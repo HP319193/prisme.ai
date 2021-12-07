@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "declaration": true,
+    "baseUrl": ".",
+    "paths": {
+      "react-native": [
+        "react-native-web"
+      ],
+      "react-native-svg": [
+        "react-native-svg-web-transform"
+      ]
+    }
+  },
+  "include": [
+    "./index.ts",
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+  ]
+}
