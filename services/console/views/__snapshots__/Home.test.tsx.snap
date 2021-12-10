@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="flex flex-1 min-h-screen justify-content-center"
+>
+  <main
+    className="flex align-items-center justify-content-center flex-column"
+  >
+    <h1
+      className="flex"
+    >
+      hello.world
+    </h1>
+    <div>
+      <div
+        className="p-rating"
+        id={null}
+        style={null}
+      >
+        <span
+          className="p-rating-icon p-rating-cancel pi pi-ban"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          tabIndex={0}
+        />
+        <span
+          className="p-rating-icon pi pi-star"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          tabIndex={0}
+        />
+        <span
+          className="p-rating-icon pi pi-star"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          tabIndex={0}
+        />
+        <span
+          className="p-rating-icon pi pi-star"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          tabIndex={0}
+        />
+        <span
+          className="p-rating-icon pi pi-star"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          tabIndex={0}
+        />
+        <span
+          className="p-rating-icon pi pi-star"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          tabIndex={0}
+        />
+      </div>
+    </div>
+  </main>
+</div>
+`;
