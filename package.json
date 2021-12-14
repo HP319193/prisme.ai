@@ -10,7 +10,7 @@
     "clean": "npx rimraf packages/**/dist",
     "build": "npx rollup -c",
     "//publish:todo": "npm publish --workspace=@prisme.ai/todo --access=public",
-    "test": "jest",
+    "test": "jest --collect-coverage",
     "//app:storybook": "npm run build && npx concurrently \"npm run build -- -w\" \"cd apps/storybook && npm start\"",
     "//build:storybook": "npm run clean && npm run build && cd apps/storybook && npm run build"
   },
@@ -33,6 +33,7 @@
     "@rollup/plugin-image": "^2.1.1",
     "@rollup/plugin-node-resolve": "^13.0.4",
     "@types/jest": "^27.0.2",
+    "@types/js-cookie": "^3.0.1",
     "@types/node-fetch": "^2.5.12",
     "@types/react": "^17.0.24",
     "@types/react-native": "^0.66.2",

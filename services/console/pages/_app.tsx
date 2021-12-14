@@ -5,9 +5,14 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
+import UserProvider from "../components/UserProvider";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <UserProvider>
+      <Component {...pageProps} />
+    </UserProvider>
+  );
 }
 
 export default appWithTranslation(MyApp);

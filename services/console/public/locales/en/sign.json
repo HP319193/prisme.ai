@@ -1,0 +1,12 @@
+{
+  "in": {
+    "title": "Connection",
+    "description": "Connect to Prisme.ai",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Connection",
+    "error": "An error has occurred, please contact support",
+    "error_403": "This account does not exist. Create an account ?",
+    "error_404": "This account does not exist. Create an account ?"
+  }
+}
