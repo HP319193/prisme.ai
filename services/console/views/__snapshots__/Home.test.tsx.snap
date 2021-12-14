@@ -2,7 +2,7 @@
 
 exports[`should render 1`] = `
 <div
-  className="flex flex-1 min-h-screen justify-content-center"
+  className="flex justify-content-center align-items-center min-h-screen"
 >
   <main
     className="flex align-items-center justify-content-center flex-column"
@@ -10,52 +10,20 @@ exports[`should render 1`] = `
     <h1
       className="flex"
     >
-      hello.world
+      home.title
     </h1>
-    <div>
-      <div
-        className="p-rating"
-        id={null}
-        style={null}
+    <button
+      className="p-button p-component"
+      disabled={false}
+    >
+      <a
+        href="/signin"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
       >
-        <span
-          className="p-rating-icon p-rating-cancel pi pi-ban"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          tabIndex={0}
-        />
-        <span
-          className="p-rating-icon pi pi-star"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          tabIndex={0}
-        />
-        <span
-          className="p-rating-icon pi pi-star"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          tabIndex={0}
-        />
-        <span
-          className="p-rating-icon pi pi-star"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          tabIndex={0}
-        />
-        <span
-          className="p-rating-icon pi pi-star"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          tabIndex={0}
-        />
-        <span
-          className="p-rating-icon pi pi-star"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          tabIndex={0}
-        />
-      </div>
-    </div>
+        home.signin
+      </a>
+    </button>
   </main>
 </div>
 `;

@@ -1,0 +1,12 @@
+{
+  "in": {
+    "title": "Conexión",
+    "description": "Iniciar sesión en Prisme.ai",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Conexión",
+    "error": "Se ha producido un error, póngase en contacto con el servicio de asistencia técnica",
+    "error_403": "Esta cuenta no existe. ¿Crear una cuenta?",
+    "error_404": "Esta cuenta no existe. ¿Crear una cuenta?"
+  }
+}

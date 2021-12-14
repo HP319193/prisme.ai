@@ -1,5 +1,6 @@
 {
-  "hello": {
-    "world": "Hello, world"
+  "home": {
+    "title": "Prisme.ai Pyramide",
+    "signin": "Signin"
   }
 }

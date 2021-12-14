@@ -18,11 +18,13 @@ include:
 
 npm_test:
   stage: test
-  tags:
-    - obs-gitlab-runner
   script:
     - npm ci
     - npm test
+  coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
+  artifacts:
+    paths:
+      - coverage
 
 .gitlab_docker:
   stage: deploy_docker
