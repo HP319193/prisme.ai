@@ -1,4 +1,3 @@
-import "@prisme.ai/types";
 import Fetcher from "./fetcher";
 
 export class Api extends Fetcher {

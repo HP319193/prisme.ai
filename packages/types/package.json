@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "description": "Prisme.ai common types",
   "author": "Prisme.ai",
-  "types": "./api.d.ts",
+  "types": "index.d.ts",
   "license": "ISC"
 }
