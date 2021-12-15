@@ -55,9 +55,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   /v2/login/anonymous:
     post:
@@ -80,11 +88,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   /v2/me:
     get:
@@ -101,16 +121,28 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   /v2/contacts/{contactId}:
     get:
       description: Retrieve some public contact
-      operationId: getThisProfile
+      operationId: getThisContact
       tags:
         - API Gateway
       parameters:
@@ -128,11 +160,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/Contact"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
 
 
@@ -172,11 +216,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   ############################################# prisme.ai-events
   /v2/workspaces/{workspaceId}/events:
@@ -241,9 +297,17 @@ paths:
                         $ref: "#/components/schemas/AllEventResponses"
 
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
     post:
       description: Emit a new event in this workspace
       operationId: sendConversationEvent
@@ -275,11 +339,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/AllEventResponses"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   /v2/workspaces/{workspaceId}/events/websocket:
     get:
@@ -345,11 +421,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   ############################################# workspaces
   ## workspaces
@@ -386,11 +474,23 @@ paths:
                     name:
                       type: string
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
     post:
       description: Create a new workspace
       operationId: createWorkspace
@@ -411,11 +511,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/Workspace"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   /v2/workspaces/{workspaceId}:
     get:
@@ -438,11 +550,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/Workspace"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
     patch:
       description: Update a workspace
@@ -471,11 +595,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/Workspace"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
     delete:
       description: Delete a workspace
@@ -502,11 +638,23 @@ paths:
                   id:
                     type: string
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
 
   ## automations
@@ -538,11 +686,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/Automation"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   /v2/workspaces/{workspaceId}/automations/{automationId}:
     get:
@@ -571,11 +731,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/Automation"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
     patch:
       description: Update an automation
@@ -610,11 +782,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/Automation"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
     delete:
       description: Delete an automation
@@ -647,11 +831,23 @@ paths:
                   id:
                     type: string
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   ## apps
   /v2/apps:
@@ -686,11 +882,23 @@ paths:
                 items:
                   $ref: "#/components/schemas/App"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
     post:
       description: Publish a new app
@@ -712,11 +920,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/App"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   /v2/apps/{appId}:
     get:
@@ -739,11 +959,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/App"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
     patch:
       description: Update an app
@@ -772,11 +1004,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/App"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
     delete:
       description: Delete an app
@@ -803,11 +1047,23 @@ paths:
                   id:
                     type: string
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   ## installed apps
   /v2/workspaces/{workspaceId}/apps:
@@ -838,11 +1094,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/AppInstance"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   /v2/workspaces/{workspaceId}/apps/{installedAppId}:
     get:
@@ -871,11 +1139,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/AppInstance"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
     patch:
       description: Configure an app
@@ -910,11 +1190,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/AppInstance"
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
     delete:
       description: Uninstall an app
@@ -947,11 +1239,23 @@ paths:
                   id:
                     type: string
         "404":
-          $ref: "#/components/responses/ObjectNotFound"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          $ref: "#/components/responses/BadPermissions"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          $ref: "#/components/responses/BadParameters"
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
 
   ## End of APIs
 
@@ -965,26 +1269,6 @@ components:
       type: apiKey
       in: header
       name: X-Prismeai-API-Key
-
-  responses:
-    "ObjectNotFound":
-      description: Object not found
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ObjectNotFoundError"
-    "BadParameters":
-      description: "Bad parameters"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/BadParametersError"
-    "BadPermissions":
-      description: "Bad parameters"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/BadPermissionsError"
 
   schemas:
     AnyValue: {}
