@@ -9,6 +9,7 @@ cache:
 variables:
   CONTAINER_BASE_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
   CONSOLE_NAME: "console"
+  CONSOLE_IMAGE_NAME: "prisme.ai-console"
   DOCKER_DRIVER: overlay2
   GIT_DEPTH: "1"
 
@@ -57,12 +58,10 @@ console_test:
     - docker:stable-dind
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker pull $CONTAINER_BASE_IMAGE/$SERVICE_NAME:latest || true
-    - cp -r node_modules/ services/$SERVICE_NAME
-    - cd services/$SERVICE_NAME
-    - docker build --build-arg "USE_LOCAL_NODE_MODULES=yes" --cache-from $CONTAINER_BASE_IMAGE/$SERVICE_NAME:latest -t $CONTAINER_BASE_IMAGE/$SERVICE_NAME:$CI_COMMIT_TAG -t $CONTAINER_BASE_IMAGE/$SERVICE_NAME:latest .
-    - docker push $CONTAINER_BASE_IMAGE/$SERVICE_NAME:$CI_COMMIT_TAG
-    - docker push $CONTAINER_BASE_IMAGE/$SERVICE_NAME:latest
+    - docker pull $IMAGE_NAME:latest || true
+    - docker build --build-arg "USE_LOCAL_NODE_MODULES=yes" --cache-from $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_TAG -t $IMAGE_NAME:latest .
+    - docker push $IMAGE_NAME:$CI_COMMIT_TAG
+    - docker push $IMAGE_NAME:latest
 
 console_build_docker:
   extends: .build_docker
@@ -72,8 +71,10 @@ console_build_docker:
     changes:
       - "services/console/*"
   before_script:
+    - cp -r node_modules/ services/$CONSOLE_NAME
+    - cd services/$CONSOLE_NAME
     - export DOCKER_HOST=tcp://docker:2375
-    - export SERVICE_NAME=$CONSOLE_NAME
+    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
 
 # deploy_k8s:
 #   stage: deploy
