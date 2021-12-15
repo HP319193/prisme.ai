@@ -905,6 +905,17 @@ declare namespace Prismeai {
             attempt: number;
         };
     }
+    export interface GenericError {
+        /**
+         * example:
+         * ObjectNotFound
+         */
+        error?: string;
+        message?: string;
+        details?: {
+            [key: string]: any;
+        }[];
+    }
     export interface GenericErrorEvent {
         /**
          * example:

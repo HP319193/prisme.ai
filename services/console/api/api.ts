@@ -1,5 +1,5 @@
+import "@prisme.ai/types";
 import Fetcher from "./fetcher";
-import { User } from "@prisme.ai/types";
 
 export class Api extends Fetcher {
   async me() {
@@ -10,7 +10,7 @@ export class Api extends Fetcher {
     email: string,
     password: string
   ): Promise<
-    User & {
+    Prismeai.GenericError & {
       headers: {
         ["x-prismeai-session-token"]: string;
       };

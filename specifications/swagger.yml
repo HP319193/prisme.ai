@@ -2057,6 +2057,18 @@ components:
 
 
 
+    GenericError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: ObjectNotFound
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
 
 
     ObjectNotFoundError:
