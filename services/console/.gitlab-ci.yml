@@ -1,11 +1,5 @@
 image: node:16
 
-cache:
-  untracked: true
-  key: "$CI_BUILD_REF_NAME"
-  paths:
-    - node_modules/
-
 variables:
   CONTAINER_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
   OBS_CONTAINER_IMAGE: $OBS_REGISTRY_URL/$CI_PROJECT_PATH
@@ -13,9 +7,8 @@ variables:
   GIT_DEPTH: "1"
 
 stages:
-  - dependencies
   - test
-  - build_docker
+  - deploy_docker
   - deploy
 
 sast:
@@ -23,36 +16,20 @@ sast:
 include:
   - template: Security/SAST.gitlab-ci.yml
 
-npm_install:
-  stage: dependencies
-  script:
-    - "npm ci"
-
-
-.npm_test:
+npm_test:
   interruptible: true
   stage: test
   script:
-    - npm test $SERVICE_NAME
+    - npm ci
+    - npm test
   coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
   artifacts:
     paths:
       - coverage
 
-console_test:
-  extends: .npm_test
-  only:
-    refs:
-      - branches
-    changes:
-      - "services/console/*"
-
-  before_script:
-    - export SERVICE_NAME=console
-
 .gitlab_docker:
   interruptible: true # Stop this job if a new one has been triggered by the same branch
-  stage: build_docker
+  stage: deploy_docker
   only:
     - tags
   image: docker:stable
