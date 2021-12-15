@@ -29,6 +29,7 @@ npm_install:
   script:
     - "npm ci"
 
+#### Parent jobs
 
 .npm_test:
   interruptible: true
@@ -39,14 +40,6 @@ npm_install:
   artifacts:
     paths:
       - coverage
-
-console_test:
-  extends: .npm_test
-  only:
-    changes:
-      - "services/console/*"
-  before_script:
-    - export SERVICE_NAME=$CONSOLE_NAME
 
 .build_docker:
   interruptible: true # Stop this job if a new one has been triggered by the same branch
@@ -63,20 +56,7 @@ console_test:
     - docker push $IMAGE_NAME:$CI_COMMIT_TAG
     - docker push $IMAGE_NAME:latest
 
-console_build_docker:
-  extends: .build_docker
-  only:
-    refs:
-      - tags
-    changes:
-      - "services/console/*"
-  before_script:
-    - cp -r node_modules/ services/$CONSOLE_NAME
-    - cd services/$CONSOLE_NAME
-    - export DOCKER_HOST=tcp://docker:2375
-    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
-
-# deploy_k8s:
+# .deploy_k8s:
 #   stage: deploy
 #   only:
 #     - tags
@@ -90,3 +70,27 @@ console_build_docker:
 #   script:
 #     - kubectl -n orange set image deploy/ggwg-proximity-portal ggwg-proximity-portal=$CONTAINER_BASE_IMAGE/$CONSOLE_NAME:$CI_COMMIT_TAG
 #     - kubectl -n orange rollout status deploy/ggwg-proximity-portal
+
+
+## Console jobs
+console_test:
+  extends: .npm_test
+  only:
+    changes:
+      - "services/console/*"
+  before_script:
+    - export SERVICE_NAME=$CONSOLE_NAME
+
+console_build_docker:
+  extends: .build_docker
+  only:
+    refs:
+      - tags
+    changes:
+      - "services/console/*"
+  before_script:
+    - cp -r node_modules/ services/$CONSOLE_NAME
+    - cd services/$CONSOLE_NAME
+    - export DOCKER_HOST=tcp://docker:2375
+    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
+
