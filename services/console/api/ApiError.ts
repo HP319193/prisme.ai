@@ -1,3 +1,4 @@
+import "@prisme.ai/types";
 export class ApiError extends Error implements Prismeai.GenericError {
   public code: number;
   public error: Prismeai.GenericError["error"];
