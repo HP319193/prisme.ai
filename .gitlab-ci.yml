@@ -42,8 +42,6 @@ npm_install:
 console_test:
   extends: .npm_test
   only:
-    refs:
-      - branches
     changes:
       - "services/console/*"
   before_script:
@@ -70,7 +68,7 @@ console_build_docker:
   extends: .build_docker
   only:
     refs:
-      - branches
+      - tags
     changes:
       - "services/console/*"
   before_script:
