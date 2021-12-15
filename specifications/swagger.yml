@@ -1096,6 +1096,10 @@ components:
         automations:
           additionalProperties:
             $ref: "#/components/schemas/Automation"
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
         id:
           type: string
 
