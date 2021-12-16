@@ -1,11 +1,12 @@
-import { APIError } from "../../../packages/types";
-
-export class ApiError extends Error implements APIError {
+export class ApiError extends Error implements Prismeai.GenericError {
   public code: number;
-  public error: APIError["error"];
-  public details: APIError["details"];
+  public error: Prismeai.GenericError["error"];
+  public details: Prismeai.GenericError["details"];
 
-  constructor({ error, message, details }: APIError, code: number) {
+  constructor(
+    { error, message, details }: Prismeai.GenericError,
+    code: number
+  ) {
     super(message);
     this.code = code;
     this.error = error;
