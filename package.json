@@ -9,6 +9,8 @@
   "scripts": {
     "clean": "npx rimraf packages/**/dist",
     "build": "npx rollup -c",
+    "build:workspaces": "npm run build --prefix services/workspaces",
+    "dev:workspaces": "npm run dev --prefix services/workspaces",
     "//publish:todo": "npm publish --workspace=@prisme.ai/todo --access=public",
     "test": "jest --collect-coverage",
     "//app:storybook": "npm run build && npx concurrently \"npm run build -- -w\" \"cd apps/storybook && npm start\"",
