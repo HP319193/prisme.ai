@@ -16,6 +16,7 @@ export const Provider: FC = ({ children }) => {
     setLoading(false);
   }, []);
 
+  //@ts-ignore
   const signin: UserContext["signin"] = useCallback(async (email, password) => {
     setLoading(true);
     try {
@@ -25,6 +26,7 @@ export const Provider: FC = ({ children }) => {
       } = await api.signin(email, password);
       api.token = token;
       setError(undefined);
+      //@ts-ignore
       setUser(user);
       setLoading(false);
       return user;

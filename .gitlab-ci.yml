@@ -1,14 +1,24 @@
 image: node:16
 
+cache:
+  untracked: true
+  key: "$CI_BUILD_REF_NAME"
+  paths:
+    - node_modules/
+
 variables:
-  CONTAINER_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
-  OBS_CONTAINER_IMAGE: $OBS_REGISTRY_URL/$CI_PROJECT_PATH
+  CONTAINER_BASE_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
+
+  CONSOLE_NAME: "console"
+  CONSOLE_IMAGE_NAME: "prisme.ai-console"
+
   DOCKER_DRIVER: overlay2
   GIT_DEPTH: "1"
 
 stages:
+  - dependencies
   - test
-  - deploy_docker
+  - build_docker
   - deploy
 
 sast:
@@ -16,47 +26,95 @@ sast:
 include:
   - template: Security/SAST.gitlab-ci.yml
 
-npm_test:
+npm_install:
+  stage: dependencies
+  script:
+    - "npm ci"
+
+#### Parent jobs
+
+.npm_test:
+  interruptible: true
   stage: test
   script:
-    - npm ci
-    - npm test
+    - npm test $SERVICE_NAME
   coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
   artifacts:
     paths:
       - coverage
 
-.gitlab_docker:
-  stage: deploy_docker
+.build_docker:
+  interruptible: true # Stop this job if a new one has been triggered by the same branch
+  stage: build_docker
   only:
     - tags
   image: docker:stable
   services:
     - docker:stable-dind
-  before_script:
-    - export DOCKER_HOST=tcp://docker:2375
-
-gitlab_latest:
-  extends: .gitlab_docker
-  allow_failure: true
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker pull $CONTAINER_IMAGE:latest || true
-    - docker build --cache-from $CONTAINER_IMAGE:latest -t $CONTAINER_IMAGE:$CI_COMMIT_TAG -t $CONTAINER_IMAGE:latest .
-    - docker push $CONTAINER_IMAGE:$CI_COMMIT_TAG
-    - docker push $CONTAINER_IMAGE:latest
+    - docker pull $IMAGE_NAME:latest || true
+    - docker build --build-arg "USE_LOCAL_NODE_MODULES=yes" --cache-from $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_TAG -t $IMAGE_NAME:latest .
+    - docker push $IMAGE_NAME:$CI_COMMIT_TAG
+    - docker push $IMAGE_NAME:latest
 
-deploy_k8s:
+.deploy_k8s:
   stage: deploy
   only:
     - tags
   tags:
-    - obs-gitlab-runner
+    - internal-runner
   image:
     name: lachlanevenson/k8s-kubectl:latest
     entrypoint: ["/bin/sh", "-c"]
+  script:
+    - helm upgrade core-eda --set ${K8S_NAME}.image.tag=$CI_COMMIT_TAG --set ${K8S_NAME}.image.repository=$IMAGE_NAME core-eda .
+
+## Console jobs
+console_test:
+  extends: .npm_test
+  only:
+    changes:
+      - "services/console/*"
+  before_script:
+    - export SERVICE_NAME=$CONSOLE_NAME
+
+console_build_docker:
+  # extends: .build_docker
+  interruptible: true # Stop this job if a new one has been triggered by the same branch
+  stage: build_docker
+  # only:
+  #   - tags
+  image: docker:stable
+  services:
+    - docker:stable-dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker pull $IMAGE_NAME:latest || true
+    - docker build --build-arg "USE_LOCAL_NODE_MODULES=yes" --cache-from $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_TAG -t $IMAGE_NAME:latest .
+    - docker push $IMAGE_NAME:$CI_COMMIT_TAG
+    - docker push $IMAGE_NAME:latest
+
+  only:
+    refs:
+      - tags
+    changes:
+      - "services/console/*"
+  before_script:
+    - cp -r node_modules/ services/$CONSOLE_NAME
+    - cd services/$CONSOLE_NAME
+    - export DOCKER_HOST=tcp://docker:2375
+    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
+
+console_deploy:
+  extends: .deploy_k8s
+  only:
+    refs:
+      - tags
+    changes:
+      - "services/console/*"
   before_script:
     - export KUBECONFIG=$KUBECONFIG
-  script:
-    - kubectl -n orange set image deploy/ggwg-proximity-portal ggwg-proximity-portal=$CONTAINER_IMAGE:$CI_COMMIT_TAG
-    - kubectl -n orange rollout status deploy/ggwg-proximity-portal
+    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
+    - export K8S_NAME=$CONSOLE_IMAGE_NAME
+

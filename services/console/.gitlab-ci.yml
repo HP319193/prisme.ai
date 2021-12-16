@@ -1,0 +1,63 @@
+image: node:16
+
+variables:
+  CONTAINER_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
+  OBS_CONTAINER_IMAGE: $OBS_REGISTRY_URL/$CI_PROJECT_PATH
+  DOCKER_DRIVER: overlay2
+  GIT_DEPTH: "1"
+
+stages:
+  - test
+  - deploy_docker
+  - deploy
+
+sast:
+  stage: test
+include:
+  - template: Security/SAST.gitlab-ci.yml
+
+npm_test:
+  interruptible: true
+  stage: test
+  script:
+    - npm ci
+    - npm test
+  coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
+  artifacts:
+    paths:
+      - coverage
+
+.gitlab_docker:
+  interruptible: true # Stop this job if a new one has been triggered by the same branch
+  stage: deploy_docker
+  only:
+    - tags
+  image: docker:stable
+  services:
+    - docker:stable-dind
+  before_script:
+    - export DOCKER_HOST=tcp://docker:2375
+
+gitlab_latest:
+  extends: .gitlab_docker
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker pull $CONTAINER_IMAGE:latest || true
+    - docker build --cache-from $CONTAINER_IMAGE:latest -t $CONTAINER_IMAGE:$CI_COMMIT_TAG -t $CONTAINER_IMAGE:latest .
+    - docker push $CONTAINER_IMAGE:$CI_COMMIT_TAG
+    - docker push $CONTAINER_IMAGE:latest
+
+deploy_k8s:
+  stage: deploy
+  only:
+    - tags
+  tags:
+    - obs-gitlab-runner
+  image:
+    name: lachlanevenson/k8s-kubectl:latest
+    entrypoint: ["/bin/sh", "-c"]
+  before_script:
+    - export KUBECONFIG=$KUBECONFIG
+  script:
+    - kubectl -n orange set image deploy/ggwg-proximity-portal ggwg-proximity-portal=$CONTAINER_IMAGE:$CI_COMMIT_TAG
+    - kubectl -n orange rollout status deploy/ggwg-proximity-portal
