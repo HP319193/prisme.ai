@@ -8,11 +8,13 @@
   ],
   "scripts": {
     "clean": "npx rimraf packages/**/dist",
-    "build": "npx rollup -c",
+    "build:packages": "npx rollup -c",
+    "build:console": "npm run build --prefix services/console",
     "//publish:todo": "npm publish --workspace=@prisme.ai/todo --access=public",
     "test": "jest --collect-coverage",
     "//app:storybook": "npm run build && npx concurrently \"npm run build -- -w\" \"cd apps/storybook && npm start\"",
-    "//build:storybook": "npm run clean && npm run build && cd apps/storybook && npm run build"
+    "//build:storybook": "npm run clean && npm run build && cd apps/storybook && npm run build",
+    "build:types": "npx dtsgen --out ./packages/types/api.d.ts ./specifications/swagger.yml"
   },
   "repository": {
     "type": "git",
@@ -29,6 +31,7 @@
     "@babel/preset-env": "^7.16.0",
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.15.0",
+    "@dtsgenerator/replace-namespace": "^1.5.1",
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-image": "^2.1.1",
     "@rollup/plugin-node-resolve": "^13.0.4",

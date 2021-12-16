@@ -13,8 +13,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
+    "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "__mocks__/react-i18next.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "__mocks__/react-i18next.js",
+    "../../node_modules/@prisme.ai/types/index.d.ts"
+  ],
   "exclude": ["node_modules", "*.test.tsx"]
 }

@@ -1,0 +1,2104 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Prisme.ai APIs
+  description: Prisme.ai APIs specifications
+  termsOfService: https://www.prisme.ai/mentions-legales
+  contact:
+    name: Prisme.ai Support Team
+    email: support@prisme.ai
+    url: https://www.prisme.ai
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://localhost:1337
+  - url: https://api.prisme.ai
+security:
+  - ApiKeyAuth: []
+    BearerAuth: []
+
+paths:
+  ############################################# gateway
+  /v2/login:
+    post:
+      description: Username / Password authentication
+      operationId: credentialsAuth
+      tags:
+        - API Gateway
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+
+      responses:
+        "200":
+          description: Success Response
+          headers:
+            X-Prismeai-Session-Token:
+              schema:
+                type: string
+              description: Created session token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "400":
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  /v2/login/anonymous:
+    post:
+      description: Anonymous authentication
+      operationId: anonymousAuth
+      tags:
+        - API Gateway
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: Success Response
+          headers:
+            X-Prismeai-Session-Token:
+              schema:
+                type: string
+              description: Created session token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  /v2/me:
+    get:
+      description: Retrieve current authenticated user
+      operationId: getMyProfile
+      tags:
+        - API Gateway
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  /v2/contacts/{contactId}:
+    get:
+      description: Retrieve some public contact
+      operationId: getThisContact
+      tags:
+        - API Gateway
+      parameters:
+        - name: "contactId"
+          in: "path"
+          description: "Contact ID"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contact"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+
+
+  /v2/signup:
+    post:
+      description: Signup
+      operationId: signup
+      tags:
+        - API Gateway
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - username
+                - password
+                - firstName
+                - lastName
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  ############################################# prisme.ai-events
+  /v2/workspaces/{workspaceId}/events:
+    get:
+      description: Retrieve events filtered with any JSON path specified in GET parameters
+      operationId: eventsLongpolling
+      tags:
+        - "Prisme.ai Events"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "ID of workspace to listen to"
+          required: true
+          schema:
+            type: string
+        - name: "somePayloadField.subField"
+          in: "query"
+          description: "Allows to filter on any field inside events payload"
+          schema:
+            type: string
+        - name: "filter"
+          in: "query"
+          example: message,notification
+          description: "Comma separated list of listened events "
+          schema:
+            type: string
+        - name: "fromDate"
+          in: "query"
+          description: "Retrieve events created after this ISO8601 formatted date"
+          schema:
+            type: string
+        - name: "longpolling"
+          in: "query"
+          example: 30
+          description: "Optional longpolling timeout. No longpolling by default"
+          required: false
+          schema:
+            type: number
+        - name: "page"
+          in: "query"
+          description: "Page number"
+          schema:
+            type: number
+        - name: "limit"
+          in: "query"
+          description: "Page size"
+          required: false
+          schema:
+            type: number
+      responses: &getEventsResponse
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      events:
+                        $ref: "#/components/schemas/AllEventResponses"
+
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+    post:
+      description: Emit a new event in this workspace
+      operationId: sendConversationEvent
+      tags:
+        - "Prisme.ai Events"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "ID of workspace to listen to"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - events
+              properties:
+                events:
+                  $ref: "#/components/schemas/AllEventRequests"
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AllEventResponses"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  /v2/workspaces/{workspaceId}/events/websocket:
+    get:
+      description: Retrieve events filtered with any JSON path specified in GET parameters
+      operationId: eventsWebsocket
+      tags:
+        - "Prisme.ai Events"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "ID of workspace to listen to"
+          required: true
+          schema:
+            type: string
+        - name: "somePayloadField.subField"
+          in: "query"
+          description: "Allows to filter on any field inside events payload"
+          schema:
+            type: string
+        - name: "filter"
+          in: "query"
+          example: message,notification
+          description: "Comma separated list of listened events "
+          schema:
+            type: string
+      responses: *getEventsResponse
+
+  ############################################# runtime
+  /v2/workspaces/{workspaceId}/webhooks/{automationId}:
+    post:
+      description: Trigger some workflow automation from HTTP. GET/POST/PUT/PATCH/DELETE methods can all be used
+      operationId: automationWebhook
+      tags:
+        - "Prisme.ai Runtime"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace ID"
+          required: true
+          schema:
+            type: string
+        - name: "automationId"
+          in: "path"
+          description: "Automation ID we will trigger"
+          required: true
+          schema:
+            type: string
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Entire body will be passed as a payload to the triggered workflow
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  ############################################# workspaces
+  ## workspaces
+  /v2/workspaces:
+    get:
+      description: Fetch my workspaces (those I own and shared ones)
+      operationId: getWorkspaces
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "page"
+          in: "query"
+          description: "Page number"
+          schema:
+            type: number
+        - name: "limit"
+          in: "query"
+          description: "Page size"
+          required: false
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+    post:
+      description: Create a new workspace
+      operationId: createWorkspace
+      tags:
+        - "Prisme.ai Workspaces"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Workspace"
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workspace"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  /v2/workspaces/{workspaceId}:
+    get:
+      description: Fetch a workspace
+      operationId: getWorkspace
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace id"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workspace"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+    patch:
+      description: Update a workspace
+      operationId: updateWorkspace
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace id"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Workspace"
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workspace"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+    delete:
+      description: Delete a workspace
+      operationId: deleteWorkspace
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace id"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    type: string
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+
+  ## automations
+  /v2/workspaces/{workspaceId}/automations:
+    post:
+      description: Create a new automation
+      operationId: createAutomation
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace id"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Automation"
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Automation"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  /v2/workspaces/{workspaceId}/automations/{automationId}:
+    get:
+      description: Fetch an automation
+      operationId: getAutomation
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace id"
+          required: true
+          schema:
+            type: string
+        - name: "automationId"
+          in: "path"
+          description: "Automation id"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Automation"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+    patch:
+      description: Update an automation
+      operationId: updateAutomation
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace id"
+          required: true
+          schema:
+            type: string
+        - name: "automationId"
+          in: "path"
+          description: "Automation id"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Automation"
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Automation"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+    delete:
+      description: Delete an automation
+      operationId: deleteAutomation
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace id"
+          required: true
+          schema:
+            type: string
+        - name: "automationId"
+          in: "path"
+          description: "Automation id"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    type: string
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  ## apps
+  /v2/apps:
+    get:
+      description: Search for an app inside the app store (or retrieve full app store)
+      operationId: searchApps
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "query"
+          in: "query"
+          description: "Search these keywords"
+          schema:
+            type: string
+        - name: "page"
+          in: "query"
+          description: "Page number"
+          schema:
+            type: string
+        - name: "limit"
+          in: "query"
+          description: "Page size"
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/App"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+    post:
+      description: Publish a new app
+      operationId: createApp
+      tags:
+        - "Prisme.ai Workspaces"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/App"
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/App"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  /v2/apps/{appId}:
+    get:
+      description: Fetch an app
+      operationId: getApp
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "appId"
+          in: "path"
+          description: "App id"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/App"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+    patch:
+      description: Update an app
+      operationId: updateApp
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "appId"
+          in: "path"
+          description: "App id"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/App"
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/App"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+    delete:
+      description: Delete an app
+      operationId: deleteApp
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "appId"
+          in: "path"
+          description: "App id"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    type: string
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  ## installed apps
+  /v2/workspaces/{workspaceId}/apps:
+    post:
+      description: Install a new app
+      operationId: installApp
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace id"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppInstance"
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppInstance"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  /v2/workspaces/{workspaceId}/apps/{installedAppId}:
+    get:
+      description: Fetch an installed app
+      operationId: getInstalledApp
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace id"
+          required: true
+          schema:
+            type: string
+        - name: "installedAppId"
+          in: "path"
+          description: "Installed app id"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppInstance"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+    patch:
+      description: Configure an app
+      operationId: configureApp
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace id"
+          required: true
+          schema:
+            type: string
+        - name: "installedAppId"
+          in: "path"
+          description: "Installed app id"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppInstance"
+
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppInstance"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+    delete:
+      description: Uninstall an app
+      operationId: uninstallApp
+      tags:
+        - "Prisme.ai Workspaces"
+      parameters:
+        - name: "workspaceId"
+          in: "path"
+          description: "Workspace id"
+          required: true
+          schema:
+            type: string
+        - name: "installedAppId"
+          in: "path"
+          description: "Installed app id"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    type: string
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "403":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadPermissionsError"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+
+  ## End of APIs
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: apiKey
+      in: header
+      name: X-Prismeai-Session-Token
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Prismeai-API-Key
+
+  schemas:
+    AnyValue: {}
+    Object:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique id
+
+    Contact:
+      allOf:
+        - required:
+            - role
+            - firstName
+          type: object
+          properties:
+            firstName:
+              type: string
+              description: Name
+            lastName:
+              type: string
+              description: Name
+            photo:
+              type: string
+              description: Profile picture URL
+
+        - $ref: "#/components/schemas/Object"
+
+    User:
+      allOf:
+        - type: object
+          properties:
+            email:
+              type: string
+              example: foo@prisme.ai
+            authData:
+              type: object
+              properties:
+                provider:
+                  type: string
+                  enum:
+                    - credentials
+                    - anonymous
+        - $ref: "#/components/schemas/Contact"
+
+    App:
+      allOf:
+      - type: object
+        required:
+          - name
+        properties:
+          name:
+            type: string
+          owner:
+            type: object
+            properties:
+              id:
+                type: string
+          constants:
+            type: object
+          config:
+            additionalProperties:
+              $ref: "#/components/schemas/TypedArgument"
+          automations:
+            additionalProperties:
+              $ref: "#/components/schemas/Automation"
+      - $ref: "#/components/schemas/Object"
+
+    AppInstance:
+      allOf:
+      - type: object
+        required:
+          - app
+          - name
+        properties:
+          app:
+            type: string
+            example: "prismeaiMessenger"
+            description: "App unique name"
+          name:
+            type: string
+          config:
+            type: object
+            example:
+              foo: "bar"
+            description: "Inside the app, these config values will be accessible with $.Config.foo"
+      - $ref: "#/components/schemas/Object"
+
+    Workspace:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        owner:
+          type: object
+          properties:
+            id:
+              type: string
+        imports:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppInstance"
+        constants:
+          type: object
+        automations:
+          additionalProperties:
+            $ref: "#/components/schemas/Automation"
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        id:
+          type: string
+
+    Trigger:
+      type: object
+      anyOf:
+        - required: ["do", "events"]
+        - required: ["do", "dates"]
+      properties:
+        events:
+          type: array
+          items:
+            type: string
+          example:
+            - prismeaiMessenger.event
+        dates:
+          type: array
+          items:
+            type: string
+          example:
+            - 2021-12-25T00:00
+            - "* * 1 * *"
+        endpoint:
+          oneOf:
+            - type: boolean
+              example: "Set to true in order to activate HTTP endpoint. Slug will be trigger name by default"
+            - type: string
+              example: "Slug name"
+        do:
+          type: string
+          description: "Target workflow"
+          example: "MyWorkflow"
+
+    LocalizedText:
+      oneOf:
+        - additionalProperties:
+            type: string
+          example:
+            fr: "Bonjour"
+            en: "Hello"
+        - type: string
+          example: Bonjour
+
+    TypedArgument:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - string
+            - number
+        description:
+          $ref: "#/components/schemas/LocalizedText"
+
+    InstructionList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Instruction"
+
+    Workflow:
+      type: object
+      required:
+        - do
+      properties:
+        description:
+          $ref: "#/components/schemas/LocalizedText"
+        arguments:
+          additionalProperties:
+            $ref: "#/components/schemas/TypedArgument"
+        do:
+          $ref: "#/components/schemas/InstructionList"
+        output:
+          description: "Workflow result expression. Might be a variable reference, an object/array with variables inside ..."
+          example: "$result"
+        private:
+          type: boolean
+          description: "Set this to true if you don't want your workflow to be accessible outside of your app. Default is false."
+          example: false
+
+
+    Automation:
+      type: object
+      required:
+        - workflows
+      description: Full description at (TODO swagger url)
+      properties:
+        triggers:
+          additionalProperties:
+            $ref: "#/components/schemas/Trigger"
+        workflows:
+          additionalProperties:
+            $ref: "#/components/schemas/Workflow"
+        id:
+          type: string
+
+    ###############################################################################################################################################
+    ############################################################ Workflow Instructions ############################################################
+    Emit:
+      type: object
+      required:
+        - emit
+      maxProperties:  1
+      properties:
+        emit:
+          type: object
+          required:
+            - event
+          properties:
+            event:
+              type: string
+              example: "prismeaiMessenger.message"
+            payload:
+              type: object
+
+    Wait:
+      type: object
+      required:
+        - wait
+      maxProperties: 1
+      properties:
+        wait:
+          type: object
+          required:
+            - event
+          properties:
+            event:
+              type: string
+              example: "prismeaiMessenger.message"
+            filters:
+              type: object
+              description: "Only match the next intent fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
+              example:
+                automationId: someId
+                someObjectField.someNestedField: 'foo'
+            output:
+              type: string
+              description: Will save the caught event inside this variable
+              example: nameOfResultVariable
+
+    VariableLifespan:
+      description: Rules defining when a variable should be automatically removed
+      properties:
+        messages:
+          type: number
+          description: Number of user messages sent before automatically removing this variable
+        seconds:
+          type: number
+          description: Number of seconds elapsed since this variable initialization, before automatically removing it
+
+    Set:
+      type: object
+      required:
+        - "set"
+      maxProperties: 1
+      properties:
+        set:
+          required:
+            - name
+            - value
+          properties:
+            name:
+              type: string
+              description: Variable name, might be "foo", "session.sessionScopedFoo", "global.globalScopedFoo", "user.userScopedFoo", ...
+            value:
+              $ref: "#/components/schemas/AnyValue"
+              description: variable value
+            lifespan:
+              $ref: "#/components/schemas/VariableLifespan"
+
+    Delete:
+      type: object
+      required:
+        - delete
+      maxProperties: 1
+      properties:
+        delete:
+          required:
+            - name
+          properties:
+            name:
+              type: string
+              description: Variable name to remove
+
+
+    If:
+      type: object
+      required:
+        - "if"
+      maxProperties: 1
+      properties:
+        if:
+          required:
+            - condition
+            - then
+          properties:
+            condition:
+              type: string
+            then:
+              $ref: "#/components/schemas/InstructionList"
+
+    ElseIf:
+      type: object
+      required:
+        - "elseif"
+      maxProperties: 1
+      properties:
+        elseif:
+          required:
+            - condition
+            - then
+          properties:
+            condition:
+              type: string
+            then:
+              $ref: "#/components/schemas/InstructionList"
+
+    Else:
+      type: object
+      required:
+        - else
+      maxProperties: 1
+      properties:
+        else:
+          required:
+            - then
+          properties:
+            then:
+              $ref: "#/components/schemas/InstructionList"
+
+    Conditions:
+      oneOf:
+        - $ref: "#/components/schemas/If"
+        - $ref: "#/components/schemas/ElseIf"
+        - $ref: "#/components/schemas/Else"
+
+    Repeat:
+      type: object
+      required:
+        - "repeat"
+      maxProperties: 1
+      properties:
+        repeat:
+          oneOf:
+            - required: ["on", "then"]
+            - required: ["until", "then"]
+          description: One of "on" or "until" is required
+          properties:
+            on:
+              type: string
+            until:
+              type: number
+            then:
+              $ref: "#/components/schemas/InstructionList"
+
+    All:
+      type: object
+      required:
+        - "all"
+      maxProperties: 1
+      properties:
+        all:
+          description: Execute each instruction in parallel. Pause current workflow execution until all instructions are processed.
+          type: array
+          items:
+            $ref: "#/components/schemas/Instruction"
+
+    Break:
+      type: object
+      required:
+        - "break"
+      maxProperties: 1
+      properties:
+        break:
+          description: Stop current workflow execution. Does not have any configuration option
+          type: object
+
+    Instruction:
+      anyOf:
+        - $ref: "#/components/schemas/Emit"
+        - $ref: "#/components/schemas/Wait"
+        - $ref: "#/components/schemas/Set"
+        - $ref: "#/components/schemas/Delete"
+        - $ref: "#/components/schemas/Conditions"
+        - $ref: "#/components/schemas/Repeat"
+        - $ref: "#/components/schemas/All"
+        - $ref: "#/components/schemas/Break"
+
+
+    ################################################################################################################################
+    ############################################################ Events ############################################################
+    BaseEventResponse:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          description: Creation date (ISO8601)
+        source:
+          type: object
+          properties:
+            app:
+              type: string
+              enum:
+                - prisme.ai-nlu
+                - prisme.ai-dsul-server
+                - prisme.ai-analytics
+                - prisme.ai-actions
+                - any existing app name
+            user:
+              description: Authenticated user
+              type: object
+              properties:
+                id:
+                  type: string
+            workspace:
+              description: Related workspace
+              type: object
+              properties:
+                id:
+                  type: string
+            host:
+              type: object
+              properties:
+                ip:
+                  type: string
+            correlationId:
+              type: string
+        target:
+          type: object
+          properties:
+            user:
+              description: Authenticated user
+              type: object
+              properties:
+                id:
+                  type: string
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            level:
+              type: string
+              enum:
+                - warning
+                - error
+                - fatal
+              example: warning
+        id:
+          type: string
+
+    AllEventRequests:
+      type: array
+      items:
+        anyOf:
+          - $ref: "#/components/schemas/GenericErrorEvent"
+          - $ref: "#/components/schemas/FailedLogin"
+          - $ref: "#/components/schemas/SucceededLogin"
+          - $ref: "#/components/schemas/TriggeredWorkflow"
+          - $ref: "#/components/schemas/UpdatedContexts"
+          - $ref: "#/components/schemas/CreatedWorkspace"
+          - $ref: "#/components/schemas/UpdatedWorkspace"
+          - $ref: "#/components/schemas/DeletedWorkspace"
+          - $ref: "#/components/schemas/InstalledApp"
+          - $ref: "#/components/schemas/ConfiguredApp"
+          - $ref: "#/components/schemas/CreatedAutomation"
+          - $ref: "#/components/schemas/UpdatedAutomation"
+          - $ref: "#/components/schemas/DeletedAutomation"
+
+    AllEventResponses:
+      type: array
+      items:
+        anyOf:
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/GenericErrorEvent"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/FailedLogin"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/SucceededLogin"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/TriggeredWorkflow"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/UpdatedContexts"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/CreatedWorkspace"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/UpdatedWorkspace"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/DeletedWorkspace"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/InstalledApp"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/ConfiguredApp"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/CreatedAutomation"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/UpdatedAutomation"
+          - allOf:
+              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/DeletedAutomation"
+
+    GenericErrorEvent:
+      type: object
+      properties:
+        type:
+          type: string
+          example:
+            error
+
+    ########################## API Gateway ##########################
+    FailedLogin:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.login.failed
+          enum:
+            - gateway.login.failed
+        payload:
+          type: object
+          required:
+            - ip
+            - attempt
+          properties:
+            ip:
+              type: string
+            attempt:
+              type: number
+
+    SucceededLogin:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.login.succeeded
+          enum:
+            - gateway.login.succeeded
+        payload:
+          type: object
+          required:
+            - ip
+            - attempt
+          properties:
+            ip:
+              type: string
+            attempt:
+              type: number
+
+    ########################## Workspaces events ##########################
+    CreatedWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.created
+          enum:
+            - workspaces.created
+        payload:
+          type: object
+          required:
+            - workspace
+          properties:
+            workspace:
+              $ref: "#/components/schemas/Workspace"
+
+    DeletedWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.deleted
+          enum:
+            - workspaces.deleted
+        payload:
+          type: object
+          required:
+            - workspace
+          properties:
+            workspace:
+              $ref: "#/components/schemas/Workspace"
+
+    UpdatedWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.updated
+          enum:
+            - workspaces.updated
+        payload:
+          type: object
+          required:
+            - workspace
+          properties:
+            workspace:
+              $ref: "#/components/schemas/Workspace"
+
+    InstalledApp:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.app.installed
+          enum:
+            - workspaces.app.installed
+        payload:
+          $ref: "#/components/schemas/AppInstance"
+
+    ConfiguredApp:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.app.configured
+          enum:
+            - workspaces.app.configured
+        payload:
+          $ref: "#/components/schemas/AppInstance"
+
+    CreatedAutomation:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.automation.created
+          enum:
+            - workspaces.automation.created
+        payload:
+          type: object
+          required:
+            - automation
+          properties:
+            automation:
+              $ref: "#/components/schemas/Automation"
+
+    UpdatedAutomation:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.automation.updated
+          enum:
+            - workspaces.automation.updated
+        payload:
+          type: object
+          required:
+            - automation
+          properties:
+            automation:
+              $ref: "#/components/schemas/Automation"
+
+
+    DeletedAutomation:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.automation.deleted
+          enum:
+            - workspaces.automation.deleted
+        payload:
+          type: object
+          required:
+            - automation
+          properties:
+            automation:
+              type: object
+              required:
+                - id
+                - name
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+
+
+    ########################## Runtime events ##########################
+
+    TriggeredWorkflow:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.workflow.triggered
+          enum:
+            - runtime.workflow.triggered
+        payload:
+          type: object
+          required:
+            - event
+            - workflow
+          properties:
+            event:
+              type: object
+              properties:
+                id:
+                  type: string
+                type:
+                  type: string
+            workflow:
+              type: string
+            payload:
+              type: object
+
+
+    UpdatedContexts:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.contexts.updated
+          enum:
+            - runtime.contexts.updated
+        payload:
+          type: object
+          required:
+            - contexts
+          properties:
+            contexts:
+              type: object
+
+
+
+    GenericError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: ObjectNotFound
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+
+
+    ObjectNotFoundError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: ObjectNotFound
+        message:
+          type: string
+
+    BadParametersError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: BadParameters
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+
+    BadPermissionsError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: BadPermissions
+        message:
+          type: string
+          example: Insufficient permissions
