@@ -57,7 +57,7 @@ app.use(requestDecorator);
  */
 app.use(
   validationMiddleware({
-    ignorePaths: [],
+    ignorePaths: ["^/sys"],
   }),
   validationErrorMiddleware
 );

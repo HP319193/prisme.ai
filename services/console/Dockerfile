@@ -1,18 +1,14 @@
 # Install dependencies only when needed
-FROM node:16 AS deps
-ARG USE_LOCAL_NODE_MODULES=no
+FROM node:alpine AS deps
 
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-# RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json ./
-COPY node_modules ./node_modules
-
-# Remove node_modules & npm ci only if we do not asked to keep local node_modules
-RUN if [ "$USE_LOCAL_NODE_MODULES" = "no" ] ; then rm -rf node_modules && npm ci ; fi
+RUN npm ci
 
 # Rebuild the source code only when needed
-FROM node:16 AS builder
+FROM node:alpine AS builder
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
