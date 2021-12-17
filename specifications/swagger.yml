@@ -237,7 +237,7 @@ paths:
   ############################################# prisme.ai-events
   /v2/workspaces/{workspaceId}/events:
     get:
-      description: Retrieve events filtered with any JSON path specified in GET parameters
+      description: Retrieve events filtered with any JSON path specified in GET parameters. Can be called as websocket.
       operationId: eventsLongpolling
       tags:
         - "Prisme.ai Events"
@@ -357,31 +357,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/BadParametersError"
 
-  /v2/workspaces/{workspaceId}/events/websocket:
-    get:
-      description: Retrieve events filtered with any JSON path specified in GET parameters
-      operationId: eventsWebsocket
-      tags:
-        - "Prisme.ai Events"
-      parameters:
-        - name: "workspaceId"
-          in: "path"
-          description: "ID of workspace to listen to"
-          required: true
-          schema:
-            type: string
-        - name: "somePayloadField.subField"
-          in: "query"
-          description: "Allows to filter on any field inside events payload"
-          schema:
-            type: string
-        - name: "filter"
-          in: "query"
-          example: message,notification
-          description: "Comma separated list of listened events "
-          schema:
-            type: string
-      responses: *getEventsResponse
 
   ############################################# runtime
   /v2/workspaces/{workspaceId}/webhooks/{automationId}:
@@ -1308,11 +1283,8 @@ components:
             authData:
               type: object
               properties:
-                provider:
-                  type: string
-                  enum:
-                    - credentials
-                    - anonymous
+                facebook:
+                  type: object
         - $ref: "#/components/schemas/Contact"
 
     App:
@@ -1322,6 +1294,10 @@ components:
           - name
         properties:
           name:
+            type: string
+          description:
+            $ref: "#/components/schemas/LocalizedText"
+          photo:
             type: string
           owner:
             type: object
@@ -1497,6 +1473,9 @@ components:
               example: "prismeaiMessenger.message"
             payload:
               type: object
+            private:
+              type: boolean
+              example: If true, can't be listened from any other app than current one
 
     Wait:
       type: object
@@ -1726,6 +1705,10 @@ components:
               type: string
             message:
               type: string
+            details:
+              type: array
+              items:
+                type: object
             level:
               type: string
               enum:
@@ -1828,6 +1811,8 @@ components:
               type: string
             attempt:
               type: number
+            username:
+              type: string
 
     SucceededLogin:
       type: object
@@ -1850,6 +1835,8 @@ components:
               type: string
             attempt:
               type: number
+            username:
+              type: string
 
     ########################## Workspaces events ##########################
     CreatedWorkspace:

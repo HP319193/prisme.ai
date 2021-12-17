@@ -7,6 +7,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@prisme.ai/types": "^1.0.1",
     "final-form": "^4.20.4",
     "js-cookie": "^3.0.1",
     "next": "12.0.7",
@@ -20,7 +21,6 @@
     "react-transition-group": "^4.4.2"
   },
   "devDependencies": {
-    "@prisme.ai/types": "^1.0.1",
     "@types/js-cookie": "^3.0.1",
     "@types/node": "16.11.12",
     "@types/react": "17.0.37",

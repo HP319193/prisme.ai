@@ -41,6 +41,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -88,6 +91,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -103,6 +109,7 @@ declare namespace Prismeai {
         payload: {
             ip: string;
             attempt: number;
+            username?: string;
         };
     } | {
         /**
@@ -139,6 +146,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -154,6 +164,7 @@ declare namespace Prismeai {
         payload: {
             ip: string;
             attempt: number;
+            username?: string;
         };
     } | {
         /**
@@ -190,6 +201,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -247,6 +261,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -299,6 +316,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -349,6 +369,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -399,6 +422,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -449,6 +475,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -497,6 +526,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -545,6 +577,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -595,6 +630,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -645,6 +683,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -667,6 +708,8 @@ declare namespace Prismeai {
     export type AnyValue = any;
     export interface App {
         name: string;
+        description?: LocalizedText;
+        photo?: string;
         owner?: {
             id?: string;
         };
@@ -777,6 +820,9 @@ declare namespace Prismeai {
         error?: {
             code?: string;
             message?: string;
+            details?: {
+                [key: string]: any;
+            }[];
             /**
              * example:
              * warning
@@ -892,6 +938,11 @@ declare namespace Prismeai {
             payload?: {
                 [key: string]: any;
             };
+            /**
+             * example:
+             * If true, can't be listened from any other app than current one
+             */
+            private?: boolean;
         };
     }
     export interface FailedLogin {
@@ -903,6 +954,7 @@ declare namespace Prismeai {
         payload: {
             ip: string;
             attempt: number;
+            username?: string;
         };
     }
     export interface GenericError {
@@ -992,6 +1044,7 @@ declare namespace Prismeai {
         payload: {
             ip: string;
             attempt: number;
+            username?: string;
         };
     }
     export type Trigger = {
@@ -1101,7 +1154,9 @@ declare namespace Prismeai {
          */
         email?: string;
         authData?: {
-            provider?: "credentials" | "anonymous";
+            facebook?: {
+                [key: string]: any;
+            };
         };
         /**
          * Name
@@ -1356,29 +1411,6 @@ declare namespace PrismeaiAPI {
             longpolling?: Parameters.Longpolling;
             page?: Parameters.Page;
             limit?: Parameters.Limit;
-        }
-        namespace Responses {
-            export interface $200 {
-                result?: {
-                    events?: Prismeai.AllEventResponses;
-                };
-            }
-            export type $400 = Prismeai.BadParametersError;
-            export type $404 = Prismeai.ObjectNotFoundError;
-        }
-    }
-    namespace EventsWebsocket {
-        namespace Parameters {
-            export type Filter = string;
-            export type SomePayloadFieldSubField = string;
-            export type WorkspaceId = string;
-        }
-        export interface PathParameters {
-            workspaceId: Parameters.WorkspaceId;
-        }
-        export interface QueryParameters {
-            "somePayloadField.subField"?: Parameters.SomePayloadFieldSubField;
-            filter?: Parameters.Filter;
         }
         namespace Responses {
             export interface $200 {

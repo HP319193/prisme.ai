@@ -7,13 +7,17 @@ cache:
     - node_modules/
 
 variables:
-  CONTAINER_BASE_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
-
-  CONSOLE_NAME: "console"
-  CONSOLE_IMAGE_NAME: "prisme.ai-console"
-
   DOCKER_DRIVER: overlay2
   GIT_DEPTH: "1"
+  CONTAINER_BASE_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
+
+  CONSOLE_DIRECTORY: "console"
+  CONSOLE_IMAGE_NAME: "prisme.ai-console"
+  CONSOLE_K8S_NAME: "prismeai-console"
+
+  WORKSPACES_DIRECTORY: "workspaces"
+  WORKSPACES_IMAGE_NAME: "prisme.ai-workspaces"
+  WORKSPACES_K8S_NAME: "prismeai-workspaces"
 
 stages:
   - dependencies
@@ -47,28 +51,36 @@ npm_install:
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   only:
-    - tags
+    # - tags
+    - main
+    - master
   image: docker:stable
   services:
     - docker:stable-dind
   script:
+    - cp -r ../../specifications/ . # Include current swagger file in docker image as it is required for HTTP request validations
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker pull $IMAGE_NAME:latest || true
-    - docker build --build-arg "USE_LOCAL_NODE_MODULES=yes" --cache-from $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_TAG -t $IMAGE_NAME:latest .
-    - docker push $IMAGE_NAME:$CI_COMMIT_TAG
+    - docker build --cache-from $IMAGE_NAME:latest -t $IMAGE_NAME:latest .
+    # - docker push $IMAGE_NAME:$CI_COMMIT_TAG
     - docker push $IMAGE_NAME:latest
 
 .deploy_k8s:
   stage: deploy
   only:
-    - tags
+    # - tags
+    - main
+    - master
+  cache: []
   tags:
     - internal-runner
   image:
     name: lachlanevenson/k8s-kubectl:latest
-    entrypoint: ["/bin/sh", "-c"]
+    entrypoint: ["/bin/bash", "-c"]
   script:
-    - helm upgrade core-eda --set ${K8S_NAME}.image.tag=$CI_COMMIT_TAG --set ${K8S_NAME}.image.repository=$IMAGE_NAME core-eda .
+    - kubectl -n core rollout restart deploy/${K8S_NAME}
+    # - kubectl -n core set image deploy/${K8S_NAME} ${K8S_NAME}=$IMAGE_NAME:$CI_COMMIT_TAG --record
+    - kubectl -n core rollout status deploy/${K8S_NAME}
 
 ## Console jobs
 console_test:
@@ -77,32 +89,24 @@ console_test:
     changes:
       - "services/console/*"
   before_script:
-    - export SERVICE_NAME=$CONSOLE_NAME
+    - export SERVICE_NAME=$CONSOLE_DIRECTORY
 
 console_build_docker:
-  # extends: .build_docker
+  extends: .build_docker
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
-  # only:
-  #   - tags
   image: docker:stable
   services:
     - docker:stable-dind
-  script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker pull $IMAGE_NAME:latest || true
-    - docker build --build-arg "USE_LOCAL_NODE_MODULES=yes" --cache-from $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_TAG -t $IMAGE_NAME:latest .
-    - docker push $IMAGE_NAME:$CI_COMMIT_TAG
-    - docker push $IMAGE_NAME:latest
-
   only:
     refs:
-      - tags
+      # - tags
+      - main
+      - master
     changes:
       - "services/console/*"
   before_script:
-    - cp -r node_modules/ services/$CONSOLE_NAME
-    - cd services/$CONSOLE_NAME
+    - cd services/$CONSOLE_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
 
@@ -110,11 +114,55 @@ console_deploy:
   extends: .deploy_k8s
   only:
     refs:
-      - tags
+      # - tags
+      - main
+      - master
     changes:
       - "services/console/*"
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
-    - export K8S_NAME=$CONSOLE_IMAGE_NAME
+    - export K8S_NAME=$CONSOLE_K8S_NAME
 
+
+## Workspaces jobs
+# workspaces_test:
+#   extends: .npm_test
+#   only:
+#     changes:
+#       - "services/workspaces/*"
+#   before_script:
+#     - export SERVICE_NAME=$WORKSPACES_DIRECTORY
+
+workspaces_build_docker:
+  extends: .build_docker
+  interruptible: true # Stop this job if a new one has been triggered by the same branch
+  stage: build_docker
+  image: docker:stable
+  services:
+    - docker:stable-dind
+  only:
+    refs:
+      # - tags
+      - main
+      - master
+    changes:
+      - "services/workspaces/*"
+  before_script:
+    - cd services/$WORKSPACES_DIRECTORY
+    - export DOCKER_HOST=tcp://docker:2375
+    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME
+
+workspaces_deploy:
+  extends: .deploy_k8s
+  only:
+    refs:
+      # - tags
+      - main
+      - master
+    changes:
+      - "services/workspaces/*"
+  before_script:
+    - export KUBECONFIG=$KUBECONFIG
+    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME
+    - export K8S_NAME=$WORKSPACES_K8S_NAME
