@@ -1,0 +1,332 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should get layout 1`] = `
+<div
+  className="flex min-h-screen flex-column"
+>
+  <div
+    className="bg-primary p-4"
+  >
+    <div
+      className="flex justify-content-between"
+    >
+      <div
+        className="flex direction-row align-items-center"
+      >
+        <div
+          className="mr-2"
+        >
+          <a
+            href="/workspaces"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+          >
+            Prisme.ai
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex flex-1 surface-ground relative"
+  >
+    <div
+      className="flex flex-1 justify-content-center align-items-center"
+    >
+      <div
+        className="undefined pi pi-spin pi-spinner"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render 404 1`] = `
+<div
+  className="flex min-h-screen flex-column"
+>
+  <div
+    className="bg-primary p-4"
+  >
+    <div
+      className="flex justify-content-between"
+    >
+      <div
+        className="flex direction-row align-items-center"
+      >
+        <div
+          className="mr-2"
+        >
+          <a
+            href="/workspaces"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+          >
+            Prisme.ai
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex flex-1 surface-ground relative"
+  >
+    <a
+      href="/workspaces"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
+    >
+      404
+    </a>
+  </div>
+</div>
+`;
+
+exports[`should render empty 1`] = `
+<div
+  className="flex min-h-screen flex-column"
+>
+  <div
+    className="bg-primary p-4"
+  >
+    <div
+      className="flex justify-content-between"
+    >
+      <div
+        className="flex direction-row align-items-center"
+      >
+        <div
+          className="mr-2"
+        >
+          <a
+            href="/workspaces"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+          >
+            Prisme.ai
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex flex-1 surface-ground relative"
+  >
+    <div
+      className="flex flex-1 justify-content-center align-items-center"
+    >
+      <div
+        className="undefined pi pi-spin pi-spinner"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render fetching 1`] = `
+<div
+  className="flex min-h-screen flex-column"
+>
+  <div
+    className="bg-primary p-4"
+  >
+    <div
+      className="flex justify-content-between"
+    >
+      <div
+        className="flex direction-row align-items-center"
+      >
+        <div
+          className="mr-2"
+        >
+          <a
+            href="/workspaces"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+          >
+            Prisme.ai
+          </a>
+        </div>
+        <div
+          className="p-inplace p-component p-inplace-closable flex"
+        >
+          <div
+            aria-label={null}
+            className="p-inplace-display"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            tabIndex={0}
+          >
+            <div
+              className="flex"
+            >
+              foo
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button
+          className="p-button p-component 
+                  mx-2
+                  "
+          disabled={false}
+          onClick={[Function]}
+        >
+          automations.link
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex flex-1 surface-ground relative"
+  >
+    <div
+      className="flex flex-1"
+    >
+      <div
+        className="flex flex-1 flex-column"
+      >
+        Foo
+      </div>
+      <div
+        className="
+          absolute
+          surface-section
+          top-0
+          left-100
+          bottom-0
+          p-4
+          transition-transform
+          transition-duration-100
+          transition-ease-in
+          "
+        onClick={[Function]}
+        onTouchEnd={[Function]}
+      >
+        <div>
+          <div>
+            automations.link
+          </div>
+          <div>
+            <button
+              className="p-button p-component"
+              disabled={false}
+              onClick={[Function]}
+            >
+              <div
+                className="mr-2 pi pi-plus"
+              />
+              automations.create.label
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render loading 1`] = `
+<div
+  className="flex min-h-screen flex-column"
+>
+  <div
+    className="bg-primary p-4"
+  >
+    <div
+      className="flex justify-content-between"
+    >
+      <div
+        className="flex direction-row align-items-center"
+      >
+        <div
+          className="mr-2"
+        >
+          <a
+            href="/workspaces"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+          >
+            Prisme.ai
+          </a>
+        </div>
+        <div
+          className="p-inplace p-component p-inplace-closable flex"
+        >
+          <div
+            aria-label={null}
+            className="p-inplace-display"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            tabIndex={0}
+          >
+            <div
+              className="flex"
+            >
+              foo
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button
+          className="p-button p-component 
+                  mx-2
+                  "
+          disabled={false}
+          onClick={[Function]}
+        >
+          automations.link
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex flex-1 surface-ground relative"
+  >
+    <div
+      className="flex flex-1"
+    >
+      <div
+        className="flex flex-1 flex-column"
+      >
+        Foo
+      </div>
+      <div
+        className="
+          absolute
+          surface-section
+          top-0
+          left-100
+          bottom-0
+          p-4
+          transition-transform
+          transition-duration-100
+          transition-ease-in
+          "
+        onClick={[Function]}
+        onTouchEnd={[Function]}
+      >
+        <div>
+          <div>
+            automations.link
+          </div>
+          <div>
+            <button
+              className="p-button p-component"
+              disabled={false}
+              onClick={[Function]}
+            >
+              <div
+                className="mr-2 pi pi-plus"
+              />
+              automations.create.label
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

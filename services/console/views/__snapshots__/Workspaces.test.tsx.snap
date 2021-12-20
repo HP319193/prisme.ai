@@ -1,0 +1,203 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render empty 1`] = `
+<div
+  className="flex min-h-screen flex-column"
+>
+  <div
+    className="bg-primary p-4"
+  >
+    <div
+      className="flex justify-content-between"
+    >
+      <div
+        className="flex direction-row align-items-center"
+      >
+        <div
+          className="mr-2"
+        >
+          <a
+            href="/workspaces"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+          >
+            Prisme.ai
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex flex-1 surface-ground relative"
+  >
+    <div
+      className="justify-content-center flex flex-wrap align-items-start justify-content-start"
+    >
+      <div
+        className="p-card p-component w-4 m-2"
+        id={null}
+        style={null}
+      >
+        <div
+          className="p-card-body"
+        >
+          <div
+            className="p-card-content"
+          >
+            create.description
+          </div>
+          <div
+            className="p-card-footer"
+          >
+            <button
+              className="p-button p-component"
+              disabled={false}
+              onClick={[Function]}
+            >
+              create.label
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render some workspaces 1`] = `
+<div
+  className="flex min-h-screen flex-column"
+>
+  <div
+    className="bg-primary p-4"
+  >
+    <div
+      className="flex justify-content-between"
+    >
+      <div
+        className="flex direction-row align-items-center"
+      >
+        <div
+          className="mr-2"
+        >
+          <a
+            href="/workspaces"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+          >
+            Prisme.ai
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex flex-1 surface-ground relative"
+  >
+    <div
+      className="justify-content-center flex flex-wrap align-items-start justify-content-start"
+    >
+      <div
+        className="p-card p-component w-3 m-2"
+        id={null}
+        style={null}
+      >
+        <div
+          className="p-card-body"
+        >
+          <div
+            className="p-card-content"
+          >
+            <a
+              href="/workspaces/1"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+            >
+              foo
+            </a>
+          </div>
+          <div
+            className="p-card-footer"
+          >
+            <a
+              href="/workspaces/1"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+            >
+              <button
+                className="p-button p-component"
+                disabled={false}
+              >
+                edit.label
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div
+        className="p-card p-component w-3 m-2"
+        id={null}
+        style={null}
+      >
+        <div
+          className="p-card-body"
+        >
+          <div
+            className="p-card-content"
+          >
+            <a
+              href="/workspaces/42"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+            >
+              bar
+            </a>
+          </div>
+          <div
+            className="p-card-footer"
+          >
+            <a
+              href="/workspaces/42"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+            >
+              <button
+                className="p-button p-component"
+                disabled={false}
+              >
+                edit.label
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div
+        className="p-card p-component w-4 m-2"
+        id={null}
+        style={null}
+      >
+        <div
+          className="p-card-body"
+        >
+          <div
+            className="p-card-content"
+          >
+            create.description
+          </div>
+          <div
+            className="p-card-footer"
+          >
+            <button
+              className="p-button p-component"
+              disabled={false}
+              onClick={[Function]}
+            >
+              create.label
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,11 +1,10 @@
-import { FC, ReactNode, useMemo } from "react";
+import { FC, ReactNode } from "react";
 import {
   FieldInputProps,
   FieldMetaState,
   FieldProps as FProps,
   useField,
 } from "react-final-form";
-import { classNames } from "primereact/utils";
 import { isFormFieldValid } from "../utils/forms";
 
 interface FieldProps extends Partial<FProps<any, any>> {
@@ -27,15 +26,15 @@ export const FieldContainer: FC<FieldProps> = ({
   ...fieldProps
 }) => {
   const { input, meta } = useField(name, fieldProps);
-  const childrenClassName =
-    classNames({
-      "p-invalid": isFormFieldValid(meta),
-    }) || "";
   return (
     <div className="p-field mb-5">
       <span className={`p-float-label mx-2 ${className}`}>
         {typeof children === "function"
-          ? children({ input, meta, className: childrenClassName })
+          ? children({
+              input,
+              meta,
+              className: isFormFieldValid(meta) ? "p-invalid" : "",
+            })
           : children}
         <label htmlFor={name}>{label}</label>
       </span>

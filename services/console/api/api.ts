@@ -1,4 +1,5 @@
 import Fetcher from "./fetcher";
+import { Workspace } from "./types";
 
 export class Api extends Fetcher {
   async me() {
@@ -19,6 +20,22 @@ export class Api extends Fetcher {
       email,
       password,
     });
+  }
+
+  async getWorkspaces(): Promise<Workspace[]> {
+    return await this.get("/workspaces");
+  }
+
+  async getWorkspace(id: string): Promise<Workspace | null> {
+    return await this.get(`/workspaces/${id}`);
+  }
+
+  async createWorkspace(name: string): Promise<Workspace> {
+    return await this.post("/workspaces", { name });
+  }
+
+  async updateWorkspace(workspace: Workspace): Promise<Workspace> {
+    return await this.patch(`/workspaces/${workspace.id}`, workspace);
   }
 }
 

@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="p-field mb-5"
+>
+  <span
+    className="p-float-label mx-2 undefined"
+  >
+    Foo
+    <label
+      htmlFor=""
+    >
+      foo
+    </label>
+  </span>
+</div>
+`;
+
+exports[`should render an input 1`] = `
+<div
+  className="p-field mb-5"
+>
+  <span
+    className="p-float-label mx-2 undefined"
+  >
+    <input
+      className=""
+    />
+    <label
+      htmlFor=""
+    >
+      foo
+    </label>
+  </span>
+</div>
+`;
+
+exports[`should render an invalid input 1`] = `
+<div
+  className="p-field mb-5"
+>
+  <span
+    className="p-float-label mx-2 undefined"
+  >
+    <input
+      className="p-invalid"
+      error="error"
+      touched={true}
+    />
+    <label
+      htmlFor=""
+    >
+      foo
+    </label>
+  </span>
+</div>
+`;

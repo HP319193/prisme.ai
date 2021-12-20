@@ -29,19 +29,24 @@ export class Fetcher {
     this.host = host;
   }
 
-  async _fetch(url: string, options: RequestInit = {}) {
+  private async _fetch(url: string, options: RequestInit = {}) {
     const headers: any = options.headers || {};
-    headers["x-prismeai-session-token"] =
-      headers["x-prismeai-session-token"] || this._token;
-    const res = await fetch(`${this.host}${url}`, {
+    if (this._token && !headers["x-prismeai-session-token"]) {
+      headers["x-prismeai-session-token"] = this._token;
+    }
+    const res = await global.fetch(`${this.host}${url}`, {
       ...options,
       headers,
     });
+
     if (!res.ok) {
+      let error;
       try {
-        throw new ApiError(JSON.parse(res.statusText), res.status);
-      } catch (e) {}
-      throw new HTTPError(res.statusText, res.status);
+        error = new ApiError(JSON.parse(res.statusText), res.status);
+      } catch (e) {
+        error = new HTTPError(res.statusText, res.status);
+      }
+      throw error;
     }
 
     const response = (await res.json()) || {};
@@ -55,24 +60,24 @@ export class Fetcher {
   }
   async get(url: string) {
     return this._fetch(url, {
-      method: "get",
+      method: "GET",
     });
   }
-  async post(url: string, body: Record<string, any>) {
+  async post(url: string, body?: Record<string, any>) {
     return this._fetch(url, {
-      method: "post",
-      body: JSON.stringify(body),
+      method: "POST",
+      body: body && JSON.stringify(body),
     });
   }
   async patch(url: string, body: Record<string, any>) {
     return this._fetch(url, {
-      method: "patch",
+      method: "PATCH",
       body: JSON.stringify(body),
     });
   }
   async delete(url: string, id: string) {
     return this._fetch(url, {
-      method: "delete",
+      method: "DELETE",
       body: JSON.stringify({ id }),
     });
   }

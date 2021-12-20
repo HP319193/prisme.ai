@@ -1,0 +1,391 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should have error 1`] = `
+<div
+  className="flex justify-content-center align-items-center min-h-screen"
+>
+  <form
+    className="w-8"
+    onSubmit={[Function]}
+  >
+    <fieldset
+      className="p-fieldset p-component pt-5"
+      id={null}
+      onClick={null}
+      style={null}
+    >
+      <legend
+        className="p-fieldset-legend p-unselectable-text"
+        onClick={[Function]}
+      >
+        <span
+          className="p-fieldset-legend-text"
+          id="pr_id_3_header"
+        >
+          in.description
+        </span>
+      </legend>
+      <div
+        aria-hidden={false}
+        aria-labelledby="pr_id_3_header"
+        className="p-toggleable-content"
+        id="pr_id_3_content"
+        role="region"
+      >
+        <div
+          className="p-fieldset-content"
+        >
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="p-float-label mx-2 undefined"
+            >
+              <input
+                autoFocus={true}
+                className="p-inputtext p-component  min-w-full"
+                id="email"
+                name="email"
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                onInput={[Function]}
+                onKeyPress={[Function]}
+                value=""
+              />
+              <label
+                htmlFor="email"
+              >
+                in.email
+              </label>
+            </span>
+          </div>
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="p-float-label mx-2 undefined"
+            >
+              <input
+                className="p-inputtext p-component  min-w-full"
+                id="password"
+                name="password"
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                onInput={[Function]}
+                onKeyPress={[Function]}
+                type="password"
+                value=""
+              />
+              <label
+                htmlFor="password"
+              >
+                in.password
+              </label>
+            </span>
+          </div>
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="p-float-label mx-2 flex justify-content-end"
+            >
+              <button
+                className="p-button p-component"
+                disabled={false}
+                type="submit"
+              >
+                <div
+                  className="pi pi-lock mr-2"
+                />
+                in.submit
+              </button>
+              <label
+                htmlFor=""
+              />
+            </span>
+          </div>
+          <div
+            className={null}
+            id={null}
+            style={null}
+          >
+            <div>
+              <div
+                className="p-message p-component p-message-error"
+                onClick={[Function]}
+              >
+                <div
+                  className="p-message-wrapper"
+                >
+                  <span
+                    className="p-message-icon pi  pi-times-circle"
+                  />
+                  <span
+                    className="p-message-summary"
+                  >
+                    in.error
+                  </span>
+                  <span
+                    className="p-message-detail"
+                  />
+                  <button
+                    className="p-message-close p-link"
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    <i
+                      className="p-message-close-icon pi pi-times"
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+`;
+
+exports[`should load 1`] = `
+<div
+  className="flex justify-content-center align-items-center min-h-screen"
+>
+  <form
+    className="w-8"
+    onSubmit={[Function]}
+  >
+    <fieldset
+      className="p-fieldset p-component pt-5"
+      id={null}
+      onClick={null}
+      style={null}
+    >
+      <legend
+        className="p-fieldset-legend p-unselectable-text"
+        onClick={[Function]}
+      >
+        <span
+          className="p-fieldset-legend-text"
+          id="pr_id_2_header"
+        >
+          in.description
+        </span>
+      </legend>
+      <div
+        aria-hidden={false}
+        aria-labelledby="pr_id_2_header"
+        className="p-toggleable-content"
+        id="pr_id_2_content"
+        role="region"
+      >
+        <div
+          className="p-fieldset-content"
+        >
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="p-float-label mx-2 undefined"
+            >
+              <input
+                autoFocus={true}
+                className="p-inputtext p-component  min-w-full"
+                id="email"
+                name="email"
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                onInput={[Function]}
+                onKeyPress={[Function]}
+                value=""
+              />
+              <label
+                htmlFor="email"
+              >
+                in.email
+              </label>
+            </span>
+          </div>
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="p-float-label mx-2 undefined"
+            >
+              <input
+                className="p-inputtext p-component  min-w-full"
+                id="password"
+                name="password"
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                onInput={[Function]}
+                onKeyPress={[Function]}
+                type="password"
+                value=""
+              />
+              <label
+                htmlFor="password"
+              >
+                in.password
+              </label>
+            </span>
+          </div>
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="p-float-label mx-2 flex justify-content-end"
+            >
+              <button
+                className="p-button p-component p-disabled"
+                disabled={true}
+                type="submit"
+              >
+                <div
+                  className="pi pi-spin pi-spinner mr-2"
+                />
+                in.submit
+              </button>
+              <label
+                htmlFor=""
+              />
+            </span>
+          </div>
+          <div
+            className={null}
+            id={null}
+            style={null}
+          >
+            <div />
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+`;
+
+exports[`should render 1`] = `
+<div
+  className="flex justify-content-center align-items-center min-h-screen"
+>
+  <form
+    className="w-8"
+    onSubmit={[Function]}
+  >
+    <fieldset
+      className="p-fieldset p-component pt-5"
+      id={null}
+      onClick={null}
+      style={null}
+    >
+      <legend
+        className="p-fieldset-legend p-unselectable-text"
+        onClick={[Function]}
+      >
+        <span
+          className="p-fieldset-legend-text"
+          id="pr_id_1_header"
+        >
+          in.description
+        </span>
+      </legend>
+      <div
+        aria-hidden={false}
+        aria-labelledby="pr_id_1_header"
+        className="p-toggleable-content"
+        id="pr_id_1_content"
+        role="region"
+      >
+        <div
+          className="p-fieldset-content"
+        >
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="p-float-label mx-2 undefined"
+            >
+              <input
+                autoFocus={true}
+                className="p-inputtext p-component  min-w-full"
+                id="email"
+                name="email"
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                onInput={[Function]}
+                onKeyPress={[Function]}
+                value=""
+              />
+              <label
+                htmlFor="email"
+              >
+                in.email
+              </label>
+            </span>
+          </div>
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="p-float-label mx-2 undefined"
+            >
+              <input
+                className="p-inputtext p-component  min-w-full"
+                id="password"
+                name="password"
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                onInput={[Function]}
+                onKeyPress={[Function]}
+                type="password"
+                value=""
+              />
+              <label
+                htmlFor="password"
+              >
+                in.password
+              </label>
+            </span>
+          </div>
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="p-float-label mx-2 flex justify-content-end"
+            >
+              <button
+                className="p-button p-component"
+                disabled={false}
+                type="submit"
+              >
+                <div
+                  className="pi pi-lock mr-2"
+                />
+                in.submit
+              </button>
+              <label
+                htmlFor=""
+              />
+            </span>
+          </div>
+          <div
+            className={null}
+            id={null}
+            style={null}
+          >
+            <div />
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+`;

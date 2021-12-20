@@ -6,11 +6,26 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import UserProvider from "../components/UserProvider";
+import WorkspacesProvider from "../components/WorkspacesProvider";
+import { NextPage } from "next";
+import { ReactElement, ReactNode, useEffect } from "react";
 
-function MyApp({ Component, pageProps }: AppProps) {
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   return (
     <UserProvider>
-      <Component {...pageProps} />
+      <WorkspacesProvider>
+        {getLayout(<Component {...pageProps} />)}
+      </WorkspacesProvider>
     </UserProvider>
   );
 }

@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="
+          absolute
+          surface-section
+          top-0
+          left-100
+          bottom-0
+          p-4
+          transition-transform
+          transition-duration-100
+          transition-ease-in
+          "
+  onClick={[Function]}
+  onTouchEnd={[Function]}
+/>
+`;
+
+exports[`should render opened 1`] = `
+<div
+  className="
+          absolute
+          surface-section
+          top-0
+          left-100
+          bottom-0
+          p-4
+          transition-transform
+          transition-duration-100
+          transition-ease-in
+          -translate-x-100"
+  onClick={[Function]}
+  onTouchEnd={[Function]}
+/>
+`;

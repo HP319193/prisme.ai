@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+Array [
+  <div
+    className="flex"
+  >
+    foo
+  </div>,
+  <input
+    autoFocus={true}
+    className="p-inputtext p-component p-filled"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onInput={[Function]}
+    onKeyDown={[Function]}
+    onKeyPress={[Function]}
+    value="foo"
+  />,
+]
+`;

@@ -1,0 +1,25 @@
+{
+  "create": {
+    "description_first": "Créez votre premier espace de travail pour commencer à automatiser votre travail",
+    "description": "Créez un nouvel espace de travail",
+    "label": "Creer un espace de travail",
+    "defaultName": "Workspace"
+  },
+  "edit": {
+    "label": "Éditer"
+  },
+  "automations": {
+    "link": "Automatisations",
+    "create": {
+      "label": "Créer une automatisation",
+      "defaultName": "Automatisation"
+    }
+  },
+  "apps": {
+    "link": "Apps"
+  },
+  "pages": {
+    "link": "Pages"
+  },
+  "404": "Cet espace de travail n'existe pas. Revenez à votre page d'accueil."
+}

@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div>
+  <div>
+    automations.link
+  </div>
+  <div>
+    <button
+      className="p-button p-component"
+      disabled={false}
+      onClick={[Function]}
+    >
+      <div
+        className="mr-2 pi pi-plus"
+      />
+      automations.create.label
+    </button>
+  </div>
+  <div
+    onClick={[MockFunction]}
+  >
+    <a
+      href="/workspaces/42/automations/First/manifest"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
+    >
+      First
+    </a>
+  </div>
+</div>
+`;
