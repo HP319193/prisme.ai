@@ -45,7 +45,6 @@ const build = packages.map((name) => {
       ],
     };
   }
-  console.log(rollupConfig);
 });
 
 export default build;

@@ -1,4 +1,3 @@
-import "@prisme.ai/types";
 import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 

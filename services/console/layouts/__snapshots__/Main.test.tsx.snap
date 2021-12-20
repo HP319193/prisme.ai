@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="flex min-h-screen flex-column"
+>
+  <div
+    className="bg-primary p-4"
+  >
+    <div
+      className="flex justify-content-between"
+    >
+      <div
+        className="flex direction-row align-items-center"
+      >
+        <div
+          className="mr-2"
+        >
+          <a
+            href="/workspaces"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+          >
+            Prisme.ai
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex flex-1 surface-ground relative"
+  />
+</div>
+`;
+
+exports[`should render with custom header 1`] = `
+<div
+  className="flex min-h-screen flex-column"
+>
+  <div
+    className="bg-primary p-4"
+  >
+    <div>
+      Custom header
+    </div>
+  </div>
+  <div
+    className="flex flex-1 surface-ground relative"
+  />
+</div>
+`;

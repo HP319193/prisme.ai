@@ -47,7 +47,7 @@ export const SignIn = () => {
     if (!values.email) {
       errors.email = "required";
     }
-    if (!values.email) {
+    if (!values.password) {
       errors.password = "required";
     }
     return errors;

@@ -1,4 +1,5 @@
 import Cookie from "js-cookie";
+import localStorage from "./localStorage";
 
 const checkLocalStorage = () => {
   try {
@@ -26,10 +27,11 @@ export const Storage = {
     return Cookie.get(k);
   },
   set: (k: string, v: any) => {
+    const value = typeof v === "object" ? JSON.stringify(v) : v;
     if (IS_LOCAL_STORAGE_AVAILABLE) {
-      return localStorage.setItem(k, JSON.stringify(v));
+      return localStorage.setItem(k, value);
     }
-    return Cookie.set(k, JSON.stringify(v));
+    return Cookie.set(k, value);
   },
   remove: (k: string) => {
     if (IS_LOCAL_STORAGE_AVAILABLE) {
@@ -38,3 +40,5 @@ export const Storage = {
     Cookie.remove(k);
   },
 };
+
+export default Storage;

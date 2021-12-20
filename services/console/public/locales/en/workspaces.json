@@ -1,0 +1,25 @@
+{
+  "create": {
+    "description_first": "Create your first workspace to start automating your work",
+    "description": "Create a new workspace",
+    "label": "Create a workspace",
+    "defaultName": "Workspace"
+  },
+  "edit": {
+    "label": "Edit"
+  },
+  "automations": {
+    "link": "Automations",
+    "create": {
+      "label": "Create an automation",
+      "defaultName": "Automation"
+    }
+  },
+  "apps": {
+    "link": "Apps"
+  },
+  "pages": {
+    "link": "Pages"
+  },
+  "404": "This workspace does not exist. Return to your home page."
+}

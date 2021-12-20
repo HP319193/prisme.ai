@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should edit title 1`] = `
+<div
+  className="p-inplace p-component p-inplace-closable flex"
+>
+  <div
+    aria-label={null}
+    className="p-inplace-display"
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    tabIndex={0}
+  >
+    <div
+      className="flex"
+    >
+      foo
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should get layout 1`] = `
+<div
+  className="flex flex-column "
+>
+  <div
+    className="flex flex-1 flex-row"
+  />
+  <div
+    className="flex"
+  >
+    <div />
+  </div>
+</div>
+`;
+
+exports[`should render 1`] = `
+<div
+  className="flex flex-column "
+>
+  <div
+    className="flex flex-1 flex-row"
+  />
+  <div
+    className="flex"
+  >
+    Foo
+  </div>
+</div>
+`;
+
+exports[`should render with manifest tab active 1`] = `
+<div
+  className="flex flex-column "
+>
+  <div
+    className="flex flex-1 flex-row"
+  />
+  <div
+    className="flex"
+  >
+    Foo
+  </div>
+</div>
+`;

@@ -2,17 +2,18 @@ import { FC, useCallback, useEffect, useState } from "react";
 import context, { UserContext } from "./context";
 import api from "../../api/api";
 import ApiError from "../../api/ApiError";
-import { Storage } from "../../utils/Storage";
 
-export const Provider: FC = ({ children }) => {
+export const UserProvider: FC = ({ children }) => {
   const [user, setUser] = useState<UserContext["user"]>(null);
   const [loading, setLoading] = useState<UserContext["loading"]>(false);
   const [error, setError] = useState<ApiError>();
 
   const fetchMe = useCallback(async () => {
     setLoading(true);
-    const user = await api.me();
-    setUser(user);
+    try {
+      const user = await api.me();
+      setUser(user);
+    } catch (e) {}
     setLoading(false);
   }, []);
 
@@ -54,4 +55,4 @@ export const Provider: FC = ({ children }) => {
   );
 };
 
-export default Provider;
+export default UserProvider;
