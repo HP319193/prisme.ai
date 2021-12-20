@@ -1,0 +1,52 @@
+endpoints:
+  ip:
+    path: "/ip"
+  httpbin:
+    path: "/httpbin/*"
+  headers:
+    path: "/headers"
+
+  test:
+    hosts:
+      - "test.ok"
+    path: "*"
+
+services:
+  httpbin:
+    url: "https://httpbin.org"
+
+pipelines:
+
+  # - name: unauthenticated
+  #   endpoints:
+  #     - ip
+  #   policies:
+  #     - proxy:
+  #         service: httpbin
+
+  - name: strippedPath
+    endpoints:
+      - httpbin
+    policies:
+      - blacklist:
+          paths:
+            - /httpbin/uuid
+      - proxy:
+          service: httpbin
+          pathRewrite:
+            "^/httpbin": "/"
+
+  - name: authenticated
+    endpoints:
+      - headers
+    policies:
+      - prismeAuth: {}
+      - proxy:
+          service: httpbin
+
+  - name: testhost
+    endpoints:
+      - test
+    policies:
+      - proxy:
+          service: httpbin

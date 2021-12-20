@@ -1,0 +1,40 @@
+{
+  "name": "@prisme.ai/api-gateway",
+  "version": "1.0.0",
+  "description": "Official Prisme.ai API Gateway",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p tsconfig.json",
+    "start": "node --abort-on-uncaught-exception dist/index.js",
+    "dev": "ts-node-dev -r dotenv/config --inspect=9231 --respawn ./src"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.0",
+    "@types/express": "^4.17.8",
+    "@types/js-yaml": "^4.0.0",
+    "@types/node-fetch": "^2.5.7",
+    "@types/on-finished": "^2.3.1",
+    "@types/superagent": "^4.1.10",
+    "@types/uuid": "^8.3.0",
+    "@types/validatorjs": "^3.15.0",
+    "ts-node-dev": "^1.0.0-pre.62"
+  },
+  "dependencies": {
+    "argparse": "^2.0.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "http-proxy-middleware": "^1.0.6",
+    "js-yaml": "^4.1.0",
+    "on-finished": "^2.3.0",
+    "pino": "^7.2.0",
+    "prettier": "^2.1.2",
+    "safe-stable-stringify": "^1.1.1",
+    "superagent": "^6.1.0",
+    "ts-node": "^9.0.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.0.2",
+    "uuid": "^8.3.2",
+    "validatorjs": "^3.22.1"
+  }
+}
