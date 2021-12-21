@@ -5,7 +5,7 @@ exports[`should get layout 1`] = `
   className="flex min-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4"
+    className="bg-primary p-4 z-1 shadow-4"
   >
     <div
       className="flex justify-content-between"
@@ -46,7 +46,7 @@ exports[`should render 404 1`] = `
   className="flex min-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4"
+    className="bg-primary p-4 z-1 shadow-4"
   >
     <div
       className="flex justify-content-between"
@@ -87,7 +87,7 @@ exports[`should render empty 1`] = `
   className="flex min-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4"
+    className="bg-primary p-4 z-1 shadow-4"
   >
     <div
       className="flex justify-content-between"
@@ -128,7 +128,7 @@ exports[`should render fetching 1`] = `
   className="flex min-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4"
+    className="bg-primary p-4 z-1 shadow-4"
   >
     <div
       className="flex justify-content-between"
@@ -200,7 +200,8 @@ exports[`should render fetching 1`] = `
           transition-transform
           transition-duration-100
           transition-ease-in
-          "
+          
+          shadow-4"
         onClick={[Function]}
         onTouchEnd={[Function]}
       >
@@ -232,7 +233,7 @@ exports[`should render loading 1`] = `
   className="flex min-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4"
+    className="bg-primary p-4 z-1 shadow-4"
   >
     <div
       className="flex justify-content-between"
@@ -304,7 +305,8 @@ exports[`should render loading 1`] = `
           transition-transform
           transition-duration-100
           transition-ease-in
-          "
+          
+          shadow-4"
         onClick={[Function]}
         onTouchEnd={[Function]}
       >

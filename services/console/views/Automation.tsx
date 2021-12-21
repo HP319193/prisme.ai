@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { ReactElement } from "react";
-import { getLayout as getAutomationLayout } from "../layouts/AutomationLayout";
+import getAutomationLayout from "../layouts/AutomationLayout";
 import getLayout, { useWorkspace } from "../layouts/WorkspaceLayout";
 
 export const Automation = () => {

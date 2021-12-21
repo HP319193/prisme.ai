@@ -25,7 +25,8 @@ export const SidePanel: FC<SidePanelProps> = ({
           transition-transform
           transition-duration-100
           transition-ease-in
-          ${sidebarOpen ? "-translate-x-100" : ""}`}
+          ${sidebarOpen ? "-translate-x-100" : ""}
+          shadow-4`}
       >
         {children}
       </div>

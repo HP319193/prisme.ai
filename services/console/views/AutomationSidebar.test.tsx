@@ -1,7 +1,6 @@
 import AutomationsSidebar from "./AutomationsSidebar";
 import renderer, { act } from "react-test-renderer";
 import { useWorkspaces } from "../components/WorkspacesProvider";
-import { useRouter } from "next/router";
 import { Button } from "primereact/button";
 import { useWorkspace } from "../layouts/WorkspaceLayout";
 
@@ -58,8 +57,23 @@ it("should create an automation", async () => {
     automations: {
       ...useWorkspace().workspace.automations,
       ["automations.create.defaultName"]: {
-        triggers: {},
-        workflows: {},
+        triggers: {
+          "automations.create.value.trigger": {
+            do: "",
+            events: ["automations.create.value.event"],
+          },
+        },
+        workflows: {
+          "automations.create.value.workflow": {
+            do: [
+              {
+                emit: {
+                  event: "automations.create.value.event",
+                },
+              },
+            ],
+          },
+        },
       },
     },
   });
@@ -84,8 +98,23 @@ it("should create an automation with existing name", async () => {
         workflows: {},
       },
       ["automations.create.defaultName (1)"]: {
-        triggers: {},
-        workflows: {},
+        triggers: {
+          "automations.create.value.trigger": {
+            do: "",
+            events: ["automations.create.value.event"],
+          },
+        },
+        workflows: {
+          "automations.create.value.workflow": {
+            do: [
+              {
+                emit: {
+                  event: "automations.create.value.event",
+                },
+              },
+            ],
+          },
+        },
       },
     },
   });

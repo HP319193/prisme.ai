@@ -5,7 +5,7 @@ exports[`should render 1`] = `
   className="flex min-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4"
+    className="bg-primary p-4 z-1 shadow-4"
   >
     <div
       className="flex justify-content-between"
@@ -38,7 +38,7 @@ exports[`should render with custom header 1`] = `
   className="flex min-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4"
+    className="bg-primary p-4 z-1 shadow-4"
   >
     <div>
       Custom header

@@ -11,7 +11,7 @@ export const Main: FC<MainProps> = ({
 }) => {
   return (
     <div className="flex min-h-screen flex-column">
-      <div className="bg-primary p-4">
+      <div className="bg-primary p-4 z-1 shadow-4">
         <H {...headerProps} />
       </div>
       <div className="flex flex-1 surface-ground relative">{children}</div>

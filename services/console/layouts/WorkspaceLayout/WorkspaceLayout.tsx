@@ -159,8 +159,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
             {sidebar === "automations" && (
               <AutomationsSidebar onClose={() => setSidebarOpen(false)} />
             )}
-            {sidebar === "apps" && <div>les apps bientôt</div>}
-            {sidebar === "pages" && <div>les pages bientôt</div>}
+            {/*sidebar === "apps" && <div>les apps bientôt</div>}
+            {sidebar === "pages" && <div>les pages bientôt</div>*/}
           </SidePanel>
         </div>
       </Main>
