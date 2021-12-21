@@ -40,6 +40,7 @@
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-image": "^2.1.1",
     "@rollup/plugin-node-resolve": "^13.0.4",
+    "@types/ace": "^0.0.47",
     "@types/jest": "^27.0.2",
     "@types/js-cookie": "^3.0.1",
     "@types/node-fetch": "^2.5.12",

@@ -43,8 +43,23 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
       automations: {
         ...automations,
         [name]: {
-          triggers: {},
-          workflows: {},
+          triggers: {
+            [t("automations.create.value.trigger")]: {
+              events: [t("automations.create.value.event")],
+              do: "",
+            },
+          },
+          workflows: {
+            [t("automations.create.value.workflow")]: {
+              do: [
+                {
+                  emit: {
+                    event: t("automations.create.value.event"),
+                  },
+                },
+              ],
+            },
+          },
         },
       },
     });

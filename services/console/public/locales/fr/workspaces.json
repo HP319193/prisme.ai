@@ -12,7 +12,22 @@
     "link": "Automatisations",
     "create": {
       "label": "Créer une automatisation",
-      "defaultName": "Automatisation"
+      "defaultName": "Automatisation",
+      "value": {
+        "trigger": "un declencheur",
+        "event": "un évènement",
+        "workflow": "une liste de taches"
+      }
+    },
+    "back": "Retour",
+    "design": {
+      "title": "Conception"
+    },
+    "manifest": {
+      "title": "Manifeste"
+    },
+    "save": {
+      "label": "Enregistrer"
     }
   },
   "apps": {

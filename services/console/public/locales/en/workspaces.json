@@ -13,6 +13,16 @@
     "create": {
       "label": "Create an automation",
       "defaultName": "Automation"
+    },
+    "back": "Back",
+    "design": {
+      "title": "Design"
+    },
+    "manifest": {
+      "title": "Manifest"
+    },
+    "save": {
+      "label": "Save"
     }
   },
   "apps": {

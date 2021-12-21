@@ -1,10 +1,8 @@
 import AutomationDesign from "./AutomationDesign";
 import renderer from "react-test-renderer";
-import { getLayout } from "../layouts/AutomationLayout";
+import getLayout from "../layouts/AutomationLayout";
 
-jest.mock("../layouts/AutomationLayout", () => ({
-  getLayout: jest.fn(),
-}));
+jest.mock("../layouts/AutomationLayout", () => jest.fn());
 
 it("should render", () => {
   const root = renderer.create(<AutomationDesign />);
