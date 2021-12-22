@@ -1,0 +1,40 @@
+{
+  "create": {
+    "description_first": "Cree su primer espacio de trabajo para empezar a automatizar su trabajo",
+    "description": "Crear un nuevo espacio de trabajo",
+    "label": "Crear un espacio de trabajo",
+    "defaultName": "Espacio de trabajo"
+  },
+  "edit": {
+    "label": "Editar"
+  },
+  "automations": {
+    "link": "Automatizaciones",
+    "create": {
+      "label": "Crear una automatización",
+      "defaultName": "Automatización",
+      "value": {
+        "trigger": "un disparador",
+        "event": "un evento",
+        "workflow": "una lista de tareas"
+      }
+    },
+    "back": "Volver",
+    "design": {
+      "title": "Diseño"
+    },
+    "manifest": {
+      "title": "Manifiesto"
+    },
+    "save": {
+      "label": "Registro"
+    }
+  },
+  "apps": {
+    "link": "Apps"
+  },
+  "pages": {
+    "link": "Páginas"
+  },
+  "404": "Este espacio de trabajo no existe. Vuelve a tu página de inicio."
+}

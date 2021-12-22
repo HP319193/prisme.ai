@@ -12,7 +12,12 @@
     "link": "Automations",
     "create": {
       "label": "Create an automation",
-      "defaultName": "Automation"
+      "defaultName": "Automation",
+      "value": {
+        "trigger": "a trigger",
+        "event": "an event",
+        "workflow": "a workflow"
+      }
     },
     "back": "Back",
     "design": {
