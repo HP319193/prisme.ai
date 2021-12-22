@@ -8,7 +8,7 @@ import "primeflex/primeflex.css";
 import UserProvider from "../components/UserProvider";
 import WorkspacesProvider from "../components/WorkspacesProvider";
 import { NextPage } from "next";
-import { ReactElement, ReactNode, useEffect } from "react";
+import { ReactElement, ReactNode } from "react";
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;

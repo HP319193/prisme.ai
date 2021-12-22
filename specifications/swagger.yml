@@ -1364,6 +1364,7 @@ components:
       anyOf:
         - required: ["do", "events"]
         - required: ["do", "dates"]
+        - required: ["do", "endpoint"]
       properties:
         events:
           type: array

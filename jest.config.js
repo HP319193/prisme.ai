@@ -9,4 +9,5 @@ module.exports = {
     "<rootDir>/services/console/utils/yaml.ts",
     "<rootDir>/packages/validation",
   ],
+  setupFiles: ["<rootDir>/.jest/setEnvVars.js"],
 };

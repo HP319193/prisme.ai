@@ -28,6 +28,9 @@
     },
     "save": {
       "label": "Enregistrer"
+    },
+    "endpoint": {
+      "copied": "L'adresse a bien été copiée"
     }
   },
   "apps": {

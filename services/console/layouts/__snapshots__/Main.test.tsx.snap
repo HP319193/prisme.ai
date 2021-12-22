@@ -29,7 +29,15 @@ exports[`should render 1`] = `
   </div>
   <div
     className="flex flex-1 surface-ground relative"
-  />
+  >
+    <div
+      className="p-toast p-component p-toast-bottom-right"
+      id={null}
+      style={null}
+    >
+      <div />
+    </div>
+  </div>
 </div>
 `;
 
@@ -46,6 +54,14 @@ exports[`should render with custom header 1`] = `
   </div>
   <div
     className="flex flex-1 surface-ground relative"
-  />
+  >
+    <div
+      className="p-toast p-component p-toast-bottom-right"
+      id={null}
+      style={null}
+    >
+      <div />
+    </div>
+  </div>
 </div>
 `;

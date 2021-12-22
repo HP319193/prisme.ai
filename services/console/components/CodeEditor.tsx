@@ -12,6 +12,7 @@ import "ace-builds/src-noconflict/mode-yaml";
 import "ace-builds/src-noconflict/mode-json";
 
 import { Ace } from "ace-builds";
+import { addCustomAnnotations } from "../utils/aceEditorTweaks";
 
 export interface CodeEditorProps extends IAceEditorProps {
   mode: "javascript" | "css" | "html" | "yaml" | "json";
@@ -43,7 +44,7 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
       value: initialValue,
       onChange,
       placeholder = "",
-      mode = "yaml",
+      mode,
       height = "auto",
       width = "auto",
       readOnly = false,
@@ -62,6 +63,11 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
     useImperativeHandle(ref, () => aceRef.current!, []);
     //const theme = `solarized_${darkMode ? "dark" : "light"}`;
     const theme = `xcode`;
+
+    useEffect(() => {
+      if (!aceRef.current) return;
+      addCustomAnnotations(aceRef.current.editor);
+    }, []);
 
     useEffect(() => {
       if (!aceRef.current) return;
