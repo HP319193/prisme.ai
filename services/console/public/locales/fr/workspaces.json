@@ -1,4 +1,12 @@
 {
+  "workspaces": {
+    "title": "Espaces de travails et applications — $t(common:main.title)",
+    "description": "Créez de nouveaux espaces de travails et de nouvelles apps, éditez les et exécutez les"
+  },
+  "workspace": {
+    "title": "\"{{name}}\" Espace de travail — $t(common:main.title)",
+    "description": "Édition de l'espace de travail \"{{name}}\""
+  },
   "create": {
     "description_first": "Créez votre premier espace de travail pour commencer à automatiser votre travail",
     "description": "Créez un nouvel espace de travail",

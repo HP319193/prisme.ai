@@ -1,6 +1,6 @@
 {
   "in": {
-    "title": "Connexion",
+    "title": "Connexion — $t(common:main.title)",
     "description": "Connectez vous à Prisme.ai",
     "email": "E-mail",
     "password": "Mot de passe",

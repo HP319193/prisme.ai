@@ -10,6 +10,7 @@ import workspaceContext, { WorkspaceContext } from "./context";
 import Loading from "../../components/Loading";
 import { Button } from "primereact/button";
 import AutomationsSidebar from "../../views/AutomationsSidebar";
+import Head from "next/head";
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
@@ -96,6 +97,13 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   return (
     <workspaceContext.Provider value={{ workspace, loading }}>
+      <Head>
+        <title>{t("workspace.title", { name: workspace.name })}</title>
+        <meta
+          name="description"
+          content={t("workspace.description", { name: workspace.name })}
+        />
+      </Head>
       <Main
         leftContent={
           workspace && (

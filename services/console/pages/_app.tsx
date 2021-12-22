@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { appWithTranslation } from "next-i18next";
+import { appWithTranslation, useTranslation } from "next-i18next";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
@@ -9,6 +9,7 @@ import UserProvider from "../components/UserProvider";
 import WorkspacesProvider from "../components/WorkspacesProvider";
 import { NextPage } from "next";
 import { ReactElement, ReactNode } from "react";
+import Head from "next/head";
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -20,10 +21,16 @@ type AppPropsWithLayout = AppProps & {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
+  const { t } = useTranslation("common");
 
   return (
     <UserProvider>
       <WorkspacesProvider>
+        <Head>
+          <title>{t("main.title")}</title>
+          <meta name="description" content={t("main.description")} />
+          <link rel="icon" href="/favicon.png" />
+        </Head>
         {getLayout(<Component {...pageProps} />)}
       </WorkspacesProvider>
     </UserProvider>

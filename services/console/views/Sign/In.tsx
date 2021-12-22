@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from "react";
-import Head from "next/head";
 import { useTranslation } from "react-i18next";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
@@ -11,6 +10,7 @@ import Field from "../../layouts/Field";
 import Fieldset from "../../layouts/Fieldset";
 import { useUser } from "../../components/UserProvider";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 interface Values {
   email: string;
