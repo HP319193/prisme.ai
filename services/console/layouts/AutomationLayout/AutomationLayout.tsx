@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { TabMenu } from "primereact/tabmenu";
 import { useWorkspace } from "../WorkspaceLayout";
 import { useRouter } from "next/router";
@@ -7,6 +7,8 @@ import { useWorkspaces } from "../../components/WorkspacesProvider";
 import { useTranslation } from "next-i18next";
 import { Button } from "primereact/button";
 import context, { AutomationLayoutContext } from "./context";
+import { validateAutomation } from "@prisme.ai/validation";
+import { ValidationError } from "../../utils/yaml";
 
 export const AutomationLayout: FC = ({ children }) => {
   const { t } = useTranslation("workspaces");
@@ -22,6 +24,7 @@ export const AutomationLayout: FC = ({ children }) => {
     value: workspace.automations[`${name}`],
   });
   const { update } = useWorkspaces();
+  const [invalid, setInvalid] = useState<false | ValidationError[]>(false);
 
   const currentTab = route.split(/\//).pop();
   const updateTitle = useCallback(
@@ -42,6 +45,9 @@ export const AutomationLayout: FC = ({ children }) => {
 
   const setAutomation: AutomationLayoutContext["setAutomation"] = useCallback(
     (automation) => {
+      validateAutomation(automation);
+      validateAutomation.errors;
+      setInvalid((validateAutomation.errors as ValidationError[]) || false);
       setCurrentAutomation({
         name: `${name}`,
         value: automation,
@@ -56,6 +62,7 @@ export const AutomationLayout: FC = ({ children }) => {
     });
   }, [name, workspace.automations]);
   const save: AutomationLayoutContext["save"] = useCallback(() => {
+    if (invalid) return;
     update({
       ...workspace,
       automations: {
@@ -63,7 +70,7 @@ export const AutomationLayout: FC = ({ children }) => {
         [automation.name]: automation.value,
       },
     });
-  }, [automation.name, automation.value, update, workspace]);
+  }, [automation.name, automation.value, update, invalid, workspace]);
 
   const title = useMemo(
     () => [
@@ -97,16 +104,20 @@ export const AutomationLayout: FC = ({ children }) => {
         className: "flex justify-content-center align-items-center ml-2 mr-2",
         template: () => (
           <div>
-            <Button onClick={save}>{t("automations.save.label")}</Button>
+            <Button onClick={save} disabled={!!invalid}>
+              {t("automations.save.label")}
+            </Button>
           </div>
         ),
       },
     ],
-    [name, push, save, t, workspace.id]
+    [invalid, name, push, save, t, workspace.id]
   );
 
   return (
-    <context.Provider value={{ automation, setAutomation, reset, save }}>
+    <context.Provider
+      value={{ automation, setAutomation, reset, save, invalid }}
+    >
       <div className="flex flex-column flex-1">
         <div className="flex flex-row">
           <TabMenu model={title} activeIndex={-1} className="flex-1" />

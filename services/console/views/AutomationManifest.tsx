@@ -6,11 +6,12 @@ import getAutomationLayout, {
 import getLayout from "../layouts/WorkspaceLayout";
 import { Workspace } from "../api/types";
 import dynamic from "next/dynamic";
-import useYaml from "../utils/yaml";
+import useYaml from "../utils/useYaml";
+import { getLineNumber } from "../utils/yaml";
 
 const CodeEditor = dynamic(import("../components/CodeEditor"), { ssr: false });
 export const AutomationManifest = () => {
-  const { automation, setAutomation } = useAutomation();
+  const { automation, setAutomation, invalid } = useAutomation();
   const [value, setValue] = useState<string | undefined>();
   const [annotations, setAnnotations] = useState<any>();
   const { toJSON, toYaml } = useYaml();
@@ -55,7 +56,30 @@ export const AutomationManifest = () => {
     },
     [checkSyntaxAndReturnYAML, setAutomation]
   );
+
+  useEffect(() => {
+    if (!invalid || !value) {
+      setAnnotations([]);
+      return;
+    }
+    const annotations = invalid
+      .map(({ instancePath, message }) => {
+        try {
+          const row = getLineNumber(value, instancePath);
+          return {
+            row,
+            column: 0,
+            text: message,
+            type: "error",
+          };
+        } catch (e) {}
+      })
+      .filter(Boolean);
+    setAnnotations(annotations);
+  }, [invalid, value]);
+
   if (value === undefined) return null;
+
   return (
     <div className="flex flex-1 flex-column">
       <CodeEditor

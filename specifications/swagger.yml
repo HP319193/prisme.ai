@@ -178,8 +178,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/BadParametersError"
 
-
-
   /v2/signup:
     post:
       description: Signup
@@ -356,7 +354,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BadParametersError"
-
 
   ############################################# runtime
   /v2/workspaces/{workspaceId}/webhooks/{automationId}:
@@ -630,7 +627,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BadParametersError"
-
 
   ## automations
   /v2/workspaces/{workspaceId}/automations:
@@ -1289,50 +1285,50 @@ components:
 
     App:
       allOf:
-      - type: object
-        required:
-          - name
-        properties:
-          name:
-            type: string
-          description:
-            $ref: "#/components/schemas/LocalizedText"
-          photo:
-            type: string
-          owner:
-            type: object
-            properties:
-              id:
-                type: string
-          constants:
-            type: object
-          config:
-            additionalProperties:
-              $ref: "#/components/schemas/TypedArgument"
-          automations:
-            additionalProperties:
-              $ref: "#/components/schemas/Automation"
-      - $ref: "#/components/schemas/Object"
+        - type: object
+          required:
+            - name
+          properties:
+            name:
+              type: string
+            description:
+              $ref: "#/components/schemas/LocalizedText"
+            photo:
+              type: string
+            owner:
+              type: object
+              properties:
+                id:
+                  type: string
+            constants:
+              type: object
+            config:
+              additionalProperties:
+                $ref: "#/components/schemas/TypedArgument"
+            automations:
+              additionalProperties:
+                $ref: "#/components/schemas/Automation"
+        - $ref: "#/components/schemas/Object"
 
     AppInstance:
       allOf:
-      - type: object
-        required:
-          - app
-          - name
-        properties:
-          app:
-            type: string
-            example: "prismeaiMessenger"
-            description: "App unique name"
-          name:
-            type: string
-          config:
-            type: object
-            example:
-              foo: "bar"
-            description: "Inside the app, these config values will be accessible with $.Config.foo"
-      - $ref: "#/components/schemas/Object"
+        - type: object
+          required:
+            - app
+            - name
+          properties:
+            app:
+              type: string
+              example: "prismeaiMessenger"
+              description: "App unique name"
+            name:
+              type: string
+            config:
+              type: object
+              example:
+                foo: "bar"
+              description: "Inside the app, these config values will be accessible with $.Config.foo"
+        - $ref: "#/components/schemas/Object"
 
     Workspace:
       type: object
@@ -1439,7 +1435,6 @@ components:
           description: "Set this to true if you don't want your workflow to be accessible outside of your app. Default is false."
           example: false
 
-
     Automation:
       type: object
       required:
@@ -1461,7 +1456,7 @@ components:
       type: object
       required:
         - emit
-      maxProperties:  1
+      maxProperties: 1
       properties:
         emit:
           type: object
@@ -1496,7 +1491,7 @@ components:
               description: "Only match the next intent fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
               example:
                 automationId: someId
-                someObjectField.someNestedField: 'foo'
+                someObjectField.someNestedField: "foo"
             output:
               type: string
               description: Will save the caught event inside this variable
@@ -1545,7 +1540,6 @@ components:
             name:
               type: string
               description: Variable name to remove
-
 
     If:
       type: object
@@ -1649,7 +1643,10 @@ components:
         - $ref: "#/components/schemas/Repeat"
         - $ref: "#/components/schemas/All"
         - $ref: "#/components/schemas/Break"
-
+        - type: object
+          additionalProperties: true
+          minProperties: 1
+          maxProperties: 1
 
     ################################################################################################################################
     ############################################################ Events ############################################################
@@ -1786,8 +1783,7 @@ components:
       properties:
         type:
           type: string
-          example:
-            error
+          example: error
 
     ########################## API Gateway ##########################
     FailedLogin:
@@ -1962,7 +1958,6 @@ components:
             automation:
               $ref: "#/components/schemas/Automation"
 
-
     DeletedAutomation:
       type: object
       required:
@@ -1989,7 +1984,6 @@ components:
                   type: string
                 name:
                   type: string
-
 
     ########################## Runtime events ##########################
 
@@ -2022,7 +2016,6 @@ components:
             payload:
               type: object
 
-
     UpdatedContexts:
       type: object
       required:
@@ -2042,8 +2035,6 @@ components:
             contexts:
               type: object
 
-
-
     GenericError:
       type: object
       properties:
@@ -2056,7 +2047,6 @@ components:
           type: array
           items:
             type: object
-
 
     ObjectNotFoundError:
       type: object

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@prisme.ai/types": "^1.0.1",
+    "@prisme.ai/validation": "^1.0.0",
     "ace-builds": "^1.4.13",
     "final-form": "^4.20.4",
     "js-cookie": "^3.0.1",

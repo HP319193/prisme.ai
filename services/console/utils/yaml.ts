@@ -1,28 +1,38 @@
-let worker: any;
+import { ErrorParameters } from "ajv";
 
-export const useYaml = () => {
-  if (!worker) {
-    worker = new Worker(new URL("./yaml.worker", import.meta.url));
-  }
-  const call = <T>(action: string, data: any): Promise<T> =>
-    new Promise((resolve, reject) => {
-      const requestId = Math.random();
-      const callback = ({ data: { id, data, error } }: MessageEvent) => {
-        if (id !== requestId) return;
-        if (error) reject(error);
-        else resolve(data);
-        worker.removeEventListener("message", callback);
-      };
-      worker.addEventListener("message", callback);
-      worker.postMessage({ action, data, id: requestId });
-    });
-  const toJSON = async <T>(value: string) => {
-    return await call<T>("load", value);
-  };
-  const toYaml = async <T>(value: T) => {
-    return await call<string>("dump", value);
-  };
-  return { toYaml, toJSON };
+export interface ValidationError {
+  instancePath: string;
+  keyword: string;
+  message: string;
+  params: ErrorParameters;
+  schemaPath: string;
+}
+
+export const getLineNumber = (yaml: string, path: string) => {
+  const lines = yaml.split(/\n/).map((line, index) => {
+    const [key] = line.split(/\:/);
+    const [, indent = "", name] = key.match(/(\s+)(.*$)/) || [];
+    return {
+      line: index + 1,
+      indent: indent.length / 2,
+      name: name || key,
+    };
+  });
+  const pathParts = `${path}`.replace(/^\//, "").split(/\//);
+  let line = 0;
+
+  pathParts.forEach((part, index) => {
+    const found = lines
+      .filter(
+        ({ indent, line: lineNumber }) => indent === index && lineNumber > line
+      )
+      .find(({ name }) => name === part);
+
+    if (!found) {
+      throw new Error("not found");
+    }
+    line = found.line;
+  });
+
+  return line;
 };
-
-export default useYaml;

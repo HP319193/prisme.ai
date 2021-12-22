@@ -7,5 +7,6 @@ module.exports = {
   coveragePathIgnorePatterns: [
     "<rootDir>/services/console/.*/context.ts",
     "<rootDir>/services/console/utils/yaml.ts",
+    "<rootDir>/packages/validation",
   ],
 };
