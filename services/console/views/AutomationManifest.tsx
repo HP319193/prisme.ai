@@ -136,7 +136,7 @@ export const AutomationManifest = () => {
     return () => {
       current.removeEventListener("click", listener);
     };
-  }, [allAnnotations, ref, toaster]);
+  }, [allAnnotations, ref, t, toaster]);
 
   if (value === undefined) return null;
 

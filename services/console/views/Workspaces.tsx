@@ -1,3 +1,4 @@
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Button } from "primereact/button";
@@ -29,6 +30,10 @@ export const WorkspacesView = () => {
 
   return (
     <Main>
+      <Head>
+        <title>{t("workspaces.title")}</title>
+        <meta name="description" content={t("workspaces.description")} />
+      </Head>
       <CardsContainer className="justify-content-center">
         {workspacesList.map(({ name, id }) => (
           <Card
