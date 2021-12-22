@@ -1,7 +1,7 @@
 import AutomationManifest from "./AutomationManifest";
 import renderer, { act } from "react-test-renderer";
 import getLayout, { useAutomation } from "../layouts/AutomationLayout";
-import useYaml from "../utils/yaml";
+import useYaml from "../utils/useYaml";
 import CodeEditor from "../components/CodeEditor";
 import { YAMLException } from "js-yaml";
 
@@ -14,7 +14,7 @@ jest.mock("../layouts/AutomationLayout", () => {
   mock.useAutomation = () => mock;
   return mock;
 });
-jest.mock("../utils/yaml", () => {
+jest.mock("../utils/useYaml", () => {
   const mock = {
     toJSON: jest.fn((value: string) => ({})),
     toYaml: jest.fn((value: any) => ""),
@@ -172,5 +172,26 @@ workflows:
 foo bar`,
       type: "error",
     },
+  ]);
+});
+
+it("should build annotations on errors", async () => {
+  useYaml().toYaml = async () => `workflows:
+  foo:
+    bar: bar
+`;
+  useAutomation().invalid = [
+    {
+      instancePath: "/workflows/foo",
+      message: "error",
+    },
+  ] as any;
+
+  const root = renderer.create(<AutomationManifest />);
+  await act(async () => {
+    await true;
+  });
+  expect(root.root.findByType(CodeEditor).props.annotations).toEqual([
+    { row: 2, column: 0, text: "error", type: "error" },
   ]);
 });

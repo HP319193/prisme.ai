@@ -12,6 +12,7 @@
     "build:console": "npm run build --prefix services/console",
     "build:workspaces": "npm run build --prefix services/workspaces",
     "build:gateway": "npm run build --prefix services/api-gateway",
+    "install": "npm run build:packages",
     "dev:workspaces": "npm run dev --prefix services/workspaces",
     "dev:gateway": "npm run dev --prefix services/api-gateway",
     "//publish:todo": "npm publish --workspace=@prisme.ai/todo --access=public",

@@ -1,5 +1,7 @@
 import { createContext, useContext } from "react";
+import { ValidateFunction } from "ajv";
 import { Workspace } from "../../api/types";
+import { ValidationError } from "../../utils/yaml";
 
 export interface AutomationLayoutContext {
   automation: {
@@ -9,6 +11,7 @@ export interface AutomationLayoutContext {
   setAutomation: (automation: Workspace["automations"][0]) => void;
   reset: () => void;
   save: () => void;
+  invalid: false | ValidationError[];
 }
 export const automationLayoutContext = createContext<AutomationLayoutContext>({
   automation: {
@@ -21,6 +24,7 @@ export const automationLayoutContext = createContext<AutomationLayoutContext>({
   setAutomation() {},
   reset() {},
   save() {},
+  invalid: false,
 });
 
 export const useAutomation = () => useContext(automationLayoutContext);
