@@ -14,3 +14,11 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.ace_gutter-cell.ace_endpoint:before {
+  font-family: primeicons;
+  position: absolute;
+  left: 4px;
+  top: 2px;
+  content: "";
+}

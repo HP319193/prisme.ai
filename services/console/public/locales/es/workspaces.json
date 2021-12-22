@@ -28,6 +28,9 @@
     },
     "save": {
       "label": "Registro"
+    },
+    "endpoint": {
+      "copied": "La URL ha sido copiada"
     }
   },
   "apps": {

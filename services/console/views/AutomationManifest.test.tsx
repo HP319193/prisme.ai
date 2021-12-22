@@ -4,7 +4,17 @@ import getLayout, { useAutomation } from "../layouts/AutomationLayout";
 import useYaml from "../utils/useYaml";
 import CodeEditor from "../components/CodeEditor";
 import { YAMLException } from "js-yaml";
+import { useWorkspace } from "../layouts/WorkspaceLayout";
+import { Workspace } from "../api/types";
 
+jest.mock("../layouts/WorkspaceLayout", () => {
+  const mock = {
+    workspace: { id: "42" },
+  };
+  const getLayout: any = jest.fn();
+  getLayout.useWorkspace = () => mock;
+  return getLayout;
+});
 jest.mock("../layouts/AutomationLayout", () => {
   const mock: any = jest.fn();
   mock.automation = {};
@@ -20,6 +30,10 @@ jest.mock("../utils/useYaml", () => {
     toYaml: jest.fn((value: any) => ""),
   };
   return () => mock;
+});
+
+beforeEach(() => {
+  useAutomation().invalid = false;
 });
 it("should render", () => {
   const root = renderer.create(<AutomationManifest />);
@@ -193,5 +207,31 @@ it("should build annotations on errors", async () => {
   });
   expect(root.root.findByType(CodeEditor).props.annotations).toEqual([
     { row: 2, column: 0, text: "error", type: "error" },
+  ]);
+});
+
+it("should find endpoints", async () => {
+  useWorkspace().workspace = {
+    id: "42",
+  } as Workspace;
+  useYaml().toYaml = async () => `workflows:
+  foo:
+    bar: bar
+triggers:
+  hello:
+    endpoint: true
+    do: it
+  world:
+    endpoint: yo
+    do: it
+`;
+
+  const root = renderer.create(<AutomationManifest />);
+  await act(async () => {
+    await true;
+  });
+  expect(root.root.findByType(CodeEditor).props.annotations).toEqual([
+    { row: 5, column: 0, text: "/api/workspace/42/hello", type: "endpoint" },
+    { row: 8, column: 0, text: "/api/workspace/42/yo", type: "endpoint" },
   ]);
 });

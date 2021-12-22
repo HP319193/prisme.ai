@@ -28,6 +28,9 @@
     },
     "save": {
       "label": "Save"
+    },
+    "endpoint": {
+      "copied": "Endpoint has been copied"
     }
   },
   "apps": {

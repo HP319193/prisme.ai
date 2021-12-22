@@ -1,5 +1,6 @@
 import { FC } from "react";
 import Header, { HeaderProps } from "../components/Header";
+import Toaster from "./Toaster";
 
 interface MainProps extends HeaderProps {
   header?: () => JSX.Element;
@@ -14,7 +15,9 @@ export const Main: FC<MainProps> = ({
       <div className="bg-primary p-4 z-1 shadow-4">
         <H {...headerProps} />
       </div>
-      <div className="flex flex-1 surface-ground relative">{children}</div>
+      <div className="flex flex-1 surface-ground relative">
+        <Toaster>{children}</Toaster>
+      </div>
     </div>
   );
 };
