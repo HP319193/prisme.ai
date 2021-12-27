@@ -10,7 +10,7 @@ exports[`should render 1`] = `
     <h1
       className="flex"
     >
-      home.title
+      main.title
     </h1>
     <button
       className="p-button p-component"
