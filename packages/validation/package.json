@@ -1,12 +1,13 @@
 {
   "name": "@prisme.ai/validation",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Prisme.ai validation utilities",
   "author": "Prisme.ai",
   "license": "ISC",
   "main": "./dist/validation/index.js",
   "scripts": {
-    "build": "node ./src/build.js"
+    "build": "node ./src/build.js",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "ajv": "^8.8.2",
