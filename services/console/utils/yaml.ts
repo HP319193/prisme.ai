@@ -1,10 +1,10 @@
-import { ErrorParameters } from "ajv";
+import { ErrorObject } from "ajv";
 
 export interface ValidationError {
   instancePath: string;
   keyword: string;
   message: string;
-  params: ErrorParameters;
+  params: ErrorObject;
   schemaPath: string;
 }
 
