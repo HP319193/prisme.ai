@@ -23,6 +23,10 @@ variables:
   API_GATEWAY_IMAGE_NAME: "prisme.ai-api-gateway"
   API_GATEWAY_K8S_NAME: "prismeai-api-gateway"
 
+  RUNTIME_DIRECTORY: "runtime"
+  RUNTIME_IMAGE_NAME: "prisme.ai-runtime"
+  RUNTIME_K8S_NAME: "prismeai-runtime"
+
 stages:
   - dependencies
   - test
@@ -170,6 +174,41 @@ workspaces_deploy:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME
     - export K8S_NAME=$WORKSPACES_K8S_NAME
+
+## Runtime jobs
+runtime_build_docker:
+  extends: .build_docker
+  interruptible: true # Stop this job if a new one has been triggered by the same branch
+  stage: build_docker
+  image: docker:stable
+  services:
+    - docker:stable-dind
+  only:
+    # refs:
+    #   # - tags
+    #   - main
+    #   - master
+    changes:
+      - "services/runtime/*"
+  before_script:
+    - cd services/$RUNTIME_DIRECTORY
+    - export DOCKER_HOST=tcp://docker:2375
+    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
+
+runtime_deploy:
+  extends: .deploy_k8s
+  only:
+    # refs:
+    #   # - tags
+    #   - main
+    #   - master
+    changes:
+      - "services/runtime/*"
+  before_script:
+    - export KUBECONFIG=$KUBECONFIG
+    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
+    - export K8S_NAME=$RUNTIME_K8S_NAME
+
 
 ## API Gateway jobs
 api-gateway_build_docker:

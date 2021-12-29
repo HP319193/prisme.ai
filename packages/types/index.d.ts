@@ -989,7 +989,9 @@ declare namespace Prismeai {
         type: "workspaces.app.installed";
         payload: AppInstance;
     }
-    export type Instruction = Emit | Wait | Set | Delete | Conditions | Repeat | All | Break;
+    export type Instruction = Emit | Wait | Set | Delete | Conditions | Repeat | All | Break | {
+        [name: string]: any;
+    };
     export type InstructionList = Instruction[];
     export type LocalizedText = {
         [name: string]: string;
@@ -1087,6 +1089,29 @@ declare namespace Prismeai {
          */
         dates: string[];
         endpoint?: boolean | string;
+        /**
+         * Target workflow
+         * example:
+         * MyWorkflow
+         */
+        do: string;
+    } | {
+        /**
+         * example:
+         * [
+         *   "prismeaiMessenger.event"
+         * ]
+         */
+        events?: string[];
+        /**
+         * example:
+         * [
+         *   "2021-12-25T00:00",
+         *   "* * 1 * *"
+         * ]
+         */
+        dates?: string[];
+        endpoint: boolean | string;
         /**
          * Target workflow
          * example:
@@ -1274,7 +1299,8 @@ declare namespace PrismeaiAPI {
         export interface RequestBody {
         }
         namespace Responses {
-            export type $200 = Prismeai.User;
+            export interface $200 {
+            }
             export type $400 = Prismeai.BadParametersError;
             export type $403 = Prismeai.BadPermissionsError;
             export type $404 = Prismeai.ObjectNotFoundError;
