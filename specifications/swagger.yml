@@ -1848,10 +1848,10 @@ components:
         payload:
           type: object
           required:
-            - workspace
+            - workspaceId
           properties:
-            workspace:
-              $ref: "#/components/schemas/Workspace"
+            workspaceId:
+              type: string
 
     UpdatedWorkspace:
       type: object

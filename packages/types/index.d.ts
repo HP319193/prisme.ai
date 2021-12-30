@@ -437,7 +437,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.deleted";
         payload: {
-            workspace: Workspace;
+            workspaceId: string;
         };
     } | {
         /**
@@ -913,7 +913,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.deleted";
         payload: {
-            workspace: Workspace;
+            workspaceId: string;
         };
     }
     export interface Else {

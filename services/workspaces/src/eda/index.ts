@@ -11,12 +11,11 @@ import { Logger, logger } from "../logger";
 
 export enum EventType {
   Error = "error",
-  SucceededLogin = "gateway.login.succeeded",
-  FailedLogin = "gateway.login.failed",
+  CreatedWorkspace = "workspaces.created",
+  UpdatedWorkspace = "workspaces.updated",
+  DeletedWorkspace = "workspaces.deleted",
   InstalledApp = "workspaces.app.installed",
   ConfiguredApp = "workspaces.app.configured",
-  TriggeredWorkflow = "runtime.workflow.triggered",
-  UpdatedContexts = "runtime.contexts.updated",
 }
 export class CallbackContext {
   public logger: Logger;
