@@ -13,8 +13,11 @@ export const createWorkspace =
 export const getWorkspace =
   (logger: Logger, ctx: PrismeContext, storage: IStorage) =>
   async (workspaceId: string) => {
-    logger.debug(`Retrieving worksppace ${workspaceId}`);
-    return await storage.get(workspaceId);
+    const workspace = await storage.get(workspaceId);
+    if (!workspace) {
+      return;
+    }
+    return workspace;
   };
 
 // Not implemented yet, awaiting authentification to check workspaces ownership

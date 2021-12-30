@@ -25,6 +25,9 @@ async function getWorkspaceHandler(
 ) {
   const workspaces = services.workspaces(logger, context);
   const result = await workspaces.getWorkspace(workspaceId);
+  if (!result) {
+    res.sendStatus(404);
+  }
   res.send(result);
 }
 
