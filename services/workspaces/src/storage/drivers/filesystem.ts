@@ -1,18 +1,18 @@
-import {Storage} from '../types';
-import {join, dirname} from 'path';
-import fs from 'fs';
+import { Storage } from "../types";
+import { join, dirname } from "path";
+import fs from "fs";
 
 export interface FilesystemOptions {
   dirpath?: string;
 }
 
 const defaultFilesystemOptions: Partial<FilesystemOptions> = {
-  dirpath: join(__dirname, 'app_models'),
+  dirpath: join(__dirname, "app_models"),
 };
 
 const mkdir = (path: string, recursive: boolean = true) => {
-  fs.mkdirSync(path, {recursive});
-}
+  fs.mkdirSync(path, { recursive });
+};
 
 export default class Filesystem implements Storage {
   private options: FilesystemOptions;
@@ -22,11 +22,11 @@ export default class Filesystem implements Storage {
       ...options,
       dirpath: options.dirpath || defaultFilesystemOptions.dirpath,
     };
-    mkdir(this.options.dirpath || '');
+    mkdir(this.options.dirpath || "");
   }
 
   private getPath(key: string) {
-    return join(this.options.dirpath || '', key);
+    return join(this.options.dirpath || "", key);
   }
 
   public get(key: string) {
@@ -45,11 +45,11 @@ export default class Filesystem implements Storage {
     const parentDirectory = dirname(filepath);
     mkdir(parentDirectory);
     return new Promise((resolve: any, reject: any) => {
-      fs.writeFile(filepath, data, err => {
+      fs.writeFile(filepath, data, (err) => {
         if (err) {
           reject(err);
         }
-        resolve({success: true});
+        resolve({ success: true });
       });
     });
   }
@@ -58,8 +58,8 @@ export default class Filesystem implements Storage {
     return new Promise((resolve: any, reject: any) => {
       try {
         //@ts-ignore l'option recursive apparu avec node12 n'est visiblement pas encore typée !
-        fs.rmdirSync(this.getPath(key), {recursive: true});
-        resolve({success: true});
+        fs.rmdirSync(this.getPath(key), { recursive: true });
+        resolve({ success: true });
       } catch (e) {
         reject(e);
       }

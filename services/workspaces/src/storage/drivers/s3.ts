@@ -1,5 +1,5 @@
-import {Storage} from '../types';
-import AWS from "aws-sdk"
+import { Storage } from "../types";
+import AWS from "aws-sdk";
 
 export interface S3Options {
   accessKeyId: string;
@@ -12,7 +12,7 @@ export interface S3Options {
 }
 
 const defaultS3Options: Partial<S3Options> = {
-  cacheControl: 'public, max-age=31536000',
+  cacheControl: "public, max-age=31536000",
 };
 
 export default class S3Like implements Storage {
@@ -20,13 +20,13 @@ export default class S3Like implements Storage {
   private options: S3Options;
 
   public constructor(options: S3Options) {
-    this.options = {...defaultS3Options, ...options};
+    this.options = { ...defaultS3Options, ...options };
     this.client = new AWS.S3({
       accessKeyId: this.options.accessKeyId,
       secretAccessKey: this.options.secretAccessKey,
       params: {
         Bucket: this.options.bucket,
-        CacheControl: this.options.cacheControl
+        CacheControl: this.options.cacheControl,
       },
       region: this.options.region,
       endpoint: this.options.endpoint,
@@ -46,7 +46,7 @@ export default class S3Like implements Storage {
           } else {
             resolve(data.Body);
           }
-        },
+        }
       );
     });
   }
@@ -64,24 +64,24 @@ export default class S3Like implements Storage {
           } else if (data && data.Contents) {
             Promise.all(
               data.Contents.map(
-                ({Key}) =>
+                ({ Key }) =>
                   new Promise((resolve, reject) => {
                     this.client.deleteObject(
-                      {Key: Key as any, Bucket: this.options.bucket},
+                      { Key: Key as any, Bucket: this.options.bucket },
                       (err, data) => {
                         if (err) {
                           reject(err);
                         }
                         resolve(data);
-                      },
+                      }
                     );
-                  }),
-              ),
+                  })
+              )
             )
               .then(resolve)
               .catch(reject);
           }
-        },
+        }
       );
       this.client.deleteObject(
         {
@@ -94,7 +94,7 @@ export default class S3Like implements Storage {
           } else {
             resolve(data);
           }
-        },
+        }
       );
     });
   }

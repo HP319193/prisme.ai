@@ -1,14 +1,14 @@
-import yaml from 'js-yaml';
-import {Storage, DriverType} from './types';
-import S3 from './drivers/s3';
-import Filesystem from './drivers/filesystem';
+import yaml from "js-yaml";
+import { Storage, DriverType } from "./types";
+import S3 from "./drivers/s3";
+import Filesystem from "./drivers/filesystem";
 
-const getS3Key = (appId: string, version: string = 'current') => {
+const getS3Key = (appId: string, version: string = "current") => {
   if (!version) {
     return appId;
   }
   return `${appId}/${version}.yml`;
-}
+};
 
 export default class DSULStorage implements Storage {
   private driver: Storage;
@@ -45,11 +45,11 @@ export default class DSULStorage implements Storage {
   public save(appId: string, app: any) {
     return this.driver.save(
       getS3Key(appId),
-      yaml.dump(app, {skipInvalid: true}),
+      yaml.dump(app, { skipInvalid: true })
     );
   }
 
   public delete(appId: string) {
-    return this.driver.delete(getS3Key(appId, ''));
+    return this.driver.delete(getS3Key(appId, ""));
   }
 }
