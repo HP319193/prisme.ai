@@ -1,4 +1,4 @@
-export interface Storage {
+export interface IStorage {
   get(id: string): any;
 
   save(id: string, data: any): Promise<any>;

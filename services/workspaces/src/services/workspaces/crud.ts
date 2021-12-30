@@ -1,22 +1,17 @@
 import { PrismeContext } from "../../api/middlewares";
 import { Logger } from "../../logger";
-import { Storage } from "../../storage/types";
+import { IStorage } from "../../storage/types";
+import { v4 as uuidv4 } from "uuid";
 
 export const createWorkspace =
-  (logger: Logger, ctx: PrismeContext, storage: Storage) =>
+  (logger: Logger, ctx: PrismeContext, storage: IStorage) =>
   async (workspace: Prismeai.Workspace) => {
-    logger.debug(`Saving worksppace ${workspace.id}`);
-    // TODO How to handle new workspace creation without an id yet ?
-    // Create a new id, check if it exists
-    const result = await storage.save(workspace.id || "", workspace);
-    if (result.error) {
-      // throw error how ?
-    }
-    return { ...workspace };
+    await storage.save(uuidv4(), workspace);
+    return workspace;
   };
 
 export const getWorkspace =
-  (logger: Logger, ctx: PrismeContext, storage: Storage) =>
+  (logger: Logger, ctx: PrismeContext, storage: IStorage) =>
   async (workspaceId: string) => {
     logger.debug(`Retrieving worksppace ${workspaceId}`);
     return await storage.get(workspaceId);
@@ -24,25 +19,21 @@ export const getWorkspace =
 
 // Not implemented yet, awaiting authentification to check workspaces ownership
 export const getWorkspaces =
-  (logger: Logger, ctx: PrismeContext, storage: Storage) =>
+  (logger: Logger, ctx: PrismeContext, storage: IStorage) =>
   async (query: PrismeaiAPI.GetWorkspaces.QueryParameters) => {
     logger.debug("Some logs from getWorkspaces");
     return [];
   };
 
 export const updateWorkspace =
-  (logger: Logger, ctx: PrismeContext, storage: Storage) =>
+  (logger: Logger, ctx: PrismeContext, storage: IStorage) =>
   async (workspace: Prismeai.Workspace) => {
-    logger.debug(`Saving worksppace ${workspace.id}`);
-    const result = await storage.save(workspace.id || "", workspace);
-    if (result.error) {
-      // throw error how ?
-    }
+    await storage.save(workspace.id || "", workspace);
     return { ...workspace };
   };
 
 export const deleteWorkspace =
-  (logger: Logger, ctx: PrismeContext, storage: Storage) =>
+  (logger: Logger, ctx: PrismeContext, storage: IStorage) =>
   async (
     workspaceId: PrismeaiAPI.DeleteWorkspace.PathParameters["workspaceId"]
   ) => {

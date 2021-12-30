@@ -1,4 +1,4 @@
-import { Storage } from "../types";
+import { IStorage } from "../types";
 import { join, dirname } from "path";
 import fs from "fs";
 import { ErrorSeverity, PrismeError } from "../../errors";
@@ -15,7 +15,7 @@ const mkdir = (path: string, recursive: boolean = true) => {
   fs.mkdirSync(path, { recursive });
 };
 
-export default class Filesystem implements Storage {
+export default class Filesystem implements IStorage {
   private options: FilesystemOptions;
 
   public constructor(options: FilesystemOptions) {

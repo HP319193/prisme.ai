@@ -1,4 +1,4 @@
-import { Storage } from "../types";
+import { IStorage } from "../types";
 import AWS from "aws-sdk";
 import { ErrorSeverity, PrismeError } from "../../errors";
 
@@ -16,7 +16,7 @@ const defaultS3Options: Partial<S3Options> = {
   cacheControl: "public, max-age=31536000",
 };
 
-export default class S3Like implements Storage {
+export default class S3Like implements IStorage {
   private client: AWS.S3;
   private options: S3Options;
 
