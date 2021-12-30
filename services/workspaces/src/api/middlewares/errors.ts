@@ -3,10 +3,16 @@
 import { NextFunction, Request, Response } from "express";
 import { PrismeContext } from ".";
 import { EventType } from "../../eda";
-import { ErrorSeverity, PrismeError } from "../../errors";
+import { ErrorSeverity, ObjectNotFoundError, PrismeError } from "../../errors";
 import { logger } from "../../logger";
 
 function errorHttpStatus(err: Error, serverError: boolean) {
+  if (
+    (<any>err)?.details?.[0]?.message === "not found" ||
+    err instanceof ObjectNotFoundError
+  ) {
+    return 404;
+  }
   return serverError ? 500 : 400;
 }
 
@@ -35,7 +41,7 @@ export const errorDecorator = (
 
   if (serverError) {
     (req.logger || logger).fatal({ ...req.context, err });
-  } else {
+  } else if (!(err instanceof ObjectNotFoundError)) {
     (req.logger || logger).error({ ...req.context, err });
   }
 
@@ -52,11 +58,6 @@ export const errorDecorator = (
   });
 };
 
-/**
- * Custom error handling middleware - final
- * WARNING: Must be defined last, after other app.use(), routes calls
- * and all other error handling middleware
- */
 // eslint-disable-next-line consistent-return
 export const finalErrorHandler = (
   err: DecoratedError,
@@ -64,19 +65,16 @@ export const finalErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  /**
-   * Delegate to the default Express error handler,
-   * when the headers have already been sent to the client
-   */
   if (res.headersSent) return next(err);
 
-  /**
-   * Crash server in case of a developer error.
-   * NOTE: a Node.js process manager should be set up to immediately restart the crashed server
-   */
-  // if (err.isDeveloperError) exitProcess();
-  // else
-  return res.status(err.httpStatus || 500).json(err.error || "Internal error");
+  const status = err.httpStatus || 500;
+  return res
+    .status(status)
+    .json(
+      status == 500
+        ? { error: "Internal", message: "Internal error" }
+        : err.error
+    );
 };
 
 module.exports = {

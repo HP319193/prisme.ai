@@ -19,6 +19,6 @@ export const unhandledRejectionHandler = (reason: string, p: Promise<any>) => {
 };
 
 export const uncaughtExceptionHandler = (err: Error) => {
-  logger.error(err);
+  logger.error({ msg: "Uncaught exception", err });
   // exitProcess();
 };

@@ -43,34 +43,9 @@ export const broker = new Broker<CallbackContext>(
   }
 );
 
-export async function initBroker() {
-  broker.on(EventType.Error, async (event, broker, { logger }) => {
-    logger.error(event);
-    return true;
-  });
-
-  broker.on(EventType.TriggeredWorkflow, async (event, broker, { logger }) => {
-    const done = Math.random() > 0.2;
-    const duration = Math.random() * 1000;
-    await new Promise((resolve) => setTimeout(resolve, duration));
-    console.log("rcv", event, " is ", done, " after ", duration);
-    return done;
-  });
-
-  broker.on(EventType.InstalledApp, async (event, broker, { logger }) => {
-    logger.info(event);
-    broker.send(EventType.ConfiguredApp, {
-      app: "configured app sent from installed app",
-      name: "",
-    });
-    return true;
-  });
-
-  broker.on(EventType.ConfiguredApp, async (event, broker, { logger }) => {
-    logger.info(event);
-    return true;
-  });
-}
+broker.onErrorCallback = (event, err) => {
+  logger.debug({ event, err });
+};
 
 export interface EventMetrics {
   pending: PendingEvents;

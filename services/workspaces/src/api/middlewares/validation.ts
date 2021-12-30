@@ -14,6 +14,7 @@ export const validationMiddleware = ({ ignorePaths = [] }: ValidationOpts) => {
     apiSpec: OPENAPI_FILEPATH,
     validateRequests: true,
     validateResponses: DEBUG,
+    validateSecurity: false,
     ignorePaths: !ignorePaths.length
       ? undefined
       : (path: string) => {

@@ -13,11 +13,7 @@ export const createWorkspace =
 export const getWorkspace =
   (logger: Logger, ctx: PrismeContext, storage: IStorage) =>
   async (workspaceId: string) => {
-    const workspace = await storage.get(workspaceId);
-    if (!workspace) {
-      return;
-    }
-    return workspace;
+    return await storage.get(workspaceId);
   };
 
 // Not implemented yet, awaiting authentification to check workspaces ownership
@@ -30,8 +26,8 @@ export const getWorkspaces =
 
 export const updateWorkspace =
   (logger: Logger, ctx: PrismeContext, storage: IStorage) =>
-  async (workspace: Prismeai.Workspace) => {
-    await storage.save(workspace.id || "", workspace);
+  async (workspaceId: string, workspace: Prismeai.Workspace) => {
+    await storage.save(workspaceId, workspace);
     return { ...workspace };
   };
 

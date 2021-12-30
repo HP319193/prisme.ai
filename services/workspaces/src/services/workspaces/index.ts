@@ -1,10 +1,11 @@
+import { WORKSPACES_STORAGE_TYPE } from "../../../config";
 import { PrismeContext } from "../../api/middlewares";
 import { Logger } from "../../logger";
 
 import * as crud from "./crud";
 import DSULStorage from "./DSULStorage";
 
-const storage = new DSULStorage();
+const storage = new DSULStorage(WORKSPACES_STORAGE_TYPE);
 
 export default (logger: Logger, ctx: PrismeContext) => {
   const moduleLogger = logger.child({ module: "workspaces" });

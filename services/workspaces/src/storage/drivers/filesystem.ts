@@ -1,14 +1,14 @@
 import { IStorage } from "../types";
 import { join, dirname } from "path";
 import fs from "fs";
-import { ErrorSeverity, PrismeError } from "../../errors";
+import { ErrorSeverity, ObjectNotFoundError, PrismeError } from "../../errors";
 
 export interface FilesystemOptions {
   dirpath?: string;
 }
 
 const defaultFilesystemOptions: Partial<FilesystemOptions> = {
-  dirpath: join(__dirname, "app_models"),
+  dirpath: join(__dirname, "../../../models"),
 };
 
 const mkdir = (path: string, recursive: boolean = true) => {
@@ -30,32 +30,26 @@ export default class Filesystem implements IStorage {
     return join(this.options.dirpath || "", key);
   }
 
-  public get(key: string) {
-    return new Promise((resolve: any, reject: any) => {
+  async get(key: string) {
+    return await new Promise((resolve: any, reject: any) => {
       fs.readFile(this.getPath(key), (err, data) => {
         if (err) {
-          throw new PrismeError(
-            "Failed to retrieve file",
-            err,
-            ErrorSeverity.Error
-          );
+          reject(new ObjectNotFoundError());
         }
         resolve(data);
       });
     });
   }
 
-  public save(key: string, data: any) {
+  async save(key: string, data: any) {
     const filepath = this.getPath(key);
     const parentDirectory = dirname(filepath);
     mkdir(parentDirectory);
-    return new Promise((resolve: any, reject: any) => {
+    return await new Promise((resolve: any, reject: any) => {
       fs.writeFile(filepath, data, (err) => {
         if (err) {
-          throw new PrismeError(
-            "Failed to save file",
-            err,
-            ErrorSeverity.Error
+          reject(
+            new PrismeError("Failed to save file", err, ErrorSeverity.Fatal)
           );
         }
         resolve({ success: true });
@@ -63,14 +57,16 @@ export default class Filesystem implements IStorage {
     });
   }
 
-  public delete(key: string) {
-    return new Promise((resolve: any, reject: any) => {
+  async delete(key: string) {
+    return await new Promise((resolve: any, reject: any) => {
       try {
         //@ts-ignore l'option recursive apparu avec node12 n'est visiblement pas encore typée !
         fs.rmdirSync(this.getPath(key), { recursive: true });
         resolve({ success: true });
       } catch (e) {
-        throw new PrismeError("Failed to delete file", e, ErrorSeverity.Error);
+        reject(
+          new PrismeError("Failed to delete file", e, ErrorSeverity.Fatal)
+        );
       }
     });
   }

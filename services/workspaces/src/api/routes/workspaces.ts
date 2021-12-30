@@ -25,9 +25,6 @@ async function getWorkspaceHandler(
 ) {
   const workspaces = services.workspaces(logger, context);
   const result = await workspaces.getWorkspace(workspaceId);
-  if (!result) {
-    res.sendStatus(404);
-  }
   res.send(result);
 }
 
@@ -35,12 +32,17 @@ async function updateWorkspaceHandler(
   {
     logger,
     context,
+    params: { workspaceId },
     body,
-  }: Request<any, any, PrismeaiAPI.CreateWorkspace.RequestBody>,
+  }: Request<
+    PrismeaiAPI.UpdateWorkspace.PathParameters,
+    any,
+    PrismeaiAPI.CreateWorkspace.RequestBody
+  >,
   res: Response<PrismeaiAPI.CreateWorkspace.Responses.$200>
 ) {
   const workspaces = services.workspaces(logger, context);
-  const result = await workspaces.updateWorkspace(body);
+  const result = await workspaces.updateWorkspace(workspaceId, body);
   res.send(result);
 }
 
@@ -73,7 +75,7 @@ async function getWorkspacesHandler(
 const app = express.Router();
 
 app.post(`/`, asyncRoute(createWorkspaceHandler));
-app.patch(`/`, asyncRoute(updateWorkspaceHandler));
+app.patch(`/:workspaceId`, asyncRoute(updateWorkspaceHandler));
 app.get(`/`, asyncRoute(getWorkspacesHandler));
 app.delete(`/:workspaceId`, asyncRoute(deleteWorkspaceHandler));
 app.get(`/:workspaceId`, asyncRoute(getWorkspaceHandler));

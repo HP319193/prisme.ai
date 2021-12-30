@@ -3,7 +3,7 @@ import http from "http";
 import { APP_NAME, PORT } from "../config";
 
 import { app } from "./api";
-import { broker, initBroker } from "./eda";
+import { broker } from "./eda";
 import { uncaughtExceptionHandler, unhandledRejectionHandler } from "./errors";
 import "@prisme.ai/types";
 
@@ -34,5 +34,3 @@ const httpServer = http.createServer(app);
 httpServer.listen(PORT, function () {
   console.log(`${APP_NAME} listening on ${PORT}.`);
 });
-
-initBroker();

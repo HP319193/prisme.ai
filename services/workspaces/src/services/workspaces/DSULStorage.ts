@@ -10,20 +10,20 @@ const getS3Key = (appId: string, version: string = "current") => {
 };
 
 export default class DSULStorage extends Storage implements IStorage {
-  public get(appId: string) {
-    return this.driver
-      .get(getS3Key(appId))
-      .then((data: string) => yaml.load(data));
+  async get(appId: string): Promise<Prismeai.Workspace> {
+    const dsul = await this.driver.get(getS3Key(appId));
+    return yaml.load(dsul) as Prismeai.Workspace;
   }
 
-  public save(appId: string, app: any) {
-    return this.driver.save(
+  async save(appId: string, app: Prismeai.Workspace) {
+    app.id = appId;
+    await this.driver.save(
       getS3Key(appId),
       yaml.dump(app, { skipInvalid: true })
     );
   }
 
-  public delete(appId: string) {
-    return this.driver.delete(getS3Key(appId, ""));
+  async delete(appId: string) {
+    await this.driver.delete(getS3Key(appId, ""));
   }
 }

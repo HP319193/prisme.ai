@@ -34,3 +34,9 @@ export class PrismeError extends Error implements PrismeError {
     };
   }
 }
+
+export class ObjectNotFoundError extends PrismeError {
+  constructor(msg: string = "Object not found", details?: any) {
+    super(msg, details);
+  }
+}

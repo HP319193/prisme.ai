@@ -1,6 +1,6 @@
 import { IStorage } from "../types";
 import AWS from "aws-sdk";
-import { ErrorSeverity, PrismeError } from "../../errors";
+import { ErrorSeverity, ObjectNotFoundError, PrismeError } from "../../errors";
 
 export interface S3Options {
   accessKeyId: string;
@@ -43,11 +43,7 @@ export default class S3Like implements IStorage {
         },
         function (err, data) {
           if (err) {
-            throw new PrismeError(
-              "Failed to retrieve file",
-              err,
-              ErrorSeverity.Error
-            );
+            reject(new ObjectNotFoundError());
           } else {
             resolve(data.Body);
           }
@@ -65,10 +61,12 @@ export default class S3Like implements IStorage {
         },
         (error, data) => {
           if (error) {
-            throw new PrismeError(
-              "Failed to list files before deletion",
-              error,
-              ErrorSeverity.Error
+            reject(
+              new PrismeError(
+                "Failed to list files before deletion",
+                error,
+                ErrorSeverity.Fatal
+              )
             );
           } else if (data && data.Contents) {
             Promise.all(
@@ -79,10 +77,12 @@ export default class S3Like implements IStorage {
                       { Key: Key as any, Bucket: this.options.bucket },
                       (err, data) => {
                         if (err) {
-                          throw new PrismeError(
-                            "Failed to delete file",
-                            err,
-                            ErrorSeverity.Error
+                          reject(
+                            new PrismeError(
+                              "Failed to delete file",
+                              err,
+                              ErrorSeverity.Fatal
+                            )
                           );
                         }
                         resolve(data);
@@ -103,10 +103,8 @@ export default class S3Like implements IStorage {
         },
         function (err, data) {
           if (err) {
-            throw new PrismeError(
-              "Failed to delete file",
-              err,
-              ErrorSeverity.Error
+            reject(
+              new PrismeError("Failed to delete file", err, ErrorSeverity.Fatal)
             );
           } else {
             resolve(data);
@@ -126,10 +124,8 @@ export default class S3Like implements IStorage {
     return new Promise((resolve: any, reject: any) => {
       this.client.putObject(params, function (err, data) {
         if (err) {
-          throw new PrismeError(
-            "Failed to save file",
-            err,
-            ErrorSeverity.Error
+          reject(
+            new PrismeError("Failed to save file", err, ErrorSeverity.Fatal)
           );
         } else {
           resolve(data);

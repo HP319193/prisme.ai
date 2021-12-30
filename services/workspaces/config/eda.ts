@@ -1,6 +1,6 @@
 import { OPENAPI_FILEPATH } from "./api";
 
-export const APP_NAME = process.env.APP_NAME || "prisme.ai-dsul-server";
+export const APP_NAME = process.env.APP_NAME || "prisme.ai-workspaces";
 
 export const EVENTS_OAS_PATH = process.env.EVENTS_OAS_PATH || OPENAPI_FILEPATH;
 
@@ -10,6 +10,7 @@ export const EVENTS_OAS_PATH = process.env.EVENTS_OAS_PATH || OPENAPI_FILEPATH;
 
 export const BROKER_DRIVER = process.env.BROKER_DRIVER || "redis";
 
-export const BROKER_HOST = process.env.BROKER_HOST || "redis://nas:6379/10";
+export const BROKER_HOST =
+  process.env.BROKER_HOST || "redis://localhost:6379/10";
 
 export const BROKER_PASSWORD = process.env.BROKER_PASSWORD;
