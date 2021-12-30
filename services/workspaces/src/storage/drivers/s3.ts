@@ -41,7 +41,7 @@ export default class S3Like implements IStorage {
           Key: key,
           Bucket: this.options.bucket,
         },
-        function (err, data) {
+        function (err: any, data: any) {
           if (err) {
             reject(new ObjectNotFoundError());
           } else {
@@ -59,7 +59,7 @@ export default class S3Like implements IStorage {
           Prefix: key,
           Bucket: this.options.bucket,
         },
-        (error, data) => {
+        (error: any, data: any) => {
           if (error) {
             reject(
               new PrismeError(
@@ -71,11 +71,11 @@ export default class S3Like implements IStorage {
           } else if (data && data.Contents) {
             Promise.all(
               data.Contents.map(
-                ({ Key }) =>
+                ({ Key }: any) =>
                   new Promise((resolve, reject) => {
                     this.client.deleteObject(
                       { Key: Key as any, Bucket: this.options.bucket },
-                      (err, data) => {
+                      (err: any, data: any) => {
                         if (err) {
                           reject(
                             new PrismeError(
@@ -101,7 +101,7 @@ export default class S3Like implements IStorage {
           Key: key,
           Bucket: this.options.bucket,
         },
-        function (err, data) {
+        function (err: any, data: any) {
           if (err) {
             reject(
               new PrismeError("Failed to delete file", err, ErrorSeverity.Fatal)
@@ -122,7 +122,7 @@ export default class S3Like implements IStorage {
       CacheControl: this.options.cacheControl,
     };
     return new Promise((resolve: any, reject: any) => {
-      this.client.putObject(params, function (err, data) {
+      this.client.putObject(params, function (err: any, data: any) {
         if (err) {
           reject(
             new PrismeError("Failed to save file", err, ErrorSeverity.Fatal)
