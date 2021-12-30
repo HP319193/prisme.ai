@@ -1,6 +1,6 @@
-import express, {Request, Response} from "express";
+import express, { Request, Response } from "express";
 import services from "../../services";
-import {asyncRoute} from "../utils/async";
+import { asyncRoute } from "../utils/async";
 
 async function createWorkspaceHandler(
   {
@@ -19,7 +19,7 @@ async function getWorkspaceHandler(
   {
     logger,
     context,
-    params: {workspaceId},
+    params: { workspaceId },
   }: Request<PrismeaiAPI.GetWorkspace.PathParameters>,
   res: Response<PrismeaiAPI.GetWorkspace.Responses.$200>
 ) {
@@ -28,17 +28,30 @@ async function getWorkspaceHandler(
   res.send(result);
 }
 
+async function updateWorkspaceHandler(
+  {
+    logger,
+    context,
+    body,
+  }: Request<any, any, PrismeaiAPI.CreateWorkspace.RequestBody>,
+  res: Response<PrismeaiAPI.CreateWorkspace.Responses.$200>
+) {
+  const workspaces = services.workspaces(logger, context);
+  const result = await workspaces.updateWorkspace(body);
+  res.send(result);
+}
+
 async function deleteWorkspaceHandler(
   {
     logger,
     context,
-    params: {workspaceId},
+    params: { workspaceId },
   }: Request<PrismeaiAPI.DeleteWorkspace.PathParameters>,
   res: Response<PrismeaiAPI.DeleteWorkspace.Responses.$200>
 ) {
   const workspaces = services.workspaces(logger, context);
   await workspaces.deleteWorkspace(workspaceId);
-  res.send({id: workspaceId});
+  res.send({ id: workspaceId });
 }
 
 async function getWorkspacesHandler(
@@ -57,6 +70,7 @@ async function getWorkspacesHandler(
 const app = express.Router();
 
 app.post(`/`, asyncRoute(createWorkspaceHandler));
+app.patch(`/`, asyncRoute(updateWorkspaceHandler));
 app.get(`/`, asyncRoute(getWorkspacesHandler));
 app.delete(`/:workspaceId`, asyncRoute(deleteWorkspaceHandler));
 app.get(`/:workspaceId`, asyncRoute(getWorkspaceHandler));
