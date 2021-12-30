@@ -1,5 +1,5 @@
 import pino from "pino";
-import { APP_NAME } from "../../config";
+import { APP_NAME, DEBUG } from "../../config";
 
 export type Logger = pino.Logger;
 
@@ -16,4 +16,5 @@ export const logger = pino({
   base: {
     app: APP_NAME,
   },
+  level: DEBUG ? LogLevel.Trace : LogLevel.Info,
 });

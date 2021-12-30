@@ -34,3 +34,18 @@ export class PrismeError extends Error implements PrismeError {
     };
   }
 }
+
+export class ObjectNotFoundError extends PrismeError {
+  constructor(msg: string = "Object not found", details?: any) {
+    super(msg, details);
+  }
+}
+
+export class TooManyCallError extends PrismeError {
+  constructor(
+    msg: string = "Reached maximum number of successive calls",
+    details: { limit: number }
+  ) {
+    super(msg, details);
+  }
+}

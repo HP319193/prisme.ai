@@ -12,7 +12,11 @@ import { Logger, logger } from "../logger";
 export enum EventType {
   Error = "error",
   TriggeredWorkflow = "runtime.workflow.triggered",
+  TriggeredWebhook = "runtime.webhook.triggered",
   UpdatedContexts = "runtime.contexts.updated",
+
+  CreatedAutomation = "workspaces.automation.created",
+  UpdatedAutomation = "workspaces.automation.updated",
 }
 export class CallbackContext {
   public logger: Logger;
@@ -34,17 +38,15 @@ export const broker = new Broker<CallbackContext>(
     },
     validator: {
       oasFilepath: EVENTS_OAS_PATH,
+      whitelistEventPrefixes: ["apps."],
     },
     CallbackContextCtor: CallbackContext,
   }
 );
 
-export async function initBroker() {
-  broker.on(EventType.Error, async (event, broker, { logger }) => {
-    logger.error(event);
-    return true;
-  });
-}
+broker.onErrorCallback = (event, err) => {
+  logger.debug({ event, err });
+};
 
 export interface EventMetrics {
   pending: PendingEvents;

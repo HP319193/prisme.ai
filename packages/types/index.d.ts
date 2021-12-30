@@ -1119,6 +1119,29 @@ declare namespace Prismeai {
          */
         do: string;
     };
+    export interface TriggeredWebhook {
+        /**
+         * example:
+         * runtime.webhook.triggered
+         */
+        type: "runtime.webhook.triggered";
+        payload: {
+            workspaceId: string;
+            automationId: string;
+            originalUrl: string;
+            /**
+             * example:
+             * post
+             */
+            method: string;
+            headers: {
+                [key: string]: any;
+            };
+            payload: {
+                [key: string]: any;
+            };
+        };
+    }
     export interface TriggeredWorkflow {
         /**
          * example:
