@@ -35,6 +35,7 @@ export const getWorkspaces =
 export const updateWorkspace =
   (logger: Logger, broker: Broker, ctx: PrismeContext, storage: IStorage) =>
   async (workspaceId: string, workspace: Prismeai.Workspace) => {
+    await getWorkspace(logger, ctx, storage)(workspaceId);
     await storage.save(workspaceId, workspace);
     broker.send<Prismeai.UpdatedWorkspace["payload"]>(
       EventType.UpdatedWorkspace,
@@ -50,6 +51,7 @@ export const deleteWorkspace =
   async (
     workspaceId: PrismeaiAPI.DeleteWorkspace.PathParameters["workspaceId"]
   ) => {
+    await getWorkspace(logger, ctx, storage)(workspaceId);
     await storage.delete(workspaceId);
     broker.send<Prismeai.DeletedWorkspace["payload"]>(
       EventType.DeletedWorkspace,
