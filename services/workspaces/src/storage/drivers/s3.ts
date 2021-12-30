@@ -1,5 +1,6 @@
 import { Storage } from "../types";
 import AWS from "aws-sdk";
+import { ErrorSeverity, PrismeError } from "../../errors";
 
 export interface S3Options {
   accessKeyId: string;
@@ -42,7 +43,11 @@ export default class S3Like implements Storage {
         },
         function (err, data) {
           if (err) {
-            reject(err);
+            throw new PrismeError(
+              "Failed to retrieve file",
+              err,
+              ErrorSeverity.Error
+            );
           } else {
             resolve(data.Body);
           }
@@ -60,7 +65,11 @@ export default class S3Like implements Storage {
         },
         (error, data) => {
           if (error) {
-            reject(error);
+            throw new PrismeError(
+              "Failed to list files before deletion",
+              error,
+              ErrorSeverity.Error
+            );
           } else if (data && data.Contents) {
             Promise.all(
               data.Contents.map(
@@ -70,7 +79,11 @@ export default class S3Like implements Storage {
                       { Key: Key as any, Bucket: this.options.bucket },
                       (err, data) => {
                         if (err) {
-                          reject(err);
+                          throw new PrismeError(
+                            "Failed to delete file",
+                            err,
+                            ErrorSeverity.Error
+                          );
                         }
                         resolve(data);
                       }
@@ -90,7 +103,11 @@ export default class S3Like implements Storage {
         },
         function (err, data) {
           if (err) {
-            reject(err);
+            throw new PrismeError(
+              "Failed to delete file",
+              err,
+              ErrorSeverity.Error
+            );
           } else {
             resolve(data);
           }
@@ -109,7 +126,11 @@ export default class S3Like implements Storage {
     return new Promise((resolve: any, reject: any) => {
       this.client.putObject(params, function (err, data) {
         if (err) {
-          reject(err);
+          throw new PrismeError(
+            "Failed to save file",
+            err,
+            ErrorSeverity.Error
+          );
         } else {
           resolve(data);
         }

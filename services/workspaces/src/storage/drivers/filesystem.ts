@@ -1,6 +1,7 @@
 import { Storage } from "../types";
 import { join, dirname } from "path";
 import fs from "fs";
+import { ErrorSeverity, PrismeError } from "../../errors";
 
 export interface FilesystemOptions {
   dirpath?: string;
@@ -33,7 +34,11 @@ export default class Filesystem implements Storage {
     return new Promise((resolve: any, reject: any) => {
       fs.readFile(this.getPath(key), (err, data) => {
         if (err) {
-          reject(err);
+          throw new PrismeError(
+            "Failed to retrieve file",
+            err,
+            ErrorSeverity.Error
+          );
         }
         resolve(data);
       });
@@ -47,7 +52,11 @@ export default class Filesystem implements Storage {
     return new Promise((resolve: any, reject: any) => {
       fs.writeFile(filepath, data, (err) => {
         if (err) {
-          reject(err);
+          throw new PrismeError(
+            "Failed to save file",
+            err,
+            ErrorSeverity.Error
+          );
         }
         resolve({ success: true });
       });
@@ -61,7 +70,7 @@ export default class Filesystem implements Storage {
         fs.rmdirSync(this.getPath(key), { recursive: true });
         resolve({ success: true });
       } catch (e) {
-        reject(e);
+        throw new PrismeError("Failed to delete file", e, ErrorSeverity.Error);
       }
     });
   }
