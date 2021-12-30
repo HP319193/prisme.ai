@@ -43,8 +43,9 @@ export const updateWorkspace =
 
 export const deleteWorkspace =
   (logger: Logger, ctx: PrismeContext, storage: Storage) =>
-    async (workspaceId: PrismeaiAPI.DeleteWorkspace.PathParameters["workspaceId"]) => {
-      logger.info("Some logs from deleteWorkspaces");
-      await storage.delete(workspaceId);
-      return workspaceId;
-    };
+  async (
+    workspaceId: PrismeaiAPI.DeleteWorkspace.PathParameters["workspaceId"]
+  ) => {
+    await storage.delete(workspaceId);
+    return { id: workspaceId };
+  };
