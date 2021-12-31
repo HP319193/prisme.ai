@@ -1,10 +1,16 @@
-const NEXT_PUBLIC_ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "";
+import getConfig from "next/config";
+
+const { publicRuntimeConfig } = getConfig();
+
+const endpoint =
+  `${publicRuntimeConfig.API_HOST}/${publicRuntimeConfig.ENDPOINT}` || "";
+
+console.log("point", publicRuntimeConfig);
 
 export const generateEndpoint = (workspaceId: string, slug: string) =>
-  NEXT_PUBLIC_ENDPOINT.replace(/\{\{workspaceId\}\}/, workspaceId).replace(
-    /\{\{slug\}\}/,
-    slug
-  );
+  endpoint
+    .replace(/\{\{workspaceId\}\}/, workspaceId)
+    .replace(/\{\{slug\}\}/, slug);
 
 const urls = {
   generateEndpoint,

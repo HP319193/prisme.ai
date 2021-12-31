@@ -231,7 +231,17 @@ triggers:
     await true;
   });
   expect(root.root.findByType(CodeEditor).props.annotations).toEqual([
-    { row: 5, column: 0, text: "/api/workspace/42/hello", type: "endpoint" },
-    { row: 8, column: 0, text: "/api/workspace/42/yo", type: "endpoint" },
+    {
+      row: 5,
+      column: 0,
+      text: "http://localhost:3000/api/workspace/42/hello",
+      type: "endpoint",
+    },
+    {
+      row: 8,
+      column: 0,
+      text: "http://localhost:3000/api/workspace/42/yo",
+      type: "endpoint",
+    },
   ]);
 });

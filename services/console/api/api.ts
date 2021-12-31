@@ -1,5 +1,8 @@
+import getConfig from "next/config";
 import Fetcher from "./fetcher";
 import { Workspace } from "./types";
+
+const { publicRuntimeConfig } = getConfig();
 
 export class Api extends Fetcher {
   async me() {
@@ -39,4 +42,4 @@ export class Api extends Fetcher {
   }
 }
 
-export default new Api(process.env.NEXT_PUBLIC_API_HOST || "");
+export default new Api(publicRuntimeConfig.API_HOST || "");
