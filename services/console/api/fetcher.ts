@@ -10,6 +10,7 @@ const headersAsObject = (headers: Headers) =>
     }),
     {}
   );
+
 export class Fetcher {
   private host: string;
 
@@ -36,7 +37,10 @@ export class Fetcher {
     }
     const res = await global.fetch(`${this.host}${url}`, {
       ...options,
-      headers,
+      headers: {
+        ...headers,
+        "Content-Type": "application/json",
+      },
     });
 
     if (!res.ok) {
@@ -58,23 +62,27 @@ export class Fetcher {
     });
     return response;
   }
+
   async get(url: string) {
     return this._fetch(url, {
       method: "GET",
     });
   }
+
   async post(url: string, body?: Record<string, any>) {
     return this._fetch(url, {
       method: "POST",
       body: body && JSON.stringify(body),
     });
   }
+
   async patch(url: string, body: Record<string, any>) {
     return this._fetch(url, {
       method: "PATCH",
       body: JSON.stringify(body),
     });
   }
+
   async delete(url: string, id: string) {
     return this._fetch(url, {
       method: "DELETE",
