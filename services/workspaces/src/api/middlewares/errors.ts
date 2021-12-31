@@ -34,9 +34,9 @@ export const errorDecorator = (
       (err as PrismeError).severity === ErrorSeverity.Fatal);
 
   if (serverError) {
-    (req.logger || logger).fatal(err);
+    (req.logger || logger).fatal({ ...req.context, err });
   } else {
-    (req.logger || logger).error(err);
+    (req.logger || logger).error({ ...req.context, err });
   }
 
   if (req.broker) {

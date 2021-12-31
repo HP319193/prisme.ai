@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { syscfg } from "../config";
 import { logger } from "../logger";
 import { v4 as uuid } from "uuid";
+import { broker } from "../eda";
 
 export interface HTTPContext {
   hostname: string;
@@ -9,6 +10,8 @@ export interface HTTPContext {
   method: string;
   ip: string;
   path: string;
+  requestLength: number;
+  userAgent: string;
 }
 
 export interface PrismeContext {
@@ -27,10 +30,13 @@ export function requestDecorator(
   const workspaceIdPattern = /^\/v2\/workspaces\/([\w-]+)/;
   const workspaceId = req.path.match(workspaceIdPattern)?.[1];
 
+  const userId = req.user?.id as string;
+  const correlationId = (req.header(syscfg.CORRELATION_ID_HEADER) ||
+    uuid()) as string;
+
   const context: PrismeContext = {
-    correlationId: (req.header(syscfg.CORRELATION_ID_HEADER) ||
-      uuid()) as string,
-    userId: req.header(syscfg.USER_ID_HEADER) as any as string,
+    correlationId,
+    userId,
     workspaceId: workspaceId,
     http: {
       originalUrl: req.originalUrl,
@@ -41,13 +47,18 @@ export function requestDecorator(
         req.ip,
       path: req.path,
       hostname: req.hostname,
+      requestLength: req.socket.bytesRead,
+      userAgent: req.get("User-Agent") as string,
     },
   };
 
   req.context = context;
   req.logger = logger.child(context);
+  req.broker = broker.child(context);
 
-  res.set(syscfg.CORRELATION_ID_HEADER, context.correlationId);
+  res.set(syscfg.CORRELATION_ID_HEADER, correlationId);
+  req.headers[syscfg.CORRELATION_ID_HEADER] = correlationId;
+  req.headers[syscfg.USER_ID_HEADER] = userId;
 
   next();
 }

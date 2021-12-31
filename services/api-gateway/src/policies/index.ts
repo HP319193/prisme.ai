@@ -2,18 +2,18 @@ import { RequestHandler } from "express";
 import { GatewayConfig } from "../config";
 
 import * as proxy from "./proxy";
-import * as prismeAuth from "./prismeAuth";
+import * as authentication from "./authentication";
 import * as blacklist from "./blacklist";
 
 export enum PolicyType {
   Proxy = "proxy",
-  PrismeAuth = "prismeAuth",
+  PrismeAuth = "authentication",
   Blacklist = "blacklist",
 }
 
 export interface Policies {
   [PolicyType.Proxy]: proxy.Params;
-  [PolicyType.PrismeAuth]: prismeAuth.Params;
+  [PolicyType.PrismeAuth]: authentication.Params;
   [PolicyType.Blacklist]: blacklist.Params;
 }
 
@@ -21,7 +21,7 @@ export const policiesValidatorSchema: {
   [k in PolicyType]: any;
 } = {
   [PolicyType.Proxy]: proxy.validatorSchema,
-  [PolicyType.PrismeAuth]: prismeAuth.validatorSchema,
+  [PolicyType.PrismeAuth]: authentication.validatorSchema,
   [PolicyType.Blacklist]: blacklist.validatorSchema,
 };
 
@@ -32,7 +32,7 @@ const policies: {
   ) => Promise<RequestHandler>;
 } = {
   [PolicyType.Proxy]: proxy.init,
-  [PolicyType.PrismeAuth]: prismeAuth.init,
+  [PolicyType.PrismeAuth]: authentication.init,
   [PolicyType.Blacklist]: blacklist.init,
 };
 

@@ -13,7 +13,6 @@ export default async function init(
   const endpointToPipeline = gtwcfg.endpointToPipeline;
   await Promise.all(
     Object.entries(endpointToPipeline).map(async ([endpointName, pipeline]) => {
-      const router = express.Router();
       const endpoint = gtwcfg.endpoint(endpointName);
       const mountPaths = endpoint.pathRegexp
         ? [RegExp(endpoint.pathRegexp)]
@@ -28,16 +27,14 @@ export default async function init(
       mountPaths.forEach((path: string | RegExp) => {
         if (endpoint.methods) {
           endpoint.methods.forEach((m: any) => {
-            (router as any)[m.trim().toLowerCase()](path, ...handlers);
+            (app as any)[m.trim().toLowerCase()](path, ...handlers);
             log.info("Init endpoint %s %s", m, path);
           });
         } else {
           log.info("Init endpoint %s", path);
-          router.all(path, ...handlers);
+          app.all(path, ...handlers);
         }
       });
-
-      app.use(router);
     })
   );
 }
