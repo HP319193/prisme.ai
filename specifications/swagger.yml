@@ -45,27 +45,16 @@ paths:
       responses:
         "200":
           description: Success Response
-          headers:
-            X-Prismeai-Session-Token:
-              schema:
-                type: string
-              description: Created session token
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-        "404":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ObjectNotFoundError"
-        "400":
-          description: Bad parameters
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/AuthenticationError"
 
   /v2/login/anonymous:
     post:
@@ -78,33 +67,10 @@ paths:
       responses:
         "200":
           description: Success Response
-          headers:
-            X-Prismeai-Session-Token:
-              schema:
-                type: string
-              description: Created session token
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-        "404":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ObjectNotFoundError"
-        "403":
-          description: Bad permissions
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
 
   /v2/me:
     get:
@@ -120,24 +86,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-        "404":
-          description: Object not found
+        "401":
+          description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ObjectNotFoundError"
-        "403":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/AuthenticationError"
 
   /v2/contacts/{contactId}:
     get:
@@ -166,17 +120,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/ForbiddenError"
 
   /v2/signup:
     post:
@@ -213,24 +161,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-        "404":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ObjectNotFoundError"
-        "403":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadPermissionsError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/BadParametersError"
+
+  /v2/logout:
+    post:
+      description: Log out
+      operationId: logout
+      tags:
+        - API Gateway
+      responses:
+        "200":
+          description: Success Response
 
   ############################################# prisme.ai-events
   /v2/workspaces/{workspaceId}/events:
@@ -301,11 +247,18 @@ paths:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/BadParametersError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
+
     post:
       description: Emit a new event in this workspace
       operationId: sendConversationEvent
@@ -342,14 +295,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
-        "403":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
+                $ref: "#/components/schemas/AuthenticationError"
+        "403":
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
@@ -399,17 +358,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/ForbiddenError"
 
   ############################################# workspaces
   ## workspaces
@@ -445,24 +398,19 @@ paths:
                       type: string
                     name:
                       type: string
-        "404":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ObjectNotFoundError"
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/ForbiddenError"
+
     post:
       description: Create a new workspace
       operationId: createWorkspace
@@ -482,20 +430,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Workspace"
-        "404":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ObjectNotFoundError"
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
+                $ref: "#/components/schemas/ForbiddenError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
@@ -527,18 +475,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/ForbiddenError"
 
     patch:
       description: Update a workspace
@@ -572,14 +520,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
-        "403":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
+                $ref: "#/components/schemas/AuthenticationError"
+        "403":
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
@@ -615,18 +569,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/ForbiddenError"
 
   ## automations
   /v2/workspaces/{workspaceId}/automations:
@@ -662,14 +616,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
-        "403":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
+                $ref: "#/components/schemas/AuthenticationError"
+        "403":
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
@@ -707,18 +667,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/ForbiddenError"
 
     patch:
       description: Update an automation
@@ -758,14 +718,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
-        "403":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
+                $ref: "#/components/schemas/AuthenticationError"
+        "403":
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
@@ -807,18 +773,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/ForbiddenError"
 
   ## apps
   /v2/apps:
@@ -852,20 +818,20 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/App"
-        "404":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ObjectNotFoundError"
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
+                $ref: "#/components/schemas/ForbiddenError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
@@ -890,20 +856,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/App"
-        "404":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ObjectNotFoundError"
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
+                $ref: "#/components/schemas/ForbiddenError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
@@ -935,18 +901,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/ForbiddenError"
 
     patch:
       description: Update an app
@@ -980,14 +946,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
-        "403":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
+                $ref: "#/components/schemas/AuthenticationError"
+        "403":
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
@@ -1023,18 +995,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/ForbiddenError"
 
   ## installed apps
   /v2/workspaces/{workspaceId}/apps:
@@ -1070,14 +1042,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
-        "403":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
+                $ref: "#/components/schemas/AuthenticationError"
+        "403":
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
@@ -1115,18 +1093,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/ForbiddenError"
 
     patch:
       description: Configure an app
@@ -1166,14 +1144,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
-        "403":
-          description: Object not found
+        "401":
+          description: AuthenticationError
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
+                $ref: "#/components/schemas/AuthenticationError"
+        "403":
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "400":
-          description: Object not found
+          description: Bad parameters
           content:
             application/json:
               schema:
@@ -1215,18 +1199,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ObjectNotFoundError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
         "403":
-          description: Object not found
+          description: Bad permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadPermissionsError"
-        "400":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadParametersError"
+                $ref: "#/components/schemas/ForbiddenError"
 
   ## End of APIs
 
@@ -1234,8 +1218,8 @@ components:
   securitySchemes:
     BearerAuth:
       type: apiKey
-      in: header
-      name: X-Prismeai-Session-Token
+      in: cookie
+      name: connect.sid
     ApiKeyAuth:
       type: apiKey
       in: header
@@ -1253,7 +1237,6 @@ components:
     Contact:
       allOf:
         - required:
-            - role
             - firstName
           type: object
           properties:
@@ -1281,6 +1264,7 @@ components:
               properties:
                 facebook:
                   type: object
+              additionalProperties: true
         - $ref: "#/components/schemas/Contact"
 
     App:
@@ -1802,12 +1786,10 @@ components:
           type: object
           required:
             - ip
-            - attempt
+            - username
           properties:
             ip:
               type: string
-            attempt:
-              type: number
             username:
               type: string
 
@@ -1826,13 +1808,14 @@ components:
           type: object
           required:
             - ip
-            - attempt
+            - username
+            - id
           properties:
             ip:
               type: string
-            attempt:
-              type: number
             username:
+              type: string
+            id:
               type: string
 
     ########################## Workspaces events ##########################
@@ -2071,12 +2054,23 @@ components:
           items:
             type: object
 
-    BadPermissionsError:
+    AuthenticationError:
+      type: object
+      properties:
+        error:
+            type: string
+            example: AuthenticationError
+        message:
+            type: string
+            example: Unauthenticated
+
+
+    ForbiddenError:
       type: object
       properties:
         error:
           type: string
-          example: BadPermissions
+          example: ForbiddenError
         message:
           type: string
-          example: Insufficient permissions
+          example: Forbidden

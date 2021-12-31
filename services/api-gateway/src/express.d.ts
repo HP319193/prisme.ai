@@ -3,5 +3,7 @@ declare namespace Express {
     context: PrismeContext;
     logger: Logger;
     service: string;
+    user?: Prismeai.User;
+    broker: Broker;
   }
 }

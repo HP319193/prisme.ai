@@ -24,7 +24,24 @@ export class ForbiddenError extends PrismeError {
 }
 
 export class AuthenticationError extends PrismeError {
+  constructor(msg = "Unauthenticated") {
+    super(msg, undefined, 401);
+  }
+}
+export class RequestValidationError extends PrismeError {
+  constructor(msg: string, details: any[] = []) {
+    super(msg, details, 400);
+  }
+}
+
+export class NotFoundError extends PrismeError {
   constructor() {
-    super("Missing or invalid token", undefined, 401);
+    super("Route not found", undefined, 404);
+  }
+}
+
+export class AlreadyUsed extends PrismeError {
+  constructor(type: string) {
+    super(`${type} already in use`, undefined, 400);
   }
 }

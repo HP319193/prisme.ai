@@ -108,8 +108,7 @@ declare namespace Prismeai {
         type: "gateway.login.failed";
         payload: {
             ip: string;
-            attempt: number;
-            username?: string;
+            username: string;
         };
     } | {
         /**
@@ -163,8 +162,8 @@ declare namespace Prismeai {
         type: "gateway.login.succeeded";
         payload: {
             ip: string;
-            attempt: number;
-            username?: string;
+            username: string;
+            id: string;
         };
     } | {
         /**
@@ -750,6 +749,18 @@ declare namespace Prismeai {
          */
         id?: string;
     }
+    export interface AuthenticationError {
+        /**
+         * example:
+         * AuthenticationError
+         */
+        error?: string;
+        /**
+         * example:
+         * Unauthenticated
+         */
+        message?: string;
+    }
     /**
      * Full description at (TODO swagger url)
      */
@@ -772,18 +783,6 @@ declare namespace Prismeai {
         details?: {
             [key: string]: any;
         }[];
-    }
-    export interface BadPermissionsError {
-        /**
-         * example:
-         * BadPermissions
-         */
-        error?: string;
-        /**
-         * example:
-         * Insufficient permissions
-         */
-        message?: string;
     }
     export interface BaseEventResponse {
         /**
@@ -953,9 +952,20 @@ declare namespace Prismeai {
         type: "gateway.login.failed";
         payload: {
             ip: string;
-            attempt: number;
-            username?: string;
+            username: string;
         };
+    }
+    export interface ForbiddenError {
+        /**
+         * example:
+         * ForbiddenError
+         */
+        error?: string;
+        /**
+         * example:
+         * Forbidden
+         */
+        message?: string;
     }
     export interface GenericError {
         /**
@@ -989,7 +999,9 @@ declare namespace Prismeai {
         type: "workspaces.app.installed";
         payload: AppInstance;
     }
-    export type Instruction = Emit | Wait | Set | Delete | Conditions | Repeat | All | Break;
+    export type Instruction = Emit | Wait | Set | Delete | Conditions | Repeat | All | Break | {
+        [name: string]: any;
+    };
     export type InstructionList = Instruction[];
     export type LocalizedText = {
         [name: string]: string;
@@ -1043,8 +1055,8 @@ declare namespace Prismeai {
         type: "gateway.login.succeeded";
         payload: {
             ip: string;
-            attempt: number;
-            username?: string;
+            username: string;
+            id: string;
         };
     }
     export type Trigger = {
@@ -1087,6 +1099,29 @@ declare namespace Prismeai {
          */
         dates: string[];
         endpoint?: boolean | string;
+        /**
+         * Target workflow
+         * example:
+         * MyWorkflow
+         */
+        do: string;
+    } | {
+        /**
+         * example:
+         * [
+         *   "prismeaiMessenger.event"
+         * ]
+         */
+        events?: string[];
+        /**
+         * example:
+         * [
+         *   "2021-12-25T00:00",
+         *   "* * 1 * *"
+         * ]
+         */
+        dates?: string[];
+        endpoint: boolean | string;
         /**
          * Target workflow
          * example:
@@ -1154,6 +1189,7 @@ declare namespace Prismeai {
          */
         email?: string;
         authData?: {
+            [name: string]: any;
             facebook?: {
                 [key: string]: any;
             };
@@ -1254,9 +1290,6 @@ declare namespace PrismeaiAPI {
     namespace AnonymousAuth {
         namespace Responses {
             export type $200 = Prismeai.User;
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
-            export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
     namespace AutomationWebhook {
@@ -1275,8 +1308,7 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.User;
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1293,7 +1325,8 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = Prismeai.AppInstance;
             export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1302,8 +1335,8 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = Prismeai.App;
             export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
-            export type $404 = Prismeai.ObjectNotFoundError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
         }
     }
     namespace CreateAutomation {
@@ -1317,7 +1350,8 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = /* Full description at (TODO swagger url) */ Prismeai.Automation;
             export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1326,8 +1360,8 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = Prismeai.Workspace;
             export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
-            export type $404 = Prismeai.ObjectNotFoundError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
         }
     }
     namespace CredentialsAuth {
@@ -1337,8 +1371,7 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.User;
-            export type $400 = Prismeai.BadParametersError;
-            export type $404 = Prismeai.ObjectNotFoundError;
+            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace DeleteApp {
@@ -1352,8 +1385,8 @@ declare namespace PrismeaiAPI {
             export interface $200 {
                 id: string;
             }
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1370,8 +1403,8 @@ declare namespace PrismeaiAPI {
             export interface $200 {
                 id: string;
             }
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1386,8 +1419,8 @@ declare namespace PrismeaiAPI {
             export interface $200 {
                 id: string;
             }
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1419,6 +1452,7 @@ declare namespace PrismeaiAPI {
                 };
             }
             export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1431,8 +1465,8 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.App;
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1447,8 +1481,8 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = /* Full description at (TODO swagger url) */ Prismeai.Automation;
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1463,17 +1497,15 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.AppInstance;
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
     namespace GetMyProfile {
         namespace Responses {
             export type $200 = Prismeai.User;
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
-            export type $404 = Prismeai.ObjectNotFoundError;
+            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace GetThisContact {
@@ -1485,8 +1517,7 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.Contact;
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1499,8 +1530,8 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.Workspace;
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1518,9 +1549,8 @@ declare namespace PrismeaiAPI {
                 id?: string;
                 name?: string;
             }[];
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
-            export type $404 = Prismeai.ObjectNotFoundError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
         }
     }
     namespace InstallApp {
@@ -1534,8 +1564,15 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = Prismeai.AppInstance;
             export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace Logout {
+        namespace Responses {
+            export interface $200 {
+            }
         }
     }
     namespace SearchApps {
@@ -1552,8 +1589,8 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = Prismeai.App[];
             export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
-            export type $404 = Prismeai.ObjectNotFoundError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
         }
     }
     namespace SendConversationEvent {
@@ -1569,7 +1606,8 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = Prismeai.AllEventResponses;
             export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1583,8 +1621,6 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = Prismeai.User;
             export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
-            export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
     namespace UninstallApp {
@@ -1600,8 +1636,8 @@ declare namespace PrismeaiAPI {
             export interface $200 {
                 id: string;
             }
-            export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1616,7 +1652,8 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = Prismeai.App;
             export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1633,7 +1670,8 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = /* Full description at (TODO swagger url) */ Prismeai.Automation;
             export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1648,7 +1686,8 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = Prismeai.Workspace;
             export type $400 = Prismeai.BadParametersError;
-            export type $403 = Prismeai.BadPermissionsError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }

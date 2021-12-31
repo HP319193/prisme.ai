@@ -21,7 +21,7 @@ export default function (
         message: "Internal server error",
         success: false,
       });
-      logger.error(err);
+      logger.error({ ...req.context, err });
     }
   } else {
     next();

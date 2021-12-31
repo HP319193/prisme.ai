@@ -12,9 +12,9 @@ export default (req: Request, res: Response, next: NextFunction) => {
       service: req.service,
       http: {
         ...(req.context?.http || {}),
-        response_code: res.statusCode,
-        response_length: res.getHeader("content-length"),
-        response_duration: responseTime,
+        responseCode: res.statusCode,
+        responseLength: res.getHeader("content-length"),
+        responseDuration: responseTime,
       },
     };
 
