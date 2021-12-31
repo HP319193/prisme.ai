@@ -57,8 +57,13 @@ export function requestDecorator(
   req.broker = broker.child(context);
 
   res.set(syscfg.CORRELATION_ID_HEADER, correlationId);
-  req.headers[syscfg.CORRELATION_ID_HEADER] = correlationId;
-  req.headers[syscfg.USER_ID_HEADER] = userId;
+  if (correlationId) {
+    req.headers[syscfg.CORRELATION_ID_HEADER] = correlationId;
+  }
+
+  if (userId) {
+    req.headers[syscfg.USER_ID_HEADER] = userId;
+  }
 
   next();
 }
