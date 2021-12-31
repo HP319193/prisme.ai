@@ -16,6 +16,7 @@ export async function init(app: Application) {
   app.use(cookieParser());
   const redisClient = redis.createClient({
     url: storage.Sessions.host,
+    password: storage.Sessions.password,
     ...storage.Sessions.driverOptions,
   });
 

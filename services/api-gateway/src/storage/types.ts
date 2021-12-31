@@ -5,6 +5,7 @@ export type SavedData = Data & { id: string };
 export interface StorageOptions {
   driver: string;
   host: string;
+  password?: string;
   driverOptions: any;
 }
 

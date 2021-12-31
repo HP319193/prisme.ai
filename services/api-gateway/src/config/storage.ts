@@ -11,6 +11,7 @@ export default <Record<string, StorageOptions>>{
   Sessions: {
     driver: "redis",
     host: process.env.SESSIONS_STORAGE_HOST || "redis://localhost:6379/0",
+    password: process.env.SESSIONS_STORAGE_PASSWORD,
     driverOptions: extractOptsFromEnv("SESSIONS_STORAGE_OPT_"),
   },
 };
