@@ -1,7 +1,7 @@
 import { Broker } from "@prisme.ai/broker";
 import { Logger } from "../../../../logger";
 import { Workspace } from "../../../workspaces";
-import { Contexts } from "../../contexts";
+import { ContextsManager } from "../../contexts";
 import { emit } from "./emit";
 
 export enum InstructionType {

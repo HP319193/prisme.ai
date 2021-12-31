@@ -184,10 +184,10 @@ runtime_build_docker:
   services:
     - docker:stable-dind
   only:
-    # refs:
-    #   # - tags
-    #   - main
-    #   - master
+    refs:
+      # - tags
+      - main
+      - master
     changes:
       - "services/runtime/*"
   before_script:
@@ -198,10 +198,10 @@ runtime_build_docker:
 runtime_deploy:
   extends: .deploy_k8s
   only:
-    # refs:
-    #   # - tags
-    #   - main
-    #   - master
+    refs:
+      # - tags
+      - main
+      - master
     changes:
       - "services/runtime/*"
   before_script:

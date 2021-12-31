@@ -1,20 +1,19 @@
 "use strict";
 import http from "http";
-import { APP_NAME, CONTEXTS_CACHE, PORT } from "../config";
+import {
+  APP_NAME,
+  CONTEXTS_CACHE,
+  PORT,
+  WORKSPACES_STORAGE_TYPE,
+} from "../config";
 
 import { app } from "./api";
 import { broker } from "./eda";
-import { uncaughtExceptionHandler, unhandledRejectionHandler } from "./errors";
+import { uncaughtExceptionHandler } from "./errors";
 import "@prisme.ai/types";
 import Runtime from "./services/runtime";
 import { Workspaces } from "./services/workspaces";
 import { buildCache } from "./cache";
-
-/**
- * The 'unhandledRejection' event is emitted whenever a Promise is rejected and
- * no error handler is attached to the promise.
- */
-process.on("unhandledRejection", unhandledRejectionHandler);
 
 /**
  * The 'uncaughtException' event is emitted when an uncaught JavaScript exception
@@ -39,7 +38,7 @@ const httpServer = http.createServer(app);
   await broker.ready;
   const cache = await buildCache(CONTEXTS_CACHE);
 
-  const workspaces = new Workspaces(broker);
+  const workspaces = new Workspaces(WORKSPACES_STORAGE_TYPE, broker);
   const runtime = new Runtime(broker, workspaces, cache);
 
   runtime.start();
