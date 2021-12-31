@@ -1129,6 +1129,29 @@ declare namespace Prismeai {
          */
         do: string;
     };
+    export interface TriggeredWebhook {
+        /**
+         * example:
+         * runtime.webhook.triggered
+         */
+        type: "runtime.webhook.triggered";
+        payload: {
+            workspaceId: string;
+            automationId: string;
+            originalUrl: string;
+            /**
+             * example:
+             * post
+             */
+            method: string;
+            headers: {
+                [key: string]: any;
+            };
+            payload: {
+                [key: string]: any;
+            };
+        };
+    }
     export interface TriggeredWorkflow {
         /**
          * example:
@@ -1307,7 +1330,8 @@ declare namespace PrismeaiAPI {
         export interface RequestBody {
         }
         namespace Responses {
-            export type $200 = Prismeai.User;
+            export interface $200 {
+            }
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }

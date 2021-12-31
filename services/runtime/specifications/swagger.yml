@@ -1996,41 +1996,6 @@ components:
             payload:
               type: object
 
-    TriggeredWebhook:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.webhook.triggered
-          enum:
-            - runtime.webhook.triggered
-        payload:
-          type: object
-          required:
-            - workspaceId
-            - automationId
-            - originalUrl
-            - method
-            - headers
-            - payload
-          properties:
-            workspaceId:
-              type: string
-            automationId:
-              type: string
-            originalUrl:
-              type: string
-            method:
-              type: string
-              example: post
-            headers:
-              type: object
-            payload:
-              type: object
-
     UpdatedContexts:
       type: object
       required:
