@@ -6,7 +6,7 @@ const sendEvent =
   (logger: Logger, ctx: PrismeContext, broker: Broker) =>
   async (event: Pick<PrismeEvent, "type" | "payload">) => {
     logger.info("Send event ", event.type);
-    return await broker.send(event.type, event.payload);
+    return await broker.send(event.type, event.payload || {});
   };
 
 export { sendEvent };
