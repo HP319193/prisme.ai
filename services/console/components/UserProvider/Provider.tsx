@@ -18,27 +18,30 @@ export const UserProvider: FC = ({ children }) => {
   }, []);
 
   //@ts-ignore
-  const signin: UserContext["signin"] = useCallback(async (email, password) => {
-    setLoading(true);
-    try {
-      const {
-        headers: { ["x-prismeai-session-token"]: token },
-        ...user
-      } = await api.signin(email, password);
-      api.token = token;
-      setError(undefined);
-      //@ts-ignore
-      setUser(user);
-      setLoading(false);
-      return user;
-    } catch (e) {
-      api.token = null;
-      setUser(null);
-      setLoading(false);
-      setError(e as ApiError);
-      return null;
-    }
-  }, []);
+  const signin: UserContext["signin"] = useCallback(
+    async (username, password) => {
+      setLoading(true);
+      try {
+        const {
+          headers: { ["x-prismeai-session-token"]: token },
+          ...user
+        } = await api.signin(username, password);
+        api.token = token;
+        setError(undefined);
+        //@ts-ignore
+        setUser(user);
+        setLoading(false);
+        return user;
+      } catch (e) {
+        api.token = null;
+        setUser(null);
+        setLoading(false);
+        setError(e as ApiError);
+        return null;
+      }
+    },
+    []
+  );
   const signout: UserContext["signout"] = useCallback(async () => {
     api.token = null;
     setUser(null);

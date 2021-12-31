@@ -44,8 +44,8 @@ exports[`should have error 1`] = `
               <input
                 autoFocus={true}
                 className="p-inputtext p-component  min-w-full"
-                id="email"
-                name="email"
+                id="username"
+                name="username"
                 onBlur={[Function]}
                 onChange={[Function]}
                 onFocus={[Function]}
@@ -54,7 +54,7 @@ exports[`should have error 1`] = `
                 value=""
               />
               <label
-                htmlFor="email"
+                htmlFor="username"
               >
                 in.email
               </label>
@@ -194,8 +194,8 @@ exports[`should load 1`] = `
               <input
                 autoFocus={true}
                 className="p-inputtext p-component  min-w-full"
-                id="email"
-                name="email"
+                id="username"
+                name="username"
                 onBlur={[Function]}
                 onChange={[Function]}
                 onFocus={[Function]}
@@ -204,7 +204,7 @@ exports[`should load 1`] = `
                 value=""
               />
               <label
-                htmlFor="email"
+                htmlFor="username"
               >
                 in.email
               </label>
@@ -314,8 +314,8 @@ exports[`should render 1`] = `
               <input
                 autoFocus={true}
                 className="p-inputtext p-component  min-w-full"
-                id="email"
-                name="email"
+                id="username"
+                name="username"
                 onBlur={[Function]}
                 onChange={[Function]}
                 onFocus={[Function]}
@@ -324,7 +324,7 @@ exports[`should render 1`] = `
                 value=""
               />
               <label
-                htmlFor="email"
+                htmlFor="username"
               >
                 in.email
               </label>

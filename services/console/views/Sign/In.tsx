@@ -13,9 +13,10 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 
 interface Values {
-  email: string;
+  username: string;
   password: string;
 }
+
 export const SignIn = () => {
   const { t } = useTranslation("sign");
   const { push } = useRouter();
@@ -23,8 +24,8 @@ export const SignIn = () => {
   const messages = useRef<Messages>(null);
 
   const submit = useCallback(
-    async ({ email, password }: Values) => {
-      await signin(email, password);
+    async ({ username, password }: Values) => {
+      await signin(username, password);
     },
     [signin]
   );
@@ -44,8 +45,8 @@ export const SignIn = () => {
 
   const validate = (values: Values) => {
     const errors: Partial<Values> = {};
-    if (!values.email) {
-      errors.email = "required";
+    if (!values.username) {
+      errors.username = "required";
     }
     if (!values.password) {
       errors.password = "required";
@@ -69,10 +70,10 @@ export const SignIn = () => {
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit} className="w-8">
             <Fieldset legend={t("in.description")}>
-              <Field name="email" label={t("in.email")}>
+              <Field name="username" label={t("in.email")}>
                 {({ input, className }) => (
                   <InputText
-                    id="email"
+                    id="username"
                     {...input}
                     autoFocus
                     className={`${className} min-w-full`}

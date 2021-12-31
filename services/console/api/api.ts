@@ -10,7 +10,7 @@ export class Api extends Fetcher {
   }
 
   async signin(
-    email: string,
+    username: string,
     password: string
   ): Promise<
     Prismeai.GenericError & {
@@ -20,7 +20,7 @@ export class Api extends Fetcher {
     }
   > {
     return await this.post("/login", {
-      email,
+      username,
       password,
     });
   }

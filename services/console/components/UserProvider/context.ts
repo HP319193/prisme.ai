@@ -5,7 +5,7 @@ export interface UserContext<T = Prismeai.User | null> {
   user: T;
   loading: boolean;
   error?: ApiError;
-  signin: (email: string, password: string) => Promise<Prismeai.User | null>;
+  signin: (username: string, password: string) => Promise<Prismeai.User | null>;
   signout: () => void;
 }
 

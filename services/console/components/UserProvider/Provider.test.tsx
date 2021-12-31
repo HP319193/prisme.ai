@@ -68,13 +68,13 @@ it("should signin with success", async () => {
   );
   let promise: Promise<any>;
   act(() => {
-    promise = context.signin("email", "password");
+    promise = context.signin("username", "password");
   });
   expect(context.loading).toBe(true);
   await act(async () => {
     await promise;
   });
-  expect(api.signin).toHaveBeenCalledWith("email", "password");
+  expect(api.signin).toHaveBeenCalledWith("username", "password");
   expect(context.loading).toBe(false);
   expect(context.user).toEqual({
     id: "42",
@@ -100,13 +100,13 @@ it("should signin without success", async () => {
     </UserProvider>
   );
   act(() => {
-    promise = context.signin("email", "password");
+    promise = context.signin("username", "password");
   });
   expect(context.loading).toBe(true);
   await act(async () => {
     await promise;
   });
-  expect(api.signin).toHaveBeenCalledWith("email", "password");
+  expect(api.signin).toHaveBeenCalledWith("username", "password");
   expect(context.loading).toBe(false);
   expect(context.user).toEqual(null);
   expect(context.error).toEqual(

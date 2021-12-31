@@ -16,7 +16,7 @@ it("should call /signin", () => {
   api.post = jest.fn();
   api.signin("user@fake.com", "password");
   expect(api.post).toHaveBeenCalledWith("/login", {
-    email: "user@fake.com",
+    username: "user@fake.com",
     password: "password",
   });
 });

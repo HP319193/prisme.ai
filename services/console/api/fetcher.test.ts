@@ -19,7 +19,9 @@ it("should fetch", async () => {
   const o = await fetcher.get("url");
   expect(o.headers).toEqual({ foo: "bar" });
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
-    headers: {},
+    headers: {
+      "Content-Type": "application/json",
+    },
     method: "GET",
   });
 });
@@ -38,6 +40,7 @@ it("should fetch with auth", async () => {
   await fetcher.get("url");
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
     headers: {
+      "Content-Type": "application/json",
       "x-prismeai-session-token": "token",
     },
     method: "GET",
@@ -65,7 +68,9 @@ it("should fail to fetch", async () => {
     }
   }
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
-    headers: {},
+    headers: {
+      "Content-Type": "application/json",
+    },
     method: "GET",
   });
 });
@@ -87,7 +92,9 @@ it("should fail to fetch with unformatted error", async () => {
     }
   }
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
-    headers: {},
+    headers: {
+      "Content-Type": "application/json",
+    },
     method: "GET",
   });
 });
@@ -104,7 +111,9 @@ it("should post", async () => {
   }));
   await fetcher.post("url");
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
-    headers: {},
+    headers: {
+      "Content-Type": "application/json",
+    },
     method: "POST",
   });
 });
@@ -121,7 +130,9 @@ it("should post with body", async () => {
   }));
   await fetcher.post("url", {});
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
-    headers: {},
+    headers: {
+      "Content-Type": "application/json",
+    },
     method: "POST",
     body: "{}",
   });
@@ -139,7 +150,9 @@ it("should patch", async () => {
   }));
   await fetcher.patch("url", {});
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
-    headers: {},
+    headers: {
+      "Content-Type": "application/json",
+    },
     method: "PATCH",
     body: "{}",
   });
@@ -157,7 +170,9 @@ it("should delete", async () => {
   }));
   await fetcher.delete("url", "42");
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
-    headers: {},
+    headers: {
+      "Content-Type": "application/json",
+    },
     method: "DELETE",
     body: '{"id":"42"}',
   });

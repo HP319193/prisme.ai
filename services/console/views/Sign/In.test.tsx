@@ -57,7 +57,7 @@ it("should submit form", async () => {
   await act(async () => {
     await root.root
       .findByType(Form)
-      .props.onSubmit({ email: "email@company.com", password: "123456" });
+      .props.onSubmit({ username: "email@company.com", password: "123456" });
   });
   expect(useUser().signin).toHaveBeenCalledWith("email@company.com", "123456");
 });
@@ -65,23 +65,23 @@ it("should submit form", async () => {
 it("should validate form", async () => {
   const root = renderer.create(<SignIn />);
   expect(
-    root.root.findByType(Form).props.validate({ email: "", password: "" })
+    root.root.findByType(Form).props.validate({ username: "", password: "" })
   ).toEqual({
-    email: "required",
+    username: "required",
     password: "required",
   });
   expect(
-    root.root.findByType(Form).props.validate({ email: "a", password: "" })
+    root.root.findByType(Form).props.validate({ username: "a", password: "" })
   ).toEqual({
     password: "required",
   });
   expect(
-    root.root.findByType(Form).props.validate({ email: "", password: "a" })
+    root.root.findByType(Form).props.validate({ username: "", password: "a" })
   ).toEqual({
-    email: "required",
+    username: "required",
   });
   expect(
-    root.root.findByType(Form).props.validate({ email: "a", password: "a" })
+    root.root.findByType(Form).props.validate({ username: "a", password: "a" })
   ).toEqual({});
 });
 
