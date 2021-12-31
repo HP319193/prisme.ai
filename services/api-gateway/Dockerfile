@@ -16,7 +16,7 @@ COPY --from=build /app/node_modules/ /app/node_modules/
 COPY --from=build /app/dist/ /app
 COPY --from=build /app/dist/index.js /app
 
-COPY specifications/ /www/specifications/
+COPY specifications/ /specifications/
 
 RUN npm prune --production
 
