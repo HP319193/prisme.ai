@@ -95,7 +95,7 @@ console_test:
   extends: .npm_test
   only:
     changes:
-      - "services/console/*"
+      - "services/console/**/*"
   before_script:
     - export SERVICE_NAME=$CONSOLE_DIRECTORY
 
@@ -112,7 +112,7 @@ console_build_docker:
       - main
       - master
     changes:
-      - "services/console/*"
+      - "services/console/**/*"
   before_script:
     - cd services/$CONSOLE_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -126,7 +126,7 @@ console_deploy:
       - main
       - master
     changes:
-      - "services/console/*"
+      - "services/console/**/*"
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
@@ -155,7 +155,7 @@ workspaces_build_docker:
       - main
       - master
     changes:
-      - "services/workspaces/*"
+      - "services/workspaces/**/*"
   before_script:
     - cd services/$WORKSPACES_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -169,7 +169,7 @@ workspaces_deploy:
       - main
       - master
     changes:
-      - "services/workspaces/*"
+      - "services/workspaces/**/*"
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME
@@ -189,7 +189,7 @@ runtime_build_docker:
       - main
       - master
     changes:
-      - "services/runtime/*"
+      - "services/runtime/**/*"
   before_script:
     - cd services/$RUNTIME_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -203,7 +203,7 @@ runtime_deploy:
       - main
       - master
     changes:
-      - "services/runtime/*"
+      - "services/runtime/**/*"
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
@@ -224,7 +224,7 @@ api-gateway_build_docker:
       - main
       - master
     changes:
-      - "services/api-gateway/*"
+      - "services/api-gateway/**/*"
   before_script:
     - cd services/$API_GATEWAY_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -238,7 +238,7 @@ api-gateway_deploy:
       - main
       - master
     changes:
-      - "services/api-gateway/*"
+      - "services/api-gateway/**/*"
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME

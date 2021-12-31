@@ -20,4 +20,5 @@ COPY specifications/ /specifications/
 
 RUN npm prune --production
 
+
 CMD [ "node", "--abort-on-uncaught-exception", "index.js" ]
