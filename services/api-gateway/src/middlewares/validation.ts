@@ -14,6 +14,7 @@ export const validationMiddleware = ({ ignorePaths = [] }: ValidationOpts) => {
     apiSpec: syscfg.OPENAPI_FILEPATH,
     validateRequests: true,
     validateResponses: syscfg.DEBUG,
+    validateSecurity: false,
     ignorePaths: !ignorePaths.length
       ? undefined
       : (path: string) => {
