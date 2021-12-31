@@ -37,6 +37,7 @@ export const broker = new Broker<CallbackContext>(
     },
     validator: {
       oasFilepath: EVENTS_OAS_PATH,
+      whitelistEventPrefixes: ["apps."],
     },
     CallbackContextCtor: CallbackContext,
   }
