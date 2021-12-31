@@ -5,7 +5,10 @@ module.exports = {
   reactStrictMode: true,
   i18n,
   publicRuntimeConfig: {
-    API_HOST: process.env.API_HOST,
-    ENDPOINT: process.env.ENDPOINT,
+    // API_HOST: process.env.API_HOST,
+    // Restore the above line to plug the front to the real
+    // back-end
+    API_HOST: "https://api.eda.prisme.ai/v2",
+    ENDPOINT: process.env.ENDPOINT || "workspace/{{workspaceId}}/{{slug}}",
   },
 };
