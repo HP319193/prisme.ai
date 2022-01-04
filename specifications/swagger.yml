@@ -347,6 +347,23 @@ paths:
       responses:
         "200":
           description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WorkflowResult"
+        "400":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericError"
         "404":
           description: Object not found
           content:
@@ -1629,6 +1646,17 @@ components:
           minProperties: 1
           maxProperties: 1
 
+    WorkflowResult:
+      type: object
+      required:
+        - workflow
+        - output
+      properties:
+        workflow:
+          type: string
+        output:
+          $ref: "#/components/schemas/AnyValue"
+
     ################################################################################################################################
     ############################################################ Events ############################################################
     BaseEventResponse:
@@ -1996,6 +2024,35 @@ components:
             payload:
               type: object
 
+    ExecutedWorkflow:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.workflow.executed
+          enum:
+            - runtime.workflow.executed
+        payload:
+          type: object
+          required:
+            - workflow
+            - automation
+            - payload
+            - output
+          properties:
+            workflow:
+              type: string
+            automation:
+              type: string
+            payload:
+              type: object
+            output:
+              $ref: "#/components/schemas/AnyValue"
+
+
     TriggeredWebhook:
       type: object
       required:
@@ -2059,9 +2116,7 @@ components:
         message:
           type: string
         details:
-          type: array
-          items:
-            type: object
+          $ref: "#/components/schemas/AnyValue"
 
     ObjectNotFoundError:
       type: object

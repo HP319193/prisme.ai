@@ -7,8 +7,8 @@ export type DetailedTrigger = Prismeai.Trigger & {
   automationId: string;
 };
 export interface Triggers {
-  events: Record<string, DetailedTrigger>;
-  endpoints: Record<string, DetailedTrigger>;
+  events: Record<string, DetailedTrigger[]>;
+  endpoints: Record<string, DetailedTrigger[]>;
 }
 
 export type DetailedWorkflow = Prismeai.Workflow & {
@@ -39,13 +39,19 @@ export class Workspace {
       .reduce<Triggers>(
         (triggers, trigger) => {
           (trigger.events || []).forEach((cur) => {
-            triggers.events[cur] = trigger;
+            triggers.events[cur] = (triggers.events[cur] || []).concat([
+              trigger,
+            ]);
           });
 
           if (trigger.endpoint === true) {
-            triggers.endpoints[trigger.automationId] = trigger;
+            triggers.endpoints[trigger.automationId] = (
+              triggers.endpoints[trigger.automationId] || []
+            ).concat([trigger]);
           } else if (typeof trigger.endpoint === "string") {
-            triggers.endpoints[trigger.endpoint] = trigger;
+            triggers.endpoints[trigger.endpoint] = (
+              triggers.endpoints[trigger.endpoint] || []
+            ).concat([trigger]);
           }
 
           return triggers;
@@ -83,11 +89,11 @@ export class Workspace {
       : [[], name];
   }
 
-  getEventTrigger(event: string) {
+  getEventTriggers(event: string) {
     return this.triggers.events[event];
   }
 
-  getEndpointTrigger(slug: string) {
+  getEndpointTriggers(slug: string) {
     return this.triggers.endpoints[slug];
   }
 

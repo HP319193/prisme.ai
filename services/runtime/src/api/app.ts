@@ -15,77 +15,80 @@ import {
   validationErrorMiddleware,
   validationMiddleware,
 } from "./middlewares/validation";
+import Runtime from "../services/runtime";
 
-const app = express();
+export function init(runtime: Runtime) {
+  const app = express();
 
-/**
- * Helmet helps to secure Express apps by setting various HTTP headers.
- */
-// app.use(helmet());
+  /**
+   * Helmet helps to secure Express apps by setting various HTTP headers.
+   */
+  // app.use(helmet());
 
-/**
- * Get NODE_ENV from environment and store in Express.
- */
-app.set("env", process.env.NODE_ENV);
+  /**
+   * Get NODE_ENV from environment and store in Express.
+   */
+  app.set("env", process.env.NODE_ENV);
 
-/**
- * Morgan logger
- */
-app.use(bodyParser.json());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+  /**
+   * Morgan logger
+   */
+  app.use(bodyParser.json());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
 
-/**
- * Metrics
- */
-initMetrics(app);
+  /**
+   * Metrics
+   */
+  initMetrics(app);
 
-/**
- * Traceability
- */
-/**
- * When running Express app behind a proxy we need to detect client IP address correctly.
- * For NGINX the following must be configured 'proxy_set_header X-Forwarded-For $remote_addr;'
- * @link http://expressjs.com/en/guide/behind-proxies.html
- */
-app.set("trust proxy", true);
+  /**
+   * Traceability
+   */
+  /**
+   * When running Express app behind a proxy we need to detect client IP address correctly.
+   * For NGINX the following must be configured 'proxy_set_header X-Forwarded-For $remote_addr;'
+   * @link http://expressjs.com/en/guide/behind-proxies.html
+   */
+  app.set("trust proxy", true);
 
-app.use(requestDecorator);
+  app.use(requestDecorator);
 
-/**
- * Validation
- */
-app.use(
-  validationMiddleware({
-    ignorePaths: ["^/sys"],
-  }),
-  validationErrorMiddleware
-);
+  /**
+   * Validation
+   */
+  app.use(
+    validationMiddleware({
+      ignorePaths: ["^/sys"],
+    }),
+    validationErrorMiddleware
+  );
 
-/**
- * User routes
- */
-initRoutes(app);
+  /**
+   * User routes
+   */
+  initRoutes(app, runtime);
 
-/**
- * ERROR HANDLING
- */
+  /**
+   * ERROR HANDLING
+   */
 
-/**
- * Catch 404 and forward to error handler
- */
-// app.use(notFoundErrorHandler);
+  /**
+   * Catch 404 and forward to error handler
+   */
+  // app.use(notFoundErrorHandler);
 
-/**
- * Decorate error object with additional data
- */
-app.use(errorDecorator);
+  /**
+   * Decorate error object with additional data
+   */
+  app.use(errorDecorator);
 
-/**
- * Custom error handling middleware - final
- * WARNING: Must be defined last, after other app.use(), routes calls
- * and all other error handling middleware
- */
-app.use(finalErrorHandler);
+  /**
+   * Custom error handling middleware - final
+   * WARNING: Must be defined last, after other app.use(), routes calls
+   * and all other error handling middleware
+   */
+  app.use(finalErrorHandler);
 
-export { app };
+  return app;
+}

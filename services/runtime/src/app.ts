@@ -7,7 +7,7 @@ import {
   WORKSPACES_STORAGE_TYPE,
 } from "../config";
 
-import { app } from "./api";
+import { init as initAPI } from "./api";
 import { broker } from "./eda";
 import { uncaughtExceptionHandler } from "./errors";
 import "@prisme.ai/types";
@@ -32,8 +32,6 @@ async function exit() {
 process.on("SIGTERM", exit);
 process.on("SIGINT", exit);
 
-const httpServer = http.createServer(app);
-
 (async function () {
   await broker.ready;
   const cache = await buildCache(CONTEXTS_CACHE);
@@ -43,8 +41,10 @@ const httpServer = http.createServer(app);
 
   runtime.start();
   workspaces.startLiveUpdates();
-})();
 
-httpServer.listen(PORT, function () {
-  console.log(`${APP_NAME} listening on ${PORT}.`);
-});
+  const app = initAPI(runtime);
+  const httpServer = http.createServer(app);
+  httpServer.listen(PORT, function () {
+    console.log(`${APP_NAME} listening on ${PORT}.`);
+  });
+})();

@@ -1,12 +1,14 @@
 import { Broker } from "@prisme.ai/broker";
+import { EventType } from "../../../eda";
+import { ObjectNotFoundError } from "../../../errors";
 import { Logger } from "../../../logger";
-import { Workspace } from "../../workspaces";
+import { DetailedWorkflow, Workspace } from "../../workspaces";
 import { ContextsManager } from "../contexts";
 import { runInstruction } from "./instructions";
 
 export async function executeWorkflow(
   workspace: Workspace,
-  workflow: Prismeai.Workflow,
+  workflow: DetailedWorkflow,
   payload: object,
   ctx: ContextsManager,
   logger: Logger,
@@ -31,9 +33,16 @@ export async function executeWorkflow(
       }
       const workflow = workspace.getWorkflow(keys[0]);
       if (!workflow) {
-        logger.warn({
+        logger.trace({
           msg: `Did not find any workflow matching '${keys[0]}'`,
         });
+        broker.send(
+          "error",
+          new ObjectNotFoundError(`Workflow not found`, {
+            workspaceId: workspace.id,
+            workflow: keys[0],
+          })
+        );
         return;
       }
       await executeWorkflow(
@@ -46,4 +55,20 @@ export async function executeWorkflow(
       );
     }
   }
+
+  const output = evaluateOutput(workflow, ctx);
+  broker.send<Prismeai.ExecutedWorkflow["payload"]>(
+    EventType.ExecutedWorkflow,
+    {
+      workflow: workflow.name,
+      automation: workflow.automationId,
+      payload,
+      output,
+    }
+  );
+  return output;
+}
+
+function evaluateOutput(workflow: Prismeai.Workflow, ctx: ContextsManager) {
+  return workflow.output || "hardcoded output";
 }

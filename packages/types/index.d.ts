@@ -944,6 +944,21 @@ declare namespace Prismeai {
             private?: boolean;
         };
     }
+    export interface ExecutedWorkflow {
+        /**
+         * example:
+         * runtime.workflow.executed
+         */
+        type: "runtime.workflow.executed";
+        payload: {
+            workflow: string;
+            automation: string;
+            payload: {
+                [key: string]: any;
+            };
+            output: AnyValue;
+        };
+    }
     export interface FailedLogin {
         /**
          * example:
@@ -974,9 +989,7 @@ declare namespace Prismeai {
          */
         error?: string;
         message?: string;
-        details?: {
-            [key: string]: any;
-        }[];
+        details?: AnyValue;
     }
     export interface GenericErrorEvent {
         /**
@@ -1292,6 +1305,10 @@ declare namespace Prismeai {
          */
         private?: boolean;
     }
+    export interface WorkflowResult {
+        workflow: string;
+        output: AnyValue;
+    }
     export interface Workspace {
         name: string;
         owner?: {
@@ -1331,7 +1348,9 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export interface $200 {
+                result: Prismeai.WorkflowResult[];
             }
+            export type $400 = Prismeai.GenericError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
