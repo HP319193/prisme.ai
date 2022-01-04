@@ -3,12 +3,15 @@
 import { NextFunction, Request, Response } from "express";
 import { PrismeContext } from ".";
 import { EventType } from "../../eda";
-import { ErrorSeverity, PrismeError } from "../../errors";
+import { ErrorSeverity, ObjectNotFoundError, PrismeError } from "../../errors";
 import { logger } from "../../logger";
 
 function errorHttpStatus(err: Error, serverError: boolean) {
   // Handles express-openapi-validator not found error
-  if ((<any>err)?.details?.[0]?.message === "not found") {
+  if (
+    (<any>err)?.details?.[0]?.message === "not found" ||
+    err instanceof ObjectNotFoundError
+  ) {
     return 404;
   }
   return serverError ? 500 : 400;
