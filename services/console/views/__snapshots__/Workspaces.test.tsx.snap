@@ -25,6 +25,25 @@ exports[`should render empty 1`] = `
           </a>
         </div>
       </div>
+      <div>
+        <button
+          className="p-button p-component p-button-icon-only"
+          disabled={false}
+          onClick={[Function]}
+        >
+          <span
+            className="p-button-icon p-c pi pi-power-off"
+          />
+          <span
+            className="p-button-label p-c"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "&nbsp;",
+              }
+            }
+          />
+        </button>
+      </div>
     </div>
   </div>
   <div
@@ -95,6 +114,25 @@ exports[`should render some workspaces 1`] = `
             Prisme.ai
           </a>
         </div>
+      </div>
+      <div>
+        <button
+          className="p-button p-component p-button-icon-only"
+          disabled={false}
+          onClick={[Function]}
+        >
+          <span
+            className="p-button-icon p-c pi pi-power-off"
+          />
+          <span
+            className="p-button-label p-c"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "&nbsp;",
+              }
+            }
+          />
+        </button>
       </div>
     </div>
   </div>
