@@ -13,7 +13,7 @@ export class Api extends Fetcher {
     username: string,
     password: string
   ): Promise<
-    Prismeai.GenericError & {
+    Prismeai.User & {
       headers: {
         ["x-prismeai-session-token"]: string;
       };

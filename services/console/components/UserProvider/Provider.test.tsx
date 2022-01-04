@@ -5,6 +5,11 @@ import api from "../../api/api";
 import ApiError from "../../api/ApiError";
 import Storage from "../../utils/Storage";
 
+jest.mock("next/router", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
+}));
 beforeEach(() => {
   Storage.remove("auth-token");
   jest.resetAllMocks();
@@ -66,6 +71,9 @@ it("should signin with success", async () => {
       <Test />
     </UserProvider>
   );
+  await act(async () => {
+    await true;
+  });
   let promise: Promise<any>;
   act(() => {
     promise = context.signin("username", "password");

@@ -52,6 +52,23 @@ exports[`should get layout 1`] = `
         >
           automations.link
         </button>
+        <button
+          className="p-button p-component p-button-icon-only"
+          disabled={false}
+          onClick={[Function]}
+        >
+          <span
+            className="p-button-icon p-c pi pi-power-off"
+          />
+          <span
+            className="p-button-label p-c"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "&nbsp;",
+              }
+            }
+          />
+        </button>
       </div>
     </div>
   </div>
@@ -137,6 +154,25 @@ exports[`should render 404 1`] = `
           </a>
         </div>
       </div>
+      <div>
+        <button
+          className="p-button p-component p-button-icon-only"
+          disabled={false}
+          onClick={[Function]}
+        >
+          <span
+            className="p-button-icon p-c pi pi-power-off"
+          />
+          <span
+            className="p-button-label p-c"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "&nbsp;",
+              }
+            }
+          />
+        </button>
+      </div>
     </div>
   </div>
   <div
@@ -211,6 +247,23 @@ exports[`should render empty 1`] = `
           onClick={[Function]}
         >
           automations.link
+        </button>
+        <button
+          className="p-button p-component p-button-icon-only"
+          disabled={false}
+          onClick={[Function]}
+        >
+          <span
+            className="p-button-icon p-c pi pi-power-off"
+          />
+          <span
+            className="p-button-label p-c"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "&nbsp;",
+              }
+            }
+          />
         </button>
       </div>
     </div>
@@ -324,6 +377,23 @@ exports[`should render fetching 1`] = `
         >
           automations.link
         </button>
+        <button
+          className="p-button p-component p-button-icon-only"
+          disabled={false}
+          onClick={[Function]}
+        >
+          <span
+            className="p-button-icon p-c pi pi-power-off"
+          />
+          <span
+            className="p-button-label p-c"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "&nbsp;",
+              }
+            }
+          />
+        </button>
       </div>
     </div>
   </div>
@@ -435,6 +505,23 @@ exports[`should render loading 1`] = `
           onClick={[Function]}
         >
           automations.link
+        </button>
+        <button
+          className="p-button p-component p-button-icon-only"
+          disabled={false}
+          onClick={[Function]}
+        >
+          <span
+            className="p-button-icon p-c pi pi-power-off"
+          />
+          <span
+            className="p-button-label p-c"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "&nbsp;",
+              }
+            }
+          />
         </button>
       </div>
     </div>

@@ -57,7 +57,7 @@ it("should render some workspaces", () => {
 it("should create new workspace", async () => {
   const root = renderer.create(<Workspaces />);
   await act(async () => {
-    await root.root.findByType(Button).props.onClick();
+    await root.root.findAllByType(Button)[1].props.onClick();
   });
   expect(useWorkspaces().create).toHaveBeenCalledWith("create.defaultName");
   expect(useRouter().push).toHaveBeenCalledWith("/workspaces/43");
