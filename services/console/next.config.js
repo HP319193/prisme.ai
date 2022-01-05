@@ -5,8 +5,8 @@ module.exports = {
   reactStrictMode: true,
   i18n,
   publicRuntimeConfig: {
-    API_HOST: process.env.NEXT_PUBLIC_API_HOST,
-    ENDPOINT: `${process.env.NEXT_PUBLIC_API_HOST}/workspace/{{workspaceId}}/{{slug}}`,
+    API_HOST: process.env.API_HOST,
+    ENDPOINT: `${process.env.ENDPOINT}/workspace/{{workspaceId}}/{{slug}}`,
     SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN || "",
   },
 };
