@@ -1,5 +1,9 @@
+import getConfig from "next/config";
+
+const { publicRuntimeConfig } = getConfig();
+
 export const generateEndpoint = (workspaceId: string, slug: string) =>
-  `${process.env.ENDPOINT}`
+  `${publicRuntimeConfig.ENDPOINT}`
     .replace(/\{\{workspaceId\}\}/, workspaceId)
     .replace(/\{\{slug\}\}/, slug);
 

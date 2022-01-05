@@ -1,15 +1,18 @@
+import getConfig from "next/config";
 import { useCallback, useEffect } from "react";
+
+const { publicRuntimeConfig } = getConfig();
 
 export const Sentry = () => {
   const init = useCallback(async () => {
-    if (!process.env.SENTRY_DSN) return;
+    if (!publicRuntimeConfig.SENTRY_DSN) return;
     const [Sentry, Tracing] = await Promise.all([
       import("@sentry/browser"),
       import("@sentry/tracing"),
     ]);
 
     Sentry.init({
-      dsn: process.env.SENTRY_DSN,
+      dsn: publicRuntimeConfig.SENTRY_DSN,
       integrations: [new Tracing.Integrations.BrowserTracing()],
 
       // Set tracesSampleRate to 1.0 to capture 100%
