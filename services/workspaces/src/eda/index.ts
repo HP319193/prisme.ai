@@ -16,7 +16,11 @@ export enum EventType {
   DeletedWorkspace = "workspaces.deleted",
   InstalledApp = "workspaces.app.installed",
   ConfiguredApp = "workspaces.app.configured",
+  CreatedAutomation = "workspaces.automation.created",
+  UpdatedAutomation = "workspaces.automation.updated",
+  DeletedAutomation = "workspaces.automation.deleted",
 }
+
 export class CallbackContext {
   public logger: Logger;
 
@@ -50,6 +54,7 @@ broker.onErrorCallback = (event, err) => {
 export interface EventMetrics {
   pending: PendingEvents;
 }
+
 export async function getMetrics(): Promise<EventMetrics> {
   return {
     pending: await broker.pending(),

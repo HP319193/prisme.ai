@@ -19,6 +19,7 @@ export type DetailedWorkflow = Prismeai.Workflow & {
 export type Workflows = Record<WorkflowName, DetailedWorkflow[]>;
 
 export class Workspace {
+  private dsul: Prismeai.Workspace;
   public name: string;
   public id: string;
   private triggers: Triggers;
@@ -27,6 +28,15 @@ export class Workspace {
   constructor(workspace: Prismeai.Workspace) {
     this.name = workspace.name;
     this.id = workspace.id!!;
+    this.triggers = { events: {}, endpoints: {} };
+    this.workflows = {};
+
+    this.dsul = workspace;
+    this.update(workspace);
+  }
+
+  update(workspace: Prismeai.Workspace) {
+    this.name = workspace.name;
     this.triggers = Object.values(workspace?.automations || {})
       .map(({ triggers, id }) =>
         Object.entries(triggers || {}).map(([name, cur]) => ({
@@ -77,6 +87,30 @@ export class Workspace {
           [workflow.name]: newWorkflows,
         };
       }, {});
+
+    this.dsul = workspace;
+  }
+
+  addOrReplaceAutomation(automation: Prismeai.Automation) {
+    const newAutomations = (this.dsul.automations || [])
+      .filter((cur) => cur.id !== automation.id)
+      .concat([automation]);
+
+    this.update({
+      ...this.dsul,
+      automations: newAutomations,
+    });
+  }
+
+  deleteAutomation(automationId: string) {
+    const newAutomations = (this.dsul.automations || []).filter(
+      (cur) => cur.id !== automationId
+    );
+
+    this.update({
+      ...this.dsul,
+      automations: newAutomations,
+    });
   }
 
   private parseWorkflowName(name: string): WorkflowReference {

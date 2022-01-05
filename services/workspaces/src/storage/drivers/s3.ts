@@ -1,4 +1,4 @@
-import { IStorage } from "../types";
+import { IStorage, ObjectList } from "../types";
 import AWS from "aws-sdk";
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from "../../errors";
 
@@ -31,6 +31,35 @@ export default class S3Like implements IStorage {
       },
       region: this.options.region,
       endpoint: this.options.endpoint,
+    });
+  }
+
+  public find(
+    prefix: string,
+    continuationToken?: string,
+    out: ObjectList = []
+  ): Promise<ObjectList> {
+    return new Promise((resolve, reject) => {
+      this.client
+        .listObjectsV2({
+          Bucket: this.options.bucket,
+          ContinuationToken: continuationToken,
+          Prefix: prefix,
+        })
+        .promise()
+        .then(({ Contents, IsTruncated, NextContinuationToken }) => {
+          out.push(
+            ...(Contents || [])
+              .filter((cur) => cur.Key)
+              .map((cur) => ({
+                key: cur.Key!!?.split("/")[0],
+              }))
+          );
+          !IsTruncated
+            ? resolve(out)
+            : resolve(this.find(prefix, NextContinuationToken, out));
+        })
+        .catch(reject);
     });
   }
 
