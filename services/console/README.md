@@ -12,10 +12,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 See https://nextjs.org/docs/ for more informations
 
-## Dev environement
+## Environement
 
-A dev static backend is available in pages/api. You can set some values in your dev environement to help you dev without backend.
+You can set the following env variables to customize your installation. Set it in a .env file or a .env.local file (see https://nextjs.org/docs/api-reference/next.config.js/environment-variables)
 
-### DEV_USER
-
-Set DEV_USER in your .env.local with a static stringified User object. You'll be able to login with this user's email and any password.
+- NEXT_PUBLIC_API_HOST: Api Gateway host
+- NEXT_PUBLIC_SENTRY_DSN: If you want to trace errors on Sentry, set your Sentry DSN

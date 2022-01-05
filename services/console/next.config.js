@@ -7,5 +7,6 @@ module.exports = {
   env: {
     API_HOST: process.env.NEXT_PUBLIC_API_HOST,
     ENDPOINT: `${process.env.NEXT_PUBLIC_API_HOST}/workspace/{{workspaceId}}/{{slug}}`,
+    SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
   },
 };
