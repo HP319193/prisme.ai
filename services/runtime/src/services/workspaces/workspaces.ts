@@ -19,10 +19,56 @@ export class Workspaces extends Storage {
   }
 
   startLiveUpdates() {
-    this.broker.on<Prismeai.UpdatedAutomation["payload"]>(
+    const listenedEvents = [
+      EventType.UpdatedWorkspace,
+      EventType.DeletedWorkspace,
+      EventType.CreatedAutomation,
       EventType.UpdatedAutomation,
+      EventType.DeletedAutomation,
+    ];
+
+    this.broker.on(
+      listenedEvents,
       async (event, broker, { logger }) => {
+        const workspaceId = event.source.workspaceId;
+        if (!workspaceId || !(workspaceId in this.workspaces)) {
+          return true;
+        }
+        const workspace = this.workspaces[workspaceId];
+
+        logger.info({
+          msg: "Received an updated workspace through events",
+          event,
+        });
+        switch (event.type) {
+          case EventType.DeletedWorkspace:
+            delete this.workspaces[workspaceId];
+            break;
+          case EventType.UpdatedWorkspace:
+            const updatedWorkspace = (event as any as Prismeai.UpdatedWorkspace)
+              .payload.workspace;
+            (updatedWorkspace.automations || []).forEach((automation) => {
+              workspace.addOrReplaceAutomation(automation);
+            });
+            break;
+          case EventType.CreatedAutomation:
+          case EventType.UpdatedAutomation:
+            const updatedAutomation = (
+              event as any as Prismeai.UpdatedAutomation
+            ).payload.automation;
+            workspace.addOrReplaceAutomation(updatedAutomation);
+            break;
+          case EventType.DeletedAutomation:
+            const deletedAutomation = (
+              event as any as Prismeai.DeletedAutomation
+            ).payload.automation;
+            workspace.deleteAutomation(deletedAutomation.id);
+            break;
+        }
         return true;
+      },
+      {
+        GroupPartitions: false, // Every instance must be notified
       }
     );
   }

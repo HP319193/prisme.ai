@@ -718,9 +718,7 @@ declare namespace Prismeai {
         config?: {
             [name: string]: TypedArgument;
         };
-        automations?: {
-            [name: string]: /* Full description at (TODO swagger url) */ Automation;
-        };
+        automations?: /* Full description at (TODO swagger url) */ Automation[];
         /**
          * Unique id
          */
@@ -772,6 +770,7 @@ declare namespace Prismeai {
             [name: string]: Workflow;
         };
         id?: string;
+        name?: string;
     }
     export interface BadParametersError {
         /**
@@ -1307,7 +1306,7 @@ declare namespace Prismeai {
     }
     export interface WorkflowResult {
         workflow: string;
-        output: AnyValue;
+        output?: AnyValue;
     }
     export interface Workspace {
         name: string;
@@ -1318,9 +1317,7 @@ declare namespace Prismeai {
         constants?: {
             [key: string]: any;
         };
-        automations?: {
-            [name: string]: /* Full description at (TODO swagger url) */ Automation;
-        };
+        automations?: /* Full description at (TODO swagger url) */ Automation[];
         createdAt?: string;
         updatedAt?: string;
         id?: string;

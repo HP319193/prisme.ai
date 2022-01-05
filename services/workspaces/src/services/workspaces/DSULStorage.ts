@@ -1,5 +1,4 @@
 import yaml from "js-yaml";
-import { IStorage } from "../../storage/types";
 import Storage from "../../storage";
 
 const getS3Key = (appId: string, version: string = "current") => {
@@ -9,10 +8,18 @@ const getS3Key = (appId: string, version: string = "current") => {
   return `${appId}/${version}.yml`;
 };
 
-export default class DSULStorage extends Storage implements IStorage {
+export default class DSULStorage extends Storage {
   async get(appId: string): Promise<Prismeai.Workspace> {
     const dsul = await this.driver.get(getS3Key(appId));
     return yaml.load(dsul) as Prismeai.Workspace;
+  }
+
+  async list(): Promise<PrismeaiAPI.GetWorkspaces.Responses.$200> {
+    const dsulIds = await this.driver.find("");
+    const fullDSULs = await Promise.all(
+      dsulIds.map(({ key }) => this.get(key))
+    );
+    return fullDSULs.map(({ name, id }) => ({ name, id }));
   }
 
   async save(appId: string, app: Prismeai.Workspace) {

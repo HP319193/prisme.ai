@@ -16,8 +16,11 @@ export enum EventType {
   TriggeredWebhook = "runtime.webhook.triggered",
   UpdatedContexts = "runtime.contexts.updated",
 
+  UpdatedWorkspace = "workspaces.updated",
+  DeletedWorkspace = "workspaces.deleted",
   CreatedAutomation = "workspaces.automation.created",
   UpdatedAutomation = "workspaces.automation.updated",
+  DeletedAutomation = "workspaces.automation.deleted",
 }
 export class CallbackContext {
   public logger: Logger;

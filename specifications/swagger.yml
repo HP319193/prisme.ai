@@ -15,8 +15,8 @@ servers:
   - url: http://localhost:1337
   - url: https://api.prisme.ai
 security:
-  - ApiKeyAuth: []
-    BearerAuth: []
+  - ApiKeyAuth: [ ]
+    BearerAuth: [ ]
 
 paths:
   ############################################# gateway
@@ -27,7 +27,7 @@ paths:
       tags:
         - API Gateway
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuth: [ ]
       requestBody:
         required: true
         content:
@@ -63,7 +63,7 @@ paths:
       tags:
         - API Gateway
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuth: [ ]
       responses:
         "200":
           description: Success Response
@@ -133,7 +133,7 @@ paths:
       tags:
         - API Gateway
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuth: [ ]
       requestBody:
         required: true
         content:
@@ -335,7 +335,7 @@ paths:
           schema:
             type: string
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuth: [ ]
       requestBody:
         required: true
         content:
@@ -1239,7 +1239,7 @@ components:
       name: X-Prismeai-API-Key
 
   schemas:
-    AnyValue: {}
+    AnyValue: { }
     Object:
       type: object
       properties:
@@ -1303,7 +1303,8 @@ components:
               additionalProperties:
                 $ref: "#/components/schemas/TypedArgument"
             automations:
-              additionalProperties:
+              type: array
+              items:
                 $ref: "#/components/schemas/Automation"
         - $ref: "#/components/schemas/Object"
 
@@ -1347,7 +1348,8 @@ components:
         constants:
           type: object
         automations:
-          additionalProperties:
+          type: array
+          items:
             $ref: "#/components/schemas/Automation"
         createdAt:
           type: string
@@ -1359,9 +1361,9 @@ components:
     Trigger:
       type: object
       anyOf:
-        - required: ["do", "events"]
-        - required: ["do", "dates"]
-        - required: ["do", "endpoint"]
+        - required: [ "do", "events" ]
+        - required: [ "do", "dates" ]
+        - required: [ "do", "endpoint" ]
       properties:
         events:
           type: array
@@ -1446,6 +1448,8 @@ components:
           additionalProperties:
             $ref: "#/components/schemas/Workflow"
         id:
+          type: string
+        name:
           type: string
 
     ###############################################################################################################################################
@@ -1598,8 +1602,8 @@ components:
       properties:
         repeat:
           oneOf:
-            - required: ["on", "then"]
-            - required: ["until", "then"]
+            - required: [ "on", "then" ]
+            - required: [ "until", "then" ]
           description: One of "on" or "until" is required
           properties:
             on:
@@ -1650,7 +1654,6 @@ components:
       type: object
       required:
         - workflow
-        - output
       properties:
         workflow:
           type: string
@@ -2144,11 +2147,11 @@ components:
       type: object
       properties:
         error:
-            type: string
-            example: AuthenticationError
+          type: string
+          example: AuthenticationError
         message:
-            type: string
-            example: Unauthenticated
+          type: string
+          example: Unauthenticated
 
 
     ForbiddenError:
