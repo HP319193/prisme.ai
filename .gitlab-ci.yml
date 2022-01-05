@@ -58,27 +58,18 @@ npm_install:
 .build_docker:
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
-  only:
-    # - tags
-    - main
-    - master
   image: docker:stable
   services:
     - docker:stable-dind
   script:
-    - cp -r ../../specifications/ . # Include current swagger file in docker image as it is required for HTTP request validations
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker pull $IMAGE_NAME:latest || true
-    - docker build --cache-from $IMAGE_NAME:latest -t $IMAGE_NAME:latest .
+    - docker build --cache-from $IMAGE_NAME:latest -t $IMAGE_NAME:latest . -f $DIRECTORY/Dockerfile
     # - docker push $IMAGE_NAME:$CI_COMMIT_TAG
     - docker push $IMAGE_NAME:latest
 
 .deploy_k8s:
   stage: deploy
-  only:
-    # - tags
-    - main
-    - master
   cache: []
   tags:
     - internal-runner
@@ -114,7 +105,10 @@ console_build_docker:
     changes:
       - "services/console/**/*"
   before_script:
+    # TODO fix console docker build with new dockerfile (root based)
+    - cp -r specifications/ services/$CONSOLE_DIRECTORY/specifications
     - cd services/$CONSOLE_DIRECTORY
+    - export DIRECTORY=.
     - export DOCKER_HOST=tcp://docker:2375
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
 
@@ -157,7 +151,7 @@ workspaces_build_docker:
     changes:
       - "services/workspaces/**/*"
   before_script:
-    - cd services/$WORKSPACES_DIRECTORY
+    - export DIRECTORY=services/$WORKSPACES_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME
 
@@ -191,7 +185,7 @@ runtime_build_docker:
     changes:
       - "services/runtime/**/*"
   before_script:
-    - cd services/$RUNTIME_DIRECTORY
+    - export DIRECTORY=services/$RUNTIME_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
 
@@ -226,7 +220,7 @@ api-gateway_build_docker:
     changes:
       - "services/api-gateway/**/*"
   before_script:
-    - cd services/$API_GATEWAY_DIRECTORY
+    - export DIRECTORY=services/$API_GATEWAY_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME
 
