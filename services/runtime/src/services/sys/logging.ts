@@ -1,6 +1,6 @@
-import { Logger, LogLevel } from "../../logger";
+import { Logger, LogLevel, logger as rootLogger } from "../../logger";
 
 export const changeLogLevel = (logger: Logger) => async (level: LogLevel) => {
   logger.info(`Changed logging level to ${level}`);
-  logger.level = level;
+  rootLogger.level = level;
 };

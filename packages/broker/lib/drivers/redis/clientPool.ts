@@ -5,7 +5,7 @@ import { SubscriptionOptions, DriverOptions } from "..";
 
 const NoGroupErrRegexp = new RegExp(/No such key '([a-zA-Z0-9_\-.:]+)'/);
 const MAX_CLIENTS = 10;
-const BLOCKING_TIME = 200;
+const BLOCKING_TIME = 1000;
 
 interface ClientInfo {
   client: RedisClientType;
@@ -125,13 +125,13 @@ export class ClientPool {
       });
   }
 
-  async readStreams(streams: string[], lastKnownIds?: string[]) {
+  async readStreams(streams: string[], lastKnownIds: string[]) {
     const reply = await this.execute(
       (client, blocking) =>
         client.xRead(
           streams.map((streamName, idx) => ({
             key: streamName,
-            id: lastKnownIds?.[idx] || `${Date.now()}-0`,
+            id: lastKnownIds[idx],
           })),
           {
             BLOCK: blocking ? BLOCKING_TIME : undefined,

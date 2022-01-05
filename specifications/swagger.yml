@@ -1673,12 +1673,6 @@ components:
           properties:
             app:
               type: string
-              enum:
-                - prisme.ai-nlu
-                - prisme.ai-dsul-server
-                - prisme.ai-analytics
-                - prisme.ai-actions
-                - any existing app name
             user:
               description: Authenticated user
               type: object

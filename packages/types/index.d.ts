@@ -12,7 +12,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -62,7 +62,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -116,7 +116,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -171,7 +171,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -231,7 +231,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -286,7 +286,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -339,7 +339,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -392,7 +392,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -445,7 +445,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -496,7 +496,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -547,7 +547,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -600,7 +600,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -653,7 +653,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */
@@ -789,7 +789,7 @@ declare namespace Prismeai {
          */
         createdAt?: string;
         source?: {
-            app?: "prisme.ai-nlu" | "prisme.ai-dsul-server" | "prisme.ai-analytics" | "prisme.ai-actions" | "any existing app name";
+            app?: string;
             /**
              * Authenticated user
              */

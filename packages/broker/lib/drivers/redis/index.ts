@@ -60,6 +60,15 @@ export class RedisDriver implements Driver {
     const topics = Array.isArray(topic) ? topic : [topic];
     const streams = this.getTopicStreams(topics);
 
+    const initializedLastKnownIds =
+      lastKnownIds ||
+      streams.reduce(
+        (ids, stream) => ({
+          ...ids,
+          [stream]: `${Date.now()}-0`,
+        }),
+        {}
+      );
     const eventsByStream = await (subscriptionOpts.GroupPartitions
       ? this.client.readStreamsPartition(
           this.groupName,
@@ -69,7 +78,7 @@ export class RedisDriver implements Driver {
         )
       : this.client.readStreams(
           streams,
-          streams.map((curStream) => lastKnownIds?.[curStream] || "")
+          streams.map((curStream) => initializedLastKnownIds?.[curStream] || "")
         ));
 
     // Transmit received events to callback
@@ -80,7 +89,7 @@ export class RedisDriver implements Driver {
         results: events.map(cb),
         lastId: events.length
           ? events[events.length - 1].id
-          : lastKnownIds?.[streamName],
+          : initializedLastKnownIds?.[streamName],
         types: new Set(events.map((cur) => cur.type)),
       })
     );
@@ -120,7 +129,7 @@ export class RedisDriver implements Driver {
 
     if (!this.closed && (!subscriptionOpts.ListenOnlyOnce || !receivedData)) {
       const updatedLastKnownIds = {
-        ...(lastKnownIds || {}),
+        ...(initializedLastKnownIds || {}),
         ...processedStreams.reduce(
           (lastIds, { streamName, lastId }) => ({
             ...lastIds,
