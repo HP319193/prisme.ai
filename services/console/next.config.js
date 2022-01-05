@@ -4,9 +4,9 @@ const { i18n } = require("./next-i18next.config");
 module.exports = {
   reactStrictMode: true,
   i18n,
-  env: {
-    API_HOST: process.env.NEXT_PUBLIC_API_HOST,
-    ENDPOINT: `${process.env.NEXT_PUBLIC_API_HOST}/workspace/{{workspaceId}}/{{slug}}`,
-    SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  publicRuntimeConfig: {
+    API_HOST: process.env.API_HOST,
+    ENDPOINT: `${process.env.ENDPOINT}/workspace/{{workspaceId}}/{{slug}}`,
+    SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN || "",
   },
 };

@@ -12,7 +12,11 @@ import { broker } from "./eda";
 
 const app = express();
 app.set("trust proxy", true);
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 app.use(cors({ credentials: true, origin: true }));
 
 let gtwcfg;
