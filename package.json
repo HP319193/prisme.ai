@@ -21,6 +21,7 @@
     "dev:gateway": "npm run dev --prefix services/api-gateway",
     "dev:runtime": "npm run dev --prefix services/runtime",
     "publish:types": "npm publish --workspace=@prisme.ai/types --access=public",
+    "publish:broker": "npm publish --workspace=@prisme.ai/broker --access=public",
     "test": "jest --collect-coverage"
   },
   "repository": {
