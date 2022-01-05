@@ -24,10 +24,10 @@
     "@types/superagent": "^4.1.10",
     "@types/uuid": "^8.3.0",
     "@types/validatorjs": "^3.15.0",
-    "cors": "^2.8.5",
     "ts-node-dev": "^1.0.0-pre.62"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "@prisme.ai/broker": "^0.0.16",
     "@prisme.ai/types": "^1.0.6",
     "argparse": "^2.0.1",

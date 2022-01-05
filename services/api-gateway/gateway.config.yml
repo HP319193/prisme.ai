@@ -3,10 +3,10 @@ endpoints:
     path: "/v2/workspaces/*/webhooks/*"
 
   workspaces:
-    path: "/v2/workspaces/*"
+    path: "/v2/workspaces*"
 
   apps:
-    path: "/v2/apps/*"
+    path: "/v2/apps*"
 
   console:
     path: "*"
@@ -15,13 +15,13 @@ endpoints:
 
 services:
   workspaces:
-    url: "http://workspaces"
+    url: "http://workspaces:3002"
   runtime:
-    url: "http://runtime"
+    url: "http://runtime:3003"
   events:
-    url: "http://events"
+    url: "http://events:3002"
   console:
-    url: "http://console"
+    url: "http://console:3001"
 
 pipelines:
   - name: runtime
