@@ -1,6 +1,6 @@
 {
   "name": "@prisme.ai/broker",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Package allowing event-based communications with Prisme.ai Message broker",
   "main": "dist/index.js",
   "scripts": {
