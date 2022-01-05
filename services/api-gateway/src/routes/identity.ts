@@ -18,7 +18,7 @@ const loginHandler = (strategy: string) =>
         if (err || !user) {
           next(new AuthenticationError(info.message));
           await req.broker.send(EventType.FailedLogin, {
-            username: req.body.username,
+            email: req.body.email,
             ip: req.context?.http?.ip,
           });
           return;
@@ -33,7 +33,7 @@ const loginHandler = (strategy: string) =>
           }
           res.send(user);
           await req.broker.send(EventType.SucceededLogin, {
-            username: user.username || user.firstName,
+            email: user.email || user.firstName,
             ip: req.context?.http?.ip,
             id: user.id,
           });

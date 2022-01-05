@@ -5,8 +5,20 @@
     "email": "Correo electrónico",
     "password": "Contraseña",
     "submit": "Conexión",
+    "signup": "¿ Inscríbase en ?",
+    "error": "Contraseña incorrecta"
+  },
+  "up": {
+    "title": "Inscripción — $t(common:main.title)",
+    "description": "Prueba con Prisme.ai",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "firstName": "Appelido",
+    "lastName": "Nombre",
+    "submit": "Registro",
+    "signin": "Ya tengo una cuenta",
     "error": "Se ha producido un error, póngase en contacto con el servicio de asistencia técnica",
-    "error_403": "Esta cuenta no existe. ¿Crear una cuenta?",
-    "error_404": "Esta cuenta no existe. ¿Crear una cuenta?"
+    "error_AuthenticationError": "Ya existe una cuenta para este correo electrónico, pero la contraseña no es válida.",
+    "error_InvalidEmail": "El correo electrónico no es válido."
   }
 }

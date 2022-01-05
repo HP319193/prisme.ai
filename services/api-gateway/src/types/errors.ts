@@ -45,3 +45,9 @@ export class AlreadyUsed extends PrismeError {
     super(`${type} already in use`, undefined, 400);
   }
 }
+
+export class InvalidEmail extends PrismeError {
+  constructor() {
+    super(`value must be an email`, undefined, 400);
+  }
+}

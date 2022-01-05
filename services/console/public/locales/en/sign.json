@@ -5,8 +5,20 @@
     "email": "Email",
     "password": "Password",
     "submit": "Connection",
+    "signup": "Signup ?",
+    "error": "Wrong password"
+  },
+  "up": {
+    "title": "Signup — $t(common:main.title)",
+    "description": "Try Prisme.ai",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "Firstname",
+    "lastName": "Lastname",
+    "submit": "Signup",
+    "signin": "I already have an account",
     "error": "An error has occurred, please contact support",
-    "error_403": "This account does not exist. Create an account ?",
-    "error_404": "This account does not exist. Create an account ?"
+    "error_AuthenticationError": "An account already exists for this email, but the password is invalid.",
+    "error_InvalidEmail": "The email is invalid."
   }
 }

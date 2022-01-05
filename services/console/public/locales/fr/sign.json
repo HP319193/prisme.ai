@@ -5,8 +5,20 @@
     "email": "E-mail",
     "password": "Mot de passe",
     "submit": "Connexion",
+    "signup": "Inscription ?",
+    "error": "Mot de passe invalide"
+  },
+  "up": {
+    "title": "Inscription — $t(common:main.title)",
+    "description": "Essayez Prisme.ai",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "submit": "Inscription",
+    "signin": "J'ai déjà un compte",
     "error": "Une erreur est survenue, veuillez contacter le support",
-    "error_403": "Ce compte n'existe pas. Créer un compte ?",
-    "error_404": "Ce compte n'existe pas. Créer un compte ?"
+    "error_AuthenticationError": "Un compte existe déjà pour cet email, mais le mot de passe est invalide.",
+    "error_InvalidEmail": "L'email est invalide."
   }
 }

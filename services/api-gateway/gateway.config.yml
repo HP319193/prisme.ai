@@ -1,52 +1,49 @@
 endpoints:
-  ip:
-    path: "/ip"
-  httpbin:
-    path: "/httpbin/*"
-  headers:
-    path: "/headers"
+  webhooks:
+    path: "/v2/workspaces/*/webhooks/*"
 
-  test:
-    hosts:
-      - "test.ok"
+  workspaces:
+    path: "/v2/workspaces/*"
+
+  apps:
+    path: "/v2/apps/*"
+
+  console:
     path: "*"
+    hosts:
+      - console.eda.prisme.ai
 
 services:
-  httpbin:
-    url: "https://httpbin.org"
+  workspaces:
+    url: "http://workspaces"
+  runtime:
+    url: "http://runtime"
+  events:
+    url: "http://events"
+  console:
+    url: "http://console"
 
 pipelines:
-
-  # - name: unauthenticated
-  #   endpoints:
-  #     - ip
-  #   policies:
-  #     - proxy:
-  #         service: httpbin
-
-  - name: strippedPath
+  - name: runtime
     endpoints:
-      - httpbin
-    policies:
-      - blacklist:
-          paths:
-            - /httpbin/uuid
-      - proxy:
-          service: httpbin
-          pathRewrite:
-            "^/httpbin": "/"
-
-  - name: authenticated
-    endpoints:
-      - headers
+      - webhooks
     policies:
       - authentication: {}
       - proxy:
-          service: httpbin
+          service: runtime
 
-  - name: testhost
+  - name: workspaces
     endpoints:
-      - test
+      - workspaces
+      - apps
+    policies:
+      - authentication: {}
+      - proxy:
+          service: workspaces
+
+  - name: console
+    endpoints:
+      - console
     policies:
       - proxy:
-          service: httpbin
+          service: console

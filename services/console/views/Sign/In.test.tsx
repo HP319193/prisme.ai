@@ -21,6 +21,10 @@ jest.mock("next/router", () => {
   };
 });
 
+jest.mock("primereact/fieldset", () => ({
+  Fieldset: ({ children }: any) => children,
+}));
+
 beforeEach(() => {
   const { mock } = useUser() as any;
   mock.user = null;
@@ -57,7 +61,7 @@ it("should submit form", async () => {
   await act(async () => {
     await root.root
       .findByType(Form)
-      .props.onSubmit({ username: "email@company.com", password: "123456" });
+      .props.onSubmit({ email: "email@company.com", password: "123456" });
   });
   expect(useUser().signin).toHaveBeenCalledWith("email@company.com", "123456");
 });
@@ -65,23 +69,23 @@ it("should submit form", async () => {
 it("should validate form", async () => {
   const root = renderer.create(<SignIn />);
   expect(
-    root.root.findByType(Form).props.validate({ username: "", password: "" })
+    root.root.findByType(Form).props.validate({ email: "", password: "" })
   ).toEqual({
-    username: "required",
+    email: "required",
     password: "required",
   });
   expect(
-    root.root.findByType(Form).props.validate({ username: "a", password: "" })
+    root.root.findByType(Form).props.validate({ email: "a", password: "" })
   ).toEqual({
     password: "required",
   });
   expect(
-    root.root.findByType(Form).props.validate({ username: "", password: "a" })
+    root.root.findByType(Form).props.validate({ email: "", password: "a" })
   ).toEqual({
-    username: "required",
+    email: "required",
   });
   expect(
-    root.root.findByType(Form).props.validate({ username: "a", password: "a" })
+    root.root.findByType(Form).props.validate({ email: "a", password: "a" })
   ).toEqual({});
 });
 

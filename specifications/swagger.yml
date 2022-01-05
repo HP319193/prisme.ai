@@ -22,7 +22,7 @@ paths:
   ############################################# gateway
   /v2/login:
     post:
-      description: Username / Password authentication
+      description: emailPassword authentication
       operationId: credentialsAuth
       tags:
         - API Gateway
@@ -34,10 +34,10 @@ paths:
           application/json:
             schema:
               required:
-                - username
+                - email
                 - password
               properties:
-                username:
+                email:
                   type: string
                 password:
                   type: string
@@ -140,12 +140,12 @@ paths:
           application/json:
             schema:
               required:
-                - username
+                - email
                 - password
                 - firstName
                 - lastName
               properties:
-                username:
+                email:
                   type: string
                 password:
                   type: string
@@ -1813,11 +1813,11 @@ components:
           type: object
           required:
             - ip
-            - username
+            - email
           properties:
             ip:
               type: string
-            username:
+            email:
               type: string
 
     SucceededLogin:
@@ -1835,12 +1835,12 @@ components:
           type: object
           required:
             - ip
-            - username
+            - email
             - id
           properties:
             ip:
               type: string
-            username:
+            email:
               type: string
             id:
               type: string

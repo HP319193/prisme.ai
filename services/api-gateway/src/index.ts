@@ -1,5 +1,7 @@
 import express from "express";
 require("express-async-errors");
+import helmet from "helmet";
+import cors from "cors";
 import { syscfg, GatewayConfig } from "./config";
 import initRoutes from "./routes";
 import { initMetrics } from "./metrics";
@@ -10,6 +12,8 @@ import { broker } from "./eda";
 
 const app = express();
 app.set("trust proxy", true);
+app.use(helmet());
+app.use(cors({ credentials: true, origin: true }));
 
 let gtwcfg;
 try {

@@ -58,20 +58,25 @@ async function initPassportStrategies(
   users: ReturnType<typeof services.identity>
 ) {
   passport.use(
-    new LocalStrategy(async function (username, password, done) {
-      try {
-        const user = await users.login(username, password);
-        return done(null, user);
-      } catch (err) {
-        done(null, false, { message: "Incorrect username or password." });
-        if (!(err instanceof AuthenticationError)) {
-          logger.error({
-            msg: "Unexpected error raised during passport authenticate",
-            err,
-          });
+    new LocalStrategy(
+      {
+        usernameField: "email",
+      },
+      async function (email, password, done) {
+        try {
+          const user = await users.login(email, password);
+          return done(null, user);
+        } catch (err) {
+          done(null, false, { message: "Incorrect email or password." });
+          if (!(err instanceof AuthenticationError)) {
+            logger.error({
+              msg: "Unexpected error raised during passport authenticate",
+              err,
+            });
+          }
         }
       }
-    })
+    )
   );
 
   passport.use(

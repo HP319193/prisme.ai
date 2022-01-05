@@ -19,7 +19,9 @@ it("should fetch", async () => {
   const o = await fetcher.get("url");
   expect(o.headers).toEqual({ foo: "bar" });
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
+    credentials: "include",
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     },
     method: "GET",
@@ -39,7 +41,9 @@ it("should fetch with auth", async () => {
   fetcher.token = "token";
   await fetcher.get("url");
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
+    credentials: "include",
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
       "x-prismeai-session-token": "token",
     },
@@ -52,7 +56,7 @@ it("should fail to fetch", async () => {
   // @ts-ignore
   global.fetch = jest.fn(() => ({
     ok: false,
-    statusText: JSON.stringify({
+    json: () => ({
       error: "error",
       message: "message",
     }),
@@ -68,7 +72,9 @@ it("should fail to fetch", async () => {
     }
   }
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
+    credentials: "include",
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     },
     method: "GET",
@@ -92,7 +98,9 @@ it("should fail to fetch with unformatted error", async () => {
     }
   }
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
+    credentials: "include",
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     },
     method: "GET",
@@ -111,7 +119,9 @@ it("should post", async () => {
   }));
   await fetcher.post("url");
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
+    credentials: "include",
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     },
     method: "POST",
@@ -130,7 +140,9 @@ it("should post with body", async () => {
   }));
   await fetcher.post("url", {});
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
+    credentials: "include",
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     },
     method: "POST",
@@ -150,7 +162,9 @@ it("should patch", async () => {
   }));
   await fetcher.patch("url", {});
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
+    credentials: "include",
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     },
     method: "PATCH",
@@ -170,7 +184,9 @@ it("should delete", async () => {
   }));
   await fetcher.delete("url", "42");
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
+    credentials: "include",
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     },
     method: "DELETE",

@@ -1,22 +1,36 @@
 import { PrismeContext } from "../../middlewares";
 import { StorageDriver } from "../../storage";
-import { AlreadyUsed, AuthenticationError } from "../../types/errors";
+import {
+  AlreadyUsed,
+  AuthenticationError,
+  InvalidEmail,
+} from "../../types/errors";
 import { comparePasswords, hashPassword } from "./utils";
+import isEmail from "is-email";
 
 export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
-  async function (req: PrismeaiAPI.Signup.RequestBody) {
-    const existingUsers = await Users.find({ email: req.username });
+  async function ({
+    email,
+    password,
+    firstName,
+    lastName,
+  }: PrismeaiAPI.Signup.RequestBody) {
+    const existingUsers = await Users.find({ email });
     if (existingUsers.length) {
       throw new AlreadyUsed("email");
     }
 
-    const password = await hashPassword(req.password);
+    if (!isEmail(email)) {
+      throw new InvalidEmail();
+    }
+
+    const hash = await hashPassword(password);
     const user: Prismeai.User = {
-      email: req.username,
-      firstName: req.firstName,
-      lastName: req.lastName,
+      email,
+      firstName,
+      lastName,
     };
-    const savedUser = await Users.save({ ...user, password });
+    const savedUser = await Users.save({ ...user, password: hash });
     return Promise.resolve(savedUser);
   };
 
@@ -26,8 +40,8 @@ export const get = (Users: StorageDriver, ctx?: PrismeContext) =>
   };
 
 export const login = (Users: StorageDriver, ctx?: PrismeContext) =>
-  async function (username: string, password: string) {
-    const users = await Users.find({ email: username });
+  async function (email: string, password: string) {
+    const users = await Users.find({ email });
     if (!users.length) {
       throw new AuthenticationError();
     }
