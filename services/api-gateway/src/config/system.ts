@@ -1,7 +1,7 @@
 import path from "path";
 
 export default {
-  PORT: process.env.PORT || 6666,
+  PORT: process.env.PORT || 3001,
   DEBUG: ["dev", "development"].includes(process.env.NODE_ENV || "production"),
 
   GATEWAY_CONFIG:

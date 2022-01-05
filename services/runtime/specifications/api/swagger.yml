@@ -22,7 +22,7 @@ paths:
   ############################################# gateway
   /v2/login:
     post:
-      description: Username / Password authentication
+      description: email / Password authentication
       operationId: credentialsAuth
       tags:
         - API Gateway
@@ -32,10 +32,10 @@ paths:
           application/json:
             schema:
               required:
-                - username
+                - email
                 - password
               properties:
-                username:
+                email:
                   type: string
                 password:
                   type: string
@@ -95,7 +95,6 @@ paths:
         "400":
           $ref: "#/components/responses/BadParameters"
 
-
   /v2/signup:
     post:
       description: Signup
@@ -108,12 +107,12 @@ paths:
           application/json:
             schema:
               required:
-                - username
+                - email
                 - password
                 - firstName
                 - lastName
               properties:
-                username:
+                email:
                   type: string
                 password:
                   type: string
@@ -425,7 +424,6 @@ paths:
           $ref: "#/components/responses/BadPermissions"
         "400":
           $ref: "#/components/responses/BadParameters"
-
 
   ## automations
   /v2/workspaces/{workspaceId}/automations:
@@ -798,7 +796,6 @@ components:
                     - anonymous
         - $ref: "#/components/schemas/Contact"
 
-
     Workspace:
       type: object
       required:
@@ -841,7 +838,6 @@ components:
           type: string
         config:
           type: object
-
 
     ############################################################ Events ############################################################
     BaseEventResponse:
@@ -973,8 +969,7 @@ components:
       properties:
         type:
           type: string
-          example:
-            error
+          example: error
 
     ########################## API Gateway ##########################
     FailedLogin:
@@ -1108,7 +1103,6 @@ components:
             automation:
               $ref: "#/components/schemas/Automation"
 
-
     DeletedAutomation:
       type: object
       properties:
@@ -1130,7 +1124,6 @@ components:
                   type: string
                 name:
                   type: string
-
 
     ########################## Runtime events ##########################
 
@@ -1157,7 +1150,6 @@ components:
             payload:
               type: object
 
-
     UpdatedContexts:
       type: object
       properties:
@@ -1171,10 +1163,6 @@ components:
           properties:
             contexts:
               type: object
-
-
-
-
 
     ObjectNotFoundError:
       type: object

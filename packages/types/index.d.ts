@@ -108,7 +108,7 @@ declare namespace Prismeai {
         type: "gateway.login.failed";
         payload: {
             ip: string;
-            username: string;
+            email: string;
         };
     } | {
         /**
@@ -162,7 +162,7 @@ declare namespace Prismeai {
         type: "gateway.login.succeeded";
         payload: {
             ip: string;
-            username: string;
+            email: string;
             id: string;
         };
     } | {
@@ -966,7 +966,7 @@ declare namespace Prismeai {
         type: "gateway.login.failed";
         payload: {
             ip: string;
-            username: string;
+            email: string;
         };
     }
     export interface ForbiddenError {
@@ -1067,7 +1067,7 @@ declare namespace Prismeai {
         type: "gateway.login.succeeded";
         payload: {
             ip: string;
-            username: string;
+            email: string;
             id: string;
         };
     }
@@ -1406,7 +1406,7 @@ declare namespace PrismeaiAPI {
     }
     namespace CredentialsAuth {
         export interface RequestBody {
-            username: string;
+            email: string;
             password: string;
         }
         namespace Responses {
@@ -1653,7 +1653,7 @@ declare namespace PrismeaiAPI {
     }
     namespace Signup {
         export interface RequestBody {
-            username: string;
+            email: string;
             password: string;
             firstName: string;
             lastName: string;

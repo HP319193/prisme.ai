@@ -5,6 +5,13 @@ import api from "../../api/api";
 import ApiError from "../../api/ApiError";
 import Storage from "../../utils/Storage";
 
+jest.mock("../../api/api", () => ({
+  me: jest.fn(),
+  signin: jest.fn(),
+  signout: jest.fn(),
+  signup: jest.fn(),
+}));
+
 jest.mock("next/router", () => ({
   useRouter: () => ({
     push: jest.fn(),
@@ -76,13 +83,13 @@ it("should signin with success", async () => {
   });
   let promise: Promise<any>;
   act(() => {
-    promise = context.signin("username", "password");
+    promise = context.signin("email", "password");
   });
   expect(context.loading).toBe(true);
   await act(async () => {
     await promise;
   });
-  expect(api.signin).toHaveBeenCalledWith("username", "password");
+  expect(api.signin).toHaveBeenCalledWith("email", "password");
   expect(context.loading).toBe(false);
   expect(context.user).toEqual({
     id: "42",
@@ -108,13 +115,13 @@ it("should signin without success", async () => {
     </UserProvider>
   );
   act(() => {
-    promise = context.signin("username", "password");
+    promise = context.signin("email", "password");
   });
   expect(context.loading).toBe(true);
   await act(async () => {
     await promise;
   });
-  expect(api.signin).toHaveBeenCalledWith("username", "password");
+  expect(api.signin).toHaveBeenCalledWith("email", "password");
   expect(context.loading).toBe(false);
   expect(context.user).toEqual(null);
   expect(context.error).toEqual(
@@ -136,6 +143,109 @@ it("should signout", async () => {
     </UserProvider>
   );
   context.signout();
-  expect(Storage.remove).toHaveBeenCalledWith("auth-token");
+  expect(api.signout).toHaveBeenCalled();
   expect(context.user).toBeNull();
+});
+
+it("should signup with a new account", async () => {
+  let promise: Promise<any>;
+  let context: any = {};
+  const Test = () => {
+    context = useUser();
+    return null;
+  };
+  const root = renderer.create(
+    <UserProvider>
+      <Test />
+    </UserProvider>
+  );
+  await act(async () => {
+    // Because of initial fetch me
+    await true;
+  });
+  (api.signup as jest.Mock).mockImplementation(async () => ({
+    headers: {
+      "x-prismeai-session-token": "dev-token",
+    },
+    id: "42",
+    email: "email",
+    firstName: "firstname",
+    lastName: "lastname",
+  }));
+  act(() => {
+    promise = context.signup("email", "password", "firstname", "lastname");
+  });
+  expect(context.loading).toBe(true);
+  await act(async () => {
+    await promise;
+  });
+  expect(api.signup).toHaveBeenCalledWith(
+    "email",
+    "password",
+    "firstname",
+    "lastname"
+  );
+  expect(context.loading).toBe(false);
+
+  expect(context.user).toEqual({
+    id: "42",
+    email: "email",
+    firstName: "firstname",
+    lastName: "lastname",
+  });
+});
+
+it("should signup with an existing account", async () => {
+  let context: any = {};
+  const Test = () => {
+    context = useUser();
+    return null;
+  };
+  const root = renderer.create(
+    <UserProvider>
+      <Test />
+    </UserProvider>
+  );
+  await act(async () => {
+    // Because of initial fetch me
+    await true;
+  });
+  (api.signup as jest.Mock).mockImplementation(async () => {
+    throw new ApiError({ error: "AlreadyUsed", message: "" }, 401);
+  });
+
+  await act(async () => {
+    await context.signup("email", "password", "firstname", "lastname");
+  });
+
+  expect(api.signin).toHaveBeenCalledWith("email", "password");
+});
+
+it("should fail to signup", async () => {
+  let context: any = {};
+  const Test = () => {
+    context = useUser();
+    return null;
+  };
+  const root = renderer.create(
+    <UserProvider>
+      <Test />
+    </UserProvider>
+  );
+  await act(async () => {
+    // Because of initial fetch me
+    await true;
+  });
+  (api.signup as jest.Mock).mockImplementation(async () => {
+    throw new ApiError({ error: "InvalidEmail", message: "" }, 400);
+  });
+
+  await act(async () => {
+    await context.signup("email", "password", "firstname", "lastname");
+  });
+
+  expect(context.user).toBe(null);
+  expect(context.error).toEqual(
+    new ApiError({ error: "InvalidEmail", message: "" }, 400)
+  );
 });

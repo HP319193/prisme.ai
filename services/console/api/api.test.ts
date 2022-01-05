@@ -16,9 +16,29 @@ it("should call /signin", () => {
   api.post = jest.fn();
   api.signin("user@fake.com", "password");
   expect(api.post).toHaveBeenCalledWith("/login", {
-    username: "user@fake.com",
+    email: "user@fake.com",
     password: "password",
   });
+});
+
+it("should call /signup", () => {
+  const api = new Api("/fake/");
+  api.post = jest.fn();
+  api.signup("user@fake.com", "password", "firstname", "lastname");
+  expect(api.post).toHaveBeenCalledWith("/signup", {
+    email: "user@fake.com",
+    password: "password",
+    firstName: "firstname",
+    lastName: "lastname",
+  });
+});
+
+it("should call /signout", () => {
+  const api = new Api("/fake/");
+  api.post = jest.fn();
+  api.signout();
+  expect(api.post).toHaveBeenCalledWith("/logout");
+  expect(api.token).toBeUndefined();
 });
 
 it("should call get /workspaces", () => {

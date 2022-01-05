@@ -4,3 +4,4 @@ services/*/dist
 **/.DS_STORE
 **/.env
 services/workspaces/heapdumps
+data

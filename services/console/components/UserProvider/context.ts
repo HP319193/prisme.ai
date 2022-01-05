@@ -5,7 +5,13 @@ export interface UserContext<T = Prismeai.User | null> {
   user: T;
   loading: boolean;
   error?: ApiError;
-  signin: (username: string, password: string) => Promise<Prismeai.User | null>;
+  signin: (email: string, password: string) => Promise<Prismeai.User | null>;
+  signup: (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+  ) => Promise<Prismeai.User | null>;
   signout: () => void;
 }
 
@@ -13,6 +19,7 @@ export const userContext = createContext<UserContext>({
   user: null,
   loading: false,
   signin: async () => null,
+  signup: async () => null,
   signout() {},
 });
 

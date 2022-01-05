@@ -2,15 +2,13 @@ import getConfig from "next/config";
 import Fetcher from "./fetcher";
 import { Workspace } from "./types";
 
-const { publicRuntimeConfig } = getConfig();
-
 export class Api extends Fetcher {
   async me() {
     return await this.get("/me");
   }
 
   async signin(
-    username: string,
+    email: string,
     password: string
   ): Promise<
     Prismeai.User & {
@@ -20,9 +18,34 @@ export class Api extends Fetcher {
     }
   > {
     return await this.post("/login", {
-      username,
+      email,
       password,
     });
+  }
+
+  async signup(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+  ): Promise<
+    Prismeai.User & {
+      headers: {
+        ["x-prismeai-session-token"]: string;
+      };
+    }
+  > {
+    return await this.post("/signup", {
+      email: email,
+      password,
+      firstName,
+      lastName,
+    });
+  }
+
+  async signout() {
+    await this.post("/logout");
+    this.token = null;
   }
 
   async getWorkspaces(): Promise<Workspace[]> {
@@ -42,4 +65,4 @@ export class Api extends Fetcher {
   }
 }
 
-export default new Api(publicRuntimeConfig.API_HOST || "");
+export default new Api(process.env.API_HOST || "");

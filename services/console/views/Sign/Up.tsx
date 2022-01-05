@@ -12,31 +12,34 @@ import { useUser } from "../../components/UserProvider";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
+import ApiError from "../../api/ApiError";
 
 interface Values {
   email: string;
   password: string;
+  firstName: string;
+  lastName: string;
 }
 
 export const SignIn = () => {
   const { t } = useTranslation("sign");
   const { push } = useRouter();
-  const { user, loading, error, signin } = useUser();
+  const { user, loading, error, signup } = useUser();
   const messages = useRef<Messages>(null);
 
   const submit = useCallback(
-    async ({ email, password }: Values) => {
-      await signin(email, password);
+    async ({ email, password, firstName, lastName }: Values) => {
+      await signup(email, password, firstName, lastName);
     },
-    [signin]
+    [signup]
   );
 
   useEffect(() => {
     if (!messages.current || !error) return;
-    console.log(error.error);
+
     messages.current.show({
       severity: "error",
-      summary: t("in.error", { context: error.error }),
+      summary: t("up.error", { context: error.error }),
     });
   }, [error, t]);
 
@@ -53,6 +56,12 @@ export const SignIn = () => {
     if (!values.password) {
       errors.password = "required";
     }
+    if (!values.firstName) {
+      errors.firstName = "required";
+    }
+    if (!values.lastName) {
+      errors.lastName = "required";
+    }
     return errors;
   };
 
@@ -65,14 +74,14 @@ export const SignIn = () => {
   return (
     <FullScreen>
       <Head>
-        <title>{t("in.title")}</title>
-        <meta name="description" content={t("in.description")} />
+        <title>{t("up.title")}</title>
+        <meta name="description" content={t("up.description")} />
       </Head>
       <Form onSubmit={submit} validate={validate}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit} className="w-8">
-            <Fieldset legend={t("in.description")}>
-              <Field name="email" label={t("in.email")}>
+            <Fieldset legend={t("up.description")}>
+              <Field name="email" label={t("up.email")}>
                 {({ input, className }) => (
                   <InputText
                     id="email"
@@ -82,7 +91,7 @@ export const SignIn = () => {
                   />
                 )}
               </Field>
-              <Field name="password" label={t("in.password")}>
+              <Field name="password" label={t("up.password")}>
                 {({ input, className }) => (
                   <InputText
                     id="password"
@@ -92,16 +101,32 @@ export const SignIn = () => {
                   />
                 )}
               </Field>
+              <Field name="firstName" label={t("up.firstName")}>
+                {({ input, className }) => (
+                  <InputText
+                    id="firstName"
+                    {...input}
+                    className={`${className} min-w-full`}
+                  />
+                )}
+              </Field>
+              <Field name="lastName" label={t("up.lastName")}>
+                {({ input, className }) => (
+                  <InputText
+                    id="lastName"
+                    {...input}
+                    className={`${className} min-w-full`}
+                  />
+                )}
+              </Field>
               <Field className="flex justify-content-between">
-                <div className="flex flex-column">
-                  <Link href="/signup">{t("in.signup")}</Link>
-                </div>
+                <Link href="/signin">{t("up.signin")}</Link>
                 <Button type="submit" disabled={loading}>
                   <div className={`${getIcon()} mr-2`} />
-                  {t("in.submit")}
+                  {t("up.submit")}
                 </Button>
               </Field>
-              <Messages className="absolute bottom-0" ref={messages}></Messages>
+              <Messages ref={messages}></Messages>
             </Fieldset>
           </form>
         )}

@@ -37,8 +37,10 @@ export class Fetcher {
     }
     const res = await global.fetch(`${this.host}${url}`, {
       ...options,
+      credentials: "include",
       headers: {
         ...headers,
+        "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
       },
     });
@@ -46,7 +48,7 @@ export class Fetcher {
     if (!res.ok) {
       let error;
       try {
-        error = new ApiError(JSON.parse(res.statusText), res.status);
+        error = new ApiError(await res.json(), res.status);
       } catch (e) {
         error = new HTTPError(res.statusText, res.status);
       }
