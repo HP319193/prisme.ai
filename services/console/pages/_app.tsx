@@ -10,6 +10,9 @@ import WorkspacesProvider from "../components/WorkspacesProvider";
 import { NextPage } from "next";
 import { ReactElement, ReactNode } from "react";
 import Head from "next/head";
+import dynamic from "next/dynamic";
+
+const Sentry = dynamic(import("../utils/Sentry"), { ssr: false });
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -31,6 +34,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <meta name="description" content={t("main.description")} />
           <link rel="icon" href="/favicon.png" />
         </Head>
+        <Sentry />
         {getLayout(<Component {...pageProps} />)}
       </WorkspacesProvider>
     </UserProvider>
