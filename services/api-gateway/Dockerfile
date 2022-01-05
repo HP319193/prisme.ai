@@ -1,24 +1,45 @@
-FROM node:16-alpine as build
+## Install dependencies
+FROM node:16 as node_modules
 
-WORKDIR /app
-COPY package.json /app
-COPY package-lock.json /app
-COPY tsconfig.json /app
-COPY ./src /app/src
+WORKDIR /www
+COPY package*.json /www/
+COPY *.config.js /www/
+COPY dtsgen.json /www/
+
+# Gateway
+COPY services/api-gateway/package*.json /www/services/api-gateway/
+COPY services/api-gateway/tsconfig.json /www/services/api-gateway/
+
+# Packages
+COPY specifications/ /www/specifications
+COPY packages/ /www/packages
+
 RUN npm ci
-RUN npm run build
 
+## Build api-gateway
+FROM node:16 as build
+WORKDIR /www
+
+# Copy sourcecode & build bundle
+COPY --from=node_modules /www/ /www/
+COPY services/api-gateway/ /www/services/api-gateway
+RUN npm run build:gateway
+
+## Running environment
 FROM node:16-alpine
-WORKDIR /app
+WORKDIR /www
 
-COPY package.json /app/
-COPY --from=build /app/node_modules/ /app/node_modules/
-COPY --from=build /app/dist/ /app
-COPY --from=build /app/dist/index.js /app
-
-COPY specifications/ /specifications/
-
+COPY services/api-gateway/package.json /www/
+COPY --from=node_modules /www/node_modules/ /www/node_modules/
+COPY --from=build /www/services/api-gateway/dist/ /www
+COPY --from=build /www/services/api-gateway/dist/index.js /www
 RUN npm prune --production
 
+COPY specifications/ /www/specifications/
 
-CMD [ "node", "--abort-on-uncaught-exception", "index.js" ]
+ENV OPENAPI_FILEPATH /www/specifications/swagger.yml
+
+EXPOSE 3030
+
+
+CMD [ "node", "--abort-on-uncaught-exception", "index.js"]
