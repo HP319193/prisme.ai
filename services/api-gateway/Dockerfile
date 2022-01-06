@@ -31,6 +31,8 @@ WORKDIR /www
 
 COPY services/api-gateway/package.json /www/
 COPY --from=node_modules /www/node_modules/ /www/node_modules/
+# Do not forget packages/ as locally built packages are symlinked
+COPY --from=node_modules /www/packages/ /www/packages/
 COPY --from=build /www/services/api-gateway/dist/ /www
 COPY --from=build /www/services/api-gateway/dist/index.js /www
 RUN npm prune --production

@@ -32,6 +32,8 @@ WORKDIR /www
 
 COPY services/runtime/package.json /www/
 COPY --from=node_modules /www/node_modules/ /www/node_modules/
+# Do not forget packages/ as locally built packages are symlinked
+COPY --from=node_modules /www/packages/ /www/packages/
 COPY --from=build /www/services/runtime/dist/ /www
 COPY --from=build /www/services/runtime/dist/index.js /www
 RUN npm prune --production
