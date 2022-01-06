@@ -3,6 +3,7 @@ import { ClientPool } from "./clientPool";
 
 enum RedisKey {
   StreamPrefix = "streams:",
+  InternalPrefix = "internal:",
   CatchAllStream = "catchall_stream",
 }
 
@@ -14,11 +15,9 @@ export class RedisDriver implements Driver {
   private grouppedEvents: Set<string>;
   private subscriptionOpts: SubscriptionOptions;
   private closed: boolean;
+  private serverTimeOffset: number;
 
   constructor(opts: DriverOptions) {
-    this.client = new ClientPool(opts);
-    this.ready = this.client.ready;
-
     this.groupName = opts.consumer.app;
     this.consumerId = opts.consumer.name;
     this.grouppedEvents = new Set();
@@ -29,6 +28,29 @@ export class RedisDriver implements Driver {
       ...(opts.subscription || {}),
     };
     this.closed = false;
+    this.serverTimeOffset = 0;
+
+    this.client = new ClientPool(opts);
+    this.ready = this.client.ready;
+    this.ready.then(() => {
+      this.detectServerTimeOffset();
+    });
+  }
+
+  async detectServerTimeOffset() {
+    const fakeMsg = await this.client.send(
+      {},
+      RedisKey.InternalPrefix + "time_tests"
+    );
+    const [curTime] = (fakeMsg?.id || "").split("-");
+    if (curTime) {
+      const localTime = Date.now();
+      this.serverTimeOffset = localTime - parseInt(curTime);
+    }
+  }
+
+  getTime() {
+    return Date.now() - this.serverTimeOffset;
   }
 
   getTopicStreams(topics: string[]) {
@@ -65,7 +87,7 @@ export class RedisDriver implements Driver {
       streams.reduce(
         (ids, stream) => ({
           ...ids,
-          [stream]: `${Date.now()}-0`,
+          [stream]: `${this.getTime()}-0`,
         }),
         {}
       );
