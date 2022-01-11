@@ -70,15 +70,81 @@ it("should call patch /workspaces/42", () => {
   api.updateWorkspace({
     id: "42",
     name: "foo",
-    automations: {},
+    automations: [],
     createdAt: "",
     updatedAt: "",
   });
   expect(api.patch).toHaveBeenCalledWith("/workspaces/42", {
     id: "42",
     name: "foo",
-    automations: {},
+    automations: [],
     createdAt: "",
     updatedAt: "",
   });
+});
+
+it("should call post /workspaces/42/automations", () => {
+  const api = new Api("/fake/");
+  api.post = jest.fn();
+  api.createAutomation(
+    {
+      id: "42",
+      name: "foo",
+      automations: [],
+      createdAt: "",
+      updatedAt: "",
+    },
+    {
+      name: "foo",
+      workflows: {},
+    }
+  );
+  expect(api.post).toHaveBeenCalledWith("/workspaces/42/automations", {
+    name: "foo",
+    workflows: {},
+  });
+});
+
+it("should call patch /workspaces/42/automations", () => {
+  const api = new Api("/fake/");
+  api.patch = jest.fn();
+  api.updateAutomation(
+    {
+      id: "42",
+      name: "foo",
+      automations: [],
+      createdAt: "",
+      updatedAt: "",
+    },
+    {
+      id: "42-1",
+      name: "foo",
+      workflows: {},
+    }
+  );
+  expect(api.patch).toHaveBeenCalledWith("/workspaces/42/automations/42-1", {
+    id: "42-1",
+    name: "foo",
+    workflows: {},
+  });
+});
+
+it("should call delete /workspaces/42/automations/42-1", () => {
+  const api = new Api("/fake/");
+  api.delete = jest.fn();
+  api.deleteAutomation(
+    {
+      id: "42",
+      name: "foo",
+      automations: [],
+      createdAt: "",
+      updatedAt: "",
+    },
+    {
+      id: "42-1",
+      name: "foo",
+      workflows: {},
+    }
+  );
+  expect(api.delete).toHaveBeenCalledWith("/workspaces/42/automations/42-1");
 });

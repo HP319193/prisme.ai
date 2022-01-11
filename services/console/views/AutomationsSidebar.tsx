@@ -1,28 +1,29 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Button } from "primereact/button";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useWorkspaces } from "../components/WorkspacesProvider";
 import { useWorkspace } from "../layouts/WorkspaceLayout";
+import { useWorkspaces } from "../components/WorkspacesProvider";
+import path from "path/posix";
+import { useToaster } from "../layouts/Toaster";
 
 interface AutomationsSidebarProps {
   onClose: () => void;
 }
+
 export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation("workspaces");
   const { push } = useRouter();
-  const { update } = useWorkspaces();
   const {
     workspace,
-    workspace: { id, automations = {} },
+    workspace: { id: workspaceId, automations = [] },
   } = useWorkspace();
-  const automationsList = useMemo(
-    () => Object.keys(automations),
-    [automations]
-  );
+
+  const { createAutomation } = useWorkspaces();
+
   const [creating, setCreating] = useState(false);
 
   const generateAutomationName = useCallback(() => {
@@ -30,50 +31,52 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
     let version = 0;
     const generateName = () =>
       `${defaultName}${version ? ` (${version})` : ""}`;
-    while (automationsList.includes(generateName())) {
+    while (automations.find(({ name }) => name === generateName())) {
       version++;
     }
     return generateName();
-  }, [automationsList, t]);
+  }, [automations, t]);
+
   const create = useCallback(async () => {
     setCreating(true);
+
     const name = generateAutomationName();
-    await update({
-      ...workspace,
-      automations: {
-        ...automations,
-        [name]: {
-          triggers: {
-            [t("automations.create.value.trigger")]: {
-              events: [t("automations.create.value.event")],
-              do: "",
+    const createdAutomation = await createAutomation(workspace, {
+      name,
+      triggers: {
+        [t("automations.create.value.trigger")]: {
+          events: [t("automations.create.value.event")],
+          do: t("automations.create.value.workflow"),
+        },
+      },
+      workflows: {
+        [t("automations.create.value.workflow")]: {
+          do: [
+            {
+              emit: {
+                event: t("automations.create.value.event"),
+              },
             },
-          },
-          workflows: {
-            [t("automations.create.value.workflow")]: {
-              do: [
-                {
-                  emit: {
-                    event: t("automations.create.value.event"),
-                  },
-                },
-              ],
-            },
-          },
+          ],
         },
       },
     });
+    console.log("createdAutomation", createdAutomation);
     setCreating(false);
-    push(`/workspaces/${id}/automations/${name}/manifest`);
     onClose();
+    if (createdAutomation) {
+      await push(
+        `/workspaces/${workspaceId}/automations/${createdAutomation.id}/manifest`
+      );
+    }
   }, [
-    automations,
     generateAutomationName,
-    id,
+    createAutomation,
+    workspace,
+    t,
     onClose,
     push,
-    update,
-    workspace,
+    workspaceId,
   ]);
 
   return (
@@ -87,10 +90,16 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
           {t("automations.create.label")}
         </Button>
       </div>
-      {automationsList.map((automation) => (
-        <div key={automation} onClick={onClose}>
-          <Link href={`/workspaces/${id}/automations/${automation}/manifest`}>
-            {automation}
+      {automations.map((automation) => (
+        <div
+          key={automation.id}
+          onClick={onClose}
+          className="flex justify-content-between align-items-center"
+        >
+          <Link
+            href={`/workspaces/${workspaceId}/automations/${automation.id}/manifest`}
+          >
+            {automation.name}
           </Link>
         </div>
       ))}

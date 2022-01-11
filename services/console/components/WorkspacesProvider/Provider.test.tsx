@@ -294,3 +294,150 @@ it("should fail to update a workspace", async () => {
     expect(expected).toBeNull();
   });
 });
+
+it("should create an automation", async () => {
+  const workspace = {
+    id: "42",
+    name: "workspace",
+  };
+  jest
+    .spyOn(api, "getWorkspaces")
+    .mockReturnValue(Promise.resolve([workspace] as any));
+  jest.spyOn(api, "createAutomation").mockImplementation((w: any, a: any) => ({
+    id: `${w.id}-1`,
+    ...a,
+  }));
+
+  let context: any = {};
+  const Test = () => {
+    context = useWorkspaces();
+    return null;
+  };
+  const root = renderer.create(
+    <Provider>
+      <Test />
+    </Provider>
+  );
+  await act(async () => {
+    await true;
+  });
+  await act(async () => {
+    const w = await context.createAutomation(workspace, { name: "foo" });
+    expect(w).toEqual({
+      id: "42-1",
+      name: "foo",
+    });
+  });
+
+  expect(context.workspaces.get("42")).toEqual({
+    id: "42",
+    name: "workspace",
+    automations: [
+      {
+        id: "42-1",
+        name: "foo",
+      },
+    ],
+  });
+});
+
+it("should update an automation", async () => {
+  const workspace = {
+    id: "42",
+    name: "workspace",
+    automations: [
+      {
+        id: "42-1",
+        name: "foo",
+      },
+    ],
+  };
+  jest
+    .spyOn(api, "getWorkspaces")
+    .mockReturnValue(Promise.resolve([workspace] as any));
+  jest
+    .spyOn(api, "updateAutomation")
+    .mockImplementation((w: any, a: any) => ({ ...a }));
+
+  let context: any = {};
+  const Test = () => {
+    context = useWorkspaces();
+    return null;
+  };
+  const root = renderer.create(
+    <Provider>
+      <Test />
+    </Provider>
+  );
+  await act(async () => {
+    await true;
+  });
+  await act(async () => {
+    const w = await context.updateAutomation(workspace, {
+      id: "42-1",
+      name: "bar",
+    });
+    expect(w).toEqual({
+      id: "42-1",
+      name: "bar",
+    });
+  });
+
+  expect(context.workspaces.get("42")).toEqual({
+    id: "42",
+    name: "workspace",
+    automations: [
+      {
+        id: "42-1",
+        name: "bar",
+      },
+    ],
+  });
+});
+
+it("should delete an automation", async () => {
+  const workspace = {
+    id: "42",
+    name: "workspace",
+    automations: [
+      {
+        id: "42-1",
+        name: "foo",
+      },
+    ],
+  };
+  jest
+    .spyOn(api, "getWorkspaces")
+    .mockReturnValue(Promise.resolve([workspace] as any));
+  jest.spyOn(api, "deleteAutomation").mockImplementation((w: any, a: any) => a);
+
+  let context: any = {};
+  const Test = () => {
+    context = useWorkspaces();
+    return null;
+  };
+  const root = renderer.create(
+    <Provider>
+      <Test />
+    </Provider>
+  );
+  await act(async () => {
+    await true;
+  });
+  await act(async () => {
+    const w = await context.deleteAutomation(workspace, {
+      id: "42-1",
+      name: "foo",
+    });
+    expect(w).toEqual({
+      id: "42-1",
+      name: "foo",
+    });
+  });
+
+  expect(context.workspaces.get("42")).toEqual({
+    id: "42",
+    name: "workspace",
+    automations: [],
+  });
+});

@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { nanoid } from "nanoid";
 import { Broker } from "@prisme.ai/broker";
 import { EventType } from "../../../eda";
 import DSULStorage from "../DSULStorage";
@@ -13,7 +13,7 @@ class Workspaces {
   }
 
   createWorkspace = async (workspace: Prismeai.Workspace) => {
-    await this.storage.save(uuidv4(), workspace);
+    await this.storage.save(nanoid(7), workspace);
     this.broker.send<Prismeai.CreatedWorkspace["payload"]>(
       EventType.CreatedWorkspace,
       {

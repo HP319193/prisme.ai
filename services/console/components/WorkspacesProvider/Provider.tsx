@@ -4,16 +4,41 @@ import api from "../../api/api";
 import { useUser } from "../UserProvider";
 import { Workspace } from "../../api/types";
 
+const insertAutomation = (
+  workspace: Workspace,
+  automation: Prismeai.Automation
+) => {
+  const newAutomations = (workspace.automations || [])
+    .filter(({ id }) => id !== automation.id)
+    .concat([automation]);
+
+  return {
+    ...workspace,
+    automations: newAutomations,
+  };
+};
+
 export const WorkspacesProvider: FC = ({ children }) => {
   const { user } = useUser();
   const [workspaces, setWorkspaces] = useState<WorkspacesContext["workspaces"]>(
     new Map()
   );
   const fetchWorkspaces = useCallback(async () => {
-    const workspaces = await api.getWorkspaces();
-    setWorkspaces(
-      new Map(workspaces.map((workspace) => [workspace.id, workspace]))
-    );
+    const freshWorkspaces = await api.getWorkspaces();
+    setWorkspaces((workspaces) => {
+      const newWorkspaces = new Map(workspaces);
+      freshWorkspaces.forEach((w) => {
+        if (newWorkspaces.has(w.id)) {
+        }
+        newWorkspaces.set(
+          w.id,
+          newWorkspaces.get(w.id)
+            ? ({ ...newWorkspaces.get(w.id), name: w.name } as Workspace)
+            : w
+        );
+      });
+      return newWorkspaces;
+    });
   }, []);
 
   useEffect(() => {
@@ -89,6 +114,61 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [workspaces]
   );
 
+  const createAutomation: WorkspacesContext["createAutomation"] = useCallback(
+    async (workspace: Workspace, automation: Prismeai.Automation) => {
+      const automationResult = await api.createAutomation(
+        workspace,
+        automation
+      );
+      const newWorkspace = insertAutomation(workspace, automationResult);
+      const newWorkspaces = new Map(workspaces);
+      newWorkspaces.set(newWorkspace.id, newWorkspace);
+      setWorkspaces(newWorkspaces);
+
+      return automationResult;
+    },
+    [workspaces]
+  );
+
+  const updateAutomation: WorkspacesContext["updateAutomation"] = useCallback(
+    async (workspace: Workspace, automation: Prismeai.Automation) => {
+      const automationResult = await api.updateAutomation(
+        workspace,
+        automation
+      );
+
+      const newWorkspace = insertAutomation(workspace, automationResult);
+      const newWorkspaces = new Map(workspaces);
+      newWorkspaces.set(newWorkspace.id, newWorkspace);
+      setWorkspaces(newWorkspaces);
+
+      return automationResult;
+    },
+    [workspaces]
+  );
+
+  const deleteAutomation: WorkspacesContext["deleteAutomation"] = useCallback(
+    async (workspace: Workspace, automation: Prismeai.Automation) => {
+      await api.deleteAutomation(workspace, automation);
+
+      const newWorkspaces = new Map(workspaces);
+      const newWorkspace = {
+        ...newWorkspaces.get(workspace.id),
+      } as Workspace;
+
+      newWorkspace.automations = (newWorkspace.automations || []).filter(
+        ({ id }) => {
+          id !== automation.id;
+        }
+      );
+      newWorkspaces.set(workspace.id, newWorkspace);
+      setWorkspaces(newWorkspaces);
+
+      return automation;
+    },
+    [workspaces]
+  );
+
   return (
     <context.Provider
       value={{
@@ -97,6 +177,9 @@ export const WorkspacesProvider: FC = ({ children }) => {
         fetch,
         create,
         update,
+        createAutomation,
+        updateAutomation,
+        deleteAutomation,
       }}
     >
       {children}

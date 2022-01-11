@@ -85,10 +85,9 @@ export class Fetcher {
     });
   }
 
-  async delete(url: string, id: string) {
+  async delete(url: string) {
     return this._fetch(url, {
       method: "DELETE",
-      body: JSON.stringify({ id }),
     });
   }
 }

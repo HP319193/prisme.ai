@@ -1,25 +1,21 @@
 import { createContext, useContext } from "react";
-import { ValidateFunction } from "ajv";
 import { Workspace } from "../../api/types";
 import { ValidationError } from "../../utils/yaml";
 
 export interface AutomationLayoutContext {
-  automation: {
-    name: string;
-    value: Workspace["automations"][0];
-  };
-  setAutomation: (automation: Workspace["automations"][0]) => void;
+  automation: Prismeai.Automation;
+  setAutomation: (automation: Prismeai.Automation) => void;
   reset: () => void;
   save: () => void;
   invalid: false | ValidationError[];
 }
+
 export const automationLayoutContext = createContext<AutomationLayoutContext>({
   automation: {
+    id: "",
     name: "",
-    value: {
-      triggers: {},
-      workflows: {},
-    },
+    triggers: {},
+    workflows: {},
   },
   setAutomation() {},
   reset() {},

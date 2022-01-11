@@ -22,6 +22,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [workspace, setCurrentWorkspace] = useState<
     WorkspaceContext["workspace"] | null
   >();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebar, setSidebar] = useState<"automations" | "apps" | "pages">(
     "automations"

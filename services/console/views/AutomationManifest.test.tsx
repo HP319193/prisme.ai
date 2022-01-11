@@ -18,9 +18,6 @@ jest.mock("../layouts/WorkspaceLayout", () => {
 jest.mock("../layouts/AutomationLayout", () => {
   const mock: any = jest.fn();
   mock.automation = {};
-  mock.setAutomation = jest.fn(
-    (automation: any) => (mock.automation.value = automation)
-  );
   mock.useAutomation = () => mock;
   return mock;
 });
@@ -46,7 +43,7 @@ it("should get layout", () => {
 });
 
 it("should init yaml", async () => {
-  useAutomation().setAutomation({
+  useAutomation().automation = {
     triggers: {
       foo: {
         events: ["bar"],
@@ -64,7 +61,7 @@ it("should init yaml", async () => {
         ],
       },
     },
-  });
+  };
   const root = renderer.create(<AutomationManifest />);
   await act(async () => {
     await true;
@@ -91,10 +88,10 @@ it("should init yaml", async () => {
 });
 
 it("should not update empty yaml", async () => {
-  useAutomation().setAutomation({
+  useAutomation().automation = {
     triggers: {},
     workflows: {},
-  });
+  };
   const root = renderer.create(<AutomationManifest />);
   await act(async () => {
     await true;
@@ -106,10 +103,10 @@ it("should not update empty yaml", async () => {
 });
 
 it("should update yaml", async () => {
-  useAutomation().setAutomation({
+  useAutomation().automation = {
     triggers: {},
     workflows: {},
-  });
+  };
   const root = renderer.create(<AutomationManifest />);
   await act(async () => {
     await true;
@@ -143,10 +140,10 @@ workflows:
 });
 
 it("should generation anotations when failing to update yaml", async () => {
-  useAutomation().setAutomation({
+  useAutomation().automation = {
     triggers: {},
     workflows: {},
-  });
+  };
   (useYaml().toJSON as jest.Mock).mockRejectedValue(
     new YAMLException("foo", {
       line: 42,
@@ -206,7 +203,7 @@ it("should build annotations on errors", async () => {
     await true;
   });
   expect(root.root.findByType(CodeEditor).props.annotations).toEqual([
-    { row: 2, column: 0, text: "error", type: "error" },
+    { row: 1, column: 0, text: "error", type: "error" },
   ]);
 });
 

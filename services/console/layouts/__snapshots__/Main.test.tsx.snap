@@ -29,7 +29,7 @@ exports[`should render 1`] = `
         <button
           className="p-button p-component p-button-icon-only"
           disabled={false}
-          onClick={[Function]}
+          onClick={[MockFunction]}
         >
           <span
             className="p-button-icon p-c pi pi-power-off"
@@ -57,5 +57,15 @@ exports[`should render 1`] = `
       <div />
     </div>
   </div>
+</div>
+`;
+
+exports[`should render loading 1`] = `
+<div
+  className="flex min-h-screen flex-column justify-center"
+>
+  <div
+    className="text-5xl pi pi-spin pi-spinner"
+  />
 </div>
 `;

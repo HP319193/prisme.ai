@@ -36,10 +36,14 @@ export const AutomationManifest = () => {
 
   const initYaml = useCallback(async () => {
     try {
-      const value = await toYaml(automation.value);
+      console.log("gra", automation);
+      const value = await toYaml({
+        triggers: automation.triggers,
+        workflows: automation.workflows,
+      });
       setValue(value);
     } catch (e) {}
-  }, [automation.value, toYaml]);
+  }, [automation, toYaml]);
   useEffect(() => {
     initYaml();
   }, [initYaml]);
@@ -80,10 +84,11 @@ export const AutomationManifest = () => {
       setAnnotations([]);
       return;
     }
+
     const annotations = invalid
       .map(({ instancePath, message }) => {
         try {
-          const row = getLineNumberFromPath(value, instancePath);
+          const row = getLineNumberFromPath(value, instancePath) - 1;
           return {
             row,
             column: 0,

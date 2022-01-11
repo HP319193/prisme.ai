@@ -35,7 +35,12 @@
       "title": "Manifeste"
     },
     "save": {
-      "label": "Enregistrer"
+      "label": "Enregistrer",
+      "toast": "L'automatisation a bien été enregistrée",
+      "error": "Une erreur est survenue"
+    },
+    "delete": {
+      "toast": "L'automatisation a bien été supprimée"
     },
     "endpoint": {
       "copied": "L'adresse a bien été copiée"
