@@ -7,9 +7,9 @@ export const Automation = () => {
   const { workspace } = useWorkspace();
   const {
     replace,
-    query: { name },
+    query: { automationId },
   } = useRouter();
-  replace(`/workspaces/${workspace.id}/automations/${name}/manifest`);
+  replace(`/workspaces/${workspace.id}/automations/${automationId}/manifest`);
 
   return null;
 };

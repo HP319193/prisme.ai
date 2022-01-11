@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { nanoid } from "nanoid";
 import { Broker } from "@prisme.ai/broker";
 import { EventType } from "../../../eda";
 import Workspaces from "./workspaces";
@@ -20,7 +20,7 @@ class Automations {
     workspaceId: string,
     automation: Prismeai.Automation
   ) => {
-    automation.id = uuidv4();
+    automation.id = nanoid(7);
     const workspace = await this.workspaces.getWorkspace(workspaceId);
 
     const updatedWorkspace = this.addOrReplaceAutomation(workspace, automation);

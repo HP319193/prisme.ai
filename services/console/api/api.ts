@@ -65,6 +65,34 @@ export class Api extends Fetcher {
   async updateWorkspace(workspace: Workspace): Promise<Workspace> {
     return await this.patch(`/workspaces/${workspace.id}`, workspace);
   }
+
+  async createAutomation(
+    workspace: Workspace,
+    automation: Prismeai.Automation
+  ): Promise<Prismeai.Automation> {
+    return await this.post(`/workspaces/${workspace.id}/automations`, {
+      ...automation,
+    });
+  }
+
+  async updateAutomation(
+    workspace: Workspace,
+    automation: Prismeai.Automation
+  ): Promise<Prismeai.Automation> {
+    return await this.patch(
+      `/workspaces/${workspace.id}/automations/${automation.id}`,
+      automation
+    );
+  }
+
+  async deleteAutomation(
+    workspace: Workspace,
+    automation: Prismeai.Automation
+  ): Promise<string> {
+    return await this.delete(
+      `/workspaces/${workspace.id}/automations/${automation.id}`
+    );
+  }
 }
 
 export default new Api(publicRuntimeConfig.API_HOST || "");

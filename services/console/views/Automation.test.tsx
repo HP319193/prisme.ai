@@ -18,7 +18,7 @@ jest.mock("next/router", () => {
     useRouter: () => ({
       query: {
         id: "42",
-        name: "foo",
+        automationId: "43",
       },
       replace,
     }),
@@ -29,7 +29,7 @@ it("should render", () => {
   const root = renderer.create(<Automation />);
   expect(root.toJSON()).toMatchSnapshot();
   expect(useRouter().replace).toHaveBeenCalledWith(
-    "/workspaces/42/automations/foo/manifest"
+    "/workspaces/42/automations/43/manifest"
   );
 });
 

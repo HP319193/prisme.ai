@@ -8,6 +8,18 @@ export interface WorkspacesContext {
   fetch: (name: string) => Promise<Workspace | null>;
   create: (name: string) => Promise<Workspace>;
   update: (workspace: Workspace) => Promise<Workspace | null>;
+  createAutomation: (
+    workspace: Workspace,
+    automation: Prismeai.Automation
+  ) => Promise<Prismeai.Automation | null>;
+  updateAutomation: (
+    workspace: Workspace,
+    automation: Prismeai.Automation
+  ) => Promise<Prismeai.Automation> | null;
+  deleteAutomation: (
+    workspace: Workspace,
+    automation: Prismeai.Automation
+  ) => Promise<Prismeai.Automation> | null;
 }
 
 export const workspacesContext = createContext<WorkspacesContext>({
@@ -16,6 +28,9 @@ export const workspacesContext = createContext<WorkspacesContext>({
   fetch: async () => null,
   create: async () => ({} as Workspace),
   update: async () => ({} as Workspace),
+  createAutomation: async () => ({} as Prismeai.Automation),
+  updateAutomation: async () => ({} as Prismeai.Automation),
+  deleteAutomation: async () => ({} as Prismeai.Automation),
 });
 
 export const useWorkspaces = () => useContext(workspacesContext);

@@ -3,24 +3,30 @@ import renderer, { act } from "react-test-renderer";
 import { useWorkspaces } from "../components/WorkspacesProvider";
 import { Button } from "primereact/button";
 import { useWorkspace } from "../layouts/WorkspaceLayout";
+import { useRouter } from "next/router";
 
 jest.mock("../components/WorkspacesProvider", () => {
-  const update = jest.fn();
+  const createAutomation = jest.fn((w, automation) => ({
+    id: `${w.id}-1`,
+    ...automation,
+  }));
   return {
     useWorkspaces: () => ({
-      update,
+      createAutomation,
     }),
   };
 });
 jest.mock("../layouts/WorkspaceLayout", () => {
   const workspace = {
     id: "42",
-    automations: {
-      First: {
+    automations: [
+      {
+        id: "43",
+        name: "First",
         triggers: {},
         workflows: {},
       },
-    },
+    ],
   };
   return {
     useWorkspace: () => ({
@@ -52,70 +58,69 @@ it("should create an automation", async () => {
   await act(async () => {
     await root.root.findByType(Button).props.onClick();
   });
-  expect(useWorkspaces().update).toHaveBeenCalledWith({
-    ...useWorkspace().workspace,
-    automations: {
-      ...useWorkspace().workspace.automations,
-      ["automations.create.defaultName"]: {
-        triggers: {
-          "automations.create.value.trigger": {
-            do: "",
-            events: ["automations.create.value.event"],
-          },
-        },
-        workflows: {
-          "automations.create.value.workflow": {
-            do: [
-              {
-                emit: {
-                  event: "automations.create.value.event",
-                },
-              },
-            ],
-          },
+  expect(useWorkspaces().createAutomation).toHaveBeenCalledWith(
+    useWorkspace().workspace,
+    {
+      name: "automations.create.defaultName",
+      triggers: {
+        "automations.create.value.trigger": {
+          do: "automations.create.value.workflow",
+          events: ["automations.create.value.event"],
         },
       },
-    },
-  });
+      workflows: {
+        "automations.create.value.workflow": {
+          do: [
+            {
+              emit: {
+                event: "automations.create.value.event",
+              },
+            },
+          ],
+        },
+      },
+    }
+  );
   expect(onClose).toHaveBeenCalled();
+  expect(useRouter().push).toHaveBeenCalledWith(
+    "/workspaces/42/automations/42-1/manifest"
+  );
 });
 it("should create an automation with existing name", async () => {
-  useWorkspace().workspace.automations["automations.create.defaultName"] = {
-    triggers: {},
-    workflows: {},
-  };
+  useWorkspace().workspace.automations = [
+    {
+      id: "44",
+      name: "automations.create.defaultName",
+      triggers: {},
+      workflows: {},
+    },
+  ];
   const onClose = jest.fn();
   const root = renderer.create(<AutomationsSidebar onClose={onClose} />);
   await act(async () => {
     await root.root.findByType(Button).props.onClick();
   });
-  expect(useWorkspaces().update).toHaveBeenCalledWith({
-    ...useWorkspace().workspace,
-    automations: {
-      ...useWorkspace().workspace.automations,
-      ["automations.create.defaultName"]: {
-        triggers: {},
-        workflows: {},
-      },
-      ["automations.create.defaultName (1)"]: {
-        triggers: {
-          "automations.create.value.trigger": {
-            do: "",
-            events: ["automations.create.value.event"],
-          },
+  expect(useWorkspaces().createAutomation).toHaveBeenCalledWith(
+    useWorkspace().workspace,
+    {
+      name: "automations.create.defaultName (1)",
+      triggers: {
+        "automations.create.value.trigger": {
+          do: "automations.create.value.workflow",
+          events: ["automations.create.value.event"],
         },
-        workflows: {
-          "automations.create.value.workflow": {
-            do: [
-              {
-                emit: {
-                  event: "automations.create.value.event",
-                },
+      },
+      workflows: {
+        "automations.create.value.workflow": {
+          do: [
+            {
+              emit: {
+                event: "automations.create.value.event",
               },
-            ],
-          },
+            },
+          ],
         },
       },
-    },
-  });
+    }
+  );
 });

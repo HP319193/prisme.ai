@@ -33,6 +33,7 @@ services:
       PORT: 3003
       BROKER_HOST: redis://redis/10
       CONTEXTS_CACHE_HOST: redis://redis/0
+      OPENAPI_FILEPATH: /home/node/app/specifications/swagger.yml
   workspaces:
     working_dir: /home/node/app/
     entrypoint: npm run dev --prefix=services/workspaces
@@ -47,6 +48,7 @@ services:
     environment:
       PORT: 3002
       BROKER_HOST: redis://redis/10
+      OPENAPI_FILEPATH: /home/node/app/specifications/swagger.yml
   gateway:
     working_dir: /home/node/app/
     entrypoint: npm run dev --prefix=services/api-gateway

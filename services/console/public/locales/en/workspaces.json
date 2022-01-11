@@ -27,7 +27,12 @@
       "title": "Manifest"
     },
     "save": {
-      "label": "Save"
+      "label": "Save",
+      "toast": "Automation has been saved",
+      "error": "Unknown error has occured"
+    },
+    "delete": {
+      "toast": "Automation has been deleted"
     },
     "endpoint": {
       "copied": "Endpoint has been copied"

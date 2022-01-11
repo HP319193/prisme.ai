@@ -182,7 +182,7 @@ it("should delete", async () => {
       return {};
     },
   }));
-  await fetcher.delete("url", "42");
+  await fetcher.delete("url");
   expect(global.fetch).toHaveBeenCalledWith("http/url", {
     credentials: "include",
     headers: {
@@ -190,7 +190,6 @@ it("should delete", async () => {
       "Content-Type": "application/json",
     },
     method: "DELETE",
-    body: '{"id":"42"}',
   });
 });
 

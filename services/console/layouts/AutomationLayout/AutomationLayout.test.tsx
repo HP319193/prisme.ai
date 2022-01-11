@@ -8,6 +8,7 @@ import { useWorkspaces } from "../../components/WorkspacesProvider";
 import { useAutomation } from "./context";
 import { useWorkspace } from "../WorkspaceLayout";
 import { Button } from "primereact/button";
+import { useToaster } from "../Toaster";
 
 jest.mock("primereact/tabmenu", () => ({
   TabMenu: () => null,
@@ -15,19 +16,6 @@ jest.mock("primereact/tabmenu", () => ({
 jest.mock("../WorkspaceLayout", () => {
   const workspace = {
     id: "42",
-    automations: {
-      foo: {
-        triggers: {
-          events: [],
-          do: "",
-        },
-        workflows: {},
-      },
-      foofoo: {
-        triggers: {},
-        workflows: {},
-      },
-    },
   };
   return {
     useWorkspace: () => ({
@@ -38,8 +26,8 @@ jest.mock("../WorkspaceLayout", () => {
 
 jest.mock("next/router", () => {
   const mock = {
-    query: { name: "foo", id: "42" },
-    route: "/workspaces/42/automations/foo/manifest",
+    query: { id: "42", automationId: "43" },
+    route: "/workspaces/42/automations/43/manifest",
     push: jest.fn(),
     replace: jest.fn(),
   };
@@ -50,29 +38,36 @@ jest.mock("next/router", () => {
 
 jest.mock("../../components/WorkspacesProvider", () => {
   const mock = {
-    update: jest.fn(),
+    updateAutomation: jest.fn(),
   };
   return {
     useWorkspaces: () => mock,
   };
 });
 
+jest.mock("../Toaster", () => {
+  const mock = {
+    show: jest.fn(),
+  };
+  return { useToaster: () => mock };
+});
+
 beforeEach(() => {
-  useWorkspace().workspace.automations = {
-    foo: {
-      triggers: {
-        foo: {
-          events: [],
-          do: "",
-        },
-      },
-      workflows: {},
-    },
-    foofoo: {
+  useWorkspace().workspace.automations = [
+    {
+      id: "43",
+      name: "foo",
       triggers: {},
       workflows: {},
     },
-  };
+    {
+      id: "44",
+      name: "foofoo",
+      triggers: {},
+      workflows: {},
+    },
+  ];
+  (useWorkspaces().updateAutomation as Jest.Mock).mockClear();
 });
 
 it("should render", () => {
@@ -86,8 +81,11 @@ it("should render with manifest tab active", () => {
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it("should navigate", () => {
+it("should navigate", async () => {
   const root = renderer.create(<AutomationLayout>Foo</AutomationLayout>);
+  await act(async () => {
+    await true;
+  });
   act(() => {
     root.root.findAllByType(TabMenu)[0].props.model[0].command();
   });
@@ -98,7 +96,7 @@ it("should navigate", () => {
     root.root.findAllByType(TabMenu)[1].props.model[0].command();
   });
   expect(useRouter().push).toHaveBeenCalledWith(
-    "/workspaces/42/automations/foo/design"
+    "/workspaces/42/automations/43/design"
   );
   (useRouter().push as any).mockClear();
 
@@ -106,12 +104,15 @@ it("should navigate", () => {
     root.root.findAllByType(TabMenu)[1].props.model[1].command();
   });
   expect(useRouter().push).toHaveBeenCalledWith(
-    "/workspaces/42/automations/foo/manifest"
+    "/workspaces/42/automations/43/manifest"
   );
 });
 
 it("should edit title", async () => {
   const root = renderer.create(<AutomationLayout>Foo</AutomationLayout>);
+  await act(async () => {
+    await true;
+  });
   const itemRoot = renderer.create(
     root.root.findAllByType(TabMenu)[0].props.model[1].template()
   );
@@ -121,49 +122,28 @@ it("should edit title", async () => {
     await itemRoot.root.findByType(EditableTitle).props.onChange("foo");
   });
 
-  expect(useWorkspaces().update).not.toHaveBeenCalled();
-  expect(useRouter().replace).not.toHaveBeenCalled();
+  const { updateAutomation } = useWorkspaces();
+
+  expect(updateAutomation).not.toHaveBeenCalled();
 
   await act(async () => {
     await itemRoot.root.findByType(EditableTitle).props.onChange("foofoo");
   });
 
-  expect(useWorkspaces().update).not.toHaveBeenCalled();
-  expect(useRouter().replace).not.toHaveBeenCalled();
-
   await act(async () => {
     await itemRoot.root.findByType(EditableTitle).props.onChange("bar");
   });
-
-  expect(useWorkspaces().update).toHaveBeenCalledWith({
-    id: "42",
-    automations: {
-      bar: {
-        triggers: {
-          foo: {
-            events: [],
-            do: "",
-          },
-        },
-        workflows: {},
-      },
-      foofoo: {
-        triggers: {},
-        workflows: {},
-      },
-    },
-  });
-  expect(useRouter().replace).toHaveBeenCalledWith(
-    "/workspaces/42/automations/bar/manifest"
-  );
 });
 
-it("should get layout", () => {
+it("should get layout", async () => {
   const root = renderer.create(getLayout(<div />));
+  await act(async () => {
+    await true;
+  });
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it("should set and reset automation", () => {
+it("should set and reset automation", async () => {
   let context: any;
   const Test = () => {
     context = useAutomation();
@@ -174,17 +154,31 @@ it("should set and reset automation", () => {
       <Test />
     </AutomationLayout>
   );
-
+  await act(async () => {
+    await true;
+  });
   const expectedAutomation = {
     triggers: {},
-    workflows: {},
+    workflows: {
+      something: {
+        do: [
+          {
+            emit: {
+              events: ["event"],
+            },
+          },
+        ],
+      },
+    },
   };
   act(() => {
     context.setAutomation(expectedAutomation);
   });
+  console.log(context.automation);
   expect(context.automation).toEqual({
+    id: "43",
     name: "foo",
-    value: expectedAutomation,
+    ...expectedAutomation,
   });
 
   act(() => {
@@ -192,20 +186,14 @@ it("should set and reset automation", () => {
   });
 
   expect(context.automation).toEqual({
+    id: "43",
     name: "foo",
-    value: {
-      triggers: {
-        foo: {
-          events: [],
-          do: "",
-        },
-      },
-      workflows: {},
-    },
+    triggers: {},
+    workflows: {},
   });
 });
 
-it("should save automation", () => {
+it("should save automation", async () => {
   let context: any;
   const Test = () => {
     context = useAutomation();
@@ -216,37 +204,50 @@ it("should save automation", () => {
       <Test />
     </AutomationLayout>
   );
-
+  await act(async () => {
+    await true;
+  });
   act(() => {
     context.save();
   });
-  expect(useWorkspaces().update).toHaveBeenCalledWith({
-    id: "42",
-    automations: {
-      foo: {
-        triggers: {
-          foo: {
-            events: [],
-            do: "",
-          },
-        },
-        workflows: {},
-      },
-      foofoo: {
-        triggers: {},
-        workflows: {},
-      },
-    },
-  });
+  expect(useWorkspaces().updateAutomation).toHaveBeenCalledWith(
+    useWorkspace().workspace,
+    {
+      id: "43",
+      name: "foo",
+      triggers: {},
+      workflows: {},
+    }
+  );
 });
 
-it("should save", () => {
+it("should save", async () => {
   const root = renderer.create(<AutomationLayout>foo</AutomationLayout>);
+  await act(async () => {
+    await true;
+  });
   const itemRoot = renderer.create(
     root.root.findAllByType(TabMenu)[1].props.model[2].template()
   );
   act(() => {
     itemRoot.root.findByType(Button).props.onClick();
   });
-  expect(useWorkspaces().update).toHaveBeenCalled();
+  expect(useWorkspaces().updateAutomation).toHaveBeenCalled();
+});
+
+it("should fail to save", async () => {
+  const root = renderer.create(<AutomationLayout>foo</AutomationLayout>);
+  await act(async () => {
+    await true;
+  });
+  (useWorkspaces().updateAutomation as jest.Mock).mockImplementationOnce(() => {
+    throw new Error();
+  });
+  const itemRoot = renderer.create(
+    root.root.findAllByType(TabMenu)[1].props.model[2].template()
+  );
+  act(() => {
+    itemRoot.root.findByType(Button).props.onClick();
+  });
+  expect(useToaster().show).toHaveBeenCalled();
 });

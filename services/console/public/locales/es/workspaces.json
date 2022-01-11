@@ -27,7 +27,12 @@
       "title": "Manifiesto"
     },
     "save": {
-      "label": "Registro"
+      "label": "Registro",
+      "toast": "Se ha registrado la automatización",
+      "error": "Se ha producido un error"
+    },
+    "delete": {
+      "toast": "Se ha eliminado la automatización"
     },
     "endpoint": {
       "copied": "La URL ha sido copiada"

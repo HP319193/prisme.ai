@@ -40,7 +40,7 @@ beforeEach(() => {
       return {
         id: "42",
         name: "foo",
-        automations: {},
+        automations: [],
       };
     }
     return null;
@@ -100,7 +100,7 @@ it("should update title", () => {
   expect(useWorkspaces().update).toHaveBeenCalledWith({
     id: "42",
     name: "bar",
-    automations: {},
+    automations: [],
   });
 });
 
