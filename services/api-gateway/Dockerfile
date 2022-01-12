@@ -1,47 +1,16 @@
-## Install dependencies
-FROM node:16 as node_modules
+ARG DEPENDENCIES_IMAGE=registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies
+ARG DEPENDENCIES_TAG=latest
+
+FROM $DEPENDENCIES_IMAGE:$DEPENDENCIES_TAG as build
 
 WORKDIR /www
-COPY package*.json /www/
-COPY *.config.js /www/
-COPY dtsgen.json /www/
 
-# Gateway
-COPY services/api-gateway/package*.json /www/services/api-gateway/
-COPY services/api-gateway/tsconfig.json /www/services/api-gateway/
-
-# Packages
-COPY specifications/ /www/specifications
-COPY packages/ /www/packages
-
-RUN npm ci
-
-## Build api-gateway
-FROM node:16 as build
-WORKDIR /www
-
-# Copy sourcecode & build bundle
-COPY --from=node_modules /www/ /www/
 COPY services/api-gateway/ /www/services/api-gateway
-RUN npm run build:gateway
+# If we do not move node_modules @prisme.ai/ as ./packages, npm prune --production broke them trying to recreate usual symlinks
+RUN npm run build:gateway && mv node_modules/@prisme.ai packages/ && npm prune --production
 
-## Running environment
-FROM node:16-alpine
-WORKDIR /www
-
-COPY services/api-gateway/package.json /www/
-COPY --from=node_modules /www/node_modules/ /www/node_modules/
-# Do not forget packages/ as locally built packages are symlinked
-COPY --from=node_modules /www/packages/ /www/packages/
-COPY --from=build /www/services/api-gateway/dist/ /www
-COPY --from=build /www/services/api-gateway/dist/index.js /www
-RUN npm prune --production
-
-COPY specifications/ /www/specifications/
-
+EXPOSE 3003
 ENV OPENAPI_FILEPATH /www/specifications/swagger.yml
+ENV NODE_ENV production
 
-EXPOSE 3030
-
-
-CMD [ "node", "--abort-on-uncaught-exception", "index.js"]
+CMD [ "node", "--abort-on-uncaught-exception", "services/api-gateway/dist/index.js"]
