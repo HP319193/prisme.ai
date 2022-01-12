@@ -1,46 +1,16 @@
-## Install dependencies
-FROM node:16 as node_modules
+ARG DEPENDENCIES_IMAGE=registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies
+ARG DEPENDENCIES_TAG=latest
+
+FROM $DEPENDENCIES_IMAGE:$DEPENDENCIES_TAG as build
 
 WORKDIR /www
-COPY package*.json /www/
-COPY *.config.js /www/
-COPY dtsgen.json /www/
 
-# Runtime
-COPY services/runtime/package*.json /www/services/runtime/
-COPY services/runtime/tsconfig.json /www/services/runtime/
-COPY services/runtime/*.config.js /www/services/runtime/
-
-# Packages
-COPY specifications/ /www/specifications
-COPY packages/ /www/packages
-
-RUN npm ci
-
-## Build runtime
-FROM node:16 as build
-WORKDIR /www
-
-# Copy sourcecode & build bundle
-COPY --from=node_modules /www/ /www/
 COPY services/runtime/ /www/services/runtime
-RUN npm run build:runtime
+# If we do not move node_modules @prisme.ai/ as ./packages, npm prune --production broke them trying to recreate usual symlinks
+RUN npm run build:runtime && mv node_modules/@prisme.ai packages/ && npm prune --production
 
-## Running environment
-FROM node:16-alpine
-WORKDIR /www
+EXPOSE 3003
+ENV OPENAPI_FILEPATH /www/specifications/swagger.yml
+ENV NODE_ENV production
 
-COPY services/runtime/package.json /www/
-COPY --from=node_modules /www/node_modules/ /www/node_modules/
-# Do not forget packages/ as locally built packages are symlinked
-COPY --from=node_modules /www/packages/ /www/packages/
-COPY --from=build /www/services/runtime/dist/ /www
-COPY --from=build /www/services/runtime/dist/index.js /www
-RUN npm prune --production
-
-COPY specifications/ /www/specifications/
-
-EXPOSE 3030
-
-
-CMD [ "node", "--abort-on-uncaught-exception", "index.js"]
+CMD [ "node", "--abort-on-uncaught-exception", "services/runtime/dist/index.js"]

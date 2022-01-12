@@ -4,23 +4,9 @@ import { APP_NAME, PORT } from "../config";
 
 import { app } from "./api";
 import { broker } from "./eda";
-import { uncaughtExceptionHandler, unhandledRejectionHandler } from "./errors";
+import { uncaughtExceptionHandler } from "./errors";
 import "@prisme.ai/types";
 
-/**
- * The 'unhandledRejection' event is emitted whenever a Promise is rejected and
- * no error handler is attached to the promise.
- */
-process.on("unhandledRejection", unhandledRejectionHandler);
-
-/**
- * The 'uncaughtException' event is emitted when an uncaught JavaScript exception
- * bubbles all the way back to the event loop omitting Express.js error handler.
- *
- * !!! WARNING !!!
- * It is not safe to resume normal operation after 'uncaughtException'.
- * @link https://nodejs.org/api/process.html#process_warning_using_uncaughtexception_correctly
- */
 process.on("uncaughtException", uncaughtExceptionHandler);
 
 async function exit() {

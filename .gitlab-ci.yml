@@ -1,11 +1,5 @@
 image: node:16
 
-cache:
-  untracked: true
-  key: "$CI_BUILD_REF_NAME"
-  paths:
-    - node_modules/
-
 variables:
   DOCKER_DRIVER: overlay2
   GIT_DEPTH: "1"
@@ -40,8 +34,29 @@ stages:
 
 npm_install:
   stage: dependencies
+  only:
+    changes:
+      - "package-lock.json"
+      - "packages/**/*"
+    refs:
+      - main
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
+  image: docker:stable
+  services:
+    - docker:stable-dind
   script:
-    - "npm ci"
+    - >
+      if [ -z $CI_COMMIT_BRANCH ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
+        export FEATURE_TAG=latest
+      else
+        export FEATURE_TAG=$(echo ${CI_COMMIT_BRANCH} | tr \/ -)
+      fi
+
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker pull $CONTAINER_BASE_IMAGE/prisme.ai-dependencies:latest || true
+    - docker build . -f dependencies.dockerfile -t prisme.ai-dependencies -t $CONTAINER_BASE_IMAGE/prisme.ai-dependencies:$FEATURE_TAG --cache-from $CONTAINER_BASE_IMAGE/prisme.ai-dependencies:latest
+    - docker push $CONTAINER_BASE_IMAGE/prisme.ai-dependencies:$FEATURE_TAG
 
 #### Parent jobs
 
@@ -49,11 +64,21 @@ npm_install:
   interruptible: true
   stage: test
   script:
+    - >
+      if ! [[ -d node_modules/ ]] ; then
+        npm ci
+      fi
     - npm test $SERVICE_NAME
   coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
   artifacts:
     paths:
       - coverage
+  cache: &cache
+    key:
+      files: &lockFiles
+        - package-lock.json
+    paths:
+      - node_modules/
 
 .build_docker:
   interruptible: true # Stop this job if a new one has been triggered by the same branch
@@ -62,24 +87,33 @@ npm_install:
   services:
     - docker:stable-dind
   script:
+    - >
+      if [ -z $CI_COMMIT_BRANCH ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
+        export FEATURE_TAG=latest
+      else
+        export FEATURE_TAG=$(echo ${CI_COMMIT_BRANCH} | tr \/ -)
+      fi
+
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker pull $IMAGE_NAME:latest || true
-    - docker build --cache-from $IMAGE_NAME:latest -t $IMAGE_NAME:latest . -f $DIRECTORY/Dockerfile
-    # - docker push $IMAGE_NAME:$CI_COMMIT_TAG
-    - docker push $IMAGE_NAME:latest
+    - docker build  --build-arg DEPENDENCIES_TAG=$FEATURE_TAG --cache-from $IMAGE_NAME:$FEATURE_TAG -t $IMAGE_NAME:$FEATURE_TAG . -f $DIRECTORY/Dockerfile
+    - docker push $IMAGE_NAME:$FEATURE_TAG
 
 .deploy_k8s:
   stage: deploy
-  cache: []
   tags:
     - internal-runner
   image:
-    name: lachlanevenson/k8s-kubectl:latest
-    entrypoint: ["/bin/bash", "-c"]
+    name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
+    entrypoint: ["/bin/sh", "-c"]
   script:
-    - kubectl -n core rollout restart deploy/${K8S_NAME}
-    # - kubectl -n core set image deploy/${K8S_NAME} ${K8S_NAME}=$IMAGE_NAME:$CI_COMMIT_TAG --record
-    - kubectl -n core rollout status deploy/${K8S_NAME}
+    - >
+      if [ -z $CI_COMMIT_BRANCH ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
+        export FEATURE_TAG=latest
+      else
+        export FEATURE_TAG=$(echo ${CI_COMMIT_BRANCH} | tr \/ -)
+      fi
+    - deploy $CI_COMMIT_BRANCH $K8S_NAME $IMAGE_NAME $FEATURE_TAG
 
 ## Console jobs
 console_test:
@@ -99,16 +133,14 @@ console_build_docker:
     - docker:stable-dind
   only:
     refs:
-      # - tags
       - main
       - master
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
     changes:
       - "services/console/**/*"
   before_script:
-    # TODO fix console docker build with new dockerfile (root based)
-    - cp -r specifications/ services/$CONSOLE_DIRECTORY/specifications
-    - cd services/$CONSOLE_DIRECTORY
-    - export DIRECTORY=.
+    - export DIRECTORY=services/$CONSOLE_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
 
@@ -116,9 +148,10 @@ console_deploy:
   extends: .deploy_k8s
   only:
     refs:
-      # - tags
       - main
       - master
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
     changes:
       - "services/console/**/*"
   before_script:
@@ -127,14 +160,14 @@ console_deploy:
     - export K8S_NAME=$CONSOLE_K8S_NAME
 
 
-## Workspaces jobs
-# workspaces_test:
-#   extends: .npm_test
-#   only:
-#     changes:
-#       - "services/workspaces/*"
-#   before_script:
-#     - export SERVICE_NAME=$WORKSPACES_DIRECTORY
+# ## Workspaces jobs
+# # workspaces_test:
+# #   extends: .npm_test
+# #   only:
+# #     changes:
+# #       - "services/workspaces/*"
+# #   before_script:
+# #     - export SERVICE_NAME=$WORKSPACES_DIRECTORY
 
 workspaces_build_docker:
   extends: .build_docker
@@ -145,7 +178,8 @@ workspaces_build_docker:
     - docker:stable-dind
   only:
     refs:
-      # - tags
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
       - main
       - master
     changes:
@@ -159,7 +193,8 @@ workspaces_deploy:
   extends: .deploy_k8s
   only:
     refs:
-      # - tags
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
       - main
       - master
     changes:
@@ -169,7 +204,7 @@ workspaces_deploy:
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME
     - export K8S_NAME=$WORKSPACES_K8S_NAME
 
-## Runtime jobs
+# ## Runtime jobs
 runtime_build_docker:
   extends: .build_docker
   interruptible: true # Stop this job if a new one has been triggered by the same branch
@@ -179,7 +214,8 @@ runtime_build_docker:
     - docker:stable-dind
   only:
     refs:
-      # - tags
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
       - main
       - master
     changes:
@@ -193,7 +229,8 @@ runtime_deploy:
   extends: .deploy_k8s
   only:
     refs:
-      # - tags
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
       - main
       - master
     changes:
@@ -204,7 +241,7 @@ runtime_deploy:
     - export K8S_NAME=$RUNTIME_K8S_NAME
 
 
-## API Gateway jobs
+# ## API Gateway jobs
 api-gateway_build_docker:
   extends: .build_docker
   interruptible: true # Stop this job if a new one has been triggered by the same branch
@@ -214,7 +251,8 @@ api-gateway_build_docker:
     - docker:stable-dind
   only:
     refs:
-      # - tags
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
       - main
       - master
     changes:
@@ -228,7 +266,8 @@ api-gateway_deploy:
   extends: .deploy_k8s
   only:
     refs:
-      # - tags
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
       - main
       - master
     changes:

@@ -1,31 +1,27 @@
-version: '3'
+version: "3"
 services:
   mongo:
     image: mongo:4.0
     container_name: mongo_api
     ports:
-      - '27017:27017'
+      - "27017:27017"
     volumes:
       - ./data/mongo:/data/db
   redis:
     image: redis
     container_name: redis_api
+    volumes:
+      - ./data/redis:/data
     ports:
       - "6379:6379"
-  install:
-    working_dir: /home/node/app/
-    entrypoint: npm i bcrypt
-    image: node:16
-    volumes:
-      - ./:/home/node/app
   runtime:
-    working_dir: /home/node/app
+    working_dir: /www
     entrypoint: npm run dev --prefix=services/runtime
-    image: node:16
+    image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies:latest
     volumes:
-      - ./:/home/node/app
+      - ./services/runtime:/www/services/runtime
+      - ./data/models:/www/models
     depends_on:
-      - install
       - redis
     ports:
       - "3003:3003"
@@ -33,50 +29,53 @@ services:
       PORT: 3003
       BROKER_HOST: redis://redis/10
       CONTEXTS_CACHE_HOST: redis://redis/0
-      OPENAPI_FILEPATH: /home/node/app/specifications/swagger.yml
+      OPENAPI_FILEPATH: /www/specifications/swagger.yml
+      WORKSPACES_STORAGE_TYPE: FILESYSTEM
+      WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
+
   workspaces:
-    working_dir: /home/node/app/
+    working_dir: /www
     entrypoint: npm run dev --prefix=services/workspaces
-    image: node:16
+    image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies:latest
     volumes:
-      - ./:/home/node/app
+      - ./services/workspaces:/www/services/workspaces
+      - ./data/models:/www/models
     depends_on:
-      - install
       - redis
     ports:
       - "3002:3002"
     environment:
       PORT: 3002
       BROKER_HOST: redis://redis/10
-      OPENAPI_FILEPATH: /home/node/app/specifications/swagger.yml
+      OPENAPI_FILEPATH: /www/specifications/swagger.yml
+      WORKSPACES_STORAGE_TYPE: FILESYSTEM
+      WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
+
   gateway:
-    working_dir: /home/node/app/
+    working_dir: /www
     entrypoint: npm run dev --prefix=services/api-gateway
-    image: node:16
+    image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies:latest
     volumes:
-      - ./:/home/node/app
+      - ./services/api-gateway:/www/services/api-gateway
     depends_on:
-      - install
       - mongo
       - redis
     ports:
-      - '3001:3001'
+      - "3001:3001"
     environment:
       PORT: 3001
       NODE_ENV: development
-      OPENAPI_FILEPATH: /home/node/app/specifications/swagger.yml
+      OPENAPI_FILEPATH: /www/specifications/swagger.yml
       USERS_STORAGE_HOST: mongodb://mongo/eda
       SESSIONS_STORAGE_HOST: redis://redis/2
       BROKER_HOST: redis://redis/10
   console:
-    working_dir: /home/node/app/
+    working_dir: /www
     entrypoint: npm run dev --prefix=services/console
-    image: node:16-alpine
+    image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies:latest
     volumes:
-      - ./:/home/node/app
-    depends_on:
-      - install
+      - ./services/console:/www/services/console
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
       NEXT_PUBLIC_API_HOST: http://localhost:3001/v2

@@ -24,9 +24,25 @@ export default class GatewayConfig {
     if (configErrors) {
       throw new errors.ConfigurationError("Bad configuration", configErrors);
     }
-    this.config = (yaml.load(
-      fs.readFileSync(filepath, "utf8")
-    ) as any) as Config;
+    const raw = fs.readFileSync(filepath, "utf8");
+    this.config = yaml.load(
+      this.injectEnvironmentVariables(raw)
+    ) as any as Config;
+  }
+
+  private injectEnvironmentVariables(raw: string) {
+    const regexp = new RegExp(/\${([a-zA-Z0-9_-]+)}/g);
+    const matches = raw.match(regexp);
+    return (matches || []).reduce((config, pattern) => {
+      const variable = pattern.slice(2, -1);
+      if (process.env[variable]) {
+        return config.replace(
+          new RegExp(`\\\${${variable}}`, "g"),
+          process.env[variable]!!
+        );
+      }
+      return config;
+    }, raw);
   }
 
   public service(name: string): Service {
