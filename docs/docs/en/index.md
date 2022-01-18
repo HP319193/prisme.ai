@@ -1,17 +1,9 @@
-# Welcome to MkDocs
+# Prisme.ai
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+## Description
 
-## Commands
+Prisme.ai is an Event Driven Architected platform designed to help creating software without coding skills.
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+The platform is built as an orchestra of backend microservice and frontend clients.
 
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+Complete code base is structured into this mono-repository.
