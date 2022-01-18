@@ -71,9 +71,9 @@ build_all() {
   done
 }
 
-build_changelog() {
-  npm run changelog
-}
+#build_changelog() {
+#  npm run changelog
+#}
 
 usage() {
   echo "Usage :"
@@ -85,14 +85,14 @@ if [ -z $1 ] ; then
   echo Missing command
   usage
 elif [ $1 == 'all' ] ; then
-  build_changelog
+#  build_changelog
   build_all
 elif [ $1 == 'config' ] ; then
   shift
-  build_changelog
+#  build_changelog
   build_config $@
 else
-  build_changelog
+#  build_changelog
   build_lang $1 $2
 fi
 

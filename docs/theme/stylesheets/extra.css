@@ -39,3 +39,7 @@
     height: 1.2rem;
     fill: currentColor;
 }
+
+.search-container .md-header-nav__button {
+    display: none;
+}

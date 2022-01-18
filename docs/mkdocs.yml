@@ -40,6 +40,14 @@ nav:
   - i18n.home: index.md
   - i18n.contributing:
       - i18n.index: contributing/index.md
+      - i18n.functionnalRequirements: contributing/functionnalRequirements.md
+      - i18n.architecture: contributing/architecture.md
+      - i18n.projects:
+          - i18n.console: contributing/Technical/console/Specifications.md
+          - i18n.events: contributing/Technical/events/Specifications.md
+          - i18n.runtime: contributing/Technical/runtime/Specifications.md
+          - i18n.workspaces: contributing/Technical/workspaces/Specifications.md
+          - i18n.apiGateway: contributing/Technical/apiGateway/Specifications.md
 
 markdown_extensions:
   - admonition
