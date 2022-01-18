@@ -1,0 +1,41 @@
+:root {
+    --md-primary-fg-color: rgb(10, 29, 59);
+    --md-primary-fg-color--light: rgb(10, 29, 59);
+    --md-primary-fg-color--dark: rgb(10, 29, 59);
+}
+
+.search-container {
+    flex: 1;
+    display: flex;
+}
+
+.langpicker {
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, Helvetica, Arial,
+    sans-serif;
+    font-size: 14px;
+    color: white;
+    background-color: transparent;
+    border-style: none;
+    appearance: none;
+    line-height: 2;
+    margin: 4px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.md-button--primary {
+    color: rgb(10, 29, 59) !important;
+}
+
+.md-header-nav {
+    display: flex;
+    align-items: center;
+    padding: 0 .2rem;
+}
+
+.md-header-nav__button.md-logo img, .md-header-nav__button.md-logo svg {
+    display: block;
+    width: 1.2rem;
+    height: 1.2rem;
+    fill: currentColor;
+}

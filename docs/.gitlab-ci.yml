@@ -1,0 +1,42 @@
+stages:
+  - build
+  - deploy
+
+build_static:
+  stage: build
+  only:
+    - master
+    - prod
+  image: python:latest
+  script:
+    - export GITLAB_BASE_URL=`echo $CI_REPOSITORY_URL | sed "s;\/*$CI_PROJECT_PATH.*;;"`/
+    - echo $GITLAB_BASE_URL
+    - apt-get update && apt-get install -y nodejs npm
+    - npm ci
+    - pip install mkdocs-material==6.2.5
+    - bash ./build.sh all
+  artifacts:
+    paths:
+      - public
+
+.s3_deploy:
+  stage: deploy
+  image: python:alpine
+  before_script:
+    - pip install awscli
+
+dev_deploy:
+  extends: .s3_deploy
+  only:
+    - master
+  script:
+    - aws s3 cp public/ s3://$DEV_DOCS_S3_BUCKET_NAME/ --recursive --include "*"
+    - aws cloudfront create-invalidation --distribution-id $DEV_DOCS_CDN_DISTRIBUTION_ID --paths "/*"
+
+prod_deploy:
+  extends: .s3_deploy
+  only:
+    - prod
+  script:
+    - aws s3 cp public/ s3://$DOCS_S3_BUCKET_NAME/ --recursive --include "*"
+    - aws cloudfront create-invalidation --distribution-id $DOCS_CDN_DISTRIBUTION_ID --paths "/*"

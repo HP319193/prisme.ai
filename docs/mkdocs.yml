@@ -1,0 +1,121 @@
+site_name: i18n.site_name
+site_url: https://docs.eda.prisme.ai
+console_url: https://console.eda.prisme.ai/login
+site_author: Prisme.ai
+site_description: i18n.site_description
+start: i18n.start
+docs_dir: docs/en
+site_dir: public/fr
+# Copyright
+copyright: Prisme.ai &copy; 2016 - 2022 Gogowego SAS
+extra_css:
+  - stylesheets/extra.css
+extra_javascript:
+  - javascripts/extra.js
+theme:
+  name: material
+  custom_dir: ./theme
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+  font:
+    text: Montserrat
+  features:
+    - navigation.tabs
+languages:
+  - title: Français (FR)
+    code: fr
+  - title: English (EN)
+    code: en
+extra:
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/prisme_ai
+      name: prisme_ai on Twitter
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/prisme-ai
+      name: Prisme.ai on LinkedIn
+  generator: false
+
+nav:
+  - i18n.home: index.md
+  - i18n.getting_started:
+      - i18n.signup: getting-started.md
+      - i18n.hello_world: creating-your-service.md
+      - i18n.publish: publishing-your-service.md
+      - i18n.customization:
+          - i18n.appearance: customization/appearance.md
+          - i18n.dataInjection: customization/dataInjection.md
+  - i18n.channels:
+      - i18n.mobileapp: products/automatisation/connectors/mobileapp.md
+      - i18n.chat: products/automatisation/connectors/webchat.md
+      - i18n.webpage: products/automatisation/connectors/desktop.md
+      - API: products/automatisation/connectors/api.md
+      - Facebook Messenger: products/automatisation/connectors/messenger.md
+      - Slack: products/automatisation/connectors/slack.md
+      - SMS: products/automatisation/connectors/sms.md
+      - WhatsApp: products/automatisation/connectors/whatsapp.md
+      - RCS: products/automatisation/connectors/rcs.md
+      - Google Assistant: products/automatisation/connectors/googleaction.md
+      - Alexa: products/automatisation/connectors/alexa.md
+      - Email: products/automatisation/connectors/email.md
+      - Teams: products/automatisation/connectors/teams.md
+      - Live Chat:
+          - i18n.introduction: products/conversationnel/livechat/index.md
+          - Chatwoot: products/conversationnel/livechat/chatwoot.md
+
+  - DSUL: products/editor/dsul.md
+  - i18n.reference:
+      - i18n.restful:
+          - i18n.authentication: reference/restfull-api/authentication.md
+          - i18n.messages: reference/restfull-api/messages.md
+          - i18n.dataflow:
+              - i18n.collections: reference/restfull-api/DataFlow/collections.md
+              - i18n.documents: reference/restfull-api/DataFlow/documents.md
+              - i18n.views: reference/restfull-api/DataFlow/views.md
+      - i18n.js_api:
+          - i18n.prisme_ai_messenger: reference/javascript-api/prisme_ai_messenger.md
+          - i18n.dataflow: reference/javascript-api/dataflow.md
+      - i18n.on_premise: reference/on_premise.md
+  - i18n.changelog:
+      - i18n.release_notes: changelog.md
+      - i18n.deprecations: deprecations.md
+
+markdown_extensions:
+  - admonition
+  - abbr
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: squidfunk
+      repo: mkdocs-material
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name:
+            class: mermaid
+            format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
