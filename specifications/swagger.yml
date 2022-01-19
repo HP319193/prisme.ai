@@ -1543,56 +1543,16 @@ components:
               type: string
               description: Variable name to remove
 
-    If:
-      type: object
-      required:
-        - "if"
-      maxProperties: 1
-      properties:
-        if:
-          required:
-            - condition
-            - then
-          properties:
-            condition:
-              type: string
-            then:
-              $ref: "#/components/schemas/InstructionList"
-
-    ElseIf:
-      type: object
-      required:
-        - "elseif"
-      maxProperties: 1
-      properties:
-        elseif:
-          required:
-            - condition
-            - then
-          properties:
-            condition:
-              type: string
-            then:
-              $ref: "#/components/schemas/InstructionList"
-
-    Else:
-      type: object
-      required:
-        - else
-      maxProperties: 1
-      properties:
-        else:
-          required:
-            - then
-          properties:
-            then:
-              $ref: "#/components/schemas/InstructionList"
-
     Conditions:
-      oneOf:
-        - $ref: "#/components/schemas/If"
-        - $ref: "#/components/schemas/ElseIf"
-        - $ref: "#/components/schemas/Else"
+      type: object
+      required:
+        - default
+      properties:
+        default:
+          $ref: "#/components/schemas/InstructionList"
+      additionalProperties:
+        $ref: "#/components/schemas/InstructionList"
+      minProperties: 2
 
     Repeat:
       type: object
