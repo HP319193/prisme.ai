@@ -2,7 +2,7 @@
 
 exports[`should render 1`] = `
 <div
-  className="flex min-h-screen flex-column"
+  className="flex min-h-screen max-h-screen flex-column"
 >
   <div
     className="bg-primary p-4 z-1 shadow-4"
@@ -47,7 +47,7 @@ exports[`should render 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative"
+    className="flex flex-1 surface-ground relative overflow-hidden"
   >
     <div
       className="p-toast p-component p-toast-bottom-right"
@@ -62,10 +62,14 @@ exports[`should render 1`] = `
 
 exports[`should render loading 1`] = `
 <div
-  className="flex min-h-screen flex-column justify-center"
+  className="flex min-h-screen max-h-screen flex-column justify-center"
 >
   <div
-    className="text-5xl pi pi-spin pi-spinner"
-  />
+    className="flex flex-1 align-items-center justify-content-center"
+  >
+    <div
+      className="text-5xl align-self-center justify-self-center pi pi-spin pi-spinner"
+    />
+  </div>
 </div>
 `;

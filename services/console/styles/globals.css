@@ -22,3 +22,23 @@ a {
   top: 2px;
   content: "";
 }
+
+.prisme-events-viewer__event.p-accordion
+  .p-accordion-header
+  .p-accordion-header-link {
+  justify-content: space-between;
+  font-weight: inherit;
+  color: inherit;
+}
+.prisme-events-viewer__event.p-accordion
+  .p-accordion-header
+  .p-accordion-header-text {
+  color: inherit;
+}
+.prisme-events-viewer__event.p-accordion .p-accordion-content {
+  padding: 0;
+}
+
+.prisme-events-viewer__event .p-accordion-toggle-icon {
+  order: 1;
+}

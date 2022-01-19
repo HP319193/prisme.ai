@@ -192,29 +192,39 @@ paths:
           required: true
           schema:
             type: string
-        - name: "somePayloadField.subField"
-          in: "query"
-          description: "Allows to filter on any field inside events payload"
+        - name: correlationId
+          in: query
+          description: Match every events with the same correlationId
           schema:
             type: string
-        - name: "filter"
+        - name: beforeId
+          in: query
+          description: Match every events created before given eventId
+          schema:
+            type: string
+        - in: query
+          name: query
+          schema:
+            type: object
+            additionalProperties: true
+          style: form
+          explode: false
+        - name: "types"
           in: "query"
           example: message,notification
-          description: "Comma separated list of listened events "
+          description: "Comma separated list of listened event types "
           schema:
             type: string
-        - name: "fromDate"
+        - name: "afterDate"
           in: "query"
           description: "Retrieve events created after this ISO8601 formatted date"
           schema:
             type: string
-        - name: "longpolling"
+        - name: "beforeDate"
           in: "query"
-          example: 30
-          description: "Optional longpolling timeout. No longpolling by default"
-          required: false
+          description: "Retrieve events created before this ISO8601 formatted date"
           schema:
-            type: number
+            type: string
         - name: "page"
           in: "query"
           description: "Page number"
@@ -261,7 +271,7 @@ paths:
 
     post:
       description: Emit a new event in this workspace
-      operationId: sendConversationEvent
+      operationId: sendWorkspaceEvent
       tags:
         - "Prisme.ai Events"
       parameters:
@@ -1622,56 +1632,49 @@ components:
 
     ################################################################################################################################
     ############################################################ Events ############################################################
-    BaseEventResponse:
+    PrismeEvent:
       type: object
+      required:
+        - type
+        - source
+        - createdAt
+        - id
       properties:
-        createdAt:
+        type:
           type: string
-          description: Creation date (ISO8601)
+          example: apps.someApp.someCustomEvent
         source:
           type: object
+          required:
+            - correlationId
+            - host
           properties:
             app:
               type: string
-            user:
-              description: Authenticated user
-              type: object
-              properties:
-                id:
-                  type: string
-            workspace:
-              description: Related workspace
-              type: object
-              properties:
-                id:
-                  type: string
+            userId:
+              type: string
+            workspaceId:
+              type: string
             host:
               type: object
+              required:
+                - service
               properties:
-                ip:
+                service:
                   type: string
             correlationId:
               type: string
-        target:
-          type: object
-          properties:
-            user:
-              description: Authenticated user
-              type: object
-              properties:
-                id:
-                  type: string
+        payload:
+          $ref: "#/components/schemas/AnyValue"
         error:
           type: object
           properties:
-            code:
+            error:
               type: string
             message:
               type: string
             details:
-              type: array
-              items:
-                type: object
+              $ref: "#/components/schemas/AnyValue"
             level:
               type: string
               enum:
@@ -1679,6 +1682,9 @@ components:
                 - error
                 - fatal
               example: warning
+        createdAt:
+          type: string
+          description: Creation date (ISO8601)
         id:
           type: string
 
@@ -1699,57 +1705,71 @@ components:
           - $ref: "#/components/schemas/CreatedAutomation"
           - $ref: "#/components/schemas/UpdatedAutomation"
           - $ref: "#/components/schemas/DeletedAutomation"
+          - $ref: "#/components/schemas/AppEvent"
 
     AllEventResponses:
       type: array
       items:
         anyOf:
+          - $ref: "#/components/schemas/PrismeEvent" # custom event
+          # or a native event
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/GenericErrorEvent"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/FailedLogin"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/SucceededLogin"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/TriggeredWorkflow"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/UpdatedContexts"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/CreatedWorkspace"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/UpdatedWorkspace"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/DeletedWorkspace"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/InstalledApp"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/ConfiguredApp"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/CreatedAutomation"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/UpdatedAutomation"
           - allOf:
-              - $ref: "#/components/schemas/BaseEventResponse"
+              - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/DeletedAutomation"
 
     GenericErrorEvent:
       type: object
+      required:
+        - type
+        - payload
       properties:
         type:
           type: string
           example: error
+        error:
+          type: object
+          required:
+            - message
+          properties:
+            message:
+              type: string
+          additionalProperties: true
 
     ########################## API Gateway ##########################
     FailedLogin:
@@ -2062,6 +2082,19 @@ components:
           properties:
             contexts:
               type: object
+
+    AppEvent:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apps.someApp.someCustomEvent
+          description: Event name must be prefixed with apps.appName
+        payload:
+          $ref: "#/components/schemas/AnyValue"
 
     GenericError:
       type: object

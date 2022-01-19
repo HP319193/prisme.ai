@@ -14,3 +14,9 @@ export const BROKER_HOST =
   process.env.BROKER_HOST || "redis://localhost:6379/10";
 
 export const BROKER_PASSWORD = process.env.BROKER_PASSWORD;
+
+export const BROKER_WHITELIST_EVENT_PREFIXES = (
+  process.env.BROKER_WHITELIST_EVENT_PREFIXES || "apps."
+).split(",");
+
+export const BROKER_NAMESPACE = process.env.BROKER_NAMESPACE;

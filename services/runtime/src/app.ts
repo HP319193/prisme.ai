@@ -15,14 +15,6 @@ import Runtime from "./services/runtime";
 import { Workspaces } from "./services/workspaces";
 import { buildCache } from "./cache";
 
-/**
- * The 'uncaughtException' event is emitted when an uncaught JavaScript exception
- * bubbles all the way back to the event loop omitting Express.js error handler.
- *
- * !!! WARNING !!!
- * It is not safe to resume normal operation after 'uncaughtException'.
- * @link https://nodejs.org/api/process.html#process_warning_using_uncaughtexception_correctly
- */
 process.on("uncaughtException", uncaughtExceptionHandler);
 
 async function exit() {

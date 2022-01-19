@@ -36,7 +36,6 @@ export const AutomationManifest = () => {
 
   const initYaml = useCallback(async () => {
     try {
-      console.log("gra", automation);
       const value = await toYaml({
         triggers: automation.triggers,
         workflows: automation.workflows,

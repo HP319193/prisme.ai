@@ -65,7 +65,7 @@ export class Fetcher {
     return response;
   }
 
-  async get(url: string) {
+  async get<T = any>(url: string): Promise<T> {
     return this._fetch(url, {
       method: "GET",
     });

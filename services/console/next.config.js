@@ -7,6 +7,6 @@ module.exports = {
   publicRuntimeConfig: {
     API_HOST: process.env.API_HOST,
     ENDPOINT: `${process.env.ENDPOINT}/workspace/{{workspaceId}}/{{slug}}`,
-    SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN || "",
+    SENTRY_DSN: process.env.SENTRY_DSN || "",
   },
 };

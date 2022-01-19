@@ -52,24 +52,24 @@ class CallbackContext {
 
 let createdBrokers: Broker<CallbackContext>[] = [];
 async function getBrokers(
-  apps: Record<string, number>,
+  services: Record<string, number>,
   settings?: Record<string, Partial<SubscriptionOptions>>
 ): Promise<Record<string, Broker<CallbackContext>[]>> {
   const prefix = crypto.randomBytes(2).toString("hex") + "_";
   const brokers: Record<string, Broker<CallbackContext>[]> = {};
-  for (const [appName, count] of Object.entries(apps)) {
-    brokers[appName] = Array.apply(null, new Array(count)).map(
+  for (const [service, count] of Object.entries(services)) {
+    brokers[service] = Array.apply(null, new Array(count)).map(
       (_: any, idx: number) =>
         new Broker<CallbackContext>(
-          { app: appName, name: `${appName}${count}` },
+          { service: service, name: `${service}${count}` },
           {
             driver: {
               type: "redis",
               host: process.env.BROKER_HOST || "redis://localhost:6379/10",
               subscription: {
-                EventsPrefix: prefix,
-                ...(settings?.[appName] || {}),
+                ...(settings?.[service] || {}),
               },
+              namespace: prefix,
             },
             validator: {
               oasFilepath:
@@ -81,8 +81,8 @@ async function getBrokers(
           }
         )
     );
-    createdBrokers.push(...brokers[appName]);
-    await Promise.all(brokers[appName].map((cur) => cur.ready));
+    createdBrokers.push(...brokers[service]);
+    await Promise.all(brokers[service].map((cur) => cur.ready));
   }
 
   return brokers;
@@ -145,7 +145,7 @@ describe("Event validation & callback errors", () => {
     return promise.then((event: PrismeEvent) => {
       expect(event).not.toBe(false);
       expect(event.error).toMatchObject(error.toJSON());
-      expect(event.source.app).toBe("nlu");
+      expect(event.source?.host?.service).toBe(brokerNLU1.service);
       // Correlation id, user id & workspace id should remain the same as in the event that made the callback throw
       expect(event.source.correlationId).toBe(
         fullMessageEvent?.source?.correlationId
@@ -208,7 +208,7 @@ describe("Event validation & callback errors", () => {
       expect(event.source.userId).toMatch(source.userId);
       expect(event.source.workspaceId).toMatch(source.workspaceId);
       // These however should be updated with last sender
-      expect(event.source.app).toMatch(brokerNLU1.app);
+      expect(event.source?.host?.service).toMatch(brokerNLU1.service);
     });
   });
 
@@ -278,7 +278,7 @@ describe("Basic messaging without partitions", () => {
       expect(event).not.toBe(false);
       expect(event?.type).toBe(EventType.UpdatedContexts);
       expect(event?.payload?.contexts?.session?.hello).toBe("world");
-      expect(event?.source?.app).toBe(brokerAnalytics1.app);
+      expect(event?.source?.host?.service).toBe(brokerAnalytics1.service);
       expect(typeof event?.source?.host?.ip).toBe("string");
       expect(typeof event?.createdAt).toBe("string");
       expect(typeof event?.source.correlationId).toBe("string");

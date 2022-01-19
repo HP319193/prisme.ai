@@ -47,7 +47,7 @@ const DEFAULT_DRIVER_OPTS: BrokerOptions["driver"] = {
 };
 
 export class Broker<CallbackContext = any> {
-  public app: string;
+  public service: string;
   public consumer: Consumer;
   private eventsFactory: EventsFactory;
   private driver: Driver;
@@ -75,7 +75,7 @@ export class Broker<CallbackContext = any> {
       name: process.env.HOSTNAME || `${Math.round(Math.random() * 100000)}`,
       ...consumer,
     };
-    this.app = this.consumer.app;
+    this.service = this.consumer.service;
     this.eventsFactory = new EventsFactory({ validator: validatorOpts });
     this.driver = driver({
       consumer: this.consumer,
@@ -144,10 +144,9 @@ export class Broker<CallbackContext = any> {
       ...(partialSource || {}),
       host: {
         replica: this.consumer.name,
-        ip: "",
         ...(partialSource?.host || {}),
+        service: this.service,
       },
-      app: this.app,
     });
     event.source.topic = this.getEventTopic(topic, event);
 

@@ -10,4 +10,10 @@ export default {
   BROKER_HOST: process.env.BROKER_HOST || "redis://localhost:6379/0",
 
   BROKER_PASSWORD: process.env.BROKER_PASSWORD,
+
+  BROKER_WHITELIST_EVENT_PREFIXES: (
+    process.env.BROKER_WHITELIST_EVENT_PREFIXES || "apps."
+  ).split(","),
+
+  BROKER_NAMESPACE: process.env.BROKER_NAMESPACE,
 };

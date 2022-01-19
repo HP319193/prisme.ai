@@ -14,11 +14,12 @@ export class RedisDriver implements Driver {
   public groupName: string;
   private grouppedEvents: Set<string>;
   private subscriptionOpts: SubscriptionOptions;
+  private namespace?: string;
   private closed: boolean;
   private serverTimeOffset: number;
 
   constructor(opts: DriverOptions) {
-    this.groupName = opts.consumer.app;
+    this.groupName = opts.consumer.service;
     this.consumerId = opts.consumer.name;
     this.grouppedEvents = new Set();
     this.subscriptionOpts = {
@@ -27,6 +28,7 @@ export class RedisDriver implements Driver {
       NoAck: false,
       ...(opts.subscription || {}),
     };
+    this.namespace = opts.namespace;
     this.closed = false;
     this.serverTimeOffset = 0;
 
@@ -55,10 +57,7 @@ export class RedisDriver implements Driver {
 
   getTopicStreams(topics: string[]) {
     return topics.map((topic) => {
-      if (this.subscriptionOpts.EventsPrefix) {
-        return `${RedisKey.StreamPrefix}${this.subscriptionOpts.EventsPrefix}${topic}`;
-      }
-      return `${RedisKey.StreamPrefix}${topic}`;
+      return `${RedisKey.StreamPrefix}${this.namespace || ""}${topic}`;
     }) as any as string[];
   }
 

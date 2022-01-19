@@ -16,6 +16,13 @@
   "edit": {
     "label": "Éditer"
   },
+  "events": {
+    "empty": "Il ne s'est encore rien passé ici…",
+    "details": {
+      "name": "Attribut",
+      "value": "Valeur"
+    }
+  },
   "automations": {
     "link": "Automatisations",
     "create": {

@@ -3,6 +3,7 @@ services:
   mongo:
     image: mongo:4.0
     container_name: mongo_api
+    restart: always
     ports:
       - "27017:27017"
     volumes:
@@ -10,10 +11,48 @@ services:
   redis:
     image: redis
     container_name: redis_api
+    restart: always
     volumes:
       - ./data/redis:/data
     ports:
       - "6379:6379"
+
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    container_name: elastic
+    restart: always
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms750m -Xmx750m
+      - http.host=0.0.0.0
+      - transport.host=0.0.0.0
+      - network.host=0.0.0.0
+      - node.name=elastic
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./data/es01:/usr/share/elasticsearch/data
+      - ./data/elasticsearch01.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.14.0
+    container_name: kibana
+    restart: always
+    depends_on:
+      - elastic
+    ports:
+      - 5601:5601
+    # environment:
+    #   - xpack.security.enabled=true
+    #   - ELASTICSEARCH_USERNAME=elastic
+    #   - ELASTICSEARCH_PASSWORD=@UK8sJD0dfqp
+    volumes:
+      - ./data/kibana.yml:/usr/share/kibana/config/kibana.yml
+
   runtime:
     working_dir: /www
     entrypoint: npm run dev --prefix=services/runtime
@@ -21,12 +60,14 @@ services:
     volumes:
       - ./services/runtime:/www/services/runtime
       - ./data/models:/www/models
+      - ./specifications:/www/specifications
     depends_on:
       - redis
     ports:
       - "3003:3003"
     environment:
       PORT: 3003
+      NODE_ENV: development
       BROKER_HOST: redis://redis/10
       CONTEXTS_CACHE_HOST: redis://redis/0
       OPENAPI_FILEPATH: /www/specifications/swagger.yml
@@ -40,16 +81,38 @@ services:
     volumes:
       - ./services/workspaces:/www/services/workspaces
       - ./data/models:/www/models
+      - ./specifications:/www/specifications
     depends_on:
       - redis
     ports:
       - "3002:3002"
     environment:
       PORT: 3002
+      NODE_ENV: development
       BROKER_HOST: redis://redis/10
       OPENAPI_FILEPATH: /www/specifications/swagger.yml
       WORKSPACES_STORAGE_TYPE: FILESYSTEM
       WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
+
+  events:
+    working_dir: /www
+    entrypoint: npm run dev --prefix=services/events
+    image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies:latest
+    volumes:
+      - ./services/events:/www/services/events
+      - ./specifications:/www/specifications
+    depends_on:
+      - redis
+      - elastic
+    ports:
+      - "3004:3004"
+
+    environment:
+      PORT: 3004
+      NODE_ENV: development
+      BROKER_HOST: redis://redis/10
+      OPENAPI_FILEPATH: /www/specifications/swagger.yml
+      EVENTS_STORAGE_ES_HOST: http://elastic:9200
 
   gateway:
     working_dir: /www
@@ -57,6 +120,7 @@ services:
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies:latest
     volumes:
       - ./services/api-gateway:/www/services/api-gateway
+      - ./specifications:/www/specifications
     depends_on:
       - mongo
       - redis

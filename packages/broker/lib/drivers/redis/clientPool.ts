@@ -10,7 +10,7 @@ const BLOCKING_TIME = 1000;
 interface ClientInfo {
   client: RedisClientType;
   blocking: boolean;
-  ready: boolean;
+  ready: boolean | Promise<boolean>;
   available: boolean;
 }
 
@@ -38,6 +38,7 @@ export class ClientPool {
   private opts: DriverOptions;
   private clients: ClientInfo[];
   public ready: Promise<any>;
+  public closed: boolean;
   private clientsByStreams: Record<string, ClientInfo>;
   private nonblocking: ClientInfo;
 
@@ -52,6 +53,7 @@ export class ClientPool {
       this.nonblocking.ready = true;
       return true;
     });
+    this.closed = false;
 
     this.createdGrouppedStreams = new Set();
   }
@@ -95,8 +97,9 @@ export class ClientPool {
   }
 
   async closeClients() {
+    this.closed = true;
     await Promise.all(
-      this.clients.map(({ client }) => client.quit().catch(() => {}))
+      this.clients.map(({ client }) => client.disconnect().catch(() => {}))
     );
   }
 
@@ -126,6 +129,9 @@ export class ClientPool {
   }
 
   async readStreams(streams: string[], lastKnownIds: string[]) {
+    if (this.closed) {
+      return Promise.resolve({});
+    }
     const reply = await this.execute(
       (client, blocking) =>
         client.xRead(
@@ -148,6 +154,9 @@ export class ClientPool {
     subscriptionOpts: SubscriptionOptions,
     streams: string[]
   ): Promise<DeserializedMessages> {
+    if (this.closed) {
+      return Promise.resolve({});
+    }
     await Promise.all(
       streams.map((streamName) => this.createGroup(streamName, groupName))
     );

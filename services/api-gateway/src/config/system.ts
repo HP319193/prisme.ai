@@ -13,8 +13,8 @@ export default {
     path.resolve(__dirname, "../../specifications/swagger.yml"),
 
   CORRELATION_ID_HEADER:
-    process.env.CORRELATION_ID_HEADER || "X-Correlation-Id",
-  USER_ID_HEADER: process.env.USER_ID_HEADER || "X-Prismeai-User-Id",
+    process.env.CORRELATION_ID_HEADER || "x-correlation-id",
+  USER_ID_HEADER: process.env.USER_ID_HEADER || "x-prismeai-user-id",
 
   SESSION_COOKIES_MAX_AGE: parseInt(
     process.env.SESSION_COOKIES_MAX_AGE || <any>(30 * 24 * 60 * 60)
