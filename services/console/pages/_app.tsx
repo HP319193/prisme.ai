@@ -12,6 +12,7 @@ import { ReactElement, ReactNode } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import Toaster from "../layouts/Toaster";
+import addFormatters from "../utils/i18nextFormatters";
 
 const Sentry = dynamic(import("../utils/Sentry"), { ssr: false });
 
@@ -25,7 +26,8 @@ type AppPropsWithLayout = AppProps & {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
+  addFormatters(i18n);
 
   return (
     <UserProvider>

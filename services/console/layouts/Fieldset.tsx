@@ -1,8 +1,8 @@
-import { Fieldset, FieldsetProps } from "primereact/fieldset";
+import { Fieldset as PRFieldset, FieldsetProps } from "primereact/fieldset";
 import { FC } from "react";
 
-export const FieldsetCustom: FC<FieldsetProps> = (props) => (
-  <Fieldset className="pt-5" {...props} />
+export const Fieldset: FC<FieldsetProps> = (props) => (
+  <PRFieldset className="pt-5 mb-4" {...props} />
 );
 
-export default FieldsetCustom;
+export default Fieldset;

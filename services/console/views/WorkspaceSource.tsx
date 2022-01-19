@@ -32,7 +32,7 @@ interface WorkspaceSourceProps {
 }
 export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const { t } = useTranslation("workspaces");
-  const { workspace, setInvalid, setDirty, setNewSource, invalid } =
+  const { workspace, setInvalid, setDirty, setNewSource, invalid, save } =
     useWorkspace();
   const [value, setValue] = useState<string | undefined>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
@@ -80,7 +80,9 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         setInvalid((validateWorkspace.errors as ValidationError[]) || false);
         setNewSource(json);
         setDirty(true);
-      } catch (e) { }
+      } catch (e) {
+
+      }
     },
     [checkSyntaxAndReturnYAML, setDirty, setInvalid, setNewSource]
   );
@@ -150,6 +152,20 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     };
   }, [allAnnotations, ref, t, toaster]);
 
+  const shortcuts = useMemo(
+    () => [
+      {
+        name: t('expert.save.help'),
+        exec: save,
+        bindKey: {
+          mac: 'cmd-s',
+          win: 'ctrl-s',
+        },
+      },
+    ],
+    [save, t],
+  );
+
   if (value === undefined) return null;
 
   return (
@@ -160,6 +176,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         onChange={update}
         annotations={allAnnotations}
         onLoad={onLoad}
+        shortcuts={shortcuts}
       />
     </div>
   );

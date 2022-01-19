@@ -1,0 +1,409 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should build flow 1`] = `
+Array [
+  Object {
+    "data": Object {
+      "label": "Trigger",
+      "trigger": true,
+    },
+    "id": "0",
+    "position": Object {
+      "x": 0,
+      "y": 0,
+    },
+    "type": "trigger",
+  },
+  Object {
+    "data": Object {
+      "label": "emit",
+      "value": Object {
+        "event": "apps.foobar",
+        "payload": Object {
+          "foo": "bar",
+        },
+        "private": true,
+      },
+    },
+    "id": "0.0",
+    "position": Object {
+      "x": 0,
+      "y": 150,
+    },
+    "type": "instruction",
+  },
+  Object {
+    "data": Object {
+      "label": "wait",
+      "value": Object {
+        "event": "apps.forIt",
+        "output": "value",
+      },
+    },
+    "id": "0.1",
+    "position": Object {
+      "x": 0,
+      "y": 300,
+    },
+    "type": "instruction",
+  },
+  Object {
+    "data": Object {
+      "label": "set",
+      "value": Object {
+        "lifespan": 42,
+        "name": "foo",
+        "value": "$value",
+      },
+    },
+    "id": "0.2",
+    "position": Object {
+      "x": 0,
+      "y": 450,
+    },
+    "type": "instruction",
+  },
+  Object {
+    "data": Object {
+      "label": "delete",
+      "value": Object {
+        "name": "bar",
+      },
+    },
+    "id": "0.3",
+    "position": Object {
+      "x": 0,
+      "y": 600,
+    },
+    "type": "instruction",
+  },
+  Object {
+    "data": Object {
+      "label": "conditions",
+      "value": Object {
+        "$a == 1": Array [
+          Object {
+            "emit": "apps.1",
+          },
+          Object {
+            "emit": "apps.2",
+          },
+        ],
+        "default": Array [
+          Object {
+            "all": Array [
+              Object {
+                "emit": "apps.3",
+              },
+              Object {
+                "emit": "apps.4",
+              },
+              Object {
+                "repeat": Object {
+                  "on": "$a",
+                  "then": Array [
+                    Object {
+                      "emit": "apps.5",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "id": "0.4",
+    "position": Object {
+      "x": 0,
+      "y": 750,
+    },
+    "type": "conditions",
+  },
+  Object {
+    "data": Object {
+      "label": "emit",
+      "value": "apps.1",
+    },
+    "id": "0.4.0.0",
+    "position": Object {
+      "x": 300,
+      "y": 900,
+    },
+    "type": "instruction",
+  },
+  Object {
+    "data": Object {
+      "label": "emit",
+      "value": "apps.2",
+    },
+    "id": "0.4.0.1",
+    "position": Object {
+      "x": 300,
+      "y": 1050,
+    },
+    "type": "instruction",
+  },
+  Object {
+    "data": Object {
+      "label": "empty block",
+      "value": null,
+    },
+    "id": "0.4.0.2",
+    "position": Object {
+      "x": 300,
+      "y": 1200,
+    },
+    "type": "empty",
+  },
+  Object {
+    "data": Object {
+      "label": "all",
+      "value": Array [
+        Object {
+          "emit": "apps.3",
+        },
+        Object {
+          "emit": "apps.4",
+        },
+        Object {
+          "repeat": Object {
+            "on": "$a",
+            "then": Array [
+              Object {
+                "emit": "apps.5",
+              },
+            ],
+          },
+        },
+      ],
+    },
+    "id": "0.4.1.0",
+    "position": Object {
+      "x": 600,
+      "y": 900,
+    },
+    "type": "instruction",
+  },
+  Object {
+    "data": Object {
+      "label": "emit",
+      "value": "apps.3",
+    },
+    "id": "0.4.1.0.0",
+    "position": Object {
+      "x": 900,
+      "y": 1050,
+    },
+    "type": "instruction",
+  },
+  Object {
+    "data": Object {
+      "label": "emit",
+      "value": "apps.4",
+    },
+    "id": "0.4.1.0.1",
+    "position": Object {
+      "x": 1200,
+      "y": 1050,
+    },
+    "type": "instruction",
+  },
+  Object {
+    "data": Object {
+      "label": "repeat",
+      "value": Object {
+        "on": "$a",
+        "then": Array [
+          Object {
+            "emit": "apps.5",
+          },
+        ],
+      },
+    },
+    "id": "0.4.1.0.2",
+    "position": Object {
+      "x": 1500,
+      "y": 1050,
+    },
+    "type": "instruction",
+  },
+  Object {
+    "data": Object {
+      "label": "empty block",
+      "value": null,
+    },
+    "id": "0.4.1.1",
+    "position": Object {
+      "x": 600,
+      "y": 1200,
+    },
+    "type": "empty",
+  },
+  Object {
+    "id": "0.4.2.0",
+    "position": Object {
+      "x": 900,
+      "y": 900,
+    },
+    "type": "empty",
+  },
+  Object {
+    "data": Object {
+      "label": "empty block",
+      "value": null,
+    },
+    "id": "0.5",
+    "position": Object {
+      "x": 0,
+      "y": 1350,
+    },
+    "type": "empty",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.0-0.1",
+    "source": "0.0",
+    "target": "0.1",
+    "type": "instruction",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.1-0.2",
+    "source": "0.1",
+    "target": "0.2",
+    "type": "instruction",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.2-0.3",
+    "source": "0.2",
+    "target": "0.3",
+    "type": "instruction",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.3-0.4",
+    "source": "0.3",
+    "target": "0.4",
+    "type": "instruction",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.4.0.0-0.4.0.1",
+    "source": "0.4.0.0",
+    "target": "0.4.0.1",
+    "type": "instruction",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.4.0.1-0.4.0.2",
+    "source": "0.4.0.1",
+    "target": "0.4.0.2",
+    "type": "edge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "data": Object {
+      "label": "$a == 1",
+    },
+    "id": "edge-0.4-0.4.0.0",
+    "source": "0.4",
+    "sourceHandle": "0",
+    "target": "0.4.0.0",
+    "type": "conditionEdge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.4.1.0-0.4.1.0.0",
+    "source": "0.4.1.0",
+    "target": "0.4.1.0.0",
+    "type": "edge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.4.1.0.0-0.4.1.1",
+    "source": "0.4.1.0.0",
+    "target": "0.4.1.1",
+    "type": "edge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.4.1.0-0.4.1.0.1",
+    "source": "0.4.1.0",
+    "target": "0.4.1.0.1",
+    "type": "edge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.4.1.0.1-0.4.1.1",
+    "source": "0.4.1.0.1",
+    "target": "0.4.1.1",
+    "type": "edge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.4.1.0-0.4.1.0.2",
+    "source": "0.4.1.0",
+    "target": "0.4.1.0.2",
+    "type": "edge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.4.1.0.2-0.4.1.1",
+    "source": "0.4.1.0.2",
+    "target": "0.4.1.1",
+    "type": "edge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "data": Object {
+      "label": "default",
+    },
+    "id": "edge-0.4-0.4.1.0",
+    "source": "0.4",
+    "sourceHandle": "1",
+    "target": "0.4.1.0",
+    "type": "conditionEdge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "data": Object {
+      "label": "new condition",
+    },
+    "id": "edge-0.4-0.4.2.0",
+    "source": "0.4",
+    "sourceHandle": "2",
+    "target": "0.4.2.0",
+    "type": "conditionEdge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.5-0.4.0.2",
+    "source": "0.4.0.2",
+    "target": "0.5",
+    "type": "conditionEdge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.5-0.4.1.1",
+    "source": "0.4.1.1",
+    "target": "0.5",
+    "type": "conditionEdge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.5-0.4.2.0",
+    "source": "0.4.2.0",
+    "target": "0.5",
+    "type": "conditionEdge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0-0.0",
+    "source": "0",
+    "target": "0.0",
+    "type": "instruction",
+  },
+]
+`;

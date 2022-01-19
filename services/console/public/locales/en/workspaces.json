@@ -1,4 +1,12 @@
 {
+  "workspaces": {
+    "title": "Workspaces and Applications — $t(common:main.title)",
+    "description": "Create new Workspaces and new Apps, edit them, and run them"
+  },
+  "workspace": {
+    "title": "\"{{name}}\" Workspace — $t(common:main.title)",
+    "description": "Editing Workspace \"{{name}}\""
+  },
   "create": {
     "description_first": "Create your first workspace to start automating your work",
     "description": "Create a new workspace",
@@ -41,6 +49,47 @@
     },
     "endpoint": {
       "copied": "Endpoint has been copied"
+    },
+    "trigger": {
+      "events": {
+        "title": "Events",
+        "help": "Automation will be run everytime one of this event will be fired."
+      },
+      "dates": {
+        "title": "Dates",
+        "help": "Automation will be run at every specified date interval."
+      },
+      "endpoint": {
+        "title": "Adresse web",
+        "help": "Automation will be run everytime the endpoint will be hit."
+      },
+      "save": "Enregistrer"
+    },
+    "instruction": {
+      "title_builtin": "Logical",
+      "label": "{{context}}",
+      "label_emit": "Emit event",
+      "label_repeat": "Repeat on",
+      "label_all": "All instructions",
+      "label_wait": "Wait for event",
+      "label_set": "Set var",
+      "label_delete": "Delete var",
+      "label_conditions": "Conditions",
+      "search": "Search"
+    },
+    "node": {
+      "label": "{{instruction}}{{value, then}} {{value}}"
+    },
+    "edit": {
+      "select": "Select instruction",
+      "builtin": "Logical"
+    },
+    "condition": {
+      "edit": {
+        "title": "Condition",
+        "submit": "Save",
+        "submit_new": "Add"
+      }
     }
   },
   "apps": {
@@ -57,6 +106,7 @@
       "confirm_message": "You are about to leave without saving. Are you sure?"
     },
     "save": {
+      "help": "Save",
       "confirm": "Your workspace is saved"
     }
   },

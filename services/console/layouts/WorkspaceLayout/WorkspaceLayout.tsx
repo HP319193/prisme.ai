@@ -217,6 +217,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       value={{
         workspace,
         loading,
+        save,
         displaySource,
         invalid,
         setInvalid,

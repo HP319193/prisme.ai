@@ -10,6 +10,7 @@
   "dependencies": {
     "@prisme.ai/types": "^1.0.1",
     "@prisme.ai/validation": "^1.0.4",
+    "@react-hook/hover": "^4.0.0",
     "@sentry/browser": "^6.16.1",
     "@sentry/tracing": "^6.16.1",
     "ace-builds": "^1.4.13",
@@ -29,6 +30,7 @@
     "react-click-away-listener": "^2.0.5",
     "react-dom": "17.0.2",
     "react-final-form": "^6.5.7",
+    "react-flow-renderer": "^9.7.3",
     "react-transition-group": "^4.4.2",
     "socket.io-client": "^4.4.1"
   },
