@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "@prisme.ai/broker": "^0.0.16",
+    "@prisme.ai/broker": "^0.1.2",
     "@prisme.ai/types": "^1.0.6",
     "argparse": "^2.0.1",
     "bcrypt": "^5.0.1",

@@ -1,6 +1,5 @@
 import workspaces from "./workspaces";
 import sys from "./sys";
-import events from "./events";
 
-export { workspaces, sys, events };
-export default { workspaces, sys, events };
+export { workspaces, sys };
+export default { workspaces, sys };

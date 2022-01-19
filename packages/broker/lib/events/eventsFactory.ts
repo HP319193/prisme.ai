@@ -2,12 +2,12 @@ import { BrokerError } from "../errors";
 import { uniqueId } from "../utils";
 import { init as initValidator, validate, ValidatorOptions } from "./validator";
 export interface Consumer {
-  app: string;
+  service: string;
   name: string;
 }
 export interface Host {
-  ip: string;
-  replica: string;
+  replica?: string;
+  service: string;
 }
 
 export enum NativeTopic {
@@ -17,7 +17,7 @@ export enum NativeTopic {
 
 export type Topic = NativeTopic | string;
 export interface EventSource {
-  app: string;
+  app?: string;
   userId?: string;
   workspaceId?: string;
   host?: Host;

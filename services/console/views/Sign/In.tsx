@@ -33,7 +33,7 @@ export const SignIn = () => {
 
   useEffect(() => {
     if (!messages.current || !error) return;
-    console.log(error.error);
+
     messages.current.show({
       severity: "error",
       summary: t("in.error", { context: error.error }),

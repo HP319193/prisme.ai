@@ -148,3 +148,19 @@ it("should call delete /workspaces/42/automations/42-1", () => {
   );
   expect(api.delete).toHaveBeenCalledWith("/workspaces/42/automations/42-1");
 });
+
+it('should call get /workspaces/42/events', async () => {
+  const api = new Api("/fake/");
+  api.get = jest.fn(async (): Promise<any> => ({
+    result: {
+      events: [{
+        id: '1',
+        createdAt: '2021-01-01'
+      }]
+    }
+  }));
+  expect(await api.getEvents('42')).toEqual([{
+    id: '1',
+    createdAt: new Date('2021-01-01')
+  }])
+})

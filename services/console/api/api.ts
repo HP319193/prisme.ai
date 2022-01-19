@@ -1,6 +1,7 @@
 import getConfig from "next/config";
+import QueryString from "qs";
 import Fetcher from "./fetcher";
-import { Workspace } from "./types";
+import { Event, Workspace } from "./types";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -92,6 +93,26 @@ export class Api extends Fetcher {
     return await this.delete(
       `/workspaces/${workspace.id}/automations/${automation.id}`
     );
+  }
+
+  async getEvents(workspaceId: string, options: { beforeDate?: Date | string } = {}): Promise<Event<Date>[]> {
+    try {
+      const query = QueryString.stringify(options)
+      const { result: { events } } =
+        await this.get<{
+          result: {
+            events: Event<string>[]
+          }
+        }>(
+          `/workspaces/${workspaceId}/events${query && `?${query}`}`
+        );
+      return events.map(({ createdAt, ...event }) => ({
+        ...event,
+        createdAt: new Date(createdAt)
+      }))
+    } catch (e) {
+      return []
+    }
   }
 }
 

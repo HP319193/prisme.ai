@@ -17,6 +17,9 @@ COPY services/workspaces/package-lock.json /www/services/workspaces/package-lock
 COPY services/api-gateway/package.json /www/services/api-gateway/package.json
 COPY services/api-gateway/package-lock.json /www/services/api-gateway/package-lock.json
 
+COPY services/events/package.json /www/services/events/package.json
+COPY services/events/package-lock.json /www/services/events/package-lock.json
+
 
 # Packages
 COPY packages/broker/package.json /www/packages/broker/package.json

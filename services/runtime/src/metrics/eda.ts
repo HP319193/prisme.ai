@@ -11,7 +11,7 @@ export async function initEDAMetrics(registry: client.Registry) {
       const metrics = await getMetrics();
       metrics.pending.events.forEach((cur) => {
         pendingMetrics.set(
-          { event: cur.type, consumer: broker.app },
+          { event: cur.type, consumer: broker.service },
           cur.pending
         );
       });
@@ -41,7 +41,7 @@ export async function initEDAMetrics(registry: client.Registry) {
   broker.onProcessedEventCallback = (event, metrics) => {
     const vals = {
       event: event.type,
-      consumer: broker.app,
+      consumer: broker.service,
       workspace: event?.source?.workspaceId,
     };
     processDurationMetrics.labels(vals).observe(metrics.procesDuration);

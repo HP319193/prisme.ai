@@ -8,6 +8,9 @@
   "edit": {
     "label": "Editar"
   },
+  "events": {
+    "empty": "Aquí todavía no ha pasado nada…"
+  },
   "automations": {
     "link": "Automatizaciones",
     "create": {

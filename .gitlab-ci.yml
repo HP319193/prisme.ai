@@ -21,6 +21,10 @@ variables:
   RUNTIME_IMAGE_NAME: "prisme.ai-runtime"
   RUNTIME_K8S_NAME: "prismeai-runtime"
 
+  EVENTS_DIRECTORY: "events"
+  EVENTS_IMAGE_NAME: "prisme.ai-events"
+  EVENTS_K8S_NAME: "prismeai-events"
+
 stages:
   - dependencies
   - test
@@ -66,9 +70,10 @@ npm_install:
   script:
     - >
       if ! [[ -d node_modules/ ]] ; then
-        npm ci
+        BUILD_PACKAGES=0 npm ci
       fi
-    - npm test $SERVICE_NAME
+    - npm run build:packages
+    - npm test --prefix $DIRECTORY
   coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
   artifacts:
     paths:
@@ -122,7 +127,7 @@ console_test:
     changes:
       - "services/console/**/*"
   before_script:
-    - export SERVICE_NAME=$CONSOLE_DIRECTORY
+    - export DIRECTORY=services/$CONSOLE_DIRECTORY
 
 console_build_docker:
   extends: .build_docker
@@ -276,3 +281,47 @@ api-gateway_deploy:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME
     - export K8S_NAME=$API_GATEWAY_K8S_NAME
+
+# ## Events jobs
+events_test:
+  extends: .npm_test
+  only:
+    changes:
+      - "services/events/**/*"
+  before_script:
+    - export DIRECTORY=services/$EVENTS_DIRECTORY
+
+events_build_docker:
+  extends: .build_docker
+  interruptible: true # Stop this job if a new one has been triggered by the same branch
+  stage: build_docker
+  image: docker:stable
+  services:
+    - docker:stable-dind
+  only:
+    refs:
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
+      - main
+      - master
+    changes:
+      - "services/events/**/*"
+  before_script:
+    - export DIRECTORY=services/$EVENTS_DIRECTORY
+    - export DOCKER_HOST=tcp://docker:2375
+    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME
+
+events_deploy:
+  extends: .deploy_k8s
+  only:
+    refs:
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
+      - main
+      - master
+    changes:
+      - "services/events/**/*"
+  before_script:
+    - export KUBECONFIG=$KUBECONFIG
+    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME
+    - export K8S_NAME=$EVENTS_K8S_NAME

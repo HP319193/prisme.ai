@@ -67,7 +67,7 @@ beforeEach(() => {
       workflows: {},
     },
   ];
-  (useWorkspaces().updateAutomation as Jest.Mock).mockClear();
+  (useWorkspaces().updateAutomation as jest.Mock).mockClear();
 });
 
 it("should render", () => {
@@ -174,7 +174,7 @@ it("should set and reset automation", async () => {
   act(() => {
     context.setAutomation(expectedAutomation);
   });
-  console.log(context.automation);
+
   expect(context.automation).toEqual({
     id: "43",
     name: "foo",
@@ -207,8 +207,8 @@ it("should save automation", async () => {
   await act(async () => {
     await true;
   });
-  act(() => {
-    context.save();
+  await act(async () => {
+    await context.save();
   });
   expect(useWorkspaces().updateAutomation).toHaveBeenCalledWith(
     useWorkspace().workspace,
@@ -229,8 +229,8 @@ it("should save", async () => {
   const itemRoot = renderer.create(
     root.root.findAllByType(TabMenu)[1].props.model[2].template()
   );
-  act(() => {
-    itemRoot.root.findByType(Button).props.onClick();
+  await act(async () => {
+    await itemRoot.root.findByType(Button).props.onClick();
   });
   expect(useWorkspaces().updateAutomation).toHaveBeenCalled();
 });
@@ -246,8 +246,8 @@ it("should fail to save", async () => {
   const itemRoot = renderer.create(
     root.root.findAllByType(TabMenu)[1].props.model[2].template()
   );
-  act(() => {
-    itemRoot.root.findByType(Button).props.onClick();
+  await act(async () => {
+    await itemRoot.root.findByType(Button).props.onClick();
   });
   expect(useToaster().show).toHaveBeenCalled();
 });

@@ -8,6 +8,13 @@
   "edit": {
     "label": "Edit"
   },
+  "events": {
+    "empty": "Nothing has happened here yet…",
+    "details": {
+      "name": "Field",
+      "value": "Value"
+    }    
+  },
   "automations": {
     "link": "Automations",
     "create": {

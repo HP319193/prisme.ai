@@ -2,8 +2,6 @@
 
 import express from "express";
 import bodyParser from "body-parser";
-// import packageJson from "../package.json";
-// import { stderrStream, stdoutStream } from "./utils/logger/morgan";
 import {
   errorDecorator,
   finalErrorHandler,
@@ -19,11 +17,6 @@ import Runtime from "../services/runtime";
 
 export function init(runtime: Runtime) {
   const app = express();
-
-  /**
-   * Helmet helps to secure Express apps by setting various HTTP headers.
-   */
-  // app.use(helmet());
 
   /**
    * Get NODE_ENV from environment and store in Express.
@@ -72,11 +65,6 @@ export function init(runtime: Runtime) {
   /**
    * ERROR HANDLING
    */
-
-  /**
-   * Catch 404 and forward to error handler
-   */
-  // app.use(notFoundErrorHandler);
 
   /**
    * Decorate error object with additional data

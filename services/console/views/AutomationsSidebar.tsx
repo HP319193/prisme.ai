@@ -61,7 +61,7 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
         },
       },
     });
-    console.log("createdAutomation", createdAutomation);
+
     setCreating(false);
     onClose();
     if (createdAutomation) {

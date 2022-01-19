@@ -11,9 +11,6 @@ export interface SubscriptionOptions {
 
   // If true, considers any event as processed as soon as it has been passed to a callback
   NoAck: boolean;
-
-  // Mainly used by unit tests to make concurrent calls safer
-  EventsPrefix?: string;
 }
 
 export interface PendingEvents {
@@ -49,6 +46,9 @@ export interface DriverOptions {
   password?: string;
   consumer: Consumer;
   subscription?: Partial<SubscriptionOptions>;
+
+  // Mainly used by unit tests and preview envs to send & rcv events from distinct namespaces on the same broker instance
+  namespace?: string;
 }
 
 export function driver(opts: DriverOptions) {

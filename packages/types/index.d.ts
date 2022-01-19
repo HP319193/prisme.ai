@@ -5,704 +5,411 @@ declare namespace Prismeai {
          */
         all: Instruction[];
     }
-    export type AllEventRequests = (GenericErrorEvent | FailedLogin | SucceededLogin | TriggeredWorkflow | UpdatedContexts | CreatedWorkspace | UpdatedWorkspace | DeletedWorkspace | InstalledApp | ConfiguredApp | CreatedAutomation | UpdatedAutomation | DeletedAutomation)[];
-    export type AllEventResponses = ({
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
-            app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
-        };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
-        error?: {
-            code?: string;
-            message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
-            /**
-             * example:
-             * warning
-             */
-            level?: "warning" | "error" | "fatal";
-        };
-        id?: string;
+    export type AllEventRequests = (GenericErrorEvent | FailedLogin | SucceededLogin | TriggeredWorkflow | UpdatedContexts | CreatedWorkspace | UpdatedWorkspace | DeletedWorkspace | InstalledApp | ConfiguredApp | CreatedAutomation | UpdatedAutomation | DeletedAutomation | AppEvent)[];
+    export type AllEventResponses = (PrismeEvent | {
         /**
          * example:
          * error
          */
-        type?: string;
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        type: string;
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AnyValue;
         error?: {
-            code?: string;
-            message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            [name: string]: any;
+            error?: string;
+            message: string;
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * gateway.login.failed
          */
         type: "gateway.login.failed";
-        payload: {
-            ip: string;
-            email: string;
-        };
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AnyValue;
         error?: {
-            code?: string;
+            error?: string;
             message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * gateway.login.succeeded
          */
         type: "gateway.login.succeeded";
-        payload: {
-            ip: string;
-            email: string;
-            id: string;
-        };
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AnyValue;
         error?: {
-            code?: string;
+            error?: string;
             message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * runtime.workflow.triggered
          */
         type: "runtime.workflow.triggered";
-        payload: {
-            event: {
-                id?: string;
-                type?: string;
-            };
-            workflow: string;
-            payload?: {
-                [key: string]: any;
-            };
-        };
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AnyValue;
         error?: {
-            code?: string;
+            error?: string;
             message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * runtime.contexts.updated
          */
         type: "runtime.contexts.updated";
-        payload: {
-            contexts: {
-                [key: string]: any;
-            };
-        };
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AnyValue;
         error?: {
-            code?: string;
+            error?: string;
             message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * workspaces.created
          */
         type: "workspaces.created";
-        payload: {
-            workspace: Workspace;
-        };
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AnyValue;
         error?: {
-            code?: string;
+            error?: string;
             message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * workspaces.updated
          */
         type: "workspaces.updated";
-        payload: {
-            workspace: Workspace;
-        };
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AnyValue;
         error?: {
-            code?: string;
+            error?: string;
             message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * workspaces.deleted
          */
         type: "workspaces.deleted";
-        payload: {
-            workspaceId: string;
-        };
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AnyValue;
         error?: {
-            code?: string;
+            error?: string;
             message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * workspaces.app.installed
          */
         type: "workspaces.app.installed";
-        payload: AppInstance;
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AppInstance;
         error?: {
-            code?: string;
+            error?: string;
             message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * workspaces.app.configured
          */
         type: "workspaces.app.configured";
-        payload: AppInstance;
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AppInstance;
         error?: {
-            code?: string;
+            error?: string;
             message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * workspaces.automation.created
          */
         type: "workspaces.automation.created";
-        payload: {
-            automation: /* Full description at (TODO swagger url) */ Automation;
-        };
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AnyValue;
         error?: {
-            code?: string;
+            error?: string;
             message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * workspaces.automation.updated
          */
         type: "workspaces.automation.updated";
-        payload: {
-            automation: /* Full description at (TODO swagger url) */ Automation;
-        };
-    } | {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
+        source: {
             app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
+            correlationId: string;
         };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
+        payload: AnyValue;
         error?: {
-            code?: string;
+            error?: string;
             message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
+            details?: AnyValue;
             /**
              * example:
              * warning
              */
             level?: "warning" | "error" | "fatal";
         };
-        id?: string;
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
         /**
          * example:
          * workspaces.automation.deleted
          */
         type: "workspaces.automation.deleted";
-        payload: {
-            automation: {
-                id: string;
-                name: string;
+        source: {
+            app?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
             };
+            correlationId: string;
         };
+        payload: AnyValue;
+        error?: {
+            error?: string;
+            message?: string;
+            details?: AnyValue;
+            /**
+             * example:
+             * warning
+             */
+            level?: "warning" | "error" | "fatal";
+        };
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
     })[];
     export type AnyValue = any;
     export interface App {
@@ -723,6 +430,15 @@ declare namespace Prismeai {
          * Unique id
          */
         id?: string;
+    }
+    export interface AppEvent {
+        /**
+         * Event name must be prefixed with apps.appName
+         * example:
+         * apps.someApp.someCustomEvent
+         */
+        type: string;
+        payload: AnyValue;
     }
     export interface AppInstance {
         /**
@@ -782,52 +498,6 @@ declare namespace Prismeai {
         details?: {
             [key: string]: any;
         }[];
-    }
-    export interface BaseEventResponse {
-        /**
-         * Creation date (ISO8601)
-         */
-        createdAt?: string;
-        source?: {
-            app?: string;
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-            /**
-             * Related workspace
-             */
-            workspace?: {
-                id?: string;
-            };
-            host?: {
-                ip?: string;
-            };
-            correlationId?: string;
-        };
-        target?: {
-            /**
-             * Authenticated user
-             */
-            user?: {
-                id?: string;
-            };
-        };
-        error?: {
-            code?: string;
-            message?: string;
-            details?: {
-                [key: string]: any;
-            }[];
-            /**
-             * example:
-             * warning
-             */
-            level?: "warning" | "error" | "fatal";
-        };
-        id?: string;
     }
     export interface Break {
         /**
@@ -995,7 +665,11 @@ declare namespace Prismeai {
          * example:
          * error
          */
-        type?: string;
+        type: string;
+        error?: {
+            [name: string]: any;
+            message: string;
+        };
     }
     export interface If {
         if: {
@@ -1031,6 +705,38 @@ declare namespace Prismeai {
          */
         error?: string;
         message?: string;
+    }
+    export interface PrismeEvent {
+        /**
+         * example:
+         * apps.someApp.someCustomEvent
+         */
+        type: string;
+        source: {
+            app?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
+            };
+            correlationId: string;
+        };
+        payload?: AnyValue;
+        error?: {
+            error?: string;
+            message?: string;
+            details?: AnyValue;
+            /**
+             * example:
+             * warning
+             */
+            level?: "warning" | "error" | "fatal";
+        };
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
     }
     export interface Repeat {
         /**
@@ -1466,22 +1172,28 @@ declare namespace PrismeaiAPI {
     }
     namespace EventsLongpolling {
         namespace Parameters {
-            export type Filter = string;
-            export type FromDate = string;
+            export type AfterDate = string;
+            export type BeforeDate = string;
+            export type BeforeId = string;
+            export type CorrelationId = string;
             export type Limit = number;
-            export type Longpolling = number;
             export type Page = number;
-            export type SomePayloadFieldSubField = string;
+            export interface Query {
+                [name: string]: any;
+            }
+            export type Types = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
         }
         export interface QueryParameters {
-            "somePayloadField.subField"?: Parameters.SomePayloadFieldSubField;
-            filter?: Parameters.Filter;
-            fromDate?: Parameters.FromDate;
-            longpolling?: Parameters.Longpolling;
+            correlationId?: Parameters.CorrelationId;
+            beforeId?: Parameters.BeforeId;
+            query?: Parameters.Query;
+            types?: Parameters.Types;
+            afterDate?: Parameters.AfterDate;
+            beforeDate?: Parameters.BeforeDate;
             page?: Parameters.Page;
             limit?: Parameters.Limit;
         }
@@ -1633,7 +1345,7 @@ declare namespace PrismeaiAPI {
             export type $403 = Prismeai.ForbiddenError;
         }
     }
-    namespace SendConversationEvent {
+    namespace SendWorkspaceEvent {
         namespace Parameters {
             export type WorkspaceId = string;
         }

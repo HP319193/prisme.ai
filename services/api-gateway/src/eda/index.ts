@@ -9,6 +9,8 @@ const {
   BROKER_HOST,
   BROKER_PASSWORD,
   EVENTS_OAS_PATH,
+  BROKER_WHITELIST_EVENT_PREFIXES,
+  BROKER_NAMESPACE,
 } = edaConfig;
 
 export enum EventType {
@@ -26,16 +28,18 @@ export class CallbackContext {
 
 export const broker = new Broker<CallbackContext>(
   {
-    app: APP_NAME,
+    service: APP_NAME,
   },
   {
     driver: {
       type: BROKER_DRIVER,
       host: BROKER_HOST,
       password: BROKER_PASSWORD,
+      namespace: BROKER_NAMESPACE,
     },
     validator: {
       oasFilepath: EVENTS_OAS_PATH,
+      whitelistEventPrefixes: BROKER_WHITELIST_EVENT_PREFIXES,
     },
     CallbackContextCtor: CallbackContext,
   }

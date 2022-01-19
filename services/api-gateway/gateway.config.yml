@@ -8,6 +8,12 @@ endpoints:
   apps:
     path: "/v2/apps*"
 
+  socket.io:
+    path: "/socket.io*"
+
+  events:
+    path: "/v2/workspaces/*/events*"
+
   console:
     path: "*"
     hosts:
@@ -19,7 +25,7 @@ services:
   runtime:
     url: "http://runtime:3003"
   events:
-    url: "http://events:3002"
+    url: "http://events:3004"
   console:
     url: "http://console:3001"
 
@@ -31,6 +37,23 @@ pipelines:
       - authentication: {}
       - proxy:
           service: runtime
+
+  - name: sockets
+    endpoints:
+      - socket.io
+    policies:
+      - authentication: {}
+      - proxy:
+          service: events
+          websockets: true
+
+  - name: events
+    endpoints:
+      - events
+    policies:
+      - authentication: {}
+      - proxy:
+          service: events
 
   - name: workspaces
     endpoints:

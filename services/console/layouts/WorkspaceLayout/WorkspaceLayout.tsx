@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import EditableTitle from "../../components/EditableTitle";
 import { useWorkspaces } from "../../components/WorkspacesProvider";
@@ -11,6 +11,30 @@ import Loading from "../../components/Loading";
 import { Button } from "primereact/button";
 import AutomationsSidebar from "../../views/AutomationsSidebar";
 import Head from "next/head";
+import { EventsByDay } from ".";
+import Events from "../../api/events";
+import { Event } from "../../api/types";
+import api from "../../api/api";
+
+const getDate = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate());
+const addEventToMap = (allEvents: EventsByDay, newEvent: Event<Date>) => {
+  const { createdAt } = newEvent;
+  const date = getDate(createdAt);
+  const prevEvents = allEvents.get(+date) || new Set();
+  if (Array.from(prevEvents).find(({ id }) => newEvent.id === id)) return allEvents;
+  const newEvents = [...Array.from(prevEvents), newEvent];
+  newEvents.sort((a, b) => +b.createdAt - +a.createdAt)
+  allEvents.set(+date, new Set(newEvents));
+  return allEvents;
+};
+
+const getLatest = (events: Event<Date>[]) => {
+  if (events.length === 0) return;
+  events.sort((a, b) => +a.createdAt - +b.createdAt)
+  return events[0].createdAt
+}
+
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
@@ -19,9 +43,66 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const { t } = useTranslation("workspaces");
   const { get, fetch, update } = useWorkspaces();
   const [loading, setLoading] = useState<WorkspaceContext["loading"]>(false);
+  const lockEvents = useRef(false)
   const [workspace, setCurrentWorkspace] = useState<
     WorkspaceContext["workspace"] | null
   >();
+  const [events, setEvents] = useState<WorkspaceContext['events']>('loading');
+  const [socket, setSocket] = useState<Events>();
+  const latest = useRef<Date | undefined | null>();
+
+  // Init socket
+  useEffect(() => {
+    if (!workspace) return;
+    const c = new Events(workspace.id);
+    setSocket(c);
+    return () => {
+      c.destroy();
+    };
+  }, [workspace]);
+
+  const nextEvents = useCallback(async () => {
+    if (!workspace || lockEvents.current || latest.current === null) return;
+    lockEvents.current = true
+    const fetched = await api.getEvents(workspace.id, {
+      beforeDate: latest.current
+    })
+    setEvents(events => {
+      const newEvents = new Map(events === 'loading' ? [] : events);
+      fetched.forEach(event => {
+        addEventToMap(newEvents, event)
+      })
+      latest.current = getLatest(fetched) || null
+      return newEvents
+    });
+    lockEvents.current = false
+  }, [lockEvents, workspace]);
+
+  // Load events history
+  useEffect(() => {
+    if (!workspace) return;
+    latest.current = undefined;
+    setEvents('loading')
+    nextEvents();
+  }, [nextEvents, workspace])
+
+  // Listen to new events
+  useEffect(() => {
+    if (!socket) return;
+
+    const listener = (eventName: string, eventData: Prismeai.PrismeEvent) => {
+      const event = {
+        ...eventData,
+        createdAt: new Date(eventData.createdAt || ""),
+      };
+
+      setEvents(addEventToMap(new Map(events === 'loading' ? [] : events), event));
+    };
+    const off = socket.all(listener);
+    return () => {
+      off();
+    };
+  }, [socket, events]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebar, setSidebar] = useState<"automations" | "apps" | "pages">(
@@ -97,7 +178,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }
 
   return (
-    <workspaceContext.Provider value={{ workspace, loading }}>
+    <workspaceContext.Provider value={{ workspace, loading, events, nextEvents }}>
       <Head>
         <title>{t("workspace.title", { name: workspace.name })}</title>
         <meta
@@ -118,10 +199,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
                 onClick={displayAutomations}
                 className={`
                   mx-2
-                  ${
-                    sidebarOpen && sidebar === "automations"
-                      ? "p-button-secondary"
-                      : ""
+                  ${sidebarOpen && sidebar === "automations"
+                    ? "p-button-secondary"
+                    : ""
                   }`}
               >
                 {t("automations.link")}
@@ -159,7 +239,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         }
       >
         <div className="flex flex-1">
-          <div className="flex flex-1 flex-column">{children}</div>
+          <div className="flex flex-1 flex-column overflow-auto">{children}</div>
 
           <SidePanel
             sidebarOpen={sidebarOpen}
