@@ -10,7 +10,7 @@ const BLOCKING_TIME = 1000;
 interface ClientInfo {
   client: RedisClientType;
   blocking: boolean;
-  ready: boolean | Promise<boolean>;
+  ready: Promise<boolean>;
   available: boolean;
 }
 
@@ -49,10 +49,7 @@ export class ClientPool {
     this.clients = [];
     this.clientsByStreams = {};
     this.nonblocking = this.createClient(opts, false);
-    this.ready = this.nonblocking.client.connect().then(() => {
-      this.nonblocking.ready = true;
-      return true;
-    });
+    this.ready = this.nonblocking.ready;
     this.closed = false;
 
     this.createdGrouppedStreams = new Set();
@@ -89,7 +86,7 @@ export class ClientPool {
     const clientInfo = {
       blocking,
       client,
-      ready: false,
+      ready: client.connect().then(() => true),
       available: true,
     };
     this.clients.push(clientInfo);
@@ -109,9 +106,6 @@ export class ClientPool {
     targetStreams: string[]
   ) {
     const client = this.getClient(targetStreams);
-    if (!client.ready) {
-      client.ready = await client.client.connect().then(() => true);
-    }
     return await command(client.client, client.blocking);
   }
 
