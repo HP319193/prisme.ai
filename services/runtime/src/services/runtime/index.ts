@@ -106,6 +106,7 @@ export default class Runtime {
       if (error instanceof PrismeError) {
         throw error;
       } else {
+        logger.error(error);
         throw new Error("Internal error");
       }
     }
