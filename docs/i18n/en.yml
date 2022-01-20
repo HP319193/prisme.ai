@@ -1,5 +1,8 @@
 home: Home
 index: Index
+start: Documentation
+site_name: Prisme.ai
+
 contributing: Contributing
 functionnalRequirements: Functionnal Requirements
 architecture: Architecture
@@ -9,4 +12,5 @@ events: Events
 apiGateway: ApiGateway
 workspaces: Workspaces
 projects: Projects
+specifications: Specifications
 

@@ -86,30 +86,26 @@ App states are managed by React context API with thematic Providers.
 
 # Design
 
-App is responsive if possible. It have to be fully usable on width > 768px. On smaller devices, some functionalities may not be available. An explication will be displayed to let user knows what he could do on a bigger screen.
+The console should be responsive, usable on width > 768px. On smaller devices, some functionalities may not be available. An explication will be displayed to let user knows what he could do on a bigger screen.
 
-App is accessible. Main functionalities are usable with keyboard and readable with screen reader.
-
-Graphical theme is one of bundled with PrimeReact.
+The features should have accessibility in mind. Main functionalities should be usable with keyboard and readable with a screen reader.
 
 ## Performance
 
 Run Lighthouse to check for performance, best practices, accessibility, and SEO. For best results, use a production build of Next.js and use incognito in your browser so results aren't affected by extensions.
 
-Results must be green.
+Lighthouse's results must be green.
 
 # Quality
 
 ## Development and quality standards
 
-- at least 70% coverage
-- maximum of 3 % of duplicate code
+- At least 70% test coverage
+- Maximum 3 % duplicated code
 
 ## Tests
 
 All components have a minimum snapshot test. Complex components have as many snapshots than different possible states. Utils have unit tests.
-
-Code coverage should never be under 70%.
 
 <table style="width:100%;">
 <colgroup>
@@ -165,3 +161,7 @@ Authenticated user token is stored in local storage.
 # Hosting
 
 Dockerfile, docker-compose and Helm chart ready to use.
+
+# Linting
+
+The code should be formatted using Prettier, using the version specified in the package.json

@@ -150,3 +150,7 @@ TODO : detail & include specific metrics from the first RSE audits
 # Hosting
 
 Dockerfile, docker-compose and Helm chart ready to use.
+
+# Linting
+
+The code should be formatted using Prettier, using the version specified in the package.json
