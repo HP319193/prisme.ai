@@ -1,6 +1,6 @@
 {
   "name": "@prisme.ai/types",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Prisme.ai common types",
   "author": "Prisme.ai",
   "types": "./index.d.ts",
