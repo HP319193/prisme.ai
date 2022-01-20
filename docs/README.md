@@ -1,10 +1,5 @@
 # Prisme.ai Documentation
 
-## Workflow
-
-Every modification pushed to **master** branch will be deployed on https://obsidienne.prisme.ai.  
-In order to deploy in production once every modification is approved, thanks to merge **master** branch into **prod** branch, which will automatically update https://docs.prisme.ai.  
-
 ## Local development 
 ### Installation
 ```
@@ -34,7 +29,7 @@ Creates **public/fr** folder, ready to be served over HTTP.
 This command will produce a **public** folder containing a subdirectory for each language.  
 In order to serve this **public** folder over HTTP, a web redirection will be needed to serve the default language subdirectory. More details in **Deploy on S3**.  
 
-## Initial AWS S3 setup 
+## Host to AWS S3
 1. Create a new S3 bucket
 2. Untick every options from **Permissions > Block public access**
 3. Paste following policy inside **Permissions > Bucket Policy** in order to make the bucket publicly available :
@@ -89,7 +84,7 @@ In order to serve this **public** folder over HTTP, a web redirection will be ne
 Update **HostName** tags with the desired public DNS  
 5. Copy the **Endpoint** url shown at the top of the **Static website hosting** area, we will need it later
 
-Now, lets's move on our CloudFront distribution with a custom HTTPS-enabled domain :
+Now, let's move on our CloudFront distribution with a custom HTTPS-enabled domain :
 1. Open AWS **Certificate Manager** service in **N.Virginia** region : we won't be able to use our certificate from CloudFront if we don't specify this precise region
 2. Issue a new certificate with the desired DNS
 3. Once the certificate is ready, create a **Web** distribution within **CloudFront** service
