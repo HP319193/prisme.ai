@@ -38,6 +38,7 @@ export enum ContextType {
   Customs = "customs",
 }
 
+type PublicContexts = Omit<Contexts, "run">;
 export class ContextsManager {
   private workspaceId: string;
   private userId: string;
@@ -149,6 +150,12 @@ export class ContextsManager {
       return this.contexts[context];
     }
     return this.contexts[ContextType.Customs] as any as T;
+  }
+
+  get publicContexts(): PublicContexts {
+    const publicContexts = { ...this.contexts } as PublicContexts;
+    delete publicContexts.run;
+    return publicContexts;
   }
 
   async securityChecks() {

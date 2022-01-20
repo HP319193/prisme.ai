@@ -2,6 +2,7 @@ import { Broker } from "@prisme.ai/broker";
 import { EventType } from "../../../eda";
 import { ObjectNotFoundError } from "../../../errors";
 import { Logger } from "../../../logger";
+import { interpolate } from "../../../utils";
 import { DetailedWorkflow, Workspace } from "../../workspaces";
 import { ContextsManager } from "../contexts";
 import { runInstruction } from "./instructions";
@@ -18,16 +19,22 @@ export async function executeWorkflow(
   await ctx.securityChecks();
 
   for (const instruction of workflow.do) {
+    // Before each run, we interpolate the instruction to replace all the variables based on the context
+    const interpolatedInstruction = interpolate(
+      instruction,
+      ctx.publicContexts
+    );
+
     const knownInstruction = await runInstruction(
       workspace,
-      instruction,
+      interpolatedInstruction,
       ctx,
       logger,
       broker
     );
 
     if (!knownInstruction) {
-      const keys = Object.keys(instruction);
+      const keys = Object.keys(interpolatedInstruction);
       if (!keys.length) {
         return;
       }
@@ -48,7 +55,7 @@ export async function executeWorkflow(
       await executeWorkflow(
         workspace,
         workflow,
-        (<any>instruction)[keys[0]],
+        (<any>interpolatedInstruction)[keys[0]],
         ctx,
         logger,
         broker
@@ -70,5 +77,7 @@ export async function executeWorkflow(
 }
 
 function evaluateOutput(workflow: Prismeai.Workflow, ctx: ContextsManager) {
-  return workflow.output || "hardcoded output";
+  return workflow.output
+    ? interpolate(workflow.output, ctx.publicContexts)
+    : "hardcoded output";
 }
