@@ -1,7 +1,12 @@
-# prisme.ai-dsul-server
+# Prisme.ai Workspaces
 
-## Todo list
-### List des specs à faire :
-- Demande d'action
-- Demande au NLU (Talk/Slot filling)
-- Envoyer un message de réponse
+This service exposes CRUD routes to edit a Prisme.ai workspace.
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm i
+npm run dev
+```
