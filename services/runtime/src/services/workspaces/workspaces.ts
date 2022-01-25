@@ -45,24 +45,26 @@ export class Workspaces extends Storage {
             delete this.workspaces[workspaceId];
             break;
           case EventType.UpdatedWorkspace:
-            const updatedWorkspace = (event as any as Prismeai.UpdatedWorkspace)
-              .payload.workspace;
-            (updatedWorkspace.automations || []).forEach((automation) => {
-              workspace.addOrReplaceAutomation(automation);
-            });
+            const {
+              payload: { workspace: newWorkspace },
+            } = event as any as Prismeai.UpdatedWorkspace;
+            workspace.update(newWorkspace);
             break;
           case EventType.CreatedAutomation:
           case EventType.UpdatedAutomation:
-            const updatedAutomation = (
-              event as any as Prismeai.UpdatedAutomation
-            ).payload.automation;
-            workspace.addOrReplaceAutomation(updatedAutomation);
+            const {
+              payload: { automation, slug, oldSlug },
+            } = event as any as Prismeai.UpdatedAutomation;
+            workspace.updateAutomation(slug, automation);
+            if (oldSlug) {
+              workspace.deleteAutomation(oldSlug);
+            }
             break;
           case EventType.DeletedAutomation:
             const deletedAutomation = (
               event as any as Prismeai.DeletedAutomation
             ).payload.automation;
-            workspace.deleteAutomation(deletedAutomation.id);
+            workspace.deleteAutomation(deletedAutomation.slug);
             break;
         }
         return true;

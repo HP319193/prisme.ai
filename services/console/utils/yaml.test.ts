@@ -83,3 +83,23 @@ triggers:
     value: "",
   });
 });
+
+it('should get grand paernt line',  () => {
+  const yaml = `a:
+  b:
+    c:
+      d: e
+  `
+  expect(findParent(yaml, 4, 1)).toEqual({
+    line: 3,
+    indent: 2,
+    name: 'c',
+    value: ''
+  })
+  expect(findParent(yaml, 4, 2)).toEqual({
+    line: 3,
+    indent: 2,
+    name: 'c',
+    value: ''
+  })
+})

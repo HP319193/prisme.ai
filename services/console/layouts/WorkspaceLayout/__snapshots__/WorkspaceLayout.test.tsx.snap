@@ -43,37 +43,16 @@ exports[`should get layout 1`] = `
         </div>
       </div>
       <div>
-        <button
-          className="p-button p-component 
-                  mx-2
-                  "
-          disabled={false}
+        <a
+          href="/workspaces/42/source"
           onClick={[Function]}
-        >
-          automations.link
-        </button>
-        <button
-          className="p-button p-component p-button-icon-only"
-          disabled={false}
-          onClick={[Function]}
-        >
-          <span
-            className="p-button-icon p-c pi pi-power-off"
-          />
-          <span
-            className="p-button-label p-c"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "&nbsp;",
-              }
-            }
-          />
-        </button>
+          onMouseEnter={[Function]}
+        />
       </div>
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-hidden"
+    className="flex flex-1 surface-ground relative overflow-auto"
   >
     <div
       className="flex flex-1"
@@ -95,7 +74,8 @@ exports[`should get layout 1`] = `
           transition-duration-100
           transition-ease-in
           
-          shadow-4"
+          shadow-4
+          z-2"
         onClick={[Function]}
         onTouchEnd={[Function]}
       >
@@ -103,27 +83,9 @@ exports[`should get layout 1`] = `
           <div>
             automations.link
           </div>
-          <div>
-            <button
-              className="p-button p-component"
-              disabled={false}
-              onClick={[Function]}
-            >
-              <div
-                className="mr-2 pi pi-plus"
-              />
-              automations.create.label
-            </button>
-          </div>
+          <div />
         </div>
       </div>
-    </div>
-    <div
-      className="p-toast p-component p-toast-bottom-right"
-      id={null}
-      style={null}
-    >
-      <div />
     </div>
   </div>
 </div>
@@ -154,29 +116,11 @@ exports[`should render 404 1`] = `
           </a>
         </div>
       </div>
-      <div>
-        <button
-          className="p-button p-component p-button-icon-only"
-          disabled={false}
-          onClick={[Function]}
-        >
-          <span
-            className="p-button-icon p-c pi pi-power-off"
-          />
-          <span
-            className="p-button-label p-c"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "&nbsp;",
-              }
-            }
-          />
-        </button>
-      </div>
+      <div />
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-hidden"
+    className="flex flex-1 surface-ground relative overflow-auto"
   >
     <a
       href="/workspaces"
@@ -185,13 +129,6 @@ exports[`should render 404 1`] = `
     >
       404
     </a>
-    <div
-      className="p-toast p-component p-toast-bottom-right"
-      id={null}
-      style={null}
-    >
-      <div />
-    </div>
   </div>
 </div>
 `;
@@ -239,37 +176,16 @@ exports[`should render empty 1`] = `
         </div>
       </div>
       <div>
-        <button
-          className="p-button p-component 
-                  mx-2
-                  "
-          disabled={false}
+        <a
+          href="/workspaces/42/source"
           onClick={[Function]}
-        >
-          automations.link
-        </button>
-        <button
-          className="p-button p-component p-button-icon-only"
-          disabled={false}
-          onClick={[Function]}
-        >
-          <span
-            className="p-button-icon p-c pi pi-power-off"
-          />
-          <span
-            className="p-button-label p-c"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "&nbsp;",
-              }
-            }
-          />
-        </button>
+          onMouseEnter={[Function]}
+        />
       </div>
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-hidden"
+    className="flex flex-1 surface-ground relative overflow-auto"
   >
     <div
       className="flex flex-1"
@@ -291,7 +207,8 @@ exports[`should render empty 1`] = `
           transition-duration-100
           transition-ease-in
           
-          shadow-4"
+          shadow-4
+          z-2"
         onClick={[Function]}
         onTouchEnd={[Function]}
       >
@@ -299,27 +216,9 @@ exports[`should render empty 1`] = `
           <div>
             automations.link
           </div>
-          <div>
-            <button
-              className="p-button p-component"
-              disabled={false}
-              onClick={[Function]}
-            >
-              <div
-                className="mr-2 pi pi-plus"
-              />
-              automations.create.label
-            </button>
-          </div>
+          <div />
         </div>
       </div>
-    </div>
-    <div
-      className="p-toast p-component p-toast-bottom-right"
-      id={null}
-      style={null}
-    >
-      <div />
     </div>
   </div>
 </div>
@@ -368,37 +267,16 @@ exports[`should render fetching 1`] = `
         </div>
       </div>
       <div>
-        <button
-          className="p-button p-component 
-                  mx-2
-                  "
-          disabled={false}
+        <a
+          href="/workspaces/42/source"
           onClick={[Function]}
-        >
-          automations.link
-        </button>
-        <button
-          className="p-button p-component p-button-icon-only"
-          disabled={false}
-          onClick={[Function]}
-        >
-          <span
-            className="p-button-icon p-c pi pi-power-off"
-          />
-          <span
-            className="p-button-label p-c"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "&nbsp;",
-              }
-            }
-          />
-        </button>
+          onMouseEnter={[Function]}
+        />
       </div>
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-hidden"
+    className="flex flex-1 surface-ground relative overflow-auto"
   >
     <div
       className="flex flex-1"
@@ -420,7 +298,8 @@ exports[`should render fetching 1`] = `
           transition-duration-100
           transition-ease-in
           
-          shadow-4"
+          shadow-4
+          z-2"
         onClick={[Function]}
         onTouchEnd={[Function]}
       >
@@ -428,27 +307,9 @@ exports[`should render fetching 1`] = `
           <div>
             automations.link
           </div>
-          <div>
-            <button
-              className="p-button p-component"
-              disabled={false}
-              onClick={[Function]}
-            >
-              <div
-                className="mr-2 pi pi-plus"
-              />
-              automations.create.label
-            </button>
-          </div>
+          <div />
         </div>
       </div>
-    </div>
-    <div
-      className="p-toast p-component p-toast-bottom-right"
-      id={null}
-      style={null}
-    >
-      <div />
     </div>
   </div>
 </div>
@@ -497,37 +358,16 @@ exports[`should render loading 1`] = `
         </div>
       </div>
       <div>
-        <button
-          className="p-button p-component 
-                  mx-2
-                  "
-          disabled={false}
+        <a
+          href="/workspaces/42/source"
           onClick={[Function]}
-        >
-          automations.link
-        </button>
-        <button
-          className="p-button p-component p-button-icon-only"
-          disabled={false}
-          onClick={[Function]}
-        >
-          <span
-            className="p-button-icon p-c pi pi-power-off"
-          />
-          <span
-            className="p-button-label p-c"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "&nbsp;",
-              }
-            }
-          />
-        </button>
+          onMouseEnter={[Function]}
+        />
       </div>
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-hidden"
+    className="flex flex-1 surface-ground relative overflow-auto"
   >
     <div
       className="flex flex-1"
@@ -549,7 +389,8 @@ exports[`should render loading 1`] = `
           transition-duration-100
           transition-ease-in
           
-          shadow-4"
+          shadow-4
+          z-2"
         onClick={[Function]}
         onTouchEnd={[Function]}
       >
@@ -557,27 +398,9 @@ exports[`should render loading 1`] = `
           <div>
             automations.link
           </div>
-          <div>
-            <button
-              className="p-button p-component"
-              disabled={false}
-              onClick={[Function]}
-            >
-              <div
-                className="mr-2 pi pi-plus"
-              />
-              automations.create.label
-            </button>
-          </div>
+          <div />
         </div>
       </div>
-    </div>
-    <div
-      className="p-toast p-component p-toast-bottom-right"
-      id={null}
-      style={null}
-    >
-      <div />
     </div>
   </div>
 </div>

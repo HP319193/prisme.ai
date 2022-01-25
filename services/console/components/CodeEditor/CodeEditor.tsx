@@ -12,7 +12,7 @@ import "ace-builds/src-noconflict/mode-yaml";
 import "ace-builds/src-noconflict/mode-json";
 
 import { Ace } from "ace-builds";
-import { addCustomAnnotations } from "../utils/aceEditorTweaks";
+import { addCustomAnnotations } from "../../utils/aceEditorTweaks";
 
 export interface CodeEditorProps extends IAceEditorProps {
   mode: "javascript" | "css" | "html" | "yaml" | "json";
@@ -66,8 +66,8 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
 
     useEffect(() => {
       if (!aceRef.current) return;
-      addCustomAnnotations(aceRef.current.editor);
-    }, []);
+      addCustomAnnotations(aceRef.current.editor, annotations);
+    }, [annotations]);
 
     useEffect(() => {
       if (!aceRef.current) return;

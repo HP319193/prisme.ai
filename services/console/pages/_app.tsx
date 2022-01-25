@@ -11,6 +11,7 @@ import { NextPage } from "next";
 import { ReactElement, ReactNode } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
+import Toaster from "../layouts/Toaster";
 
 const Sentry = dynamic(import("../utils/Sentry"), { ssr: false });
 
@@ -35,7 +36,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <link rel="icon" href="/favicon.png" />
         </Head>
         <Sentry />
-        {getLayout(<Component {...pageProps} />)}
+        <Toaster>{getLayout(<Component {...pageProps} />)}</Toaster>
       </WorkspacesProvider>
     </UserProvider>
   );

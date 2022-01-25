@@ -1,11 +1,11 @@
 declare namespace Prismeai {
     export interface All {
         /**
-         * Execute each instruction in parallel. Pause current workflow execution until all instructions are processed.
+         * Execute each instruction in parallel. Pause current automation execution until all instructions are processed.
          */
         all: Instruction[];
     }
-    export type AllEventRequests = (GenericErrorEvent | FailedLogin | SucceededLogin | TriggeredWorkflow | UpdatedContexts | CreatedWorkspace | UpdatedWorkspace | DeletedWorkspace | InstalledApp | ConfiguredApp | CreatedAutomation | UpdatedAutomation | DeletedAutomation | AppEvent)[];
+    export type AllEventRequests = (GenericErrorEvent | FailedLogin | SucceededLogin | TriggeredAutomation | UpdatedContexts | CreatedWorkspace | UpdatedWorkspace | DeletedWorkspace | InstalledApp | ConfiguredApp | CreatedAutomation | UpdatedAutomation | DeletedAutomation | AppEvent)[];
     export type AllEventResponses = (PrismeEvent | {
         /**
          * example:
@@ -103,9 +103,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * runtime.workflow.triggered
+         * runtime.automation.triggered
          */
-        type: "runtime.workflow.triggered";
+        type: "runtime.automation.triggered";
         source: {
             app?: string;
             userId?: string;
@@ -425,7 +425,9 @@ declare namespace Prismeai {
         config?: {
             [name: string]: TypedArgument;
         };
-        automations?: /* Full description at (TODO swagger url) */ Automation[];
+        automations?: {
+            [name: string]: /* Full description at (TODO swagger url) */ Automation;
+        };
         /**
          * Unique id
          */
@@ -479,14 +481,33 @@ declare namespace Prismeai {
      * Full description at (TODO swagger url)
      */
     export interface Automation {
-        triggers?: {
-            [name: string]: Trigger;
+        trigger?: Trigger;
+        description?: LocalizedText;
+        arguments?: {
+            [name: string]: TypedArgument;
         };
-        workflows: {
-            [name: string]: Workflow;
-        };
-        id?: string;
-        name?: string;
+        do: InstructionList;
+        /**
+         * Automation result expression. Might be a variable reference, an object/array with variables inside ...
+         * example:
+         * $result
+         */
+        output?: any;
+        /**
+         * Set this to true if you don't want your automation to be accessible outside of your app. Default is false.
+         * example:
+         * false
+         */
+        private?: boolean;
+        name: string;
+        /**
+         * Unique & human readable id across current workspace's automations
+         */
+        slug?: string;
+    }
+    export interface AutomationResult {
+        slug: string;
+        output?: AnyValue;
     }
     export interface BadParametersError {
         /**
@@ -501,13 +522,16 @@ declare namespace Prismeai {
     }
     export interface Break {
         /**
-         * Stop current workflow execution. Does not have any configuration option
+         * Stop current automation execution. Does not have any configuration option
          */
         break: {
             [key: string]: any;
         };
     }
-    export type Conditions = If | ElseIf | Else;
+    export interface Conditions {
+        [name: string]: InstructionList;
+        default: InstructionList;
+    }
     export interface ConfiguredApp {
         /**
          * example:
@@ -541,6 +565,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.automation.created";
         payload: {
+            slug: string;
             automation: /* Full description at (TODO swagger url) */ Automation;
         };
     }
@@ -570,7 +595,7 @@ declare namespace Prismeai {
         type: "workspaces.automation.deleted";
         payload: {
             automation: {
-                id: string;
+                slug: string;
                 name: string;
             };
         };
@@ -583,17 +608,6 @@ declare namespace Prismeai {
         type: "workspaces.deleted";
         payload: {
             workspaceId: string;
-        };
-    }
-    export interface Else {
-        else: {
-            then: InstructionList;
-        };
-    }
-    export interface ElseIf {
-        elseif: {
-            condition: string;
-            then: InstructionList;
         };
     }
     export interface Emit {
@@ -613,15 +627,14 @@ declare namespace Prismeai {
             private?: boolean;
         };
     }
-    export interface ExecutedWorkflow {
+    export interface ExecutedAutomation {
         /**
          * example:
-         * runtime.workflow.executed
+         * runtime.automation.executed
          */
-        type: "runtime.workflow.executed";
+        type: "runtime.automation.executed";
         payload: {
-            workflow: string;
-            automation: string;
+            slug: string;
             payload: {
                 [key: string]: any;
             };
@@ -669,12 +682,6 @@ declare namespace Prismeai {
         error?: {
             [name: string]: any;
             message: string;
-        };
-    }
-    export interface If {
-        if: {
-            condition: string;
-            then: InstructionList;
         };
     }
     export interface InstalledApp {
@@ -794,12 +801,6 @@ declare namespace Prismeai {
          */
         dates?: string[];
         endpoint?: boolean | string;
-        /**
-         * Target workflow
-         * example:
-         * MyWorkflow
-         */
-        do: string;
     } | {
         /**
          * example:
@@ -817,12 +818,6 @@ declare namespace Prismeai {
          */
         dates: string[];
         endpoint?: boolean | string;
-        /**
-         * Target workflow
-         * example:
-         * MyWorkflow
-         */
-        do: string;
     } | {
         /**
          * example:
@@ -840,13 +835,24 @@ declare namespace Prismeai {
          */
         dates?: string[];
         endpoint: boolean | string;
-        /**
-         * Target workflow
-         * example:
-         * MyWorkflow
-         */
-        do: string;
     };
+    export interface TriggeredAutomation {
+        /**
+         * example:
+         * runtime.automation.triggered
+         */
+        type: "runtime.automation.triggered";
+        payload: {
+            event: {
+                id?: string;
+                type?: string;
+            };
+            slug: string;
+            payload?: {
+                [key: string]: any;
+            };
+        };
+    }
     export interface TriggeredWebhook {
         /**
          * example:
@@ -855,7 +861,7 @@ declare namespace Prismeai {
         type: "runtime.webhook.triggered";
         payload: {
             workspaceId: string;
-            automationId: string;
+            automationSlug: string;
             originalUrl: string;
             /**
              * example:
@@ -866,23 +872,6 @@ declare namespace Prismeai {
                 [key: string]: any;
             };
             payload: {
-                [key: string]: any;
-            };
-        };
-    }
-    export interface TriggeredWorkflow {
-        /**
-         * example:
-         * runtime.workflow.triggered
-         */
-        type: "runtime.workflow.triggered";
-        payload: {
-            event: {
-                id?: string;
-                type?: string;
-            };
-            workflow: string;
-            payload?: {
                 [key: string]: any;
             };
         };
@@ -899,6 +888,11 @@ declare namespace Prismeai {
         type: "workspaces.automation.updated";
         payload: {
             automation: /* Full description at (TODO swagger url) */ Automation;
+            slug: string;
+            /**
+             * Filled with the previous automation slug when renamed
+             */
+            oldSlug?: string;
         };
     }
     export interface UpdatedContexts {
@@ -976,7 +970,7 @@ declare namespace Prismeai {
              * Only match the next intent fulfilling these filters. Multiple filters will be joined with an 'AND' operator
              * example:
              * {
-             *   "automationId": "someId",
+             *   "automationSlug": "someId",
              *   "someObjectField.someNestedField": "foo"
              * }
              */
@@ -991,29 +985,6 @@ declare namespace Prismeai {
             output?: string;
         };
     }
-    export interface Workflow {
-        description?: LocalizedText;
-        arguments?: {
-            [name: string]: TypedArgument;
-        };
-        do: InstructionList;
-        /**
-         * Workflow result expression. Might be a variable reference, an object/array with variables inside ...
-         * example:
-         * $result
-         */
-        output?: any;
-        /**
-         * Set this to true if you don't want your workflow to be accessible outside of your app. Default is false.
-         * example:
-         * false
-         */
-        private?: boolean;
-    }
-    export interface WorkflowResult {
-        workflow: string;
-        output?: AnyValue;
-    }
     export interface Workspace {
         name: string;
         owner?: {
@@ -1023,7 +994,9 @@ declare namespace Prismeai {
         constants?: {
             [key: string]: any;
         };
-        automations?: /* Full description at (TODO swagger url) */ Automation[];
+        automations?: {
+            [name: string]: /* Full description at (TODO swagger url) */ Automation;
+        };
         createdAt?: string;
         updatedAt?: string;
         id?: string;
@@ -1037,21 +1010,21 @@ declare namespace PrismeaiAPI {
     }
     namespace AutomationWebhook {
         namespace Parameters {
-            export type AutomationId = string;
+            export type AutomationSlug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            automationId: Parameters.AutomationId;
+            automationSlug: Parameters.AutomationSlug;
         }
         /**
-         * Entire body will be passed as a payload to the triggered workflow
+         * Entire body will be passed as a payload to the triggered automation
          */
         export interface RequestBody {
         }
         namespace Responses {
             export interface $200 {
-                result: Prismeai.WorkflowResult[];
+                result: Prismeai.AutomationResult[];
             }
             export type $400 = Prismeai.GenericError;
             export type $403 = Prismeai.ForbiddenError;
@@ -1138,16 +1111,16 @@ declare namespace PrismeaiAPI {
     }
     namespace DeleteAutomation {
         namespace Parameters {
-            export type AutomationId = string;
+            export type AutomationSlug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            automationId: Parameters.AutomationId;
+            automationSlug: Parameters.AutomationSlug;
         }
         namespace Responses {
             export interface $200 {
-                id: string;
+                slug?: string;
             }
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -1224,12 +1197,12 @@ declare namespace PrismeaiAPI {
     }
     namespace GetAutomation {
         namespace Parameters {
-            export type AutomationId = string;
+            export type AutomationSlug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            automationId: Parameters.AutomationId;
+            automationSlug: Parameters.AutomationSlug;
         }
         namespace Responses {
             export type $200 = /* Full description at (TODO swagger url) */ Prismeai.Automation;
@@ -1411,12 +1384,12 @@ declare namespace PrismeaiAPI {
     }
     namespace UpdateAutomation {
         namespace Parameters {
-            export type AutomationId = string;
+            export type AutomationSlug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            automationId: Parameters.AutomationId;
+            automationSlug: Parameters.AutomationSlug;
         }
         export type RequestBody = /* Full description at (TODO swagger url) */ Prismeai.Automation;
         namespace Responses {

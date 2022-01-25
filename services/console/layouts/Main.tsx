@@ -42,8 +42,8 @@ export const Main: FC<MainProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex flex-1 surface-ground relative overflow-hidden">
-        <Toaster>{children}</Toaster>
+      <div className="flex flex-1 surface-ground relative overflow-auto">
+        {children}
       </div>
     </div>
   );

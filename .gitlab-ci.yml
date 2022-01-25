@@ -73,7 +73,7 @@ npm_install:
         BUILD_PACKAGES=0 npm ci
       fi
     - npm run build:packages
-    - npm test --prefix $DIRECTORY
+    - npm test -- $DIRECTORY
   coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
   artifacts:
     paths:
@@ -89,6 +89,9 @@ npm_install:
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
+  when:
+    - manual
+    - on_success
   services:
     - docker:stable-dind
   script:
@@ -108,6 +111,9 @@ npm_install:
   stage: deploy
   tags:
     - internal-runner
+  when:
+    - manual
+    - on_success
   image:
     name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
     entrypoint: ["/bin/sh", "-c"]

@@ -40,3 +40,9 @@ export class ObjectNotFoundError extends PrismeError {
     super(msg, details);
   }
 }
+
+export class AlreadyUsedError extends PrismeError {
+  constructor(msg: string = "Already used", details?: any) {
+    super(msg, details);
+  }
+}

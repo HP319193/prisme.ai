@@ -1,20 +1,27 @@
 import { useRouter } from "next/router";
-import { ReactElement } from "react";
-import getAutomationLayout from "../layouts/AutomationLayout";
 import getLayout, { useWorkspace } from "../layouts/WorkspaceLayout";
+import Error404 from "./Errors/404";
 
 export const Automation = () => {
   const { workspace } = useWorkspace();
   const {
-    replace,
     query: { automationId },
   } = useRouter();
-  replace(`/workspaces/${workspace.id}/automations/${automationId}/manifest`);
+  const automation = (workspace.automations || {})[`${automationId}`];
 
-  return null;
+  if (!automation) {
+    return <Error404 link={`/workspaces/${workspace.id}`} />;
+  }
+  return (
+    <div>
+      Automation
+      <div>
+        <pre>{JSON.stringify(automation, null, "  ")}</pre>
+      </div>
+    </div>
+  );
 };
 
-Automation.getLayout = (page: ReactElement) =>
-  getLayout(getAutomationLayout(page));
+Automation.getLayout = getLayout;
 
 export default Automation;

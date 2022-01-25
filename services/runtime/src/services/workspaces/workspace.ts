@@ -1,35 +1,23 @@
-export type AppName = string;
-export type WorkflowName = string;
-export type WorkflowReference = [AppName[], WorkflowName];
-
 export type DetailedTrigger = Prismeai.Trigger & {
-  name: string;
-  automationId: string;
+  automationSlug: string;
 };
+type EventName = string;
+type EndpointName = string;
 export interface Triggers {
-  events: Record<string, DetailedTrigger[]>;
-  endpoints: Record<string, DetailedTrigger[]>;
+  events: Record<EventName, DetailedTrigger[]>;
+  endpoints: Record<EndpointName, DetailedTrigger[]>;
 }
-
-export type DetailedWorkflow = Prismeai.Workflow & {
-  name: string;
-  automationId: string;
-  appName?: string;
-};
-export type Workflows = Record<WorkflowName, DetailedWorkflow[]>;
 
 export class Workspace {
   private dsul: Prismeai.Workspace;
   public name: string;
   public id: string;
   private triggers: Triggers;
-  private workflows: Workflows;
 
   constructor(workspace: Prismeai.Workspace) {
     this.name = workspace.name;
     this.id = workspace.id!!;
     this.triggers = { events: {}, endpoints: {} };
-    this.workflows = {};
 
     this.dsul = workspace;
     this.update(workspace);
@@ -37,90 +25,58 @@ export class Workspace {
 
   update(workspace: Prismeai.Workspace) {
     this.name = workspace.name;
-    this.triggers = Object.values(workspace?.automations || {})
-      .map(({ triggers, id }) =>
-        Object.entries(triggers || {}).map(([name, cur]) => ({
-          ...cur,
-          automationId: id!!,
-          name,
-        }))
-      )
-      .flat()
-      .reduce<Triggers>(
-        (triggers, trigger) => {
-          (trigger.events || []).forEach((cur) => {
-            triggers.events[cur] = (triggers.events[cur] || []).concat([
-              trigger,
-            ]);
+
+    const { automations = {} } = workspace;
+    this.triggers = Object.keys(automations).reduce(
+      (prev, key) => {
+        const automation = automations[key];
+        const { trigger, trigger: { events, endpoint } = {} } = automation;
+        if (!trigger) return prev;
+        if (events) {
+          events.forEach((event) => {
+            prev.events[event] = [
+              ...(prev.events[event] || []),
+              {
+                ...trigger,
+                automationSlug: key,
+              },
+            ];
           });
-
-          if (trigger.endpoint === true) {
-            triggers.endpoints[trigger.automationId] = (
-              triggers.endpoints[trigger.automationId] || []
-            ).concat([trigger]);
-          } else if (typeof trigger.endpoint === "string") {
-            triggers.endpoints[trigger.endpoint] = (
-              triggers.endpoints[trigger.endpoint] || []
-            ).concat([trigger]);
-          }
-
-          return triggers;
-        },
-        { events: {}, endpoints: {} }
-      );
-
-    this.workflows = Object.values(workspace?.automations || {})
-      .map(({ workflows, id }) =>
-        Object.entries(workflows || {}).map(([name, cur]) => ({
-          ...cur,
-          automationId: id!!,
-          name,
-        }))
-      )
-      .flat()
-      .reduce<Workflows>((workflows, workflow) => {
-        const newWorkflows = (workflows[workflow.name] || []).concat([
-          workflow,
-        ]);
-        return {
-          ...workflows,
-          [workflow.name]: newWorkflows,
-        };
-      }, {});
+        }
+        if (endpoint) {
+          const endpointName = endpoint === true ? key : endpoint;
+          prev.endpoints[endpointName] = [
+            ...(prev.endpoints[endpointName] || []),
+            {
+              ...trigger,
+              automationSlug: key,
+            },
+          ];
+        }
+        return prev;
+      },
+      { events: {}, endpoints: {} } as Triggers
+    );
 
     this.dsul = workspace;
   }
 
-  addOrReplaceAutomation(automation: Prismeai.Automation) {
-    const newAutomations = (this.dsul.automations || [])
-      .filter((cur) => cur.id !== automation.id)
-      .concat([automation]);
+  updateAutomation(automationSlug: string, automation: Prismeai.Automation) {
+    const newAutomations = {
+      ...this.dsul.automations,
+    };
+    newAutomations[automationSlug] = automation;
+    this.update({ ...this.dsul, automations: newAutomations });
+  }
+
+  deleteAutomation(automationSlug: string) {
+    const newAutomations = { ...this.dsul.automations };
+    delete newAutomations[automationSlug];
 
     this.update({
       ...this.dsul,
       automations: newAutomations,
     });
-  }
-
-  deleteAutomation(automationId: string) {
-    const newAutomations = (this.dsul.automations || []).filter(
-      (cur) => cur.id !== automationId
-    );
-
-    this.update({
-      ...this.dsul,
-      automations: newAutomations,
-    });
-  }
-
-  private parseWorkflowName(name: string): WorkflowReference {
-    const appSeparatorIdx = name.lastIndexOf(".");
-    return appSeparatorIdx !== -1
-      ? [
-          name.slice(0, appSeparatorIdx).split("."),
-          name.slice(appSeparatorIdx + 1),
-        ]
-      : [[], name];
   }
 
   getEventTriggers(event: string) {
@@ -131,15 +87,14 @@ export class Workspace {
     return this.triggers.endpoints[slug];
   }
 
-  getWorkflow(id: string) {
-    const [apps, name] = this.parseWorkflowName(id);
-    const matchingWorkflows = this.workflows[name];
-    if (!matchingWorkflows) {
-      return undefined;
-    }
-    const appsName = apps.join(".");
-    return matchingWorkflows.find(
-      (cur) => (!appsName && !cur.appName) || appsName == cur.appName
-    );
+  getAutomation(slug: string) {
+    const automation = (this.dsul.automations || {})[slug];
+
+    if (!automation) return null;
+
+    return {
+      slug,
+      ...automation,
+    };
   }
 }

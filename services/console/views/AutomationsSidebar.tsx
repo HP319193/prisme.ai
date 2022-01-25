@@ -5,12 +5,12 @@ import { FC, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useWorkspace } from "../layouts/WorkspaceLayout";
 import { useWorkspaces } from "../components/WorkspacesProvider";
-import path from "path/posix";
-import { useToaster } from "../layouts/Toaster";
 
 interface AutomationsSidebarProps {
   onClose: () => void;
 }
+
+const emptyObject: Prismeai.Workspace['automations'] = {};
 
 export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
   onClose,
@@ -19,7 +19,7 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
   const { push } = useRouter();
   const {
     workspace,
-    workspace: { id: workspaceId, automations = [] },
+    workspace: { id: workspaceId, automations = emptyObject },
   } = useWorkspace();
 
   const { createAutomation } = useWorkspaces();
@@ -31,7 +31,8 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
     let version = 0;
     const generateName = () =>
       `${defaultName}${version ? ` (${version})` : ""}`;
-    while (automations.find(({ name }) => name === generateName())) {
+    const names = Object.keys(automations).map((key) => automations[key].name);
+    while (names.find((name) => name === generateName())) {
       version++;
     }
     return generateName();
@@ -43,30 +44,23 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
     const name = generateAutomationName();
     const createdAutomation = await createAutomation(workspace, {
       name,
-      triggers: {
-        [t("automations.create.value.trigger")]: {
-          events: [t("automations.create.value.event")],
-          do: t("automations.create.value.workflow"),
-        },
+      trigger: {
+        events: [t("automations.create.value.event")],
       },
-      workflows: {
-        [t("automations.create.value.workflow")]: {
-          do: [
-            {
-              emit: {
-                event: t("automations.create.value.event"),
-              },
-            },
-          ],
+      do: [
+        {
+          emit: {
+            event: t("automations.create.value.event"),
+          },
         },
-      },
+      ],
     });
 
     setCreating(false);
     onClose();
     if (createdAutomation) {
       await push(
-        `/workspaces/${workspaceId}/automations/${createdAutomation.id}/manifest`
+        `/workspaces/${workspaceId}/automations/${createdAutomation.slug}`
       );
     }
   }, [
@@ -90,16 +84,14 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
           {t("automations.create.label")}
         </Button>
       </div>
-      {automations.map((automation) => (
+      {Object.keys(automations).map((key) => (
         <div
-          key={automation.id}
+          key={key}
           onClick={onClose}
           className="flex justify-content-between align-items-center"
         >
-          <Link
-            href={`/workspaces/${workspaceId}/automations/${automation.id}/manifest`}
-          >
-            {automation.name}
+          <Link href={`/workspaces/${workspaceId}/automations/${key}`}>
+            {automations[key].name}
           </Link>
         </div>
       ))}

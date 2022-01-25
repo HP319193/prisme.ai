@@ -6,7 +6,7 @@ module.exports = {
   i18n,
   publicRuntimeConfig: {
     API_HOST: process.env.API_HOST,
-    ENDPOINT: `${process.env.ENDPOINT}/workspace/{{workspaceId}}/{{slug}}`,
+    ENDPOINT: `${process.env.API_HOST}/workspaces/{{workspaceId}}/webhooks/{{slug}}`,
     SENTRY_DSN: process.env.SENTRY_DSN || "",
   },
 };

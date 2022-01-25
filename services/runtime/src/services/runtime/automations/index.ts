@@ -3,13 +3,13 @@ import { EventType } from "../../../eda";
 import { ObjectNotFoundError } from "../../../errors";
 import { Logger } from "../../../logger";
 import { interpolate } from "../../../utils";
-import { DetailedWorkflow, Workspace } from "../../workspaces";
+import { Workspace } from "../../workspaces";
 import { ContextsManager } from "../contexts";
 import { runInstruction } from "./instructions";
 
-export async function executeWorkflow(
+export async function executeAutomation(
   workspace: Workspace,
-  workflow: DetailedWorkflow,
+  automation: Prismeai.Automation,
   payload: object,
   ctx: ContextsManager,
   logger: Logger,
@@ -18,7 +18,7 @@ export async function executeWorkflow(
   ctx.run.payload = payload;
   await ctx.securityChecks();
 
-  for (const instruction of workflow.do) {
+  for (const instruction of automation.do) {
     // Before each run, we interpolate the instruction to replace all the variables based on the context
     const interpolatedInstruction = interpolate(
       instruction,
@@ -38,23 +38,23 @@ export async function executeWorkflow(
       if (!keys.length) {
         return;
       }
-      const workflow = workspace.getWorkflow(keys[0]);
-      if (!workflow) {
+      const customAutomation = workspace.getAutomation(keys[0]);
+      if (!customAutomation) {
         logger.trace({
-          msg: `Did not find any workflow matching '${keys[0]}'`,
+          msg: `Did not find any automation matching '${keys[0]}'`,
         });
         broker.send(
           "error",
-          new ObjectNotFoundError(`Workflow not found`, {
+          new ObjectNotFoundError(`Automation not found`, {
             workspaceId: workspace.id,
-            workflow: keys[0],
+            automation: keys[0],
           })
         );
         return;
       }
-      await executeWorkflow(
+      await executeAutomation(
         workspace,
-        workflow,
+        customAutomation,
         (<any>interpolatedInstruction)[keys[0]],
         ctx,
         logger,
@@ -63,12 +63,11 @@ export async function executeWorkflow(
     }
   }
 
-  const output = evaluateOutput(workflow, ctx);
-  broker.send<Prismeai.ExecutedWorkflow["payload"]>(
-    EventType.ExecutedWorkflow,
+  const output = evaluateOutput(automation, ctx);
+  broker.send<Prismeai.ExecutedAutomation["payload"]>(
+    EventType.ExecutedAutomation,
     {
-      workflow: workflow.name,
-      automation: workflow.automationId,
+      slug: automation.slug!,
       payload,
       output,
     }
@@ -76,8 +75,8 @@ export async function executeWorkflow(
   return output;
 }
 
-function evaluateOutput(workflow: Prismeai.Workflow, ctx: ContextsManager) {
-  return workflow.output
-    ? interpolate(workflow.output, ctx.publicContexts)
+function evaluateOutput(automation: Prismeai.Automation, ctx: ContextsManager) {
+  return automation.output
+    ? interpolate(automation.output, ctx.publicContexts)
     : "hardcoded output";
 }

@@ -14,11 +14,12 @@ export interface WorkspacesContext {
   ) => Promise<Prismeai.Automation | null>;
   updateAutomation: (
     workspace: Workspace,
+    automationId: string,
     automation: Prismeai.Automation
   ) => Promise<Prismeai.Automation> | null;
   deleteAutomation: (
     workspace: Workspace,
-    automation: Prismeai.Automation
+    automationId: string
   ) => Promise<Prismeai.Automation> | null;
 }
 

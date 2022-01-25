@@ -7,9 +7,9 @@ import { TooManyCallError } from "../../errors";
 
 // This contexts holds internal information about current run
 // and expires with last executed instruction
-// A run can span over multiple events & workflows in a row, all bound to the same correlationId
+// A run can span over multiple events & automations in a row, all bound to the same correlationId
 export interface RunContext {
-  depth: number; // Depth of current workflow.
+  depth: number; // Depth of current automation.
   correlationId: string;
   payload: object;
 }

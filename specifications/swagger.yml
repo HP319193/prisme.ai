@@ -325,9 +325,9 @@ paths:
                 $ref: "#/components/schemas/BadParametersError"
 
   ############################################# runtime
-  /v2/workspaces/{workspaceId}/webhooks/{automationId}:
+  /v2/workspaces/{workspaceId}/webhooks/{automationSlug}:
     post:
-      description: Trigger some workflow automation from HTTP. GET/POST/PUT/PATCH/DELETE methods can all be used
+      description: Trigger some automation from HTTP. GET/POST/PUT/PATCH/DELETE methods can all be used
       operationId: automationWebhook
       tags:
         - "Prisme.ai Runtime"
@@ -338,9 +338,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: "automationId"
+        - name: "automationSlug"
           in: "path"
-          description: "Automation ID we will trigger"
+          description: "Automation slug we will trigger"
           required: true
           schema:
             type: string
@@ -352,7 +352,7 @@ paths:
           application/json:
             schema:
               type: object
-              description: Entire body will be passed as a payload to the triggered workflow
+              description: Entire body will be passed as a payload to the triggered automation
 
       responses:
         "200":
@@ -367,7 +367,7 @@ paths:
                   result:
                     type: array
                     items:
-                      $ref: "#/components/schemas/WorkflowResult"
+                      $ref: "#/components/schemas/AutomationResult"
         "400":
           description: Object not found
           content:
@@ -658,7 +658,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/BadParametersError"
 
-  /v2/workspaces/{workspaceId}/automations/{automationId}:
+  /v2/workspaces/{workspaceId}/automations/{automationSlug}:
     get:
       description: Fetch an automation
       operationId: getAutomation
@@ -671,9 +671,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: "automationId"
+        - name: "automationSlug"
           in: "path"
-          description: "Automation id"
+          description: "Automation slug"
           required: true
           schema:
             type: string
@@ -715,9 +715,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: "automationId"
+        - name: "automationSlug"
           in: "path"
-          description: "Automation id"
+          description: "Automation slug"
           required: true
           schema:
             type: string
@@ -772,9 +772,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: "automationId"
+        - name: "automationSlug"
           in: "path"
-          description: "Automation id"
+          description: "Automation slug"
           required: true
           schema:
             type: string
@@ -788,7 +788,7 @@ paths:
                 required:
                   - id
                 properties:
-                  id:
+                  slug:
                     type: string
         "404":
           description: Object not found
@@ -1313,8 +1313,8 @@ components:
               additionalProperties:
                 $ref: "#/components/schemas/TypedArgument"
             automations:
-              type: array
-              items:
+              type: object
+              additionalProperties:
                 $ref: "#/components/schemas/Automation"
         - $ref: "#/components/schemas/Object"
 
@@ -1358,8 +1358,8 @@ components:
         constants:
           type: object
         automations:
-          type: array
-          items:
+          type: object
+          additionalProperties:
             $ref: "#/components/schemas/Automation"
         createdAt:
           type: string
@@ -1371,9 +1371,9 @@ components:
     Trigger:
       type: object
       anyOf:
-        - required: ["do", "events"]
-        - required: ["do", "dates"]
-        - required: ["do", "endpoint"]
+        - required: ["events"]
+        - required: ["dates"]
+        - required: ["endpoint"]
       properties:
         events:
           type: array
@@ -1394,10 +1394,6 @@ components:
               example: "Set to true in order to activate HTTP endpoint. Slug will be trigger name by default"
             - type: string
               example: "Slug name"
-        do:
-          type: string
-          description: "Target workflow"
-          example: "MyWorkflow"
 
     LocalizedText:
       oneOf:
@@ -1425,11 +1421,16 @@ components:
       items:
         $ref: "#/components/schemas/Instruction"
 
-    Workflow:
+    Automation:
       type: object
       required:
         - do
+        - name
+      description: Full description at (TODO swagger url)
+      additionalProperties: false
       properties:
+        trigger:
+          $ref: "#/components/schemas/Trigger"
         description:
           $ref: "#/components/schemas/LocalizedText"
         arguments:
@@ -1438,32 +1439,20 @@ components:
         do:
           $ref: "#/components/schemas/InstructionList"
         output:
-          description: "Workflow result expression. Might be a variable reference, an object/array with variables inside ..."
+          description: "Automation result expression. Might be a variable reference, an object/array with variables inside ..."
           example: "$result"
         private:
           type: boolean
-          description: "Set this to true if you don't want your workflow to be accessible outside of your app. Default is false."
+          description: "Set this to true if you don't want your automation to be accessible outside of your app. Default is false."
           example: false
-
-    Automation:
-      type: object
-      required:
-        - workflows
-      description: Full description at (TODO swagger url)
-      properties:
-        triggers:
-          additionalProperties:
-            $ref: "#/components/schemas/Trigger"
-        workflows:
-          additionalProperties:
-            $ref: "#/components/schemas/Workflow"
-        id:
-          type: string
         name:
           type: string
+        slug:
+          type: string
+          description: Unique & human readable id across current workspace's automations
 
     ###############################################################################################################################################
-    ############################################################ Workflow Instructions ############################################################
+    ############################################################ Automation Instructions ############################################################
     Emit:
       type: object
       required:
@@ -1502,7 +1491,7 @@ components:
               type: object
               description: "Only match the next intent fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
               example:
-                automationId: someId
+                automationSlug: someId
                 someObjectField.someNestedField: "foo"
             output:
               type: string
@@ -1590,7 +1579,7 @@ components:
       maxProperties: 1
       properties:
         all:
-          description: Execute each instruction in parallel. Pause current workflow execution until all instructions are processed.
+          description: Execute each instruction in parallel. Pause current automation execution until all instructions are processed.
           type: array
           items:
             $ref: "#/components/schemas/Instruction"
@@ -1602,7 +1591,7 @@ components:
       maxProperties: 1
       properties:
         break:
-          description: Stop current workflow execution. Does not have any configuration option
+          description: Stop current automation execution. Does not have any configuration option
           type: object
 
     Instruction:
@@ -1620,12 +1609,12 @@ components:
           minProperties: 1
           maxProperties: 1
 
-    WorkflowResult:
+    AutomationResult:
       type: object
       required:
-        - workflow
+        - slug
       properties:
-        workflow:
+        slug:
           type: string
         output:
           $ref: "#/components/schemas/AnyValue"
@@ -1695,7 +1684,7 @@ components:
           - $ref: "#/components/schemas/GenericErrorEvent"
           - $ref: "#/components/schemas/FailedLogin"
           - $ref: "#/components/schemas/SucceededLogin"
-          - $ref: "#/components/schemas/TriggeredWorkflow"
+          - $ref: "#/components/schemas/TriggeredAutomation"
           - $ref: "#/components/schemas/UpdatedContexts"
           - $ref: "#/components/schemas/CreatedWorkspace"
           - $ref: "#/components/schemas/UpdatedWorkspace"
@@ -1724,7 +1713,7 @@ components:
               - $ref: "#/components/schemas/SucceededLogin"
           - allOf:
               - $ref: "#/components/schemas/PrismeEvent"
-              - $ref: "#/components/schemas/TriggeredWorkflow"
+              - $ref: "#/components/schemas/TriggeredAutomation"
           - allOf:
               - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/UpdatedContexts"
@@ -1920,7 +1909,10 @@ components:
           type: object
           required:
             - automation
+            - slug
           properties:
+            slug:
+              type: string
             automation:
               $ref: "#/components/schemas/Automation"
 
@@ -1939,9 +1931,15 @@ components:
           type: object
           required:
             - automation
+            - slug
           properties:
             automation:
               $ref: "#/components/schemas/Automation"
+            slug:
+              type: string
+            oldSlug:
+              type: string
+              description: Filled with the previous automation slug when renamed
 
     DeletedAutomation:
       type: object
@@ -1962,17 +1960,17 @@ components:
             automation:
               type: object
               required:
-                - id
+                - slug
                 - name
               properties:
-                id:
+                slug:
                   type: string
                 name:
                   type: string
 
     ########################## Runtime events ##########################
 
-    TriggeredWorkflow:
+    TriggeredAutomation:
       type: object
       required:
         - type
@@ -1980,14 +1978,14 @@ components:
       properties:
         type:
           type: string
-          example: runtime.workflow.triggered
+          example: runtime.automation.triggered
           enum:
-            - runtime.workflow.triggered
+            - runtime.automation.triggered
         payload:
           type: object
           required:
             - event
-            - workflow
+            - slug
           properties:
             event:
               type: object
@@ -1996,12 +1994,12 @@ components:
                   type: string
                 type:
                   type: string
-            workflow:
+            slug:
               type: string
             payload:
               type: object
 
-    ExecutedWorkflow:
+    ExecutedAutomation:
       type: object
       required:
         - type
@@ -2009,20 +2007,17 @@ components:
       properties:
         type:
           type: string
-          example: runtime.workflow.executed
+          example: runtime.automation.executed
           enum:
-            - runtime.workflow.executed
+            - runtime.automation.executed
         payload:
           type: object
           required:
-            - workflow
-            - automation
+            - slug
             - payload
             - output
           properties:
-            workflow:
-              type: string
-            automation:
+            slug:
               type: string
             payload:
               type: object
@@ -2044,7 +2039,7 @@ components:
           type: object
           required:
             - workspaceId
-            - automationId
+            - automationSlug
             - originalUrl
             - method
             - headers
@@ -2052,7 +2047,7 @@ components:
           properties:
             workspaceId:
               type: string
-            automationId:
+            automationSlug:
               type: string
             originalUrl:
               type: string

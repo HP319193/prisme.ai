@@ -10,7 +10,7 @@ export default function init(runtime: Runtime) {
       originalUrl,
       method,
       logger,
-      params: { workspaceId, automationId },
+      params: { workspaceId, automationSlug },
       body,
       broker,
     }: Request<PrismeaiAPI.AutomationWebhook.PathParameters>,
@@ -20,7 +20,7 @@ export default function init(runtime: Runtime) {
       EventType.TriggeredWebhook,
       {
         workspaceId,
-        automationId,
+        automationSlug,
         originalUrl,
         method: <any>method,
         headers,
@@ -33,7 +33,7 @@ export default function init(runtime: Runtime) {
 
   const app = express.Router({ mergeParams: true });
 
-  app.use(`/:automationId`, asyncRoute(webhookHandler));
+  app.use(`/:automationSlug`, asyncRoute(webhookHandler));
 
   return app;
 }

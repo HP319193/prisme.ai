@@ -21,9 +21,7 @@
       "label": "Create an automation",
       "defaultName": "Automation",
       "value": {
-        "trigger": "a trigger",
-        "event": "an event",
-        "workflow": "a workflow"
+        "event": "an event"
       }
     },
     "back": "Back",
@@ -50,6 +48,17 @@
   },
   "pages": {
     "link": "Pages"
+  },
+  "expert": {
+    "show": "Edit the workspace source code",
+    "hide": "Hide the source code",
+    "exit": {
+      "confirm_title": "Changes in progress",
+      "confirm_message": "You are about to leave without saving. Are you sure?"
+    },
+    "save": {
+      "confirm": "Your workspace is saved"
+    }
   },
   "404": "This workspace does not exist. Return to your home page."
 }

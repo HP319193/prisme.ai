@@ -8,6 +8,12 @@ jest.mock("../layouts/WorkspaceLayout", () => {
   mock.useWorkspace = () => ({
     workspace: {
       id: "42",
+      automations: [
+        {
+          id: "43",
+          name: "Hello",
+        },
+      ],
     },
   });
   return mock;
@@ -17,7 +23,6 @@ jest.mock("next/router", () => {
   return {
     useRouter: () => ({
       query: {
-        id: "42",
         automationId: "43",
       },
       replace,
@@ -28,12 +33,4 @@ jest.mock("next/router", () => {
 it("should render", () => {
   const root = renderer.create(<Automation />);
   expect(root.toJSON()).toMatchSnapshot();
-  expect(useRouter().replace).toHaveBeenCalledWith(
-    "/workspaces/42/automations/43/manifest"
-  );
-});
-
-it("should have workspaces layout", () => {
-  const a = Automation.getLayout(<div />);
-  expect(getLayout).toHaveBeenCalled();
 });

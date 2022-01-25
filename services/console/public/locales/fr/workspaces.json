@@ -29,9 +29,7 @@
       "label": "Créer une automatisation",
       "defaultName": "Automatisation",
       "value": {
-        "trigger": "un declencheur",
-        "event": "un évènement",
-        "workflow": "une liste de taches"
+        "event": "un évènement"
       }
     },
     "back": "Retour",
@@ -58,6 +56,17 @@
   },
   "pages": {
     "link": "Pages"
+  },
+  "expert": {
+    "show": "Éditer le code source de l'espace de travail",
+    "hide": "Masquer le code source",
+    "exit": {
+      "confirm_title": "Modifications en cours",
+      "confirm_message": "Vous vous appretez à quitter sans sauvegarder. Êtes vous sur ?"
+    },
+    "save": {
+      "confirm": "Votre espace de travail est enregistré"
+    }
   },
   "404": "Cet espace de travail n'existe pas. Revenez à votre page d'accueil."
 }
