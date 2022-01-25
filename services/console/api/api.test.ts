@@ -70,14 +70,14 @@ it("should call patch /workspaces/42", () => {
   api.updateWorkspace({
     id: "42",
     name: "foo",
-    automations: [],
+    automations: {},
     createdAt: "",
     updatedAt: "",
   });
   expect(api.patch).toHaveBeenCalledWith("/workspaces/42", {
     id: "42",
     name: "foo",
-    automations: [],
+    automations: {},
     createdAt: "",
     updatedAt: "",
   });
@@ -90,18 +90,18 @@ it("should call post /workspaces/42/automations", () => {
     {
       id: "42",
       name: "foo",
-      automations: [],
+      automations: {},
       createdAt: "",
       updatedAt: "",
     },
     {
       name: "foo",
-      workflows: {},
+      do: []
     }
   );
   expect(api.post).toHaveBeenCalledWith("/workspaces/42/automations", {
     name: "foo",
-    workflows: {},
+    do: [],
   });
 });
 
@@ -112,20 +112,19 @@ it("should call patch /workspaces/42/automations", () => {
     {
       id: "42",
       name: "foo",
-      automations: [],
+      automations: {},
       createdAt: "",
       updatedAt: "",
     },
+    "42-1",
     {
-      id: "42-1",
       name: "foo",
-      workflows: {},
+      do: []
     }
   );
   expect(api.patch).toHaveBeenCalledWith("/workspaces/42/automations/42-1", {
-    id: "42-1",
     name: "foo",
-    workflows: {},
+    do: []
   });
 });
 
@@ -136,15 +135,11 @@ it("should call delete /workspaces/42/automations/42-1", () => {
     {
       id: "42",
       name: "foo",
-      automations: [],
+      automations: {},
       createdAt: "",
       updatedAt: "",
     },
-    {
-      id: "42-1",
-      name: "foo",
-      workflows: {},
-    }
+    "42-1"
   );
   expect(api.delete).toHaveBeenCalledWith("/workspaces/42/automations/42-1");
 });

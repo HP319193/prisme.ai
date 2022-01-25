@@ -38,21 +38,6 @@ services:
       - ./data/es01:/usr/share/elasticsearch/data
       - ./data/elasticsearch01.yml:/usr/share/elasticsearch/config/elasticsearch.yml
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.14.0
-    container_name: kibana
-    restart: always
-    depends_on:
-      - elastic
-    ports:
-      - 5601:5601
-    # environment:
-    #   - xpack.security.enabled=true
-    #   - ELASTICSEARCH_USERNAME=elastic
-    #   - ELASTICSEARCH_PASSWORD=@UK8sJD0dfqp
-    volumes:
-      - ./data/kibana.yml:/usr/share/kibana/config/kibana.yml
-
   runtime:
     working_dir: /www
     entrypoint: npm run dev --prefix=services/runtime
@@ -61,6 +46,7 @@ services:
       - ./services/runtime:/www/services/runtime
       - ./data/models:/www/models
       - ./specifications:/www/specifications
+      - ./packages:/www/node_modules/@prisme.ai
     depends_on:
       - redis
     ports:
@@ -82,6 +68,7 @@ services:
       - ./services/workspaces:/www/services/workspaces
       - ./data/models:/www/models
       - ./specifications:/www/specifications
+      - ./packages:/www/node_modules/@prisme.ai
     depends_on:
       - redis
     ports:
@@ -101,6 +88,7 @@ services:
     volumes:
       - ./services/events:/www/services/events
       - ./specifications:/www/specifications
+      - ./packages:/www/node_modules/@prisme.ai
     depends_on:
       - redis
       - elastic
@@ -121,6 +109,7 @@ services:
     volumes:
       - ./services/api-gateway:/www/services/api-gateway
       - ./specifications:/www/specifications
+      - ./packages:/www/node_modules/@prisme.ai
     depends_on:
       - mongo
       - redis
@@ -137,8 +126,12 @@ services:
     working_dir: /www
     entrypoint: npm run dev --prefix=services/console
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies:latest
+    depends_on:
+      - gateway
     volumes:
       - ./services/console:/www/services/console
+      - ./specifications:/www/specifications
+      - ./packages:/www/node_modules/@prisme.ai
     ports:
       - "3000:3000"
     environment:

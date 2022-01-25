@@ -70,7 +70,7 @@ export class Api extends Fetcher {
   async createAutomation(
     workspace: Workspace,
     automation: Prismeai.Automation
-  ): Promise<Prismeai.Automation> {
+  ): Promise<Prismeai.Automation & { slug: string }> {
     return await this.post(`/workspaces/${workspace.id}/automations`, {
       ...automation,
     });
@@ -78,20 +78,21 @@ export class Api extends Fetcher {
 
   async updateAutomation(
     workspace: Workspace,
+    slug: string,
     automation: Prismeai.Automation
   ): Promise<Prismeai.Automation> {
     return await this.patch(
-      `/workspaces/${workspace.id}/automations/${automation.id}`,
+      `/workspaces/${workspace.id}/automations/${slug}`,
       automation
     );
   }
 
   async deleteAutomation(
     workspace: Workspace,
-    automation: Prismeai.Automation
+    slug: string
   ): Promise<string> {
     return await this.delete(
-      `/workspaces/${workspace.id}/automations/${automation.id}`
+      `/workspaces/${workspace.id}/automations/${slug}`
     );
   }
 

@@ -3,7 +3,7 @@ import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 const endpoint =
-  `${publicRuntimeConfig.API_HOST}/${publicRuntimeConfig.ENDPOINT}` || "";
+  publicRuntimeConfig.ENDPOINT || "";
 
 export const generateEndpoint = (workspaceId: string, slug: string) =>
   endpoint

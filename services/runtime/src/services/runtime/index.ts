@@ -5,7 +5,7 @@ import { CacheDriver } from "../../cache";
 import { ContextsManager } from "./contexts";
 import { ObjectNotFoundError, PrismeError } from "../../errors";
 import { EventType } from "../../eda";
-import { executeWorkflow } from "./workflows";
+import { executeAutomation } from "./automations";
 
 export default class Runtime {
   private broker: Broker;
@@ -65,6 +65,7 @@ export default class Runtime {
       userId!!,
       correlationId!!
     );
+
     logger.debug({ msg: "Starting to process event", event });
     const workspace = await this.workspaces.getWorkspace(
       ctx.global.workspaceId
@@ -78,19 +79,19 @@ export default class Runtime {
       }
       return await Promise.all(
         triggers.map(async (cur: DetailedTrigger) => {
-          const workflow = workspace.getWorkflow(cur.do);
-          if (!workflow) {
+          const automation = workspace.getAutomation(cur.automationSlug);
+          if (!automation) {
             logger.trace(
-              `Did not find any matching workflow '${cur.do}' for trigger '${cur.name})`
+              `Did not find any matching automation '${cur.automationSlug}' for trigger '${cur.endpoint})`
             );
-            throw new ObjectNotFoundError(`Workflow not found`, {
+            throw new ObjectNotFoundError(`Automation not found`, {
               workspaceId,
-              workflow: cur.do,
+              automation: cur.automationSlug,
             });
           }
-          const output = await executeWorkflow(
+          const output = await executeAutomation(
             workspace,
-            workflow,
+            automation,
             payload,
             ctx,
             logger,
@@ -98,7 +99,7 @@ export default class Runtime {
           );
           return {
             output,
-            workflow: cur.do,
+            slug: cur.automationSlug,
           };
         })
       );
@@ -120,16 +121,17 @@ export default class Runtime {
     payload: any;
   } {
     if (event.type === EventType.TriggeredWebhook) {
-      const { automationId, payload } = (<Prismeai.TriggeredWebhook>event)
+      const { automationSlug, payload } = (<Prismeai.TriggeredWebhook>event)
         .payload;
+
       const parsed = {
-        triggers: workspace.getEndpointTriggers(automationId),
+        triggers: workspace.getEndpointTriggers(automationSlug),
         payload,
       };
       if (!parsed.triggers?.length) {
         throw new ObjectNotFoundError(
-          `Did not find any matching trigger for endpoint ${automationId}`,
-          { workspaceId: workspace.id, endpoint: automationId }
+          `Did not find any matching trigger for endpoint ${automationSlug}`,
+          { workspaceId: workspace.id, endpoint: automationSlug }
         );
       }
 

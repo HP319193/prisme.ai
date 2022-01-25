@@ -13,7 +13,8 @@ exports[`should render 1`] = `
           transition-duration-100
           transition-ease-in
           
-          shadow-4"
+          shadow-4
+          z-2"
   onClick={[Function]}
   onTouchEnd={[Function]}
 />
@@ -32,7 +33,8 @@ exports[`should render opened 1`] = `
           transition-duration-100
           transition-ease-in
           -translate-x-100
-          shadow-4"
+          shadow-4
+          z-2"
   onClick={[Function]}
   onTouchEnd={[Function]}
 />

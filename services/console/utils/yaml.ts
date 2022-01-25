@@ -51,7 +51,7 @@ export const findParameter = (
   );
 };
 
-export const findParent = (yaml: string, line: number) => {
+export const findParent = (yaml: string, line: number, level: number = 1) => {
   const lines = getLines(yaml);
   const { indent: currentIndent } =
     lines.find(({ line: l }) => line === l) || {};

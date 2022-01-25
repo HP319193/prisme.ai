@@ -47,7 +47,7 @@ exports[`should render empty 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-hidden"
+    className="flex flex-1 surface-ground relative overflow-auto"
   >
     <div
       className="justify-content-center flex flex-wrap align-items-start justify-content-start"
@@ -78,13 +78,6 @@ exports[`should render empty 1`] = `
           </div>
         </div>
       </div>
-    </div>
-    <div
-      className="p-toast p-component p-toast-bottom-right"
-      id={null}
-      style={null}
-    >
-      <div />
     </div>
   </div>
 </div>
@@ -137,7 +130,7 @@ exports[`should render some workspaces 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-hidden"
+    className="flex flex-1 surface-ground relative overflow-auto"
   >
     <div
       className="justify-content-center flex flex-wrap align-items-start justify-content-start"
@@ -242,13 +235,6 @@ exports[`should render some workspaces 1`] = `
           </div>
         </div>
       </div>
-    </div>
-    <div
-      className="p-toast p-component p-toast-bottom-right"
-      id={null}
-      style={null}
-    >
-      <div />
     </div>
   </div>
 </div>

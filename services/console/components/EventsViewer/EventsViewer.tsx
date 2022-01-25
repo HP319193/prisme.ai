@@ -53,7 +53,7 @@ export const EventsViewer = () => {
                         <div className="flex flex-1 flex-column">
                           <div className="flex flex-row">
                             <div className="flex font-bold mr-2">
-                              {event.source?.app}
+                              {event.source?.app || event.source?.host?.service}
                             </div>
                             <div className="flex">
                               {dateFormat(event.createdAt, {

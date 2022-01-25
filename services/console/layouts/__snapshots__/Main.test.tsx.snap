@@ -47,16 +47,8 @@ exports[`should render 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-hidden"
-  >
-    <div
-      className="p-toast p-component p-toast-bottom-right"
-      id={null}
-      style={null}
-    >
-      <div />
-    </div>
-  </div>
+    className="flex flex-1 surface-ground relative overflow-auto"
+  />
 </div>
 `;
 

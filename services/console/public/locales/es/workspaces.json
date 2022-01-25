@@ -17,9 +17,7 @@
       "label": "Crear una automatización",
       "defaultName": "Automatización",
       "value": {
-        "trigger": "un disparador",
-        "event": "un evento",
-        "workflow": "una lista de tareas"
+        "event": "un evento"
       }
     },
     "back": "Volver",
@@ -46,6 +44,17 @@
   },
   "pages": {
     "link": "Páginas"
+  },
+  "expert": {
+    "show": "Editar el código fuente del espacio de trabajo",
+    "hide": "Ocultar el código fuente",
+    "exit": {
+      "confirm_title": "Cambios en curso",
+      "confirm_message": "Estás a punto de irte sin ahorrar. ¿Está seguro?"
+    },
+    "save": {
+      "confirm": "Su espacio de trabajo está registrado"
+    }
   },
   "404": "Este espacio de trabajo no existe. Vuelve a tu página de inicio."
 }

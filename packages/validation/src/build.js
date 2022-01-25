@@ -9,6 +9,7 @@ const validators = Object.keys(json.components.schemas);
 const file = `
 import Ajv from "ajv";
 const schemas = ${JSON.stringify(json)}
+// @ts-ignore
 const ajv = new Ajv({ strict: false });
 ajv.addSchema(schemas, "swagger");
 ${validators

@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 
 jest.mock("../components/WorkspacesProvider", () => {
   const createAutomation = jest.fn((w, automation) => ({
-    id: `${w.id}-1`,
+    slug: `${w.id}-1`,
     ...automation,
   }));
   return {
@@ -19,14 +19,12 @@ jest.mock("../components/WorkspacesProvider", () => {
 jest.mock("../layouts/WorkspaceLayout", () => {
   const workspace = {
     id: "42",
-    automations: [
-      {
-        id: "43",
+    automations: {
+      '42-1': {
         name: "First",
-        triggers: {},
-        workflows: {},
+        do: [],
       },
-    ],
+    },
   };
   return {
     useWorkspace: () => ({
@@ -62,39 +60,30 @@ it("should create an automation", async () => {
     useWorkspace().workspace,
     {
       name: "automations.create.defaultName",
-      triggers: {
-        "automations.create.value.trigger": {
-          do: "automations.create.value.workflow",
-          events: ["automations.create.value.event"],
-        },
+      trigger: {
+        events: ["automations.create.value.event"],
       },
-      workflows: {
-        "automations.create.value.workflow": {
-          do: [
-            {
-              emit: {
-                event: "automations.create.value.event",
-              },
-            },
-          ],
+      do: [
+        {
+          emit: {
+            event: "automations.create.value.event",
+          },
         },
-      },
+      ],
     }
   );
   expect(onClose).toHaveBeenCalled();
   expect(useRouter().push).toHaveBeenCalledWith(
-    "/workspaces/42/automations/42-1/manifest"
+    "/workspaces/42/automations/42-1"
   );
 });
 it("should create an automation with existing name", async () => {
-  useWorkspace().workspace.automations = [
-    {
-      id: "44",
+  useWorkspace().workspace.automations = {
+    '44': {
       name: "automations.create.defaultName",
-      triggers: {},
-      workflows: {},
+      do: [],
     },
-  ];
+  };
   const onClose = jest.fn();
   const root = renderer.create(<AutomationsSidebar onClose={onClose} />);
   await act(async () => {
@@ -104,23 +93,16 @@ it("should create an automation with existing name", async () => {
     useWorkspace().workspace,
     {
       name: "automations.create.defaultName (1)",
-      triggers: {
-        "automations.create.value.trigger": {
-          do: "automations.create.value.workflow",
-          events: ["automations.create.value.event"],
-        },
+      trigger: {
+        events: ["automations.create.value.event"],
       },
-      workflows: {
-        "automations.create.value.workflow": {
-          do: [
-            {
-              emit: {
-                event: "automations.create.value.event",
-              },
-            },
-          ],
+      do: [
+        {
+          emit: {
+            event: "automations.create.value.event",
+          },
         },
-      },
+      ],
     }
   );
 });

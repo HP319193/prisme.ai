@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "start": "docker-compose -f docker-compose.dev.yml up",
+    "stop": "docker-compose -f docker-compose.dev.yml down",
     "postinstall": "(command -v docker-compose > /dev/null && npm run build:docker:deps) || exit 0",
     "clean": "npx rimraf packages/**/dist",
     "build:packages": "npx rollup -c",

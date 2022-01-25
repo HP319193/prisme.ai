@@ -2,6 +2,6 @@
 jest.mock("next/config", () => () => ({
   publicRuntimeConfig: {
     API_HOST: "http://localhost:3000/api",
-    ENDPOINT: "workspace/{{workspaceId}}/{{slug}}",
+    ENDPOINT: "http://localhost:3000/api/workspace/{{workspaceId}}/webhook/{{slug}}",
   },
 }));

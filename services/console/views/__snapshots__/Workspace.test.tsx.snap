@@ -1,11 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should render 1`] = `
-<div
-  className="flex flex-1 align-items-center justify-content-center"
->
+Array [
   <div
-    className=" align-self-center justify-self-center pi pi-spin pi-spinner"
-  />
-</div>
+    className="
+          absolute top-0 bottom-0 right-0 left-0
+          flex flex-1
+          shadow-4
+          transition-transform
+          transition-duration-200
+          transition-ease-in
+          z-1
+          -translate-y-100
+        "
+  />,
+  <div
+    className="flex flex-1 align-items-center justify-content-center"
+  >
+    <div
+      className=" align-self-center justify-self-center pi pi-spin pi-spinner"
+    />
+  </div>,
+]
 `;

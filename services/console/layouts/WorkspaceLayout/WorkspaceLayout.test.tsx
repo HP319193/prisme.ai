@@ -15,15 +15,10 @@ import { Event } from "../../api/types";
 jest.useFakeTimers();
 
 jest.mock("../../components/WorkspacesProvider", () => {
-  const get = jest.fn();
-  const fetch = jest.fn();
-  const update = jest.fn();
+
+  const mock = {}
   return {
-    useWorkspaces: () => ({
-      get,
-      fetch,
-      update,
-    }),
+    useWorkspaces: () => mock,
   };
 });
 
@@ -31,6 +26,8 @@ jest.mock("next/router", () => {
   const query = { id: "42" };
   const mock = {
     query,
+    route: "/workspace/42",
+    push: jest.fn(),
   };
   return {
     useRouter: () => mock,
@@ -52,25 +49,23 @@ jest.mock("../../api/events", () => {
   return Events
 })
 
+jest.mock("primereact/button", () => {
+  return { Button: () => null }
+})
+
 beforeEach(() => {
   useRouter().query.id = "42";
-  (useWorkspaces().get as any).mockImplementation((id: string) => {
-    if (id === "42") {
-      return {
-        id: "42",
-        name: "foo",
-        automations: [],
-      };
-    }
-    if (id === "43") {
-      return {
-        id: "43",
-        name: "bar",
-        automations: [],
-      };
-    }
-    return null;
-  });
+  (useWorkspaces() as any).workspaces = new Map([['42', {
+    id: "42",
+    name: "foo",
+    automations: [],
+  }], ['43', {
+    id: "43",
+    name: "bar",
+    automations: [],
+  }], ['12', null]]);
+  (useWorkspaces() as any).fetch = jest.fn();
+  (useWorkspaces() as any).update = jest.fn();
 });
 
 it("should render empty", async () => {
@@ -99,8 +94,7 @@ it("should render 404", async () => {
 });
 
 it("should render fetching", async () => {
-  (useWorkspaces().get as any).mockImplementation(() => undefined);
-  (useWorkspaces().fetch as any).mockImplementation(() => ({
+  (useWorkspaces().fetch as jest.Mock).mockImplementation(() => ({
     id: "42",
     name: "foo",
     automations: [],
@@ -125,6 +119,7 @@ it("should update title", async () => {
   await act(async () => {
     await true;
   });
+
   act(() => {
     root.root.findByType(EditableTitle).props.onChange("bar");
   });

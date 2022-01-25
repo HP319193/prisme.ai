@@ -1,7 +1,10 @@
-export const addCustomAnnotations = (editor: any) => {
+import { Ace } from "ace-builds";
+
+export const addCustomAnnotations = (editor: any, annotations: Ace.Annotation[] = []) => {
   const original = editor.renderer.$gutterLayer.setAnnotations.bind(
     editor.renderer.$gutterLayer
   );
+    
   editor.renderer.$gutterLayer.setAnnotations = function (annotations: any) {
     original(annotations);
     editor.renderer.$gutterLayer.$annotations.forEach(
@@ -13,4 +16,6 @@ export const addCustomAnnotations = (editor: any) => {
       }
     );
   };
+
+  editor.renderer.$gutterLayer.setAnnotations(annotations)
 };

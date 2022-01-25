@@ -13,8 +13,8 @@ import { Logger, logger } from "../logger";
 
 export enum EventType {
   Error = "error",
-  TriggeredWorkflow = "runtime.workflow.triggered",
-  ExecutedWorkflow = "runtime.workflow.executed",
+  TriggeredAutomation = "runtime.automation.triggered",
+  ExecutedAutomation = "runtime.automation.executed",
   TriggeredWebhook = "runtime.webhook.triggered",
   UpdatedContexts = "runtime.contexts.updated",
 

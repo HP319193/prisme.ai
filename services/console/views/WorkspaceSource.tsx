@@ -1,48 +1,51 @@
-import {
-  ReactElement,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { YAMLException } from "js-yaml";
-import getAutomationLayout, {
-  useAutomation,
-} from "../layouts/AutomationLayout";
-import getLayout, { useWorkspace } from "../layouts/WorkspaceLayout";
+import { useWorkspace } from "../layouts/WorkspaceLayout";
 import { Workspace } from "../api/types";
-import dynamic from "next/dynamic";
 import useYaml from "../utils/useYaml";
 import {
   findParameter,
   findParent,
   getLineNumberFromPath,
+  ValidationError,
 } from "../utils/yaml";
 import { generateEndpoint } from "../utils/urls";
 import { useToaster } from "../layouts/Toaster";
 import { useTranslation } from "next-i18next";
+import { validateWorkspace } from "@prisme.ai/validation";
+import CodeEditor from '../components/CodeEditor/lazy';
 
-const CodeEditor = dynamic(import("../components/CodeEditor"), { ssr: false });
-export const AutomationManifest = () => {
+interface Annotation {
+  row: number;
+  column: number;
+  text: string;
+  type: "error";
+}
+
+const getEndpointAutomationName = (value: string, line: number) => {
+  const { line: l = line } = findParent(`${value}`, line) || {}
+  return findParent(`${value}`, l)
+}
+
+interface WorkspaceSourceProps {
+  onLoad?: () => void;
+}
+export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const { t } = useTranslation("workspaces");
-  const { workspace } = useWorkspace();
-  const { automation, setAutomation, invalid } = useAutomation();
+  const { workspace, setInvalid, setDirty, setNewSource, invalid } =
+    useWorkspace();
   const [value, setValue] = useState<string | undefined>();
-  const [annotations, setAnnotations] = useState<any>();
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const { toJSON, toYaml } = useYaml();
   const ref = useRef<HTMLDivElement>(null);
   const toaster = useToaster();
 
   const initYaml = useCallback(async () => {
     try {
-      const value = await toYaml({
-        triggers: automation.triggers,
-        workflows: automation.workflows,
-      });
+      const value = await toYaml(workspace);
       setValue(value);
-    } catch (e) {}
-  }, [automation, toYaml]);
+    } catch (e) { }
+  }, [workspace, toYaml]);
   useEffect(() => {
     initYaml();
   }, [initYaml]);
@@ -52,7 +55,7 @@ export const AutomationManifest = () => {
       if (value === undefined) return;
       try {
         setAnnotations([]);
-        return await toJSON<Workspace["automations"][0]>(value);
+        return await toJSON<Workspace>(value);
       } catch (e) {
         const { mark, message } = e as YAMLException;
         setAnnotations([
@@ -69,13 +72,17 @@ export const AutomationManifest = () => {
   );
 
   const update = useCallback(
-    async (value: string) => {
+    async (newValue: string) => {
       try {
-        const json = await checkSyntaxAndReturnYAML(value);
-        json && setAutomation(json);
-      } catch (e) {}
+        const json = await checkSyntaxAndReturnYAML(newValue);
+        if (!json) return;
+        validateWorkspace(json);
+        setInvalid((validateWorkspace.errors as ValidationError[]) || false);
+        setNewSource(json);
+        setDirty(true);
+      } catch (e) { }
     },
-    [checkSyntaxAndReturnYAML, setAutomation]
+    [checkSyntaxAndReturnYAML, setDirty, setInvalid, setNewSource]
   );
 
   useEffect(() => {
@@ -94,28 +101,29 @@ export const AutomationManifest = () => {
             text: message,
             type: "error",
           };
-        } catch (e) {}
+        } catch (e) { }
       })
-      .filter(Boolean);
+      .filter(Boolean) as Annotation[];
     setAnnotations(annotations);
   }, [invalid, value]);
 
   const allAnnotations = useMemo(() => {
+    if (!workspace) return annotations;
     const endpoints = findParameter(`${value}`, {
-      indent: 2,
+      indent: 3,
       parameter: "endpoint",
     }).map(({ line, value: v }) => ({
       row: line - 1,
       column: 0,
       text: generateEndpoint(
         workspace.id,
-        v === "true" ? (findParent(`${value}`, line) || { name: v }).name : v
+        v === "true" ? (getEndpointAutomationName(`${value}`, line) || { name: v }).name : v
       ),
       type: "endpoint",
     }));
     const allAnnotations = [...(annotations || []), ...endpoints];
     return allAnnotations;
-  }, [annotations, value, workspace.id]);
+  }, [annotations, value, workspace]);
 
   useEffect(() => {
     const { current } = ref;
@@ -151,12 +159,10 @@ export const AutomationManifest = () => {
         value={value}
         onChange={update}
         annotations={allAnnotations}
+        onLoad={onLoad}
       />
     </div>
   );
 };
 
-AutomationManifest.getLayout = (page: ReactElement) =>
-  getLayout(getAutomationLayout(page));
-
-export default AutomationManifest;
+export default WorkspaceSource;

@@ -1,6 +1,9 @@
 import { useRouter } from "next/router";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, MouseEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import Head from "next/head";
+import Link from "next/link";
+import { confirmDialog } from "primereact/confirmdialog";
 import EditableTitle from "../../components/EditableTitle";
 import { useWorkspaces } from "../../components/WorkspacesProvider";
 import Main from "../Main";
@@ -10,11 +13,11 @@ import workspaceContext, { WorkspaceContext } from "./context";
 import Loading from "../../components/Loading";
 import { Button } from "primereact/button";
 import AutomationsSidebar from "../../views/AutomationsSidebar";
-import Head from "next/head";
 import { EventsByDay } from ".";
 import Events from "../../api/events";
 import { Event } from "../../api/types";
 import api from "../../api/api";
+import { useToaster } from "../Toaster";
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -35,13 +38,16 @@ const getLatest = (events: Event<Date>[]) => {
   return events[0].createdAt
 }
 
-
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
     query: { id },
+    route,
+    push,
   } = useRouter();
+
   const { t } = useTranslation("workspaces");
-  const { get, fetch, update } = useWorkspaces();
+  const { fetch, update, workspaces } = useWorkspaces();
+  const toaster = useToaster();
   const [loading, setLoading] = useState<WorkspaceContext["loading"]>(false);
   const lockEvents = useRef(false)
   const [workspace, setCurrentWorkspace] = useState<
@@ -103,31 +109,33 @@ export const WorkspaceLayout: FC = ({ children }) => {
       off();
     };
   }, [socket, events]);
+  const displaySource = !!route.match(/\/source$/);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebar, setSidebar] = useState<"automations" | "apps" | "pages">(
     "automations"
   );
 
-  const setCurrent = useCallback(
-    async (id: string) => {
-      const alreadyLoaded = get(id);
-      if (alreadyLoaded !== undefined) {
-        setCurrentWorkspace(alreadyLoaded);
-        return;
-      }
+  const [dirty, setDirty] = useState<WorkspaceContext["dirty"]>(false);
+  const [invalid, setInvalid] = useState<WorkspaceContext["invalid"]>(false);
+  const [newSource, setNewSource] = useState<WorkspaceContext["newSource"]>();
+  const [saving, setSaving] = useState(false);
 
+  const setCurrent = useRef(
+    async (id: string) => {
       setLoading(true);
       const workspace = await fetch(id);
       setLoading(false);
-      setCurrentWorkspace(workspace);
     },
-    [fetch, get]
   );
 
   useEffect(() => {
-    setCurrent(`${id}`);
-  }, [id, setCurrent]);
+    setCurrent.current(`${id}`);
+  }, [id]);
+
+  useEffect(() => {
+    setCurrentWorkspace(workspaces.get(`${id}`));
+  }, [id, workspaces])
 
   const updateTitle = useCallback(
     async (value: string) => {
@@ -135,6 +143,33 @@ export const WorkspaceLayout: FC = ({ children }) => {
       await update({ ...workspace, name: value });
     },
     [update, workspace]
+  );
+
+  const save = useCallback(async () => {
+    if (!newSource) return;
+    setSaving(true);
+    const newWorkspace = await update(newSource);
+    setCurrentWorkspace(newWorkspace);
+    setSaving(false);
+    setDirty(false);
+    toaster.show({
+      severity: "success",
+      summary: t("expert.save.confirm"),
+    });
+  }, [newSource, t, toaster, update]);
+
+  const alertSourceIsDirty: MouseEventHandler = useCallback(
+    (e) => {
+      if (!dirty || !workspace || !displaySource) return;
+      e.preventDefault();
+      confirmDialog({
+        message: t("expert.exit.confirm_message"),
+        header: t("expert.exit.confirm_title"),
+        icon: "pi pi-exclamation-triangle",
+        accept: () => push(`/workspaces/${workspace.id}`),
+      });
+    },
+    [dirty, displaySource, push, t, workspace]
   );
 
   const displayAutomations = useCallback(() => {
@@ -178,7 +213,21 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }
 
   return (
-    <workspaceContext.Provider value={{ workspace, loading, events, nextEvents }}>
+    <workspaceContext.Provider
+      value={{
+        workspace,
+        loading,
+        displaySource,
+        invalid,
+        setInvalid,
+        dirty,
+        setDirty,
+        newSource,
+        setNewSource,
+        events,
+        nextEvents
+      }}
+    >
       <Head>
         <title>{t("workspace.title", { name: workspace.name })}</title>
         <meta
@@ -195,6 +244,31 @@ export const WorkspaceLayout: FC = ({ children }) => {
         rightContent={
           workspace && (
             <>
+              {displaySource && (
+                <Button
+                  onClick={save}
+                  disabled={!dirty || !!invalid || saving}
+                  className="flex-row relative"
+                >
+                  {saving && (
+                    <div className="pi pi-spinner pi-spin -ml-3 absolute" />
+                  )}
+                  <div className="mx-2">{t("automations.save.label")}</div>
+                </Button>
+              )}
+              <Link
+                href={`/workspaces/${workspace.id}${displaySource ? "" : "/source"
+                  }`}
+              >
+                <a>
+                  <Button
+                    icon="pi pi-code"
+                    tooltip={t(`expert.${displaySource ? "hide" : "show"}`)}
+                    tooltipOptions={{ position: "left" }}
+                    onClick={alertSourceIsDirty}
+                  />
+                </a>
+              </Link>
               <Button
                 onClick={displayAutomations}
                 className={`

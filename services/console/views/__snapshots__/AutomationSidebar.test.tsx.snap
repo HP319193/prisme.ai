@@ -22,7 +22,7 @@ exports[`should render 1`] = `
     onClick={[MockFunction]}
   >
     <a
-      href="/workspaces/42/automations/43/manifest"
+      href="/workspaces/42/automations/42-1"
       onClick={[Function]}
       onMouseEnter={[Function]}
     >
