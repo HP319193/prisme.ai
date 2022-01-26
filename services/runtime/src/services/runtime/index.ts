@@ -41,13 +41,15 @@ export default class Runtime {
   async getContexts(
     workspaceId: string,
     userId: string,
-    correlationId: string
+    correlationId: string,
+    payload: any
   ): Promise<ContextsManager> {
     const ctx = new ContextsManager(
       workspaceId,
       userId,
       correlationId,
-      this.cache
+      this.cache,
+      payload
     );
     await ctx.fetch();
     return ctx;
@@ -60,23 +62,23 @@ export default class Runtime {
         `Can't process event '${event.type}' without source userId, correlationId or workspaceId !`
       );
     }
-    const ctx = await this.getContexts(
-      workspaceId!!,
-      userId!!,
-      correlationId!!
-    );
-
-    logger.debug({ msg: "Starting to process event", event });
-    const workspace = await this.workspaces.getWorkspace(
-      ctx.global.workspaceId
-    );
+    const workspace = await this.workspaces.getWorkspace(workspaceId);
 
     try {
+      logger.debug({ msg: "Starting to process event", event });
       const { triggers, payload } = this.parseEvent(workspace, event);
       if (!triggers?.length) {
         logger.trace("Did not find any matching trigger");
         return;
       }
+
+      const ctx = await this.getContexts(
+        workspaceId!!,
+        userId!!,
+        correlationId!!,
+        payload
+      );
+
       return await Promise.all(
         triggers.map(async (cur: DetailedTrigger) => {
           const automation = workspace.getAutomation(cur.automationSlug);
@@ -92,7 +94,6 @@ export default class Runtime {
           const output = await executeAutomation(
             workspace,
             automation,
-            payload,
             ctx,
             logger,
             broker
@@ -123,10 +124,9 @@ export default class Runtime {
     if (event.type === EventType.TriggeredWebhook) {
       const { automationSlug, payload } = (<Prismeai.TriggeredWebhook>event)
         .payload;
-
       const parsed = {
         triggers: workspace.getEndpointTriggers(automationSlug),
-        payload,
+        payload: payload,
       };
       if (!parsed.triggers?.length) {
         throw new ObjectNotFoundError(

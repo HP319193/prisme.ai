@@ -1368,7 +1368,7 @@ components:
         id:
           type: string
 
-    Trigger:
+    When:
       type: object
       anyOf:
         - required: ["events"]
@@ -1429,8 +1429,8 @@ components:
       description: Full description at (TODO swagger url)
       additionalProperties: false
       properties:
-        trigger:
-          $ref: "#/components/schemas/Trigger"
+        when:
+          $ref: "#/components/schemas/When"
         description:
           $ref: "#/components/schemas/LocalizedText"
         arguments:
@@ -1594,6 +1594,38 @@ components:
           description: Stop current automation execution. Does not have any configuration option
           type: object
 
+    Fetch:
+      type: object
+      required:
+        - "fetch"
+      maxProperties: 1
+      properties:
+        fetch:
+          description: Send an HTTP request
+          type: object
+          required:
+            - url
+          properties:
+            url:
+              type: string
+            method:
+              type: string
+              enum:
+                - get
+                - post
+                - put
+                - patch
+                - delete
+            headers:
+              type: object
+              additionalProperties: true
+            body:
+              type: object
+              description: HTTP request body
+            output:
+              type: string
+              description: Name of the variable which will hold the result
+
     Instruction:
       anyOf:
         - $ref: "#/components/schemas/Emit"
@@ -1604,6 +1636,7 @@ components:
         - $ref: "#/components/schemas/Repeat"
         - $ref: "#/components/schemas/All"
         - $ref: "#/components/schemas/Break"
+        - $ref: "#/components/schemas/Fetch"
         - type: object
           additionalProperties: true
           minProperties: 1

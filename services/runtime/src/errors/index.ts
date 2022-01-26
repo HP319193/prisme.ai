@@ -49,3 +49,23 @@ export class TooManyCallError extends PrismeError {
     super(msg, details);
   }
 }
+export class InvalidEventError extends PrismeError {
+  constructor(msg: string = "Trying to send an invalid event", details?: any) {
+    super(msg, details);
+  }
+}
+
+export class InvalidVariableNameError extends PrismeError {
+  constructor(
+    msg: string = "Invalid variable name. Only allowed characters are : a-z, A-Z, 0-9, '_' et '-'.",
+    details?: any
+  ) {
+    super(msg, details);
+  }
+}
+
+export class InvalidSetInstructionError extends PrismeError {
+  constructor(msg: string = "Invalid set instruction", details?: any) {
+    super(msg, details);
+  }
+}

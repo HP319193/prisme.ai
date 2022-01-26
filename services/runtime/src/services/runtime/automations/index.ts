@@ -10,15 +10,13 @@ import { runInstruction } from "./instructions";
 export async function executeAutomation(
   workspace: Workspace,
   automation: Prismeai.Automation,
-  payload: object,
   ctx: ContextsManager,
   logger: Logger,
   broker: Broker
 ) {
-  ctx.run.payload = payload;
   await ctx.securityChecks();
 
-  for (const instruction of automation.do) {
+  for (const instruction of automation.do || []) {
     // Before each run, we interpolate the instruction to replace all the variables based on the context
     const interpolatedInstruction = interpolate(
       instruction,
@@ -34,41 +32,46 @@ export async function executeAutomation(
     );
 
     if (!knownInstruction) {
-      const keys = Object.keys(interpolatedInstruction);
-      if (!keys.length) {
+      const automationName = Object.keys(interpolatedInstruction)[0];
+      if (!automationName) {
         return;
       }
-      const customAutomation = workspace.getAutomation(keys[0]);
-      if (!customAutomation) {
+      const calledAutomation = workspace.getAutomation(automationName);
+      if (!calledAutomation) {
         logger.trace({
-          msg: `Did not find any automation matching '${keys[0]}'`,
+          msg: `Did not find any automation matching '${automationName}'`,
         });
         broker.send(
           "error",
           new ObjectNotFoundError(`Automation not found`, {
             workspaceId: workspace.id,
-            automation: keys[0],
+            automation: automationName,
           })
         );
         return;
       }
-      await executeAutomation(
+
+      const payload = interpolatedInstruction[automationName] || {};
+      const result = await executeAutomation(
         workspace,
-        customAutomation,
-        (<any>interpolatedInstruction)[keys[0]],
-        ctx,
+        calledAutomation,
+        ctx.child({ payload }),
         logger,
         broker
       );
+      if (typeof result !== "undefined" && (<any>payload).output!!) {
+        ctx.set((<any>payload).output, result);
+      }
     }
   }
 
+  await ctx.save(); // TODO only save updated contexts (avoid making N unecessary redis requests at each automation end)
   const output = evaluateOutput(automation, ctx);
   broker.send<Prismeai.ExecutedAutomation["payload"]>(
     EventType.ExecutedAutomation,
     {
       slug: automation.slug!,
-      payload,
+      payload: ctx.payload,
       output,
     }
   );

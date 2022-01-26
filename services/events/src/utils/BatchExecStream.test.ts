@@ -88,7 +88,7 @@ describe("When flushing is faster than writting", () => {
     await sendChunks(willSend, stream);
     stream.end();
     await stream.onClosed();
-    await sleep(200); // onClosed occasionally returns while last chunks are still flushing :(
+    await sleep(400); // onClosed occasionally returns while last chunks are still flushing :(
 
     verifyReceivedChunks(received, willSend);
   });
@@ -102,7 +102,7 @@ describe("When flushing is slower than writting", () => {
     const received: Chunk[] = [];
 
     const stream = getStream({
-      flushEvery: 500,
+      flushEvery: 300,
       highWaterMark: 50,
       flushAt: 20,
       bulkExec: async (chunks) => {
@@ -113,7 +113,7 @@ describe("When flushing is slower than writting", () => {
     await sendChunks(willSend, stream);
     stream.end();
     await stream.onClosed();
-    await sleep(200); // onClosed occasionally returns while last chunks are still flushing :(
+    await sleep(400); // onClosed occasionally returns while last chunks are still flushing :(
 
     verifyReceivedChunks(received, willSend);
   });
@@ -125,7 +125,7 @@ describe("When flushing is slower than writting", () => {
     const received: Chunk[] = [];
 
     const stream = getStream({
-      flushEvery: 500,
+      flushEvery: 300,
       highWaterMark: 50,
       flushAt: 20,
       bulkExec: async (chunks) => {
@@ -139,7 +139,7 @@ describe("When flushing is slower than writting", () => {
     await sendChunks(willSend, stream);
     stream.end();
     await stream.onClosed();
-    await sleep(200); // onClosed occasionally returns while last chunks are still flushing :(
+    await sleep(400); // onClosed occasionally returns while last chunks are still flushing :(
 
     verifyReceivedChunks(received, willSend);
   });

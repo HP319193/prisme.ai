@@ -481,7 +481,7 @@ declare namespace Prismeai {
      * Full description at (TODO swagger url)
      */
     export interface Automation {
-        trigger?: Trigger;
+        when?: When;
         description?: LocalizedText;
         arguments?: {
             [name: string]: TypedArgument;
@@ -652,6 +652,28 @@ declare namespace Prismeai {
             email: string;
         };
     }
+    export interface Fetch {
+        /**
+         * Send an HTTP request
+         */
+        fetch: {
+            url: string;
+            method?: "get" | "post" | "put" | "patch" | "delete";
+            headers?: {
+                [name: string]: any;
+            };
+            /**
+             * HTTP request body
+             */
+            body?: {
+                [key: string]: any;
+            };
+            /**
+             * Name of the variable which will hold the result
+             */
+            output?: string;
+        };
+    }
     export interface ForbiddenError {
         /**
          * example:
@@ -692,7 +714,7 @@ declare namespace Prismeai {
         type: "workspaces.app.installed";
         payload: AppInstance;
     }
-    export type Instruction = Emit | Wait | Set | Delete | Conditions | Repeat | All | Break | {
+    export type Instruction = Emit | Wait | Set | Delete | Conditions | Repeat | All | Break | Fetch | {
         [name: string]: any;
     };
     export type InstructionList = Instruction[];
@@ -784,58 +806,6 @@ declare namespace Prismeai {
             id: string;
         };
     }
-    export type Trigger = {
-        /**
-         * example:
-         * [
-         *   "prismeaiMessenger.event"
-         * ]
-         */
-        events: string[];
-        /**
-         * example:
-         * [
-         *   "2021-12-25T00:00",
-         *   "* * 1 * *"
-         * ]
-         */
-        dates?: string[];
-        endpoint?: boolean | string;
-    } | {
-        /**
-         * example:
-         * [
-         *   "prismeaiMessenger.event"
-         * ]
-         */
-        events?: string[];
-        /**
-         * example:
-         * [
-         *   "2021-12-25T00:00",
-         *   "* * 1 * *"
-         * ]
-         */
-        dates: string[];
-        endpoint?: boolean | string;
-    } | {
-        /**
-         * example:
-         * [
-         *   "prismeaiMessenger.event"
-         * ]
-         */
-        events?: string[];
-        /**
-         * example:
-         * [
-         *   "2021-12-25T00:00",
-         *   "* * 1 * *"
-         * ]
-         */
-        dates?: string[];
-        endpoint: boolean | string;
-    };
     export interface TriggeredAutomation {
         /**
          * example:
@@ -985,6 +955,58 @@ declare namespace Prismeai {
             output?: string;
         };
     }
+    export type When = {
+        /**
+         * example:
+         * [
+         *   "prismeaiMessenger.event"
+         * ]
+         */
+        events: string[];
+        /**
+         * example:
+         * [
+         *   "2021-12-25T00:00",
+         *   "* * 1 * *"
+         * ]
+         */
+        dates?: string[];
+        endpoint?: boolean | string;
+    } | {
+        /**
+         * example:
+         * [
+         *   "prismeaiMessenger.event"
+         * ]
+         */
+        events?: string[];
+        /**
+         * example:
+         * [
+         *   "2021-12-25T00:00",
+         *   "* * 1 * *"
+         * ]
+         */
+        dates: string[];
+        endpoint?: boolean | string;
+    } | {
+        /**
+         * example:
+         * [
+         *   "prismeaiMessenger.event"
+         * ]
+         */
+        events?: string[];
+        /**
+         * example:
+         * [
+         *   "2021-12-25T00:00",
+         *   "* * 1 * *"
+         * ]
+         */
+        dates?: string[];
+        endpoint: boolean | string;
+    };
     export interface Workspace {
         name: string;
         owner?: {

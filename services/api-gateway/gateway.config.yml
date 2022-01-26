@@ -34,7 +34,6 @@ pipelines:
     endpoints:
       - webhooks
     policies:
-      - authentication: {}
       - proxy:
           service: runtime
 
