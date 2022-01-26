@@ -16,4 +16,6 @@ export default {
   ).split(","),
 
   BROKER_NAMESPACE: process.env.BROKER_NAMESPACE,
+
+  BROKER_TOPIC_MAXLEN: parseInt(process.env.BROKER_TOPIC_MAXLEN || "10000"),
 };

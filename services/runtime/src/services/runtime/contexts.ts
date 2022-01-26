@@ -3,7 +3,16 @@ import {
   MAXIMUM_SUCCESSIVE_CALLS,
 } from "../../../config";
 import { CacheDriver } from "../../cache";
-import { TooManyCallError } from "../../errors";
+import {
+  InvalidSetInstructionError,
+  InvalidVariableNameError,
+  TooManyCallError,
+} from "../../errors";
+import { Logger, logger } from "../../logger";
+
+type RecursivePartial<T> = {
+  [P in keyof T]?: RecursivePartial<T[P]>;
+};
 
 // This contexts holds internal information about current run
 // and expires with last executed instruction
@@ -11,7 +20,6 @@ import { TooManyCallError } from "../../errors";
 export interface RunContext {
   depth: number; // Depth of current automation.
   correlationId: string;
-  payload: object;
 }
 
 export interface GlobalContext {
@@ -24,10 +32,14 @@ export interface UserContext {
   [k: string]: any;
 }
 
+// Holds local variables from current automation. Never persisted
+export type LocalContext = Record<string, any>;
+
 export interface Contexts {
   run: RunContext;
   global: GlobalContext;
   user: UserContext;
+  local: LocalContext;
   [k: string]: object;
 }
 
@@ -39,28 +51,46 @@ export enum ContextType {
 }
 
 type PublicContexts = Omit<Contexts, "run">;
+
+export const NativeContexts = ["global", "user"];
+
+const VariableNameValidationRegexp = new RegExp(/^[a-zA-Z0-9._-]+$/);
 export class ContextsManager {
   private workspaceId: string;
   private userId: string;
   private correlationId: string;
   private cache: CacheDriver;
   private contexts: Contexts;
+  private logger: Logger;
+
+  public payload: any;
 
   constructor(
     workspaceId: string,
     userId: string,
     correlationId: string,
-    cache: CacheDriver
+    cache: CacheDriver,
+    payload: any = {}
   ) {
     this.workspaceId = workspaceId;
     this.userId = userId;
     this.correlationId = correlationId;
     this.cache = cache;
-    this.contexts = this.default();
+    this.contexts = this.default({
+      local: payload,
+    });
+    this.logger = logger.child({
+      userId,
+      workspaceId,
+      correlationId,
+    });
+
+    this.payload = payload || {};
   }
 
-  private default(additionalContexts: Partial<Contexts> = {}) {
+  private default(additionalContexts: RecursivePartial<Contexts> = {}) {
     return {
+      local: {},
       ...additionalContexts,
       global: {
         ...(additionalContexts?.global || {}),
@@ -98,11 +128,12 @@ export class ContextsManager {
       global,
       run,
       user,
+      local: this.contexts.local,
     });
   }
 
   async save(context?: ContextType) {
-    const { global, run, user, ...customs } = this.contexts;
+    const { global, run, user, local: _, ...customs } = this.contexts;
 
     if (!context || context === ContextType.Global) {
       await this.cache.setObject(this.cacheKey(ContextType.Global), global);
@@ -145,17 +176,71 @@ export class ContextsManager {
     return this.contexts.run;
   }
 
-  get<T = object>(context: ContextType | string) {
-    if (context in ContextType) {
-      return this.contexts[context];
+  // Reinstantiate a new ContextsManager for a child execution context
+  child(opts: { resetLocal?: boolean; payload?: any } = {}): ContextsManager {
+    const childContexts: Contexts = {
+      ...this.contexts,
+      // If keeping local context, reinstantiate it to avoid parents context corruption by their children
+      local:
+        opts.resetLocal || true
+          ? opts.payload || {}
+          : { ...this.contexts.local, ...opts.payload },
+    };
+    const child = Object.assign({}, this, {
+      contexts: childContexts,
+      payload: opts.payload || {},
+    });
+    Object.setPrototypeOf(child, ContextsManager.prototype);
+    return child;
+  }
+
+  private validateVariableName(name: string) {
+    if (!VariableNameValidationRegexp.test(name)) {
+      throw new InvalidVariableNameError(
+        "Invalid variable name. Only allowed characters are : a-z, A-Z, 0-9, '_' et '-'.",
+        {
+          name,
+        }
+      );
     }
-    return this.contexts[ContextType.Customs] as any as T;
+  }
+
+  set(path: string, value: any) {
+    this.validateVariableName(path);
+    try {
+      const splittedPath = path.split(".");
+      const rootVarName = path[0];
+      const lastKey = splittedPath[splittedPath.length - 1];
+
+      const context: any = NativeContexts.includes(rootVarName)
+        ? this.contexts
+        : this.contexts.local;
+
+      let parentVariable = context;
+      for (let i = 0; i < splittedPath.length - 1; i++) {
+        const key = splittedPath[i];
+        if (!(key in parentVariable)) {
+          parentVariable[key] = {};
+        }
+        parentVariable = parentVariable[key];
+      }
+
+      parentVariable[lastKey] = value;
+    } catch (error) {
+      this.logger.error(error);
+      throw new InvalidSetInstructionError("Invalid set instruction", {
+        variable: path,
+        value,
+      });
+    }
   }
 
   get publicContexts(): PublicContexts {
-    const publicContexts = { ...this.contexts } as PublicContexts;
-    delete publicContexts.run;
-    return publicContexts;
+    const { run: _, local, ...publicContexts } = this.contexts;
+    return {
+      ...publicContexts,
+      ...local,
+    };
   }
 
   async securityChecks() {

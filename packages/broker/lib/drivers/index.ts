@@ -49,6 +49,8 @@ export interface DriverOptions {
 
   // Mainly used by unit tests and preview envs to send & rcv events from distinct namespaces on the same broker instance
   namespace?: string;
+
+  topicsMaxLen?: number; // Cap topics to a max number of events (oldest events get removed to stay under this threshold)
 }
 
 export function driver(opts: DriverOptions) {

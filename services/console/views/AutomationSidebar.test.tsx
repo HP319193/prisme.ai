@@ -60,7 +60,7 @@ it("should create an automation", async () => {
     useWorkspace().workspace,
     {
       name: "automations.create.defaultName",
-      trigger: {
+      when: {
         events: ["automations.create.value.event"],
       },
       do: [
@@ -93,7 +93,7 @@ it("should create an automation with existing name", async () => {
     useWorkspace().workspace,
     {
       name: "automations.create.defaultName (1)",
-      trigger: {
+      when: {
         events: ["automations.create.value.event"],
       },
       do: [

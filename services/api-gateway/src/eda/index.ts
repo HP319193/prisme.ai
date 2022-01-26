@@ -11,6 +11,7 @@ const {
   EVENTS_OAS_PATH,
   BROKER_WHITELIST_EVENT_PREFIXES,
   BROKER_NAMESPACE,
+  BROKER_TOPIC_MAXLEN,
 } = edaConfig;
 
 export enum EventType {
@@ -36,6 +37,7 @@ export const broker = new Broker<CallbackContext>(
       host: BROKER_HOST,
       password: BROKER_PASSWORD,
       namespace: BROKER_NAMESPACE,
+      topicsMaxLen: BROKER_TOPIC_MAXLEN,
     },
     validator: {
       oasFilepath: EVENTS_OAS_PATH,

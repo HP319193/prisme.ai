@@ -89,9 +89,6 @@ npm_install:
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
-  when:
-    - manual
-    - on_success
   services:
     - docker:stable-dind
   script:
@@ -111,9 +108,6 @@ npm_install:
   stage: deploy
   tags:
     - internal-runner
-  when:
-    - manual
-    - on_success
   image:
     name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
     entrypoint: ["/bin/sh", "-c"]
@@ -216,6 +210,14 @@ workspaces_deploy:
     - export K8S_NAME=$WORKSPACES_K8S_NAME
 
 # ## Runtime jobs
+events_test:
+  extends: .npm_test
+  only:
+    changes:
+      - "services/runtime/**/*"
+  before_script:
+    - export DIRECTORY=services/$RUNTIME_DIRECTORY
+
 runtime_build_docker:
   extends: .build_docker
   interruptible: true # Stop this job if a new one has been triggered by the same branch

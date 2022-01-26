@@ -110,10 +110,30 @@ export class ClientPool {
   }
 
   async send(message: any, stream: string) {
+    const options: {
+      TRIM?: {
+        strategy?: "MAXLEN" | "MINID";
+        strategyModifier?: "=" | "~";
+        threshold: number;
+        limit?: number;
+      };
+    } = this.opts.topicsMaxLen
+      ? {
+          TRIM: {
+            strategy: "MAXLEN",
+            threshold: this.opts.topicsMaxLen,
+          },
+        }
+      : {};
     return this.nonblocking.client
-      .xAdd(stream, "*", {
-        value: JSON.stringify(message),
-      })
+      .xAdd(
+        stream,
+        "*",
+        {
+          value: JSON.stringify(message),
+        },
+        options
+      )
       .then((createdId: string) => {
         if (typeof createdId !== "string") {
           throw createdId;

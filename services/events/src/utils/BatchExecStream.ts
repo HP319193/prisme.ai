@@ -98,7 +98,7 @@ export default class BatchExecStream<T> extends Stream.Writable {
       });
       this.bulk.push(...bulk);
       this.bulkCount += bulk.length;
-      this.flush(callback);
+      callback();
       return;
     }
   }

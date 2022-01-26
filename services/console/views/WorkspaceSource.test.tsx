@@ -75,7 +75,7 @@ it('should check syntax', async () => {
   expect(ed.props.annotations).toEqual([]);
 
   (useYaml().toJSON as jest.Mock).mockImplementation(() => {
-    throw new YAMLException('Invalid', {
+    const e = new YAMLException('Invalid', {
       line: 3,
       position: 0,
       buffer: '',
@@ -83,6 +83,10 @@ it('should check syntax', async () => {
       snippet: 'error',
       name: 'error'
     })
+    e.message = `Invalid in \"error\" (4:1)
+
+error`
+    throw e;
   })
   act(() => {
     ed.props.onChange(`

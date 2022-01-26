@@ -1,4 +1,4 @@
-export type DetailedTrigger = Prismeai.Trigger & {
+export type DetailedTrigger = Prismeai.When & {
   automationSlug: string;
 };
 type EventName = string;
@@ -30,14 +30,14 @@ export class Workspace {
     this.triggers = Object.keys(automations).reduce(
       (prev, key) => {
         const automation = automations[key];
-        const { trigger, trigger: { events, endpoint } = {} } = automation;
-        if (!trigger) return prev;
+        const { when, when: { events, endpoint } = {} } = automation;
+        if (!when) return prev;
         if (events) {
           events.forEach((event) => {
             prev.events[event] = [
               ...(prev.events[event] || []),
               {
-                ...trigger,
+                ...when,
                 automationSlug: key,
               },
             ];
@@ -48,7 +48,7 @@ export class Workspace {
           prev.endpoints[endpointName] = [
             ...(prev.endpoints[endpointName] || []),
             {
-              ...trigger,
+              ...when,
               automationSlug: key,
             },
           ];
