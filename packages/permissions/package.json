@@ -1,0 +1,26 @@
+{
+  "name": "@prisme.ai/permissions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/prisme.ai/prisme.ai.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/prisme.ai/prisme.ai/issues"
+  },
+  "homepage": "https://gitlab.com/prisme.ai/prisme.ai#readme",
+  "dependencies": {
+    "@casl/ability": "^5.4.3",
+    "@casl/mongoose": "^6.0.0",
+    "@casl/prisma": "^1.0.1",
+    "@prisma/client": "^3.8.1",
+    "mongoose": "^6.1.8"
+  }
+}
