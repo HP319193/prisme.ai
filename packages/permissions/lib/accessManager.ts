@@ -307,4 +307,23 @@ export class AccessManager<
     await doc.save();
     return doc.filterFields();
   }
+
+  async throwUnlessCan(
+    actionType: ActionType,
+    subjectType: SubjectType,
+    id: string
+  ) {
+    const { permissions, user } = this.checkAsUser();
+
+    const subject = await this.fetch(subjectType, id);
+    if (!subject) {
+      throw new ObjectNotFoundError();
+    }
+
+    permissions.throwUnlessCan(
+      actionType,
+      subjectType,
+      subject?.filterFields()
+    );
+  }
 }

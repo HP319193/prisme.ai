@@ -14,4 +14,11 @@ export default <Record<string, StorageOptions>>{
     password: process.env.SESSIONS_STORAGE_PASSWORD,
     driverOptions: extractOptsFromEnv("SESSIONS_STORAGE_OPT_"),
   },
+
+  Permissions: {
+    driver: "mongoose",
+    host:
+      process.env.PERMISSIONS_STORAGE_HOST || "mongodb://localhost:27017/eda",
+    driverOptions: {},
+  },
 };

@@ -23,7 +23,6 @@ export default (logger: Logger, ctx: PrismeContext) => {
   return {
     createWorkspace: workspacesCrud.createWorkspace,
     getWorkspace: workspacesCrud.getWorkspace,
-    getWorkspaces: workspacesCrud.getWorkspaces,
     updateWorkspace: workspacesCrud.updateWorkspace,
     deleteWorkspace: workspacesCrud.deleteWorkspace,
     createAutomation: automationsCrud.createAutomation,

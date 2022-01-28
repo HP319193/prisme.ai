@@ -6,13 +6,23 @@ import { EventType } from "../../eda";
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from "../../errors";
 import { logger } from "../../logger";
 
+enum KnownErrorCodes {
+  ObjectNotFound = "ObjectNotFoundError",
+  ForbiddenError = "ForbiddenError",
+  BrokerError = "BrokerError",
+  UnknownRole = "UnknownRole",
+}
+
 function errorHttpStatus(err: Error, serverError: boolean) {
-  // Handles express-openapi-validator not found error
   if (
     (<any>err)?.details?.[0]?.message === "not found" ||
-    err instanceof ObjectNotFoundError
+    err instanceof ObjectNotFoundError ||
+    (err as any).error == KnownErrorCodes.ObjectNotFound
   ) {
     return 404;
+  }
+  if ((err as any).error == KnownErrorCodes.ForbiddenError) {
+    return 403;
   }
   return serverError ? 500 : 400;
 }
@@ -34,9 +44,12 @@ export const errorDecorator = (
   res: Response,
   next: NextFunction
 ) => {
+  const isKnownErrorCode = Object.values(KnownErrorCodes).includes(
+    (err as PrismeError).error as KnownErrorCodes
+  );
   // Server error and stack trace is available - it is most likely a developer error
   const serverError =
-    (err as PrismeError).error !== "BrokerError" &&
+    !isKnownErrorCode &&
     (!(err instanceof PrismeError) ||
       (err as PrismeError).severity === ErrorSeverity.Fatal);
 
@@ -52,7 +65,7 @@ export const errorDecorator = (
 
   next({
     error:
-      err instanceof PrismeError || (err as PrismeError).error === "BrokerError"
+      err instanceof PrismeError || isKnownErrorCode
         ? PrismeError.prototype.toJSON.apply(err)
         : err,
     httpStatus: errorHttpStatus(err, serverError),
