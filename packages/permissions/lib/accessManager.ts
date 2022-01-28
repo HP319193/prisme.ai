@@ -25,7 +25,7 @@ export interface AccessManagerOptions<SubjectType extends string = string> {
     host: string;
     password?: string;
   };
-  schemas: Record<SubjectType, mongoose.Schema>;
+  schemas: Record<SubjectType, mongoose.Schema | Record<string, object>>;
 }
 
 export class AccessManager<
@@ -50,7 +50,12 @@ export class AccessManager<
 
     const schemas: Record<SubjectType, mongoose.Schema> = Object.entries(
       opts.schemas
-    ).reduce((schemas, [name, schema]) => {
+    ).reduce((schemas, [name, schemaDef]) => {
+      const schema =
+        schemaDef instanceof mongoose.Schema
+          ? schemaDef
+          : new mongoose.Schema(schemaDef as Record<string, object>);
+
       (schema as mongoose.Schema).plugin(accessibleRecordsPlugin);
       (schema as mongoose.Schema).add(BaseSchema);
 
@@ -109,8 +114,11 @@ export class AccessManager<
     subjectType: returnType,
     id: string
   ): Promise<Document<SubjectInterfaces[returnType]> | null> {
+    if (!id) {
+      return null;
+    }
     const Model = this.model(subjectType);
-    const subject = await Model.findById(id);
+    const subject = await Model.findOne({ id });
 
     return subject;
   }
@@ -171,7 +179,7 @@ export class AccessManager<
     const object: T =
       typeof (<Document>document).toJSON === "function"
         ? ((<Document>document).toJSON() as T)
-        : (document as T);
+        : ({ ...document } as T);
 
     delete (<any>object).createdAt;
     delete (<any>object).createdBy;
@@ -184,7 +192,7 @@ export class AccessManager<
 
   async create<returnType extends SubjectType>(
     subjectType: returnType,
-    subject: Omit<SubjectInterfaces[returnType], "id">
+    subject: Omit<SubjectInterfaces[returnType], "id"> & { id?: string }
   ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions, user } = this.checkAsUser();
     permissions.throwUnlessCan(ActionType.Create, subjectType, subject!!);
@@ -197,6 +205,7 @@ export class AccessManager<
       createdAt: date.toISOString(),
       updatedAt: date.toISOString(),
     });
+    object.id = subject.id || object._id!!.toString();
     await object.save();
     const doc = object.filterFields();
     permissions.pullRoleFromSubject(subjectType, doc);
@@ -229,6 +238,24 @@ export class AccessManager<
     await currentSubject.save();
 
     return currentSubject.filterFields();
+  }
+
+  async delete<returnType extends SubjectType>(
+    subjectType: returnType,
+    id: string
+  ): Promise<void> {
+    const { permissions, user } = this.checkAsUser();
+    const subject = await this.fetch(subjectType, id);
+    if (!subject) {
+      throw new ObjectNotFoundError();
+    }
+
+    permissions.throwUnlessCan(
+      ActionType.Delete,
+      subjectType,
+      subject.filterFields()
+    );
+    await subject.delete();
   }
 
   async grant<returnType extends SubjectType>(

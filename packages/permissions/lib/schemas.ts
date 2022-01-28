@@ -1,5 +1,5 @@
-import { Schema, Document } from "mongoose";
-import { ActionType, Subject } from "..";
+import { Schema, Document, Types } from "mongoose";
+import { Subject } from "..";
 
 const CollaboratorSchema = new Schema(
   {
@@ -15,6 +15,8 @@ const CollaboratorSchema = new Schema(
 );
 
 const BaseSchema = new Schema({
+  _id: { type: Types.ObjectId, auto: true },
+  id: { type: String, index: true, unique: true },
   createdBy: String,
   updatedBy: String,
   createdAt: String,
@@ -29,14 +31,13 @@ const BaseSchema = new Schema({
 export { BaseSchema };
 
 export function buildFilterFieldsMethod() {
-  return function (
-    this: Document | Subject,
-    action: ActionType = ActionType.Read
-  ) {
+  return function (this: Document | Subject) {
     const object: Subject =
       typeof this.toJSON === "function" ? this.toJSON() : this;
     if (object._id) {
-      object.id = object._id.toString();
+      if (!object.id) {
+        object.id = object._id.toString();
+      }
       delete object._id;
     }
     if (typeof object.__v !== "undefined") {

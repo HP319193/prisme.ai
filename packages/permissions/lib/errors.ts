@@ -7,9 +7,9 @@ export class PrismeError extends Error implements PrismeError {
   public error: string;
   public details: any;
 
-  constructor(message: string, details: any) {
+  constructor(message: string, details: any, code?: string) {
     super(message);
-    this.error = this.constructor.name;
+    this.error = code || this.constructor.name;
     this.details = details;
   }
 
@@ -24,18 +24,18 @@ export class PrismeError extends Error implements PrismeError {
 
 export class ForbiddenError extends PrismeError {
   constructor(msg: string = "Unauthorized access", details?: any) {
-    super(msg, details);
+    super(msg, details, "ForbiddenError");
   }
 }
 
 export class UnknownRole extends PrismeError {
   constructor(msg: string = "Unknown role", details?: any) {
-    super(msg, details);
+    super(msg, details, "UnknownRole");
   }
 }
 
 export class ObjectNotFoundError extends PrismeError {
   constructor(msg: string = "Object not found") {
-    super(msg, []);
+    super(msg, [], "ObjectNotFoundError");
   }
 }

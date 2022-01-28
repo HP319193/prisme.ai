@@ -2,7 +2,7 @@
   "name": "@prisme.ai/permissions",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/permissions/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,8 +19,6 @@
   "dependencies": {
     "@casl/ability": "^5.4.3",
     "@casl/mongoose": "^6.0.0",
-    "@casl/prisma": "^1.0.1",
-    "@prisma/client": "^3.8.1",
     "mongoose": "^6.1.8"
   }
 }
