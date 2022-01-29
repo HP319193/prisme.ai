@@ -25,7 +25,10 @@ export interface AccessManagerOptions<SubjectType extends string = string> {
     host: string;
     password?: string;
   };
-  schemas: Record<SubjectType, mongoose.Schema | Record<string, object>>;
+  schemas: Record<
+    SubjectType,
+    false | mongoose.Schema | Record<string, object>
+  >;
 }
 
 export class AccessManager<
@@ -48,27 +51,29 @@ export class AccessManager<
       subjectTypes: Object.keys(opts.schemas) as any as SubjectType[],
     };
 
-    const schemas: Record<SubjectType, mongoose.Schema> = Object.entries(
-      opts.schemas
-    ).reduce((schemas, [name, schemaDef]) => {
-      const schema =
-        schemaDef instanceof mongoose.Schema
-          ? schemaDef
-          : new mongoose.Schema(schemaDef as Record<string, object>);
+    const schemas: Record<SubjectType, mongoose.Schema | false> =
+      Object.entries(opts.schemas).reduce((schemas, [name, schemaDef]) => {
+        if (schemaDef === false) {
+          return { ...schemas, [name]: false };
+        }
+        const schema =
+          schemaDef instanceof mongoose.Schema
+            ? schemaDef
+            : new mongoose.Schema(schemaDef as Record<string, object>);
 
-      (schema as mongoose.Schema).plugin(accessibleRecordsPlugin);
-      (schema as mongoose.Schema).add(BaseSchema);
+        (schema as mongoose.Schema).plugin(accessibleRecordsPlugin);
+        (schema as mongoose.Schema).add(BaseSchema);
 
-      (schema as mongoose.Schema).method(
-        "filterFields",
-        buildFilterFieldsMethod()
-      );
+        (schema as mongoose.Schema).method(
+          "filterFields",
+          buildFilterFieldsMethod()
+        );
 
-      return {
-        ...schemas,
-        [name]: schema,
-      };
-    }, {} as Record<SubjectType, mongoose.Schema>);
+        return {
+          ...schemas,
+          [name]: schema,
+        };
+      }, {} as Record<SubjectType, mongoose.Schema>);
 
     validateRules(
       (permissionsConfig.abac || []).concat(
@@ -78,6 +83,9 @@ export class AccessManager<
     );
 
     this.models = Object.entries(schemas).reduce((models, [name, schema]) => {
+      if (schema === false) {
+        return models;
+      }
       return {
         ...models,
         [name]: mongoose.model(name, schema as mongoose.Schema),
@@ -127,7 +135,9 @@ export class AccessManager<
     subjectType: returnType
   ): AccessibleRecordModel<Document<SubjectInterfaces[returnType]>> {
     if (!(subjectType in this.models)) {
-      throw new Error(`Unknown model ${subjectType}`);
+      throw new Error(
+        `Unknown model ${subjectType}. Did you provide a persistance schema for this subjectType ?`
+      );
     }
     return this.models[subjectType];
   }
@@ -324,6 +334,17 @@ export class AccessManager<
       actionType,
       subjectType,
       subject?.filterFields()
+    );
+  }
+
+  filterSubjectsBy<returnType extends SubjectType>(
+    actionType: ActionType,
+    subjectType: returnType,
+    subjects: SubjectInterfaces[returnType][]
+  ): SubjectInterfaces[returnType][] {
+    const { permissions, user } = this.checkAsUser();
+    return subjects.filter((cur) =>
+      permissions.can(actionType, subjectType, cur)
     );
   }
 }

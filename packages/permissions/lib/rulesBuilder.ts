@@ -116,7 +116,7 @@ export function nativeRules(
 
 export async function validateRules(
   rules: RawRuleOf<Ability>[],
-  schemas: Record<string, Schema>
+  schemas: Record<string, Schema | false>
 ) {
   for (const rule of rules) {
     const targetSubjects =
@@ -127,11 +127,14 @@ export async function validateRules(
         : [rule.subject];
     for (const subject of targetSubjects) {
       const schema = schemas[subject as string];
+      if (schema === false) {
+        continue;
+      }
       if (!schema) {
         throw new Error(
           `Permission rules refers to subject type '${subject}' which hasn't any defined schema : ${JSON.stringify(
             rule
-          )}`
+          )}. If you do not want any persistance schema, please set it to false.`
         );
       }
       const fields = Object.keys(rule.conditions || {}).map(

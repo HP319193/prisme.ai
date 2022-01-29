@@ -110,7 +110,9 @@ describe("CRUD with a predefined role", () => {
       updatedWorkspace
     );
 
-    expect(workspace).toMatchObject(updatedWorkspace);
+    expect(workspace).toEqual(
+      expect.objectContaining({ name: updatedWorkspace.name })
+    );
     expect(workspace.updatedAt).not.toEqual(updatedWorkspace.createdAt);
   });
 
