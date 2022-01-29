@@ -7,6 +7,7 @@ import {
   EVENTS_BUFFER_FLUSH_EVERY,
   EVENTS_BUFFER_HIGH_WATERMARK,
   EVENTS_STORAGE_ES_OPTIONS,
+  PERMISSIONS_STORAGE_MONGODB_OPTIONS,
   PORT,
 } from "../config";
 
@@ -17,6 +18,7 @@ import "@prisme.ai/types";
 import { Subscriptions } from "./services/events/Subscriptions";
 import BatchExecStream from "./utils/BatchExecStream";
 import { buildEventsStore } from "./services/events/store";
+import { initAccessManager } from "./permissions";
 
 process.on("uncaughtException", uncaughtExceptionHandler);
 
@@ -31,7 +33,10 @@ process.on("SIGINT", exit);
 const app = express();
 const httpServer = http.createServer(app);
 
-const subscriptions = new Subscriptions(broker);
+const accessManager = initAccessManager(PERMISSIONS_STORAGE_MONGODB_OPTIONS);
+accessManager.start();
+
+const subscriptions = new Subscriptions(broker, accessManager);
 subscriptions.start();
 const store = buildEventsStore(EVENTS_STORAGE_ES_OPTIONS);
 
@@ -48,7 +53,7 @@ broker.all(async function saveEvent(event): Promise<boolean> {
   return true;
 });
 
-initAPI(app, httpServer, subscriptions, store);
+initAPI(app, httpServer, subscriptions, store, accessManager);
 
 httpServer.listen(PORT, function () {
   console.log(`${APP_NAME} listening on ${PORT}.`);

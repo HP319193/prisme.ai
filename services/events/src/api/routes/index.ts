@@ -6,12 +6,14 @@ import { initEventsRoutes } from "./events";
 import { initWebsockets } from "./websockets";
 import { Subscriptions } from "../../services/events/Subscriptions";
 import { EventsStore } from "../../services/events/store";
+import { AccessManager } from "../../permissions";
 
 export const init = (
   app: Application,
   httpServer: http.Server,
   eventsSubscription: Subscriptions,
-  eventsStore: EventsStore
+  eventsStore: EventsStore,
+  accessManager: AccessManager
 ): void => {
   initWebsockets(httpServer, eventsSubscription);
 

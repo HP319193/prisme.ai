@@ -1,8 +1,10 @@
 import { Broker, PrismeEvent } from "@prisme.ai/broker";
+import { AccessManager, SubjectType, ActionType } from "../../permissions";
 
 export interface Subscriber {
   userId: string;
   callback: (event: PrismeEvent<any>) => void;
+  accessManager: Required<AccessManager>;
 }
 
 type WorkspaceId = string;
@@ -10,10 +12,12 @@ type WorkspaceId = string;
 export class Subscriptions {
   private broker: Broker;
   private subscribers: Record<WorkspaceId, Subscriber[]>;
+  private accessManager: AccessManager;
 
-  constructor(broker: Broker) {
+  constructor(broker: Broker, accessManager: AccessManager) {
     this.broker = broker;
     this.subscribers = {};
+    this.accessManager = accessManager;
   }
 
   start() {
@@ -23,8 +27,10 @@ export class Subscriptions {
         logger.trace({ msg: "Received event", event });
         if (!event.source.workspaceId) return true;
         const subscribers = this.subscribers[event.source.workspaceId];
-        (subscribers || []).forEach(({ callback }) => {
-          callback(event);
+        (subscribers || []).forEach(({ callback, accessManager }) => {
+          if (accessManager.can(ActionType.Read, SubjectType.Event, event)) {
+            callback(event);
+          }
         });
         return true;
       },
@@ -34,11 +40,23 @@ export class Subscriptions {
     );
   }
 
-  subscribe(workspaceId: string, subscriber: Subscriber): () => void {
+  subscribe(
+    workspaceId: string,
+    subscriber: Omit<Subscriber, "accessManager">
+  ): () => void {
     if (!(workspaceId in this.subscribers)) {
       this.subscribers[workspaceId] = [];
     }
-    this.subscribers[workspaceId].push(subscriber);
+
+    const userAccessManager = this.accessManager.as({
+      id: subscriber.userId,
+    });
+    userAccessManager.pullRoleFromSubject(SubjectType.Workspace, workspaceId);
+
+    this.subscribers[workspaceId].push({
+      ...subscriber,
+      accessManager: userAccessManager,
+    });
 
     return () => {
       this.subscribers[workspaceId] = this.subscribers[workspaceId].filter(

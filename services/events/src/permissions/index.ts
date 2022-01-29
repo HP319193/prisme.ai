@@ -1,3 +1,4 @@
+import { PrismeEvent } from "@prisme.ai/broker";
 import {
   AccessManager as GenericAccessManager,
   AccessManagerOptions,
@@ -9,6 +10,7 @@ export { SubjectType, Role, ActionType };
 
 type SubjectInterfaces = {
   [SubjectType.Workspace]: { id: string; name: string };
+  [SubjectType.Event]: Prismeai.PrismeEvent | PrismeEvent;
 };
 
 export type AccessManager = GenericAccessManager<
@@ -24,6 +26,7 @@ export function initAccessManager(storage: AccessManagerOptions["storage"]) {
         workspace: {
           name: String,
         },
+        event: false,
       },
     },
     config

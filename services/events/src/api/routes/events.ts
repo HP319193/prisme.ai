@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { SubjectType, ActionType } from "../../permissions";
 import services from "../../services";
 import { EventsStore, PayloadQuery } from "../../services/events/store";
 import { asyncRoute } from "../utils/async";
@@ -9,9 +10,17 @@ export function initEventsRoutes(eventsStore: EventsStore) {
       logger,
       context,
       body,
+      params: { workspaceId },
+      accessManager,
     }: Request<any, any, PrismeaiAPI.SendWorkspaceEvent.RequestBody>,
     res: Response
   ) {
+    for (let event of body.events) {
+      await accessManager.throwUnlessCan(ActionType.Create, SubjectType.Event, {
+        ...event,
+        source: { workspaceId },
+      } as Prismeai.PrismeEvent);
+    }
     const events = services.events(logger, context);
 
     const result = await Promise.all(body.events.map(events.sendEvent));
@@ -30,6 +39,7 @@ export function initEventsRoutes(eventsStore: EventsStore) {
         limit,
         ...payloadQuery
       },
+      accessManager,
     }: Request<
       PrismeaiAPI.EventsLongpolling.PathParameters,
       PrismeaiAPI.EventsLongpolling.Responses.$200,
@@ -47,9 +57,14 @@ export function initEventsRoutes(eventsStore: EventsStore) {
       payloadQuery: payloadQuery as PayloadQuery,
       types: types ? types.split(",") : undefined,
     });
+
     return res.send({
       result: {
-        events,
+        events: accessManager.filterSubjectsBy(
+          ActionType.Read,
+          SubjectType.Event,
+          events
+        ),
       },
     });
   }

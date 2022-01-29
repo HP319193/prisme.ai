@@ -318,14 +318,26 @@ export class AccessManager<
     return doc.filterFields();
   }
 
-  async throwUnlessCan(
+  can<returnType extends SubjectType>(
+    actionType: ActionType,
+    subjectType: returnType,
+    subject: SubjectInterfaces[returnType]
+  ): boolean {
+    const { permissions, user } = this.checkAsUser();
+    return permissions.can(actionType, subjectType, subject);
+  }
+
+  async throwUnlessCan<returnType extends SubjectType>(
     actionType: ActionType,
     subjectType: SubjectType,
-    id: string
+    idOrSubject: SubjectInterfaces[returnType] | string
   ) {
     const { permissions, user } = this.checkAsUser();
 
-    const subject = await this.fetch(subjectType, id);
+    const subject =
+      typeof idOrSubject === "string"
+        ? await this.fetch(subjectType, idOrSubject)
+        : idOrSubject;
     if (!subject) {
       throw new ObjectNotFoundError();
     }
@@ -333,7 +345,9 @@ export class AccessManager<
     permissions.throwUnlessCan(
       actionType,
       subjectType,
-      subject?.filterFields()
+      typeof subject.filterFields === "function"
+        ? subject.filterFields()
+        : subject
     );
   }
 
