@@ -10,8 +10,8 @@ interface LayoutProps {
 const Layout = ({ Header, Content, PageHeader }: LayoutProps) => (
   <AntdLayout>
     <AntdLayout.Header>
-      <div>{Header}</div>
-      <div>{PageHeader}</div>
+      {Header}
+      {PageHeader}
     </AntdLayout.Header>
     <AntdLayout.Content>{Content}</AntdLayout.Content>
   </AntdLayout>
