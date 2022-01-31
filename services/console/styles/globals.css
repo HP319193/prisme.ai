@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html,
 body {
   padding: 0;
@@ -30,11 +34,13 @@ a {
   font-weight: inherit;
   color: inherit;
 }
+
 .prisme-events-viewer__event.p-accordion
   .p-accordion-header
   .p-accordion-header-text {
   color: inherit;
 }
+
 .prisme-events-viewer__event.p-accordion .p-accordion-content {
   padding: 0;
 }
