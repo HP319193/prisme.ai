@@ -1,10 +1,11 @@
 import { Row, Col } from "../components/DesignSystem";
+import { Story } from "@storybook/react";
 
 export default {
   title: "Layout/RowCol",
 };
 
-const Template = (args) => (
+const Template: Story = (args) => (
   <>
     <Row>
       <Col span={24}>col</Col>

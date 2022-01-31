@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { Button } from "antd";
+import { Button as AntdButton } from "antd";
 
 type antdButtonsType = "link" | "text" | "default";
 
@@ -9,13 +9,13 @@ const prismeBtnTypeToAntdType: [string, antdButtonsType][] = [
   ["link", "link"],
 ];
 
-interface ButtonProps {
-  children: ReactElement;
+export interface ButtonProps {
+  children: ReactElement | string;
   type?: string;
   key?: string | number;
 }
 
-export default ({ children, type = "default", key }: ButtonProps) => {
+const Button = ({ children, type = "default", key }: ButtonProps) => {
   const btnType = prismeBtnTypeToAntdType.find(
     ([inputType, resultType]) => inputType === type
   );
@@ -26,8 +26,10 @@ export default ({ children, type = "default", key }: ButtonProps) => {
   }
 
   return (
-    <Button type={btnType[1]} key={key}>
+    <AntdButton type={btnType[1]} key={key}>
       {children}
-    </Button>
+    </AntdButton>
   );
 };
+
+export default Button;

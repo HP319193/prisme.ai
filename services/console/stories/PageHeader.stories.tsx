@@ -1,16 +1,20 @@
 import { Button, PageHeader } from "../components/DesignSystem";
 import "./no-padding.css";
+import { PageHeaderProps } from "../components/DesignSystem/PageHeader";
+import { Story } from "@storybook/react";
 
 export default {
   title: "Layout/PageHeader",
 };
 
 const RightButtons = [
-  <Button type="grey">Button 1</Button>,
-  <Button>Button 2</Button>,
+  <Button type="grey" key="1">
+    Button 1
+  </Button>,
+  <Button key="2">Button 2</Button>,
 ];
 
-const Template = (args) => (
+const Template: Story<PageHeaderProps> = (args: any) => (
   <PageHeader title={"Send mail automation"} {...args} />
 );
 

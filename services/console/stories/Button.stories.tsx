@@ -1,5 +1,7 @@
 import React from "react";
+import { ButtonProps } from "../components/DesignSystem/Button";
 import { Button } from "../components/DesignSystem";
+import { Story } from "@storybook/react";
 
 export default {
   title: "Components/Button",
@@ -12,7 +14,9 @@ export default {
   },
 };
 
-const Template = (args) => <Button {...args}>I am a button !</Button>;
+const Template: Story<ButtonProps> = (args: any) => (
+  <Button {...args}>I am a button !</Button>
+);
 
 export const Default = Template.bind({});
 Default.args = {

@@ -1,6 +1,5 @@
-import { Layout } from "antd";
+import { Layout as AntdLayout } from "antd";
 import { ReactNode } from "react";
-import { PageHeader } from "../../index";
 
 interface LayoutProps {
   Header: ReactNode;
@@ -8,12 +7,14 @@ interface LayoutProps {
   PageHeader: ReactNode;
 }
 
-export default ({ Header, Content, PageHeader }: LayoutProps) => (
-  <Layout>
-    <Layout.Header>
+const Layout = ({ Header, Content, PageHeader }: LayoutProps) => (
+  <AntdLayout>
+    <AntdLayout.Header>
       <div>{Header}</div>
       <div>{PageHeader}</div>
-    </Layout.Header>
-    <Layout.Content>{Content}</Layout.Content>
-  </Layout>
+    </AntdLayout.Header>
+    <AntdLayout.Content>{Content}</AntdLayout.Content>
+  </AntdLayout>
 );
+
+export default Layout;

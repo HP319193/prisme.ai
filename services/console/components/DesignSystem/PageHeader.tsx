@@ -1,15 +1,17 @@
-import { PageHeader } from "antd";
+import { PageHeader as AntdPageHeader } from "antd";
 
-interface PageHeaderProps {
+export interface PageHeaderProps {
   title: String;
   onBack: (e: any) => void;
   RightButtons?: JSX.Element[];
 }
 
-export default ({
+const PageHeader = ({
   title,
   onBack = () => null,
   RightButtons,
 }: PageHeaderProps) => (
-  <PageHeader onBack={onBack} title={title} extra={RightButtons} />
+  <AntdPageHeader onBack={onBack} title={title} extra={RightButtons} />
 );
+
+export default PageHeader;
