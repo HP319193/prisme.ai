@@ -60,7 +60,7 @@ export class Subscriptions {
 
     return () => {
       this.subscribers[workspaceId] = this.subscribers[workspaceId].filter(
-        (cur) => cur !== subscriber
+        (cur) => cur.callback !== subscriber.callback
       );
     };
   }

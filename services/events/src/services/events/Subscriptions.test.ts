@@ -37,25 +37,40 @@ const generateChunks = (
 const getSubscriptions = (
   chunksGenerator: (cb: (event: Chunk) => void) => void
 ) => {
-  return new Subscriptions({
-    all: (cb: EventCallback<any, any>) => {
-      chunksGenerator((event) =>
-        cb(
-          {
-            payload: event,
-            id: event.id,
-            type: event.type,
-            createdAt: "",
-            source: {
-              workspaceId: event.workspaceId,
+  class DummyAccessManager {
+    as() {
+      return this;
+    }
+
+    pullRoleFromSubject() {}
+
+    can() {
+      return true;
+    }
+  }
+
+  return new Subscriptions(
+    {
+      all: (cb: EventCallback<any, any>) => {
+        chunksGenerator((event) =>
+          cb(
+            {
+              payload: event,
+              id: event.id,
+              type: event.type,
+              createdAt: "",
+              source: {
+                workspaceId: event.workspaceId,
+              },
             },
-          },
-          undefined as any as Broker,
-          { logger: console } as CallbackContext
-        )
-      );
-    },
-  } as Pick<Broker, "all"> as Broker);
+            undefined as any as Broker,
+            { logger: console } as CallbackContext
+          )
+        );
+      },
+    } as Pick<Broker, "all"> as Broker,
+    new DummyAccessManager() as any
+  );
 };
 
 const verifyReceivedChunks = (receivedChunks: Chunk[], sentChunks: Chunk[]) => {
