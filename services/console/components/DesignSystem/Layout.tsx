@@ -8,7 +8,7 @@ interface LayoutProps {
 }
 
 const Layout = ({ Header, Content, PageHeader }: LayoutProps) => (
-  <AntdLayout>
+  <AntdLayout className="h-screen">
     <AntdLayout.Header>
       {Header}
       {PageHeader}
