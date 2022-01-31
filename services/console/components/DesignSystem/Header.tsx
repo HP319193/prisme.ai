@@ -1,23 +1,46 @@
-import { Button, Space, Avatar, Divider } from "./";
+import { Button, Space, Avatar, Divider, Dropdown, Menu } from "./";
+import { useMemo } from "react";
+import { ShareAltOutlined } from "@ant-design/icons";
+import iconPrisme from "../../icons/icon-prisme.svg";
+import Image from "next/image";
 
-const Header = () => (
-  <div className="px-2 flex flex-row w-full justify-between items-center pr-header border-b">
-    <div>logo</div>
-    <div>Nom de mon Workspace</div>
-    <div className="flex flex-row items-center">
-      <Button type="grey">
+interface HeaderProps {
+  workspaces: string[];
+  shareText: string;
+  userName: string;
+  userAvatar: string;
+}
+
+const Header = ({
+  workspaces,
+  shareText,
+  userName,
+  userAvatar,
+}: HeaderProps) => {
+  const workspacesMenu = useMemo(
+    () => <Menu items={workspaces} />,
+    [workspaces]
+  );
+
+  return (
+    <div className="px-6 flex flex-row w-full justify-between items-center pr-header border-b">
+      <Image src={iconPrisme} width={23} height={25} alt="prisme.ai logo" />
+      <Dropdown Menu={workspacesMenu}>{workspaces[0]}</Dropdown>
+      <div className="flex flex-row items-center">
+        <Button type="grey">
+          <Space>
+            {shareText}
+            <ShareAltOutlined />
+          </Space>
+        </Button>
+        <Divider type="vertical" className="mr-4" />
         <Space>
-          Partager
-          <i className="pi pi-share-alt" />
+          {userName}
+          <Avatar src={userAvatar} />
         </Space>
-      </Button>
-      <Divider type="vertical" className="mr-4" />
-      <Space>
-        John Doe
-        <Avatar />
-      </Space>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Header;
