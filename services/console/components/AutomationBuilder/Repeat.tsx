@@ -1,6 +1,6 @@
 import { FC, memo } from "react";
 import { Handle, NodeProps, Position } from 'react-flow-renderer'
-import { Block } from "./Block";
+import Block from "./Block";
 import styles from "./styles";
 
 export const Repeat: FC<NodeProps> = (props => {

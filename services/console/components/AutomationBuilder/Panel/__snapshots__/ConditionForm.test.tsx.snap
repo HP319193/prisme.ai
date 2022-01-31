@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div>
+  <form
+    onSubmit={[Function]}
+  >
+    <fieldset
+      className="p-fieldset p-component pt-5 mb-4"
+      id={null}
+      onClick={null}
+      style={null}
+    >
+      <legend
+        className="p-fieldset-legend p-unselectable-text"
+        onClick={[Function]}
+      >
+        <span
+          className="p-fieldset-legend-text"
+          id="pr_id_1_header"
+        >
+          automations.condition.edit.title
+        </span>
+      </legend>
+      <div
+        aria-hidden={false}
+        aria-labelledby="pr_id_1_header"
+        className="p-toggleable-content"
+        id="pr_id_1_content"
+        role="region"
+      >
+        <div
+          className="p-fieldset-content"
+        >
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="p-float-label mx-2 undefined"
+            >
+              <input
+                className="p-inputtext p-component"
+                id="condition"
+                name="condition"
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                onInput={[Function]}
+                onKeyPress={[Function]}
+                value=""
+              />
+              <label
+                htmlFor="condition"
+              >
+                condition
+              </label>
+            </span>
+          </div>
+          <button
+            className="p-button p-component"
+            disabled={false}
+            type="submit"
+          >
+            automations.condition.edit.submit
+          </button>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+`;

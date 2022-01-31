@@ -12,7 +12,7 @@ interface BlockProps {
   onEdit?: () => void;
 }
 
-export const Block: FC<NodeProps & BlockProps> = (({ data, removable = true, selected, onEdit }) => {
+export const Block: FC<NodeProps & BlockProps> = (({ data, removable = true, selected, onEdit, type }) => {
   const { t } = useTranslation('workspaces');
   const { removeInstruction, getApp } = useAutomationBuilder();
   const ref = useRef(null);
@@ -87,7 +87,7 @@ export const Block: FC<NodeProps & BlockProps> = (({ data, removable = true, sel
             <Image src={icon} width={16} height={16} alt={name} />
           </div>
           <div className="flex flex-1 justify-content-between">
-            {name}
+            {type === 'trigger' ? t('automations.trigger.title') : name}
             {removable && <button
               className="border-none cursor-pointer"
               style={{ background: 'none', visibility: isHover ? 'visible' : 'hidden' }}
@@ -111,7 +111,7 @@ export const Block: FC<NodeProps & BlockProps> = (({ data, removable = true, sel
               cursor: `url(${pencil.src}) 16 16, pointer`
             }}
           >
-            {getLabel(data)}
+            {data.component ? <data.component /> : getLabel(data)}
           </button>
         )}
         {!onEdit && (

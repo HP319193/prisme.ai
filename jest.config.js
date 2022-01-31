@@ -4,6 +4,7 @@ module.exports = () => {
     moduleNameMapper: {
       "\\.tsx?$": "babel-jest",
       "\\.s?css$": "identity-obj-proxy",
+      "\\.svg$": "<rootDir>/__mocks__/svgMock.js"
     },
     testEnvironment: "jsdom",
     coveragePathIgnorePatterns: [

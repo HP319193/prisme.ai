@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="ReactFlowProvider"
+>
+  <div>
+    ReactFlow
+  </div>
+  <div
+    className="Panel"
+  />
+  <div
+    className="absolute bottom-0 right-0 z-5"
+  >
+    <div>
+      debug:
+    </div>
+    <div>
+      <label>
+        Nodes draggable 
+        <input
+          checked={false}
+          onChange={[Function]}
+          type="checkbox"
+        />
+      </label>
+    </div>
+  </div>
+</div>
+`;

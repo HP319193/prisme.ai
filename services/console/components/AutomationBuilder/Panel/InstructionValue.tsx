@@ -1,12 +1,11 @@
 import { FC } from "react"
 import Form from "../../SchemaForm/Form";
 import Fieldset from "../../../layouts/Fieldset";
-import { edit } from "ace-builds";
 
 interface InstructionValueProps {
   instruction: string;
   value: any;
-  schema: any;
+  schema?: any;
   onSubmit: (values: any) => void;
 }
 

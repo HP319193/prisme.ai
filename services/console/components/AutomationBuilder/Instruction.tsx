@@ -1,13 +1,13 @@
 import { FC, memo } from "react";
 import { Handle, NodeProps, Position } from 'react-flow-renderer'
-import { Block } from "./Block";
+import Block from "./Block";
 import { useAutomationBuilder } from "./context";
 import styles from "./styles";
 
 export const Instruction: FC<NodeProps> = (props => {
   const { data } = props;
-  const { editInstruction, getSchema } = useAutomationBuilder();
-  const hasProperty = !!(getSchema(data.label) || {}).properties
+  const { editInstruction } = useAutomationBuilder();
+
   return (
     <>
       <Handle

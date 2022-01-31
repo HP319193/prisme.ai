@@ -9,8 +9,8 @@ import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
 
 const Endpoint = () => {
+  const { t } = useTranslation('workspaces');
   const { input } = useField('endpoint');
-  console.log(input)
 
   return (
     <div className="p-field mb-5">
@@ -20,7 +20,7 @@ const Endpoint = () => {
           onChange={({ value }) => input.onChange(value)}
           className="mr-2"
         />
-        Assigner une adresse web à cette auto
+        {t('automations.trigger.endpoint.custom')}
       </label>
       {input.value !== false && (
         <InputText
@@ -56,7 +56,7 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onSubmit }) => {
             </FieldContainer>
           </Fieldset>
           <Fieldset legend={t('automations.trigger.dates.title')}>
-            soon
+            {t('automations.trigger.dates.help')}
           </Fieldset>
           <Fieldset legend={t('automations.trigger.endpoint.title')}>
             <Endpoint />

@@ -51,17 +51,24 @@
       "copied": "La URL ha sido copiada"
     },
     "trigger": {
+      "title": "Se activa cuando",
       "events": {
         "title": "Eventos",
+        "display_one": "El evento {{events}} ocurre",
+        "display_other": "Uno de los eventos {{events}} ocurre",
         "help": "La automatización se ejecutará siempre que se produzca uno de los siguientes eventos."
       },
       "dates": {
         "title": "Fechas",
-        "help": "La automatización se ejecutará en cada intervalo de tiempo especificado."
+        "_help": "La automatización se ejecutará en cada intervalo de tiempo especificado.",
+        "help": "Disponible en breve"
       },
       "endpoint": {
         "title": "Dirección web",
-        "help": "La automatización se ejecutará cada vez que se llame a una url."
+        "display": "Se visita <a>la dirección web<icon /><a>",
+        "copied": "La dirección web ha sido copiado en su portapapeles",
+        "help": "La automatización se ejecutará cada vez que se llame a una url.",
+        "custom": "Ejecuta esta automatización llamando a una dirección web"
       },
       "save": "Registro"
     },

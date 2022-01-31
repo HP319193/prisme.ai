@@ -23,9 +23,7 @@ export const InstructionForm: FC<InstructionFormProps> = ({ instruction, onSubmi
   })
 
   const setInstruction = useCallback((instructionName: string) => {
-    console.log(instructionName)
     const schema = getSchema(instructionName.toLowerCase());
-    console.log(schema)
     if (!schema.properties) {
       onSubmit({
         [instructionName]: undefined

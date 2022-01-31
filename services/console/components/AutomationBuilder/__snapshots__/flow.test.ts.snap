@@ -4,8 +4,8 @@ exports[`should build flow 1`] = `
 Array [
   Object {
     "data": Object {
-      "label": "Trigger",
       "trigger": true,
+      "value": undefined,
     },
     "id": "0",
     "position": Object {
@@ -16,7 +16,71 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 0,
       "label": "emit",
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "on": "$a",
+                      "then": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
       "value": Object {
         "event": "apps.foobar",
         "payload": Object {
@@ -24,6 +88,7 @@ Array [
         },
         "private": true,
       },
+      "withButton": true,
     },
     "id": "0.0",
     "position": Object {
@@ -34,11 +99,76 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 1,
       "label": "wait",
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "on": "$a",
+                      "then": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
       "value": Object {
         "event": "apps.forIt",
         "output": "value",
       },
+      "withButton": true,
     },
     "id": "0.1",
     "position": Object {
@@ -49,12 +179,77 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 2,
       "label": "set",
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "on": "$a",
+                      "then": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
       "value": Object {
         "lifespan": 42,
         "name": "foo",
         "value": "$value",
       },
+      "withButton": true,
     },
     "id": "0.2",
     "position": Object {
@@ -65,10 +260,75 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 3,
       "label": "delete",
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "on": "$a",
+                      "then": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
       "value": Object {
         "name": "bar",
       },
+      "withButton": true,
     },
     "id": "0.3",
     "position": Object {
@@ -79,7 +339,71 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 4,
       "label": "conditions",
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "on": "$a",
+                      "then": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
       "value": Object {
         "$a == 1": Array [
           Object {
@@ -112,6 +436,7 @@ Array [
           },
         ],
       },
+      "withButton": true,
     },
     "id": "0.4",
     "position": Object {
@@ -122,8 +447,18 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 0,
       "label": "emit",
+      "parent": Array [
+        Object {
+          "emit": "apps.1",
+        },
+        Object {
+          "emit": "apps.2",
+        },
+      ],
       "value": "apps.1",
+      "withButton": true,
     },
     "id": "0.4.0.0",
     "position": Object {
@@ -134,8 +469,18 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 1,
       "label": "emit",
+      "parent": Array [
+        Object {
+          "emit": "apps.1",
+        },
+        Object {
+          "emit": "apps.2",
+        },
+      ],
       "value": "apps.2",
+      "withButton": true,
     },
     "id": "0.4.0.1",
     "position": Object {
@@ -146,8 +491,18 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 2,
       "label": "empty block",
+      "parent": Array [
+        Object {
+          "emit": "apps.1",
+        },
+        Object {
+          "emit": "apps.2",
+        },
+      ],
       "value": null,
+      "withButton": true,
     },
     "id": "0.4.0.2",
     "position": Object {
@@ -158,7 +513,30 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 0,
       "label": "all",
+      "parent": Array [
+        Object {
+          "all": Array [
+            Object {
+              "emit": "apps.3",
+            },
+            Object {
+              "emit": "apps.4",
+            },
+            Object {
+              "repeat": Object {
+                "on": "$a",
+                "then": Array [
+                  Object {
+                    "emit": "apps.5",
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ],
       "value": Array [
         Object {
           "emit": "apps.3",
@@ -177,6 +555,7 @@ Array [
           },
         },
       ],
+      "withButton": true,
     },
     "id": "0.4.1.0",
     "position": Object {
@@ -187,8 +566,45 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 0,
       "label": "emit",
-      "value": "apps.3",
+      "parent": Array [
+        Object {
+          "emit": "apps.3",
+        },
+        Object {
+          "emit": "apps.4",
+        },
+        Object {
+          "repeat": Object {
+            "on": "$a",
+            "then": Array [
+              Object {
+                "emit": "apps.5",
+              },
+            ],
+          },
+        },
+      ],
+      "value": Array [
+        Object {
+          "emit": "apps.3",
+        },
+        Object {
+          "emit": "apps.4",
+        },
+        Object {
+          "repeat": Object {
+            "on": "$a",
+            "then": Array [
+              Object {
+                "emit": "apps.5",
+              },
+            ],
+          },
+        },
+      ],
+      "withButton": true,
     },
     "id": "0.4.1.0.0",
     "position": Object {
@@ -199,8 +615,45 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 1,
       "label": "emit",
-      "value": "apps.4",
+      "parent": Array [
+        Object {
+          "emit": "apps.3",
+        },
+        Object {
+          "emit": "apps.4",
+        },
+        Object {
+          "repeat": Object {
+            "on": "$a",
+            "then": Array [
+              Object {
+                "emit": "apps.5",
+              },
+            ],
+          },
+        },
+      ],
+      "value": Array [
+        Object {
+          "emit": "apps.3",
+        },
+        Object {
+          "emit": "apps.4",
+        },
+        Object {
+          "repeat": Object {
+            "on": "$a",
+            "then": Array [
+              Object {
+                "emit": "apps.5",
+              },
+            ],
+          },
+        },
+      ],
+      "withButton": true,
     },
     "id": "0.4.1.0.1",
     "position": Object {
@@ -211,15 +664,45 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 2,
       "label": "repeat",
-      "value": Object {
-        "on": "$a",
-        "then": Array [
-          Object {
-            "emit": "apps.5",
+      "parent": Array [
+        Object {
+          "emit": "apps.3",
+        },
+        Object {
+          "emit": "apps.4",
+        },
+        Object {
+          "repeat": Object {
+            "on": "$a",
+            "then": Array [
+              Object {
+                "emit": "apps.5",
+              },
+            ],
           },
-        ],
-      },
+        },
+      ],
+      "value": Array [
+        Object {
+          "emit": "apps.3",
+        },
+        Object {
+          "emit": "apps.4",
+        },
+        Object {
+          "repeat": Object {
+            "on": "$a",
+            "then": Array [
+              Object {
+                "emit": "apps.5",
+              },
+            ],
+          },
+        },
+      ],
+      "withButton": true,
     },
     "id": "0.4.1.0.2",
     "position": Object {
@@ -230,8 +713,81 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 3,
+      "label": "new all",
+      "parent": Array [
+        Object {
+          "emit": "apps.3",
+        },
+        Object {
+          "emit": "apps.4",
+        },
+        Object {
+          "repeat": Object {
+            "on": "$a",
+            "then": Array [
+              Object {
+                "emit": "apps.5",
+              },
+            ],
+          },
+        },
+      ],
+      "value": Array [
+        Object {
+          "emit": "apps.3",
+        },
+        Object {
+          "emit": "apps.4",
+        },
+        Object {
+          "repeat": Object {
+            "on": "$a",
+            "then": Array [
+              Object {
+                "emit": "apps.5",
+              },
+            ],
+          },
+        },
+      ],
+      "withButton": true,
+    },
+    "id": "0.4.1.0.3",
+    "position": Object {
+      "x": 1800,
+      "y": 1050,
+    },
+    "type": "empty",
+  },
+  Object {
+    "data": Object {
+      "index": 1,
       "label": "empty block",
+      "parent": Array [
+        Object {
+          "all": Array [
+            Object {
+              "emit": "apps.3",
+            },
+            Object {
+              "emit": "apps.4",
+            },
+            Object {
+              "repeat": Object {
+                "on": "$a",
+                "then": Array [
+                  Object {
+                    "emit": "apps.5",
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ],
       "value": null,
+      "withButton": true,
     },
     "id": "0.4.1.1",
     "position": Object {
@@ -241,6 +797,44 @@ Array [
     "type": "empty",
   },
   Object {
+    "data": Object {
+      "key": "new condition",
+      "parent": Object {
+        "conditions": Object {
+          "$a == 1": Array [
+            Object {
+              "emit": "apps.1",
+            },
+            Object {
+              "emit": "apps.2",
+            },
+          ],
+          "default": Array [
+            Object {
+              "all": Array [
+                Object {
+                  "emit": "apps.3",
+                },
+                Object {
+                  "emit": "apps.4",
+                },
+                Object {
+                  "repeat": Object {
+                    "on": "$a",
+                    "then": Array [
+                      Object {
+                        "emit": "apps.5",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "withButton": false,
+    },
     "id": "0.4.2.0",
     "position": Object {
       "x": 900,
@@ -250,8 +844,73 @@ Array [
   },
   Object {
     "data": Object {
+      "index": 5,
       "label": "empty block",
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "on": "$a",
+                      "then": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
       "value": null,
+      "withButton": true,
     },
     "id": "0.5",
     "position": Object {
@@ -262,6 +921,72 @@ Array [
   },
   Object {
     "arrowHeadType": "arrow",
+    "data": Object {
+      "index": 1,
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "on": "$a",
+                      "then": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    },
     "id": "edge-0.0-0.1",
     "source": "0.0",
     "target": "0.1",
@@ -269,6 +994,72 @@ Array [
   },
   Object {
     "arrowHeadType": "arrow",
+    "data": Object {
+      "index": 2,
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "on": "$a",
+                      "then": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    },
     "id": "edge-0.1-0.2",
     "source": "0.1",
     "target": "0.2",
@@ -276,6 +1067,72 @@ Array [
   },
   Object {
     "arrowHeadType": "arrow",
+    "data": Object {
+      "index": 3,
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "on": "$a",
+                      "then": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    },
     "id": "edge-0.2-0.3",
     "source": "0.2",
     "target": "0.3",
@@ -283,6 +1140,72 @@ Array [
   },
   Object {
     "arrowHeadType": "arrow",
+    "data": Object {
+      "index": 4,
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "on": "$a",
+                      "then": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    },
     "id": "edge-0.3-0.4",
     "source": "0.3",
     "target": "0.4",
@@ -290,6 +1213,17 @@ Array [
   },
   Object {
     "arrowHeadType": "arrow",
+    "data": Object {
+      "index": 1,
+      "parent": Array [
+        Object {
+          "emit": "apps.1",
+        },
+        Object {
+          "emit": "apps.2",
+        },
+      ],
+    },
     "id": "edge-0.4.0.0-0.4.0.1",
     "source": "0.4.0.0",
     "target": "0.4.0.1",
@@ -297,6 +1231,17 @@ Array [
   },
   Object {
     "arrowHeadType": "arrow",
+    "data": Object {
+      "index": 2,
+      "parent": Array [
+        Object {
+          "emit": "apps.1",
+        },
+        Object {
+          "emit": "apps.2",
+        },
+      ],
+    },
     "id": "edge-0.4.0.1-0.4.0.2",
     "source": "0.4.0.1",
     "target": "0.4.0.2",
@@ -305,11 +1250,20 @@ Array [
   Object {
     "arrowHeadType": "arrow",
     "data": Object {
+      "key": "$a == 1",
       "label": "$a == 1",
+      "parent": Array [
+        Object {
+          "emit": "apps.1",
+        },
+        Object {
+          "emit": "apps.2",
+        },
+      ],
     },
     "id": "edge-0.4-0.4.0.0",
     "source": "0.4",
-    "sourceHandle": "0",
+    "sourceHandle": "$a == 1",
     "target": "0.4.0.0",
     "type": "conditionEdge",
   },
@@ -357,23 +1311,74 @@ Array [
   },
   Object {
     "arrowHeadType": "arrow",
+    "id": "edge-0.4.1.0-0.4.1.0.3",
+    "source": "0.4.1.0",
+    "target": "0.4.1.0.3",
+    "type": "edge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "id": "edge-0.4.1.0.3-0.4.1.1",
+    "source": "0.4.1.0.3",
+    "target": "0.4.1.1",
+    "type": "edge",
+  },
+  Object {
+    "arrowHeadType": "arrow",
     "data": Object {
+      "key": "default",
       "label": "default",
+      "parent": undefined,
     },
     "id": "edge-0.4-0.4.1.0",
     "source": "0.4",
-    "sourceHandle": "1",
+    "sourceHandle": "default",
     "target": "0.4.1.0",
     "type": "conditionEdge",
   },
   Object {
     "arrowHeadType": "arrow",
     "data": Object {
+      "key": "",
       "label": "new condition",
+      "parent": Object {
+        "conditions": Object {
+          "$a == 1": Array [
+            Object {
+              "emit": "apps.1",
+            },
+            Object {
+              "emit": "apps.2",
+            },
+          ],
+          "default": Array [
+            Object {
+              "all": Array [
+                Object {
+                  "emit": "apps.3",
+                },
+                Object {
+                  "emit": "apps.4",
+                },
+                Object {
+                  "repeat": Object {
+                    "on": "$a",
+                    "then": Array [
+                      Object {
+                        "emit": "apps.5",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
     },
     "id": "edge-0.4-0.4.2.0",
     "source": "0.4",
-    "sourceHandle": "2",
+    "sourceHandle": "new condition",
     "target": "0.4.2.0",
     "type": "conditionEdge",
   },
@@ -400,6 +1405,72 @@ Array [
   },
   Object {
     "arrowHeadType": "arrow",
+    "data": Object {
+      "index": 0,
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "on": "$a",
+                      "then": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    },
     "id": "edge-0-0.0",
     "source": "0",
     "target": "0.0",

@@ -75,6 +75,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     async (newValue: string) => {
       try {
         const json = await checkSyntaxAndReturnYAML(newValue);
+
         if (!json) return;
         validateWorkspace(json);
         setInvalid((validateWorkspace.errors as ValidationError[]) || false);

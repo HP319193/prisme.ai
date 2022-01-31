@@ -1,6 +1,6 @@
 import { FC, memo, useEffect, useMemo } from "react";
 import { Handle, NodeProps, Position, useUpdateNodeInternals } from 'react-flow-renderer'
-import { Block } from "./Block";
+import Block from "./Block";
 import { Flow } from "./flow";
 import styles from "./styles";
 

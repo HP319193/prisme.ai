@@ -1,14 +1,17 @@
+import { useTranslation } from 'next-i18next';
 import { Button } from 'primereact/button';
 import { FC, useCallback } from 'react'
 import { Form as FFForm, FormRenderProps } from 'react-final-form';
 import { Field } from './Field';
 import { Schema } from './types';
 
-interface FormProps extends Pick<FormRenderProps, 'initialValues'> {
+interface FormProps {
   schema: Schema;
   onSubmit: (values: any) => void;
+  initialValues?: FormRenderProps['initialValues'];
 }
 export const Form: FC<FormProps> = ({ schema, onSubmit, ...formProps }) => {
+  const { t } = useTranslation('common')
   const properties = Object.keys(schema.properties || {})
     .reduce((prev, name) => {
       if (prev[name].type === 'array') {
@@ -56,22 +59,34 @@ export const Form: FC<FormProps> = ({ schema, onSubmit, ...formProps }) => {
           [attr]: values[attr]
         };
       }, {});
+
+      if (schema.required) {
+        schema.required.forEach(attr => {
+          if (!parsedValues[attr as keyof typeof parsedValues]) {
+            errors[attr] = 'required'
+          }
+        })
+      }
+
       if (Object.keys(errors).length === 0) {
         onSubmit(parsedValues)
       }
-
     }
 
     // Check oneOf
     if (oneOf) {
-      oneOf.forEach(({ required }) => {
-        required.forEach((f => {
-          errors[f] = 'oneOfRequired'
-        }))
-      })
+      const oneOfIsValid = oneOf.some(({ required }) => required.every(f => values[f]))
+      if (!oneOfIsValid) {
+        oneOf.forEach(({ required }) => {
+          required.forEach((f => {
+            if (values[f]) return;
+            errors[f] = 'oneOfRequired'
+          }))
+        })
+      }
     }
     return errors
-  }, [onSubmit, oneOf, properties, schema.properties])
+  }, [onSubmit, oneOf, properties, schema])
 
   return <FFForm onSubmit={submit} {...formProps}>
     {({ handleSubmit }) => (
@@ -85,7 +100,7 @@ export const Form: FC<FormProps> = ({ schema, onSubmit, ...formProps }) => {
             />)
           )
         }
-        <Button type="submit">Enregistrer</Button>
+        <Button type="submit">{t('save')}</Button>
       </form>
     )}
   </FFForm>

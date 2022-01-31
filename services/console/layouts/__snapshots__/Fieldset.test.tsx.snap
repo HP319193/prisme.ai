@@ -2,7 +2,7 @@
 
 exports[`should render 1`] = `
 <fieldset
-  className="p-fieldset p-component pt-5"
+  className="p-fieldset p-component pt-5 mb-4"
   id={null}
   onClick={null}
   style={null}

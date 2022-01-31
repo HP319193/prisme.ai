@@ -7,10 +7,13 @@ import Error404 from "./Errors/404";
 import EditableTitle from '../components/EditableTitle';
 import { Button } from "primereact/button";
 import useKeyboardShortcut from "../components/useKeyboardShortcut";
-import api from "../api/api";
+import { useWorkspaces } from "../components/WorkspacesProvider";
+import { useTranslation } from "next-i18next";
 
 export const Automation = () => {
+  const { t } = useTranslation('workspaces')
   const { workspace } = useWorkspace();
+  const { updateAutomation } = useWorkspaces();
   const {
     query: { automationId },
   } = useRouter();
@@ -31,10 +34,12 @@ export const Automation = () => {
 
   const save = useCallback(async () => {
     setSaving(true);
-    const saved = await api.updateAutomation(workspace, `${automationId}`, value)
-    setValue(saved);
+    const saved = await updateAutomation(workspace, `${automationId}`, value)
+    if (saved) {
+      setValue(saved);
+    }
     setSaving(false)
-  }, [automationId, value, workspace])
+  }, [automationId, updateAutomation, value, workspace])
 
   useKeyboardShortcut([{
     key: 's',
@@ -44,7 +49,6 @@ export const Automation = () => {
       save()
     }
   }])
-
   if (!automation) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
   }
@@ -52,13 +56,13 @@ export const Automation = () => {
     <>
       <div className="flex flex-row justify-content-between bg-white">
         <div className="flex flex-row align-items-center">
-          <Link href={`/workspaces/${workspace.id}`}>Retour</Link>
+          <Link href={`/workspaces/${workspace.id}`}>{t('automations.back')}</Link>
           <EditableTitle title={value.name} onChange={updateTitle} />
         </div>
         <div className="flex flex-row align-items-center">
           <Button onClick={save} disabled={saving}>
             {saving && <i className="pi pi-spin pi-spinner absolute -ml-3" />}
-            Save
+            {t('automations.save.label')}
           </Button>
         </div>
       </div>

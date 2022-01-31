@@ -11,6 +11,8 @@ import Events from "../../api/events";
 import api from "../../api/api";
 import { useWorkspace, WorkspaceContext } from "./context";
 import { Event } from "../../api/types";
+import { useToaster } from "../Toaster";
+import { confirmDialog } from "primereact/confirmdialog";
 
 jest.useFakeTimers();
 
@@ -51,6 +53,18 @@ jest.mock("../../api/events", () => {
 
 jest.mock("primereact/button", () => {
   return { Button: () => null }
+})
+
+jest.mock("../Toaster", () => {
+  const mock = {
+    show: jest.fn()
+  }
+  return { useToaster: () => mock }
+})
+
+jest.mock("primereact/confirmdialog", () => {
+  const mock = jest.fn();
+  return { confirmDialog: mock }
 })
 
 beforeEach(() => {
@@ -294,4 +308,92 @@ it('should listen to events on socket', async () => {
     [1609459200000, new Set([{ createdAt: new Date('2021-01-01') }])],
     [1609545600000, new Set([{ createdAt: new Date('2021-01-02') }])],
   ]))
+})
+
+it('should save', async () => {
+  useWorkspaces().update = jest.fn();
+  let context: WorkspaceContext = {} as WorkspaceContext;
+  const Test = () => {
+    context = useWorkspace();
+    return null;
+  }
+  const root = renderer.create(<WorkspaceLayout><Test /></WorkspaceLayout>);
+  act(() => {
+    return;
+  });
+  act(() => {
+    context.setNewSource({
+      name: 'win',
+      automations: {},
+      createdAt: '',
+      updatedAt: '',
+      id: ''
+    });
+  })
+  await act(async () => {
+    await context.save();
+  })
+
+  expect(useWorkspaces().update).toHaveBeenCalledWith({
+    name: 'win',
+    automations: {},
+    createdAt: '',
+    updatedAt: '',
+    id: ''
+  })
+
+  expect(useToaster().show).toHaveBeenCalledWith({
+    severity: "success",
+    summary: "expert.save.confirm",
+  })
+})
+
+it('should display automations', () => {
+  let context: WorkspaceContext = {} as WorkspaceContext;
+  const Test = () => {
+    context = useWorkspace();
+    return null;
+  }
+  const root = renderer.create(<WorkspaceLayout><Test /></WorkspaceLayout>);
+  act(() => {
+    return;
+  });
+
+  const link = root.root.find((a) => a.type === Button && a.props.children === 'automations.link')
+  act(() => {
+    link.props.onClick();
+  })
+
+  expect(root.root.findByType(AutomationsSidebar)).toBeDefined();
+})
+
+it('should ask before leaving source edition', async () => {
+  let context: WorkspaceContext = {} as WorkspaceContext;
+  const Test = () => {
+    context = useWorkspace();
+    return null;
+  }
+  useRouter().route = "/workspace/42/source"
+  const root = renderer.create(<WorkspaceLayout><Test /></WorkspaceLayout>);
+  await act(async () => {
+    await true
+  });
+
+  act(() => {
+    context.setDirty(true)
+  });
+  const e = { preventDefault: jest.fn() }
+  act(() => {
+    root.root.find(el => el.props.icon === 'pi pi-code').props.onClick(e);
+  })
+  expect(e.preventDefault).toHaveBeenCalled();
+  expect(confirmDialog).toHaveBeenCalledWith({
+    message: "expert.exit.confirm_message",
+    header: "expert.exit.confirm_title",
+    icon: "pi pi-exclamation-triangle",
+    accept: expect.any(Function),
+  });
+
+  (confirmDialog as jest.Mock).mock.calls[0][0].accept()
+  expect(useRouter().push).toHaveBeenCalledWith('/workspaces/42')
 })

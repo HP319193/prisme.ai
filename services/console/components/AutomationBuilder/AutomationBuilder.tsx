@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react"
-import ReactFlow, { ReactFlowProvider, Controls, useZoomPanHelper, useUpdateNodeInternals } from 'react-flow-renderer'
+import ReactFlow, { ReactFlowProvider, Controls, useZoomPanHelper } from 'react-flow-renderer'
 import { buildFlow } from "./flow"
 import ConditionEdge from "./ConditionEdge"
 import automationBuilderContext, { AutomationBuilderContext } from "./context"
@@ -20,6 +20,7 @@ import { Schema } from "../SchemaForm/types"
 import BUILTIN_INSTRUCTIONS from '@prisme.ai/validation/instructions.json'
 import { useTranslation } from "next-i18next"
 import TriggerForm from "./Panel/TriggerForm"
+import { generateEndpoint } from "../../utils/urls"
 
 interface AutomationBuilderProps {
   id?: string;
@@ -61,11 +62,20 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({ id, value, onCha
     setTimeout(() => zoomPanHelper.fitView());
   }, [zoomPanHelper, id])
 
-  const elements = useMemo(() => {
-    return buildFlow(value)
-  }, [value])
-
   const { workspace, workspace: { automations = {} } } = useWorkspace()
+
+  const elements = useMemo(() => {
+    const flow = buildFlow(value)
+    if (value.when && value.when.endpoint) {
+      flow[0].data.endpoint = generateEndpoint(
+        workspace.id,
+        `${(value.when.endpoint === "true" || value.when.endpoint === true)
+          ? id
+          : value.when.endpoint}`
+      )
+    }
+    return flow
+  }, [id, value, workspace.id])
 
   const instructionsSchemas: [string, Record<string, Schema>, { icon: string }][] = useMemo(() => [
     [t('automations.instruction.title_builtin'), BUILTIN_INSTRUCTIONS, { icon: iconPrisme.src }],
@@ -124,7 +134,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({ id, value, onCha
   const editInstruction: AutomationBuilderContext['editInstruction'] = useCallback(async (parent, index) => {
     if (!parent || !parent[index]) return;
     const instruction = await editInstructionDetails(parent[index]);
-    parent.splice(index, 0, instruction)
+    parent.splice(index, 1, instruction)
     onChange({ ...value })
   }, [editInstructionDetails, onChange, value])
 
@@ -154,7 +164,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({ id, value, onCha
         newConditions.splice(-1, 0, [newCondition, []]);
       }
       // Build the new object
-      parent.conditions = newConditions.reduce((prev, [condition, list]) => ({
+      parent.conditions = newConditions.reduce((prev, [condition, list = []]) => ({
         ...prev,
         [condition]: list
       }), {} as Prismeai.Conditions)
@@ -168,7 +178,6 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({ id, value, onCha
     setTriggerEditing({
       trigger: value.when,
       onSubmit: (when) => {
-        console.log(when)
         onChange({ ...value, when })
         hidePanel();
       }

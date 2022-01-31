@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+Array [
+  <path
+    className="react-flow__edge-path"
+    d="M 0,0L 0,0Q 0,5 5,5L 5,5Q 10,5 10,10L 10,10"
+    id="a"
+    markerEnd="none"
+    style={Object {}}
+  />,
+  <foreignObject
+    className="edgebutton-foreignobject"
+    height={40}
+    requiredExtensions="http://www.w3.org/1999/xhtml"
+    width={40}
+    x={-15}
+    y={-15}
+  >
+    <div
+      className="flex justify-content-center align-items-center"
+      style={
+        Object {
+          "height": "40px",
+        }
+      }
+    >
+      <button
+        className="pi pi-plus border-none bg-primary p-1 border-round z-1 text-xs cursor-pointer"
+        onClick={[Function]}
+      />
+    </div>
+  </foreignObject>,
+]
+`;

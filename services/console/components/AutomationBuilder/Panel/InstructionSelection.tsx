@@ -2,7 +2,7 @@ import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import { Button } from "primereact/button"
 import { InputText } from "primereact/inputtext"
-import { FC, Fragment, useEffect, useMemo, useState } from "react"
+import { FC, useMemo, useState } from "react"
 import { useAutomationBuilder } from "../context";
 
 export interface InstructionSelectionProps {

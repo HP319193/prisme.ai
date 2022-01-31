@@ -51,17 +51,24 @@
       "copied": "Endpoint has been copied"
     },
     "trigger": {
+      "title": "Triggered when",
       "events": {
         "title": "Events",
+        "display_one": "The event {{events}} occurs",
+        "display_other": "One of the events {{events}} occurs",
         "help": "Automation will be run everytime one of this event will be fired."
       },
       "dates": {
         "title": "Dates",
-        "help": "Automation will be run at every specified date interval."
+        "_help": "Automation will be run at every specified date interval.",
+        "help": "Soon available"
       },
       "endpoint": {
-        "title": "Adresse web",
-        "help": "Automation will be run everytime the endpoint will be hit."
+        "title": "Endpoint",
+        "display": "<a>The endpoint <icon /><a> is hit",
+        "copied": "Endpoint has been copied in your clipboard",
+        "help": "Automation will be run everytime the endpoint will be hit.",
+        "custom": "Execute this automation by calling a web address"
       },
       "save": "Enregistrer"
     },

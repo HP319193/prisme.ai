@@ -5,7 +5,7 @@ import useYaml from "../utils/useYaml";
 import CodeEditor from "../components/CodeEditor/lazy";
 import { YAMLException } from "js-yaml";
 import { validateWorkspace } from "@prisme.ai/validation";
-import { findParameter } from "../utils/yaml";
+import { useToaster } from "../layouts/Toaster";
 
 jest.mock("../utils/useYaml", () => {
   const toJSON = jest.fn();
@@ -18,7 +18,9 @@ jest.mock("../utils/useYaml", () => {
 });
 
 jest.mock("../layouts/WorkspaceLayout", () => {
-  const mock = {};
+  const mock = {
+    setNewSource: () => null
+  };
   return {
     useWorkspace: () => mock,
   };
@@ -32,12 +34,15 @@ jest.mock("@prisme.ai/validation", () => ({
   validateWorkspace: jest.fn()
 }))
 
-jest.mock("../utils/yaml", () => {
-  const findParameter = jest.fn(() => [])
+jest.mock("../layouts/Toaster", () => {
+  const mock = {}
   return {
-    findParameter
+    useToaster() {
+      return mock
+    }
   }
 })
+
 
 it("should render empty", () => {
   const root = renderer.create(<WorkspaceSource />);
@@ -163,17 +168,68 @@ it('should find endpoints', async () => {
     name: 'foo',
     id: '42'
   };
-  (findParameter as jest.Mock).mockImplementation(() => [{
-    line: 3,
-    indent: 2,
-    name: 'foo',
-    value: true
-  }]);
   (useYaml().toYaml as jest.Mock).mockImplementation(() => `name: foo
 automations:
   foo:
     when:
       endpoint: true
+`)
+  useToaster().show = jest.fn();
+  const listeners: any = {}
+  const div = {
+    addEventListener: (type: string, fn: Function) => {
+      listeners[type] = listeners[type] || [];
+      listeners[type].push(fn);
+    },
+    removeEventListener: () => null
+  };
+  (window.navigator.clipboard as any) = {
+    writeText: jest.fn()
+  }
+  const root = renderer.create(<WorkspaceSource />, {
+    createNodeMock: (element) => {
+      if (element.type === 'div') return div
+      return null;
+    }
+  });
+  await act(async () => {
+    await true;
+  })
+  const ed = root.root.findByType(CodeEditor)
+  expect(ed.props.annotations).toEqual([{
+    column: 0,
+    row: 4,
+    text: "http://localhost:3000/api/workspace/42/webhook/foo",
+    type: "endpoint",
+  },])
+
+  listeners.click.forEach((fn: Function) => fn({
+    target: {
+      classList: {
+        contains: () => true
+      },
+      textContent: '5'
+    }
+  }))
+
+  expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith('http://localhost:3000/api/workspace/42/webhook/foo')
+  expect(useToaster().show).toHaveBeenCalledWith({
+    severity: "info",
+    summary: "automations.endpoint.copied",
+  })
+
+})
+
+it('should find custom endpoints', async () => {
+  (useWorkspace() as any).workspace = {
+    name: 'foo',
+    id: '42'
+  };
+  (useYaml().toYaml as jest.Mock).mockImplementation(() => `name: foo
+automations:
+  foo:
+    when:
+      endpoint: custom
 `)
   const root = renderer.create(<WorkspaceSource />);
   await act(async () => {
@@ -182,8 +238,104 @@ automations:
   const ed = root.root.findByType(CodeEditor)
   expect(ed.props.annotations).toEqual([{
     column: 0,
-    row: 2,
-    text: "http://localhost:3000/api/workspace/42/webhook/true",
+    row: 4,
+    text: "http://localhost:3000/api/workspace/42/webhook/custom",
     type: "endpoint",
   },])
+})
+
+it('should create annotation for invalid lines on update', async () => {
+  (useWorkspace() as any).workspace = {
+    name: 'foo',
+    id: '42'
+  };
+  (useYaml().toYaml as jest.Mock).mockImplementation(() => `name: foo
+automations:
+  foo:
+    when:
+      events:
+        - bar
+`)
+  const root = renderer.create(<WorkspaceSource />);
+  await act(async () => {
+    await true;
+  })
+
+  const ed = root.root.findByType(CodeEditor);
+
+  (useYaml().toJSON as jest.Mock).mockImplementation(() => {
+    throw new YAMLException('invalid trigger', {
+      buffer: '',
+      line: 4,
+      column: 4,
+      position: 4,
+      name: 'trigger',
+      snippet: 'trigger'
+    })
+  });
+
+  act(() => {
+    ed.props.onChange(`name: foo
+automations:
+  foo:
+    trigger:
+      events:
+        - bar
+`)
+  });
+
+  await act(async () => {
+    await true;
+  })
+
+  expect(ed.props.annotations).toEqual([
+    {
+      row: 4,
+      column: 4,
+      text: 'invalid trigger in "trigger" (5:5)\n\ntrigger',
+      type: 'error'
+    }
+  ])
+})
+
+it('should create annotation for invalid server return', async () => {
+  (useWorkspace() as any).workspace = {
+    name: 'foo',
+    id: '42',
+    automations: {
+      foo: {
+        trigger: {
+          events: ['bar']
+        }
+      }
+    }
+  };
+  (useYaml().toYaml as jest.Mock).mockImplementation(() => `name: foo
+automations:
+  foo:
+    trigger:
+      events:
+        - bar
+`);
+  (useWorkspace() as any).invalid = [{
+    instancePath: '/automations/foo/trigger',
+    keyword: 'trigger',
+    message: 'trigger is invalid',
+    params: '',
+    schemaPath: '/automations/foo/trigger',
+  }];
+
+  const root = renderer.create(<WorkspaceSource />);
+  await act(async () => {
+    await true;
+  })
+
+  const ed = root.root.findByType(CodeEditor);
+
+  expect(ed.props.annotations).toEqual([{
+    row: 3,
+    column: 0,
+    text: 'trigger is invalid',
+    type: 'error'
+  }])
 })

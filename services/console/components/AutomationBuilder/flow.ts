@@ -6,6 +6,9 @@ export class Flow {
   static BLOCK_EMPTY = 'empty block';
   static NEW_CONDITION = 'new condition';
   static NEW_ALL = 'new all';
+  static CONDITIONS = 'conditions';
+  static REPEAT = 'repeat';
+  static ALL = 'all';
 
   private value: Prismeai.Automation;
   private nodes: Node[] = [];
@@ -142,9 +145,9 @@ export class Flow {
 
         prevNode = node;
 
-        if (name === 'conditions') {
+        if (name === Flow.CONDITIONS) {
           prevNode = null;
-          node.type = 'conditions';
+          node.type = Flow.CONDITIONS;
           const nodes = this.buildConditions({
             conditions: value,
             parent: instruction as { conditions: Prismeai.Conditions },
@@ -172,9 +175,9 @@ export class Flow {
           });
         }
 
-        if (name === 'repeat') {
+        if (name === Flow.REPEAT) {
           prevNode = null;
-          node.type = 'repeat';
+          node.type = Flow.REPEAT;
           const instructions = (value as Prismeai.Repeat['repeat']).then;
           const nodes = this.buildInstructions({
             instructions,
@@ -218,7 +221,7 @@ export class Flow {
           );
         }
 
-        if (name === 'all') {
+        if (name === Flow.ALL) {
           prevNode = null;
           const prevX = position.x;
           position = {
@@ -283,8 +286,8 @@ export class Flow {
       id: '0',
       type: 'trigger',
       data: {
-        label: 'Trigger',
         trigger: true,
+        value: this.value.when,
       },
       position: { x: 0, y: 0 },
     };

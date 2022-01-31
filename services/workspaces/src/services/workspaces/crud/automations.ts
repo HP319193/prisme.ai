@@ -82,7 +82,7 @@ class Automations {
     automation: Prismeai.Automation
   ) => {
     const workspace = await this.storage.get(workspaceId);
-    console.log(automationSlug, workspace);
+
     if (
       !workspace ||
       !workspace.automations ||

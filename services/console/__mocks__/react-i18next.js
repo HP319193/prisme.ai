@@ -3,3 +3,7 @@ export const useTranslation = () => {
     t: (str) => str,
   };
 };
+
+export const Trans = ({ children }) => {
+  return children
+}
