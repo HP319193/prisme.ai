@@ -5,7 +5,17 @@ module.exports = {
   ],
   "addons": [
     "@storybook/addon-links",
-    "@storybook/addon-essentials"
+    "@storybook/addon-essentials",
+    {
+      name: "storybook-preset-less",
+      options: {
+        lessLoaderOptions: {
+          lessOptions: {
+            javascriptEnabled: true,
+          },
+        },
+      },
+    },
   ],
   "framework": "@storybook/react",
   "core": {

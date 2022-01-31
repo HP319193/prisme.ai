@@ -1,0 +1,53 @@
+@import "./antd.less";
+
+// global
+@primary-color: #015DFF;
+@primary-color-hover: #2d7dff;
+@heading-5-size: ceil(@font-size-base * 0.88);
+@border-color-base: #E5E5E5;
+@layout-header-background: white;
+@layout-header-padding: 0;
+@layout-header-height: unset;
+
+// buttons
+.ant-btn {
+  border: none;
+
+  &:hover {
+    color: @primary-color-hover;
+  }
+
+  color: @primary-color;
+}
+
+.ant-btn-text {
+  &:hover {
+    color: @primary-color-hover;
+  }
+
+  color: @text-color-secondary;
+}
+
+.ant-btn-link > span {
+  text-decoration: underline;
+}
+
+
+// Header
+@page-header-heading-title: @heading-5-size;
+@page-header-padding: 0;
+@page-header-padding-vertical: 0;
+@page-header-back-color: @text-color-secondary;
+
+.ant-page-header {
+  border-bottom: 1px solid @border-color-base;
+
+
+  &-heading {
+    padding: 0 15px;
+
+    &-title {
+      color: @primary-color;
+    }
+  }
+}

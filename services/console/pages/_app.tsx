@@ -1,4 +1,5 @@
 import '../styles/globals.css';
+import '../styles/prismeai-theme.less';
 import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
