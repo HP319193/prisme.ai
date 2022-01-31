@@ -178,6 +178,191 @@ paths:
         "200":
           description: Success Response
 
+  ############################################# permissions routes
+  /v2/{subjectType}/{subjectId}/collaborators:
+    get:
+      description: Retrieve collaborators roles & permissions for the 'subjectType' 'subjectId'
+      operationId: getCollaborators
+      tags:
+        - permissions
+      parameters:
+        - name: "subjectType"
+          in: "path"
+          description: "The target subject type"
+          required: true
+          schema:
+            type: string
+            enum:
+              - workspaces
+        - name: subjectId
+          in: path
+          description: The target subject id (i.e workspaceId if subjectType is 'workspace')
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                properties:
+                  result:
+                    $ref: "#/components/schemas/Collaborators"
+
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "400":
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+        "403":
+          description: ForbiddenError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
+
+  /v2/{subjectType}/{subjectId}/collaborators/share:
+    post:
+      description: Share the object with someone via a given role or specific permission
+      operationId: share
+      tags:
+        - sharing
+      parameters:
+        - name: "subjectType"
+          in: "path"
+          description: "The target subject type"
+          required: true
+          schema:
+            type: string
+            enum: &KNOWN_SUBJECT_TYPES
+              - workspaces
+        - name: subjectId
+          in: path
+          description: The target subject id (i.e workspaceId if subjectType is 'workspace')
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Collaborator"
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Collaborator"
+
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "400":
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+        "403":
+          description: ForbiddenError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
+
+  /v2/{subjectType}/{subjectId}/collaborators/revoke/{collaboratorId}:
+    post:
+      description: Revoke all role & permissions from a collaborator
+      operationId: revokeCollaborator
+      tags:
+        - permissions
+      parameters:
+        - name: "subjectType"
+          in: "path"
+          description: "The target subject type"
+          required: true
+          schema:
+            type: string
+            enum: *KNOWN_SUBJECT_TYPES
+        - name: subjectId
+          in: path
+          description: The target subject id (i.e workspaceId if subjectType is 'workspace')
+          required: true
+          schema:
+            type: string
+        - name: collaboratorId
+          in: path
+          description: The collaborator user id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    type: string
+
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "400":
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+        "403":
+          description: ForbiddenError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
+
+
   ############################################# prisme.ai-events
   /v2/workspaces/{workspaceId}/events:
     get:
@@ -1651,6 +1836,56 @@ components:
           type: string
         output:
           $ref: "#/components/schemas/AnyValue"
+
+
+    ################################################################################################################################
+    ################################################# Permissions &c collaboraotrs #################################################
+    Collaborators:
+      type: array
+      items:
+        $ref: "#/components/schemas/Collaborator"
+      example:
+        - email: admin@prisme.ai
+          role: admin
+        - email: readonly@prisme.ai
+          permissions:
+            read: true
+
+    Role:
+      type: string
+      enum:
+        - admin
+        - collaborator
+
+    Permissions:
+      properties:
+        read:
+          type: boolean
+        write:
+          type: boolean
+        update:
+          type: boolean
+        create:
+          type: boolean
+        manage_collaborators:
+          type: boolean
+
+    Collaborator:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        role:
+          $ref: "#/components/schemas/Role"
+        permissions:
+          $ref: "#/components/schemas/Permissions"
+
+
 
     ################################################################################################################################
     ############################################################ Events ############################################################

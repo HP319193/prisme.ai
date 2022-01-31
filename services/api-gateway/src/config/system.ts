@@ -16,10 +16,14 @@ export default {
     process.env.CORRELATION_ID_HEADER || "x-correlation-id",
   USER_ID_HEADER: process.env.USER_ID_HEADER || "x-prismeai-user-id",
 
+  API_KEY_HEADER: process.env.API_KEY_HEADER || "x-prismeai-api-key",
+
   SESSION_COOKIES_MAX_AGE: parseInt(
     process.env.SESSION_COOKIES_MAX_AGE || <any>(30 * 24 * 60 * 60)
   ), // 1 month (seconds)
 
   SESSION_COOKIES_SIGN_SECRET:
     process.env.SESSION_COOKIES_SIGN_SECRET || ",s6<Mt3=dE[7a#k{)4H)C4%",
+
+  INTERNAL_API_KEY: process.env.INTERNAL_API_KEY || "#pZFT>2.g9x8p9D",
 };

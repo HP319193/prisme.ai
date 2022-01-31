@@ -13,13 +13,11 @@ export type Role = string;
 export type UserId = string;
 
 export type UserSubject = Record<string, any>;
-export type SubjectCollaborators = Record<
-  UserId,
-  {
-    role?: Role;
-    permissions?: Partial<Record<ActionType, boolean>>;
-  }
->;
+export type SubjectCollaborator = {
+  role?: Role;
+  permissions?: Partial<Record<ActionType, boolean>>;
+};
+export type SubjectCollaborators = Record<UserId, SubjectCollaborator>;
 export interface BaseSubject {
   id: string;
   createdBy: string;

@@ -195,18 +195,18 @@ describe("CRUD with a predefined role", () => {
     ];
     // Grant by role
     adminYWorkspaces[0] = await adminY.grant(
-      Role.Admin,
       SubjectType.Workspace,
       adminYWorkspaces[0].id,
-      adminZ.user!!
+      adminZ.user!!,
+      Role.Admin
     );
 
     // Grant by permission
     adminZWorkspaces[1] = await adminZ.grant(
-      ActionType.Read,
       SubjectType.Workspace,
       adminZWorkspaces[1].id,
-      adminY.user!!
+      adminY.user!!,
+      ActionType.Read
     );
 
     const workspacesZ = await adminZ.findAll(SubjectType.Workspace);
@@ -245,10 +245,10 @@ describe("CRUD with a predefined role", () => {
     });
 
     const sharedWorkspace = await adminZ.grant(
-      Role.Collaborator,
       SubjectType.Workspace,
       workspace.id,
-      collabZ.user
+      collabZ.user,
+      Role.Collaborator
     );
 
     collabZ.pullRoleFromSubject(SubjectType.Workspace, sharedWorkspace.id);
@@ -305,10 +305,10 @@ describe("Role & Permissions granting", () => {
     ).rejects.toThrow();
 
     const sharedWorkspace = await adminA.grant(
-      Role.Admin,
       SubjectType.Workspace,
       createdWorkspace.id,
-      adminB.user!!
+      adminB.user!!,
+      Role.Admin
     );
     expect(sharedWorkspace?.collaborators).toMatchObject({
       [adminB?.user?.id!!]: {
@@ -324,10 +324,10 @@ describe("Role & Permissions granting", () => {
 
   it("Any admin can revoke a specific role of someone else on its own workspace", async () => {
     const unsharedWorkspace = await adminA.revoke(
-      Role.Admin,
       SubjectType.Workspace,
       createdWorkspace.id,
-      adminB.user!!
+      adminB.user!!,
+      Role.Admin
     );
     expect(unsharedWorkspace?.collaborators).toMatchObject({
       [adminB.user.id]: {},
@@ -363,10 +363,10 @@ describe("Role & Permissions granting", () => {
     await expect(adminB.get(SubjectType.Page, page.id)).rejects.toThrow();
 
     const sharedPage = await adminA.grant(
-      [ActionType.Read, ActionType.Update],
       SubjectType.Page,
       page.id,
-      collaborator.user!!
+      collaborator.user!!,
+      [ActionType.Read, ActionType.Update]
     );
 
     // Check that collaborator now can read & update the page (but not its collaborators field !)

@@ -23,10 +23,10 @@ export function initAccessManager(storage: AccessManagerOptions["storage"]) {
     {
       storage,
       schemas: {
-        workspace: {
+        [SubjectType.Workspace]: {
           name: String,
         },
-        event: false,
+        [SubjectType.Event]: false,
       },
     },
     config

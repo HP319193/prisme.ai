@@ -1,15 +1,15 @@
 import { Ability, ForbiddenError, subject as an } from "@casl/ability";
 
 import { permittedFieldsOf } from "@casl/ability/extra";
-import { Rules } from "..";
+import { Rules, SubjectCollaborator } from "..";
 import { injectRules, nativeRules, sortRules } from "./rulesBuilder";
 import {
   UnknownRole,
   ForbiddenError as PrismeaiForbiddenError,
+  InvalidCollaborator,
 } from "./errors";
 import {
   User,
-  // Subject,
   ActionType,
   Role,
   RoleTemplates,
@@ -59,12 +59,41 @@ export class Permissions<SubjectType extends string> {
   }
 
   grant(
-    permission: ActionType | ActionType[] | Role,
+    permission: ActionType | ActionType[] | Role | SubjectCollaborator,
     subjectType: SubjectType,
     subject: Subject,
     collaborator: User
-  ) {
+  ): Subject {
     this.throwUnlessCan(ActionType.ManageCollaborators, subjectType, subject);
+
+    // Update entire collaborator
+    if (typeof permission === "object" && !Array.isArray(permission)) {
+      const { role, permissions, ...otherFields } =
+        permission as Prismeai.Collaborator;
+      if (Object.keys(otherFields).length) {
+        throw new InvalidCollaborator(
+          `Only allowed collaborator fields are 'role' and 'permissions' (found ${Object.keys(
+            otherFields
+          ).join(",")})`
+        );
+      }
+
+      if (role && !this.findRoleTemplate(role, subjectType)) {
+        throw new UnknownRole(
+          `Can't assign ${subjectType || ""} role '${role}' to user '${
+            this.user.id
+          }' as it does not seem to exist .`
+        );
+      }
+
+      return {
+        ...subject,
+        collaborators: {
+          ...subject.collaborators,
+          [collaborator.id]: permission as Prismeai.Collaborator,
+        },
+      };
+    }
 
     // Grant a role
     const roleTemplate = this.findRoleTemplate(permission as Role, subjectType);
@@ -77,14 +106,16 @@ export class Permissions<SubjectType extends string> {
           ...subject.collaborators,
           [collaborator.id]: {
             ...contributor,
-            role,
+            role: role,
           },
         },
       };
     }
 
     // Grant an action / list of actions
-    const actions = Array.isArray(permission) ? permission : [permission];
+    const actions = (
+      Array.isArray(permission) ? permission : [permission]
+    ) as string[];
     const { permissions: currentPermissions, ...contributor } =
       subject.collaborators?.[collaborator.id] || {};
 
@@ -126,9 +157,6 @@ export class Permissions<SubjectType extends string> {
       const role = permission;
       const { role: currentRole, ...contributor } =
         subject.collaborators?.[collaborator.id] || {};
-      if (currentRole !== role) {
-        return subject;
-      }
       if (role === "all") {
         // Revoke all permissions & role
         const { [collaborator.id]: him, ...contributorsWithoutHim } =
@@ -137,6 +165,10 @@ export class Permissions<SubjectType extends string> {
           ...subject,
           collaborators: contributorsWithoutHim,
         };
+      }
+
+      if (currentRole !== role) {
+        return subject;
       }
 
       return {

@@ -9,6 +9,14 @@ export class PrismeError extends Error {
     this.details = details;
     this.httpCode = httpCode;
   }
+
+  toJSON() {
+    return {
+      error: this.error,
+      message: this.message,
+      details: this.details,
+    };
+  }
 }
 
 export class ConfigurationError extends PrismeError {

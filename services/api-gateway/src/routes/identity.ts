@@ -1,9 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
 import services from "../services";
 import passport from "passport";
-import { isAuthenticated } from "../middlewares/authentication";
+import {
+  isAuthenticated,
+  isInternallyAuthenticated,
+} from "../middlewares/authentication";
 import { AuthenticationError } from "../types/errors";
 import { EventType } from "../eda";
+import { FindUserQuery } from "../services/identity/users";
 
 const loginHandler = (strategy: string) =>
   async function (
@@ -65,6 +69,24 @@ async function logoutHandler(req: Request, res: Response) {
   res.status(200).send();
 }
 
+/**
+ * Internal route
+ */
+async function findContactsHandler(
+  { context, body: { email, ids } }: Request<any, any, FindUserQuery>,
+  res: Response<{
+    contacts: Prismeai.User[];
+  }>
+) {
+  const identity = services.identity(context);
+  return res.send({
+    contacts: await identity.find({
+      email,
+      ids,
+    }),
+  });
+}
+
 const app = express.Router();
 
 app.post(`/login`, loginHandler("local"));
@@ -72,5 +94,8 @@ app.post(`/login/anonymous`, loginHandler("anonymous"));
 app.post(`/signup`, signupHandler);
 app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/logout`, logoutHandler);
+
+// Internal routes
+app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);
 
 export default app;

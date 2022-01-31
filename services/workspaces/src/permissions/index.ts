@@ -7,7 +7,7 @@ import { SubjectType, Role, config } from "./config";
 
 export { SubjectType, Role, ActionType };
 
-type SubjectInterfaces = {
+export type SubjectInterfaces = {
   [SubjectType.Workspace]: { id: string; name: string };
 };
 
@@ -21,7 +21,7 @@ export function initAccessManager(storage: AccessManagerOptions["storage"]) {
     {
       storage,
       schemas: {
-        workspace: {
+        [SubjectType.Workspace]: {
           name: String,
         },
       },

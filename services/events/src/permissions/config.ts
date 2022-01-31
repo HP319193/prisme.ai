@@ -1,8 +1,8 @@
 import { PermissionsConfig, ActionType } from "@prisme.ai/permissions";
 
 export enum SubjectType {
-  Workspace = "workspace",
-  Event = "event",
+  Workspace = "workspaces",
+  Event = "events",
 }
 
 export enum Role {

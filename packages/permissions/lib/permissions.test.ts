@@ -282,7 +282,7 @@ describe("ABAC > Grant permissions", () => {
         SubjectType.Workspace,
         adminWorkspace,
         collaboratorUser
-      );
+      ) as any as Subject;
     }).not.toThrow();
 
     expect(sharedWorkspace!!.collaborators).toMatchObject({
@@ -340,7 +340,7 @@ describe("ABAC > Grant permissions", () => {
         SubjectType.Workspace,
         adminWorkspace,
         collaboratorUser
-      );
+      ) as any as Subject;
     }).not.toThrow();
     // He can also update collaborators field manually
     expect(
@@ -421,7 +421,7 @@ describe("ABAC > Grant permissions", () => {
         SubjectType.Workspace,
         adminWorkspace,
         collaboratorUser
-      );
+      ) as any as Subject;
     }).not.toThrow();
 
     expect(sharedWorkspace!!.collaborators).toMatchObject({
@@ -440,7 +440,7 @@ describe("ABAC > Grant permissions", () => {
         SubjectType.Workspace,
         sharedWorkspace!!,
         collaboratorUser2
-      );
+      ) as any as Subject;
     }).not.toThrow();
 
     // Thus, the second collaborator can read this workspace
@@ -489,7 +489,7 @@ describe("ABAC > Grant permissions", () => {
         SubjectType.Workspace,
         adminWorkspace,
         collaboratorUser
-      );
+      ) as any as Subject;
     }).not.toThrow();
 
     // The collaborator now can't read anymore this workspace !
@@ -719,7 +719,7 @@ describe("Subject-attached Roles", () => {
         SubjectType.Workspace,
         adminWorkspace,
         futureCollaboratorUser
-      );
+      ) as any as Subject;
     }).not.toThrow();
 
     expect(sharedWorkspace!!.collaborators).toMatchObject({

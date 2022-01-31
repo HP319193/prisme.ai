@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { syscfg } from "../../config";
 import { AuthenticationError } from "../../types/errors";
 
 export function isAuthenticated(
@@ -7,6 +8,19 @@ export function isAuthenticated(
   next: NextFunction
 ) {
   if (req.user) {
+    return next();
+  }
+
+  throw new AuthenticationError();
+}
+
+export function isInternallyAuthenticated(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const apiKey = req.headers[syscfg.API_KEY_HEADER];
+  if (apiKey && apiKey === syscfg.INTERNAL_API_KEY) {
     return next();
   }
 

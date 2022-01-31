@@ -4,9 +4,11 @@ import {
   AlreadyUsed,
   AuthenticationError,
   InvalidEmail,
+  PrismeError,
 } from "../../types/errors";
 import { comparePasswords, hashPassword } from "./utils";
 import isEmail from "is-email";
+import { ObjectId } from "mongodb";
 
 export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function ({
@@ -61,4 +63,28 @@ export const anonymousLogin = (Users: StorageDriver, ctx?: PrismeContext) =>
       },
     };
     return await Users.save(user);
+  };
+
+export interface FindUserQuery {
+  email?: string;
+  ids?: string[];
+}
+export const find = (Users: StorageDriver, ctx?: PrismeContext) =>
+  async function ({ email, ids }: FindUserQuery) {
+    if (email) {
+      return await Users.find({ email });
+    }
+    if (ids) {
+      try {
+        const mongoIds = ids.map((id) => new ObjectId(id));
+        return await Users.find({
+          _id: {
+            $in: mongoIds,
+          },
+        });
+      } catch (error) {
+        throw new PrismeError(`Invalid id (${ids.join(",")})`, { ids }, 400);
+      }
+    }
+    return [];
   };

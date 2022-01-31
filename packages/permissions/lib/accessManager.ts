@@ -10,6 +10,7 @@ import {
   buildFilterFieldsMethod,
   BaseSubject,
   UserSubject,
+  SubjectCollaborator,
 } from "..";
 import { validateRules } from "./rulesBuilder";
 import { ObjectNotFoundError } from "./errors";
@@ -268,10 +269,10 @@ export class AccessManager<
   }
 
   async grant<returnType extends SubjectType>(
-    permission: ActionType | ActionType[] | Role,
     subjectType: returnType,
     id: string,
-    collaborator: User
+    collaborator: User,
+    permission: ActionType | ActionType[] | Role | SubjectCollaborator
   ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions, user } = this.checkAsUser();
 
@@ -293,10 +294,10 @@ export class AccessManager<
   }
 
   async revoke<returnType extends SubjectType>(
-    permission: ActionType | ActionType[] | Role | "all",
     subjectType: returnType,
     id: string,
-    collaborator: User
+    collaborator: User,
+    permission: ActionType | ActionType[] | Role | "all" = "all"
   ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions, user } = this.checkAsUser();
 

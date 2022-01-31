@@ -82,6 +82,7 @@ services:
       WORKSPACES_STORAGE_TYPE: FILESYSTEM
       WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
       PERMISSIONS_STORAGE_HOST: mongodb://mongo/permissions
+      GATEWAY_API_URL: http://gateway:3001
 
   events:
     working_dir: /www

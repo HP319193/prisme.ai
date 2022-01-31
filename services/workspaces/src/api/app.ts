@@ -13,8 +13,9 @@ import {
   validationErrorMiddleware,
   validationMiddleware,
 } from "./middlewares/validation";
-import { AccessManager } from "../permissions";
+import { AccessManager, SubjectType, SubjectInterfaces } from "../permissions";
 import { accessManagerMiddleware } from "./middlewares/accessManager";
+import { initCollaboratorRoutes } from "@prisme.ai/permissions";
 
 export function initAPI(accessManager: AccessManager) {
   const app = express();
@@ -59,6 +60,11 @@ export function initAPI(accessManager: AccessManager) {
     }),
     validationErrorMiddleware
   );
+
+  /**
+   * Sharing routes
+   */
+  initCollaboratorRoutes<SubjectType>(app);
 
   /**
    * User routes

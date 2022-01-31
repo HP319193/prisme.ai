@@ -40,8 +40,20 @@ export class UnknownSubjectType extends PrismeError {
   }
 }
 
+export class InvalidCollaborator extends PrismeError {
+  constructor(msg: string = "Invalid collaborator", details?: any) {
+    super(msg, details, "InvalidCollaborator");
+  }
+}
+
 export class ObjectNotFoundError extends PrismeError {
   constructor(msg: string = "Object not found") {
     super(msg, [], "ObjectNotFoundError");
+  }
+}
+
+export class CollaboratorNotFound extends PrismeError {
+  constructor(msg: string = "Can't find this collaborator") {
+    super(msg, [], "CollaboratorNotFound");
   }
 }
