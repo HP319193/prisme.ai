@@ -1,6 +1,5 @@
 import "../styles/prismeai-theme.less";
 import "../styles/globals.css";
-import "primeicons/primeicons.css";
 import * as NextImage from "next/image";
 
 const OriginalNextImage = NextImage.default;
