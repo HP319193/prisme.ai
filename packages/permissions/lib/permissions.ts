@@ -107,7 +107,7 @@ export class Permissions<SubjectType extends string> {
   }
 
   revoke(
-    permission: ActionType | ActionType[] | Role,
+    permission: ActionType | ActionType[] | Role | "all",
     subjectType: SubjectType,
     subject: Subject,
     collaborator: User
@@ -115,14 +115,30 @@ export class Permissions<SubjectType extends string> {
     this.throwUnlessCan(ActionType.ManageCollaborators, subjectType, subject);
 
     // Revoke a role
-    const roleTemplate = this.findRoleTemplate(permission as Role, subjectType);
-    if (typeof permission === "string" && roleTemplate) {
+    const isExistingRole = !!this.findRoleTemplate(
+      permission as Role,
+      subjectType
+    );
+    if (
+      typeof permission === "string" &&
+      (permission === "all" || isExistingRole)
+    ) {
       const role = permission;
       const { role: currentRole, ...contributor } =
         subject.collaborators?.[collaborator.id] || {};
       if (currentRole !== role) {
         return subject;
       }
+      if (role === "all") {
+        // Revoke all permissions & role
+        const { [collaborator.id]: him, ...contributorsWithoutHim } =
+          subject.collaborators || {};
+        return {
+          ...subject,
+          collaborators: contributorsWithoutHim,
+        };
+      }
+
       return {
         ...subject,
         collaborators: {

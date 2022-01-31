@@ -34,6 +34,12 @@ export class UnknownRole extends PrismeError {
   }
 }
 
+export class UnknownSubjectType extends PrismeError {
+  constructor(msg: string = "Unknown subject type", details?: any) {
+    super(msg, details, "UnknownSubjectType");
+  }
+}
+
 export class ObjectNotFoundError extends PrismeError {
   constructor(msg: string = "Object not found") {
     super(msg, [], "ObjectNotFoundError");

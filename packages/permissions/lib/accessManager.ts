@@ -16,7 +16,7 @@ import { ObjectNotFoundError } from "./errors";
 
 type Document<T = any> = mongoose.Document<T> &
   BaseSubject & {
-    filterFields: () => T & BaseSubject;
+    filterFields: (permissions: Permissions<any>) => T & BaseSubject;
   };
 
 export interface AccessManagerOptions<SubjectType extends string = string> {
@@ -66,7 +66,7 @@ export class AccessManager<
 
         (schema as mongoose.Schema).method(
           "filterFields",
-          buildFilterFieldsMethod()
+          buildFilterFieldsMethod(name as any)
         );
 
         return {
@@ -115,7 +115,7 @@ export class AccessManager<
     if (!model) {
       return;
     }
-    return permissions.pullRoleFromSubject(subjectType, model.filterFields());
+    return permissions.pullRoleFromSubject(subjectType, model.toJSON());
   }
 
   private async fetch<returnType extends SubjectType>(
@@ -167,7 +167,7 @@ export class AccessManager<
       .filter((cur) =>
         permissions.can(ActionType.Read, subjectType, cur.toJSON())
       )
-      .map((cur) => cur.filterFields());
+      .map((cur) => cur.filterFields(permissions));
   }
 
   async get<returnType extends SubjectType>(
@@ -180,9 +180,8 @@ export class AccessManager<
       throw new ObjectNotFoundError();
     }
 
-    const filtered = subject.filterFields();
-    permissions.throwUnlessCan(ActionType.Read, subjectType, filtered);
-    return filtered;
+    permissions.throwUnlessCan(ActionType.Read, subjectType, subject.toJSON());
+    return subject.filterFields(permissions);
   }
 
   private filterFieldsBeforeUpdate<T>(document: T | Document<T>): T {
@@ -197,6 +196,7 @@ export class AccessManager<
     delete (<any>object).updatedBy;
     delete (<any>object).id;
     delete (<any>object)._id;
+    delete (<any>object).collaborators;
     return object;
   }
 
@@ -217,9 +217,8 @@ export class AccessManager<
     });
     object.id = subject.id || object._id!!.toString();
     await object.save();
-    const doc = object.filterFields();
-    permissions.pullRoleFromSubject(subjectType, doc);
-    return doc;
+    permissions.pullRoleFromSubject(subjectType, object.toJSON());
+    return object.filterFields(permissions);
   }
 
   async update<returnType extends SubjectType>(
@@ -236,7 +235,7 @@ export class AccessManager<
     permissions.throwUnlessCan(
       ActionType.Update,
       subjectType,
-      currentSubject.filterFields()
+      currentSubject.toJSON()
     );
 
     const date = new Date();
@@ -247,7 +246,7 @@ export class AccessManager<
     });
     await currentSubject.save();
 
-    return currentSubject.filterFields();
+    return currentSubject.filterFields(permissions);
   }
 
   async delete<returnType extends SubjectType>(
@@ -263,7 +262,7 @@ export class AccessManager<
     permissions.throwUnlessCan(
       ActionType.Delete,
       subjectType,
-      subject.filterFields()
+      subject.toJSON()
     );
     await subject.delete();
   }
@@ -284,17 +283,17 @@ export class AccessManager<
     const updatedSubject = permissions.grant(
       permission,
       subjectType,
-      doc.filterFields(),
+      doc.toJSON(),
       collaborator
     );
 
     doc.set(updatedSubject);
     await doc.save();
-    return doc.filterFields();
+    return doc.filterFields(permissions);
   }
 
   async revoke<returnType extends SubjectType>(
-    permission: ActionType | ActionType[] | Role,
+    permission: ActionType | ActionType[] | Role | "all",
     subjectType: returnType,
     id: string,
     collaborator: User
@@ -309,13 +308,13 @@ export class AccessManager<
     const updatedSubject = permissions.revoke(
       permission,
       subjectType,
-      doc.filterFields(),
+      doc.toJSON(),
       collaborator
     );
 
     doc.set(updatedSubject);
     await doc.save();
-    return doc.filterFields();
+    return doc.filterFields(permissions);
   }
 
   can<returnType extends SubjectType>(
@@ -345,9 +344,7 @@ export class AccessManager<
     permissions.throwUnlessCan(
       actionType,
       subjectType,
-      typeof subject.filterFields === "function"
-        ? subject.filterFields()
-        : subject
+      typeof subject.toJSON === "function" ? subject.toJSON() : subject
     );
   }
 

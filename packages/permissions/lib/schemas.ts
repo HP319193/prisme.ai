@@ -1,5 +1,5 @@
 import { Schema, Document, Types } from "mongoose";
-import { Subject } from "..";
+import { ActionType, Permissions, Subject } from "..";
 
 const CollaboratorSchema = new Schema(
   {
@@ -30,8 +30,13 @@ const BaseSchema = new Schema({
 
 export { BaseSchema };
 
-export function buildFilterFieldsMethod() {
-  return function (this: Document | Subject) {
+export function buildFilterFieldsMethod<SubjectType extends string>(
+  subjectType: SubjectType
+) {
+  return function (
+    this: Document | Subject,
+    permissions?: Permissions<SubjectType>
+  ) {
     const object: Subject =
       typeof this.toJSON === "function" ? this.toJSON() : this;
     if (object._id) {
@@ -42,6 +47,13 @@ export function buildFilterFieldsMethod() {
     }
     if (typeof object.__v !== "undefined") {
       delete object.__v;
+    }
+
+    if (
+      !permissions ||
+      !permissions.can(ActionType.ManageCollaborators, subjectType, object)
+    ) {
+      delete object.collaborators;
     }
 
     return object;
