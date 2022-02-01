@@ -5,13 +5,13 @@ import { evaluateNode } from "../utils";
 
 class Variable extends Evaluatable {
   variableName;
-  constructor(name) {
+  constructor(name: any) {
     super();
 
     this.variableName = name;
   }
 
-  evaluateVariableName(variableName, context) {
+  evaluateVariableName(variableName: any, context: any) {
     if (isArray(variableName)) {
       console.log(variableName);
       // we can have nested variables
@@ -21,7 +21,7 @@ class Variable extends Evaluatable {
     return variableName;
   }
 
-  evaluate(context) {
+  evaluate(context: any) {
     const variableName = this.evaluateVariableName(this.variableName, context);
 
     return get(context, variableName);

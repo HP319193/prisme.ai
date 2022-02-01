@@ -1,10 +1,10 @@
 import memoize from "lodash/memoize";
 import isString from "lodash/isString";
 import isBoolean from "lodash/isBoolean";
-import { Grammar, Parser } from "nearley";
-const compiledGrammar = require("./grammar");
+import { CompiledRules, Grammar, Parser } from "nearley";
+import compiledGrammar from "./grammar";
 
-const grammar = Grammar.fromCompiled(compiledGrammar);
+const grammar = Grammar.fromCompiled(compiledGrammar as CompiledRules);
 
 function createParser() {
   return new Parser(grammar);

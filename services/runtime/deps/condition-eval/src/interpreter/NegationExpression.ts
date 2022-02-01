@@ -3,13 +3,13 @@ import { evaluateNode } from "../utils";
 
 class NegationExpression extends Evaluatable {
   node;
-  constructor(node) {
+  constructor(node: any) {
     super();
 
     this.node = node;
   }
 
-  evaluate(context) {
+  evaluate(context: any) {
     return !evaluateNode(this.node, context);
   }
 }

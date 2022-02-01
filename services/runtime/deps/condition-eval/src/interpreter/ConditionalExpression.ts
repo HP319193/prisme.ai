@@ -5,7 +5,7 @@ class ConditionalExpression extends Evaluatable {
   leftNode;
   rightNode;
   operator;
-  constructor(leftNode, rightNode, operator) {
+  constructor(leftNode: any, rightNode: any, operator: any) {
     super();
 
     this.leftNode = leftNode;
@@ -13,7 +13,7 @@ class ConditionalExpression extends Evaluatable {
     this.operator = operator;
   }
 
-  evaluate(context) {
+  evaluate(context: any) {
     const left = evaluateNode(this.leftNode, context);
     const right = evaluateNode(this.rightNode, context);
 

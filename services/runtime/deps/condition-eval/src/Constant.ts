@@ -2,13 +2,13 @@ import Evaluatable from "./Evaluatable";
 
 class Constant extends Evaluatable {
   value: any;
-  constructor(value) {
+  constructor(value: any) {
     super();
 
     this.value = value;
   }
 
-  evaluate(context) {
+  evaluate(context: any) {
     return this.value;
   }
 }
