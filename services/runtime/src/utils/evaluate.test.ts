@@ -74,6 +74,9 @@ describe("Math.js should handle basic conditions features", () => {
     expect(evaluate("bonjour matches bon")).toEqual(true);
     expect(evaluate("salut !== aurevoir")).toEqual(true);
     expect(evaluate(`"salut" !== 'salut'`)).toEqual(false);
+    expect(
+      evaluate(`"salut, moi c'est michel!" === 'salut, moi c pas michel.'`)
+    ).toEqual(false);
     expect(evaluate("salut !== salut")).toEqual(false);
   });
 });

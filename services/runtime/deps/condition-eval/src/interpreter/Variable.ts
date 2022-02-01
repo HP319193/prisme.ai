@@ -13,7 +13,6 @@ class Variable extends Evaluatable {
 
   evaluateVariableName(variableName: any, context: any) {
     if (isArray(variableName)) {
-      console.log(variableName);
       // we can have nested variables
       return variableName.map((n) => evaluateNode(n, context));
     }

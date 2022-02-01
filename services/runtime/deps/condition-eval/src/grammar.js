@@ -31,8 +31,8 @@ function id(x) { return x[0]; }
                 "true": /[Tt][Rr][Uu][Ee]/,	
                 "false": /[Ff][Aa][Ll][Ss][Ee]/,
                 word: /[a-zA-Z0-9_]+/,
-                sqstr: /'[a-zA-Z ]*'/,
-                dqstr: /"[a-zA-Z ]*"/,
+                sqstr: /'.*?'/,
+                dqstr: /".*?"/,
                 dcbl: /{{/,
                 dcbr: /}}/
 	});
