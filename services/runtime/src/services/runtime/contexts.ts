@@ -1,5 +1,6 @@
 import {
   CONTEXT_RUN_EXPIRE_TIME,
+  CONTEXT_SESSION_EXPIRE_TIME,
   MAXIMUM_SUCCESSIVE_CALLS,
 } from "../../../config";
 import { CacheDriver } from "../../cache";
@@ -39,6 +40,7 @@ export interface Contexts {
   run: RunContext;
   global: GlobalContext;
   user: UserContext;
+  session: Record<string, any>;
   local: LocalContext;
   [k: string]: object;
 }
@@ -47,12 +49,18 @@ export enum ContextType {
   Run = "run",
   Global = "global",
   User = "user",
+  Session = "session",
   Customs = "customs",
+  Local = "local",
 }
 
 type PublicContexts = Omit<Contexts, "run">;
 
-export const NativeContexts = ["global", "user"];
+export const UserAccessibleContexts: ContextType[] = [
+  ContextType.Global,
+  ContextType.User,
+  ContextType.Session,
+];
 
 const VariableNameValidationRegexp = new RegExp(/^[a-zA-Z0-9._-]+$/);
 export class ContextsManager {
@@ -106,6 +114,9 @@ export class ContextsManager {
         ...(additionalContexts?.run || {}),
         correlationId: this.correlationId,
       },
+      session: {
+        ...(additionalContexts?.session || {}),
+      },
     };
   }
 
@@ -122,18 +133,22 @@ export class ContextsManager {
     const customs = await this.cache.getObject(
       this.cacheKey(ContextType.Customs)
     );
+    const session = await this.cache.getObject(
+      this.cacheKey(ContextType.Session)
+    );
 
     this.contexts = this.default({
       ...(customs || {}),
       global,
       run,
       user,
-      local: this.contexts.local,
+      session,
+      local: this.contexts[ContextType.Local],
     });
   }
 
   async save(context?: ContextType) {
-    const { global, run, user, local: _, ...customs } = this.contexts;
+    const { global, run, user, local: _, session, ...customs } = this.contexts;
 
     if (!context || context === ContextType.Global) {
       await this.cache.setObject(this.cacheKey(ContextType.Global), global);
@@ -149,6 +164,11 @@ export class ContextsManager {
     if (!context || context === ContextType.Customs) {
       await this.cache.setObject(this.cacheKey(ContextType.Customs), customs);
     }
+    if (!context || context === ContextType.Session) {
+      await this.cache.setObject(this.cacheKey(ContextType.Session), session, {
+        ttl: CONTEXT_SESSION_EXPIRE_TIME,
+      });
+    }
   }
 
   private cacheKey(context: ContextType | string) {
@@ -160,6 +180,9 @@ export class ContextsManager {
     }
     if (context === ContextType.Run) {
       return `contexts:${this.workspaceId}:run:${this.correlationId}`;
+    }
+    if (context === ContextType.Session) {
+      return `contexts:${this.workspaceId}:session:${this.userId}`;
     }
     return `contexts:${this.workspaceId}:user:${this.userId}:customs`;
   }
@@ -184,7 +207,7 @@ export class ContextsManager {
       local:
         opts.resetLocal || true
           ? opts.payload || {}
-          : { ...this.contexts.local, ...opts.payload },
+          : { ...this.contexts[ContextType.Local], ...opts.payload },
     };
     const child = Object.assign({}, this, {
       contexts: childContexts,
@@ -205,27 +228,38 @@ export class ContextsManager {
     }
   }
 
+  private findParentVariableFor(path: string) {
+    const splittedPath = path.split(".");
+    const rootVarName = splittedPath[0];
+    const lastKey = splittedPath[splittedPath.length - 1];
+
+    const context: any = UserAccessibleContexts.includes(
+      rootVarName as ContextType
+    )
+      ? this.contexts
+      : this.contexts[ContextType.Local];
+
+    let parent = context;
+    for (let i = 0; i < splittedPath.length - 1; i++) {
+      const key = splittedPath[i];
+      if (!(key in parent)) {
+        parent[key] = {};
+      }
+      parent = parent[key];
+    }
+
+    return {
+      parent,
+      lastKey,
+    };
+  }
+
   set(path: string, value: any) {
     this.validateVariableName(path);
+
     try {
-      const splittedPath = path.split(".");
-      const rootVarName = path[0];
-      const lastKey = splittedPath[splittedPath.length - 1];
-
-      const context: any = NativeContexts.includes(rootVarName)
-        ? this.contexts
-        : this.contexts.local;
-
-      let parentVariable = context;
-      for (let i = 0; i < splittedPath.length - 1; i++) {
-        const key = splittedPath[i];
-        if (!(key in parentVariable)) {
-          parentVariable[key] = {};
-        }
-        parentVariable = parentVariable[key];
-      }
-
-      parentVariable[lastKey] = value;
+      const { parent, lastKey } = this.findParentVariableFor(path);
+      parent[lastKey] = value;
     } catch (error) {
       this.logger.error(error);
       throw new InvalidSetInstructionError("Invalid set instruction", {
@@ -233,6 +267,13 @@ export class ContextsManager {
         value,
       });
     }
+  }
+
+  delete(path: string) {
+    this.validateVariableName(path);
+
+    const { parent, lastKey } = this.findParentVariableFor(path);
+    delete parent[lastKey];
   }
 
   get publicContexts(): PublicContexts {

@@ -6,11 +6,15 @@ import { ContextsManager } from "../../contexts";
 import { conditions } from "./conditions";
 import { emit } from "./emit";
 import { fetch } from "./fetch";
+import { set } from "./set";
+import { deleteInstruction } from "./deleteInstruction";
 
 export enum InstructionType {
   Emit = "emit",
   Fetch = "fetch",
   Conditions = "conditions",
+  Set = "set",
+  Delete = "delete",
 }
 
 export async function runCustomAutomation(
@@ -85,6 +89,12 @@ export async function runInstruction(
         broker,
         ctx,
       });
+      break;
+    case InstructionType.Set:
+      result = await set(<Prismeai.Set["set"]>payload, ctx);
+      break;
+    case InstructionType.Delete:
+      result = await deleteInstruction(<Prismeai.Delete["delete"]>payload, ctx);
       break;
     default:
       result = await runCustomAutomation(
