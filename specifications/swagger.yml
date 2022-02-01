@@ -2934,6 +2934,15 @@ components:
               type: string
               description: Name of the variable which will hold the result
 
+    Comment:
+      type: object
+      required:
+        - 'comment'
+      maxProperties: 1
+      properties:
+        comment:
+          description: Do nothing but display a comment in instructions list
+          type: string
     Instruction:
       anyOf:
         - $ref: '#/components/schemas/Emit'
@@ -2945,6 +2954,7 @@ components:
         - $ref: '#/components/schemas/All'
         - $ref: '#/components/schemas/Break'
         - $ref: '#/components/schemas/Fetch'
+        - $ref: '#/components/schemas/Comment'
         - type: object
           additionalProperties: true
           minProperties: 1
