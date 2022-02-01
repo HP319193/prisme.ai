@@ -123,9 +123,6 @@ export function initCollaboratorRoutes<SubjectType extends string>(
 
   const baseRoute = "/v2/:subjectType/:subjectId/collaborators";
   app.get(`${baseRoute}`, asyncRoute(getCollaboratorsHandler));
-  app.post(`${baseRoute}/share`, asyncRoute(shareHandler));
-  app.post(
-    `${baseRoute}/revoke/:collaboratorId`,
-    asyncRoute(revokeCollaborator)
-  );
+  app.post(`${baseRoute}`, asyncRoute(shareHandler));
+  app.delete(`${baseRoute}/:collaboratorId`, asyncRoute(revokeCollaborator));
 }

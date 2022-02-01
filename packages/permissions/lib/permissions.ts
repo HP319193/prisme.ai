@@ -1,5 +1,4 @@
 import { Ability, ForbiddenError, subject as an } from "@casl/ability";
-
 import { permittedFieldsOf } from "@casl/ability/extra";
 import { Rules, SubjectCollaborator } from "..";
 import { injectRules, nativeRules, sortRules } from "./rulesBuilder";
