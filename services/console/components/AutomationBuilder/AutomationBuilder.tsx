@@ -107,6 +107,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({ id, value, onCha
 
   const editInstructionDetails = useCallback(async (instruction?: Prismeai.Instruction) => {
     return new Promise<Prismeai.Instruction>((resolve) => {
+      hidePanel();
       setInstructionEditing({
         instruction,
         onSubmit: (instruction: Prismeai.Instruction) => {
@@ -143,6 +144,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({ id, value, onCha
 
   const editConditionDetails = useCallback((condition: string) => {
     return new Promise<string>((resolve) => {
+      hidePanel();
       setConditionEditing({
         condition,
         onSubmit: (condition: string) => {
@@ -178,6 +180,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({ id, value, onCha
   }, [editConditionDetails, onChange, value]);
 
   const editTrigger: AutomationBuilderContext['editTrigger'] = useCallback(() => {
+    hidePanel();
     setTriggerEditing({
       trigger: value.when,
       onSubmit: (when) => {
