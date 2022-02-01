@@ -65,7 +65,7 @@
       },
       "endpoint": {
         "title": "Dirección web",
-        "display": "Se visita <a>la dirección web<icon /><a>",
+        "display": "Se visita <a>la dirección web<icon /></a>",
         "copied": "La dirección web ha sido copiado en su portapapeles",
         "help": "La automatización se ejecutará cada vez que se llame a una url.",
         "custom": "Ejecuta esta automatización llamando a una dirección web"

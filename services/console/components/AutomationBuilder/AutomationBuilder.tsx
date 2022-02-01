@@ -78,7 +78,10 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({ id, value, onCha
   }, [id, value, workspace.id])
 
   const instructionsSchemas: [string, Record<string, Schema>, { icon: string }][] = useMemo(() => [
-    [t('automations.instruction.title_builtin'), BUILTIN_INSTRUCTIONS, { icon: iconPrisme.src }],
+    [t('automations.instruction.title_builtin'), Object.keys(BUILTIN_INSTRUCTIONS).reduce((prev, name) => ({
+      ...prev,
+      [name]: (BUILTIN_INSTRUCTIONS as any)[name].properties[name]
+    }), {}), { icon: iconPrisme.src }],
     [workspace.name, Object.keys(automations).reduce((prev, name) => {
       if (name === id) return prev;
       const schema = automations[name].arguments ? {
