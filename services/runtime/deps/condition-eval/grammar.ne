@@ -26,13 +26,11 @@
                 "undefined": /[Uu][Nn][Dd][Ee][Ff][Ii][Nn][Ee][Dd]/,	
                 "true": /[Tt][Rr][Uu][Ee]/,	
                 "false": /[Ff][Aa][Ll][Ss][Ee]/,
-                word: /[a-zA-Z]+/,
+                word: /[a-zA-Z0-9_]+/,
                 sqstr: /'[a-zA-Z ]*'/,
                 dqstr: /"[a-zA-Z ]*"/,
                 dcbl: /{{/,
-                dcbr: /}}/,
-                variable: /[a-zA-Z_]/,
-                variableAfterDot : /[a-zA-Z0-9_]+/
+                dcbr: /}}/
 	});
 %}
 

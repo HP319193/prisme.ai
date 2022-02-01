@@ -121,6 +121,11 @@ describe("It should handle variables within {{}}", () => {
         bar: { foo: { deep: true } },
       })
     ).toEqual(false);
+    expect(
+      evaluate('{{hub.verify_token}} === "ok"', {
+        hub: { verify_token: "ok" },
+      })
+    ).toEqual(true);
   });
 
   it("does not work yet with array or object comparaisons", () => {
