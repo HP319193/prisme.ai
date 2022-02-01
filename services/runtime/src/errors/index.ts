@@ -69,3 +69,9 @@ export class InvalidSetInstructionError extends PrismeError {
     super(msg, details);
   }
 }
+
+export class InvalidConditionSyntax extends PrismeError {
+  constructor(msg: string = "Invalid syntax in a condition", details?: any) {
+    super(msg, details);
+  }
+}
