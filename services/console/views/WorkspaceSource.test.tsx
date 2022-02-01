@@ -292,7 +292,7 @@ automations:
     {
       row: 4,
       column: 4,
-      text: 'invalid trigger in "trigger" (5:5)\n\ntrigger',
+      text: expect.any(String),
       type: 'error'
     }
   ])
