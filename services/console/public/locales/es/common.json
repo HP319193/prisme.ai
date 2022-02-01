@@ -1,6 +1,11 @@
 {
+  "main": {
+    "title": "Prisme.ai Pyramide",
+    "description": "Plataforma de automatización de bajo código sin código"
+  },
   "home": {
     "title": "Prisme.ai Pyramide",
     "signin": "Conexión"
-  }
+  },
+  "save": "Registro"
 }

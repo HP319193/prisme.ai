@@ -1,6 +1,6 @@
-import express, { Request, Response } from "express";
-import services from "../../services";
-import { asyncRoute } from "../utils/async";
+import express, { Request, Response } from 'express';
+import services from '../../services';
+import { asyncRoute } from '../utils/async';
 
 async function createAutomationHandler(
   {

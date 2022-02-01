@@ -75,7 +75,7 @@ exports[`should get layout 1`] = `
           transition-ease-in
           
           shadow-4
-          z-2"
+          z-4"
         onClick={[Function]}
         onTouchEnd={[Function]}
       >
@@ -208,7 +208,7 @@ exports[`should render empty 1`] = `
           transition-ease-in
           
           shadow-4
-          z-2"
+          z-4"
         onClick={[Function]}
         onTouchEnd={[Function]}
       >
@@ -299,7 +299,7 @@ exports[`should render fetching 1`] = `
           transition-ease-in
           
           shadow-4
-          z-2"
+          z-4"
         onClick={[Function]}
         onTouchEnd={[Function]}
       >
@@ -390,7 +390,7 @@ exports[`should render loading 1`] = `
           transition-ease-in
           
           shadow-4
-          z-2"
+          z-4"
         onClick={[Function]}
         onTouchEnd={[Function]}
       >

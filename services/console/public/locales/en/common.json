@@ -1,9 +1,10 @@
 {
   "main": {
     "title": "Prisme.ai Pyramide",
-    "description": "Plateforme d'automatisation low code no code"
+    "description": "Automatation low code no code platform"
   },
   "home": {
     "signin": "Signin"
-  }
+  },
+  "save": "Save"
 }

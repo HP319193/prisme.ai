@@ -42,3 +42,9 @@ a {
 .prisme-events-viewer__event .p-accordion-toggle-icon {
   order: 1;
 }
+
+.p-float-label .ace_focus ~ label,
+.p-float-label .filled ~ label {
+    top: -0.75rem;
+    font-size: 12px;
+}

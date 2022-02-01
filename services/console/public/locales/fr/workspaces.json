@@ -49,6 +49,54 @@
     },
     "endpoint": {
       "copied": "L'adresse a bien été copiée"
+    },
+    "trigger": {
+      "title": "Se déclenche quand",
+      "events": {
+        "title": "Évènements",
+        "display_one": "L'évenement {{events}} survient",
+        "display_other": "L'un des évenements {{events}} survient",
+        "help": "L'automatisation sera exécutées à chaque fois que l'un des évènements suivants se produira."
+      },
+      "dates": {
+        "title": "Dates",
+        "_help": "L'automatisation sera exécutées à chaque intervale de temps spécifié.",
+        "help": "Bientôt disponible"
+      },
+      "endpoint": {
+        "title": "Adresse web",
+        "display": "<a>L'adresse web<icon /></a> est visitée",
+        "copied": "L'adresse web a bien été copiée dans votre presse-papier",
+        "help": "L'automatisation sera exécutées à chaque fois qu'une url sera appelée.",
+        "custom": "Exécuter cette automatisation en appellant une adresse web"
+      },
+      "save": "Enregistrer"
+    },
+    "instruction": {
+      "title_builtin": "Logique",
+      "label": "{{context}}",
+      "label_emit": "Émet l'évenement",
+      "label_repeat": "Répète sur",
+      "label_all": "Toutes les instructions",
+      "label_wait": "Attend l'évenement",
+      "label_set": "Définit var",
+      "label_delete": "Supprime var",
+      "label_conditions": "Conditions",
+      "search": "Rechercher"
+    },
+    "node": {
+      "label": "{{instruction}} {{value, then}} {{value}}"
+    },
+    "edit": {
+      "select": "Choisissez une instruction",
+      "builtin": "$t(automations.instruction.title_builtin)"
+    },
+    "condition": {
+      "edit": {
+        "title": "Condition",
+        "submit": "Enregistrer",
+        "submit_new": "Ajouter"
+      }
     }
   },
   "apps": {
@@ -65,6 +113,7 @@
       "confirm_message": "Vous vous appretez à quitter sans sauvegarder. Êtes vous sur ?"
     },
     "save": {
+      "help": "Enregistrer",
       "confirm": "Votre espace de travail est enregistré"
     }
   },

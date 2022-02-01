@@ -1,0 +1,197 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div>
+  <form
+    onSubmit={[Function]}
+  >
+    <fieldset
+      className="p-fieldset p-component pt-5 mb-4"
+      id={null}
+      onClick={null}
+      style={null}
+    >
+      <legend
+        className="p-fieldset-legend p-unselectable-text"
+        onClick={[Function]}
+      >
+        <span
+          className="p-fieldset-legend-text"
+          id="pr_id_1_header"
+        >
+          automations.trigger.events.title
+        </span>
+      </legend>
+      <div
+        aria-hidden={false}
+        aria-labelledby="pr_id_1_header"
+        className="p-toggleable-content"
+        id="pr_id_1_content"
+        role="region"
+      >
+        <div
+          className="p-fieldset-content"
+        >
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="p-float-label mx-2 undefined"
+            >
+              <div
+                className="p-chips p-component p-inputwrapper p-inputwrapper-filled"
+                id={null}
+                style={null}
+              >
+                <ul
+                  className="p-inputtext p-chips-multiple-container"
+                  onClick={[Function]}
+                >
+                  <li
+                    className="p-chips-token p-highlight"
+                  >
+                    <span
+                      className="p-chips-token-label"
+                    >
+                      foo
+                    </span>
+                    <span
+                      className="p-chips-token-icon pi pi-times-circle"
+                      onClick={[Function]}
+                    />
+                  </li>
+                  <li
+                    className="p-chips-input-token"
+                  >
+                    <input
+                      aria-labelledby={null}
+                      disabled={null}
+                      name="events"
+                      onBlur={[Function]}
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      onPaste={[Function]}
+                      placeholder={null}
+                      readOnly={false}
+                      type="text"
+                    />
+                  </li>
+                </ul>
+              </div>
+              <label
+                htmlFor="events"
+              />
+            </span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      className="p-fieldset p-component pt-5 mb-4"
+      id={null}
+      onClick={null}
+      style={null}
+    >
+      <legend
+        className="p-fieldset-legend p-unselectable-text"
+        onClick={[Function]}
+      >
+        <span
+          className="p-fieldset-legend-text"
+          id="pr_id_2_header"
+        >
+          automations.trigger.dates.title
+        </span>
+      </legend>
+      <div
+        aria-hidden={false}
+        aria-labelledby="pr_id_2_header"
+        className="p-toggleable-content"
+        id="pr_id_2_content"
+        role="region"
+      >
+        <div
+          className="p-fieldset-content"
+        >
+          automations.trigger.dates.help
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      className="p-fieldset p-component pt-5 mb-4"
+      id={null}
+      onClick={null}
+      style={null}
+    >
+      <legend
+        className="p-fieldset-legend p-unselectable-text"
+        onClick={[Function]}
+      >
+        <span
+          className="p-fieldset-legend-text"
+          id="pr_id_3_header"
+        >
+          automations.trigger.endpoint.title
+        </span>
+      </legend>
+      <div
+        aria-hidden={false}
+        aria-labelledby="pr_id_3_header"
+        className="p-toggleable-content"
+        id="pr_id_3_content"
+        role="region"
+      >
+        <div
+          className="p-fieldset-content"
+        >
+          <div
+            className="p-field mb-5"
+          >
+            <label
+              className="mx-2 flex flex-1 align-items-center flex-column"
+            >
+              <div
+                aria-checked={false}
+                className="p-inputswitch p-component mr-2"
+                id={null}
+                onClick={[Function]}
+                role="checkbox"
+                style={null}
+              >
+                <div
+                  className="p-hidden-accessible"
+                >
+                  <input
+                    aria-checked={false}
+                    aria-labelledby={null}
+                    checked={false}
+                    disabled={false}
+                    id={null}
+                    name={null}
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    role="switch"
+                    type="checkbox"
+                  />
+                </div>
+                <span
+                  className="p-inputswitch-slider"
+                />
+              </div>
+              automations.trigger.endpoint.custom
+            </label>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <button
+      className="p-button p-component"
+      disabled={false}
+    >
+      automations.trigger.save
+    </button>
+  </form>
+</div>
+`;

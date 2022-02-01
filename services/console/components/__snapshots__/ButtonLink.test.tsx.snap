@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render with link 1`] = `
+<button
+  style={
+    Object {
+      "background": "none",
+      "border": 0,
+      "cursor": "pointer",
+      "fontSize": "inherit",
+    }
+  }
+>
+  <div
+    className="Link"
+  >
+    Click
+  </div>
+</button>
+`;
+
+exports[`should render without link 1`] = `
+<button
+  style={
+    Object {
+      "background": "none",
+      "border": 0,
+      "cursor": "pointer",
+      "fontSize": "inherit",
+    }
+  }
+>
+  Click
+</button>
+`;

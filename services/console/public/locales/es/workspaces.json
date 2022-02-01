@@ -1,4 +1,12 @@
 {
+  "workspaces": {
+    "title": "Espacios de trabajo y aplicaciones — $t(common:main.title)",
+    "description": "Crear nuevos espacios de trabajo y aplicaciones, editarlos y ejecutarlos"
+  },
+  "workspace": {
+    "title": "\"{{name}}\" Espacios de trabajo — $t(common:main.title)",
+    "description": "Editar el espacio de trabajo \"{{name}}\""
+  },
   "create": {
     "description_first": "Cree su primer espacio de trabajo para empezar a automatizar su trabajo",
     "description": "Crear un nuevo espacio de trabajo",
@@ -9,7 +17,11 @@
     "label": "Editar"
   },
   "events": {
-    "empty": "Aquí todavía no ha pasado nada…"
+    "empty": "Aquí todavía no ha pasado nada…",
+    "details": {
+      "name": "Atributo",
+      "value": "Valor"
+    }
   },
   "automations": {
     "link": "Automatizaciones",
@@ -37,6 +49,54 @@
     },
     "endpoint": {
       "copied": "La URL ha sido copiada"
+    },
+    "trigger": {
+      "title": "Se activa cuando",
+      "events": {
+        "title": "Eventos",
+        "display_one": "El evento {{events}} ocurre",
+        "display_other": "Uno de los eventos {{events}} ocurre",
+        "help": "La automatización se ejecutará siempre que se produzca uno de los siguientes eventos."
+      },
+      "dates": {
+        "title": "Fechas",
+        "_help": "La automatización se ejecutará en cada intervalo de tiempo especificado.",
+        "help": "Disponible en breve"
+      },
+      "endpoint": {
+        "title": "Dirección web",
+        "display": "Se visita <a>la dirección web<icon /><a>",
+        "copied": "La dirección web ha sido copiado en su portapapeles",
+        "help": "La automatización se ejecutará cada vez que se llame a una url.",
+        "custom": "Ejecuta esta automatización llamando a una dirección web"
+      },
+      "save": "Registro"
+    },
+    "instruction": {
+      "title_builtin": "Lógica",
+      "label": "{{context}}",
+      "label_emit": "Emitir el evento",
+      "label_repeat": "Repetir en",
+      "label_all": "Todas las instrucciones",
+      "label_wait": "A la espera del evento",
+      "label_set": "Define var",
+      "label_delete": "Borrar var",
+      "label_conditions": "Condiciones",
+      "search": "Investigador"
+    },
+    "node": {
+      "label": "{{instruction}} {{value, then}} {{value}}"
+    },
+    "edit": {
+      "select": "Elija una instrucción",
+      "builtin": "$t(automations.instruction.title_builtin)"
+    },
+    "condition": {
+      "edit": {
+        "title": "Condición",
+        "submit": "Registro",
+        "submit_new": "Añadir"
+      }
     }
   },
   "apps": {
@@ -53,6 +113,7 @@
       "confirm_message": "Estás a punto de irte sin ahorrar. ¿Está seguro?"
     },
     "save": {
+      "help": "Registro",
       "confirm": "Su espacio de trabajo está registrado"
     }
   },

@@ -1,0 +1,202 @@
+{
+  "emit": {
+    "type": "object",
+    "required": [
+      "emit"
+    ],
+    "maxProperties": 1,
+    "properties": {
+      "emit": {
+        "type": "object",
+        "required": [
+          "event"
+        ],
+        "properties": {
+          "event": {
+            "type": "string",
+            "example": "prismeaiMessenger.message"
+          },
+          "payload": {
+            "type": "object"
+          },
+          "private": {
+            "type": "boolean",
+            "example": "If true, can't be listened from any other app than current one"
+          }
+        }
+      }
+    }
+  },
+  "wait": {
+    "type": "object",
+    "required": [
+      "wait"
+    ],
+    "maxProperties": 1,
+    "properties": {
+      "wait": {
+        "type": "object",
+        "required": [
+          "event"
+        ],
+        "properties": {
+          "event": {
+            "type": "string",
+            "example": "prismeaiMessenger.message"
+          },
+          "filters": {
+            "type": "object",
+            "description": "Only match the next intent fulfilling these filters. Multiple filters will be joined with an 'AND' operator ",
+            "example": {
+              "automationSlug": "someId",
+              "someObjectField.someNestedField": "foo"
+            }
+          },
+          "output": {
+            "type": "string",
+            "description": "Will save the caught event inside this variable",
+            "example": "nameOfResultVariable"
+          }
+        }
+      }
+    }
+  },
+  "set": {
+    "type": "object",
+    "required": [
+      "set"
+    ],
+    "maxProperties": 1,
+    "properties": {
+      "set": {
+        "required": [
+          "name",
+          "value"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Variable name, might be \"foo\", \"session.sessionScopedFoo\", \"global.globalScopedFoo\", \"user.userScopedFoo\", ..."
+          },
+          "value": {
+            "description": "variable value"
+          },
+          "lifespan": {
+            "description": "Rules defining when a variable should be automatically removed",
+            "properties": {
+              "messages": {
+                "type": "number",
+                "description": "Number of user messages sent before automatically removing this variable"
+              },
+              "seconds": {
+                "type": "number",
+                "description": "Number of seconds elapsed since this variable initialization, before automatically removing it"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "delete": {
+    "type": "object",
+    "required": [
+      "delete"
+    ],
+    "maxProperties": 1,
+    "properties": {
+      "delete": {
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Variable name to remove"
+          }
+        }
+      }
+    }
+  },
+  "conditions": {
+    "type": "object",
+    "required": [
+      "default"
+    ],
+    "properties": {
+      "default": {
+        "type": "array"
+      }
+    },
+    "additionalProperties": {
+      "type": "array"
+    },
+    "minProperties": 2
+  },
+  "repeat": {
+    "type": "object",
+    "required": [
+      "repeat"
+    ],
+    "maxProperties": 1,
+    "properties": {
+      "repeat": {
+        "oneOf": [
+          {
+            "required": [
+              "on",
+              "then"
+            ]
+          },
+          {
+            "required": [
+              "until",
+              "then"
+            ]
+          }
+        ],
+        "description": "One of \"on\" or \"until\" is required",
+        "properties": {
+          "on": {
+            "type": "string"
+          },
+          "until": {
+            "type": "number"
+          },
+          "then": {
+            "type": "array"
+          }
+        }
+      }
+    }
+  },
+  "all": {
+    "type": "object",
+    "required": [
+      "all"
+    ],
+    "maxProperties": 1,
+    "properties": {
+      "all": {
+        "description": "Execute each instruction in parallel. Pause current automation execution until all instructions are processed.",
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "break": {
+    "type": "object",
+    "required": [
+      "break"
+    ],
+    "maxProperties": 1,
+    "properties": {
+      "break": {
+        "description": "Stop current automation execution. Does not have any configuration option",
+        "type": "object"
+      }
+    }
+  }
+}

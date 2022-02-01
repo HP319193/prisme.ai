@@ -1,9 +1,9 @@
-import { remove as removeDiacritics } from "diacritics";
-import { Broker } from "@prisme.ai/broker";
-import { EventType } from "../../../eda";
-import Workspaces from "./workspaces";
-import DSULStorage from "../DSULStorage";
-import { AlreadyUsedError, ObjectNotFoundError } from "../../../errors";
+import { remove as removeDiacritics } from 'diacritics';
+import { Broker } from '@prisme.ai/broker';
+import { EventType } from '../../../eda';
+import Workspaces from './workspaces';
+import DSULStorage from '../DSULStorage';
+import { AlreadyUsedError, ObjectNotFoundError } from '../../../errors';
 
 class Automations {
   private broker: Broker;
@@ -21,7 +21,7 @@ class Automations {
     automationName: string
   ) {
     const base = removeDiacritics(automationName)
-      .replace(/[^a-zA-Z0-9 _-]+/g, "")
+      .replace(/[^a-zA-Z0-9 _-]+/g, '')
       .trim()
       .slice(0, 20);
     let slug = base;
@@ -52,7 +52,7 @@ class Automations {
     await this.workspaces.updateWorkspace(workspaceId, updatedWorkspace);
 
     this.broker
-      .send<Prismeai.CreatedAutomation["payload"]>(
+      .send<Prismeai.CreatedAutomation['payload']>(
         EventType.CreatedAutomation,
         {
           automation,
@@ -117,7 +117,7 @@ class Automations {
 
     await this.workspaces.updateWorkspace(workspaceId, updatedWorkspace);
 
-    this.broker.send<Prismeai.UpdatedAutomation["payload"]>(
+    this.broker.send<Prismeai.UpdatedAutomation['payload']>(
       EventType.UpdatedAutomation,
       {
         automation,
@@ -130,7 +130,7 @@ class Automations {
 
   deleteAutomation = async (
     workspaceId: string,
-    automationSlug: PrismeaiAPI.DeleteAutomation.PathParameters["automationSlug"]
+    automationSlug: PrismeaiAPI.DeleteAutomation.PathParameters['automationSlug']
   ) => {
     const workspace = await this.storage.get(workspaceId);
 
@@ -154,7 +154,7 @@ class Automations {
 
     await this.storage.save(workspaceId, updatedWorkspace);
 
-    this.broker.send<Prismeai.DeletedAutomation["payload"]>(
+    this.broker.send<Prismeai.DeletedAutomation['payload']>(
       EventType.DeletedAutomation,
       {
         automation: {

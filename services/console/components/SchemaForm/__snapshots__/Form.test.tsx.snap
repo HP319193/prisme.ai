@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<form
+  onSubmit={[Function]}
+>
+  <div
+    className="p-field mb-5"
+  >
+    <span
+      className="p-float-label mx-2 undefined"
+    >
+      <input
+        className="p-inputtext p-component"
+        id="foo"
+        name="foo"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        onInput={[Function]}
+        onKeyPress={[Function]}
+        value=""
+      />
+      <label
+        htmlFor="foo"
+      >
+        foo
+      </label>
+    </span>
+  </div>
+  <div
+    className="p-field mb-5"
+  >
+    <label
+      className="mx-2 flex flex-1 align-items-center"
+    >
+      <div
+        aria-checked={false}
+        className="p-inputswitch p-component mr-2"
+        id={null}
+        onClick={[Function]}
+        role="checkbox"
+        style={null}
+      >
+        <div
+          className="p-hidden-accessible"
+        >
+          <input
+            aria-checked={false}
+            aria-labelledby={null}
+            checked={false}
+            disabled={false}
+            id={null}
+            name={null}
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            role="switch"
+            type="checkbox"
+          />
+        </div>
+        <span
+          className="p-inputswitch-slider"
+        />
+      </div>
+      bar
+    </label>
+  </div>
+  <div
+    className="p-field mb-5"
+  >
+    <span
+      className="p-float-label mx-2 undefined"
+    >
+      <label
+        htmlFor="lorem"
+      >
+        lorem
+      </label>
+    </span>
+  </div>
+  <button
+    className="p-button p-component"
+    disabled={false}
+    type="submit"
+  >
+    save
+  </button>
+</form>
+`;

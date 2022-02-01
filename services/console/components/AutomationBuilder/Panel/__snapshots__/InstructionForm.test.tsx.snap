@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="flex flex-1 flex-column"
+>
+  <div
+    className="flex flex-1 align-items-stretch flex-column mb-4"
+  >
+    <div>
+      automations.edit.select
+    </div>
+    <span
+      className="p-input-icon-left p-input-icon-right"
+    >
+      <i
+        className="pi pi-search"
+      />
+      <input
+        autoFocus={true}
+        className="p-inputtext p-component"
+        onChange={[Function]}
+        onInput={[Function]}
+        onKeyPress={[Function]}
+        placeholder="automations.instruction.search"
+        value=""
+      />
+      <i>
+        <button
+          onClick={[Function]}
+          style={
+            Object {
+              "background": "none",
+              "border": 0,
+              "color": "inherit",
+            }
+          }
+        >
+          <i
+            className="pi pi-times"
+          />
+        </button>
+      </i>
+    </span>
+  </div>
+</div>
+`;

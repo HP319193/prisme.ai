@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+Array [
+  <div>
+    Handle
+  </div>,
+  <div
+    className="flex justify-content-between"
+    style={
+      Object {
+        "padding": "0 10px",
+      }
+    }
+  >
+    <div>
+      Handle
+    </div>
+  </div>,
+]
+`;
