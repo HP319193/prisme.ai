@@ -3,9 +3,15 @@
 // global
 @primary-color: #015DFF;
 @primary-color-hover: #2d7dff;
-@heading-5-size: ceil(@font-size-base * 0.88);
+@heading-5-size: 12px;
 @border-color-base: #E5E5E5;
 @border-radius-base: 10px;
+
+// Titles
+h5.ant-typography, .ant-typography h5 {
+  color: #939CA6;
+  letter-spacing: 2px;
+}
 
 // Buttons
 .ant-btn {
@@ -95,4 +101,8 @@
 .ant-collapse-borderless > .ant-collapse-item:last-child, .ant-collapse-borderless > .ant-collapse-item:last-child .ant-collapse-header {
   border-radius: inherit;
   border: 0;
+}
+
+.ant-collapse-header {
+  font-weight: @typography-title-font-weight;
 }

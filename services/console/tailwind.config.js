@@ -5,6 +5,9 @@ module.exports = {
     "./layouts/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    borderRadius: {
+      DEFAULT: "10px",
+    },
     extend: {},
   },
   plugins: [],
