@@ -1,26 +1,12 @@
-import { Header, Layout, Menu, PageHeader } from "../components/DesignSystem";
+import { Header, Layout, PageHeader } from "../components/DesignSystem";
+import { LayoutProps } from "../components/DesignSystem/Layout";
 import "./no-padding.css";
 import { Story } from "@storybook/react";
-import { PageHeaderProps } from "../components/DesignSystem/PageHeader";
-import { LayoutProps } from "antd";
-import { MailOutlined } from "@ant-design/icons";
 
 export default {
   title: "Layout/Layout",
   component: Layout,
 };
-
-const handleClick = () => {
-  console.log("click ");
-};
-
-// const headerMenu = (
-//   <Menu onClick={this.handleClick} selectedKeys={[current]} mode="horizontal">
-//     <Menu.Item key="mail" icon={<MailOutlined />}>
-//       Navigation One
-//     </Menu.Item>
-//   </Menu>
-// );
 
 const HeaderComponent = (
   <Header
@@ -43,7 +29,7 @@ const BodyComponent = (
   </div>
 );
 
-const Template: Story<LayoutProps> = (args) => (
+const Template: Story<LayoutProps> = ({ Header, PageHeader, Content }) => (
   <Layout
     Header={HeaderComponent}
     PageHeader={CurrentPageHeader}
@@ -51,7 +37,11 @@ const Template: Story<LayoutProps> = (args) => (
   />
 );
 
-export const Default = Template.bind({});
+export const Default = Template.bind({
+  Header: HeaderComponent,
+  PageHeader: CurrentPageHeader,
+  Content: BodyComponent,
+});
 
 const ContentColumnTemplate: Story<LayoutProps> = (args) => (
   <Layout Header={HeaderComponent} Content={BodyComponent} />

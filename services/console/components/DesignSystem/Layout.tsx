@@ -1,7 +1,7 @@
 import { Layout as AntdLayout } from "antd";
 import { ReactNode } from "react";
 
-interface LayoutProps {
+export interface LayoutProps {
   Header: ReactNode;
   Content: ReactNode;
   PageHeader?: ReactNode;
