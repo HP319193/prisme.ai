@@ -5,6 +5,7 @@
 @primary-color-hover: #2d7dff;
 @heading-5-size: ceil(@font-size-base * 0.88);
 @border-color-base: #E5E5E5;
+@border-radius-base: 10px;
 
 // Buttons
 .ant-btn {
@@ -86,4 +87,12 @@
     display: flex !important;
     align-items: center;
   }
+}
+
+// Collapse
+@collapse-header-bg: @component-background;
+
+.ant-collapse-borderless > .ant-collapse-item:last-child, .ant-collapse-borderless > .ant-collapse-item:last-child .ant-collapse-header {
+  border-radius: inherit;
+  border: 0;
 }
