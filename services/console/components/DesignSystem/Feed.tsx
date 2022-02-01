@@ -8,13 +8,14 @@ export type Section = {
 
 export interface FeedProps {
   sections: Section[];
+  className?: string;
 }
 
-const Feed = ({ sections }: FeedProps) => (
+const Feed = ({ sections, className }: FeedProps) => (
   <Space
     direction="vertical"
     size="large"
-    className="flex grow bg-blue-50 rounded p-6"
+    className={`flex grow bg-blue-50 rounded p-6 ${className || ""}`}
   >
     {sections.map(({ title, content }) => (
       <div key={title}>

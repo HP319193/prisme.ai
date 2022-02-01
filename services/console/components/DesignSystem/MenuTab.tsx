@@ -27,7 +27,7 @@ const MenuTab = ({ items, onSelect }: MenuProps) => {
       className="h-8"
     >
       {items.map((item) => (
-        <AntdMenu.Item key={item}>item</AntdMenu.Item>
+        <AntdMenu.Item key={item}>{item}</AntdMenu.Item>
       ))}
     </AntdMenu>
   );

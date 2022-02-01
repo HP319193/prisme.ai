@@ -1,6 +1,7 @@
 import { Section } from "../components/DesignSystem/Feed";
 import React from "react";
-import { Collapse } from "../components/DesignSystem";
+import { Button, Collapse, Space } from "../components/DesignSystem";
+import { FilterOutlined, SearchOutlined } from "@ant-design/icons";
 
 export const itemsWithCollapseContent: Section[] = [
   {
@@ -46,3 +47,20 @@ export const itemsWithCollapseContent: Section[] = [
     ),
   },
 ];
+
+export const FeedLayoutHeader = (
+  <Space className="h-8">
+    <Button>
+      <Space>
+        <FilterOutlined />
+        Filter
+      </Space>
+    </Button>
+    <Button type="grey">
+      <Space>
+        <SearchOutlined />
+        Search
+      </Space>
+    </Button>
+  </Space>
+);

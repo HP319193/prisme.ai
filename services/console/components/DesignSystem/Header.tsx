@@ -23,7 +23,7 @@ const Header = ({
   );
 
   return (
-    <div className="px-6 flex flex-row w-full justify-between items-center pr-header border-b">
+    <div className="px-6 flex flex-row w-full justify-between items-center pr-header">
       <Image src={iconPrisme} width={23} height={25} alt="prisme.ai logo" />
       <Dropdown Menu={workspacesMenu}>{workspaces[0]}</Dropdown>
       <div className="flex flex-row items-center">

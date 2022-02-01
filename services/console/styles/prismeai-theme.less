@@ -4,6 +4,7 @@
 @primary-color: #015DFF;
 @primary-color-hover: #2d7dff;
 @heading-5-size: 12px;
+@heading-4-size: @font-size-base;
 @border-color-base: #E5E5E5;
 @border-radius-base: 10px;
 
@@ -90,13 +91,23 @@ h5.ant-typography, .ant-typography h5 {
 }
 
 // Menu
-.ant-menu-item {
-  color: @text-color-secondary;
+.ant-menu {
+  &-item {
+    color: @text-color-secondary;
 
-  &-only-child {
-    display: flex !important;
-    align-items: center;
+    &-only-child {
+      display: flex !important;
+      align-items: center;
+    }
   }
+
+  &-horizontal {
+    border: none;
+  }
+}
+
+.ant-menu-horizontal > .ant-menu-item::after, .ant-menu-horizontal > .ant-menu-submenu::after {
+  border-bottom: none !important;
 }
 
 // Collapse
@@ -121,4 +132,8 @@ h5.ant-typography, .ant-typography h5 {
 // ### Feed.tsx Title
 .ant-typography.mb-4 {
   margin-bottom: 1rem;
+}
+
+.ant-typography.mb-0 {
+  margin-bottom: 0;
 }

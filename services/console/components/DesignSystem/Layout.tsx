@@ -2,18 +2,19 @@ import { Layout as AntdLayout } from "antd";
 import { ReactNode } from "react";
 
 export interface LayoutProps {
+  className?: string;
   Header: ReactNode;
   Content: ReactNode;
   PageHeader?: ReactNode;
 }
 
-const Layout = ({ Header, Content, PageHeader }: LayoutProps) => (
-  <AntdLayout className="h-screen">
+const Layout = ({ className, Header, Content, PageHeader }: LayoutProps) => (
+  <AntdLayout className={`${className || ""} flex grow`}>
     <AntdLayout.Header>
       {Header}
       {PageHeader || null}
     </AntdLayout.Header>
-    <AntdLayout.Content>{Content}</AntdLayout.Content>
+    <AntdLayout.Content className="flex">{Content}</AntdLayout.Content>
   </AntdLayout>
 );
 

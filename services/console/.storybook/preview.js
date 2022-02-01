@@ -4,6 +4,7 @@ import * as NextImage from "next/image";
 
 import { addDecorator } from "@storybook/react";
 import { withPropsTable } from "storybook-addon-react-docgen";
+import "./style.css";
 
 const OriginalNextImage = NextImage.default;
 

@@ -7,10 +7,12 @@ import {
   Space,
   Button,
   Col,
+  Feed,
 } from "../components/DesignSystem";
 import { LayoutProps } from "../components/DesignSystem/Layout";
 import { Story } from "@storybook/react";
 import { FilterOutlined, SearchOutlined } from "@ant-design/icons";
+import { FeedLayoutHeader, itemsWithCollapseContent } from "./mockData";
 
 export default {
   title: "Layout/Layout",
@@ -31,14 +33,22 @@ const HeaderComponent = (
   />
 );
 
+const PageHeaderButtons = [
+  <Button type="grey" key="1">
+    Button 1
+  </Button>,
+  <Button key="2">Button 2</Button>,
+];
 const CurrentPageHeader = (
-  <PageHeader onBack={() => {}} title={"Send mail automation"} />
+  <PageHeader
+    onBack={() => {}}
+    title={"Send mail automation"}
+    RightButtons={PageHeaderButtons}
+  />
 );
 
 const BodyComponent = (
-  <div className="h-full bg-slate-200 flex items-center justify-center">
-    page content
-  </div>
+  <div className="h-full bg-slate-200 flex">page content</div>
 );
 
 const Template: Story<LayoutProps> = ({ Header, PageHeader, Content }) => (
@@ -63,4 +73,11 @@ export const SidePanelExample = Template.bind({});
 SidePanelExample.args = {
   Header: RightColumnHeader,
   Content: BodyComponent,
+};
+
+const LeftContent = <Feed sections={itemsWithCollapseContent} />;
+export const WorkspaceFeedLayout = Template.bind({});
+WorkspaceFeedLayout.args = {
+  Header: FeedLayoutHeader,
+  Content: LeftContent,
 };
