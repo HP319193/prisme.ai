@@ -59,7 +59,6 @@
 }
 
 // Icons
-
 .anticon {
   vertical-align: 0;
 
@@ -75,7 +74,16 @@
 
 
 // Dropdown
-
 .ant-dropdown-trigger {
   cursor: pointer;
+}
+
+// Menu
+.ant-menu-item {
+  color: @text-color-secondary;
+
+  &-only-child {
+    display: flex !important;
+    align-items: center;
+  }
 }

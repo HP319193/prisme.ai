@@ -1,7 +1,17 @@
-import { Header, Layout, PageHeader } from "../components/DesignSystem";
+import {
+  Header,
+  Layout,
+  MenuTab,
+  PageHeader,
+  Row,
+  Space,
+  Button,
+  Col,
+} from "../components/DesignSystem";
 import { LayoutProps } from "../components/DesignSystem/Layout";
 import "./no-padding.css";
 import { Story } from "@storybook/react";
+import { FilterOutlined, SearchOutlined } from "@ant-design/icons";
 
 export default {
   title: "Layout/Layout",
@@ -30,21 +40,62 @@ const BodyComponent = (
 );
 
 const Template: Story<LayoutProps> = ({ Header, PageHeader, Content }) => (
-  <Layout
-    Header={HeaderComponent}
-    PageHeader={CurrentPageHeader}
-    Content={BodyComponent}
-  />
+  <Layout Header={Header} PageHeader={PageHeader} Content={Content} />
 );
 
-export const Default = Template.bind({
+export const Default = Template.bind({});
+Default.args = {
   Header: HeaderComponent,
   PageHeader: CurrentPageHeader,
   Content: BodyComponent,
-});
+};
 
-const ContentColumnTemplate: Story<LayoutProps> = (args) => (
-  <Layout Header={HeaderComponent} Content={BodyComponent} />
+export const ContentColumn = Template.bind({});
+ContentColumn.args = {
+  Header: HeaderComponent,
+  Content: BodyComponent,
+};
+
+const RightColumnHeader = (
+  <MenuTab items={["Apps", "Automations"]} onSelect={() => {}} />
+);
+const RightColumn = (
+  <Layout Header={RightColumnHeader} Content={BodyComponent} />
 );
 
-export const ContentColumn = ContentColumnTemplate.bind({});
+export const RightSection = Template.bind({});
+RightSection.args = {
+  Header: RightColumnHeader,
+  Content: BodyComponent,
+};
+
+const LeftColumnHeader = (
+  <Space className="h-8">
+    <Button>
+      <Space>
+        <FilterOutlined />
+        Filter
+      </Space>
+    </Button>
+    <Button type="grey">
+      <Space>
+        <SearchOutlined />
+        Search
+      </Space>
+    </Button>
+  </Space>
+);
+const LeftColumn = <Layout Header={LeftColumnHeader} Content={BodyComponent} />;
+
+const WorkspaceContent = (
+  <Row>
+    <Col span={18}>{LeftColumn}</Col>
+    <Col span={6}>{RightColumn}</Col>
+  </Row>
+);
+
+export const WorkspaceLayout = Template.bind({});
+WorkspaceLayout.args = {
+  Header: HeaderComponent,
+  Content: WorkspaceContent,
+};
