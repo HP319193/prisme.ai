@@ -13,6 +13,10 @@ h5.ant-typography, .ant-typography h5 {
   letter-spacing: 2px;
 }
 
+// Layout
+
+@layout-body-background: white;
+
 // Buttons
 .ant-btn {
   border: none;
@@ -105,4 +109,16 @@ h5.ant-typography, .ant-typography h5 {
 
 .ant-collapse-header {
   font-weight: @typography-title-font-weight;
+}
+
+// --
+// --
+// # Below are edge cases override
+
+
+// ## Force tailwind to override Ant-design
+
+// ### Feed.tsx Title
+.ant-typography.mb-4 {
+  margin-bottom: 1rem;
 }

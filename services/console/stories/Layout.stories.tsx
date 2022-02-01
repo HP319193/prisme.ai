@@ -52,12 +52,6 @@ Default.args = {
   Content: BodyComponent,
 };
 
-export const ContentColumn = Template.bind({});
-ContentColumn.args = {
-  Header: HeaderComponent,
-  Content: BodyComponent,
-};
-
 const RightColumnHeader = (
   <MenuTab items={["Apps", "Automations"]} onSelect={() => {}} />
 );
@@ -65,39 +59,8 @@ const RightColumn = (
   <Layout Header={RightColumnHeader} Content={BodyComponent} />
 );
 
-export const RightSection = Template.bind({});
-RightSection.args = {
+export const SidePanelExample = Template.bind({});
+SidePanelExample.args = {
   Header: RightColumnHeader,
   Content: BodyComponent,
-};
-
-const LeftColumnHeader = (
-  <Space className="h-8">
-    <Button>
-      <Space>
-        <FilterOutlined />
-        Filter
-      </Space>
-    </Button>
-    <Button type="grey">
-      <Space>
-        <SearchOutlined />
-        Search
-      </Space>
-    </Button>
-  </Space>
-);
-const LeftColumn = <Layout Header={LeftColumnHeader} Content={BodyComponent} />;
-
-const WorkspaceContent = (
-  <Row>
-    <Col span={18}>{LeftColumn}</Col>
-    <Col span={6}>{RightColumn}</Col>
-  </Row>
-);
-
-export const WorkspaceLayout = Template.bind({});
-WorkspaceLayout.args = {
-  Header: HeaderComponent,
-  Content: WorkspaceContent,
 };
