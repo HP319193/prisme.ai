@@ -2,8 +2,9 @@ import memoize from "lodash/memoize";
 import isString from "lodash/isString";
 import isBoolean from "lodash/isBoolean";
 import { Grammar, Parser } from "nearley";
+const compiledGrammar = require("./grammar");
 
-const grammar = Grammar.fromCompiled(require("./grammar.js"));
+const grammar = Grammar.fromCompiled(compiledGrammar);
 
 function createParser() {
   return new Parser(grammar);
