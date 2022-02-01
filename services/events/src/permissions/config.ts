@@ -10,7 +10,7 @@ export enum Role {
   Collaborator = "collaborator",
 }
 
-export const config: PermissionsConfig<SubjectType> = {
+export const config: PermissionsConfig<SubjectType, Prismeai.Role> = {
   subjectTypes: Object.values(SubjectType),
   rbac: [
     {

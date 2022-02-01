@@ -1,13 +1,15 @@
-import {
-  NextFunction,
-  Request,
-  Response,
-  Router,
-  RequestHandler,
-} from "express";
-import { ActionType, Subject } from "../..";
+import { NextFunction, Request, Response, Router } from "express";
+import { AccessManager, ActionType } from "../..";
 import { CollaboratorNotFound } from "../errors";
+import { SubjectCollaborator } from "../types";
 import { fetchCollaboratorContacts } from "./fetchCollaboratorContacts";
+
+type InstantiatedAccessManager<SubjectType extends string> = Required<
+  AccessManager<SubjectType, { [k in SubjectType]: any }, Prismeai.Role>
+>;
+type ExtendedRequest<SubjectType extends string> = {
+  accessManager: InstantiatedAccessManager<SubjectType>;
+};
 
 export function initCollaboratorRoutes<SubjectType extends string>(
   app: Router
@@ -20,14 +22,15 @@ export function initCollaboratorRoutes<SubjectType extends string>(
       PrismeaiAPI.GetCollaborators.PathParameters,
       PrismeaiAPI.GetCollaborators.Responses.$200,
       any
-    >,
+    > &
+      ExtendedRequest<SubjectType>,
     res: Response<PrismeaiAPI.GetCollaborators.Responses.$200>,
     next: NextFunction
   ) {
-    const subject = (await accessManager.get(
+    const subject = await accessManager.get(
       subjectType as SubjectType,
       subjectId
-    )) as Subject;
+    );
 
     await accessManager.throwUnlessCan(
       ActionType.ManageCollaborators,
@@ -45,15 +48,16 @@ export function initCollaboratorRoutes<SubjectType extends string>(
       Object.entries(subject.collaborators || {}).map(
         async ([collaboratorId, collaborator]) => {
           return {
-            ...collaborator,
+            ...(collaborator as SubjectCollaborator<Prismeai.Role>),
             id: collaboratorId,
-            email: contacts.find((cur) => cur.id === collaboratorId)?.email,
+            email:
+              contacts.find((cur) => cur.id === collaboratorId)?.email || "",
           };
         }
       )
     );
 
-    return res.send({ result: collaborators as Prismeai.Collaborators });
+    return res.send({ result: collaborators });
   }
 
   async function shareHandler(
@@ -65,7 +69,8 @@ export function initCollaboratorRoutes<SubjectType extends string>(
       PrismeaiAPI.Share.PathParameters,
       PrismeaiAPI.Share.Responses.$200,
       PrismeaiAPI.Share.RequestBody
-    >,
+    > &
+      ExtendedRequest<SubjectType>,
     res: Response<PrismeaiAPI.Share.Responses.$200>,
     next: NextFunction
   ) {
@@ -81,7 +86,7 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     const sharedSubject = await accessManager.grant(
       subjectType as SubjectType,
       subjectId,
-      <any>collaborator,
+      collaborator,
       permissions
     );
     return res.send({
@@ -99,7 +104,8 @@ export function initCollaboratorRoutes<SubjectType extends string>(
       PrismeaiAPI.RevokeCollaborator.PathParameters,
       PrismeaiAPI.RevokeCollaborator.Responses.$200,
       any
-    >,
+    > &
+      ExtendedRequest<SubjectType>,
     res: Response<PrismeaiAPI.RevokeCollaborator.Responses.$200>,
     next: NextFunction
   ) {
@@ -111,8 +117,7 @@ export function initCollaboratorRoutes<SubjectType extends string>(
   }
 
   const asyncRoute =
-    (fn: RequestHandler<any>) =>
-    (req: Request, res: Response, next: NextFunction) =>
+    (fn: any) => (req: Request, res: Response, next: NextFunction) =>
       Promise.resolve(fn(req, res, next)).catch(next);
 
   const baseRoute = "/v2/:subjectType/:subjectId/collaborators";

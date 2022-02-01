@@ -4,7 +4,7 @@ import { User, ActionType } from "./types";
 import { RoleTemplates } from "..";
 
 export interface RuleContext {
-  user: User;
+  user: User<string>;
   subject?: { id?: string };
 }
 
@@ -56,8 +56,8 @@ export function sortRules(rules: RawRuleOf<Ability>[]) {
 }
 
 export function nativeRules(
-  user: User,
-  roles: RoleTemplates<any>,
+  user: User<string>,
+  roles: RoleTemplates<any, string>,
   subjectTypes: string[]
 ) {
   const anySubjectPermissionsGrantEquivalentActions: RawRuleOf<Ability>[] =

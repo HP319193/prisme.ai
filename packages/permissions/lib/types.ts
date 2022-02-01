@@ -9,42 +9,51 @@ export enum ActionType {
   Delete = "delete",
 }
 
-export type Role = string;
 export type UserId = string;
 
 export type UserSubject = Record<string, any>;
-export type SubjectCollaborator = {
+export type SubjectCollaborator<Role extends string> = {
   role?: Role;
   permissions?: Partial<Record<ActionType, boolean>>;
 };
-export type SubjectCollaborators = Record<UserId, SubjectCollaborator>;
-export interface BaseSubject {
+export type SubjectCollaborators<Role extends string> = Record<
+  UserId,
+  SubjectCollaborator<Role>
+>;
+export interface BaseSubject<Role extends string> {
   id: string;
   createdBy: string;
   updatedBy: string;
   createdAt: string;
   updatedAt: string;
-  collaborators?: SubjectCollaborators;
+  collaborators?: SubjectCollaborators<Role>;
 }
-export type Subject<CustomAttributes = UserSubject> = BaseSubject &
-  CustomAttributes;
+export type Subject<
+  CustomAttributes = UserSubject,
+  Role extends string = string
+> = BaseSubject<Role> & CustomAttributes;
 
-export interface User {
+export interface User<Role extends string> {
   id: UserId;
   role?: Role;
 }
 
 export type Rules = RawRuleOf<Ability>[];
-export interface RoleTemplate<SubjectType extends string> {
+export interface RoleTemplate<SubjectType extends string, Role extends string> {
   name: Role;
   subjectType?: SubjectType;
   rules: RawRuleOf<Ability>[];
 }
-export type RoleTemplates<SubjectType extends string> =
-  RoleTemplate<SubjectType>[];
+export type RoleTemplates<
+  SubjectType extends string,
+  Role extends string
+> = RoleTemplate<SubjectType, Role>[];
 
-export interface PermissionsConfig<SubjectType extends string> {
+export interface PermissionsConfig<
+  SubjectType extends string,
+  Role extends string
+> {
   subjectTypes: SubjectType[];
-  rbac: RoleTemplates<SubjectType>;
+  rbac: RoleTemplates<SubjectType, Role>;
   abac: Rules;
 }

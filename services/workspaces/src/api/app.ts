@@ -13,7 +13,7 @@ import {
   validationErrorMiddleware,
   validationMiddleware,
 } from "./middlewares/validation";
-import { AccessManager, SubjectType, SubjectInterfaces } from "../permissions";
+import { AccessManager, SubjectType } from "../permissions";
 import { accessManagerMiddleware } from "./middlewares/accessManager";
 import { initCollaboratorRoutes } from "@prisme.ai/permissions";
 

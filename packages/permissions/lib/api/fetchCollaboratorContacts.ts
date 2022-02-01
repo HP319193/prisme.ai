@@ -1,7 +1,8 @@
 import fetch from "node-fetch";
 
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "#pZFT>2.g9x8p9D";
-const GATEWAY_API_URL = process.env.GATEWAY_API_URL || "http://localhost:3001";
+const GATEWAY_API_HOST =
+  process.env.GATEWAY_API_HOST || "http://localhost:3001/v2";
 const API_KEY_HEADER = process.env.API_KEY_HEADER || "x-prismeai-api-key";
 
 export interface FindUserQuery {
@@ -11,8 +12,8 @@ export interface FindUserQuery {
 
 export async function fetchCollaboratorContacts(
   query: FindUserQuery
-): Promise<Prismeai.User[]> {
-  const ret = await fetch(`${GATEWAY_API_URL}/v2/contacts`, {
+): Promise<(Prismeai.User & { id: string })[]> {
+  const ret = await fetch(`${GATEWAY_API_HOST}/contacts`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

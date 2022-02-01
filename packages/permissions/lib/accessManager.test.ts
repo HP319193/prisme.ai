@@ -30,7 +30,7 @@ type SubjectInterfaces = {
   [SubjectType.Event]: { id: string };
 };
 
-const accessManager = new AccessManager<SubjectType, SubjectInterfaces>(
+const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
   {
     storage: {
       host: "mongodb://nas:27017/testCASL",
@@ -66,7 +66,8 @@ const adminB = accessManager.as({
 });
 
 describe("CRUD with a predefined role", () => {
-  let createdWorkspace: SubjectInterfaces[SubjectType.Workspace] & BaseSubject;
+  let createdWorkspace: SubjectInterfaces[SubjectType.Workspace] &
+    BaseSubject<Role>;
   it("A created object is automatically initialized with base fields", async () => {
     const workspace = await adminA.create(SubjectType.Workspace, {
       name: "workspaceName",
@@ -294,7 +295,8 @@ describe("CRUD with a predefined role", () => {
 });
 
 describe("Role & Permissions granting", () => {
-  let createdWorkspace: SubjectInterfaces[SubjectType.Workspace] & BaseSubject;
+  let createdWorkspace: SubjectInterfaces[SubjectType.Workspace] &
+    BaseSubject<Role>;
   it("Any admin can grant a specific role to someone else on its own workspace", async () => {
     // Lets make adminA create a workspace
     createdWorkspace = await adminA.create(SubjectType.Workspace, <any>{});

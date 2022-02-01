@@ -8,16 +8,10 @@ import {
   ForbiddenError as PrismeaiForbiddenError,
   InvalidCollaborator,
 } from "./errors";
-import {
-  User,
-  ActionType,
-  Role,
-  RoleTemplates,
-  PermissionsConfig,
-} from "./types";
+import { User, ActionType, RoleTemplates, PermissionsConfig } from "./types";
 
 type UserId = string;
-interface Subject {
+interface Subject<Role extends string> {
   id?: string;
   collaborators?: Record<
     UserId,
@@ -29,14 +23,17 @@ interface Subject {
   [k: string]: any;
 }
 
-export class Permissions<SubjectType extends string> {
-  private user: User;
-  private roleTemplates: RoleTemplates<SubjectType>;
+export class Permissions<
+  SubjectType extends string,
+  Role extends string = string
+> {
+  private user: User<Role>;
+  private roleTemplates: RoleTemplates<SubjectType, Role>;
   private rules: Rules;
   private loadedRoleIds: Set<string>;
   public ability: Ability;
 
-  constructor(user: User, config: PermissionsConfig<SubjectType>) {
+  constructor(user: User<Role>, config: PermissionsConfig<SubjectType, Role>) {
     this.user = user;
     const { rbac, abac } = config;
     this.roleTemplates = rbac;
@@ -59,17 +56,17 @@ export class Permissions<SubjectType extends string> {
   }
 
   grant(
-    permission: ActionType | ActionType[] | Role | SubjectCollaborator,
+    permission: ActionType | ActionType[] | Role | SubjectCollaborator<Role>,
     subjectType: SubjectType,
-    subject: Subject,
-    collaborator: User
-  ): Subject {
+    subject: Subject<Role>,
+    collaborator: User<Role>
+  ): Subject<Role> {
     this.throwUnlessCan(ActionType.ManageCollaborators, subjectType, subject);
 
     // Update entire collaborator
     if (typeof permission === "object" && !Array.isArray(permission)) {
       const { role, permissions, ...otherFields } =
-        permission as Prismeai.Collaborator;
+        permission as SubjectCollaborator<Role>;
       if (Object.keys(otherFields).length) {
         throw new InvalidCollaborator(
           `Only allowed collaborator fields are 'role' and 'permissions' (found ${Object.keys(
@@ -90,7 +87,7 @@ export class Permissions<SubjectType extends string> {
         ...subject,
         collaborators: {
           ...subject.collaborators,
-          [collaborator.id]: permission as Prismeai.Collaborator,
+          [collaborator.id]: permission as SubjectCollaborator<Role>,
         },
       };
     }
@@ -98,7 +95,7 @@ export class Permissions<SubjectType extends string> {
     // Grant a role
     const roleTemplate = this.findRoleTemplate(permission as Role, subjectType);
     if (typeof permission === "string" && roleTemplate) {
-      const role = permission;
+      const role = permission as Role;
       const contributor = subject.collaborators?.[collaborator.id] || {};
       return {
         ...subject,
@@ -140,8 +137,8 @@ export class Permissions<SubjectType extends string> {
   revoke(
     permission: ActionType | ActionType[] | Role | "all",
     subjectType: SubjectType,
-    subject: Subject,
-    collaborator: User
+    subject: Subject<Role>,
+    collaborator: User<Role>
   ) {
     this.throwUnlessCan(ActionType.ManageCollaborators, subjectType, subject);
 
@@ -208,7 +205,11 @@ export class Permissions<SubjectType extends string> {
   }
 
   // Update current ability with a new role, which might be related to a specific subject
-  private loadRole(role: Role, subjectType?: SubjectType, subject?: Subject) {
+  private loadRole(
+    role: Role,
+    subjectType?: SubjectType,
+    subject?: Subject<Role>
+  ) {
     const roleId = subjectType ? `${subjectType}/${subject?.id}` : role;
     if (this.loadedRoleIds.has(roleId)) {
       return;
@@ -233,13 +234,13 @@ export class Permissions<SubjectType extends string> {
     return this.ability;
   }
 
-  pullRoleFromSubject(subjectType: SubjectType, subject: Subject) {
+  pullRoleFromSubject(subjectType: SubjectType, subject: Subject<Role>) {
     // Auto assign "admin" role for subjects created by the user
     if (
       subject.createdBy === this.user.id &&
-      this.findRoleTemplate("admin", subjectType)
+      this.findRoleTemplate("admin" as Role, subjectType)
     ) {
-      this.loadRole("admin", subjectType, subject);
+      this.loadRole("admin" as Role, subjectType, subject);
       return;
     }
 
@@ -253,7 +254,7 @@ export class Permissions<SubjectType extends string> {
   can(
     action: string,
     subjectType: SubjectType,
-    subject?: Subject,
+    subject?: Subject<Role>,
     field?: string
   ) {
     if (subject) {
@@ -266,7 +267,11 @@ export class Permissions<SubjectType extends string> {
     );
   }
 
-  throwUnlessCan(action: string, subjectType: SubjectType, subject?: Subject) {
+  throwUnlessCan(
+    action: string,
+    subjectType: SubjectType,
+    subject?: Subject<Role>
+  ) {
     if (subject) {
       this.pullRoleFromSubject(subjectType, subject);
     }
@@ -289,7 +294,7 @@ export class Permissions<SubjectType extends string> {
   permittedFieldsFor(
     action: string,
     subjectType: SubjectType,
-    subject?: Subject
+    subject?: Subject<Role>
   ) {
     return permittedFieldsOf(
       this.ability,

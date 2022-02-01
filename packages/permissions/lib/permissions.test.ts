@@ -8,7 +8,7 @@ import configs from "../examples";
 
 export type Subject = Record<string, any> & {
   id?: string;
-  collaborators?: SubjectCollaborators;
+  collaborators?: SubjectCollaborators<Role>;
 };
 
 export enum SubjectType {
@@ -25,7 +25,7 @@ enum Role {
 }
 
 describe("Access management", () => {
-  const config: PermissionsConfig<SubjectType> = configs.accessManagement;
+  const config: PermissionsConfig<SubjectType, Role> = configs.accessManagement;
 
   it("Admins can create workspaces/pages", () => {
     const perms = new Permissions({ id: "myUserId", role: Role.Admin }, config);
@@ -103,7 +103,7 @@ describe("Access management", () => {
   });
 });
 
-const config: PermissionsConfig<SubjectType> = configs.abac;
+const config: PermissionsConfig<SubjectType, Role> = configs.abac;
 
 describe("ABAC > Some custom attribute based authorization", () => {
   it("Everyone can read a public page", () => {
@@ -536,7 +536,7 @@ describe("ABAC > Grant permissions", () => {
 });
 
 describe("Subject-attached Roles", () => {
-  const config: PermissionsConfig<SubjectType> = configs.roles;
+  const config: PermissionsConfig<SubjectType, Role> = configs.roles;
 
   it("A workspace admin can fully manage it", () => {
     const adminUser = {

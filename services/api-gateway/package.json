@@ -27,14 +27,14 @@
     "ts-node-dev": "^1.0.0-pre.62"
   },
   "dependencies": {
-    "cors": "^2.8.5",
     "@prisme.ai/broker": "^0.1.2",
-    "@prisme.ai/types": "^1.0.6",
     "@prisme.ai/permissions": "^1.0.0",
+    "@prisme.ai/types": "^1.0.6",
     "argparse": "^2.0.1",
     "bcrypt": "^5.0.1",
     "connect-redis": "^6.0.0",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",

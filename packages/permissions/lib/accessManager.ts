@@ -6,7 +6,6 @@ import {
   PermissionsConfig,
   User,
   ActionType,
-  Role,
   buildFilterFieldsMethod,
   BaseSubject,
   UserSubject,
@@ -15,9 +14,12 @@ import {
 import { validateRules } from "./rulesBuilder";
 import { ObjectNotFoundError } from "./errors";
 
-type Document<T = any> = mongoose.Document<T> &
-  BaseSubject & {
-    filterFields: (permissions: Permissions<any>) => T & BaseSubject;
+type Document<T, Role extends string> = Omit<mongoose.Document<T>, "toJSON"> &
+  BaseSubject<Role> & {
+    filterFields: (
+      permissions: Permissions<any, Role>
+    ) => T & BaseSubject<Role>;
+    toJSON: () => T & BaseSubject<Role>;
   };
 
 export interface AccessManagerOptions<SubjectType extends string = string> {
@@ -34,17 +36,24 @@ export interface AccessManagerOptions<SubjectType extends string = string> {
 
 export class AccessManager<
   SubjectType extends string,
-  SubjectInterfaces extends { [k in SubjectType]: UserSubject }
+  SubjectInterfaces extends { [k in SubjectType]: UserSubject },
+  Role extends string
 > {
   private opts: AccessManagerOptions<SubjectType>;
-  private models: Record<SubjectType, AccessibleRecordModel<Document>>;
-  private permissionsConfig: PermissionsConfig<SubjectType>;
-  private permissions?: Permissions<SubjectType>;
-  public user?: User;
+  private models: Record<
+    SubjectType,
+    AccessibleRecordModel<Document<any, Role>>
+  >;
+  private permissionsConfig: PermissionsConfig<SubjectType, Role>;
+  private permissions?: Permissions<SubjectType, Role>;
+  public user?: User<Role>;
 
   constructor(
     opts: AccessManagerOptions<SubjectType>,
-    permissionsConfig: Omit<PermissionsConfig<SubjectType>, "subjectTypes">
+    permissionsConfig: Omit<
+      PermissionsConfig<SubjectType, Role>,
+      "subjectTypes"
+    >
   ) {
     this.opts = opts;
     this.permissionsConfig = {
@@ -91,14 +100,16 @@ export class AccessManager<
         ...models,
         [name]: mongoose.model(name, schema as mongoose.Schema),
       };
-    }, {} as Record<SubjectType, AccessibleRecordModel<Document>>);
+    }, {} as Record<SubjectType, AccessibleRecordModel<Document<any, Role>>>);
   }
 
   async start() {
     await mongoose.connect(this.opts.storage.host);
   }
 
-  as(user: User): Required<AccessManager<SubjectType, SubjectInterfaces>> {
+  as(
+    user: User<Role>
+  ): Required<AccessManager<SubjectType, SubjectInterfaces, Role>> {
     const child = Object.assign({}, this, {
       permissions: new Permissions(user, this.permissionsConfig),
       user: {
@@ -122,7 +133,7 @@ export class AccessManager<
   private async fetch<returnType extends SubjectType>(
     subjectType: returnType,
     id: string
-  ): Promise<Document<SubjectInterfaces[returnType]> | null> {
+  ): Promise<Document<SubjectInterfaces[returnType], Role> | null> {
     if (!id) {
       return null;
     }
@@ -134,7 +145,7 @@ export class AccessManager<
 
   private model<returnType extends SubjectType>(
     subjectType: returnType
-  ): AccessibleRecordModel<Document<SubjectInterfaces[returnType]>> {
+  ): AccessibleRecordModel<Document<SubjectInterfaces[returnType], Role>> {
     if (!(subjectType in this.models)) {
       throw new Error(
         `Unknown model ${subjectType}. Did you provide a persistance schema for this subjectType ?`
@@ -155,7 +166,7 @@ export class AccessManager<
 
   async findAll<returnType extends SubjectType>(
     subjectType: returnType
-  ): Promise<(SubjectInterfaces[returnType] & BaseSubject)[]> {
+  ): Promise<(SubjectInterfaces[returnType] & BaseSubject<Role>)[]> {
     const { permissions } = this.checkAsUser();
     const Model = this.model(subjectType);
     const query = Model.accessibleBy(
@@ -174,8 +185,8 @@ export class AccessManager<
   async get<returnType extends SubjectType>(
     subjectType: returnType,
     id: string
-  ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
-    const { permissions, user } = this.checkAsUser();
+  ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
+    const { permissions } = this.checkAsUser();
     const subject = await this.fetch(subjectType, id);
     if (!subject) {
       throw new ObjectNotFoundError();
@@ -185,10 +196,10 @@ export class AccessManager<
     return subject.filterFields(permissions);
   }
 
-  private filterFieldsBeforeUpdate<T>(document: T | Document<T>): T {
+  private filterFieldsBeforeUpdate<T>(document: T | Document<T, Role>): T {
     const object: T =
-      typeof (<Document>document).toJSON === "function"
-        ? ((<Document>document).toJSON() as T)
+      typeof (<Document<any, Role>>document).toJSON === "function"
+        ? ((<Document<any, Role>>document).toJSON() as T)
         : ({ ...document } as T);
 
     delete (<any>object).createdAt;
@@ -204,7 +215,7 @@ export class AccessManager<
   async create<returnType extends SubjectType>(
     subjectType: returnType,
     subject: Omit<SubjectInterfaces[returnType], "id"> & { id?: string }
-  ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
+  ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions, user } = this.checkAsUser();
     permissions.throwUnlessCan(ActionType.Create, subjectType, subject!!);
     const Model = this.model(subjectType);
@@ -225,7 +236,7 @@ export class AccessManager<
   async update<returnType extends SubjectType>(
     subjectType: returnType,
     updatedSubject: SubjectInterfaces[returnType]
-  ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
+  ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions, user } = this.checkAsUser();
 
     const currentSubject = await this.fetch(subjectType, updatedSubject.id);
@@ -254,7 +265,7 @@ export class AccessManager<
     subjectType: returnType,
     id: string
   ): Promise<void> {
-    const { permissions, user } = this.checkAsUser();
+    const { permissions } = this.checkAsUser();
     const subject = await this.fetch(subjectType, id);
     if (!subject) {
       throw new ObjectNotFoundError();
@@ -271,10 +282,10 @@ export class AccessManager<
   async grant<returnType extends SubjectType>(
     subjectType: returnType,
     id: string,
-    collaborator: User,
-    permission: ActionType | ActionType[] | Role | SubjectCollaborator
-  ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
-    const { permissions, user } = this.checkAsUser();
+    collaborator: User<Role>,
+    permission: ActionType | ActionType[] | Role | SubjectCollaborator<Role>
+  ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
+    const { permissions } = this.checkAsUser();
 
     const doc = await this.fetch(subjectType, id);
     if (!doc) {
@@ -296,10 +307,10 @@ export class AccessManager<
   async revoke<returnType extends SubjectType>(
     subjectType: returnType,
     id: string,
-    collaborator: User,
+    collaborator: User<Role>,
     permission: ActionType | ActionType[] | Role | "all" = "all"
-  ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
-    const { permissions, user } = this.checkAsUser();
+  ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
+    const { permissions } = this.checkAsUser();
 
     const doc = await this.fetch(subjectType, id);
     if (!doc) {
@@ -323,7 +334,7 @@ export class AccessManager<
     subjectType: returnType,
     subject: SubjectInterfaces[returnType]
   ): boolean {
-    const { permissions, user } = this.checkAsUser();
+    const { permissions } = this.checkAsUser();
     return permissions.can(actionType, subjectType, subject);
   }
 
@@ -332,7 +343,7 @@ export class AccessManager<
     subjectType: SubjectType,
     idOrSubject: SubjectInterfaces[returnType] | string
   ) {
-    const { permissions, user } = this.checkAsUser();
+    const { permissions } = this.checkAsUser();
 
     const subject =
       typeof idOrSubject === "string"
@@ -354,7 +365,7 @@ export class AccessManager<
     subjectType: returnType,
     subjects: SubjectInterfaces[returnType][]
   ): SubjectInterfaces[returnType][] {
-    const { permissions, user } = this.checkAsUser();
+    const { permissions } = this.checkAsUser();
     return subjects.filter((cur) =>
       permissions.can(actionType, subjectType, cur)
     );

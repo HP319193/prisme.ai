@@ -16,7 +16,6 @@
     "noEmit": true,
     "declaration": true
   },
-  "include": ["./index.ts", "lib/*", "lib/api/*", "lib/api/express.d.ts"],
-  "exclude": ["node_modules", "dist"],
-  "files": ["lib/api/express.d.ts"]
+  "include": ["./index.ts", "lib/*", "lib/api/*"],
+  "exclude": ["node_modules", "dist"]
 }
