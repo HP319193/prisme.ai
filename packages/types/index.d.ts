@@ -1063,11 +1063,17 @@ declare namespace PrismeaiAPI {
     namespace AutomationWebhook {
         namespace Parameters {
             export type AutomationSlug = string;
+            export interface Query {
+                [name: string]: any;
+            }
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
             automationSlug: Parameters.AutomationSlug;
+        }
+        export interface QueryParameters {
+            query?: Parameters.Query;
         }
         /**
          * Entire body will be passed as a payload to the triggered automation
@@ -1075,9 +1081,7 @@ declare namespace PrismeaiAPI {
         export interface RequestBody {
         }
         namespace Responses {
-            export interface $200 {
-                result: Prismeai.AutomationResult[];
-            }
+            export type $200 = Prismeai.AnyValue;
             export type $400 = Prismeai.GenericError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
