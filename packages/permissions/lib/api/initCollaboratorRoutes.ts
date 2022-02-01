@@ -1,3 +1,4 @@
+import "@prisme.ai/types";
 import { NextFunction, Request, Response, Router } from "express";
 import { AccessManager, ActionType } from "../..";
 import { CollaboratorNotFound } from "../errors";

@@ -1,3 +1,4 @@
+import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { AccessManager, BaseSubject } from "..";
 import abacWithRoles, { Role } from "../examples/abacWithRoles";
@@ -33,7 +34,7 @@ type SubjectInterfaces = {
 const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
   {
     storage: {
-      host: "mongodb://nas:27017/testCASL",
+      host: "mongodb://localhost:27017/permissions-tests",
     },
     schemas: {
       user: new mongoose.Schema({}),
@@ -51,7 +52,11 @@ const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
   abacWithRoles
 );
 
+let mongod: MongoMemoryServer;
 beforeAll(async () => {
+  mongod = await MongoMemoryServer.create();
+  //@ts-ignore
+  accessManager.opts.storage.host = mongod.getUri();
   await accessManager.start();
 });
 
@@ -397,4 +402,7 @@ describe("Role & Permissions granting", () => {
 
 afterAll(async () => {
   await mongoose.connection.close();
+  if (mongod) {
+    await mongod.stop();
+  }
 });
