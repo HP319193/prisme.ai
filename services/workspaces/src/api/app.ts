@@ -13,67 +13,79 @@ import {
   validationErrorMiddleware,
   validationMiddleware,
 } from "./middlewares/validation";
+import { AccessManager, SubjectType } from "../permissions";
+import { accessManagerMiddleware } from "./middlewares/accessManager";
+import { initCollaboratorRoutes } from "@prisme.ai/permissions";
 
-const app = express();
+export function initAPI(accessManager: AccessManager) {
+  const app = express();
 
-/**
- * Get NODE_ENV from environment and store in Express.
- */
-app.set("env", process.env.NODE_ENV);
+  /**
+   * Get NODE_ENV from environment and store in Express.
+   */
+  app.set("env", process.env.NODE_ENV);
 
-/**
- * Morgan logger
- */
-app.use(bodyParser.json());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+  /**
+   * Morgan logger
+   */
+  app.use(bodyParser.json());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
 
-/**
- * Metrics
- */
-initMetrics(app);
+  /**
+   * Metrics
+   */
+  initMetrics(app);
 
-/**
- * Traceability
- */
-/**
- * When running Express app behind a proxy we need to detect client IP address correctly.
- * For NGINX the following must be configured 'proxy_set_header X-Forwarded-For $remote_addr;'
- * @link http://expressjs.com/en/guide/behind-proxies.html
- */
-app.set("trust proxy", true);
+  /**
+   * Traceability
+   */
+  /**
+   * When running Express app behind a proxy we need to detect client IP address correctly.
+   * For NGINX the following must be configured 'proxy_set_header X-Forwarded-For $remote_addr;'
+   * @link http://expressjs.com/en/guide/behind-proxies.html
+   */
+  app.set("trust proxy", true);
 
-app.use(requestDecorator);
+  app.use(requestDecorator);
 
-/**
- * Validation
- */
-app.use(
-  validationMiddleware({
-    ignorePaths: ["^/sys"],
-  }),
-  validationErrorMiddleware
-);
+  app.use(accessManagerMiddleware(accessManager));
 
-/**
- * User routes
- */
-initRoutes(app);
+  /**
+   * Validation
+   */
+  app.use(
+    validationMiddleware({
+      ignorePaths: ["^/sys"],
+    }),
+    validationErrorMiddleware
+  );
 
-/**
- * ERROR HANDLING
- */
+  /**
+   * Sharing routes
+   */
+  initCollaboratorRoutes<SubjectType>(app);
 
-/**
- * Decorate error object with additional data
- */
-app.use(errorDecorator);
+  /**
+   * User routes
+   */
+  initRoutes(app);
 
-/**
- * Custom error handling middleware - final
- * WARNING: Must be defined last, after other app.use(), routes calls
- * and all other error handling middleware
- */
-app.use(finalErrorHandler);
+  /**
+   * ERROR HANDLING
+   */
 
-export { app };
+  /**
+   * Decorate error object with additional data
+   */
+  app.use(errorDecorator);
+
+  /**
+   * Custom error handling middleware - final
+   * WARNING: Must be defined last, after other app.use(), routes calls
+   * and all other error handling middleware
+   */
+  app.use(finalErrorHandler);
+
+  return app;
+}

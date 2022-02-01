@@ -59,6 +59,7 @@ services:
       OPENAPI_FILEPATH: /www/specifications/swagger.yml
       WORKSPACES_STORAGE_TYPE: FILESYSTEM
       WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
+      PERMISSIONS_STORAGE_HOST: mongodb://mongo/permissions
 
   workspaces:
     working_dir: /www
@@ -80,6 +81,8 @@ services:
       OPENAPI_FILEPATH: /www/specifications/swagger.yml
       WORKSPACES_STORAGE_TYPE: FILESYSTEM
       WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
+      PERMISSIONS_STORAGE_HOST: mongodb://mongo/permissions
+      GATEWAY_API_HOST: http://gateway:3001/v2
 
   events:
     working_dir: /www
@@ -101,6 +104,7 @@ services:
       BROKER_HOST: redis://redis/10
       OPENAPI_FILEPATH: /www/specifications/swagger.yml
       EVENTS_STORAGE_ES_HOST: http://elastic:9200
+      PERMISSIONS_STORAGE_HOST: mongodb://mongo/permissions
 
   gateway:
     working_dir: /www
@@ -122,6 +126,8 @@ services:
       USERS_STORAGE_HOST: mongodb://mongo/eda
       SESSIONS_STORAGE_HOST: redis://redis/2
       BROKER_HOST: redis://redis/10
+      PERMISSIONS_STORAGE_HOST: mongodb://mongo/permissions
+
   console:
     working_dir: /www
     entrypoint: npm run dev --prefix=services/console

@@ -210,7 +210,7 @@ workspaces_deploy:
     - export K8S_NAME=$WORKSPACES_K8S_NAME
 
 # ## Runtime jobs
-events_test:
+runtime_test:
   extends: .npm_test
   only:
     changes:

@@ -8,6 +8,9 @@ export const CORRELATION_ID_HEADER =
 export const USER_ID_HEADER =
   process.env.USER_ID_HEADER || "x-prismeai-user-id";
 
+export const API_KEY_HEADER =
+  process.env.API_KEY_HEADER || "x-prismeai-api-key";
+
 export const OPENAPI_FILEPATH =
   process.env.OPENAPI_FILEPATH ||
   path.resolve(__dirname, "../specifications/swagger.yml");

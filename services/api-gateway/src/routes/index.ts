@@ -30,7 +30,7 @@ export default async function initRoutes(
   app.use(
     bodyParser.json(),
     validationMiddleware({
-      ignorePaths: ["^/sys"],
+      ignorePaths: ["^/sys", "^/v2/contacts"],
     }),
     validationErrorMiddleware
   );

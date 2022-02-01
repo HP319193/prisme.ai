@@ -13,7 +13,7 @@ class Workspaces {
   }
 
   createWorkspace = async (workspace: Prismeai.Workspace) => {
-    await this.storage.save(nanoid(7), workspace);
+    await this.storage.save(workspace.id || nanoid(7), workspace);
     this.broker.send<Prismeai.CreatedWorkspace["payload"]>(
       EventType.CreatedWorkspace,
       {
@@ -25,11 +25,6 @@ class Workspaces {
 
   getWorkspace = async (workspaceId: string) => {
     return await this.storage.get(workspaceId);
-  };
-
-  // Not implemented yet, awaiting authentification to check workspaces ownership
-  getWorkspaces = async (query: PrismeaiAPI.GetWorkspaces.QueryParameters) => {
-    return this.storage.list();
   };
 
   updateWorkspace = async (

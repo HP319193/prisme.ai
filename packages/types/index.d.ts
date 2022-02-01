@@ -528,6 +528,28 @@ declare namespace Prismeai {
             [key: string]: any;
         };
     }
+    export interface Collaborator {
+        email: string;
+        id?: string;
+        role?: Role;
+        permissions?: Permissions;
+    }
+    /**
+     * example:
+     * [
+     *   {
+     *     "email": "admin@prisme.ai",
+     *     "role": "admin"
+     *   },
+     *   {
+     *     "email": "readonly@prisme.ai",
+     *     "permissions": {
+     *       "read": true
+     *     }
+     *   }
+     * ]
+     */
+    export type Collaborators = Collaborator[];
     export interface Conditions {
         [name: string]: InstructionList;
         default: InstructionList;
@@ -735,6 +757,13 @@ declare namespace Prismeai {
         error?: string;
         message?: string;
     }
+    export interface Permissions {
+        read?: boolean;
+        write?: boolean;
+        update?: boolean;
+        create?: boolean;
+        manage_collaborators?: boolean;
+    }
     export interface PrismeEvent {
         /**
          * example:
@@ -781,6 +810,7 @@ declare namespace Prismeai {
             then: InstructionList;
         };
     }
+    export type Role = "admin" | "collaborator";
     export interface Set {
         set: {
             /**
@@ -1233,6 +1263,40 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace GetCollaborators {
+        namespace Parameters {
+            export type SubjectId = string;
+            export type SubjectType = "workspaces";
+        }
+        export interface PathParameters {
+            subjectType: Parameters.SubjectType;
+            subjectId: Parameters.SubjectId;
+        }
+        namespace Responses {
+            export interface $200 {
+                result: /**
+                 * example:
+                 * [
+                 *   {
+                 *     "email": "admin@prisme.ai",
+                 *     "role": "admin"
+                 *   },
+                 *   {
+                 *     "email": "readonly@prisme.ai",
+                 *     "permissions": {
+                 *       "read": true
+                 *     }
+                 *   }
+                 * ]
+                 */
+                Prismeai.Collaborators;
+            }
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace GetInstalledApp {
         namespace Parameters {
             export type InstalledAppId = string;
@@ -1322,6 +1386,27 @@ declare namespace PrismeaiAPI {
             }
         }
     }
+    namespace RevokeCollaborator {
+        namespace Parameters {
+            export type CollaboratorId = string;
+            export type SubjectId = string;
+            export type SubjectType = "workspaces";
+        }
+        export interface PathParameters {
+            subjectType: Parameters.SubjectType;
+            subjectId: Parameters.SubjectId;
+            collaboratorId: Parameters.CollaboratorId;
+        }
+        namespace Responses {
+            export interface $200 {
+                id: string;
+            }
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace SearchApps {
         namespace Parameters {
             export type Limit = string;
@@ -1352,6 +1437,24 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.AllEventResponses;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace Share {
+        namespace Parameters {
+            export type SubjectId = string;
+            export type SubjectType = "workspaces";
+        }
+        export interface PathParameters {
+            subjectType: Parameters.SubjectType;
+            subjectId: Parameters.SubjectId;
+        }
+        export type RequestBody = Prismeai.Collaborator;
+        namespace Responses {
+            export type $200 = Prismeai.Collaborator;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;

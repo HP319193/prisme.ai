@@ -10,10 +10,11 @@
     "dev": "ts-node-dev -r dotenv/config --inspect=9230 --transpile-only --respawn ./src/app.ts"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^7.16.0",
     "@prisme.ai/broker": "^0.1.2",
+    "@prisme.ai/permissions": "^1.0.0",
     "@prisme.ai/types": "^1.0.8",
     "body-parser": "^1.19.0",
-    "@elastic/elasticsearch": "^7.16.0",
     "express": "^4.17.1",
     "express-openapi-validator": "^4.13.4",
     "heapdump": "^0.3.15",

@@ -16,12 +16,15 @@ import {
 import { Application } from "express";
 import { Subscriptions } from "../services/events/Subscriptions";
 import { EventsStore } from "../services/events/store";
+import { AccessManager } from "../permissions";
+import { accessManagerMiddleware } from "./middlewares/accessManager";
 
 export function initAPI(
   app: Application,
   httpServer: http.Server,
   eventsSubscription: Subscriptions,
-  eventsStore: EventsStore
+  eventsStore: EventsStore,
+  accessManager: AccessManager
 ) {
   /**
    * Get NODE_ENV from environment and store in Express.
@@ -52,6 +55,8 @@ export function initAPI(
 
   app.use(requestDecorator);
 
+  app.use(accessManagerMiddleware(accessManager));
+
   /**
    * Validation
    */
@@ -65,7 +70,7 @@ export function initAPI(
   /**
    * User routes
    */
-  initRoutes(app, httpServer, eventsSubscription, eventsStore);
+  initRoutes(app, httpServer, eventsSubscription, eventsStore, accessManager);
 
   /**
    * ERROR HANDLING
