@@ -125,7 +125,7 @@ it('should get schema', () => {
   }
   const onChange = jest.fn()
   const root = renderer.create(<AutomationBuilder id="automationBar" value={value} onChange={onChange} />);
-  expect((ReactFlow as any).context.getSchema('emit').properties.emit).toBeDefined();
+  expect((ReactFlow as any).context.getSchema('emit').properties).toBeDefined();
 })
 
 it('should get app', () => {

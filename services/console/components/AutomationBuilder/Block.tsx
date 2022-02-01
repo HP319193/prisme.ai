@@ -6,6 +6,7 @@ import { Flow } from "./flow";
 import { useAutomationBuilder } from "./context";
 import { useTranslation } from "next-i18next";
 import pencil from '../../icons/cursor-pencil.svg';
+import { truncate } from "../../utils/strings";
 
 interface BlockProps {
   removable?: boolean
@@ -36,7 +37,7 @@ export const Block: FC<NodeProps & BlockProps> = (({ data, removable = true, sel
       case 'set':
         return t('automations.node.label', {
           instruction: t('automations.instruction.label', { context: label }),
-          value: value && `${value.name} = ${value.value}`,
+          value: value && `${value.name} = ${truncate(value.value, 10, '…')}`,
           display: ':'
         });
       case 'delete':
