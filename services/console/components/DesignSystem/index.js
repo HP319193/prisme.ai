@@ -5,4 +5,5 @@ export { default as PageHeader } from "./PageHeader";
 export { default as Menu } from "./Menu";
 export { default as MenuTab } from "./MenuTab";
 export { default as Dropdown } from "./Dropdown";
+export { default as Collapse } from "./Collapse";
 export { Row, Col, Space, Avatar, Divider } from "antd";

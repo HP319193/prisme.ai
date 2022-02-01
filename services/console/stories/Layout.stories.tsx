@@ -9,13 +9,15 @@ import {
   Col,
 } from "../components/DesignSystem";
 import { LayoutProps } from "../components/DesignSystem/Layout";
-import "./no-padding.css";
 import { Story } from "@storybook/react";
 import { FilterOutlined, SearchOutlined } from "@ant-design/icons";
 
 export default {
   title: "Layout/Layout",
   component: Layout,
+  parameters: {
+    layout: "fullscreen",
+  },
 };
 
 const HeaderComponent = (

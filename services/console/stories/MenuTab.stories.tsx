@@ -1,7 +1,5 @@
 import { Story } from "@storybook/react";
 import { MenuTab } from "../components/DesignSystem";
-import "./no-padding.css";
-
 import { action } from "@storybook/addon-actions";
 
 const actionsData = {
@@ -17,6 +15,9 @@ export default {
         type: "array",
       },
     },
+  },
+  parameters: {
+    layout: "centered",
   },
 };
 

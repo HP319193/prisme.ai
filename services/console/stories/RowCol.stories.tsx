@@ -3,6 +3,9 @@ import { Story } from "@storybook/react";
 
 export default {
   title: "Layout/RowCol",
+  parameters: {
+    layout: "fullscreen",
+  },
 };
 
 const Template: Story = (args) => (

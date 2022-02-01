@@ -12,6 +12,9 @@ export default {
       control: { type: "select" },
     },
   },
+  parameters: {
+    layout: "centered",
+  },
 };
 
 const Template: Story<ButtonProps> = (args: any) => (

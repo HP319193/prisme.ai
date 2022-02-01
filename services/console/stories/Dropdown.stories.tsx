@@ -13,6 +13,9 @@ export default {
       },
     },
   },
+  parameters: {
+    layout: "centered",
+  },
 };
 
 const menuItems = ["item 1", "item 2"];
