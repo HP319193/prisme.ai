@@ -4,15 +4,11 @@ import { ReactNode } from "react";
 interface LayoutProps {
   Header: ReactNode;
   Content: ReactNode;
-  PageHeader?: ReactNode;
 }
 
-const Layout = ({ Header, Content, PageHeader }: LayoutProps) => (
+const Layout = ({ Header, Content }: LayoutProps) => (
   <AntdLayout className="h-screen">
-    <AntdLayout.Header>
-      {Header}
-      {PageHeader || null}
-    </AntdLayout.Header>
+    <AntdLayout.Header>{Header}</AntdLayout.Header>
     <AntdLayout.Content>{Content}</AntdLayout.Content>
   </AntdLayout>
 );

@@ -6,6 +6,13 @@ import { DropdownProps } from "../components/DesignSystem/Dropdown";
 export default {
   title: "Components/Dropdown",
   component: Dropdown,
+  argsType: {
+    items: {
+      control: {
+        type: "array",
+      },
+    },
+  },
 };
 
 const menuItems = ["item 1", "item 2"];

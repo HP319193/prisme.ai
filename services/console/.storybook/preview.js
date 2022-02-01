@@ -2,6 +2,9 @@ import "../styles/prismeai-theme.less";
 import "../styles/globals.css";
 import * as NextImage from "next/image";
 
+import { addDecorator } from "@storybook/react";
+import { withPropsTable } from "storybook-addon-react-docgen";
+
 const OriginalNextImage = NextImage.default;
 
 Object.defineProperty(NextImage, "default", {
@@ -21,3 +24,5 @@ export const parameters = {
     "storybook/docs/panel": { index: -1 },
   },
 };
+
+addDecorator(withPropsTable);

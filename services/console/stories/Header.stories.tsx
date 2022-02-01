@@ -4,6 +4,7 @@ import "./no-padding.css";
 
 export default {
   title: "Layout/Header",
+  component: Header,
 };
 
 const Template: Story = () => (

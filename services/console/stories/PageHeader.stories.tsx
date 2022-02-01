@@ -5,6 +5,7 @@ import { Story } from "@storybook/react";
 
 export default {
   title: "Layout/PageHeader",
+  component: PageHeader,
 };
 
 const RightButtons = [
