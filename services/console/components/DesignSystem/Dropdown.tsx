@@ -11,7 +11,7 @@ export interface DropdownProps {
 
 const Dropdown = ({ Menu, children }: DropdownProps) => {
   if (!Menu) {
-    return <div>{children}</div>;
+    return <div className="ant-dropdown-trigger">{children}</div>;
   }
 
   return (
