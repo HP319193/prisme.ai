@@ -9,11 +9,13 @@ import { Button } from "primereact/button";
 import useKeyboardShortcut from "../components/useKeyboardShortcut";
 import { useWorkspaces } from "../components/WorkspacesProvider";
 import { useTranslation } from "next-i18next";
+import { useToaster } from "../layouts/Toaster";
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces')
   const { workspace } = useWorkspace();
   const { updateAutomation } = useWorkspaces();
+  const toaster = useToaster();
   const {
     query: { automationId },
   } = useRouter();
@@ -34,12 +36,19 @@ export const Automation = () => {
 
   const save = useCallback(async () => {
     setSaving(true);
-    const saved = await updateAutomation(workspace, `${automationId}`, value)
-    if (saved) {
-      setValue(saved);
+    try {
+      const saved = await updateAutomation(workspace, `${automationId}`, value)
+      if (saved) {
+        setValue(saved);
+      }
+    } catch (e) {
+      toaster.show({
+        severity: 'error',
+        summary: t('automations.save.error')
+      })
     }
     setSaving(false)
-  }, [automationId, updateAutomation, value, workspace])
+  }, [automationId, t, toaster, updateAutomation, value, workspace])
 
   useKeyboardShortcut([{
     key: 's',
