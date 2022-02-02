@@ -21,6 +21,7 @@ export const Panel: FC<PanelProps> = ({ visible, onVisibleChange, children }) =>
           modal={false}
           appendTo={ref.current}
           maskStyle={{ position: 'relative' }}
+          className="w-30rem"
         >
           {children}
         </Sidebar>

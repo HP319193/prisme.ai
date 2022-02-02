@@ -28,13 +28,13 @@ export const FieldContainer: FC<FieldProps> = ({
   const { input, meta } = useField(name, fieldProps);
   return (
     <div className="p-field mb-5">
-      <span className={`p-float-label mx-2 ${className}`}>
+      <span className={`flex p-float-label mx-2 ${className}`}>
         {typeof children === "function"
           ? children({
-              input,
-              meta,
-              className: isFormFieldValid(meta) ? "p-invalid" : "",
-            })
+            input,
+            meta,
+            className: `flex flex-1 ${isFormFieldValid(meta) ? "p-invalid" : ""}`,
+          })
           : children}
         <label htmlFor={name}>{label}</label>
       </span>
