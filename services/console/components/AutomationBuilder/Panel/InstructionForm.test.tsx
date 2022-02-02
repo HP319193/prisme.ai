@@ -34,7 +34,7 @@ it("should set instruction without params", () => {
   })
 
   expect(onSubmit).toHaveBeenCalledWith({
-    wait: undefined
+    wait: {}
   })
 });
 

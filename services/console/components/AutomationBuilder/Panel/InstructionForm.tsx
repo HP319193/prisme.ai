@@ -26,7 +26,7 @@ export const InstructionForm: FC<InstructionFormProps> = ({ instruction, onSubmi
     const schema = getSchema(instructionName.toLowerCase());
     if (!schema.properties) {
       onSubmit({
-        [instructionName]: undefined
+        [instructionName]: {}
       })
       return;
     }
