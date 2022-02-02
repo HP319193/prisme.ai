@@ -42,7 +42,7 @@ export const Main: FC<MainProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex flex-1 surface-ground relative overflow-auto">
+      <div className="flex flex-1 surface-ground relative" style={{ overflow: 'auto', overflowX: 'hidden' }}>
         {children}
       </div>
     </div>

@@ -47,7 +47,13 @@ exports[`should render empty 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-auto"
+    className="flex flex-1 surface-ground relative"
+    style={
+      Object {
+        "overflow": "auto",
+        "overflowX": "hidden",
+      }
+    }
   >
     <div
       className="justify-content-center flex flex-wrap align-items-start justify-content-start"
@@ -130,7 +136,13 @@ exports[`should render some workspaces 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-auto"
+    className="flex flex-1 surface-ground relative"
+    style={
+      Object {
+        "overflow": "auto",
+        "overflowX": "hidden",
+      }
+    }
   >
     <div
       className="justify-content-center flex flex-wrap align-items-start justify-content-start"

@@ -47,7 +47,13 @@ exports[`should render 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-auto"
+    className="flex flex-1 surface-ground relative"
+    style={
+      Object {
+        "overflow": "auto",
+        "overflowX": "hidden",
+      }
+    }
   />
 </div>
 `;
