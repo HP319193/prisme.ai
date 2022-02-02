@@ -42,8 +42,19 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const initYaml = useCallback(async () => {
     try {
-      const { id, ...json } = workspace
-      const value = await toYaml(json);
+      // remove workspace id and automations slugs
+      const { id, automations = {}, ...json } = workspace
+      const cleanedJson = {
+        ...json,
+        automations: Object.keys(automations).reduce((prev, name) => {
+          const { slug, ...automation } = automations[name];
+          return ({
+            ...prev,
+            [name]: automation
+          })
+        }, {})
+      }
+      const value = await toYaml(cleanedJson);
       setValue(value);
     } catch (e) { }
   }, [workspace, toYaml]);
@@ -53,7 +64,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const checkSyntaxAndReturnYAML = useCallback(
     async (value: string) => {
-      if (value === undefined) return;
+      if (!workspace || value === undefined) return;
       try {
         setAnnotations([]);
         return { ...await toJSON<Workspace>(value), id: workspace.id };
@@ -69,7 +80,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         ]);
       }
     },
-    [toJSON, workspace.id]
+    [toJSON, workspace]
   );
 
   const update = useCallback(
