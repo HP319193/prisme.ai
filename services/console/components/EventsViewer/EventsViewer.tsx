@@ -1,35 +1,31 @@
-import { Accordion, AccordionTab } from "primereact/accordion";
-import { useTranslation } from "next-i18next";
-import { useWorkspace } from "../../layouts/WorkspaceLayout";
-import { useDateFormat } from "../../utils/dates";
-import EventDetails from "./EventDetails";
-import Loading from "../Loading";
-import { useEffect } from "react";
-import { useScrollListener } from "../useScrollListener";
+import { Accordion, AccordionTab } from 'primereact/accordion';
+import { useTranslation } from 'next-i18next';
+import { useWorkspace } from '../../layouts/WorkspaceLayout';
+import { useDateFormat } from '../../utils/dates';
+import EventDetails from './EventDetails';
+import Loading from '../Loading';
+import { useEffect } from 'react';
+import { useScrollListener } from '../useScrollListener';
 
 export const EventsViewer = () => {
-  const { t } = useTranslation("workspaces");
-  const {
-    events,
-    nextEvents,
-    readEvents
-  } = useWorkspace();
+  const { t } = useTranslation('workspaces');
+  const { events, nextEvents, readEvents } = useWorkspace();
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
 
   useEffect(() => {
     if (bottom) {
-      nextEvents()
+      nextEvents();
     }
-  }, [bottom, nextEvents])
+  }, [bottom, nextEvents]);
 
   if (events === 'loading') {
-    return <Loading />
+    return <Loading />;
   }
 
   const dates = Array.from(events.keys());
 
-  if (dates.length === 0) return <div className="p-2">{t("events.empty")}</div>;
+  if (dates.length === 0) return <div className="p-2">{t('events.empty')}</div>;
 
   dates.sort((a, b) => a - b).reverse();
 
@@ -51,10 +47,12 @@ export const EventsViewer = () => {
                     <AccordionTab
                       key={event.id}
                       header={
-                        <div className={`
+                        <div
+                          className={`
                           flex flex-1 flex-column
                           ${readEvents.has(event.id) ? 'opacity-50' : ''}
-                        `}>
+                        `}
+                        >
                           <div className="flex flex-row">
                             <div className="flex font-bold mr-2">
                               {event.source?.app || event.source?.host?.service}

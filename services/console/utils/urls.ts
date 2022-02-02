@@ -1,9 +1,8 @@
-import getConfig from "next/config";
+import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
 
-const endpoint =
-  publicRuntimeConfig.ENDPOINT || "";
+const endpoint = publicRuntimeConfig.ENDPOINT || '';
 
 export const generateEndpoint = (workspaceId: string, slug: string) =>
   endpoint

@@ -1,18 +1,18 @@
-import SignIn from "./In";
-import renderer, { act } from "react-test-renderer";
-import { useUser } from "../../components/UserProvider";
-import ApiError from "../../api/ApiError";
-import { Form } from "react-final-form";
-import { useRouter } from "next/router";
+import SignIn from './In';
+import renderer, { act } from 'react-test-renderer';
+import { useUser } from '../../components/UserProvider';
+import ApiError from '../../api/ApiError';
+import { Form } from 'react-final-form';
+import { useRouter } from 'next/router';
 
-jest.mock("../../components/UserProvider", () => {
+jest.mock('../../components/UserProvider', () => {
   const mock: any = {};
   mock.mock = mock;
   return {
     useUser: () => mock,
   };
 });
-jest.mock("next/router", () => {
+jest.mock('next/router', () => {
   const push = jest.fn();
   return {
     useRouter: () => ({
@@ -21,7 +21,7 @@ jest.mock("next/router", () => {
   };
 });
 
-jest.mock("primereact/fieldset", () => ({
+jest.mock('primereact/fieldset', () => ({
   Fieldset: ({ children }: any) => children,
 }));
 
@@ -33,22 +33,22 @@ beforeEach(() => {
   mock.signin = jest.fn();
 });
 
-it("should render", () => {
+it('should render', () => {
   const root = renderer.create(<SignIn />);
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it("should load", () => {
+it('should load', () => {
   (useUser() as any).mock.loading = true;
   const root = renderer.create(<SignIn />);
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it("should have error", () => {
+it('should have error', () => {
   (useUser() as any).mock.error = new ApiError(
     {
-      error: "Error",
-      message: "Error",
+      error: 'Error',
+      message: 'Error',
     },
     400
   );
@@ -56,44 +56,44 @@ it("should have error", () => {
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it("should submit form", async () => {
+it('should submit form', async () => {
   const root = renderer.create(<SignIn />);
   await act(async () => {
     await root.root
       .findByType(Form)
-      .props.onSubmit({ email: "email@company.com", password: "123456" });
+      .props.onSubmit({ email: 'email@company.com', password: '123456' });
   });
-  expect(useUser().signin).toHaveBeenCalledWith("email@company.com", "123456");
+  expect(useUser().signin).toHaveBeenCalledWith('email@company.com', '123456');
 });
 
-it("should validate form", async () => {
+it('should validate form', async () => {
   const root = renderer.create(<SignIn />);
   expect(
-    root.root.findByType(Form).props.validate({ email: "", password: "" })
+    root.root.findByType(Form).props.validate({ email: '', password: '' })
   ).toEqual({
-    email: "required",
-    password: "required",
+    email: 'required',
+    password: 'required',
   });
   expect(
-    root.root.findByType(Form).props.validate({ email: "a", password: "" })
+    root.root.findByType(Form).props.validate({ email: 'a', password: '' })
   ).toEqual({
-    password: "required",
+    password: 'required',
   });
   expect(
-    root.root.findByType(Form).props.validate({ email: "", password: "a" })
+    root.root.findByType(Form).props.validate({ email: '', password: 'a' })
   ).toEqual({
-    email: "required",
+    email: 'required',
   });
   expect(
-    root.root.findByType(Form).props.validate({ email: "a", password: "a" })
+    root.root.findByType(Form).props.validate({ email: 'a', password: 'a' })
   ).toEqual({});
 });
 
-it("should redirect after signin", () => {
+it('should redirect after signin', () => {
   const root = renderer.create(<SignIn />);
   act(() => {
     (useUser() as any).mock.user = {};
     root.update(<SignIn />);
   });
-  expect(useRouter().push).toHaveBeenCalledWith("/workspaces");
+  expect(useRouter().push).toHaveBeenCalledWith('/workspaces');
 });

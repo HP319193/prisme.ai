@@ -1,17 +1,17 @@
-import { useCallback, useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
-import { Messages } from "primereact/messages";
-import { Form } from "react-final-form";
+import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { Messages } from 'primereact/messages';
+import { Form } from 'react-final-form';
 
-import FullScreen from "../../layouts/FullScreen";
-import Field from "../../layouts/Field";
-import Fieldset from "../../layouts/Fieldset";
-import { useUser } from "../../components/UserProvider";
-import { useRouter } from "next/router";
-import Head from "next/head";
-import Link from "next/link";
+import FullScreen from '../../layouts/FullScreen';
+import Field from '../../layouts/Field';
+import Fieldset from '../../layouts/Fieldset';
+import { useUser } from '../../components/UserProvider';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
+import Link from 'next/link';
 
 interface Values {
   email: string;
@@ -19,7 +19,7 @@ interface Values {
 }
 
 export const SignIn = () => {
-  const { t } = useTranslation("sign");
+  const { t } = useTranslation('sign');
   const { push } = useRouter();
   const { user, loading, error, signin } = useUser();
   const messages = useRef<Messages>(null);
@@ -35,44 +35,44 @@ export const SignIn = () => {
     if (!messages.current || !error) return;
 
     messages.current.show({
-      severity: "error",
-      summary: t("in.error", { context: error.error }),
+      severity: 'error',
+      summary: t('in.error', { context: error.error }),
     });
   }, [error, t]);
 
   useEffect(() => {
     if (!user || loading) return;
-    push("/workspaces");
+    push('/workspaces');
   }, [loading, push, user]);
 
   const validate = (values: Values) => {
     const errors: Partial<Values> = {};
     if (!values.email) {
-      errors.email = "required";
+      errors.email = 'required';
     }
     if (!values.password) {
-      errors.password = "required";
+      errors.password = 'required';
     }
     return errors;
   };
 
   const getIcon = () => {
-    if (loading) return "pi pi-spin pi-spinner";
-    if (user) return "pi pi-lock-open";
-    return "pi pi-lock";
+    if (loading) return 'pi pi-spin pi-spinner';
+    if (user) return 'pi pi-lock-open';
+    return 'pi pi-lock';
   };
 
   return (
     <FullScreen>
       <Head>
-        <title>{t("in.title")}</title>
-        <meta name="description" content={t("in.description")} />
+        <title>{t('in.title')}</title>
+        <meta name="description" content={t('in.description')} />
       </Head>
       <Form onSubmit={submit} validate={validate}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit} className="w-8">
-            <Fieldset legend={t("in.description")}>
-              <Field name="email" label={t("in.email")}>
+            <Fieldset legend={t('in.description')}>
+              <Field name="email" label={t('in.email')}>
                 {({ input, className }) => (
                   <InputText
                     id="email"
@@ -82,7 +82,7 @@ export const SignIn = () => {
                   />
                 )}
               </Field>
-              <Field name="password" label={t("in.password")}>
+              <Field name="password" label={t('in.password')}>
                 {({ input, className }) => (
                   <InputText
                     id="password"
@@ -94,11 +94,11 @@ export const SignIn = () => {
               </Field>
               <Field className="flex justify-content-between">
                 <div className="flex flex-column">
-                  <Link href="/signup">{t("in.signup")}</Link>
+                  <Link href="/signup">{t('in.signup')}</Link>
                 </div>
                 <Button type="submit" disabled={loading}>
                   <div className={`${getIcon()} mr-2`} />
-                  {t("in.submit")}
+                  {t('in.submit')}
                 </Button>
               </Field>
               <Messages className="absolute bottom-0" ref={messages}></Messages>

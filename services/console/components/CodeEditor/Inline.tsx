@@ -4,7 +4,10 @@ import CodeEditor, { CodeEditorProps } from './CodeEditor';
 
 const DEFAULT_LINE_HEIGHT = 18;
 
-export const CodeEditorInline: React.FC<CodeEditorProps> = ({ value, ...props }) => {
+export const CodeEditorInline: React.FC<CodeEditorProps> = ({
+  value,
+  ...props
+}) => {
   const ref = React.useRef<any>(null);
   const [lineHeight, setLineHeight] = React.useState(0);
 
@@ -27,9 +30,11 @@ export const CodeEditorInline: React.FC<CodeEditorProps> = ({ value, ...props })
           flex: 1,
           border: '1px solid #ced4da',
           borderRadius: '6px',
-          ...(singleLine ? undefined : { background: 'white' })
+          ...(singleLine ? undefined : { background: 'white' }),
         }}
-        value={typeof value === 'object' ? JSON.stringify(value, null, '  ') : value}
+        value={
+          typeof value === 'object' ? JSON.stringify(value, null, '  ') : value
+        }
         maxLines={Infinity}
         ref={ref}
         showGutter={!lineHeight || !singleLine}

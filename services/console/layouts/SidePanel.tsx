@@ -1,7 +1,7 @@
-import { FC } from "react";
-import ClickAwayListener from "react-click-away-listener";
+import { FC } from 'react';
+import ClickAwayListener from 'react-click-away-listener';
 
-const noop = () => { };
+const noop = () => {};
 interface SidePanelProps {
   sidebarOpen: boolean;
   onClose?: () => void;
@@ -25,7 +25,7 @@ export const SidePanel: FC<SidePanelProps> = ({
           transition-transform
           transition-duration-100
           transition-ease-in
-          ${sidebarOpen ? "-translate-x-100" : ""}
+          ${sidebarOpen ? '-translate-x-100' : ''}
           shadow-4
           z-4`}
       >

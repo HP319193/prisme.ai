@@ -20,7 +20,7 @@ a {
   position: absolute;
   left: 4px;
   top: 2px;
-  content: "";
+  content: '';
 }
 
 .prisme-events-viewer__event.p-accordion
@@ -45,6 +45,6 @@ a {
 
 .p-float-label .ace_focus ~ label,
 .p-float-label .filled ~ label {
-    top: -0.75rem;
-    font-size: 12px;
+  top: -0.75rem;
+  font-size: 12px;
 }

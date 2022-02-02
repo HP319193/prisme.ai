@@ -1,7 +1,7 @@
 export class ApiError extends Error implements Prismeai.GenericError {
   public code: number;
-  public error: Prismeai.GenericError["error"];
-  public details: Prismeai.GenericError["details"];
+  public error: Prismeai.GenericError['error'];
+  public details: Prismeai.GenericError['details'];
 
   constructor(
     { error, message, details }: Prismeai.GenericError,

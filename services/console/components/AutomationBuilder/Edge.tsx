@@ -5,7 +5,6 @@ import {
   getMarkerEnd,
 } from 'react-flow-renderer';
 
-
 export const Edge: FC<EdgeProps> = ({
   id,
   sourceX,
@@ -17,7 +16,7 @@ export const Edge: FC<EdgeProps> = ({
   style = {},
   arrowHeadType,
   markerEndId,
-  children
+  children,
 }) => {
   const edgePath = getSmoothStepPath({
     sourceX,
@@ -41,6 +40,6 @@ export const Edge: FC<EdgeProps> = ({
       {children}
     </>
   );
-}
+};
 
-export default Edge
+export default Edge;

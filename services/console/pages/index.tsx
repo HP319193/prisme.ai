@@ -1,12 +1,12 @@
-import type { GetServerSideProps } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import type { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-export { default } from "../views/Home";
+export { default } from '../views/Home';
 
 export const getServerSideProps: GetServerSideProps = async ({
-  locale = "",
+  locale = '',
 }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common"])),
+    ...(await serverSideTranslations(locale, ['common'])),
   },
 });

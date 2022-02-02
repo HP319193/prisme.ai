@@ -1,4 +1,4 @@
-const { i18n } = require("./next-i18next.config");
+const { i18n } = require('./next-i18next.config');
 
 /** @type {import('next').NextConfig} */
 module.exports = {
@@ -7,6 +7,6 @@ module.exports = {
   publicRuntimeConfig: {
     API_HOST: process.env.API_HOST,
     ENDPOINT: `${process.env.API_HOST}/workspaces/{{workspaceId}}/webhooks/{{slug}}`,
-    SENTRY_DSN: process.env.SENTRY_DSN || "",
+    SENTRY_DSN: process.env.SENTRY_DSN || '',
   },
 };

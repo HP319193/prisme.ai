@@ -1,29 +1,31 @@
-import { useTranslation } from "next-i18next";
-import Image from "next/image";
-import { Button } from "primereact/button"
-import { InputText } from "primereact/inputtext"
-import { FC, useMemo, useState } from "react"
-import { useAutomationBuilder } from "../context";
+import { useTranslation } from 'next-i18next';
+import Image from 'next/image';
+import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
+import { FC, useMemo, useState } from 'react';
+import { useAutomationBuilder } from '../context';
 
 export interface InstructionSelectionProps {
   onSubmit: (key: string) => void;
 }
 
-export const InstructionSelection: FC<InstructionSelectionProps> = ({ onSubmit }) => {
+export const InstructionSelection: FC<InstructionSelectionProps> = ({
+  onSubmit,
+}) => {
   const { t } = useTranslation('workspaces');
   const { instructionsSchemas } = useAutomationBuilder();
   const [search, setSearch] = useState('');
   const filteredInstructions = useMemo(() => {
-    return instructionsSchemas.reduce<[string, string, string[]][]>((prev, [name, list, more]) => {
-      const matching = search ? Object.keys(list).filter(a => a.match(search)) : Object.keys(list)
-      if (!matching) return prev;
-      return [
-        ...prev,
-        [name, more.icon, matching]
-      ];
-    }, [])
+    return instructionsSchemas
+      .reduce<[string, string, string[]][]>((prev, [name, list, more]) => {
+        const matching = search
+          ? Object.keys(list).filter((a) => a.match(search))
+          : Object.keys(list);
+        if (!matching) return prev;
+        return [...prev, [name, more.icon, matching]];
+      }, [])
       .filter(([, , list]) => list.length);
-  }, [instructionsSchemas, search])
+  }, [instructionsSchemas, search]);
 
   return (
     <>
@@ -38,7 +40,14 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({ onSubmit }
             autoFocus
             className="flex-1"
           />
-          <i><button onClick={() => setSearch('')} style={{ background: 'none', border: 0, color: 'inherit' }}><i className="pi pi-times" /></button></i>
+          <i>
+            <button
+              onClick={() => setSearch('')}
+              style={{ background: 'none', border: 0, color: 'inherit' }}
+            >
+              <i className="pi pi-times" />
+            </button>
+          </i>
         </span>
       </div>
       {filteredInstructions.map(([section, icon, instructionsInSection]) => (
@@ -49,17 +58,19 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({ onSubmit }
             </div>
             {section}
           </div>
-          {instructionsInSection.map(key => (
+          {instructionsInSection.map((key) => (
             <Button
               key={key}
               onClick={() => onSubmit(key)}
               className="p-button-outlined my-1"
-            >{key}</Button>
+            >
+              {key}
+            </Button>
           ))}
         </div>
       ))}
     </>
-  )
-}
+  );
+};
 
-export default InstructionSelection
+export default InstructionSelection;

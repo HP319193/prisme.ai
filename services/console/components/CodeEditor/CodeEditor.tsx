@@ -1,21 +1,21 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import AceEditor, { IAceEditorProps, IMarker } from "react-ace";
-import ReactAce from "react-ace/lib/ace";
-import "ace-builds/src-noconflict/ext-language_tools";
-import "ace-builds/src-noconflict/ext-searchbox";
-import "ace-builds/src-noconflict/snippets/javascript";
-import "ace-builds/src-noconflict/theme-xcode";
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/mode-css";
-import "ace-builds/src-noconflict/mode-html";
-import "ace-builds/src-noconflict/mode-yaml";
-import "ace-builds/src-noconflict/mode-json";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import AceEditor, { IAceEditorProps, IMarker } from 'react-ace';
+import ReactAce from 'react-ace/lib/ace';
+import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/ext-searchbox';
+import 'ace-builds/src-noconflict/snippets/javascript';
+import 'ace-builds/src-noconflict/theme-xcode';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-css';
+import 'ace-builds/src-noconflict/mode-html';
+import 'ace-builds/src-noconflict/mode-yaml';
+import 'ace-builds/src-noconflict/mode-json';
 
-import { Ace } from "ace-builds";
-import { addCustomAnnotations } from "../../utils/aceEditorTweaks";
+import { Ace } from 'ace-builds';
+import { addCustomAnnotations } from '../../utils/aceEditorTweaks';
 
 export interface CodeEditorProps extends IAceEditorProps {
-  mode: "javascript" | "css" | "html" | "yaml" | "json";
+  mode: 'javascript' | 'css' | 'html' | 'yaml' | 'json';
   value: string;
   onChange?: (value: string) => void;
   placeholder?: string;
@@ -43,10 +43,10 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
     {
       value: initialValue,
       onChange,
-      placeholder = "",
+      placeholder = '',
       mode,
-      height = "auto",
-      width = "auto",
+      height = 'auto',
+      width = 'auto',
       readOnly = false,
       completers,
       shortcuts,
@@ -77,10 +77,10 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
         editor.completers.push(completer)
       );
       // This code automatically opens autocomplete menu when typing `.` character
-      editor.commands.on("afterExec", (e) => {
-        if (e.command.name === "insertstring" && /^[\w.]$/.test(`${e.args}`)) {
+      editor.commands.on('afterExec', (e) => {
+        if (e.command.name === 'insertstring' && /^[\w.]$/.test(`${e.args}`)) {
           if (!aceRef.current) return;
-          aceRef.current.editor.execCommand("startAutocomplete");
+          aceRef.current.editor.execCommand('startAutocomplete');
         }
       });
 
@@ -109,7 +109,7 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
       });
       (markers || []).forEach((marker) => {
         const { className, endCol, endRow, startCol, startRow, type } = marker;
-        const Range = ace.require("ace/range").Range;
+        const Range = ace.require('ace/range').Range;
         editor
           .getSession()
           .addMarker(
@@ -124,7 +124,7 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
       <AceEditor
         ref={aceRef}
         style={{
-          display: "flex",
+          display: 'flex',
           flex: 1,
           ...style,
         }}

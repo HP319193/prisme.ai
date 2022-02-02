@@ -1,1 +1,1 @@
-export { default } from './AutomationBuilder'
+export { default } from './AutomationBuilder';

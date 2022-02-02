@@ -4,7 +4,7 @@ variables:
   CONTAINER_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
   OBS_CONTAINER_IMAGE: $OBS_REGISTRY_URL/$CI_PROJECT_PATH
   DOCKER_DRIVER: overlay2
-  GIT_DEPTH: "1"
+  GIT_DEPTH: '1'
 
 stages:
   - test
@@ -55,7 +55,7 @@ deploy_k8s:
     - obs-gitlab-runner
   image:
     name: lachlanevenson/k8s-kubectl:latest
-    entrypoint: ["/bin/sh", "-c"]
+    entrypoint: ['/bin/sh', '-c']
   before_script:
     - export KUBECONFIG=$KUBECONFIG
   script:

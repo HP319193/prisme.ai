@@ -1,11 +1,11 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode } from 'react';
 import {
   FieldInputProps,
   FieldMetaState,
   FieldProps as FProps,
   useField,
-} from "react-final-form";
-import { isFormFieldValid } from "../utils/forms";
+} from 'react-final-form';
+import { isFormFieldValid } from '../utils/forms';
 
 interface FieldProps extends Partial<FProps<any, any>> {
   label?: string | ReactNode;
@@ -22,19 +22,21 @@ export const FieldContainer: FC<FieldProps> = ({
   label,
   className,
   children,
-  name = "",
+  name = '',
   ...fieldProps
 }) => {
   const { input, meta } = useField(name, fieldProps);
   return (
     <div className="p-field mb-5">
       <span className={`flex p-float-label mx-2 ${className}`}>
-        {typeof children === "function"
+        {typeof children === 'function'
           ? children({
-            input,
-            meta,
-            className: `flex flex-1 ${isFormFieldValid(meta) ? "p-invalid" : ""}`,
-          })
+              input,
+              meta,
+              className: `flex flex-1 ${
+                isFormFieldValid(meta) ? 'p-invalid' : ''
+              }`,
+            })
           : children}
         <label htmlFor={name}>{label}</label>
       </span>

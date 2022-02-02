@@ -1,5 +1,5 @@
-import getConfig from "next/config";
-import io, { Socket } from "socket.io-client";
+import getConfig from 'next/config';
+import io, { Socket } from 'socket.io-client';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -7,7 +7,7 @@ export class Events {
   private client: Socket;
   constructor(workspaceId: string) {
     this.client = io(
-      `${publicRuntimeConfig.API_HOST || ""}/workspaces/${workspaceId}/events`,
+      `${publicRuntimeConfig.API_HOST || ''}/workspaces/${workspaceId}/events`,
       {
         withCredentials: true,
       }

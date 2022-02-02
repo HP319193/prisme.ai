@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { EventsViewer } from "../components/EventsViewer";
-import getLayout, { useWorkspace } from "../layouts/WorkspaceLayout";
-import WorkspaceSource from "./WorkspaceSource";
+import { useEffect, useState } from 'react';
+import { EventsViewer } from '../components/EventsViewer';
+import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
+import WorkspaceSource from './WorkspaceSource';
 
 export const Workspace = () => {
   const { displaySource } = useWorkspace();
@@ -28,7 +28,7 @@ export const Workspace = () => {
           transition-duration-200
           transition-ease-in
           z-1
-          ${displaySourceView ? "" : "-translate-y-100"}
+          ${displaySourceView ? '' : '-translate-y-100'}
         `}
       >
         {mountSourceComponent && (

@@ -1,45 +1,46 @@
-import AutomationBuilder from "./AutomationBuilder";
-import renderer, { act } from "react-test-renderer";
-import ReactFlow, { useZoomPanHelper } from "react-flow-renderer";
-import { useWorkspace } from "../../layouts/WorkspaceLayout";
-import Panel from "./Panel";
-import InstructionForm from "./Panel/InstructionForm";
-import ConditionForm from "./Panel/ConditionForm";
-import TriggerForm from "./Panel/TriggerForm";
-
+import AutomationBuilder from './AutomationBuilder';
+import renderer, { act } from 'react-test-renderer';
+import ReactFlow, { useZoomPanHelper } from 'react-flow-renderer';
+import { useWorkspace } from '../../layouts/WorkspaceLayout';
+import Panel from './Panel';
+import InstructionForm from './Panel/InstructionForm';
+import ConditionForm from './Panel/ConditionForm';
+import TriggerForm from './Panel/TriggerForm';
 
 jest.mock('react-flow-renderer', () => {
-  const { useAutomationBuilder } = require("./context");
+  const { useAutomationBuilder } = require('./context');
   const ReactFlow: any = () => {
     ReactFlow.context = useAutomationBuilder();
-    return <div>ReactFlow</div>
-  }
-  const ReactFlowProvider = ({ children }: any) => <div className="ReactFlowProvider">{children}</div>;
-  ReactFlow.ReactFlowProvider = ReactFlowProvider
+    return <div>ReactFlow</div>;
+  };
+  const ReactFlowProvider = ({ children }: any) => (
+    <div className="ReactFlowProvider">{children}</div>
+  );
+  ReactFlow.ReactFlowProvider = ReactFlowProvider;
   const Controls = () => <div className="Controls" />;
   ReactFlow.Controls = Controls;
   const useZoomPanHelper = {
-    fitView: jest.fn()
-  }
+    fitView: jest.fn(),
+  };
   ReactFlow.useZoomPanHelper = () => useZoomPanHelper;
   ReactFlow.ArrowHeadType = {
-    Arrow: 'arrow'
-  }
+    Arrow: 'arrow',
+  };
 
-  return ReactFlow
+  return ReactFlow;
 });
 
-jest.mock("../../layouts/WorkspaceLayout", () => {
-  const mock = {}
+jest.mock('../../layouts/WorkspaceLayout', () => {
+  const mock = {};
   return {
-    useWorkspace: () => mock
-  }
-})
+    useWorkspace: () => mock,
+  };
+});
 
 jest.mock('./Panel', () => {
-  const Panel = ({ children }: any) => <div className="Panel">{children}</div>
-  return Panel
-})
+  const Panel = ({ children }: any) => <div className="Panel">{children}</div>;
+  return Panel;
+});
 
 beforeEach(() => {
   useWorkspace().workspace = {
@@ -53,20 +54,22 @@ beforeEach(() => {
       automationBar: {
         name: 'Foo',
         do: [],
-      }
+      },
     },
     createdAt: '',
-    updatedAt: ''
-  }
-})
+    updatedAt: '',
+  };
+});
 
-it("should render", () => {
+it('should render', () => {
   const value = {
     name: 'Automation',
-    do: []
-  }
-  const onChange = jest.fn()
-  const root = renderer.create(<AutomationBuilder id="a" value={value} onChange={onChange} />);
+    do: [],
+  };
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <AutomationBuilder id="a" value={value} onChange={onChange} />
+  );
   expect(root.toJSON()).toMatchSnapshot();
 });
 
@@ -74,212 +77,252 @@ it('should fit zoom', () => {
   jest.useFakeTimers();
   const value = {
     name: 'Automation',
-    do: []
-  }
-  const onChange = jest.fn()
-  const root = renderer.create(<AutomationBuilder id="a" value={value} onChange={onChange} />);
+    do: [],
+  };
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <AutomationBuilder id="a" value={value} onChange={onChange} />
+  );
 
   act(() => {
     jest.runAllTimers();
-  })
+  });
 
   expect(useZoomPanHelper().fitView).toHaveBeenCalled();
-})
+});
 
 it('should build instructions schemas', () => {
   const value = {
     name: 'Automation',
-    do: []
-  }
-  const onChange = jest.fn()
-  const root = renderer.create(<AutomationBuilder id="automationBar" value={value} onChange={onChange} />);
-  expect((ReactFlow as any).context.instructionsSchemas.length).toBe(2)
-  expect((ReactFlow as any).context.instructionsSchemas[0][0]).toBe('automations.instruction.title_builtin')
-  expect((ReactFlow as any).context.instructionsSchemas[1][0]).toBe('foo')
-  expect(Object.keys((ReactFlow as any).context.instructionsSchemas[1][1])).toEqual(['automationFoo'])
-})
+    do: [],
+  };
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+  );
+  expect((ReactFlow as any).context.instructionsSchemas.length).toBe(2);
+  expect((ReactFlow as any).context.instructionsSchemas[0][0]).toBe(
+    'automations.instruction.title_builtin'
+  );
+  expect((ReactFlow as any).context.instructionsSchemas[1][0]).toBe('foo');
+  expect(
+    Object.keys((ReactFlow as any).context.instructionsSchemas[1][1])
+  ).toEqual(['automationFoo']);
+});
 
 it('should hide panel', async () => {
   const value = {
     name: 'Automation',
-    do: []
-  }
-  const onChange = jest.fn()
-  const root = renderer.create(<AutomationBuilder id="automationBar" value={value} onChange={onChange} />);
+    do: [],
+  };
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+  );
 
   await act(async () => {
     (ReactFlow as any).context.editInstruction([{ emit: {} }], 0);
     await true;
-  })
-  expect(root.root.findByType(Panel).props.visible).toBe(true)
+  });
+  expect(root.root.findByType(Panel).props.visible).toBe(true);
   act(() => {
     root.root.findByType(Panel).props.onVisibleChange();
-  })
-  expect(root.root.findByType(Panel).props.visible).toBe(false)
-})
+  });
+  expect(root.root.findByType(Panel).props.visible).toBe(false);
+});
 
 it('should get schema', () => {
   const value = {
     name: 'Automation',
-    do: []
-  }
-  const onChange = jest.fn()
-  const root = renderer.create(<AutomationBuilder id="automationBar" value={value} onChange={onChange} />);
+    do: [],
+  };
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+  );
   expect((ReactFlow as any).context.getSchema('emit').properties).toBeDefined();
-})
+});
 
 it('should get app', () => {
   const value = {
     name: 'Automation',
-    do: []
-  }
-  const onChange = jest.fn()
-  const root = renderer.create(<AutomationBuilder id="automationBar" value={value} onChange={onChange} />);
+    do: [],
+  };
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+  );
   expect((ReactFlow as any).context.getApp('automationFoo')).toEqual({
     name: 'foo',
-    icon: '/file.svg'
+    icon: '/file.svg',
   });
-})
+});
 
 it('should add instruction', async () => {
   const value = {
     name: 'Automation',
-    do: []
-  }
-  const onChange = jest.fn()
-  const root = renderer.create(<AutomationBuilder id="automationBar" value={value} onChange={onChange} />);
+    do: [],
+  };
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+  );
   act(() => {
-    (ReactFlow as any).context.addInstruction(value.do, 0)
-  })
+    (ReactFlow as any).context.addInstruction(value.do, 0);
+  });
 
   expect(root.root.findByType(InstructionForm)).toBeDefined();
 
   await act(async () => {
-    await root.root.findByType(InstructionForm).props.onSubmit({ foo: undefined });
-  })
+    await root.root
+      .findByType(InstructionForm)
+      .props.onSubmit({ foo: undefined });
+  });
 
   expect(onChange).toHaveBeenCalledWith({
     name: 'Automation',
-    do: [{
-      foo: undefined
-    }]
-  })
-})
+    do: [
+      {
+        foo: undefined,
+      },
+    ],
+  });
+});
 
 it('should remove instruction', async () => {
   const value = {
     name: 'Automation',
-    do: [{
-      foo: undefined
-    }]
-  }
-  const onChange = jest.fn()
-  const root = renderer.create(<AutomationBuilder id="automationBar" value={value} onChange={onChange} />);
+    do: [
+      {
+        foo: undefined,
+      },
+    ],
+  };
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+  );
   act(() => {
-    (ReactFlow as any).context.removeInstruction(value.do, 0)
-  })
+    (ReactFlow as any).context.removeInstruction(value.do, 0);
+  });
 
   expect(onChange).toHaveBeenCalledWith({
     name: 'Automation',
-    do: []
-  })
-})
+    do: [],
+  });
+});
 
 it('should edit instruction', async () => {
   const value = {
     name: 'Automation',
-    do: [{ foo: undefined }]
-  }
-  const onChange = jest.fn()
-  const root = renderer.create(<AutomationBuilder id="automationBar" value={value} onChange={onChange} />);
+    do: [{ foo: undefined }],
+  };
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+  );
   act(() => {
-    (ReactFlow as any).context.editInstruction(value.do, 0)
-  })
+    (ReactFlow as any).context.editInstruction(value.do, 0);
+  });
 
   expect(root.root.findByType(InstructionForm)).toBeDefined();
 
   await act(async () => {
     await root.root.findByType(InstructionForm).props.onSubmit({ foo: true });
-  })
+  });
 
   expect(onChange).toHaveBeenCalledWith({
     name: 'Automation',
-    do: [{
-      foo: true
-    }]
-  })
-})
+    do: [
+      {
+        foo: true,
+      },
+    ],
+  });
+});
 
 it('should edit condition', async () => {
   const value = {
     name: 'Automation',
-    do: [{
-      conditions: {}
-    }]
-  }
-  const onChange = jest.fn()
-  const root = renderer.create(<AutomationBuilder id="automationBar" value={value} onChange={onChange} />);
+    do: [
+      {
+        conditions: {},
+      },
+    ],
+  };
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+  );
   act(() => {
-    (ReactFlow as any).context.editCondition(value.do[0])
-  })
+    (ReactFlow as any).context.editCondition(value.do[0]);
+  });
 
   expect(root.root.findByType(ConditionForm)).toBeDefined();
 
   await act(async () => {
     await root.root.findByType(ConditionForm).props.onSubmit('$a == 1');
-  })
+  });
 
   expect(onChange).toHaveBeenCalledWith({
     name: 'Automation',
-    do: [{
-      conditions: {
-        '$a == 1': [],
-        'default': [],
-      }
-    }]
-  })
+    do: [
+      {
+        conditions: {
+          '$a == 1': [],
+          default: [],
+        },
+      },
+    ],
+  });
 
   act(() => {
-    (ReactFlow as any).context.editCondition(value.do[0])
-  })
+    (ReactFlow as any).context.editCondition(value.do[0]);
+  });
   await act(async () => {
     await root.root.findByType(ConditionForm).props.onSubmit('$a == 2');
-  })
+  });
 
   expect(onChange).toHaveBeenCalledWith({
     name: 'Automation',
-    do: [{
-      conditions: {
-        '$a == 1': [],
-        '$a == 2': [],
-        'default': [],
-      }
-    }]
-  })
-})
+    do: [
+      {
+        conditions: {
+          '$a == 1': [],
+          '$a == 2': [],
+          default: [],
+        },
+      },
+    ],
+  });
+});
 
 it('should edit trigger', async () => {
   const value = {
     name: 'Automation',
-    do: [{ foo: undefined }]
-  }
-  const onChange = jest.fn()
-  const root = renderer.create(<AutomationBuilder id="automationBar" value={value} onChange={onChange} />);
+    do: [{ foo: undefined }],
+  };
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+  );
   act(() => {
-    (ReactFlow as any).context.editTrigger()
-  })
+    (ReactFlow as any).context.editTrigger();
+  });
 
   expect(root.root.findByType(TriggerForm)).toBeDefined();
 
   await act(async () => {
     await root.root.findByType(TriggerForm).props.onSubmit({ events: ['foo'] });
-  })
+  });
 
   expect(onChange).toHaveBeenCalledWith({
     name: 'Automation',
     when: { events: ['foo'] },
-    do: [{
-      foo: undefined
-    }]
-  })
-})
+    do: [
+      {
+        foo: undefined,
+      },
+    ],
+  });
+});

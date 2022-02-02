@@ -1,26 +1,26 @@
-import AceEditor, { IMarker } from "react-ace";
-import CodeEditor from "./CodeEditor";
-import renderer, { act } from "react-test-renderer";
-import { Ace } from "ace-builds";
-import { useRef } from "react";
+import AceEditor, { IMarker } from 'react-ace';
+import CodeEditor from './CodeEditor';
+import renderer, { act } from 'react-test-renderer';
+import { Ace } from 'ace-builds';
+import { useRef } from 'react';
 
-it("should render", () => {
+it('should render', () => {
   const root = renderer.create(<CodeEditor mode="yaml" value="foo" />);
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it("should update value", () => {
+it('should update value', () => {
   const onChange = jest.fn();
   const root = renderer.create(
     <CodeEditor mode="yaml" value="foo" onChange={onChange} />
   );
   act(() => {
-    root.root.findByType(AceEditor).props.onChange("bar");
+    root.root.findByType(AceEditor).props.onChange('bar');
   });
-  expect(onChange).toHaveBeenCalledWith("bar");
+  expect(onChange).toHaveBeenCalledWith('bar');
 });
 
-it("should set completers", async () => {
+it('should set completers', async () => {
   const completers: Ace.Completer[] = [
     {
       getCompletions: () => null,
@@ -45,7 +45,7 @@ it("should set completers", async () => {
   expect(editor.completers).not.toContain(completers[0]);
 });
 
-it("should have an auto completers on .", async () => {
+it('should have an auto completers on .', async () => {
   let ref: any;
   const Container = () => {
     ref = useRef<AceEditor>(null);
@@ -56,15 +56,15 @@ it("should have an auto completers on .", async () => {
     await true;
   });
   const editor = ref.current.editor;
-  jest.spyOn(editor, "execCommand");
-  editor.execCommand("insertstring", ".");
-  expect(editor.execCommand).toHaveBeenCalledWith("startAutocomplete");
+  jest.spyOn(editor, 'execCommand');
+  editor.execCommand('insertstring', '.');
+  expect(editor.execCommand).toHaveBeenCalledWith('startAutocomplete');
 });
 
-it("should set shortcuts", async () => {
+it('should set shortcuts', async () => {
   const shortcuts: any[] = [
     {
-      name: "foo",
+      name: 'foo',
     },
   ];
   let ref: any;
@@ -79,24 +79,24 @@ it("should set shortcuts", async () => {
     await true;
   });
   const editor = ref.current.editor;
-  jest.spyOn(editor.commands, "addCommand");
+  jest.spyOn(editor.commands, 'addCommand');
   act(() => {
     root.update(<Container shortcuts={shortcuts} />);
   });
   expect(editor.commands.addCommand).toHaveBeenCalledWith({
-    name: "foo",
+    name: 'foo',
   });
 });
 
-it("should set markers", async () => {
+it('should set markers', async () => {
   const markers: IMarker[] = [
     {
-      className: "foo",
+      className: 'foo',
       endCol: 1,
       endRow: 1,
       startCol: 1,
       startRow: 1,
-      type: "fullLine",
+      type: 'fullLine',
     },
   ];
   let ref: any;
@@ -109,7 +109,7 @@ it("should set markers", async () => {
     await true;
   });
   const editor = ref.current.editor;
-  jest.spyOn(editor.getSession(), "addMarker");
+  jest.spyOn(editor.getSession(), 'addMarker');
   act(() => {
     root.update(<Container markers={markers} />);
   });
@@ -124,7 +124,7 @@ it("should set markers", async () => {
         row: 1,
       },
     },
-    "foo",
-    "fullLine"
+    'foo',
+    'fullLine'
   );
 });

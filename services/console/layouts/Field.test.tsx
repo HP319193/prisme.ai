@@ -1,8 +1,8 @@
-import Field from "./Field";
-import renderer from "react-test-renderer";
-import { useField } from "react-final-form";
+import Field from './Field';
+import renderer from 'react-test-renderer';
+import { useField } from 'react-final-form';
 
-jest.mock("react-final-form", () => {
+jest.mock('react-final-form', () => {
   const mock = {
     input: {},
     meta: {},
@@ -11,12 +11,12 @@ jest.mock("react-final-form", () => {
     useField: () => mock,
   };
 });
-it("should render", () => {
+it('should render', () => {
   const root = renderer.create(<Field label="foo">Foo</Field>);
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it("should render an input", () => {
+it('should render an input', () => {
   const root = renderer.create(
     <Field label="foo">
       {({ className, input, meta }) => (
@@ -27,9 +27,9 @@ it("should render an input", () => {
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it("should render an invalid input", () => {
-  useField("foo").meta.error = "error";
-  useField("foo").meta.touched = true;
+it('should render an invalid input', () => {
+  useField('foo').meta.error = 'error';
+  useField('foo').meta.touched = true;
   const root = renderer.create(
     <Field label="foo">
       {({ className, input, meta }) => (

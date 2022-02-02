@@ -5,5 +5,5 @@ export const useTranslation = () => {
 };
 
 export const Trans = ({ children }) => {
-  return children
-}
+  return children;
+};

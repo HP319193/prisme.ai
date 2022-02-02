@@ -1,10 +1,10 @@
-import Cookie from "js-cookie";
-import localStorage from "./localStorage";
+import Cookie from 'js-cookie';
+import localStorage from './localStorage';
 
 const checkLocalStorage = () => {
   try {
-    localStorage.setItem("__test", "1");
-    localStorage.removeItem("__test");
+    localStorage.setItem('__test', '1');
+    localStorage.removeItem('__test');
     return true;
   } catch (e) {
     return false;
@@ -18,7 +18,7 @@ export const Storage = {
     if (IS_LOCAL_STORAGE_AVAILABLE) {
       const v = localStorage.getItem(k);
       try {
-        return JSON.parse(v || "");
+        return JSON.parse(v || '');
       } catch (e) {
         return v;
       }
@@ -27,7 +27,7 @@ export const Storage = {
     return Cookie.get(k);
   },
   set: (k: string, v: any) => {
-    const value = typeof v === "object" ? JSON.stringify(v) : v;
+    const value = typeof v === 'object' ? JSON.stringify(v) : v;
     if (IS_LOCAL_STORAGE_AVAILABLE) {
       return localStorage.setItem(k, value);
     }

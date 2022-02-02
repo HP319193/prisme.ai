@@ -1,16 +1,16 @@
-import { GetServerSideProps } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { GetServerSideProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-export { default } from "../../../../../views/Automation";
+export { default } from '../../../../../views/Automation';
 
 export const getServerSideProps: GetServerSideProps = async ({
-  locale = "",
+  locale = '',
 }) => ({
   props: {
     ...(await serverSideTranslations(locale, [
-      "common",
-      "workspaces",
-      "errors",
+      'common',
+      'workspaces',
+      'errors',
     ])),
   },
 });

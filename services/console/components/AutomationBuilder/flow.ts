@@ -230,10 +230,9 @@ export class Flow {
           };
           const i = instruction as Prismeai.All;
           const parent = (i.all = i.all || []);
-          ([
-            ...(value || []),
-            { [Flow.NEW_ALL]: {} },
-          ] as Prismeai.All['all']).forEach((instruction, childk) => {
+          (
+            [...(value || []), { [Flow.NEW_ALL]: {} }] as Prismeai.All['all']
+          ).forEach((instruction, childk) => {
             const [name] = Object.keys(instruction);
             position = {
               ...position,
