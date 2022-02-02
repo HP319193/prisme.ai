@@ -156,32 +156,6 @@ it("should display automations", async () => {
   expect(root.root.findByType(AutomationsSidebar)).toBeDefined();
 });
 
-xit("should display apps", async () => {
-  const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
-  await act(async () => {
-    await true;
-  });
-  act(() => {
-    root.root.findAllByType(Button)[1].props.onClick();
-    jest.runAllTimers();
-  });
-
-  expect(root.root.findAllByType(AutomationsSidebar)).toEqual([]);
-});
-
-xit("should display pages", async () => {
-  const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
-  await act(async () => {
-    await true;
-  });
-  act(() => {
-    root.root.findAllByType(Button)[2].props.onClick();
-    jest.runAllTimers();
-  });
-
-  expect(root.root.findAllByType(AutomationsSidebar)).toEqual([]);
-});
-
 it("should close sidepanel", async () => {
   const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
   await act(async () => {

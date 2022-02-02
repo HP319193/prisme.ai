@@ -56,6 +56,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [events, setEvents] = useState<WorkspaceContext['events']>('loading');
   const [socket, setSocket] = useState<Events>();
   const latest = useRef<Date | undefined | null>();
+  const { current: readEvents } = useRef<WorkspaceContext['readEvents']>(new Set());
 
   // Init socket
   useEffect(() => {
@@ -91,6 +92,17 @@ export const WorkspaceLayout: FC = ({ children }) => {
     setEvents('loading')
     nextEvents();
   }, [nextEvents, workspace])
+
+  // Set events as "read" when leaving home
+  const prevRoute = useRef(route);
+  useEffect(() => {
+    if (events !== 'loading' && route !== prevRoute.current && route !== '/workspaces/[id]') {
+      prevRoute.current = route;
+      Array.from(events.entries())
+        .forEach(([, ids]) => ids
+          .forEach(({ id }) => readEvents.add(id)))
+    }
+  }), [route]
 
   // Listen to new events
   useEffect(() => {
@@ -179,20 +191,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
       setSidebarOpen(true);
     }, 200);
   }, [sidebar, sidebarOpen]);
-  // const displayApps = useCallback(() => {
-  //   setTimeout(() => {
-  //     if (sidebarOpen && sidebar === "apps") return;
-  //     setSidebar("apps");
-  //     setSidebarOpen(true);
-  //   }, 200);
-  // }, [sidebar, sidebarOpen]);
-  // const displayPages = useCallback(() => {
-  //   setTimeout(() => {
-  //     if (sidebarOpen && sidebar === "pages") return;
-  //     setSidebar("pages");
-  //     setSidebarOpen(true);
-  //   }, 200);
-  // }, [sidebar, sidebarOpen]);
 
   if (!loading && workspace === null) {
     return (
@@ -226,7 +224,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
         newSource,
         setNewSource,
         events,
-        nextEvents
+        nextEvents,
+        readEvents
       }}
     >
       <Head>

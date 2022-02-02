@@ -11,7 +11,8 @@ export const EventsViewer = () => {
   const { t } = useTranslation("workspaces");
   const {
     events,
-    nextEvents
+    nextEvents,
+    readEvents
   } = useWorkspace();
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
@@ -50,7 +51,10 @@ export const EventsViewer = () => {
                     <AccordionTab
                       key={event.id}
                       header={
-                        <div className="flex flex-1 flex-column">
+                        <div className={`
+                          flex flex-1 flex-column
+                          ${readEvents.has(event.id) ? 'opacity-50' : ''}
+                        `}>
                           <div className="flex flex-row">
                             <div className="flex font-bold mr-2">
                               {event.source?.app || event.source?.host?.service}

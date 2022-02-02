@@ -1,6 +1,5 @@
 import EventsViewer from "./EventsViewer";
 import renderer, { act } from "react-test-renderer";
-import Events from "../../api/events";
 import { useWorkspace } from "../../layouts/WorkspaceLayout";
 import { Event } from "../../api/types";
 
@@ -19,7 +18,8 @@ jest.mock("../../api/events", () => {
 
 jest.mock("../../layouts/WorkspaceLayout", () => {
   const mock = {
-    events: 'loading'
+    events: 'loading',
+    readEvents: new Set()
   }
   return {
     useWorkspace: () => mock
