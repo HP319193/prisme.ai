@@ -86,20 +86,6 @@ it("should set shortcuts", async () => {
   expect(editor.commands.addCommand).toHaveBeenCalledWith({
     name: "foo",
   });
-  editor.commands.addCommand.mockClear();
-  act(() => {
-    root.update(
-      <Container
-        shortcuts={[
-          {
-            name: "foo",
-            bar: "foo",
-          },
-        ]}
-      />
-    );
-  });
-  expect(editor.commands.addCommand).not.toHaveBeenCalled();
 });
 
 it("should set markers", async () => {

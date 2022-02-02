@@ -97,7 +97,6 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
       if (!aceRef.current) return;
       const { editor } = aceRef.current;
       (shortcuts || []).forEach((command) => {
-        if (editor.commands.byName[command.name]) return;
         editor.commands.addCommand(command);
       });
     }, [shortcuts]);
