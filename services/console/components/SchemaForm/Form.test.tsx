@@ -49,7 +49,7 @@ it("should submit", () => {
   expect(errors).toEqual({ foo: 'required' })
 });
 
-it("should check invalid objet", () => {
+it("should save string as string", () => {
   const schema = {
     required: ['foo'],
     properties: {
@@ -60,10 +60,33 @@ it("should check invalid objet", () => {
   }
   const onSubmit = jest.fn()
   const root = renderer.create(<Form schema={schema} onSubmit={onSubmit} />);
-  const errors = root.root.findByType(FFForm).props.onSubmit({
-    foo: '{fail}'
+  root.root.findByType(FFForm).props.onSubmit({
+    foo: 'value'
   });
-  expect(errors).toEqual({ foo: 'invalid object' })
+  expect(onSubmit).toHaveBeenCalledWith({
+    foo: 'value'
+  })
+});
+
+it("should save object as object", () => {
+  const schema = {
+    required: ['foo'],
+    properties: {
+      foo: {
+        type: 'object'
+      },
+    }
+  }
+  const onSubmit = jest.fn()
+  const root = renderer.create(<Form schema={schema} onSubmit={onSubmit} />);
+  root.root.findByType(FFForm).props.onSubmit({
+    foo: '{"bar": 1}'
+  });
+  expect(onSubmit).toHaveBeenCalledWith({
+    foo: {
+      bar: 1
+    }
+  })
 });
 
 it("should check oneOf rule", () => {

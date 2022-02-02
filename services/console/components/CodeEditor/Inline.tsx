@@ -29,7 +29,7 @@ export const CodeEditorInline: React.FC<CodeEditorProps> = ({ value, ...props })
           borderRadius: '6px',
           ...(singleLine ? undefined : { background: 'white' })
         }}
-        value={value}
+        value={typeof value === 'object' ? JSON.stringify(value, null, '  ') : value}
         maxLines={Infinity}
         ref={ref}
         showGutter={!lineHeight || !singleLine}

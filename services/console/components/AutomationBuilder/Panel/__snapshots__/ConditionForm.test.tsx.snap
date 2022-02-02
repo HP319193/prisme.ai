@@ -36,10 +36,10 @@ exports[`should render 1`] = `
             className="p-field mb-5"
           >
             <span
-              className="p-float-label mx-2 undefined"
+              className="flex p-float-label mx-2 undefined"
             >
               <input
-                className="p-inputtext p-component"
+                className="p-inputtext p-component flex flex-1 "
                 id="condition"
                 name="condition"
                 onBlur={[Function]}

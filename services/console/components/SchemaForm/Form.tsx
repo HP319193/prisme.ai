@@ -45,7 +45,10 @@ export const Form: FC<FormProps> = ({ schema, onSubmit, ...formProps }) => {
               [attr]: JSON.parse(values[attr])
             };
           } catch (e) {
-            errors[attr] = 'invalid object';
+            return {
+              ...prev,
+              [attr]: values[attr]
+            };
           }
         }
         if (type === 'array') {
