@@ -42,7 +42,8 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const initYaml = useCallback(async () => {
     try {
-      const value = await toYaml(workspace);
+      const { id, ...json } = workspace
+      const value = await toYaml(json);
       setValue(value);
     } catch (e) { }
   }, [workspace, toYaml]);
@@ -55,7 +56,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
       if (value === undefined) return;
       try {
         setAnnotations([]);
-        return await toJSON<Workspace>(value);
+        return { ...await toJSON<Workspace>(value), id: workspace.id };
       } catch (e) {
         const { mark, message } = e as YAMLException;
         setAnnotations([
@@ -68,7 +69,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         ]);
       }
     },
-    [toJSON]
+    [toJSON, workspace.id]
   );
 
   const update = useCallback(
