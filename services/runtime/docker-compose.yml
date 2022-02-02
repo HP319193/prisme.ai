@@ -1,0 +1,28 @@
+version: "3"
+services:
+  redis:
+    image: redis
+    container_name: redis_api
+    restart: always
+    volumes:
+      - ../../data/redis:/data
+    ports:
+      - "6379:6379"
+  runtime:
+    entrypoint: npm start --prefix=services/runtime
+    image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-runtime:latest
+    volumes:
+      - ../../data/models:/www/models
+    depends_on:
+      - redis
+    ports:
+      - "3003:3003"
+    environment:
+      PORT: 3003
+      NODE_ENV: development
+      BROKER_HOST: redis://redis/10
+      CONTEXTS_CACHE_HOST: redis://redis/0
+      OPENAPI_FILEPATH: /www/specifications/swagger.yml
+      WORKSPACES_STORAGE_TYPE: FILESYSTEM
+      WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
+      PERMISSIONS_STORAGE_HOST: mongodb://mongo/permissions

@@ -1,0 +1,47 @@
+version: "3"
+services:
+  redis:
+    image: redis
+    container_name: redis_api
+    restart: always
+    volumes:
+      - ../../data/redis:/data
+    ports:
+      - "6379:6379"
+
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    container_name: elastic
+    restart: always
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms750m -Xmx750m
+      - http.host=0.0.0.0
+      - transport.host=0.0.0.0
+      - network.host=0.0.0.0
+      - node.name=elastic
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ../../data/es01:/usr/share/elasticsearch/data
+      - ../../data/elasticsearch01.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+
+  events:
+    entrypoint: npm start --prefix services/events
+    image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-events:latest
+    depends_on:
+      - redis
+      - elastic
+    ports:
+      - "3004:3004"
+    environment:
+      PORT: 3004
+      NODE_ENV: development
+      BROKER_HOST: redis://redis/10
+      OPENAPI_FILEPATH: /www/specifications/swagger.yml
+      EVENTS_STORAGE_ES_HOST: http://elastic:9200
+      PERMISSIONS_STORAGE_HOST: mongodb://mongo/permissions
