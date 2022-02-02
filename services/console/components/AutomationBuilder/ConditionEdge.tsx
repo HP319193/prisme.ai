@@ -43,10 +43,10 @@ export const ConditionEdge: FC<EdgeProps> = ({
       />
       {data &&
         <foreignObject
-          width={100}
+          width={200}
           height={40}
-          x={targetX - 50}
-          y={targetY - 48}
+          x={targetX - 100}
+          y={targetY - 55}
           className="edgebutton-foreignobject"
           requiredExtensions="http://www.w3.org/1999/xhtml"
         >
