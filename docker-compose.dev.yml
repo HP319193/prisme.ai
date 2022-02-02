@@ -138,6 +138,7 @@ services:
       - ./services/console:/www/services/console
       - ./specifications:/www/specifications
       - ./packages:/www/node_modules/@prisme.ai
+      - /www/services/console/.next
     ports:
       - "3000:3000"
     environment:
