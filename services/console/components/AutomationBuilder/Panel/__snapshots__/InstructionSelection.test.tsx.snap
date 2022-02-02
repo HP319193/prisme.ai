@@ -9,14 +9,14 @@ Array [
       automations.edit.select
     </div>
     <span
-      className="p-input-icon-left p-input-icon-right"
+      className="flex p-input-icon-left p-input-icon-right"
     >
       <i
         className="pi pi-search"
       />
       <input
         autoFocus={true}
-        className="p-inputtext p-component p-filled"
+        className="p-inputtext p-component p-filled flex-1"
         onChange={[Function]}
         onInput={[Function]}
         onKeyPress={[Function]}
@@ -321,14 +321,14 @@ Array [
       automations.edit.select
     </div>
     <span
-      className="p-input-icon-left p-input-icon-right"
+      className="flex p-input-icon-left p-input-icon-right"
     >
       <i
         className="pi pi-search"
       />
       <input
         autoFocus={true}
-        className="p-inputtext p-component"
+        className="p-inputtext p-component flex-1"
         onChange={[Function]}
         onInput={[Function]}
         onKeyPress={[Function]}

@@ -21,20 +21,22 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({ onSubmit }
         ...prev,
         [name, more.icon, matching]
       ];
-    }, []);
+    }, [])
+      .filter(([, , list]) => list.length);
   }, [instructionsSchemas, search])
 
   return (
     <>
       <div className="flex flex-1 align-items-stretch flex-column mb-4">
         <div>{t('automations.edit.select')}</div>
-        <span className="p-input-icon-left p-input-icon-right">
+        <span className="flex p-input-icon-left p-input-icon-right">
           <i className="pi pi-search" />
           <InputText
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t('automations.instruction.search')}
             autoFocus
+            className="flex-1"
           />
           <i><button onClick={() => setSearch('')} style={{ background: 'none', border: 0, color: 'inherit' }}><i className="pi pi-times" /></button></i>
         </span>
