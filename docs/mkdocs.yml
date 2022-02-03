@@ -43,15 +43,15 @@ nav:
       - i18n.functionnalRequirements: contributing/functionnalRequirements.md
       - i18n.architecture: contributing/architecture.md
       - i18n.console:
-          - i18n.specifications: contributing/Technical/console/Specifications.md
+          - i18n.specifications: contributing/technical/console/specifications.md
       - i18n.events:
-          - i18n.specifications: contributing/Technical/events/Specifications.md
+          - i18n.specifications: contributing/technical/events/specifications.md
       - i18n.runtime:
-          - i18n.specifications: contributing/Technical/runtime/Specifications.md
+          - i18n.specifications: contributing/technical/runtime/specifications.md
       - i18n.workspaces:
-          - i18n.specifications: contributing/Technical/workspaces/Specifications.md
+          - i18n.specifications: contributing/technical/workspaces/specifications.md
       - i18n.apiGateway:
-          - i18n.specifications: contributing/Technical/apiGateway/Specifications.md
+          - i18n.specifications: contributing/technical/apiGateway/specifications.md
 
 markdown_extensions:
   - admonition

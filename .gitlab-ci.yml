@@ -333,3 +333,47 @@ events_deploy:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME
     - export K8S_NAME=$EVENTS_K8S_NAME
+
+
+# ## Docs jobs
+docs_build_static:
+  stage: build_docker
+  interruptible: true # Stop this job if a new one has been triggered by the same branch
+  only:
+    refs:
+      - main
+      - master
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
+    # changes:
+    #  - "docs/**/*"
+  image: python:latest
+  script:
+    - cd docs
+    - apt-get update && apt-get install -y nodejs npm
+    - npm ci
+    - pip install mkdocs-material==6.2.5
+    - bash ./build.sh all    
+  artifacts:
+    paths:
+      - docs/public
+
+.s3_deploy:
+  stage: deploy
+  image: python:alpine
+  before_script:
+    - pip install awscli
+
+docs_deploy:
+  extends: .s3_deploy
+  only:
+    refs:
+      - main
+      - master
+      - /^feature\/.*$/
+      - /^pipeline\/.*$/
+    # changes:
+    #  - "docs/**/*"
+  script:
+    - aws s3 cp docs/public/ s3://$DOCS_S3_BUCKET_NAME/ --recursive --include "*"
+    - aws cloudfront create-invalidation --distribution-id $DOCS_CDN_DISTRIBUTION_ID --paths "/*"
