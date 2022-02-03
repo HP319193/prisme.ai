@@ -3,7 +3,7 @@ import { PageHeaderProps } from "./PageHeader";
 import { Story } from "@storybook/react";
 
 export default {
-  title: "Layout/PageHeader",
+  title: "Components/PageHeader",
   component: PageHeader,
   parameters: {
     layout: "padded",

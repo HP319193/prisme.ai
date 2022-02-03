@@ -2,7 +2,7 @@ import { Row, Col } from "../index";
 import { Story } from "@storybook/react";
 
 export default {
-  title: "Layout/RowCol",
+  title: "Components/RowCol",
   parameters: {
     layout: "padded",
   },

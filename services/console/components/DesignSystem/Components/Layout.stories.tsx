@@ -4,7 +4,7 @@ import { Story } from "@storybook/react";
 import { FeedLayoutHeader, itemsWithCollapseContent } from "../mockData";
 
 export default {
-  title: "Layout/Layout",
+  title: "Components/Layout",
   component: Layout,
   parameters: {
     layout: "fullscreen",

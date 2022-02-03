@@ -16,5 +16,30 @@ const Template: Story<WorkspaceFeedProps> = ({ sections }) => (
 
 export const Default = Template.bind({});
 Default.args = {
-  sections: [{ title: "Today", content: [{ label: "hello", content: "hey" }] }],
+  sections: [
+    {
+      title: "Today",
+      content: [
+        { label: "This is an entry", content: "and its corresponding text" },
+        { label: "This is an entry", content: "and its corresponding text" },
+        { label: "This is an entry", content: "and its corresponding text" },
+      ],
+    },
+    {
+      title: "Yesterday",
+      content: [
+        { label: "This is an entry", content: "and its corresponding text" },
+        { label: "This is an entry", content: "and its corresponding text" },
+        { label: "This is an entry", content: "and its corresponding text" },
+      ],
+    },
+    {
+      title: "Friday 11/11/2021",
+      content: [
+        { label: "This is an entry", content: "and its corresponding text" },
+        { label: "This is an entry", content: "and its corresponding text" },
+        { label: "This is an entry", content: "and its corresponding text" },
+      ],
+    },
+  ],
 };
