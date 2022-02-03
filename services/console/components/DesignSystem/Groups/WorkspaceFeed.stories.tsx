@@ -1,5 +1,5 @@
 import { Story } from "@storybook/react";
-import { WorkspaceFeed } from "../index";
+import { WorkspaceFeed } from "../";
 import { WorkspaceFeedProps } from "./WorkspaceFeed";
 
 export default {

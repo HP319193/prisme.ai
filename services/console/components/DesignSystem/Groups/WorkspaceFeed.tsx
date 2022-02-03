@@ -1,6 +1,8 @@
-import { Button, Space } from "../";
 import { FilterOutlined, SearchOutlined } from "@ant-design/icons";
-import { Collapse, Feed, FeedHeader, Layout } from "../index";
+import { Button, Collapse, Feed, FeedHeader, Layout } from "../";
+
+// Importing Space from above crash build
+import { Space } from "antd";
 import { CollapseItem } from "../Components/Collapse";
 
 const headerButtons = [

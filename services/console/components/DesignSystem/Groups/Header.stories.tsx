@@ -2,7 +2,7 @@ import { Story } from "@storybook/react";
 import { Header } from "../index";
 
 export default {
-  title: "Layout/Header",
+  title: "Groups/Header",
   component: Header,
   parameters: {
     layout: "fullscreen",
