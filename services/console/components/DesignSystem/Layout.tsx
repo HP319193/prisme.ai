@@ -4,17 +4,17 @@ import { ReactNode } from "react";
 export interface LayoutProps {
   className?: string;
   Header: ReactNode;
-  Content: ReactNode;
+  children: ReactNode;
   PageHeader?: ReactNode;
 }
 
-const Layout = ({ className, Header, Content, PageHeader }: LayoutProps) => (
+const Layout = ({ className, Header, PageHeader, children }: LayoutProps) => (
   <AntdLayout className={`${className || ""} flex grow`}>
     <AntdLayout.Header>
       {Header}
       {PageHeader || null}
     </AntdLayout.Header>
-    <AntdLayout.Content className="flex">{Content}</AntdLayout.Content>
+    <AntdLayout.Content className="flex">{children}</AntdLayout.Content>
   </AntdLayout>
 );
 

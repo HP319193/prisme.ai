@@ -28,24 +28,25 @@ const AutomationsContent = (
   <Layout
     className="border border-gray border-solid grow h-full rounded p-4 m-2"
     Header={AutomationsHeader}
-    Content={SidePanelContent}
-  />
+  >
+    {SidePanelContent}
+  </Layout>
 );
 
 const RightColumn = (
-  <Layout Header={RightColumnHeader} Content={AutomationsContent} />
+  <Layout Header={RightColumnHeader}>{AutomationsContent}</Layout>
 );
 
-const LeftContent = (
-  <Feed className="p-4 m-2" sections={itemsWithCollapseContent} />
-);
-
-const LeftColumn = <Layout Header={FeedLayoutHeader} Content={LeftContent} />;
+// const LeftContent = (
+//   <Feed className="p-4 m-2" sections={itemsWithCollapseContent} />
+// );
+//
+// const LeftColumn = <Layout Header={FeedLayoutHeader} Content={LeftContent} />;
 
 const WorkspaceContent = (
   <Row className="grow">
     <Col span={18} className="flex">
-      {LeftColumn}
+      {/*{LeftColumn}*/}
     </Col>
     <Col span={6} className="flex">
       {RightColumn}
@@ -73,7 +74,7 @@ const WorkspaceHome = ({}: any) => {
     />
   );
 
-  return <Layout Header={SiteHeader} Content={WorkspaceContent} />;
+  return <Layout Header={SiteHeader}>{WorkspaceContent}</Layout>;
 };
 
 export default WorkspaceHome;

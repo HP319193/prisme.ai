@@ -48,23 +48,26 @@ const AutomationsContent = (
   <Layout
     className="border border-gray border-solid grow h-full rounded p-4 m-2"
     Header={AutomationsHeader}
-    Content={SidePanelContent}
-  />
+  >
+    {SidePanelContent}
+  </Layout>
 );
 
 const RightColumn = (
-  <Layout Header={RightColumnHeader} Content={AutomationsContent} />
+  <Layout Header={RightColumnHeader}>{AutomationsContent}</Layout>
 );
 
-const Template: Story<LayoutProps> = ({ Header, PageHeader, Content }) => (
-  <Layout Header={Header} PageHeader={PageHeader} Content={Content} />
+const Template: Story<LayoutProps> = ({ Header, PageHeader, children }) => (
+  <Layout Header={Header} PageHeader={PageHeader}>
+    {children}
+  </Layout>
 );
 
 const LeftContent = (
   <Feed className="p-4 m-2" sections={itemsWithCollapseContent} />
 );
 
-const LeftColumn = <Layout Header={FeedLayoutHeader} Content={LeftContent} />;
+const LeftColumn = <Layout Header={FeedLayoutHeader}>{LeftContent}</Layout>;
 
 const WorkspaceContent = (
   <Row className="grow">
@@ -80,5 +83,5 @@ const WorkspaceContent = (
 export const Default = Template.bind({});
 Default.args = {
   Header: HeaderComponent,
-  Content: WorkspaceContent,
+  children: WorkspaceContent,
 };

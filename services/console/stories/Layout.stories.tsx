@@ -49,15 +49,17 @@ const BodyComponent = (
   </div>
 );
 
-const Template: Story<LayoutProps> = ({ Header, PageHeader, Content }) => (
-  <Layout Header={Header} PageHeader={PageHeader} Content={Content} />
+const Template: Story<LayoutProps> = ({ Header, PageHeader, children }) => (
+  <Layout Header={Header} PageHeader={PageHeader}>
+    {children}
+  </Layout>
 );
 
 export const Default = Template.bind({});
 Default.args = {
   Header: HeaderComponent,
   PageHeader: CurrentPageHeader,
-  Content: BodyComponent,
+  children: BodyComponent,
 };
 
 const RightColumnHeader = (
@@ -67,12 +69,12 @@ const RightColumnHeader = (
 export const SidePanelExample = Template.bind({});
 SidePanelExample.args = {
   Header: RightColumnHeader,
-  Content: BodyComponent,
+  children: BodyComponent,
 };
 
 const LeftContent = <Feed sections={itemsWithCollapseContent} />;
 export const WorkspaceFeedLayout = Template.bind({});
 WorkspaceFeedLayout.args = {
   Header: FeedLayoutHeader,
-  Content: LeftContent,
+  children: LeftContent,
 };
