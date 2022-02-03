@@ -1,5 +1,5 @@
-import { Button, PageHeader } from "../components/DesignSystem";
-import { PageHeaderProps } from "../components/DesignSystem/PageHeader";
+import { Button, PageHeader } from "./index";
+import { PageHeaderProps } from "./PageHeader";
 import { Story } from "@storybook/react";
 
 export default {

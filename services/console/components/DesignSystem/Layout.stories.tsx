@@ -1,14 +1,10 @@
-import {
-  Header,
-  Layout,
-  MenuTab,
-  PageHeader,
-  Button,
-  Feed,
-} from "../components/DesignSystem";
-import { LayoutProps } from "../components/DesignSystem/Layout";
+import { Header, Layout, MenuTab, PageHeader, Button, Feed } from "./index";
+import { LayoutProps } from "./Layout";
 import { Story } from "@storybook/react";
-import { FeedLayoutHeader, itemsWithCollapseContent } from "./mockData";
+import {
+  FeedLayoutHeader,
+  itemsWithCollapseContent,
+} from "../../stories/mockData";
 
 export default {
   title: "Layout/Layout",

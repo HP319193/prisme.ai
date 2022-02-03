@@ -1,5 +1,5 @@
 import { Story } from "@storybook/react";
-import { MenuTab } from "../components/DesignSystem";
+import { MenuTab } from "./index";
 import { action } from "@storybook/addon-actions";
 
 const actionsData = {

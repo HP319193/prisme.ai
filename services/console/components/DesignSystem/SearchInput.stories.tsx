@@ -1,7 +1,7 @@
 import React from "react";
-import { SearchInput } from "../components/DesignSystem";
+import { SearchInput } from "./index";
 import { Story } from "@storybook/react";
-import { SearchInputProps } from "../components/DesignSystem/SearchInput";
+import { SearchInputProps } from "./SearchInput";
 import { action } from "@storybook/addon-actions";
 
 const actionsData = {

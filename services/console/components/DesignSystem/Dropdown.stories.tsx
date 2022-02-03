@@ -1,7 +1,7 @@
 import React from "react";
-import { Dropdown, Menu } from "../components/DesignSystem";
+import { Dropdown, Menu } from "./index";
 import { Story } from "@storybook/react";
-import { DropdownProps } from "../components/DesignSystem/Dropdown";
+import { DropdownProps } from "./Dropdown";
 
 export default {
   title: "Components/Dropdown",

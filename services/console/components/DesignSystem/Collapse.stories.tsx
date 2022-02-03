@@ -1,7 +1,7 @@
 import React from "react";
-import { Collapse } from "../components/DesignSystem";
+import { Collapse } from "./index";
 import { Story } from "@storybook/react";
-import { CollapseProps } from "../components/DesignSystem/Collapse";
+import { CollapseProps } from "./Collapse";
 
 export default {
   title: "Components/Collapse",

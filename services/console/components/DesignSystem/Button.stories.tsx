@@ -1,6 +1,6 @@
 import React from "react";
-import { ButtonProps } from "../components/DesignSystem/Button";
-import { Button } from "../components/DesignSystem";
+import { ButtonProps } from "./Button";
+import { Button } from "./index";
 import { Story } from "@storybook/react";
 
 export default {

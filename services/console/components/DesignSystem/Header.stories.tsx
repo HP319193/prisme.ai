@@ -1,5 +1,5 @@
 import { Story } from "@storybook/react";
-import { Header } from "../components/DesignSystem";
+import { Header } from "./index";
 
 export default {
   title: "Layout/Header",

@@ -8,10 +8,13 @@ import {
   Space,
   Title,
   Button,
-} from "../components/DesignSystem";
-import { LayoutProps } from "../components/DesignSystem/Layout";
+} from "../index";
+import { LayoutProps } from "../Layout";
 import { Story } from "@storybook/react";
-import { FeedLayoutHeader, itemsWithCollapseContent } from "./mockData";
+import {
+  FeedLayoutHeader,
+  itemsWithCollapseContent,
+} from "../../../stories/mockData";
 
 export default {
   title: "Pages/WorkspaceHome",
