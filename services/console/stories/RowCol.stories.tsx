@@ -4,7 +4,7 @@ import { Story } from "@storybook/react";
 export default {
   title: "Layout/RowCol",
   parameters: {
-    layout: "fullscreen",
+    layout: "padded",
   },
 };
 

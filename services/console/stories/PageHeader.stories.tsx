@@ -6,7 +6,7 @@ export default {
   title: "Layout/PageHeader",
   component: PageHeader,
   parameters: {
-    layout: "fullscreen",
+    layout: "padded",
   },
 };
 
