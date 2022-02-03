@@ -412,6 +412,22 @@ declare namespace Prismeai {
         id: string;
     })[];
     export type AnyValue = any;
+    export interface ApiKey {
+        apiKey: string;
+        subjectType: string;
+        subjectId: string;
+        rules: ApiKeyRules;
+    }
+    export interface ApiKeyRules {
+        /**
+         * example:
+         * [
+         *   "allowedEvent1",
+         *   "allowedEvent2"
+         * ]
+         */
+        events?: string[];
+    }
     export interface App {
         name: string;
         description?: LocalizedText;
@@ -1105,6 +1121,26 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace CreateApiKey {
+        namespace Parameters {
+            export type SubjectId = string;
+            export type SubjectType = "workspaces";
+        }
+        export interface PathParameters {
+            subjectType: Parameters.SubjectType;
+            subjectId: Parameters.SubjectId;
+        }
+        export interface RequestBody {
+            rules: Prismeai.ApiKeyRules;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.ApiKey;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace CreateApp {
         export type RequestBody = Prismeai.App;
         namespace Responses {
@@ -1147,6 +1183,27 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export type $200 = Prismeai.User;
             export type $401 = Prismeai.AuthenticationError;
+        }
+    }
+    namespace DeleteApiKey {
+        namespace Parameters {
+            export type ApiKey = string;
+            export type SubjectId = string;
+            export type SubjectType = "workspaces";
+        }
+        export interface PathParameters {
+            subjectType: Parameters.SubjectType;
+            subjectId: Parameters.SubjectId;
+            apiKey: Parameters.ApiKey;
+        }
+        namespace Responses {
+            export interface $200 {
+                apiKey?: string;
+            }
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
     namespace DeleteApp {
@@ -1384,6 +1441,23 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace ListApiKeys {
+        namespace Parameters {
+            export type SubjectId = string;
+            export type SubjectType = "workspaces";
+        }
+        export interface PathParameters {
+            subjectType: Parameters.SubjectType;
+            subjectId: Parameters.SubjectId;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.ApiKey[];
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace Logout {
         namespace Responses {
             export interface $200 {
@@ -1490,6 +1564,28 @@ declare namespace PrismeaiAPI {
             export interface $200 {
                 id: string;
             }
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace UpdateApiKey {
+        namespace Parameters {
+            export type ApiKey = string;
+            export type SubjectId = string;
+            export type SubjectType = "workspaces";
+        }
+        export interface PathParameters {
+            subjectType: Parameters.SubjectType;
+            subjectId: Parameters.SubjectId;
+            apiKey: Parameters.ApiKey;
+        }
+        export interface RequestBody {
+            rules: Prismeai.ApiKeyRules;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.ApiKey;
+            export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;

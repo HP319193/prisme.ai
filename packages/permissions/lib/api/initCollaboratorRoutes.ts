@@ -1,16 +1,10 @@
 import "@prisme.ai/types";
 import { NextFunction, Request, Response, Router } from "express";
-import { AccessManager, ActionType } from "../..";
+import { ActionType } from "../..";
 import { CollaboratorNotFound } from "../errors";
 import { SubjectCollaborator } from "../types";
 import { fetchCollaboratorContacts } from "./fetchCollaboratorContacts";
-
-type InstantiatedAccessManager<SubjectType extends string> = Required<
-  AccessManager<SubjectType, { [k in SubjectType]: any }, Prismeai.Role>
->;
-type ExtendedRequest<SubjectType extends string> = {
-  accessManager: InstantiatedAccessManager<SubjectType>;
-};
+import { asyncRoute, ExtendedRequest } from "./utils";
 
 export function initCollaboratorRoutes<SubjectType extends string>(
   app: Router
@@ -116,10 +110,6 @@ export function initCollaboratorRoutes<SubjectType extends string>(
 
     return res.send({ id: collaboratorId });
   }
-
-  const asyncRoute =
-    (fn: any) => (req: Request, res: Response, next: NextFunction) =>
-      Promise.resolve(fn(req, res, next)).catch(next);
 
   const baseRoute = "/v2/:subjectType/:subjectId/collaborators";
   app.get(`${baseRoute}`, asyncRoute(getCollaboratorsHandler));

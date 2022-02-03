@@ -52,12 +52,13 @@ export type RoleTemplates<
 
 export interface PermissionsConfig<
   SubjectType extends string,
-  Role extends string
+  Role extends string,
+  CustomRules = any
 > {
   subjectTypes: SubjectType[];
   rbac: RoleTemplates<SubjectType, Role>;
   abac: Rules;
-  roleBuilder?: (
-    role: Omit<CustomRole<SubjectType>, "rules">
+  customRulesBuilder?: (
+    role: Omit<CustomRole<SubjectType, CustomRules>, "casl">
   ) => RawRuleOf<Ability>[];
 }

@@ -2,6 +2,7 @@ import { PermissionsConfig, ActionType } from "@prisme.ai/permissions";
 
 export enum SubjectType {
   Workspace = "workspaces",
+  Event = "events",
 }
 
 export enum Role {
@@ -9,11 +10,7 @@ export enum Role {
   Collaborator = "collaborator",
 }
 
-export const config: PermissionsConfig<
-  SubjectType,
-  Prismeai.Role,
-  Prismeai.ApiKeyRules
-> = {
+export const config: PermissionsConfig<SubjectType, Prismeai.Role> = {
   subjectTypes: Object.values(SubjectType),
   rbac: [
     {
@@ -21,11 +18,11 @@ export const config: PermissionsConfig<
       subjectType: SubjectType.Workspace,
       rules: [
         {
-          action: ActionType.Manage,
-          subject: SubjectType.Workspace,
+          action: [ActionType.Create, ActionType.Read],
+          subject: SubjectType.Event,
           conditions: {
             // This role only applies to a specific workspace !
-            id: "${subject.id}",
+            "source.workspaceId": "${subject.id}",
           },
         },
       ],
@@ -36,24 +33,15 @@ export const config: PermissionsConfig<
       subjectType: SubjectType.Workspace,
       rules: [
         {
-          action: [ActionType.Update, ActionType.Read],
-          subject: SubjectType.Workspace,
+          action: [ActionType.Create, ActionType.Read],
+          subject: SubjectType.Event,
           conditions: {
             // This role only applies to a specific workspace !
-            id: "${subject.id}",
+            "source.workspaceId": "${subject.id}",
           },
         },
       ],
     },
   ],
-  abac: [
-    // Those who can't create workspace will be blocked by gateway api on POST
-    {
-      action: ActionType.Create,
-      subject: SubjectType.Workspace,
-    },
-  ],
-  customRulesBuilder: (role) => {
-    return [];
-  },
+  abac: [],
 };

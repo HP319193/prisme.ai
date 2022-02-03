@@ -14,7 +14,7 @@ export enum Role {
   Guest = "guest",
 }
 
-const config: PermissionsConfig<SubjectType, Role> = {
+const config: PermissionsConfig<SubjectType, Role, Prismeai.ApiKeyRules> = {
   subjectTypes: Object.values(SubjectType),
   rbac: [
     {
@@ -33,7 +33,11 @@ const config: PermissionsConfig<SubjectType, Role> = {
     },
   ],
   abac: [],
-  roleBuilder: ({ subjectType, subjectId, payload }) => {
+  customRulesBuilder: ({ type, subjectType, subjectId, rules }) => {
+    if (type !== "apiKey") {
+      throw new Error("Unsupported custom role type " + type);
+    }
+
     if (subjectType === SubjectType.Workspace) {
       return [
         {
@@ -41,7 +45,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
           subject: SubjectType.Event,
           conditions: {
             type: {
-              $in: payload.allowedEvents,
+              $in: rules.events,
             },
             "source.workspaceId": subjectId,
           },

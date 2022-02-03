@@ -1,26 +1,37 @@
 import { Schema, Document, Types } from "mongoose";
-import { ActionType, BaseSubject, Permissions, Rules, Subject } from "..";
+import { ActionType, Permissions, Rules, Subject } from "..";
+import { SubjectType } from "../examples/accessManagement";
 
 export const Roles = new Schema({
+  id: { type: String, index: true },
   name: String,
-  apiKey: { type: String, sparse: true },
+  // apiKey: { type: String, sparse: true },
+  type: String,
   subjectType: String,
   subjectId: String,
-  payload: Schema.Types.Mixed,
   rules: Schema.Types.Mixed,
+  casl: Schema.Types.Mixed,
 });
 
 export enum NativeSubjectType {
   Roles = "roles",
 }
 
-export type CustomRole<SubjectType extends string> = {
+export type CustomRole<SubjectType extends string, CustomRules = any> = {
   name: string;
-  apiKey?: string;
+  id: string;
+  type: "apiKey";
   subjectType: SubjectType;
   subjectId: string;
-  payload: any;
-  rules: Rules;
+  rules: CustomRules;
+  casl: Rules;
+};
+
+export type ApiKey<SubjectType extends string, CustomRules = any> = Omit<
+  CustomRole<SubjectType, CustomRules>,
+  "name" | "casl" | "type" | "id"
+> & {
+  apiKey: string;
 };
 
 const CollaboratorSchema = new Schema(

@@ -1,6 +1,6 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import { AccessManager, BaseSubject, CustomRole } from "..";
+import { AccessManager, BaseSubject, ApiKey } from "..";
 import abacWithRoles, { Role } from "../examples/abacWithRoles";
 import apiKeys from "../examples/apiKeys";
 
@@ -37,7 +37,7 @@ type SubjectInterfaces = {
 const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
   {
     storage: {
-      host: "mongodb://nas:27017/testCASL",
+      host: "mongodb://localhost:27017/testCASL",
     },
     schemas: {
       user: new mongoose.Schema({}),
@@ -55,7 +55,7 @@ const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
   },
   {
     ...abacWithRoles,
-    roleBuilder: apiKeys.roleBuilder,
+    customRulesBuilder: apiKeys.customRulesBuilder,
   }
 );
 
@@ -404,7 +404,7 @@ describe("Role & Permissions granting", () => {
 
 describe("API Keys", () => {
   const ourWorkspace = {
-    id: "ourWorkspaceId",
+    id: "ourWorkspaceId" + Math.round(Math.random() * 10000),
     name: "ourWorkspace",
     collaborators: {
       [adminA.user.id]: {
@@ -413,7 +413,7 @@ describe("API Keys", () => {
     },
   };
   const anotherWorkspace = {
-    id: "anotherWorkspaceId",
+    id: "anotherWorkspaceId" + Math.round(Math.random() * 10000),
     name: "anotherWorkspace",
     collaborators: {
       anotherAdminId: {
@@ -437,78 +437,109 @@ describe("API Keys", () => {
     anotherWorkspace
   );
 
-  const ourWorkspaceAPIKey: Omit<CustomRole<SubjectType>, "rules"> = {
-    name: "myApiKey",
-    apiKey: "myApiKey",
+  const ourWorkspaceAPIKey: ApiKey<SubjectType, Prismeai.ApiKeyRules> = {
+    apiKey: "will be defined on creation",
     subjectType: SubjectType.Workspace,
     subjectId: ourWorkspace.id,
-    payload: {
-      allowedEvents: ["event1", "event4"],
+    rules: {
+      events: ["event1", "event4"],
     },
   };
 
   const allowedEvent = {
-    type: ourWorkspaceAPIKey.payload.allowedEvents[0],
+    type: ourWorkspaceAPIKey.rules.events?.[0],
     source: {
       workspaceId: ourWorkspace.id,
     },
     id: "someId",
   };
 
-  const eventFromAnotherWorkspace = {
-    type: ourWorkspaceAPIKey.payload.allowedEvents[0],
-    source: {
-      workspaceId: anotherWorkspace.id,
-    },
-    id: "someOtherId",
-  };
-
   it("Can't load an unknown api key", async () => {
     await expect(
       //@ts-ignore
-      adminA.pullRole({ apiKey: "someUnknownAPIKey" })
+      adminA.pullApiKey("someUnknownAPIKey")
     ).rejects.toThrow();
   });
 
   it("Can't create an API Key on a subject without manage_collaborators permission", async () => {
     await expect(
-      adminA.saveRole({
-        ...ourWorkspaceAPIKey,
-        subjectId: anotherWorkspace.id,
-      })
+      adminA.createApiKey(
+        SubjectType.Workspace,
+        anotherWorkspace.id,
+        ourWorkspaceAPIKey.rules
+      )
     ).rejects.toThrow();
   });
 
-  let ourSavedApiKey: CustomRole<SubjectType>;
+  let ourSavedApiKey: ApiKey<SubjectType>;
   it("A workspace admin can create an API key for this workspace", async () => {
     await expect(
-      adminA.saveRole(ourWorkspaceAPIKey).then((apiKey) => {
-        ourSavedApiKey = apiKey;
-        return apiKey;
+      adminA
+        .createApiKey(
+          SubjectType.Workspace,
+          ourWorkspace.id,
+          ourWorkspaceAPIKey.rules
+        )
+        .then((apiKey) => {
+          ourSavedApiKey = apiKey;
+          return apiKey;
+        })
+    ).resolves.toEqual(
+      expect.objectContaining({
+        rules: ourWorkspaceAPIKey.rules,
+        subjectId: ourWorkspaceAPIKey.subjectId,
+        subjectType: ourWorkspaceAPIKey.subjectType,
       })
-    ).resolves.toEqual(expect.objectContaining(ourWorkspaceAPIKey));
+    );
 
     await expect(
-      adminB.saveRole({
-        ...ourWorkspaceAPIKey,
-        subjectId: anotherWorkspace.id,
-        apiKey: "anotherWorkspaceApiKey",
-        name: "anotherWorkspaceApiKey",
-      })
+      adminB.createApiKey(
+        SubjectType.Workspace,
+        anotherWorkspace.id,
+        ourWorkspaceAPIKey.rules
+      )
     ).resolves.toEqual(
       expect.objectContaining({ subjectId: anotherWorkspace.id })
+    );
+  });
+
+  it("An admin can update its workspace's api keys", async () => {
+    const newPayload = {
+      ...ourWorkspaceAPIKey.rules,
+      events: (ourWorkspaceAPIKey.rules.events || []).concat([
+        "someOtherEvent",
+      ]),
+    };
+    await expect(
+      adminA
+        .updateApiKey(
+          ourSavedApiKey.apiKey,
+          SubjectType.Workspace,
+          ourWorkspace.id,
+          newPayload
+        )
+        .then((apiKey) => {
+          ourSavedApiKey = apiKey;
+          return apiKey;
+        })
+    ).resolves.toEqual(
+      expect.objectContaining({
+        rules: newPayload,
+        subjectId: ourWorkspaceAPIKey.subjectId,
+        subjectType: ourWorkspaceAPIKey.subjectType,
+      })
     );
   });
 
   it("A workspace admin can list the api keys of his workspace", async () => {
     await expect(
       //@ts-ignore
-      adminB.findRoles(SubjectType.Workspace, ourWorkspace.id)
+      adminB.findApiKeys(SubjectType.Workspace, ourWorkspace.id)
     ).rejects.toThrow();
 
     await expect(
       //@ts-ignore
-      adminA.findRoles(SubjectType.Workspace, ourWorkspace.id)
+      adminA.findApiKeys(SubjectType.Workspace, ourWorkspace.id)
     ).resolves.toMatchObject([ourSavedApiKey]);
   });
 
@@ -518,7 +549,7 @@ describe("API Keys", () => {
     ).rejects.toThrow();
 
     //@ts-ignore
-    await adminB.pullRole({ apiKey: ourWorkspaceAPIKey.apiKey });
+    await adminB.pullApiKey(ourSavedApiKey.apiKey);
 
     await expect(
       adminB.throwUnlessCan(ActionType.Read, SubjectType.Event, allowedEvent)
@@ -530,6 +561,21 @@ describe("API Keys", () => {
         type: "someRandomForbiddenType",
       })
     ).rejects.toThrow();
+  });
+
+  it("A workspace admin can delete the workspace api keys", async () => {
+    await expect(
+      adminA.deleteApiKey(
+        ourSavedApiKey.apiKey,
+        ourSavedApiKey.subjectType,
+        ourSavedApiKey.subjectId
+      )
+    ).resolves.toBe(true);
+
+    await expect(
+      //@ts-ignore
+      adminA.findApiKeys(SubjectType.Workspace, ourWorkspace.id)
+    ).resolves.toMatchObject([]);
   });
 });
 
