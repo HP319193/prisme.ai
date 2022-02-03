@@ -1,4 +1,4 @@
-import { BaseSchema } from "./schemas";
+import { BaseSchema, Roles as RolesSchema, Roles } from "./schemas";
 import mongoose from "mongoose";
 import { accessibleRecordsPlugin, AccessibleRecordModel } from "@casl/mongoose";
 import {
@@ -10,9 +10,11 @@ import {
   BaseSubject,
   UserSubject,
   SubjectCollaborator,
+  NativeSubjectType,
+  CustomRole,
 } from "..";
 import { validateRules } from "./rulesBuilder";
-import { ObjectNotFoundError } from "./errors";
+import { InvalidAPIKey, ObjectNotFoundError, PrismeError } from "./errors";
 
 type Document<T, Role extends string> = Omit<mongoose.Document<T>, "toJSON"> &
   BaseSubject<Role> & {
@@ -62,7 +64,10 @@ export class AccessManager<
     };
 
     const schemas: Record<SubjectType, mongoose.Schema | false> =
-      Object.entries(opts.schemas).reduce((schemas, [name, schemaDef]) => {
+      Object.entries({
+        ...opts.schemas,
+        [NativeSubjectType.Roles]: RolesSchema,
+      }).reduce((schemas, [name, schemaDef]) => {
         if (schemaDef === false) {
           return { ...schemas, [name]: false };
         }
@@ -358,6 +363,8 @@ export class AccessManager<
       subjectType,
       typeof subject.toJSON === "function" ? subject.toJSON() : subject
     );
+
+    return true;
   }
 
   filterSubjectsBy<returnType extends SubjectType>(
@@ -369,5 +376,106 @@ export class AccessManager<
     return subjects.filter((cur) =>
       permissions.can(actionType, subjectType, cur)
     );
+  }
+
+  private async pullRole(
+    query:
+      | {
+          id: string;
+        }
+      | {
+          apiKey: string;
+        }
+  ) {
+    const { permissions } = this.checkAsUser();
+    const RolesModel = (await this.model(
+      <any>NativeSubjectType.Roles
+    )) as any as AccessibleRecordModel<Document<CustomRole<SubjectType>, any>>;
+
+    const docs =
+      typeof (<any>query).id !== "undefined"
+        ? await RolesModel.find({
+            _id: new mongoose.Types.ObjectId((<any>query).id),
+          })
+        : await RolesModel.find(query);
+
+    if (!docs.length) {
+      throw new InvalidAPIKey();
+    }
+    permissions.loadRules(
+      docs.flatMap((cur) => {
+        return JSON.parse(cur.toJSON().rules as any as string);
+      })
+    );
+  }
+
+  async saveRole(
+    role: Omit<CustomRole<SubjectType>, "rules">
+  ): Promise<CustomRole<SubjectType>> {
+    const roleBuilder = this.permissionsConfig.roleBuilder;
+    if (!roleBuilder) {
+      throw new Error(
+        "Cannot save any custom role without specifying the role builder inside permissions config !"
+      );
+    }
+    const { permissions } = this.checkAsUser();
+    permissions.throwUnlessCan(
+      ActionType.ManageCollaborators,
+      role.subjectType,
+      {
+        id: role.subjectId,
+      }
+    );
+
+    const RolesModel = (await this.model(
+      <any>NativeSubjectType.Roles
+    )) as any as AccessibleRecordModel<Document<CustomRole<SubjectType>, any>>;
+    const rules = roleBuilder(role);
+
+    const savedApiKey = await RolesModel.findOneAndUpdate(
+      {
+        apiKey: role.apiKey,
+        subjectType: role.subjectType,
+        subjectId: role.subjectId,
+      },
+      {
+        ...role,
+        rules: JSON.stringify(rules), // MongoDB would reject $ characters
+      },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+
+    return {
+      ...savedApiKey.toJSON(),
+      rules,
+    };
+  }
+
+  async findRoles(
+    subjectType: SubjectType,
+    subjectId: string
+  ): Promise<CustomRole<SubjectType>[]> {
+    const { permissions } = this.checkAsUser();
+    permissions.throwUnlessCan(ActionType.ManageCollaborators, subjectType, {
+      id: subjectId,
+    });
+
+    const RolesModel = (await this.model(
+      <any>NativeSubjectType.Roles
+    )) as any as AccessibleRecordModel<Document<CustomRole<SubjectType>, any>>;
+
+    const docs = await RolesModel.find({
+      subjectType,
+      subjectId,
+    });
+    return docs
+      .map((cur) => cur.toJSON())
+      .map((cur) => ({
+        ...cur,
+        rules: JSON.parse(cur.rules as any),
+      }));
   }
 }

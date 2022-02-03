@@ -1,5 +1,27 @@
 import { Schema, Document, Types } from "mongoose";
-import { ActionType, Permissions, Subject } from "..";
+import { ActionType, BaseSubject, Permissions, Rules, Subject } from "..";
+
+export const Roles = new Schema({
+  name: String,
+  apiKey: { type: String, sparse: true },
+  subjectType: String,
+  subjectId: String,
+  payload: Schema.Types.Mixed,
+  rules: Schema.Types.Mixed,
+});
+
+export enum NativeSubjectType {
+  Roles = "roles",
+}
+
+export type CustomRole<SubjectType extends string> = {
+  name: string;
+  apiKey?: string;
+  subjectType: SubjectType;
+  subjectId: string;
+  payload: any;
+  rules: Rules;
+};
 
 const CollaboratorSchema = new Schema(
   {

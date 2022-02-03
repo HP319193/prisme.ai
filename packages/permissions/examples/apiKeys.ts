@@ -1,4 +1,4 @@
-import { PermissionsConfig, ActionType } from "..";
+import { PermissionsConfig, ActionType, CustomRole } from "..";
 
 export enum SubjectType {
   User = "user",
@@ -8,7 +8,7 @@ export enum SubjectType {
   Platform = "platform",
 }
 
-enum Role {
+export enum Role {
   Admin = "admin",
   Collaborator = "collaborator",
   Guest = "guest",
@@ -24,17 +24,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
 
     {
       name: Role.Guest,
-      rules: [
-        {
-          action: [ActionType.Create, ActionType.Read],
-          subject: SubjectType.Event,
-          conditions: {
-            type: {
-              $regex: "^apps.someAuthorizedApp.",
-            },
-          },
-        },
-      ],
+      rules: [],
     },
 
     {
@@ -42,24 +32,24 @@ const config: PermissionsConfig<SubjectType, Role> = {
       rules: [],
     },
   ],
-  abac: [
-    {
-      // Everyone can read / update its own user
-      action: ActionType.Manage,
-      subject: SubjectType.User,
-      conditions: {
-        id: "${user.id}",
-      },
-    },
-    {
-      // Everyone can read a public page
-      action: ActionType.Read,
-      subject: SubjectType.Page,
-      conditions: {
-        public: true,
-      },
-    },
-  ],
+  abac: [],
+  roleBuilder: ({ subjectType, subjectId, payload }) => {
+    if (subjectType === SubjectType.Workspace) {
+      return [
+        {
+          action: [ActionType.Create, ActionType.Read],
+          subject: SubjectType.Event,
+          conditions: {
+            type: {
+              $in: payload.allowedEvents,
+            },
+            "source.workspaceId": subjectId,
+          },
+        },
+      ];
+    }
+    throw new Error("Unsupported api key");
+  },
 };
 
 export default config;

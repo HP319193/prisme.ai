@@ -1,7 +1,8 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import { AccessManager, BaseSubject } from "..";
+import { AccessManager, BaseSubject, CustomRole } from "..";
 import abacWithRoles, { Role } from "../examples/abacWithRoles";
+import apiKeys from "../examples/apiKeys";
 
 enum ActionType {
   Manage = "manage", // Super admin : permits every action
@@ -17,6 +18,7 @@ enum SubjectType {
   Workspace = "workspace",
   Page = "page",
   Event = "event",
+  Platform = "platform",
 }
 
 type SubjectInterfaces = {
@@ -29,12 +31,13 @@ type SubjectInterfaces = {
     workspaceId: string;
   };
   [SubjectType.Event]: { id: string };
+  [SubjectType.Platform]: {};
 };
 
 const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
   {
     storage: {
-      host: "mongodb://localhost:27017/permissions-tests",
+      host: "mongodb://nas:27017/testCASL",
     },
     schemas: {
       user: new mongoose.Schema({}),
@@ -46,10 +49,14 @@ const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
         workspaceId: { type: String, index: true },
         public: Boolean,
       }),
-      event: new mongoose.Schema({}),
+      event: false,
+      platform: false,
     },
   },
-  abacWithRoles
+  {
+    ...abacWithRoles,
+    roleBuilder: apiKeys.roleBuilder,
+  }
 );
 
 let mongod: MongoMemoryServer;
@@ -216,7 +223,6 @@ describe("CRUD with a predefined role", () => {
     );
 
     const workspacesZ = await adminZ.findAll(SubjectType.Workspace);
-    const workspacesY = await adminY.findAll(SubjectType.Workspace);
 
     const sort = (workspaces: { id: string }[]) =>
       workspaces.sort((a, b) => (a.id > b.id ? 1 : -1));
@@ -224,10 +230,6 @@ describe("CRUD with a predefined role", () => {
     expect(sort(workspacesZ)).toMatchObject(
       sort(adminZWorkspaces.concat(adminYWorkspaces))
     );
-
-    // expect(sort(workspacesY)).toMatchObject(
-    //   sort(adminYWorkspaces.concat([adminZWorkspaces[1]]))
-    // );
   });
 
   it("A workspace admin can list all pages of his workspace (including those he did not create himself)", async () => {
@@ -396,6 +398,137 @@ describe("Role & Permissions granting", () => {
     // This does not provide him any permission on corresponding workspace !
     await expect(
       collaborator.get(SubjectType.Workspace, workspace.id)
+    ).rejects.toThrow();
+  });
+});
+
+describe("API Keys", () => {
+  const ourWorkspace = {
+    id: "ourWorkspaceId",
+    name: "ourWorkspace",
+    collaborators: {
+      [adminA.user.id]: {
+        role: "admin",
+      },
+    },
+  };
+  const anotherWorkspace = {
+    id: "anotherWorkspaceId",
+    name: "anotherWorkspace",
+    collaborators: {
+      anotherAdminId: {
+        role: "admin",
+      },
+      [adminB.user.id]: {
+        role: "admin",
+      },
+    },
+  };
+  //@ts-ignore
+  adminA.permissions.pullRoleFromSubject(SubjectType.Workspace, ourWorkspace);
+  //@ts-ignore
+  adminA.permissions.pullRoleFromSubject(
+    SubjectType.Workspace,
+    anotherWorkspace
+  );
+  //@ts-ignore
+  adminB.permissions.pullRoleFromSubject(
+    SubjectType.Workspace,
+    anotherWorkspace
+  );
+
+  const ourWorkspaceAPIKey: Omit<CustomRole<SubjectType>, "rules"> = {
+    name: "myApiKey",
+    apiKey: "myApiKey",
+    subjectType: SubjectType.Workspace,
+    subjectId: ourWorkspace.id,
+    payload: {
+      allowedEvents: ["event1", "event4"],
+    },
+  };
+
+  const allowedEvent = {
+    type: ourWorkspaceAPIKey.payload.allowedEvents[0],
+    source: {
+      workspaceId: ourWorkspace.id,
+    },
+    id: "someId",
+  };
+
+  const eventFromAnotherWorkspace = {
+    type: ourWorkspaceAPIKey.payload.allowedEvents[0],
+    source: {
+      workspaceId: anotherWorkspace.id,
+    },
+    id: "someOtherId",
+  };
+
+  it("Can't load an unknown api key", async () => {
+    await expect(
+      //@ts-ignore
+      adminA.pullRole({ apiKey: "someUnknownAPIKey" })
+    ).rejects.toThrow();
+  });
+
+  it("Can't create an API Key on a subject without manage_collaborators permission", async () => {
+    await expect(
+      adminA.saveRole({
+        ...ourWorkspaceAPIKey,
+        subjectId: anotherWorkspace.id,
+      })
+    ).rejects.toThrow();
+  });
+
+  let ourSavedApiKey: CustomRole<SubjectType>;
+  it("A workspace admin can create an API key for this workspace", async () => {
+    await expect(
+      adminA.saveRole(ourWorkspaceAPIKey).then((apiKey) => {
+        ourSavedApiKey = apiKey;
+        return apiKey;
+      })
+    ).resolves.toEqual(expect.objectContaining(ourWorkspaceAPIKey));
+
+    await expect(
+      adminB.saveRole({
+        ...ourWorkspaceAPIKey,
+        subjectId: anotherWorkspace.id,
+        apiKey: "anotherWorkspaceApiKey",
+        name: "anotherWorkspaceApiKey",
+      })
+    ).resolves.toEqual(
+      expect.objectContaining({ subjectId: anotherWorkspace.id })
+    );
+  });
+
+  it("A workspace admin can list the api keys of his workspace", async () => {
+    await expect(
+      //@ts-ignore
+      adminB.findRoles(SubjectType.Workspace, ourWorkspace.id)
+    ).rejects.toThrow();
+
+    await expect(
+      //@ts-ignore
+      adminA.findRoles(SubjectType.Workspace, ourWorkspace.id)
+    ).resolves.toMatchObject([ourSavedApiKey]);
+  });
+
+  it("Any user authenticated with an api key automatically escalate corresponding permissions", async () => {
+    await expect(
+      adminB.throwUnlessCan(ActionType.Read, SubjectType.Event, allowedEvent)
+    ).rejects.toThrow();
+
+    //@ts-ignore
+    await adminB.pullRole({ apiKey: ourWorkspaceAPIKey.apiKey });
+
+    await expect(
+      adminB.throwUnlessCan(ActionType.Read, SubjectType.Event, allowedEvent)
+    ).resolves.toBe(true);
+
+    await expect(
+      adminB.throwUnlessCan(ActionType.Read, SubjectType.Event, {
+        ...allowedEvent,
+        type: "someRandomForbiddenType",
+      })
     ).rejects.toThrow();
   });
 });

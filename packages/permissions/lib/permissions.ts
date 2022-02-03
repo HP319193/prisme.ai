@@ -224,11 +224,13 @@ export class Permissions<
         } role '${role}'.`
       );
     }
-    const roleRules = roleTemplate
-      ? injectRules(roleTemplate.rules, { user: this.user, subject })
-      : [];
 
-    this.rules = sortRules([...roleRules, ...this.rules]);
+    return this.loadRules(roleTemplate?.rules || [], { subject });
+  }
+
+  loadRules(rules: Rules, context: Record<string, any> = {}) {
+    const injectedRules = injectRules(rules, { user: this.user, ...context });
+    this.rules = sortRules([...injectedRules, ...this.rules]);
     this.ability = new Ability(this.rules);
     return this.ability;
   }

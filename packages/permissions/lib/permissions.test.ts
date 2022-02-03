@@ -16,6 +16,7 @@ export enum SubjectType {
   Workspace = "workspace",
   Page = "page",
   Event = "event",
+  Platform = "platform",
 }
 
 enum Role {

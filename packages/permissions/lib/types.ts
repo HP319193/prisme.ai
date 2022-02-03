@@ -1,4 +1,5 @@
 import { Ability, RawRuleOf } from "@casl/ability";
+import { CustomRole } from "..";
 
 export enum ActionType {
   Manage = "manage", // Super admin : permits every action
@@ -56,4 +57,7 @@ export interface PermissionsConfig<
   subjectTypes: SubjectType[];
   rbac: RoleTemplates<SubjectType, Role>;
   abac: Rules;
+  roleBuilder?: (
+    role: Omit<CustomRole<SubjectType>, "rules">
+  ) => RawRuleOf<Ability>[];
 }
