@@ -37,16 +37,18 @@
 # Design
 
 ## Events & API
-Produced events : 
+
+Produced events :
+
 - **runtime.workflow.triggered**
 - **runtime.contexts.updated**
 
 [Documentation](https://gitlab.com/prisme.ai/prisme.ai/-/blob/main/specifications/swagger.yml)
 
-
-**Note :**  As with all other APIs, the DSUL validation of automations and workspaces is based entirely on their swagger. Thus, an up-to-date swagger means automatically updated and synchronised documentation and validation. 
+**Note :** As with all other APIs, the DSUL validation of automations and workspaces is based entirely on their swagger. Thus, an up-to-date swagger means automatically updated and synchronized documentation and validation.
 
 ## Handling concurrency
+
 To allow two administrators to edit two different automations of the same workspace, the backend must ensure that no information is lost in such a scenario.
 
 To do this, the CRUD automation APIs will only receive one automation at a time, and the backend will take care of merging it with the rest of the workspace, without any possible loss of data due to 2 concurrent requests.
@@ -61,9 +63,9 @@ Example :
 
 The required quality level corresponds to the recommended SonarQube Quality Gate:
 
-* 80% minimum code coverage
-* 3 % max of duplicated lines
-* Level A in Maintabily, Reliability and Security
+- 80% minimum code coverage
+- 3 % max of duplicated lines
+- Level A in Maintabily, Reliability and Security
 
 ## Tests specifics
 
@@ -116,7 +118,7 @@ As a minimum, this information should include : :
 
 ## Errors
 
-Technical errors (aka unexpected errors) such as a timeout on a REST service call are caught by the service and logged with the full stacktrace. Only operational errors (those explicitly thrown) with a FATAL criticality (if not specified by the developer, the criticality is simply ERROR) are logged.
+Technical errors (aka unexpected errors) such as a timeout on a REST service call are caught by the service and logged with the full stack trace. Only operational errors (those explicitly thrown) with a FATAL criticality (if not specified by the developer, the criticality is simply ERROR) are logged.
 
 If this error occurs during the processing of an HTTP request, the caller simply receives a generic "Internal Error".
 
@@ -126,7 +128,7 @@ Both in the log and in the event, the usual contextual information is included a
 
 ## Supervision
 
-Just like the other backend microservices, this one provides different administration routes:
+Just like the other backend micro services, this one provides different administration routes:
 
 - /metrics : Prometheus
 - /sys/logging : dynamically change log details
@@ -137,13 +139,13 @@ Just like the other backend microservices, this one provides different administr
 
 TODO : To complete with results from testing tools
 
-# Company Social Responsability (CSR)
+# Company Social Responsibility (CSR)
 
 Examples :
 
 - Use lazy loading for occasional resource loading
 - Limit databases results with pagination
-- Group massive processing into more effective batchs
+- Group massive processing into more effective batches
 
 TODO : detail & include specific metrics from the first RSE audits
 

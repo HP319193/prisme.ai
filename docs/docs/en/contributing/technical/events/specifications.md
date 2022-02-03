@@ -1,6 +1,11 @@
 # Description
 
-**Runtime** service is in charge of the workspaces execution depending on declared triggers, such as : events, dates or HTTP.
+The **Events** service is in charge of :
+
+- Enabling the **consumption of events** from an external service in web socket or HTTP long polling
+- Allowing the **emission of events** from an external service in web socket or HTTP long polling
+- **<span dir="">Historization</span>** (storage in a data lake) of each event handled by the message broker
+- **Searching** for events through various filters directly from the data lake
 
 # Technical stack
 
@@ -37,7 +42,9 @@
 # Design
 
 ## Events & API
-Produced events : 
+
+Produced events :
+
 - **runtime.workflow.triggered**
 - **runtime.contexts.updated**
 
@@ -45,55 +52,26 @@ Produced events :
 
 ## Handling concurrency
 
-**An event related to a workspace cannot be handled before the previous event (related to a specific workspace for one particular session) has been fully handled.**
+In order to allow external consumers to handle events and be able to scale on multiple instance while using web socket, our **Events** service shall offer a **message queue** mode to consume these. \
+In other words : only "distribute" one copy of each event to one of those instances (instead of one copy to each instance). \
+\
+By default, on event is forwarded to each web socket client subscribed to this kind of event.
 
 ## Performance
 
-Performance tests on different example DSULs should be carried out at each major release change, and the test result written up and referenced by this section.
-The example DSULs are to be defined, but they should represent different real-life cases as well as some non-standard cases, and be as unitary as possible.
-
-List example:
-
-- Workflow using a function app.
-- Workflow with a condition.
-
-## Limits & Checks
-
-<table>
-<tr>
-<td>Feature</td>
-<td>Limit type</td>
-<td>Value</td>
-<td>Action if exceeded</td>
-<td>Comments</td>
-</tr>
-<tr>
-<td>Trigger by event</td>
-<td>Number of events **processed** for a specific correlationId</td>
-<td>20</td>
-<td>The 21th event is ignored in order to stop the chain</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td>Contexts</td>
-<td>Memory space (in KB) used by all the contexts in one workspace</td>
-<td>10 KB</td>
-<td>Once the limit reached, the workspace is "paused" (triggers become inactive -- impossible to trigger any automation).</td>
-<td>The admin should be able to clean up the workspace memory</td>
-</tr>
-</table>
+Minimum resources shall be tested and specified so that 99% of external consumers receive each event in less than **N** milliseconds when a total of **M** events per second are processed by the same workspace.
 
 # Quality
 
 ## Development standards and quality measurement
 
-Example : 
+Example :
 
 The required quality level corresponds to the recommended SonarQube Quality Gate:
 
-* 80% minimum code coverage
-* 3 % max of duplicated lines
-* Level A in Maintabily, Reliability and Security
+- 80% minimum code coverage
+- 3 % max of duplicated lines
+- Level A in Maintainability, Reliability and Security
 
 ## Tests specifics
 
@@ -146,7 +124,7 @@ As a minimum, this information should include : :
 
 ## Errors
 
-Technical errors (aka unexpected errors) such as a timeout on a REST service call are caught by the service and logged with the full stacktrace. Only operational errors (those explicitly thrown) with a FATAL criticality (if not specified by the developer, the criticality is simply ERROR) are logged.
+Technical errors (aka unexpected errors) such as a timeout on a REST service call are caught by the service and logged with the full stack trace. Only operational errors (those explicitly thrown) with a FATAL criticality (if not specified by the developer, the criticality is simply ERROR) are logged.
 
 If this error occurs during the processing of an HTTP request, the caller simply receives a generic "Internal Error".
 
@@ -156,7 +134,7 @@ Both in the log and in the event, the usual contextual information is included a
 
 ## Supervision
 
-Just like the other backend microservices, this one provides different administration routes:
+Just like the other backend micro services, this one provides different administration routes:
 
 - /metrics : Prometheus
 - /sys/logging : dynamically change log details
@@ -167,19 +145,19 @@ Just like the other backend microservices, this one provides different administr
 
 TODO : To complete with results from testing tools
 
-# Company Social Responsability (CSR)
+# Company Social Responsibility (CSR)
 
 Examples :
 
 - Use lazy loading for occasional resource loading
 - Limit databases results with pagination
-- Group massive processing into more effective batchs
+- Group massive processing into more effective batches
 
 TODO : detail & include specific metrics from the first RSE audits
 
 # Hosting
 
-Dockerfile, docker-compose and Helm chart ready to use.
+Dockerfile, docker-compose and Helm chart ready to use.w
 
 # Linting
 

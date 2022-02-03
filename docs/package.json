@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "changelog": "ts-node ./scripts/changelog.ts",
     "start": "./serve.sh en",
-    "start:en": "./serve.sh en"
+    "start:en": "./serve.sh en",
+    "dev": "npm start"
   },
   "repository": {
     "type": "git",

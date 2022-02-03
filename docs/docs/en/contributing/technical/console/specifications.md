@@ -1,6 +1,6 @@
 # Description
 
-Console is a webapp targeted to App builders and Endusers which help to create and use workspaces, automations and applications.
+Console is a web-app targeted to App builders and Endusers which help to create and use workspaces, automations and applications.
 
 It runs on every modern browser up to date (Chrome, Firefox, Safari, Edge).
 
@@ -152,11 +152,11 @@ App only read path which is parsed by NextJS. XSS attack should not be possible.
 
 Authenticated user token is stored in local storage.
 
-# Company Social Responsability (CSR)
+# Company Social Responsibility (CSR)
 
 - Use lazy loading for occasional resource loading
 - Limit databases results with pagination
-- Group massive processing into more effective batchs
+- Group massive processing into more effective batches
 
 # Hosting
 
