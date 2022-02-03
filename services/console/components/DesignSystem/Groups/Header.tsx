@@ -18,7 +18,7 @@ const Header = ({
   userAvatar,
 }: HeaderProps) => {
   const workspacesMenu = useMemo(
-    () => <Menu items={workspaces} />,
+    () => <Menu items={workspaces} onClick={() => {}} />,
     [workspaces]
   );
 
