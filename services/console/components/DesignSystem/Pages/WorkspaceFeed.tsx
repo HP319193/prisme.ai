@@ -1,8 +1,8 @@
-import FeedLayoutHeader from "./FeedHeader";
+import FeedLayoutHeader from "../Components/FeedHeader";
 import React from "react";
 
 import { Layout, Feed } from "../";
-import { itemsWithCollapseContent } from "../../../stories/mockData";
+import { itemsWithCollapseContent } from "../mockData";
 
 const WorkspaceFeed = () => {
   // Mock hook

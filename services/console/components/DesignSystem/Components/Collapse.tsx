@@ -2,11 +2,13 @@ import { Collapse as AntdCollapse } from "antd";
 
 const { Panel } = AntdCollapse;
 
+export type CollapseItem = {
+  label: string;
+  content: string;
+};
+
 export interface CollapseProps {
-  items: {
-    label: string;
-    content: string;
-  }[];
+  items: CollapseItem[];
 }
 
 const Collapse = ({ items }: CollapseProps) => {

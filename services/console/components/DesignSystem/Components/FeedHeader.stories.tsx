@@ -5,7 +5,7 @@ import { FilterOutlined, SearchOutlined } from "@ant-design/icons";
 import { Space } from "antd";
 
 export default {
-  title: "Groups/FeedHeader",
+  title: "Components/FeedHeader",
   component: FeedHeader,
   parameters: {
     layout: "centered",

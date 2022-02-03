@@ -1,6 +1,6 @@
-import { Section } from "../components/DesignSystem/Groups/Feed";
+import { Section } from "./Components/Feed";
 import React from "react";
-import { Button, Collapse, Space } from "../components/DesignSystem";
+import { Button, Collapse, Space } from "./index";
 import { FilterOutlined, SearchOutlined } from "@ant-design/icons";
 
 export const itemsWithCollapseContent: Section[] = [

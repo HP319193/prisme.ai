@@ -11,10 +11,7 @@ import {
 } from "../index";
 import { LayoutProps } from "../Components/Layout";
 import { Story } from "@storybook/react";
-import {
-  FeedLayoutHeader,
-  itemsWithCollapseContent,
-} from "../../../stories/mockData";
+import { FeedLayoutHeader, itemsWithCollapseContent } from "../mockData";
 
 export default {
   title: "Pages/WorkspaceHome",

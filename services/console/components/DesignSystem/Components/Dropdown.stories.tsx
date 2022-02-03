@@ -20,7 +20,7 @@ export default {
 
 const menuItems = ["item 1", "item 2"];
 
-const workspacesMenu = <Menu items={menuItems} />;
+const workspacesMenu = <Menu items={menuItems} onClick={() => {}} />;
 
 const Template: Story<DropdownProps> = ({ Menu }) => (
   <Dropdown Menu={Menu}>I am a dropdown !</Dropdown>
