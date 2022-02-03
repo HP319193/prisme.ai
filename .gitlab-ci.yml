@@ -345,8 +345,8 @@ docs_build_static:
       - master
       - /^feature\/.*$/
       - /^pipeline\/.*$/
-    # changes:
-    #  - "docs/**/*"
+    changes:
+      - "docs/**/*"
   image: python:latest
   script:
     - cd docs
@@ -369,11 +369,9 @@ docs_deploy:
   only:
     refs:
       - main
-      - master
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-    # changes:
-    #  - "docs/**/*"
+    changes:
+      - "docs/**/*"
   script:
+    - aws s3 rm s3://$S3_BUCKET_NAME --recursive
     - aws s3 cp docs/public/ s3://$DOCS_S3_BUCKET_NAME/ --recursive --include "*"
     - aws cloudfront create-invalidation --distribution-id $DOCS_CDN_DISTRIBUTION_ID --paths "/*"
