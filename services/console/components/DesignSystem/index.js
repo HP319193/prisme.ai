@@ -11,4 +11,5 @@ export { default as MenuTab } from "./MenuTab";
 export { default as Dropdown } from "./Dropdown";
 export { default as Collapse } from "./Collapse";
 export { default as Feed } from "./Feed";
+export { default as SearchInput } from "./SearchInput";
 export { Row, Col, Space, Avatar, Divider } from "antd";

@@ -9,7 +9,12 @@ module.exports = {
     borderRadius: {
       DEFAULT: "10px",
     },
-    extend: {},
+    extend: {
+      colors: {
+        // Antdesign secondary text color
+        gray: "#939CA6",
+      },
+    },
   },
   plugins: [],
 };

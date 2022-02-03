@@ -8,28 +8,8 @@ import {
   Space,
   Title,
   Button,
-} from "../components/DesignSystem";
-import { LayoutProps } from "../components/DesignSystem/Layout";
-import { Story } from "@storybook/react";
-import { FeedLayoutHeader, itemsWithCollapseContent } from "./mockData";
-
-export default {
-  title: "Pages/WorkspaceHome",
-  parameters: {
-    layout: "fullscreen",
-  },
-};
-
-const HeaderComponent = (
-  <Header
-    workspaces={["mon premier workspace", "mon second workspace"]}
-    shareText={"Partager"}
-    userName={"John Doe"}
-    userAvatar={
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/240px-User-avatar.svg.png"
-    }
-  />
-);
+} from "../";
+import { useTranslation } from "react-i18next";
 
 const RightColumnHeader = (
   <MenuTab items={["Apps", "Automations"]} onSelect={() => {}} />
@@ -56,10 +36,6 @@ const RightColumn = (
   <Layout Header={RightColumnHeader} Content={AutomationsContent} />
 );
 
-const Template: Story<LayoutProps> = ({ Header, PageHeader, Content }) => (
-  <Layout Header={Header} PageHeader={PageHeader} Content={Content} />
-);
-
 const LeftContent = (
   <Feed className="p-4 m-2" sections={itemsWithCollapseContent} />
 );
@@ -77,8 +53,27 @@ const WorkspaceContent = (
   </Row>
 );
 
-export const Default = Template.bind({});
-Default.args = {
-  Header: HeaderComponent,
-  Content: WorkspaceContent,
+const WorkspaceHome = ({}: any) => {
+  const { t } = useTranslation("workspaces");
+
+  // Hooks mocks
+  const workspacesNames = ["mon premier workspace", "mon second workspace"];
+  const user = {
+    name: "John Doe",
+    avatar:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/240px-User-avatar.svg.png",
+  };
+
+  const SiteHeader = (
+    <Header
+      workspaces={workspacesNames}
+      shareText={t("share")}
+      userName={user.name}
+      userAvatar={user.avatar}
+    />
+  );
+
+  return <Layout Header={SiteHeader} Content={WorkspaceContent} />;
 };
+
+export default WorkspaceHome;
