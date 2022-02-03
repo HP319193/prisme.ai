@@ -1,7 +1,7 @@
-import { Button, Space, Avatar, Divider, Dropdown, Menu } from "./";
+import { Button, Space, Avatar, Divider, Dropdown, Menu } from "../index";
 import { useMemo } from "react";
 import { ShareAltOutlined } from "@ant-design/icons";
-import iconPrisme from "../../icons/icon-prisme.svg";
+import iconPrisme from "../../../icons/icon-prisme.svg";
 import Image from "next/image";
 
 interface HeaderProps {

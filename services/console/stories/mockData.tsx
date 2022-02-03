@@ -1,4 +1,4 @@
-import { Section } from "../components/DesignSystem/Feed";
+import { Section } from "../components/DesignSystem/Groups/Feed";
 import React from "react";
 import { Button, Collapse, Space } from "../components/DesignSystem";
 import { FilterOutlined, SearchOutlined } from "@ant-design/icons";

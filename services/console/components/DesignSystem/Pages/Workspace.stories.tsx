@@ -9,7 +9,7 @@ import {
   Title,
   Button,
 } from "../index";
-import { LayoutProps } from "../Layout";
+import { LayoutProps } from "../Components/Layout";
 import { Story } from "@storybook/react";
 import {
   FeedLayoutHeader,

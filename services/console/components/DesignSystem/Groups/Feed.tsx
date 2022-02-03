@@ -1,4 +1,4 @@
-import { Title, Space } from "./";
+import { Title, Space } from "../index";
 import { ReactElement } from "react";
 
 export type Section = {

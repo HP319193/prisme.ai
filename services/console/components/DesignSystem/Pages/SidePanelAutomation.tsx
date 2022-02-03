@@ -1,6 +1,6 @@
 import React from "react";
 import { Space } from "../";
-import SearchInput from "../SearchInput";
+import SearchInput from "../Components/SearchInput";
 import { useTranslation } from "react-i18next";
 
 const SidePanelAutomation = () => {

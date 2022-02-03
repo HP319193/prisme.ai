@@ -1,4 +1,4 @@
-import { Button, PageHeader } from "./index";
+import { Button, PageHeader } from "../index";
 import { PageHeaderProps } from "./PageHeader";
 import { Story } from "@storybook/react";
 

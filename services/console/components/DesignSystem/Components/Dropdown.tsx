@@ -2,7 +2,7 @@ import { DownOutlined } from "@ant-design/icons";
 import { Dropdown as AntdDropdown } from "antd";
 import { ReactElement } from "react";
 
-import { Space } from "./";
+import { Space } from "../index";
 
 export interface DropdownProps {
   Menu: ReactElement;

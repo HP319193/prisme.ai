@@ -1,4 +1,4 @@
-import { Row, Col } from "./index";
+import { Row, Col } from "../index";
 import { Story } from "@storybook/react";
 
 export default {

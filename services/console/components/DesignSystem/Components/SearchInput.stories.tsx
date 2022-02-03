@@ -1,5 +1,5 @@
 import React from "react";
-import { SearchInput } from "./index";
+import { SearchInput } from "../index";
 import { Story } from "@storybook/react";
 import { SearchInputProps } from "./SearchInput";
 import { action } from "@storybook/addon-actions";

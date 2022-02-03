@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown, Menu } from "./index";
+import { Dropdown, Menu } from "../index";
 import { Story } from "@storybook/react";
 import { DropdownProps } from "./Dropdown";
 

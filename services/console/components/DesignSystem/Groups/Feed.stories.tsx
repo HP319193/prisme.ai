@@ -1,8 +1,8 @@
 import React from "react";
-import { Collapse, Feed } from "./index";
+import { Collapse, Feed } from "../index";
 import { Story } from "@storybook/react";
 import { FeedProps, Section } from "./Feed";
-import { itemsWithCollapseContent } from "../../stories/mockData";
+import { itemsWithCollapseContent } from "../../../stories/mockData";
 
 export default {
   title: "Layout/Feed",
