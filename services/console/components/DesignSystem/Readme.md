@@ -11,7 +11,8 @@ Same for the "Feed" component, which uses only basic elements.
 ## Groups
 
 The groups are elements which uses multiple Components, and serve a business-logic purpose.
-For example, the "Workspace event feed" has a specific Header, to serve its user stories.
+For example, the "Feed Header" serve a specific component or use.
+
 
 ## Pages
 
