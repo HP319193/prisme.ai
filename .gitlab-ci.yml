@@ -353,7 +353,7 @@ docs_build_static:
     - apt-get update && apt-get install -y nodejs npm
     - npm ci
     - pip install mkdocs-material==6.2.5
-    - bash ./build.sh all    
+    - bash ./build.sh all
   artifacts:
     paths:
       - docs/public
@@ -372,6 +372,6 @@ docs_deploy:
     changes:
       - "docs/**/*"
   script:
-    - aws s3 rm s3://$S3_BUCKET_NAME --recursive
+    - aws s3 rm s3://$DOCS_S3_BUCKET_NAME --recursive
     - aws s3 cp docs/public/ s3://$DOCS_S3_BUCKET_NAME/ --recursive --include "*"
     - aws cloudfront create-invalidation --distribution-id $DOCS_CDN_DISTRIBUTION_ID --paths "/*"
