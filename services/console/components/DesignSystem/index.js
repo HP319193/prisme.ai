@@ -12,10 +12,12 @@ export { default as Collapse } from "./Components/Collapse";
 export { default as SearchInput } from "./Components/SearchInput";
 export { default as Feed } from "./Components/Feed";
 export { default as FeedHeader } from "./Components/FeedHeader";
+
 export { default as SidePanelAutomations } from "./Groups/SidePanelAutomations";
 export { default as SidePanel } from "./Groups/SidePanel";
-
 export { default as Header } from "./Groups/Header";
 export { default as WorkspaceFeed } from "./Groups/WorkspaceFeed";
+
+export { default as WorkspaceHome } from "./Pages/WorkspaceHome";
 
 export { Row, Col, Space, Avatar, Divider } from "antd";

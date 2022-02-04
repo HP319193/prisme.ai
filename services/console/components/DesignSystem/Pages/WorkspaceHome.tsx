@@ -4,6 +4,7 @@ import React from "react";
 import SidePanel from "../Groups/SidePanel";
 import { WorkspaceFeed } from "../";
 import { FeedSection } from "../Groups/WorkspaceFeed";
+import { mockFeedSection } from "../mockData";
 
 export interface WorkspaceHomeProps {}
 
@@ -17,7 +18,36 @@ const WorkspaceHome = ({}: any) => {
     avatar:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/240px-User-avatar.svg.png",
   };
-  const sections: FeedSection[] = [];
+
+  // importing mockData crash storybook ??
+  const sections: FeedSection[] = [
+    {
+      title: "TODAY",
+      content: [
+        {
+          label: "New contact on Hubspot",
+          content: "John doe is requesting a demo",
+        },
+        {
+          label: "New email from Nathan",
+          content: "Hello, I just wanted to spam your inbox",
+        },
+      ],
+    },
+    {
+      title: "Yesterday",
+      content: [
+        {
+          label: "New contact on Hubspot",
+          content: "John doe is requesting a demo",
+        },
+        {
+          label: "New email from Nathan",
+          content: "Hello, I just wanted to spam your inbox",
+        },
+      ],
+    },
+  ];
   // End hooks mocks
 
   return (
