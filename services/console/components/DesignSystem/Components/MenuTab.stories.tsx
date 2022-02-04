@@ -22,7 +22,9 @@ export default {
 };
 
 const Template: Story = ({ onSelect, items = [] }) => (
-  <MenuTab items={items} onSelect={onSelect} />
+  <div className="w-96">
+    <MenuTab items={items} onSelect={onSelect} />
+  </div>
 );
 
 export const Default = Template.bind({});
