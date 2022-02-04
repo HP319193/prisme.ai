@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { BaseSchema, Roles as RolesSchema, Roles } from "./schemas";
+import { BaseSchema, Roles as RolesSchema } from "./schemas";
 import mongoose from "mongoose";
 import { accessibleRecordsPlugin, AccessibleRecordModel } from "@casl/mongoose";
 import {
@@ -22,7 +22,6 @@ import {
   PrismeError,
   UnknownRole,
 } from "./errors";
-import { apiKeys } from "../examples";
 
 type Document<T, Role extends string> = Omit<mongoose.Document<T>, "toJSON"> &
   BaseSubject<Role> & {
@@ -121,10 +120,10 @@ export class AccessManager<
     await mongoose.connect(this.opts.storage.host);
   }
 
-  as(
+  async as(
     user: User<Role>,
     apiKey?: string
-  ): Required<AccessManager<SubjectType, SubjectInterfaces, Role>> {
+  ): Promise<Required<AccessManager<SubjectType, SubjectInterfaces, Role>>> {
     const child: Required<AccessManager<SubjectType, SubjectInterfaces, Role>> =
       Object.assign({}, this, {
         permissions: new Permissions(user, this.permissionsConfig),
@@ -136,7 +135,7 @@ export class AccessManager<
     Object.setPrototypeOf(child, AccessManager.prototype);
 
     if (apiKey) {
-      child.pullApiKey(apiKey);
+      await child.pullApiKey(apiKey);
     }
     return child;
   }
@@ -429,8 +428,7 @@ export class AccessManager<
         "Cannot save any custom role without specifying the rules builder inside permissions config !"
       );
     }
-    const { permissions } = this.checkAsUser();
-    this.throwUnlessCan(
+    await this.throwUnlessCan(
       ActionType.ManageCollaborators,
       role.subjectType,
       role.subjectId
@@ -464,8 +462,6 @@ export class AccessManager<
   }
 
   async deleteRole(id: string): Promise<boolean> {
-    const { permissions } = this.checkAsUser();
-
     const RolesModel = (await this.model(
       <any>NativeSubjectType.Roles
     )) as any as AccessibleRecordModel<
@@ -479,7 +475,7 @@ export class AccessManager<
       throw new ObjectNotFoundError();
     }
     const role = doc.toJSON();
-    this.throwUnlessCan(
+    await this.throwUnlessCan(
       ActionType.ManageCollaborators,
       role.subjectType,
       role.subjectId
@@ -493,8 +489,11 @@ export class AccessManager<
     subjectType: SubjectType,
     subjectId: string
   ): Promise<CustomRole<SubjectType, CustomRules>[]> {
-    const { permissions } = this.checkAsUser();
-    this.throwUnlessCan(ActionType.ManageCollaborators, subjectType, subjectId);
+    await this.throwUnlessCan(
+      ActionType.ManageCollaborators,
+      subjectType,
+      subjectId
+    );
 
     const RolesModel = (await this.model(
       <any>NativeSubjectType.Roles
@@ -518,10 +517,7 @@ export class AccessManager<
     try {
       return await this.pullRole({ name: apiKey });
     } catch (error) {
-      if (error instanceof UnknownRole) {
-        throw new InvalidAPIKey();
-      }
-      throw error;
+      throw new InvalidAPIKey();
     }
   }
 
@@ -561,9 +557,6 @@ export class AccessManager<
     subjectId: string,
     rules: CustomRules
   ): Promise<ApiKey<SubjectType, CustomRules>> {
-    const { permissions } = this.checkAsUser();
-    this.throwUnlessCan(ActionType.ManageCollaborators, subjectType, subjectId);
-
     const apiKey = crypto.randomUUID();
     const role = await this.saveRole({
       id: this.getApiKeyRoleId(apiKey, subjectType, subjectId),
@@ -582,11 +575,6 @@ export class AccessManager<
     subjectId: string,
     rules: CustomRules
   ): Promise<ApiKey<SubjectType, CustomRules>> {
-    const { permissions } = this.checkAsUser();
-    permissions.throwUnlessCan(ActionType.ManageCollaborators, subjectType, {
-      id: subjectId,
-    });
-
     const role = await this.saveRole({
       id: this.getApiKeyRoleId(apiKey, subjectType, subjectId),
       name: apiKey,
@@ -603,11 +591,6 @@ export class AccessManager<
     subjectType: SubjectType,
     subjectId: string
   ): Promise<boolean> {
-    const { permissions } = this.checkAsUser();
-    permissions.throwUnlessCan(ActionType.ManageCollaborators, subjectType, {
-      id: subjectId,
-    });
-
     return await this.deleteRole(
       this.getApiKeyRoleId(apiKey, subjectType, subjectId)
     );

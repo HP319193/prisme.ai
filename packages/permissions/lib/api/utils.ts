@@ -1,3 +1,4 @@
+import { Broker } from "@prisme.ai/broker";
 import { NextFunction, Request, Response } from "express";
 import { AccessManager } from "../..";
 
@@ -14,6 +15,7 @@ export type InstantiatedAccessManager<
 >;
 export type ExtendedRequest<SubjectType extends string, CustomRules = any> = {
   accessManager: InstantiatedAccessManager<SubjectType, CustomRules>;
+  broker: Broker;
 };
 
 export const asyncRoute =

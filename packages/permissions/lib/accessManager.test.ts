@@ -59,22 +59,26 @@ const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
   }
 );
 
+const adminAId = "adminUserIdA";
+const adminBId = "adminUserIdB";
+let adminA: Required<AccessManager<SubjectType, SubjectInterfaces, Role>>;
+let adminB: Required<AccessManager<SubjectType, SubjectInterfaces, Role>>;
 let mongod: MongoMemoryServer;
 beforeAll(async () => {
   mongod = await MongoMemoryServer.create();
   //@ts-ignore
   accessManager.opts.storage.host = mongod.getUri();
   await accessManager.start();
-});
 
-const adminA = accessManager.as({
-  id: "adminUserIdA",
-  role: Role.WorkspaceBuilder,
-});
+  adminA = await accessManager.as({
+    id: adminAId,
+    role: Role.WorkspaceBuilder,
+  });
 
-const adminB = accessManager.as({
-  id: "adminUserIdB",
-  role: Role.WorkspaceBuilder,
+  adminB = await accessManager.as({
+    id: adminBId,
+    role: Role.WorkspaceBuilder,
+  });
 });
 
 describe("CRUD with a predefined role", () => {
@@ -153,11 +157,11 @@ describe("CRUD with a predefined role", () => {
   });
 
   it("An admin can list all workspaces he created", async () => {
-    const adminZ = accessManager.as({
+    const adminZ = await accessManager.as({
       id: `adminUserIdZ${Math.round(Math.random() * 10000)}`,
       role: Role.WorkspaceBuilder,
     });
-    const adminY = accessManager.as({
+    const adminY = await accessManager.as({
       id: `adminUserIdY${Math.round(Math.random() * 10000)}`,
       role: Role.WorkspaceBuilder,
     });
@@ -184,11 +188,11 @@ describe("CRUD with a predefined role", () => {
   });
 
   it("An admin can list all workspaces he created + those shared with him", async () => {
-    const adminZ = accessManager.as({
+    const adminZ = await accessManager.as({
       id: `adminUserIdZ${Math.round(Math.random() * 100000)}`,
       role: Role.WorkspaceBuilder,
     });
-    const adminY = accessManager.as({
+    const adminY = await accessManager.as({
       id: `adminUserIdY${Math.round(Math.random() * 100000)}`,
       role: Role.WorkspaceBuilder,
     });
@@ -233,15 +237,15 @@ describe("CRUD with a predefined role", () => {
   });
 
   it("A workspace admin can list all pages of his workspace (including those he did not create himself)", async () => {
-    const adminZ = accessManager.as({
+    const adminZ = await accessManager.as({
       id: `adminUserIdZ${Math.round(Math.random() * 100000)}`,
       role: Role.WorkspaceBuilder,
     });
-    const adminX = accessManager.as({
+    const adminX = await accessManager.as({
       id: `adminUserIdX${Math.round(Math.random() * 100000)}`,
       role: Role.WorkspaceBuilder,
     });
-    const collabZ = accessManager.as({
+    const collabZ = await accessManager.as({
       id: `collabUserIdZ${Math.round(Math.random() * 100000)}`,
     });
 
@@ -345,7 +349,7 @@ describe("Role & Permissions granting", () => {
     // Refresh adminB to force him to "forgot" he was admin
     // TODO a way to automatically detect that ?
     // If AccessManager.as() instance is meant to be alive a long time, this would be critical ...
-    const refreshedAdminB = accessManager.as({
+    const refreshedAdminB = await accessManager.as({
       id: "adminUserIdB",
     });
 
@@ -356,7 +360,7 @@ describe("Role & Permissions granting", () => {
   });
 
   it("A collaborator can update a page for which he has been given update permission", async () => {
-    const collaborator = accessManager.as({
+    const collaborator = await accessManager.as({
       id: "someCollaboratorId",
       role: Role.Guest,
     });
@@ -407,7 +411,7 @@ describe("API Keys", () => {
     id: "ourWorkspaceId" + Math.round(Math.random() * 10000),
     name: "ourWorkspace",
     collaborators: {
-      [adminA.user.id]: {
+      [adminAId]: {
         role: "admin",
       },
     },
@@ -419,23 +423,45 @@ describe("API Keys", () => {
       anotherAdminId: {
         role: "admin",
       },
-      [adminB.user.id]: {
+      [adminBId]: {
         role: "admin",
       },
     },
   };
-  //@ts-ignore
-  adminA.permissions.pullRoleFromSubject(SubjectType.Workspace, ourWorkspace);
-  //@ts-ignore
-  adminA.permissions.pullRoleFromSubject(
-    SubjectType.Workspace,
-    anotherWorkspace
-  );
-  //@ts-ignore
-  adminB.permissions.pullRoleFromSubject(
-    SubjectType.Workspace,
-    anotherWorkspace
-  );
+
+  // Required just because "describe" blocks are executed before "beforeAll" resolution
+  it("Setup", () => {
+    //@ts-ignore
+    adminA.permissions.pullRoleFromSubject(SubjectType.Workspace, ourWorkspace);
+    //@ts-ignore
+    adminA.permissions.pullRoleFromSubject(
+      SubjectType.Workspace,
+      anotherWorkspace
+    );
+    //@ts-ignore
+    adminB.permissions.pullRoleFromSubject(
+      SubjectType.Workspace,
+      anotherWorkspace
+    );
+
+    // Prevent from fetching non existent data
+    [adminA, adminB].forEach((admin) => {
+      const throwUnlessCan = admin.throwUnlessCan.bind(admin);
+      admin.throwUnlessCan = (
+        actionType: ActionType,
+        subjectType: SubjectType,
+        idOrSubject: object | string
+      ) => {
+        if (idOrSubject === ourWorkspace.id) {
+          return throwUnlessCan(actionType, subjectType, ourWorkspace);
+        }
+        if (idOrSubject === anotherWorkspace.id) {
+          return throwUnlessCan(actionType, subjectType, anotherWorkspace);
+        }
+        return throwUnlessCan(actionType, subjectType, idOrSubject);
+      };
+    });
+  });
 
   const ourWorkspaceAPIKey: ApiKey<SubjectType, Prismeai.ApiKeyRules> = {
     apiKey: "will be defined on creation",

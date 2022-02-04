@@ -2305,6 +2305,75 @@ components:
               type: string
           additionalProperties: true
 
+    ########################## API Keys #############################
+    CreatedApiKey:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apikeys.created
+          enum:
+            - apikeys.created
+        payload: &API_KEY_EVENT_PAYLOAD
+          type: object
+          required:
+            - apiKey
+            - subjectType
+            - subjectId
+            - rules
+          properties:
+            apiKey:
+              type: string
+            subjectType:
+              type: string
+              enum: *KNOWN_SUBJECT_TYPES
+            subjectId:
+              type: string
+            rules:
+              $ref: "#/components/schemas/ApiKeyRules"
+
+    UpdatedApiKey:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apikeys.updated
+          enum:
+            - apikeys.updated
+        payload: *API_KEY_EVENT_PAYLOAD
+
+    DeletedApiKey:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apikeys.deleted
+          enum:
+            - apikeys.deleted
+        payload:
+          type: object
+          required:
+            - apiKey
+            - subjectType
+            - subjectId
+          properties:
+            apiKey:
+              type: string
+            subjectType:
+              type: string
+              enum: *KNOWN_SUBJECT_TYPES
+            subjectId:
+              type: string
+
     ########################## API Gateway ##########################
     FailedLogin:
       type: object

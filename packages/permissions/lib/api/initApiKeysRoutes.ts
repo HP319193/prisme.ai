@@ -2,6 +2,12 @@ import "@prisme.ai/types";
 import { Request, Response, Router } from "express";
 import { asyncRoute, ExtendedRequest } from "./utils";
 
+export enum EventType {
+  CreatedApiKey = "apikeys.created",
+  UpdatedApiKey = "apikeys.updated",
+  DeletedApiKey = "apikeys.deleted",
+}
+
 export function initApiKeysRoutes<
   SubjectType extends string,
   CustomRules = any
@@ -30,6 +36,7 @@ export function initApiKeysRoutes<
       params: { subjectType, subjectId },
       body,
       accessManager,
+      broker,
     }: Request<
       PrismeaiAPI.CreateApiKey.PathParameters,
       PrismeaiAPI.CreateApiKey.Responses.$200,
@@ -44,6 +51,13 @@ export function initApiKeysRoutes<
       body.rules
     );
 
+    if (broker) {
+      broker.send<Prismeai.CreatedApiKey["payload"]>(
+        EventType.CreatedApiKey,
+        <Prismeai.CreatedApiKey["payload"]>apiKey
+      );
+    }
+
     return res.send(apiKey);
   }
 
@@ -52,6 +66,7 @@ export function initApiKeysRoutes<
       params: { subjectType, subjectId, apiKey },
       body,
       accessManager,
+      broker,
     }: Request<
       PrismeaiAPI.UpdateApiKey.PathParameters,
       PrismeaiAPI.UpdateApiKey.Responses.$200,
@@ -67,6 +82,13 @@ export function initApiKeysRoutes<
       body.rules
     );
 
+    if (broker) {
+      broker.send<Prismeai.UpdatedApiKey["payload"]>(
+        EventType.UpdatedApiKey,
+        <Prismeai.UpdatedApiKey["payload"]>updatedApiKey
+      );
+    }
+
     return res.send(updatedApiKey);
   }
 
@@ -74,6 +96,7 @@ export function initApiKeysRoutes<
     {
       params: { apiKey, subjectType, subjectId },
       accessManager,
+      broker,
     }: Request<
       PrismeaiAPI.DeleteApiKey.PathParameters,
       PrismeaiAPI.DeleteApiKey.Responses.$200,
@@ -87,6 +110,15 @@ export function initApiKeysRoutes<
       subjectType as SubjectType,
       subjectId
     );
+
+    if (broker) {
+      broker.send<Prismeai.DeletedApiKey["payload"]>(EventType.DeletedApiKey, {
+        apiKey,
+        subjectType:
+          subjectType as Prismeai.DeletedApiKey["payload"]["subjectType"],
+        subjectId,
+      });
+    }
 
     return res.send({ apiKey });
   }

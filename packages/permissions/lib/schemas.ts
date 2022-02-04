@@ -1,11 +1,9 @@
 import { Schema, Document, Types } from "mongoose";
 import { ActionType, Permissions, Rules, Subject } from "..";
-import { SubjectType } from "../examples/accessManagement";
 
 export const Roles = new Schema({
   id: { type: String, index: true },
   name: String,
-  // apiKey: { type: String, sparse: true },
   type: String,
   subjectType: String,
   subjectId: String,

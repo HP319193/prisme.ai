@@ -596,6 +596,19 @@ declare namespace Prismeai {
          */
         id?: string;
     }
+    export interface CreatedApiKey {
+        /**
+         * example:
+         * apikeys.created
+         */
+        type: "apikeys.created";
+        payload: {
+            apiKey: string;
+            subjectType: "workspaces";
+            subjectId: string;
+            rules: ApiKeyRules;
+        };
+    }
     export interface CreatedAutomation {
         /**
          * example:
@@ -623,6 +636,18 @@ declare namespace Prismeai {
              * Variable name to remove
              */
             name: string;
+        };
+    }
+    export interface DeletedApiKey {
+        /**
+         * example:
+         * apikeys.deleted
+         */
+        type: "apikeys.deleted";
+        payload: {
+            apiKey: string;
+            subjectType: "workspaces";
+            subjectId: string;
         };
     }
     export interface DeletedAutomation {
@@ -895,6 +920,19 @@ declare namespace Prismeai {
     export interface TypedArgument {
         type?: "string" | "number";
         description?: LocalizedText;
+    }
+    export interface UpdatedApiKey {
+        /**
+         * example:
+         * apikeys.updated
+         */
+        type: "apikeys.updated";
+        payload: {
+            apiKey: string;
+            subjectType: "workspaces";
+            subjectId: string;
+            rules: ApiKeyRules;
+        };
     }
     export interface UpdatedAutomation {
         /**

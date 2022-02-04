@@ -1,4 +1,4 @@
-import { PermissionsConfig, ActionType, CustomRole } from "..";
+import { PermissionsConfig, ActionType } from "..";
 
 export enum SubjectType {
   User = "user",

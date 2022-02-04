@@ -10,7 +10,11 @@ export enum Role {
   Collaborator = "collaborator",
 }
 
-export const config: PermissionsConfig<SubjectType, Prismeai.Role> = {
+export const config: PermissionsConfig<
+  SubjectType,
+  Prismeai.Role,
+  Prismeai.ApiKeyRules
+> = {
   subjectTypes: Object.values(SubjectType),
   rbac: [
     {
@@ -40,8 +44,50 @@ export const config: PermissionsConfig<SubjectType, Prismeai.Role> = {
             "source.workspaceId": "${subject.id}",
           },
         },
+        {
+          inverted: true,
+          action: [ActionType.Create, ActionType.Read],
+          subject: SubjectType.Event,
+          conditions: {
+            type: {
+              $regex: "^apikeys\\..*$",
+            },
+            // This role only applies to a specific workspace !
+            "source.workspaceId": "${subject.id}",
+          },
+        },
       ],
     },
   ],
   abac: [],
+  customRulesBuilder: (role) => {
+    if (role.type !== "apiKey") {
+      throw new Error("Unsupported custom role " + JSON.stringify(role));
+    }
+
+    if (role.subjectType === SubjectType.Workspace) {
+      if (!role?.rules?.events) {
+        return [];
+      }
+
+      const escapedAllowedEvents = role.rules.events.map((cur) =>
+        cur.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/[*]/g, ".*")
+      );
+      const allowedEventsRegex = `^(${escapedAllowedEvents.join("|")})$`;
+
+      return [
+        {
+          action: [ActionType.Create, ActionType.Read],
+          subject: SubjectType.Event,
+          conditions: {
+            type: {
+              $regex: allowedEventsRegex,
+            },
+            "source.workspaceId": role.subjectId,
+          },
+        },
+      ];
+    }
+    throw new Error("Unsupported api key");
+  },
 };

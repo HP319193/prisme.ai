@@ -3,6 +3,7 @@ import { AccessManager, SubjectType, ActionType } from "../../permissions";
 
 export interface Subscriber {
   userId: string;
+  apiKey?: string;
   callback: (event: PrismeEvent<any>) => void;
   accessManager: Required<AccessManager>;
 }
@@ -40,17 +41,20 @@ export class Subscriptions {
     );
   }
 
-  subscribe(
+  async subscribe(
     workspaceId: string,
     subscriber: Omit<Subscriber, "accessManager">
-  ): () => void {
+  ): Promise<() => void> {
     if (!(workspaceId in this.subscribers)) {
       this.subscribers[workspaceId] = [];
     }
 
-    const userAccessManager = this.accessManager.as({
-      id: subscriber.userId,
-    });
+    const userAccessManager = await this.accessManager.as(
+      {
+        id: subscriber.userId,
+      },
+      subscriber.apiKey
+    );
     userAccessManager.pullRoleFromSubject(SubjectType.Workspace, workspaceId);
 
     this.subscribers[workspaceId].push({
