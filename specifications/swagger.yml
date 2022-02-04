@@ -537,11 +537,14 @@ paths:
       security:
         - ApiKeyAuth: []
       requestBody:
-        required: true
         content:
-          application/json:
+          "application/json":
             schema:
               type: object
+              description: Entire body will be passed as a payload to the triggered automation
+          "*/*":
+            schema:
+              $ref: "#/components/schemas/AnyValue"
               description: Entire body will be passed as a payload to the triggered automation
 
       responses:
