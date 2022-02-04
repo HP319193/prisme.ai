@@ -9,7 +9,7 @@ services:
     ports:
       - "6379:6379"
   runtime:
-    entrypoint: npm start --prefix=services/runtime
+    entrypoint: node --abort-on-uncaught-exception services/runtime/dist/index.js
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-runtime:latest
     volumes:
       - ../../data/models:/www/models

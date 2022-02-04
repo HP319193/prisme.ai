@@ -31,7 +31,7 @@ services:
       - ../../data/elasticsearch01.yml:/usr/share/elasticsearch/config/elasticsearch.yml
 
   events:
-    entrypoint: npm start --prefix services/events
+    entrypoint: node --abort-on-uncaught-exception services/events/dist/index.js
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-events:latest
     depends_on:
       - redis

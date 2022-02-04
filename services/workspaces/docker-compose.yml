@@ -9,7 +9,7 @@ services:
     ports:
       - "6379:6379"
   workspaces:
-    entrypoint: npm start --prefix=services/workspaces
+    entrypoint: node --abort-on-uncaught-exception services/workspaces/dist/index.js
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-workspaces:latest
     volumes:
       - ../../data/models:/www/models

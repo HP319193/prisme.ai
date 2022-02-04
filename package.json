@@ -23,7 +23,7 @@
     "dev:console": "npm run dev --prefix services/console",
     "dev:design-system": "npm start --prefix packages/design-system",
     "dev:workspaces": "npm run dev --prefix services/workspaces",
-    "dev:gateway": "npm run dev --prefix services/api-gateway",
+    "dev:api-gateway": "npm run dev --prefix services/api-gateway",
     "dev:runtime": "npm run dev --prefix services/runtime",
     "dev:events": "npm run dev --prefix services/events",
     "dev:docs": "npm run dev --prefix docs",
