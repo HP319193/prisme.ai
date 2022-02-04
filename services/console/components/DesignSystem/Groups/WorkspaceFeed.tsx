@@ -41,7 +41,9 @@ const WorkspaceFeed = ({ sections }: WorkspaceFeedProps) => {
 
   return (
     <Layout Header={WorkspaceFeedHeader}>
-      <Feed sections={feedSections} />
+      <div className="p-2 flex grow">
+        <Feed sections={feedSections} />
+      </div>
     </Layout>
   );
 };
