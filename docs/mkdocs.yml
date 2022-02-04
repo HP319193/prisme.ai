@@ -1,0 +1,94 @@
+site_name: i18n.site_name
+site_url: https://docs.eda.prisme.ai
+console_url: https://console.eda.prisme.ai/login
+site_author: Prisme.ai
+site_description: i18n.site_description
+start: i18n.start
+docs_dir: docs/en
+site_dir: public/fr
+# Copyright
+copyright: Prisme.ai &copy; 2016 - 2022 Gogowego SAS
+extra_css:
+  - stylesheets/extra.css
+extra_javascript:
+  - javascripts/extra.js
+theme:
+  name: material
+  custom_dir: ./theme
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+  font:
+    text: Montserrat
+  features:
+    - navigation.tabs
+languages:
+  - title: Français (FR)
+    code: fr
+  - title: English (EN)
+    code: en
+extra:
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/prisme_ai
+      name: prisme_ai on Twitter
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/prisme-ai
+      name: Prisme.ai on LinkedIn
+  generator: false
+
+nav:
+  - i18n.home: index.md
+  - i18n.contributing:
+      - i18n.index: contributing/index.md
+      - i18n.functionnalRequirements: contributing/functionnalRequirements.md
+      - i18n.architecture: contributing/architecture.md
+      - i18n.console:
+          - i18n.specifications: contributing/technical/console/specifications.md
+      - i18n.events:
+          - i18n.specifications: contributing/technical/events/specifications.md
+      - i18n.runtime:
+          - i18n.specifications: contributing/technical/runtime/specifications.md
+      - i18n.workspaces:
+          - i18n.specifications: contributing/technical/workspaces/specifications.md
+      - i18n.apiGateway:
+          - i18n.specifications: contributing/technical/apiGateway/specifications.md
+
+markdown_extensions:
+  - admonition
+  - abbr
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: squidfunk
+      repo: mkdocs-material
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name:
+            class: mermaid
+            format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde

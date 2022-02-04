@@ -1,0 +1,16 @@
+home: Home
+index: Index
+start: Documentation
+site_name: Prisme.ai
+site_description: Everything you need to know about Prisme.ai
+
+contributing: Contributing
+functionnalRequirements: Functionnal Requirements
+architecture: Architecture
+console: Console
+runtime: Runtime
+events: Events
+apiGateway: ApiGateway
+workspaces: Workspaces
+projects: Projects
+specifications: Specifications
