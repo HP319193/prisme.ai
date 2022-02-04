@@ -4,6 +4,7 @@ import { Button, Collapse, Feed, FeedHeader, Layout } from "../";
 // Importing Space from above crash build
 import { Space } from "antd";
 import { CollapseItem } from "../Components/Collapse";
+import { Section } from "../Components/Feed";
 
 const headerButtons = [
   <Button key="filter">
@@ -22,13 +23,13 @@ const headerButtons = [
 
 const WorkspaceFeedHeader = <FeedHeader buttons={headerButtons} />;
 
-export type Section = {
+export type FeedSection = {
   title: string;
   content: CollapseItem[];
 };
 
 export interface WorkspaceFeedProps {
-  sections: Section[];
+  sections: FeedSection[];
 }
 
 const WorkspaceFeed = ({ sections }: WorkspaceFeedProps) => {
