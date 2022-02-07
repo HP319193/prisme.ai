@@ -1,37 +1,37 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { YAMLException } from "js-yaml";
-import { useWorkspace } from "../layouts/WorkspaceLayout";
-import { Workspace } from "../api/types";
-import useYaml from "../utils/useYaml";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { YAMLException } from 'js-yaml';
+import { useWorkspace } from '../layouts/WorkspaceLayout';
+import { Workspace } from '../api/types';
+import useYaml from '../utils/useYaml';
 import {
   findParameter,
   findParent,
   getLineNumberFromPath,
   ValidationError,
-} from "../utils/yaml";
-import { generateEndpoint } from "../utils/urls";
-import { useToaster } from "../layouts/Toaster";
-import { useTranslation } from "next-i18next";
-import { validateWorkspace } from "@prisme.ai/validation";
+} from '../utils/yaml';
+import { generateEndpoint } from '../utils/urls';
+import { useToaster } from '../layouts/Toaster';
+import { useTranslation } from 'next-i18next';
+import { validateWorkspace } from '@prisme.ai/validation';
 import CodeEditor from '../components/CodeEditor/lazy';
 
 interface Annotation {
   row: number;
   column: number;
   text: string;
-  type: "error";
+  type: 'error';
 }
 
 const getEndpointAutomationName = (value: string, line: number) => {
-  const { line: l = line } = findParent(`${value}`, line) || {}
-  return findParent(`${value}`, l)
-}
+  const { line: l = line } = findParent(`${value}`, line) || {};
+  return findParent(`${value}`, l);
+};
 
 interface WorkspaceSourceProps {
   onLoad?: () => void;
 }
 export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
-  const { t } = useTranslation("workspaces");
+  const { t } = useTranslation('workspaces');
   const { workspace, setInvalid, setDirty, setNewSource, invalid, save } =
     useWorkspace();
   const [value, setValue] = useState<string | undefined>();
@@ -42,9 +42,21 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const initYaml = useCallback(async () => {
     try {
-      const value = await toYaml(workspace);
+      // remove workspace id and automations slugs
+      const { id, automations = {}, ...json } = workspace;
+      const cleanedJson = {
+        ...json,
+        automations: Object.keys(automations).reduce((prev, name) => {
+          const { slug, ...automation } = automations[name];
+          return {
+            ...prev,
+            [name]: automation,
+          };
+        }, {}),
+      };
+      const value = await toYaml(cleanedJson);
       setValue(value);
-    } catch (e) { }
+    } catch (e) {}
   }, [workspace, toYaml]);
   useEffect(() => {
     initYaml();
@@ -52,10 +64,10 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const checkSyntaxAndReturnYAML = useCallback(
     async (value: string) => {
-      if (value === undefined) return;
+      if (!workspace || value === undefined) return;
       try {
         setAnnotations([]);
-        return await toJSON<Workspace>(value);
+        return { ...(await toJSON<Workspace>(value)), id: workspace.id };
       } catch (e) {
         const { mark, message } = e as YAMLException;
         setAnnotations([
@@ -63,12 +75,12 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
             row: mark.line,
             column: mark.position,
             text: message,
-            type: "error",
+            type: 'error',
           },
         ]);
       }
     },
-    [toJSON]
+    [toJSON, workspace]
   );
 
   const update = useCallback(
@@ -81,9 +93,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         setInvalid((validateWorkspace.errors as ValidationError[]) || false);
         setNewSource(json);
         setDirty(true);
-      } catch (e) {
-
-      }
+      } catch (e) {}
     },
     [checkSyntaxAndReturnYAML, setDirty, setInvalid, setNewSource]
   );
@@ -102,9 +112,9 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
             row,
             column: 0,
             text: message,
-            type: "error",
+            type: 'error',
           };
-        } catch (e) { }
+        } catch (e) {}
       })
       .filter(Boolean) as Annotation[];
     setAnnotations(annotations);
@@ -114,15 +124,17 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     if (!workspace) return annotations;
     const endpoints = findParameter(`${value}`, {
       indent: 3,
-      parameter: "endpoint",
+      parameter: 'endpoint',
     }).map(({ line, value: v }) => ({
       row: line - 1,
       column: 0,
       text: generateEndpoint(
         workspace.id,
-        v === "true" ? (getEndpointAutomationName(`${value}`, line) || { name: v }).name : v
+        v === 'true'
+          ? (getEndpointAutomationName(`${value}`, line) || { name: v }).name
+          : v
       ),
-      type: "endpoint",
+      type: 'endpoint',
     }));
     const allAnnotations = [...(annotations || []), ...endpoints];
     return allAnnotations;
@@ -133,23 +145,23 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     if (!current) return;
     const listener = (e: MouseEvent) => {
       const target = e.target as HTMLDivElement;
-      if (!target.classList.contains("ace_endpoint")) return;
+      if (!target.classList.contains('ace_endpoint')) return;
       const line = +(target.textContent || 0);
       const { text: url } =
         allAnnotations.find(
-          ({ row, type }) => line - 1 === row && type === "endpoint"
+          ({ row, type }) => line - 1 === row && type === 'endpoint'
         ) || {};
       if (!url) return;
       navigator.clipboard.writeText(url);
       toaster.show({
-        severity: "info",
-        summary: t("automations.endpoint.copied"),
+        severity: 'info',
+        summary: t('automations.endpoint.copied'),
       });
     };
-    current.addEventListener("click", listener);
+    current.addEventListener('click', listener);
 
     return () => {
-      current.removeEventListener("click", listener);
+      current.removeEventListener('click', listener);
     };
   }, [allAnnotations, ref, t, toaster]);
 
@@ -164,7 +176,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         },
       },
     ],
-    [save, t],
+    [save, t]
   );
 
   if (value === undefined) return null;

@@ -5,7 +5,7 @@ exports[`should render 1`] = `
   className="p-field mb-5"
 >
   <span
-    className="p-float-label mx-2 undefined"
+    className="flex p-float-label mx-2 undefined"
   >
     Foo
     <label
@@ -22,10 +22,10 @@ exports[`should render an input 1`] = `
   className="p-field mb-5"
 >
   <span
-    className="p-float-label mx-2 undefined"
+    className="flex p-float-label mx-2 undefined"
   >
     <input
-      className=""
+      className="flex flex-1 "
     />
     <label
       htmlFor=""
@@ -41,10 +41,10 @@ exports[`should render an invalid input 1`] = `
   className="p-field mb-5"
 >
   <span
-    className="p-float-label mx-2 undefined"
+    className="flex p-float-label mx-2 undefined"
   >
     <input
-      className="p-invalid"
+      className="flex flex-1 p-invalid"
       error="error"
       touched={true}
     />

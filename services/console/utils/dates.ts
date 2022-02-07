@@ -1,7 +1,7 @@
-import formatDate from "date-fns/format";
-import formatRelative from "date-fns/formatRelative";
-import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import formatDate from 'date-fns/format';
+import formatRelative from 'date-fns/formatRelative';
+import { useTranslation } from 'next-i18next';
+import { useEffect, useState } from 'react';
 
 interface LocaleWithoutHourOption extends Locale {
   formatRelativeLocaleWithoutHour: {
@@ -61,13 +61,13 @@ const getLocale = async (lang: string) => {
     today: "'Today'",
     tomorrow: "'Tomorrow'",
     nextWeek: "'Next' eeee",
-    other: "dd.MM.yyyy",
+    other: 'dd.MM.yyyy',
   };
   let locale: LocaleWithoutHourOption;
 
   switch (lang) {
-    case "fr": {
-      const module = await import("date-fns/locale/fr");
+    case 'fr': {
+      const module = await import('date-fns/locale/fr');
       locale = {
         ...module.default,
         formatRelativeLocaleWithoutHour: {
@@ -76,13 +76,13 @@ const getLocale = async (lang: string) => {
           today: "'aujourd’hui'",
           tomorrow: "'demain'",
           nextWeek: "eeee 'prochain'",
-          other: "P",
+          other: 'P',
         },
       };
       break;
     }
-    case "es": {
-      const module = await import("date-fns/locale/es");
+    case 'es': {
+      const module = await import('date-fns/locale/es');
       locale = {
         ...module.default,
         formatRelativeLocaleWithoutHour: {
@@ -90,14 +90,14 @@ const getLocale = async (lang: string) => {
           yesterday: "'ayer'",
           today: "'hoy'",
           tomorrow: "'mañana'",
-          nextWeek: "eeee",
-          other: "P",
+          nextWeek: 'eeee',
+          other: 'P',
         },
       };
       break;
     }
     default: {
-      const module = await import("date-fns/locale/en-US");
+      const module = await import('date-fns/locale/en-US');
       locale = {
         ...module.default,
         formatRelativeLocaleWithoutHour,
@@ -108,9 +108,9 @@ const getLocale = async (lang: string) => {
 };
 
 export const useDateFormat = () => {
-  const { i18n: { language = "en" } = {} } = useTranslation();
+  const { i18n: { language = 'en' } = {} } = useTranslation();
   const [formatFn, setFormatFn] = useState<FormatReturn>(
-    () => (date: Date | string) => ""
+    () => (date: Date | string) => ''
   );
 
   useEffect(() => {

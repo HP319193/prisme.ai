@@ -1,11 +1,13 @@
-import TriggerForm from "./TriggerForm";
-import renderer from "react-test-renderer";
+import TriggerForm from './TriggerForm';
+import renderer from 'react-test-renderer';
 
-it("should render", () => {
+it('should render', () => {
   const trigger = {
-    events: ['foo']
-  }
+    events: ['foo'],
+  };
   const onSubmit = jest.fn();
-  const root = renderer.create(<TriggerForm trigger={trigger} onSubmit={onSubmit} />);
+  const root = renderer.create(
+    <TriggerForm trigger={trigger} onSubmit={onSubmit} />
+  );
   expect(root.toJSON()).toMatchSnapshot();
 });

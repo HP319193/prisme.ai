@@ -1,8 +1,8 @@
-import { FC, memo } from "react";
-import { Handle, NodeProps, Position } from 'react-flow-renderer'
-import { useAutomationBuilder } from "./context";
+import { FC, memo } from 'react';
+import { Handle, NodeProps, Position } from 'react-flow-renderer';
+import { useAutomationBuilder } from './context';
 
-export const EmptyBlock: FC<NodeProps> = (({ data = {}, id, ...props }) => {
+export const EmptyBlock: FC<NodeProps> = ({ data = {}, id, ...props }) => {
   const { addInstruction } = useAutomationBuilder();
 
   return (
@@ -23,17 +23,22 @@ export const EmptyBlock: FC<NodeProps> = (({ data = {}, id, ...props }) => {
           flex-column
           w-10rem"
       >
-        <div className="flex justify-content-center" style={{ minHeight: '1px' }}>
-          {data.withButton &&
+        <div
+          className="flex justify-content-center"
+          style={{ minHeight: '1px' }}
+        >
+          {data.withButton && (
             <button
               className="pi pi-plus border-none bg-primary p-1 border-round z-1 text-xs cursor-pointer"
               onClick={() => {
-                addInstruction(data.parent, data.index)
-              }} />}
+                addInstruction(data.parent, data.index);
+              }}
+            />
+          )}
         </div>
       </div>
     </>
   );
-});
+};
 
-export default memo(EmptyBlock)
+export default memo(EmptyBlock);

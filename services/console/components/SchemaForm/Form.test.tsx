@@ -1,111 +1,137 @@
-import Form from "./Form";
-import renderer from "react-test-renderer";
+import Form from './Form';
+import renderer from 'react-test-renderer';
 import { Form as FFForm } from 'react-final-form';
 
-it("should render", () => {
+it('should render', () => {
   const schema = {
     required: ['foo'],
     properties: {
       foo: {
-        type: 'string'
+        type: 'string',
       },
       bar: {
-        type: 'boolean'
+        type: 'boolean',
       },
       lorem: {
-        type: 'object'
+        type: 'object',
       },
       ipsum: {
-        type: 'array'
-      }
-    }
-  }
-  const onSubmit = jest.fn()
+        type: 'array',
+      },
+    },
+  };
+  const onSubmit = jest.fn();
   const root = renderer.create(<Form schema={schema} onSubmit={onSubmit} />);
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it("should submit", () => {
+it('should submit', () => {
   const schema = {
     required: ['foo'],
     properties: {
       foo: {
-        type: 'string'
+        type: 'string',
       },
       bar: {
-        type: 'boolean'
+        type: 'boolean',
       },
       lorem: {
-        type: 'object'
+        type: 'object',
       },
       ipsum: {
-        type: 'array'
-      }
-    }
-  }
-  const onSubmit = jest.fn()
+        type: 'array',
+      },
+    },
+  };
+  const onSubmit = jest.fn();
   const root = renderer.create(<Form schema={schema} onSubmit={onSubmit} />);
   const errors = root.root.findByType(FFForm).props.onSubmit({});
-  expect(errors).toEqual({ foo: 'required' })
+  expect(errors).toEqual({ foo: 'required' });
 });
 
-it("should check invalid objet", () => {
+it('should save string as string', () => {
   const schema = {
     required: ['foo'],
     properties: {
       foo: {
-        type: 'object'
+        type: 'object',
       },
-    }
-  }
-  const onSubmit = jest.fn()
+    },
+  };
+  const onSubmit = jest.fn();
   const root = renderer.create(<Form schema={schema} onSubmit={onSubmit} />);
-  const errors = root.root.findByType(FFForm).props.onSubmit({
-    foo: '{fail}'
+  root.root.findByType(FFForm).props.onSubmit({
+    foo: 'value',
   });
-  expect(errors).toEqual({ foo: 'invalid object' })
+  expect(onSubmit).toHaveBeenCalledWith({
+    foo: 'value',
+  });
 });
 
-it("should check oneOf rule", () => {
+it('should save object as object', () => {
   const schema = {
-    oneOf: [{
-      required: ['foo', 'lorem']
-    }, {
-      required: ['bar', 'lorem']
-    }],
+    required: ['foo'],
     properties: {
       foo: {
-        type: 'string'
+        type: 'object',
+      },
+    },
+  };
+  const onSubmit = jest.fn();
+  const root = renderer.create(<Form schema={schema} onSubmit={onSubmit} />);
+  root.root.findByType(FFForm).props.onSubmit({
+    foo: '{"bar": 1}',
+  });
+  expect(onSubmit).toHaveBeenCalledWith({
+    foo: {
+      bar: 1,
+    },
+  });
+});
+
+it('should check oneOf rule', () => {
+  const schema = {
+    oneOf: [
+      {
+        required: ['foo', 'lorem'],
+      },
+      {
+        required: ['bar', 'lorem'],
+      },
+    ],
+    properties: {
+      foo: {
+        type: 'string',
       },
       bar: {
-        type: 'string'
+        type: 'string',
       },
       lorem: {
-        type: 'string'
+        type: 'string',
       },
-    }
-  }
-  const onSubmit = jest.fn()
+    },
+  };
+  const onSubmit = jest.fn();
   const root = renderer.create(<Form schema={schema} onSubmit={onSubmit} />);
   const errors = root.root.findByType(FFForm).props.onSubmit({
     lorem: 'a',
   });
-  expect(errors).toEqual({ foo: 'oneOfRequired', bar: 'oneOfRequired' })
+  expect(errors).toEqual({ foo: 'oneOfRequired', bar: 'oneOfRequired' });
 });
 
-it("should submit without error", () => {
+it('should submit without error', () => {
   const schema = {
     required: ['foo'],
     properties: {
       foo: {
-        type: 'string'
+        type: 'string',
       },
-    }
-  }
-  const onSubmit = jest.fn()
+    },
+  };
+  const onSubmit = jest.fn();
   const root = renderer.create(<Form schema={schema} onSubmit={onSubmit} />);
   const errors = root.root.findByType(FFForm).props.onSubmit({
     foo: 'a',
   });
-  expect(onSubmit).toHaveBeenCalledWith({ foo: 'a' })
+  expect(onSubmit).toHaveBeenCalledWith({ foo: 'a' });
 });

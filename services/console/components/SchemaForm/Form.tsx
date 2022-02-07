@@ -1,6 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import { Button } from 'primereact/button';
-import { FC, useCallback } from 'react'
+import { FC, useCallback } from 'react';
 import { Form as FFForm, FormRenderProps } from 'react-final-form';
 import { Field } from './Field';
 import { Schema } from './types';
@@ -11,99 +11,116 @@ interface FormProps {
   initialValues?: FormRenderProps['initialValues'];
 }
 export const Form: FC<FormProps> = ({ schema, onSubmit, ...formProps }) => {
-  const { t } = useTranslation('common')
-  const properties = Object.keys(schema.properties || {})
-    .reduce((prev, name) => {
+  const { t } = useTranslation('common');
+  const properties = Object.keys(schema.properties || {}).reduce(
+    (prev, name) => {
       if (prev[name].type === 'array') {
         delete prev[name];
       }
       return prev;
-    }, { ...schema.properties || {} })
+    },
+    { ...(schema.properties || {}) }
+  );
 
-  const required = (schema.required || [])
-    .filter(f => Object.keys(properties).includes(f))
+  const required = (schema.required || []).filter((f) =>
+    Object.keys(properties).includes(f)
+  );
 
   const oneOf = schema.oneOf
     ? schema.oneOf.map(({ required }) => ({
-      required: required.filter(f => Object.keys(properties).includes(f))
-    })) : null
+        required: required.filter((f) => Object.keys(properties).includes(f)),
+      }))
+    : null;
 
-  const fields = Object.keys(properties).map(field => ({
+  const fields = Object.keys(properties).map((field) => ({
     field,
     type: properties[field].type,
-    required: required.includes(field)
+    required: required.includes(field),
   }));
-  const submit = useCallback((values: any) => {
-    let errors: Record<string, string> = {}
-    if (!oneOf || oneOf.some(({ required }) => required.every(f => !!values[f]))) {
-      const parsedValues = Object.keys(schema.properties || properties).reduce((prev, attr) => {
-        const { type } = (schema.properties || properties)[attr]
-        if (type === 'object' && values[attr]) {
-          try {
+  const submit = useCallback(
+    (values: any) => {
+      let errors: Record<string, string> = {};
+      if (
+        !oneOf ||
+        oneOf.some(({ required }) => required.every((f) => !!values[f]))
+      ) {
+        const parsedValues = Object.keys(
+          schema.properties || properties
+        ).reduce((prev, attr) => {
+          const { type } = (schema.properties || properties)[attr];
+          if (type === 'object' && values[attr]) {
+            try {
+              return {
+                ...prev,
+                [attr]: JSON.parse(values[attr]),
+              };
+            } catch (e) {
+              return {
+                ...prev,
+                [attr]: values[attr],
+              };
+            }
+          }
+          if (type === 'array') {
             return {
               ...prev,
-              [attr]: JSON.parse(values[attr])
+              [attr]: [],
             };
-          } catch (e) {
-            errors[attr] = 'invalid object';
           }
-        }
-        if (type === 'array') {
           return {
             ...prev,
-            [attr]: []
-          }
+            [attr]: values[attr],
+          };
+        }, {});
+
+        if (schema.required) {
+          schema.required.forEach((attr) => {
+            if (!parsedValues[attr as keyof typeof parsedValues]) {
+              errors[attr] = 'required';
+            }
+          });
         }
-        return {
-          ...prev,
-          [attr]: values[attr]
-        };
-      }, {});
 
-      if (schema.required) {
-        schema.required.forEach(attr => {
-          if (!parsedValues[attr as keyof typeof parsedValues]) {
-            errors[attr] = 'required'
-          }
-        })
+        if (Object.keys(errors).length === 0) {
+          onSubmit(parsedValues);
+        }
       }
 
-      if (Object.keys(errors).length === 0) {
-        onSubmit(parsedValues)
+      // Check oneOf
+      if (oneOf) {
+        const oneOfIsValid = oneOf.some(({ required }) =>
+          required.every((f) => values[f])
+        );
+        if (!oneOfIsValid) {
+          oneOf.forEach(({ required }) => {
+            required.forEach((f) => {
+              if (values[f]) return;
+              errors[f] = 'oneOfRequired';
+            });
+          });
+        }
       }
-    }
+      return errors;
+    },
+    [onSubmit, oneOf, properties, schema]
+  );
 
-    // Check oneOf
-    if (oneOf) {
-      const oneOfIsValid = oneOf.some(({ required }) => required.every(f => values[f]))
-      if (!oneOfIsValid) {
-        oneOf.forEach(({ required }) => {
-          required.forEach((f => {
-            if (values[f]) return;
-            errors[f] = 'oneOfRequired'
-          }))
-        })
-      }
-    }
-    return errors
-  }, [onSubmit, oneOf, properties, schema])
-
-  return <FFForm onSubmit={submit} {...formProps}>
-    {({ handleSubmit }) => (
-      <form onSubmit={handleSubmit}>
-        {
-          fields.map(field => (
+  return (
+    <FFForm onSubmit={submit} {...formProps}>
+      {({ handleSubmit }) => (
+        <form onSubmit={handleSubmit}>
+          {fields.map((field) => (
             <Field
               key={field.field}
               {...field}
               oneOf={oneOf ? oneOf : undefined}
-            />)
-          )
-        }
-        <Button type="submit">{t('save')}</Button>
-      </form>
-    )}
-  </FFForm>
-}
+            />
+          ))}
+          <Button type="submit">{t('save')}</Button>
+        </form>
+      )}
+    </FFForm>
+  );
+};
 
 export default Form;

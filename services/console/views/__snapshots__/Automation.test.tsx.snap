@@ -78,7 +78,8 @@ Array [
     </div>
     <div>
       <label>
-        Nodes draggable 
+        Nodes draggable
+         
         <input
           checked={false}
           onChange={[Function]}

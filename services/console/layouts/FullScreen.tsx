@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC } from 'react';
 
 export const FullScreen: FC = ({ children }) => {
   return (

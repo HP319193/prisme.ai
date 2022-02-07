@@ -18,7 +18,8 @@ exports[`should render 1`] = `
     </div>
     <div>
       <label>
-        Nodes draggable 
+        Nodes draggable
+         
         <input
           checked={false}
           onChange={[Function]}

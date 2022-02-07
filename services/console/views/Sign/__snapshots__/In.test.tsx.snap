@@ -12,11 +12,11 @@ exports[`should have error 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="p-float-label mx-2 undefined"
+        className="flex p-float-label mx-2 undefined"
       >
         <input
           autoFocus={true}
-          className="p-inputtext p-component  min-w-full"
+          className="p-inputtext p-component flex flex-1  min-w-full"
           id="email"
           name="email"
           onBlur={[Function]}
@@ -37,10 +37,10 @@ exports[`should have error 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="p-float-label mx-2 undefined"
+        className="flex p-float-label mx-2 undefined"
       >
         <input
-          className="p-inputtext p-component  min-w-full"
+          className="p-inputtext p-component flex flex-1  min-w-full"
           id="password"
           name="password"
           onBlur={[Function]}
@@ -62,7 +62,7 @@ exports[`should have error 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="p-float-label mx-2 flex justify-content-between"
+        className="flex p-float-label mx-2 flex justify-content-between"
       >
         <div
           className="flex flex-column"
@@ -143,11 +143,11 @@ exports[`should load 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="p-float-label mx-2 undefined"
+        className="flex p-float-label mx-2 undefined"
       >
         <input
           autoFocus={true}
-          className="p-inputtext p-component  min-w-full"
+          className="p-inputtext p-component flex flex-1  min-w-full"
           id="email"
           name="email"
           onBlur={[Function]}
@@ -168,10 +168,10 @@ exports[`should load 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="p-float-label mx-2 undefined"
+        className="flex p-float-label mx-2 undefined"
       >
         <input
-          className="p-inputtext p-component  min-w-full"
+          className="p-inputtext p-component flex flex-1  min-w-full"
           id="password"
           name="password"
           onBlur={[Function]}
@@ -193,7 +193,7 @@ exports[`should load 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="p-float-label mx-2 flex justify-content-between"
+        className="flex p-float-label mx-2 flex justify-content-between"
       >
         <div
           className="flex flex-column"
@@ -244,11 +244,11 @@ exports[`should render 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="p-float-label mx-2 undefined"
+        className="flex p-float-label mx-2 undefined"
       >
         <input
           autoFocus={true}
-          className="p-inputtext p-component  min-w-full"
+          className="p-inputtext p-component flex flex-1  min-w-full"
           id="email"
           name="email"
           onBlur={[Function]}
@@ -269,10 +269,10 @@ exports[`should render 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="p-float-label mx-2 undefined"
+        className="flex p-float-label mx-2 undefined"
       >
         <input
-          className="p-inputtext p-component  min-w-full"
+          className="p-inputtext p-component flex flex-1  min-w-full"
           id="password"
           name="password"
           onBlur={[Function]}
@@ -294,7 +294,7 @@ exports[`should render 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="p-float-label mx-2 flex justify-content-between"
+        className="flex p-float-label mx-2 flex justify-content-between"
       >
         <div
           className="flex flex-column"

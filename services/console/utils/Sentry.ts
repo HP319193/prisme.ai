@@ -1,5 +1,5 @@
-import getConfig from "next/config";
-import { useCallback, useEffect } from "react";
+import getConfig from 'next/config';
+import { useCallback, useEffect } from 'react';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -7,8 +7,8 @@ export const Sentry = () => {
   const init = useCallback(async () => {
     if (!publicRuntimeConfig.SENTRY_DSN) return;
     const [Sentry, Tracing] = await Promise.all([
-      import("@sentry/browser"),
-      import("@sentry/tracing"),
+      import('@sentry/browser'),
+      import('@sentry/tracing'),
     ]);
 
     Sentry.init({

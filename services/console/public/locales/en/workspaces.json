@@ -21,7 +21,7 @@
     "details": {
       "name": "Field",
       "value": "Value"
-    }    
+    }
   },
   "automations": {
     "link": "Automations",
@@ -65,7 +65,7 @@
       },
       "endpoint": {
         "title": "Endpoint",
-        "display": "<a>The endpoint <icon /><a> is hit",
+        "display": "<a>The endpoint <icon /></a> is hit",
         "copied": "Endpoint has been copied in your clipboard",
         "help": "Automation will be run everytime the endpoint will be hit.",
         "custom": "Execute this automation by calling a web address"

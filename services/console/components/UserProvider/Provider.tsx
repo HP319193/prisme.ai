@@ -1,23 +1,23 @@
-import { FC, useCallback, useEffect, useRef, useState } from "react";
-import context, { UserContext } from "./context";
-import api from "../../api/api";
-import ApiError from "../../api/ApiError";
-import { useRouter } from "next/router";
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import context, { UserContext } from './context';
+import api from '../../api/api';
+import ApiError from '../../api/ApiError';
+import { useRouter } from 'next/router';
 
-const PUBLIC_URLS = ["/signin", "/signup"];
+const PUBLIC_URLS = ['/signin', '/signup'];
 
 export const UserProvider: FC = ({ children }) => {
-  const [user, setUser] = useState<UserContext["user"]>(null);
-  const [loading, setLoading] = useState<UserContext["loading"]>(true);
+  const [user, setUser] = useState<UserContext['user']>(null);
+  const [loading, setLoading] = useState<UserContext['loading']>(true);
   const [error, setError] = useState<ApiError>();
 
   const { push, route } = useRouter();
 
-  const signin: UserContext["signin"] = useCallback(async (email, password) => {
+  const signin: UserContext['signin'] = useCallback(async (email, password) => {
     setLoading(true);
     try {
       const {
-        headers: { ["x-prismeai-session-token"]: token },
+        headers: { ['x-prismeai-session-token']: token },
         ...user
       } = await api.signin(email, password);
       api.token = token;
@@ -34,12 +34,12 @@ export const UserProvider: FC = ({ children }) => {
     }
   }, []);
 
-  const signup: UserContext["signup"] = useCallback(
+  const signup: UserContext['signup'] = useCallback(
     async (email, password, firstName, lastName) => {
       setLoading(true);
       try {
         const {
-          headers: { ["x-prismeai-session-token"]: token },
+          headers: { ['x-prismeai-session-token']: token },
           ...user
         } = await api.signup(email, password, firstName, lastName);
         api.token = token;
@@ -50,7 +50,7 @@ export const UserProvider: FC = ({ children }) => {
         return user;
       } catch (e) {
         const { error } = e as ApiError;
-        if (error === "AlreadyUsed") {
+        if (error === 'AlreadyUsed') {
           // Try to log in
           try {
             const user = await signin(email, password);
@@ -69,11 +69,11 @@ export const UserProvider: FC = ({ children }) => {
     [signin]
   );
 
-  const signout: UserContext["signout"] = useCallback(async () => {
+  const signout: UserContext['signout'] = useCallback(async () => {
     api.signout();
     setUser(null);
     if (!PUBLIC_URLS.includes(route)) {
-      push("/");
+      push('/');
     }
   }, [push, route]);
 

@@ -1,12 +1,12 @@
-import { FC, useCallback, useEffect, useState } from "react";
-import context, { WorkspacesContext } from "./context";
-import api from "../../api/api";
-import { useUser } from "../UserProvider";
-import { Workspace } from "../../api/types";
+import { FC, useCallback, useEffect, useState } from 'react';
+import context, { WorkspacesContext } from './context';
+import api from '../../api/api';
+import { useUser } from '../UserProvider';
+import { Workspace } from '../../api/types';
 
 export const WorkspacesProvider: FC = ({ children }) => {
   const { user } = useUser();
-  const [workspaces, setWorkspaces] = useState<WorkspacesContext["workspaces"]>(
+  const [workspaces, setWorkspaces] = useState<WorkspacesContext['workspaces']>(
     new Map()
   );
   const fetchWorkspaces = useCallback(async () => {
@@ -35,7 +35,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
     fetchWorkspaces();
   }, [fetchWorkspaces, user]);
 
-  const get: WorkspacesContext["get"] = useCallback(
+  const get: WorkspacesContext['get'] = useCallback(
     (id: string) => {
       return workspaces.get(id);
     },
@@ -47,7 +47,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
       let workspace: Workspace | null = null;
       try {
         workspace = await api.getWorkspace(id);
-      } catch (e) { }
+      } catch (e) {}
       const newWorkspaces = new Map(workspaces);
       newWorkspaces.set(id, workspace);
       setWorkspaces(newWorkspaces);
@@ -56,10 +56,10 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [workspaces]
   );
 
-  const create: WorkspacesContext["create"] = useCallback(
+  const create: WorkspacesContext['create'] = useCallback(
     async (name: string) => {
       let version = 0;
-      const lastName = () => `${name}${version ? ` (${version})` : ""}`;
+      const lastName = () => `${name}${version ? ` (${version})` : ''}`;
       while (
         Array.from(workspaces.values()).find(
           (workspace) => workspace && workspace.name === lastName()
@@ -100,7 +100,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [workspaces]
   );
 
-  const createAutomation: WorkspacesContext["createAutomation"] = useCallback(
+  const createAutomation: WorkspacesContext['createAutomation'] = useCallback(
     async (workspace, automation) => {
       const automationResult = await api.createAutomation(
         workspace,
@@ -122,7 +122,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [workspaces]
   );
 
-  const updateAutomation: WorkspacesContext["updateAutomation"] = useCallback(
+  const updateAutomation: WorkspacesContext['updateAutomation'] = useCallback(
     async (workspace, slug, automation) => {
       const automationResult = await api.updateAutomation(
         workspace,
@@ -146,7 +146,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [workspaces]
   );
 
-  const deleteAutomation: WorkspacesContext["deleteAutomation"] = useCallback(
+  const deleteAutomation: WorkspacesContext['deleteAutomation'] = useCallback(
     async (workspace, slug) => {
       await api.deleteAutomation(workspace, slug);
 

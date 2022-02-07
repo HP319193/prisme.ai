@@ -17,9 +17,9 @@ Array [
     className="edgebutton-foreignobject"
     height={40}
     requiredExtensions="http://www.w3.org/1999/xhtml"
-    width={100}
-    x={-40}
-    y={-38}
+    width={200}
+    x={-90}
+    y={-45}
   >
     <div
       className="flex justify-content-center align-items-center"
@@ -57,9 +57,9 @@ Array [
     className="edgebutton-foreignobject"
     height={40}
     requiredExtensions="http://www.w3.org/1999/xhtml"
-    width={100}
-    x={-40}
-    y={-38}
+    width={200}
+    x={-90}
+    y={-45}
   >
     <div
       className="flex justify-content-center align-items-center"

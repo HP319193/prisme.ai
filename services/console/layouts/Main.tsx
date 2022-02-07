@@ -1,9 +1,9 @@
-import Link from "next/link";
-import { Button } from "primereact/button";
-import { FC, ReactNode } from "react";
-import Loading from "../components/Loading";
-import { useUser } from "../components/UserProvider";
-import Toaster from "./Toaster";
+import Link from 'next/link';
+import { Button } from 'primereact/button';
+import { FC, ReactNode } from 'react';
+import Loading from '../components/Loading';
+import { useUser } from '../components/UserProvider';
+import Toaster from './Toaster';
 
 interface MainProps {
   title?: string;
@@ -32,7 +32,7 @@ export const Main: FC<MainProps> = ({
         <div className="flex justify-content-between">
           <div className="flex direction-row align-items-center">
             <div className="mr-2">
-              <Link href="/workspaces">{title || "Prisme.ai"}</Link>
+              <Link href="/workspaces">{title || 'Prisme.ai'}</Link>
             </div>
             {leftContent}
           </div>
@@ -42,7 +42,10 @@ export const Main: FC<MainProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex flex-1 surface-ground relative overflow-auto">
+      <div
+        className="flex flex-1 surface-ground relative"
+        style={{ overflow: 'auto', overflowX: 'hidden' }}
+      >
         {children}
       </div>
     </div>

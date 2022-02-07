@@ -10,9 +10,7 @@ export interface AutomationBuilderContext {
     key: string
   ) => void;
   editTrigger: () => void;
-  getApp: (
-    instruction: string
-  ) => {
+  getApp: (instruction: string) => {
     name: string;
     icon: string;
   };

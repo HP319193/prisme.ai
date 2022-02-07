@@ -1,11 +1,11 @@
-import AutomationsSidebar from "./AutomationsSidebar";
-import renderer, { act } from "react-test-renderer";
-import { useWorkspaces } from "../components/WorkspacesProvider";
-import { Button } from "primereact/button";
-import { useWorkspace } from "../layouts/WorkspaceLayout";
-import { useRouter } from "next/router";
+import AutomationsSidebar from './AutomationsSidebar';
+import renderer, { act } from 'react-test-renderer';
+import { useWorkspaces } from '../components/WorkspacesProvider';
+import { Button } from 'primereact/button';
+import { useWorkspace } from '../layouts/WorkspaceLayout';
+import { useRouter } from 'next/router';
 
-jest.mock("../components/WorkspacesProvider", () => {
+jest.mock('../components/WorkspacesProvider', () => {
   const createAutomation = jest.fn((w, automation) => ({
     slug: `${w.id}-1`,
     ...automation,
@@ -16,12 +16,12 @@ jest.mock("../components/WorkspacesProvider", () => {
     }),
   };
 });
-jest.mock("../layouts/WorkspaceLayout", () => {
+jest.mock('../layouts/WorkspaceLayout', () => {
   const workspace = {
-    id: "42",
+    id: '42',
     automations: {
       '42-1': {
-        name: "First",
+        name: 'First',
         do: [],
       },
     },
@@ -32,25 +32,25 @@ jest.mock("../layouts/WorkspaceLayout", () => {
     }),
   };
 });
-jest.mock("next/router", () => {
+jest.mock('next/router', () => {
   const push = jest.fn();
   return {
     useRouter: () => ({
       query: {
-        id: "42",
-        name: "foo",
+        id: '42',
+        name: 'foo',
       },
       push,
     }),
   };
 });
-it("should render", () => {
+it('should render', () => {
   const onClose = jest.fn();
   const root = renderer.create(<AutomationsSidebar onClose={onClose} />);
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it("should create an automation", async () => {
+it('should create an automation', async () => {
   const onClose = jest.fn();
   const root = renderer.create(<AutomationsSidebar onClose={onClose} />);
   await act(async () => {
@@ -59,14 +59,14 @@ it("should create an automation", async () => {
   expect(useWorkspaces().createAutomation).toHaveBeenCalledWith(
     useWorkspace().workspace,
     {
-      name: "automations.create.defaultName",
+      name: 'automations.create.defaultName',
       when: {
-        events: ["automations.create.value.event"],
+        events: ['automations.create.value.event'],
       },
       do: [
         {
           emit: {
-            event: "automations.create.value.event",
+            event: 'automations.create.value.event',
           },
         },
       ],
@@ -74,13 +74,13 @@ it("should create an automation", async () => {
   );
   expect(onClose).toHaveBeenCalled();
   expect(useRouter().push).toHaveBeenCalledWith(
-    "/workspaces/42/automations/42-1"
+    '/workspaces/42/automations/42-1'
   );
 });
-it("should create an automation with existing name", async () => {
+it('should create an automation with existing name', async () => {
   useWorkspace().workspace.automations = {
     '44': {
-      name: "automations.create.defaultName",
+      name: 'automations.create.defaultName',
       do: [],
     },
   };
@@ -92,14 +92,14 @@ it("should create an automation with existing name", async () => {
   expect(useWorkspaces().createAutomation).toHaveBeenCalledWith(
     useWorkspace().workspace,
     {
-      name: "automations.create.defaultName (1)",
+      name: 'automations.create.defaultName (1)',
       when: {
-        events: ["automations.create.value.event"],
+        events: ['automations.create.value.event'],
       },
       do: [
         {
           emit: {
-            event: "automations.create.value.event",
+            event: 'automations.create.value.event',
           },
         },
       ],

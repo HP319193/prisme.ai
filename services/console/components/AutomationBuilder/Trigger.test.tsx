@@ -1,73 +1,93 @@
-import Trigger, { TriggerDisplay } from "./Trigger";
-import renderer, { act } from "react-test-renderer";
-import { useAutomationBuilder } from "./context";
-import Block from "./Block";
-import { useToaster } from "../../layouts/Toaster";
-import { Trans } from "next-i18next";
+import Trigger, { TriggerDisplay } from './Trigger';
+import renderer, { act } from 'react-test-renderer';
+import { useAutomationBuilder } from './context';
+import Block from './Block';
+import { useToaster } from '../../layouts/Toaster';
+import { Trans } from 'next-i18next';
 
 jest.mock('./context', () => {
   const mock = {
     getApp: () => ({
       name: 'App',
-      icon: '/icon.svg'
-    })
-  }
+      icon: '/icon.svg',
+    }),
+  };
   return {
-    useAutomationBuilder: () => mock
-  }
-})
+    useAutomationBuilder: () => mock,
+  };
+});
 
-jest.mock('./Block', () => () => null)
+jest.mock('./Block', () => () => null);
 
 jest.mock('react-flow-renderer', () => {
   return {
     Handle: () => <div>Handle</div>,
     Position: {
-      Bottom: 0
-    }
-  }
-})
+      Bottom: 0,
+    },
+  };
+});
 
-jest.mock("../../layouts/Toaster", () => {
+jest.mock('../../layouts/Toaster', () => {
   const mock = {
-    show: jest.fn()
+    show: jest.fn(),
   };
   return {
-    useToaster: () => mock
-  }
-})
+    useToaster: () => mock,
+  };
+});
 
-it("should render", () => {
-  const root = renderer.create(<Trigger id="a" data={{}} type="trigger" selected={false} isConnectable={false} />);
+it('should render', () => {
+  const root = renderer.create(
+    <Trigger
+      id="a"
+      data={{}}
+      type="trigger"
+      selected={false}
+      isConnectable={false}
+    />
+  );
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it("should edit", () => {
+it('should edit', () => {
   useAutomationBuilder().editTrigger = jest.fn();
-  const root = renderer.create(<Trigger id="a" data={{}} type="trigger" selected={false} isConnectable={false} />);
+  const root = renderer.create(
+    <Trigger
+      id="a"
+      data={{}}
+      type="trigger"
+      selected={false}
+      isConnectable={false}
+    />
+  );
 
   act(() => {
-    root.root.findByType(Block).props.onEdit()
-  })
-  expect(useAutomationBuilder().editTrigger).toHaveBeenCalled()
+    root.root.findByType(Block).props.onEdit();
+  });
+  expect(useAutomationBuilder().editTrigger).toHaveBeenCalled();
 });
 
 it('should copy endpoint', () => {
-  const root = renderer.create(<TriggerDisplay value={{ endpoint: 'true' }} endpoint="http://endpoint" />);
+  const root = renderer.create(
+    <TriggerDisplay value={{ endpoint: 'true' }} endpoint="http://endpoint" />
+  );
   const e = { preventDefault: jest.fn(), stopPropagation: jest.fn() };
   (window.navigator.clipboard as any) = {
-    writeText: jest.fn()
-  }
+    writeText: jest.fn(),
+  };
 
   act(() => {
     root.root.findByType(Trans).props.components.a.props.onClick(e);
-  })
+  });
 
   expect(e.preventDefault).toHaveBeenCalled();
   expect(e.stopPropagation).toHaveBeenCalled();
-  expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith('http://endpoint')
+  expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
+    'http://endpoint'
+  );
   expect(useToaster().show).toHaveBeenCalledWith({
     severity: 'success',
-    summary: 'automations.trigger.endpoint.copied'
-  })
-})
+    summary: 'automations.trigger.endpoint.copied',
+  });
+});

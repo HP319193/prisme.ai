@@ -1,4 +1,4 @@
-import { ErrorObject } from "ajv";
+import { ErrorObject } from 'ajv';
 
 export interface ValidationError {
   instancePath: string;
@@ -11,7 +11,7 @@ export interface ValidationError {
 export const getLines = (yaml: string) =>
   yaml.split(/\n/).map((line, index) => {
     const [key, value] = line.split(/\:\s?/);
-    const [, indent = "", name] = key.match(/(\s+)(.*$)/) || [];
+    const [, indent = '', name] = key.match(/(\s+)(.*$)/) || [];
     return {
       line: index + 1,
       indent: indent.length / 2,
@@ -22,7 +22,7 @@ export const getLines = (yaml: string) =>
 
 export const getLineNumberFromPath = (yaml: string, path: string) => {
   const lines = getLines(yaml);
-  const pathParts = `${path}`.replace(/^\//, "").split(/\//);
+  const pathParts = `${path}`.replace(/^\//, '').split(/\//);
   let line = 0;
 
   pathParts.forEach((part, index) => {
@@ -33,7 +33,7 @@ export const getLineNumberFromPath = (yaml: string, path: string) => {
       .find(({ name }) => name === part);
 
     if (!found) {
-      throw new Error("not found");
+      throw new Error('not found');
     }
     line = found.line;
   });

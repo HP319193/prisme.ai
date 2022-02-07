@@ -5,8 +5,8 @@ import {
   useEffect,
   useRef,
   useState,
-} from "react";
-import { Toast } from "primereact/toast";
+} from 'react';
+import { Toast } from 'primereact/toast';
 
 export const context = createContext<Toast>({} as Toast);
 

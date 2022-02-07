@@ -52,7 +52,13 @@ exports[`should get layout 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-auto"
+    className="flex flex-1 surface-ground relative"
+    style={
+      Object {
+        "overflow": "auto",
+        "overflowX": "hidden",
+      }
+    }
   >
     <div
       className="flex flex-1"
@@ -120,7 +126,13 @@ exports[`should render 404 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-auto"
+    className="flex flex-1 surface-ground relative"
+    style={
+      Object {
+        "overflow": "auto",
+        "overflowX": "hidden",
+      }
+    }
   >
     <a
       href="/workspaces"
@@ -185,7 +197,13 @@ exports[`should render empty 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-auto"
+    className="flex flex-1 surface-ground relative"
+    style={
+      Object {
+        "overflow": "auto",
+        "overflowX": "hidden",
+      }
+    }
   >
     <div
       className="flex flex-1"
@@ -276,7 +294,13 @@ exports[`should render fetching 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-auto"
+    className="flex flex-1 surface-ground relative"
+    style={
+      Object {
+        "overflow": "auto",
+        "overflowX": "hidden",
+      }
+    }
   >
     <div
       className="flex flex-1"
@@ -367,7 +391,13 @@ exports[`should render loading 1`] = `
     </div>
   </div>
   <div
-    className="flex flex-1 surface-ground relative overflow-auto"
+    className="flex flex-1 surface-ground relative"
+    style={
+      Object {
+        "overflow": "auto",
+        "overflowX": "hidden",
+      }
+    }
   >
     <div
       className="flex flex-1"

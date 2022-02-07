@@ -1,6 +1,6 @@
-import { FC, LegacyRef, useCallback, useRef, useState } from "react";
-import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
-import { InputText } from "primereact/inputtext";
+import { FC, LegacyRef, useCallback, useRef, useState } from 'react';
+import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
+import { InputText } from 'primereact/inputtext';
 interface EditableTitleProps {
   title: string;
   onChange: (v: string) => void;
@@ -25,7 +25,7 @@ export const EditableTitle: FC<EditableTitleProps> = ({ title, onChange }) => {
           value={value}
           onChange={({ target: { value } }) => setValue(value)}
           autoFocus
-          onKeyDown={({ key }) => key === "Enter" && submit()}
+          onKeyDown={({ key }) => key === 'Enter' && submit()}
           onBlur={submit}
         />
       </InplaceContent>

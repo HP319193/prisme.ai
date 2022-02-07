@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import {
   EdgeProps,
   getMarkerEnd,
-  getSmoothStepPath
+  getSmoothStepPath,
 } from 'react-flow-renderer';
 import { useAutomationBuilder } from './context';
 
@@ -15,7 +15,7 @@ export const ConditionEdge: FC<EdgeProps> = ({
   sourcePosition,
   targetPosition,
   style = {
-    strokeDasharray: '5, 5'
+    strokeDasharray: '5, 5',
   },
   data,
   arrowHeadType,
@@ -41,31 +41,35 @@ export const ConditionEdge: FC<EdgeProps> = ({
         d={edgePath}
         markerEnd={markerEnd}
       />
-      {data &&
+      {data && (
         <foreignObject
-          width={100}
+          width={200}
           height={40}
-          x={targetX - 50}
-          y={targetY - 48}
+          x={targetX - 100}
+          y={targetY - 55}
           className="edgebutton-foreignobject"
           requiredExtensions="http://www.w3.org/1999/xhtml"
         >
           <div
             className="flex justify-content-center align-items-center"
-            style={{ height: `${40}px` }}>
+            style={{ height: `${40}px` }}
+          >
             <button
               className={`
                 border-none bg-primary p-1 border-round z-1 text-xs
                 ${data.parent ? 'cursor-pointer' : ''}
                 `}
-              onClick={data.parent && (() => editCondition(data.parent, data.key))}>
+              onClick={
+                data.parent && (() => editCondition(data.parent, data.key))
+              }
+            >
               {data.label}
             </button>
           </div>
         </foreignObject>
-      }
+      )}
     </>
   );
-}
+};
 
-export default ConditionEdge
+export default ConditionEdge;

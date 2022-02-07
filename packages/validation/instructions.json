@@ -198,5 +198,48 @@
         "type": "object"
       }
     }
+  },
+  "fetch": {
+    "type": "object",
+    "required": [
+      "fetch"
+    ],
+    "maxProperties": 1,
+    "properties": {
+      "fetch": {
+        "description": "Send an HTTP request",
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "get",
+              "post",
+              "put",
+              "patch",
+              "delete"
+            ]
+          },
+          "headers": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "body": {
+            "type": "object",
+            "description": "HTTP request body"
+          },
+          "output": {
+            "type": "string",
+            "description": "Name of the variable which will hold the result"
+          }
+        }
+      }
+    }
   }
 }

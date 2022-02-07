@@ -84,7 +84,10 @@ exports[`should render events 1`] = `
                       className="p-accordion-header-text"
                     >
                       <div
-                        className="flex flex-1 flex-column"
+                        className="
+                          flex flex-1 flex-column
+                          
+                        "
                       >
                         <div
                           className="flex flex-row"
@@ -172,7 +175,10 @@ exports[`should render events 1`] = `
                       className="p-accordion-header-text"
                     >
                       <div
-                        className="flex flex-1 flex-column"
+                        className="
+                          flex flex-1 flex-column
+                          
+                        "
                       >
                         <div
                           className="flex flex-row"
@@ -260,7 +266,10 @@ exports[`should render events 1`] = `
                       className="p-accordion-header-text"
                     >
                       <div
-                        className="flex flex-1 flex-column"
+                        className="
+                          flex flex-1 flex-column
+                          
+                        "
                       >
                         <div
                           className="flex flex-row"
@@ -304,7 +313,10 @@ exports[`should render events 1`] = `
                       className="p-accordion-header-text"
                     >
                       <div
-                        className="flex flex-1 flex-column"
+                        className="
+                          flex flex-1 flex-column
+                          
+                        "
                       >
                         <div
                           className="flex flex-row"
@@ -348,7 +360,10 @@ exports[`should render events 1`] = `
                       className="p-accordion-header-text"
                     >
                       <div
-                        className="flex flex-1 flex-column"
+                        className="
+                          flex flex-1 flex-column
+                          
+                        "
                       >
                         <div
                           className="flex flex-row"
