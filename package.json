@@ -23,6 +23,7 @@
     "build:docker:deps": "docker build . -f dependencies.dockerfile -t registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies --cache-from registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies",
     "install": "[ \"$BUILD_PACKAGES\" = \"0\" ] || npm run build:packages",
     "dev:console": "npm run dev --prefix services/console",
+    "dev:design-system": "npm run storybook --prefix services/console",
     "dev:workspaces": "npm run dev --prefix services/workspaces",
     "dev:gateway": "npm run dev --prefix services/api-gateway",
     "dev:runtime": "npm run dev --prefix services/runtime",
@@ -43,7 +44,7 @@
   },
   "homepage": "https://gitlab.com/gogowego-devsecops/dev/pyramide#readme",
   "devDependencies": {
-    "@babel/core": "^7.15.5",
+    "@babel/core": "^7.17.0",
     "@babel/preset-env": "^7.16.0",
     "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.15.0",
@@ -72,7 +73,14 @@
     "rollup-plugin-typescript2": "^0.30.0",
     "sass": "^1.42.1",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "@storybook/addon-actions": "^6.4.18",
+    "@storybook/addon-essentials": "^6.4.18",
+    "@storybook/addon-links": "^6.4.18",
+    "@storybook/builder-webpack5": "^6.4.18",
+    "@storybook/manager-webpack5": "^6.4.18",
+    "@storybook/react": "^6.4.18",
+    "babel-loader": "^8.2.3"
   },
   "dependencies": {
     "bcrypt": "^5.0.1"
