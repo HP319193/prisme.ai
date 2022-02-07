@@ -11,6 +11,14 @@ jest.mock('../context', () => {
         return {
           properties: {},
         };
+      if (name === 'conditions')
+        return {
+          type: 'object',
+        };
+      if (name === 'all')
+        return {
+          type: 'array',
+        };
       return {};
     },
     instructionsSchemas: [],
@@ -35,7 +43,25 @@ it('should set instruction without params', () => {
   });
 
   expect(onSubmit).toHaveBeenCalledWith({
-    wait: {},
+    wait: undefined,
+  });
+  onSubmit.mockClear();
+
+  act(() => {
+    root.root.findByType(InstructionSelection).props.onSubmit('conditions');
+  });
+
+  expect(onSubmit).toHaveBeenCalledWith({
+    conditions: {},
+  });
+  onSubmit.mockClear();
+
+  act(() => {
+    root.root.findByType(InstructionSelection).props.onSubmit('all');
+  });
+
+  expect(onSubmit).toHaveBeenCalledWith({
+    all: [],
   });
 });
 

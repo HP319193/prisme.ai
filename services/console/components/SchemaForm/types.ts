@@ -7,4 +7,5 @@ export interface Schema {
     }
   >;
   oneOf?: { required: string[] }[];
+  type?: string;
 }

@@ -4,6 +4,16 @@ import InstructionValue from './InstructionValue';
 import { Schema } from '../../SchemaForm/types';
 import { useAutomationBuilder } from '../context';
 
+const getDefaultValue = (type: string) => {
+  switch (type) {
+    case 'array':
+      return [];
+    case 'object':
+      return {};
+    default:
+      return undefined;
+  }
+};
 interface InstructionFormProps {
   instruction?: Prismeai.Instruction;
   onSubmit: (i: Prismeai.Instruction) => void;
@@ -31,9 +41,10 @@ export const InstructionForm: FC<InstructionFormProps> = ({
   const setInstruction = useCallback(
     (instructionName: string) => {
       const schema = getSchema(instructionName.toLowerCase());
+
       if (!schema.properties) {
         onSubmit({
-          [instructionName]: {},
+          [instructionName]: getDefaultValue(schema.type || ''),
         });
         return;
       }
