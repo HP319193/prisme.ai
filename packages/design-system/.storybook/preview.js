@@ -1,5 +1,5 @@
 import '../styles/prismeai-theme.less';
-import '../styles/globals.css';
+import '../styles/index.less';
 import * as NextImage from 'next/image';
 
 import { addDecorator } from '@storybook/react';

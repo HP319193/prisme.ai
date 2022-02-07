@@ -1,14 +1,14 @@
 import { Button, Space, Avatar, Divider, Dropdown, Menu } from '../index';
-import { useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { ShareAltOutlined } from '@ant-design/icons';
-import iconPrisme from '../../../icons/icon-prisme.svg';
-import Image from 'next/image';
+import { ReactElement } from 'react';
 
 interface HeaderProps {
   workspaces: string[];
   shareText: string;
   userName: string;
   userAvatar: string;
+  icon?: ReactElement;
 }
 
 const Header = ({
@@ -16,6 +16,7 @@ const Header = ({
   shareText,
   userName,
   userAvatar,
+  icon,
 }: HeaderProps) => {
   const workspacesMenu = useMemo(
     () => <Menu items={workspaces} onClick={() => {}} />,
@@ -24,7 +25,7 @@ const Header = ({
 
   return (
     <div className="px-6 flex flex-row w-full justify-between items-center pr-header">
-      <Image src={iconPrisme} width={23} height={25} alt="prisme.ai logo" />
+      {icon}
       <Dropdown Menu={workspacesMenu}>{workspaces[0]}</Dropdown>
       <div className="flex flex-row items-center">
         <Button type="grey">

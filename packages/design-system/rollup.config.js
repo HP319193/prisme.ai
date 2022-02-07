@@ -1,0 +1,42 @@
+import babel from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import ts from 'rollup-plugin-typescript2';
+import postcss from 'rollup-plugin-postcss';
+
+const packageJson = require('./package.json');
+
+export default {
+  input: './index.ts',
+  output: [
+    {
+      dir: './dist',
+      format: 'cjs',
+      sourcemap: true,
+      exports: 'named',
+      preserveModules: true,
+      preserveModulesRoot: './',
+    },
+  ],
+  external: [...Object.keys(packageJson.dependencies || {})],
+  plugins: [
+    nodeResolve({
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    }),
+    postcss({ extract: true }),
+    commonjs({
+      exclude: 'src/**',
+    }),
+    ts({
+      useTsconfigDeclarationDir: true,
+      tsconfig: './tsconfig.json',
+    }),
+    babel({
+      exclude: '/node_modules/',
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      include: ['./**/*'],
+      babelHelpers: 'bundled',
+      presets: [['@babel/preset-react', { runtime: 'automatic' }]],
+    }),
+  ],
+};

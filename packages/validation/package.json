@@ -6,7 +6,7 @@
   "license": "ISC",
   "main": "./dist/validation/index.js",
   "scripts": {
-    "build": "node ./src/build.js",
+    "prebuild": "node ./src/build.js",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

@@ -1,0 +1,139 @@
+@import "./antd.less";
+
+// global
+@primary-color: #015DFF;
+@primary-color-hover: #2d7dff;
+@heading-5-size: 12px;
+@heading-4-size: @font-size-base;
+@border-color-base: #E5E5E5;
+@border-radius-base: 10px;
+
+// Titles
+h5.ant-typography, .ant-typography h5 {
+  color: #939CA6;
+  letter-spacing: 2px;
+}
+
+// Layout
+
+@layout-body-background: white;
+
+// Buttons
+.ant-btn {
+  border: none;
+
+  &:hover {
+    color: @primary-color-hover;
+  }
+
+  color: @primary-color;
+}
+
+.ant-btn-text {
+  &:hover {
+    color: @primary-color-hover;
+  }
+
+  color: @text-color-secondary;
+}
+
+.ant-btn-link > span {
+  text-decoration: underline;
+}
+
+
+// Header
+@layout-header-height: unset;
+@layout-header-background: white;
+@layout-header-padding: 0;
+
+.pr-header {
+  height: 72px;
+}
+
+// Page Header
+@page-header-height: 30px;
+@page-header-heading-title: @heading-5-size;
+@page-header-padding: 0;
+@page-header-padding-vertical: 0;
+@page-header-back-color: @text-color-secondary;
+
+.ant-page-header {
+  border-bottom: 1px solid @border-color-base;
+
+  &-heading {
+    padding: 0 15px;
+
+    &-title {
+      color: @primary-color;
+    }
+  }
+}
+
+// Icons
+.anticon {
+  vertical-align: 0;
+
+  &-down {
+    width: 11px;
+  }
+}
+
+@avatar-bg: #1ea7fd3b;
+.ant-avatar-image {
+  background-color: @avatar-bg;
+}
+
+
+// Dropdown
+.ant-dropdown-trigger {
+  cursor: pointer;
+}
+
+// Menu
+.ant-menu {
+  &-item {
+    color: @text-color-secondary;
+
+    &-only-child {
+      display: flex !important;
+      align-items: center;
+    }
+  }
+
+  &-horizontal {
+    border: none;
+  }
+}
+
+.ant-menu-horizontal > .ant-menu-item::after, .ant-menu-horizontal > .ant-menu-submenu::after {
+  border-bottom: none !important;
+}
+
+// Collapse
+@collapse-header-bg: @component-background;
+
+.ant-collapse-borderless > .ant-collapse-item:last-child, .ant-collapse-borderless > .ant-collapse-item:last-child .ant-collapse-header {
+  border-radius: inherit;
+  border: 0;
+}
+
+.ant-collapse-header {
+  font-weight: @typography-title-font-weight;
+}
+
+// --
+// --
+// # Below are edge cases override
+
+
+// ## Force tailwind to override Ant-design
+
+// ### Feed.tsx Title
+.ant-typography.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.ant-typography.mb-0 {
+  margin-bottom: 0;
+}
