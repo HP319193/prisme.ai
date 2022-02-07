@@ -7,16 +7,16 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./data/mongo:/data/db
+      - ../../data/mongo:/data/db
   redis:
     image: redis
     container_name: redis_api
     restart: always
     volumes:
-      - ./data/redis:/data
+      - ../../data/redis:/data
     ports:
       - "6379:6379"
-  gateway:
+  api-gateway:
     entrypoint: npm start --prefix services/api-gateway
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-api-gateway:latest
     depends_on:

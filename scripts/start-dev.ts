@@ -1,20 +1,48 @@
 import fs from 'fs';
 import inquirer from 'inquirer';
 import shell from 'shelljs-live';
+import yaml from 'js-yaml';
 
 const SERVICES = './services';
 const DOCKERFILE = 'docker-compose.yml';
-const GATEWAY_CONFIG = '/tmp/prisme-gateway.yml';
+const DEV_SERVICE_CONFIG_PATH = '/tmp/prismeai';
+const GATEWAY_CONFIG = `${DEV_SERVICE_CONFIG_PATH}/prisme-gateway.yml`;
 
-const runDocker = (services: string[]) => {
+try {
+  fs.mkdirSync(DEV_SERVICE_CONFIG_PATH);
+} catch (e) {}
+
+interface Service {
+  service: string;
+  dev: boolean;
+}
+
+const runDocker = (services: Service[]) => {
+  const dockerConfigs = services.map(({ service, dev }) => {
+    const configPath = `${SERVICES}/${service}/${DOCKERFILE}`;
+    if (dev) {
+      const file = fs.readFileSync(configPath);
+      const config: any = yaml.load(`${file}`);
+      delete config.services[service];
+      const devConfigPath = `${SERVICES}/${service}/docker-compose-dev.yml`;
+      fs.writeFileSync(devConfigPath, yaml.dump(config));
+      return {
+        service,
+        dev,
+        path: devConfigPath,
+      };
+    }
+    return {
+      service,
+      dev,
+      path: configPath,
+    };
+  });
+
   const command = [
     'docker-compose',
-    ...services.reduce<string[]>(
-      (prev, service) => [
-        ...prev,
-        '-f',
-        `${SERVICES}/${service}/${DOCKERFILE}`,
-      ],
+    ...dockerConfigs.reduce<string[]>(
+      (prev, { path }) => [...prev, '-f', path],
       []
     ),
   ];
@@ -34,7 +62,7 @@ const getEnvs = (localServices: string[]): Record<string, string> => {
         './services/api-gateway/gateway.config.yml'
       );
       const newConfig = `${original}`.replace(/(url\:\s").+(:\d+")/g, (m) => {
-        return m.replace(/(url\:\s").+(:\d+")/, '$1localhost$2');
+        return m.replace(/(url\:\s").+(:\d+")/, '$1http://localhost$2');
       });
       fs.writeFileSync(GATEWAY_CONFIG, newConfig);
       return {
@@ -46,8 +74,12 @@ const getEnvs = (localServices: string[]): Record<string, string> => {
   return {};
 };
 
-const runLocal = (services: string[], env: Record<string, string> = {}) => {
-  const command = services.map((s) => `"dev:${s}"`);
+const runLocal = (services: Service[]) => {
+  const localServices = services.flatMap(({ service, dev }) =>
+    dev ? service : []
+  );
+  const env = getEnvs(localServices);
+  const command = localServices.map((s) => `"dev:${s}"`);
   const prefix = Object.keys(env).reduce(
     (prev, name) => `${prev} ${name}=${env[name]}`,
     ''
@@ -58,28 +90,34 @@ const runLocal = (services: string[], env: Record<string, string> = {}) => {
 };
 
 const init = async () => {
-  const services = fs.readdirSync(SERVICES).filter((service) => {
-    try {
-      return fs.statSync(`${SERVICES}/${service}/${DOCKERFILE}`);
-    } catch (e) {
-      return false;
-    }
-  });
+  // const availablesServices = fs.readdirSync(SERVICES).filter((service) => {
+  //   try {
+  //     return fs.statSync(`${SERVICES}/${service}/${DOCKERFILE}`);
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // });
+  const availablesServices = ['events'];
 
   const { services: docker } = await inquirer.prompt([
     {
       type: 'checkbox',
       message: 'Select services to run from build image',
       name: 'services',
-      choices: [...services.map((name) => ({ name, checked: true }))],
+      choices: [
+        ...[availablesServices].map((name) => ({ name, checked: true })),
+      ],
     },
   ]);
 
-  const local = services.filter((s) => !docker.includes(s));
+  const services = availablesServices.map((service) => ({
+    service,
+    dev: !docker.includes(service),
+  }));
 
-  runDocker(docker);
-  const env = getEnvs(local);
-  runLocal(local, env);
+  runDocker(services);
+
+  runLocal(services);
 };
 
 init();
