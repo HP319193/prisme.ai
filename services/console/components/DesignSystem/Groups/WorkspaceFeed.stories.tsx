@@ -1,12 +1,12 @@
-import { Story } from "@storybook/react";
-import { WorkspaceFeed } from "../";
-import { WorkspaceFeedProps } from "./WorkspaceFeed";
+import { Story } from '@storybook/react';
+import { WorkspaceFeed } from '../';
+import { WorkspaceFeedProps } from './WorkspaceFeed';
 
 export default {
-  title: "Groups/WorkspaceFeed",
+  title: 'Groups/WorkspaceFeed',
   component: WorkspaceFeed,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
 };
 
@@ -18,27 +18,27 @@ export const Default = Template.bind({});
 Default.args = {
   sections: [
     {
-      title: "Today",
+      title: 'Today',
       content: [
-        { label: "This is an entry", content: "and its corresponding text" },
-        { label: "This is an entry", content: "and its corresponding text" },
-        { label: "This is an entry", content: "and its corresponding text" },
+        { label: 'This is an entry', content: 'and its corresponding text' },
+        { label: 'This is an entry', content: 'and its corresponding text' },
+        { label: 'This is an entry', content: 'and its corresponding text' },
       ],
     },
     {
-      title: "Yesterday",
+      title: 'Yesterday',
       content: [
-        { label: "This is an entry", content: "and its corresponding text" },
-        { label: "This is an entry", content: "and its corresponding text" },
-        { label: "This is an entry", content: "and its corresponding text" },
+        { label: 'This is an entry', content: 'and its corresponding text' },
+        { label: 'This is an entry', content: 'and its corresponding text' },
+        { label: 'This is an entry', content: 'and its corresponding text' },
       ],
     },
     {
-      title: "Friday 11/11/2021",
+      title: 'Friday 11/11/2021',
       content: [
-        { label: "This is an entry", content: "and its corresponding text" },
-        { label: "This is an entry", content: "and its corresponding text" },
-        { label: "This is an entry", content: "and its corresponding text" },
+        { label: 'This is an entry', content: 'and its corresponding text' },
+        { label: 'This is an entry', content: 'and its corresponding text' },
+        { label: 'This is an entry', content: 'and its corresponding text' },
       ],
     },
   ],

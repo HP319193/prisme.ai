@@ -1,12 +1,12 @@
-import { Story } from "@storybook/react";
-import { SidePanel } from "../";
-import { SidePanelProps } from "./SidePanel";
+import { Story } from '@storybook/react';
+import { SidePanel } from '../';
+import { SidePanelProps } from './SidePanel';
 
 export default {
-  title: "Groups/SidePanel",
+  title: 'Groups/SidePanel',
   component: SidePanel,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
 };
 

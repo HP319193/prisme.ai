@@ -1,8 +1,8 @@
-import { DownOutlined } from "@ant-design/icons";
-import { Dropdown as AntdDropdown } from "antd";
-import { ReactElement } from "react";
+import { DownOutlined } from '@ant-design/icons';
+import { Dropdown as AntdDropdown } from 'antd';
+import { ReactElement } from 'react';
 
-import { Space } from "../index";
+import { Space } from '../index';
 
 export interface DropdownProps {
   Menu: ReactElement;
@@ -15,7 +15,7 @@ const Dropdown = ({ Menu, children }: DropdownProps) => {
   }
 
   return (
-    <AntdDropdown overlay={Menu} trigger={["click"]}>
+    <AntdDropdown overlay={Menu} trigger={['click']}>
       <Space>
         {children}
         <DownOutlined />

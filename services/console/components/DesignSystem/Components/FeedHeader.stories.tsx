@@ -1,14 +1,14 @@
-import React from "react";
-import { Button, FeedHeader } from "../index";
-import { Story } from "@storybook/react";
-import { FilterOutlined, SearchOutlined } from "@ant-design/icons";
-import { Space } from "antd";
+import React from 'react';
+import { Button, FeedHeader } from '../index';
+import { Story } from '@storybook/react';
+import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
+import { Space } from 'antd';
 
 export default {
-  title: "Components/FeedHeader",
+  title: 'Components/FeedHeader',
   component: FeedHeader,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
 };
 

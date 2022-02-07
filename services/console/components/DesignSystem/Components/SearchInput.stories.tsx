@@ -1,22 +1,22 @@
-import React from "react";
-import { SearchInput } from "../index";
-import { Story } from "@storybook/react";
-import { SearchInputProps } from "./SearchInput";
-import { action } from "@storybook/addon-actions";
+import React from 'react';
+import { SearchInput } from '../index';
+import { Story } from '@storybook/react';
+import { SearchInputProps } from './SearchInput';
+import { action } from '@storybook/addon-actions';
 
 const actionsData = {
-  onSelect: action("onSelect"),
+  onSelect: action('onSelect'),
 };
 export default {
-  title: "Components/SearchInput",
+  title: 'Components/SearchInput',
   component: SearchInput,
   argsType: {
     placeholder: {
-      type: { name: "string", required: false },
+      type: { name: 'string', required: false },
     },
   },
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
 };
 
@@ -26,5 +26,5 @@ const Template: Story<SearchInputProps> = ({ placeholder, onPressEnter }) => (
 
 export const Default = Template.bind({});
 Default.args = {
-  placeholder: "Search something",
+  placeholder: 'Search something',
 };

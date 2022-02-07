@@ -1,6 +1,6 @@
-import { Menu as AntdMenu } from "antd";
-import { useState } from "react";
-import { MenuInfo } from "rc-menu/lib/interface";
+import { Menu as AntdMenu } from 'antd';
+import { useState } from 'react';
+import { MenuInfo } from 'rc-menu/lib/interface';
 
 interface MenuProps {
   items: string[];

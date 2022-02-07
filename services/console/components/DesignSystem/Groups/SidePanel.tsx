@@ -1,6 +1,6 @@
-import React from "react";
-import { Layout, MenuTab, Button, SidePanelAutomations } from "../index";
-import { Typography } from "antd";
+import React from 'react';
+import { Layout, MenuTab, Button, SidePanelAutomations } from '../index';
+import { Typography } from 'antd';
 
 export const Title = Typography.Title;
 
@@ -25,7 +25,7 @@ export interface SidePanelProps {}
 
 const SidePanel = ({}: SidePanelProps) => (
   <Layout
-    Header={<MenuTab items={["Apps", "Automations"]} onSelect={() => {}} />}
+    Header={<MenuTab items={['Apps', 'Automations']} onSelect={() => {}} />}
   >
     {AutomationsContent}
   </Layout>

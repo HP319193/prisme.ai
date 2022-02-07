@@ -1,24 +1,24 @@
-import React from "react";
-import { Dropdown, Menu } from "../index";
-import { Story } from "@storybook/react";
-import { DropdownProps } from "./Dropdown";
+import React from 'react';
+import { Dropdown, Menu } from '../index';
+import { Story } from '@storybook/react';
+import { DropdownProps } from './Dropdown';
 
 export default {
-  title: "Components/Dropdown",
+  title: 'Components/Dropdown',
   component: Dropdown,
   argsType: {
     items: {
       control: {
-        type: "array",
+        type: 'array',
       },
     },
   },
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
 };
 
-const menuItems = ["item 1", "item 2"];
+const menuItems = ['item 1', 'item 2'];
 
 const workspacesMenu = <Menu items={menuItems} onClick={() => {}} />;
 

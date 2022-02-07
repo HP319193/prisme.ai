@@ -1,5 +1,5 @@
-import { Layout as AntdLayout } from "antd";
-import { ReactNode } from "react";
+import { Layout as AntdLayout } from 'antd';
+import { ReactNode } from 'react';
 
 export interface LayoutProps {
   className?: string;
@@ -9,7 +9,7 @@ export interface LayoutProps {
 }
 
 const Layout = ({ className, Header, PageHeader, children }: LayoutProps) => (
-  <AntdLayout className={`${className || ""} flex grow`}>
+  <AntdLayout className={`${className || ''} flex grow`}>
     <AntdLayout.Header>
       {Header}
       {PageHeader || null}

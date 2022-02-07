@@ -1,23 +1,23 @@
-import { Story } from "@storybook/react";
-import { MenuTab } from "../index";
-import { action } from "@storybook/addon-actions";
+import { Story } from '@storybook/react';
+import { MenuTab } from '../index';
+import { action } from '@storybook/addon-actions';
 
 const actionsData = {
-  onSelect: action("onSelect"),
+  onSelect: action('onSelect'),
 };
 
 export default {
-  title: "Components/MenuTab",
+  title: 'Components/MenuTab',
   component: MenuTab,
   argsType: {
     items: {
       control: {
-        type: "array",
+        type: 'array',
       },
     },
   },
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
 };
 
@@ -29,5 +29,5 @@ const Template: Story = ({ onSelect, items = [] }) => (
 
 export const Default = Template.bind({});
 Default.args = {
-  items: ["Automations", "Apps"],
+  items: ['Automations', 'Apps'],
 };

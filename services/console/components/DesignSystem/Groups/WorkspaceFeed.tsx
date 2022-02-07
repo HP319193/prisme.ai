@@ -1,11 +1,11 @@
-import { FilterOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Collapse, Feed, FeedHeader, Layout } from "../";
+import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Collapse, Feed, FeedHeader, Layout } from '../';
 
 // Importing Space from above crash build
-import { Space } from "antd";
-import { CollapseItem } from "../Components/Collapse";
-import { Section } from "../Components/Feed";
-import { itemsWithCollapseContent } from "../mockData";
+import { Space } from 'antd';
+import { CollapseItem } from '../Components/Collapse';
+import { Section } from '../Components/Feed';
+import { itemsWithCollapseContent } from '../mockData';
 
 const headerButtons = [
   <Button key="filter">

@@ -1,6 +1,6 @@
-import { Input } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
-import { KeyboardEventHandler } from "react";
+import { Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { KeyboardEventHandler } from 'react';
 
 export interface SearchInputProps {
   placeholder: string;

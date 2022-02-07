@@ -1,12 +1,12 @@
-import { Button, PageHeader } from "../index";
-import { PageHeaderProps } from "./PageHeader";
-import { Story } from "@storybook/react";
+import { Button, PageHeader } from '../index';
+import { PageHeaderProps } from './PageHeader';
+import { Story } from '@storybook/react';
 
 export default {
-  title: "Components/PageHeader",
+  title: 'Components/PageHeader',
   component: PageHeader,
   parameters: {
-    layout: "padded",
+    layout: 'padded',
   },
 };
 
@@ -18,7 +18,7 @@ const RightButtons = [
 ];
 
 const Template: Story<PageHeaderProps> = (args: any) => (
-  <PageHeader title={"Send mail automation"} {...args} />
+  <PageHeader title={'Send mail automation'} {...args} />
 );
 
 export const Default = Template.bind({});

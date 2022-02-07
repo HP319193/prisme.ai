@@ -1,5 +1,5 @@
-import { Title, Space } from "../index";
-import { ReactElement } from "react";
+import { Title, Space } from '../index';
+import { ReactElement } from 'react';
 
 export type Section = {
   title: string;
@@ -15,7 +15,7 @@ const Feed = ({ sections, className }: FeedProps) => (
   <Space
     direction="vertical"
     size="large"
-    className={`flex grow bg-blue-50 rounded p-6 ${className || ""}`}
+    className={`flex grow bg-blue-50 rounded p-6 ${className || ''}`}
   >
     {sections.map(({ title, content }) => (
       <div key={title}>

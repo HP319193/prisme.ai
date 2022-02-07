@@ -1,4 +1,4 @@
-import { Collapse as AntdCollapse } from "antd";
+import { Collapse as AntdCollapse } from 'antd';
 
 const { Panel } = AntdCollapse;
 

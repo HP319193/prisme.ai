@@ -1,27 +1,27 @@
-import React from "react";
-import { Collapse, Feed } from "../index";
-import { Story } from "@storybook/react";
-import { FeedProps, Section } from "./Feed";
-import { itemsWithCollapseContent } from "../mockData";
+import React from 'react';
+import { Collapse, Feed } from '../index';
+import { Story } from '@storybook/react';
+import { FeedProps, Section } from './Feed';
+import { itemsWithCollapseContent } from '../mockData';
 
 export default {
-  title: "Components/Feed",
+  title: 'Components/Feed',
   component: Feed,
   argsType: {
     items: {
       control: {
-        type: "array",
+        type: 'array',
       },
     },
   },
   parameters: {
-    layout: "padded",
+    layout: 'padded',
   },
 };
 
 const feedItems: Section[] = [
-  { title: "First section", content: <div>Content 1</div> },
-  { title: "Second section", content: <div>Content 2</div> },
+  { title: 'First section', content: <div>Content 1</div> },
+  { title: 'Second section', content: <div>Content 2</div> },
 ];
 
 const Template: Story<FeedProps> = ({ sections }) => (

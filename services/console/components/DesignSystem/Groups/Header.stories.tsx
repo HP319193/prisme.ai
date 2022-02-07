@@ -1,21 +1,21 @@
-import { Story } from "@storybook/react";
-import { Header } from "../index";
+import { Story } from '@storybook/react';
+import { Header } from '../index';
 
 export default {
-  title: "Groups/Header",
+  title: 'Groups/Header',
   component: Header,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
 };
 
 const Template: Story = () => (
   <Header
-    workspaces={["mon premier workspace", "mon second workspace"]}
-    shareText={"Partager"}
-    userName={"John Doe"}
+    workspaces={['mon premier workspace', 'mon second workspace']}
+    shareText={'Partager'}
+    userName={'John Doe'}
     userAvatar={
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/240px-User-avatar.svg.png"
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/240px-User-avatar.svg.png'
     }
   />
 );

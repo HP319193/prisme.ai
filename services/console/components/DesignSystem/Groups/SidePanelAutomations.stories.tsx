@@ -1,13 +1,13 @@
-import { Story } from "@storybook/react";
+import { Story } from '@storybook/react';
 import SidePanelAutomations, {
   SidePanelAutomationsProps,
-} from "./SidePanelAutomations";
+} from './SidePanelAutomations';
 
 export default {
-  title: "Groups/SidePanelAutomations",
+  title: 'Groups/SidePanelAutomations',
   component: SidePanelAutomations,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
 };
 

@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react";
-import { Space } from "../index";
+import React, { ReactElement } from 'react';
+import { Space } from '../index';
 
 interface FeedHeaderProps {
   buttons: ReactElement[];

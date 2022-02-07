@@ -1,23 +1,23 @@
-import { Header, Layout, MenuTab, PageHeader, Button, Feed } from "../index";
-import { LayoutProps } from "./Layout";
-import { Story } from "@storybook/react";
-import { FeedLayoutHeader, itemsWithCollapseContent } from "../mockData";
+import { Header, Layout, MenuTab, PageHeader, Button, Feed } from '../index';
+import { LayoutProps } from './Layout';
+import { Story } from '@storybook/react';
+import { FeedLayoutHeader, itemsWithCollapseContent } from '../mockData';
 
 export default {
-  title: "Components/Layout",
+  title: 'Components/Layout',
   component: Layout,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
 };
 
 const HeaderComponent = (
   <Header
-    workspaces={["mon premier workspace", "mon second workspace"]}
-    shareText={"Partager"}
-    userName={"John Doe"}
+    workspaces={['mon premier workspace', 'mon second workspace']}
+    shareText={'Partager'}
+    userName={'John Doe'}
     userAvatar={
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/240px-User-avatar.svg.png"
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/240px-User-avatar.svg.png'
     }
   />
 );
@@ -31,7 +31,7 @@ const PageHeaderButtons = [
 const CurrentPageHeader = (
   <PageHeader
     onBack={() => {}}
-    title={"Send mail automation"}
+    title={'Send mail automation'}
     RightButtons={PageHeaderButtons}
   />
 );
@@ -56,7 +56,7 @@ Default.args = {
 };
 
 const RightColumnHeader = (
-  <MenuTab items={["Apps", "Automations"]} onSelect={() => {}} />
+  <MenuTab items={['Apps', 'Automations']} onSelect={() => {}} />
 );
 
 export const SidePanelExample = Template.bind({});

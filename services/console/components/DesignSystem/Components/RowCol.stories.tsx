@@ -1,10 +1,10 @@
-import { Row, Col } from "../index";
-import { Story } from "@storybook/react";
+import { Row, Col } from '../index';
+import { Story } from '@storybook/react';
 
 export default {
-  title: "Components/RowCol",
+  title: 'Components/RowCol',
   parameters: {
-    layout: "padded",
+    layout: 'padded',
   },
 };
 
