@@ -1,8 +1,8 @@
-import memoize from "lodash/memoize";
-import isString from "lodash/isString";
-import isBoolean from "lodash/isBoolean";
-import { CompiledRules, Grammar, Parser } from "nearley";
-import compiledGrammar from "./grammar";
+import memoize from 'lodash/memoize';
+import isString from 'lodash/isString';
+import isBoolean from 'lodash/isBoolean';
+import { CompiledRules, Grammar, Parser } from 'nearley';
+import compiledGrammar from './grammar';
 
 const grammar = Grammar.fromCompiled(compiledGrammar as CompiledRules);
 
@@ -19,7 +19,7 @@ function createParser() {
  */
 const _parse = (expression: string) => {
   if (!isString(expression) || expression.length === 0) {
-    throw new Error("expression needs to be a non-empty string");
+    throw new Error('expression needs to be a non-empty string');
   }
 
   const parser = createParser();
@@ -40,7 +40,7 @@ const _parse = (expression: string) => {
     segments[2] = segments[2].substring(1);
     segments[3] = segments[3].substring(1);
 
-    throw new Error(segments.join("\n"));
+    throw new Error(segments.join('\n'));
   }
 };
 
@@ -67,7 +67,10 @@ export function evaluate(
   context = {},
   strictBoolean = true
 ) {
-  const node = parse(expression);
+  const node = parse(expression.trim());
+  if (!node) {
+    throw new Error();
+  }
 
   // console.dir(node, { depth: 100 });
 
