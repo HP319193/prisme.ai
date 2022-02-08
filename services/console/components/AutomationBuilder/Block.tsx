@@ -28,46 +28,38 @@ export const Block: FC<NodeProps & BlockProps> = ({
 
   const getLabel = useCallback(
     ({ label, value }: { label: string; value: any }) => {
+      let displayedValue = '';
       switch (label) {
         case 'emit':
-          return t('automations.node.label', {
-            instruction: t('automations.instruction.label', { context: label }),
-            value:
-              typeof value === 'string' ? value : (value && value.event) || '',
-            display: ':',
-          });
+          displayedValue =
+            typeof value === 'string' ? value : (value && value.event) || '';
+          break;
         case 'repeat':
-          return t('automations.node.label', {
-            instruction: t('automations.instruction.label', { context: label }),
-            value: (value && value.on) || '?',
-            display: ':',
-          });
+          displayedValue = (value && value.on) || '?';
+          break;
         case 'set':
-          return t('automations.node.label', {
-            instruction: t('automations.instruction.label', { context: label }),
-            value: value && `${value.name} = ${truncate(value.value, 10, '…')}`,
-            display: ':',
-          });
+          displayedValue =
+            value && `${value.name} = ${truncate(value.value, 10, '…')}`;
+          break;
         case 'delete':
-          return t('automations.node.label', {
-            instruction: t('automations.instruction.label', { context: label }),
-            value: (value && value.name) || '?',
-            display: ':',
-          });
+          displayedValue = (value && value.name) || '?';
+          break;
         case 'wait':
-          return t('automations.node.label', {
-            instruction: t('automations.instruction.label', { context: label }),
-            value: (value && value.event) || '?',
-            display: ':',
-          });
+          displayedValue = (value && value.event) || '?';
+          break;
         default:
-          return t('automations.node.label', {
-            instruction: t('automations.instruction.label', { context: label }),
-            value:
-              typeof value === 'string' ? value : (value && value.event) || '',
-            display: ':',
-          });
+          displayedValue =
+            typeof value === 'string' ? value : (value && value.event) || '';
       }
+      return t('automations.node.label', {
+        instruction: t('automations.instruction.label', { context: label }),
+        value: displayedValue,
+        display: ':',
+
+        interpolation: {
+          maxReplaces: 3,
+        },
+      });
     },
     [t]
   );
