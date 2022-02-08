@@ -11,14 +11,19 @@ export default {
   output: [
     {
       dir: './dist',
-      format: 'cjs',
+      format: 'esm',
       sourcemap: true,
       exports: 'named',
       preserveModules: true,
       preserveModulesRoot: './',
     },
   ],
-  external: [...Object.keys(packageJson.dependencies || {})],
+  external: [
+    ...Object.keys(packageJson.dependencies || {}),
+    ...Object.keys(packageJson.peerDependencies || {}),
+    'tslib',
+    'react/jsx-runtime',
+  ],
   plugins: [
     nodeResolve({
       extensions: ['.js', '.jsx', '.ts', '.tsx'],

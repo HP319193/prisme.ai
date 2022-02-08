@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Button } from 'primereact/button';
+import { Button } from '@prisme.ai/design-system';
 import { FC, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../layouts/WorkspaceLayout';

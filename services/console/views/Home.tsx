@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'primereact/button';
+import { Button } from '@prisme.ai/design-system';
 import Link from 'next/link';
 
 import FullScreen from '../layouts/FullScreen';

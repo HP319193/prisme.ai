@@ -1,16 +1,17 @@
-@import "./antd.less";
+@import './antd.less';
 
 // global
-@primary-color: #015DFF;
+@primary-color: #015dff;
 @primary-color-hover: #2d7dff;
 @heading-5-size: 12px;
 @heading-4-size: @font-size-base;
-@border-color-base: #E5E5E5;
+@border-color-base: #e5e5e5;
 @border-radius-base: 10px;
 
 // Titles
-h5.ant-typography, .ant-typography h5 {
-  color: #939CA6;
+h5.ant-typography,
+.ant-typography h5 {
+  color: #939ca6;
   letter-spacing: 2px;
 }
 
@@ -40,7 +41,6 @@ h5.ant-typography, .ant-typography h5 {
 .ant-btn-link > span {
   text-decoration: underline;
 }
-
 
 // Header
 @layout-header-height: unset;
@@ -84,7 +84,6 @@ h5.ant-typography, .ant-typography h5 {
   background-color: @avatar-bg;
 }
 
-
 // Dropdown
 .ant-dropdown-trigger {
   cursor: pointer;
@@ -106,14 +105,16 @@ h5.ant-typography, .ant-typography h5 {
   }
 }
 
-.ant-menu-horizontal > .ant-menu-item::after, .ant-menu-horizontal > .ant-menu-submenu::after {
+.ant-menu-horizontal > .ant-menu-item::after,
+.ant-menu-horizontal > .ant-menu-submenu::after {
   border-bottom: none !important;
 }
 
 // Collapse
 @collapse-header-bg: @component-background;
 
-.ant-collapse-borderless > .ant-collapse-item:last-child, .ant-collapse-borderless > .ant-collapse-item:last-child .ant-collapse-header {
+.ant-collapse-borderless > .ant-collapse-item:last-child,
+.ant-collapse-borderless > .ant-collapse-item:last-child .ant-collapse-header {
   border-radius: inherit;
   border: 0;
 }
@@ -125,7 +126,6 @@ h5.ant-typography, .ant-typography h5 {
 // --
 // --
 // # Below are edge cases override
-
 
 // ## Force tailwind to override Ant-design
 

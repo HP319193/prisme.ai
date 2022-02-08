@@ -1,32 +1,24 @@
-import { ReactElement } from 'react';
-import { Button as AntdButton } from 'antd';
+import { useMemo } from 'react';
+import { Button as AntdButton, ButtonProps as AntdButtonProps } from 'antd';
 
-type antdButtonsType = 'link' | 'text' | 'default';
-
-const prismeBtnTypeToAntdType: [string, antdButtonsType][] = [
-  ['default', 'default'],
-  ['grey', 'text'],
-  ['link', 'link'],
-];
-
-export interface ButtonProps {
-  children: ReactElement | string;
-  type?: string;
-  key?: string | number;
+export interface ButtonProps extends Omit<AntdButtonProps, 'type'> {
+  variant?: 'default' | 'primary' | 'grey' | 'link';
+  type?: 'button' | 'submit' | 'reset';
 }
 
-const Button = ({ children, type = 'default', key }: ButtonProps) => {
-  const btnType = prismeBtnTypeToAntdType.find(
-    ([inputType, resultType]) => inputType === type
-  );
-
-  if (!btnType) {
-    console.error('wrong button type for button', children);
-    return null;
-  }
+export const Button = ({
+  children,
+  variant = 'default',
+  type = 'button',
+  ...props
+}: ButtonProps) => {
+  const antdType = useMemo(() => {
+    if (variant === 'grey') return 'text';
+    return variant;
+  }, [variant]);
 
   return (
-    <AntdButton type={btnType[1]} key={key}>
+    <AntdButton type={antdType} htmlType={type} {...props}>
       {children}
     </AntdButton>
   );

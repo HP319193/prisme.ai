@@ -2,9 +2,11 @@
   "name": "@prisme.ai/design-system",
   "description": "Prisme.ai design system",
   "main": "./dist/index.js",
+  "type": "module",
   "scripts": {
-    "build-tailwind": "npx tailwindcss -c ./tailwind.config.js -i ./styles/tailwind.css -o ./styles/index.css",
-    "build": "npm run build-tailwind && rollup -c rollup.config.js",
+    "build-tailwind": "npx tailwindcss -c ./tailwind.config.cjs -i ./styles/tailwind.css -o ./styles/index.css",
+    "build-styles": "npm run build-tailwind && npx less --js ./styles/prismeai-theme.less ./styles/theme.css",
+    "build": "npm run build-styles && rollup -c rollup.config.js",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "watch-less": "less-watch-compiler --config less-watcher.config.json",

@@ -28,7 +28,7 @@ const Header = ({
       {icon}
       <Dropdown Menu={workspacesMenu}>{workspaces[0]}</Dropdown>
       <div className="flex flex-row items-center">
-        <Button type="grey">
+        <Button variant="grey">
           <Space>
             {shareText}
             <ShareAltOutlined />

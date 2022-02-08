@@ -85,7 +85,7 @@ export const FeedLayoutHeader = (
         Filter
       </Space>
     </Button>
-    <Button type="grey">
+    <Button variant="grey">
       <Space>
         <SearchOutlined />
         Search

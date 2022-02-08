@@ -1,5 +1,3 @@
-import '../styles/globals.css';
-import '../styles/prismeai-theme.less';
 import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
@@ -14,6 +12,9 @@ import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import Toaster from '../layouts/Toaster';
 import addFormatters from '../utils/i18nextFormatters';
+import '../styles/globals.css';
+import '@prisme.ai/design-system/styles/index.css';
+import '@prisme.ai/design-system/styles/theme.css';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 

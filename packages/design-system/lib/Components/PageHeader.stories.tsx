@@ -11,7 +11,7 @@ export default {
 };
 
 const RightButtons = [
-  <Button type="grey" key="1">
+  <Button variant="grey" key="1">
     Button 1
   </Button>,
   <Button key="2">Button 2</Button>,

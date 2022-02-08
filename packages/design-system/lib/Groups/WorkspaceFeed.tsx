@@ -14,7 +14,7 @@ const headerButtons = [
       Filter
     </Space>
   </Button>,
-  <Button type="grey" key="Search">
+  <Button variant="grey" key="Search">
     <Space>
       <SearchOutlined />
       Search
