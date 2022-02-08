@@ -1,4 +1,4 @@
-import { Header, Layout, Row, Col, SidePanelAutomations } from '../';
+import { Header, Layout, Row, Col, SidePanelAutomations, MenuTab } from '../';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 import SidePanel from '../Groups/SidePanel';
@@ -56,7 +56,7 @@ const WorkspaceHome = ({}: any) => {
       Header={
         <Header
           workspaces={workspacesNames}
-          shareText={t('share')}
+          t={(text: string) => text}
           userName={user.name}
           userAvatar={user.avatar}
           icon={<img src={icon} />}
@@ -68,7 +68,11 @@ const WorkspaceHome = ({}: any) => {
           <WorkspaceFeed sections={sections} />
         </Col>
         <Col span={8} className="flex h-full">
-          <SidePanel>
+          <SidePanel
+            Header={
+              <MenuTab items={['Apps', 'Automations']} onSelect={() => {}} />
+            }
+          >
             <SidePanelAutomations
               automations={[
                 { title: 'Mail', content: 'Réponse automatique vacances' },
