@@ -2,14 +2,14 @@ import {
   CONTEXT_RUN_EXPIRE_TIME,
   CONTEXT_SESSION_EXPIRE_TIME,
   MAXIMUM_SUCCESSIVE_CALLS,
-} from "../../../config";
-import { CacheDriver } from "../../cache";
+} from '../../../config';
+import { CacheDriver } from '../../cache';
 import {
   InvalidSetInstructionError,
   InvalidVariableNameError,
   TooManyCallError,
-} from "../../errors";
-import { Logger, logger } from "../../logger";
+} from '../../errors';
+import { Logger, logger } from '../../logger';
 
 type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
@@ -29,7 +29,7 @@ export interface GlobalContext {
 }
 
 export interface UserContext {
-  id: string;
+  id?: string;
   [k: string]: any;
 }
 
@@ -46,15 +46,15 @@ export interface Contexts {
 }
 
 export enum ContextType {
-  Run = "run",
-  Global = "global",
-  User = "user",
-  Session = "session",
-  Customs = "customs",
-  Local = "local",
+  Run = 'run',
+  Global = 'global',
+  User = 'user',
+  Session = 'session',
+  Customs = 'customs',
+  Local = 'local',
 }
 
-type PublicContexts = Omit<Contexts, "run">;
+type PublicContexts = Omit<Contexts, 'run'>;
 
 export const UserAccessibleContexts: ContextType[] = [
   ContextType.Global,
@@ -62,10 +62,12 @@ export const UserAccessibleContexts: ContextType[] = [
   ContextType.Session,
 ];
 
-const VariableNameValidationRegexp = new RegExp(/^[a-zA-Z0-9._-]+$/);
+const VariableNameValidationRegexp = new RegExp(/^[a-zA-Z0-9_-]+$/);
+
+type SplittedPath = (string | number)[];
 export class ContextsManager {
   private workspaceId: string;
-  private userId: string;
+  private userId?: string;
   private correlationId: string;
   private cache: CacheDriver;
   private contexts: Contexts;
@@ -85,7 +87,7 @@ export class ContextsManager {
     this.correlationId = correlationId;
     this.cache = cache;
     this.contexts = this.default({
-      local: payload,
+      local: { ...payload },
     });
     this.logger = logger.child({
       userId,
@@ -127,9 +129,9 @@ export class ContextsManager {
     const run = await this.cache.getObject<RunContext>(
       this.cacheKey(ContextType.Run)
     );
-    const user = await this.cache.getObject<UserContext>(
-      this.cacheKey(ContextType.User)
-    );
+    const user = this.userId
+      ? await this.cache.getObject<UserContext>(this.cacheKey(ContextType.User))
+      : {};
     const customs = await this.cache.getObject(
       this.cacheKey(ContextType.Customs)
     );
@@ -158,7 +160,7 @@ export class ContextsManager {
         ttl: CONTEXT_RUN_EXPIRE_TIME,
       });
     }
-    if (!context || context === ContextType.User) {
+    if ((!context || context === ContextType.User) && this.userId) {
       await this.cache.setObject(this.cacheKey(ContextType.User), user);
     }
     if (!context || context === ContextType.Customs) {
@@ -182,7 +184,8 @@ export class ContextsManager {
       return `contexts:${this.workspaceId}:run:${this.correlationId}`;
     }
     if (context === ContextType.Session) {
-      return `contexts:${this.workspaceId}:session:${this.userId}`;
+      const sessionId = this.userId || this.correlationId;
+      return `contexts:${this.workspaceId}:session:${sessionId}`;
     }
     return `contexts:${this.workspaceId}:user:${this.userId}:customs`;
   }
@@ -211,25 +214,51 @@ export class ContextsManager {
     };
     const child = Object.assign({}, this, {
       contexts: childContexts,
-      payload: opts.payload || {},
+      payload: { ...(opts.payload || {}) },
     });
     Object.setPrototypeOf(child, ContextsManager.prototype);
     return child;
   }
 
-  private validateVariableName(name: string) {
-    if (!VariableNameValidationRegexp.test(name)) {
-      throw new InvalidVariableNameError(
-        "Invalid variable name. Only allowed characters are : a-z, A-Z, 0-9, '_' et '-'.",
-        {
-          name,
-        }
-      );
-    }
+  private parseVariableName(fullVariable: string): SplittedPath {
+    const enforcedDotNotation = fullVariable
+      .split('][')
+      .join('.')
+      .split('].')
+      .join('.')
+      .split('[')
+      .join('.');
+    // Last operation might leave a final ] (i.e some.final[brackets])
+    const splittedPath =
+      enforcedDotNotation[enforcedDotNotation.length - 1] === ']'
+        ? enforcedDotNotation
+            .slice(0, enforcedDotNotation.length - 1)
+            .split('.')
+        : enforcedDotNotation.split('.');
+
+    return splittedPath.map((name) => {
+      if (
+        (name[0] === "'" && name[name.length - 1] === "'") ||
+        (name[0] === '"' && name[name.length - 1] === '"')
+      ) {
+        name = name.slice(1, name.length - 1);
+      }
+
+      if (!name.length || !VariableNameValidationRegexp.test(name)) {
+        throw new InvalidVariableNameError(
+          "Invalid variable name. Only allowed characters are : a-z, A-Z, 0-9, '_' et '-'.",
+          {
+            invalidPart: name,
+            fullVariable,
+          }
+        );
+      }
+
+      return !isNaN(<any>name) ? parseInt(name) : name;
+    });
   }
 
-  private findParentVariableFor(path: string) {
-    const splittedPath = path.split(".");
+  private findParentVariableFor(splittedPath: SplittedPath) {
     const rootVarName = splittedPath[0];
     const lastKey = splittedPath[splittedPath.length - 1];
 
@@ -255,14 +284,14 @@ export class ContextsManager {
   }
 
   set(path: string, value: any) {
-    this.validateVariableName(path);
+    const splittedPath = this.parseVariableName(path);
 
     try {
-      const { parent, lastKey } = this.findParentVariableFor(path);
+      const { parent, lastKey } = this.findParentVariableFor(splittedPath);
       parent[lastKey] = value;
     } catch (error) {
       this.logger.error(error);
-      throw new InvalidSetInstructionError("Invalid set instruction", {
+      throw new InvalidSetInstructionError('Invalid set instruction', {
         variable: path,
         value,
       });
@@ -270,9 +299,9 @@ export class ContextsManager {
   }
 
   delete(path: string) {
-    this.validateVariableName(path);
+    const splittedPath = this.parseVariableName(path);
 
-    const { parent, lastKey } = this.findParentVariableFor(path);
+    const { parent, lastKey } = this.findParentVariableFor(splittedPath);
     delete parent[lastKey];
   }
 
@@ -286,7 +315,7 @@ export class ContextsManager {
 
   async securityChecks() {
     if (this.run.depth > MAXIMUM_SUCCESSIVE_CALLS) {
-      throw new TooManyCallError("Reached maximum number of successive calls", {
+      throw new TooManyCallError('Reached maximum number of successive calls', {
         limit: MAXIMUM_SUCCESSIVE_CALLS,
       });
     }

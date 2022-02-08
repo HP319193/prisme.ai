@@ -1,11 +1,11 @@
-import { Broker, PrismeEvent } from "@prisme.ai/broker";
-import { Logger } from "../../logger";
-import { DetailedTrigger, Workspace, Workspaces } from "../workspaces";
-import { CacheDriver } from "../../cache";
-import { ContextsManager } from "./contexts";
-import { ObjectNotFoundError, PrismeError } from "../../errors";
-import { EventType } from "../../eda";
-import { executeAutomation } from "./automations";
+import { Broker, PrismeEvent } from '@prisme.ai/broker';
+import { Logger } from '../../logger';
+import { DetailedTrigger, Workspace, Workspaces } from '../workspaces';
+import { CacheDriver } from '../../cache';
+import { ContextsManager } from './contexts';
+import { ObjectNotFoundError, PrismeError } from '../../errors';
+import { EventType } from '../../eda';
+import { executeAutomation } from './automations';
 
 export default class Runtime {
   private broker: Broker;
@@ -31,7 +31,7 @@ export default class Runtime {
         // This event is directly handed from routes/webhooks.ts to allow passing back worklow result within http response
         return true;
       }
-      if (event.type.startsWith("apps.")) {
+      if (event.type.startsWith('apps.')) {
         await this.processEvent(event, logger, broker);
       }
       return true;
@@ -57,18 +57,18 @@ export default class Runtime {
 
   async processEvent(event: PrismeEvent, logger: Logger, broker: Broker) {
     const { userId, workspaceId, correlationId } = event.source;
-    if (!userId || !correlationId || !workspaceId) {
+    if (!correlationId || !workspaceId) {
       throw new Error(
-        `Can't process event '${event.type}' without source userId, correlationId or workspaceId !`
+        `Can't process event '${event.type}' without source correlationId or workspaceId !`
       );
     }
     const workspace = await this.workspaces.getWorkspace(workspaceId);
 
     try {
-      logger.debug({ msg: "Starting to process event", event });
+      logger.debug({ msg: 'Starting to process event', event });
       const { triggers, payload } = this.parseEvent(workspace, event);
       if (!triggers?.length) {
-        logger.trace("Did not find any matching trigger");
+        logger.trace('Did not find any matching trigger');
         return;
       }
 
@@ -109,7 +109,7 @@ export default class Runtime {
         throw error;
       } else {
         logger.error(error);
-        throw new Error("Internal error");
+        throw new Error('Internal error');
       }
     }
   }
@@ -122,11 +122,17 @@ export default class Runtime {
     payload: any;
   } {
     if (event.type === EventType.TriggeredWebhook) {
-      const { automationSlug, payload } = (<Prismeai.TriggeredWebhook>event)
-        .payload;
+      const { automationSlug, body, headers, query, method } = (<
+        Prismeai.TriggeredWebhook
+      >event).payload;
       const parsed = {
         triggers: workspace.getEndpointTriggers(automationSlug),
-        payload: payload,
+        payload: {
+          body,
+          headers,
+          query,
+          method,
+        },
       };
       if (!parsed.triggers?.length) {
         throw new ObjectNotFoundError(

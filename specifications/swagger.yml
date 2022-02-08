@@ -2654,23 +2654,23 @@ components:
           required:
             - workspaceId
             - automationSlug
-            - originalUrl
+            - query
             - method
             - headers
-            - payload
+            - body
           properties:
             workspaceId:
               type: string
             automationSlug:
-              type: string
-            originalUrl:
               type: string
             method:
               type: string
               example: post
             headers:
               type: object
-            payload:
+            query:
+              type: object
+            body:
               type: object
 
     UpdatedContexts:
