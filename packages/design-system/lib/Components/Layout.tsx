@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 
 export interface LayoutProps {
   className?: string;
-  Header: ReactNode;
+  Header?: ReactNode;
   children: ReactNode;
   PageHeader?: ReactNode;
 }

@@ -1,7 +1,8 @@
 import { Story } from '@storybook/react';
-import { Header } from '../index';
+import { Header } from '../';
 // @ts-ignore
 import icon from '../../../../services/console/icons/icon-prisme.svg';
+import { HeaderProps } from './Header';
 
 export default {
   title: 'Groups/Header',
@@ -11,10 +12,10 @@ export default {
   },
 };
 
-const Template: Story = () => (
+const Template: Story<HeaderProps> = ({ t }) => (
   <Header
     workspaces={['mon premier workspace', 'mon second workspace']}
-    shareText={'Partager'}
+    t={t}
     userName={'John Doe'}
     userAvatar={
       'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/240px-User-avatar.svg.png'
@@ -24,3 +25,6 @@ const Template: Story = () => (
 );
 
 export const Default = Template.bind({});
+Default.args = {
+  t: (text: string) => text,
+};

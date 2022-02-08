@@ -3,21 +3,15 @@ import { FC, useMemo } from 'react';
 import { ShareAltOutlined } from '@ant-design/icons';
 import { ReactElement } from 'react';
 
-interface HeaderProps {
+export interface HeaderProps {
   workspaces: string[];
-  shareText: string;
+  t: Function;
   userName: string;
   userAvatar: string;
   icon?: ReactElement;
 }
 
-const Header = ({
-  workspaces,
-  shareText,
-  userName,
-  userAvatar,
-  icon,
-}: HeaderProps) => {
+const Header = ({ workspaces, t, userName, userAvatar, icon }: HeaderProps) => {
   const workspacesMenu = useMemo(
     () => <Menu items={workspaces} onClick={() => {}} />,
     [workspaces]
@@ -30,7 +24,7 @@ const Header = ({
       <div className="flex flex-row items-center">
         <Button variant="grey">
           <Space>
-            {shareText}
+            {t('shareText')}
             <ShareAltOutlined />
           </Space>
         </Button>
