@@ -2,14 +2,14 @@ import { Space } from 'antd';
 import { SearchInput, Button, ListItem, Title } from '../';
 import { useTranslation } from 'react-i18next';
 
-export interface SidePanelAutomationsProps {
+export interface AutomationsListProps {
   automations: {
     title: string;
     content: string;
   }[];
 }
 
-const SidePanelAutomations = ({ automations }: SidePanelAutomationsProps) => {
+const AutomationsList = ({ automations }: AutomationsListProps) => {
   const { t } = useTranslation('workspaces');
 
   return (
@@ -31,4 +31,4 @@ const SidePanelAutomations = ({ automations }: SidePanelAutomationsProps) => {
   );
 };
 
-export default SidePanelAutomations;
+export default AutomationsList;

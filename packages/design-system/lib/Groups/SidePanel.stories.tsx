@@ -1,5 +1,9 @@
 import { Story } from '@storybook/react';
-import { MenuTab, SidePanel, SidePanelAutomations } from '../';
+import {
+  MenuTab,
+  SidePanel,
+  AutomationsList as AutomationsListComp,
+} from '../';
 import { SidePanelProps } from './SidePanel';
 import React from 'react';
 import InstructionsList from './InstructionsList';
@@ -16,11 +20,11 @@ const Template: Story<SidePanelProps> = ({ Header, children }) => (
   <SidePanel Header={Header}>{children}</SidePanel>
 );
 
-export const Default = Template.bind({});
-Default.args = {
+export const AutomationsList = Template.bind({});
+AutomationsList.args = {
   Header: <MenuTab items={['Apps', 'Automations']} onSelect={() => {}} />,
   children: (
-    <SidePanelAutomations
+    <AutomationsListComp
       automations={[
         { title: 'Mail', content: 'Réponse automatique vacances' },
         { title: 'Bot', content: 'Gérer compte client' },

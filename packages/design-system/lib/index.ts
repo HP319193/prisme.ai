@@ -16,7 +16,7 @@ export { default as Text } from './Components/Text';
 export { default as ListItem } from './Components/ListItem';
 export { default as Input } from './Components/Input';
 
-export { default as SidePanelAutomations } from './Groups/SidePanelAutomations';
+export { default as AutomationsList } from './Groups/AutomationsList';
 export { default as SidePanel } from './Groups/SidePanel';
 export { default as Header } from './Groups/Header';
 export { default as WorkspaceFeed } from './Groups/WorkspaceFeed';

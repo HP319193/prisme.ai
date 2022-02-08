@@ -1,4 +1,4 @@
-import { Header, Layout, Row, Col, SidePanelAutomations, MenuTab } from '../';
+import { Header, Layout, Row, Col, AutomationsList, MenuTab } from '../';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 import SidePanel from '../Groups/SidePanel';
@@ -73,7 +73,7 @@ const WorkspaceHome = ({}: any) => {
               <MenuTab items={['Apps', 'Automations']} onSelect={() => {}} />
             }
           >
-            <SidePanelAutomations
+            <AutomationsList
               automations={[
                 { title: 'Mail', content: 'Réponse automatique vacances' },
                 { title: 'Bot', content: 'Gérer compte client' },

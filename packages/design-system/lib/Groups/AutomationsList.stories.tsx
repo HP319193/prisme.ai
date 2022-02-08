@@ -1,18 +1,16 @@
 import { Story } from '@storybook/react';
-import SidePanelAutomations, {
-  SidePanelAutomationsProps,
-} from './SidePanelAutomations';
+import AutomationsList, { AutomationsListProps } from './AutomationsList';
 
 export default {
-  title: 'Groups/SidePanelAutomations',
-  component: SidePanelAutomations,
+  title: 'Groups/AutomationsList',
+  component: AutomationsList,
   parameters: {
     layout: 'fullscreen',
   },
 };
 
-const Template: Story<SidePanelAutomationsProps> = ({ automations }) => (
-  <SidePanelAutomations automations={automations} />
+const Template: Story<AutomationsListProps> = ({ automations }) => (
+  <AutomationsList automations={automations} />
 );
 
 export const Default = Template.bind({});
