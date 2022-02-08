@@ -1994,15 +1994,15 @@ components:
       properties:
         repeat:
           oneOf:
-            - required: ["on", "then"]
-            - required: ["until", "then"]
+            - required: ["on", "do"]
+            - required: ["until", "do"]
           description: One of "on" or "until" is required
           properties:
             on:
               type: string
             until:
               type: number
-            then:
+            do:
               $ref: "#/components/schemas/InstructionList"
 
     All:

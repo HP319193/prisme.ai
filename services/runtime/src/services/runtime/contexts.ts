@@ -201,7 +201,9 @@ export class ContextsManager {
       ...this.contexts,
       // If keeping local context, reinstantiate it to avoid parents context corruption by their children
       local:
-        opts.resetLocal || true
+        typeof opts.resetLocal !== 'undefined'
+          ? opts.resetLocal
+          : true
           ? opts.payload || {}
           : { ...this.contexts[ContextType.Local], ...opts.payload },
     };

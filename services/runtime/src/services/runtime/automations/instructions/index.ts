@@ -8,6 +8,7 @@ import { emit } from './emit';
 import { fetch } from './fetch';
 import { set } from './set';
 import { deleteInstruction } from './deleteInstruction';
+import { repeat } from './repeat';
 
 export enum InstructionType {
   Emit = 'emit',
@@ -16,6 +17,7 @@ export enum InstructionType {
   Set = 'set',
   Delete = 'delete',
   Break = 'break',
+  Repeat = 'repeat',
 }
 
 export async function runCustomAutomation(
@@ -96,6 +98,14 @@ export async function runInstruction(
       break;
     case InstructionType.Delete:
       result = await deleteInstruction(<Prismeai.Delete['delete']>payload, ctx);
+      break;
+    case InstructionType.Repeat:
+      result = await repeat(<Prismeai.Repeat['repeat']>payload, {
+        workspace,
+        logger,
+        broker,
+        ctx,
+      });
       break;
     default:
       result = await runCustomAutomation(
