@@ -63,6 +63,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
       subject: SubjectType.Event,
     },
   ],
+  ownerRole: Role.Admin,
 };
 
 export default config;

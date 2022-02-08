@@ -54,6 +54,7 @@ const config: PermissionsConfig<SubjectType, Role, Prismeai.ApiKeyRules> = {
     }
     throw new Error("Unsupported api key");
   },
+  ownerRole: Role.Admin,
 };
 
 export default config;

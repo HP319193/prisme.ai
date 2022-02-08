@@ -851,7 +851,7 @@ declare namespace Prismeai {
             then: InstructionList;
         };
     }
-    export type Role = "admin" | "collaborator";
+    export type Role = "owner" | "editor";
     export interface Set {
         set: {
             /**

@@ -26,6 +26,7 @@ export class Permissions<
   SubjectType extends string,
   Role extends string = string
 > {
+  private ownerRole: Role;
   private user: User<Role>;
   private roleTemplates: RoleTemplates<SubjectType, Role>;
   private rules: Rules;
@@ -34,8 +35,9 @@ export class Permissions<
 
   constructor(user: User<Role>, config: PermissionsConfig<SubjectType, Role>) {
     this.user = user;
-    const { rbac, abac } = config;
+    const { rbac, abac, ownerRole } = config;
     this.roleTemplates = rbac;
+    this.ownerRole = ownerRole || ("owner" as Role);
 
     this.loadedRoleIds = new Set();
     this.rules = sortRules([
@@ -236,12 +238,12 @@ export class Permissions<
   }
 
   pullRoleFromSubject(subjectType: SubjectType, subject: Subject<Role>) {
-    // Auto assign "admin" role for subjects created by the user
+    // Auto assign "owner" role for subjects created by the user
     if (
       subject.createdBy === this.user.id &&
-      this.findRoleTemplate("admin" as Role, subjectType)
+      this.findRoleTemplate(this.ownerRole, subjectType)
     ) {
-      this.loadRole("admin" as Role, subjectType, subject);
+      this.loadRole(this.ownerRole, subjectType, subject);
       return;
     }
 

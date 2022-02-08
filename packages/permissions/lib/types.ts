@@ -61,4 +61,5 @@ export interface PermissionsConfig<
   customRulesBuilder?: (
     role: Omit<CustomRole<SubjectType, CustomRules>, "casl">
   ) => RawRuleOf<Ability>[];
+  ownerRole?: Role;
 }

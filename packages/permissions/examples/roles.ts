@@ -88,6 +88,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
     },
   ],
   abac: [],
+  ownerRole: Role.Admin,
 };
 
 export default config;

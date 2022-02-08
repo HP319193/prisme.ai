@@ -2102,8 +2102,8 @@ components:
     Role:
       type: string
       enum:
-        - admin
-        - collaborator
+        - owner
+        - editor
 
     Permissions:
       properties:
