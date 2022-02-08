@@ -147,7 +147,7 @@ describe('It should handle variables within {{}}', () => {
   });
 });
 
-it('works with regexp', () => {
+it('works with the regexp() keyword on matches instruction.', () => {
   expect(evaluate('"bonjour@gmail.com" matches regex(bon)', {})).toEqual(true);
   expect(
     evaluate(
@@ -155,4 +155,13 @@ it('works with regexp', () => {
       {}
     )
   ).toEqual(true);
+  expect(
+    evaluate(
+      `"bonjour.georges@gmail.com" not matches regex([a-z0-9]+@[a-z]+.[a-z]{2,3})`,
+      {}
+    )
+  ).toEqual(false);
+  expect(
+    evaluate(`"bonjour.georges@gmail.com" matches REGEX([0-9]+)`, {})
+  ).toEqual(false);
 });

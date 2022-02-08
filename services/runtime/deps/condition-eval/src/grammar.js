@@ -10,7 +10,7 @@ function id(x) { return x[0]; }
 
 	const lexer = moo.compile({
                 dot: ".",
-                regex: /regex\(.*\)/,
+                regex: /[rR][eE][gG][eE][xX]\(.*\)/,
                 openingBracket: "[",
                 closingBracket: "]",
                 openP: "(",
@@ -209,6 +209,7 @@ var grammar = {
     {"name": "booleanOperator", "symbols": [(lexer.has("or") ? {type: "or"} : or)], "postprocess": id},
     {"name": "equalityExpression", "symbols": ["relationalExpression"], "postprocess": id},
     {"name": "equalityExpression", "symbols": ["relationalExpression", (lexer.has("ws") ? {type: "ws"} : ws), (lexer.has("matches") ? {type: "matches"} : matches), (lexer.has("ws") ? {type: "ws"} : ws), (lexer.has("regex") ? {type: "regex"} : regex)], "postprocess": toConditionalExpression},
+    {"name": "equalityExpression", "symbols": ["relationalExpression", (lexer.has("ws") ? {type: "ws"} : ws), (lexer.has("notMatches") ? {type: "notMatches"} : notMatches), (lexer.has("ws") ? {type: "ws"} : ws), (lexer.has("regex") ? {type: "regex"} : regex)], "postprocess": toConditionalExpression},
     {"name": "equalityExpression", "symbols": ["relationalExpression", (lexer.has("ws") ? {type: "ws"} : ws), "equalityOperator", (lexer.has("ws") ? {type: "ws"} : ws), "equalityExpression"], "postprocess": toConditionalExpression},
     {"name": "equalityOperator", "symbols": [(lexer.has("equals") ? {type: "equals"} : equals)], "postprocess": id},
     {"name": "equalityOperator", "symbols": [(lexer.has("notEquals") ? {type: "notEquals"} : notEquals)], "postprocess": id},

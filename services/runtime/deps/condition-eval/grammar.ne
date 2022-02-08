@@ -6,7 +6,7 @@
 
 	const lexer = moo.compile({
                 dot: ".",
-                regex: /regex\(.*\)/,
+                regex: /[rR][eE][gG][eE][xX]\(.*\)/,
                 openingBracket: "[",
                 closingBracket: "]",
                 openP: "(",
@@ -82,6 +82,7 @@ booleanOperator -> %and {% id %} | %or {% id %}
 equalityExpression -> 
         relationalExpression {% id %}
         | relationalExpression %ws %matches %ws %regex {% toConditionalExpression %}
+        | relationalExpression %ws %notMatches %ws %regex {% toConditionalExpression %}
         | relationalExpression %ws equalityOperator %ws equalityExpression {% toConditionalExpression %}
 
 equalityOperator -> %equals {% id %} | %notEquals {% id %} | %matches {% id %} | %notMatches {% id %} 
