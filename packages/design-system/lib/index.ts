@@ -21,7 +21,9 @@ export { default as SidePanel } from './Groups/SidePanel';
 export { default as Header } from './Groups/Header';
 export { default as WorkspaceFeed } from './Groups/WorkspaceFeed';
 export { default as LoginForm } from './Groups/LoginForm';
+export { default as DualHeader } from './Groups/DualHeader';
 
 export { default as WorkspaceHome } from './Pages/WorkspaceHome';
+export { default as LoginPage } from './Pages/LoginPage';
 
 export { Row, Col, Space, Avatar, Divider } from 'antd';
