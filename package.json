@@ -19,6 +19,7 @@
     "build:events": "npm run build --prefix services/events",
     "build:validation:instruction": "ts-node scripts/buildInstructions.ts specifications/swagger.yml packages/validation/instructions.json",
     "build:validation": "npm run build --prefix ./packages/validation && npm run build:validation:instruction",
+    "build:design-system": "npm run build --prefix ./packages/design-system",
     "build:types": "npx dtsgen --out ./packages/types/index.d.ts ./specifications/swagger.yml",
     "build:docker:deps": "docker build . -f dependencies.dockerfile -t registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies --cache-from registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies",
     "install": "[ \"$BUILD_PACKAGES\" = \"0\" ] || npm run build:packages",
