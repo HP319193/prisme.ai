@@ -1,10 +1,11 @@
-import { Header, Layout, Row, Col } from '../';
+import { Header, Layout, Row, Col, SidePanelAutomations } from '../';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 import SidePanel from '../Groups/SidePanel';
 import { WorkspaceFeed } from '../';
 import { FeedSection } from '../Groups/WorkspaceFeed';
-import { mockFeedSection } from '../mockData';
+// @ts-ignore
+import icon from '../../../../services/console/icons/icon-prisme.svg';
 
 export interface WorkspaceHomeProps {}
 
@@ -58,15 +59,37 @@ const WorkspaceHome = ({}: any) => {
           shareText={t('share')}
           userName={user.name}
           userAvatar={user.avatar}
+          icon={<img src={icon} />}
         />
       }
     >
       <Row className="grow">
-        <Col span={18} className="flex">
+        <Col span={16} className="flex h-full">
           <WorkspaceFeed sections={sections} />
         </Col>
-        <Col span={6} className="flex">
-          <SidePanel />
+        <Col span={8} className="flex h-full">
+          <SidePanel>
+            <SidePanelAutomations
+              automations={[
+                { title: 'Mail', content: 'Réponse automatique vacances' },
+                { title: 'Bot', content: 'Gérer compte client' },
+                { title: 'Mail', content: 'Réponse automatique vacances' },
+                { title: 'Bot', content: 'Gérer compte client' },
+                { title: 'Mail', content: 'Réponse automatique vacances' },
+                { title: 'Bot', content: 'Gérer compte client' },
+                { title: 'Mail', content: 'Réponse automatique vacances' },
+                { title: 'Bot', content: 'Gérer compte client' },
+                { title: 'Mail', content: 'Réponse automatique vacances' },
+                { title: 'Bot', content: 'Gérer compte client' },
+                { title: 'Mail', content: 'Réponse automatique vacances' },
+                { title: 'Bot', content: 'Gérer compte client' },
+                { title: 'Mail', content: 'Réponse automatique vacances' },
+                { title: 'Bot', content: 'Gérer compte client' },
+                { title: 'Mail', content: 'Réponse automatique vacances' },
+                { title: 'Bot', content: 'Gérer compte client' },
+              ]}
+            />
+          </SidePanel>
         </Col>
       </Row>
     </Layout>

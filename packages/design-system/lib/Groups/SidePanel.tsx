@@ -1,33 +1,18 @@
-import React from 'react';
-import { Layout, MenuTab, Button, SidePanelAutomations } from '../index';
-import { Typography } from 'antd';
+import React, { ReactElement } from 'react';
+import { Layout, MenuTab } from '../';
 
-export const Title = Typography.Title;
+export interface SidePanelProps {
+  children: ReactElement;
+}
 
-const AutomationsHeader = (
-  <div className="flex justify-between items-center">
-    <Title level={4} className="mb-0">
-      Automations
-    </Title>
-    <Button>+ Add an automation</Button>
-  </div>
-);
-const AutomationsContent = (
-  <Layout
-    className="border border-gray border-solid grow h-full rounded p-4 m-2"
-    Header={AutomationsHeader}
-  >
-    {SidePanelAutomations}
-  </Layout>
-);
-
-export interface SidePanelProps {}
-
-const SidePanel = ({}: SidePanelProps) => (
+const SidePanel = ({ children }: SidePanelProps) => (
   <Layout
     Header={<MenuTab items={['Apps', 'Automations']} onSelect={() => {}} />}
+    className="m-2"
   >
-    {AutomationsContent}
+    <div className="border border-gray-200 border-solid grow h-full rounded p-4">
+      {children}
+    </div>
   </Layout>
 );
 

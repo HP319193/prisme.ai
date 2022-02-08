@@ -2,6 +2,8 @@ import { Header, Layout, MenuTab, PageHeader, Button, Feed } from '../index';
 import { LayoutProps } from './Layout';
 import { Story } from '@storybook/react';
 import { FeedLayoutHeader, itemsWithCollapseContent } from '../mockData';
+// @ts-ignore
+import icon from '../../../../services/console/icons/icon-prisme.svg';
 
 export default {
   title: 'Components/Layout',
@@ -19,6 +21,7 @@ const HeaderComponent = (
     userAvatar={
       'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/240px-User-avatar.svg.png'
     }
+    icon={<img src={icon} />}
   />
 );
 

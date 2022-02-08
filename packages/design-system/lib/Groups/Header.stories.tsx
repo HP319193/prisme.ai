@@ -1,5 +1,6 @@
 import { Story } from '@storybook/react';
 import { Header } from '../index';
+// @ts-ignore
 import icon from '../../../../services/console/icons/icon-prisme.svg';
 
 export default {

@@ -8,7 +8,7 @@ export default {
   component: Button,
   argTypes: {
     type: {
-      options: ['default', 'grey', 'link'],
+      options: ['default', 'grey', 'link', 'plain'],
       control: { type: 'select' },
     },
   },
@@ -17,8 +17,8 @@ export default {
   },
 };
 
-const Template: Story<ButtonProps> = (args: any) => (
-  <Button {...args}>I am a button !</Button>
+const Template: Story<ButtonProps> = ({ type }) => (
+  <Button type={type}>I am a button !</Button>
 );
 
 export const Default = Template.bind({});

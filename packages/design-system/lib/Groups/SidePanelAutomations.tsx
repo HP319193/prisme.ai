@@ -1,15 +1,36 @@
 import { Space } from 'antd';
-import { SearchInput } from '../';
+import { SearchInput, Button, ListItem } from '../';
 import { useTranslation } from 'react-i18next';
+import { Typography } from 'antd';
 
-export interface SidePanelAutomationsProps {}
+const Title = Typography.Title;
 
-const SidePanelAutomations = ({}: SidePanelAutomationsProps) => {
+export interface SidePanelAutomationsProps {
+  automations: {
+    title: string;
+    content: string;
+  }[];
+}
+
+const SidePanelAutomations = ({ automations }: SidePanelAutomationsProps) => {
   const { t } = useTranslation('workspaces');
+
   return (
-    <Space>
-      <SearchInput placeholder={t('search')} />
-    </Space>
+    <div className="flex grow h-full flex-col">
+      <div className="flex justify-between items-center mb-6">
+        <Title level={4} className="mb-0">
+          {t('automations.title')}
+        </Title>
+        <Button>{t('automations.add')}</Button>
+      </div>
+      <SearchInput placeholder={t('search')} className="mb-6" />
+      <Space direction="vertical" className="flex grow overflow-x-auto">
+        {automations &&
+          automations.map(({ title, content }) => (
+            <ListItem title={title} content={content} key={title} />
+          ))}
+      </Space>
+    </div>
   );
 };
 
