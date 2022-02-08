@@ -35,3 +35,8 @@ export const Link = Template.bind({});
 Link.args = {
   type: 'link',
 };
+
+export const Plain = Template.bind({});
+Plain.args = {
+  type: 'plain',
+};
