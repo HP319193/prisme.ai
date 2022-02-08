@@ -218,7 +218,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   if (!workspace) {
     return (
       <Main>
-        <div className="flex flex-1 justify-center align--center">
+        <div className="flex flex-1 justify-center align-center">
           <Loading />
         </div>
       </Main>

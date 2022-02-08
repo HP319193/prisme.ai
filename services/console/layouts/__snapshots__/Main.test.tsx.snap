@@ -11,7 +11,7 @@ exports[`should render 1`] = `
       className="flex justify-between"
     >
       <div
-        className="flex direction-row align--center"
+        className="flex direction-row align-center"
       >
         <div
           className="mr-2"
@@ -63,7 +63,7 @@ exports[`should render loading 1`] = `
   className="flex min-h-screen max-h-screen flex-column justify-center"
 >
   <div
-    className="flex flex-1 align--center justify-center"
+    className="flex flex-1 align-center justify-center"
   >
     <div
       className="text-5xl align-self-center justify-self-center pi pi-spin pi-spinner"

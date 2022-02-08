@@ -15,7 +15,7 @@ Array [
         "
   />,
   <div
-    className="flex flex-1 align--center justify-center"
+    className="flex flex-1 align-center justify-center"
   >
     <div
       className=" align-self-center justify-self-center pi pi-spin pi-spinner"

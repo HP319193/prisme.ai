@@ -11,7 +11,7 @@ exports[`should get layout 1`] = `
       className="flex justify-between"
     >
       <div
-        className="flex direction-row align--center"
+        className="flex direction-row align-center"
       >
         <div
           className="mr-2"
@@ -108,7 +108,7 @@ exports[`should render 404 1`] = `
       className="flex justify-between"
     >
       <div
-        className="flex direction-row align--center"
+        className="flex direction-row align-center"
       >
         <div
           className="mr-2"
@@ -156,7 +156,7 @@ exports[`should render empty 1`] = `
       className="flex justify-between"
     >
       <div
-        className="flex direction-row align--center"
+        className="flex direction-row align-center"
       >
         <div
           className="mr-2"
@@ -253,7 +253,7 @@ exports[`should render fetching 1`] = `
       className="flex justify-between"
     >
       <div
-        className="flex direction-row align--center"
+        className="flex direction-row align-center"
       >
         <div
           className="mr-2"
@@ -350,7 +350,7 @@ exports[`should render loading 1`] = `
       className="flex justify-between"
     >
       <div
-        className="flex direction-row align--center"
+        className="flex direction-row align-center"
       >
         <div
           className="mr-2"

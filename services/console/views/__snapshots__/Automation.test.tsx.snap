@@ -6,7 +6,7 @@ Array [
     className="flex flex-row justify-between bg-white"
   >
     <div
-      className="flex flex-row align--center"
+      className="flex flex-row align-center"
     >
       <a
         href="/workspaces/42"
@@ -34,7 +34,7 @@ Array [
       </div>
     </div>
     <div
-      className="flex flex-row align--center"
+      className="flex flex-row align-center"
     >
       <button
         className="p-button p-component"

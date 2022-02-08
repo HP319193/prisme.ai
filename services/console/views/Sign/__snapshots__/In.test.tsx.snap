@@ -2,7 +2,7 @@
 
 exports[`should have error 1`] = `
 <div
-  className="flex justify-center align--center min-h-screen"
+  className="flex justify-center align-center min-h-screen"
 >
   <form
     className="w-8"
@@ -133,7 +133,7 @@ exports[`should have error 1`] = `
 
 exports[`should load 1`] = `
 <div
-  className="flex justify-center align--center min-h-screen"
+  className="flex justify-center align-center min-h-screen"
 >
   <form
     className="w-8"
@@ -234,7 +234,7 @@ exports[`should load 1`] = `
 
 exports[`should render 1`] = `
 <div
-  className="flex justify-center align--center min-h-screen"
+  className="flex justify-center align-center min-h-screen"
 >
   <form
     className="w-8"

@@ -69,13 +69,13 @@ export const Automation = () => {
   return (
     <>
       <div className="flex flex-row justify-between bg-white">
-        <div className="flex flex-row align--center">
+        <div className="flex flex-row align-center">
           <Link href={`/workspaces/${workspace.id}`}>
             {t('automations.back')}
           </Link>
           <EditableTitle title={value.name} onChange={updateTitle} />
         </div>
-        <div className="flex flex-row align--center">
+        <div className="flex flex-row align-center">
           <Button onClick={save} disabled={saving}>
             {saving && <i className="pi pi-spin pi-spinner absolute -ml-3" />}
             {t('automations.save.label')}

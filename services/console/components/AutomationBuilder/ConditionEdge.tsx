@@ -51,7 +51,7 @@ export const ConditionEdge: FC<EdgeProps> = ({
           requiredExtensions="http://www.w3.org/1999/xhtml"
         >
           <div
-            className="flex justify-center align--center"
+            className="flex justify-center align-center"
             style={{ height: `${40}px` }}
           >
             <button

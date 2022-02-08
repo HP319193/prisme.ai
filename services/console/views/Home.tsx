@@ -9,7 +9,7 @@ export const Home: NextPage = () => {
   const { t } = useTranslation('common');
   return (
     <FullScreen>
-      <main className="flex align--center justify-center flex-column">
+      <main className="flex align-center justify-center flex-column">
         <h1 className="flex">{t('main.title')}</h1>
         <Button>
           <Link href="/signin">{t('home.signin')}</Link>

@@ -14,7 +14,7 @@ const Endpoint = () => {
 
   return (
     <div className="p-field mb-5">
-      <label className="mx-2 flex flex-1 align--center flex-column">
+      <label className="mx-2 flex flex-1 align-center flex-column">
         <InputSwitch
           checked={input.value !== false}
           onChange={({ value }) => input.onChange(value)}

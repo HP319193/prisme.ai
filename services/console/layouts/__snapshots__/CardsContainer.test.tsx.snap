@@ -2,6 +2,6 @@
 
 exports[`should render 1`] = `
 <div
-  className="undefined flex flex-wrap align--start justify-start"
+  className="undefined flex flex-wrap align-start justify-start"
 />
 `;

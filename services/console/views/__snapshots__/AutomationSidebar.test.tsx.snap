@@ -18,7 +18,7 @@ exports[`should render 1`] = `
     </button>
   </div>
   <div
-    className="flex justify-between align--center"
+    className="flex justify-between align-center"
     onClick={[MockFunction]}
   >
     <a

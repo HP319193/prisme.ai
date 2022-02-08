@@ -18,7 +18,7 @@ Array [
     y={-15}
   >
     <div
-      className="flex justify-center align--center"
+      className="flex justify-center align-center"
       style={
         Object {
           "height": "40px",

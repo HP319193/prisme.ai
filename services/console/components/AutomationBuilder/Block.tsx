@@ -81,7 +81,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
         <div
           className="
           flex
-          align--center
+          align-center
           border-solid
           border-none
           border-bottom-1
