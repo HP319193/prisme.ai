@@ -81,7 +81,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
         <div
           className="
           flex
-          align-items-center
+          align--center
           border-solid
           border-none
           border-bottom-1
@@ -92,7 +92,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
           <div className="mr-2">
             <Image src={icon} width={16} height={16} alt={name} />
           </div>
-          <div className="flex flex-1 justify-content-between">
+          <div className="flex flex-1 justify-between">
             {type === 'trigger' ? t('automations.trigger.title') : name}
             {removable && (
               <button
@@ -113,7 +113,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
             onClick={onEdit}
             className="
             flex
-            justify-content-center
+            justify-center
             p-2
           "
             style={{
@@ -130,7 +130,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
           <div
             className="
             flex
-            justify-content-center
+            justify-center
             p-2
             cursor-default"
           >

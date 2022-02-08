@@ -8,9 +8,7 @@ export const CardsContainer: FC<CardsContainerProps> = ({
   children,
 }) => {
   return (
-    <div
-      className={`${className} flex flex-wrap align-items-start justify-content-start`}
-    >
+    <div className={`${className} flex flex-wrap align--start justify-start`}>
       {children}
     </div>
   );

@@ -39,7 +39,7 @@ export const Field: FC<FieldProps> = ({ field, type, required, oneOf }) => {
     case 'boolean':
       return (
         <div className="p-field mb-5">
-          <label className="mx-2 flex flex-1 align-items-center">
+          <label className="mx-2 flex flex-1 align--center">
             <InputSwitch
               checked={input.value}
               onChange={({ value }) => input.onChange(value)}

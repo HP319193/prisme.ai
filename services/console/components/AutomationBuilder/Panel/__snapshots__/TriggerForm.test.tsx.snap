@@ -148,7 +148,7 @@ exports[`should render 1`] = `
             className="p-field mb-5"
           >
             <label
-              className="mx-2 flex flex-1 align-items-center flex-column"
+              className="mx-2 flex flex-1 align--center flex-column"
             >
               <div
                 aria-checked={false}

@@ -21,7 +21,7 @@ Array [
     }
   >
     <div
-      className=" flex align-items-center border-solid border-none border-bottom-1 border-primary p-2 "
+      className=" flex align--center border-solid border-none border-bottom-1 border-primary p-2 "
     >
       <div
         className="mr-2"
@@ -142,7 +142,7 @@ Array [
         </span>
       </div>
       <div
-        className="flex flex-1 justify-content-between"
+        className="flex flex-1 justify-between"
       >
         App
         <button
@@ -162,7 +162,7 @@ Array [
       </div>
     </div>
     <div
-      className=" flex justify-content-center p-2 cursor-default"
+      className=" flex justify-center p-2 cursor-default"
     >
       automations.node.label
     </div>

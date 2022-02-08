@@ -29,8 +29,8 @@ export const Main: FC<MainProps> = ({
   return (
     <div className="flex min-h-screen max-h-screen flex-column">
       <div className="bg-primary p-4 z-1 shadow-4">
-        <div className="flex justify-content-between">
-          <div className="flex direction-row align-items-center">
+        <div className="flex justify-between">
+          <div className="flex direction-row align--center">
             <div className="mr-2">
               <Link href="/workspaces">{title || 'Prisme.ai'}</Link>
             </div>

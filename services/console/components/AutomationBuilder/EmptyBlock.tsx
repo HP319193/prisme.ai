@@ -23,10 +23,7 @@ export const EmptyBlock: FC<NodeProps> = ({ data = {}, id, ...props }) => {
           flex-column
           w-10rem"
       >
-        <div
-          className="flex justify-content-center"
-          style={{ minHeight: '1px' }}
-        >
+        <div className="flex justify-center" style={{ minHeight: '1px' }}>
           {data.withButton && (
             <button
               className="pi pi-plus border-none bg-primary p-1 border-round z-1 text-xs cursor-pointer"

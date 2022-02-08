@@ -17,14 +17,13 @@ export const SidePanel: FC<SidePanelProps> = ({
       <div
         className={`
           absolute
-          surface-section
           top-0
           left-100
           bottom-0
           p-4
           transition-transform
           transition-duration-100
-          transition-ease-in
+          ease-in
           ${sidebarOpen ? '-translate-x-100' : ''}
           shadow-4
           z-4`}

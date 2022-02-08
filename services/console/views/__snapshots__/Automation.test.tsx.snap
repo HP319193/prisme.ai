@@ -3,10 +3,10 @@
 exports[`should render 1`] = `
 Array [
   <div
-    className="flex flex-row justify-content-between bg-white"
+    className="flex flex-row justify-between bg-white"
   >
     <div
-      className="flex flex-row align-items-center"
+      className="flex flex-row align--center"
     >
       <a
         href="/workspaces/42"
@@ -34,7 +34,7 @@ Array [
       </div>
     </div>
     <div
-      className="flex flex-row align-items-center"
+      className="flex flex-row align--center"
     >
       <button
         className="p-button p-component"

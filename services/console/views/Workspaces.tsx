@@ -34,7 +34,7 @@ export const WorkspacesView = () => {
         <title>{t('workspaces.title')}</title>
         <meta name="description" content={t('workspaces.description')} />
       </Head>
-      <CardsContainer className="justify-content-center">
+      <CardsContainer className="justify-center">
         {workspacesList.map(({ name, id }) => (
           <Card
             key={id}

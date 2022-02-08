@@ -8,10 +8,10 @@ exports[`should render empty 1`] = `
     className="bg-primary p-4 z-1 shadow-4"
   >
     <div
-      className="flex justify-content-between"
+      className="flex justify-between"
     >
       <div
-        className="flex direction-row align-items-center"
+        className="flex direction-row align--center"
       >
         <div
           className="mr-2"
@@ -56,7 +56,7 @@ exports[`should render empty 1`] = `
     }
   >
     <div
-      className="justify-content-center flex flex-wrap align-items-start justify-content-start"
+      className="justify-center flex flex-wrap align--start justify-start"
     >
       <div
         className="p-card p-component w-4 m-2"
@@ -97,10 +97,10 @@ exports[`should render some workspaces 1`] = `
     className="bg-primary p-4 z-1 shadow-4"
   >
     <div
-      className="flex justify-content-between"
+      className="flex justify-between"
     >
       <div
-        className="flex direction-row align-items-center"
+        className="flex direction-row align--center"
       >
         <div
           className="mr-2"
@@ -145,7 +145,7 @@ exports[`should render some workspaces 1`] = `
     }
   >
     <div
-      className="justify-content-center flex flex-wrap align-items-start justify-content-start"
+      className="justify-center flex flex-wrap align--start justify-start"
     >
       <div
         className="p-card p-component w-3 m-2"

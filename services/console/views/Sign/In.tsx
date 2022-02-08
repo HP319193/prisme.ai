@@ -92,7 +92,7 @@ export const SignIn = () => {
                   />
                 )}
               </Field>
-              <Field className="flex justify-content-between">
+              <Field className="flex justify-between">
                 <div className="flex flex-column">
                   <Link href="/signup">{t('in.signup')}</Link>
                 </div>

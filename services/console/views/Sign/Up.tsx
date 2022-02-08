@@ -119,7 +119,7 @@ export const SignIn = () => {
                   />
                 )}
               </Field>
-              <Field className="flex justify-content-between">
+              <Field className="flex justify-between">
                 <Link href="/signin">{t('up.signin')}</Link>
                 <Button type="submit" disabled={loading}>
                   <div className={`${getIcon()} mr-2`} />

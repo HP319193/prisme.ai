@@ -5,7 +5,7 @@ interface LoadingProps {
 }
 export const Loading: FC<LoadingProps> = ({ className }) => {
   return (
-    <div className="flex flex-1 align-items-center justify-content-center">
+    <div className="flex flex-1 align--center justify-center">
       <div
         className={`${
           className || ''

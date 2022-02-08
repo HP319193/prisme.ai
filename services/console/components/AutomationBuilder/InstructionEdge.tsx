@@ -27,7 +27,7 @@ export const InstructionEdge: FC<EdgeProps> = (props) => {
         requiredExtensions="http://www.w3.org/1999/xhtml"
       >
         <div
-          className="flex justify-content-center align-items-center"
+          className="flex justify-center align--center"
           style={{ height: `${foreignObjectSize}px` }}
         >
           <button

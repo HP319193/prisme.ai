@@ -2,10 +2,10 @@
 
 exports[`should render 1`] = `
 <div
-  className="flex justify-content-center align-items-center min-h-screen"
+  className="flex justify-center align--center min-h-screen"
 >
   <main
-    className="flex align-items-center justify-content-center flex-column"
+    className="flex align--center justify-center flex-column"
   >
     <h1
       className="flex"

@@ -12,7 +12,7 @@ Array [
     className=" flex flex-column w-10rem"
   >
     <div
-      className="flex justify-content-center"
+      className="flex justify-center"
       style={
         Object {
           "minHeight": "1px",

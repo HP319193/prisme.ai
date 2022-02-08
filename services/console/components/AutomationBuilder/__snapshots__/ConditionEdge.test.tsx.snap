@@ -22,7 +22,7 @@ Array [
     y={-45}
   >
     <div
-      className="flex justify-content-center align-items-center"
+      className="flex justify-center align--center"
       style={
         Object {
           "height": "40px",
@@ -62,7 +62,7 @@ Array [
     y={-45}
   >
     <div
-      className="flex justify-content-center align-items-center"
+      className="flex justify-center align--center"
       style={
         Object {
           "height": "40px",

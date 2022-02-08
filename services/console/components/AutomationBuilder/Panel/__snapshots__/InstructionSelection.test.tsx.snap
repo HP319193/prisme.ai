@@ -3,7 +3,7 @@
 exports[`should filter 1`] = `
 Array [
   <div
-    className="flex flex-1 align-items-stretch flex-column mb-4"
+    className="flex flex-1 align--stretch flex-column mb-4"
   >
     <div>
       automations.edit.select
@@ -45,7 +45,7 @@ Array [
     className="flex flex-1 flex-column mb-4"
   >
     <div
-      className="flex align-items-center"
+      className="flex align--center"
     >
       <div
         className="mr-2"
@@ -179,7 +179,7 @@ Array [
     className="flex flex-1 flex-column mb-4"
   >
     <div
-      className="flex align-items-center"
+      className="flex align--center"
     >
       <div
         className="mr-2"
@@ -315,7 +315,7 @@ Array [
 exports[`should render 1`] = `
 Array [
   <div
-    className="flex flex-1 align-items-stretch flex-column mb-4"
+    className="flex flex-1 align--stretch flex-column mb-4"
   >
     <div>
       automations.edit.select
@@ -357,7 +357,7 @@ Array [
     className="flex flex-1 flex-column mb-4"
   >
     <div
-      className="flex align-items-center"
+      className="flex align--center"
     >
       <div
         className="mr-2"
@@ -498,7 +498,7 @@ Array [
     className="flex flex-1 flex-column mb-4"
   >
     <div
-      className="flex align-items-center"
+      className="flex align--center"
     >
       <div
         className="mr-2"

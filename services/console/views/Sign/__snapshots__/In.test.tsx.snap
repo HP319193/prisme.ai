@@ -2,7 +2,7 @@
 
 exports[`should have error 1`] = `
 <div
-  className="flex justify-content-center align-items-center min-h-screen"
+  className="flex justify-center align--center min-h-screen"
 >
   <form
     className="w-8"
@@ -62,7 +62,7 @@ exports[`should have error 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="flex p-float-label mx-2 flex justify-content-between"
+        className="flex p-float-label mx-2 flex justify-between"
       >
         <div
           className="flex flex-column"
@@ -133,7 +133,7 @@ exports[`should have error 1`] = `
 
 exports[`should load 1`] = `
 <div
-  className="flex justify-content-center align-items-center min-h-screen"
+  className="flex justify-center align--center min-h-screen"
 >
   <form
     className="w-8"
@@ -193,7 +193,7 @@ exports[`should load 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="flex p-float-label mx-2 flex justify-content-between"
+        className="flex p-float-label mx-2 flex justify-between"
       >
         <div
           className="flex flex-column"
@@ -234,7 +234,7 @@ exports[`should load 1`] = `
 
 exports[`should render 1`] = `
 <div
-  className="flex justify-content-center align-items-center min-h-screen"
+  className="flex justify-center align--center min-h-screen"
 >
   <form
     className="w-8"
@@ -294,7 +294,7 @@ exports[`should render 1`] = `
       className="p-field mb-5"
     >
       <span
-        className="flex p-float-label mx-2 flex justify-content-between"
+        className="flex p-float-label mx-2 flex justify-between"
       >
         <div
           className="flex flex-column"
