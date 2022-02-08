@@ -1,17 +1,9 @@
 import '../styles/prismeai-theme.less';
-import '../styles/index.less';
-import * as NextImage from 'next/image';
+import '../styles/tailwind.css';
 
 import { addDecorator } from '@storybook/react';
 import { withPropsTable } from 'storybook-addon-react-docgen';
 import './style.css';
-
-const OriginalNextImage = NextImage.default;
-
-Object.defineProperty(NextImage, 'default', {
-  configurable: true,
-  value: (props) => <OriginalNextImage {...props} unoptimized />,
-});
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
