@@ -1,20 +1,21 @@
-import { Broker } from "@prisme.ai/broker";
-import { ObjectNotFoundError } from "../../../../errors";
-import { Logger } from "../../../../logger";
-import { Workspace } from "../../../workspaces";
-import { ContextsManager } from "../../contexts";
-import { conditions } from "./conditions";
-import { emit } from "./emit";
-import { fetch } from "./fetch";
-import { set } from "./set";
-import { deleteInstruction } from "./deleteInstruction";
+import { Broker } from '@prisme.ai/broker';
+import { ObjectNotFoundError } from '../../../../errors';
+import { Logger } from '../../../../logger';
+import { Workspace } from '../../../workspaces';
+import { ContextsManager } from '../../contexts';
+import { conditions } from './conditions';
+import { emit } from './emit';
+import { fetch } from './fetch';
+import { set } from './set';
+import { deleteInstruction } from './deleteInstruction';
 
 export enum InstructionType {
-  Emit = "emit",
-  Fetch = "fetch",
-  Conditions = "conditions",
-  Set = "set",
-  Delete = "delete",
+  Emit = 'emit',
+  Fetch = 'fetch',
+  Conditions = 'conditions',
+  Set = 'set',
+  Delete = 'delete',
+  Break = 'break',
 }
 
 export async function runCustomAutomation(
@@ -38,7 +39,7 @@ export async function runCustomAutomation(
       msg: `Did not find any automation matching '${automationName}'`,
     });
     broker.send(
-      "error",
+      'error',
       new ObjectNotFoundError(`Automation not found`, {
         workspaceId: workspace.id,
         automation: automationName,
@@ -52,7 +53,7 @@ export async function runCustomAutomation(
     calledAutomation,
     ctx.child({ payload })
   );
-  if (typeof result !== "undefined" && (<any>payload).output!!) {
+  if (typeof result !== 'undefined' && (<any>payload).output!!) {
     ctx.set((<any>payload).output, result);
   }
 }
@@ -77,10 +78,10 @@ export async function runInstruction(
   const payload = (<any>instruction)[instructionName] as Prismeai.Instruction;
   switch (instructionName) {
     case InstructionType.Emit:
-      result = await emit(<Prismeai.Emit["emit"]>payload, broker);
+      result = await emit(<Prismeai.Emit['emit']>payload, broker);
       break;
     case InstructionType.Fetch:
-      result = await fetch(<Prismeai.Fetch["fetch"]>payload, ctx);
+      result = await fetch(<Prismeai.Fetch['fetch']>payload, ctx);
       break;
     case InstructionType.Conditions:
       result = await conditions(<Prismeai.Conditions>payload, {
@@ -91,10 +92,10 @@ export async function runInstruction(
       });
       break;
     case InstructionType.Set:
-      result = await set(<Prismeai.Set["set"]>payload, ctx);
+      result = await set(<Prismeai.Set['set']>payload, ctx);
       break;
     case InstructionType.Delete:
-      result = await deleteInstruction(<Prismeai.Delete["delete"]>payload, ctx);
+      result = await deleteInstruction(<Prismeai.Delete['delete']>payload, ctx);
       break;
     default:
       result = await runCustomAutomation(
@@ -107,7 +108,7 @@ export async function runInstruction(
       );
   }
 
-  if (typeof result !== "undefined" && (<any>payload).output!!) {
+  if (typeof result !== 'undefined' && (<any>payload).output!!) {
     ctx.set((<any>payload).output, result);
   }
 
