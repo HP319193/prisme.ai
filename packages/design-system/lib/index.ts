@@ -25,6 +25,5 @@ export { default as DualHeader } from './Groups/DualHeader';
 export { default as GraphSidePanel } from './Groups/GraphSidePanel';
 
 export { default as WorkspaceHome } from './Pages/WorkspaceHome';
-export { default as LoginPage } from './Pages/LoginPage';
 
 export { Row, Col, Space, Avatar, Divider } from 'antd';

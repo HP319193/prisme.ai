@@ -38,7 +38,7 @@ export const FieldContainer: FC<FieldProps> = ({
               }`,
             })
           : children}
-        <label htmlFor={name}>{label}</label>
+        {label && <label htmlFor={name}>{label}</label>}
       </span>
     </div>
   );

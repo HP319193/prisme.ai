@@ -1,17 +1,22 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
 import { Messages } from 'primereact/messages';
 import { Form } from 'react-final-form';
 
-import FullScreen from '../../layouts/FullScreen';
-import Field from '../../layouts/Field';
-import Fieldset from '../../layouts/Fieldset';
 import { useUser } from '../../components/UserProvider';
+import Image from 'next/Image';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Link from 'next/link';
+import {
+  Input,
+  Layout,
+  Button,
+  Title,
+  Space,
+  Col,
+} from '@prisme.ai/design-system';
+import icon from '../../icons/icon-prisme.svg';
+import Fieldset from '../../layouts/Fieldset';
+import Field from '../../layouts/Field';
 
 interface Values {
   email: string;
@@ -26,6 +31,7 @@ export const SignIn = () => {
 
   const submit = useCallback(
     async ({ email, password }: Values) => {
+      console.log('submitting');
       await signin(email, password);
     },
     [signin]
@@ -63,51 +69,115 @@ export const SignIn = () => {
   };
 
   return (
-    <FullScreen>
-      <Head>
-        <title>{t('in.title')}</title>
-        <meta name="description" content={t('in.description')} />
-      </Head>
-      <Form onSubmit={submit} validate={validate}>
-        {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit} className="w-8">
-            <Fieldset legend={t('in.description')}>
-              <Field name="email" label={t('in.email')}>
-                {({ input, className }) => (
-                  <InputText
-                    id="email"
-                    {...input}
-                    autoFocus
-                    className={`${className} min-w-full`}
-                  />
-                )}
-              </Field>
-              <Field name="password" label={t('in.password')}>
-                {({ input, className }) => (
-                  <InputText
-                    id="password"
-                    type="password"
-                    {...input}
-                    className={`${className} min-w-full`}
-                  />
-                )}
-              </Field>
-              <Field className="flex justify-between">
-                <div className="flex flex-column">
-                  <Link href="/signup">{t('in.signup')}</Link>
-                </div>
-                <Button type="submit" disabled={loading}>
-                  <div className={`${getIcon()} mr-2`} />
-                  {t('in.submit')}
-                </Button>
-              </Field>
-              <Messages className="absolute bottom-0" ref={messages}></Messages>
-            </Fieldset>
-          </form>
-        )}
-      </Form>
-    </FullScreen>
+    <Layout
+      Header={
+        <div className="ml-24">
+          <div className="flex flex-row">
+            <Image src={icon} width={16} height={16} />
+            Prisme.ai
+          </div>
+          <meta name="description" content={t('in.description')} />
+        </div>
+      }
+      className="bg-blue-200 mt-14"
+    >
+      <div className="flex grow justify-evenly mt-32">
+        <Col span={12}>
+          <div className="flex items-center flex-col">
+            <div>
+              <Title>{t('login.header')}</Title>
+              <div className="">{t('login.description')}</div>
+            </div>
+          </div>
+        </Col>
+        <Col span={12}>
+          <div className="flex items-center flex-col">
+            <Form onSubmit={submit} validate={validate}>
+              {({ handleSubmit }) => (
+                <form onSubmit={handleSubmit} className="w-full">
+                  <Space size="middle" direction="vertical">
+                    <Fieldset legend={t('in.description')}>
+                      <Field name="email">
+                        {({ input: { type, ...inputProps }, className }) => (
+                          <Input
+                            placeholder={t('in.email')}
+                            className={className}
+                            {...inputProps}
+                          />
+                        )}
+                      </Field>
+                      <Field name="password">
+                        {({ input: { type, ...inputProps }, className }) => (
+                          <Input
+                            placeholder={t('in.password')}
+                            className={className}
+                            type={'password' as any}
+                            {...inputProps}
+                          />
+                        )}
+                      </Field>
+                    </Fieldset>
+                    <Button
+                      variant="primary"
+                      disabled={loading}
+                      className="w-full"
+                      htmlType="submit"
+                    >
+                      {/* // TODO why submit doesn't work ?? */}
+                      <div className={`${getIcon()} mr-2`} />
+                      {t('in.submit')}
+                    </Button>
+                  </Space>
+                </form>
+              )}
+            </Form>
+          </div>
+        </Col>
+      </div>
+    </Layout>
   );
+
+  // return (
+  //   <>
+  //
+  //
+  //           <Fieldset legend={t('in.description')}>
+  //             <Field name="email" label={t('in.email')}>
+  //               {({ input, className }) => (
+  //                 <InputText
+  //                   id="email"
+  //                   {...input}
+  //                   autoFocus
+  //                   className={`${className} min-w-full`}
+  //                 />
+  //               )}
+  //             </Field>
+  //             <Field name="password" label={t('in.password')}>
+  //               {({ input, className }) => (
+  //                 <InputText
+  //                   id="password"
+  //                   type="password"
+  //                   {...input}
+  //                   className={`${className} min-w-full`}
+  //                 />
+  //               )}
+  //             </Field>
+  //             <Field className="flex justify-content-between">
+  //               <div className="flex flex-column">
+  //                 <Link href="/signup">{t('in.signup')}</Link>
+  //               </div>
+  //               <Button type="submit" disabled={loading}>
+  //                 <div className={`${getIcon()} mr-2`} />
+  //                 {t('in.submit')}
+  //               </Button>
+  //             </Field>
+  //             <Messages className="absolute bottom-0" ref={messages}></Messages>
+  //           </Fieldset>
+  //         </form>
+  //       )}
+  //     </Form>
+  //   </>
+  // );
 };
 
 export default SignIn;
