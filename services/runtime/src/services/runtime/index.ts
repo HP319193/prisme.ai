@@ -122,11 +122,17 @@ export default class Runtime {
     payload: any;
   } {
     if (event.type === EventType.TriggeredWebhook) {
-      const { automationSlug, payload } = (<Prismeai.TriggeredWebhook>event)
-        .payload;
+      const { automationSlug, body, headers, query, method } = (<
+        Prismeai.TriggeredWebhook
+      >event).payload;
       const parsed = {
         triggers: workspace.getEndpointTriggers(automationSlug),
-        payload: payload,
+        payload: {
+          body,
+          headers,
+          query,
+          method,
+        },
       };
       if (!parsed.triggers?.length) {
         throw new ObjectNotFoundError(

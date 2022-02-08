@@ -785,7 +785,7 @@ declare namespace Prismeai {
      *   },
      *   {
      *     "email": "readonly@prisme.ai",
-     *     "permissions": {
+     *     "policies": {
      *       "read": true
      *     }
      *   }
@@ -897,7 +897,6 @@ declare namespace Prismeai {
         payload: {
             workspaceId: string;
             automationSlug: string;
-            originalUrl: string;
             /**
              * example:
              * post
@@ -906,7 +905,10 @@ declare namespace Prismeai {
             headers: {
                 [key: string]: any;
             };
-            payload: {
+            query: {
+                [key: string]: any;
+            };
+            body: {
                 [key: string]: any;
             };
         };
@@ -1404,7 +1406,7 @@ declare namespace PrismeaiAPI {
                  *   },
                  *   {
                  *     "email": "readonly@prisme.ai",
-                 *     "permissions": {
+                 *     "policies": {
                  *       "read": true
                  *     }
                  *   }

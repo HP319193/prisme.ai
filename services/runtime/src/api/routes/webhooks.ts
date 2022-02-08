@@ -1,7 +1,7 @@
-import express, { Request, Response } from "express";
-import { EventType } from "../../eda";
-import Runtime from "../../services/runtime";
-import { asyncRoute } from "../utils/async";
+import express, { Request, Response } from 'express';
+import { EventType } from '../../eda';
+import Runtime from '../../services/runtime';
+import { asyncRoute } from '../utils/async';
 
 export default function init(runtime: Runtime) {
   async function webhookHandler(
@@ -17,12 +17,11 @@ export default function init(runtime: Runtime) {
     }: Request<PrismeaiAPI.AutomationWebhook.PathParameters>,
     res: Response<PrismeaiAPI.AutomationWebhook.Responses.$200>
   ) {
-    const DO_NOT_SEND_HEADERS = ["cookie", "host"];
+    const DO_NOT_SEND_HEADERS = ['cookie', 'host'];
     const filteredHeaders = Object.entries(headers)
       .filter(
         ([k, v]) =>
-          !k.toLowerCase().startsWith("x-prismeai") &&
-          !DO_NOT_SEND_HEADERS.includes(k)
+          !k.toLowerCase().startsWith('x-') && !DO_NOT_SEND_HEADERS.includes(k)
       )
       .reduce(
         (obj, [k, v]) => ({
@@ -32,20 +31,15 @@ export default function init(runtime: Runtime) {
         {}
       );
 
-    const event = await broker.send<Prismeai.TriggeredWebhook["payload"]>(
+    const event = await broker.send<Prismeai.TriggeredWebhook['payload']>(
       EventType.TriggeredWebhook,
       {
         workspaceId,
         automationSlug,
-        originalUrl,
-        method: <any>method,
-        headers,
-        payload: {
-          body,
-          headers: filteredHeaders,
-          method,
-          query,
-        },
+        body,
+        headers: filteredHeaders,
+        method,
+        query,
       }
     );
     const outputs = await runtime.processEvent(event, logger, broker);
