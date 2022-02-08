@@ -2,14 +2,14 @@ import {
   CONTEXT_RUN_EXPIRE_TIME,
   CONTEXT_SESSION_EXPIRE_TIME,
   MAXIMUM_SUCCESSIVE_CALLS,
-} from "../../../config";
-import { CacheDriver } from "../../cache";
+} from '../../../config';
+import { CacheDriver } from '../../cache';
 import {
   InvalidSetInstructionError,
   InvalidVariableNameError,
   TooManyCallError,
-} from "../../errors";
-import { Logger, logger } from "../../logger";
+} from '../../errors';
+import { Logger, logger } from '../../logger';
 
 type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
@@ -29,7 +29,7 @@ export interface GlobalContext {
 }
 
 export interface UserContext {
-  id: string;
+  id?: string;
   [k: string]: any;
 }
 
@@ -46,15 +46,15 @@ export interface Contexts {
 }
 
 export enum ContextType {
-  Run = "run",
-  Global = "global",
-  User = "user",
-  Session = "session",
-  Customs = "customs",
-  Local = "local",
+  Run = 'run',
+  Global = 'global',
+  User = 'user',
+  Session = 'session',
+  Customs = 'customs',
+  Local = 'local',
 }
 
-type PublicContexts = Omit<Contexts, "run">;
+type PublicContexts = Omit<Contexts, 'run'>;
 
 export const UserAccessibleContexts: ContextType[] = [
   ContextType.Global,
@@ -65,7 +65,7 @@ export const UserAccessibleContexts: ContextType[] = [
 const VariableNameValidationRegexp = new RegExp(/^[a-zA-Z0-9._-]+$/);
 export class ContextsManager {
   private workspaceId: string;
-  private userId: string;
+  private userId?: string;
   private correlationId: string;
   private cache: CacheDriver;
   private contexts: Contexts;
@@ -127,9 +127,9 @@ export class ContextsManager {
     const run = await this.cache.getObject<RunContext>(
       this.cacheKey(ContextType.Run)
     );
-    const user = await this.cache.getObject<UserContext>(
-      this.cacheKey(ContextType.User)
-    );
+    const user = this.userId
+      ? await this.cache.getObject<UserContext>(this.cacheKey(ContextType.User))
+      : {};
     const customs = await this.cache.getObject(
       this.cacheKey(ContextType.Customs)
     );
@@ -158,7 +158,7 @@ export class ContextsManager {
         ttl: CONTEXT_RUN_EXPIRE_TIME,
       });
     }
-    if (!context || context === ContextType.User) {
+    if ((!context || context === ContextType.User) && this.userId) {
       await this.cache.setObject(this.cacheKey(ContextType.User), user);
     }
     if (!context || context === ContextType.Customs) {
@@ -182,7 +182,8 @@ export class ContextsManager {
       return `contexts:${this.workspaceId}:run:${this.correlationId}`;
     }
     if (context === ContextType.Session) {
-      return `contexts:${this.workspaceId}:session:${this.userId}`;
+      const sessionId = this.userId || this.correlationId;
+      return `contexts:${this.workspaceId}:session:${sessionId}`;
     }
     return `contexts:${this.workspaceId}:user:${this.userId}:customs`;
   }
@@ -229,7 +230,7 @@ export class ContextsManager {
   }
 
   private findParentVariableFor(path: string) {
-    const splittedPath = path.split(".");
+    const splittedPath = path.split('.');
     const rootVarName = splittedPath[0];
     const lastKey = splittedPath[splittedPath.length - 1];
 
@@ -262,7 +263,7 @@ export class ContextsManager {
       parent[lastKey] = value;
     } catch (error) {
       this.logger.error(error);
-      throw new InvalidSetInstructionError("Invalid set instruction", {
+      throw new InvalidSetInstructionError('Invalid set instruction', {
         variable: path,
         value,
       });
@@ -286,7 +287,7 @@ export class ContextsManager {
 
   async securityChecks() {
     if (this.run.depth > MAXIMUM_SUCCESSIVE_CALLS) {
-      throw new TooManyCallError("Reached maximum number of successive calls", {
+      throw new TooManyCallError('Reached maximum number of successive calls', {
         limit: MAXIMUM_SUCCESSIVE_CALLS,
       });
     }
