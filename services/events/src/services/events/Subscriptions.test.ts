@@ -64,7 +64,12 @@ const getSubscriptions = (
               },
             },
             undefined as any as Broker,
-            { logger: console } as CallbackContext
+            {
+              logger: {
+                trace: () => null,
+                info: () => null,
+              },
+            } as CallbackContext
           )
         );
       },
@@ -95,7 +100,7 @@ describe("Basic", () => {
     });
 
     // Subscribe before starting emitting events
-    events.subscribe(WorkspaceA, {
+    await events.subscribe(WorkspaceA, {
       userId: UserA,
       callback: (event) => {
         received.push(event.payload);
@@ -125,7 +130,7 @@ describe("Basic", () => {
         await sleep(sleepBetweenEmits);
 
         if (sentIdx === subscribeAfter) {
-          events.subscribe(WorkspaceA, {
+          await events.subscribe(WorkspaceA, {
             userId: UserA,
             callback: (event) => {
               received.push(event.payload);
@@ -161,7 +166,7 @@ describe("Basic", () => {
         await sleep(sleepBetweenEmits);
 
         if (sentIdx === subscribeAfter) {
-          unsubscribeCallback = events.subscribe(WorkspaceA, {
+          unsubscribeCallback = await events.subscribe(WorkspaceA, {
             userId: UserA,
             callback: (event) => {
               received.push(event.payload);

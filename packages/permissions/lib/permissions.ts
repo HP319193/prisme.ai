@@ -5,18 +5,18 @@ import { injectRules, nativeRules, sortRules } from "./rulesBuilder";
 import {
   UnknownRole,
   ForbiddenError as PrismeaiForbiddenError,
-  InvalidCollaborator,
+  InvalidPermissions,
 } from "./errors";
 import { User, ActionType, RoleTemplates, PermissionsConfig } from "./types";
 
 type UserId = string;
 interface Subject<Role extends string> {
   id?: string;
-  collaborators?: Record<
+  permissions?: Record<
     UserId,
     {
       role?: Role;
-      permissions?: Partial<Record<ActionType, boolean>>;
+      policies?: Partial<Record<ActionType, boolean>>;
     }
   >;
   [k: string]: any;
@@ -26,6 +26,7 @@ export class Permissions<
   SubjectType extends string,
   Role extends string = string
 > {
+  private ownerRole: Role;
   private user: User<Role>;
   private roleTemplates: RoleTemplates<SubjectType, Role>;
   private rules: Rules;
@@ -34,8 +35,9 @@ export class Permissions<
 
   constructor(user: User<Role>, config: PermissionsConfig<SubjectType, Role>) {
     this.user = user;
-    const { rbac, abac } = config;
+    const { rbac, abac, ownerRole } = config;
     this.roleTemplates = rbac;
+    this.ownerRole = ownerRole || ("owner" as Role);
 
     this.loadedRoleIds = new Set();
     this.rules = sortRules([
@@ -58,17 +60,17 @@ export class Permissions<
     permission: ActionType | ActionType[] | Role | SubjectCollaborator<Role>,
     subjectType: SubjectType,
     subject: Subject<Role>,
-    collaborator: User<Role>
+    user: User<Role>
   ): Subject<Role> {
-    this.throwUnlessCan(ActionType.ManageCollaborators, subjectType, subject);
+    this.throwUnlessCan(ActionType.ManagePermissions, subjectType, subject);
 
-    // Update entire collaborator
+    // Update entire user
     if (typeof permission === "object" && !Array.isArray(permission)) {
-      const { role, permissions, ...otherFields } =
+      const { role, policies, ...otherFields } =
         permission as SubjectCollaborator<Role>;
       if (Object.keys(otherFields).length) {
-        throw new InvalidCollaborator(
-          `Only allowed collaborator fields are 'role' and 'permissions' (found ${Object.keys(
+        throw new InvalidPermissions(
+          `Only allowed permissions fields are 'role' and 'policies' (found ${Object.keys(
             otherFields
           ).join(",")})`
         );
@@ -84,9 +86,9 @@ export class Permissions<
 
       return {
         ...subject,
-        collaborators: {
-          ...subject.collaborators,
-          [collaborator.id]: permission as SubjectCollaborator<Role>,
+        permissions: {
+          ...subject.permissions,
+          [user.id]: permission as SubjectCollaborator<Role>,
         },
       };
     }
@@ -95,12 +97,12 @@ export class Permissions<
     const roleTemplate = this.findRoleTemplate(permission as Role, subjectType);
     if (typeof permission === "string" && roleTemplate) {
       const role = permission as Role;
-      const contributor = subject.collaborators?.[collaborator.id] || {};
+      const contributor = subject.permissions?.[user.id] || {};
       return {
         ...subject,
-        collaborators: {
-          ...subject.collaborators,
-          [collaborator.id]: {
+        permissions: {
+          ...subject.permissions,
+          [user.id]: {
             ...contributor,
             role: role,
           },
@@ -112,21 +114,21 @@ export class Permissions<
     const actions = (
       Array.isArray(permission) ? permission : [permission]
     ) as string[];
-    const { permissions: currentPermissions, ...contributor } =
-      subject.collaborators?.[collaborator.id] || {};
+    const { policies: currentPolicies, ...contributor } =
+      subject.permissions?.[user.id] || {};
 
     return {
       ...subject,
-      collaborators: {
-        ...subject.collaborators,
-        [collaborator.id]: {
+      permissions: {
+        ...subject.permissions,
+        [user.id]: {
           ...contributor,
-          permissions: actions.reduce(
-            (permissions, permission) => ({
-              ...permissions,
+          policies: actions.reduce(
+            (policies, permission) => ({
+              ...policies,
               [permission]: true,
             }),
-            currentPermissions || {}
+            currentPolicies || {}
           ),
         },
       },
@@ -137,9 +139,9 @@ export class Permissions<
     permission: ActionType | ActionType[] | Role | "all",
     subjectType: SubjectType,
     subject: Subject<Role>,
-    collaborator: User<Role>
+    user: User<Role>
   ) {
-    this.throwUnlessCan(ActionType.ManageCollaborators, subjectType, subject);
+    this.throwUnlessCan(ActionType.ManagePermissions, subjectType, subject);
 
     // Revoke a role
     const isExistingRole = !!this.findRoleTemplate(
@@ -152,14 +154,14 @@ export class Permissions<
     ) {
       const role = permission;
       const { role: currentRole, ...contributor } =
-        subject.collaborators?.[collaborator.id] || {};
+        subject.permissions?.[user.id] || {};
       if (role === "all") {
-        // Revoke all permissions & role
-        const { [collaborator.id]: him, ...contributorsWithoutHim } =
-          subject.collaborators || {};
+        // Revoke all policies & role
+        const { [user.id]: him, ...contributorsWithoutHim } =
+          subject.permissions || {};
         return {
           ...subject,
-          collaborators: contributorsWithoutHim,
+          permissions: contributorsWithoutHim,
         };
       }
 
@@ -169,9 +171,9 @@ export class Permissions<
 
       return {
         ...subject,
-        collaborators: {
-          ...subject.collaborators,
-          [collaborator.id]: contributor,
+        permissions: {
+          ...subject.permissions,
+          [user.id]: contributor,
         },
       };
     }
@@ -180,21 +182,21 @@ export class Permissions<
     const actionsToRevoke = Array.isArray(permission)
       ? permission
       : [permission];
-    const { permissions: currentPermissions, ...contributor } =
-      subject.collaborators?.[collaborator.id] || {};
+    const { policies: currentPolicies, ...contributor } =
+      subject.permissions?.[user.id] || {};
 
     return {
       ...subject,
-      collaborators: {
-        ...subject.collaborators,
-        [collaborator.id]: {
+      permissions: {
+        ...subject.permissions,
+        [user.id]: {
           ...contributor,
-          permissions: Object.entries(currentPermissions || {}).reduce(
-            (permissions, [permission, enabled]) => {
+          policies: Object.entries(currentPolicies || {}).reduce(
+            (policies, [permission, enabled]) => {
               if (actionsToRevoke.includes(permission as ActionType)) {
-                return permissions;
+                return policies;
               }
-              return { ...permissions, [permission]: enabled };
+              return { ...policies, [permission]: enabled };
             },
             {}
           ),
@@ -224,26 +226,28 @@ export class Permissions<
         } role '${role}'.`
       );
     }
-    const roleRules = roleTemplate
-      ? injectRules(roleTemplate.rules, { user: this.user, subject })
-      : [];
 
-    this.rules = sortRules([...roleRules, ...this.rules]);
+    return this.loadRules(roleTemplate?.rules || [], { subject });
+  }
+
+  loadRules(rules: Rules, context: Record<string, any> = {}) {
+    const injectedRules = injectRules(rules, { user: this.user, ...context });
+    this.rules = sortRules([...injectedRules, ...this.rules]);
     this.ability = new Ability(this.rules);
     return this.ability;
   }
 
   pullRoleFromSubject(subjectType: SubjectType, subject: Subject<Role>) {
-    // Auto assign "admin" role for subjects created by the user
+    // Auto assign "owner" role for subjects created by the user
     if (
       subject.createdBy === this.user.id &&
-      this.findRoleTemplate("admin" as Role, subjectType)
+      this.findRoleTemplate(this.ownerRole, subjectType)
     ) {
-      this.loadRole("admin" as Role, subjectType, subject);
+      this.loadRole(this.ownerRole, subjectType, subject);
       return;
     }
 
-    const { role } = subject.collaborators?.[this.user.id] || {};
+    const { role } = subject.permissions?.[this.user.id] || {};
     if (!role) {
       return;
     }

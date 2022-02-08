@@ -15,7 +15,10 @@ import {
 } from "./middlewares/validation";
 import { AccessManager, SubjectType } from "../permissions";
 import { accessManagerMiddleware } from "./middlewares/accessManager";
-import { initCollaboratorRoutes } from "@prisme.ai/permissions";
+import {
+  initApiKeysRoutes,
+  initCollaboratorRoutes,
+} from "@prisme.ai/permissions";
 
 export function initAPI(accessManager: AccessManager) {
   const app = express();
@@ -65,6 +68,11 @@ export function initAPI(accessManager: AccessManager) {
    * Sharing routes
    */
   initCollaboratorRoutes<SubjectType>(app);
+
+  /**
+   * API Key routes
+   */
+  initApiKeysRoutes<SubjectType, Prismeai.ApiKeyRules>(app);
 
   /**
    * User routes

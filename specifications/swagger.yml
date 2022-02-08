@@ -179,12 +179,12 @@ paths:
           description: Success Response
 
   ############################################# permissions routes
-  /v2/{subjectType}/{subjectId}/collaborators:
+  /v2/{subjectType}/{subjectId}/permissions:
     post:
       description: Share the object with someone via a given role or specific permission
       operationId: share
       tags:
-        - sharing
+        - permissions
       parameters:
         - name: "subjectType"
           in: "path"
@@ -205,14 +205,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Collaborator"
+              $ref: "#/components/schemas/UserPermissions"
       responses:
         "200":
           description: Success Response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Collaborator"
+                $ref: "#/components/schemas/UserPermissions"
 
         "404":
           description: Object not found
@@ -239,8 +239,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/AuthenticationError"
     get:
-      description: Retrieve collaborators roles & permissions for the 'subjectType' 'subjectId'
-      operationId: getCollaborators
+      description: Retrieve permissions for the 'subjectType' 'subjectId'
+      operationId: getPermissions
       tags:
         - permissions
       parameters:
@@ -269,7 +269,7 @@ paths:
                   - result
                 properties:
                   result:
-                    $ref: "#/components/schemas/Collaborators"
+                    $ref: "#/components/schemas/PermissionsList"
 
         "404":
           description: Object not found
@@ -296,10 +296,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/AuthenticationError"
 
-  /v2/{subjectType}/{subjectId}/collaborators/{collaboratorId}:
+  /v2/{subjectType}/{subjectId}/permissions/{userId}:
     delete:
-      description: Revoke all role & permissions from a collaborator
-      operationId: revokeCollaborator
+      description: Revoke all role & permissions from a user
+      operationId: revokePermissions
       tags:
         - permissions
       parameters:
@@ -316,9 +316,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: collaboratorId
+        - name: userId
           in: path
-          description: The collaborator user id
+          description: The target user id
           required: true
           schema:
             type: string
@@ -333,6 +333,248 @@ paths:
                   - id
                 properties:
                   id:
+                    type: string
+
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "400":
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+        "403":
+          description: ForbiddenError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
+
+  /v2/{subjectType}/{subjectId}/apikeys:
+    get:
+      description: List api keys
+      operationId: listApiKeys
+      tags:
+        - ApiKeys
+      parameters:
+        - name: "subjectType"
+          in: "path"
+          description: "The target subject type"
+          required: true
+          schema:
+            type: string
+            enum: *KNOWN_SUBJECT_TYPES
+        - name: subjectId
+          in: path
+          description: The target subject id (i.e workspaceId if subjectType is 'workspace')
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ApiKey"
+
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "400":
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+        "403":
+          description: ForbiddenError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
+    post:
+      description: Create an api key
+      operationId: createApiKey
+      tags:
+        - ApiKeys
+      parameters:
+        - name: "subjectType"
+          in: "path"
+          description: "The target subject type"
+          required: true
+          schema:
+            type: string
+            enum: *KNOWN_SUBJECT_TYPES
+        - name: subjectId
+          in: path
+          description: The target subject id (i.e workspaceId if subjectType is 'workspace')
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: &API_KEY_SAVE_REQUEST_BODY
+              type: object
+              required:
+                - rules
+              properties:
+                rules:
+                  $ref: "#/components/schemas/ApiKeyRules"
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiKey"
+
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "400":
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+        "403":
+          description: ForbiddenError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
+
+  /v2/{subjectType}/{subjectId}/apikeys/{apiKey}:
+    put:
+      description: Update an api key
+      operationId: updateApiKey
+      tags:
+        - ApiKeys
+      parameters:
+        - name: "subjectType"
+          in: "path"
+          description: "The target subject type"
+          required: true
+          schema:
+            type: string
+            enum: *KNOWN_SUBJECT_TYPES
+        - name: subjectId
+          in: path
+          description: The target subject id (i.e workspaceId if subjectType is 'workspace')
+          required: true
+          schema:
+            type: string
+        - name: apiKey
+          in: path
+          description: The target api key
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: *API_KEY_SAVE_REQUEST_BODY
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiKey"
+
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectNotFoundError"
+        "400":
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadParametersError"
+        "403":
+          description: ForbiddenError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "401":
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
+
+    delete:
+      description: Delete an api key
+      operationId: deleteApiKey
+      tags:
+        - ApiKeys
+      parameters:
+        - name: "subjectType"
+          in: "path"
+          description: "The target subject type"
+          required: true
+          schema:
+            type: string
+            enum: *KNOWN_SUBJECT_TYPES
+        - name: subjectId
+          in: path
+          description: The target subject id (i.e workspaceId if subjectType is 'workspace')
+          required: true
+          schema:
+            type: string
+        - name: apiKey
+          in: path
+          description: The target api key
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  apiKey:
                     type: string
 
         "404":
@@ -1845,25 +2087,25 @@ components:
 
 
     ################################################################################################################################
-    ################################################# Permissions &c collaboraotrs #################################################
-    Collaborators:
+    ################################################# Permissions ##################################################################
+    PermissionsList:
       type: array
       items:
-        $ref: "#/components/schemas/Collaborator"
+        $ref: "#/components/schemas/UserPermissions"
       example:
         - email: admin@prisme.ai
           role: admin
         - email: readonly@prisme.ai
-          permissions:
+          policies:
             read: true
 
     Role:
       type: string
       enum:
-        - admin
-        - collaborator
+        - owner
+        - editor
 
-    Permissions:
+    Policies:
       properties:
         read:
           type: boolean
@@ -1873,10 +2115,10 @@ components:
           type: boolean
         create:
           type: boolean
-        manage_collaborators:
+        manage_permissions:
           type: boolean
 
-    Collaborator:
+    UserPermissions:
       type: object
       additionalProperties: false
       required:
@@ -1888,8 +2130,37 @@ components:
           type: string
         role:
           $ref: "#/components/schemas/Role"
-        permissions:
-          $ref: "#/components/schemas/Permissions"
+        policies:
+          $ref: "#/components/schemas/Policies"
+
+    ApiKeyRules:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            type: string
+          example:
+            - allowedEvent1
+            - allowedEvent2
+
+    ApiKey:
+      type: object
+      additionalProperties: false
+      required:
+        - apiKey
+        - rules
+        - subjectType
+        - subjectId
+      properties:
+        apiKey:
+          type: string
+        subjectType:
+          type: string
+        subjectId:
+          type: string
+        rules:
+          $ref: "#/components/schemas/ApiKeyRules"
 
 
 
@@ -2033,6 +2304,75 @@ components:
             message:
               type: string
           additionalProperties: true
+
+    ########################## API Keys #############################
+    CreatedApiKey:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apikeys.created
+          enum:
+            - apikeys.created
+        payload: &API_KEY_EVENT_PAYLOAD
+          type: object
+          required:
+            - apiKey
+            - subjectType
+            - subjectId
+            - rules
+          properties:
+            apiKey:
+              type: string
+            subjectType:
+              type: string
+              enum: *KNOWN_SUBJECT_TYPES
+            subjectId:
+              type: string
+            rules:
+              $ref: "#/components/schemas/ApiKeyRules"
+
+    UpdatedApiKey:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apikeys.updated
+          enum:
+            - apikeys.updated
+        payload: *API_KEY_EVENT_PAYLOAD
+
+    DeletedApiKey:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apikeys.deleted
+          enum:
+            - apikeys.deleted
+        payload:
+          type: object
+          required:
+            - apiKey
+            - subjectType
+            - subjectId
+          properties:
+            apiKey:
+              type: string
+            subjectType:
+              type: string
+              enum: *KNOWN_SUBJECT_TYPES
+            subjectId:
+              type: string
 
     ########################## API Gateway ##########################
     FailedLogin:

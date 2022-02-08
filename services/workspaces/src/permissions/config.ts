@@ -5,15 +5,27 @@ export enum SubjectType {
 }
 
 export enum Role {
-  Admin = "admin",
-  Collaborator = "collaborator",
+  // Owner can :
+  // 1. Manage permissions + API keys
+  // 2. View all workspace events
+  // 3. Has full CRUD permissions on the workspace, installed apps & pages
+  Owner = "owner",
+
+  // Editor can :
+  // 2. View all workspace events except API key & permissions ones
+  // 3. Has CRUD permissions except delete on the workspace, installed apps & pages
+  Editor = "editor",
 }
 
-export const config: PermissionsConfig<SubjectType, Prismeai.Role> = {
+export const config: PermissionsConfig<
+  SubjectType,
+  Prismeai.Role,
+  Prismeai.ApiKeyRules
+> = {
   subjectTypes: Object.values(SubjectType),
   rbac: [
     {
-      name: Role.Admin,
+      name: Role.Owner,
       subjectType: SubjectType.Workspace,
       rules: [
         {
@@ -28,7 +40,7 @@ export const config: PermissionsConfig<SubjectType, Prismeai.Role> = {
     },
 
     {
-      name: Role.Collaborator,
+      name: Role.Editor,
       subjectType: SubjectType.Workspace,
       rules: [
         {
@@ -49,4 +61,8 @@ export const config: PermissionsConfig<SubjectType, Prismeai.Role> = {
       subject: SubjectType.Workspace,
     },
   ],
+  customRulesBuilder: (role) => {
+    return [];
+  },
+  ownerRole: Role.Owner,
 };

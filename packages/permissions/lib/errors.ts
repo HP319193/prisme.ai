@@ -7,7 +7,7 @@ export class PrismeError extends Error implements PrismeError {
   public error: string;
   public details: any;
 
-  constructor(message: string, details: any, code?: string) {
+  constructor(message: string, details: any = {}, code?: string) {
     super(message);
     this.error = code || this.constructor.name;
     this.details = details;
@@ -40,9 +40,9 @@ export class UnknownSubjectType extends PrismeError {
   }
 }
 
-export class InvalidCollaborator extends PrismeError {
+export class InvalidPermissions extends PrismeError {
   constructor(msg: string = "Invalid collaborator", details?: any) {
-    super(msg, details, "InvalidCollaborator");
+    super(msg, details, "InvalidPermissions");
   }
 }
 
@@ -55,5 +55,10 @@ export class ObjectNotFoundError extends PrismeError {
 export class CollaboratorNotFound extends PrismeError {
   constructor(msg: string = "Can't find this collaborator") {
     super(msg, [], "CollaboratorNotFound");
+  }
+}
+export class InvalidAPIKey extends PrismeError {
+  constructor(msg: string = "Invalid API Key") {
+    super(msg, [], "InvalidAPIKey");
   }
 }

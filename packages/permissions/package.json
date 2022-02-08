@@ -19,6 +19,7 @@
   "dependencies": {
     "@casl/ability": "^5.4.3",
     "@casl/mongoose": "^6.0.0",
+    "@prisme.ai/broker": "^0.1.2",
     "mongoose": "^6.1.8",
     "node-fetch": "^2.6.6"
   },

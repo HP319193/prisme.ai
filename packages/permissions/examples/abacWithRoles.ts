@@ -7,12 +7,14 @@ export enum SubjectType {
   Workspace = "workspace",
   Page = "page",
   Event = "event",
+  Platform = "platform",
 }
 
-const config: PermissionsConfig<SubjectType> = {
+const config: PermissionsConfig<SubjectType, Role> = {
   subjectTypes: roles.subjectTypes,
   rbac: roles.rbac,
   abac: abac.abac,
+  ownerRole: Role.Admin,
 };
 
 export default config;

@@ -1,8 +1,9 @@
 import { Ability, RawRuleOf } from "@casl/ability";
+import { CustomRole } from "..";
 
 export enum ActionType {
   Manage = "manage", // Super admin : permits every action
-  ManageCollaborators = "manage_collaborators",
+  ManagePermissions = "manage_permissions",
   Create = "create",
   Read = "read",
   Update = "update",
@@ -14,7 +15,7 @@ export type UserId = string;
 export type UserSubject = Record<string, any>;
 export type SubjectCollaborator<Role extends string> = {
   role?: Role;
-  permissions?: Partial<Record<ActionType, boolean>>;
+  policies?: Partial<Record<ActionType, boolean>>;
 };
 export type SubjectCollaborators<Role extends string> = Record<
   UserId,
@@ -26,7 +27,7 @@ export interface BaseSubject<Role extends string> {
   updatedBy: string;
   createdAt: string;
   updatedAt: string;
-  collaborators?: SubjectCollaborators<Role>;
+  permissions?: SubjectCollaborators<Role>;
 }
 export type Subject<
   CustomAttributes = UserSubject,
@@ -51,9 +52,14 @@ export type RoleTemplates<
 
 export interface PermissionsConfig<
   SubjectType extends string,
-  Role extends string
+  Role extends string,
+  CustomRules = any
 > {
   subjectTypes: SubjectType[];
   rbac: RoleTemplates<SubjectType, Role>;
   abac: Rules;
+  customRulesBuilder?: (
+    role: Omit<CustomRole<SubjectType, CustomRules>, "casl">
+  ) => RawRuleOf<Ability>[];
+  ownerRole?: Role;
 }

@@ -5,6 +5,7 @@ export enum SubjectType {
   Workspace = "workspace",
   Page = "page",
   Event = "event",
+  Platform = "platform",
 }
 
 export enum Role {
@@ -17,7 +18,7 @@ export enum Role {
   Collaborator = "collaborator",
 }
 
-const config: PermissionsConfig<SubjectType> = {
+const config: PermissionsConfig<SubjectType, Role> = {
   subjectTypes: Object.values(SubjectType),
   rbac: [
     // Platform-wide roles
@@ -87,6 +88,7 @@ const config: PermissionsConfig<SubjectType> = {
     },
   ],
   abac: [],
+  ownerRole: Role.Admin,
 };
 
 export default config;

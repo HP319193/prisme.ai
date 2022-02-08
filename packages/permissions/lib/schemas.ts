@@ -1,10 +1,41 @@
 import { Schema, Document, Types } from "mongoose";
-import { ActionType, Permissions, Subject } from "..";
+import { ActionType, Permissions, Rules, Subject } from "..";
 
-const CollaboratorSchema = new Schema(
+export const Roles = new Schema({
+  id: { type: String, index: true },
+  name: String,
+  type: String,
+  subjectType: String,
+  subjectId: String,
+  rules: Schema.Types.Mixed,
+  casl: Schema.Types.Mixed,
+});
+
+export enum NativeSubjectType {
+  Roles = "roles",
+}
+
+export type CustomRole<SubjectType extends string, CustomRules = any> = {
+  name: string;
+  id: string;
+  type: "apiKey";
+  subjectType: SubjectType;
+  subjectId: string;
+  rules: CustomRules;
+  casl: Rules;
+};
+
+export type ApiKey<SubjectType extends string, CustomRules = any> = Omit<
+  CustomRole<SubjectType, CustomRules>,
+  "name" | "casl" | "type" | "id"
+> & {
+  apiKey: string;
+};
+
+const PermissionListSchema = new Schema(
   {
     role: String,
-    permissions: {
+    policies: {
       type: Map,
       of: Boolean,
     },
@@ -21,9 +52,9 @@ const BaseSchema = new Schema({
   updatedBy: String,
   createdAt: String,
   updatedAt: String,
-  collaborators: {
+  permissions: {
     type: Map,
-    of: CollaboratorSchema,
+    of: PermissionListSchema,
     index: true,
   },
 });
@@ -51,9 +82,9 @@ export function buildFilterFieldsMethod<SubjectType extends string>(
 
     if (
       !permissions ||
-      !permissions.can(ActionType.ManageCollaborators, subjectType, object)
+      !permissions.can(ActionType.ManagePermissions, subjectType, object)
     ) {
-      delete object.collaborators;
+      delete object.permissions;
     }
 
     return object;

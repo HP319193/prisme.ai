@@ -1,31 +1,25 @@
 import "@prisme.ai/types";
 import { NextFunction, Request, Response, Router } from "express";
-import { AccessManager, ActionType } from "../..";
+import { ActionType } from "../..";
 import { CollaboratorNotFound } from "../errors";
 import { SubjectCollaborator } from "../types";
-import { fetchCollaboratorContacts } from "./fetchCollaboratorContacts";
-
-type InstantiatedAccessManager<SubjectType extends string> = Required<
-  AccessManager<SubjectType, { [k in SubjectType]: any }, Prismeai.Role>
->;
-type ExtendedRequest<SubjectType extends string> = {
-  accessManager: InstantiatedAccessManager<SubjectType>;
-};
+import { fetchUsers } from "./fetchUsers";
+import { asyncRoute, ExtendedRequest } from "./utils";
 
 export function initCollaboratorRoutes<SubjectType extends string>(
   app: Router
 ) {
-  async function getCollaboratorsHandler(
+  async function getPermissionsHandler(
     {
       params: { subjectType, subjectId },
       accessManager,
     }: Request<
-      PrismeaiAPI.GetCollaborators.PathParameters,
-      PrismeaiAPI.GetCollaborators.Responses.$200,
+      PrismeaiAPI.GetPermissions.PathParameters,
+      PrismeaiAPI.GetPermissions.Responses.$200,
       any
     > &
       ExtendedRequest<SubjectType>,
-    res: Response<PrismeaiAPI.GetCollaborators.Responses.$200>,
+    res: Response<PrismeaiAPI.GetPermissions.Responses.$200>,
     next: NextFunction
   ) {
     const subject = await accessManager.get(
@@ -34,31 +28,28 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     );
 
     await accessManager.throwUnlessCan(
-      ActionType.ManageCollaborators,
+      ActionType.ManagePermissions,
       subjectType as SubjectType,
       subject
     );
 
-    const contacts = await fetchCollaboratorContacts({
-      ids: Object.keys(subject.collaborators || {}).map(
-        (collaboratorId) => collaboratorId
-      ),
+    const contacts = await fetchUsers({
+      ids: Object.keys(subject.permissions || {}).map((userId) => userId),
     });
 
-    const collaborators = await Promise.all(
-      Object.entries(subject.collaborators || {}).map(
-        async ([collaboratorId, collaborator]) => {
+    const users = await Promise.all(
+      Object.entries(subject.permissions || {}).map(
+        async ([userId, collaborator]) => {
           return {
             ...(collaborator as SubjectCollaborator<Prismeai.Role>),
-            id: collaboratorId,
-            email:
-              contacts.find((cur) => cur.id === collaboratorId)?.email || "",
+            id: userId,
+            email: contacts.find((cur) => cur.id === userId)?.email || "",
           };
         }
       )
     );
 
-    return res.send({ result: collaborators });
+    return res.send({ result: users });
   }
 
   async function shareHandler(
@@ -76,13 +67,13 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     next: NextFunction
   ) {
     const { email, ...permissions } = body;
-    const collaborators = await fetchCollaboratorContacts({ email });
-    if (!collaborators.length) {
+    const users = await fetchUsers({ email });
+    if (!users.length) {
       throw new CollaboratorNotFound(
         `Could not find any user corresponding to ${email}`
       );
     }
-    const collaborator = collaborators[0];
+    const collaborator = users[0];
 
     const sharedSubject = await accessManager.grant(
       subjectType as SubjectType,
@@ -91,7 +82,7 @@ export function initCollaboratorRoutes<SubjectType extends string>(
       permissions
     );
     return res.send({
-      ...(sharedSubject.collaborators?.[<any>collaborator.id] || {}),
+      ...(sharedSubject.permissions?.[<any>collaborator.id] || {}),
       email,
       id: collaborator.id,
     });
@@ -99,30 +90,26 @@ export function initCollaboratorRoutes<SubjectType extends string>(
 
   async function revokeCollaborator(
     {
-      params: { subjectType, subjectId, collaboratorId },
+      params: { subjectType, subjectId, userId },
       accessManager,
     }: Request<
-      PrismeaiAPI.RevokeCollaborator.PathParameters,
-      PrismeaiAPI.RevokeCollaborator.Responses.$200,
+      PrismeaiAPI.RevokePermissions.PathParameters,
+      PrismeaiAPI.RevokePermissions.Responses.$200,
       any
     > &
       ExtendedRequest<SubjectType>,
-    res: Response<PrismeaiAPI.RevokeCollaborator.Responses.$200>,
+    res: Response<PrismeaiAPI.RevokePermissions.Responses.$200>,
     next: NextFunction
   ) {
     await accessManager.revoke(<any>subjectType, subjectId, {
-      id: collaboratorId,
+      id: userId,
     });
 
-    return res.send({ id: collaboratorId });
+    return res.send({ id: userId });
   }
 
-  const asyncRoute =
-    (fn: any) => (req: Request, res: Response, next: NextFunction) =>
-      Promise.resolve(fn(req, res, next)).catch(next);
-
-  const baseRoute = "/v2/:subjectType/:subjectId/collaborators";
-  app.get(`${baseRoute}`, asyncRoute(getCollaboratorsHandler));
+  const baseRoute = "/v2/:subjectType/:subjectId/permissions";
+  app.get(`${baseRoute}`, asyncRoute(getPermissionsHandler));
   app.post(`${baseRoute}`, asyncRoute(shareHandler));
-  app.delete(`${baseRoute}/:collaboratorId`, asyncRoute(revokeCollaborator));
+  app.delete(`${baseRoute}/:userId`, asyncRoute(revokeCollaborator));
 }

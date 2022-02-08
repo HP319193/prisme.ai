@@ -8,7 +8,7 @@ import configs from "../examples";
 
 export type Subject = Record<string, any> & {
   id?: string;
-  collaborators?: SubjectCollaborators<Role>;
+  permissions?: SubjectCollaborators<Role>;
 };
 
 export enum SubjectType {
@@ -16,6 +16,7 @@ export enum SubjectType {
   Workspace = "workspace",
   Page = "page",
   Event = "event",
+  Platform = "platform",
 }
 
 enum Role {
@@ -285,10 +286,10 @@ describe("ABAC > Grant permissions", () => {
       ) as any as Subject;
     }).not.toThrow();
 
-    expect(sharedWorkspace!!.collaborators).toMatchObject({
+    expect(sharedWorkspace!!.permissions).toMatchObject({
       [collaboratorUser.id]: {
         // role: Role.Collaborator,
-        permissions: {
+        policies: {
           [ActionType.Read]: true,
         },
       },
@@ -348,13 +349,13 @@ describe("ABAC > Grant permissions", () => {
         ActionType.Update,
         SubjectType.Workspace,
         <any>adminWorkspace,
-        "collaborators"
+        "permissions"
       )
     ).toBe(true);
 
-    expect(sharedWorkspace!!.collaborators).toMatchObject({
+    expect(sharedWorkspace!!.permissions).toMatchObject({
       [collaboratorUser.id]: {
-        permissions: {
+        policies: {
           [ActionType.Read]: true,
           [ActionType.Delete]: true,
         },
@@ -378,7 +379,7 @@ describe("ABAC > Grant permissions", () => {
     ).toBe(true);
   });
 
-  it("Any admin can grant a specific permission to someone else on a workspace he has been granted manage_collaborators permission", () => {
+  it("Any admin can grant a specific permission to someone else on a workspace he has been granted manage_permissions permission", () => {
     const adminUser = { id: "adminUserId", role: Role.Admin };
     const collaboratorUser = {
       id: "collaboratorId",
@@ -417,18 +418,18 @@ describe("ABAC > Grant permissions", () => {
     let sharedWorkspace: Subject;
     expect(() => {
       sharedWorkspace = adminPerms.grant(
-        ActionType.ManageCollaborators,
+        ActionType.ManagePermissions,
         SubjectType.Workspace,
         adminWorkspace,
         collaboratorUser
       ) as any as Subject;
     }).not.toThrow();
 
-    expect(sharedWorkspace!!.collaborators).toMatchObject({
+    expect(sharedWorkspace!!.permissions).toMatchObject({
       [collaboratorUser.id]: {
         // role: Role.Collaborator,
-        permissions: {
-          [ActionType.ManageCollaborators]: true,
+        policies: {
+          [ActionType.ManagePermissions]: true,
         },
       },
     });
@@ -464,9 +465,9 @@ describe("ABAC > Grant permissions", () => {
     const adminWorkspace = {
       id: "hisWorkspaceId",
       createdBy: adminUser.id,
-      collaborators: {
+      permissions: {
         [collaboratorUser.id]: {
-          permissions: {
+          policies: {
             [ActionType.Read]: true,
           },
         },
@@ -502,7 +503,7 @@ describe("ABAC > Grant permissions", () => {
     ).toBe(false);
   });
 
-  it("No admin can update collaborators field without manage_collaborators permission", () => {
+  it("No admin can update collaborators field without manage_permissions permission", () => {
     const adminPerms = new Permissions(
       { id: "myUserId", role: Role.Admin },
       config
@@ -510,9 +511,9 @@ describe("ABAC > Grant permissions", () => {
     const workspace = {
       id: "workspaceId",
       createdBy: "someOtherGuy",
-      collaborators: {
+      permissions: {
         myUserId: {
-          permissions: {
+          policies: {
             [ActionType.Update]: true,
           },
         },
@@ -523,20 +524,21 @@ describe("ABAC > Grant permissions", () => {
     expect(
       adminPerms.can(ActionType.Update, SubjectType.Workspace, <any>workspace)
     ).toBe(true);
-    // But he cannot update collaborators field !
+    // But he cannot update permissions field !
     expect(
       adminPerms.can(
         ActionType.Update,
         SubjectType.Workspace,
         <any>workspace,
-        "collaborators"
+        "permissions"
       )
     ).toBe(false);
   });
 });
 
 describe("Subject-attached Roles", () => {
-  const config: PermissionsConfig<SubjectType, Role> = configs.roles;
+  const config: PermissionsConfig<SubjectType, Role> =
+    configs.roles as PermissionsConfig<SubjectType, Role>;
 
   it("A workspace admin can fully manage it", () => {
     const adminUser = {
@@ -546,7 +548,7 @@ describe("Subject-attached Roles", () => {
     const workspace = {
       id: "hisWorkspaceId",
       createdBy: "someOtherAdminId",
-      collaborators: {
+      permissions: {
         [adminUser.id]: {
           role: Role.Admin,
         },
@@ -567,7 +569,7 @@ describe("Subject-attached Roles", () => {
     const hisWorkspace = {
       id: "hisWorkspaceId",
       createdBy: "someOtherAdminId",
-      collaborators: {
+      permissions: {
         [adminUser.id]: {
           role: Role.Admin,
         },
@@ -582,7 +584,7 @@ describe("Subject-attached Roles", () => {
     const anotherWorkspace = {
       id: "anotherWorkspaceId",
       createdBy: "someOtherAdminId",
-      collaborators: {
+      permissions: {
         someOtherAdminId: {
           role: Role.Admin,
         },
@@ -604,7 +606,7 @@ describe("Subject-attached Roles", () => {
     const workspace = {
       id: "hisWorkspaceId",
       createdBy: "someAdminId",
-      collaborators: {
+      permissions: {
         [collaboratorUser.id]: {
           role: Role.Collaborator,
         },
@@ -636,7 +638,7 @@ describe("Subject-attached Roles", () => {
     const hisWorkspace = {
       id: "hisWorkspaceId",
       createdBy: "someOtherAdminId",
-      collaborators: {
+      permissions: {
         [adminUser.id]: {
           role: Role.Admin,
         },
@@ -670,7 +672,7 @@ describe("Subject-attached Roles", () => {
     const hisWorkspace = {
       id: "hisWorkspaceId",
       createdBy: "someOtherAdminId",
-      collaborators: {
+      permissions: {
         [adminUser.id]: {
           role: Role.Admin,
         },
@@ -704,7 +706,7 @@ describe("Subject-attached Roles", () => {
     const adminWorkspace = {
       id: "hisWorkspaceId",
       createdBy: "someOtherGuy",
-      collaborators: {
+      permissions: {
         [adminUser.id]: {
           role: Role.Admin,
         },
@@ -722,7 +724,7 @@ describe("Subject-attached Roles", () => {
       ) as any as Subject;
     }).not.toThrow();
 
-    expect(sharedWorkspace!!.collaborators).toMatchObject({
+    expect(sharedWorkspace!!.permissions).toMatchObject({
       [futureCollaboratorUser.id]: {
         role: Role.Collaborator,
       },

@@ -33,7 +33,10 @@ process.on("SIGINT", exit);
 const app = express();
 const httpServer = http.createServer(app);
 
-const accessManager = initAccessManager(PERMISSIONS_STORAGE_MONGODB_OPTIONS);
+const accessManager = initAccessManager(
+  PERMISSIONS_STORAGE_MONGODB_OPTIONS,
+  broker
+);
 accessManager.start();
 
 const subscriptions = new Subscriptions(broker, accessManager);

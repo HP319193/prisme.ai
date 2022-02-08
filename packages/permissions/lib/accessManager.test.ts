@@ -1,11 +1,12 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import { AccessManager, BaseSubject } from "..";
+import { AccessManager, BaseSubject, ApiKey } from "..";
 import abacWithRoles, { Role } from "../examples/abacWithRoles";
+import apiKeys from "../examples/apiKeys";
 
 enum ActionType {
   Manage = "manage", // Super admin : permits every action
-  ManageCollaborators = "manage_collaborators",
+  ManagePermissions = "manage_permissions",
   Create = "create",
   Read = "read",
   Update = "update",
@@ -17,6 +18,7 @@ enum SubjectType {
   Workspace = "workspace",
   Page = "page",
   Event = "event",
+  Platform = "platform",
 }
 
 type SubjectInterfaces = {
@@ -29,12 +31,13 @@ type SubjectInterfaces = {
     workspaceId: string;
   };
   [SubjectType.Event]: { id: string };
+  [SubjectType.Platform]: {};
 };
 
 const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
   {
     storage: {
-      host: "mongodb://localhost:27017/permissions-tests",
+      host: "mongodb://localhost:27017/testCASL",
     },
     schemas: {
       user: new mongoose.Schema({}),
@@ -46,28 +49,36 @@ const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
         workspaceId: { type: String, index: true },
         public: Boolean,
       }),
-      event: new mongoose.Schema({}),
+      event: false,
+      platform: false,
     },
   },
-  abacWithRoles
+  {
+    ...abacWithRoles,
+    customRulesBuilder: apiKeys.customRulesBuilder,
+  }
 );
 
+const adminAId = "adminUserIdA";
+const adminBId = "adminUserIdB";
+let adminA: Required<AccessManager<SubjectType, SubjectInterfaces, Role>>;
+let adminB: Required<AccessManager<SubjectType, SubjectInterfaces, Role>>;
 let mongod: MongoMemoryServer;
 beforeAll(async () => {
   mongod = await MongoMemoryServer.create();
   //@ts-ignore
   accessManager.opts.storage.host = mongod.getUri();
   await accessManager.start();
-});
 
-const adminA = accessManager.as({
-  id: "adminUserIdA",
-  role: Role.WorkspaceBuilder,
-});
+  adminA = await accessManager.as({
+    id: adminAId,
+    role: Role.WorkspaceBuilder,
+  });
 
-const adminB = accessManager.as({
-  id: "adminUserIdB",
-  role: Role.WorkspaceBuilder,
+  adminB = await accessManager.as({
+    id: adminBId,
+    role: Role.WorkspaceBuilder,
+  });
 });
 
 describe("CRUD with a predefined role", () => {
@@ -146,11 +157,11 @@ describe("CRUD with a predefined role", () => {
   });
 
   it("An admin can list all workspaces he created", async () => {
-    const adminZ = accessManager.as({
+    const adminZ = await accessManager.as({
       id: `adminUserIdZ${Math.round(Math.random() * 10000)}`,
       role: Role.WorkspaceBuilder,
     });
-    const adminY = accessManager.as({
+    const adminY = await accessManager.as({
       id: `adminUserIdY${Math.round(Math.random() * 10000)}`,
       role: Role.WorkspaceBuilder,
     });
@@ -177,11 +188,11 @@ describe("CRUD with a predefined role", () => {
   });
 
   it("An admin can list all workspaces he created + those shared with him", async () => {
-    const adminZ = accessManager.as({
+    const adminZ = await accessManager.as({
       id: `adminUserIdZ${Math.round(Math.random() * 100000)}`,
       role: Role.WorkspaceBuilder,
     });
-    const adminY = accessManager.as({
+    const adminY = await accessManager.as({
       id: `adminUserIdY${Math.round(Math.random() * 100000)}`,
       role: Role.WorkspaceBuilder,
     });
@@ -216,7 +227,6 @@ describe("CRUD with a predefined role", () => {
     );
 
     const workspacesZ = await adminZ.findAll(SubjectType.Workspace);
-    const workspacesY = await adminY.findAll(SubjectType.Workspace);
 
     const sort = (workspaces: { id: string }[]) =>
       workspaces.sort((a, b) => (a.id > b.id ? 1 : -1));
@@ -224,22 +234,18 @@ describe("CRUD with a predefined role", () => {
     expect(sort(workspacesZ)).toMatchObject(
       sort(adminZWorkspaces.concat(adminYWorkspaces))
     );
-
-    // expect(sort(workspacesY)).toMatchObject(
-    //   sort(adminYWorkspaces.concat([adminZWorkspaces[1]]))
-    // );
   });
 
   it("A workspace admin can list all pages of his workspace (including those he did not create himself)", async () => {
-    const adminZ = accessManager.as({
+    const adminZ = await accessManager.as({
       id: `adminUserIdZ${Math.round(Math.random() * 100000)}`,
       role: Role.WorkspaceBuilder,
     });
-    const adminX = accessManager.as({
+    const adminX = await accessManager.as({
       id: `adminUserIdX${Math.round(Math.random() * 100000)}`,
       role: Role.WorkspaceBuilder,
     });
-    const collabZ = accessManager.as({
+    const collabZ = await accessManager.as({
       id: `collabUserIdZ${Math.round(Math.random() * 100000)}`,
     });
 
@@ -317,7 +323,7 @@ describe("Role & Permissions granting", () => {
       adminB.user!!,
       Role.Admin
     );
-    expect(sharedWorkspace?.collaborators).toMatchObject({
+    expect(sharedWorkspace?.permissions).toMatchObject({
       [adminB?.user?.id!!]: {
         role: Role.Admin,
       },
@@ -336,14 +342,14 @@ describe("Role & Permissions granting", () => {
       adminB.user!!,
       Role.Admin
     );
-    expect(unsharedWorkspace?.collaborators).toMatchObject({
+    expect(unsharedWorkspace?.permissions).toMatchObject({
       [adminB.user.id]: {},
     });
 
     // Refresh adminB to force him to "forgot" he was admin
     // TODO a way to automatically detect that ?
     // If AccessManager.as() instance is meant to be alive a long time, this would be critical ...
-    const refreshedAdminB = accessManager.as({
+    const refreshedAdminB = await accessManager.as({
       id: "adminUserIdB",
     });
 
@@ -354,7 +360,7 @@ describe("Role & Permissions granting", () => {
   });
 
   it("A collaborator can update a page for which he has been given update permission", async () => {
-    const collaborator = accessManager.as({
+    const collaborator = await accessManager.as({
       id: "someCollaboratorId",
       role: Role.Guest,
     });
@@ -376,8 +382,8 @@ describe("Role & Permissions granting", () => {
       [ActionType.Read, ActionType.Update]
     );
 
-    // Check that collaborator now can read & update the page (but not its collaborators field !)
-    const { collaborators, ...sharedWithoutCollaborators } = sharedPage;
+    // Check that collaborator now can read & update the page (but not its permissions field !)
+    const { permissions, ...sharedWithoutCollaborators } = sharedPage;
     await expect(
       collaborator.get(SubjectType.Page, page.id)
     ).resolves.toMatchObject(sharedWithoutCollaborators);
@@ -397,6 +403,205 @@ describe("Role & Permissions granting", () => {
     await expect(
       collaborator.get(SubjectType.Workspace, workspace.id)
     ).rejects.toThrow();
+  });
+});
+
+describe("API Keys", () => {
+  const ourWorkspace = {
+    id: "ourWorkspaceId" + Math.round(Math.random() * 10000),
+    name: "ourWorkspace",
+    permissions: {
+      [adminAId]: {
+        role: "admin",
+      },
+    },
+  };
+  const anotherWorkspace = {
+    id: "anotherWorkspaceId" + Math.round(Math.random() * 10000),
+    name: "anotherWorkspace",
+    permissions: {
+      anotherAdminId: {
+        role: "admin",
+      },
+      [adminBId]: {
+        role: "admin",
+      },
+    },
+  };
+
+  // Required just because "describe" blocks are executed before "beforeAll" resolution
+  it("Setup", () => {
+    //@ts-ignore
+    adminA.permissions.pullRoleFromSubject(SubjectType.Workspace, ourWorkspace);
+    //@ts-ignore
+    adminA.permissions.pullRoleFromSubject(
+      SubjectType.Workspace,
+      anotherWorkspace
+    );
+    //@ts-ignore
+    adminB.permissions.pullRoleFromSubject(
+      SubjectType.Workspace,
+      anotherWorkspace
+    );
+
+    // Prevent from fetching non existent data
+    [adminA, adminB].forEach((admin) => {
+      const throwUnlessCan = admin.throwUnlessCan.bind(admin);
+      admin.throwUnlessCan = (
+        actionType: ActionType,
+        subjectType: SubjectType,
+        idOrSubject: object | string
+      ) => {
+        if (idOrSubject === ourWorkspace.id) {
+          return throwUnlessCan(actionType, subjectType, ourWorkspace);
+        }
+        if (idOrSubject === anotherWorkspace.id) {
+          return throwUnlessCan(actionType, subjectType, anotherWorkspace);
+        }
+        return throwUnlessCan(actionType, subjectType, idOrSubject);
+      };
+    });
+  });
+
+  const ourWorkspaceAPIKey: ApiKey<SubjectType, Prismeai.ApiKeyRules> = {
+    apiKey: "will be defined on creation",
+    subjectType: SubjectType.Workspace,
+    subjectId: ourWorkspace.id,
+    rules: {
+      events: ["event1", "event4"],
+    },
+  };
+
+  const allowedEvent = {
+    type: ourWorkspaceAPIKey.rules.events?.[0],
+    source: {
+      workspaceId: ourWorkspace.id,
+    },
+    id: "someId",
+  };
+
+  it("Can't load an unknown api key", async () => {
+    await expect(
+      //@ts-ignore
+      adminA.pullApiKey("someUnknownAPIKey")
+    ).rejects.toThrow();
+  });
+
+  it("Can't create an API Key on a subject without manage_permissions permission", async () => {
+    await expect(
+      adminA.createApiKey(
+        SubjectType.Workspace,
+        anotherWorkspace.id,
+        ourWorkspaceAPIKey.rules
+      )
+    ).rejects.toThrow();
+  });
+
+  let ourSavedApiKey: ApiKey<SubjectType>;
+  it("A workspace admin can create an API key for this workspace", async () => {
+    await expect(
+      adminA
+        .createApiKey(
+          SubjectType.Workspace,
+          ourWorkspace.id,
+          ourWorkspaceAPIKey.rules
+        )
+        .then((apiKey) => {
+          ourSavedApiKey = apiKey;
+          return apiKey;
+        })
+    ).resolves.toEqual(
+      expect.objectContaining({
+        rules: ourWorkspaceAPIKey.rules,
+        subjectId: ourWorkspaceAPIKey.subjectId,
+        subjectType: ourWorkspaceAPIKey.subjectType,
+      })
+    );
+
+    await expect(
+      adminB.createApiKey(
+        SubjectType.Workspace,
+        anotherWorkspace.id,
+        ourWorkspaceAPIKey.rules
+      )
+    ).resolves.toEqual(
+      expect.objectContaining({ subjectId: anotherWorkspace.id })
+    );
+  });
+
+  it("An admin can update its workspace's api keys", async () => {
+    const newPayload = {
+      ...ourWorkspaceAPIKey.rules,
+      events: (ourWorkspaceAPIKey.rules.events || []).concat([
+        "someOtherEvent",
+      ]),
+    };
+    await expect(
+      adminA
+        .updateApiKey(
+          ourSavedApiKey.apiKey,
+          SubjectType.Workspace,
+          ourWorkspace.id,
+          newPayload
+        )
+        .then((apiKey) => {
+          ourSavedApiKey = apiKey;
+          return apiKey;
+        })
+    ).resolves.toEqual(
+      expect.objectContaining({
+        rules: newPayload,
+        subjectId: ourWorkspaceAPIKey.subjectId,
+        subjectType: ourWorkspaceAPIKey.subjectType,
+      })
+    );
+  });
+
+  it("A workspace admin can list the api keys of his workspace", async () => {
+    await expect(
+      //@ts-ignore
+      adminB.findApiKeys(SubjectType.Workspace, ourWorkspace.id)
+    ).rejects.toThrow();
+
+    await expect(
+      //@ts-ignore
+      adminA.findApiKeys(SubjectType.Workspace, ourWorkspace.id)
+    ).resolves.toMatchObject([ourSavedApiKey]);
+  });
+
+  it("Any user authenticated with an api key automatically escalate corresponding permissions", async () => {
+    await expect(
+      adminB.throwUnlessCan(ActionType.Read, SubjectType.Event, allowedEvent)
+    ).rejects.toThrow();
+
+    //@ts-ignore
+    await adminB.pullApiKey(ourSavedApiKey.apiKey);
+
+    await expect(
+      adminB.throwUnlessCan(ActionType.Read, SubjectType.Event, allowedEvent)
+    ).resolves.toBe(true);
+
+    await expect(
+      adminB.throwUnlessCan(ActionType.Read, SubjectType.Event, {
+        ...allowedEvent,
+        type: "someRandomForbiddenType",
+      })
+    ).rejects.toThrow();
+  });
+
+  it("A workspace admin can delete the workspace api keys", async () => {
+    await expect(
+      adminA.deleteApiKey(
+        ourSavedApiKey.apiKey,
+        ourSavedApiKey.subjectType,
+        ourSavedApiKey.subjectId
+      )
+    ).resolves.toBe(true);
+
+    await expect(
+      //@ts-ignore
+      adminA.findApiKeys(SubjectType.Workspace, ourWorkspace.id)
+    ).resolves.toMatchObject([]);
   });
 });
 
