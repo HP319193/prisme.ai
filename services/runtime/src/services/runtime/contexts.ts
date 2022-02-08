@@ -62,7 +62,9 @@ export const UserAccessibleContexts: ContextType[] = [
   ContextType.Session,
 ];
 
-const VariableNameValidationRegexp = new RegExp(/^[a-zA-Z0-9._-]+$/);
+const VariableNameValidationRegexp = new RegExp(/^[a-zA-Z0-9_-]+$/);
+
+type SplittedPath = (string | number)[];
 export class ContextsManager {
   private workspaceId: string;
   private userId?: string;
@@ -218,19 +220,45 @@ export class ContextsManager {
     return child;
   }
 
-  private validateVariableName(name: string) {
-    if (!VariableNameValidationRegexp.test(name)) {
-      throw new InvalidVariableNameError(
-        "Invalid variable name. Only allowed characters are : a-z, A-Z, 0-9, '_' et '-'.",
-        {
-          name,
-        }
-      );
-    }
+  private parseVariableName(fullVariable: string): SplittedPath {
+    const enforcedDotNotation = fullVariable
+      .split('][')
+      .join('.')
+      .split('].')
+      .join('.')
+      .split('[')
+      .join('.');
+    // Last operation might leave a final ] (i.e some.final[brackets])
+    const splittedPath =
+      enforcedDotNotation[enforcedDotNotation.length - 1] === ']'
+        ? enforcedDotNotation
+            .slice(0, enforcedDotNotation.length - 1)
+            .split('.')
+        : enforcedDotNotation.split('.');
+
+    return splittedPath.map((name) => {
+      if (
+        (name[0] === "'" && name[name.length - 1] === "'") ||
+        (name[0] === '"' && name[name.length - 1] === '"')
+      ) {
+        name = name.slice(1, name.length - 1);
+      }
+
+      if (!name.length || !VariableNameValidationRegexp.test(name)) {
+        throw new InvalidVariableNameError(
+          "Invalid variable name. Only allowed characters are : a-z, A-Z, 0-9, '_' et '-'.",
+          {
+            invalidPart: name,
+            fullVariable,
+          }
+        );
+      }
+
+      return !isNaN(<any>name) ? parseInt(name) : name;
+    });
   }
 
-  private findParentVariableFor(path: string) {
-    const splittedPath = path.split('.');
+  private findParentVariableFor(splittedPath: SplittedPath) {
     const rootVarName = splittedPath[0];
     const lastKey = splittedPath[splittedPath.length - 1];
 
@@ -256,10 +284,10 @@ export class ContextsManager {
   }
 
   set(path: string, value: any) {
-    this.validateVariableName(path);
+    const splittedPath = this.parseVariableName(path);
 
     try {
-      const { parent, lastKey } = this.findParentVariableFor(path);
+      const { parent, lastKey } = this.findParentVariableFor(splittedPath);
       parent[lastKey] = value;
     } catch (error) {
       this.logger.error(error);
@@ -271,9 +299,9 @@ export class ContextsManager {
   }
 
   delete(path: string) {
-    this.validateVariableName(path);
+    const splittedPath = this.parseVariableName(path);
 
-    const { parent, lastKey } = this.findParentVariableFor(path);
+    const { parent, lastKey } = this.findParentVariableFor(splittedPath);
     delete parent[lastKey];
   }
 
