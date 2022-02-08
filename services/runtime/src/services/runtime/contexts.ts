@@ -85,7 +85,7 @@ export class ContextsManager {
     this.correlationId = correlationId;
     this.cache = cache;
     this.contexts = this.default({
-      local: payload,
+      local: { ...payload },
     });
     this.logger = logger.child({
       userId,
@@ -212,7 +212,7 @@ export class ContextsManager {
     };
     const child = Object.assign({}, this, {
       contexts: childContexts,
-      payload: opts.payload || {},
+      payload: { ...(opts.payload || {}) },
     });
     Object.setPrototypeOf(child, ContextsManager.prototype);
     return child;
