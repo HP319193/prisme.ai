@@ -14,17 +14,15 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import EditableTitle from '../../components/EditableTitle';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
 import Main from '../Main';
-import SidePanel from '../SidePanel';
-import Error404 from '../../views/Errors/404';
 import workspaceContext, { WorkspaceContext } from './context';
 import Loading from '../../components/Loading';
 import { Button } from 'primereact/button';
-import AutomationsSidebar from '../../views/AutomationsSidebar';
 import { EventsByDay } from '.';
 import Events from '../../api/events';
 import { Event } from '../../api/types';
 import api from '../../api/api';
 import { useToaster } from '../Toaster';
+import Error404 from '../../views/Errors/404';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -140,11 +138,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }, [socket, events]);
   const displaySource = !!route.match(/\/source$/);
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebar, setSidebar] = useState<'automations' | 'apps' | 'pages'>(
-    'automations'
-  );
-
   const [dirty, setDirty] = useState<WorkspaceContext['dirty']>(false);
   const [invalid, setInvalid] = useState<WorkspaceContext['invalid']>(false);
   const [newSource, setNewSource] = useState<WorkspaceContext['newSource']>();
@@ -199,28 +192,20 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [dirty, displaySource, push, t, workspace]
   );
 
-  const displayAutomations = useCallback(() => {
-    setTimeout(() => {
-      if (sidebarOpen && sidebar === 'automations') return;
-      setSidebar('automations');
-      setSidebarOpen(true);
-    }, 200);
-  }, [sidebar, sidebarOpen]);
-
-  if (!loading && workspace === null) {
-    return (
-      <Main>
-        <Error404 link="/workspaces" reason={t('404')} />
-      </Main>
-    );
-  }
-
   if (!workspace) {
     return (
       <Main>
         <div className="flex flex-1 justify-center align-center">
           <Loading />
         </div>
+      </Main>
+    );
+  }
+
+  if (!loading && workspace === null) {
+    return (
+      <Main>
+        <Error404 link="/workspaces" reason={t('404')} />
       </Main>
     );
   }
@@ -285,46 +270,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
                   />
                 </a>
               </Link>
-              <Button
-                onClick={displayAutomations}
-                className={`
-                  mx-2
-                  ${
-                    sidebarOpen && sidebar === 'automations'
-                      ? 'p-button-secondary'
-                      : ''
-                  }`}
-              >
-                {t('automations.link')}
-              </Button>
-              {/*(
-                <Button
-                  onClick={displayApps}
-                  className={`
-                  mx-2
-                  ${
-                    sidebarOpen && sidebar === "apps"
-                      ? "p-button-secondary"
-                      : ""
-                  }`}
-                >
-                  {t("apps.link")}
-                </Button>
-              )}
-              {(
-                <Button
-                  onClick={displayPages}
-                  className={`
-                  mx-2
-                  ${
-                    sidebarOpen && sidebar === "pages"
-                      ? "p-button-secondary"
-                      : ""
-                  }`}
-                >
-                  {t("pages.link")}
-                </Button>
-                )*/}
             </>
           )
         }
@@ -333,17 +278,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
           <div className="flex flex-1 flex-column overflow-auto">
             {children}
           </div>
-
-          <SidePanel
-            sidebarOpen={sidebarOpen}
-            onClose={() => sidebarOpen && setSidebarOpen(false)}
-          >
-            {sidebar === 'automations' && (
-              <AutomationsSidebar onClose={() => setSidebarOpen(false)} />
-            )}
-            {/*sidebar === "apps" && <div>les apps bientôt</div>}
-            {sidebar === "pages" && <div>les pages bientôt</div>*/}
-          </SidePanel>
         </div>
       </Main>
     </workspaceContext.Provider>

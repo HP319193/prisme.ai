@@ -13,15 +13,9 @@ import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 
-interface AutomationsSidebarProps {
-  onClose: () => void;
-}
-
 const emptyObject: Prismeai.Workspace['automations'] = {};
 
-export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
-  onClose,
-}) => {
+export const AutomationsSidebar: FC = () => {
   const { t } = useTranslation('workspaces');
   const localize = useLocalizedText();
   const { push } = useRouter();
@@ -75,7 +69,6 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
     });
 
     setCreating(false);
-    onClose();
     if (createdAutomation) {
       await push(
         `/workspaces/${workspaceId}/automations/${createdAutomation.slug}`
@@ -86,7 +79,6 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
     createAutomation,
     workspace,
     t,
-    onClose,
     push,
     workspaceId,
   ]);
@@ -112,7 +104,7 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
             key={slug}
             href={`/workspaces/${workspaceId}/automations/${slug}`}
           >
-            <a onClick={onClose}>
+            <a>
               <ListItem title={name} content={localize(description)} />
             </a>
           </Link>

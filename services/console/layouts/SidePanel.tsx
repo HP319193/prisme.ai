@@ -1,36 +1,10 @@
 import { FC } from 'react';
-import ClickAwayListener from 'react-click-away-listener';
 
-const noop = () => {};
-interface SidePanelProps {
-  sidebarOpen: boolean;
-  onClose?: () => void;
-}
-
-export const SidePanel: FC<SidePanelProps> = ({
-  sidebarOpen,
-  onClose = noop,
-  children,
-}) => {
+export const SidePanel: FC = ({ children }) => {
   return (
-    <ClickAwayListener onClickAway={onClose}>
-      <div
-        className={`
-          absolute
-          top-0
-          left-full
-          bottom-0
-          p-4
-          transition-transform
-          transition-duration-100
-          ease-in
-          ${sidebarOpen ? '-translate-x-full' : ''}
-          shadow-4
-          z-4`}
-      >
-        {children}
-      </div>
-    </ClickAwayListener>
+    <div className="border border-gray-200 border-solid grow h-full rounded p-4">
+      {children}
+    </div>
   );
 };
 
