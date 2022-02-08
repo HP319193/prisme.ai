@@ -10,7 +10,7 @@ const GraphSidePanel = ({ children }: GraphSidePanelProps) => (
   <SidePanel>
     <div>
       <div className="flex grow justify-end">
-        <Button type="grey">
+        <Button variant="grey">
           <CloseCircleOutlined />
         </Button>
       </div>

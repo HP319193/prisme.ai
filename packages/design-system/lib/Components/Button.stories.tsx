@@ -8,7 +8,7 @@ export default {
   component: Button,
   argTypes: {
     type: {
-      options: ['default', 'grey', 'link', 'plain'],
+      options: ['default', 'primary', 'grey', 'link'],
       control: { type: 'select' },
     },
   },
@@ -18,25 +18,25 @@ export default {
 };
 
 const Template: Story<ButtonProps> = ({ type }) => (
-  <Button type={type}>I am a button !</Button>
+  <Button variant={type}>I am a button !</Button>
 );
 
 export const Default = Template.bind({});
 Default.args = {
-  type: 'default',
+  variant: 'default',
 };
 
 export const Grey = Template.bind({});
 Grey.args = {
-  type: 'grey',
+  variant: 'grey',
 };
 
 export const Link = Template.bind({});
 Link.args = {
-  type: 'link',
+  variant: 'link',
 };
 
 export const Plain = Template.bind({});
 Plain.args = {
-  type: 'plain',
+  variant: 'primary',
 };
