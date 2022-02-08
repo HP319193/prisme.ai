@@ -18,13 +18,13 @@ export const SidePanel: FC<SidePanelProps> = ({
         className={`
           absolute
           top-0
-          left-100
+          left-full
           bottom-0
           p-4
           transition-transform
           transition-duration-100
           ease-in
-          ${sidebarOpen ? '-translate-x-100' : ''}
+          ${sidebarOpen ? '-translate-x-full' : ''}
           shadow-4
           z-4`}
       >
