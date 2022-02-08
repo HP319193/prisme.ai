@@ -41,7 +41,7 @@ export async function executeAutomation(
 function evaluateOutput(automation: Prismeai.Automation, ctx: ContextsManager) {
   return automation.output
     ? interpolate(automation.output, ctx.publicContexts)
-    : 'hardcoded output';
+    : {};
 }
 
 export async function runInstructions(
