@@ -16,7 +16,7 @@ export default {
 const HeaderComponent = (
   <Header
     workspaces={['mon premier workspace', 'mon second workspace']}
-    shareText={'Partager'}
+    t={(text: string) => text}
     userName={'John Doe'}
     userAvatar={
       'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/240px-User-avatar.svg.png'
