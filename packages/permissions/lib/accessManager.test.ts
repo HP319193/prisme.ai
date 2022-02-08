@@ -6,7 +6,7 @@ import apiKeys from "../examples/apiKeys";
 
 enum ActionType {
   Manage = "manage", // Super admin : permits every action
-  ManageCollaborators = "manage_collaborators",
+  ManagePermissions = "manage_permissions",
   Create = "create",
   Read = "read",
   Update = "update",
@@ -323,7 +323,7 @@ describe("Role & Permissions granting", () => {
       adminB.user!!,
       Role.Admin
     );
-    expect(sharedWorkspace?.collaborators).toMatchObject({
+    expect(sharedWorkspace?.permissions).toMatchObject({
       [adminB?.user?.id!!]: {
         role: Role.Admin,
       },
@@ -342,7 +342,7 @@ describe("Role & Permissions granting", () => {
       adminB.user!!,
       Role.Admin
     );
-    expect(unsharedWorkspace?.collaborators).toMatchObject({
+    expect(unsharedWorkspace?.permissions).toMatchObject({
       [adminB.user.id]: {},
     });
 
@@ -382,8 +382,8 @@ describe("Role & Permissions granting", () => {
       [ActionType.Read, ActionType.Update]
     );
 
-    // Check that collaborator now can read & update the page (but not its collaborators field !)
-    const { collaborators, ...sharedWithoutCollaborators } = sharedPage;
+    // Check that collaborator now can read & update the page (but not its permissions field !)
+    const { permissions, ...sharedWithoutCollaborators } = sharedPage;
     await expect(
       collaborator.get(SubjectType.Page, page.id)
     ).resolves.toMatchObject(sharedWithoutCollaborators);
@@ -410,7 +410,7 @@ describe("API Keys", () => {
   const ourWorkspace = {
     id: "ourWorkspaceId" + Math.round(Math.random() * 10000),
     name: "ourWorkspace",
-    collaborators: {
+    permissions: {
       [adminAId]: {
         role: "admin",
       },
@@ -419,7 +419,7 @@ describe("API Keys", () => {
   const anotherWorkspace = {
     id: "anotherWorkspaceId" + Math.round(Math.random() * 10000),
     name: "anotherWorkspace",
-    collaborators: {
+    permissions: {
       anotherAdminId: {
         role: "admin",
       },
@@ -487,7 +487,7 @@ describe("API Keys", () => {
     ).rejects.toThrow();
   });
 
-  it("Can't create an API Key on a subject without manage_collaborators permission", async () => {
+  it("Can't create an API Key on a subject without manage_permissions permission", async () => {
     await expect(
       adminA.createApiKey(
         SubjectType.Workspace,

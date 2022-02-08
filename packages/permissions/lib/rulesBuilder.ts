@@ -65,7 +65,7 @@ export function nativeRules(
       action,
       subject: "all",
       conditions: {
-        [`collaborators.\${user.id}.permissions.${action}`]: true,
+        [`permissions.\${user.id}.policies.${action}`]: true,
       },
     }));
 
@@ -74,7 +74,7 @@ export function nativeRules(
       subject: subjectType as string,
       action: ActionType.Read as string,
       conditions: {
-        "collaborators.${user.id}.role": {
+        "permissions.${user.id}.role": {
           $exists: true,
           $in: roles
             .filter((cur) => cur.subjectType && cur.subjectType === subjectType)
@@ -95,9 +95,9 @@ export function nativeRules(
       inverted: true,
       action: ActionType.Update,
       subject: "all",
-      fields: ["collaborators"],
+      fields: ["permissions"],
       conditions: {
-        [`collaborators.\${user.id}.permissions.manage_collaborators`]: {
+        [`permissions.\${user.id}.policies.manage_permissions`]: {
           $ne: true,
         },
         createdBy: { $ne: "${user.id}" },

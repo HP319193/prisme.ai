@@ -40,9 +40,9 @@ export class UnknownSubjectType extends PrismeError {
   }
 }
 
-export class InvalidCollaborator extends PrismeError {
+export class InvalidPermissions extends PrismeError {
   constructor(msg: string = "Invalid collaborator", details?: any) {
-    super(msg, details, "InvalidCollaborator");
+    super(msg, details, "InvalidPermissions");
   }
 }
 

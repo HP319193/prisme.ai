@@ -32,10 +32,10 @@ export type ApiKey<SubjectType extends string, CustomRules = any> = Omit<
   apiKey: string;
 };
 
-const CollaboratorSchema = new Schema(
+const PermissionListSchema = new Schema(
   {
     role: String,
-    permissions: {
+    policies: {
       type: Map,
       of: Boolean,
     },
@@ -52,9 +52,9 @@ const BaseSchema = new Schema({
   updatedBy: String,
   createdAt: String,
   updatedAt: String,
-  collaborators: {
+  permissions: {
     type: Map,
-    of: CollaboratorSchema,
+    of: PermissionListSchema,
     index: true,
   },
 });
@@ -82,9 +82,9 @@ export function buildFilterFieldsMethod<SubjectType extends string>(
 
     if (
       !permissions ||
-      !permissions.can(ActionType.ManageCollaborators, subjectType, object)
+      !permissions.can(ActionType.ManagePermissions, subjectType, object)
     ) {
-      delete object.collaborators;
+      delete object.permissions;
     }
 
     return object;

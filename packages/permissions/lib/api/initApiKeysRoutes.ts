@@ -123,7 +123,7 @@ export function initApiKeysRoutes<
     return res.send({ apiKey });
   }
 
-  const baseRoute = "/v2/:subjectType/:subjectId/apiKeys";
+  const baseRoute = "/v2/:subjectType/:subjectId/apikeys";
   app.post(`${baseRoute}`, asyncRoute(createApiKeyHandler));
   app.get(`${baseRoute}`, asyncRoute(getApiKeysHandler));
   app.put(`${baseRoute}/:apiKey`, asyncRoute(updateApiKeyHandler));

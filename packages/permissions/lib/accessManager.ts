@@ -227,7 +227,7 @@ export class AccessManager<
     delete (<any>object).updatedBy;
     delete (<any>object).id;
     delete (<any>object)._id;
-    delete (<any>object).collaborators;
+    delete (<any>object).permissions;
     return object;
   }
 
@@ -301,7 +301,7 @@ export class AccessManager<
   async grant<returnType extends SubjectType>(
     subjectType: returnType,
     id: string,
-    collaborator: User<Role>,
+    user: User<Role>,
     permission: ActionType | ActionType[] | Role | SubjectCollaborator<Role>
   ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions } = this.checkAsUser();
@@ -315,7 +315,7 @@ export class AccessManager<
       permission,
       subjectType,
       doc.toJSON(),
-      collaborator
+      user
     );
 
     doc.set(updatedSubject);
@@ -326,7 +326,7 @@ export class AccessManager<
   async revoke<returnType extends SubjectType>(
     subjectType: returnType,
     id: string,
-    collaborator: User<Role>,
+    user: User<Role>,
     permission: ActionType | ActionType[] | Role | "all" = "all"
   ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions } = this.checkAsUser();
@@ -340,7 +340,7 @@ export class AccessManager<
       permission,
       subjectType,
       doc.toJSON(),
-      collaborator
+      user
     );
 
     doc.set(updatedSubject);
@@ -429,7 +429,7 @@ export class AccessManager<
       );
     }
     await this.throwUnlessCan(
-      ActionType.ManageCollaborators,
+      ActionType.ManagePermissions,
       role.subjectType,
       role.subjectId
     );
@@ -476,7 +476,7 @@ export class AccessManager<
     }
     const role = doc.toJSON();
     await this.throwUnlessCan(
-      ActionType.ManageCollaborators,
+      ActionType.ManagePermissions,
       role.subjectType,
       role.subjectId
     );
@@ -490,7 +490,7 @@ export class AccessManager<
     subjectId: string
   ): Promise<CustomRole<SubjectType, CustomRules>[]> {
     await this.throwUnlessCan(
-      ActionType.ManageCollaborators,
+      ActionType.ManagePermissions,
       subjectType,
       subjectId
     );

@@ -10,7 +10,7 @@ export interface FindUserQuery {
   ids?: string[];
 }
 
-export async function fetchCollaboratorContacts(
+export async function fetchUsers(
   query: FindUserQuery
 ): Promise<(Prismeai.User & { id: string })[]> {
   const ret = await fetch(`${GATEWAY_API_HOST}/contacts`, {

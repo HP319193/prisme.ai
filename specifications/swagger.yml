@@ -179,7 +179,7 @@ paths:
           description: Success Response
 
   ############################################# permissions routes
-  /v2/{subjectType}/{subjectId}/collaborators:
+  /v2/{subjectType}/{subjectId}/permissions:
     post:
       description: Share the object with someone via a given role or specific permission
       operationId: share
@@ -205,14 +205,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Collaborator"
+              $ref: "#/components/schemas/UserPermissions"
       responses:
         "200":
           description: Success Response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Collaborator"
+                $ref: "#/components/schemas/UserPermissions"
 
         "404":
           description: Object not found
@@ -239,8 +239,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/AuthenticationError"
     get:
-      description: Retrieve collaborators roles & permissions for the 'subjectType' 'subjectId'
-      operationId: getCollaborators
+      description: Retrieve permissions for the 'subjectType' 'subjectId'
+      operationId: getPermissions
       tags:
         - permissions
       parameters:
@@ -269,7 +269,7 @@ paths:
                   - result
                 properties:
                   result:
-                    $ref: "#/components/schemas/Collaborators"
+                    $ref: "#/components/schemas/PermissionsList"
 
         "404":
           description: Object not found
@@ -296,10 +296,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/AuthenticationError"
 
-  /v2/{subjectType}/{subjectId}/collaborators/{collaboratorId}:
+  /v2/{subjectType}/{subjectId}/permissions/{userId}:
     delete:
-      description: Revoke all role & permissions from a collaborator
-      operationId: revokeCollaborator
+      description: Revoke all role & permissions from a user
+      operationId: revokePermissions
       tags:
         - permissions
       parameters:
@@ -316,9 +316,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: collaboratorId
+        - name: userId
           in: path
-          description: The collaborator user id
+          description: The target user id
           required: true
           schema:
             type: string
@@ -360,7 +360,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/AuthenticationError"
 
-  /v2/{subjectType}/{subjectId}/apiKeys:
+  /v2/{subjectType}/{subjectId}/apikeys:
     get:
       description: List api keys
       operationId: listApiKeys
@@ -477,7 +477,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/AuthenticationError"
 
-  /v2/{subjectType}/{subjectId}/apiKeys/{apiKey}:
+  /v2/{subjectType}/{subjectId}/apikeys/{apiKey}:
     put:
       description: Update an api key
       operationId: updateApiKey
@@ -2087,16 +2087,16 @@ components:
 
 
     ################################################################################################################################
-    ################################################# Permissions &c collaboraotrs #################################################
-    Collaborators:
+    ################################################# Permissions ##################################################################
+    PermissionsList:
       type: array
       items:
-        $ref: "#/components/schemas/Collaborator"
+        $ref: "#/components/schemas/UserPermissions"
       example:
         - email: admin@prisme.ai
           role: admin
         - email: readonly@prisme.ai
-          permissions:
+          policies:
             read: true
 
     Role:
@@ -2105,7 +2105,7 @@ components:
         - owner
         - editor
 
-    Permissions:
+    Policies:
       properties:
         read:
           type: boolean
@@ -2115,10 +2115,10 @@ components:
           type: boolean
         create:
           type: boolean
-        manage_collaborators:
+        manage_permissions:
           type: boolean
 
-    Collaborator:
+    UserPermissions:
       type: object
       additionalProperties: false
       required:
@@ -2130,8 +2130,8 @@ components:
           type: string
         role:
           $ref: "#/components/schemas/Role"
-        permissions:
-          $ref: "#/components/schemas/Permissions"
+        policies:
+          $ref: "#/components/schemas/Policies"
 
     ApiKeyRules:
       type: object
