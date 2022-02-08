@@ -1,9 +1,9 @@
 import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
-import 'primereact/resources/themes/lara-light-indigo/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
+// import 'primereact/resources/themes/lara-light-indigo/theme.css';
+// import 'primereact/resources/primereact.min.css';
+// import 'primeicons/primeicons.css';
+// import 'primeflex/primeflex.css';
 import UserProvider from '../components/UserProvider';
 import WorkspacesProvider from '../components/WorkspacesProvider';
 import { NextPage } from 'next';
@@ -13,6 +13,7 @@ import dynamic from 'next/dynamic';
 import Toaster from '../layouts/Toaster';
 import addFormatters from '../utils/i18nextFormatters';
 import '../styles/globals.css';
+import '../styles/tailwind-console.css';
 import '@prisme.ai/design-system/styles/index.css';
 import '@prisme.ai/design-system/styles/theme.css';
 
