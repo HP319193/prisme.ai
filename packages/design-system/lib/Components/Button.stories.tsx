@@ -17,8 +17,8 @@ export default {
   },
 };
 
-const Template: Story<ButtonProps> = ({ type }) => (
-  <Button variant={type}>I am a button !</Button>
+const Template: Story<ButtonProps> = ({ variant }) => (
+  <Button variant={variant}>I am a button !</Button>
 );
 
 export const Default = Template.bind({});
