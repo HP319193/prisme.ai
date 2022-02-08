@@ -121,9 +121,8 @@ export const SignIn = () => {
                       variant="primary"
                       disabled={loading}
                       className="w-full"
-                      htmlType="submit"
+                      type="submit"
                     >
-                      {/* // TODO why submit doesn't work ?? */}
                       <div className={`${getIcon()} mr-2`} />
                       {t('in.submit')}
                     </Button>
@@ -136,48 +135,6 @@ export const SignIn = () => {
       </div>
     </Layout>
   );
-
-  // return (
-  //   <>
-  //
-  //
-  //           <Fieldset legend={t('in.description')}>
-  //             <Field name="email" label={t('in.email')}>
-  //               {({ input, className }) => (
-  //                 <InputText
-  //                   id="email"
-  //                   {...input}
-  //                   autoFocus
-  //                   className={`${className} min-w-full`}
-  //                 />
-  //               )}
-  //             </Field>
-  //             <Field name="password" label={t('in.password')}>
-  //               {({ input, className }) => (
-  //                 <InputText
-  //                   id="password"
-  //                   type="password"
-  //                   {...input}
-  //                   className={`${className} min-w-full`}
-  //                 />
-  //               )}
-  //             </Field>
-  //             <Field className="flex justify-content-between">
-  //               <div className="flex flex-column">
-  //                 <Link href="/signup">{t('in.signup')}</Link>
-  //               </div>
-  //               <Button type="submit" disabled={loading}>
-  //                 <div className={`${getIcon()} mr-2`} />
-  //                 {t('in.submit')}
-  //               </Button>
-  //             </Field>
-  //             <Messages className="absolute bottom-0" ref={messages}></Messages>
-  //           </Fieldset>
-  //         </form>
-  //       )}
-  //     </Form>
-  //   </>
-  // );
 };
 
 export default SignIn;
