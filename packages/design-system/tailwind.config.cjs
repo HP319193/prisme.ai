@@ -9,6 +9,7 @@ module.exports = {
         // Antdesign secondary text color
         gray: '#939CA6',
         'gray-200': '#E5E5E5',
+        'blue-200': '#F8FAFF',
       },
     },
   },

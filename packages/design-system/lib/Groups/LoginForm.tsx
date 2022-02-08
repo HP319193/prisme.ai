@@ -10,7 +10,9 @@ const LoginForm = ({ t }: LoginFormProps) => {
     <Space size="middle" direction="vertical">
       <Input placeholder={t('login.username')} />
       <Input placeholder={t('login.password')} type="password" />
-      <Button type="plain">{t('login.button')}</Button>
+      <Button type="plain" className="w-full">
+        {t('login.button')}
+      </Button>
     </Space>
   );
 };
