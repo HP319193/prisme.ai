@@ -1,9 +1,6 @@
 import { Space } from 'antd';
-import { SearchInput, Button, ListItem } from '../';
+import { SearchInput, Button, ListItem, Title } from '../';
 import { useTranslation } from 'react-i18next';
-import { Typography } from 'antd';
-
-const Title = Typography.Title;
 
 export interface SidePanelAutomationsProps {
   automations: {

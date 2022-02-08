@@ -4,7 +4,7 @@ import { Text } from '../';
 
 export interface ListItemProps {
   title: string;
-  content: string;
+  content?: string;
 }
 
 const ListItem = ({ title, content }: ListItemProps) => (
@@ -14,7 +14,7 @@ const ListItem = ({ title, content }: ListItemProps) => (
   >
     <Space direction="vertical">
       <div>{title}</div>
-      <Text type="grey">{content}</Text>
+      {content && <Text type="grey">{content}</Text>}
     </Space>
     <Space>
       <RightOutlined className="text-gray" />
