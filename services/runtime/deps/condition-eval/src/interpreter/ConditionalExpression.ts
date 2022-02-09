@@ -1,8 +1,9 @@
 import Evaluatable from '../Evaluatable';
 import { evaluateNode } from '../utils';
-const regexKeyword = /^[rR][eE][gG][eE][xX]\(/;
+
+const regexKeyword = /^regex\(/i;
+
 const handleMatches = (left: any, right: any) => {
-  console.info('handleMatches', left, right);
   if (!!`${right}`.match(regexKeyword)) {
     const regex = `${right}`.replace(regexKeyword, '').replace(/\)$/, '');
     return `${left}`.match(new RegExp(regex));
@@ -31,7 +32,6 @@ class ConditionalExpression extends Evaluatable {
 
       case 'not matches':
         const result = handleMatches(left, right);
-        console.log('Result of not matches:', result);
         return !result;
 
       case 'exists':
