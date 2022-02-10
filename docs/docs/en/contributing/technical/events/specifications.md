@@ -18,7 +18,7 @@ The **Events** service is in charge of :
 
   <tr>
     <td>
-      [Express](https://github.com/expressjs/express)
+      <a href="https://github.com/expressjs/express" target="_blank">Express</a>
     </td>
     <td>HTTP framework</td>
     <td>4.17.1</td>
@@ -26,36 +26,55 @@ The **Events** service is in charge of :
 
   <tr>
     <td>
-      [express-openapi-validator](https://github.com/cdimascio/express-openapi-validator)
+      <a href="https://github.com/cdimascio/express-openapi-validator" target="_blank">express-openapi-validator</a>
     </td>
     <td>Swagger-based syntax validation of incoming requests</td>
     <td>4.13.4</td>
   </tr>
 
   <tr>
-    <td>@prisme.ai/broker</td>
+    <td>
+      <a href="https://socket.io/" target="_blank">socket.io</a>
+    </td>
+    <td>Web sockets</td>
+    <td>4.4.1</td>
+  </tr>  
+
+  <tr>
+    <td>
+      <a href="https://github.com/elastic/elasticsearch-js" target="_blank">@elastic/elasticsearch</a>
+    </td>
+    <td>Events storage</td>
+    <td>7.16.0</td>
+  </tr>    
+
+  <tr>
+    <td>
+      <a href="https://gitlab.com/prisme.ai/prisme.ai/-/tree/main/packages/broker" target="_blank">
+        @prisme.ai/broker
+      </a>    
+    </td>
     <td>Message broker interface</td>
     <td>latest</td>
   </tr>
+
+  <tr>
+    <td>
+      <a href="https://gitlab.com/prisme.ai/prisme.ai/-/tree/main/packages/permissions" target="_blank">
+        @prisme.ai/permissions
+      </a>        
+    </td>
+    <td>Authorization</td>
+    <td>latest</td>
+  </tr>  
 </table>
 
 # Design
 
 ## Events & API
 
-Produced events :
-
-- **runtime.workflow.triggered**
-- **runtime.contexts.updated**
-
 [Documentation](https://gitlab.com/prisme.ai/prisme.ai/-/blob/main/specifications/swagger.yml)
 
-## Handling concurrency
-
-In order to allow external consumers to handle events and be able to scale on multiple instance while using web socket, our **Events** service shall offer a **message queue** mode to consume these. \
-In other words : only "distribute" one copy of each event to one of those instances (instead of one copy to each instance). \
-\
-By default, on event is forwarded to each web socket client subscribed to this kind of event.
 
 ## Performance
 
@@ -65,46 +84,11 @@ Minimum resources shall be tested and specified so that 99% of external consumer
 
 ## Development standards and quality measurement
 
-Example :
-
 The required quality level corresponds to the recommended SonarQube Quality Gate:
 
 - 80% minimum code coverage
 - 3 % max of duplicated lines
 - Level A in Maintainability, Reliability and Security
-
-## Tests specifics
-
-<table>
-<tr>
-<td>Test type</td>
-<td>Manual / Automated</td>
-<td>Type of module</td>
-<td>Code coverage</td>
-<td>Detail</td>
-</tr>
-<tr>
-<td>UT</td>
-<td>Automated</td>
-<td>Backend & Frontend</td>
-<td>Approximately 70%</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td>E2E</td>
-<td>Automated</td>
-<td>UI</td>
-<td>30%, happy paths</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td>API</td>
-<td>Automated</td>
-<td>Backend</td>
-<td>Approximately 70%</td>
-<td>N/A</td>
-</tr>
-</table>
 
 ## Logs
 
@@ -113,7 +97,7 @@ Any action is logged into two different ways:
 - Trace of the HTTP call if there is one (produced at the Gateway API level)
 - Transcription of the action as an event (produced by the service handling the action)
 
-In both cases, all the usual contextual information is included (provided by the common bootstrap between the backend services).\
+In both cases, all the usual contextual information is included (provided by the common bootstrap between the backend services).  
 As a minimum, this information should include : :
 
 - Correlation id
@@ -124,11 +108,11 @@ As a minimum, this information should include : :
 
 ## Errors
 
-Technical errors (aka unexpected errors) such as a timeout on a REST service call are caught by the service and logged with the full stack trace. Only operational errors (those explicitly thrown) with a FATAL criticality (if not specified by the developer, the criticality is simply ERROR) are logged.
+Technical errors (aka unexpected errors) such as a timeout on a REST service call are caught by the service and logged with the full stack trace. 
 
 If this error occurs during the processing of an HTTP request, the caller simply receives a generic "Internal Error".
 
-In addition to the logs thus produced, the error is transmitted as a generic error event.
+In addition to the error logs, the error is also transmitted as a generic error event.
 
 Both in the log and in the event, the usual contextual information is included as much as possible (see [Logs](#logs)).
 
@@ -143,21 +127,7 @@ Just like the other backend micro services, this one provides different administ
 
 # Security
 
-TODO : To complete with results from testing tools
-
 # Company Social Responsibility (CSR)
-
-Examples :
-
-- Use lazy loading for occasional resource loading
-- Limit databases results with pagination
-- Group massive processing into more effective batches
-
-TODO : detail & include specific metrics from the first RSE audits
-
-# Hosting
-
-Dockerfile, docker-compose and Helm chart ready to use.w
 
 # Linting
 

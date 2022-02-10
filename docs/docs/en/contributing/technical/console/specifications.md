@@ -144,7 +144,7 @@ No log must appears in user's console.
 
 ## Errors
 
-Unexpected errors are send to sentry.
+Unexpected errors are sent to sentry.
 
 # Security
 

@@ -2229,7 +2229,7 @@ components:
           - $ref: "#/components/schemas/GenericErrorEvent"
           - $ref: "#/components/schemas/FailedLogin"
           - $ref: "#/components/schemas/SucceededLogin"
-          - $ref: "#/components/schemas/TriggeredAutomation"
+          - $ref: "#/components/schemas/ExecutedAutomation"
           - $ref: "#/components/schemas/UpdatedContexts"
           - $ref: "#/components/schemas/CreatedWorkspace"
           - $ref: "#/components/schemas/UpdatedWorkspace"
@@ -2258,7 +2258,7 @@ components:
               - $ref: "#/components/schemas/SucceededLogin"
           - allOf:
               - $ref: "#/components/schemas/PrismeEvent"
-              - $ref: "#/components/schemas/TriggeredAutomation"
+              - $ref: "#/components/schemas/ExecutedAutomation"
           - allOf:
               - $ref: "#/components/schemas/PrismeEvent"
               - $ref: "#/components/schemas/UpdatedContexts"
@@ -2583,35 +2583,6 @@ components:
                   type: string
 
     ########################## Runtime events ##########################
-
-    TriggeredAutomation:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.automation.triggered
-          enum:
-            - runtime.automation.triggered
-        payload:
-          type: object
-          required:
-            - event
-            - slug
-          properties:
-            event:
-              type: object
-              properties:
-                id:
-                  type: string
-                type:
-                  type: string
-            slug:
-              type: string
-            payload:
-              type: object
 
     ExecutedAutomation:
       type: object

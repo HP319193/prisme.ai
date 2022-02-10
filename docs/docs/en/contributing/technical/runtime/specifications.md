@@ -13,7 +13,7 @@
 
   <tr>
     <td>
-      [Express](https://github.com/expressjs/express)
+      <a href="https://github.com/expressjs/express" target="_blank">Express</a>
     </td>
     <td>HTTP framework</td>
     <td>4.17.1</td>
@@ -21,17 +21,42 @@
 
   <tr>
     <td>
-      [express-openapi-validator](https://github.com/cdimascio/express-openapi-validator)
+      <a href="https://github.com/cdimascio/express-openapi-validator" target="_blank">express-openapi-validator</a>
     </td>
     <td>Swagger-based syntax validation of incoming requests</td>
     <td>4.13.4</td>
   </tr>
 
   <tr>
-    <td>@prisme.ai/broker</td>
+    <td>
+      <a href="https://gitlab.com/prisme.ai/prisme.ai/-/tree/main/packages/broker" target="_blank">
+        @prisme.ai/broker
+      </a>    
+    </td>
     <td>Message broker interface</td>
     <td>latest</td>
   </tr>
+
+  <tr>
+    <td>
+      <a href="https://github.com/no-context/moo" target="_blank">
+        moo
+      </a>    
+    </td>
+    <td>Lexer for conditions parsing</td>
+    <td>0.5.1</td>
+  </tr>  
+
+  <tr>
+    <td>
+      <a href="https://github.com/kach/nearley" target="_blank">
+        nearly
+      </a>    
+    </td>
+    <td>Parser for conditions</td>
+    <td>2.20.1</td>
+  </tr>    
+
 </table>
 
 # Design
@@ -40,8 +65,8 @@
 
 Produced events :
 
-- **runtime.workflow.triggered**
-- **runtime.contexts.updated**
+- **runtime.webhook.triggered**
+- **runtime.automation.executed**
 
 [Documentation](https://gitlab.com/prisme.ai/prisme.ai/-/blob/main/specifications/swagger.yml)
 
@@ -59,7 +84,7 @@ List example:
 - Workflow using a function app.
 - Workflow with a condition.
 
-## Limits & Checks
+## Limits & Constraints
 
 <table>
 <tr>
@@ -70,18 +95,18 @@ List example:
 <td>Comments</td>
 </tr>
 <tr>
-<td>Trigger by event</td>
-<td>Number of events **processed** for a specific correlationId</td>
+<td>Automation execution</td>
+<td>Number of successive automation execution for a same correlationId</td>
 <td>20</td>
 <td>The 21th event is ignored in order to stop the chain</td>
-<td>N/A</td>
+<td>Configurable with <b>MAXIMUM_SUCCESSIVE_CALLS</b> env var</td>
 </tr>
 <tr>
 <td>Contexts</td>
 <td>Memory space (in KB) used by all the contexts in one workspace</td>
 <td>10 KB</td>
-<td>Once the limit reached, the workspace is "paused" (triggers become inactive -- impossible to trigger any automation).</td>
-<td>The admin should be able to clean up the workspace memory</td>
+<td>Once the limit reached, any <b>set</b> instruction is skipped until the admin frees memory with <b>delete</b></td>
+<td></td>
 </tr>
 </table>
 
@@ -89,46 +114,11 @@ List example:
 
 ## Development standards and quality measurement
 
-Example :
-
 The required quality level corresponds to the recommended SonarQube Quality Gate:
 
 - 80% minimum code coverage
 - 3 % max of duplicated lines
 - Level A in Maintabily, Reliability and Security
-
-## Tests specifics
-
-<table>
-<tr>
-<td>Test type</td>
-<td>Manual / Automated</td>
-<td>Type of module</td>
-<td>Code coverage</td>
-<td>Detail</td>
-</tr>
-<tr>
-<td>UT</td>
-<td>Automated</td>
-<td>Backend & Frontend</td>
-<td>Approximately 70%</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td>E2E</td>
-<td>Automated</td>
-<td>UI</td>
-<td>30%, happy paths</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td>API</td>
-<td>Automated</td>
-<td>Backend</td>
-<td>Approximately 70%</td>
-<td>N/A</td>
-</tr>
-</table>
 
 ## Logs
 
@@ -148,14 +138,13 @@ As a minimum, this information should include : :
 
 ## Errors
 
-Technical errors (aka unexpected errors) such as a timeout on a REST service call are caught by the service and logged with the full stack trace. Only operational errors (those explicitly thrown) with a FATAL criticality (if not specified by the developer, the criticality is simply ERROR) are logged.
+Technical errors (aka unexpected errors) such as a timeout on a REST service call are caught by the service and logged with the full stack trace. 
 
 If this error occurs during the processing of an HTTP request, the caller simply receives a generic "Internal Error".
 
-In addition to the logs thus produced, the error is transmitted as a generic error event.
+In addition to the error logs, the error is also transmitted as a generic error event.
 
 Both in the log and in the event, the usual contextual information is included as much as possible (see [Logs](#logs)).
-
 ## Supervision
 
 Just like the other backend micro services, this one provides different administration routes:
@@ -167,21 +156,7 @@ Just like the other backend micro services, this one provides different administ
 
 # Security
 
-TODO : To complete with results from testing tools
-
 # Company Social Responsability (CSR)
-
-Examples :
-
-- Use lazy loading for occasional resource loading
-- Limit databases results with pagination
-- Group massive processing into more effective batches
-
-TODO : detail & include specific metrics from the first RSE audits
-
-# Hosting
-
-Dockerfile, docker-compose and Helm chart ready to use.
 
 # Linting
 
