@@ -8,7 +8,7 @@ export interface SidePanelProps {
 }
 
 const SidePanel = ({ Header, children, className = '' }: SidePanelProps) => (
-  <Layout Header={Header} className={`m-2 ${className}`}>
+  <Layout Header={Header} className={`p-2 h-full ${className}`}>
     <div className="border border-gray-200 border-solid grow h-full rounded p-4">
       {children}
     </div>
