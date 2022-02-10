@@ -4,6 +4,7 @@ import { useUser } from '../../components/UserProvider';
 import ApiError from '../../api/ApiError';
 import { Form } from 'react-final-form';
 import { useRouter } from 'next/router';
+import Image from 'next/Image';
 
 jest.mock('../../components/UserProvider', () => {
   const mock: any = {};
