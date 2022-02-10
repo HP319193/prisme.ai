@@ -26,4 +26,4 @@ export { default as GraphSidePanel } from './Groups/GraphSidePanel';
 
 export { default as WorkspaceHome } from './Pages/WorkspaceHome';
 
-export { Row, Col, Space, Avatar, Divider } from 'antd';
+export { Row, Col, Space, Avatar, Divider, Table } from 'antd';

@@ -1,17 +1,26 @@
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo, MouseEvent } from 'react';
+import { Table } from '@prisme.ai/design-system';
 import { Event } from '../../api/types';
-import { DataTable, DataTableRowClickEventParams } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import { useDateFormat } from '../../utils/dates';
 import { useTranslation } from 'next-i18next';
 import { selectText } from '../../utils/dom';
+import { truncate } from '../../utils/strings';
 
 interface EventsDetailsProps extends Event<Date> {}
+
+const PAYLOAD_TRUNCATE_LENGTH = 50;
+
+const truncatePayload = (payloadValue: string) => {
+  if (payloadValue.length > PAYLOAD_TRUNCATE_LENGTH) {
+    return truncate(payloadValue, PAYLOAD_TRUNCATE_LENGTH);
+  }
+  return payloadValue;
+};
 
 export const EventDetails: FC<EventsDetailsProps> = (event) => {
   const { t } = useTranslation('workspaces');
   const formatDate = useDateFormat();
-  const value = useMemo(
+  const dataSource = useMemo(
     () => [
       {
         name: 'id',
@@ -47,7 +56,14 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
       },
       {
         name: 'payload',
-        value: event.payload && (
+        value: (
+          <pre>
+            <code>
+              {truncatePayload(JSON.stringify(event.payload, null, ' '))}
+            </code>
+          </pre>
+        ),
+        payloadValue: event.payload && (
           <pre>
             <code>{JSON.stringify(event.payload, null, ' ')}</code>
           </pre>
@@ -72,21 +88,34 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
     ],
     [event, formatDate]
   );
-  const onRowClick = useCallback(
-    ({ originalEvent: { target } }: DataTableRowClickEventParams) => {
-      const valueTd = (
-        target as HTMLTableRowElement
-      ).parentNode?.querySelectorAll('td')[1]!;
-      selectText(valueTd);
-    },
-    []
-  );
+  const onRowClick = useCallback(({ target }: MouseEvent) => {
+    const valueTd = (
+      target as HTMLTableRowElement
+    ).parentNode?.querySelectorAll('td');
+    if (valueTd && valueTd.length === 3) {
+      selectText(valueTd[2]);
+    }
+  }, []);
 
   return (
-    <DataTable value={value} onRowClick={onRowClick}>
-      <Column field="name" header={t('events.details.name')} />
-      <Column field="value" header={t('events.details.value')} />
-    </DataTable>
+    <Table
+      dataSource={dataSource}
+      columns={[
+        { title: t('events.details.name'), dataIndex: 'name', key: 'name' },
+        { title: t('events.details.value'), dataIndex: 'value', key: 'value' },
+      ]}
+      bordered
+      pagination={{ pageSize: 50, position: [] }}
+      scroll={{ y: 500 }}
+      expandable={{
+        expandedRowRender: (record) => record.payloadValue,
+        rowExpandable: (record) => record.name === 'payload',
+      }}
+      expandRowByClick
+      onRow={() => ({
+        onClick: onRowClick,
+      })}
+    />
   );
 };
 
