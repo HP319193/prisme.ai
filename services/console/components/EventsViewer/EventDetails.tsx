@@ -23,38 +23,47 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
   const dataSource = useMemo(
     () => [
       {
+        key: 'id',
         name: 'id',
         value: event.id,
       },
       {
+        key: 'type',
         name: 'type',
         value: event.type,
       },
       {
+        key: 'createdAt',
         name: 'createdAt',
         value: formatDate(event.createdAt, { format: 'yyyy-MM-dd hh:mm' }),
       },
       {
+        key: 'source.app',
         name: 'source.app',
         value: event.source.app,
       },
       {
+        key: 'source.userId',
         name: 'source.userId',
         value: event.source.userId,
       },
       {
+        key: 'source.workspaceId',
         name: 'source.workspaceId',
         value: event.source.workspaceId,
       },
       {
+        key: 'source.host.service',
         name: 'source.host.service',
         value: event.source.host.service,
       },
       {
+        key: 'source.correlationId',
         name: 'source.correlationId',
         value: event.source.correlationId,
       },
       {
+        key: 'payload',
         name: 'payload',
         value: (
           <pre>
@@ -70,14 +79,17 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
         ),
       },
       {
+        key: 'error.error',
         name: 'error.error',
         value: event.error?.error,
       },
       {
+        key: 'error.message',
         name: 'error.message',
         value: event.error?.message,
       },
       {
+        key: 'error.details',
         name: 'error.details',
         value: event.error?.details && (
           <pre>

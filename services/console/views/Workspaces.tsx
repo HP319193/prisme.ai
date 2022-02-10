@@ -65,7 +65,7 @@ export const WorkspacesView = () => {
                   </Link>,
                 ]}
               >
-                <div>{name}</div>
+                <Text>{name}</Text>
               </Card>
             ))}
             <Card

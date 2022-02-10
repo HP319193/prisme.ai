@@ -50,9 +50,7 @@ exports[`should render some workspaces 1`] = `
         className="ant-card-body"
         style={Object {}}
       >
-        <div>
-          foo
-        </div>
+        foo
       </div>
       <ul
         className="ant-card-actions"
@@ -83,9 +81,7 @@ exports[`should render some workspaces 1`] = `
         className="ant-card-body"
         style={Object {}}
       >
-        <div>
-          bar
-        </div>
+        bar
       </div>
       <ul
         className="ant-card-actions"
