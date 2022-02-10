@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { Spin } from 'antd';
 
 interface LoadingProps {
   className?: string;
@@ -6,10 +7,8 @@ interface LoadingProps {
 export const Loading: FC<LoadingProps> = ({ className }) => {
   return (
     <div className="flex flex-1 align-center justify-center">
-      <div
-        className={`${
-          className || ''
-        } align-self-center justify-self-center pi pi-spin pi-spinner`}
+      <Spin
+        className={`!flex justify-center items-center ${className || ''}`}
       />
     </div>
   );
