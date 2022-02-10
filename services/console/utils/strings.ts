@@ -1,4 +1,9 @@
-export const truncate = (str: string, len: number, ellipsis: string = '…') => {
-  const truncated = str.substring(0, len);
-  return `${truncated}${str.length > truncated.length ? ellipsis : ''}`;
+export const truncate = (
+  str: string = '',
+  len: number,
+  ellipsis: string = '…'
+) => {
+  const original = `${str || ''}`;
+  const truncated = original.substring(0, len);
+  return `${truncated}${original.length > truncated.length ? ellipsis : ''}`;
 };
