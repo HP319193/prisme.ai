@@ -1,7 +1,8 @@
 {
   "in": {
     "title": "Connection",
-    "description": "Connect to Prisme.ai",
+    "header": "Connect\nto Prisme.ai",
+    "description": "If you don't have an account yet\nyou can <a>sign up here !</a>",
     "email": "Email",
     "password": "Password",
     "submit": "Connection",
@@ -10,7 +11,8 @@
   },
   "up": {
     "title": "Signup — $t(common:main.title)",
-    "description": "Try Prisme.ai",
+    "header": "Try Prisme.ai",
+    "description": "If you already have an account\n<a>sign in</a>",
     "email": "Email",
     "password": "Password",
     "firstName": "Firstname",

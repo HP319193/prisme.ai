@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Messages } from 'primereact/messages';
 import { Form } from 'react-final-form';
 
@@ -17,6 +17,7 @@ import {
 import icon from '../../icons/icon-prisme.svg';
 import Fieldset from '../../layouts/Fieldset';
 import Field from '../../layouts/Field';
+import SignHeader from '../../components/SignHeader';
 
 interface Values {
   email: string;
@@ -31,7 +32,6 @@ export const SignIn = () => {
 
   const submit = useCallback(
     async ({ email, password }: Values) => {
-      console.log('submitting');
       await signin(email, password);
     },
     [signin]
@@ -69,24 +69,23 @@ export const SignIn = () => {
   };
 
   return (
-    <Layout
-      Header={
-        <div className="ml-24">
-          <div className="flex flex-row">
-            <Image src={icon} width={16} height={16} />
-            Prisme.ai
-          </div>
-          <meta name="description" content={t('in.description')} />
-        </div>
-      }
-      className="bg-blue-200 mt-14"
-    >
+    <Layout Header={<SignHeader />} className="!bg-blue-200 pt-14">
       <div className="flex grow justify-evenly mt-32">
         <Col span={12}>
           <div className="flex items-center flex-col">
             <div>
-              <Title>{t('login.header')}</Title>
-              <div className="">{t('login.description')}</div>
+              <Title>{t('in.header')}</Title>
+              <Trans
+                t={t}
+                i18nKey="in.description"
+                values={{
+                  url: '/signup',
+                }}
+                components={{
+                  a: <a href={`signup`} />,
+                  icon: <i className="pi pi-copy" />,
+                }}
+              />
             </div>
           </div>
         </Col>
@@ -94,14 +93,18 @@ export const SignIn = () => {
           <div className="flex items-center flex-col">
             <Form onSubmit={submit} validate={validate}>
               {({ handleSubmit }) => (
-                <form onSubmit={handleSubmit} className="w-full">
-                  <Space size="middle" direction="vertical">
-                    <Fieldset legend={t('in.description')}>
+                <form onSubmit={handleSubmit} className="w-96 flex">
+                  <Space
+                    size="middle"
+                    direction="vertical"
+                    className="flex grow"
+                  >
+                    <Fieldset>
                       <Field name="email">
                         {({ input: { type, ...inputProps }, className }) => (
                           <Input
                             placeholder={t('in.email')}
-                            className={className}
+                            className={`${className} h-12`}
                             {...inputProps}
                           />
                         )}
@@ -110,7 +113,7 @@ export const SignIn = () => {
                         {({ input: { type, ...inputProps }, className }) => (
                           <Input
                             placeholder={t('in.password')}
-                            className={className}
+                            className={`${className} h-12`}
                             type={'password' as any}
                             {...inputProps}
                           />
@@ -120,7 +123,7 @@ export const SignIn = () => {
                     <Button
                       variant="primary"
                       disabled={loading}
-                      className="w-full"
+                      className="w-full !h-12"
                       type="submit"
                     >
                       <div className={`${getIcon()} mr-2`} />
