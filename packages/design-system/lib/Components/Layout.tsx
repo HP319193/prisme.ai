@@ -1,15 +1,20 @@
 import { Layout as AntdLayout } from 'antd';
-import { ReactNode } from 'react';
+import { HTMLAttributes, ReactNode } from 'react';
 
-export interface LayoutProps {
-  className?: string;
+export interface LayoutProps extends HTMLAttributes<HTMLDivElement> {
   Header?: ReactNode;
   children: ReactNode;
   PageHeader?: ReactNode;
 }
 
-const Layout = ({ className, Header, PageHeader, children }: LayoutProps) => (
-  <AntdLayout className={`${className || ''} flex grow flex-col`}>
+const Layout = ({
+  className,
+  Header,
+  PageHeader,
+  children,
+  ...props
+}: LayoutProps) => (
+  <AntdLayout className={`${className || ''} flex grow flex-col`} {...props}>
     <AntdLayout.Header>
       {Header}
       {PageHeader || null}

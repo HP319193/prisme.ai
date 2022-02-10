@@ -30,16 +30,18 @@ export const Panel: FC<PanelProps> = ({
   return (
     <div
       className={`
+        flex
         absolute top-0 bottom-0 -right-1/3 w-1/3 z-10 flex-col
         transition-transform
         ease-in
         duration-200
+        overflow-hidden
         ${hidden ? '' : '-translate-x-full'}
       `}
     >
-      <SidePanel className="!bg-white">
-        <div className="flex flex-col">
-          <div className="flex grow justify-end">
+      <SidePanel className="!bg-white overflow-hidden h-full">
+        <div className="flex flex-col overflow-hidden h-full">
+          <div className="flex justify-end">
             <Button variant="grey" onClick={() => setHidden(true)}>
               <CloseCircleOutlined />
             </Button>

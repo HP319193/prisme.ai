@@ -1,10 +1,8 @@
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import { useEffect, useState, useCallback } from 'react';
 import AutomationBuilder from '../components/AutomationBuilder';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
-import EditableTitle from '../components/EditableTitle';
 import { Button } from 'primereact/button';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useWorkspaces } from '../components/WorkspacesProvider';
@@ -23,7 +21,7 @@ export const Automation = () => {
     push,
   } = useRouter();
   const automation = (workspace.automations || {})[`${automationId}`];
-  const [value, setValue] = useState<Prismeai.Automation>(automation);
+  const [value, setValue] = useState<Prismeai.Automation>(automation || {});
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -75,7 +73,7 @@ export const Automation = () => {
         title={value.name}
         onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
-          <Button onClick={save} disabled={saving}>
+          <Button onClick={save} disabled={saving} key="1">
             {saving && <LoadingOutlined />}
             {t('automations.save.label')}
           </Button>,

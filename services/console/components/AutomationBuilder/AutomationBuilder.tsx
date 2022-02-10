@@ -101,7 +101,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
 
   const instructionsSchemas: [
     string,
-    Record<string, Schema>,
+    Record<string, Schema & { description?: string }>,
     { icon: string }
   ][] = useMemo(
     () => [
@@ -132,6 +132,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
               properties: {
                 [name]: schema,
               },
+              description: automations[name].description,
             },
           };
         }, {}),

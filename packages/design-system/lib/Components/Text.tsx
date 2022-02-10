@@ -1,12 +1,16 @@
-import { ReactElement } from 'react';
+import { HTMLAttributes, ReactElement } from 'react';
 
-export interface TextProps {
+export interface TextProps extends HTMLAttributes<HTMLDivElement> {
   children: string | ReactElement;
   type: 'grey' | 'regular';
 }
 
-const Text = ({ children, type }: TextProps) => {
-  return <div className={type === 'grey' ? 'text-gray' : ''}>{children}</div>;
+const Text = ({ children, type, ...props }: TextProps) => {
+  return (
+    <div className={type === 'grey' ? 'text-gray' : ''} {...props}>
+      {children}
+    </div>
+  );
 };
 
 export default Text;

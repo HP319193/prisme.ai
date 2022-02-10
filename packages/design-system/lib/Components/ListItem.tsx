@@ -12,7 +12,7 @@ const ListItem = ({ title, content }: ListItemProps) => (
     className="flex grow border border-gray-200 rounded p-2 items-center justify-between cursor-pointer"
     key={title}
   >
-    <Space direction="vertical">
+    <Space direction="vertical" className="align-baseline">
       <div>{title}</div>
       {content && <Text type="grey">{content}</Text>}
     </Space>
