@@ -20,6 +20,9 @@ jest.mock('next/router', () => {
     }),
   };
 });
+jest.mock('next/Image', () => {
+  return ({ src }: any) => <div>{src}</div>;
+});
 
 jest.mock('primereact/fieldset', () => ({
   Fieldset: ({ children }: any) => children,
