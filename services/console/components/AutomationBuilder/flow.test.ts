@@ -55,7 +55,7 @@ const automation = {
               {
                 repeat: {
                   on: '$a',
-                  then: [
+                  do: [
                     {
                       emit: 'apps.5',
                     },

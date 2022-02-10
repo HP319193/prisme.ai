@@ -67,7 +67,7 @@ export async function runInstructions(
     const interpolatedInstruction = interpolate(
       instruction,
       ctx.publicContexts,
-      ['do'] // Do not interpolate 'then' fields as they include nested instruction lists
+      ['do'] // Do not interpolate 'do' fields as they include nested instruction lists
     );
 
     await runInstruction(

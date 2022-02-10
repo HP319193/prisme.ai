@@ -68,7 +68,7 @@ Array [
                   Object {
                     "repeat": Object {
                       "on": "$a",
-                      "then": Array [
+                      "do": Array [
                         Object {
                           "emit": "apps.5",
                         },
@@ -151,7 +151,7 @@ Array [
                   Object {
                     "repeat": Object {
                       "on": "$a",
-                      "then": Array [
+                      "do": Array [
                         Object {
                           "emit": "apps.5",
                         },
@@ -231,7 +231,7 @@ Array [
                   Object {
                     "repeat": Object {
                       "on": "$a",
-                      "then": Array [
+                      "do": Array [
                         Object {
                           "emit": "apps.5",
                         },
@@ -312,7 +312,7 @@ Array [
                   Object {
                     "repeat": Object {
                       "on": "$a",
-                      "then": Array [
+                      "do": Array [
                         Object {
                           "emit": "apps.5",
                         },
@@ -391,7 +391,7 @@ Array [
                   Object {
                     "repeat": Object {
                       "on": "$a",
-                      "then": Array [
+                      "do": Array [
                         Object {
                           "emit": "apps.5",
                         },
@@ -425,7 +425,7 @@ Array [
               Object {
                 "repeat": Object {
                   "on": "$a",
-                  "then": Array [
+                  "do": Array [
                     Object {
                       "emit": "apps.5",
                     },
@@ -527,7 +527,7 @@ Array [
             Object {
               "repeat": Object {
                 "on": "$a",
-                "then": Array [
+                "do": Array [
                   Object {
                     "emit": "apps.5",
                   },
@@ -547,7 +547,7 @@ Array [
         Object {
           "repeat": Object {
             "on": "$a",
-            "then": Array [
+            "do": Array [
               Object {
                 "emit": "apps.5",
               },
@@ -578,7 +578,7 @@ Array [
         Object {
           "repeat": Object {
             "on": "$a",
-            "then": Array [
+            "do": Array [
               Object {
                 "emit": "apps.5",
               },
@@ -596,7 +596,7 @@ Array [
         Object {
           "repeat": Object {
             "on": "$a",
-            "then": Array [
+            "do": Array [
               Object {
                 "emit": "apps.5",
               },
@@ -627,7 +627,7 @@ Array [
         Object {
           "repeat": Object {
             "on": "$a",
-            "then": Array [
+            "do": Array [
               Object {
                 "emit": "apps.5",
               },
@@ -645,7 +645,7 @@ Array [
         Object {
           "repeat": Object {
             "on": "$a",
-            "then": Array [
+            "do": Array [
               Object {
                 "emit": "apps.5",
               },
@@ -676,7 +676,7 @@ Array [
         Object {
           "repeat": Object {
             "on": "$a",
-            "then": Array [
+            "do": Array [
               Object {
                 "emit": "apps.5",
               },
@@ -694,7 +694,7 @@ Array [
         Object {
           "repeat": Object {
             "on": "$a",
-            "then": Array [
+            "do": Array [
               Object {
                 "emit": "apps.5",
               },
@@ -725,7 +725,7 @@ Array [
         Object {
           "repeat": Object {
             "on": "$a",
-            "then": Array [
+            "do": Array [
               Object {
                 "emit": "apps.5",
               },
@@ -743,7 +743,7 @@ Array [
         Object {
           "repeat": Object {
             "on": "$a",
-            "then": Array [
+            "do": Array [
               Object {
                 "emit": "apps.5",
               },
@@ -776,7 +776,7 @@ Array [
             Object {
               "repeat": Object {
                 "on": "$a",
-                "then": Array [
+                "do": Array [
                   Object {
                     "emit": "apps.5",
                   },
@@ -821,7 +821,7 @@ Array [
                 Object {
                   "repeat": Object {
                     "on": "$a",
-                    "then": Array [
+                    "do": Array [
                       Object {
                         "emit": "apps.5",
                       },
@@ -896,7 +896,7 @@ Array [
                   Object {
                     "repeat": Object {
                       "on": "$a",
-                      "then": Array [
+                      "do": Array [
                         Object {
                           "emit": "apps.5",
                         },
@@ -973,7 +973,7 @@ Array [
                   Object {
                     "repeat": Object {
                       "on": "$a",
-                      "then": Array [
+                      "do": Array [
                         Object {
                           "emit": "apps.5",
                         },
@@ -1046,7 +1046,7 @@ Array [
                   Object {
                     "repeat": Object {
                       "on": "$a",
-                      "then": Array [
+                      "do": Array [
                         Object {
                           "emit": "apps.5",
                         },
@@ -1119,7 +1119,7 @@ Array [
                   Object {
                     "repeat": Object {
                       "on": "$a",
-                      "then": Array [
+                      "do": Array [
                         Object {
                           "emit": "apps.5",
                         },
@@ -1192,7 +1192,7 @@ Array [
                   Object {
                     "repeat": Object {
                       "on": "$a",
-                      "then": Array [
+                      "do": Array [
                         Object {
                           "emit": "apps.5",
                         },
@@ -1363,7 +1363,7 @@ Array [
                 Object {
                   "repeat": Object {
                     "on": "$a",
-                    "then": Array [
+                    "do": Array [
                       Object {
                         "emit": "apps.5",
                       },
@@ -1457,7 +1457,7 @@ Array [
                   Object {
                     "repeat": Object {
                       "on": "$a",
-                      "then": Array [
+                      "do": Array [
                         Object {
                           "emit": "apps.5",
                         },

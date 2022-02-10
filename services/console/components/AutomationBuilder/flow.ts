@@ -178,7 +178,7 @@ export class Flow {
         if (name === Flow.REPEAT) {
           prevNode = null;
           node.type = Flow.REPEAT;
-          const instructions = (value as Prismeai.Repeat['repeat']).then;
+          const instructions = (value as Prismeai.Repeat['repeat']).do;
           const nodes = this.buildInstructions({
             instructions,
             parentId: node.id,

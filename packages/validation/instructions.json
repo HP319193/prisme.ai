@@ -145,13 +145,13 @@
           {
             "required": [
               "on",
-              "then"
+              "do"
             ]
           },
           {
             "required": [
               "until",
-              "then"
+              "do"
             ]
           }
         ],
@@ -163,7 +163,7 @@
           "until": {
             "type": "number"
           },
-          "then": {
+          "do": {
             "type": "array"
           }
         }

@@ -38,7 +38,7 @@ it('should render', () => {
       );
       <Block
         id="a"
-        data={{ label: 'repeat', value: { on: '$a', then: [] } }}
+        data={{ label: 'repeat', value: { on: '$a', do: [] } }}
         type="instruction"
         selected={false}
         isConnectable={false}
