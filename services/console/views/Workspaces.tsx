@@ -1,3 +1,4 @@
+import { Layout } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -6,6 +7,7 @@ import { Card } from 'primereact/card';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Workspace } from '../api/types';
+import Header from '../components/Header';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 
 import CardsContainer from '../layouts/CardsContainer';
@@ -29,7 +31,7 @@ export const WorkspacesView = () => {
   }, [create, push, t]);
 
   return (
-    <Main>
+    <Layout Header={<Header />}>
       <Head>
         <title>{t('workspaces.title')}</title>
         <meta name="description" content={t('workspaces.description')} />
@@ -63,7 +65,7 @@ export const WorkspacesView = () => {
           })}
         </Card>
       </CardsContainer>
-    </Main>
+    </Layout>
   );
 };
 

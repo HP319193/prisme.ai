@@ -13,7 +13,10 @@ const WorkspaceHome = ({}: any) => {
   const { t } = useTranslation('workspaces');
 
   // Start hooks mocks
-  const workspacesNames = ['mon premier workspace', 'mon second workspace'];
+  const workspacesNames = [
+    { label: 'mon premier workspace', key: '1' },
+    { label: 'mon second workspace', key: '2' },
+  ];
   const user = {
     name: 'John Doe',
     avatar:

@@ -5,7 +5,7 @@ exports[`should get layout 1`] = `
   className="flex min-h-screen max-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4 z-1 drop-shadow-md"
+    className="bg-primary p-4 z-1 "
   >
     <div
       className="flex justify-between"
@@ -80,7 +80,7 @@ exports[`should get layout 1`] = `
           transition-duration-100
           transition-ease-in
           
-          drop-shadow-md
+          
           z-4"
         onClick={[Function]}
         onTouchEnd={[Function]}
@@ -102,7 +102,7 @@ exports[`should render 404 1`] = `
   className="flex min-h-screen max-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4 z-1 drop-shadow-md"
+    className="bg-primary p-4 z-1 "
   >
     <div
       className="flex justify-between"
@@ -150,7 +150,7 @@ exports[`should render empty 1`] = `
   className="flex min-h-screen max-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4 z-1 drop-shadow-md"
+    className="bg-primary p-4 z-1 "
   >
     <div
       className="flex justify-between"
@@ -225,7 +225,7 @@ exports[`should render empty 1`] = `
           transition-duration-100
           transition-ease-in
           
-          drop-shadow-md
+          
           z-4"
         onClick={[Function]}
         onTouchEnd={[Function]}
@@ -247,7 +247,7 @@ exports[`should render fetching 1`] = `
   className="flex min-h-screen max-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4 z-1 drop-shadow-md"
+    className="bg-primary p-4 z-1 "
   >
     <div
       className="flex justify-between"
@@ -322,7 +322,7 @@ exports[`should render fetching 1`] = `
           transition-duration-100
           transition-ease-in
           
-          drop-shadow-md
+          
           z-4"
         onClick={[Function]}
         onTouchEnd={[Function]}
@@ -344,7 +344,7 @@ exports[`should render loading 1`] = `
   className="flex min-h-screen max-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4 z-1 drop-shadow-md"
+    className="bg-primary p-4 z-1 "
   >
     <div
       className="flex justify-between"
@@ -419,7 +419,7 @@ exports[`should render loading 1`] = `
           transition-duration-100
           transition-ease-in
           
-          drop-shadow-md
+          
           z-4"
         onClick={[Function]}
         onTouchEnd={[Function]}

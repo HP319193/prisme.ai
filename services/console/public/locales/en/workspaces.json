@@ -106,7 +106,7 @@
     "link": "Pages"
   },
   "expert": {
-    "show": "Edit the workspace source code",
+    "show": "Edit the source code",
     "hide": "Hide the source code",
     "exit": {
       "confirm_title": "Changes in progress",

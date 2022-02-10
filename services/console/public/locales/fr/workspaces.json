@@ -5,7 +5,8 @@
   },
   "workspace": {
     "title": "\"{{name}}\" Espace de travail — $t(common:main.title)",
-    "description": "Édition de l'espace de travail \"{{name}}\""
+    "description": "Édition de l'espace de travail \"{{name}}\"",
+    "share": "Partager"
   },
   "create": {
     "description_first": "Créez votre premier espace de travail pour commencer à automatiser votre travail",
@@ -106,7 +107,7 @@
     "link": "Pages"
   },
   "expert": {
-    "show": "Éditer le code source de l'espace de travail",
+    "show": "Éditer le code source",
     "hide": "Masquer le code source",
     "exit": {
       "confirm_title": "Modifications en cours",

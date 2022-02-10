@@ -5,7 +5,7 @@ exports[`should render 1`] = `
   className="flex min-h-screen max-h-screen flex-column"
 >
   <div
-    className="bg-primary p-4 z-1 drop-shadow-md"
+    className="bg-primary p-4 z-1 "
   >
     <div
       className="flex justify-between"

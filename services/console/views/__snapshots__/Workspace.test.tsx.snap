@@ -6,7 +6,7 @@ Array [
     className="
           absolute top-0 bottom-0 right-0 left-0
           flex flex-1
-          drop-shadow-md
+          
           transition-transform
           transition-duration-200
           transition-ease-in

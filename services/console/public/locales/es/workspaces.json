@@ -106,7 +106,7 @@
     "link": "Páginas"
   },
   "expert": {
-    "show": "Editar el código fuente del espacio de trabajo",
+    "show": "Editar el código fuente",
     "hide": "Ocultar el código fuente",
     "exit": {
       "confirm_title": "Cambios en curso",

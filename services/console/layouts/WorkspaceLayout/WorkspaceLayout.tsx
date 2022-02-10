@@ -9,20 +9,19 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { confirmDialog } from 'primereact/confirmdialog';
-import EditableTitle from '../../components/EditableTitle';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
-import Main from '../Main';
 import workspaceContext, { WorkspaceContext } from './context';
 import Loading from '../../components/Loading';
-import { Button } from 'primereact/button';
 import { EventsByDay } from '.';
 import Events from '../../api/events';
 import { Event } from '../../api/types';
 import api from '../../api/api';
 import { useToaster } from '../Toaster';
 import Error404 from '../../views/Errors/404';
+import { Layout } from '@prisme.ai/design-system';
+import { useUser } from '../../components/UserProvider';
+import HeaderWorkspace from '../../components/HeaderWorkspace';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -45,6 +44,7 @@ const getLatest = (events: Event<Date>[]) => {
 };
 
 export const WorkspaceLayout: FC = ({ children }) => {
+  const { user } = useUser();
   const {
     query: { id },
     route,
@@ -192,22 +192,16 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [dirty, displaySource, push, t, workspace]
   );
 
-  if (!workspace) {
+  if (!workspace || !user) {
     return (
-      <Main>
-        <div className="flex flex-1 justify-center align-center">
-          <Loading />
-        </div>
-      </Main>
+      <div className="flex flex-1 justify-center align-center">
+        <Loading />
+      </div>
     );
   }
 
   if (!loading && workspace === null) {
-    return (
-      <Main>
-        <Error404 link="/workspaces" reason={t('404')} />
-      </Main>
-    );
+    return <Error404 link="/workspaces" reason={t('404')} />;
   }
 
   return (
@@ -235,51 +229,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
           content={t('workspace.description', { name: workspace.name })}
         />
       </Head>
-      <Main
-        leftContent={
-          workspace && (
-            <EditableTitle title={workspace.name} onChange={updateTitle} />
-          )
-        }
-        rightContent={
-          workspace && (
-            <>
-              {displaySource && (
-                <Button
-                  onClick={save}
-                  disabled={!dirty || !!invalid || saving}
-                  className="flex-row relative"
-                >
-                  {saving && (
-                    <div className="pi pi-spinner pi-spin -ml-3 absolute" />
-                  )}
-                  <div className="mx-2">{t('automations.save.label')}</div>
-                </Button>
-              )}
-              <Link
-                href={`/workspaces/${workspace.id}${
-                  displaySource ? '' : '/source'
-                }`}
-              >
-                <a>
-                  <Button
-                    icon="pi pi-code"
-                    tooltip={t(`expert.${displaySource ? 'hide' : 'show'}`)}
-                    tooltipOptions={{ position: 'left' }}
-                    onClick={alertSourceIsDirty}
-                  />
-                </a>
-              </Link>
-            </>
-          )
-        }
-      >
-        <div className="flex flex-1">
-          <div className="flex flex-1 flex-column overflow-auto">
-            {children}
-          </div>
-        </div>
-      </Main>
+      <Layout Header={<HeaderWorkspace />}>{children}</Layout>
     </workspaceContext.Provider>
   );
 };
