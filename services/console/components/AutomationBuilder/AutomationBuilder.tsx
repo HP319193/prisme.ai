@@ -3,6 +3,8 @@ import ReactFlow, {
   ReactFlowProvider,
   Controls,
   useZoomPanHelper,
+  Background,
+  BackgroundVariant,
 } from 'react-flow-renderer';
 import { buildFlow } from './flow';
 import ConditionEdge from './ConditionEdge';
@@ -308,6 +310,12 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
           edgeTypes={edgeTypes}
         >
           <Controls />
+          <Background
+            variant={BackgroundVariant.Dots}
+            gap={50}
+            size={2}
+            color="#eee"
+          />
         </ReactFlow>
         <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
           {instructionEditing && <InstructionForm {...instructionEditing} />}

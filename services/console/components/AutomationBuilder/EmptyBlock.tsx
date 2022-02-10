@@ -1,3 +1,4 @@
+import { PlusOutlined } from '@ant-design/icons';
 import { FC, memo } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import { useAutomationBuilder } from './context';
@@ -21,16 +22,18 @@ export const EmptyBlock: FC<NodeProps> = ({ data = {}, id, ...props }) => {
         className="
           flex
           flex-col
-          w-10rem"
+          w-[250px]"
       >
         <div className="flex justify-center" style={{ minHeight: '1px' }}>
           {data.withButton && (
             <button
-              className="pi pi-plus border-none bg-primary p-1 border-round z-1 text-xs cursor-pointer"
+              className="bg-graph-accent text-white rounded w-10 h-10"
               onClick={() => {
                 addInstruction(data.parent, data.index);
               }}
-            />
+            >
+              <PlusOutlined />
+            </button>
           )}
         </div>
       </div>

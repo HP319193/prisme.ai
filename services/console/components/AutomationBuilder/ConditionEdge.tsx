@@ -56,7 +56,7 @@ export const ConditionEdge: FC<EdgeProps> = ({
           >
             <button
               className={`
-                border-none bg-primary p-1 border-round z-1 text-xs
+                bg-graph-accent p-1 rounded z-1 text-xs min-w-sm text-white px-4
                 ${data.parent ? 'cursor-pointer' : ''}
                 `}
               onClick={

@@ -71,10 +71,10 @@ export const Block: FC<NodeProps & BlockProps> = ({
           flex
           flex-col
           surface-section
-          border-solid
-          border-${selected ? '3' : '1'}
-          border-primary
-          border-round`}
+          border-graph-border
+          bg-graph-background
+          ${selected ? 'border-4' : 'border-2'}
+          rounded`}
         style={{ width: Flow.BLOCK_WIDTH - 50 }}
         ref={ref}
       >
@@ -82,10 +82,8 @@ export const Block: FC<NodeProps & BlockProps> = ({
           className="
           flex
           align-center
-          border-solid
-          border-none
-          border-bottom-1
-          border-primary
+          border-b-2
+          border-graph-border
           p-2
         "
         >
