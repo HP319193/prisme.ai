@@ -42,6 +42,7 @@ nav:
       - i18n.index: contributing/index.md
       - i18n.functionnalRequirements: contributing/functionnalRequirements.md
       - i18n.architecture: contributing/architecture.md
+      - i18n.permissions: contributing/permissions.md
       - i18n.console:
           - i18n.specifications: contributing/technical/console/specifications.md
       - i18n.events:
