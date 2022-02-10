@@ -7,10 +7,10 @@ Array [
           flex
           flex-col
           surface-section
-          border-solid
-          border-1
-          border-primary
-          border-round"
+          border-graph-border
+          bg-graph-background
+          border-2
+          rounded"
     style={
       Object {
         "width": 250,
@@ -18,7 +18,7 @@ Array [
     }
   >
     <div
-      className=" flex align-center border-solid border-none border-bottom-1 border-primary p-2 "
+      className=" flex align-center border-b-2 border-graph-border p-2 "
     >
       <div
         className="mr-2"
@@ -170,10 +170,10 @@ Array [
           flex
           flex-col
           surface-section
-          border-solid
-          border-1
-          border-primary
-          border-round"
+          border-graph-border
+          bg-graph-background
+          border-2
+          rounded"
     style={
       Object {
         "width": 250,
@@ -181,7 +181,7 @@ Array [
     }
   >
     <div
-      className=" flex align-center border-solid border-none border-bottom-1 border-primary p-2 "
+      className=" flex align-center border-b-2 border-graph-border p-2 "
     >
       <div
         className="mr-2"
@@ -333,10 +333,10 @@ Array [
           flex
           flex-col
           surface-section
-          border-solid
-          border-1
-          border-primary
-          border-round"
+          border-graph-border
+          bg-graph-background
+          border-2
+          rounded"
     style={
       Object {
         "width": 250,
@@ -344,7 +344,7 @@ Array [
     }
   >
     <div
-      className=" flex align-center border-solid border-none border-bottom-1 border-primary p-2 "
+      className=" flex align-center border-b-2 border-graph-border p-2 "
     >
       <div
         className="mr-2"
@@ -496,10 +496,10 @@ Array [
           flex
           flex-col
           surface-section
-          border-solid
-          border-1
-          border-primary
-          border-round"
+          border-graph-border
+          bg-graph-background
+          border-2
+          rounded"
     style={
       Object {
         "width": 250,
@@ -507,7 +507,7 @@ Array [
     }
   >
     <div
-      className=" flex align-center border-solid border-none border-bottom-1 border-primary p-2 "
+      className=" flex align-center border-b-2 border-graph-border p-2 "
     >
       <div
         className="mr-2"
@@ -659,10 +659,10 @@ Array [
           flex
           flex-col
           surface-section
-          border-solid
-          border-1
-          border-primary
-          border-round"
+          border-graph-border
+          bg-graph-background
+          border-2
+          rounded"
     style={
       Object {
         "width": 250,
@@ -670,7 +670,7 @@ Array [
     }
   >
     <div
-      className=" flex align-center border-solid border-none border-bottom-1 border-primary p-2 "
+      className=" flex align-center border-b-2 border-graph-border p-2 "
     >
       <div
         className="mr-2"
@@ -822,10 +822,10 @@ Array [
           flex
           flex-col
           surface-section
-          border-solid
-          border-1
-          border-primary
-          border-round"
+          border-graph-border
+          bg-graph-background
+          border-2
+          rounded"
     style={
       Object {
         "width": 250,
@@ -833,7 +833,7 @@ Array [
     }
   >
     <div
-      className=" flex align-center border-solid border-none border-bottom-1 border-primary p-2 "
+      className=" flex align-center border-b-2 border-graph-border p-2 "
     >
       <div
         className="mr-2"

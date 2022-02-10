@@ -9,7 +9,7 @@ Array [
     Handle
   </div>,
   <div
-    className=" flex flex-col w-10rem"
+    className=" flex flex-col w-[250px]"
   >
     <div
       className="flex justify-center"

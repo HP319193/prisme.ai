@@ -1,11 +1,27 @@
 import Panel from './Panel';
 import renderer, { act } from 'react-test-renderer';
-import { Sidebar } from 'primereact/sidebar';
+import { Button } from '@prisme.ai/design-system';
 
-jest.mock('primereact/sidebar', () => {
-  const Sidebar = () => <div>Sidebar</div>;
+jest.mock('@prisme.ai/design-system', () => {
   return {
-    Sidebar,
+    ListItem({ children = null }: any) {
+      return children;
+    },
+    SearchInput({ children = null }: any) {
+      return children;
+    },
+    Space({ children = null }: any) {
+      return children;
+    },
+    Title({ children = null }: any) {
+      return children;
+    },
+    Button({ children = null }: any) {
+      return children;
+    },
+    SidePanel({ children = null }: any) {
+      return children;
+    },
   };
 });
 
@@ -13,23 +29,27 @@ it('should render', () => {
   const onVisibleChange = jest.fn();
   const div = {};
   const root = renderer.create(
-    <Panel visible={true} onVisibleChange={onVisibleChange} />,
-    {
-      createNodeMock(el) {
-        if (el.type === 'div') return div;
-        return null;
-      },
-    }
+    <Panel visible={true} onVisibleChange={onVisibleChange} />
   );
+  expect(root.toJSON()).toMatchSnapshot();
+});
+it('should hide', () => {
+  jest.useFakeTimers();
+  const onVisibleChange = jest.fn();
+  const div = {};
+  const root = renderer.create(
+    <Panel visible={true} onVisibleChange={onVisibleChange} />
+  );
+
   expect(root.toJSON()).toMatchSnapshot();
 
   act(() => {
-    root.update(<Panel visible={true} onVisibleChange={onVisibleChange} />);
+    root.root.findByType(Button).props.onClick();
   });
 
-  expect(root.toJSON()).toMatchSnapshot();
-
-  root.root.findByType(Sidebar).props.onHide();
+  act(() => {
+    jest.runAllTimers();
+  });
 
   expect(onVisibleChange).toHaveBeenCalledWith(false);
 });

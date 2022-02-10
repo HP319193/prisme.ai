@@ -8,7 +8,7 @@ exports[`should render 1`] = `
     className="p-field mb-5"
   >
     <span
-      className="flex p-float-label mx-2 undefined"
+      className="flex p-float-label mx-2 "
     >
       <input
         className="p-inputtext p-component flex flex-1 "
@@ -71,7 +71,7 @@ exports[`should render 1`] = `
     className="p-field mb-5"
   >
     <span
-      className="flex p-float-label mx-2 undefined"
+      className="flex p-float-label mx-2 "
     >
       <label
         htmlFor="lorem"

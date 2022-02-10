@@ -4,29 +4,15 @@ exports[`should render 1`] = `
 <div
   className="ReactFlowProvider"
 >
-  <div>
-    ReactFlow
-  </div>
   <div
-    className="Panel"
-  />
-  <div
-    className="absolute bottom-0 right-0 z-5"
+    className="relative flex flex-1 overflow-x-hidden"
   >
     <div>
-      debug:
+      ReactFlow
     </div>
-    <div>
-      <label>
-        Nodes draggable
-         
-        <input
-          checked={false}
-          onChange={[Function]}
-          type="checkbox"
-        />
-      </label>
-    </div>
+    <div
+      className="Panel"
+    />
   </div>
 </div>
 `;
