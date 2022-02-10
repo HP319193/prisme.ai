@@ -10,14 +10,13 @@ import {
   ValidationError,
 } from '../utils/yaml';
 import { generateEndpoint } from '../utils/urls';
-import { useToaster } from '../layouts/Toaster';
 import { useTranslation } from 'next-i18next';
 import { validateWorkspace } from '@prisme.ai/validation';
 import CodeEditor from '../components/CodeEditor/lazy';
 import { Button, PageHeader } from '@prisme.ai/design-system';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-import { Modal } from 'antd';
+import { Modal, notification } from 'antd';
 
 interface Annotation {
   row: number;
@@ -49,7 +48,6 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const { toJSON, toYaml } = useYaml();
   const ref = useRef<HTMLDivElement>(null);
-  const toaster = useToaster();
   const { push, events } = useRouter();
   const [confirm, setConfirm] = useState(false);
 
@@ -193,9 +191,9 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         ) || {};
       if (!url) return;
       navigator.clipboard.writeText(url);
-      toaster.show({
-        severity: 'info',
-        summary: t('automations.endpoint.copied'),
+      notification.success({
+        message: t('automations.endpoint.copied'),
+        placement: 'bottomRight',
       });
     };
     current.addEventListener('click', listener);
@@ -203,7 +201,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     return () => {
       current.removeEventListener('click', listener);
     };
-  }, [allAnnotations, ref, t, toaster]);
+  }, [allAnnotations, ref, t]);
 
   const shortcuts = useMemo(
     () => [

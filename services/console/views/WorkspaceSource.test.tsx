@@ -5,7 +5,6 @@ import useYaml from '../utils/useYaml';
 import CodeEditor from '../components/CodeEditor/lazy';
 import { YAMLException } from 'js-yaml';
 import { validateWorkspace } from '@prisme.ai/validation';
-import { useToaster } from '../layouts/Toaster';
 
 jest.mock('../utils/useYaml', () => {
   const toJSON = jest.fn();
@@ -46,15 +45,6 @@ jest.mock('../components/CodeEditor/lazy', () => {
 jest.mock('@prisme.ai/validation', () => ({
   validateWorkspace: jest.fn(),
 }));
-
-jest.mock('../layouts/Toaster', () => {
-  const mock = {};
-  return {
-    useToaster() {
-      return mock;
-    },
-  };
-});
 
 it('should render empty', () => {
   const root = renderer.create(<WorkspaceSource />);
@@ -196,7 +186,6 @@ automations:
       endpoint: true
 `
   );
-  useToaster().show = jest.fn();
   const listeners: any = {};
   const div = {
     addEventListener: (type: string, fn: Function) => {
@@ -241,10 +230,6 @@ automations:
   expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
     'http://localhost:3000/api/workspace/42/webhook/foo'
   );
-  expect(useToaster().show).toHaveBeenCalledWith({
-    severity: 'info',
-    summary: 'automations.endpoint.copied',
-  });
 });
 
 it('should find custom endpoints', async () => {

@@ -11,7 +11,6 @@ import Events from '../../api/events';
 import api from '../../api/api';
 import { useWorkspace, WorkspaceContext } from './context';
 import { Event } from '../../api/types';
-import { useToaster } from '../Toaster';
 import { confirmDialog } from 'primereact/confirmdialog';
 
 jest.useFakeTimers();
@@ -61,13 +60,6 @@ jest.mock('../../api/events', () => {
 
 jest.mock('primereact/button', () => {
   return { Button: () => null };
-});
-
-jest.mock('../Toaster', () => {
-  const mock = {
-    show: jest.fn(),
-  };
-  return { useToaster: () => mock };
 });
 
 jest.mock('primereact/confirmdialog', () => {
@@ -311,10 +303,5 @@ it('should save', async () => {
     createdAt: '',
     updatedAt: '',
     id: '',
-  });
-
-  expect(useToaster().show).toHaveBeenCalledWith({
-    severity: 'success',
-    summary: 'expert.save.confirm',
   });
 });

@@ -9,11 +9,11 @@ import { EventsByDay } from '.';
 import Events from '../../api/events';
 import { Event } from '../../api/types';
 import api from '../../api/api';
-import { useToaster } from '../Toaster';
 import Error404 from '../../views/Errors/404';
 import { Layout } from '@prisme.ai/design-system';
 import { useUser } from '../../components/UserProvider';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
+import { notification } from 'antd';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -44,7 +44,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   const { t } = useTranslation('workspaces');
   const { fetch, update, workspaces } = useWorkspaces();
-  const toaster = useToaster();
   const [loading, setLoading] = useState<WorkspaceContext['loading']>(false);
   const lockEvents = useRef(false);
   const [workspace, setCurrentWorkspace] = useState<
@@ -161,11 +160,11 @@ export const WorkspaceLayout: FC = ({ children }) => {
     const newWorkspace = await update(newSource);
     setCurrentWorkspace(newWorkspace);
     setSaving(false);
-    toaster.show({
-      severity: 'success',
-      summary: t('expert.save.confirm'),
+    notification.success({
+      message: t('expert.save.confirm'),
+      placement: 'bottomRight',
     });
-  }, [newSource, t, toaster, update]);
+  }, [newSource, t, update]);
 
   if (!workspace || !user) {
     return (

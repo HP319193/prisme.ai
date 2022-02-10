@@ -6,15 +6,15 @@ import Error404 from './Errors/404';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
-import { useToaster } from '../layouts/Toaster';
 import { Button, PageHeader } from '@prisme.ai/design-system';
 import { LoadingOutlined } from '@ant-design/icons';
+import { notification } from 'antd';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
   const { workspace } = useWorkspace();
   const { updateAutomation } = useWorkspaces();
-  const toaster = useToaster();
+
   const {
     query: { automationId },
     push,
@@ -41,18 +41,21 @@ export const Automation = () => {
     setSaving(true);
     try {
       const saved = await updateAutomation(workspace, `${automationId}`, value);
-      console.log('SAVED', saved);
       if (saved) {
         setValue(saved);
       }
+      notification.success({
+        message: t('automations.save.toast'),
+        placement: 'bottomRight',
+      });
     } catch (e) {
-      toaster.show({
-        severity: 'error',
-        summary: t('automations.save.error'),
+      notification.error({
+        message: t('automations.save.error'),
+        placement: 'bottomRight',
       });
     }
     setSaving(false);
-  }, [automationId, t, toaster, updateAutomation, value, workspace]);
+  }, [automationId, t, updateAutomation, value, workspace]);
 
   useKeyboardShortcut([
     {

@@ -10,7 +10,6 @@ import { NextPage } from 'next';
 import { ReactElement, ReactNode } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-import Toaster from '../layouts/Toaster';
 import addFormatters from '../utils/i18nextFormatters';
 import '../styles/globals.css';
 import '../styles/tailwind-console.css';
@@ -41,7 +40,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <link rel="icon" href="/favicon.png" />
         </Head>
         <Sentry />
-        <Toaster>{getLayout(<Component {...pageProps} />)}</Toaster>
+        {getLayout(<Component {...pageProps} />)}
       </WorkspacesProvider>
     </UserProvider>
   );
