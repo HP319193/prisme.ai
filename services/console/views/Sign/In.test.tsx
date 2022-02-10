@@ -38,7 +38,6 @@ beforeEach(() => {
 
 it('should render', () => {
   const root = renderer.create(<SignIn />);
-  console.log(root);
   expect(root.toJSON()).toMatchSnapshot();
 });
 
