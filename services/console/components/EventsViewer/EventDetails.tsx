@@ -11,7 +11,7 @@ interface EventsDetailsProps extends Event<Date> {}
 const PAYLOAD_TRUNCATE_LENGTH = 50;
 
 const truncatePayload = (payloadValue: string) => {
-  if (payloadValue.length > PAYLOAD_TRUNCATE_LENGTH) {
+  if (payloadValue && payloadValue.length > PAYLOAD_TRUNCATE_LENGTH) {
     return truncate(payloadValue, PAYLOAD_TRUNCATE_LENGTH);
   }
   return payloadValue;

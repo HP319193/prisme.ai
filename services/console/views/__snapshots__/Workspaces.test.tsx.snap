@@ -27,13 +27,7 @@ exports[`should render empty 1`] = `
           }
         >
           <span>
-            <button
-              className="p-button p-component"
-              disabled={false}
-              onClick={[Function]}
-            >
-              create.label
-            </button>
+            create.label
           </span>
         </li>
       </ul>
@@ -56,13 +50,9 @@ exports[`should render some workspaces 1`] = `
         className="ant-card-body"
         style={Object {}}
       >
-        <a
-          href="/workspaces/1"
-          onClick={[Function]}
-          onMouseEnter={[Function]}
-        >
+        <div>
           foo
-        </a>
+        </div>
       </div>
       <ul
         className="ant-card-actions"
@@ -80,12 +70,7 @@ exports[`should render some workspaces 1`] = `
               onClick={[Function]}
               onMouseEnter={[Function]}
             >
-              <button
-                className="p-button p-component"
-                disabled={false}
-              >
-                edit.label
-              </button>
+              edit.label
             </a>
           </span>
         </li>
@@ -98,13 +83,9 @@ exports[`should render some workspaces 1`] = `
         className="ant-card-body"
         style={Object {}}
       >
-        <a
-          href="/workspaces/42"
-          onClick={[Function]}
-          onMouseEnter={[Function]}
-        >
+        <div>
           bar
-        </a>
+        </div>
       </div>
       <ul
         className="ant-card-actions"
@@ -122,12 +103,7 @@ exports[`should render some workspaces 1`] = `
               onClick={[Function]}
               onMouseEnter={[Function]}
             >
-              <button
-                className="p-button p-component"
-                disabled={false}
-              >
-                edit.label
-              </button>
+              edit.label
             </a>
           </span>
         </li>
@@ -153,13 +129,7 @@ exports[`should render some workspaces 1`] = `
           }
         >
           <span>
-            <button
-              className="p-button p-component"
-              disabled={false}
-              onClick={[Function]}
-            >
-              create.label
-            </button>
+            create.label
           </span>
         </li>
       </ul>
