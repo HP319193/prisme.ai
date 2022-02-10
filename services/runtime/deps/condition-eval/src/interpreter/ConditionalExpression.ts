@@ -1,6 +1,13 @@
-import Evaluatable from "../Evaluatable";
-import { evaluateNode } from "../utils";
+import Evaluatable from '../Evaluatable';
+import { evaluateNode } from '../utils';
 
+const handleMatches = (left: any, right: any) => {
+  if (Array.isArray(right)) {
+    // That means we matched a regexp() expression. As it returns an array of strings instead of a string.
+    return `${left}`.match(new RegExp(right.join('')));
+  }
+  return `${left}`.match(right);
+};
 class ConditionalExpression extends Evaluatable {
   leftNode;
   rightNode;
@@ -18,49 +25,50 @@ class ConditionalExpression extends Evaluatable {
     const right = evaluateNode(this.rightNode, context);
 
     switch (`${this.operator}`.toLowerCase()) {
-      case "matches":
-        return !!`${left}`.match(right);
+      case 'matches':
+        return !!handleMatches(left, right);
 
-      case "not matches":
-        return !`${left}`.match(right);
+      case 'not matches':
+        const result = handleMatches(left, right);
+        return !result;
 
-      case "exists":
+      case 'exists':
         return left !== undefined && left !== null;
 
-      case "not exists":
+      case 'not exists':
         return left === undefined || left === null;
 
-      case "equals":
-      case "==":
-      case "===":
+      case 'equals':
+      case '==':
+      case '===':
         return left === right;
-      case "not equals":
-      case "!=":
-      case "!==":
+      case 'not equals':
+      case '!=':
+      case '!==':
         return left !== right;
 
-      case "<=":
+      case '<=':
         return left <= right;
 
-      case "<":
+      case '<':
         return left < right;
 
-      case ">=":
+      case '>=':
         return left >= right;
 
-      case ">":
+      case '>':
         return left > right;
 
-      case "and":
-      case "&&":
+      case 'and':
+      case '&&':
         return left && right;
 
-      case "or":
-      case "||":
+      case 'or':
+      case '||':
         return left || right;
     }
 
-    throw new Error(this.operator + " not implemented");
+    throw new Error(this.operator + ' not implemented');
   }
 }
 

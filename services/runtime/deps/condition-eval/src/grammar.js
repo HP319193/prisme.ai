@@ -8,34 +8,42 @@ function id(x) { return x[0]; }
 
 	const moo = require("moo");
 
-	const lexer = moo.compile({
-                dot: ".",
-                openingBracket: "[",
-                closingBracket: "]",
-                openP: "(",
-                closingP: ")",
-                ws:     /[ \t]+/,
-                number: /[0-9]+/,
-                matches: /[Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
-                notMatches: /[Nn][Oo][Tt] [Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
-                equals: /[Ee][Qq][Uu][Aa][Ll][Ss]|===|==/,
-                notEquals: /[Nn][Oo][Tt] [Ee][Qq][Uu][Aa][Ll][Ss]|!==|!=/,
-                relationalOperator: /<=|>=|>|</,
-                bang: "!",
-                exists:/[Ee][Xx][Ii][Ss][Tt][Ss]/,
-                notExists:/[Nn][Oo][Tt] [Ee][Xx][Ii][Ss][Tt][Ss]/,
-                and:/[Aa][Nn][Dd]|&&/,
-                or:/[Oo][Rr]|\|\|/,
-                "null": /[Nn][Uu][Ll][Ll]/,
-                "undefined": /[Uu][Nn][Dd][Ee][Ff][Ii][Nn][Ee][Dd]/,	
-                "true": /[Tt][Rr][Uu][Ee]/,	
-                "false": /[Ff][Aa][Ll][Ss][Ee]/,
-                word: /[a-zA-Z0-9_]+/,
-                sqstr: /'.*?'/,
-                dqstr: /".*?"/,
-                dcbl: /{{/,
-                dcbr: /}}/
-	});
+        const lexer = moo.states({
+                main: {
+                        dot: ".",
+                        regex: { match: /[rR][eE][gG][eE][xX]\(/, push: 'regex' },
+                        openingBracket: "[",
+                        closingBracket: "]",
+                        openP: "(",
+                        closingP: ")",
+                        ws:     /[ \t]+/,
+                        number: /[0-9]+/,
+                        matches: /[Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
+                        notMatches: /[Nn][Oo][Tt] [Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
+                        equals: /[Ee][Qq][Uu][Aa][Ll][Ss]|===|==/,
+                        notEquals: /[Nn][Oo][Tt] [Ee][Qq][Uu][Aa][Ll][Ss]|!==|!=/,
+                        relationalOperator: /<=|>=|>|</,
+                        bang: "!",
+                        exists:/[Ee][Xx][Ii][Ss][Tt][Ss]/,
+                        notExists:/[Nn][Oo][Tt] [Ee][Xx][Ii][Ss][Tt][Ss]/,
+                        and:/[Aa][Nn][Dd]|&&/,
+                        or:/[Oo][Rr]|\|\|/,
+                        "null": /[Nn][Uu][Ll][Ll]/,
+                        "undefined": /[Uu][Nn][Dd][Ee][Ff][Ii][Nn][Ee][Dd]/,	
+                        "true": /[Tt][Rr][Uu][Ee]/,	
+                        "false": /[Ff][Aa][Ll][Ss][Ee]/,
+                        word: /[a-zA-Z0-9_]+/,
+                        sqstr: /'.*?'/,
+                        dqstr: /".*?"/,
+                        dcbl: { match: /{{/, push: "main" },
+                        dcbr: { match: /}}/, pop: true }
+                },
+                regex: {
+                        dcbl: { match: /{{/, push: "main" },
+                        closingP: { match: /\)$/, pop: true },
+                        anything: { match: /[^)]+/, lineBreaks: true }
+                }
+        });
 
 
 // Bypasses TS6133. Allow declared but unused functions.
@@ -207,7 +215,14 @@ var grammar = {
     {"name": "booleanOperator", "symbols": [(lexer.has("and") ? {type: "and"} : and)], "postprocess": id},
     {"name": "booleanOperator", "symbols": [(lexer.has("or") ? {type: "or"} : or)], "postprocess": id},
     {"name": "equalityExpression", "symbols": ["relationalExpression"], "postprocess": id},
+    {"name": "equalityExpression$ebnf$1", "symbols": ["insideARegEx"]},
+    {"name": "equalityExpression$ebnf$1", "symbols": ["equalityExpression$ebnf$1", "insideARegEx"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "equalityExpression", "symbols": ["relationalExpression", (lexer.has("ws") ? {type: "ws"} : ws), "matchOperator", (lexer.has("ws") ? {type: "ws"} : ws), (lexer.has("regex") ? {type: "regex"} : regex), "equalityExpression$ebnf$1", (lexer.has("closingP") ? {type: "closingP"} : closingP)], "postprocess": ([left,,operator,,,right]) => toConditionalExpression([left,,operator,,right])},
     {"name": "equalityExpression", "symbols": ["relationalExpression", (lexer.has("ws") ? {type: "ws"} : ws), "equalityOperator", (lexer.has("ws") ? {type: "ws"} : ws), "equalityExpression"], "postprocess": toConditionalExpression},
+    {"name": "matchOperator", "symbols": [(lexer.has("matches") ? {type: "matches"} : matches)]},
+    {"name": "matchOperator", "symbols": [(lexer.has("notMatches") ? {type: "notMatches"} : notMatches)]},
+    {"name": "insideARegEx", "symbols": [(lexer.has("anything") ? {type: "anything"} : anything)], "postprocess": ([value]) => value.value},
+    {"name": "insideARegEx", "symbols": ["variable"], "postprocess": id},
     {"name": "equalityOperator", "symbols": [(lexer.has("equals") ? {type: "equals"} : equals)], "postprocess": id},
     {"name": "equalityOperator", "symbols": [(lexer.has("notEquals") ? {type: "notEquals"} : notEquals)], "postprocess": id},
     {"name": "equalityOperator", "symbols": [(lexer.has("matches") ? {type: "matches"} : matches)], "postprocess": id},
@@ -219,9 +234,10 @@ var grammar = {
     {"name": "unaryExpression", "symbols": ["undefinedLiteral"], "postprocess": ([value]) => new Variable(value)},
     {"name": "unaryExpression", "symbols": ["number"], "postprocess": ([value]) => new NumberConstant(value)},
     {"name": "unaryExpression", "symbols": ["string"], "postprocess": ([value]) => new StringConstant(value)},
-    {"name": "unaryExpression", "symbols": [(lexer.has("dcbl") ? {type: "dcbl"} : dcbl), "_", "variablePath", "_", (lexer.has("dcbr") ? {type: "dcbr"} : dcbr)], "postprocess": ([,,path]) => new Variable(path)},
+    {"name": "unaryExpression", "symbols": ["variable"], "postprocess": id},
     {"name": "unaryExpression", "symbols": [(lexer.has("bang") ? {type: "bang"} : bang), "_", "expression"], "postprocess": ([,,node]) => new NegationExpression(node)},
     {"name": "unaryExpression", "symbols": [{"literal":"("}, "_", "expression", "_", {"literal":")"}], "postprocess": d => d[2]},
+    {"name": "variable", "symbols": [(lexer.has("dcbl") ? {type: "dcbl"} : dcbl), "_", "variablePath", "_", (lexer.has("dcbr") ? {type: "dcbr"} : dcbr)], "postprocess": ([,,path]) => new Variable(path)},
     {"name": "variablePath", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
     {"name": "variablePath", "symbols": ["variablePath", (lexer.has("openingBracket") ? {type: "openingBracket"} : openingBracket), "expression", (lexer.has("closingBracket") ? {type: "closingBracket"} : closingBracket)], "postprocess": d => [...arrayify(d[0]), d[2]]},
     {"name": "variablePath", "symbols": ["variablePath", "_", (lexer.has("dot") ? {type: "dot"} : dot), "_", (lexer.has("word") ? {type: "word"} : word)], "postprocess": d => [...arrayify(d[0]), d[4]]},
