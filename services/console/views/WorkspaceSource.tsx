@@ -203,11 +203,16 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     };
   }, [allAnnotations, ref, t]);
 
+  const saveSource = useCallback(() => {
+    save();
+    setDirty(false);
+  }, []);
+
   const shortcuts = useMemo(
     () => [
       {
         name: t('expert.save.help'),
-        exec: save,
+        exec: saveSource,
         bindKey: {
           mac: 'cmd-s',
           win: 'ctrl-s',
@@ -224,7 +229,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
       <PageHeader
         onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
-          <Button onClick={save} disabled={saving} key="1">
+          <Button onClick={saveSource} disabled={saving} key="1">
             {saving && <LoadingOutlined />}
             {t('automations.save.label')}
           </Button>,
