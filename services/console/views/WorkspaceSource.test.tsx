@@ -17,6 +17,19 @@ jest.mock('../utils/useYaml', () => {
   return useYaml;
 });
 
+jest.mock('next/router', () => {
+  const mock = {
+    push: jest.fn(),
+    events: {
+      on: jest.fn(),
+      off: jest.fn(),
+    },
+  };
+  return {
+    useRouter: () => mock,
+  };
+});
+
 jest.mock('../layouts/WorkspaceLayout', () => {
   const mock = {
     setNewSource: () => null,
@@ -137,7 +150,7 @@ it('should check workspace format', async () => {
     name: 'foo',
     automations: [],
   }));
-  (validateWorkspace as any as jest.Mock).mockImplementation(() => {
+  ((validateWorkspace as any) as jest.Mock).mockImplementation(() => {
     validateWorkspace.errors = [
       {
         instancePath: '/automations',

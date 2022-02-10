@@ -129,7 +129,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }, [socket, events]);
   const displaySource = !!route.match(/\/source$/);
 
-  const [dirty, setDirty] = useState<WorkspaceContext['dirty']>(false);
   const [invalid, setInvalid] = useState<WorkspaceContext['invalid']>(false);
   const [newSource, setNewSource] = useState<WorkspaceContext['newSource']>();
   const [saving, setSaving] = useState(false);
@@ -162,7 +161,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     const newWorkspace = await update(newSource);
     setCurrentWorkspace(newWorkspace);
     setSaving(false);
-    setDirty(false);
     toaster.show({
       severity: 'success',
       summary: t('expert.save.confirm'),
@@ -190,8 +188,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         displaySource,
         invalid,
         setInvalid,
-        dirty,
-        setDirty,
+        saving,
         newSource,
         setNewSource,
         events,

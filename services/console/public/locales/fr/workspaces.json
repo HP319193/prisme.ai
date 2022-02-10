@@ -111,7 +111,9 @@
     "hide": "Masquer le code source",
     "exit": {
       "confirm_title": "Modifications en cours",
-      "confirm_message": "Vous vous appretez à quitter sans sauvegarder. Êtes vous sur ?"
+      "confirm_message": "Vous vous appretez à quitter sans sauvegarder. Êtes vous sur ?",
+      "cancel": "Attendez un peu",
+      "confirm": "Partons !"
     },
     "save": {
       "help": "Enregistrer",
