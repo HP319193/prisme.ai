@@ -56,16 +56,7 @@ export const AutomationsSidebar: FC = () => {
     const name = generateAutomationName();
     const createdAutomation = await createAutomation(workspace, {
       name,
-      when: {
-        events: [t('automations.create.value.event')],
-      },
-      do: [
-        {
-          emit: {
-            event: t('automations.create.value.event'),
-          },
-        },
-      ],
+      do: [],
     });
 
     setCreating(false);
