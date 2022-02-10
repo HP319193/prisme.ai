@@ -54,12 +54,12 @@ const automation = {
               },
               {
                 repeat: {
-                  on: '$a',
                   do: [
                     {
                       emit: 'apps.5',
                     },
                   ],
+                  on: '$a',
                 },
               },
             ],
