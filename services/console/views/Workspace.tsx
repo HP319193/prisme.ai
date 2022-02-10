@@ -49,7 +49,7 @@ export const Workspace = () => {
         )}
       </div>
 
-      <Row className="grow">
+      <Row className="h-full">
         <Col span={16} className="flex h-full">
           <EventsViewer />
         </Col>
