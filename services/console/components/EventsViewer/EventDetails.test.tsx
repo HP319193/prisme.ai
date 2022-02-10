@@ -53,7 +53,7 @@ it('should select on row click', () => {
   tr.appendChild(td1);
   tr.appendChild(td2);
   act(() => {
-    root.root.findByType(Table).props.onRow({
+    root.root.findByType(Table).props.onRow().onClick({
       target: td0,
     });
   });
