@@ -1,8 +1,7 @@
-import { Layout } from '@prisme.ai/design-system';
+import { Layout, Button } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Button } from 'primereact/button';
 import { Card } from 'antd';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
