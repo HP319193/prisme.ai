@@ -4,35 +4,42 @@
 
 	const moo = require("moo");
 
-	const lexer = moo.compile({
-                dot: ".",
-                regex: /[rR][eE][gG][eE][xX]\(.*\)/,
-                openingBracket: "[",
-                closingBracket: "]",
-                openP: "(",
-                closingP: ")",
-                ws:     /[ \t]+/,
-                number: /[0-9]+/,
-                matches: /[Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
-                notMatches: /[Nn][Oo][Tt] [Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
-                equals: /[Ee][Qq][Uu][Aa][Ll][Ss]|===|==/,
-                notEquals: /[Nn][Oo][Tt] [Ee][Qq][Uu][Aa][Ll][Ss]|!==|!=/,
-                relationalOperator: /<=|>=|>|</,
-                bang: "!",
-                exists:/[Ee][Xx][Ii][Ss][Tt][Ss]/,
-                notExists:/[Nn][Oo][Tt] [Ee][Xx][Ii][Ss][Tt][Ss]/,
-                and:/[Aa][Nn][Dd]|&&/,
-                or:/[Oo][Rr]|\|\|/,
-                "null": /[Nn][Uu][Ll][Ll]/,
-                "undefined": /[Uu][Nn][Dd][Ee][Ff][Ii][Nn][Ee][Dd]/,	
-                "true": /[Tt][Rr][Uu][Ee]/,	
-                "false": /[Ff][Aa][Ll][Ss][Ee]/,
-                word: /[a-zA-Z0-9_]+/,
-                sqstr: /'.*?'/,
-                dqstr: /".*?"/,
-                dcbl: /{{/,
-                dcbr: /}}/
-	});
+        const lexer = moo.states({
+                main: {
+                        dot: ".",
+                        regex: { match: /[rR][eE][gG][eE][xX]\(/, push: 'regex' },
+                        openingBracket: "[",
+                        closingBracket: "]",
+                        openP: "(",
+                        closingP: ")",
+                        ws:     /[ \t]+/,
+                        number: /[0-9]+/,
+                        matches: /[Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
+                        notMatches: /[Nn][Oo][Tt] [Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
+                        equals: /[Ee][Qq][Uu][Aa][Ll][Ss]|===|==/,
+                        notEquals: /[Nn][Oo][Tt] [Ee][Qq][Uu][Aa][Ll][Ss]|!==|!=/,
+                        relationalOperator: /<=|>=|>|</,
+                        bang: "!",
+                        exists:/[Ee][Xx][Ii][Ss][Tt][Ss]/,
+                        notExists:/[Nn][Oo][Tt] [Ee][Xx][Ii][Ss][Tt][Ss]/,
+                        and:/[Aa][Nn][Dd]|&&/,
+                        or:/[Oo][Rr]|\|\|/,
+                        "null": /[Nn][Uu][Ll][Ll]/,
+                        "undefined": /[Uu][Nn][Dd][Ee][Ff][Ii][Nn][Ee][Dd]/,	
+                        "true": /[Tt][Rr][Uu][Ee]/,	
+                        "false": /[Ff][Aa][Ll][Ss][Ee]/,
+                        word: /[a-zA-Z0-9_]+/,
+                        sqstr: /'.*?'/,
+                        dqstr: /".*?"/,
+                        dcbl: { match: /{{/, push: "main" },
+                        dcbr: { match: /}}/, pop: true }
+                },
+                regex: {
+                        dcbl: { match: /{{/, push: "main" },
+                        closingP: { match: /\)$/, pop: true },
+                        anything: { match: /[^)]+/, lineBreaks: true }
+                }
+        });
 %}
 
 # Pass your lexer with @lexer:
@@ -81,9 +88,11 @@ booleanOperator -> %and {% id %} | %or {% id %}
 
 equalityExpression -> 
         relationalExpression {% id %}
-        | relationalExpression %ws %matches %ws %regex {% toConditionalExpression %}
-        | relationalExpression %ws %notMatches %ws %regex {% toConditionalExpression %}
+        | relationalExpression %ws matchOperator %ws %regex insideARegEx:+ %closingP {% ([left,,operator,,,right]) => toConditionalExpression([left,,operator,,right]) %}
         | relationalExpression %ws equalityOperator %ws equalityExpression {% toConditionalExpression %}
+
+matchOperator -> %matches | %notMatches 
+insideARegEx -> %anything {% ([value]) => value.value %} | variable {% id %}
 
 equalityOperator -> %equals {% id %} | %notEquals {% id %} | %matches {% id %} | %notMatches {% id %} 
 
@@ -97,9 +106,11 @@ unaryExpression ->
         | undefinedLiteral {% ([value]) => new Variable(value) %}
         | number {% ([value]) => new NumberConstant(value) %}
         | string {% ([value]) => new StringConstant(value) %}
-        | %dcbl _ variablePath _ %dcbr {% ([,,path]) => new Variable(path)  %}
+        | variable {% id %}
         | %bang _ expression {% ([,,node]) => new NegationExpression(node) %}
         | "(" _ expression _ ")" {% d => d[2] %}
+
+variable -> %dcbl _ variablePath _ %dcbr {% ([,,path]) => new Variable(path)  %}     
 
 variablePath ->
         %word {% id %}

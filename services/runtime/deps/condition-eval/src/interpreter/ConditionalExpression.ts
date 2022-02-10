@@ -1,12 +1,10 @@
 import Evaluatable from '../Evaluatable';
 import { evaluateNode } from '../utils';
 
-const regexKeyword = /^regex\(/i;
-
 const handleMatches = (left: any, right: any) => {
-  if (!!`${right}`.match(regexKeyword)) {
-    const regex = `${right}`.replace(regexKeyword, '').replace(/\)$/, '');
-    return `${left}`.match(new RegExp(regex));
+  if (Array.isArray(right)) {
+    // That means we matched a regexp() expression. As it returns an array of strings instead of a string.
+    return `${left}`.match(new RegExp(right.join('')));
   }
   return `${left}`.match(right);
 };

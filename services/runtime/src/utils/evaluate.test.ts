@@ -148,7 +148,38 @@ describe('It should handle variables within {{}}', () => {
 });
 
 it('works with the regexp() keyword on matches instruction.', () => {
-  expect(evaluate('"bonjour@gmail.com" matches regex(bon)', {})).toEqual(true);
+  expect(
+    evaluate('"luke.skywalker@gmail.com" matches regex(luke)', {})
+  ).toEqual(true);
+  expect(
+    evaluate(`"bonjour.georges@gmail.com" matches REGEX({{myRegex}})`, {
+      myRegex: 'bonjour',
+    })
+  ).toEqual(true);
+  expect(
+    evaluate(
+      `"bonjour.georges@gmail.com" matches REGEX({{myRegex}}|aurevoir)`,
+      {
+        myRegex: 'bonjour',
+      }
+    )
+  ).toEqual(true);
+  expect(
+    evaluate('"luke.skywalker@gmail.com" matches regex(darkvader)', {})
+  ).toEqual(false);
+  expect(
+    evaluate(`"bonjour.georges@gmail.com" matches REGEX({{myRegex}})`, {
+      myRegex: 'aurevoir',
+    })
+  ).toEqual(false);
+  expect(
+    evaluate(`"bonjour.georges@gmail.com" matches REGEX({{myRegex}})`, {
+      myRegex: 'aurevoir',
+    })
+  ).toEqual(false);
+  expect(
+    evaluate('"luke.skywalker@gmail.com" matches regex(/skywalker/)', {})
+  ).toEqual(false); // Indeed, we have to keep in mind that the regexp() keyword is not a regexp, and use the javascript new RegExp by passing the content as a string.
   expect(
     evaluate(
       `"bonjour.georges@gmail.com" matches regex([a-z0-9]+@[a-z]+.[a-z]{2,3})`,
