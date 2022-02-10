@@ -838,11 +838,11 @@ declare namespace Prismeai {
         repeat: /* One of "on" or "until" is required */ {
             on: string;
             until?: number;
-            then: InstructionList;
+            do: InstructionList;
         } | {
             on?: string;
             until: number;
-            then: InstructionList;
+            do: InstructionList;
         };
     }
     export type Role = "owner" | "editor";

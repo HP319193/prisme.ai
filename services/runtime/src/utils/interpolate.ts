@@ -24,6 +24,7 @@ const evaluate = (expr: any, ctx: any, { asString = false } = {}) => {
 export const interpolate = (
   target: any,
   context = {},
+  exclude: string[] = [],
   pattern = /\{\{([^{}]*?)\}\}/g
 ): any => {
   if (!context) {
@@ -52,12 +53,16 @@ export const interpolate = (
       throw new Error(`Could not interpolate string "${target}": ${e}`);
     }
   } else if (Array.isArray(target)) {
-    return target.map((value: any) => interpolate(value, context, pattern));
+    return target.map((value: any) =>
+      interpolate(value, context, exclude, pattern)
+    );
   } else if (target && typeof target === 'object') {
     return Object.entries(target).reduce(
       (acc, [key, value]) => ({
         ...acc,
-        [key]: interpolate(value, context, pattern),
+        [key]: exclude.includes(key)
+          ? value
+          : interpolate(value, context, exclude, pattern),
       }),
       {}
     );
