@@ -3,8 +3,6 @@ services:
   console:
     entrypoint: npm start  --prefix services/console
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-console:latest
-    depends_on:
-      - gateway
     ports:
       - "3000:3000"
     environment:

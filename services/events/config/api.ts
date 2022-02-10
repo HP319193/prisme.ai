@@ -1,6 +1,6 @@
 import path from "path";
 
-export const PORT = process.env.PORT || 3030;
+export const PORT = process.env.PORT || 3004;
 
 export const CORRELATION_ID_HEADER =
   process.env.CORRELATION_ID_HEADER || "x-correlation-id";

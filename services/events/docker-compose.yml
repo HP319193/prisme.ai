@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   redis:
     image: redis
@@ -26,6 +26,11 @@ services:
       memlock:
         soft: -1
         hard: -1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 20s
+      retries: 6
+      timeout: 5s
     volumes:
       - ../../data/es01:/usr/share/elasticsearch/data
       - ../../data/elasticsearch01.yml:/usr/share/elasticsearch/config/elasticsearch.yml
@@ -34,8 +39,10 @@ services:
     entrypoint: node --abort-on-uncaught-exception services/events/dist/index.js
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-events:latest
     depends_on:
-      - redis
-      - elastic
+      redis:
+        condition: service_started
+      elastic:
+        condition: service_healthy
     ports:
       - "3004:3004"
     environment:

@@ -1,0 +1,7 @@
+node.name: elastic
+# cluster.name: "docker-cluster"
+network.host: 0.0.0.0
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
+cluster.routing.allocation.disk.threshold_enabled: false
+reindex.ssl.verification_mode: none
