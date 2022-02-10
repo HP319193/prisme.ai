@@ -58,16 +58,7 @@ it('should create an automation', async () => {
     useWorkspace().workspace,
     {
       name: 'automations.create.defaultName',
-      when: {
-        events: ['automations.create.value.event'],
-      },
-      do: [
-        {
-          emit: {
-            event: 'automations.create.value.event',
-          },
-        },
-      ],
+      do: [],
     }
   );
   expect(useRouter().push).toHaveBeenCalledWith(
@@ -89,16 +80,7 @@ it('should create an automation with existing name', async () => {
     useWorkspace().workspace,
     {
       name: 'automations.create.defaultName (1)',
-      when: {
-        events: ['automations.create.value.event'],
-      },
-      do: [
-        {
-          emit: {
-            event: 'automations.create.value.event',
-          },
-        },
-      ],
+      do: [],
     }
   );
 });
