@@ -16,7 +16,6 @@ import {
   Title,
   Button,
 } from '@prisme.ai/design-system';
-import icon from '../../icons/icon-prisme.svg';
 import SignHeader from '../../components/SignHeader';
 
 interface Values {

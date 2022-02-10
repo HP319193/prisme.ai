@@ -1,6 +1,6 @@
-import { useCallback, useMemo } from 'react';
-import { CodeOutlined, ShareAltOutlined } from '@ant-design/icons';
-import { Menu, Dropdown, Button, Space } from '@prisme.ai/design-system';
+import { useMemo } from 'react';
+import { CodeOutlined } from '@ant-design/icons';
+import { Menu, Dropdown, Space } from '@prisme.ai/design-system';
 import { useWorkspaces } from './WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useTranslation } from 'next-i18next';

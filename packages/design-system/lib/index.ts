@@ -16,14 +16,4 @@ export { default as Text } from './Components/Text';
 export { default as ListItem } from './Components/ListItem';
 export { default as Input } from './Components/Input';
 
-export { default as AutomationsList } from './Groups/AutomationsList';
-export { default as SidePanel } from './Groups/SidePanel';
-export { default as Header } from './Groups/Header';
-export { default as WorkspaceFeed } from './Groups/WorkspaceFeed';
-export { default as LoginForm } from './Groups/LoginForm';
-export { default as DualHeader } from './Groups/DualHeader';
-export { default as GraphSidePanel } from './Groups/GraphSidePanel';
-
-export { default as WorkspaceHome } from './Pages/WorkspaceHome';
-
 export { Row, Col, Space, Avatar, Divider, Table } from 'antd';
