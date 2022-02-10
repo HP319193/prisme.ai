@@ -49,6 +49,7 @@ nav:
           - i18n.specifications: contributing/technical/events/specifications.md
       - i18n.runtime:
           - i18n.specifications: contributing/technical/runtime/specifications.md
+          - i18n.automations: contributing/technical/runtime/automations.md
       - i18n.workspaces:
           - i18n.specifications: contributing/technical/workspaces/specifications.md
       - i18n.apiGateway:
