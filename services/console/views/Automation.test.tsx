@@ -1,15 +1,19 @@
 import Automation from './Automation';
 import renderer, { act } from 'react-test-renderer';
-import { AutomationBuilder } from '../components/AutomationBuilder/AutomationBuilder';
+import AutomationBuilder from '../components/AutomationBuilder';
 import { useRouter } from 'next/router';
-import EditableTitle from '../components/EditableTitle';
-import { Button } from 'primereact/button';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
+import { PageHeader } from '@prisme.ai/design-system';
 
 jest.mock('../layouts/WorkspaceLayout', () => {
-  const mock = {};
+  const mock = {
+    workspace: {
+      id: '42',
+      name: 'Foo',
+    },
+  };
 
   return {
     useWorkspace: () => mock,
@@ -38,6 +42,8 @@ jest.mock('../components/WorkspacesProvider', () => {
 });
 
 jest.mock('../components/useKeyboardShortcut', () => jest.fn());
+
+jest.mock('../components/AutomationBuilder', () => () => null);
 
 beforeEach(() => {
   useWorkspace().workspace = {
@@ -90,36 +96,6 @@ it('should update value', async () => {
   });
 });
 
-it('should update title', async () => {
-  const root = renderer.create(<Automation />);
-  expect(root.root.findByType(AutomationBuilder).props.value).toEqual({
-    name: 'Hello',
-    do: [],
-  });
-
-  act(() => {
-    return;
-  });
-
-  act(() => {
-    root.root.findByType(EditableTitle).props.onChange('newTitle');
-  });
-
-  expect(root.root.findByType(AutomationBuilder).props.value).toEqual({
-    name: 'newTitle',
-    do: [],
-  });
-
-  act(() => {
-    root.root.findByType(EditableTitle).props.onChange('bar');
-  });
-
-  expect(root.root.findByType(AutomationBuilder).props.value).toEqual({
-    name: 'newTitle',
-    do: [],
-  });
-});
-
 it('should save', () => {
   const root = renderer.create(<Automation />);
 
@@ -128,7 +104,7 @@ it('should save', () => {
   });
 
   act(() => {
-    root.root.findByType(Button).props.onClick();
+    root.root.findByType(PageHeader).props.RightButtons[0].props.onClick();
   });
 
   expect(useWorkspaces().updateAutomation).toHaveBeenCalled();

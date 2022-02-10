@@ -3,23 +3,6 @@ import renderer, { act } from 'react-test-renderer';
 import InstructionSelection from './InstructionSelection';
 import InstructionValue from './InstructionValue';
 
-jest.mock('@prisme.ai/design-system', () => {
-  return {
-    ListItem({ children = null }: any) {
-      return children;
-    },
-    SearchInput({ children = null }: any) {
-      return children;
-    },
-    Space({ children = null }: any) {
-      return children;
-    },
-    Title({ children = null }: any) {
-      return children;
-    },
-  };
-});
-
 jest.mock('../context', () => {
   const mock = {
     getSchema: (name: string) => {

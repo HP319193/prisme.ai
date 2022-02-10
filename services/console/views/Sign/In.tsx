@@ -4,7 +4,6 @@ import { Messages } from 'primereact/messages';
 import { Form } from 'react-final-form';
 
 import { useUser } from '../../components/UserProvider';
-import Image from 'next/Image';
 import { useRouter } from 'next/router';
 import {
   Input,
@@ -14,7 +13,6 @@ import {
   Space,
   Col,
 } from '@prisme.ai/design-system';
-import icon from '../../icons/icon-prisme.svg';
 import Fieldset from '../../layouts/Fieldset';
 import Field from '../../layouts/Field';
 import SignHeader from '../../components/SignHeader';

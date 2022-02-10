@@ -5,7 +5,24 @@ exports[`should render 1`] = `
   className="flex flex-1 align-center justify-center"
 >
   <div
-    className=" align-self-center justify-self-center pi pi-spin pi-spinner"
-  />
+    className="ant-spin ant-spin-spinning !flex justify-center items-center "
+  >
+    <span
+      className="ant-spin-dot ant-spin-dot-spin"
+    >
+      <i
+        className="ant-spin-dot-item"
+      />
+      <i
+        className="ant-spin-dot-item"
+      />
+      <i
+        className="ant-spin-dot-item"
+      />
+      <i
+        className="ant-spin-dot-item"
+      />
+    </span>
+  </div>
 </div>
 `;

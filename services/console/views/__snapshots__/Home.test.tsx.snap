@@ -12,18 +12,13 @@ exports[`should render 1`] = `
     >
       main.title
     </h1>
-    <button
-      className="p-button p-component"
-      disabled={false}
+    <a
+      href="/signin"
+      onClick={[Function]}
+      onMouseEnter={[Function]}
     >
-      <a
-        href="/signin"
-        onClick={[Function]}
-        onMouseEnter={[Function]}
-      >
-        home.signin
-      </a>
-    </button>
+      home.signin
+    </a>
   </main>
 </div>
 `;

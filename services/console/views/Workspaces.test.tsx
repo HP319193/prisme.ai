@@ -1,8 +1,8 @@
 import Workspaces from './Workspaces';
 import renderer, { act } from 'react-test-renderer';
 import { useWorkspaces } from '../components/WorkspacesProvider';
-import { Button } from 'primereact/button';
 import { useRouter } from 'next/router';
+import { Card } from 'antd';
 
 jest.mock('../components/WorkspacesProvider', () => {
   const workspaces = new Map();
@@ -57,7 +57,7 @@ it('should render some workspaces', () => {
 it('should create new workspace', async () => {
   const root = renderer.create(<Workspaces />);
   await act(async () => {
-    await root.root.findAllByType(Button)[1].props.onClick();
+    await root.root.findByType(Card).props.actions[0].props.onClick();
   });
   expect(useWorkspaces().create).toHaveBeenCalledWith('create.defaultName');
   expect(useRouter().push).toHaveBeenCalledWith('/workspaces/43');

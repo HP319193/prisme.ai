@@ -8,7 +8,7 @@ import WorkspaceSource from './WorkspaceSource';
 
 export const Workspace = () => {
   const { t } = useTranslation('workspaces');
-  const { displaySource } = useWorkspace();
+  const { displaySource, workspace } = useWorkspace();
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
   const [sidebar, setSidebar] = useState('automations');
@@ -29,6 +29,8 @@ export const Workspace = () => {
     ],
     [t]
   );
+
+  if (!workspace) return null;
 
   return (
     <>

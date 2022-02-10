@@ -3,12 +3,19 @@ import renderer, { act } from 'react-test-renderer';
 import WorkspaceSource from './WorkspaceSource';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 
+jest.mock('next/router', () => {
+  const mock = { push: jest.fn() };
+  return {
+    useRouter: () => mock,
+  };
+});
 jest.mock('../utils/useYaml', () => ({}));
 
 jest.mock('../layouts/WorkspaceLayout', () => {
   const mock = {
     events: 'loading',
     displaySource: false,
+    workspace: { id: '42', name: 'Foo' },
   };
   return {
     useWorkspace: () => mock,
@@ -29,7 +36,7 @@ it('should display source after mount', async () => {
   jest.useFakeTimers();
   const root = renderer.create(<Workspace />);
   expect(root.root.findAllByType('div')[0].props.className).toContain(
-    '-translate-y-100'
+    '-translate-y-full'
   );
   expect(() => root.root.findByType(WorkspaceSource)).toThrow();
 

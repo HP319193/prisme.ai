@@ -2,402 +2,53 @@
 
 exports[`should render empty 1`] = `
 <div
-  className="p-2"
+  className="p-2 flex h-full"
 >
-  events.empty
+  <div
+    className="p-2"
+  >
+    events.empty
+  </div>
 </div>
 `;
 
 exports[`should render events 1`] = `
 <div
-  className="flex flex-1 flex-col overflow-hidden"
+  className="p-2 flex h-full"
 >
   <div
-    className="overflow-auto"
-  >
-    <div
-      className="p-accordion p-component"
-      id="pr_id_4"
-      style={null}
-    >
-      <div
-        className="p-accordion-tab p-accordion-tab-active"
-      >
-        <div
-          className="p-accordion-header p-highlight"
-          style={null}
-        >
-          <a
-            aria-controls="pr_id_4_content_0"
-            aria-expanded={true}
-            className="p-accordion-header-link"
-            href="#pr_id_4_content_0"
-            id="pr_id_4_header_0"
-            onClick={[Function]}
-            role="tab"
-            tabIndex={null}
-          >
-            <span
-              className="p-accordion-toggle-icon pi pi-chevron-down"
-            />
-            <span
-              className="p-accordion-header-text"
-            />
-          </a>
-        </div>
-        <div
-          aria-labelledby="pr_id_4_header_0"
-          className="p-toggleable-content"
-          id="pr_id_4_content_0"
-          role="region"
-          style={null}
-        >
-          <div
-            className="p-accordion-content"
-          >
-            <div
-              className="p-accordion p-component prisme-events-viewer__event"
-              id="pr_id_1"
-              style={null}
-            >
-              <div
-                className="p-accordion-tab"
-              >
-                <div
-                  className="p-accordion-header"
-                  style={null}
-                >
-                  <a
-                    aria-controls="pr_id_1_content_0"
-                    aria-expanded={null}
-                    className="p-accordion-header-link"
-                    href="#pr_id_1_content_0"
-                    id="pr_id_1_header_0"
-                    onClick={[Function]}
-                    role="tab"
-                    tabIndex={null}
-                  >
-                    <span
-                      className="p-accordion-toggle-icon pi pi-chevron-right"
-                    />
-                    <span
-                      className="p-accordion-header-text"
-                    >
-                      <div
-                        className="
-                          flex flex-1 flex-col
-                          
-                        "
-                      >
-                        <div
-                          className="flex flex-row"
-                        >
-                          <div
-                            className="flex font-bold mr-2"
-                          />
-                          <div
-                            className="flex"
-                          />
-                        </div>
-                        <div
-                          className="flex"
-                        />
-                      </div>
-                    </span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="p-accordion-tab p-accordion-tab-active"
-      >
-        <div
-          className="p-accordion-header p-highlight"
-          style={null}
-        >
-          <a
-            aria-controls="pr_id_4_content_1"
-            aria-expanded={true}
-            className="p-accordion-header-link"
-            href="#pr_id_4_content_1"
-            id="pr_id_4_header_1"
-            onClick={[Function]}
-            role="tab"
-            tabIndex={null}
-          >
-            <span
-              className="p-accordion-toggle-icon pi pi-chevron-down"
-            />
-            <span
-              className="p-accordion-header-text"
-            />
-          </a>
-        </div>
-        <div
-          aria-labelledby="pr_id_4_header_1"
-          className="p-toggleable-content"
-          id="pr_id_4_content_1"
-          role="region"
-          style={null}
-        >
-          <div
-            className="p-accordion-content"
-          >
-            <div
-              className="p-accordion p-component prisme-events-viewer__event"
-              id="pr_id_2"
-              style={null}
-            >
-              <div
-                className="p-accordion-tab"
-              >
-                <div
-                  className="p-accordion-header"
-                  style={null}
-                >
-                  <a
-                    aria-controls="pr_id_2_content_0"
-                    aria-expanded={null}
-                    className="p-accordion-header-link"
-                    href="#pr_id_2_content_0"
-                    id="pr_id_2_header_0"
-                    onClick={[Function]}
-                    role="tab"
-                    tabIndex={null}
-                  >
-                    <span
-                      className="p-accordion-toggle-icon pi pi-chevron-right"
-                    />
-                    <span
-                      className="p-accordion-header-text"
-                    >
-                      <div
-                        className="
-                          flex flex-1 flex-col
-                          
-                        "
-                      >
-                        <div
-                          className="flex flex-row"
-                        >
-                          <div
-                            className="flex font-bold mr-2"
-                          />
-                          <div
-                            className="flex"
-                          />
-                        </div>
-                        <div
-                          className="flex"
-                        />
-                      </div>
-                    </span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="p-accordion-tab p-accordion-tab-active"
-      >
-        <div
-          className="p-accordion-header p-highlight"
-          style={null}
-        >
-          <a
-            aria-controls="pr_id_4_content_2"
-            aria-expanded={true}
-            className="p-accordion-header-link"
-            href="#pr_id_4_content_2"
-            id="pr_id_4_header_2"
-            onClick={[Function]}
-            role="tab"
-            tabIndex={null}
-          >
-            <span
-              className="p-accordion-toggle-icon pi pi-chevron-down"
-            />
-            <span
-              className="p-accordion-header-text"
-            />
-          </a>
-        </div>
-        <div
-          aria-labelledby="pr_id_4_header_2"
-          className="p-toggleable-content"
-          id="pr_id_4_content_2"
-          role="region"
-          style={null}
-        >
-          <div
-            className="p-accordion-content"
-          >
-            <div
-              className="p-accordion p-component prisme-events-viewer__event"
-              id="pr_id_3"
-              style={null}
-            >
-              <div
-                className="p-accordion-tab"
-              >
-                <div
-                  className="p-accordion-header"
-                  style={null}
-                >
-                  <a
-                    aria-controls="pr_id_3_content_0"
-                    aria-expanded={null}
-                    className="p-accordion-header-link"
-                    href="#pr_id_3_content_0"
-                    id="pr_id_3_header_0"
-                    onClick={[Function]}
-                    role="tab"
-                    tabIndex={null}
-                  >
-                    <span
-                      className="p-accordion-toggle-icon pi pi-chevron-right"
-                    />
-                    <span
-                      className="p-accordion-header-text"
-                    >
-                      <div
-                        className="
-                          flex flex-1 flex-col
-                          
-                        "
-                      >
-                        <div
-                          className="flex flex-row"
-                        >
-                          <div
-                            className="flex font-bold mr-2"
-                          />
-                          <div
-                            className="flex"
-                          />
-                        </div>
-                        <div
-                          className="flex"
-                        />
-                      </div>
-                    </span>
-                  </a>
-                </div>
-              </div>
-              <div
-                className="p-accordion-tab"
-              >
-                <div
-                  className="p-accordion-header"
-                  style={null}
-                >
-                  <a
-                    aria-controls="pr_id_3_content_1"
-                    aria-expanded={null}
-                    className="p-accordion-header-link"
-                    href="#pr_id_3_content_1"
-                    id="pr_id_3_header_1"
-                    onClick={[Function]}
-                    role="tab"
-                    tabIndex={null}
-                  >
-                    <span
-                      className="p-accordion-toggle-icon pi pi-chevron-right"
-                    />
-                    <span
-                      className="p-accordion-header-text"
-                    >
-                      <div
-                        className="
-                          flex flex-1 flex-col
-                          
-                        "
-                      >
-                        <div
-                          className="flex flex-row"
-                        >
-                          <div
-                            className="flex font-bold mr-2"
-                          />
-                          <div
-                            className="flex"
-                          />
-                        </div>
-                        <div
-                          className="flex"
-                        />
-                      </div>
-                    </span>
-                  </a>
-                </div>
-              </div>
-              <div
-                className="p-accordion-tab"
-              >
-                <div
-                  className="p-accordion-header"
-                  style={null}
-                >
-                  <a
-                    aria-controls="pr_id_3_content_2"
-                    aria-expanded={null}
-                    className="p-accordion-header-link"
-                    href="#pr_id_3_content_2"
-                    id="pr_id_3_header_2"
-                    onClick={[Function]}
-                    role="tab"
-                    tabIndex={null}
-                  >
-                    <span
-                      className="p-accordion-toggle-icon pi pi-chevron-right"
-                    />
-                    <span
-                      className="p-accordion-header-text"
-                    >
-                      <div
-                        className="
-                          flex flex-1 flex-col
-                          
-                        "
-                      >
-                        <div
-                          className="flex flex-row"
-                        >
-                          <div
-                            className="flex font-bold mr-2"
-                          />
-                          <div
-                            className="flex"
-                          />
-                        </div>
-                        <div
-                          className="flex"
-                        />
-                      </div>
-                    </span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    className="w-full overflow-auto"
+  />
 </div>
 `;
 
 exports[`should render loading 1`] = `
 <div
-  className="flex flex-1 align-center justify-center"
+  className="p-2 flex h-full"
 >
   <div
-    className=" align-self-center justify-self-center pi pi-spin pi-spinner"
-  />
+    className="flex flex-1 align-center justify-center"
+  >
+    <div
+      className="ant-spin ant-spin-spinning !flex justify-center items-center "
+    >
+      <span
+        className="ant-spin-dot ant-spin-dot-spin"
+      >
+        <i
+          className="ant-spin-dot-item"
+        />
+        <i
+          className="ant-spin-dot-item"
+        />
+        <i
+          className="ant-spin-dot-item"
+        />
+        <i
+          className="ant-spin-dot-item"
+        />
+      </span>
+    </div>
+  </div>
 </div>
 `;

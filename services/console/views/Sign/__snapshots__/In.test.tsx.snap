@@ -2,333 +2,123 @@
 
 exports[`should have error 1`] = `
 <div
-  className="flex justify-center align-center min-h-screen"
+  className="flex grow justify-evenly mt-32"
 >
-  <form
-    className="w-8"
-    onSubmit={[Function]}
+  <div
+    className="flex items-center flex-col"
   >
-    <div
-      className="p-field mb-5"
-    >
-      <span
-        className="flex p-float-label mx-2 undefined"
-      >
-        <input
-          autoFocus={true}
-          className="p-inputtext p-component flex flex-1  min-w-full"
-          id="email"
-          name="email"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onFocus={[Function]}
-          onInput={[Function]}
-          onKeyPress={[Function]}
-          value=""
-        />
-        <label
-          htmlFor="email"
-        >
-          in.email
-        </label>
-      </span>
+    <div>
+      in.header
     </div>
-    <div
-      className="p-field mb-5"
+  </div>
+  <div
+    className="flex items-center flex-col"
+  >
+    <form
+      className="w-96 flex"
+      onSubmit={[Function]}
     >
-      <span
-        className="flex p-float-label mx-2 undefined"
+      <div
+        className="p-field mb-5"
       >
-        <input
-          className="p-inputtext p-component flex flex-1  min-w-full"
-          id="password"
-          name="password"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onFocus={[Function]}
-          onInput={[Function]}
-          onKeyPress={[Function]}
-          type="password"
-          value=""
+        <span
+          className="flex "
         />
-        <label
-          htmlFor="password"
-        >
-          in.password
-        </label>
-      </span>
-    </div>
-    <div
-      className="p-field mb-5"
-    >
-      <span
-        className="flex p-float-label mx-2 flex justify-between"
-      >
-        <div
-          className="flex flex-col"
-        >
-          <a
-            href="/signup"
-            onClick={[Function]}
-            onMouseEnter={[Function]}
-          >
-            in.signup
-          </a>
-        </div>
-        <button
-          className="p-button p-component"
-          disabled={false}
-          type="submit"
-        >
-          <div
-            className="pi pi-lock mr-2"
-          />
-          in.submit
-        </button>
-        <label
-          htmlFor=""
-        />
-      </span>
-    </div>
-    <div
-      className="absolute bottom-0"
-      id={null}
-      style={null}
-    >
-      <div>
-        <div
-          className="p-message p-component p-message-error"
-          onClick={[Function]}
-        >
-          <div
-            className="p-message-wrapper"
-          >
-            <span
-              className="p-message-icon pi  pi-times-circle"
-            />
-            <span
-              className="p-message-summary"
-            >
-              in.error
-            </span>
-            <span
-              className="p-message-detail"
-            />
-            <button
-              className="p-message-close p-link"
-              onClick={[Function]}
-              type="button"
-            >
-              <i
-                className="p-message-close-icon pi pi-times"
-              />
-            </button>
-          </div>
-        </div>
       </div>
-    </div>
-  </form>
+      <div
+        className="p-field mb-5"
+      >
+        <span
+          className="flex "
+        />
+      </div>
+      <div
+        className="pi pi-lock mr-2"
+      />
+      in.submit
+    </form>
+  </div>
 </div>
 `;
 
 exports[`should load 1`] = `
 <div
-  className="flex justify-center align-center min-h-screen"
+  className="flex grow justify-evenly mt-32"
 >
-  <form
-    className="w-8"
-    onSubmit={[Function]}
+  <div
+    className="flex items-center flex-col"
   >
-    <div
-      className="p-field mb-5"
+    <div>
+      in.header
+    </div>
+  </div>
+  <div
+    className="flex items-center flex-col"
+  >
+    <form
+      className="w-96 flex"
+      onSubmit={[Function]}
     >
-      <span
-        className="flex p-float-label mx-2 undefined"
+      <div
+        className="p-field mb-5"
       >
-        <input
-          autoFocus={true}
-          className="p-inputtext p-component flex flex-1  min-w-full"
-          id="email"
-          name="email"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onFocus={[Function]}
-          onInput={[Function]}
-          onKeyPress={[Function]}
-          value=""
+        <span
+          className="flex "
         />
-        <label
-          htmlFor="email"
-        >
-          in.email
-        </label>
-      </span>
-    </div>
-    <div
-      className="p-field mb-5"
-    >
-      <span
-        className="flex p-float-label mx-2 undefined"
+      </div>
+      <div
+        className="p-field mb-5"
       >
-        <input
-          className="p-inputtext p-component flex flex-1  min-w-full"
-          id="password"
-          name="password"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onFocus={[Function]}
-          onInput={[Function]}
-          onKeyPress={[Function]}
-          type="password"
-          value=""
+        <span
+          className="flex "
         />
-        <label
-          htmlFor="password"
-        >
-          in.password
-        </label>
-      </span>
-    </div>
-    <div
-      className="p-field mb-5"
-    >
-      <span
-        className="flex p-float-label mx-2 flex justify-between"
-      >
-        <div
-          className="flex flex-col"
-        >
-          <a
-            href="/signup"
-            onClick={[Function]}
-            onMouseEnter={[Function]}
-          >
-            in.signup
-          </a>
-        </div>
-        <button
-          className="p-button p-component p-disabled"
-          disabled={true}
-          type="submit"
-        >
-          <div
-            className="pi pi-spin pi-spinner mr-2"
-          />
-          in.submit
-        </button>
-        <label
-          htmlFor=""
-        />
-      </span>
-    </div>
-    <div
-      className="absolute bottom-0"
-      id={null}
-      style={null}
-    >
-      <div />
-    </div>
-  </form>
+      </div>
+      <div
+        className="pi pi-spin pi-spinner mr-2"
+      />
+      in.submit
+    </form>
+  </div>
 </div>
 `;
 
 exports[`should render 1`] = `
 <div
-  className="flex justify-center align-center min-h-screen"
+  className="flex grow justify-evenly mt-32"
 >
-  <form
-    className="w-8"
-    onSubmit={[Function]}
+  <div
+    className="flex items-center flex-col"
   >
-    <div
-      className="p-field mb-5"
+    <div>
+      in.header
+    </div>
+  </div>
+  <div
+    className="flex items-center flex-col"
+  >
+    <form
+      className="w-96 flex"
+      onSubmit={[Function]}
     >
-      <span
-        className="flex p-float-label mx-2 undefined"
+      <div
+        className="p-field mb-5"
       >
-        <input
-          autoFocus={true}
-          className="p-inputtext p-component flex flex-1  min-w-full"
-          id="email"
-          name="email"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onFocus={[Function]}
-          onInput={[Function]}
-          onKeyPress={[Function]}
-          value=""
+        <span
+          className="flex "
         />
-        <label
-          htmlFor="email"
-        >
-          in.email
-        </label>
-      </span>
-    </div>
-    <div
-      className="p-field mb-5"
-    >
-      <span
-        className="flex p-float-label mx-2 undefined"
+      </div>
+      <div
+        className="p-field mb-5"
       >
-        <input
-          className="p-inputtext p-component flex flex-1  min-w-full"
-          id="password"
-          name="password"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onFocus={[Function]}
-          onInput={[Function]}
-          onKeyPress={[Function]}
-          type="password"
-          value=""
+        <span
+          className="flex "
         />
-        <label
-          htmlFor="password"
-        >
-          in.password
-        </label>
-      </span>
-    </div>
-    <div
-      className="p-field mb-5"
-    >
-      <span
-        className="flex p-float-label mx-2 flex justify-between"
-      >
-        <div
-          className="flex flex-col"
-        >
-          <a
-            href="/signup"
-            onClick={[Function]}
-            onMouseEnter={[Function]}
-          >
-            in.signup
-          </a>
-        </div>
-        <button
-          className="p-button p-component"
-          disabled={false}
-          type="submit"
-        >
-          <div
-            className="pi pi-lock mr-2"
-          />
-          in.submit
-        </button>
-        <label
-          htmlFor=""
-        />
-      </span>
-    </div>
-    <div
-      className="absolute bottom-0"
-      id={null}
-      style={null}
-    >
-      <div />
-    </div>
-  </form>
+      </div>
+      <div
+        className="pi pi-lock mr-2"
+      />
+      in.submit
+    </form>
+  </div>
 </div>
 `;

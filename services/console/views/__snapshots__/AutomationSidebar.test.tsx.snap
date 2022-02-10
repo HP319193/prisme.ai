@@ -1,33 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should render 1`] = `
-<div>
-  <div>
-    automations.link
-  </div>
-  <div>
-    <button
-      className="p-button p-component"
-      disabled={false}
-      onClick={[Function]}
-    >
-      <div
-        className="mr-2 pi pi-plus"
-      />
-      automations.create.label
-    </button>
-  </div>
+<div
+  className="flex grow h-full flex-col"
+>
   <div
-    className="flex justify-between align-center"
-    onClick={[MockFunction]}
+    className="flex justify-between items-center mb-6"
   >
-    <a
-      href="/workspaces/42/automations/42-1"
-      onClick={[Function]}
-      onMouseEnter={[Function]}
-    >
-      First
-    </a>
+    automations.link
+    automations.create.label
   </div>
+  <a
+    href="/workspaces/42/automations/42-1"
+    onClick={[Function]}
+    onMouseEnter={[Function]}
+  />
 </div>
 `;

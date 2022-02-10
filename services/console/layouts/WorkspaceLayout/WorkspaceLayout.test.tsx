@@ -16,6 +16,15 @@ import { confirmDialog } from 'primereact/confirmdialog';
 
 jest.useFakeTimers();
 
+jest.mock('../../components/UserProvider', () => {
+  const mock = {
+    user: {},
+  };
+  return {
+    useUser: () => mock,
+  };
+});
+
 jest.mock('../../components/WorkspacesProvider', () => {
   const mock = {};
   return {
@@ -99,14 +108,6 @@ it('should render empty', async () => {
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it('should render loading', async () => {
-  const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
-  await act(async () => {
-    await true;
-  });
-  expect(root.toJSON()).toMatchSnapshot();
-});
-
 it('should render 404', async () => {
   useRouter().query.id = '12';
   const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
@@ -135,56 +136,6 @@ it('should get layout', async () => {
     await true;
   });
   expect(root.toJSON()).toMatchSnapshot();
-});
-
-it('should update title', async () => {
-  const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
-  await act(async () => {
-    await true;
-  });
-
-  act(() => {
-    root.root.findByType(EditableTitle).props.onChange('bar');
-  });
-  expect(useWorkspaces().update).toHaveBeenCalledWith({
-    id: '42',
-    name: 'bar',
-    automations: [],
-  });
-});
-
-it('should display automations', async () => {
-  const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
-  await act(async () => {
-    await true;
-  });
-  act(() => {
-    root.root.findAllByType(Button)[0].props.onClick();
-    jest.runAllTimers();
-  });
-  expect(root.root.findByType(AutomationsSidebar)).toBeDefined();
-});
-
-it('should close sidepanel', async () => {
-  const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
-  await act(async () => {
-    await true;
-  });
-  act(() => {
-    root.root.findByType(SidePanel).props.onClose();
-  });
-  expect(root.root.findByType(SidePanel).props.sidebarOpen).toBe(false);
-});
-
-it('should close automations sidepanel', async () => {
-  const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
-  await act(async () => {
-    await true;
-  });
-  act(() => {
-    root.root.findByType(AutomationsSidebar).props.onClose();
-  });
-  expect(root.root.findByType(SidePanel).props.sidebarOpen).toBe(false);
 });
 
 it('should destroy socket', async () => {
@@ -366,64 +317,4 @@ it('should save', async () => {
     severity: 'success',
     summary: 'expert.save.confirm',
   });
-});
-
-it('should display automations', () => {
-  let context: WorkspaceContext = {} as WorkspaceContext;
-  const Test = () => {
-    context = useWorkspace();
-    return null;
-  };
-  const root = renderer.create(
-    <WorkspaceLayout>
-      <Test />
-    </WorkspaceLayout>
-  );
-  act(() => {
-    return;
-  });
-
-  const link = root.root.find(
-    (a) => a.type === Button && a.props.children === 'automations.link'
-  );
-  act(() => {
-    link.props.onClick();
-  });
-
-  expect(root.root.findByType(AutomationsSidebar)).toBeDefined();
-});
-
-it('should ask before leaving source edition', async () => {
-  let context: WorkspaceContext = {} as WorkspaceContext;
-  const Test = () => {
-    context = useWorkspace();
-    return null;
-  };
-  useRouter().route = '/workspace/42/source';
-  const root = renderer.create(
-    <WorkspaceLayout>
-      <Test />
-    </WorkspaceLayout>
-  );
-  await act(async () => {
-    await true;
-  });
-
-  act(() => {
-    context.setDirty(true);
-  });
-  const e = { preventDefault: jest.fn() };
-  act(() => {
-    root.root.find((el) => el.props.icon === 'pi pi-code').props.onClick(e);
-  });
-  expect(e.preventDefault).toHaveBeenCalled();
-  expect(confirmDialog).toHaveBeenCalledWith({
-    message: 'expert.exit.confirm_message',
-    header: 'expert.exit.confirm_title',
-    icon: 'pi pi-exclamation-triangle',
-    accept: expect.any(Function),
-  });
-
-  (confirmDialog as jest.Mock).mock.calls[0][0].accept();
-  expect(useRouter().push).toHaveBeenCalledWith('/workspaces/42');
 });

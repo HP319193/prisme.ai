@@ -7,23 +7,6 @@ import InstructionForm from './Panel/InstructionForm';
 import ConditionForm from './Panel/ConditionForm';
 import TriggerForm from './Panel/TriggerForm';
 
-jest.mock('@prisme.ai/design-system', () => {
-  return {
-    ListItem({ children = null }: any) {
-      return children;
-    },
-    SearchInput({ children = null }: any) {
-      return children;
-    },
-    Space({ children = null }: any) {
-      return children;
-    },
-    Title({ children = null }: any) {
-      return children;
-    },
-  };
-});
-
 jest.mock('react-flow-renderer', () => {
   const { useAutomationBuilder } = require('./context');
   const ReactFlow: any = () => {

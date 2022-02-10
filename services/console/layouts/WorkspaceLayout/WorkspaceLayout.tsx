@@ -1,15 +1,7 @@
 import { useRouter } from 'next/router';
-import {
-  FC,
-  MouseEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
-import { confirmDialog } from 'primereact/confirmdialog';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
 import workspaceContext, { WorkspaceContext } from './context';
 import Loading from '../../components/Loading';
@@ -48,7 +40,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const {
     query: { id },
     route,
-    push,
   } = useRouter();
 
   const { t } = useTranslation('workspaces');
@@ -177,20 +168,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
       summary: t('expert.save.confirm'),
     });
   }, [newSource, t, toaster, update]);
-
-  const alertSourceIsDirty: MouseEventHandler = useCallback(
-    (e) => {
-      if (!dirty || !workspace || !displaySource) return;
-      e.preventDefault();
-      confirmDialog({
-        message: t('expert.exit.confirm_message'),
-        header: t('expert.exit.confirm_title'),
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => push(`/workspaces/${workspace.id}`),
-      });
-    },
-    [dirty, displaySource, push, t, workspace]
-  );
 
   if (!workspace || !user) {
     return (

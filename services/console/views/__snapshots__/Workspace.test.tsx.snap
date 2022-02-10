@@ -4,22 +4,53 @@ exports[`should render 1`] = `
 Array [
   <div
     className="
-          absolute top-0 bottom-0 right-0 left-0
+          absolute top-[75px] bottom-0 right-0 left-0
+          bg-white
           flex flex-1
-          
           transition-transform
           transition-duration-200
           transition-ease-in
-          z-1
-          -translate-y-100
+          z-10
+          -translate-y-full
         "
   />,
   <div
-    className="flex flex-1 align-center justify-center"
+    className="p-2 flex h-full"
   >
     <div
-      className=" align-self-center justify-self-center pi pi-spin pi-spinner"
-    />
+      className="flex flex-1 align-center justify-center"
+    >
+      <div
+        className="ant-spin ant-spin-spinning !flex justify-center items-center "
+      >
+        <span
+          className="ant-spin-dot ant-spin-dot-spin"
+        >
+          <i
+            className="ant-spin-dot-item"
+          />
+          <i
+            className="ant-spin-dot-item"
+          />
+          <i
+            className="ant-spin-dot-item"
+          />
+          <i
+            className="ant-spin-dot-item"
+          />
+        </span>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="flex grow h-full flex-col"
+  >
+    <div
+      className="flex justify-between items-center mb-6"
+    >
+      automations.link
+      automations.create.label
+    </div>
   </div>,
 ]
 `;

@@ -3,23 +3,6 @@ import renderer, { act } from 'react-test-renderer';
 import { useAutomationBuilder } from '../context';
 import { SearchInput } from '@prisme.ai/design-system';
 
-jest.mock('@prisme.ai/design-system', () => {
-  return {
-    ListItem({ children = null }: any) {
-      return children;
-    },
-    SearchInput({ children = null }: any) {
-      return children;
-    },
-    Space({ children = null }: any) {
-      return children;
-    },
-    Title({ children = null }: any) {
-      return children;
-    },
-  };
-});
-
 jest.mock('../context', () => {
   const mock = {};
   return {

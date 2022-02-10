@@ -3,12 +3,11 @@ import { useEffect, useState, useCallback } from 'react';
 import AutomationBuilder from '../components/AutomationBuilder';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
-import { Button } from 'primereact/button';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
 import { useToaster } from '../layouts/Toaster';
-import { PageHeader } from '@prisme.ai/design-system';
+import { Button, PageHeader } from '@prisme.ai/design-system';
 import { LoadingOutlined } from '@ant-design/icons';
 
 export const Automation = () => {
@@ -42,6 +41,7 @@ export const Automation = () => {
     setSaving(true);
     try {
       const saved = await updateAutomation(workspace, `${automationId}`, value);
+      console.log('SAVED', saved);
       if (saved) {
         setValue(saved);
       }
@@ -64,7 +64,7 @@ export const Automation = () => {
       },
     },
   ]);
-  if (!automation) {
+  if (!value) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
   }
   return (

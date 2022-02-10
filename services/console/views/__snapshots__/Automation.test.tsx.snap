@@ -1,102 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should render 1`] = `
-Array [
-  <div
-    className="flex flex-row justify-between bg-white"
-  >
-    <div
-      className="flex flex-row align-center"
-    >
-      <a
-        href="/workspaces/42"
-        onClick={[Function]}
-        onMouseEnter={[Function]}
-      >
-        automations.back
-      </a>
-      <div
-        className="p-inplace p-component p-inplace-closable flex"
-      >
-        <div
-          aria-label={null}
-          className="p-inplace-display"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          tabIndex={0}
-        >
-          <div
-            className="flex"
-          >
-            Hello
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      className="flex flex-row align-center"
-    >
-      <button
-        className="p-button p-component"
-        disabled={false}
-        onClick={[Function]}
-      >
-        automations.save.label
-      </button>
-    </div>
-  </div>,
-  <div
-    className="react-flow flex flex-1"
-  >
-    <div
-      className="react-flow__renderer react-flow__zoompane"
-    >
-      <div
-        className="react-flow__nodes"
-        style={
-          Object {
-            "transform": "translate(0px,0px) scale(1)",
-          }
-        }
-      />
-      <div
-        className="react-flow__pane"
-        onClick={[Function]}
-        onContextMenu={[Function]}
-        onWheel={[Function]}
-      />
-    </div>
-  </div>,
-  <div
-    className="absolute top-0 bottom-0 right-0"
-  />,
-  <div
-    className="absolute bottom-0 right-0 z-5"
-  >
-    <div>
-      debug:
-    </div>
-    <div>
-      <label>
-        Nodes draggable
-         
-        <input
-          checked={false}
-          onChange={[Function]}
-          type="checkbox"
-        />
-      </label>
-    </div>
-  </div>,
-]
+<div
+  className="relative flex flex-1"
+/>
 `;
 
 exports[`should render redirect 1`] = `
-<a
-  href="/workspaces/42"
-  onClick={[Function]}
-  onMouseEnter={[Function]}
->
-  404
-</a>
+<div
+  className="relative flex flex-1"
+/>
 `;

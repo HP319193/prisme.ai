@@ -2,78 +2,31 @@
 
 exports[`should render empty 1`] = `
 <div
-  className="flex min-h-screen max-h-screen flex-col"
+  className="!bg-blue-200 flex grow m-4 rounded"
 >
   <div
-    className="bg-primary p-4 z-1 "
+    className="justify-start flex flex-wrap align-start justify-start"
   >
     <div
-      className="flex justify-between"
+      className="ant-card ant-card-bordered !m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
     >
       <div
-        className="flex direction-row align-center"
+        className="ant-card-body"
+        style={Object {}}
       >
-        <div
-          className="mr-2"
-        >
-          <a
-            href="/workspaces"
-            onClick={[Function]}
-            onMouseEnter={[Function]}
-          >
-            Prisme.ai
-          </a>
-        </div>
+        create.description
       </div>
-      <div>
-        <button
-          className="p-button p-component p-button-icon-only"
-          disabled={false}
-          onClick={[Function]}
-        >
-          <span
-            className="p-button-icon p-c pi pi-power-off"
-          />
-          <span
-            className="p-button-label p-c"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "&nbsp;",
-              }
+      <ul
+        className="ant-card-actions"
+      >
+        <li
+          style={
+            Object {
+              "width": "100%",
             }
-          />
-        </button>
-      </div>
-    </div>
-  </div>
-  <div
-    className="flex flex-1 surface-ground relative"
-    style={
-      Object {
-        "overflow": "auto",
-        "overflowX": "hidden",
-      }
-    }
-  >
-    <div
-      className="justify-center flex flex-wrap align-start justify-start"
-    >
-      <div
-        className="p-card p-component w-4 m-2"
-        id={null}
-        style={null}
-      >
-        <div
-          className="p-card-body"
+          }
         >
-          <div
-            className="p-card-content"
-          >
-            create.description
-          </div>
-          <div
-            className="p-card-footer"
-          >
+          <span>
             <button
               className="p-button p-component"
               disabled={false}
@@ -81,9 +34,9 @@ exports[`should render empty 1`] = `
             >
               create.label
             </button>
-          </div>
-        </div>
-      </div>
+          </span>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
@@ -91,121 +44,79 @@ exports[`should render empty 1`] = `
 
 exports[`should render some workspaces 1`] = `
 <div
-  className="flex min-h-screen max-h-screen flex-col"
+  className="!bg-blue-200 flex grow m-4 rounded"
 >
   <div
-    className="bg-primary p-4 z-1 "
+    className="justify-start flex flex-wrap align-start justify-start"
   >
     <div
-      className="flex justify-between"
+      className="ant-card ant-card-bordered !m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
     >
       <div
-        className="flex direction-row align-center"
+        className="ant-card-body"
+        style={Object {}}
       >
-        <div
-          className="mr-2"
-        >
-          <a
-            href="/workspaces"
-            onClick={[Function]}
-            onMouseEnter={[Function]}
-          >
-            Prisme.ai
-          </a>
-        </div>
-      </div>
-      <div>
-        <button
-          className="p-button p-component p-button-icon-only"
-          disabled={false}
+        <a
+          href="/workspaces/1"
           onClick={[Function]}
+          onMouseEnter={[Function]}
         >
-          <span
-            className="p-button-icon p-c pi pi-power-off"
-          />
-          <span
-            className="p-button-label p-c"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "&nbsp;",
-              }
-            }
-          />
-        </button>
+          foo
+        </a>
       </div>
+      <ul
+        className="ant-card-actions"
+      >
+        <li
+          style={
+            Object {
+              "width": "100%",
+            }
+          }
+        >
+          <span>
+            <a
+              href="/workspaces/1"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+            >
+              <button
+                className="p-button p-component"
+                disabled={false}
+              >
+                edit.label
+              </button>
+            </a>
+          </span>
+        </li>
+      </ul>
     </div>
-  </div>
-  <div
-    className="flex flex-1 surface-ground relative"
-    style={
-      Object {
-        "overflow": "auto",
-        "overflowX": "hidden",
-      }
-    }
-  >
     <div
-      className="justify-center flex flex-wrap align-start justify-start"
+      className="ant-card ant-card-bordered !m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
     >
       <div
-        className="p-card p-component w-3 m-2"
-        id={null}
-        style={null}
+        className="ant-card-body"
+        style={Object {}}
       >
-        <div
-          className="p-card-body"
+        <a
+          href="/workspaces/42"
+          onClick={[Function]}
+          onMouseEnter={[Function]}
         >
-          <div
-            className="p-card-content"
-          >
-            <a
-              href="/workspaces/1"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
-            >
-              foo
-            </a>
-          </div>
-          <div
-            className="p-card-footer"
-          >
-            <a
-              href="/workspaces/1"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
-            >
-              <button
-                className="p-button p-component"
-                disabled={false}
-              >
-                edit.label
-              </button>
-            </a>
-          </div>
-        </div>
+          bar
+        </a>
       </div>
-      <div
-        className="p-card p-component w-3 m-2"
-        id={null}
-        style={null}
+      <ul
+        className="ant-card-actions"
       >
-        <div
-          className="p-card-body"
+        <li
+          style={
+            Object {
+              "width": "100%",
+            }
+          }
         >
-          <div
-            className="p-card-content"
-          >
-            <a
-              href="/workspaces/42"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
-            >
-              bar
-            </a>
-          </div>
-          <div
-            className="p-card-footer"
-          >
+          <span>
             <a
               href="/workspaces/42"
               onClick={[Function]}
@@ -218,25 +129,30 @@ exports[`should render some workspaces 1`] = `
                 edit.label
               </button>
             </a>
-          </div>
-        </div>
-      </div>
+          </span>
+        </li>
+      </ul>
+    </div>
+    <div
+      className="ant-card ant-card-bordered !m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
+    >
       <div
-        className="p-card p-component w-4 m-2"
-        id={null}
-        style={null}
+        className="ant-card-body"
+        style={Object {}}
       >
-        <div
-          className="p-card-body"
+        create.description
+      </div>
+      <ul
+        className="ant-card-actions"
+      >
+        <li
+          style={
+            Object {
+              "width": "100%",
+            }
+          }
         >
-          <div
-            className="p-card-content"
-          >
-            create.description
-          </div>
-          <div
-            className="p-card-footer"
-          >
+          <span>
             <button
               className="p-button p-component"
               disabled={false}
@@ -244,9 +160,9 @@ exports[`should render some workspaces 1`] = `
             >
               create.label
             </button>
-          </div>
-        </div>
-      </div>
+          </span>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
