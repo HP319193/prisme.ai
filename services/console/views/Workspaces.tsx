@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Button } from 'primereact/button';
-import { Card } from 'primereact/card';
+import { Card } from 'antd';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Workspace } from '../api/types';
@@ -31,41 +31,45 @@ export const WorkspacesView = () => {
   }, [create, push, t]);
 
   return (
-    <Layout Header={<Header />}>
+    <>
       <Head>
         <title>{t('workspaces.title')}</title>
-        <meta name="description" content={t('workspaces.description')} />
+        <meta name="description" content={t('workspaces.description')} />§
       </Head>
-      <CardsContainer className="justify-center">
-        {workspacesList.map(({ name, id }) => (
-          <Card
-            key={id}
-            className="w-3 m-2"
-            footer={
-              <Link href={`/workspaces/${id}`}>
-                <a>
-                  <Button>{t('edit.label')}</Button>
-                </a>
-              </Link>
-            }
-          >
-            <Link href={`/workspaces/${id}`}>{name}</Link>
-          </Card>
-        ))}
-        <Card
-          className="w-4 m-2"
-          footer={
-            <Button onClick={createWorkspace} disabled={loading}>
-              {t('create.label')}
-            </Button>
-          }
-        >
-          {t('create.description', {
-            context: workspaces.size === 0 ? 'first' : '',
-          })}
-        </Card>
-      </CardsContainer>
-    </Layout>
+      <Layout Header={<Header />}>
+        <div className="!bg-blue-200 flex grow m-4 rounded">
+          <CardsContainer className="justify-start">
+            {workspacesList.map(({ name, id }) => (
+              <Card
+                key={id}
+                className="!m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
+                actions={[
+                  <Link href={`/workspaces/${id}`}>
+                    <a>
+                      <Button>{t('edit.label')}</Button>
+                    </a>
+                  </Link>,
+                ]}
+              >
+                <Link href={`/workspaces/${id}`}>{name}</Link>
+              </Card>
+            ))}
+            <Card
+              className="!m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
+              actions={[
+                <Button onClick={createWorkspace} disabled={loading}>
+                  {t('create.label')}
+                </Button>,
+              ]}
+            >
+              {t('create.description', {
+                context: workspaces.size === 0 ? 'first' : '',
+              })}
+            </Card>
+          </CardsContainer>
+        </div>
+      </Layout>
+    </>
   );
 };
 
