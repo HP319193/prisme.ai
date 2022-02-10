@@ -65,7 +65,7 @@ exports[`should have error 1`] = `
         className="flex p-float-label mx-2 flex justify-between"
       >
         <div
-          className="flex flex-column"
+          className="flex flex-col"
         >
           <a
             href="/signup"
@@ -196,7 +196,7 @@ exports[`should load 1`] = `
         className="flex p-float-label mx-2 flex justify-between"
       >
         <div
-          className="flex flex-column"
+          className="flex flex-col"
         >
           <a
             href="/signup"
@@ -297,7 +297,7 @@ exports[`should render 1`] = `
         className="flex p-float-label mx-2 flex justify-between"
       >
         <div
-          className="flex flex-column"
+          className="flex flex-col"
         >
           <a
             href="/signup"

@@ -32,8 +32,14 @@ interface WorkspaceSourceProps {
 }
 export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const { t } = useTranslation('workspaces');
-  const { workspace, setInvalid, setDirty, setNewSource, invalid, save } =
-    useWorkspace();
+  const {
+    workspace,
+    setInvalid,
+    setDirty,
+    setNewSource,
+    invalid,
+    save,
+  } = useWorkspace();
   const [value, setValue] = useState<string | undefined>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const { toJSON, toYaml } = useYaml();
@@ -182,7 +188,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   if (value === undefined) return null;
 
   return (
-    <div className="flex flex-1 flex-column" ref={ref}>
+    <div className="flex flex-1 flex-col" ref={ref}>
       <CodeEditor
         mode="yaml"
         value={value}

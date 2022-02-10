@@ -81,11 +81,13 @@ export const Automation = () => {
           </Button>,
         ]}
       />
-      <AutomationBuilder
-        id={`${automationId}`}
-        value={value}
-        onChange={setValue}
-      />
+      <div className="relative flex flex-1">
+        <AutomationBuilder
+          id={`${automationId}`}
+          value={value}
+          onChange={setValue}
+        />
+      </div>
     </>
   );
 };

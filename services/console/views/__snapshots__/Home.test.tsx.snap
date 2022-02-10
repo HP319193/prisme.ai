@@ -5,7 +5,7 @@ exports[`should render 1`] = `
   className="flex justify-center align-center min-h-screen"
 >
   <main
-    className="flex align-center justify-center flex-column"
+    className="flex align-center justify-center flex-col"
   >
     <h1
       className="flex"

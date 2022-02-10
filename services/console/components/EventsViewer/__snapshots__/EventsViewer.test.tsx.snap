@@ -10,7 +10,7 @@ exports[`should render empty 1`] = `
 
 exports[`should render events 1`] = `
 <div
-  className="flex flex-1 flex-column overflow-hidden"
+  className="flex flex-1 flex-col overflow-hidden"
 >
   <div
     className="overflow-auto"
@@ -85,7 +85,7 @@ exports[`should render events 1`] = `
                     >
                       <div
                         className="
-                          flex flex-1 flex-column
+                          flex flex-1 flex-col
                           
                         "
                       >
@@ -176,7 +176,7 @@ exports[`should render events 1`] = `
                     >
                       <div
                         className="
-                          flex flex-1 flex-column
+                          flex flex-1 flex-col
                           
                         "
                       >
@@ -267,7 +267,7 @@ exports[`should render events 1`] = `
                     >
                       <div
                         className="
-                          flex flex-1 flex-column
+                          flex flex-1 flex-col
                           
                         "
                       >
@@ -314,7 +314,7 @@ exports[`should render events 1`] = `
                     >
                       <div
                         className="
-                          flex flex-1 flex-column
+                          flex flex-1 flex-col
                           
                         "
                       >
@@ -361,7 +361,7 @@ exports[`should render events 1`] = `
                     >
                       <div
                         className="
-                          flex flex-1 flex-column
+                          flex flex-1 flex-col
                           
                         "
                       >

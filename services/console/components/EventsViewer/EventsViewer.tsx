@@ -30,7 +30,7 @@ export const EventsViewer = () => {
   dates.sort((a, b) => a - b).reverse();
 
   return (
-    <div className="flex flex-1 flex-column overflow-hidden">
+    <div className="flex flex-1 flex-col overflow-hidden">
       <div ref={ref} className="overflow-auto">
         <Accordion multiple activeIndex={dates.map((v, k) => k)}>
           {dates.map((date) => (
@@ -49,7 +49,7 @@ export const EventsViewer = () => {
                       header={
                         <div
                           className={`
-                          flex flex-1 flex-column
+                          flex flex-1 flex-col
                           ${readEvents.has(event.id) ? 'opacity-50' : ''}
                         `}
                         >

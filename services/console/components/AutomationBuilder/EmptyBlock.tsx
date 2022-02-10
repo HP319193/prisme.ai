@@ -20,7 +20,7 @@ export const EmptyBlock: FC<NodeProps> = ({ data = {}, id, ...props }) => {
       <div
         className="
           flex
-          flex-column
+          flex-col
           w-10rem"
       >
         <div className="flex justify-center" style={{ minHeight: '1px' }}>

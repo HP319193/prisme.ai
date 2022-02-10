@@ -69,7 +69,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
       <div
         className={`
           flex
-          flex-column
+          flex-col
           surface-section
           border-solid
           border-${selected ? '3' : '1'}

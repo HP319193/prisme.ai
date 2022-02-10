@@ -20,14 +20,14 @@ export const Main: FC<MainProps> = ({
 
   if (!user && loading) {
     return (
-      <div className="flex min-h-screen max-h-screen flex-column justify-center">
+      <div className="flex min-h-screen max-h-screen flex-col justify-center">
         <Loading className="text-5xl" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen max-h-screen flex-column">
+    <div className="flex min-h-screen max-h-screen flex-col">
       <div className="bg-primary p-4 z-1 ">
         <div className="flex justify-between">
           <div className="flex direction-row align-center">

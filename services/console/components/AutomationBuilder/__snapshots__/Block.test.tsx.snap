@@ -5,7 +5,7 @@ Array [
   <div
     className="
           flex
-          flex-column
+          flex-col
           surface-section
           border-solid
           border-1
@@ -168,7 +168,7 @@ Array [
   <div
     className="
           flex
-          flex-column
+          flex-col
           surface-section
           border-solid
           border-1
@@ -331,7 +331,7 @@ Array [
   <div
     className="
           flex
-          flex-column
+          flex-col
           surface-section
           border-solid
           border-1
@@ -494,7 +494,7 @@ Array [
   <div
     className="
           flex
-          flex-column
+          flex-col
           surface-section
           border-solid
           border-1
@@ -657,7 +657,7 @@ Array [
   <div
     className="
           flex
-          flex-column
+          flex-col
           surface-section
           border-solid
           border-1
@@ -820,7 +820,7 @@ Array [
   <div
     className="
           flex
-          flex-column
+          flex-col
           surface-section
           border-solid
           border-1

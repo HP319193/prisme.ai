@@ -2,10 +2,10 @@
 
 exports[`should render 1`] = `
 <div
-  className="flex flex-1 flex-column"
+  className="flex flex-1 flex-col"
 >
   <div
-    className="flex flex-1 align-stretch flex-column mb-4"
+    className="flex flex-1 align-stretch flex-col mb-4"
   >
     <div>
       automations.edit.select

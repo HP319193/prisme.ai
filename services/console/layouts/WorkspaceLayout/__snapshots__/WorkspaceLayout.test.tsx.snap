@@ -2,7 +2,7 @@
 
 exports[`should get layout 1`] = `
 <div
-  className="flex min-h-screen max-h-screen flex-column"
+  className="flex min-h-screen max-h-screen flex-col"
 >
   <div
     className="bg-primary p-4 z-1 "
@@ -64,7 +64,7 @@ exports[`should get layout 1`] = `
       className="flex flex-1"
     >
       <div
-        className="flex flex-1 flex-column overflow-auto"
+        className="flex flex-1 flex-col overflow-auto"
       >
         <div />
       </div>
@@ -99,7 +99,7 @@ exports[`should get layout 1`] = `
 
 exports[`should render 404 1`] = `
 <div
-  className="flex min-h-screen max-h-screen flex-column"
+  className="flex min-h-screen max-h-screen flex-col"
 >
   <div
     className="bg-primary p-4 z-1 "
@@ -147,7 +147,7 @@ exports[`should render 404 1`] = `
 
 exports[`should render empty 1`] = `
 <div
-  className="flex min-h-screen max-h-screen flex-column"
+  className="flex min-h-screen max-h-screen flex-col"
 >
   <div
     className="bg-primary p-4 z-1 "
@@ -209,7 +209,7 @@ exports[`should render empty 1`] = `
       className="flex flex-1"
     >
       <div
-        className="flex flex-1 flex-column overflow-auto"
+        className="flex flex-1 flex-col overflow-auto"
       >
         Foo
       </div>
@@ -244,7 +244,7 @@ exports[`should render empty 1`] = `
 
 exports[`should render fetching 1`] = `
 <div
-  className="flex min-h-screen max-h-screen flex-column"
+  className="flex min-h-screen max-h-screen flex-col"
 >
   <div
     className="bg-primary p-4 z-1 "
@@ -306,7 +306,7 @@ exports[`should render fetching 1`] = `
       className="flex flex-1"
     >
       <div
-        className="flex flex-1 flex-column overflow-auto"
+        className="flex flex-1 flex-col overflow-auto"
       >
         Foo
       </div>
@@ -341,7 +341,7 @@ exports[`should render fetching 1`] = `
 
 exports[`should render loading 1`] = `
 <div
-  className="flex min-h-screen max-h-screen flex-column"
+  className="flex min-h-screen max-h-screen flex-col"
 >
   <div
     className="bg-primary p-4 z-1 "
@@ -403,7 +403,7 @@ exports[`should render loading 1`] = `
       className="flex flex-1"
     >
       <div
-        className="flex flex-1 flex-column overflow-auto"
+        className="flex flex-1 flex-col overflow-auto"
       >
         Foo
       </div>

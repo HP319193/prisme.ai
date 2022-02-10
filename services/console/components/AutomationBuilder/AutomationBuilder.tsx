@@ -165,38 +165,35 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [hidePanel]
   );
 
-  const addInstruction: AutomationBuilderContext['addInstruction'] =
-    useCallback(
-      async (parent, index) => {
-        if (!parent) return;
-        try {
-          const instruction = await editInstructionDetails();
-          parent.splice(index, 0, instruction);
-          onChange({ ...value });
-        } catch (e) {}
-      },
-      [editInstructionDetails, onChange, value]
-    );
-
-  const removeInstruction: AutomationBuilderContext['removeInstruction'] =
-    useCallback(
-      (parent, index) => {
-        parent.splice(index, 1);
+  const addInstruction: AutomationBuilderContext['addInstruction'] = useCallback(
+    async (parent, index) => {
+      if (!parent) return;
+      try {
+        const instruction = await editInstructionDetails();
+        parent.splice(index, 0, instruction);
         onChange({ ...value });
-      },
-      [onChange, value]
-    );
+      } catch (e) {}
+    },
+    [editInstructionDetails, onChange, value]
+  );
 
-  const editInstruction: AutomationBuilderContext['editInstruction'] =
-    useCallback(
-      async (parent, index) => {
-        if (!parent || !parent[index]) return;
-        const instruction = await editInstructionDetails(parent[index]);
-        parent.splice(index, 1, instruction);
-        onChange({ ...value });
-      },
-      [editInstructionDetails, onChange, value]
-    );
+  const removeInstruction: AutomationBuilderContext['removeInstruction'] = useCallback(
+    (parent, index) => {
+      parent.splice(index, 1);
+      onChange({ ...value });
+    },
+    [onChange, value]
+  );
+
+  const editInstruction: AutomationBuilderContext['editInstruction'] = useCallback(
+    async (parent, index) => {
+      if (!parent || !parent[index]) return;
+      const instruction = await editInstructionDetails(parent[index]);
+      parent.splice(index, 1, instruction);
+      onChange({ ...value });
+    },
+    [editInstructionDetails, onChange, value]
+  );
 
   const editConditionDetails = useCallback(
     (condition: string) => {
@@ -247,18 +244,17 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [editConditionDetails, onChange, value]
   );
 
-  const editTrigger: AutomationBuilderContext['editTrigger'] =
-    useCallback(() => {
-      hidePanel();
-      setTriggerEditing({
-        trigger: value.when,
-        onSubmit: (when) => {
-          onChange({ ...value, when });
-          hidePanel();
-        },
-      });
-      setPanelIsOpen(true);
-    }, [hidePanel, onChange, value]);
+  const editTrigger: AutomationBuilderContext['editTrigger'] = useCallback(() => {
+    hidePanel();
+    setTriggerEditing({
+      trigger: value.when,
+      onSubmit: (when) => {
+        onChange({ ...value, when });
+        hidePanel();
+      },
+    });
+    setPanelIsOpen(true);
+  }, [hidePanel, onChange, value]);
 
   const getApp: AutomationBuilderContext['getApp'] = useCallback(
     (instruction) => {
@@ -301,34 +297,22 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         getSchema,
       }}
     >
-      <ReactFlow
-        elements={elements}
-        className="flex flex-1"
-        nodesConnectable={false}
-        nodesDraggable={nodesDraggable}
-        elementsSelectable
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-      >
-        <Controls />
-      </ReactFlow>
-      <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
-        {instructionEditing && <InstructionForm {...instructionEditing} />}
-        {conditionEditing && <ConditionForm {...conditionEditing} />}
-        {triggerEditing && <TriggerForm {...triggerEditing} />}
-      </Panel>
-      <div className="absolute bottom-0 right-0 z-5">
-        <div>debug:</div>
-        <div>
-          <label>
-            Nodes draggable{' '}
-            <input
-              type="checkbox"
-              checked={nodesDraggable}
-              onChange={({ target: { checked } }) => setNodesDraggable(checked)}
-            />
-          </label>
-        </div>
+      <div className="relative flex flex-1 overflow-x-hidden">
+        <ReactFlow
+          elements={elements}
+          nodesConnectable={false}
+          nodesDraggable={nodesDraggable}
+          elementsSelectable
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+        >
+          <Controls />
+        </ReactFlow>
+        <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
+          {instructionEditing && <InstructionForm {...instructionEditing} />}
+          {conditionEditing && <ConditionForm {...conditionEditing} />}
+          {triggerEditing && <TriggerForm {...triggerEditing} />}
+        </Panel>
       </div>
     </automationBuilderContext.Provider>
   );

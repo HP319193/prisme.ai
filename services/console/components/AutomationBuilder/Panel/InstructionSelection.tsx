@@ -7,10 +7,12 @@ import { useAutomationBuilder } from '../context';
 
 export interface InstructionSelectionProps {
   onSubmit: (key: string) => void;
+  focus?: true;
 }
 
 export const InstructionSelection: FC<InstructionSelectionProps> = ({
   onSubmit,
+  focus,
 }) => {
   const { t } = useTranslation('workspaces');
   const { instructionsSchemas } = useAutomationBuilder();
@@ -29,7 +31,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
 
   return (
     <>
-      <div className="flex flex-1 align-stretch flex-column mb-4">
+      <div className="flex flex-1 align-stretch flex-col mb-4">
         <div>{t('automations.edit.select')}</div>
         <span className="flex p-input-icon-left p-input-icon-right">
           <i className="pi pi-search" />
@@ -37,7 +39,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t('automations.instruction.search')}
-            autoFocus
+            autoFocus={focus}
             className="flex-1"
           />
           <i>
@@ -51,7 +53,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
         </span>
       </div>
       {filteredInstructions.map(([section, icon, instructionsInSection]) => (
-        <div key={section} className="flex flex-1 flex-column mb-4">
+        <div key={section} className="flex flex-1 flex-col mb-4">
           <div className="flex align-center">
             <div className="mr-2">
               <Image src={icon} width={16} height={16} alt={section} />

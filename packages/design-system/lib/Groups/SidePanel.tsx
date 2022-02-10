@@ -4,10 +4,11 @@ import { Layout, MenuTab } from '../';
 export interface SidePanelProps {
   children: ReactElement;
   Header?: ReactElement;
+  className?: string;
 }
 
-const SidePanel = ({ Header, children }: SidePanelProps) => (
-  <Layout Header={Header} className="m-2">
+const SidePanel = ({ Header, children, className = '' }: SidePanelProps) => (
+  <Layout Header={Header} className={`m-2 ${className}`}>
     <div className="border border-gray-200 border-solid grow h-full rounded p-4">
       {children}
     </div>

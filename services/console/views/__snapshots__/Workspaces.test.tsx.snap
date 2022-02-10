@@ -2,7 +2,7 @@
 
 exports[`should render empty 1`] = `
 <div
-  className="flex min-h-screen max-h-screen flex-column"
+  className="flex min-h-screen max-h-screen flex-col"
 >
   <div
     className="bg-primary p-4 z-1 "
@@ -91,7 +91,7 @@ exports[`should render empty 1`] = `
 
 exports[`should render some workspaces 1`] = `
 <div
-  className="flex min-h-screen max-h-screen flex-column"
+  className="flex min-h-screen max-h-screen flex-col"
 >
   <div
     className="bg-primary p-4 z-1 "

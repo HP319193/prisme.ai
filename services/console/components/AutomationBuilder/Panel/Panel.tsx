@@ -1,34 +1,53 @@
-import { FC, useRef } from 'react';
-import { Sidebar } from 'primereact/sidebar';
+import { CloseCircleOutlined } from '@ant-design/icons';
+import { Button, SidePanel } from '@prisme.ai/design-system';
+import { FC, useEffect, useState } from 'react';
 
+const noop = () => null;
 interface PanelProps {
   visible: boolean;
   onVisibleChange?: (v: boolean) => void;
 }
 export const Panel: FC<PanelProps> = ({
   visible,
-  onVisibleChange,
+  onVisibleChange = noop,
   children,
 }) => {
-  const ref = useRef(null);
+  const [hidden, setHidden] = useState(true);
+
+  useEffect(() => {
+    if (hidden) {
+      const t = setTimeout(() => onVisibleChange(false), 200);
+      return () => {
+        clearTimeout(t);
+      };
+    }
+  }, [hidden]);
+
+  useEffect(() => {
+    setTimeout(() => setHidden(!visible), 1);
+  }, [visible]);
 
   return (
-    <>
-      <div ref={ref} className="absolute top-0 bottom-0 right-0" />
-      {ref.current && (
-        <Sidebar
-          visible={visible}
-          onHide={() => onVisibleChange && onVisibleChange(false)}
-          position="right"
-          modal={false}
-          appendTo={ref.current}
-          maskStyle={{ position: 'relative' }}
-          className="w-30rem"
-        >
+    <div
+      className={`
+        absolute top-0 bottom-0 -right-1/3 w-1/3 z-10 flex-col
+        transition-transform
+        ease-in
+        duration-200
+        ${hidden ? '' : '-translate-x-full'}
+      `}
+    >
+      <SidePanel className="!bg-white">
+        <div className="flex flex-col">
+          <div className="flex grow justify-end">
+            <Button variant="grey" onClick={() => setHidden(true)}>
+              <CloseCircleOutlined />
+            </Button>
+          </div>
           {children}
-        </Sidebar>
-      )}
-    </>
+        </div>
+      </SidePanel>
+    </div>
   );
 };
 
