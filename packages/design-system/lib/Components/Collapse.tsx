@@ -1,10 +1,11 @@
 import { Collapse as AntdCollapse } from 'antd';
+import { ReactElement } from 'react';
 
 const { Panel } = AntdCollapse;
 
 export type CollapseItem = {
   label: string;
-  content: string;
+  content: ReactElement | string;
 };
 
 export interface CollapseProps {
@@ -20,7 +21,7 @@ const Collapse = ({ items }: CollapseProps) => {
     <AntdCollapse bordered={false} expandIconPosition="right">
       {items.map(({ label, content }, index) => (
         <Panel header={label} key={`${index}-${label}`}>
-          <p>{content}</p>
+          {content}
         </Panel>
       ))}
     </AntdCollapse>
