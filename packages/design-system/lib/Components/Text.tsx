@@ -2,10 +2,10 @@ import { HTMLAttributes, ReactElement } from 'react';
 
 export interface TextProps extends HTMLAttributes<HTMLDivElement> {
   children: string | ReactElement;
-  type: 'grey' | 'regular';
+  type?: 'grey' | 'regular';
 }
 
-const Text = ({ children, type, ...props }: TextProps) => {
+const Text = ({ children, type = 'regular', ...props }: TextProps) => {
   return (
     <div className={type === 'grey' ? 'text-gray' : ''} {...props}>
       {children}

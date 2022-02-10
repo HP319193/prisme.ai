@@ -42,20 +42,20 @@ const HeaderWorkspace = () => {
     [workspaces, displaySource]
   );
 
-  const share = useCallback(() => {
-    console.log('share');
-  }, []);
+  // const share = useCallback(() => {
+  //   console.log('share');
+  // }, []);
   return (
     <Header
       title={<Dropdown Menu={workspacesMenu}>{currentWorkspace}</Dropdown>}
-      leftContent={
-        <Button variant="grey" onClick={share}>
-          <Space>
-            {t('workspace.share')}
-            <ShareAltOutlined />
-          </Space>
-        </Button>
-      }
+      // leftContent={
+      //   <Button variant="grey" onClick={share}>
+      //     <Space>
+      //       {t('workspace.share')}
+      //       <ShareAltOutlined />
+      //     </Space>
+      //   </Button>
+      // }
     />
   );
 };

@@ -1,4 +1,4 @@
-import { Layout, Button } from '@prisme.ai/design-system';
+import { Layout, Button, Text } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -50,7 +50,7 @@ export const WorkspacesView = () => {
                   </Link>,
                 ]}
               >
-                <Link href={`/workspaces/${id}`}>{name}</Link>
+                <Text>{name}</Text>
               </Card>
             ))}
             <Card

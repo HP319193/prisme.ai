@@ -59,7 +59,7 @@ const Header = ({ title, leftContent }: HeaderProps) => {
       <div className="flex flex-row items-center">
         {leftContent}
 
-        <Divider type="vertical" className="mr-4" />
+        {leftContent && <Divider type="vertical" className="mr-4" />}
 
         {user && (
           <Dropdown Menu={useMenu}>
