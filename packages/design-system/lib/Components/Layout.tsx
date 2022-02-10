@@ -9,12 +9,14 @@ export interface LayoutProps {
 }
 
 const Layout = ({ className, Header, PageHeader, children }: LayoutProps) => (
-  <AntdLayout className={`${className || ''} flex grow`}>
+  <AntdLayout className={`${className || ''} flex grow flex-col`}>
     <AntdLayout.Header>
       {Header}
       {PageHeader || null}
     </AntdLayout.Header>
-    <AntdLayout.Content className="flex">{children}</AntdLayout.Content>
+    <AntdLayout.Content className="flex flex-col	">
+      {children}
+    </AntdLayout.Content>
   </AntdLayout>
 );
 

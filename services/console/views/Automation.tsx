@@ -10,6 +10,8 @@ import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
 import { useToaster } from '../layouts/Toaster';
+import { PageHeader } from '@prisme.ai/design-system';
+import { LoadingOutlined } from '@ant-design/icons';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
@@ -18,6 +20,7 @@ export const Automation = () => {
   const toaster = useToaster();
   const {
     query: { automationId },
+    push,
   } = useRouter();
   const automation = (workspace.automations || {})[`${automationId}`];
   const [value, setValue] = useState<Prismeai.Automation>(automation);
@@ -68,20 +71,16 @@ export const Automation = () => {
   }
   return (
     <>
-      <div className="flex flex-row justify-between bg-white">
-        <div className="flex flex-row align-center">
-          <Link href={`/workspaces/${workspace.id}`}>
-            {t('automations.back')}
-          </Link>
-          <EditableTitle title={value.name} onChange={updateTitle} />
-        </div>
-        <div className="flex flex-row align-center">
+      <PageHeader
+        title={value.name}
+        onBack={() => push(`/workspaces/${workspace.id}`)}
+        RightButtons={[
           <Button onClick={save} disabled={saving}>
-            {saving && <i className="pi pi-spin pi-spinner absolute -ml-3" />}
+            {saving && <LoadingOutlined />}
             {t('automations.save.label')}
-          </Button>
-        </div>
-      </div>
+          </Button>,
+        ]}
+      />
       <AutomationBuilder
         id={`${automationId}`}
         value={value}

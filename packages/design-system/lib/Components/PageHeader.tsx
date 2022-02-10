@@ -1,7 +1,7 @@
 import { PageHeader as AntdPageHeader } from 'antd';
 
 export interface PageHeaderProps {
-  title: String;
+  title: string;
   onBack: (e: any) => void;
   RightButtons?: JSX.Element[];
 }
