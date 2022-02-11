@@ -56,13 +56,7 @@ exports[`should render 1`] = `
               </label>
             </span>
           </div>
-          <button
-            className="p-button p-component"
-            disabled={false}
-            type="submit"
-          >
-            automations.condition.edit.submit
-          </button>
+          automations.condition.edit.save
         </div>
       </div>
     </fieldset>

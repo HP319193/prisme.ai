@@ -183,12 +183,7 @@ exports[`should render 1`] = `
         </div>
       </div>
     </fieldset>
-    <button
-      className="p-button p-component"
-      disabled={false}
-    >
-      automations.trigger.save
-    </button>
+    automations.trigger.save
   </form>
 </div>
 `;

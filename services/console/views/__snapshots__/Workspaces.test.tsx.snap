@@ -7,7 +7,16 @@ exports[`should render empty 1`] = `
   <div
     className="flex flex-wrap align-start justify-start"
   >
-    create.description
+    <div
+      className="flex grow items-center justify-between flex-col text-center"
+    >
+      <div
+        className="flex items-center flex-col text-center mt-20"
+      >
+        create.label
+      </div>
+      create.description_sub
+    </div>
   </div>
 </div>
 `;
@@ -19,9 +28,30 @@ exports[`should render some workspaces 1`] = `
   <div
     className="flex flex-wrap align-start justify-start"
   >
-    foo
-    bar
-    create.description
+    <div
+      className="flex grow items-center justify-center flex-col text-center"
+    >
+      <div />
+      foo
+      workspaces.defaultDescription
+    </div>
+    <div
+      className="flex grow items-center justify-center flex-col text-center"
+    >
+      <div />
+      bar
+      workspaces.defaultDescription
+    </div>
+    <div
+      className="flex grow items-center justify-between flex-col text-center"
+    >
+      <div
+        className="flex items-center flex-col text-center mt-20"
+      >
+        create.label
+      </div>
+      create.description_sub
+    </div>
   </div>
 </div>
 `;

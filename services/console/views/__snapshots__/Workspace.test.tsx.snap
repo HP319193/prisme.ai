@@ -22,13 +22,17 @@ Array [
     />
   </div>,
   <div
-    className="flex grow h-full flex-col"
+    className="border border-gray-200 border-solid grow h-full rounded p-4"
   >
     <div
-      className="flex justify-between items-center mb-6"
+      className="flex grow h-full flex-col"
     >
-      automations.link
-      automations.create.label
+      <div
+        className="flex justify-between items-center mb-6"
+      >
+        automations.link
+        automations.create.label
+      </div>
     </div>
   </div>,
 ]

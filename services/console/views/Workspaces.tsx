@@ -73,6 +73,7 @@ export const WorkspacesView = () => {
                     variant="primary"
                     onClick={createWorkspace}
                     disabled={loading}
+                    id="createWorkspaceButton"
                     className="!h-10 !w-10 !p-0 !flex items-center justify-center mb-5"
                   >
                     <PlusOutlined />

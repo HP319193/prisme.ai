@@ -80,12 +80,6 @@ exports[`should render 1`] = `
       </label>
     </span>
   </div>
-  <button
-    className="p-button p-component"
-    disabled={false}
-    type="submit"
-  >
-    save
-  </button>
+  automations.edit.save
 </form>
 `;

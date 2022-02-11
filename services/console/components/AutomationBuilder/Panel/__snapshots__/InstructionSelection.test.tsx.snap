@@ -119,11 +119,6 @@ exports[`should filter 1`] = `
     </noscript>
   </span>
   logical
-  <button
-    className="p-button p-component w-full text-left"
-    disabled={false}
-    onClick={[Function]}
-  />
   <span
     style={
       Object {
@@ -239,11 +234,6 @@ exports[`should filter 1`] = `
     </noscript>
   </span>
   workspace
-  <button
-    className="p-button p-component w-full text-left"
-    disabled={false}
-    onClick={[Function]}
-  />
 </div>
 `;
 
@@ -366,16 +356,6 @@ exports[`should render 1`] = `
     </noscript>
   </span>
   logical
-  <button
-    className="p-button p-component w-full text-left"
-    disabled={false}
-    onClick={[Function]}
-  />
-  <button
-    className="p-button p-component w-full text-left"
-    disabled={false}
-    onClick={[Function]}
-  />
   <span
     style={
       Object {
@@ -491,15 +471,5 @@ exports[`should render 1`] = `
     </noscript>
   </span>
   workspace
-  <button
-    className="p-button p-component w-full text-left"
-    disabled={false}
-    onClick={[Function]}
-  />
-  <button
-    className="p-button p-component w-full text-left"
-    disabled={false}
-    onClick={[Function]}
-  />
 </div>
 `;
