@@ -22,21 +22,6 @@ export const WorkspacesView = () => {
     [workspaces]
   );
 
-  workspaces.set('1', {
-    id: '1',
-    name: 'foo',
-    automations: {},
-    createdAt: '2021-12-15',
-    updatedAt: '2021-12-15',
-  });
-  workspaces.set('42', {
-    id: '42',
-    name: 'bar',
-    automations: {},
-    createdAt: '2021-12-15',
-    updatedAt: '2021-12-15',
-  });
-
   const createWorkspace = useCallback(async () => {
     setLoading(true);
     const { id } = await create(t('create.defaultName'));
