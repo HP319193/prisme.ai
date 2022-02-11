@@ -1,13 +1,16 @@
-import { Layout, Button, Text } from '@prisme.ai/design-system';
+import { Layout, Button, Text, Space, Title } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { Card } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Workspace } from '../api/types';
 import Header from '../components/Header';
 import { useWorkspaces } from '../components/WorkspacesProvider';
+import icon from '../icons/icon-workspace.svg';
 
 export const WorkspacesView = () => {
   const { t } = useTranslation('workspaces');
@@ -47,20 +50,45 @@ export const WorkspacesView = () => {
                   </Link>,
                 ]}
               >
-                <Text>{name}</Text>
+                <div className="flex grow items-center justify-center flex-col text-center">
+                  <Space direction="vertical">
+                    <Image
+                      src={icon}
+                      width={48}
+                      height={48}
+                      className="rounded text-blue"
+                    />
+                    <Title level={4}>{name}</Title>
+                    <Text type="grey">
+                      {t('workspaces.defaultDescription')}
+                    </Text>
+                  </Space>
+                </div>
               </Card>
             ))}
-            <Card
-              className="!m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
-              actions={[
-                <Button onClick={createWorkspace} disabled={loading}>
-                  {t('create.label')}
-                </Button>,
-              ]}
-            >
-              {t('create.description', {
-                context: workspaces.size === 0 ? 'first' : '',
-              })}
+            <Card className="!m-8 w-64 h-96 flex flex-col justify-between overflow-hidden !bg-transparent !border-2">
+              <div className="flex grow items-center justify-between flex-col text-center">
+                <div className="flex items-center flex-col text-center mt-20">
+                  <Button
+                    variant="primary"
+                    onClick={createWorkspace}
+                    disabled={loading}
+                    className="!h-10 !w-10 !p-0 !flex items-center justify-center mb-5"
+                  >
+                    <PlusOutlined />
+                  </Button>
+                  <Title level={4}>
+                    {t('create.label', {
+                      context: workspaces.size === 0 ? 'first' : '',
+                    })}
+                  </Title>
+                </div>
+                <Text type="grey">
+                  {t('create.description_sub', {
+                    context: workspaces.size === 0 ? 'first' : '',
+                  })}
+                </Text>
+              </div>
             </Card>
           </div>
         </div>

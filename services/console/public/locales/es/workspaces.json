@@ -1,7 +1,8 @@
 {
   "workspaces": {
     "title": "Espacios de trabajo y aplicaciones — $t(common:main.title)",
-    "description": "Crear nuevos espacios de trabajo y aplicaciones, editarlos y ejecutarlos"
+    "description": "Crear nuevos espacios de trabajo y aplicaciones, editarlos y ejecutarlos",
+    "defaultDescription": "Creado por ti"
   },
   "workspace": {
     "title": "\"{{name}}\" Espacios de trabajo — $t(common:main.title)",
@@ -9,9 +10,9 @@
   },
   "create": {
     "description_first": "Cree su primer espacio de trabajo para empezar a automatizar su trabajo",
-    "description": "Crear un nuevo espacio de trabajo",
+    "description": "Nuevo espacio de trabajo",
     "label": "Crear un espacio de trabajo",
-    "defaultName": "Espacio de trabajo"
+    "defaultName": "Y empieza a automatizar y mejorar"
   },
   "edit": {
     "label": "Editar"

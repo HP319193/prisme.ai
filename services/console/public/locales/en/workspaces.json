@@ -1,7 +1,8 @@
 {
   "workspaces": {
     "title": "Workspaces and Applications — $t(common:main.title)",
-    "description": "Create new Workspaces and new Apps, edit them, and run them"
+    "description": "Create new Workspaces and new Apps, edit them, and run them",
+    "defaultDescription": "Created by you"
   },
   "workspace": {
     "title": "\"{{name}}\" Workspace — $t(common:main.title)",
@@ -9,9 +10,10 @@
   },
   "create": {
     "description_first": "Create your first workspace to start automating your work",
-    "description": "Create a new workspace",
+    "description": "New workspace",
     "label": "Create a workspace",
-    "defaultName": "Workspace"
+    "defaultName": "Workspace",
+    "description_sub": "And start automating and enhancing"
   },
   "edit": {
     "label": "Edit"
