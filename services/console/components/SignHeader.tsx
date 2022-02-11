@@ -1,4 +1,4 @@
-import Image from 'next/Image';
+import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import { Title } from '@prisme.ai/design-system';
 

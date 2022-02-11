@@ -20,7 +20,7 @@ jest.mock('next/router', () => {
     }),
   };
 });
-jest.mock('next/Image', () => {
+jest.mock('next/image', () => {
   return ({ src }: any) => <div>{src}</div>;
 });
 
