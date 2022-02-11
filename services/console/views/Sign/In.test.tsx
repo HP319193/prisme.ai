@@ -24,10 +24,6 @@ jest.mock('next/image', () => {
   return ({ src }: any) => <div>{src}</div>;
 });
 
-jest.mock('primereact/fieldset', () => ({
-  Fieldset: ({ children }: any) => children,
-}));
-
 beforeEach(() => {
   const { mock } = useUser() as any;
   mock.user = null;

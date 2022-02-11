@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Messages } from 'primereact/messages';
 import { Form } from 'react-final-form';
 
 import { useUser } from '../../components/UserProvider';
@@ -13,9 +12,9 @@ import {
   Space,
   Col,
 } from '@prisme.ai/design-system';
-import Fieldset from '../../layouts/Fieldset';
 import Field from '../../layouts/Field';
 import SignHeader from '../../components/SignHeader';
+import { notification } from 'antd';
 
 interface Values {
   email: string;
@@ -26,7 +25,6 @@ export const SignIn = () => {
   const { t } = useTranslation('sign');
   const { push } = useRouter();
   const { user, loading, error, signin } = useUser();
-  const messages = useRef<Messages>(null);
 
   const submit = useCallback(
     async ({ email, password }: Values) => {
@@ -36,11 +34,10 @@ export const SignIn = () => {
   );
 
   useEffect(() => {
-    if (!messages.current || !error) return;
-
-    messages.current.show({
-      severity: 'error',
-      summary: t('in.error', { context: error.error }),
+    if (!error) return;
+    notification.error({
+      message: t('in.error', { context: error.error }),
+      placement: 'bottomRight',
     });
   }, [error, t]);
 
