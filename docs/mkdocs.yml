@@ -38,11 +38,14 @@ extra:
 
 nav:
   - i18n.home: index.md
+  - i18n.getstarted:
+      - i18n.index: getstarted/index.md
+      - i18n.configuration: getstarted/configuration.md
+      - i18n.permissions: getstarted/permissions.md
   - i18n.contributing:
       - i18n.index: contributing/index.md
-      - i18n.functionnalRequirements: contributing/functionnalRequirements.md
-      - i18n.architecture: contributing/architecture.md
-      - i18n.permissions: contributing/permissions.md
+  - i18n.architecture:
+      - i18n.index: contributing/architecture.md
       - i18n.console:
           - i18n.specifications: contributing/technical/console/specifications.md
       - i18n.events:

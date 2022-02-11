@@ -6,7 +6,7 @@ serve() {
     return 1
   fi
   mkdocs serve -f $tmp_config
-  rm $tmp_config
+  # rm $tmp_config
 }
 
 usage() {
