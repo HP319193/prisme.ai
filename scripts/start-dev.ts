@@ -6,9 +6,10 @@ import yaml from "js-yaml";
 const SERVICES = "./services";
 const DOCKERFILE = "docker-compose.yml";
 const DEV_SERVICE_CONFIG_PATH = "/tmp/prismeai";
-const GATEWAY_CONFIG = `${DEV_SERVICE_CONFIG_PATH}/prisme-gateway.yml`;
+const GATEWAY_SERVICE: string = "api-gateway";
 const SERVICES_PORTS: Record<string, string> = {
-  console: "3001",
+  console: "3000",
+  [GATEWAY_SERVICE]: "3001",
   workspaces: "3002",
   runtime: "3003",
   events: "3004",
@@ -24,6 +25,13 @@ interface Service {
 }
 
 const runDocker = (services: Service[]) => {
+  const dockerSharedEnvs: Record<string, string> = {};
+  if (services.find(({ service, dev }) => service === GATEWAY_SERVICE && dev)) {
+    dockerSharedEnvs[
+      "GATEWAY_API_HOST"
+    ] = `http://host.docker.internal:${SERVICES_PORTS[GATEWAY_SERVICE]}`;
+  }
+
   const dockerConfigs = services.map(({ service, dev }) => {
     const configPath = `${SERVICES}/${service}/${DOCKERFILE}`;
     const file = fs.readFileSync(configPath);
@@ -32,8 +40,12 @@ const runDocker = (services: Service[]) => {
     if (dev) {
       delete config.services[service];
     } else {
+      config.services[service].environment = {
+        ...config.services[service]?.environment,
+        ...dockerSharedEnvs,
+      };
       // Current service is gateway api from docker image :
-      if (service === "api-gateway") {
+      if (service === GATEWAY_SERVICE) {
         // Update any local service endpoint with docker host gateway
         const envs: Record<string, string> = services
           .filter(({ dev }) => dev)
@@ -74,20 +86,14 @@ const runDocker = (services: Service[]) => {
 };
 
 const getEnvs = (localServices: string[]): Record<string, string> => {
-  if (localServices.includes("api-gateway")) {
+  if (localServices.includes(GATEWAY_SERVICE)) {
     // api gateway is in dev mode and must join dockerized other services
-    try {
-      const original = fs.readFileSync(
-        "./services/api-gateway/gateway.config.yml"
-      );
-      const newConfig = `${original}`.replace(/(url\:\s").+(:\d+")/g, (m) => {
-        return m.replace(/(url\:\s").+(:\d+")/, "$1http://localhost$2");
-      });
-      fs.writeFileSync(GATEWAY_CONFIG, newConfig);
-      return {
-        GATEWAY_CONFIG_PATH: GATEWAY_CONFIG,
-      };
-    } catch (e) {}
+    return {
+      WORKSPACES_API_URL: `http://localhost:${SERVICES_PORTS["workspaces"]}`,
+      RUNTIME_API_URL: `http://localhost:${SERVICES_PORTS["runtime"]}`,
+      CONSOLE_API_URL: `http://localhost:${SERVICES_PORTS["console"]}`,
+      EVENTS_API_URL: `http://localhost:${SERVICES_PORTS["events"]}`,
+    };
   }
 
   return {};
