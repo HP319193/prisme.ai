@@ -28,10 +28,12 @@ export const ConditionForm: FC<ConditionFormProps> = ({
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>
             <Fieldset legend={t('automations.condition.edit.title')}>
-              <Field field="condition" type="string" required />
-              <Button type="submit">
-                {t('automations.condition.edit.save')}
-              </Button>
+              <>
+                <Field field="condition" type="string" required />
+                <Button type="submit">
+                  {t('automations.condition.edit.save')}
+                </Button>
+              </>
             </Fieldset>
           </form>
         )}
