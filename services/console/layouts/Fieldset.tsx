@@ -1,8 +1,16 @@
-import { Fieldset as PRFieldset, FieldsetProps } from 'primereact/fieldset';
-import { FC } from 'react';
+import { FC, ReactElement } from 'react';
+import { Divider } from 'antd';
 
-export const Fieldset: FC<FieldsetProps> = (props) => (
-  <PRFieldset className="pt-5 mb-4" {...props} />
+export interface FieldsetProps {
+  legend: string;
+  children: ReactElement | string;
+}
+
+export const Fieldset: FC<FieldsetProps> = ({ legend, children }) => (
+  <div>
+    <Divider orientation="left">{legend}</Divider>
+    {children}
+  </div>
 );
 
 export default Fieldset;
