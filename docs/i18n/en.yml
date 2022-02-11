@@ -12,9 +12,10 @@ architecture: Architecture
 console: Console
 runtime: Runtime
 events: Events
-apiGateway: ApiGateway
+apiGateway: API Gateway
 workspaces: Workspaces
 projects: Projects
 specifications: Specifications
-permissions: Roles and Permissions
+permissions: Permissions and API Keys
+authentication_access_control: Authentication and Authorization
 automations: Automations

@@ -34,3 +34,6 @@ In addition, 3 native & persistent contexts are provided :
 - **global** : this context is shared by all authenticated users for the same workspace.  
 - **user** : this context holds user-specific data  
 - **session** : this context holds session-specific data. It is automatically removed **15 minutes** (configurable with **CONTEXT_SESSION_EXPIRE_TIME** env var) after the last write access (i.e by **set** or **output**)
+
+**Note that user and session contexts rely on an authenticated user id for being persisted**.  
+In case the automation is triggered from a webhook without any session cookie / token, **user** and **session** will not be persisted, making any variable **set** not visible from subsequent requests (and possibly silently breaking some workspace functionnality).

@@ -7,7 +7,11 @@
 ## API Gateway
 
 This is the only public endpoint of the architecture.  
-The API Gateway enforces authentication, authorization, rate limits and others policies on incoming requests before dispatching them to the right micro service.
+The API Gateway enforces authentication, authorization (on API level only), rate limits and others policies on incoming requests before dispatching them to the right micro service.  
+
+**As only the API Gateway enforces authentication, every other backend microservices must be securely kept inside a private & trusted network**.  
+Other backend microservices will rely on a `x-prismeai-user-id` header (automatically set by api-gateway) when needing access to authenticated user identity.  
+[More details on Authentication & Authorization](./authentication_access_control)
 
 **Required databases :**  
 - **Document database** : Stores user accounts & their API level permissions (i.e can access events API, workspaces API, ...)  
