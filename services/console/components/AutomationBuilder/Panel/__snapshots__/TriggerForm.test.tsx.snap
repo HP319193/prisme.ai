@@ -37,48 +37,7 @@ exports[`should render 1`] = `
           >
             <span
               className="flex "
-            >
-              <div
-                className="p-chips p-component p-inputwrapper p-inputwrapper-filled"
-                id={null}
-                style={null}
-              >
-                <ul
-                  className="p-inputtext p-chips-multiple-container"
-                  onClick={[Function]}
-                >
-                  <li
-                    className="p-chips-token p-highlight"
-                  >
-                    <span
-                      className="p-chips-token-label"
-                    >
-                      foo
-                    </span>
-                    <span
-                      className="p-chips-token-icon pi pi-times-circle"
-                      onClick={[Function]}
-                    />
-                  </li>
-                  <li
-                    className="p-chips-input-token"
-                  >
-                    <input
-                      aria-labelledby={null}
-                      disabled={null}
-                      name="events"
-                      onBlur={[Function]}
-                      onFocus={[Function]}
-                      onKeyDown={[Function]}
-                      onPaste={[Function]}
-                      placeholder={null}
-                      readOnly={false}
-                      type="text"
-                    />
-                  </li>
-                </ul>
-              </div>
-            </span>
+            />
           </div>
         </div>
       </div>

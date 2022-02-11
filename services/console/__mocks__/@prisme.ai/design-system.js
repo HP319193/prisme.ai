@@ -85,3 +85,7 @@ export function Table({ children = null }) {
 export function Text({ children = null }) {
   return children;
 }
+
+export function TagEditable({ children = null }) {
+  return children;
+}

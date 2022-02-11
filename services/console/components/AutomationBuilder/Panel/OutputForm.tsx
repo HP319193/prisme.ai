@@ -8,7 +8,7 @@ import { CodeEditorInline } from '../../CodeEditor/lazy';
 
 interface OutputFormProps {
   output?: string;
-  onSubmit: (v: string) => void;
+  onSubmit: (v: { output: any }) => void;
 }
 
 export const OutputForm: FC<OutputFormProps> = ({ output, onSubmit }) => {
