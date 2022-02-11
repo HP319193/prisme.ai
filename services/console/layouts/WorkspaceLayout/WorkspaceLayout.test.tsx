@@ -3,15 +3,11 @@ import { getLayout } from './index';
 import renderer, { act } from 'react-test-renderer';
 import { useRouter } from 'next/router';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
-import EditableTitle from '../../components/EditableTitle';
-import { Button } from 'primereact/button';
-import AutomationsSidebar from '../../views/AutomationsSidebar';
-import SidePanel from '../SidePanel';
 import Events from '../../api/events';
 import api from '../../api/api';
 import { useWorkspace, WorkspaceContext } from './context';
 import { Event } from '../../api/types';
-import { confirmDialog } from 'primereact/confirmdialog';
+import { notification } from 'antd';
 
 jest.useFakeTimers();
 
@@ -56,15 +52,6 @@ jest.mock('../../api/events', () => {
     }
   }
   return Events;
-});
-
-jest.mock('primereact/button', () => {
-  return { Button: () => null };
-});
-
-jest.mock('primereact/confirmdialog', () => {
-  const mock = jest.fn();
-  return { confirmDialog: mock };
 });
 
 beforeEach(() => {
@@ -281,8 +268,8 @@ it('should save', async () => {
       <Test />
     </WorkspaceLayout>
   );
-  act(() => {
-    return;
+  await act(async () => {
+    await true;
   });
   act(() => {
     context.setNewSource({
@@ -303,5 +290,9 @@ it('should save', async () => {
     createdAt: '',
     updatedAt: '',
     id: '',
+  });
+  expect(notification.success).toHaveBeenCalledWith({
+    message: 'expert.save.confirm',
+    placement: 'bottomRight',
   });
 });

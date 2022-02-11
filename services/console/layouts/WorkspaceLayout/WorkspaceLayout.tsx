@@ -134,7 +134,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   const setCurrent = useRef(async (id: string) => {
     setLoading(true);
-    const workspace = await fetch(id);
+    await fetch(id);
     setLoading(false);
   });
 

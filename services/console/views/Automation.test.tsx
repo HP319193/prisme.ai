@@ -6,6 +6,7 @@ import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { PageHeader } from '@prisme.ai/design-system';
+import { notification } from 'antd';
 
 jest.mock('../layouts/WorkspaceLayout', () => {
   const mock = {
@@ -108,6 +109,7 @@ it('should save', () => {
   });
 
   expect(useWorkspaces().updateAutomation).toHaveBeenCalled();
+  expect(notification.success).toHaveBeenCalledWith;
 });
 
 it('should save on shortcut', async () => {
@@ -119,7 +121,7 @@ it('should save on shortcut', async () => {
   const e = { preventDefault: jest.fn() };
   expect(useKeyboardShortcut).toHaveBeenCalled();
   await act(async () => {
-    (useKeyboardShortcut as jest.Mock).mock.calls[0][0][0].command(e);
+    await (useKeyboardShortcut as jest.Mock).mock.calls[0][0][0].command(e);
   });
   expect(e.preventDefault).toHaveBeenCalled();
   expect(useWorkspaces().updateAutomation).toHaveBeenCalled();

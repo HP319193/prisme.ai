@@ -9,9 +9,6 @@ import { Workspace } from '../api/types';
 import Header from '../components/Header';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 
-import CardsContainer from '../layouts/CardsContainer';
-import Main from '../layouts/Main';
-
 export const WorkspacesView = () => {
   const { t } = useTranslation('workspaces');
   const { push } = useRouter();
@@ -37,7 +34,7 @@ export const WorkspacesView = () => {
       </Head>
       <Layout Header={<Header />}>
         <div className="!bg-blue-200 flex grow m-4 rounded">
-          <CardsContainer className="justify-start">
+          <div className="flex flex-wrap align-start justify-start">
             {workspacesList.map(({ name, id }) => (
               <Card
                 key={id}
@@ -65,7 +62,7 @@ export const WorkspacesView = () => {
                 context: workspaces.size === 0 ? 'first' : '',
               })}
             </Card>
-          </CardsContainer>
+          </div>
         </div>
       </Layout>
     </>

@@ -67,10 +67,7 @@ it('should copy endpoint', () => {
     writeText: jest.fn(),
   };
 
-  act(() => {
-    root.root.findByType(Trans).props.components.a.props.onClick(e);
-  });
-
+  root.root.findByType(Trans).props.components.a.props.onClick(e);
   expect(e.preventDefault).toHaveBeenCalled();
   expect(e.stopPropagation).toHaveBeenCalled();
   expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(

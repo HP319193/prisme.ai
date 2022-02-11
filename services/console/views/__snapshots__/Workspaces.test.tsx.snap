@@ -5,33 +5,9 @@ exports[`should render empty 1`] = `
   className="!bg-blue-200 flex grow m-4 rounded"
 >
   <div
-    className="justify-start flex flex-wrap align-start justify-start"
+    className="flex flex-wrap align-start justify-start"
   >
-    <div
-      className="ant-card ant-card-bordered !m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
-    >
-      <div
-        className="ant-card-body"
-        style={Object {}}
-      >
-        create.description
-      </div>
-      <ul
-        className="ant-card-actions"
-      >
-        <li
-          style={
-            Object {
-              "width": "100%",
-            }
-          }
-        >
-          <span>
-            create.label
-          </span>
-        </li>
-      </ul>
-    </div>
+    create.description
   </div>
 </div>
 `;
@@ -41,95 +17,11 @@ exports[`should render some workspaces 1`] = `
   className="!bg-blue-200 flex grow m-4 rounded"
 >
   <div
-    className="justify-start flex flex-wrap align-start justify-start"
+    className="flex flex-wrap align-start justify-start"
   >
-    <div
-      className="ant-card ant-card-bordered !m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
-    >
-      <div
-        className="ant-card-body"
-        style={Object {}}
-      >
-        foo
-      </div>
-      <ul
-        className="ant-card-actions"
-      >
-        <li
-          style={
-            Object {
-              "width": "100%",
-            }
-          }
-        >
-          <span>
-            <a
-              href="/workspaces/1"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
-            >
-              edit.label
-            </a>
-          </span>
-        </li>
-      </ul>
-    </div>
-    <div
-      className="ant-card ant-card-bordered !m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
-    >
-      <div
-        className="ant-card-body"
-        style={Object {}}
-      >
-        bar
-      </div>
-      <ul
-        className="ant-card-actions"
-      >
-        <li
-          style={
-            Object {
-              "width": "100%",
-            }
-          }
-        >
-          <span>
-            <a
-              href="/workspaces/42"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
-            >
-              edit.label
-            </a>
-          </span>
-        </li>
-      </ul>
-    </div>
-    <div
-      className="ant-card ant-card-bordered !m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
-    >
-      <div
-        className="ant-card-body"
-        style={Object {}}
-      >
-        create.description
-      </div>
-      <ul
-        className="ant-card-actions"
-      >
-        <li
-          style={
-            Object {
-              "width": "100%",
-            }
-          }
-        >
-          <span>
-            create.label
-          </span>
-        </li>
-      </ul>
-    </div>
+    foo
+    bar
+    create.description
   </div>
 </div>
 `;

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Messages } from 'primereact/messages';
 import { Form } from 'react-final-form';
-
 import Field from '../../layouts/Field';
 import Fieldset from '../../layouts/Fieldset';
 import { useUser } from '../../components/UserProvider';

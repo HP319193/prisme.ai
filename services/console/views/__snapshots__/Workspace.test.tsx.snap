@@ -19,28 +19,7 @@ Array [
   >
     <div
       className="flex flex-1 align-center justify-center"
-    >
-      <div
-        className="ant-spin ant-spin-spinning !flex justify-center items-center "
-      >
-        <span
-          className="ant-spin-dot ant-spin-dot-spin"
-        >
-          <i
-            className="ant-spin-dot-item"
-          />
-          <i
-            className="ant-spin-dot-item"
-          />
-          <i
-            className="ant-spin-dot-item"
-          />
-          <i
-            className="ant-spin-dot-item"
-          />
-        </span>
-      </div>
-    </div>
+    />
   </div>,
   <div
     className="flex grow h-full flex-col"
