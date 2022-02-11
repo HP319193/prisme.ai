@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { Form } from 'react-final-form';
 import Fieldset from '../../../layouts/Fieldset';
 import FieldContainer from '../../../layouts/Field';
@@ -12,10 +12,23 @@ interface OutputFormProps {
 }
 
 export const OutputForm: FC<OutputFormProps> = ({ output, onSubmit }) => {
+  const submitAsJSON = useCallback(
+    ({ output }: { output: string }) => {
+      try {
+        const parsedValue = JSON.parse(output.replace('\n', ''));
+        onSubmit({ output: parsedValue });
+      } catch (e: any) {
+        console.error('error parsing output value :', output);
+        console.error(e);
+      }
+    },
+    [onSubmit]
+  );
+
   const { t } = useTranslation('workspaces');
   return (
     <div className="flex flex-1 flex-col h-full">
-      <Form onSubmit={onSubmit} initialValues={{ output }}>
+      <Form onSubmit={submitAsJSON} initialValues={{ output }}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>
             <Fieldset legend={t('automations.output.edit.title')}>
@@ -24,11 +37,13 @@ export const OutputForm: FC<OutputFormProps> = ({ output, onSubmit }) => {
                 label={t('automations.output.edit.label')}
               >
                 {({ input }) => (
-                  <CodeEditorInline
-                    mode="json"
-                    value={input.value}
-                    onChange={input.onChange}
-                  />
+                  <div>
+                    <CodeEditorInline
+                      mode="json"
+                      value={input.value}
+                      onChange={input.onChange}
+                    />
+                  </div>
                 )}
               </FieldContainer>
             </Fieldset>
