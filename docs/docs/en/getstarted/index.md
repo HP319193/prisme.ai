@@ -4,7 +4,7 @@ To install Prisme.ai, first make sure that `git`, `npm`, `docker` and `NodeJS` (
 
 Then, you can type the following commands :  
 ```
-git cone https://gitlab.com/prisme.ai/prisme.ai.git  
+git clone https://gitlab.com/prisme.ai/prisme.ai.git  
 npm install  
 npm start  # Type 'Enter' for Docker-mode or 'a' then 'Enter' for local NodeJS start  
 ```  

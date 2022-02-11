@@ -74,29 +74,30 @@ Produced events :
 
 Below are the results of differents performance tests conducted on this testing automation :  
 ```yaml
-stressTest:
-  name: stressTest
+simpleUserJourney:
+  name: performance testing automation
   when:
     endpoint: true
   do:
     - set:
         name: name
-        value: antoine
-        lifespan: '2'
+        value: Doe
+        lifespan: "2"
     - conditions:
-        '{{name}} == antoine':
+        "{{name}} == Doe":
           - emit:
               event: apps.test
               payload:
-                lastName: antoine
+                lastName: John
         default:
           - emit:
               event: apps.newtest
               payload:
-                lastName: else
+              lastName: Smith
   output:
-    content: '{{name}}'
-    body: '{{body}}'
+    content: "{{name}}"
+    requestBody: "{{body}}"
+
 ```  
 This automation is kept simple in order to avoid external interactions that might biase the results : a single `set`, a `conditions` block testing this variable and an `emit`.  
 
@@ -107,12 +108,50 @@ During these tests, the `runtime` instances were connected to :
 MongoDB primary node never exceeded 7% CPU and 30% Memory usage.  
 Redis never exceeded 5% CPU and 4% Memory usage.
 
-### Scenario 1 : 100 concurrent users during 10 minutes, 1 runtime instance  
+See [architecture schema](../../../#architecture)  
+
+Testing script :  
+```javascript
+import http from 'k6/http';
+import { check, group, sleep } from 'k6';
+
+export const options = {
+  stages: [
+    { duration: '5m', target: 100 }, // simulate ramp-up of traffic from 1 to 100 users over 5 minutes.
+    { duration: '10m', target: 100 }, // stay at 100 users for 10 minutes
+    { duration: '5m', target: 0 }, // ramp-down to 0 users
+  ],
+  thresholds: {
+    'http_req_duration': ['p(99)<1500'], // 99% of requests must complete below 1.5s
+    'webhook run successfully': ['p(99)<1500'], // 99% of requests must complete below 1.5s
+  },
+};
+
+const BASE_URL = 'https://api.eda.prisme.ai';
+const USERNAME = 'someAccountEmail';
+const PASSWORD = 'someAccountPassword';
+const WORKSPACE_ID= "someWorkspaceId"
+
+export default () => {
+  const webhookRes = http.post(`${BASE_URL}/v2/workspaces/${WORKSPACE_ID}/webhooks/Automation`, {
+    foo: "too"
+  });
+
+  check(webhookRes, {
+    'webhook run successfully': (resp) => resp.status === 200,
+    'is body present': (resp) => resp.json().hasOwnProperty('body'),
+  });
+
+  sleep(1);
+};
+```
+
+### Scenario 1 : 100 concurrent users during 10 minutes, 1 runtime/events/api-gateway instance  
 The 100 concurrent users gradually reached their maximum number during the first 2 minutes, then stayed at that level during 5 minutes, before gradually decreasing during 2 minutes.  
 
 ![image](/assets/images/performance/runtime_100VU_1vCore.png)
 
-### Scenario 2 : 100 concurrent users during 10 minutes, 2 runtime instances
+### Scenario 2 : 100 concurrent users during 10 minutes, 2 runtime/events/api-gateway instances
 The 100 concurrent users gradually reached their maximum number during the first 2 minutes, then stayed at that level during 5 minutes, before gradually decreasing during 2 minutes.  
 
 ![image](/assets/images/performance/runtime_100VU_2vCore.png)
