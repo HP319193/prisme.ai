@@ -41,7 +41,7 @@ export const Panel: FC<PanelProps> = ({
       `}
     >
       <SidePanel className="!bg-white overflow-hidden h-full">
-        <div className="flex flex-col overflow-hidden h-full">
+        <div className="flex flex-col overflow-hidden h-full pb-12">
           <div className="flex justify-end">
             <Button variant="grey" onClick={() => setHidden(true)}>
               <CloseCircleOutlined />

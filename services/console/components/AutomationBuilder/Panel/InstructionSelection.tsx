@@ -61,7 +61,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
                 <Button
                   key={name}
                   onClick={() => onSubmit(name)}
-                  className="w-full text-left"
+                  className="w-full text-left !h-fit"
                 >
                   <ListItem title={name} /*content={description}*/ />
                 </Button>
