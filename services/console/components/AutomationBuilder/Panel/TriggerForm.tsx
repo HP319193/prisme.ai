@@ -1,10 +1,10 @@
 import { useTranslation } from 'next-i18next';
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import { Form, useField } from 'react-final-form';
 import FieldContainer from '../../../layouts/Field';
 import Fieldset from '../../../layouts/Fieldset';
 import { Chips } from 'primereact/chips';
-import { Button } from 'primereact/button';
+import { Button } from '@prisme.ai/design-system';
 import { InputSwitch } from 'primereact/inputswitch';
 import { InputText } from 'primereact/inputtext';
 
@@ -63,7 +63,7 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onSubmit }) => {
             <Fieldset legend={t('automations.trigger.endpoint.title')}>
               <Endpoint />
             </Fieldset>
-            <Button>{t('automations.trigger.save')}</Button>
+            <Button type="submit">{t('automations.trigger.save')}</Button>
           </form>
         )}
       </Form>

@@ -1,5 +1,5 @@
 import { useTranslation } from 'next-i18next';
-import { Button } from 'primereact/button';
+import { Button } from '@prisme.ai/design-system';
 import { FC, useCallback } from 'react';
 import { Form as FFForm, FormRenderProps } from 'react-final-form';
 import { Field } from './Field';
@@ -11,7 +11,7 @@ interface FormProps {
   initialValues?: FormRenderProps['initialValues'];
 }
 export const Form: FC<FormProps> = ({ schema, onSubmit, ...formProps }) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation('workspaces');
   const properties = Object.keys(schema.properties || {}).reduce(
     (prev, name) => {
       if (prev[name].type === 'array') {
@@ -116,7 +116,7 @@ export const Form: FC<FormProps> = ({ schema, onSubmit, ...formProps }) => {
               oneOf={oneOf ? oneOf : undefined}
             />
           ))}
-          <Button type="submit">{t('save')}</Button>
+          <Button type="submit">{t('automations.edit.save')}</Button>
         </form>
       )}
     </FFForm>

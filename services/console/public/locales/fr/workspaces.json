@@ -72,7 +72,7 @@
         "help": "L'automatisation sera exécutées à chaque fois qu'une url sera appelée.",
         "custom": "Exécuter cette automatisation en appellant une adresse web"
       },
-      "save": "Enregistrer"
+      "save": "Enregistrer déclencheur"
     },
     "instruction": {
       "title_builtin": "Logique",
@@ -103,12 +103,13 @@
     },
     "edit": {
       "select": "Choisissez une instruction",
-      "builtin": "$t(automations.instruction.title_builtin)"
+      "builtin": "$t(automations.instruction.title_builtin)",
+      "save": "Enregistrer l'instruction"
     },
     "condition": {
       "edit": {
         "title": "Condition",
-        "submit": "Enregistrer",
+        "save": "Enregistrer condition",
         "submit_new": "Ajouter"
       }
     }

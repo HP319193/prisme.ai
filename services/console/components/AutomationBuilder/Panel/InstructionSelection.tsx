@@ -1,7 +1,7 @@
 import { ListItem, SearchInput, Space, Title } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
-import { Button } from 'primereact/button';
+import { Button } from '@prisme.ai/design-system';
 import { FC, useMemo, useState } from 'react';
 import { useAutomationBuilder } from '../context';
 
@@ -22,11 +22,12 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
     return instructionsSchemas
       .reduce<[string, string, { name: string; description?: string }[]][]>(
         (prev, [name, list, more]) => {
-          const matching = (search
-            ? Object.keys(list).filter((a) =>
-                `${name} ${a}`.toLowerCase().match(search.toLowerCase())
-              )
-            : Object.keys(list)
+          const matching = (
+            search
+              ? Object.keys(list).filter((a) =>
+                  `${name} ${a}`.toLowerCase().match(search.toLowerCase())
+                )
+              : Object.keys(list)
           ).map((name) => ({
             name,
             description: (list[name] || {}).description,

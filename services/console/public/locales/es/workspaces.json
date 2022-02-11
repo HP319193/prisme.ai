@@ -71,7 +71,7 @@
         "help": "La automatización se ejecutará cada vez que se llame a una url.",
         "custom": "Ejecuta esta automatización llamando a una dirección web"
       },
-      "save": "Registro"
+      "save": "guardar disparador"
     },
     "instruction": {
       "title_builtin": "Lógica",
@@ -90,12 +90,13 @@
     },
     "edit": {
       "select": "Elija una instrucción",
-      "builtin": "$t(automations.instruction.title_builtin)"
+      "builtin": "$t(automations.instruction.title_builtin)",
+      "save": "guardar instrucción"
     },
     "condition": {
       "edit": {
         "title": "Condición",
-        "submit": "Registro",
+        "save": "Registro condición",
         "submit_new": "Añadir"
       }
     }

@@ -1,5 +1,5 @@
 import { useTranslation } from 'next-i18next';
-import { Button } from 'primereact/button';
+import { Button } from '@prisme.ai/design-system';
 import { FC, useCallback } from 'react';
 import { Form } from 'react-final-form';
 import Fieldset from '../../../layouts/Fieldset';
@@ -30,7 +30,7 @@ export const ConditionForm: FC<ConditionFormProps> = ({
             <Fieldset legend={t('automations.condition.edit.title')}>
               <Field field="condition" type="string" required />
               <Button type="submit">
-                {t('automations.condition.edit.submit')}
+                {t('automations.condition.edit.save')}
               </Button>
             </Fieldset>
           </form>

@@ -72,7 +72,7 @@
         "help": "Automation will be run everytime the endpoint will be hit.",
         "custom": "Execute this automation by calling a web address"
       },
-      "save": "Enregistrer"
+      "save": "Save trigger"
     },
     "instruction": {
       "title_builtin": "Logical",
@@ -91,12 +91,13 @@
     },
     "edit": {
       "select": "Select instruction",
-      "builtin": "Logical"
+      "builtin": "Logical",
+      "save": "Save instruction"
     },
     "condition": {
       "edit": {
         "title": "Condition",
-        "submit": "Save",
+        "save": "Save condition",
         "submit_new": "Add"
       }
     }
