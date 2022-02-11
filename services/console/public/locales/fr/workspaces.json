@@ -66,13 +66,13 @@
         "help": "Bientôt disponible"
       },
       "endpoint": {
-        "title": "Adresse web",
+        "title": "URL",
         "display": "<a>L'adresse web<icon /></a> est visitée",
-        "copied": "L'adresse web a bien été copiée dans votre presse-papier",
+        "copied": "L'URL a bien été copiée dans votre presse-papier",
         "help": "L'automatisation sera exécutées à chaque fois qu'une url sera appelée.",
-        "custom": "Exécuter cette automatisation en appellant une adresse web"
+        "custom": "Exécuter cette automatisation en appellant une URL"
       },
-      "save": "Enregistrer déclencheur"
+      "save": "Ajouter"
     },
     "instruction": {
       "title_builtin": "Logique",
@@ -92,7 +92,7 @@
       "edit": {
         "title": "Retourner la valeur :",
         "label": "Valeur",
-        "save": "Enregistrer"
+        "save": "Ajouter"
       }
     },
     "node": {
@@ -104,12 +104,12 @@
     "edit": {
       "select": "Choisissez une instruction",
       "builtin": "$t(automations.instruction.title_builtin)",
-      "save": "Enregistrer l'instruction"
+      "save": "Ajouter"
     },
     "condition": {
       "edit": {
         "title": "Condition",
-        "save": "Enregistrer condition",
+        "save": "Ajouter",
         "submit_new": "Ajouter"
       }
     }

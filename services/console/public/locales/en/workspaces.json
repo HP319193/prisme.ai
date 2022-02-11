@@ -66,13 +66,13 @@
         "help": "Soon available"
       },
       "endpoint": {
-        "title": "Endpoint",
-        "display": "<a>The endpoint <icon /></a> is hit",
-        "copied": "Endpoint has been copied in your clipboard",
-        "help": "Automation will be run everytime the endpoint will be hit.",
+        "title": "URL",
+        "display": "<a>The URL <icon /></a> is hit",
+        "copied": "URL has been copied in your clipboard",
+        "help": "Automation will be run everytime the URL will be hit.",
         "custom": "Execute this automation by calling a web address"
       },
-      "save": "Save trigger"
+      "save": "Add"
     },
     "instruction": {
       "title_builtin": "Logical",
@@ -92,12 +92,12 @@
     "edit": {
       "select": "Select instruction",
       "builtin": "Logical",
-      "save": "Save instruction"
+      "save": "Add"
     },
     "condition": {
       "edit": {
         "title": "Condition",
-        "save": "Save condition",
+        "save": "Add",
         "submit_new": "Add"
       }
     }
