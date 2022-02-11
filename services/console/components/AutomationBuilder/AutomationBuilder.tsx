@@ -159,6 +159,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     setInstructionEditing(undefined);
     setConditionEditing(undefined);
     setTriggerEditing(undefined);
+    setOutputEditing(undefined);
   }, []);
 
   const editInstructionDetails = useCallback(

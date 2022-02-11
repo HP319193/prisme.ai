@@ -96,12 +96,10 @@ export class Flow {
     instructions,
     parentId,
     startAt,
-    root,
   }: {
     instructions: Prismeai.InstructionList;
     parentId: string;
     startAt: { x: number; y: number };
-    root?: boolean;
   }) {
     let prevNode: Node | null;
     let position = startAt;
@@ -109,8 +107,10 @@ export class Flow {
     if (!Array.isArray(instructions)) return [];
 
     const newNodes = [
-      ...instructions,
-      ...(root ? [] : [{ [Flow.BLOCK_EMPTY]: null }]),
+      { [Flow.BLOCK_EMPTY]: null },
+      ...instructions.reduce<Prismeai.InstructionList>((prev, instruction) => {
+        return [...prev, instruction, { [Flow.BLOCK_EMPTY]: null }];
+      }, []),
     ].map((instruction, k) => {
       const name = Object.keys(instruction)[0];
       const value = instruction[name as keyof typeof instruction]!;
@@ -136,7 +136,7 @@ export class Flow {
           id: `edge-${prevNode.id}-${id}`,
           source: prevNode.id,
           target: id,
-          type: name === Flow.BLOCK_EMPTY ? 'edge' : 'instruction',
+          type: 'edge',
           data: {
             parent: instructions,
             index: k,
@@ -167,6 +167,7 @@ export class Flow {
             ...position,
             y: Math.max(position.y, lastNode.position.y),
           };
+
           const edge = {
             id: `edge-${parentId}.${k + 1}-${lastNode.id}`,
             source: `${lastNode.id}`,
@@ -300,7 +301,6 @@ export class Flow {
       instructions: this.value.do,
       parentId: trigger.id,
       startAt: trigger.position,
-      root: true,
     });
 
     if (nodes[0]) {
@@ -312,7 +312,7 @@ export class Flow {
           parent: this.value.do,
           index: 0,
         },
-        type: nodes.length === 1 ? 'edge' : 'instruction',
+        type: 'edge',
         arrowHeadType: ArrowHeadType.Arrow,
       };
       this.edges.push(edge);
@@ -336,15 +336,16 @@ export class Flow {
       id: `edge-${lastNode.id}-output`,
       source: lastNode.id,
       target: 'output',
-      type: 'instruction',
+      type: 'edge',
       data: {
         parent: this.value.do,
-        index: this.value.do.length,
+        index: (this.value.do || []).length,
       },
       arrowHeadType: ArrowHeadType.Arrow,
     });
 
     const flow = [...this.nodes, ...this.edges];
+
     return flow;
   }
 }
