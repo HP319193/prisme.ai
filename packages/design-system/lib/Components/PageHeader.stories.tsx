@@ -18,7 +18,7 @@ const RightButtons = [
 ];
 
 const Template: Story<PageHeaderProps> = (args: any) => (
-  <PageHeader title={'Send mail automation'} {...args} />
+  <PageHeader title={<div>'Send mail automation'</div>} {...args} />
 );
 
 export const Default = Template.bind({});

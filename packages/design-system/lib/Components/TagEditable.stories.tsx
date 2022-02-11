@@ -21,8 +21,6 @@ const Template: Story<any> = (
   const [value, setValue] = useState(['test', 'test2']);
   const placeholder = 'type anything';
 
-  console.log('value is', value);
-
   return (
     <div className="w-72">
       <TagEditable

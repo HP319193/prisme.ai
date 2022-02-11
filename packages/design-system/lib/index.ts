@@ -16,5 +16,6 @@ export { default as Text } from './Components/Text';
 export { default as ListItem } from './Components/ListItem';
 export { default as Input } from './Components/Input';
 export { default as TagEditable } from './Components/TagEditable';
+export { default as EditableTitle } from './Components/EditableTitle';
 
 export { Row, Col, Space, Avatar, Divider, Table } from 'antd';

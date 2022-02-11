@@ -6,7 +6,7 @@ import Error404 from './Errors/404';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
-import { Button, PageHeader } from '@prisme.ai/design-system';
+import { Button, EditableTitle, PageHeader } from '@prisme.ai/design-system';
 import { LoadingOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
 
@@ -73,7 +73,14 @@ export const Automation = () => {
   return (
     <>
       <PageHeader
-        title={value.name}
+        title={
+          <EditableTitle
+            value={value.name}
+            onChange={updateTitle}
+            level={4}
+            className="!m-0 !ml-4"
+          />
+        }
         onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
           <Button onClick={save} disabled={saving} key="1">
