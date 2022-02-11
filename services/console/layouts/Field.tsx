@@ -29,7 +29,7 @@ export const FieldContainer: FC<FieldProps> = ({
   return (
     <div className="mb-5">
       <span
-        className={`flex flex-col ${label ? 'mx-2 ' : ''}${className || ''}`}
+        className={`flex ${label ? 'flex-col mx-2 ' : ''}${className || ''}`}
       >
         {label && <label htmlFor={name}>{label}</label>}
         {typeof children === 'function'
