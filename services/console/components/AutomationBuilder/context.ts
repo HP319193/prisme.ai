@@ -10,6 +10,7 @@ export interface AutomationBuilderContext {
     key: string
   ) => void;
   editTrigger: () => void;
+  editOutput: () => void;
   getApp: (
     instruction: string
   ) => {
@@ -30,6 +31,7 @@ export const automationBuilderContext = createContext<AutomationBuilderContext>(
     editInstruction() {},
     editCondition() {},
     editTrigger() {},
+    editOutput() {},
     getApp() {
       return {
         name: '',

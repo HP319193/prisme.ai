@@ -54,7 +54,6 @@
       "copied": "L'adresse a bien été copiée"
     },
     "trigger": {
-      "title": "Se déclenche quand",
       "events": {
         "title": "Évènements",
         "display_one": "L'évenement {{events}} survient",
@@ -87,8 +86,20 @@
       "label_conditions": "Conditions",
       "search": "Rechercher"
     },
+    "output": {
+      "label": "{{output}}",
+      "label_empty": "Indéfinie",
+      "edit": {
+        "title": "Retourner la valeur :",
+        "label": "Valeur",
+        "save": "Enregistrer"
+      }
+    },
     "node": {
-      "label": "{{instruction}} {{value, then}} {{value}}"
+      "title": "",
+      "title_trigger": "Se déclenche quand",
+      "title_output": "Sortie",
+      "label": "{{instruction}} {{value}}"
     },
     "edit": {
       "select": "Choisissez une instruction",

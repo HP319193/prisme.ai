@@ -154,11 +154,7 @@ Array [
               "visibility": "hidden",
             }
           }
-        >
-          <div
-            className="pi pi-times-circle"
-          />
-        </button>
+        />
       </div>
     </div>
     <div

@@ -26,7 +26,7 @@ Array [
       }
     >
       <button
-        className="pi pi-plus border-none bg-primary p-1 border-round z-1 text-xs cursor-pointer"
+        className="bg-graph-accent text-white rounded w-10 h-10"
         onClick={[Function]}
       />
     </div>

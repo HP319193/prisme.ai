@@ -27,6 +27,8 @@ import BUILTIN_INSTRUCTIONS from '@prisme.ai/validation/instructions.json';
 import { useTranslation } from 'next-i18next';
 import TriggerForm from './Panel/TriggerForm';
 import { generateEndpoint } from '../../utils/urls';
+import OutputBlock from './OutputBlock';
+import OutputForm from './Panel/OutputForm';
 
 interface AutomationBuilderProps {
   id?: string;
@@ -40,6 +42,7 @@ const nodeTypes = {
   conditions: Conditions,
   repeat: Repeat,
   empty: EmptyBlock,
+  outputValue: OutputBlock,
 };
 const edgeTypes = {
   edge: Edge,
@@ -73,6 +76,13 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     | {
         trigger?: Prismeai.When;
         onSubmit: (v: Prismeai.When) => void;
+      }
+    | undefined
+  >();
+  const [outputEditing, setOutputEditing] = useState<
+    | {
+        output?: Prismeai.Automation['output'];
+        onSubmit: (v: { output: Prismeai.Automation['output'] }) => void;
       }
     | undefined
   >();
@@ -259,6 +269,18 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     setPanelIsOpen(true);
   }, [hidePanel, onChange, value]);
 
+  const editOutput: AutomationBuilderContext['editOutput'] = useCallback(() => {
+    hidePanel();
+    setOutputEditing({
+      output: value.output,
+      onSubmit: ({ output }) => {
+        onChange({ ...value, output });
+        hidePanel();
+      },
+    });
+    setPanelIsOpen(true);
+  }, [hidePanel, onChange, value]);
+
   const getApp: AutomationBuilderContext['getApp'] = useCallback(
     (instruction) => {
       const [name, , { icon }] =
@@ -295,6 +317,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         editInstruction,
         editCondition,
         editTrigger,
+        editOutput,
         getApp,
         instructionsSchemas,
         getSchema,
@@ -321,6 +344,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
           {instructionEditing && <InstructionForm {...instructionEditing} />}
           {conditionEditing && <ConditionForm {...conditionEditing} />}
           {triggerEditing && <TriggerForm {...triggerEditing} />}
+          {outputEditing && <OutputForm {...outputEditing} />}
         </Panel>
       </div>
     </automationBuilderContext.Provider>

@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="flex flex-1 flex-col h-full"
+>
+  <form
+    onSubmit={[Function]}
+  >
+    <fieldset
+      className="p-fieldset p-component pt-5 mb-4"
+      id={null}
+      onClick={null}
+      style={null}
+    >
+      <legend
+        className="p-fieldset-legend p-unselectable-text"
+        onClick={[Function]}
+      >
+        <span
+          className="p-fieldset-legend-text"
+          id="pr_id_1_header"
+        >
+          automations.output.edit.title
+        </span>
+      </legend>
+      <div
+        aria-hidden={false}
+        aria-labelledby="pr_id_1_header"
+        className="p-toggleable-content"
+        id="pr_id_1_content"
+        role="region"
+      >
+        <div
+          className="p-fieldset-content"
+        >
+          <div
+            className="p-field mb-5"
+          >
+            <span
+              className="flex p-float-label mx-2 "
+            >
+              <label
+                htmlFor="output"
+              >
+                automations.output.edit.label
+              </label>
+            </span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    automations.output.edit.save
+  </form>
+</div>
+`;

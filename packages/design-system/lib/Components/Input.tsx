@@ -4,7 +4,7 @@ import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 const { Password: AntdInputPassword } = AntdInput;
 
 export interface InputProps extends AntdInputProps {
-  placeholder: string;
+  placeholder?: string;
   type?: 'text' | 'password';
   className?: string;
 }

@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { EdgeProps, getEdgeCenter } from 'react-flow-renderer';
 import { useAutomationBuilder } from './context';
 import Edge from './Edge';
+import { PlusOutlined } from '@ant-design/icons';
 
 const foreignObjectSize = 40;
 
@@ -31,9 +32,11 @@ export const InstructionEdge: FC<EdgeProps> = (props) => {
           style={{ height: `${foreignObjectSize}px` }}
         >
           <button
-            className="pi pi-plus border-none bg-primary p-1 border-round z-1 text-xs cursor-pointer"
+            className="bg-graph-accent text-white rounded w-10 h-10"
             onClick={() => addInstruction(data.parent, data.index)}
-          />
+          >
+            <PlusOutlined />
+          </button>
         </div>
       </foreignObject>
     </Edge>

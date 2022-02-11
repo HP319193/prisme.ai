@@ -4,6 +4,7 @@ exports[`should build flow 1`] = `
 Array [
   Object {
     "data": Object {
+      "title": "trigger",
       "trigger": true,
       "value": undefined,
     },
@@ -93,7 +94,7 @@ Array [
     "id": "0.0",
     "position": Object {
       "x": 0,
-      "y": 150,
+      "y": 200,
     },
     "type": "instruction",
   },
@@ -173,7 +174,7 @@ Array [
     "id": "0.1",
     "position": Object {
       "x": 0,
-      "y": 300,
+      "y": 400,
     },
     "type": "instruction",
   },
@@ -254,7 +255,7 @@ Array [
     "id": "0.2",
     "position": Object {
       "x": 0,
-      "y": 450,
+      "y": 600,
     },
     "type": "instruction",
   },
@@ -333,7 +334,7 @@ Array [
     "id": "0.3",
     "position": Object {
       "x": 0,
-      "y": 600,
+      "y": 800,
     },
     "type": "instruction",
   },
@@ -441,7 +442,7 @@ Array [
     "id": "0.4",
     "position": Object {
       "x": 0,
-      "y": 750,
+      "y": 1000,
     },
     "type": "conditions",
   },
@@ -463,7 +464,7 @@ Array [
     "id": "0.4.0.0",
     "position": Object {
       "x": 300,
-      "y": 900,
+      "y": 1200,
     },
     "type": "instruction",
   },
@@ -485,7 +486,7 @@ Array [
     "id": "0.4.0.1",
     "position": Object {
       "x": 300,
-      "y": 1050,
+      "y": 1400,
     },
     "type": "instruction",
   },
@@ -507,7 +508,7 @@ Array [
     "id": "0.4.0.2",
     "position": Object {
       "x": 300,
-      "y": 1200,
+      "y": 1600,
     },
     "type": "empty",
   },
@@ -560,7 +561,7 @@ Array [
     "id": "0.4.1.0",
     "position": Object {
       "x": 600,
-      "y": 900,
+      "y": 1200,
     },
     "type": "instruction",
   },
@@ -609,7 +610,7 @@ Array [
     "id": "0.4.1.0.0",
     "position": Object {
       "x": 900,
-      "y": 1050,
+      "y": 1400,
     },
     "type": "instruction",
   },
@@ -658,7 +659,7 @@ Array [
     "id": "0.4.1.0.1",
     "position": Object {
       "x": 1200,
-      "y": 1050,
+      "y": 1400,
     },
     "type": "instruction",
   },
@@ -707,7 +708,7 @@ Array [
     "id": "0.4.1.0.2",
     "position": Object {
       "x": 1500,
-      "y": 1050,
+      "y": 1400,
     },
     "type": "instruction",
   },
@@ -756,7 +757,7 @@ Array [
     "id": "0.4.1.0.3",
     "position": Object {
       "x": 1800,
-      "y": 1050,
+      "y": 1400,
     },
     "type": "empty",
   },
@@ -792,7 +793,7 @@ Array [
     "id": "0.4.1.1",
     "position": Object {
       "x": 600,
-      "y": 1200,
+      "y": 1600,
     },
     "type": "empty",
   },
@@ -838,86 +839,93 @@ Array [
     "id": "0.4.2.0",
     "position": Object {
       "x": 900,
-      "y": 900,
+      "y": 1200,
     },
     "type": "empty",
   },
   Object {
     "data": Object {
-      "index": 5,
-      "label": "empty block",
-      "parent": Array [
-        Object {
-          "emit": Object {
-            "event": "apps.foobar",
-            "payload": Object {
-              "foo": "bar",
+      "output": true,
+      "title": "output",
+      "value": Object {
+        "do": Array [
+          Object {
+            "emit": Object {
+              "event": "apps.foobar",
+              "payload": Object {
+                "foo": "bar",
+              },
+              "private": true,
             },
-            "private": true,
           },
-        },
-        Object {
-          "wait": Object {
-            "event": "apps.forIt",
-            "output": "value",
+          Object {
+            "wait": Object {
+              "event": "apps.forIt",
+              "output": "value",
+            },
           },
-        },
-        Object {
-          "set": Object {
-            "lifespan": 42,
-            "name": "foo",
-            "value": "$value",
+          Object {
+            "set": Object {
+              "lifespan": 42,
+              "name": "foo",
+              "value": "$value",
+            },
           },
-        },
-        Object {
-          "delete": Object {
-            "name": "bar",
+          Object {
+            "delete": Object {
+              "name": "bar",
+            },
           },
-        },
-        Object {
-          "conditions": Object {
-            "$a == 1": Array [
-              Object {
-                "emit": "apps.1",
-              },
-              Object {
-                "emit": "apps.2",
-              },
-            ],
-            "default": Array [
-              Object {
-                "all": Array [
-                  Object {
-                    "emit": "apps.3",
-                  },
-                  Object {
-                    "emit": "apps.4",
-                  },
-                  Object {
-                    "repeat": Object {
-                      "do": Array [
-                        Object {
-                          "emit": "apps.5",
-                        },
-                      ],
-                      "on": "$a",
+          Object {
+            "conditions": Object {
+              "$a == 1": Array [
+                Object {
+                  "emit": "apps.1",
+                },
+                Object {
+                  "emit": "apps.2",
+                },
+              ],
+              "default": Array [
+                Object {
+                  "all": Array [
+                    Object {
+                      "emit": "apps.3",
                     },
-                  },
-                ],
-              },
-            ],
+                    Object {
+                      "emit": "apps.4",
+                    },
+                    Object {
+                      "repeat": Object {
+                        "do": Array [
+                          Object {
+                            "emit": "apps.5",
+                          },
+                        ],
+                        "on": "$a",
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
           },
+        ],
+        "name": "example",
+        "trigger": Object {
+          "events": Array [
+            "apps.foo",
+            "apps.bar",
+          ],
         },
-      ],
-      "value": null,
-      "withButton": true,
+      },
     },
-    "id": "0.5",
+    "id": "output",
     "position": Object {
-      "x": 0,
-      "y": 1350,
+      "x": 900,
+      "y": 1400,
     },
-    "type": "empty",
+    "type": "outputValue",
   },
   Object {
     "arrowHeadType": "arrow",
@@ -1474,6 +1482,79 @@ Array [
     "id": "edge-0-0.0",
     "source": "0",
     "target": "0.0",
+    "type": "instruction",
+  },
+  Object {
+    "arrowHeadType": "arrow",
+    "data": Object {
+      "index": 5,
+      "parent": Array [
+        Object {
+          "emit": Object {
+            "event": "apps.foobar",
+            "payload": Object {
+              "foo": "bar",
+            },
+            "private": true,
+          },
+        },
+        Object {
+          "wait": Object {
+            "event": "apps.forIt",
+            "output": "value",
+          },
+        },
+        Object {
+          "set": Object {
+            "lifespan": 42,
+            "name": "foo",
+            "value": "$value",
+          },
+        },
+        Object {
+          "delete": Object {
+            "name": "bar",
+          },
+        },
+        Object {
+          "conditions": Object {
+            "$a == 1": Array [
+              Object {
+                "emit": "apps.1",
+              },
+              Object {
+                "emit": "apps.2",
+              },
+            ],
+            "default": Array [
+              Object {
+                "all": Array [
+                  Object {
+                    "emit": "apps.3",
+                  },
+                  Object {
+                    "emit": "apps.4",
+                  },
+                  Object {
+                    "repeat": Object {
+                      "do": Array [
+                        Object {
+                          "emit": "apps.5",
+                        },
+                      ],
+                      "on": "$a",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    },
+    "id": "edge-0.4.2.0-output",
+    "source": "0.4.2.0",
+    "target": "output",
     "type": "instruction",
   },
 ]
