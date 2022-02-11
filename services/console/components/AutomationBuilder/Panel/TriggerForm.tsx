@@ -4,7 +4,7 @@ import { Form, useField } from 'react-final-form';
 import FieldContainer from '../../../layouts/Field';
 import Fieldset from '../../../layouts/Fieldset';
 import { Button, Input, TagEditable } from '@prisme.ai/design-system';
-import { InputSwitch } from 'primereact/inputswitch';
+import { Switch } from 'antd';
 
 const Endpoint = () => {
   const { t } = useTranslation('workspaces');
@@ -12,13 +12,12 @@ const Endpoint = () => {
 
   return (
     <div className="p-field mb-5">
-      <label className="mx-2 flex flex-1 align-center flex-col">
-        <InputSwitch
+      <label className="mx-2 flex flex-1 items-center flex-row">
+        <div className="ml-2">{t('automations.trigger.endpoint.custom')}</div>
+        <Switch
           checked={input.value !== false}
-          onChange={({ value }) => input.onChange(value)}
-          className="mr-2"
+          onChange={(value) => input.onChange(value)}
         />
-        {t('automations.trigger.endpoint.custom')}
       </label>
       {input.value !== false && (
         <Input

@@ -1,5 +1,5 @@
-import { Input as InputText } from '@prisme.ai/design-system';
-import { Switch as InputSwitch } from 'antd';
+import { Input } from '@prisme.ai/design-system';
+import { Switch } from 'antd';
 import { FC } from 'react';
 import FieldContainer from '../../layouts/Field';
 import { useField } from 'react-final-form';
@@ -42,7 +42,7 @@ export const Field: FC<FieldProps> = ({ field, type, required, oneOf }) => {
       return (
         <div className="mb-5">
           <label className="mx-2 flex flex-1 align-center">
-            <InputSwitch
+            <Switch
               checked={input.value}
               onChange={(value) => input.onChange(value)}
               className="!mr-2"
@@ -61,7 +61,7 @@ export const Field: FC<FieldProps> = ({ field, type, required, oneOf }) => {
           validate={validate}
         >
           {({ input, className }) => (
-            <InputText id={field} {...input} className={className} />
+            <Input id={field} {...input} className={className} />
           )}
         </FieldContainer>
       );
