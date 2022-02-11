@@ -70,19 +70,52 @@ Produced events :
 
 [Documentation](https://gitlab.com/prisme.ai/prisme.ai/-/blob/main/specifications/swagger.yml)
 
-## Handling concurrency
+## Performance & Scalability
 
-**An event related to a workspace cannot be handled before the previous event (related to a specific workspace for one particular session) has been fully handled.**
+Below are the results of differents performance tests conducted on this testing automation :  
+```yaml
+stressTest:
+  name: stressTest
+  when:
+    endpoint: true
+  do:
+    - set:
+        name: name
+        value: antoine
+        lifespan: '2'
+    - conditions:
+        '{{name}} == antoine':
+          - emit:
+              event: apps.test
+              payload:
+                lastName: antoine
+        default:
+          - emit:
+              event: apps.newtest
+              payload:
+                lastName: else
+  output:
+    content: '{{name}}'
+    body: '{{body}}'
+```  
+This automation is kept simple in order to avoid external interactions that might biase the results : a single `set`, a `conditions` block testing this variable and an `emit`.  
 
-## Performance
+During these tests, the `runtime` instances were connected to :  
+- A 2vCPU / 4GB MongoDB replicaset  
+- A 1vCPU / 1GB single-node redis
 
-Performance tests on different example DSULs should be carried out at each major release change, and the test result written up and referenced by this section.
-The example DSULs are to be defined, but they should represent different real-life cases as well as some non-standard cases, and be as unitary as possible.
+MongoDB primary node never exceeded 7% CPU and 30% Memory usage.  
+Redis never exceeded 5% CPU and 4% Memory usage.
 
-List example:
+### Scenario 1 : 100 concurrent users during 10 minutes, 1 runtime instance  
+The 100 concurrent users gradually reached their maximum number during the first 2 minutes, then stayed at that level during 5 minutes, before gradually decreasing during 2 minutes.  
 
-- Workflow using a function app.
-- Workflow with a condition.
+![image](/assets/images/performance/runtime_100VU_1vCore.png)
+
+### Scenario 2 : 100 concurrent users during 10 minutes, 2 runtime instances
+The 100 concurrent users gradually reached their maximum number during the first 2 minutes, then stayed at that level during 5 minutes, before gradually decreasing during 2 minutes.  
+
+![image](/assets/images/performance/runtime_100VU_2vCore.png)
 
 ## Limits & Constraints
 
