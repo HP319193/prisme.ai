@@ -11,11 +11,11 @@ export interface InputProps extends AntdInputProps {
 
 const Input = ({
   placeholder,
-  type = 'text',
+  inputType = 'text',
   className,
   ...otherProps
 }: InputProps) => {
-  switch (type) {
+  switch (inputType) {
     case 'password':
       return (
         <AntdInputPassword
