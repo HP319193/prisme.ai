@@ -11,7 +11,7 @@ export const WORKSPACES_STORAGE_TYPE: DriverType =
  */
 
 export const WORKSPACES_STORAGE_FILESYSTEM_DIRPATH =
-  process.env.WORKSPACES_STORAGE_FILESYSTEM_DIRPATH || "models/";
+  process.env.WORKSPACES_STORAGE_FILESYSTEM_DIRPATH || "../../data/models/";
 
 export const WORKSPACES_STORAGE_FILESYSTEM_OPTIONS: FilesystemOptions = {
   dirpath: WORKSPACES_STORAGE_FILESYSTEM_DIRPATH,
@@ -51,7 +51,8 @@ export const WORKSPACES_STORAGE_S3_OPTIONS: S3Options = {
  * Permissions MongoDB
  */
 export const PERMISSIONS_STORAGE_HOST =
-  process.env.PERMISSIONS_STORAGE_HOST || "mongodb://localhost:27017/eda";
+  process.env.PERMISSIONS_STORAGE_HOST ||
+  "mongodb://localhost:27017/permissions";
 
 export const PERMISSIONS_STORAGE_MONGODB_OPTIONS: AccessManagerOptions["storage"] =
   {

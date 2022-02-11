@@ -21,13 +21,13 @@ endpoints:
 
 services:
   workspaces:
-    url: "http://workspaces:3002"
+    url: ${WORKSPACES_API_URL:-http://workspaces:3002}
   runtime:
-    url: "http://runtime:3003"
+    url: ${RUNTIME_API_URL:-http://runtime:3003}
   events:
-    url: "http://events:3004"
+    url: ${EVENTS_API_URL:-http://events:3004}
   console:
-    url: "http://console:3001"
+    url: ${CONSOLE_API_URL:-http://console:3001}
 
 pipelines:
   - name: runtime

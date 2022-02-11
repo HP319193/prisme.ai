@@ -7,6 +7,12 @@ const SERVICES = "./services";
 const DOCKERFILE = "docker-compose.yml";
 const DEV_SERVICE_CONFIG_PATH = "/tmp/prismeai";
 const GATEWAY_CONFIG = `${DEV_SERVICE_CONFIG_PATH}/prisme-gateway.yml`;
+const SERVICES_PORTS: Record<string, string> = {
+  console: "3001",
+  workspaces: "3002",
+  runtime: "3003",
+  events: "3004",
+};
 
 try {
   fs.mkdirSync(DEV_SERVICE_CONFIG_PATH);
@@ -20,22 +26,36 @@ interface Service {
 const runDocker = (services: Service[]) => {
   const dockerConfigs = services.map(({ service, dev }) => {
     const configPath = `${SERVICES}/${service}/${DOCKERFILE}`;
+    const file = fs.readFileSync(configPath);
+    const config: any = yaml.load(`${file}`);
+    const devConfigPath = `${SERVICES}/${service}/docker-compose-dev.yml`;
     if (dev) {
-      const file = fs.readFileSync(configPath);
-      const config: any = yaml.load(`${file}`);
       delete config.services[service];
-      const devConfigPath = `${SERVICES}/${service}/docker-compose-dev.yml`;
-      fs.writeFileSync(devConfigPath, yaml.dump(config));
-      return {
-        service,
-        dev,
-        path: devConfigPath,
-      };
+    } else {
+      // Current service is gateway api from docker image :
+      if (service === "api-gateway") {
+        // Update any local service endpoint with docker host gateway
+        const envs: Record<string, string> = services
+          .filter(({ dev }) => dev)
+          .reduce((envs, { service }) => {
+            return {
+              ...envs,
+              [`${service.toUpperCase()}_API_URL`]: `http://host.docker.internal:${SERVICES_PORTS[service]}`,
+            };
+          }, {});
+
+        config.services[service].environment = {
+          ...config.services[service]?.environment,
+          ...envs,
+        };
+      }
     }
+
+    fs.writeFileSync(devConfigPath, yaml.dump(config));
     return {
       service,
       dev,
-      path: configPath,
+      path: devConfigPath,
     };
   });
 
@@ -46,7 +66,6 @@ const runDocker = (services: Service[]) => {
       []
     ),
   ];
-
   shell([...command, "-p", "prismeai", "up"], { async: true });
 
   process.on("exit", () => {

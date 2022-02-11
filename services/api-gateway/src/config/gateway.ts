@@ -31,14 +31,15 @@ export default class GatewayConfig {
   }
 
   private injectEnvironmentVariables(raw: string) {
-    const regexp = new RegExp(/\${([a-zA-Z0-9_-]+)}/g);
+    const regexp = new RegExp(/\${([^}]+)}/g);
     const matches = raw.match(regexp);
     return (matches || []).reduce((config, pattern) => {
-      const variable = pattern.slice(2, -1);
-      if (process.env[variable]) {
-        return config.replace(
-          new RegExp(`\\\${${variable}}`, "g"),
-          process.env[variable]!!
+      const [variable, defaultValue] = pattern.slice(2, -1).split(":-");
+      if (process.env[variable] || defaultValue) {
+        //@ts-ignore
+        return config.replaceAll(
+          pattern,
+          (process.env[variable] || defaultValue)!!
         );
       }
       return config;
