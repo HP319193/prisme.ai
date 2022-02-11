@@ -20,6 +20,7 @@ exports[`should render 1`] = `
           >
             automations.output.edit.label
           </label>
+          <div />
         </span>
       </div>
     </div>
