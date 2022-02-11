@@ -5,7 +5,7 @@ const { Password: AntdInputPassword } = AntdInput;
 
 export interface InputProps extends AntdInputProps {
   placeholder?: string;
-  type?: 'text' | 'password';
+  inputType?: 'text' | 'password';
   className?: string;
 }
 

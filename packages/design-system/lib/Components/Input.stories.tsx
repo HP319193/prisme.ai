@@ -6,7 +6,7 @@ export default {
   placeholder: 'Components/Input',
   component: Input,
   argTypes: {
-    type: {
+    inputType: {
       options: ['text', 'password'],
       control: { type: 'select' },
     },
@@ -16,18 +16,18 @@ export default {
   },
 };
 
-const Template: Story<InputProps> = ({ placeholder, type }) => (
-  <Input placeholder={placeholder} type={type} />
+const Template: Story<InputProps> = ({ placeholder, inputType }) => (
+  <Input placeholder={placeholder} inputType={inputType} />
 );
 
 export const Default = Template.bind({});
 Default.args = {
   placeholder: 'type anything',
-  type: 'text',
+  inputType: 'text',
 };
 
 export const Password = Template.bind({});
 Password.args = {
   placeholder: 'enter your password',
-  type: 'password',
+  inputType: 'password',
 };

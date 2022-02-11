@@ -112,7 +112,7 @@ export const SignIn = () => {
                           <Input
                             placeholder={t('in.password')}
                             className={`${className} h-12`}
-                            type={'password' as any}
+                            inputType={'password' as any}
                             {...inputProps}
                           />
                         )}

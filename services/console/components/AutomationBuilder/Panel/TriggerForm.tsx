@@ -3,10 +3,8 @@ import { FC, useMemo } from 'react';
 import { Form, useField } from 'react-final-form';
 import FieldContainer from '../../../layouts/Field';
 import Fieldset from '../../../layouts/Fieldset';
-import { Chips } from 'primereact/chips';
-import { Button } from '@prisme.ai/design-system';
+import { Button, Input, TagEditable } from '@prisme.ai/design-system';
 import { InputSwitch } from 'primereact/inputswitch';
-import { InputText } from 'primereact/inputtext';
 
 const Endpoint = () => {
   const { t } = useTranslation('workspaces');
@@ -23,7 +21,7 @@ const Endpoint = () => {
         {t('automations.trigger.endpoint.custom')}
       </label>
       {input.value !== false && (
-        <InputText
+        <Input
           {...input}
           value={typeof input.value === 'string' ? input.value : ''}
         />
@@ -54,7 +52,12 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onSubmit }) => {
           <form onSubmit={handleSubmit}>
             <Fieldset legend={t('automations.trigger.events.title')}>
               <FieldContainer name="events">
-                {({ input }) => <Chips {...input} separator="," />}
+                {({ input }) => (
+                  <TagEditable
+                    placeholder={t('automations.trigger.events.title')}
+                    {...input}
+                  />
+                )}
               </FieldContainer>
             </Fieldset>
             <Fieldset legend={t('automations.trigger.dates.title')}>

@@ -4,8 +4,8 @@ import { Input, Space } from '../';
 
 export interface TagEditableProps {
   value: string[];
-  placeholder: string;
   onChange: (value: string[]) => void;
+  placeholder?: string;
 }
 
 const TagEditable = ({ placeholder, onChange, value }: TagEditableProps) => {
