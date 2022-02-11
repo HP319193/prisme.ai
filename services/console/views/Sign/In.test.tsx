@@ -20,9 +20,6 @@ jest.mock('next/router', () => {
     }),
   };
 });
-jest.mock('next/image', () => {
-  return ({ src }: any) => <div>{src}</div>;
-});
 
 beforeEach(() => {
   const { mock } = useUser() as any;

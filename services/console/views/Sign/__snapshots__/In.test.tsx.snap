@@ -32,9 +32,6 @@ exports[`should have error 1`] = `
           className="flex "
         />
       </div>
-      <div
-        className="pi pi-lock mr-2"
-      />
       in.submit
     </form>
   </div>
@@ -73,9 +70,6 @@ exports[`should load 1`] = `
           className="flex "
         />
       </div>
-      <div
-        className="pi pi-spin pi-spinner mr-2"
-      />
       in.submit
     </form>
   </div>
@@ -114,9 +108,6 @@ exports[`should render 1`] = `
           className="flex "
         />
       </div>
-      <div
-        className="pi pi-lock mr-2"
-      />
       in.submit
     </form>
   </div>

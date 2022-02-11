@@ -5,6 +5,7 @@ import Block from './Block';
 import { useAutomationBuilder } from './context';
 import styles from './styles';
 import { notification } from 'antd';
+import { LinkOutlined } from '@ant-design/icons';
 
 interface TriggerDisplayProps {
   value: Prismeai.When;
@@ -53,7 +54,7 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
                   href={endpoint}
                 />
               ),
-              icon: <i className="pi pi-copy" />,
+              icon: <LinkOutlined />,
             }}
           >
             <a>The endpoint</a> is hit

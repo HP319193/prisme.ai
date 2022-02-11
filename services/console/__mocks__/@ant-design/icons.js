@@ -7,3 +7,9 @@ export function CloseCircleOutlined() {
 export function PlusOutlined() {
   return null;
 }
+export function UnlockOutlined() {
+  return null;
+}
+export function LockOutlined() {
+  return null;
+}

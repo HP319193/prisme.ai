@@ -14,6 +14,11 @@ import {
 } from '@prisme.ai/design-system';
 import SignHeader from '../../components/SignHeader';
 import { notification } from 'antd';
+import {
+  LoadingOutlined,
+  LockOutlined,
+  UnlockOutlined,
+} from '@ant-design/icons';
 
 interface Values {
   email: string;
@@ -65,9 +70,9 @@ export const SignIn = () => {
   };
 
   const getIcon = () => {
-    if (loading) return 'pi pi-spin pi-spinner';
-    if (user) return 'pi pi-lock-open';
-    return 'pi pi-lock';
+    if (loading) return <LoadingOutlined />;
+    if (user) return <UnlockOutlined />;
+    return <LockOutlined />;
   };
 
   return (
@@ -85,7 +90,6 @@ export const SignIn = () => {
                 }}
                 components={{
                   a: <a href={`signin`} />,
-                  icon: <i className="pi pi-copy" />,
                 }}
               />
             </div>
@@ -144,7 +148,7 @@ export const SignIn = () => {
                       className="w-full !h-12"
                       type="submit"
                     >
-                      <div className={`${getIcon()} mr-2`} />
+                      {getIcon()}
                       {t('up.submit')}
                     </Button>
                   </Space>
