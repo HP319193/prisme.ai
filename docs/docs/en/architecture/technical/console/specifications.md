@@ -40,21 +40,6 @@ A user account is needed to access the service.
   <td>Internationalization utility</td>
   <td>10</td>
 </tr>
-<tr class="even">
-  <td><a href="https://primefaces.org/primereact">primereact</a></td>
-  <td>Design system</td>
-  <td>7</td>
-</tr>
-<tr class="odd">
-  <td><a href="https://primefaces.org/primeflex">primeflex</a></td>
-  <td>CSS utility</td>
-  <td>5</td>
-</tr>
-<tr class="even">
-  <td><a href="https://primefaces.org/primereact/icons/">primeicons</a></td>
-  <td>Icons set</td>
-  <td>5</td>
-</tr>
 <tr class="odd">
   <td><a href="https://final-form.org/">final-form</a></td>
   <td>Forms management</td>
@@ -71,9 +56,6 @@ A user account is needed to access the service.
 The web app is built on top of [typescript](https://www.typescriptlang.org/) language and [React](https://reactjs.org/)/[NextJS](https://nextjs.org/) framework.
 
 Through NextJS, the app is dynamically routed and some pages can be rendered on server side for SEO and caching.
-
-Graphical interfaces are built with [PrimeReact](https://primefaces.org/primereact) design system.
-The app uses a maximum of their components to build views. Layouts are structured with [PrimeFlex](https://www.primefaces.org/primeflex/). Views mixed Layouts components and interface components. No css is needed.
 
 Internationalization is managed by [i18next](https://www.i18next.com/). Translations are located in public/:lang folder under many json files.  
 Languages supported are english, french and spanish. English is the default language.
