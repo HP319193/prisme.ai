@@ -15,5 +15,6 @@ export { default as FeedHeader } from './Components/FeedHeader';
 export { default as Text } from './Components/Text';
 export { default as ListItem } from './Components/ListItem';
 export { default as Input } from './Components/Input';
+export { default as TagEditable } from './Components/TagEditable';
 
 export { Row, Col, Space, Avatar, Divider, Table } from 'antd';
