@@ -1,10 +1,11 @@
-import { SidePanel, Row, Col, MenuTab } from '@prisme.ai/design-system';
+import { Row, Col, MenuTab } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { EventsViewer } from '../components/EventsViewer';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import AutomationsSidebar from './AutomationsSidebar';
 import WorkspaceSource from './WorkspaceSource';
+import SidePanel from '../layouts/SidePanel';
 
 export const Workspace = () => {
   const { t } = useTranslation('workspaces');
