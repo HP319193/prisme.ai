@@ -16,7 +16,7 @@ exports[`should hide 1`] = `
     className="border border-gray-200 border-solid grow h-full rounded p-4"
   >
     <div
-      className="flex flex-col overflow-hidden h-full"
+      className="flex flex-col overflow-hidden h-full pb-12"
     >
       <div
         className="flex justify-end"
@@ -42,7 +42,7 @@ exports[`should render 1`] = `
     className="border border-gray-200 border-solid grow h-full rounded p-4"
   >
     <div
-      className="flex flex-col overflow-hidden h-full"
+      className="flex flex-col overflow-hidden h-full pb-12"
     >
       <div
         className="flex justify-end"

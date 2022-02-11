@@ -5,143 +5,36 @@ exports[`should render 1`] = `
   <form
     onSubmit={[Function]}
   >
-    <fieldset
-      className="p-fieldset p-component pt-5 mb-4"
-      id={null}
-      onClick={null}
-      style={null}
-    >
-      <legend
-        className="p-fieldset-legend p-unselectable-text"
-        onClick={[Function]}
+    <div>
+      automations.trigger.events.title
+      <div
+        className="mb-5"
       >
         <span
-          className="p-fieldset-legend-text"
-          id="pr_id_1_header"
-        >
-          automations.trigger.events.title
-        </span>
-      </legend>
+          className="flex "
+        />
+      </div>
+    </div>
+    <div>
+      automations.trigger.dates.title
+      automations.trigger.dates.help
+    </div>
+    <div>
+      automations.trigger.endpoint.title
       <div
-        aria-hidden={false}
-        aria-labelledby="pr_id_1_header"
-        className="p-toggleable-content"
-        id="pr_id_1_content"
-        role="region"
+        className="p-field mb-5"
       >
-        <div
-          className="p-fieldset-content"
+        <label
+          className="mx-2 flex flex-1 items-center flex-row"
         >
           <div
-            className="p-field mb-5"
+            className="ml-2"
           >
-            <span
-              className="flex "
-            />
+            automations.trigger.endpoint.custom
           </div>
-        </div>
+        </label>
       </div>
-    </fieldset>
-    <fieldset
-      className="p-fieldset p-component pt-5 mb-4"
-      id={null}
-      onClick={null}
-      style={null}
-    >
-      <legend
-        className="p-fieldset-legend p-unselectable-text"
-        onClick={[Function]}
-      >
-        <span
-          className="p-fieldset-legend-text"
-          id="pr_id_2_header"
-        >
-          automations.trigger.dates.title
-        </span>
-      </legend>
-      <div
-        aria-hidden={false}
-        aria-labelledby="pr_id_2_header"
-        className="p-toggleable-content"
-        id="pr_id_2_content"
-        role="region"
-      >
-        <div
-          className="p-fieldset-content"
-        >
-          automations.trigger.dates.help
-        </div>
-      </div>
-    </fieldset>
-    <fieldset
-      className="p-fieldset p-component pt-5 mb-4"
-      id={null}
-      onClick={null}
-      style={null}
-    >
-      <legend
-        className="p-fieldset-legend p-unselectable-text"
-        onClick={[Function]}
-      >
-        <span
-          className="p-fieldset-legend-text"
-          id="pr_id_3_header"
-        >
-          automations.trigger.endpoint.title
-        </span>
-      </legend>
-      <div
-        aria-hidden={false}
-        aria-labelledby="pr_id_3_header"
-        className="p-toggleable-content"
-        id="pr_id_3_content"
-        role="region"
-      >
-        <div
-          className="p-fieldset-content"
-        >
-          <div
-            className="p-field mb-5"
-          >
-            <label
-              className="mx-2 flex flex-1 align-center flex-col"
-            >
-              <div
-                aria-checked={false}
-                className="p-inputswitch p-component mr-2"
-                id={null}
-                onClick={[Function]}
-                role="checkbox"
-                style={null}
-              >
-                <div
-                  className="p-hidden-accessible"
-                >
-                  <input
-                    aria-checked={false}
-                    aria-labelledby={null}
-                    checked={false}
-                    disabled={false}
-                    id={null}
-                    name={null}
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    onFocus={[Function]}
-                    onKeyDown={[Function]}
-                    role="switch"
-                    type="checkbox"
-                  />
-                </div>
-                <span
-                  className="p-inputswitch-slider"
-                />
-              </div>
-              automations.trigger.endpoint.custom
-            </label>
-          </div>
-        </div>
-      </div>
-    </fieldset>
+    </div>
     automations.trigger.save
   </form>
 </div>

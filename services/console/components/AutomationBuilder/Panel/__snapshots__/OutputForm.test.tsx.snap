@@ -7,49 +7,22 @@ exports[`should render 1`] = `
   <form
     onSubmit={[Function]}
   >
-    <fieldset
-      className="p-fieldset p-component pt-5 mb-4"
-      id={null}
-      onClick={null}
-      style={null}
-    >
-      <legend
-        className="p-fieldset-legend p-unselectable-text"
-        onClick={[Function]}
+    <div>
+      automations.output.edit.title
+      <div
+        className="mb-5"
       >
         <span
-          className="p-fieldset-legend-text"
-          id="pr_id_1_header"
+          className="flex flex-col mx-2 "
         >
-          automations.output.edit.title
-        </span>
-      </legend>
-      <div
-        aria-hidden={false}
-        aria-labelledby="pr_id_1_header"
-        className="p-toggleable-content"
-        id="pr_id_1_content"
-        role="region"
-      >
-        <div
-          className="p-fieldset-content"
-        >
-          <div
-            className="p-field mb-5"
+          <label
+            htmlFor="output"
           >
-            <span
-              className="flex p-float-label mx-2 "
-            >
-              <label
-                htmlFor="output"
-              >
-                automations.output.edit.label
-              </label>
-            </span>
-          </div>
-        </div>
+            automations.output.edit.label
+          </label>
+        </span>
       </div>
-    </fieldset>
+    </div>
     automations.output.edit.save
   </form>
 </div>
