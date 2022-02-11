@@ -104,45 +104,43 @@ export const SignIn = () => {
                     direction="vertical"
                     className="flex grow"
                   >
-                    <Fieldset>
-                      <Field name="email">
-                        {({ input: { type, ...inputProps }, className }) => (
-                          <Input
-                            placeholder={t('in.email')}
-                            className={`${className} h-12`}
-                            {...inputProps}
-                          />
-                        )}
-                      </Field>
-                      <Field name="password">
-                        {({ input: { type, ...inputProps }, className }) => (
-                          <Input
-                            placeholder={t('in.password')}
-                            className={`${className} h-12`}
-                            inputType={'password' as any}
-                            {...inputProps}
-                          />
-                        )}
-                      </Field>
-                      <Field name="firstName">
-                        {({ input: { type, ...inputProps }, className }) => (
-                          <Input
-                            placeholder={t('up.firstName')}
-                            className={`${className} h-12`}
-                            {...inputProps}
-                          />
-                        )}
-                      </Field>
-                      <Field name="lastName">
-                        {({ input: { type, ...inputProps }, className }) => (
-                          <Input
-                            placeholder={t('up.lastName')}
-                            className={`${className} h-12`}
-                            {...inputProps}
-                          />
-                        )}
-                      </Field>
-                    </Fieldset>
+                    <Field name="email">
+                      {({ input: { type, ...inputProps }, className }) => (
+                        <Input
+                          placeholder={t('in.email')}
+                          className={`${className} h-12`}
+                          {...inputProps}
+                        />
+                      )}
+                    </Field>
+                    <Field name="password">
+                      {({ input: { type, ...inputProps }, className }) => (
+                        <Input
+                          placeholder={t('in.password')}
+                          className={`${className} h-12`}
+                          inputType={'password' as any}
+                          {...inputProps}
+                        />
+                      )}
+                    </Field>
+                    <Field name="firstName">
+                      {({ input: { type, ...inputProps }, className }) => (
+                        <Input
+                          placeholder={t('up.firstName')}
+                          className={`${className} h-12`}
+                          {...inputProps}
+                        />
+                      )}
+                    </Field>
+                    <Field name="lastName">
+                      {({ input: { type, ...inputProps }, className }) => (
+                        <Input
+                          placeholder={t('up.lastName')}
+                          className={`${className} h-12`}
+                          {...inputProps}
+                        />
+                      )}
+                    </Field>
                     <Button
                       variant="primary"
                       disabled={loading}
