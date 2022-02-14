@@ -23,6 +23,7 @@ export const AutomationsSidebar: FC = () => {
     workspace,
     workspace: { id: workspaceId, automations = emptyObject },
   } = useWorkspace();
+
   const [filter, setFilter] = useState('');
 
   const filteredAutomations = useMemo(() => {
@@ -32,7 +33,7 @@ export const AutomationsSidebar: FC = () => {
         ? { ...automations[key], slug: key }
         : [];
     });
-  }, [filter]);
+  }, [filter, automations]);
 
   const { createAutomation } = useWorkspaces();
 
