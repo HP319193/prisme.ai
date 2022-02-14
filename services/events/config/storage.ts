@@ -1,19 +1,19 @@
-import { BROKER_NAMESPACE } from ".";
+import { BROKER_NAMESPACE } from '.';
 import {
   StoreDriverOptions,
   StoreDriverType,
-} from "../src/services/events/store";
-import { AccessManagerOptions } from "@prisme.ai/permissions";
+} from '../src/services/events/store';
+import { AccessManagerOptions } from '@prisme.ai/permissions';
 
 /*
  * Events storage
  */
 
 export const EVENTS_STORAGE_DRIVER =
-  (process.env.EVENTS_STORAGE_DRIVER as StoreDriverType) || "elasticsearch";
+  (process.env.EVENTS_STORAGE_DRIVER as StoreDriverType) || 'elasticsearch';
 
 export const EVENTS_STORAGE_ES_HOST =
-  process.env.EVENTS_STORAGE_ES_HOST || "http://localhost:9200";
+  process.env.EVENTS_STORAGE_ES_HOST || 'http://localhost:9200';
 
 export const EVENTS_STORAGE_ES_USER = process.env.EVENTS_STORAGE_ES_USER;
 
@@ -35,9 +35,10 @@ export const EVENTS_STORAGE_ES_OPTIONS: StoreDriverOptions = {
  * Permissions MongoDB
  */
 export const PERMISSIONS_STORAGE_HOST =
-  process.env.PERMISSIONS_STORAGE_HOST || "mongodb://localhost:27017/eda";
+  process.env.PERMISSIONS_STORAGE_HOST ||
+  'mongodb://localhost:27017/permissions';
 
-export const PERMISSIONS_STORAGE_MONGODB_OPTIONS: AccessManagerOptions["storage"] =
+export const PERMISSIONS_STORAGE_MONGODB_OPTIONS: AccessManagerOptions['storage'] =
   {
     host: PERMISSIONS_STORAGE_HOST,
   };

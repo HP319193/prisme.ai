@@ -19,7 +19,6 @@
     "build:validation": "npm run build --prefix ./packages/validation && npm run build:validation:instruction",
     "build:design-system": "npm run build --prefix ./packages/design-system",
     "build:types": "npx dtsgen --out ./packages/types/index.d.ts ./specifications/swagger.yml",
-    "postinstall": "npm run build:packages && npm run build:validation && npm run build:types && npm run build:console",
     "dev:console": "npm run dev --prefix services/console",
     "dev:design-system": "npm start --prefix packages/design-system",
     "dev:workspaces": "npm run dev --prefix services/workspaces",

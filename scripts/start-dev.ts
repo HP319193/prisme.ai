@@ -1,18 +1,18 @@
-import fs from "fs";
-import inquirer from "inquirer";
-import shell from "shelljs-live";
-import yaml from "js-yaml";
+import fs from 'fs';
+import inquirer from 'inquirer';
+import shell from 'shelljs-live';
+import yaml from 'js-yaml';
 
-const SERVICES = "./services";
-const DOCKERFILE = "docker-compose.yml";
-const DEV_SERVICE_CONFIG_PATH = "/tmp/prismeai";
-const GATEWAY_SERVICE: string = "api-gateway";
+const SERVICES = './services';
+const DOCKERFILE = 'docker-compose.yml';
+const DEV_SERVICE_CONFIG_PATH = '/tmp/prismeai';
+const GATEWAY_SERVICE: string = 'api-gateway';
 const SERVICES_PORTS: Record<string, string> = {
-  console: "3000",
-  [GATEWAY_SERVICE]: "3001",
-  workspaces: "3002",
-  runtime: "3003",
-  events: "3004",
+  console: '3000',
+  [GATEWAY_SERVICE]: '3001',
+  workspaces: '3002',
+  runtime: '3003',
+  events: '3004',
 };
 
 try {
@@ -28,7 +28,7 @@ const runDocker = (services: Service[]) => {
   const dockerSharedEnvs: Record<string, string> = {};
   if (services.find(({ service, dev }) => service === GATEWAY_SERVICE && dev)) {
     dockerSharedEnvs[
-      "GATEWAY_API_HOST"
+      'GATEWAY_API_HOST'
     ] = `http://host.docker.internal:${SERVICES_PORTS[GATEWAY_SERVICE]}`;
   }
 
@@ -72,16 +72,16 @@ const runDocker = (services: Service[]) => {
   });
 
   const command = [
-    "docker-compose",
+    'docker-compose',
     ...dockerConfigs.reduce<string[]>(
-      (prev, { path }) => [...prev, "-f", path],
+      (prev, { path }) => [...prev, '-f', path],
       []
     ),
   ];
-  shell([...command, "-p", "prismeai", "up"], { async: true });
+  shell([...command, '-p', 'prismeai', 'up'], { async: true });
 
-  process.on("exit", () => {
-    shell("docker-compose -p prismeai down");
+  process.on('exit', () => {
+    shell('docker-compose -p prismeai down');
   });
 };
 
@@ -89,10 +89,10 @@ const getEnvs = (localServices: string[]): Record<string, string> => {
   if (localServices.includes(GATEWAY_SERVICE)) {
     // api gateway is in dev mode and must join dockerized other services
     return {
-      WORKSPACES_API_URL: `http://localhost:${SERVICES_PORTS["workspaces"]}`,
-      RUNTIME_API_URL: `http://localhost:${SERVICES_PORTS["runtime"]}`,
-      CONSOLE_API_URL: `http://localhost:${SERVICES_PORTS["console"]}`,
-      EVENTS_API_URL: `http://localhost:${SERVICES_PORTS["events"]}`,
+      WORKSPACES_API_URL: `http://localhost:${SERVICES_PORTS['workspaces']}`,
+      RUNTIME_API_URL: `http://localhost:${SERVICES_PORTS['runtime']}`,
+      CONSOLE_API_URL: `http://localhost:${SERVICES_PORTS['console']}`,
+      EVENTS_API_URL: `http://localhost:${SERVICES_PORTS['events']}`,
     };
   }
 
@@ -107,9 +107,9 @@ const runLocal = (services: Service[]) => {
   const command = localServices.map((s) => `"dev:${s}"`);
   const prefix = Object.keys(env).reduce(
     (prev, name) => `${prev} ${name}=${env[name]}`,
-    ""
+    ''
   );
-  shell(`${prefix} ./node_modules/.bin/npm-run-all -p ${command.join(" ")}`, {
+  shell(`${prefix} ./node_modules/.bin/npm-run-all -p ${command.join(' ')}`, {
     async: true,
   });
 };
@@ -124,9 +124,9 @@ const init = async () => {
   });
   const { services: docker } = await inquirer.prompt([
     {
-      type: "checkbox",
-      message: "Select services to run from build image",
-      name: "services",
+      type: 'checkbox',
+      message: 'Select services to run from build image',
+      name: 'services',
       choices: availablesServices.map((name) => ({ name, checked: true })),
     },
   ]);

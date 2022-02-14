@@ -1,5 +1,5 @@
-import { Broker, PrismeEvent } from "@prisme.ai/broker";
-import { AccessManager, SubjectType, ActionType } from "../../permissions";
+import { Broker, PrismeEvent } from '@prisme.ai/broker';
+import { AccessManager, SubjectType, ActionType } from '../../permissions';
 
 export interface Subscriber {
   userId: string;
@@ -25,7 +25,7 @@ export class Subscriptions {
     // Unpartitioned listener (for websockets : we do not know which prisme.ai-events instance holds which socket)
     this.broker.all(
       async (event, broker, { logger }) => {
-        logger.trace({ msg: "Received event", event });
+        logger.trace({ msg: 'Received event', event });
         if (!event.source.workspaceId) return true;
         const subscribers = this.subscribers[event.source.workspaceId];
         (subscribers || []).forEach(({ callback, accessManager }) => {
@@ -43,7 +43,7 @@ export class Subscriptions {
 
   async subscribe(
     workspaceId: string,
-    subscriber: Omit<Subscriber, "accessManager">
+    subscriber: Omit<Subscriber, 'accessManager'>
   ): Promise<() => void> {
     if (!(workspaceId in this.subscribers)) {
       this.subscribers[workspaceId] = [];
