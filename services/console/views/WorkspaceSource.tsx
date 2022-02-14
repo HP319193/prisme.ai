@@ -206,7 +206,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const saveSource = useCallback(() => {
     save();
     setDirty(false);
-  }, []);
+  }, [save]);
 
   const shortcuts = useMemo(
     () => [
