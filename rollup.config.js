@@ -1,16 +1,16 @@
-import fs from "fs";
-import { exec as syncExec } from "child_process";
-import util from "util";
-import peerDepsExternal from "rollup-plugin-peer-deps-external";
-import cjs from "@rollup/plugin-commonjs";
-import ts from "rollup-plugin-typescript2";
-import images from "@rollup/plugin-image";
-import autoprefixer from "autoprefixer";
-import postcss from "rollup-plugin-postcss";
+import fs from 'fs';
+import { exec as syncExec } from 'child_process';
+import util from 'util';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import cjs from '@rollup/plugin-commonjs';
+import ts from 'rollup-plugin-typescript2';
+import images from '@rollup/plugin-image';
+import autoprefixer from 'autoprefixer';
+import postcss from 'rollup-plugin-postcss';
 
 const exec = util.promisify(syncExec);
 
-const root = "./packages";
+const root = './packages';
 const packages = fs.readdirSync(root);
 
 const build = async () =>
@@ -18,8 +18,12 @@ const build = async () =>
     await Promise.all(
       packages.map(async (name) => {
         const pkg = require(`${root}/${name}/package.json`);
+        if (pkg.scripts && pkg.scripts.prebuild) {
+          await exec(`cd ${root}/${name} && npm run prebuild`);
+        }
         if (pkg.scripts && pkg.scripts.build) {
-          await exec(`cd ${root}/${name} && ${pkg.scripts.build}`);
+          exec(`npm run build --prefix=packages/${name}`);
+          return false;
         }
         try {
           const config = fs.readFileSync(`${root}/${name}/rollup.config.js`);
@@ -31,16 +35,12 @@ const build = async () =>
             input: `${root}/${name}/index.ts`,
             output: {
               dir: `${root}/${name}/dist`,
-              format: "cjs",
-              exports: "named",
+              format: 'cjs',
+              exports: 'named',
               preserveModules: true,
               preserveModulesRoot: root,
             },
-            external: [
-              ...Object.keys(pkg.dependencies || {}),
-              "react-native",
-              "react-native-svg",
-            ],
+            external: [...Object.keys(pkg.dependencies || {})],
             plugins: [
               peerDepsExternal({
                 packageJsonPath: `${root}/${name}/package.json`,
@@ -51,7 +51,7 @@ const build = async () =>
                 plugins: [autoprefixer()],
                 sourceMap: true,
                 minimize: true,
-                extract: "styles.css",
+                extract: 'styles.css',
               }),
               ts({ tsconfig }),
             ],

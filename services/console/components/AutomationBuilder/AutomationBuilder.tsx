@@ -3,6 +3,8 @@ import ReactFlow, {
   ReactFlowProvider,
   Controls,
   useZoomPanHelper,
+  Background,
+  BackgroundVariant,
 } from 'react-flow-renderer';
 import { buildFlow } from './flow';
 import ConditionEdge from './ConditionEdge';
@@ -25,6 +27,8 @@ import BUILTIN_INSTRUCTIONS from '@prisme.ai/validation/instructions.json';
 import { useTranslation } from 'next-i18next';
 import TriggerForm from './Panel/TriggerForm';
 import { generateEndpoint } from '../../utils/urls';
+import OutputBlock from './OutputBlock';
+import OutputForm from './Panel/OutputForm';
 
 interface AutomationBuilderProps {
   id?: string;
@@ -38,6 +42,7 @@ const nodeTypes = {
   conditions: Conditions,
   repeat: Repeat,
   empty: EmptyBlock,
+  outputValue: OutputBlock,
 };
 const edgeTypes = {
   edge: Edge,
@@ -74,6 +79,13 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
       }
     | undefined
   >();
+  const [outputEditing, setOutputEditing] = useState<
+    | {
+        output?: Prismeai.Automation['output'];
+        onSubmit: (v: { output: Prismeai.Automation['output'] }) => void;
+      }
+    | undefined
+  >();
 
   useEffect(() => {
     setTimeout(() => zoomPanHelper.fitView());
@@ -101,7 +113,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
 
   const instructionsSchemas: [
     string,
-    Record<string, Schema>,
+    Record<string, Schema & { description?: string }>,
     { icon: string }
   ][] = useMemo(
     () => [
@@ -132,6 +144,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
               properties: {
                 [name]: schema,
               },
+              description: automations[name].description,
             },
           };
         }, {}),
@@ -146,6 +159,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     setInstructionEditing(undefined);
     setConditionEditing(undefined);
     setTriggerEditing(undefined);
+    setOutputEditing(undefined);
   }, []);
 
   const editInstructionDetails = useCallback(
@@ -260,6 +274,18 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
       setPanelIsOpen(true);
     }, [hidePanel, onChange, value]);
 
+  const editOutput: AutomationBuilderContext['editOutput'] = useCallback(() => {
+    hidePanel();
+    setOutputEditing({
+      output: value.output,
+      onSubmit: ({ output }) => {
+        onChange({ ...value, output });
+        hidePanel();
+      },
+    });
+    setPanelIsOpen(true);
+  }, [hidePanel, onChange, value]);
+
   const getApp: AutomationBuilderContext['getApp'] = useCallback(
     (instruction) => {
       const [name, , { icon }] =
@@ -296,39 +322,37 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         editInstruction,
         editCondition,
         editTrigger,
+        editOutput,
         getApp,
         instructionsSchemas,
         getSchema,
       }}
     >
-      <ReactFlow
-        elements={elements}
-        className="flex flex-1"
-        nodesConnectable={false}
-        nodesDraggable={nodesDraggable}
-        elementsSelectable
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-      >
-        <Controls />
-      </ReactFlow>
-      <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
-        {instructionEditing && <InstructionForm {...instructionEditing} />}
-        {conditionEditing && <ConditionForm {...conditionEditing} />}
-        {triggerEditing && <TriggerForm {...triggerEditing} />}
-      </Panel>
-      <div className="absolute bottom-0 right-0 z-5">
-        <div>debug:</div>
-        <div>
-          <label>
-            Nodes draggable{' '}
-            <input
-              type="checkbox"
-              checked={nodesDraggable}
-              onChange={({ target: { checked } }) => setNodesDraggable(checked)}
-            />
-          </label>
-        </div>
+      <div className="relative flex flex-1 overflow-x-hidden">
+        <ReactFlow
+          elements={elements}
+          nodesConnectable={false}
+          nodesDraggable={nodesDraggable}
+          elementsSelectable
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+        >
+          <Controls />
+          <Background
+            variant={BackgroundVariant.Dots}
+            gap={50}
+            size={2}
+            color="#eee"
+          />
+        </ReactFlow>
+        <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
+          {instructionEditing && <InstructionForm {...instructionEditing} />}
+          {conditionEditing && <ConditionForm {...conditionEditing} />}
+          {triggerEditing && <TriggerForm {...triggerEditing} />}
+          {outputEditing && !triggerEditing && (
+            <OutputForm {...outputEditing} />
+          )}
+        </Panel>
       </div>
     </automationBuilderContext.Provider>
   );

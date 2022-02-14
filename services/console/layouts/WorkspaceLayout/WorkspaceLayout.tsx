@@ -1,30 +1,19 @@
 import { useRouter } from 'next/router';
-import {
-  FC,
-  MouseEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
-import Link from 'next/link';
-import { confirmDialog } from 'primereact/confirmdialog';
-import EditableTitle from '../../components/EditableTitle';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
-import Main from '../Main';
-import SidePanel from '../SidePanel';
-import Error404 from '../../views/Errors/404';
 import workspaceContext, { WorkspaceContext } from './context';
 import Loading from '../../components/Loading';
-import { Button } from 'primereact/button';
-import AutomationsSidebar from '../../views/AutomationsSidebar';
 import { EventsByDay } from '.';
 import Events from '../../api/events';
 import { Event } from '../../api/types';
 import api from '../../api/api';
-import { useToaster } from '../Toaster';
+import Error404 from '../../views/Errors/404';
+import { Layout } from '@prisme.ai/design-system';
+import { useUser } from '../../components/UserProvider';
+import HeaderWorkspace from '../../components/HeaderWorkspace';
+import { notification } from 'antd';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -47,22 +36,21 @@ const getLatest = (events: Event<Date>[]) => {
 };
 
 export const WorkspaceLayout: FC = ({ children }) => {
+  const { user } = useUser();
   const {
     query: { id },
     route,
-    push,
   } = useRouter();
 
   const { t } = useTranslation('workspaces');
   const { fetch, update, workspaces } = useWorkspaces();
-  const toaster = useToaster();
   const [loading, setLoading] = useState<WorkspaceContext['loading']>(false);
   const lockEvents = useRef(false);
   const [workspace, setCurrentWorkspace] = useState<
     WorkspaceContext['workspace'] | null
   >();
   const [events, setEvents] = useState<WorkspaceContext['events']>('loading');
-  const [socket, setSocket] = useState<Events>();
+  const socket = useRef<Events>();
   const latest = useRef<Date | undefined | null>();
   const { current: readEvents } = useRef<WorkspaceContext['readEvents']>(
     new Set()
@@ -70,11 +58,14 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   // Init socket
   useEffect(() => {
-    if (!workspace) return;
-    const c = new Events(workspace.id);
-    setSocket(c);
+    if (
+      !workspace ||
+      (socket.current && socket.current.workspaceId === workspace.id)
+    )
+      return;
+    socket.current = new Events(workspace.id);
     return () => {
-      c.destroy();
+      socket.current && socket.current.destroy();
     };
   }, [workspace]);
 
@@ -121,7 +112,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   // Listen to new events
   useEffect(() => {
-    if (!socket) return;
+    if (!socket.current) return;
 
     const listener = (eventName: string, eventData: Prismeai.PrismeEvent) => {
       const event = {
@@ -133,26 +124,20 @@ export const WorkspaceLayout: FC = ({ children }) => {
         addEventToMap(new Map(events === 'loading' ? [] : events), event)
       );
     };
-    const off = socket.all(listener);
+    const off = socket.current.all(listener);
     return () => {
       off();
     };
   }, [socket, events]);
   const displaySource = !!route.match(/\/source$/);
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebar, setSidebar] = useState<'automations' | 'apps' | 'pages'>(
-    'automations'
-  );
-
-  const [dirty, setDirty] = useState<WorkspaceContext['dirty']>(false);
   const [invalid, setInvalid] = useState<WorkspaceContext['invalid']>(false);
   const [newSource, setNewSource] = useState<WorkspaceContext['newSource']>();
   const [saving, setSaving] = useState(false);
 
   const setCurrent = useRef(async (id: string) => {
     setLoading(true);
-    const workspace = await fetch(id);
+    await fetch(id);
     setLoading(false);
   });
 
@@ -178,51 +163,22 @@ export const WorkspaceLayout: FC = ({ children }) => {
     const newWorkspace = await update(newSource);
     setCurrentWorkspace(newWorkspace);
     setSaving(false);
-    setDirty(false);
-    toaster.show({
-      severity: 'success',
-      summary: t('expert.save.confirm'),
+    notification.success({
+      message: t('expert.save.confirm'),
+      placement: 'bottomRight',
     });
-  }, [newSource, t, toaster, update]);
+  }, [newSource, t, update]);
 
-  const alertSourceIsDirty: MouseEventHandler = useCallback(
-    (e) => {
-      if (!dirty || !workspace || !displaySource) return;
-      e.preventDefault();
-      confirmDialog({
-        message: t('expert.exit.confirm_message'),
-        header: t('expert.exit.confirm_title'),
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => push(`/workspaces/${workspace.id}`),
-      });
-    },
-    [dirty, displaySource, push, t, workspace]
-  );
-
-  const displayAutomations = useCallback(() => {
-    setTimeout(() => {
-      if (sidebarOpen && sidebar === 'automations') return;
-      setSidebar('automations');
-      setSidebarOpen(true);
-    }, 200);
-  }, [sidebar, sidebarOpen]);
-
-  if (!loading && workspace === null) {
+  if (!workspace || !user) {
     return (
-      <Main>
-        <Error404 link="/workspaces" reason={t('404')} />
-      </Main>
+      <div className="flex flex-1 justify-center align-center">
+        <Loading />
+      </div>
     );
   }
 
-  if (!workspace) {
-    return (
-      <Main>
-        <div className="flex flex-1 justify-content-center align-items-center">
-          <Loading />
-        </div>
-      </Main>
-    );
+  if (!loading && workspace === null) {
+    return <Error404 link="/workspaces" reason={t('404')} />;
   }
 
   return (
@@ -234,8 +190,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         displaySource,
         invalid,
         setInvalid,
-        dirty,
-        setDirty,
+        saving,
         newSource,
         setNewSource,
         events,
@@ -250,102 +205,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
           content={t('workspace.description', { name: workspace.name })}
         />
       </Head>
-      <Main
-        leftContent={
-          workspace && (
-            <EditableTitle title={workspace.name} onChange={updateTitle} />
-          )
-        }
-        rightContent={
-          workspace && (
-            <>
-              {displaySource && (
-                <Button
-                  onClick={save}
-                  disabled={!dirty || !!invalid || saving}
-                  className="flex-row relative"
-                >
-                  {saving && (
-                    <div className="pi pi-spinner pi-spin -ml-3 absolute" />
-                  )}
-                  <div className="mx-2">{t('automations.save.label')}</div>
-                </Button>
-              )}
-              <Link
-                href={`/workspaces/${workspace.id}${
-                  displaySource ? '' : '/source'
-                }`}
-              >
-                <a>
-                  <Button
-                    icon="pi pi-code"
-                    tooltip={t(`expert.${displaySource ? 'hide' : 'show'}`)}
-                    tooltipOptions={{ position: 'left' }}
-                    onClick={alertSourceIsDirty}
-                  />
-                </a>
-              </Link>
-              <Button
-                onClick={displayAutomations}
-                className={`
-                  mx-2
-                  ${
-                    sidebarOpen && sidebar === 'automations'
-                      ? 'p-button-secondary'
-                      : ''
-                  }`}
-              >
-                {t('automations.link')}
-              </Button>
-              {/*(
-                <Button
-                  onClick={displayApps}
-                  className={`
-                  mx-2
-                  ${
-                    sidebarOpen && sidebar === "apps"
-                      ? "p-button-secondary"
-                      : ""
-                  }`}
-                >
-                  {t("apps.link")}
-                </Button>
-              )}
-              {(
-                <Button
-                  onClick={displayPages}
-                  className={`
-                  mx-2
-                  ${
-                    sidebarOpen && sidebar === "pages"
-                      ? "p-button-secondary"
-                      : ""
-                  }`}
-                >
-                  {t("pages.link")}
-                </Button>
-                )*/}
-            </>
-          )
-        }
-      >
-        <div className="flex flex-1">
-          <div className="flex flex-1 flex-column overflow-auto">
-            {children}
-          </div>
-
-          <SidePanel
-            sidebarOpen={sidebarOpen}
-            onClose={() => sidebarOpen && setSidebarOpen(false)}
-          >
-            {sidebar === 'automations' && (
-              <AutomationsSidebar onClose={() => setSidebarOpen(false)} />
-            )}
-            {/*sidebar === "apps" && <div>les apps bientôt</div>}
-            {sidebar === "pages" && <div>les pages bientôt</div>*/}
-          </SidePanel>
-        </div>
-      </Main>
+      <Layout Header={<HeaderWorkspace />}>{children}</Layout>
     </workspaceContext.Provider>
   );
 };

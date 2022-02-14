@@ -1,6 +1,7 @@
 import Block from './Block';
 import renderer, { act } from 'react-test-renderer';
 import { useAutomationBuilder } from './context';
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 jest.mock('react-flow-renderer', () => {
   return {
@@ -95,9 +96,7 @@ it('should remove instruction', () => {
   );
 
   act(() => {
-    root.root
-      .find((el) => el.props.className === 'pi pi-times-circle')
-      .parent!.props.onClick();
+    root.root.findByType(CloseCircleOutlined).parent!.props.onClick();
   });
   expect(useAutomationBuilder().removeInstruction).toHaveBeenCalledWith(
     parent,

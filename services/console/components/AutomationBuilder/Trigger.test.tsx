@@ -2,7 +2,6 @@ import Trigger, { TriggerDisplay } from './Trigger';
 import renderer, { act } from 'react-test-renderer';
 import { useAutomationBuilder } from './context';
 import Block from './Block';
-import { useToaster } from '../../layouts/Toaster';
 import { Trans } from 'next-i18next';
 
 jest.mock('./context', () => {
@@ -25,15 +24,6 @@ jest.mock('react-flow-renderer', () => {
     Position: {
       Bottom: 0,
     },
-  };
-});
-
-jest.mock('../../layouts/Toaster', () => {
-  const mock = {
-    show: jest.fn(),
-  };
-  return {
-    useToaster: () => mock,
   };
 });
 
@@ -77,17 +67,10 @@ it('should copy endpoint', () => {
     writeText: jest.fn(),
   };
 
-  act(() => {
-    root.root.findByType(Trans).props.components.a.props.onClick(e);
-  });
-
+  root.root.findByType(Trans).props.components.a.props.onClick(e);
   expect(e.preventDefault).toHaveBeenCalled();
   expect(e.stopPropagation).toHaveBeenCalled();
   expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
     'http://endpoint'
   );
-  expect(useToaster().show).toHaveBeenCalledWith({
-    severity: 'success',
-    summary: 'automations.trigger.endpoint.copied',
-  });
 });

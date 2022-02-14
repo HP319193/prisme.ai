@@ -1,10 +1,11 @@
 import { Trans, useTranslation } from 'next-i18next';
 import { FC, memo, useMemo } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
-import { useToaster } from '../../layouts/Toaster';
 import Block from './Block';
 import { useAutomationBuilder } from './context';
 import styles from './styles';
+import { notification } from 'antd';
+import { LinkOutlined } from '@ant-design/icons';
 
 interface TriggerDisplayProps {
   value: Prismeai.When;
@@ -15,13 +16,12 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
   endpoint = '',
 }) => {
   const { t } = useTranslation('workspaces');
-  const toaster = useToaster();
 
   const copyEndpoint = () => {
     globalThis.navigator.clipboard.writeText(endpoint);
-    toaster.show({
-      severity: 'success',
-      summary: t('automations.trigger.endpoint.copied'),
+    notification.success({
+      message: t('automations.trigger.endpoint.copied'),
+      placement: 'bottomRight',
     });
   };
 
@@ -54,7 +54,7 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
                   href={endpoint}
                 />
               ),
-              icon: <i className="pi pi-copy" />,
+              icon: <LinkOutlined />,
             }}
           >
             <a>The endpoint</a> is hit

@@ -5,67 +5,23 @@ exports[`should render 1`] = `
   <form
     onSubmit={[Function]}
   >
-    <fieldset
-      className="p-fieldset p-component pt-5 mb-4"
-      id={null}
-      onClick={null}
-      style={null}
-    >
-      <legend
-        className="p-fieldset-legend p-unselectable-text"
-        onClick={[Function]}
+    <div>
+      automations.condition.edit.title
+      <div
+        className="mb-5"
       >
         <span
-          className="p-fieldset-legend-text"
-          id="pr_id_1_header"
+          className="flex flex-col mx-2 "
         >
-          automations.condition.edit.title
+          <label
+            htmlFor="condition"
+          >
+            condition
+          </label>
         </span>
-      </legend>
-      <div
-        aria-hidden={false}
-        aria-labelledby="pr_id_1_header"
-        className="p-toggleable-content"
-        id="pr_id_1_content"
-        role="region"
-      >
-        <div
-          className="p-fieldset-content"
-        >
-          <div
-            className="p-field mb-5"
-          >
-            <span
-              className="flex p-float-label mx-2 undefined"
-            >
-              <input
-                className="p-inputtext p-component flex flex-1 "
-                id="condition"
-                name="condition"
-                onBlur={[Function]}
-                onChange={[Function]}
-                onFocus={[Function]}
-                onInput={[Function]}
-                onKeyPress={[Function]}
-                value=""
-              />
-              <label
-                htmlFor="condition"
-              >
-                condition
-              </label>
-            </span>
-          </div>
-          <button
-            className="p-button p-component"
-            disabled={false}
-            type="submit"
-          >
-            automations.condition.edit.submit
-          </button>
-        </div>
       </div>
-    </fieldset>
+      automations.condition.edit.save
+    </div>
   </form>
 </div>
 `;

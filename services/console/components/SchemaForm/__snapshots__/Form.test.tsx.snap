@@ -5,22 +5,11 @@ exports[`should render 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="p-field mb-5"
+    className="mb-5"
   >
     <span
-      className="flex p-float-label mx-2 undefined"
+      className="flex flex-col mx-2 "
     >
-      <input
-        className="p-inputtext p-component flex flex-1 "
-        id="foo"
-        name="foo"
-        onBlur={[Function]}
-        onChange={[Function]}
-        onFocus={[Function]}
-        onInput={[Function]}
-        onKeyPress={[Function]}
-        value=""
-      />
       <label
         htmlFor="foo"
       >
@@ -29,63 +18,30 @@ exports[`should render 1`] = `
     </span>
   </div>
   <div
-    className="p-field mb-5"
+    className="mb-5"
   >
     <label
-      className="mx-2 flex flex-1 align-items-center"
+      className="mx-2 flex flex-1 align-center"
     >
-      <div
-        aria-checked={false}
-        className="p-inputswitch p-component mr-2"
-        id={null}
-        onClick={[Function]}
-        role="checkbox"
-        style={null}
-      >
-        <div
-          className="p-hidden-accessible"
-        >
-          <input
-            aria-checked={false}
-            aria-labelledby={null}
-            checked={false}
-            disabled={false}
-            id={null}
-            name={null}
-            onBlur={[Function]}
-            onChange={[Function]}
-            onFocus={[Function]}
-            onKeyDown={[Function]}
-            role="switch"
-            type="checkbox"
-          />
-        </div>
-        <span
-          className="p-inputswitch-slider"
-        />
+      <div>
+        bar
       </div>
-      bar
     </label>
   </div>
   <div
-    className="p-field mb-5"
+    className="mb-5"
   >
     <span
-      className="flex p-float-label mx-2 undefined"
+      className="flex flex-col mx-2 "
     >
       <label
         htmlFor="lorem"
       >
         lorem
       </label>
+      <div />
     </span>
   </div>
-  <button
-    className="p-button p-component"
-    disabled={false}
-    type="submit"
-  >
-    save
-  </button>
+  automations.edit.save
 </form>
 `;

@@ -2,88 +2,20 @@
 
 exports[`should render empty 1`] = `
 <div
-  className="flex min-h-screen max-h-screen flex-column"
+  className="!bg-blue-200 flex grow m-4 rounded"
 >
   <div
-    className="bg-primary p-4 z-1 shadow-4"
+    className="flex flex-wrap align-start justify-start"
   >
     <div
-      className="flex justify-content-between"
+      className="flex grow items-center justify-between flex-col text-center"
     >
       <div
-        className="flex direction-row align-items-center"
+        className="flex items-center flex-col text-center mt-20"
       >
-        <div
-          className="mr-2"
-        >
-          <a
-            href="/workspaces"
-            onClick={[Function]}
-            onMouseEnter={[Function]}
-          >
-            Prisme.ai
-          </a>
-        </div>
+        create.label
       </div>
-      <div>
-        <button
-          className="p-button p-component p-button-icon-only"
-          disabled={false}
-          onClick={[Function]}
-        >
-          <span
-            className="p-button-icon p-c pi pi-power-off"
-          />
-          <span
-            className="p-button-label p-c"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "&nbsp;",
-              }
-            }
-          />
-        </button>
-      </div>
-    </div>
-  </div>
-  <div
-    className="flex flex-1 surface-ground relative"
-    style={
-      Object {
-        "overflow": "auto",
-        "overflowX": "hidden",
-      }
-    }
-  >
-    <div
-      className="justify-content-center flex flex-wrap align-items-start justify-content-start"
-    >
-      <div
-        className="p-card p-component w-4 m-2"
-        id={null}
-        style={null}
-      >
-        <div
-          className="p-card-body"
-        >
-          <div
-            className="p-card-content"
-          >
-            create.description
-          </div>
-          <div
-            className="p-card-footer"
-          >
-            <button
-              className="p-button p-component"
-              disabled={false}
-              onClick={[Function]}
-            >
-              create.label
-            </button>
-          </div>
-        </div>
-      </div>
+      create.description_sub
     </div>
   </div>
 </div>
@@ -91,162 +23,34 @@ exports[`should render empty 1`] = `
 
 exports[`should render some workspaces 1`] = `
 <div
-  className="flex min-h-screen max-h-screen flex-column"
+  className="!bg-blue-200 flex grow m-4 rounded"
 >
   <div
-    className="bg-primary p-4 z-1 shadow-4"
+    className="flex flex-wrap align-start justify-start"
   >
     <div
-      className="flex justify-content-between"
+      className="flex grow items-center justify-center flex-col text-center"
     >
-      <div
-        className="flex direction-row align-items-center"
-      >
-        <div
-          className="mr-2"
-        >
-          <a
-            href="/workspaces"
-            onClick={[Function]}
-            onMouseEnter={[Function]}
-          >
-            Prisme.ai
-          </a>
-        </div>
-      </div>
-      <div>
-        <button
-          className="p-button p-component p-button-icon-only"
-          disabled={false}
-          onClick={[Function]}
-        >
-          <span
-            className="p-button-icon p-c pi pi-power-off"
-          />
-          <span
-            className="p-button-label p-c"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "&nbsp;",
-              }
-            }
-          />
-        </button>
-      </div>
+      <div />
+      foo
+      workspaces.defaultDescription
     </div>
-  </div>
-  <div
-    className="flex flex-1 surface-ground relative"
-    style={
-      Object {
-        "overflow": "auto",
-        "overflowX": "hidden",
-      }
-    }
-  >
     <div
-      className="justify-content-center flex flex-wrap align-items-start justify-content-start"
+      className="flex grow items-center justify-center flex-col text-center"
+    >
+      <div />
+      bar
+      workspaces.defaultDescription
+    </div>
+    <div
+      className="flex grow items-center justify-between flex-col text-center"
     >
       <div
-        className="p-card p-component w-3 m-2"
-        id={null}
-        style={null}
+        className="flex items-center flex-col text-center mt-20"
       >
-        <div
-          className="p-card-body"
-        >
-          <div
-            className="p-card-content"
-          >
-            <a
-              href="/workspaces/1"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
-            >
-              foo
-            </a>
-          </div>
-          <div
-            className="p-card-footer"
-          >
-            <a
-              href="/workspaces/1"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
-            >
-              <button
-                className="p-button p-component"
-                disabled={false}
-              >
-                edit.label
-              </button>
-            </a>
-          </div>
-        </div>
+        create.label
       </div>
-      <div
-        className="p-card p-component w-3 m-2"
-        id={null}
-        style={null}
-      >
-        <div
-          className="p-card-body"
-        >
-          <div
-            className="p-card-content"
-          >
-            <a
-              href="/workspaces/42"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
-            >
-              bar
-            </a>
-          </div>
-          <div
-            className="p-card-footer"
-          >
-            <a
-              href="/workspaces/42"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
-            >
-              <button
-                className="p-button p-component"
-                disabled={false}
-              >
-                edit.label
-              </button>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div
-        className="p-card p-component w-4 m-2"
-        id={null}
-        style={null}
-      >
-        <div
-          className="p-card-body"
-        >
-          <div
-            className="p-card-content"
-          >
-            create.description
-          </div>
-          <div
-            className="p-card-footer"
-          >
-            <button
-              className="p-button p-component"
-              disabled={false}
-              onClick={[Function]}
-            >
-              create.label
-            </button>
-          </div>
-        </div>
-      </div>
+      create.description_sub
     </div>
   </div>
 </div>

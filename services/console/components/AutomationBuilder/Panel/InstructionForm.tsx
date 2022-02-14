@@ -68,7 +68,7 @@ export const InstructionForm: FC<InstructionFormProps> = ({
   );
 
   return (
-    <div className="flex flex-1 flex-column">
+    <div className="flex flex-1 flex-col h-full">
       {!edit ||
         (!edit.instruction && (
           <InstructionSelection onSubmit={setInstruction} />

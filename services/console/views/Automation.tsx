@@ -1,26 +1,26 @@
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import { useEffect, useState, useCallback } from 'react';
 import AutomationBuilder from '../components/AutomationBuilder';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
-import EditableTitle from '../components/EditableTitle';
-import { Button } from 'primereact/button';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
-import { useToaster } from '../layouts/Toaster';
+import { Button, EditableTitle, PageHeader } from '@prisme.ai/design-system';
+import { LoadingOutlined } from '@ant-design/icons';
+import { notification } from 'antd';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
   const { workspace } = useWorkspace();
   const { updateAutomation } = useWorkspaces();
-  const toaster = useToaster();
+
   const {
     query: { automationId },
+    push,
   } = useRouter();
   const automation = (workspace.automations || {})[`${automationId}`];
-  const [value, setValue] = useState<Prismeai.Automation>(automation);
+  const [value, setValue] = useState<Prismeai.Automation>(automation || {});
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -44,14 +44,18 @@ export const Automation = () => {
       if (saved) {
         setValue(saved);
       }
+      notification.success({
+        message: t('automations.save.toast'),
+        placement: 'bottomRight',
+      });
     } catch (e) {
-      toaster.show({
-        severity: 'error',
-        summary: t('automations.save.error'),
+      notification.error({
+        message: t('automations.save.error'),
+        placement: 'bottomRight',
       });
     }
     setSaving(false);
-  }, [automationId, t, toaster, updateAutomation, value, workspace]);
+  }, [automationId, t, updateAutomation, value, workspace]);
 
   useKeyboardShortcut([
     {
@@ -63,30 +67,35 @@ export const Automation = () => {
       },
     },
   ]);
-  if (!automation) {
+  if (!value) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
   }
   return (
     <>
-      <div className="flex flex-row justify-content-between bg-white">
-        <div className="flex flex-row align-items-center">
-          <Link href={`/workspaces/${workspace.id}`}>
-            {t('automations.back')}
-          </Link>
-          <EditableTitle title={value.name} onChange={updateTitle} />
-        </div>
-        <div className="flex flex-row align-items-center">
-          <Button onClick={save} disabled={saving}>
-            {saving && <i className="pi pi-spin pi-spinner absolute -ml-3" />}
+      <PageHeader
+        title={
+          <EditableTitle
+            value={value.name}
+            onChange={updateTitle}
+            level={4}
+            className="!m-0 !ml-4"
+          />
+        }
+        onBack={() => push(`/workspaces/${workspace.id}`)}
+        RightButtons={[
+          <Button onClick={save} disabled={saving} key="1">
+            {saving && <LoadingOutlined />}
             {t('automations.save.label')}
-          </Button>
-        </div>
-      </div>
-      <AutomationBuilder
-        id={`${automationId}`}
-        value={value}
-        onChange={setValue}
+          </Button>,
+        ]}
       />
+      <div className="relative flex flex-1">
+        <AutomationBuilder
+          id={`${automationId}`}
+          value={value}
+          onChange={setValue}
+        />
+      </div>
     </>
   );
 };

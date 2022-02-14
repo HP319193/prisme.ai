@@ -1,12 +1,10 @@
 import { useTranslation } from 'next-i18next';
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import { Form, useField } from 'react-final-form';
 import FieldContainer from '../../../layouts/Field';
 import Fieldset from '../../../layouts/Fieldset';
-import { Chips } from 'primereact/chips';
-import { Button } from 'primereact/button';
-import { InputSwitch } from 'primereact/inputswitch';
-import { InputText } from 'primereact/inputtext';
+import { Button, Input, TagEditable } from '@prisme.ai/design-system';
+import { Switch } from 'antd';
 
 const Endpoint = () => {
   const { t } = useTranslation('workspaces');
@@ -14,16 +12,15 @@ const Endpoint = () => {
 
   return (
     <div className="p-field mb-5">
-      <label className="mx-2 flex flex-1 align-items-center flex-column">
-        <InputSwitch
+      <label className="mx-2 flex flex-1 items-center flex-row">
+        <div className="ml-2">{t('automations.trigger.endpoint.custom')}</div>
+        <Switch
           checked={input.value !== false}
-          onChange={({ value }) => input.onChange(value)}
-          className="mr-2"
+          onChange={(value) => input.onChange(value)}
         />
-        {t('automations.trigger.endpoint.custom')}
       </label>
       {input.value !== false && (
-        <InputText
+        <Input
           {...input}
           value={typeof input.value === 'string' ? input.value : ''}
         />
@@ -54,7 +51,12 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onSubmit }) => {
           <form onSubmit={handleSubmit}>
             <Fieldset legend={t('automations.trigger.events.title')}>
               <FieldContainer name="events">
-                {({ input }) => <Chips {...input} separator="," />}
+                {({ input }) => (
+                  <TagEditable
+                    placeholder={t('automations.trigger.events.title')}
+                    {...input}
+                  />
+                )}
               </FieldContainer>
             </Fieldset>
             <Fieldset legend={t('automations.trigger.dates.title')}>
@@ -63,7 +65,7 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onSubmit }) => {
             <Fieldset legend={t('automations.trigger.endpoint.title')}>
               <Endpoint />
             </Fieldset>
-            <Button>{t('automations.trigger.save')}</Button>
+            <Button type="submit">{t('automations.trigger.save')}</Button>
           </form>
         )}
       </Form>

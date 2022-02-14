@@ -1,26 +1,39 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Button } from 'primereact/button';
-import { FC, useCallback, useState } from 'react';
+import {
+  Button,
+  ListItem,
+  SearchInput,
+  Space,
+  Title,
+} from '@prisme.ai/design-system';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useWorkspaces } from '../components/WorkspacesProvider';
-
-interface AutomationsSidebarProps {
-  onClose: () => void;
-}
+import useLocalizedText from '../utils/useLocalizedText';
 
 const emptyObject: Prismeai.Workspace['automations'] = {};
 
-export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
-  onClose,
-}) => {
+export const AutomationsSidebar: FC = () => {
   const { t } = useTranslation('workspaces');
+  const localize = useLocalizedText();
   const { push } = useRouter();
   const {
     workspace,
     workspace: { id: workspaceId, automations = emptyObject },
   } = useWorkspace();
+
+  const [filter, setFilter] = useState('');
+
+  const filteredAutomations = useMemo(() => {
+    return Object.keys(automations).flatMap((key) => {
+      const { name, description = '' } = automations[key];
+      return `${name} ${description}`.toLowerCase().match(filter.toLowerCase())
+        ? { ...automations[key], slug: key }
+        : [];
+    });
+  }, [filter, automations]);
 
   const { createAutomation } = useWorkspaces();
 
@@ -44,20 +57,10 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
     const name = generateAutomationName();
     const createdAutomation = await createAutomation(workspace, {
       name,
-      when: {
-        events: [t('automations.create.value.event')],
-      },
-      do: [
-        {
-          emit: {
-            event: t('automations.create.value.event'),
-          },
-        },
-      ],
+      do: [],
     });
 
     setCreating(false);
-    onClose();
     if (createdAutomation) {
       await push(
         `/workspaces/${workspaceId}/automations/${createdAutomation.slug}`
@@ -68,33 +71,37 @@ export const AutomationsSidebar: FC<AutomationsSidebarProps> = ({
     createAutomation,
     workspace,
     t,
-    onClose,
     push,
     workspaceId,
   ]);
 
   return (
-    <div>
-      <div>{t('automations.link')}</div>
-      <div>
+    <div className="flex grow h-full flex-col">
+      <div className="flex justify-between items-center mb-6">
+        <Title level={4} className="mb-0">
+          {t('automations.link')}
+        </Title>
         <Button onClick={create} disabled={creating}>
-          <div
-            className={`mr-2 pi ${creating ? 'pi-spin pi-spinner' : 'pi-plus'}`}
-          />
           {t('automations.create.label')}
         </Button>
       </div>
-      {Object.keys(automations).map((key) => (
-        <div
-          key={key}
-          onClick={onClose}
-          className="flex justify-content-between align-items-center"
-        >
-          <Link href={`/workspaces/${workspaceId}/automations/${key}`}>
-            {automations[key].name}
+      <SearchInput
+        placeholder={t('search')}
+        className="mb-6"
+        onChange={({ target: { value } }) => setFilter(value)}
+      />
+      <Space direction="vertical" className="flex grow overflow-x-auto">
+        {filteredAutomations.map(({ name, description, slug }) => (
+          <Link
+            key={slug}
+            href={`/workspaces/${workspaceId}/automations/${slug}`}
+          >
+            <a>
+              <ListItem title={name} content={localize(description)} />
+            </a>
           </Link>
-        </div>
-      ))}
+        ))}
+      </Space>
     </div>
   );
 };

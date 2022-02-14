@@ -1,0 +1,22 @@
+{
+  "name": "@prisme.ai/design-system",
+  "version": "1.0.2",
+  "description": "Prisme.ai design system",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build-tailwind": "npx tailwindcss -c ./tailwind.config.cjs -i ./styles/tailwind.css -o ./styles/index.css",
+    "build-styles": "npm run build-tailwind && npx lessc --js ./styles/prismeai-theme.less ./styles/theme.css",
+    "build": "npm run build-styles && rollup -c rollup.config.js",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "watch-less": "less-watch-compiler --config less-watcher.config.json",
+    "start": "npm run build-tailwind && concurrently --kill-others \"npm run watch-less\" \"npm run storybook\""
+  },
+  "dependencies": {
+    "antd": "^4.18.5"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "tailwindcss": "^3.0.17"
+  }
+}

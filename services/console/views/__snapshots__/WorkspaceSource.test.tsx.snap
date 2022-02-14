@@ -4,6 +4,6 @@ exports[`should render empty 1`] = `null`;
 
 exports[`should render empty 2`] = `
 <div
-  className="flex flex-1 flex-column"
+  className="flex flex-1 flex-col"
 />
 `;

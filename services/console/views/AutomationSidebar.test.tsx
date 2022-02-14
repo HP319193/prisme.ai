@@ -1,9 +1,9 @@
 import AutomationsSidebar from './AutomationsSidebar';
 import renderer, { act } from 'react-test-renderer';
 import { useWorkspaces } from '../components/WorkspacesProvider';
-import { Button } from 'primereact/button';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useRouter } from 'next/router';
+import { Button } from '@prisme.ai/design-system';
 
 jest.mock('../components/WorkspacesProvider', () => {
   const createAutomation = jest.fn((w, automation) => ({
@@ -45,14 +45,12 @@ jest.mock('next/router', () => {
   };
 });
 it('should render', () => {
-  const onClose = jest.fn();
-  const root = renderer.create(<AutomationsSidebar onClose={onClose} />);
+  const root = renderer.create(<AutomationsSidebar />);
   expect(root.toJSON()).toMatchSnapshot();
 });
 
 it('should create an automation', async () => {
-  const onClose = jest.fn();
-  const root = renderer.create(<AutomationsSidebar onClose={onClose} />);
+  const root = renderer.create(<AutomationsSidebar />);
   await act(async () => {
     await root.root.findByType(Button).props.onClick();
   });
@@ -60,19 +58,9 @@ it('should create an automation', async () => {
     useWorkspace().workspace,
     {
       name: 'automations.create.defaultName',
-      when: {
-        events: ['automations.create.value.event'],
-      },
-      do: [
-        {
-          emit: {
-            event: 'automations.create.value.event',
-          },
-        },
-      ],
+      do: [],
     }
   );
-  expect(onClose).toHaveBeenCalled();
   expect(useRouter().push).toHaveBeenCalledWith(
     '/workspaces/42/automations/42-1'
   );
@@ -84,8 +72,7 @@ it('should create an automation with existing name', async () => {
       do: [],
     },
   };
-  const onClose = jest.fn();
-  const root = renderer.create(<AutomationsSidebar onClose={onClose} />);
+  const root = renderer.create(<AutomationsSidebar />);
   await act(async () => {
     await root.root.findByType(Button).props.onClick();
   });
@@ -93,16 +80,7 @@ it('should create an automation with existing name', async () => {
     useWorkspace().workspace,
     {
       name: 'automations.create.defaultName (1)',
-      when: {
-        events: ['automations.create.value.event'],
-      },
-      do: [
-        {
-          emit: {
-            event: 'automations.create.value.event',
-          },
-        },
-      ],
+      do: [],
     }
   );
 });

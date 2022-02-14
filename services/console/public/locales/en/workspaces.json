@@ -1,7 +1,8 @@
 {
   "workspaces": {
     "title": "Workspaces and Applications — $t(common:main.title)",
-    "description": "Create new Workspaces and new Apps, edit them, and run them"
+    "description": "Create new Workspaces and new Apps, edit them, and run them",
+    "defaultDescription": "Created by you"
   },
   "workspace": {
     "title": "\"{{name}}\" Workspace — $t(common:main.title)",
@@ -9,9 +10,10 @@
   },
   "create": {
     "description_first": "Create your first workspace to start automating your work",
-    "description": "Create a new workspace",
+    "description": "New workspace",
     "label": "Create a workspace",
-    "defaultName": "Workspace"
+    "defaultName": "Workspace",
+    "description_sub": "And start automating and enhancing"
   },
   "edit": {
     "label": "Edit"
@@ -64,13 +66,13 @@
         "help": "Soon available"
       },
       "endpoint": {
-        "title": "Endpoint",
-        "display": "<a>The endpoint <icon /></a> is hit",
-        "copied": "Endpoint has been copied in your clipboard",
-        "help": "Automation will be run everytime the endpoint will be hit.",
+        "title": "URL",
+        "display": "<a>The URL <icon /></a> is hit",
+        "copied": "URL has been copied in your clipboard",
+        "help": "Automation will be run everytime the URL will be hit.",
         "custom": "Execute this automation by calling a web address"
       },
-      "save": "Enregistrer"
+      "save": "Add"
     },
     "instruction": {
       "title_builtin": "Logical",
@@ -89,12 +91,13 @@
     },
     "edit": {
       "select": "Select instruction",
-      "builtin": "Logical"
+      "builtin": "Logical",
+      "save": "Add"
     },
     "condition": {
       "edit": {
         "title": "Condition",
-        "submit": "Save",
+        "save": "Add",
         "submit_new": "Add"
       }
     }
@@ -106,7 +109,7 @@
     "link": "Pages"
   },
   "expert": {
-    "show": "Edit the workspace source code",
+    "show": "Edit the source code",
     "hide": "Hide the source code",
     "exit": {
       "confirm_title": "Changes in progress",

@@ -1,17 +1,20 @@
 {
   "workspaces": {
     "title": "Espaces de travails et applications — $t(common:main.title)",
-    "description": "Créez de nouveaux espaces de travails et de nouvelles apps, éditez les et exécutez les"
+    "description": "Créez de nouveaux espaces de travails et de nouvelles apps, éditez les et exécutez les",
+    "defaultDescription": "Créé par vous"
   },
   "workspace": {
     "title": "\"{{name}}\" Espace de travail — $t(common:main.title)",
-    "description": "Édition de l'espace de travail \"{{name}}\""
+    "description": "Édition de l'espace de travail \"{{name}}\"",
+    "share": "Partager"
   },
   "create": {
     "description_first": "Créez votre premier espace de travail pour commencer à automatiser votre travail",
-    "description": "Créez un nouvel espace de travail",
-    "label": "Creer un espace de travail",
-    "defaultName": "Workspace"
+    "description": "Nouvel espace de travail",
+    "label": "Créer un espace de travail",
+    "defaultName": "Workspace",
+    "description_sub": "Et commencez à automatiser et valoriser"
   },
   "edit": {
     "label": "Éditer"
@@ -51,7 +54,6 @@
       "copied": "L'adresse a bien été copiée"
     },
     "trigger": {
-      "title": "Se déclenche quand",
       "events": {
         "title": "Évènements",
         "display_one": "L'évenement {{events}} survient",
@@ -64,13 +66,13 @@
         "help": "Bientôt disponible"
       },
       "endpoint": {
-        "title": "Adresse web",
+        "title": "URL",
         "display": "<a>L'adresse web<icon /></a> est visitée",
-        "copied": "L'adresse web a bien été copiée dans votre presse-papier",
+        "copied": "L'URL a bien été copiée dans votre presse-papier",
         "help": "L'automatisation sera exécutées à chaque fois qu'une url sera appelée.",
-        "custom": "Exécuter cette automatisation en appellant une adresse web"
+        "custom": "Exécuter cette automatisation en appellant une URL"
       },
-      "save": "Enregistrer"
+      "save": "Ajouter"
     },
     "instruction": {
       "title_builtin": "Logique",
@@ -84,17 +86,30 @@
       "label_conditions": "Conditions",
       "search": "Rechercher"
     },
+    "output": {
+      "label": "{{output}}",
+      "label_empty": "Indéfinie",
+      "edit": {
+        "title": "Retourner la valeur :",
+        "label": "Valeur",
+        "save": "Ajouter"
+      }
+    },
     "node": {
-      "label": "{{instruction}} {{value, then}} {{value}}"
+      "title": "",
+      "title_trigger": "Se déclenche quand",
+      "title_output": "Sortie",
+      "label": "{{instruction}} {{value}}"
     },
     "edit": {
       "select": "Choisissez une instruction",
-      "builtin": "$t(automations.instruction.title_builtin)"
+      "builtin": "$t(automations.instruction.title_builtin)",
+      "save": "Ajouter"
     },
     "condition": {
       "edit": {
         "title": "Condition",
-        "submit": "Enregistrer",
+        "save": "Ajouter",
         "submit_new": "Ajouter"
       }
     }
@@ -106,11 +121,13 @@
     "link": "Pages"
   },
   "expert": {
-    "show": "Éditer le code source de l'espace de travail",
+    "show": "Éditer le code source",
     "hide": "Masquer le code source",
     "exit": {
       "confirm_title": "Modifications en cours",
-      "confirm_message": "Vous vous appretez à quitter sans sauvegarder. Êtes vous sur ?"
+      "confirm_message": "Vous vous appretez à quitter sans sauvegarder. Êtes vous sur ?",
+      "cancel": "Attendez un peu",
+      "confirm": "Partons !"
     },
     "save": {
       "help": "Enregistrer",

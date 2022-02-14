@@ -1,35 +1,32 @@
 import Panel from './Panel';
 import renderer, { act } from 'react-test-renderer';
-import { Sidebar } from 'primereact/sidebar';
-
-jest.mock('primereact/sidebar', () => {
-  const Sidebar = () => <div>Sidebar</div>;
-  return {
-    Sidebar,
-  };
-});
+import { Button } from '@prisme.ai/design-system';
 
 it('should render', () => {
   const onVisibleChange = jest.fn();
   const div = {};
   const root = renderer.create(
-    <Panel visible={true} onVisibleChange={onVisibleChange} />,
-    {
-      createNodeMock(el) {
-        if (el.type === 'div') return div;
-        return null;
-      },
-    }
+    <Panel visible={true} onVisibleChange={onVisibleChange} />
   );
+  expect(root.toJSON()).toMatchSnapshot();
+});
+it('should hide', () => {
+  jest.useFakeTimers();
+  const onVisibleChange = jest.fn();
+  const div = {};
+  const root = renderer.create(
+    <Panel visible={true} onVisibleChange={onVisibleChange} />
+  );
+
   expect(root.toJSON()).toMatchSnapshot();
 
   act(() => {
-    root.update(<Panel visible={true} onVisibleChange={onVisibleChange} />);
+    root.root.findByType(Button).props.onClick();
   });
 
-  expect(root.toJSON()).toMatchSnapshot();
-
-  root.root.findByType(Sidebar).props.onHide();
+  act(() => {
+    jest.runAllTimers();
+  });
 
   expect(onVisibleChange).toHaveBeenCalledWith(false);
 });

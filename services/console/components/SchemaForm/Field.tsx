@@ -1,5 +1,5 @@
-import { InputText } from 'primereact/inputtext';
-import { InputSwitch } from 'primereact/inputswitch';
+import { Input } from '@prisme.ai/design-system';
+import { Switch } from 'antd';
 import { FC } from 'react';
 import FieldContainer from '../../layouts/Field';
 import { useField } from 'react-final-form';
@@ -32,20 +32,22 @@ export const Field: FC<FieldProps> = ({ field, type, required, oneOf }) => {
           validate={validate}
         >
           {({ input, className }) => (
-            <CodeEditorInline mode="json" {...input} className={className} />
+            <div>
+              <CodeEditorInline mode="json" {...input} className={className} />
+            </div>
           )}
         </FieldContainer>
       );
     case 'boolean':
       return (
-        <div className="p-field mb-5">
-          <label className="mx-2 flex flex-1 align-items-center">
-            <InputSwitch
+        <div className="mb-5">
+          <label className="mx-2 flex flex-1 align-center">
+            <Switch
               checked={input.value}
-              onChange={({ value }) => input.onChange(value)}
-              className="mr-2"
+              onChange={(value) => input.onChange(value)}
+              className="!mr-2"
             />
-            {field}
+            <div>{field}</div>
           </label>
         </div>
       );
@@ -59,7 +61,7 @@ export const Field: FC<FieldProps> = ({ field, type, required, oneOf }) => {
           validate={validate}
         >
           {({ input, className }) => (
-            <InputText id={field} {...input} className={className} />
+            <Input id={field} {...input} className={className} />
           )}
         </FieldContainer>
       );

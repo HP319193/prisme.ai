@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="flex flex-1 flex-col h-full"
+>
+  <form
+    onSubmit={[Function]}
+  >
+    <div>
+      automations.output.edit.title
+      <div
+        className="mb-5"
+      >
+        <span
+          className="flex flex-col mx-2 "
+        >
+          <label
+            htmlFor="output"
+          >
+            automations.output.edit.label
+          </label>
+          <div />
+        </span>
+      </div>
+    </div>
+    automations.output.edit.save
+  </form>
+</div>
+`;

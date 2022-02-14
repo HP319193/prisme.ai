@@ -10,10 +10,13 @@ import {
   ValidationError,
 } from '../utils/yaml';
 import { generateEndpoint } from '../utils/urls';
-import { useToaster } from '../layouts/Toaster';
 import { useTranslation } from 'next-i18next';
 import { validateWorkspace } from '@prisme.ai/validation';
 import CodeEditor from '../components/CodeEditor/lazy';
+import { Button, PageHeader } from '@prisme.ai/design-system';
+import { LoadingOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router';
+import { Modal, notification } from 'antd';
 
 interface Annotation {
   row: number;
@@ -32,13 +35,47 @@ interface WorkspaceSourceProps {
 }
 export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const { t } = useTranslation('workspaces');
-  const { workspace, setInvalid, setDirty, setNewSource, invalid, save } =
-    useWorkspace();
+  const {
+    workspace,
+    setInvalid,
+    setNewSource,
+    invalid,
+    save,
+    saving,
+  } = useWorkspace();
+  const [dirty, setDirty] = useState(false);
   const [value, setValue] = useState<string | undefined>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const { toJSON, toYaml } = useYaml();
   const ref = useRef<HTMLDivElement>(null);
-  const toaster = useToaster();
+  const { push, events } = useRouter();
+  const [confirm, setConfirm] = useState(false);
+
+  useEffect(() => {
+    const askForConfirmation = async (path: string) => {
+      await Modal.confirm({
+        okText: t('expert.exit.cancel'),
+        cancelText: t('expert.exit.confirm'),
+        title: t('expert.exit.confirm_title'),
+        content: t('expert.exit.confirm_message'),
+        onCancel: () => {
+          setConfirm(true);
+          setTimeout(() => push(path), 1);
+        },
+      });
+    };
+    const listener = (path: string) => {
+      if (dirty && !confirm) {
+        askForConfirmation(path);
+        events.emit('routeChangeError');
+        throw `routeChange aborted. This error can be safely ignored - https://github.com/zeit/next.js/issues/2476.`;
+      }
+    };
+    events.on('routeChangeStart', listener);
+    return () => {
+      events.off('routeChangeStart', listener);
+    };
+  }, [dirty, confirm]);
 
   const initYaml = useCallback(async () => {
     try {
@@ -85,6 +122,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const update = useCallback(
     async (newValue: string) => {
+      setDirty(true);
       try {
         const json = await checkSyntaxAndReturnYAML(newValue);
 
@@ -153,9 +191,9 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         ) || {};
       if (!url) return;
       navigator.clipboard.writeText(url);
-      toaster.show({
-        severity: 'info',
-        summary: t('automations.endpoint.copied'),
+      notification.success({
+        message: t('automations.endpoint.copied'),
+        placement: 'bottomRight',
       });
     };
     current.addEventListener('click', listener);
@@ -163,13 +201,18 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     return () => {
       current.removeEventListener('click', listener);
     };
-  }, [allAnnotations, ref, t, toaster]);
+  }, [allAnnotations, ref, t]);
+
+  const saveSource = useCallback(() => {
+    save();
+    setDirty(false);
+  }, [save]);
 
   const shortcuts = useMemo(
     () => [
       {
         name: t('expert.save.help'),
-        exec: save,
+        exec: saveSource,
         bindKey: {
           mac: 'cmd-s',
           win: 'ctrl-s',
@@ -182,7 +225,16 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   if (value === undefined) return null;
 
   return (
-    <div className="flex flex-1 flex-column" ref={ref}>
+    <div className="flex flex-1 flex-col" ref={ref}>
+      <PageHeader
+        onBack={() => push(`/workspaces/${workspace.id}`)}
+        RightButtons={[
+          <Button onClick={saveSource} disabled={saving} key="1">
+            {saving && <LoadingOutlined />}
+            {t('automations.save.label')}
+          </Button>,
+        ]}
+      />
       <CodeEditor
         mode="yaml"
         value={value}

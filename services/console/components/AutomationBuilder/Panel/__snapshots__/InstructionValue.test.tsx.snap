@@ -3,69 +3,25 @@
 exports[`should not render without schema 1`] = `null`;
 
 exports[`should render 1`] = `
-<fieldset
-  className="p-fieldset p-component pt-5 mb-4"
-  id={null}
-  onClick={null}
-  style={null}
->
-  <legend
-    className="p-fieldset-legend p-unselectable-text"
-    onClick={[Function]}
-  >
-    <span
-      className="p-fieldset-legend-text"
-      id="pr_id_1_header"
-    >
-      emit
-    </span>
-  </legend>
-  <div
-    aria-hidden={false}
-    aria-labelledby="pr_id_1_header"
-    className="p-toggleable-content"
-    id="pr_id_1_content"
-    role="region"
+<div>
+  emit
+  <form
+    onSubmit={[Function]}
   >
     <div
-      className="p-fieldset-content"
+      className="mb-5"
     >
-      <form
-        onSubmit={[Function]}
+      <span
+        className="flex flex-col mx-2 "
       >
-        <div
-          className="p-field mb-5"
+        <label
+          htmlFor="event"
         >
-          <span
-            className="flex p-float-label mx-2 undefined"
-          >
-            <input
-              className="p-inputtext p-component flex flex-1 "
-              id="event"
-              name="event"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              onInput={[Function]}
-              onKeyPress={[Function]}
-              value=""
-            />
-            <label
-              htmlFor="event"
-            >
-              event
-            </label>
-          </span>
-        </div>
-        <button
-          className="p-button p-component"
-          disabled={false}
-          type="submit"
-        >
-          save
-        </button>
-      </form>
+          event
+        </label>
+      </span>
     </div>
-  </div>
-</fieldset>
+    automations.edit.save
+  </form>
+</div>
 `;

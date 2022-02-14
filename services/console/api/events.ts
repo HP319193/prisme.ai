@@ -5,7 +5,10 @@ const { publicRuntimeConfig } = getConfig();
 
 export class Events {
   private client: Socket;
+  public workspaceId: string;
+
   constructor(workspaceId: string) {
+    this.workspaceId = workspaceId;
     this.client = io(
       `${publicRuntimeConfig.API_HOST || ''}/workspaces/${workspaceId}/events`,
       {
@@ -15,7 +18,13 @@ export class Events {
   }
 
   destroy() {
-    this.client.disconnect();
+    if (this.client.connected) {
+      this.client.disconnect();
+      return;
+    }
+    this.client.once('connect', () => {
+      this.client.disconnect();
+    });
   }
 
   all(listener: (eventName: string, eventData: Prismeai.PrismeEvent) => void) {

@@ -21,10 +21,6 @@ jest.mock('next/router', () => {
   };
 });
 
-jest.mock('primereact/fieldset', () => ({
-  Fieldset: ({ children }: any) => children,
-}));
-
 beforeEach(() => {
   const { mock } = useUser() as any;
   mock.user = null;

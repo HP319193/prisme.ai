@@ -1,7 +1,8 @@
 {
   "workspaces": {
     "title": "Espacios de trabajo y aplicaciones — $t(common:main.title)",
-    "description": "Crear nuevos espacios de trabajo y aplicaciones, editarlos y ejecutarlos"
+    "description": "Crear nuevos espacios de trabajo y aplicaciones, editarlos y ejecutarlos",
+    "defaultDescription": "Creado por ti"
   },
   "workspace": {
     "title": "\"{{name}}\" Espacios de trabajo — $t(common:main.title)",
@@ -9,9 +10,9 @@
   },
   "create": {
     "description_first": "Cree su primer espacio de trabajo para empezar a automatizar su trabajo",
-    "description": "Crear un nuevo espacio de trabajo",
+    "description": "Nuevo espacio de trabajo",
     "label": "Crear un espacio de trabajo",
-    "defaultName": "Espacio de trabajo"
+    "defaultName": "Y empieza a automatizar y mejorar"
   },
   "edit": {
     "label": "Editar"
@@ -64,13 +65,13 @@
         "help": "Disponible en breve"
       },
       "endpoint": {
-        "title": "Dirección web",
-        "display": "Se visita <a>la dirección web<icon /></a>",
-        "copied": "La dirección web ha sido copiado en su portapapeles",
+        "title": "URL",
+        "display": "Se visita <a>la URL<icon /></a>",
+        "copied": "La URL ha sido copiado en su portapapeles",
         "help": "La automatización se ejecutará cada vez que se llame a una url.",
-        "custom": "Ejecuta esta automatización llamando a una dirección web"
+        "custom": "Ejecuta esta automatización llamando a una URL"
       },
-      "save": "Registro"
+      "save": "guardar disparador"
     },
     "instruction": {
       "title_builtin": "Lógica",
@@ -89,12 +90,13 @@
     },
     "edit": {
       "select": "Elija una instrucción",
-      "builtin": "$t(automations.instruction.title_builtin)"
+      "builtin": "$t(automations.instruction.title_builtin)",
+      "save": "guardar instrucción"
     },
     "condition": {
       "edit": {
         "title": "Condición",
-        "submit": "Registro",
+        "save": "Registro condición",
         "submit_new": "Añadir"
       }
     }
@@ -106,7 +108,7 @@
     "link": "Páginas"
   },
   "expert": {
-    "show": "Editar el código fuente del espacio de trabajo",
+    "show": "Editar el código fuente",
     "hide": "Ocultar el código fuente",
     "exit": {
       "confirm_title": "Cambios en curso",

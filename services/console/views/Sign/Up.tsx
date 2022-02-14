@@ -1,18 +1,24 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
-import { Messages } from 'primereact/messages';
+import { useCallback, useEffect } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { Form } from 'react-final-form';
-
-import FullScreen from '../../layouts/FullScreen';
 import Field from '../../layouts/Field';
-import Fieldset from '../../layouts/Fieldset';
 import { useUser } from '../../components/UserProvider';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Link from 'next/link';
-import ApiError from '../../api/ApiError';
+import {
+  Col,
+  Input,
+  Layout,
+  Space,
+  Title,
+  Button,
+} from '@prisme.ai/design-system';
+import SignHeader from '../../components/SignHeader';
+import { notification } from 'antd';
+import {
+  LoadingOutlined,
+  LockOutlined,
+  UnlockOutlined,
+} from '@ant-design/icons';
 
 interface Values {
   email: string;
@@ -25,7 +31,6 @@ export const SignIn = () => {
   const { t } = useTranslation('sign');
   const { push } = useRouter();
   const { user, loading, error, signup } = useUser();
-  const messages = useRef<Messages>(null);
 
   const submit = useCallback(
     async ({ email, password, firstName, lastName }: Values) => {
@@ -35,11 +40,10 @@ export const SignIn = () => {
   );
 
   useEffect(() => {
-    if (!messages.current || !error) return;
-
-    messages.current.show({
-      severity: 'error',
-      summary: t('up.error', { context: error.error }),
+    if (!error) return;
+    notification.error({
+      message: t('up.error', { context: error.error }),
+      placement: 'bottomRight',
     });
   }, [error, t]);
 
@@ -66,72 +70,95 @@ export const SignIn = () => {
   };
 
   const getIcon = () => {
-    if (loading) return 'pi pi-spin pi-spinner';
-    if (user) return 'pi pi-lock-open';
-    return 'pi pi-lock';
+    if (loading) return <LoadingOutlined />;
+    if (user) return <UnlockOutlined />;
+    return <LockOutlined />;
   };
 
   return (
-    <FullScreen>
-      <Head>
-        <title>{t('up.title')}</title>
-        <meta name="description" content={t('up.description')} />
-      </Head>
-      <Form onSubmit={submit} validate={validate}>
-        {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit} className="w-8">
-            <Fieldset legend={t('up.description')}>
-              <Field name="email" label={t('up.email')}>
-                {({ input, className }) => (
-                  <InputText
-                    id="email"
-                    {...input}
-                    autoFocus
-                    className={`${className} min-w-full`}
-                  />
-                )}
-              </Field>
-              <Field name="password" label={t('up.password')}>
-                {({ input, className }) => (
-                  <InputText
-                    id="password"
-                    type="password"
-                    {...input}
-                    className={`${className} min-w-full`}
-                  />
-                )}
-              </Field>
-              <Field name="firstName" label={t('up.firstName')}>
-                {({ input, className }) => (
-                  <InputText
-                    id="firstName"
-                    {...input}
-                    className={`${className} min-w-full`}
-                  />
-                )}
-              </Field>
-              <Field name="lastName" label={t('up.lastName')}>
-                {({ input, className }) => (
-                  <InputText
-                    id="lastName"
-                    {...input}
-                    className={`${className} min-w-full`}
-                  />
-                )}
-              </Field>
-              <Field className="flex justify-content-between">
-                <Link href="/signin">{t('up.signin')}</Link>
-                <Button type="submit" disabled={loading}>
-                  <div className={`${getIcon()} mr-2`} />
-                  {t('up.submit')}
-                </Button>
-              </Field>
-              <Messages ref={messages}></Messages>
-            </Fieldset>
-          </form>
-        )}
-      </Form>
-    </FullScreen>
+    <Layout Header={<SignHeader />} className="!bg-blue-200 pt-14">
+      <div className="flex grow justify-evenly mt-32">
+        <Col span={12}>
+          <div className="flex items-center flex-col">
+            <div>
+              <Title>{t('up.header')}</Title>
+              <Trans
+                t={t}
+                i18nKey="up.description"
+                values={{
+                  url: '/signin',
+                }}
+                components={{
+                  a: <a href={`signin`} />,
+                }}
+              />
+            </div>
+          </div>
+        </Col>
+        <Col span={12}>
+          <div className="flex items-center flex-col">
+            <Form onSubmit={submit} validate={validate}>
+              {({ handleSubmit }) => (
+                <form onSubmit={handleSubmit} className="w-96 flex">
+                  <Space
+                    size="middle"
+                    direction="vertical"
+                    className="flex grow"
+                  >
+                    <Field name="email">
+                      {({ input: { type, ...inputProps }, className }) => (
+                        <Input
+                          placeholder={t('in.email')}
+                          className={`${className} h-12`}
+                          {...inputProps}
+                        />
+                      )}
+                    </Field>
+                    <Field name="password">
+                      {({ input: { type, ...inputProps }, className }) => (
+                        <Input
+                          placeholder={t('in.password')}
+                          className={`${className} h-12`}
+                          inputType={'password' as any}
+                          {...inputProps}
+                        />
+                      )}
+                    </Field>
+                    <Field name="firstName">
+                      {({ input: { type, ...inputProps }, className }) => (
+                        <Input
+                          placeholder={t('up.firstName')}
+                          className={`${className} h-12`}
+                          {...inputProps}
+                        />
+                      )}
+                    </Field>
+                    <Field name="lastName">
+                      {({ input: { type, ...inputProps }, className }) => (
+                        <Input
+                          placeholder={t('up.lastName')}
+                          className={`${className} h-12`}
+                          {...inputProps}
+                        />
+                      )}
+                    </Field>
+                    <Button
+                      variant="primary"
+                      disabled={loading}
+                      className="w-full !h-12"
+                      type="submit"
+                    >
+                      {getIcon()}
+                      {t('up.submit')}
+                    </Button>
+                  </Space>
+                </form>
+              )}
+            </Form>
+          </div>
+        </Col>
+      </div>
+    </Layout>
   );
 };
 

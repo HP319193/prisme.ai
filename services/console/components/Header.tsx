@@ -1,0 +1,77 @@
+import { ReactElement, useMemo } from 'react';
+import { LogoutOutlined } from '@ant-design/icons';
+import {
+  Menu,
+  Dropdown,
+  Space,
+  Divider,
+  Avatar,
+} from '@prisme.ai/design-system';
+import { useUser } from './UserProvider';
+import { useTranslation } from 'next-i18next';
+import logo from '../icons/icon-prisme.svg';
+import Image from 'next/image';
+import Link from 'next/link';
+
+interface HeaderProps {
+  title?: string | ReactElement;
+  leftContent?: string | ReactElement;
+}
+const Header = ({ title, leftContent }: HeaderProps) => {
+  const { t } = useTranslation('user');
+  const { user, signout } = useUser();
+
+  const useMenu = useMemo(
+    () => (
+      <Menu
+        items={[
+          {
+            label: (
+              <Space>
+                <LogoutOutlined />
+
+                {t('sign.out')}
+              </Space>
+            ),
+            key: 'signout',
+          },
+        ]}
+        onClick={(item) => {
+          if (typeof item === 'string') return;
+          switch (item.key) {
+            case 'signout':
+              signout();
+          }
+        }}
+      />
+    ),
+    []
+  );
+
+  return (
+    <div className="relative px-6 flex flex-row w-full justify-between items-center pr-header z-20 bg-white">
+      <Link href="/workspaces">
+        <a>
+          <Image {...logo} />
+        </a>
+      </Link>
+      {title}
+      <div className="flex flex-row items-center">
+        {leftContent}
+
+        {leftContent && <Divider type="vertical" className="mr-4" />}
+
+        {user && (
+          <Dropdown Menu={useMenu}>
+            <Space>
+              {user.firstName}
+              {user.photo && <Avatar src={user.photo} />}
+            </Space>
+          </Dropdown>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Header;

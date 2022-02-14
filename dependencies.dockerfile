@@ -24,6 +24,8 @@ COPY services/events/package-lock.json /www/services/events/package-lock.json
 # Packages
 COPY packages/broker/package.json /www/packages/broker/package.json
 COPY packages/broker/package-lock.json /www/packages/broker/package-lock.json
+COPY packages/design-system/package.json /www/packages/design-system/package.json
+COPY packages/design-system/package-lock.json /www/packages/design-system/package-lock.json
 
 COPY packages/validation/package.json /www/packages/validation/package.json
 

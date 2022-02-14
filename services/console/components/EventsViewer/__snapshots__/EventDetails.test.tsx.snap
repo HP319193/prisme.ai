@@ -2,17 +2,6 @@
 
 exports[`should render 1`] = `
 <div
-  className="DataTable"
->
-  <div
-    className="Column"
-  >
-    {"field":"name","header":"events.details.name"}
-  </div>
-  <div
-    className="Column"
-  >
-    {"field":"value","header":"events.details.value"}
-  </div>
-</div>
+  className="Table"
+/>
 `;

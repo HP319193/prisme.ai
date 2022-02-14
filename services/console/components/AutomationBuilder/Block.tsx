@@ -7,6 +7,7 @@ import { useAutomationBuilder } from './context';
 import { useTranslation } from 'next-i18next';
 import pencil from '../../icons/cursor-pencil.svg';
 import { truncate } from '../../utils/strings';
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 interface BlockProps {
   removable?: boolean;
@@ -18,7 +19,6 @@ export const Block: FC<NodeProps & BlockProps> = ({
   removable = true,
   selected,
   onEdit,
-  type,
 }) => {
   const { t } = useTranslation('workspaces');
   const { removeInstruction, getApp } = useAutomationBuilder();
@@ -47,6 +47,15 @@ export const Block: FC<NodeProps & BlockProps> = ({
         case 'wait':
           displayedValue = (value && value.event) || '?';
           break;
+        case 'output':
+          return t('automations.output.label', {
+            output: value.output,
+            context: value.output ? '' : 'empty',
+            interpolation: {
+              maxReplaces: 1,
+            },
+          });
+          break;
         default:
           displayedValue =
             typeof value === 'string' ? value : (value && value.event) || '';
@@ -57,7 +66,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
         display: ':',
 
         interpolation: {
-          maxReplaces: 3,
+          maxReplaces: 2,
         },
       });
     },
@@ -69,31 +78,31 @@ export const Block: FC<NodeProps & BlockProps> = ({
       <div
         className={`
           flex
-          flex-column
+          flex-col
           surface-section
-          border-solid
-          border-${selected ? '3' : '1'}
-          border-primary
-          border-round`}
+          border-graph-border
+          bg-graph-background
+          ${selected ? 'border-4' : 'border-2'}
+          rounded`}
         style={{ width: Flow.BLOCK_WIDTH - 50 }}
         ref={ref}
       >
         <div
           className="
           flex
-          align-items-center
-          border-solid
-          border-none
-          border-bottom-1
-          border-primary
+          align-center
+          border-b-2
+          border-graph-border
           p-2
         "
         >
           <div className="mr-2">
             <Image src={icon} width={16} height={16} alt={name} />
           </div>
-          <div className="flex flex-1 justify-content-between">
-            {type === 'trigger' ? t('automations.trigger.title') : name}
+          <div className="flex flex-1 justify-between">
+            {data.title
+              ? t('automations.node.title', { context: data.title })
+              : name}
             {removable && (
               <button
                 className="border-none cursor-pointer"
@@ -103,7 +112,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
                 }}
                 onClick={() => removeInstruction(data.parent, data.index)}
               >
-                <div className="pi pi-times-circle" />
+                <CloseCircleOutlined />
               </button>
             )}
           </div>
@@ -113,7 +122,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
             onClick={onEdit}
             className="
             flex
-            justify-content-center
+            justify-center
             p-2
           "
             style={{
@@ -130,7 +139,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
           <div
             className="
             flex
-            justify-content-center
+            justify-center
             p-2
             cursor-default"
           >

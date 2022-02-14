@@ -1,7 +1,7 @@
 import InstructionSelection from './InstructionSelection';
 import renderer, { act } from 'react-test-renderer';
 import { useAutomationBuilder } from '../context';
-import { InputText } from 'primereact/inputtext';
+import { SearchInput } from '@prisme.ai/design-system';
 
 jest.mock('../context', () => {
   const mock = {};
@@ -29,7 +29,7 @@ it('should filter', () => {
 
   act(() => {
     root.root
-      .findByType(InputText)
+      .findByType(SearchInput)
       .props.onChange({ target: { value: 'ait' } });
   });
 

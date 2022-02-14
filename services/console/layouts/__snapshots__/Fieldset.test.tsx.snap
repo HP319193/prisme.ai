@@ -1,22 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should render 1`] = `
-<fieldset
-  className="p-fieldset p-component pt-5 mb-4"
-  id={null}
-  onClick={null}
-  style={null}
->
-  <div
-    aria-hidden={false}
-    aria-labelledby="pr_id_1_header"
-    className="p-toggleable-content"
-    id="pr_id_1_content"
-    role="region"
-  >
-    <div
-      className="p-fieldset-content"
-    />
-  </div>
-</fieldset>
-`;
+exports[`should render 1`] = `<div />`;

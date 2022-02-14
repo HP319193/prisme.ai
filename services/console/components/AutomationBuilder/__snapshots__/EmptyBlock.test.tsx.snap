@@ -9,10 +9,10 @@ Array [
     Handle
   </div>,
   <div
-    className=" flex flex-column w-10rem"
+    className=" flex flex-col w-[250px]"
   >
     <div
-      className="flex justify-content-center"
+      className="flex justify-center"
       style={
         Object {
           "minHeight": "1px",

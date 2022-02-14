@@ -1,14 +1,11 @@
-ARG DEPENDENCIES_IMAGE=registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-dependencies
-ARG DEPENDENCIES_TAG=latest
-
-FROM $DEPENDENCIES_IMAGE:$DEPENDENCIES_TAG as build
+FROM node:16 as build
 WORKDIR /www
 
-RUN apk add --no-cache libc6-compat
 
-COPY services/console/ /www/services/console
+COPY . /www/
+RUN rm -rf /www/services/console/.next
 # If we do not move node_modules @prisme.ai/ as ./packages, npm prune --production broke them trying to recreate usual symlinks
-RUN npm run build:console && mv node_modules/@prisme.ai packages/ && npm prune --production
+RUN npm ci && npm run build:console && mv node_modules/@prisme.ai packages/ && npm prune --production
 
 EXPOSE 3000
 ENV PORT 3000

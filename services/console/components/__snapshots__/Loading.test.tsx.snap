@@ -2,10 +2,6 @@
 
 exports[`should render 1`] = `
 <div
-  className="flex flex-1 align-items-center justify-content-center"
->
-  <div
-    className=" align-self-center justify-self-center pi pi-spin pi-spinner"
-  />
-</div>
+  className="flex flex-1 align-center justify-center"
+/>
 `;

@@ -51,12 +51,12 @@ export const ConditionEdge: FC<EdgeProps> = ({
           requiredExtensions="http://www.w3.org/1999/xhtml"
         >
           <div
-            className="flex justify-content-center align-items-center"
+            className="flex justify-center align-center"
             style={{ height: `${40}px` }}
           >
             <button
               className={`
-                border-none bg-primary p-1 border-round z-1 text-xs
+                bg-graph-accent p-1 rounded z-1 text-xs min-w-sm text-white px-4
                 ${data.parent ? 'cursor-pointer' : ''}
                 `}
               onClick={

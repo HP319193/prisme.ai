@@ -1,17 +1,25 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
-import { Messages } from 'primereact/messages';
+import { Trans, useTranslation } from 'react-i18next';
 import { Form } from 'react-final-form';
 
-import FullScreen from '../../layouts/FullScreen';
-import Field from '../../layouts/Field';
-import Fieldset from '../../layouts/Fieldset';
 import { useUser } from '../../components/UserProvider';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Link from 'next/link';
+import {
+  Input,
+  Layout,
+  Button,
+  Title,
+  Space,
+  Col,
+} from '@prisme.ai/design-system';
+import Field from '../../layouts/Field';
+import SignHeader from '../../components/SignHeader';
+import { notification } from 'antd';
+import {
+  LoadingOutlined,
+  LockOutlined,
+  UnlockOutlined,
+} from '@ant-design/icons';
 
 interface Values {
   email: string;
@@ -22,7 +30,6 @@ export const SignIn = () => {
   const { t } = useTranslation('sign');
   const { push } = useRouter();
   const { user, loading, error, signin } = useUser();
-  const messages = useRef<Messages>(null);
 
   const submit = useCallback(
     async ({ email, password }: Values) => {
@@ -32,11 +39,10 @@ export const SignIn = () => {
   );
 
   useEffect(() => {
-    if (!messages.current || !error) return;
-
-    messages.current.show({
-      severity: 'error',
-      summary: t('in.error', { context: error.error }),
+    if (!error) return;
+    notification.error({
+      message: t('in.error', { context: error.error }),
+      placement: 'bottomRight',
     });
   }, [error, t]);
 
@@ -57,56 +63,77 @@ export const SignIn = () => {
   };
 
   const getIcon = () => {
-    if (loading) return 'pi pi-spin pi-spinner';
-    if (user) return 'pi pi-lock-open';
-    return 'pi pi-lock';
+    if (loading) return <LoadingOutlined />;
+    if (user) return <UnlockOutlined />;
+    return <LockOutlined />;
   };
 
   return (
-    <FullScreen>
-      <Head>
-        <title>{t('in.title')}</title>
-        <meta name="description" content={t('in.description')} />
-      </Head>
-      <Form onSubmit={submit} validate={validate}>
-        {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit} className="w-8">
-            <Fieldset legend={t('in.description')}>
-              <Field name="email" label={t('in.email')}>
-                {({ input, className }) => (
-                  <InputText
-                    id="email"
-                    {...input}
-                    autoFocus
-                    className={`${className} min-w-full`}
-                  />
-                )}
-              </Field>
-              <Field name="password" label={t('in.password')}>
-                {({ input, className }) => (
-                  <InputText
-                    id="password"
-                    type="password"
-                    {...input}
-                    className={`${className} min-w-full`}
-                  />
-                )}
-              </Field>
-              <Field className="flex justify-content-between">
-                <div className="flex flex-column">
-                  <Link href="/signup">{t('in.signup')}</Link>
-                </div>
-                <Button type="submit" disabled={loading}>
-                  <div className={`${getIcon()} mr-2`} />
-                  {t('in.submit')}
-                </Button>
-              </Field>
-              <Messages className="absolute bottom-0" ref={messages}></Messages>
-            </Fieldset>
-          </form>
-        )}
-      </Form>
-    </FullScreen>
+    <Layout Header={<SignHeader />} className="!bg-blue-200 pt-14">
+      <div className="flex grow justify-evenly mt-32">
+        <Col span={12}>
+          <div className="flex items-center flex-col">
+            <div>
+              <Title>{t('in.header')}</Title>
+              <Trans
+                t={t}
+                i18nKey="in.description"
+                values={{
+                  url: '/signup',
+                }}
+                components={{
+                  a: <a href={`signup`} />,
+                }}
+              />
+            </div>
+          </div>
+        </Col>
+        <Col span={12}>
+          <div className="flex items-center flex-col">
+            <Form onSubmit={submit} validate={validate}>
+              {({ handleSubmit }) => (
+                <form onSubmit={handleSubmit} className="w-96 flex">
+                  <Space
+                    size="middle"
+                    direction="vertical"
+                    className="flex grow"
+                  >
+                    <Field name="email">
+                      {({ input: { type, ...inputProps }, className }) => (
+                        <Input
+                          placeholder={t('in.email')}
+                          className={`${className} !h-12`}
+                          {...inputProps}
+                        />
+                      )}
+                    </Field>
+                    <Field name="password">
+                      {({ input: { type, ...inputProps }, className }) => (
+                        <Input
+                          placeholder={t('in.password')}
+                          className={`${className} !h-12`}
+                          inputType={'password' as any}
+                          {...inputProps}
+                        />
+                      )}
+                    </Field>
+                    <Button
+                      variant="primary"
+                      disabled={loading}
+                      className="w-full !h-12"
+                      type="submit"
+                    >
+                      {getIcon()}
+                      {t('in.submit')}
+                    </Button>
+                  </Space>
+                </form>
+              )}
+            </Form>
+          </div>
+        </Col>
+      </div>
+    </Layout>
   );
 };
 

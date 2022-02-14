@@ -25,10 +25,7 @@ export const Conditions: FC<NodeProps> = (props) => {
     <>
       <Handle type="target" position={Position.Top} style={styles.handle} />
       <Block {...props} />
-      <div
-        className="flex justify-content-between"
-        style={{ padding: '0 10px' }}
-      >
+      <div className="flex justify-between" style={{ padding: '0 10px' }}>
         {sources.map((key) => (
           <Handle
             key={key}

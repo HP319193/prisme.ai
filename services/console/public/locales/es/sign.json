@@ -1,7 +1,8 @@
 {
   "in": {
     "title": "Conexión",
-    "description": "Iniciar sesión en Prisme.ai",
+    "header": "Conectar\na Prisme.ai",
+    "description": "Si aún no tienes una cuenta\npuedes <a>regístrate aquí!</a>",
     "email": "Correo electrónico",
     "password": "Contraseña",
     "submit": "Conexión",
@@ -10,7 +11,8 @@
   },
   "up": {
     "title": "Inscripción — $t(common:main.title)",
-    "description": "Prueba con Prisme.ai",
+    "header": "Prueba Prisme.ai",
+    "description": "Si ya tienes una cuenta\n<a>regístrate</a>",
     "email": "Correo electrónico",
     "password": "Contraseña",
     "firstName": "Appelido",

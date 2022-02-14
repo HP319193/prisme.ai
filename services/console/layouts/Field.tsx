@@ -27,8 +27,11 @@ export const FieldContainer: FC<FieldProps> = ({
 }) => {
   const { input, meta } = useField(name, fieldProps);
   return (
-    <div className="p-field mb-5">
-      <span className={`flex p-float-label mx-2 ${className}`}>
+    <div className="mb-5">
+      <span
+        className={`flex ${label ? 'flex-col mx-2 ' : ''}${className || ''}`}
+      >
+        {label && <label htmlFor={name}>{label}</label>}
         {typeof children === 'function'
           ? children({
               input,
@@ -38,7 +41,6 @@ export const FieldContainer: FC<FieldProps> = ({
               }`,
             })
           : children}
-        <label htmlFor={name}>{label}</label>
       </span>
     </div>
   );

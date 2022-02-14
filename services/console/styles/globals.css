@@ -1,9 +1,15 @@
+#__next {
+  height: 100%;
+  display: flex;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: Montserrat, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  white-space: pre-line;
 }
 
 a {
@@ -16,11 +22,14 @@ a {
 }
 
 .ace_gutter-cell.ace_endpoint:before {
-  font-family: primeicons;
   position: absolute;
+  content: '';
+  background-image: url('/images/link.png');
+  background-size: contain;
+  width: 12px;
+  height: 12px;
   left: 4px;
   top: 2px;
-  content: '';
 }
 
 .prisme-events-viewer__event.p-accordion
@@ -30,11 +39,13 @@ a {
   font-weight: inherit;
   color: inherit;
 }
+
 .prisme-events-viewer__event.p-accordion
   .p-accordion-header
   .p-accordion-header-text {
   color: inherit;
 }
+
 .prisme-events-viewer__event.p-accordion .p-accordion-content {
   padding: 0;
 }

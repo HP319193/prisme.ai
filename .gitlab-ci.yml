@@ -65,7 +65,6 @@ npm_install:
 #### Parent jobs
 
 .npm_test:
-  interruptible: true
   stage: test
   script:
     - >
@@ -86,7 +85,6 @@ npm_install:
       - node_modules/
 
 .build_docker:
-  interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
   services:
@@ -110,7 +108,7 @@ npm_install:
     - internal-runner
   image:
     name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
-    entrypoint: ["/bin/sh", "-c"]
+    entrypoint: [ "/bin/sh", "-c" ]
   script:
     - >
       if [ -z $CI_COMMIT_BRANCH ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
@@ -131,7 +129,6 @@ console_test:
 
 console_build_docker:
   extends: .build_docker
-  interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
   services:
