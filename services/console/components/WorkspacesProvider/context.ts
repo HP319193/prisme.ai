@@ -23,6 +23,10 @@ export interface WorkspacesContext {
     workspace: Workspace,
     automationId: string
   ) => Promise<Prismeai.Automation> | null;
+
+  getWorkspaceUsersPermissions: (
+    workspaceId: string
+  ) => Promise<Prismeai.PermissionsList>;
 }
 
 export const workspacesContext = createContext<WorkspacesContext>({
@@ -35,6 +39,7 @@ export const workspacesContext = createContext<WorkspacesContext>({
   createAutomation: async () => ({} as Prismeai.Automation),
   updateAutomation: async () => ({} as Prismeai.Automation),
   deleteAutomation: async () => ({} as Prismeai.Automation),
+  getWorkspaceUsersPermissions: async () => [] as Prismeai.PermissionsList,
 });
 
 export const useWorkspaces = () => useContext(workspacesContext);
