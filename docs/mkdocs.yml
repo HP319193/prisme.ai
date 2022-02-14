@@ -38,20 +38,26 @@ extra:
 
 nav:
   - i18n.home: index.md
+  - i18n.getstarted:
+      - i18n.index: getstarted/index.md
+      - i18n.configuration: getstarted/configuration.md
+      - i18n.permissions: getstarted/permissions.md
   - i18n.contributing:
       - i18n.index: contributing/index.md
-      - i18n.functionnalRequirements: contributing/functionnalRequirements.md
-      - i18n.architecture: contributing/architecture.md
-      - i18n.console:
-          - i18n.specifications: contributing/technical/console/specifications.md
-      - i18n.events:
-          - i18n.specifications: contributing/technical/events/specifications.md
-      - i18n.runtime:
-          - i18n.specifications: contributing/technical/runtime/specifications.md
-      - i18n.workspaces:
-          - i18n.specifications: contributing/technical/workspaces/specifications.md
+  - i18n.architecture:
+      - i18n.index: architecture/index.md
+      - i18n.authentication_access_control: architecture/authentication_access_control.md
       - i18n.apiGateway:
-          - i18n.specifications: contributing/technical/apiGateway/specifications.md
+          - i18n.specifications: architecture/technical/apiGateway/specifications.md
+      - i18n.console:
+          - i18n.specifications: architecture/technical/console/specifications.md
+      - i18n.events:
+          - i18n.specifications: architecture/technical/events/specifications.md
+      - i18n.runtime:
+          - i18n.specifications: architecture/technical/runtime/specifications.md
+          - i18n.automations: architecture/technical/runtime/automations.md
+      - i18n.workspaces:
+          - i18n.specifications: architecture/technical/workspaces/specifications.md
 
 markdown_extensions:
   - admonition

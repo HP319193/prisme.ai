@@ -4,13 +4,18 @@ start: Documentation
 site_name: Prisme.ai
 site_description: Everything you need to know about Prisme.ai
 
+getstarted: Getting Started
+configuration: Configuration
 contributing: Contributing
 functionnalRequirements: Functionnal Requirements
 architecture: Architecture
 console: Console
 runtime: Runtime
 events: Events
-apiGateway: ApiGateway
+apiGateway: API Gateway
 workspaces: Workspaces
 projects: Projects
 specifications: Specifications
+permissions: Permissions and API Keys
+authentication_access_control: Authentication and Authorization
+automations: Automations

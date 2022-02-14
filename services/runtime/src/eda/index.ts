@@ -1,4 +1,4 @@
-import { Broker, PendingEvents, PrismeEvent } from "@prisme.ai/broker";
+import { Broker, PendingEvents, PrismeEvent } from '@prisme.ai/broker';
 
 import {
   APP_NAME,
@@ -9,21 +9,20 @@ import {
   BROKER_WHITELIST_EVENT_PREFIXES,
   BROKER_NAMESPACE,
   BROKER_TOPIC_MAXLEN,
-} from "../../config";
-import { Logger, logger } from "../logger";
+} from '../../config';
+import { Logger, logger } from '../logger';
 
 export enum EventType {
-  Error = "error",
-  TriggeredAutomation = "runtime.automation.triggered",
-  ExecutedAutomation = "runtime.automation.executed",
-  TriggeredWebhook = "runtime.webhook.triggered",
-  UpdatedContexts = "runtime.contexts.updated",
+  Error = 'error',
+  ExecutedAutomation = 'runtime.automation.executed',
+  TriggeredWebhook = 'runtime.webhook.triggered',
+  UpdatedContexts = 'runtime.contexts.updated',
 
-  UpdatedWorkspace = "workspaces.updated",
-  DeletedWorkspace = "workspaces.deleted",
-  CreatedAutomation = "workspaces.automation.created",
-  UpdatedAutomation = "workspaces.automation.updated",
-  DeletedAutomation = "workspaces.automation.deleted",
+  UpdatedWorkspace = 'workspaces.updated',
+  DeletedWorkspace = 'workspaces.deleted',
+  CreatedAutomation = 'workspaces.automation.created',
+  UpdatedAutomation = 'workspaces.automation.updated',
+  DeletedAutomation = 'workspaces.automation.deleted',
 }
 export class CallbackContext {
   public logger: Logger;

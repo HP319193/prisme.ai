@@ -345,10 +345,13 @@ docs_build_static:
       - master
       - /^feature\/.*$/
       - /^pipeline\/.*$/
+      - /^doc\/.*$/
     changes:
       - "docs/**/*"
+      - "specifications/*"
   image: python:latest
   script:
+    - cp ./specifications/swagger.yml docs/docs/api/swagger.yml
     - cd docs
     - apt-get update && apt-get install -y nodejs npm
     - npm ci
@@ -369,8 +372,10 @@ docs_deploy:
   only:
     refs:
       - main
+      - /^doc\/.*$/
     changes:
       - "docs/**/*"
+      - "specifications/*"
   script:
     - aws s3 rm s3://$DOCS_S3_BUCKET_NAME --recursive
     - aws s3 cp docs/public/ s3://$DOCS_S3_BUCKET_NAME/ --recursive --include "*"

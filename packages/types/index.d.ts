@@ -5,7 +5,7 @@ declare namespace Prismeai {
          */
         all: Instruction[];
     }
-    export type AllEventRequests = (GenericErrorEvent | FailedLogin | SucceededLogin | TriggeredAutomation | UpdatedContexts | CreatedWorkspace | UpdatedWorkspace | DeletedWorkspace | InstalledApp | ConfiguredApp | CreatedAutomation | UpdatedAutomation | DeletedAutomation | AppEvent)[];
+    export type AllEventRequests = (GenericErrorEvent | FailedLogin | SucceededLogin | ExecutedAutomation | UpdatedContexts | CreatedWorkspace | UpdatedWorkspace | DeletedWorkspace | InstalledApp | ConfiguredApp | CreatedAutomation | UpdatedAutomation | DeletedAutomation | AppEvent)[];
     export type AllEventResponses = (PrismeEvent | {
         /**
          * example:
@@ -103,9 +103,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * runtime.automation.triggered
+         * runtime.automation.executed
          */
-        type: "runtime.automation.triggered";
+        type: "runtime.automation.executed";
         source: {
             app?: string;
             userId?: string;
@@ -869,23 +869,6 @@ declare namespace Prismeai {
             ip: string;
             email: string;
             id: string;
-        };
-    }
-    export interface TriggeredAutomation {
-        /**
-         * example:
-         * runtime.automation.triggered
-         */
-        type: "runtime.automation.triggered";
-        payload: {
-            event: {
-                id?: string;
-                type?: string;
-            };
-            slug: string;
-            payload?: {
-                [key: string]: any;
-            };
         };
     }
     export interface TriggeredWebhook {

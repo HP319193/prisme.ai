@@ -8,7 +8,7 @@ Root space propose common tools:
 - Rollup build recipe
 - Jest tests config
 
-Every sub projects will compile typescript, run jest tests and bundle their index.ts into a unique bundle.
+Every sub projects will compile with typescript, run jest tests and bundle their index.ts into a unique bundle.
 
 ### Services
 
@@ -22,11 +22,11 @@ frontend components.
 
 ## Build
 
-Building uses a common way for Packages but Services uses their own process. Each package build with rollup. A common
-configuration is applied when running `npm run build` command, but a package project can have its own `rollup.config.js`
-file to override the default config. Packages are built in a `dist` folder in their own file space.
+Packages are all built by Rollup, given the root `rollup.config.js` file **or** a custom `rollup.config.js` provided by the package project.  
 
-Services must have their own Dockerfile to be able to create an autonomous dist version ready to deploy.
+Services uses their own build process as declared in their package.json. For example, **console** service is built using Nextjs while backend services are built by **typescript** (with a custom `tsconfig.json`).  
+
+For Docker-based production deployments, all services also provide a `Dockerfile`.
 
 ## Tests
 
