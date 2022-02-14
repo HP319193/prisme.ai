@@ -50,7 +50,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     WorkspaceContext['workspace'] | null
   >();
   const [events, setEvents] = useState<WorkspaceContext['events']>('loading');
-  const [socket, setSocket] = useState<Events>();
+  const socket = useRef<Events>();
   const latest = useRef<Date | undefined | null>();
   const { current: readEvents } = useRef<WorkspaceContext['readEvents']>(
     new Set()
@@ -58,11 +58,14 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   // Init socket
   useEffect(() => {
-    if (!workspace) return;
-    const c = new Events(workspace.id);
-    setSocket(c);
+    if (
+      !workspace ||
+      (socket.current && socket.current.workspaceId === workspace.id)
+    )
+      return;
+    socket.current = new Events(workspace.id);
     return () => {
-      c.destroy();
+      socket.current && socket.current.destroy();
     };
   }, [workspace]);
 
@@ -109,7 +112,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   // Listen to new events
   useEffect(() => {
-    if (!socket) return;
+    if (!socket.current) return;
 
     const listener = (eventName: string, eventData: Prismeai.PrismeEvent) => {
       const event = {
@@ -121,7 +124,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         addEventToMap(new Map(events === 'loading' ? [] : events), event)
       );
     };
-    const off = socket.all(listener);
+    const off = socket.current.all(listener);
     return () => {
       off();
     };

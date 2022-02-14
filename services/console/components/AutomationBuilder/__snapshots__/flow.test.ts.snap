@@ -1389,78 +1389,78 @@ Array [
     "data": Object {
       "output": true,
       "title": "output",
-      "value": Object {
-        "do": Array [
-          Object {
-            "emit": Object {
-              "event": "apps.foobar",
-              "payload": Object {
-                "foo": "bar",
-              },
-              "private": true,
-            },
-          },
-          Object {
-            "wait": Object {
-              "event": "apps.forIt",
-              "output": "value",
-            },
-          },
-          Object {
-            "set": Object {
-              "lifespan": 42,
-              "name": "foo",
-              "value": "$value",
-            },
-          },
-          Object {
-            "delete": Object {
-              "name": "bar",
-            },
-          },
-          Object {
-            "conditions": Object {
-              "$a == 1": Array [
-                Object {
-                  "emit": "apps.1",
-                },
-                Object {
-                  "emit": "apps.2",
-                },
-              ],
-              "default": Array [
-                Object {
-                  "all": Array [
-                    Object {
-                      "emit": "apps.3",
-                    },
-                    Object {
-                      "emit": "apps.4",
-                    },
-                    Object {
-                      "repeat": Object {
-                        "do": Array [
-                          Object {
-                            "emit": "apps.5",
-                          },
-                        ],
-                        "on": "$a",
-                      },
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-        ],
-        "name": "example",
-        "trigger": Object {
-          "events": Array [
-            "apps.foo",
-            "apps.bar",
-          ],
+      "value": "{
+  \\"name\\": \\"example\\",
+  \\"trigger\\": {
+    \\"events\\": [
+      \\"apps.foo\\",
+      \\"apps.bar\\"
+    ]
+  },
+  \\"do\\": [
+    {
+      \\"emit\\": {
+        \\"event\\": \\"apps.foobar\\",
+        \\"payload\\": {
+          \\"foo\\": \\"bar\\"
         },
-      },
+        \\"private\\": true
+      }
+    },
+    {
+      \\"wait\\": {
+        \\"event\\": \\"apps.forIt\\",
+        \\"output\\": \\"value\\"
+      }
+    },
+    {
+      \\"set\\": {
+        \\"name\\": \\"foo\\",
+        \\"value\\": \\"$value\\",
+        \\"lifespan\\": 42
+      }
+    },
+    {
+      \\"delete\\": {
+        \\"name\\": \\"bar\\"
+      }
+    },
+    {
+      \\"conditions\\": {
+        \\"$a == 1\\": [
+          {
+            \\"emit\\": \\"apps.1\\"
+          },
+          {
+            \\"emit\\": \\"apps.2\\"
+          }
+        ],
+        \\"default\\": [
+          {
+            \\"all\\": [
+              {
+                \\"emit\\": \\"apps.3\\"
+              },
+              {
+                \\"emit\\": \\"apps.4\\"
+              },
+              {
+                \\"repeat\\": {
+                  \\"do\\": [
+                    {
+                      \\"emit\\": \\"apps.5\\"
+                    }
+                  ],
+                  \\"on\\": \\"$a\\"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}",
     },
     "id": "output",
     "position": Object {

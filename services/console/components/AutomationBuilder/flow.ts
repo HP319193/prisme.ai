@@ -325,7 +325,10 @@ export class Flow {
       data: {
         title: 'output',
         output: true,
-        value: this.value,
+        value:
+          typeof this.value === 'string'
+            ? this.value
+            : JSON.stringify(this.value, null, '  '),
       },
       position: {
         ...lastNode.position,
