@@ -15,8 +15,8 @@ servers:
   - url: http://localhost:1337
   - url: https://api.prisme.ai
 security:
-  - ApiKeyAuth: []
-    BearerAuth: []
+  - ApiKeyAuth: [ ]
+    BearerAuth: [ ]
 
 paths:
   ############################################# gateway
@@ -27,7 +27,7 @@ paths:
       tags:
         - API Gateway
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuth: [ ]
       requestBody:
         required: true
         content:
@@ -63,7 +63,7 @@ paths:
       tags:
         - API Gateway
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuth: [ ]
       responses:
         "200":
           description: Success Response
@@ -133,7 +133,7 @@ paths:
       tags:
         - API Gateway
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuth: [ ]
       requestBody:
         required: true
         content:
@@ -777,7 +777,7 @@ paths:
           style: form
           explode: false
       security:
-        - ApiKeyAuth: []
+        - ApiKeyAuth: [ ]
       requestBody:
         content:
           "application/json":
@@ -1682,7 +1682,7 @@ components:
       name: X-Prismeai-API-Key
 
   schemas:
-    AnyValue: {}
+    AnyValue: { }
     Object:
       type: object
       properties:
@@ -1804,9 +1804,9 @@ components:
     When:
       type: object
       anyOf:
-        - required: ["events"]
-        - required: ["dates"]
-        - required: ["endpoint"]
+        - required: [ "events" ]
+        - required: [ "dates" ]
+        - required: [ "endpoint" ]
       properties:
         events:
           type: array
@@ -1956,7 +1956,7 @@ components:
               type: string
               description: Variable name, might be "foo", "session.sessionScopedFoo", "global.globalScopedFoo", "user.userScopedFoo", ...
             value:
-              $ref: "#/components/schemas/AnyValue"
+              type: object
               description: variable value
             lifespan:
               $ref: "#/components/schemas/VariableLifespan"
@@ -1994,8 +1994,8 @@ components:
       properties:
         repeat:
           oneOf:
-            - required: ["on", "do"]
-            - required: ["until", "do"]
+            - required: [ "on", "do" ]
+            - required: [ "until", "do" ]
           description: One of "on" or "until" is required
           properties:
             on:
