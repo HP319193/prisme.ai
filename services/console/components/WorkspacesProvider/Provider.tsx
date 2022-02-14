@@ -100,6 +100,27 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [workspaces]
   );
 
+  const remove: WorkspacesContext['remove'] = useCallback(
+    async ({ id }) => {
+      const optimisticNewWorkspaces = new Map(workspaces);
+      const toDelete = optimisticNewWorkspaces.get(id);
+      try {
+        optimisticNewWorkspaces.delete(id);
+        setWorkspaces(optimisticNewWorkspaces);
+        await api.deleteWorkspace(id);
+      } catch (e) {
+        if (!toDelete) return null;
+        setWorkspaces((workspaces) => {
+          const newWorkspaces = new Map(workspaces);
+          newWorkspaces.set(id, toDelete);
+          return newWorkspaces;
+        });
+      }
+      return null;
+    },
+    [workspaces]
+  );
+
   const createAutomation: WorkspacesContext['createAutomation'] = useCallback(
     async (workspace, automation) => {
       const automationResult = await api.createAutomation(
@@ -174,6 +195,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         fetch,
         create,
         update,
+        remove,
         createAutomation,
         updateAutomation,
         deleteAutomation,

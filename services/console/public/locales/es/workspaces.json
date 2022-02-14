@@ -7,7 +7,18 @@
   "workspace": {
     "title": "\"{{name}}\" Espacios de trabajo — $t(common:main.title)",
     "description": "Editar el espacio de trabajo \"{{name}}\"",
-    "share": "Compartir"
+    "share": "Compartir",
+    "empty": "<button>Crea tu primera automatización</button> para ver cómo cobra vida tu espacio de trabajo",
+    "delete": {
+      "label": "Eliminar la espacio de trabajo",
+      "confirm": {
+        "title": "¿Desea eliminar la espacio de trabajo \"{{name}}\"?",
+        "content": "Cuidado, los datos se perderán.",
+        "ok": "Sí, borrar",
+        "cancel": "No, me arrepiento"
+      },
+      "toast": "Se ha eliminado la espacio de trabajo"
+    }
   },
   "create": {
     "description_first": "Cree su primer espacio de trabajo para empezar a automatizar su trabajo",
