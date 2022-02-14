@@ -48,6 +48,13 @@
       "error": "Une erreur est survenue"
     },
     "delete": {
+      "label": "Supprimer l'automatisation",
+      "confirm": {
+        "title": "Voulez vous supprimer l'automatisation \"{{name}}\" ?",
+        "content": "Attention, les données seront perdues.",
+        "ok": "Oui, supprimer",
+        "cancel": "Non, je regrette"
+      },
       "toast": "L'automatisation a bien été supprimée"
     },
     "endpoint": {

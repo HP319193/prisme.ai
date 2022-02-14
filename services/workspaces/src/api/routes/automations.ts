@@ -1,7 +1,7 @@
-import express, { Request, Response } from "express";
-import { SubjectType, ActionType } from "../../permissions";
-import services from "../../services";
-import { asyncRoute } from "../utils/async";
+import express, { Request, Response } from 'express';
+import { SubjectType, ActionType } from '../../permissions';
+import services from '../../services';
+import { asyncRoute } from '../utils/async';
 
 async function createAutomationHandler(
   {
@@ -85,8 +85,12 @@ async function deleteAutomationHandler(
     workspaceId
   );
   const automations = services.workspaces(logger, context);
-  await automations.deleteAutomation(workspaceId, automationSlug);
-  res.send({ slug: automationSlug });
+  const deleted = await automations.deleteAutomation(
+    workspaceId,
+    automationSlug
+  );
+
+  res.send(deleted);
 }
 
 const app = express.Router({ mergeParams: true });

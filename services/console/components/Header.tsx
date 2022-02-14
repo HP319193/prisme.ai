@@ -21,7 +21,7 @@ const Header = ({ title, leftContent }: HeaderProps) => {
   const { t } = useTranslation('user');
   const { user, signout } = useUser();
 
-  const useMenu = useMemo(
+  const userMenu = useMemo(
     () => (
       <Menu
         items={[
@@ -62,7 +62,7 @@ const Header = ({ title, leftContent }: HeaderProps) => {
         {leftContent && <Divider type="vertical" className="mr-4" />}
 
         {user && (
-          <Dropdown Menu={useMenu}>
+          <Dropdown Menu={userMenu}>
             <Space>
               {user.firstName}
               {user.photo && <Avatar src={user.photo} />}
