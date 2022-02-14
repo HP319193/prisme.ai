@@ -116,6 +116,13 @@ export class Api extends Fetcher {
       return [];
     }
   }
+
+  async getPermissions(
+    subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
+    subjectId: string
+  ) {
+    return await this.get(`/${subjectType}/${subjectId}/permissions`);
+  }
 }
 
 export default new Api(publicRuntimeConfig.API_HOST || '');

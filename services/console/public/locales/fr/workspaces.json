@@ -163,5 +163,6 @@
       "fail": "Votre espace de travail est invalide et n'a pas pu être enregistré."
     }
   },
-  "404": "Cet espace de travail n'existe pas. Revenez à votre page d'accueil."
+  "404": "Cet espace de travail n'existe pas. Revenez à votre page d'accueil.",
+  "share": "Partager"
 }

@@ -163,5 +163,6 @@
       "fail": "Your workspace is invalid and could not be saved."
     }
   },
-  "404": "This workspace does not exist. Return to your home page."
+  "404": "This workspace does not exist. Return to your home page.",
+  "share": "Share"
 }
