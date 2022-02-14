@@ -1,6 +1,7 @@
 import fs from 'fs';
 import inquirer from 'inquirer';
 import shell from 'shelljs-live';
+import { exec } from 'shelljs';
 import yaml from 'js-yaml';
 
 const SERVICES = './services';
@@ -99,6 +100,35 @@ const getEnvs = (localServices: string[]): Record<string, string> => {
   return {};
 };
 
+const listHealthyContainers = (): string => {
+  const names = exec(
+    `docker ps  --filter health=healthy  --format "{{.Names}}"`
+  ).stdout;
+  console.log('GOT : ', names);
+  return names;
+};
+
+const waitForContainers = async (
+  names: string[],
+  timeout: number = 120000,
+  interval: number = 5000
+) => {
+  return new Promise((resolve, reject) => {
+    const time0 = Date.now();
+    const timer = setInterval(() => {
+      const now = Date.now();
+      if (now - time0 > timeout) {
+        reject(new Error(`Timeout waiting for ${names.join(',')} containers`));
+      }
+      const healthyContainers = listHealthyContainers();
+      if (names.every((cur) => healthyContainers.includes(cur))) {
+        clearInterval(timer);
+        resolve(true);
+      }
+    }, interval);
+  });
+};
+
 const runLocal = (services: Service[]) => {
   const localServices = services.flatMap(({ service, dev }) =>
     dev ? service : []
@@ -138,7 +168,8 @@ const init = async () => {
 
   runDocker(services);
 
+  await waitForContainers(['elastic']);
+
   runLocal(services);
 };
-
 init();

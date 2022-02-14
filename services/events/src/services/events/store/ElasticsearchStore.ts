@@ -18,8 +18,6 @@ export class ElasticsearchStore implements EventsStore {
             password: opts.password,
           }
         : undefined,
-      maxRetries: 5,
-      requestTimeout: 20,
       ...opts.driverOptions,
     });
     this.namespace = namespace;
