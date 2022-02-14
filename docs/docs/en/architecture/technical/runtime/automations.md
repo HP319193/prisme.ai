@@ -1,6 +1,6 @@
 # Automations
 
-**prisme.ai-runtime** executes what (`automatio.do` field) is described by workspaces **automations** against their respective trigger (`automation.when` field) payload.    
+**prisme.ai-runtime** executes what (`automation.do` field) is described by workspaces **automations** against their respective trigger (`automation.when` field) payload.    
 
 ## Triggers  
 
