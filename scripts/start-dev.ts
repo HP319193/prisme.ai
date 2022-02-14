@@ -89,12 +89,13 @@ const runDocker = (services: Service[]) => {
 const getEnvs = (localServices: string[]): Record<string, string> => {
   if (localServices.includes(GATEWAY_SERVICE)) {
     // api gateway is in dev mode and must join dockerized other services
-    return {
-      WORKSPACES_API_URL: `http://localhost:${SERVICES_PORTS['workspaces']}`,
-      RUNTIME_API_URL: `http://localhost:${SERVICES_PORTS['runtime']}`,
-      CONSOLE_API_URL: `http://localhost:${SERVICES_PORTS['console']}`,
-      EVENTS_API_URL: `http://localhost:${SERVICES_PORTS['events']}`,
-    };
+    return Object.keys(SERVICES_PORTS).reduce(
+      (prev, k) => ({
+        ...prev,
+        [`${k.toUpperCase()}`]: `http://localhost:${SERVICES_PORTS[k]}`,
+      }),
+      {}
+    );
   }
 
   return {};
