@@ -12,8 +12,7 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 servers:
-  - url: http://localhost:1337
-  - url: https://api.prisme.ai
+  - url: https://api.eda.prisme.ai
 security:
   - ApiKeyAuth: [ ]
     BearerAuth: [ ]
