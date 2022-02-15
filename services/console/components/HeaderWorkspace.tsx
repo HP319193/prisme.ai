@@ -39,7 +39,7 @@ const HeaderWorkspace = () => {
         }}
       />
     ),
-    [workspaces, displaySource, push, id]
+    [t, displaySource, push, id]
   );
 
   // const share = useCallback(() => {

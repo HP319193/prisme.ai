@@ -27,7 +27,8 @@ export const Empty = () => {
         `/workspaces/${workspace.id}/automations/${createdAutomation.slug}`
       );
     }
-  }, []);
+  }, [createAutomation, push, t, workspace]);
+
   return (
     <div className="flex flex-1 justify-around items-center flex-col">
       <Image src={icon.src} width={293} height={227} alt="" />
