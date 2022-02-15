@@ -1,0 +1,28 @@
+version: "3"
+services:
+  redis:
+    image: redis
+    container_name: redis_api
+    restart: always
+    volumes:
+      - ../../data/redis:/data
+    ports:
+      - "6379:6379"
+  workspaces:
+    entrypoint: node --abort-on-uncaught-exception services/workspaces/dist/index.js
+    image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-workspaces:latest
+    volumes:
+      - ../../data/models:/www/models
+    depends_on:
+      - redis
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: 3002
+      NODE_ENV: development
+      BROKER_HOST: redis://redis/10
+      OPENAPI_FILEPATH: /www/specifications/swagger.yml
+      WORKSPACES_STORAGE_TYPE: FILESYSTEM
+      WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
+      PERMISSIONS_STORAGE_HOST: mongodb://mongo/permissions
+      GATEWAY_API_HOST: http://api-gateway:3001/v2

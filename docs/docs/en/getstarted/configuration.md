@@ -115,7 +115,7 @@ WORKSPACES_STORAGE_S3_LIKE_BUCKET_NAME=someBucketName
     <td>USERS_STORAGE_HOST</td>
     <td>api-gateway</td>
     <td>MongoDB URL for users storage</td>
-    <td>mongodb://localhost:27017/eda</td>
+    <td>mongodb://localhost:27017/users</td>
   </tr>       
   <tr>
     <td>SESSIONS_STORAGE_HOST</td>

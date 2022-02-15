@@ -7,7 +7,8 @@
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf dist build",
     "ts-node": "ts-node",
-    "dev": "ts-node-dev -r dotenv/config --inspect=9230 --transpile-only --respawn ./src/app.ts"
+    "dev": "ts-node-dev -r dotenv/config --inspect=9230 --transpile-only --respawn ./src/app.ts",
+    "start": "node --abort-on-uncaught-exception dist/index.js"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.16.0",

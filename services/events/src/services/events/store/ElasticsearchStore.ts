@@ -1,9 +1,9 @@
-import elasticsearch from "@elastic/elasticsearch";
-import { StoreDriverOptions } from ".";
-import { EVENTS_RETENTION_DAYS } from "../../../../config";
-import { ObjectNotFoundError } from "../../../errors";
-import { logger } from "../../../logger";
-import { EventsStore, SearchOptions } from "./types";
+import elasticsearch from '@elastic/elasticsearch';
+import { StoreDriverOptions } from '.';
+import { EVENTS_RETENTION_DAYS } from '../../../../config';
+import { ObjectNotFoundError } from '../../../errors';
+import { logger } from '../../../logger';
+import { EventsStore, SearchOptions } from './types';
 
 export class ElasticsearchStore implements EventsStore {
   client: elasticsearch.Client;
@@ -26,13 +26,13 @@ export class ElasticsearchStore implements EventsStore {
 
   private async initializeConfiguration() {
     const policyName = `policy-events${
-      this.namespace ? "-" + this.namespace : ""
+      this.namespace ? '-' + this.namespace : ''
     }`;
     const templateName = `template-events${
-      this.namespace ? "-" + this.namespace : ""
+      this.namespace ? '-' + this.namespace : ''
     }`;
     const indexTemplateName = `index-template-events${
-      this.namespace ? "-" + this.namespace : ""
+      this.namespace ? '-' + this.namespace : ''
     }`;
 
     const ROLLOVER_AT_DAYS = 30;
@@ -45,7 +45,7 @@ export class ElasticsearchStore implements EventsStore {
               actions: {
                 rollover: {
                   max_age: `${ROLLOVER_AT_DAYS}d`,
-                  max_size: "50GB",
+                  max_size: '50GB',
                 },
               },
             },
@@ -65,39 +65,39 @@ export class ElasticsearchStore implements EventsStore {
       body: {
         template: {
           settings: {
-            "index.lifecycle.name": policyName,
+            'index.lifecycle.name': policyName,
           },
           mappings: {
             properties: {
               createdAt: {
-                type: "date",
+                type: 'date',
               },
               id: {
-                type: "keyword",
+                type: 'keyword',
               },
               type: {
-                type: "keyword",
+                type: 'keyword',
               },
-              "source.correlationId": {
-                type: "keyword",
+              'source.correlationId': {
+                type: 'keyword',
               },
-              "source.workspaceId": {
-                type: "keyword",
+              'source.workspaceId': {
+                type: 'keyword',
               },
-              "source.app": {
-                type: "keyword",
+              'source.app': {
+                type: 'keyword',
               },
-              "source.userId": {
-                type: "keyword",
+              'source.userId': {
+                type: 'keyword',
               },
               payload: {
-                type: "flattened",
+                type: 'flattened',
               },
-              "error.error": {
-                type: "keyword",
+              'error.error': {
+                type: 'keyword',
               },
-              "error.message": {
-                type: "text",
+              'error.message': {
+                type: 'text',
               },
             },
           },
@@ -108,7 +108,7 @@ export class ElasticsearchStore implements EventsStore {
       {
         name: indexTemplateName,
         body: {
-          index_patterns: [this.getWorkspaceEventsIndexName("*")],
+          index_patterns: [this.getWorkspaceEventsIndexName('*')],
           composed_of: [templateName],
           data_stream: {}, // Create data streams instead of indices
         },
@@ -119,12 +119,12 @@ export class ElasticsearchStore implements EventsStore {
 
   private getWorkspaceEventsIndexName(workspaceId: string) {
     return `events${
-      this.namespace ? "-" + this.namespace : ""
+      this.namespace ? '-' + this.namespace : ''
     }-${workspaceId}`.toLocaleLowerCase();
   }
 
   private buildSearchBody(options: SearchOptions) {
-    let createdAtSort = "desc";
+    let createdAtSort = 'desc';
     const additionalBody: any = {};
     const filter = [],
       must: any = [];
@@ -152,7 +152,7 @@ export class ElasticsearchStore implements EventsStore {
     if (options.correlationId) {
       filter.push({
         term: {
-          "source.correlationId": options.correlationId,
+          'source.correlationId': options.correlationId,
         },
       });
     }
@@ -169,7 +169,7 @@ export class ElasticsearchStore implements EventsStore {
       Object.entries(options.payloadQuery).forEach(([key, value]) => {
         must.push({
           match: {
-            ["payload." + key]: value,
+            ['payload.' + key]: value,
           },
         });
       });
@@ -207,11 +207,11 @@ export class ElasticsearchStore implements EventsStore {
         }
       );
       return result.body.hits.hits.map((cur: any) => {
-        delete cur._source["@timestamp"];
+        delete cur._source['@timestamp'];
         return cur._source;
       });
     } catch (error: any) {
-      if ((error?.message || "").startsWith("index_not_found_exception")) {
+      if ((error?.message || '').startsWith('index_not_found_exception')) {
         throw new ObjectNotFoundError(`Workspace not found`);
       }
       throw error;
@@ -235,7 +235,7 @@ export class ElasticsearchStore implements EventsStore {
             },
           },
           {
-            "@timestamp": cur.createdAt,
+            '@timestamp': cur.createdAt,
             ...cur,
           },
         ];
@@ -250,7 +250,7 @@ export class ElasticsearchStore implements EventsStore {
     });
     if (result.body.errors) {
       logger.error({
-        msg: "Elasticsearch store raised an exception during bulk insert",
+        msg: 'Elasticsearch store raised an exception during bulk insert',
         errors: result.body.items,
       });
     }

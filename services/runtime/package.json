@@ -8,7 +8,8 @@
     "build:nearley": "nearleyc deps/condition-eval/grammar.ne -o deps/condition-eval/src/grammar.js",
     "clean": "rm -rf dist build",
     "ts-node": "ts-node",
-    "dev": "ts-node-dev -r dotenv/config --inspect=9230 --transpile-only --respawn ./src/app.ts"
+    "dev": "ts-node-dev -r dotenv/config --inspect=9230 --transpile-only --respawn ./src/app.ts",
+    "start": "node --abort-on-uncaught-exception dist/index.js"
   },
   "dependencies": {
     "@prisme.ai/broker": "^0.1.2",
