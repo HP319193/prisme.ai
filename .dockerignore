@@ -3,3 +3,6 @@ services/*/node_modules/
 packages/*/node_modules/
 data/
 **/**/dist/
+docs/
+heapdumps/
+**/**/.next/

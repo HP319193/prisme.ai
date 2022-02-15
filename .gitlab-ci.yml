@@ -36,11 +36,14 @@ stages:
 # include:
 #   - template: Security/SAST.gitlab-ci.yml
 
-npm_install:
+backend_npm_install:
   stage: dependencies
   only:
     changes:
-      - "package-lock.json"
+      - "services/api-gateway/package.json"
+      - "services/runtime/package.json"
+      - "services/workspaces/package.json"
+      - "services/events/package.json"
       - "packages/**/*"
     refs:
       - main

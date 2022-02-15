@@ -7,3 +7,4 @@ services/workspaces/heapdumps
 data/
 **/**/dist/
 services/*/docker-compose-dev.yml
+**/**/local.env
