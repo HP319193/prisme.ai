@@ -18,6 +18,7 @@ services:
       - '6379:6379'
   api-gateway:
     entrypoint: npm start --prefix services/api-gateway
+    restart: on-failure
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-api-gateway:latest
     depends_on:
       - mongo

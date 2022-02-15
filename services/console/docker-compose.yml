@@ -2,6 +2,7 @@ version: "3"
 services:
   console:
     entrypoint: npm start  --prefix services/console
+    restart: on-failure
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-console:latest
     ports:
       - "3000:3000"

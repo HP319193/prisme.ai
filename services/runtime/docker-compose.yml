@@ -11,6 +11,7 @@ services:
   runtime:
     entrypoint: node --abort-on-uncaught-exception services/runtime/dist/index.js
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-runtime:latest
+    restart: on-failure
     volumes:
       - ../../data/models:/www/models
     depends_on:

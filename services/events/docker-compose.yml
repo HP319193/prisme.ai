@@ -38,6 +38,7 @@ services:
   events:
     entrypoint: node --abort-on-uncaught-exception services/events/dist/index.js
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-events:latest
+    restart: on-failure
     depends_on:
       redis:
         condition: service_started
