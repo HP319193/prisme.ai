@@ -5,6 +5,7 @@ WORKDIR /www
 COPY package*.json /www/
 COPY *.config.js /www/
 COPY dtsgen.json /www/
+COPY patches/ /www/patches
 
 COPY services/console/package.json /www/services/console/package.json
 
