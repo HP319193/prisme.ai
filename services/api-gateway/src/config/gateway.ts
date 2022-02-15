@@ -1,8 +1,8 @@
-import yaml from "js-yaml";
-import fs from "fs";
+import yaml from 'js-yaml';
+import fs from 'fs';
 
-import { Endpoint, Service, Pipeline, errors } from "../types";
-import { findConfigErrors } from "./gatewayConfigValidator";
+import { Endpoint, Service, Pipeline, errors } from '../types';
+import { findConfigErrors } from './gatewayConfigValidator';
 
 export interface Config {
   endpoints: {
@@ -22,9 +22,9 @@ export default class GatewayConfig {
   constructor(filepath: string) {
     const configErrors = findConfigErrors(filepath);
     if (configErrors) {
-      throw new errors.ConfigurationError("Bad configuration", configErrors);
+      throw new errors.ConfigurationError('Bad configuration', configErrors);
     }
-    const raw = fs.readFileSync(filepath, "utf8");
+    const raw = fs.readFileSync(filepath, 'utf8');
     this.config = yaml.load(
       this.injectEnvironmentVariables(raw)
     ) as any as Config;
@@ -34,7 +34,7 @@ export default class GatewayConfig {
     const regexp = new RegExp(/\${([^}]+)}/g);
     const matches = raw.match(regexp);
     return (matches || []).reduce((config, pattern) => {
-      const [variable, defaultValue] = pattern.slice(2, -1).split(":-");
+      const [variable, defaultValue] = pattern.slice(2, -1).split(':-');
       if (process.env[variable] || defaultValue) {
         //@ts-ignore
         return config.replaceAll(

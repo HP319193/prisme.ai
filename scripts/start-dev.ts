@@ -93,13 +93,15 @@ const runDocker = (services: Service[]) => {
 const getEnvs = (localServices: string[]): Record<string, string> => {
   if (localServices.includes(GATEWAY_SERVICE)) {
     // api gateway is in dev mode and must join dockerized other services
-    return Object.keys(SERVICES_PORTS).reduce(
-      (prev, k) => ({
-        ...prev,
-        [`${k.toUpperCase()}`]: `http://localhost:${SERVICES_PORTS[k]}`,
-      }),
-      {}
-    );
+    return Object.keys(SERVICES_PORTS)
+      .filter((cur) => cur !== 'api-gateway') // API-GATEWAY_URL makes sh crash
+      .reduce(
+        (prev, k) => ({
+          ...prev,
+          [`${k.toUpperCase()}_API_URL`]: `http://localhost:${SERVICES_PORTS[k]}`,
+        }),
+        {}
+      );
   }
 
   return {};

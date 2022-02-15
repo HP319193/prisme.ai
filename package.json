@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "start": "ts-node scripts/start-dev.ts",
+    "postinstall": "patch-package",
     "clean": "npx rimraf packages/**/dist",
     "build:packages": "npx rollup -c",
     "build:console": "npm run build --prefix services/console",
@@ -65,8 +66,8 @@
     "@types/react": "^17.0.24",
     "@types/react-native": "^0.66.2",
     "@types/react-test-renderer": "^17.0.1",
-    "autoprefixer": "^10.4.2",
     "@types/shelljs": "^0.8.11",
+    "autoprefixer": "^10.4.2",
     "babel-jest": "^27.3.1",
     "babel-loader": "^8.2.3",
     "babel-plugin-module-resolver": "^4.1.0",
@@ -84,16 +85,17 @@
     "rollup-plugin-svg": "^2.0.0",
     "rollup-plugin-typescript2": "^0.30.0",
     "sass": "^1.42.1",
+    "shelljs": "^0.8.5",
+    "shelljs-live": "^0.0.5",
     "storybook-addon-react-docgen": "^1.2.42",
     "storybook-preset-less": "^1.1.2",
     "tailwindcss": "^3.0.19",
-    "shelljs": "^0.8.5",
-    "shelljs-live": "^0.0.5",
     "tslib": "^2.3.1",
     "typescript": "^4.4.3"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
-    "bcrypt": "^5.0.1"
+    "bcrypt": "^5.0.1",
+    "patch-package": "^6.4.7"
   }
 }

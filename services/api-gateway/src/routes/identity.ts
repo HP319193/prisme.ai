@@ -1,13 +1,13 @@
-import express, { NextFunction, Request, Response } from "express";
-import services from "../services";
-import passport from "passport";
+import express, { NextFunction, Request, Response } from 'express';
+import services from '../services';
+import passport from 'passport';
 import {
   isAuthenticated,
   isInternallyAuthenticated,
-} from "../middlewares/authentication";
-import { AuthenticationError } from "../types/errors";
-import { EventType } from "../eda";
-import { FindUserQuery } from "../services/identity/users";
+} from '../middlewares/authentication';
+import { AuthenticationError } from '../types/errors';
+import { EventType } from '../eda';
+import { FindUserQuery } from '../services/identity/users';
 
 const loginHandler = (strategy: string) =>
   async function (
@@ -32,10 +32,13 @@ const loginHandler = (strategy: string) =>
           if (err) {
             req.logger?.error(err);
             return next(
-              new AuthenticationError("Unknown authentication error")
+              new AuthenticationError('Unknown authentication error')
             );
           }
-          res.send(user);
+          res.send({
+            ...user,
+            token: req.sessionID,
+          });
           await req.broker.send(EventType.SucceededLogin, {
             email: user.email || user.firstName,
             ip: req.context?.http?.ip,
@@ -54,7 +57,7 @@ async function signupHandler(
   const { context, body } = req;
   const identity = services.identity(context);
   await identity.signup(body);
-  loginHandler("local")(req, res, next);
+  loginHandler('local')(req, res, next);
 }
 
 async function meHandler(
@@ -89,8 +92,8 @@ async function findContactsHandler(
 
 const app = express.Router();
 
-app.post(`/login`, loginHandler("local"));
-app.post(`/login/anonymous`, loginHandler("anonymous"));
+app.post(`/login`, loginHandler('local'));
+app.post(`/login/anonymous`, loginHandler('anonymous'));
 app.post(`/signup`, signupHandler);
 app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/logout`, logoutHandler);
