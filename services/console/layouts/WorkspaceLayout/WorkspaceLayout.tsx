@@ -159,8 +159,15 @@ export const WorkspaceLayout: FC = ({ children }) => {
     if (!newSource) return;
     setSaving(true);
     const newWorkspace = await update(newSource);
-    setCurrentWorkspace(newWorkspace);
     setSaving(false);
+    if (!newWorkspace) {
+      notification.error({
+        message: t('expert.save.fail'),
+        placement: 'bottomRight',
+      });
+      return;
+    }
+    setCurrentWorkspace(newWorkspace);
     notification.success({
       message: t('expert.save.confirm'),
       placement: 'bottomRight',

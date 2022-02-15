@@ -141,7 +141,8 @@
     },
     "save": {
       "help": "Save",
-      "confirm": "Your workspace is saved"
+      "confirm": "Your workspace is saved",
+      "fail": "Your workspace is invalid and could not be saved."
     }
   },
   "404": "This workspace does not exist. Return to your home page."

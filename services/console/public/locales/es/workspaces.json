@@ -141,7 +141,8 @@
     },
     "save": {
       "help": "Registro",
-      "confirm": "Su espacio de trabajo está registrado"
+      "confirm": "Su espacio de trabajo está registrado",
+      "fail": "Su espacio de trabajo no es válido y no ha podido ser registrado."
     }
   },
   "404": "Este espacio de trabajo no existe. Vuelve a tu página de inicio."
