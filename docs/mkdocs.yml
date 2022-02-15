@@ -58,6 +58,7 @@ nav:
           - i18n.automations: architecture/technical/runtime/automations.md
       - i18n.workspaces:
           - i18n.specifications: architecture/technical/workspaces/specifications.md
+  - API: /api
 
 markdown_extensions:
   - admonition

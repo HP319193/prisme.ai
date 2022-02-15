@@ -19,6 +19,7 @@ security:
     BearerAuth: []
 
 paths:
+
   ############################################# gateway
   /v2/login:
     post:

@@ -351,7 +351,7 @@ docs_build_static:
       - "specifications/*"
   image: python:latest
   script:
-    - cp ./specifications/swagger.yml docs/docs/api/swagger.yml
+    - cp ./specifications/swagger.yml docs/public/api/swagger.yml
     - cd docs
     - apt-get update && apt-get install -y nodejs npm
     - npm ci
