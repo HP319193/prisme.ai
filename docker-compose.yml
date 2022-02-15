@@ -1,0 +1,124 @@
+version: '3'
+services:
+  mongo:
+    image: 'mongo:4.0'
+    container_name: mongo_api
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - './data/mongo:/data/db'
+  redis:
+    image: redis
+    container_name: redis_api
+    restart: always
+    volumes:
+      - './data/redis:/data'
+    ports:
+      - '6379:6379'
+  api-gateway:
+    entrypoint: npm start --prefix services/api-gateway
+    image: 'registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-api-gateway:latest'
+    depends_on:
+      - mongo
+      - redis
+    ports:
+      - '3001:3001'
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      OPENAPI_FILEPATH: /www/specifications/swagger.yml
+      USERS_STORAGE_HOST: 'mongodb://mongo/users'
+      SESSIONS_STORAGE_HOST: 'redis://redis/2'
+      BROKER_HOST: 'redis://redis/10'
+      PERMISSIONS_STORAGE_HOST: 'mongodb://mongo/permissions'
+  console:
+    entrypoint: npm start  --prefix services/console
+    image: 'registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-console:latest'
+    ports:
+      - '3000:3000'
+    environment:
+      NEXT_PUBLIC_API_HOST: 'http://localhost:3001/v2'
+  elastic:
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.14.0'
+    container_name: elastic
+    restart: always
+    ports:
+      - '9200:9200'
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms750m -Xmx750m
+      - http.host=0.0.0.0
+      - transport.host=0.0.0.0
+      - network.host=0.0.0.0
+      - node.name=elastic
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - '-f'
+        - 'http://localhost:9200'
+      interval: 20s
+      retries: 6
+      timeout: 5s
+    volumes:
+      - './data/es01:/usr/share/elasticsearch/data'
+      - >-
+        ./data/elasticsearch01.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+  events:
+    entrypoint: node --abort-on-uncaught-exception services/events/dist/index.js
+    image: 'registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-events:latest'
+    depends_on:
+      redis:
+        condition: service_started
+      elastic:
+        condition: service_healthy
+    ports:
+      - '3004:3004'
+    environment:
+      PORT: 3004
+      NODE_ENV: development
+      BROKER_HOST: 'redis://redis/10'
+      OPENAPI_FILEPATH: /www/specifications/swagger.yml
+      EVENTS_STORAGE_ES_HOST: 'http://elastic:9200'
+      PERMISSIONS_STORAGE_HOST: 'mongodb://mongo/permissions'
+  runtime:
+    entrypoint: node --abort-on-uncaught-exception services/runtime/dist/index.js
+    image: 'registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-runtime:latest'
+    volumes:
+      - './data/models:/www/models'
+    depends_on:
+      - redis
+    ports:
+      - '3003:3003'
+    environment:
+      PORT: 3003
+      NODE_ENV: development
+      BROKER_HOST: 'redis://redis/10'
+      CONTEXTS_CACHE_HOST: 'redis://redis/0'
+      OPENAPI_FILEPATH: /www/specifications/swagger.yml
+      WORKSPACES_STORAGE_TYPE: FILESYSTEM
+      WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
+      PERMISSIONS_STORAGE_HOST: 'mongodb://mongo/permissions'
+  workspaces:
+    entrypoint: node --abort-on-uncaught-exception services/workspaces/dist/index.js
+    image: 'registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-workspaces:latest'
+    volumes:
+      - './data/models:/www/models'
+    depends_on:
+      - redis
+    ports:
+      - '3002:3002'
+    environment:
+      PORT: 3002
+      NODE_ENV: development
+      BROKER_HOST: 'redis://redis/10'
+      OPENAPI_FILEPATH: /www/specifications/swagger.yml
+      WORKSPACES_STORAGE_TYPE: FILESYSTEM
+      WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
+      PERMISSIONS_STORAGE_HOST: 'mongodb://mongo/permissions'
+      GATEWAY_API_HOST: 'http://api-gateway:3001/v2'

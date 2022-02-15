@@ -26,6 +26,7 @@ interface Service {
 }
 
 const runDocker = (services: Service[]) => {
+  const devConfigPath = `docker-compose-dev.yml`;
   const dockerSharedEnvs: Record<string, string> = {};
   if (services.find(({ service, dev }) => service === GATEWAY_SERVICE && dev)) {
     dockerSharedEnvs[
@@ -37,7 +38,6 @@ const runDocker = (services: Service[]) => {
     const configPath = `${SERVICES}/${service}/${DOCKERFILE}`;
     const file = fs.readFileSync(configPath);
     const config: any = yaml.load(`${file}`);
-    const devConfigPath = `${SERVICES}/${service}/docker-compose-dev.yml`;
     if (dev) {
       delete config.services[service];
     } else {
@@ -64,21 +64,25 @@ const runDocker = (services: Service[]) => {
       }
     }
 
-    fs.writeFileSync(devConfigPath, yaml.dump(config));
     return {
       service,
       dev,
-      path: devConfigPath,
+      config,
     };
   });
 
-  const command = [
-    'docker-compose',
-    ...dockerConfigs.reduce<string[]>(
-      (prev, { path }) => [...prev, '-f', path],
-      []
+  const devConfig = yaml.dump({
+    version: '3',
+    services: dockerConfigs.reduce(
+      (services, { config }) => ({
+        ...services,
+        ...config.services,
+      }),
+      {}
     ),
-  ];
+  });
+  fs.writeFileSync(devConfigPath, devConfig.replace(/\.\.\/\.\.\//g, './'));
+  const command = ['docker-compose', '-f', devConfigPath];
   shell([...command, '-p', 'prismeai', 'up'], { async: true });
 
   process.on('exit', () => {
@@ -105,7 +109,6 @@ const listHealthyContainers = (): string => {
   const names = exec(
     `docker ps  --filter health=healthy  --format "{{.Names}}"`
   ).stdout;
-  console.log('GOT : ', names);
   return names;
 };
 
