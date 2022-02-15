@@ -21,11 +21,12 @@ const TagEditable = ({ placeholder, onChange, value }: TagEditableProps) => {
     setInputValue(value);
   };
 
-  const handleInputConfirm = () => {
+  const handleInputConfirm = (e: { preventDefault: Function }) => {
     if (inputValue && value.indexOf(inputValue) === -1) {
       onChange([...value, inputValue]);
     }
     setInputValue('');
+    e.preventDefault();
   };
 
   const handleEditInputChange = ({ target: { value } }: any) => {
@@ -33,6 +34,7 @@ const TagEditable = ({ placeholder, onChange, value }: TagEditableProps) => {
   };
 
   const handleEditInputConfirm = () => {
+    // preventDefault();
     const newTags = [...value];
     newTags[editInputIndex] = editInputValue;
     onChange(newTags);
@@ -60,11 +62,9 @@ const TagEditable = ({ placeholder, onChange, value }: TagEditableProps) => {
             <Tag key={tag} closable onClose={() => handleClose(tag)}>
               <span
                 onDoubleClick={(e) => {
-                  if (index !== 0) {
-                    setEditInputIndex(index);
-                    setEditInputValue(tag);
-                    e.preventDefault();
-                  }
+                  setEditInputIndex(index);
+                  setEditInputValue(tag);
+                  e.preventDefault();
                 }}
               >
                 {tag}
@@ -74,9 +74,8 @@ const TagEditable = ({ placeholder, onChange, value }: TagEditableProps) => {
         })}
       </Space>
       <Input
-        className="mt-2"
+        className="!mt-2"
         type="text"
-        size="small"
         value={inputValue}
         onChange={handleInputChange}
         onBlur={handleInputConfirm}

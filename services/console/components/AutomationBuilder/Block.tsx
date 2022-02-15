@@ -4,7 +4,7 @@ import { FC, memo, useCallback, useRef } from 'react';
 import { NodeProps } from 'react-flow-renderer';
 import { Flow } from './flow';
 import { useAutomationBuilder } from './context';
-import { useTranslation } from 'next-i18next';
+import { Trans, useTranslation } from 'next-i18next';
 import pencil from '../../icons/cursor-pencil.svg';
 import { truncate } from '../../utils/strings';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -48,14 +48,27 @@ export const Block: FC<NodeProps & BlockProps> = ({
           displayedValue = (value && value.event) || '?';
           break;
         case 'output':
-          return t('automations.output.label', {
-            output: value.output,
-            context: value.output ? '' : 'empty',
-            interpolation: {
-              maxReplaces: 1,
-            },
-          });
-          break;
+          return (
+            <Trans
+              t={t}
+              i18nKey="automations.output.label"
+              components={{
+                pre: <pre className="text-left text-xs" />,
+                code: <code />,
+                italic: <div className="text-xs text-gray-50 italic" />,
+              }}
+              values={{
+                context: value.output ? 'json' : 'empty',
+                output: (
+                  (typeof value.output === 'string'
+                    ? value.output
+                    : JSON.stringify(value.output, null, '  ')) || ''
+                ).replaceAll('{{', '{\u200b{'),
+              }}
+            >
+              Prout
+            </Trans>
+          );
         default:
           displayedValue =
             typeof value === 'string' ? value : (value && value.event) || '';
@@ -64,9 +77,8 @@ export const Block: FC<NodeProps & BlockProps> = ({
         instruction: t('automations.instruction.label', { context: label }),
         value: displayedValue,
         display: ':',
-
         interpolation: {
-          maxReplaces: 2,
+          skipOnVariables: true,
         },
       });
     },

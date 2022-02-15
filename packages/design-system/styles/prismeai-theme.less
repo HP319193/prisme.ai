@@ -7,6 +7,7 @@
 @heading-4-size: @font-size-base;
 @border-color-base: #e5e5e5;
 @border-radius-base: 10px;
+@text-color-secondary: #939CA6;
 
 // Titles
 h5.ant-typography,
@@ -32,6 +33,10 @@ h5.ant-typography,
     color: #fff;
     border-color: @primary-color;
     background-color: @primary-color !important;
+
+    &[disabled], &[disabled]:hover, &[disabled]:focus, &[disabled]:active {
+      background-color: @border-color-base !important;
+    }
 
     &:hover {
       color: #fff;
@@ -155,4 +160,12 @@ h5.ant-typography,
 .ant-card-body {
   display: flex;
   flex: 1;
+}
+
+// Input
+
+.pr-label--with-placeholder,
+.pr-input:focus-within label {
+  transform: scale(.75) translateY(-3rem) translateX(-1.15rem);
+  color: @text-color-secondary;
 }

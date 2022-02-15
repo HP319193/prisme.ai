@@ -45,14 +45,14 @@ const Header = ({ title, leftContent }: HeaderProps) => {
         }}
       />
     ),
-    []
+    [signout, t]
   );
 
   return (
     <div className="relative px-6 flex flex-row w-full justify-between items-center pr-header z-20 bg-white">
       <Link href="/workspaces">
         <a>
-          <Image {...logo} />
+          <Image {...logo} alt="Prisme.ai" />
         </a>
       </Link>
       {title}

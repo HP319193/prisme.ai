@@ -17,6 +17,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "external.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "__mocks__/react-i18next.js",

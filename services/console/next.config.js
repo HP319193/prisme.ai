@@ -9,4 +9,13 @@ module.exports = {
     ENDPOINT: `${process.env.API_HOST}/workspaces/{{workspaceId}}/webhooks/{{slug}}`,
     SENTRY_DSN: process.env.SENTRY_DSN || '',
   },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.svgr$/i,
+      issuer: /\.[jt]sx?$/,
+      use: ['@svgr/webpack'],
+    });
+
+    return config;
+  },
 };

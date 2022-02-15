@@ -67,12 +67,14 @@
       },
       "endpoint": {
         "title": "URL",
-        "display": "<a>L'adresse web<icon /></a> est visitée",
+        "display": "<a>L'adresse web<icon /></a> est appelée",
         "copied": "L'URL a bien été copiée dans votre presse-papier",
         "help": "L'automatisation sera exécutées à chaque fois qu'une url sera appelée.",
-        "custom": "Exécuter cette automatisation en appellant une URL"
+        "custom": "Exécuter cette automatisation en appellant une URL",
+        "url": "URL personnalisée"
       },
-      "save": "Ajouter"
+      "add": "Ajouter",
+      "save": "Enregistrer"
     },
     "instruction": {
       "title_builtin": "Logique",
@@ -87,8 +89,8 @@
       "search": "Rechercher"
     },
     "output": {
-      "label": "{{output}}",
-      "label_empty": "Indéfinie",
+      "label": "<pre><code>{{output}}</code></pre>",
+      "label_empty": "<italic>Définir</italic>",
       "edit": {
         "title": "Retourner la valeur :",
         "label": "Valeur",
@@ -115,10 +117,18 @@
     }
   },
   "apps": {
-    "link": "Apps"
+    "link": "Apps",
+    "soon": "Les Apps seront bientôt disponibles.",
+    "create": {
+      "label": "Créer une nouvelle App"
+    }
   },
   "pages": {
-    "link": "Pages"
+    "link": "Pages",
+    "soon": "Les Pages seront bientôt disponibles.",
+    "create": {
+      "label": "Créer une nouvelle Page"
+    }
   },
   "expert": {
     "show": "Éditer le code source",

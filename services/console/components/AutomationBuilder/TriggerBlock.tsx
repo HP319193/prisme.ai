@@ -25,9 +25,17 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
     });
   };
 
+  if (!endpoint && (!value.events || !value.events.length)) {
+    return (
+      <div className="text-xs text-gray-50 italic">
+        {t('automations.trigger.add')}
+      </div>
+    );
+  }
+
   return (
     <div className="text-xs">
-      {value.events && value.events.length && (
+      {value.events && value.events.length > 0 && (
         <div>
           {t('automations.trigger.events.display', {
             events: value.events,
@@ -65,7 +73,7 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
   );
 };
 
-export const Trigger: FC<NodeProps> = (props) => {
+export const TriggerBlock: FC<NodeProps> = (props) => {
   const { data } = props;
   const { editTrigger } = useAutomationBuilder();
   const triggerData = useMemo(
@@ -95,4 +103,4 @@ export const Trigger: FC<NodeProps> = (props) => {
   );
 };
 
-export default memo(Trigger);
+export default memo(TriggerBlock);

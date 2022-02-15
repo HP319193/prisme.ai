@@ -6,6 +6,11 @@ import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import AutomationsSidebar from './AutomationsSidebar';
 import WorkspaceSource from './WorkspaceSource';
 import SidePanel from '../layouts/SidePanel';
+import IconApps from '../icons/icon-apps.svgr';
+import IconAutomations from '../icons/icon-automations.svgr';
+import IconPages from '../icons/icon-pages.svgr';
+import AppsSidebar from './AppsSidebar';
+import PagesSidebar from './PagesSidebar';
 
 export const Workspace = () => {
   const { t } = useTranslation('workspaces');
@@ -25,8 +30,39 @@ export const Workspace = () => {
 
   const menu = useMemo(
     () => [
-      //{ label: t('apps.link'), key: 'apps' },
-      { label: t('automations.link'), key: 'automations' },
+      {
+        label: (
+          <div className="flex items-center">
+            <div className="flex mr-1">
+              <IconApps width={16} height={16} />
+            </div>
+            {t('apps.link')}
+          </div>
+        ),
+        key: 'apps',
+      },
+      {
+        label: (
+          <div className="flex items-center">
+            <div className="flex mr-1">
+              <IconAutomations width={16} height={16} />
+            </div>
+            {t('automations.link')}
+          </div>
+        ),
+        key: 'automations',
+      },
+      {
+        label: (
+          <div className="flex items-center">
+            <div className="flex mr-1">
+              <IconPages width={16} height={16} />
+            </div>
+            {t('pages.link')}
+          </div>
+        ),
+        key: 'pages',
+      },
     ],
     [t]
   );
@@ -69,8 +105,9 @@ export const Workspace = () => {
             }
           >
             <>
-              {sidebar === 'apps' && <div>Apps</div>}
+              {sidebar === 'apps' && <AppsSidebar />}
               {sidebar === 'automations' && <AutomationsSidebar />}
+              {sidebar === 'pages' && <PagesSidebar />}
             </>
           </SidePanel>
         </Col>

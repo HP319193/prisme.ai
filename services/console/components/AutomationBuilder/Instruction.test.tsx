@@ -9,6 +9,9 @@ jest.mock('./context', () => {
       name: 'App',
       icon: '/icon.svg',
     }),
+    getSchema: () => ({
+      properties: {},
+    }),
   };
   return {
     useAutomationBuilder: () => mock,

@@ -11,14 +11,19 @@ export default {
       options: ['default', 'primary', 'grey', 'link'],
       control: { type: 'select' },
     },
+    disabled: {
+      control: { type: 'boolean' },
+    },
   },
   parameters: {
     layout: 'centered',
   },
 };
 
-const Template: Story<ButtonProps> = ({ variant }) => (
-  <Button variant={variant}>I am a button !</Button>
+const Template: Story<ButtonProps> = ({ variant, disabled }) => (
+  <Button variant={variant} disabled={disabled}>
+    I am a button !
+  </Button>
 );
 
 export const Default = Template.bind({});

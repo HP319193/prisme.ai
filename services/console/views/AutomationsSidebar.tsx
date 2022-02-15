@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import useLocalizedText from '../utils/useLocalizedText';
+import IconAutomations from '../icons/icon-automations.svgr';
 
 const emptyObject: Prismeai.Workspace['automations'] = {};
 
@@ -66,14 +67,9 @@ export const AutomationsSidebar: FC = () => {
         `/workspaces/${workspaceId}/automations/${createdAutomation.slug}`
       );
     }
-  }, [
-    generateAutomationName,
-    createAutomation,
-    workspace,
-    t,
-    push,
-    workspaceId,
-  ]);
+  }, [generateAutomationName, createAutomation, workspace, push, workspaceId]);
+
+  const isEmpty = Object.keys(automations).length === 0;
 
   return (
     <div className="flex grow h-full flex-col">
@@ -85,23 +81,35 @@ export const AutomationsSidebar: FC = () => {
           {t('automations.create.label')}
         </Button>
       </div>
-      <SearchInput
-        placeholder={t('search')}
-        className="mb-6"
-        onChange={({ target: { value } }) => setFilter(value)}
-      />
-      <Space direction="vertical" className="flex grow overflow-x-auto">
-        {filteredAutomations.map(({ name, description, slug }) => (
-          <Link
-            key={slug}
-            href={`/workspaces/${workspaceId}/automations/${slug}`}
-          >
-            <a>
-              <ListItem title={name} content={localize(description)} />
-            </a>
-          </Link>
-        ))}
-      </Space>
+      {isEmpty && (
+        <Button className="flex flex-1" onClick={create} disabled={creating}>
+          <div className="flex flex-1 justify-center items-center flex-col">
+            <IconAutomations height={100} width={100} />
+            <div className="mt-4">{t('automations.create.label')}</div>
+          </div>
+        </Button>
+      )}
+      {!isEmpty && (
+        <>
+          <SearchInput
+            placeholder={t('search')}
+            className="mb-6"
+            onChange={({ target: { value } }) => setFilter(value)}
+          />
+          <Space direction="vertical" className="flex grow overflow-x-auto">
+            {filteredAutomations.map(({ name, description, slug }) => (
+              <Link
+                key={slug}
+                href={`/workspaces/${workspaceId}/automations/${slug}`}
+              >
+                <a>
+                  <ListItem title={name} content={localize(description)} />
+                </a>
+              </Link>
+            ))}
+          </Space>
+        </>
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import Trigger, { TriggerDisplay } from './Trigger';
+import TriggerBlock, { TriggerDisplay } from './TriggerBlock';
 import renderer, { act } from 'react-test-renderer';
 import { useAutomationBuilder } from './context';
 import Block from './Block';
@@ -29,7 +29,7 @@ jest.mock('react-flow-renderer', () => {
 
 it('should render', () => {
   const root = renderer.create(
-    <Trigger
+    <TriggerBlock
       id="a"
       data={{}}
       type="trigger"
@@ -43,7 +43,7 @@ it('should render', () => {
 it('should edit', () => {
   useAutomationBuilder().editTrigger = jest.fn();
   const root = renderer.create(
-    <Trigger
+    <TriggerBlock
       id="a"
       data={{}}
       type="trigger"

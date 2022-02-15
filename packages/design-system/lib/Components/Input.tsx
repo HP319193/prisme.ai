@@ -5,37 +5,58 @@ const { Password: AntdInputPassword } = AntdInput;
 
 export interface InputProps extends AntdInputProps {
   placeholder?: string;
+  label?: string;
   inputType?: 'text' | 'password';
   className?: string;
 }
 
 const Input = ({
   placeholder,
+  label,
   inputType = 'text',
   className,
   ...otherProps
 }: InputProps) => {
+  let inputComponent = null;
+
   switch (inputType) {
     case 'password':
-      return (
+      inputComponent = (
         <AntdInputPassword
           placeholder={placeholder}
-          className={`${className} rounded`}
+          className={`${className} rounded h-[50px] basis-[50px]`}
           iconRender={(visible: boolean) =>
             visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
           }
           {...otherProps}
         />
       );
+      break;
     default:
     case 'text':
-      return (
+      inputComponent = (
         <AntdInput
           placeholder={placeholder}
-          className={`${className} rounded`}
+          className={`${className} rounded h-[50px] basis-[50px]`}
           {...otherProps}
         />
       );
+      break;
   }
+
+  return (
+    <div className={`relative pr-input ${label ? 'mt-5' : ''}`}>
+      {inputComponent}
+      {placeholder || otherProps.value ? (
+        <label className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none pr-label--with-placeholder">
+          {label}
+        </label>
+      ) : (
+        <label className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none">
+          {label}
+        </label>
+      )}
+    </div>
+  );
 };
 export default Input;

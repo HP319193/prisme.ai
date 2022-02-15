@@ -145,6 +145,7 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
         showGutter={true}
         highlightActiveLine={true}
         height={height}
+        min-height="50px"
         width={width}
         annotations={annotations}
         {...props}

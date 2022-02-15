@@ -13,10 +13,10 @@ exports[`should hide 1`] = `
       "
 >
   <div
-    className="border border-gray-200 border-solid grow h-full rounded p-4"
+    className="flex border border-gray-200 border-solid grow h-full rounded p-4"
   >
     <div
-      className="flex flex-col overflow-hidden h-full pb-12"
+      className="flex flex-1 flex-col overflow-hidden h-full pb-12"
     >
       <div
         className="flex justify-end"
@@ -39,10 +39,10 @@ exports[`should render 1`] = `
       "
 >
   <div
-    className="border border-gray-200 border-solid grow h-full rounded p-4"
+    className="flex border border-gray-200 border-solid grow h-full rounded p-4"
   >
     <div
-      className="flex flex-col overflow-hidden h-full pb-12"
+      className="flex flex-1 flex-col overflow-hidden h-full pb-12"
     >
       <div
         className="flex justify-end"

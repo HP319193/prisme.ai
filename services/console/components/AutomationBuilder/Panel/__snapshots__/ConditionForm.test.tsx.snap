@@ -11,14 +11,8 @@ exports[`should render 1`] = `
         className="mb-5"
       >
         <span
-          className="flex flex-col mx-2 "
-        >
-          <label
-            htmlFor="condition"
-          >
-            condition
-          </label>
-        </span>
+          className="flex flex-col "
+        />
       </div>
       automations.condition.edit.save
     </div>

@@ -54,14 +54,9 @@ export const Field: FC<FieldProps> = ({ field, type, required, oneOf }) => {
     case 'string':
     default:
       return (
-        <FieldContainer
-          key={field}
-          name={field}
-          label={field}
-          validate={validate}
-        >
+        <FieldContainer key={field} name={field} validate={validate}>
           {({ input, className }) => (
-            <Input id={field} {...input} className={className} />
+            <Input id={field} label={field} {...input} className={className} />
           )}
         </FieldContainer>
       );

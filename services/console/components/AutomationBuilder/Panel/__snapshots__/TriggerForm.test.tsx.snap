@@ -11,7 +11,7 @@ exports[`should render 1`] = `
         className="mb-5"
       >
         <span
-          className="flex "
+          className="flex flex-col "
         />
       </div>
     </div>
@@ -25,10 +25,10 @@ exports[`should render 1`] = `
         className="p-field mb-5"
       >
         <label
-          className="mx-2 flex flex-1 items-center flex-row"
+          className="mx-2 flex flex-1 items-center justify-between flex-row"
         >
           <div
-            className="ml-2"
+            className="mr-2"
           >
             automations.trigger.endpoint.custom
           </div>
