@@ -9,7 +9,7 @@ export interface ListItemProps {
 
 const ListItem = ({ title, content }: ListItemProps) => (
   <div
-    className="flex grow border border-gray-200 rounded p-2 items-center justify-between cursor-pointer text-gray"
+    className="flex grow border border-gray-200 rounded px-6 py-4 items-center justify-between cursor-pointer text-gray"
     key={title}
   >
     <Space direction="vertical" className="align-baseline">

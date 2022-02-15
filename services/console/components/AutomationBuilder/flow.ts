@@ -107,15 +107,29 @@ export class Flow {
     if (!Array.isArray(instructions)) return [];
 
     const newNodes = [
-      { [Flow.BLOCK_EMPTY]: null },
-      ...instructions.reduce<Prismeai.InstructionList>((prev, instruction) => {
-        return [...prev, instruction, { [Flow.BLOCK_EMPTY]: null }];
-      }, []),
-    ].map((instruction, k) => {
+      { [Flow.BLOCK_EMPTY]: null, index: 0 },
+      ...instructions.reduce<(Prismeai.Instruction & { index: number })[]>(
+        (prev, instruction, index) => {
+          return [
+            ...prev,
+            { ...instruction, index },
+            { [Flow.BLOCK_EMPTY]: null, index: index + 1 },
+          ];
+        },
+        []
+      ),
+    ].map(({ index, ...instruction }, k) => {
       const name = Object.keys(instruction)[0];
       const value = instruction[name as keyof typeof instruction]!;
       const id = `${parentId}.${k}`;
-      position = { ...position, y: position.y + Flow.BLOCK_HEIGHT };
+      position = {
+        ...position,
+        y:
+          position.y +
+          (name === Flow.BLOCK_EMPTY
+            ? Flow.BLOCK_HEIGHT / 1.5
+            : Flow.BLOCK_HEIGHT / 2),
+      };
 
       const node: Node = {
         id,
@@ -124,7 +138,7 @@ export class Flow {
           label: name,
           value,
           parent: instructions,
-          index: k,
+          index,
           withButton: true,
         },
         position,
@@ -139,7 +153,7 @@ export class Flow {
           type: 'edge',
           data: {
             parent: instructions,
-            index: k,
+            index,
           },
           arrowHeadType: ArrowHeadType.Arrow,
         };
@@ -325,14 +339,11 @@ export class Flow {
       data: {
         title: 'output',
         output: true,
-        value:
-          typeof this.value === 'string'
-            ? this.value
-            : JSON.stringify(this.value, null, '  '),
+        value: this.value,
       },
       position: {
         ...lastNode.position,
-        y: lastNode.position.y + Flow.BLOCK_HEIGHT,
+        y: lastNode.position.y + Flow.BLOCK_HEIGHT / 2,
       },
     });
     this.edges.push({

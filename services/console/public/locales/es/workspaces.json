@@ -6,13 +6,15 @@
   },
   "workspace": {
     "title": "\"{{name}}\" Espacios de trabajo — $t(common:main.title)",
-    "description": "Editar el espacio de trabajo \"{{name}}\""
+    "description": "Editar el espacio de trabajo \"{{name}}\"",
+    "share": "Compartir"
   },
   "create": {
     "description_first": "Cree su primer espacio de trabajo para empezar a automatizar su trabajo",
     "description": "Nuevo espacio de trabajo",
     "label": "Crear un espacio de trabajo",
-    "defaultName": "Y empieza a automatizar y mejorar"
+    "defaultName": "Y empieza a automatizar y mejorar",
+    "description_sub": "Y empezar a automatizar y valorizar"
   },
   "edit": {
     "label": "Editar"
@@ -52,7 +54,6 @@
       "copied": "La URL ha sido copiada"
     },
     "trigger": {
-      "title": "Se activa cuando",
       "events": {
         "title": "Eventos",
         "display_one": "El evento {{events}} ocurre",
@@ -69,9 +70,11 @@
         "display": "Se visita <a>la URL<icon /></a>",
         "copied": "La URL ha sido copiado en su portapapeles",
         "help": "La automatización se ejecutará cada vez que se llame a una url.",
-        "custom": "Ejecuta esta automatización llamando a una URL"
+        "custom": "Ejecuta esta automatización llamando a una URL",
+        "url": "URL"
       },
-      "save": "guardar disparador"
+      "add": "Añadir",
+      "save": "Registro"
     },
     "instruction": {
       "title_builtin": "Lógica",
@@ -85,8 +88,20 @@
       "label_conditions": "Condiciones",
       "search": "Investigador"
     },
+    "output": {
+      "label": "<pre><code>{{output}}</code></pre>",
+      "label_empty": "<italic>Definir</italic>",
+      "edit": {
+        "title": "Devuelve el valor :",
+        "label": "Valor",
+        "save": "Añadir"
+      }
+    },
     "node": {
-      "label": "{{instruction}} {{value, then}} {{value}}"
+      "title": "",
+      "title_trigger": "Se activa cuando",
+      "title_output": "Salida",
+      "label": "{{instruction}} {{value}}"
     },
     "edit": {
       "select": "Elija una instrucción",
@@ -102,17 +117,27 @@
     }
   },
   "apps": {
-    "link": "Apps"
+    "link": "Apps",
+    "soon": "Las Apps estarán disponibles en breve.",
+    "create": {
+      "label": "Crear una nueva App"
+    }
   },
   "pages": {
-    "link": "Páginas"
+    "link": "Páginas",
+    "soon": "Las Páginas estarán disponibles en breve.",
+    "create": {
+      "label": "Crear una nueva Página"
+    }
   },
   "expert": {
     "show": "Editar el código fuente",
     "hide": "Ocultar el código fuente",
     "exit": {
       "confirm_title": "Cambios en curso",
-      "confirm_message": "Estás a punto de irte sin ahorrar. ¿Está seguro?"
+      "confirm_message": "Estás a punto de irte sin ahorrar. ¿Está seguro?",
+      "cancel": "Espera un momento",
+      "confirm": "¡Vamos!"
     },
     "save": {
       "help": "Registro",

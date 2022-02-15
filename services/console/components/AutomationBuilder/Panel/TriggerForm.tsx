@@ -12,8 +12,8 @@ const Endpoint = () => {
 
   return (
     <div className="p-field mb-5">
-      <label className="mx-2 flex flex-1 items-center flex-row">
-        <div className="ml-2">{t('automations.trigger.endpoint.custom')}</div>
+      <label className="mx-2 flex flex-1 items-center justify-between flex-row">
+        <div className="mr-2">{t('automations.trigger.endpoint.custom')}</div>
         <Switch
           checked={input.value !== false}
           onChange={(value) => input.onChange(value)}
@@ -22,6 +22,7 @@ const Endpoint = () => {
       {input.value !== false && (
         <Input
           {...input}
+          label={t('automations.trigger.endpoint.url')}
           value={typeof input.value === 'string' ? input.value : ''}
         />
       )}

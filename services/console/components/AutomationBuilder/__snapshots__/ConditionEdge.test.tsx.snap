@@ -19,7 +19,7 @@ Array [
     requiredExtensions="http://www.w3.org/1999/xhtml"
     width={200}
     x={-90}
-    y={-45}
+    y={-65}
   >
     <div
       className="flex justify-center align-center"
@@ -59,7 +59,7 @@ Array [
     requiredExtensions="http://www.w3.org/1999/xhtml"
     width={200}
     x={-90}
-    y={-45}
+    y={-65}
   >
     <div
       className="flex justify-center align-center"

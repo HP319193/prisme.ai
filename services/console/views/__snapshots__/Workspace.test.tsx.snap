@@ -22,7 +22,7 @@ Array [
     />
   </div>,
   <div
-    className="border border-gray-200 border-solid grow h-full rounded p-4"
+    className="flex border border-gray-200 border-solid grow h-full rounded p-4"
   >
     <div
       className="flex grow h-full flex-col"
@@ -32,6 +32,19 @@ Array [
       >
         automations.link
         automations.create.label
+      </div>
+      <div
+        className="flex flex-1 justify-center items-center flex-col"
+      >
+        <SvgrURL
+          height={100}
+          width={100}
+        />
+        <div
+          className="mt-4"
+        >
+          automations.create.label
+        </div>
       </div>
     </div>
   </div>,

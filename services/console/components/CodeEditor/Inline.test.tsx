@@ -32,5 +32,5 @@ it('should get line height', () => {
   act(() => {
     return;
   });
-  expect(root.root.findByType(CodeEditor).props.style.minHeight).toBe('84px');
+  expect(root.root.findByType(CodeEditor).props.style.minHeight).toBe('50px');
 });

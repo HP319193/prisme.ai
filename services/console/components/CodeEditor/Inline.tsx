@@ -26,10 +26,11 @@ export const CodeEditorInline: React.FC<CodeEditorProps> = ({
       <CodeEditor
         {...props}
         style={{
-          minHeight: `${2 * lineHeight}px`,
           flex: 1,
-          border: '1px solid #ced4da',
-          borderRadius: '6px',
+          minHeight: '50px',
+          border: '1px solid #E5E5E5',
+          borderRadius: '10px',
+          padding: '10px',
           ...(singleLine ? undefined : { background: 'white' }),
         }}
         value={

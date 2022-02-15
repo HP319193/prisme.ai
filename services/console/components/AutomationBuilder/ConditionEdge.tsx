@@ -46,7 +46,7 @@ export const ConditionEdge: FC<EdgeProps> = ({
           width={200}
           height={40}
           x={targetX - 100}
-          y={targetY - 55}
+          y={targetY - 75}
           className="edgebutton-foreignobject"
           requiredExtensions="http://www.w3.org/1999/xhtml"
         >

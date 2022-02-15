@@ -14,6 +14,7 @@ import { Layout } from '@prisme.ai/design-system';
 import { useUser } from '../../components/UserProvider';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
 import { notification } from 'antd';
+import Storage from '../../utils/Storage';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -52,7 +53,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [events, setEvents] = useState<WorkspaceContext['events']>('loading');
   const socket = useRef<Events>();
   const latest = useRef<Date | undefined | null>();
-  const { current: readEvents } = useRef<WorkspaceContext['readEvents']>(
+  const [readEvents, setReadEvents] = useState<WorkspaceContext['readEvents']>(
     new Set()
   );
 
@@ -88,27 +89,24 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   // Load events history
   useEffect(() => {
-    if (!workspace) return;
+    if (!workspace || lockEvents.current) return;
     latest.current = undefined;
     setEvents('loading');
     nextEvents();
   }, [nextEvents, workspace]);
 
-  // Set events as "read" when leaving home
-  const prevRoute = useRef(route);
-  useEffect(() => {
-    if (
-      events !== 'loading' &&
-      route !== prevRoute.current &&
-      route !== '/workspaces/[id]'
-    ) {
-      prevRoute.current = route;
-      Array.from(events.entries()).forEach(([, ids]) =>
-        ids.forEach(({ id }) => readEvents.add(id))
-      );
-    }
-  }),
-    [route];
+  const readEvent = useCallback(
+    (eventId: string) => {
+      if (!workspace) return;
+      setReadEvents((readEvents) => {
+        const newReads = new Set(readEvents);
+        newReads.add(eventId);
+        Storage.set(`readEvents-${workspace.id}`, Array.from(newReads));
+        return newReads;
+      });
+    },
+    [workspace]
+  );
 
   // Listen to new events
   useEffect(() => {
@@ -196,6 +194,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         events,
         nextEvents,
         readEvents,
+        readEvent,
       }}
     >
       <Head>

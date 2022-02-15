@@ -9,10 +9,10 @@ import { Collapse, Feed, Layout } from '@prisme.ai/design-system';
 import { Section } from '@prisme.ai/design-system/lib/Components/Feed';
 import { CollapseItem } from '@prisme.ai/design-system/lib/Components/Collapse';
 import { Event } from '../../api/types';
+import Empty from './Empty';
 
 export const EventsViewer = () => {
-  const { t } = useTranslation('workspaces');
-  const { events, nextEvents, readEvents } = useWorkspace();
+  const { events, nextEvents, readEvents, readEvent } = useWorkspace();
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
 
@@ -25,13 +25,28 @@ export const EventsViewer = () => {
   const generateSectionContent = useCallback(
     (events: Set<Event<Date>>): CollapseItem[] =>
       Array.from(events).map((event) => ({
-        label: `${dateFormat(event.createdAt, {
-          relative: true,
-        })} ${event.source?.app || event.source?.host?.service}`,
+        label: (
+          <div className="flex flex-col">
+            <div className="flex flex-row">
+              <div className="font-bold">
+                {event.source?.app || event.source?.host?.service}
+              </div>
+              <div className="text-gray font-thin ml-4">
+                {dateFormat(event.createdAt, {
+                  relative: true,
+                })}
+              </div>
+            </div>
+            <div className="font-normal">{event.type}</div>
+          </div>
+        ),
         content: <EventDetails {...event} />,
         className: readEvents.has(event.id) ? 'opacity-50' : '',
+        onClick: () => {
+          readEvent(event.id);
+        },
       })),
-    [dateFormat]
+    [dateFormat, readEvent, readEvents]
   );
 
   // readEvents.has(event.id) ? 'opacity-50' : '' à appliquer sur les collapse
@@ -47,14 +62,14 @@ export const EventsViewer = () => {
           }),
           content: <Collapse items={generateSectionContent(events)} />,
         })),
-    [dateFormat, events]
+    [dateFormat, events, generateSectionContent]
   );
 
   let content;
   if (events === 'loading') {
     content = <Loading />;
   } else if (feedSections.length === 0) {
-    content = <div className="p-2">{t('events.empty')}</div>;
+    content = <Empty />;
   } else {
     content = (
       <div className="w-full overflow-auto" ref={ref}>

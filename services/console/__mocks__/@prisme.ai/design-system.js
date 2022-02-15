@@ -89,3 +89,7 @@ export function Text({ children = null }) {
 export function TagEditable({ children = null }) {
   return children;
 }
+
+export function EditableTitle({ children = null }) {
+  return children;
+}

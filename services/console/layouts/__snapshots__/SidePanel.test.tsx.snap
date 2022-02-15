@@ -2,6 +2,6 @@
 
 exports[`should render 1`] = `
 <div
-  className="border border-gray-200 border-solid grow h-full rounded p-4"
+  className="flex border border-gray-200 border-solid grow h-full rounded p-4"
 />
 `;

@@ -8,14 +8,8 @@ exports[`should render 1`] = `
     className="mb-5"
   >
     <span
-      className="flex flex-col mx-2 "
-    >
-      <label
-        htmlFor="foo"
-      >
-        foo
-      </label>
-    </span>
+      className="flex flex-col "
+    />
   </div>
   <div
     className="mb-5"
@@ -32,9 +26,10 @@ exports[`should render 1`] = `
     className="mb-5"
   >
     <span
-      className="flex flex-col mx-2 "
+      className="flex flex-col "
     >
       <label
+        className="text-gray text-[11px]"
         htmlFor="lorem"
       >
         lorem

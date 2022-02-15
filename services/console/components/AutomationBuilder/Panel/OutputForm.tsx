@@ -12,14 +12,16 @@ interface OutputFormProps {
 }
 
 export const OutputForm: FC<OutputFormProps> = ({ output, onSubmit }) => {
-  const submitAsJSON = useCallback(
+  const submit = useCallback(
     ({ output }: { output: string }) => {
       try {
+        if (typeof output === 'object') {
+          throw new Error('not json');
+        }
         const parsedValue = JSON.parse(output.replace('\n', ''));
         onSubmit({ output: parsedValue });
-      } catch (e: any) {
-        console.error('error parsing output value :', output);
-        console.error(e);
+      } catch (e) {
+        onSubmit({ output });
       }
     },
     [onSubmit]
@@ -28,7 +30,7 @@ export const OutputForm: FC<OutputFormProps> = ({ output, onSubmit }) => {
   const { t } = useTranslation('workspaces');
   return (
     <div className="flex flex-1 flex-col h-full">
-      <Form onSubmit={submitAsJSON} initialValues={{ output }}>
+      <Form onSubmit={submit} initialValues={{ output }}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>
             <Fieldset legend={t('automations.output.edit.title')}>

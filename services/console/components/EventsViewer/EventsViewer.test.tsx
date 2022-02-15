@@ -33,6 +33,13 @@ jest.mock('../../utils/dates', () => {
   };
 });
 
+jest.mock('next/router', () => {
+  const mock = { push: jest.fn() };
+  return {
+    useRouter: () => mock,
+  };
+});
+
 const now = Date.now;
 afterEach(() => {
   Date.now = now;

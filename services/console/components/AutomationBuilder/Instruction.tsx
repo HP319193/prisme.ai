@@ -6,14 +6,18 @@ import styles from './styles';
 
 export const Instruction: FC<NodeProps> = (props) => {
   const { data } = props;
-  const { editInstruction } = useAutomationBuilder();
-
+  const { editInstruction, getSchema } = useAutomationBuilder();
+  const hasProperties = !!getSchema(data.label).properties;
   return (
     <>
       <Handle type="target" position={Position.Top} style={styles.handle} />
       <Block
         {...props}
-        onEdit={() => editInstruction(data.parent, data.index)}
+        onEdit={
+          hasProperties
+            ? () => editInstruction(data.parent, data.index)
+            : undefined
+        }
       />
       <Handle type="source" position={Position.Bottom} style={styles.handle} />
     </>

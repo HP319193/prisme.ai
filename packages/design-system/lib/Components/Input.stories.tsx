@@ -16,18 +16,20 @@ export default {
   },
 };
 
-const Template: Story<InputProps> = ({ placeholder, inputType }) => (
-  <Input placeholder={placeholder} inputType={inputType} />
+const Template: Story<InputProps> = ({ placeholder, inputType, label }) => (
+  <Input placeholder={placeholder} inputType={inputType} label={label} />
 );
 
 export const Default = Template.bind({});
 Default.args = {
   placeholder: 'type anything',
+  label: 'Label',
   inputType: 'text',
 };
 
 export const Password = Template.bind({});
 Password.args = {
   placeholder: 'enter your password',
+  label: 'Label',
   inputType: 'password',
 };

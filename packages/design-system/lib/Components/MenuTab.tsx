@@ -1,9 +1,9 @@
 import { Menu as AntdMenu } from 'antd';
-import { useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { MenuInfo } from 'rc-menu/lib/interface';
 
 interface MenuProps {
-  items: (string | { label: string; key: string })[];
+  items: (string | { label: string | ReactElement; key: string })[];
   selected?: string;
   onSelect: (itemKey: string) => void;
 }

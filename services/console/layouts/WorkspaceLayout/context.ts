@@ -11,6 +11,7 @@ export interface WorkspaceContext {
   events: EventsByDay | 'loading';
   nextEvents: () => void;
   readEvents: Set<string>;
+  readEvent: (eventId: string) => void;
   displaySource: boolean;
   invalid: false | ValidationError[];
   setInvalid: (invalid: WorkspaceContext['invalid']) => void;
@@ -26,6 +27,7 @@ export const workspaceContext = createContext<WorkspaceContext>({
   events: 'loading',
   nextEvents() {},
   readEvents: new Set(),
+  readEvent() {},
   displaySource: false,
   invalid: false,
   setInvalid() {},

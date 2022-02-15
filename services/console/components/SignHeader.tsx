@@ -9,7 +9,7 @@ const SignHeader = () => {
   return (
     <div className="ml-24">
       <Title level={4} className="flex flex-row">
-        <Image src={icon} width={16} height={16} />
+        <Image src={icon} width={16} height={16} alt="Prisme.ai" />
         <div className="ml-2 !font-light tracking-[.5em]">PRISME.AI</div>
       </Title>
       <meta name="description" content={t('in.description')} />
