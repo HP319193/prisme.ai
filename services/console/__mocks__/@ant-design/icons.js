@@ -13,3 +13,9 @@ export function UnlockOutlined() {
 export function LockOutlined() {
   return null;
 }
+export function LinkOutlined() {
+  return null;
+}
+export function DeleteOutlined() {
+  return null;
+}

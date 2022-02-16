@@ -14,6 +14,7 @@ const HeaderWorkspace = () => {
   const {
     workspace: { id, name: currentWorkspace },
     displaySource,
+    sourceDisplayed,
   } = useWorkspace();
   const { push } = useRouter();
 
@@ -45,7 +46,7 @@ const HeaderWorkspace = () => {
             label: (
               <div className="flex items-center">
                 <CodeOutlined className="mr-2" />
-                {t(`expert.${displaySource ? 'hide' : 'show'}`)}
+                {t(`expert.${sourceDisplayed ? 'hide' : 'show'}`)}
               </div>
             ),
             key: 'source',
@@ -64,15 +65,12 @@ const HeaderWorkspace = () => {
           if (typeof item === 'string') return;
           switch (item.key) {
             case 'source':
-              push(`/workspaces/${id}/${displaySource ? '' : 'source'}`);
-              return;
-            case 'delete':
-              confirmDelete();
+              displaySource(!sourceDisplayed);
           }
         }}
       />
     ),
-    [t, displaySource, push, id, confirmDelete]
+    [t, displaySource, sourceDisplayed]
   );
 
   // const share = useCallback(() => {

@@ -43,7 +43,7 @@ export const WorkspacesView = () => {
                 key={id}
                 className="!m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
                 actions={[
-                  <Link href={`/workspaces/${id}`}>
+                  <Link href={`/workspaces/${id}`} key="1">
                     <a>
                       <Button>{t('edit.label')}</Button>
                     </a>
@@ -57,6 +57,7 @@ export const WorkspacesView = () => {
                       width={48}
                       height={48}
                       className="rounded text-blue"
+                      alt={name}
                     />
                     <Title level={4}>{name}</Title>
                     <Text type="grey">
