@@ -2,9 +2,5 @@
   "presets": [
     "next/babel"
   ],
-  "plugins": [
-    [
-      "postcss-preset-env"
-    ]
-  ]
+  "plugins": []
 }

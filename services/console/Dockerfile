@@ -12,15 +12,15 @@ RUN mv /www/services/console/_babelrc /www/services/console/.babelrc
 
 RUN npm ci
 
-#RUN npm run build:console
+RUN npm run build:console
 
-#EXPOSE 3000
-#ENV PORT 3000
-#ENV NODE_ENV production
+EXPOSE 3000
+ENV PORT 3000
+ENV NODE_ENV production
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-#CMD ["npm", "--prefix", "services/console", "start"]
+CMD ["npm", "--prefix", "services/console", "start"]
