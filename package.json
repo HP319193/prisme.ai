@@ -9,7 +9,7 @@
   "scripts": {
     "start": "ts-node scripts/start-dev.ts",
     "clean": "npx rimraf packages/**/dist",
-    "build:packages": "npx rollup -c",
+    "build:packages": "npm run build:validation:instruction && npx rollup -c",
     "build:console": "npm run build --prefix services/console",
     "build:workspaces": "npm run build --prefix services/workspaces",
     "build:gateway": "npm run build --prefix services/api-gateway",

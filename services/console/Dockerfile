@@ -2,7 +2,7 @@ FROM node:16 as build
 WORKDIR /www
 
 COPY ./package.json ./package-lock.json ./rollup.config.js ./dtsgen.json /www/
-COPY ./scripts/buildInstructions.ts /www/scripts/buildInstructions
+COPY ./scripts/buildInstructions.ts /www/scripts/
 COPY ./packages /www/packages
 COPY ./services/console/package*  /www/services/console/
 
@@ -13,6 +13,8 @@ RUN rm -rf /www/services/console/.next && \
     rm -rf /www/services/console/.eslintrc.json && \
     mv /www/services/console/_babelrc /www/services/console/.babelrc
 
+COPY ./specifications /www/specifications
+RUN npm run build:packages
 RUN npm run build:console
 
 EXPOSE 3000
