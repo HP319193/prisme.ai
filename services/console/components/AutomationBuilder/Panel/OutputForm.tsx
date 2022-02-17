@@ -29,7 +29,7 @@ export const OutputForm: FC<OutputFormProps> = ({ output, onSubmit }) => {
 
   const { t } = useTranslation('workspaces');
   return (
-    <div className="flex flex-1 flex-col h-full">
+    <div className="flex flex-1 flex-col h-full overflow-x-auto">
       <Form onSubmit={submit} initialValues={{ output }}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>

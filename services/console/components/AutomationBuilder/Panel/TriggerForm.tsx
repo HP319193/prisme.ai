@@ -46,7 +46,7 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onSubmit }) => {
   );
 
   return (
-    <div>
+    <div className="overflow-x-auto">
       <Form onSubmit={onSubmit} initialValues={initialValue}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>
