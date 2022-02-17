@@ -107,18 +107,17 @@ export class Flow {
     if (!Array.isArray(instructions)) return [];
 
     const newNodes = [
-      { [Flow.BLOCK_EMPTY]: null, index: 0 },
-      ...instructions.reduce<(Prismeai.Instruction & { index: number })[]>(
-        (prev, instruction, index) => {
-          return [
-            ...prev,
-            { ...instruction, index },
-            { [Flow.BLOCK_EMPTY]: null, index: index + 1 },
-          ];
-        },
-        []
-      ),
-    ].map(({ index, ...instruction }, k) => {
+      { instruction: { [Flow.BLOCK_EMPTY]: null }, index: 0 },
+      ...instructions.reduce<
+        { instruction: Prismeai.Instruction; index: number }[]
+      >((prev, instruction, index) => {
+        return [
+          ...prev,
+          { instruction, index },
+          { instruction: { [Flow.BLOCK_EMPTY]: null }, index: index + 1 },
+        ];
+      }, []),
+    ].map(({ index, instruction }, k) => {
       const name = Object.keys(instruction)[0];
       const value = instruction[name as keyof typeof instruction]!;
       const id = `${parentId}.${k}`;
@@ -248,10 +247,9 @@ export class Flow {
         };
         const i = instruction as Prismeai.All;
         const parent = (i.all = i.all || []);
-        ([
-          ...(value || []),
-          { [Flow.NEW_ALL]: {} },
-        ] as Prismeai.All['all']).forEach((instruction, childk) => {
+        (
+          [...(value || []), { [Flow.NEW_ALL]: {} }] as Prismeai.All['all']
+        ).forEach((instruction, childk) => {
           const [name] = Object.keys(instruction);
           position = {
             ...position,
