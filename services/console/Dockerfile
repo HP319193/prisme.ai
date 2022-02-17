@@ -4,13 +4,14 @@ WORKDIR /www
 COPY ./package.json ./package-lock.json ./rollup.config.js ./dtsgen.json /www/
 COPY ./scripts/buildInstructions.ts /www/scripts/buildInstructions
 COPY ./packages /www/packages
-COPY ./services/console /www/services/console
-
-RUN rm -rf /www/services/console/.next
-RUN rm /www/services/console/.eslintrc.json
-RUN mv /www/services/console/_babelrc /www/services/console/.babelrc
+COPY ./services/console/package*  /www/services/console/
 
 RUN npm ci
+
+COPY ./services/console/ /www/services/console
+RUN rm -rf /www/services/console/.next && \
+    rm -rf /www/services/console/.eslintrc.json && \
+    mv /www/services/console/_babelrc /www/services/console/.babelrc
 
 RUN npm run build:console
 
