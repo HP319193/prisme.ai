@@ -32,6 +32,7 @@ RUN BUILD_PACKAGES=0 npm ci
 
 ## Build packages
 
+COPY scripts/ /www/scripts
 COPY specifications/ /www/specifications
 COPY packages/ /www/packages
 
