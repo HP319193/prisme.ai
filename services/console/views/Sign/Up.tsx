@@ -14,11 +14,6 @@ import {
 } from '@prisme.ai/design-system';
 import SignHeader from '../../components/SignHeader';
 import { notification } from 'antd';
-import {
-  LoadingOutlined,
-  LockOutlined,
-  UnlockOutlined,
-} from '@ant-design/icons';
 
 interface Values {
   email: string;
@@ -67,12 +62,6 @@ export const SignIn = () => {
       errors.lastName = 'required';
     }
     return errors;
-  };
-
-  const getIcon = () => {
-    if (loading) return <LoadingOutlined />;
-    if (user) return <UnlockOutlined />;
-    return <LockOutlined />;
   };
 
   return (
@@ -148,7 +137,6 @@ export const SignIn = () => {
                       className="w-full !h-12"
                       type="submit"
                     >
-                      {getIcon()}
                       {t('up.submit')}
                     </Button>
                   </Space>
