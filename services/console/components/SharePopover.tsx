@@ -43,7 +43,7 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
     return [];
   }, []);
 
-  const onSubmit = () => {};
+  const onSubmit = (values) => {};
 
   return (
     <Space direction="vertical" className="w-[60vw]">

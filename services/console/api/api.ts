@@ -130,7 +130,21 @@ export class Api extends Fetcher {
     subjectId: string,
     permissions: UserPermissions
   ) {
-    return await this.post(`/${subjectType}/${subjectId}/permissions`);
+    return await this.post(
+      `/${subjectType}/${subjectId}/permissions`,
+      permissions
+    );
+  }
+
+  async deletePermissions(
+    subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
+    subjectId: string,
+    userId: string
+  ) {
+    return await this.post(
+      `/${subjectType}/${subjectId}/permissions`,
+      permissions
+    );
   }
 }
 
