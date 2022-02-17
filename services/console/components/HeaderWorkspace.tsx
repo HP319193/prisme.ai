@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { Dispatch, useCallback, useMemo, SetStateAction } from 'react';
 import { CodeOutlined, ShareAltOutlined, DeleteOutlined } from '@ant-design/icons';
 import {
   Menu,
@@ -88,7 +88,11 @@ const HeaderWorkspace = () => {
       title={<Dropdown Menu={workspacesMenu}>{currentWorkspace}</Dropdown>}
       leftContent={
         <Popover
-          content={({ setVisible }) => <SharePopover setVisible={setVisible} />}
+          content={({
+            setVisible,
+          }: {
+            setVisible: Dispatch<SetStateAction<boolean>>;
+          }) => <SharePopover setVisible={setVisible} />}
           title={t('workspace.share')}
         >
           <Button variant="grey">

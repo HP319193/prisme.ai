@@ -6,14 +6,8 @@ import {
   useMemo,
   useState,
 } from 'react';
-import {
-  Button,
-  Input,
-  Table,
-  Space,
-  TagEditable,
-} from '@prisme.ai/design-system';
-import { Form, useField } from 'react-final-form';
+import { Button, Input, Table, Space } from '@prisme.ai/design-system';
+import { Form } from 'react-final-form';
 import { useTranslation } from 'react-i18next';
 import FieldContainer from '../layouts/Field';
 import Policies = Prismeai.Policies;
@@ -25,13 +19,9 @@ interface SharePopoverProps {
   setVisible: Dispatch<SetStateAction<boolean>>;
 }
 
-interface permission {
-  email: string;
-  role: Policies;
-}
-
 const SharePopover = ({ setVisible }: SharePopoverProps) => {
   const { t } = useTranslation('workspaces');
+  const { t: commonT } = useTranslation('common');
   const { getWorkspaceUsersPermissions } = useWorkspaces();
   const {
     workspace: { id: workspaceId },
@@ -39,7 +29,9 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
   const [workspaceUsers, setWorkspaceUsers] = useState<UserPermissions[]>([]);
 
   const initialFetch = useCallback(async () => {
+    console.log('fetch');
     const users = await getWorkspaceUsersPermissions(workspaceId);
+    console.log('fetched', users);
     setWorkspaceUsers(users);
   }, [getWorkspaceUsersPermissions, workspaceId]);
 
@@ -65,7 +57,7 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
               <FieldContainer name="role">
                 {({ input }) => <Input label={t('share.role')} {...input} />}
               </FieldContainer>
-              <Button type="submit">{t('add')}</Button>
+              <Button type="submit">{commonT('add')}</Button>
             </Space>
           </form>
         )}

@@ -164,5 +164,11 @@
     }
   },
   "404": "Cet espace de travail n'existe pas. Revenez à votre page d'accueil.",
-  "share": "Partager"
+  "share": {
+    "label": "Partager",
+    "email": "Email",
+    "role": "Rôle",
+    "access": "Accès",
+    "actions": "Actions"
+  }
 }

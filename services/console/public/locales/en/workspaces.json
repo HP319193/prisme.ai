@@ -91,7 +91,7 @@
         "custom": "Execute this automation by calling a web address",
         "url": "Custom URL"
       },
-      "add": "Add",
+      "add": "Save",
       "save": "Save"
     },
     "instruction": {
@@ -164,5 +164,11 @@
     }
   },
   "404": "This workspace does not exist. Return to your home page.",
-  "share": "Share"
+  "share": {
+    "label": "Share",
+    "email": "Email",
+    "role": "Role",
+    "access": "Access",
+    "actions": "Actions"
+  }
 }

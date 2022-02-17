@@ -2,6 +2,7 @@ import getConfig from 'next/config';
 import QueryString from 'qs';
 import Fetcher from './fetcher';
 import { Event, Workspace } from './types';
+import UserPermissions = Prismeai.UserPermissions;
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -122,6 +123,14 @@ export class Api extends Fetcher {
     subjectId: string
   ) {
     return await this.get(`/${subjectType}/${subjectId}/permissions`);
+  }
+
+  async postPermissions(
+    subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
+    subjectId: string,
+    permissions: UserPermissions
+  ) {
+    return await this.post(`/${subjectType}/${subjectId}/permissions`);
   }
 }
 

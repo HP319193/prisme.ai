@@ -164,5 +164,11 @@
     }
   },
   "404": "Este espacio de trabajo no existe. Vuelve a tu página de inicio.",
-  "share": "Cuota"
+  "share": {
+    "label": "Compartir",
+    "email": "Correo electrónico",
+    "role": "Rol",
+    "access": "Acceso",
+    "actions": "Acciones"
+  }
 }
