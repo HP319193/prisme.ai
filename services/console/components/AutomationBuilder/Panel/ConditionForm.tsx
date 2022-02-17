@@ -4,6 +4,7 @@ import { FC, useCallback } from 'react';
 import { Form } from 'react-final-form';
 import Fieldset from '../../../layouts/Fieldset';
 import { Field } from '../../SchemaForm/Field';
+import { PlusOutlined } from '@ant-design/icons';
 
 interface ConditionFormProps {
   condition?: string;
@@ -27,10 +28,14 @@ export const ConditionForm: FC<ConditionFormProps> = ({
       <Form onSubmit={submit} initialValues={{ condition }}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>
-            <Fieldset legend={t('automations.condition.edit.title')}>
+            <Fieldset
+              legend={t('automations.condition.edit.title')}
+              hasDivider={false}
+            >
               <>
                 <Field field="condition" type="string" required />
                 <Button type="submit">
+                  <PlusOutlined />
                   {t('automations.condition.edit.save')}
                 </Button>
               </>

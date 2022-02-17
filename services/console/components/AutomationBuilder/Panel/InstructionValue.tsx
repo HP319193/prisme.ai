@@ -17,7 +17,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
 }) => {
   if (!schema) return null;
   return (
-    <Fieldset legend={instruction}>
+    <Fieldset legend={instruction} hasDivider={false}>
       <Form schema={schema} onSubmit={onSubmit} initialValues={value} />
     </Fieldset>
   );

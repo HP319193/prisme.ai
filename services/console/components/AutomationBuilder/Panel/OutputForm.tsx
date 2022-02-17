@@ -5,6 +5,7 @@ import FieldContainer from '../../../layouts/Field';
 import { Button } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { CodeEditorInline } from '../../CodeEditor/lazy';
+import { PlusOutlined } from '@ant-design/icons';
 
 interface OutputFormProps {
   output?: string;
@@ -33,7 +34,10 @@ export const OutputForm: FC<OutputFormProps> = ({ output, onSubmit }) => {
       <Form onSubmit={submit} initialValues={{ output }}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>
-            <Fieldset legend={t('automations.output.edit.title')}>
+            <Fieldset
+              legend={t('automations.output.edit.title')}
+              hasDivider={false}
+            >
               <FieldContainer
                 name="output"
                 label={t('automations.output.edit.label')}
@@ -50,7 +54,10 @@ export const OutputForm: FC<OutputFormProps> = ({ output, onSubmit }) => {
               </FieldContainer>
             </Fieldset>
 
-            <Button type="submit">{t('automations.output.edit.save')}</Button>
+            <Button type="submit">
+              <PlusOutlined />
+              {t('automations.output.edit.save')}
+            </Button>
           </form>
         )}
       </Form>
