@@ -1,14 +1,14 @@
-import { PrismeContext } from "../../middlewares";
-import { StorageDriver } from "../../storage";
+import { PrismeContext } from '../../middlewares';
+import { StorageDriver } from '../../storage';
 import {
   AlreadyUsed,
   AuthenticationError,
   InvalidEmail,
   PrismeError,
-} from "../../types/errors";
-import { comparePasswords, hashPassword } from "./utils";
-import isEmail from "is-email";
-import { ObjectId } from "mongodb";
+} from '../../types/errors';
+import { comparePasswords, hashPassword } from './utils';
+import isEmail from 'is-email';
+import { ObjectId } from 'mongodb';
 
 export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function ({
@@ -19,7 +19,7 @@ export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
   }: PrismeaiAPI.Signup.RequestBody) {
     const existingUsers = await Users.find({ email });
     if (existingUsers.length) {
-      throw new AlreadyUsed("email");
+      throw new AlreadyUsed('email');
     }
 
     if (!isEmail(email)) {
@@ -33,12 +33,15 @@ export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
       lastName,
     };
     const savedUser = await Users.save({ ...user, password: hash });
+    delete savedUser.password;
     return Promise.resolve(savedUser);
   };
 
 export const get = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function (id: string) {
-    return await Users.get(id);
+    const user = await Users.get(id);
+    delete user.password;
+    return user;
   };
 
 export const login = (Users: StorageDriver, ctx?: PrismeContext) =>
@@ -50,6 +53,7 @@ export const login = (Users: StorageDriver, ctx?: PrismeContext) =>
     if (!(await comparePasswords(password, users[0].password))) {
       throw new AuthenticationError();
     }
+    delete users[0].password;
     return users[0];
   };
 
@@ -57,7 +61,7 @@ export const anonymousLogin = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function () {
     const user: Prismeai.User = {
       firstName:
-        "anonymous-" + Date.now() + "-" + Math.round(Math.random() * 1000),
+        'anonymous-' + Date.now() + '-' + Math.round(Math.random() * 1000),
       authData: {
         anonymous: {},
       },
@@ -77,13 +81,14 @@ export const find = (Users: StorageDriver, ctx?: PrismeContext) =>
     if (ids) {
       try {
         const mongoIds = ids.map((id) => new ObjectId(id));
-        return await Users.find({
+        const users = await Users.find({
           _id: {
             $in: mongoIds,
           },
         });
+        return users.map(({ password, ...user }) => user);
       } catch (error) {
-        throw new PrismeError(`Invalid id (${ids.join(",")})`, { ids }, 400);
+        throw new PrismeError(`Invalid id (${ids.join(',')})`, { ids }, 400);
       }
     }
     return [];

@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "start": "ts-node scripts/start-dev.ts",
+    "postinstall": "patch-package",
     "clean": "npx rimraf packages/**/dist",
     "build:packages": "npm run build:validation:instruction && npx rollup -c",
     "build:console": "npm run build --prefix services/console",
@@ -95,6 +96,7 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.7.0"
+    "@ant-design/icons": "^4.7.0",
+    "patch-package": "^6.4.7"
   }
 }

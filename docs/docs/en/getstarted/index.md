@@ -7,7 +7,7 @@ git clone https://gitlab.com/prisme.ai/prisme.ai.git
 docker-compose up
 ```
 
-## For developpers : Docker + NodeJS
+## For developers : Docker + NodeJS
 If willing to change any part of this codebase, we recommand testing your updates live using our `npm start` script, which starts the services you want to change with NodeJS, and everything else with Docker.  
 In order to do so, please make sure that `git`, `npm`, `docker` and `NodeJS 16` (**only for NodeJS start**) are installed on your system.  
 
