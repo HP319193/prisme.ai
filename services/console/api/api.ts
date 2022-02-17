@@ -121,7 +121,7 @@ export class Api extends Fetcher {
   async getPermissions(
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string
-  ) {
+  ): Promise<PrismeaiAPI.GetPermissions.Responses.$200> {
     return await this.get(`/${subjectType}/${subjectId}/permissions`);
   }
 
@@ -129,7 +129,7 @@ export class Api extends Fetcher {
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string,
     permissions: UserPermissions
-  ) {
+  ): Promise<PrismeaiAPI.Share.Responses.$200> {
     return await this.post(
       `/${subjectType}/${subjectId}/permissions`,
       permissions
@@ -140,11 +140,8 @@ export class Api extends Fetcher {
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string,
     userId: string
-  ) {
-    return await this.post(
-      `/${subjectType}/${subjectId}/permissions`,
-      permissions
-    );
+  ): Promise<PrismeaiAPI.RevokePermissions.Responses.$200> {
+    return await this.post(`/${subjectType}/${subjectId}/permissions`);
   }
 }
 

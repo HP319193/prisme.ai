@@ -10,30 +10,34 @@ import { Button, Input, Table, Space } from '@prisme.ai/design-system';
 import { Form } from 'react-final-form';
 import { useTranslation } from 'react-i18next';
 import FieldContainer from '../layouts/Field';
-import Policies = Prismeai.Policies;
-import { useWorkspaces } from './WorkspacesProvider';
 import UserPermissions = Prismeai.UserPermissions;
 import { useWorkspace } from '../layouts/WorkspaceLayout';
+import { usePermissions } from './PermissionsProvider';
+import Role = Prismeai.Role;
 
 interface SharePopoverProps {
   setVisible: Dispatch<SetStateAction<boolean>>;
 }
 
+interface userPermissionForm {
+  email: string;
+  role: Role;
+}
+
 const SharePopover = ({ setVisible }: SharePopoverProps) => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
-  const { getWorkspaceUsersPermissions } = useWorkspaces();
+  const { usersPermissions, getUsersPermissions, addUserPermissions } =
+    usePermissions();
   const {
     workspace: { id: workspaceId },
   } = useWorkspace();
-  const [workspaceUsers, setWorkspaceUsers] = useState<UserPermissions[]>([]);
+
+  console.log('usersPermissions', usersPermissions);
 
   const initialFetch = useCallback(async () => {
-    console.log('fetch');
-    const users = await getWorkspaceUsersPermissions(workspaceId);
-    console.log('fetched', users);
-    setWorkspaceUsers(users);
-  }, [getWorkspaceUsersPermissions, workspaceId]);
+    getUsersPermissions('workspaces', workspaceId);
+  }, [getUsersPermissions, workspaceId]);
 
   useEffect(() => {
     initialFetch();
@@ -43,11 +47,13 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
     return [];
   }, []);
 
-  const onSubmit = (values) => {};
+  const onSubmit = ({ email, role }: userPermissionForm) => {
+    addUserPermissions('workspaces', workspaceId, { email, role });
+  };
 
   return (
     <Space direction="vertical" className="w-[60vw]">
-      <Form onSubmit={onSubmit} initialValues={workspaceUsers}>
+      <Form onSubmit={onSubmit} initialValues={{ email: '', role: '' }}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>
             <Space className="flex flex-row">

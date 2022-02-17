@@ -3,7 +3,7 @@ import UserPermissions = Prismeai.UserPermissions;
 import SubjectType = PrismeaiAPI.GetPermissions.Parameters.SubjectType;
 
 export interface PermissionsContext {
-  usersPermissions: Map<string, UserPermissions | null>;
+  usersPermissions: Map<string, UserPermissions[]>;
   addUserPermissions: (
     subjectType: SubjectType,
     subjectId: string,
@@ -14,17 +14,16 @@ export interface PermissionsContext {
   //   workspaceId: string
   // ) => Promise<any>;
   getUsersPermissions: (
-    subjectId: string,
-    subjectType: SubjectType
-  ) => Promise<Map<string, UserPermissions | null>>;
+    subjectType: SubjectType,
+    subjectId: string
+  ) => Promise<UserPermissions[]>;
 }
 
 export const workspacesContext = createContext<PermissionsContext>({
   usersPermissions: new Map(),
   // unshareWorkspaceToUser: async () => ({} as any),
   addUserPermissions: async () => ({} as UserPermissions),
-  getUsersPermissions: async () =>
-    new Map() as Map<string, UserPermissions | null>,
+  getUsersPermissions: async () => [] as UserPermissions[],
 });
 
 export const usePermissions = () => useContext(workspacesContext);
