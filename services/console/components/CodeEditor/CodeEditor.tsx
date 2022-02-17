@@ -109,6 +109,7 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
       });
       (markers || []).forEach((marker) => {
         const { className, endCol, endRow, startCol, startRow, type } = marker;
+        // @ts-ignore
         const Range = ace.require('ace/range').Range;
         editor
           .getSession()
