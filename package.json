@@ -41,6 +41,7 @@
   },
   "homepage": "https://gitlab.com/gogowego-devsecops/dev/pyramide#readme",
   "devDependencies": {
+    "@apidevtools/json-schema-ref-parser": "^9.0.9",
     "@babel/core": "^7.17.0",
     "@babel/preset-env": "^7.16.0",
     "@babel/preset-react": "^7.16.7",
@@ -94,7 +95,6 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",
-    "bcrypt": "^5.0.1"
+    "@ant-design/icons": "^4.7.0"
   }
 }
