@@ -70,11 +70,11 @@
         "display": "<a>L'adresse web<icon /></a> est appelée",
         "copied": "L'URL a bien été copiée dans votre presse-papier",
         "help": "L'automatisation sera exécutées à chaque fois qu'une url sera appelée.",
-        "custom": "Exécuter cette automatisation en appellant une URL",
+        "custom": "Accessible par url",
         "url": "URL personnalisée"
       },
       "add": "Ajouter",
-      "save": "Enregistrer"
+      "save": "Ajouter"
     },
     "instruction": {
       "title_builtin": "Logique",

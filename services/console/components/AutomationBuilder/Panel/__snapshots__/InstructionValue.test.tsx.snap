@@ -3,7 +3,9 @@
 exports[`should not render without schema 1`] = `null`;
 
 exports[`should render 1`] = `
-<div>
+<div
+  className="mt-5"
+>
   emit
   <form
     onSubmit={[Function]}

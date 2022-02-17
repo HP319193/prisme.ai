@@ -2,7 +2,7 @@
 
 exports[`should render 1`] = `
 <div
-  className="flex flex-1 flex-col h-full"
+  className="flex flex-1 flex-col h-full overflow-x-auto"
 >
   <div
     className="flex grow h-full flex-col overflow-auto"

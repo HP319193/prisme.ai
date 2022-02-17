@@ -5,7 +5,9 @@ exports[`should render 1`] = `
   <form
     onSubmit={[Function]}
   >
-    <div>
+    <div
+      className="mt-5"
+    >
       automations.condition.edit.title
       <div
         className="mb-5"

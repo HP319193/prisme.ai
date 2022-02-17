@@ -4,6 +4,7 @@ import { FC, useCallback } from 'react';
 import { Form as FFForm, FormRenderProps } from 'react-final-form';
 import { Field } from './Field';
 import { Schema } from './types';
+import { PlusOutlined } from '@ant-design/icons';
 
 interface FormProps {
   schema: Schema;
@@ -116,7 +117,10 @@ export const Form: FC<FormProps> = ({ schema, onSubmit, ...formProps }) => {
               oneOf={oneOf ? oneOf : undefined}
             />
           ))}
-          <Button type="submit">{t('automations.edit.save')}</Button>
+          <Button type="submit">
+            <PlusOutlined />
+            {t('automations.edit.save')}
+          </Button>
         </form>
       )}
     </FFForm>

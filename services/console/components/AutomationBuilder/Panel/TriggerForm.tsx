@@ -5,6 +5,7 @@ import FieldContainer from '../../../layouts/Field';
 import Fieldset from '../../../layouts/Fieldset';
 import { Button, Input, TagEditable } from '@prisme.ai/design-system';
 import { Switch } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
 const Endpoint = () => {
   const { t } = useTranslation('workspaces');
@@ -12,20 +13,20 @@ const Endpoint = () => {
 
   return (
     <div className="p-field mb-5">
-      <label className="mx-2 flex flex-1 items-center justify-between flex-row">
-        <div className="mr-2">{t('automations.trigger.endpoint.custom')}</div>
+      <label className=" flex flex-1 items-center justify-between flex-row">
+        <div>{t('automations.trigger.endpoint.custom')}</div>
+
+        {/*<Input*/}
+        {/*  disabled={!input.value}*/}
+        {/*  {...input}*/}
+        {/*  label={t('automations.trigger.endpoint.url')}*/}
+        {/*  value={typeof input.value === 'string' ? input.value : ''}*/}
+        {/*/>*/}
         <Switch
           checked={input.value !== false}
           onChange={(value) => input.onChange(value)}
         />
       </label>
-      {input.value !== false && (
-        <Input
-          {...input}
-          label={t('automations.trigger.endpoint.url')}
-          value={typeof input.value === 'string' ? input.value : ''}
-        />
-      )}
     </div>
   );
 };
@@ -46,11 +47,14 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onSubmit }) => {
   );
 
   return (
-    <div>
+    <div className="overflow-x-auto">
       <Form onSubmit={onSubmit} initialValues={initialValue}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>
-            <Fieldset legend={t('automations.trigger.events.title')}>
+            <Fieldset
+              legend={t('automations.trigger.events.title')}
+              hasDivider={false}
+            >
               <FieldContainer name="events">
                 {({ input }) => (
                   <TagEditable
@@ -66,7 +70,10 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onSubmit }) => {
             <Fieldset legend={t('automations.trigger.endpoint.title')}>
               <Endpoint />
             </Fieldset>
-            <Button type="submit">{t('automations.trigger.save')}</Button>
+            <Button type="submit">
+              <PlusOutlined />
+              {t('automations.trigger.save')}
+            </Button>
           </form>
         )}
       </Form>
