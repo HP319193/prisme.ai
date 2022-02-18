@@ -80,7 +80,7 @@ Produced events :
 - **gateway.login.succeeded**
 - **gateway.login.failed**
 
-[Documentation](https://gitlab.com/prisme.ai/prisme.ai/-/blob/main/specifications/swagger.yml)
+[Documentation](/api)
 
 # Quality
 

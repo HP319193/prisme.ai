@@ -2,12 +2,13 @@
 Policies are the differents kind of permissions which can be granted to someone for a specific object. This is the smallest permissions granularity.  
 
 Currently, the only supported policies are :  
-- **create** : can **create** the given kind of object  
-- **read** : can **read** **this** object  
-- **update** : can **update** **this** object    
-- **delete** : can **delete** **this** object    
-- **manage_permissions** : can manage **permissions** of others **users** on **this** object, can manage **this** object's API keys  
-- **manage** : can do all of the above
+
+* **create** : can **create** the given kind of object  
+* **read** : can **read** **this** object  
+* **update** : can **update** **this** object    
+* **delete** : can **delete** **this** object    
+* **manage_permissions** : can manage **permissions** of others **users** on **this** object, can manage **this** object's API keys  
+* **manage** : can do all of the above
 
 API Keys are defined in these same terms of **policies** and **objects**.  
 These policies must be assigned to a specific object / user pair.  
@@ -24,14 +25,16 @@ For example, a **Workspace Owner** automatically has all policies for **Pages** 
 
 ## Owner
 A Workspace **Owner** can :  
-- Manage permissions + API keys  
-- View all workspace events  
-- Has full CRUD permissions on the workspace, installed apps & pages
+
+* Manage permissions + API keys  
+* View all workspace events  
+* Has full CRUD permissions on the workspace, installed apps & pages
 
 ## Editor
 A Workspace **Editor** can :  
-- View all workspace events except API key & permissions ones  
-- Has CRUD permissions except delete on the workspace, installed apps & pages
+
+* View all workspace events except API key & permissions ones  
+* Has CRUD permissions except delete on the workspace, installed apps & pages
 
 # API Keys  
 Anyone with **manage_permissions** policy on a workspace (i.e `Owner`s) can create an API Key for this workspace, automatically granting some permissions to whatever requests including this API Key inside the `x-prismeai-api-key` header.  

@@ -73,7 +73,7 @@ The **Events** service is in charge of :
 
 ## Events & API
 
-[Documentation](https://gitlab.com/prisme.ai/prisme.ai/-/blob/main/specifications/swagger.yml)
+[Documentation](/api)
 
 
 ## Performance

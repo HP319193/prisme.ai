@@ -63,7 +63,7 @@ Produced events :
 - **workspaces.automation.updated**
 - **workspaces.automation.deleted**
 
-[Documentation](https://gitlab.com/prisme.ai/prisme.ai/-/blob/main/specifications/swagger.yml)
+[Documentation](/api)
 
 **Note :** As with all other APIs, the DSUL validation of automations and workspaces is based entirely on their swagger. Thus, an up-to-date swagger means automatically updated and synchronized documentation and validation.
 

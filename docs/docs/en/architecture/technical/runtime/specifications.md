@@ -68,7 +68,7 @@ Produced events :
 - **runtime.webhook.triggered**
 - **runtime.automation.executed**
 
-[Documentation](https://gitlab.com/prisme.ai/prisme.ai/-/blob/main/specifications/swagger.yml)
+[Documentation](/api)
 
 ## Performance & Scalability
 

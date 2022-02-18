@@ -1,0 +1,88 @@
+# Instructions
+
+## Logic-related 
+
+### Conditions
+Conditionally execute instructions
+
+**Parameters :**  
+
+No parameter
+
+**Children nodes :**  
+Every conditions will be represented as parallel branches on your graph, each beginning with a blue box allowing you to edit the condition itself, followed by the instruction that you will add for that specific condition.  
+
+A **default** branch is automatically added to configure what instructions to execute when no other condition matches.  
+
+[More details on Conditions syntax](../conditions)
+
+### Repeat
+Execute a list of instructions N times, or for each record from an array variable
+
+**Parameters :**  
+
+* **on** : An array variable name to loop on. Each record will be available inside an **item** variable  
+* **until** : A number of times to repeat this loop. Each iteration number will be stored inside an **item** variable  
+
+**on** and **until** parameters cannot be used together.  
+
+**Children nodes :**  
+When adding a **Repeat** instruction, a new graph branch will appear, allowing you to create the instructions that will be repeated.  
+
+### Break
+Stops currently executing automation
+
+**Parameters :**  
+
+No parameter
+
+### All
+Execute the given instructions in parallel  
+
+_Coming soon_
+
+## Variable-related
+
+### Set
+Set a new or existing variable
+
+**Parameters :**  
+
+* **name** : Variable name  
+* **value** : Variable value (might be a JSON object, a string, a number, ...)  
+* **lifespan** : _Coming soon_
+
+### Delete
+Delete a variable  
+
+**Parameters :**  
+
+* **name** : Variable name
+
+## Interaction-related 
+
+### Fetch
+Sends an HTTP request to call external web services  
+
+**Parameters :**  
+
+* **URL** : Target URL
+* **method** : Request method (get | post | put | patch | delete)
+* **headers** : Request headers  
+* **body** : Request body (might be a JSON object, a string, a number, ...)  
+* **output** : Name of the variable that will store the response body  
+
+
+### Emit
+Emit a new event.  
+
+**Parameters :**  
+
+* **event** : Event name  
+* **payload** : JSON object that will be sent as the event payload  
+
+
+### Wait
+Wait for an event. Pauses the current execution until the requested event is received.  
+
+_Coming soon_

@@ -19,3 +19,5 @@ specifications: Specifications
 permissions: Permissions and API Keys
 authentication_access_control: Authentication and Authorization
 automations: Automations
+instructions: Instructions
+conditions: Conditions

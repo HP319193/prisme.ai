@@ -42,6 +42,11 @@ nav:
       - i18n.index: getstarted/index.md
       - i18n.configuration: getstarted/configuration.md
       - i18n.permissions: getstarted/permissions.md
+  - Workspaces:
+    - i18n.automations: workspaces/automations.md
+    - i18n.instructions: workspaces/instructions.md
+    - i18n.conditions: workspaces/conditions.md
+
   - i18n.contributing:
       - i18n.index: contributing/index.md
   - i18n.architecture:
@@ -55,7 +60,6 @@ nav:
           - i18n.specifications: architecture/technical/events/specifications.md
       - i18n.runtime:
           - i18n.specifications: architecture/technical/runtime/specifications.md
-          - i18n.automations: architecture/technical/runtime/automations.md
       - i18n.workspaces:
           - i18n.specifications: architecture/technical/workspaces/specifications.md
   - API: /api
