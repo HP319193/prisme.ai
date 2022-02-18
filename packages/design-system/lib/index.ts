@@ -3,6 +3,7 @@ import { Typography } from 'antd';
 export const Title = Typography.Title;
 
 export { default as Button } from './Components/Button';
+export { default as Select } from './Components/Select';
 export { default as Layout } from './Components/Layout';
 export { default as PageHeader } from './Components/PageHeader';
 export { default as Menu } from './Components/Menu';
