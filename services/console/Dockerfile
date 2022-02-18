@@ -14,8 +14,18 @@ RUN rm -rf /www/services/console/.next && \
     mv /www/services/console/_babelrc /www/services/console/.babelrc
 
 COPY ./specifications /www/specifications
-RUN npm run build:packages
-RUN npm run build:console
+RUN npm run build:packages && \
+    npm run build:console && \
+    npm prune --production
+
+FROM node:16-alpine as runtime
+
+WORKDIR /www
+COPY --from=build /www/packages /www/packages
+COPY --from=build /www/services/console/  /www/services/console/
+COPY --from=build /www/package.json /www/package-lock.json /www/rollup.config.js /www/dtsgen.json /www/
+COPY --from=build /www/specifications/  /www/specifications/
+COPY --from=build /www/node_modules/  /www/node_modules/
 
 EXPOSE 3000
 ENV PORT 3000
