@@ -11,12 +11,24 @@ COPY patches/ /www/patches
 
 COPY scripts/ /www/scripts
 COPY specifications/ /www/specifications
+
+COPY services/runtime/package* /www/services/runtime/
+COPY services/workspaces/package* /www/services/workspaces/
+COPY services/api-gateway/package* /www/services/api-gateway/
+COPY services/events/package* /www/services/events/
+
+# Packages
+COPY packages/broker/package* /www/packages/broker/
+COPY packages/validation/package* /www/packages/validation/
+COPY packages/design-system/package* /www/packages/design-system/
+COPY packages/permissions/package* /www/packages/permissions/
+
+RUN BUILD_PACKAGES=0 npm ci
+
 COPY packages/ /www/packages
 
-RUN npm ci
-
 # Build packages && replace their node_modules symlinks with themselves
-RUN npm run build:packages && rm -rf node_modules/@prisme.ai && mv packages/ node_modules/@prisme.ai
+RUN npm run build:types && npm run build:packages && rm -rf node_modules/@prisme.ai && mv packages/ node_modules/@prisme.ai
 
 FROM node:16-alpine as node_modules
 
