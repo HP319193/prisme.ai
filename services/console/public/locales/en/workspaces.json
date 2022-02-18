@@ -170,6 +170,10 @@
     "role": "Role",
     "access": "Access",
     "actions": "Actions",
-    "delete": "Remove access"
+    "delete": "Remove access",
+    "roles": {
+      "owner": "Owner",
+      "editor": "Editor"
+    }
   }
 }

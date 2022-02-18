@@ -1,14 +1,13 @@
-import {
+import React, {
   Dispatch,
   SetStateAction,
   useCallback,
   useEffect,
   useMemo,
-  useState,
 } from 'react';
-import { Button, Input, Table, Space } from '@prisme.ai/design-system';
+import { Button, Input, Table, Space, Select } from '@prisme.ai/design-system';
 import { Tooltip } from 'antd';
-import { Form } from 'react-final-form';
+import { Form, useField } from 'react-final-form';
 import { useTranslation } from 'react-i18next';
 import FieldContainer from '../layouts/Field';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
@@ -25,15 +24,31 @@ interface userPermissionForm {
   role: Role;
 }
 
-const generateRowButtons = (t: Function, onDelete: Function) => (
-  <div className="flex flex-row justify-center">
-    <Tooltip title={t('share.delete')}>
-      <Button onClick={() => onDelete()}>
-        <DeleteOutlined />
-      </Button>
-    </Tooltip>
-  </div>
-);
+type SelectOption = {
+  value: string;
+  label: string;
+};
+
+const RoleSelect = ({
+  rolesOptions,
+  t,
+}: {
+  rolesOptions: SelectOption[];
+  t: Function;
+}) => {
+  const { input: roleInput } = useField('role', {
+    initialValue: rolesOptions[0].value,
+  });
+
+  return (
+    <Select
+      {...roleInput}
+      selectOptions={rolesOptions}
+      label={t('share.role')}
+      className="w-40"
+    />
+  );
+};
 
 const SharePopover = ({ setVisible }: SharePopoverProps) => {
   const { t } = useTranslation('workspaces');
@@ -47,6 +62,27 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
   const {
     workspace: { id: workspaceId },
   } = useWorkspace();
+
+  const generateRowButtons = useCallback(
+    (onDelete: Function) => (
+      <div className="flex flex-row justify-center">
+        <Tooltip title={t('share.delete')}>
+          <Button onClick={() => onDelete()}>
+            <DeleteOutlined />
+          </Button>
+        </Tooltip>
+      </div>
+    ),
+    [t]
+  );
+
+  const rolesOptions = useMemo<SelectOption[]>(
+    () => [
+      { value: 'owner', label: t('share.roles.owner') },
+      { value: 'editor', label: t('share.roles.editor') },
+    ],
+    [t]
+  );
 
   console.log('usersPermissions', usersPermissions);
 
@@ -69,14 +105,19 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
         key: id,
         email,
         role,
-        actions: generateRowButtons(t, () =>
+        actions: generateRowButtons(() =>
           // @ts-ignore
           // Previous filter ensure we have an id defined
           removeUserPermissions('workspaces', workspaceId, id)
         ),
       }));
     return rows;
-  }, [removeUserPermissions, t, usersPermissions, workspaceId]);
+  }, [
+    generateRowButtons,
+    removeUserPermissions,
+    usersPermissions,
+    workspaceId,
+  ]);
 
   const onSubmit = ({ email, role }: userPermissionForm) => {
     addUserPermissions('workspaces', workspaceId, { email, role });
@@ -91,9 +132,11 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
               <FieldContainer name="email">
                 {({ input }) => <Input label={t('share.email')} {...input} />}
               </FieldContainer>
-              <FieldContainer name="role">
-                {({ input }) => <Input label={t('share.role')} {...input} />}
-              </FieldContainer>
+              <div className="mb-5">
+                <span className={`flex flex-col`}>
+                  <RoleSelect rolesOptions={rolesOptions} t={t} />
+                </span>
+              </div>
               <Button type="submit">{commonT('add')}</Button>
             </Space>
           </form>
