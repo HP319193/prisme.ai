@@ -129,7 +129,12 @@ WORKSPACES_STORAGE_S3_LIKE_BUCKET_NAME=someBucketName
     <td>Redis password for sessions storage</td>
     <td></td>
   </tr>    
-
+  <tr>
+    <td>PASSWORD_VALIDATION_REGEXP</td>
+    <td>api-gateway</td>
+    <td>Password validation regexp</td>
+    <td>.{8,}</td>
+  </tr>    
 
   <!-- Events -->
   <tr>
