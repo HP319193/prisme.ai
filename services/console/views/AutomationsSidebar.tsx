@@ -84,8 +84,14 @@ export const AutomationsSidebar: FC = () => {
       {isEmpty && (
         <Button className="flex flex-1" onClick={create} disabled={creating}>
           <div className="flex flex-1 justify-center items-center flex-col">
-            <IconAutomations height={100} width={100} />
-            <div className="mt-4">{t('automations.create.label')}</div>
+            <IconAutomations
+              height={100}
+              width={100}
+              className="text-gray-200"
+            />
+            <div className="mt-4 text-gray">
+              {t('automations.create.label')}
+            </div>
           </div>
         </Button>
       )}

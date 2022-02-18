@@ -13,8 +13,8 @@ export const AppsSidebar = () => {
         <Button disabled>{t('apps.create.label')}</Button>
       </div>
       <div className="flex flex-1 justify-center items-center flex-col">
-        <IconApps width={100} height={100} />
-        <div className="mt-4">{t('apps.soon')}</div>
+        <IconApps width={100} height={100} className="text-gray-200" />
+        <div className="mt-4 text-gray">{t('apps.soon')}</div>
       </div>
     </div>
   );

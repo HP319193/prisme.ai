@@ -14,11 +14,12 @@ exports[`should render 1`] = `
     className="flex flex-1 justify-center items-center flex-col"
   >
     <SvgrURL
+      className="text-gray-200"
       height={100}
       width={100}
     />
     <div
-      className="mt-4"
+      className="mt-4 text-gray"
     >
       pages.soon
     </div>

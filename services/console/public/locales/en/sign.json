@@ -5,7 +5,7 @@
     "description": "If you don't have an account yet\nyou can <a>sign up here !</a>",
     "email": "Email",
     "password": "Password",
-    "submit": "Connection",
+    "submit": "Login",
     "signup": "Signup ?",
     "error": "Wrong password"
   },

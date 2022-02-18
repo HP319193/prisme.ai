@@ -24,7 +24,7 @@ const Input = ({
       inputComponent = (
         <AntdInputPassword
           placeholder={placeholder}
-          className={`${className} rounded h-[50px] basis-[50px]`}
+          className={`${className} rounded`}
           iconRender={(visible: boolean) =>
             visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
           }

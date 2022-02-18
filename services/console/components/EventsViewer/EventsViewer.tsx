@@ -27,7 +27,11 @@ export const EventsViewer = () => {
       Array.from(events).map((event) => ({
         label: (
           <div className="flex flex-col">
-            <div className="flex flex-row">
+            <div
+              className={`flex flex-row ${
+                readEvents.has(event.id) ? 'opacity-50' : ''
+              }`}
+            >
               <div className="font-bold">
                 {event.source?.app || event.source?.host?.service}
               </div>
@@ -41,7 +45,6 @@ export const EventsViewer = () => {
           </div>
         ),
         content: <EventDetails {...event} />,
-        className: readEvents.has(event.id) ? 'opacity-50' : '',
         onClick: () => {
           readEvent(event.id);
         },

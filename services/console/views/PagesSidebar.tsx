@@ -13,8 +13,8 @@ export const PagesSidebar = () => {
         <Button disabled>{t('pages.create.label')}</Button>
       </div>
       <div className="flex flex-1 justify-center items-center flex-col">
-        <IconPages width={100} height={100} />
-        <div className="mt-4">{t('pages.soon')}</div>
+        <IconPages width={100} height={100} className="text-gray-200" />
+        <div className="mt-4 text-gray">{t('pages.soon')}</div>
       </div>
     </div>
   );

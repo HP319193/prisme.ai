@@ -79,6 +79,7 @@
             "description": "Variable name, might be \"foo\", \"session.sessionScopedFoo\", \"global.globalScopedFoo\", \"user.userScopedFoo\", ..."
           },
           "value": {
+            "type": "object",
             "description": "variable value"
           },
           "lifespan": {
