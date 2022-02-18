@@ -2,7 +2,6 @@
   "name": "@prisme.ai/api-gateway",
   "version": "1.0.0",
   "description": "Official Prisme.ai API Gateway",
-
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p tsconfig.json",
@@ -63,3 +62,4 @@
     "validatorjs": "^3.22.1"
   }
 }
+

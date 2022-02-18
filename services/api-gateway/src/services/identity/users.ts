@@ -5,10 +5,12 @@ import {
   AuthenticationError,
   InvalidEmail,
   PrismeError,
+  InvalidPassword,
 } from '../../types/errors';
 import { comparePasswords, hashPassword } from './utils';
 import isEmail from 'is-email';
 import { ObjectId } from 'mongodb';
+import { syscfg } from '../../config';
 
 export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function ({
@@ -24,6 +26,12 @@ export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
 
     if (!isEmail(email)) {
       throw new InvalidEmail();
+    }
+
+    if (!syscfg.PASSWORD_VALIDATION_REGEXP.test(password)) {
+      throw new InvalidPassword(
+        'Invalid password : must be at least 8 characters long.'
+      );
     }
 
     const hash = await hashPassword(password);

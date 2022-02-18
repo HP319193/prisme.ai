@@ -21,6 +21,7 @@
     "signin": "I already have an account",
     "error": "An error has occurred, please contact support",
     "error_AuthenticationError": "An account already exists for this email, but the password is invalid.",
-    "error_InvalidEmail": "The email is invalid."
+    "error_InvalidEmail": "The email is invalid.",
+    "error_InvalidPassword": "The password is invalid : must be at least 8 characters long."
   }
 }

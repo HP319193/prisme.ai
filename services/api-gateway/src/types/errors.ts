@@ -27,12 +27,12 @@ export class ConfigurationError extends PrismeError {
 
 export class ForbiddenError extends PrismeError {
   constructor() {
-    super("Forbidden", undefined, 403);
+    super('Forbidden', undefined, 403);
   }
 }
 
 export class AuthenticationError extends PrismeError {
-  constructor(msg = "Unauthenticated") {
+  constructor(msg = 'Unauthenticated') {
     super(msg, undefined, 401);
   }
 }
@@ -44,7 +44,7 @@ export class RequestValidationError extends PrismeError {
 
 export class NotFoundError extends PrismeError {
   constructor() {
-    super("Route not found", undefined, 404);
+    super('Route not found', undefined, 404);
   }
 }
 
@@ -57,5 +57,11 @@ export class AlreadyUsed extends PrismeError {
 export class InvalidEmail extends PrismeError {
   constructor() {
     super(`value must be an email`, undefined, 400);
+  }
+}
+
+export class InvalidPassword extends PrismeError {
+  constructor(msg: string = `Invalid password`) {
+    super(msg, undefined, 400);
   }
 }

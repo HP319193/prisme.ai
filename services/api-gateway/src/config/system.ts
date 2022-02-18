@@ -28,4 +28,8 @@ export default {
     process.env.SESSION_COOKIES_SIGN_SECRET || ',s6<Mt3=dE[7a#k{)4H)C4%',
 
   INTERNAL_API_KEY: process.env.INTERNAL_API_KEY || '#pZFT>2.g9x8p9D',
+
+  PASSWORD_VALIDATION_REGEXP: new RegExp(
+    process.env.PASSWORD_VALIDATION_REGEXP || '.{8,}'
+  ),
 };

@@ -21,6 +21,7 @@
     "signin": "Ya tengo una cuenta",
     "error": "Se ha producido un error, póngase en contacto con el servicio de asistencia técnica",
     "error_AuthenticationError": "Ya existe una cuenta para este correo electrónico, pero la contraseña no es válida.",
-    "error_InvalidEmail": "El correo electrónico no es válido."
+    "error_InvalidEmail": "El correo electrónico no es válido.",
+    "error_InvalidPassword": "La contraseña no es válida : debe tener al menos 8 caracteres."
   }
 }

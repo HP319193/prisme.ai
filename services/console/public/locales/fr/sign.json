@@ -21,7 +21,8 @@
     "signin": "J'ai déjà un compte",
     "error": "Une erreur est survenue, veuillez contacter le support",
     "error_AuthenticationError": "Un compte existe déjà pour cet email, mais le mot de passe est invalide.",
-    "error_InvalidEmail": "L'email est invalide."
+    "error_InvalidEmail": "L'email est invalide.",
+    "error_InvalidPassword": "Le mot de passe est invalide : celui-ci doit avoir au moins 8 caractère."
   },
   "out": {
     "link": "Déconnexion"
