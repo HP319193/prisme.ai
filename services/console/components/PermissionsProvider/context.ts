@@ -9,10 +9,11 @@ export interface PermissionsContext {
     subjectId: string,
     permissions: UserPermissions
   ) => Promise<any>;
-  // unshareWorkspaceToUser: (
-  //   userEmail: string,
-  //   workspaceId: string
-  // ) => Promise<any>;
+  removeUserPermissions: (
+    subjectType: SubjectType,
+    subjectId: string,
+    userEmail: string
+  ) => Promise<any>;
   getUsersPermissions: (
     subjectType: SubjectType,
     subjectId: string
@@ -21,7 +22,7 @@ export interface PermissionsContext {
 
 export const workspacesContext = createContext<PermissionsContext>({
   usersPermissions: new Map(),
-  // unshareWorkspaceToUser: async () => ({} as any),
+  removeUserPermissions: async () => ({} as any),
   addUserPermissions: async () => ({} as UserPermissions),
   getUsersPermissions: async () => [] as UserPermissions[],
 });

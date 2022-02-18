@@ -169,6 +169,7 @@
     "email": "Email",
     "role": "Role",
     "access": "Access",
-    "actions": "Actions"
+    "actions": "Actions",
+    "delete": "Remove access"
   }
 }

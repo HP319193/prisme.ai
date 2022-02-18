@@ -93,11 +93,11 @@ const HeaderWorkspace = () => {
           }: {
             setVisible: Dispatch<SetStateAction<boolean>>;
           }) => <SharePopover setVisible={setVisible} />}
-          title={t('workspace.share')}
+          title={t('share.label')}
         >
           <Button variant="grey">
             <Space>
-              {t('workspace.share')}
+              {t('share.label')}
               <ShareAltOutlined />
             </Space>
           </Button>

@@ -50,11 +50,34 @@ export const PermissionsProvider: FC = ({ children }) => {
       [usersPermissions]
     );
 
+  const removeUserPermissions: PermissionsContext['removeUserPermissions'] =
+    useCallback(
+      async (subjectType, subjectId, userEmail) => {
+        const fetchedUserPermissions = await api.deletePermissions(
+          subjectType,
+          subjectId,
+          userEmail
+        );
+        const newUsersPermissions = new Map<string, UserPermissions[]>(
+          usersPermissions
+        );
+        newUsersPermissions.set(subjectId, [
+          ...(usersPermissions.get(subjectId) || []).filter(
+            (userPerm) => userPerm.email != userEmail
+          ),
+        ]);
+        setUsersPermissions(newUsersPermissions);
+        return fetchedUserPermissions;
+      },
+      [usersPermissions]
+    );
+
   return (
     <context.Provider
       value={{
         usersPermissions,
         addUserPermissions,
+        removeUserPermissions,
         getUsersPermissions,
       }}
     >

@@ -1,12 +1,16 @@
 {
   "emit": {
     "type": "object",
-    "required": ["emit"],
+    "required": [
+      "emit"
+    ],
     "maxProperties": 1,
     "properties": {
       "emit": {
         "type": "object",
-        "required": ["event"],
+        "required": [
+          "event"
+        ],
         "properties": {
           "event": {
             "type": "string",
@@ -25,12 +29,16 @@
   },
   "wait": {
     "type": "object",
-    "required": ["wait"],
+    "required": [
+      "wait"
+    ],
     "maxProperties": 1,
     "properties": {
       "wait": {
         "type": "object",
-        "required": ["event"],
+        "required": [
+          "event"
+        ],
         "properties": {
           "event": {
             "type": "string",
@@ -55,11 +63,16 @@
   },
   "set": {
     "type": "object",
-    "required": ["set"],
+    "required": [
+      "set"
+    ],
     "maxProperties": 1,
     "properties": {
       "set": {
-        "required": ["name", "value"],
+        "required": [
+          "name",
+          "value"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -88,11 +101,15 @@
   },
   "delete": {
     "type": "object",
-    "required": ["delete"],
+    "required": [
+      "delete"
+    ],
     "maxProperties": 1,
     "properties": {
       "delete": {
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -104,7 +121,9 @@
   },
   "conditions": {
     "type": "object",
-    "required": ["default"],
+    "required": [
+      "default"
+    ],
     "properties": {
       "default": {
         "type": "array"
@@ -117,16 +136,24 @@
   },
   "repeat": {
     "type": "object",
-    "required": ["repeat"],
+    "required": [
+      "repeat"
+    ],
     "maxProperties": 1,
     "properties": {
       "repeat": {
         "oneOf": [
           {
-            "required": ["on", "do"]
+            "required": [
+              "on",
+              "do"
+            ]
           },
           {
-            "required": ["until", "do"]
+            "required": [
+              "until",
+              "do"
+            ]
           }
         ],
         "description": "One of \"on\" or \"until\" is required",
@@ -146,7 +173,9 @@
   },
   "all": {
     "type": "object",
-    "required": ["all"],
+    "required": [
+      "all"
+    ],
     "maxProperties": 1,
     "properties": {
       "all": {
@@ -160,7 +189,9 @@
   },
   "break": {
     "type": "object",
-    "required": ["break"],
+    "required": [
+      "break"
+    ],
     "maxProperties": 1,
     "properties": {
       "break": {
@@ -171,20 +202,30 @@
   },
   "fetch": {
     "type": "object",
-    "required": ["fetch"],
+    "required": [
+      "fetch"
+    ],
     "maxProperties": 1,
     "properties": {
       "fetch": {
         "description": "Send an HTTP request",
         "type": "object",
-        "required": ["url"],
+        "required": [
+          "url"
+        ],
         "properties": {
           "url": {
             "type": "string"
           },
           "method": {
             "type": "string",
-            "enum": ["get", "post", "put", "patch", "delete"]
+            "enum": [
+              "get",
+              "post",
+              "put",
+              "patch",
+              "delete"
+            ]
           },
           "headers": {
             "type": "object",

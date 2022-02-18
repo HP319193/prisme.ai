@@ -7,13 +7,14 @@ import {
   useState,
 } from 'react';
 import { Button, Input, Table, Space } from '@prisme.ai/design-system';
+import { Tooltip } from 'antd';
 import { Form } from 'react-final-form';
 import { useTranslation } from 'react-i18next';
 import FieldContainer from '../layouts/Field';
-import UserPermissions = Prismeai.UserPermissions;
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { usePermissions } from './PermissionsProvider';
 import Role = Prismeai.Role;
+import { DeleteOutlined } from '@ant-design/icons';
 
 interface SharePopoverProps {
   setVisible: Dispatch<SetStateAction<boolean>>;
@@ -24,11 +25,25 @@ interface userPermissionForm {
   role: Role;
 }
 
+const generateRowButtons = (t: Function, onDelete: Function) => (
+  <div className="flex flex-row justify-center">
+    <Tooltip title={t('share.delete')}>
+      <Button onClick={() => onDelete()}>
+        <DeleteOutlined />
+      </Button>
+    </Tooltip>
+  </div>
+);
+
 const SharePopover = ({ setVisible }: SharePopoverProps) => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
-  const { usersPermissions, getUsersPermissions, addUserPermissions } =
-    usePermissions();
+  const {
+    usersPermissions,
+    getUsersPermissions,
+    addUserPermissions,
+    removeUserPermissions,
+  } = usePermissions();
   const {
     workspace: { id: workspaceId },
   } = useWorkspace();
@@ -44,8 +59,24 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
   }, [initialFetch]);
 
   const dataSource = useMemo(() => {
-    return [];
-  }, []);
+    const data = usersPermissions.get(workspaceId);
+    if (!data) {
+      return [];
+    }
+    const rows = data
+      .filter(({ id }) => !!id)
+      .map(({ email, role, id }) => ({
+        key: id,
+        email,
+        role,
+        actions: generateRowButtons(t, () =>
+          // @ts-ignore
+          // Previous filter ensure we have an id defined
+          removeUserPermissions('workspaces', workspaceId, id)
+        ),
+      }));
+    return rows;
+  }, [removeUserPermissions, t, usersPermissions, workspaceId]);
 
   const onSubmit = ({ email, role }: userPermissionForm) => {
     addUserPermissions('workspaces', workspaceId, { email, role });
@@ -71,7 +102,7 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
       <Table
         dataSource={dataSource}
         columns={[
-          { title: t('share.access'), dataIndex: 'access', key: 'access' },
+          { title: t('share.email'), dataIndex: 'email', key: 'email' },
           {
             title: t('share.role'),
             dataIndex: 'role',
@@ -81,6 +112,7 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
             title: t('share.actions'),
             dataIndex: 'actions',
             key: 'actions',
+            width: '15%',
           },
         ]}
         bordered
