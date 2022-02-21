@@ -13,8 +13,7 @@ import { generateEndpoint } from '../utils/urls';
 import { useTranslation } from 'next-i18next';
 import { validateWorkspace } from '@prisme.ai/validation';
 import CodeEditor from '../components/CodeEditor/lazy';
-import { Button, PageHeader } from '@prisme.ai/design-system';
-import { LoadingOutlined } from '@ant-design/icons';
+import { Button, Loading, PageHeader, Space } from '@prisme.ai/design-system';
 import { useRouter } from 'next/router';
 import { Modal, notification } from 'antd';
 
@@ -232,9 +231,16 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
       <PageHeader
         onBack={() => displaySource(false)}
         RightButtons={[
-          <Button onClick={saveSource} disabled={saving} key="1">
-            {saving && <LoadingOutlined />}
-            {t('automations.save.label')}
+          <Button
+            onClick={saveSource}
+            disabled={saving}
+            key="1"
+            className="!flex flex-row"
+          >
+            <Space>
+              {t('automations.save.label')}
+              {saving && <Loading />}
+            </Space>
           </Button>,
         ]}
       />
