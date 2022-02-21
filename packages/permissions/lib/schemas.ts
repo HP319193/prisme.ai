@@ -1,5 +1,5 @@
-import { Schema, Document, Types } from "mongoose";
-import { ActionType, Permissions, Rules, Subject } from "..";
+import { Document, Schema, Types } from 'mongoose';
+import { ActionType, Permissions, Rules, Subject } from '..';
 
 export const Roles = new Schema({
   id: { type: String, index: true },
@@ -12,13 +12,13 @@ export const Roles = new Schema({
 });
 
 export enum NativeSubjectType {
-  Roles = "roles",
+  Roles = 'roles',
 }
 
 export type CustomRole<SubjectType extends string, CustomRules = any> = {
   name: string;
   id: string;
-  type: "apiKey";
+  type: 'apiKey';
   subjectType: SubjectType;
   subjectId: string;
   rules: CustomRules;
@@ -27,7 +27,7 @@ export type CustomRole<SubjectType extends string, CustomRules = any> = {
 
 export type ApiKey<SubjectType extends string, CustomRules = any> = Omit<
   CustomRole<SubjectType, CustomRules>,
-  "name" | "casl" | "type" | "id"
+  'name' | 'casl' | 'type' | 'id'
 > & {
   apiKey: string;
 };
@@ -69,14 +69,14 @@ export function buildFilterFieldsMethod<SubjectType extends string>(
     permissions?: Permissions<SubjectType>
   ) {
     const object: Subject =
-      typeof this.toJSON === "function" ? this.toJSON() : this;
+      typeof this.toJSON === 'function' ? this.toJSON() : this;
     if (object._id) {
       if (!object.id) {
         object.id = object._id.toString();
       }
       delete object._id;
     }
-    if (typeof object.__v !== "undefined") {
+    if (typeof object.__v !== 'undefined') {
       delete object.__v;
     }
 

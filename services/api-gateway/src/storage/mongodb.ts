@@ -1,13 +1,13 @@
-import { Data, SavedData, Query, StorageDriver } from ".";
+import { Data, Query, SavedData, StorageDriver } from '.';
 import {
-  MongoClient,
-  MongoClientOptions,
+  Collection,
   Db,
   Document,
-  Collection,
+  MongoClient,
+  MongoClientOptions,
   ObjectId,
   WithId,
-} from "mongodb";
+} from 'mongodb';
 
 export class MongodbDriver implements StorageDriver {
   private client: MongoClient;

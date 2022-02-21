@@ -1,5 +1,5 @@
-import { evaluate as angelEval } from "../../deps/condition-eval";
-import { InvalidConditionSyntax } from "../errors";
+import { evaluate as angelEval } from '../../deps/condition-eval';
+import { InvalidConditionSyntax } from '../errors';
 
 export const evaluate = (expression: string, scope: any = null) => {
   /*

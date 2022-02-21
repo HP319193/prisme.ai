@@ -1,9 +1,10 @@
-import RedisCache from "./redis";
-import { CacheOptions } from "./types";
-export * from "./types";
+import RedisCache from './redis';
+import { CacheOptions } from './types';
+
+export * from './types';
 
 export enum CacheType {
-  Redis = "redis",
+  Redis = 'redis',
 }
 
 export async function buildCache(opts: CacheOptions) {

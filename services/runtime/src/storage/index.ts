@@ -1,10 +1,10 @@
-import { DriverType, IStorage } from "./types";
-import S3 from "./drivers/s3";
-import Filesystem from "./drivers/filesystem";
+import { DriverType, IStorage } from './types';
+import S3 from './drivers/s3';
+import Filesystem from './drivers/filesystem';
 import {
   WORKSPACES_STORAGE_FILESYSTEM_OPTIONS,
   WORKSPACES_STORAGE_S3_OPTIONS,
-} from "../../config";
+} from '../../config';
 
 export default class Storage {
   protected driver: IStorage;

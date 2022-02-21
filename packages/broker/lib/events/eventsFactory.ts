@@ -1,6 +1,7 @@
-import { BrokerError } from "../errors";
-import { uniqueId } from "../utils";
-import { init as initValidator, validate, ValidatorOptions } from "./validator";
+import { BrokerError } from '../errors';
+import { uniqueId } from '../utils';
+import { init as initValidator, validate, ValidatorOptions } from './validator';
+
 export interface Consumer {
   service: string;
   name: string;
@@ -11,8 +12,8 @@ export interface Host {
 }
 
 export enum NativeTopic {
-  WorkspaceUser = "correlationId",
-  WorkspaceId = "workspaceId",
+  WorkspaceUser = 'correlationId',
+  WorkspaceId = 'workspaceId',
 }
 
 export type Topic = NativeTopic | string;
@@ -48,8 +49,8 @@ export class EventsFactory {
   create(
     eventType: string,
     payload: object,
-    partialSource: Partial<EventSource> & Pick<EventSource, "app">
-  ): Omit<PrismeEvent, "id"> {
+    partialSource: Partial<EventSource> & Pick<EventSource, 'app'>
+  ): Omit<PrismeEvent, 'id'> {
     if (!(payload instanceof Error)) {
       validate(eventType, payload);
     }

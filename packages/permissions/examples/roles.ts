@@ -1,21 +1,21 @@
-import { PermissionsConfig, ActionType } from "..";
+import { ActionType, PermissionsConfig } from '..';
 
 export enum SubjectType {
-  User = "user",
-  Workspace = "workspace",
-  Page = "page",
-  Event = "event",
-  Platform = "platform",
+  User = 'user',
+  Workspace = 'workspace',
+  Page = 'page',
+  Event = 'event',
+  Platform = 'platform',
 }
 
 export enum Role {
   // Platform-wide roles
-  WorkspaceBuilder = "workspace_builder",
-  Guest = "guest",
+  WorkspaceBuilder = 'workspace_builder',
+  Guest = 'guest',
 
   // Workspace roles
-  Admin = "admin",
-  Collaborator = "collaborator",
+  Admin = 'admin',
+  Collaborator = 'collaborator',
 }
 
 const config: PermissionsConfig<SubjectType, Role> = {
@@ -50,7 +50,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
           subject: SubjectType.Workspace,
           conditions: {
             // This role only applies to a specific workspace !
-            id: "${subject.id}",
+            id: '${subject.id}',
           },
         },
         {
@@ -58,7 +58,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
           subject: SubjectType.Page,
           conditions: {
             // This role only applies to a specific workspace !
-            workspaceId: "${subject.id}",
+            workspaceId: '${subject.id}',
           },
         },
       ],
@@ -73,7 +73,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
           subject: SubjectType.Workspace,
           conditions: {
             // This role only applies to a specific workspace !
-            id: "${subject.id}",
+            id: '${subject.id}',
           },
         },
         {
@@ -81,7 +81,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
           subject: SubjectType.Page,
           conditions: {
             // This role only applies to a specific workspace !
-            workspaceId: "${subject.id}",
+            workspaceId: '${subject.id}',
           },
         },
       ],

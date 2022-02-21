@@ -1,8 +1,8 @@
-import express, { Request, Response } from "express";
-import { nanoid } from "nanoid";
-import { SubjectType } from "../../permissions";
-import services from "../../services";
-import { asyncRoute } from "../utils/async";
+import express, { Request, Response } from 'express';
+import { nanoid } from 'nanoid';
+import { SubjectType } from '../../permissions';
+import services from '../../services';
+import { asyncRoute } from '../utils/async';
 
 async function createWorkspaceHandler(
   {

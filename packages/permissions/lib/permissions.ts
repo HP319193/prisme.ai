@@ -1,13 +1,13 @@
-import { Ability, ForbiddenError, subject as an } from "@casl/ability";
-import { permittedFieldsOf } from "@casl/ability/extra";
-import { Rules, SubjectCollaborator } from "..";
-import { injectRules, nativeRules, sortRules } from "./rulesBuilder";
+import { Ability, ForbiddenError, subject as an } from '@casl/ability';
+import { permittedFieldsOf } from '@casl/ability/extra';
+import { Rules, SubjectCollaborator } from '..';
+import { injectRules, nativeRules, sortRules } from './rulesBuilder';
 import {
-  UnknownRole,
   ForbiddenError as PrismeaiForbiddenError,
   InvalidPermissions,
-} from "./errors";
-import { User, ActionType, RoleTemplates, PermissionsConfig } from "./types";
+  UnknownRole,
+} from './errors';
+import { ActionType, PermissionsConfig, RoleTemplates, User } from './types';
 
 type UserId = string;
 interface Subject<Role extends string> {
@@ -37,7 +37,7 @@ export class Permissions<
     this.user = user;
     const { rbac, abac, ownerRole } = config;
     this.roleTemplates = rbac;
-    this.ownerRole = ownerRole || ("owner" as Role);
+    this.ownerRole = ownerRole || ('owner' as Role);
 
     this.loadedRoleIds = new Set();
     this.rules = sortRules([
@@ -65,20 +65,20 @@ export class Permissions<
     this.throwUnlessCan(ActionType.ManagePermissions, subjectType, subject);
 
     // Update entire user
-    if (typeof permission === "object" && !Array.isArray(permission)) {
+    if (typeof permission === 'object' && !Array.isArray(permission)) {
       const { role, policies, ...otherFields } =
         permission as SubjectCollaborator<Role>;
       if (Object.keys(otherFields).length) {
         throw new InvalidPermissions(
           `Only allowed permissions fields are 'role' and 'policies' (found ${Object.keys(
             otherFields
-          ).join(",")})`
+          ).join(',')})`
         );
       }
 
       if (role && !this.findRoleTemplate(role, subjectType)) {
         throw new UnknownRole(
-          `Can't assign ${subjectType || ""} role '${role}' to user '${
+          `Can't assign ${subjectType || ''} role '${role}' to user '${
             this.user.id
           }' as it does not seem to exist .`
         );
@@ -95,7 +95,7 @@ export class Permissions<
 
     // Grant a role
     const roleTemplate = this.findRoleTemplate(permission as Role, subjectType);
-    if (typeof permission === "string" && roleTemplate) {
+    if (typeof permission === 'string' && roleTemplate) {
       const role = permission as Role;
       const contributor = subject.permissions?.[user.id] || {};
       return {
@@ -136,7 +136,7 @@ export class Permissions<
   }
 
   revoke(
-    permission: ActionType | ActionType[] | Role | "all",
+    permission: ActionType | ActionType[] | Role | 'all',
     subjectType: SubjectType,
     subject: Subject<Role>,
     user: User<Role>
@@ -149,13 +149,13 @@ export class Permissions<
       subjectType
     );
     if (
-      typeof permission === "string" &&
-      (permission === "all" || isExistingRole)
+      typeof permission === 'string' &&
+      (permission === 'all' || isExistingRole)
     ) {
       const role = permission;
       const { role: currentRole, ...contributor } =
         subject.permissions?.[user.id] || {};
-      if (role === "all") {
+      if (role === 'all') {
         // Revoke all policies & role
         const { [user.id]: him, ...contributorsWithoutHim } =
           subject.permissions || {};
@@ -222,7 +222,7 @@ export class Permissions<
     if (!roleTemplate) {
       throw new UnknownRole(
         `User '${this.user.id}' is assigned an unknown ${
-          subjectType || ""
+          subjectType || ''
         } role '${role}'.`
       );
     }

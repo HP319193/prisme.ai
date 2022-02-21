@@ -1,7 +1,7 @@
-import express, { Request, Response } from "express";
-import { LogLevel } from "../../logger";
-import sysServices from "../../services/sys";
-import { asyncRoute } from "../utils/async";
+import express, { Request, Response } from 'express';
+import { LogLevel } from '../../logger';
+import sysServices from '../../services/sys';
+import { asyncRoute } from '../utils/async';
 
 async function healthcheckHandler(req: Request, res: Response) {
   const sys = sysServices(req.logger, req.context);
@@ -11,9 +11,9 @@ async function healthcheckHandler(req: Request, res: Response) {
 
 async function heapdumpHandler(req: Request, res: Response) {
   const sys = sysServices(req.logger, req.context);
-  req.logger.info({ msg: "Requested heapdump" });
+  req.logger.info({ msg: 'Requested heapdump' });
   await sys.heapdump();
-  res.status(200).send({ msg: "successfully took a heap dump" });
+  res.status(200).send({ msg: 'successfully took a heap dump' });
 }
 
 async function loggingHandler(
@@ -26,7 +26,7 @@ async function loggingHandler(
     cur.toLowerCase()
   );
   if (!level || !availableLevels.includes(level.toLowerCase())) {
-    return res.status(400).send({ error: "Missing or invalid level" });
+    return res.status(400).send({ error: 'Missing or invalid level' });
   }
   sys.changeLogLevel(level);
   return res

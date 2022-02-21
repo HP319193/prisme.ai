@@ -1,17 +1,17 @@
-import { PermissionsConfig, ActionType } from "..";
+import { ActionType, PermissionsConfig } from '..';
 
 export enum SubjectType {
-  User = "user",
-  Workspace = "workspace",
-  Page = "page",
-  Event = "event",
-  Platform = "platform",
+  User = 'user',
+  Workspace = 'workspace',
+  Page = 'page',
+  Event = 'event',
+  Platform = 'platform',
 }
 
 enum Role {
-  Admin = "admin",
-  Collaborator = "collaborator",
-  Guest = "guest",
+  Admin = 'admin',
+  Collaborator = 'collaborator',
+  Guest = 'guest',
 }
 
 const config: PermissionsConfig<SubjectType, Role> = {
@@ -30,7 +30,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
           subject: SubjectType.Event,
           conditions: {
             type: {
-              $regex: "^apps.someAuthorizedApp.",
+              $regex: '^apps.someAuthorizedApp.',
             },
           },
         },
@@ -48,7 +48,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
       action: ActionType.Manage,
       subject: SubjectType.User,
       conditions: {
-        id: "${user.id}",
+        id: '${user.id}',
       },
     },
     {

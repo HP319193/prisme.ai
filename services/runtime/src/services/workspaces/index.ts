@@ -1,2 +1,2 @@
-export * from "./workspace";
-export * from "./workspaces";
+export * from './workspace';
+export * from './workspaces';

@@ -140,7 +140,7 @@ it('should check workspace format', async () => {
     name: 'foo',
     automations: [],
   }));
-  ((validateWorkspace as any) as jest.Mock).mockImplementation(() => {
+  (validateWorkspace as any as jest.Mock).mockImplementation(() => {
     validateWorkspace.errors = [
       {
         instancePath: '/automations',

@@ -1,5 +1,5 @@
-import crypto from "crypto";
+import crypto from 'crypto';
 
 export function uniqueId() {
-  return crypto.randomBytes(16).toString("hex");
+  return crypto.randomBytes(16).toString('hex');
 }

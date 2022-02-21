@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import { syscfg } from "../config";
-import { logger } from "../logger";
-import { v4 as uuid } from "uuid";
-import { broker } from "../eda";
+import { NextFunction, Request, Response } from 'express';
+import { syscfg } from '../config';
+import { logger } from '../logger';
+import { v4 as uuid } from 'uuid';
+import { broker } from '../eda';
 
 export interface HTTPContext {
   hostname: string;
@@ -42,13 +42,13 @@ export function requestDecorator(
       originalUrl: req.originalUrl,
       method: req.method,
       ip:
-        <string>req.headers["x-forwarded-for"] ||
+        <string>req.headers['x-forwarded-for'] ||
         req.socket.remoteAddress ||
         req.ip,
       path: req.path,
       hostname: req.hostname,
       requestLength: req.socket.bytesRead,
-      userAgent: req.get("User-Agent") as string,
+      userAgent: req.get('User-Agent') as string,
     },
   };
 

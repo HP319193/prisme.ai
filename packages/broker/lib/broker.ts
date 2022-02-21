@@ -1,13 +1,13 @@
 import {
-  Topic,
-  NativeTopic,
-  EventSource,
-  EventsFactory,
-  PrismeEvent,
   Consumer,
-} from "./events";
-import { driver, Driver, DriverOptions, SubscriptionOptions } from "./drivers";
-import { ValidatorOptions } from "./events/validator";
+  EventsFactory,
+  EventSource,
+  NativeTopic,
+  PrismeEvent,
+  Topic,
+} from './events';
+import { driver, Driver, DriverOptions, SubscriptionOptions } from './drivers';
+import { ValidatorOptions } from './events/validator';
 
 export type EventSender = (
   eventType: string,
@@ -36,14 +36,14 @@ interface CallbackContextCtor<CallbackContext> {
 }
 
 export interface BrokerOptions<CallbackContext = any> {
-  driver: Omit<DriverOptions, "consumer">;
+  driver: Omit<DriverOptions, 'consumer'>;
   validator: ValidatorOptions;
   CallbackContextCtor?: CallbackContextCtor<CallbackContext>;
 }
 
-const DEFAULT_DRIVER_OPTS: BrokerOptions["driver"] = {
-  type: "redis",
-  host: "redis://localhost:6379/10",
+const DEFAULT_DRIVER_OPTS: BrokerOptions['driver'] = {
+  type: 'redis',
+  host: 'redis://localhost:6379/10',
 };
 
 export class Broker<CallbackContext = any> {
@@ -62,7 +62,7 @@ export class Broker<CallbackContext = any> {
   public onErrorCallback?: (event: PrismeEvent, error: Error) => void;
 
   constructor(
-    consumer: Omit<Consumer, "name"> & {
+    consumer: Omit<Consumer, 'name'> & {
       name?: string;
     },
     {
@@ -105,7 +105,7 @@ export class Broker<CallbackContext = any> {
 
   private getEventTopic(
     topic: Topic | undefined,
-    event: Omit<PrismeEvent, "id">
+    event: Omit<PrismeEvent, 'id'>
   ) {
     if (!topic) {
       return event.type;
@@ -115,7 +115,7 @@ export class Broker<CallbackContext = any> {
       case NativeTopic.WorkspaceUser:
         if (!event.source.workspaceId || !event.source.userId) {
           throw new Error(
-            "Cant use workspace user topic without source.correlationId or source.userId defined !"
+            'Cant use workspace user topic without source.correlationId or source.userId defined !'
           );
         }
 
@@ -124,7 +124,7 @@ export class Broker<CallbackContext = any> {
       case NativeTopic.WorkspaceId:
         if (!event.source.workspaceId) {
           throw new Error(
-            "Cant use workspace topic without source.workspaceId defined !"
+            'Cant use workspace topic without source.workspaceId defined !'
           );
         }
         return `topic:workspaceId:${event.source.workspaceId!!}`;
@@ -201,7 +201,7 @@ export class Broker<CallbackContext = any> {
       }
       return result;
     } catch (error) {
-      childBroker.send("error", error as any);
+      childBroker.send('error', error as any);
       if (this.onErrorCallback) {
         this.onErrorCallback(event, <Error>error);
       }

@@ -1,10 +1,10 @@
-import "@prisme.ai/types";
-import { NextFunction, Request, Response, Router } from "express";
-import { ActionType } from "../..";
-import { CollaboratorNotFound } from "../errors";
-import { SubjectCollaborator } from "../types";
-import { fetchUsers } from "./fetchUsers";
-import { asyncRoute, ExtendedRequest } from "./utils";
+import '@prisme.ai/types';
+import { NextFunction, Request, Response, Router } from 'express';
+import { ActionType } from '../..';
+import { CollaboratorNotFound } from '../errors';
+import { SubjectCollaborator } from '../types';
+import { fetchUsers } from './fetchUsers';
+import { asyncRoute, ExtendedRequest } from './utils';
 
 export function initCollaboratorRoutes<SubjectType extends string>(
   app: Router
@@ -43,7 +43,7 @@ export function initCollaboratorRoutes<SubjectType extends string>(
           return {
             ...(collaborator as SubjectCollaborator<Prismeai.Role>),
             id: userId,
-            email: contacts.find((cur) => cur.id === userId)?.email || "",
+            email: contacts.find((cur) => cur.id === userId)?.email || '',
           };
         }
       )
@@ -108,7 +108,7 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     return res.send({ id: userId });
   }
 
-  const baseRoute = "/v2/:subjectType/:subjectId/permissions";
+  const baseRoute = '/v2/:subjectType/:subjectId/permissions';
   app.get(`${baseRoute}`, asyncRoute(getPermissionsHandler));
   app.post(`${baseRoute}`, asyncRoute(shareHandler));
   app.delete(`${baseRoute}/:userId`, asyncRoute(revokeCollaborator));

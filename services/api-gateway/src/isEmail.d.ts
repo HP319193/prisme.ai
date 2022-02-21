@@ -1,1 +1,1 @@
-declare module "is-email";
+declare module 'is-email';

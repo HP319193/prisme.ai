@@ -1,10 +1,10 @@
 /**
  * Expose a writeable stream and execute it as a set of bulk requests.
  */
-"use strict";
+'use strict';
 
-import { Stream } from "stream";
-import { logger } from "../logger";
+import { Stream } from 'stream';
+import { logger } from '../logger';
 
 export interface BatchExecStreamOptions<T> {
   bulkExec: (bulk: T[]) => void;
@@ -37,7 +37,7 @@ export default class BatchExecStream<T> extends Stream.Writable {
     this.flushEvery = opts.flushEvery || 5000;
     if (this.flushAt > this.highWaterMark) {
       throw new Error(
-        "BatchExecStream flushAt parameter cannot be greater than highWaterMark"
+        'BatchExecStream flushAt parameter cannot be greater than highWaterMark'
       );
     }
     this.bulk = [];
@@ -48,9 +48,9 @@ export default class BatchExecStream<T> extends Stream.Writable {
       () => this.flush(() => undefined),
       this.flushEvery
     );
-    this.on("finish", () => {
+    this.on('finish', () => {
       this.flush(() => {
-        this.emit("close");
+        this.emit('close');
         clearTimeout(this.flushEveryTimeout);
       });
     });
@@ -67,11 +67,11 @@ export default class BatchExecStream<T> extends Stream.Writable {
   }
 
   async onClosed() {
-    return await new Promise((resolve) => this.once("close", resolve));
+    return await new Promise((resolve) => this.once('close', resolve));
   }
 
   async nextDrain() {
-    return await new Promise((resolve) => this.once("drain", resolve));
+    return await new Promise((resolve) => this.once('drain', resolve));
   }
 
   async writeAndWait(chunk: T) {
@@ -93,7 +93,7 @@ export default class BatchExecStream<T> extends Stream.Writable {
       callback();
     } catch (error) {
       logger.error({
-        msg: "An error raised while executing bulk flush",
+        msg: 'An error raised while executing bulk flush',
         err: error,
       });
       this.bulk.push(...bulk);

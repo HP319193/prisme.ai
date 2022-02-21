@@ -1,9 +1,9 @@
-import yaml from "js-yaml";
-import path from "path";
-import fs from "fs";
-import ajv from "ajv";
-import fetch from "node-fetch";
-import { EventValidationError } from "../errors";
+import yaml from 'js-yaml';
+import path from 'path';
+import fs from 'fs';
+import ajv from 'ajv';
+import fetch from 'node-fetch';
+import { EventValidationError } from '../errors';
 
 const ajValidator = new ajv({ allErrors: true });
 let OAS_URL: string;
@@ -54,7 +54,7 @@ async function fetchOAS(
       throw new Error(`Invalid OAS found at ${url} : ${error}`);
     }
   }
-  throw new Error("Missing a valid events OAS file.");
+  throw new Error('Missing a valid events OAS file.');
 }
 
 let ajvInitialized = false;
@@ -82,16 +82,16 @@ export async function init({
   delete data.security;
   delete data.paths;
   //@ts-ignore
-  ajValidator.addKeyword("components", {});
+  ajValidator.addKeyword('components', {});
   //@ts-ignore
-  ajValidator.addKeyword("example", {});
+  ajValidator.addKeyword('example', {});
   Object.entries(data?.components?.schemas).forEach(
     ([componentName, component]: [string, any]) => {
       const typeProperty =
         component && component.properties && component.properties.type;
       const eventType = typeProperty
         ? typeProperty.example || (typeProperty.enum && typeProperty.enum[0])
-        : "";
+        : '';
       if (!eventType) {
         return;
       }

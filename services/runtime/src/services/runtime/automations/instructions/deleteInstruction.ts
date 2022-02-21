@@ -1,7 +1,7 @@
-import { ContextsManager } from "../../contexts";
+import { ContextsManager } from '../../contexts';
 
 export async function deleteInstruction(
-  { name }: Prismeai.Delete["delete"],
+  { name }: Prismeai.Delete['delete'],
   ctx: ContextsManager
 ) {
   ctx.delete(name);

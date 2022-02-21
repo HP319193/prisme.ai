@@ -1,7 +1,7 @@
-import { createClient } from "@node-redis/client";
-import { RedisClientType } from "@node-redis/client/dist/lib/client";
-import { SetOptions } from ".";
-import { CacheDriver, CacheOptions } from "./types";
+import { createClient } from '@node-redis/client';
+import { RedisClientType } from '@node-redis/client/dist/lib/client';
+import { SetOptions } from '.';
+import { CacheDriver, CacheOptions } from './types';
 
 export default class RedisCache implements CacheDriver {
   private client: RedisClientType;
@@ -11,7 +11,7 @@ export default class RedisCache implements CacheDriver {
       url: opts.host,
       password: opts.password,
     });
-    this.client.on("error", (err: Error) => {
+    this.client.on('error', (err: Error) => {
       console.error(`Error occured with cache redis driver : ${err}`);
     });
   }

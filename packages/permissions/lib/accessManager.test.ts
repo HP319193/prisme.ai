@@ -1,24 +1,24 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
-import mongoose from "mongoose";
-import { AccessManager, BaseSubject, ApiKey } from "..";
-import abacWithRoles, { Role } from "../examples/abacWithRoles";
-import apiKeys from "../examples/apiKeys";
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
+import { AccessManager, ApiKey, BaseSubject } from '..';
+import abacWithRoles, { Role } from '../examples/abacWithRoles';
+import apiKeys from '../examples/apiKeys';
 
 enum ActionType {
-  Manage = "manage", // Super admin : permits every action
-  ManagePermissions = "manage_permissions",
-  Create = "create",
-  Read = "read",
-  Update = "update",
-  Delete = "delete",
+  Manage = 'manage', // Super admin : permits every action
+  ManagePermissions = 'manage_permissions',
+  Create = 'create',
+  Read = 'read',
+  Update = 'update',
+  Delete = 'delete',
 }
 
 enum SubjectType {
-  User = "user",
-  Workspace = "workspace",
-  Page = "page",
-  Event = "event",
-  Platform = "platform",
+  User = 'user',
+  Workspace = 'workspace',
+  Page = 'page',
+  Event = 'event',
+  Platform = 'platform',
 }
 
 type SubjectInterfaces = {
@@ -37,7 +37,7 @@ type SubjectInterfaces = {
 const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
   {
     storage: {
-      host: "mongodb://localhost:27017/testCASL",
+      host: 'mongodb://localhost:27017/testCASL',
     },
     schemas: {
       user: new mongoose.Schema({}),
@@ -59,8 +59,8 @@ const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
   }
 );
 
-const adminAId = "adminUserIdA";
-const adminBId = "adminUserIdB";
+const adminAId = 'adminUserIdA';
+const adminBId = 'adminUserIdB';
 let adminA: Required<AccessManager<SubjectType, SubjectInterfaces, Role>>;
 let adminB: Required<AccessManager<SubjectType, SubjectInterfaces, Role>>;
 let mongod: MongoMemoryServer;
@@ -81,23 +81,23 @@ beforeAll(async () => {
   });
 });
 
-describe("CRUD with a predefined role", () => {
+describe('CRUD with a predefined role', () => {
   let createdWorkspace: SubjectInterfaces[SubjectType.Workspace] &
     BaseSubject<Role>;
-  it("A created object is automatically initialized with base fields", async () => {
+  it('A created object is automatically initialized with base fields', async () => {
     const workspace = await adminA.create(SubjectType.Workspace, {
-      name: "workspaceName",
+      name: 'workspaceName',
     });
 
     expect(workspace.createdBy).toEqual(adminA.user.id);
     expect(workspace.updatedBy).toEqual(adminA.user.id);
-    expect(typeof workspace.updatedBy).toEqual("string");
-    expect(typeof workspace.updatedAt).toEqual("string");
+    expect(typeof workspace.updatedBy).toEqual('string');
+    expect(typeof workspace.updatedAt).toEqual('string');
     expect(workspace.updatedAt).toEqual(workspace.createdAt);
     createdWorkspace = workspace;
   });
 
-  it("An admin can get its workspace by id", async () => {
+  it('An admin can get its workspace by id', async () => {
     const workspace = await adminA.get(
       SubjectType.Workspace,
       createdWorkspace.id!!
@@ -105,7 +105,7 @@ describe("CRUD with a predefined role", () => {
     expect(workspace).toMatchObject(createdWorkspace);
   });
 
-  it("Another admin should not be able to get nor update this workspace", async () => {
+  it('Another admin should not be able to get nor update this workspace', async () => {
     await expect(
       adminB.get(SubjectType.Workspace, createdWorkspace.id!!)
     ).rejects.toThrow();
@@ -113,15 +113,15 @@ describe("CRUD with a predefined role", () => {
     await expect(
       adminB.update(SubjectType.Workspace, {
         id: createdWorkspace.id!!,
-        name: "",
+        name: '',
       })
     ).rejects.toThrow();
   });
 
-  it("An admin can update its workspace (which updates updatedBy & updatedAt fields)", async () => {
+  it('An admin can update its workspace (which updates updatedBy & updatedAt fields)', async () => {
     const updatedWorkspace = {
       ...createdWorkspace,
-      name: "hisNewName",
+      name: 'hisNewName',
     };
     const workspace = await adminA.update(
       SubjectType.Workspace,
@@ -134,9 +134,9 @@ describe("CRUD with a predefined role", () => {
     expect(workspace.updatedAt).not.toEqual(updatedWorkspace.createdAt);
   });
 
-  it("An admin can create a page in its workspace", async () => {
+  it('An admin can create a page in its workspace', async () => {
     const pageToCreate = {
-      name: "somePageName",
+      name: 'somePageName',
       workspaceId: createdWorkspace.id,
       public: false,
     };
@@ -145,9 +145,9 @@ describe("CRUD with a predefined role", () => {
     ).resolves.toEqual(expect.objectContaining(pageToCreate));
   });
 
-  it("An admin cannot create a page in a workspace he does not own", async () => {
+  it('An admin cannot create a page in a workspace he does not own', async () => {
     const pageToCreate = {
-      name: "somePageName",
+      name: 'somePageName',
       workspaceId: createdWorkspace.id,
       public: false,
     };
@@ -156,7 +156,7 @@ describe("CRUD with a predefined role", () => {
     ).rejects.toThrow();
   });
 
-  it("An admin can list all workspaces he created", async () => {
+  it('An admin can list all workspaces he created', async () => {
     const adminZ = await accessManager.as({
       id: `adminUserIdZ${Math.round(Math.random() * 10000)}`,
       role: Role.WorkspaceBuilder,
@@ -187,7 +187,7 @@ describe("CRUD with a predefined role", () => {
     expect(workspacesY).toMatchObject(adminYWorkspaces);
   });
 
-  it("An admin can list all workspaces he created + those shared with him", async () => {
+  it('An admin can list all workspaces he created + those shared with him', async () => {
     const adminZ = await accessManager.as({
       id: `adminUserIdZ${Math.round(Math.random() * 100000)}`,
       role: Role.WorkspaceBuilder,
@@ -236,7 +236,7 @@ describe("CRUD with a predefined role", () => {
     );
   });
 
-  it("A workspace admin can list all pages of his workspace (including those he did not create himself)", async () => {
+  it('A workspace admin can list all pages of his workspace (including those he did not create himself)', async () => {
     const adminZ = await accessManager.as({
       id: `adminUserIdZ${Math.round(Math.random() * 100000)}`,
       role: Role.WorkspaceBuilder,
@@ -305,10 +305,10 @@ describe("CRUD with a predefined role", () => {
   });
 });
 
-describe("Role & Permissions granting", () => {
+describe('Role & Permissions granting', () => {
   let createdWorkspace: SubjectInterfaces[SubjectType.Workspace] &
     BaseSubject<Role>;
-  it("Any admin can grant a specific role to someone else on its own workspace", async () => {
+  it('Any admin can grant a specific role to someone else on its own workspace', async () => {
     // Lets make adminA create a workspace
     createdWorkspace = await adminA.create(SubjectType.Workspace, <any>{});
 
@@ -335,7 +335,7 @@ describe("Role & Permissions granting", () => {
     ).resolves.toMatchObject(sharedWorkspace);
   });
 
-  it("Any admin can revoke a specific role of someone else on its own workspace", async () => {
+  it('Any admin can revoke a specific role of someone else on its own workspace', async () => {
     const unsharedWorkspace = await adminA.revoke(
       SubjectType.Workspace,
       createdWorkspace.id,
@@ -350,7 +350,7 @@ describe("Role & Permissions granting", () => {
     // TODO a way to automatically detect that ?
     // If AccessManager.as() instance is meant to be alive a long time, this would be critical ...
     const refreshedAdminB = await accessManager.as({
-      id: "adminUserIdB",
+      id: 'adminUserIdB',
     });
 
     // Check that adminB now can't read createdWorkspace
@@ -359,9 +359,9 @@ describe("Role & Permissions granting", () => {
     ).rejects.toThrow();
   });
 
-  it("A collaborator can update a page for which he has been given update permission", async () => {
+  it('A collaborator can update a page for which he has been given update permission', async () => {
     const collaborator = await accessManager.as({
-      id: "someCollaboratorId",
+      id: 'someCollaboratorId',
       role: Role.Guest,
     });
     // Lets make adminA create a workspace
@@ -369,7 +369,7 @@ describe("Role & Permissions granting", () => {
 
     const page = await adminA.create(SubjectType.Page, <any>{
       workspaceId: workspace.id,
-      name: "some page name",
+      name: 'some page name',
     });
 
     // Check that collaborator cannot read this page
@@ -390,12 +390,12 @@ describe("Role & Permissions granting", () => {
     await expect(
       collaborator.update(SubjectType.Page, {
         ...page,
-        name: "a new name",
+        name: 'a new name',
       })
     ).resolves.toEqual(
       expect.objectContaining({
         id: page.id,
-        name: "a new name",
+        name: 'a new name',
       })
     );
 
@@ -406,31 +406,31 @@ describe("Role & Permissions granting", () => {
   });
 });
 
-describe("API Keys", () => {
+describe('API Keys', () => {
   const ourWorkspace = {
-    id: "ourWorkspaceId" + Math.round(Math.random() * 10000),
-    name: "ourWorkspace",
+    id: 'ourWorkspaceId' + Math.round(Math.random() * 10000),
+    name: 'ourWorkspace',
     permissions: {
       [adminAId]: {
-        role: "admin",
+        role: 'admin',
       },
     },
   };
   const anotherWorkspace = {
-    id: "anotherWorkspaceId" + Math.round(Math.random() * 10000),
-    name: "anotherWorkspace",
+    id: 'anotherWorkspaceId' + Math.round(Math.random() * 10000),
+    name: 'anotherWorkspace',
     permissions: {
       anotherAdminId: {
-        role: "admin",
+        role: 'admin',
       },
       [adminBId]: {
-        role: "admin",
+        role: 'admin',
       },
     },
   };
 
   // Required just because "describe" blocks are executed before "beforeAll" resolution
-  it("Setup", () => {
+  it('Setup', () => {
     //@ts-ignore
     adminA.permissions.pullRoleFromSubject(SubjectType.Workspace, ourWorkspace);
     //@ts-ignore
@@ -464,11 +464,11 @@ describe("API Keys", () => {
   });
 
   const ourWorkspaceAPIKey: ApiKey<SubjectType, Prismeai.ApiKeyRules> = {
-    apiKey: "will be defined on creation",
+    apiKey: 'will be defined on creation',
     subjectType: SubjectType.Workspace,
     subjectId: ourWorkspace.id,
     rules: {
-      events: ["event1", "event4"],
+      events: ['event1', 'event4'],
     },
   };
 
@@ -477,13 +477,13 @@ describe("API Keys", () => {
     source: {
       workspaceId: ourWorkspace.id,
     },
-    id: "someId",
+    id: 'someId',
   };
 
   it("Can't load an unknown api key", async () => {
     await expect(
       //@ts-ignore
-      adminA.pullApiKey("someUnknownAPIKey")
+      adminA.pullApiKey('someUnknownAPIKey')
     ).rejects.toThrow();
   });
 
@@ -498,7 +498,7 @@ describe("API Keys", () => {
   });
 
   let ourSavedApiKey: ApiKey<SubjectType>;
-  it("A workspace admin can create an API key for this workspace", async () => {
+  it('A workspace admin can create an API key for this workspace', async () => {
     await expect(
       adminA
         .createApiKey(
@@ -533,7 +533,7 @@ describe("API Keys", () => {
     const newPayload = {
       ...ourWorkspaceAPIKey.rules,
       events: (ourWorkspaceAPIKey.rules.events || []).concat([
-        "someOtherEvent",
+        'someOtherEvent',
       ]),
     };
     await expect(
@@ -557,7 +557,7 @@ describe("API Keys", () => {
     );
   });
 
-  it("A workspace admin can list the api keys of his workspace", async () => {
+  it('A workspace admin can list the api keys of his workspace', async () => {
     await expect(
       //@ts-ignore
       adminB.findApiKeys(SubjectType.Workspace, ourWorkspace.id)
@@ -569,7 +569,7 @@ describe("API Keys", () => {
     ).resolves.toMatchObject([ourSavedApiKey]);
   });
 
-  it("Any user authenticated with an api key automatically escalate corresponding permissions", async () => {
+  it('Any user authenticated with an api key automatically escalate corresponding permissions', async () => {
     await expect(
       adminB.throwUnlessCan(ActionType.Read, SubjectType.Event, allowedEvent)
     ).rejects.toThrow();
@@ -584,12 +584,12 @@ describe("API Keys", () => {
     await expect(
       adminB.throwUnlessCan(ActionType.Read, SubjectType.Event, {
         ...allowedEvent,
-        type: "someRandomForbiddenType",
+        type: 'someRandomForbiddenType',
       })
     ).rejects.toThrow();
   });
 
-  it("A workspace admin can delete the workspace api keys", async () => {
+  it('A workspace admin can delete the workspace api keys', async () => {
     await expect(
       adminA.deleteApiKey(
         ourSavedApiKey.apiKey,

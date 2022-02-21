@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import * as OpenApiValidator from "express-openapi-validator";
-import { HttpError } from "express-openapi-validator/dist/framework/types";
-import { DEBUG, OPENAPI_FILEPATH } from "../../../config";
-import { PrismeError } from "../../errors";
+import { NextFunction, Request, Response } from 'express';
+import * as OpenApiValidator from 'express-openapi-validator';
+import { HttpError } from 'express-openapi-validator/dist/framework/types';
+import { DEBUG, OPENAPI_FILEPATH } from '../../../config';
+import { PrismeError } from '../../errors';
 
 interface ValidationOpts {
   ignorePaths?: string[];

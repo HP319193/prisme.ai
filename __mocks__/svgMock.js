@@ -1,3 +1,3 @@
 export default {
-  src: '/file.svg'
-}
+  src: '/file.svg',
+};

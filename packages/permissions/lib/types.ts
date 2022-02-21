@@ -1,13 +1,13 @@
-import { Ability, RawRuleOf } from "@casl/ability";
-import { CustomRole } from "..";
+import { Ability, RawRuleOf } from '@casl/ability';
+import { CustomRole } from '..';
 
 export enum ActionType {
-  Manage = "manage", // Super admin : permits every action
-  ManagePermissions = "manage_permissions",
-  Create = "create",
-  Read = "read",
-  Update = "update",
-  Delete = "delete",
+  Manage = 'manage', // Super admin : permits every action
+  ManagePermissions = 'manage_permissions',
+  Create = 'create',
+  Read = 'read',
+  Update = 'update',
+  Delete = 'delete',
 }
 
 export type UserId = string;
@@ -59,7 +59,7 @@ export interface PermissionsConfig<
   rbac: RoleTemplates<SubjectType, Role>;
   abac: Rules;
   customRulesBuilder?: (
-    role: Omit<CustomRole<SubjectType, CustomRules>, "casl">
+    role: Omit<CustomRole<SubjectType, CustomRules>, 'casl'>
   ) => RawRuleOf<Ability>[];
   ownerRole?: Role;
 }

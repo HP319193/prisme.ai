@@ -1,11 +1,11 @@
-import { PrismeContext } from "../../api/middlewares";
-import { broker } from "../../eda";
-import { Logger } from "../../logger";
+import { PrismeContext } from '../../api/middlewares';
+import { broker } from '../../eda';
+import { Logger } from '../../logger';
 
-import sendEvent from "./send";
+import sendEvent from './send';
 
 export default (logger: Logger, ctx: PrismeContext) => {
-  const moduleLogger = logger.child({ module: "workspaces" });
+  const moduleLogger = logger.child({ module: 'workspaces' });
   const moduleBroker = broker.child(ctx);
 
   return {

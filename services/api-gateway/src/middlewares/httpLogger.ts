@@ -1,6 +1,6 @@
-import { logger } from "../logger";
-import { NextFunction, Request, Response } from "express";
-import onFinished from "on-finished";
+import { logger } from '../logger';
+import { NextFunction, Request, Response } from 'express';
+import onFinished from 'on-finished';
 
 export default (req: Request, res: Response, next: NextFunction) => {
   const time0 = Date.now();
@@ -13,7 +13,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
       http: {
         ...(req.context?.http || {}),
         responseCode: res.statusCode,
-        responseLength: res.getHeader("content-length"),
+        responseLength: res.getHeader('content-length'),
         responseDuration: responseTime,
       },
     };

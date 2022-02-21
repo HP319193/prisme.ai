@@ -1,7 +1,7 @@
-import isArray from "lodash/isArray";
-import get from "lodash/get";
-import Evaluatable from "../Evaluatable";
-import { evaluateNode } from "../utils";
+import isArray from 'lodash/isArray';
+import get from 'lodash/get';
+import Evaluatable from '../Evaluatable';
+import { evaluateNode } from '../utils';
 
 class Variable extends Evaluatable {
   variableName;

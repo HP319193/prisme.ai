@@ -1,6 +1,6 @@
-import { FilesystemOptions } from "../src/storage/drivers/filesystem";
-import { S3Options } from "../src/storage/drivers/s3";
-import { DriverType } from "../src/storage/types";
+import { FilesystemOptions } from '../src/storage/drivers/filesystem';
+import { S3Options } from '../src/storage/drivers/s3';
+import { DriverType } from '../src/storage/types';
 
 export const WORKSPACES_STORAGE_TYPE: DriverType =
   (process.env.WORKSPACES_STORAGE_TYPE as DriverType) || DriverType.FILESYSTEM;
@@ -10,7 +10,7 @@ export const WORKSPACES_STORAGE_TYPE: DriverType =
  */
 
 export const WORKSPACES_STORAGE_FILESYSTEM_DIRPATH =
-  process.env.WORKSPACES_STORAGE_FILESYSTEM_DIRPATH || "models/";
+  process.env.WORKSPACES_STORAGE_FILESYSTEM_DIRPATH || 'models/';
 
 export const WORKSPACES_STORAGE_FILESYSTEM_OPTIONS: FilesystemOptions = {
   dirpath: WORKSPACES_STORAGE_FILESYSTEM_DIRPATH,

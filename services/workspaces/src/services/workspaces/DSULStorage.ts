@@ -1,7 +1,7 @@
-import yaml from "js-yaml";
-import Storage from "../../storage";
+import yaml from 'js-yaml';
+import Storage from '../../storage';
 
-const getS3Key = (appId: string, version: string = "current") => {
+const getS3Key = (appId: string, version: string = 'current') => {
   if (!version) {
     return appId;
   }
@@ -15,7 +15,7 @@ export default class DSULStorage extends Storage {
   }
 
   async list(): Promise<PrismeaiAPI.GetWorkspaces.Responses.$200> {
-    const dsulIds = await this.driver.find("");
+    const dsulIds = await this.driver.find('');
     const fullDSULs = await Promise.all(
       dsulIds.map(({ key }) => this.get(key))
     );
@@ -31,6 +31,6 @@ export default class DSULStorage extends Storage {
   }
 
   async delete(appId: string) {
-    await this.driver.delete(getS3Key(appId, ""));
+    await this.driver.delete(getS3Key(appId, ''));
   }
 }

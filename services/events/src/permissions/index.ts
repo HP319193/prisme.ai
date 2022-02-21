@@ -1,11 +1,11 @@
-import { Broker, PrismeEvent } from "@prisme.ai/broker";
+import { Broker, PrismeEvent } from '@prisme.ai/broker';
 import {
   AccessManager as GenericAccessManager,
   AccessManagerOptions,
   ActionType,
   EventType as PermissionsEventType,
-} from "@prisme.ai/permissions";
-import { SubjectType, Role, config } from "./config";
+} from '@prisme.ai/permissions';
+import { config, Role, SubjectType } from './config';
 
 export { SubjectType, Role, ActionType };
 
@@ -21,7 +21,7 @@ export type AccessManager = GenericAccessManager<
 >;
 
 export function initAccessManager(
-  storage: AccessManagerOptions["storage"],
+  storage: AccessManagerOptions['storage'],
   broker: Broker
 ) {
   const accessManager = new GenericAccessManager<
@@ -41,7 +41,7 @@ export function initAccessManager(
     config
   );
 
-  broker.on<Prismeai.CreatedApiKey["payload"]>(
+  broker.on<Prismeai.CreatedApiKey['payload']>(
     [PermissionsEventType.CreatedApiKey, PermissionsEventType.UpdatedApiKey],
     async (event) => {
       const { apiKey, subjectType, subjectId, rules } = event.payload || {};
@@ -56,7 +56,7 @@ export function initAccessManager(
     }
   );
 
-  broker.on<Prismeai.DeletedApiKey["payload"]>(
+  broker.on<Prismeai.DeletedApiKey['payload']>(
     PermissionsEventType.DeletedApiKey,
     async (event) => {
       const { apiKey, subjectType, subjectId } = event.payload || {};

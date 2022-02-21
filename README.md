@@ -7,7 +7,7 @@ Prisme.ai allows you to collect the interactions of Apps: an app can be a custom
 social networks, sms...) or software (CRM, ERP, AD, DMP, Analytics. ..).  
 The solution then allows you to enrich these interactions by connecting them to each other, to boost certain processes
 thanks to automation and AI, to finally expose them in the form of a Page according to needs and profiles. All this in
-accordance with the regulations regarding private data.   
+accordance with the regulations regarding private data.  
 All of these interactions are collected, enriched and distributed in real time with a low-code approach.
 
 # Documentation

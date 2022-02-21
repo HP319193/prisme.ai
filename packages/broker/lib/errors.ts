@@ -1,6 +1,6 @@
 export enum ErrorLevel {
-  Warning = "warning",
-  Fatal = "fatal",
+  Warning = 'warning',
+  Fatal = 'fatal',
 }
 
 export interface BrokerError {
@@ -14,7 +14,7 @@ export class BrokerError extends Error implements BrokerError {
 
   constructor(message: string, details: any) {
     super(message);
-    this.error = "BrokerError";
+    this.error = 'BrokerError';
     this.details = details;
   }
 

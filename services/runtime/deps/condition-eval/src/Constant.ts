@@ -1,4 +1,4 @@
-import Evaluatable from "./Evaluatable";
+import Evaluatable from './Evaluatable';
 
 class Constant extends Evaluatable {
   value: any;

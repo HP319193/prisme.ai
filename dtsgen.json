@@ -1,16 +1,16 @@
 {
   "plugins": {
-      "@dtsgenerator/replace-namespace": {
-          "map": [
-            {
-              "from": ["Components", "Schemas"],
-              "to": ["Prismeai"]
-            },
-            {
-              "from": ["Paths"],
-              "to": ["PrismeaiAPI"]
-            }
-          ]
-      }
+    "@dtsgenerator/replace-namespace": {
+      "map": [
+        {
+          "from": ["Components", "Schemas"],
+          "to": ["Prismeai"]
+        },
+        {
+          "from": ["Paths"],
+          "to": ["PrismeaiAPI"]
+        }
+      ]
+    }
   }
 }

@@ -1,14 +1,14 @@
-"use strict";
+'use strict';
 
-import { NextFunction, Request, Response } from "express";
-import { PrismeContext } from ".";
-import { EventType } from "../../eda";
-import { ErrorSeverity, ObjectNotFoundError, PrismeError } from "../../errors";
-import { logger } from "../../logger";
+import { NextFunction, Request, Response } from 'express';
+import { PrismeContext } from '.';
+import { EventType } from '../../eda';
+import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
+import { logger } from '../../logger';
 
 function errorHttpStatus(err: Error, serverError: boolean) {
   if (
-    (<any>err)?.details?.[0]?.message === "not found" ||
+    (<any>err)?.details?.[0]?.message === 'not found' ||
     err instanceof ObjectNotFoundError
   ) {
     return 404;
@@ -35,7 +35,7 @@ export const errorDecorator = (
 ) => {
   // Server error and stack trace is available - it is most likely a developer error
   const serverError =
-    (err as PrismeError).error !== "BrokerError" &&
+    (err as PrismeError).error !== 'BrokerError' &&
     (!(err instanceof PrismeError) ||
       (err as PrismeError).severity === ErrorSeverity.Fatal);
 
@@ -51,7 +51,7 @@ export const errorDecorator = (
 
   next({
     error:
-      err instanceof PrismeError || (err as PrismeError).error === "BrokerError"
+      err instanceof PrismeError || (err as PrismeError).error === 'BrokerError'
         ? PrismeError.prototype.toJSON.apply(err)
         : err,
     httpStatus: errorHttpStatus(err, serverError),
@@ -72,7 +72,7 @@ export const finalErrorHandler = (
     .status(status)
     .json(
       status == 500
-        ? { error: "Internal", message: "Internal error" }
+        ? { error: 'Internal', message: 'Internal error' }
         : err.error
     );
 };

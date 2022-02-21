@@ -1,6 +1,6 @@
-import { LogLevel } from "../logger";
+import { LogLevel } from '../logger';
 
-export * from "./handlers";
+export * from './handlers';
 
 export enum ErrorSeverity {
   Fatal = LogLevel.Fatal,
@@ -36,7 +36,7 @@ export class PrismeError extends Error implements PrismeError {
 }
 
 export class ObjectNotFoundError extends PrismeError {
-  constructor(msg: string = "Object not found", details?: any) {
+  constructor(msg: string = 'Object not found', details?: any) {
     super(msg, details);
   }
 }

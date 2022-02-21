@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-import { RequestHandler, NextFunction, Response } from "express";
-import { Request } from "express-serve-static-core";
+import { NextFunction, RequestHandler, Response } from 'express';
+import { Request } from 'express-serve-static-core';
 
 export const asyncRoute =
   (fn: RequestHandler<any>) =>

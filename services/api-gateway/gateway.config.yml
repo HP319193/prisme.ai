@@ -1,21 +1,21 @@
 endpoints:
   webhooks:
-    path: "/v2/workspaces/*/webhooks/*"
+    path: '/v2/workspaces/*/webhooks/*'
 
   workspaces:
-    path: "/v2/workspaces*"
+    path: '/v2/workspaces*'
 
   apps:
-    path: "/v2/apps*"
+    path: '/v2/apps*'
 
   socket.io:
-    path: "/socket.io*"
+    path: '/socket.io*'
 
   events:
-    path: "/v2/workspaces/*/events*"
+    path: '/v2/workspaces/*/events*'
 
   console:
-    path: "*"
+    path: '*'
     hosts:
       - console.eda.prisme.ai
 

@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from "express";
-import { AccessManager } from "../../permissions";
+import { NextFunction, Request, Response } from 'express';
+import { AccessManager } from '../../permissions';
 
 export function accessManagerMiddleware(accessManager: AccessManager) {
   return async (req: Request, res: Response, next: NextFunction) => {

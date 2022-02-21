@@ -1,3 +1,3 @@
-import { parse, evaluate } from "./src/index";
+import { evaluate, parse } from './src/index';
 
 export { evaluate, parse };

@@ -7,7 +7,7 @@ services:
     volumes:
       - ../../data/redis:/data
     ports:
-      - "6379:6379"
+      - '6379:6379'
 
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
@@ -27,7 +27,7 @@ services:
         soft: -1
         hard: -1
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:9200']
       interval: 20s
       retries: 6
       timeout: 5s
@@ -45,7 +45,7 @@ services:
       elastic:
         condition: service_healthy
     ports:
-      - "3004:3004"
+      - '3004:3004'
     environment:
       PORT: 3004
       NODE_ENV: development

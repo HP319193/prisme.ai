@@ -1,7 +1,7 @@
-import { createClient } from "@node-redis/client";
-import { RedisClientType } from "@node-redis/client/dist/lib/client";
-import { StreamsMessagesReply } from "@node-redis/client/dist/lib/commands/generic-transformers";
-import { SubscriptionOptions, DriverOptions } from "..";
+import { createClient } from '@node-redis/client';
+import { RedisClientType } from '@node-redis/client/dist/lib/client';
+import { StreamsMessagesReply } from '@node-redis/client/dist/lib/commands/generic-transformers';
+import { DriverOptions, SubscriptionOptions } from '..';
 
 const NoGroupErrRegexp = new RegExp(/No such key '([a-zA-Z0-9_\-.:]+)'/);
 const MAX_CLIENTS = 10;
@@ -56,7 +56,7 @@ export class ClientPool {
   }
 
   private getClient(streams: string[]) {
-    const key = streams.join("_");
+    const key = streams.join('_');
     // Multiple callers can use the same blocking client if they are listening to the same streams
     if (key && key in this.clientsByStreams) {
       return this.clientsByStreams[key];
@@ -80,7 +80,7 @@ export class ClientPool {
       url: opts.host,
       password: opts.password,
     });
-    client.on("error", (err: Error) => {
+    client.on('error', (err: Error) => {
       console.error(`Error occured with broker redis driver : ${err}`);
     });
     const clientInfo = {
@@ -112,15 +112,15 @@ export class ClientPool {
   async send(message: any, stream: string) {
     const options: {
       TRIM?: {
-        strategy?: "MAXLEN" | "MINID";
-        strategyModifier?: "=" | "~";
+        strategy?: 'MAXLEN' | 'MINID';
+        strategyModifier?: '=' | '~';
         threshold: number;
         limit?: number;
       };
     } = this.opts.topicsMaxLen
       ? {
           TRIM: {
-            strategy: "MAXLEN",
+            strategy: 'MAXLEN',
             threshold: this.opts.topicsMaxLen,
           },
         }
@@ -128,14 +128,14 @@ export class ClientPool {
     return this.nonblocking.client
       .xAdd(
         stream,
-        "*",
+        '*',
         {
           value: JSON.stringify(message),
         },
         options
       )
       .then((createdId: string) => {
-        if (typeof createdId !== "string") {
+        if (typeof createdId !== 'string') {
           throw createdId;
         }
         return { ...message, id: createdId };
@@ -181,7 +181,7 @@ export class ClientPool {
           consumerId,
           streams.map((streamName) => ({
             key: streamName,
-            id: ">",
+            id: '>',
           })),
           {
             NOACK: subscriptionOpts.NoAck ? true : undefined,
@@ -190,7 +190,7 @@ export class ClientPool {
         );
         return this.deserializeStreamsReply(reply);
       } catch (error) {
-        if (`${error}`.includes("NOGROUP")) {
+        if (`${error}`.includes('NOGROUP')) {
           const [, streamName] = `${error}`.match(NoGroupErrRegexp) || [,];
           if (streamName) {
             this.createdGrouppedStreams.delete(streamName);
@@ -216,18 +216,18 @@ export class ClientPool {
       const ret = await this.nonblocking.client.xGroupCreate(
         stream,
         group,
-        "$",
+        '$',
         {
           MKSTREAM: true,
         }
       );
-      if (ret !== "OK") {
+      if (ret !== 'OK') {
         throw ret;
       }
     } catch (error: any) {
       if (
         !error?.message?.includes ||
-        !error.message.includes("already exists")
+        !error.message.includes('already exists')
       ) {
         console.error(`Redis broker could not create group : `, error);
         throw error;
@@ -261,7 +261,7 @@ export class ClientPool {
               };
             } catch (error) {
               console.error(
-                "Redis broker could not parse following message : ",
+                'Redis broker could not parse following message : ',
                 raw
               );
             }

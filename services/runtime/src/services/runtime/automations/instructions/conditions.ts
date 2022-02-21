@@ -1,9 +1,9 @@
-import { Broker } from "@prisme.ai/broker";
-import { Logger } from "pino";
-import { runInstructions } from "..";
-import { evaluate } from "../../../../utils/evaluate";
-import { Workspace } from "../../../workspaces";
-import { ContextsManager } from "../../contexts";
+import { Broker } from '@prisme.ai/broker';
+import { Logger } from 'pino';
+import { runInstructions } from '..';
+import { evaluate } from '../../../../utils/evaluate';
+import { Workspace } from '../../../workspaces';
+import { ContextsManager } from '../../contexts';
 
 const getFirstTruthyCondition = (
   { default: defaultWorkflow, ...conditions }: Prismeai.Conditions,

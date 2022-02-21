@@ -1,8 +1,8 @@
-import { Broker, CallbackContext, EventCallback } from "@prisme.ai/broker";
-import { Subscriptions } from "./Subscriptions";
+import { Broker, CallbackContext, EventCallback } from '@prisme.ai/broker';
+import { Subscriptions } from './Subscriptions';
 
-const WorkspaceA = "myFirstWorkspace";
-const UserA = "myFirstUser";
+const WorkspaceA = 'myFirstWorkspace';
+const UserA = 'myFirstUser';
 
 interface Chunk {
   type: string;
@@ -58,7 +58,7 @@ const getSubscriptions = (
               payload: event,
               id: event.id,
               type: event.type,
-              createdAt: "",
+              createdAt: '',
               source: {
                 workspaceId: event.workspaceId,
               },
@@ -73,7 +73,7 @@ const getSubscriptions = (
           )
         );
       },
-    } as Pick<Broker, "all"> as Broker,
+    } as Pick<Broker, 'all'> as Broker,
     new DummyAccessManager() as any
   );
 };
@@ -85,9 +85,9 @@ const verifyReceivedChunks = (receivedChunks: Chunk[], sentChunks: Chunk[]) => {
   );
 };
 
-describe("Basic", () => {
-  it("Should receive all notified events", async () => {
-    const willSend = generateChunks("myEventName", 10);
+describe('Basic', () => {
+  it('Should receive all notified events', async () => {
+    const willSend = generateChunks('myEventName', 10);
     const received: Chunk[] = [];
 
     let sentIdx = 0;
@@ -115,8 +115,8 @@ describe("Basic", () => {
     verifyReceivedChunks(received, willSend);
   });
 
-  it("Should receive only events sent after subscription", async () => {
-    const willSend = generateChunks("myEventName", 100);
+  it('Should receive only events sent after subscription', async () => {
+    const willSend = generateChunks('myEventName', 100);
     const received: Chunk[] = [];
 
     const subscribeAfter = 30; // Will subscribe to events after 30 events emits
@@ -147,8 +147,8 @@ describe("Basic", () => {
     verifyReceivedChunks(received, shouldReceive);
   });
 
-  it("Should not receive events after unsubscription", async () => {
-    const willSend = generateChunks("myEventName", 100);
+  it('Should not receive events after unsubscription', async () => {
+    const willSend = generateChunks('myEventName', 100);
     const received: Chunk[] = [];
 
     const subscribeAfter = 30; // Will subscribe to events after 30 events emits

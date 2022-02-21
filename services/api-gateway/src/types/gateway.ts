@@ -1,4 +1,4 @@
-import { Policies } from "../policies";
+import { Policies } from '../policies';
 
 export interface Endpoint {
   host?: string;

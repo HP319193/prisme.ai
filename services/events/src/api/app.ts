@@ -1,23 +1,22 @@
-"use strict";
-import http from "http";
-import express from "express";
-import bodyParser from "body-parser";
+'use strict';
+import http from 'http';
+import express, { Application } from 'express';
+import bodyParser from 'body-parser';
 import {
   errorDecorator,
   finalErrorHandler,
   requestDecorator,
-} from "./middlewares";
-import initRoutes from "./routes";
-import { initMetrics } from "../metrics";
+} from './middlewares';
+import initRoutes from './routes';
+import { initMetrics } from '../metrics';
 import {
   validationErrorMiddleware,
   validationMiddleware,
-} from "./middlewares/validation";
-import { Application } from "express";
-import { Subscriptions } from "../services/events/Subscriptions";
-import { EventsStore } from "../services/events/store";
-import { AccessManager } from "../permissions";
-import { accessManagerMiddleware } from "./middlewares/accessManager";
+} from './middlewares/validation';
+import { Subscriptions } from '../services/events/Subscriptions';
+import { EventsStore } from '../services/events/store';
+import { AccessManager } from '../permissions';
+import { accessManagerMiddleware } from './middlewares/accessManager';
 
 export function initAPI(
   app: Application,
@@ -29,7 +28,7 @@ export function initAPI(
   /**
    * Get NODE_ENV from environment and store in Express.
    */
-  app.set("env", process.env.NODE_ENV);
+  app.set('env', process.env.NODE_ENV);
 
   /**
    * Morgan logger
@@ -51,7 +50,7 @@ export function initAPI(
    * For NGINX the following must be configured 'proxy_set_header X-Forwarded-For $remote_addr;'
    * @link http://expressjs.com/en/guide/behind-proxies.html
    */
-  app.set("trust proxy", true);
+  app.set('trust proxy', true);
 
   app.use(requestDecorator);
 
@@ -62,7 +61,7 @@ export function initAPI(
    */
   app.use(
     validationMiddleware({
-      ignorePaths: ["^/sys"],
+      ignorePaths: ['^/sys'],
     }),
     validationErrorMiddleware
   );

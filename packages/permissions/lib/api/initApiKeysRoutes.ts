@@ -1,11 +1,11 @@
-import "@prisme.ai/types";
-import { Request, Response, Router } from "express";
-import { asyncRoute, ExtendedRequest } from "./utils";
+import '@prisme.ai/types';
+import { Request, Response, Router } from 'express';
+import { asyncRoute, ExtendedRequest } from './utils';
 
 export enum EventType {
-  CreatedApiKey = "apikeys.created",
-  UpdatedApiKey = "apikeys.updated",
-  DeletedApiKey = "apikeys.deleted",
+  CreatedApiKey = 'apikeys.created',
+  UpdatedApiKey = 'apikeys.updated',
+  DeletedApiKey = 'apikeys.deleted',
 }
 
 export function initApiKeysRoutes<
@@ -52,9 +52,9 @@ export function initApiKeysRoutes<
     );
 
     if (broker) {
-      broker.send<Prismeai.CreatedApiKey["payload"]>(
+      broker.send<Prismeai.CreatedApiKey['payload']>(
         EventType.CreatedApiKey,
-        <Prismeai.CreatedApiKey["payload"]>apiKey
+        <Prismeai.CreatedApiKey['payload']>apiKey
       );
     }
 
@@ -83,9 +83,9 @@ export function initApiKeysRoutes<
     );
 
     if (broker) {
-      broker.send<Prismeai.UpdatedApiKey["payload"]>(
+      broker.send<Prismeai.UpdatedApiKey['payload']>(
         EventType.UpdatedApiKey,
-        <Prismeai.UpdatedApiKey["payload"]>updatedApiKey
+        <Prismeai.UpdatedApiKey['payload']>updatedApiKey
       );
     }
 
@@ -112,10 +112,10 @@ export function initApiKeysRoutes<
     );
 
     if (broker) {
-      broker.send<Prismeai.DeletedApiKey["payload"]>(EventType.DeletedApiKey, {
+      broker.send<Prismeai.DeletedApiKey['payload']>(EventType.DeletedApiKey, {
         apiKey,
         subjectType:
-          subjectType as Prismeai.DeletedApiKey["payload"]["subjectType"],
+          subjectType as Prismeai.DeletedApiKey['payload']['subjectType'],
         subjectId,
       });
     }
@@ -123,7 +123,7 @@ export function initApiKeysRoutes<
     return res.send({ apiKey });
   }
 
-  const baseRoute = "/v2/:subjectType/:subjectId/apikeys";
+  const baseRoute = '/v2/:subjectType/:subjectId/apikeys';
   app.post(`${baseRoute}`, asyncRoute(createApiKeyHandler));
   app.get(`${baseRoute}`, asyncRoute(getApiKeysHandler));
   app.put(`${baseRoute}/:apiKey`, asyncRoute(updateApiKeyHandler));

@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import * as OpenApiValidator from "express-openapi-validator";
-import { HttpError } from "express-openapi-validator/dist/framework/types";
-import { syscfg } from "../config";
-import { NotFoundError, RequestValidationError } from "../types/errors";
+import { NextFunction, Request, Response } from 'express';
+import * as OpenApiValidator from 'express-openapi-validator';
+import { HttpError } from 'express-openapi-validator/dist/framework/types';
+import { syscfg } from '../config';
+import { NotFoundError, RequestValidationError } from '../types/errors';
 
 interface ValidationOpts {
   ignorePaths?: string[];
@@ -30,7 +30,7 @@ export const validationErrorMiddleware = (
   next: NextFunction
 ) => {
   if (err instanceof HttpError) {
-    if (err.message === "not found") {
+    if (err.message === 'not found') {
       next(new NotFoundError());
     } else {
       next(new RequestValidationError(err.message, err.errors));

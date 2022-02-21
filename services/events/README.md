@@ -8,16 +8,17 @@ First, run the development server:
 npm run dev
 ```
 
-By default, prisme.ai-events listens on 3030 port and handles following features :  
-- Event sending  
+By default, prisme.ai-events listens on 3030 port and handles following features :
+
+- Event sending
 - Events listening websocket
-- Events longpoll 
+- Events longpoll
 - Events storage in a datalake
 - Events search (via datalake)
 
 ## Environement
 
-You can set the following env variables to customize your installation.  
+You can set the following env variables to customize your installation.
 
 - BROKER_HOST: Message broker host
 - OPENAPI_FILEPATH: Filepath to the OpenAPI file describing HTTP endpoints and supported events

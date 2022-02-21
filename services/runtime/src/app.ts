@@ -1,28 +1,28 @@
-"use strict";
-import http from "http";
+'use strict';
+import http from 'http';
 import {
   APP_NAME,
   CONTEXTS_CACHE,
   PORT,
   WORKSPACES_STORAGE_TYPE,
-} from "../config";
+} from '../config';
 
-import { init as initAPI } from "./api";
-import { broker } from "./eda";
-import { uncaughtExceptionHandler } from "./errors";
-import "@prisme.ai/types";
-import Runtime from "./services/runtime";
-import { Workspaces } from "./services/workspaces";
-import { buildCache } from "./cache";
+import { init as initAPI } from './api';
+import { broker } from './eda';
+import { uncaughtExceptionHandler } from './errors';
+import '@prisme.ai/types';
+import Runtime from './services/runtime';
+import { Workspaces } from './services/workspaces';
+import { buildCache } from './cache';
 
-process.on("uncaughtException", uncaughtExceptionHandler);
+process.on('uncaughtException', uncaughtExceptionHandler);
 
 async function exit() {
   await broker.close();
   process.exit(0);
 }
-process.on("SIGTERM", exit);
-process.on("SIGINT", exit);
+process.on('SIGTERM', exit);
+process.on('SIGINT', exit);
 
 (async function () {
   await broker.ready;

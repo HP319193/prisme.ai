@@ -1,12 +1,12 @@
-import yaml from "js-yaml";
-import { Broker } from "@prisme.ai/broker";
-import { EventType } from "../../eda";
-import { ObjectNotFoundError } from "../../errors";
-import Storage from "../../storage";
-import { DriverType } from "../../storage/types";
-import { Workspace } from "./workspace";
+import yaml from 'js-yaml';
+import { Broker } from '@prisme.ai/broker';
+import { EventType } from '../../eda';
+import { ObjectNotFoundError } from '../../errors';
+import Storage from '../../storage';
+import { DriverType } from '../../storage/types';
+import { Workspace } from './workspace';
 
-export * from "./workspace";
+export * from './workspace';
 
 export class Workspaces extends Storage {
   private broker: Broker;
@@ -37,7 +37,7 @@ export class Workspaces extends Storage {
         const workspace = this.workspaces[workspaceId];
 
         logger.info({
-          msg: "Received an updated workspace through events",
+          msg: 'Received an updated workspace through events',
           event,
         });
         switch (event.type) {

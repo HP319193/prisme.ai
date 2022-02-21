@@ -1,6 +1,6 @@
-import { IStorage, ObjectList } from "../types";
-import AWS from "aws-sdk";
-import { ErrorSeverity, ObjectNotFoundError, PrismeError } from "../../errors";
+import { IStorage, ObjectList } from '../types';
+import AWS from 'aws-sdk';
+import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 
 export interface S3Options {
   accessKeyId: string;
@@ -13,7 +13,7 @@ export interface S3Options {
 }
 
 const defaultS3Options: Partial<S3Options> = {
-  cacheControl: "public, max-age=31536000",
+  cacheControl: 'public, max-age=31536000',
 };
 
 export default class S3Like implements IStorage {
@@ -52,7 +52,7 @@ export default class S3Like implements IStorage {
             ...(Contents || [])
               .filter((cur) => cur.Key)
               .map((cur) => ({
-                key: cur.Key!!?.split("/")[0],
+                key: cur.Key!!?.split('/')[0],
               }))
           );
           !IsTruncated
@@ -92,7 +92,7 @@ export default class S3Like implements IStorage {
           if (error) {
             reject(
               new PrismeError(
-                "Failed to list files before deletion",
+                'Failed to list files before deletion',
                 error,
                 ErrorSeverity.Fatal
               )
@@ -108,7 +108,7 @@ export default class S3Like implements IStorage {
                         if (err) {
                           reject(
                             new PrismeError(
-                              "Failed to delete file",
+                              'Failed to delete file',
                               err,
                               ErrorSeverity.Fatal
                             )
@@ -133,7 +133,7 @@ export default class S3Like implements IStorage {
         function (err: any, data: any) {
           if (err) {
             reject(
-              new PrismeError("Failed to delete file", err, ErrorSeverity.Fatal)
+              new PrismeError('Failed to delete file', err, ErrorSeverity.Fatal)
             );
           } else {
             resolve(data);
@@ -154,7 +154,7 @@ export default class S3Like implements IStorage {
       this.client.putObject(params, function (err: any, data: any) {
         if (err) {
           reject(
-            new PrismeError("Failed to save file", err, ErrorSeverity.Fatal)
+            new PrismeError('Failed to save file', err, ErrorSeverity.Fatal)
           );
         } else {
           resolve(data);
