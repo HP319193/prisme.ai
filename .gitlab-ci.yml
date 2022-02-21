@@ -2,28 +2,28 @@ image: node:16
 
 variables:
   DOCKER_DRIVER: overlay2
-  GIT_DEPTH: "1"
+  GIT_DEPTH: '1'
   CONTAINER_BASE_IMAGE: registry.gitlab.com/$CI_PROJECT_PATH
 
-  CONSOLE_DIRECTORY: "console"
-  CONSOLE_IMAGE_NAME: "prisme.ai-console"
-  CONSOLE_K8S_NAME: "prismeai-console"
+  CONSOLE_DIRECTORY: 'console'
+  CONSOLE_IMAGE_NAME: 'prisme.ai-console'
+  CONSOLE_K8S_NAME: 'prismeai-console'
 
-  WORKSPACES_DIRECTORY: "workspaces"
-  WORKSPACES_IMAGE_NAME: "prisme.ai-workspaces"
-  WORKSPACES_K8S_NAME: "prismeai-workspaces"
+  WORKSPACES_DIRECTORY: 'workspaces'
+  WORKSPACES_IMAGE_NAME: 'prisme.ai-workspaces'
+  WORKSPACES_K8S_NAME: 'prismeai-workspaces'
 
-  API_GATEWAY_DIRECTORY: "api-gateway"
-  API_GATEWAY_IMAGE_NAME: "prisme.ai-api-gateway"
-  API_GATEWAY_K8S_NAME: "prismeai-api-gateway"
+  API_GATEWAY_DIRECTORY: 'api-gateway'
+  API_GATEWAY_IMAGE_NAME: 'prisme.ai-api-gateway'
+  API_GATEWAY_K8S_NAME: 'prismeai-api-gateway'
 
-  RUNTIME_DIRECTORY: "runtime"
-  RUNTIME_IMAGE_NAME: "prisme.ai-runtime"
-  RUNTIME_K8S_NAME: "prismeai-runtime"
+  RUNTIME_DIRECTORY: 'runtime'
+  RUNTIME_IMAGE_NAME: 'prisme.ai-runtime'
+  RUNTIME_K8S_NAME: 'prismeai-runtime'
 
-  EVENTS_DIRECTORY: "events"
-  EVENTS_IMAGE_NAME: "prisme.ai-events"
-  EVENTS_K8S_NAME: "prismeai-events"
+  EVENTS_DIRECTORY: 'events'
+  EVENTS_IMAGE_NAME: 'prisme.ai-events'
+  EVENTS_K8S_NAME: 'prismeai-events'
 
 stages:
   - dependencies
@@ -40,14 +40,15 @@ backend_npm_install:
   stage: dependencies
   only:
     changes:
-      - "services/api-gateway/package.json"
-      - "services/runtime/package.json"
-      - "services/workspaces/package.json"
-      - "services/events/package.json"
-      - "packages/**/*"
+      - 'services/api-gateway/package.json'
+      - 'services/runtime/package.json'
+      - 'services/workspaces/package.json'
+      - 'services/events/package.json'
+      - 'packages/**/*'
     refs:
       - main
       - /^feature\/.*$/
+      - /^fix\/.*$/
       - /^pipeline\/.*$/
   image: docker:stable
   services:
@@ -111,7 +112,7 @@ backend_npm_install:
     - internal-runner
   image:
     name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
-    entrypoint: [ "/bin/sh", "-c" ]
+    entrypoint: ['/bin/sh', '-c']
   script:
     - >
       if [ -z $CI_COMMIT_BRANCH ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
@@ -126,7 +127,7 @@ console_test:
   extends: .npm_test
   only:
     changes:
-      - "services/console/**/*"
+      - 'services/console/**/*'
   before_script:
     - export DIRECTORY=services/$CONSOLE_DIRECTORY
 
@@ -143,7 +144,7 @@ console_build_docker:
       - /^feature\/.*$/
       - /^pipeline\/.*$/
     changes:
-      - "services/console/**/*"
+      - 'services/console/**/*'
   before_script:
     - export DIRECTORY=services/$CONSOLE_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -158,12 +159,11 @@ console_deploy:
       - /^feature\/.*$/
       - /^pipeline\/.*$/
     changes:
-      - "services/console/**/*"
+      - 'services/console/**/*'
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
     - export K8S_NAME=$CONSOLE_K8S_NAME
-
 
 # ## Workspaces jobs
 # # workspaces_test:
@@ -188,7 +188,7 @@ workspaces_build_docker:
       - main
       - master
     changes:
-      - "services/workspaces/**/*"
+      - 'services/workspaces/**/*'
   before_script:
     - export DIRECTORY=services/$WORKSPACES_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -203,7 +203,7 @@ workspaces_deploy:
       - main
       - master
     changes:
-      - "services/workspaces/**/*"
+      - 'services/workspaces/**/*'
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME
@@ -214,7 +214,7 @@ runtime_test:
   extends: .npm_test
   only:
     changes:
-      - "services/runtime/**/*"
+      - 'services/runtime/**/*'
   before_script:
     - export DIRECTORY=services/$RUNTIME_DIRECTORY
 
@@ -232,7 +232,7 @@ runtime_build_docker:
       - main
       - master
     changes:
-      - "services/runtime/**/*"
+      - 'services/runtime/**/*'
   before_script:
     - export DIRECTORY=services/$RUNTIME_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -247,12 +247,11 @@ runtime_deploy:
       - main
       - master
     changes:
-      - "services/runtime/**/*"
+      - 'services/runtime/**/*'
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
     - export K8S_NAME=$RUNTIME_K8S_NAME
-
 
 # ## API Gateway jobs
 api-gateway_build_docker:
@@ -269,7 +268,7 @@ api-gateway_build_docker:
       - main
       - master
     changes:
-      - "services/api-gateway/**/*"
+      - 'services/api-gateway/**/*'
   before_script:
     - export DIRECTORY=services/$API_GATEWAY_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -284,7 +283,7 @@ api-gateway_deploy:
       - main
       - master
     changes:
-      - "services/api-gateway/**/*"
+      - 'services/api-gateway/**/*'
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME
@@ -295,7 +294,7 @@ events_test:
   extends: .npm_test
   only:
     changes:
-      - "services/events/**/*"
+      - 'services/events/**/*'
   before_script:
     - export DIRECTORY=services/$EVENTS_DIRECTORY
 
@@ -313,7 +312,7 @@ events_build_docker:
       - main
       - master
     changes:
-      - "services/events/**/*"
+      - 'services/events/**/*'
   before_script:
     - export DIRECTORY=services/$EVENTS_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -328,12 +327,11 @@ events_deploy:
       - main
       - master
     changes:
-      - "services/events/**/*"
+      - 'services/events/**/*'
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME
     - export K8S_NAME=$EVENTS_K8S_NAME
-
 
 # ## Docs jobs
 docs_build_static:
@@ -347,8 +345,8 @@ docs_build_static:
       - /^pipeline\/.*$/
       - /^doc\/.*$/
     changes:
-      - "docs/**/*"
-      - "specifications/*"
+      - 'docs/**/*'
+      - 'specifications/*'
   image: python:latest
   script:
     - cp ./specifications/swagger.yml docs/public/api/swagger.yml
@@ -374,8 +372,8 @@ docs_deploy:
       - main
       - /^doc\/.*$/
     changes:
-      - "docs/**/*"
-      - "specifications/*"
+      - 'docs/**/*'
+      - 'specifications/*'
   script:
     - aws s3 rm s3://$DOCS_S3_BUCKET_NAME --recursive
     - aws s3 cp docs/public/ s3://$DOCS_S3_BUCKET_NAME/ --recursive --include "*"
