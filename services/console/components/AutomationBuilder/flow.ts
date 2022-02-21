@@ -42,8 +42,6 @@ export class Flow {
       if (key !== Flow.NEW_CONDITION) {
         parent.conditions[key] = parent.conditions[key] || [];
       }
-      const appendTo =
-        key === Flow.NEW_CONDITION ? parent : parent.conditions[key];
       // Build condition nodes
       if (
         key === Flow.NEW_CONDITION ||
@@ -55,7 +53,7 @@ export class Flow {
           type: 'empty',
           data: {
             withButton: key !== Flow.NEW_CONDITION,
-            parent: appendTo,
+            parent: parent.conditions[key],
             key,
           },
           position: {
@@ -79,7 +77,7 @@ export class Flow {
         target: `${id}.0`,
         data: {
           label: key,
-          parent: key === 'default' ? undefined : appendTo,
+          parent: key === 'default' ? undefined : parent,
           key: key !== Flow.NEW_CONDITION ? key : '',
         },
         type: 'conditionEdge',
@@ -247,9 +245,10 @@ export class Flow {
         };
         const i = instruction as Prismeai.All;
         const parent = (i.all = i.all || []);
-        (
-          [...(value || []), { [Flow.NEW_ALL]: {} }] as Prismeai.All['all']
-        ).forEach((instruction, childk) => {
+        ([
+          ...(value || []),
+          { [Flow.NEW_ALL]: {} },
+        ] as Prismeai.All['all']).forEach((instruction, childk) => {
           const [name] = Object.keys(instruction);
           position = {
             ...position,
