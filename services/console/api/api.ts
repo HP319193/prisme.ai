@@ -2,7 +2,8 @@ import getConfig from 'next/config';
 import QueryString from 'qs';
 import Fetcher from './fetcher';
 import { Event, Workspace } from './types';
-import UserPermissions = Prismeai.UserPermissions;
+
+type UserPermissions = Prismeai.UserPermissions;
 
 const { publicRuntimeConfig } = getConfig();
 

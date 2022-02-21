@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
-import UserPermissions = Prismeai.UserPermissions;
-import SubjectType = PrismeaiAPI.GetPermissions.Parameters.SubjectType;
+
+type SubjectType = PrismeaiAPI.GetPermissions.Parameters.SubjectType;
+type UserPermissions = Prismeai.UserPermissions;
 
 export interface PermissionsContext {
   usersPermissions: Map<string, UserPermissions[]>;

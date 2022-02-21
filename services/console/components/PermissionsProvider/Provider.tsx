@@ -2,8 +2,9 @@ import { FC, useCallback, useState } from 'react';
 import context, { PermissionsContext } from './context';
 import api from '../../api/api';
 import { isEqual } from 'lodash';
-import UserPermissions = Prismeai.UserPermissions;
-import SubjectType = PrismeaiAPI.GetPermissions.Parameters.SubjectType;
+
+type UserPermissions = Prismeai.UserPermissions;
+type SubjectType = PrismeaiAPI.GetPermissions.Parameters.SubjectType;
 
 export const PermissionsProvider: FC = ({ children }) => {
   const [usersPermissions, setUsersPermissions] = useState<

@@ -3,7 +3,6 @@ import context, { WorkspacesContext } from './context';
 import api from '../../api/api';
 import { useUser } from '../UserProvider';
 import { Workspace } from '../../api/types';
-import UserPermissions = Prismeai.UserPermissions;
 
 export const WorkspacesProvider: FC = ({ children }) => {
   const { user } = useUser();
@@ -188,16 +187,6 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [workspaces]
   );
 
-  // set role to editor for the postpermissions
-  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] =
-    useCallback(async (workspaceId) => {
-      const userPermissions = await api.getPermissions(
-        'workspaces',
-        workspaceId
-      );
-      return userPermissions;
-    }, []);
-
   return (
     <context.Provider
       value={{
@@ -210,7 +199,6 @@ export const WorkspacesProvider: FC = ({ children }) => {
         createAutomation,
         updateAutomation,
         deleteAutomation,
-        getWorkspaceUsersPermissions,
       }}
     >
       {children}

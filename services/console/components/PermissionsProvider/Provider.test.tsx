@@ -1,10 +1,9 @@
 import Provider from './Provider';
 import renderer, { act } from 'react-test-renderer';
 import api from '../../api/api';
-import { useWorkspaces } from '.';
-import { useUser } from '../UserProvider';
+import { usePermissions } from '.';
 
-jest.mock('../UserProvider', () => {
+jest.mock('../WorkspacesProvider', () => {
   const mock = {
     user: {},
   };
@@ -20,7 +19,7 @@ beforeEach(() => {
 it('should access context', async () => {
   let context: any = {};
   const Test = () => {
-    context = useWorkspaces();
+    context = usePermissions();
     return null;
   };
   const root = renderer.create(
@@ -28,26 +27,32 @@ it('should access context', async () => {
       <Test />
     </Provider>
   );
-  expect(context.workspaces).toEqual(new Map());
-  expect(context.get).toBeInstanceOf(Function);
-  expect(context.fetch).toBeInstanceOf(Function);
-  expect(context.create).toBeInstanceOf(Function);
-  expect(context.update).toBeInstanceOf(Function);
+  expect(context.usersPermissions).toEqual(new Map());
+  expect(context.getUsersPermissions).toBeInstanceOf(Function);
+  expect(context.addUserPermissions).toBeInstanceOf(Function);
+  expect(context.removeUserPermissions).toBeInstanceOf(Function);
 });
 
-it('should fetch workspaces', async () => {
-  jest.spyOn(api, 'getWorkspaces').mockReturnValue(
-    Promise.resolve([
-      {
-        id: '42',
-        name: 'workspace',
-      },
-    ] as any)
+it('should fetch userPermissions', async () => {
+  jest.spyOn(api, 'getPermissions').mockReturnValue(
+    Promise.resolve({
+      result: [
+        {
+          id: '42',
+          email: 'user@tropfort.com',
+          role: 'owner',
+        },
+        {
+          id: '43',
+          email: 'user2@tropfort.com',
+          role: 'editor',
+        },
+      ],
+    } as any)
   );
-  useUser().user = {} as any;
   let context: any = {};
   const Test = () => {
-    context = useWorkspaces();
+    context = usePermissions();
     return null;
   };
   const root = renderer.create(
@@ -56,432 +61,282 @@ it('should fetch workspaces', async () => {
     </Provider>
   );
   await act(async () => {
-    await true;
+    // TODO store object type in addition to id in provider
+    await context.getUsersPermissions('workspaces', 'workspaceId11');
   });
-  expect(api.getWorkspaces).toHaveBeenCalled();
-  expect(context.workspaces).toEqual(
+
+  expect(api.getPermissions).toHaveBeenCalled();
+  expect(context.usersPermissions).toEqual(
     new Map([
       [
-        '42',
-        {
-          id: '42',
-          name: 'workspace',
-        },
+        'workspaceId11',
+        [
+          {
+            id: '42',
+            email: 'user@tropfort.com',
+            role: 'owner',
+          },
+          {
+            id: '43',
+            email: 'user2@tropfort.com',
+            role: 'editor',
+          },
+        ],
       ],
     ])
   );
 });
 
 it('should not fetch workspaces', async () => {
-  jest.spyOn(api, 'getWorkspaces').mockReturnValue(
-    Promise.resolve([
-      {
-        id: '42',
-        name: 'workspace',
-      },
-    ] as any)
-  );
-  useUser().user = null as any;
-  let context: any = {};
-  const Test = () => {
-    context = useWorkspaces();
-    return null;
-  };
-  const root = renderer.create(
-    <Provider>
-      <Test />
-    </Provider>
-  );
-  await act(async () => {
-    await true;
-  });
-  expect(api.getWorkspaces).not.toHaveBeenCalled();
-  expect(context.workspaces).toEqual(new Map());
-});
-
-it('should create a workspace', async () => {
-  jest.spyOn(api, 'getWorkspaces').mockReturnValue(Promise.resolve([]));
-  jest.spyOn(api, 'createWorkspace').mockReturnValue(
+  jest.spyOn(api, 'getPermissions').mockReturnValue(
     Promise.resolve({
-      id: 'new',
-      name: 'new',
-    } as any)
-  );
-  let context: any = {};
-  const Test = () => {
-    context = useWorkspaces();
-    return null;
-  };
-  const root = renderer.create(
-    <Provider>
-      <Test />
-    </Provider>
-  );
-  await act(async () => {
-    const expected = await context.create('new');
-    expect(api.createWorkspace).toHaveBeenCalledWith('new');
-    expect(expected).toEqual({
-      id: 'new',
-      name: 'new',
-    });
-  });
-});
-
-it('should create many workspace', async () => {
-  jest.spyOn(api, 'getWorkspaces').mockReturnValue(Promise.resolve([]));
-  jest.spyOn(api, 'createWorkspace').mockReturnValue(
-    Promise.resolve({
-      id: 'new (1)',
-      name: 'new (1)',
-    } as any)
-  );
-  let context: any = {};
-  const Test = () => {
-    context = useWorkspaces();
-    return null;
-  };
-  const root = renderer.create(
-    <Provider>
-      <Test />
-    </Provider>
-  );
-  await act(async () => {
-    context.workspaces.set('new', {
-      name: 'new',
-    });
-    const expected = await context.create('new');
-    expect(api.createWorkspace).toHaveBeenCalledWith('new (1)');
-    expect(expected).toEqual({
-      id: 'new (1)',
-      name: 'new (1)',
-    });
-  });
-});
-
-it('should fetch a workspace', async () => {
-  jest.spyOn(api, 'getWorkspaces').mockReturnValue(Promise.resolve([]));
-  jest.spyOn(api, 'getWorkspace').mockReturnValue(
-    Promise.resolve({
-      id: '42',
-      name: 'fourtytwo',
-    } as any)
-  );
-  let context: any = {};
-  const Test = () => {
-    context = useWorkspaces();
-    return null;
-  };
-  const root = renderer.create(
-    <Provider>
-      <Test />
-    </Provider>
-  );
-  await act(async () => {
-    const expected = await context.fetch('42');
-    expect(api.getWorkspace).toHaveBeenCalledWith('42');
-    expect(expected).toEqual({
-      id: '42',
-      name: 'fourtytwo',
-    });
-  });
-});
-
-it('should get a workspace', async () => {
-  useUser().user = {} as any;
-  jest.spyOn(api, 'getWorkspaces').mockReturnValue(
-    Promise.resolve([
-      {
-        id: '42',
-        name: 'fourtytwo',
-      },
-    ] as any)
-  );
-  let context: any = {};
-  const Test = () => {
-    context = useWorkspaces();
-    return null;
-  };
-  const root = renderer.create(
-    <Provider>
-      <Test />
-    </Provider>
-  );
-  await act(async () => {
-    await true;
-  });
-  const expected = context.get('42');
-  expect(expected).toEqual({
-    id: '42',
-    name: 'fourtytwo',
-  });
-});
-
-it('should update a workspace', async () => {
-  jest.spyOn(api, 'getWorkspaces').mockReturnValue(Promise.resolve([]));
-  jest.spyOn(api, 'updateWorkspace').mockReturnValue(
-    Promise.resolve({
-      id: '42',
-      name: 'foo',
-    } as any)
-  );
-  let context: any = {};
-  const Test = () => {
-    context = useWorkspaces();
-    return null;
-  };
-  const root = renderer.create(
-    <Provider>
-      <Test />
-    </Provider>
-  );
-  await act(async () => {
-    context.workspaces.set('42', {
-      id: '42',
-      name: 'foo',
-    });
-    const expected = await context.update({
-      id: '42',
-      name: 'foo',
-    });
-    expect(api.updateWorkspace).toHaveBeenCalledWith({
-      id: '42',
-      name: 'foo',
-    });
-    expect(expected).toEqual({
-      id: '42',
-      name: 'foo',
-    });
-  });
-});
-
-it('should fail to update a workspace', async () => {
-  useUser().user = {} as any;
-  jest.spyOn(api, 'getWorkspaces').mockReturnValue(
-    Promise.resolve([
-      {
-        id: '42',
-        name: 'foo',
-      },
-    ] as any)
-  );
-  jest.spyOn(api, 'updateWorkspace').mockRejectedValue('fail');
-  let context: any = {};
-  const Test = () => {
-    context = useWorkspaces();
-    return null;
-  };
-  const root = renderer.create(
-    <Provider>
-      <Test />
-    </Provider>
-  );
-  await act(async () => {
-    await true;
-  });
-  await act(async () => {
-    const expected = await context.update({
-      id: '42',
-      name: 'foo',
-    });
-    expect(api.updateWorkspace).toHaveBeenCalledWith({
-      id: '42',
-      name: 'foo',
-    });
-    expect(expected).toBeNull();
-  });
-});
-
-it('should create an automation', async () => {
-  const workspace = {
-    id: '42',
-    name: 'workspace',
-  };
-  jest
-    .spyOn(api, 'getWorkspaces')
-    .mockReturnValue(Promise.resolve([workspace] as any));
-  jest.spyOn(api, 'createAutomation').mockImplementation((w: any, a: any) => ({
-    slug: `${w.id}-1`,
-    ...a,
-  }));
-
-  let context: any = {};
-  const Test = () => {
-    context = useWorkspaces();
-    return null;
-  };
-  const root = renderer.create(
-    <Provider>
-      <Test />
-    </Provider>
-  );
-  await act(async () => {
-    await true;
-  });
-  await act(async () => {
-    const w = await context.createAutomation(workspace, { name: 'foo' });
-    expect(w).toEqual({
-      slug: '42-1',
-      name: 'foo',
-    });
-  });
-
-  expect(context.workspaces.get('42')).toEqual({
-    id: '42',
-    name: 'workspace',
-    automations: {
-      '42-1': {
-        name: 'foo',
-      },
-    },
-  });
-});
-
-it('should update an automation', async () => {
-  const workspace = {
-    id: '42',
-    name: 'workspace',
-    automations: {
-      foo: {
-        name: 'foo',
-      },
-    },
-  };
-  jest
-    .spyOn(api, 'getWorkspaces')
-    .mockReturnValue(Promise.resolve([workspace] as any));
-  jest
-    .spyOn(api, 'updateAutomation')
-    .mockImplementation((w: any, id: string, a: any) => a);
-  let context: any = {};
-  const Test = () => {
-    context = useWorkspaces();
-    return null;
-  };
-  const root = renderer.create(
-    <Provider>
-      <Test />
-    </Provider>
-  );
-  await act(async () => {
-    await true;
-  });
-  await act(async () => {
-    const w = await context.updateAutomation(workspace, 'foo', {
-      name: 'bar',
-    });
-    expect(w).toEqual({
-      name: 'bar',
-    });
-  });
-
-  expect(context.workspaces.get('42')).toEqual({
-    id: '42',
-    name: 'workspace',
-    automations: {
-      foo: {
-        name: 'bar',
-      },
-    },
-  });
-});
-
-it('should delete an automation', async () => {
-  const workspace = {
-    id: '42',
-    name: 'workspace',
-    automations: {
-      foo: {
-        name: 'foo',
-      },
-    },
-  };
-  useUser().user = {} as any;
-  jest
-    .spyOn(api, 'getWorkspaces')
-    .mockReturnValue(Promise.resolve([workspace] as any));
-  jest
-    .spyOn(api, 'deleteAutomation')
-    .mockImplementation((w: any, id: string) => w.automations[id]);
-
-  let context: any = {};
-  const Test = () => {
-    context = useWorkspaces();
-    return null;
-  };
-  const root = renderer.create(
-    <Provider>
-      <Test />
-    </Provider>
-  );
-  await act(async () => {
-    await true;
-  });
-
-  await act(async () => {
-    const w = await context.deleteAutomation(workspace, 'foo');
-    expect(w).toEqual({
-      name: 'foo',
-    });
-  });
-
-  expect(context.workspaces.get('42')).toEqual({
-    id: '42',
-    name: 'workspace',
-    automations: {},
-  });
-
-  it('should get permissions', async () => {
-    const permissions = [
-      {
-        email: 'admin@prisme.ai',
-        role: 'admin',
-      },
-      {
-        email: 'readonly@prisme.ai',
-        policies: {
-          read: true,
+      result: [
+        {
+          id: '42',
+          email: 'user@tropfort.com',
+          role: 'owner',
         },
-      },
-    ];
-    useUser().user = {} as any;
-    jest
-      .spyOn(api, 'getPermissions')
-      .mockReturnValue(Promise.resolve(permissions as any));
+        {
+          id: '43',
+          email: 'user2@tropfort.com',
+          role: 'editor',
+        },
+      ],
+    } as any)
+  );
 
-    let context: any = {};
-    const Test = () => {
-      context = useWorkspaces();
-      return null;
-    };
-    const root = renderer.create(
-      <Provider>
-        <Test />
-      </Provider>
+  let context: any = {};
+  const Test = () => {
+    context = usePermissions();
+    return null;
+  };
+  const root = renderer.create(
+    <Provider>
+      <Test />
+    </Provider>
+  );
+  await act(async () => {
+    await true;
+  });
+  expect(api.getPermissions).not.toHaveBeenCalled();
+  expect(context.usersPermissions).toEqual(new Map());
+});
+
+it('should give user permissions', async () => {
+  jest.spyOn(api, 'postPermissions').mockReturnValue(
+    Promise.resolve({
+      id: '44',
+      email: 'user3@tropfort.com',
+      role: 'editor',
+    } as any)
+  );
+  let context: any = {};
+  const Test = () => {
+    context = usePermissions();
+    return null;
+  };
+  const root = renderer.create(
+    <Provider>
+      <Test />
+    </Provider>
+  );
+  await act(async () => {
+    const expected = await context.addUserPermissions(
+      'workspaces',
+      'workspaceId11',
+      {
+        id: '44',
+        role: 'owner',
+      }
     );
-    await act(async () => {
-      await true;
-    });
-
-    await act(async () => {
-      const w = await context.getWorkspaceUsersPermissions('123idworkspace123');
-      expect(w).toEqual([
-        {
-          email: 'admin@prisme.ai',
-          role: 'admin',
-        },
-        {
-          email: 'readonly@prisme.ai',
-          policies: {
-            read: true,
-          },
-        },
-      ]);
-    });
-
-    expect(context.workspaces.get('42')).toEqual({
-      id: '42',
-      name: 'workspace',
-      automations: {},
+    expect(api.postPermissions).toHaveBeenCalledWith(
+      'workspaces',
+      'workspaceId11',
+      {
+        id: '44',
+        role: 'owner',
+      }
+    );
+    expect(expected).toEqual({
+      id: '44',
+      email: 'user3@tropfort.com',
+      role: 'editor',
     });
   });
+
+  await act(async () => {
+    await true;
+  });
+  expect(context.usersPermissions).toEqual(
+    new Map([
+      [
+        'workspaceId11',
+        [
+          {
+            id: '44',
+            email: 'user3@tropfort.com',
+            role: 'editor',
+          },
+        ],
+      ],
+    ])
+  );
+});
+
+it("should add user to provider's list", async () => {
+  jest.spyOn(api, 'getPermissions').mockReturnValue(
+    Promise.resolve({
+      result: [
+        {
+          id: '42',
+          email: 'user@tropfort.com',
+          role: 'owner',
+        },
+        {
+          id: '43',
+          email: 'user2@tropfort.com',
+          role: 'editor',
+        },
+      ],
+    } as any)
+  );
+  jest.spyOn(api, 'postPermissions').mockReturnValue(
+    Promise.resolve({
+      id: '44',
+      email: 'user3@tropfort.com',
+      role: 'editor',
+    } as any)
+  );
+  let context: any = {};
+  const Test = () => {
+    context = usePermissions();
+    return null;
+  };
+  const root = renderer.create(
+    <Provider>
+      <Test />
+    </Provider>
+  );
+
+  await act(async () => {
+    await context.getUsersPermissions('workspaces', 'workspaceId11');
+  });
+
+  await act(async () => {
+    const expected = await context.addUserPermissions(
+      'workspaces',
+      'workspaceId11',
+      {
+        id: '44',
+        role: 'owner',
+      }
+    );
+    expect(api.postPermissions).toHaveBeenCalledWith(
+      'workspaces',
+      'workspaceId11',
+      {
+        id: '44',
+        role: 'owner',
+      }
+    );
+    expect(expected).toEqual({
+      id: '44',
+      email: 'user3@tropfort.com',
+      role: 'editor',
+    });
+  });
+
+  await act(async () => {
+    await true;
+  });
+  expect(context.usersPermissions).toEqual(
+    new Map([
+      [
+        'workspaceId11',
+        [
+          {
+            id: '42',
+            email: 'user@tropfort.com',
+            role: 'owner',
+          },
+          {
+            id: '43',
+            email: 'user2@tropfort.com',
+            role: 'editor',
+          },
+          {
+            id: '44',
+            email: 'user3@tropfort.com',
+            role: 'editor',
+          },
+        ],
+      ],
+    ])
+  );
+});
+
+it("should remove a user's permissions", async () => {
+  jest.spyOn(api, 'deletePermissions').mockReturnValue({} as any);
+  jest.spyOn(api, 'getPermissions').mockReturnValue(
+    Promise.resolve({
+      result: [
+        {
+          id: '42',
+          email: 'user@tropfort.com',
+          role: 'owner',
+        },
+        {
+          id: '43',
+          email: 'user2@tropfort.com',
+          role: 'editor',
+        },
+      ],
+    } as any)
+  );
+  let context: any = {};
+  const Test = () => {
+    context = usePermissions();
+    return null;
+  };
+  const root = renderer.create(
+    <Provider>
+      <Test />
+    </Provider>
+  );
+
+  await act(async () => {
+    await context.getUsersPermissions('workspaces', 'workspaceId11');
+  });
+
+  await act(async () => {
+    await context.removeUserPermissions(
+      'workspaces',
+      'workspaceId11',
+      'user2@tropfort.com'
+    );
+    expect(api.deletePermissions).toHaveBeenCalledWith(
+      'workspaces',
+      'workspaceId11',
+      'user2@tropfort.com'
+    );
+  });
+
+  await act(async () => {
+    await true;
+  });
+
+  expect(context.usersPermissions).toEqual(
+    new Map([
+      [
+        'workspaceId11',
+        [
+          {
+            id: '42',
+            email: 'user@tropfort.com',
+            role: 'owner',
+          },
+        ],
+      ],
+    ])
+  );
 });
