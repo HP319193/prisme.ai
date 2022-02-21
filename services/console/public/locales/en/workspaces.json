@@ -7,7 +7,18 @@
   "workspace": {
     "title": "\"{{name}}\" Workspace — $t(common:main.title)",
     "description": "Editing Workspace \"{{name}}\"",
-    "empty": "<button>Créez votre première automatisation</button> pour voir votre espace de travail s'animer"
+    "empty": "<button>Créez votre première automatisation</button> pour voir votre espace de travail s'animer",
+    "share": "Share",
+    "delete": {
+      "label": "Delete Workspace",
+      "confirm": {
+        "title": "Do you want to delete the \"{{name}}\" workspace?",
+        "content": "Warning, the data will be lost.",
+        "ok": "Yes, delete",
+        "cancel": "No, please no"
+      },
+      "toast": "Workspace has been deleted"
+    }
   },
   "create": {
     "description_first": "Create your first workspace to start automating your work",
@@ -48,6 +59,13 @@
       "error": "Unknown error has occured"
     },
     "delete": {
+      "label": "Remove automation",
+      "confirm": {
+        "title": "Do you want to delete the \"{name}\" automation?",
+        "content": "Warning, the data will be lost.",
+        "ok": "Yes, delete",
+        "cancel": "No, please no"
+      },
       "toast": "Automation has been deleted"
     },
     "endpoint": {

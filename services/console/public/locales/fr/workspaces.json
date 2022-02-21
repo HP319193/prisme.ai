@@ -7,7 +7,18 @@
   "workspace": {
     "title": "\"{{name}}\" Espace de travail — $t(common:main.title)",
     "description": "Édition de l'espace de travail \"{{name}}\"",
-    "share": "Partager"
+    "share": "Partager",
+    "empty": "<button>Créez votre première automatisation</button> pour voir votre espace de travail s'animer",
+    "delete": {
+      "label": "Supprimer l'espace de travail",
+      "confirm": {
+        "title": "Voulez vous supprimer l'espace de travail \"{{name}}\" ?",
+        "content": "Attention, les données seront perdues.",
+        "ok": "Oui, supprimer",
+        "cancel": "Non, je regrette"
+      },
+      "toast": "L'espace de travail a bien été supprimée"
+    }
   },
   "create": {
     "description_first": "Créez votre premier espace de travail pour commencer à automatiser votre travail",
@@ -48,6 +59,13 @@
       "error": "Une erreur est survenue"
     },
     "delete": {
+      "label": "Supprimer l'automatisation",
+      "confirm": {
+        "title": "Voulez vous supprimer l'automatisation \"{{name}}\" ?",
+        "content": "Attention, les données seront perdues.",
+        "ok": "Oui, supprimer",
+        "cancel": "Non, je regrette"
+      },
       "toast": "L'automatisation a bien été supprimée"
     },
     "endpoint": {

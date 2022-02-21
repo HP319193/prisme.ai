@@ -67,6 +67,10 @@ export class Api extends Fetcher {
     return await this.patch(`/workspaces/${workspace.id}`, workspace);
   }
 
+  async deleteWorkspace(workspaceId: Workspace['id']): Promise<Workspace> {
+    return await this.delete(`/workspaces/${workspaceId}`);
+  }
+
   async createAutomation(
     workspace: Workspace,
     automation: Prismeai.Automation
