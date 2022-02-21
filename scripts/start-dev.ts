@@ -161,7 +161,7 @@ const init = async () => {
   const { services: docker } = await inquirer.prompt([
     {
       type: 'checkbox',
-      message: 'Select services to run from build image',
+      message: 'Unselect services you want to develop on',
       name: 'services',
       choices: availablesServices.map((name) => ({ name, checked: true })),
     },
