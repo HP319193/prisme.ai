@@ -1,5 +1,5 @@
 import { IStorage, ObjectList } from '../types';
-import { dirname, join } from 'path';
+import { join, dirname } from 'path';
 import fs from 'fs';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 

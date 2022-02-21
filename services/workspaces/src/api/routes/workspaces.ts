@@ -14,11 +14,8 @@ async function createWorkspaceHandler(
   res: Response<PrismeaiAPI.CreateWorkspace.Responses.$200>
 ) {
   body.id = nanoid(7);
-  await accessManager.create(SubjectType.Workspace, {
-    id: body.id,
-    name: body.name,
-  });
-  const workspaces = services.workspaces(logger, context);
+
+  const workspaces = services.workspaces(accessManager, logger, context);
   const result = await workspaces.createWorkspace(body);
   res.send(result);
 }
@@ -32,9 +29,7 @@ async function getWorkspaceHandler(
   }: Request<PrismeaiAPI.GetWorkspace.PathParameters>,
   res: Response<PrismeaiAPI.GetWorkspace.Responses.$200>
 ) {
-  await accessManager.get(SubjectType.Workspace, workspaceId);
-
-  const workspaces = services.workspaces(logger, context);
+  const workspaces = services.workspaces(accessManager, logger, context);
   const result = await workspaces.getWorkspace(workspaceId);
   res.send(result);
 }
@@ -53,11 +48,7 @@ async function updateWorkspaceHandler(
   >,
   res: Response<PrismeaiAPI.CreateWorkspace.Responses.$200>
 ) {
-  await accessManager.update(SubjectType.Workspace, {
-    id: workspaceId,
-    name: body.name,
-  });
-  const workspaces = services.workspaces(logger, context);
+  const workspaces = services.workspaces(accessManager, logger, context);
   const result = await workspaces.updateWorkspace(workspaceId, body);
   res.send(result);
 }
@@ -71,8 +62,7 @@ async function deleteWorkspaceHandler(
   }: Request<PrismeaiAPI.DeleteWorkspace.PathParameters>,
   res: Response<PrismeaiAPI.DeleteWorkspace.Responses.$200>
 ) {
-  await accessManager.delete(SubjectType.Workspace, workspaceId);
-  const workspaces = services.workspaces(logger, context);
+  const workspaces = services.workspaces(accessManager, logger, context);
   await workspaces.deleteWorkspace(workspaceId);
   res.send({ id: workspaceId });
 }

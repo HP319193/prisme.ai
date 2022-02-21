@@ -1,7 +1,8 @@
-import { ActionType, PermissionsConfig } from '@prisme.ai/permissions';
+import { PermissionsConfig, ActionType } from '@prisme.ai/permissions';
 
 export enum SubjectType {
   Workspace = 'workspaces',
+  App = 'apps',
 }
 
 export enum Role {
@@ -36,6 +37,13 @@ export const config: PermissionsConfig<
             id: '${subject.id}',
           },
         },
+        {
+          action: ActionType.Manage,
+          subject: SubjectType.App,
+          conditions: {
+            workspaceId: '${subject.id}',
+          },
+        },
       ],
     },
 
@@ -51,6 +59,13 @@ export const config: PermissionsConfig<
             id: '${subject.id}',
           },
         },
+        {
+          action: ActionType.Update,
+          subject: SubjectType.App,
+          conditions: {
+            workspaceId: '${subject.id}',
+          },
+        },
       ],
     },
   ],
@@ -59,6 +74,10 @@ export const config: PermissionsConfig<
     {
       action: ActionType.Create,
       subject: SubjectType.Workspace,
+    },
+    {
+      action: ActionType.Read,
+      subject: SubjectType.App,
     },
   ],
   customRulesBuilder: (role) => {
