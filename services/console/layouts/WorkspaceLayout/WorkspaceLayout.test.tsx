@@ -6,7 +6,7 @@ import { useWorkspaces } from '../../components/WorkspacesProvider';
 import Events from '../../api/events';
 import api from '../../api/api';
 import { useWorkspace, WorkspaceContext } from './context';
-import { Event } from '../../api/types';
+import { Event, Workspace } from '../../api/types';
 import { notification } from 'antd';
 
 jest.useFakeTimers();
@@ -257,7 +257,7 @@ it('should listen to events on socket', async () => {
 });
 
 it('should save', async () => {
-  useWorkspaces().update = jest.fn();
+  useWorkspaces().update = jest.fn(async () => ({} as Workspace));
   let context: WorkspaceContext = {} as WorkspaceContext;
   const Test = () => {
     context = useWorkspace();
@@ -293,6 +293,39 @@ it('should save', async () => {
   });
   expect(notification.success).toHaveBeenCalledWith({
     message: 'expert.save.confirm',
+    placement: 'bottomRight',
+  });
+});
+
+it('should fail to save', async () => {
+  useWorkspaces().update = jest.fn();
+  let context: WorkspaceContext = {} as WorkspaceContext;
+  const Test = () => {
+    context = useWorkspace();
+    return null;
+  };
+  const root = renderer.create(
+    <WorkspaceLayout>
+      <Test />
+    </WorkspaceLayout>
+  );
+  await act(async () => {
+    await true;
+  });
+  act(() => {
+    context.setNewSource({
+      name: 'win',
+      automations: {},
+      createdAt: '',
+      updatedAt: '',
+      id: '',
+    });
+  });
+  await act(async () => {
+    await context.save();
+  });
+  expect(notification.error).toHaveBeenCalledWith({
+    message: 'expert.save.fail',
     placement: 'bottomRight',
   });
 });

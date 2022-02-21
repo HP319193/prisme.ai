@@ -159,7 +159,8 @@
     },
     "save": {
       "help": "Enregistrer",
-      "confirm": "Votre espace de travail est enregistré"
+      "confirm": "Votre espace de travail est enregistré",
+      "fail": "Votre espace de travail est invalide et n'a pas pu être enregistré."
     }
   },
   "404": "Cet espace de travail n'existe pas. Revenez à votre page d'accueil."
