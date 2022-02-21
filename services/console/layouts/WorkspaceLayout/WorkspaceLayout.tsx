@@ -15,6 +15,7 @@ import { useUser } from '../../components/UserProvider';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
 import { notification } from 'antd';
 import Storage from '../../utils/Storage';
+import WorkspaceSource from '../../views/WorkspaceSource';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -40,7 +41,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const { user } = useUser();
   const {
     query: { id },
-    route,
   } = useRouter();
 
   const { t } = useTranslation('workspaces');
@@ -56,6 +56,23 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [readEvents, setReadEvents] = useState<WorkspaceContext['readEvents']>(
     new Set()
   );
+  const [mountSourceComponent, setMountComponent] = useState(false);
+  const [displaySourceView, setDisplaySourceView] = useState(false);
+  const [sourceDisplayed, setSourceDisplayed] = useState(false);
+
+  const displaySource = useCallback((v: boolean) => {
+    setSourceDisplayed(v);
+  }, []);
+
+  // Manage source panel display
+  useEffect(() => {
+    if (sourceDisplayed) {
+      setMountComponent(true);
+    } else {
+      setDisplaySourceView(false);
+      setTimeout(() => setMountComponent(false), 200);
+    }
+  }, [sourceDisplayed]);
 
   // Init socket
   useEffect(() => {
@@ -127,7 +144,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
       off();
     };
   }, [socket, events]);
-  const displaySource = !!route.match(/\/source$/);
 
   const [invalid, setInvalid] = useState<WorkspaceContext['invalid']>(false);
   const [newSource, setNewSource] = useState<WorkspaceContext['newSource']>();
@@ -193,6 +209,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         loading,
         save,
         displaySource,
+        sourceDisplayed,
         invalid,
         setInvalid,
         saving,
@@ -211,6 +228,22 @@ export const WorkspaceLayout: FC = ({ children }) => {
           content={t('workspace.description', { name: workspace.name })}
         />
       </Head>
+      <div
+        className={`
+          absolute top-[75px] bottom-0 right-0 left-0
+          bg-white
+          flex flex-1
+          transition-transform
+          transition-duration-200
+          transition-ease-in
+          z-10
+          ${displaySourceView ? '' : '-translate-y-full'}
+        `}
+      >
+        {mountSourceComponent && (
+          <WorkspaceSource onLoad={() => setDisplaySourceView(true)} />
+        )}
+      </div>
       <Layout Header={<HeaderWorkspace />}>{children}</Layout>
     </workspaceContext.Provider>
   );

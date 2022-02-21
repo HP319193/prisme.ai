@@ -1,6 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should get layout 1`] = `<div />`;
+exports[`should get layout 1`] = `
+Array [
+  <div
+    className="
+          absolute top-[75px] bottom-0 right-0 left-0
+          bg-white
+          flex flex-1
+          transition-transform
+          transition-duration-200
+          transition-ease-in
+          z-10
+          -translate-y-full
+        "
+  />,
+  <div />,
+]
+`;
 
 exports[`should render 404 1`] = `
 <div
@@ -12,6 +28,38 @@ exports[`should render 404 1`] = `
 </div>
 `;
 
-exports[`should render empty 1`] = `"Foo"`;
+exports[`should render empty 1`] = `
+Array [
+  <div
+    className="
+          absolute top-[75px] bottom-0 right-0 left-0
+          bg-white
+          flex flex-1
+          transition-transform
+          transition-duration-200
+          transition-ease-in
+          z-10
+          -translate-y-full
+        "
+  />,
+  "Foo",
+]
+`;
 
-exports[`should render fetching 1`] = `"Foo"`;
+exports[`should render fetching 1`] = `
+Array [
+  <div
+    className="
+          absolute top-[75px] bottom-0 right-0 left-0
+          bg-white
+          flex flex-1
+          transition-transform
+          transition-duration-200
+          transition-ease-in
+          z-10
+          -translate-y-full
+        "
+  />,
+  "Foo",
+]
+`;

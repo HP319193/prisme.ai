@@ -8,6 +8,7 @@ import api from '../../api/api';
 import { useWorkspace, WorkspaceContext } from './context';
 import { Event, Workspace } from '../../api/types';
 import { notification } from 'antd';
+import WorkspaceSource from '../../views/WorkspaceSource';
 
 jest.useFakeTimers();
 
@@ -26,7 +27,10 @@ jest.mock('../../components/WorkspacesProvider', () => {
     useWorkspaces: () => mock,
   };
 });
-
+jest.mock('../../views/WorkspaceSource', () => {
+  const WorkspaceSource = () => <div>CodeEditor</div>;
+  return WorkspaceSource;
+});
 jest.mock('next/router', () => {
   const query = { id: '42' };
   const mock = {
@@ -297,7 +301,7 @@ it('should save', async () => {
   });
 });
 
-it('should fail to save', async () => {
+it('should failt to save', async () => {
   useWorkspaces().update = jest.fn();
   let context: WorkspaceContext = {} as WorkspaceContext;
   const Test = () => {
@@ -324,8 +328,48 @@ it('should fail to save', async () => {
   await act(async () => {
     await context.save();
   });
+
+  expect(useWorkspaces().update).toHaveBeenCalledWith({
+    name: 'win',
+    automations: {},
+    createdAt: '',
+    updatedAt: '',
+    id: '',
+  });
   expect(notification.error).toHaveBeenCalledWith({
     message: 'expert.save.fail',
     placement: 'bottomRight',
   });
+});
+
+it('should display source after mount', async () => {
+  jest.useFakeTimers();
+  let context: WorkspaceContext = {} as WorkspaceContext;
+  const Test = () => {
+    context = useWorkspace();
+    return null;
+  };
+  const root = renderer.create(
+    <WorkspaceLayout>
+      <Test />
+    </WorkspaceLayout>
+  );
+  await act(async () => {
+    await true;
+  });
+  expect(root.root.findAllByType('div')[0].props.className).toContain(
+    '-translate-y-full'
+  );
+  expect(() => root.root.findByType(WorkspaceSource)).toThrow();
+
+  act(() => {
+    context.displaySource(true);
+  });
+  expect(root.root.findByType(WorkspaceSource)).toBeDefined();
+  act(() => {
+    root.root.findByType(WorkspaceSource).props.onLoad();
+  });
+  expect(root.root.findAllByType('div')[0].props.className).not.toContain(
+    '-translate-y-100'
+  );
 });

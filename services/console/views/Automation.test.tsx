@@ -97,15 +97,17 @@ it('should update value', async () => {
   });
 });
 
-it('should save', () => {
+it('should save', async () => {
   const root = renderer.create(<Automation />);
 
   act(() => {
     return;
   });
 
-  act(() => {
-    root.root.findByType(PageHeader).props.RightButtons[0].props.onClick();
+  await act(async () => {
+    await root.root
+      .findByType(PageHeader)
+      .props.RightButtons[0].props.onClick();
   });
 
   expect(useWorkspaces().updateAutomation).toHaveBeenCalled();

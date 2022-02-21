@@ -42,6 +42,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     invalid,
     save,
     saving,
+    displaySource,
   } = useWorkspace();
   const [dirty, setDirty] = useState(false);
   const [value, setValue] = useState<string | undefined>();
@@ -60,6 +61,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         content: t('expert.exit.confirm_message'),
         onCancel: () => {
           setConfirm(true);
+          displaySource(false);
           setTimeout(() => push(path), 1);
         },
       });
@@ -75,7 +77,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     return () => {
       events.off('routeChangeStart', listener);
     };
-  }, [dirty, confirm]);
+  }, [dirty, confirm, events, t, displaySource, push]);
 
   const initYaml = useCallback(async () => {
     try {
@@ -95,6 +97,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
       setValue(value);
     } catch (e) {}
   }, [workspace, toYaml]);
+
   useEffect(() => {
     initYaml();
   }, [initYaml]);
@@ -219,7 +222,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         },
       },
     ],
-    [save, t]
+    [saveSource, t]
   );
 
   if (value === undefined) return null;
@@ -227,7 +230,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   return (
     <div className="flex flex-1 flex-col" ref={ref}>
       <PageHeader
-        onBack={() => push(`/workspaces/${workspace.id}`)}
+        onBack={() => displaySource(false)}
         RightButtons={[
           <Button onClick={saveSource} disabled={saving} key="1">
             {saving && <LoadingOutlined />}
