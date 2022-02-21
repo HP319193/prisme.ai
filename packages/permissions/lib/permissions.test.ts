@@ -2,6 +2,7 @@ import {
   ActionType,
   Permissions,
   PermissionsConfig,
+  PublicAccess,
   SubjectCollaborators,
 } from '..';
 import configs from '../examples';
@@ -208,6 +209,41 @@ describe('ABAC > Owner permissions', () => {
     ).toBe(false);
   });
 
+  it('Anyone should be able to read/update a page wih public read/update policies', () => {
+    const perms = new Permissions({ id: 'myUserId', role: Role.Admin }, config);
+    const publicPermissions = {
+      [PublicAccess]: {
+        policies: {
+          [ActionType.Read]: true,
+          [ActionType.Update]: true,
+        },
+      },
+    };
+    expect(
+      perms.can(ActionType.Read, SubjectType.Page, <any>{
+        id: 'gneuh',
+        createdBy: 'someOtherUserId',
+        permissions: publicPermissions,
+      })
+    ).toBe(true);
+
+    expect(
+      perms.can(ActionType.Update, SubjectType.Page, <any>{
+        id: 'gneuh',
+        createdBy: 'someOtherUserId',
+        permissions: publicPermissions,
+      })
+    ).toBe(true);
+
+    expect(
+      perms.can(ActionType.Manage, SubjectType.Page, <any>{
+        id: 'gneuh',
+        createdBy: 'someOtherUserId',
+        permissions: publicPermissions,
+      })
+    ).toBe(false);
+  });
+
   it('Admin or guest can manage their own user', () => {
     const permsAdmin = new Permissions(
       { id: 'myUserId', role: Role.Admin },
@@ -288,6 +324,48 @@ describe('ABAC > Grant permissions', () => {
 
     expect(sharedWorkspace!!.permissions).toMatchObject({
       [collaboratorUser.id]: {
+        // role: Role.Collaborator,
+        policies: {
+          [ActionType.Read]: true,
+        },
+      },
+    });
+  });
+
+  it('Any admin can make his page publicly readable', () => {
+    const adminUser = { id: 'adminUserId', role: Role.Admin };
+    const collaboratorUser = {
+      id: 'collaboratorId',
+      role: Role.Collaborator,
+    };
+    const collaboratorPerms = new Permissions(collaboratorUser, config);
+    const adminPerms = new Permissions(adminUser, config);
+    const adminWorkspace = {
+      id: 'hisWorkspaceId',
+      createdBy: adminUser.id,
+    } as Subject;
+
+    // The collaborator initially can't read this workspace !
+    expect(
+      collaboratorPerms.can(
+        ActionType.Read,
+        SubjectType.Workspace,
+        adminWorkspace
+      )
+    ).toBe(false);
+
+    let sharedWorkspace: Subject;
+    expect(() => {
+      sharedWorkspace = adminPerms.grant(
+        ActionType.Read,
+        SubjectType.Workspace,
+        adminWorkspace,
+        PublicAccess
+      ) as any as Subject;
+    }).not.toThrow();
+
+    expect(sharedWorkspace!!.permissions).toMatchObject({
+      [PublicAccess]: {
         // role: Role.Collaborator,
         policies: {
           [ActionType.Read]: true,

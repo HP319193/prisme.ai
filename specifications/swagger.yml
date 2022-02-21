@@ -2105,6 +2105,9 @@ components:
         - email: readonly@prisme.ai
           policies:
             read: true
+        - public: true
+          policies:
+            read: true
 
     Role:
       type: string
@@ -2128,13 +2131,16 @@ components:
     UserPermissions:
       type: object
       additionalProperties: false
-      required:
-        - email
+      oneOf:
+        - required: [ "email" ]
+        - required: [ "public" ]
       properties:
         email:
           type: string
         id:
           type: string
+        public:
+          type: boolean
         role:
           $ref: '#/components/schemas/Role'
         policies:

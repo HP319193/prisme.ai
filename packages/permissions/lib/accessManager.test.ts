@@ -1,6 +1,6 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import { AccessManager, ApiKey, BaseSubject } from '..';
+import { AccessManager, BaseSubject, ApiKey, PublicAccess } from '..';
 import abacWithRoles, { Role } from '../examples/abacWithRoles';
 import apiKeys from '../examples/apiKeys';
 
@@ -209,12 +209,34 @@ describe('CRUD with a predefined role', () => {
       await adminY.create(SubjectType.Workspace, {
         name: `Y${Math.random() * 1000}`,
       }),
+      await adminY.create(SubjectType.Workspace, {
+        name: `YPublicRead${Math.random() * 1000}`,
+      }),
+      await adminY.create(SubjectType.Workspace, {
+        name: `YPublicAdmin${Math.random() * 1000}`,
+      }),
     ];
     // Grant by role
     adminYWorkspaces[0] = await adminY.grant(
       SubjectType.Workspace,
       adminYWorkspaces[0].id,
       adminZ.user!!,
+      Role.Admin
+    );
+
+    // Make a workspace public
+    adminYWorkspaces[1] = await adminY.grant(
+      SubjectType.Workspace,
+      adminYWorkspaces[1].id,
+      PublicAccess,
+      ActionType.Read
+    );
+
+    // Make a workspace publicly "admin"
+    adminYWorkspaces[2] = await adminY.grant(
+      SubjectType.Workspace,
+      adminYWorkspaces[2].id,
+      PublicAccess,
       Role.Admin
     );
 
@@ -232,7 +254,16 @@ describe('CRUD with a predefined role', () => {
       workspaces.sort((a, b) => (a.id > b.id ? 1 : -1));
 
     expect(sort(workspacesZ)).toMatchObject(
-      sort(adminZWorkspaces.concat(adminYWorkspaces))
+      sort(
+        adminZWorkspaces.concat(
+          adminYWorkspaces.map((cur) => {
+            if (cur.name.startsWith('YPublicRead')) {
+              delete cur.permissions;
+            }
+            return cur;
+          })
+        )
+      )
     );
   });
 

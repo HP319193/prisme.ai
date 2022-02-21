@@ -7,9 +7,11 @@ import {
   InvalidPermissions,
   UnknownRole,
 } from './errors';
-import { ActionType, PermissionsConfig, RoleTemplates, User } from './types';
+import { User, ActionType, RoleTemplates, PermissionsConfig } from './types';
 
 type UserId = string;
+
+export const PublicAccess = '*';
 interface Subject<Role extends string> {
   id?: string;
   permissions?: Record<
@@ -60,9 +62,11 @@ export class Permissions<
     permission: ActionType | ActionType[] | Role | SubjectCollaborator<Role>,
     subjectType: SubjectType,
     subject: Subject<Role>,
-    user: User<Role>
+    user: User<Role> | typeof PublicAccess
   ): Subject<Role> {
     this.throwUnlessCan(ActionType.ManagePermissions, subjectType, subject);
+
+    const userId: string = user === PublicAccess ? user : user.id;
 
     // Update entire user
     if (typeof permission === 'object' && !Array.isArray(permission)) {
@@ -88,7 +92,7 @@ export class Permissions<
         ...subject,
         permissions: {
           ...subject.permissions,
-          [user.id]: permission as SubjectCollaborator<Role>,
+          [userId]: permission as SubjectCollaborator<Role>,
         },
       };
     }
@@ -97,12 +101,12 @@ export class Permissions<
     const roleTemplate = this.findRoleTemplate(permission as Role, subjectType);
     if (typeof permission === 'string' && roleTemplate) {
       const role = permission as Role;
-      const contributor = subject.permissions?.[user.id] || {};
+      const contributor = subject.permissions?.[userId] || {};
       return {
         ...subject,
         permissions: {
           ...subject.permissions,
-          [user.id]: {
+          [userId]: {
             ...contributor,
             role: role,
           },
@@ -115,13 +119,13 @@ export class Permissions<
       Array.isArray(permission) ? permission : [permission]
     ) as string[];
     const { policies: currentPolicies, ...contributor } =
-      subject.permissions?.[user.id] || {};
+      subject.permissions?.[userId] || {};
 
     return {
       ...subject,
       permissions: {
         ...subject.permissions,
-        [user.id]: {
+        [userId]: {
           ...contributor,
           policies: actions.reduce(
             (policies, permission) => ({
@@ -139,9 +143,11 @@ export class Permissions<
     permission: ActionType | ActionType[] | Role | 'all',
     subjectType: SubjectType,
     subject: Subject<Role>,
-    user: User<Role>
+    user: User<Role> | typeof PublicAccess
   ) {
     this.throwUnlessCan(ActionType.ManagePermissions, subjectType, subject);
+
+    const userId: string = user === PublicAccess ? user : user.id;
 
     // Revoke a role
     const isExistingRole = !!this.findRoleTemplate(
@@ -154,10 +160,10 @@ export class Permissions<
     ) {
       const role = permission;
       const { role: currentRole, ...contributor } =
-        subject.permissions?.[user.id] || {};
+        subject.permissions?.[userId] || {};
       if (role === 'all') {
         // Revoke all policies & role
-        const { [user.id]: him, ...contributorsWithoutHim } =
+        const { [userId]: him, ...contributorsWithoutHim } =
           subject.permissions || {};
         return {
           ...subject,
@@ -173,7 +179,7 @@ export class Permissions<
         ...subject,
         permissions: {
           ...subject.permissions,
-          [user.id]: contributor,
+          [userId]: contributor,
         },
       };
     }
@@ -183,13 +189,13 @@ export class Permissions<
       ? permission
       : [permission];
     const { policies: currentPolicies, ...contributor } =
-      subject.permissions?.[user.id] || {};
+      subject.permissions?.[userId] || {};
 
     return {
       ...subject,
       permissions: {
         ...subject.permissions,
-        [user.id]: {
+        [userId]: {
           ...contributor,
           policies: Object.entries(currentPolicies || {}).reduce(
             (policies, [permission, enabled]) => {
@@ -247,11 +253,15 @@ export class Permissions<
       return;
     }
 
-    const { role } = subject.permissions?.[this.user.id] || {};
-    if (!role) {
-      return;
+    const { role: userRole } = subject.permissions?.[this.user.id] || {};
+    if (userRole) {
+      this.loadRole(userRole, subjectType, subject);
     }
-    this.loadRole(role, subjectType, subject);
+
+    const { role: publicRole } = subject.permissions?.[PublicAccess] || {};
+    if (publicRole) {
+      this.loadRole(publicRole, subjectType, subject);
+    }
   }
 
   can(
