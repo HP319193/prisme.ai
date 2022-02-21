@@ -1,10 +1,10 @@
-import { Driver, DriverOptions, SubscriptionOptions } from "..";
-import { ClientPool } from "./clientPool";
+import { Driver, DriverOptions, SubscriptionOptions } from '..';
+import { ClientPool } from './clientPool';
 
 enum RedisKey {
-  StreamPrefix = "streams:",
-  InternalPrefix = "internal:",
-  CatchAllStream = "catchall_stream",
+  StreamPrefix = 'streams:',
+  InternalPrefix = 'internal:',
+  CatchAllStream = 'catchall_stream',
 }
 
 export class RedisDriver implements Driver {
@@ -42,9 +42,9 @@ export class RedisDriver implements Driver {
   async detectServerTimeOffset() {
     const fakeMsg = await this.client.send(
       {},
-      RedisKey.InternalPrefix + "time_tests"
+      RedisKey.InternalPrefix + 'time_tests'
     );
-    const [curTime] = (fakeMsg?.id || "").split("-");
+    const [curTime] = (fakeMsg?.id || '').split('-');
     if (curTime) {
       const localTime = Date.now();
       this.serverTimeOffset = localTime - parseInt(curTime);
@@ -57,7 +57,7 @@ export class RedisDriver implements Driver {
 
   getTopicStreams(topics: string[]) {
     return topics.map((topic) => {
-      return `${RedisKey.StreamPrefix}${this.namespace || ""}${topic}`;
+      return `${RedisKey.StreamPrefix}${this.namespace || ''}${topic}`;
     }) as any as string[];
   }
 
@@ -99,7 +99,7 @@ export class RedisDriver implements Driver {
         )
       : this.client.readStreams(
           streams,
-          streams.map((curStream) => initializedLastKnownIds?.[curStream] || "")
+          streams.map((curStream) => initializedLastKnownIds?.[curStream] || '')
         ));
 
     // Transmit received events to callback

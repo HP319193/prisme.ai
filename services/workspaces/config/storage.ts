@@ -1,7 +1,7 @@
-import { FilesystemOptions } from "../src/storage/drivers/filesystem";
-import { S3Options } from "../src/storage/drivers/s3";
-import { DriverType } from "../src/storage/types";
-import { AccessManagerOptions } from "@prisme.ai/permissions";
+import { FilesystemOptions } from '../src/storage/drivers/filesystem';
+import { S3Options } from '../src/storage/drivers/s3';
+import { DriverType } from '../src/storage/types';
+import { AccessManagerOptions } from '@prisme.ai/permissions';
 
 export const WORKSPACES_STORAGE_TYPE: DriverType =
   (process.env.WORKSPACES_STORAGE_TYPE as DriverType) || DriverType.FILESYSTEM;
@@ -11,7 +11,7 @@ export const WORKSPACES_STORAGE_TYPE: DriverType =
  */
 
 export const WORKSPACES_STORAGE_FILESYSTEM_DIRPATH =
-  process.env.WORKSPACES_STORAGE_FILESYSTEM_DIRPATH || "../../data/models/";
+  process.env.WORKSPACES_STORAGE_FILESYSTEM_DIRPATH || '../../data/models/';
 
 export const WORKSPACES_STORAGE_FILESYSTEM_OPTIONS: FilesystemOptions = {
   dirpath: WORKSPACES_STORAGE_FILESYSTEM_DIRPATH,
@@ -52,9 +52,9 @@ export const WORKSPACES_STORAGE_S3_OPTIONS: S3Options = {
  */
 export const PERMISSIONS_STORAGE_HOST =
   process.env.PERMISSIONS_STORAGE_HOST ||
-  "mongodb://localhost:27017/permissions";
+  'mongodb://localhost:27017/permissions';
 
-export const PERMISSIONS_STORAGE_MONGODB_OPTIONS: AccessManagerOptions["storage"] =
+export const PERMISSIONS_STORAGE_MONGODB_OPTIONS: AccessManagerOptions['storage'] =
   {
     host: PERMISSIONS_STORAGE_HOST,
   };

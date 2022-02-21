@@ -1,11 +1,11 @@
-import { WORKSPACES_STORAGE_TYPE } from "../../../config";
-import { PrismeContext } from "../../api/middlewares";
-import { Logger } from "../../logger";
-import { broker } from "../../eda";
+import { WORKSPACES_STORAGE_TYPE } from '../../../config';
+import { PrismeContext } from '../../api/middlewares';
+import { Logger } from '../../logger';
+import { broker } from '../../eda';
 
-import WorkspacesCrud from "./crud/workspaces";
-import AutomationsCrud from "./crud/automations";
-import DSULStorage from "./DSULStorage";
+import WorkspacesCrud from './crud/workspaces';
+import AutomationsCrud from './crud/automations';
+import DSULStorage from './DSULStorage';
 
 const storage = new DSULStorage(WORKSPACES_STORAGE_TYPE);
 

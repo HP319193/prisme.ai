@@ -1,10 +1,10 @@
-import express, { NextFunction } from "express";
-import { Pipeline } from "../types";
-import { buildMiddleware } from "../policies";
-import { GatewayConfig } from "../config";
-import { logger } from "../logger";
+import express, { NextFunction } from 'express';
+import { Pipeline } from '../types';
+import { buildMiddleware } from '../policies';
+import { GatewayConfig } from '../config';
+import { logger } from '../logger';
 
-const log = logger.child({ module: "pipelines" });
+const log = logger.child({ module: 'pipelines' });
 
 export default async function init(
   app: express.Application,
@@ -16,7 +16,7 @@ export default async function init(
       const endpoint = gtwcfg.endpoint(endpointName);
       const mountPaths = endpoint.pathRegexp
         ? [RegExp(endpoint.pathRegexp)]
-        : endpoint.paths || [endpoint.path || "*"];
+        : endpoint.paths || [endpoint.path || '*'];
 
       const pipelineHandler = await configurePipeline(pipeline, gtwcfg);
       const handlers = [
@@ -28,10 +28,10 @@ export default async function init(
         if (endpoint.methods) {
           endpoint.methods.forEach((m: any) => {
             (app as any)[m.trim().toLowerCase()](path, ...handlers);
-            log.info("Init endpoint %s %s", m, path);
+            log.info('Init endpoint %s %s', m, path);
           });
         } else {
-          log.info("Init endpoint %s", path);
+          log.info('Init endpoint %s', path);
           app.all(path, ...handlers);
         }
       });
@@ -57,7 +57,7 @@ function hostFilterMiddleware(allowedHosts: string[]): express.RequestHandler {
       allowedHosts.length &&
       !allowedHosts?.some((cur) => new RegExp(cur).test(req.hostname))
     ) {
-      next("route");
+      next('route');
       return;
     }
     next();

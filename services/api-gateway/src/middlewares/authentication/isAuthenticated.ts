@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express";
-import { syscfg } from "../../config";
-import { AuthenticationError } from "../../types/errors";
+import { NextFunction, Request, Response } from 'express';
+import { syscfg } from '../../config';
+import { AuthenticationError } from '../../types/errors';
 
 export function isAuthenticated(
   req: Request,

@@ -1,4 +1,4 @@
-import BatchExecStream, { BatchExecStreamOptions } from "./BatchExecStream";
+import BatchExecStream, { BatchExecStreamOptions } from './BatchExecStream';
 
 const streams: BatchExecStream<Chunk>[] = [];
 const getStream = (opts: BatchExecStreamOptions<Chunk>) => {
@@ -48,9 +48,9 @@ const verifyReceivedChunks = (receivedChunks: Chunk[], sentChunks: Chunk[]) => {
   );
 };
 
-describe("When flushing is faster than writting", () => {
-  it("Should flush as many chunks as given (all in a row)", async () => {
-    const willSend: Chunk[] = generateChunks(["one", "two"], 200, 1000);
+describe('When flushing is faster than writting', () => {
+  it('Should flush as many chunks as given (all in a row)', async () => {
+    const willSend: Chunk[] = generateChunks(['one', 'two'], 200, 1000);
     const received: Chunk[] = [];
 
     const stream = getStream({
@@ -65,9 +65,9 @@ describe("When flushing is faster than writting", () => {
     verifyReceivedChunks(received, willSend);
   });
 
-  it("An exception raised during a flush should move processed chunks back to queue", async () => {
-    const willSend: Chunk[] = generateChunks("one", 2).concat(
-      generateChunks("two", 4)
+  it('An exception raised during a flush should move processed chunks back to queue', async () => {
+    const willSend: Chunk[] = generateChunks('one', 2).concat(
+      generateChunks('two', 4)
     );
     const received: Chunk[] = [];
 
@@ -94,10 +94,10 @@ describe("When flushing is faster than writting", () => {
   });
 });
 
-describe("When flushing is slower than writting", () => {
-  it("Should flush as many chunks as given (all in a row)", async () => {
-    const willSend: Chunk[] = generateChunks("one", 200, 300).concat(
-      generateChunks("two", 20, 100)
+describe('When flushing is slower than writting', () => {
+  it('Should flush as many chunks as given (all in a row)', async () => {
+    const willSend: Chunk[] = generateChunks('one', 200, 300).concat(
+      generateChunks('two', 20, 100)
     );
     const received: Chunk[] = [];
 
@@ -118,9 +118,9 @@ describe("When flushing is slower than writting", () => {
     verifyReceivedChunks(received, willSend);
   });
 
-  it("An exception raised during a flush should move processed chunks back to queue", async () => {
-    const willSend: Chunk[] = generateChunks("one", 200, 300).concat(
-      generateChunks("two", 20, 100)
+  it('An exception raised during a flush should move processed chunks back to queue', async () => {
+    const willSend: Chunk[] = generateChunks('one', 200, 300).concat(
+      generateChunks('two', 20, 100)
     );
     const received: Chunk[] = [];
 

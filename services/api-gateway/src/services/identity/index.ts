@@ -1,9 +1,9 @@
-import { storage } from "../../config";
-import { PrismeContext } from "../../middlewares";
-import { buildStorage, StorageDriver } from "../../storage";
-import { signup, get, login, anonymousLogin, find } from "./users";
+import { storage } from '../../config';
+import { PrismeContext } from '../../middlewares';
+import { buildStorage, StorageDriver } from '../../storage';
+import { anonymousLogin, find, get, login, signup } from './users';
 
-const Users: StorageDriver = buildStorage("Users", storage.Users);
+const Users: StorageDriver = buildStorage('Users', storage.Users);
 
 export default (ctx?: PrismeContext) => {
   return {

@@ -1,5 +1,5 @@
-import Evaluatable from "../Evaluatable";
-import { evaluateNode } from "../utils";
+import Evaluatable from '../Evaluatable';
+import { evaluateNode } from '../utils';
 
 class NegationExpression extends Evaluatable {
   node;

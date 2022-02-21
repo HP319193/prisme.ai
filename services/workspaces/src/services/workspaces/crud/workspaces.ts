@@ -1,7 +1,7 @@
-import { nanoid } from "nanoid";
-import { Broker } from "@prisme.ai/broker";
-import { EventType } from "../../../eda";
-import DSULStorage from "../DSULStorage";
+import { nanoid } from 'nanoid';
+import { Broker } from '@prisme.ai/broker';
+import { EventType } from '../../../eda';
+import DSULStorage from '../DSULStorage';
 
 class Workspaces {
   private broker: Broker;
@@ -14,7 +14,7 @@ class Workspaces {
 
   createWorkspace = async (workspace: Prismeai.Workspace) => {
     await this.storage.save(workspace.id || nanoid(7), workspace);
-    this.broker.send<Prismeai.CreatedWorkspace["payload"]>(
+    this.broker.send<Prismeai.CreatedWorkspace['payload']>(
       EventType.CreatedWorkspace,
       {
         workspace,
@@ -33,7 +33,7 @@ class Workspaces {
   ) => {
     await this.getWorkspace(workspaceId);
     await this.storage.save(workspaceId, workspace);
-    this.broker.send<Prismeai.UpdatedWorkspace["payload"]>(
+    this.broker.send<Prismeai.UpdatedWorkspace['payload']>(
       EventType.UpdatedWorkspace,
       {
         workspace,
@@ -43,11 +43,11 @@ class Workspaces {
   };
 
   deleteWorkspace = async (
-    workspaceId: PrismeaiAPI.DeleteWorkspace.PathParameters["workspaceId"]
+    workspaceId: PrismeaiAPI.DeleteWorkspace.PathParameters['workspaceId']
   ) => {
     await this.getWorkspace(workspaceId);
     await this.storage.delete(workspaceId);
-    this.broker.send<Prismeai.DeletedWorkspace["payload"]>(
+    this.broker.send<Prismeai.DeletedWorkspace['payload']>(
       EventType.DeletedWorkspace,
       {
         workspaceId,

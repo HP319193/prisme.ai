@@ -23,42 +23,42 @@ export class PrismeError extends Error implements PrismeError {
 }
 
 export class ForbiddenError extends PrismeError {
-  constructor(msg: string = "Unauthorized access", details?: any) {
-    super(msg, details, "ForbiddenError");
+  constructor(msg: string = 'Unauthorized access', details?: any) {
+    super(msg, details, 'ForbiddenError');
   }
 }
 
 export class UnknownRole extends PrismeError {
-  constructor(msg: string = "Unknown role", details?: any) {
-    super(msg, details, "UnknownRole");
+  constructor(msg: string = 'Unknown role', details?: any) {
+    super(msg, details, 'UnknownRole');
   }
 }
 
 export class UnknownSubjectType extends PrismeError {
-  constructor(msg: string = "Unknown subject type", details?: any) {
-    super(msg, details, "UnknownSubjectType");
+  constructor(msg: string = 'Unknown subject type', details?: any) {
+    super(msg, details, 'UnknownSubjectType');
   }
 }
 
 export class InvalidPermissions extends PrismeError {
-  constructor(msg: string = "Invalid collaborator", details?: any) {
-    super(msg, details, "InvalidPermissions");
+  constructor(msg: string = 'Invalid collaborator', details?: any) {
+    super(msg, details, 'InvalidPermissions');
   }
 }
 
 export class ObjectNotFoundError extends PrismeError {
-  constructor(msg: string = "Object not found") {
-    super(msg, [], "ObjectNotFoundError");
+  constructor(msg: string = 'Object not found') {
+    super(msg, [], 'ObjectNotFoundError');
   }
 }
 
 export class CollaboratorNotFound extends PrismeError {
   constructor(msg: string = "Can't find this collaborator") {
-    super(msg, [], "CollaboratorNotFound");
+    super(msg, [], 'CollaboratorNotFound');
   }
 }
 export class InvalidAPIKey extends PrismeError {
-  constructor(msg: string = "Invalid API Key") {
-    super(msg, [], "InvalidAPIKey");
+  constructor(msg: string = 'Invalid API Key') {
+    super(msg, [], 'InvalidAPIKey');
   }
 }

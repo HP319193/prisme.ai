@@ -1,7 +1,7 @@
-import { Schema } from "mongoose";
-import { Ability, RawRuleOf, MongoQuery } from "@casl/ability";
-import { User, ActionType } from "./types";
-import { RoleTemplates } from "..";
+import { Schema } from 'mongoose';
+import { Ability, MongoQuery, RawRuleOf } from '@casl/ability';
+import { ActionType, User } from './types';
+import { RoleTemplates } from '..';
 
 export interface RuleContext {
   user: User<string>;
@@ -9,18 +9,18 @@ export interface RuleContext {
 }
 
 function injectPlaceholders(value: any, ctx: RuleContext) {
-  if (typeof value !== "string") {
+  if (typeof value !== 'string') {
     return value;
   }
   return value
-    .replace("${user.id}", ctx.user.id)
-    .replace("${subject.id}", ctx.subject?.id || "");
+    .replace('${user.id}', ctx.user.id)
+    .replace('${subject.id}', ctx.subject?.id || '');
 }
 
 function injectConditions(conditions: object, ctx: RuleContext): MongoQuery {
   return Object.entries(conditions).reduce((injected, [k, v]) => {
     const injectedKey = injectPlaceholders(k, ctx);
-    if (typeof v === "object" && !Array.isArray(v)) {
+    if (typeof v === 'object' && !Array.isArray(v)) {
       return {
         ...injected,
         [injectedKey]: injectConditions(v, ctx),
@@ -63,7 +63,7 @@ export function nativeRules(
   const anySubjectPermissionsGrantEquivalentActions: RawRuleOf<Ability>[] =
     Object.values(ActionType).map((action) => ({
       action,
-      subject: "all",
+      subject: 'all',
       conditions: {
         [`permissions.\${user.id}.policies.${action}`]: true,
       },
@@ -74,7 +74,7 @@ export function nativeRules(
       subject: subjectType as string,
       action: ActionType.Read as string,
       conditions: {
-        "permissions.${user.id}.role": {
+        'permissions.${user.id}.role': {
           $exists: true,
           $in: roles
             .filter((cur) => cur.subjectType && cur.subjectType === subjectType)
@@ -88,19 +88,19 @@ export function nativeRules(
     {
       // Everyone can manage its own subject
       action: ActionType.Manage,
-      subject: "all",
-      conditions: { createdBy: "${user.id}" },
+      subject: 'all',
+      conditions: { createdBy: '${user.id}' },
     },
     {
       inverted: true,
       action: ActionType.Update,
-      subject: "all",
-      fields: ["permissions"],
+      subject: 'all',
+      fields: ['permissions'],
       conditions: {
         [`permissions.\${user.id}.policies.manage_permissions`]: {
           $ne: true,
         },
-        createdBy: { $ne: "${user.id}" },
+        createdBy: { $ne: '${user.id}' },
       },
     },
   ];
@@ -120,7 +120,7 @@ export async function validateRules(
 ) {
   for (const rule of rules) {
     const targetSubjects =
-      rule.subject === "all"
+      rule.subject === 'all'
         ? Object.keys(schemas)
         : Array.isArray(rule.subject)
         ? rule.subject
@@ -138,15 +138,15 @@ export async function validateRules(
         );
       }
       const fields = Object.keys(rule.conditions || {}).map(
-        (field) => field.split(".")[0]
+        (field) => field.split('.')[0]
       );
       const unknownFields = fields.filter(
-        (cur) => cur !== "id" && !schema.path(cur)
+        (cur) => cur !== 'id' && !schema.path(cur)
       );
       if (unknownFields.length) {
         throw new Error(
           `A permission rule condition refers to some unknown fields '${unknownFields.join(
-            ", "
+            ', '
           )}' within subject '${subject}' (these fields must be declared in corresponding schema) : ${JSON.stringify(
             rule
           )}`

@@ -1,35 +1,35 @@
-import { syscfg } from "../../config";
-import yaml from "js-yaml";
-import Validator from "validatorjs";
-import fs from "fs";
-import { Policies, policiesValidatorSchema } from "../../policies";
-import { Config } from "../gateway";
-import registerCustomRules from "./customRules";
+import { syscfg } from '../../config';
+import yaml from 'js-yaml';
+import Validator from 'validatorjs';
+import fs from 'fs';
+import { Policies, policiesValidatorSchema } from '../../policies';
+import { Config } from '../gateway';
+import registerCustomRules from './customRules';
 
 const rootSchema = {
-  endpoints: "required|object",
-  services: "required|object",
+  endpoints: 'required|object',
+  services: 'required|object',
 
-  pipelines: "required|array|min:1",
-  "pipelines.*": {
-    name: "required|string",
-    endpoints: "array:string",
-    "endpoints.*": "endpoint_exists|endpoint_used_only_once",
-    policies: "required|array|min:1",
-    "policies.*": "single_policy_in_object|valid_policy_name",
+  pipelines: 'required|array|min:1',
+  'pipelines.*': {
+    name: 'required|string',
+    endpoints: 'array:string',
+    'endpoints.*': 'endpoint_exists|endpoint_used_only_once',
+    policies: 'required|array|min:1',
+    'policies.*': 'single_policy_in_object|valid_policy_name',
   },
 };
 
 const endpointSchema = {
-  path: "required_without_all:paths,pathRegexp|string",
-  paths: "array|string",
-  pathRegexp: "string",
-  methods: "array:string",
-  hosts: "array:string",
+  path: 'required_without_all:paths,pathRegexp|string',
+  paths: 'array|string',
+  pathRegexp: 'string',
+  methods: 'array:string',
+  hosts: 'array:string',
 };
 
 const serviceSchema = {
-  url: "required|string",
+  url: 'required|string',
 };
 
 export function findConfigErrors(filepath: string) {
@@ -41,7 +41,7 @@ export function findConfigErrors(filepath: string) {
       ...errors,
       ...Object.entries(validation.errors?.errors || {}).reduce(
         (errs, [key, msg]) => ({
-          [rootKey.length ? rootKey + "." + key : key]: msg,
+          [rootKey.length ? rootKey + '.' + key : key]: msg,
         }),
         {}
       ),
@@ -49,11 +49,11 @@ export function findConfigErrors(filepath: string) {
   }
 
   const config = yaml.load(
-    (fs.readFileSync(filepath) as any) as string
+    fs.readFileSync(filepath) as any as string
   ) as Config;
   registerCustomRules(config);
 
-  validate(config, rootSchema, "");
+  validate(config, rootSchema, '');
 
   // Validate endpoints
   Object.entries(config.endpoints).forEach(([name, endpoint]) => {

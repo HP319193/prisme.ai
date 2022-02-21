@@ -1,29 +1,29 @@
-import crypto from "crypto";
-import { BaseSchema, Roles as RolesSchema } from "./schemas";
-import mongoose from "mongoose";
-import { accessibleRecordsPlugin, AccessibleRecordModel } from "@casl/mongoose";
+import crypto from 'crypto';
+import { BaseSchema, Roles as RolesSchema } from './schemas';
+import mongoose from 'mongoose';
+import { AccessibleRecordModel, accessibleRecordsPlugin } from '@casl/mongoose';
 import {
+  ActionType,
+  ApiKey,
+  BaseSubject,
+  buildFilterFieldsMethod,
+  CustomRole,
+  NativeSubjectType,
   Permissions,
   PermissionsConfig,
-  User,
-  ActionType,
-  buildFilterFieldsMethod,
-  BaseSubject,
-  UserSubject,
   SubjectCollaborator,
-  NativeSubjectType,
-  CustomRole,
-  ApiKey,
-} from "..";
-import { validateRules } from "./rulesBuilder";
+  User,
+  UserSubject,
+} from '..';
+import { validateRules } from './rulesBuilder';
 import {
   InvalidAPIKey,
   ObjectNotFoundError,
   PrismeError,
   UnknownRole,
-} from "./errors";
+} from './errors';
 
-type Document<T, Role extends string> = Omit<mongoose.Document<T>, "toJSON"> &
+type Document<T, Role extends string> = Omit<mongoose.Document<T>, 'toJSON'> &
   BaseSubject<Role> & {
     filterFields: (
       permissions: Permissions<any, Role>
@@ -33,7 +33,7 @@ type Document<T, Role extends string> = Omit<mongoose.Document<T>, "toJSON"> &
 
 export interface AccessManagerOptions<SubjectType extends string = string> {
   storage: {
-    driver?: "mongoose";
+    driver?: 'mongoose';
     host: string;
     password?: string;
   };
@@ -62,7 +62,7 @@ export class AccessManager<
     opts: AccessManagerOptions<SubjectType>,
     permissionsConfig: Omit<
       PermissionsConfig<SubjectType, Role, CustomRules>,
-      "subjectTypes"
+      'subjectTypes'
     >
   ) {
     this.opts = opts;
@@ -88,7 +88,7 @@ export class AccessManager<
         (schema as mongoose.Schema).add(BaseSchema);
 
         (schema as mongoose.Schema).method(
-          "filterFields",
+          'filterFields',
           buildFilterFieldsMethod(name as any)
         );
 
@@ -129,7 +129,7 @@ export class AccessManager<
         permissions: new Permissions(user, this.permissionsConfig),
         user: {
           ...user,
-          role: user.role || "guest",
+          role: user.role || 'guest',
         },
       });
     Object.setPrototypeOf(child, AccessManager.prototype);
@@ -177,7 +177,7 @@ export class AccessManager<
     const { permissions, user } = this;
     if (!permissions || !user) {
       throw new Error(
-        "You must call AccessManager.as(user) method before anything else."
+        'You must call AccessManager.as(user) method before anything else.'
       );
     }
     return { permissions, user };
@@ -217,7 +217,7 @@ export class AccessManager<
 
   private filterFieldsBeforeUpdate<T>(document: T | Document<T, Role>): T {
     const object: T =
-      typeof (<Document<any, Role>>document).toJSON === "function"
+      typeof (<Document<any, Role>>document).toJSON === 'function'
         ? ((<Document<any, Role>>document).toJSON() as T)
         : ({ ...document } as T);
 
@@ -233,7 +233,7 @@ export class AccessManager<
 
   async create<returnType extends SubjectType>(
     subjectType: returnType,
-    subject: Omit<SubjectInterfaces[returnType], "id"> & { id?: string }
+    subject: Omit<SubjectInterfaces[returnType], 'id'> & { id?: string }
   ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions, user } = this.checkAsUser();
     permissions.throwUnlessCan(ActionType.Create, subjectType, subject!!);
@@ -327,7 +327,7 @@ export class AccessManager<
     subjectType: returnType,
     id: string,
     user: User<Role>,
-    permission: ActionType | ActionType[] | Role | "all" = "all"
+    permission: ActionType | ActionType[] | Role | 'all' = 'all'
   ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions } = this.checkAsUser();
 
@@ -365,7 +365,7 @@ export class AccessManager<
     const { permissions } = this.checkAsUser();
 
     const subject =
-      typeof idOrSubject === "string"
+      typeof idOrSubject === 'string'
         ? await this.fetch(subjectType, idOrSubject)
         : idOrSubject;
     if (!subject) {
@@ -375,7 +375,7 @@ export class AccessManager<
     permissions.throwUnlessCan(
       actionType,
       subjectType,
-      typeof subject.toJSON === "function" ? subject.toJSON() : subject
+      typeof subject.toJSON === 'function' ? subject.toJSON() : subject
     );
 
     return true;
@@ -417,15 +417,15 @@ export class AccessManager<
   }
 
   async saveRole(
-    role: Omit<CustomRole<SubjectType, CustomRules>, "casl">
+    role: Omit<CustomRole<SubjectType, CustomRules>, 'casl'>
   ): Promise<CustomRole<SubjectType, CustomRules>> {
     if (!role.id) {
-      throw new PrismeError("A role id is required for saving");
+      throw new PrismeError('A role id is required for saving');
     }
     const rulesBuilder = this.permissionsConfig.customRulesBuilder;
     if (!rulesBuilder) {
       throw new Error(
-        "Cannot save any custom role without specifying the rules builder inside permissions config !"
+        'Cannot save any custom role without specifying the rules builder inside permissions config !'
       );
     }
     await this.throwUnlessCan(
@@ -540,7 +540,7 @@ export class AccessManager<
   ): Promise<ApiKey<SubjectType, CustomRules>[]> {
     const roles = await this.findRoles(subjectType, subjectId);
     return roles
-      .filter((cur) => cur.type === "apiKey")
+      .filter((cur) => cur.type === 'apiKey')
       .map(this.convertRoleToApiKey);
   }
 
@@ -561,7 +561,7 @@ export class AccessManager<
     const role = await this.saveRole({
       id: this.getApiKeyRoleId(apiKey, subjectType, subjectId),
       name: apiKey,
-      type: "apiKey",
+      type: 'apiKey',
       subjectType,
       subjectId,
       rules,
@@ -578,7 +578,7 @@ export class AccessManager<
     const role = await this.saveRole({
       id: this.getApiKeyRoleId(apiKey, subjectType, subjectId),
       name: apiKey,
-      type: "apiKey",
+      type: 'apiKey',
       subjectType,
       subjectId,
       rules,

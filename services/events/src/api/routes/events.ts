@@ -1,8 +1,8 @@
-import express, { Request, Response } from "express";
-import { SubjectType, ActionType } from "../../permissions";
-import services from "../../services";
-import { EventsStore, PayloadQuery } from "../../services/events/store";
-import { asyncRoute } from "../utils/async";
+import express, { Request, Response } from 'express';
+import { ActionType, SubjectType } from '../../permissions';
+import services from '../../services';
+import { EventsStore, PayloadQuery } from '../../services/events/store';
+import { asyncRoute } from '../utils/async';
 
 export function initEventsRoutes(eventsStore: EventsStore) {
   async function sendEventHandler(
@@ -55,7 +55,7 @@ export function initEventsRoutes(eventsStore: EventsStore) {
       page,
       limit,
       payloadQuery: payloadQuery as PayloadQuery,
-      types: types ? types.split(",") : undefined,
+      types: types ? types.split(',') : undefined,
     });
 
     return res.send({

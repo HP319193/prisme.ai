@@ -1,21 +1,21 @@
-"use strict";
+'use strict';
 
-import { NextFunction, Request, Response } from "express";
-import { PrismeContext } from ".";
-import { EventType } from "../../eda";
-import { ErrorSeverity, ObjectNotFoundError, PrismeError } from "../../errors";
-import { logger } from "../../logger";
+import { NextFunction, Request, Response } from 'express';
+import { PrismeContext } from '.';
+import { EventType } from '../../eda';
+import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
+import { logger } from '../../logger';
 
 enum KnownErrorCodes {
-  ObjectNotFound = "ObjectNotFoundError",
-  ForbiddenError = "ForbiddenError",
-  BrokerError = "BrokerError",
-  UnknownRole = "UnknownRole",
+  ObjectNotFound = 'ObjectNotFoundError',
+  ForbiddenError = 'ForbiddenError',
+  BrokerError = 'BrokerError',
+  UnknownRole = 'UnknownRole',
 }
 
 function errorHttpStatus(err: Error, serverError: boolean) {
   if (
-    (<any>err)?.details?.[0]?.message === "not found" ||
+    (<any>err)?.details?.[0]?.message === 'not found' ||
     err instanceof ObjectNotFoundError ||
     (err as any).error == KnownErrorCodes.ObjectNotFound
   ) {
@@ -47,7 +47,7 @@ export const errorDecorator = (
   const isKnownErrorCode =
     Object.values(KnownErrorCodes).includes(
       (err as PrismeError).error as KnownErrorCodes
-    ) || (err.stack || "").includes("PrismeError");
+    ) || (err.stack || '').includes('PrismeError');
   // Server error and stack trace is available - it is most likely a developer error
   const serverError =
     !isKnownErrorCode &&
@@ -87,7 +87,7 @@ export const finalErrorHandler = (
     .status(status)
     .json(
       status == 500
-        ? { error: "Internal", message: "Internal error" }
+        ? { error: 'Internal', message: 'Internal error' }
         : err.error
     );
 };

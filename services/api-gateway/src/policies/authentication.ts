@@ -1,13 +1,13 @@
-import express from "express";
-import { syscfg } from "../config";
-import { isAuthenticated } from "../middlewares/authentication/isAuthenticated";
+import express from 'express';
+import { syscfg } from '../config';
+import { isAuthenticated } from '../middlewares/authentication/isAuthenticated';
 
 export interface Params {
   injectUserIdHeader?: boolean;
 }
 
 export const validatorSchema = {
-  injectUserIdHeader: "boolean",
+  injectUserIdHeader: 'boolean',
 };
 
 export async function init(params: Params) {

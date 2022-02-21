@@ -1,12 +1,12 @@
-import http from "http";
-import { Application } from "express";
+import http from 'http';
+import { Application } from 'express';
 
-import sys from "./sys";
-import { initEventsRoutes } from "./events";
-import { initWebsockets } from "./websockets";
-import { Subscriptions } from "../../services/events/Subscriptions";
-import { EventsStore } from "../../services/events/store";
-import { AccessManager } from "../../permissions";
+import sys from './sys';
+import { initEventsRoutes } from './events';
+import { initWebsockets } from './websockets';
+import { Subscriptions } from '../../services/events/Subscriptions';
+import { EventsStore } from '../../services/events/store';
+import { AccessManager } from '../../permissions';
 
 export const init = (
   app: Application,
@@ -17,7 +17,7 @@ export const init = (
 ): void => {
   initWebsockets(httpServer, eventsSubscription);
 
-  const root = "/v2";
+  const root = '/v2';
   app.use(`/sys`, sys);
   app.use(
     `${root}/workspaces/:workspaceId/events`,

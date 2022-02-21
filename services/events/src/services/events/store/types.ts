@@ -1,5 +1,5 @@
 export enum StoreDriverType {
-  Elasticsearch = "elasticsearch",
+  Elasticsearch = 'elasticsearch',
 }
 
 export interface StoreDriverOptions {
@@ -14,7 +14,7 @@ export type PayloadQuery = Record<string, string>;
 
 export type SearchOptions = Omit<
   PrismeaiAPI.EventsLongpolling.QueryParameters,
-  "query" | "types"
+  'query' | 'types'
 > & {
   payloadQuery?: PayloadQuery;
   types?: string[];

@@ -1,24 +1,24 @@
-"use strict";
+'use strict';
 
-import express from "express";
-import bodyParser from "body-parser";
+import express from 'express';
+import bodyParser from 'body-parser';
 import {
   errorDecorator,
   finalErrorHandler,
   requestDecorator,
-} from "./middlewares";
-import initRoutes from "./routes";
-import { initMetrics } from "../metrics";
+} from './middlewares';
+import initRoutes from './routes';
+import { initMetrics } from '../metrics';
 import {
   validationErrorMiddleware,
   validationMiddleware,
-} from "./middlewares/validation";
-import { AccessManager, SubjectType } from "../permissions";
-import { accessManagerMiddleware } from "./middlewares/accessManager";
+} from './middlewares/validation';
+import { AccessManager, SubjectType } from '../permissions';
+import { accessManagerMiddleware } from './middlewares/accessManager';
 import {
   initApiKeysRoutes,
   initCollaboratorRoutes,
-} from "@prisme.ai/permissions";
+} from '@prisme.ai/permissions';
 
 export function initAPI(accessManager: AccessManager) {
   const app = express();
@@ -26,7 +26,7 @@ export function initAPI(accessManager: AccessManager) {
   /**
    * Get NODE_ENV from environment and store in Express.
    */
-  app.set("env", process.env.NODE_ENV);
+  app.set('env', process.env.NODE_ENV);
 
   /**
    * Morgan logger
@@ -48,7 +48,7 @@ export function initAPI(accessManager: AccessManager) {
    * For NGINX the following must be configured 'proxy_set_header X-Forwarded-For $remote_addr;'
    * @link http://expressjs.com/en/guide/behind-proxies.html
    */
-  app.set("trust proxy", true);
+  app.set('trust proxy', true);
 
   app.use(requestDecorator);
 
@@ -59,7 +59,7 @@ export function initAPI(accessManager: AccessManager) {
    */
   app.use(
     validationMiddleware({
-      ignorePaths: ["^/sys"],
+      ignorePaths: ['^/sys'],
     }),
     validationErrorMiddleware
   );

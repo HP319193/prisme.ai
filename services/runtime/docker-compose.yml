@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   redis:
     image: redis
@@ -7,7 +7,7 @@ services:
     volumes:
       - ../../data/redis:/data
     ports:
-      - "6379:6379"
+      - '6379:6379'
   runtime:
     entrypoint: node --abort-on-uncaught-exception services/runtime/dist/index.js
     image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-runtime:latest
@@ -17,7 +17,7 @@ services:
     depends_on:
       - redis
     ports:
-      - "3003:3003"
+      - '3003:3003'
     environment:
       PORT: 3003
       NODE_ENV: development

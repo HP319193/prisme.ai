@@ -1,41 +1,35 @@
-import path from "path";
-import crypto from "crypto";
-import {
-  Broker,
-  PrismeEvent,
-  EventSource,
-  NativeTopic,
-  BrokerError,
-} from "../index";
-import { SubscriptionOptions } from "./drivers";
+import path from 'path';
+import crypto from 'crypto';
+import { Broker, BrokerError, EventSource, PrismeEvent } from '../index';
+import { SubscriptionOptions } from './drivers';
 
-require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 enum EventType {
-  Error = "error",
-  SucceededLogin = "gateway.login.succeeded",
-  FailedLogin = "gateway.login.failed",
-  InstalledApp = "workspaces.app.installed",
-  ConfiguredApp = "workspaces.app.configured",
-  TriggeredWorkflow = "runtime.workflow.triggered",
-  UpdatedContexts = "runtime.contexts.updated",
+  Error = 'error',
+  SucceededLogin = 'gateway.login.succeeded',
+  FailedLogin = 'gateway.login.failed',
+  InstalledApp = 'workspaces.app.installed',
+  ConfiguredApp = 'workspaces.app.configured',
+  TriggeredWorkflow = 'runtime.workflow.triggered',
+  UpdatedContexts = 'runtime.contexts.updated',
 }
 const appInstanceEvent = {
-  app: "",
-  name: "",
+  app: '',
+  name: '',
 };
 const loginEvent = {
-  ip: "",
+  ip: '',
   attempt: 1,
 };
 const triggeredWorkflowEvent = {
   event: {},
-  workflow: "",
+  workflow: '',
 };
 const updatedContextsEvent = {
   contexts: {
     session: {
-      hello: "world",
+      hello: 'world',
     },
   },
 };
@@ -55,7 +49,7 @@ async function getBrokers(
   services: Record<string, number>,
   settings?: Record<string, Partial<SubscriptionOptions>>
 ): Promise<Record<string, Broker<CallbackContext>[]>> {
-  const prefix = crypto.randomBytes(2).toString("hex") + "_";
+  const prefix = crypto.randomBytes(2).toString('hex') + '_';
   const brokers: Record<string, Broker<CallbackContext>[]> = {};
   for (const [service, count] of Object.entries(services)) {
     brokers[service] = Array.apply(null, new Array(count)).map(
@@ -64,8 +58,8 @@ async function getBrokers(
           { service: service, name: `${service}${count}` },
           {
             driver: {
-              type: "redis",
-              host: process.env.BROKER_HOST || "redis://localhost:6379/10",
+              type: 'redis',
+              host: process.env.BROKER_HOST || 'redis://localhost:6379/10',
               subscription: {
                 ...(settings?.[service] || {}),
               },
@@ -74,8 +68,8 @@ async function getBrokers(
             validator: {
               oasFilepath:
                 process.env.EVENTS_OAS_PATH ||
-                path.resolve(__dirname, "../openapi/events.yml"),
-              whitelistEventPrefixes: ["tests."],
+                path.resolve(__dirname, '../openapi/events.yml'),
+              whitelistEventPrefixes: ['tests.'],
             },
             CallbackContextCtor: CallbackContext,
           }
@@ -100,8 +94,8 @@ const sleep = async (delay: number) =>
 
 const timeout = 200;
 
-describe("Event validation & callback errors", () => {
-  it("Should raise a validation exception", async () => {
+describe('Event validation & callback errors', () => {
+  it('Should raise a validation exception', async () => {
     const {
       dsul: [brokerDSUL],
     } = await getBrokers({ dsul: 1 });
@@ -109,12 +103,12 @@ describe("Event validation & callback errors", () => {
     await expect(resp).rejects.toThrow();
   });
 
-  it("Should emit an generic Error event when callback raises", async () => {
+  it('Should emit an generic Error event when callback raises', async () => {
     const {
       nlu: [brokerNLU1],
       dsul: [brokerDSUL],
     } = await getBrokers({ nlu: 1, dsul: 1 });
-    const error = new BrokerError("oops", { foo: "some details" });
+    const error = new BrokerError('oops', { foo: 'some details' });
     let fullMessageEvent: PrismeEvent;
     brokerNLU1.on(
       EventType.FailedLogin,
@@ -157,7 +151,7 @@ describe("Event validation & callback errors", () => {
     });
   });
 
-  it("A child broker should be passed to callbacks in order to keep same source", async () => {
+  it('A child broker should be passed to callbacks in order to keep same source', async () => {
     const {
       nlu: [brokerNLU1],
       dsul: [brokerDSUL],
@@ -197,8 +191,8 @@ describe("Event validation & callback errors", () => {
       }
     );
     const source = {
-      userId: "someUserId",
-      workspaceId: "someWorkspaceId",
+      userId: 'someUserId',
+      workspaceId: 'someWorkspaceId',
     };
     brokerDSUL.send(EventType.InstalledApp, appInstanceEvent, source);
     return cascadingEventPromise.then((event: PrismeEvent) => {
@@ -212,7 +206,7 @@ describe("Event validation & callback errors", () => {
     });
   });
 
-  it("Unacknowledged events read by a consumer group should be set as pending", async () => {
+  it('Unacknowledged events read by a consumer group should be set as pending', async () => {
     const {
       nlu: [brokerNLU1],
       dsul: [brokerDSUL],
@@ -246,7 +240,7 @@ describe("Event validation & callback errors", () => {
   });
 });
 
-describe("Basic messaging without partitions", () => {
+describe('Basic messaging without partitions', () => {
   it(`Broker should send & receive < ${timeout}ms without partition, & with source field properly filled`, async () => {
     const {
       nlu: [brokerNLU1],
@@ -277,13 +271,13 @@ describe("Basic messaging without partitions", () => {
     ).then((event) => {
       expect(event).not.toBe(false);
       expect(event?.type).toBe(EventType.UpdatedContexts);
-      expect(event?.payload?.contexts?.session?.hello).toBe("world");
+      expect(event?.payload?.contexts?.session?.hello).toBe('world');
       expect(event?.source?.host?.service).toBe(brokerAnalytics1.service);
-      expect(typeof event?.source?.host?.ip).toBe("string");
-      expect(typeof event?.createdAt).toBe("string");
-      expect(typeof event?.source.correlationId).toBe("string");
+      expect(typeof event?.source?.host?.ip).toBe('string');
+      expect(typeof event?.createdAt).toBe('string');
+      expect(typeof event?.source.correlationId).toBe('string');
       expect(event?.source.correlationId).toMatch(
-        new RegExp("[a-zA-Z0-9_-]{16,}")
+        new RegExp('[a-zA-Z0-9_-]{16,}')
       );
     });
   });
@@ -295,15 +289,15 @@ describe("Basic messaging without partitions", () => {
     } = await getBrokers({ nlu: 1, analytics: 1 });
 
     const willSend = {
-      ["tests.one"]: 1,
-      ["tests.three"]: 3,
-      ["tests.two"]: 2,
+      ['tests.one']: 1,
+      ['tests.three']: 3,
+      ['tests.two']: 2,
     };
 
     const received: Record<string, number> = {
-      ["tests.one"]: 0,
-      ["tests.three"]: 0,
-      ["tests.two"]: 0,
+      ['tests.one']: 0,
+      ['tests.three']: 0,
+      ['tests.two']: 0,
     };
 
     return maxTimeout(
@@ -378,7 +372,7 @@ describe("Basic messaging without partitions", () => {
 
       brokerDSUL.send(EventType.UpdatedContexts, updatedContextsEvent)
     ).then((results) => {
-      expect(typeof results?.[0]?.id).toBe("string");
+      expect(typeof results?.[0]?.id).toBe('string');
       expect(results?.[0]?.id).toBe(results?.[1]?.id);
     });
   });
@@ -390,15 +384,15 @@ describe("Basic messaging without partitions", () => {
     } = await getBrokers({ nlu: 2, analytics: 1 });
 
     const willSend = {
-      ["tests.one"]: 1,
-      ["tests.three"]: 3,
-      ["tests.two"]: 2,
+      ['tests.one']: 1,
+      ['tests.three']: 3,
+      ['tests.two']: 2,
     };
 
     const received: Record<string, number> = {
-      ["tests.one"]: 0,
-      ["tests.three"]: 0,
-      ["tests.two"]: 0,
+      ['tests.one']: 0,
+      ['tests.three']: 0,
+      ['tests.two']: 0,
     };
 
     return maxTimeout(
@@ -436,7 +430,7 @@ describe("Basic messaging without partitions", () => {
   });
 });
 
-describe("Basic messaging with partitions", () => {
+describe('Basic messaging with partitions', () => {
   it(`Broker should send & receive < ${timeout}ms with partition`, async () => {
     const {
       nlu: [brokerNLU1],
@@ -464,7 +458,7 @@ describe("Basic messaging with partitions", () => {
       })
     ).then((event) => {
       expect(event).not.toBe(false);
-      expect(event?.payload?.contexts?.session?.hello).toBe("world");
+      expect(event?.payload?.contexts?.session?.hello).toBe('world');
     });
   });
 
@@ -517,7 +511,7 @@ describe("Basic messaging with partitions", () => {
       dsul: [brokerDSUL],
     } = await getBrokers({ nlu: 1, dsul: 1 });
 
-    const topic = "someCustomTopic";
+    const topic = 'someCustomTopic';
     return maxTimeout(
       2000,
       new Promise(async (resolve) => {
@@ -546,15 +540,15 @@ describe("Basic messaging with partitions", () => {
     } = await getBrokers({ nlu: 2, analytics: 1 });
 
     const willSend = {
-      ["tests.one"]: 1,
-      ["tests.three"]: 3,
-      ["tests.two"]: 2,
+      ['tests.one']: 1,
+      ['tests.three']: 3,
+      ['tests.two']: 2,
     };
 
     const received: Record<string, number> = {
-      ["tests.one"]: 0,
-      ["tests.three"]: 0,
-      ["tests.two"]: 0,
+      ['tests.one']: 0,
+      ['tests.three']: 0,
+      ['tests.two']: 0,
     };
 
     return maxTimeout(
@@ -598,15 +592,15 @@ describe("Basic messaging with partitions", () => {
     } = await getBrokers({ nlu: 2, analytics: 1 });
 
     const willSend = {
-      ["tests.one"]: 1,
-      ["tests.three"]: 3,
-      ["tests.two"]: 2,
+      ['tests.one']: 1,
+      ['tests.three']: 3,
+      ['tests.two']: 2,
     };
 
     const received: Record<string, number> = {
-      ["tests.one"]: 0,
-      ["tests.three"]: 0,
-      ["tests.two"]: 0,
+      ['tests.one']: 0,
+      ['tests.three']: 0,
+      ['tests.two']: 0,
     };
 
     return maxTimeout(
@@ -645,7 +639,7 @@ describe("Basic messaging with partitions", () => {
   });
 });
 
-describe("More complex messaging spread over time", () => {
+describe('More complex messaging spread over time', () => {
   const msgsToSend = 10;
   it(`${msgsToSend} messages sent to 1 group of 2 instances + 2 other instances listening without group`, async () => {
     const {

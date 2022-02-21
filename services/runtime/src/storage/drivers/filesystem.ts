@@ -1,14 +1,14 @@
-import { IStorage } from "../types";
-import { join, dirname } from "path";
-import fs from "fs";
-import { ErrorSeverity, ObjectNotFoundError, PrismeError } from "../../errors";
+import { IStorage } from '../types';
+import { dirname, join } from 'path';
+import fs from 'fs';
+import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 
 export interface FilesystemOptions {
   dirpath?: string;
 }
 
 const defaultFilesystemOptions: Partial<FilesystemOptions> = {
-  dirpath: join(__dirname, "../../../models"),
+  dirpath: join(__dirname, '../../../models'),
 };
 
 const mkdir = (path: string, recursive: boolean = true) => {
@@ -23,11 +23,11 @@ export default class Filesystem implements IStorage {
       ...options,
       dirpath: options.dirpath || defaultFilesystemOptions.dirpath,
     };
-    mkdir(this.options.dirpath || "");
+    mkdir(this.options.dirpath || '');
   }
 
   private getPath(key: string) {
-    return join(this.options.dirpath || "", key);
+    return join(this.options.dirpath || '', key);
   }
 
   async get(key: string) {
@@ -49,7 +49,7 @@ export default class Filesystem implements IStorage {
       fs.writeFile(filepath, data, (err) => {
         if (err) {
           reject(
-            new PrismeError("Failed to save file", err, ErrorSeverity.Fatal)
+            new PrismeError('Failed to save file', err, ErrorSeverity.Fatal)
           );
         }
         resolve({ success: true });
@@ -65,7 +65,7 @@ export default class Filesystem implements IStorage {
         resolve({ success: true });
       } catch (e) {
         reject(
-          new PrismeError("Failed to delete file", e, ErrorSeverity.Fatal)
+          new PrismeError('Failed to delete file', e, ErrorSeverity.Fatal)
         );
       }
     });

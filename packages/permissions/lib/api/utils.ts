@@ -1,6 +1,6 @@
-import { Broker } from "@prisme.ai/broker";
-import { NextFunction, Request, Response } from "express";
-import { AccessManager } from "../..";
+import { Broker } from '@prisme.ai/broker';
+import { NextFunction, Request, Response } from 'express';
+import { AccessManager } from '../..';
 
 export type InstantiatedAccessManager<
   SubjectType extends string,

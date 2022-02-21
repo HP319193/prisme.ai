@@ -1,14 +1,14 @@
-import { RequestHandler } from "express";
-import { GatewayConfig } from "../config";
+import { RequestHandler } from 'express';
+import { GatewayConfig } from '../config';
 
-import * as proxy from "./proxy";
-import * as authentication from "./authentication";
-import * as blacklist from "./blacklist";
+import * as proxy from './proxy';
+import * as authentication from './authentication';
+import * as blacklist from './blacklist';
 
 export enum PolicyType {
-  Proxy = "proxy",
-  PrismeAuth = "authentication",
-  Blacklist = "blacklist",
+  Proxy = 'proxy',
+  PrismeAuth = 'authentication',
+  Blacklist = 'blacklist',
 }
 
 export interface Policies {

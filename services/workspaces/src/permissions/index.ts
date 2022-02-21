@@ -2,8 +2,8 @@ import {
   AccessManager as GenericAccessManager,
   AccessManagerOptions,
   ActionType,
-} from "@prisme.ai/permissions";
-import { SubjectType, Role, config } from "./config";
+} from '@prisme.ai/permissions';
+import { config, Role, SubjectType } from './config';
 
 export { SubjectType, Role, ActionType };
 
@@ -17,7 +17,7 @@ export type AccessManager = GenericAccessManager<
   Prismeai.Role
 >;
 
-export function initAccessManager(storage: AccessManagerOptions["storage"]) {
+export function initAccessManager(storage: AccessManagerOptions['storage']) {
   return new GenericAccessManager<
     SubjectType,
     SubjectInterfaces,

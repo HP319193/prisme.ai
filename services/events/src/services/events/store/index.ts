@@ -1,8 +1,8 @@
-export * from "./types";
+export * from './types';
 
-import { StoreDriverType, StoreDriverOptions } from "./types";
-import { ElasticsearchStore } from "./ElasticsearchStore";
-import { ConfigurationError } from "../../../errors";
+import { StoreDriverOptions, StoreDriverType } from './types';
+import { ElasticsearchStore } from './ElasticsearchStore';
+import { ConfigurationError } from '../../../errors';
 
 export function buildEventsStore(opts: StoreDriverOptions) {
   switch (opts.driver) {

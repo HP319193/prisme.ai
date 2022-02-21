@@ -1,8 +1,8 @@
-import fs from "fs";
-import { default as dump } from "heapdump";
-import { HEAPDUMPS_DIRECTORY } from "../../../config";
-import { logger, Logger } from "../../logger";
-import { throttle } from "../../utils/throttle";
+import fs from 'fs';
+import { default as dump } from 'heapdump';
+import { HEAPDUMPS_DIRECTORY } from '../../../config';
+import { logger, Logger } from '../../logger';
+import { throttle } from '../../utils/throttle';
 
 let heapdumpsDirectory = HEAPDUMPS_DIRECTORY;
 try {
@@ -11,14 +11,14 @@ try {
   logger.error(
     `Could not create heapdump '${HEAPDUMPS_DIRECTORY}' directory : ${error} `
   );
-  heapdumpsDirectory = ".";
+  heapdumpsDirectory = '.';
 }
 
 export const unthrottledHeapdump = (logger: Logger) => async () => {
   dump.writeSnapshot(
     `${heapdumpsDirectory}/heapdump-${Date.now()}`,
     (err, filename) => {
-      logger.info("Heapdump written to", filename);
+      logger.info('Heapdump written to', filename);
     }
   );
 };

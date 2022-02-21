@@ -1,17 +1,17 @@
-import { PermissionsConfig, ActionType } from "..";
+import { ActionType, PermissionsConfig } from '..';
 
 export enum SubjectType {
-  User = "user",
-  Workspace = "workspace",
-  Page = "page",
-  Event = "event",
-  Platform = "platform",
+  User = 'user',
+  Workspace = 'workspace',
+  Page = 'page',
+  Event = 'event',
+  Platform = 'platform',
 }
 
 enum Role {
-  Admin = "admin",
-  Collaborator = "collaborator",
-  Guest = "guest",
+  Admin = 'admin',
+  Collaborator = 'collaborator',
+  Guest = 'guest',
 }
 
 const config: PermissionsConfig<SubjectType, Role> = {

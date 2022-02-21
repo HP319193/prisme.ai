@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { createProxyMiddleware } from "http-proxy-middleware";
-import { GatewayConfig } from "../config";
+import { NextFunction, Request, Response } from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import { GatewayConfig } from '../config';
 
 export interface Params {
   service: string;
@@ -15,13 +15,13 @@ export interface Params {
 }
 
 export const validatorSchema = {
-  service: "required|string|service_exists",
-  websockets: "boolean",
+  service: 'required|string|service_exists',
+  websockets: 'boolean',
   pathRewrite: {},
-  "pathRewrite.*": "string",
+  'pathRewrite.*': 'string',
   router: {},
-  "router.*": "string",
-  timeout: "number", // seconds
+  'router.*': 'string',
+  timeout: 'number', // seconds
 };
 
 export async function init(params: Params, gtwcfg: GatewayConfig) {

@@ -1,7 +1,7 @@
-import { Broker, PendingEvents, PrismeEvent } from "@prisme.ai/broker";
+import { Broker, PendingEvents, PrismeEvent } from '@prisme.ai/broker';
 
-import { eda as edaConfig } from "../config";
-import { Logger, logger } from "../logger";
+import { eda as edaConfig } from '../config';
+import { Logger, logger } from '../logger';
 
 const {
   APP_NAME,
@@ -15,9 +15,9 @@ const {
 } = edaConfig;
 
 export enum EventType {
-  Error = "error",
-  SucceededLogin = "gateway.login.succeeded",
-  FailedLogin = "gateway.login.failed",
+  Error = 'error',
+  SucceededLogin = 'gateway.login.succeeded',
+  FailedLogin = 'gateway.login.failed',
 }
 export class CallbackContext {
   public logger: Logger;

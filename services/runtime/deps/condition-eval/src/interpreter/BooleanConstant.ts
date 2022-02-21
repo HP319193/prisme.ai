@@ -1,4 +1,4 @@
-import Constant from "../Constant";
+import Constant from '../Constant';
 
 class BooleanConstant extends Constant {}
 

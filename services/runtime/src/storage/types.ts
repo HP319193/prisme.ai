@@ -7,6 +7,6 @@ export interface IStorage {
 }
 
 export enum DriverType {
-  S3_LIKE = "S3_LIKE",
-  FILESYSTEM = "FILESYSTEM",
+  S3_LIKE = 'S3_LIKE',
+  FILESYSTEM = 'FILESYSTEM',
 }

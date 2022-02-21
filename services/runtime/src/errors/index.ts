@@ -1,6 +1,6 @@
-import { LogLevel } from "../logger";
+import { LogLevel } from '../logger';
 
-export * from "./handlers";
+export * from './handlers';
 
 export enum ErrorSeverity {
   Fatal = LogLevel.Fatal,
@@ -36,21 +36,21 @@ export class PrismeError extends Error implements PrismeError {
 }
 
 export class ObjectNotFoundError extends PrismeError {
-  constructor(msg: string = "Object not found", details?: any) {
+  constructor(msg: string = 'Object not found', details?: any) {
     super(msg, details);
   }
 }
 
 export class TooManyCallError extends PrismeError {
   constructor(
-    msg: string = "Reached maximum number of successive calls",
+    msg: string = 'Reached maximum number of successive calls',
     details: { limit: number }
   ) {
     super(msg, details);
   }
 }
 export class InvalidEventError extends PrismeError {
-  constructor(msg: string = "Trying to send an invalid event", details?: any) {
+  constructor(msg: string = 'Trying to send an invalid event', details?: any) {
     super(msg, details);
   }
 }
@@ -65,13 +65,13 @@ export class InvalidVariableNameError extends PrismeError {
 }
 
 export class InvalidSetInstructionError extends PrismeError {
-  constructor(msg: string = "Invalid set instruction", details?: any) {
+  constructor(msg: string = 'Invalid set instruction', details?: any) {
     super(msg, details);
   }
 }
 
 export class InvalidConditionSyntax extends PrismeError {
-  constructor(msg: string = "Invalid syntax in a condition", details?: any) {
+  constructor(msg: string = 'Invalid syntax in a condition', details?: any) {
     super(msg, details);
   }
 }

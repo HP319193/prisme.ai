@@ -1,6 +1,6 @@
-"use strict";
-import http from "http";
-import express from "express";
+'use strict';
+import http from 'http';
+import express from 'express';
 import {
   APP_NAME,
   EVENTS_BUFFER_FLUSH_AT,
@@ -9,26 +9,26 @@ import {
   EVENTS_STORAGE_ES_OPTIONS,
   PERMISSIONS_STORAGE_MONGODB_OPTIONS,
   PORT,
-} from "../config";
+} from '../config';
 
-import { initAPI } from "./api";
-import { broker } from "./eda";
-import { uncaughtExceptionHandler } from "./errors";
-import "@prisme.ai/types";
-import { Subscriptions } from "./services/events/Subscriptions";
-import BatchExecStream from "./utils/BatchExecStream";
-import { buildEventsStore } from "./services/events/store";
-import { initAccessManager } from "./permissions";
+import { initAPI } from './api';
+import { broker } from './eda';
+import { uncaughtExceptionHandler } from './errors';
+import '@prisme.ai/types';
+import { Subscriptions } from './services/events/Subscriptions';
+import BatchExecStream from './utils/BatchExecStream';
+import { buildEventsStore } from './services/events/store';
+import { initAccessManager } from './permissions';
 
-process.on("uncaughtException", uncaughtExceptionHandler);
+process.on('uncaughtException', uncaughtExceptionHandler);
 
 async function exit() {
   await broker.close();
   httpServer.close();
   process.exit(0);
 }
-process.on("SIGTERM", exit);
-process.on("SIGINT", exit);
+process.on('SIGTERM', exit);
+process.on('SIGINT', exit);
 
 const app = express();
 const httpServer = http.createServer(app);

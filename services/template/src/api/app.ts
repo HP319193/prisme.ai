@@ -1,25 +1,25 @@
-"use strict";
+'use strict';
 
-import express from "express";
-import bodyParser from "body-parser";
+import express from 'express';
+import bodyParser from 'body-parser';
 import {
   errorDecorator,
   finalErrorHandler,
   requestDecorator,
-} from "./middlewares";
-import initRoutes from "./routes";
-import { initMetrics } from "../metrics";
+} from './middlewares';
+import initRoutes from './routes';
+import { initMetrics } from '../metrics';
 import {
   validationErrorMiddleware,
   validationMiddleware,
-} from "./middlewares/validation";
+} from './middlewares/validation';
 
 const app = express();
 
 /**
  * Get NODE_ENV from environment and store in Express.
  */
-app.set("env", process.env.NODE_ENV);
+app.set('env', process.env.NODE_ENV);
 
 /**
  * Morgan logger
@@ -41,7 +41,7 @@ initMetrics(app);
  * For NGINX the following must be configured 'proxy_set_header X-Forwarded-For $remote_addr;'
  * @link http://expressjs.com/en/guide/behind-proxies.html
  */
-app.set("trust proxy", true);
+app.set('trust proxy', true);
 
 app.use(requestDecorator);
 
@@ -50,7 +50,7 @@ app.use(requestDecorator);
  */
 app.use(
   validationMiddleware({
-    ignorePaths: ["^/sys"],
+    ignorePaths: ['^/sys'],
   }),
   validationErrorMiddleware
 );

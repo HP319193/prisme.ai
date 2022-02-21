@@ -1,10 +1,10 @@
-export * from "./types";
-import { StorageOptions, StorageDriver } from ".";
-import { MongodbDriver } from "./mongodb";
-import { ConfigurationError } from "../types/errors";
+export * from './types';
+import { StorageDriver, StorageOptions } from '.';
+import { MongodbDriver } from './mongodb';
+import { ConfigurationError } from '../types/errors';
 
 export enum StorageDriverType {
-  Mongodb = "mongodb",
+  Mongodb = 'mongodb',
 }
 
 const createdDrivers: StorageDriver[] = [];

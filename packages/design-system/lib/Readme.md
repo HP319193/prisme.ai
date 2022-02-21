@@ -13,7 +13,6 @@ Same for the "Feed" component, which uses only basic elements.
 The groups are elements which uses multiple Components, and serve a business-logic purpose.
 For example, the "Feed Header" serve a specific component or use.
 
-
 ## Pages
 
 The pages are the layout and templating of various groups or components to offer a web-application

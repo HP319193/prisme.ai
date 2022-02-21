@@ -1,6 +1,6 @@
-export * from "./redis";
-import { RedisDriver } from "./redis";
-import { PrismeEvent, Consumer } from "../events";
+export * from './redis';
+import { RedisDriver } from './redis';
+import { Consumer, PrismeEvent } from '../events';
 
 export interface SubscriptionOptions {
   // If true, each event will be received by a single instance of each distinct microservice
@@ -24,7 +24,7 @@ export interface PendingEvents {
 export interface Driver {
   ready: Promise<boolean>;
 
-  send: (event: Omit<PrismeEvent, "id">, topic: string) => Promise<PrismeEvent>;
+  send: (event: Omit<PrismeEvent, 'id'>, topic: string) => Promise<PrismeEvent>;
   on(
     topic: string | string[],
     cb: (event: PrismeEvent) => boolean | Promise<boolean>,
@@ -55,7 +55,7 @@ export interface DriverOptions {
 
 export function driver(opts: DriverOptions) {
   switch (opts.type) {
-    case "redis":
+    case 'redis':
       return new RedisDriver(opts);
     default:
       throw new Error(`Unknown driver ${opts.type}`);

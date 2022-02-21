@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import { CORRELATION_ID_HEADER, USER_ID_HEADER } from "../../../config";
-import { broker } from "../../eda";
-import { logger } from "../../logger";
-import { uniqueId } from "../../utils";
+import { NextFunction, Request, Response } from 'express';
+import { CORRELATION_ID_HEADER, USER_ID_HEADER } from '../../../config';
+import { broker } from '../../eda';
+import { logger } from '../../logger';
+import { uniqueId } from '../../utils';
 
 export interface HTTPContext {
   hostname: string;

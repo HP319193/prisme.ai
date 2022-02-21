@@ -1,2 +1,2 @@
-export * from "./gateway";
-export * as errors from "./errors";
+export * from './gateway';
+export * as errors from './errors';

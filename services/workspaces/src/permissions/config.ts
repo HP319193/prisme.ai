@@ -1,7 +1,7 @@
-import { PermissionsConfig, ActionType } from "@prisme.ai/permissions";
+import { ActionType, PermissionsConfig } from '@prisme.ai/permissions';
 
 export enum SubjectType {
-  Workspace = "workspaces",
+  Workspace = 'workspaces',
 }
 
 export enum Role {
@@ -9,12 +9,12 @@ export enum Role {
   // 1. Manage permissions + API keys
   // 2. View all workspace events
   // 3. Has full CRUD permissions on the workspace, installed apps & pages
-  Owner = "owner",
+  Owner = 'owner',
 
   // Editor can :
   // 2. View all workspace events except API key & permissions ones
   // 3. Has CRUD permissions except delete on the workspace, installed apps & pages
-  Editor = "editor",
+  Editor = 'editor',
 }
 
 export const config: PermissionsConfig<
@@ -33,7 +33,7 @@ export const config: PermissionsConfig<
           subject: SubjectType.Workspace,
           conditions: {
             // This role only applies to a specific workspace !
-            id: "${subject.id}",
+            id: '${subject.id}',
           },
         },
       ],
@@ -48,7 +48,7 @@ export const config: PermissionsConfig<
           subject: SubjectType.Workspace,
           conditions: {
             // This role only applies to a specific workspace !
-            id: "${subject.id}",
+            id: '${subject.id}',
           },
         },
       ],

@@ -1,5 +1,5 @@
-const fs = require("fs");
-const yaml = require("js-yaml");
+const fs = require('fs');
+const yaml = require('js-yaml');
 
 const schema = fs.readFileSync(
   `${__dirname}/../../../specifications/swagger.yml`
@@ -20,7 +20,7 @@ export const validate${validator} = ajv.compile({
 });
 `
   )
-  .join("")}
+  .join('')}
 export default ajv
 `;
 
