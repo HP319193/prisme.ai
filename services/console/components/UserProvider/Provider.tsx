@@ -16,10 +16,7 @@ export const UserProvider: FC = ({ children }) => {
   const signin: UserContext['signin'] = useCallback(async (email, password) => {
     setLoading(true);
     try {
-      const {
-        headers: { ['x-prismeai-session-token']: token },
-        ...user
-      } = await api.signin(email, password);
+      const { token, ...user } = await api.signin(email, password);
       api.token = token;
       setError(undefined);
       setUser(user);
@@ -38,10 +35,12 @@ export const UserProvider: FC = ({ children }) => {
     async (email, password, firstName, lastName) => {
       setLoading(true);
       try {
-        const {
-          headers: { ['x-prismeai-session-token']: token },
-          ...user
-        } = await api.signup(email, password, firstName, lastName);
+        const { token, ...user } = await api.signup(
+          email,
+          password,
+          firstName,
+          lastName
+        );
         api.token = token;
         setError(undefined);
         setUser(user);

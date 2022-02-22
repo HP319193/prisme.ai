@@ -2,6 +2,7 @@ import { Storage } from '../utils/Storage';
 import ApiError from './ApiError';
 import HTTPError from './HTTPError';
 
+const TOKEN_KEY = 'prisme-auth-token';
 const headersAsObject = (headers: Headers) =>
   Array.from(headers).reduce(
     (prev, [k, v]) => ({
@@ -16,14 +17,14 @@ export class Fetcher {
 
   set token(v: string | null) {
     if (v) {
-      Storage.set('auth-token', v);
+      Storage.set(TOKEN_KEY, v);
     } else {
-      Storage.remove('auth-token');
+      Storage.remove(TOKEN_KEY);
     }
   }
 
   private get _token() {
-    return Storage.get('auth-token');
+    return Storage.get(TOKEN_KEY);
   }
 
   constructor(host: string) {
@@ -37,7 +38,6 @@ export class Fetcher {
     }
     const res = await global.fetch(`${this.host}${url}`, {
       ...options,
-      credentials: 'include',
       headers: {
         ...headers,
         'Access-Control-Allow-Origin': '*',

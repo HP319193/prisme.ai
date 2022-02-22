@@ -4,7 +4,7 @@ import HTTPError from './HTTPError';
 import Storage from '../utils/Storage';
 
 beforeEach(() => {
-  Storage.remove('auth-token');
+  Storage.remove('prisme-auth-token');
 });
 it('should fetch', async () => {
   const fetcher = new Fetcher('http/');
@@ -197,5 +197,5 @@ it('should delete token', () => {
   const fetcher = new Fetcher('http/');
   jest.spyOn(Storage, 'remove');
   fetcher.token = null;
-  expect(Storage.remove).toHaveBeenCalledWith('auth-token');
+  expect(Storage.remove).toHaveBeenCalledWith('prisme-auth-token');
 });

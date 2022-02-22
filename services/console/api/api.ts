@@ -17,9 +17,7 @@ export class Api extends Fetcher {
     password: string
   ): Promise<
     Prismeai.User & {
-      headers: {
-        ['x-prismeai-session-token']: string;
-      };
+      token: string;
     }
   > {
     return await this.post('/login', {
@@ -35,9 +33,7 @@ export class Api extends Fetcher {
     lastName: string
   ): Promise<
     Prismeai.User & {
-      headers: {
-        ['x-prismeai-session-token']: string;
-      };
+      token: string;
     }
   > {
     return await this.post('/signup', {
