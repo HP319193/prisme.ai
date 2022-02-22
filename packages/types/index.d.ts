@@ -1614,8 +1614,8 @@ declare namespace PrismeaiAPI {
     }
     namespace SearchApps {
         namespace Parameters {
-            export type Limit = string;
-            export type Page = string;
+            export type Limit = number;
+            export type Page = number;
             export type Query = string;
         }
         export interface QueryParameters {

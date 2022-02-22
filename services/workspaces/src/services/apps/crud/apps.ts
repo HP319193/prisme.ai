@@ -5,7 +5,11 @@ import DSULStorage from '../../DSULStorage';
 import { AccessManager, SubjectType } from '../../../permissions';
 import { workspaces as workspacesServices } from '../..';
 import { PrismeError } from '../../../errors';
+import { FindOptions } from '@prisme.ai/permissions';
 
+export interface ListAppsQuery {
+  query?: string;
+}
 class Apps {
   private accessManager: Required<AccessManager>;
   private workspaces: ReturnType<typeof workspacesServices>;
@@ -24,8 +28,18 @@ class Apps {
     this.storage = storage;
   }
 
-  listApps = async () => {
-    return await this.accessManager.findAll(SubjectType.App);
+  listApps = async (query?: ListAppsQuery, opts?: FindOptions) => {
+    return await this.accessManager.findAll(
+      SubjectType.App,
+      query?.query?.length
+        ? {
+            $text: {
+              $search: query?.query,
+            },
+          }
+        : {},
+      opts
+    );
   };
 
   publishApp = async (app: Prismeai.App) => {

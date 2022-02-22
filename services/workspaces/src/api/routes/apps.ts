@@ -58,12 +58,23 @@ async function listAppsHandler(
     logger,
     context,
     accessManager,
+    query: { query, page, limit },
   }: Request<any, any, any, PrismeaiAPI.SearchApps.QueryParameters>,
   res: Response<PrismeaiAPI.SearchApps.Responses.$200>
 ) {
   const workspaces = services.workspaces(accessManager, logger, context);
   const apps = services.apps(accessManager, workspaces, logger, context);
-  const result = await apps.listApps();
+  const result = await apps.listApps(
+    {
+      query,
+    },
+    {
+      pagination: {
+        page,
+        limit,
+      },
+    }
+  );
   res.send(result);
 }
 

@@ -44,6 +44,15 @@ export interface AccessManagerOptions<SubjectType extends string = string> {
   >;
 }
 
+export interface FindOptions {
+  pagination?: {
+    page?: number;
+    limit?: number;
+  };
+}
+
+const DEFAULT_FIND_PAGE_SIZE = 20;
+
 export class AccessManager<
   SubjectType extends string,
   SubjectInterfaces extends { [k in SubjectType]: UserSubject },
@@ -188,19 +197,21 @@ export class AccessManager<
     subjectType: returnType,
     additionalQuery?: mongoose.FilterQuery<
       Document<SubjectInterfaces[returnType], Role>
-    >
+    >,
+    opts?: FindOptions
   ): Promise<(SubjectInterfaces[returnType] & BaseSubject<Role>)[]> {
     const { permissions } = this.checkAsUser();
     const Model = this.model(subjectType);
-    const query = Model.accessibleBy(
-      permissions.ability,
-      ActionType.Read
-    ).getQuery();
+    const mongoQuery = Model.accessibleBy(permissions.ability, ActionType.Read);
 
+    const { page = 0, limit = DEFAULT_FIND_PAGE_SIZE } = opts?.pagination || {};
     const accessibleSubjects = await Model.find({
       ...additionalQuery,
-      ...query,
-    });
+      ...mongoQuery.getQuery(),
+    })
+      .skip(page * limit)
+      .limit(limit);
+
     return accessibleSubjects
       .filter((cur) =>
         permissions.can(ActionType.Read, subjectType, cur.toJSON())

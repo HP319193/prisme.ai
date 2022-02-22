@@ -70,10 +70,20 @@ async function deleteWorkspaceHandler(
 async function getWorkspacesHandler(
   {
     accessManager,
+    query: { limit, page },
   }: Request<any, any, any, PrismeaiAPI.GetWorkspaces.QueryParameters>,
   res: Response<PrismeaiAPI.GetWorkspaces.Responses.$200>
 ) {
-  const result = await accessManager.findAll(SubjectType.Workspace);
+  const result = await accessManager.findAll(
+    SubjectType.Workspace,
+    {},
+    {
+      pagination: {
+        limit,
+        page,
+      },
+    }
+  );
   res.send(result);
 }
 

@@ -35,7 +35,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           workspaceId: { type: String, index: true },
           versions: Schema.Types.Mixed,
           description: Schema.Types.Mixed,
-          name: String,
+          name: { type: String, text: true },
           photo: String,
         },
       },
