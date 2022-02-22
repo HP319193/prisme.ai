@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { BaseSchema, Roles as RolesSchema } from './schemas';
 import mongoose from 'mongoose';
-import { AccessibleRecordModel, accessibleRecordsPlugin } from '@casl/mongoose';
+import { accessibleRecordsPlugin, AccessibleRecordModel } from '@casl/mongoose';
 import {
   ActionType,
   ApiKey,
@@ -14,6 +14,7 @@ import {
   SubjectCollaborator,
   User,
   UserSubject,
+  PublicAccess,
 } from '..';
 import { validateRules } from './rulesBuilder';
 import {
@@ -301,7 +302,7 @@ export class AccessManager<
   async grant<returnType extends SubjectType>(
     subjectType: returnType,
     id: string,
-    user: User<Role>,
+    user: User<Role> | typeof PublicAccess,
     permission: ActionType | ActionType[] | Role | SubjectCollaborator<Role>
   ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions } = this.checkAsUser();
@@ -326,7 +327,7 @@ export class AccessManager<
   async revoke<returnType extends SubjectType>(
     subjectType: returnType,
     id: string,
-    user: User<Role>,
+    user: User<Role> | typeof PublicAccess,
     permission: ActionType | ActionType[] | Role | 'all' = 'all'
   ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions } = this.checkAsUser();
