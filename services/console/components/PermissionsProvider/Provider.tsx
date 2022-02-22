@@ -97,38 +97,6 @@ export const PermissionsProvider: FC = ({ children }) => {
     [usersPermissions]
   );
 
-  const removeUserPermissions: PermissionsContext['removeUserPermissions'] = useCallback(
-    async (subjectType, subjectId, userEmail) => {
-      const backupUsersPermissions = new Map(usersPermissions);
-
-      // optimistic
-      setUsersPermissions(
-        removeUserFromMap(subjectId, usersPermissions, userEmail)
-      );
-
-      try {
-        const deletedUserPermissions = await api.deletePermissions(
-          subjectType,
-          subjectId,
-          userEmail
-        );
-        setUsersPermissions(
-          removeUserFromMap(subjectId, usersPermissions, userEmail)
-        );
-        return deletedUserPermissions;
-      } catch (e) {
-        notification.error({
-          message: t('api', { errorName: e }),
-          placement: 'bottomRight',
-        });
-
-        setUsersPermissions(backupUsersPermissions);
-        return null;
-      }
-    },
-    [t, usersPermissions]
-  );
-
   const removeUserPermissions: PermissionsContext['removeUserPermissions'] =
     useCallback(
       async (subjectType, subjectId, userEmail) => {
