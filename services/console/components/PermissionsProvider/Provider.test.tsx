@@ -123,7 +123,7 @@ it('should not fetch workspaces', async () => {
 });
 
 it('should give user permissions', async () => {
-  jest.spyOn(api, 'postPermissions').mockReturnValue(
+  jest.spyOn(api, 'addPermissions').mockReturnValue(
     Promise.resolve({
       id: '44',
       email: 'user3@tropfort.com',
@@ -149,7 +149,7 @@ it('should give user permissions', async () => {
         role: 'owner',
       }
     );
-    expect(api.postPermissions).toHaveBeenCalledWith(
+    expect(api.addPermissions).toHaveBeenCalledWith(
       'workspaces',
       'workspaceId11',
       {
@@ -200,7 +200,7 @@ it("should add user to provider's list", async () => {
       ],
     } as any)
   );
-  jest.spyOn(api, 'postPermissions').mockReturnValue(
+  jest.spyOn(api, 'addPermissions').mockReturnValue(
     Promise.resolve({
       id: '44',
       email: 'user3@tropfort.com',
@@ -231,7 +231,7 @@ it("should add user to provider's list", async () => {
         role: 'owner',
       }
     );
-    expect(api.postPermissions).toHaveBeenCalledWith(
+    expect(api.addPermissions).toHaveBeenCalledWith(
       'workspaces',
       'workspaceId11',
       {

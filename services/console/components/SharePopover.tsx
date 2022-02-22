@@ -102,11 +102,10 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
         key: id,
         email,
         role,
-        actions: generateRowButtons(() =>
-          // @ts-ignore
-          // Previous filter ensure we have an id defined
-          removeUserPermissions('workspaces', workspaceId, id)
-        ),
+        actions: generateRowButtons(() => {
+          if (!id) return;
+          removeUserPermissions('workspaces', workspaceId, id);
+        }),
       }));
     return rows;
   }, [

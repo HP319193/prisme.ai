@@ -9,12 +9,12 @@ export interface PermissionsContext {
     subjectType: SubjectType,
     subjectId: string,
     permissions: UserPermissions
-  ) => Promise<any>;
+  ) => Promise<PrismeaiAPI.Share.Responses.$200>;
   removeUserPermissions: (
     subjectType: SubjectType,
     subjectId: string,
     userEmail: string
-  ) => Promise<any>;
+  ) => Promise<PrismeaiAPI.RevokePermissions.Responses.$200>;
   getUsersPermissions: (
     subjectType: SubjectType,
     subjectId: string

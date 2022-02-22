@@ -1,7 +1,7 @@
 import { FC, useCallback, useState } from 'react';
 import context, { PermissionsContext } from './context';
 import api from '../../api/api';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 
 type UserPermissions = Prismeai.UserPermissions;
 type SubjectType = PrismeaiAPI.GetPermissions.Parameters.SubjectType;
@@ -14,7 +14,7 @@ export const PermissionsProvider: FC = ({ children }) => {
   const addUserPermissions: PermissionsContext['addUserPermissions'] =
     useCallback(
       async (subjectType, subjectId, permissions) => {
-        const fetchedUserPermissions = await api.postPermissions(
+        const fetchedUserPermissions = await api.addPermissions(
           subjectType,
           subjectId,
           permissions

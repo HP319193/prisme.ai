@@ -126,7 +126,7 @@ export class Api extends Fetcher {
     return await this.get(`/${subjectType}/${subjectId}/permissions`);
   }
 
-  async postPermissions(
+  async addPermissions(
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string,
     permissions: UserPermissions
