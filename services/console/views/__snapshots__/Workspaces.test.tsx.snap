@@ -1,73 +1,69 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should render empty 1`] = `
-Array [
+<div
+  className="!bg-blue-200 flex grow m-4 rounded relative"
+>
   <div
-    className="!bg-blue-200 flex grow m-4 rounded"
+    className="flex flex-wrap align-start justify-start"
   >
     <div
-      className="flex flex-wrap align-start justify-start"
+      className="flex grow items-center justify-between flex-col text-center"
     >
       <div
-        className="flex grow items-center justify-between flex-col text-center"
+        className="flex items-center flex-col text-center mt-20"
       >
-        <div
-          className="flex items-center flex-col text-center mt-20"
-        >
-          create.label
-        </div>
-        create.description_sub
+        create.label
       </div>
+      create.description_sub
     </div>
-  </div>,
+  </div>
   <div
-    className="absolute bottom-0 right-[15px] text-gray"
+    className="absolute bottom-0 right-[15px] text-gray mr-1"
   >
     Prisme.ai 
     6.0.0
-  </div>,
-]
+  </div>
+</div>
 `;
 
 exports[`should render some workspaces 1`] = `
-Array [
+<div
+  className="!bg-blue-200 flex grow m-4 rounded relative"
+>
   <div
-    className="!bg-blue-200 flex grow m-4 rounded"
+    className="flex flex-wrap align-start justify-start"
   >
     <div
-      className="flex flex-wrap align-start justify-start"
+      className="flex grow items-center justify-center flex-col text-center"
+    >
+      <div />
+      foo
+      workspaces.defaultDescription
+    </div>
+    <div
+      className="flex grow items-center justify-center flex-col text-center"
+    >
+      <div />
+      bar
+      workspaces.defaultDescription
+    </div>
+    <div
+      className="flex grow items-center justify-between flex-col text-center"
     >
       <div
-        className="flex grow items-center justify-center flex-col text-center"
+        className="flex items-center flex-col text-center mt-20"
       >
-        <div />
-        foo
-        workspaces.defaultDescription
+        create.label
       </div>
-      <div
-        className="flex grow items-center justify-center flex-col text-center"
-      >
-        <div />
-        bar
-        workspaces.defaultDescription
-      </div>
-      <div
-        className="flex grow items-center justify-between flex-col text-center"
-      >
-        <div
-          className="flex items-center flex-col text-center mt-20"
-        >
-          create.label
-        </div>
-        create.description_sub
-      </div>
+      create.description_sub
     </div>
-  </div>,
+  </div>
   <div
-    className="absolute bottom-0 right-[15px] text-gray"
+    className="absolute bottom-0 right-[15px] text-gray mr-1"
   >
     Prisme.ai 
     6.0.0
-  </div>,
-]
+  </div>
+</div>
 `;

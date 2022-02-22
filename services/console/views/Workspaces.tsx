@@ -37,7 +37,7 @@ export const WorkspacesView = () => {
         <meta name="description" content={t('workspaces.description')} />§
       </Head>
       <Layout Header={<Header />}>
-        <div className="!bg-blue-200 flex grow m-4 rounded">
+        <div className="!bg-blue-200 flex grow m-4 rounded relative">
           <div className="flex flex-wrap align-start justify-start">
             {workspacesList.map(({ name, id }) => (
               <Card
@@ -94,9 +94,9 @@ export const WorkspacesView = () => {
               </div>
             </Card>
           </div>
-        </div>
-        <div className="absolute bottom-0 right-[15px] text-gray">
-          Prisme.ai {packageJson.version}
+          <div className="absolute bottom-0 right-[15px] text-gray mr-1">
+            Prisme.ai {packageJson.version}
+          </div>
         </div>
       </Layout>
     </>
