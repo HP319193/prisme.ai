@@ -9,9 +9,8 @@ const getDefaultValue = (type: string) => {
     case 'array':
       return [];
     case 'object':
-      return {};
     default:
-      return undefined;
+      return {};
   }
 };
 interface InstructionFormProps {
