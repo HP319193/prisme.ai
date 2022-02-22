@@ -10,7 +10,9 @@ export const useLocalizedText = () => {
     (text: Prismeai.LocalizedText | undefined) => {
       if (!text) return '';
       if (typeof text === 'string') return text;
-      return text[language] || text.en;
+      if (text[language]) return text[language];
+      if (text.en) return text.en;
+      return text[Object.keys(text)[0]];
     },
     [language]
   );

@@ -60,10 +60,10 @@ export const Workspace = () => {
   return (
     <>
       <Row className="h-full">
-        <Col span={16} className="flex h-full">
+        <Col span={14} className="flex h-full">
           <EventsViewer />
         </Col>
-        <Col span={8} className="flex h-full">
+        <Col span={10} className="flex h-full">
           <SidePanel
             Header={
               <MenuTab
