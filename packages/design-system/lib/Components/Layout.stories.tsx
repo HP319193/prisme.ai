@@ -1,4 +1,4 @@
-import { Header, Layout, MenuTab, PageHeader, Button, Feed } from '../index';
+import { Button, Feed, Layout, MenuTab, PageHeader } from '../index';
 import { LayoutProps } from './Layout';
 import { Story } from '@storybook/react';
 import { FeedLayoutHeader, itemsWithCollapseContent } from '../mockData';
@@ -13,17 +13,7 @@ export default {
   },
 };
 
-const HeaderComponent = (
-  <Header
-    workspaces={['mon premier workspace', 'mon second workspace']}
-    t={(text: string) => text}
-    userName={'John Doe'}
-    userAvatar={
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/240px-User-avatar.svg.png'
-    }
-    icon={<img src={icon} />}
-  />
-);
+const HeaderComponent = <div>Header component</div>;
 
 const PageHeaderButtons = [
   <Button variant="grey" key="1">
