@@ -1,7 +1,7 @@
 import Provider from './Provider';
 import renderer, { act } from 'react-test-renderer';
 import api from '../../api/api';
-import { usePermissions } from '.';
+import { usePermissions } from './context';
 
 jest.mock('../WorkspacesProvider', () => {
   const mock = {

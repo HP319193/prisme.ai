@@ -1,6 +1,6 @@
 import UserProvider from './Provider';
 import renderer, { act } from 'react-test-renderer';
-import { useUser } from '.';
+import { useUser } from './context';
 import api from '../../api/api';
 import ApiError from '../../api/ApiError';
 import Storage from '../../utils/Storage';
