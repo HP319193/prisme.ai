@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
@@ -75,17 +75,20 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }, [sourceDisplayed]);
 
   // Init socket
+  const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
+    workspace,
+  ]);
   useEffect(() => {
     if (
-      !workspace ||
-      (socket.current && socket.current.workspaceId === workspace.id)
+      !workspaceId ||
+      (socket.current && socket.current.workspaceId === workspaceId)
     )
       return;
-    socket.current = new Events(workspace.id);
+    socket.current = new Events(workspaceId);
     return () => {
       socket.current && socket.current.destroy();
     };
-  }, [workspace]);
+  }, [workspaceId]);
 
   const nextEvents = useCallback(async () => {
     if (!workspace || lockEvents.current || latest.current === null) return;
