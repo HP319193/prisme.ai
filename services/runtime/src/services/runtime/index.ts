@@ -20,11 +20,7 @@ export default class Runtime {
 
   async start() {
     this.broker.all(async (event, broker, { logger }) => {
-      if (
-        !event.source.workspaceId ||
-        !event.source.userId ||
-        !event.source.correlationId
-      ) {
+      if (!event.source.workspaceId || !event.source.correlationId) {
         return true;
       }
       if (event.type === EventType.TriggeredWebhook) {
