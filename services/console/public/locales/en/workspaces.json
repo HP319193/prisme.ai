@@ -61,7 +61,7 @@
     "delete": {
       "label": "Remove automation",
       "confirm": {
-        "title": "Do you want to delete the \"{name}\" automation?",
+        "title": "Do you want to delete the \"{{name}}\" automation?",
         "content": "Warning, the data will be lost.",
         "ok": "Yes, delete",
         "cancel": "No, please no"
