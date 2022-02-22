@@ -97,15 +97,17 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
       return [];
     }
 
-    const rows = data.map(({ email, role, id }) => ({
-      key: id,
-      email,
-      role,
-      actions: generateRowButtons(() => {
-        if (!id) return;
-        removeUserPermissions('workspaces', workspaceId, id);
-      }),
-    }));
+    const rows = data
+      .filter(({ id }) => !!id && id != '*') // Public permission has id='*'
+      .map(({ email, role, id }) => ({
+        key: id,
+        email,
+        role,
+        actions: generateRowButtons(() => {
+          if (!id) return;
+          removeUserPermissions('workspaces', workspaceId, id);
+        }),
+      }));
     return rows;
   }, [
     generateRowButtons,
