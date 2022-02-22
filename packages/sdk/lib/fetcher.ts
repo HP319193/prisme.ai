@@ -11,12 +11,8 @@ const headersAsObject = (headers: Headers) =>
   );
 
 export class Fetcher {
-  protected host: string;
-  protected _token: string | null = null;
-
-  set token(v: string | null) {
-    this._token = v;
-  }
+  public host: string;
+  public token: string | null = null;
 
   constructor(host: string) {
     this.host = host;
@@ -24,8 +20,8 @@ export class Fetcher {
 
   private async _fetch(url: string, options: RequestInit = {}) {
     const headers: any = options.headers || {};
-    if (this._token && !headers['x-prismeai-session-token']) {
-      headers['x-prismeai-session-token'] = this._token;
+    if (this.token && !headers['x-prismeai-session-token']) {
+      headers['x-prismeai-session-token'] = this.token;
     }
     const res = await global.fetch(`${this.host}${url}`, {
       ...options,

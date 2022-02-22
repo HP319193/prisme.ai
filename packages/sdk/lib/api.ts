@@ -94,9 +94,31 @@ export class Api extends Fetcher {
     return await this.delete(`/workspaces/${workspace.id}/automations/${slug}`);
   }
 
+  // Pages
+  async createPage(
+    workspace: Workspace,
+    page: Prismeai.Page
+  ): Promise<Prismeai.Page & { slug: string }> {
+    return await this.post(`/workspaces/${workspace.id}/pages`, {
+      ...page,
+    });
+  }
+
+  async updatePage(
+    workspace: Workspace,
+    slug: string,
+    page: Prismeai.Page
+  ): Promise<Prismeai.Page> {
+    return await this.patch(`/workspaces/${workspace.id}/pages/${slug}`, page);
+  }
+
+  async deletePage(workspace: Workspace, slug: string): Promise<string> {
+    return await this.delete(`/workspaces/${workspace.id}/pages/${slug}`);
+  }
+
   // Events
   streamEvents(workspaceId: string) {
-    return new Events(workspaceId, this._token || '', this.host);
+    return new Events(workspaceId, this.token || '', this.host);
   }
 
   async getEvents(

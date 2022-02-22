@@ -1,7 +1,7 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { Button } from '@prisme.ai/design-system';
 import { FC, useEffect, useState } from 'react';
-import SidePanel from '../../../layouts/SidePanel';
+import SidePanel from '../layouts/SidePanel';
 
 const noop = () => null;
 interface PanelProps {
@@ -40,7 +40,7 @@ export const Panel: FC<PanelProps> = ({
         ${hidden ? '' : '-translate-x-full'}
       `}
     >
-      <SidePanel className="!bg-white overflow-hidden h-full">
+      <SidePanel className="!bg-white overflow-hidden h-full rounded !p-0 m-2">
         <div className="flex flex-1 flex-col overflow-hidden h-full pb-12">
           <div className="flex justify-end">
             <Button variant="grey" onClick={() => setHidden(true)}>
