@@ -28,8 +28,6 @@ const removeUserFromMap = (
   usersPermissions: Map<string, UserPermissions[]>,
   userEmail: string
 ) => {
-  console.log('before', usersPermissions);
-
   const newUsersPermissions = new Map<string, UserPermissions[]>(
     usersPermissions
   );
@@ -38,8 +36,6 @@ const removeUserFromMap = (
       (userPerm) => userPerm.email !== userEmail
     ),
   ]);
-
-  console.log('after', newUsersPermissions);
 
   return newUsersPermissions;
 };
