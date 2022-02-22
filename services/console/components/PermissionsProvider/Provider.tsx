@@ -8,7 +8,7 @@ import api from '../../api/api';
 type UserPermissions = Prismeai.UserPermissions;
 type SubjectType = PrismeaiAPI.GetPermissions.Parameters.SubjectType;
 
-const generateNewPermissionsMap = (
+const addUserToMap = (
   subjectId: string,
   usersPermissions: Map<string, UserPermissions[]>,
   newUserPermissions: UserPermissions
@@ -19,6 +19,22 @@ const generateNewPermissionsMap = (
   newUsersPermissions.set(subjectId, [
     ...(usersPermissions.get(subjectId) || []),
     newUserPermissions,
+  ]);
+
+  return newUsersPermissions;
+};
+const removeUserFromMap = (
+  subjectId: string,
+  usersPermissions: Map<string, UserPermissions[]>,
+  userEmail: string
+) => {
+  const newUsersPermissions = new Map<string, UserPermissions[]>(
+    usersPermissions
+  );
+  newUsersPermissions.set(subjectId, [
+    ...(usersPermissions.get(subjectId) || []).filter(
+      (userPerm) => userPerm.email === userEmail
+    ),
   ]);
 
   return newUsersPermissions;
@@ -38,7 +54,7 @@ export const PermissionsProvider: FC = ({ children }) => {
 
         // optimistic
         setUsersPermissions(
-          generateNewPermissionsMap(subjectId, usersPermissions, permissions)
+          addUserToMap(subjectId, usersPermissions, permissions)
         );
 
         try {
@@ -47,14 +63,9 @@ export const PermissionsProvider: FC = ({ children }) => {
             subjectId,
             permissions
           );
-          const newUsersPermissions = new Map<string, UserPermissions[]>(
-            usersPermissions
+          setUsersPermissions(
+            addUserToMap(subjectId, usersPermissions, fetchedUserPermissions)
           );
-          newUsersPermissions.set(subjectId, [
-            ...(usersPermissions.get(subjectId) || []),
-            fetchedUserPermissions,
-          ]);
-          setUsersPermissions(newUsersPermissions);
           return fetchedUserPermissions;
         } catch (e) {
           notification.error({
@@ -91,23 +102,34 @@ export const PermissionsProvider: FC = ({ children }) => {
   const removeUserPermissions: PermissionsContext['removeUserPermissions'] =
     useCallback(
       async (subjectType, subjectId, userEmail) => {
-        const fetchedUserPermissions = await api.deletePermissions(
-          subjectType,
-          subjectId,
-          userEmail
+        const backupUsersPermissions = new Map(usersPermissions);
+
+        // optimistic
+        setUsersPermissions(
+          removeUserFromMap(subjectId, usersPermissions, userEmail)
         );
-        const newUsersPermissions = new Map<string, UserPermissions[]>(
-          usersPermissions
-        );
-        newUsersPermissions.set(subjectId, [
-          ...(usersPermissions.get(subjectId) || []).filter(
-            (userPerm) => userPerm.email != userEmail
-          ),
-        ]);
-        setUsersPermissions(newUsersPermissions);
-        return fetchedUserPermissions;
+
+        try {
+          const deletedUserPermissions = await api.deletePermissions(
+            subjectType,
+            subjectId,
+            userEmail
+          );
+          setUsersPermissions(
+            removeUserFromMap(subjectId, usersPermissions, userEmail)
+          );
+          return deletedUserPermissions;
+        } catch (e) {
+          notification.error({
+            message: t('api', { errorName: e }),
+            placement: 'bottomRight',
+          });
+
+          setUsersPermissions(backupUsersPermissions);
+          return null;
+        }
       },
-      [usersPermissions]
+      [t, usersPermissions]
     );
 
   return (
