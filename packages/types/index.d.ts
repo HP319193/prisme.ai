@@ -748,6 +748,12 @@ declare namespace Prismeai {
         automations?: {
             [name: string]: /* Full description at (TODO swagger url) */ Automation;
         };
+        widgets?: {
+            [name: string]: /* Widget */ Widget;
+        };
+        pages?: {
+            [name: string]: /* Page */ Page;
+        };
         createdAt?: string;
         updatedAt?: string;
         id?: string;
@@ -932,6 +938,16 @@ declare namespace Prismeai {
          */
         error?: string;
         message?: string;
+    }
+    /**
+     * Page
+     */
+    export interface Page {
+        title?: LocalizedText;
+        description?: LocalizedText;
+        widgets: {
+            name?: string;
+        }[];
     }
     /**
      * example:
@@ -1270,6 +1286,14 @@ declare namespace Prismeai {
         dates?: string[];
         endpoint: boolean | string;
     };
+    /**
+     * Widget
+     */
+    export interface Widget {
+        description?: LocalizedText;
+        name?: LocalizedText;
+        url: string;
+    }
     export type Workspace = DSUL;
 }
 declare namespace PrismeaiAPI {

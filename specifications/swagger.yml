@@ -1760,6 +1760,14 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/Automation'
+        widgets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Widget'
+        pages:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Page'
         createdAt:
           type: string
         updatedAt:
@@ -1864,6 +1872,40 @@ components:
         slug:
           type: string
           description: Unique & human readable id across current workspace's automations
+
+    Widget:
+      type: object
+      required:
+        - url
+      description: Widget
+      additionalProperties: false
+      properties:
+        description:
+          $ref: '#/components/schemas/LocalizedText'
+        name:
+          $ref: '#/components/schemas/LocalizedText'
+        url:
+          type: string
+
+    Page:
+      type: object
+      required:
+        - widgets
+      description: Page
+      additionalProperties: false
+      properties:
+        title:
+          $ref: '#/components/schemas/LocalizedText'
+        description:
+          $ref: '#/components/schemas/LocalizedText'
+        widgets:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              name:
+                type: string
 
     ###############################################################################################################################################
     ############################################################ Automation Instructions ############################################################
