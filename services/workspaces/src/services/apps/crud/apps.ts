@@ -1,5 +1,5 @@
+import { nanoid } from 'nanoid';
 import { Broker } from '@prisme.ai/broker';
-import { ObjectNotFoundError } from '@prisme.ai/permissions';
 import { EventType } from '../../../eda';
 import DSULStorage from '../../DSULStorage';
 import { AccessManager, SubjectType } from '../../../permissions';
@@ -32,29 +32,28 @@ class Apps {
     if (!app.workspaceId) {
       throw new PrismeError('Please specify app.workspaceId', {});
     }
-    app.id = app.workspaceId;
 
     const latestRelease = await this.workspaces.getWorkspace(app.workspaceId);
 
-    let releaseName = '0';
+    app.id = undefined;
     // Build updated versions list
-    let existingApp;
-    try {
-      existingApp = await this.accessManager.get(SubjectType.App, app.id);
-      const existingVersions = existingApp.versions || [];
-      releaseName = `${(parseInt(existingVersions[0]) || 0) + 1}`;
+    let existingApp = await this.accessManager.findAll(SubjectType.App, {
+      workspaceId: app.workspaceId,
+    });
+    app.id = existingApp?.[0]?.id;
+    const existingVersions = existingApp?.[0]?.versions || [];
+    const releaseName = `${(parseInt(existingVersions[0]) || 0) + 1}`;
+    if (existingVersions.length) {
       app.versions = [releaseName, ...existingVersions];
-    } catch (error) {
-      if (!(error instanceof ObjectNotFoundError)) {
-        throw error;
-      }
+    } else {
       app.versions = ['0'];
     }
 
     // Check permissions & create/update App object
-    if (existingApp) {
+    if (app.id) {
       await this.accessManager.update(SubjectType.App, app);
     } else {
+      app.id = nanoid(7);
       await this.accessManager.create(SubjectType.App, app);
     }
 

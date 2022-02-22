@@ -185,7 +185,10 @@ export class AccessManager<
   }
 
   async findAll<returnType extends SubjectType>(
-    subjectType: returnType
+    subjectType: returnType,
+    additionalQuery?: mongoose.FilterQuery<
+      Document<SubjectInterfaces[returnType], Role>
+    >
   ): Promise<(SubjectInterfaces[returnType] & BaseSubject<Role>)[]> {
     const { permissions } = this.checkAsUser();
     const Model = this.model(subjectType);
@@ -194,7 +197,10 @@ export class AccessManager<
       ActionType.Read
     ).getQuery();
 
-    const accessibleSubjects = await Model.find(query);
+    const accessibleSubjects = await Model.find({
+      ...additionalQuery,
+      ...query,
+    });
     return accessibleSubjects
       .filter((cur) =>
         permissions.can(ActionType.Read, subjectType, cur.toJSON())
