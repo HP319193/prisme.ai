@@ -9,7 +9,7 @@ export interface PermissionsContext {
     subjectType: SubjectType,
     subjectId: string,
     permissions: UserPermissions
-  ) => Promise<PrismeaiAPI.Share.Responses.$200>;
+  ) => Promise<PrismeaiAPI.Share.Responses.$200 | null>;
   removeUserPermissions: (
     subjectType: SubjectType,
     subjectId: string,

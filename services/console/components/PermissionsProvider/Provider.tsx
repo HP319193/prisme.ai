@@ -1,35 +1,72 @@
 import { FC, useCallback, useState } from 'react';
+import { notification } from 'antd';
+import { useTranslation } from 'react-i18next';
+import isEqual from 'lodash/isEqual';
 import context, { PermissionsContext } from './context';
 import api from '../../api/api';
-import isEqual from 'lodash/isEqual';
 
 type UserPermissions = Prismeai.UserPermissions;
 type SubjectType = PrismeaiAPI.GetPermissions.Parameters.SubjectType;
+
+const generateNewPermissionsMap = (
+  subjectId: string,
+  usersPermissions: Map<string, UserPermissions[]>,
+  newUserPermissions: UserPermissions
+) => {
+  const newUsersPermissions = new Map<string, UserPermissions[]>(
+    usersPermissions
+  );
+  newUsersPermissions.set(subjectId, [
+    ...(usersPermissions.get(subjectId) || []),
+    newUserPermissions,
+  ]);
+
+  return newUsersPermissions;
+};
 
 export const PermissionsProvider: FC = ({ children }) => {
   const [usersPermissions, setUsersPermissions] = useState<
     PermissionsContext['usersPermissions']
   >(new Map());
 
+  const { t } = useTranslation('errors');
+
   const addUserPermissions: PermissionsContext['addUserPermissions'] =
     useCallback(
       async (subjectType, subjectId, permissions) => {
-        const fetchedUserPermissions = await api.addPermissions(
-          subjectType,
-          subjectId,
-          permissions
+        const backupUsersPermissions = new Map(usersPermissions);
+
+        // optimistic
+        setUsersPermissions(
+          generateNewPermissionsMap(subjectId, usersPermissions, permissions)
         );
-        const newUsersPermissions = new Map<string, UserPermissions[]>(
-          usersPermissions
-        );
-        newUsersPermissions.set(subjectId, [
-          ...(usersPermissions.get(subjectId) || []),
-          fetchedUserPermissions,
-        ]);
-        setUsersPermissions(newUsersPermissions);
-        return fetchedUserPermissions;
+
+        try {
+          const fetchedUserPermissions = await api.addPermissions(
+            subjectType,
+            subjectId,
+            permissions
+          );
+          const newUsersPermissions = new Map<string, UserPermissions[]>(
+            usersPermissions
+          );
+          newUsersPermissions.set(subjectId, [
+            ...(usersPermissions.get(subjectId) || []),
+            fetchedUserPermissions,
+          ]);
+          setUsersPermissions(newUsersPermissions);
+          return fetchedUserPermissions;
+        } catch (e) {
+          notification.error({
+            message: t('api', { errorName: e }),
+            placement: 'bottomRight',
+          });
+
+          setUsersPermissions(backupUsersPermissions);
+          return null;
+        }
       },
-      [usersPermissions]
+      [t, usersPermissions]
     );
 
   const getUsersPermissions: PermissionsContext['getUsersPermissions'] =

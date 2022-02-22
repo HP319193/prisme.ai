@@ -1,3 +1,4 @@
 {
-  "404": "This page does not exist. Return to the home page."
+  "404": "This page does not exist. Return to the home page.",
+  "api": "An error occured: \"{{errorName}}\""
 }
