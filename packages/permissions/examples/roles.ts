@@ -19,7 +19,16 @@ export enum Role {
 }
 
 const config: PermissionsConfig<SubjectType, Role> = {
-  subjectTypes: Object.values(SubjectType),
+  subjects: Object.values(SubjectType).reduce(
+    (subjects, cur) => ({
+      ...subjects,
+      [cur]:
+        cur === SubjectType.Workspace
+          ? { author: { assignRole: Role.Admin } }
+          : {},
+    }),
+    {} as any
+  ),
   rbac: [
     // Platform-wide roles
     {
@@ -88,7 +97,6 @@ const config: PermissionsConfig<SubjectType, Role> = {
     },
   ],
   abac: [],
-  ownerRole: Role.Admin,
 };
 
 export default config;

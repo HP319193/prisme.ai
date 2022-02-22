@@ -70,16 +70,10 @@ export class AccessManager<
 
   constructor(
     opts: AccessManagerOptions<SubjectType>,
-    permissionsConfig: Omit<
-      PermissionsConfig<SubjectType, Role, CustomRules>,
-      'subjectTypes'
-    >
+    permissionsConfig: PermissionsConfig<SubjectType, Role, CustomRules>
   ) {
     this.opts = opts;
-    this.permissionsConfig = {
-      ...permissionsConfig,
-      subjectTypes: Object.keys(opts.schemas) as any as SubjectType[],
-    };
+    this.permissionsConfig = permissionsConfig;
 
     const schemas: Record<SubjectType, mongoose.Schema | false> =
       Object.entries({

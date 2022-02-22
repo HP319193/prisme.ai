@@ -1,6 +1,6 @@
 import { Ability, ForbiddenError, subject as an } from '@casl/ability';
 import { permittedFieldsOf } from '@casl/ability/extra';
-import { Rules, SubjectCollaborator } from '..';
+import { Rules, SubjectCollaborator, SubjectOptions } from '..';
 import { injectRules, nativeRules, sortRules } from './rulesBuilder';
 import {
   ForbiddenError as PrismeaiForbiddenError,
@@ -28,7 +28,7 @@ export class Permissions<
   SubjectType extends string,
   Role extends string = string
 > {
-  private ownerRole: Role;
+  private subjects: Record<SubjectType, SubjectOptions<Role>>;
   private user: User<Role>;
   private roleTemplates: RoleTemplates<SubjectType, Role>;
   private rules: Rules;
@@ -37,13 +37,13 @@ export class Permissions<
 
   constructor(user: User<Role>, config: PermissionsConfig<SubjectType, Role>) {
     this.user = user;
-    const { rbac, abac, ownerRole } = config;
+    const { rbac, abac, subjects } = config;
     this.roleTemplates = rbac;
-    this.ownerRole = ownerRole || ('owner' as Role);
+    this.subjects = subjects;
 
     this.loadedRoleIds = new Set();
     this.rules = sortRules([
-      ...nativeRules(user, config.rbac, config.subjectTypes),
+      ...nativeRules(user, config.rbac, config.subjects),
       ...injectRules(abac, { user }),
     ]);
     this.ability = new Ability(this.rules);
@@ -244,12 +244,10 @@ export class Permissions<
   }
 
   pullRoleFromSubject(subjectType: SubjectType, subject: Subject<Role>) {
-    // Auto assign "owner" role for subjects created by the user
-    if (
-      subject.createdBy === this.user.id &&
-      this.findRoleTemplate(this.ownerRole, subjectType)
-    ) {
-      this.loadRole(this.ownerRole, subjectType, subject);
+    // Auto assign "author" role for subjects created by the user
+    const authorAssignedRole = this.subjects[subjectType]?.author?.assignRole;
+    if (authorAssignedRole && subject.createdBy === this.user.id) {
+      this.loadRole(authorAssignedRole, subjectType, subject);
       return;
     }
 

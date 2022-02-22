@@ -93,6 +93,8 @@ class Apps {
 
   deleteApp = async (appId: PrismeaiAPI.DeleteApp.PathParameters['appId']) => {
     const app = await this.accessManager.get(SubjectType.App, appId);
+    // Load user permissions from workspace
+    await this.accessManager.get(SubjectType.Workspace, app.workspaceId);
     await this.accessManager.delete(SubjectType.App, appId);
     await this.storage.delete(appId);
     this.broker.send<Prismeai.DeletedApp['payload']>(

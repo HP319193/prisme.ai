@@ -23,7 +23,19 @@ export const config: PermissionsConfig<
   Prismeai.Role,
   Prismeai.ApiKeyRules
 > = {
-  subjectTypes: Object.values(SubjectType),
+  subjects: {
+    [SubjectType.Workspace]: {
+      author: {
+        assignRole: Role.Owner,
+      },
+    },
+    [SubjectType.App]: {
+      author: {
+        // App permissions should only be indicated by parent workspace permissions
+        disableManagePolicy: true,
+      },
+    },
+  },
   rbac: [
     {
       name: Role.Owner,
@@ -83,5 +95,4 @@ export const config: PermissionsConfig<
   customRulesBuilder: (role) => {
     return [];
   },
-  ownerRole: Role.Owner,
 };
