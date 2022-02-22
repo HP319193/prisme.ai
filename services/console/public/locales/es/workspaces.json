@@ -163,5 +163,17 @@
       "fail": "Su espacio de trabajo no es válido y no ha podido ser registrado."
     }
   },
-  "404": "Este espacio de trabajo no existe. Vuelve a tu página de inicio."
+  "404": "Este espacio de trabajo no existe. Vuelve a tu página de inicio.",
+  "share": {
+    "label": "Compartir",
+    "email": "Correo electrónico",
+    "role": "Rol",
+    "access": "Acceso",
+    "actions": "Acciones",
+    "delete": "Eliminar acceso",
+    "roles": {
+      "owner": "Owner",
+      "editor": "Editor"
+    }
+  }
 }

@@ -91,7 +91,7 @@
         "custom": "Execute this automation by calling a web address",
         "url": "Custom URL"
       },
-      "add": "Add",
+      "add": "Save",
       "save": "Save"
     },
     "instruction": {
@@ -163,5 +163,17 @@
       "fail": "Your workspace is invalid and could not be saved."
     }
   },
-  "404": "This workspace does not exist. Return to your home page."
+  "404": "This workspace does not exist. Return to your home page.",
+  "share": {
+    "label": "Share",
+    "email": "Email",
+    "role": "Role",
+    "access": "Access",
+    "actions": "Actions",
+    "delete": "Remove access",
+    "roles": {
+      "owner": "Owner",
+      "editor": "Editor"
+    }
+  }
 }

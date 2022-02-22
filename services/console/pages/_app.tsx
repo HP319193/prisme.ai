@@ -10,6 +10,7 @@ import '../styles/globals.css';
 import '../styles/tailwind-console.css';
 import '@prisme.ai/design-system/styles/index.css';
 import '@prisme.ai/design-system/styles/theme.css';
+import PermissionsProvider from '../components/PermissionsProvider';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -28,13 +29,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <UserProvider>
       <WorkspacesProvider>
-        <Head>
-          <title>{t('main.title')}</title>
-          <meta name="description" content={t('main.description')} />
-          <link rel="icon" href="/favicon.png" />
-        </Head>
-        <Sentry />
-        {getLayout(<Component {...pageProps} />)}
+        <PermissionsProvider>
+          <Head>
+            <title>{t('main.title')}</title>
+            <meta name="description" content={t('main.description')} />
+            <link rel="icon" href="/favicon.png" />
+          </Head>
+          <Sentry />
+          {getLayout(<Component {...pageProps} />)}
+        </PermissionsProvider>
       </WorkspacesProvider>
     </UserProvider>
   );

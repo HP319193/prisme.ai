@@ -1,12 +1,19 @@
-import { useCallback, useMemo } from 'react';
-import { CodeOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Menu, Dropdown } from '@prisme.ai/design-system';
+import { Dispatch, useCallback, useMemo, SetStateAction } from 'react';
+import { CodeOutlined, ShareAltOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  Menu,
+  Dropdown,
+  Space,
+  Button,
+  Popover,
+} from '@prisme.ai/design-system';
+import { Modal, notification } from 'antd';
 import { useWorkspaces } from './WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import Header from './Header';
-import { Modal, notification } from 'antd';
+import SharePopover from './SharePopover';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
@@ -76,20 +83,26 @@ const HeaderWorkspace = () => {
     [t, displaySource, sourceDisplayed]
   );
 
-  // const share = useCallback(() => {
-  //   console.log('share');
-  // }, []);
   return (
     <Header
       title={<Dropdown Menu={workspacesMenu}>{currentWorkspace}</Dropdown>}
-      // leftContent={
-      //   <Button variant="grey" onClick={share}>
-      //     <Space>
-      //       {t('workspace.share')}
-      //       <ShareAltOutlined />
-      //     </Space>
-      //   </Button>
-      // }
+      leftContent={
+        <Popover
+          content={({
+            setVisible,
+          }: {
+            setVisible: Dispatch<SetStateAction<boolean>>;
+          }) => <SharePopover setVisible={setVisible} />}
+          title={t('share.label')}
+        >
+          <Button variant="grey">
+            <Space>
+              {t('share.label')}
+              <ShareAltOutlined />
+            </Space>
+          </Button>
+        </Popover>
+      }
     />
   );
 };

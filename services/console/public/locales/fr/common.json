@@ -6,5 +6,6 @@
   "home": {
     "signin": "Connexion"
   },
-  "save": "Enregistrer"
+  "save": "Enregistrer",
+  "add": "Ajouter"
 }

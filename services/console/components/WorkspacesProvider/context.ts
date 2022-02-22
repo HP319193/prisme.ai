@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { Event, Workspace } from '../../api/types';
+import { Workspace } from '../../api/types';
 
 export interface WorkspacesContext {
   workspaces: Map<string, Workspace | null>;
@@ -9,6 +9,7 @@ export interface WorkspacesContext {
   create: (name: string) => Promise<Workspace>;
   update: (workspace: Workspace) => Promise<Workspace | null>;
   remove: (workspace: Pick<Workspace, 'id'>) => Promise<null>;
+
   createAutomation: (
     workspace: Workspace,
     automation: Prismeai.Automation

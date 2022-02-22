@@ -3,6 +3,8 @@ import QueryString from 'qs';
 import Fetcher from './fetcher';
 import { Event, Workspace } from './types';
 
+type UserPermissions = Prismeai.UserPermissions;
+
 const { publicRuntimeConfig } = getConfig();
 
 export class Api extends Fetcher {
@@ -115,6 +117,34 @@ export class Api extends Fetcher {
     } catch (e) {
       return [];
     }
+  }
+
+  async getPermissions(
+    subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
+    subjectId: string
+  ): Promise<PrismeaiAPI.GetPermissions.Responses.$200> {
+    return await this.get(`/${subjectType}/${subjectId}/permissions`);
+  }
+
+  async addPermissions(
+    subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
+    subjectId: string,
+    permissions: UserPermissions
+  ): Promise<PrismeaiAPI.Share.Responses.$200> {
+    return await this.post(
+      `/${subjectType}/${subjectId}/permissions`,
+      permissions
+    );
+  }
+
+  async deletePermissions(
+    subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
+    subjectId: string,
+    userEmail: string
+  ): Promise<PrismeaiAPI.RevokePermissions.Responses.$200> {
+    return await this.delete(
+      `/${subjectType}/${subjectId}/permissions/${userEmail}`
+    );
   }
 }
 
