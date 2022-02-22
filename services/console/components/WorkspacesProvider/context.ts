@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { Workspace } from '../../api/types';
+import { Workspace } from '@prisme.ai/sdk';
 
 export interface WorkspacesContext {
   workspaces: Map<string, Workspace | null>;

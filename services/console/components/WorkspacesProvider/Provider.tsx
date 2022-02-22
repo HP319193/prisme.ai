@@ -1,8 +1,8 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import context, { WorkspacesContext } from './context';
-import api from '../../api/api';
+import api from '../../utils/api';
+import { Workspace } from '@prisme.ai/sdk';
 import { useUser } from '../UserProvider';
-import { Workspace } from '../../api/types';
 
 export const WorkspacesProvider: FC = ({ children }) => {
   const { user } = useUser();

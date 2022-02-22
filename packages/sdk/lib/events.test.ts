@@ -16,24 +16,26 @@ jest.mock('socket.io-client', () => {
 });
 
 it('should connect to Websocket', () => {
-  const client = new Events('1');
+  const client = new Events('1', 'abcde');
   expect(io).toHaveBeenCalledWith(
-    `${publicRuntimeConfig.API_HOST || ''}/workspaces/1/events`,
+    `https://api.eda.prisme.ai/workspaces/1/events`,
     {
-      withCredentials: true,
+      extraHeaders: {
+        'x-prismeai-session-token': 'abcde',
+      },
     }
   );
 });
 
 it('should disconnect to Websocket', () => {
-  const client = new Events('1');
+  const client = new Events('1', 'abcde');
   (client as any).client.connected = true;
   client.destroy();
   expect(io().disconnect).toHaveBeenCalled();
 });
 
 it('should wait before disconnecting Websocket', () => {
-  const client = new Events('1');
+  const client = new Events('1', 'abcde');
   const ioInstance = io();
   (client as any).client.connected = false;
   ((client as any).client.once as jest.Mock).mockClear();
@@ -46,7 +48,7 @@ it('should wait before disconnecting Websocket', () => {
 });
 
 it('should listen to all events', () => {
-  const client = new Events('1');
+  const client = new Events('1', 'abcde');
   const listener = () => null;
   const off = client.all(listener);
   expect(io().onAny).toHaveBeenCalledWith(listener);

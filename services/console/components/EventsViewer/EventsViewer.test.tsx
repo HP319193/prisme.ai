@@ -1,9 +1,9 @@
 import EventsViewer from './EventsViewer';
 import renderer, { act } from 'react-test-renderer';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import { Event } from '../../api/types';
+import { Event } from '@prisme.ai/sdk';
 
-jest.mock('../../api/events', () => {
+jest.mock('@prisme.ai/sdk', () => {
   class Events {
     static listeners: any[] = [];
     all(listener: any) {
@@ -13,7 +13,8 @@ jest.mock('../../api/events', () => {
       };
     }
   }
-  return Events;
+  class Api {}
+  return { Api, Events };
 });
 
 jest.mock('../../layouts/WorkspaceLayout', () => {

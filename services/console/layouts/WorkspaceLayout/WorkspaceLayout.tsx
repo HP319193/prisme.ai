@@ -6,9 +6,8 @@ import { useWorkspaces } from '../../components/WorkspacesProvider';
 import workspaceContext, { WorkspaceContext } from './context';
 import Loading from '../../components/Loading';
 import { EventsByDay } from '.';
-import Events from '../../api/events';
-import { Event } from '../../api/types';
-import api from '../../api/api';
+import api from '../../utils/api';
+import { Events, Event } from '@prisme.ai/sdk';
 import Error404 from '../../views/Errors/404';
 import { Layout } from '@prisme.ai/design-system';
 import { useUser } from '../../components/UserProvider';
@@ -84,7 +83,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       (socket.current && socket.current.workspaceId === workspaceId)
     )
       return;
-    socket.current = new Events(workspaceId);
+    socket.current = api.streamEvents(workspaceId);
     return () => {
       socket.current && socket.current.destroy();
     };

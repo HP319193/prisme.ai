@@ -1,11 +1,10 @@
-import getConfig from 'next/config';
 import QueryString from 'qs';
 import Fetcher from './fetcher';
 import { Event, Workspace } from './types';
 
 type UserPermissions = Prismeai.UserPermissions;
 
-const { publicRuntimeConfig } = getConfig();
+import { Events } from './events';
 
 export class Api extends Fetcher {
   async me() {
@@ -49,6 +48,7 @@ export class Api extends Fetcher {
     this.token = null;
   }
 
+  // Workspaces
   async getWorkspaces(): Promise<Workspace[]> {
     return await this.get('/workspaces');
   }
@@ -69,6 +69,7 @@ export class Api extends Fetcher {
     return await this.delete(`/workspaces/${workspaceId}`);
   }
 
+  // Automations
   async createAutomation(
     workspace: Workspace,
     automation: Prismeai.Automation
@@ -91,6 +92,11 @@ export class Api extends Fetcher {
 
   async deleteAutomation(workspace: Workspace, slug: string): Promise<string> {
     return await this.delete(`/workspaces/${workspace.id}/automations/${slug}`);
+  }
+
+  // Events
+  streamEvents(workspaceId: string) {
+    return new Events(workspaceId, this._token || '', this.host);
   }
 
   async getEvents(
@@ -144,4 +150,4 @@ export class Api extends Fetcher {
   }
 }
 
-export default new Api(publicRuntimeConfig.API_HOST || '');
+export default new Api('https://api.eda.prisme.ai');

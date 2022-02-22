@@ -3,10 +3,9 @@ import { getLayout } from './index';
 import renderer, { act } from 'react-test-renderer';
 import { useRouter } from 'next/router';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
-import Events from '../../api/events';
-import api from '../../api/api';
+import api from '../../utils/api';
+import { Events, Event, Workspace } from '@prisme.ai/sdk';
 import { useWorkspace, WorkspaceContext } from './context';
-import { Event, Workspace } from '../../api/types';
 import { notification } from 'antd';
 import WorkspaceSource from '../../views/WorkspaceSource';
 
@@ -43,7 +42,7 @@ jest.mock('next/router', () => {
   };
 });
 
-jest.mock('../../api/events', () => {
+jest.mock('@prisme.ai/sdk', () => {
   class Events {
     static destroyMock = jest.fn();
     static listeners: any[] = [];
@@ -55,7 +54,17 @@ jest.mock('../../api/events', () => {
       Events.destroyMock();
     }
   }
-  return Events;
+  const mockEvents = new Events();
+  class Api {
+    streamEvents() {
+      return mockEvents;
+    }
+    getEvents() {
+      return [];
+    }
+  }
+
+  return { Api, Events };
 });
 
 beforeEach(() => {

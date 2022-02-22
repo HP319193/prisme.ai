@@ -1,11 +1,11 @@
 import UserProvider from './Provider';
 import renderer, { act } from 'react-test-renderer';
 import { useUser } from './context';
-import api from '../../api/api';
-import ApiError from '../../api/ApiError';
+import api from '../../utils/api';
+import { ApiError } from '@prisme.ai/sdk';
 import Storage from '../../utils/Storage';
 
-jest.mock('../../api/api', () => ({
+jest.mock('../../utils/api', () => ({
   me: jest.fn(),
   signin: jest.fn(),
   signout: jest.fn(),
@@ -64,8 +64,8 @@ it('should signin with success', async () => {
   jest.spyOn(api, 'me').mockRejectedValue('fail');
   jest.spyOn(api, 'signin').mockReturnValue(
     Promise.resolve({
-      headers: { 'x-prismeai-session-token': 'token' },
       id: '42',
+      token: 'token',
     } as any)
   );
   let context: any = {};
@@ -164,13 +164,11 @@ it('should signup with a new account', async () => {
     await true;
   });
   (api.signup as jest.Mock).mockImplementation(async () => ({
-    headers: {
-      'x-prismeai-session-token': 'dev-token',
-    },
     id: '42',
     email: 'email',
     firstName: 'firstname',
     lastName: 'lastname',
+    token: 'dev-token',
   }));
   act(() => {
     promise = context.signup('email', 'password', 'firstname', 'lastname');

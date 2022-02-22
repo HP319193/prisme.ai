@@ -1,20 +1,19 @@
-import getConfig from 'next/config';
 import io, { Socket } from 'socket.io-client';
-
-const { publicRuntimeConfig } = getConfig();
-
 export class Events {
   private client: Socket;
   public workspaceId: string;
 
-  constructor(workspaceId: string) {
+  constructor(
+    workspaceId: string,
+    token: string,
+    apiHost: string = 'https://api.eda.prisme.ai'
+  ) {
     this.workspaceId = workspaceId;
-    this.client = io(
-      `${publicRuntimeConfig.API_HOST || ''}/workspaces/${workspaceId}/events`,
-      {
-        withCredentials: true,
-      }
-    );
+    this.client = io(`${apiHost}/workspaces/${workspaceId}/events`, {
+      extraHeaders: {
+        'x-prismeai-session-token': token,
+      },
+    });
   }
 
   destroy() {

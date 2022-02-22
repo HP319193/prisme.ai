@@ -1,8 +1,6 @@
-import { Storage } from '../utils/Storage';
 import ApiError from './ApiError';
 import HTTPError from './HTTPError';
 
-const TOKEN_KEY = 'prisme-auth-token';
 const headersAsObject = (headers: Headers) =>
   Array.from(headers).reduce(
     (prev, [k, v]) => ({
@@ -13,18 +11,11 @@ const headersAsObject = (headers: Headers) =>
   );
 
 export class Fetcher {
-  private host: string;
+  protected host: string;
+  protected _token: string | null = null;
 
   set token(v: string | null) {
-    if (v) {
-      Storage.set(TOKEN_KEY, v);
-    } else {
-      Storage.remove(TOKEN_KEY);
-    }
-  }
-
-  private get _token() {
-    return Storage.get(TOKEN_KEY);
+    this._token = v;
   }
 
   constructor(host: string) {

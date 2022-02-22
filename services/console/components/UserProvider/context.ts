@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import ApiError from '../../api/ApiError';
+import { ApiError } from '@prisme.ai/sdk';
 
 export interface UserContext<T = Prismeai.User | null> {
   user: T;
