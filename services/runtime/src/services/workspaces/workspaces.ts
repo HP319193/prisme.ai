@@ -84,7 +84,9 @@ export class Workspaces extends Storage {
 
   async fetchWorkspace(workspaceId: string): Promise<Prismeai.Workspace> {
     try {
-      const raw = await this.driver.get(`${workspaceId}/current.yml`);
+      const raw = await this.driver.get(
+        `workspaces/${workspaceId}/current.yml`
+      );
       const dsul = yaml.load(raw) as Prismeai.Workspace;
       this.workspaces[workspaceId] = new Workspace(dsul);
       return dsul;
