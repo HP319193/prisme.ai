@@ -66,6 +66,9 @@ const HeaderWorkspace = () => {
           switch (item.key) {
             case 'source':
               displaySource(!sourceDisplayed);
+              break;
+            case 'delete':
+              confirmDelete();
           }
         }}
       />
