@@ -14,3 +14,4 @@ ENV OPENAPI_FILEPATH /www/specifications/swagger.yml
 ENV NODE_ENV production
 
 CMD [ "node", "--abort-on-uncaught-exception", "services/events/dist/index.js"]
+
