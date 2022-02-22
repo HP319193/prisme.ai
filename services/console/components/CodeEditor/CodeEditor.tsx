@@ -58,7 +58,7 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
     }: CodeEditorProps,
     ref
   ) {
-    const value = useRef(initialValue);
+    const value = useRef(String(initialValue));
     const aceRef = useRef<ReactAce>(null);
     useImperativeHandle(ref, () => aceRef.current!, []);
     //const theme = `solarized_${darkMode ? "dark" : "light"}`;
