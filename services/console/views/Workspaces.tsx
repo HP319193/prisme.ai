@@ -1,4 +1,4 @@
-import { Layout, Button, Text, Space, Title } from '@prisme.ai/design-system';
+import { Button, Layout, Space, Text, Title } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -7,6 +7,7 @@ import { Card } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import packageJson from '../../../package.json';
 import { Workspace } from '../api/types';
 import Header from '../components/Header';
 import { useWorkspaces } from '../components/WorkspacesProvider';
@@ -93,6 +94,9 @@ export const WorkspacesView = () => {
               </div>
             </Card>
           </div>
+        </div>
+        <div className="absolute bottom-0 right-[15px] text-gray">
+          Prisme.ai {packageJson.version}
         </div>
       </Layout>
     </>
