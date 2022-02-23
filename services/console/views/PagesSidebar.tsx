@@ -7,7 +7,9 @@ import {
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
+import { useWorkspaces } from '../components/WorkspacesProvider';
 import IconPages from '../icons/icon-pages.svgr';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useLocalizedText from '../utils/useLocalizedText';
@@ -15,9 +17,15 @@ import useLocalizedText from '../utils/useLocalizedText';
 const emptyObject: Prismeai.Workspace['pages'] = {};
 
 export const PagesSidebar = () => {
-  const { t } = useTranslation('workspaces');
-  const localize = useLocalizedText();
   const {
+    t,
+    i18n: { language },
+  } = useTranslation('workspaces');
+  const localize = useLocalizedText();
+  const { createPage } = useWorkspaces();
+  const { push } = useRouter();
+  const {
+    workspace,
     workspace: { id: workspaceId, pages = emptyObject },
   } = useWorkspace();
 
@@ -34,8 +42,35 @@ export const PagesSidebar = () => {
     });
   }, [filter, localize, pages]);
 
-  const creating = false;
-  const create = useCallback(() => {}, []);
+  const [creating, setCreating] = useState(false);
+  const generatePageName = useCallback(() => {
+    const defaultName = t('pages.create.defaultName');
+    let version = 0;
+    const generateName = () =>
+      `${defaultName}${version ? ` (${version})` : ''}`;
+    const names = Object.keys(pages).map((key) => pages[key].name);
+    while (names.find((name) => name === generateName())) {
+      version++;
+    }
+    return generateName();
+  }, [pages, t]);
+
+  const create = useCallback(async () => {
+    setCreating(true);
+
+    const name = generatePageName();
+    const createdPage = await createPage(workspace, {
+      name: {
+        [language]: name,
+      },
+      widgets: [],
+    });
+
+    setCreating(false);
+    if (createdPage) {
+      await push(`/workspaces/${workspaceId}/pages/${createdPage.slug}`);
+    }
+  }, [generatePageName, createPage, workspace, push, workspaceId]);
 
   const isEmpty = Object.keys(pages).length === 0;
 
