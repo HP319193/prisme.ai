@@ -6,7 +6,11 @@ import { DetailedAutomation, Workspace } from '../../workspaces';
 import { ContextsManager } from '../contexts';
 import { runInstruction, InstructionType } from './instructions';
 
-class Break {}
+export class Break {
+  constructor(public scope: Prismeai.Break['break']['scope'] = 'automation') {
+    this.scope = scope;
+  }
+}
 
 export async function executeAutomation(
   workspace: Workspace,
@@ -19,7 +23,7 @@ export async function executeAutomation(
   try {
     await runInstructions(automation.do, { workspace, ctx, logger, broker });
   } catch (error) {
-    if (!(error instanceof Break)) {
+    if (!(error instanceof Break) || error.scope === 'all') {
       (<any>error).source = (<any>error).source || {
         ...broker.parentSource,
         automationSlug: automation.slug,
@@ -63,7 +67,8 @@ export async function runInstructions(
   for (let instruction of instructions || []) {
     const instructionName = Object.keys(instruction || {})[0];
     if (instructionName === InstructionType.Break) {
-      throw new Break();
+      const scope = (<any>instruction)[InstructionType.Break]?.scope;
+      throw new Break(scope);
     }
 
     // Before each run, we interpolate the instruction to replace all the variables based on the context
