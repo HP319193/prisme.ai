@@ -62,18 +62,20 @@ export const PagesSidebar = () => {
     setCreating(true);
 
     const name = generatePageName();
-    const createdPage = await createPage(workspace, {
-      name: {
-        [language]: name,
-      },
-      widgets: [],
-    });
+    try {
+      const createdPage = await createPage(workspace, {
+        name: {
+          [language]: name,
+        },
+        widgets: [],
+      });
 
+      if (createdPage) {
+        await push(`/workspaces/${workspaceId}/pages/${createdPage.slug}`);
+      }
+    } catch (e) {}
     setCreating(false);
-    if (createdPage) {
-      await push(`/workspaces/${workspaceId}/pages/${createdPage.slug}`);
-    }
-  }, [generatePageName, createPage, workspace, push, workspaceId]);
+  }, [generatePageName, createPage, workspace, language, push, workspaceId]);
 
   const isEmpty = Object.keys(pages).length === 0;
 

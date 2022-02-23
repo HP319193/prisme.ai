@@ -2,7 +2,7 @@ import { remove as removeDiacritics } from 'diacritics';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import Workspaces from './workspaces';
-import DSULStorage from '../DSULStorage';
+import DSULStorage from '../../DSULStorage';
 import { AlreadyUsedError, ObjectNotFoundError } from '../../../errors';
 
 class Pages {

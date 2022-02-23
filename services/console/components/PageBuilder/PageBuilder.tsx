@@ -68,10 +68,12 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
 
   return (
     <context.Provider value={{ page: value, widgets, addWidget, resizeWidget }}>
-      <Widgets />
-      <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
-        {widgetEditing && <WidgetForm {...widgetEditing} />}
-      </Panel>
+      <div className="relative flex flex-1 overflow-x-hidden">
+        <Widgets />
+        <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
+          {widgetEditing && <WidgetForm {...widgetEditing} />}
+        </Panel>
+      </div>
     </context.Provider>
   );
 };

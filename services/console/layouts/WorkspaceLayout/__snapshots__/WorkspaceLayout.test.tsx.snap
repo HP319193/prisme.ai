@@ -23,7 +23,7 @@ exports[`should render 404 1`] = `
   className="flex flex-1 justify-center align-center"
 >
   <div
-    className="flex flex-1 align-center justify-center"
+    className="flex flex-1 align-center justify-center "
   />
 </div>
 `;
