@@ -48,12 +48,15 @@ export const PagesSidebar = () => {
     let version = 0;
     const generateName = () =>
       `${defaultName}${version ? ` (${version})` : ''}`;
-    const names = Object.keys(pages).map((key) => pages[key].name);
+    const names = Object.keys(pages).map((key) => {
+      const name = pages[key].name;
+      return typeof name === 'string' ? name : name[language];
+    });
     while (names.find((name) => name === generateName())) {
       version++;
     }
     return generateName();
-  }, [pages, t]);
+  }, [language, pages, t]);
 
   const create = useCallback(async () => {
     setCreating(true);

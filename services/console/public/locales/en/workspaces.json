@@ -143,9 +143,29 @@
   },
   "pages": {
     "link": "Pages",
-    "soon": "Pages will be available soon.",
     "create": {
-      "label": "Create a new Page"
+      "label": "Create a new Page",
+      "defaultName": "Page"
+    },
+    "delete": {
+      "label": "Delete the page",
+      "confirm": {
+        "title": "Do you want to delete the page \"{{name}}\"?",
+        "content": "Warning, the data will be lost.",
+        "ok": "Yes, delete",
+        "cancel": "No, please no"
+      },
+      "toast": "Page has been deleted"
+    },
+    "save": {
+      "label": "Save",
+      "toast": "Page has been saved",
+      "error": "Unknown error has occured"
+    },
+    "widgets": {
+      "add": "Add a widget",
+      "resize": "Resize widget display",
+      "search": "Search a widget"
     }
   },
   "expert": {

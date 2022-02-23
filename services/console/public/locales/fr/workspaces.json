@@ -143,9 +143,29 @@
   },
   "pages": {
     "link": "Pages",
-    "soon": "Les Pages seront bientôt disponibles.",
     "create": {
-      "label": "Créer une nouvelle Page"
+      "label": "Créer une nouvelle Page",
+      "defaultName": "Page"
+    },
+    "delete": {
+      "label": "Supprimer la page",
+      "confirm": {
+        "title": "Voulez vous supprimer la page \"{{name}}\" ?",
+        "content": "Attention, les données seront perdues.",
+        "ok": "Oui, supprimer",
+        "cancel": "Non, je regrette"
+      },
+      "toast": "La page a bien été supprimée"
+    },
+    "save": {
+      "label": "Enregistrer",
+      "toast": "La page a bien été enregistrée",
+      "error": "Une erreur est survenue"
+    },
+    "widgets": {
+      "add": "Ajouter un widget",
+      "resize": "Redimensionner l'affichage du widget",
+      "search": "Rechercher un widget"
     }
   },
   "expert": {

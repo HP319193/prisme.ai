@@ -34,7 +34,7 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
       <SearchInput
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder={t('pages.instruction.search')}
+        placeholder={t('pages.widgets.search')}
         className="mb-6"
       />
       {filteredWidgets.map(({ slug, name, description }) => (
