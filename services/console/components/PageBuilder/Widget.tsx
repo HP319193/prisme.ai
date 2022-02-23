@@ -1,4 +1,5 @@
 import {
+  memo,
   ReactEventHandler,
   useCallback,
   useEffect,
@@ -16,17 +17,20 @@ export const Widget = ({ url, id }: WidgetProps) => {
   const { t } = useTranslation('workspaces');
   const ref = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
-  const handleLoad = useCallback((e) => {
-    setLoading(false);
-    e.target.contentWindow.postMessage(
-      {
-        source: 'prisme.ai',
-        token: api.token,
-        id,
-      },
-      '*'
-    );
-  }, []);
+  const handleLoad = useCallback(
+    (e) => {
+      setLoading(false);
+      e.target.contentWindow.postMessage(
+        {
+          source: 'prisme.ai',
+          token: api.token,
+          id,
+        },
+        '*'
+      );
+    },
+    [id]
+  );
 
   useEffect(() => {
     if (!ref.current) return;
@@ -68,4 +72,4 @@ export const Widget = ({ url, id }: WidgetProps) => {
   );
 };
 
-export default Widget;
+export default memo(Widget);

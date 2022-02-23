@@ -25,12 +25,14 @@ export const PagesSidebar = () => {
 
   const filteredPages = useMemo(() => {
     return Object.keys(pages).flatMap((key) => {
-      const { title, description = '' } = pages[key];
-      return `${title} ${description}`.toLowerCase().match(filter.toLowerCase())
+      const { name, description = '' } = pages[key];
+      return `${localize(name)} ${localize(description)}`
+        .toLowerCase()
+        .match(filter.toLowerCase())
         ? { ...pages[key], slug: key }
         : [];
     });
-  }, [filter, pages]);
+  }, [filter, localize, pages]);
 
   const creating = false;
   const create = useCallback(() => {}, []);
@@ -63,14 +65,14 @@ export const PagesSidebar = () => {
             onChange={({ target: { value } }) => setFilter(value)}
           />
           <Space direction="vertical" className="flex grow overflow-x-auto">
-            {filteredPages.map(({ title, description, slug }) => (
+            {filteredPages.map(({ name, description, slug }) => (
               <Link
                 key={slug}
                 href={`/workspaces/${workspaceId}/pages/${slug}`}
               >
                 <a>
                   <ListItem
-                    title={localize(title)}
+                    title={localize(name)}
                     content={localize(description)}
                   />
                 </a>

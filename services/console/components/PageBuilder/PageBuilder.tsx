@@ -26,12 +26,11 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
 
   const widgets = useMemo(() => workspace.widgets, [workspace.widgets]);
 
-  useEffect(() => {
-    (value.widgets || []).forEach((widget: { key?: string }) => {
-      if (widget.key) return;
-      widget.key = nanoid();
-    });
-  }, [value]);
+  // Generate keys
+  (value.widgets || []).forEach((widget: { key?: string }) => {
+    if (widget.key) return;
+    widget.key = nanoid();
+  });
 
   const addWidgetDetails = useCallback(async () => {
     return new Promise<string>((resolve) => {

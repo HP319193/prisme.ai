@@ -16,6 +16,7 @@ import useLocalizedText from '../utils/useLocalizedText';
 import PageBuilder from '../components/PageBuilder';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { PageBuilderContext } from '../components/PageBuilder/context';
+import Loading from '../components/Loading';
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
@@ -28,21 +29,26 @@ export const Page = () => {
     push,
   } = useRouter();
   const page = (workspace.pages || {})[`${pageId}`];
-  const [value, setValue] = useState<Prismeai.Page>(page);
+  const [value, setValue] = useState<Prismeai.Page>();
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    setValue(page);
+    setValue({
+      ...page,
+      widgets: page.widgets.map((widget) => ({ ...widget })),
+    });
   }, [page]);
 
   const updateTitle = useCallback(
     (newTitle: string) => {
+      if (!value) return;
       setValue({ ...value, name: newTitle });
     },
     [value]
   );
 
   const save = useCallback(async () => {
+    if (!value) return;
     setSaving(true);
     try {
       const cleanedValue = {
@@ -52,6 +58,7 @@ export const Page = () => {
         ),
       };
       await updatePage(workspace, `${pageId}`, cleanedValue);
+
       notification.success({
         message: t('pages.save.toast'),
         placement: 'bottomRight',
@@ -85,8 +92,12 @@ export const Page = () => {
     });
   }, [pageId, push, t, workspace.id]);
 
-  if (!value) {
+  if (!page) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
+  }
+
+  if (!value) {
+    return <Loading />;
   }
 
   return (
