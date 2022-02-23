@@ -67,9 +67,10 @@ export const Page = () => {
     try {
       const cleanedValue = {
         ...value,
-        widgets: (
-          (value.widgets || []) as PageBuilderContext['page']['widgets']
-        ).map(({ key, ...widget }) => widget),
+        widgets: ((value.widgets ||
+          []) as PageBuilderContext['page']['widgets']).map(
+          ({ key, ...widget }) => widget
+        ),
       };
       await updatePage(workspace, `${pageId}`, cleanedValue);
 

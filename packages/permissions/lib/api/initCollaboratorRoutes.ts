@@ -87,8 +87,10 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     next: NextFunction
   ) {
     const { email, public: publicShare, ...permissions } = body;
-    const users: ((Prismeai.User & { id: string }) | typeof PublicAccess)[] =
-      publicShare ? [PublicAccess] : await fetchUsers({ email });
+    const users: (
+      | (Prismeai.User & { id: string })
+      | typeof PublicAccess
+    )[] = publicShare ? [PublicAccess] : await fetchUsers({ email });
     if (!users.length) {
       throw new CollaboratorNotFound(
         `Could not find any user corresponding to ${email}`

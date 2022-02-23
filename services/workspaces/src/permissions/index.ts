@@ -46,6 +46,10 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           description: Schema.Types.Mixed,
           widgets: Schema.Types.Mixed,
         },
+        [SubjectType.Page]: {
+          workspaceId: { type: String, index: true },
+          name: { type: String, text: true },
+        },
       },
     },
     config

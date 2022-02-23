@@ -144,7 +144,7 @@ const HeaderWorkspace = () => {
         }}
       />
     ),
-    [t, sourceDisplayed, displaySource, confirmDelete]
+    [t, sourceDisplayed, displaySource, confirmPublishApp, confirmDelete]
   );
 
   return (
