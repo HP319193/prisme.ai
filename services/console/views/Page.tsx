@@ -37,7 +37,7 @@ export const Page = () => {
 
   const updateTitle = useCallback(
     (newTitle: string) => {
-      setValue({ ...value, title: newTitle });
+      setValue({ ...value, name: newTitle });
     },
     [value]
   );
@@ -95,7 +95,7 @@ export const Page = () => {
         title={
           <div className="flex flex-row items-center">
             <EditableTitle
-              value={localize(value.title)}
+              value={localize(value.name)}
               onChange={updateTitle}
               level={4}
               className="!m-0 !ml-4"

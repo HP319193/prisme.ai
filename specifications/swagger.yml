@@ -1246,6 +1246,210 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
+  ## pages
+  /v2/workspaces/{workspaceId}/pages:
+    post:
+      description: Create a new page
+      operationId: createPage
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Page'
+
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+
+  /v2/workspaces/{workspaceId}/pages/{pageSlug}:
+    get:
+      description: Fetch a page
+      operationId: getPage
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'pageSlug'
+          in: 'path'
+          description: 'Page slug'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+    patch:
+      description: Update a page
+      operationId: updatePage
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'pageSlug'
+          in: 'path'
+          description: 'Page slug'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Page'
+
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+
+    delete:
+      description: Delete a Page
+      operationId: deletePage
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'pageSlug'
+          in: 'path'
+          description: 'Page slug'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  slug:
+                    type: string
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
   ## apps
   /v2/apps:
     get:
@@ -1890,11 +2094,12 @@ components:
     Page:
       type: object
       required:
+        - name
         - widgets
       description: Page
       additionalProperties: false
       properties:
-        title:
+        name:
           $ref: '#/components/schemas/LocalizedText'
         description:
           $ref: '#/components/schemas/LocalizedText'
@@ -1906,6 +2111,9 @@ components:
             properties:
               name:
                 type: string
+        slug:
+          type: string
+          description: Unique & human readable id across current workspace's automations
 
     ###############################################################################################################################################
     ############################################################ Automation Instructions ############################################################
@@ -2268,6 +2476,9 @@ components:
           - $ref: '#/components/schemas/CreatedAutomation'
           - $ref: '#/components/schemas/UpdatedAutomation'
           - $ref: '#/components/schemas/DeletedAutomation'
+          - $ref: '#/components/schemas/CreatedPage'
+          - $ref: '#/components/schemas/UpdatedPage'
+          - $ref: '#/components/schemas/DeletedPage'
           - $ref: '#/components/schemas/AppEvent'
 
     AllEventResponses:
@@ -2321,6 +2532,15 @@ components:
           - allOf:
               - $ref: '#/components/schemas/PrismeEvent'
               - $ref: '#/components/schemas/DeletedAutomation'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/CreatedPage'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/UpdatedPage'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/DeletedPage'
 
     GenericErrorEvent:
       type: object
@@ -2706,6 +2926,80 @@ components:
             - automation
           properties:
             automation:
+              type: object
+              required:
+                - slug
+                - name
+              properties:
+                slug:
+                  type: string
+                name:
+                  type: string
+
+    CreatedPage:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.page.created
+          enum:
+            - workspaces.page.created
+        payload:
+          type: object
+          required:
+            - page
+            - slug
+          properties:
+            slug:
+              type: string
+            page:
+              $ref: '#/components/schemas/Page'
+
+    UpdatedPage:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.page.updated
+          enum:
+            - workspaces.page.updated
+        payload:
+          type: object
+          required:
+            - page
+            - slug
+          properties:
+            page:
+              $ref: '#/components/schemas/Page'
+            slug:
+              type: string
+            oldSlug:
+              type: string
+              description: Filled with the previous page slug when renamed
+
+    DeletedPage:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.page.deleted
+          enum:
+            - workspaces.page.deleted
+        payload:
+          type: object
+          required:
+            - page
+          properties:
+            page:
               type: object
               required:
                 - slug
