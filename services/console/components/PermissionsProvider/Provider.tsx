@@ -13,14 +13,13 @@ const addUserToMap = (
   usersPermissions: Map<string, UserPermissions[]>,
   newUserPermissions: UserPermissions
 ) => {
-  const newUsersPermissions = new Map<string, UserPermissions[]>(
-    usersPermissions
-  );
+  const newUsersPermissions = new Map(usersPermissions);
   newUsersPermissions.set(subjectId, [
-    ...(usersPermissions.get(subjectId) || []),
+    ...(usersPermissions.get(subjectId) || []).filter(
+      ({ email }) => email !== newUserPermissions.email
+    ),
     newUserPermissions,
   ]);
-
   return newUsersPermissions;
 };
 const removeUserFromMap = (
@@ -53,7 +52,11 @@ export const PermissionsProvider: FC = ({ children }) => {
 
       // optimistic
       setUsersPermissions(
-        addUserToMap(subjectId, usersPermissions, permissions)
+        addUserToMap(
+          `${subjectType}:${subjectId}`,
+          usersPermissions,
+          permissions
+        )
       );
 
       try {
@@ -63,7 +66,11 @@ export const PermissionsProvider: FC = ({ children }) => {
           permissions
         );
         setUsersPermissions(
-          addUserToMap(subjectId, usersPermissions, fetchedUserPermissions)
+          addUserToMap(
+            `${subjectType}:${subjectId}`,
+            usersPermissions,
+            fetchedUserPermissions
+          )
         );
         return fetchedUserPermissions;
       } catch (e) {
@@ -80,7 +87,7 @@ export const PermissionsProvider: FC = ({ children }) => {
   );
 
   const getUsersPermissions: PermissionsContext['getUsersPermissions'] = useCallback(
-    async (subjectType: SubjectType, subjectId: string) => {
+    async (subjectType, subjectId) => {
       const fetchedUsersPermissions = await api.getPermissions(
         subjectType,
         subjectId
@@ -88,7 +95,10 @@ export const PermissionsProvider: FC = ({ children }) => {
       const newUsersPermissions = new Map<string, UserPermissions[]>(
         usersPermissions
       );
-      newUsersPermissions.set(subjectId, fetchedUsersPermissions.result);
+      newUsersPermissions.set(
+        `${subjectType}:${subjectId}`,
+        fetchedUsersPermissions.result
+      );
       if (!isEqual(newUsersPermissions, usersPermissions)) {
         setUsersPermissions(newUsersPermissions);
       }
@@ -97,27 +107,45 @@ export const PermissionsProvider: FC = ({ children }) => {
     [usersPermissions]
   );
 
-  const removeUserPermissions: PermissionsContext['removeUserPermissions'] =
-    useCallback(
-      async (subjectType, subjectId, userEmail) => {
-        const fetchedUserPermissions = await api.deletePermissions(
+  const removeUserPermissions: PermissionsContext['removeUserPermissions'] = useCallback(
+    async (subjectType, subjectId, userEmail) => {
+      const backupUsersPermissions = new Map(usersPermissions);
+
+      // optimistic
+      setUsersPermissions(
+        removeUserFromMap(
+          `${subjectType}:${subjectId}`,
+          usersPermissions,
+          userEmail
+        )
+      );
+
+      try {
+        const deletedUserPermissions = await api.deletePermissions(
           subjectType,
           subjectId,
           userEmail
         );
-        const newUsersPermissions = new Map<string, UserPermissions[]>(
-          usersPermissions
+        setUsersPermissions(
+          removeUserFromMap(
+            `${subjectType}:${subjectId}`,
+            usersPermissions,
+            userEmail
+          )
         );
-        newUsersPermissions.set(subjectId, [
-          ...(usersPermissions.get(subjectId) || []).filter(
-            (userPerm) => userPerm.email != userEmail
-          ),
-        ]);
-        setUsersPermissions(newUsersPermissions);
-        return fetchedUserPermissions;
-      },
-      [usersPermissions]
-    );
+        return deletedUserPermissions;
+      } catch (e) {
+        notification.error({
+          message: t('api', { errorName: e }),
+          placement: 'bottomRight',
+        });
+
+        setUsersPermissions(backupUsersPermissions);
+        return null;
+      }
+    },
+    [t, usersPermissions]
+  );
 
   return (
     <context.Provider

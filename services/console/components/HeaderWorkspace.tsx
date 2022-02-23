@@ -1,5 +1,9 @@
 import { Dispatch, useCallback, useMemo, SetStateAction } from 'react';
-import { CodeOutlined, ShareAltOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  CodeOutlined,
+  ShareAltOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
 import {
   Menu,
   Dropdown,
@@ -13,7 +17,7 @@ import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import Header from './Header';
-import SharePopover from './SharePopover';
+import ShareWorkspace from './Share/ShareWorkspace';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
@@ -22,6 +26,7 @@ const HeaderWorkspace = () => {
     workspace: { id, name: currentWorkspace },
     displaySource,
     sourceDisplayed,
+    share: { label, component: ShareComponent = ShareWorkspace } = {},
   } = useWorkspace();
   const { push } = useRouter();
 
@@ -80,7 +85,7 @@ const HeaderWorkspace = () => {
         }}
       />
     ),
-    [t, displaySource, sourceDisplayed]
+    [t, sourceDisplayed, displaySource, confirmDelete]
   );
 
   return (
@@ -88,16 +93,12 @@ const HeaderWorkspace = () => {
       title={<Dropdown Menu={workspacesMenu}>{currentWorkspace}</Dropdown>}
       leftContent={
         <Popover
-          content={({
-            setVisible,
-          }: {
-            setVisible: Dispatch<SetStateAction<boolean>>;
-          }) => <SharePopover setVisible={setVisible} />}
-          title={t('share.label')}
+          content={() => <ShareComponent />}
+          title={label || t('share.label')}
         >
           <Button variant="grey">
             <Space>
-              {t('share.label')}
+              {label || t('share.label')}
               <ShareAltOutlined />
             </Space>
           </Button>

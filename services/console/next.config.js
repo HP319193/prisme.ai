@@ -7,6 +7,7 @@ module.exports = {
   publicRuntimeConfig: {
     API_HOST: process.env.API_HOST,
     ENDPOINT: `${process.env.API_HOST}/workspaces/{{workspaceId}}/webhooks/{{slug}}`,
+    PAGES_HOST: process.env.PAGES_HOST,
     SENTRY_DSN: process.env.SENTRY_DSN || '',
   },
   webpack(config) {

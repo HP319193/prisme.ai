@@ -19,6 +19,7 @@ import {
   initApiKeysRoutes,
   initCollaboratorRoutes,
 } from '@prisme.ai/permissions';
+import { permissionsMiddleware } from '../permissions/middleware';
 import DSULStorage from '../services/DSULStorage';
 import { Broker } from '@prisme.ai/broker';
 
@@ -74,7 +75,7 @@ export function initAPI(
   /**
    * Sharing routes
    */
-  initCollaboratorRoutes<SubjectType>(app);
+  initCollaboratorRoutes<SubjectType>(app, permissionsMiddleware);
 
   /**
    * API Key routes

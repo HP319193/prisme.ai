@@ -10,6 +10,7 @@ import { isFormFieldValid } from '../utils/forms';
 interface FieldProps extends Partial<FProps<any, any>> {
   label?: string | ReactNode;
   className?: string;
+  containerClassName?: string;
   children:
     | ReactNode
     | ((props: {
@@ -23,11 +24,12 @@ export const FieldContainer: FC<FieldProps> = ({
   className,
   children,
   name = '',
+  containerClassName,
   ...fieldProps
 }) => {
   const { input, meta } = useField(name, fieldProps);
   return (
-    <div className="mb-5">
+    <div className={`mb-5 ${containerClassName || ''}`}>
       <span className={`flex flex-col ${className || ''}`}>
         {label && (
           <label className="text-gray text-[11px]" htmlFor={name}>

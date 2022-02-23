@@ -1,3 +1,4 @@
+import { NextFunction, Request, Response, Router } from 'express';
 import { Ability, RawRuleOf } from '@casl/ability';
 import { CustomRole } from '..';
 
@@ -69,3 +70,13 @@ export interface PermissionsConfig<
     role: Omit<CustomRole<SubjectType, CustomRules>, 'casl'>
   ) => RawRuleOf<Ability>[];
 }
+
+export type PermissionsMiddleware = (
+  req: Request<
+    PrismeaiAPI.GetPermissions.PathParameters,
+    PrismeaiAPI.GetPermissions.Responses.$200,
+    any
+  >,
+  res: Response<PrismeaiAPI.GetPermissions.Responses.$200>,
+  next: NextFunction
+) => void;

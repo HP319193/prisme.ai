@@ -17,11 +17,12 @@ import PageBuilder from '../components/PageBuilder';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { PageBuilderContext } from '../components/PageBuilder/context';
 import Loading from '../components/Loading';
+import SharePage from '../components/Share/SharePage';
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
   const { updatePage, deletePage } = useWorkspaces();
-  const { workspace } = useWorkspace();
+  const { workspace, setShare } = useWorkspace();
   const localize = useLocalizedText();
 
   const {
@@ -33,9 +34,21 @@ export const Page = () => {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    setShare({
+      label: t('pages.share.label'),
+      component: () => <SharePage pageId={`${pageId}`} />,
+    });
+
+    return () => {
+      setShare(undefined);
+    };
+  }, [pageId, setShare, t]);
+
+  useEffect(() => {
+    if (!page) return;
     setValue({
       ...page,
-      widgets: page.widgets.map((widget) => ({ ...widget })),
+      widgets: (page.widgets || []).map((widget) => ({ ...widget })),
     });
   }, [page]);
 
@@ -136,7 +149,7 @@ export const Page = () => {
         }
         onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
-          <Button onClick={save} disabled={saving} key="1">
+          <Button onClick={save} disabled={saving} key="save">
             {saving && <LoadingOutlined />}
             {t('pages.save.label')}
           </Button>,

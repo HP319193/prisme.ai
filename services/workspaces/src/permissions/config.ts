@@ -3,6 +3,7 @@ import { PermissionsConfig, ActionType } from '@prisme.ai/permissions';
 export enum SubjectType {
   Workspace = 'workspaces',
   App = 'apps',
+  Page = 'pages',
 }
 
 export enum Role {
@@ -16,6 +17,10 @@ export enum Role {
   // 2. View all workspace events except API key & permissions ones
   // 3. Has CRUD permissions except delete on the workspace, installed apps & pages
   Editor = 'editor',
+
+  // Page user can :
+  // 1. Access page and play with it
+  PageUser = 'page-user',
 }
 
 export const config: PermissionsConfig<
@@ -30,6 +35,12 @@ export const config: PermissionsConfig<
       },
     },
     [SubjectType.App]: {
+      author: {
+        // App permissions should only be indicated by parent workspace permissions
+        disableManagePolicy: true,
+      },
+    },
+    [SubjectType.Page]: {
       author: {
         // App permissions should only be indicated by parent workspace permissions
         disableManagePolicy: true,
@@ -56,6 +67,13 @@ export const config: PermissionsConfig<
             workspaceId: '${subject.id}',
           },
         },
+        {
+          action: ActionType.Manage,
+          subject: SubjectType.Page,
+          conditions: {
+            workspaceId: '${subject.id}',
+          },
+        },
       ],
     },
 
@@ -72,8 +90,15 @@ export const config: PermissionsConfig<
           },
         },
         {
-          action: ActionType.Update,
+          action: [ActionType.Update, ActionType.Read],
           subject: SubjectType.App,
+          conditions: {
+            workspaceId: '${subject.id}',
+          },
+        },
+        {
+          action: [ActionType.Update, ActionType.Read],
+          subject: SubjectType.Page,
           conditions: {
             workspaceId: '${subject.id}',
           },

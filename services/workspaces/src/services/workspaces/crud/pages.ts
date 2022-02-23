@@ -4,13 +4,22 @@ import { EventType } from '../../../eda';
 import Workspaces from './workspaces';
 import DSULStorage from '../../DSULStorage';
 import { AlreadyUsedError, ObjectNotFoundError } from '../../../errors';
+import { AccessManager, SubjectType } from '../../../permissions';
+import { log } from 'console';
 
 class Pages {
+  private accessManager: Required<AccessManager>;
   private broker: Broker;
   private storage: DSULStorage;
   private workspaces: Workspaces;
 
-  constructor(broker: Broker, storage: DSULStorage, workspaces: Workspaces) {
+  constructor(
+    accessManager: Required<AccessManager>,
+    broker: Broker,
+    storage: DSULStorage,
+    workspaces: Workspaces
+  ) {
+    this.accessManager = accessManager;
     this.broker = broker;
     this.storage = storage;
     this.workspaces = workspaces;
@@ -47,6 +56,11 @@ class Pages {
       },
     };
 
+    await this.accessManager.create(SubjectType.Page, {
+      id: `${workspace.id}:${slug}`,
+      workspaceId: workspace.id!,
+      name: slug,
+    });
     await this.workspaces.updateWorkspace(workspaceId, updatedWorkspace);
 
     this.broker
@@ -104,6 +118,14 @@ class Pages {
       oldSlug = pageSlug;
       delete updatedWorkspace.pages[oldSlug];
       updatedWorkspace.pages[page.slug] = page;
+
+      // TODO : update slug
+
+      // Get previous permissions,
+
+      // Create new permission
+
+      // Delete old permission
     }
 
     await this.workspaces.updateWorkspace(workspaceId, updatedWorkspace);
@@ -135,6 +157,11 @@ class Pages {
       ...workspace,
       pages: newPages,
     };
+
+    await this.accessManager.delete(
+      SubjectType.Page,
+      `${workspace.id}:${pageSlug}`
+    );
 
     await this.storage.save(workspaceId, updatedWorkspace);
 

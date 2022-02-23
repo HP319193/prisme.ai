@@ -5,6 +5,9 @@ endpoints:
   workspaces:
     path: '/v2/workspaces*'
 
+  pages:
+    path: '/v2/pages*'
+
   apps:
     path: '/v2/apps*'
 
@@ -58,6 +61,7 @@ pipelines:
     endpoints:
       - workspaces
       - apps
+      - pages
     policies:
       - authentication: {}
       - proxy:

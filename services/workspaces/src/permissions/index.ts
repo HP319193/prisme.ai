@@ -11,6 +11,7 @@ export { SubjectType, Role, ActionType };
 export type SubjectInterfaces = {
   [SubjectType.Workspace]: { id: string; name: string };
   [SubjectType.App]: Prismeai.App;
+  [SubjectType.Page]: { workspaceId: string; name: string };
 };
 
 export type AccessManager = GenericAccessManager<
@@ -38,6 +39,10 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           name: { type: String, text: true },
           photo: String,
           slug: { type: String, index: true },
+        },
+        [SubjectType.Page]: {
+          workspaceId: { type: String, index: true },
+          name: { type: String, text: true },
         },
       },
     },

@@ -149,6 +149,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [invalid, setInvalid] = useState<WorkspaceContext['invalid']>(false);
   const [newSource, setNewSource] = useState<WorkspaceContext['newSource']>();
   const [saving, setSaving] = useState(false);
+  const [share, setShare] = useState<WorkspaceContext['share']>();
 
   const setCurrent = useRef(async (id: string) => {
     setLoading(true);
@@ -220,6 +221,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
         nextEvents,
         readEvents,
         readEvent,
+        share,
+        setShare,
       }}
     >
       <Head>

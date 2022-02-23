@@ -804,7 +804,7 @@ declare namespace Prismeai {
         type: "apikeys.created";
         payload: {
             apiKey: string;
-            subjectType: "workspaces";
+            subjectType: "workspaces" | "pages";
             subjectId: string;
             rules: ApiKeyRules;
         };
@@ -881,7 +881,7 @@ declare namespace Prismeai {
         type: "apikeys.deleted";
         payload: {
             apiKey: string;
-            subjectType: "workspaces";
+            subjectType: "workspaces" | "pages";
             subjectId: string;
         };
     }
@@ -1236,7 +1236,7 @@ declare namespace Prismeai {
         type: "apikeys.updated";
         payload: {
             apiKey: string;
-            subjectType: "workspaces";
+            subjectType: "workspaces" | "pages";
             subjectId: string;
             rules: ApiKeyRules;
         };
@@ -1519,7 +1519,7 @@ declare namespace PrismeaiAPI {
     namespace CreateApiKey {
         namespace Parameters {
             export type SubjectId = string;
-            export type SubjectType = "workspaces";
+            export type SubjectType = "workspaces" | "pages";
         }
         export interface PathParameters {
             subjectType: Parameters.SubjectType;
@@ -1620,7 +1620,7 @@ declare namespace PrismeaiAPI {
         namespace Parameters {
             export type ApiKey = string;
             export type SubjectId = string;
-            export type SubjectType = "workspaces";
+            export type SubjectType = "workspaces" | "pages";
         }
         export interface PathParameters {
             subjectType: Parameters.SubjectType;
@@ -1802,7 +1802,7 @@ declare namespace PrismeaiAPI {
     namespace GetPermissions {
         namespace Parameters {
             export type SubjectId = string;
-            export type SubjectType = "workspaces";
+            export type SubjectType = "workspaces" | "pages";
         }
         export interface PathParameters {
             subjectType: Parameters.SubjectType;
@@ -1903,7 +1903,7 @@ declare namespace PrismeaiAPI {
     namespace ListApiKeys {
         namespace Parameters {
             export type SubjectId = string;
-            export type SubjectType = "workspaces";
+            export type SubjectType = "workspaces" | "pages";
         }
         export interface PathParameters {
             subjectType: Parameters.SubjectType;
@@ -1950,7 +1950,7 @@ declare namespace PrismeaiAPI {
     namespace RevokePermissions {
         namespace Parameters {
             export type SubjectId = string;
-            export type SubjectType = "workspaces";
+            export type SubjectType = "workspaces" | "pages";
             export type UserId = string;
         }
         export interface PathParameters {
@@ -2007,7 +2007,7 @@ declare namespace PrismeaiAPI {
     namespace Share {
         namespace Parameters {
             export type SubjectId = string;
-            export type SubjectType = "workspaces";
+            export type SubjectType = "workspaces" | "pages";
         }
         export interface PathParameters {
             subjectType: Parameters.SubjectType;
@@ -2056,7 +2056,7 @@ declare namespace PrismeaiAPI {
         namespace Parameters {
             export type ApiKey = string;
             export type SubjectId = string;
-            export type SubjectType = "workspaces";
+            export type SubjectType = "workspaces" | "pages";
         }
         export interface PathParameters {
             subjectType: Parameters.SubjectType;

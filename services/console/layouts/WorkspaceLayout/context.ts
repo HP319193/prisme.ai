@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, FC, useContext } from 'react';
 import { Event, Workspace } from '@prisme.ai/sdk';
 import { ValidationError } from '../../utils/yaml';
 
@@ -18,6 +18,11 @@ export interface WorkspaceContext {
   setInvalid: (invalid: WorkspaceContext['invalid']) => void;
   newSource?: Workspace;
   setNewSource: (fn: WorkspaceContext['newSource']) => void;
+  share?: {
+    label: string;
+    component: FC;
+  };
+  setShare: (share: WorkspaceContext['share']) => void;
 }
 
 export const workspaceContext = createContext<WorkspaceContext>({
@@ -34,6 +39,7 @@ export const workspaceContext = createContext<WorkspaceContext>({
   invalid: false,
   setInvalid() {},
   setNewSource() {},
+  setShare() {},
 });
 
 export const useWorkspace = () => useContext(workspaceContext);

@@ -18,7 +18,7 @@ async function createPageHandler(
     SubjectType.Workspace,
     workspaceId
   );
-  const pages = services.workspaces(logger, context);
+  const pages = services.workspaces(accessManager, logger, context);
   const result = await pages.createPage(workspaceId, body);
   res.send(result);
 }
@@ -37,7 +37,7 @@ async function getPageHandler(
     SubjectType.Workspace,
     workspaceId
   );
-  const pages = services.workspaces(logger, context);
+  const pages = services.workspaces(accessManager, logger, context);
   const result = await pages.getPage(workspaceId, pageSlug);
   res.send(result);
 }
@@ -61,7 +61,7 @@ async function updatePageHandler(
     SubjectType.Workspace,
     workspaceId
   );
-  const pages = services.workspaces(logger, context);
+  const pages = services.workspaces(accessManager, logger, context);
   const result = await pages.updatePage(workspaceId, pageSlug, body);
   res.send(result);
 }
@@ -80,7 +80,7 @@ async function deletePageHandler(
     SubjectType.Workspace,
     workspaceId
   );
-  const pages = services.workspaces(logger, context);
+  const pages = services.workspaces(accessManager, logger, context);
   const deleted = await pages.deletePage(workspaceId, pageSlug);
 
   res.send(deleted);

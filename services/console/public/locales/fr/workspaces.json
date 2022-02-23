@@ -166,6 +166,13 @@
       "add": "Ajouter un widget",
       "resize": "Redimensionner l'affichage du widget",
       "search": "Rechercher un widget"
+    },
+    "share": {
+      "label": "Partager l'accès à la page",
+      "access": "Accès",
+      "access_private": "Choisissez quels utilisateurs peuvent consulter votre page",
+      "copy": "Copier l'adresse publique de la page",
+      "copied": "L'adresse est copiée dans votre presse papier"
     }
   },
   "expert": {
