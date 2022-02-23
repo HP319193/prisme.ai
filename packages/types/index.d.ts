@@ -1067,6 +1067,7 @@ declare namespace Prismeai {
         description?: LocalizedText;
         widgets: {
             name?: string;
+            height?: number;
         }[];
         /**
          * Unique & human readable id across current workspace's automations

@@ -6,12 +6,14 @@ export interface PageBuilderContext {
   };
   widgets: Record<string, Prismeai.Widget>;
   addWidget: (position: number) => void;
+  resizeWidget: (key: string, height: number) => void;
 }
 
 export const context = createContext<PageBuilderContext>({
   page: {} as Prismeai.Page,
   widgets: {},
   addWidget() {},
+  resizeWidget() {},
 });
 
 export const usePageBuilder = () => useContext(context);

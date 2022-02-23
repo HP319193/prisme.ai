@@ -53,7 +53,8 @@ export const Page = () => {
     try {
       const cleanedValue = {
         ...value,
-        widgets: (value.widgets as PageBuilderContext['page']['widgets']).map(
+        widgets: ((value.widgets ||
+          []) as PageBuilderContext['page']['widgets']).map(
           ({ key, ...widget }) => widget
         ),
       };

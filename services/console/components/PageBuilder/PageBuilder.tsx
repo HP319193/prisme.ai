@@ -44,8 +44,8 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
       setPanelIsOpen(true);
     });
   }, [hidePanel]);
-  const addWidget = useCallback(
-    async (position: number) => {
+  const addWidget: PageBuilderContext['addWidget'] = useCallback(
+    async (position) => {
       const widget = await addWidgetDetails();
       const newWidgets = [...value.widgets];
       newWidgets.splice(position, 0, { name: widget, key: nanoid() });
@@ -57,8 +57,17 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     [addWidgetDetails, onChange, value]
   );
 
+  const resizeWidget: PageBuilderContext['resizeWidget'] = useCallback(
+    (key, height) => {
+      const widget = value.widgets.find(({ key: k }) => key === k);
+      if (!widget) return;
+      widget.height = height;
+    },
+    [value.widgets]
+  );
+
   return (
-    <context.Provider value={{ page: value, widgets, addWidget }}>
+    <context.Provider value={{ page: value, widgets, addWidget, resizeWidget }}>
       <Widgets />
       <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
         {widgetEditing && <WidgetForm {...widgetEditing} />}
