@@ -83,14 +83,14 @@ export const Page = () => {
       okText: t('pages.delete.confirm.cancel'),
       onCancel: () => {
         push(`/workspaces/${workspace.id}`);
-        //deletePage(workspace, `${pageId}`);
+        deletePage(workspace, `${pageId}`);
         notification.success({
           message: t('pages.delete.toast'),
           placement: 'bottomRight',
         });
       },
     });
-  }, [pageId, push, t, workspace.id]);
+  }, [deletePage, pageId, push, t, workspace]);
 
   if (!page) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
@@ -125,8 +125,7 @@ export const Page = () => {
                       key: 'delete',
                     },
                   ]}
-                  onClick={console.log}
-                  //onClick={confirmDeletePage}
+                  onClick={confirmDeletePage}
                 />
               }
             >
