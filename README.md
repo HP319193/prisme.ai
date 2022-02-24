@@ -4,7 +4,7 @@
 
 Our mission is to help developers to enjoy their daily work.
 
-Connect everything, automate everthing, show everywhere and enjoy.
+Connect everything, automate everything, show everywhere and enjoy.
 
 Prisme.ai allows you to collect the interactions of Apps: an app can be a customer channel (phone, mail, live chat,
 social networks, sms, form...) or software (CRM, ERP, AD, DMP, Analytics. ..) or your Custom App.
