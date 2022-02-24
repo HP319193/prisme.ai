@@ -23,7 +23,14 @@ export const config: PermissionsConfig<
   Prismeai.Role,
   Prismeai.ApiKeyRules
 > = {
-  subjectTypes: Object.values(SubjectType),
+  subjects: {
+    [SubjectType.Workspace]: {
+      author: {
+        assignRole: Role.Owner,
+      },
+    },
+    [SubjectType.Event]: {},
+  },
   rbac: [
     {
       name: Role.Owner,
@@ -98,5 +105,4 @@ export const config: PermissionsConfig<
     }
     throw new Error('Unsupported api key');
   },
-  ownerRole: Role.Owner,
 };

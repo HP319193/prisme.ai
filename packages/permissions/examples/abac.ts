@@ -15,7 +15,13 @@ enum Role {
 }
 
 const config: PermissionsConfig<SubjectType, Role> = {
-  subjectTypes: Object.values(SubjectType),
+  subjects: Object.values(SubjectType).reduce(
+    (subjects, cur) => ({
+      ...subjects,
+      [cur]: {},
+    }),
+    {} as any
+  ),
   rbac: [
     {
       name: Role.Admin,
@@ -60,7 +66,6 @@ const config: PermissionsConfig<SubjectType, Role> = {
       },
     },
   ],
-  ownerRole: Role.Admin,
 };
 
 export default config;

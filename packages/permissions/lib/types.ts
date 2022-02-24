@@ -50,16 +50,22 @@ export type RoleTemplates<
   Role extends string
 > = RoleTemplate<SubjectType, Role>[];
 
+export interface SubjectOptions<Role> {
+  author?: {
+    assignRole?: Role;
+    disableManagePolicy?: boolean;
+  };
+}
+
 export interface PermissionsConfig<
   SubjectType extends string,
   Role extends string,
   CustomRules = any
 > {
-  subjectTypes: SubjectType[];
+  subjects: Record<SubjectType, SubjectOptions<Role>>;
   rbac: RoleTemplates<SubjectType, Role>;
   abac: Rules;
   customRulesBuilder?: (
     role: Omit<CustomRole<SubjectType, CustomRules>, 'casl'>
   ) => RawRuleOf<Ability>[];
-  ownerRole?: Role;
 }

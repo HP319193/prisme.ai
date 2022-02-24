@@ -2,17 +2,14 @@ import { remove as removeDiacritics } from 'diacritics';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import Workspaces from './workspaces';
-import DSULStorage from '../DSULStorage';
 import { AlreadyUsedError, ObjectNotFoundError } from '../../../errors';
 
 class Automations {
   private broker: Broker;
-  private storage: DSULStorage;
   private workspaces: Workspaces;
 
-  constructor(broker: Broker, storage: DSULStorage, workspaces: Workspaces) {
+  constructor(broker: Broker, workspaces: Workspaces) {
     this.broker = broker;
-    this.storage = storage;
     this.workspaces = workspaces;
   }
 
@@ -64,7 +61,7 @@ class Automations {
   };
 
   getAutomation = async (workspaceId: string, automationSlug: string) => {
-    const workspace = await this.storage.get(workspaceId);
+    const workspace = await this.workspaces.getWorkspace(workspaceId);
     const automation = (workspace.automations || {})[automationSlug];
     if (!automation) {
       throw new ObjectNotFoundError(
@@ -81,7 +78,7 @@ class Automations {
     automationSlug: string,
     automation: Prismeai.Automation
   ) => {
-    const workspace = await this.storage.get(workspaceId);
+    const workspace = await this.workspaces.getWorkspace(workspaceId);
 
     if (
       !workspace ||
@@ -132,7 +129,7 @@ class Automations {
     workspaceId: string,
     automationSlug: PrismeaiAPI.DeleteAutomation.PathParameters['automationSlug']
   ) => {
-    const workspace = await this.storage.get(workspaceId);
+    const workspace = await this.workspaces.getWorkspace(workspaceId);
 
     if (
       !workspace ||
@@ -152,7 +149,7 @@ class Automations {
       automations: newAutomations,
     };
 
-    await this.storage.save(workspaceId, updatedWorkspace);
+    await this.workspaces.updateWorkspace(workspaceId, updatedWorkspace);
 
     this.broker.send<Prismeai.DeletedAutomation['payload']>(
       EventType.DeletedAutomation,

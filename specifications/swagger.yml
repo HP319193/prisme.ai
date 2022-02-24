@@ -1263,12 +1263,12 @@ paths:
           in: 'query'
           description: 'Page number'
           schema:
-            type: string
+            type: number
         - name: 'limit'
           in: 'query'
           description: 'Page size'
           schema:
-            type: string
+            type: number
       responses:
         '200':
           description: Success Response
@@ -1298,8 +1298,8 @@ paths:
                 $ref: '#/components/schemas/BadParametersError'
 
     post:
-      description: Publish a new app
-      operationId: createApp
+      description: Publish a workspace as a new app version
+      operationId: publishApp
       tags:
         - 'Prisme.ai Workspaces'
       requestBody:
@@ -1337,7 +1337,7 @@ paths:
 
   /v2/apps/{appId}:
     get:
-      description: Fetch an app
+      description: Fetch an app DSUL
       operationId: getApp
       tags:
         - 'Prisme.ai Workspaces'
@@ -1348,59 +1348,19 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        '200':
-          description: Success Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/App'
-        '404':
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ObjectNotFoundError'
-        '401':
-          description: AuthenticationError
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthenticationError'
-        '403':
-          description: Bad permissions
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenError'
-
-    patch:
-      description: Update an app
-      operationId: updateApp
-      tags:
-        - 'Prisme.ai Workspaces'
-      parameters:
-        - name: 'appId'
-          in: 'path'
-          description: 'App id'
-          required: true
+        - name: "version"
+          in: "query"
+          description: "App version"
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/App'
-
       responses:
         '200':
           description: Success Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/App'
-        '404':
+                $ref: "#/components/schemas/DSUL"
+        "404":
           description: Object not found
           content:
             application/json:
@@ -1417,13 +1377,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ForbiddenError'
-        '400':
-          description: Bad parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadParametersError'
+                $ref: "#/components/schemas/ForbiddenError"
 
     delete:
       description: Delete an app
@@ -1732,46 +1686,42 @@ components:
         - $ref: '#/components/schemas/Contact'
 
     App:
-      allOf:
-        - type: object
-          required:
-            - name
-          properties:
-            name:
-              type: string
-            description:
-              $ref: '#/components/schemas/LocalizedText'
-            photo:
-              type: string
-            owner:
-              type: object
-              properties:
-                id:
-                  type: string
-            constants:
-              type: object
-            config:
-              additionalProperties:
-                $ref: '#/components/schemas/TypedArgument'
-            automations:
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/Automation'
-        - $ref: '#/components/schemas/Object'
+      type: object
+      required:
+        - workspaceId
+        - name
+      properties:
+        workspaceId:
+          type: string
+        versions:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+        description:
+          $ref: "#/components/schemas/LocalizedText"
+        photo:
+          type: string
+        id:
+          type: string
 
     AppInstance:
       allOf:
         - type: object
           required:
-            - app
+            - appId
             - name
           properties:
-            app:
+            appId:
               type: string
-              example: 'prismeaiMessenger'
-              description: 'App unique name'
+              description: "App id"
+            appVersion:
+              type: string
+              description: "Defaults to the latest known app version"
             name:
               type: string
+              description: "App instance unique name that will be used in workspace automations to access its events & automations"
             config:
               type: object
               example:
@@ -1780,12 +1730,19 @@ components:
         - $ref: '#/components/schemas/Object'
 
     Workspace:
+      $ref: "#/components/schemas/DSUL"
+
+    DSUL:
       type: object
       additionalProperties: false
       required:
         - name
       properties:
         name:
+          type: string
+        description:
+          $ref: "#/components/schemas/LocalizedText"
+        photo:
           type: string
         owner:
           type: object
@@ -1795,9 +1752,10 @@ components:
         imports:
           type: array
           items:
-            $ref: '#/components/schemas/AppInstance'
-        constants:
-          type: object
+            $ref: "#/components/schemas/AppInstance"
+        config:
+          additionalProperties:
+            $ref: "#/components/schemas/TypedArgument"
         automations:
           type: object
           additionalProperties:
@@ -1854,6 +1812,7 @@ components:
           enum:
             - string
             - number
+            - object
         description:
           $ref: '#/components/schemas/LocalizedText'
 
@@ -1880,12 +1839,15 @@ components:
         do:
           $ref: '#/components/schemas/InstructionList'
         output:
-          description: 'Automation result expression. Might be a variable reference, an object/array with variables inside ...'
-          example: '$result'
+          description: "Automation result expression. Might be a variable reference, an object/array with variables inside ..."
+          example: "{{result}}"
         private:
-          type: boolean
           description: "Set this to true if you don't want your automation to be accessible outside of your app. Default is false."
           example: false
+        disabled:
+          type: boolean
+          description: "Set this to true if you want to turn off this automation."
+          example: true
         name:
           type: string
         slug:
@@ -2431,6 +2393,45 @@ components:
             email:
               type: string
             id:
+              type: string
+
+    ########################## Apps events ##########################
+    PublishedApp:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apps.published
+          enum:
+            - apps.published
+        payload:
+          type: object
+          required:
+            - app
+          properties:
+            app:
+              $ref: "#/components/schemas/App"
+
+    DeletedApp:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apps.deleted
+          enum:
+            - apps.deleted
+        payload:
+          type: object
+          required:
+            - appId
+          properties:
+            appId:
               type: string
 
     ########################## Workspaces events ##########################

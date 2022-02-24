@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 import { Ability, RawRuleOf, MongoQuery } from '@casl/ability';
 import { User, ActionType } from './types';
-import { RoleTemplates } from '..';
+import { RoleTemplates, SubjectOptions } from '..';
 
 export interface RuleContext {
   user: User<string>;
@@ -58,7 +58,7 @@ export function sortRules(rules: RawRuleOf<Ability>[]) {
 export function nativeRules(
   user: User<string>,
   roles: RoleTemplates<any, string>,
-  subjectTypes: string[]
+  subjects: Record<any, SubjectOptions<any>>
 ) {
   const anySubjectPermissionsGrantEquivalentActions: RawRuleOf<Ability>[] =
     Object.values(ActionType).flatMap((action) => [
@@ -78,40 +78,44 @@ export function nativeRules(
       },
     ]);
 
-  const anySubjectRoleGrantReadAccess: RawRuleOf<Ability>[] =
-    subjectTypes.flatMap((subjectType) => {
-      const rolesWithReadPolicy = roles
-        .filter((cur) => cur.subjectType && cur.subjectType === subjectType)
-        .map((cur) => cur.name);
-      return [
-        {
-          subject: subjectType as string,
-          action: ActionType.Read as string,
-          conditions: {
-            'permissions.${user.id}.role': {
-              $exists: true,
-              $in: rolesWithReadPolicy,
-            },
+  const anySubjectRoleGrantReadAccess: RawRuleOf<Ability>[] = Object.entries(
+    subjects
+  ).flatMap(([subjectType, subjectOpts]) => {
+    const rolesWithReadPolicy = roles
+      .filter((cur) => cur.subjectType && cur.subjectType === subjectType)
+      .map((cur) => cur.name);
+    return [
+      {
+        subject: subjectType as string,
+        action: ActionType.Read as string,
+        conditions: {
+          'permissions.${user.id}.role': {
+            $exists: true,
+            $in: rolesWithReadPolicy,
           },
         },
-        {
-          subject: subjectType as string,
-          action: ActionType.Read as string,
-          conditions: {
-            'permissions.*.role': {
-              $exists: true,
-              $in: rolesWithReadPolicy,
-            },
+      },
+      {
+        subject: subjectType as string,
+        action: ActionType.Read as string,
+        conditions: {
+          'permissions.*.role': {
+            $exists: true,
+            $in: rolesWithReadPolicy,
           },
         },
-      ];
-    });
+      },
+    ];
+  });
 
+  const subjectsWithAuthorManagePolicy = Object.entries(subjects)
+    .filter(([_, subjectOpts]) => !subjectOpts?.author?.disableManagePolicy)
+    .map(([subjectType]) => subjectType);
   const subjectAuthorsHaveManageAccess: RawRuleOf<Ability>[] = [
     {
       // Everyone can manage its own subject
       action: ActionType.Manage,
-      subject: 'all',
+      subject: subjectsWithAuthorManagePolicy,
       conditions: { createdBy: '${user.id}' },
     },
     {

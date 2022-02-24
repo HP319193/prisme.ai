@@ -28,13 +28,15 @@ A Workspace **Owner** can :
 
 * Manage permissions + API keys  
 * View all workspace events  
-* Has full CRUD permissions on the workspace, installed apps & pages
+* Has full CRUD permissions on the workspace, installed apps & pages  
+* Publish the workspace as a new app release and delete this app  
 
 ## Editor
 A Workspace **Editor** can :  
 
 * View all workspace events except API key & permissions ones  
-* Has CRUD permissions except delete on the workspace, installed apps & pages
+* Has CRUD permissions except delete on the workspace, installed apps & pages  
+* Publish a new app release if the workspace has already been published by an Owner
 
 # API Keys  
 Anyone with **manage_permissions** policy on a workspace (i.e `Owner`s) can create an API Key for this workspace, automatically granting some permissions to whatever requests including this API Key inside the `x-prismeai-api-key` header.  

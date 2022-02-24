@@ -15,7 +15,16 @@ export enum Role {
 }
 
 const config: PermissionsConfig<SubjectType, Role, Prismeai.ApiKeyRules> = {
-  subjectTypes: Object.values(SubjectType),
+  subjects: Object.values(SubjectType).reduce(
+    (subjects, cur) => ({
+      ...subjects,
+      [cur]:
+        cur === SubjectType.Workspace
+          ? { author: { assignRole: Role.Admin } }
+          : {},
+    }),
+    {} as any
+  ),
   rbac: [
     {
       name: Role.Admin,
@@ -54,7 +63,6 @@ const config: PermissionsConfig<SubjectType, Role, Prismeai.ApiKeyRules> = {
     }
     throw new Error('Unsupported api key');
   },
-  ownerRole: Role.Admin,
 };
 
 export default config;

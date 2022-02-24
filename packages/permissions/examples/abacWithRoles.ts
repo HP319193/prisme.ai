@@ -11,10 +11,9 @@ export enum SubjectType {
 }
 
 const config: PermissionsConfig<SubjectType, Role> = {
-  subjectTypes: roles.subjectTypes,
+  subjects: roles.subjects,
   rbac: roles.rbac,
   abac: abac.abac,
-  ownerRole: Role.Admin,
 };
 
 export default config;

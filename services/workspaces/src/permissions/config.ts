@@ -1,7 +1,8 @@
-import { ActionType, PermissionsConfig } from '@prisme.ai/permissions';
+import { PermissionsConfig, ActionType } from '@prisme.ai/permissions';
 
 export enum SubjectType {
   Workspace = 'workspaces',
+  App = 'apps',
 }
 
 export enum Role {
@@ -22,7 +23,19 @@ export const config: PermissionsConfig<
   Prismeai.Role,
   Prismeai.ApiKeyRules
 > = {
-  subjectTypes: Object.values(SubjectType),
+  subjects: {
+    [SubjectType.Workspace]: {
+      author: {
+        assignRole: Role.Owner,
+      },
+    },
+    [SubjectType.App]: {
+      author: {
+        // App permissions should only be indicated by parent workspace permissions
+        disableManagePolicy: true,
+      },
+    },
+  },
   rbac: [
     {
       name: Role.Owner,
@@ -34,6 +47,13 @@ export const config: PermissionsConfig<
           conditions: {
             // This role only applies to a specific workspace !
             id: '${subject.id}',
+          },
+        },
+        {
+          action: ActionType.Manage,
+          subject: SubjectType.App,
+          conditions: {
+            workspaceId: '${subject.id}',
           },
         },
       ],
@@ -51,6 +71,13 @@ export const config: PermissionsConfig<
             id: '${subject.id}',
           },
         },
+        {
+          action: ActionType.Update,
+          subject: SubjectType.App,
+          conditions: {
+            workspaceId: '${subject.id}',
+          },
+        },
       ],
     },
   ],
@@ -60,9 +87,12 @@ export const config: PermissionsConfig<
       action: ActionType.Create,
       subject: SubjectType.Workspace,
     },
+    {
+      action: ActionType.Read,
+      subject: SubjectType.App,
+    },
   ],
   customRulesBuilder: (role) => {
     return [];
   },
-  ownerRole: Role.Owner,
 };
