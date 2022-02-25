@@ -1,6 +1,6 @@
 import EventDetails from './EventDetails';
 import renderer, { act } from 'react-test-renderer';
-import { Event } from '../../api/types';
+import { Event } from '@prisme.ai/sdk';
 import { FC } from 'react';
 import { selectText } from '../../utils/dom';
 import { Table } from '@prisme.ai/design-system';

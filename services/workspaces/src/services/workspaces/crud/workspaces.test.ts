@@ -8,9 +8,14 @@ it('should call DSULStorage', async () => {
     name: 'nameWorkspace',
     id: '123456',
   };
+  const mockedAccess: any = {};
   const mockedStorage: any = { save: jest.fn() };
   const mockedBroker: any = { send: jest.fn() };
-  const workspaceCrud = new Workspaces(mockedBroker, mockedStorage);
+  const workspaceCrud = new Workspaces(
+    mockedAccess,
+    mockedBroker,
+    mockedStorage
+  );
 
   const result = await workspaceCrud.createWorkspace(workspace);
 

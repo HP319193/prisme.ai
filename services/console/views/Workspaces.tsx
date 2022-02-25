@@ -8,7 +8,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import packageJson from '../../../package.json';
-import { Workspace } from '../api/types';
+import { Workspace } from '@prisme.ai/sdk';
 import Header from '../components/Header';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import icon from '../icons/icon-workspace.svg';

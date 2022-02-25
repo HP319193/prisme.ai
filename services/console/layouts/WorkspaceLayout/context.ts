@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { Event, Workspace } from '../../api/types';
+import { Event, Workspace } from '@prisme.ai/sdk';
 import { ValidationError } from '../../utils/yaml';
 
 export type EventsByDay = Map<number, Set<Event<Date>>>;

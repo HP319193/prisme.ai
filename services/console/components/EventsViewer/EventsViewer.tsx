@@ -8,7 +8,7 @@ import { useScrollListener } from '../useScrollListener';
 import { Collapse, Feed, Layout } from '@prisme.ai/design-system';
 import { Section } from '@prisme.ai/design-system/lib/Components/Feed';
 import { CollapseItem } from '@prisme.ai/design-system/lib/Components/Collapse';
-import { Event } from '../../api/types';
+import { Event } from '@prisme.ai/sdk';
 import Empty from './Empty';
 
 export const EventsViewer = () => {

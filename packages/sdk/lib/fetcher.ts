@@ -1,4 +1,3 @@
-import { Storage } from '../utils/Storage';
 import ApiError from './ApiError';
 import HTTPError from './HTTPError';
 
@@ -12,18 +11,11 @@ const headersAsObject = (headers: Headers) =>
   );
 
 export class Fetcher {
-  private host: string;
+  protected host: string;
+  protected _token: string | null = null;
 
   set token(v: string | null) {
-    if (v) {
-      Storage.set('auth-token', v);
-    } else {
-      Storage.remove('auth-token');
-    }
-  }
-
-  private get _token() {
-    return Storage.get('auth-token');
+    this._token = v;
   }
 
   constructor(host: string) {
@@ -37,7 +29,6 @@ export class Fetcher {
     }
     const res = await global.fetch(`${this.host}${url}`, {
       ...options,
-      credentials: 'include',
       headers: {
         ...headers,
         'Access-Control-Allow-Origin': '*',

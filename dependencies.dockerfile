@@ -18,14 +18,10 @@ COPY services/api-gateway/package* /www/services/api-gateway/
 COPY services/events/package* /www/services/events/
 
 # Packages
-COPY packages/broker/package* /www/packages/broker/
-COPY packages/validation/package* /www/packages/validation/
-COPY packages/design-system/package* /www/packages/design-system/
-COPY packages/permissions/package* /www/packages/permissions/
+COPY packages/ /www/packages
+RUN rm -rf packages/design-system packages/sdk
 
 RUN BUILD_PACKAGES=0 npm ci
-
-COPY packages/ /www/packages
 
 # Build packages && replace their node_modules symlinks with themselves
 RUN npm run build:types && npm run build:packages && rm -rf node_modules/@prisme.ai && mv packages/ node_modules/@prisme.ai

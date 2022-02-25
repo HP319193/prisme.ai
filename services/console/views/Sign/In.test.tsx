@@ -1,7 +1,7 @@
 import SignIn from './In';
 import renderer, { act } from 'react-test-renderer';
 import { useUser } from '../../components/UserProvider';
-import ApiError from '../../api/ApiError';
+import { ApiError } from '@prisme.ai/sdk';
 import { Form } from 'react-final-form';
 import { useRouter } from 'next/router';
 

@@ -1,8 +1,9 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import context, { UserContext } from './context';
-import api from '../../api/api';
-import ApiError from '../../api/ApiError';
+import api from '../../utils/api';
+import { ApiError } from '@prisme.ai/sdk';
 import { useRouter } from 'next/router';
+import Storage from '../../utils/Storage';
 
 const PUBLIC_URLS = ['/signin', '/signup'];
 
@@ -16,11 +17,9 @@ export const UserProvider: FC = ({ children }) => {
   const signin: UserContext['signin'] = useCallback(async (email, password) => {
     setLoading(true);
     try {
-      const {
-        headers: { ['x-prismeai-session-token']: token },
-        ...user
-      } = await api.signin(email, password);
+      const { token, ...user } = await api.signin(email, password);
       api.token = token;
+      Storage.set('auth-token', token);
       setError(undefined);
       setUser(user);
       setLoading(false);
@@ -38,11 +37,14 @@ export const UserProvider: FC = ({ children }) => {
     async (email, password, firstName, lastName) => {
       setLoading(true);
       try {
-        const {
-          headers: { ['x-prismeai-session-token']: token },
-          ...user
-        } = await api.signup(email, password, firstName, lastName);
+        const { token, ...user } = await api.signup(
+          email,
+          password,
+          firstName,
+          lastName
+        );
         api.token = token;
+        Storage.set('auth-token', token);
         setError(undefined);
         setUser(user);
 

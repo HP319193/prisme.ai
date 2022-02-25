@@ -1,11 +1,7 @@
 import ApiError from './ApiError';
 import Fetcher from './fetcher';
 import HTTPError from './HTTPError';
-import Storage from '../utils/Storage';
 
-beforeEach(() => {
-  Storage.remove('auth-token');
-});
 it('should fetch', async () => {
   const fetcher = new Fetcher('http/');
   // @ts-ignore
@@ -19,7 +15,6 @@ it('should fetch', async () => {
   const o = await fetcher.get('url');
   expect(o.headers).toEqual({ foo: 'bar' });
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    credentials: 'include',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
@@ -41,7 +36,6 @@ it('should fetch with auth', async () => {
   fetcher.token = 'token';
   await fetcher.get('url');
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    credentials: 'include',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
@@ -72,7 +66,6 @@ it('should fail to fetch', async () => {
     }
   }
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    credentials: 'include',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
@@ -98,7 +91,6 @@ it('should fail to fetch with unformatted error', async () => {
     }
   }
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    credentials: 'include',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
@@ -119,7 +111,6 @@ it('should post', async () => {
   }));
   await fetcher.post('url');
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    credentials: 'include',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
@@ -140,7 +131,6 @@ it('should post with body', async () => {
   }));
   await fetcher.post('url', {});
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    credentials: 'include',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
@@ -162,7 +152,6 @@ it('should patch', async () => {
   }));
   await fetcher.patch('url', {});
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    credentials: 'include',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
@@ -184,18 +173,10 @@ it('should delete', async () => {
   }));
   await fetcher.delete('url');
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    credentials: 'include',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
     },
     method: 'DELETE',
   });
-});
-
-it('should delete token', () => {
-  const fetcher = new Fetcher('http/');
-  jest.spyOn(Storage, 'remove');
-  fetcher.token = null;
-  expect(Storage.remove).toHaveBeenCalledWith('auth-token');
 });
