@@ -82,11 +82,23 @@ const runDocker = (services: Service[]) => {
     ),
   });
   fs.writeFileSync(devConfigPath, devConfig.replace(/\.\.\/\.\.\//g, './'));
+  const dockerServices = services
+    .filter((cur) => !cur.dev)
+    .map((cur) => cur.service);
   const command = ['docker-compose', '-f', devConfigPath];
-  shell([...command, '-p', 'prismeai', 'up'], { async: true });
+  // Detach databases services to avoid killing them on every ctrl+c
+  shell(
+    [...command, '-p', 'prismeai', 'up', '-d', 'redis', 'mongo', 'elastic'],
+    {
+      async: true,
+    }
+  );
+  shell([...command, '-p', 'prismeai', 'up', ...dockerServices], {
+    async: true,
+  });
 
   process.on('exit', () => {
-    shell('docker-compose -p prismeai down');
+    shell('docker-compose -p prismeai down ' + dockerServices.join(' '));
   });
 };
 
