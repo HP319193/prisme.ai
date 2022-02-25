@@ -1,17 +1,28 @@
 # Configuration  
 
 Prisme.ai services can be configured through various environment variables.  
-In a dockerized setup, you can tune these variables from each `services/*/docker-compose.yml` file ([docker-compose configuration](https://docs.docker.com/compose/environment-variables/)).  
-In a NodeJS setup, you can create a `services/*/.env` file contaning key / values pairs as follows :  
+In a **docker** setup, you can tune these variables inside the root `docker-compose.yml` file ([docker-compose configuration](https://docs.docker.com/compose/environment-variables/)).  
+
+In a **developer** setup, you can create a `services/*/.env` file contaning key / values pairs as follows :  
 ```
 WORKSPACES_STORAGE_TYPE=S3_LIKE
 WORKSPACES_STORAGE_S3_LIKE_BUCKET_NAME=someBucketName
 ...
 ```  
+Then, for when you want to run this service directly from its docker image, you can also add an `env_file` option to its `services/*/docker-compose.yml` file :  
+```yaml
+  console:
+    entrypoint: npm start  --prefix services/console
+    restart: on-failure
+    image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-console:latest
+    ports:
+      - '3000:3000'
+    env_file: ./.env
+```
 
 # Environment variables  
 
-**Note 1 :** Some variable default values might change depending on the selected start mode (Docker or NodeJS), especially URL-related ones  
+**Note 1 :** Some variable default values might change depending on the selected start mode (Docker or Developer), especially URL-related ones  
 **Note 2 :** Relative paths start from the executing service directory 
 
 <table>
@@ -135,6 +146,27 @@ WORKSPACES_STORAGE_S3_LIKE_BUCKET_NAME=someBucketName
     <td>Password validation regexp</td>
     <td>.{8,}</td>
   </tr>    
+
+  <tr>
+    <td>WORKSPACES_API_URL</td>
+    <td>api-gateway</td>
+    <td>prismeai-workspaces internal URL</td>
+    <td>http://workspaces:3002</td>
+  </tr>      
+
+  <tr>
+    <td>EVENTS_API_URL</td>
+    <td>api-gateway</td>
+    <td>prismeai-events internal URL</td>
+    <td>http://events:3004</td>
+  </tr>      
+
+  <tr>
+    <td>RUNTIME_API_URL</td>
+    <td>api-gateway</td>
+    <td>prismeai-runtime internal URL</td>
+    <td>http://runtime:3003</td>
+  </tr>          
 
   <!-- Events -->
   <tr>

@@ -2,7 +2,7 @@
 
 Authentication is enforced by the api-gateway which validates session cookies / headers, & adds a `x-prismeai-user-id` header to the request before forwarding it to the target microservice. Thus, other backend microservices do not enforce any authentication mechanism & rely on this `x-prismeai-user-id` header when needing access to the authenticated user id.  Therefore, these backend microservices must be securely kept inside a private & trusted network.  
 
-The API Gateway will reject un-authenticated requests **only if the target API is protected by an authentication** policy inside the `gateway.config.yml`.  
+The API Gateway will reject un-authenticated requests **only if the target API is protected by an authentication** policy inside the `gateway.config.yml`.  .  
 
 # Authorization
 

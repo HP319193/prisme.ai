@@ -4,6 +4,17 @@
 
 ![image](/assets/images/architecture/microservices.png)
 
+## Scalability
+The above architecture can easily scale up accross multiple instance for each service, and over multiple machines.  
+For this, 3 conditions must be kept true :  
+
+* All instances can access the broker  
+* prismeai-workspaces and prismeai-events have the same document database instance  
+* prismeai-workspaces and prismeai-runtime have the same file storage instance 
+
+From there and thanks to the shared broker, events processing will automatically be distributed accross instances.  
+**However**, input HTTP requests like automation webhooks require a load balancer to be setup in order for these requests to be distributed accross all instances.  
+
 ## API Gateway
 
 This is the only public endpoint of the architecture.  
