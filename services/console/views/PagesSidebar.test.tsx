@@ -10,8 +10,20 @@ jest.mock('next/router', () => {
     useRouter: () => mock,
   };
 });
+jest.mock('../components/WorkspacesProvider', () => {
+  const mock = {
+    createPage: jest.fn(),
+  };
+  return {
+    useWorkspaces: () => mock,
+  };
+});
 
 it('should render', () => {
   const root = renderer.create(<PagesSidebar />);
   expect(root.toJSON()).toMatchSnapshot();
+});
+
+it('should generate name', () => {
+  const root = renderer.create(<PagesSidebar />);
 });

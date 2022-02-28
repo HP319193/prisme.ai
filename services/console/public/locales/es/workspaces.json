@@ -138,7 +138,7 @@
     "link": "Apps",
     "soon": "Las Apps estarán disponibles en breve.",
     "create": {
-      "label": "Crear una nueva App"
+      "label": "Instalación de una App"
     }
   },
   "pages": {
@@ -165,7 +165,8 @@
     "widgets": {
       "add": "Añadir un widget",
       "resize": "Cambiar el tamaño de la pantalla del widget",
-      "search": "Buscar un widget"
+      "search": "Buscar un widget",
+      "empty": "No hay widgets disponibles en este espacio de trabajo."
     }
   },
   "expert": {

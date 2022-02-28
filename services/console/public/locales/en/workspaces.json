@@ -138,7 +138,7 @@
     "link": "Apps",
     "soon": "Apps will be available soon.",
     "create": {
-      "label": "Create a new App"
+      "label": "Install an App"
     }
   },
   "pages": {
@@ -165,7 +165,8 @@
     "widgets": {
       "add": "Add a widget",
       "resize": "Resize widget display",
-      "search": "Search a widget"
+      "search": "Search a widget",
+      "empty": "No widgets are available in this workspace."
     }
   },
   "expert": {

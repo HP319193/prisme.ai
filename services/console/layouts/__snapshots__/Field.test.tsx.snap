@@ -2,7 +2,7 @@
 
 exports[`should render 1`] = `
 <div
-  className="mb-5"
+  className="mb-5 "
 >
   <span
     className="flex flex-col "
@@ -20,7 +20,7 @@ exports[`should render 1`] = `
 
 exports[`should render an input 1`] = `
 <div
-  className="mb-5"
+  className="mb-5 "
 >
   <span
     className="flex flex-col "
@@ -40,7 +40,7 @@ exports[`should render an input 1`] = `
 
 exports[`should render an invalid input 1`] = `
 <div
-  className="mb-5"
+  className="mb-5 "
 >
   <span
     className="flex flex-col "
