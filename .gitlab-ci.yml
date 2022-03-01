@@ -76,7 +76,7 @@ backend_npm_install:
         BUILD_PACKAGES=0 npm ci
       fi
     - npm run build:packages
-    - npm test -- $DIRECTORY
+    - npm test -- services/$DIRECTORY
   coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
   artifacts:
     paths:
