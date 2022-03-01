@@ -18,6 +18,7 @@ export enum EventType {
   TriggeredWebhook = 'runtime.webhook.triggered',
   UpdatedContexts = 'runtime.contexts.updated',
 
+  CreatedWorkspace = 'workspaces.created',
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
   CreatedAutomation = 'workspaces.automation.created',

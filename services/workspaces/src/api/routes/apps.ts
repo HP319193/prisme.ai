@@ -1,88 +1,129 @@
+import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
-import services from '../../services';
+import { AccessManager } from '../../permissions';
+import { Apps, Workspaces } from '../../services';
+import DSULStorage from '../../services/DSULStorage';
+import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
 
-async function publishAppHandler(
-  {
-    logger,
-    context,
-    body,
-    accessManager,
-  }: Request<any, any, PrismeaiAPI.PublishApp.RequestBody>,
-  res: Response<PrismeaiAPI.PublishApp.Responses.$200>
+export default function init(
+  workspacesStorage: DSULStorage,
+  appsStorage: DSULStorage
 ) {
-  const workspaces = services.workspaces(accessManager, logger, context);
-  const apps = services.apps(accessManager, workspaces, logger, context);
-  const result = await apps.publishApp(body);
-  res.send(result);
-}
+  const getServices = ({
+    context,
+    accessManager,
+    broker,
+  }: {
+    context: PrismeContext;
+    accessManager: Required<AccessManager>;
+    broker: Broker;
+  }) => {
+    const apps = new Apps(accessManager, broker.child(context), appsStorage);
+    const workspaces = new Workspaces(
+      accessManager,
+      apps,
+      broker.child(context),
+      workspacesStorage
+    );
+    return { apps, workspaces };
+  };
 
-async function getAppHandler(
-  {
-    logger,
-    context,
-    params: { appId },
-    query: { version },
-    accessManager,
-  }: Request<
-    PrismeaiAPI.GetApp.PathParameters,
-    any,
-    any,
-    PrismeaiAPI.GetApp.QueryParameters
-  >,
-  res: Response<PrismeaiAPI.GetApp.Responses.$200>
-) {
-  const workspaces = services.workspaces(accessManager, logger, context);
-  const apps = services.apps(accessManager, workspaces, logger, context);
-  const result = await apps.getApp(appId, version);
-  res.send(result);
-}
-
-async function deleteAppHandler(
-  {
-    logger,
-    context,
-    params: { appId },
-    accessManager,
-  }: Request<PrismeaiAPI.DeleteApp.PathParameters>,
-  res: Response<PrismeaiAPI.DeleteApp.Responses.$200>
-) {
-  const workspaces = services.workspaces(accessManager, logger, context);
-  const apps = services.apps(accessManager, workspaces, logger, context);
-  await apps.deleteApp(appId);
-  res.send({ id: appId });
-}
-
-async function listAppsHandler(
-  {
-    logger,
-    context,
-    accessManager,
-    query: { query, page, limit },
-  }: Request<any, any, any, PrismeaiAPI.SearchApps.QueryParameters>,
-  res: Response<PrismeaiAPI.SearchApps.Responses.$200>
-) {
-  const workspaces = services.workspaces(accessManager, logger, context);
-  const apps = services.apps(accessManager, workspaces, logger, context);
-  const result = await apps.listApps(
+  async function publishAppHandler(
     {
-      query,
-    },
+      context,
+      body,
+      accessManager,
+      broker,
+    }: Request<any, any, PrismeaiAPI.PublishApp.RequestBody>,
+    res: Response<PrismeaiAPI.PublishApp.Responses.$200>
+  ) {
+    const { apps, workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const dsul = await workspaces.getWorkspace(body.workspaceId);
+    const result = await apps.publishApp(body, dsul);
+    res.send(result);
+  }
+
+  async function getAppHandler(
     {
-      pagination: {
-        page,
-        limit,
+      context,
+      params: { appId },
+      query: { version },
+      accessManager,
+      broker,
+    }: Request<
+      PrismeaiAPI.GetApp.PathParameters,
+      any,
+      any,
+      PrismeaiAPI.GetApp.QueryParameters
+    >,
+    res: Response<PrismeaiAPI.GetApp.Responses.$200>
+  ) {
+    const { apps } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const result = await apps.getApp(appId, version);
+    res.send(result);
+  }
+
+  async function deleteAppHandler(
+    {
+      context,
+      params: { appId },
+      accessManager,
+      broker,
+    }: Request<PrismeaiAPI.DeleteApp.PathParameters>,
+    res: Response<PrismeaiAPI.DeleteApp.Responses.$200>
+  ) {
+    const { apps } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    await apps.deleteApp(appId);
+    res.send({ id: appId });
+  }
+
+  async function listAppsHandler(
+    {
+      context,
+      accessManager,
+      query: { query, page, limit },
+      broker,
+    }: Request<any, any, any, PrismeaiAPI.SearchApps.QueryParameters>,
+    res: Response<PrismeaiAPI.SearchApps.Responses.$200>
+  ) {
+    const { apps } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const result = await apps.listApps(
+      {
+        query,
       },
-    }
-  );
-  res.send(result);
+      {
+        pagination: {
+          page,
+          limit,
+        },
+      }
+    );
+    res.send(result);
+  }
+
+  const app = express.Router();
+
+  app.post(`/`, asyncRoute(publishAppHandler));
+  app.get(`/`, asyncRoute(listAppsHandler));
+  app.delete(`/:appId`, asyncRoute(deleteAppHandler));
+  app.get(`/:appId`, asyncRoute(getAppHandler));
+
+  return app;
 }
-
-const app = express.Router();
-
-app.post(`/`, asyncRoute(publishAppHandler));
-app.get(`/`, asyncRoute(listAppsHandler));
-app.delete(`/:appId`, asyncRoute(deleteAppHandler));
-app.get(`/:appId`, asyncRoute(getAppHandler));
-
-export default app;

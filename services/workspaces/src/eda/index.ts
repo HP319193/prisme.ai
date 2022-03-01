@@ -18,6 +18,7 @@ export enum EventType {
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
   InstalledApp = 'workspaces.app.installed',
+  UninstalledApp = 'workspaces.app.uninstalled',
   ConfiguredApp = 'workspaces.app.configured',
   CreatedAutomation = 'workspaces.automation.created',
   UpdatedAutomation = 'workspaces.automation.updated',
@@ -34,35 +35,39 @@ export class CallbackContext {
   }
 }
 
-export const broker = new Broker<CallbackContext>(
-  {
-    service: APP_NAME,
-  },
-  {
-    driver: {
-      type: BROKER_DRIVER,
-      host: BROKER_HOST,
-      password: BROKER_PASSWORD,
-      namespace: BROKER_NAMESPACE,
-      topicsMaxLen: BROKER_TOPIC_MAXLEN,
+export function initEDA() {
+  const broker = new Broker<CallbackContext>(
+    {
+      service: APP_NAME,
     },
-    validator: {
-      oasFilepath: EVENTS_OAS_PATH,
-      whitelistEventPrefixes: BROKER_WHITELIST_EVENT_PREFIXES,
-    },
-    CallbackContextCtor: CallbackContext,
-  }
-);
+    {
+      driver: {
+        type: BROKER_DRIVER,
+        host: BROKER_HOST,
+        password: BROKER_PASSWORD,
+        namespace: BROKER_NAMESPACE,
+        topicsMaxLen: BROKER_TOPIC_MAXLEN,
+      },
+      validator: {
+        oasFilepath: EVENTS_OAS_PATH,
+        whitelistEventPrefixes: BROKER_WHITELIST_EVENT_PREFIXES,
+      },
+      CallbackContextCtor: CallbackContext,
+    }
+  );
 
-broker.onErrorCallback = (event, err) => {
-  logger.debug({ event, err });
-};
+  broker.onErrorCallback = (event, err) => {
+    logger.debug({ event, err });
+  };
+
+  return broker;
+}
 
 export interface EventMetrics {
   pending: PendingEvents;
 }
 
-export async function getMetrics(): Promise<EventMetrics> {
+export async function getMetrics(broker: Broker): Promise<EventMetrics> {
   return {
     pending: await broker.pending(),
   };

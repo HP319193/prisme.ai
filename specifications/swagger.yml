@@ -1426,7 +1426,7 @@ paths:
   /v2/workspaces/{workspaceId}/apps:
     post:
       description: Install a new app
-      operationId: installApp
+      operationId: installAppInstance
       tags:
         - 'Prisme.ai Workspaces'
       parameters:
@@ -1474,11 +1474,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadParametersError'
-
-  /v2/workspaces/{workspaceId}/apps/{installedAppId}:
     get:
-      description: Fetch an installed app
-      operationId: getInstalledApp
+      description: Get installed aps
+      operationId: listAppInstances
       tags:
         - 'Prisme.ai Workspaces'
       parameters:
@@ -1488,19 +1486,15 @@ paths:
           required: true
           schema:
             type: string
-        - name: 'installedAppId'
-          in: 'path'
-          description: 'Installed app id'
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: Success Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AppInstance'
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppInstance'
         '404':
           description: Object not found
           content:
@@ -1519,10 +1513,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
 
+  /v2/workspaces/{workspaceId}/apps/{slug}:
     patch:
       description: Configure an app
-      operationId: configureApp
+      operationId: configureAppInstance
       tags:
         - 'Prisme.ai Workspaces'
       parameters:
@@ -1532,9 +1533,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: 'installedAppId'
+        - name: 'slug'
           in: 'path'
-          description: 'Installed app id'
+          description: 'App instance slug'
           required: true
           schema:
             type: string
@@ -1543,7 +1544,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AppInstance'
+              $ref: '#/components/schemas/AppInstancePatch'
 
       responses:
         '200':
@@ -1579,7 +1580,7 @@ paths:
 
     delete:
       description: Uninstall an app
-      operationId: uninstallApp
+      operationId: uninstallAppInstance
       tags:
         - 'Prisme.ai Workspaces'
       parameters:
@@ -1589,9 +1590,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: 'installedAppId'
+        - name: 'slug'
           in: 'path'
-          description: 'Installed app id'
+          description: 'App instance slug'
           required: true
           schema:
             type: string
@@ -1689,7 +1690,6 @@ components:
       type: object
       required:
         - workspaceId
-        - name
       properties:
         workspaceId:
           type: string
@@ -1707,27 +1707,29 @@ components:
           type: string
 
     AppInstance:
-      allOf:
-        - type: object
-          required:
-            - appId
-            - name
-          properties:
-            appId:
-              type: string
-              description: "App id"
-            appVersion:
-              type: string
-              description: "Defaults to the latest known app version"
-            name:
-              type: string
-              description: "App instance unique name that will be used in workspace automations to access its events & automations"
-            config:
-              type: object
-              example:
-                foo: 'bar'
-              description: 'Inside the app, these config values will be accessible with $.Config.foo'
-        - $ref: '#/components/schemas/Object'
+      type: object
+      required:
+        - appId
+        - slug
+      properties: &APP_INSTANCE_PROPERTIES
+        appId:
+          type: string
+          description: "App id"
+        appVersion:
+          type: string
+          description: "Defaults to the latest known app version"
+        slug:
+          type: string
+          description: "App instance unique name that will be used in workspace automations to access its events & automations"
+        config:
+          type: object
+          example:
+            foo: 'bar'
+          description: 'Inside the app, these config values will be accessible with $.Config.foo'
+
+    AppInstancePatch:
+      type: object
+      properties: *APP_INSTANCE_PROPERTIES
 
     Workspace:
       $ref: "#/components/schemas/DSUL"
@@ -2207,8 +2209,9 @@ components:
           - $ref: '#/components/schemas/CreatedWorkspace'
           - $ref: '#/components/schemas/UpdatedWorkspace'
           - $ref: '#/components/schemas/DeletedWorkspace'
-          - $ref: '#/components/schemas/InstalledApp'
-          - $ref: '#/components/schemas/ConfiguredApp'
+          - $ref: '#/components/schemas/InstalledAppInstance'
+          - $ref: '#/components/schemas/UninstalledAppInstance'
+          - $ref: '#/components/schemas/ConfiguredAppInstance'
           - $ref: '#/components/schemas/CreatedAutomation'
           - $ref: '#/components/schemas/UpdatedAutomation'
           - $ref: '#/components/schemas/DeletedAutomation'
@@ -2246,10 +2249,16 @@ components:
               - $ref: '#/components/schemas/DeletedWorkspace'
           - allOf:
               - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/InstalledApp'
+              - $ref: '#/components/schemas/AppInstance'
           - allOf:
               - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/ConfiguredApp'
+              - $ref: '#/components/schemas/ConfiguredAppInstance'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/InstalledAppInstance'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/UninstalledAppInstance'
           - allOf:
               - $ref: '#/components/schemas/PrismeEvent'
               - $ref: '#/components/schemas/CreatedAutomation'
@@ -2492,7 +2501,21 @@ components:
             workspace:
               $ref: '#/components/schemas/Workspace'
 
-    InstalledApp:
+    UninstalledAppInstance:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.app.uninstalled
+          enum:
+            - workspaces.app.uninstalled
+        payload:
+          $ref: '#/components/schemas/AppInstance'
+
+    InstalledAppInstance:
       type: object
       required:
         - type
@@ -2506,7 +2529,7 @@ components:
         payload:
           $ref: '#/components/schemas/AppInstance'
 
-    ConfiguredApp:
+    ConfiguredAppInstance:
       type: object
       required:
         - type

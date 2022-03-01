@@ -166,13 +166,13 @@ console_deploy:
     - export K8S_NAME=$CONSOLE_K8S_NAME
 
 # ## Workspaces jobs
-# # workspaces_test:
-# #   extends: .npm_test
-# #   only:
-# #     changes:
-# #       - "services/workspaces/*"
-# #   before_script:
-# #     - export SERVICE_NAME=$WORKSPACES_DIRECTORY
+workspaces_test:
+  extends: .npm_test
+  only:
+    changes:
+      - "services/workspaces/*"
+  before_script:
+    - export SERVICE_NAME=$WORKSPACES_DIRECTORY
 
 workspaces_build_docker:
   extends: .build_docker
