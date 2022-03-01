@@ -53,6 +53,48 @@ class Workspaces {
 
     this.diffHandlers = [
       {
+        path: 'automations.*',
+        handler: async (allDiffs: DSULDiff[]) => {
+          for (let {
+            type,
+            value,
+            root,
+            parentKey: automationSlug,
+          } of allDiffs) {
+            const automation = value as Prismeai.Automation;
+            switch (type) {
+              case DiffType.ValueCreated:
+                await this.automations.createAutomation(
+                  root,
+                  automation,
+                  automationSlug
+                );
+                break;
+              case DiffType.ValueUpdated:
+                await this.automations.updateAutomation(
+                  root,
+                  automationSlug,
+                  automation
+                );
+                break;
+              case DiffType.ValueDeleted:
+                await this.automations.deleteAutomation(
+                  // Rebuild current dsul with the removed automation to prevent deleteAutomation from throwing an ObjectNotFoundError
+                  {
+                    ...root,
+                    automations: {
+                      ...root?.automations,
+                      [automationSlug]: automation,
+                    },
+                  },
+                  automationSlug
+                );
+                break;
+            }
+          }
+        },
+      },
+      {
         path: 'imports.*',
         handler: async (allDiffs: DSULDiff[]) => {
           for (let { type, value, oldValue, root } of allDiffs) {
@@ -97,48 +139,6 @@ class Workspaces {
           }
         },
       },
-      {
-        path: 'automations.*',
-        handler: async (allDiffs: DSULDiff[]) => {
-          for (let {
-            type,
-            value,
-            root,
-            parentKey: automationSlug,
-          } of allDiffs) {
-            const automation = value as Prismeai.Automation;
-            switch (type) {
-              case DiffType.ValueCreated:
-                await this.automations.createAutomation(
-                  root,
-                  automation,
-                  automationSlug
-                );
-                break;
-              case DiffType.ValueUpdated:
-                await this.automations.updateAutomation(
-                  root,
-                  automationSlug,
-                  automation
-                );
-                break;
-              case DiffType.ValueDeleted:
-                await this.automations.deleteAutomation(
-                  // Rebuild current dsul with the removed automation to prevent deleteAutomation from throwing an ObjectNotFoundError
-                  {
-                    ...root,
-                    automations: {
-                      ...root?.automations,
-                      [automationSlug]: automation,
-                    },
-                  },
-                  automationSlug
-                );
-                break;
-            }
-          }
-        },
-      },
     ];
   }
 
@@ -147,19 +147,23 @@ class Workspaces {
    */
 
   createWorkspace = async (workspace: Prismeai.Workspace) => {
-    await this.processEveryDiffs({} as any, workspace);
-
-    await this.accessManager.create(SubjectType.Workspace, {
-      id: workspace.id,
-      name: workspace.name,
-    });
-    await this.storage.save(workspace.id || nanoid(7), workspace);
+    this.broker.buffer(true);
     this.broker.send<Prismeai.CreatedWorkspace['payload']>(
       EventType.CreatedWorkspace,
       {
         workspace,
       }
     );
+
+    await this.processEveryDiffs({} as any, workspace);
+    await this.accessManager.create(SubjectType.Workspace, {
+      id: workspace.id,
+      name: workspace.name,
+    });
+    await this.storage.save(workspace.id || nanoid(7), workspace);
+
+    // Send events
+    await this.broker.flush(true);
     return workspace;
   };
 
@@ -180,18 +184,24 @@ class Workspaces {
     workspaceId: string,
     workspace: Prismeai.Workspace
   ) => {
-    const currentDSUL = await this.getWorkspace(workspaceId);
-    const diffs = await this.processEveryDiffs(currentDSUL, workspace);
-    if (diffs.__type === DiffType.ValueUnchanged) {
-      return workspace;
-    }
-    await this.save(workspaceId, workspace);
+    this.broker.buffer(true);
     this.broker.send<Prismeai.UpdatedWorkspace['payload']>(
       EventType.UpdatedWorkspace,
       {
         workspace,
       }
     );
+
+    const currentDSUL = await this.getWorkspace(workspaceId);
+    const diffs = await this.processEveryDiffs(currentDSUL, workspace);
+    if (diffs.__type === DiffType.ValueUnchanged) {
+      this.broker.clear(true);
+      return workspace;
+    }
+    await this.save(workspaceId, workspace);
+
+    // Send events
+    await this.broker.flush(true);
     return workspace;
   };
 

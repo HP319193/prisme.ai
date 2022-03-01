@@ -61,7 +61,12 @@ const getMockedStorage = () => ({
     return {};
   }),
 });
-const getMockedBroker = () => ({ send: jest.fn() });
+const getMockedBroker = () => ({
+  send: jest.fn(),
+  buffer: jest.fn(),
+  flush: jest.fn(),
+  clear: jest.fn(),
+});
 
 it('createWorkspace should call accessManager, DSULStorage, broker', async () => {
   const workspace: Prismeai.Workspace = {
