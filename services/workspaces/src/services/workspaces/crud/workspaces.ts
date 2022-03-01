@@ -55,7 +55,6 @@ class Workspaces {
       {
         path: 'imports.*',
         handler: async (allDiffs: DSULDiff[]) => {
-          console.log('===> ', allDiffs);
           for (let { type, value, oldValue, root } of allDiffs) {
             const appInstance = value as Prismeai.AppInstance;
             switch (type) {
@@ -182,8 +181,8 @@ class Workspaces {
     workspace: Prismeai.Workspace
   ) => {
     const currentDSUL = await this.getWorkspace(workspaceId);
-    const dsulDiffs = await this.processEveryDiffs(currentDSUL, workspace);
-    if (!dsulDiffs.length) {
+    const diffs = await this.processEveryDiffs(currentDSUL, workspace);
+    if (diffs.__type === DiffType.ValueUnchanged) {
       return workspace;
     }
     await this.save(workspaceId, workspace);
@@ -200,7 +199,6 @@ class Workspaces {
     oldDSUL: Prismeai.DSUL,
     newDSUL: Prismeai.DSUL
   ) {
-    let allDsulDiffs: DSULDiff[] = [];
     const diffs = getObjectsDifferences(oldDSUL, newDSUL);
     for (let { path, handler } of this.diffHandlers) {
       const diffsPath = path.split('.').flatMap((key) => ['data', key]);
@@ -231,9 +229,8 @@ class Workspaces {
       );
 
       await handler(dsulDiffs);
-      allDsulDiffs.push(...dsulDiffs);
     }
-    return allDsulDiffs;
+    return diffs;
   }
 
   deleteWorkspace = async (

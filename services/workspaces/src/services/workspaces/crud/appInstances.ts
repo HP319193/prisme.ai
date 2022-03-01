@@ -83,7 +83,6 @@ class AppInstances {
     slug: string,
     appInstancePatch: Partial<Prismeai.AppInstance>
   ) => {
-    console.log(workspaceId, slug, appInstancePatch);
     const workspace =
       typeof workspaceId === 'string'
         ? await this.workspaces.getWorkspace(workspaceId)
