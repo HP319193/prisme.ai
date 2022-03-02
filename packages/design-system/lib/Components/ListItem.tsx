@@ -6,15 +6,17 @@ import { ReactElement } from 'react';
 export interface ListItemProps {
   title: string | ReactElement;
   content?: string;
+  rightContent?: string | ReactElement;
 }
 
-const ListItem = ({ title, content }: ListItemProps) => (
+const ListItem = ({ title, content, rightContent }: ListItemProps) => (
   <div className="flex grow border border-gray-200 rounded px-6 py-4 items-center justify-between cursor-pointer text-gray">
     <Space direction="vertical" className="align-baseline">
       <Text type="grey">{title}</Text>
       {content && <Text type="grey">{content}</Text>}
     </Space>
     <Space>
+      {rightContent}
       <RightOutlined />
     </Space>
   </div>

@@ -13,6 +13,7 @@ module.exports = {
       colors: {
         // Antdesign secondary text color
         gray: '#939CA6',
+        accent: '#015dff',
         'gray-200': '#E5E5E5',
         'blue-200': '#F8FAFF',
         'graph-border': '#BFD7FF',
