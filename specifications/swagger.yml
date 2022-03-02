@@ -2160,7 +2160,9 @@ components:
             - correlationId
             - host
           properties:
-            app:
+            appId:
+              type: string
+            appInstanceSlug:
               type: string
             userId:
               type: string

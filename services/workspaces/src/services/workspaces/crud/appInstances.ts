@@ -80,7 +80,11 @@ class AppInstances {
 
     this.broker.send<Prismeai.InstalledAppInstance['payload']>(
       EventType.InstalledApp,
-      { appInstance: appInstanceWithoutSlug, slug }
+      { appInstance: appInstanceWithoutSlug, slug },
+      {
+        appId: appInstance.appId,
+        appInstanceSlug: slug,
+      }
     );
     return appInstance;
   };
@@ -133,7 +137,11 @@ class AppInstances {
 
     this.broker.send<Prismeai.ConfiguredAppInstance['payload']>(
       EventType.ConfiguredApp,
-      { appInstance, slug: renamedSlug || slug, oldSlug }
+      { appInstance, slug: renamedSlug || slug, oldSlug },
+      {
+        appId: appInstance.appId,
+        appInstanceSlug: renamedSlug || slug,
+      }
     );
 
     return appInstance;
@@ -166,7 +174,11 @@ class AppInstances {
 
     this.broker.send<Prismeai.UninstalledAppInstance['payload']>(
       EventType.UninstalledApp,
-      { appInstance, slug }
+      { appInstance, slug },
+      {
+        appId: appInstance.appId,
+        appInstanceSlug: slug,
+      }
     );
 
     return { slug };

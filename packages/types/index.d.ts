@@ -13,7 +13,8 @@ declare namespace Prismeai {
          */
         type: string;
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -45,7 +46,8 @@ declare namespace Prismeai {
          */
         type: "gateway.login.failed";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -76,7 +78,8 @@ declare namespace Prismeai {
          */
         type: "gateway.login.succeeded";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -107,7 +110,8 @@ declare namespace Prismeai {
          */
         type: "runtime.automation.executed";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -138,7 +142,8 @@ declare namespace Prismeai {
          */
         type: "runtime.contexts.updated";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -169,7 +174,8 @@ declare namespace Prismeai {
          */
         type: "workspaces.created";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -200,7 +206,8 @@ declare namespace Prismeai {
          */
         type: "workspaces.updated";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -231,7 +238,8 @@ declare namespace Prismeai {
          */
         type: "workspaces.deleted";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -262,7 +270,8 @@ declare namespace Prismeai {
          */
         type: string;
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -291,6 +300,10 @@ declare namespace Prismeai {
          */
         appId: string;
         /**
+         * App name
+         */
+        appName?: string;
+        /**
          * Defaults to the latest known app version
          */
         appVersion?: string;
@@ -315,7 +328,8 @@ declare namespace Prismeai {
          */
         type: "workspaces.app.configured";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -346,7 +360,8 @@ declare namespace Prismeai {
          */
         type: "workspaces.app.installed";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -377,7 +392,8 @@ declare namespace Prismeai {
          */
         type: "workspaces.app.uninstalled";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -408,7 +424,8 @@ declare namespace Prismeai {
          */
         type: "workspaces.automation.created";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -439,7 +456,8 @@ declare namespace Prismeai {
          */
         type: "workspaces.automation.updated";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -470,7 +488,8 @@ declare namespace Prismeai {
          */
         type: "workspaces.automation.deleted";
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
@@ -535,6 +554,10 @@ declare namespace Prismeai {
          */
         appId: string;
         /**
+         * App name
+         */
+        appName?: string;
+        /**
          * Defaults to the latest known app version
          */
         appVersion?: string;
@@ -558,6 +581,10 @@ declare namespace Prismeai {
          * App id
          */
         appId?: string;
+        /**
+         * App name
+         */
+        appName?: string;
         /**
          * Defaults to the latest known app version
          */
@@ -954,7 +981,8 @@ declare namespace Prismeai {
          */
         type: string;
         source: {
-            app?: string;
+            appId?: string;
+            appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
             host: {
