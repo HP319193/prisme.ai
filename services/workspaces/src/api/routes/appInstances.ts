@@ -1,5 +1,6 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
+import { MissingFieldError } from '../../errors';
 import { AccessManager } from '../../permissions';
 import { Apps, Workspaces } from '../../services';
 import DSULStorage from '../../services/DSULStorage';
@@ -48,8 +49,12 @@ export default function init(
       accessManager,
       broker,
     });
-    await workspaces.appInstances.installApp(workspaceId, body);
-    res.send(body);
+    if (!body.slug) {
+      throw new MissingFieldError(`Missing 'slug' field`, { field: 'slug' });
+    }
+    const appInstance = body as Prismeai.AppInstance & { slug: string };
+    await workspaces.appInstances.installApp(workspaceId, appInstance);
+    res.send(appInstance);
   }
 
   async function configureAppHandler(

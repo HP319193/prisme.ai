@@ -22,9 +22,16 @@ class AppInstances {
     this.broker = broker;
   }
 
-  list = async (workspaceId: string) => {
+  list = async (
+    workspaceId: string
+  ): Promise<(Prismeai.AppInstance & { slug: string })[]> => {
     const workspace = await this.workspaces.getWorkspace(workspaceId);
-    return workspace.imports || [];
+    return Object.entries(workspace.imports || {}).reduce(
+      (appInstances, [slug, appInstance]) => {
+        return [...appInstances, { ...appInstance, slug }];
+      },
+      [] as any
+    );
   };
 
   private validateSlug(workspace: Prismeai.Workspace, slug: string) {
