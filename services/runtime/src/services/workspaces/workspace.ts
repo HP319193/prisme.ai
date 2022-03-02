@@ -1,3 +1,4 @@
+import { PrismeError } from '../../errors';
 import { Apps } from '../apps';
 
 export type DetailedTrigger = Prismeai.When & {
@@ -22,6 +23,7 @@ export type ParsedAutomationName = [AppName, AutomationName];
 export interface AppContext {
   appId: string;
   appInstanceSlug: string;
+  parentAppIds: string[];
 }
 
 export class Workspace {
@@ -115,11 +117,23 @@ export class Workspace {
   }
 
   async updateImport(slug: string, appInstance: Prismeai.AppInstance) {
+    const parentAppIds = this.appContext?.parentAppIds || [];
+    if (parentAppIds.includes(appInstance.appId)) {
+      throw new PrismeError(
+        `Recursive import detected : cannot import appId '${
+          appInstance.appId
+        }' inside app '${parentAppIds[parentAppIds.length - 1]}' `,
+        {}
+      );
+    }
     const { appId, appVersion } = appInstance;
     const dsul = await this.apps.getApp(appId, appVersion);
     this.imports[slug] = await Workspace.create(dsul, this.apps, {
       appId: appId,
-      appInstanceSlug: slug,
+      appInstanceSlug: this.appContext
+        ? `${this.appContext.appInstanceSlug}.${slug}`
+        : slug,
+      parentAppIds: (this.appContext?.parentAppIds || []).concat(appId),
     });
     return this.imports[slug];
   }
