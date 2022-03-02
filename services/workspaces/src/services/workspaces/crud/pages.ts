@@ -5,7 +5,6 @@ import Workspaces from './workspaces';
 import DSULStorage from '../../DSULStorage';
 import { AlreadyUsedError, ObjectNotFoundError } from '../../../errors';
 import { AccessManager, SubjectType } from '../../../permissions';
-import { log } from 'console';
 
 class Pages {
   private accessManager: Required<AccessManager>;
