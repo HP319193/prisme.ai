@@ -1,28 +1,45 @@
 import * as React from 'react';
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useRef } from 'react';
 import { Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import api from '../../utils/api';
 import { usePageBuilder } from './context';
 import Loading from '../Loading';
 import Block from '../Block';
+import useHover from '@react-hook/hover';
+import { CloseCircleOutlined } from '@ant-design/icons';
+
 interface WidgetProps {
   url: string;
   id: string;
+  name: string;
 }
-export const Widget = ({ url, id }: WidgetProps) => {
+export const Widget = ({ url, id, name }: WidgetProps) => {
   const { t } = useTranslation('workspaces');
+  const { removeWidget } = usePageBuilder();
   const ref = useRef<HTMLDivElement>(null);
+  const isHover = useHover(ref);
 
   return (
     <div
       ref={ref}
-      className="flex m-4 relative"
-      style={{
-        resize: 'vertical',
-        overflow: 'auto',
-      }}
+      className="flex m-4 relative 
+          flex-col
+          surface-section
+          border-graph-border
+          bg-white
+          border-2
+          rounded"
     >
+      <div className="flex flex-1 border-graph-border bg-graph-background border-b-2 justify-between p-2">
+        {name}
+        <button
+          className={`${isHover ? 'opacity-1' : 'opacity-0'}`}
+          onClick={() => removeWidget(id)}
+        >
+          <CloseCircleOutlined />
+        </button>
+      </div>
       <Block
         url={url}
         entityId={id}

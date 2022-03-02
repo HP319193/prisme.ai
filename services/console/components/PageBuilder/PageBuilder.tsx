@@ -57,17 +57,19 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     [addWidgetDetails, onChange, value]
   );
 
-  const resizeWidget: PageBuilderContext['resizeWidget'] = useCallback(
-    (key, height) => {
-      const widget = value.widgets.find(({ key: k }) => key === k);
-      if (!widget) return;
-      widget.height = height;
+  const removeWidget: PageBuilderContext['removeWidget'] = useCallback(
+    (key) => {
+      const newWidgets = value.widgets.filter(({ key: k }) => k !== key);
+      onChange({
+        ...value,
+        widgets: newWidgets,
+      });
     },
-    [value.widgets]
+    [onChange, value]
   );
 
   return (
-    <context.Provider value={{ page: value, widgets, addWidget, resizeWidget }}>
+    <context.Provider value={{ page: value, widgets, addWidget, removeWidget }}>
       <div className="relative flex flex-1 overflow-x-hidden">
         <Widgets />
         <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>

@@ -25,9 +25,9 @@ export const Widgets = () => {
       <div className="m-4">
         <AddWidget after={-1} />
       </div>
-      {widgetsInPage.map(({ url, key }, index) => (
+      {widgetsInPage.map(({ url, key, name }, index) => (
         <Fragment key={key}>
-          <Widget url={url} id={`${key || index}`} />
+          <Widget url={url} id={`${key || index}`} name={name} />
           <AddWidget after={index} />
         </Fragment>
       ))}
