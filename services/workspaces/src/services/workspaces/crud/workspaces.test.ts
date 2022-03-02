@@ -15,8 +15,56 @@ const getMockedApps = () => ({
   getApp: jest.fn(),
 });
 
-const getMockedStorage = () => ({ save: jest.fn(), delete: jest.fn() });
-const getMockedBroker = () => ({ send: jest.fn() });
+const INIT_WORKSPACE_ID = 'initWorkspaceId';
+const INIT_AUTOMATION_SLUG = 'initAutomationSlug';
+const workspaces = {
+  [INIT_WORKSPACE_ID]: {
+    id: INIT_WORKSPACE_ID,
+    name: 'initWorkspace',
+    imports: {
+      unchangedAppInstance: {
+        appId: 'someAppId',
+      },
+      willBeChangedAppInstance: {
+        appId: 'someAppId',
+        appVersion: 'current',
+      },
+      willBeRemovedAppInstance: {
+        appId: 'someAppId',
+      },
+    },
+    automations: {
+      [INIT_AUTOMATION_SLUG]: {
+        name: 'willBeChangedAutomation',
+        do: [],
+      },
+      someUnchangedAutomation: {
+        name: 'someUnchangedAutomation',
+        do: [],
+      },
+      willBeRemovedAutomation: {
+        name: 'willBeRemovedAutomation',
+        do: [],
+      },
+    },
+  },
+};
+const getMockedStorage = () => ({
+  save: jest.fn(),
+  delete: jest.fn(),
+  get: jest.fn((workspaceId: string) => {
+    if (workspaceId in workspaces) {
+      return workspaces[workspaceId];
+    }
+    return {};
+  }),
+});
+const getMockedBroker = () => ({
+  send: jest.fn(),
+  buffer: jest.fn(),
+  flush: jest.fn(),
+  clear: jest.fn(),
+});
 
 it('createWorkspace should call accessManager, DSULStorage, broker', async () => {
   const workspace: Prismeai.Workspace = {
@@ -74,6 +122,105 @@ it('updateWorkspace should call accessManager, DSULStorage, broker', async () =>
   expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.updated', {
     workspace,
   });
+});
+
+it('updateWorkspace should emit specific events corresponding to each updated part', async () => {
+  const ADDED_AUTOMATION_SLUG = 'addedAutomationSlug';
+
+  let {
+    unchangedAppInstance,
+    willBeChangedAppInstance,
+    willBeRemovedAppInstance,
+  } = workspaces[INIT_WORKSPACE_ID].imports;
+  const createdAppInstance = {
+    appId: 'someAppId',
+  };
+  willBeChangedAppInstance = {
+    ...willBeChangedAppInstance,
+    appVersion: 'someNewVersion',
+  };
+  const workspace: Prismeai.Workspace = {
+    ...workspaces[INIT_WORKSPACE_ID],
+    imports: {
+      unchangedAppInstance,
+      willBeChangedAppInstance,
+      createdAppInstance,
+    },
+    automations: {
+      [INIT_AUTOMATION_SLUG]: {
+        name: 'defaultAutomationNameRenamed',
+        do: [],
+      },
+      [ADDED_AUTOMATION_SLUG]: {
+        name: 'addedAutomationName',
+        do: [],
+      },
+      someUnchangedAutomation:
+        workspaces[INIT_WORKSPACE_ID].automations.someUnchangedAutomation,
+    },
+  };
+  const mockedAccessManager: any = getMockedAccessManager();
+  const mockedApps: any = getMockedApps();
+  const mockedStorage: any = getMockedStorage();
+  const mockedBroker: any = getMockedBroker();
+  const workspaceCrud = new Workspaces(
+    mockedAccessManager,
+    mockedApps,
+    mockedBroker,
+    mockedStorage
+  );
+
+  await workspaceCrud.updateWorkspace(workspace.id, workspace);
+
+  expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.updated', {
+    workspace,
+  });
+
+  expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.app.configured', {
+    appInstance: willBeChangedAppInstance,
+    slug: 'willBeChangedAppInstance',
+    oldSlug: undefined,
+  });
+
+  expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.app.installed', {
+    appInstance: createdAppInstance,
+    slug: 'createdAppInstance',
+  });
+
+  expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.app.uninstalled', {
+    appInstance: willBeRemovedAppInstance,
+    slug: 'willBeRemovedAppInstance',
+  });
+
+  expect(mockedBroker.send).toHaveBeenCalledWith(
+    'workspaces.automation.updated',
+    {
+      automation: workspace.automations[INIT_AUTOMATION_SLUG],
+      slug: INIT_AUTOMATION_SLUG,
+    }
+  );
+
+  expect(mockedBroker.send).toHaveBeenCalledWith(
+    'workspaces.automation.deleted',
+    {
+      automation: {
+        name: workspaces[INIT_WORKSPACE_ID].automations[
+          'willBeRemovedAutomation'
+        ].name,
+        slug: 'willBeRemovedAutomation',
+      },
+    }
+  );
+
+  expect(mockedBroker.send).toHaveBeenCalledWith(
+    'workspaces.automation.created',
+    {
+      automation: workspace.automations[ADDED_AUTOMATION_SLUG],
+      slug: ADDED_AUTOMATION_SLUG,
+    }
+  );
+
+  expect(mockedBroker.send).toHaveBeenCalledTimes(7);
 });
 
 it('save should call accessManager & DSULStorage', async () => {

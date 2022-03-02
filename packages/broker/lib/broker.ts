@@ -46,6 +46,8 @@ const DEFAULT_DRIVER_OPTS: BrokerOptions['driver'] = {
   host: 'redis://localhost:6379/10',
 };
 
+type Buffer = Omit<PrismeEvent<object>, 'id'>[];
+
 export class Broker<CallbackContext = any> {
   public service: string;
   public consumer: Consumer;
@@ -53,6 +55,8 @@ export class Broker<CallbackContext = any> {
   private driver: Driver;
   public ready: Promise<any>;
   private parentSource: Partial<EventSource>;
+
+  private _buffer: false | Buffer;
 
   private CallbackContextCtor?: CallbackContextCtor<CallbackContext>;
   public onProcessedEventCallback?: (
@@ -83,6 +87,7 @@ export class Broker<CallbackContext = any> {
     });
     this.parentSource = {};
     this.CallbackContextCtor = CallbackContextCtor;
+    this._buffer = false;
 
     this.ready = Promise.all([
       this.eventsFactory.ready,
@@ -98,9 +103,31 @@ export class Broker<CallbackContext = any> {
         workspaceId: parentSource.workspaceId,
         correlationId: parentSource.correlationId,
       },
+      _buffer: false,
     });
     Object.setPrototypeOf(child, Broker.prototype);
     return child;
+  }
+
+  buffer(enabled: boolean) {
+    this._buffer = enabled ? [] : false;
+  }
+
+  async flush(disableBuffer?: boolean) {
+    if (!this._buffer) {
+      throw new Error(
+        'Trying to flush broker although buffer is not activated'
+      );
+    }
+    const results = this._buffer.map((event) =>
+      this.driver.send(event, event.source.topic!)
+    );
+    this._buffer = disableBuffer ? false : [];
+    return await Promise.all(results);
+  }
+
+  clear(disableBuffer?: boolean) {
+    this._buffer = disableBuffer ? false : [];
   }
 
   private getEventTopic(
@@ -150,6 +177,10 @@ export class Broker<CallbackContext = any> {
     });
     event.source.topic = this.getEventTopic(topic, event);
 
+    if (this._buffer) {
+      this._buffer.push(event);
+      return;
+    }
     return this.driver.send(event, event.source.topic);
   }
 

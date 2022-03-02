@@ -1710,22 +1710,24 @@ components:
       type: object
       required:
         - appId
-        - slug
       properties: &APP_INSTANCE_PROPERTIES
         appId:
           type: string
           description: "App id"
+        appName:
+          type: string
+          description: "App name"
         appVersion:
           type: string
           description: "Defaults to the latest known app version"
-        slug:
-          type: string
-          description: "App instance unique name that will be used in workspace automations to access its events & automations"
         config:
           type: object
           example:
             foo: 'bar'
           description: 'Inside the app, these config values will be accessible with $.Config.foo'
+        slug:
+          type: string
+          description: Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
 
     AppInstancePatch:
       type: object
@@ -1752,8 +1754,8 @@ components:
             id:
               type: string
         imports:
-          type: array
-          items:
+          type: object
+          additionalProperties:
             $ref: "#/components/schemas/AppInstance"
         config:
           additionalProperties:
@@ -2158,7 +2160,9 @@ components:
             - correlationId
             - host
           properties:
-            app:
+            appId:
+              type: string
+            appInstanceSlug:
               type: string
             userId:
               type: string
@@ -2513,7 +2517,15 @@ components:
           enum:
             - workspaces.app.uninstalled
         payload:
-          $ref: '#/components/schemas/AppInstance'
+          type: object
+          required:
+            - appInstance
+            - slug
+          properties:
+            appInstance:
+              $ref: '#/components/schemas/AppInstance'
+            slug:
+              type: string
 
     InstalledAppInstance:
       type: object
@@ -2527,7 +2539,15 @@ components:
           enum:
             - workspaces.app.installed
         payload:
-          $ref: '#/components/schemas/AppInstance'
+          type: object
+          required:
+            - appInstance
+            - slug
+          properties:
+            appInstance:
+              $ref: '#/components/schemas/AppInstance'
+            slug:
+              type: string
 
     ConfiguredAppInstance:
       type: object
@@ -2541,7 +2561,18 @@ components:
           enum:
             - workspaces.app.configured
         payload:
-          $ref: '#/components/schemas/AppInstance'
+          type: object
+          required:
+            - appInstance
+            - slug
+          properties:
+            appInstance:
+              $ref: '#/components/schemas/AppInstance'
+            slug:
+              type: string
+            oldSlug:
+              type: string
+              description: Filled with the previous appInstance slug when renamed
 
     CreatedAutomation:
       type: object
