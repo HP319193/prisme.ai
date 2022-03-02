@@ -25,29 +25,16 @@ const hiddenLS: {
   removeItem() {},
 };
 if (IS_LOCAL_STORAGE_AVAILABLE) {
-  hiddenLS.getItem = localStorage.__proto__.getItem.bind(localStorage);
-  localStorage.__proto__.getItem = (k: string) => {
-    if (k === 'auth-token') return null;
-    return hiddenLS.getItem(k);
-  };
-
-  hiddenLS.setItem = localStorage.__proto__.setItem.bind(localStorage);
-  localStorage.__proto__.setItem = (k: string, v: any) => {
-    if (k === 'auth-token') return null;
-    return hiddenLS.setItem(k, v);
-  };
-
-  hiddenLS.removeItem = localStorage.__proto__.removeItem.bind(localStorage);
-  localStorage.__proto__.removeItem = (k: string) => {
-    if (k === 'auth-token') return null;
-    return hiddenLS.removeItem(k);
-  };
+  Object.defineProperty(window, 'localStorage', {
+    value: sessionStorage,
+    configurable: true,
+  });
 }
 
 export const Storage = {
   get: (k: string) => {
     if (IS_LOCAL_STORAGE_AVAILABLE) {
-      const v = hiddenLS.getItem(k);
+      const v = localStorage.getItem(k);
       try {
         return JSON.parse(v || '');
       } catch (e) {
@@ -60,13 +47,13 @@ export const Storage = {
   set: (k: string, v: any) => {
     const value = typeof v === 'object' ? JSON.stringify(v) : v;
     if (IS_LOCAL_STORAGE_AVAILABLE) {
-      return hiddenLS.setItem(k, value);
+      return localStorage.setItem(k, value);
     }
     return Cookie.set(k, value);
   },
   remove: (k: string) => {
     if (IS_LOCAL_STORAGE_AVAILABLE) {
-      return hiddenLS.removeItem(k);
+      return localStorage.removeItem(k);
     }
     Cookie.remove(k);
   },
