@@ -1,9 +1,11 @@
 import { Broker } from '@prisme.ai/broker';
 import { InvalidEventError } from '../../../../errors';
+import { AppContext } from '../../../workspaces';
 
 export async function emit(
   { event, payload }: Prismeai.Emit['emit'],
-  broker: Broker
+  broker: Broker,
+  appContext?: AppContext
 ) {
   if (!event.startsWith('apps.')) {
     throw new InvalidEventError(
@@ -13,5 +15,6 @@ export async function emit(
       }
     );
   }
-  return await broker.send(event, payload || {});
+
+  return await broker.send(event, payload || {}, appContext);
 }

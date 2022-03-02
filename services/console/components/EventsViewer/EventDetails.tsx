@@ -38,9 +38,14 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
         value: formatDate(event.createdAt, { format: 'yyyy-MM-dd hh:mm' }),
       },
       {
-        key: 'source.app',
-        name: 'source.app',
-        value: event.source.app,
+        key: 'source.appId',
+        name: 'source.appId',
+        value: event.source.appId,
+      },
+      {
+        key: 'source.appInstanceSlug',
+        name: 'source.appInstanceSlug',
+        value: event.source.appInstanceSlug,
       },
       {
         key: 'source.userId',
@@ -101,9 +106,9 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
     [event, formatDate]
   );
   const onRowClick = useCallback(({ target }: MouseEvent) => {
-    const valueTd = (target as HTMLTableRowElement).parentNode?.querySelectorAll(
-      'td'
-    );
+    const valueTd = (
+      target as HTMLTableRowElement
+    ).parentNode?.querySelectorAll('td');
     if (valueTd && valueTd.length === 3) {
       selectText(valueTd[2]);
     }

@@ -2,7 +2,7 @@ import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import { Logger } from '../../../logger';
 import { interpolate } from '../../../utils';
-import { Workspace } from '../../workspaces';
+import { DetailedAutomation, Workspace } from '../../workspaces';
 import { ContextsManager } from '../contexts';
 import { runInstruction, InstructionType } from './instructions';
 
@@ -10,7 +10,7 @@ class Break {}
 
 export async function executeAutomation(
   workspace: Workspace,
-  automation: Prismeai.Automation,
+  automation: DetailedAutomation,
   ctx: ContextsManager,
   logger: Logger,
   broker: Broker
@@ -33,12 +33,13 @@ export async function executeAutomation(
       slug: automation.slug!,
       payload: ctx.payload,
       output,
-    }
+    },
+    workspace.appContext
   );
   return output;
 }
 
-function evaluateOutput(automation: Prismeai.Automation, ctx: ContextsManager) {
+function evaluateOutput(automation: DetailedAutomation, ctx: ContextsManager) {
   return automation.output
     ? interpolate(automation.output, ctx.publicContexts)
     : {};
@@ -78,7 +79,7 @@ export async function runInstructions(
       broker,
       (nextAutomation, nextCtx = ctx) => {
         return executeAutomation(
-          workspace,
+          nextAutomation.workspace,
           nextAutomation,
           nextCtx,
           logger,

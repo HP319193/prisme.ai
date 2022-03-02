@@ -99,9 +99,11 @@ export class Broker<CallbackContext = any> {
     const child = Object.assign({}, this, {
       parentSource: {
         ...this.parentSource,
-        userId: parentSource.userId,
-        workspaceId: parentSource.workspaceId,
-        correlationId: parentSource.correlationId,
+        ...parentSource,
+        userId: parentSource.userId || this.parentSource.userId,
+        workspaceId: parentSource.workspaceId || this.parentSource.workspaceId,
+        correlationId:
+          parentSource.correlationId || this.parentSource.correlationId,
       },
       _buffer: false,
     });
@@ -179,7 +181,7 @@ export class Broker<CallbackContext = any> {
 
     if (this._buffer) {
       this._buffer.push(event);
-      return;
+      return { type: 'buffered event' } as PrismeEvent;
     }
     return this.driver.send(event, event.source.topic);
   }

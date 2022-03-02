@@ -91,6 +91,7 @@ export default class Runtime {
             throw new ObjectNotFoundError(`Automation not found`, {
               workspaceId,
               automation: trigger.automationSlug,
+              ...trigger.workspace.appContext,
             });
           }
           const output = await executeAutomation(
@@ -98,11 +99,12 @@ export default class Runtime {
             automation,
             ctx,
             logger,
-            broker
+            broker.child(trigger.workspace.appContext || {})
           );
           return {
             output,
             slug: trigger.automationSlug,
+            ...trigger.workspace.appContext,
           };
         })
       );
