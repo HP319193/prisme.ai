@@ -33,7 +33,7 @@ class AppInstances {
         field: 'slug',
       });
     }
-    if ((workspace.imports || []).find((cur) => cur.slug === slug)) {
+    if (slug in (workspace.imports || {})) {
       throw new AlreadyUsedError('App instance slug already in use');
     }
   }
@@ -52,8 +52,11 @@ class AppInstances {
 
   installApp = async (
     workspaceId: string | Prismeai.Workspace,
-    appInstance: Prismeai.AppInstance
+    appInstance: Prismeai.AppInstance & { slug: string }
   ) => {
+    if (!appInstance.slug) {
+      throw new MissingFieldError(`Missing 'slug' field`, { field: 'slug' });
+    }
     const workspace =
       typeof workspaceId === 'string'
         ? await this.workspaces.getWorkspace(workspaceId)
@@ -62,9 +65,13 @@ class AppInstances {
     this.validateSlug(workspace, appInstance.slug);
     await this.validateApp(appInstance.appId, appInstance.appVersion);
 
+    const { slug, ...appInstanceWithoutSlug } = appInstance;
     const updatedWorkspace = {
       ...workspace,
-      imports: [...(workspace.imports || []), appInstance],
+      imports: {
+        ...(workspace.imports || {}),
+        [appInstance.slug]: appInstanceWithoutSlug,
+      },
     };
     // Persist only if we've been given a workspaceId string, otherwise simply return the updated workspace
     if (typeof workspaceId === 'string') {
@@ -73,7 +80,7 @@ class AppInstances {
 
     this.broker.send<Prismeai.InstalledAppInstance['payload']>(
       EventType.InstalledApp,
-      appInstance
+      { appInstance: appInstanceWithoutSlug, slug }
     );
     return appInstance;
   };
@@ -88,38 +95,45 @@ class AppInstances {
         ? await this.workspaces.getWorkspace(workspaceId)
         : workspaceId;
 
-    const currentAppInstance = (workspace.imports || []).find(
-      (cur) => cur.slug === slug
-    );
+    const currentAppInstance = (workspace.imports || {})[slug];
     if (!currentAppInstance) {
       throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
     }
 
+    delete currentAppInstance.slug;
+    const { slug: renamedSlug, ...patchWithoutSlug } = appInstancePatch;
     const appInstance = {
       ...currentAppInstance,
-      ...appInstancePatch,
+      ...patchWithoutSlug,
     };
+
+    const updatedWorkspace = {
+      ...workspace,
+      imports: {
+        ...workspace.imports,
+        [slug]: appInstance,
+      },
+    };
+
     // Slug renaming
-    if (appInstance.slug && appInstance.slug !== slug) {
-      this.validateSlug(workspace, appInstance.slug);
+    let oldSlug;
+    if (renamedSlug && renamedSlug !== slug) {
+      this.validateSlug(workspace, renamedSlug);
+      oldSlug = slug;
+      delete updatedWorkspace.imports[oldSlug];
+      updatedWorkspace.imports[renamedSlug] = appInstance;
     }
 
     await this.validateApp(appInstance.appId, appInstance.appVersion);
 
-    const updatedWorkspace = {
-      ...workspace,
-      imports: (workspace.imports || []).map((cur) =>
-        cur.slug !== slug ? cur : appInstance
-      ),
-    };
     // Persist only if we've been given a workspaceId string, otherwise simply return the updated workspace
     if (typeof workspaceId === 'string') {
       await this.workspaces.save(workspaceId, updatedWorkspace);
     }
 
-    this.broker.send<Prismeai.InstalledAppInstance['payload']>(
+    this.broker.send<Prismeai.ConfiguredAppInstance['payload']>(
       EventType.ConfiguredApp,
-      appInstance
+      { appInstance, slug: renamedSlug || slug, oldSlug }
     );
 
     return appInstance;
@@ -134,25 +148,25 @@ class AppInstances {
         ? await this.workspaces.getWorkspace(workspaceId)
         : workspaceId;
 
-    const appInstance = (workspace.imports || []).find(
-      (cur) => cur.slug === slug
-    );
+    const appInstance = (workspace.imports || {})[slug];
     if (!appInstance) {
       throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
     }
 
+    const { [slug]: removedApp, ...importsWithoutRemovedOne } =
+      workspace.imports || {};
     const updatedWorkspace = {
       ...workspace,
-      imports: (workspace.imports || []).filter((cur) => cur.slug !== slug),
+      imports: importsWithoutRemovedOne,
     };
     // Persist only if we've been given a workspaceId string, otherwise simply return the updated workspace
     if (typeof workspaceId === 'string') {
       await this.workspaces.save(workspaceId, updatedWorkspace);
     }
 
-    this.broker.send<Prismeai.InstalledAppInstance['payload']>(
+    this.broker.send<Prismeai.UninstalledAppInstance['payload']>(
       EventType.UninstalledApp,
-      appInstance
+      { appInstance, slug }
     );
 
     return { slug };

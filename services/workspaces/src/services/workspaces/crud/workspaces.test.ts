@@ -21,20 +21,18 @@ const workspaces = {
   [INIT_WORKSPACE_ID]: {
     id: INIT_WORKSPACE_ID,
     name: 'initWorkspace',
-    imports: [
-      {
-        slug: 'unchangedAppInstance',
+    imports: {
+      unchangedAppInstance: {
         appId: 'someAppId',
       },
-      {
-        slug: 'willBeChangedAppInstance',
+      willBeChangedAppInstance: {
+        appId: 'someAppId',
+        appVersion: 'current',
+      },
+      willBeRemovedAppInstance: {
         appId: 'someAppId',
       },
-      // {
-      //   slug: 'willBeRemovedAppInstance',
-      //   appId: 'someAppId',
-      // },
-    ],
+    },
     automations: {
       [INIT_AUTOMATION_SLUG]: {
         name: 'willBeChangedAutomation',
@@ -129,19 +127,25 @@ it('updateWorkspace should call accessManager, DSULStorage, broker', async () =>
 it('updateWorkspace should emit specific events corresponding to each updated part', async () => {
   const ADDED_AUTOMATION_SLUG = 'addedAutomationSlug';
 
-  const unchangedAppInstance = workspaces[INIT_WORKSPACE_ID].imports[0];
-  const updatedAppInstance = {
-    ...workspaces[INIT_WORKSPACE_ID].imports[1],
-    name: 'renamedAppInstance',
-  };
+  let {
+    unchangedAppInstance,
+    willBeChangedAppInstance,
+    willBeRemovedAppInstance,
+  } = workspaces[INIT_WORKSPACE_ID].imports;
   const createdAppInstance = {
     appId: 'someAppId',
-    slug: 'newAppInstanceSlug',
   };
-  const removedAppInstance = workspaces[INIT_WORKSPACE_ID].imports[2];
+  willBeChangedAppInstance = {
+    ...willBeChangedAppInstance,
+    appVersion: 'someNewVersion',
+  };
   const workspace: Prismeai.Workspace = {
     ...workspaces[INIT_WORKSPACE_ID],
-    imports: [unchangedAppInstance, updatedAppInstance, createdAppInstance],
+    imports: {
+      unchangedAppInstance,
+      willBeChangedAppInstance,
+      createdAppInstance,
+    },
     automations: {
       [INIT_AUTOMATION_SLUG]: {
         name: 'defaultAutomationNameRenamed',
@@ -172,20 +176,21 @@ it('updateWorkspace should emit specific events corresponding to each updated pa
     workspace,
   });
 
-  expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.app.configured',
-    updatedAppInstance
-  );
+  expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.app.configured', {
+    appInstance: willBeChangedAppInstance,
+    slug: 'willBeChangedAppInstance',
+    oldSlug: undefined,
+  });
 
-  expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.app.installed',
-    createdAppInstance
-  );
+  expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.app.installed', {
+    appInstance: createdAppInstance,
+    slug: 'createdAppInstance',
+  });
 
-  // expect(mockedBroker.send).toHaveBeenCalledWith(
-  //   'workspaces.app.uninstalled',
-  //   removedAppInstance
-  // );
+  expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.app.uninstalled', {
+    appInstance: willBeRemovedAppInstance,
+    slug: 'willBeRemovedAppInstance',
+  });
 
   expect(mockedBroker.send).toHaveBeenCalledWith(
     'workspaces.automation.updated',
@@ -215,7 +220,7 @@ it('updateWorkspace should emit specific events corresponding to each updated pa
     }
   );
 
-  expect(mockedBroker.send).toHaveBeenCalledTimes(6);
+  expect(mockedBroker.send).toHaveBeenCalledTimes(7);
 });
 
 it('save should call accessManager & DSULStorage', async () => {

@@ -34,18 +34,16 @@ const workspaces = {
   [ALREADY_INSTALLED_WORKSPACE_ID]: {
     name: 'alreadyInstalledAppWorkspaceName',
     id: ALREADY_INSTALLED_WORKSPACE_ID,
-    imports: [
-      {
+    imports: {
+      [APP_INSTANCE_SLUG]: {
         appId: APP_ID,
         version: '1',
-        slug: APP_INSTANCE_SLUG,
       },
-      {
+      anotherSlugThatWillConflict: {
         appId: APP_ID,
         version: '0',
-        slug: 'anotherSlugThatWillConflict',
       },
-    ],
+    },
     automations: {},
   },
 
@@ -97,22 +95,21 @@ describe('installApp', () => {
 
     const appInstance = {
       appId: APP_ID,
-      slug: APP_INSTANCE_SLUG,
     };
-    const result = await appInstancesCrud.installApp(
-      EMPTY_WORKSPACE_ID,
-      appInstance
-    );
+    const result = await appInstancesCrud.installApp(EMPTY_WORKSPACE_ID, {
+      ...appInstance,
+      slug: APP_INSTANCE_SLUG,
+    });
 
     expect(result).toMatchObject(appInstance);
     expect(mockedWorkspaces.save).toHaveBeenCalledWith(EMPTY_WORKSPACE_ID, {
       ...workspaces[EMPTY_WORKSPACE_ID],
-      imports: [appInstance],
+      imports: { [APP_INSTANCE_SLUG]: appInstance },
     });
-    expect(mockedBroker.send).toHaveBeenCalledWith(
-      'workspaces.app.installed',
-      appInstance
-    );
+    expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.app.installed', {
+      appInstance,
+      slug: APP_INSTANCE_SLUG,
+    });
   });
 
   it('installApp should throw MissingFieldError if slug not defined', async () => {
@@ -205,7 +202,6 @@ describe('configureApp', () => {
     const appInstance = {
       appId: APP_ID,
       version: '2',
-      slug: APP_INSTANCE_SLUG,
     };
     const result = await appInstancesCrud.configureApp(
       ALREADY_INSTALLED_WORKSPACE_ID,
@@ -218,15 +214,15 @@ describe('configureApp', () => {
       ALREADY_INSTALLED_WORKSPACE_ID,
       {
         ...workspaces[ALREADY_INSTALLED_WORKSPACE_ID],
-        imports: [
-          appInstance,
-          workspaces[ALREADY_INSTALLED_WORKSPACE_ID].imports[1],
-        ],
+        imports: {
+          ...workspaces[ALREADY_INSTALLED_WORKSPACE_ID].imports,
+          [APP_INSTANCE_SLUG]: appInstance,
+        },
       }
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
       'workspaces.app.configured',
-      appInstance
+      { appInstance, slug: APP_INSTANCE_SLUG }
     );
   });
 
@@ -298,17 +294,20 @@ describe('uninstallApp', () => {
       APP_INSTANCE_SLUG
     );
 
+    const { [APP_INSTANCE_SLUG]: removedOne, ...importsWithoutRemovedOne } =
+      workspaces[ALREADY_INSTALLED_WORKSPACE_ID].imports;
+
     expect(mockedWorkspaces.save).toHaveBeenCalledWith(
       ALREADY_INSTALLED_WORKSPACE_ID,
       {
         ...workspaces[ALREADY_INSTALLED_WORKSPACE_ID],
-        imports: [workspaces[ALREADY_INSTALLED_WORKSPACE_ID].imports[1]],
+        imports: importsWithoutRemovedOne,
       }
     );
 
     expect(mockedBroker.send).toHaveBeenCalledWith(
       'workspaces.app.uninstalled',
-      workspaces[ALREADY_INSTALLED_WORKSPACE_ID].imports[0]
+      { appInstance: removedOne, slug: APP_INSTANCE_SLUG }
     );
   });
 });

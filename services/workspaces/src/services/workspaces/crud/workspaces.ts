@@ -97,42 +97,51 @@ class Workspaces {
       {
         path: 'imports.*',
         handler: async (allDiffs: DSULDiff[]) => {
-          for (let { type, value, oldValue, root } of allDiffs) {
+          for (let {
+            type,
+            value,
+            oldValue,
+            root,
+            parentKey: appSlug,
+          } of allDiffs) {
             const appInstance = value as Prismeai.AppInstance;
+
             switch (type) {
               case DiffType.ValueCreated:
+                // Rebuild current dsul without the installed app to prevent installApp from throwing an AlreadyUsedError
+                const { [appSlug]: currentOne, ...importsWithoutCurrentOne } =
+                  root.imports || {};
                 await this.appInstances.installApp(
-                  // Rebuild current dsul without the installed app to prevent installApp from throwing an AlreadyUsedError
                   {
                     ...root,
-                    imports: (root?.imports || []).filter(
-                      (cur) => cur != appInstance
-                    ),
+                    imports: importsWithoutCurrentOne,
                   },
-                  appInstance
+                  { ...appInstance, slug: appSlug }
                 );
                 break;
               case DiffType.ValueUpdated:
                 await this.appInstances.configureApp(
-                  // Rebuild current dsul without the configured app to prevent configureApp from throwing an AlreadyUsedError
                   {
                     ...root,
-                    imports: (root?.imports || []).map((cur) =>
-                      cur != appInstance ? cur : oldValue
-                    ),
+                    imports: {
+                      ...root.imports,
+                      [appSlug]: oldValue,
+                    },
                   },
-                  oldValue?.slug || appInstance.slug,
+                  appSlug,
                   appInstance
                 );
                 break;
               case DiffType.ValueDeleted:
                 await this.appInstances.uninstallApp(
-                  // Rebuild current dsul with the removed app to prevent deleteAutomation from throwing an ObjectNotFoundError
                   {
                     ...root,
-                    imports: [...(root?.imports || []), appInstance],
+                    imports: {
+                      ...(root?.imports || {}),
+                      [appSlug]: appInstance,
+                    },
                   },
-                  appInstance.slug
+                  appSlug
                 );
                 break;
             }

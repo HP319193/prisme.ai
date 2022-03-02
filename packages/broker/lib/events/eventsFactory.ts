@@ -18,7 +18,8 @@ export enum NativeTopic {
 
 export type Topic = NativeTopic | string;
 export interface EventSource {
-  app?: string;
+  appId?: string;
+  appInstanceSlug?: string;
   userId?: string;
   workspaceId?: string;
   host?: Host;
@@ -49,7 +50,8 @@ export class EventsFactory {
   create(
     eventType: string,
     payload: object,
-    partialSource: Partial<EventSource> & Pick<EventSource, 'app'>
+    partialSource: Partial<EventSource> &
+      Pick<EventSource, 'appId' | 'appInstanceSlug'>
   ): Omit<PrismeEvent, 'id'> {
     if (!(payload instanceof Error)) {
       validate(eventType, payload);

@@ -295,10 +295,6 @@ declare namespace Prismeai {
          */
         appVersion?: string;
         /**
-         * App instance unique name that will be used in workspace automations to access its events & automations
-         */
-        slug: string;
-        /**
          * Inside the app, these config values will be accessible with $.Config.foo
          * example:
          * {
@@ -308,6 +304,10 @@ declare namespace Prismeai {
         config?: {
             [key: string]: any;
         };
+        /**
+         * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+         */
+        slug?: string;
     } | {
         /**
          * example:
@@ -323,7 +323,7 @@ declare namespace Prismeai {
             };
             correlationId: string;
         };
-        payload: AppInstance;
+        payload: AnyValue;
         error?: {
             error?: string;
             message?: string;
@@ -354,7 +354,7 @@ declare namespace Prismeai {
             };
             correlationId: string;
         };
-        payload: AppInstance;
+        payload: AnyValue;
         error?: {
             error?: string;
             message?: string;
@@ -385,7 +385,7 @@ declare namespace Prismeai {
             };
             correlationId: string;
         };
-        payload: AppInstance;
+        payload: AnyValue;
         error?: {
             error?: string;
             message?: string;
@@ -539,10 +539,6 @@ declare namespace Prismeai {
          */
         appVersion?: string;
         /**
-         * App instance unique name that will be used in workspace automations to access its events & automations
-         */
-        slug: string;
-        /**
          * Inside the app, these config values will be accessible with $.Config.foo
          * example:
          * {
@@ -552,6 +548,10 @@ declare namespace Prismeai {
         config?: {
             [key: string]: any;
         };
+        /**
+         * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+         */
+        slug?: string;
     }
     export interface AppInstancePatch {
         /**
@@ -563,10 +563,6 @@ declare namespace Prismeai {
          */
         appVersion?: string;
         /**
-         * App instance unique name that will be used in workspace automations to access its events & automations
-         */
-        slug?: string;
-        /**
          * Inside the app, these config values will be accessible with $.Config.foo
          * example:
          * {
@@ -576,6 +572,10 @@ declare namespace Prismeai {
         config?: {
             [key: string]: any;
         };
+        /**
+         * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+         */
+        slug?: string;
     }
     export interface AuthenticationError {
         /**
@@ -656,7 +656,14 @@ declare namespace Prismeai {
          * workspaces.app.configured
          */
         type: "workspaces.app.configured";
-        payload: AppInstance;
+        payload: {
+            appInstance: AppInstance;
+            slug: string;
+            /**
+             * Filled with the previous appInstance slug when renamed
+             */
+            oldSlug?: string;
+        };
     }
     export interface Contact {
         /**
@@ -717,7 +724,9 @@ declare namespace Prismeai {
         owner?: {
             id?: string;
         };
-        imports?: AppInstance[];
+        imports?: {
+            [name: string]: AppInstance;
+        };
         config?: {
             [name: string]: TypedArgument;
         };
@@ -883,7 +892,10 @@ declare namespace Prismeai {
          * workspaces.app.installed
          */
         type: "workspaces.app.installed";
-        payload: AppInstance;
+        payload: {
+            appInstance: AppInstance;
+            slug: string;
+        };
     }
     export type Instruction = Emit | Wait | Set | Delete | Conditions | Repeat | All | Break | Fetch | {
         [name: string]: any;
@@ -1054,7 +1066,10 @@ declare namespace Prismeai {
          * workspaces.app.uninstalled
          */
         type: "workspaces.app.uninstalled";
-        payload: AppInstance;
+        payload: {
+            appInstance: AppInstance;
+            slug: string;
+        };
     }
     export interface UpdatedApiKey {
         /**
