@@ -19,8 +19,15 @@ import {
   initApiKeysRoutes,
   initCollaboratorRoutes,
 } from '@prisme.ai/permissions';
+import DSULStorage from '../services/DSULStorage';
+import { Broker } from '@prisme.ai/broker';
 
-export function initAPI(accessManager: AccessManager) {
+export function initAPI(
+  accessManager: AccessManager,
+  workspacesStorage: DSULStorage,
+  appsStorage: DSULStorage,
+  broker: Broker
+) {
   const app = express();
 
   /**
@@ -38,7 +45,7 @@ export function initAPI(accessManager: AccessManager) {
   /**
    * Metrics
    */
-  initMetrics(app);
+  initMetrics(app, broker);
 
   /**
    * Traceability
@@ -50,7 +57,7 @@ export function initAPI(accessManager: AccessManager) {
    */
   app.set('trust proxy', true);
 
-  app.use(requestDecorator);
+  app.use(requestDecorator(broker));
 
   app.use(accessManagerMiddleware(accessManager));
 
@@ -77,7 +84,7 @@ export function initAPI(accessManager: AccessManager) {
   /**
    * User routes
    */
-  initRoutes(app);
+  initRoutes(app, workspacesStorage, appsStorage);
 
   /**
    * ERROR HANDLING

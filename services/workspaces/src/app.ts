@@ -1,12 +1,19 @@
 'use strict';
 import http from 'http';
-import { APP_NAME, PERMISSIONS_STORAGE_MONGODB_OPTIONS, PORT } from '../config';
+import {
+  APP_NAME,
+  PERMISSIONS_STORAGE_MONGODB_OPTIONS,
+  PORT,
+  WORKSPACES_STORAGE_OPTIONS,
+  WORKSPACES_STORAGE_TYPE,
+} from '../config';
 
 import { initAPI } from './api';
-import { broker } from './eda';
+import { initEDA } from './eda';
 import { uncaughtExceptionHandler } from './errors';
 import '@prisme.ai/types';
 import { initAccessManager } from './permissions';
+import DSULStorage, { DSULType } from './services/DSULStorage';
 
 process.on('uncaughtException', uncaughtExceptionHandler);
 
@@ -17,10 +24,24 @@ async function exit() {
 process.on('SIGTERM', exit);
 process.on('SIGINT', exit);
 
+const broker = initEDA();
+
 const accessManager = initAccessManager(PERMISSIONS_STORAGE_MONGODB_OPTIONS);
 accessManager.start();
 
-const app = initAPI(accessManager);
+const workspacesStorage = new DSULStorage(
+  DSULType.Workspace,
+  WORKSPACES_STORAGE_TYPE,
+  WORKSPACES_STORAGE_OPTIONS[WORKSPACES_STORAGE_TYPE]
+);
+
+const appsStorage = new DSULStorage(
+  DSULType.App,
+  WORKSPACES_STORAGE_TYPE,
+  WORKSPACES_STORAGE_OPTIONS[WORKSPACES_STORAGE_TYPE]
+);
+
+const app = initAPI(accessManager, workspacesStorage, appsStorage, broker);
 
 const httpServer = http.createServer(app);
 

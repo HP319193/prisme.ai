@@ -27,6 +27,10 @@ export default class Runtime {
         // This event is directly handed from routes/webhooks.ts to allow passing back worklow result within http response
         return true;
       }
+      if (event.type === EventType.CreatedWorkspace) {
+        // No need to handle this event as DSULStorage might not contain created workspace yet (which whould emit an error)
+        return true;
+      }
       if (event.type.startsWith('apps.')) {
         await this.processEvent(event, logger, broker);
       }

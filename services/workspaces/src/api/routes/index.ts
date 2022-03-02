@@ -1,15 +1,28 @@
 import { Application } from 'express';
 
 import sys from './sys';
-import workspaces from './workspaces';
-import automations from './automations';
-import apps from './apps';
+import initWorkspaces from './workspaces';
+import initAutomations from './automations';
+import initApps from './apps';
+import initAppInstances from './appInstances';
+import DSULStorage from '../../services/DSULStorage';
 
-export const init = (app: Application): void => {
+export const init = (
+  app: Application,
+  workspacesStorage: DSULStorage,
+  appsStorage: DSULStorage
+): void => {
   const root = '/v2';
   app.use(`/sys`, sys);
-  app.use(`${root}/workspaces`, workspaces);
-  app.use(`${root}/workspaces/:workspaceId/automations`, automations);
-  app.use(`${root}/apps`, apps);
+  app.use(`${root}/workspaces`, initWorkspaces(workspacesStorage, appsStorage));
+  app.use(
+    `${root}/workspaces/:workspaceId/automations`,
+    initAutomations(workspacesStorage, appsStorage)
+  );
+  app.use(
+    `${root}/workspaces/:workspaceId/apps`,
+    initAppInstances(workspacesStorage, appsStorage)
+  );
+  app.use(`${root}/apps`, initApps(workspacesStorage, appsStorage));
 };
 export default init;

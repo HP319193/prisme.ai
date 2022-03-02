@@ -8,7 +8,7 @@ class Automations {
   private broker: Broker;
   private workspaces: Workspaces;
 
-  constructor(broker: Broker, workspaces: Workspaces) {
+  constructor(workspaces: Workspaces, broker: Broker) {
     this.broker = broker;
     this.workspaces = workspaces;
   }
@@ -32,11 +32,16 @@ class Automations {
   }
 
   createAutomation = async (
-    workspaceId: string,
-    automation: Prismeai.Automation
+    workspaceId: string | Prismeai.Workspace,
+    automation: Prismeai.Automation,
+    automationSlug?: string
   ) => {
-    const workspace = await this.workspaces.getWorkspace(workspaceId);
-    const slug = this.generateAutomationSlug(workspace, automation.name);
+    const workspace =
+      typeof workspaceId === 'string'
+        ? await this.workspaces.getWorkspace(workspaceId)
+        : workspaceId;
+    const slug =
+      automationSlug || this.generateAutomationSlug(workspace, automation.name);
 
     const updatedWorkspace = {
       ...workspace,
@@ -46,17 +51,18 @@ class Automations {
       },
     };
 
-    await this.workspaces.updateWorkspace(workspaceId, updatedWorkspace);
+    // Persist only if we've been given a workspaceId string, otherwise simply return the updated workspace
+    if (typeof workspaceId === 'string') {
+      await this.workspaces.save(workspaceId, updatedWorkspace);
+    }
 
-    this.broker
-      .send<Prismeai.CreatedAutomation['payload']>(
-        EventType.CreatedAutomation,
-        {
-          automation,
-          slug,
-        }
-      )
-      .catch(console.error);
+    this.broker.send<Prismeai.CreatedAutomation['payload']>(
+      EventType.CreatedAutomation,
+      {
+        automation,
+        slug,
+      }
+    );
     return { ...automation, slug };
   };
 
@@ -74,11 +80,14 @@ class Automations {
   };
 
   updateAutomation = async (
-    workspaceId: string,
+    workspaceId: string | Prismeai.Workspace,
     automationSlug: string,
     automation: Prismeai.Automation
   ) => {
-    const workspace = await this.workspaces.getWorkspace(workspaceId);
+    const workspace =
+      typeof workspaceId === 'string'
+        ? await this.workspaces.getWorkspace(workspaceId)
+        : workspaceId;
 
     if (
       !workspace ||
@@ -112,7 +121,10 @@ class Automations {
       updatedWorkspace.automations[automation.slug] = automation;
     }
 
-    await this.workspaces.updateWorkspace(workspaceId, updatedWorkspace);
+    // Persist only if we've been given a workspaceId string, otherwise simply return the updated workspace
+    if (typeof workspaceId === 'string') {
+      await this.workspaces.save(workspaceId, updatedWorkspace);
+    }
 
     this.broker.send<Prismeai.UpdatedAutomation['payload']>(
       EventType.UpdatedAutomation,
@@ -126,10 +138,13 @@ class Automations {
   };
 
   deleteAutomation = async (
-    workspaceId: string,
+    workspaceId: string | Prismeai.Workspace,
     automationSlug: PrismeaiAPI.DeleteAutomation.PathParameters['automationSlug']
   ) => {
-    const workspace = await this.workspaces.getWorkspace(workspaceId);
+    const workspace =
+      typeof workspaceId === 'string'
+        ? await this.workspaces.getWorkspace(workspaceId)
+        : workspaceId;
 
     if (
       !workspace ||
@@ -142,6 +157,7 @@ class Automations {
       );
     }
 
+    const { name: automationName } = workspace.automations[automationSlug];
     const newAutomations = { ...workspace.automations };
     delete newAutomations[automationSlug];
     const updatedWorkspace = {
@@ -149,14 +165,17 @@ class Automations {
       automations: newAutomations,
     };
 
-    await this.workspaces.updateWorkspace(workspaceId, updatedWorkspace);
+    // Persist only if we've been given a workspaceId string, otherwise simply return the updated workspace
+    if (typeof workspaceId === 'string') {
+      await this.workspaces.save(workspaceId, updatedWorkspace);
+    }
 
     this.broker.send<Prismeai.DeletedAutomation['payload']>(
       EventType.DeletedAutomation,
       {
         automation: {
           slug: automationSlug,
-          name: workspace.name,
+          name: automationName,
         },
       }
     );

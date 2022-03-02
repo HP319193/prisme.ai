@@ -5,7 +5,7 @@ declare namespace Prismeai {
          */
         all: Instruction[];
     }
-    export type AllEventRequests = (GenericErrorEvent | FailedLogin | SucceededLogin | ExecutedAutomation | UpdatedContexts | CreatedWorkspace | UpdatedWorkspace | DeletedWorkspace | InstalledApp | ConfiguredApp | CreatedAutomation | UpdatedAutomation | DeletedAutomation | AppEvent)[];
+    export type AllEventRequests = (GenericErrorEvent | FailedLogin | SucceededLogin | ExecutedAutomation | UpdatedContexts | CreatedWorkspace | UpdatedWorkspace | DeletedWorkspace | InstalledAppInstance | UninstalledAppInstance | ConfiguredAppInstance | CreatedAutomation | UpdatedAutomation | DeletedAutomation | AppEvent)[];
     export type AllEventResponses = (PrismeEvent | {
         /**
          * example:
@@ -258,6 +258,90 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
+         * apps.someApp.someCustomEvent
+         */
+        type: string;
+        source: {
+            app?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
+            };
+            correlationId: string;
+        };
+        payload?: AnyValue;
+        error?: {
+            error?: string;
+            message?: string;
+            details?: AnyValue;
+            /**
+             * example:
+             * warning
+             */
+            level?: "warning" | "error" | "fatal";
+        };
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+        /**
+         * App id
+         */
+        appId: string;
+        /**
+         * Defaults to the latest known app version
+         */
+        appVersion?: string;
+        /**
+         * App instance unique name that will be used in workspace automations to access its events & automations
+         */
+        slug: string;
+        /**
+         * Inside the app, these config values will be accessible with $.Config.foo
+         * example:
+         * {
+         *   "foo": "bar"
+         * }
+         */
+        config?: {
+            [key: string]: any;
+        };
+    } | {
+        /**
+         * example:
+         * workspaces.app.configured
+         */
+        type: "workspaces.app.configured";
+        source: {
+            app?: string;
+            userId?: string;
+            workspaceId?: string;
+            host: {
+                service: string;
+            };
+            correlationId: string;
+        };
+        payload: AppInstance;
+        error?: {
+            error?: string;
+            message?: string;
+            details?: AnyValue;
+            /**
+             * example:
+             * warning
+             */
+            level?: "warning" | "error" | "fatal";
+        };
+        /**
+         * Creation date (ISO8601)
+         */
+        createdAt: string;
+        id: string;
+    } | {
+        /**
+         * example:
          * workspaces.app.installed
          */
         type: "workspaces.app.installed";
@@ -289,9 +373,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * workspaces.app.configured
+         * workspaces.app.uninstalled
          */
-        type: "workspaces.app.configured";
+        type: "workspaces.app.uninstalled";
         source: {
             app?: string;
             userId?: string;
@@ -431,7 +515,7 @@ declare namespace Prismeai {
     export interface App {
         workspaceId: string;
         versions?: string[];
-        name: string;
+        name?: string;
         description?: LocalizedText;
         photo?: string;
         id?: string;
@@ -457,7 +541,7 @@ declare namespace Prismeai {
         /**
          * App instance unique name that will be used in workspace automations to access its events & automations
          */
-        name: string;
+        slug: string;
         /**
          * Inside the app, these config values will be accessible with $.Config.foo
          * example:
@@ -468,10 +552,30 @@ declare namespace Prismeai {
         config?: {
             [key: string]: any;
         };
+    }
+    export interface AppInstancePatch {
         /**
-         * Unique id
+         * App id
          */
-        id?: string;
+        appId?: string;
+        /**
+         * Defaults to the latest known app version
+         */
+        appVersion?: string;
+        /**
+         * App instance unique name that will be used in workspace automations to access its events & automations
+         */
+        slug?: string;
+        /**
+         * Inside the app, these config values will be accessible with $.Config.foo
+         * example:
+         * {
+         *   "foo": "bar"
+         * }
+         */
+        config?: {
+            [key: string]: any;
+        };
     }
     export interface AuthenticationError {
         /**
@@ -546,7 +650,7 @@ declare namespace Prismeai {
         [name: string]: InstructionList;
         default: InstructionList;
     }
-    export interface ConfiguredApp {
+    export interface ConfiguredAppInstance {
         /**
          * example:
          * workspaces.app.configured
@@ -773,7 +877,7 @@ declare namespace Prismeai {
             message: string;
         };
     }
-    export interface InstalledApp {
+    export interface InstalledAppInstance {
         /**
          * example:
          * workspaces.app.installed
@@ -943,6 +1047,14 @@ declare namespace Prismeai {
     export interface TypedArgument {
         type?: "string" | "number" | "object";
         description?: LocalizedText;
+    }
+    export interface UninstalledAppInstance {
+        /**
+         * example:
+         * workspaces.app.uninstalled
+         */
+        type: "workspaces.app.uninstalled";
+        payload: AppInstance;
     }
     export interface UpdatedApiKey {
         /**
@@ -1191,16 +1303,16 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
-    namespace ConfigureApp {
+    namespace ConfigureAppInstance {
         namespace Parameters {
-            export type InstalledAppId = string;
+            export type Slug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            installedAppId: Parameters.InstalledAppId;
+            slug: Parameters.Slug;
         }
-        export type RequestBody = Prismeai.AppInstance;
+        export type RequestBody = Prismeai.AppInstancePatch;
         namespace Responses {
             export type $200 = Prismeai.AppInstance;
             export type $400 = Prismeai.BadParametersError;
@@ -1436,22 +1548,6 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
-    namespace GetInstalledApp {
-        namespace Parameters {
-            export type InstalledAppId = string;
-            export type WorkspaceId = string;
-        }
-        export interface PathParameters {
-            workspaceId: Parameters.WorkspaceId;
-            installedAppId: Parameters.InstalledAppId;
-        }
-        namespace Responses {
-            export type $200 = Prismeai.AppInstance;
-            export type $401 = Prismeai.AuthenticationError;
-            export type $403 = Prismeai.ForbiddenError;
-            export type $404 = Prismeai.ObjectNotFoundError;
-        }
-    }
     namespace GetMyProfile {
         namespace Responses {
             export type $200 = Prismeai.User;
@@ -1543,7 +1639,7 @@ declare namespace PrismeaiAPI {
             export type $403 = Prismeai.ForbiddenError;
         }
     }
-    namespace InstallApp {
+    namespace InstallAppInstance {
         namespace Parameters {
             export type WorkspaceId = string;
         }
@@ -1570,6 +1666,21 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.ApiKey[];
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace ListAppInstances {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.AppInstance[];
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -1678,14 +1789,14 @@ declare namespace PrismeaiAPI {
             export type $400 = Prismeai.BadParametersError;
         }
     }
-    namespace UninstallApp {
+    namespace UninstallAppInstance {
         namespace Parameters {
-            export type InstalledAppId = string;
+            export type Slug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            installedAppId: Parameters.InstalledAppId;
+            slug: Parameters.Slug;
         }
         namespace Responses {
             export interface $200 {

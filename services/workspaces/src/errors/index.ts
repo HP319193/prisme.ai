@@ -46,3 +46,9 @@ export class AlreadyUsedError extends PrismeError {
     super(msg, details);
   }
 }
+
+export class MissingFieldError extends PrismeError {
+  constructor(msg: string = 'Missing field', details?: any) {
+    super(msg, details);
+  }
+}

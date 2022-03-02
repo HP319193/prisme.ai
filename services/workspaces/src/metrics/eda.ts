@@ -1,7 +1,11 @@
-import { broker, getMetrics } from '../eda';
+import { getMetrics } from '../eda';
 import client from 'prom-client';
+import { Broker } from '@prisme.ai/broker';
 
-export async function initEDAMetrics(registry: client.Registry) {
+export async function initEDAMetrics(
+  registry: client.Registry,
+  broker: Broker
+) {
   const pendingLabels = ['event', 'consumer'];
   const pendingMetrics = new client.Gauge({
     name: 'events_pending',
@@ -9,7 +13,7 @@ export async function initEDAMetrics(registry: client.Registry) {
     labelNames: pendingLabels,
     registers: [registry],
     async collect() {
-      const metrics = await getMetrics();
+      const metrics = await getMetrics(broker);
       metrics.pending.events.forEach((cur) => {
         pendingMetrics.set(
           { event: cur.type, consumer: broker.service },
