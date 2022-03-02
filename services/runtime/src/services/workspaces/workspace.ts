@@ -1,6 +1,10 @@
+import { Apps } from '../apps';
+
 export type DetailedTrigger = Prismeai.When & {
   automationSlug: string;
 };
+export type AppName = string;
+export type AutomationName = string;
 type EventName = string;
 type EndpointName = string;
 export interface Triggers {
@@ -8,25 +12,31 @@ export interface Triggers {
   endpoints: Record<EndpointName, DetailedTrigger[]>;
 }
 
+export type ParsedAutomationName = [AppName, AutomationName];
 export class Workspace {
   private dsul: Prismeai.Workspace;
   public name: string;
   public id: string;
   private triggers: Triggers;
+  private imports: Record<string, Workspace>;
 
-  constructor(workspace: Prismeai.Workspace) {
+  private apps: Apps;
+
+  constructor(workspace: Prismeai.Workspace, apps: Apps) {
+    this.apps = apps;
     this.name = workspace.name;
     this.id = workspace.id!!;
     this.triggers = { events: {}, endpoints: {} };
 
     this.dsul = workspace;
+    this.imports = {};
     this.update(workspace);
   }
 
   update(workspace: Prismeai.Workspace) {
     this.name = workspace.name;
 
-    const { automations = {} } = workspace;
+    const { automations = {}, imports = {} } = workspace;
     this.triggers = Object.keys(automations).reduce(
       (prev, key) => {
         const automation = automations[key];
@@ -59,6 +69,20 @@ export class Workspace {
     );
 
     this.dsul = workspace;
+
+    Object.entries(imports || {}).forEach(async ([slug, appInstance]) => {
+      await this.updateImport(slug, appInstance);
+    });
+  }
+
+  async updateImport(slug: string, appInstance: Prismeai.AppInstance) {
+    const { appId, appVersion } = appInstance;
+    const dsul = await this.apps.getApp(appId, appVersion);
+    this.imports[slug] = new Workspace(dsul, this.apps);
+  }
+
+  deleteImport(slug: string) {
+    delete this.imports[slug];
   }
 
   updateAutomation(automationSlug: string, automation: Prismeai.Automation) {
@@ -87,13 +111,28 @@ export class Workspace {
     return this.triggers.endpoints[slug];
   }
 
-  getAutomation(slug: string) {
-    const automation = (this.dsul.automations || {})[slug];
+  private parseAutomationName(name: string): ParsedAutomationName {
+    const appSeparatorIdx = name.indexOf('.');
+    return appSeparatorIdx !== -1
+      ? [name.slice(0, appSeparatorIdx), name.slice(appSeparatorIdx + 1)]
+      : ['', name];
+  }
+
+  getAutomation(slug: string): Prismeai.Automation | null {
+    const [appSlug, name] = this.parseAutomationName(slug);
+    if (appSlug) {
+      if (!(appSlug in this.imports)) {
+        return null;
+      }
+      return this.imports[appSlug].getAutomation(name);
+    }
+
+    const automation = (this.dsul.automations || {})[name];
 
     if (!automation) return null;
 
     return {
-      slug,
+      slug: name,
       ...automation,
     };
   }

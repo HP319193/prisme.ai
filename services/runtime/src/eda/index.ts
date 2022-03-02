@@ -24,6 +24,10 @@ export enum EventType {
   CreatedAutomation = 'workspaces.automation.created',
   UpdatedAutomation = 'workspaces.automation.updated',
   DeletedAutomation = 'workspaces.automation.deleted',
+
+  InstalledApp = 'workspaces.app.installed',
+  UninstalledApp = 'workspaces.app.uninstalled',
+  ConfiguredApp = 'workspaces.app.configured',
 }
 export class CallbackContext {
   public logger: Logger;

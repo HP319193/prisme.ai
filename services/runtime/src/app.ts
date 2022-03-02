@@ -14,6 +14,7 @@ import '@prisme.ai/types';
 import Runtime from './services/runtime';
 import { Workspaces } from './services/workspaces';
 import { buildCache } from './cache';
+import { Apps } from './services/apps';
 
 process.on('uncaughtException', uncaughtExceptionHandler);
 
@@ -21,6 +22,7 @@ async function exit() {
   await broker.close();
   process.exit(0);
 }
+
 process.on('SIGTERM', exit);
 process.on('SIGINT', exit);
 
@@ -28,7 +30,8 @@ process.on('SIGINT', exit);
   await broker.ready;
   const cache = await buildCache(CONTEXTS_CACHE);
 
-  const workspaces = new Workspaces(WORKSPACES_STORAGE_TYPE, broker);
+  const apps = new Apps(WORKSPACES_STORAGE_TYPE);
+  const workspaces = new Workspaces(WORKSPACES_STORAGE_TYPE, apps, broker);
   const runtime = new Runtime(broker, workspaces, cache);
 
   runtime.start();

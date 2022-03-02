@@ -5,16 +5,19 @@ import { ObjectNotFoundError } from '../../errors';
 import Storage from '../../storage';
 import { DriverType } from '../../storage/types';
 import { Workspace } from './workspace';
+import { Apps } from '../apps';
 
 export * from './workspace';
 
 export class Workspaces extends Storage {
   private broker: Broker;
+  private apps: Apps;
   private workspaces: Record<string, Workspace>;
 
-  constructor(driverType: DriverType, broker: Broker) {
+  constructor(driverType: DriverType, apps: Apps, broker: Broker) {
     super(driverType);
     this.workspaces = {};
+    this.apps = apps;
     this.broker = broker;
   }
 
@@ -25,6 +28,9 @@ export class Workspaces extends Storage {
       EventType.CreatedAutomation,
       EventType.UpdatedAutomation,
       EventType.DeletedAutomation,
+      EventType.InstalledApp,
+      EventType.UninstalledApp,
+      EventType.ConfiguredApp,
     ];
 
     this.broker.on(
@@ -66,6 +72,25 @@ export class Workspaces extends Storage {
             ).payload.automation;
             workspace.deleteAutomation(deletedAutomation.slug);
             break;
+          case EventType.InstalledApp:
+          case EventType.ConfiguredApp:
+            const {
+              payload: {
+                appInstance,
+                slug: appInstanceSlug,
+                oldSlug: appInstanceOldSlug,
+              },
+            } = event as any as Prismeai.ConfiguredAppInstance;
+            workspace.updateImport(appInstanceSlug, appInstance);
+            if (appInstanceOldSlug) {
+              workspace.deleteImport(appInstanceOldSlug);
+            }
+            break;
+          case EventType.UninstalledApp:
+            const uninstalledAppInstanceSlug = (
+              event as any as Prismeai.UninstalledAppInstance
+            ).payload.slug;
+            workspace.deleteAutomation(uninstalledAppInstanceSlug);
         }
         return true;
       },
@@ -88,7 +113,7 @@ export class Workspaces extends Storage {
         `workspaces/${workspaceId}/current.yml`
       );
       const dsul = yaml.load(raw) as Prismeai.Workspace;
-      this.workspaces[workspaceId] = new Workspace(dsul);
+      this.workspaces[workspaceId] = new Workspace(dsul, this.apps);
       return dsul;
     } catch (err) {
       if (err instanceof ObjectNotFoundError) {
