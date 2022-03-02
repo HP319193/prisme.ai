@@ -2,6 +2,7 @@ import { Apps } from '../apps';
 
 export type DetailedTrigger = Prismeai.When & {
   automationSlug: string;
+  workspace: Workspace;
 };
 export type AppName = string;
 export type AutomationName = string;
@@ -22,7 +23,7 @@ export class Workspace {
 
   private apps: Apps;
 
-  constructor(workspace: Prismeai.Workspace, apps: Apps) {
+  private constructor(workspace: Prismeai.Workspace, apps: Apps) {
     this.apps = apps;
     this.name = workspace.name;
     this.id = workspace.id!!;
@@ -30,10 +31,15 @@ export class Workspace {
 
     this.dsul = workspace;
     this.imports = {};
-    this.update(workspace);
   }
 
-  update(workspace: Prismeai.Workspace) {
+  static async create(dsul: Prismeai.Workspace, apps: Apps) {
+    const workspace = new Workspace(dsul, apps);
+    await workspace.update(dsul);
+    return workspace;
+  }
+
+  async update(workspace: Prismeai.Workspace) {
     this.name = workspace.name;
 
     const { automations = {}, imports = {} } = workspace;
@@ -49,6 +55,7 @@ export class Workspace {
               {
                 ...when,
                 automationSlug: key,
+                workspace: this,
               },
             ];
           });
@@ -60,6 +67,7 @@ export class Workspace {
             {
               ...when,
               automationSlug: key,
+              workspace: this,
             },
           ];
         }
@@ -70,34 +78,49 @@ export class Workspace {
 
     this.dsul = workspace;
 
-    Object.entries(imports || {}).forEach(async ([slug, appInstance]) => {
-      await this.updateImport(slug, appInstance);
-    });
+    // Pull app instances
+    for (let [slug, appInstance] of Object.entries(imports || {})) {
+      const workspace = await this.updateImport(slug, appInstance);
+      this.triggers = {
+        events: {
+          ...workspace.triggers.events,
+          ...this.triggers.events,
+        },
+        endpoints: {
+          ...workspace.triggers.endpoints,
+          ...this.triggers.endpoints,
+        },
+      };
+    }
   }
 
   async updateImport(slug: string, appInstance: Prismeai.AppInstance) {
     const { appId, appVersion } = appInstance;
     const dsul = await this.apps.getApp(appId, appVersion);
-    this.imports[slug] = new Workspace(dsul, this.apps);
+    this.imports[slug] = await Workspace.create(dsul, this.apps);
+    return this.imports[slug];
   }
 
   deleteImport(slug: string) {
     delete this.imports[slug];
   }
 
-  updateAutomation(automationSlug: string, automation: Prismeai.Automation) {
+  async updateAutomation(
+    automationSlug: string,
+    automation: Prismeai.Automation
+  ) {
     const newAutomations = {
       ...this.dsul.automations,
     };
     newAutomations[automationSlug] = automation;
-    this.update({ ...this.dsul, automations: newAutomations });
+    await this.update({ ...this.dsul, automations: newAutomations });
   }
 
-  deleteAutomation(automationSlug: string) {
+  async deleteAutomation(automationSlug: string) {
     const newAutomations = { ...this.dsul.automations };
     delete newAutomations[automationSlug];
 
-    this.update({
+    await this.update({
       ...this.dsul,
       automations: newAutomations,
     });

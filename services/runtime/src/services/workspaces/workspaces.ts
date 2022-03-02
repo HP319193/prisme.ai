@@ -113,7 +113,7 @@ export class Workspaces extends Storage {
         `workspaces/${workspaceId}/current.yml`
       );
       const dsul = yaml.load(raw) as Prismeai.Workspace;
-      this.workspaces[workspaceId] = new Workspace(dsul, this.apps);
+      this.workspaces[workspaceId] = await Workspace.create(dsul, this.apps);
       return dsul;
     } catch (err) {
       if (err instanceof ObjectNotFoundError) {

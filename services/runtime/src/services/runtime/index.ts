@@ -80,19 +80,21 @@ export default class Runtime {
       );
 
       return await Promise.all(
-        triggers.map(async (cur: DetailedTrigger) => {
-          const automation = workspace.getAutomation(cur.automationSlug);
+        triggers.map(async (trigger: DetailedTrigger) => {
+          const automation = trigger.workspace.getAutomation(
+            trigger.automationSlug
+          );
           if (!automation) {
             logger.trace(
-              `Did not find any matching automation '${cur.automationSlug}' for trigger '${cur.endpoint})`
+              `Did not find any matching automation '${trigger.automationSlug}' for trigger '${trigger.endpoint})`
             );
             throw new ObjectNotFoundError(`Automation not found`, {
               workspaceId,
-              automation: cur.automationSlug,
+              automation: trigger.automationSlug,
             });
           }
           const output = await executeAutomation(
-            workspace,
+            trigger.workspace,
             automation,
             ctx,
             logger,
@@ -100,7 +102,7 @@ export default class Runtime {
           );
           return {
             output,
-            slug: cur.automationSlug,
+            slug: trigger.automationSlug,
           };
         })
       );
