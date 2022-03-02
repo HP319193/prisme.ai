@@ -76,7 +76,7 @@ backend_npm_install:
         BUILD_PACKAGES=0 npm ci
       fi
     - npm run build:packages
-    - npm test -- services/$DIRECTORY
+    - npm test -- $DIRECTORY
   coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
   artifacts:
     paths:
@@ -172,7 +172,7 @@ workspaces_test:
     changes:
       - "services/workspaces/*"
   before_script:
-    - export SERVICE_NAME=$WORKSPACES_DIRECTORY
+    - export DIRECTORY=services/$WORKSPACES_DIRECTORY
 
 workspaces_build_docker:
   extends: .build_docker

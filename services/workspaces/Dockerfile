@@ -15,4 +15,3 @@ ENV NODE_ENV production
 
 
 CMD [ "node", "--abort-on-uncaught-exception", "services/workspaces/dist/index.js"]
-
