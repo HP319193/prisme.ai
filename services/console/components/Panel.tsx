@@ -1,7 +1,6 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { Button } from '@prisme.ai/design-system';
+import { Button, SidePanel } from '@prisme.ai/design-system';
 import { FC, useEffect, useState } from 'react';
-import SidePanel from '../layouts/SidePanel';
 
 const noop = () => null;
 interface PanelProps {

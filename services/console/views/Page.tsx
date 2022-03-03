@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
 import { useTranslation } from 'next-i18next';
@@ -7,6 +7,7 @@ import {
   Button,
   Dropdown,
   EditableTitle,
+  Loading,
   Menu,
   PageHeader,
 } from '@prisme.ai/design-system';
@@ -16,7 +17,6 @@ import useLocalizedText from '../utils/useLocalizedText';
 import PageBuilder from '../components/PageBuilder';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { PageBuilderContext } from '../components/PageBuilder/context';
-import Loading from '../components/Loading';
 import SharePage from '../components/Share/SharePage';
 
 export const Page = () => {
@@ -66,10 +66,9 @@ export const Page = () => {
     try {
       const cleanedValue = {
         ...value,
-        widgets: ((value.widgets ||
-          []) as PageBuilderContext['page']['widgets']).map(
-          ({ key, ...widget }) => widget
-        ),
+        widgets: (
+          (value.widgets || []) as PageBuilderContext['page']['widgets']
+        ).map(({ key, ...widget }) => widget),
       };
       await updatePage(workspace, `${pageId}`, cleanedValue);
 

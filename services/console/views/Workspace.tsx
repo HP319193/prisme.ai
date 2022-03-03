@@ -1,10 +1,9 @@
-import { Row, Col, MenuTab } from '@prisme.ai/design-system';
+import { Col, MenuTab, Row, SidePanel } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo, useState } from 'react';
 import { EventsViewer } from '../components/EventsViewer';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import AutomationsSidebar from './AutomationsSidebar';
-import SidePanel from '../layouts/SidePanel';
 import IconApps from '../icons/icon-apps.svgr';
 import IconAutomations from '../icons/icon-automations.svgr';
 import IconPages from '../icons/icon-pages.svgr';

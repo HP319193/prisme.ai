@@ -4,7 +4,7 @@ import { Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import api from '../../utils/api';
 import { usePageBuilder } from './context';
-import Loading from '../Loading';
+import { Loading } from '@prisme.ai/design-system';
 import Block from '../Block';
 import useHover from '@react-hook/hover';
 import { CloseCircleOutlined } from '@ant-design/icons';
