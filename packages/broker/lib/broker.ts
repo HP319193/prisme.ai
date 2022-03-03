@@ -57,6 +57,8 @@ export class Broker<CallbackContext = any> {
   private parentSource: Partial<EventSource>;
 
   private _buffer: false | Buffer;
+  private validateEvents: boolean;
+  private forceTopic?: string;
 
   private CallbackContextCtor?: CallbackContextCtor<CallbackContext>;
   public onProcessedEventCallback?: (
@@ -88,6 +90,7 @@ export class Broker<CallbackContext = any> {
     this.parentSource = {};
     this.CallbackContextCtor = CallbackContextCtor;
     this._buffer = false;
+    this.validateEvents = true;
 
     this.ready = Promise.all([
       this.eventsFactory.ready,
@@ -95,7 +98,13 @@ export class Broker<CallbackContext = any> {
     ]).then((statuses) => statuses.every(Boolean));
   }
 
-  child(parentSource: Partial<EventSource>): Broker<CallbackContext> {
+  child(
+    parentSource: Partial<EventSource>,
+    opts?: {
+      validateEvents: boolean;
+      forceTopic?: string;
+    }
+  ): Broker<CallbackContext> {
     const child = Object.assign({}, this, {
       parentSource: {
         ...this.parentSource,
@@ -106,6 +115,7 @@ export class Broker<CallbackContext = any> {
           parentSource.correlationId || this.parentSource.correlationId,
       },
       _buffer: false,
+      ...opts,
     });
     Object.setPrototypeOf(child, Broker.prototype);
     return child;
@@ -136,6 +146,9 @@ export class Broker<CallbackContext = any> {
     topic: Topic | undefined,
     event: Omit<PrismeEvent, 'id'>
   ) {
+    if (this.forceTopic) {
+      return this.forceTopic;
+    }
     if (!topic) {
       return event.type;
     }
@@ -168,15 +181,22 @@ export class Broker<CallbackContext = any> {
     partialSource?: Partial<EventSource>,
     topic?: Topic
   ) {
-    const event = this.eventsFactory.create(eventType, payload, {
-      ...this.parentSource,
-      ...(partialSource || {}),
-      host: {
-        replica: this.consumer.name,
-        ...(partialSource?.host || {}),
-        service: this.service,
+    const event = this.eventsFactory.create(
+      eventType,
+      payload,
+      {
+        ...this.parentSource,
+        ...(partialSource || {}),
+        host: {
+          replica: this.consumer.name,
+          ...(partialSource?.host || {}),
+          service: this.service,
+        },
       },
-    });
+      {
+        validateEvent: this.validateEvents,
+      }
+    );
     event.source.topic = this.getEventTopic(topic, event);
 
     if (this._buffer) {

@@ -1,3 +1,4 @@
+import { PrismeEvent } from '@prisme.ai/broker';
 import { PrismeError } from '../../errors';
 import { Apps } from '../apps';
 
@@ -104,10 +105,7 @@ export class Workspace {
     for (let [slug, appInstance] of Object.entries(imports || {})) {
       const workspace = await this.updateImport(slug, appInstance);
       this.triggers = {
-        events: {
-          ...workspace.triggers.events,
-          ...this.triggers.events,
-        },
+        ...this.triggers,
         endpoints: {
           ...workspace.triggers.endpoints,
           ...this.triggers.endpoints,
@@ -163,15 +161,26 @@ export class Workspace {
     });
   }
 
-  getEventTriggers(event: string) {
-    return this.triggers.events[event];
+  getEventTriggers(event: PrismeEvent) {
+    const triggers = this.triggers.events[event.type] || [];
+    const [firstAppSlug, nestedAppSlugs] = this.parseAppRef(event.type);
+    if (firstAppSlug in this.imports) {
+      triggers.push(
+        ...this.imports[firstAppSlug].getEventTriggers({
+          ...event,
+          type: nestedAppSlugs,
+        })
+      );
+    }
+
+    return triggers;
   }
 
   getEndpointTriggers(slug: string) {
     return this.triggers.endpoints[slug];
   }
 
-  private parseAutomationName(name: string): ParsedAutomationName {
+  private parseAppRef(name: string): ParsedAutomationName {
     const appSeparatorIdx = name.indexOf('.');
     return appSeparatorIdx !== -1
       ? [name.slice(0, appSeparatorIdx), name.slice(appSeparatorIdx + 1)]
@@ -179,7 +188,7 @@ export class Workspace {
   }
 
   getAutomation(slug: string): DetailedAutomation | null {
-    const [appSlug, name] = this.parseAutomationName(slug);
+    const [appSlug, name] = this.parseAppRef(slug);
     if (appSlug) {
       if (!(appSlug in this.imports)) {
         return null;

@@ -1,7 +1,9 @@
 import { Broker } from '@prisme.ai/broker';
+import { SLUG_VALIDATION_REGEXP } from '../../../../config';
 import { EventType } from '../../../eda';
 import {
   AlreadyUsedError,
+  InvalidSlugError,
   MissingFieldError,
   ObjectNotFoundError,
 } from '../../../errors';
@@ -39,6 +41,9 @@ class AppInstances {
       throw new MissingFieldError('Missing app instance slug', {
         field: 'slug',
       });
+    }
+    if (!SLUG_VALIDATION_REGEXP.test(slug)) {
+      throw new InvalidSlugError(slug);
     }
     if (slug in (workspace.imports || {})) {
       throw new AlreadyUsedError('App instance slug already in use');

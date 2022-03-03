@@ -6,6 +6,7 @@ import { ContextsManager } from './contexts';
 import { ObjectNotFoundError, PrismeError } from '../../errors';
 import { EventType } from '../../eda';
 import { executeAutomation } from './automations';
+import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../config';
 
 export default class Runtime {
   private broker: Broker;
@@ -19,23 +20,16 @@ export default class Runtime {
   }
 
   async start() {
-    this.broker.all(async (event, broker, { logger }) => {
-      if (!event.source.workspaceId || !event.source.correlationId) {
-        return true;
-      }
-      if (event.type === EventType.TriggeredWebhook) {
-        // This event is directly handed from routes/webhooks.ts to allow passing back worklow result within http response
-        return true;
-      }
-      if (event.type === EventType.CreatedWorkspace) {
-        // No need to handle this event as DSULStorage might not contain created workspace yet (which whould emit an error)
-        return true;
-      }
-      if (event.type.startsWith('apps.')) {
+    this.broker.on(
+      RUNTIME_EMITS_BROKER_TOPIC,
+      async (event, broker, { logger }) => {
+        if (!event.source.workspaceId || !event.source.correlationId) {
+          return true;
+        }
         await this.processEvent(event, logger, broker);
+        return true;
       }
-      return true;
-    });
+    );
   }
 
   async getContexts(
@@ -99,7 +93,10 @@ export default class Runtime {
             automation,
             ctx,
             logger,
-            broker.child(trigger.workspace.appContext || {})
+            broker.child(trigger.workspace.appContext || {}, {
+              validateEvents: false,
+              forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+            })
           );
           return {
             output,
@@ -149,7 +146,7 @@ export default class Runtime {
     }
 
     return {
-      triggers: workspace.getEventTriggers(event.type),
+      triggers: workspace.getEventTriggers(event),
       payload: event.payload,
     };
   }
