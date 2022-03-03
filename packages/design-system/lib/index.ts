@@ -21,5 +21,6 @@ export { default as EditableTitle } from './Components/EditableTitle';
 export { default as EditableText } from './Components/EditableText';
 export { default as Loading } from './Components/Loading';
 export { default as Popover } from './Components/Popover';
+export { default as SidePanel } from './Components/SidePanel';
 
 export { Row, Col, Space, Avatar, Divider, Table, Checkbox } from 'antd';
