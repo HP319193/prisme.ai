@@ -6,7 +6,7 @@ import initAutomations from './automations';
 import initApps from './apps';
 import initAppInstances from './appInstances';
 import DSULStorage from '../../services/DSULStorage';
-import pages from './pages';
+import initPages from './pages';
 
 export const init = (
   app: Application,
@@ -25,6 +25,9 @@ export const init = (
     initAppInstances(workspacesStorage, appsStorage)
   );
   app.use(`${root}/apps`, initApps(workspacesStorage, appsStorage));
-  app.use(`${root}/workspaces/:workspaceId/pages`, pages);
+  app.use(
+    `${root}/workspaces/:workspaceId/pages`,
+    initPages(workspacesStorage, appsStorage)
+  );
 };
 export default init;

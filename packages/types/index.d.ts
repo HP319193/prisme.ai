@@ -1070,7 +1070,7 @@ declare namespace Prismeai {
             height?: number;
         }[];
         /**
-         * Unique & human readable id across current workspace's automations
+         * Unique & human readable id across current workspace's pages
          */
         slug?: string;
     }
@@ -1926,6 +1926,21 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.AppInstance[];
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace ListPages {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        namespace Responses {
+            export type $200 = /* Page */ Prismeai.Page[];
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;

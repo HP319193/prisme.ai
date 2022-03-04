@@ -1,27 +1,23 @@
 import { remove as removeDiacritics } from 'diacritics';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
-import Workspaces from './workspaces';
-import DSULStorage from '../../DSULStorage';
 import { AlreadyUsedError, ObjectNotFoundError } from '../../../errors';
 import { AccessManager, SubjectType } from '../../../permissions';
+import DSULStorage from '../../DSULStorage';
 
 class Pages {
   private accessManager: Required<AccessManager>;
-  private broker: Broker;
   private storage: DSULStorage;
-  private workspaces: Workspaces;
+  private broker: Broker;
 
   constructor(
     accessManager: Required<AccessManager>,
-    broker: Broker,
     storage: DSULStorage,
-    workspaces: Workspaces
+    broker: Broker
   ) {
     this.accessManager = accessManager;
-    this.broker = broker;
     this.storage = storage;
-    this.workspaces = workspaces;
+    this.broker = broker;
   }
 
   private generatePageSlug(workspace: Prismeai.Workspace, pageName: string) {
@@ -39,8 +35,12 @@ class Pages {
     return slug;
   }
 
+  private pageId(workspaceId: string, slug: string) {
+    return `${workspaceId}:${slug}`;
+  }
+
   createPage = async (workspaceId: string, page: Prismeai.Page) => {
-    const workspace = await this.workspaces.getWorkspace(workspaceId);
+    const workspace = await this.storage.get(workspaceId);
     const name =
       typeof page.name === 'string'
         ? page.name
@@ -56,11 +56,11 @@ class Pages {
     };
 
     await this.accessManager.create(SubjectType.Page, {
-      id: `${workspace.id}:${slug}`,
-      workspaceId: workspace.id!,
+      id: this.pageId(workspaceId, slug),
+      workspaceId,
       name: slug,
     });
-    await this.workspaces.updateWorkspace(workspaceId, updatedWorkspace);
+    await this.storage.save(workspaceId, updatedWorkspace);
 
     this.broker
       .send<Prismeai.CreatedPage['payload']>(EventType.CreatedPage, {
@@ -71,7 +71,19 @@ class Pages {
     return { ...page, slug };
   };
 
+  list = async (workspaceId: string) => {
+    return await this.accessManager.findAll(SubjectType.Page, {
+      workspaceId,
+    });
+    // const workspace = await this.storage.get(workspaceId);
+    // return pages.map(({ slug }) => (workspace.pages || {})[slug]);
+  };
+
   getPage = async (workspaceId: string, pageSlug: string) => {
+    await this.accessManager.get(
+      SubjectType.Page,
+      this.pageId(workspaceId, pageSlug)
+    );
     const workspace = await this.storage.get(workspaceId);
     const page = (workspace.pages || {})[pageSlug];
     if (!page) {
@@ -89,10 +101,15 @@ class Pages {
     pageSlug: string,
     page: Prismeai.Page
   ) => {
+    await this.accessManager.update(SubjectType.Page, {
+      id: this.pageId(workspaceId, pageSlug),
+      workspaceId,
+      name: pageSlug,
+    });
     const workspace = await this.storage.get(workspaceId);
 
     if (!workspace || !workspace.pages || !workspace.pages[pageSlug]) {
-      throw new ObjectNotFoundError(`Could not find automation '${pageSlug}'`, {
+      throw new ObjectNotFoundError(`Could not find page '${pageSlug}'`, {
         workspaceId,
         pageSlug,
       });
@@ -110,7 +127,7 @@ class Pages {
     if (page.slug && page.slug !== pageSlug) {
       if (page.slug in workspace.pages) {
         throw new AlreadyUsedError(
-          `Automation slug '${page.slug}' is already used by another automation of your workspace !`
+          `Page slug '${page.slug}' is already used by another page of your workspace !`
         );
       }
 
@@ -127,7 +144,7 @@ class Pages {
       // Delete old permission
     }
 
-    await this.workspaces.updateWorkspace(workspaceId, updatedWorkspace);
+    await this.storage.save(workspaceId, updatedWorkspace);
 
     this.broker.send<Prismeai.UpdatedPage['payload']>(EventType.UpdatedPage, {
       page,
@@ -159,7 +176,7 @@ class Pages {
 
     await this.accessManager.delete(
       SubjectType.Page,
-      `${workspace.id}:${pageSlug}`
+      this.pageId(workspaceId, pageSlug)
     );
 
     await this.storage.save(workspaceId, updatedWorkspace);
