@@ -28,11 +28,20 @@ class AppInstances {
     workspaceId: string
   ): Promise<(Prismeai.AppInstance & { slug: string })[]> => {
     const workspace = await this.workspaces.getWorkspace(workspaceId);
-    return Object.entries(workspace.imports || {}).reduce(
+    const appInstances = Object.entries(workspace.imports || {}).reduce(
       (appInstances, [slug, appInstance]) => {
         return [...appInstances, { ...appInstance, slug }];
       },
       [] as any
+    );
+    return await Promise.all(
+      appInstances.map(async (cur: Prismeai.AppInstance) => {
+        const availableSlugs = await this.apps.getAvailableSlugs(
+          cur.appId,
+          cur.appVersion
+        );
+        return { ...cur, ...availableSlugs };
+      })
     );
   };
 

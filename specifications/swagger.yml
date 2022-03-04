@@ -1744,9 +1744,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AppInstance'
+                $ref: '#/components/schemas/AppInstanceDetailedList'
         '404':
           description: Object not found
           content:
@@ -1978,9 +1976,50 @@ components:
           type: string
           description: Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
 
+    AvailableSlugs:
+      type: object
+      required:
+        - automations
+        - widgets
+      properties:
+        widgets:
+          type: array
+          items:
+            type: object
+            required:
+              - slug
+            properties:
+              slug:
+                type: string
+              name:
+                $ref: '#/components/schemas/LocalizedText'
+              description:
+                $ref: '#/components/schemas/LocalizedText'
+        automations:
+          type: array
+          items:
+            type: object
+            required:
+              - slug
+              - name
+            properties:
+              slug:
+                type: string
+              name:
+                $ref: '#/components/schemas/LocalizedText'
+              description:
+                $ref: '#/components/schemas/LocalizedText'
+
     AppInstancePatch:
       type: object
       properties: *APP_INSTANCE_PROPERTIES
+
+    AppInstanceDetailedList:
+      type: array
+      items:
+        allOf:
+          - $ref: '#/components/schemas/AppInstance'
+          - $ref: '#/components/schemas/AvailableSlugs'
 
     Workspace:
       $ref: '#/components/schemas/DSUL'
@@ -3042,7 +3081,7 @@ components:
             - page
           properties:
             page:
-              $ref: "#/components/schemas/Page"
+              $ref: '#/components/schemas/Page'
 
     ########################## Runtime events ##########################
 

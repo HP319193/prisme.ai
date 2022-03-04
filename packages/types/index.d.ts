@@ -511,7 +511,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.page.created";
         source: {
-            appId?: string;
+            appSlug?: string;
             appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
@@ -543,7 +543,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.page.updated";
         source: {
-            appId?: string;
+            appSlug?: string;
             appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
@@ -575,7 +575,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.page.deleted";
         source: {
-            appId?: string;
+            appSlug?: string;
             appInstanceSlug?: string;
             userId?: string;
             workspaceId?: string;
@@ -654,6 +654,35 @@ declare namespace Prismeai {
          */
         slug?: string;
     }
+    export type AppInstanceDetailedList = {
+        /**
+         * App unique id
+         */
+        appSlug: string;
+        /**
+         * App name
+         */
+        appName?: string;
+        /**
+         * Defaults to the latest known app version
+         */
+        appVersion?: string;
+        config?: Config;
+        /**
+         * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+         */
+        slug?: string;
+        widgets: {
+            slug: string;
+            name?: LocalizedText;
+            description?: LocalizedText;
+        }[];
+        automations: {
+            slug: string;
+            name: LocalizedText;
+            description?: LocalizedText;
+        }[];
+    }[];
     export interface AppInstancePatch {
         /**
          * App unique id
@@ -722,6 +751,18 @@ declare namespace Prismeai {
     export interface AutomationResult {
         slug: string;
         output?: AnyValue;
+    }
+    export interface AvailableSlugs {
+        widgets: {
+            slug: string;
+            name?: LocalizedText;
+            description?: LocalizedText;
+        }[];
+        automations: {
+            slug: string;
+            name: LocalizedText;
+            description?: LocalizedText;
+        }[];
     }
     export interface BadParametersError {
         /**
@@ -1914,7 +1955,7 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
         }
         namespace Responses {
-            export type $200 = Prismeai.AppInstance[];
+            export type $200 = Prismeai.AppInstanceDetailedList;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
