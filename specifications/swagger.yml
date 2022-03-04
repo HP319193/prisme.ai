@@ -2140,7 +2140,7 @@ components:
         - widgets
       properties:
         config:
-          $ref: "#/components/schemas/Config"
+          $ref: '#/components/schemas/Config'
         widgets:
           type: array
           items:
@@ -2173,7 +2173,6 @@ components:
       type: object
       properties: *APP_INSTANCE_PROPERTIES
 
-
     DetailedAppInstance:
       type: object
       allOf:
@@ -2183,7 +2182,7 @@ components:
     AppInstanceDetailedList:
       type: array
       items:
-        $ref: "#/components/schemas/DetailedAppInstance"
+        $ref: '#/components/schemas/DetailedAppInstance'
 
     Workspace:
       $ref: '#/components/schemas/DSUL'
