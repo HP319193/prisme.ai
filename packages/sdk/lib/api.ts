@@ -1,10 +1,10 @@
 import QueryString from 'qs';
 import Fetcher from './fetcher';
 import { Event, Workspace } from './types';
+import { Events } from './events';
+import { removedUndefinedProperties } from './utils';
 
 type UserPermissions = Prismeai.UserPermissions;
-
-import { Events } from './events';
 
 export class Api extends Fetcher {
   async me() {
@@ -169,6 +169,30 @@ export class Api extends Fetcher {
     return await this.delete(
       `/${subjectType}/${subjectId}/permissions/${userEmail}`
     );
+  }
+
+  async getApps(
+    query:
+      | PrismeaiAPI.SearchApps.QueryParameters['query']
+      | undefined = undefined,
+    page:
+      | PrismeaiAPI.SearchApps.QueryParameters['page']
+      | undefined = undefined,
+    limit:
+      | PrismeaiAPI.SearchApps.QueryParameters['limit']
+      | undefined = undefined
+  ): Promise<PrismeaiAPI.SearchApps.Responses.$200> {
+    const params = new URLSearchParams(
+      removedUndefinedProperties(
+        {
+          query: `${query || ''}`,
+          page: `${page || ''}`,
+          limit: `${limit || ''}`,
+        },
+        true
+      )
+    );
+    return await this.get(`/apps?${params.toString()}`);
   }
 }
 
