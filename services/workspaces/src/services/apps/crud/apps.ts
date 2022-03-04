@@ -143,6 +143,25 @@ class Apps {
     };
   };
 
+  getAvailableSlugs = async (
+    appId: string,
+    version?: string
+  ): Promise<Prismeai.AppDetails> => {
+    const app = await this.storage.get(appId, version || 'current');
+    return {
+      widgets: Object.entries(app.widgets || {}).map(
+        ([slug, { name, description }]) => ({
+          slug,
+          name,
+          description,
+        })
+      ),
+      automations: Object.entries(
+        app.automations || {}
+      ).map(([slug, { name, description }]) => ({ slug, name, description })),
+    };
+  };
+
   deleteApp = async (
     appSlug: PrismeaiAPI.DeleteApp.PathParameters['appSlug']
   ) => {
