@@ -1,6 +1,6 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
-import { SubjectType, ActionType, AccessManager } from '../../permissions';
+import { AccessManager } from '../../permissions';
 import { Apps, Workspaces } from '../../services';
 import DSULStorage from '../../services/DSULStorage';
 import { PrismeContext } from '../middlewares';
@@ -39,7 +39,6 @@ export default function init(
     }: Request<any, any, PrismeaiAPI.CreatePage.RequestBody>,
     res: Response<PrismeaiAPI.CreatePage.Responses.$200>
   ) {
-    console.log('GOT REQUEST');
     const { workspaces } = getServices({
       context,
       accessManager,
@@ -52,11 +51,11 @@ export default function init(
   async function listPagesHandler(
     {
       context,
-      params: { workspaceId, pageSlug },
+      params: { workspaceId },
       accessManager,
       broker,
-    }: Request<PrismeaiAPI.GetPage.PathParameters>,
-    res: Response<PrismeaiAPI.GetPage.Responses.$200>
+    }: Request<PrismeaiAPI.ListPages.PathParameters>,
+    res: Response<PrismeaiAPI.ListPages.Responses.$200>
   ) {
     const { workspaces } = getServices({
       context,
@@ -70,7 +69,7 @@ export default function init(
   async function getPageHandler(
     {
       context,
-      params: { workspaceId, pageSlug },
+      params: { workspaceId, id },
       accessManager,
       broker,
     }: Request<PrismeaiAPI.GetPage.PathParameters>,
@@ -81,14 +80,14 @@ export default function init(
       accessManager,
       broker,
     });
-    const result = await workspaces.pages.getPage(workspaceId, pageSlug);
+    const result = await workspaces.pages.getPage(id);
     res.send(result);
   }
 
   async function updatePageHandler(
     {
       context,
-      params: { workspaceId, pageSlug },
+      params: { id },
       body,
       accessManager,
       broker,
@@ -104,18 +103,14 @@ export default function init(
       accessManager,
       broker,
     });
-    const result = await workspaces.pages.updatePage(
-      workspaceId,
-      pageSlug,
-      body
-    );
+    const result = await workspaces.pages.updatePage(id, body);
     res.send(result);
   }
 
   async function deletePageHandler(
     {
       context,
-      params: { workspaceId, pageSlug },
+      params: { id },
       accessManager,
       broker,
     }: Request<PrismeaiAPI.DeletePage.PathParameters>,
@@ -126,7 +121,7 @@ export default function init(
       accessManager,
       broker,
     });
-    const deleted = await workspaces.pages.deletePage(workspaceId, pageSlug);
+    const deleted = await workspaces.pages.deletePage(id);
 
     res.send(deleted);
   }
@@ -135,9 +130,9 @@ export default function init(
 
   app.get(`/`, asyncRoute(listPagesHandler));
   app.post(`/`, asyncRoute(createPageHandler));
-  app.patch(`/:pageSlug`, asyncRoute(updatePageHandler));
-  app.delete(`/:pageSlug`, asyncRoute(deletePageHandler));
-  app.get(`/:pageSlug`, asyncRoute(getPageHandler));
+  app.patch(`/:id`, asyncRoute(updatePageHandler));
+  app.delete(`/:id`, asyncRoute(deletePageHandler));
+  app.get(`/:id`, asyncRoute(getPageHandler));
 
   return app;
 }

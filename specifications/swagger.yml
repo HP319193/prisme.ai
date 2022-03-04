@@ -1347,7 +1347,7 @@ paths:
                 $ref: '#/components/schemas/BadParametersError'
 
   # Pages
-  /v2/workspaces/{workspaceId}/pages/{pageSlug}:
+  /v2/workspaces/{workspaceId}/pages/{id}:
     get:
       description: Fetch a page
       operationId: getPage
@@ -1360,7 +1360,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: 'pageSlug'
+        - name: 'id'
           in: 'path'
           description: 'Page slug'
           required: true
@@ -1404,7 +1404,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: 'pageSlug'
+        - name: 'id'
           in: 'path'
           description: 'Page slug'
           required: true
@@ -1461,7 +1461,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: 'pageSlug'
+        - name: 'id'
           in: 'path'
           description: 'Page slug'
           required: true
@@ -1477,7 +1477,7 @@ paths:
                 required:
                   - id
                 properties:
-                  slug:
+                  id:
                     type: string
         '404':
           description: Object not found
@@ -2151,6 +2151,8 @@ components:
           $ref: '#/components/schemas/LocalizedText'
         description:
           $ref: '#/components/schemas/LocalizedText'
+        workspaceId:
+          type: string
         widgets:
           type: array
           items:
@@ -2161,9 +2163,8 @@ components:
                 type: string
               height:
                 type: number
-        slug:
+        id:
           type: string
-          description: Unique & human readable id across current workspace's pages
 
     ###############################################################################################################################################
     ############################################################ Automation Instructions ############################################################
@@ -3001,10 +3002,7 @@ components:
           type: object
           required:
             - page
-            - slug
           properties:
-            slug:
-              type: string
             page:
               $ref: '#/components/schemas/Page'
 
@@ -3023,15 +3021,9 @@ components:
           type: object
           required:
             - page
-            - slug
           properties:
             page:
               $ref: '#/components/schemas/Page'
-            slug:
-              type: string
-            oldSlug:
-              type: string
-              description: Filled with the previous page slug when renamed
 
     DeletedPage:
       type: object
@@ -3050,15 +3042,7 @@ components:
             - page
           properties:
             page:
-              type: object
-              required:
-                - slug
-                - name
-              properties:
-                slug:
-                  type: string
-                name:
-                  type: string
+              $ref: "#/components/schemas/Page"
 
     ########################## Runtime events ##########################
 

@@ -52,7 +52,7 @@ class Workspaces {
     this.storage = storage;
     this.automations = new Automations(this, broker);
     this.appInstances = new AppInstances(this, this.apps, broker);
-    this.pages = new Pages(this.accessManager, storage, broker);
+    this.pages = new Pages(this.accessManager, broker);
 
     this.diffHandlers = [
       {
