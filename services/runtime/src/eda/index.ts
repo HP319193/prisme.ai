@@ -28,6 +28,8 @@ export enum EventType {
   InstalledApp = 'workspaces.app.installed',
   UninstalledApp = 'workspaces.app.uninstalled',
   ConfiguredApp = 'workspaces.app.configured',
+
+  PublishedApp = 'apps.published',
 }
 export class CallbackContext {
   public logger: Logger;

@@ -13,12 +13,14 @@ export class Workspaces extends Storage {
   private broker: Broker;
   private apps: Apps;
   private workspaces: Record<string, Workspace>;
+  private watchedApps: Record<string, string[]>;
 
   constructor(driverType: DriverType, apps: Apps, broker: Broker) {
     super(driverType);
     this.workspaces = {};
     this.apps = apps;
     this.broker = broker;
+    this.watchedApps = {};
   }
 
   startLiveUpdates() {
@@ -31,11 +33,23 @@ export class Workspaces extends Storage {
       EventType.InstalledApp,
       EventType.UninstalledApp,
       EventType.ConfiguredApp,
+      EventType.PublishedApp,
     ];
 
     this.broker.on(
       listenedEvents,
       async (event, broker, { logger }) => {
+        if (event.type === EventType.PublishedApp) {
+          const publishedApp = (event as any as Prismeai.PublishedApp).payload
+            .app;
+          if (publishedApp.id && publishedApp.id in this.watchedApps) {
+            await this.apps.fetchApp(publishedApp.id, 'current');
+            const updateWorkspaceIds = this.watchedApps[publishedApp.id];
+            updateWorkspaceIds.map((workspaceId) =>
+              this.fetchWorkspace(workspaceId)
+            );
+          }
+        }
         const workspaceId = event.source.workspaceId;
         if (!workspaceId || !(workspaceId in this.workspaces)) {
           return true;
@@ -85,12 +99,14 @@ export class Workspaces extends Storage {
             if (appInstanceOldSlug) {
               workspace.deleteImport(appInstanceOldSlug);
             }
+            this.watchAppCurrentVersions(workspaceId, [appInstance]);
             break;
           case EventType.UninstalledApp:
             const uninstalledAppInstanceSlug = (
               event as any as Prismeai.UninstalledAppInstance
             ).payload.slug;
             workspace.deleteAutomation(uninstalledAppInstanceSlug);
+            break;
         }
         return true;
       },
@@ -107,6 +123,24 @@ export class Workspaces extends Storage {
     return this.workspaces[workspaceId];
   }
 
+  async watchAppCurrentVersions(
+    workspaceId: string,
+    imports: Prismeai.AppInstance[]
+  ) {
+    const requiredApps = Object.values(imports || {})
+      .filter(({ appVersion }) => !appVersion || appVersion === 'current')
+      .map(({ appId }) => appId);
+    this.watchedApps = requiredApps.reduce(
+      (watchedApps, watchAppId) => ({
+        ...watchedApps,
+        [watchAppId]: [
+          ...new Set([...(watchedApps[watchAppId] || []), workspaceId]),
+        ],
+      }),
+      this.watchedApps
+    );
+  }
+
   async fetchWorkspace(workspaceId: string): Promise<Prismeai.Workspace> {
     try {
       const raw = await this.driver.get(
@@ -114,6 +148,12 @@ export class Workspaces extends Storage {
       );
       const dsul = yaml.load(raw) as Prismeai.Workspace;
       this.workspaces[workspaceId] = await Workspace.create(dsul, this.apps);
+
+      // Check imported apps & update watched app current versions
+      if (dsul.imports) {
+        this.watchAppCurrentVersions(workspaceId, Object.values(dsul.imports));
+      }
+
       return dsul;
     } catch (err) {
       if (err instanceof ObjectNotFoundError) {

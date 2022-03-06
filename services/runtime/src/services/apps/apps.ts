@@ -21,15 +21,15 @@ export class Apps extends Storage {
     const version = appVersion || 'current';
     const app = this.apps[appId];
     if (!app || !(version in app.versions)) {
-      await this.fetchWorkspace(appId, version);
+      await this.fetchApp(appId, version);
     }
     return this.apps[appId].versions[version];
   }
 
-  private async fetchWorkspace(
+  public async fetchApp(
     appId: string,
     appVersion: string
-  ): Promise<Prismeai.Workspace> {
+  ): Promise<Prismeai.DSUL> {
     try {
       const raw = await this.driver.get(`apps/${appId}/${appVersion}.yml`);
       const dsul = yaml.load(raw) as Prismeai.DSUL;
