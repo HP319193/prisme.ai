@@ -91,7 +91,9 @@ export default class Runtime {
           const output = await executeAutomation(
             trigger.workspace,
             automation,
-            ctx,
+            ctx.child({
+              config: trigger.workspace.config,
+            }),
             logger,
             broker.child(trigger.workspace.appContext || {}, {
               validateEvents: false,

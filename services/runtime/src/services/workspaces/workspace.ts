@@ -31,6 +31,7 @@ export class Workspace {
   private dsul: Prismeai.Workspace;
   public name: string;
   public id: string;
+  public config: any;
   private triggers: Triggers;
   private imports: Record<string, Workspace>;
 
@@ -45,6 +46,7 @@ export class Workspace {
     this.apps = apps;
     this.name = workspace.name;
     this.id = workspace.id!!;
+    this.config = {};
     this.triggers = { events: {}, endpoints: {} };
 
     this.dsul = workspace;
@@ -52,18 +54,35 @@ export class Workspace {
     this.appContext = appContext;
   }
 
+  private parseTypedConfig(typedConfig: Prismeai.DSULConfig) {
+    return Object.entries(typedConfig).reduce(
+      (config, [k, { type, value }]) => {
+        return {
+          ...config,
+          [k]: value,
+        };
+      },
+      {}
+    );
+  }
+
   static async create(
     dsul: Prismeai.Workspace,
     apps: Apps,
-    appContext?: AppContext
+    appContext?: AppContext,
+    overrideConfig?: any
   ) {
     const workspace = new Workspace(dsul, apps, appContext);
     await workspace.update(dsul);
+    if (overrideConfig) {
+      workspace.config = overrideConfig;
+    }
     return workspace;
   }
 
   async update(workspace: Prismeai.Workspace) {
     this.name = workspace.name;
+    this.config = this.parseTypedConfig(workspace.config || {});
 
     const { automations = {}, imports = {} } = workspace;
     this.triggers = Object.keys(automations).reduce(
@@ -126,13 +145,18 @@ export class Workspace {
     }
     const { appId, appVersion } = appInstance;
     const dsul = await this.apps.getApp(appId, appVersion);
-    this.imports[slug] = await Workspace.create(dsul, this.apps, {
-      appId: appId,
-      appInstanceSlug: this.appContext
-        ? `${this.appContext.appInstanceSlug}.${slug}`
-        : slug,
-      parentAppIds: (this.appContext?.parentAppIds || []).concat(appId),
-    });
+    this.imports[slug] = await Workspace.create(
+      dsul,
+      this.apps,
+      {
+        appId: appId,
+        appInstanceSlug: this.appContext
+          ? `${this.appContext.appInstanceSlug}.${slug}`
+          : slug,
+        parentAppIds: (this.appContext?.parentAppIds || []).concat(appId),
+      },
+      appInstance.config || {}
+    );
     return this.imports[slug];
   }
 

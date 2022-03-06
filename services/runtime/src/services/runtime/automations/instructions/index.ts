@@ -50,7 +50,7 @@ export async function runCustomAutomation(
   const payload = instruction[automationName] || {};
   const result = await executeAutomation(
     calledAutomation,
-    ctx.child({ payload })
+    ctx.child({ payload, config: calledAutomation.workspace.config })
   );
   if (typeof result !== 'undefined' && (<any>payload).output!!) {
     ctx.set((<any>payload).output, result);
