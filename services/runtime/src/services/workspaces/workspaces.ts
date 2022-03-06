@@ -62,7 +62,10 @@ export class Workspaces extends Storage {
         });
         switch (event.type) {
           case EventType.DeletedWorkspace:
-            delete this.workspaces[workspaceId];
+            // TODO better way to enforce this is executed after runtime processEvent
+            setTimeout(() => {
+              delete this.workspaces[workspaceId];
+            }, 5000);
             break;
           case EventType.UpdatedWorkspace:
             const {

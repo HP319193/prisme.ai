@@ -692,6 +692,16 @@ declare namespace Prismeai {
             oldSlug?: string;
         };
     }
+    export interface ConfiguredWorkspace {
+        /**
+         * example:
+         * workspaces.configured
+         */
+        type: "workspaces.configured";
+        payload: {
+            config: any;
+        };
+    }
     export interface Contact {
         /**
          * Name

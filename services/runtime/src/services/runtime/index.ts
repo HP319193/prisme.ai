@@ -23,9 +23,11 @@ export default class Runtime {
     this.broker.on(
       [
         RUNTIME_EMITS_BROKER_TOPIC,
+        EventType.ConfiguredWorkspace,
         EventType.ConfiguredApp,
         EventType.InstalledApp,
         EventType.UninstalledApp,
+        EventType.DeletedWorkspace,
       ],
       async (event, broker, { logger }) => {
         if (!event.source.workspaceId || !event.source.correlationId) {
@@ -153,8 +155,30 @@ export default class Runtime {
       return parsed;
     }
 
+    const triggers = workspace.getEventTriggers(event);
+    // Simulate workspace.app.uninstalled events when workspace is deleted
+    if (event.type === EventType.DeletedWorkspace) {
+      triggers.push(
+        ...Object.entries(workspace.dsul.imports || {}).flatMap(
+          ([slug, appInstance]) =>
+            workspace.getEventTriggers({
+              ...event,
+              source: {
+                ...event.source,
+                appInstanceSlug: slug,
+              },
+              type: EventType.UninstalledApp,
+              payload: {
+                appInstance,
+                slug,
+              },
+            } as PrismeEvent<Prismeai.UninstalledAppInstance['payload']>)
+        )
+      );
+    }
+
     return {
-      triggers: workspace.getEventTriggers(event),
+      triggers,
       payload: event.payload,
     };
   }

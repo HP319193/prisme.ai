@@ -19,6 +19,7 @@ export enum EventType {
   UpdatedContexts = 'runtime.contexts.updated',
 
   CreatedWorkspace = 'workspaces.created',
+  ConfiguredWorkspace = 'workspaces.configured',
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
   CreatedAutomation = 'workspaces.automation.created',

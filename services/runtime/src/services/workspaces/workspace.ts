@@ -28,7 +28,7 @@ export interface AppContext {
 }
 
 export class Workspace {
-  private dsul: Prismeai.Workspace;
+  public dsul: Prismeai.Workspace;
   public name: string;
   public id: string;
   public config: any;

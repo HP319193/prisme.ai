@@ -261,8 +261,8 @@ export class ContextsManager {
   get publicContexts(): PublicContexts {
     const { run: _, local, ...publicContexts } = this.contexts;
     return {
-      ...publicContexts,
       ...local,
+      ...publicContexts,
     };
   }
 

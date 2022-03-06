@@ -2512,6 +2512,24 @@ components:
             workspace:
               $ref: '#/components/schemas/Workspace'
 
+    ConfiguredWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.configured
+          enum:
+            - workspaces.configured
+        payload:
+          type: object
+          required:
+            - config
+          properties:
+            config: {}
+
     UninstalledAppInstance:
       type: object
       required:
