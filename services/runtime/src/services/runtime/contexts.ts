@@ -193,15 +193,14 @@ export class ContextsManager {
   child(
     opts: { resetLocal?: boolean; payload?: any; config?: any } = {}
   ): ContextsManager {
+    const resetLocal =
+      typeof opts.resetLocal !== 'undefined' ? opts.resetLocal : true;
     const childContexts: Contexts = {
       ...this.contexts,
       // If keeping local context, reinstantiate it to avoid parents context corruption by their children
-      local:
-        typeof opts.resetLocal !== 'undefined'
-          ? opts.resetLocal
-          : true
-          ? opts.payload || {}
-          : { ...this.contexts[ContextType.Local], ...opts.payload },
+      local: resetLocal
+        ? opts.payload || {}
+        : { ...this.contexts[ContextType.Local], ...opts.payload },
       config: opts.config || this.contexts.config || {},
     };
     const child = Object.assign({}, this, {

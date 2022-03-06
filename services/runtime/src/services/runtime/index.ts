@@ -21,7 +21,12 @@ export default class Runtime {
 
   async start() {
     this.broker.on(
-      RUNTIME_EMITS_BROKER_TOPIC,
+      [
+        RUNTIME_EMITS_BROKER_TOPIC,
+        EventType.ConfiguredApp,
+        EventType.InstalledApp,
+        EventType.UninstalledApp,
+      ],
       async (event, broker, { logger }) => {
         if (!event.source.workspaceId || !event.source.correlationId) {
           return true;
@@ -93,6 +98,7 @@ export default class Runtime {
             automation,
             ctx.child({
               config: trigger.workspace.config,
+              resetLocal: false,
             }),
             logger,
             broker.child(trigger.workspace.appContext || {}, {

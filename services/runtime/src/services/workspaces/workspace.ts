@@ -196,6 +196,15 @@ export class Workspace {
         })
       );
     }
+    // Few native events (not prefixed with an appInstanceSlug) are appInstance related (i.e ConfiguredApp)
+    else if (
+      event.source.appInstanceSlug &&
+      event.source.appInstanceSlug in this.imports
+    ) {
+      triggers.push(
+        ...this.imports[event.source.appInstanceSlug].getEventTriggers(event)
+      );
+    }
 
     return triggers;
   }

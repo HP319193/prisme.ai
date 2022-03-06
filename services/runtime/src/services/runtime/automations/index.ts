@@ -16,7 +16,6 @@ export async function executeAutomation(
   broker: Broker
 ) {
   await ctx.securityChecks();
-
   try {
     await runInstructions(automation.do, { workspace, ctx, logger, broker });
   } catch (error) {
