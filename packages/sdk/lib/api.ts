@@ -199,7 +199,7 @@ export class Api extends Fetcher {
     workspaceId: PrismeaiAPI.InstallAppInstance.PathParameters['workspaceId'],
     body: PrismeaiAPI.InstallAppInstance.RequestBody
   ): Promise<PrismeaiAPI.InstallAppInstance.Responses.$200> {
-    return await this.post(`/workspaces/{workspaceId}/apps`, body);
+    return await this.post(`/workspaces/${workspaceId}/apps`, body);
   }
 }
 

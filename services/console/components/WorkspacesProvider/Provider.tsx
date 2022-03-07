@@ -261,12 +261,18 @@ export const WorkspacesProvider: FC = ({ children }) => {
   const installApp: WorkspacesContext['installApp'] = useCallback(
     async (workspaceId, body) => {
       try {
+        const currentWorkspace = workspaces.get(workspaceId);
+
+        if (!currentWorkspace) {
+          throw new Error("Can't add an app to an empty workspace");
+        }
+
         // Generate app instance slug
         let version = 0;
         const slug = () => `${body.appName}${version ? ` (${version})` : ''}`;
         while (
-          Array.from(workspaces.values()).find(
-            (workspace) => workspace && workspace.name === slug()
+          Object.keys(currentWorkspace.imports || {}).find(
+            (appInstanceSlug) => appInstanceSlug === slug()
           )
         ) {
           version++;
@@ -276,15 +282,10 @@ export const WorkspacesProvider: FC = ({ children }) => {
           ...body,
           slug: slug(),
         });
-        const currentWorkspace = workspaces.get(workspaceId);
 
         // Typescript check, this route should always return a slug
         if (!fetchedAppInstance.slug) {
           throw new Error('Received app instance has no slug');
-        }
-
-        if (!currentWorkspace) {
-          throw new Error("Can't add an app to an empty workspace");
         }
 
         const updatedWorkspace = {
