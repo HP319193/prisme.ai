@@ -429,59 +429,63 @@ it('should delete an automation', async () => {
     name: 'workspace',
     automations: {},
   });
+});
 
-  it('should get permissions', async () => {
-    const permissions = [
-      {
-        email: 'admin@prisme.ai',
-        role: 'admin',
-      },
-      {
-        email: 'readonly@prisme.ai',
-        policies: {
-          read: true,
-        },
-      },
-    ];
-    useUser().user = {} as any;
-    jest
-      .spyOn(api, 'getPermissions')
-      .mockReturnValue(Promise.resolve(permissions as any));
+it('should install a new app', async () => {
+  const newAppInstance = {
+    appId: 'monappId',
+    appName: "le nom de l'app",
+    appVersion: '1',
+    slug: 'monappId',
+  };
+  const workspace = {
+    id: '42',
+    name: 'foo',
+  };
+  jest
+    .spyOn(api, 'getWorkspaces')
+    .mockReturnValue(Promise.resolve([workspace] as any));
 
-    let context: any = {};
-    const Test = () => {
-      context = useWorkspaces();
-      return null;
-    };
-    const root = renderer.create(
-      <Provider>
-        <Test />
-      </Provider>
-    );
-    await act(async () => {
-      await true;
+  // useUser().user = {} as any;
+  jest
+    .spyOn(api, 'installApp')
+    .mockReturnValue(Promise.resolve(newAppInstance as any));
+
+  let context: any = {};
+  const Test = () => {
+    context = useWorkspaces();
+    return null;
+  };
+  const root = renderer.create(
+    <Provider>
+      <Test />
+    </Provider>
+  );
+  await act(async () => {
+    await true;
+  });
+
+  await act(async () => {
+    context.installApp('42', {
+      appId: 'monappId',
+      appName: "le nom de l'app",
+      appVersion: '1',
     });
+  });
 
-    await act(async () => {
-      const w = await context.getWorkspaceUsersPermissions('123idworkspace123');
-      expect(w).toEqual([
-        {
-          email: 'admin@prisme.ai',
-          role: 'admin',
-        },
-        {
-          email: 'readonly@prisme.ai',
-          policies: {
-            read: true,
-          },
-        },
-      ]);
-    });
-
-    expect(context.workspaces.get('42')).toEqual({
+  await act(async () => {
+    const w = await context.workspaces.get('42');
+    expect(w).toEqual({
       id: '42',
-      name: 'workspace',
-      automations: {},
+      name: 'foo',
+      imports: {
+        monappId: {
+          appId: 'monappId',
+          appName: "le nom de l'app",
+          appVersion: '1',
+          slug: 'monappId',
+        },
+      },
     });
   });
 });

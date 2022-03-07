@@ -3,8 +3,11 @@ import context, { WorkspacesContext } from './context';
 import api from '../../utils/api';
 import { Workspace } from '@prisme.ai/sdk';
 import { useUser } from '../UserProvider';
+import { notification } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 export const WorkspacesProvider: FC = ({ children }) => {
+  const { t } = useTranslation();
   const { user } = useUser();
   const [workspaces, setWorkspaces] = useState<WorkspacesContext['workspaces']>(
     new Map()
@@ -255,6 +258,60 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [workspaces]
   );
 
+  const installApp: WorkspacesContext['installApp'] = useCallback(
+    async (workspaceId, body) => {
+      try {
+        // Generate app instance slug
+        let version = 0;
+        const slug = () => `${body.appName}${version ? ` (${version})` : ''}`;
+        while (
+          Array.from(workspaces.values()).find(
+            (workspace) => workspace && workspace.name === slug()
+          )
+        ) {
+          version++;
+        }
+
+        const fetchedAppInstance = await api.installApp(workspaceId, {
+          ...body,
+          slug: slug(),
+        });
+        const currentWorkspace = workspaces.get(workspaceId);
+
+        // Typescript check, this route should always return a slug
+        if (!fetchedAppInstance.slug) {
+          throw new Error('Received app instance has no slug');
+        }
+
+        if (!currentWorkspace) {
+          throw new Error("Can't add an app to an empty workspace");
+        }
+
+        const updatedWorkspace = {
+          ...currentWorkspace,
+          imports: {
+            ...(currentWorkspace.imports || {}),
+            [fetchedAppInstance.slug]: fetchedAppInstance,
+          },
+        };
+
+        const newWorkspaces = new Map(workspaces);
+        newWorkspaces.set(workspaceId, updatedWorkspace);
+        setWorkspaces(newWorkspaces);
+
+        return fetchedAppInstance;
+      } catch (e) {
+        notification.error({
+          message: t('api', { errorName: e }),
+          placement: 'bottomRight',
+        });
+        console.error(e);
+        return null;
+      }
+    },
+    [t, workspaces]
+  );
+
   return (
     <context.Provider
       value={{
@@ -271,6 +328,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         createPage,
         updatePage,
         deletePage,
+        installApp,
       }}
     >
       {children}

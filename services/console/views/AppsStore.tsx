@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,15 @@ interface AppStoreProps {
 const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   const { t } = useTranslation('workspaces');
   const { apps, getApps } = useApps();
+  const [filter, setFilter] = useState('');
+
+  const filteredApps = useMemo(() => {
+    return Array.from(apps).flatMap(([key, app]) => {
+      return `${app.name}`.toLowerCase().match(filter.toLowerCase())
+        ? { ...app }
+        : [];
+    });
+  }, [apps, filter]);
 
   useEffect(() => {
     if (visible) {
@@ -27,37 +36,43 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
       visible={visible}
       footer={null}
       title={<div>{t('apps.store.title')}</div>}
-      width={'80vw'}
+      width="80vw"
     >
-      <div className="flex items-center justify-between">
-        <SearchInput className="!min-w-[20rem]" />
-        <Button variant="primary">{t('apps.store.create')}</Button>
-      </div>
-      <div className="flex flex-wrap flex-row align-start justify-start mt-5">
-        {Array.from(apps).map(([_, { id, name, description, photo }]) => (
-          <div
-            key={id}
-            className="flex flex-row w-[25rem] align-center items-center border rounded border-gray-200 p-4 space-x-5 h-[9rem]"
-          >
-            <div className="flex align-center justify-center w-[6rem]">
-              {photo ? (
-                <Image
-                  src={photo}
-                  width={80}
-                  height={80}
-                  alt={t('apps.photoAlt')}
-                />
-              ) : (
-                <IconApps width={80} height={80} className="text-gray-200" />
-              )}
+      <div className="h-[70vh]">
+        <div className="flex items-center justify-between">
+          <SearchInput
+            className="!min-w-[20rem]"
+            onChange={({ target: { value } }) => setFilter(value)}
+            placeholder={t('apps.search')}
+          />
+          <Button variant="primary">{t('apps.store.create')}</Button>
+        </div>
+        <div className="flex flex-wrap flex-row align-start justify-start mt-5">
+          {filteredApps.map(({ id, name, description, photo }) => (
+            <div
+              key={id}
+              className="flex flex-row w-[25rem] align-center items-center border rounded border-gray-200 p-4 space-x-5 h-[9rem]"
+            >
+              <div className="flex align-center justify-center w-[6rem]">
+                {photo ? (
+                  <Image
+                    src={photo}
+                    width={80}
+                    height={80}
+                    alt={t('apps.photoAlt')}
+                  />
+                ) : (
+                  <IconApps width={80} height={80} className="text-gray-200" />
+                )}
+              </div>
+              <div className="flex flex-col grow justify-start h-full mt-3">
+                <Title level={4}>{name}</Title>
+                <div>description</div>
+                {/*  Get description language, fallback to en */}
+              </div>
             </div>
-            <div className="flex flex-col grow justify-start h-full mt-3">
-              <Title level={4}>{name}</Title>
-              <div>description</div>
-              {/*  Get description language, fallback to en */}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </Modal>
   );

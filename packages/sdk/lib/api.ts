@@ -194,6 +194,13 @@ export class Api extends Fetcher {
     );
     return await this.get(`/apps?${params.toString()}`);
   }
+
+  async installApp(
+    workspaceId: PrismeaiAPI.InstallAppInstance.PathParameters['workspaceId'],
+    body: PrismeaiAPI.InstallAppInstance.RequestBody
+  ): Promise<PrismeaiAPI.InstallAppInstance.Responses.$200> {
+    return await this.post(`/workspaces/{workspaceId}/apps`, body);
+  }
 }
 
 export default new Api('https://api.eda.prisme.ai');
