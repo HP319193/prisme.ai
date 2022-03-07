@@ -12,9 +12,11 @@ export type CollapseItem = {
 
 export interface CollapseProps {
   items: CollapseItem[];
+  className?: string;
+  light?: boolean;
 }
 
-const Collapse = ({ items }: CollapseProps) => {
+const Collapse = ({ items, light }: CollapseProps) => {
   const prevClicked = useRef<string[]>([]);
   const click = useCallback(
     (key: string | string[]) => {
@@ -35,7 +37,16 @@ const Collapse = ({ items }: CollapseProps) => {
   }
 
   return (
-    <AntdCollapse bordered={false} expandIconPosition="right" onChange={click}>
+    <AntdCollapse
+      bordered={false}
+      expandIconPosition="right"
+      onChange={click}
+      className={
+        light
+          ? 'pr-collapse-light !border !border-solid !border-gray-200 rounded !px-2 !py-1'
+          : ''
+      }
+    >
       {items.map(({ label, content, className }, index) => (
         <Panel header={label} key={`${index}`} className={className || ''}>
           {content}
