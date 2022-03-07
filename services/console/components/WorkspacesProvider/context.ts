@@ -45,7 +45,16 @@ export interface WorkspacesContext {
   installApp: (
     workspaceId: PrismeaiAPI.InstallAppInstance.PathParameters['workspaceId'],
     body: PrismeaiAPI.InstallAppInstance.RequestBody
+  ) => Promise<Prismeai.AppInstance | null>;
+  updateApp: (
+    workspaceId: PrismeaiAPI.ConfigureAppInstance.PathParameters['workspaceId'],
+    slug: PrismeaiAPI.ConfigureAppInstance.PathParameters['slug'],
+    body: PrismeaiAPI.ConfigureAppInstance.RequestBody
   ) => Promise<any>;
+  uninstallApp: (
+    workspaceId: PrismeaiAPI.UninstallAppInstance.PathParameters['workspaceId'],
+    slug: PrismeaiAPI.UninstallAppInstance.PathParameters['slug']
+  ) => Promise<{ id: string } | null>;
 }
 
 export const workspacesContext = createContext<WorkspacesContext>({
@@ -63,6 +72,8 @@ export const workspacesContext = createContext<WorkspacesContext>({
   updatePage: async () => ({} as Prismeai.Page),
   deletePage: async () => ({} as Prismeai.Page),
   installApp: async () => ({} as any),
+  updateApp: async () => ({} as any),
+  uninstallApp: async () => ({} as any),
 });
 
 export const useWorkspaces = () => useContext(workspacesContext);

@@ -313,6 +313,82 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [t, workspaces]
   );
 
+  const updateApp: WorkspacesContext['updateApp'] = useCallback(
+    async (workspaceId, slug, body) => {
+      try {
+        const updatedAppInstance = await api.updateApp(workspaceId, slug, body);
+
+        const newWorkspaces = new Map(workspaces);
+        const currentWorkspace = workspaces.get(workspaceId);
+
+        if (!currentWorkspace) {
+          throw new Error("Can't add an app to an empty workspace");
+        }
+
+        newWorkspaces.set(workspaceId, {
+          ...currentWorkspace,
+          imports: {
+            ...currentWorkspace.imports,
+            [slug]: updatedAppInstance,
+          },
+        });
+
+        setWorkspaces(newWorkspaces);
+        return { id: slug };
+      } catch (e) {
+        notification.error({
+          message: t('api', { errorName: e }),
+          placement: 'bottomRight',
+        });
+        console.error(e);
+        return null;
+      }
+    },
+    [t, workspaces]
+  );
+
+  const uninstallApp: WorkspacesContext['uninstallApp'] = useCallback(
+    async (workspaceId, slug) => {
+      try {
+        const uninstalledAppInstance = await api.uninstallApp(
+          workspaceId,
+          slug
+        );
+
+        const newWorkspaces = new Map(workspaces);
+        const currentWorkspace = workspaces.get(workspaceId);
+
+        if (!currentWorkspace) {
+          throw new Error("Can't add an app to an empty workspace");
+        }
+
+        newWorkspaces.set(workspaceId, {
+          ...currentWorkspace,
+          imports: {
+            ...Object.entries(currentWorkspace.imports || {})
+              .filter(([key]) => key !== slug)
+              .reduce(
+                // Transform back to object
+                (object, [key, value]) => ({ ...object, [key]: value }),
+                {}
+              ),
+          },
+        });
+
+        setWorkspaces(newWorkspaces);
+        return { id: slug };
+      } catch (e) {
+        notification.error({
+          message: t('api', { errorName: e }),
+          placement: 'bottomRight',
+        });
+        console.error(e);
+        return null;
+      }
+    },
+    [t, workspaces]
+  );
+
   return (
     <context.Provider
       value={{
@@ -330,6 +406,8 @@ export const WorkspacesProvider: FC = ({ children }) => {
         updatePage,
         deletePage,
         installApp,
+        updateApp,
+        uninstallApp,
       }}
     >
       {children}

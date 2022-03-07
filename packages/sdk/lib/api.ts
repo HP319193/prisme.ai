@@ -201,6 +201,21 @@ export class Api extends Fetcher {
   ): Promise<PrismeaiAPI.InstallAppInstance.Responses.$200> {
     return await this.post(`/workspaces/${workspaceId}/apps`, body);
   }
+
+  async updateApp(
+    workspaceId: PrismeaiAPI.ConfigureAppInstance.PathParameters['workspaceId'],
+    slug: PrismeaiAPI.ConfigureAppInstance.PathParameters['slug'],
+    body: PrismeaiAPI.ConfigureAppInstance.RequestBody
+  ): Promise<PrismeaiAPI.ConfigureAppInstance.Responses.$200> {
+    return await this.patch(`/workspaces/${workspaceId}/apps/${slug}`, body);
+  }
+
+  async uninstallApp(
+    workspaceId: PrismeaiAPI.UninstallAppInstance.PathParameters['workspaceId'],
+    slug: PrismeaiAPI.ConfigureAppInstance.PathParameters['slug']
+  ): Promise<PrismeaiAPI.UninstallAppInstance.Responses.$200> {
+    return await this.post(`/workspaces/${workspaceId}/apps/${slug}`);
+  }
 }
 
 export default new Api('https://api.eda.prisme.ai');
