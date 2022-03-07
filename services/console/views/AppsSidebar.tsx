@@ -1,4 +1,3 @@
-import { SettingOutlined } from '@ant-design/icons';
 import {
   Button,
   ListItem,
@@ -16,44 +15,13 @@ import IconApps from '../icons/icon-apps.svgr';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import AppsStore from './AppsStore';
 
-const imports: Record<
-  string,
-  {
-    appName: string;
-    appId: string;
-    config: Record<string, any>;
-    widgets: Record<string, { url: string }>;
-  }
-> = {
-  'my functions': {
-    appName: 'run code',
-    appId: 'prout',
-    config: {},
-    widgets: {
-      setup: {
-        url: 'http://localhost:5433/main.js',
-      },
-    },
-  },
-  'my other functions': {
-    appName: 'run code',
-    appId: 'prout',
-    config: {},
-    widgets: {
-      setup: {
-        url: 'http://localhost:5433/main.js',
-      },
-    },
-  },
-};
-
 export const AppsSidebar = () => {
   const { t } = useTranslation('workspaces');
   const { push } = useRouter();
 
   const {
     workspace,
-    workspace: { id: workspaceId },
+    workspace: { id: workspaceId, imports = {} },
   } = useWorkspace();
   const [appStoreVisible, setAppStoreVisible] = useState(false);
 
@@ -69,18 +37,21 @@ export const AppsSidebar = () => {
         ? { ...imports[key], slug: key }
         : [];
     });
-  }, [filter]);
+  }, [filter, imports]);
 
-  const setup = useCallback((key: string) => {
-    console.log('setup', key);
-    const app = imports[key];
-    const { setup } = app.widgets || {};
-    if (!setup) return;
-    setModal({
-      title: key,
-      url: setup.url,
-    });
-  }, []);
+  const setup = useCallback(
+    (key: string) => {
+      console.log('setup', key);
+      // const app = imports[key];
+      // const { setup } = app.widgets || {};
+      // if (!setup) return;
+      // setModal({
+      //   title: key,
+      //   url: setup.url,
+      // });
+    },
+    [imports]
+  );
 
   const isEmpty = Object.keys(imports).length === 0;
 
@@ -113,7 +84,8 @@ export const AppsSidebar = () => {
               onChange={({ target: { value } }) => setFilter(value)}
             />
             <Space direction="vertical" className="flex grow overflow-x-auto">
-              {filteredApps.map(({ appName, slug, widgets }) => (
+              {/*{filteredApps.map(({ appName, slug, widgets }) => (*/}
+              {filteredApps.map(({ appName, slug }) => (
                 <Link
                   key={slug}
                   href={`/workspaces/${workspaceId}/apps/${slug}`}
@@ -123,17 +95,18 @@ export const AppsSidebar = () => {
                       title={slug}
                       content={appName}
                       rightContent={
-                        widgets.setup ? (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setup(slug);
-                            }}
-                            className="hover:text-accent"
-                          >
-                            <SettingOutlined />
-                          </button>
-                        ) : undefined
+                        undefined
+                        // widgets.setup ? (
+                        //   <button
+                        //     onClick={(e) => {
+                        //       e.preventDefault();
+                        //       setup(slug);
+                        //     }}
+                        //     className="hover:text-accent"
+                        //   >
+                        //     <SettingOutlined />
+                        //   </button>
+                        // ) : undefined
                       }
                     />
                   </a>
