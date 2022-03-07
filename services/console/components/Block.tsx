@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as prismeaiDS from '@prisme.ai/design-system';
+import * as prismeaiSDK from '@prisme.ai/sdk';
 import { ReactElement, useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 
@@ -7,6 +8,7 @@ import { nanoid } from 'nanoid';
 window.__external = window.__external || {
   React,
   prismeaiDS,
+  prismeaiSDK,
 };
 // @ts-ignore
 window.__external.React.default = React;
@@ -81,7 +83,7 @@ export const IFrameBlock = ({
         '*'
       );
     },
-    [entityId]
+    [entityId, token]
   );
   useEffect(() => {
     const listener = (e: MessageEvent) => {
