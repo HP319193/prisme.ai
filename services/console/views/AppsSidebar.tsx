@@ -67,7 +67,7 @@ export const AppsSidebar = () => {
             {t('apps.link')}
           </Title>
           <Button onClick={() => setAppStoreVisible(true)}>
-            {t('apps.create.label')}
+            {t('apps.install')}
           </Button>
         </div>
         {isEmpty && (

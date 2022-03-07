@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { Button, SearchInput, Title } from '@prisme.ai/design-system';
+import { SearchInput, Title } from '@prisme.ai/design-system';
 import { useApps } from '../components/AppsProvider';
 import IconApps from '../icons/icon-apps.svgr';
 import { useWorkspaces } from '../components/WorkspacesProvider';
@@ -64,7 +64,7 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
       onCancel={onCancel}
       visible={visible}
       footer={null}
-      title={<div>{t('apps.store.title')}</div>}
+      title={<div>{t('apps.title')}</div>}
       width="80vw"
     >
       <div className="h-[70vh]">
@@ -74,7 +74,6 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
             onChange={({ target: { value } }) => setFilter(value)}
             placeholder={t('apps.search')}
           />
-          <Button variant="primary">{t('apps.store.create')}</Button>
         </div>
         <div className="flex flex-wrap flex-row align-start justify-start mt-5">
           {filteredApps.map(({ id, name, description, photo }) => (

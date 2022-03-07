@@ -137,9 +137,9 @@
   "apps": {
     "link": "Apps",
     "soon": "Las Apps estarán disponibles en breve.",
-    "create": {
-      "label": "Instalación de una App"
-    }
+    "install": "Instalar una aplicación",
+    "search": "Buscar una aplicación...",
+    "title": "Apps Store"
   },
   "pages": {
     "link": "Páginas",
