@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
 import { useTranslation } from 'next-i18next';
@@ -16,21 +16,26 @@ import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
 import useLocalizedText from '../utils/useLocalizedText';
 import PageBuilder from '../components/PageBuilder';
-import { useWorkspaces } from '../components/WorkspacesProvider';
 import { PageBuilderContext } from '../components/PageBuilder/context';
 import SharePage from '../components/Share/SharePage';
+import usePages from '../components/PagesProvider/context';
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
-  const { updatePage, deletePage } = useWorkspaces();
   const { workspace, setShare } = useWorkspace();
   const localize = useLocalizedText();
+  const { pages, savePage, deletePage } = usePages();
 
   const {
-    query: { pageId },
+    query: { id: workspaceId, pageId },
     push,
   } = useRouter();
-  const page = (workspace.pages || {})[`${pageId}`];
+  const page = useMemo(() => {
+    return Array.from(pages.get(`${workspaceId}`) || []).find(
+      ({ id }) => pageId === id
+    );
+  }, [pageId, pages, workspaceId]);
+
   const [value, setValue] = useState<Prismeai.Page>();
   const [saving, setSaving] = useState(false);
 
@@ -62,7 +67,7 @@ export const Page = () => {
   );
 
   const save = useCallback(async () => {
-    if (!value) return;
+    if (!value || !page || !page.id) return;
     setSaving(true);
     try {
       const cleanedValue = {
@@ -71,8 +76,9 @@ export const Page = () => {
           []) as PageBuilderContext['page']['widgets']).map(
           ({ key, ...widget }) => widget
         ),
+        id: page.id,
       };
-      await updatePage(workspace, `${pageId}`, cleanedValue);
+      await savePage(workspace.id, cleanedValue);
 
       notification.success({
         message: t('pages.save.toast'),
@@ -85,7 +91,7 @@ export const Page = () => {
       });
     }
     setSaving(false);
-  }, [pageId, t, updatePage, value, workspace]);
+  }, [page, savePage, t, value, workspace.id]);
 
   const confirmDeletePage = useCallback(() => {
     Modal.confirm({
@@ -98,7 +104,7 @@ export const Page = () => {
       okText: t('pages.delete.confirm.cancel'),
       onCancel: () => {
         push(`/workspaces/${workspace.id}`);
-        deletePage(workspace, `${pageId}`);
+        deletePage(workspace.id, `${pageId}`);
         notification.success({
           message: t('pages.delete.toast'),
           placement: 'bottomRight',

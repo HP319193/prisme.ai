@@ -95,25 +95,36 @@ export class Api extends Fetcher {
   }
 
   // Pages
+  async getPages(
+    workspaceId: NonNullable<Workspace['id']>
+  ): Promise<Prismeai.Page[]> {
+    return await this.get(`/workspaces/${workspaceId}/pages`);
+  }
+
   async createPage(
-    workspace: Workspace,
+    workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
-  ): Promise<Prismeai.Page & { slug: string }> {
-    return await this.post(`/workspaces/${workspace.id}/pages`, {
+  ): Promise<Prismeai.Page> {
+    return await this.post(`/workspaces/${workspaceId}/pages`, {
       ...page,
     });
   }
 
   async updatePage(
-    workspace: Workspace,
-    slug: string,
+    workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    return await this.patch(`/workspaces/${workspace.id}/pages/${slug}`, page);
+    return await this.patch(
+      `/workspaces/${workspaceId}/pages/${page.id}`,
+      page
+    );
   }
 
-  async deletePage(workspace: Workspace, slug: string): Promise<string> {
-    return await this.delete(`/workspaces/${workspace.id}/pages/${slug}`);
+  async deletePage(
+    workspaceId: NonNullable<Workspace['id']>,
+    pageId: string
+  ): Promise<Pick<Prismeai.Page, 'id'>> {
+    return await this.delete(`/workspaces/${workspaceId}/pages/${pageId}`);
   }
 
   // Events

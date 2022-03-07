@@ -88,21 +88,25 @@ export const PermissionsProvider: FC = ({ children }) => {
 
   const getUsersPermissions: PermissionsContext['getUsersPermissions'] = useCallback(
     async (subjectType, subjectId) => {
-      const fetchedUsersPermissions = await api.getPermissions(
-        subjectType,
-        subjectId
-      );
-      const newUsersPermissions = new Map<string, UserPermissions[]>(
-        usersPermissions
-      );
-      newUsersPermissions.set(
-        `${subjectType}:${subjectId}`,
-        fetchedUsersPermissions.result
-      );
-      if (!isEqual(newUsersPermissions, usersPermissions)) {
-        setUsersPermissions(newUsersPermissions);
+      try {
+        const fetchedUsersPermissions = await api.getPermissions(
+          subjectType,
+          subjectId
+        );
+        const newUsersPermissions = new Map<string, UserPermissions[]>(
+          usersPermissions
+        );
+        newUsersPermissions.set(
+          `${subjectType}:${subjectId}`,
+          fetchedUsersPermissions.result
+        );
+        if (!isEqual(newUsersPermissions, usersPermissions)) {
+          setUsersPermissions(newUsersPermissions);
+        }
+        return fetchedUsersPermissions.result;
+      } catch (e) {
+        return [];
       }
-      return fetchedUsersPermissions.result;
     },
     [usersPermissions]
   );

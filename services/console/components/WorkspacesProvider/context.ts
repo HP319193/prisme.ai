@@ -24,20 +24,6 @@ export interface WorkspacesContext {
     slug: string
   ) => Promise<Prismeai.Automation> | null;
 
-  createPage: (
-    workspace: Workspace,
-    page: Prismeai.Page
-  ) => Promise<Prismeai.Page | null>;
-  updatePage: (
-    workspace: Workspace,
-    slug: string,
-    page: Prismeai.Page
-  ) => Promise<Prismeai.Page> | null;
-  deletePage: (
-    workspace: Workspace,
-    slug: string
-  ) => Promise<Prismeai.Page> | null;
-
   getWorkspaceUsersPermissions: (
     workspaceId: string
   ) => Promise<Prismeai.PermissionsList>;
@@ -70,9 +56,6 @@ export const workspacesContext = createContext<WorkspacesContext>({
   updateAutomation: async () => ({} as Prismeai.Automation),
   deleteAutomation: async () => ({} as Prismeai.Automation),
   getWorkspaceUsersPermissions: async () => [] as Prismeai.PermissionsList,
-  createPage: async () => ({} as Prismeai.Page),
-  updatePage: async () => ({} as Prismeai.Page),
-  deletePage: async () => ({} as Prismeai.Page),
   installApp: async () => ({} as any),
   updateApp: async () => ({} as any),
   uninstallApp: async () => ({} as any),

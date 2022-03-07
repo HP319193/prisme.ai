@@ -9,12 +9,11 @@ import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
+import usePages from '../components/PagesProvider/context';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import IconPages from '../icons/icon-pages.svgr';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useLocalizedText from '../utils/useLocalizedText';
-
-const emptyObject: Prismeai.Workspace['pages'] = {};
 
 export const PagesSidebar = () => {
   const {
@@ -22,25 +21,30 @@ export const PagesSidebar = () => {
     i18n: { language },
   } = useTranslation('workspaces');
   const localize = useLocalizedText();
-  const { createPage } = useWorkspaces();
+  const { pages, createPage } = usePages();
   const { push } = useRouter();
   const {
     workspace,
-    workspace: { id: workspaceId, pages = emptyObject },
+    workspace: { id: workspaceId },
   } = useWorkspace();
+
+  const currentPages = useMemo(() => Array.from(pages.get(workspaceId) || []), [
+    pages,
+    workspaceId,
+  ]);
 
   const [filter, setFilter] = useState('');
 
   const filteredPages = useMemo(() => {
-    return Object.keys(pages).flatMap((key) => {
-      const { name, description = '' } = pages[key];
+    return currentPages.flatMap((page) => {
+      const { name, description } = page;
       return `${localize(name)} ${localize(description)}`
         .toLowerCase()
         .match(filter.toLowerCase())
-        ? { ...pages[key], slug: key }
+        ? page
         : [];
     });
-  }, [filter, localize, pages]);
+  }, [currentPages, filter, localize]);
 
   const [creating, setCreating] = useState(false);
   const generatePageName = useCallback(() => {
@@ -48,22 +52,21 @@ export const PagesSidebar = () => {
     let version = 0;
     const generateName = () =>
       `${defaultName}${version ? ` (${version})` : ''}`;
-    const names = Object.keys(pages).map((key) => {
-      const name = pages[key].name;
+    const names = currentPages.map(({ name }) => {
       return typeof name === 'string' ? name : name[language];
     });
     while (names.find((name) => name === generateName())) {
       version++;
     }
     return generateName();
-  }, [language, pages, t]);
+  }, [currentPages, language, t]);
 
   const create = useCallback(async () => {
     setCreating(true);
 
     const name = generatePageName();
     try {
-      const createdPage = await createPage(workspace, {
+      const createdPage = await createPage(workspace.id, {
         name: {
           [language]: name,
         },
@@ -77,7 +80,7 @@ export const PagesSidebar = () => {
     setCreating(false);
   }, [generatePageName, createPage, workspace, language, push, workspaceId]);
 
-  const isEmpty = Object.keys(pages).length === 0;
+  const isEmpty = currentPages.length === 0;
 
   return (
     <div className="flex grow h-full flex-col">
@@ -105,11 +108,8 @@ export const PagesSidebar = () => {
             onChange={({ target: { value } }) => setFilter(value)}
           />
           <Space direction="vertical" className="flex grow overflow-x-auto">
-            {filteredPages.map(({ name, description, slug }) => (
-              <Link
-                key={slug}
-                href={`/workspaces/${workspaceId}/pages/${slug}`}
-              >
+            {filteredPages.map(({ name, description, id }) => (
+              <Link key={id} href={`/workspaces/${workspaceId}/pages/${id}`}>
                 <a>
                   <ListItem
                     title={localize(name)}

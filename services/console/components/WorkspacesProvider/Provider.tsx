@@ -192,71 +192,15 @@ export const WorkspacesProvider: FC = ({ children }) => {
   );
 
   // set role to editor for the postpermissions
-  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] =
-    useCallback(async (workspaceId) => {
-      const userPermissions = await api.getPermissions(
+  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] = useCallback(
+    async (workspaceId) => {
+      const { result: userPermissions } = await api.getPermissions(
         'workspaces',
         workspaceId
       );
-      return userPermissions.result;
-    }, []);
-
-  const createPage: WorkspacesContext['createPage'] = useCallback(
-    async (workspace, page) => {
-      const result = await api.createPage(workspace, page);
-      const { slug, ...newPage } = result;
-      const newWorkspace = {
-        ...workspace,
-        pages: {
-          ...workspace.pages,
-          [slug]: newPage,
-        },
-      };
-      const newWorkspaces = new Map(workspaces);
-      newWorkspaces.set(newWorkspace.id, newWorkspace);
-      setWorkspaces(newWorkspaces);
-      return result;
+      return userPermissions;
     },
-    [workspaces]
-  );
-
-  const updatePage: WorkspacesContext['updatePage'] = useCallback(
-    async (workspace, slug, page) => {
-      const result = await api.updatePage(workspace, slug, page);
-
-      const newWorkspace = {
-        ...workspace,
-        pages: {
-          ...workspace.pages,
-          [slug]: result,
-        },
-      };
-      const newWorkspaces = new Map(workspaces);
-      newWorkspaces.set(newWorkspace.id, newWorkspace);
-      setWorkspaces(newWorkspaces);
-
-      return result;
-    },
-    [workspaces]
-  );
-
-  const deletePage: WorkspacesContext['deletePage'] = useCallback(
-    async (workspace, slug) => {
-      await api.deletePage(workspace, slug);
-
-      const newWorkspaces = new Map(workspaces);
-      const newWorkspace = {
-        ...newWorkspaces.get(workspace.id),
-      } as Workspace;
-
-      const { [slug]: removed, ...filteredPages } = workspace.pages || {};
-      newWorkspace.pages = filteredPages;
-      newWorkspaces.set(workspace.id, newWorkspace);
-      setWorkspaces(newWorkspaces);
-
-      return removed;
-    },
-    [workspaces]
+    []
   );
 
   const installApp: WorkspacesContext['installApp'] = useCallback(
@@ -410,9 +354,6 @@ export const WorkspacesProvider: FC = ({ children }) => {
         updateAutomation,
         deleteAutomation,
         getWorkspaceUsersPermissions,
-        createPage,
-        updatePage,
-        deletePage,
         installApp,
         updateApp,
         uninstallApp,
