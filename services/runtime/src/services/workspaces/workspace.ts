@@ -122,14 +122,7 @@ export class Workspace {
 
     // Pull app instances
     for (let [slug, appInstance] of Object.entries(imports || {})) {
-      const workspace = await this.updateImport(slug, appInstance);
-      this.triggers = {
-        ...this.triggers,
-        endpoints: {
-          ...workspace.triggers.endpoints,
-          ...this.triggers.endpoints,
-        },
-      };
+      await this.updateImport(slug, appInstance);
     }
   }
 
@@ -210,7 +203,14 @@ export class Workspace {
   }
 
   getEndpointTriggers(slug: string) {
-    return this.triggers.endpoints[slug];
+    const triggers = this.triggers.endpoints[slug] || [];
+
+    const [appSlug, name] = this.parseAppRef(slug);
+    if (appSlug && appSlug in this.imports) {
+      triggers.push(...this.imports[appSlug].getEndpointTriggers(name));
+    }
+
+    return triggers;
   }
 
   private parseAppRef(name: string): ParsedAutomationName {
