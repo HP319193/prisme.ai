@@ -8,6 +8,7 @@ export type CollapseItem = {
   content: ReactElement | string | null;
   className?: string;
   onClick?: () => void;
+  opened?: boolean;
 };
 
 export interface CollapseProps {

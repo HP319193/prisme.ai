@@ -31,7 +31,7 @@ const MenuTab = ({ items, selected: initialSelected, onSelect }: MenuProps) => {
   return (
     <AntdMenu
       onClick={handleSelection}
-      selectedKeys={[selected]}
+      selectedKeys={selected ? [selected] : undefined}
       mode="horizontal"
       className="h-8"
     >

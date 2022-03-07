@@ -1,6 +1,15 @@
-import React from 'react';
+import * as React from 'react';
+import * as prismeaiDS from '@prisme.ai/design-system';
 import { ReactElement, useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
+
+// @ts-ignore
+window.__external = window.__external || {
+  React,
+  prismeaiDS,
+};
+// @ts-ignore
+window.__external.React.default = React;
 
 interface BlockComponentProps {
   entityId: string;
@@ -19,10 +28,6 @@ export const ReactBlock = ({ url, renderLoading, ...props }: BlockProps) => {
   const [Component, setComponent] = useState<BlockComponent | null>(null);
   useEffect(() => {
     const uniqMethod = `__load_${nanoid()}`;
-    // @ts-ignore
-    window.React = React;
-    // @ts-ignore
-    window.React.default = React;
     // @ts-ignore
     window[uniqMethod] = (module) => {
       console.log('module', module);

@@ -4,7 +4,7 @@ import { usePageBuilder } from './context';
 import Widget from './Widget';
 
 export const Widgets = () => {
-  const { page, widgets } = usePageBuilder();
+  const { page, widgets = {} } = usePageBuilder();
 
   const widgetsInPage = useMemo(
     () =>
