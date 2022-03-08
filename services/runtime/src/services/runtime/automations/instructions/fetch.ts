@@ -14,7 +14,7 @@ export async function fetch(
     },
     method: method,
   });
-  if (result.headers.get('Content-Type') === 'application/json') {
+  if ((result.headers.get('Content-Type') || '').includes('application/json')) {
     return await result.json();
   }
   return await result.text();
