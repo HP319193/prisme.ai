@@ -13,9 +13,15 @@ import { generateEndpoint } from '../utils/urls';
 import { useTranslation } from 'next-i18next';
 import { validateWorkspace } from '@prisme.ai/validation';
 import CodeEditor from '../components/CodeEditor/lazy';
-import { Button, Loading, PageHeader, Space } from '@prisme.ai/design-system';
+import {
+  Button,
+  Loading,
+  Modal,
+  PageHeader,
+  Space,
+} from '@prisme.ai/design-system';
 import { useRouter } from 'next/router';
-import { Modal, notification } from 'antd';
+import { notification } from 'antd';
 
 interface Annotation {
   row: number;

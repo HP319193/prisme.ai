@@ -1,7 +1,11 @@
-import { Button, SearchInput, Space, Title } from '@prisme.ai/design-system';
-import { Modal } from 'antd';
+import {
+  Button,
+  Modal,
+  SearchInput,
+  Space,
+  Title,
+} from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Block from '../components/Block';
 import IconApps from '../icons/icon-apps.svgr';
@@ -12,10 +16,8 @@ import { useApps } from '../components/AppsProvider';
 
 export const AppsSidebar = () => {
   const { t } = useTranslation('workspaces');
-  const { push } = useRouter();
 
   const {
-    workspace,
     workspace: { id: workspaceId },
   } = useWorkspace();
 
@@ -43,8 +45,6 @@ export const AppsSidebar = () => {
         : [];
     });
   }, [filter, workspaceAppInstances]);
-
-  console.log('appInstnaces', workspaceAppInstances);
 
   const setup = useCallback((key: string) => {
     console.log('setup', key);

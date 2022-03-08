@@ -9,10 +9,11 @@ import {
   EditableTitle,
   Loading,
   Menu,
+  Modal,
   PageHeader,
 } from '@prisme.ai/design-system';
 import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Modal, notification } from 'antd';
+import { notification } from 'antd';
 import useLocalizedText from '../utils/useLocalizedText';
 import PageBuilder from '../components/PageBuilder';
 import { useWorkspaces } from '../components/WorkspacesProvider';

@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
-import { Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { SearchInput, Title } from '@prisme.ai/design-system';
+import { Modal, SearchInput, Title } from '@prisme.ai/design-system';
 import { useApps } from '../components/AppsProvider';
 import IconApps from '../icons/icon-apps.svgr';
 import { useWorkspaces } from '../components/WorkspacesProvider';

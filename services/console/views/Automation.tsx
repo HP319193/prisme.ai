@@ -12,11 +12,12 @@ import {
   EditableTitle,
   Loading,
   Menu,
+  Modal,
   PageHeader,
   Space,
 } from '@prisme.ai/design-system';
 import { DeleteOutlined } from '@ant-design/icons';
-import { Modal, notification } from 'antd';
+import { notification } from 'antd';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');

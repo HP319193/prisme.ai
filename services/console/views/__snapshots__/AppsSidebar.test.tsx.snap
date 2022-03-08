@@ -1,28 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should render 1`] = `
-<div
-  className="flex grow h-full flex-col"
->
+Array [
   <div
-    className="flex justify-between items-center mb-6"
+    className="flex flex-col h-[70vh] overflow-hidden"
   >
-    apps.link
-    apps.create.label
-  </div>
-  <div
-    className="flex flex-1 justify-center items-center flex-col"
-  >
-    <SvgrURL
-      className="text-gray-200"
-      height={100}
-      width={100}
+    <div
+      className="flex items-center justify-between"
     />
     <div
-      className="mt-4 text-gray"
+      className="flex flex-wrap flex-row align-start justify-center mt-5 overflow-y-auto"
+    />
+  </div>,
+  <div
+    className="flex grow h-full flex-col"
+  >
+    <div
+      className="flex justify-between items-center mb-6"
     >
-      apps.soon
+      apps.link
+      apps.install
     </div>
-  </div>
-</div>
+    <div
+      className="flex flex-1 justify-center items-center flex-col"
+    >
+      <SvgrURL
+        className="text-gray-200"
+        height={100}
+        width={100}
+      />
+      <div
+        className="mt-4 text-gray"
+      >
+        apps.soon
+      </div>
+    </div>
+    <div
+      className="flex flex-1 h-[80vh] overflow-auto"
+    />
+  </div>,
+]
 `;

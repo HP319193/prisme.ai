@@ -4,36 +4,28 @@ exports[`should render 1`] = `
 Array [
   <div
     className="p-2 flex h-full"
-  >
-    <div
-      className="flex flex-1 align-center justify-center "
-    />
-  </div>,
+  />,
   <div
-    className="flex border border-gray-200 border-solid grow h-full rounded p-4"
+    className="flex grow h-full flex-col"
   >
     <div
-      className="flex grow h-full flex-col"
+      className="flex justify-between items-center mb-6"
     >
+      automations.link
+      automations.create.label
+    </div>
+    <div
+      className="flex flex-1 justify-center items-center flex-col"
+    >
+      <SvgrURL
+        className="text-gray-200"
+        height={100}
+        width={100}
+      />
       <div
-        className="flex justify-between items-center mb-6"
+        className="mt-4 text-gray"
       >
-        automations.link
         automations.create.label
-      </div>
-      <div
-        className="flex flex-1 justify-center items-center flex-col"
-      >
-        <SvgrURL
-          className="text-gray-200"
-          height={100}
-          width={100}
-        />
-        <div
-          className="mt-4 text-gray"
-        >
-          automations.create.label
-        </div>
       </div>
     </div>
   </div>,

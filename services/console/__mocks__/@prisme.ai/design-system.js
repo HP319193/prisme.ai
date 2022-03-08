@@ -93,3 +93,11 @@ export function TagEditable({ children = null }) {
 export function EditableTitle({ children = null }) {
   return children;
 }
+
+export function Loading({ children = null }) {
+  return children;
+}
+
+export function Modal({ children = null }) {
+  return children;
+}

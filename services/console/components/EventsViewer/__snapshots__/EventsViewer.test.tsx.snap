@@ -139,9 +139,5 @@ exports[`should render events 1`] = `
 exports[`should render loading 1`] = `
 <div
   className="p-2 flex h-full"
->
-  <div
-    className="flex flex-1 align-center justify-center "
-  />
-</div>
+/>
 `;

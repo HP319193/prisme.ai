@@ -9,10 +9,11 @@ import {
   Button,
   Dropdown,
   Menu,
+  Modal,
   Popover,
   Space,
 } from '@prisme.ai/design-system';
-import { Modal, notification } from 'antd';
+import { notification } from 'antd';
 import { useWorkspaces } from './WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useTranslation } from 'next-i18next';
