@@ -667,35 +667,7 @@ declare namespace Prismeai {
          */
         slug?: string;
     }
-    export type AppInstanceDetailedList = {
-        /**
-         * App unique id
-         */
-        appSlug: string;
-        /**
-         * App name
-         */
-        appName?: string;
-        /**
-         * Defaults to the latest known app version
-         */
-        appVersion?: string;
-        config?: Config;
-        /**
-         * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
-         */
-        slug?: string;
-        widgets: {
-            slug: string;
-            name?: LocalizedText;
-            description?: LocalizedText;
-        }[];
-        automations: {
-            slug: string;
-            name: LocalizedText;
-            description?: LocalizedText;
-        }[];
-    }[];
+    export type AppInstanceDetailedList = DetailedAppInstance[];
     export interface AppInstancePatch {
         /**
          * App unique id
@@ -968,6 +940,35 @@ declare namespace Prismeai {
         payload: {
             workspaceId: string;
         };
+    }
+    export interface DetailedAppInstance {
+        /**
+         * App unique id
+         */
+        appSlug: string;
+        /**
+         * App name
+         */
+        appName?: string;
+        /**
+         * Defaults to the latest known app version
+         */
+        appVersion?: string;
+        config?: Config;
+        /**
+         * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+         */
+        slug?: string;
+        widgets: {
+            slug: string;
+            name?: LocalizedText;
+            description?: LocalizedText;
+        }[];
+        automations: {
+            slug: string;
+            name: LocalizedText;
+            description?: LocalizedText;
+        }[];
     }
     export interface Emit {
         emit: {
@@ -1787,6 +1788,23 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.DSUL;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace GetAppInstance {
+        namespace Parameters {
+            export type Slug = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            slug: Parameters.Slug;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.AppInstance;
+            export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;

@@ -121,12 +121,31 @@ export default function init(
     res.send(appInstances);
   }
 
+  async function getAppHandler(
+    {
+      context,
+      params: { workspaceId, slug },
+      accessManager,
+      broker,
+    }: Request<PrismeaiAPI.GetAppInstance.PathParameters, any, any, any>,
+    res: Response<PrismeaiAPI.GetAppInstance.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const appInstance = await workspaces.appInstances.get(workspaceId, slug);
+    res.send(appInstance);
+  }
+
   const app = express.Router({ mergeParams: true });
 
   app.post(`/`, asyncRoute(installAppHandler));
   app.get(`/`, asyncRoute(listAppInstancesHandler));
   app.delete(`/:slug`, asyncRoute(uninstallAppHandler));
   app.patch(`/:slug`, asyncRoute(configureAppHandler));
+  app.get(`/:slug`, asyncRoute(getAppHandler));
 
   return app;
 }

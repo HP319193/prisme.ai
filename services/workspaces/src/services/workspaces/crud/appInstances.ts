@@ -26,7 +26,7 @@ class AppInstances {
 
   list = async (
     workspaceId: string
-  ): Promise<(Prismeai.AppInstance & { slug: string })[]> => {
+  ): Promise<(Prismeai.DetailedAppInstance & { slug: string })[]> => {
     const workspace = await this.workspaces.getWorkspace(workspaceId);
     const appInstances = Object.entries(workspace.imports || {}).reduce(
       (appInstances, [slug, appInstance]) => {
@@ -50,6 +50,30 @@ class AppInstances {
         };
       })
     );
+  };
+
+  get = async (
+    workspaceId: string,
+    slug: string
+  ): Promise<Prismeai.DetailedAppInstance & { slug: string }> => {
+    const workspace = await this.workspaces.getWorkspace(workspaceId);
+    const appInstance = (workspace.imports || {})[slug];
+    if (!appInstance) {
+      throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
+    }
+    const availableSlugs = await this.apps.getAppDetails(
+      appInstance.appSlug,
+      appInstance.appVersion
+    );
+    return {
+      ...appInstance,
+      ...availableSlugs,
+      config: {
+        value: appInstance.config?.value || {},
+        ...availableSlugs?.config,
+      },
+      slug,
+    };
   };
 
   private validateSlug(workspace: Prismeai.Workspace, slug: string) {
