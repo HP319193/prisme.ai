@@ -15,6 +15,7 @@ import { notification } from 'antd';
 import Storage from '../../utils/Storage';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import usePages from '../../components/PagesProvider/context';
+import { useApps } from '../../components/AppsProvider';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -60,10 +61,14 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
 
   const { fetchPages } = usePages();
-
   useEffect(() => {
     fetchPages(`${id}`);
   }, [fetchPages, id]);
+
+  const { fetchImports } = useApps();
+  useEffect(() => {
+    fetchImports(`${id}`);
+  }, [fetchImports, id]);
 
   const displaySource = useCallback((v: boolean) => {
     setSourceDisplayed(v);

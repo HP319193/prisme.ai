@@ -53,13 +53,13 @@ export const PagesSidebar = () => {
     const generateName = () =>
       `${defaultName}${version ? ` (${version})` : ''}`;
     const names = currentPages.map(({ name }) => {
-      return typeof name === 'string' ? name : name[language];
+      return localize(name);
     });
     while (names.find((name) => name === generateName())) {
       version++;
     }
     return generateName();
-  }, [currentPages, language, t]);
+  }, [currentPages, localize, t]);
 
   const create = useCallback(async () => {
     setCreating(true);

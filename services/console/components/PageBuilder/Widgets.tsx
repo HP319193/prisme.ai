@@ -1,4 +1,5 @@
 import { Fragment, useMemo } from 'react';
+import { useApps } from '../AppsProvider';
 import AddWidget from './AddWidget';
 import { usePageBuilder } from './context';
 import Widget from './Widget';

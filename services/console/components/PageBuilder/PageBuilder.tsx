@@ -5,6 +5,8 @@ import { context, PageBuilderContext } from './context';
 import WidgetForm from './Panel/WidgetForm';
 import Widgets from './Widgets';
 import { nanoid } from 'nanoid';
+import { useApps } from '../AppsProvider';
+import { get } from 'lodash';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -12,6 +14,7 @@ interface PageBuilderProps {
 }
 export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const { workspace } = useWorkspace();
+  const { imports } = useApps();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
   const [widgetEditing, setWidgetEditing] = useState<
     | {
@@ -24,7 +27,13 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     setPanelIsOpen(false);
   }, []);
 
-  const widgets = useMemo(() => workspace.widgets, [workspace.widgets]);
+  const widgets = useMemo(() => {
+    const widgets = (imports.get(workspace.id) || []).flatMap(
+      ({ widgets }) => widgets
+    );
+    console.log('widgets', widgets);
+    return workspace.widgets;
+  }, [imports, workspace.id, workspace.widgets]);
 
   // Generate keys
   (value.widgets || []).forEach((widget: { key?: string }) => {

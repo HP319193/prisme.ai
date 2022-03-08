@@ -6,6 +6,13 @@ import { removedUndefinedProperties } from './utils';
 
 type UserPermissions = Prismeai.UserPermissions;
 
+interface PageWithMetadata extends Prismeai.Page {
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+  updatedBy: string;
+}
+
 export class Api extends Fetcher {
   async me() {
     return await this.get('/me');
@@ -98,7 +105,9 @@ export class Api extends Fetcher {
   async getPages(
     workspaceId: NonNullable<Workspace['id']>
   ): Promise<Prismeai.Page[]> {
-    const pages = await this.get(`/workspaces/${workspaceId}/pages`);
+    const pages = await this.get<PageWithMetadata[]>(
+      `/workspaces/${workspaceId}/pages`
+    );
     return pages.map(
       ({ createdAt, createdBy, updatedAt, updatedBy, ...page }: any) => page
     );
@@ -114,7 +123,10 @@ export class Api extends Fetcher {
       updatedAt,
       updatedBy,
       ...newPage
-    } = await this.post(`/workspaces/${workspaceId}/pages`, page);
+    } = await this.post<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages`,
+      page
+    );
     return newPage;
   }
 
@@ -128,7 +140,10 @@ export class Api extends Fetcher {
       updatedAt,
       updatedBy,
       ...updatedPage
-    } = await this.patch(`/workspaces/${workspaceId}/pages/${page.id}`, page);
+    } = await this.patch<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages/${page.id}`,
+      page
+    );
     return updatedPage;
   }
 
@@ -248,6 +263,12 @@ export class Api extends Fetcher {
 
   async listAppInstances(
     workspaceId: PrismeaiAPI.ListAppInstances.PathParameters['workspaceId']
+  ): Promise<PrismeaiAPI.ListAppInstances.Responses.$200> {
+    return await this.get(`/workspaces/${workspaceId}/apps`);
+  }
+
+  async fetchImports(
+    workspaceId: PrismeaiAPI.ListAppInstances.Parameters.WorkspaceId
   ): Promise<PrismeaiAPI.ListAppInstances.Responses.$200> {
     return await this.get(`/workspaces/${workspaceId}/apps`);
   }

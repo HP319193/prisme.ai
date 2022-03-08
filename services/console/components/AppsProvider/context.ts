@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-
+import api from '../../utils/api';
 export interface AppsContext {
   apps: Map<string, Prismeai.App>;
   appInstances: Map<string, Prismeai.AppInstance[]>;
