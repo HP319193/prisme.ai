@@ -30,17 +30,17 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const widgets: PageBuilderContext['widgets'] = useMemo(() => {
     return [
       {
+        slug: '',
         appName: '',
-        appSlug: '',
         widgets: Object.keys(workspace.widgets || {}).map((slug) => ({
           slug,
           ...workspace.widgets[slug],
         })),
       },
       ...(imports.get(workspace.id) || []).map(
-        ({ appName = '', appSlug = '', widgets = [] }) => ({
+        ({ slug = '', appName = '', widgets = [] }) => ({
+          slug,
           appName,
-          appSlug,
           widgets: widgets.map(
             ({ slug, description = slug, name = slug, url = '' }) => ({
               slug,
@@ -52,7 +52,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
         })
       ),
     ];
-  }, [imports, workspace.id, workspace.name, workspace.widgets]);
+  }, [imports, workspace.id, workspace.widgets]);
 
   // Generate keys
   (value.widgets || []).forEach((widget: { key?: string }) => {

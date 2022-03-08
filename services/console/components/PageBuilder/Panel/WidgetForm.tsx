@@ -21,15 +21,15 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
   const localize = useLocalizedText();
   const [search, setSearch] = useState('');
   const filteredWidgets = useMemo(() => {
-    return widgets.flatMap(({ appName, appSlug, widgets }) => {
-      const searchIn = `${appName} ${appSlug} ${widgets.map(
+    return widgets.flatMap(({ appName, slug, widgets }) => {
+      const searchIn = `${appName} ${slug} ${widgets.map(
         ({ name, description, slug }) =>
           `${slug} ${localize(name)} ${localize(description)}`
       )}`.toLowerCase();
       if (!searchIn.match(search.toLowerCase())) return [];
       return {
         appName,
-        appSlug,
+        slug,
         widgets: widgets.filter(({ name, description, slug }) =>
           `${localize(name)} ${localize(description)} ${slug}`
             .toLowerCase()
@@ -66,7 +66,7 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
         className="mb-6"
       />
       <Space direction="vertical" className="flex grow overflow-x-auto">
-        {filteredWidgets.map(({ appName, appSlug, widgets }) => (
+        {filteredWidgets.map(({ appName, slug: appSlug, widgets }) => (
           <Space key={appName} direction="vertical" className="!flex flex-1">
             {appName && (
               <Space>

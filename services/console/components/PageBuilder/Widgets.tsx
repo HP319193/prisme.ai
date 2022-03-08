@@ -1,4 +1,3 @@
-import { Title } from '@prisme.ai/design-system';
 import { Fragment, useMemo } from 'react';
 import useLocalizedText from '../../utils/useLocalizedText';
 import AddWidget from './AddWidget';
@@ -13,8 +12,7 @@ export const Widgets = () => {
       const parts = name.split(/\./);
       parts.reverse();
       const [widgetName, appName = ''] = parts;
-      const app = widgets.find(({ appSlug }) => appSlug === appName);
-      console.log(app);
+      const app = widgets.find(({ slug }) => slug === appName);
       if (!app) return [];
       const widget = app.widgets.find(({ slug }) => slug === widgetName);
       if (!widget) return [];
