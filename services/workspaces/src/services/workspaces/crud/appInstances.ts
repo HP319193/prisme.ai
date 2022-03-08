@@ -40,7 +40,14 @@ class AppInstances {
           cur.appSlug,
           cur.appVersion
         );
-        return { ...cur, ...availableSlugs };
+        return {
+          ...cur,
+          ...availableSlugs,
+          config: {
+            value: cur.config?.value || {},
+            ...availableSlugs?.config,
+          },
+        };
       })
     );
   };

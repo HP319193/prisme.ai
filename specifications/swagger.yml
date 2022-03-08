@@ -1982,6 +1982,8 @@ components:
         - automations
         - widgets
       properties:
+        config:
+          $ref: "#/components/schemas/Config"
         widgets:
           type: array
           items:

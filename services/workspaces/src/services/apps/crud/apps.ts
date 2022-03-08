@@ -129,6 +129,7 @@ class Apps {
   ): Promise<Prismeai.AppDetails> => {
     const app = await this.storage.get(appId, version || 'current');
     return {
+      config: app.config,
       widgets: Object.entries(app.widgets || {}).map(
         ([slug, { name, description }]) => ({
           slug,
@@ -136,9 +137,9 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(
-        app.automations || {}
-      ).map(([slug, { name, description }]) => ({ slug, name, description })),
+      automations: Object.entries(app.automations || {}).map(
+        ([slug, { name, description }]) => ({ slug, name, description })
+      ),
     };
   };
 

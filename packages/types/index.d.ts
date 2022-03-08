@@ -627,6 +627,7 @@ declare namespace Prismeai {
         slug?: string;
     }
     export interface AppDetails {
+        config?: Config;
         widgets: {
             slug: string;
             name?: LocalizedText;
