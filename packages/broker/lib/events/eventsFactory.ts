@@ -18,7 +18,7 @@ export enum NativeTopic {
 
 export type Topic = NativeTopic | string;
 export interface EventSource {
-  appId?: string;
+  appSlug?: string;
   appInstanceSlug?: string;
   userId?: string;
   workspaceId?: string;
@@ -59,7 +59,7 @@ export class EventsFactory {
     eventType: string,
     payload: object,
     partialSource: Partial<EventSource> &
-      Pick<EventSource, 'appId' | 'appInstanceSlug'>,
+      Pick<EventSource, 'appSlug' | 'appInstanceSlug'>,
     { validateEvent }: CreateEventOptions
   ): Omit<PrismeEvent, 'id'> {
     if (!EVENT_NAMES_REGEXP.test(eventType)) {

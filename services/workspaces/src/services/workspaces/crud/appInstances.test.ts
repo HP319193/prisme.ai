@@ -36,11 +36,11 @@ const workspaces = {
     id: ALREADY_INSTALLED_WORKSPACE_ID,
     imports: {
       [APP_INSTANCE_SLUG]: {
-        appId: APP_ID,
+        appSlug: APP_ID,
         version: '1',
       },
       anotherSlugThatWillConflict: {
-        appId: APP_ID,
+        appSlug: APP_ID,
         version: '0',
       },
     },
@@ -65,18 +65,18 @@ const getMockedWorkspaces = () => ({
   save: jest.fn(),
 });
 const getMockedApps = () => ({
-  getApp: jest.fn((appId, version?: string) => {
-    if (!(appId in apps)) {
+  getApp: jest.fn((appSlug, version?: string) => {
+    if (!(appSlug in apps)) {
       throw new Error();
     }
     if (
       version &&
       version !== 'current' &&
-      !(apps[appId].versions || []).includes(version)
+      !(apps[appSlug].versions || []).includes(version)
     ) {
       throw new Error();
     }
-    return apps[appId];
+    return apps[appSlug];
   }),
 });
 const getMockedBroker = () => ({ send: jest.fn() });
@@ -94,7 +94,7 @@ describe('installApp', () => {
     );
 
     const appInstance = {
-      appId: APP_ID,
+      appSlug: APP_ID,
     };
     const result = await appInstancesCrud.installApp(EMPTY_WORKSPACE_ID, {
       ...appInstance,
@@ -106,10 +106,14 @@ describe('installApp', () => {
       ...workspaces[EMPTY_WORKSPACE_ID],
       imports: { [APP_INSTANCE_SLUG]: appInstance },
     });
-    expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.app.installed', {
-      appInstance,
-      slug: APP_INSTANCE_SLUG,
-    });
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.app.installed',
+      {
+        appInstance,
+        slug: APP_INSTANCE_SLUG,
+      },
+      expect.anything()
+    );
   });
 
   it('installApp should throw MissingFieldError if slug not defined', async () => {
@@ -124,7 +128,7 @@ describe('installApp', () => {
     );
 
     expect(
-      appInstancesCrud.installApp(EMPTY_WORKSPACE_ID, { appId: '' } as any)
+      appInstancesCrud.installApp(EMPTY_WORKSPACE_ID, { appSlug: '' } as any)
     ).rejects.toThrow(MissingFieldError);
   });
 
@@ -141,7 +145,7 @@ describe('installApp', () => {
 
     expect(
       appInstancesCrud.installApp(ALREADY_INSTALLED_WORKSPACE_ID, {
-        appId: '',
+        appSlug: '',
         slug: APP_INSTANCE_SLUG,
       } as any)
     ).rejects.toThrow(AlreadyUsedError);
@@ -160,7 +164,7 @@ describe('installApp', () => {
 
     expect(
       appInstancesCrud.installApp(EMPTY_WORKSPACE_ID, {
-        appId: 'someUnknownAppId',
+        appSlug: 'someUnknownAppId',
         slug: APP_INSTANCE_SLUG,
       } as any)
     ).rejects.toThrow(ObjectNotFoundError);
@@ -179,7 +183,7 @@ describe('installApp', () => {
 
     expect(
       appInstancesCrud.installApp(EMPTY_WORKSPACE_ID, {
-        appId: APP_ID,
+        appSlug: APP_ID,
         appVersion: 'someUnknownVersion',
         slug: APP_INSTANCE_SLUG,
       } as any)
@@ -200,7 +204,7 @@ describe('configureApp', () => {
     );
 
     const appInstance = {
-      appId: APP_ID,
+      appSlug: APP_ID,
       version: '2',
     };
     const result = await appInstancesCrud.configureApp(
@@ -222,7 +226,8 @@ describe('configureApp', () => {
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
       'workspaces.app.configured',
-      { appInstance, slug: APP_INSTANCE_SLUG }
+      { appInstance, slug: APP_INSTANCE_SLUG },
+      expect.anything()
     );
   });
 
@@ -238,7 +243,7 @@ describe('configureApp', () => {
     );
 
     const appInstance = {
-      appId: APP_ID,
+      appSlug: APP_ID,
       version: '2',
       slug: APP_INSTANCE_SLUG,
     };
@@ -263,7 +268,7 @@ describe('configureApp', () => {
     );
 
     const appInstance = {
-      appId: APP_ID,
+      appSlug: APP_ID,
       version: '2',
       slug: 'anotherSlugThatWillConflict',
     };
@@ -307,7 +312,8 @@ describe('uninstallApp', () => {
 
     expect(mockedBroker.send).toHaveBeenCalledWith(
       'workspaces.app.uninstalled',
-      { appInstance: removedOne, slug: APP_INSTANCE_SLUG }
+      { appInstance: removedOne, slug: APP_INSTANCE_SLUG },
+      expect.anything()
     );
   });
 });
