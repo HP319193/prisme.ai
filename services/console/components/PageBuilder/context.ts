@@ -4,14 +4,14 @@ export interface PageBuilderContext {
   page: Omit<Prismeai.Page, 'widgets'> & {
     widgets: (Prismeai.Page['widgets'][number] & { key?: string })[];
   };
-  widgets: Record<string, Prismeai.Widget>;
+  widgets: { label: string; widgets: Record<string, Prismeai.Widget> }[];
   addWidget: (position: number) => void;
   removeWidget: (key: string) => void;
 }
 
 export const context = createContext<PageBuilderContext>({
   page: {} as Prismeai.Page,
-  widgets: {},
+  widgets: [],
   addWidget() {},
   removeWidget() {},
 });

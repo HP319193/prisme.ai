@@ -28,12 +28,29 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   }, []);
 
   const widgets = useMemo(() => {
-    const widgets = (imports.get(workspace.id) || []).flatMap(
-      ({ widgets }) => widgets
-    );
-    console.log('widgets', widgets);
-    return workspace.widgets;
-  }, [imports, workspace.id, workspace.widgets]);
+    return [
+      {
+        label: workspace.name,
+        widgets: workspace.widgets,
+      },
+      ...(imports.get(workspace.id) || []).map(
+        ({ appName, appSlug, widgets }) => ({
+          label: appName,
+          widgets: widgets.reduce(
+            (prev, { slug, name = slug, description = slug, url }) => ({
+              ...prev,
+              [`${appSlug}.${slug}`]: {
+                name,
+                description,
+                url,
+              },
+            }),
+            {}
+          ),
+        })
+      ),
+    ];
+  }, [imports, workspace.id, workspace.name, workspace.widgets]);
 
   // Generate keys
   (value.widgets || []).forEach((widget: { key?: string }) => {
