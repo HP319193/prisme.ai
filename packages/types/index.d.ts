@@ -1810,6 +1810,23 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace GetAppInstanceConfig {
+        namespace Parameters {
+            export type Slug = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            slug: Parameters.Slug;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.AppInstance;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace GetAutomation {
         namespace Parameters {
             export type AutomationSlug = string;
@@ -2132,6 +2149,24 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.ApiKey;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace UpdateAppInstanceConfig {
+        namespace Parameters {
+            export type Slug = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            slug: Parameters.Slug;
+        }
+        export type RequestBody = any;
+        namespace Responses {
+            export type $200 = Prismeai.AppInstance;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
