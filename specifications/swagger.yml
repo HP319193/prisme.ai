@@ -1721,10 +1721,7 @@ components:
           type: string
           description: "Defaults to the latest known app version"
         config:
-          type: object
-          example:
-            foo: 'bar'
-          description: 'Inside the app, these config values will be accessible with $.Config.foo'
+          $ref: "#/components/schemas/Config"
         slug:
           type: string
           description: Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
@@ -1758,7 +1755,7 @@ components:
           additionalProperties:
             $ref: "#/components/schemas/AppInstance"
         config:
-          $ref: "#/components/schemas/DSULConfig"
+          $ref: "#/components/schemas/Config"
         automations:
           type: object
           additionalProperties:
@@ -1770,13 +1767,16 @@ components:
         id:
           type: string
 
-    DSULConfig:
-      additionalProperties:
-        allOf:
-          - $ref: "#/components/schemas/TypedArgument"
-          - type: object
-            properties:
-              value: {}
+    Config:
+      type: object
+      additionalProperties: false
+      properties:
+        schema:
+          additionalProperties:
+            $ref: "#/components/schemas/TypedArgument"
+        widget:
+          type: string
+        value: {}
 
     When:
       type: object
@@ -2528,7 +2528,8 @@ components:
           required:
             - config
           properties:
-            config: {}
+            config:
+              $ref: '#/components/schemas/Config'
 
     UninstalledAppInstance:
       type: object
