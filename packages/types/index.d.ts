@@ -307,16 +307,7 @@ declare namespace Prismeai {
          * Defaults to the latest known app version
          */
         appVersion?: string;
-        /**
-         * Inside the app, these config values will be accessible with $.Config.foo
-         * example:
-         * {
-         *   "foo": "bar"
-         * }
-         */
-        config?: {
-            [key: string]: any;
-        };
+        config?: Config;
         /**
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
@@ -561,16 +552,7 @@ declare namespace Prismeai {
          * Defaults to the latest known app version
          */
         appVersion?: string;
-        /**
-         * Inside the app, these config values will be accessible with $.Config.foo
-         * example:
-         * {
-         *   "foo": "bar"
-         * }
-         */
-        config?: {
-            [key: string]: any;
-        };
+        config?: Config;
         /**
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
@@ -589,16 +571,7 @@ declare namespace Prismeai {
          * Defaults to the latest known app version
          */
         appVersion?: string;
-        /**
-         * Inside the app, these config values will be accessible with $.Config.foo
-         * example:
-         * {
-         *   "foo": "bar"
-         * }
-         */
-        config?: {
-            [key: string]: any;
-        };
+        config?: Config;
         /**
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
@@ -677,6 +650,13 @@ declare namespace Prismeai {
         [name: string]: InstructionList;
         default: InstructionList;
     }
+    export interface Config {
+        schema?: {
+            [name: string]: TypedArgument;
+        };
+        widget?: string;
+        value?: any;
+    }
     export interface ConfiguredAppInstance {
         /**
          * example:
@@ -699,7 +679,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.configured";
         payload: {
-            config: any;
+            config: Config;
         };
     }
     export interface Contact {
@@ -764,20 +744,13 @@ declare namespace Prismeai {
         imports?: {
             [name: string]: AppInstance;
         };
-        config?: DSULConfig;
+        config?: Config;
         automations?: {
             [name: string]: /* Full description at (TODO swagger url) */ Automation;
         };
         createdAt?: string;
         updatedAt?: string;
         id?: string;
-    }
-    export interface DSULConfig {
-        [name: string]: {
-            type?: "string" | "number" | "object";
-            description?: LocalizedText;
-            value?: any;
-        };
     }
     export interface Delete {
         delete: {

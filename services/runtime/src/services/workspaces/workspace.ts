@@ -54,18 +54,6 @@ export class Workspace {
     this.appContext = appContext;
   }
 
-  private parseTypedConfig(typedConfig: Prismeai.DSULConfig) {
-    return Object.entries(typedConfig).reduce(
-      (config, [k, { type, value }]) => {
-        return {
-          ...config,
-          [k]: value,
-        };
-      },
-      {}
-    );
-  }
-
   static async create(
     dsul: Prismeai.Workspace,
     apps: Apps,
@@ -82,7 +70,7 @@ export class Workspace {
 
   async update(workspace: Prismeai.Workspace) {
     this.name = workspace.name;
-    this.config = this.parseTypedConfig(workspace.config || {});
+    this.config = workspace.config?.value || {};
 
     const { automations = {}, imports = {} } = workspace;
     this.triggers = Object.keys(automations).reduce(
@@ -148,7 +136,7 @@ export class Workspace {
           : slug,
         parentAppSlugs: (this.appContext?.parentAppSlugs || []).concat(appSlug),
       },
-      appInstance.config || {}
+      appInstance.config?.value || {}
     );
     return this.imports[slug];
   }
