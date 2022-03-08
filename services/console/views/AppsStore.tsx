@@ -75,7 +75,7 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
             placeholder={t('apps.search')}
           />
         </div>
-        <div className="flex flex-wrap flex-row align-start justify-start mt-5 overflow-y-auto">
+        <div className="flex flex-wrap flex-row align-start justify-center mt-5 overflow-y-auto">
           {filteredApps.map(({ slug, name, description, photo }) => (
             <div
               key={slug}
