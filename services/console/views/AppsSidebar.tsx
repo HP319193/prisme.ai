@@ -1,13 +1,12 @@
 import {
   Button,
-  ListItem,
+  Collapse,
   SearchInput,
   Space,
   Title,
 } from '@prisme.ai/design-system';
 import { Modal } from 'antd';
 import { useTranslation } from 'next-i18next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import Block from '../components/Block';
@@ -39,19 +38,16 @@ export const AppsSidebar = () => {
     });
   }, [filter, imports]);
 
-  const setup = useCallback(
-    (key: string) => {
-      console.log('setup', key);
-      // const app = imports[key];
-      // const { setup } = app.widgets || {};
-      // if (!setup) return;
-      // setModal({
-      //   title: key,
-      //   url: setup.url,
-      // });
-    },
-    [imports]
-  );
+  const setup = useCallback((key: string) => {
+    console.log('setup', key);
+    // const app = imports[key];
+    // const { setup } = app.widgets || {};
+    // if (!setup) return;
+    // setModal({
+    //   title: key,
+    //   url: setup.url,
+    // });
+  }, []);
 
   const isEmpty = Object.keys(imports).length === 0;
 
@@ -85,32 +81,12 @@ export const AppsSidebar = () => {
             />
             <Space direction="vertical" className="flex grow overflow-x-auto">
               {/*{filteredApps.map(({ appName, slug, widgets }) => (*/}
-              {filteredApps.map(({ appName, slug }) => (
-                <Link
+              {filteredApps.map(({ slug, config }) => (
+                <Collapse
+                  light
                   key={slug}
-                  href={`/workspaces/${workspaceId}/apps/${slug}`}
-                >
-                  <a>
-                    <ListItem
-                      title={slug}
-                      content={appName}
-                      rightContent={
-                        undefined
-                        // widgets.setup ? (
-                        //   <button
-                        //     onClick={(e) => {
-                        //       e.preventDefault();
-                        //       setup(slug);
-                        //     }}
-                        //     className="hover:text-accent"
-                        //   >
-                        //     <SettingOutlined />
-                        //   </button>
-                        // ) : undefined
-                      }
-                    />
-                  </a>
-                </Link>
+                  items={[{ label: `${slug}`, content: <div>test</div> }]}
+                />
               ))}
             </Space>
           </>
