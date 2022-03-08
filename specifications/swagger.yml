@@ -2150,6 +2150,8 @@ components:
             properties:
               slug:
                 type: string
+              url:
+                type: string
               name:
                 $ref: '#/components/schemas/LocalizedText'
               description:

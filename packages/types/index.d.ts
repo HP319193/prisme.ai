@@ -630,6 +630,7 @@ declare namespace Prismeai {
         config?: Config;
         widgets: {
             slug: string;
+            url?: string;
             name?: LocalizedText;
             description?: LocalizedText;
         }[];
@@ -961,6 +962,7 @@ declare namespace Prismeai {
         slug?: string;
         widgets: {
             slug: string;
+            url?: string;
             name?: LocalizedText;
             description?: LocalizedText;
         }[];

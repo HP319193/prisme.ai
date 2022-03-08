@@ -131,8 +131,9 @@ class Apps {
     return {
       config: app.config,
       widgets: Object.entries(app.widgets || {}).map(
-        ([slug, { name, description }]) => ({
+        ([slug, { name, description, url }]) => ({
           slug,
+          url,
           name,
           description,
         })
@@ -156,9 +157,9 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(
-        app.automations || {}
-      ).map(([slug, { name, description }]) => ({ slug, name, description })),
+      automations: Object.entries(app.automations || {}).map(
+        ([slug, { name, description }]) => ({ slug, name, description })
+      ),
     };
   };
 
