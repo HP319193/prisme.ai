@@ -52,11 +52,11 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   const onAppClick = useCallback(
     async (id: string, name: string) => {
       await installApp(workspaceId, {
-        appId: id,
+        appSlug: id,
         appName: name,
       });
     },
-    [installApp]
+    [installApp, workspaceId]
   );
 
   return (

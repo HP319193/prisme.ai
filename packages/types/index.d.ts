@@ -626,6 +626,18 @@ declare namespace Prismeai {
         photo?: string;
         slug?: string;
     }
+    export interface AppDetails {
+        widgets: {
+            slug: string;
+            name?: LocalizedText;
+            description?: LocalizedText;
+        }[];
+        automations: {
+            slug: string;
+            name: LocalizedText;
+            description?: LocalizedText;
+        }[];
+    }
     export interface AppEvent {
         /**
          * Event name must be prefixed with apps.appName
@@ -751,18 +763,6 @@ declare namespace Prismeai {
     export interface AutomationResult {
         slug: string;
         output?: AnyValue;
-    }
-    export interface AvailableSlugs {
-        widgets: {
-            slug: string;
-            name?: LocalizedText;
-            description?: LocalizedText;
-        }[];
-        automations: {
-            slug: string;
-            name: LocalizedText;
-            description?: LocalizedText;
-        }[];
     }
     export interface BadParametersError {
         /**

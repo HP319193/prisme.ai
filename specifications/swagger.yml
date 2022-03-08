@@ -1976,7 +1976,7 @@ components:
           type: string
           description: Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
 
-    AvailableSlugs:
+    AppDetails:
       type: object
       required:
         - automations
@@ -2019,7 +2019,7 @@ components:
       items:
         allOf:
           - $ref: '#/components/schemas/AppInstance'
-          - $ref: '#/components/schemas/AvailableSlugs'
+          - $ref: '#/components/schemas/AppDetails'
 
     Workspace:
       $ref: '#/components/schemas/DSUL'

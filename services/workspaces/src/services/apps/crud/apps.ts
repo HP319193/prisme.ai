@@ -123,10 +123,10 @@ class Apps {
     return await this.storage.get(appSlug, version || 'current');
   };
 
-  getAvailableSlugs = async (
+  getAppDetails = async (
     appId: string,
     version?: string
-  ): Promise<Prismeai.AvailableSlugs> => {
+  ): Promise<Prismeai.AppDetails> => {
     const app = await this.storage.get(appId, version || 'current');
     return {
       widgets: Object.entries(app.widgets || {}).map(

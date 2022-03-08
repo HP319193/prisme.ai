@@ -36,8 +36,8 @@ class AppInstances {
     );
     return await Promise.all(
       appInstances.map(async (cur: Prismeai.AppInstance) => {
-        const availableSlugs = await this.apps.getAvailableSlugs(
-          cur.appId,
+        const availableSlugs = await this.apps.getAppDetails(
+          cur.appSlug,
           cur.appVersion
         );
         return { ...cur, ...availableSlugs };
