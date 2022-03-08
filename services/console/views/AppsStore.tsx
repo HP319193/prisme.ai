@@ -14,12 +14,12 @@ interface AppStoreProps {
 }
 
 interface FilteredApps extends Prismeai.App {
-  id: string;
+  slug: string;
   name: string;
 }
 
 const isFilteredApp = (app: Prismeai.App): app is FilteredApps => {
-  return !!app.id && !!app.name;
+  return !!app.slug && !!app.name;
 };
 
 const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
@@ -67,7 +67,7 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
       title={<div>{t('apps.title')}</div>}
       width="80vw"
     >
-      <div className="h-[70vh]">
+      <div className="flex flex-col h-[70vh] overflow-hidden">
         <div className="flex items-center justify-between">
           <SearchInput
             className="!min-w-[20rem]"
@@ -75,12 +75,12 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
             placeholder={t('apps.search')}
           />
         </div>
-        <div className="flex flex-wrap flex-row align-start justify-start mt-5">
-          {filteredApps.map(({ id, name, description, photo }) => (
+        <div className="flex flex-wrap flex-row align-start justify-start mt-5 overflow-y-auto">
+          {filteredApps.map(({ slug, name, description, photo }) => (
             <div
-              key={id}
-              className="flex flex-row w-[25rem] align-center items-center border rounded border-gray-200 p-4 space-x-5 h-[9rem] cursor-pointer hover:bg-blue-200"
-              onClick={() => onAppClick(id, name)}
+              key={slug}
+              className="flex flex-row w-[25rem] align-center items-center border rounded border-gray-200 p-4 m-2 h-[9rem] cursor-pointer hover:bg-blue-200"
+              onClick={() => onAppClick(slug, name)}
             >
               <div className="flex align-center justify-center w-[6rem]">
                 {photo ? (

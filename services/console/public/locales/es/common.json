@@ -8,5 +8,6 @@
     "signin": "Conexión"
   },
   "save": "Registro",
-  "add": "agregar"
+  "add": "agregar",
+  "cancel": "cancelar"
 }

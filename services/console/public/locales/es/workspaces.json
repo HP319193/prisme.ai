@@ -139,7 +139,16 @@
     "soon": "Las Apps estarán disponibles en breve.",
     "install": "Instalar una aplicación",
     "search": "Buscar una aplicación...",
-    "title": "Apps Store"
+    "title": "Apps Store",
+    "publish": {
+      "menuLabel": "Publicar como aplicación",
+      "confirm": {
+        "title": "Publicar el espacio de trabajo como una aplicación",
+        "ok": "Publicar",
+        "toast": "Aplicación publicada",
+        "content": "Las automatizaciones, las páginas, el widget y la configuración del espacio de trabajo serán accesibles para cualquier persona que instale su aplicación. Elimine cualquier clave de API privada que desee mantener privada primero".
+      }
+    }
   },
   "pages": {
     "link": "Páginas",

@@ -216,6 +216,12 @@ export class Api extends Fetcher {
   ): Promise<PrismeaiAPI.UninstallAppInstance.Responses.$200> {
     return await this.post(`/workspaces/${workspaceId}/apps/${slug}`);
   }
+
+  async publishApp(
+    body: PrismeaiAPI.PublishApp.RequestBody
+  ): Promise<PrismeaiAPI.PublishApp.Responses.$200> {
+    return await this.post(`/apps`, body);
+  }
 }
 
 export default new Api('https://api.eda.prisme.ai');

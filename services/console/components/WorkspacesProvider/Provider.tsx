@@ -5,6 +5,7 @@ import { Workspace } from '@prisme.ai/sdk';
 import { useUser } from '../UserProvider';
 import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { removedUndefinedProperties } from '../../utils/objects';
 
 export const WorkspacesProvider: FC = ({ children }) => {
   const { t } = useTranslation();
@@ -389,6 +390,13 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [t, workspaces]
   );
 
+  const publishApp: WorkspacesContext['publishApp'] = useCallback(
+    async (body) => {
+      return api.publishApp(removedUndefinedProperties(body));
+    },
+    []
+  );
+
   return (
     <context.Provider
       value={{
@@ -408,6 +416,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         installApp,
         updateApp,
         uninstallApp,
+        publishApp,
       }}
     >
       {children}

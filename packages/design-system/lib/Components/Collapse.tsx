@@ -5,7 +5,7 @@ const { Panel } = AntdCollapse;
 
 export type CollapseItem = {
   label: string | ReactElement;
-  content: ReactElement | string;
+  content: ReactElement | string | null;
   className?: string;
   onClick?: () => void;
 };

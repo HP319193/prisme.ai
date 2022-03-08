@@ -139,7 +139,16 @@
     "soon": "Les Apps seront bientôt disponibles.",
     "install": "Installer une App",
     "search": "Chercher une app...",
-    "title": "Apps Store"
+    "title": "Apps Store",
+    "publish": {
+      "menuLabel": "Publier en tant qu'App",
+      "confirm": {
+        "title": "Publier le workspace tant qu'App",
+        "ok": "Publier",
+        "toast": "Application publiée",
+        "content": "Les automations, pages, widget et la configuration du workspace seront accessible par quiconque installe votre App. Supprimez toute clé privée d'API avant de publier."
+      }
+    }
   },
   "pages": {
     "link": "Pages",

@@ -1,15 +1,16 @@
-import { Dispatch, useCallback, useMemo, SetStateAction } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
+  AppstoreAddOutlined,
   CodeOutlined,
-  ShareAltOutlined,
   DeleteOutlined,
+  ShareAltOutlined,
 } from '@ant-design/icons';
 import {
-  Menu,
-  Dropdown,
-  Space,
   Button,
+  Dropdown,
+  Menu,
   Popover,
+  Space,
 } from '@prisme.ai/design-system';
 import { Modal, notification } from 'antd';
 import { useWorkspaces } from './WorkspacesProvider';
@@ -21,8 +22,10 @@ import ShareWorkspace from './Share/ShareWorkspace';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
-  const { remove } = useWorkspaces();
+  const { t: commonT } = useTranslation('common');
+  const { remove, publishApp } = useWorkspaces();
   const {
+    workspace,
     workspace: { id, name: currentWorkspace },
     displaySource,
     sourceDisplayed,
@@ -50,6 +53,49 @@ const HeaderWorkspace = () => {
     });
   }, [currentWorkspace, id, push, remove, t]);
 
+  const confirmPublishApp = useCallback(() => {
+    Modal.confirm({
+      icon: <AppstoreAddOutlined />,
+      title: t('apps.publish.confirm.title', {
+        name: currentWorkspace,
+      }),
+      content: t('apps.publish.confirm.content'),
+      cancelText: commonT('cancel'),
+      okText: t('apps.publish.confirm.ok'),
+      onOk: async () => {
+        try {
+          await publishApp({
+            workspaceId: workspace.id,
+            name: workspace.name,
+            description: workspace.description,
+            photo: workspace.photo,
+            slug: workspace.name,
+          });
+          notification.success({
+            message: t('apps.publish.confirm.toast'),
+            placement: 'bottomRight',
+          });
+        } catch (e) {
+          notification.error({
+            message: t('api', { errorName: e }),
+            placement: 'bottomRight',
+          });
+          console.error(e);
+          return null;
+        }
+      },
+    });
+  }, [
+    commonT,
+    currentWorkspace,
+    publishApp,
+    t,
+    workspace.description,
+    workspace.id,
+    workspace.name,
+    workspace.photo,
+  ]);
+
   const workspacesMenu = useMemo(
     () => (
       <Menu
@@ -66,6 +112,15 @@ const HeaderWorkspace = () => {
           {
             label: (
               <div className="flex items-center">
+                <AppstoreAddOutlined className="mr-2" />
+                {t(`apps.publish.menuLabel`)}
+              </div>
+            ),
+            key: 'publish',
+          },
+          {
+            label: (
+              <div className="flex items-center">
                 <DeleteOutlined className="mr-2" />
                 {t(`workspace.delete.label`)}
               </div>
@@ -78,6 +133,9 @@ const HeaderWorkspace = () => {
           switch (item.key) {
             case 'source':
               displaySource(!sourceDisplayed);
+              break;
+            case 'publish':
+              confirmPublishApp();
               break;
             case 'delete':
               confirmDelete();

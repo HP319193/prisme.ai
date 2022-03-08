@@ -1,10 +1,4 @@
-import {
-  Button,
-  Collapse,
-  SearchInput,
-  Space,
-  Title,
-} from '@prisme.ai/design-system';
+import { Button, SearchInput, Space, Title } from '@prisme.ai/design-system';
 import { Modal } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
@@ -13,6 +7,7 @@ import Block from '../components/Block';
 import IconApps from '../icons/icon-apps.svgr';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import AppsStore from './AppsStore';
+import AppsSidebarItem from './AppsSidebarItem';
 
 export const AppsSidebar = () => {
   const { t } = useTranslation('workspaces');
@@ -81,12 +76,8 @@ export const AppsSidebar = () => {
             />
             <Space direction="vertical" className="flex grow overflow-x-auto">
               {/*{filteredApps.map(({ appName, slug, widgets }) => (*/}
-              {filteredApps.map(({ slug, config }) => (
-                <Collapse
-                  light
-                  key={slug}
-                  items={[{ label: `${slug}`, content: <div>test</div> }]}
-                />
+              {filteredApps.map((appInstance: Prismeai.AppInstance) => (
+                <AppsSidebarItem key={appInstance.appSlug} {...appInstance} />
               ))}
             </Space>
           </>

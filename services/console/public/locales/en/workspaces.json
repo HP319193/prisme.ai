@@ -139,7 +139,16 @@
     "soon": "Apps will be available soon.",
     "install": "Install an App",
     "search": "Search for an app...",
-    "title": "Apps Store"
+    "title": "Apps Store",
+    "publish": {
+      "menuLabel": "Publish as an app",
+      "confirm": {
+        "title": "Publish the workspace as an app",
+        "ok": "Publish",
+        "toast": "App Published",
+        "content": "The workspace's automations, pages, widget and config will be accessible to anyone who install your app. Remove any private API key you want to keep private first."
+      }
+    }
   },
   "pages": {
     "link": "Pages",

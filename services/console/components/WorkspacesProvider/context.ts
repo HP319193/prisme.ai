@@ -55,6 +55,8 @@ export interface WorkspacesContext {
     workspaceId: PrismeaiAPI.UninstallAppInstance.PathParameters['workspaceId'],
     slug: PrismeaiAPI.UninstallAppInstance.PathParameters['slug']
   ) => Promise<{ id: string } | null>;
+
+  publishApp: (app: PrismeaiAPI.PublishApp.RequestBody) => Promise<any>;
 }
 
 export const workspacesContext = createContext<WorkspacesContext>({
@@ -74,6 +76,7 @@ export const workspacesContext = createContext<WorkspacesContext>({
   installApp: async () => ({} as any),
   updateApp: async () => ({} as any),
   uninstallApp: async () => ({} as any),
+  publishApp: async () => ({} as any),
 });
 
 export const useWorkspaces = () => useContext(workspacesContext);
