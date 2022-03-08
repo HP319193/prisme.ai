@@ -42,9 +42,9 @@ export class Workspaces extends Storage {
         if (event.type === EventType.PublishedApp) {
           const publishedApp = (event as any as Prismeai.PublishedApp).payload
             .app;
-          if (publishedApp.id && publishedApp.id in this.watchedApps) {
-            await this.apps.fetchApp(publishedApp.id, 'current');
-            const updateWorkspaceIds = this.watchedApps[publishedApp.id];
+          if (publishedApp.slug && publishedApp.slug in this.watchedApps) {
+            await this.apps.fetchApp(publishedApp.slug, 'current');
+            const updateWorkspaceIds = this.watchedApps[publishedApp.slug];
             updateWorkspaceIds.map((workspaceId) =>
               this.fetchWorkspace(workspaceId)
             );
@@ -132,7 +132,7 @@ export class Workspaces extends Storage {
   ) {
     const requiredApps = Object.values(imports || {})
       .filter(({ appVersion }) => !appVersion || appVersion === 'current')
-      .map(({ appId }) => appId);
+      .map(({ appSlug }) => appSlug);
     this.watchedApps = requiredApps.reduce(
       (watchedApps, watchAppId) => ({
         ...watchedApps,

@@ -51,7 +51,7 @@ export default function init(
   async function getAppHandler(
     {
       context,
-      params: { appId },
+      params: { appSlug },
       query: { version },
       accessManager,
       broker,
@@ -68,14 +68,14 @@ export default function init(
       accessManager,
       broker,
     });
-    const result = await apps.getApp(appId, version);
+    const result = await apps.getApp(appSlug, version);
     res.send(result);
   }
 
   async function deleteAppHandler(
     {
       context,
-      params: { appId },
+      params: { appSlug },
       accessManager,
       broker,
     }: Request<PrismeaiAPI.DeleteApp.PathParameters>,
@@ -86,8 +86,8 @@ export default function init(
       accessManager,
       broker,
     });
-    await apps.deleteApp(appId);
-    res.send({ id: appId });
+    await apps.deleteApp(appSlug);
+    res.send({ id: appSlug });
   }
 
   async function listAppsHandler(
@@ -122,8 +122,8 @@ export default function init(
 
   app.post(`/`, asyncRoute(publishAppHandler));
   app.get(`/`, asyncRoute(listAppsHandler));
-  app.delete(`/:appId`, asyncRoute(deleteAppHandler));
-  app.get(`/:appId`, asyncRoute(getAppHandler));
+  app.delete(`/:appSlug`, asyncRoute(deleteAppHandler));
+  app.get(`/:appSlug`, asyncRoute(getAppHandler));
 
   return app;
 }

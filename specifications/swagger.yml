@@ -1335,16 +1335,16 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadParametersError'
 
-  /v2/apps/{appId}:
+  /v2/apps/{appSlug}:
     get:
       description: Fetch an app DSUL
       operationId: getApp
       tags:
         - 'Prisme.ai Workspaces'
       parameters:
-        - name: 'appId'
+        - name: 'appSlug'
           in: 'path'
-          description: 'App id'
+          description: 'App unique id'
           required: true
           schema:
             type: string
@@ -1385,9 +1385,9 @@ paths:
       tags:
         - 'Prisme.ai Workspaces'
       parameters:
-        - name: 'appId'
+        - name: 'appSlug'
           in: 'path'
-          description: 'App id'
+          description: 'App unique id'
           required: true
           schema:
             type: string
@@ -1703,17 +1703,17 @@ components:
           $ref: "#/components/schemas/LocalizedText"
         photo:
           type: string
-        id:
+        slug:
           type: string
 
     AppInstance:
       type: object
       required:
-        - appId
+        - appSlug
       properties: &APP_INSTANCE_PROPERTIES
-        appId:
+        appSlug:
           type: string
-          description: "App id"
+          description: "App unique id"
         appName:
           type: string
           description: "App name"
@@ -2167,7 +2167,7 @@ components:
             - correlationId
             - host
           properties:
-            appId:
+            appSlug:
               type: string
             appInstanceSlug:
               type: string
@@ -2449,9 +2449,9 @@ components:
         payload:
           type: object
           required:
-            - appId
+            - appSlug
           properties:
-            appId:
+            appSlug:
               type: string
 
     ########################## Workspaces events ##########################

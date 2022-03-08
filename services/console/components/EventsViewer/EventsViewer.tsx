@@ -33,7 +33,7 @@ export const EventsViewer = () => {
               }`}
             >
               <div className="font-bold">
-                {event.source?.app || event.source?.host?.service}
+                {event.source?.appSlug || event.source?.host?.service}
               </div>
               <div className="text-gray font-thin ml-4">
                 {dateFormat(event.createdAt, {

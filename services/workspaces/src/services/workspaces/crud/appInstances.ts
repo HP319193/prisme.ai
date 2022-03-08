@@ -50,14 +50,14 @@ class AppInstances {
     }
   }
 
-  private async validateApp(appId: string, appVersion?: string) {
+  private async validateApp(appSlug: string, appVersion?: string) {
     try {
-      await this.apps.getApp(appId, appVersion);
+      await this.apps.getApp(appSlug, appVersion);
     } catch {
       throw new ObjectNotFoundError(
         appVersion
-          ? `Unknown app '${appId}' or version '${appVersion}'`
-          : `Unknown app '${appId}'`
+          ? `Unknown app '${appSlug}' or version '${appVersion}'`
+          : `Unknown app '${appSlug}'`
       );
     }
   }
@@ -75,7 +75,7 @@ class AppInstances {
         : workspaceId;
 
     this.validateSlug(workspace, appInstance.slug);
-    await this.validateApp(appInstance.appId, appInstance.appVersion);
+    await this.validateApp(appInstance.appSlug, appInstance.appVersion);
 
     const { slug, ...appInstanceWithoutSlug } = appInstance;
     const updatedWorkspace = {
@@ -94,7 +94,7 @@ class AppInstances {
       EventType.InstalledApp,
       { appInstance: appInstanceWithoutSlug, slug },
       {
-        appId: appInstance.appId,
+        appSlug: appInstance.appSlug,
         appInstanceSlug: slug,
       }
     );
@@ -116,7 +116,7 @@ class AppInstances {
       throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
     }
 
-    delete currentAppInstance.slug;
+    delete (<any>currentAppInstance).slug;
     const { slug: renamedSlug, ...patchWithoutSlug } = appInstancePatch;
     const appInstance = {
       ...currentAppInstance,
@@ -140,7 +140,7 @@ class AppInstances {
       updatedWorkspace.imports[renamedSlug] = appInstance;
     }
 
-    await this.validateApp(appInstance.appId, appInstance.appVersion);
+    await this.validateApp(appInstance.appSlug, appInstance.appVersion);
 
     // Persist only if we've been given a workspaceId string, otherwise simply return the updated workspace
     if (typeof workspaceId === 'string') {
@@ -151,7 +151,7 @@ class AppInstances {
       EventType.ConfiguredApp,
       { appInstance, slug: renamedSlug || slug, oldSlug },
       {
-        appId: appInstance.appId,
+        appSlug: appInstance.appSlug,
         appInstanceSlug: renamedSlug || slug,
       }
     );
@@ -188,7 +188,7 @@ class AppInstances {
       EventType.UninstalledApp,
       { appInstance, slug },
       {
-        appId: appInstance.appId,
+        appSlug: appInstance.appSlug,
         appInstanceSlug: slug,
       }
     );

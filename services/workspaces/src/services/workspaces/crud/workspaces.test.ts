@@ -23,14 +23,14 @@ const workspaces = {
     name: 'initWorkspace',
     imports: {
       unchangedAppInstance: {
-        appId: 'someAppId',
+        appSlug: 'someAppId',
       },
       willBeChangedAppInstance: {
-        appId: 'someAppId',
+        appSlug: 'someAppId',
         appVersion: 'current',
       },
       willBeRemovedAppInstance: {
-        appId: 'someAppId',
+        appSlug: 'someAppId',
       },
     },
     automations: {
@@ -133,7 +133,7 @@ it('updateWorkspace should emit specific events corresponding to each updated pa
     willBeRemovedAppInstance,
   } = workspaces[INIT_WORKSPACE_ID].imports;
   const createdAppInstance = {
-    appId: 'someAppId',
+    appSlug: 'someAppId',
   };
   willBeChangedAppInstance = {
     ...willBeChangedAppInstance,
@@ -176,21 +176,33 @@ it('updateWorkspace should emit specific events corresponding to each updated pa
     workspace,
   });
 
-  expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.app.configured', {
-    appInstance: willBeChangedAppInstance,
-    slug: 'willBeChangedAppInstance',
-    oldSlug: undefined,
-  });
+  expect(mockedBroker.send).toHaveBeenCalledWith(
+    'workspaces.app.configured',
+    {
+      appInstance: willBeChangedAppInstance,
+      slug: 'willBeChangedAppInstance',
+      oldSlug: undefined,
+    },
+    expect.anything()
+  );
 
-  expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.app.installed', {
-    appInstance: createdAppInstance,
-    slug: 'createdAppInstance',
-  });
+  expect(mockedBroker.send).toHaveBeenCalledWith(
+    'workspaces.app.installed',
+    {
+      appInstance: createdAppInstance,
+      slug: 'createdAppInstance',
+    },
+    expect.anything()
+  );
 
-  expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.app.uninstalled', {
-    appInstance: willBeRemovedAppInstance,
-    slug: 'willBeRemovedAppInstance',
-  });
+  expect(mockedBroker.send).toHaveBeenCalledWith(
+    'workspaces.app.uninstalled',
+    {
+      appInstance: willBeRemovedAppInstance,
+      slug: 'willBeRemovedAppInstance',
+    },
+    expect.anything()
+  );
 
   expect(mockedBroker.send).toHaveBeenCalledWith(
     'workspaces.automation.updated',

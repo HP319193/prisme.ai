@@ -38,9 +38,9 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
         value: formatDate(event.createdAt, { format: 'yyyy-MM-dd hh:mm' }),
       },
       {
-        key: 'source.appId',
-        name: 'source.appId',
-        value: event.source.appId,
+        key: 'source.appSlug',
+        name: 'source.appSlug',
+        value: event.source.appSlug,
       },
       {
         key: 'source.appInstanceSlug',
