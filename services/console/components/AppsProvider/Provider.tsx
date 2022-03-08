@@ -7,6 +7,9 @@ import api from '../../utils/api';
 
 export const AppsProvider: FC = ({ children }) => {
   const [apps, setApps] = useState<AppsContext['apps']>(new Map());
+  const [appInstances, setAppInstances] = useState<AppsContext['appInstances']>(
+    new Map()
+  );
   const { t } = useTranslation('errors');
 
   const getApps: AppsContext['getApps'] = useCallback(
@@ -34,11 +37,34 @@ export const AppsProvider: FC = ({ children }) => {
     [apps, t]
   );
 
+  const getAppInstances: AppsContext['getAppInstances'] = useCallback(
+    async (workspaceId) => {
+      const fetchedAppInstanceForWorkspace = await api.listAppInstances(
+        workspaceId
+      );
+
+      const fetchAppInstanceArray = Object.values(
+        fetchedAppInstanceForWorkspace
+      );
+
+      if (!isEqual(fetchAppInstanceArray, appInstances.get(workspaceId))) {
+        const newAppInstances = new Map(appInstances);
+        newAppInstances.set(workspaceId, fetchAppInstanceArray);
+        setAppInstances(newAppInstances);
+      }
+
+      return fetchAppInstanceArray;
+    },
+    [appInstances]
+  );
+
   return (
     <context.Provider
       value={{
         apps,
+        appInstances,
         getApps,
+        getAppInstances,
       }}
     >
       {children}

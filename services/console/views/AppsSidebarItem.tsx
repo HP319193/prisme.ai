@@ -7,14 +7,16 @@ const AppsSidebarItem = ({
   config: { schema, value, widget } = {},
 }: Prismeai.AppInstance) => {
   const configComponent: ReactElement | null = useMemo(() => {
-    if (widget) {
-      // return widget;
-      return <div>here will be widget</div>;
-    }
     if (schema) {
+      console.log('schema', schema);
       return <Form schema={schema} onSubmit={() => {}} initialValues={value} />;
     }
     return null;
+    // if (widget) {
+    //   // return widget;
+    //   return <div>here will be widget</div>;
+    // }
+    // return null;
   }, [schema, value, widget]);
 
   return (

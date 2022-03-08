@@ -214,13 +214,19 @@ export class Api extends Fetcher {
     workspaceId: PrismeaiAPI.UninstallAppInstance.PathParameters['workspaceId'],
     slug: PrismeaiAPI.ConfigureAppInstance.PathParameters['slug']
   ): Promise<PrismeaiAPI.UninstallAppInstance.Responses.$200> {
-    return await this.post(`/workspaces/${workspaceId}/apps/${slug}`);
+    return await this.delete(`/workspaces/${workspaceId}/apps/${slug}`);
   }
 
   async publishApp(
     body: PrismeaiAPI.PublishApp.RequestBody
   ): Promise<PrismeaiAPI.PublishApp.Responses.$200> {
     return await this.post(`/apps`, body);
+  }
+
+  async listAppInstances(
+    workspaceId: PrismeaiAPI.ListAppInstances.PathParameters['workspaceId']
+  ): Promise<PrismeaiAPI.ListAppInstances.Responses.$200> {
+    return await this.get(`/workspaces/${workspaceId}/apps`);
   }
 }
 

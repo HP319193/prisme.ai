@@ -2,12 +2,13 @@ import { Button, SearchInput, Space, Title } from '@prisme.ai/design-system';
 import { Modal } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Block from '../components/Block';
 import IconApps from '../icons/icon-apps.svgr';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import AppsStore from './AppsStore';
 import AppsSidebarItem from './AppsSidebarItem';
+import { useApps } from '../components/AppsProvider';
 
 export const AppsSidebar = () => {
   const { t } = useTranslation('workspaces');
@@ -15,8 +16,12 @@ export const AppsSidebar = () => {
 
   const {
     workspace,
-    workspace: { id: workspaceId, imports = {} },
+    workspace: { id: workspaceId },
   } = useWorkspace();
+
+  const { appInstances, getAppInstances } = useApps();
+  const workspaceAppInstances = appInstances.get(workspaceId);
+
   const [appStoreVisible, setAppStoreVisible] = useState(false);
 
   const [filter, setFilter] = useState('');
@@ -24,14 +29,22 @@ export const AppsSidebar = () => {
     null
   );
 
+  useEffect(() => {
+    getAppInstances(workspaceId);
+  }, [getAppInstances, workspaceId]);
+
   const filteredApps = useMemo(() => {
-    return Object.keys(imports).flatMap((key) => {
-      const { appName } = imports[key];
-      return `${key} ${appName}`.toLowerCase().match(filter.toLowerCase())
-        ? { ...imports[key], slug: key }
+    if (!workspaceAppInstances) return [];
+    return workspaceAppInstances.flatMap((appInstance) => {
+      return `${appInstance.slug} ${appInstance.appName}`
+        .toLowerCase()
+        .match(filter.toLowerCase())
+        ? { ...appInstance, slug: appInstance.slug }
         : [];
     });
-  }, [filter, imports]);
+  }, [filter, workspaceAppInstances]);
+
+  console.log('appInstnaces', workspaceAppInstances);
 
   const setup = useCallback((key: string) => {
     console.log('setup', key);
@@ -44,7 +57,7 @@ export const AppsSidebar = () => {
     // });
   }, []);
 
-  const isEmpty = Object.keys(imports).length === 0;
+  const isEmpty = (workspaceAppInstances || []).length === 0;
 
   return (
     <>
