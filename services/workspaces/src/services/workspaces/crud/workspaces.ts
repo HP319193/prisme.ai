@@ -53,6 +53,17 @@ class Workspaces {
 
     this.diffHandlers = [
       {
+        path: 'config',
+        handler: async (allDiffs: DSULDiff[]) => {
+          this.broker.send<Prismeai.ConfiguredWorkspace['payload']>(
+            EventType.ConfiguredWorkspace,
+            {
+              config: allDiffs[0].value,
+            }
+          );
+        },
+      },
+      {
         path: 'automations.*',
         handler: async (allDiffs: DSULDiff[]) => {
           for (let {
@@ -246,8 +257,9 @@ class Workspaces {
           };
         }
       );
-
-      await handler(dsulDiffs);
+      if (dsulDiffs.length) {
+        await handler(dsulDiffs);
+      }
     }
     return diffs;
   }

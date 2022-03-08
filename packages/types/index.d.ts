@@ -692,6 +692,16 @@ declare namespace Prismeai {
             oldSlug?: string;
         };
     }
+    export interface ConfiguredWorkspace {
+        /**
+         * example:
+         * workspaces.configured
+         */
+        type: "workspaces.configured";
+        payload: {
+            config: any;
+        };
+    }
     export interface Contact {
         /**
          * Name
@@ -754,15 +764,20 @@ declare namespace Prismeai {
         imports?: {
             [name: string]: AppInstance;
         };
-        config?: {
-            [name: string]: TypedArgument;
-        };
+        config?: DSULConfig;
         automations?: {
             [name: string]: /* Full description at (TODO swagger url) */ Automation;
         };
         createdAt?: string;
         updatedAt?: string;
         id?: string;
+    }
+    export interface DSULConfig {
+        [name: string]: {
+            type?: "string" | "number" | "object";
+            description?: LocalizedText;
+            value?: any;
+        };
     }
     export interface Delete {
         delete: {

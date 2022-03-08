@@ -19,11 +19,18 @@ export enum EventType {
   UpdatedContexts = 'runtime.contexts.updated',
 
   CreatedWorkspace = 'workspaces.created',
+  ConfiguredWorkspace = 'workspaces.configured',
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
   CreatedAutomation = 'workspaces.automation.created',
   UpdatedAutomation = 'workspaces.automation.updated',
   DeletedAutomation = 'workspaces.automation.deleted',
+
+  InstalledApp = 'workspaces.app.installed',
+  UninstalledApp = 'workspaces.app.uninstalled',
+  ConfiguredApp = 'workspaces.app.configured',
+
+  PublishedApp = 'apps.published',
 }
 export class CallbackContext {
   public logger: Logger;

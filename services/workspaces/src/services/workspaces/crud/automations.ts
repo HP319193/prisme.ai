@@ -2,7 +2,12 @@ import { remove as removeDiacritics } from 'diacritics';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import Workspaces from './workspaces';
-import { AlreadyUsedError, ObjectNotFoundError } from '../../../errors';
+import {
+  AlreadyUsedError,
+  InvalidSlugError,
+  ObjectNotFoundError,
+} from '../../../errors';
+import { SLUG_VALIDATION_REGEXP } from '../../../../config';
 
 class Automations {
   private broker: Broker;
@@ -42,6 +47,9 @@ class Automations {
         : workspaceId;
     const slug =
       automationSlug || this.generateAutomationSlug(workspace, automation.name);
+    if (!SLUG_VALIDATION_REGEXP.test(slug)) {
+      throw new InvalidSlugError(slug);
+    }
 
     const updatedWorkspace = {
       ...workspace,
@@ -110,6 +118,9 @@ class Automations {
 
     let oldSlug;
     if (automation.slug && automation.slug !== automationSlug) {
+      if (!SLUG_VALIDATION_REGEXP.test(automation.slug)) {
+        throw new InvalidSlugError(automation.slug);
+      }
       if (automation.slug in workspace.automations) {
         throw new AlreadyUsedError(
           `Automation slug '${automation.slug}' is already used by another automation of your workspace !`

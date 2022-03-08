@@ -1,7 +1,7 @@
 import { Broker } from '@prisme.ai/broker';
 import { ObjectNotFoundError } from '../../../../errors';
 import { Logger } from '../../../../logger';
-import { Workspace } from '../../../workspaces';
+import { DetailedAutomation, Workspace } from '../../../workspaces';
 import { ContextsManager } from '../../contexts';
 import { conditions } from './conditions';
 import { emit } from './emit';
@@ -26,10 +26,7 @@ export async function runCustomAutomation(
   ctx: ContextsManager,
   logger: Logger,
   broker: Broker,
-  executeAutomation: (
-    automation: Prismeai.Automation,
-    ctx: any
-  ) => Promise<void>
+  executeAutomation: (automation: DetailedAutomation, ctx: any) => Promise<void>
 ) {
   const automationName = Object.keys(instruction)[0];
   if (!automationName) {
@@ -53,7 +50,7 @@ export async function runCustomAutomation(
   const payload = instruction[automationName] || {};
   const result = await executeAutomation(
     calledAutomation,
-    ctx.child({ payload })
+    ctx.child({ payload, config: calledAutomation.workspace.config })
   );
   if (typeof result !== 'undefined' && (<any>payload).output!!) {
     ctx.set((<any>payload).output, result);
@@ -67,7 +64,7 @@ export async function runInstruction(
   logger: Logger,
   broker: Broker,
   executeAutomation: (
-    automation: Prismeai.Automation,
+    automation: DetailedAutomation,
     context?: any
   ) => Promise<void>
 ) {
@@ -80,7 +77,11 @@ export async function runInstruction(
   const payload = (<any>instruction)[instructionName] as Prismeai.Instruction;
   switch (instructionName) {
     case InstructionType.Emit:
-      result = await emit(<Prismeai.Emit['emit']>payload, broker);
+      result = await emit(
+        <Prismeai.Emit['emit']>payload,
+        broker,
+        workspace.appContext
+      );
       break;
     case InstructionType.Fetch:
       result = await fetch(<Prismeai.Fetch['fetch']>payload, ctx);

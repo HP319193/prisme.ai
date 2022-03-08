@@ -6,6 +6,7 @@ import { ContextsManager } from './contexts';
 import { ObjectNotFoundError, PrismeError } from '../../errors';
 import { EventType } from '../../eda';
 import { executeAutomation } from './automations';
+import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../config';
 
 export default class Runtime {
   private broker: Broker;
@@ -19,23 +20,23 @@ export default class Runtime {
   }
 
   async start() {
-    this.broker.all(async (event, broker, { logger }) => {
-      if (!event.source.workspaceId || !event.source.correlationId) {
-        return true;
-      }
-      if (event.type === EventType.TriggeredWebhook) {
-        // This event is directly handed from routes/webhooks.ts to allow passing back worklow result within http response
-        return true;
-      }
-      if (event.type === EventType.CreatedWorkspace) {
-        // No need to handle this event as DSULStorage might not contain created workspace yet (which whould emit an error)
-        return true;
-      }
-      if (event.type.startsWith('apps.')) {
+    this.broker.on(
+      [
+        RUNTIME_EMITS_BROKER_TOPIC,
+        EventType.ConfiguredWorkspace,
+        EventType.ConfiguredApp,
+        EventType.InstalledApp,
+        EventType.UninstalledApp,
+        EventType.DeletedWorkspace,
+      ],
+      async (event, broker, { logger }) => {
+        if (!event.source.workspaceId || !event.source.correlationId) {
+          return true;
+        }
         await this.processEvent(event, logger, broker);
+        return true;
       }
-      return true;
-    });
+    );
   }
 
   async getContexts(
@@ -80,27 +81,37 @@ export default class Runtime {
       );
 
       return await Promise.all(
-        triggers.map(async (cur: DetailedTrigger) => {
-          const automation = workspace.getAutomation(cur.automationSlug);
+        triggers.map(async (trigger: DetailedTrigger) => {
+          const automation = trigger.workspace.getAutomation(
+            trigger.automationSlug
+          );
           if (!automation) {
             logger.trace(
-              `Did not find any matching automation '${cur.automationSlug}' for trigger '${cur.endpoint})`
+              `Did not find any matching automation '${trigger.automationSlug}' for trigger '${trigger.endpoint})`
             );
             throw new ObjectNotFoundError(`Automation not found`, {
               workspaceId,
-              automation: cur.automationSlug,
+              automation: trigger.automationSlug,
+              ...trigger.workspace.appContext,
             });
           }
           const output = await executeAutomation(
-            workspace,
+            trigger.workspace,
             automation,
-            ctx,
+            ctx.child({
+              config: trigger.workspace.config,
+              resetLocal: false,
+            }),
             logger,
-            broker
+            broker.child(trigger.workspace.appContext || {}, {
+              validateEvents: false,
+              forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+            })
           );
           return {
             output,
-            slug: cur.automationSlug,
+            slug: trigger.automationSlug,
+            ...trigger.workspace.appContext,
           };
         })
       );
@@ -144,8 +155,30 @@ export default class Runtime {
       return parsed;
     }
 
+    const triggers = workspace.getEventTriggers(event);
+    // Simulate workspace.app.uninstalled events when workspace is deleted
+    if (event.type === EventType.DeletedWorkspace) {
+      triggers.push(
+        ...Object.entries(workspace.dsul.imports || {}).flatMap(
+          ([slug, appInstance]) =>
+            workspace.getEventTriggers({
+              ...event,
+              source: {
+                ...event.source,
+                appInstanceSlug: slug,
+              },
+              type: EventType.UninstalledApp,
+              payload: {
+                appInstance,
+                slug,
+              },
+            } as PrismeEvent<Prismeai.UninstalledAppInstance['payload']>)
+        )
+      );
+    }
+
     return {
-      triggers: workspace.getEventTriggers(event.type),
+      triggers,
       payload: event.payload,
     };
   }

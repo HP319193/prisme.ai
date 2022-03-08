@@ -15,6 +15,7 @@ import { Logger, logger } from '../logger';
 export enum EventType {
   Error = 'error',
   CreatedWorkspace = 'workspaces.created',
+  ConfiguredWorkspace = 'workspaces.configured',
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
   InstalledApp = 'workspaces.app.installed',

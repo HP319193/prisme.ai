@@ -1,4 +1,4 @@
-import { BrokerError } from '../errors';
+import { BrokerError, EventValidationError } from '../errors';
 import { uniqueId } from '../utils';
 import { init as initValidator, validate, ValidatorOptions } from './validator';
 
@@ -40,6 +40,14 @@ export interface EventsFactoryOptions {
   validator: ValidatorOptions;
 }
 
+export interface CreateEventOptions {
+  validateEvent: boolean;
+}
+
+// Must be in sync with SLUG_VALIDATION_REGEXP variable inside workspaces config
+// TODO move to a shared utils package
+const EVENT_NAMES_REGEXP = new RegExp('^[a-zA-Z0-9 ._-]*$');
+
 export class EventsFactory {
   public ready: Promise<any>;
 
@@ -51,9 +59,16 @@ export class EventsFactory {
     eventType: string,
     payload: object,
     partialSource: Partial<EventSource> &
-      Pick<EventSource, 'appId' | 'appInstanceSlug'>
+      Pick<EventSource, 'appId' | 'appInstanceSlug'>,
+    { validateEvent }: CreateEventOptions
   ): Omit<PrismeEvent, 'id'> {
-    if (!(payload instanceof Error)) {
+    if (!EVENT_NAMES_REGEXP.test(eventType)) {
+      throw new EventValidationError(
+        `Invalid event name '${eventType}' : only allowed characters are letters, numbers, whitespaces, . _ and -`,
+        { event: eventType }
+      );
+    }
+    if (validateEvent && !(payload instanceof Error)) {
       validate(eventType, payload);
     }
     const data =

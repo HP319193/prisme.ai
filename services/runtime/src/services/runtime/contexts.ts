@@ -39,6 +39,7 @@ export interface Contexts {
   user: UserContext;
   session: Record<string, any>;
   local: LocalContext;
+  config: object;
   [k: string]: object;
 }
 
@@ -47,7 +48,6 @@ export enum ContextType {
   Global = 'global',
   User = 'user',
   Session = 'session',
-  Customs = 'customs',
   Local = 'local',
 }
 
@@ -95,6 +95,7 @@ export class ContextsManager {
     return {
       local: {},
       ...additionalContexts,
+      config: additionalContexts.config || {},
       global: {
         ...(additionalContexts?.global || {}),
         workspaceId: this.workspaceId,
@@ -125,15 +126,11 @@ export class ContextsManager {
     const user = this.userId
       ? await this.cache.getObject<UserContext>(this.cacheKey(ContextType.User))
       : {};
-    const customs = await this.cache.getObject(
-      this.cacheKey(ContextType.Customs)
-    );
     const session = await this.cache.getObject(
       this.cacheKey(ContextType.Session)
     );
 
     this.contexts = this.default({
-      ...(customs || {}),
       global,
       run,
       user,
@@ -143,7 +140,7 @@ export class ContextsManager {
   }
 
   async save(context?: ContextType) {
-    const { global, run, user, local: _, session, ...customs } = this.contexts;
+    const { global, run, user, local: _, session } = this.contexts;
 
     if (!context || context === ContextType.Global) {
       await this.cache.setObject(this.cacheKey(ContextType.Global), global);
@@ -156,9 +153,6 @@ export class ContextsManager {
     if ((!context || context === ContextType.User) && this.userId) {
       await this.cache.setObject(this.cacheKey(ContextType.User), user);
     }
-    if (!context || context === ContextType.Customs) {
-      await this.cache.setObject(this.cacheKey(ContextType.Customs), customs);
-    }
     if (!context || context === ContextType.Session) {
       await this.cache.setObject(this.cacheKey(ContextType.Session), session, {
         ttl: CONTEXT_SESSION_EXPIRE_TIME,
@@ -166,7 +160,7 @@ export class ContextsManager {
     }
   }
 
-  private cacheKey(context: ContextType | string) {
+  private cacheKey(context: Omit<ContextType, ContextType.Local>) {
     if (context === ContextType.User) {
       return `contexts:${this.workspaceId}:user:${this.userId}`;
     }
@@ -180,7 +174,7 @@ export class ContextsManager {
       const sessionId = this.userId || this.correlationId;
       return `contexts:${this.workspaceId}:session:${sessionId}`;
     }
-    return `contexts:${this.workspaceId}:user:${this.userId}:customs`;
+    throw new Error(`Unknown context '${context} inside context store'`);
   }
 
   get global(): GlobalContext {
@@ -196,16 +190,18 @@ export class ContextsManager {
   }
 
   // Reinstantiate a new ContextsManager for a child execution context
-  child(opts: { resetLocal?: boolean; payload?: any } = {}): ContextsManager {
+  child(
+    opts: { resetLocal?: boolean; payload?: any; config?: any } = {}
+  ): ContextsManager {
+    const resetLocal =
+      typeof opts.resetLocal !== 'undefined' ? opts.resetLocal : true;
     const childContexts: Contexts = {
       ...this.contexts,
       // If keeping local context, reinstantiate it to avoid parents context corruption by their children
-      local:
-        typeof opts.resetLocal !== 'undefined'
-          ? opts.resetLocal
-          : true
-          ? opts.payload || {}
-          : { ...this.contexts[ContextType.Local], ...opts.payload },
+      local: resetLocal
+        ? opts.payload || {}
+        : { ...this.contexts[ContextType.Local], ...opts.payload },
+      config: opts.config || this.contexts.config || {},
     };
     const child = Object.assign({}, this, {
       contexts: childContexts,
@@ -265,8 +261,8 @@ export class ContextsManager {
   get publicContexts(): PublicContexts {
     const { run: _, local, ...publicContexts } = this.contexts;
     return {
-      ...publicContexts,
       ...local,
+      ...publicContexts,
     };
   }
 

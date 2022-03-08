@@ -1,17 +1,30 @@
 import { Broker } from '@prisme.ai/broker';
+import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../../config';
 import { InvalidEventError } from '../../../../errors';
+import { AppContext } from '../../../workspaces';
 
 export async function emit(
   { event, payload }: Prismeai.Emit['emit'],
-  broker: Broker
+  broker: Broker,
+  appContext?: AppContext
 ) {
-  if (!event.startsWith('apps.')) {
-    throw new InvalidEventError(
-      "Trying to send an invalid event (only allowed events are 'apps.*.*')",
-      {
-        event: event,
-      }
+  try {
+    return await broker.send(
+      appContext?.appInstanceSlug
+        ? `${appContext?.appInstanceSlug}.${event}`
+        : event,
+      payload || {},
+      appContext,
+      RUNTIME_EMITS_BROKER_TOPIC
     );
+  } catch (error) {
+    if (
+      (error as any)?.message &&
+      (<any>error).message.includes('Invalid event name')
+    ) {
+      throw new InvalidEventError((<any>error).message);
+    } else {
+      throw error;
+    }
   }
-  return await broker.send(event, payload || {});
 }

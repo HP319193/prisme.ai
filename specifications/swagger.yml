@@ -1758,8 +1758,7 @@ components:
           additionalProperties:
             $ref: "#/components/schemas/AppInstance"
         config:
-          additionalProperties:
-            $ref: "#/components/schemas/TypedArgument"
+          $ref: "#/components/schemas/DSULConfig"
         automations:
           type: object
           additionalProperties:
@@ -1770,6 +1769,14 @@ components:
           type: string
         id:
           type: string
+
+    DSULConfig:
+      additionalProperties:
+        allOf:
+          - $ref: "#/components/schemas/TypedArgument"
+          - type: object
+            properties:
+              value: {}
 
     When:
       type: object
@@ -2504,6 +2511,24 @@ components:
           properties:
             workspace:
               $ref: '#/components/schemas/Workspace'
+
+    ConfiguredWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.configured
+          enum:
+            - workspaces.configured
+        payload:
+          type: object
+          required:
+            - config
+          properties:
+            config: {}
 
     UninstalledAppInstance:
       type: object

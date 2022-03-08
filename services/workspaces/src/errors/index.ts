@@ -52,3 +52,12 @@ export class MissingFieldError extends PrismeError {
     super(msg, details);
   }
 }
+
+export class InvalidSlugError extends PrismeError {
+  constructor(slug: string) {
+    super(
+      `Invalid slug '${slug} : only allowed characters are letters, numbers, whitespaces, . _ and -'`,
+      {}
+    );
+  }
+}
