@@ -173,6 +173,7 @@
     },
     "widgets": {
       "add": "Ajouter un widget",
+      "remove": "Supprimer le widget",
       "resize": "Redimensionner l'affichage du widget",
       "search": "Rechercher un widget",
       "empty": "Aucun widget n'est disponible dans cet espace de travail."

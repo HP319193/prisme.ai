@@ -29,16 +29,19 @@ export const Widget = ({ url, id, name }: WidgetProps) => {
           border-graph-border
           bg-white
           border-2
-          rounded"
+          rounded
+          overflow-hidden"
     >
       <div className="flex flex-1 border-graph-border bg-graph-background border-b-2 justify-between p-2">
         {name}
-        <button
-          className={`${isHover ? 'opacity-1' : 'opacity-0'}`}
-          onClick={() => removeWidget(id)}
-        >
-          <CloseCircleOutlined />
-        </button>
+        <Tooltip title={t('pages.widgets.remove')} placement="left">
+          <button
+            className={`${isHover ? 'opacity-1' : 'opacity-0'}`}
+            onClick={() => removeWidget(id)}
+          >
+            <CloseCircleOutlined />
+          </button>
+        </Tooltip>
       </div>
       <Block
         url={url}

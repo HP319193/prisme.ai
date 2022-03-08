@@ -98,26 +98,38 @@ export class Api extends Fetcher {
   async getPages(
     workspaceId: NonNullable<Workspace['id']>
   ): Promise<Prismeai.Page[]> {
-    return await this.get(`/workspaces/${workspaceId}/pages`);
+    const pages = await this.get(`/workspaces/${workspaceId}/pages`);
+    return pages.map(
+      ({ createdAt, createdBy, updatedAt, updatedBy, ...page }: any) => page
+    );
   }
 
   async createPage(
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    return await this.post(`/workspaces/${workspaceId}/pages`, {
-      ...page,
-    });
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...newPage
+    } = await this.post(`/workspaces/${workspaceId}/pages`, page);
+    return newPage;
   }
 
   async updatePage(
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    return await this.patch(
-      `/workspaces/${workspaceId}/pages/${page.id}`,
-      page
-    );
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...updatedPage
+    } = await this.patch(`/workspaces/${workspaceId}/pages/${page.id}`, page);
+    return updatedPage;
   }
 
   async deletePage(
