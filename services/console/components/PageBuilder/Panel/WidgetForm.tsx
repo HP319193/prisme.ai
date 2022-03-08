@@ -1,4 +1,11 @@
-import { Button, ListItem, SearchInput, Text } from '@prisme.ai/design-system';
+import {
+  Button,
+  ListItem,
+  SearchInput,
+  Text,
+  Space,
+  Title,
+} from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo, useState } from 'react';
 import useLocalizedText from '../../../utils/useLocalizedText';
@@ -14,19 +21,22 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
   const localize = useLocalizedText();
   const [search, setSearch] = useState('');
   const filteredWidgets = useMemo(() => {
-    return Object.keys(widgets || {})
-      .map((slug) => ({
-        ...widgets[slug],
-        name: localize(slug),
-        description: localize(widgets[slug].description),
-        slug,
-      }))
-      .filter(({ name, description }) => {
-        const matching = `${name} ${description}`
-          .toLowerCase()
-          .match(search.toLowerCase());
-        return !!matching;
-      });
+    return widgets.flatMap(({ appName, appSlug, widgets }) => {
+      const searchIn = `${appName} ${appSlug} ${widgets.map(
+        ({ name, description, slug }) =>
+          `${slug} ${localize(name)} ${localize(description)}`
+      )}`.toLowerCase();
+      if (!searchIn.match(search.toLowerCase())) return [];
+      return {
+        appName,
+        appSlug,
+        widgets: widgets.filter(({ name, description, slug }) =>
+          `${localize(name)} ${localize(description)} ${slug}`
+            .toLowerCase()
+            .match(search.toLowerCase())
+        ),
+      };
+    });
   }, [localize, search, widgets]);
 
   const isEmpty = !widgets || Object.keys(widgets).length === 0;
@@ -55,18 +65,31 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
         placeholder={t('pages.widgets.search')}
         className="mb-6"
       />
-      {filteredWidgets.map(({ slug, name, description }) => (
-        <Button
-          key={slug}
-          onClick={() => onSubmit(slug)}
-          className="w-full text-left !h-fit !px-0"
-        >
-          <ListItem
-            title={<span className="flex align-left">{name}</span>}
-            content={description}
-          />
-        </Button>
-      ))}
+      <Space direction="vertical" className="flex grow overflow-x-auto">
+        {filteredWidgets.map(({ appName, appSlug, widgets }) => (
+          <Space key={appName} direction="vertical" className="!flex flex-1">
+            {appName && (
+              <Space>
+                <Title level={4}>{appName}</Title>
+              </Space>
+            )}
+            <Space direction="vertical" className="!flex flex-1">
+              {widgets.map(({ slug, name, description }) => (
+                <Button
+                  key={`${appSlug}.${slug}`}
+                  onClick={() => onSubmit(`${appSlug}.${slug}`)}
+                  className="w-full text-left !h-fit"
+                >
+                  <ListItem
+                    title={localize(name)}
+                    content={localize(description)}
+                  />
+                </Button>
+              ))}
+            </Space>
+          </Space>
+        ))}
+      </Space>
     </div>
   );
 };

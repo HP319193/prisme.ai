@@ -4,7 +4,11 @@ export interface PageBuilderContext {
   page: Omit<Prismeai.Page, 'widgets'> & {
     widgets: (Prismeai.Page['widgets'][number] & { key?: string })[];
   };
-  widgets: { label: string; widgets: Record<string, Prismeai.Widget> }[];
+  widgets: {
+    appName: string;
+    appSlug: string;
+    widgets: (Prismeai.Widget & { slug: string })[];
+  }[];
   addWidget: (position: number) => void;
   removeWidget: (key: string) => void;
 }

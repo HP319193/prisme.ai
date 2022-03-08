@@ -27,25 +27,27 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     setPanelIsOpen(false);
   }, []);
 
-  const widgets = useMemo(() => {
+  const widgets: PageBuilderContext['widgets'] = useMemo(() => {
     return [
       {
-        label: workspace.name,
-        widgets: workspace.widgets,
+        appName: '',
+        appSlug: '',
+        widgets: Object.keys(workspace.widgets || {}).map((slug) => ({
+          slug,
+          ...workspace.widgets[slug],
+        })),
       },
       ...(imports.get(workspace.id) || []).map(
-        ({ appName, appSlug, widgets }) => ({
-          label: appName,
-          widgets: widgets.reduce(
-            (prev, { slug, name = slug, description = slug, url }) => ({
-              ...prev,
-              [`${appSlug}.${slug}`]: {
-                name,
-                description,
-                url,
-              },
-            }),
-            {}
+        ({ appName = '', appSlug = '', widgets = [] }) => ({
+          appName,
+          appSlug,
+          widgets: widgets.map(
+            ({ slug, description = slug, name = slug, url = '' }) => ({
+              slug,
+              name,
+              description,
+              url,
+            })
           ),
         })
       ),

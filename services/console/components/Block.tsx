@@ -4,14 +4,16 @@ import * as prismeaiSDK from '@prisme.ai/sdk';
 import { ReactElement, useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 
-// @ts-ignore
-window.__external = window.__external || {
-  React,
-  prismeaiDS,
-  prismeaiSDK,
-};
-// @ts-ignore
-window.__external.React.default = React;
+if (window) {
+  // @ts-ignore
+  window.__external = window.__external || {
+    React,
+    prismeaiDS,
+    prismeaiSDK,
+  };
+  // @ts-ignore
+  window.__external.React.default = React;
+}
 
 interface BlockComponentProps {
   entityId: string;

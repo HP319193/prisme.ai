@@ -12,9 +12,9 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 interface WidgetProps {
   url: string;
   id: string;
-  name: string;
+  title: string | React.ReactNode;
 }
-export const Widget = ({ url, id, name }: WidgetProps) => {
+export const Widget = ({ url, id, title }: WidgetProps) => {
   const { t } = useTranslation('workspaces');
   const { removeWidget } = usePageBuilder();
   const ref = useRef<HTMLDivElement>(null);
@@ -33,7 +33,7 @@ export const Widget = ({ url, id, name }: WidgetProps) => {
           overflow-hidden"
     >
       <div className="flex flex-1 border-graph-border bg-graph-background border-b-2 justify-between p-2">
-        {name}
+        {title}
         <Tooltip title={t('pages.widgets.remove')} placement="left">
           <button
             className={`${isHover ? 'opacity-1' : 'opacity-0'}`}
