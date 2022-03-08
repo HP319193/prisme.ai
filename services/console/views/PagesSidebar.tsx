@@ -1,9 +1,9 @@
 import {
   Button,
-  SearchInput,
-  Title,
-  Space,
   ListItem,
+  SearchInput,
+  Space,
+  Title,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
@@ -71,7 +71,7 @@ export const PagesSidebar = () => {
       });
 
       if (createdPage) {
-        await push(`/workspaces/${workspaceId}/pages/${createdPage.slug}`);
+        await push(`/workspaces/${workspaceId}/pages/${createdPage.id}`);
       }
     } catch (e) {}
     setCreating(false);

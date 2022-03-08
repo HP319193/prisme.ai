@@ -18,6 +18,7 @@ export const AppsSidebar = () => {
   const { t } = useTranslation('workspaces');
 
   const {
+    workspace,
     workspace: { id: workspaceId },
   } = useWorkspace();
 
@@ -32,8 +33,8 @@ export const AppsSidebar = () => {
   );
 
   useEffect(() => {
-    getAppInstances(workspaceId);
-  }, [getAppInstances, workspaceId]);
+    getAppInstances(workspace.id);
+  }, [getAppInstances, workspace]);
 
   const filteredApps = useMemo(() => {
     if (!workspaceAppInstances) return [];

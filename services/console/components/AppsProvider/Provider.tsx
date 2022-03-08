@@ -17,7 +17,7 @@ export const AppsProvider: FC = ({ children }) => {
       try {
         const fetchedApps = await api.getApps(query, page);
         const appMapUpdate: Map<string, Prismeai.App> = fetchedApps.reduce(
-          (newMap, app) => newMap.set(app.id, app),
+          (newMap, app) => newMap.set(app.slug, app),
           new Map()
         );
         if (!isEqual(appMapUpdate, apps)) {

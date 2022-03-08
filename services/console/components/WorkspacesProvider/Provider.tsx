@@ -198,7 +198,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         'workspaces',
         workspaceId
       );
-      return userPermissions;
+      return userPermissions.result;
     }, []);
 
   const createPage: WorkspacesContext['createPage'] = useCallback(
@@ -270,7 +270,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
 
         // Generate app instance slug
         let version = 0;
-        const slug = () => `${body.appName}${version ? ` (${version})` : ''}`;
+        const slug = () => `${body.appName}${version ? ` ${version}` : ''}`;
         while (
           Object.keys(currentWorkspace.imports || {}).find(
             (appInstanceSlug) => appInstanceSlug === slug()
