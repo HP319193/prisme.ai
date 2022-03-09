@@ -10,6 +10,9 @@ exports[`should render 1`] = `
   <form
     onSubmit={[Function]}
   >
+    <div>
+      automations.instruction.description
+    </div>
     <div
       className="mb-5 "
     >
