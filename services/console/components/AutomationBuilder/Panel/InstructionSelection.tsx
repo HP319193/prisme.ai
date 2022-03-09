@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { Button } from '@prisme.ai/design-system';
 import { FC, useMemo, useState } from 'react';
 import { useAutomationBuilder } from '../context';
+import { truncate } from '../../../utils/strings';
+import { Tooltip } from 'antd';
 
 export interface InstructionSelectionProps {
   onSubmit: (key: string) => void;
@@ -38,7 +40,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
       )
       .filter(([, , list]) => list.length);
   }, [instructionsSchemas, search]);
-
+  console.log(filteredInstructions);
   return (
     <div className="flex grow h-full flex-col overflow-auto">
       <SearchInput
@@ -64,7 +66,30 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
                   onClick={() => onSubmit(name)}
                   className="w-full text-left !h-fit"
                 >
-                  <ListItem title={name} /*content={description}*/ />
+                  <ListItem
+                    title={t('automations.instruction.label', {
+                      context: name,
+                    })}
+                    content={
+                      <Tooltip
+                        title={t('automations.instruction.description', {
+                          context: name,
+                          default: description,
+                        })}
+                      >
+                        <div className="text-xs">
+                          {truncate(
+                            t('automations.instruction.description', {
+                              context: name,
+                              default: description,
+                            }),
+                            30,
+                            '…'
+                          )}
+                        </div>
+                      </Tooltip>
+                    }
+                  />
                 </Button>
               ))}
             </Space>
