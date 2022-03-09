@@ -13,6 +13,24 @@ const checkLocalStorage = () => {
 
 const IS_LOCAL_STORAGE_AVAILABLE = checkLocalStorage();
 
+const hiddenLS: {
+  getItem: typeof localStorage.getItem;
+  setItem: typeof localStorage.setItem;
+  removeItem: typeof localStorage.removeItem;
+} = {
+  getItem() {
+    return null;
+  },
+  setItem() {},
+  removeItem() {},
+};
+if (IS_LOCAL_STORAGE_AVAILABLE) {
+  Object.defineProperty(window, 'localStorage', {
+    value: sessionStorage,
+    configurable: true,
+  });
+}
+
 export const Storage = {
   get: (k: string) => {
     if (IS_LOCAL_STORAGE_AVAILABLE) {

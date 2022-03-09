@@ -18,6 +18,9 @@ export { default as ListItem } from './Components/ListItem';
 export { default as Input } from './Components/Input';
 export { default as TagEditable } from './Components/TagEditable';
 export { default as EditableTitle } from './Components/EditableTitle';
+export { default as EditableText } from './Components/EditableText';
+export { default as Loading } from './Components/Loading';
 export { default as Popover } from './Components/Popover';
+export { default as SidePanel } from './Components/SidePanel';
 
-export { Row, Col, Space, Avatar, Divider, Table } from 'antd';
+export { Row, Col, Space, Avatar, Divider, Table, Checkbox, Modal } from 'antd';

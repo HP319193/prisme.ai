@@ -137,15 +137,53 @@
   "apps": {
     "link": "Apps",
     "soon": "Les Apps seront bientôt disponibles.",
-    "create": {
-      "label": "Créer une nouvelle App"
+    "install": "Installer une App",
+    "search": "Chercher une app...",
+    "title": "Apps Store",
+    "publish": {
+      "menuLabel": "Publier en tant qu'App",
+      "confirm": {
+        "title": "Publier le workspace tant qu'App",
+        "ok": "Publier",
+        "toast": "Application publiée",
+        "content": "Les automations, pages, widget et la configuration du workspace seront accessible par quiconque installe votre App. Supprimez toute clé privée d'API avant de publier."
+      }
     }
   },
   "pages": {
     "link": "Pages",
-    "soon": "Les Pages seront bientôt disponibles.",
     "create": {
-      "label": "Créer une nouvelle Page"
+      "label": "Créer une nouvelle Page",
+      "defaultName": "Page"
+    },
+    "delete": {
+      "label": "Supprimer la page",
+      "confirm": {
+        "title": "Voulez vous supprimer la page \"{{name}}\" ?",
+        "content": "Attention, les données seront perdues.",
+        "ok": "Oui, supprimer",
+        "cancel": "Non, je regrette"
+      },
+      "toast": "La page a bien été supprimée"
+    },
+    "save": {
+      "label": "Enregistrer",
+      "toast": "La page a bien été enregistrée",
+      "error": "Une erreur est survenue"
+    },
+    "widgets": {
+      "add": "Ajouter un widget",
+      "remove": "Supprimer le widget",
+      "resize": "Redimensionner l'affichage du widget",
+      "search": "Rechercher un widget",
+      "empty": "Aucun widget n'est disponible dans cet espace de travail."
+    },
+    "share": {
+      "label": "Partager l'accès à la page",
+      "access": "Accès",
+      "access_private": "Choisissez quels utilisateurs peuvent consulter votre page",
+      "copy": "Copier l'adresse publique de la page",
+      "copied": "L'adresse est copiée dans votre presse papier"
     }
   },
   "expert": {

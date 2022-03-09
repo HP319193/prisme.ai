@@ -137,15 +137,45 @@
   "apps": {
     "link": "Apps",
     "soon": "Las Apps estarán disponibles en breve.",
-    "create": {
-      "label": "Crear una nueva App"
+    "install": "Instalar una aplicación",
+    "search": "Buscar una aplicación...",
+    "title": "Apps Store",
+    "publish": {
+      "menuLabel": "Publicar como aplicación",
+      "confirm": {
+        "title": "Publicar el espacio de trabajo como una aplicación",
+        "ok": "Publicar",
+        "toast": "Aplicación publicada",
+        "content": "Las automatizaciones, las páginas, el widget y la configuración del espacio de trabajo serán accesibles para cualquier persona que instale su aplicación. Elimine cualquier clave de API privada que desee mantener privada primero".
+      }
     }
   },
   "pages": {
     "link": "Páginas",
-    "soon": "Las Páginas estarán disponibles en breve.",
     "create": {
-      "label": "Crear una nueva Página"
+      "label": "Crear una nueva Página",
+      "defaultName": "Página"
+    },
+    "delete": {
+      "label": "Eliminar la Página",
+      "confirm": {
+        "title": "¿Desea eliminar la Página \"{{name}}\"?",
+        "content": "Cuidado, los datos se perderán.",
+        "ok": "Sí, borrar",
+        "cancel": "No, me arrepiento"
+      },
+      "toast": "Se ha eliminado la Página"
+    },
+    "save": {
+      "label": "Registro",
+      "toast": "Se ha registrado la Página",
+      "error": "Se ha producido un error"
+    },
+    "widgets": {
+      "add": "Añadir un widget",
+      "resize": "Cambiar el tamaño de la pantalla del widget",
+      "search": "Buscar un widget",
+      "empty": "No hay widgets disponibles en este espacio de trabajo."
     }
   },
   "expert": {

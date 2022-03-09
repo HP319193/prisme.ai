@@ -69,7 +69,7 @@ it('should fetch userPermissions', async () => {
   expect(context.usersPermissions).toEqual(
     new Map([
       [
-        'workspaceId11',
+        'workspaces:workspaceId11',
         [
           {
             id: '42',
@@ -170,7 +170,7 @@ it('should give user permissions', async () => {
   expect(context.usersPermissions).toEqual(
     new Map([
       [
-        'workspaceId11',
+        'workspaces:workspaceId11',
         [
           {
             id: '44',
@@ -252,7 +252,7 @@ it("should add user to provider's list", async () => {
   expect(context.usersPermissions).toEqual(
     new Map([
       [
-        'workspaceId11',
+        'workspaces:workspaceId11',
         [
           {
             id: '42',
@@ -328,7 +328,7 @@ it("should remove a user's permissions", async () => {
   expect(context.usersPermissions).toEqual(
     new Map([
       [
-        'workspaceId11',
+        'workspaces:workspaceId11',
         [
           {
             id: '42',

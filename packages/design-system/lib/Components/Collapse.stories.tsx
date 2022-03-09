@@ -29,13 +29,19 @@ const collapseItems = [
   },
 ];
 
-const Template: Story<CollapseProps> = ({ items }) => (
-  <Collapse items={items} />
+const Template: Story<CollapseProps> = ({ items, light }) => (
+  <Collapse items={items} light={light} />
 );
 
 export const Default = Template.bind({});
 Default.args = {
   items: collapseItems,
+};
+
+export const Light = Template.bind({});
+Light.args = {
+  items: collapseItems,
+  light: true,
 };
 
 export const NoItemsInMenu = Template.bind({});

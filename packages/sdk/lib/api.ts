@@ -1,10 +1,17 @@
 import QueryString from 'qs';
 import Fetcher from './fetcher';
 import { Event, Workspace } from './types';
+import { Events } from './events';
+import { removedUndefinedProperties } from './utils';
 
 type UserPermissions = Prismeai.UserPermissions;
 
-import { Events } from './events';
+interface PageWithMetadata extends Prismeai.Page {
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+  updatedBy: string;
+}
 
 export class Api extends Fetcher {
   async me() {
@@ -94,9 +101,62 @@ export class Api extends Fetcher {
     return await this.delete(`/workspaces/${workspace.id}/automations/${slug}`);
   }
 
+  // Pages
+  async getPages(
+    workspaceId: NonNullable<Workspace['id']>
+  ): Promise<Prismeai.Page[]> {
+    const pages = await this.get<PageWithMetadata[]>(
+      `/workspaces/${workspaceId}/pages`
+    );
+    return pages.map(
+      ({ createdAt, createdBy, updatedAt, updatedBy, ...page }: any) => page
+    );
+  }
+
+  async createPage(
+    workspaceId: NonNullable<Workspace['id']>,
+    page: Prismeai.Page
+  ): Promise<Prismeai.Page> {
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...newPage
+    } = await this.post<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages`,
+      page
+    );
+    return newPage;
+  }
+
+  async updatePage(
+    workspaceId: NonNullable<Workspace['id']>,
+    page: Prismeai.Page
+  ): Promise<Prismeai.Page> {
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...updatedPage
+    } = await this.patch<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages/${page.id}`,
+      page
+    );
+    return updatedPage;
+  }
+
+  async deletePage(
+    workspaceId: NonNullable<Workspace['id']>,
+    pageId: string
+  ): Promise<Pick<Prismeai.Page, 'id'>> {
+    return await this.delete(`/workspaces/${workspaceId}/pages/${pageId}`);
+  }
+
   // Events
   streamEvents(workspaceId: string) {
-    return new Events(workspaceId, this._token || '', this.host);
+    return new Events(workspaceId, this.token || '', this.host);
   }
 
   async getEvents(
@@ -147,6 +207,92 @@ export class Api extends Fetcher {
     return await this.delete(
       `/${subjectType}/${subjectId}/permissions/${userEmail}`
     );
+  }
+
+  async getApps(
+    query:
+      | PrismeaiAPI.SearchApps.QueryParameters['query']
+      | undefined = undefined,
+    page:
+      | PrismeaiAPI.SearchApps.QueryParameters['page']
+      | undefined = undefined,
+    limit:
+      | PrismeaiAPI.SearchApps.QueryParameters['limit']
+      | undefined = undefined
+  ): Promise<PrismeaiAPI.SearchApps.Responses.$200> {
+    const params = new URLSearchParams(
+      removedUndefinedProperties(
+        {
+          query: `${query || ''}`,
+          page: `${page || ''}`,
+          limit: `${limit || ''}`,
+        },
+        true
+      )
+    );
+    return await this.get(`/apps?${params.toString()}`);
+  }
+
+  async installApp(
+    workspaceId: PrismeaiAPI.InstallAppInstance.PathParameters['workspaceId'],
+    body: PrismeaiAPI.InstallAppInstance.RequestBody
+  ): Promise<PrismeaiAPI.InstallAppInstance.Responses.$200> {
+    return await this.post(`/workspaces/${workspaceId}/apps`, body);
+  }
+
+  async updateApp(
+    workspaceId: PrismeaiAPI.ConfigureAppInstance.PathParameters['workspaceId'],
+    slug: PrismeaiAPI.ConfigureAppInstance.PathParameters['slug'],
+    body: PrismeaiAPI.ConfigureAppInstance.RequestBody
+  ): Promise<PrismeaiAPI.ConfigureAppInstance.Responses.$200> {
+    return await this.patch(`/workspaces/${workspaceId}/apps/${slug}`, body);
+  }
+
+  async uninstallApp(
+    workspaceId: PrismeaiAPI.UninstallAppInstance.PathParameters['workspaceId'],
+    slug: PrismeaiAPI.ConfigureAppInstance.PathParameters['slug']
+  ): Promise<PrismeaiAPI.UninstallAppInstance.Responses.$200> {
+    return await this.delete(`/workspaces/${workspaceId}/apps/${slug}`);
+  }
+
+  async publishApp(
+    body: PrismeaiAPI.PublishApp.RequestBody
+  ): Promise<PrismeaiAPI.PublishApp.Responses.$200> {
+    return await this.post(`/apps`, body);
+  }
+
+  async listAppInstances(
+    workspaceId: PrismeaiAPI.ListAppInstances.PathParameters['workspaceId']
+  ): Promise<PrismeaiAPI.ListAppInstances.Responses.$200> {
+    return await this.get(`/workspaces/${workspaceId}/apps`);
+  }
+
+  async fetchImports(
+    workspaceId: PrismeaiAPI.ListAppInstances.Parameters.WorkspaceId
+  ): Promise<PrismeaiAPI.ListAppInstances.Responses.$200> {
+    return await this.get(`/workspaces/${workspaceId}/apps`);
+  }
+
+  async getAppConfig<T>(
+    workspaceId: PrismeaiAPI.GetAppInstanceConfig.Parameters.WorkspaceId,
+    slug: PrismeaiAPI.GetAppInstanceConfig.Parameters.Slug
+  ): Promise<T> {
+    const { config = {} } = await this.get<Prismeai.AppInstance>(
+      `/workspaces/${workspaceId}/apps/${slug}/config`
+    );
+    return config as T;
+  }
+
+  async updateAppConfig(
+    workspaceId: PrismeaiAPI.UpdateAppInstanceConfig.Parameters.WorkspaceId,
+    slug: PrismeaiAPI.UpdateAppInstanceConfig.Parameters.Slug,
+    config: any
+  ): Promise<PrismeaiAPI.UpdateAppInstanceConfig.Responses.$200['config']> {
+    await this.patch<Prismeai.AppInstance>(
+      `/workspaces/${workspaceId}/apps/${slug}/config`,
+      { config }
+    );
+    return config;
   }
 }
 

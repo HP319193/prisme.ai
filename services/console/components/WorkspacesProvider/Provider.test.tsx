@@ -430,3 +430,180 @@ it('should delete an automation', async () => {
     automations: {},
   });
 });
+
+it('should install a new app', async () => {
+  const newAppInstance = {
+    appId: 'monappId',
+    appName: "le nom de l'app",
+    appVersion: '1',
+    slug: 'monappId',
+  };
+  const workspace = {
+    id: '42',
+    name: 'foo',
+  };
+  jest
+    .spyOn(api, 'getWorkspaces')
+    .mockReturnValue(Promise.resolve([workspace] as any));
+
+  // useUser().user = {} as any;
+  jest
+    .spyOn(api, 'installApp')
+    .mockReturnValue(Promise.resolve(newAppInstance as any));
+
+  let context: any = {};
+  const Test = () => {
+    context = useWorkspaces();
+    return null;
+  };
+  const root = renderer.create(
+    <Provider>
+      <Test />
+    </Provider>
+  );
+  await act(async () => {
+    await true;
+  });
+
+  await act(async () => {
+    context.installApp('42', {
+      appId: 'monappId',
+      appName: "le nom de l'app",
+      appVersion: '1',
+    });
+  });
+
+  await act(async () => {
+    const w = await context.workspaces.get('42');
+    expect(w).toEqual({
+      id: '42',
+      name: 'foo',
+      imports: {
+        monappId: {
+          appId: 'monappId',
+          appName: "le nom de l'app",
+          appVersion: '1',
+          slug: 'monappId',
+        },
+      },
+    });
+  });
+});
+
+it('should update an app', async () => {
+  const updatedAppInstance = {
+    appId: 'new id',
+    appName: 'new name',
+    appVersion: '2',
+    slug: 'monappId',
+  };
+  const workspace = {
+    id: '42',
+    name: 'foo',
+    imports: {
+      monappId: {
+        appId: 'monappId',
+        appName: "le nom de l'app",
+        appVersion: '1',
+        slug: 'monappId',
+      },
+    },
+  };
+  jest
+    .spyOn(api, 'getWorkspaces')
+    .mockReturnValue(Promise.resolve([workspace] as any));
+
+  // useUser().user = {} as any;
+  jest
+    .spyOn(api, 'updateApp')
+    .mockReturnValue(Promise.resolve(updatedAppInstance as any));
+
+  let context: any = {};
+  const Test = () => {
+    context = useWorkspaces();
+    return null;
+  };
+  const root = renderer.create(
+    <Provider>
+      <Test />
+    </Provider>
+  );
+  await act(async () => {
+    await true;
+  });
+
+  await act(async () => {
+    context.updateApp('42', 'monappId', {
+      appId: 'new id',
+      appName: 'new name',
+      appVersion: '2',
+      slug: 'monappId',
+    });
+  });
+
+  await act(async () => {
+    const w = await context.workspaces.get('42');
+    expect(w).toEqual({
+      id: '42',
+      name: 'foo',
+      imports: {
+        monappId: {
+          appId: 'new id',
+          appName: 'new name',
+          appVersion: '2',
+          slug: 'monappId',
+        },
+      },
+    });
+  });
+});
+
+it('should uninstall an app', async () => {
+  const workspace = {
+    id: '42',
+    name: 'foo',
+    imports: {
+      monappId: {
+        appId: 'monappId',
+        appName: "le nom de l'app",
+        appVersion: '1',
+        slug: 'monappId',
+      },
+    },
+  };
+  jest
+    .spyOn(api, 'getWorkspaces')
+    .mockReturnValue(Promise.resolve([workspace] as any));
+
+  // useUser().user = {} as any;
+  jest
+    .spyOn(api, 'uninstallApp')
+    .mockReturnValue(Promise.resolve({ id: 'monappId' } as any));
+
+  let context: any = {};
+  const Test = () => {
+    context = useWorkspaces();
+    return null;
+  };
+  const root = renderer.create(
+    <Provider>
+      <Test />
+    </Provider>
+  );
+  await act(async () => {
+    await true;
+  });
+
+  await act(async () => {
+    context.uninstallApp('42', 'monappId');
+  });
+
+  await act(async () => {
+    const w = await context.workspaces.get('42');
+    expect(w).toEqual({
+      id: '42',
+      name: 'foo',
+      imports: {},
+    });
+  });
+});

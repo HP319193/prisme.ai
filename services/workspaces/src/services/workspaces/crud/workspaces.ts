@@ -6,6 +6,7 @@ import { AccessManager, SubjectType } from '../../../permissions';
 import AppInstances from './appInstances';
 import Apps from '../../apps/crud/apps';
 import Automations from './automations';
+import Pages from './pages';
 import {
   Diffs,
   DiffType,
@@ -35,6 +36,7 @@ class Workspaces {
   private storage: DSULStorage;
   public automations: Automations;
   public appInstances: AppInstances;
+  public pages: Pages;
 
   private diffHandlers: DSULDiffHandler[];
 
@@ -50,6 +52,7 @@ class Workspaces {
     this.storage = storage;
     this.automations = new Automations(this, broker);
     this.appInstances = new AppInstances(this, this.apps, broker);
+    this.pages = new Pages(this.accessManager, broker);
 
     this.diffHandlers = [
       {

@@ -13,14 +13,13 @@ const addUserToMap = (
   usersPermissions: Map<string, UserPermissions[]>,
   newUserPermissions: UserPermissions
 ) => {
-  const newUsersPermissions = new Map<string, UserPermissions[]>(
-    usersPermissions
-  );
+  const newUsersPermissions = new Map(usersPermissions);
   newUsersPermissions.set(subjectId, [
-    ...(usersPermissions.get(subjectId) || []),
+    ...(usersPermissions.get(subjectId) || []).filter(
+      ({ email }) => email !== newUserPermissions.email
+    ),
     newUserPermissions,
   ]);
-
   return newUsersPermissions;
 };
 const removeUserFromMap = (
@@ -53,7 +52,11 @@ export const PermissionsProvider: FC = ({ children }) => {
 
       // optimistic
       setUsersPermissions(
-        addUserToMap(subjectId, usersPermissions, permissions)
+        addUserToMap(
+          `${subjectType}:${subjectId}`,
+          usersPermissions,
+          permissions
+        )
       );
 
       try {
@@ -63,7 +66,11 @@ export const PermissionsProvider: FC = ({ children }) => {
           permissions
         );
         setUsersPermissions(
-          addUserToMap(subjectId, usersPermissions, fetchedUserPermissions)
+          addUserToMap(
+            `${subjectType}:${subjectId}`,
+            usersPermissions,
+            fetchedUserPermissions
+          )
         );
         return fetchedUserPermissions;
       } catch (e) {
@@ -80,19 +87,26 @@ export const PermissionsProvider: FC = ({ children }) => {
   );
 
   const getUsersPermissions: PermissionsContext['getUsersPermissions'] = useCallback(
-    async (subjectType: SubjectType, subjectId: string) => {
-      const fetchedUsersPermissions = await api.getPermissions(
-        subjectType,
-        subjectId
-      );
-      const newUsersPermissions = new Map<string, UserPermissions[]>(
-        usersPermissions
-      );
-      newUsersPermissions.set(subjectId, fetchedUsersPermissions.result);
-      if (!isEqual(newUsersPermissions, usersPermissions)) {
-        setUsersPermissions(newUsersPermissions);
+    async (subjectType, subjectId) => {
+      try {
+        const fetchedUsersPermissions = await api.getPermissions(
+          subjectType,
+          subjectId
+        );
+        const newUsersPermissions = new Map<string, UserPermissions[]>(
+          usersPermissions
+        );
+        newUsersPermissions.set(
+          `${subjectType}:${subjectId}`,
+          fetchedUsersPermissions.result
+        );
+        if (!isEqual(newUsersPermissions, usersPermissions)) {
+          setUsersPermissions(newUsersPermissions);
+        }
+        return fetchedUsersPermissions.result;
+      } catch (e) {
+        return [];
       }
-      return fetchedUsersPermissions.result;
     },
     [usersPermissions]
   );
@@ -103,7 +117,11 @@ export const PermissionsProvider: FC = ({ children }) => {
 
       // optimistic
       setUsersPermissions(
-        removeUserFromMap(subjectId, usersPermissions, userEmail)
+        removeUserFromMap(
+          `${subjectType}:${subjectId}`,
+          usersPermissions,
+          userEmail
+        )
       );
 
       try {
@@ -113,7 +131,11 @@ export const PermissionsProvider: FC = ({ children }) => {
           userEmail
         );
         setUsersPermissions(
-          removeUserFromMap(subjectId, usersPermissions, userEmail)
+          removeUserFromMap(
+            `${subjectType}:${subjectId}`,
+            usersPermissions,
+            userEmail
+          )
         );
         return deletedUserPermissions;
       } catch (e) {

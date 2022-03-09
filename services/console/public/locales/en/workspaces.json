@@ -137,15 +137,45 @@
   "apps": {
     "link": "Apps",
     "soon": "Apps will be available soon.",
-    "create": {
-      "label": "Create a new App"
+    "install": "Install an App",
+    "search": "Search for an app...",
+    "title": "Apps Store",
+    "publish": {
+      "menuLabel": "Publish as an app",
+      "confirm": {
+        "title": "Publish the workspace as an app",
+        "ok": "Publish",
+        "toast": "App Published",
+        "content": "The workspace's automations, pages, widget and config will be accessible to anyone who install your app. Remove any private API key you want to keep private first."
+      }
     }
   },
   "pages": {
     "link": "Pages",
-    "soon": "Pages will be available soon.",
     "create": {
-      "label": "Create a new Page"
+      "label": "Create a new Page",
+      "defaultName": "Page"
+    },
+    "delete": {
+      "label": "Delete the page",
+      "confirm": {
+        "title": "Do you want to delete the page \"{{name}}\"?",
+        "content": "Warning, the data will be lost.",
+        "ok": "Yes, delete",
+        "cancel": "No, please no"
+      },
+      "toast": "Page has been deleted"
+    },
+    "save": {
+      "label": "Save",
+      "toast": "Page has been saved",
+      "error": "Unknown error has occured"
+    },
+    "widgets": {
+      "add": "Add a widget",
+      "resize": "Resize widget display",
+      "search": "Search a widget",
+      "empty": "No widgets are available in this workspace."
     }
   },
   "expert": {

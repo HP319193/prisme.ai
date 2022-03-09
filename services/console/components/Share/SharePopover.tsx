@@ -1,21 +1,15 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-} from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Button, Input, Select, Space, Table } from '@prisme.ai/design-system';
 import { Tooltip } from 'antd';
 import { Form, useField } from 'react-final-form';
 import { useTranslation } from 'react-i18next';
-import FieldContainer from '../layouts/Field';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
-import { usePermissions } from './PermissionsProvider';
+import FieldContainer from '../../layouts/Field';
+import { usePermissions } from '../PermissionsProvider';
 import { DeleteOutlined } from '@ant-design/icons';
 
 interface SharePopoverProps {
-  setVisible: Dispatch<SetStateAction<boolean>>;
+  subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType;
+  subjectId: string;
 }
 
 interface userPermissionForm {
@@ -49,7 +43,7 @@ const RoleSelect = ({
   );
 };
 
-const SharePopover = ({ setVisible }: SharePopoverProps) => {
+const SharePopover = ({ subjectType, subjectId }: SharePopoverProps) => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
   const {
@@ -58,9 +52,6 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
     addUserPermissions,
     removeUserPermissions,
   } = usePermissions();
-  const {
-    workspace: { id: workspaceId },
-  } = useWorkspace();
 
   const generateRowButtons = useCallback(
     (onDelete: Function) => (
@@ -84,15 +75,16 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
   );
 
   const initialFetch = useCallback(async () => {
-    getUsersPermissions('workspaces', workspaceId);
-  }, [getUsersPermissions, workspaceId]);
+    getUsersPermissions(subjectType, subjectId);
+  }, [getUsersPermissions, subjectType, subjectId]);
 
   useEffect(() => {
     initialFetch();
   }, [initialFetch]);
 
   const dataSource = useMemo(() => {
-    const data = usersPermissions.get(workspaceId);
+    const data = usersPermissions.get(`${subjectType}:${subjectId}`);
+
     if (!data) {
       return [];
     }
@@ -105,28 +97,34 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
         role,
         actions: generateRowButtons(() => {
           if (!id) return;
-          removeUserPermissions('workspaces', workspaceId, id);
+          removeUserPermissions(subjectType, subjectId, id);
         }),
       }));
+
     return rows;
   }, [
     generateRowButtons,
     removeUserPermissions,
+    subjectId,
+    subjectType,
     usersPermissions,
-    workspaceId,
   ]);
 
   const onSubmit = ({ email, role }: userPermissionForm) => {
-    addUserPermissions('workspaces', workspaceId, { email, role });
+    addUserPermissions(subjectType, subjectId, { email, role });
   };
 
   return (
     <Space direction="vertical" className="w-[60vw]">
       <Form onSubmit={onSubmit} initialValues={{ email: '', role: '' }}>
         {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
-            <Space className="flex flex-row">
-              <FieldContainer name="email">
+          <form onSubmit={handleSubmit} className="flex flex-1">
+            <div className="flex flex-row flex-1 items-center">
+              <FieldContainer
+                name="email"
+                className="mx-2"
+                containerClassName="flex-1"
+              >
                 {({ input }) => <Input label={t('share.email')} {...input} />}
               </FieldContainer>
               <div className="mb-5">
@@ -135,7 +133,7 @@ const SharePopover = ({ setVisible }: SharePopoverProps) => {
                 </span>
               </div>
               <Button type="submit">{commonT('add')}</Button>
-            </Space>
+            </div>
           </form>
         )}
       </Form>

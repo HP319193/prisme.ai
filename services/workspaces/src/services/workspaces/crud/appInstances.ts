@@ -26,14 +26,54 @@ class AppInstances {
 
   list = async (
     workspaceId: string
-  ): Promise<(Prismeai.AppInstance & { slug: string })[]> => {
+  ): Promise<(Prismeai.DetailedAppInstance & { slug: string })[]> => {
     const workspace = await this.workspaces.getWorkspace(workspaceId);
-    return Object.entries(workspace.imports || {}).reduce(
+    const appInstances = Object.entries(workspace.imports || {}).reduce(
       (appInstances, [slug, appInstance]) => {
         return [...appInstances, { ...appInstance, slug }];
       },
       [] as any
     );
+    return await Promise.all(
+      appInstances.map(async (cur: Prismeai.AppInstance) => {
+        const availableSlugs = await this.apps.getAppDetails(
+          cur.appSlug,
+          cur.appVersion
+        );
+        return {
+          ...cur,
+          ...availableSlugs,
+          config: {
+            value: cur.config?.value || {},
+            ...availableSlugs?.config,
+          },
+        };
+      })
+    );
+  };
+
+  get = async (
+    workspaceId: string,
+    slug: string
+  ): Promise<Prismeai.DetailedAppInstance & { slug: string }> => {
+    const workspace = await this.workspaces.getWorkspace(workspaceId);
+    const appInstance = (workspace.imports || {})[slug];
+    if (!appInstance) {
+      throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
+    }
+    const availableSlugs = await this.apps.getAppDetails(
+      appInstance.appSlug,
+      appInstance.appVersion
+    );
+    return {
+      ...appInstance,
+      ...availableSlugs,
+      config: {
+        value: appInstance.config?.value || {},
+        ...availableSlugs?.config,
+      },
+      slug,
+    };
   };
 
   private validateSlug(workspace: Prismeai.Workspace, slug: string) {

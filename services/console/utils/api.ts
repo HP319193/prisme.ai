@@ -7,4 +7,5 @@ const { publicRuntimeConfig } = getConfig();
 const api = new Api(publicRuntimeConfig.API_HOST);
 api.token = Storage.get('auth-token');
 
+export * from '@prisme.ai/sdk';
 export default api;

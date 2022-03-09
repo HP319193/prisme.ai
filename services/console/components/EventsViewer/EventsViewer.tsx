@@ -1,11 +1,9 @@
-import { useTranslation } from 'next-i18next';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import { useDateFormat } from '../../utils/dates';
 import EventDetails from './EventDetails';
-import Loading from '../Loading';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useScrollListener } from '../useScrollListener';
-import { Collapse, Feed, Layout } from '@prisme.ai/design-system';
+import { Collapse, Feed, Layout, Loading } from '@prisme.ai/design-system';
 import { Section } from '@prisme.ai/design-system/lib/Components/Feed';
 import { CollapseItem } from '@prisme.ai/design-system/lib/Components/Collapse';
 import { Event } from '@prisme.ai/sdk';

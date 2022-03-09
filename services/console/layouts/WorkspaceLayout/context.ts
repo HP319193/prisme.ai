@@ -1,9 +1,19 @@
-import { createContext, useContext } from 'react';
+import { createContext, FC, useContext } from 'react';
 import { Event, Workspace } from '@prisme.ai/sdk';
 import { ValidationError } from '../../utils/yaml';
 
 export type EventsByDay = Map<number, Set<Event<Date>>>;
 export interface WorkspaceContext {
+  displaySource: (status: boolean) => void;
+  sourceDisplayed: boolean;
+  invalid: false | ValidationError[];
+  setInvalid: (invalid: WorkspaceContext['invalid']) => void;
+  newSource?: Workspace;
+  setNewSource: (fn: WorkspaceContext['newSource']) => void;
+  fullSidebar: boolean;
+  setFullSidebar: (s: boolean) => void;
+
+  // To move into a WorkspaceProvider
   workspace: Workspace;
   loading: boolean;
   save: () => void;
@@ -12,15 +22,22 @@ export interface WorkspaceContext {
   nextEvents: () => void;
   readEvents: Set<string>;
   readEvent: (eventId: string) => void;
-  displaySource: (status: boolean) => void;
-  sourceDisplayed: boolean;
-  invalid: false | ValidationError[];
-  setInvalid: (invalid: WorkspaceContext['invalid']) => void;
-  newSource?: Workspace;
-  setNewSource: (fn: WorkspaceContext['newSource']) => void;
+  share?: {
+    label: string;
+    component: FC;
+  };
+  setShare: (share: WorkspaceContext['share']) => void;
 }
 
 export const workspaceContext = createContext<WorkspaceContext>({
+  displaySource() {},
+  sourceDisplayed: false,
+  invalid: false,
+  setInvalid() {},
+  setNewSource() {},
+  fullSidebar: false,
+  setFullSidebar() {},
+  //
   workspace: {} as Workspace,
   loading: false,
   save() {},
@@ -29,11 +46,7 @@ export const workspaceContext = createContext<WorkspaceContext>({
   nextEvents() {},
   readEvents: new Set(),
   readEvent() {},
-  displaySource() {},
-  sourceDisplayed: false,
-  invalid: false,
-  setInvalid() {},
-  setNewSource() {},
+  setShare() {},
 });
 
 export const useWorkspace = () => useContext(workspaceContext);

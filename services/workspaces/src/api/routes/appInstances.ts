@@ -57,6 +57,43 @@ export default function init(
     res.send(appInstance);
   }
 
+  async function updateAppConfigHandler(
+    {
+      context,
+      params: { workspaceId, slug },
+      body,
+      accessManager,
+      broker,
+    }: Request<
+      PrismeaiAPI.UpdateAppInstanceConfig.PathParameters,
+      any,
+      PrismeaiAPI.UpdateAppInstanceConfig.RequestBody,
+      any
+    >,
+    res: Response<PrismeaiAPI.UpdateAppInstanceConfig.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const currentAppInstance = await workspaces.appInstances.get(
+      workspaceId,
+      slug
+    );
+    const updatedAppInstance = await workspaces.appInstances.configureApp(
+      workspaceId,
+      slug,
+      {
+        config: {
+          ...currentAppInstance?.config,
+          value: body,
+        },
+      }
+    );
+    res.send(updatedAppInstance);
+  }
+
   async function configureAppHandler(
     {
       context,
@@ -121,12 +158,51 @@ export default function init(
     res.send(appInstances);
   }
 
+  async function getAppHandler(
+    {
+      context,
+      params: { workspaceId, slug },
+      accessManager,
+      broker,
+    }: Request<PrismeaiAPI.GetAppInstance.PathParameters, any, any, any>,
+    res: Response<PrismeaiAPI.GetAppInstance.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const appInstance = await workspaces.appInstances.get(workspaceId, slug);
+    res.send(appInstance);
+  }
+
+  async function getAppConfigHandler(
+    {
+      context,
+      params: { workspaceId, slug },
+      accessManager,
+      broker,
+    }: Request<PrismeaiAPI.GetAppInstanceConfig.PathParameters, any, any, any>,
+    res: Response<PrismeaiAPI.GetAppInstanceConfig.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const appInstance = await workspaces.appInstances.get(workspaceId, slug);
+    res.send(appInstance.config?.value || {});
+  }
+
   const app = express.Router({ mergeParams: true });
 
   app.post(`/`, asyncRoute(installAppHandler));
   app.get(`/`, asyncRoute(listAppInstancesHandler));
   app.delete(`/:slug`, asyncRoute(uninstallAppHandler));
   app.patch(`/:slug`, asyncRoute(configureAppHandler));
+  app.patch(`/:slug/config`, asyncRoute(updateAppConfigHandler));
+  app.get(`/:slug`, asyncRoute(getAppHandler));
+  app.get(`/:slug/config`, asyncRoute(getAppConfigHandler));
 
   return app;
 }

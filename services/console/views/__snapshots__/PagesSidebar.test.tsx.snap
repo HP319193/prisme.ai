@@ -21,7 +21,7 @@ exports[`should render 1`] = `
     <div
       className="mt-4 text-gray"
     >
-      pages.soon
+      pages.create.label
     </div>
   </div>
 </div>

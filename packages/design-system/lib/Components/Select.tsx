@@ -18,8 +18,10 @@ const Select = ({ selectOptions, label, ...otherProps }: SelectProps) => (
       {...otherProps}
       className={`flex grow ${otherProps.className || ''}`}
     >
-      {selectOptions.map(({ value, label }) => (
-        <Option value={value}>{label}</Option>
+      {selectOptions.map(({ value, label }, index) => (
+        <Option key={index} value={value}>
+          {label}
+        </Option>
       ))}
     </AntdSelect>
     <label className="pr-label-top duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none">

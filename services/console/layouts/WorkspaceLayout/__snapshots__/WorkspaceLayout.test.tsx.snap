@@ -21,11 +21,7 @@ Array [
 exports[`should render 404 1`] = `
 <div
   className="flex flex-1 justify-center align-center"
->
-  <div
-    className="flex flex-1 align-center justify-center"
-  />
-</div>
+/>
 `;
 
 exports[`should render empty 1`] = `

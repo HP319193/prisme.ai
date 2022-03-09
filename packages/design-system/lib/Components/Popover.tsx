@@ -1,18 +1,28 @@
+import { Popover as AntdPopover, PopoverProps as AntdPopoverProps } from 'antd';
 import {
-  Popover as AntdPopover,
-  PopoverProps as AntdPopoverProps,
-  Button,
-} from 'antd';
-import { Dispatch, FC, ReactElement, SetStateAction, useState } from 'react';
+  Dispatch,
+  FC,
+  ReactElement,
+  ReactNode,
+  SetStateAction,
+  useState,
+} from 'react';
 
 export interface PopoverProps extends AntdPopoverProps {
   children: ReactElement;
   content: FC<{ setVisible: Dispatch<SetStateAction<boolean>> }>;
-  title: string;
+  title: string | ReactNode;
+  initialVisible?: boolean;
 }
 
-const Popover = ({ title, children, content, ...otherProps }: PopoverProps) => {
-  const [visible, setVisible] = useState(false);
+const Popover: FC<PopoverProps> = ({
+  title,
+  children,
+  content,
+  initialVisible = false,
+  ...otherProps
+}) => {
+  const [visible, setVisible] = useState(initialVisible);
 
   return (
     <AntdPopover

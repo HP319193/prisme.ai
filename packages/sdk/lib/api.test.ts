@@ -38,7 +38,7 @@ it('should call /signout', () => {
   api.post = jest.fn();
   api.signout();
   expect(api.post).toHaveBeenCalledWith('/logout');
-  expect(api.token).toBeUndefined();
+  expect(api.token).toBeNull();
 });
 
 it('should call get /workspaces', () => {

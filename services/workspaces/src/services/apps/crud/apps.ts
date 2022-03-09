@@ -123,7 +123,49 @@ class Apps {
     return await this.storage.get(appSlug, version || 'current');
   };
 
-  deleteApp = async (appSlug: string) => {
+  getAppDetails = async (
+    appId: string,
+    version?: string
+  ): Promise<Prismeai.AppDetails> => {
+    const app = await this.storage.get(appId, version || 'current');
+    return {
+      config: app.config,
+      widgets: Object.entries(app.widgets || {}).map(
+        ([slug, { name, description, url }]) => ({
+          slug,
+          url,
+          name,
+          description,
+        })
+      ),
+      automations: Object.entries(
+        app.automations || {}
+      ).map(([slug, { name, description }]) => ({ slug, name, description })),
+    };
+  };
+
+  getAvailableSlugs = async (
+    appId: string,
+    version?: string
+  ): Promise<Prismeai.AppDetails> => {
+    const app = await this.storage.get(appId, version || 'current');
+    return {
+      widgets: Object.entries(app.widgets || {}).map(
+        ([slug, { name, description }]) => ({
+          slug,
+          name,
+          description,
+        })
+      ),
+      automations: Object.entries(app.automations || {}).map(
+        ([slug, { name, description }]) => ({ slug, name, description })
+      ),
+    };
+  };
+
+  deleteApp = async (
+    appSlug: PrismeaiAPI.DeleteApp.PathParameters['appSlug']
+  ) => {
     const app = await this.accessManager.get(SubjectType.App, appSlug);
     // Load user permissions from workspace
     await this.accessManager.get(SubjectType.Workspace, app.workspaceId);

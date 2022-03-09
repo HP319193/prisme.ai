@@ -26,6 +26,9 @@ export enum EventType {
   DeletedAutomation = 'workspaces.automation.deleted',
   PublishedApp = 'apps.published',
   DeletedApp = 'apps.deleted',
+  CreatedPage = 'workspaces.page.created',
+  UpdatedPage = 'workspaces.page.updated',
+  DeletedPage = 'workspaces.page.deleted',
 }
 
 export class CallbackContext {

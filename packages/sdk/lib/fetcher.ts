@@ -11,21 +11,17 @@ const headersAsObject = (headers: Headers) =>
   );
 
 export class Fetcher {
-  protected host: string;
-  protected _token: string | null = null;
-
-  set token(v: string | null) {
-    this._token = v;
-  }
+  public host: string;
+  public token: string | null = null;
 
   constructor(host: string) {
     this.host = host;
   }
 
-  private async _fetch(url: string, options: RequestInit = {}) {
+  private async _fetch<T>(url: string, options: RequestInit = {}): Promise<T> {
     const headers: any = options.headers || {};
-    if (this._token && !headers['x-prismeai-session-token']) {
-      headers['x-prismeai-session-token'] = this._token;
+    if (this.token && !headers['x-prismeai-session-token']) {
+      headers['x-prismeai-session-token'] = this.token;
     }
     const res = await global.fetch(`${this.host}${url}`, {
       ...options,
@@ -56,28 +52,28 @@ export class Fetcher {
     return response;
   }
 
-  async get<T = any>(url: string): Promise<T> {
-    return this._fetch(url, {
+  async get<T = any>(url: string) {
+    return this._fetch<T>(url, {
       method: 'GET',
     });
   }
 
-  async post(url: string, body?: Record<string, any>) {
-    return this._fetch(url, {
+  async post<T>(url: string, body?: Record<string, any>) {
+    return this._fetch<T>(url, {
       method: 'POST',
       body: body && JSON.stringify(body),
     });
   }
 
-  async patch(url: string, body: Record<string, any>) {
-    return this._fetch(url, {
+  async patch<T>(url: string, body: Record<string, any>) {
+    return this._fetch<T>(url, {
       method: 'PATCH',
       body: JSON.stringify(body),
     });
   }
 
-  async delete(url: string) {
-    return this._fetch(url, {
+  async delete<T>(url: string) {
+    return this._fetch<T>(url, {
       method: 'DELETE',
     });
   }

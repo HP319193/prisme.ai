@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AutomationBuilder from '../components/AutomationBuilder';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
@@ -10,11 +10,14 @@ import {
   Button,
   Dropdown,
   EditableTitle,
+  Loading,
   Menu,
+  Modal,
   PageHeader,
+  Space,
 } from '@prisme.ai/design-system';
-import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Modal, notification } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { notification } from 'antd';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
@@ -132,9 +135,16 @@ export const Automation = () => {
         }
         onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
-          <Button onClick={save} disabled={saving} key="1">
-            {saving && <LoadingOutlined />}
-            {t('automations.save.label')}
+          <Button
+            onClick={save}
+            disabled={saving}
+            key="1"
+            className="!flex flex-row"
+          >
+            <Space>
+              {t('automations.save.label')}
+              {saving && <Loading />}
+            </Space>
           </Button>,
         ]}
       />

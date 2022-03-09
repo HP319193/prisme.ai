@@ -4,17 +4,18 @@ import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
 import workspaceContext, { WorkspaceContext } from './context';
-import Loading from '../../components/Loading';
 import { EventsByDay } from '.';
 import api from '../../utils/api';
 import { Events, Event } from '@prisme.ai/sdk';
 import Error404 from '../../views/Errors/404';
-import { Layout } from '@prisme.ai/design-system';
+import { Layout, Loading } from '@prisme.ai/design-system';
 import { useUser } from '../../components/UserProvider';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
 import { notification } from 'antd';
 import Storage from '../../utils/Storage';
 import WorkspaceSource from '../../views/WorkspaceSource';
+import usePages from '../../components/PagesProvider/context';
+import { useApps } from '../../components/AppsProvider';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -58,6 +59,17 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
+  const [fullSidebar, setFullSidebar] = useState(false);
+
+  const { fetchPages } = usePages();
+  useEffect(() => {
+    fetchPages(`${id}`);
+  }, [fetchPages, id]);
+
+  const { getAppInstances } = useApps();
+  useEffect(() => {
+    getAppInstances(`${id}`);
+  }, [getAppInstances, id]);
 
   const displaySource = useCallback((v: boolean) => {
     setSourceDisplayed(v);
@@ -150,6 +162,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [invalid, setInvalid] = useState<WorkspaceContext['invalid']>(false);
   const [newSource, setNewSource] = useState<WorkspaceContext['newSource']>();
   const [saving, setSaving] = useState(false);
+  const [share, setShare] = useState<WorkspaceContext['share']>();
 
   const setCurrent = useRef(async (id: string) => {
     setLoading(true);
@@ -207,9 +220,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
   return (
     <workspaceContext.Provider
       value={{
-        workspace,
-        loading,
-        save,
         displaySource,
         sourceDisplayed,
         invalid,
@@ -217,10 +227,18 @@ export const WorkspaceLayout: FC = ({ children }) => {
         saving,
         newSource,
         setNewSource,
+        fullSidebar,
+        setFullSidebar,
+
+        workspace,
+        loading,
+        save,
         events,
         nextEvents,
         readEvents,
         readEvent,
+        share,
+        setShare,
       }}
     >
       <Head>

@@ -8,7 +8,16 @@ import { fetchUsers } from './fetchUsers';
 import { asyncRoute, ExtendedRequest } from './utils';
 
 export function initCollaboratorRoutes<SubjectType extends string>(
-  app: Router
+  app: Router,
+  middleware: (
+    req: Request<
+      PrismeaiAPI.GetPermissions.PathParameters,
+      PrismeaiAPI.GetPermissions.Responses.$200,
+      any
+    >,
+    res: Response<PrismeaiAPI.GetPermissions.Responses.$200>,
+    next: NextFunction
+  ) => void
 ) {
   async function getPermissionsHandler(
     {
@@ -78,8 +87,10 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     next: NextFunction
   ) {
     const { email, public: publicShare, ...permissions } = body;
-    const users: ((Prismeai.User & { id: string }) | typeof PublicAccess)[] =
-      publicShare ? [PublicAccess] : await fetchUsers({ email });
+    const users: (
+      | (Prismeai.User & { id: string })
+      | typeof PublicAccess
+    )[] = publicShare ? [PublicAccess] : await fetchUsers({ email });
     if (!users.length) {
       throw new CollaboratorNotFound(
         `Could not find any user corresponding to ${email}`
@@ -134,6 +145,9 @@ export function initCollaboratorRoutes<SubjectType extends string>(
   }
 
   const baseRoute = '/v2/:subjectType/:subjectId/permissions';
+  if (middleware) {
+    app.use(`${baseRoute}`, middleware);
+  }
   app.get(`${baseRoute}`, asyncRoute(getPermissionsHandler));
   app.post(`${baseRoute}`, asyncRoute(shareHandler));
   app.delete(`${baseRoute}/:userId`, asyncRoute(revokeCollaborator));
