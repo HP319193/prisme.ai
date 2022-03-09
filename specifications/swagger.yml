@@ -2156,6 +2156,9 @@ components:
                 $ref: '#/components/schemas/LocalizedText'
               description:
                 $ref: '#/components/schemas/LocalizedText'
+              arguments:
+                additionalProperties:
+                  $ref: '#/components/schemas/TypedArgument'
         automations:
           type: array
           items:

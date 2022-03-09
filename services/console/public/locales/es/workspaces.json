@@ -104,6 +104,14 @@
       "label_set": "Define var",
       "label_delete": "Borrar var",
       "label_conditions": "Condiciones",
+      "description": "{{default}}",
+      "description_emit": "Emite un evento de su elección al que puede asociar un objeto de datos. Si eliges hacer este evento privado, no será escuchado por otros espacios de trabajo y Apps.",
+      "description_repeat": "Repite una lista de instrucciones en cada elemento de un array de datos pasado como parámetro (`on`) o hasta un determinado número de iteraciones (`until`).",
+      "description_all": "Ejecuta todas las instrucciones del grupo en paralelo. Las siguientes instrucciones se ejecutarán sólo después de que se hayan completado todas las instrucciones de este grupo.",
+      "description_wait": "Bloquea el procesamiento de la lista de instrucciones hasta que se active el evento pasado en el parámetro.",
+      "description_set": "Establece un valor en una variable.",
+      "description_delete": "Borra una variable",
+      "description_conditions": "Comprueba las condiciones para ejecutar un determinado grupo de instrucciones.",
       "search": "Investigador"
     },
     "output": {
@@ -146,7 +154,7 @@
         "title": "Publicar el espacio de trabajo como una aplicación",
         "ok": "Publicar",
         "toast": "Aplicación publicada",
-        "content": "Las automatizaciones, las páginas, el widget y la configuración del espacio de trabajo serán accesibles para cualquier persona que instale su aplicación. Elimine cualquier clave de API privada que desee mantener privada primero".
+        "content": "Las automatizaciones, las páginas, el widget y la configuración del espacio de trabajo serán accesibles para cualquier persona que instale su aplicación. Elimine cualquier clave de API privada que desee mantener privada primero"
       }
     }
   },
@@ -173,9 +181,16 @@
     },
     "widgets": {
       "add": "Añadir un widget",
-      "resize": "Cambiar el tamaño de la pantalla del widget",
+      "remove": "Eliminar el widget",
       "search": "Buscar un widget",
       "empty": "No hay widgets disponibles en este espacio de trabajo."
+    },
+    "share": {
+      "label": "Compartir el acceso a la página",
+      "access": "Acceda",
+      "access_private": "Elija qué usuarios pueden ver su página",
+      "copy": "Copiar la dirección pública de la página",
+      "copied": "La dirección se copia en el portapapeles"
     }
   },
   "expert": {

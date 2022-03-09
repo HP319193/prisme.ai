@@ -104,6 +104,14 @@
       "label_set": "Set var",
       "label_delete": "Delete var",
       "label_conditions": "Conditions",
+      "description": "{{default}}",
+      "description_emit": "Issue an event of your choice to which you can associate a data object. If you choose to make this event private, it will not be heard by other workspaces and Apps.",
+      "description_repeat": "Repeats a list of instructions on each element of a data array passed in parameter (`on`) or up to a certain number of iterations (`until`).",
+      "description_all": "Executes all the instructions of the group in parallel. The following instructions will be executed only after all the instructions of this group are finished.",
+      "description_wait": "Blocks the processing of the instruction list until the event passed in parameter is triggered.",
+      "description_set": "Sets a value in a variable.",
+      "description_delete": "Delete a variable",
+      "description_conditions": "Test conditions in order to execute this or that group of instructions.",
       "search": "Search"
     },
     "output": {
@@ -173,9 +181,16 @@
     },
     "widgets": {
       "add": "Add a widget",
-      "resize": "Resize widget display",
+      "remove": "Remove the widget",
       "search": "Search a widget",
       "empty": "No widgets are available in this workspace."
+    },
+    "share": {
+      "label": "Share access to the page",
+      "access": "Access",
+      "access_private": "Choose which users can view your page",
+      "copy": "Copy the public address of the page",
+      "copied": "The address is copied into your clipboard"
     }
   },
   "expert": {

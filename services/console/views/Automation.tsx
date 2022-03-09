@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import AutomationBuilder from '../components/AutomationBuilder';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
@@ -18,11 +18,19 @@ import {
 } from '@prisme.ai/design-system';
 import { DeleteOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
+import { useApps } from '../components/AppsProvider';
+import useLocalizedText from '../utils/useLocalizedText';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
+  const localize = useLocalizedText();
   const { workspace } = useWorkspace();
   const { updateAutomation, deleteAutomation } = useWorkspaces();
+  const { getAppInstances, appInstances } = useApps();
+
+  useEffect(() => {
+    getAppInstances(workspace.id);
+  }, [getAppInstances, workspace.id]);
 
   const {
     query: { automationId },
@@ -97,6 +105,28 @@ export const Automation = () => {
     });
   }, [automationId, deleteAutomation, push, t, workspace]);
 
+  const customInstructions = useMemo(
+    () =>
+      (appInstances.get(workspace.id) || []).map(
+        ({ slug: appSlug, automations, appName }) => ({
+          appName: `${appSlug} (${appName})`,
+          icon: '',
+          automations: automations.reduce(
+            (prev, { slug, name, description, ...rest }) => ({
+              ...prev,
+              [`${appSlug}.${slug}`]: {
+                name: localize(name) || '',
+                description: localize(description) || '',
+                ...rest,
+              },
+            }),
+            {}
+          ),
+        })
+      ),
+    [appInstances, localize, workspace.id]
+  );
+
   if (!value) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
   }
@@ -153,6 +183,7 @@ export const Automation = () => {
           id={`${automationId}`}
           value={value}
           onChange={setValue}
+          customInstructions={customInstructions}
         />
       </div>
     </>

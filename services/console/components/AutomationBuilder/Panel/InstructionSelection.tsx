@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { Button } from '@prisme.ai/design-system';
 import { FC, useMemo, useState } from 'react';
 import { useAutomationBuilder } from '../context';
+import { truncate } from '../../../utils/strings';
+import { Tooltip } from 'antd';
 
 export interface InstructionSelectionProps {
   onSubmit: (key: string) => void;
@@ -22,12 +24,11 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
     return instructionsSchemas
       .reduce<[string, string, { name: string; description?: string }[]][]>(
         (prev, [name, list, more]) => {
-          const matching = (
-            search
-              ? Object.keys(list).filter((a) =>
-                  `${name} ${a}`.toLowerCase().match(search.toLowerCase())
-                )
-              : Object.keys(list)
+          const matching = (search
+            ? Object.keys(list).filter((a) =>
+                `${name} ${a}`.toLowerCase().match(search.toLowerCase())
+              )
+            : Object.keys(list)
           ).map((name) => ({
             name,
             description: (list[name] || {}).description,
@@ -53,7 +54,9 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
         {filteredInstructions.map(([section, icon, instructions]) => (
           <Space key={section} direction="vertical" className="!flex flex-1">
             <Space>
-              <Image src={icon} width={16} height={16} alt={section} />
+              {icon && (
+                <Image src={icon} width={16} height={16} alt={section} />
+              )}
               <Title level={4}>{section}</Title>
             </Space>
             <Space direction="vertical" className="!flex flex-1">
@@ -63,7 +66,30 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
                   onClick={() => onSubmit(name)}
                   className="w-full text-left !h-fit"
                 >
-                  <ListItem title={name} /*content={description}*/ />
+                  <ListItem
+                    title={t('automations.instruction.label', {
+                      context: name,
+                    })}
+                    content={
+                      <Tooltip
+                        title={t('automations.instruction.description', {
+                          context: name,
+                          default: description,
+                        })}
+                      >
+                        <div className="text-xs">
+                          {truncate(
+                            t('automations.instruction.description', {
+                              context: name,
+                              default: description,
+                            }),
+                            30,
+                            '…'
+                          )}
+                        </div>
+                      </Tooltip>
+                    }
+                  />
                 </Button>
               ))}
             </Space>

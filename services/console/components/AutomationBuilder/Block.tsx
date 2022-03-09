@@ -108,9 +108,11 @@ export const Block: FC<NodeProps & BlockProps> = ({
           p-2
         "
         >
-          <div className="mr-2">
-            <Image src={icon} width={16} height={16} alt={name} />
-          </div>
+          {icon && (
+            <div className="mr-2">
+              <Image src={icon} width={16} height={16} alt={name} />
+            </div>
+          )}
           <div className="flex flex-1 justify-between">
             {data.title
               ? t('automations.node.title', { context: data.title })

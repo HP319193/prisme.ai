@@ -3,32 +3,35 @@ import * as prismeaiDS from '@prisme.ai/design-system';
 import * as prismeaiSDK from '../utils/api';
 import { ReactElement, useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
+import { useTranslation } from 'next-i18next';
 
 if (process.browser) {
   // @ts-ignore
   window.__external = window.__external || {
-    React,
+    React: { ...React, default: React },
     prismeaiDS,
     prismeaiSDK,
   };
-  // @ts-ignore
-  window.__external.React.default = React;
 }
 
 interface BlockComponentProps {
   entityId: string;
+  token?: string;
+  workspaceId?: string;
+  appInstance?: string;
+  language?: string;
 }
 type BlockComponent = (props: BlockComponentProps) => ReactElement;
 
 interface BlockProps extends BlockComponentProps {
   url: string;
   renderLoading?: ReactElement;
-  token?: string;
-  workspaceId?: string;
-  appInstance?: string;
 }
 
 export const ReactBlock = ({ url, renderLoading, ...props }: BlockProps) => {
+  const {
+    i18n: { language },
+  } = useTranslation('workspaces');
   const [loading, setLoading] = useState(true);
 
   const [Component, setComponent] = useState<BlockComponent | null>(null);
@@ -61,7 +64,7 @@ export const ReactBlock = ({ url, renderLoading, ...props }: BlockProps) => {
   return (
     <>
       {(loading && renderLoading) || null}
-      {Component && <Component {...props} />}
+      {Component && <Component {...props} language={language} />}
     </>
   );
 };

@@ -29,11 +29,25 @@ import TriggerForm from './Panel/TriggerForm';
 import { generateEndpoint } from '../../utils/urls';
 import OutputBlock from './OutputBlock';
 import OutputForm from './Panel/OutputForm';
+import useLocalizedText from '../../utils/useLocalizedText';
 
+type InstructionSchemaTupple = [
+  string,
+  Record<string, Schema & { description?: string }>,
+  { icon: string }
+];
 interface AutomationBuilderProps {
   id?: string;
   value: Prismeai.Automation;
   onChange: (value: Prismeai.Automation) => void;
+  customInstructions?: {
+    appName?: string;
+    icon?: string;
+    automations: Record<
+      string,
+      Pick<Prismeai.Automation, 'name' | 'description' | 'arguments'>
+    >;
+  }[];
 }
 
 const nodeTypes = {
@@ -54,8 +68,11 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   id,
   value,
   onChange,
+  customInstructions,
 }) => {
   const { t } = useTranslation('workspaces');
+  const localize = useLocalizedText();
+
   const zoomPanHelper = useZoomPanHelper();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
   const [instructionEditing, setInstructionEditing] = useState<
@@ -111,11 +128,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     return flow;
   }, [id, value, workspace.id]);
 
-  const instructionsSchemas: [
-    string,
-    Record<string, Schema & { description?: string }>,
-    { icon: string }
-  ][] = useMemo(
+  const instructionsSchemas: InstructionSchemaTupple[] = useMemo(
     () => [
       [
         t('automations.instruction.title_builtin'),
@@ -128,29 +141,31 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         ),
         { icon: iconPrisme.src },
       ],
-      [
-        workspace.name,
-        Object.keys(automations).reduce((prev, name) => {
-          if (name === id) return prev;
-          const schema = automations[name].arguments
-            ? {
-                type: 'object',
-                properties: automations[name].arguments,
-              }
-            : undefined;
+      ...[
+        { appName: workspace.name, automations, icon: iconWorkspace.src },
+        ...(customInstructions || []),
+      ].map<InstructionSchemaTupple>(
+        ({ appName = '', automations, icon = '' }) => {
+          return [
+            appName,
+            Object.keys(automations).reduce((prev, name) => {
+              if (name === id) return prev;
+              const schema = automations[name].arguments;
 
-          return {
-            ...prev,
-            [name]: {
-              properties: schema,
-              description: automations[name].description,
-            },
-          };
-        }, {}),
-        { icon: iconWorkspace.src },
-      ],
+              return {
+                ...prev,
+                [name]: {
+                  properties: schema,
+                  description: localize(automations[name].description),
+                },
+              };
+            }, {}),
+            { icon },
+          ];
+        }
+      ),
     ],
-    [automations, id, t, workspace.name]
+    [automations, customInstructions, id, localize, t, workspace.name]
   );
 
   const hidePanel = useCallback(() => {
@@ -178,38 +193,35 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [hidePanel]
   );
 
-  const addInstruction: AutomationBuilderContext['addInstruction'] =
-    useCallback(
-      async (parent, index) => {
-        if (!parent) return;
-        try {
-          const instruction = await editInstructionDetails();
-          parent.splice(index, 0, instruction);
-          onChange({ ...value });
-        } catch (e) {}
-      },
-      [editInstructionDetails, onChange, value]
-    );
-
-  const removeInstruction: AutomationBuilderContext['removeInstruction'] =
-    useCallback(
-      (parent, index) => {
-        parent.splice(index, 1);
+  const addInstruction: AutomationBuilderContext['addInstruction'] = useCallback(
+    async (parent, index) => {
+      if (!parent) return;
+      try {
+        const instruction = await editInstructionDetails();
+        parent.splice(index, 0, instruction);
         onChange({ ...value });
-      },
-      [onChange, value]
-    );
+      } catch (e) {}
+    },
+    [editInstructionDetails, onChange, value]
+  );
 
-  const editInstruction: AutomationBuilderContext['editInstruction'] =
-    useCallback(
-      async (parent, index) => {
-        if (!parent || !parent[index]) return;
-        const instruction = await editInstructionDetails(parent[index]);
-        parent.splice(index, 1, instruction);
-        onChange({ ...value });
-      },
-      [editInstructionDetails, onChange, value]
-    );
+  const removeInstruction: AutomationBuilderContext['removeInstruction'] = useCallback(
+    (parent, index) => {
+      parent.splice(index, 1);
+      onChange({ ...value });
+    },
+    [onChange, value]
+  );
+
+  const editInstruction: AutomationBuilderContext['editInstruction'] = useCallback(
+    async (parent, index) => {
+      if (!parent || !parent[index]) return;
+      const instruction = await editInstructionDetails(parent[index]);
+      parent.splice(index, 1, instruction);
+      onChange({ ...value });
+    },
+    [editInstructionDetails, onChange, value]
+  );
 
   const editConditionDetails = useCallback(
     (condition: string) => {
@@ -260,18 +272,17 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [editConditionDetails, onChange, value]
   );
 
-  const editTrigger: AutomationBuilderContext['editTrigger'] =
-    useCallback(() => {
-      hidePanel();
-      setTriggerEditing({
-        trigger: value.when,
-        onSubmit: (when) => {
-          onChange({ ...value, when });
-          hidePanel();
-        },
-      });
-      setPanelIsOpen(true);
-    }, [hidePanel, onChange, value]);
+  const editTrigger: AutomationBuilderContext['editTrigger'] = useCallback(() => {
+    hidePanel();
+    setTriggerEditing({
+      trigger: value.when,
+      onSubmit: (when) => {
+        onChange({ ...value, when });
+        hidePanel();
+      },
+    });
+    setPanelIsOpen(true);
+  }, [hidePanel, onChange, value]);
 
   const editOutput: AutomationBuilderContext['editOutput'] = useCallback(() => {
     hidePanel();

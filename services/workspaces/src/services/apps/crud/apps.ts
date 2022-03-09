@@ -138,9 +138,14 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(
-        app.automations || {}
-      ).map(([slug, { name, description }]) => ({ slug, name, description })),
+      automations: Object.entries(app.automations || {}).map(
+        ([slug, { name, description, arguments: args }]) => ({
+          slug,
+          name,
+          description,
+          arguments: args,
+        })
+      ),
     };
   };
 
@@ -157,9 +162,9 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(app.automations || {}).map(
-        ([slug, { name, description }]) => ({ slug, name, description })
-      ),
+      automations: Object.entries(
+        app.automations || {}
+      ).map(([slug, { name, description }]) => ({ slug, name, description })),
     };
   };
 

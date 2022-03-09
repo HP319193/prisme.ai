@@ -104,6 +104,14 @@
       "label_set": "Définit var",
       "label_delete": "Supprime var",
       "label_conditions": "Conditions",
+      "description": "{{default}}",
+      "description_emit": "Émet un évenement de votre choix auquel vous pouvez associer un objet de données. Si vous choisissez de rendre cet évèenment privé, il ne sera pas entendu par les autres espaces de travail et Apps.",
+      "description_repeat": "Répète une liste d'instructions sur chaque élément d'un tableau de données passé en paramètre (`on`) ou jusqu'à un certain nombre d'itération (`until`).",
+      "description_all": "Exécute toutes les instructions du groupe en parallèle. Les instructions suivantes seront exécutées seulement une fois que toutes les intructions de ce groupe seront terminées.",
+      "description_wait": "Bloque le traitement de la liste d'instruction jusqu'à ce que l'évènement passé en paramètre soit déclenché.",
+      "description_set": "Définie une valeur dans une variable.",
+      "description_delete": "Supprime une variable",
+      "description_conditions": "Teste des conditions afin d'éxécuter tel ou tel groupe d'instructions.",
       "search": "Rechercher"
     },
     "output": {
@@ -174,7 +182,6 @@
     "widgets": {
       "add": "Ajouter un widget",
       "remove": "Supprimer le widget",
-      "resize": "Redimensionner l'affichage du widget",
       "search": "Rechercher un widget",
       "empty": "Aucun widget n'est disponible dans cet espace de travail."
     },

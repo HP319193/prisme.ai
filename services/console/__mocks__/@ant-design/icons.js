@@ -19,3 +19,6 @@ export function LinkOutlined() {
 export function DeleteOutlined() {
   return null;
 }
+export function ArrowLeftOutlined() {
+  return null;
+}

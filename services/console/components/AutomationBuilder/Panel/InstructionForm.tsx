@@ -3,6 +3,7 @@ import InstructionSelection from './InstructionSelection';
 import InstructionValue from './InstructionValue';
 import { Schema } from '../../SchemaForm/types';
 import { useAutomationBuilder } from '../context';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
 const getDefaultValue = (type: string) => {
   switch (type) {
@@ -39,8 +40,7 @@ export const InstructionForm: FC<InstructionFormProps> = ({
 
   const setInstruction = useCallback(
     (instructionName: string) => {
-      const schema = getSchema(instructionName.toLowerCase());
-
+      const schema = getSchema(instructionName);
       if (!schema.properties) {
         onSubmit({
           [instructionName]: getDefaultValue(schema.type || ''),
@@ -66,8 +66,24 @@ export const InstructionForm: FC<InstructionFormProps> = ({
     [edit.instruction, onSubmit]
   );
 
+  const unsetInstruction = useCallback(() => {
+    setEdit({
+      instruction: '',
+      value: {},
+      schema: null,
+    });
+  }, []);
+
   return (
     <div className="flex flex-1 flex-col h-full overflow-x-auto">
+      {!instruction && edit.instruction && (
+        <button
+          onClick={unsetInstruction}
+          className="absolute top-[24px] left-[1rem]"
+        >
+          <ArrowLeftOutlined />
+        </button>
+      )}
       {!edit ||
         (!edit.instruction && (
           <InstructionSelection onSubmit={setInstruction} />
