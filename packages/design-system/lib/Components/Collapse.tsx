@@ -1,4 +1,7 @@
-import { Collapse as AntdCollapse } from 'antd';
+import {
+  Collapse as AntdCollapse,
+  CollapseProps as AntdCollapseProps,
+} from 'antd';
 import { ReactElement, useCallback, useRef } from 'react';
 
 const { Panel } = AntdCollapse;
@@ -15,9 +18,10 @@ export interface CollapseProps {
   items: CollapseItem[];
   className?: string;
   light?: boolean;
+  icon?: AntdCollapseProps['expandIcon'];
 }
 
-const Collapse = ({ items, light }: CollapseProps) => {
+const Collapse = ({ items, light, icon }: CollapseProps) => {
   const prevClicked = useRef<string[]>([]);
   const click = useCallback(
     (key: string | string[]) => {
@@ -40,6 +44,7 @@ const Collapse = ({ items, light }: CollapseProps) => {
   return (
     <AntdCollapse
       bordered={false}
+      expandIcon={icon}
       expandIconPosition="right"
       onChange={click}
       className={
