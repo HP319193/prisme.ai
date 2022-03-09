@@ -38,13 +38,13 @@ it('should fetch apps from store', async () => {
         workspaceId: 'workspace1Id',
         versions: ['0'],
         name: 'App 1',
-        id: 'appId1',
+        slug: 'appId1',
       },
       {
         workspaceId: 'workspace2Id',
         versions: ['0'],
         name: 'App 2',
-        id: 'appId2',
+        slug: 'appId2',
       },
     ] as any)
   );
@@ -71,7 +71,7 @@ it('should fetch apps from store', async () => {
           workspaceId: 'workspace1Id',
           versions: ['0'],
           name: 'App 1',
-          id: 'appId1',
+          slug: 'appId1',
         },
       ],
       [
@@ -80,7 +80,7 @@ it('should fetch apps from store', async () => {
           workspaceId: 'workspace2Id',
           versions: ['0'],
           name: 'App 2',
-          id: 'appId2',
+          slug: 'appId2',
         },
       ],
     ])
