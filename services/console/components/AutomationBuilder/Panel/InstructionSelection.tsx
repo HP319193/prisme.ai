@@ -22,12 +22,11 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
     return instructionsSchemas
       .reduce<[string, string, { name: string; description?: string }[]][]>(
         (prev, [name, list, more]) => {
-          const matching = (
-            search
-              ? Object.keys(list).filter((a) =>
-                  `${name} ${a}`.toLowerCase().match(search.toLowerCase())
-                )
-              : Object.keys(list)
+          const matching = (search
+            ? Object.keys(list).filter((a) =>
+                `${name} ${a}`.toLowerCase().match(search.toLowerCase())
+              )
+            : Object.keys(list)
           ).map((name) => ({
             name,
             description: (list[name] || {}).description,
@@ -53,7 +52,9 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
         {filteredInstructions.map(([section, icon, instructions]) => (
           <Space key={section} direction="vertical" className="!flex flex-1">
             <Space>
-              <Image src={icon} width={16} height={16} alt={section} />
+              {icon && (
+                <Image src={icon} width={16} height={16} alt={section} />
+              )}
               <Title level={4}>{section}</Title>
             </Space>
             <Space direction="vertical" className="!flex flex-1">
