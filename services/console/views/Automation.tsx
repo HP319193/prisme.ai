@@ -112,11 +112,12 @@ export const Automation = () => {
           appName: `${appSlug} (${appName})`,
           icon: '',
           automations: automations.reduce(
-            (prev, { slug, name, description }) => ({
+            (prev, { slug, name, description, ...rest }) => ({
               ...prev,
               [`${appSlug}.${slug}`]: {
                 name: localize(name) || '',
                 description: localize(description) || '',
+                ...rest,
               },
             }),
             {}

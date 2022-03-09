@@ -633,6 +633,9 @@ declare namespace Prismeai {
             url?: string;
             name?: LocalizedText;
             description?: LocalizedText;
+            arguments?: {
+                [name: string]: TypedArgument;
+            };
         }[];
         automations: {
             slug: string;
@@ -965,6 +968,9 @@ declare namespace Prismeai {
             url?: string;
             name?: LocalizedText;
             description?: LocalizedText;
+            arguments?: {
+                [name: string]: TypedArgument;
+            };
         }[];
         automations: {
             slug: string;
