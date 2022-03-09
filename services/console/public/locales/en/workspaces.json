@@ -183,7 +183,7 @@
       "add": "Add a widget",
       "remove": "Remove the widget",
       "search": "Search a widget",
-      "empty": "No widgets are available in this workspace."
+      "empty": "No widgets are available in this workspace. Install an App!"
     },
     "share": {
       "label": "Share access to the page",
