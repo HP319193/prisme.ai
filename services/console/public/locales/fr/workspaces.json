@@ -183,7 +183,7 @@
       "add": "Ajouter un widget",
       "remove": "Supprimer le widget",
       "search": "Rechercher un widget",
-      "empty": "Aucun widget n'est disponible dans cet espace de travail."
+      "empty": "Aucun widget n'est disponible dans cet espace de travail. Installez une App !"
     },
     "share": {
       "label": "Partager l'accès à la page",
