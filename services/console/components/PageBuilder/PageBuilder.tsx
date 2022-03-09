@@ -14,7 +14,7 @@ interface PageBuilderProps {
 }
 export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const { workspace } = useWorkspace();
-  const { imports } = useApps();
+  const { appInstances } = useApps();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
   const [widgetEditing, setWidgetEditing] = useState<
     | {
@@ -37,7 +37,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
           ...workspace.widgets[slug],
         })),
       },
-      ...(imports.get(workspace.id) || []).map(
+      ...(appInstances.get(workspace.id) || []).map(
         ({ slug = '', appName = '', widgets = [] }) => ({
           slug,
           appName,
@@ -52,7 +52,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
         })
       ),
     ];
-  }, [imports, workspace.id, workspace.widgets]);
+  }, [appInstances, workspace.id, workspace.widgets]);
 
   // Generate keys
   (value.widgets || []).forEach((widget: { key?: string }) => {

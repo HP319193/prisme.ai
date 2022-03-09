@@ -65,10 +65,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
     fetchPages(`${id}`);
   }, [fetchPages, id]);
 
-  const { fetchImports } = useApps();
+  const { getAppInstances } = useApps();
   useEffect(() => {
-    fetchImports(`${id}`);
-  }, [fetchImports, id]);
+    getAppInstances(`${id}`);
+  }, [getAppInstances, id]);
 
   const displaySource = useCallback((v: boolean) => {
     setSourceDisplayed(v);
