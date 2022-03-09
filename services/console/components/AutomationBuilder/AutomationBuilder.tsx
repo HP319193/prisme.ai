@@ -148,12 +148,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
             appName,
             Object.keys(automations).reduce((prev, name) => {
               if (name === id) return prev;
-              const schema = automations[name].arguments
-                ? {
-                    type: 'object',
-                    properties: automations[name].arguments,
-                  }
-                : undefined;
+              const schema = automations[name].arguments;
 
               return {
                 ...prev,
@@ -170,7 +165,6 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     ],
     [automations, customInstructions, id, t, workspace.name]
   );
-  console.log('instructionsSchemas', instructionsSchemas);
 
   const hidePanel = useCallback(() => {
     setPanelIsOpen(false);

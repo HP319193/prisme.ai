@@ -40,7 +40,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
       )
       .filter(([, , list]) => list.length);
   }, [instructionsSchemas, search]);
-  console.log(filteredInstructions);
+
   return (
     <div className="flex grow h-full flex-col overflow-auto">
       <SearchInput
