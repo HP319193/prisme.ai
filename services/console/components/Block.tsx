@@ -8,12 +8,10 @@ import { useTranslation } from 'next-i18next';
 if (process.browser) {
   // @ts-ignore
   window.__external = window.__external || {
-    React,
+    React: { ...React, default: React },
     prismeaiDS,
     prismeaiSDK,
   };
-  // @ts-ignore
-  window.__external.React.default = React;
 }
 
 interface BlockComponentProps {
