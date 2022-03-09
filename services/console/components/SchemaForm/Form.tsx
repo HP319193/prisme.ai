@@ -10,8 +10,14 @@ interface FormProps {
   schema: Schema;
   onSubmit: (values: any) => void;
   initialValues?: FormRenderProps['initialValues'];
+  description?: string;
 }
-export const Form: FC<FormProps> = ({ schema, onSubmit, ...formProps }) => {
+export const Form: FC<FormProps> = ({
+  schema,
+  onSubmit,
+  description,
+  ...formProps
+}) => {
   const { t } = useTranslation('workspaces');
   const properties = Object.keys(schema.properties || {}).reduce(
     (prev, name) => {
@@ -110,6 +116,7 @@ export const Form: FC<FormProps> = ({ schema, onSubmit, ...formProps }) => {
     <FFForm onSubmit={submit} {...formProps}>
       {({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
+          {description && <div>{description}</div>}
           {fields.map((field) => (
             <Field
               key={field.field}

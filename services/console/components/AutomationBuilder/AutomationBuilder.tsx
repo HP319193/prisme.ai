@@ -29,6 +29,7 @@ import TriggerForm from './Panel/TriggerForm';
 import { generateEndpoint } from '../../utils/urls';
 import OutputBlock from './OutputBlock';
 import OutputForm from './Panel/OutputForm';
+import useLocalizedText from '../../utils/useLocalizedText';
 
 type InstructionSchemaTupple = [
   string,
@@ -70,6 +71,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   customInstructions,
 }) => {
   const { t } = useTranslation('workspaces');
+  const localize = useLocalizedText();
 
   const zoomPanHelper = useZoomPanHelper();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
@@ -154,7 +156,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
                 ...prev,
                 [name]: {
                   properties: schema,
-                  description: automations[name].description,
+                  description: localize(automations[name].description),
                 },
               };
             }, {}),
@@ -163,7 +165,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         }
       ),
     ],
-    [automations, customInstructions, id, t, workspace.name]
+    [automations, customInstructions, id, localize, t, workspace.name]
   );
 
   const hidePanel = useCallback(() => {

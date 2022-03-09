@@ -1,4 +1,5 @@
 export interface Schema {
+  description?: string;
   required?: string[];
   properties?: Record<
     string,
