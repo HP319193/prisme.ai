@@ -1,18 +1,22 @@
 import Form from '../components/SchemaForm/Form';
 import { Collapse, ListItem } from '@prisme.ai/design-system';
-import { ReactElement, useMemo } from 'react';
+import { memo, ReactElement, useMemo } from 'react';
 import Block from '../components/Block';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import api from '../utils/api';
 import { SettingOutlined } from '@ant-design/icons';
 
+interface AppsSidebarItemProps extends Prismeai.AppInstance {
+  workspaceId: string;
+  onToggle: (app: string, state: boolean) => void;
+}
+
 const AppsSidebarItem = ({
+  workspaceId,
   slug = '',
   config: { schema, value, widget } = {},
-}: Prismeai.AppInstance) => {
-  const {
-    workspace: { id: workspaceId },
-  } = useWorkspace();
+  onToggle,
+}: AppsSidebarItemProps) => {
   const configComponent: ReactElement | null = useMemo(() => {
     if (schema) {
       return <Form schema={schema} onSubmit={() => {}} initialValues={value} />;
@@ -43,11 +47,15 @@ const AppsSidebarItem = ({
           content: configComponent,
         },
       ]}
-      icon={({ isActive }) => (
-        <SettingOutlined className={`${isActive ? '!text-accent' : ''}`} />
-      )}
+      icon={({ isActive }) => {
+        // Timeout to avoid set state while rendering
+        setTimeout(() => onToggle(slug, !!isActive));
+        return (
+          <SettingOutlined className={`${isActive ? '!text-accent' : ''}`} />
+        );
+      }}
     />
   );
 };
 
-export default AppsSidebarItem;
+export default memo(AppsSidebarItem);

@@ -12,7 +12,7 @@ import PagesSidebar from './PagesSidebar';
 
 export const Workspace = () => {
   const { t } = useTranslation('workspaces');
-  const { workspace } = useWorkspace();
+  const { workspace, fullSidebar } = useWorkspace();
   const [sidebar, setSidebar] = useState('automations');
 
   const menu = useMemo(
@@ -64,6 +64,10 @@ export const Workspace = () => {
         </Col>
         <Col span={10} className="flex h-full">
           <SidePanel
+            className={`
+            absolute top-0 right-0 bottom-0 !bg-white
+            ${fullSidebar ? 'w-[90vw] drop-shadow' : 'w-full'}
+            transition-all ease-in duration-200`}
             Header={
               <MenuTab
                 items={menu}

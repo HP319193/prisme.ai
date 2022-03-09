@@ -59,6 +59,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
+  const [fullSidebar, setFullSidebar] = useState(false);
 
   const { fetchPages } = usePages();
   useEffect(() => {
@@ -219,9 +220,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
   return (
     <workspaceContext.Provider
       value={{
-        workspace,
-        loading,
-        save,
         displaySource,
         sourceDisplayed,
         invalid,
@@ -229,6 +227,12 @@ export const WorkspaceLayout: FC = ({ children }) => {
         saving,
         newSource,
         setNewSource,
+        fullSidebar,
+        setFullSidebar,
+
+        workspace,
+        loading,
+        save,
         events,
         nextEvents,
         readEvents,

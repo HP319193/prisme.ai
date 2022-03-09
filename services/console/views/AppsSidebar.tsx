@@ -20,6 +20,7 @@ export const AppsSidebar = () => {
   const {
     workspace,
     workspace: { id: workspaceId },
+    setFullSidebar,
   } = useWorkspace();
 
   const { appInstances, getAppInstances } = useApps();
@@ -31,6 +32,29 @@ export const AppsSidebar = () => {
   const [modal, setModal] = useState<{ title: string; url: string } | null>(
     null
   );
+  const [opened, setOpened] = useState(new Set());
+
+  useEffect(() => {
+    setFullSidebar(!!opened.size);
+  }, [opened, setFullSidebar]);
+
+  useEffect(() => {
+    return () => {
+      setFullSidebar(false);
+    };
+  }, [setFullSidebar]);
+
+  const toggleSetup = useCallback((app: string, state: boolean) => {
+    setOpened((opened) => {
+      const newOpened = new Set(opened);
+      if (state) {
+        newOpened.add(app);
+      } else {
+        newOpened.delete(app);
+      }
+      return newOpened;
+    });
+  }, []);
 
   useEffect(() => {
     getAppInstances(workspace.id);
@@ -46,17 +70,6 @@ export const AppsSidebar = () => {
         : [];
     });
   }, [filter, workspaceAppInstances]);
-
-  const setup = useCallback((key: string) => {
-    console.log('setup', key);
-    // const app = imports[key];
-    // const { setup } = app.widgets || {};
-    // if (!setup) return;
-    // setModal({
-    //   title: key,
-    //   url: setup.url,
-    // });
-  }, []);
 
   const isEmpty = (workspaceAppInstances || []).length === 0;
 
@@ -89,9 +102,13 @@ export const AppsSidebar = () => {
               onChange={({ target: { value } }) => setFilter(value)}
             />
             <Space direction="vertical" className="flex grow overflow-x-auto">
-              {/*{filteredApps.map(({ appName, slug, widgets }) => (*/}
               {filteredApps.map((appInstance: Prismeai.AppInstance) => (
-                <AppsSidebarItem key={appInstance.appSlug} {...appInstance} />
+                <AppsSidebarItem
+                  key={appInstance.appSlug}
+                  workspaceId={workspaceId}
+                  {...appInstance}
+                  onToggle={toggleSetup}
+                />
               ))}
             </Space>
           </>
