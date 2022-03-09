@@ -1,4 +1,5 @@
 import { Fragment, useMemo } from 'react';
+import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import useLocalizedText from '../../utils/useLocalizedText';
 import AddWidget from './AddWidget';
 import { usePageBuilder } from './context';
@@ -6,6 +7,9 @@ import Widget from './Widget';
 
 export const Widgets = () => {
   const localize = useLocalizedText();
+  const {
+    workspace: { id: workspaceId },
+  } = useWorkspace();
   const { page, widgets = [] } = usePageBuilder();
   const widgetsInPage = useMemo(() => {
     return (page.widgets || []).flatMap(({ key, name = '' }) => {
@@ -16,7 +20,7 @@ export const Widgets = () => {
       if (!app) return [];
       const widget = app.widgets.find(({ slug }) => slug === widgetName);
       if (!widget) return [];
-      return { ...widget, key, appName: app.appName };
+      return { ...widget, key, appName: app.appName, appInstance: app.slug };
     });
   }, [page.widgets, widgets]);
 
@@ -25,7 +29,7 @@ export const Widgets = () => {
       <div className="m-4">
         <AddWidget after={-1} />
       </div>
-      {widgetsInPage.map(({ url, key, name, appName }, index) => (
+      {widgetsInPage.map(({ url, key, name, appName, appInstance }, index) => (
         <Fragment key={key}>
           <Widget
             url={url}
@@ -36,6 +40,8 @@ export const Widgets = () => {
                 {localize(name)}
               </div>
             }
+            workspaceId={workspaceId}
+            appInstance={appInstance}
           />
           <AddWidget after={index} />
         </Fragment>

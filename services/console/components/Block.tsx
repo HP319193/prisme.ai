@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as prismeaiDS from '@prisme.ai/design-system';
-import * as prismeaiSDK from '@prisme.ai/sdk';
+import * as prismeaiSDK from '../utils/api';
 import { ReactElement, useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 
-if (window) {
+if (process.browser) {
   // @ts-ignore
   window.__external = window.__external || {
     React,
@@ -24,6 +24,8 @@ interface BlockProps extends BlockComponentProps {
   url: string;
   renderLoading?: ReactElement;
   token?: string;
+  workspaceId?: string;
+  appInstance?: string;
 }
 
 export const ReactBlock = ({ url, renderLoading, ...props }: BlockProps) => {
@@ -34,7 +36,6 @@ export const ReactBlock = ({ url, renderLoading, ...props }: BlockProps) => {
     const uniqMethod = `__load_${nanoid()}`;
     // @ts-ignore
     window[uniqMethod] = (module) => {
-      console.log('module', module);
       setComponent(() => {
         return module.default;
       });

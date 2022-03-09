@@ -13,8 +13,16 @@ interface WidgetProps {
   url: string;
   id: string;
   title: string | React.ReactNode;
+  workspaceId: string;
+  appInstance: string;
 }
-export const Widget = ({ url, id, title }: WidgetProps) => {
+export const Widget = ({
+  url,
+  id,
+  title,
+  workspaceId,
+  appInstance,
+}: WidgetProps) => {
   const { t } = useTranslation('workspaces');
   const { removeWidget } = usePageBuilder();
   const ref = useRef<HTMLDivElement>(null);
@@ -47,6 +55,8 @@ export const Widget = ({ url, id, title }: WidgetProps) => {
         url={url}
         entityId={id}
         token={`${api.token}`}
+        workspaceId={workspaceId}
+        appInstance={appInstance}
         renderLoading={
           <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
         }
