@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   AppstoreAddOutlined,
   CodeOutlined,
@@ -20,19 +20,19 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import Header from './Header';
 import ShareWorkspace from './Share/ShareWorkspace';
+import PublishModal from './PublishModal';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
-  const { t: commonT } = useTranslation('common');
-  const { remove, publishApp } = useWorkspaces();
+  const { remove } = useWorkspaces();
   const {
-    workspace,
     workspace: { id, name: currentWorkspace },
     displaySource,
     sourceDisplayed,
     share: { label, component: ShareComponent = ShareWorkspace } = {},
   } = useWorkspace();
   const { push } = useRouter();
+  const [publishVisible, setPublishVisible] = useState(false);
 
   const confirmDelete = useCallback(() => {
     Modal.confirm({
@@ -53,49 +53,6 @@ const HeaderWorkspace = () => {
       },
     });
   }, [currentWorkspace, id, push, remove, t]);
-
-  const confirmPublishApp = useCallback(() => {
-    Modal.confirm({
-      icon: <AppstoreAddOutlined />,
-      title: t('apps.publish.confirm.title', {
-        name: currentWorkspace,
-      }),
-      content: t('apps.publish.confirm.content'),
-      cancelText: commonT('cancel'),
-      okText: t('apps.publish.confirm.ok'),
-      onOk: async () => {
-        try {
-          await publishApp({
-            workspaceId: workspace.id,
-            name: workspace.name,
-            description: workspace.description,
-            photo: workspace.photo,
-            slug: workspace.name,
-          });
-          notification.success({
-            message: t('apps.publish.confirm.toast'),
-            placement: 'bottomRight',
-          });
-        } catch (e) {
-          notification.error({
-            message: t('api', { errorName: e }),
-            placement: 'bottomRight',
-          });
-          console.error(e);
-          return null;
-        }
-      },
-    });
-  }, [
-    commonT,
-    currentWorkspace,
-    publishApp,
-    t,
-    workspace.description,
-    workspace.id,
-    workspace.name,
-    workspace.photo,
-  ]);
 
   const workspacesMenu = useMemo(
     () => (
@@ -136,7 +93,7 @@ const HeaderWorkspace = () => {
               displaySource(!sourceDisplayed);
               break;
             case 'publish':
-              confirmPublishApp();
+              setPublishVisible(true);
               break;
             case 'delete':
               confirmDelete();
@@ -144,26 +101,32 @@ const HeaderWorkspace = () => {
         }}
       />
     ),
-    [t, sourceDisplayed, displaySource, confirmPublishApp, confirmDelete]
+    [t, sourceDisplayed, displaySource, setPublishVisible, confirmDelete]
   );
 
   return (
-    <Header
-      title={<Dropdown Menu={workspacesMenu}>{currentWorkspace}</Dropdown>}
-      leftContent={
-        <Popover
-          content={() => <ShareComponent />}
-          title={label || t('share.label')}
-        >
-          <Button variant="grey">
-            <Space>
-              {label || t('share.label')}
-              <ShareAltOutlined />
-            </Space>
-          </Button>
-        </Popover>
-      }
-    />
+    <>
+      <PublishModal
+        visible={publishVisible}
+        close={() => setPublishVisible(false)}
+      />
+      <Header
+        title={<Dropdown Menu={workspacesMenu}>{currentWorkspace}</Dropdown>}
+        leftContent={
+          <Popover
+            content={() => <ShareComponent />}
+            title={label || t('share.label')}
+          >
+            <Button variant="grey">
+              <Space>
+                {label || t('share.label')}
+                <ShareAltOutlined />
+              </Space>
+            </Button>
+          </Popover>
+        }
+      />
+    </>
   );
 };
 

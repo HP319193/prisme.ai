@@ -151,10 +151,11 @@
     "publish": {
       "menuLabel": "Publier en tant qu'App",
       "confirm": {
+        "slugInput": "App name",
         "title": "Publier le workspace tant qu'App",
         "ok": "Publier",
         "toast": "Application publiée",
-        "content": "Les automations, pages, widget et la configuration du workspace seront accessible par quiconque installe votre App. Supprimez toute clé privée d'API avant de publier."
+        "content": "Les automations, pages, widget et la configuration du workspace seront accessible par quiconque installe votre App.\nSupprimez toute clé privée d'API avant de publier."
       }
     }
   },

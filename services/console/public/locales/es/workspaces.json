@@ -151,10 +151,11 @@
     "publish": {
       "menuLabel": "Publicar como aplicación",
       "confirm": {
+        "slugInput": "nombre de la aplicación",
         "title": "Publicar el espacio de trabajo como una aplicación",
         "ok": "Publicar",
         "toast": "Aplicación publicada",
-        "content": "Las automatizaciones, las páginas, el widget y la configuración del espacio de trabajo serán accesibles para cualquier persona que instale su aplicación. Elimine cualquier clave de API privada que desee mantener privada primero"
+        "content": "Las automatizaciones, las páginas, el widget y la configuración del espacio de trabajo serán accesibles para cualquier persona que instale su aplicación.\nElimine cualquier clave de API privada que desee mantener privada primero"
       }
     }
   },
