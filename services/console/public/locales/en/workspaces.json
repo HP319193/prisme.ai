@@ -18,7 +18,9 @@
         "cancel": "No, please no"
       },
       "toast": "Workspace has been deleted"
-    }
+    },
+    "expandSidebar": "Expand",
+    "collapseSidebar": "Collapse"
   },
   "create": {
     "description_first": "Create your first workspace to start automating your work",

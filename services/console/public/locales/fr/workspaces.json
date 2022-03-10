@@ -18,7 +18,9 @@
         "cancel": "Non, je regrette"
       },
       "toast": "L'espace de travail a bien été supprimée"
-    }
+    },
+    "expandSidebar": "Agrandir",
+    "collapseSidebar": "Réduire"
   },
   "create": {
     "description_first": "Créez votre premier espace de travail pour commencer à automatiser votre travail",
