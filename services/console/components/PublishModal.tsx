@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { notification } from 'antd';
 import { useWorkspaces } from './WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
+import { SLUG_MATCH_INVALID_CHARACTERS } from '../utils/regex';
 
 interface PublishModalProps {
   visible: boolean;
@@ -16,7 +17,9 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
   const { t: errorT } = useTranslation('errors');
-  const [publishName, setPublishName] = useState('');
+  const [publishName, setPublishName] = useState(
+    workspace.name.replace(SLUG_MATCH_INVALID_CHARACTERS, '')
+  );
 
   const onConfirm = useCallback(async () => {
     try {
@@ -59,6 +62,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
         onConfirm();
         close();
       }}
+      okButtonProps={{ disabled: publishName.length === 0 }}
       okText={t('apps.publish.confirm.ok')}
       cancelText={commonT('cancel')}
       onCancel={close}
