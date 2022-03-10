@@ -1,4 +1,4 @@
-import { Input, Modal, notification } from '@prisme.ai/design-system';
+import { Input, Modal, notification, Tooltip } from '@prisme.ai/design-system';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspaces } from './WorkspacesProvider';
@@ -78,12 +78,17 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
     >
       <div>
         <div className="mb-10">{t('apps.publish.confirm.content')}</div>
-        <Input
-          status={!isSlugValid ? 'error' : undefined}
-          label={t('apps.publish.confirm.slugInput')}
-          value={publishName}
-          onChange={(event) => setPublishName(event.target.value)}
-        />
+        <Tooltip
+          title={t('apps.publish.confirm.slugInvalid')}
+          visible={!isSlugValid}
+        >
+          <Input
+            status={!isSlugValid ? 'error' : undefined}
+            label={t('apps.publish.confirm.slugInput')}
+            value={publishName}
+            onChange={(event) => setPublishName(event.target.value)}
+          />
+        </Tooltip>
       </div>
     </Modal>
   );

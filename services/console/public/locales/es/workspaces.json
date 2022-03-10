@@ -152,6 +152,7 @@
       "menuLabel": "Publicar como aplicación",
       "confirm": {
         "slugInput": "nombre de la aplicación",
+        "slugIvalid": "Los únicos caracteres permitidos son letras, números, espacios en blanco, . _ y -",
         "title": "Publicar el espacio de trabajo como una aplicación",
         "ok": "Publicar",
         "toast": "Aplicación publicada",

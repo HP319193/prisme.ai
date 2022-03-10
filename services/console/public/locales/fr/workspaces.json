@@ -152,6 +152,7 @@
       "menuLabel": "Publier en tant qu'App",
       "confirm": {
         "slugInput": "App name",
+        "slugInvalid": "Les seuls caractères acceptés sont les lettres, les chiffres, espaces, et les symboles: . _ -",
         "title": "Publier le workspace tant qu'App",
         "ok": "Publier",
         "toast": "Application publiée",
