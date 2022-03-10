@@ -19,7 +19,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
   const { t: errorT } = useTranslation('errors');
-  const [publishName, setPublishName] = useState(
+  const [publishSlug, setPublishSlug] = useState(
     workspace.name.replace(SLUG_MATCH_INVALID_CHARACTERS, '')
   );
 
@@ -30,7 +30,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
         name: workspace.name,
         description: workspace.description,
         photo: workspace.photo,
-        slug: publishName,
+        slug: publishSlug,
       });
       notification.success({
         message: t('apps.publish.confirm.toast'),
@@ -46,7 +46,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
     }
   }, [
     publishApp,
-    publishName,
+    publishSlug,
     t,
     workspace.description,
     workspace.id,
@@ -55,8 +55,8 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   ]);
 
   const isSlugValid = useMemo(
-    () => publishName.length > 0 && SLUG_VALIDATION_REGEXP.test(publishName),
-    [publishName]
+    () => publishSlug.length > 0 && SLUG_VALIDATION_REGEXP.test(publishSlug),
+    [publishSlug]
   );
 
   return (
@@ -85,8 +85,8 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
           <Input
             status={!isSlugValid ? 'error' : undefined}
             label={t('apps.publish.confirm.slugInput')}
-            value={publishName}
-            onChange={(event) => setPublishName(event.target.value)}
+            value={publishSlug}
+            onChange={(event) => setPublishSlug(event.target.value)}
           />
         </Tooltip>
       </div>
