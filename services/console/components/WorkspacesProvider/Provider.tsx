@@ -6,6 +6,7 @@ import { useUser } from '../UserProvider';
 import { useTranslation } from 'react-i18next';
 import { removedUndefinedProperties } from '../../utils/objects';
 import { notification } from '@prisme.ai/design-system';
+import { SLUG_MATCH_INVALID_CHARACTERS } from '../../utils/regex';
 
 export const WorkspacesProvider: FC = ({ children }) => {
   const { t } = useTranslation();
@@ -213,10 +214,13 @@ export const WorkspacesProvider: FC = ({ children }) => {
 
         // Generate app instance slug
         let version = 0;
-        const slug = () => `${body.appName}${version ? ` ${version}` : ''}`;
+        const newAppInstanceSlug = () =>
+          `${body.appSlug.replace(SLUG_MATCH_INVALID_CHARACTERS, '')}${
+            version ? ` ${version}` : ''
+          }`;
         while (
           Object.keys(currentWorkspace.imports || {}).find(
-            (appInstanceSlug) => appInstanceSlug === slug()
+            (appInstanceSlug) => appInstanceSlug === newAppInstanceSlug()
           )
         ) {
           version++;
@@ -224,7 +228,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
 
         const fetchedAppInstance = await api.installApp(workspaceId, {
           ...body,
-          slug: slug(),
+          slug: newAppInstanceSlug(),
         });
 
         // Typescript check, this route should always return a slug
