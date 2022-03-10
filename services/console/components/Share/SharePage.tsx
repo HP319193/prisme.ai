@@ -4,10 +4,11 @@ import {
   Input,
   notification,
   Space,
+  Switch,
   Table,
   Text,
+  Tooltip,
 } from '@prisme.ai/design-system';
-import { Switch, Tooltip } from 'antd';
 import { Form } from 'react-final-form';
 import { useTranslation } from 'react-i18next';
 import FieldContainer from '../../layouts/Field';

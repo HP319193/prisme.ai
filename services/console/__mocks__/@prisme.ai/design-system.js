@@ -106,6 +106,14 @@ export function Card({ children = null }) {
   return children;
 }
 
+export function Switch({ children = null }) {
+  return children;
+}
+
+export function Tooltip({ children = null }) {
+  return children;
+}
+
 export const notification = {
   error: jest.fn(),
   confirm: jest.fn(),

@@ -34,4 +34,6 @@ export {
   Modal,
   Card,
   notification,
+  Switch,
+  Tooltip,
 } from 'antd';

@@ -1,5 +1,4 @@
-import { Input } from '@prisme.ai/design-system';
-import { Switch } from 'antd';
+import { Input, Switch } from '@prisme.ai/design-system';
 import { FC } from 'react';
 import FieldContainer from '../../layouts/Field';
 import { useField } from 'react-final-form';
