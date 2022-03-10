@@ -54,7 +54,7 @@ export class Broker<CallbackContext = any> {
   private eventsFactory: EventsFactory;
   private driver: Driver;
   public ready: Promise<any>;
-  private parentSource: Partial<EventSource>;
+  public parentSource: Partial<EventSource>;
 
   private _buffer: false | Buffer;
   private validateEvents: boolean;
@@ -181,12 +181,14 @@ export class Broker<CallbackContext = any> {
     partialSource?: Partial<EventSource>,
     topic?: Topic
   ) {
+    const overrideSource =
+      payload instanceof Error ? (<any>payload).source : partialSource;
     const event = this.eventsFactory.create(
       eventType,
       payload,
       {
         ...this.parentSource,
-        ...(partialSource || {}),
+        ...(overrideSource || {}),
         host: {
           replica: this.consumer.name,
           ...(partialSource?.host || {}),

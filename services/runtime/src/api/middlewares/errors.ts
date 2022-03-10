@@ -65,10 +65,7 @@ export const errorDecorator = (
   }
 
   next({
-    error:
-      err instanceof PrismeError || isKnownErrorCode
-        ? PrismeError.prototype.toJSON.apply(err)
-        : err,
+    error: PrismeError.prototype.toJSON.apply(err),
     httpStatus: errorHttpStatus(err, serverError),
   });
 };
@@ -81,8 +78,9 @@ export const finalErrorHandler = (
   next: NextFunction
 ) => {
   if (res.headersSent) return next(err);
-
-  return res.status(err.httpStatus || 500).json(err.error || 'Internal error');
+  return res
+    .status(err.httpStatus || 500)
+    .json(err.error || { error: 'Internal error' });
 };
 
 module.exports = {

@@ -20,6 +20,10 @@ export async function executeAutomation(
     await runInstructions(automation.do, { workspace, ctx, logger, broker });
   } catch (error) {
     if (!(error instanceof Break)) {
+      (<any>error).source = (<any>error).source || {
+        ...broker.parentSource,
+        automationSlug: automation.slug,
+      };
       throw error;
     }
   }
@@ -82,7 +86,7 @@ export async function runInstructions(
           nextAutomation,
           nextCtx,
           logger,
-          broker
+          broker.child(nextAutomation.workspace.appContext || {})
         );
       }
     );

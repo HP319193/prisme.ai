@@ -17,92 +17,115 @@ const truncatePayload = (payloadValue: string) => {
   return payloadValue;
 };
 
+interface EventRecord {
+  key: string;
+  name: string;
+  value: any;
+  payloadValue: any;
+}
+
 export const EventDetails: FC<EventsDetailsProps> = (event) => {
   const { t } = useTranslation('workspaces');
   const formatDate = useDateFormat();
   const dataSource = useMemo(
-    () => [
-      {
-        key: 'id',
-        name: 'id',
-        value: event.id,
-      },
-      {
-        key: 'type',
-        name: 'type',
-        value: event.type,
-      },
-      {
-        key: 'createdAt',
-        name: 'createdAt',
-        value: formatDate(event.createdAt, { format: 'yyyy-MM-dd hh:mm' }),
-      },
-      {
-        key: 'source.appSlug',
-        name: 'source.appSlug',
-        value: event.source.appSlug,
-      },
-      {
-        key: 'source.appInstanceSlug',
-        name: 'source.appInstanceSlug',
-        value: event.source.appInstanceSlug,
-      },
-      {
-        key: 'source.userId',
-        name: 'source.userId',
-        value: event.source.userId,
-      },
-      {
-        key: 'source.workspaceId',
-        name: 'source.workspaceId',
-        value: event.source.workspaceId,
-      },
-      {
-        key: 'source.host.service',
-        name: 'source.host.service',
-        value: event.source.host.service,
-      },
-      {
-        key: 'source.correlationId',
-        name: 'source.correlationId',
-        value: event.source.correlationId,
-      },
-      {
-        key: 'payload',
-        name: 'payload',
-        value: (
-          <pre>
-            <code>
-              {truncatePayload(JSON.stringify(event.payload, null, ' '))}
-            </code>
-          </pre>
-        ),
-        payloadValue: event.payload && (
-          <pre>
-            <code>{JSON.stringify(event.payload, null, ' ')}</code>
-          </pre>
-        ),
-      },
-      {
-        key: 'error.error',
-        name: 'error.error',
-        value: event.error?.error,
-      },
-      {
-        key: 'error.message',
-        name: 'error.message',
-        value: event.error?.message,
-      },
-      {
-        key: 'error.details',
-        name: 'error.details',
-        value: event.error?.details && (
-          <pre>
-            <code>{JSON.stringify(event.error?.details, null, ' ')}</code>
-          </pre>
-        ),
-      },
-    ],
+    () =>
+      [
+        {
+          key: 'id',
+          name: 'id',
+          value: event.id,
+        },
+        {
+          key: 'type',
+          name: 'type',
+          value: event.type,
+        },
+        {
+          key: 'createdAt',
+          name: 'createdAt',
+          value: formatDate(event.createdAt, { format: 'yyyy-MM-dd hh:mm' }),
+        },
+        event.source.appSlug && {
+          key: 'source.appSlug',
+          name: 'source.appSlug',
+          value: event.source.appSlug,
+        },
+        event.source.appInstanceSlug
+          ? {
+              key: 'source.appInstanceSlug',
+              name: 'source.appInstanceSlug',
+              value: event.source.appInstanceSlug,
+            }
+          : false,
+        event.source.automationSlug
+          ? {
+              key: 'source.automationSlug',
+              name: 'source.automationSlug',
+              value: event.source.automationSlug,
+            }
+          : false,
+        {
+          key: 'source.userId',
+          name: 'source.userId',
+          value: event.source.userId,
+        },
+        {
+          key: 'source.workspaceId',
+          name: 'source.workspaceId',
+          value: event.source.workspaceId,
+        },
+        {
+          key: 'source.host.service',
+          name: 'source.host.service',
+          value: event.source.host.service,
+        },
+        {
+          key: 'source.correlationId',
+          name: 'source.correlationId',
+          value: event.source.correlationId,
+        },
+        {
+          key: 'payload',
+          name: 'payload',
+          value: (
+            <pre>
+              <code>
+                {truncatePayload(JSON.stringify(event.payload, null, ' '))}
+              </code>
+            </pre>
+          ),
+          payloadValue: event.payload && (
+            <pre>
+              <code>{JSON.stringify(event.payload, null, ' ')}</code>
+            </pre>
+          ),
+        },
+        event.error
+          ? {
+              key: 'error.error',
+              name: 'error.error',
+              value: event.error?.error,
+            }
+          : false,
+        event.error
+          ? {
+              key: 'error.message',
+              name: 'error.message',
+              value: event.error?.message,
+            }
+          : false,
+        event.error
+          ? {
+              key: 'error.details',
+              name: 'error.details',
+              value: event.error?.details && (
+                <pre>
+                  <code>{JSON.stringify(event.error?.details, null, ' ')}</code>
+                </pre>
+              ),
+            }
+          : false,
+      ].filter(Boolean) as EventRecord[],
     [event, formatDate]
   );
   const onRowClick = useCallback(({ target }: MouseEvent) => {

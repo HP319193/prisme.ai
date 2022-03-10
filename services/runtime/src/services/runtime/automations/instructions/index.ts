@@ -34,17 +34,10 @@ export async function runCustomAutomation(
   }
   const calledAutomation = workspace.getAutomation(automationName);
   if (!calledAutomation) {
-    logger.trace({
-      msg: `Did not find any automation matching '${automationName}'`,
+    throw new ObjectNotFoundError(`Automation not found`, {
+      workspaceId: workspace.id,
+      automation: automationName,
     });
-    broker.send(
-      'error',
-      new ObjectNotFoundError(`Automation not found`, {
-        workspaceId: workspace.id,
-        automation: automationName,
-      })
-    );
-    return;
   }
 
   const payload = instruction[automationName] || {};

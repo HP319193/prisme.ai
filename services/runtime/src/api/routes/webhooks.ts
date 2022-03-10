@@ -5,18 +5,18 @@ import { asyncRoute } from '../utils/async';
 
 export default function init(runtime: Runtime) {
   async function webhookHandler(
-    {
+    req: Request<PrismeaiAPI.AutomationWebhook.PathParameters>,
+    res: Response<PrismeaiAPI.AutomationWebhook.Responses.$200>
+  ) {
+    const {
       headers,
-      originalUrl,
       method,
       query,
       logger,
       params: { workspaceId, automationSlug },
       body,
       broker,
-    }: Request<PrismeaiAPI.AutomationWebhook.PathParameters>,
-    res: Response<PrismeaiAPI.AutomationWebhook.Responses.$200>
-  ) {
+    } = req;
     const DO_NOT_SEND_HEADERS = ['cookie', 'host'];
     const filteredHeaders = Object.entries(headers)
       .filter(

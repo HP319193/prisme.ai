@@ -2679,6 +2679,8 @@ components:
               type: string
             appInstanceSlug:
               type: string
+            automationSlug:
+              type: string
             userId:
               type: string
             workspaceId:

@@ -20,6 +20,7 @@ export type Topic = NativeTopic | string;
 export interface EventSource {
   appSlug?: string;
   appInstanceSlug?: string;
+  automationSlug?: string;
   userId?: string;
   workspaceId?: string;
   host?: Host;
@@ -58,8 +59,7 @@ export class EventsFactory {
   create(
     eventType: string,
     payload: object,
-    partialSource: Partial<EventSource> &
-      Pick<EventSource, 'appSlug' | 'appInstanceSlug'>,
+    partialSource: Partial<EventSource>,
     { validateEvent }: CreateEventOptions
   ): Omit<PrismeEvent, 'id'> {
     if (!EVENT_NAMES_REGEXP.test(eventType)) {

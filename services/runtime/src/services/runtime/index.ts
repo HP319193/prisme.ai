@@ -3,7 +3,7 @@ import { Logger } from '../../logger';
 import { DetailedTrigger, Workspace, Workspaces } from '../workspaces';
 import { CacheDriver } from '../../cache';
 import { ContextsManager } from './contexts';
-import { ObjectNotFoundError, PrismeError } from '../../errors';
+import { ObjectNotFoundError } from '../../errors';
 import { EventType } from '../../eda';
 import { executeAutomation } from './automations';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../config';
@@ -65,36 +65,36 @@ export default class Runtime {
     }
     const workspace = await this.workspaces.getWorkspace(workspaceId);
 
-    try {
-      logger.debug({ msg: 'Starting to process event', event });
-      const { triggers, payload } = this.parseEvent(workspace, event);
-      if (!triggers?.length) {
-        logger.trace('Did not find any matching trigger');
-        return;
-      }
+    logger.debug({ msg: 'Starting to process event', event });
+    const { triggers, payload } = this.parseEvent(workspace, event);
+    if (!triggers?.length) {
+      logger.trace('Did not find any matching trigger');
+      return;
+    }
 
-      const ctx = await this.getContexts(
-        workspaceId!!,
-        userId!!,
-        correlationId!!,
-        payload
-      );
+    const ctx = await this.getContexts(
+      workspaceId!!,
+      userId!!,
+      correlationId!!,
+      payload
+    );
 
-      return await Promise.all(
-        triggers.map(async (trigger: DetailedTrigger) => {
-          const automation = trigger.workspace.getAutomation(
-            trigger.automationSlug
+    return await Promise.all(
+      triggers.map(async (trigger: DetailedTrigger) => {
+        const automation = trigger.workspace.getAutomation(
+          trigger.automationSlug
+        );
+        if (!automation) {
+          logger.trace(
+            `Did not find any matching automation '${trigger.automationSlug}' for trigger '${trigger.endpoint})`
           );
-          if (!automation) {
-            logger.trace(
-              `Did not find any matching automation '${trigger.automationSlug}' for trigger '${trigger.endpoint})`
-            );
-            throw new ObjectNotFoundError(`Automation not found`, {
-              workspaceId,
-              automation: trigger.automationSlug,
-              ...trigger.workspace.appContext,
-            });
-          }
+          throw new ObjectNotFoundError(`Automation not found`, {
+            workspaceId,
+            automation: trigger.automationSlug,
+            ...trigger.workspace.appContext,
+          });
+        }
+        try {
           const output = await executeAutomation(
             trigger.workspace,
             automation,
@@ -103,26 +103,28 @@ export default class Runtime {
               resetLocal: false,
             }),
             logger,
-            broker.child(trigger.workspace.appContext || {}, {
-              validateEvents: false,
-              forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
-            })
+            broker.child(
+              {
+                ...trigger.workspace.appContext,
+                automationSlug: automation.slug,
+              },
+              {
+                validateEvents: false,
+                forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+              }
+            )
           );
           return {
             output,
             slug: trigger.automationSlug,
             ...trigger.workspace.appContext,
           };
-        })
-      );
-    } catch (error) {
-      if (error instanceof PrismeError) {
-        throw error;
-      } else {
-        logger.error(error);
-        throw new Error('Internal error');
-      }
-    }
+        } catch (error) {
+          logger.error(error);
+          throw error;
+        }
+      })
+    );
   }
 
   private parseEvent(

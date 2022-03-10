@@ -1,3 +1,4 @@
+import { EventSource } from '@prisme.ai/broker';
 import { LogLevel } from '../logger';
 
 export * from './handlers';
@@ -18,6 +19,7 @@ export class PrismeError extends Error implements PrismeError {
   public error: string;
   public details: any;
   public severity: ErrorSeverity;
+  public source?: Partial<EventSource>;
 
   constructor(message: string, details: any, severity?: ErrorSeverity) {
     super(message);
@@ -28,7 +30,7 @@ export class PrismeError extends Error implements PrismeError {
 
   toJSON() {
     return {
-      error: this.error,
+      error: this.error || 'InternalError',
       message: this.message,
       details: this.details,
     };
