@@ -1,9 +1,9 @@
 import { FC, useCallback, useState } from 'react';
-import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 import isEqual from 'lodash/isEqual';
 import context, { AppsContext } from './context';
 import api from '../../utils/api';
+import { notification } from '@prisme.ai/design-system';
 
 export const AppsProvider: FC = ({ children }) => {
   const [apps, setApps] = useState<AppsContext['apps']>(new Map());

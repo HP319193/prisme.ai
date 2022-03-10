@@ -1,10 +1,12 @@
-import { Input, Modal } from '@prisme.ai/design-system';
-import { useCallback, useState } from 'react';
+import { Input, Modal, notification } from '@prisme.ai/design-system';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { notification } from 'antd';
 import { useWorkspaces } from './WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
-import { SLUG_MATCH_INVALID_CHARACTERS } from '../utils/regex';
+import {
+  SLUG_MATCH_INVALID_CHARACTERS,
+  SLUG_VALIDATION_REGEXP,
+} from '../utils/regex';
 
 interface PublishModalProps {
   visible: boolean;
@@ -52,6 +54,11 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
     workspace.photo,
   ]);
 
+  const isSlugValid = useMemo(
+    () => publishName.length > 0 && SLUG_VALIDATION_REGEXP.test(publishName),
+    [publishName]
+  );
+
   return (
     <Modal
       visible={visible}
@@ -62,7 +69,9 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
         onConfirm();
         close();
       }}
-      okButtonProps={{ disabled: publishName.length === 0 }}
+      okButtonProps={{
+        disabled: !isSlugValid,
+      }}
       okText={t('apps.publish.confirm.ok')}
       cancelText={commonT('cancel')}
       onCancel={close}
@@ -70,6 +79,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
       <div>
         <div className="mb-10">{t('apps.publish.confirm.content')}</div>
         <Input
+          status={!isSlugValid ? 'error' : undefined}
           label={t('apps.publish.confirm.slugInput')}
           value={publishName}
           onChange={(event) => setPublishName(event.target.value)}

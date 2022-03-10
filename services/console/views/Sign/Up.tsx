@@ -5,15 +5,15 @@ import Field from '../../layouts/Field';
 import { useUser } from '../../components/UserProvider';
 import { useRouter } from 'next/router';
 import {
+  Button,
   Col,
   Input,
   Layout,
+  notification,
   Space,
   Title,
-  Button,
 } from '@prisme.ai/design-system';
 import SignHeader from '../../components/SignHeader';
-import { notification } from 'antd';
 
 interface Values {
   email: string;

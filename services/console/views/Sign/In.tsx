@@ -5,16 +5,16 @@ import { Form } from 'react-final-form';
 import { useUser } from '../../components/UserProvider';
 import { useRouter } from 'next/router';
 import {
+  Button,
+  Col,
   Input,
   Layout,
-  Button,
-  Title,
+  notification,
   Space,
-  Col,
+  Title,
 } from '@prisme.ai/design-system';
 import Field from '../../layouts/Field';
 import SignHeader from '../../components/SignHeader';
-import { notification } from 'antd';
 
 interface Values {
   email: string;

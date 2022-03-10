@@ -4,8 +4,8 @@ import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import Block from './Block';
 import { useAutomationBuilder } from './context';
 import styles from './styles';
-import { notification } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
+import { notification } from '@prisme.ai/design-system';
 
 interface TriggerDisplayProps {
   value: Prismeai.When;

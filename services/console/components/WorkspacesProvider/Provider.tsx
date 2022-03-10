@@ -3,9 +3,9 @@ import context, { WorkspacesContext } from './context';
 import api from '../../utils/api';
 import { Workspace } from '@prisme.ai/sdk';
 import { useUser } from '../UserProvider';
-import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { removedUndefinedProperties } from '../../utils/objects';
+import { notification } from '@prisme.ai/design-system';
 
 export const WorkspacesProvider: FC = ({ children }) => {
   const { t } = useTranslation();

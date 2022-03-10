@@ -23,4 +23,15 @@ export { default as Loading } from './Components/Loading';
 export { default as Popover } from './Components/Popover';
 export { default as SidePanel } from './Components/SidePanel';
 
-export { Row, Col, Space, Avatar, Divider, Table, Checkbox, Modal } from 'antd';
+export {
+  Row,
+  Col,
+  Space,
+  Avatar,
+  Divider,
+  Table,
+  Checkbox,
+  Modal,
+  Card,
+  notification,
+} from 'antd';

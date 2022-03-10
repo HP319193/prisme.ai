@@ -17,11 +17,11 @@ import {
   Button,
   Loading,
   Modal,
+  notification,
   PageHeader,
   Space,
 } from '@prisme.ai/design-system';
 import { useRouter } from 'next/router';
-import { notification } from 'antd';
 
 interface Annotation {
   row: number;

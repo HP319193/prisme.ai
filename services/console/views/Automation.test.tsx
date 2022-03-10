@@ -5,8 +5,7 @@ import { useRouter } from 'next/router';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
-import { PageHeader } from '@prisme.ai/design-system';
-import { notification } from 'antd';
+import { notification, PageHeader } from '@prisme.ai/design-system';
 
 jest.mock('../layouts/WorkspaceLayout', () => {
   const mock = {

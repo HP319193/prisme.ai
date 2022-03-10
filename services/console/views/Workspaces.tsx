@@ -1,9 +1,15 @@
-import { Button, Layout, Space, Text, Title } from '@prisme.ai/design-system';
+import {
+  Button,
+  Card,
+  Layout,
+  Space,
+  Text,
+  Title,
+} from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { Card } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

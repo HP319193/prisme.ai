@@ -13,11 +13,11 @@ import {
   Loading,
   Menu,
   Modal,
+  notification,
   PageHeader,
   Space,
 } from '@prisme.ai/design-system';
 import { DeleteOutlined } from '@ant-design/icons';
-import { notification } from 'antd';
 import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 
