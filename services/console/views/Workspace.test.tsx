@@ -1,7 +1,5 @@
 import Workspace from './Workspace';
-import renderer, { act } from 'react-test-renderer';
-import WorkspaceSource from './WorkspaceSource';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
+import renderer from 'react-test-renderer';
 
 jest.mock('next/router', () => {
   const mock = { push: jest.fn() };
@@ -13,7 +11,7 @@ jest.mock('../utils/useYaml', () => ({}));
 
 jest.mock('../layouts/WorkspaceLayout', () => {
   const mock = {
-    events: 'loading',
+    events: new Map(),
     displaySource: false,
     workspace: { id: '42', name: 'Foo' },
   };

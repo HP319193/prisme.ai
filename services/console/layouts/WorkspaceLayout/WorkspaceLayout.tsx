@@ -15,6 +15,7 @@ import Storage from '../../utils/Storage';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import usePages from '../../components/PagesProvider/context';
 import { useApps } from '../../components/AppsProvider';
+import debounce from 'lodash/debounce';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -139,6 +140,15 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [workspace]
   );
 
+  const debouncedFetchWorkspace = useMemo(
+    () =>
+      debounce(() => {
+        if (!workspaceId) return;
+        fetch(workspaceId);
+      }, 500),
+    [fetch, workspaceId]
+  );
+
   // Listen to new events
   useEffect(() => {
     if (!socket.current) return;
@@ -152,6 +162,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
       setEvents(
         addEventToMap(new Map(events === 'loading' ? [] : events), event)
       );
+
+      if (workspace && eventName.startsWith('workspaces.')) {
+        debouncedFetchWorkspace();
+      }
     };
     const off = socket.current.all(listener);
     return () => {

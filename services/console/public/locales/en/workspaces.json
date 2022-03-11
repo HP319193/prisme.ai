@@ -148,6 +148,10 @@
     "link": "Apps",
     "soon": "Apps will be available soon.",
     "install": "Install an App",
+    "uninstall": "Are you sure you want to remove {{appName}} from your workspace ?",
+    "uninstallConfirm": "Uninstall {{appName}}",
+    "uninstallTooltip": "Uninstall",
+    "configTooltip": "Configuration",
     "search": "Search for an app...",
     "title": "Apps Store",
     "publish": {

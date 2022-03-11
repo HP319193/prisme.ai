@@ -22,6 +22,7 @@ import {
   Space,
 } from '@prisme.ai/design-system';
 import { useRouter } from 'next/router';
+import { useWorkspaces } from '../components/WorkspacesProvider';
 
 interface Annotation {
   row: number;
@@ -49,6 +50,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     saving,
     displaySource,
   } = useWorkspace();
+  const { fetch } = useWorkspaces();
   const [dirty, setDirty] = useState(false);
   const [value, setValue] = useState<string | undefined>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);

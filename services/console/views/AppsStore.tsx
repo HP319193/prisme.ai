@@ -54,6 +54,7 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
         appSlug: id,
         appName: name,
       });
+      onCancel();
     },
     [installApp, workspaceId]
   );

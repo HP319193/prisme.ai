@@ -20,6 +20,7 @@ import {
 import { DeleteOutlined } from '@ant-design/icons';
 import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
+import { usePrevious } from '../utils/usePrevious';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
@@ -39,10 +40,13 @@ export const Automation = () => {
   const automation = (workspace.automations || {})[`${automationId}`];
   const [value, setValue] = useState<Prismeai.Automation>(automation || {});
   const [saving, setSaving] = useState(false);
+  const prevAutomationId = usePrevious(automationId);
 
   useEffect(() => {
-    setValue(automation);
-  }, [automation]);
+    if (prevAutomationId !== automationId) {
+      setValue(automation);
+    }
+  }, [automation, automationId, prevAutomationId]);
 
   const updateTitle = useCallback(
     (newTitle: string) => {

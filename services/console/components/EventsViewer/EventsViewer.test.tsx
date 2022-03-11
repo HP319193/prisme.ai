@@ -19,7 +19,7 @@ jest.mock('@prisme.ai/sdk', () => {
 
 jest.mock('../../layouts/WorkspaceLayout', () => {
   const mock = {
-    events: 'loading',
+    events: new Map(),
     readEvents: new Set(),
   };
   return {
