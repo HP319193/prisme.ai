@@ -138,14 +138,14 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(app.automations || {}).map(
-        ([slug, { name, description, arguments: args }]) => ({
+      automations: Object.entries(app.automations || {})
+        .filter(([slug, { private: privateAutomation }]) => !privateAutomation)
+        .map(([slug, { name, description, arguments: args }]) => ({
           slug,
           name,
           description,
           arguments: args,
-        })
-      ),
+        })),
     };
   };
 
@@ -162,9 +162,9 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(
-        app.automations || {}
-      ).map(([slug, { name, description }]) => ({ slug, name, description })),
+      automations: Object.entries(app.automations || {}).map(
+        ([slug, { name, description }]) => ({ slug, name, description })
+      ),
     };
   };
 
