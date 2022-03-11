@@ -117,16 +117,11 @@ export class Api extends Fetcher {
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const {
-      createdAt,
-      createdBy,
-      updatedAt,
-      updatedBy,
-      ...newPage
-    } = await this.post<PageWithMetadata>(
-      `/workspaces/${workspaceId}/pages`,
-      page
-    );
+    const { createdAt, createdBy, updatedAt, updatedBy, ...newPage } =
+      await this.post<PageWithMetadata>(
+        `/workspaces/${workspaceId}/pages`,
+        page
+      );
     return newPage;
   }
 
@@ -134,16 +129,11 @@ export class Api extends Fetcher {
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const {
-      createdAt,
-      createdBy,
-      updatedAt,
-      updatedBy,
-      ...updatedPage
-    } = await this.patch<PageWithMetadata>(
-      `/workspaces/${workspaceId}/pages/${page.id}`,
-      page
-    );
+    const { createdAt, createdBy, updatedAt, updatedBy, ...updatedPage } =
+      await this.patch<PageWithMetadata>(
+        `/workspaces/${workspaceId}/pages/${page.id}`,
+        page
+      );
     return updatedPage;
   }
 
@@ -277,7 +267,7 @@ export class Api extends Fetcher {
     workspaceId: PrismeaiAPI.GetAppInstanceConfig.Parameters.WorkspaceId,
     slug: PrismeaiAPI.GetAppInstanceConfig.Parameters.Slug
   ): Promise<T> {
-    const { config = {} } = await this.get<Prismeai.AppInstance>(
+    const config = await this.get<T>(
       `/workspaces/${workspaceId}/apps/${slug}/config`
     );
     return config as T;
@@ -290,7 +280,7 @@ export class Api extends Fetcher {
   ): Promise<PrismeaiAPI.UpdateAppInstanceConfig.Responses.$200['config']> {
     await this.patch<Prismeai.AppInstance>(
       `/workspaces/${workspaceId}/apps/${slug}/config`,
-      { config }
+      { ...config }
     );
     return config;
   }
