@@ -148,6 +148,10 @@
     "link": "Apps",
     "soon": "Les Apps seront bientôt disponibles.",
     "install": "Installer une App",
+    "uninstall": "Êtes vous sûr de vouloir supprimer {{appName}} de votre espace de travail ?",
+    "uninstallConfirm": "Désinstaller {{appName}}",
+    "uninstallTooltip": "Désinstaller",
+    "configTooltip": "Paramétrer",
     "search": "Chercher une app...",
     "title": "Apps Store",
     "publish": {
