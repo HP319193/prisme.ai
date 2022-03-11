@@ -1506,9 +1506,14 @@ paths:
       tags:
         - 'Prisme.ai Workspaces'
       parameters:
-        - name: 'query'
+        - name: 'text'
           in: 'query'
           description: 'Search these keywords'
+          schema:
+            type: string
+        - name: 'workspaceId'
+          in: 'query'
+          description: 'Find apps published from this workspace'
           schema:
             type: string
         - name: 'page'

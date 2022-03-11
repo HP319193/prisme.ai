@@ -94,7 +94,7 @@ export default function init(
     {
       context,
       accessManager,
-      query: { query, page, limit },
+      query: { page, limit, ...query },
       broker,
     }: Request<any, any, any, PrismeaiAPI.SearchApps.QueryParameters>,
     res: Response<PrismeaiAPI.SearchApps.Responses.$200>
@@ -104,17 +104,12 @@ export default function init(
       accessManager,
       broker,
     });
-    const result = await apps.listApps(
-      {
-        query,
+    const result = await apps.listApps(query, {
+      pagination: {
+        page,
+        limit,
       },
-      {
-        pagination: {
-          page,
-          limit,
-        },
-      }
-    );
+    });
     res.send(result);
   }
 

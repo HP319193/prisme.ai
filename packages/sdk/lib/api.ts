@@ -200,8 +200,8 @@ export class Api extends Fetcher {
   }
 
   async getApps(
-    query:
-      | PrismeaiAPI.SearchApps.QueryParameters['query']
+    text:
+      | PrismeaiAPI.SearchApps.QueryParameters['text']
       | undefined = undefined,
     page:
       | PrismeaiAPI.SearchApps.QueryParameters['page']
@@ -213,7 +213,7 @@ export class Api extends Fetcher {
     const params = new URLSearchParams(
       removedUndefinedProperties(
         {
-          query: `${query || ''}`,
+          text: `${text || ''}`,
           page: `${page || ''}`,
           limit: `${limit || ''}`,
         },
