@@ -433,7 +433,7 @@ it('should delete an automation', async () => {
 
 it('should install a new app', async () => {
   const newAppInstance = {
-    appId: 'monappId',
+    appSlug: 'monappId',
     appName: "le nom de l'app",
     appVersion: '1',
     slug: 'monappId',
@@ -467,7 +467,7 @@ it('should install a new app', async () => {
 
   await act(async () => {
     context.installApp('42', {
-      appId: 'monappId',
+      appSlug: 'monappId',
       appName: "le nom de l'app",
       appVersion: '1',
     });
@@ -480,7 +480,7 @@ it('should install a new app', async () => {
       name: 'foo',
       imports: {
         monappId: {
-          appId: 'monappId',
+          appSlug: 'monappId',
           appName: "le nom de l'app",
           appVersion: '1',
           slug: 'monappId',

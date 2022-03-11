@@ -258,7 +258,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         return null;
       }
     },
-    [t, workspaces]
+    [errorT, workspaces]
   );
 
   const updateApp: WorkspacesContext['updateApp'] = useCallback(
@@ -292,7 +292,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         return null;
       }
     },
-    [t, workspaces]
+    [errorT, workspaces]
   );
 
   const uninstallApp: WorkspacesContext['uninstallApp'] = useCallback(
@@ -334,7 +334,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         return null;
       }
     },
-    [t, workspaces]
+    [errorT, workspaces]
   );
 
   const publishApp: WorkspacesContext['publishApp'] = useCallback(
