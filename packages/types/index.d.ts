@@ -2080,10 +2080,12 @@ declare namespace PrismeaiAPI {
         namespace Parameters {
             export type Limit = number;
             export type Page = number;
-            export type Query = string;
+            export type Text = string;
+            export type WorkspaceId = string;
         }
         export interface QueryParameters {
-            query?: Parameters.Query;
+            text?: Parameters.Text;
+            workspaceId?: Parameters.WorkspaceId;
             page?: Parameters.Page;
             limit?: Parameters.Limit;
         }

@@ -12,7 +12,8 @@ import { FindOptions } from '@prisme.ai/permissions';
 import { SLUG_VALIDATION_REGEXP } from '../../../../config';
 
 export interface ListAppsQuery {
-  query?: string;
+  text?: string;
+  workspaceId?: string;
 }
 class Apps {
   private accessManager: Required<AccessManager>;
@@ -29,16 +30,22 @@ class Apps {
     this.storage = storage;
   }
 
-  listApps = async (query?: ListAppsQuery, opts?: FindOptions) => {
+  listApps = async (
+    { text, ...query }: ListAppsQuery = {},
+    opts?: FindOptions
+  ) => {
     return await this.accessManager.findAll(
       SubjectType.App,
-      query?.query?.length
-        ? {
-            $text: {
-              $search: query?.query,
-            },
-          }
-        : {},
+      {
+        ...(text?.length
+          ? {
+              $text: {
+                $search: text,
+              },
+            }
+          : {}),
+        ...query,
+      },
       opts
     );
   };
@@ -162,9 +169,9 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(
-        app.automations || {}
-      ).map(([slug, { name, description }]) => ({ slug, name, description })),
+      automations: Object.entries(app.automations || {}).map(
+        ([slug, { name, description }]) => ({ slug, name, description })
+      ),
     };
   };
 
