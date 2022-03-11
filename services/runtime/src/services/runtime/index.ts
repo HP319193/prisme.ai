@@ -28,6 +28,7 @@ export default class Runtime {
         EventType.InstalledApp,
         EventType.UninstalledApp,
         EventType.DeletedWorkspace,
+        EventType.DeletedApp,
         EventType.PublishedApp,
       ],
       async (event, broker, { logger }) => {
@@ -203,7 +204,10 @@ export default class Runtime {
     }
 
     // Dispatch apps.published event to installed apps (as their instance config will be packaged as a new app)
-    if (event.type === EventType.PublishedApp) {
+    if (
+      event.type === EventType.PublishedApp ||
+      event.type === EventType.DeletedApp
+    ) {
       triggers.push(
         ...Object.values(workspace.imports || {}).flatMap((workspace) =>
           workspace.getEventTriggers(event)

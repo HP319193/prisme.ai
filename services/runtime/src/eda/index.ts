@@ -30,6 +30,7 @@ export enum EventType {
   UninstalledApp = 'workspaces.app.uninstalled',
   ConfiguredApp = 'workspaces.app.configured',
 
+  DeletedApp = 'apps.deleted',
   PublishedApp = 'apps.published',
 }
 export class CallbackContext {

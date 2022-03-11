@@ -4,7 +4,7 @@ export interface AppsContext {
   apps: Map<string, Prismeai.App>;
   appInstances: Map<string, Prismeai.DetailedAppInstance[]>;
   getApps: (
-    query?: PrismeaiAPI.SearchApps.QueryParameters['query'],
+    text?: PrismeaiAPI.SearchApps.QueryParameters['text'],
     page?: PrismeaiAPI.SearchApps.QueryParameters['page']
   ) => Promise<Map<string, Prismeai.App> | null>;
   getAppInstances: (
