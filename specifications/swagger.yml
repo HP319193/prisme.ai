@@ -2677,7 +2677,7 @@ components:
           properties:
             appSlug:
               type: string
-            appInstanceSlug:
+            appInstanceFullSlug:
               type: string
             automationSlug:
               type: string

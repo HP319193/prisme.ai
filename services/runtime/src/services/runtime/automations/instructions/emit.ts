@@ -10,8 +10,8 @@ export async function emit(
 ) {
   try {
     return await broker.send(
-      appContext?.appInstanceSlug
-        ? `${appContext?.appInstanceSlug}.${event}`
+      appContext?.appInstanceFullSlug
+        ? `${appContext?.appInstanceFullSlug}.${event}`
         : event,
       payload || {},
       appContext,

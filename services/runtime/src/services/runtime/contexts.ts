@@ -7,6 +7,7 @@ import { CacheDriver } from '../../cache';
 import { InvalidSetInstructionError, TooManyCallError } from '../../errors';
 import { Logger, logger } from '../../logger';
 import { parseVariableName, SplittedPath } from '../../utils/parseVariableName';
+import { AppContext } from '../workspaces';
 
 type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
@@ -18,6 +19,11 @@ type RecursivePartial<T> = {
 export interface RunContext {
   depth: number; // Depth of current automation.
   correlationId: string;
+
+  // Only set if running inside an app instance :
+  appSlug?: string; // App unique slug
+  appInstanceSlug?: string; // Current instance slug defined by parent workspace/app
+  parentAppSlug?: string; // Only if parent context is also an app instance
 }
 
 export interface GlobalContext {
@@ -31,7 +37,7 @@ export interface UserContext {
 }
 
 // Holds local variables from current automation. Never persisted
-export type LocalContext = Record<string, any>;
+export type LocalContext = any;
 
 export interface Contexts {
   run: RunContext;
@@ -40,7 +46,6 @@ export interface Contexts {
   session: Record<string, any>;
   local: LocalContext;
   config: object;
-  [k: string]: object;
 }
 
 export enum ContextType {
@@ -79,9 +84,21 @@ export class ContextsManager {
     this.userId = userId;
     this.correlationId = correlationId;
     this.cache = cache;
-    this.contexts = this.default({
+    this.contexts = {
       local: { ...payload },
-    });
+      global: {
+        workspaceId,
+      },
+      user: {
+        id: userId,
+      },
+      session: {},
+      config: {},
+      run: {
+        depth: 0,
+        correlationId,
+      },
+    };
     this.logger = logger.child({
       userId,
       workspaceId,
@@ -91,27 +108,29 @@ export class ContextsManager {
     this.payload = payload || {};
   }
 
-  private default(additionalContexts: RecursivePartial<Contexts> = {}) {
+  private merge(additionalContexts: RecursivePartial<Contexts> = {}) {
     return {
-      local: {},
+      ...this.contexts,
       ...additionalContexts,
-      config: additionalContexts.config || {},
+      config: additionalContexts.config || this.contexts.config || {},
       global: {
-        ...(additionalContexts?.global || {}),
+        ...this.contexts?.global,
+        ...additionalContexts?.global,
         workspaceId: this.workspaceId,
       },
       user: {
-        ...(additionalContexts?.user || {}),
+        ...this.contexts?.user,
+        ...additionalContexts?.user,
         id: this.userId,
       },
       run: {
-        depth: 0,
-        payload: {},
-        ...(additionalContexts?.run || {}),
+        ...this.contexts?.run,
+        ...additionalContexts?.run,
         correlationId: this.correlationId,
       },
       session: {
-        ...(additionalContexts?.session || {}),
+        ...this.contexts?.session,
+        ...additionalContexts?.session,
       },
     };
   }
@@ -130,7 +149,7 @@ export class ContextsManager {
       this.cacheKey(ContextType.Session)
     );
 
-    this.contexts = this.default({
+    this.contexts = this.merge({
       global,
       run,
       user,
@@ -191,18 +210,30 @@ export class ContextsManager {
 
   // Reinstantiate a new ContextsManager for a child execution context
   child(
-    opts: { resetLocal?: boolean; payload?: any; config?: any } = {}
+    additionalContexts: RecursivePartial<Contexts> = {},
+    opts: { resetLocal?: boolean; payload?: any; appContext?: AppContext } = {}
   ): ContextsManager {
     const resetLocal =
       typeof opts.resetLocal !== 'undefined' ? opts.resetLocal : true;
-    const childContexts: Contexts = {
-      ...this.contexts,
-      // If keeping local context, reinstantiate it to avoid parents context corruption by their children
+    const run: Partial<RunContext> = opts.appContext
+      ? {
+          appSlug: opts.appContext.appSlug,
+          appInstanceSlug: opts.appContext.appInstanceSlug,
+          parentAppSlug:
+            (opts.appContext.parentAppSlugs?.length || 0) > 1
+              ? opts.appContext.parentAppSlugs[
+                  opts.appContext.parentAppSlugs.length - 2
+                ]
+              : undefined,
+        }
+      : {};
+    const childContexts = this.merge({
       local: resetLocal
         ? opts.payload || {}
         : { ...this.contexts[ContextType.Local], ...opts.payload },
-      config: opts.config || this.contexts.config || {},
-    };
+      run,
+      ...additionalContexts,
+    });
     const child = Object.assign({}, this, {
       contexts: childContexts,
       payload: { ...(opts.payload || {}) },
@@ -259,7 +290,7 @@ export class ContextsManager {
   }
 
   get publicContexts(): PublicContexts {
-    const { run: _, local, ...publicContexts } = this.contexts;
+    const { local, ...publicContexts } = this.contexts;
     return {
       ...local,
       ...publicContexts,

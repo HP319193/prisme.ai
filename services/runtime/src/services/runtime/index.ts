@@ -28,6 +28,7 @@ export default class Runtime {
         EventType.InstalledApp,
         EventType.UninstalledApp,
         EventType.DeletedWorkspace,
+        EventType.PublishedApp,
       ],
       async (event, broker, { logger }) => {
         if (!event.source.workspaceId || !event.source.correlationId) {
@@ -66,7 +67,7 @@ export default class Runtime {
     const workspace = await this.workspaces.getWorkspace(workspaceId);
 
     logger.debug({ msg: 'Starting to process event', event });
-    const { triggers, payload } = this.parseEvent(workspace, event);
+    const { triggers, payload } = await this.parseEvent(workspace, event);
     if (!triggers?.length) {
       logger.trace('Did not find any matching trigger');
       return;
@@ -98,14 +99,21 @@ export default class Runtime {
           const output = await executeAutomation(
             trigger.workspace,
             automation,
-            ctx.child({
-              config: trigger.workspace.config,
-              resetLocal: false,
-            }),
+            ctx.child(
+              {
+                config: trigger.workspace.config,
+              },
+              {
+                resetLocal: false,
+                appContext: trigger.workspace?.appContext,
+              }
+            ),
             logger,
             broker.child(
               {
-                ...trigger.workspace.appContext,
+                appSlug: trigger.workspace.appContext?.appSlug,
+                appInstanceFullSlug:
+                  trigger.workspace.appContext?.appInstanceFullSlug,
                 automationSlug: automation.slug,
               },
               {
@@ -127,13 +135,13 @@ export default class Runtime {
     );
   }
 
-  private parseEvent(
+  private async parseEvent(
     workspace: Workspace,
     event: PrismeEvent
-  ): {
+  ): Promise<{
     triggers: DetailedTrigger[];
     payload: any;
-  } {
+  }> {
     if (event.type === EventType.TriggeredWebhook) {
       const { automationSlug, body, headers, query, method } = (<
         Prismeai.TriggeredWebhook
@@ -157,6 +165,21 @@ export default class Runtime {
       return parsed;
     }
 
+    // In case our in-memory workspace has not been updated yet, force its config update
+    // In the future, we might have a callback ordered queue natively handled by prisme.ai/broker
+    if (event.type === EventType.ConfiguredWorkspace) {
+      workspace.config =
+        (<PrismeEvent<Prismeai.ConfiguredWorkspace['payload']>>event).payload
+          ?.config?.value || {};
+    }
+
+    if (event.type === EventType.ConfiguredApp) {
+      const payload = (<PrismeEvent<Prismeai.ConfiguredAppInstance['payload']>>(
+        event
+      ))?.payload;
+      await workspace.updateImport(payload!.slug!, payload!.appInstance!);
+    }
+
     const triggers = workspace.getEventTriggers(event);
     // Simulate workspace.app.uninstalled events when workspace is deleted
     if (event.type === EventType.DeletedWorkspace) {
@@ -175,6 +198,15 @@ export default class Runtime {
                 slug,
               },
             } as PrismeEvent<Prismeai.UninstalledAppInstance['payload']>)
+        )
+      );
+    }
+
+    // Dispatch apps.published event to installed apps (as their instance config will be packaged as a new app)
+    if (event.type === EventType.PublishedApp) {
+      triggers.push(
+        ...Object.values(workspace.imports || {}).flatMap((workspace) =>
+          workspace.getEventTriggers(event)
         )
       );
     }

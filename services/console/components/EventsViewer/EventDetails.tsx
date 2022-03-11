@@ -50,11 +50,11 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
           name: 'source.appSlug',
           value: event.source.appSlug,
         },
-        event.source.appInstanceSlug
+        event.source.appInstanceFullSlug
           ? {
-              key: 'source.appInstanceSlug',
-              name: 'source.appInstanceSlug',
-              value: event.source.appInstanceSlug,
+              key: 'source.appInstanceFullSlug',
+              name: 'source.appInstanceFullSlug',
+              value: event.source.appInstanceFullSlug,
             }
           : false,
         event.source.automationSlug

@@ -36,8 +36,7 @@ export async function executeAutomation(
       slug: automation.slug!,
       payload: ctx.payload,
       output,
-    },
-    workspace.appContext
+    }
   );
   return output;
 }
@@ -86,7 +85,12 @@ export async function runInstructions(
           nextAutomation,
           nextCtx,
           logger,
-          broker.child(nextAutomation.workspace.appContext || {})
+          broker.child({
+            appSlug: nextAutomation.workspace.appContext?.appSlug,
+            appInstanceFullSlug:
+              nextAutomation.workspace.appContext?.appInstanceFullSlug,
+            automationSlug: nextAutomation.slug,
+          })
         );
       }
     );
