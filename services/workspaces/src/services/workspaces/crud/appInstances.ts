@@ -34,22 +34,29 @@ class AppInstances {
       },
       [] as any
     );
-    return await Promise.all(
-      appInstances.map(async (cur: Prismeai.AppInstance) => {
-        const availableSlugs = await this.apps.getAppDetails(
-          cur.appSlug,
-          cur.appVersion
-        );
-        return {
-          ...cur,
-          ...availableSlugs,
-          config: {
-            value: cur.config?.value || {},
-            ...availableSlugs?.config,
-          },
-        };
-      })
-    );
+    return (
+      await Promise.all(
+        appInstances.map(async (cur: Prismeai.AppInstance) => {
+          try {
+            const availableSlugs = await this.apps.getAppDetails(
+              cur.appSlug,
+              cur.appVersion
+            );
+            return {
+              ...cur,
+              ...availableSlugs,
+              config: {
+                ...availableSlugs?.config,
+                value: cur.config || {},
+              },
+            };
+          } catch (error) {
+            // If app does not exist anymore, just ignore this instance
+            return undefined;
+          }
+        })
+      )
+    ).filter(Boolean);
   };
 
   get = async (
@@ -69,7 +76,7 @@ class AppInstances {
       ...appInstance,
       ...availableSlugs,
       config: {
-        value: appInstance.config?.value || {},
+        value: appInstance.config || {},
         ...availableSlugs?.config,
       },
       slug,

@@ -138,7 +138,7 @@ export class Workspace {
         appInstanceSlug: slug,
         parentAppSlugs: (this.appContext?.parentAppSlugs || []).concat(appSlug),
       },
-      appInstance.config?.value || {}
+      appInstance.config || {}
     );
     return this.imports[slug];
   }

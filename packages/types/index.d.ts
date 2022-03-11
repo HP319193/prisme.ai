@@ -316,7 +316,7 @@ declare namespace Prismeai {
          * Defaults to the latest known app version
          */
         appVersion?: string;
-        config?: Config;
+        config?: any;
         /**
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
@@ -683,7 +683,7 @@ declare namespace Prismeai {
          * Defaults to the latest known app version
          */
         appVersion?: string;
-        config?: Config;
+        config?: any;
         /**
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
@@ -703,7 +703,7 @@ declare namespace Prismeai {
          * Defaults to the latest known app version
          */
         appVersion?: string;
-        config?: Config;
+        config?: any;
         /**
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
@@ -1847,7 +1847,8 @@ declare namespace PrismeaiAPI {
             slug: Parameters.Slug;
         }
         namespace Responses {
-            export type $200 = any;
+            export interface $200 {
+            }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -2193,7 +2194,8 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
             slug: Parameters.Slug;
         }
-        export type RequestBody = any;
+        export interface RequestBody {
+        }
         namespace Responses {
             export type $200 = Prismeai.AppInstance;
             export type $400 = Prismeai.BadParametersError;

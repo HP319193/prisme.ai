@@ -1800,7 +1800,8 @@ paths:
           description: Success Response
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
         '404':
           description: Object not found
           content:
@@ -1847,7 +1848,8 @@ paths:
         required: true
         content:
           application/json:
-            schema: {}
+            schema:
+              type: object
 
       responses:
         '200':
@@ -2131,8 +2133,7 @@ components:
         appVersion:
           type: string
           description: 'Defaults to the latest known app version'
-        config:
-          $ref: '#/components/schemas/Config'
+        config: {}
         slug:
           type: string
           description: Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
