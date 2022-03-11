@@ -16,6 +16,10 @@ export interface WorkspaceContext {
   // To move into a WorkspaceProvider
   workspace: Workspace;
   loading: boolean;
+  filters: {
+    afterDate: PrismeaiAPI.EventsLongpolling.Parameters.AfterDate;
+    beforeDate: PrismeaiAPI.EventsLongpolling.Parameters.BeforeDate;
+  };
   save: (workspace: Workspace) => void;
   saveSource: () => void;
   saving: boolean;
