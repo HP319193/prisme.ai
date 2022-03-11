@@ -38,7 +38,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
       });
     } catch (e: any) {
       notification.error({
-        message: errorT('api', { errorName: e.message }),
+        message: errorT('unknown', { errorName: e.message }),
         placement: 'bottomRight',
       });
       console.error(e);

@@ -28,7 +28,7 @@ export const AppsProvider: FC = ({ children }) => {
         return apps;
       } catch (e) {
         notification.error({
-          message: t('api', { errorName: e }),
+          message: t('unknown', { errorName: e }),
           placement: 'bottomRight',
         });
         return null;

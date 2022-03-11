@@ -76,7 +76,7 @@ export const PermissionsProvider: FC = ({ children }) => {
           return fetchedUserPermissions;
         } catch (e) {
           notification.error({
-            message: t('api', { errorName: e }),
+            message: t('unknown', { errorName: e }),
             placement: 'bottomRight',
           });
 
@@ -143,7 +143,7 @@ export const PermissionsProvider: FC = ({ children }) => {
           return deletedUserPermissions;
         } catch (e) {
           notification.error({
-            message: t('api', { errorName: e }),
+            message: t('unknown', { errorName: e }),
             placement: 'bottomRight',
           });
 

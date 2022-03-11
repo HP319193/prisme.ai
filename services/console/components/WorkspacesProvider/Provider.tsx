@@ -251,7 +251,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         return fetchedAppInstance;
       } catch (e) {
         notification.error({
-          message: errorT('api', { errorName: e }),
+          message: errorT('unknown', { errorName: e }),
           placement: 'bottomRight',
         });
         console.error(e);
@@ -285,7 +285,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         return { id: slug };
       } catch (e) {
         notification.error({
-          message: errorT('api', { errorName: e }),
+          message: errorT('unknown', { errorName: e }),
           placement: 'bottomRight',
         });
         console.error(e);
@@ -327,7 +327,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         return { id: slug };
       } catch (e) {
         notification.error({
-          message: errorT('api', { errorName: e }),
+          message: errorT('unknown', { errorName: e }),
           placement: 'bottomRight',
         });
         console.error(e);

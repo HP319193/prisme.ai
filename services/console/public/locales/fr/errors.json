@@ -1,4 +1,4 @@
 {
   "404": "Cette page n'existe pas. Revenez à l'accueil.",
-  "api": "Une erreur est survenue: \"{{errorName}}\""
+  "unknown": "Une erreur est survenue: \"{{errorName}}\""
 }
