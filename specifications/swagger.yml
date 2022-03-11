@@ -1795,8 +1795,7 @@ paths:
           description: Success Response
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/AppInstance'
+              schema: {}
         '404':
           description: Object not found
           content:

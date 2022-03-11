@@ -1847,7 +1847,7 @@ declare namespace PrismeaiAPI {
             slug: Parameters.Slug;
         }
         namespace Responses {
-            export type $200 = Prismeai.AppInstance;
+            export type $200 = any;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
