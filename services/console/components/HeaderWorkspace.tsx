@@ -47,7 +47,7 @@ const HeaderWorkspace = () => {
         push('/workspaces');
         remove({ id });
         notification.success({
-          message: t('automations.delete.toast'),
+          message: t('workspace.delete.toast'),
           placement: 'bottomRight',
         });
       },
