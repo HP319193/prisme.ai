@@ -3,12 +3,14 @@ import context, { WorkspacesContext } from './context';
 import api from '../../utils/api';
 import { Workspace } from '@prisme.ai/sdk';
 import { useUser } from '../UserProvider';
-import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { removedUndefinedProperties } from '../../utils/objects';
+import { notification } from '@prisme.ai/design-system';
+import { SLUG_MATCH_INVALID_CHARACTERS } from '../../utils/regex';
 
 export const WorkspacesProvider: FC = ({ children }) => {
   const { t } = useTranslation();
+  const { t: errorT } = useTranslation('errors');
   const { user } = useUser();
   const [workspaces, setWorkspaces] = useState<WorkspacesContext['workspaces']>(
     new Map()
@@ -192,16 +194,14 @@ export const WorkspacesProvider: FC = ({ children }) => {
   );
 
   // set role to editor for the postpermissions
-  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] = useCallback(
-    async (workspaceId) => {
+  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] =
+    useCallback(async (workspaceId) => {
       const { result: userPermissions } = await api.getPermissions(
         'workspaces',
         workspaceId
       );
       return userPermissions;
-    },
-    []
-  );
+    }, []);
 
   const installApp: WorkspacesContext['installApp'] = useCallback(
     async (workspaceId, body) => {
@@ -214,10 +214,13 @@ export const WorkspacesProvider: FC = ({ children }) => {
 
         // Generate app instance slug
         let version = 0;
-        const slug = () => `${body.appName}${version ? ` ${version}` : ''}`;
+        const newAppInstanceSlug = () =>
+          `${body.appSlug.replace(SLUG_MATCH_INVALID_CHARACTERS, '')}${
+            version ? ` ${version}` : ''
+          }`;
         while (
           Object.keys(currentWorkspace.imports || {}).find(
-            (appInstanceSlug) => appInstanceSlug === slug()
+            (appInstanceSlug) => appInstanceSlug === newAppInstanceSlug()
           )
         ) {
           version++;
@@ -225,7 +228,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
 
         const fetchedAppInstance = await api.installApp(workspaceId, {
           ...body,
-          slug: slug(),
+          slug: newAppInstanceSlug(),
         });
 
         // Typescript check, this route should always return a slug
@@ -248,14 +251,14 @@ export const WorkspacesProvider: FC = ({ children }) => {
         return fetchedAppInstance;
       } catch (e) {
         notification.error({
-          message: t('api', { errorName: e }),
+          message: errorT('unknown', { errorName: e }),
           placement: 'bottomRight',
         });
         console.error(e);
         return null;
       }
     },
-    [t, workspaces]
+    [errorT, workspaces]
   );
 
   const updateApp: WorkspacesContext['updateApp'] = useCallback(
@@ -282,14 +285,14 @@ export const WorkspacesProvider: FC = ({ children }) => {
         return { id: slug };
       } catch (e) {
         notification.error({
-          message: t('api', { errorName: e }),
+          message: errorT('unknown', { errorName: e }),
           placement: 'bottomRight',
         });
         console.error(e);
         return null;
       }
     },
-    [t, workspaces]
+    [errorT, workspaces]
   );
 
   const uninstallApp: WorkspacesContext['uninstallApp'] = useCallback(
@@ -324,14 +327,14 @@ export const WorkspacesProvider: FC = ({ children }) => {
         return { id: slug };
       } catch (e) {
         notification.error({
-          message: t('api', { errorName: e }),
+          message: errorT('unknown', { errorName: e }),
           placement: 'bottomRight',
         });
         console.error(e);
         return null;
       }
     },
-    [t, workspaces]
+    [errorT, workspaces]
   );
 
   const publishApp: WorkspacesContext['publishApp'] = useCallback(

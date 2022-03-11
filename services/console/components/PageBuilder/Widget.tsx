@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { memo, useRef } from 'react';
-import { Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import api from '../../utils/api';
 import { usePageBuilder } from './context';
-import { Loading } from '@prisme.ai/design-system';
+import { Loading, Tooltip } from '@prisme.ai/design-system';
 import Block from '../Block';
 import useHover from '@react-hook/hover';
 import { CloseCircleOutlined } from '@ant-design/icons';

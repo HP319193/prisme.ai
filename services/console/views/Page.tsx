@@ -10,10 +10,10 @@ import {
   Loading,
   Menu,
   Modal,
+  notification,
   PageHeader,
 } from '@prisme.ai/design-system';
 import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
-import { notification } from 'antd';
 import useLocalizedText from '../utils/useLocalizedText';
 import PageBuilder from '../components/PageBuilder';
 import { PageBuilderContext } from '../components/PageBuilder/context';
@@ -72,10 +72,9 @@ export const Page = () => {
     try {
       const cleanedValue = {
         ...value,
-        widgets: ((value.widgets ||
-          []) as PageBuilderContext['page']['widgets']).map(
-          ({ key, ...widget }) => widget
-        ),
+        widgets: (
+          (value.widgets || []) as PageBuilderContext['page']['widgets']
+        ).map(({ key, ...widget }) => widget),
         id: page.id,
       };
       await savePage(workspace.id, cleanedValue);

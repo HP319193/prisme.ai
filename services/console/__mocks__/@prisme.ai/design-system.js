@@ -101,3 +101,22 @@ export function Loading({ children = null }) {
 export function Modal({ children = null }) {
   return children;
 }
+
+export function Card({ children = null }) {
+  return children;
+}
+
+export function Switch({ children = null }) {
+  return children;
+}
+
+export function Tooltip({ children = null }) {
+  return children;
+}
+
+export const notification = {
+  error: jest.fn(),
+  confirm: jest.fn(),
+  info: jest.fn(),
+  success: jest.fn(),
+};

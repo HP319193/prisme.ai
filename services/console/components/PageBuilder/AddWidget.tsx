@@ -1,4 +1,4 @@
-import { Tooltip } from 'antd';
+import { Tooltip } from '@prisme.ai/design-system';
 import { PlusOutlined } from '@ant-design/icons';
 import { usePageBuilder } from './context';
 import { useTranslation } from 'next-i18next';

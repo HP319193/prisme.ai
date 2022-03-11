@@ -1,6 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, Input, Space, Table, Text } from '@prisme.ai/design-system';
-import { notification, Switch, Tooltip } from 'antd';
+import {
+  Button,
+  Input,
+  notification,
+  Space,
+  Switch,
+  Table,
+  Text,
+  Tooltip,
+} from '@prisme.ai/design-system';
 import { Form } from 'react-final-form';
 import { useTranslation } from 'react-i18next';
 import FieldContainer from '../../layouts/Field';

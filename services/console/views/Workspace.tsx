@@ -1,4 +1,11 @@
-import { Col, MenuTab, Row, SidePanel } from '@prisme.ai/design-system';
+import {
+  Button,
+  Col,
+  MenuTab,
+  Row,
+  SidePanel,
+  Tooltip,
+} from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo, useState } from 'react';
 import { EventsViewer } from '../components/EventsViewer';
@@ -9,10 +16,11 @@ import IconAutomations from '../icons/icon-automations.svgr';
 import IconPages from '../icons/icon-pages.svgr';
 import AppsSidebar from './AppsSidebar';
 import PagesSidebar from './PagesSidebar';
+import { DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
 
 export const Workspace = () => {
   const { t } = useTranslation('workspaces');
-  const { workspace, fullSidebar } = useWorkspace();
+  const { workspace, fullSidebar, setFullSidebar } = useWorkspace();
   const [sidebar, setSidebar] = useState('automations');
 
   const menu = useMemo(
@@ -69,13 +77,37 @@ export const Workspace = () => {
             ${fullSidebar ? 'w-[90vw] drop-shadow' : 'w-full'}
             transition-all ease-in duration-200`}
             Header={
-              <MenuTab
-                items={menu}
-                selected={
-                  (menu.find(({ key }) => sidebar === key) || menu[0]).key
-                }
-                onSelect={setSidebar}
-              />
+              <div className="flex flex-row items-center justify-between">
+                <MenuTab
+                  items={menu}
+                  selected={
+                    (menu.find(({ key }) => sidebar === key) || menu[0]).key
+                  }
+                  onSelect={setSidebar}
+                />
+                <Tooltip
+                  title={t(
+                    fullSidebar
+                      ? 'workspace.collapseSidebar'
+                      : 'workspace.expandSidebar'
+                  )}
+                  placement="left"
+                >
+                  <Button onClick={() => setFullSidebar(!fullSidebar)}>
+                    {fullSidebar ? (
+                      <DoubleRightOutlined
+                        className="color-blue"
+                        alt="workspace.collapseSidebar"
+                      />
+                    ) : (
+                      <DoubleLeftOutlined
+                        className="color-blue"
+                        alt="workspace.expandSidebar"
+                      />
+                    )}
+                  </Button>
+                </Tooltip>
+              </div>
             }
           >
             <>

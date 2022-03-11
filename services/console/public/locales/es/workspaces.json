@@ -18,7 +18,9 @@
         "cancel": "No, me arrepiento"
       },
       "toast": "Se ha eliminado la espacio de trabajo"
-    }
+    },
+    "expandSidebar": "Expandir",
+    "collapseSidebar": "Contraer"
   },
   "create": {
     "description_first": "Cree su primer espacio de trabajo para empezar a automatizar su trabajo",
@@ -151,10 +153,12 @@
     "publish": {
       "menuLabel": "Publicar como aplicación",
       "confirm": {
+        "slugInput": "nombre de la aplicación",
+        "slugIvalid": "Los únicos caracteres permitidos son letras, números, espacios en blanco, . _ y -",
         "title": "Publicar el espacio de trabajo como una aplicación",
         "ok": "Publicar",
         "toast": "Aplicación publicada",
-        "content": "Las automatizaciones, las páginas, el widget y la configuración del espacio de trabajo serán accesibles para cualquier persona que instale su aplicación. Elimine cualquier clave de API privada que desee mantener privada primero"
+        "content": "Las automatizaciones, las páginas, el widget y la configuración del espacio de trabajo serán accesibles para cualquier persona que instale su aplicación.\nElimine cualquier clave de API privada que desee mantener privada primero"
       }
     }
   },

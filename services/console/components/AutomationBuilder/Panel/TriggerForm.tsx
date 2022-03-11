@@ -3,8 +3,7 @@ import { FC, useMemo } from 'react';
 import { Form, useField } from 'react-final-form';
 import FieldContainer from '../../../layouts/Field';
 import Fieldset from '../../../layouts/Fieldset';
-import { Button, Input, TagEditable } from '@prisme.ai/design-system';
-import { Switch } from 'antd';
+import { Button, Switch, TagEditable } from '@prisme.ai/design-system';
 import { PlusOutlined } from '@ant-design/icons';
 
 const Endpoint = () => {

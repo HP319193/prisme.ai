@@ -6,12 +6,11 @@ import { useWorkspaces } from '../../components/WorkspacesProvider';
 import workspaceContext, { WorkspaceContext } from './context';
 import { EventsByDay } from '.';
 import api from '../../utils/api';
-import { Events, Event } from '@prisme.ai/sdk';
+import { Event, Events } from '@prisme.ai/sdk';
 import Error404 from '../../views/Errors/404';
-import { Layout, Loading } from '@prisme.ai/design-system';
+import { Layout, Loading, notification } from '@prisme.ai/design-system';
 import { useUser } from '../../components/UserProvider';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
-import { notification } from 'antd';
 import Storage from '../../utils/Storage';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import usePages from '../../components/PagesProvider/context';
@@ -86,9 +85,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }, [sourceDisplayed]);
 
   // Init socket
-  const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
-    workspace,
-  ]);
+  const workspaceId = useMemo(
+    () => (workspace ? workspace.id : null),
+    [workspace]
+  );
   useEffect(() => {
     if (
       !workspaceId ||

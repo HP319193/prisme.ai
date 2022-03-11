@@ -18,7 +18,9 @@
         "cancel": "No, please no"
       },
       "toast": "Workspace has been deleted"
-    }
+    },
+    "expandSidebar": "Expand",
+    "collapseSidebar": "Collapse"
   },
   "create": {
     "description_first": "Create your first workspace to start automating your work",
@@ -151,10 +153,12 @@
     "publish": {
       "menuLabel": "Publish as an app",
       "confirm": {
+        "slugInput": "App name",
+        "slugInvalid": "Only allowed characters are letters, numbers, whitespaces, . _ and -",
         "title": "Publish the workspace as an app",
         "ok": "Publish",
         "toast": "App Published",
-        "content": "The workspace's automations, pages, widget and config will be accessible to anyone who install your app. Remove any private API key you want to keep private first."
+        "content": "The workspace's automations, pages, widget and config will be accessible to anyone who install your app.\nRemove any private API key you want to keep private first."
       }
     }
   },

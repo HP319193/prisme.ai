@@ -1,6 +1,5 @@
 import { FC, ReactElement } from 'react';
-import { Divider } from 'antd';
-import { Title } from '@prisme.ai/design-system';
+import { Divider, Title } from '@prisme.ai/design-system';
 
 export interface FieldsetProps {
   legend: string;

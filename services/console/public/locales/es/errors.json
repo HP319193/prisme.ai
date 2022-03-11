@@ -1,4 +1,4 @@
 {
   "404": "Esta página no existe. Volver a la página de inicio.",
-  "api": "Se ha producido un error: \"{{errorName}}\""
+  "unknown": "Se ha producido un error: \"{{errorName}}\""
 }

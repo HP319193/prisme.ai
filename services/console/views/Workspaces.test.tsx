@@ -2,7 +2,6 @@ import Workspaces from './Workspaces';
 import renderer, { act } from 'react-test-renderer';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useRouter } from 'next/router';
-import { Card } from 'antd';
 
 jest.mock('../components/WorkspacesProvider', () => {
   const workspaces = new Map();

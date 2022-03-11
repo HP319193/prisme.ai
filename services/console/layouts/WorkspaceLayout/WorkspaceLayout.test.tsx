@@ -4,9 +4,9 @@ import renderer, { act } from 'react-test-renderer';
 import { useRouter } from 'next/router';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
 import api from '../../utils/api';
-import { Events, Event, Workspace } from '@prisme.ai/sdk';
+import { Event, Events, Workspace } from '@prisme.ai/sdk';
 import { useWorkspace, WorkspaceContext } from './context';
-import { notification } from 'antd';
+import { notification } from '@prisme.ai/design-system';
 import WorkspaceSource from '../../views/WorkspaceSource';
 
 jest.useFakeTimers();
