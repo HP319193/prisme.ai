@@ -5,6 +5,7 @@ export interface Schema {
     string,
     {
       type: string;
+      description?: string;
     }
   >;
   oneOf?: { required: string[] }[];

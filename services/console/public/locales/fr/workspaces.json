@@ -128,7 +128,8 @@
         "title": "Retourner la valeur :",
         "label": "Valeur",
         "save": "Ajouter"
-      }
+      },
+      "description": "Indiquez le nom d'une variable dans laquelle stocker la sortie de cette instruction afin de l'exploiter dans la suite de l'automatisation"
     },
     "node": {
       "title": "",

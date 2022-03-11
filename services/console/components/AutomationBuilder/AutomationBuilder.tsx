@@ -153,7 +153,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
               const schema = automations[name].arguments || {};
               schema.output = schema.output || {
                 type: 'string',
-                description: 'output',
+                description: t('automations.output.description'),
               };
 
               return {

@@ -9,7 +9,11 @@ exports[`should render 1`] = `
   >
     <span
       className="flex flex-col "
-    />
+    >
+      <div
+        className="relative"
+      />
+    </span>
   </div>
   <div
     className="mb-5"

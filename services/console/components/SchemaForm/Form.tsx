@@ -42,6 +42,7 @@ export const Form: FC<FormProps> = ({
   const fields = Object.keys(properties).map((field) => ({
     field,
     type: properties[field].type,
+    description: properties[field].description,
     required: required.includes(field),
   }));
   const submit = useCallback(

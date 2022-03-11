@@ -5,15 +5,23 @@ import { useField } from 'react-final-form';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import { FieldValidator } from 'final-form';
 import { Schema } from './types';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 interface FieldProps {
   field: string;
   type: string;
+  description?: string;
   required: boolean;
   oneOf?: Schema['oneOf'];
 }
 
-export const Field: FC<FieldProps> = ({ field, type, required, oneOf }) => {
+export const Field: FC<FieldProps> = ({
+  field,
+  type,
+  description,
+  required,
+  oneOf,
+}) => {
   const { input } = useField(field);
   const validate: FieldValidator<any> = (value) => {
     const isRequired = oneOf
@@ -55,7 +63,21 @@ export const Field: FC<FieldProps> = ({ field, type, required, oneOf }) => {
       return (
         <FieldContainer key={field} name={field} validate={validate}>
           {({ input, className }) => (
-            <Input id={field} label={field} {...input} className={className} />
+            <div className="relative">
+              {description && (
+                <div className="absolute top-[-2px] right-0 text-accent">
+                  <Tooltip title={description} placement="left">
+                    <InfoCircleOutlined />
+                  </Tooltip>
+                </div>
+              )}
+              <Input
+                id={field}
+                label={field}
+                {...input}
+                className={className}
+              />
+            </div>
           )}
         </FieldContainer>
       );

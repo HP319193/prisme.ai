@@ -123,7 +123,8 @@
         "title": "Devuelve el valor :",
         "label": "Valor",
         "save": "Añadir"
-      }
+      },
+      "description": "Especifique el nombre de una variable en la que almacenar la salida de esta instrucción para utilizarla en la automatización posterior"
     },
     "node": {
       "title": "",
