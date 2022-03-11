@@ -135,7 +135,7 @@ class AppInstances {
       { appInstance: appInstanceWithoutSlug, slug },
       {
         appSlug: appInstance.appSlug,
-        appInstanceSlug: slug,
+        appInstanceFullSlug: slug,
       }
     );
     return appInstance;
@@ -192,7 +192,7 @@ class AppInstances {
       { appInstance, slug: renamedSlug || slug, oldSlug },
       {
         appSlug: appInstance.appSlug,
-        appInstanceSlug: renamedSlug || slug,
+        appInstanceFullSlug: renamedSlug || slug,
       }
     );
 
@@ -229,7 +229,7 @@ class AppInstances {
       { appInstance, slug },
       {
         appSlug: appInstance.appSlug,
-        appInstanceSlug: slug,
+        appInstanceFullSlug: slug,
       }
     );
 

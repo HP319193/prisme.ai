@@ -19,7 +19,7 @@ export enum NativeTopic {
 export type Topic = NativeTopic | string;
 export interface EventSource {
   appSlug?: string;
-  appInstanceSlug?: string;
+  appInstanceFullSlug?: string;
   automationSlug?: string;
   userId?: string;
   workspaceId?: string;

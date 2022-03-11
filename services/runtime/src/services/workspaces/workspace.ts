@@ -24,6 +24,7 @@ export type ParsedAutomationName = [AppName, AutomationName];
 export interface AppContext {
   appSlug: string;
   appInstanceSlug: string;
+  appInstanceFullSlug: string;
   parentAppSlugs: string[];
 }
 
@@ -33,7 +34,7 @@ export class Workspace {
   public id: string;
   public config: any;
   private triggers: Triggers;
-  private imports: Record<string, Workspace>;
+  public imports: Record<string, Workspace>;
 
   public appContext?: AppContext;
   private apps: Apps;
@@ -63,7 +64,7 @@ export class Workspace {
     const workspace = new Workspace(dsul, apps, appContext);
     await workspace.update(dsul);
     if (overrideConfig) {
-      workspace.config = overrideConfig;
+      workspace.config = { ...workspace.config, ...overrideConfig };
     }
     return workspace;
   }
@@ -131,9 +132,10 @@ export class Workspace {
       this.apps,
       {
         appSlug: appSlug,
-        appInstanceSlug: this.appContext
-          ? `${this.appContext.appInstanceSlug}.${slug}`
+        appInstanceFullSlug: this.appContext
+          ? `${this.appContext.appInstanceFullSlug}.${slug}`
           : slug,
+        appInstanceSlug: slug,
         parentAppSlugs: (this.appContext?.parentAppSlugs || []).concat(appSlug),
       },
       appInstance.config?.value || {}
@@ -179,11 +181,13 @@ export class Workspace {
     }
     // Few native events (not prefixed with an appInstanceSlug) are appInstance related (i.e ConfiguredApp)
     else if (
-      event.source.appInstanceSlug &&
-      event.source.appInstanceSlug in this.imports
+      event.source.appInstanceFullSlug &&
+      event.source.appInstanceFullSlug in this.imports
     ) {
       triggers.push(
-        ...this.imports[event.source.appInstanceSlug].getEventTriggers(event)
+        ...this.imports[event.source.appInstanceFullSlug].getEventTriggers(
+          event
+        )
       );
     }
 

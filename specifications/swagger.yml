@@ -1800,8 +1800,7 @@ paths:
           description: Success Response
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/AppInstance'
+              schema: {}
         '404':
           description: Object not found
           content:
@@ -2682,7 +2681,7 @@ components:
           properties:
             appSlug:
               type: string
-            appInstanceSlug:
+            appInstanceFullSlug:
               type: string
             automationSlug:
               type: string
