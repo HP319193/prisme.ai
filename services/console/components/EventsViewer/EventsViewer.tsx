@@ -3,11 +3,20 @@ import { useDateFormat } from '../../utils/dates';
 import EventDetails from './EventDetails';
 import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useScrollListener } from '../useScrollListener';
-import { Collapse, Feed, Layout, Loading } from '@prisme.ai/design-system';
+import {
+  Button,
+  Collapse,
+  Feed,
+  FeedHeader,
+  Layout,
+  Loading,
+} from '@prisme.ai/design-system';
 import { Section } from '@prisme.ai/design-system/lib/Components/Feed';
 import { CollapseItem } from '@prisme.ai/design-system/lib/Components/Collapse';
 import { Event } from '@prisme.ai/sdk';
 import Empty from './Empty';
+import { useTranslation } from 'next-i18next';
+import { FilterOutlined } from '@ant-design/icons';
 
 export const EventsViewerRenderer = memo(function EventsViewserRendere({
   events,
@@ -18,6 +27,7 @@ export const EventsViewerRenderer = memo(function EventsViewserRendere({
   WorkspaceContext,
   'events' | 'nextEvents' | 'readEvent' | 'readEvents'
 >) {
+  const { t } = useTranslation('workspaces');
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
 
@@ -73,6 +83,16 @@ export const EventsViewerRenderer = memo(function EventsViewserRendere({
     [dateFormat, events, generateSectionContent]
   );
 
+  const feedHeaderButtons = useMemo(
+    () => [
+      <Button key="filter">
+        <FilterOutlined />
+        {t('feed.filter')}
+      </Button>,
+    ],
+    [t]
+  );
+
   let content;
   if (events === 'loading') {
     content = <Loading />;
@@ -87,7 +107,10 @@ export const EventsViewerRenderer = memo(function EventsViewserRendere({
   }
 
   return (
-    <Layout Header={<div className="h-8" />} className="h-full">
+    <Layout
+      Header={<FeedHeader buttons={feedHeaderButtons} />}
+      className="h-full"
+    >
       <div className="p-2 flex h-full">{content}</div>
     </Layout>
   );

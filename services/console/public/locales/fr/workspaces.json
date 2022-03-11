@@ -326,5 +326,8 @@
       "object": "Objet",
       "array": "Tableau"
     }
+  },
+  "feed": {
+    "filter": "Filtres"
   }
 }

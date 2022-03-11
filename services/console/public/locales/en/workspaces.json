@@ -303,6 +303,9 @@
       },
       "toast_automations": "Automation has been deleted",
       "toast_pages": "Page has been deleted"
+    },
+    "feed": {
+      "filter": "Filters"
     }
   },
   "schema": {

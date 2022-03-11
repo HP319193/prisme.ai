@@ -305,6 +305,9 @@
       "toast_pages": "Se ha eliminado la página"
     }
   },
+  "feed": {
+    "filter": "Filtros"
+  },
   "schema": {
     "property": {
       "edit": "Editar",
