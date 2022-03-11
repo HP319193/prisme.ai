@@ -2299,6 +2299,10 @@ components:
             - object
         description:
           $ref: '#/components/schemas/LocalizedText'
+        ui:widget:
+          type: string
+        ui:options:
+          type: object
 
     InstructionList:
       type: array

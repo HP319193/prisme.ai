@@ -1280,6 +1280,10 @@ declare namespace Prismeai {
     export interface TypedArgument {
         type?: "string" | "number" | "object";
         description?: LocalizedText;
+        "ui:widget"?: string;
+        "ui:options"?: {
+            [key: string]: any;
+        };
     }
     export interface UninstalledAppInstance {
         /**

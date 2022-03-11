@@ -44,6 +44,12 @@ export const Form: FC<FormProps> = ({
     type: properties[field].type,
     description: properties[field].description,
     required: required.includes(field),
+    widget: properties[field]['ui:widget']
+      ? {
+          component: properties[field]['ui:widget'],
+          options: properties[field]['ui:options'],
+        }
+      : undefined,
   }));
   const submit = useCallback(
     (values: any) => {

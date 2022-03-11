@@ -120,3 +120,7 @@ export const notification = {
   info: jest.fn(),
   success: jest.fn(),
 };
+
+export function Select({ children = null }) {
+  return children;
+}

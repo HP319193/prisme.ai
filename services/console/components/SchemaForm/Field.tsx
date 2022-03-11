@@ -1,4 +1,5 @@
-import { Input, Switch } from '@prisme.ai/design-system';
+import { Input, Select, Switch } from '@prisme.ai/design-system';
+import { Tooltip } from 'antd';
 import { FC } from 'react';
 import FieldContainer from '../../layouts/Field';
 import { useField } from 'react-final-form';
@@ -13,6 +14,10 @@ interface FieldProps {
   description?: string;
   required: boolean;
   oneOf?: Schema['oneOf'];
+  widget?: {
+    component: string;
+    options?: any;
+  };
 }
 
 export const Field: FC<FieldProps> = ({
@@ -21,6 +26,9 @@ export const Field: FC<FieldProps> = ({
   description,
   required,
   oneOf,
+  widget = {
+    component: type,
+  },
 }) => {
   const { input } = useField(field);
   const validate: FieldValidator<any> = (value) => {
@@ -29,7 +37,8 @@ export const Field: FC<FieldProps> = ({
       : required;
     return !value && isRequired ? 'required' : undefined;
   };
-  switch (type) {
+
+  switch (widget.component) {
     case 'object':
       return (
         <FieldContainer
@@ -57,6 +66,28 @@ export const Field: FC<FieldProps> = ({
             <div>{field}</div>
           </label>
         </div>
+      );
+    case 'select':
+      return (
+        <FieldContainer key={field} name={field} validate={validate}>
+          {({ input, className }) => (
+            <Select
+              className="flex flex-1 w-full"
+              selectOptions={(Array.isArray(widget.options.options)
+                ? widget.options.options
+                : []
+              ).map((item: string | { label: string; value: string }) =>
+                typeof item === 'string'
+                  ? {
+                      label: item,
+                      value: item,
+                    }
+                  : item
+              )}
+              {...input}
+            />
+          )}
+        </FieldContainer>
       );
     case 'string':
     default:
