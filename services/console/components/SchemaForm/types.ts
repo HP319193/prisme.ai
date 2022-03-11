@@ -1,15 +1,10 @@
 export interface Schema {
   description?: string;
   required?: string[];
-  properties?: Record<
-    string,
-    {
-      type: string;
-      description?: string;
-      'ui:widget'?: string;
-      'ui:options'?: any;
-    }
-  >;
+  properties?: Record<string, Schema>;
   oneOf?: { required: string[] }[];
-  type?: string;
+  type: string;
+  items?: Schema;
+  'ui:widget'?: string;
+  'ui:options'?: any;
 }

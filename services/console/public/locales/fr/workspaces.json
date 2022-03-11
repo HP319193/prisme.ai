@@ -119,7 +119,11 @@
       "description_conditions": "Teste des conditions afin d'éxécuter tel ou tel groupe d'instructions.",
       "description_fetch": "Envoie une requête HTTP.",
       "description_break": "Arrête l'exécution d'une automatisation.",
-      "search": "Rechercher"
+      "search": "Rechercher",
+      "item": {
+        "add": "Ajouter un item",
+        "remove": "Supprimer l'item"
+      }
     },
     "output": {
       "label": "<pre><code>{{output}}</code></pre>",

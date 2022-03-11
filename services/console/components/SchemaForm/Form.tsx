@@ -5,6 +5,9 @@ import { Form as FFForm, FormRenderProps } from 'react-final-form';
 import { Field } from './Field';
 import { Schema } from './types';
 import { PlusOutlined } from '@ant-design/icons';
+import arrayMutators from 'final-form-arrays';
+
+const convertField = () => {};
 
 interface FormProps {
   schema: Schema;
@@ -19,15 +22,8 @@ export const Form: FC<FormProps> = ({
   ...formProps
 }) => {
   const { t } = useTranslation('workspaces');
-  const properties = Object.keys(schema.properties || {}).reduce(
-    (prev, name) => {
-      if (prev[name].type === 'array') {
-        delete prev[name];
-      }
-      return prev;
-    },
-    { ...(schema.properties || {}) }
-  );
+
+  const { properties = {} } = schema;
 
   const required = (schema.required || []).filter((f) =>
     Object.keys(properties).includes(f)
@@ -42,6 +38,7 @@ export const Form: FC<FormProps> = ({
   const fields = Object.keys(properties).map((field) => ({
     field,
     type: properties[field].type,
+    items: properties[field].items,
     description: properties[field].description,
     required: required.includes(field),
     widget: properties[field]['ui:widget']
@@ -53,6 +50,7 @@ export const Form: FC<FormProps> = ({
   }));
   const submit = useCallback(
     (values: any) => {
+      console.log(values);
       let errors: Record<string, string> = {};
       if (
         !oneOf ||
@@ -78,7 +76,7 @@ export const Form: FC<FormProps> = ({
           if (type === 'array') {
             return {
               ...prev,
-              [attr]: [],
+              [attr]: values[attr],
             };
           }
           return {
@@ -120,7 +118,7 @@ export const Form: FC<FormProps> = ({
   );
 
   return (
-    <FFForm onSubmit={submit} {...formProps}>
+    <FFForm onSubmit={submit} {...formProps} mutators={{ ...arrayMutators }}>
       {({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           {description && <div>{description}</div>}
