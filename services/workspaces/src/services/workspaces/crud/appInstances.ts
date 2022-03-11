@@ -76,8 +76,8 @@ class AppInstances {
       ...appInstance,
       ...availableSlugs,
       config: {
-        value: appInstance.config || {},
         ...availableSlugs?.config,
+        value: appInstance.config || {},
       },
       slug,
     };
