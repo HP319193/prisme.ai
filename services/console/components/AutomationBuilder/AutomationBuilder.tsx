@@ -150,7 +150,11 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
             appName,
             Object.keys(automations).reduce((prev, name) => {
               if (name === id) return prev;
-              const schema = automations[name].arguments;
+              const schema = automations[name].arguments || {};
+              schema.output = schema.output || {
+                type: 'string',
+                description: 'output',
+              };
 
               return {
                 ...prev,
