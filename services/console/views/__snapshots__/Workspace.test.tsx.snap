@@ -145,7 +145,7 @@ Array [
       <div
         className="mt-4 text-gray"
       >
-        automations.create.label
+        automations.empty
       </div>
     </div>
   </div>,

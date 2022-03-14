@@ -22,7 +22,7 @@ exports[`should render empty 1`] = `
     className="absolute bottom-0 right-[15px] text-gray mr-1"
   >
     Prisme.ai 
-    6.0.0
+    6.1.0
   </div>
 </div>
 `;
@@ -63,7 +63,7 @@ exports[`should render some workspaces 1`] = `
     className="absolute bottom-0 right-[15px] text-gray mr-1"
   >
     Prisme.ai 
-    6.0.0
+    6.1.0
   </div>
 </div>
 `;
