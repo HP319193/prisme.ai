@@ -2279,7 +2279,8 @@ components:
 
     LocalizedText:
       oneOf:
-        - additionalProperties:
+        - type: object
+          additionalProperties:
             type: string
           example:
             fr: 'Bonjour'
