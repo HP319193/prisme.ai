@@ -35,14 +35,10 @@ export const AppsSidebar = () => {
   const [opened, setOpened] = useState(new Set());
 
   useEffect(() => {
-    setFullSidebar(!!opened.size);
+    if (opened.size > 0) {
+      setFullSidebar(true);
+    }
   }, [opened, setFullSidebar]);
-
-  useEffect(() => {
-    return () => {
-      setFullSidebar(false);
-    };
-  }, [setFullSidebar]);
 
   const toggleSetup = useCallback((app: string, state: boolean) => {
     setOpened((opened) => {
