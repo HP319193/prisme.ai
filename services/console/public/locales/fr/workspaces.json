@@ -45,7 +45,7 @@
       "label": "Ajouter une automatisation",
       "defaultName": "Automatisation",
       "value": {
-        "event": "un évènement"
+        "event": "un événement"
       }
     },
     "empty": "Une automatisation décrit ce qu'il faut faire et quand il faut le faire",
@@ -76,10 +76,10 @@
     },
     "trigger": {
       "events": {
-        "title": "Évènements",
-        "display_one": "L'évenement {{events}} survient",
-        "display_other": "L'un des évenements {{events}} survient",
-        "help": "L'automatisation sera exécutées à chaque fois que l'un des évènements suivants se produira."
+        "title": "événements",
+        "display_one": "L'événement {{events}} survient",
+        "display_other": "L'un des événements {{events}} survient",
+        "help": "L'automatisation sera exécutées à chaque fois que l'un des événements suivants se produira."
       },
       "dates": {
         "title": "Dates",
@@ -100,21 +100,25 @@
     "instruction": {
       "title_builtin": "Logique",
       "label": "{{context}}",
-      "label_emit": "Émet l'évenement",
+      "label_emit": "Émet l'événement",
       "label_repeat": "Répète sur",
       "label_all": "Toutes les instructions",
-      "label_wait": "Attend l'évenement",
+      "label_wait": "Attend l'événement",
       "label_set": "Définit var",
       "label_delete": "Supprime var",
       "label_conditions": "Conditions",
+      "label_fetch": "Requête HTTP",
+      "label_break": "Interruption",
       "description": "{{default}}",
-      "description_emit": "Émet un évenement de votre choix auquel vous pouvez associer un objet de données. Si vous choisissez de rendre cet évèenment privé, il ne sera pas entendu par les autres espaces de travail et Apps.",
+      "description_emit": "Émet un événement de votre choix auquel vous pouvez associer un objet de données. Si vous choisissez de rendre cet évèenment privé, il ne sera pas entendu par les autres espaces de travail et Apps.",
       "description_repeat": "Répète une liste d'instructions sur chaque élément d'un tableau de données passé en paramètre (`on`) ou jusqu'à un certain nombre d'itération (`until`).",
       "description_all": "Exécute toutes les instructions du groupe en parallèle. Les instructions suivantes seront exécutées seulement une fois que toutes les intructions de ce groupe seront terminées.",
-      "description_wait": "Bloque le traitement de la liste d'instruction jusqu'à ce que l'évènement passé en paramètre soit déclenché.",
+      "description_wait": "Bloque le traitement de la liste d'instruction jusqu'à ce que l'événement passé en paramètre soit déclenché.",
       "description_set": "Définie une valeur dans une variable.",
       "description_delete": "Supprime une variable",
       "description_conditions": "Teste des conditions afin d'éxécuter tel ou tel groupe d'instructions.",
+      "description_fetch": "Envoie une requête HTTP.",
+      "description_break": "Arrête l'exécution d'une automatisation.",
       "search": "Rechercher"
     },
     "output": {
@@ -160,10 +164,10 @@
       "confirm": {
         "slugInput": "App name",
         "slugInvalid": "Les seuls caractères acceptés sont les lettres, les chiffres, espaces, et les symboles: . _ -",
-        "title": "Publier le workspace tant qu'App",
+        "title": "Publier le workspace en tant qu'App",
         "ok": "Publier",
         "toast": "Application publiée",
-        "content": "Les automations, pages, widget et la configuration du workspace seront accessible par quiconque installe votre App.\nSupprimez toute clé privée d'API avant de publier."
+        "content": "Les Automatisations, Pages, Widgets ainsi que la configuration du Workspace seront accessibles à tous les utilisateurs qui installent votre App.\nSupprimez toute clé privée d'API avant de publier."
       }
     }
   },
@@ -193,7 +197,7 @@
       "add": "Ajouter un widget",
       "remove": "Supprimer le widget",
       "search": "Rechercher un widget",
-      "empty": "Aucun widget n'est disponible dans cet espace de travail. Installez une App !"
+      "empty": "Aucun widget n'est disponible dans cet espace de travail. Ajoutez une App !"
     },
     "share": {
       "label": "Partager cette page",

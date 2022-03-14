@@ -7,8 +7,8 @@
   "workspace": {
     "title": "\"{{name}}\" Workspace — $t(common:main.title)",
     "description": "Editing Workspace \"{{name}}\"",
-    "empty": "<button>Créez votre première automatisation</button> pour voir votre espace de travail s'animer",
     "share": "Share this workspace",
+    "empty": "<button>Créez votre première automatisation</button> pour voir votre espace de travail s'animer",
     "delete": {
       "label": "Delete Workspace",
       "confirm": {
@@ -107,14 +107,18 @@
       "label_set": "Set var",
       "label_delete": "Delete var",
       "label_conditions": "Conditions",
+      "label_fetch": "HTTP Request",
+      "label_break": "Break",
       "description": "{{default}}",
       "description_emit": "Issue an event of your choice to which you can associate a data object. If you choose to make this event private, it will not be heard by other workspaces and Apps.",
       "description_repeat": "Repeats a list of instructions on each element of a data array passed in parameter (`on`) or up to a certain number of iterations (`until`).",
       "description_all": "Executes all the instructions of the group in parallel. The following instructions will be executed only after all the instructions of this group are finished.",
       "description_wait": "Blocks the processing of the instruction list until the event passed in parameter is triggered.",
       "description_set": "Sets a value in a variable.",
-      "description_delete": "Delete a variable",
+      "description_delete": "Delete a variable.",
       "description_conditions": "Test conditions in order to execute this or that group of instructions.",
+      "description_fetch": "Send an HTTP request.",
+      "description_break": "Stop current automation execution.",
       "search": "Search"
     },
     "output": {
@@ -163,7 +167,7 @@
         "title": "Publish the workspace as an app",
         "ok": "Publish",
         "toast": "App Published",
-        "content": "The workspace's automations, pages, widget and config will be accessible to anyone who install your app.\nRemove any private API key you want to keep private first."
+        "content": "Automations, Pages, Widgets as well as Workspace configuration will be accessible to anyone installing your App.\nFirst, remove any private API key you want to keep private."
       }
     }
   },
@@ -193,7 +197,7 @@
       "add": "Add a widget",
       "remove": "Remove the widget",
       "search": "Search a widget",
-      "empty": "No widgets are available in this workspace. Install an App!"
+      "empty": "No widgets are available in this workspace. Add an App!"
     },
     "share": {
       "label": "Share this page",
