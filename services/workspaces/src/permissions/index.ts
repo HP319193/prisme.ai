@@ -9,7 +9,12 @@ import { SubjectType, Role, config } from './config';
 export { SubjectType, Role, ActionType };
 
 export type SubjectInterfaces = {
-  [SubjectType.Workspace]: { id: string; name: string };
+  [SubjectType.Workspace]: {
+    id: string;
+    name: string;
+    photo?: string;
+    description?: Prismeai.LocalizedText;
+  };
   [SubjectType.App]: Prismeai.App;
   [SubjectType.Page]: Prismeai.Page;
 };
@@ -31,6 +36,8 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
       schemas: {
         [SubjectType.Workspace]: {
           name: String,
+          photo: String,
+          description: Schema.Types.Mixed,
         },
         [SubjectType.App]: {
           workspaceId: { type: String, index: true },

@@ -199,6 +199,8 @@ class Workspaces {
     await this.accessManager.update(SubjectType.Workspace, {
       id: workspaceId,
       name: workspace.name,
+      photo: workspace.photo,
+      description: workspace.description,
     });
     await this.storage.save(workspaceId, workspace);
   };
