@@ -18,7 +18,7 @@ import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import getConfig from 'next/config';
 
 const {
-  publicRuntimeConfig: { PAGES_HOST = '' },
+  publicRuntimeConfig: { PAGES_HOST = window.location.hostname },
 } = getConfig();
 
 interface SharePageProps {
@@ -40,7 +40,7 @@ const SharePage = ({ pageId }: SharePageProps) => {
   } = usePermissions();
   const { workspace } = useWorkspace();
   const subjectType = 'pages';
-  const subjectId = `${workspace.id}:${pageId}`;
+  const subjectId = `${pageId}`;
 
   const generateRowButtons = useCallback(
     (onDelete: Function) => (
