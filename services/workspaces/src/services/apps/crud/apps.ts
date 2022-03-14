@@ -81,6 +81,18 @@ class Apps {
       }
     }
 
+    if (!app.photo && !existingApp?.[0]?.photo && dsul.photo) {
+      app.photo = dsul.photo;
+    }
+
+    if (
+      !app.description &&
+      !existingApp?.[0]?.description &&
+      dsul.description
+    ) {
+      app.description = dsul.description;
+    }
+
     if (!app.name) {
       app.name = existingApp?.[0]?.name || dsul.name;
     }
