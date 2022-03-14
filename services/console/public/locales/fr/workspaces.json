@@ -177,7 +177,7 @@
       "label": "Ajouter une Page",
       "defaultName": "Page"
     },
-    "empty": "Des interfaces en fonctions des besoins et des rôles",
+    "empty": "Des interfaces en fonction des besoins et des rôles",
     "delete": {
       "label": "Supprimer la page",
       "confirm": {
