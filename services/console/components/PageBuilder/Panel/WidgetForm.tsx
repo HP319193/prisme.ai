@@ -2,7 +2,6 @@ import {
   Button,
   ListItem,
   SearchInput,
-  Text,
   Space,
   Title,
 } from '@prisme.ai/design-system';
@@ -13,6 +12,7 @@ import { usePageBuilder } from '../context';
 import IconApps from '../../../icons/icon-apps.svgr';
 import Link from 'next/link';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';
+
 interface WidgetFormProps {
   onSubmit: (widgetSlug: string) => void;
 }
@@ -80,7 +80,7 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
           <Space key={appName} direction="vertical" className="!flex flex-1">
             {appName && (
               <Space>
-                <Title level={4}>{appName}</Title>
+                <Title level={4}>{`${appSlug} (${appName})`}</Title>
               </Space>
             )}
             <Space direction="vertical" className="!flex flex-1">
@@ -90,10 +90,7 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
                   onClick={() => onSubmit(`${appSlug}.${slug}`)}
                   className="w-full text-left !h-fit"
                 >
-                  <ListItem
-                    title={localize(name)}
-                    content={localize(description)}
-                  />
+                  <ListItem title={localize(name)} />
                 </Button>
               ))}
             </Space>
