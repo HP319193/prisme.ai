@@ -8,7 +8,7 @@
     "title": "\"{{name}}\" Workspace — $t(common:main.title)",
     "description": "Editing Workspace \"{{name}}\"",
     "empty": "<button>Créez votre première automatisation</button> pour voir votre espace de travail s'animer",
-    "share": "Share",
+    "share": "Share this workspace",
     "delete": {
       "label": "Delete Workspace",
       "confirm": {
@@ -196,7 +196,7 @@
       "empty": "No widgets are available in this workspace. Install an App!"
     },
     "share": {
-      "label": "Share access to the page",
+      "label": "Share this page",
       "access": "Access",
       "access_private": "Choose which users can view your page",
       "copy": "Copy the public address of the page",

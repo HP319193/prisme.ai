@@ -7,7 +7,7 @@ import {
   Tooltip,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { EventsViewer } from '../components/EventsViewer';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import AutomationsSidebar from './AutomationsSidebar';
@@ -17,11 +17,19 @@ import IconPages from '../icons/icon-pages.svgr';
 import AppsSidebar from './AppsSidebar';
 import PagesSidebar from './PagesSidebar';
 import { DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
+import ShareWorkspace from '../components/Share/ShareWorkspace';
 
 export const Workspace = () => {
   const { t } = useTranslation('workspaces');
-  const { workspace, fullSidebar, setFullSidebar } = useWorkspace();
+  const { workspace, fullSidebar, setFullSidebar, setShare } = useWorkspace();
   const [sidebar, setSidebar] = useState('automations');
+
+  useEffect(() => {
+    setShare({
+      label: t('workspace.share'),
+      component: ShareWorkspace,
+    });
+  }, [setShare, t]);
 
   const menu = useMemo(
     () => [

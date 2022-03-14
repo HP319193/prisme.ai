@@ -7,7 +7,7 @@
   "workspace": {
     "title": "\"{{name}}\" Espace de travail — $t(common:main.title)",
     "description": "Édition de l'espace de travail \"{{name}}\"",
-    "share": "Partager",
+    "share": "Partager ce workspace",
     "empty": "<button>Créez votre première automatisation</button> pour voir votre espace de travail s'animer",
     "delete": {
       "label": "Supprimer l'espace de travail",
@@ -196,7 +196,7 @@
       "empty": "Aucun widget n'est disponible dans cet espace de travail. Installez une App !"
     },
     "share": {
-      "label": "Partager l'accès à la page",
+      "label": "Partager cette page",
       "access": "Accès",
       "access_private": "Choisissez quels utilisateurs peuvent consulter votre page",
       "copy": "Copier l'adresse publique de la page",
