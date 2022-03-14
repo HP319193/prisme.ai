@@ -1,7 +1,7 @@
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
+import { useWorkspace, WorkspaceContext } from '../../layouts/WorkspaceLayout';
 import { useDateFormat } from '../../utils/dates';
 import EventDetails from './EventDetails';
-import { useCallback, useEffect, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useScrollListener } from '../useScrollListener';
 import { Collapse, Feed, Layout, Loading } from '@prisme.ai/design-system';
 import { Section } from '@prisme.ai/design-system/lib/Components/Feed';
@@ -9,8 +9,15 @@ import { CollapseItem } from '@prisme.ai/design-system/lib/Components/Collapse';
 import { Event } from '@prisme.ai/sdk';
 import Empty from './Empty';
 
-export const EventsViewer = () => {
-  const { events, nextEvents, readEvents, readEvent } = useWorkspace();
+export const EventsViewerRenderer = memo(function EventsViewserRendere({
+  events,
+  nextEvents,
+  readEvents,
+  readEvent,
+}: Pick<
+  WorkspaceContext,
+  'events' | 'nextEvents' | 'readEvent' | 'readEvents'
+>) {
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
 
@@ -84,6 +91,18 @@ export const EventsViewer = () => {
       <div className="p-2 flex h-full">{content}</div>
     </Layout>
   );
-};
+});
 
+export const EventsViewer = () => {
+  const { events, nextEvents, readEvents, readEvent } = useWorkspace();
+
+  return (
+    <EventsViewerRenderer
+      events={events}
+      nextEvents={nextEvents}
+      readEvents={readEvents}
+      readEvent={readEvent}
+    />
+  );
+};
 export default EventsViewer;
