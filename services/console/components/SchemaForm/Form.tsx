@@ -7,8 +7,6 @@ import { Schema } from './types';
 import { PlusOutlined } from '@ant-design/icons';
 import arrayMutators from 'final-form-arrays';
 
-const convertField = () => {};
-
 interface FormProps {
   schema: Schema;
   onSubmit: (values: any) => void;
@@ -37,9 +35,7 @@ export const Form: FC<FormProps> = ({
 
   const fields = Object.keys(properties).map((field) => ({
     field,
-    type: properties[field].type,
-    items: properties[field].items,
-    description: properties[field].description,
+    ...properties[field],
     required: required.includes(field),
     widget: properties[field]['ui:widget']
       ? {

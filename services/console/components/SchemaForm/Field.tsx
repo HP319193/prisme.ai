@@ -29,9 +29,10 @@ const getDefaultValue = (type?: string) => {
 interface FieldProps {
   field: string;
   type: string;
-  label?: string | null;
+  title?: string | null;
   description?: string;
   items?: FieldProps;
+  properties?: Record<string, FieldProps>;
   required: boolean;
   oneOf?: Schema['oneOf'];
   widget?: {
@@ -43,8 +44,9 @@ interface FieldProps {
 export const Field: FC<FieldProps> = ({
   field,
   type,
-  label = field,
+  title = field,
   items,
+  properties,
   description,
   required,
   oneOf,
@@ -65,9 +67,9 @@ export const Field: FC<FieldProps> = ({
   switch (widget.component) {
     case 'array':
       return (
-        <FieldArray key={field} name={field} label={label} validate={validate}>
+        <FieldArray key={field} name={field} label={title} validate={validate}>
           {({ fields }) => (
-            <>
+            <div className="ml-2 pl-2 border-l-[1px] border-solid border-[gray]">
               <div className="flex flex-1">
                 <button
                   type="button"
@@ -77,7 +79,7 @@ export const Field: FC<FieldProps> = ({
                   }
                 >
                   <label className="ml-[3px] text-gray text-[10px]">
-                    {label}
+                    {title}
                   </label>
                   <div className="flex flex-row items-baseline">
                     {!!description && (
@@ -100,7 +102,7 @@ export const Field: FC<FieldProps> = ({
                 {fields.map((name, index) => (
                   <div key={name} className="relative">
                     <Field
-                      label={null}
+                      title={null}
                       description={items && localize(items.description)}
                       field={name}
                       type={(items && items.type) || 'string'}
@@ -127,24 +129,24 @@ export const Field: FC<FieldProps> = ({
                   </div>
                 ))}
               </div>
-            </>
+            </div>
           )}
         </FieldArray>
       );
     case 'object':
+      const fields = Object.keys(properties || {});
+
       return (
-        <FieldContainer
-          key={field}
-          name={field}
-          label={label}
-          validate={validate}
-        >
-          {({ input, className }) => (
-            <div>
-              <CodeEditorInline mode="json" {...input} className={className} />
-            </div>
-          )}
-        </FieldContainer>
+        <div className="ml-2 pl-2 border-l-[1px] border-[gray] border-solid">
+          <label className="text-gray text-[10px]">{title}</label>
+          {fields.map((name) => (
+            <Field
+              key={name}
+              {...(properties || {})[name]}
+              field={`${field}.${name}`}
+            />
+          ))}
+        </div>
       );
     case 'boolean':
       return (
@@ -196,7 +198,7 @@ export const Field: FC<FieldProps> = ({
               )}
               <Input
                 id={field}
-                label={label || ''}
+                label={title || ''}
                 {...input}
                 className={className}
               />
