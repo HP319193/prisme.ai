@@ -5,27 +5,27 @@
     "defaultDescription": "Créé par vous"
   },
   "workspace": {
-    "title": "\"{{name}}\" Espace de travail — $t(common:main.title)",
-    "description": "Édition de l'espace de travail \"{{name}}\"",
+    "title": "\"{{name}}\" workspace — $t(common:main.title)",
+    "description": "Édition du workspace \"{{name}}\"",
     "share": "Partager ce workspace",
-    "empty": "<button>Créez votre première automatisation</button> pour voir votre espace de travail s'animer",
+    "empty": "<button>Créez votre première automatisation</button> pour voir votre workspace s'animer",
     "delete": {
-      "label": "Supprimer l'espace de travail",
+      "label": "Supprimer le workspace",
       "confirm": {
-        "title": "Voulez vous supprimer l'espace de travail \"{{name}}\" ?",
+        "title": "Voulez vous supprimer le workspace \"{{name}}\" ?",
         "content": "Attention, les données seront perdues.",
         "ok": "Oui, supprimer",
         "cancel": "Non, je regrette"
       },
-      "toast": "L'espace de travail a bien été supprimée"
+      "toast": "le workspace a bien été supprimé"
     },
     "expandSidebar": "Agrandir",
     "collapseSidebar": "Réduire"
   },
   "create": {
-    "description_first": "Créez votre premier espace de travail pour commencer à automatiser votre travail",
-    "description": "Nouvel espace de travail",
-    "label": "Créer un espace de travail",
+    "description_first": "Créez votre premier workspace pour commencer à automatiser votre travail",
+    "description": "Nouveau workspace",
+    "label": "Créer un workspace",
     "defaultName": "Workspace",
     "description_sub": "Et commencez à automatiser et valoriser"
   },
@@ -153,12 +153,12 @@
     "link": "Apps",
     "empty": "Tout est App",
     "install": "Ajouter une App",
-    "uninstall": "Êtes vous sûr de vouloir supprimer {{appName}} de votre espace de travail ?",
+    "uninstall": "Êtes vous sûr de vouloir supprimer {{appName}} de votre workspace ?",
     "uninstallConfirm": "Désinstaller {{appName}}",
     "uninstallTooltip": "Désinstaller",
     "configTooltip": "Paramétrer",
     "search": "Chercher une app...",
-    "title": "Apps Store",
+    "title": "App Store",
     "publish": {
       "menuLabel": "Publier en tant qu'App",
       "confirm": {
@@ -197,7 +197,7 @@
       "add": "Ajouter un widget",
       "remove": "Supprimer le widget",
       "search": "Rechercher un widget",
-      "empty": "Aucun widget n'est disponible dans cet espace de travail. Ajoutez une App !"
+      "empty": "Aucun widget n'est disponible dans ce workspace. Ajoutez une App !"
     },
     "share": {
       "label": "Partager cette page",
@@ -218,11 +218,11 @@
     },
     "save": {
       "help": "Enregistrer",
-      "confirm": "Votre espace de travail est enregistré",
-      "fail": "Votre espace de travail est invalide et n'a pas pu être enregistré."
+      "confirm": "Votre workspace est enregistré",
+      "fail": "Votre workspace est invalide et n'a pas pu être enregistré."
     }
   },
-  "404": "Cet espace de travail n'existe pas. Revenez à votre page d'accueil.",
+  "404": "Ce workspace n'existe pas. Revenez à votre page d'accueil.",
   "share": {
     "label": "Partager",
     "email": "Email",
