@@ -42,12 +42,13 @@
   "automations": {
     "link": "Automatisations",
     "create": {
-      "label": "Créer une automatisation",
+      "label": "Ajouter une automatisation",
       "defaultName": "Automatisation",
       "value": {
         "event": "un évènement"
       }
     },
+    "empty": "Une automatisation décrit ce qu'il faut faire et quand il faut le faire",
     "back": "Retour",
     "design": {
       "title": "Conception"
@@ -146,8 +147,8 @@
   },
   "apps": {
     "link": "Apps",
-    "soon": "Les Apps seront bientôt disponibles.",
-    "install": "Installer une App",
+    "empty": "Tout est App",
+    "install": "Ajouter une App",
     "uninstall": "Êtes vous sûr de vouloir supprimer {{appName}} de votre espace de travail ?",
     "uninstallConfirm": "Désinstaller {{appName}}",
     "uninstallTooltip": "Désinstaller",
@@ -169,9 +170,10 @@
   "pages": {
     "link": "Pages",
     "create": {
-      "label": "Créer une nouvelle Page",
+      "label": "Ajouter une Page",
       "defaultName": "Page"
     },
+    "empty": "Des interfaces en fonctions des besoins et des rôles",
     "delete": {
       "label": "Supprimer la page",
       "confirm": {

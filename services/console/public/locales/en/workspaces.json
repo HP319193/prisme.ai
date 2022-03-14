@@ -42,12 +42,13 @@
   "automations": {
     "link": "Automations",
     "create": {
-      "label": "Create an automation",
+      "label": "Add an Automation",
       "defaultName": "Automation",
       "value": {
         "event": "an event"
       }
     },
+    "empty": "An automation describes what to do and when to do it",
     "back": "Back",
     "design": {
       "title": "Design"
@@ -146,8 +147,8 @@
   },
   "apps": {
     "link": "Apps",
-    "soon": "Apps will be available soon.",
-    "install": "Install an App",
+    "empty": "All is App",
+    "install": "Add an App",
     "uninstall": "Are you sure you want to remove {{appName}} from your workspace ?",
     "uninstallConfirm": "Uninstall {{appName}}",
     "uninstallTooltip": "Uninstall",
@@ -169,9 +170,10 @@
   "pages": {
     "link": "Pages",
     "create": {
-      "label": "Create a new Page",
+      "label": "Add a Page",
       "defaultName": "Page"
     },
+    "empty": "Interfaces according to needs and roles",
     "delete": {
       "label": "Delete the page",
       "confirm": {

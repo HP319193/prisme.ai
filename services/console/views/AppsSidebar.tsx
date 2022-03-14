@@ -91,7 +91,10 @@ export const AppsSidebar = () => {
         {isEmpty && (
           <div className="flex flex-1 justify-center items-center flex-col">
             <IconApps width={100} height={100} className="text-gray-200" />
-            <div className="mt-4 text-gray">{t('apps.soon')}</div>
+            <div className="mt-4 text-gray">{t('apps.empty')}</div>
+            <Button variant="link" onClick={() => setAppStoreVisible(true)}>
+              {t('apps.install')}
+            </Button>
           </div>
         )}
         {!isEmpty && (
