@@ -22,3 +22,9 @@ export function DeleteOutlined() {
 export function ArrowLeftOutlined() {
   return null;
 }
+export function PlusCircleOutlined() {
+  return null;
+}
+export function DoubleLeftOutlined() {
+  return null;
+}

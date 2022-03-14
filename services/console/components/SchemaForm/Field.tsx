@@ -180,6 +180,7 @@ export const Field: FC<FieldProps> = ({
         </FieldContainer>
       );
     case 'string':
+    case 'number':
     default:
       return (
         <FieldContainer key={field} name={field} validate={validate}>
@@ -197,6 +198,7 @@ export const Field: FC<FieldProps> = ({
                 label={title || ''}
                 {...input}
                 className={className}
+                inputType={type === 'number' ? 'number' : 'text'}
               />
             </div>
           )}

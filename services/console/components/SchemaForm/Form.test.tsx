@@ -1,10 +1,12 @@
 import Form from './Form';
 import renderer from 'react-test-renderer';
 import { Form as FFForm } from 'react-final-form';
+import { Schema } from './types';
 
 it('should render', () => {
-  const schema = {
+  const schema: Schema = {
     required: ['foo'],
+    type: 'object',
     properties: {
       foo: {
         type: 'string',
@@ -17,6 +19,9 @@ it('should render', () => {
       },
       ipsum: {
         type: 'array',
+        items: {
+          type: 'string',
+        },
       },
     },
   };
@@ -26,7 +31,8 @@ it('should render', () => {
 });
 
 it('should submit', () => {
-  const schema = {
+  const schema: Schema = {
+    type: 'object',
     required: ['foo'],
     properties: {
       foo: {
@@ -40,6 +46,9 @@ it('should submit', () => {
       },
       ipsum: {
         type: 'array',
+        items: {
+          type: 'string',
+        },
       },
     },
   };
@@ -50,7 +59,8 @@ it('should submit', () => {
 });
 
 it('should save string as string', () => {
-  const schema = {
+  const schema: Schema = {
+    type: 'object',
     required: ['foo'],
     properties: {
       foo: {
@@ -69,7 +79,8 @@ it('should save string as string', () => {
 });
 
 it('should save object as object', () => {
-  const schema = {
+  const schema: Schema = {
+    type: 'object',
     required: ['foo'],
     properties: {
       foo: {
@@ -90,7 +101,8 @@ it('should save object as object', () => {
 });
 
 it('should check oneOf rule', () => {
-  const schema = {
+  const schema: Schema = {
+    type: 'object',
     oneOf: [
       {
         required: ['foo', 'lorem'],
@@ -120,7 +132,8 @@ it('should check oneOf rule', () => {
 });
 
 it('should submit without error', () => {
-  const schema = {
+  const schema: Schema = {
+    type: 'object',
     required: ['foo'],
     properties: {
       foo: {

@@ -17,6 +17,7 @@ export const Form: FC<FormProps> = ({
   schema,
   onSubmit,
   description,
+  initialValues = {},
   ...formProps
 }) => {
   const { t } = useTranslation('workspaces');
@@ -107,7 +108,12 @@ export const Form: FC<FormProps> = ({
   );
 
   return (
-    <FFForm onSubmit={submit} {...formProps} mutators={{ ...arrayMutators }}>
+    <FFForm
+      onSubmit={submit}
+      initialValues={initialValues}
+      {...formProps}
+      mutators={{ ...arrayMutators }}
+    >
       {({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           {description && <div>{description}</div>}
