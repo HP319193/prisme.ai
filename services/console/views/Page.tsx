@@ -17,11 +17,11 @@ import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
 import useLocalizedText from '../utils/useLocalizedText';
 import PageBuilder from '../components/PageBuilder';
 import { PageBuilderContext } from '../components/PageBuilder/context';
-import SharePage from '../components/Share/SharePage';
 import usePages from '../components/PagesProvider/context';
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
+  const { t: commonT } = useTranslation('common');
   const { workspace, setShare } = useWorkspace();
   const localize = useLocalizedText();
   const { pages, savePage, deletePage } = usePages();
@@ -40,15 +40,19 @@ export const Page = () => {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    // Removed from UI while we don't have the feature fully working
+    // (Ability to display page with a link, without sharing the workspace)
+
     setShare({
       label: t('pages.share.label'),
-      component: () => <SharePage pageId={`${pageId}`} />,
+      // component: () => <SharePage pageId={`${pageId}`} />,
+      component: () => <div>{commonT('soon')}</div>,
     });
 
     return () => {
       setShare(undefined);
     };
-  }, [pageId, setShare, t]);
+  }, [commonT, pageId, setShare, t]);
 
   useEffect(() => {
     if (!page) return;
