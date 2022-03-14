@@ -18,7 +18,7 @@ import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import getConfig from 'next/config';
 
 const {
-  publicRuntimeConfig: { PAGES_HOST = window.location.hostname },
+  publicRuntimeConfig: { PAGES_HOST = '' },
 } = getConfig();
 
 interface SharePageProps {
