@@ -1,5 +1,5 @@
 import { Input, Modal, notification, Tooltip } from '@prisme.ai/design-system';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspaces } from './WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
@@ -7,6 +7,8 @@ import {
   SLUG_MATCH_INVALID_CHARACTERS,
   SLUG_VALIDATION_REGEXP,
 } from '../utils/regex';
+import { useApps } from './AppsProvider';
+import { usePrevious } from '../utils/usePrevious';
 
 interface PublishModalProps {
   visible: boolean;
@@ -14,6 +16,7 @@ interface PublishModalProps {
 }
 
 const PublishModal = ({ visible, close }: PublishModalProps) => {
+  const { getApps } = useApps();
   const { publishApp } = useWorkspaces();
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
@@ -22,6 +25,29 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   const [publishSlug, setPublishSlug] = useState(
     workspace.name.replace(SLUG_MATCH_INVALID_CHARACTERS, '')
   );
+  const [alreadyPublished, setAlreadyPublished] = useState(false);
+  const prevWorkspaceId = usePrevious(workspace.id);
+
+  const getCurrentlyPublishedApp = useCallback(async () => {
+    const currentlyPublishedApp = await getApps(
+      undefined,
+      undefined,
+      undefined,
+      workspace.id
+    );
+    if (currentlyPublishedApp) {
+      const apps = Array.from(currentlyPublishedApp.values());
+      if (apps.length > 0 && apps[0] && apps[0].slug) {
+        setPublishSlug(apps[0].slug);
+        setAlreadyPublished(true);
+      }
+    }
+  }, [getApps, workspace.id]);
+
+  useEffect(() => {
+    if (prevWorkspaceId === workspace.id) return;
+    getCurrentlyPublishedApp();
+  }, [getCurrentlyPublishedApp, workspace.id, prevWorkspaceId]);
 
   const onConfirm = useCallback(async () => {
     try {
@@ -80,15 +106,23 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
       <div>
         <div className="mb-10">{t('apps.publish.confirm.content')}</div>
         <Tooltip
-          title={t('apps.publish.confirm.slugInvalid')}
-          visible={!isSlugValid}
+          title={
+            alreadyPublished
+              ? t('apps.publish.confirm.alreadyPublished')
+              : !isSlugValid
+              ? t('apps.publish.confirm.slugInvalid')
+              : ''
+          }
         >
-          <Input
-            status={!isSlugValid ? 'error' : undefined}
-            label={t('apps.publish.confirm.slugInput')}
-            value={publishSlug}
-            onChange={(event) => setPublishSlug(event.target.value)}
-          />
+          <div>
+            <Input
+              disabled={alreadyPublished}
+              status={!isSlugValid ? 'error' : undefined}
+              label={t('apps.publish.confirm.slugInput')}
+              value={publishSlug}
+              onChange={(event) => setPublishSlug(event.target.value)}
+            />
+          </div>
         </Tooltip>
       </div>
     </Modal>

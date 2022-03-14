@@ -114,9 +114,9 @@
       "description_repeat": "Répète une liste d'instructions sur chaque élément d'un tableau de données passé en paramètre (`on`) ou jusqu'à un certain nombre d'itération (`until`).",
       "description_all": "Exécute toutes les instructions du groupe en parallèle. Les instructions suivantes seront exécutées seulement une fois que toutes les intructions de ce groupe seront terminées.",
       "description_wait": "Bloque le traitement de la liste d'instruction jusqu'à ce que l'événement passé en paramètre soit déclenché.",
-      "description_set": "Définie une valeur dans une variable.",
+      "description_set": "Définit une valeur dans une variable.",
       "description_delete": "Supprime une variable",
-      "description_conditions": "Teste des conditions afin d'éxécuter tel ou tel groupe d'instructions.",
+      "description_conditions": "Teste des conditions afin d'exécuter tel ou tel groupe d'instructions.",
       "description_fetch": "Envoie une requête HTTP.",
       "description_break": "Arrête l'exécution d'une automatisation.",
       "search": "Rechercher"
@@ -162,6 +162,7 @@
     "publish": {
       "menuLabel": "Publier en tant qu'App",
       "confirm": {
+        "alreadyPublished": "Le workspace est déjà publié en tant qu'App avec ce nom, qui ne peut être changé",
         "slugInput": "App name",
         "slugInvalid": "Les seuls caractères acceptés sont les lettres, les chiffres, espaces, et les symboles: . _ -",
         "title": "Publier le workspace en tant qu'App",
