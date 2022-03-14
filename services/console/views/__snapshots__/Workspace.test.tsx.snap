@@ -147,6 +147,7 @@ Array [
       >
         automations.empty
       </div>
+      automations.create.label
     </div>
   </div>,
 ]
