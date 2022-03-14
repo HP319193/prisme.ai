@@ -40,7 +40,7 @@ const SharePage = ({ pageId }: SharePageProps) => {
   } = usePermissions();
   const { workspace } = useWorkspace();
   const subjectType = 'pages';
-  const subjectId = `${workspace.id}:${pageId}`;
+  const subjectId = `${pageId}`;
 
   const generateRowButtons = useCallback(
     (onDelete: Function) => (

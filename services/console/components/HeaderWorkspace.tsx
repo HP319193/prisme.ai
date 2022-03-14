@@ -119,7 +119,7 @@ const HeaderWorkspace = () => {
           >
             <Button variant="grey">
               <Space>
-                {label || t('share.label')}
+                {t('share.label')}
                 <ShareAltOutlined />
               </Space>
             </Button>

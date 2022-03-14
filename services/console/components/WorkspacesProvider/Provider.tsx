@@ -323,8 +323,6 @@ export const WorkspacesProvider: FC = ({ children }) => {
           },
         });
 
-        console.log('newWp', newWorkspaces);
-
         setWorkspaces(newWorkspaces);
         return { id: slug };
       } catch (e) {

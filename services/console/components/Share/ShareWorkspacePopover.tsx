@@ -49,7 +49,10 @@ const RoleSelect = ({
   );
 };
 
-const SharePopover = ({ subjectType, subjectId }: SharePopoverProps) => {
+const ShareWorkspacePopover = ({
+  subjectType,
+  subjectId,
+}: SharePopoverProps) => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
   const {
@@ -167,4 +170,4 @@ const SharePopover = ({ subjectType, subjectId }: SharePopoverProps) => {
   );
 };
 
-export default SharePopover;
+export default ShareWorkspacePopover;

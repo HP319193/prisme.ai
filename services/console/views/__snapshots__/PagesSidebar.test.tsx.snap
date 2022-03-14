@@ -21,8 +21,9 @@ exports[`should render 1`] = `
     <div
       className="mt-4 text-gray"
     >
-      pages.create.label
+      pages.empty
     </div>
+    pages.create.label
   </div>
 </div>
 `;

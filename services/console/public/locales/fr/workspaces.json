@@ -5,27 +5,27 @@
     "defaultDescription": "Créé par vous"
   },
   "workspace": {
-    "title": "\"{{name}}\" Espace de travail — $t(common:main.title)",
-    "description": "Édition de l'espace de travail \"{{name}}\"",
-    "share": "Partager",
-    "empty": "<button>Créez votre première automatisation</button> pour voir votre espace de travail s'animer",
+    "title": "\"{{name}}\" workspace — $t(common:main.title)",
+    "description": "Édition du workspace \"{{name}}\"",
+    "share": "Partager ce workspace",
+    "empty": "<button>Créez votre première automatisation</button> pour voir votre workspace s'animer",
     "delete": {
-      "label": "Supprimer l'espace de travail",
+      "label": "Supprimer le workspace",
       "confirm": {
-        "title": "Voulez vous supprimer l'espace de travail \"{{name}}\" ?",
+        "title": "Voulez vous supprimer le workspace \"{{name}}\" ?",
         "content": "Attention, les données seront perdues.",
         "ok": "Oui, supprimer",
         "cancel": "Non, je regrette"
       },
-      "toast": "L'espace de travail a bien été supprimée"
+      "toast": "le workspace a bien été supprimé"
     },
     "expandSidebar": "Agrandir",
     "collapseSidebar": "Réduire"
   },
   "create": {
-    "description_first": "Créez votre premier espace de travail pour commencer à automatiser votre travail",
-    "description": "Nouvel espace de travail",
-    "label": "Créer un espace de travail",
+    "description_first": "Créez votre premier workspace pour commencer à automatiser votre travail",
+    "description": "Nouveau workspace",
+    "label": "Créer un workspace",
     "defaultName": "Workspace",
     "description_sub": "Et commencez à automatiser et valoriser"
   },
@@ -42,12 +42,13 @@
   "automations": {
     "link": "Automatisations",
     "create": {
-      "label": "Créer une automatisation",
+      "label": "Ajouter une automatisation",
       "defaultName": "Automatisation",
       "value": {
-        "event": "un évènement"
+        "event": "un événement"
       }
     },
+    "empty": "Une automatisation décrit ce qu'il faut faire et quand il faut le faire",
     "back": "Retour",
     "design": {
       "title": "Conception"
@@ -75,10 +76,10 @@
     },
     "trigger": {
       "events": {
-        "title": "Évènements",
-        "display_one": "L'évenement {{events}} survient",
-        "display_other": "L'un des évenements {{events}} survient",
-        "help": "L'automatisation sera exécutées à chaque fois que l'un des évènements suivants se produira."
+        "title": "événements",
+        "display_one": "L'événement {{events}} survient",
+        "display_other": "L'un des événements {{events}} survient",
+        "help": "L'automatisation sera exécutées à chaque fois que l'un des événements suivants se produira."
       },
       "dates": {
         "title": "Dates",
@@ -99,21 +100,25 @@
     "instruction": {
       "title_builtin": "Logique",
       "label": "{{context}}",
-      "label_emit": "Émet l'évenement",
+      "label_emit": "Émet l'événement",
       "label_repeat": "Répète sur",
       "label_all": "Toutes les instructions",
-      "label_wait": "Attend l'évenement",
+      "label_wait": "Attend l'événement",
       "label_set": "Définit var",
       "label_delete": "Supprime var",
       "label_conditions": "Conditions",
+      "label_fetch": "Requête HTTP",
+      "label_break": "Interruption",
       "description": "{{default}}",
-      "description_emit": "Émet un évenement de votre choix auquel vous pouvez associer un objet de données. Si vous choisissez de rendre cet évèenment privé, il ne sera pas entendu par les autres espaces de travail et Apps.",
+      "description_emit": "Émet un événement de votre choix auquel vous pouvez associer un objet de données. Si vous choisissez de rendre cet évèenment privé, il ne sera pas entendu par les autres espaces de travail et Apps.",
       "description_repeat": "Répète une liste d'instructions sur chaque élément d'un tableau de données passé en paramètre (`on`) ou jusqu'à un certain nombre d'itération (`until`).",
       "description_all": "Exécute toutes les instructions du groupe en parallèle. Les instructions suivantes seront exécutées seulement une fois que toutes les intructions de ce groupe seront terminées.",
-      "description_wait": "Bloque le traitement de la liste d'instruction jusqu'à ce que l'évènement passé en paramètre soit déclenché.",
+      "description_wait": "Bloque le traitement de la liste d'instruction jusqu'à ce que l'événement passé en paramètre soit déclenché.",
       "description_set": "Définie une valeur dans une variable.",
       "description_delete": "Supprime une variable",
       "description_conditions": "Teste des conditions afin d'éxécuter tel ou tel groupe d'instructions.",
+      "description_fetch": "Envoie une requête HTTP.",
+      "description_break": "Arrête l'exécution d'une automatisation.",
       "search": "Rechercher"
     },
     "output": {
@@ -146,32 +151,33 @@
   },
   "apps": {
     "link": "Apps",
-    "soon": "Les Apps seront bientôt disponibles.",
-    "install": "Installer une App",
-    "uninstall": "Êtes vous sûr de vouloir supprimer {{appName}} de votre espace de travail ?",
+    "empty": "Tout est App",
+    "install": "Ajouter une App",
+    "uninstall": "Êtes vous sûr de vouloir supprimer {{appName}} de votre workspace ?",
     "uninstallConfirm": "Désinstaller {{appName}}",
     "uninstallTooltip": "Désinstaller",
     "configTooltip": "Paramétrer",
     "search": "Chercher une app...",
-    "title": "Apps Store",
+    "title": "App Store",
     "publish": {
       "menuLabel": "Publier en tant qu'App",
       "confirm": {
         "slugInput": "App name",
         "slugInvalid": "Les seuls caractères acceptés sont les lettres, les chiffres, espaces, et les symboles: . _ -",
-        "title": "Publier le workspace tant qu'App",
+        "title": "Publier le workspace en tant qu'App",
         "ok": "Publier",
         "toast": "Application publiée",
-        "content": "Les automations, pages, widget et la configuration du workspace seront accessible par quiconque installe votre App.\nSupprimez toute clé privée d'API avant de publier."
+        "content": "Les Automatisations, Pages, Widgets ainsi que la configuration du Workspace seront accessibles à tous les utilisateurs qui installent votre App.\nSupprimez toute clé privée d'API avant de publier."
       }
     }
   },
   "pages": {
     "link": "Pages",
     "create": {
-      "label": "Créer une nouvelle Page",
+      "label": "Ajouter une Page",
       "defaultName": "Page"
     },
+    "empty": "Des interfaces en fonctions des besoins et des rôles",
     "delete": {
       "label": "Supprimer la page",
       "confirm": {
@@ -191,10 +197,10 @@
       "add": "Ajouter un widget",
       "remove": "Supprimer le widget",
       "search": "Rechercher un widget",
-      "empty": "Aucun widget n'est disponible dans cet espace de travail. Installez une App !"
+      "empty": "Aucun widget n'est disponible dans ce workspace. Ajoutez une App !"
     },
     "share": {
-      "label": "Partager l'accès à la page",
+      "label": "Partager cette page",
       "access": "Accès",
       "access_private": "Choisissez quels utilisateurs peuvent consulter votre page",
       "copy": "Copier l'adresse publique de la page",
@@ -212,11 +218,11 @@
     },
     "save": {
       "help": "Enregistrer",
-      "confirm": "Votre espace de travail est enregistré",
-      "fail": "Votre espace de travail est invalide et n'a pas pu être enregistré."
+      "confirm": "Votre workspace est enregistré",
+      "fail": "Votre workspace est invalide et n'a pas pu être enregistré."
     }
   },
-  "404": "Cet espace de travail n'existe pas. Revenez à votre page d'accueil.",
+  "404": "Ce workspace n'existe pas. Revenez à votre page d'accueil.",
   "share": {
     "label": "Partager",
     "email": "Email",

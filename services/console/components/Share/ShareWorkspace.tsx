@@ -1,11 +1,13 @@
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import SharePopover from './SharePopover';
+import ShareWorkspacePopover from './ShareWorkspacePopover';
 
 export const ShareWorkspace = () => {
   const {
     workspace: { id: workspaceId },
   } = useWorkspace();
-  return <SharePopover subjectType="workspaces" subjectId={workspaceId} />;
+  return (
+    <ShareWorkspacePopover subjectType="workspaces" subjectId={workspaceId} />
+  );
 };
 
 export default ShareWorkspace;

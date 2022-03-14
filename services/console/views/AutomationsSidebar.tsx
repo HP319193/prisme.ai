@@ -89,9 +89,10 @@ export const AutomationsSidebar: FC = () => {
               width={100}
               className="text-gray-200"
             />
-            <div className="mt-4 text-gray">
+            <div className="mt-4 text-gray">{t('automations.empty')}</div>
+            <Button variant="link" onClick={create} disabled={creating}>
               {t('automations.create.label')}
-            </div>
+            </Button>
           </div>
         </Button>
       )}

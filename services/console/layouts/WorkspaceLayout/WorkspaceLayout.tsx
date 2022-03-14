@@ -16,6 +16,7 @@ import WorkspaceSource from '../../views/WorkspaceSource';
 import usePages from '../../components/PagesProvider/context';
 import { useApps } from '../../components/AppsProvider';
 import debounce from 'lodash/debounce';
+import { usePrevious } from '../../utils/usePrevious';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -60,6 +61,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [displaySourceView, setDisplaySourceView] = useState(false);
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
   const [fullSidebar, setFullSidebar] = useState(false);
+  const prevWorkspaceId = usePrevious((workspace || {}).id);
 
   const { fetchPages } = usePages();
   useEffect(() => {
@@ -121,11 +123,12 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   // Load events history
   useEffect(() => {
-    if (!workspace || lockEvents.current) return;
+    if (!workspace || lockEvents.current || prevWorkspaceId === workspace.id)
+      return;
     latest.current = undefined;
     setEvents('loading');
     nextEvents();
-  }, [nextEvents, workspace]);
+  }, [nextEvents, prevWorkspaceId, workspace]);
 
   const readEvent = useCallback(
     (eventId: string) => {
@@ -145,7 +148,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       debounce(() => {
         if (!workspaceId) return;
         fetch(workspaceId);
-      }, 500),
+      }, 2000),
     [fetch, workspaceId]
   );
 
@@ -153,13 +156,16 @@ export const WorkspaceLayout: FC = ({ children }) => {
   useEffect(() => {
     if (!socket.current) return;
 
-    const listener = (eventName: string, eventData: Prismeai.PrismeEvent) => {
+    const listener = async (
+      eventName: string,
+      eventData: Prismeai.PrismeEvent
+    ) => {
       const event = {
         ...eventData,
         createdAt: new Date(eventData.createdAt || ''),
       };
 
-      setEvents(
+      await setEvents(
         addEventToMap(new Map(events === 'loading' ? [] : events), event)
       );
 
@@ -171,7 +177,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     return () => {
       off();
     };
-  }, [socket, events]);
+  }, [socket, events, workspace, debouncedFetchWorkspace]);
 
   const [invalid, setInvalid] = useState<WorkspaceContext['invalid']>(false);
   const [newSource, setNewSource] = useState<WorkspaceContext['newSource']>();
