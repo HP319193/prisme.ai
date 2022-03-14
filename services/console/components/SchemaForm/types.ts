@@ -6,6 +6,7 @@ export interface Schema {
   oneOf?: { required: string[] }[];
   type: string;
   items?: Schema;
+  additionalProperties?: boolean;
   'ui:widget'?: string;
   'ui:options'?: any;
 }

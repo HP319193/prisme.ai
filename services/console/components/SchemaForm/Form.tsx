@@ -1,6 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import { Button } from '@prisme.ai/design-system';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { Form as FFForm, FormRenderProps } from 'react-final-form';
 import { Field } from './Field';
 import { Schema } from './types';
@@ -23,30 +23,14 @@ export const Form: FC<FormProps> = ({
 
   const { properties = {} } = schema;
 
-  const required = (schema.required || []).filter((f) =>
-    Object.keys(properties).includes(f)
-  );
-
   const oneOf = schema.oneOf
     ? schema.oneOf.map(({ required }) => ({
         required: required.filter((f) => Object.keys(properties).includes(f)),
       }))
     : null;
 
-  const fields = Object.keys(properties).map((field) => ({
-    field,
-    ...properties[field],
-    required: required.includes(field),
-    widget: properties[field]['ui:widget']
-      ? {
-          component: properties[field]['ui:widget'],
-          options: properties[field]['ui:options'],
-        }
-      : undefined,
-  }));
   const submit = useCallback(
     (values: any) => {
-      console.log(values);
       let errors: Record<string, string> = {};
       if (
         !oneOf ||
@@ -113,17 +97,22 @@ export const Form: FC<FormProps> = ({
     [onSubmit, oneOf, properties, schema]
   );
 
+  const fields: (Schema & { field: string })[] = useMemo(
+    () =>
+      Object.keys(properties).map((field) => ({
+        field,
+        ...properties[field],
+      })),
+    [properties]
+  );
+
   return (
     <FFForm onSubmit={submit} {...formProps} mutators={{ ...arrayMutators }}>
       {({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           {description && <div>{description}</div>}
           {fields.map((field) => (
-            <Field
-              key={field.field}
-              {...field}
-              oneOf={oneOf ? oneOf : undefined}
-            />
+            <Field key={field.field} {...field} required={schema.required} />
           ))}
           <Button type="submit">
             <PlusOutlined />

@@ -2,7 +2,7 @@ import { Input, Select, Switch } from '@prisme.ai/design-system';
 import { Tooltip } from 'antd';
 import { FC } from 'react';
 import FieldContainer from '../../layouts/Field';
-import { useField } from 'react-final-form';
+import { useField, Field as RFFField } from 'react-final-form';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import { FieldValidator } from 'final-form';
 import { Schema } from './types';
@@ -26,19 +26,8 @@ const getDefaultValue = (type?: string) => {
       return '';
   }
 };
-interface FieldProps {
+interface FieldProps extends Schema {
   field: string;
-  type: string;
-  title?: string | null;
-  description?: string;
-  items?: FieldProps;
-  properties?: Record<string, FieldProps>;
-  required: boolean;
-  oneOf?: Schema['oneOf'];
-  widget?: {
-    component?: string;
-    options?: any;
-  };
 }
 
 export const Field: FC<FieldProps> = ({
@@ -50,9 +39,9 @@ export const Field: FC<FieldProps> = ({
   description,
   required,
   oneOf,
-  widget = {
-    component: type,
-  },
+  'ui:widget': component = type,
+  'ui:options': componentOptions = {},
+  additionalProperties,
 }) => {
   const { t } = useTranslation('workspaces');
   const localize = useLocalizedText();
@@ -64,7 +53,7 @@ export const Field: FC<FieldProps> = ({
     return !value && isRequired ? 'required' : undefined;
   };
 
-  switch (widget.component) {
+  switch (component) {
     case 'array':
       return (
         <FieldArray key={field} name={field} label={title} validate={validate}>
@@ -102,11 +91,11 @@ export const Field: FC<FieldProps> = ({
                 {fields.map((name, index) => (
                   <div key={name} className="relative">
                     <Field
-                      title={null}
+                      title={''}
                       description={items && localize(items.description)}
                       field={name}
                       type={(items && items.type) || 'string'}
-                      required={false}
+                      required={required}
                     />
                     <Tooltip
                       title={t('automations.instruction.item.remove')}
@@ -139,13 +128,20 @@ export const Field: FC<FieldProps> = ({
       return (
         <div className="ml-2 pl-2 border-l-[1px] border-[gray] border-solid">
           <label className="text-gray text-[10px]">{title}</label>
-          {fields.map((name) => (
-            <Field
-              key={name}
-              {...(properties || {})[name]}
-              field={`${field}.${name}`}
-            />
-          ))}
+          {!additionalProperties &&
+            fields.map((name) => (
+              <Field
+                key={name}
+                field={`${field}.${name}`}
+                {...(properties || {})[name]}
+                required={required}
+              />
+            ))}
+          {additionalProperties && (
+            <RFFField name={field}>
+              {({ input }) => <CodeEditorInline mode="json" {...input} />}
+            </RFFField>
+          )}
         </div>
       );
     case 'boolean':
@@ -167,8 +163,8 @@ export const Field: FC<FieldProps> = ({
           {({ input }) => (
             <Select
               className="flex flex-1 w-full"
-              selectOptions={(Array.isArray(widget.options.options)
-                ? widget.options.options
+              selectOptions={(Array.isArray(componentOptions.options)
+                ? componentOptions.options
                 : []
               ).map((item: string | { label: string; value: string }) =>
                 typeof item === 'string'
