@@ -212,10 +212,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     const newWorkspace = await update(newSource);
     setSaving(false);
     if (!newWorkspace) {
-      notification.error({
-        message: t('expert.save.fail'),
-        placement: 'bottomRight',
-      });
       return;
     }
     setCurrentWorkspace(newWorkspace);
