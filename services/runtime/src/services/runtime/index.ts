@@ -217,7 +217,10 @@ export default class Runtime {
 
     return {
       triggers,
-      payload: event.payload,
+      payload: {
+        source: event.source,
+        payload: event.payload,
+      },
     };
   }
 }
