@@ -8,7 +8,7 @@ export interface AppsContext {
     page?: PrismeaiAPI.SearchApps.QueryParameters['page'],
     limit?: PrismeaiAPI.SearchApps.QueryParameters['limit'],
     workspaceId?: PrismeaiAPI.SearchApps.QueryParameters['workspaceId']
-  ) => Promise<Map<string, Prismeai.App> | null>;
+  ) => Promise<Prismeai.App[] | null>;
   getAppInstances: (
     workspaceId: PrismeaiAPI.ListAppInstances.PathParameters['workspaceId']
   ) => Promise<Prismeai.DetailedAppInstance[]>;
