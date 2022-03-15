@@ -114,7 +114,13 @@
       "description_set": "Establece un valor en una variable.",
       "description_delete": "Borra una variable",
       "description_conditions": "Comprueba las condiciones para ejecutar un determinado grupo de instrucciones.",
-      "search": "Investigador"
+      "description_fetch": "Envía una petición HTTP.",
+      "description_break": "Detiene la ejecución de una automatización.",
+      "search": "Investigador",
+      "item": {
+        "add": "Añadir un elemento",
+        "remove": "Borrar el elemento"
+      }
     },
     "output": {
       "label": "<pre><code>{{output}}</code></pre>",
