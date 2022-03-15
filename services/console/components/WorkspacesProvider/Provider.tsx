@@ -127,72 +127,6 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [workspaces]
   );
 
-  const createAutomation: WorkspacesContext['createAutomation'] = useCallback(
-    async (workspace, automation) => {
-      const automationResult = await api.createAutomation(
-        workspace,
-        automation
-      );
-      const { slug, ...newAutomation } = automationResult;
-      const newWorkspace = {
-        ...workspace,
-        automations: {
-          ...workspace.automations,
-          [slug]: newAutomation,
-        },
-      };
-      const newWorkspaces = new Map(workspaces);
-      newWorkspaces.set(newWorkspace.id, newWorkspace);
-      setWorkspaces(newWorkspaces);
-      return automationResult;
-    },
-    [workspaces]
-  );
-
-  const updateAutomation: WorkspacesContext['updateAutomation'] = useCallback(
-    async (workspace, slug, automation) => {
-      const automationResult = await api.updateAutomation(
-        workspace,
-        slug,
-        automation
-      );
-
-      const newWorkspace = {
-        ...workspace,
-        automations: {
-          ...workspace.automations,
-          [slug]: automationResult,
-        },
-      };
-      const newWorkspaces = new Map(workspaces);
-      newWorkspaces.set(newWorkspace.id, newWorkspace);
-      setWorkspaces(newWorkspaces);
-
-      return automationResult;
-    },
-    [workspaces]
-  );
-
-  const deleteAutomation: WorkspacesContext['deleteAutomation'] = useCallback(
-    async (workspace, slug) => {
-      await api.deleteAutomation(workspace, slug);
-
-      const newWorkspaces = new Map(workspaces);
-      const newWorkspace = {
-        ...newWorkspaces.get(workspace.id),
-      } as Workspace;
-
-      const { [slug]: removed, ...filteredAutomations } =
-        workspace.automations || {};
-      newWorkspace.automations = filteredAutomations;
-      newWorkspaces.set(workspace.id, newWorkspace);
-      setWorkspaces(newWorkspaces);
-
-      return removed;
-    },
-    [workspaces]
-  );
-
   // set role to editor for the postpermissions
   const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] = useCallback(
     async (workspaceId) => {
@@ -355,9 +289,6 @@ export const WorkspacesProvider: FC = ({ children }) => {
         create,
         update,
         remove,
-        createAutomation,
-        updateAutomation,
-        deleteAutomation,
         getWorkspaceUsersPermissions,
         installApp,
         updateApp,

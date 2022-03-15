@@ -246,6 +246,67 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [workspace]
   );
 
+  const createAutomation: WorkspaceContext['createAutomation'] = useCallback(
+    async (automation) => {
+      if (!workspace) return null;
+      const automationResult = await api.createAutomation(
+        workspace,
+        automation
+      );
+      const { slug, ...newAutomation } = automationResult;
+      setCurrentWorkspace({
+        ...workspace,
+        automations: {
+          ...workspace.automations,
+          [slug]: newAutomation,
+        },
+      });
+      return automationResult;
+    },
+    [workspace]
+  );
+
+  const updateAutomation: WorkspaceContext['updateAutomation'] = useCallback(
+    async (slug, automation) => {
+      if (!workspace) return null;
+      const automationResult = await api.updateAutomation(
+        workspace,
+        slug,
+        automation
+      );
+
+      setCurrentWorkspace({
+        ...workspace,
+        automations: {
+          ...workspace.automations,
+          [slug]: automationResult,
+        },
+      });
+
+      return automationResult;
+    },
+    [workspace]
+  );
+
+  const deleteAutomation: WorkspaceContext['deleteAutomation'] = useCallback(
+    async (slug) => {
+      if (!workspace) return null;
+      await api.deleteAutomation(workspace, slug);
+
+      const newWorkspace = {
+        ...workspace,
+      };
+
+      const { [slug]: removed, ...filteredAutomations } =
+        workspace.automations || {};
+      newWorkspace.automations = filteredAutomations;
+      setCurrentWorkspace(newWorkspace);
+
+      return removed;
+    },
+    [workspace]
+  );
+
   if (!workspace || !user) {
     return (
       <div className="flex flex-1 justify-center align-center">
@@ -282,6 +343,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
         setShare,
         getAppConfig,
         saveAppConfig,
+        createAutomation,
+        updateAutomation,
+        deleteAutomation,
       }}
     >
       <Head>

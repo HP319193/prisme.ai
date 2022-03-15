@@ -4,7 +4,6 @@ import AutomationBuilder from '../components/AutomationBuilder';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
-import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
 import {
   Button,
@@ -21,40 +20,33 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import { usePrevious } from '../utils/usePrevious';
-import { Workspace } from '../utils/api';
+import { slugifyAutomation } from '../utils/strings';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
   const localize = useLocalizedText();
-  const { workspace } = useWorkspace();
-  const { updateAutomation, deleteAutomation } = useWorkspaces();
+  const { workspace, updateAutomation, deleteAutomation } = useWorkspace();
   const { getAppInstances, appInstances } = useApps();
-
+  console.log('workspace', workspace);
   useEffect(() => {
     getAppInstances(workspace.id);
   }, [getAppInstances, workspace.id]);
 
   const {
-    query: { automationId },
+    query: { id, automationId },
     push,
+    replace,
   } = useRouter();
+
   const automation = (workspace.automations || {})[`${automationId}`];
   const [value, setValue] = useState<Prismeai.Automation>(automation || {});
   const [saving, setSaving] = useState(false);
   const prevAutomationId = usePrevious(automationId);
   const saveAutomation = useRef(
-    async (
-      workspace: Workspace,
-      automationId: string,
-      automation: Prismeai.Automation
-    ) => {
+    async (automationId: string, automation: Prismeai.Automation) => {
       setSaving(true);
       try {
-        const saved = await updateAutomation(
-          workspace,
-          automationId,
-          automation
-        );
+        const saved = await updateAutomation(automationId, automation);
         if (!saved) {
           throw new Error('not saved');
         }
@@ -75,31 +67,25 @@ export const Automation = () => {
     }
   );
 
-  useEffect(() => {
-    if (prevAutomationId !== automationId) {
-      setValue(automation);
-    }
-  }, [automation, automationId, prevAutomationId]);
-
   const updateTitle = useCallback(
-    (newTitle: string) => {
+    async (newTitle: string) => {
       if (!newTitle || Object.keys(workspace.automations).includes(newTitle)) {
         return;
       }
-      const newValue = { ...value, name: newTitle };
+      const newSlug = slugifyAutomation(workspace, newTitle);
+      const newValue = { ...value, name: newTitle, slug: newSlug };
       setValue(newValue);
-      saveAutomation.current(workspace, `${automationId}`, newValue);
+      await saveAutomation.current(`${automationId}`, newValue);
+      replace(`/workspaces/${id}/automations/${newSlug}`, undefined, {
+        shallow: true,
+      });
     },
-    [automationId, value, workspace]
+    [automationId, id, replace, value, workspace]
   );
 
   const save = useCallback(async () => {
-    const saved = await saveAutomation.current(
-      workspace,
-      `${automationId}`,
-      value
-    );
-  }, [automationId, value, workspace]);
+    await saveAutomation.current(`${automationId}`, value);
+  }, [automationId, value]);
 
   useKeyboardShortcut([
     {
@@ -123,7 +109,7 @@ export const Automation = () => {
       okText: t('automations.delete.confirm.cancel'),
       onCancel: () => {
         push(`/workspaces/${workspace.id}`);
-        deleteAutomation(workspace, `${automationId}`);
+        deleteAutomation(`${automationId}`);
         notification.success({
           message: t('automations.delete.toast'),
           placement: 'bottomRight',
@@ -155,6 +141,7 @@ export const Automation = () => {
   );
 
   if (!value) {
+    console.log('MASI !', value, automationId);
     return <Error404 link={`/workspaces/${workspace.id}`} />;
   }
   return (
