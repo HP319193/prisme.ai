@@ -193,9 +193,7 @@ it('should display select with simple options', () => {
       options: ['foo', 'bar'],
     },
   };
-  const root = renderer.create(
-    <Field field="foo" type="string" required={[]} {...props} />
-  );
+  const root = renderer.create(<Field field="foo" type="string" {...props} />);
   expect(root.root.findByType(Select).props.selectOptions).toEqual([
     {
       label: 'foo',
@@ -218,9 +216,7 @@ it('should display select with options', () => {
       ],
     },
   };
-  const root = renderer.create(
-    <Field field="foo" type="string" required={[]} {...props} />
-  );
+  const root = renderer.create(<Field field="foo" type="string" {...props} />);
   expect(root.root.findByType(Select).props.selectOptions).toEqual([
     {
       label: 'Foo',
@@ -240,8 +236,6 @@ it('should display select with invalid options', () => {
       options: true,
     },
   };
-  const root = renderer.create(
-    <Field field="foo" type="string" required={[]} {...props} />
-  );
+  const root = renderer.create(<Field field="foo" type="string" {...props} />);
   expect(root.root.findByType(Select).props.selectOptions).toEqual([]);
 });

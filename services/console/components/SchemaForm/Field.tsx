@@ -26,8 +26,9 @@ const getDefaultValue = (type?: string) => {
       return '';
   }
 };
-interface FieldProps extends Schema {
+interface FieldProps extends Omit<Schema, 'required'> {
   field: string;
+  required?: boolean;
 }
 
 export const Field: FC<FieldProps> = ({

@@ -11,7 +11,9 @@ export interface AutomationBuilderContext {
   ) => void;
   editTrigger: () => void;
   editOutput: () => void;
-  getApp: (instruction: string) => {
+  getApp: (
+    instruction: string
+  ) => {
     name: string;
     icon: string;
   };
@@ -38,7 +40,7 @@ export const automationBuilderContext = createContext<AutomationBuilderContext>(
     },
     instructionsSchemas: [],
     getSchema() {
-      return {};
+      return {} as Schema;
     },
   }
 );
