@@ -96,7 +96,8 @@ export const Field: FC<FieldProps> = ({
                       description={items && localize(items.description)}
                       field={name}
                       type={(items && items.type) || 'string'}
-                      required={required}
+                      {...items}
+                      required={false}
                     />
                     <Tooltip
                       title={t('automations.instruction.item.remove')}
