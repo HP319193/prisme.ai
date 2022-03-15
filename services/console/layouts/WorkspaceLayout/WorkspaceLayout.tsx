@@ -61,7 +61,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [displaySourceView, setDisplaySourceView] = useState(false);
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
   const [fullSidebar, setFullSidebar] = useState(false);
-  const prevWorkspaceId = usePrevious((workspace || {}).id);
 
   const { fetchPages } = usePages();
   useEffect(() => {
@@ -88,10 +87,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }, [sourceDisplayed]);
 
   // Init socket
-  const workspaceId = useMemo(
-    () => (workspace ? workspace.id : null),
-    [workspace]
-  );
+  const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
+    workspace,
+  ]);
   useEffect(() => {
     if (
       !workspaceId ||
@@ -104,30 +102,38 @@ export const WorkspaceLayout: FC = ({ children }) => {
     };
   }, [workspaceId]);
 
+  const fetchNextEvents = useRef(
+    async (workspaceId: string, beforeDate?: Date) => {
+      lockEvents.current = true;
+      const fetched = await api.getEvents(workspaceId, {
+        beforeDate: beforeDate || undefined,
+      });
+      setEvents((events) => {
+        const newEvents = new Map(events === 'loading' ? [] : events);
+        fetched.forEach((event) => {
+          addEventToMap(newEvents, event);
+        });
+        latest.current = getLatest(fetched) || null;
+        return newEvents;
+      });
+      lockEvents.current = false;
+    }
+  );
+
   const nextEvents = useCallback(async () => {
     if (!workspace || lockEvents.current || latest.current === null) return;
-    lockEvents.current = true;
-    const fetched = await api.getEvents(workspace.id, {
-      beforeDate: latest.current,
-    });
-    setEvents((events) => {
-      const newEvents = new Map(events === 'loading' ? [] : events);
-      fetched.forEach((event) => {
-        addEventToMap(newEvents, event);
-      });
-      latest.current = getLatest(fetched) || null;
-      return newEvents;
-    });
-    lockEvents.current = false;
+    fetchNextEvents.current(workspace.id, latest.current);
   }, [lockEvents, workspace]);
 
   // Load events history
+  const prevWorkspaceId = usePrevious(workspace && workspace.id);
   useEffect(() => {
-    if (!workspace || lockEvents.current || prevWorkspaceId === workspace.id)
+    if (!workspace || lockEvents.current || workspace.id === prevWorkspaceId) {
       return;
+    }
     latest.current = undefined;
     setEvents('loading');
-    nextEvents();
+    fetchNextEvents.current(workspace.id, latest.current);
   }, [nextEvents, prevWorkspaceId, workspace]);
 
   const readEvent = useCallback(
