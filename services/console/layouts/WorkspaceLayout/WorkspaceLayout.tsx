@@ -88,10 +88,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }, [sourceDisplayed]);
 
   // Init socket
-  const workspaceId = useMemo(
-    () => (workspace ? workspace.id : null),
-    [workspace]
-  );
+  const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
+    workspace,
+  ]);
   useEffect(() => {
     if (
       !workspaceId ||
@@ -225,6 +224,21 @@ export const WorkspaceLayout: FC = ({ children }) => {
     });
   }, [newSource, t, update]);
 
+  const getAppConfig = useCallback(
+    async (appInstance: string) => {
+      if (!workspace) return;
+      return await api.getAppConfig(workspace.id, appInstance);
+    },
+    [workspace]
+  );
+  const saveAppConfig = useCallback(
+    async (appInstance: string, config: any) => {
+      if (!workspace) return;
+      await api.updateAppConfig(workspace.id, appInstance, config);
+    },
+    [workspace]
+  );
+
   if (!workspace || !user) {
     return (
       <div className="flex flex-1 justify-center align-center">
@@ -259,6 +273,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
         readEvent,
         share,
         setShare,
+        getAppConfig,
+        saveAppConfig,
       }}
     >
       <Head>

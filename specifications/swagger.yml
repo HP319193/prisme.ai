@@ -2290,6 +2290,8 @@ components:
 
     TypedArgument:
       type: object
+      required:
+        - type
       properties:
         type:
           type: string
@@ -2298,6 +2300,7 @@ components:
             - number
             - object
             - array
+            - boolean
         description:
           $ref: '#/components/schemas/LocalizedText'
         items:

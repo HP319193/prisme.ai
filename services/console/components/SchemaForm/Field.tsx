@@ -196,7 +196,7 @@ export const Field: FC<FieldProps> = ({
               )}
               <Input
                 id={field}
-                label={title || ''}
+                label={localize(title) || ''}
                 {...input}
                 className={className}
                 inputType={type === 'number' ? 'number' : 'text'}

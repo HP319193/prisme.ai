@@ -6,14 +6,23 @@ import {
   Modal,
   Tooltip,
 } from '@prisme.ai/design-system';
-import { memo, ReactElement, useCallback, useMemo } from 'react';
+import {
+  memo,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import Block from '../components/Block';
 import api from '../utils/api';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
+import { Schema } from '../components/SchemaForm/types';
+import { useWorkspace } from '../layouts/WorkspaceLayout';
 
-interface AppsSidebarItemProps extends Prismeai.AppInstance {
+interface AppsSidebarItemProps extends Prismeai.DetailedAppInstance {
   workspaceId: string;
   onToggle: (app: string, state: boolean) => void;
 }
@@ -21,11 +30,27 @@ interface AppsSidebarItemProps extends Prismeai.AppInstance {
 const AppsSidebarItem = ({
   workspaceId,
   slug = '',
-  config: { schema, value, widget } = {},
+  config: { schema, widget } = {},
   onToggle,
 }: AppsSidebarItemProps) => {
   const { uninstallApp } = useWorkspaces();
+  const { getAppConfig, saveAppConfig } = useWorkspace();
   const { t } = useTranslation('workspaces');
+
+  const [value, setValue] = useState();
+  useEffect(() => {
+    const fetch = async () => {
+      setValue(await getAppConfig(slug));
+    };
+    fetch();
+  }, [getAppConfig, slug]);
+
+  const save = useCallback(
+    (values: any) => {
+      saveAppConfig(slug, values);
+    },
+    [saveAppConfig, slug]
+  );
 
   const onDelete = useCallback(
     (event) => {
@@ -42,7 +67,11 @@ const AppsSidebarItem = ({
 
   const configComponent: ReactElement | null = useMemo(() => {
     if (schema) {
-      return <Form schema={schema} onSubmit={() => {}} initialValues={value} />;
+      const s: Schema = {
+        type: 'object',
+        properties: schema,
+      };
+      return <Form schema={s} onSubmit={save} initialValues={value} />;
     }
     if (widget) {
       return (
@@ -56,7 +85,7 @@ const AppsSidebarItem = ({
       );
     }
     return null;
-  }, [schema, slug, value, widget, workspaceId]);
+  }, [save, schema, slug, value, widget, workspaceId]);
 
   if (!configComponent)
     return (
