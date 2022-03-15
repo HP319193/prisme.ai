@@ -24,6 +24,10 @@ export const Form: FC<FormProps> = ({
 
   const { properties = {} } = schema;
 
+  const required = (schema.required || []).filter((f) =>
+    Object.keys(properties).includes(f)
+  );
+
   const oneOf = schema.oneOf
     ? schema.oneOf.map(({ required }) => ({
         required: required.filter((f) => Object.keys(properties).includes(f)),
@@ -118,7 +122,11 @@ export const Form: FC<FormProps> = ({
         <form onSubmit={handleSubmit}>
           {description && <div>{description}</div>}
           {fields.map((field) => (
-            <Field key={field.field} {...field} required={schema.required} />
+            <Field
+              key={field.field}
+              {...field}
+              required={required.includes(field.field)}
+            />
           ))}
           <Button type="submit">
             <PlusOutlined />
