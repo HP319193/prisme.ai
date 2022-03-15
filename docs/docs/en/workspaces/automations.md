@@ -32,7 +32,7 @@ These events can be :
 
 * [**Native events**](#supported-native-events)  
 * [**Emitted**](../instructions#emit) from the same workspace
-* **Emitted** from an [**AppInstance**](../../apps#appinstances) TODO
+* **Emitted** from an [**AppInstance**](../../apps#emit-instruction)
 
 #### Supported native events  
 
@@ -58,7 +58,7 @@ Workspaces can only listen to a limited subset of the available native events :
     </tr>
     <tr>
       <td><b>workspaces.app.configured</b></td>
-      <td>Some AppInstance <a href="../index#config">config</a> has been updated TODO</td>
+      <td>Some AppInstance <a href="../index#config">config</a> has been updated</td>
       <td>
         ```
         {
@@ -70,7 +70,7 @@ Workspaces can only listen to a limited subset of the available native events :
     </tr>    
     <tr>
       <td><b>workspaces.app.installed</b></td>
-      <td>Some AppInstance has been installed TODO</td>
+      <td>Some AppInstance has been installed</td>
       <td>
         ```
         {
@@ -82,7 +82,7 @@ Workspaces can only listen to a limited subset of the available native events :
     </tr>        
     <tr>
       <td><b>workspaces.app.uninstalled</b></td>
-      <td>Some AppInstance has been uninstalled TODO</td>
+      <td>Some AppInstance has been uninstalled</td>
       <td>
         ```
         {
