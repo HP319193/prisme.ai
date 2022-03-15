@@ -27,7 +27,6 @@ export const Automation = () => {
   const localize = useLocalizedText();
   const { workspace, updateAutomation, deleteAutomation } = useWorkspace();
   const { getAppInstances, appInstances } = useApps();
-  console.log('workspace', workspace);
   useEffect(() => {
     getAppInstances(workspace.id);
   }, [getAppInstances, workspace.id]);
@@ -42,6 +41,15 @@ export const Automation = () => {
   const [value, setValue] = useState<Prismeai.Automation>(automation || {});
   const [saving, setSaving] = useState(false);
   const prevAutomationId = usePrevious(automationId);
+  const automationDidChange = useRef(true);
+
+  useEffect(() => {
+    if (automationDidChange.current && prevAutomationId !== automationId) {
+      setValue(automation);
+    }
+    automationDidChange.current = true;
+  }, [automation, automationId, prevAutomationId]);
+
   const saveAutomation = useRef(
     async (automationId: string, automation: Prismeai.Automation) => {
       setSaving(true);
@@ -69,18 +77,22 @@ export const Automation = () => {
 
   const updateTitle = useCallback(
     async (newTitle: string) => {
-      if (!newTitle || Object.keys(workspace.automations).includes(newTitle)) {
+      if (
+        !newTitle ||
+        Object.keys(workspace.automations || {}).includes(newTitle)
+      ) {
         return;
       }
       const newSlug = slugifyAutomation(workspace, newTitle);
       const newValue = { ...value, name: newTitle, slug: newSlug };
       setValue(newValue);
+      automationDidChange.current = false;
       await saveAutomation.current(`${automationId}`, newValue);
-      replace(`/workspaces/${id}/automations/${newSlug}`, undefined, {
+      replace(`/workspaces/${workspace.id}/automations/${newSlug}`, undefined, {
         shallow: true,
       });
     },
-    [automationId, id, replace, value, workspace]
+    [automationId, replace, value, workspace]
   );
 
   const save = useCallback(async () => {
@@ -141,7 +153,6 @@ export const Automation = () => {
   );
 
   if (!value) {
-    console.log('MASI !', value, automationId);
     return <Error404 link={`/workspaces/${workspace.id}`} />;
   }
   return (

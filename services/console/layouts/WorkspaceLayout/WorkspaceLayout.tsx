@@ -275,12 +275,17 @@ export const WorkspaceLayout: FC = ({ children }) => {
         automation
       );
 
+      const { slug: newSlug, ...newAutomation } = automationResult;
+      const newAutomations = { ...workspace.automations };
+
+      if (newSlug !== slug) {
+        delete newAutomations[slug];
+      }
+      newAutomations[newSlug] = newAutomation;
+
       setCurrentWorkspace({
         ...workspace,
-        automations: {
-          ...workspace.automations,
-          [slug]: automationResult,
-        },
+        automations: newAutomations,
       });
 
       return automationResult;

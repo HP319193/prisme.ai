@@ -36,9 +36,6 @@ Array [
       </div>
       apps.install
     </div>
-    <div
-      className="flex flex-1 h-[80vh] overflow-auto"
-    />
   </div>,
 ]
 `;

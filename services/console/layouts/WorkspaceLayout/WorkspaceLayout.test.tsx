@@ -55,6 +55,7 @@ jest.mock('@prisme.ai/sdk', () => {
     }
   }
   const mockEvents = new Events();
+
   class Api {
     streamEvents() {
       return mockEvents;
@@ -62,6 +63,17 @@ jest.mock('@prisme.ai/sdk', () => {
     getEvents() {
       return [];
     }
+    createAutomation = jest.fn((w: any, a: any) => ({
+      slug: `${w.id}-1`,
+      ...a,
+    }));
+    updateAutomation = jest.fn((w: any, s: string, a: any) => ({
+      slug: s,
+      ...a,
+    }));
+    deleteAutomation = jest.fn((w: any, slug: string) => ({
+      slug,
+    }));
   }
 
   return { Api, Events };
@@ -381,4 +393,158 @@ it('should display source after mount', async () => {
   expect(root.root.findAllByType('div')[0].props.className).not.toContain(
     '-translate-y-100'
   );
+});
+
+it('should create an automation', async () => {
+  let context: WorkspaceContext = {} as WorkspaceContext;
+  const Test = () => {
+    context = useWorkspace();
+    return null;
+  };
+  const root = renderer.create(
+    <WorkspaceLayout>
+      <Test />
+    </WorkspaceLayout>
+  );
+  await act(async () => {
+    await true;
+  });
+  await act(async () => {
+    const w = await context.createAutomation({ name: 'foo', do: [] });
+    expect(w).toEqual({
+      slug: '42-1',
+      name: 'foo',
+      do: [],
+    });
+  });
+
+  expect(api.createAutomation).toHaveBeenCalledWith(
+    {
+      id: '42',
+      name: 'foo',
+      automations: [],
+    },
+    {
+      name: 'foo',
+      do: [],
+    }
+  );
+
+  expect(context.workspace.automations).toEqual({
+    '42-1': {
+      name: 'foo',
+      do: [],
+    },
+  });
+});
+
+it('should update an automation', async () => {
+  let context: WorkspaceContext = {} as WorkspaceContext;
+  const Test = () => {
+    context = useWorkspace();
+    return null;
+  };
+  const root = renderer.create(
+    <WorkspaceLayout>
+      <Test />
+    </WorkspaceLayout>
+  );
+  await act(async () => {
+    await true;
+  });
+  await act(async () => {
+    const w = await context.updateAutomation('foo', {
+      name: 'bar',
+      do: [],
+    });
+    expect(w).toEqual({
+      slug: 'foo',
+      name: 'bar',
+      do: [],
+    });
+  });
+
+  expect(api.updateAutomation).toHaveBeenCalled();
+
+  expect(context.workspace).toEqual({
+    id: '42',
+    name: 'foo',
+    automations: {
+      foo: {
+        name: 'bar',
+        do: [],
+      },
+    },
+  });
+});
+
+it('should update an automation slug', async () => {
+  let context: WorkspaceContext = {} as WorkspaceContext;
+  const Test = () => {
+    context = useWorkspace();
+    return null;
+  };
+  const root = renderer.create(
+    <WorkspaceLayout>
+      <Test />
+    </WorkspaceLayout>
+  );
+  await act(async () => {
+    await true;
+  });
+  context.workspace.automations.foo = {
+    name: 'Foo',
+    do: [],
+  };
+  await act(async () => {
+    await context.updateAutomation('foo', {
+      name: 'bar',
+      do: [],
+      slug: 'bar',
+    });
+  });
+
+  expect(api.updateAutomation).toHaveBeenCalled();
+
+  expect(context.workspace).toEqual({
+    id: '42',
+    name: 'foo',
+    automations: {
+      bar: {
+        name: 'bar',
+        do: [],
+      },
+    },
+  });
+});
+
+it('should delete an automation', async () => {
+  let context: WorkspaceContext = {} as WorkspaceContext;
+  const Test = () => {
+    context = useWorkspace();
+    return null;
+  };
+  const root = renderer.create(
+    <WorkspaceLayout>
+      <Test />
+    </WorkspaceLayout>
+  );
+  await act(async () => {
+    await true;
+  });
+  context.workspace.automations.foo = {
+    name: 'Foo',
+    do: [],
+  };
+  await act(async () => {
+    await context.deleteAutomation('foo');
+  });
+
+  expect(api.deleteAutomation).toHaveBeenCalled();
+
+  expect(context.workspace).toEqual({
+    id: '42',
+    name: 'foo',
+    automations: {},
+  });
 });

@@ -5,7 +5,11 @@ import { useRouter } from 'next/router';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
-import { notification, PageHeader } from '@prisme.ai/design-system';
+import {
+  EditableTitle,
+  notification,
+  PageHeader,
+} from '@prisme.ai/design-system';
 
 jest.mock('../layouts/WorkspaceLayout', () => {
   const mock = {
@@ -13,6 +17,7 @@ jest.mock('../layouts/WorkspaceLayout', () => {
       id: '42',
       name: 'Foo',
     },
+    updateAutomation: jest.fn(),
   };
 
   return {
@@ -28,16 +33,6 @@ jest.mock('next/router', () => {
   };
   return {
     useRouter: () => mock,
-  };
-});
-
-jest.mock('../components/WorkspacesProvider', () => {
-  const mock = {
-    updateAutomation: jest.fn((w, s, a) => a),
-  };
-
-  return {
-    useWorkspaces: () => mock,
   };
 });
 
@@ -96,6 +91,33 @@ it('should update value', async () => {
   });
 });
 
+it('should change url after changing slug', async () => {
+  const root = renderer.create(<Automation />);
+  const title = renderer.create(root.root.findByType(PageHeader).props.title);
+
+  act(() => {
+    title.root.findByType(EditableTitle).props.onChange('foofoo');
+  });
+
+  expect(root.root.findByType(AutomationBuilder).props.value).toEqual({
+    name: 'foofoo',
+    slug: 'foofoo',
+    do: [],
+  });
+
+  await act(async () => {
+    await true;
+  });
+
+  expect(useRouter().replace).toHaveBeenCalledWith(
+    '/workspaces/42/automations/foofoo',
+    undefined,
+    {
+      shallow: true,
+    }
+  );
+});
+
 it('should save', async () => {
   const root = renderer.create(<Automation />);
 
@@ -109,7 +131,7 @@ it('should save', async () => {
       .props.RightButtons[0].props.onClick();
   });
 
-  expect(useWorkspaces().updateAutomation).toHaveBeenCalled();
+  expect(useWorkspace().updateAutomation).toHaveBeenCalled();
   expect(notification.success).toHaveBeenCalledWith;
 });
 
@@ -125,5 +147,5 @@ it('should save on shortcut', async () => {
     await (useKeyboardShortcut as jest.Mock).mock.calls[0][0][0].command(e);
   });
   expect(e.preventDefault).toHaveBeenCalled();
-  expect(useWorkspaces().updateAutomation).toHaveBeenCalled();
+  expect(useWorkspace().updateAutomation).toHaveBeenCalled();
 });
