@@ -18,11 +18,18 @@ import AppsSidebar from './AppsSidebar';
 import PagesSidebar from './PagesSidebar';
 import { DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import ShareWorkspace from '../components/Share/ShareWorkspace';
+import Storage from '../utils/Storage';
 
 export const Workspace = () => {
   const { t } = useTranslation('workspaces');
   const { workspace, fullSidebar, setFullSidebar, setShare } = useWorkspace();
-  const [sidebar, setSidebar] = useState('automations');
+  const [sidebar, setSidebar] = useState(
+    Storage.get('__workpaceSidebar') || 'automations'
+  );
+
+  useEffect(() => {
+    Storage.set('__workpaceSidebar', sidebar);
+  }, [sidebar]);
 
   useEffect(() => {
     setShare({

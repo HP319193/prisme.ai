@@ -105,23 +105,32 @@ export class Api extends Fetcher {
   async getPages(
     workspaceId: NonNullable<Workspace['id']>
   ): Promise<Prismeai.Page[]> {
-    const pages = await this.get<PageWithMetadata[]>(
-      `/workspaces/${workspaceId}/pages`
-    );
-    return pages.map(
-      ({ createdAt, createdBy, updatedAt, updatedBy, ...page }: any) => page
-    );
+    try {
+      const pages = await this.get<PageWithMetadata[]>(
+        `/workspaces/${workspaceId}/pages`
+      );
+      return pages.map(
+        ({ createdAt, createdBy, updatedAt, updatedBy, ...page }: any) => page
+      );
+    } catch (e) {
+      return [];
+    }
   }
 
   async createPage(
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const { createdAt, createdBy, updatedAt, updatedBy, ...newPage } =
-      await this.post<PageWithMetadata>(
-        `/workspaces/${workspaceId}/pages`,
-        page
-      );
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...newPage
+    } = await this.post<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages`,
+      page
+    );
     return newPage;
   }
 
@@ -129,11 +138,16 @@ export class Api extends Fetcher {
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const { createdAt, createdBy, updatedAt, updatedBy, ...updatedPage } =
-      await this.patch<PageWithMetadata>(
-        `/workspaces/${workspaceId}/pages/${page.id}`,
-        page
-      );
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...updatedPage
+    } = await this.patch<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages/${page.id}`,
+      page
+    );
     return updatedPage;
   }
 
