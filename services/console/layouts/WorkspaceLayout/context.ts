@@ -27,6 +27,8 @@ export interface WorkspaceContext {
     component: FC;
   };
   setShare: (share: WorkspaceContext['share']) => void;
+  getAppConfig: (appInstance: string) => any;
+  saveAppConfig: (appInstance: string, config: any) => void;
 }
 
 export const workspaceContext = createContext<WorkspaceContext>({
@@ -47,6 +49,8 @@ export const workspaceContext = createContext<WorkspaceContext>({
   readEvents: new Set(),
   readEvent() {},
   setShare() {},
+  getAppConfig() {},
+  saveAppConfig() {},
 });
 
 export const useWorkspace = () => useContext(workspaceContext);

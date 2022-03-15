@@ -1,6 +1,6 @@
 export interface Schema {
-  title?: string;
-  description?: string;
+  title?: Prismeai.LocalizedText;
+  description?: Prismeai.LocalizedText;
   required?: string[];
   properties?: Record<string, Schema>;
   oneOf?: { required: string[] }[];
