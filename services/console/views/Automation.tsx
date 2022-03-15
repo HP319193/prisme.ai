@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AutomationBuilder from '../components/AutomationBuilder';
 import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
@@ -21,6 +21,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import { usePrevious } from '../utils/usePrevious';
+import { Workspace } from '../utils/api';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
@@ -41,6 +42,38 @@ export const Automation = () => {
   const [value, setValue] = useState<Prismeai.Automation>(automation || {});
   const [saving, setSaving] = useState(false);
   const prevAutomationId = usePrevious(automationId);
+  const saveAutomation = useRef(
+    async (
+      workspace: Workspace,
+      automationId: string,
+      automation: Prismeai.Automation
+    ) => {
+      setSaving(true);
+      try {
+        const saved = await updateAutomation(
+          workspace,
+          automationId,
+          automation
+        );
+        if (!saved) {
+          throw new Error('not saved');
+        }
+        notification.success({
+          message: t('automations.save.toast'),
+          placement: 'bottomRight',
+        });
+        setSaving(false);
+        return saved;
+      } catch (e) {
+        notification.error({
+          message: t('automations.save.error'),
+          placement: 'bottomRight',
+        });
+        setSaving(false);
+        return null;
+      }
+    }
+  );
 
   useEffect(() => {
     if (prevAutomationId !== automationId) {
@@ -53,30 +86,20 @@ export const Automation = () => {
       if (!newTitle || Object.keys(workspace.automations).includes(newTitle)) {
         return;
       }
-      setValue({ ...value, name: newTitle });
+      const newValue = { ...value, name: newTitle };
+      setValue(newValue);
+      saveAutomation.current(workspace, `${automationId}`, newValue);
     },
-    [value, workspace.automations]
+    [automationId, value, workspace]
   );
 
   const save = useCallback(async () => {
-    setSaving(true);
-    try {
-      const saved = await updateAutomation(workspace, `${automationId}`, value);
-      if (saved) {
-        setValue(saved);
-      }
-      notification.success({
-        message: t('automations.save.toast'),
-        placement: 'bottomRight',
-      });
-    } catch (e) {
-      notification.error({
-        message: t('automations.save.error'),
-        placement: 'bottomRight',
-      });
-    }
-    setSaving(false);
-  }, [automationId, t, updateAutomation, value, workspace]);
+    const saved = await saveAutomation.current(
+      workspace,
+      `${automationId}`,
+      value
+    );
+  }, [automationId, value, workspace]);
 
   useKeyboardShortcut([
     {
