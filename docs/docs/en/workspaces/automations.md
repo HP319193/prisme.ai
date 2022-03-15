@@ -26,7 +26,109 @@ From inside the automation defining an **URL** triger, 4 [variables](#variables)
 
 ### Events  
 An automation can also listen to a list of events.  
-Whenever such events are received, the automation is executed & can directly access inner payload fields.
+Whenever such events are received, the automation is executed & can access event payload with **payload** variable.  
+
+These events can be :  
+
+* [**Native events**](#supported-native-events)  
+* [**Emitted**](../instructions#emit) from the same workspace
+* **Emitted** from an [**AppInstance**](../../apps#appinstances) TODO
+
+#### Supported native events  
+
+Workspaces can only listen to a limited subset of the available native events :  
+
+<center>
+  <table>
+    <tr>
+      <td>Event name</td>
+      <td>Description</td>
+      <td>Payload fields</td>
+    </tr>
+    <tr>
+      <td><b>workspaces.configured</b></td>
+      <td>Workspace <a href="../#config">config</a> has been updated</td>
+      <td>
+        ```
+        {
+          "config": Config object from workspace.config
+        }
+        ```
+      </td>
+    </tr>
+    <tr>
+      <td><b>workspaces.app.configured</b></td>
+      <td>Some AppInstance <a href="../index#config">config</a> has been updated TODO</td>
+      <td>
+        ```
+        {
+          "appInstance": AppInstance object from workspace.imports,
+          "slug": AppInstance slug
+        }
+        ```
+      </td>
+    </tr>    
+    <tr>
+      <td><b>workspaces.app.installed</b></td>
+      <td>Some AppInstance has been installed TODO</td>
+      <td>
+        ```
+        {
+          "appInstance": AppInstance object from workspace.imports,
+          "slug": AppInstance slug
+        }
+        ```
+      </td>
+    </tr>        
+    <tr>
+      <td><b>workspaces.app.uninstalled</b></td>
+      <td>Some AppInstance has been uninstalled TODO</td>
+      <td>
+        ```
+        {
+          "appInstance": AppInstance object from workspace.imports,
+          "slug": AppInstance slug
+        }
+        ```
+      </td>
+    </tr>      
+    <tr>
+      <td><b>workspaces.deleted</b></td>
+      <td>Workspace deleted</td>
+      <td>
+        ```
+        {
+          "workspaceId": workspace id
+        }
+        ```
+      </td>
+    </tr>                
+    <tr>
+      <td><b>apps.published</b></td>
+      <td>Workspace published as an app</td>
+      <td>
+        ```
+        {
+          "app": App object
+        }
+        ```
+      </td>
+    </tr>                    
+    <tr>
+      <td><b>apps.deleted</b></td>
+      <td>Workspace app unpublished</td>
+      <td>
+        ```
+        {
+          "appSlug": Unpublished app slug
+        }
+        ```
+      </td>
+    </tr>                        
+  </table>    
+</center>
+
+All of these events and object types indicated by **Payload fields** column are fully described inside the **Schemas** section at the bottom of our [API Swagger](/api).
 
 ## Instructions  
 Once triggered, the automation will execute every defined instruction one after another, as configured from your automation graph.  
@@ -36,6 +138,89 @@ Native instructions like **set**, **conditions** or **repeat** help structuring 
 Finally, automations can also directly call each others and retrieve their respective output.  
 
 [More details on available instructions](../instructions)
+
+## Arguments  
+
+When calling a native instruction or another automation, differents arguments can be transmitted :  
+
+![image](/assets/images/workspaces/automation_arguments.png)  
+
+And there is the corresponding source code :  
+
+```yaml
+- set:
+    name: slotFilling
+    value:
+      field: '{{field}}'
+      question: '{{question}}'
+```  
+
+However, these graphical inputs are not reserved to native instructions, but can also be configured for your own custom automations. This is achieved by specifying the name of the expected arguments, alongside their expected type.  
+
+For now, specifying these expected arguments must be done from the **arguments** field inside the automation source code, which follows [JSON Schema](https://json-schema.org/) standard.  
+
+Here is the source code for an automation leveraging every supported graphical input :  
+```yaml
+  testArguments:
+    name: testArguments
+    arguments:
+      someString:
+        type: string
+      someNumber:
+        type: number
+      someObject:
+        type: object
+        properties:
+          someStringField:
+            type: string
+      someOtherObject:
+        type: object
+        properties:
+          nestedObject:
+            type: object
+            properties:
+              someField:
+                type: number
+      someStringArray:
+        type: array
+        items:
+          type: string
+      someObjectArray:
+        type: array
+        items:
+          type: object
+          properties:
+            fieldA:
+              type: string
+      someRawJSON:
+        type: object
+        additionalProperties: true          
+    do:
+      ...
+```  
+
+When calling this automation, this form will show up :  
+![image](/assets/images/workspaces/complex_arguments.png)  
+
+... producing the following source code :  
+```yaml
+    - testArguments:
+        someString: Hello world
+        someNumber: '24'
+        someObject:
+          someStringField: My object field
+        someOtherObject:
+          nestedObject:
+            someField: '1'
+        someStringArray:
+          - This is the first value of my array argument
+        someObjectArray:
+          - fieldA: foo
+        someRawJSON:
+          custom: JSON
+```
+
+
 
 ## Output  
 Native instructions & automations can return some data that will be :   
@@ -62,11 +247,75 @@ If `session.myObjectVariable` equals to `{"mickey": "house"}` and `item.field` e
 ## Contexts  
 **Contexts** are special variables maintained accross executions in order to provide a persistent memory.  
 
-3 contexts are available :  
+5 contexts are available :  
 
 * **global** : this context is shared by all authenticated users for the same workspace.  
 * **user** : this context holds user-specific data and spans accross sessions    
-* **session** : this context holds session-specific data. It is automatically removed **15 minutes** (configurable with **CONTEXT_SESSION_EXPIRE_TIME** env var) after the last write access (i.e by **set** or **output**)
+* **session** : this context holds session-specific data. It is automatically removed **15 minutes** (configurable with **CONTEXT_SESSION_EXPIRE_TIME** env var) after the last write access (i.e by **set** or **output**)  
+* **run** : this context holds some technical information about current run   
+* **config** : this context holds current [workspace](../#config) or [AppInstance](../../apps#config-variable) config 
 
 **Note that user and session contexts rely on an authenticated user id for being persisted**.  
-In case the automation is triggered from a webhook without any session cookie / token, **user** and **session** will not be persisted, making any variable **set** not visible from subsequent requests (and possibly silently breaking some workspace functionnality).
+In case the automation is triggered from a webhook without any session cookie / token, **user** and **session** will not be persisted, making any variable **set** not visible from subsequent requests (and possibly silently breaking some workspace functionnality).  
+
+**config** and **run** contexts **cannot** be updated from automations (i.e with **set** or instructions **output**).  
+
+### Detailed contexts
+
+#### Global
+<center>
+  <table>
+    <tr>
+      <td>Variable name</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><b>global.workspaceId</b></td>
+      <td>Current workspaceId</td>
+    </tr>
+  </table>    
+</center>
+
+#### User
+<center>
+  <table>
+    <tr>
+      <td>Variable name</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><b>user.id</b></td>
+      <td>Current user id</td>
+    </tr>
+  </table>    
+</center>  
+
+#### Run
+<center>
+  <table>
+    <tr>
+      <td>Variable name</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><b>run.depth</b></td>
+      <td>Current automation depth in the stacktrace</td>
+    </tr>
+    <tr>
+      <td><b>run.correlationId</b></td>
+      <td>Current run correlationId</td>
+    </tr>    
+    <tr>
+      <td><b>run.appSlug</b></td>
+      <td>If running from an appInstance, current app slug</td>
+    </tr>        
+    <tr>
+      <td><b>run.appInstanceSlug</b></td>
+      <td>If running from an appInstance, current appInstance slug</td>
+    </tr>            
+    <tr>
+      <td><b>run.parentAppSlug</b></td>
+      <td>If parent is also an appInstance, parent app slug</td>
+    </tr>                
+  </table>    
+</center>
