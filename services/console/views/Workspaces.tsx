@@ -18,6 +18,7 @@ import { Workspace } from '@prisme.ai/sdk';
 import Header from '../components/Header';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import icon from '../icons/icon-workspace.svg';
+import useLocalizedText from '../utils/useLocalizedText';
 
 export const WorkspacesView = () => {
   const { t } = useTranslation('workspaces');
@@ -28,6 +29,7 @@ export const WorkspacesView = () => {
     () => Array.from(workspaces.values()).filter(Boolean) as Workspace[],
     [workspaces]
   );
+  const localize = useLocalizedText();
 
   const createWorkspace = useCallback(async () => {
     setLoading(true);
@@ -45,7 +47,7 @@ export const WorkspacesView = () => {
       <Layout Header={<Header />}>
         <div className="!bg-blue-200 flex grow m-4 rounded relative">
           <div className="flex flex-wrap align-start justify-start">
-            {workspacesList.map(({ name, id }) => (
+            {workspacesList.map(({ name, id, photo, description }) => (
               <Card
                 key={id}
                 className="!m-8 w-64 h-96 flex flex-col justify-between overflow-hidden"
@@ -59,16 +61,27 @@ export const WorkspacesView = () => {
               >
                 <div className="flex grow items-center justify-center flex-col text-center">
                   <Space direction="vertical">
-                    <Image
-                      src={icon}
-                      width={48}
-                      height={48}
-                      className="rounded text-blue"
-                      alt={name}
-                    />
+                    {photo ? (
+                      <div className="flex grow items-center justify-center">
+                        <img
+                          src={photo}
+                          className="rounded text-blue h-[48px] w-[48px] object-cover"
+                          alt={name}
+                        />
+                      </div>
+                    ) : (
+                      <Image
+                        src={icon}
+                        width={48}
+                        height={48}
+                        className="rounded text-blue"
+                        alt={name}
+                      />
+                    )}
                     <Title level={4}>{name}</Title>
                     <Text type="grey">
-                      {t('workspaces.defaultDescription')}
+                      {localize(description) ||
+                        t('workspaces.defaultDescription')}
                     </Text>
                   </Space>
                 </div>

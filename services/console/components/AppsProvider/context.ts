@@ -1,11 +1,13 @@
 import { createContext, useContext } from 'react';
-import api from '../../utils/api';
+
 export interface AppsContext {
   apps: Map<string, Prismeai.App>;
   appInstances: Map<string, Prismeai.DetailedAppInstance[]>;
   getApps: (
     text?: PrismeaiAPI.SearchApps.QueryParameters['text'],
-    page?: PrismeaiAPI.SearchApps.QueryParameters['page']
+    page?: PrismeaiAPI.SearchApps.QueryParameters['page'],
+    limit?: PrismeaiAPI.SearchApps.QueryParameters['limit'],
+    workspaceId?: PrismeaiAPI.SearchApps.QueryParameters['workspaceId']
   ) => Promise<Map<string, Prismeai.App> | null>;
   getAppInstances: (
     workspaceId: PrismeaiAPI.ListAppInstances.PathParameters['workspaceId']

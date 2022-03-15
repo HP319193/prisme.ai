@@ -208,6 +208,9 @@ export class Api extends Fetcher {
       | undefined = undefined,
     limit:
       | PrismeaiAPI.SearchApps.QueryParameters['limit']
+      | undefined = undefined,
+    workspaceId:
+      | PrismeaiAPI.SearchApps.QueryParameters['workspaceId']
       | undefined = undefined
   ): Promise<PrismeaiAPI.SearchApps.Responses.$200> {
     const params = new URLSearchParams(
@@ -216,6 +219,7 @@ export class Api extends Fetcher {
           text: `${text || ''}`,
           page: `${page || ''}`,
           limit: `${limit || ''}`,
+          workspaceId: `${workspaceId || ''}`,
         },
         true
       )

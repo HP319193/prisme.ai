@@ -13,9 +13,9 @@ export const AppsProvider: FC = ({ children }) => {
   const { t } = useTranslation('errors');
 
   const getApps: AppsContext['getApps'] = useCallback(
-    async (query, page) => {
+    async (query, page, limit, workspaceId) => {
       try {
-        const fetchedApps = await api.getApps(query, page);
+        const fetchedApps = await api.getApps(query, page, limit, workspaceId);
         const appMapUpdate: Map<string, Prismeai.App> = fetchedApps.reduce(
           (newMap, app) => newMap.set(app.slug, app),
           new Map()
@@ -25,7 +25,7 @@ export const AppsProvider: FC = ({ children }) => {
             new Map([...Array.from(apps), ...Array.from(appMapUpdate)])
           );
         }
-        return apps;
+        return fetchedApps;
       } catch (e) {
         notification.error({
           message: t('unknown', { errorName: e }),

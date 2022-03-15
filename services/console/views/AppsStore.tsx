@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import { Modal, SearchInput, Title } from '@prisme.ai/design-system';
 import { useApps } from '../components/AppsProvider';
 import IconApps from '../icons/icon-apps.svgr';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
+import useLocalizedText from '../utils/useLocalizedText';
 
 interface AppStoreProps {
   visible: boolean;
@@ -23,6 +23,7 @@ const isFilteredApp = (app: Prismeai.App): app is FilteredApps => {
 
 const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   const { t } = useTranslation('workspaces');
+  const localize = useLocalizedText();
   const { apps, getApps } = useApps();
   const { installApp } = useWorkspaces();
   const {
@@ -82,12 +83,11 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
               className="flex flex-row w-[25rem] align-center items-center border rounded border-gray-200 p-4 m-2 h-[9rem] cursor-pointer hover:bg-blue-200"
               onClick={() => onAppClick(slug, name)}
             >
-              <div className="flex align-center justify-center w-[6rem]">
+              <div className="flex align-center justify-center w-[6rem] mr-4">
                 {photo ? (
-                  <Image
+                  <img
                     src={photo}
-                    width={80}
-                    height={80}
+                    className="rounded text-blue h-[80px] w-[80px] object-cover"
                     alt={t('apps.photoAlt')}
                   />
                 ) : (
@@ -96,7 +96,7 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
               </div>
               <div className="flex flex-col grow justify-start h-full mt-3">
                 <Title level={4}>{name}</Title>
-                <div>description</div>
+                <div>{localize(description)}</div>
                 {/*  Get description language, fallback to en */}
               </div>
             </div>

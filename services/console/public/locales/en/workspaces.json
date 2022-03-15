@@ -167,6 +167,7 @@
     "publish": {
       "menuLabel": "Publish as an app",
       "confirm": {
+        "alreadyPublished": "The workspace is already published as an app with this name, which can't be changed",
         "slugInput": "App name",
         "slugInvalid": "Only allowed characters are letters, numbers, whitespaces, . _ and -",
         "title": "Publish the workspace as an app",
