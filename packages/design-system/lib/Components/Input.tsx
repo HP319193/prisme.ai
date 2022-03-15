@@ -6,7 +6,7 @@ const { Password: AntdInputPassword } = AntdInput;
 export interface InputProps extends AntdInputProps {
   placeholder?: string;
   label?: string;
-  inputType?: 'text' | 'password';
+  inputType?: AntdInputProps['type'];
   className?: string;
 }
 
@@ -33,11 +33,11 @@ const Input = ({
       );
       break;
     default:
-    case 'text':
       inputComponent = (
         <AntdInput
           placeholder={placeholder}
           className={`${className} rounded h-[50px] basis-[50px]`}
+          type={inputType}
           {...otherProps}
         />
       );

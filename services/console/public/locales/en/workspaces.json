@@ -119,7 +119,11 @@
       "description_conditions": "Test conditions in order to execute this or that group of instructions.",
       "description_fetch": "Send an HTTP request.",
       "description_break": "Stop current automation execution.",
-      "search": "Search"
+      "search": "Search",
+      "item": {
+        "add": "Add an item",
+        "remove": "Delete item"
+      }
     },
     "output": {
       "label": "<pre><code>{{output}}</code></pre>",
@@ -128,7 +132,8 @@
         "title": "Return value:",
         "label": "Value",
         "save": "Add"
-      }
+      },
+      "description": "Indicate the name of a variable in which to store the output of this instruction in order to exploit it in the continuation of the automation"
     },
     "node": {
       "title": "",

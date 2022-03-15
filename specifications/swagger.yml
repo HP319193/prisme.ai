@@ -2297,8 +2297,15 @@ components:
             - string
             - number
             - object
+            - array
         description:
           $ref: '#/components/schemas/LocalizedText'
+        items:
+          $ref: '#/components/schemas/TypedArgument'
+        ui:widget:
+          type: string
+        ui:options:
+          type: object
 
     InstructionList:
       type: array

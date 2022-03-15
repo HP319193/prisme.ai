@@ -18,3 +18,7 @@ export function Divider({ children = null }) {
 export function Switch({ children = null }) {
   return children;
 }
+
+export function Tooltip({ children = null }) {
+  return children;
+}

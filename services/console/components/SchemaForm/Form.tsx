@@ -1,10 +1,11 @@
 import { useTranslation } from 'next-i18next';
 import { Button } from '@prisme.ai/design-system';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { Form as FFForm, FormRenderProps } from 'react-final-form';
 import { Field } from './Field';
 import { Schema } from './types';
 import { PlusOutlined } from '@ant-design/icons';
+import arrayMutators from 'final-form-arrays';
 
 interface FormProps {
   schema: Schema;
@@ -16,18 +17,12 @@ export const Form: FC<FormProps> = ({
   schema,
   onSubmit,
   description,
+  initialValues = {},
   ...formProps
 }) => {
   const { t } = useTranslation('workspaces');
-  const properties = Object.keys(schema.properties || {}).reduce(
-    (prev, name) => {
-      if (prev[name].type === 'array') {
-        delete prev[name];
-      }
-      return prev;
-    },
-    { ...(schema.properties || {}) }
-  );
+
+  const { properties = {} } = schema;
 
   const required = (schema.required || []).filter((f) =>
     Object.keys(properties).includes(f)
@@ -39,11 +34,6 @@ export const Form: FC<FormProps> = ({
       }))
     : null;
 
-  const fields = Object.keys(properties).map((field) => ({
-    field,
-    type: properties[field].type,
-    required: required.includes(field),
-  }));
   const submit = useCallback(
     (values: any) => {
       let errors: Record<string, string> = {};
@@ -71,7 +61,7 @@ export const Form: FC<FormProps> = ({
           if (type === 'array') {
             return {
               ...prev,
-              [attr]: [],
+              [attr]: values[attr],
             };
           }
           return {
@@ -112,8 +102,22 @@ export const Form: FC<FormProps> = ({
     [onSubmit, oneOf, properties, schema]
   );
 
+  const fields: (Schema & { field: string })[] = useMemo(
+    () =>
+      Object.keys(properties).map((field) => ({
+        field,
+        ...properties[field],
+      })),
+    [properties]
+  );
+
   return (
-    <FFForm onSubmit={submit} {...formProps}>
+    <FFForm
+      onSubmit={submit}
+      initialValues={initialValues}
+      {...formProps}
+      mutators={{ ...arrayMutators }}
+    >
       {({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           {description && <div>{description}</div>}
@@ -121,7 +125,7 @@ export const Form: FC<FormProps> = ({
             <Field
               key={field.field}
               {...field}
-              oneOf={oneOf ? oneOf : undefined}
+              required={required.includes(field.field)}
             />
           ))}
           <Button type="submit">
