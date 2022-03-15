@@ -2,7 +2,7 @@
 
 A workspace is a project that :  
 
-* Enables various [**Automations**](../automations) inside your IT organization, between your APIs, ...
+* Enables various [**Automations**](automations) inside your IT organization, between your APIs, ...
 * Is easily **configurable** through workspace [**config**](#config), [**Apps**](../apps) and automations **graph** 
 * Produces [**events**](automations#events) recording what's happening and optionally triggering **Automations**  
 * Present computed data / events through [**Web Pages**](#pages) accessible to admins or event external end users

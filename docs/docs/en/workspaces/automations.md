@@ -58,7 +58,7 @@ Workspaces can only listen to a limited subset of the available native events :
     </tr>
     <tr>
       <td><b>workspaces.app.configured</b></td>
-      <td>Some AppInstance <a href="../index#config">config</a> has been updated</td>
+      <td>Some AppInstance config has been updated</td>
       <td>
         ```
         {
@@ -272,8 +272,8 @@ In case the automation is triggered from a webhook without any session cookie / 
     <tr>
       <td><b>global.workspaceId</b></td>
       <td>Current workspaceId</td>
-    </tr>
-  </table>    
+    </tr>       
+  </table>
 </center>
 
 #### User
@@ -286,9 +286,9 @@ In case the automation is triggered from a webhook without any session cookie / 
     <tr>
       <td><b>user.id</b></td>
       <td>Current user id</td>
-    </tr>
-  </table>    
-</center>  
+    </tr>       
+  </table>
+</center>
 
 #### Run
 <center>
@@ -316,6 +316,6 @@ In case the automation is triggered from a webhook without any session cookie / 
     <tr>
       <td><b>run.parentAppSlug</b></td>
       <td>If parent is also an appInstance, parent app slug</td>
-    </tr>                
-  </table>    
+    </tr>       
+  </table>
 </center>

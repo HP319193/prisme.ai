@@ -43,9 +43,12 @@ nav:
       - i18n.configuration: getstarted/configuration.md
       - i18n.permissions: getstarted/permissions.md
   - Workspaces:
+    - i18n.index: workspaces/index.md
     - i18n.automations: workspaces/automations.md
     - i18n.instructions: workspaces/instructions.md
     - i18n.conditions: workspaces/conditions.md
+  - Apps:
+    - i18n.index: apps/index.md
 
   - i18n.contributing:
       - i18n.index: contributing/index.md
