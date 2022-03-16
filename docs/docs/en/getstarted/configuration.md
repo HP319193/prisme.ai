@@ -168,6 +168,13 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>http://runtime:3003</td>
   </tr>          
 
+  <tr>
+    <td>X_FORWARDED_HEADERS</td>
+    <td>api-gateway</td>
+    <td>Add X-Forwarded-* headers on proxied requests</td>
+    <td>yes</td>
+  </tr>            
+
   <!-- Events -->
   <tr>
     <td>PORT</td>

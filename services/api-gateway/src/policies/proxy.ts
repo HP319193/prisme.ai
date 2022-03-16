@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
-import { GatewayConfig } from '../config';
+import { GatewayConfig, syscfg } from '../config';
 
 export interface Params {
   service: string;
@@ -34,6 +34,7 @@ export async function init(params: Params, gtwcfg: GatewayConfig) {
     changeOrigin: true,
     followRedirects: true,
     timeout: params.timeout || 20000,
+    xfwd: syscfg.X_FORWARDED_HEADERS,
   });
 
   return (req: Request, res: Response, next: NextFunction) => {

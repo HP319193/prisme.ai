@@ -32,4 +32,8 @@ export default {
   PASSWORD_VALIDATION_REGEXP: new RegExp(
     process.env.PASSWORD_VALIDATION_REGEXP || '.{8,}'
   ),
+
+  X_FORWARDED_HEADERS: ['yes', 'enabled', 'enable', 'true'].includes(
+    process.env.X_FORWARDED_HEADERS || 'yes'
+  ),
 };
