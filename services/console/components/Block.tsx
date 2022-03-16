@@ -14,6 +14,30 @@ if (process.browser) {
   };
 }
 
+class BlockErrorBoundary extends React.Component {
+  state = {
+    hasError: false,
+  };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    // Vous pouvez aussi enregistrer l'erreur au sein d'un service de rapport.
+    console.error(error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // Vous pouvez afficher n'importe quelle UI de repli.
+      return <h1>Something went wrong.</h1>;
+    }
+
+    return this.props.children;
+  }
+}
+
 interface BlockComponentProps {
   entityId: string;
   token?: string;
@@ -128,7 +152,11 @@ export const IFrameBlock = ({
 export const Block = ({ url, ...props }: BlockProps) => {
   const isJs = url.match(/\.js$/);
   if (isJs) {
-    return <ReactBlock url={url} {...props} />;
+    return (
+      <BlockErrorBoundary>
+        <ReactBlock url={url} {...props} />
+      </BlockErrorBoundary>
+    );
   }
   return <IFrameBlock url={url} {...props} />;
 };

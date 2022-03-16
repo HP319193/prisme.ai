@@ -5,9 +5,11 @@ import {
   ListItem,
   Modal,
   Tooltip,
+  BlockProvider,
+  useBlock,
 } from '@prisme.ai/design-system';
 import {
-  memo,
+  Fragment,
   ReactElement,
   useCallback,
   useEffect,
@@ -27,15 +29,18 @@ interface AppsSidebarItemProps extends Prismeai.DetailedAppInstance {
   onToggle: (app: string, state: boolean) => void;
 }
 
+const EmptyObject = {};
+
 const AppsSidebarItem = ({
   workspaceId,
   slug = '',
-  config: { schema, widget } = {},
+  config: { schema, widget } = EmptyObject,
   onToggle,
 }: AppsSidebarItemProps) => {
   const { uninstallApp } = useWorkspaces();
   const { getAppConfig, saveAppConfig } = useWorkspace();
   const { t } = useTranslation('workspaces');
+  const { buttons } = useBlock();
 
   const [value, setValue] = useState();
   useEffect(() => {
@@ -92,11 +97,14 @@ const AppsSidebarItem = ({
       <ListItem
         title={slug}
         rightContent={
-          <Button onClick={onDelete} className="!h-full !p-0 !pr-4">
-            <Tooltip title={t('apps.uninstallTooltip')}>
-              <DeleteOutlined className="!text-gray hover:!text-accent" />
-            </Tooltip>
-          </Button>
+          <>
+            {buttons}
+            <Button onClick={onDelete} className="!h-full !p-0 !pr-4">
+              <Tooltip title={t('apps.uninstallTooltip')}>
+                <DeleteOutlined className="!text-gray hover:!text-accent" />
+              </Tooltip>
+            </Button>
+          </>
         }
         className="!cursor-default"
       />
@@ -118,6 +126,12 @@ const AppsSidebarItem = ({
 
         return (
           <div>
+            <div className="inline-block" onClick={(e) => e.stopPropagation()}>
+              {buttons &&
+                buttons.map((button, index) => (
+                  <Fragment key={index}>{button}</Fragment>
+                ))}
+            </div>
             <Button onClick={() => onToggle(slug, !!isActive)}>
               <Tooltip title={t('apps.configTooltip')}>
                 <SettingOutlined
@@ -137,4 +151,12 @@ const AppsSidebarItem = ({
   );
 };
 
-export default memo(AppsSidebarItem);
+const AppsSidebarItemWithBlock = (props: AppsSidebarItemProps) => {
+  return (
+    <BlockProvider>
+      <AppsSidebarItem {...props} />
+    </BlockProvider>
+  );
+};
+
+export default AppsSidebarItemWithBlock;
