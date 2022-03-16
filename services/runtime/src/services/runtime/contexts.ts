@@ -227,15 +227,21 @@ export class ContextsManager {
               : undefined,
         }
       : {};
-    const childContexts = this.merge({
-      local: resetLocal
-        ? opts.payload || {}
-        : { ...this.contexts[ContextType.Local], ...opts.payload },
-      run,
-      ...additionalContexts,
-    });
+    // We do not want to reinstantiate contexts.session/user/global objects as they would prevent calling automations to receive updated fields from their called automations
+    // TODO Problem still exists for run context & any other 'additionalContexts' (i.e config)
     const child = Object.assign({}, this, {
-      contexts: childContexts,
+      contexts: {
+        ...this.contexts,
+        local: resetLocal
+          ? opts.payload || {}
+          : { ...this.contexts[ContextType.Local], ...opts.payload },
+        run: {
+          ...this.contexts.run,
+          ...run,
+          correlationId: this.contexts?.run?.correlationId,
+        },
+        ...additionalContexts,
+      },
       payload: { ...(opts.payload || {}) },
     });
     Object.setPrototypeOf(child, ContextsManager.prototype);
@@ -246,13 +252,16 @@ export class ContextsManager {
     const rootVarName = splittedPath[0];
     const lastKey = splittedPath[splittedPath.length - 1];
 
-    const context: any = UserAccessibleContexts.includes(
+    const context: ContextType = UserAccessibleContexts.includes(
       rootVarName as ContextType
     )
-      ? this.contexts
-      : this.contexts[ContextType.Local];
+      ? (rootVarName as ContextType)
+      : ContextType.Local;
 
-    let parent = context;
+    let parent =
+      context === ContextType.Local
+        ? this.contexts[ContextType.Local]
+        : this.contexts;
     for (let i = 0; i < splittedPath.length - 1; i++) {
       const key = splittedPath[i];
       if (!(key in parent)) {
@@ -264,15 +273,18 @@ export class ContextsManager {
     return {
       parent,
       lastKey,
+      context,
     };
   }
 
-  set(path: string, value: any) {
+  async set(path: string, value: any) {
     const splittedPath = parseVariableName(path);
 
     try {
-      const { parent, lastKey } = this.findParentVariableFor(splittedPath);
+      const { parent, lastKey, context } =
+        this.findParentVariableFor(splittedPath);
       parent[lastKey] = value;
+      await this.save(context);
     } catch (error) {
       this.logger.error(error);
       throw new InvalidSetInstructionError('Invalid set instruction', {
@@ -282,11 +294,13 @@ export class ContextsManager {
     }
   }
 
-  delete(path: string) {
+  async delete(path: string) {
     const splittedPath = parseVariableName(path);
 
-    const { parent, lastKey } = this.findParentVariableFor(splittedPath);
+    const { parent, lastKey, context } =
+      this.findParentVariableFor(splittedPath);
     delete parent[lastKey];
+    await this.save(context);
   }
 
   get publicContexts(): PublicContexts {

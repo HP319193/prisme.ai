@@ -28,7 +28,6 @@ export async function executeAutomation(
     }
   }
 
-  await ctx.save(); // TODO only save updated contexts (avoid making N unecessary redis requests at each automation end)
   const output = evaluateOutput(automation, ctx);
   broker.send<Prismeai.ExecutedAutomation['payload']>(
     EventType.ExecutedAutomation,

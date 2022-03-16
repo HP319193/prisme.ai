@@ -43,6 +43,7 @@ export async function runCustomAutomation(
   const payload = instruction[automationName] || {};
   const result = await executeAutomation(
     calledAutomation,
+    // ctx
     ctx.child(
       {
         config: calledAutomation.workspace.config,
