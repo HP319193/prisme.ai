@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
@@ -6,7 +6,6 @@ import WidgetForm from './Panel/WidgetForm';
 import Widgets from './Widgets';
 import { nanoid } from 'nanoid';
 import { useApps } from '../AppsProvider';
-import { get } from 'lodash';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -34,7 +33,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
         appName: '',
         widgets: Object.keys(workspace.widgets || {}).map((slug) => ({
           slug,
-          ...workspace.widgets[slug],
+          ...(workspace.widgets || {})[slug],
         })),
       },
       ...(appInstances.get(workspace.id) || []).map(
