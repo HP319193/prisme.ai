@@ -29,7 +29,7 @@ export const InstructionForm: FC<InstructionFormProps> = ({
     instruction: string;
     value: any;
     schema: Schema | null;
-  }>({
+  } | null>({
     instruction: currentInstruction,
     value:
       currentInstruction &&
@@ -58,24 +58,28 @@ export const InstructionForm: FC<InstructionFormProps> = ({
 
   useEffect(() => {
     const [currentInstruction] = Object.keys(instruction || {});
-    setEdit({
-      instruction: currentInstruction,
-      value:
-        currentInstruction &&
-        instruction &&
-        instruction[currentInstruction as keyof typeof instruction],
-      schema: getSchema(currentInstruction),
+    // force a unmount of Form to refresh initialValue
+    setEdit(null);
+    setTimeout(() => {
+      setEdit({
+        instruction: currentInstruction,
+        value:
+          currentInstruction &&
+          instruction &&
+          instruction[currentInstruction as keyof typeof instruction],
+        schema: getSchema(currentInstruction),
+      });
     });
   }, [getSchema, instruction, setInstruction]);
 
   const setInstructionValue = useCallback(
     (values: any) => {
-      if (!edit.instruction) return;
+      if (!edit || !edit.instruction) return;
       onSubmit({
         [edit.instruction]: values,
       });
     },
-    [edit.instruction, onSubmit]
+    [edit, onSubmit]
   );
 
   const unsetInstruction = useCallback(() => {
@@ -88,7 +92,7 @@ export const InstructionForm: FC<InstructionFormProps> = ({
 
   return (
     <div className="flex flex-1 flex-col h-full overflow-x-auto">
-      {!instruction && edit.instruction && (
+      {!instruction && edit && edit.instruction && (
         <button
           onClick={unsetInstruction}
           className="absolute top-[24px] left-[1rem]"
@@ -96,10 +100,9 @@ export const InstructionForm: FC<InstructionFormProps> = ({
           <ArrowLeftOutlined />
         </button>
       )}
-      {!edit ||
-        (!edit.instruction && (
-          <InstructionSelection onSubmit={setInstruction} />
-        ))}
+      {edit && !edit.instruction && (
+        <InstructionSelection onSubmit={setInstruction} />
+      )}
       {edit && edit.instruction && (
         <InstructionValue
           instruction={edit.instruction}

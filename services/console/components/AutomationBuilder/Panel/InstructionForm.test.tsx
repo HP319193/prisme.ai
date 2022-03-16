@@ -34,9 +34,15 @@ it('should render', () => {
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it('should set instruction without params', () => {
+it('should set instruction without params', async () => {
+  jest.useFakeTimers();
   const onSubmit = jest.fn();
   const root = renderer.create(<InstructionForm onSubmit={onSubmit} />);
+
+  await act(async () => {
+    await true;
+    jest.runAllTimers();
+  });
 
   act(() => {
     root.root.findByType(InstructionSelection).props.onSubmit('wait');
@@ -66,11 +72,17 @@ it('should set instruction without params', () => {
 });
 
 it('should set instruction with params', async () => {
+  jest.useFakeTimers();
   const onSubmit = jest.fn();
   const root = renderer.create(<InstructionForm onSubmit={onSubmit} />);
 
   await act(async () => {
     await true;
+    jest.runAllTimers();
+  });
+  await act(async () => {
+    await true;
+    jest.runAllTimers();
   });
 
   await act(async () => {
