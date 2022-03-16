@@ -42,7 +42,9 @@ const appsStorage = new DSULStorage(
   WORKSPACES_STORAGE_OPTIONS[WORKSPACES_STORAGE_TYPE]
 );
 
-autoinstallApps(appsStorage, accessManager);
+setTimeout(() => {
+  autoinstallApps(appsStorage, accessManager);
+}, 20000); // Arbitrary 20 sec delay to make sure app API are ready
 
 const app = initAPI(accessManager, workspacesStorage, appsStorage, broker);
 
