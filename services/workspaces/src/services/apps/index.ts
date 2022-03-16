@@ -56,6 +56,8 @@ export async function autoinstallApps(
           workspaceId: workspaceId || app.name,
           name: app.name,
           slug: app.name,
+          photo: app.photo,
+          description: app.description,
         },
         app
       );
