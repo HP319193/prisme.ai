@@ -14,6 +14,7 @@ import { uncaughtExceptionHandler } from './errors';
 import '@prisme.ai/types';
 import { initAccessManager } from './permissions';
 import DSULStorage, { DSULType } from './services/DSULStorage';
+import { autoinstallApps } from './services';
 
 process.on('uncaughtException', uncaughtExceptionHandler);
 
@@ -40,6 +41,8 @@ const appsStorage = new DSULStorage(
   WORKSPACES_STORAGE_TYPE,
   WORKSPACES_STORAGE_OPTIONS[WORKSPACES_STORAGE_TYPE]
 );
+
+autoinstallApps(appsStorage, accessManager);
 
 const app = initAPI(accessManager, workspacesStorage, appsStorage, broker);
 

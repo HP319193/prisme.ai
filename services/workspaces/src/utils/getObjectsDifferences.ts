@@ -56,7 +56,10 @@ function compareValues<T>(value1: T, value2: T) {
   return DiffType.ValueUpdated;
 }
 
-export function getObjectsDifferences<RawType>(obj1: RawType, obj2: RawType): Diffs {
+export function getObjectsDifferences<RawType>(
+  obj1: RawType,
+  obj2: RawType
+): Diffs {
   if (isFunction(obj1) || isFunction(obj2)) {
     throw 'Invalid argument. Function given, object expected.';
   }
@@ -111,4 +114,9 @@ export function getObjectsDifferences<RawType>(obj1: RawType, obj2: RawType): Di
   }
 
   return diff;
+}
+
+export function areObjectsEqual<RawType>(obj1: RawType, obj2: RawType) {
+  const diffs = getObjectsDifferences(obj1, obj2);
+  return diffs.__type === DiffType.ValueUnchanged;
 }
