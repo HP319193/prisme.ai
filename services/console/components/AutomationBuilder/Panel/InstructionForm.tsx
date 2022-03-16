@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import InstructionSelection from './InstructionSelection';
 import InstructionValue from './InstructionValue';
 import { Schema } from '../../SchemaForm/types';
@@ -55,6 +55,18 @@ export const InstructionForm: FC<InstructionFormProps> = ({
     },
     [getSchema, onSubmit]
   );
+
+  useEffect(() => {
+    const [currentInstruction] = Object.keys(instruction || {});
+    setEdit({
+      instruction: currentInstruction,
+      value:
+        currentInstruction &&
+        instruction &&
+        instruction[currentInstruction as keyof typeof instruction],
+      schema: getSchema(currentInstruction),
+    });
+  }, [getSchema, instruction, setInstruction]);
 
   const setInstructionValue = useCallback(
     (values: any) => {

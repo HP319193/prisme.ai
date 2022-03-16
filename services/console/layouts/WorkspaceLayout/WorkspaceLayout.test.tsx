@@ -357,10 +357,6 @@ it('should failt to save', async () => {
     updatedAt: '',
     id: '',
   });
-  expect(notification.error).toHaveBeenCalledWith({
-    message: 'expert.save.fail',
-    placement: 'bottomRight',
-  });
 });
 
 it('should display source after mount', async () => {

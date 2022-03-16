@@ -65,22 +65,25 @@ it('should set instruction without params', () => {
   });
 });
 
-it('should set instruction with params', () => {
+it('should set instruction with params', async () => {
   const onSubmit = jest.fn();
   const root = renderer.create(<InstructionForm onSubmit={onSubmit} />);
 
-  act(() => {
+  await act(async () => {
+    await true;
+  });
+
+  await act(async () => {
     root.root.findByType(InstructionSelection).props.onSubmit('emit');
   });
 
-  expect(root.root.findByType(InstructionValue)).toBeDefined();
+  expect(root.root.findAllByType(InstructionSelection).length).toBe(0);
 
   act(() => {
     root.root.findByType(InstructionValue).props.onSubmit({
       foo: 'bar',
     });
   });
-
   expect(onSubmit).toHaveBeenCalledWith({
     emit: {
       foo: 'bar',

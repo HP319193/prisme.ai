@@ -95,6 +95,10 @@ export const WorkspacesProvider: FC = ({ children }) => {
         setWorkspaces(newWorkspaces);
         return workspace;
       } catch (e) {
+        notification.error({
+          message: errorT('unknown', { errorName: e }),
+          placement: 'bottomRight',
+        });
         const originalWorkspace = workspaces.get(workspace.id);
         if (!originalWorkspace) return null;
         const revertedWorkspaces = new Map(workspaces);
@@ -128,16 +132,14 @@ export const WorkspacesProvider: FC = ({ children }) => {
   );
 
   // set role to editor for the postpermissions
-  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] = useCallback(
-    async (workspaceId) => {
+  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] =
+    useCallback(async (workspaceId) => {
       const { result: userPermissions } = await api.getPermissions(
         'workspaces',
         workspaceId
       );
       return userPermissions;
-    },
-    []
-  );
+    }, []);
 
   const installApp: WorkspacesContext['installApp'] = useCallback(
     async (workspaceId, body) => {
