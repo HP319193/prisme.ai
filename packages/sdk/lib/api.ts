@@ -90,7 +90,7 @@ export class Api extends Fetcher {
     workspace: Workspace,
     slug: string,
     automation: Prismeai.Automation
-  ): Promise<Prismeai.Automation> {
+  ): Promise<Prismeai.Automation & { slug: string }> {
     return await this.patch(
       `/workspaces/${workspace.id}/automations/${slug}`,
       automation

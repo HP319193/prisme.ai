@@ -1,13 +1,6 @@
-import {
-  Button,
-  Modal,
-  SearchInput,
-  Space,
-  Title,
-} from '@prisme.ai/design-system';
+import { Button, SearchInput, Space, Title } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Block from '../components/Block';
 import IconApps from '../icons/icon-apps.svgr';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import AppsStore from './AppsStore';
@@ -29,9 +22,6 @@ export const AppsSidebar = () => {
   const [appStoreVisible, setAppStoreVisible] = useState(false);
 
   const [filter, setFilter] = useState('');
-  const [modal, setModal] = useState<{ title: string; url: string } | null>(
-    null
-  );
   const [opened, setOpened] = useState(new Set());
 
   useEffect(() => {
@@ -112,19 +102,6 @@ export const AppsSidebar = () => {
             </Space>
           </>
         )}
-        <Modal
-          title={modal && modal.title}
-          centered
-          visible={!!modal}
-          onCancel={() => setModal(null)}
-          footer={null}
-          width="90vw"
-          forceRender
-        >
-          <div className="flex flex-1 h-[80vh] overflow-auto">
-            {modal && <Block url={modal.url} token="" entityId="" />}
-          </div>
-        </Modal>
       </div>
     </>
   );
