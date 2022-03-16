@@ -1,6 +1,5 @@
 import AutomationsSidebar from './AutomationsSidebar';
 import renderer, { act } from 'react-test-renderer';
-import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useRouter } from 'next/router';
 import { Button } from '@prisme.ai/design-system';
@@ -17,19 +16,20 @@ jest.mock('../components/WorkspacesProvider', () => {
   };
 });
 jest.mock('../layouts/WorkspaceLayout', () => {
-  const workspace = {
-    id: '42',
-    automations: {
-      '42-1': {
-        name: 'First',
-        do: [],
+  const mock = {
+    workspace: {
+      id: '42',
+      automations: {
+        '42-1': {
+          name: 'First',
+          do: [],
+        },
       },
     },
+    createAutomation: jest.fn((a: any) => ({ ...a, slug: a.name })),
   };
   return {
-    useWorkspace: () => ({
-      workspace,
-    }),
+    useWorkspace: () => mock,
   };
 });
 jest.mock('next/router', () => {
@@ -54,15 +54,12 @@ it('should create an automation', async () => {
   await act(async () => {
     await root.root.findByType(Button).props.onClick();
   });
-  expect(useWorkspaces().createAutomation).toHaveBeenCalledWith(
-    useWorkspace().workspace,
-    {
-      name: 'automations.create.defaultName',
-      do: [],
-    }
-  );
+  expect(useWorkspace().createAutomation).toHaveBeenCalledWith({
+    name: 'automations.create.defaultName',
+    do: [],
+  });
   expect(useRouter().push).toHaveBeenCalledWith(
-    '/workspaces/42/automations/42-1'
+    '/workspaces/42/automations/automations.create.defaultName'
   );
 });
 it('should create an automation with existing name', async () => {
@@ -76,11 +73,8 @@ it('should create an automation with existing name', async () => {
   await act(async () => {
     await root.root.findByType(Button).props.onClick();
   });
-  expect(useWorkspaces().createAutomation).toHaveBeenCalledWith(
-    useWorkspace().workspace,
-    {
-      name: 'automations.create.defaultName (1)',
-      do: [],
-    }
-  );
+  expect(useWorkspace().createAutomation).toHaveBeenCalledWith({
+    name: 'automations.create.defaultName (1)',
+    do: [],
+  });
 });

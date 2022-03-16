@@ -10,7 +10,6 @@ import {
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
-import { useWorkspaces } from '../components/WorkspacesProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import IconAutomations from '../icons/icon-automations.svgr';
 
@@ -36,7 +35,7 @@ export const AutomationsSidebar: FC = () => {
     });
   }, [filter, automations]);
 
-  const { createAutomation } = useWorkspaces();
+  const { createAutomation } = useWorkspace();
 
   const [creating, setCreating] = useState(false);
 
@@ -56,7 +55,7 @@ export const AutomationsSidebar: FC = () => {
     setCreating(true);
 
     const name = generateAutomationName();
-    const createdAutomation = await createAutomation(workspace, {
+    const createdAutomation = await createAutomation({
       name,
       do: [],
     });
@@ -67,7 +66,7 @@ export const AutomationsSidebar: FC = () => {
         `/workspaces/${workspaceId}/automations/${createdAutomation.slug}`
       );
     }
-  }, [generateAutomationName, createAutomation, workspace, push, workspaceId]);
+  }, [generateAutomationName, createAutomation, push, workspaceId]);
 
   const isEmpty = Object.keys(automations).length === 0;
 
