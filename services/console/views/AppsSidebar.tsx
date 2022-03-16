@@ -91,7 +91,7 @@ export const AppsSidebar = () => {
               onChange={({ target: { value } }) => setFilter(value)}
             />
             <Space direction="vertical" className="flex grow overflow-x-auto">
-              {filteredApps.map((appInstance: Prismeai.AppInstance) => (
+              {filteredApps.map((appInstance: Prismeai.DetailedAppInstance) => (
                 <AppsSidebarItem
                   key={appInstance.appSlug}
                   workspaceId={workspaceId}
