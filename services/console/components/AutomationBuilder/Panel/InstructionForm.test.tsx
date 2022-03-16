@@ -1,6 +1,7 @@
 import InstructionForm from './InstructionForm';
 import renderer, { act } from 'react-test-renderer';
 import InstructionSelection from './InstructionSelection';
+import InstructionValue from './InstructionValue';
 
 jest.mock('../context', () => {
   const mock = {
@@ -68,20 +69,24 @@ it('should set instruction with params', async () => {
   const onSubmit = jest.fn();
   const root = renderer.create(<InstructionForm onSubmit={onSubmit} />);
 
-  act(() => {
+  await act(async () => {
+    await true;
+  });
+
+  await act(async () => {
     root.root.findByType(InstructionSelection).props.onSubmit('emit');
   });
-  // expect(root.root.findByType(InstructionSelection)).toBeDefined();
 
-  // act(() => {
-  //   root.root.findByType(InstructionValue).props.onSubmit({
-  //     foo: 'bar',
-  //   });
-  // });
-  //
-  // expect(onSubmit).toHaveBeenCalledWith({
-  //   emit: {
-  //     foo: 'bar',
-  //   },
-  // });
+  expect(root.root.findAllByType(InstructionSelection).length).toBe(0);
+
+  act(() => {
+    root.root.findByType(InstructionValue).props.onSubmit({
+      foo: 'bar',
+    });
+  });
+  expect(onSubmit).toHaveBeenCalledWith({
+    emit: {
+      foo: 'bar',
+    },
+  });
 });
