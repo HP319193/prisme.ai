@@ -44,14 +44,13 @@ nav:
       - i18n.permissions: getstarted/permissions.md
   - Workspaces:
     - i18n.index: workspaces/index.md
-    - i18n.automations: workspaces/automations.md
-    - i18n.instructions: workspaces/instructions.md
-    - i18n.conditions: workspaces/conditions.md
-  - Apps:
-    - i18n.index: apps/index.md
-
-  - i18n.contributing:
-      - i18n.index: contributing/index.md
+    - Apps: workspaces/apps.md
+    - i18n.automations:
+        - i18n.index: workspaces/automations.md
+        - i18n.instructions: workspaces/instructions.md
+        - i18n.conditions: workspaces/conditions.md
+    - Pages: workspaces/pages.md
+  - API: /api
   - i18n.architecture:
       - i18n.index: architecture/index.md
       - i18n.authentication_access_control: architecture/authentication_access_control.md
@@ -65,7 +64,8 @@ nav:
           - i18n.specifications: architecture/technical/runtime/specifications.md
       - i18n.workspaces:
           - i18n.specifications: architecture/technical/workspaces/specifications.md
-  - API: /api
+  - i18n.contributing:
+      - i18n.index: contributing/index.md
 
 markdown_extensions:
   - admonition

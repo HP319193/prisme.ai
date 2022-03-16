@@ -5,6 +5,7 @@ site_name: Prisme.ai
 site_description: Everything you need to know about Prisme.ai
 
 getstarted: Getting Started
+definitions: Definitions
 configuration: Configuration
 contributing: Contributing
 functionnalRequirements: Functionnal Requirements

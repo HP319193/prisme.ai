@@ -1,6 +1,6 @@
 # Apps
 
-An **App** is simply a [**Workspace**](../workspaces) which has been **published** as an **App** reusable in every other workspace.  
+An **App** is simply a [**Workspace**](..) which has been **published** as an **App** reusable in every other workspace.  
 
 Once installed in a workspace, this app behaves like any normal workspace, [except for a few differences](#appinstances-execution). 
 
@@ -15,7 +15,7 @@ If the source workspace defines **description** or **photo** fields, they will b
 
 ### Defining an App Config schema  
 
-In order to ease the configuration of your app, it is possible to specify a **config.schema** field inside your source workspace. This schema follows the same notation as for [**Automations arguments**](../workspaces/automations#arguments) :   
+In order to ease the configuration of your app, it is possible to specify a **config.schema** field inside your source workspace. This schema follows the same notation as for [**Automations arguments**](../automations#arguments) :   
 ```yaml
 config:
   schema:
@@ -70,7 +70,7 @@ This has a few consequences :
 
 ### Config variable
 
-In the context of an AppInstance, the [**config**](../workspaces/automations#contexts) variable will hold current AppInstance config only. In case some config fields are left undefined, they will retrieve the value from the source App config as a default value.  
+In the context of an AppInstance, the [**config**](../automations#contexts) variable will hold current AppInstance config only. In case some config fields are left undefined, they will retrieve the value from the source App config as a default value.  
 
 **An AppInstance automation cannot access parent workspace's configuration or automations**.
 
@@ -78,11 +78,11 @@ In the context of an AppInstance, the [**config**](../workspaces/automations#con
 ### Run context
 An automation might know it is running in the context of an AppInstance thanks to the **run** context.  
 
-[More details on **run** context](../workspaces/automations#run).
+[More details on **run** context](../automations#run).
 
 ### Emit instruction
 
-[Emit](../workspaces/instructions/#emit) instruction will prefix given event name with a name uniquely identifying current AppInstance inside the parent workspace.  
+[Emit](../instructions/#emit) instruction will prefix given event name with a name uniquely identifying current AppInstance inside the parent workspace.  
 
 For instance, if an emit instruction tries to emit "**executed**" event in the context of an AppInstance named "**toolbox**", the actual name of the emitted event will be "**toolbox.executed**".  
 
@@ -101,7 +101,7 @@ If parent workspace wants to listen to this AppInstance event, it must also have
 
 #### Available native events  
 
-Only [**native events**](../workspaces/automations/#supported-native-events) available to AppInstances are the following ones :  
+Only [**native events**](../automations/#supported-native-events) available to AppInstances are the following ones :  
 
 * **workspaces.app.installed** : current AppInstance has just been installed
 * **workspaces.app.uninstalled** : current AppInstance has been uninstalled

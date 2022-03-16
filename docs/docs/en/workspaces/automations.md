@@ -1,5 +1,7 @@
 # Automations
 
+## Definitions
+
 In simple words, **automations** describes **what to do** and **when**.  
 The **what** is described as a sequence of **instructions**, and the **when** is defined with **triggers**.
 
@@ -32,7 +34,7 @@ These events can be :
 
 * [**Native events**](#supported-native-events)  
 * [**Emitted**](../instructions#emit) from the same workspace
-* **Emitted** from an [**AppInstance**](../../apps#emit-instruction)
+* **Emitted** from an [**AppInstance**](../apps#emit-instruction)
 
 #### Supported native events  
 
@@ -253,7 +255,7 @@ If `session.myObjectVariable` equals to `{"mickey": "house"}` and `item.field` e
 * **user** : this context holds user-specific data and spans accross sessions    
 * **session** : this context holds session-specific data. It is automatically removed **15 minutes** (configurable with **CONTEXT_SESSION_EXPIRE_TIME** env var) after the last write access (i.e by **set** or **output**)  
 * **run** : this context holds some technical information about current run   
-* **config** : this context holds current [workspace](../#config) or [AppInstance](../../apps#config-variable) config 
+* **config** : this context holds current [workspace](../#config) or [AppInstance](../apps#config-variable) config 
 
 **Note that user and session contexts rely on an authenticated user id for being persisted**.  
 In case the automation is triggered from a webhook without any session cookie / token, **user** and **session** will not be persisted, making any variable **set** not visible from subsequent requests (and possibly silently breaking some workspace functionnality).  

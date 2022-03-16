@@ -316,5 +316,12 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>workspaces</td>
     <td>Listening port number</td>
     <td>3002</td>
-  </tr>                   
+  </tr>
+
+  <tr>
+    <td>AUTOINSTALL_APP_*</td>
+    <td>workspaces</td>
+    <td>Some workspace source code yaml file URL to import as an app on startup</td>
+    <td>3002</td>
+  </tr>     
 </table>
