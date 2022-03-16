@@ -3,10 +3,16 @@ import { memo, useRef } from 'react';
 import { useTranslation } from 'next-i18next';
 import api from '../../utils/api';
 import { usePageBuilder } from './context';
-import { Loading, Tooltip } from '@prisme.ai/design-system';
+import {
+  BlockProvider,
+  Button,
+  Loading,
+  Tooltip,
+  useBlock,
+} from '@prisme.ai/design-system';
 import Block from '../Block';
 import useHover from '@react-hook/hover';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 
 interface WidgetProps {
   url: string;
@@ -24,12 +30,10 @@ export const Widget = ({
 }: WidgetProps) => {
   const { t } = useTranslation('workspaces');
   const { removeWidget } = usePageBuilder();
-  const ref = useRef<HTMLDivElement>(null);
-  const isHover = useHover(ref);
+  const { buttons } = useBlock();
 
   return (
     <div
-      ref={ref}
       className="flex m-4 relative 
           flex-col
           surface-section
@@ -41,14 +45,19 @@ export const Widget = ({
     >
       <div className="flex flex-1 border-graph-border bg-graph-background border-b-2 justify-between p-2">
         {title}
-        <Tooltip title={t('pages.widgets.remove')} placement="left">
-          <button
-            className={`${isHover ? 'opacity-1' : 'opacity-0'}`}
-            onClick={() => removeWidget(id)}
-          >
-            <CloseCircleOutlined />
-          </button>
-        </Tooltip>
+        <div className="flex flex-row">
+          {buttons &&
+            buttons.map((button, index) => (
+              <React.Fragment key={index}>{button}</React.Fragment>
+            ))}
+          <div className="ml-2">
+            <Tooltip title={t('pages.widgets.remove')} placement="left">
+              <Button onClick={() => removeWidget(id)}>
+                <DeleteOutlined />
+              </Button>
+            </Tooltip>
+          </div>
+        </div>
       </div>
       <Block
         url={url}
@@ -75,4 +84,12 @@ export const Widget = ({
   );
 };
 
-export default memo(Widget);
+const WidgetWithBlock = (props: WidgetProps) => {
+  return (
+    <BlockProvider>
+      <Widget {...props} />
+    </BlockProvider>
+  );
+};
+
+export default WidgetWithBlock;

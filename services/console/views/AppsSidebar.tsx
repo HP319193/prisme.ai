@@ -17,6 +17,7 @@ export const AppsSidebar = () => {
   } = useWorkspace();
 
   const { appInstances, getAppInstances } = useApps();
+
   const workspaceAppInstances = appInstances.get(workspaceId);
 
   const [appStoreVisible, setAppStoreVisible] = useState(false);
@@ -32,6 +33,8 @@ export const AppsSidebar = () => {
 
   const toggleSetup = useCallback((app: string, state: boolean) => {
     setOpened((opened) => {
+      if ((state && opened.has(app)) || (!state && !opened.has(app)))
+        return opened;
       const newOpened = new Set(opened);
       if (state) {
         newOpened.add(app);
