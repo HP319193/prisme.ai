@@ -17,7 +17,8 @@
             "example": "prismeaiMessenger.message"
           },
           "payload": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": true
           },
           "private": {
             "type": "boolean",
@@ -47,6 +48,7 @@
           "filters": {
             "type": "object",
             "description": "Only match the next intent fulfilling these filters. Multiple filters will be joined with an 'AND' operator ",
+            "additionalProperties": true,
             "example": {
               "automationSlug": "someId",
               "someObjectField.someNestedField": "foo"
@@ -80,7 +82,8 @@
           },
           "value": {
             "type": "object",
-            "description": "variable value"
+            "description": "variable value",
+            "additionalProperties": true
           },
           "lifespan": {
             "description": "Rules defining when a variable should be automatically removed",
@@ -233,7 +236,8 @@
           },
           "body": {
             "type": "object",
-            "description": "HTTP request body"
+            "description": "HTTP request body",
+            "additionalProperties": true
           },
           "output": {
             "type": "string",

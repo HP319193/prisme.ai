@@ -1004,7 +1004,7 @@ declare namespace Prismeai {
              */
             event: string;
             payload?: {
-                [key: string]: any;
+                [name: string]: any;
             };
             /**
              * example:
@@ -1052,7 +1052,7 @@ declare namespace Prismeai {
              * HTTP request body
              */
             body?: {
-                [key: string]: any;
+                [name: string]: any;
             };
             /**
              * Name of the variable which will hold the result
@@ -1235,7 +1235,7 @@ declare namespace Prismeai {
              * variable value
              */
             value: {
-                [key: string]: any;
+                [name: string]: any;
             };
             lifespan?: /* Rules defining when a variable should be automatically removed */ VariableLifespan;
         };
@@ -1428,7 +1428,7 @@ declare namespace Prismeai {
              * }
              */
             filters?: {
-                [key: string]: any;
+                [name: string]: any;
             };
             /**
              * Will save the caught event inside this variable

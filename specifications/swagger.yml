@@ -2407,6 +2407,7 @@ components:
               example: 'prismeaiMessenger.message'
             payload:
               type: object
+              additionalProperties: true
             private:
               type: boolean
               example: If true, can't be listened from any other app than current one
@@ -2428,6 +2429,7 @@ components:
             filters:
               type: object
               description: "Only match the next intent fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
+              additionalProperties: true
               example:
                 automationSlug: someId
                 someObjectField.someNestedField: 'foo'
@@ -2463,6 +2465,7 @@ components:
             value:
               type: object
               description: variable value
+              additionalProperties: true
             lifespan:
               $ref: '#/components/schemas/VariableLifespan'
 
@@ -2560,6 +2563,7 @@ components:
             body:
               type: object
               description: HTTP request body
+              additionalProperties: true
             output:
               type: string
               description: Name of the variable which will hold the result
