@@ -22,6 +22,8 @@ import {
 import { permissionsMiddleware } from '../permissions/middleware';
 import DSULStorage from '../services/DSULStorage';
 import { Broker } from '@prisme.ai/broker';
+import { EventType } from '../eda';
+import { PrismeError } from '../errors';
 
 export function initAPI(
   accessManager: AccessManager,
@@ -75,7 +77,58 @@ export function initAPI(
   /**
    * Sharing routes
    */
-  initCollaboratorRoutes<SubjectType>(app, permissionsMiddleware);
+  initCollaboratorRoutes<SubjectType>(app, permissionsMiddleware, {
+    onShared: async (req, subjectType, subjectId, permissions) => {
+      const payload = {
+        subjectId,
+        permissions,
+      };
+      const source = { workspaceId: req.context.workspaceId };
+      if (subjectType === SubjectType.Page) {
+        await req.broker.send<Prismeai.PagePermissionsShared['payload']>(
+          EventType.PagePermissionsShared,
+          payload,
+          source
+        );
+      } else if (subjectType === SubjectType.Workspace) {
+        await req.broker.send<Prismeai.WorkspacePermissionsShared['payload']>(
+          EventType.WorkspacePermissionsShared,
+          payload,
+          source
+        );
+      } else {
+        throw new PrismeError(
+          `No event declared for '${subjectType}' sharing !`,
+          {}
+        );
+      }
+    },
+    onRevoked: async (req, subjectType, subjectId, userId) => {
+      const payload = {
+        subjectId,
+        userId,
+      };
+      const source = { workspaceId: req.context.workspaceId };
+      if (subjectType === SubjectType.Page) {
+        await req.broker.send<Prismeai.PagePermissionsDeleted['payload']>(
+          EventType.PagePermissionsDeleted,
+          payload,
+          source
+        );
+      } else if (subjectType === SubjectType.Workspace) {
+        await req.broker.send<Prismeai.WorkspacePermissionsDeleted['payload']>(
+          EventType.WorkspacePermissionsDeleted,
+          payload,
+          source
+        );
+      } else {
+        throw new PrismeError(
+          `No event declared for '${subjectType}' permissions deletion !`,
+          {}
+        );
+      }
+    },
+  });
 
   /**
    * API Key routes

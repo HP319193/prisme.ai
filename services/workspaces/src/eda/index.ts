@@ -18,6 +18,8 @@ export enum EventType {
   ConfiguredWorkspace = 'workspaces.configured',
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
+  WorkspacePermissionsShared = 'workspaces.permissions.shared',
+  WorkspacePermissionsDeleted = 'workspaces.permissions.deleted',
   InstalledApp = 'workspaces.apps.installed',
   UninstalledApp = 'workspaces.apps.uninstalled',
   ConfiguredApp = 'workspaces.apps.configured',
@@ -29,6 +31,8 @@ export enum EventType {
   CreatedPage = 'workspaces.pages.created',
   UpdatedPage = 'workspaces.pages.updated',
   DeletedPage = 'workspaces.pages.deleted',
+  PagePermissionsShared = 'workspaces.pages.permissions.shared',
+  PagePermissionsDeleted = 'workspaces.pages.permissions.deleted',
 }
 
 export class CallbackContext {

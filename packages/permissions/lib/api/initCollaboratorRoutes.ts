@@ -7,6 +7,21 @@ import { SubjectCollaborator } from '../types';
 import { fetchUsers } from './fetchUsers';
 import { asyncRoute, ExtendedRequest } from './utils';
 
+export interface PermissionsRoutesCallbacks<SubjectType extends string> {
+  onShared: (
+    req: Request<any, any, any> & ExtendedRequest<SubjectType>,
+    subjectType: string,
+    subjectId: string,
+    permissions: Prismeai.UserPermissions
+  ) => any;
+
+  onRevoked: (
+    req: Request<any, any, any> & ExtendedRequest<SubjectType>,
+    subjectType: string,
+    subjectId: string,
+    userId: string
+  ) => any;
+}
 export function initCollaboratorRoutes<SubjectType extends string>(
   app: Router,
   middleware: (
@@ -17,7 +32,8 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     >,
     res: Response<PrismeaiAPI.GetPermissions.Responses.$200>,
     next: NextFunction
-  ) => void
+  ) => void,
+  callbacks?: PermissionsRoutesCallbacks<SubjectType>
 ) {
   async function getPermissionsHandler(
     {
@@ -73,11 +89,7 @@ export function initCollaboratorRoutes<SubjectType extends string>(
   }
 
   async function shareHandler(
-    {
-      params: { subjectType, subjectId },
-      accessManager,
-      body,
-    }: Request<
+    req: Request<
       PrismeaiAPI.Share.PathParameters,
       PrismeaiAPI.Share.Responses.$200,
       PrismeaiAPI.Share.RequestBody
@@ -86,11 +98,14 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     res: Response<PrismeaiAPI.Share.Responses.$200>,
     next: NextFunction
   ) {
+    const {
+      params: { subjectType, subjectId },
+      accessManager,
+      body,
+    } = req;
     const { email, public: publicShare, ...permissions } = body;
-    const users: (
-      | (Prismeai.User & { id: string })
-      | typeof PublicAccess
-    )[] = publicShare ? [PublicAccess] : await fetchUsers({ email });
+    const users: ((Prismeai.User & { id: string }) | typeof PublicAccess)[] =
+      publicShare ? [PublicAccess] : await fetchUsers({ email });
     if (!users.length) {
       throw new CollaboratorNotFound(
         `Could not find any user corresponding to ${email}`
@@ -104,6 +119,14 @@ export function initCollaboratorRoutes<SubjectType extends string>(
       collaborator,
       permissions
     );
+
+    if (callbacks?.onShared) {
+      callbacks.onShared(req, subjectType, subjectId, {
+        ...body,
+        id: (<any>collaborator)?.id,
+      });
+    }
+
     if (collaborator === PublicAccess) {
       return res.send({
         ...(sharedSubject.permissions?.[PublicAccess] || {}),
@@ -119,10 +142,7 @@ export function initCollaboratorRoutes<SubjectType extends string>(
   }
 
   async function revokeCollaborator(
-    {
-      params: { subjectType, subjectId, userId },
-      accessManager,
-    }: Request<
+    req: Request<
       PrismeaiAPI.RevokePermissions.PathParameters,
       PrismeaiAPI.RevokePermissions.Responses.$200,
       any
@@ -131,6 +151,10 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     res: Response<PrismeaiAPI.RevokePermissions.Responses.$200>,
     next: NextFunction
   ) {
+    const {
+      params: { subjectType, subjectId, userId },
+      accessManager,
+    } = req;
     await accessManager.revoke(
       <any>subjectType,
       subjectId,
@@ -140,6 +164,10 @@ export function initCollaboratorRoutes<SubjectType extends string>(
             id: userId,
           }
     );
+
+    if (callbacks?.onRevoked) {
+      callbacks.onRevoked(req, subjectType, subjectId, userId);
+    }
 
     return res.send({ id: userId });
   }
