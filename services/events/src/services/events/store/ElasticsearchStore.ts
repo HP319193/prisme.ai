@@ -212,7 +212,7 @@ export class ElasticsearchStore implements EventsStore {
       });
     } catch (error: any) {
       if ((error?.message || '').startsWith('index_not_found_exception')) {
-        throw new ObjectNotFoundError(`Workspace not found`);
+        return [];
       }
       throw error;
     }
