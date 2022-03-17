@@ -382,17 +382,15 @@ docs_deploy:
 
 load_performance:
   stage: performance
-  image: docker:git
+  when: manual
+  image:
+    name: loadimpact/k6:latest
+    entrypoint: ['']
   variables:
-    K6_IMAGE: loadimpact/k6
-    K6_VERSION: 0.36.0
     K6_TEST_FILE: scripts/loadPerformanceTesting.js
     K6_OPTIONS: ''
-    K6_DOCKER_OPTIONS: ''
-  services:
-    - docker:stable-dind
   script:
-    - docker run --rm -v "$(pwd)":/k6 -w /k6 $K6_DOCKER_OPTIONS $K6_IMAGE:$K6_VERSION run $K6_TEST_FILE --summary-export=load-performance.json $K6_OPTIONS
+    - k6 run $K6_TEST_FILE --summary-export=load-performance.json $K6_OPTIONS
   artifacts:
     reports:
       load_performance: load-performance.json
