@@ -19,10 +19,6 @@
           "payload": {
             "type": "object",
             "additionalProperties": true
-          },
-          "private": {
-            "type": "boolean",
-            "example": "If true, can't be listened from any other app than current one"
           }
         }
       }

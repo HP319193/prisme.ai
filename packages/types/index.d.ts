@@ -1006,11 +1006,6 @@ declare namespace Prismeai {
             payload?: {
                 [name: string]: any;
             };
-            /**
-             * example:
-             * If true, can't be listened from any other app than current one
-             */
-            private?: boolean;
         };
     }
     export interface ExecutedAutomation {
