@@ -1,7 +1,6 @@
 import elasticsearch from '@elastic/elasticsearch';
 import { StoreDriverOptions } from '.';
 import { EVENTS_RETENTION_DAYS } from '../../../../config';
-import { ObjectNotFoundError } from '../../../errors';
 import { logger } from '../../../logger';
 import { EventsStore, SearchOptions } from './types';
 
