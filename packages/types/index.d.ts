@@ -109,9 +109,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * runtime.automation.executed
+         * runtime.automations.executed
          */
-        type: "runtime.automation.executed";
+        type: "runtime.automations.executed";
         source: {
             appSlug?: string;
             appInstanceFullSlug?: string;
@@ -324,9 +324,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * workspaces.app.configured
+         * workspaces.apps.configured
          */
-        type: "workspaces.app.configured";
+        type: "workspaces.apps.configured";
         source: {
             appSlug?: string;
             appInstanceFullSlug?: string;
@@ -357,9 +357,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * workspaces.app.installed
+         * workspaces.apps.installed
          */
-        type: "workspaces.app.installed";
+        type: "workspaces.apps.installed";
         source: {
             appSlug?: string;
             appInstanceFullSlug?: string;
@@ -390,9 +390,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * workspaces.app.uninstalled
+         * workspaces.apps.uninstalled
          */
-        type: "workspaces.app.uninstalled";
+        type: "workspaces.apps.uninstalled";
         source: {
             appSlug?: string;
             appInstanceFullSlug?: string;
@@ -423,9 +423,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * workspaces.automation.created
+         * workspaces.automations.created
          */
-        type: "workspaces.automation.created";
+        type: "workspaces.automations.created";
         source: {
             appSlug?: string;
             appInstanceFullSlug?: string;
@@ -456,9 +456,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * workspaces.automation.updated
+         * workspaces.automations.updated
          */
-        type: "workspaces.automation.updated";
+        type: "workspaces.automations.updated";
         source: {
             appSlug?: string;
             appInstanceFullSlug?: string;
@@ -489,9 +489,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * workspaces.automation.deleted
+         * workspaces.automations.deleted
          */
-        type: "workspaces.automation.deleted";
+        type: "workspaces.automations.deleted";
         source: {
             appSlug?: string;
             appInstanceFullSlug?: string;
@@ -522,9 +522,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * workspaces.page.created
+         * workspaces.pages.created
          */
-        type: "workspaces.page.created";
+        type: "workspaces.pages.created";
         source: {
             appSlug?: string;
             appInstanceFullSlug?: string;
@@ -555,9 +555,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * workspaces.page.updated
+         * workspaces.pages.updated
          */
-        type: "workspaces.page.updated";
+        type: "workspaces.pages.updated";
         source: {
             appSlug?: string;
             appInstanceFullSlug?: string;
@@ -588,9 +588,9 @@ declare namespace Prismeai {
     } | {
         /**
          * example:
-         * workspaces.page.deleted
+         * workspaces.pages.deleted
          */
-        type: "workspaces.page.deleted";
+        type: "workspaces.pages.deleted";
         source: {
             appSlug?: string;
             appInstanceFullSlug?: string;
@@ -663,9 +663,8 @@ declare namespace Prismeai {
     }
     export interface AppEvent {
         /**
-         * Event name must be prefixed with apps.appName
          * example:
-         * apps.someApp.someCustomEvent
+         * someCustomEvent
          */
         type: string;
         payload: AnyValue;
@@ -792,9 +791,9 @@ declare namespace Prismeai {
     export interface ConfiguredAppInstance {
         /**
          * example:
-         * workspaces.app.configured
+         * workspaces.apps.configured
          */
-        type: "workspaces.app.configured";
+        type: "workspaces.apps.configured";
         payload: {
             appInstance: AppInstance;
             slug: string;
@@ -848,9 +847,9 @@ declare namespace Prismeai {
     export interface CreatedAutomation {
         /**
          * example:
-         * workspaces.automation.created
+         * workspaces.automations.created
          */
-        type: "workspaces.automation.created";
+        type: "workspaces.automations.created";
         payload: {
             slug: string;
             automation: /* Full description at (TODO swagger url) */ Automation;
@@ -859,9 +858,9 @@ declare namespace Prismeai {
     export interface CreatedPage {
         /**
          * example:
-         * workspaces.page.created
+         * workspaces.pages.created
          */
-        type: "workspaces.page.created";
+        type: "workspaces.pages.created";
         payload: {
             page: /* Page */ Page;
         };
@@ -933,9 +932,9 @@ declare namespace Prismeai {
     export interface DeletedAutomation {
         /**
          * example:
-         * workspaces.automation.deleted
+         * workspaces.automations.deleted
          */
-        type: "workspaces.automation.deleted";
+        type: "workspaces.automations.deleted";
         payload: {
             automation: {
                 slug: string;
@@ -946,9 +945,9 @@ declare namespace Prismeai {
     export interface DeletedPage {
         /**
          * example:
-         * workspaces.page.deleted
+         * workspaces.pages.deleted
          */
-        type: "workspaces.page.deleted";
+        type: "workspaces.pages.deleted";
         payload: {
             page: /* Page */ Page;
         };
@@ -1011,9 +1010,9 @@ declare namespace Prismeai {
     export interface ExecutedAutomation {
         /**
          * example:
-         * runtime.automation.executed
+         * runtime.automations.executed
          */
-        type: "runtime.automation.executed";
+        type: "runtime.automations.executed";
         payload: {
             slug: string;
             payload: {
@@ -1090,9 +1089,9 @@ declare namespace Prismeai {
     export interface InstalledAppInstance {
         /**
          * example:
-         * workspaces.app.installed
+         * workspaces.apps.installed
          */
-        type: "workspaces.app.installed";
+        type: "workspaces.apps.installed";
         payload: {
             appInstance: AppInstance;
             slug: string;
@@ -1131,6 +1130,28 @@ declare namespace Prismeai {
             height?: number;
         }[];
         id?: string;
+    }
+    export interface PagePermissionsDeleted {
+        /**
+         * example:
+         * workspaces.pages.permissions.deleted
+         */
+        type: "workspaces.pages.permissions.deleted";
+        payload: {
+            subjectId: string;
+            userId: string;
+        };
+    }
+    export interface PagePermissionsShared {
+        /**
+         * example:
+         * workspaces.pages.permissions.shared
+         */
+        type: "workspaces.pages.permissions.shared";
+        payload: {
+            subjectId: string;
+            permissions: UserPermissions;
+        };
     }
     /**
      * example:
@@ -1250,9 +1271,9 @@ declare namespace Prismeai {
     export interface TriggeredWebhook {
         /**
          * example:
-         * runtime.webhook.triggered
+         * runtime.webhooks.triggered
          */
-        type: "runtime.webhook.triggered";
+        type: "runtime.webhooks.triggered";
         payload: {
             workspaceId: string;
             automationSlug: string;
@@ -1284,9 +1305,9 @@ declare namespace Prismeai {
     export interface UninstalledAppInstance {
         /**
          * example:
-         * workspaces.app.uninstalled
+         * workspaces.apps.uninstalled
          */
-        type: "workspaces.app.uninstalled";
+        type: "workspaces.apps.uninstalled";
         payload: {
             appInstance: AppInstance;
             slug: string;
@@ -1308,9 +1329,9 @@ declare namespace Prismeai {
     export interface UpdatedAutomation {
         /**
          * example:
-         * workspaces.automation.updated
+         * workspaces.automations.updated
          */
-        type: "workspaces.automation.updated";
+        type: "workspaces.automations.updated";
         payload: {
             automation: /* Full description at (TODO swagger url) */ Automation;
             slug: string;
@@ -1335,9 +1356,9 @@ declare namespace Prismeai {
     export interface UpdatedPage {
         /**
          * example:
-         * workspaces.page.updated
+         * workspaces.pages.updated
          */
-        type: "workspaces.page.updated";
+        type: "workspaces.pages.updated";
         payload: {
             page: /* Page */ Page;
         };
@@ -1494,6 +1515,28 @@ declare namespace Prismeai {
         url: string;
     }
     export type Workspace = DSUL;
+    export interface WorkspacePermissionsDeleted {
+        /**
+         * example:
+         * workspaces.permissions.deleted
+         */
+        type: "workspaces.permissions.deleted";
+        payload: {
+            subjectId: string;
+            userId: string;
+        };
+    }
+    export interface WorkspacePermissionsShared {
+        /**
+         * example:
+         * workspaces.permissions.shared
+         */
+        type: "workspaces.permissions.shared";
+        payload: {
+            subjectId: string;
+            permissions: UserPermissions;
+        };
+    }
 }
 declare namespace PrismeaiAPI {
     namespace AnonymousAuth {

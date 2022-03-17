@@ -59,9 +59,9 @@ Produced events :
 - **workspaces.created**
 - **workspaces.updated**
 - **workspaces.deleted**
-- **workspaces.automation.created**
-- **workspaces.automation.updated**
-- **workspaces.automation.deleted**
+- **workspaces.automations.created**
+- **workspaces.automations.updated**
+- **workspaces.automations.deleted**
 
 [Documentation](/api)
 

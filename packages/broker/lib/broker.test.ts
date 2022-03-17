@@ -9,8 +9,8 @@ enum EventType {
   Error = 'error',
   SucceededLogin = 'gateway.login.succeeded',
   FailedLogin = 'gateway.login.failed',
-  InstalledApp = 'workspaces.app.installed',
-  ConfiguredApp = 'workspaces.app.configured',
+  InstalledApp = 'workspaces.apps.installed',
+  ConfiguredApp = 'workspaces.apps.configured',
   TriggeredWorkflow = 'runtime.workflow.triggered',
   UpdatedContexts = 'runtime.contexts.updated',
 }

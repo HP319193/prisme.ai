@@ -59,7 +59,7 @@ Workspaces can only listen to a limited subset of the available native events :
       </td>
     </tr>
     <tr>
-      <td><b>workspaces.app.configured</b></td>
+      <td><b>workspaces.apps.configured</b></td>
       <td>Some AppInstance config has been updated</td>
       <td>
         ```
@@ -71,7 +71,7 @@ Workspaces can only listen to a limited subset of the available native events :
       </td>
     </tr>    
     <tr>
-      <td><b>workspaces.app.installed</b></td>
+      <td><b>workspaces.apps.installed</b></td>
       <td>Some AppInstance has been installed</td>
       <td>
         ```
@@ -83,7 +83,7 @@ Workspaces can only listen to a limited subset of the available native events :
       </td>
     </tr>        
     <tr>
-      <td><b>workspaces.app.uninstalled</b></td>
+      <td><b>workspaces.apps.uninstalled</b></td>
       <td>Some AppInstance has been uninstalled</td>
       <td>
         ```

@@ -1615,9 +1615,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.app.installed
+          example: workspaces.apps.installed
           enum:
-            - workspaces.app.installed
+            - workspaces.apps.installed
         payload:
           $ref: '#/components/schemas/AppInstance'
 
@@ -1629,9 +1629,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.app.configured
+          example: workspaces.apps.configured
           enum:
-            - workspaces.app.configured
+            - workspaces.apps.configured
         payload:
           $ref: '#/components/schemas/AppInstance'
 
@@ -1643,9 +1643,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.automation.created
+          example: workspaces.automations.created
           enum:
-            - workspaces.automation.created
+            - workspaces.automations.created
         payload:
           type: object
           required:
@@ -1662,9 +1662,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.automation.updated
+          example: workspaces.automations.updated
           enum:
-            - workspaces.automation.updated
+            - workspaces.automations.updated
         payload:
           type: object
           required:
@@ -1681,9 +1681,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.automation.deleted
+          example: workspaces.automations.deleted
           enum:
-            - workspaces.automation.deleted
+            - workspaces.automations.deleted
         payload:
           type: object
           required:

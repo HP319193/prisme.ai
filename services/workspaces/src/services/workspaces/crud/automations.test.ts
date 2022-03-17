@@ -53,7 +53,7 @@ it('createAutomation should call Workspaces crud & broker', async () => {
     },
   });
   expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.automation.created',
+    'workspaces.automations.created',
     {
       slug: result.slug,
       automation,
@@ -92,7 +92,7 @@ it('updateAutomation should call Workspaces crud & broker', async () => {
     },
   });
   expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.automation.updated',
+    'workspaces.automations.updated',
     {
       slug: result.slug,
       automation,
@@ -127,7 +127,7 @@ it('deleteAutomation should call Workspaces crud & broker', async () => {
     automations: {},
   });
   expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.automation.deleted',
+    'workspaces.automations.deleted',
     {
       automation: {
         slug: INI_AUTOMATION_SLUG,

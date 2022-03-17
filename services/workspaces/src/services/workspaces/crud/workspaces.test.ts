@@ -177,7 +177,7 @@ it('updateWorkspace should emit specific events corresponding to each updated pa
   });
 
   expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.app.configured',
+    'workspaces.apps.configured',
     {
       appInstance: willBeChangedAppInstance,
       slug: 'willBeChangedAppInstance',
@@ -187,7 +187,7 @@ it('updateWorkspace should emit specific events corresponding to each updated pa
   );
 
   expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.app.installed',
+    'workspaces.apps.installed',
     {
       appInstance: createdAppInstance,
       slug: 'createdAppInstance',
@@ -196,7 +196,7 @@ it('updateWorkspace should emit specific events corresponding to each updated pa
   );
 
   expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.app.uninstalled',
+    'workspaces.apps.uninstalled',
     {
       appInstance: willBeRemovedAppInstance,
       slug: 'willBeRemovedAppInstance',
@@ -205,7 +205,7 @@ it('updateWorkspace should emit specific events corresponding to each updated pa
   );
 
   expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.automation.updated',
+    'workspaces.automations.updated',
     {
       automation: workspace.automations[INIT_AUTOMATION_SLUG],
       slug: INIT_AUTOMATION_SLUG,
@@ -213,7 +213,7 @@ it('updateWorkspace should emit specific events corresponding to each updated pa
   );
 
   expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.automation.deleted',
+    'workspaces.automations.deleted',
     {
       automation: {
         name: workspaces[INIT_WORKSPACE_ID].automations[
@@ -225,7 +225,7 @@ it('updateWorkspace should emit specific events corresponding to each updated pa
   );
 
   expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.automation.created',
+    'workspaces.automations.created',
     {
       automation: workspace.automations[ADDED_AUTOMATION_SLUG],
       slug: ADDED_AUTOMATION_SLUG,

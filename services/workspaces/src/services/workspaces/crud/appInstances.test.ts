@@ -107,7 +107,7 @@ describe('installApp', () => {
       imports: { [APP_INSTANCE_SLUG]: appInstance },
     });
     expect(mockedBroker.send).toHaveBeenCalledWith(
-      'workspaces.app.installed',
+      'workspaces.apps.installed',
       {
         appInstance,
         slug: APP_INSTANCE_SLUG,
@@ -225,7 +225,7 @@ describe('configureApp', () => {
       }
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
-      'workspaces.app.configured',
+      'workspaces.apps.configured',
       { appInstance, slug: APP_INSTANCE_SLUG },
       expect.anything()
     );
@@ -311,7 +311,7 @@ describe('uninstallApp', () => {
     );
 
     expect(mockedBroker.send).toHaveBeenCalledWith(
-      'workspaces.app.uninstalled',
+      'workspaces.apps.uninstalled',
       { appInstance: removedOne, slug: APP_INSTANCE_SLUG },
       expect.anything()
     );

@@ -103,9 +103,9 @@ If parent workspace wants to listen to this AppInstance event, it must also have
 
 Only [**native events**](../automations/#supported-native-events) available to AppInstances are the following ones :  
 
-* **workspaces.app.installed** : current AppInstance has just been installed
-* **workspaces.app.uninstalled** : current AppInstance has been uninstalled
-* **workspaces.app.configured** : current AppInstance configuration has been updated  
+* **workspaces.apps.installed** : current AppInstance has just been installed
+* **workspaces.apps.uninstalled** : current AppInstance has been uninstalled
+* **workspaces.apps.configured** : current AppInstance configuration has been updated  
 * **apps.published** : current **OR** parent workspace is published  
 * **apps.deleted** : current **OR** parent workspace is "unpublished"  
 

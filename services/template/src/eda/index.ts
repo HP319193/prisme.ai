@@ -17,11 +17,11 @@ export enum EventType {
   CreatedWorkspace = 'workspaces.created',
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
-  InstalledApp = 'workspaces.app.installed',
-  ConfiguredApp = 'workspaces.app.configured',
-  CreatedAutomation = 'workspaces.automation.created',
-  UpdatedAutomation = 'workspaces.automation.updated',
-  DeletedAutomation = 'workspaces.automation.deleted',
+  InstalledApp = 'workspaces.apps.installed',
+  ConfiguredApp = 'workspaces.apps.configured',
+  CreatedAutomation = 'workspaces.automations.created',
+  UpdatedAutomation = 'workspaces.automations.updated',
+  DeletedAutomation = 'workspaces.automations.deleted',
 }
 
 export class CallbackContext {

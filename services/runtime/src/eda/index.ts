@@ -14,21 +14,21 @@ import { Logger, logger } from '../logger';
 
 export enum EventType {
   Error = 'error',
-  ExecutedAutomation = 'runtime.automation.executed',
-  TriggeredWebhook = 'runtime.webhook.triggered',
+  ExecutedAutomation = 'runtime.automations.executed',
+  TriggeredWebhook = 'runtime.webhooks.triggered',
   UpdatedContexts = 'runtime.contexts.updated',
 
   CreatedWorkspace = 'workspaces.created',
   ConfiguredWorkspace = 'workspaces.configured',
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
-  CreatedAutomation = 'workspaces.automation.created',
-  UpdatedAutomation = 'workspaces.automation.updated',
-  DeletedAutomation = 'workspaces.automation.deleted',
+  CreatedAutomation = 'workspaces.automations.created',
+  UpdatedAutomation = 'workspaces.automations.updated',
+  DeletedAutomation = 'workspaces.automations.deleted',
 
-  InstalledApp = 'workspaces.app.installed',
-  UninstalledApp = 'workspaces.app.uninstalled',
-  ConfiguredApp = 'workspaces.app.configured',
+  InstalledApp = 'workspaces.apps.installed',
+  UninstalledApp = 'workspaces.apps.uninstalled',
+  ConfiguredApp = 'workspaces.apps.configured',
 
   DeletedApp = 'apps.deleted',
   PublishedApp = 'apps.published',

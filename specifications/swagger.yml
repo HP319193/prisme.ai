@@ -2906,6 +2906,7 @@ components:
             subjectId:
               type: string
 
+
     ########################## API Gateway ##########################
     FailedLogin:
       type: object
@@ -3070,6 +3071,50 @@ components:
             config:
               $ref: '#/components/schemas/Config'
 
+    WorkspacePermissionsShared:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.permissions.shared
+          enum:
+            - workspaces.permissions.shared
+        payload:
+          type: object
+          required:
+            - subjectId
+            - permissions
+          properties:
+            subjectId:
+              type: string
+            permissions:
+              $ref: '#/components/schemas/UserPermissions'
+
+    WorkspacePermissionsDeleted:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.permissions.deleted
+          enum:
+            - workspaces.permissions.deleted
+        payload:
+          type: object
+          required:
+            - subjectId
+            - userId
+          properties:
+            subjectId:
+              type: string
+            userId:
+              type: string
+
     UninstalledAppInstance:
       type: object
       required:
@@ -3078,9 +3123,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.app.uninstalled
+          example: workspaces.apps.uninstalled
           enum:
-            - workspaces.app.uninstalled
+            - workspaces.apps.uninstalled
         payload:
           type: object
           required:
@@ -3100,9 +3145,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.app.installed
+          example: workspaces.apps.installed
           enum:
-            - workspaces.app.installed
+            - workspaces.apps.installed
         payload:
           type: object
           required:
@@ -3122,9 +3167,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.app.configured
+          example: workspaces.apps.configured
           enum:
-            - workspaces.app.configured
+            - workspaces.apps.configured
         payload:
           type: object
           required:
@@ -3147,9 +3192,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.automation.created
+          example: workspaces.automations.created
           enum:
-            - workspaces.automation.created
+            - workspaces.automations.created
         payload:
           type: object
           required:
@@ -3169,9 +3214,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.automation.updated
+          example: workspaces.automations.updated
           enum:
-            - workspaces.automation.updated
+            - workspaces.automations.updated
         payload:
           type: object
           required:
@@ -3194,9 +3239,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.automation.deleted
+          example: workspaces.automations.deleted
           enum:
-            - workspaces.automation.deleted
+            - workspaces.automations.deleted
         payload:
           type: object
           required:
@@ -3221,9 +3266,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.page.created
+          example: workspaces.pages.created
           enum:
-            - workspaces.page.created
+            - workspaces.pages.created
         payload:
           type: object
           required:
@@ -3240,9 +3285,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.page.updated
+          example: workspaces.pages.updated
           enum:
-            - workspaces.page.updated
+            - workspaces.pages.updated
         payload:
           type: object
           required:
@@ -3259,9 +3304,9 @@ components:
       properties:
         type:
           type: string
-          example: workspaces.page.deleted
+          example: workspaces.pages.deleted
           enum:
-            - workspaces.page.deleted
+            - workspaces.pages.deleted
         payload:
           type: object
           required:
@@ -3269,6 +3314,50 @@ components:
           properties:
             page:
               $ref: '#/components/schemas/Page'
+
+    PagePermissionsShared:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.pages.permissions.shared
+          enum:
+            - workspaces.pages.permissions.shared
+        payload:
+          type: object
+          required:
+            - subjectId
+            - permissions
+          properties:
+            subjectId:
+              type: string
+            permissions:
+              $ref: '#/components/schemas/UserPermissions'
+
+    PagePermissionsDeleted:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.pages.permissions.deleted
+          enum:
+            - workspaces.pages.permissions.deleted
+        payload:
+          type: object
+          required:
+            - subjectId
+            - userId
+          properties:
+            subjectId:
+              type: string
+            userId:
+              type: string
 
     ########################## Runtime events ##########################
 
@@ -3280,9 +3369,9 @@ components:
       properties:
         type:
           type: string
-          example: runtime.automation.executed
+          example: runtime.automations.executed
           enum:
-            - runtime.automation.executed
+            - runtime.automations.executed
         payload:
           type: object
           required:
@@ -3305,9 +3394,9 @@ components:
       properties:
         type:
           type: string
-          example: runtime.webhook.triggered
+          example: runtime.webhooks.triggered
           enum:
-            - runtime.webhook.triggered
+            - runtime.webhooks.triggered
         payload:
           type: object
           required:
@@ -3359,8 +3448,7 @@ components:
       properties:
         type:
           type: string
-          example: apps.someApp.someCustomEvent
-          description: Event name must be prefixed with apps.appName
+          example: someCustomEvent
         payload:
           $ref: '#/components/schemas/AnyValue'
 
