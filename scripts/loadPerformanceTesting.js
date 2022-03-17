@@ -14,8 +14,8 @@ export const options = {
 };
 const {
   BASE_URL = 'https://api.eda.prisme.ai',
-  WORKSPACE_ID = 'X_wCz0n',
-  AUTOMATION = 'Automation',
+  WORKSPACE_ID = '4LLXbi0',
+  AUTOMATION = 'simpleUserJourney',
   BODY = JSON.stringify({
     foo: 'too',
   }),
