@@ -30,6 +30,7 @@ stages:
   - test
   - build_docker
   - deploy
+  - performance
 
 # sast:
 #   stage: test
@@ -378,3 +379,19 @@ docs_deploy:
     - aws s3 rm s3://$DOCS_S3_BUCKET_NAME --recursive
     - aws s3 cp docs/public/ s3://$DOCS_S3_BUCKET_NAME/ --recursive --include "*"
     - aws cloudfront create-invalidation --distribution-id $DOCS_CDN_DISTRIBUTION_ID --paths "/*"
+
+load_performance:
+  stage: performance
+  when: manual
+  image:
+    name: loadimpact/k6:latest
+    entrypoint: ['']
+  variables:
+    K6_TEST_FILE: scripts/loadPerformanceTesting.js
+    K6_OPTIONS: ''
+  script:
+    - k6 run $K6_TEST_FILE --summary-export=load-performance.json $K6_OPTIONS
+  artifacts:
+    reports:
+      load_performance: load-performance.json
+
