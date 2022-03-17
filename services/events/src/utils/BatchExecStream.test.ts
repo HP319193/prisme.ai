@@ -124,12 +124,14 @@ describe('When flushing is slower than writting', () => {
     );
     const received: Chunk[] = [];
 
+    let closed = false;
     const stream = getStream({
       flushEvery: 300,
       highWaterMark: 50,
       flushAt: 20,
       bulkExec: async (chunks) => {
-        if (Math.random() > 0.7) {
+        // Stop sending error on stream closing as we cannot try push them back anymore & it would make the test fail
+        if (!closed && Math.random() > 0.7) {
           throw new Error();
         }
         received.push(...chunks);
@@ -138,8 +140,9 @@ describe('When flushing is slower than writting', () => {
     });
     await sendChunks(willSend, stream);
     stream.end();
+    closed = true;
     await stream.onClosed();
-    await sleep(400); // onClosed occasionally returns while last chunks are still flushing :(
+    // await sleep(400); // onClosed occasionally returns while last chunks are still flushing :(
 
     verifyReceivedChunks(received, willSend);
   });
