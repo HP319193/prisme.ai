@@ -1,4 +1,4 @@
-import { Input, Select, Switch } from '@prisme.ai/design-system';
+import { Input, Select, Switch, TextArea } from '@prisme.ai/design-system';
 import { Tooltip } from 'antd';
 import { FC } from 'react';
 import FieldContainer from '../../layouts/Field';
@@ -47,6 +47,7 @@ export const Field: FC<FieldProps> = ({
   const { t } = useTranslation('workspaces');
   const localize = useLocalizedText();
   const { input } = useField(field);
+
   const validate: FieldValidator<any> = (value) => {
     const isRequired = oneOf
       ? oneOf.every(({ required }) => required.includes(field))
@@ -181,9 +182,19 @@ export const Field: FC<FieldProps> = ({
           )}
         </FieldContainer>
       );
+    case 'textarea':
     case 'string':
     case 'number':
     default:
+      const getComponent = () => {
+        switch (component) {
+          case 'textarea':
+            return TextArea;
+          default:
+            return Input;
+        }
+      };
+      const C = getComponent();
       return (
         <FieldContainer key={field} name={field} validate={validate}>
           {({ input, className }) => (
@@ -195,12 +206,13 @@ export const Field: FC<FieldProps> = ({
                   </Tooltip>
                 </div>
               )}
-              <Input
+              <C
                 id={field}
                 label={localize(title) || ''}
                 {...input}
                 className={className}
                 inputType={type === 'number' ? 'number' : 'text'}
+                {...componentOptions}
               />
             </div>
           )}

@@ -1,6 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import { Button } from '@prisme.ai/design-system';
-import { FC, useCallback, useMemo } from 'react';
+import { FC, ReactNode, useCallback, useMemo } from 'react';
 import { Form as FFForm, FormRenderProps } from 'react-final-form';
 import { Field } from './Field';
 import { Schema } from './types';
@@ -12,12 +12,14 @@ interface FormProps {
   onSubmit: (values: any) => void;
   initialValues?: FormRenderProps['initialValues'];
   description?: string;
+  submitLabel?: string | ReactNode;
 }
 export const Form: FC<FormProps> = ({
   schema,
   onSubmit,
   description,
   initialValues = {},
+  submitLabel,
   ...formProps
 }) => {
   const { t } = useTranslation('workspaces');
@@ -129,8 +131,12 @@ export const Form: FC<FormProps> = ({
             />
           ))}
           <Button type="submit">
-            <PlusOutlined />
-            {t('automations.edit.save')}
+            {submitLabel || (
+              <>
+                <PlusOutlined />
+                {t('automations.edit.save')}
+              </>
+            )}
           </Button>
         </form>
       )}

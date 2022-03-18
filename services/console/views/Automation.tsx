@@ -21,6 +21,21 @@ import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import { usePrevious } from '../utils/usePrevious';
 import { slugifyAutomation } from '../utils/strings';
+import UnderPanel from '../layouts/UnderPanel';
+import Form from '../components/SchemaForm/Form';
+import { Schema } from '../components/SchemaForm/types';
+
+const detailsFormSchema: Schema = {
+  type: 'object',
+  properties: {
+    slug: { type: 'string' },
+    description: {
+      type: 'string',
+      'ui:widget': 'textarea',
+      'ui:options': { rows: 10 },
+    },
+  },
+};
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
@@ -152,9 +167,17 @@ export const Automation = () => {
     [appInstances, localize, workspace.id]
   );
 
+  const updateDetails = useCallback(
+    ({ slug, description }: { slug: string; description: string }) => {
+      console.log('update', slug, description);
+    },
+    []
+  );
+
   if (!value) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
   }
+
   return (
     <>
       <PageHeader
@@ -203,6 +226,14 @@ export const Automation = () => {
           </Button>,
         ]}
       />
+      <UnderPanel visible>
+        <Form
+          schema={detailsFormSchema}
+          onSubmit={updateDetails}
+          initialValues={{ ...value, slug: automationId }}
+          submitLabel="enregistrer"
+        />
+      </UnderPanel>
       <div className="relative flex flex-1">
         <AutomationBuilder
           id={`${automationId}`}
