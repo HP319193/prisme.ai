@@ -61,16 +61,6 @@
       "toast": "L'automatisation a bien été enregistrée",
       "error": "Une erreur est survenue"
     },
-    "delete": {
-      "label": "Supprimer l'automatisation",
-      "confirm": {
-        "title": "Voulez vous supprimer l'automatisation \"{{name}}\" ?",
-        "content": "Attention, les données seront perdues.",
-        "ok": "Oui, supprimer",
-        "cancel": "Non, je regrette"
-      },
-      "toast": "L'automatisation a bien été supprimée"
-    },
     "endpoint": {
       "copied": "L'adresse a bien été copiée"
     },
@@ -152,6 +142,17 @@
         "save": "Ajouter",
         "submit_new": "Ajouter"
       }
+    },
+    "details": {
+      "slug": {
+        "label": "Nom technique"
+      },
+      "name": {
+        "label": "Titre de l'automatisation"
+      },
+      "description": {
+        "label": "Description"
+      }
     }
   },
   "apps": {
@@ -211,6 +212,14 @@
       "access_private": "Choisissez quels utilisateurs peuvent consulter votre page",
       "copy": "Copier l'adresse publique de la page",
       "copied": "L'adresse est copiée dans votre presse papier"
+    },
+    "details": {
+      "name": {
+        "label": "Titre de la page"
+      },
+      "description": {
+        "label": "Description"
+      }
     }
   },
   "expert": {
@@ -239,6 +248,42 @@
     "roles": {
       "owner": "Administrateur",
       "editor": "Editeur"
+    }
+  },
+  "languages": {
+    "add": {
+      "tooltip": "Ajouter {{lang}}"
+    },
+    "available": {
+      "title": "Langues disponibles"
+    },
+    "delete": {
+      "tooltip": "Supprimer cette langue"
+    },
+    "set": {
+      "tooltip": "Ajouter une traduction",
+      "title": "Langues ajoutées"
+    }
+  },
+  "details": {
+    "title": "",
+    "title_automations": "Réglages de l'automatisation",
+    "title_pages": "Réglages de la page",
+    "save": "Enregistrer",
+    "delete": {
+      "label": "Supprimer",
+      "label_automations": "Supprimer l'automatisation",
+      "label_pages": "Supprimer la page",
+      "confirm": {
+        "title": "Voulez vous supprimer \"{{name}}\" ?",
+        "title_automation": "Voulez vous supprimer l'automatisation \"{{name}}\" ?",
+        "title_pages": "Voulez vous supprimer la page \"{{name}}\" ?",
+        "content": "Attention, les données seront perdues.",
+        "ok": "Oui, supprimer",
+        "cancel": "Non, je regrette"
+      },
+      "toast_automations": "L'automatisation a bien été supprimée",
+      "toast_pages": "La page a bien été supprimée"
     }
   }
 }

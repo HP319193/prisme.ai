@@ -2343,7 +2343,7 @@ components:
           description: 'Set this to true if you want to turn off this automation.'
           example: true
         name:
-          type: string
+          $ref: '#/components/schemas/LocalizedText'
         slug:
           type: string
           description: Unique & human readable id across current workspace's automations
@@ -2905,7 +2905,6 @@ components:
               enum: *KNOWN_SUBJECT_TYPES
             subjectId:
               type: string
-
 
     ########################## API Gateway ##########################
     FailedLogin:

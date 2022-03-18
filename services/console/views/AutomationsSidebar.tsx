@@ -44,12 +44,14 @@ export const AutomationsSidebar: FC = () => {
     let version = 0;
     const generateName = () =>
       `${defaultName}${version ? ` (${version})` : ''}`;
-    const names = Object.keys(automations).map((key) => automations[key].name);
+    const names = Object.keys(automations).map((key) =>
+      localize(automations[key].name)
+    );
     while (names.find((name) => name === generateName())) {
       version++;
     }
     return generateName();
-  }, [automations, t]);
+  }, [automations, localize, t]);
 
   const create = useCallback(async () => {
     setCreating(true);
@@ -109,7 +111,10 @@ export const AutomationsSidebar: FC = () => {
                 href={`/workspaces/${workspaceId}/automations/${slug}`}
               >
                 <a>
-                  <ListItem title={name} content={localize(description)} />
+                  <ListItem
+                    title={localize(name)}
+                    content={localize(description)}
+                  />
                 </a>
               </Link>
             ))}

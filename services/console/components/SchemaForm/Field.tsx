@@ -14,6 +14,7 @@ import {
 import { FieldArray } from 'react-final-form-arrays';
 import { useTranslation } from 'next-i18next';
 import useLocalizedText from '../../utils/useLocalizedText';
+import InputWrapper from './InputWrapper';
 
 const getDefaultValue = (type?: string) => {
   switch (type) {
@@ -43,6 +44,7 @@ export const Field: FC<FieldProps> = ({
   'ui:widget': component = type,
   'ui:options': componentOptions = {},
   additionalProperties,
+  pattern,
 }) => {
   const { t } = useTranslation('workspaces');
   const localize = useLocalizedText();
@@ -50,8 +52,11 @@ export const Field: FC<FieldProps> = ({
 
   const validate: FieldValidator<any> = (value) => {
     const isRequired = oneOf
-      ? oneOf.every(({ required }) => required.includes(field))
+      ? oneOf.every(({ required = [] }) => required.includes(field))
       : required;
+    if (pattern) {
+      return `${value}`.match(pattern) ? undefined : pattern;
+    }
     return !value && isRequired ? 'required' : undefined;
   };
 
@@ -186,15 +191,6 @@ export const Field: FC<FieldProps> = ({
     case 'string':
     case 'number':
     default:
-      const getComponent = () => {
-        switch (component) {
-          case 'textarea':
-            return TextArea;
-          default:
-            return Input;
-        }
-      };
-      const C = getComponent();
       return (
         <FieldContainer key={field} name={field} validate={validate}>
           {({ input, className }) => (
@@ -206,13 +202,15 @@ export const Field: FC<FieldProps> = ({
                   </Tooltip>
                 </div>
               )}
-              <C
+              <InputWrapper
+                component={component}
                 id={field}
                 label={localize(title) || ''}
                 {...input}
                 className={className}
-                inputType={type === 'number' ? 'number' : 'text'}
-                {...componentOptions}
+                type={type === 'number' ? 'number' : 'text'}
+                componentOptions={componentOptions}
+                pattern={pattern}
               />
             </div>
           )}

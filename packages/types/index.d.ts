@@ -748,7 +748,7 @@ declare namespace Prismeai {
          * true
          */
         disabled?: boolean;
-        name: string;
+        name: LocalizedText;
         /**
          * Unique & human readable id across current workspace's automations
          */

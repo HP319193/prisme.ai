@@ -31,7 +31,7 @@ export const Form: FC<FormProps> = ({
   );
 
   const oneOf = schema.oneOf
-    ? schema.oneOf.map(({ required }) => ({
+    ? schema.oneOf.map(({ required = [] }) => ({
         required: required.filter((f) => Object.keys(properties).includes(f)),
       }))
     : null;
