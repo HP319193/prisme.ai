@@ -17,12 +17,16 @@ export class Events {
       extraHeaders: {
         'x-prismeai-session-token': token,
       },
-      query: filters,
+      // TODO add filters too query when workspaces service handles it
+      // query: filters,
     });
     this.filters = filters;
   }
 
   destroy() {
+    this.workspaceId = '';
+    this.filters = {};
+
     if (this.client.connected) {
       this.client.disconnect();
       return;

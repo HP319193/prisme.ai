@@ -98,7 +98,7 @@ export const AppsSidebar = () => {
             <Space direction="vertical" className="flex grow overflow-x-auto">
               {filteredApps.map((appInstance: Prismeai.DetailedAppInstance) => (
                 <AppsSidebarItem
-                  key={appInstance.appSlug}
+                  key={appInstance.slug || appInstance.appSlug}
                   workspaceId={workspaceId}
                   {...appInstance}
                   onToggle={toggleSetup}

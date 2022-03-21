@@ -61,6 +61,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     new Set()
   );
   const [filters, setFilters] = useState<WorkspaceContext['filters']>({});
+  const prevFilters = usePrevious(filters);
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
@@ -96,42 +97,53 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [workspace]
   );
   useEffect(() => {
-    if (
-      !workspaceId ||
-      (socket.current && socket.current.workspaceId === workspaceId)
-    )
+    const filterIsSame = prevFilters === filters;
+    const socketAlreadyInstantiatedForId =
+      socket.current && socket.current.workspaceId === workspaceId;
+
+    if (!workspaceId || (filterIsSame && socketAlreadyInstantiatedForId)) {
       return;
+    }
+    if (socket.current) {
+      socket.current.destroy();
+    }
     socket.current = api.streamEvents(workspaceId, filters);
+  }, [filters, prevFilters, workspaceId]);
+
+  useEffect(() => {
     return () => {
       socket.current && socket.current.destroy();
     };
-  }, [filters, workspaceId]);
+  }, []);
 
-  const fetchNextEvents = useCallback(async () => {
-    if (!workspaceId) return;
-    lockEvents.current = true;
-    const fetched = await api.getEvents(workspaceId, {
-      ...filters,
-    });
-    await setEvents((events) => {
-      const newEvents = new Map(events === 'loading' ? [] : events);
-      fetched.forEach((event) => {
-        addEventToMap(newEvents, event);
+  // TODO restore navigation, but using pages/limit
+
+  const fetchNextEvents = useCallback(
+    async (emptyEventsList: boolean = false) => {
+      if (!workspaceId) return;
+      lockEvents.current = true;
+      const fetched = await api.getEvents(workspaceId, {
+        ...filters,
       });
-      latest.current = getLatest(fetched) || null;
-      return newEvents;
-    });
-    lockEvents.current = false;
-  }, [filters, workspaceId]);
 
-  const updateEvents = useCallback(async () => {
-    // TODO empty event during fetch to prevent an empty render
-    await setEvents(new Map());
-    fetchNextEvents();
-  }, [fetchNextEvents]);
+      await setEvents((events) => {
+        const baseEvents =
+          events === 'loading' || emptyEventsList ? [] : events;
+        const newEvents = new Map(baseEvents);
+        fetched.forEach((event) => {
+          addEventToMap(newEvents, event);
+        });
+        latest.current = getLatest(fetched) || null;
+        return newEvents;
+      });
+      lockEvents.current = false;
+    },
+    [filters, workspaceId]
+  );
+
   useEffect(() => {
-    updateEvents();
-  }, [filters, updateEvents]);
+    fetchNextEvents(true);
+  }, [fetchNextEvents, filters]);
 
   const nextEvents = useCallback(async () => {
     if (!workspace || lockEvents.current || latest.current === null) return;
