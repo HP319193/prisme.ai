@@ -1,19 +1,25 @@
 import io, { Socket } from 'socket.io-client';
+import { EventsFilters } from './types';
+
 export class Events {
   private client: Socket;
   public workspaceId: string;
+  private filters: EventsFilters;
 
   constructor(
     workspaceId: string,
     token: string,
-    apiHost: string = 'https://api.eda.prisme.ai'
+    apiHost: string = 'https://api.eda.prisme.ai',
+    filters: EventsFilters
   ) {
     this.workspaceId = workspaceId;
     this.client = io(`${apiHost}/workspaces/${workspaceId}/events`, {
       extraHeaders: {
         'x-prismeai-session-token': token,
       },
+      query: filters,
     });
+    this.filters = filters;
   }
 
   destroy() {

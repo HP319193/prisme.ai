@@ -60,6 +60,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [readEvents, setReadEvents] = useState<WorkspaceContext['readEvents']>(
     new Set()
   );
+  const [filters, setFilters] = useState<WorkspaceContext['filters']>({});
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
@@ -90,43 +91,52 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }, [sourceDisplayed]);
 
   // Init socket
-  const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
-    workspace,
-  ]);
+  const workspaceId = useMemo(
+    () => (workspace ? workspace.id : null),
+    [workspace]
+  );
   useEffect(() => {
     if (
       !workspaceId ||
       (socket.current && socket.current.workspaceId === workspaceId)
     )
       return;
-    socket.current = api.streamEvents(workspaceId);
+    socket.current = api.streamEvents(workspaceId, filters);
     return () => {
       socket.current && socket.current.destroy();
     };
-  }, [workspaceId]);
+  }, [filters, workspaceId]);
 
-  const fetchNextEvents = useRef(
-    async (workspaceId: string, beforeDate?: Date) => {
-      lockEvents.current = true;
-      const fetched = await api.getEvents(workspaceId, {
-        beforeDate: beforeDate || undefined,
+  const fetchNextEvents = useCallback(async () => {
+    if (!workspaceId) return;
+    lockEvents.current = true;
+    const fetched = await api.getEvents(workspaceId, {
+      ...filters,
+    });
+    await setEvents((events) => {
+      const newEvents = new Map(events === 'loading' ? [] : events);
+      fetched.forEach((event) => {
+        addEventToMap(newEvents, event);
       });
-      setEvents((events) => {
-        const newEvents = new Map(events === 'loading' ? [] : events);
-        fetched.forEach((event) => {
-          addEventToMap(newEvents, event);
-        });
-        latest.current = getLatest(fetched) || null;
-        return newEvents;
-      });
-      lockEvents.current = false;
-    }
-  );
+      latest.current = getLatest(fetched) || null;
+      return newEvents;
+    });
+    lockEvents.current = false;
+  }, [filters, workspaceId]);
+
+  const updateEvents = useCallback(async () => {
+    // TODO empty event during fetch to prevent an empty render
+    await setEvents(new Map());
+    fetchNextEvents();
+  }, [fetchNextEvents]);
+  useEffect(() => {
+    updateEvents();
+  }, [filters, updateEvents]);
 
   const nextEvents = useCallback(async () => {
     if (!workspace || lockEvents.current || latest.current === null) return;
-    fetchNextEvents.current(workspace.id, latest.current);
-  }, [lockEvents, workspace]);
+    fetchNextEvents();
+  }, [fetchNextEvents, workspace]);
 
   // Load events history
   const prevWorkspaceId = usePrevious(workspace && workspace.id);
@@ -136,8 +146,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
     }
     latest.current = undefined;
     setEvents('loading');
-    fetchNextEvents.current(workspace.id, latest.current);
-  }, [nextEvents, prevWorkspaceId, workspace]);
+    fetchNextEvents();
+  }, [fetchNextEvents, nextEvents, prevWorkspaceId, workspace]);
 
   const readEvent = useCallback(
     (eventId: string) => {
@@ -347,6 +357,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
         workspace,
         loading,
+        filters,
+        setFilters,
         save,
         saveSource,
         events,

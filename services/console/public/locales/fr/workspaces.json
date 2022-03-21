@@ -41,6 +41,11 @@
     "label": "Éditer"
   },
   "events": {
+    "filters": {
+      "title": "Filtres",
+      "correlationId": "ID de corrélation",
+      "submit": "Appliquer"
+    },
     "empty": "Il ne s'est encore rien passé ici…",
     "details": {
       "name": "Attribut",

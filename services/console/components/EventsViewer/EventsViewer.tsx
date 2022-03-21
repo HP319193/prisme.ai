@@ -4,7 +4,6 @@ import EventDetails from './EventDetails';
 import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useScrollListener } from '../useScrollListener';
 import {
-  Button,
   Collapse,
   Feed,
   FeedHeader,
@@ -16,7 +15,7 @@ import { CollapseItem } from '@prisme.ai/design-system/lib/Components/Collapse';
 import { Event } from '@prisme.ai/sdk';
 import Empty from './Empty';
 import { useTranslation } from 'next-i18next';
-import { FilterOutlined } from '@ant-design/icons';
+import FilterEventsPopover from './FilterEventsPopover';
 
 export const EventsViewerRenderer = memo(function EventsViewserRendere({
   events,
@@ -84,13 +83,8 @@ export const EventsViewerRenderer = memo(function EventsViewserRendere({
   );
 
   const feedHeaderButtons = useMemo(
-    () => [
-      <Button key="filter">
-        <FilterOutlined />
-        {t('feed.filter')}
-      </Button>,
-    ],
-    [t]
+    () => [<FilterEventsPopover key="filterEvents" />],
+    []
   );
 
   let content;

@@ -1,6 +1,6 @@
 import QueryString from 'qs';
 import Fetcher from './fetcher';
-import { Event, Workspace } from './types';
+import { Event, EventsFilters, Workspace } from './types';
 import { Events } from './events';
 import { removedUndefinedProperties } from './utils';
 
@@ -134,16 +134,11 @@ export class Api extends Fetcher {
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const {
-      createdAt,
-      createdBy,
-      updatedAt,
-      updatedBy,
-      ...newPage
-    } = await this.post<PageWithMetadata>(
-      `/workspaces/${workspaceId}/pages`,
-      page
-    );
+    const { createdAt, createdBy, updatedAt, updatedBy, ...newPage } =
+      await this.post<PageWithMetadata>(
+        `/workspaces/${workspaceId}/pages`,
+        page
+      );
     return newPage;
   }
 
@@ -151,16 +146,11 @@ export class Api extends Fetcher {
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const {
-      createdAt,
-      createdBy,
-      updatedAt,
-      updatedBy,
-      ...updatedPage
-    } = await this.patch<PageWithMetadata>(
-      `/workspaces/${workspaceId}/pages/${page.id}`,
-      page
-    );
+    const { createdAt, createdBy, updatedAt, updatedBy, ...updatedPage } =
+      await this.patch<PageWithMetadata>(
+        `/workspaces/${workspaceId}/pages/${page.id}`,
+        page
+      );
     return updatedPage;
   }
 
@@ -172,8 +162,8 @@ export class Api extends Fetcher {
   }
 
   // Events
-  streamEvents(workspaceId: string) {
-    return new Events(workspaceId, this.token || '', this.host);
+  streamEvents(workspaceId: string, filters: EventsFilters) {
+    return new Events(workspaceId, this.token || '', this.host, filters);
   }
 
   async getEvents(

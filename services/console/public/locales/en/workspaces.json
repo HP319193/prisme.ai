@@ -41,6 +41,11 @@
     "label": "Edit"
   },
   "events": {
+    "filters": {
+      "title": "Filters",
+      "correlationId": "Correlation ID",
+      "submit": "Apply"
+    },
     "empty": "Nothing has happened here yet…",
     "details": {
       "name": "Field",

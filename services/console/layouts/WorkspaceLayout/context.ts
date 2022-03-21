@@ -2,6 +2,12 @@ import { createContext, FC, useContext } from 'react';
 import { Event, Workspace } from '@prisme.ai/sdk';
 import { ValidationError } from '../../utils/yaml';
 
+export type EventsFilters = {
+  afterDate?: PrismeaiAPI.EventsLongpolling.Parameters.AfterDate;
+  beforeDate?: PrismeaiAPI.EventsLongpolling.Parameters.BeforeDate;
+  correlationId?: PrismeaiAPI.EventsLongpolling.Parameters.CorrelationId;
+  query?: PrismeaiAPI.EventsLongpolling.Parameters.Query;
+};
 export type EventsByDay = Map<number, Set<Event<Date>>>;
 export interface WorkspaceContext {
   displaySource: (status: boolean) => void;
@@ -16,10 +22,8 @@ export interface WorkspaceContext {
   // To move into a WorkspaceProvider
   workspace: Workspace;
   loading: boolean;
-  filters: {
-    afterDate: PrismeaiAPI.EventsLongpolling.Parameters.AfterDate;
-    beforeDate: PrismeaiAPI.EventsLongpolling.Parameters.BeforeDate;
-  };
+  filters: EventsFilters;
+  setFilters: (newFilters: EventsFilters) => void;
   save: (workspace: Workspace) => void;
   saveSource: () => void;
   saving: boolean;
@@ -55,6 +59,8 @@ export const workspaceContext = createContext<WorkspaceContext>({
   //
   workspace: {} as Workspace,
   loading: false,
+  filters: {} as EventsFilters,
+  setFilters: () => {},
   save() {},
   saveSource() {},
   saving: false,
