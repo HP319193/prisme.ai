@@ -148,14 +148,6 @@ export class ElasticsearchStore implements EventsStore {
       });
     }
 
-    if (options.correlationId) {
-      filter.push({
-        term: {
-          'source.correlationId': options.correlationId,
-        },
-      });
-    }
-
     if (options.types) {
       filter.push({
         terms: {
@@ -168,7 +160,7 @@ export class ElasticsearchStore implements EventsStore {
       Object.entries(options.payloadQuery).forEach(([key, value]) => {
         must.push({
           match: {
-            ['payload.' + key]: value,
+            [key]: value,
           },
         });
       });

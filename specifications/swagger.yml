@@ -623,9 +623,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: correlationId
-          in: query
-          description: Match every events with the same correlationId
+        - name: 'text'
+          in: 'query'
+          description: 'Search these keywords'
           schema:
             type: string
         - name: beforeId

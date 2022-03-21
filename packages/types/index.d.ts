@@ -1812,12 +1812,12 @@ declare namespace PrismeaiAPI {
             export type AfterDate = string;
             export type BeforeDate = string;
             export type BeforeId = string;
-            export type CorrelationId = string;
             export type Limit = number;
             export type Page = number;
             export interface Query {
                 [name: string]: any;
             }
+            export type Text = string;
             export type Types = string;
             export type WorkspaceId = string;
         }
@@ -1825,7 +1825,7 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
         }
         export interface QueryParameters {
-            correlationId?: Parameters.CorrelationId;
+            text?: Parameters.Text;
             beforeId?: Parameters.BeforeId;
             query?: Parameters.Query;
             types?: Parameters.Types;

@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import { API_KEY_HEADER, USER_ID_HEADER } from '../../../config';
 import { logger } from '../../logger';
 import { Subscriptions } from '../../services/events/Subscriptions';
+import { cleanSearchQuery } from './events';
 
 const WORKSPACE_PATH = /^\/v2\/workspaces\/([\w-_]+)\/events$/;
 
@@ -18,6 +19,16 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
   const workspaces = io.of(WORKSPACE_PATH);
   workspaces.on('connection', async (socket) => {
     const [, workspaceId] = socket.nsp.name.match(WORKSPACE_PATH) || [];
+    const query = Object.entries(socket.handshake.query || {}).reduce(
+      (obj, [k, v]) =>
+        ['EIO', 'transport', 't', 'b64'].includes(k)
+          ? obj
+          : {
+              ...obj,
+              [k]: v,
+            },
+      {}
+    ) as PrismeaiAPI.EventsLongpolling.QueryParameters;
     const userId = socket.handshake.headers[USER_ID_HEADER];
     if (!userId) {
       logger.error(
@@ -32,6 +43,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       callback: (event: PrismeEvent<any>) => {
         socket.emit(event.type, event);
       },
+      searchOptions: cleanSearchQuery(query),
     });
 
     socket.on('disconnect', off);
