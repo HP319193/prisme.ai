@@ -27,10 +27,10 @@ const FilterEvents = ({ onSubmit }: FilterEventsProps) => {
 
 const FilterEventsPopover = () => {
   const { t } = useTranslation('workspaces');
-  const { filters, setFilters } = useWorkspace();
+  const { filters, updateFilters } = useWorkspace();
 
   return (
-    <Form onSubmit={setFilters} initialValues={{ ...filters }}>
+    <Form onSubmit={updateFilters} initialValues={{ ...filters }}>
       {({ handleSubmit }) => (
         <Popover
           content={() => <FilterEvents onSubmit={handleSubmit} />}

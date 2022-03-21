@@ -3,7 +3,11 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
-import workspaceContext, { WorkspaceContext } from './context';
+import workspaceContext, {
+  EventsFilters,
+  Pagination,
+  WorkspaceContext,
+} from './context';
 import { EventsByDay } from '.';
 import api from '../../utils/api';
 import { Event, Events } from '@prisme.ai/sdk';
@@ -19,6 +23,8 @@ import debounce from 'lodash/debounce';
 import { usePrevious } from '../../utils/usePrevious';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { Workspace } from '../../utils/api';
+
+const PAGINATION_LIMIT = 15;
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -61,6 +67,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
     new Set()
   );
   const [filters, setFilters] = useState<WorkspaceContext['filters']>({});
+  const [pagination, setPagination] = useState<Pagination>({
+    page: 0,
+    limit: PAGINATION_LIMIT,
+  });
   const prevFilters = usePrevious(filters);
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
@@ -107,8 +117,11 @@ export const WorkspaceLayout: FC = ({ children }) => {
     if (socket.current) {
       socket.current.destroy();
     }
-    socket.current = api.streamEvents(workspaceId, filters);
-  }, [filters, prevFilters, workspaceId]);
+    socket.current = api.streamEvents(workspaceId, {
+      ...filters,
+      ...pagination,
+    });
+  }, [filters, pagination, prevFilters, workspaceId]);
 
   useEffect(() => {
     return () => {
@@ -116,19 +129,31 @@ export const WorkspaceLayout: FC = ({ children }) => {
     };
   }, []);
 
-  // TODO restore navigation, but using pages/limit
-
   const fetchNextEvents = useCallback(
-    async (emptyEventsList: boolean = false) => {
+    async (
+      emptyEventsList: boolean = false,
+      newPagination: Pagination | undefined = undefined,
+      newFilters: EventsFilters | undefined = undefined
+    ) => {
       if (!workspaceId) return;
       lockEvents.current = true;
+
+      if (newPagination) {
+        setPagination(newPagination);
+      }
+      if (newFilters) {
+        setFilters(newFilters);
+      }
+
       const fetched = await api.getEvents(workspaceId, {
-        ...filters,
+        ...(newFilters || filters),
+        ...(newPagination || pagination),
       });
 
       await setEvents((events) => {
         const baseEvents =
           events === 'loading' || emptyEventsList ? [] : events;
+
         const newEvents = new Map(baseEvents);
         fetched.forEach((event) => {
           addEventToMap(newEvents, event);
@@ -138,17 +163,20 @@ export const WorkspaceLayout: FC = ({ children }) => {
       });
       lockEvents.current = false;
     },
-    [filters, workspaceId]
+    [filters, pagination, workspaceId]
   );
 
-  useEffect(() => {
-    fetchNextEvents(true);
-  }, [fetchNextEvents, filters]);
+  const updateFilters = useCallback(
+    async (newFilters: EventsFilters) => {
+      fetchNextEvents(true, { page: 0, limit: PAGINATION_LIMIT }, newFilters);
+    },
+    [fetchNextEvents]
+  );
 
   const nextEvents = useCallback(async () => {
     if (!workspace || lockEvents.current || latest.current === null) return;
-    fetchNextEvents();
-  }, [fetchNextEvents, workspace]);
+    fetchNextEvents(false, { ...pagination, page: pagination.page + 1 });
+  }, [fetchNextEvents, pagination, workspace]);
 
   // Load events history
   const prevWorkspaceId = usePrevious(workspace && workspace.id);
@@ -370,7 +398,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         workspace,
         loading,
         filters,
-        setFilters,
+        updateFilters,
         save,
         saveSource,
         events,

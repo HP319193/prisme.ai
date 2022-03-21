@@ -14,7 +14,6 @@ import { Section } from '@prisme.ai/design-system/lib/Components/Feed';
 import { CollapseItem } from '@prisme.ai/design-system/lib/Components/Collapse';
 import { Event } from '@prisme.ai/sdk';
 import Empty from './Empty';
-import { useTranslation } from 'next-i18next';
 import FilterEventsPopover from './FilterEventsPopover';
 
 export const EventsViewerRenderer = memo(function EventsViewserRendere({
@@ -26,7 +25,6 @@ export const EventsViewerRenderer = memo(function EventsViewserRendere({
   WorkspaceContext,
   'events' | 'nextEvents' | 'readEvent' | 'readEvents'
 >) {
-  const { t } = useTranslation('workspaces');
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
 
@@ -65,8 +63,6 @@ export const EventsViewerRenderer = memo(function EventsViewserRendere({
       })),
     [dateFormat, readEvent, readEvents]
   );
-
-  // readEvents.has(event.id) ? 'opacity-50' : '' à appliquer sur les collapse
 
   const feedSections: Section[] = useMemo(
     () =>

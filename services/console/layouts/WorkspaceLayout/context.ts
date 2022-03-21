@@ -8,6 +8,10 @@ export type EventsFilters = {
   correlationId?: PrismeaiAPI.EventsLongpolling.Parameters.CorrelationId;
   query?: PrismeaiAPI.EventsLongpolling.Parameters.Query;
 };
+export type Pagination = {
+  page: PrismeaiAPI.EventsLongpolling.Parameters.Page;
+  limit: PrismeaiAPI.EventsLongpolling.Parameters.Limit;
+};
 export type EventsByDay = Map<number, Set<Event<Date>>>;
 export interface WorkspaceContext {
   displaySource: (status: boolean) => void;
@@ -23,7 +27,7 @@ export interface WorkspaceContext {
   workspace: Workspace;
   loading: boolean;
   filters: EventsFilters;
-  setFilters: (newFilters: EventsFilters) => void;
+  updateFilters: (newFilters: EventsFilters) => void;
   save: (workspace: Workspace) => void;
   saveSource: () => void;
   saving: boolean;
@@ -60,7 +64,7 @@ export const workspaceContext = createContext<WorkspaceContext>({
   workspace: {} as Workspace,
   loading: false,
   filters: {} as EventsFilters,
-  setFilters: () => {},
+  updateFilters: () => {},
   save() {},
   saveSource() {},
   saving: false,

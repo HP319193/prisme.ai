@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, RefObject, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 interface IUseScrollListener {
   margin?: number;
