@@ -166,6 +166,14 @@ export class ElasticsearchStore implements EventsStore {
       });
     }
 
+    if (options.text) {
+      must.push({
+        query_string: {
+          query: options.text,
+        },
+      });
+    }
+
     return {
       sort: [{ createdAt: createdAtSort }],
       query: {
