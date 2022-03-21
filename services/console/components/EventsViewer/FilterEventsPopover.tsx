@@ -1,48 +1,55 @@
-import { Button, Input, Popover } from '@prisme.ai/design-system';
+import { Button, Popover } from '@prisme.ai/design-system';
 import { FilterOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import { Form, useField } from 'react-final-form';
+import Form from '../SchemaForm/Form';
 
-interface FilterEventsProps {
-  onSubmit: () => void;
-}
-
-const FilterEvents = ({ onSubmit }: FilterEventsProps) => {
+const FilterEvents = () => {
   const { t } = useTranslation('workspaces');
-  const { input: correlationIdInput } = useField('correlationId');
+  const { updateFilters } = useWorkspace();
 
   return (
-    <div className="flex grow flex-col justify-end items-end">
-      <Input
-        {...correlationIdInput}
-        label={t('events.filters.correlationId')}
-      />
-      <Button type="submit" onClick={onSubmit}>
-        {t('events.filters.submit')}
-      </Button>
-    </div>
+    <Form
+      schema={{
+        type: 'object',
+        properties: {
+          afterDate: {
+            type: 'string',
+            'ui:widget': 'datePicker',
+          },
+          beforeDate: {
+            type: 'string',
+            'ui:widget': 'datePicker',
+          },
+        },
+      }}
+      onSubmit={updateFilters}
+    />
   );
+
+  // return (
+  //   <div className="flex grow flex-col justify-end items-end">
+  //     <Input
+  //       {...correlationIdInput}
+  //       label={t('events.filters.correlationId')}
+  //     />
+  //     <Button type="submit" onClick={onSubmit}>
+  //       {t('events.filters.submit')}
+  //     </Button>
+  //   </div>
+  // );
 };
 
 const FilterEventsPopover = () => {
   const { t } = useTranslation('workspaces');
-  const { filters, updateFilters } = useWorkspace();
 
   return (
-    <Form onSubmit={updateFilters} initialValues={{ ...filters }}>
-      {({ handleSubmit }) => (
-        <Popover
-          content={() => <FilterEvents onSubmit={handleSubmit} />}
-          title={t('events.filters.title')}
-        >
-          <Button key="filter">
-            <FilterOutlined />
-            {t('events.filters.title')}
-          </Button>
-        </Popover>
-      )}
-    </Form>
+    <Popover content={() => <FilterEvents />} title={t('events.filters.title')}>
+      <Button key="filter">
+        <FilterOutlined />
+        {t('events.filters.title')}
+      </Button>
+    </Popover>
   );
 };
 

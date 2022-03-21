@@ -25,6 +25,7 @@ export { default as EditableText } from './Components/EditableText';
 export { default as Loading } from './Components/Loading';
 export { default as Popover } from './Components/Popover';
 export { default as SidePanel } from './Components/SidePanel';
+export { default as DatePicker } from './Components/DatePicker';
 export * from './Components/Block';
 
 export {

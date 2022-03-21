@@ -1,8 +1,8 @@
-import { Input, Select, Switch, TextArea } from '@prisme.ai/design-system';
+import { DatePicker, Input, Select, Switch, TextArea } from '@prisme.ai/design-system';
 import { Tooltip } from 'antd';
 import { FC } from 'react';
 import FieldContainer from '../../layouts/Field';
-import { useField, Field as RFFField } from 'react-final-form';
+import { Field as RFFField, useField } from 'react-final-form';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import { FieldValidator } from 'final-form';
 import { Schema } from './types';
@@ -183,6 +183,19 @@ export const Field: FC<FieldProps> = ({
                   : item
               )}
               {...input}
+            />
+          )}
+        </FieldContainer>
+      );
+    case 'datePicker':
+      return (
+        <FieldContainer key={field} name={field} validate={validate}>
+          {({ input: { value, onChange, ...restInput }, className }) => (
+            <DatePicker
+              {...restInput}
+              stringValue={input.value}
+              stringOnChange={onChange}
+              className={className}
             />
           )}
         </FieldContainer>
