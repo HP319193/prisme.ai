@@ -81,7 +81,7 @@ export function initEventsRoutes(eventsStore: EventsStore) {
       } as Prismeai.PrismeEvent
     );
 
-    const requestedFields = fields
+    const requestedFields = (fields as string)
       .split(',')
       .map((cur) => cur.trim())
       .filter(Boolean);

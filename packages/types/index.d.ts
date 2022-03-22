@@ -1842,6 +1842,7 @@ declare namespace PrismeaiAPI {
             }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
@@ -1885,6 +1886,7 @@ declare namespace PrismeaiAPI {
             }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
