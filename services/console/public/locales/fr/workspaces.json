@@ -232,6 +232,9 @@
       },
       "description": {
         "label": "Description"
+      },
+      "slug": {
+        "label": "Nom technique"
       }
     }
   },

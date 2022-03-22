@@ -54,6 +54,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           name: Schema.Types.Mixed,
           description: Schema.Types.Mixed,
           widgets: Schema.Types.Mixed,
+          slug: { type: String, index: true },
         },
       },
     },

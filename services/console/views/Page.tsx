@@ -16,7 +16,6 @@ import { PageBuilderContext } from '../components/PageBuilder/context';
 import usePages from '../components/PagesProvider/context';
 import EditDetails from '../layouts/EditDetails';
 import { Schema } from '../components/SchemaForm/types';
-import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import SharePage from '../components/Share/SharePage';
 
 export const Page = () => {
@@ -62,6 +61,10 @@ export const Page = () => {
     () => ({
       type: 'object',
       properties: {
+        slug: {
+          type: 'string',
+          title: t('pages.details.slug.label'),
+        },
         name: {
           type: 'string',
           title: t('pages.details.name.label'),
@@ -122,14 +125,16 @@ export const Page = () => {
 
   const updateDetails = useCallback(
     async ({
+      slug,
       name,
       description,
     }: {
+      slug: string;
       name: Prismeai.LocalizedText;
       description: Prismeai.LocalizedText;
     }) => {
       if (!value) return;
-      const newValue = cleanValue({ ...value, name, description });
+      const newValue = { ...cleanValue(value), slug, name, description };
       setValue(newValue);
       await savePage(workspace.id, newValue);
     },
@@ -152,7 +157,7 @@ export const Page = () => {
             {localize(value.name)}
             <EditDetails
               schema={detailsFormSchema}
-              value={{ ...value, slug: pageId }}
+              value={{ ...value }}
               onSave={updateDetails}
               onDelete={confirmDeletePage}
               context="pages"

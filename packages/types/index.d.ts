@@ -1010,6 +1010,7 @@ declare namespace Prismeai {
             appInstance?: string;
         }[];
         id?: string;
+        slug?: string;
     }
     export interface Emit {
         emit: {
@@ -1146,6 +1147,7 @@ declare namespace Prismeai {
             height?: number;
         }[];
         id?: string;
+        slug?: string;
     }
     export interface PagePermissionsDeleted {
         /**
