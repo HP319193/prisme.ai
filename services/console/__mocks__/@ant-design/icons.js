@@ -28,3 +28,6 @@ export function PlusCircleOutlined() {
 export function DoubleLeftOutlined() {
   return null;
 }
+export function SettingOutlined() {
+  return null;
+}

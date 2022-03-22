@@ -52,7 +52,7 @@ exports[`should render an invalid input 1`] = `
       foo
     </label>
     <input
-      className="flex flex-1 p-invalid"
+      className="flex flex-1 ant-input-status-error"
       error="error"
       touched={true}
     />

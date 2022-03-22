@@ -142,7 +142,11 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         { icon: iconPrisme.src },
       ],
       ...[
-        { appName: workspace.name, automations, icon: iconWorkspace.src },
+        {
+          appName: localize(workspace.name),
+          automations,
+          icon: iconWorkspace.src,
+        },
         ...(customInstructions || []),
       ].map<InstructionSchemaTupple>(
         ({ appName = '', automations, icon = '' }) => {
@@ -197,38 +201,35 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [hidePanel]
   );
 
-  const addInstruction: AutomationBuilderContext['addInstruction'] =
-    useCallback(
-      async (parent, index) => {
-        if (!parent) return;
-        try {
-          const instruction = await editInstructionDetails();
-          parent.splice(index, 0, instruction);
-          onChange({ ...value });
-        } catch (e) {}
-      },
-      [editInstructionDetails, onChange, value]
-    );
-
-  const removeInstruction: AutomationBuilderContext['removeInstruction'] =
-    useCallback(
-      (parent, index) => {
-        parent.splice(index, 1);
+  const addInstruction: AutomationBuilderContext['addInstruction'] = useCallback(
+    async (parent, index) => {
+      if (!parent) return;
+      try {
+        const instruction = await editInstructionDetails();
+        parent.splice(index, 0, instruction);
         onChange({ ...value });
-      },
-      [onChange, value]
-    );
+      } catch (e) {}
+    },
+    [editInstructionDetails, onChange, value]
+  );
 
-  const editInstruction: AutomationBuilderContext['editInstruction'] =
-    useCallback(
-      async (parent, index) => {
-        if (!parent || !parent[index]) return;
-        const instruction = await editInstructionDetails(parent[index]);
-        parent.splice(index, 1, instruction);
-        onChange({ ...value });
-      },
-      [editInstructionDetails, onChange, value]
-    );
+  const removeInstruction: AutomationBuilderContext['removeInstruction'] = useCallback(
+    (parent, index) => {
+      parent.splice(index, 1);
+      onChange({ ...value });
+    },
+    [onChange, value]
+  );
+
+  const editInstruction: AutomationBuilderContext['editInstruction'] = useCallback(
+    async (parent, index) => {
+      if (!parent || !parent[index]) return;
+      const instruction = await editInstructionDetails(parent[index]);
+      parent.splice(index, 1, instruction);
+      onChange({ ...value });
+    },
+    [editInstructionDetails, onChange, value]
+  );
 
   const editConditionDetails = useCallback(
     (condition: string) => {
@@ -279,18 +280,17 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [editConditionDetails, onChange, value]
   );
 
-  const editTrigger: AutomationBuilderContext['editTrigger'] =
-    useCallback(() => {
-      hidePanel();
-      setTriggerEditing({
-        trigger: value.when,
-        onSubmit: (when) => {
-          onChange({ ...value, when });
-          hidePanel();
-        },
-      });
-      setPanelIsOpen(true);
-    }, [hidePanel, onChange, value]);
+  const editTrigger: AutomationBuilderContext['editTrigger'] = useCallback(() => {
+    hidePanel();
+    setTriggerEditing({
+      trigger: value.when,
+      onSubmit: (when) => {
+        onChange({ ...value, when });
+        hidePanel();
+      },
+    });
+    setPanelIsOpen(true);
+  }, [hidePanel, onChange, value]);
 
   const editOutput: AutomationBuilderContext['editOutput'] = useCallback(() => {
     hidePanel();

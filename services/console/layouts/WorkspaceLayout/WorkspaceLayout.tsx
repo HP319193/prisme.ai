@@ -17,6 +17,7 @@ import usePages from '../../components/PagesProvider/context';
 import { useApps } from '../../components/AppsProvider';
 import debounce from 'lodash/debounce';
 import { usePrevious } from '../../utils/usePrevious';
+import useLocalizedText from '../../utils/useLocalizedText';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -45,6 +46,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   } = useRouter();
 
   const { t } = useTranslation('workspaces');
+  const localize = useLocalizedText();
   const { fetch, update, workspaces } = useWorkspaces();
   const [loading, setLoading] = useState<WorkspaceContext['loading']>(false);
   const lockEvents = useRef(false);
@@ -204,14 +206,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     setCurrentWorkspace(workspaces.get(`${id}`));
   }, [id, workspaces]);
 
-  const updateTitle = useCallback(
-    async (value: string) => {
-      if (!workspace || value === workspace.name) return;
-      await update({ ...workspace, name: value });
-    },
-    [update, workspace]
-  );
-
   const save = useCallback(async () => {
     if (!newSource) return;
     setSaving(true);
@@ -350,10 +344,14 @@ export const WorkspaceLayout: FC = ({ children }) => {
       }}
     >
       <Head>
-        <title>{t('workspace.title', { name: workspace.name })}</title>
+        <title>
+          {t('workspace.title', { name: localize(workspace.name) })}
+        </title>
         <meta
           name="description"
-          content={t('workspace.description', { name: workspace.name })}
+          content={t('workspace.description', {
+            name: localize(workspace.name),
+          })}
         />
       </Head>
       <div

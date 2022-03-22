@@ -35,7 +35,9 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
     () =>
       Array.from(apps)
         .flatMap(([key, app]) => {
-          return `${app.name}`.toLowerCase().match(filter.toLowerCase())
+          return `${localize(app.name)}`
+            .toLowerCase()
+            .match(filter.toLowerCase())
             ? { ...app }
             : [];
         })

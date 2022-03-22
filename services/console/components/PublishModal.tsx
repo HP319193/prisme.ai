@@ -9,6 +9,7 @@ import {
 } from '../utils/regex';
 import { useApps } from './AppsProvider';
 import { usePrevious } from '../utils/usePrevious';
+import useLocalizedText from '../utils/useLocalizedText';
 
 interface PublishModalProps {
   visible: boolean;
@@ -20,10 +21,11 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   const { publishApp } = useWorkspaces();
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
+  const localize = useLocalizedText();
   const { t: commonT } = useTranslation('common');
   const { t: errorT } = useTranslation('errors');
   const [publishSlug, setPublishSlug] = useState(
-    workspace.name.replace(SLUG_MATCH_INVALID_CHARACTERS, '')
+    localize(workspace.name).replace(SLUG_MATCH_INVALID_CHARACTERS, '')
   );
   const [alreadyPublished, setAlreadyPublished] = useState(false);
   const prevWorkspaceId = usePrevious(workspace.id);
@@ -62,12 +64,13 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
         message: t('apps.publish.confirm.toast'),
         placement: 'bottomRight',
       });
-    } catch (e: any) {
+    } catch (err) {
+      const error = err as Error;
       notification.error({
-        message: errorT('unknown', { errorName: e.message }),
+        message: errorT('unknown', { errorName: error.message }),
         placement: 'bottomRight',
       });
-      console.error(e);
+      console.error(error);
       return null;
     }
   }, [
@@ -77,7 +80,6 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
     t,
     workspace.description,
     workspace.id,
-    workspace.name,
     workspace.photo,
   ]);
 
@@ -90,7 +92,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
     <Modal
       visible={visible}
       title={t('apps.publish.confirm.title', {
-        name: workspace.name,
+        name: localize(workspace.name),
       })}
       onOk={() => {
         onConfirm();

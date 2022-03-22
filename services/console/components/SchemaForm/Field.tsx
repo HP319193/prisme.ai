@@ -1,4 +1,4 @@
-import { Input, Select, Switch } from '@prisme.ai/design-system';
+import { Input, Select, Switch, TextArea } from '@prisme.ai/design-system';
 import { Tooltip } from 'antd';
 import { FC } from 'react';
 import FieldContainer from '../../layouts/Field';
@@ -14,6 +14,7 @@ import {
 import { FieldArray } from 'react-final-form-arrays';
 import { useTranslation } from 'next-i18next';
 import useLocalizedText from '../../utils/useLocalizedText';
+import InputWrapper from './InputWrapper';
 
 const getDefaultValue = (type?: string) => {
   switch (type) {
@@ -43,14 +44,19 @@ export const Field: FC<FieldProps> = ({
   'ui:widget': component = type,
   'ui:options': componentOptions = {},
   additionalProperties,
+  pattern,
 }) => {
   const { t } = useTranslation('workspaces');
   const localize = useLocalizedText();
   const { input } = useField(field);
+
   const validate: FieldValidator<any> = (value) => {
     const isRequired = oneOf
-      ? oneOf.every(({ required }) => required.includes(field))
+      ? oneOf.every(({ required = [] }) => required.includes(field))
       : required;
+    if (pattern) {
+      return `${value}`.match(pattern) ? undefined : pattern;
+    }
     return !value && isRequired ? 'required' : undefined;
   };
 
@@ -181,6 +187,7 @@ export const Field: FC<FieldProps> = ({
           )}
         </FieldContainer>
       );
+    case 'textarea':
     case 'string':
     case 'number':
     default:
@@ -195,12 +202,15 @@ export const Field: FC<FieldProps> = ({
                   </Tooltip>
                 </div>
               )}
-              <Input
+              <InputWrapper
+                component={component}
                 id={field}
                 label={localize(title) || ''}
                 {...input}
                 className={className}
-                inputType={type === 'number' ? 'number' : 'text'}
+                type={type === 'number' ? 'number' : 'text'}
+                componentOptions={componentOptions}
+                pattern={pattern}
               />
             </div>
           )}

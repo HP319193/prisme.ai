@@ -3,4 +3,4 @@ export const SLUG_MATCH_INVALID_CHARACTERS = new RegExp(
   'g'
 );
 
-export const SLUG_VALIDATION_REGEXP = new RegExp('^[a-zA-Z0-9 ._-]*$');
+export const SLUG_VALIDATION_REGEXP = /^[a-zA-Z0-9 ._-]*$/;

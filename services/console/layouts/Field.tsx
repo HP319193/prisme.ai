@@ -41,7 +41,7 @@ export const FieldContainer: FC<FieldProps> = ({
               input,
               meta,
               className: `flex flex-1 ${
-                isFormFieldValid(meta) ? 'p-invalid' : ''
+                isFormFieldValid(meta) ? 'ant-input-status-error' : ''
               }`,
             })
           : children}

@@ -488,6 +488,7 @@ it('should update an automation slug', async () => {
   await act(async () => {
     await true;
   });
+  context.workspace.automations = context.workspace.automations || {};
   context.workspace.automations.foo = {
     name: 'Foo',
     do: [],
@@ -528,6 +529,7 @@ it('should delete an automation', async () => {
   await act(async () => {
     await true;
   });
+  context.workspace.automations = context.workspace.automations || {};
   context.workspace.automations.foo = {
     name: 'Foo',
     do: [],

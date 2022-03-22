@@ -7,20 +7,17 @@ import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useTranslation } from 'next-i18next';
 import {
   Button,
-  Dropdown,
-  EditableTitle,
   Loading,
-  Menu,
-  Modal,
   notification,
   PageHeader,
   Space,
 } from '@prisme.ai/design-system';
-import { DeleteOutlined } from '@ant-design/icons';
 import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import { usePrevious } from '../utils/usePrevious';
-import { slugifyAutomation } from '../utils/strings';
+import { Schema } from '../components/SchemaForm/types';
+import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
+import EditDetails from '../layouts/EditDetails';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
@@ -32,7 +29,7 @@ export const Automation = () => {
   }, [getAppInstances, workspace.id]);
 
   const {
-    query: { id, automationId },
+    query: { automationId },
     push,
     replace,
   } = useRouter();
@@ -49,6 +46,30 @@ export const Automation = () => {
     }
     automationDidChange.current = true;
   }, [automation, automationId, prevAutomationId]);
+
+  const detailsFormSchema: Schema = useMemo(
+    () => ({
+      type: 'object',
+      properties: {
+        slug: {
+          type: 'string',
+          title: t('automations.details.slug.label'),
+          pattern: SLUG_VALIDATION_REGEXP.source,
+        },
+        name: {
+          type: 'string',
+          title: t('automations.details.name.label'),
+          'ui:options': { localizedText: true },
+        },
+        description: {
+          'ui:widget': 'textarea',
+          title: t('automations.details.description.label'),
+          'ui:options': { rows: 10, localizedText: true },
+        },
+      },
+    }),
+    [t]
+  );
 
   const saveAutomation = useRef(
     async (automationId: string, automation: Prismeai.Automation) => {
@@ -75,26 +96,6 @@ export const Automation = () => {
     }
   );
 
-  const updateTitle = useCallback(
-    async (newTitle: string) => {
-      if (
-        !newTitle ||
-        Object.keys(workspace.automations || {}).includes(newTitle)
-      ) {
-        return;
-      }
-      const newSlug = slugifyAutomation(workspace, newTitle);
-      const newValue = { ...value, name: newTitle, slug: newSlug };
-      setValue(newValue);
-      automationDidChange.current = false;
-      await saveAutomation.current(`${automationId}`, newValue);
-      replace(`/workspaces/${workspace.id}/automations/${newSlug}`, undefined, {
-        shallow: true,
-      });
-    },
-    [automationId, replace, value, workspace]
-  );
-
   const save = useCallback(async () => {
     await saveAutomation.current(`${automationId}`, value);
   }, [automationId, value]);
@@ -111,22 +112,11 @@ export const Automation = () => {
   ]);
 
   const confirmDeleteAutomation = useCallback(() => {
-    Modal.confirm({
-      icon: <DeleteOutlined />,
-      title: t('automations.delete.confirm.title', {
-        name: automationId,
-      }),
-      content: t('automations.delete.confirm.content'),
-      cancelText: t('automations.delete.confirm.ok'),
-      okText: t('automations.delete.confirm.cancel'),
-      onCancel: () => {
-        push(`/workspaces/${workspace.id}`);
-        deleteAutomation(`${automationId}`);
-        notification.success({
-          message: t('automations.delete.toast'),
-          placement: 'bottomRight',
-        });
-      },
+    push(`/workspaces/${workspace.id}`);
+    deleteAutomation(`${automationId}`);
+    notification.success({
+      message: t('details.delete.toast', { context: 'automations' }),
+      placement: 'bottomRight',
     });
   }, [automationId, deleteAutomation, push, t, workspace]);
 
@@ -152,40 +142,46 @@ export const Automation = () => {
     [appInstances, localize, workspace.id]
   );
 
+  const updateDetails = useCallback(
+    async ({
+      slug,
+      name,
+      description,
+    }: {
+      slug: string;
+      name: Prismeai.LocalizedText;
+      description: Prismeai.LocalizedText;
+    }) => {
+      const { slug: prevSlug } = value;
+      const newValue = { ...value, name, slug, description };
+      setValue(newValue);
+      automationDidChange.current = false;
+      await saveAutomation.current(`${automationId}`, newValue);
+      if (prevSlug === slug) return;
+      replace(`/workspaces/${workspace.id}/automations/${slug}`, undefined, {
+        shallow: true,
+      });
+    },
+    [automationId, replace, value, workspace.id]
+  );
+
   if (!value) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
   }
+
   return (
     <>
       <PageHeader
         title={
           <div className="flex flex-row items-center">
-            <EditableTitle
-              value={value.name}
-              onChange={updateTitle}
-              level={4}
-              className="!m-0 !ml-4"
+            {localize(value.name)}
+            <EditDetails
+              schema={detailsFormSchema}
+              value={{ ...value, slug: automationId }}
+              onSave={updateDetails}
+              onDelete={confirmDeleteAutomation}
+              context="automations"
             />
-            <Dropdown
-              Menu={
-                <Menu
-                  items={[
-                    {
-                      label: (
-                        <div className="flex items-center">
-                          <DeleteOutlined className="mr-2" />
-                          {t('automations.delete.label')}
-                        </div>
-                      ),
-                      key: 'delete',
-                    },
-                  ]}
-                  onClick={confirmDeleteAutomation}
-                />
-              }
-            >
-              <div className="mx-1" />
-            </Dropdown>
           </div>
         }
         onBack={() => push(`/workspaces/${workspace.id}`)}
@@ -203,6 +199,7 @@ export const Automation = () => {
           </Button>,
         ]}
       />
+
       <div className="relative flex flex-1">
         <AutomationBuilder
           id={`${automationId}`}

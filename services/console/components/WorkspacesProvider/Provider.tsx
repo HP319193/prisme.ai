@@ -7,9 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { removedUndefinedProperties } from '../../utils/objects';
 import { notification } from '@prisme.ai/design-system';
 import { SLUG_MATCH_INVALID_CHARACTERS } from '../../utils/regex';
+import useLocalizedText from '../../utils/useLocalizedText';
 
 export const WorkspacesProvider: FC = ({ children }) => {
-  const { t } = useTranslation();
+  const localize = useLocalizedText();
   const { t: errorT } = useTranslation('errors');
   const { user } = useUser();
   const [workspaces, setWorkspaces] = useState<WorkspacesContext['workspaces']>(
@@ -25,7 +26,10 @@ export const WorkspacesProvider: FC = ({ children }) => {
         newWorkspaces.set(
           w.id,
           newWorkspaces.get(w.id)
-            ? ({ ...newWorkspaces.get(w.id), name: w.name } as Workspace)
+            ? ({
+                ...newWorkspaces.get(w.id),
+                name: localize(w.name),
+              } as Workspace)
             : w
         );
       });
@@ -68,7 +72,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
       const lastName = () => `${name}${version ? ` (${version})` : ''}`;
       while (
         Array.from(workspaces.values()).find(
-          (workspace) => workspace && workspace.name === lastName()
+          (workspace) => workspace && localize(workspace.name) === lastName()
         )
       ) {
         version++;
@@ -79,7 +83,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
       setWorkspaces(newWorkspaces);
       return workspace;
     },
-    [workspaces]
+    [localize, workspaces]
   );
 
   const update = useCallback(
@@ -132,14 +136,16 @@ export const WorkspacesProvider: FC = ({ children }) => {
   );
 
   // set role to editor for the postpermissions
-  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] =
-    useCallback(async (workspaceId) => {
+  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] = useCallback(
+    async (workspaceId) => {
       const { result: userPermissions } = await api.getPermissions(
         'workspaces',
         workspaceId
       );
       return userPermissions;
-    }, []);
+    },
+    []
+  );
 
   const installApp: WorkspacesContext['installApp'] = useCallback(
     async (workspaceId, body) => {
