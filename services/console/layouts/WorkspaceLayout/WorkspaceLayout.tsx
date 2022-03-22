@@ -18,6 +18,7 @@ import { useApps } from '../../components/AppsProvider';
 import debounce from 'lodash/debounce';
 import { usePrevious } from '../../utils/usePrevious';
 import useLocalizedText from '../../utils/useLocalizedText';
+import { Workspace } from '../../utils/api';
 
 const getDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -206,7 +207,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     setCurrentWorkspace(workspaces.get(`${id}`));
   }, [id, workspaces]);
 
-  const save = useCallback(async () => {
+  const saveSource = useCallback(async () => {
     if (!newSource) return;
     setSaving(true);
     const newWorkspace = await update(newSource);
@@ -220,6 +221,23 @@ export const WorkspaceLayout: FC = ({ children }) => {
       placement: 'bottomRight',
     });
   }, [newSource, t, update]);
+
+  const save = useCallback(
+    async (workspace: Workspace) => {
+      setSaving(true);
+      const newWorkspace = await update(workspace);
+      setSaving(false);
+      if (!newWorkspace) {
+        return;
+      }
+      setCurrentWorkspace(newWorkspace);
+      notification.success({
+        message: t('save.confirm'),
+        placement: 'bottomRight',
+      });
+    },
+    [t, update]
+  );
 
   const getAppConfig = useCallback(
     async (appInstance: string) => {
@@ -330,6 +348,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         workspace,
         loading,
         save,
+        saveSource,
         events,
         nextEvents,
         readEvents,

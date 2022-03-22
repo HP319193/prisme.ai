@@ -22,7 +22,12 @@ import Storage from '../utils/Storage';
 
 export const Workspace = () => {
   const { t } = useTranslation('workspaces');
-  const { workspace, fullSidebar, setFullSidebar, setShare } = useWorkspace();
+  const {
+    workspace,
+    fullSidebar,
+    setFullSidebar,
+    setShare,
+  } = useWorkspace();
   const [sidebar, setSidebar] = useState(
     Storage.get('__workpaceSidebar') || 'automations'
   );

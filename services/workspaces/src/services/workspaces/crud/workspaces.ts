@@ -13,6 +13,8 @@ import {
   getObjectsDifferences,
 } from '../../../utils/getObjectsDifferences';
 import { extractObjectsByPath } from '../../../utils/extractObjectsByPath';
+import { SLUG_VALIDATION_REGEXP } from '../../../../config';
+import { InvalidSlugError } from '../../../errors';
 
 interface DSULDiff {
   type: DiffType;
@@ -195,12 +197,19 @@ class Workspaces {
     return await this.storage.get(workspaceId);
   };
 
-  save = async (workspaceId: string, workspace: Prismeai.Workspace) => {
+  save = async (
+    workspaceId: string,
+    { slug, ...workspace }: Prismeai.Workspace
+  ) => {
+    if (slug && !SLUG_VALIDATION_REGEXP.test(slug)) {
+      throw new InvalidSlugError(slug);
+    }
     await this.accessManager.update(SubjectType.Workspace, {
       id: workspaceId,
       name: workspace.name,
       photo: workspace.photo,
       description: workspace.description,
+      slug,
     });
     await this.storage.save(workspaceId, workspace);
   };

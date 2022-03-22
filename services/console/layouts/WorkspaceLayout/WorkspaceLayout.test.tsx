@@ -306,7 +306,7 @@ it('should save', async () => {
     });
   });
   await act(async () => {
-    await context.save();
+    await context.saveSource();
   });
 
   expect(useWorkspaces().update).toHaveBeenCalledWith({
@@ -347,7 +347,7 @@ it('should failt to save', async () => {
     });
   });
   await act(async () => {
-    await context.save();
+    await context.saveSource();
   });
 
   expect(useWorkspaces().update).toHaveBeenCalledWith({

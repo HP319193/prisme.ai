@@ -14,6 +14,7 @@ export type SubjectInterfaces = {
     name: string;
     photo?: string;
     description?: Prismeai.LocalizedText;
+    slug?: string;
   };
   [SubjectType.App]: Prismeai.App;
   [SubjectType.Page]: Prismeai.Page;

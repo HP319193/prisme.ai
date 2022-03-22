@@ -16,7 +16,8 @@ export interface WorkspaceContext {
   // To move into a WorkspaceProvider
   workspace: Workspace;
   loading: boolean;
-  save: () => void;
+  save: (workspace: Workspace) => void;
+  saveSource: () => void;
   saving: boolean;
   events: EventsByDay | 'loading';
   nextEvents: () => void;
@@ -51,6 +52,7 @@ export const workspaceContext = createContext<WorkspaceContext>({
   workspace: {} as Workspace,
   loading: false,
   save() {},
+  saveSource() {},
   saving: false,
   events: 'loading',
   nextEvents() {},
