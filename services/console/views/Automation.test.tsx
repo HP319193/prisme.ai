@@ -2,14 +2,10 @@ import Automation from './Automation';
 import renderer, { act } from 'react-test-renderer';
 import AutomationBuilder from '../components/AutomationBuilder';
 import { useRouter } from 'next/router';
-import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
-import {
-  EditableTitle,
-  notification,
-  PageHeader,
-} from '@prisme.ai/design-system';
+import { notification, PageHeader } from '@prisme.ai/design-system';
+import EditDetails from '../layouts/EditDetails';
 
 jest.mock('../layouts/WorkspaceLayout', () => {
   const mock = {
@@ -96,12 +92,15 @@ it('should change url after changing slug', async () => {
   const title = renderer.create(root.root.findByType(PageHeader).props.title);
 
   act(() => {
-    title.root.findByType(EditableTitle).props.onChange('foofoo');
+    title.root
+      .findByType(EditDetails)
+      .props.onSave({ slug: 'foofoo', name: 'foofoo', description: '' });
   });
 
   expect(root.root.findByType(AutomationBuilder).props.value).toEqual({
     name: 'foofoo',
     slug: 'foofoo',
+    description: '',
     do: [],
   });
 

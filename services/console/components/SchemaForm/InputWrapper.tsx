@@ -20,6 +20,7 @@ export const InputWrapper = ({
   componentOptions = {},
   label,
   pattern,
+  type,
   ...props
 }: InputWrapperProps) => {
   const { t } = useTranslation('workspaces');
@@ -43,6 +44,7 @@ export const InputWrapper = ({
           label,
           containerClassName: 'flex flex-1',
           pattern,
+          inputType: type,
         }}
         availableLangsTitle={t('languages.available.title')}
         setLangsTitle={t('languages.set.title')}
@@ -62,6 +64,7 @@ export const InputWrapper = ({
   return (
     <Component
       {...props}
+      inputType={type}
       label={label}
       pattern={pattern}
       {...componentOptions}

@@ -8,12 +8,10 @@ import { useTranslation } from 'next-i18next';
 import {
   Button,
   Loading,
-  Modal,
   notification,
   PageHeader,
   Space,
 } from '@prisme.ai/design-system';
-import { DeleteOutlined } from '@ant-design/icons';
 import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import { usePrevious } from '../utils/usePrevious';

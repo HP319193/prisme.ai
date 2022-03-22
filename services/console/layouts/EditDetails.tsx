@@ -5,12 +5,10 @@ import {
 } from '@ant-design/icons';
 import { Button, Popover, Modal } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import Form from '../components/SchemaForm/Form';
 import { Schema } from '../components/SchemaForm/types';
 import useLocalizedText from '../utils/useLocalizedText';
-import { useWorkspace } from './WorkspaceLayout';
 
 interface EditDetailsprops {
   schema: Schema;
