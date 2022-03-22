@@ -995,6 +995,21 @@ declare namespace Prismeai {
             description?: LocalizedText;
         }[];
     }
+    /**
+     * Page
+     */
+    export interface DetailedPage {
+        name: LocalizedText;
+        description?: LocalizedText;
+        workspaceId?: string;
+        widgets: {
+            name?: string;
+            height?: number;
+            url?: string;
+            appInstance?: string;
+        }[];
+        id?: string;
+    }
     export interface Emit {
         emit: {
             /**
@@ -1975,7 +1990,7 @@ declare namespace PrismeaiAPI {
             id: Parameters.Id;
         }
         namespace Responses {
-            export type $200 = /* Page */ Prismeai.Page;
+            export type $200 = /* Page */ Prismeai.DetailedPage;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;

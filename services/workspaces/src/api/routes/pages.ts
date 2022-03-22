@@ -1,6 +1,6 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
-import { AccessManager } from '../../permissions';
+import { AccessManager, Role } from '../../permissions';
 import { Apps, Workspaces } from '../../services';
 import DSULStorage from '../../services/DSULStorage';
 import { PrismeContext } from '../middlewares';
@@ -80,8 +80,53 @@ export default function init(
       accessManager,
       broker,
     });
-    const result = await workspaces.pages.getPage(id);
-    res.send(result);
+    const page = await workspaces.pages.getPage(id);
+
+    // Get widgets urls from workspace and apps
+    const authorizedAccessManager = await accessManager.as({
+      id: 'api',
+      role: Role.SuperAdmin,
+    });
+    const { workspaces: workspacesAsRoot } = getServices({
+      context,
+      accessManager: authorizedAccessManager,
+      broker,
+    });
+    const workspace = await workspacesAsRoot.getWorkspace(workspaceId);
+    const apps = await workspacesAsRoot.appInstances.list(workspaceId);
+
+    const getWidgetDetails = (name: string) => {
+      if (workspace.widgets && workspace.widgets[name]) {
+        return { url: workspace.widgets[name].url };
+      }
+      const details = apps.reduce<{
+        url: string;
+        appInstance: string;
+      } | null>((prev, { slug: appInstance, widgets }) => {
+        if (prev) return prev;
+        const found = widgets.find(
+          ({ slug }) => `${appInstance}.${slug}` === name
+        );
+        return found
+          ? {
+              url: found.url || '',
+              appInstance,
+            }
+          : null;
+      }, null);
+      return details || { url: '', appInstance: '' };
+    };
+    const detailedPage: Prismeai.DetailedPage = {
+      ...page,
+      widgets: page.widgets.map((widget) => ({
+        ...widget,
+        ...(widget.name
+          ? getWidgetDetails(widget.name)
+          : { url: '', appInstance: '' }),
+      })),
+    };
+
+    res.send(detailedPage);
   }
 
   async function updatePageHandler(

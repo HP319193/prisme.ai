@@ -1491,7 +1491,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Page'
+                $ref: '#/components/schemas/DetailedPage'
         '404':
           description: Object not found
           content:
@@ -2507,6 +2507,22 @@ components:
                 type: number
         id:
           type: string
+
+    DetailedPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - properties:
+            widgets:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  url:
+                    type: string
+                  appInstance:
+                    type: string
 
     ###############################################################################################################################################
     ############################################################ Automation Instructions ############################################################

@@ -17,6 +17,7 @@ import usePages from '../components/PagesProvider/context';
 import EditDetails from '../layouts/EditDetails';
 import { Schema } from '../components/SchemaForm/types';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
+import SharePage from '../components/Share/SharePage';
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
@@ -39,13 +40,9 @@ export const Page = () => {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    // Removed from UI while we don't have the feature fully working
-    // (Ability to display page with a link, without sharing the workspace)
-
     setShare({
       label: t('pages.share.label'),
-      // component: () => <SharePage pageId={`${pageId}`} />,
-      component: () => <div>{commonT('soon')}</div>,
+      component: () => <SharePage pageId={`${pageId}`} />,
     });
 
     return () => {

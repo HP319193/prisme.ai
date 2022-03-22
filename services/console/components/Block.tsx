@@ -44,6 +44,7 @@ interface BlockComponentProps {
   workspaceId?: string;
   appInstance?: string;
   language?: string;
+  edit?: boolean;
 }
 type BlockComponent = (props: BlockComponentProps) => ReactElement;
 

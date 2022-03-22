@@ -117,6 +117,20 @@ export class Api extends Fetcher {
     }
   }
 
+  async getPage(
+    workspaceId: PrismeaiAPI.GetPage.Parameters.WorkspaceId,
+    pageId: PrismeaiAPI.GetPage.Parameters.Id
+  ): Promise<Prismeai.DetailedPage> {
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...page
+    } = await this.get(`/workspaces/${workspaceId}/pages/${pageId}`);
+    return page;
+  }
+
   async createPage(
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
