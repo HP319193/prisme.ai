@@ -14,7 +14,7 @@ import {
 } from '../../../utils/getObjectsDifferences';
 import { extractObjectsByPath } from '../../../utils/extractObjectsByPath';
 import { SLUG_VALIDATION_REGEXP } from '../../../../config';
-import { InvalidSlugError } from '../../../errors';
+import { AlreadyUsedError, InvalidSlugError } from '../../../errors';
 
 interface DSULDiff {
   type: DiffType;
@@ -197,20 +197,33 @@ class Workspaces {
     return await this.storage.get(workspaceId);
   };
 
-  save = async (
-    workspaceId: string,
-    { slug, ...workspace }: Prismeai.Workspace
-  ) => {
-    if (slug && !SLUG_VALIDATION_REGEXP.test(slug)) {
-      throw new InvalidSlugError(slug);
+  save = async (workspaceId: string, workspace: Prismeai.Workspace) => {
+    if (workspace.slug && !SLUG_VALIDATION_REGEXP.test(workspace.slug)) {
+      throw new InvalidSlugError(workspace.slug);
     }
-    await this.accessManager.update(SubjectType.Workspace, {
-      id: workspaceId,
-      name: workspace.name,
-      photo: workspace.photo,
-      description: workspace.description,
-      slug,
-    });
+    try {
+      await this.accessManager.update(SubjectType.Workspace, {
+        id: workspaceId,
+        name: workspace.name,
+        photo: workspace.photo,
+        description: workspace.description,
+        slug: workspace.slug,
+      });
+    } catch (error) {
+      if (
+        (<any>error).message &&
+        (<any>error).message.includes('duplicate key error')
+      ) {
+        throw new AlreadyUsedError(
+          `Workspace slug '${workspace.slug}' already used`,
+          {
+            slug: workspace.slug,
+          }
+        );
+      }
+      throw error;
+    }
+
     await this.storage.save(workspaceId, workspace);
   };
 

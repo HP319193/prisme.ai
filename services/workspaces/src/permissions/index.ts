@@ -39,7 +39,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           name: String,
           photo: String,
           description: Schema.Types.Mixed,
-          slug: { type: String, index: true },
+          slug: { type: String, sparse: true, unique: true },
         },
         [SubjectType.App]: {
           workspaceId: { type: String, index: true },
@@ -54,7 +54,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           name: Schema.Types.Mixed,
           description: Schema.Types.Mixed,
           widgets: Schema.Types.Mixed,
-          slug: { type: String, index: true },
+          slug: { type: String, sparse: true, unique: true },
         },
       },
     },
