@@ -66,11 +66,13 @@ export async function runInstructions(
     }
 
     // Before each run, we interpolate the instruction to replace all the variables based on the context
-    const interpolatedInstruction = interpolate(
-      instruction,
-      ctx.publicContexts,
-      ['do'] // Do not interpolate 'do' fields as they include nested instruction lists
-    );
+    const interpolatedInstruction = (<any>instruction).conditions
+      ? instruction
+      : interpolate(
+          instruction,
+          ctx.publicContexts,
+          ['do'] // Do not interpolate 'do' fields as they include nested instruction lists
+        );
 
     await runInstruction(
       workspace,
