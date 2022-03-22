@@ -1,6 +1,7 @@
 import elasticsearch from '@elastic/elasticsearch';
 import { StoreDriverOptions } from '.';
 import { EVENTS_RETENTION_DAYS } from '../../../../config';
+import { InvalidFiltersError, ObjectNotFoundError } from '../../../errors';
 import { logger } from '../../../logger';
 import { EventsStore, SearchOptions } from './types';
 
@@ -80,13 +81,22 @@ export class ElasticsearchStore implements EventsStore {
               'source.correlationId': {
                 type: 'keyword',
               },
+              'source.userId': {
+                type: 'keyword',
+              },
               'source.workspaceId': {
                 type: 'keyword',
               },
-              'source.app': {
+              'source.appSlug': {
                 type: 'keyword',
               },
-              'source.userId': {
+              'source.appInstanceFullSlug': {
+                type: 'keyword',
+              },
+              'source.automationSlug': {
+                type: 'keyword',
+              },
+              'source.topic': {
                 type: 'keyword',
               },
               payload: {
@@ -148,14 +158,6 @@ export class ElasticsearchStore implements EventsStore {
       });
     }
 
-    if (options.correlationId) {
-      filter.push({
-        term: {
-          'source.correlationId': options.correlationId,
-        },
-      });
-    }
-
     if (options.types) {
       filter.push({
         terms: {
@@ -168,9 +170,17 @@ export class ElasticsearchStore implements EventsStore {
       Object.entries(options.payloadQuery).forEach(([key, value]) => {
         must.push({
           match: {
-            ['payload.' + key]: value,
+            [key]: value,
           },
         });
+      });
+    }
+
+    if (options.text) {
+      must.push({
+        query_string: {
+          query: options.text,
+        },
       });
     }
 
@@ -186,31 +196,107 @@ export class ElasticsearchStore implements EventsStore {
     };
   }
 
-  async search(
+  async values(
     workspaceId: string,
-    options: SearchOptions = {}
-  ): Promise<Prismeai.PrismeEvent[]> {
+    options: SearchOptions,
+    fields: string[],
+    size = 500
+  ): Promise<PrismeaiAPI.EventsValues.Responses.$200['result']> {
+    const body = this.buildSearchBody(options);
+    body.aggs = fields.reduce(
+      (aggs, field) => ({
+        ...aggs,
+        [field]: {
+          terms: {
+            field,
+            size,
+          },
+        },
+      }),
+      {}
+    );
+
+    try {
+      const { aggregations } = await this._search(
+        workspaceId,
+        { ...options, limit: 0 },
+        body
+      );
+      return Object.entries(aggregations || {}).reduce(
+        (values, [field, { buckets }]: any) => ({
+          ...values,
+          [field]: buckets.map(
+            ({
+              key: value,
+              doc_count: count,
+            }: {
+              key: string;
+              doc_count: number;
+            }) => ({
+              value,
+              count,
+            })
+          ),
+        }),
+        {}
+      );
+    } catch (error) {
+      if (
+        ((<any>error)?.message || '').includes('Text fields are not optimised')
+      ) {
+        throw new InvalidFiltersError(
+          `Can't retrieve distinct values from one of the requested fields as it looks like a 'text' field and not a 'keyword'`
+        );
+      }
+      throw error;
+    }
+  }
+
+  async _search(
+    workspaceId: string,
+    options: SearchOptions = {},
+    body: any
+  ): Promise<elasticsearch.ApiResponse['body']> {
     const index = this.getWorkspaceEventsIndexName(workspaceId);
     const page = options.page || 0;
-    const limit = options.limit || 50;
+    const limit = typeof options.limit !== 'undefined' ? options.limit : 50;
     try {
       const result = await this.client.search(
         {
           index,
           from: page * limit,
           size: limit,
-          body: this.buildSearchBody(options),
+          body,
         },
         {
           maxRetries: 3,
         }
       );
-      return result.body.hits.hits.map((cur: any) => {
+      return result.body;
+    } catch (error: any) {
+      if ((error?.message || '').startsWith('index_not_found_exception')) {
+        throw new ObjectNotFoundError();
+      }
+      throw error;
+    }
+  }
+
+  async search(
+    workspaceId: string,
+    options: SearchOptions = {}
+  ): Promise<Prismeai.PrismeEvent[]> {
+    try {
+      const result = await this._search(
+        workspaceId,
+        options,
+        this.buildSearchBody(options)
+      );
+      return result.hits.hits.map((cur: any) => {
         delete cur._source['@timestamp'];
         return cur._source;
       });
-    } catch (error: any) {
-      if ((error?.message || '').startsWith('index_not_found_exception')) {
+    } catch (error) {
+      if (error instanceof ObjectNotFoundError) {
         return [];
       }
       throw error;

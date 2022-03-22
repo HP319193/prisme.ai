@@ -46,3 +46,9 @@ export class ConfigurationError extends PrismeError {
     super(msg, details, 500);
   }
 }
+
+export class InvalidFiltersError extends PrismeError {
+  constructor(msg: string, details?: any) {
+    super(msg, details);
+  }
+}

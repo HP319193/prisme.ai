@@ -1,7 +1,11 @@
 import express, { Request, Response } from 'express';
 import { ActionType, SubjectType } from '../../permissions';
 import services from '../../services';
-import { EventsStore, PayloadQuery } from '../../services/events/store';
+import {
+  EventsStore,
+  PayloadQuery,
+  SearchOptions,
+} from '../../services/events/store';
 import { asyncRoute } from '../utils/async';
 
 export function initEventsRoutes(eventsStore: EventsStore) {
@@ -30,15 +34,7 @@ export function initEventsRoutes(eventsStore: EventsStore) {
   async function searchEventsHandler(
     {
       params: { workspaceId },
-      query: {
-        correlationId,
-        types,
-        afterDate,
-        beforeDate,
-        page,
-        limit,
-        ...payloadQuery
-      },
+      query,
       accessManager,
     }: Request<
       PrismeaiAPI.EventsLongpolling.PathParameters,
@@ -48,15 +44,10 @@ export function initEventsRoutes(eventsStore: EventsStore) {
     >,
     res: Response
   ) {
-    const events = await eventsStore.search(workspaceId, {
-      correlationId,
-      afterDate,
-      beforeDate,
-      page,
-      limit,
-      payloadQuery: payloadQuery as PayloadQuery,
-      types: types ? types.split(',') : undefined,
-    });
+    const events = await eventsStore.search(
+      workspaceId,
+      cleanSearchQuery(query)
+    );
 
     return res.send({
       result: {
@@ -69,10 +60,68 @@ export function initEventsRoutes(eventsStore: EventsStore) {
     });
   }
 
+  async function searchEventsValuesHandler(
+    {
+      params: { workspaceId },
+      query: { fields, ...query },
+      accessManager,
+    }: Request<
+      PrismeaiAPI.EventsValues.PathParameters,
+      PrismeaiAPI.EventsValues.Responses.$200,
+      any,
+      PrismeaiAPI.EventsValues.QueryParameters
+    >,
+    res: Response<PrismeaiAPI.EventsValues.Responses.$200>
+  ) {
+    await accessManager.throwUnlessCan(
+      ActionType.GetValues,
+      SubjectType.Event,
+      {
+        source: { workspaceId },
+      } as Prismeai.PrismeEvent
+    );
+
+    const requestedFields = fields
+      .split(',')
+      .map((cur) => cur.trim())
+      .filter(Boolean);
+
+    const result = await eventsStore.values(
+      workspaceId,
+      cleanSearchQuery(query),
+      requestedFields
+    );
+
+    return res.send({
+      result,
+    });
+  }
+
   const app = express.Router({ mergeParams: true });
 
   app.get(`/`, asyncRoute(searchEventsHandler));
   app.post(`/`, asyncRoute(sendEventHandler));
+  app.get(`/values`, asyncRoute(<any>searchEventsValuesHandler));
 
   return app;
+}
+
+export function cleanSearchQuery({
+  types,
+  afterDate,
+  beforeDate,
+  page,
+  limit,
+  text,
+  ...payloadQuery
+}: PrismeaiAPI.EventsLongpolling.QueryParameters): SearchOptions {
+  return {
+    afterDate,
+    beforeDate,
+    page,
+    limit,
+    text,
+    payloadQuery: payloadQuery as PayloadQuery,
+    types: types ? types.split(',') : undefined,
+  };
 }

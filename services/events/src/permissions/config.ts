@@ -1,4 +1,12 @@
-import { ActionType, PermissionsConfig } from '@prisme.ai/permissions';
+import {
+  ActionType as NativeActionType,
+  PermissionsConfig,
+} from '@prisme.ai/permissions';
+
+export const ActionType = {
+  ...NativeActionType,
+  GetValues: 'GetValues',
+};
 
 export enum SubjectType {
   Workspace = 'workspaces',
@@ -37,7 +45,7 @@ export const config: PermissionsConfig<
       subjectType: SubjectType.Workspace,
       rules: [
         {
-          action: [ActionType.Create, ActionType.Read],
+          action: [ActionType.Create, ActionType.Read, ActionType.GetValues],
           subject: SubjectType.Event,
           conditions: {
             // This role only applies to a specific workspace !
@@ -52,7 +60,7 @@ export const config: PermissionsConfig<
       subjectType: SubjectType.Workspace,
       rules: [
         {
-          action: [ActionType.Create, ActionType.Read],
+          action: [ActionType.Create, ActionType.Read, ActionType.GetValues],
           subject: SubjectType.Event,
           conditions: {
             // This role only applies to a specific workspace !
