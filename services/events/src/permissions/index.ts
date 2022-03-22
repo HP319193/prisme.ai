@@ -2,10 +2,9 @@ import { Broker, PrismeEvent } from '@prisme.ai/broker';
 import {
   AccessManager as GenericAccessManager,
   AccessManagerOptions,
-  ActionType,
   EventType as PermissionsEventType,
 } from '@prisme.ai/permissions';
-import { config, Role, SubjectType } from './config';
+import { config, Role, SubjectType, ActionType } from './config';
 
 export { SubjectType, Role, ActionType };
 

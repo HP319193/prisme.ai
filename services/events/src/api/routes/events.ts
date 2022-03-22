@@ -60,10 +60,48 @@ export function initEventsRoutes(eventsStore: EventsStore) {
     });
   }
 
+  async function searchEventsValuesHandler(
+    {
+      params: { workspaceId },
+      query: { fields, ...query },
+      accessManager,
+    }: Request<
+      PrismeaiAPI.EventsValues.PathParameters,
+      PrismeaiAPI.EventsValues.Responses.$200,
+      any,
+      PrismeaiAPI.EventsValues.QueryParameters
+    >,
+    res: Response<PrismeaiAPI.EventsValues.Responses.$200>
+  ) {
+    await accessManager.throwUnlessCan(
+      ActionType.GetValues,
+      SubjectType.Event,
+      {
+        source: { workspaceId },
+      } as Prismeai.PrismeEvent
+    );
+
+    const requestedFields = fields
+      .split(',')
+      .map((cur) => cur.trim())
+      .filter(Boolean);
+
+    const result = await eventsStore.values(
+      workspaceId,
+      cleanSearchQuery(query),
+      requestedFields
+    );
+
+    return res.send({
+      result,
+    });
+  }
+
   const app = express.Router({ mergeParams: true });
 
   app.get(`/`, asyncRoute(searchEventsHandler));
   app.post(`/`, asyncRoute(sendEventHandler));
+  app.get(`/values`, asyncRoute(<any>searchEventsValuesHandler));
 
   return app;
 }

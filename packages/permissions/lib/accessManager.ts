@@ -361,7 +361,7 @@ export class AccessManager<
   }
 
   can<returnType extends SubjectType>(
-    actionType: ActionType,
+    actionType: ActionType | string,
     subjectType: returnType,
     subject: SubjectInterfaces[returnType]
   ): boolean {
@@ -370,7 +370,7 @@ export class AccessManager<
   }
 
   async throwUnlessCan<returnType extends SubjectType>(
-    actionType: ActionType,
+    actionType: ActionType | string,
     subjectType: SubjectType,
     idOrSubject: SubjectInterfaces[returnType] | string
   ) {
@@ -394,7 +394,7 @@ export class AccessManager<
   }
 
   filterSubjectsBy<returnType extends SubjectType>(
-    actionType: ActionType,
+    actionType: ActionType | string,
     subjectType: returnType,
     subjects: SubjectInterfaces[returnType][]
   ): SubjectInterfaces[returnType][] {
