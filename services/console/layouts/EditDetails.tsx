@@ -65,16 +65,20 @@ export const EditDetails = ({
               setVisible(false);
             }}
             initialValues={value}
-            submitLabel={t('details.save', { context })}
+            buttons={
+              <div className="flex flex-1 justify-between">
+                <Button
+                  variant="grey"
+                  onClick={confirmDelete}
+                  className="flex items-center"
+                >
+                  <DeleteOutlined />
+                  {t('details.delete.label', { context })}
+                </Button>
+                <Button type="submit">{t('details.save', { context })}</Button>
+              </div>
+            }
           />
-          <Button
-            variant="grey"
-            className="flex items-center !absolute bottom-2 right-2"
-            onClick={confirmDelete}
-          >
-            <DeleteOutlined className="mr-2" />
-            {t('details.delete.label', { context })}
-          </Button>
         </>
       )}
       overlayClassName="min-w-[50%]"
