@@ -15,6 +15,7 @@ import {
 import { extractObjectsByPath } from '../../../utils/extractObjectsByPath';
 import { SLUG_VALIDATION_REGEXP } from '../../../../config';
 import { AlreadyUsedError, InvalidSlugError } from '../../../errors';
+import { ObjectNotFoundError } from '@prisme.ai/permissions';
 
 interface DSULDiff {
   type: DiffType;
@@ -193,8 +194,24 @@ class Workspaces {
   };
 
   getWorkspace = async (workspaceId: string) => {
-    await this.accessManager.get(SubjectType.Workspace, workspaceId);
-    return await this.storage.get(workspaceId);
+    try {
+      const { id } = await this.accessManager.get(
+        SubjectType.Workspace,
+        workspaceId
+      );
+      return await this.storage.get(id);
+    } catch (e) {
+      const [workspace] = await this.accessManager.findAll(
+        SubjectType.Workspace,
+        {
+          slug: workspaceId,
+        }
+      );
+      if (!workspace) {
+        throw new ObjectNotFoundError();
+      }
+      return await this.storage.get(workspace.id);
+    }
   };
 
   save = async (workspaceId: string, workspace: Prismeai.Workspace) => {

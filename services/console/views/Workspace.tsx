@@ -19,6 +19,7 @@ import PagesSidebar from './PagesSidebar';
 import { DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import ShareWorkspace from '../components/Share/ShareWorkspace';
 import Storage from '../utils/Storage';
+import addDebug from '../utils/debug';
 
 export const Workspace = () => {
   const { t } = useTranslation('workspaces');
@@ -27,10 +28,15 @@ export const Workspace = () => {
     fullSidebar,
     setFullSidebar,
     setShare,
+    save,
   } = useWorkspace();
   const [sidebar, setSidebar] = useState(
     Storage.get('__workpaceSidebar') || 'automations'
   );
+
+  addDebug('setWorkspaceSlug', (slug: string) => {
+    save({ ...workspace, slug });
+  });
 
   useEffect(() => {
     Storage.set('__workpaceSidebar', sidebar);

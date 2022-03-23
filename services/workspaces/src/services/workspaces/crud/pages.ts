@@ -2,6 +2,7 @@ import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import { AccessManager, SubjectType } from '../../../permissions';
 import { nanoid } from 'nanoid';
+import { ObjectNotFoundError } from '@prisme.ai/permissions';
 
 class Pages {
   private accessManager: Required<AccessManager>;
@@ -33,7 +34,18 @@ class Pages {
   };
 
   getPage = async (id: string) => {
-    return await this.accessManager.get(SubjectType.Page, id);
+    try {
+      return await this.accessManager.get(SubjectType.Page, id);
+    } catch (e) {
+      const [page] = await this.accessManager.findAll(SubjectType.Page, {
+        slug: id,
+      });
+      console.log('la page', id, page);
+      if (!page) {
+        throw new ObjectNotFoundError();
+      }
+      return page;
+    }
   };
 
   updatePage = async (id: string, page: Prismeai.Page) => {
