@@ -2,6 +2,7 @@ import { Input, LocalizedInput, TextArea } from '@prisme.ai/design-system';
 import { LocalizedInputProps } from '@prisme.ai/design-system/lib/Components/LocalizedInput';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
+import { Schema } from './types';
 
 interface InputWrapperProps {
   id: string;
@@ -10,9 +11,9 @@ interface InputWrapperProps {
   className: string;
   value: string;
   onChange: LocalizedInputProps['onChange'];
-  component?: string;
-  componentOptions: any;
-  pattern?: string;
+  component?: Schema['ui:widget'];
+  componentOptions: Schema['ui:options'];
+  pattern?: Schema['pattern'];
 }
 
 export const InputWrapper = ({

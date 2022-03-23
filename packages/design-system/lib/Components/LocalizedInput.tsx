@@ -75,16 +75,19 @@ export const LocalizedInput = ({
         [selectedLang]: text,
       });
     },
-    [value]
+    [value, onChange]
   );
 
-  const addLang = useCallback((lang: string) => {
-    setSelectedLang(lang);
-    if (typeof value === 'string') {
-      setValue(value, lang);
-    }
-    input.current && input.current.focus && input.current.focus();
-  }, []);
+  const addLang = useCallback(
+    (lang: string) => {
+      setSelectedLang(lang);
+      if (typeof value === 'string') {
+        setValue(value, lang);
+      }
+      input.current && input.current.focus && input.current.focus();
+    },
+    [value]
+  );
 
   const deleteLang = useCallback(
     (lang: string) => {

@@ -153,6 +153,9 @@
       "description": {
         "label": "Description"
       }
+    },
+    "arguments": {
+      "title": "Arguments"
     }
   },
   "apps": {
@@ -284,6 +287,23 @@
       },
       "toast_automations": "L'automatisation a bien été supprimée",
       "toast_pages": "La page a bien été supprimée"
+    }
+  },
+  "schema": {
+    "property": {
+      "edit": "Éditer",
+      "add": "Ajouter une propriété",
+      "delete": "Supprimer la propriété",
+      "name": "Nom de la propriété :",
+      "details": "Détails",
+      "items": "Éléments du tableau"
+    },
+    "types": {
+      "string": "Texte",
+      "boolean": "Booléen",
+      "number": "Nombre",
+      "object": "Objet",
+      "array": "Tableau"
     }
   }
 }

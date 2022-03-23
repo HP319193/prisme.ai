@@ -2,7 +2,6 @@ import { useTranslation } from 'next-i18next';
 import { Button } from '@prisme.ai/design-system';
 import { FC, ReactNode, useCallback, useMemo } from 'react';
 import { Form as FFForm, FormRenderProps } from 'react-final-form';
-import { Field } from './Field';
 import { Schema } from './types';
 import { PlusOutlined } from '@ant-design/icons';
 import arrayMutators from 'final-form-arrays';
@@ -15,6 +14,8 @@ interface FormProps {
   description?: string;
   submitLabel?: string | ReactNode;
   buttons?: ReactNode;
+  formClassName?: string;
+  formFieldsClassName?: string;
 }
 export const Form: FC<FormProps> = ({
   schema,
@@ -23,6 +24,8 @@ export const Form: FC<FormProps> = ({
   initialValues = {},
   submitLabel,
   buttons,
+  formClassName,
+  formFieldsClassName,
   ...formProps
 }) => {
   const { t } = useTranslation('workspaces');
@@ -124,14 +127,15 @@ export const Form: FC<FormProps> = ({
       mutators={{ ...arrayMutators }}
     >
       {({ handleSubmit }) => (
-        <form onSubmit={handleSubmit}>
-          {description && <div>{description}</div>}
-          <Layout
-            options={schema['ui:options']}
-            fields={fields}
-            required={required}
-          />
-
+        <form onSubmit={handleSubmit} className={formClassName}>
+          <div className={formFieldsClassName}>
+            {description && <div>{description}</div>}
+            <Layout
+              options={schema['ui:options']}
+              fields={fields}
+              required={required}
+            />
+          </div>
           {buttons || (
             <Button type="submit">
               {submitLabel || (

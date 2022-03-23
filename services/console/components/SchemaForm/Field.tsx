@@ -191,6 +191,9 @@ export const Field: FC<FieldProps> = ({
     case 'string':
     case 'number':
     default:
+      const Component =
+        typeof component === 'function' ? component : InputWrapper;
+
       return (
         <FieldContainer
           key={field}
@@ -208,7 +211,7 @@ export const Field: FC<FieldProps> = ({
                   </Tooltip>
                 </div>
               )}
-              <InputWrapper
+              <Component
                 component={component}
                 id={field}
                 label={localize(title) || ''}
