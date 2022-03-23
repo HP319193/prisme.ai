@@ -13,6 +13,7 @@ interface FormProps {
   initialValues?: FormRenderProps['initialValues'];
   description?: string;
   submitLabel?: string | ReactNode;
+  buttons?: ReactNode;
 }
 export const Form: FC<FormProps> = ({
   schema,
@@ -20,6 +21,7 @@ export const Form: FC<FormProps> = ({
   description,
   initialValues = {},
   submitLabel,
+  buttons,
   ...formProps
 }) => {
   const { t } = useTranslation('workspaces');
@@ -130,14 +132,16 @@ export const Form: FC<FormProps> = ({
               required={required.includes(field.field)}
             />
           ))}
-          <Button type="submit">
-            {submitLabel || (
-              <>
-                <PlusOutlined />
-                {t('automations.edit.save')}
-              </>
-            )}
-          </Button>
+          {buttons || (
+            <Button type="submit">
+              {submitLabel || (
+                <>
+                  <PlusOutlined />
+                  {t('automations.edit.save')}
+                </>
+              )}
+            </Button>
+          )}
         </form>
       )}
     </FFForm>

@@ -61,16 +61,6 @@
       "toast": "Automation has been saved",
       "error": "Unknown error has occured"
     },
-    "delete": {
-      "label": "Remove automation",
-      "confirm": {
-        "title": "Do you want to delete the \"{{name}}\" automation?",
-        "content": "Warning, the data will be lost.",
-        "ok": "Yes, delete",
-        "cancel": "No, please no"
-      },
-      "toast": "Automation has been deleted"
-    },
     "endpoint": {
       "copied": "Endpoint has been copied"
     },
@@ -152,6 +142,17 @@
         "save": "Add",
         "submit_new": "Add"
       }
+    },
+    "details": {
+      "slug": {
+        "label": "Slug"
+      },
+      "name": {
+        "label": "Automatisation title"
+      },
+      "description": {
+        "label": "Description"
+      }
     }
   },
   "apps": {
@@ -211,6 +212,14 @@
       "access_private": "Choose which users can view your page",
       "copy": "Copy the public address of the page",
       "copied": "The address is copied into your clipboard"
+    },
+    "details": {
+      "name": {
+        "label": "Page title"
+      },
+      "description": {
+        "label": "Description"
+      }
     }
   },
   "expert": {
@@ -239,6 +248,42 @@
     "roles": {
       "owner": "Owner",
       "editor": "Editor"
+    }
+  },
+  "languages": {
+    "add": {
+      "tooltip": "Add {{lang}}"
+    },
+    "available": {
+      "title": "Available languages"
+    },
+    "delete": {
+      "tooltip": "Delete this language"
+    },
+    "set": {
+      "tooltip": "Add a translation",
+      "title": "Added languages"
+    }
+  },
+  "details": {
+    "title": "",
+    "title_automations": "Automation settings",
+    "title_pages": "Page settings",
+    "save": "Save",
+    "delete": {
+      "label": "Delete",
+      "label_automations": "Delete automation",
+      "label_pages": "Delete page",
+      "confirm": {
+        "title": "Do you want to delete \"{{name}}\" ?",
+        "title_automation": "Do you want to delete the \"{{name}}\" automation?",
+        "title_pages": "Do you want to delete the \"{{name}}\" page?",
+        "content": "Warning, the data will be lost.",
+        "ok": "Yes, delete",
+        "cancel": "No, please no"
+      },
+      "toast_automations": "Automation has been deleted",
+      "toast_pages": "Page has been deleted"
     }
   }
 }
