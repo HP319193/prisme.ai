@@ -1,20 +1,20 @@
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import api from '../../../utils/api';
+import api from '../../utils/api';
 
-import { PublicPageProps } from '../../../views/PublicPage';
-export { default } from '../../../views/PublicPage';
+import { PublicPageProps } from '../../views/PublicPage';
+export { default } from '../../views/PublicPage';
 
 export const getServerSideProps: GetServerSideProps<
   PublicPageProps,
-  { workspaceId: string; pageId: string }
-> = async ({ locale = '', params: { workspaceId, pageId } = {} }) => {
+  { pageId: string }
+> = async ({ locale = '', params: { pageSlug } = {} }) => {
   let page: PublicPageProps['page'] = null;
   try {
-    if (!workspaceId || !pageId) {
+    if (!pageSlug) {
       throw new Error('nope');
     }
-    page = await api.getPage(workspaceId, pageId);
+    page = await api.getPage(pageSlug);
   } catch (e) {}
 
   return {
