@@ -80,19 +80,25 @@ export const Page = () => {
     [t]
   );
 
-  const save = useCallback(async () => {
-    if (!value || !page || !page.id) return;
-    setSaving(true);
-    try {
-      const cleanedValue = {
+  const cleanValue = useCallback(
+    (value: Prismeai.Page) => {
+      return {
         ...value,
         widgets: ((value.widgets ||
           []) as PageBuilderContext['page']['widgets']).map(
           ({ key, ...widget }) => widget
         ),
-        id: page.id,
+        id: page ? page.id : '',
       };
-      await savePage(workspace.id, cleanedValue);
+    },
+    [page]
+  );
+
+  const save = useCallback(async () => {
+    if (!value || !page || !page.id) return;
+    setSaving(true);
+    try {
+      await savePage(workspace.id, cleanValue(value));
 
       notification.success({
         message: t('pages.save.toast'),
@@ -105,7 +111,7 @@ export const Page = () => {
       });
     }
     setSaving(false);
-  }, [page, savePage, t, value, workspace.id]);
+  }, [cleanValue, page, savePage, t, value, workspace.id]);
 
   const confirmDeletePage = useCallback(async () => {
     await push(`/workspaces/${workspace.id}`);
@@ -126,11 +132,11 @@ export const Page = () => {
       description: Prismeai.LocalizedText;
     }) => {
       if (!value) return;
-      const newValue = { ...value, name, description };
+      const newValue = cleanValue({ ...value, name, description });
       setValue(newValue);
       await savePage(workspace.id, newValue);
     },
-    [savePage, value, workspace.id]
+    [cleanValue, savePage, value, workspace.id]
   );
 
   if (!page) {
