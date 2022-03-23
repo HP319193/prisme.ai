@@ -48,6 +48,7 @@
         "event": "un evento"
       }
     },
+    "empty": "Una automatización describe qué hacer y cuándo hacerlo",
     "back": "Volver",
     "design": {
       "title": "Diseño"
@@ -59,16 +60,6 @@
       "label": "Registro",
       "toast": "Se ha registrado la automatización",
       "error": "Se ha producido un error"
-    },
-    "delete": {
-      "label": "Eliminar la automatización",
-      "confirm": {
-        "title": "¿Desea eliminar la automatización \"{{name}}\"?",
-        "content": "Cuidado, los datos se perderán.",
-        "ok": "Sí, borrar",
-        "cancel": "No, me arrepiento"
-      },
-      "toast": "Se ha eliminado la automatización"
     },
     "endpoint": {
       "copied": "La URL ha sido copiada"
@@ -106,6 +97,8 @@
       "label_set": "Define var",
       "label_delete": "Borrar var",
       "label_conditions": "Condiciones",
+      "label_fetch": "Petición HTTP",
+      "label_break": "Interrupción",
       "description": "{{default}}",
       "description_emit": "Emite un evento de su elección al que puede asociar un objeto de datos. Si eliges hacer este evento privado, no será escuchado por otros espacios de trabajo y Apps.",
       "description_repeat": "Repite una lista de instrucciones en cada elemento de un array de datos pasado como parámetro (`on`) o hasta un determinado número de iteraciones (`until`).",
@@ -149,6 +142,17 @@
         "save": "Registro condición",
         "submit_new": "Añadir"
       }
+    },
+    "details": {
+      "slug": {
+        "label": "Técnica Nom"
+      },
+      "name": {
+        "label": "Título de la automatización"
+      },
+      "description": {
+        "label": "Descripción"
+      }
     }
   },
   "apps": {
@@ -164,6 +168,7 @@
     "publish": {
       "menuLabel": "Publicar como aplicación",
       "confirm": {
+        "alreadyPublished": "El espacio de trabajo ya está publicado como una App con este nombre, que no se puede cambiar",
         "slugInput": "nombre de la aplicación",
         "slugIvalid": "Los únicos caracteres permitidos son letras, números, espacios en blanco, . _ y -",
         "title": "Publicar el espacio de trabajo como una aplicación",
@@ -179,6 +184,7 @@
       "label": "Crear una nueva Página",
       "defaultName": "Página"
     },
+    "empty": "Interfaces según las necesidades y las funciones",
     "delete": {
       "label": "Eliminar la Página",
       "confirm": {
@@ -206,6 +212,14 @@
       "access_private": "Elija qué usuarios pueden ver su página",
       "copy": "Copiar la dirección pública de la página",
       "copied": "La dirección se copia en el portapapeles"
+    },
+    "details": {
+      "name": {
+        "label": "Título de la página"
+      },
+      "description": {
+        "label": "Descripción"
+      }
     }
   },
   "expert": {
@@ -234,6 +248,42 @@
     "roles": {
       "owner": "Owner",
       "editor": "Editor"
+    }
+  },
+  "languages": {
+    "add": {
+      "tooltip": "Ajouter {{lang}}"
+    },
+    "available": {
+      "title": "Langues disponibles"
+    },
+    "delete": {
+      "tooltip": "Supprimer cette langue"
+    },
+    "set": {
+      "tooltip": "Ajouter une traduction",
+      "title": "Langues ajoutées"
+    }
+  },
+  "details": {
+    "title": "",
+    "title_automations": "Ajustes de la automatización",
+    "title_pages": "Configuración de la página",
+    "save": "Registro",
+    "delete": {
+      "label": "Eliminar",
+      "label_automations": "Eliminar la automatización",
+      "label_pages": "Eliminar la página",
+      "confirm": {
+        "title": "¿Desea eliminar \"{{name}}\"?",
+        "title_automation": "¿Desea eliminar la automatización \"{{name}}\"?",
+        "title_pages": "¿Desea eliminar la páginas\"{{name}}\"?",
+        "content": "Cuidado, los datos se perderán.",
+        "ok": "Sí, borrar",
+        "cancel": "No, me arrepiento"
+      },
+      "toast_automations": "Se ha eliminado la automatización",
+      "toast_pages": "Se ha eliminado la página"
     }
   }
 }
