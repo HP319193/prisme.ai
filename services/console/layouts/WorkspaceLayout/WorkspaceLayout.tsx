@@ -3,11 +3,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
-import workspaceContext, {
-  EventsFilters,
-  Pagination,
-  WorkspaceContext,
-} from './context';
+import workspaceContext, { Pagination, WorkspaceContext } from './context';
 import { EventsByDay } from '.';
 import api from '../../utils/api';
 import { Event, Events } from '@prisme.ai/sdk';
@@ -21,6 +17,7 @@ import usePages from '../../components/PagesProvider/context';
 import { useApps } from '../../components/AppsProvider';
 import debounce from 'lodash/debounce';
 import { usePrevious } from '../../utils/usePrevious';
+import { EventsFilters } from '@prisme.ai/types/additional';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { Workspace } from '../../utils/api';
 

@@ -1,13 +1,8 @@
 import { createContext, FC, useContext } from 'react';
 import { Event, Workspace } from '@prisme.ai/sdk';
 import { ValidationError } from '../../utils/yaml';
+import { EventsFilters } from '@prisme.ai/types/additional';
 
-export type EventsFilters = {
-  afterDate?: PrismeaiAPI.EventsLongpolling.Parameters.AfterDate;
-  beforeDate?: PrismeaiAPI.EventsLongpolling.Parameters.BeforeDate;
-  text?: PrismeaiAPI.EventsLongpolling.Parameters.Text;
-  query?: PrismeaiAPI.EventsLongpolling.Parameters.Query;
-};
 export type Pagination = {
   page: PrismeaiAPI.EventsLongpolling.Parameters.Page;
   limit: PrismeaiAPI.EventsLongpolling.Parameters.Limit;

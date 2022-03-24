@@ -1,4 +1,4 @@
-import { EventsFilters } from '../layouts/WorkspaceLayout';
+import { EventsFilters } from '@prisme.ai/types/additional';
 
 export const filterEmpty = (filters: EventsFilters) => {
   return !(
