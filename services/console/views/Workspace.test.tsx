@@ -12,6 +12,7 @@ jest.mock('../utils/useYaml', () => ({}));
 jest.mock('../layouts/WorkspaceLayout', () => {
   const mock = {
     events: new Map(),
+    filters: {},
     displaySource: false,
     workspace: { id: '42', name: 'Foo' },
   };

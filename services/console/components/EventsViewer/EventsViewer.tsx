@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useWorkspace, WorkspaceContext } from '../../layouts/WorkspaceLayout';
 import { useDateFormat } from '../../utils/dates';
 import EventDetails from './EventDetails';
@@ -15,16 +16,20 @@ import { CollapseItem } from '@prisme.ai/design-system/lib/Components/Collapse';
 import { Event } from '@prisme.ai/sdk';
 import Empty from './Empty';
 import FilterEventsPopover from './FilterEventsPopover';
+import { filterEmpty } from '../../utils/prismeAi';
+import { FileExcelOutlined } from '@ant-design/icons';
 
 export const EventsViewerRenderer = memo(function EventsViewserRendere({
   events,
   nextEvents,
   readEvents,
   readEvent,
+  filters,
 }: Pick<
   WorkspaceContext,
-  'events' | 'nextEvents' | 'readEvent' | 'readEvents'
+  'events' | 'nextEvents' | 'readEvent' | 'readEvents' | 'filters'
 >) {
+  const { t } = useTranslation('workspaces');
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
 
@@ -87,7 +92,18 @@ export const EventsViewerRenderer = memo(function EventsViewserRendere({
   if (events === 'loading') {
     content = <Loading />;
   } else if (feedSections.length === 0) {
-    content = <Empty />;
+    if (filterEmpty(filters)) {
+      content = <Empty />;
+    } else {
+      content = (
+        <div className="flex grow justify-center items-center">
+          <div className="flex grow justify-center items-center flex-col">
+            <FileExcelOutlined className="text-[50px] !text-gray mb-5" />
+            {t('events.filters.empty')}
+          </div>
+        </div>
+      );
+    }
   } else {
     content = (
       <div className="w-full overflow-auto" ref={ref}>
@@ -107,7 +123,7 @@ export const EventsViewerRenderer = memo(function EventsViewserRendere({
 });
 
 export const EventsViewer = () => {
-  const { events, nextEvents, readEvents, readEvent } = useWorkspace();
+  const { events, nextEvents, readEvents, readEvent, filters } = useWorkspace();
 
   return (
     <EventsViewerRenderer
@@ -115,6 +131,7 @@ export const EventsViewer = () => {
       nextEvents={nextEvents}
       readEvents={readEvents}
       readEvent={readEvent}
+      filters={filters}
     />
   );
 };

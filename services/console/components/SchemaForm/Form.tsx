@@ -101,6 +101,7 @@ export const Form: FC<FormProps> = ({
             required.forEach((f) => {
               if (values[f]) return;
               errors[f] = 'oneOfRequired';
+              errors[f] = 'oneOfRequired';
             });
           });
         }

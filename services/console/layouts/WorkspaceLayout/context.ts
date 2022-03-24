@@ -5,7 +5,7 @@ import { ValidationError } from '../../utils/yaml';
 export type EventsFilters = {
   afterDate?: PrismeaiAPI.EventsLongpolling.Parameters.AfterDate;
   beforeDate?: PrismeaiAPI.EventsLongpolling.Parameters.BeforeDate;
-  correlationId?: PrismeaiAPI.EventsLongpolling.Parameters.CorrelationId;
+  text?: PrismeaiAPI.EventsLongpolling.Parameters.Text;
   query?: PrismeaiAPI.EventsLongpolling.Parameters.Query;
 };
 export type Pagination = {

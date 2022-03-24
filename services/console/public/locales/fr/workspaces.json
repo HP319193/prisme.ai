@@ -44,7 +44,17 @@
     "filters": {
       "title": "Filtres",
       "correlationId": "ID de corrélation",
-      "submit": "Appliquer"
+      "submit": "Appliquer",
+      "text": "Texte dans un champs",
+      "afterDate": "Après une date",
+      "beforeDate": "Avant une date",
+      "query": {
+        "label": "Filtrer des champs spécifique",
+        "description": "{\n  clé: valeur,\n}",
+        "field": "Champs",
+        "value": "Valeur"
+      },
+      "empty": "Aucun résultat n'a été trouvé avec ces filtres. Essayez une autre recherche ?"
     },
     "empty": "Il ne s'est encore rien passé ici…",
     "details": {

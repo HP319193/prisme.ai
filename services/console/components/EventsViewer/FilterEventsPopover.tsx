@@ -6,38 +6,55 @@ import Form from '../SchemaForm/Form';
 
 const FilterEvents = () => {
   const { t } = useTranslation('workspaces');
+  const { t: commonT } = useTranslation('common');
   const { updateFilters } = useWorkspace();
 
-  return (
-    <Form
-      schema={{
-        type: 'object',
-        properties: {
-          afterDate: {
-            type: 'string',
-            'ui:widget': 'datePicker',
-          },
-          beforeDate: {
-            type: 'string',
-            'ui:widget': 'datePicker',
-          },
-        },
-      }}
-      onSubmit={updateFilters}
-    />
-  );
+  // TODO localize
+  // TODO filters in url ?
 
-  // return (
-  //   <div className="flex grow flex-col justify-end items-end">
-  //     <Input
-  //       {...correlationIdInput}
-  //       label={t('events.filters.correlationId')}
-  //     />
-  //     <Button type="submit" onClick={onSubmit}>
-  //       {t('events.filters.submit')}
-  //     </Button>
-  //   </div>
-  // );
+  return (
+    <div className="w-[60vw]">
+      <Form
+        schema={{
+          type: 'object',
+          properties: {
+            afterDate: {
+              title: t('events.filters.afterDate'),
+              type: 'string',
+              'ui:widget': 'datePicker',
+            },
+            beforeDate: {
+              title: t('events.filters.beforeDate'),
+              type: 'string',
+              'ui:widget': 'datePicker',
+            },
+            text: {
+              title: t('events.filters.text'),
+              type: 'string',
+            },
+            query: {
+              type: 'object',
+              title: t('events.filters.query.label'),
+              description: t('events.filters.query.description'),
+              additionalProperties: true,
+              properties: {
+                field: {
+                  title: t('events.filters.query.field'),
+                  type: 'string',
+                },
+                value: {
+                  title: t('events.filters.query.value'),
+                  type: 'string',
+                },
+              },
+            },
+          },
+        }}
+        onSubmit={updateFilters}
+        submitLabel={commonT('save')}
+      />
+    </div>
+  );
 };
 
 const FilterEventsPopover = () => {

@@ -44,7 +44,17 @@
     "filters": {
       "title": "Filters",
       "correlationId": "Correlation ID",
-      "submit": "Apply"
+      "submit": "Apply",
+      "text": "Text in any field",
+      "afterDate": "From a specific date",
+      "beforeDate": "Until a specific date",
+      "query": {
+        "label": "Filter specific fields",
+        "description": "{\n  key: value,\n}",
+        "field": "Field",
+        "value": "Value"
+      },
+      "empty": "No results were found using your filters. Try another search ?"
     },
     "empty": "Aquí todavía no ha pasado nada…",
     "details": {
