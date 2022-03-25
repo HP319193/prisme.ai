@@ -158,6 +158,7 @@ export const LocalizedInput = ({
               {label}
             </div>
           ),
+          searchable: label,
           value,
         })),
       },
