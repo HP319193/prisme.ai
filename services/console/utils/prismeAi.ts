@@ -1,4 +1,4 @@
-import { EventsFilters } from '@prisme.ai/types/additional';
+import { EventsFilters } from '@prisme.ai/sdk';
 
 export const filterEmpty = (filters: EventsFilters) => {
   return !(

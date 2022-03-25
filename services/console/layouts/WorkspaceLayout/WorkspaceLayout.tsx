@@ -6,7 +6,7 @@ import { useWorkspaces } from '../../components/WorkspacesProvider';
 import workspaceContext, { Pagination, WorkspaceContext } from './context';
 import { EventsByDay } from '.';
 import api from '../../utils/api';
-import { Event, Events } from '@prisme.ai/sdk';
+import { Event, Events, EventsFilters } from '@prisme.ai/sdk';
 import Error404 from '../../views/Errors/404';
 import { Layout, Loading, notification } from '@prisme.ai/design-system';
 import { useUser } from '../../components/UserProvider';

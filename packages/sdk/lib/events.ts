@@ -1,5 +1,5 @@
 import io, { Socket } from 'socket.io-client';
-import { EventsFilters } from '@prisme.ai/types/additional';
+import { EventsFilters } from './types';
 
 export class Events {
   private client: Socket;

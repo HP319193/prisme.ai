@@ -1,7 +1,6 @@
 import { createContext, FC, useContext } from 'react';
-import { Event, Workspace } from '@prisme.ai/sdk';
+import { Event, EventsFilters, Workspace } from '@prisme.ai/sdk';
 import { ValidationError } from '../../utils/yaml';
-import { EventsFilters } from '@prisme.ai/types/additional';
 
 export type Pagination = {
   page: PrismeaiAPI.EventsLongpolling.Parameters.Page;
