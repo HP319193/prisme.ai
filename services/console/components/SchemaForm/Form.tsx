@@ -6,6 +6,7 @@ import { Field } from './Field';
 import { Schema } from './types';
 import { PlusOutlined } from '@ant-design/icons';
 import arrayMutators from 'final-form-arrays';
+import Layout from './Layout';
 
 interface FormProps {
   schema: Schema;
@@ -125,13 +126,12 @@ export const Form: FC<FormProps> = ({
       {({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           {description && <div>{description}</div>}
-          {fields.map((field) => (
-            <Field
-              key={field.field}
-              {...field}
-              required={required.includes(field.field)}
-            />
-          ))}
+          <Layout
+            options={schema['ui:options']}
+            fields={fields}
+            required={required}
+          />
+
           {buttons || (
             <Button type="submit">
               {submitLabel || (

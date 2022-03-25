@@ -67,6 +67,10 @@ export const Automation = () => {
           'ui:options': { rows: 10, localizedText: true },
         },
       },
+      'ui:options': {
+        layout: 'columns',
+        columns: [['slug', 'name'], ['description']],
+      },
     }),
     [t]
   );
