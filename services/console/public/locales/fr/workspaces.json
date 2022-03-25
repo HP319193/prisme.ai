@@ -296,7 +296,8 @@
       "delete": "Supprimer la propriété",
       "name": "Nom de la propriété :",
       "details": "Détails",
-      "items": "Éléments du tableau"
+      "items": "Éléments du tableau",
+      "required": "Requis"
     },
     "types": {
       "string": "Texte",

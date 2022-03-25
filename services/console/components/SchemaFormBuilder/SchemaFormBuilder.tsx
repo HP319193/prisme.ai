@@ -67,7 +67,7 @@ export const SchemaFormBuilder = ({
           onChange={(checked) => update('required')(checked)}
           className="!mr-2"
         />
-        Requis
+        {t('schema.property.required')}
       </label>
       <Select
         selectOptions={options}

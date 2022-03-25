@@ -128,3 +128,7 @@ export function Select({ children = null }) {
 export function Popover({ children = null }) {
   return children;
 }
+
+export function LocalizedInput({ children = null }) {
+  return children;
+}
