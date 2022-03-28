@@ -14,7 +14,9 @@ const FloatingLabel = ({
   raisedPlaceholder,
 }: FloatingLabelProps) => {
   return (
-    <div className={`relative pr-input ${label ? 'mt-5' : ''}  ${className}`}>
+    <div
+      className={`relative flex pr-input ${label ? 'mt-5' : ''}  ${className}`}
+    >
       {component}
       <label
         className={`duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none ${

@@ -9,9 +9,6 @@ const FilterEvents = () => {
   const { t: commonT } = useTranslation('common');
   const { updateFilters } = useWorkspace();
 
-  // TODO localize
-  // TODO filters in url ?
-
   return (
     <div className="w-[60vw]">
       <Form
@@ -51,7 +48,7 @@ const FilterEvents = () => {
           },
         }}
         onSubmit={updateFilters}
-        submitLabel={commonT('save')}
+        submitLabel={t('events.filters.submit')}
       />
     </div>
   );

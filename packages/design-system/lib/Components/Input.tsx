@@ -55,13 +55,15 @@ const Input = forwardRef(
         break;
     }
 
-  return (
-    <FloatingLabel
-      className={containerClassName}
-      label={label}
-      component={inputComponent}
-      raisedPlaceholder={!!(placeholder || otherProps.value)}
-    />
-  );
-};
+    return (
+      <FloatingLabel
+        className={containerClassName}
+        label={label}
+        component={inputComponent}
+        raisedPlaceholder={!!(placeholder || otherProps.value)}
+      />
+    );
+  }
+);
+
 export default Input;
