@@ -13,16 +13,18 @@ exports[`should render 1`] = `
     <div>
       automations.instruction.description
     </div>
-    <div
-      className="mb-5 "
-    >
-      <span
-        className="flex flex-col "
+    <div>
+      <div
+        className="mb-5 flex flex-1"
       >
-        <div
-          className="relative"
-        />
-      </span>
+        <span
+          className="flex flex-col flex flex-1"
+        >
+          <div
+            className="relative"
+          />
+        </span>
+      </div>
     </div>
     automations.edit.save
   </form>

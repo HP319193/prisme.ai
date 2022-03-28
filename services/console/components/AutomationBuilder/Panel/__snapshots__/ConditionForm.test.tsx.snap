@@ -10,10 +10,10 @@ exports[`should render 1`] = `
     >
       automations.condition.edit.title
       <div
-        className="mb-5 "
+        className="mb-5 flex flex-1"
       >
         <span
-          className="flex flex-col "
+          className="flex flex-col flex flex-1"
         >
           <div
             className="relative"

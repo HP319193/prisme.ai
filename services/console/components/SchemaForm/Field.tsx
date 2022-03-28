@@ -192,7 +192,13 @@ export const Field: FC<FieldProps> = ({
     case 'number':
     default:
       return (
-        <FieldContainer key={field} name={field} validate={validate}>
+        <FieldContainer
+          key={field}
+          name={field}
+          validate={validate}
+          className="flex flex-1"
+          containerClassName="flex flex-1"
+        >
           {({ input, className }) => (
             <div className="relative">
               {!!description && (
