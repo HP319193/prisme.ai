@@ -1,6 +1,6 @@
 import QueryString from 'qs';
 import Fetcher from './fetcher';
-import { Event, EventsFilters, Workspace } from './types';
+import { Event, Workspace } from './types';
 import { Events } from './events';
 import { removedUndefinedProperties } from './utils';
 
@@ -162,8 +162,8 @@ export class Api extends Fetcher {
   }
 
   // Events
-  streamEvents(workspaceId: string, filters: EventsFilters) {
-    return new Events(workspaceId, this.token || '', this.host, filters);
+  streamEvents(workspaceId: string) {
+    return new Events(workspaceId, this.token || '', this.host);
   }
 
   async getEvents(
