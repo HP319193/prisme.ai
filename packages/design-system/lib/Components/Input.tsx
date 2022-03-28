@@ -1,6 +1,7 @@
 import { Input as AntdInput, InputProps as AntdInputProps } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { forwardRef } from 'react';
+import FloatingLabel from './Internal/FloatingLabel';
 
 const { Password: AntdInputPassword } = AntdInput;
 
@@ -54,24 +55,13 @@ const Input = forwardRef(
         break;
     }
 
-    return (
-      <div
-        className={`relative pr-input ${
-          label ? 'mt-5' : ''
-        } ${containerClassName}`}
-      >
-        {inputComponent}
-        {placeholder || otherProps.value ? (
-          <label className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none pr-label-top">
-            {label}
-          </label>
-        ) : (
-          <label className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none">
-            {label}
-          </label>
-        )}
-      </div>
-    );
-  }
-);
+  return (
+    <FloatingLabel
+      className={containerClassName}
+      label={label}
+      component={inputComponent}
+      raisedPlaceholder={!!(placeholder || otherProps.value)}
+    />
+  );
+};
 export default Input;

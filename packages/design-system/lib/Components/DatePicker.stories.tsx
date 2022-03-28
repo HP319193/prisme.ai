@@ -10,6 +10,10 @@ export default {
   },
 };
 
-const Template: Story<DatePickerProps> = () => <DatePicker />;
+const Template: Story<DatePickerProps> = ({ label }) => (
+  <DatePicker label={label} />
+);
 
-export const Default = Template.bind({});
+export const Default = Template.bind({
+  label: 'Select a date',
+});

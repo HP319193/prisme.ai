@@ -1,4 +1,5 @@
 import { Select as AntdSelect, SelectProps as AntdSelectProps } from 'antd';
+import FloatingLabel from './Internal/FloatingLabel';
 import { ReactNode } from 'react';
 
 const { Option, OptGroup } = AntdSelect;
@@ -21,9 +22,10 @@ export interface SelectProps extends AntdSelectProps {
   label?: string;
 }
 
-const Select = ({ selectOptions, label, ...otherProps }: SelectProps) => {
-  return (
-    <div className={`relative pr-input ${label ? 'mt-5' : ''}`}>
+const Select = ({ selectOptions, label, ...otherProps }: SelectProps) => (
+  <FloatingLabel
+    label={label}
+    component={
       <AntdSelect
         {...otherProps}
         className={`flex grow ${otherProps.className || ''}`}
@@ -48,11 +50,9 @@ const Select = ({ selectOptions, label, ...otherProps }: SelectProps) => {
           );
         })}
       </AntdSelect>
-      <label className="pr-label-top duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none">
-        {label}
-      </label>
-    </div>
-  );
-};
+    }
+    raisedPlaceholder={true}
+  />
+);
 
 export default Select;
