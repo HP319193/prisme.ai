@@ -147,13 +147,7 @@ export const Field: FC<FieldProps> = ({
             ))}
           {additionalProperties && (
             <RFFField name={field}>
-              {({ input }) => (
-                <CodeEditorInline
-                  mode="json"
-                  placeholder={localize(description)}
-                  {...input}
-                />
-              )}
+              {({ input }) => <CodeEditorInline mode="json" {...input} />}
             </RFFField>
           )}
         </div>
@@ -199,7 +193,7 @@ export const Field: FC<FieldProps> = ({
           {({ input: { value, onChange, ...restInput }, className }) => (
             <DatePicker
               {...restInput}
-              placeholder={localize(title)}
+              label={localize(title)}
               stringValue={input.value}
               stringOnChange={onChange}
               className={className}
