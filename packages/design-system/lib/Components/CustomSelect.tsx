@@ -53,7 +53,9 @@ export const CustomSelect = ({
           isOption(item)
             ? `${item.searchable || item.label} ${item.value}`
             : item
-        }`.match(search);
+        }`
+          .toLowerCase()
+          .match(search.toLowerCase());
       });
     const renderOptions = (
       items: (string | Option | OptionGroup)[],
