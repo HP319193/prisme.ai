@@ -892,9 +892,6 @@ declare namespace Prismeai {
         widgets?: {
             [name: string]: /* Widget */ Widget;
         };
-        pages?: {
-            [name: string]: /* Page */ Page;
-        };
         createdAt?: string;
         updatedAt?: string;
         id?: string;
@@ -1011,6 +1008,10 @@ declare namespace Prismeai {
         }[];
         id?: string;
         slug?: string;
+        createdBy?: string;
+        updatedBy?: string;
+        createdAt?: string;
+        updatedAt?: string;
     }
     export interface Emit {
         emit: {
@@ -1148,6 +1149,10 @@ declare namespace Prismeai {
         }[];
         id?: string;
         slug?: string;
+        createdBy?: string;
+        updatedBy?: string;
+        createdAt?: string;
+        updatedAt?: string;
     }
     export interface PagePermissionsDeleted {
         /**

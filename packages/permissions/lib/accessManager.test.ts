@@ -435,6 +435,34 @@ describe('Role & Permissions granting', () => {
       collaborator.get(SubjectType.Workspace, workspace.id)
     ).rejects.toThrow();
   });
+
+  it("Trying to fetch an object whose permissions depend on another one automatically pulls this other object's permissions", async () => {
+    const collaborator = await accessManager.as({
+      id: 'someCollaboratorId',
+      role: Role.Guest,
+    });
+    // Lets make adminA create a workspace
+    const workspace = await adminA.create(SubjectType.Workspace, <any>{});
+    const page = await adminA.create(SubjectType.Page, <any>{
+      workspaceId: workspace.id,
+      name: 'some page name',
+    });
+
+    // Check that collaborator initially cannot read this page
+    await expect(adminB.get(SubjectType.Page, page.id)).rejects.toThrow();
+
+    await adminA.grant(
+      SubjectType.Workspace,
+      workspace.id,
+      collaborator.user!!,
+      Role.Admin
+    );
+
+    // Check that collaborator now can read & update the page (but not its permissions field !)
+    await expect(
+      collaborator.get(SubjectType.Page, page.id)
+    ).resolves.toMatchObject(page);
+  });
 });
 
 describe('API Keys', () => {

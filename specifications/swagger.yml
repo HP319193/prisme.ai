@@ -2347,10 +2347,6 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/Widget'
-        pages:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/Page'
         createdAt:
           type: string
         updatedAt:
@@ -2510,6 +2506,14 @@ components:
         id:
           type: string
         slug:
+          type: string
+        createdBy:
+          type: string
+        updatedBy:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
           type: string
 
     DetailedPage:
