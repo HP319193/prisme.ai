@@ -167,7 +167,19 @@ export const Automation = () => {
       arguments: Prismeai.Automation['arguments'];
     }) => {
       const { slug: prevSlug } = value;
-      const newValue = { ...value, name, slug, description, arguments: args };
+      const cleanedArguments =
+        args &&
+        Object.keys(args).reduce(
+          (prev, key) => (key ? { ...prev, [key]: args[key] } : prev),
+          {}
+        );
+      const newValue = {
+        ...value,
+        name,
+        slug,
+        description,
+        arguments: cleanedArguments,
+      };
       setValue(newValue);
       automationDidChange.current = false;
       await saveAutomation.current(`${automationId}`, newValue);
