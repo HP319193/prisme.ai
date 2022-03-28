@@ -17,9 +17,9 @@ import { Event } from '@prisme.ai/sdk';
 import Empty from './Empty';
 import FilterEventsPopover from './FilterEventsPopover';
 import { filterEmpty } from '../../utils/prismeAi';
-import { FileExcelOutlined } from '@ant-design/icons';
+import { ExceptionOutlined } from '@ant-design/icons';
 
-export const EventsViewerRenderer = memo(function EventsViewserRendere({
+export const EventsViewerRenderer = memo(function EventsViewerRender({
   events,
   nextEvents,
   readEvents,
@@ -98,7 +98,7 @@ export const EventsViewerRenderer = memo(function EventsViewserRendere({
       content = (
         <div className="flex grow justify-center items-center">
           <div className="flex grow justify-center items-center flex-col">
-            <FileExcelOutlined className="text-[50px] !text-gray mb-5" />
+            <ExceptionOutlined className="text-[50px] !text-gray mb-5" />
             {t('events.filters.empty')}
           </div>
         </div>

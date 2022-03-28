@@ -44,8 +44,8 @@
     "filters": {
       "title": "Filtres",
       "correlationId": "ID de corrélation",
-      "submit": "Appliquer",
-      "text": "Texte dans un champs",
+      "submit": "Enregistrer les filtres",
+      "text": "Recherche par mots clés",
       "afterDate": "Après une date",
       "beforeDate": "Avant une date",
       "query": {

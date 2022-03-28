@@ -44,8 +44,8 @@
     "filters": {
       "title": "Filters",
       "correlationId": "Correlation ID",
-      "submit": "Apply",
-      "text": "Text in any field",
+      "submit": "Save filters",
+      "text": "Keyword search",
       "afterDate": "From a specific date",
       "beforeDate": "Until a specific date",
       "query": {
