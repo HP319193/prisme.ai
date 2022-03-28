@@ -75,3 +75,7 @@ a {
   top: -0.75rem;
   font-size: 12px;
 }
+
+.centered-collapse .ant-collapse-header {
+  align-items: baseline !important;
+}

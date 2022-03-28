@@ -63,7 +63,10 @@ export const Properties = ({ value, onChange }: any) => {
     () =>
       Object.keys(value).map((key) => ({
         label: (
-          <div className="relative flex flex-1">
+          <div
+            className="relative flex flex-1"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Input
               label={t('schema.property.name')}
               value={key}
@@ -95,8 +98,8 @@ export const Properties = ({ value, onChange }: any) => {
   );
 
   return (
-    <div className="flex flex-1 flex-col">
-      <Collapse items={items} />
+    <div className="flex flex-1 flex-col mt-[1rem] centered-collapse">
+      <Collapse items={items} expandIconPosition="left" />
       <Button onClick={add}>{t('schema.property.add')}</Button>
     </div>
   );
