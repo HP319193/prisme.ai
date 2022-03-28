@@ -155,7 +155,8 @@
       }
     },
     "arguments": {
-      "title": "Arguments"
+      "title": "Arguments",
+      "description": "Spécification des paramètres pouvant être passés à votre automatisation quand elle est utilisée en tant qu'instruction d'une autre automatisation. Un formulaire sera généré conformément à la structure que vous allez spécifier ici."
     }
   },
   "apps": {
