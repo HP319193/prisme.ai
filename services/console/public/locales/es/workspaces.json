@@ -153,6 +153,10 @@
       "description": {
         "label": "Descripción"
       }
+    },
+    "arguments": {
+      "title": "Argumentos",
+      "description": "Especificación de los parámetros que se pueden pasar a su automatización cuando se utiliza como una declaración de otra automatización. Se generará un formulario de acuerdo con la estructura que especifique aquí."
     }
   },
   "apps": {

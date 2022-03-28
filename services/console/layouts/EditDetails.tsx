@@ -65,6 +65,7 @@ export const EditDetails = ({
               setVisible(false);
             }}
             initialValues={value}
+            formFieldsClassName="max-h-[75vh] overflow-auto"
             buttons={
               <div className="flex flex-1 justify-between">
                 <Button

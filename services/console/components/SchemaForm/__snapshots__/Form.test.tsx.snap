@@ -5,67 +5,69 @@ exports[`should render 1`] = `
   onSubmit={[Function]}
 >
   <div>
-    <div
-      className="mb-5 flex flex-1"
-    >
-      <span
-        className="flex flex-col flex flex-1"
+    <div>
+      <div
+        className="mb-5 flex flex-1"
+      >
+        <span
+          className="flex flex-col flex flex-1"
+        >
+          <div
+            className="relative"
+          />
+        </span>
+      </div>
+    </div>
+    <div>
+      <div
+        className="mb-5"
+      >
+        <label
+          className="mx-2 flex flex-1 align-center"
+        >
+          <div>
+            bar
+          </div>
+        </label>
+      </div>
+    </div>
+    <div>
+      <div
+        className="ml-2 pl-2 border-l-[1px] border-[gray] border-solid"
+      >
+        <label
+          className="text-gray text-[10px]"
+        >
+          lorem
+        </label>
+      </div>
+    </div>
+    <div>
+      <div
+        className="ml-2 pl-2 border-l-[1px] border-solid border-[gray]"
       >
         <div
-          className="relative"
-        />
-      </span>
-    </div>
-  </div>
-  <div>
-    <div
-      className="mb-5"
-    >
-      <label
-        className="mx-2 flex flex-1 align-center"
-      >
-        <div>
-          bar
-        </div>
-      </label>
-    </div>
-  </div>
-  <div>
-    <div
-      className="ml-2 pl-2 border-l-[1px] border-[gray] border-solid"
-    >
-      <label
-        className="text-gray text-[10px]"
-      >
-        lorem
-      </label>
-    </div>
-  </div>
-  <div>
-    <div
-      className="ml-2 pl-2 border-l-[1px] border-solid border-[gray]"
-    >
-      <div
-        className="flex flex-1"
-      >
-        <button
-          className="text-accent flex flex-1 justify-between"
-          onClick={[Function]}
-          type="button"
+          className="flex flex-1"
         >
-          <label
-            className="ml-[3px] text-gray text-[10px]"
+          <button
+            className="text-accent flex flex-1 justify-between"
+            onClick={[Function]}
+            type="button"
           >
-            ipsum
-          </label>
-          <div
-            className="flex flex-row items-baseline"
-          />
-        </button>
+            <label
+              className="ml-[3px] text-gray text-[10px]"
+            >
+              ipsum
+            </label>
+            <div
+              className="flex flex-row items-baseline"
+            />
+          </button>
+        </div>
+        <div
+          className="my-2 ml-2"
+        />
       </div>
-      <div
-        className="my-2 ml-2"
-      />
     </div>
   </div>
   automations.edit.save

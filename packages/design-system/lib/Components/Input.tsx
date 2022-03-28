@@ -10,6 +10,7 @@ export interface InputProps extends AntdInputProps {
   inputType?: AntdInputProps['type'];
   className?: string;
   containerClassName?: string;
+  pattern?: string;
 }
 
 const Input = forwardRef(
@@ -32,7 +33,7 @@ const Input = forwardRef(
           <AntdInputPassword
             ref={ref}
             placeholder={placeholder}
-            className={`${className} rounded`}
+            className={`${className} rounded invalid:border-red-500 invalid:text-red-500`}
             iconRender={(visible: boolean) =>
               visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
             }
@@ -45,7 +46,7 @@ const Input = forwardRef(
           <AntdInput
             ref={ref}
             placeholder={placeholder}
-            className={`${className} flex-1 rounded h-[50px] basis-[50px]`}
+            className={`${className} flex-1 rounded h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500`}
             type={inputType}
             {...otherProps}
           />

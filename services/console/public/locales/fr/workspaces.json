@@ -153,6 +153,10 @@
       "description": {
         "label": "Description"
       }
+    },
+    "arguments": {
+      "title": "Arguments",
+      "description": "Spécification des paramètres pouvant être passés à votre automatisation quand elle est utilisée en tant qu'instruction d'une autre automatisation. Un formulaire sera généré conformément à la structure que vous allez spécifier ici."
     }
   },
   "apps": {
@@ -284,6 +288,24 @@
       },
       "toast_automations": "L'automatisation a bien été supprimée",
       "toast_pages": "La page a bien été supprimée"
+    }
+  },
+  "schema": {
+    "property": {
+      "edit": "Éditer",
+      "add": "Ajouter une propriété",
+      "delete": "Supprimer la propriété",
+      "name": "Nom de la propriété :",
+      "details": "Détails",
+      "items": "Éléments du tableau",
+      "required": "Requis"
+    },
+    "types": {
+      "string": "Texte",
+      "boolean": "Booléen",
+      "number": "Nombre",
+      "object": "Objet",
+      "array": "Tableau"
     }
   }
 }

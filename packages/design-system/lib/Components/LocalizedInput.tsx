@@ -75,16 +75,19 @@ export const LocalizedInput = ({
         [selectedLang]: text,
       });
     },
-    [value]
+    [value, onChange]
   );
 
-  const addLang = useCallback((lang: string) => {
-    setSelectedLang(lang);
-    if (typeof value === 'string') {
-      setValue(value, lang);
-    }
-    input.current && input.current.focus && input.current.focus();
-  }, []);
+  const addLang = useCallback(
+    (lang: string) => {
+      setSelectedLang(lang);
+      if (typeof value === 'string') {
+        setValue(value, lang);
+      }
+      input.current && input.current.focus && input.current.focus();
+    },
+    [value]
+  );
 
   const deleteLang = useCallback(
     (lang: string) => {
@@ -163,7 +166,16 @@ export const LocalizedInput = ({
         })),
       },
     ];
-  }, [value, selectedLang, deleteLang]);
+  }, [
+    value,
+    availableLangs,
+    selectedLang,
+    deleteLang,
+    deleteTooltip,
+    setLangsTitle,
+    addLangTooltip,
+    availableLangsTitle,
+  ]);
 
   return (
     <div className="flex flex-1 flex-row relative">

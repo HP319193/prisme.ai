@@ -11,19 +11,21 @@ exports[`should render 1`] = `
     onSubmit={[Function]}
   >
     <div>
-      automations.instruction.description
-    </div>
-    <div>
-      <div
-        className="mb-5 flex flex-1"
-      >
-        <span
-          className="flex flex-col flex flex-1"
+      <div>
+        automations.instruction.description
+      </div>
+      <div>
+        <div
+          className="mb-5 flex flex-1"
         >
-          <div
-            className="relative"
-          />
-        </span>
+          <span
+            className="flex flex-col flex flex-1"
+          >
+            <div
+              className="relative"
+            />
+          </span>
+        </div>
       </div>
     </div>
     automations.edit.save

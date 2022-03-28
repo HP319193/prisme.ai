@@ -153,6 +153,10 @@
       "description": {
         "label": "Description"
       }
+    },
+    "arguments": {
+      "title": "Arguments",
+      "description": "Specification of the parameters that can be passed to your automation when it is used as a statement of another automation. A form will be generated according to the structure you specify here."
     }
   },
   "apps": {

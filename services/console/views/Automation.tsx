@@ -18,6 +18,7 @@ import { usePrevious } from '../utils/usePrevious';
 import { Schema } from '../components/SchemaForm/types';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import EditDetails from '../layouts/EditDetails';
+import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
@@ -64,12 +65,15 @@ export const Automation = () => {
         description: {
           'ui:widget': 'textarea',
           title: t('automations.details.description.label'),
-          'ui:options': { rows: 10, localizedText: true },
+          'ui:options': { rows: 6, localizedText: true },
+        },
+        arguments: {
+          'ui:widget': ArgumentsEditor,
         },
       },
       'ui:options': {
         layout: 'columns',
-        columns: [['slug', 'name'], ['description']],
+        lines: [[['slug', 'name'], ['description']], ['arguments']],
       },
     }),
     [t]
@@ -151,13 +155,27 @@ export const Automation = () => {
       slug,
       name,
       description,
+      arguments: args,
     }: {
       slug: string;
       name: Prismeai.LocalizedText;
       description: Prismeai.LocalizedText;
+      arguments: Prismeai.Automation['arguments'];
     }) => {
       const { slug: prevSlug } = value;
-      const newValue = { ...value, name, slug, description };
+      const cleanedArguments =
+        args &&
+        Object.keys(args).reduce(
+          (prev, key) => (key ? { ...prev, [key]: args[key] } : prev),
+          {}
+        );
+      const newValue = {
+        ...value,
+        name,
+        slug,
+        description,
+        arguments: cleanedArguments,
+      };
       setValue(newValue);
       automationDidChange.current = false;
       await saveAutomation.current(`${automationId}`, newValue);

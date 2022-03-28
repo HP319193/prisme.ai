@@ -19,9 +19,15 @@ export interface CollapseProps {
   className?: string;
   light?: boolean;
   icon?: AntdCollapseProps['expandIcon'];
+  expandIconPosition?: AntdCollapseProps['expandIconPosition'];
 }
 
-const Collapse = ({ items, light, icon }: CollapseProps) => {
+const Collapse = ({
+  items,
+  light,
+  icon,
+  expandIconPosition = 'right',
+}: CollapseProps) => {
   const prevClicked = useRef<string[]>([]);
   const click = useCallback(
     (key: string | string[]) => {
@@ -45,7 +51,7 @@ const Collapse = ({ items, light, icon }: CollapseProps) => {
     <AntdCollapse
       bordered={false}
       expandIcon={icon}
-      expandIconPosition="right"
+      expandIconPosition={expandIconPosition}
       onChange={click}
       className={
         light

@@ -1,7 +1,8 @@
-import { Input, LocalizedInput, TextArea } from '@prisme.ai/design-system';
+import { Input, TextArea } from '@prisme.ai/design-system';
 import { LocalizedInputProps } from '@prisme.ai/design-system/lib/Components/LocalizedInput';
-import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
+import LocalizedInput from '../LocalizedInput';
+import { Schema } from './types';
 
 interface InputWrapperProps {
   id: string;
@@ -10,9 +11,9 @@ interface InputWrapperProps {
   className: string;
   value: string;
   onChange: LocalizedInputProps['onChange'];
-  component?: string;
-  componentOptions: any;
-  pattern?: string;
+  component?: Schema['ui:widget'];
+  componentOptions: Schema['ui:options'];
+  pattern?: Schema['pattern'];
 }
 
 export const InputWrapper = ({
@@ -23,7 +24,6 @@ export const InputWrapper = ({
   type,
   ...props
 }: InputWrapperProps) => {
-  const { t } = useTranslation('workspaces');
   const Component = useMemo(() => {
     switch (component) {
       case 'textarea':
@@ -46,16 +46,6 @@ export const InputWrapper = ({
           pattern,
           inputType: type,
         }}
-        availableLangsTitle={t('languages.available.title')}
-        setLangsTitle={t('languages.set.title')}
-        addLangTooltip={t('languages.add.tooltip', {
-          lang: '{{lang}}',
-          interpolation: {
-            maxReplaces: 0,
-          },
-        })}
-        deleteTooltip={t('languages.delete.tooltip')}
-        setLangTooltip={t('languages.set.tooltip')}
         iconMarginTop={17}
       />
     );
