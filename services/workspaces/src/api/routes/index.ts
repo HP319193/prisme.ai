@@ -25,9 +25,8 @@ export const init = (
     initAppInstances(workspacesStorage, appsStorage)
   );
   app.use(`${root}/apps`, initApps(workspacesStorage, appsStorage));
-  app.use(
-    `${root}/workspaces/:workspaceId/pages`,
-    initPages(workspacesStorage, appsStorage)
-  );
+  const pages = initPages(workspacesStorage, appsStorage);
+  app.use(`${root}/workspaces/:workspaceId/pages`, pages);
+  app.use(`${root}/pages`, pages);
 };
 export default init;

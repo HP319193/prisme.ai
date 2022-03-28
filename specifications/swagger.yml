@@ -1481,7 +1481,7 @@ paths:
             type: string
         - name: 'id'
           in: 'path'
-          description: 'Page slug'
+          description: 'Page id'
           required: true
           schema:
             type: string
@@ -1525,7 +1525,7 @@ paths:
             type: string
         - name: 'id'
           in: 'path'
-          description: 'Page slug'
+          description: 'Page id'
           required: true
           schema:
             type: string
@@ -1582,7 +1582,7 @@ paths:
             type: string
         - name: 'id'
           in: 'path'
-          description: 'Page slug'
+          description: 'Page id'
           required: true
           schema:
             type: string
@@ -1616,6 +1616,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
+
+  /v2/pages/{slug}:
+    get:
+      description: Fetch a page by slug
+      operationId: getPageBySlug
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'slug'
+          in: 'path'
+          description: 'Page slug'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedPage'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
 
   ## apps
   /v2/apps:

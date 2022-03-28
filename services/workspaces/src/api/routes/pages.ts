@@ -72,7 +72,10 @@ export default function init(
       params: { workspaceId, id },
       accessManager,
       broker,
-    }: Request<PrismeaiAPI.GetPage.PathParameters>,
+    }: Request<
+      PrismeaiAPI.GetPage.PathParameters &
+        PrismeaiAPI.GetPageBySlug.PathParameters
+    >,
     res: Response<PrismeaiAPI.GetPage.Responses.$200>
   ) {
     const { workspaces } = getServices({
@@ -80,7 +83,9 @@ export default function init(
       accessManager,
       broker,
     });
-    const page = await workspaces.pages.getPage(id);
+    const page = await workspaces.pages.getPage(
+      workspaceId ? id : { slug: id }
+    );
 
     // Get widgets urls from workspace and apps
     const authorizedAccessManager = await accessManager.as({

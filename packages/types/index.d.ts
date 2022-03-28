@@ -2004,6 +2004,20 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace GetPageBySlug {
+        namespace Parameters {
+            export type Slug = string;
+        }
+        export interface PathParameters {
+            slug: Parameters.Slug;
+        }
+        namespace Responses {
+            export type $200 = /* Page */ Prismeai.DetailedPage;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace GetPermissions {
         namespace Parameters {
             export type SubjectId = string;

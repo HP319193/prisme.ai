@@ -58,6 +58,11 @@ interface SubjectFieldRef<SubjectType> {
   subject: SubjectType;
 }
 
+export type FilterQuery<
+  SubjectInterface,
+  Role extends string = string
+> = mongoose.FilterQuery<Document<SubjectInterface, Role>>;
+
 export class AccessManager<
   SubjectType extends string,
   SubjectInterfaces extends { [k in SubjectType]: UserSubject },
@@ -222,9 +227,7 @@ export class AccessManager<
 
   async pullRoleFromSubject<returnType extends SubjectType>(
     subjectType: returnType,
-    query:
-      | string
-      | mongoose.FilterQuery<Document<SubjectInterfaces[returnType], Role>>
+    query: string | FilterQuery<SubjectInterfaces[returnType], Role>
   ) {
     const { permissions } = this.checkAsUser();
     const model = await this.fetch(subjectType, query);
@@ -236,9 +239,7 @@ export class AccessManager<
 
   private async fetch<returnType extends SubjectType>(
     subjectType: returnType,
-    id:
-      | string
-      | mongoose.FilterQuery<Document<SubjectInterfaces[returnType], Role>>
+    id: string | FilterQuery<SubjectInterfaces[returnType], Role>
   ): Promise<Document<SubjectInterfaces[returnType], Role> | null> {
     if (!id) {
       return null;
@@ -298,10 +299,10 @@ export class AccessManager<
 
   async get<returnType extends SubjectType>(
     subjectType: returnType,
-    id: string
+    query: string | FilterQuery<SubjectInterfaces[returnType], Role>
   ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions } = this.checkAsUser();
-    const subject = await this.fetch(subjectType, id);
+    const subject = await this.fetch(subjectType, query);
     if (!subject) {
       throw new ObjectNotFoundError();
     }

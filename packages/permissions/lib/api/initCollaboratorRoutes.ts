@@ -52,7 +52,6 @@ export function initCollaboratorRoutes<SubjectType extends string>(
       subjectType as SubjectType,
       subjectId
     );
-
     await accessManager.throwUnlessCan(
       ActionType.ManagePermissions,
       subjectType as SubjectType,
