@@ -938,7 +938,7 @@ declare namespace Prismeai {
         payload: {
             automation: {
                 slug: string;
-                name: string;
+                name: LocalizedText;
             };
         };
     }

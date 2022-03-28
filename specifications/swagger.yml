@@ -3374,7 +3374,7 @@ components:
                 slug:
                   type: string
                 name:
-                  type: string
+                  $ref: "#/components/schemas/LocalizedText"
 
     CreatedPage:
       type: object

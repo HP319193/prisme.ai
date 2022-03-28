@@ -20,9 +20,13 @@ class Automations {
 
   private generateAutomationSlug(
     workspace: Prismeai.Workspace,
-    automationName: string
+    localizedName: Prismeai.LocalizedText
   ) {
-    const base = removeDiacritics(automationName)
+    const name =
+      typeof localizedName === 'object'
+        ? localizedName[Object.keys(localizedName)[0]]
+        : (localizedName as string);
+    const base = removeDiacritics(name)
       .replace(/[^a-zA-Z0-9 _-]+/g, '')
       .trim()
       .slice(0, 20);
