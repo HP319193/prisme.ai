@@ -65,7 +65,7 @@ export const Automation = () => {
         description: {
           'ui:widget': 'textarea',
           title: t('automations.details.description.label'),
-          'ui:options': { rows: 5, localizedText: true },
+          'ui:options': { rows: 6, localizedText: true },
         },
         arguments: {
           'ui:widget': ArgumentsEditor,
@@ -73,11 +73,7 @@ export const Automation = () => {
       },
       'ui:options': {
         layout: 'columns',
-        columns: [['slug', 'name', 'description'], ['arguments']],
-      },
-      'ui:options': {
-        layout: 'columns',
-        columns: [['slug', 'name'], ['description']],
+        lines: [[['slug', 'name'], ['description']], ['arguments']],
       },
     }),
     [t]
