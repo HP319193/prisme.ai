@@ -164,7 +164,25 @@ Object {
           "onChange": [Function],
           "value": "",
         },
-        "rendered": null,
+        "rendered": Object {
+          "instance": null,
+          "nodeType": "component",
+          "props": Object {
+            "InputProps": Object {
+              "label": "title",
+            },
+            "addLangTooltip": "languages.add.tooltip",
+            "availableLangsTitle": "languages.available.title",
+            "deleteTooltip": "languages.delete.tooltip",
+            "iconMarginTop": 17,
+            "onChange": [Function],
+            "setLangTooltip": "languages.set.tooltip",
+            "setLangsTitle": "languages.set.title",
+            "value": "",
+          },
+          "rendered": null,
+          "type": [Function],
+        },
         "type": [Function],
       },
       Object {
@@ -178,7 +196,25 @@ Object {
           "onChange": [Function],
           "value": "",
         },
-        "rendered": null,
+        "rendered": Object {
+          "instance": null,
+          "nodeType": "component",
+          "props": Object {
+            "InputProps": Object {
+              "label": "description",
+            },
+            "addLangTooltip": "languages.add.tooltip",
+            "availableLangsTitle": "languages.available.title",
+            "deleteTooltip": "languages.delete.tooltip",
+            "iconMarginTop": 17,
+            "onChange": [Function],
+            "setLangTooltip": "languages.set.tooltip",
+            "setLangsTitle": "languages.set.title",
+            "value": "",
+          },
+          "rendered": null,
+          "type": [Function],
+        },
         "type": [Function],
       },
       Object {
@@ -330,6 +366,7 @@ Object {
               "props": Object {
                 "children": Array [
                   <Collapse
+                    expandIconPosition="left"
                     items={
                       Array [
                         Object {
@@ -350,6 +387,7 @@ Object {
                           </div>,
                           "label": <div
                             className="relative flex flex-1"
+                            onClick={[Function]}
                           >
                             <Input
                               containerClassName="flex flex-1"
@@ -390,6 +428,7 @@ Object {
                           </div>,
                           "label": <div
                             className="relative flex flex-1"
+                            onClick={[Function]}
                           >
                             <Input
                               containerClassName="flex flex-1"
@@ -430,6 +469,7 @@ Object {
                           </div>,
                           "label": <div
                             className="relative flex flex-1"
+                            onClick={[Function]}
                           >
                             <Input
                               containerClassName="flex flex-1"
@@ -487,6 +527,7 @@ Object {
                           </div>,
                           "label": <div
                             className="relative flex flex-1"
+                            onClick={[Function]}
                           >
                             <Input
                               containerClassName="flex flex-1"
@@ -518,13 +559,14 @@ Object {
                     schema.property.add
                   </Button>,
                 ],
-                "className": "flex flex-1 flex-col",
+                "className": "flex flex-1 flex-col mt-[1rem] centered-collapse",
               },
               "rendered": Array [
                 Object {
                   "instance": null,
                   "nodeType": "component",
                   "props": Object {
+                    "expandIconPosition": "left",
                     "items": Array [
                       Object {
                         "content": <div>
@@ -544,6 +586,7 @@ Object {
                         </div>,
                         "label": <div
                           className="relative flex flex-1"
+                          onClick={[Function]}
                         >
                           <Input
                             containerClassName="flex flex-1"
@@ -584,6 +627,7 @@ Object {
                         </div>,
                         "label": <div
                           className="relative flex flex-1"
+                          onClick={[Function]}
                         >
                           <Input
                             containerClassName="flex flex-1"
@@ -624,6 +668,7 @@ Object {
                         </div>,
                         "label": <div
                           className="relative flex flex-1"
+                          onClick={[Function]}
                         >
                           <Input
                             containerClassName="flex flex-1"
@@ -681,6 +726,7 @@ Object {
                         </div>,
                         "label": <div
                           className="relative flex flex-1"
+                          onClick={[Function]}
                         >
                           <Input
                             containerClassName="flex flex-1"

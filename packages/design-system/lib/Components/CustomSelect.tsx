@@ -66,7 +66,7 @@ export const CustomSelect = ({
           return (
             <Fragment key={`${parent}-${index}--`}>
               <Menu.Divider />
-              <Menu.Item key={`${parent}-${index}`} className="font-bold">
+              <Menu.Item key={`${parent}-${index}`} className="!font-bold">
                 {item.label}
               </Menu.Item>
               {renderOptions(item.options, `${parent}-${index}`)}
@@ -79,7 +79,10 @@ export const CustomSelect = ({
         return (
           <Menu.Item
             key={`${parent}-${index}`}
-            onClick={() => onChange(option.value)}
+            onClick={() => {
+              onChange(option.value);
+              setSearch('');
+            }}
           >
             {option.label}
           </Menu.Item>
