@@ -16,6 +16,7 @@ const DatePicker = ({
   stringOnChange,
   value,
   onChange,
+  className,
   ...props
 }: DatePickerProps & AntdDatePickerProps) => {
   const _value = stringValue ? moment(stringValue) : value;
@@ -31,6 +32,7 @@ const DatePicker = ({
       format={dateFormat}
       value={_value}
       onChange={_onChange}
+      className={`h-[50px] ${className}`}
       {...props}
     />
   );
