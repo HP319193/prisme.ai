@@ -1,6 +1,7 @@
-import { LocalizedInput, Select, Switch } from '@prisme.ai/design-system';
+import { Select, Switch } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
+import LocalizedInput from '../LocalizedInput';
 import { Schema, types } from '../SchemaForm/types';
 import Properties from './Properties';
 

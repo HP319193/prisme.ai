@@ -166,7 +166,16 @@ export const LocalizedInput = ({
         })),
       },
     ];
-  }, [value, selectedLang, deleteLang]);
+  }, [
+    value,
+    availableLangs,
+    selectedLang,
+    deleteLang,
+    deleteTooltip,
+    setLangsTitle,
+    addLangTooltip,
+    availableLangsTitle,
+  ]);
 
   return (
     <div className="flex flex-1 flex-row relative">
