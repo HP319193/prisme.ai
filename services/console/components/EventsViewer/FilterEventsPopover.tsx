@@ -3,10 +3,14 @@ import { FilterOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Form from '../SchemaForm/Form';
+import { useState } from 'react';
 
-const FilterEvents = () => {
+interface FilterEventsProps {
+  onSubmit: () => void;
+}
+
+const FilterEvents = ({ onSubmit }: FilterEventsProps) => {
   const { t } = useTranslation('workspaces');
-  const { t: commonT } = useTranslation('common');
   const { updateFilters } = useWorkspace();
 
   return (
@@ -47,7 +51,10 @@ const FilterEvents = () => {
             },
           },
         }}
-        onSubmit={updateFilters}
+        onSubmit={(value) => {
+          updateFilters(value);
+          onSubmit();
+        }}
         submitLabel={t('events.filters.submit')}
       />
     </div>
@@ -56,10 +63,17 @@ const FilterEvents = () => {
 
 const FilterEventsPopover = () => {
   const { t } = useTranslation('workspaces');
+  const [filterVisible, setFilterVisible] = useState(false);
 
   return (
-    <Popover content={() => <FilterEvents />} title={t('events.filters.title')}>
-      <Button key="filter">
+    <Popover
+      onVisibleChange={() => setFilterVisible(!filterVisible)}
+      content={() => <FilterEvents onSubmit={() => setFilterVisible(false)} />}
+      title={t('events.filters.title')}
+      visible={filterVisible}
+      trigger="click"
+    >
+      <Button key="filter" onClick={() => setFilterVisible(true)}>
         <FilterOutlined />
         {t('events.filters.title')}
       </Button>

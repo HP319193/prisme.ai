@@ -17,7 +17,6 @@ import usePages from '../../components/PagesProvider/context';
 import { useApps } from '../../components/AppsProvider';
 import debounce from 'lodash/debounce';
 import { usePrevious } from '../../utils/usePrevious';
-import { EventsFilters } from '@prisme.ai/types/additional';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { Workspace } from '../../utils/api';
 
@@ -68,7 +67,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     page: 0,
     limit: PAGINATION_LIMIT,
   });
-  const prevFilters = usePrevious(filters);
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
@@ -104,21 +102,17 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [workspace]
   );
   useEffect(() => {
-    const filterIsSame = prevFilters === filters;
     const socketAlreadyInstantiatedForId =
       socket.current && socket.current.workspaceId === workspaceId;
 
-    if (!workspaceId || (filterIsSame && socketAlreadyInstantiatedForId)) {
+    if (!workspaceId || socketAlreadyInstantiatedForId) {
       return;
     }
     if (socket.current) {
       socket.current.destroy();
     }
-    socket.current = api.streamEvents(workspaceId, {
-      ...filters,
-      ...pagination,
-    });
-  }, [filters, pagination, prevFilters, workspaceId]);
+    socket.current = api.streamEvents(workspaceId);
+  }, [pagination, workspaceId]);
 
   useEffect(() => {
     return () => {
