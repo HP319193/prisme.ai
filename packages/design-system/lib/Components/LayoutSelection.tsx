@@ -32,7 +32,9 @@ const ListItemWithSelection = ({
       listItemProps.onClick && listItemProps.onClick(e);
       onSelect(listItemProps.id);
     }}
-    className={`${className || ''} ${selected ? 'text-blue' : ''}`}
+    className={`!flex-initial ${className || ''} ${
+      selected ? 'text-blue' : ''
+    }`}
   />
 );
 
@@ -44,11 +46,11 @@ const LayoutSelection = ({
   onSelect,
 }: LayoutSelectionProps) => {
   return (
-    <Row className="flex grow">
-      <Col span={8}>
+    <Row className="flex grow h-full">
+      <Col span={8} className="h-full">
         <SidePanel
           children={
-            <div className="flex grow flex-col space-y-2">
+            <div className="flex w-full flex-col space-y-2 overflow-y-auto">
               {Header || null}
               {items.map((item) => (
                 <ListItemWithSelection
@@ -62,7 +64,9 @@ const LayoutSelection = ({
           }
         />
       </Col>
-      <Col span={16}>{children}</Col>
+      <Col span={16} className="h-full">
+        {children}
+      </Col>
     </Row>
   );
 };
