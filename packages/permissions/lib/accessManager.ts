@@ -380,7 +380,6 @@ export class AccessManager<
     subjectType: returnType,
     id: string
   ): Promise<void> {
-    const { permissions } = this.checkAsUser();
     const subject = await this.fetch(subjectType, id);
     if (!subject) {
       throw new ObjectNotFoundError();

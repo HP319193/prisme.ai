@@ -2,7 +2,7 @@ import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import { AccessManager, Role, SubjectType } from '../../../permissions';
 import { nanoid } from 'nanoid';
-import { FilterQuery, ObjectNotFoundError } from '@prisme.ai/permissions';
+import { FilterQuery } from '@prisme.ai/permissions';
 
 class Pages {
   private accessManager: Required<AccessManager>;
