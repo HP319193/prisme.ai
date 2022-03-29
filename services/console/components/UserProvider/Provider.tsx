@@ -5,7 +5,7 @@ import { ApiError } from '@prisme.ai/sdk';
 import { useRouter } from 'next/router';
 import Storage from '../../utils/Storage';
 
-const PUBLIC_URLS = ['/signin', '/signup'];
+const PUBLIC_URLS = ['/signin', '/signup', '/page/[pageSlug]'];
 
 export const UserProvider: FC = ({ children }) => {
   const [user, setUser] = useState<UserContext['user']>(null);
@@ -71,13 +71,20 @@ export const UserProvider: FC = ({ children }) => {
     [signin]
   );
 
-  const signout: UserContext['signout'] = useCallback(async () => {
-    api.signout();
-    setUser(null);
-    if (!PUBLIC_URLS.includes(route)) {
-      push('/');
-    }
-  }, [push, route]);
+  const signout: UserContext['signout'] = useCallback(
+    async (onServer: boolean = true) => {
+      if (onServer) {
+        try {
+          api.signout();
+        } catch {}
+      }
+      setUser(null);
+      if (!PUBLIC_URLS.includes(route)) {
+        push('/');
+      }
+    },
+    [push, route]
+  );
 
   const fetchMe = useCallback(async () => {
     setLoading(true);
@@ -86,7 +93,7 @@ export const UserProvider: FC = ({ children }) => {
       setUser(user);
       setLoading(false);
     } catch (e) {
-      signout();
+      signout(false);
       setTimeout(() => setLoading(false), 200);
     }
   }, [signout]);

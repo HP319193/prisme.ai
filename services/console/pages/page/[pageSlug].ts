@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       page,
-      ...(await serverSideTranslations(locale, ['common', 'pages'])),
+      ...(await serverSideTranslations(locale, ['common', 'sign', 'pages'])),
     },
   };
 };

@@ -43,7 +43,7 @@ export const PermissionsProvider: FC = ({ children }) => {
     PermissionsContext['usersPermissions']
   >(new Map());
   const { t } = useTranslation('errors');
-  console.log(usersPermissions);
+
   const addUserPermissions: PermissionsContext['addUserPermissions'] = useCallback(
     async (subjectType, subjectId, permissions) => {
       const backupUsersPermissions = new Map(usersPermissions);
