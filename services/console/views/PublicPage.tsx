@@ -1,5 +1,6 @@
 import { Loading } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Block from '../components/Block';
@@ -18,6 +19,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   const [currentPage, setCurrentPage] = useState<
     Prismeai.DetailedPage | null | 401
   >(page);
+  const [favicon, setFavicon] = useState('');
   const {
     isReady,
     query: { pageSlug },
@@ -28,7 +30,12 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     // Page is null because it does not exist OR because it need authentication
     const fetchPage = async () => {
       try {
-        setCurrentPage(await api.getPageBySlug(`${pageSlug}`));
+        const page = await api.getPageBySlug(`${pageSlug}`);
+        setCurrentPage(page);
+        if (!page.workspaceId) return;
+        const workspace = await api.getWorkspace(page.workspaceId);
+        if (!workspace || !workspace.photo) return;
+        setFavicon(workspace.photo);
       } catch (e) {
         setCurrentPage(401);
       }
@@ -43,12 +50,11 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   }
   return (
     <div className="page flex flex-1 flex-col m-2">
-      <h1 className="page-title font-bold">{localize(currentPage.name)}</h1>
-      {currentPage.description && (
-        <div className="page-description">
-          {localize(currentPage.description)}
-        </div>
-      )}
+      <Head>
+        <title>{localize(currentPage.name)}</title>
+        <meta name="description" content={localize(currentPage.description)} />
+        {favicon && <link rel="icon" href={favicon} />}
+      </Head>
       <div className="page-blocks">
         {currentPage.widgets.map(
           ({ name = '', appInstance = '', url = '' }, index) => (
