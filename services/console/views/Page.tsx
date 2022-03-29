@@ -136,7 +136,25 @@ export const Page = () => {
       if (!value) return;
       const newValue = { ...cleanValue(value), slug, name, description };
       setValue(newValue);
-      await savePage(workspace.id, newValue);
+      try {
+        await savePage(workspace.id, newValue);
+        notification.success({
+          message: t('pages.save.toast'),
+          placement: 'bottomRight',
+        });
+      } catch (e) {
+        const error: any = e;
+        if (error.details) {
+          notification.error({
+            message: t('pages.save.error', {
+              context: Object.keys(error.details || {})[0],
+            }),
+            placement: 'bottomRight',
+          });
+          return error.details;
+        }
+        throw e;
+      }
     },
     [cleanValue, savePage, value, workspace.id]
   );

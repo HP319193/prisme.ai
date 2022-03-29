@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Button,
   Input,
@@ -91,7 +97,10 @@ const SharePage = ({ pageId }: SharePageProps) => {
   ]);
 
   const [isPublic, setIsPublic] = useState(false);
+  const prevSubjectId = useRef('');
   useEffect(() => {
+    if (subjectId === prevSubjectId.current) return;
+    prevSubjectId.current = subjectId;
     const fetchIsPublic = async () => {
       const data = usersPermissions.get(`${subjectType}:${subjectId}`);
       if (!data) {
