@@ -44,37 +44,55 @@ export const Form: FC<FormProps> = ({
 
   const submit = useCallback(
     (values: any) => {
+      // Place the additionalProperties back to the root
+      const { additionalProperties, ...valuesWithoutAdditional } = values;
+      const valuesWithAdditional = {
+        ...valuesWithoutAdditional,
+        ...additionalProperties,
+      };
+
       let errors: Record<string, string> = {};
       if (
         !oneOf ||
         oneOf.some(({ required }) => required.every((f) => !!values[f]))
       ) {
-        const parsedValues = Object.keys(
-          schema.properties || properties
-        ).reduce((prev, attr) => {
-          const { type } = (schema.properties || properties)[attr];
-          if (type === 'object' && values[attr]) {
+        let fromKeys = {
+          ...(schema.properties || properties),
+          ...(values.additionalProperties || {}),
+        };
+
+        const parsedValues = Object.keys(fromKeys).reduce((prev, attr) => {
+          let type;
+          if (
+            Object.keys(values.additionalProperties).includes(attr) &&
+            typeof schema.additionalProperties === 'object'
+          ) {
+            type = schema.additionalProperties.type || 'string';
+          } else {
+            type = (schema.properties || properties)[attr].type;
+          }
+          if (type === 'object' && valuesWithAdditional[attr]) {
             try {
               return {
                 ...prev,
-                [attr]: JSON.parse(values[attr]),
+                [attr]: JSON.parse(valuesWithAdditional[attr]),
               };
             } catch (e) {
               return {
                 ...prev,
-                [attr]: values[attr],
+                [attr]: valuesWithAdditional[attr],
               };
             }
           }
           if (type === 'array') {
             return {
               ...prev,
-              [attr]: values[attr],
+              [attr]: valuesWithAdditional[attr],
             };
           }
           return {
             ...prev,
-            [attr]: values[attr],
+            [attr]: valuesWithAdditional[attr],
           };
         }, {});
 
@@ -135,6 +153,11 @@ export const Form: FC<FormProps> = ({
               options={schema['ui:options']}
               fields={fields}
               required={required}
+              additionalProperties={
+                typeof schema.additionalProperties !== 'boolean'
+                  ? schema.additionalProperties
+                  : undefined
+              }
             />
           </div>
           {buttons || (
