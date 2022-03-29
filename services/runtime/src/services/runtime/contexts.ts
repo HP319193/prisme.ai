@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   CONTEXT_RUN_EXPIRE_TIME,
   CONTEXT_SESSION_EXPIRE_TIME,
@@ -53,6 +54,7 @@ export enum ContextType {
   Global = 'global',
   User = 'user',
   Session = 'session',
+  Config = 'config',
   Local = 'local',
 }
 
@@ -62,6 +64,7 @@ export const UserAccessibleContexts: ContextType[] = [
   ContextType.Global,
   ContextType.User,
   ContextType.Session,
+  ContextType.Config,
 ];
 export class ContextsManager {
   private workspaceId: string;
@@ -283,7 +286,7 @@ export class ContextsManager {
     try {
       const { parent, lastKey, context } =
         this.findParentVariableFor(splittedPath);
-      parent[lastKey] = value;
+      parent[lastKey] = _.cloneDeep(value);
       await this.save(context);
     } catch (error) {
       this.logger.error(error);
