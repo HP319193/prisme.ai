@@ -14,7 +14,7 @@ import { uncaughtExceptionHandler } from './errors';
 import '@prisme.ai/types';
 import { initAccessManager } from './permissions';
 import DSULStorage, { DSULType } from './services/DSULStorage';
-import { autoinstallApps } from './services';
+import { autoinstallApps, syncWorkspacesWithConfigContexts } from './services';
 
 process.on('uncaughtException', uncaughtExceptionHandler);
 
@@ -47,6 +47,13 @@ setTimeout(() => {
 }, 20000); // Arbitrary 20 sec delay to make sure app API are ready
 
 const app = initAPI(accessManager, workspacesStorage, appsStorage, broker);
+
+syncWorkspacesWithConfigContexts(
+  accessManager,
+  broker,
+  workspacesStorage,
+  appsStorage
+);
 
 const httpServer = http.createServer(app);
 

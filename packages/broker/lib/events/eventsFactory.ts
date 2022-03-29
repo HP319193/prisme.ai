@@ -11,12 +11,7 @@ export interface Host {
   service: string;
 }
 
-export enum NativeTopic {
-  WorkspaceUser = 'correlationId',
-  WorkspaceId = 'workspaceId',
-}
-
-export type Topic = NativeTopic | string;
+export type Topic = string;
 export interface EventSource {
   appSlug?: string;
   appInstanceFullSlug?: string;

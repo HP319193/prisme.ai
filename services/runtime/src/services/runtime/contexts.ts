@@ -193,7 +193,10 @@ export class ContextsManager {
           contexts: {
             config,
           },
-        }
+        },
+        undefined,
+        // Current broker instance topic is normally emit's one, so we have to switch to native events topic :
+        EventType.UpdatedContexts
       );
     }
   }

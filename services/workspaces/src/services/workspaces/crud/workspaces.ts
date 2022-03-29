@@ -230,6 +230,23 @@ class Workspaces {
     return workspace;
   };
 
+  configureWorkspace = async (workspaceId: string, partialConfig: any) => {
+    const currentDSUL = await this.getWorkspace(workspaceId);
+    const updatedWorkspace = {
+      ...currentDSUL,
+      config: {
+        ...currentDSUL.config,
+        value: {
+          ...currentDSUL.config?.value,
+          ...partialConfig,
+        },
+      },
+    };
+
+    await this.updateWorkspace(workspaceId, updatedWorkspace);
+    return updatedWorkspace.config;
+  };
+
   private async processEveryDiffs(
     oldDSUL: Prismeai.DSUL,
     newDSUL: Prismeai.DSUL
