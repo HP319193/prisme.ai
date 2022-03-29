@@ -1,9 +1,50 @@
-import { Button, Popover } from '@prisme.ai/design-system';
-import { FilterOutlined } from '@ant-design/icons';
+import { Button, Collapse, Popover, Tooltip } from '@prisme.ai/design-system';
+import { FilterOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Form from '../SchemaForm/Form';
 import { useState } from 'react';
+import { CodeEditorInline } from '../CodeEditor/lazy';
+
+const QueryCollapse = ({ value, onChange }: any) => {
+  const { t } = useTranslation('workspaces');
+
+  const onCodeChange = (value: string) => {
+    if (value === '') {
+      onChange(value);
+      return;
+    }
+
+    try {
+      const parsedValue = JSON.parse(value);
+      onChange(parsedValue);
+      return;
+    } catch (e) {}
+  };
+
+  return (
+    <Collapse
+      light
+      icon={() => (
+        <Tooltip title={t('events.filters.query.description')}>
+          <InfoCircleOutlined className="text-gray" />
+        </Tooltip>
+      )}
+      items={[
+        {
+          label: t('events.filters.query.label'),
+          content: (
+            <CodeEditorInline
+              mode="json"
+              value={value}
+              onChange={onCodeChange}
+            />
+          ),
+        },
+      ]}
+    />
+  );
+};
 
 interface FilterEventsProps {
   onSubmit: () => void;
@@ -33,22 +74,17 @@ const FilterEvents = ({ onSubmit }: FilterEventsProps) => {
               title: t('events.filters.text'),
               type: 'string',
             },
-            query: {
-              type: 'object',
-              title: t('events.filters.query.label'),
-              description: t('events.filters.query.description'),
-              additionalProperties: true,
-              properties: {
-                field: {
-                  title: t('events.filters.query.field'),
-                  type: 'string',
-                },
-                value: {
-                  title: t('events.filters.query.value'),
-                  type: 'string',
-                },
-              },
-            },
+          },
+          additionalProperties: {
+            'ui:widget': QueryCollapse,
+          },
+          'ui:options': {
+            layout: 'columns',
+            lines: [
+              ['afterDate', 'beforeDate'],
+              ['text'],
+              ['additionalProperties'],
+            ],
           },
         }}
         onSubmit={(value) => {

@@ -50,7 +50,7 @@
       "beforeDate": "Until a specific date",
       "query": {
         "label": "Filter specific fields",
-        "description": "{\n  key: value,\n}",
+        "description": "An object specifying the expected value for each field, eg: {\n  \"source.workspaceId\": \"Wl4RRUN\",\n}",
         "field": "Field",
         "value": "Value"
       },

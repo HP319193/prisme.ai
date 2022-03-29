@@ -50,7 +50,7 @@
       "beforeDate": "Avant une date",
       "query": {
         "label": "Filtrer des champs spécifique",
-        "description": "{\n  clé: valeur,\n}",
+        "description": "Un objet JSON spécifiant la valeur attendue par chaque champs, par exemple : { \"source.workspaceId\": \"Wl4RRUN\",}",
         "field": "Champs",
         "value": "Valeur"
       },
