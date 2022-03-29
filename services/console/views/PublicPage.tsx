@@ -20,7 +20,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   >(page);
   const {
     isReady,
-    query: { workspaceId, pageId },
+    query: { pageSlug },
   } = useRouter();
 
   useEffect(() => {
@@ -28,13 +28,13 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     // Page is null because it does not exist OR because it need authentication
     const fetchPage = async () => {
       try {
-        setCurrentPage(await api.getPage(`${workspaceId}`, `${pageId}`));
+        setCurrentPage(await api.getPageBySlug(`${pageSlug}`));
       } catch (e) {
         setCurrentPage(401);
       }
     };
     fetchPage();
-  }, [currentPage, pageId, workspaceId]);
+  }, [currentPage, pageSlug]);
 
   if (!isReady || currentPage === null) return <Loading />;
 
@@ -64,7 +64,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
                 url={url}
                 language={language}
                 token={api.token || undefined}
-                workspaceId={`${workspaceId}`}
+                workspaceId={`${currentPage.workspaceId}`}
                 appInstance={appInstance}
               />
             </div>

@@ -97,8 +97,12 @@ export default function init(
       accessManager: authorizedAccessManager,
       broker,
     });
-    const workspace = await workspacesAsRoot.getWorkspace(workspaceId);
-    const apps = await workspacesAsRoot.appInstances.list(workspaceId);
+    const workspace = await workspacesAsRoot.getWorkspace(
+      page.workspaceId || workspaceId
+    );
+    const apps = await workspacesAsRoot.appInstances.list(
+      page.workspaceId || workspaceId
+    );
 
     const getWidgetDetails = (name: string) => {
       if (workspace.widgets && workspace.widgets[name]) {

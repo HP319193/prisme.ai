@@ -7,14 +7,14 @@ export { default } from '../../views/PublicPage';
 
 export const getServerSideProps: GetServerSideProps<
   PublicPageProps,
-  { pageId: string }
+  { pageSlug: string }
 > = async ({ locale = '', params: { pageSlug } = {} }) => {
   let page: PublicPageProps['page'] = null;
   try {
     if (!pageSlug) {
       throw new Error('nope');
     }
-    page = await api.getPage(pageSlug);
+    page = await api.getPageBySlug(pageSlug);
   } catch (e) {}
 
   return {

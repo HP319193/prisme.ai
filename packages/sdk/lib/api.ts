@@ -121,14 +121,13 @@ export class Api extends Fetcher {
     workspaceId: PrismeaiAPI.GetPage.Parameters.WorkspaceId,
     pageId: PrismeaiAPI.GetPage.Parameters.Id
   ): Promise<Prismeai.DetailedPage> {
-    const {
-      createdAt,
-      createdBy,
-      updatedAt,
-      updatedBy,
-      ...page
-    } = await this.get(`/workspaces/${workspaceId}/pages/${pageId}`);
-    return page;
+    return await this.get(`/workspaces/${workspaceId}/pages/${pageId}`);
+  }
+
+  async getPageBySlug(
+    pageSlug: PrismeaiAPI.GetPageBySlug.Parameters.Slug
+  ): Promise<Prismeai.DetailedPage> {
+    return await this.get(`/pages/${pageSlug}`);
   }
 
   async createPage(
