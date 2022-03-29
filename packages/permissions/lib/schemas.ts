@@ -84,6 +84,12 @@ export function buildFilterFieldsMethod<SubjectType extends string>(
       !permissions ||
       !permissions.can(ActionType.ManagePermissions, subjectType, object)
     ) {
+      console.log(
+        ' == ',
+        permissions
+          ? permissions.can(ActionType.ManagePermissions, subjectType, object)
+          : 'nop'
+      );
       delete object.permissions;
     }
 

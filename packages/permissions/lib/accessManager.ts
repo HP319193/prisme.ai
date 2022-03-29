@@ -473,22 +473,15 @@ export class AccessManager<
       throw new ObjectNotFoundError();
     }
 
-    const checkPermissions = () =>
-      permissions.throwUnlessCan(
-        actionType,
-        subjectType,
-        typeof subject.toJSON === 'function' ? subject.toJSON() : subject
-      );
-
-    try {
-      checkPermissions();
-    } catch (error) {
-      await this.pullRoleFromSubjectFieldRefs(
-        subjectType,
-        typeof subject.toJSON === 'function' ? subject.toJSON() : subject
-      );
-      checkPermissions();
-    }
+    await this.pullRoleFromSubjectFieldRefs(
+      subjectType,
+      typeof subject.toJSON === 'function' ? subject.toJSON() : subject
+    );
+    permissions.throwUnlessCan(
+      actionType,
+      subjectType,
+      typeof subject.toJSON === 'function' ? subject.toJSON() : subject
+    );
 
     return true;
   }
