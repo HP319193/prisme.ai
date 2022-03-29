@@ -63,11 +63,13 @@ export class Subscriptions {
         if (!event.source.workspaceId) return true;
         const subscribers = this.subscribers[event.source.workspaceId];
         (subscribers || []).forEach(
-          ({ callback, accessManager, searchOptions }) => {
-            if (
-              accessManager.can(ActionType.Read, SubjectType.Event, event) &&
-              this.matchSearchOptions(event, searchOptions)
-            ) {
+          async ({ callback, accessManager, searchOptions }) => {
+            const readable = await accessManager.can(
+              ActionType.Read,
+              SubjectType.Event,
+              event
+            );
+            if (readable && this.matchSearchOptions(event, searchOptions)) {
               callback(event);
             }
           }
@@ -107,7 +109,6 @@ export class Subscriptions {
       },
       subscriber.apiKey
     );
-    userAccessManager.pullRoleFromSubject(SubjectType.Workspace, workspaceId);
 
     this.subscribers[workspaceId].push({
       ...subscriber,

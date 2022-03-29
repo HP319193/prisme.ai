@@ -17,6 +17,7 @@ import {
   PublicAccess,
 } from '..';
 import { validateRules } from './rulesBuilder';
+import { extractObjectsByPath } from './utils';
 import {
   InvalidAPIKey,
   ObjectNotFoundError,
@@ -213,12 +214,13 @@ export class AccessManager<
     return await Promise.all(
       this.subjectFieldRefs[subjectType].map(
         async ({ subject: parentSubject, field }) => {
-          if (!subject[field]) {
+          const refValue = extractObjectsByPath(subject, field);
+          if (!refValue) {
             return Promise.resolve(true);
           }
 
           return await this.pullRoleFromSubject(parentSubject, {
-            id: subject[field],
+            id: refValue,
           });
         }
       )
@@ -278,6 +280,12 @@ export class AccessManager<
     >,
     opts?: FindOptions
   ): Promise<(SubjectInterfaces[returnType] & BaseSubject<Role>)[]> {
+    if (additionalQuery) {
+      await this.pullRoleFromSubjectFieldRefs(
+        subjectType,
+        <any>additionalQuery
+      );
+    }
     const { permissions } = this.checkAsUser();
     const Model = this.model(subjectType);
     const mongoQuery = Model.accessibleBy(permissions.ability, ActionType.Read);
@@ -449,12 +457,16 @@ export class AccessManager<
     return doc.filterFields(permissions);
   }
 
-  can<returnType extends SubjectType>(
+  async can<returnType extends SubjectType>(
     actionType: ActionType | string,
     subjectType: returnType,
     subject: SubjectInterfaces[returnType]
-  ): boolean {
+  ): Promise<boolean> {
     const { permissions } = this.checkAsUser();
+    await this.pullRoleFromSubjectFieldRefs(
+      subjectType,
+      typeof subject.toJSON === 'function' ? subject.toJSON() : subject
+    );
     return permissions.can(actionType, subjectType, subject);
   }
 
@@ -486,15 +498,18 @@ export class AccessManager<
     return true;
   }
 
-  filterSubjectsBy<returnType extends SubjectType>(
+  async filterSubjectsBy<returnType extends SubjectType>(
     actionType: ActionType | string,
     subjectType: returnType,
     subjects: SubjectInterfaces[returnType][]
-  ): SubjectInterfaces[returnType][] {
-    const { permissions } = this.checkAsUser();
-    return subjects.filter((cur) =>
-      permissions.can(actionType, subjectType, cur)
+  ): Promise<SubjectInterfaces[returnType][]> {
+    const filtered = await Promise.all(
+      subjects.map(async (cur) => {
+        const accessible = await this.can(actionType, subjectType, cur);
+        return accessible ? cur : false;
+      })
     );
+    return filtered.filter(Boolean) as SubjectInterfaces[returnType][];
   }
 
   private async pullRole(

@@ -24,15 +24,6 @@ export interface PermissionsRoutesCallbacks<SubjectType extends string> {
 }
 export function initCollaboratorRoutes<SubjectType extends string>(
   app: Router,
-  middleware: (
-    req: Request<
-      PrismeaiAPI.GetPermissions.PathParameters,
-      PrismeaiAPI.GetPermissions.Responses.$200,
-      any
-    >,
-    res: Response<PrismeaiAPI.GetPermissions.Responses.$200>,
-    next: NextFunction
-  ) => void,
   callbacks?: PermissionsRoutesCallbacks<SubjectType>
 ) {
   async function getPermissionsHandler(
@@ -172,9 +163,6 @@ export function initCollaboratorRoutes<SubjectType extends string>(
   }
 
   const baseRoute = '/v2/:subjectType/:subjectId/permissions';
-  if (middleware) {
-    app.use(`${baseRoute}`, middleware);
-  }
   app.get(`${baseRoute}`, asyncRoute(getPermissionsHandler));
   app.post(`${baseRoute}`, asyncRoute(shareHandler));
   app.delete(`${baseRoute}/:userId`, asyncRoute(revokeCollaborator));
