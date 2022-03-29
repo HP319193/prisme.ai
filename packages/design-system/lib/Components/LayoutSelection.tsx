@@ -1,24 +1,23 @@
-import { SidePanel } from '../index';
+import { Col, Row, SidePanel } from '../index';
 import { ReactNode } from 'react';
-import { SidePanelProps } from './SidePanel';
 import ListItem, { ListItemProps } from './ListItem';
 
-interface ListItemWithKey extends ListItemProps {
-  key: string;
+interface ListItemWithId extends ListItemProps {
+  id: string;
 }
 
 export interface LayoutSelectionProps {
   children: ReactNode;
-  Header: SidePanelProps['Header'];
-  items: ListItemWithKey[];
+  items: ListItemWithId[];
   selected: string;
   onSelect: (s: string) => void;
+  Header?: ReactNode;
 }
 
-interface ListItemWithSelection extends ListItemWithKey {
+interface ListItemWithSelection extends ListItemWithId {
   selected: boolean;
   onSelect: (s: string) => void;
-  key: string;
+  id: string;
 }
 
 const ListItemWithSelection = ({
@@ -31,9 +30,9 @@ const ListItemWithSelection = ({
     {...listItemProps}
     onClick={(e) => {
       listItemProps.onClick && listItemProps.onClick(e);
-      onSelect(listItemProps.key);
+      onSelect(listItemProps.id);
     }}
-    className={`${className || ''} ${selected ? 'text-blue-500' : ''}`}
+    className={`${className || ''} ${selected ? 'text-blue' : ''}`}
   />
 );
 
@@ -45,23 +44,26 @@ const LayoutSelection = ({
   onSelect,
 }: LayoutSelectionProps) => {
   return (
-    <div className="flex grow">
-      <SidePanel
-        children={
-          <div className="flex grow flex-col space-y-2">
-            {Header}
-            {items.map((item) => (
-              <ListItemWithSelection
-                {...item}
-                selected={item.key === selected}
-                onSelect={onSelect}
-              />
-            ))}
-          </div>
-        }
-      />
-      {children}
-    </div>
+    <Row className="flex grow">
+      <Col span={8}>
+        <SidePanel
+          children={
+            <div className="flex grow flex-col space-y-2">
+              {Header || null}
+              {items.map((item) => (
+                <ListItemWithSelection
+                  {...item}
+                  key={item.id}
+                  selected={item.id === selected}
+                  onSelect={onSelect}
+                />
+              ))}
+            </div>
+          }
+        />
+      </Col>
+      <Col span={16}>{children}</Col>
+    </Row>
   );
 };
 

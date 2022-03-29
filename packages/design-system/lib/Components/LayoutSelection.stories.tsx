@@ -6,7 +6,7 @@ export default {
   title: 'Components/LayoutSelection',
   component: LayoutSelection,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
   },
 };
 
@@ -20,19 +20,19 @@ export const Default = Template.bind({});
 Default.args = {
   items: [
     {
-      key: 'test1',
+      id: 'test1',
       title: 'test1',
     },
     {
-      key: 'test2',
+      id: 'test2',
       title: 'test2',
     },
     {
-      key: 'test3',
+      id: 'test3',
       title: 'test3',
     },
     {
-      key: 'test4',
+      id: 'test4',
       title: 'test4',
     },
   ],
@@ -43,19 +43,19 @@ withHeader.args = {
   Header: <div>This is a header</div>,
   items: [
     {
-      key: 'test1',
+      id: 'test1',
       title: 'test1',
     },
     {
-      key: 'test2',
+      id: 'test2',
       title: 'test2',
     },
     {
-      key: 'test3',
+      id: 'test3',
       title: 'test3',
     },
     {
-      key: 'test4',
+      id: 'test4',
       title: 'test4',
     },
   ],
