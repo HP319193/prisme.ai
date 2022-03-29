@@ -87,7 +87,7 @@ export const Form: FC<FormProps> = ({
         }
 
         if (Object.keys(errors).length === 0) {
-          onSubmit(parsedValues);
+          return onSubmit(parsedValues);
         }
       }
 

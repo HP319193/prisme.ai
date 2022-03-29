@@ -59,6 +59,7 @@
     "save": {
       "label": "Registro",
       "toast": "Se ha registrado la automatización",
+      "error_slug": "El nombre técnico ya está en uso, por favor elija otro",
       "error": "Se ha producido un error"
     },
     "endpoint": {
