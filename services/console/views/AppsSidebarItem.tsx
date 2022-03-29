@@ -14,6 +14,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import Block from '../components/Block';
@@ -43,12 +44,12 @@ const AppsSidebarItem = ({
   const { buttons } = useBlock();
 
   const [value, setValue] = useState();
+  const fetchConfig = useRef(async (slug: string) => {
+    setValue(await getAppConfig(slug));
+  });
   useEffect(() => {
-    const fetch = async () => {
-      setValue(await getAppConfig(slug));
-    };
-    fetch();
-  }, [getAppConfig, slug]);
+    fetchConfig.current(slug);
+  }, [slug]);
 
   const save = useCallback(
     (values: any) => {

@@ -35,7 +35,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
       });
       return newWorkspaces;
     });
-  }, []);
+  }, [localize]);
 
   useEffect(() => {
     if (!user) {
@@ -111,7 +111,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         return null;
       }
     },
-    [workspaces]
+    [errorT, workspaces]
   );
 
   const remove: WorkspacesContext['remove'] = useCallback(
@@ -242,11 +242,6 @@ export const WorkspacesProvider: FC = ({ children }) => {
   const uninstallApp: WorkspacesContext['uninstallApp'] = useCallback(
     async (workspaceId, slug) => {
       try {
-        const uninstalledAppInstance = await api.uninstallApp(
-          workspaceId,
-          slug
-        );
-
         const newWorkspaces = new Map(workspaces);
         const currentWorkspace = workspaces.get(workspaceId);
 
@@ -268,13 +263,15 @@ export const WorkspacesProvider: FC = ({ children }) => {
         });
 
         setWorkspaces(newWorkspaces);
+
+        await api.uninstallApp(workspaceId, slug);
+
         return { id: slug };
       } catch (e) {
         notification.error({
           message: errorT('unknown', { errorName: e }),
           placement: 'bottomRight',
         });
-        console.error(e);
         return null;
       }
     },
