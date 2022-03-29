@@ -43,7 +43,7 @@ export const PermissionsProvider: FC = ({ children }) => {
     PermissionsContext['usersPermissions']
   >(new Map());
   const { t } = useTranslation('errors');
-
+  console.log(usersPermissions);
   const addUserPermissions: PermissionsContext['addUserPermissions'] = useCallback(
     async (subjectType, subjectId, permissions) => {
       const backupUsersPermissions = new Map(usersPermissions);
@@ -91,7 +91,6 @@ export const PermissionsProvider: FC = ({ children }) => {
           subjectType,
           subjectId
         );
-        console.log(fetchedUsersPermissions);
         setUsersPermissions((usersPermissions) => {
           const newUsersPermissions = new Map(usersPermissions);
           newUsersPermissions.set(
@@ -117,7 +116,7 @@ export const PermissionsProvider: FC = ({ children }) => {
       const backupUsersPermissions = new Map(usersPermissions);
 
       // optimistic
-      setUsersPermissions(
+      setUsersPermissions((usersPermissions) =>
         removeUserFromMap(
           `${subjectType}:${subjectId}`,
           usersPermissions,
@@ -131,7 +130,7 @@ export const PermissionsProvider: FC = ({ children }) => {
           subjectId,
           userEmail
         );
-        setUsersPermissions(
+        setUsersPermissions((usersPermissions) =>
           removeUserFromMap(
             `${subjectType}:${subjectId}`,
             usersPermissions,

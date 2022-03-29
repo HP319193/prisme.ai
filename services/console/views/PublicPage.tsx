@@ -81,4 +81,6 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   );
 };
 
+PublicPage.isPublic = true;
+
 export default PublicPage;

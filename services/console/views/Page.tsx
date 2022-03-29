@@ -42,7 +42,10 @@ export const Page = () => {
     setShare({
       label: t('pages.share.label'),
       component: () => (
-        <SharePage pageId={`${(page && page.slug) || pageId}`} />
+        <SharePage
+          pageId={`${pageId}`}
+          pageSlug={(page && page.slug) || `${pageId}`}
+        />
       ),
     });
 
@@ -158,7 +161,7 @@ export const Page = () => {
         throw e;
       }
     },
-    [cleanValue, savePage, value, workspace.id]
+    [cleanValue, savePage, t, value, workspace.id]
   );
 
   if (!page) {

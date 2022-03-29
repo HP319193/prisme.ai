@@ -18,6 +18,7 @@ const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
+  isPublic?: boolean;
 };
 
 type AppPropsWithLayout = AppProps & {
@@ -26,7 +27,17 @@ type AppPropsWithLayout = AppProps & {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
+  const isPublic = Component.isPublic;
   const { t } = useTranslation('common');
+
+  if (isPublic) {
+    return (
+      <>
+        <Sentry />
+        {getLayout(<Component {...pageProps} />)}
+      </>
+    );
+  }
 
   return (
     <UserProvider>

@@ -20,7 +20,6 @@ import { useTranslation } from 'react-i18next';
 import FieldContainer from '../../layouts/Field';
 import { usePermissions } from '../PermissionsProvider';
 import { DeleteOutlined, LinkOutlined } from '@ant-design/icons';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import getConfig from 'next/config';
 
 const {
@@ -29,13 +28,14 @@ const {
 
 interface SharePageProps {
   pageId: string;
+  pageSlug: string;
 }
 
 interface userPermissionForm {
   email: string;
 }
 
-const SharePage = ({ pageId }: SharePageProps) => {
+const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
   const {
@@ -96,25 +96,21 @@ const SharePage = ({ pageId }: SharePageProps) => {
   ]);
 
   const [isPublic, setIsPublic] = useState(false);
-  const prevSubjectId = useRef('');
   useEffect(() => {
-    if (subjectId === prevSubjectId.current) return;
-    prevSubjectId.current = subjectId;
-    const fetchIsPublic = async () => {
-      const data = usersPermissions.get(`${subjectType}:${subjectId}`);
-      if (!data) {
-        return setIsPublic(false);
-      }
-      setIsPublic(!!data.find(({ public: p }) => p));
-    };
-    fetchIsPublic();
+    const data = usersPermissions.get(`${subjectType}:${subjectId}`);
+    if (!data) {
+      return setIsPublic(false);
+    }
+    setIsPublic(!!data.find(({ public: p }) => p));
   }, [subjectId, usersPermissions]);
+
   const togglePublic = useCallback(
     async (isPublic: boolean) => {
       setIsPublic(isPublic);
       if (isPublic) {
         await addUserPermissions('pages', subjectId, {
           public: true,
+          policies: { read: true },
         });
       } else {
         await removeUserPermissions('pages', subjectId, '*');
@@ -124,10 +120,13 @@ const SharePage = ({ pageId }: SharePageProps) => {
   );
 
   const onSubmit = ({ email }: userPermissionForm) => {
-    addUserPermissions(subjectType, subjectId, { email });
+    addUserPermissions(subjectType, subjectId, {
+      email,
+      policies: { read: true },
+    });
   };
 
-  const link = `${PAGES_HOST}/${pageId}`;
+  const link = `${PAGES_HOST}/${pageSlug}`;
   const copyLink = useCallback(() => {
     window.navigator.clipboard.writeText(link);
     notification.success({
