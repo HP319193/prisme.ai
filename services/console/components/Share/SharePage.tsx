@@ -44,7 +44,6 @@ const SharePage = ({ pageId }: SharePageProps) => {
     addUserPermissions,
     removeUserPermissions,
   } = usePermissions();
-  const { workspace } = useWorkspace();
   const subjectType = 'pages';
   const subjectId = `${pageId}`;
 
@@ -128,7 +127,7 @@ const SharePage = ({ pageId }: SharePageProps) => {
     addUserPermissions(subjectType, subjectId, { email });
   };
 
-  const link = `${PAGES_HOST}/${workspace.id}/${pageId}`;
+  const link = `${PAGES_HOST}/${pageId}`;
   const copyLink = useCallback(() => {
     window.navigator.clipboard.writeText(link);
     notification.success({

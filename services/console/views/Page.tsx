@@ -41,13 +41,15 @@ export const Page = () => {
   useEffect(() => {
     setShare({
       label: t('pages.share.label'),
-      component: () => <SharePage pageId={`${pageId}`} />,
+      component: () => (
+        <SharePage pageId={`${(page && page.slug) || pageId}`} />
+      ),
     });
 
     return () => {
       setShare(undefined);
     };
-  }, [commonT, pageId, setShare, t]);
+  }, [commonT, page, pageId, setShare, t]);
 
   useEffect(() => {
     if (!page) return;
