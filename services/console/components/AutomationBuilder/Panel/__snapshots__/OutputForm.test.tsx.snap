@@ -12,7 +12,7 @@ exports[`should render 1`] = `
     >
       automations.output.edit.title
       <div
-        className="mb-5 "
+        className="m-2 mb-5 flex-grow "
       >
         <span
           className="flex flex-col "

@@ -19,14 +19,14 @@ exports[`should have error 1`] = `
       onSubmit={[Function]}
     >
       <div
-        className="mb-5 "
+        className="m-2 mb-5 flex-grow "
       >
         <span
           className="flex flex-col "
         />
       </div>
       <div
-        className="mb-5 "
+        className="m-2 mb-5 flex-grow "
       >
         <span
           className="flex flex-col "
@@ -57,14 +57,14 @@ exports[`should load 1`] = `
       onSubmit={[Function]}
     >
       <div
-        className="mb-5 "
+        className="m-2 mb-5 flex-grow "
       >
         <span
           className="flex flex-col "
         />
       </div>
       <div
-        className="mb-5 "
+        className="m-2 mb-5 flex-grow "
       >
         <span
           className="flex flex-col "
@@ -95,14 +95,14 @@ exports[`should render 1`] = `
       onSubmit={[Function]}
     >
       <div
-        className="mb-5 "
+        className="m-2 mb-5 flex-grow "
       >
         <span
           className="flex flex-col "
         />
       </div>
       <div
-        className="mb-5 "
+        className="m-2 mb-5 flex-grow "
       >
         <span
           className="flex flex-col "

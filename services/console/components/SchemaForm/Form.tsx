@@ -64,7 +64,7 @@ export const Form: FC<FormProps> = ({
         const parsedValues = Object.keys(fromKeys).reduce((prev, attr) => {
           let type;
           if (
-            Object.keys(values.additionalProperties).includes(attr) &&
+            Object.keys(values.additionalProperties || {}).includes(attr) &&
             typeof schema.additionalProperties === 'object'
           ) {
             type = schema.additionalProperties.type || 'string';
