@@ -127,7 +127,8 @@ class Automations {
       }
       if (automation.slug in workspace.automations) {
         throw new AlreadyUsedError(
-          `Automation slug '${automation.slug}' is already used by another automation of your workspace !`
+          `Automation slug '${automation.slug}' is already used by another automation of your workspace !`,
+          { slug: 'AlreadyUsedError' }
         );
       }
 

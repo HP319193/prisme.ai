@@ -19,6 +19,7 @@ import { Schema } from '../components/SchemaForm/types';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import EditDetails from '../layouts/EditDetails';
 import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
+import { ApiError } from '../utils/api';
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
@@ -84,9 +85,6 @@ export const Automation = () => {
       setSaving(true);
       try {
         const saved = await updateAutomation(automationId, automation);
-        if (!saved) {
-          throw new Error('not saved');
-        }
         notification.success({
           message: t('automations.save.toast'),
           placement: 'bottomRight',
@@ -94,12 +92,15 @@ export const Automation = () => {
         setSaving(false);
         return saved;
       } catch (e) {
+        const { details } = e as ApiError;
         notification.error({
-          message: t('automations.save.error'),
+          message: t('automations.save.error', {
+            context: Object.keys(details || {})[0],
+          }),
           placement: 'bottomRight',
         });
         setSaving(false);
-        return null;
+        throw details;
       }
     }
   );
@@ -178,11 +179,15 @@ export const Automation = () => {
       };
       setValue(newValue);
       automationDidChange.current = false;
-      await saveAutomation.current(`${automationId}`, newValue);
-      if (prevSlug === slug) return;
-      replace(`/workspaces/${workspace.id}/automations/${slug}`, undefined, {
-        shallow: true,
-      });
+      try {
+        await saveAutomation.current(`${automationId}`, newValue);
+        if (prevSlug === slug) return;
+        replace(`/workspaces/${workspace.id}/automations/${slug}`, undefined, {
+          shallow: true,
+        });
+      } catch (e) {
+        return e as Record<string, string>;
+      }
     },
     [automationId, replace, value, workspace.id]
   );

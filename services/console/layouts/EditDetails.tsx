@@ -13,7 +13,7 @@ import useLocalizedText from '../utils/useLocalizedText';
 interface EditDetailsprops {
   schema: Schema;
   value: any;
-  onSave: (values: any) => void;
+  onSave: (values: any) => Promise<void | Record<string, string>>;
   onDelete: () => void;
   context?: string;
 }
@@ -60,9 +60,13 @@ export const EditDetails = ({
         <>
           <Form
             schema={schema}
-            onSubmit={(values) => {
-              onSave(values);
-              setVisible(false);
+            onSubmit={async (values) => {
+              const errors = await onSave(values);
+              if (!errors || Object.keys(errors).length === 0) {
+                setVisible(false);
+                return;
+              }
+              return errors;
             }}
             initialValues={value}
             formFieldsClassName="max-h-[75vh] overflow-auto"

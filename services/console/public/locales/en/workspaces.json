@@ -59,6 +59,7 @@
     "save": {
       "label": "Save",
       "toast": "Automation has been saved",
+      "error_slug": "Slug is already in use, please choose another one",
       "error": "Unknown error has occured"
     },
     "endpoint": {
