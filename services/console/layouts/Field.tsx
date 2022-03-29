@@ -29,7 +29,7 @@ export const FieldContainer: FC<FieldProps> = ({
 }) => {
   const { input, meta } = useField(name, fieldProps);
   return (
-    <div className={`mb-5 ${containerClassName || ''}`}>
+    <div className={`m-2 mb-5 flex-grow ${containerClassName || ''}`}>
       <span className={`flex flex-col ${className || ''}`}>
         {label && (
           <label className="text-gray text-[11px]" htmlFor={name}>
