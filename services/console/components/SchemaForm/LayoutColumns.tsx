@@ -1,5 +1,4 @@
 import { Field } from './Field';
-import Layout from './Layout';
 import { Schema } from './types';
 
 interface LayoutColumnsProps {
@@ -14,6 +13,7 @@ const FieldByName = ({
   required,
 }: LayoutColumnsProps & { name: string }) => {
   const field = fields.find(({ field }) => field === name)!;
+  if (!field) return null;
   return (
     <div className="flex flex-1">
       <Field {...field} required={required.includes(field.field)} />
@@ -35,13 +35,16 @@ export const LayoutColumns = ({
           {columns.map((column, cindex) =>
             Array.isArray(column) ? (
               <div
-                key={cindex}
+                key={`${lindex}-${cindex}`}
                 className={`flex flex-1 flex-col ${
                   cindex === columns.length - 1 ? '' : 'mr-4'
                 }`}
               >
                 {column.map((name, index) => (
-                  <div key={index} className="flex">
+                  <div
+                    key={`${lindex}-${cindex}-${index}`}
+                    className="flex flex-1"
+                  >
                     <FieldByName
                       name={name}
                       fields={fields}
@@ -51,7 +54,12 @@ export const LayoutColumns = ({
                 ))}
               </div>
             ) : (
-              <FieldByName name={column} fields={fields} required={required} />
+              <FieldByName
+                key={`${lindex}-${cindex}`}
+                name={column}
+                fields={fields}
+                required={required}
+              />
             )
           )}
         </div>

@@ -20,7 +20,15 @@
       "toast": "le workspace a bien été supprimé"
     },
     "expandSidebar": "Agrandir",
-    "collapseSidebar": "Réduire"
+    "collapseSidebar": "Réduire",
+    "details": {
+      "name": {
+        "label": "Nom du Workspace"
+      },
+      "description": {
+        "label": "Description"
+      }
+    }
   },
   "create": {
     "description_first": "Créez votre premier workspace pour commencer à automatiser votre travail",
@@ -272,15 +280,18 @@
   },
   "details": {
     "title": "",
+    "title_workspaces": "Réglages du Workspace",
     "title_automations": "Réglages de l'automatisation",
     "title_pages": "Réglages de la page",
     "save": "Enregistrer",
     "delete": {
       "label": "Supprimer",
+      "label_workspaces": "Supprimer le Workspace",
       "label_automations": "Supprimer l'automatisation",
       "label_pages": "Supprimer la page",
       "confirm": {
         "title": "Voulez vous supprimer \"{{name}}\" ?",
+        "title_workspaces": "Voulez vous supprimer le Workspace \"{{name}}\" ?",
         "title_automation": "Voulez vous supprimer l'automatisation \"{{name}}\" ?",
         "title_pages": "Voulez vous supprimer la page \"{{name}}\" ?",
         "content": "Attention, les données seront perdues.",

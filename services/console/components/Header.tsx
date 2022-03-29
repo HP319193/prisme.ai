@@ -62,7 +62,7 @@ const Header = ({ title, leftContent }: HeaderProps) => {
         {leftContent && <Divider type="vertical" className="mr-4" />}
 
         {user && (
-          <Dropdown Menu={userMenu}>
+          <Dropdown Menu={userMenu} placement="bottomRight">
             <Space>
               {user.firstName}
               {user.photo && <Avatar src={user.photo} />}

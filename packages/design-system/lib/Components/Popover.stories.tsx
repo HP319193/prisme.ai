@@ -1,6 +1,7 @@
 import { Button, Popover } from '../';
 import { Story } from '@storybook/react';
 import { PopoverProps } from './Popover';
+import { useState } from 'react';
 
 export default {
   title: 'Components/Popover',
@@ -27,4 +28,24 @@ Default.args = {
   children: <Button>Click me !</Button>,
   title: 'A title !',
   placement: 'bottom',
+};
+
+export const Controlled = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <Popover
+        visible={visible}
+        title="Hello"
+        content={() => (
+          <div>
+            <div>World</div>
+            <button onClick={() => setVisible(false)}>Close</button>
+          </div>
+        )}
+      />
+      <button onClick={() => setVisible(!visible)}>Click me</button>
+    </>
+  );
 };
