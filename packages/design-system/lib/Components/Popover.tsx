@@ -6,16 +6,18 @@ import {
   ReactNode,
   SetStateAction,
   useState,
+  useEffect,
+  useCallback,
 } from 'react';
 
+type SetVisible = (visible: boolean) => void;
 export interface PopoverProps extends AntdPopoverProps {
-  children: ReactElement;
-  content: FC<{ setVisible: Dispatch<SetStateAction<boolean>> }>;
-  title:
-    | string
-    | ReactNode
-    | FC<{ setVisible: Dispatch<SetStateAction<boolean>> }>;
+  children?: ReactElement;
+  content: FC<{ setVisible: SetVisible }>;
+  title: string | ReactNode | FC<{ setVisible: SetVisible }>;
   initialVisible?: boolean;
+  visible?: boolean;
+  onVisibleChange?: (visible: boolean) => void;
 }
 
 const Popover: FC<PopoverProps> = ({
@@ -23,17 +25,32 @@ const Popover: FC<PopoverProps> = ({
   children,
   content,
   initialVisible = false,
+  visible: controlledVisible,
+  onVisibleChange,
   ...otherProps
 }) => {
   const [visible, setVisible] = useState(initialVisible);
 
+  useEffect(() => {
+    if (controlledVisible === undefined) return;
+    setVisible(controlledVisible);
+  }, [controlledVisible]);
+
+  const toggleVisible = useCallback(
+    (visible: boolean) => {
+      if (onVisibleChange) onVisibleChange(visible);
+      else setVisible(visible);
+    },
+    [onVisibleChange]
+  );
+
   return (
     <AntdPopover
-      content={() => content({ setVisible })}
+      content={() => content({ setVisible: toggleVisible })}
       title={typeof title === 'function' ? title({ setVisible }) : title}
       trigger="click"
       visible={visible}
-      onVisibleChange={setVisible}
+      onVisibleChange={(visible) => toggleVisible(visible)}
       {...otherProps}
     >
       {children}

@@ -191,7 +191,7 @@ export const Field: FC<FieldProps> = ({
     case 'string':
     case 'number':
     default:
-      const Component =
+      const Component: any =
         typeof component === 'function' ? component : InputWrapper;
 
       return (
@@ -203,7 +203,7 @@ export const Field: FC<FieldProps> = ({
           containerClassName="flex flex-1"
         >
           {({ input, className }) => (
-            <div className="relative">
+            <div className="relative flex flex-1">
               {!!description && (
                 <div className="absolute top-[-2px] right-0 text-accent">
                   <Tooltip title={localize(description)} placement="left">
@@ -220,6 +220,7 @@ export const Field: FC<FieldProps> = ({
                 type={type === 'number' ? 'number' : 'text'}
                 componentOptions={componentOptions}
                 pattern={pattern}
+                containerClassName="flex-1"
               />
             </div>
           )}

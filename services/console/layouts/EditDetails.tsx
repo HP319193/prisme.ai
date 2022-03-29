@@ -16,6 +16,8 @@ interface EditDetailsprops {
   onSave: (values: any) => void;
   onDelete: () => void;
   context?: string;
+  visible?: boolean;
+  onVisibleChange?: (visible: boolean) => void;
 }
 
 export const EditDetails = ({
@@ -24,6 +26,7 @@ export const EditDetails = ({
   onSave,
   onDelete,
   context,
+  ...props
 }: EditDetailsprops) => {
   const { t } = useTranslation('workspaces');
   const localize = useLocalizedText();
@@ -83,6 +86,7 @@ export const EditDetails = ({
         </>
       )}
       overlayClassName="min-w-[50%]"
+      {...props}
     >
       <SettingOutlined />
     </Popover>
