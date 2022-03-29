@@ -24,9 +24,10 @@ export async function runCustomAutomation(
   workspace: Workspace,
   instruction: any,
   ctx: ContextsManager,
-  logger: Logger,
-  broker: Broker,
-  executeAutomation: (automation: DetailedAutomation, ctx: any) => Promise<void>
+  executeAutomation: (
+    automation: DetailedAutomation,
+    payload: any
+  ) => Promise<void>
 ) {
   const automationName = Object.keys(instruction)[0];
   if (!automationName) {
@@ -41,20 +42,7 @@ export async function runCustomAutomation(
   }
 
   const payload = instruction[automationName] || {};
-  const result = await executeAutomation(
-    calledAutomation,
-    // ctx
-    ctx.child(
-      {
-        config: calledAutomation.workspace.config,
-      },
-      {
-        // If we do not reinstantiate payload, writting to local context might mutate this payload (& produces output-related errors)
-        payload: { ...payload },
-        appContext: calledAutomation.workspace?.appContext,
-      }
-    )
-  );
+  const result = await executeAutomation(calledAutomation, payload);
   if (typeof result !== 'undefined' && (<any>payload).output!!) {
     ctx.set((<any>payload).output, result);
   }
@@ -116,8 +104,6 @@ export async function runInstruction(
         workspace,
         instruction,
         ctx,
-        logger,
-        broker,
         executeAutomation
       );
   }
