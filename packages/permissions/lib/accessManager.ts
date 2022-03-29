@@ -79,6 +79,7 @@ export class AccessManager<
   private permissions?: Permissions<SubjectType, Role>;
   public user?: User<Role>;
   private subjectFieldRefs: Record<SubjectType, SubjectFieldRef<SubjectType>[]>;
+  private alreadyPulledSubjectFieldRefs: Set<any>;
 
   constructor(
     opts: AccessManagerOptions<SubjectType>,
@@ -131,6 +132,7 @@ export class AccessManager<
       };
     }, {} as Record<SubjectType, AccessibleRecordModel<Document<any, Role>>>);
 
+    this.alreadyPulledSubjectFieldRefs = new Set();
     this.subjectFieldRefs = this.buildSubjectFieldRefs(permissionsConfig);
   }
 
@@ -163,7 +165,10 @@ export class AccessManager<
           (fieldRefs, cur) => ({
             ...fieldRefs,
             [cur.subject]: [
-              { subject: parentSubject, field: cur.field },
+              {
+                subject: parentSubject,
+                field: cur.field,
+              },
               ...(subjectFieldRefs[cur.subject as SubjectType] || []),
             ].filter(
               (cur, idx, arr) =>
@@ -194,6 +199,7 @@ export class AccessManager<
           ...user,
           role: user.role || 'guest',
         },
+        alreadyPulledSubjectFieldRefs: new Set(),
       });
     Object.setPrototypeOf(child, AccessManager.prototype);
 
@@ -215,10 +221,10 @@ export class AccessManager<
       this.subjectFieldRefs[subjectType].map(
         async ({ subject: parentSubject, field }) => {
           const refValue = extractObjectsByPath(subject, field);
-          if (!refValue) {
+          if (!refValue || this.alreadyPulledSubjectFieldRefs.has(refValue)) {
             return Promise.resolve(true);
           }
-
+          this.alreadyPulledSubjectFieldRefs.add(refValue);
           return await this.pullRoleFromSubject(parentSubject, {
             id: refValue,
           });
@@ -503,6 +509,8 @@ export class AccessManager<
     subjectType: returnType,
     subjects: SubjectInterfaces[returnType][]
   ): Promise<SubjectInterfaces[returnType][]> {
+    await this.pullRoleFromSubjectFieldRefs(subjectType, subjects[0]);
+
     const filtered = await Promise.all(
       subjects.map(async (cur) => {
         const accessible = await this.can(actionType, subjectType, cur);
