@@ -145,6 +145,13 @@ const ShareWorkspacePopover = ({
   ]);
 
   const onSubmit = ({ email, role }: userPermissionForm) => {
+    if (email === user.email) {
+      notification.warning({
+        message: t('share.notme'),
+        placement: 'bottomRight',
+      });
+      return;
+    }
     addUserPermissions(subjectType, subjectId, { email, role });
   };
 

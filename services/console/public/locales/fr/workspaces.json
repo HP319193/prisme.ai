@@ -262,7 +262,8 @@
       "owner": "Administrateur",
       "editor": "Editeur"
     },
-    "leave": "Vous n'avez plus accès au Workspace {{name}}."
+    "leave": "Vous n'avez plus accès au Workspace {{name}}.",
+    "notme": "Vous êtes déjà le propriétaire de ce Workspace."
   },
   "languages": {
     "add": {

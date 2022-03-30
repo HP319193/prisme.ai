@@ -20,7 +20,15 @@
       "toast": "Se ha eliminado la espacio de trabajo"
     },
     "expandSidebar": "Expandir",
-    "collapseSidebar": "Contraer"
+    "collapseSidebar": "Contraer",
+    "details": {
+      "name": {
+        "label": "Nombre del espacio de trabajo"
+      },
+      "description": {
+        "label": "Descripción"
+      }
+    }
   },
   "create": {
     "description_first": "Cree su primer espacio de trabajo para empezar a automatizar su trabajo",
@@ -254,7 +262,8 @@
       "owner": "Owner",
       "editor": "Editor"
     },
-    "leave": "Ya no tienes acceso al espacio de trabajo de {{name}}."
+    "leave": "Ya no tienes acceso al espacio de trabajo de {{name}}.",
+    "notme": "Usted ya es el propietario de este espacio de trabajo."
   },
   "languages": {
     "add": {
@@ -273,15 +282,18 @@
   },
   "details": {
     "title": "",
+    "title_workspaces": "Ajustes del espacio de trabajo",
     "title_automations": "Ajustes de la automatización",
     "title_pages": "Configuración de la página",
     "save": "Registro",
     "delete": {
       "label": "Eliminar",
+      "label_workspaces": "Eliminar el espacio de trabajo",
       "label_automations": "Eliminar la automatización",
       "label_pages": "Eliminar la página",
       "confirm": {
         "title": "¿Desea eliminar \"{{name}}\"?",
+        "title_workspaces": "¿Desea eliminar el espacio de trabajo \"{{name}}\"?",
         "title_automation": "¿Desea eliminar la automatización \"{{name}}\"?",
         "title_pages": "¿Desea eliminar la páginas\"{{name}}\"?",
         "content": "Cuidado, los datos se perderán.",
@@ -290,6 +302,24 @@
       },
       "toast_automations": "Se ha eliminado la automatización",
       "toast_pages": "Se ha eliminado la página"
+    }
+  },
+  "schema": {
+    "property": {
+      "edit": "Editar",
+      "add": "Añadir una propiedad",
+      "delete": "Eliminar la propiedad",
+      "name": "Nombre de la propiedad :",
+      "details": "Detalles",
+      "items": "Elementos de la mesa",
+      "required": "Requerido"
+    },
+    "types": {
+      "string": "Texto",
+      "boolean": "Booleano",
+      "number": "Número",
+      "object": "Objeto",
+      "array": "Cuadro"
     }
   }
 }
