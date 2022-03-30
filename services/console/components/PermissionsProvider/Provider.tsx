@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next';
 import isEqual from 'lodash/isEqual';
 import { notification } from '@prisme.ai/design-system';
 import context, { PermissionsContext } from './context';
-import api from '../../utils/api';
+import api, { ApiError } from '../../utils/api';
 
 type UserPermissions = Prismeai.UserPermissions;
-type SubjectType = PrismeaiAPI.GetPermissions.Parameters.SubjectType;
 
 const addUserToMap = (
   subjectId: string,
@@ -75,7 +74,7 @@ export const PermissionsProvider: FC = ({ children }) => {
         return fetchedUserPermissions;
       } catch (e) {
         notification.error({
-          message: t('unknown', { errorName: e }),
+          message: t('share', { context: (e as ApiError).error }),
           placement: 'bottomRight',
         });
 

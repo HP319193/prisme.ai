@@ -1,4 +1,6 @@
 {
   "404": "Cette page n'existe pas. Revenez à l'accueil.",
-  "unknown": "Une erreur est survenue: \"{{errorName}}\""
+  "unknown": "Une erreur est survenue: \"{{errorName}}\"",
+  "share": "Une erreur est survenue",
+  "share_CollaboratorNotFound": "Cet email ne correspond à aucun utilisateur existant."
 }

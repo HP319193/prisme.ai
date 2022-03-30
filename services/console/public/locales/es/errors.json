@@ -1,4 +1,6 @@
 {
   "404": "Esta página no existe. Volver a la página de inicio.",
-  "unknown": "Se ha producido un error: \"{{errorName}}\""
+  "unknown": "Se ha producido un error: \"{{errorName}}\"",
+  "share": "Se ha producido un error",
+  "share_CollaboratorNotFound": "Este correo electrónico no corresponde a ningún usuario existente."
 }

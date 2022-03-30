@@ -20,7 +20,15 @@
       "toast": "Workspace has been deleted"
     },
     "expandSidebar": "Expand",
-    "collapseSidebar": "Collapse"
+    "collapseSidebar": "Collapse",
+    "details": {
+      "name": {
+        "label": "Workspace name"
+      },
+      "description": {
+        "label": "Description"
+      }
+    }
   },
   "create": {
     "description_first": "Create your first workspace to start automating your work",
@@ -254,7 +262,8 @@
       "owner": "Owner",
       "editor": "Editor"
     },
-    "leave": "You no longer have access to the {{name}} Workspace."
+    "leave": "You no longer have access to the {{name}} Workspace.",
+    "notme": "You are already the owner of this Workspace."
   },
   "languages": {
     "add": {
@@ -273,15 +282,18 @@
   },
   "details": {
     "title": "",
+    "title_workspaces": "Workspace settings",
     "title_automations": "Automation settings",
     "title_pages": "Page settings",
     "save": "Save",
     "delete": {
       "label": "Delete",
+      "label_workspaces": "Delete Workspace",
       "label_automations": "Delete automation",
       "label_pages": "Delete page",
       "confirm": {
         "title": "Do you want to delete \"{{name}}\" ?",
+        "title_workspaces": "Do you want to delete the \"{{name}}\" Workspace?",
         "title_automation": "Do you want to delete the \"{{name}}\" automation?",
         "title_pages": "Do you want to delete the \"{{name}}\" page?",
         "content": "Warning, the data will be lost.",
@@ -290,6 +302,24 @@
       },
       "toast_automations": "Automation has been deleted",
       "toast_pages": "Page has been deleted"
+    }
+  },
+  "schema": {
+    "property": {
+      "edit": "Edit",
+      "add": "Add a property",
+      "delete": "Delete the property",
+      "name": "Property name:",
+      "details": "Details",
+      "items": "Array items",
+      "required": "Required"
+    },
+    "types": {
+      "string": "Text",
+      "boolean": "Boolean",
+      "number": "Number",
+      "object": "Object",
+      "array": "Array"
     }
   }
 }
