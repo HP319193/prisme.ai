@@ -14,7 +14,6 @@ export type SubjectInterfaces = {
     name: string;
     photo?: string;
     description?: Prismeai.LocalizedText;
-    slug?: string;
   };
   [SubjectType.App]: Prismeai.App;
   [SubjectType.Page]: Prismeai.Page;
@@ -39,7 +38,6 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           name: String,
           photo: String,
           description: Schema.Types.Mixed,
-          slug: { type: String, sparse: true, unique: true },
         },
         [SubjectType.App]: {
           workspaceId: { type: String, index: true },

@@ -895,7 +895,6 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         id?: string;
-        slug?: string;
     }
     export interface Delete {
         delete: {

@@ -13,9 +13,6 @@ import {
   getObjectsDifferences,
 } from '../../../utils/getObjectsDifferences';
 import { extractObjectsByPath } from '../../../utils/extractObjectsByPath';
-import { SLUG_VALIDATION_REGEXP } from '../../../../config';
-import { AlreadyUsedError, InvalidSlugError } from '../../../errors';
-import { ObjectNotFoundError } from '@prisme.ai/permissions';
 
 interface DSULDiff {
   type: DiffType;
@@ -194,52 +191,17 @@ class Workspaces {
   };
 
   getWorkspace = async (workspaceId: string) => {
-    try {
-      const { id } = await this.accessManager.get(
-        SubjectType.Workspace,
-        workspaceId
-      );
-      return await this.storage.get(id);
-    } catch (e) {
-      const [workspace] = await this.accessManager.findAll(
-        SubjectType.Workspace,
-        {
-          slug: workspaceId,
-        }
-      );
-      if (!workspace) {
-        throw new ObjectNotFoundError();
-      }
-      return await this.storage.get(workspace.id);
-    }
+    await this.accessManager.get(SubjectType.Workspace, workspaceId);
+    return await this.storage.get(workspaceId);
   };
 
   save = async (workspaceId: string, workspace: Prismeai.Workspace) => {
-    if (workspace.slug && !SLUG_VALIDATION_REGEXP.test(workspace.slug)) {
-      throw new InvalidSlugError(workspace.slug);
-    }
-    try {
-      await this.accessManager.update(SubjectType.Workspace, {
-        id: workspaceId,
-        name: workspace.name,
-        photo: workspace.photo,
-        description: workspace.description,
-        slug: workspace.slug,
-      });
-    } catch (error) {
-      if (
-        (<any>error).message &&
-        (<any>error).message.includes('duplicate key error')
-      ) {
-        throw new AlreadyUsedError(
-          `Workspace slug '${workspace.slug}' already used`,
-          {
-            slug: workspace.slug,
-          }
-        );
-      }
-      throw error;
-    }
+    await this.accessManager.update(SubjectType.Workspace, {
+      id: workspaceId,
+      name: workspace.name,
+      photo: workspace.photo,
+      description: workspace.description,
+    });
 
     await this.storage.save(workspaceId, workspace);
   };

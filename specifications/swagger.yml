@@ -2393,8 +2393,6 @@ components:
           type: string
         id:
           type: string
-        slug:
-          type: string
 
     Config:
       type: object
