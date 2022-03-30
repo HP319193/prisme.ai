@@ -83,9 +83,9 @@ export default function init(
       accessManager,
       broker,
     });
-    const page = await workspaces.pages.getPage(
-      workspaceId ? id : { slug: id }
-    );
+    const page = await workspaces.pages.getPage({
+      $or: [{ id }, { slug: id }],
+    });
 
     // Get widgets urls from workspace and apps
     const authorizedAccessManager = await accessManager.as({
