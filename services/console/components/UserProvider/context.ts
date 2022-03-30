@@ -12,7 +12,7 @@ export interface UserContext<T = Prismeai.User | null> {
     firstName: string,
     lastName: string
   ) => Promise<Prismeai.User | null>;
-  signout: (onServer: boolean) => void;
+  signout: (onServer?: boolean) => void;
 }
 
 export const userContext = createContext<UserContext>({
