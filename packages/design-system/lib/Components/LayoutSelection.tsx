@@ -1,6 +1,7 @@
 import { Col, Row, SidePanel } from '../index';
 import { ReactNode } from 'react';
 import ListItem, { ListItemProps } from './ListItem';
+import Button from './Button';
 
 interface ListItemWithId extends ListItemProps {
   id: string;
@@ -12,6 +13,8 @@ export interface LayoutSelectionProps {
   selected: string;
   onSelect: (s: string) => void;
   Header?: ReactNode;
+  onAdd?: () => void;
+  addLabel?: string;
 }
 
 interface ListItemWithSelection extends ListItemWithId {
@@ -44,6 +47,8 @@ const LayoutSelection = ({
   items,
   selected,
   onSelect,
+  onAdd,
+  addLabel = 'add',
 }: LayoutSelectionProps) => {
   return (
     <Row className="flex grow h-full">
@@ -60,6 +65,7 @@ const LayoutSelection = ({
                   onSelect={onSelect}
                 />
               ))}
+              {onAdd && <Button onClick={onAdd}>{addLabel}</Button>}
             </div>
           }
         />
