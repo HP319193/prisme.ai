@@ -225,7 +225,8 @@
       "access": "Accès",
       "access_private": "Choisissez quels utilisateurs peuvent consulter votre page",
       "copy": "Copier l'adresse publique de la page",
-      "copied": "L'adresse est copiée dans votre presse papier"
+      "copied": "L'adresse est copiée dans votre presse papier",
+      "notme": "Vous êtes déjà le propriétaire de cette Page."
     },
     "details": {
       "name": {

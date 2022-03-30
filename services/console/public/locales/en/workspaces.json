@@ -224,7 +224,8 @@
       "access": "Access",
       "access_private": "Choose which users can view your page",
       "copy": "Copy the public address of the page",
-      "copied": "The address is copied into your clipboard"
+      "copied": "The address is copied into your clipboard",
+      "notme": "You are already the owner of this Page."
     },
     "details": {
       "name": {

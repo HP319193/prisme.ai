@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Button,
   Input,
@@ -21,6 +15,7 @@ import FieldContainer from '../../layouts/Field';
 import { usePermissions } from '../PermissionsProvider';
 import { DeleteOutlined, LinkOutlined } from '@ant-design/icons';
 import getConfig from 'next/config';
+import { useUser } from '../UserProvider';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = '' },
@@ -38,6 +33,7 @@ interface userPermissionForm {
 const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
+  const { user } = useUser();
   const {
     usersPermissions,
     getUsersPermissions,
@@ -120,6 +116,13 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
   );
 
   const onSubmit = ({ email }: userPermissionForm) => {
+    if (email === user.email) {
+      notification.warning({
+        message: t('pages.share.notme'),
+        placement: 'bottomRight',
+      });
+      return;
+    }
     addUserPermissions(subjectType, subjectId, {
       email,
       policies: { read: true },

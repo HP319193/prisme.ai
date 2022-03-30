@@ -224,7 +224,8 @@
       "access": "Acceda",
       "access_private": "Elija qué usuarios pueden ver su página",
       "copy": "Copiar la dirección pública de la página",
-      "copied": "La dirección se copia en el portapapeles"
+      "copied": "La dirección se copia en el portapapeles",
+      "notme": "Usted ya es el propietario de esta página."
     },
     "details": {
       "name": {
