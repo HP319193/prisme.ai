@@ -2553,6 +2553,8 @@ components:
           type: string
         updatedAt:
           type: string
+        permissions:
+          $ref: '#/components/schemas/UsersPermissions'
 
     DetailedPage:
       allOf:
@@ -2811,8 +2813,10 @@ components:
       type: object
       additionalProperties: false
       oneOf:
-        - required: ['email']
-        - required: ['public']
+        - required: ['email', 'role']
+        - required: ['email', 'policies']
+        - required: ['public', 'role']
+        - required: ['public', 'policies']
       properties:
         email:
           type: string
@@ -2824,6 +2828,11 @@ components:
           $ref: '#/components/schemas/Role'
         policies:
           $ref: '#/components/schemas/Policies'
+
+    UsersPermissions:
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/UserPermissions"
 
     ApiKeyRules:
       type: object
