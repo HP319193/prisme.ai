@@ -8,7 +8,7 @@ export interface WorkspacesContext {
   fetch: (name: string) => Promise<Workspace | null>;
   create: (name: string) => Promise<Workspace>;
   update: (workspace: Workspace) => Promise<Workspace | null>;
-  remove: (workspace: Pick<Workspace, 'id'>) => Promise<null>;
+  remove: (workspace: Pick<Workspace, 'id'>, dry?: boolean) => Promise<null>;
   getWorkspaceUsersPermissions: (
     workspaceId: string
   ) => Promise<Prismeai.PermissionsList>;

@@ -253,7 +253,8 @@
     "roles": {
       "owner": "Owner",
       "editor": "Editor"
-    }
+    },
+    "leave": "You no longer have access to the {{name}} Workspace."
   },
   "languages": {
     "add": {

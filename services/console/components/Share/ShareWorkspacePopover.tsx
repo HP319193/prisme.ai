@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   Button,
   Input,
@@ -6,12 +6,17 @@ import {
   Space,
   Table,
   Tooltip,
+  notification,
 } from '@prisme.ai/design-system';
 import { Form, useField } from 'react-final-form';
 import { useTranslation } from 'react-i18next';
 import FieldContainer from '../../layouts/Field';
 import { usePermissions } from '../PermissionsProvider';
 import { DeleteOutlined } from '@ant-design/icons';
+import { useUser } from '../UserProvider';
+import { useWorkspaces } from '../WorkspacesProvider';
+import { useRouter } from 'next/router';
+import { useWorkspace } from '../../layouts/WorkspaceLayout';
 
 interface SharePopoverProps {
   subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType;
@@ -61,6 +66,12 @@ const ShareWorkspacePopover = ({
     addUserPermissions,
     removeUserPermissions,
   } = usePermissions();
+  const { user } = useUser();
+  const { remove } = useWorkspaces();
+  const {
+    workspace: { name },
+  } = useWorkspace();
+  const { push } = useRouter();
 
   const generateRowButtons = useCallback(
     (onDelete: Function) => (
@@ -83,12 +94,12 @@ const ShareWorkspacePopover = ({
     [t]
   );
 
-  const initialFetch = useCallback(async () => {
+  const initialFetch = useRef(async () => {
     getUsersPermissions(subjectType, subjectId);
-  }, [getUsersPermissions, subjectType, subjectId]);
+  });
 
   useEffect(() => {
-    initialFetch();
+    initialFetch.current();
   }, [initialFetch]);
 
   const dataSource = useMemo(() => {
@@ -106,6 +117,15 @@ const ShareWorkspacePopover = ({
         role,
         actions: generateRowButtons(() => {
           if (!id) return;
+          if (id === user.id) {
+            // User is removing himself his access to the workspace
+            push('/workspaces');
+            remove({ id: subjectId }, true);
+            notification.success({
+              message: t('share.leave', { name }),
+              placement: 'bottomRight',
+            });
+          }
           removeUserPermissions(subjectType, subjectId, id);
         }),
       }));
@@ -113,9 +133,14 @@ const ShareWorkspacePopover = ({
     return rows;
   }, [
     generateRowButtons,
+    name,
+    push,
+    remove,
     removeUserPermissions,
     subjectId,
     subjectType,
+    t,
+    user.id,
     usersPermissions,
   ]);
 
