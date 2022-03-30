@@ -261,7 +261,8 @@
     "roles": {
       "owner": "Administrateur",
       "editor": "Editeur"
-    }
+    },
+    "leave": "Vous n'avez plus accès au Workspace {{name}}."
   },
   "languages": {
     "add": {

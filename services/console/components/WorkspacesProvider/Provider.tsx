@@ -115,12 +115,13 @@ export const WorkspacesProvider: FC = ({ children }) => {
   );
 
   const remove: WorkspacesContext['remove'] = useCallback(
-    async ({ id }) => {
+    async ({ id }, dry) => {
       const optimisticNewWorkspaces = new Map(workspaces);
       const toDelete = optimisticNewWorkspaces.get(id);
       try {
         optimisticNewWorkspaces.delete(id);
         setWorkspaces(optimisticNewWorkspaces);
+        if (dry) return null;
         await api.deleteWorkspace(id);
       } catch (e) {
         if (!toDelete) return null;

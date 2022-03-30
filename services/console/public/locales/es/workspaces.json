@@ -253,7 +253,8 @@
     "roles": {
       "owner": "Owner",
       "editor": "Editor"
-    }
+    },
+    "leave": "Ya no tienes acceso al espacio de trabajo de {{name}}."
   },
   "languages": {
     "add": {
