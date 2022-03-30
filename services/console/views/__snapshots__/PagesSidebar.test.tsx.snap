@@ -10,20 +10,16 @@ exports[`should render 1`] = `
     pages.link
     pages.create.label
   </div>
+  <SvgrURL
+    className="text-gray-200"
+    height={100}
+    width={100}
+  />
   <div
-    className="flex flex-1 justify-center items-center flex-col"
+    className="mt-4 text-gray"
   >
-    <SvgrURL
-      className="text-gray-200"
-      height={100}
-      width={100}
-    />
-    <div
-      className="mt-4 text-gray"
-    >
-      pages.empty
-    </div>
-    pages.create.label
+    pages.empty
   </div>
+  pages.create.label
 </div>
 `;
