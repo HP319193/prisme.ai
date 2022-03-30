@@ -2535,7 +2535,6 @@ components:
           type: array
           items:
             type: object
-            additionalProperties: false
             properties:
               name:
                 type: string
@@ -2554,7 +2553,7 @@ components:
         updatedAt:
           type: string
         permissions:
-          $ref: '#/components/schemas/UsersPermissions'
+          $ref: '#/components/schemas/PermissionsMap'
 
     DetailedPage:
       allOf:
@@ -2813,10 +2812,8 @@ components:
       type: object
       additionalProperties: false
       oneOf:
-        - required: ['email', 'role']
-        - required: ['email', 'policies']
-        - required: ['public', 'role']
-        - required: ['public', 'policies']
+        - required: ['email']
+        - required: ['public']
       properties:
         email:
           type: string
@@ -2829,10 +2826,15 @@ components:
         policies:
           $ref: '#/components/schemas/Policies'
 
-    UsersPermissions:
+    PermissionsMap:
       type: object
       additionalProperties:
-        $ref: "#/components/schemas/UserPermissions"
+        type: object
+        properties:
+          role:
+            $ref: '#/components/schemas/Role'
+          policies:
+            $ref: '#/components/schemas/Policies'
 
     ApiKeyRules:
       type: object
