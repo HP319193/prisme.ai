@@ -1481,7 +1481,7 @@ paths:
             type: string
         - name: 'id'
           in: 'path'
-          description: 'Page slug'
+          description: 'Page id'
           required: true
           schema:
             type: string
@@ -1491,7 +1491,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Page'
+                $ref: '#/components/schemas/DetailedPage'
         '404':
           description: Object not found
           content:
@@ -1525,7 +1525,7 @@ paths:
             type: string
         - name: 'id'
           in: 'path'
-          description: 'Page slug'
+          description: 'Page id'
           required: true
           schema:
             type: string
@@ -1582,7 +1582,7 @@ paths:
             type: string
         - name: 'id'
           in: 'path'
-          description: 'Page slug'
+          description: 'Page id'
           required: true
           schema:
             type: string
@@ -1616,6 +1616,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
+
+  /v2/pages/{slug}:
+    get:
+      description: Fetch a page by slug
+      operationId: getPageBySlug
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'slug'
+          in: 'path'
+          description: 'Page slug'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedPage'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
 
   ## apps
   /v2/apps:
@@ -2347,10 +2387,6 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/Widget'
-        pages:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/Page'
         createdAt:
           type: string
         updatedAt:
@@ -2499,7 +2535,6 @@ components:
           type: array
           items:
             type: object
-            additionalProperties: false
             properties:
               name:
                 type: string
@@ -2507,6 +2542,34 @@ components:
                 type: number
         id:
           type: string
+        slug:
+          type: string
+        createdBy:
+          type: string
+        updatedBy:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        permissions:
+          $ref: '#/components/schemas/PermissionsMap'
+
+    DetailedPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - properties:
+            widgets:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  url:
+                    type: string
+                  appInstance:
+                    type: string
 
     ###############################################################################################################################################
     ############################################################ Automation Instructions ############################################################
@@ -2762,6 +2825,16 @@ components:
           $ref: '#/components/schemas/Role'
         policies:
           $ref: '#/components/schemas/Policies'
+
+    PermissionsMap:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          role:
+            $ref: '#/components/schemas/Role'
+          policies:
+            $ref: '#/components/schemas/Policies'
 
     ApiKeyRules:
       type: object

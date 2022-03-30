@@ -51,7 +51,7 @@ export function initEventsRoutes(eventsStore: EventsStore) {
 
     return res.send({
       result: {
-        events: accessManager.filterSubjectsBy(
+        events: await accessManager.filterSubjectsBy(
           ActionType.Read,
           SubjectType.Event,
           events

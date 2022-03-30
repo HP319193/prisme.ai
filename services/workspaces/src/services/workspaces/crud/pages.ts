@@ -1,7 +1,9 @@
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
-import { AccessManager, SubjectType } from '../../../permissions';
+import { AccessManager, Role, SubjectType } from '../../../permissions';
 import { nanoid } from 'nanoid';
+import { FilterQuery } from '@prisme.ai/permissions';
+import { AlreadyUsedError } from '../../../errors';
 
 class Pages {
   private accessManager: Required<AccessManager>;
@@ -32,22 +34,31 @@ class Pages {
     });
   };
 
-  getPage = async (id: string) => {
-    return await this.accessManager.get(SubjectType.Page, id);
+  getPage = async (idOrQuery: string | FilterQuery<Prismeai.Page, Role>) => {
+    return await this.accessManager.get(SubjectType.Page, idOrQuery);
   };
 
   updatePage = async (id: string, page: Prismeai.Page) => {
     const currentPage = await this.accessManager.get(SubjectType.Page, id);
-    const updated = await this.accessManager.update(SubjectType.Page, {
-      ...currentPage,
-      ...page,
-      id,
-    });
-
-    this.broker.send<Prismeai.UpdatedPage['payload']>(EventType.UpdatedPage, {
-      page,
-    });
-    return updated;
+    try {
+      const updated = await this.accessManager.update(SubjectType.Page, {
+        ...currentPage,
+        ...page,
+        id,
+      });
+      this.broker.send<Prismeai.UpdatedPage['payload']>(EventType.UpdatedPage, {
+        page,
+      });
+      return updated;
+    } catch (e) {
+      if ((e as { code: number }).code === 11000) {
+        throw new AlreadyUsedError(
+          `Page slug '${page.slug}' is already used by another page !`,
+          { slug: 'AlreadyUsedError' }
+        );
+      }
+      throw e;
+    }
   };
 
   deletePage = async (id: string) => {

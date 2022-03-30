@@ -46,7 +46,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     setInvalid,
     setNewSource,
     invalid,
-    save,
+    saveSource,
     saving,
     displaySource,
   } = useWorkspace();
@@ -213,23 +213,23 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     };
   }, [allAnnotations, ref, t]);
 
-  const saveSource = useCallback(() => {
-    save();
+  const save = useCallback(() => {
+    saveSource();
     setDirty(false);
-  }, [save]);
+  }, [saveSource]);
 
   const shortcuts = useMemo(
     () => [
       {
         name: t('expert.save.help'),
-        exec: saveSource,
+        exec: save,
         bindKey: {
           mac: 'cmd-s',
           win: 'ctrl-s',
         },
       },
     ],
-    [saveSource, t]
+    [save, t]
   );
 
   if (value === undefined) return null;
@@ -240,7 +240,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         onBack={() => displaySource(false)}
         RightButtons={[
           <Button
-            onClick={saveSource}
+            onClick={save}
             disabled={saving}
             key="1"
             className="!flex flex-row"

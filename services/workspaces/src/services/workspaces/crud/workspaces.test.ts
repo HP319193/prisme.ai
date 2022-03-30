@@ -5,6 +5,7 @@ import { SubjectType } from '../../../permissions';
 jest.mock('nanoid', () => ({ nanoid: () => '123456' }));
 
 const getMockedAccessManager = () => ({
+  findAll: jest.fn(),
   create: jest.fn(),
   get: jest.fn(),
   update: jest.fn(),

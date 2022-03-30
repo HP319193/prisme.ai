@@ -16,7 +16,7 @@ import { PageBuilderContext } from '../components/PageBuilder/context';
 import usePages from '../components/PagesProvider/context';
 import EditDetails from '../layouts/EditDetails';
 import { Schema } from '../components/SchemaForm/types';
-import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
+import SharePage from '../components/Share/SharePage';
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
@@ -39,19 +39,20 @@ export const Page = () => {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    // Removed from UI while we don't have the feature fully working
-    // (Ability to display page with a link, without sharing the workspace)
-
     setShare({
       label: t('pages.share.label'),
-      // component: () => <SharePage pageId={`${pageId}`} />,
-      component: () => <div>{commonT('soon')}</div>,
+      component: () => (
+        <SharePage
+          pageId={`${pageId}`}
+          pageSlug={(page && page.slug) || `${pageId}`}
+        />
+      ),
     });
 
     return () => {
       setShare(undefined);
     };
-  }, [commonT, pageId, setShare, t]);
+  }, [commonT, page, pageId, setShare, t]);
 
   useEffect(() => {
     if (!page) return;
@@ -65,6 +66,10 @@ export const Page = () => {
     () => ({
       type: 'object',
       properties: {
+        slug: {
+          type: 'string',
+          title: t('pages.details.slug.label'),
+        },
         name: {
           type: 'string',
           title: t('pages.details.name.label'),
@@ -125,18 +130,38 @@ export const Page = () => {
 
   const updateDetails = useCallback(
     async ({
+      slug,
       name,
       description,
     }: {
+      slug: string;
       name: Prismeai.LocalizedText;
       description: Prismeai.LocalizedText;
     }) => {
       if (!value) return;
-      const newValue = cleanValue({ ...value, name, description });
+      const newValue = { ...cleanValue(value), slug, name, description };
       setValue(newValue);
-      await savePage(workspace.id, newValue);
+      try {
+        await savePage(workspace.id, newValue);
+        notification.success({
+          message: t('pages.save.toast'),
+          placement: 'bottomRight',
+        });
+      } catch (e) {
+        const error: any = e;
+        if (error.details) {
+          notification.error({
+            message: t('pages.save.error', {
+              context: Object.keys(error.details || {})[0],
+            }),
+            placement: 'bottomRight',
+          });
+          return error.details;
+        }
+        throw e;
+      }
     },
-    [cleanValue, savePage, value, workspace.id]
+    [cleanValue, savePage, t, value, workspace.id]
   );
 
   if (!page) {
@@ -155,7 +180,7 @@ export const Page = () => {
             {localize(value.name)}
             <EditDetails
               schema={detailsFormSchema}
-              value={{ ...value, slug: pageId }}
+              value={{ ...value }}
               onSave={updateDetails}
               onDelete={confirmDeletePage}
               context="pages"

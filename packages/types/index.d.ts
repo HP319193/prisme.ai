@@ -892,9 +892,6 @@ declare namespace Prismeai {
         widgets?: {
             [name: string]: /* Widget */ Widget;
         };
-        pages?: {
-            [name: string]: /* Page */ Page;
-        };
         createdAt?: string;
         updatedAt?: string;
         id?: string;
@@ -994,6 +991,27 @@ declare namespace Prismeai {
             name: LocalizedText;
             description?: LocalizedText;
         }[];
+    }
+    /**
+     * Page
+     */
+    export interface DetailedPage {
+        name: LocalizedText;
+        description?: LocalizedText;
+        workspaceId?: string;
+        widgets: {
+            name?: string;
+            height?: number;
+            url?: string;
+            appInstance?: string;
+        }[];
+        id?: string;
+        slug?: string;
+        createdBy?: string;
+        updatedBy?: string;
+        createdAt?: string;
+        updatedAt?: string;
+        permissions?: PermissionsMap;
     }
     export interface Emit {
         emit: {
@@ -1130,6 +1148,12 @@ declare namespace Prismeai {
             height?: number;
         }[];
         id?: string;
+        slug?: string;
+        createdBy?: string;
+        updatedBy?: string;
+        createdAt?: string;
+        updatedAt?: string;
+        permissions?: PermissionsMap;
     }
     export interface PagePermissionsDeleted {
         /**
@@ -1175,6 +1199,12 @@ declare namespace Prismeai {
      * ]
      */
     export type PermissionsList = UserPermissions[];
+    export interface PermissionsMap {
+        [name: string]: {
+            role?: Role;
+            policies?: Policies;
+        };
+    }
     export interface Policies {
         read?: boolean;
         write?: boolean;
@@ -1975,7 +2005,21 @@ declare namespace PrismeaiAPI {
             id: Parameters.Id;
         }
         namespace Responses {
-            export type $200 = /* Page */ Prismeai.Page;
+            export type $200 = /* Page */ Prismeai.DetailedPage;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace GetPageBySlug {
+        namespace Parameters {
+            export type Slug = string;
+        }
+        export interface PathParameters {
+            slug: Parameters.Slug;
+        }
+        namespace Responses {
+            export type $200 = /* Page */ Prismeai.DetailedPage;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;

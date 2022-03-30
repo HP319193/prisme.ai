@@ -98,7 +98,9 @@ const runDocker = (services: Service[]) => {
   });
 
   process.on('exit', () => {
-    shell('docker-compose -p prismeai down ' + dockerServices.join(' '));
+    if (dockerServices.length) {
+      shell('docker-compose -p prismeai down ' + dockerServices.join(' '));
+    }
   });
 };
 

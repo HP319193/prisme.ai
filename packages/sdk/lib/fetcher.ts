@@ -42,14 +42,19 @@ export class Fetcher {
       throw error;
     }
 
-    const response = (await res.json()) || {};
-    Object.defineProperty(response, 'headers', {
-      value: headersAsObject(res.headers),
-      configurable: false,
-      enumerable: false,
-      writable: false,
-    });
-    return response;
+    const clone = res.clone();
+    try {
+      const response = (await res.json()) || {};
+      Object.defineProperty(response, 'headers', {
+        value: headersAsObject(res.headers),
+        configurable: false,
+        enumerable: false,
+        writable: false,
+      });
+      return response;
+    } catch (e) {
+      return ((await clone.text()) as unknown) as T;
+    }
   }
 
   async get<T = any>(url: string) {

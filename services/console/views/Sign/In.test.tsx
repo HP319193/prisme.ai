@@ -4,6 +4,7 @@ import { useUser } from '../../components/UserProvider';
 import { ApiError } from '@prisme.ai/sdk';
 import { Form } from 'react-final-form';
 import { useRouter } from 'next/router';
+import SigninForm from '../../components/SigninForm';
 
 jest.mock('../../components/UserProvider', () => {
   const mock: any = {};
@@ -88,8 +89,7 @@ it('should validate form', async () => {
 it('should redirect after signin', () => {
   const root = renderer.create(<SignIn />);
   act(() => {
-    (useUser() as any).mock.user = {};
-    root.update(<SignIn />);
+    root.root.findByType(SigninForm).props.onSignin({});
   });
   expect(useRouter().push).toHaveBeenCalledWith('/workspaces');
 });

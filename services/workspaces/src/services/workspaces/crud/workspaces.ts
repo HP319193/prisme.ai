@@ -202,6 +202,7 @@ class Workspaces {
       photo: workspace.photo,
       description: workspace.description,
     });
+
     await this.storage.save(workspaceId, workspace);
   };
 

@@ -5,13 +5,14 @@ import { AuthenticationError } from '../../types/errors';
 export function isAuthenticated(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  optional?: boolean
 ) {
-  if (req.user) {
-    return next();
+  if (!req.user && !optional) {
+    throw new AuthenticationError();
   }
 
-  throw new AuthenticationError();
+  return next(req.user);
 }
 
 export function isInternallyAuthenticated(

@@ -61,9 +61,17 @@ pipelines:
     endpoints:
       - workspaces
       - apps
-      - pages
     policies:
       - authentication: {}
+      - proxy:
+          service: workspaces
+
+  - name: pages
+    endpoints:
+      - pages
+    policies:
+      - authentication:
+          optional: true
       - proxy:
           service: workspaces
 

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { API_KEY_HEADER } from '../../../config';
-import { AccessManager, SubjectType } from '../../permissions';
+import { AccessManager } from '../../permissions';
 
 export function accessManagerMiddleware(accessManager: AccessManager) {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -18,12 +18,6 @@ export function accessManagerMiddleware(accessManager: AccessManager) {
       return;
     }
 
-    if (req.context.workspaceId && req.accessManager) {
-      await req.accessManager.pullRoleFromSubject(
-        SubjectType.Workspace,
-        req.context.workspaceId
-      );
-    }
     next();
   };
 }

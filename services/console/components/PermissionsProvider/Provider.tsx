@@ -42,7 +42,6 @@ export const PermissionsProvider: FC = ({ children }) => {
   const [usersPermissions, setUsersPermissions] = useState<
     PermissionsContext['usersPermissions']
   >(new Map());
-
   const { t } = useTranslation('errors');
 
   const addUserPermissions: PermissionsContext['addUserPermissions'] = useCallback(
@@ -92,22 +91,24 @@ export const PermissionsProvider: FC = ({ children }) => {
           subjectType,
           subjectId
         );
-        const newUsersPermissions = new Map<string, UserPermissions[]>(
-          usersPermissions
-        );
-        newUsersPermissions.set(
-          `${subjectType}:${subjectId}`,
-          fetchedUsersPermissions.result
-        );
-        if (!isEqual(newUsersPermissions, usersPermissions)) {
-          setUsersPermissions(newUsersPermissions);
-        }
+        setUsersPermissions((usersPermissions) => {
+          const newUsersPermissions = new Map(usersPermissions);
+          newUsersPermissions.set(
+            `${subjectType}:${subjectId}`,
+            fetchedUsersPermissions.result
+          );
+          if (isEqual(newUsersPermissions, usersPermissions)) {
+            return usersPermissions;
+          }
+          return newUsersPermissions;
+        });
+
         return fetchedUsersPermissions.result;
       } catch (e) {
         return [];
       }
     },
-    [usersPermissions]
+    []
   );
 
   const removeUserPermissions: PermissionsContext['removeUserPermissions'] = useCallback(
@@ -115,7 +116,7 @@ export const PermissionsProvider: FC = ({ children }) => {
       const backupUsersPermissions = new Map(usersPermissions);
 
       // optimistic
-      setUsersPermissions(
+      setUsersPermissions((usersPermissions) =>
         removeUserFromMap(
           `${subjectType}:${subjectId}`,
           usersPermissions,
@@ -129,7 +130,7 @@ export const PermissionsProvider: FC = ({ children }) => {
           subjectId,
           userEmail
         );
-        setUsersPermissions(
+        setUsersPermissions((usersPermissions) =>
           removeUserFromMap(
             `${subjectType}:${subjectId}`,
             usersPermissions,
