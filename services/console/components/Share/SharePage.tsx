@@ -129,7 +129,7 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
     });
   };
 
-  const link = `${PAGES_HOST}/${pageSlug}`;
+  const link = `${PAGES_HOST || global.location.origin}/${pageSlug}`;
   const copyLink = useCallback(() => {
     window.navigator.clipboard.writeText(link);
     notification.success({
