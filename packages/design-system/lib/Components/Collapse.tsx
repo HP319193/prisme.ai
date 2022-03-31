@@ -27,6 +27,7 @@ const Collapse = ({
   light,
   icon,
   expandIconPosition = 'right',
+  className,
 }: CollapseProps) => {
   const prevClicked = useRef<string[]>([]);
   const click = useCallback(
@@ -53,11 +54,11 @@ const Collapse = ({
       expandIcon={icon}
       expandIconPosition={expandIconPosition}
       onChange={click}
-      className={
+      className={`${className || ''} ${
         light
           ? 'pr-collapse-light !border !border-solid !border-gray-200 rounded !px-2 !py-1'
           : ''
-      }
+      }`}
     >
       {items.map(({ label, content, className }, index) => (
         <Panel header={label} key={`${index}`} className={className || ''}>

@@ -25,6 +25,7 @@ const QueryCollapse = ({ value, onChange }: any) => {
   return (
     <Collapse
       light
+      className="flex-1"
       icon={() => (
         <Tooltip title={t('events.filters.query.description')}>
           <InfoCircleOutlined className="text-gray" />
