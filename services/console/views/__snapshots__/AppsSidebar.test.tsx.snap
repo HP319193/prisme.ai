@@ -21,21 +21,17 @@ Array [
       apps.link
       apps.install
     </div>
+    <SvgrURL
+      className="text-gray-200"
+      height={100}
+      width={100}
+    />
     <div
-      className="flex flex-1 justify-center items-center flex-col"
+      className="mt-4 text-gray"
     >
-      <SvgrURL
-        className="text-gray-200"
-        height={100}
-        width={100}
-      />
-      <div
-        className="mt-4 text-gray"
-      >
-        apps.empty
-      </div>
-      apps.install
+      apps.empty
     </div>
+    apps.install
   </div>,
 ]
 `;

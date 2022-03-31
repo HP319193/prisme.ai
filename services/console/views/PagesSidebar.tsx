@@ -27,10 +27,10 @@ export const PagesSidebar = () => {
     workspace: { id: workspaceId },
   } = useWorkspace();
 
-  const currentPages = useMemo(
-    () => Array.from(pages.get(workspaceId) || []),
-    [pages, workspaceId]
-  );
+  const currentPages = useMemo(() => Array.from(pages.get(workspaceId) || []), [
+    pages,
+    workspaceId,
+  ]);
 
   const [filter, setFilter] = useState('');
 
@@ -92,14 +92,14 @@ export const PagesSidebar = () => {
         </Button>
       </div>
       {isEmpty && (
-        <Button className="flex flex-1" onClick={create} disabled={creating}>
-          <div className="flex flex-1 justify-center items-center flex-col">
-            <IconPages width={100} height={100} className="text-gray-200" />
-            <div className="mt-4 text-gray">{t('pages.empty')}</div>
-            <Button variant="link" onClick={create} disabled={creating}>
-              {t('pages.create.label')}
-            </Button>
-          </div>
+        <Button
+          className="flex flex-1 justify-center items-center flex-col"
+          onClick={create}
+          disabled={creating}
+        >
+          <IconPages width={100} height={100} className="text-gray-200" />
+          <div className="mt-4 text-gray">{t('pages.empty')}</div>
+          {t('pages.create.label')}
         </Button>
       )}
       {!isEmpty && (
