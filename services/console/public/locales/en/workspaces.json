@@ -90,7 +90,7 @@
         "display": "<a>The URL <icon /></a> is hit",
         "copied": "URL has been copied in your clipboard",
         "help": "Automation will be run everytime the URL will be hit.",
-        "custom": "Execute this automation by calling a web address",
+        "custom": "Accessible by URL",
         "url": "Custom URL"
       },
       "add": "Save",
