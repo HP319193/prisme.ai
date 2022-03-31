@@ -5,6 +5,7 @@ export const Title = Typography.Title;
 export { default as Button } from './Components/Button';
 export { default as Select } from './Components/Select';
 export { default as Layout } from './Components/Layout';
+export { default as LayoutSelection } from './Components/LayoutSelection';
 export { default as PageHeader } from './Components/PageHeader';
 export { default as Menu } from './Components/Menu';
 export { default as MenuTab } from './Components/MenuTab';
@@ -39,4 +40,5 @@ export {
   notification,
   Switch,
   Tooltip,
+  Tabs,
 } from 'antd';
