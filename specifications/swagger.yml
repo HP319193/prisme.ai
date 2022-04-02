@@ -2619,9 +2619,12 @@ components:
                     example:
                       automationSlug: someId
                       someObjectField.someNestedField: 'foo'
+                  cancelTriggers:
+                    type: boolean
+                    description: If true, do not send this event to the the usual triggers
             timeout:
               type: number
-              description: After N seconds, timeout & outputs an empty result. Defaults to 30
+              description: After N seconds, timeout & outputs an empty result. Defaults to 20
             output:
               type: string
               description: Will save the caught event inside this variable

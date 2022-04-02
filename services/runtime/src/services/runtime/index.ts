@@ -11,6 +11,7 @@ import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../config';
 interface PendingWait {
   event: string;
   filters?: Record<string, any>;
+  cancelTriggers?: boolean;
   request: {
     id: string;
     expiresAt: number;
@@ -48,7 +49,17 @@ export default class Runtime {
         if (!event.source.workspaceId || !event.source.correlationId) {
           return true;
         }
-        await this.processEvent(event, logger, broker);
+        const cancelTriggers = this.fulfillPendingWaits(
+          event as Prismeai.PrismeEvent,
+          broker
+        );
+        if (!cancelTriggers) {
+          await this.processEvent(
+            event as Prismeai.PrismeEvent,
+            logger,
+            broker
+          );
+        }
         return true;
       }
     );
@@ -72,6 +83,7 @@ export default class Runtime {
       expiresAt: payload.expiresAt,
       alreadyFulfilled: false,
     };
+
     payload.wait.oneOf.forEach((cur) => {
       if (!this.pendingWaits[cur.event]) {
         this.pendingWaits[cur.event] = [];
@@ -79,15 +91,13 @@ export default class Runtime {
       this.pendingWaits[cur.event].push({
         event: cur.event,
         filters: cur.filters,
+        cancelTriggers: cur.cancelTriggers,
         request,
       });
     });
   }
 
-  private async fulfillPendingWaits(
-    event: Prismeai.PrismeEvent,
-    broker: Broker
-  ) {
+  private fulfillPendingWaits(event: Prismeai.PrismeEvent, broker: Broker) {
     const pendingWaits = this.pendingWaits[event.type];
     if (!pendingWaits?.length) {
       return;
@@ -107,22 +117,23 @@ export default class Runtime {
       return false;
     });
 
-    await Promise.all(
-      matchingWaits.map(async (cur) => {
-        const FulfilledWaitEvent = EventType.FulfilledWait.replace(
-          '{{id}}',
-          cur.request.id
-        );
+    let cancelTriggers = false;
+    matchingWaits.map((cur) => {
+      const FulfilledWaitEvent = EventType.FulfilledWait.replace(
+        '{{id}}',
+        cur.request.id
+      );
+      broker.send<Prismeai.FulfilledWait['payload']>(FulfilledWaitEvent, {
+        id: cur.request.id,
+        event,
+      });
 
-        await broker.send<Prismeai.FulfilledWait['payload']>(
-          FulfilledWaitEvent,
-          {
-            id: cur.request.id,
-            event,
-          }
-        );
-      })
-    );
+      if (cur.cancelTriggers) {
+        cancelTriggers = true;
+      }
+    });
+
+    return cancelTriggers;
   }
 
   async getContexts(

@@ -1477,9 +1477,13 @@ declare namespace Prismeai {
                 filters?: {
                     [name: string]: any;
                 };
+                /**
+                 * If true, do not send this event to the the usual triggers
+                 */
+                cancelTriggers?: boolean;
             }[];
             /**
-             * After N seconds, timeout & outputs an empty result. Defaults to 30
+             * After N seconds, timeout & outputs an empty result. Defaults to 20
              */
             timeout?: number;
             /**
