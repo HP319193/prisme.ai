@@ -8,10 +8,23 @@ import { EventType } from '../../eda';
 import { executeAutomation } from './automations';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../config';
 
+interface PendingWait {
+  event: string;
+  filters?: Record<string, any>;
+  request: {
+    id: string;
+    expiresAt: number;
+    alreadyFulfilled: boolean;
+  };
+}
+
+type EventName = string;
 export default class Runtime {
   private broker: Broker;
   private workspaces: Workspaces;
   private cache: CacheDriver;
+
+  private pendingWaits: Record<EventName, PendingWait[]>;
 
   constructor(broker: Broker, workspaces: Workspaces, cache: CacheDriver) {
     this.broker = broker;
@@ -38,6 +51,77 @@ export default class Runtime {
         await this.processEvent(event, logger, broker);
         return true;
       }
+    );
+
+    // Listen to pending waits
+    this.broker.on<Prismeai.PendingWait['payload']>(
+      EventType.PendingWait,
+      (event) => {
+        this.registerPendingWait(event.payload!);
+        return true;
+      },
+      {
+        GroupPartitions: false,
+      }
+    );
+  }
+
+  private registerPendingWait(payload: Prismeai.PendingWait['payload']) {
+    const request = {
+      id: payload.id,
+      expiresAt: payload.expiresAt,
+      alreadyFulfilled: false,
+    };
+    payload.wait.oneOf.forEach((cur) => {
+      if (!this.pendingWaits[cur.event]) {
+        this.pendingWaits[cur.event] = [];
+      }
+      this.pendingWaits[cur.event].push({
+        event: cur.event,
+        filters: cur.filters,
+        request,
+      });
+    });
+  }
+
+  private async fulfillPendingWaits(
+    event: Prismeai.PrismeEvent,
+    broker: Broker
+  ) {
+    const pendingWaits = this.pendingWaits[event.type];
+    if (!pendingWaits?.length) {
+      return;
+    }
+    const matchingWaits: PendingWait[] = [];
+    this.pendingWaits[event.type] = pendingWaits.filter((cur) => {
+      if (cur.request.expiresAt < Date.now() || cur.request.alreadyFulfilled) {
+        return false; // Clean outdated waits
+      }
+      if (!jsonPathMatches(cur.filters, event)) {
+        return true; // This one is not matching
+      }
+
+      cur.request.alreadyFulfilled = true;
+      // This one is matching : clean it & fulfill it
+      matchingWaits.push(cur);
+      return false;
+    });
+
+    await Promise.all(
+      matchingWaits.map(async (cur) => {
+        const FulfilledWaitEvent = EventType.FulfilledWait.replace(
+          '{{id}}',
+          cur.request.id
+        );
+
+        await broker.send<Prismeai.FulfilledWait['payload']>(
+          FulfilledWaitEvent,
+          {
+            id: cur.request.id,
+            event,
+          }
+        );
+      })
     );
   }
 

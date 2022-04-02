@@ -12,3 +12,7 @@ export const CONTEXT_SESSION_EXPIRE_TIME = parseInt(
 
 export const RUNTIME_EMITS_BROKER_TOPIC =
   process.env.RUNTIME_EMITS_BROKER_TOPIC || 'topic:runtime:emit';
+
+export const WAIT_DEFAULT_TIMEOUT = parseInt(
+  process.env.WAIT_DEFAULT_TIMEOUT || `20`
+);

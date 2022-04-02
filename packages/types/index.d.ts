@@ -1460,22 +1460,28 @@ declare namespace Prismeai {
     }
     export interface Wait {
         wait: {
+            oneOf: {
+                /**
+                 * example:
+                 * prismeaiMessenger.message
+                 */
+                event: string;
+                /**
+                 * Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator
+                 * example:
+                 * {
+                 *   "automationSlug": "someId",
+                 *   "someObjectField.someNestedField": "foo"
+                 * }
+                 */
+                filters?: {
+                    [name: string]: any;
+                };
+            }[];
             /**
-             * example:
-             * prismeaiMessenger.message
+             * After N seconds, timeout & outputs an empty result. Defaults to 30
              */
-            event: string;
-            /**
-             * Only match the next intent fulfilling these filters. Multiple filters will be joined with an 'AND' operator
-             * example:
-             * {
-             *   "automationSlug": "someId",
-             *   "someObjectField.someNestedField": "foo"
-             * }
-             */
-            filters?: {
-                [name: string]: any;
-            };
+            timeout?: number;
             /**
              * Will save the caught event inside this variable
              * example:
