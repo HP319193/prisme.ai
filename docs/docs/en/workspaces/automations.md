@@ -254,13 +254,13 @@ If `session.myObjectVariable` equals to `{"mickey": "house"}` and `item.field` e
 * **global** : this context is shared by all authenticated users for the same workspace.  
 * **user** : this context holds user-specific data and spans accross sessions    
 * **session** : this context holds session-specific data. It is automatically removed **15 minutes** (configurable with **CONTEXT_SESSION_EXPIRE_TIME** env var) after the last write access (i.e by **set** or **output**)  
-* **run** : this context holds some technical information about current run   
+* **run** : this context holds some technical information about current run, and is automatically removed **60 seconds** after the initial trigger (configurable with **CONTEXT_RUN_EXPIRE_TIME** env var)  
 * **config** : this context holds current [workspace](../#config) or [AppInstance](../apps#config-variable) config 
 
-**Note that user and session contexts rely on an authenticated user id for being persisted**.  
-In case the automation is triggered from a webhook without any session cookie / token, **user** and **session** will not be persisted, making any variable **set** not visible from subsequent requests (and possibly silently breaking some workspace functionnality).  
+All of these contexts might be written to using [set](../instructions#set) instruction.  
 
-**config** and **run** contexts **cannot** be updated from automations (i.e with **set** or instructions **output**).  
+However, **note that user and session contexts rely on an authenticated user id for being persisted**.  
+In case the automation is triggered from a webhook without any session cookie / token, **user** and **session** will not be persisted, making any variable **set** not visible from subsequent requests (and possibly silently breaking some workspace functionnality).  
 
 ### Detailed contexts
 

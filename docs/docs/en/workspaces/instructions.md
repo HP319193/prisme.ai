@@ -85,4 +85,22 @@ Emit a new event.
 ### Wait
 Wait for an event. Pauses the current execution until the requested event is received.  
 
-_Coming soon_
+**Parameters :**  
+
+* **oneOf** : Pauses until **one** of these events is received
+* **timeout** : If **waits** timeouts after **N** seconds, resume execution & outputs an empty result. Defaults to **20**
+* **output** : Name of the variable that will store the received event  
+
+**oneOf parameter :**  
+List of event candidates with the following parameters :  
+
+* **event** : Event name, required  
+* **filters** : Free form JSON object for filtering on any event fields. For example :  
+```yaml
+- wait:
+    oneOf:
+      event: someEvent
+      filters:
+        source.correlationId: '{{run.correlationId}}'
+```
+* **cancelTriggers** : If true, cancels the execution of the usual triggers for this event. Other **waits** still receive this event.  
