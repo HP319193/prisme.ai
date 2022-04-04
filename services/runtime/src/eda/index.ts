@@ -17,6 +17,8 @@ export enum EventType {
   ExecutedAutomation = 'runtime.automations.executed',
   TriggeredWebhook = 'runtime.webhooks.triggered',
   UpdatedContexts = 'runtime.contexts.updated',
+  PendingWait = 'runtime.waits.pending',
+  FulfilledWait = 'runtime.waits.fulfilled.{{id}}',
 
   CreatedWorkspace = 'workspaces.created',
   ConfiguredWorkspace = 'workspaces.configured',
@@ -55,7 +57,9 @@ export const broker = new Broker<CallbackContext>(
     },
     validator: {
       oasFilepath: EVENTS_OAS_PATH,
-      whitelistEventPrefixes: BROKER_WHITELIST_EVENT_PREFIXES,
+      whitelistEventPrefixes: BROKER_WHITELIST_EVENT_PREFIXES.concat([
+        'runtime.waits.fulfilled.',
+      ]),
     },
     CallbackContextCtor: CallbackContext,
   }

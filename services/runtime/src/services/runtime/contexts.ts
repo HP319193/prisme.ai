@@ -22,10 +22,12 @@ type RecursivePartial<T> = {
 export interface RunContext {
   depth: number; // Depth of current automation.
   correlationId: string;
+  automationSlug?: string;
 
   // Only set if running inside an app instance :
   appSlug?: string; // App unique slug
   appInstanceSlug?: string; // Current instance slug defined by parent workspace/app
+  appInstanceFullSlug?: string; // Current instance full slug (from root workspace)
   parentAppSlug?: string; // Only if parent context is also an app instance
 }
 
@@ -67,6 +69,7 @@ export const UserAccessibleContexts: ContextType[] = [
   ContextType.User,
   ContextType.Session,
   ContextType.Config,
+  ContextType.Run,
 ];
 export class ContextsManager {
   private workspaceId: string;
@@ -166,7 +169,7 @@ export class ContextsManager {
     });
   }
 
-  async save(context?: ContextType) {
+  async save(context?: ContextType, ttl?: number) {
     const { global, run, user, local: _, config, session } = this.contexts;
 
     if (!context || context === ContextType.Global) {
@@ -174,7 +177,7 @@ export class ContextsManager {
     }
     if (!context || context === ContextType.Run) {
       await this.cache.setObject(this.cacheKey(ContextType.Run), run, {
-        ttl: CONTEXT_RUN_EXPIRE_TIME,
+        ttl: ttl || CONTEXT_RUN_EXPIRE_TIME,
       });
     }
     if ((!context || context === ContextType.User) && this.userId) {
@@ -238,22 +241,23 @@ export class ContextsManager {
       payload?: any;
       appContext?: AppContext;
       broker?: Broker;
-    } = {}
+      automationSlug: string;
+    }
   ): ContextsManager {
     const resetLocal =
       typeof opts.resetLocal !== 'undefined' ? opts.resetLocal : true;
     const run: Partial<RunContext> = opts.appContext
       ? {
-          appSlug: opts.appContext.appSlug,
-          appInstanceSlug: opts.appContext.appInstanceSlug,
+          ...opts.appContext,
           parentAppSlug:
             (opts.appContext.parentAppSlugs?.length || 0) > 1
               ? opts.appContext.parentAppSlugs[
                   opts.appContext.parentAppSlugs.length - 2
                 ]
               : undefined,
+          automationSlug: opts.automationSlug,
         }
-      : {};
+      : { automationSlug: opts.automationSlug };
     // We do not want to reinstantiate contexts.session/user/global objects as they would prevent calling automations to receive updated fields from their called automations
     // TODO Problem still exists for run context & any other 'additionalContexts' (i.e config)
     const child = Object.assign({}, this, {
@@ -263,7 +267,7 @@ export class ContextsManager {
           ? opts.payload || {}
           : { ...this.contexts[ContextType.Local], ...opts.payload },
         run: {
-          ...this.contexts.run,
+          ...this.run,
           ...run,
           correlationId: this.contexts?.run?.correlationId,
         },
@@ -305,14 +309,14 @@ export class ContextsManager {
     };
   }
 
-  async set(path: string, value: any) {
+  async set(path: string, value: any, ttl?: number) {
     const splittedPath = parseVariableName(path);
 
     try {
       const { parent, lastKey, context } =
         this.findParentVariableFor(splittedPath);
       parent[lastKey] = _.cloneDeep(value);
-      await this.save(context);
+      await this.save(context, ttl);
     } catch (error) {
       this.logger.error(error);
       throw new InvalidSetInstructionError('Invalid set instruction', {

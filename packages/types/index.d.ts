@@ -1084,6 +1084,17 @@ declare namespace Prismeai {
          */
         message?: string;
     }
+    export interface FulfilledWait {
+        /**
+         * example:
+         * runtime.waits.fulfilled.{{id}}
+         */
+        type: "runtime.waits.fulfilled.{{id}}";
+        payload: {
+            id?: string;
+            event: PrismeEvent;
+        };
+    }
     export interface GenericError {
         /**
          * example:
@@ -1175,6 +1186,18 @@ declare namespace Prismeai {
         payload: {
             subjectId: string;
             permissions: UserPermissions;
+        };
+    }
+    export interface PendingWait {
+        /**
+         * example:
+         * runtime.waits.pending
+         */
+        type: "runtime.waits.pending";
+        payload: {
+            id: string;
+            expiresAt: number;
+            wait: Wait.Properties.Wait;
         };
     }
     /**
@@ -1460,22 +1483,32 @@ declare namespace Prismeai {
     }
     export interface Wait {
         wait: {
+            oneOf: {
+                /**
+                 * example:
+                 * prismeaiMessenger.message
+                 */
+                event: string;
+                /**
+                 * Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator
+                 * example:
+                 * {
+                 *   "automationSlug": "someId",
+                 *   "someObjectField.someNestedField": "foo"
+                 * }
+                 */
+                filters?: {
+                    [name: string]: any;
+                };
+                /**
+                 * If true, do not send this event to the the usual triggers
+                 */
+                cancelTriggers?: boolean;
+            }[];
             /**
-             * example:
-             * prismeaiMessenger.message
+             * After N seconds, timeout & outputs an empty result. Defaults to 20
              */
-            event: string;
-            /**
-             * Only match the next intent fulfilling these filters. Multiple filters will be joined with an 'AND' operator
-             * example:
-             * {
-             *   "automationSlug": "someId",
-             *   "someObjectField.someNestedField": "foo"
-             * }
-             */
-            filters?: {
-                [name: string]: any;
-            };
+            timeout?: number;
             /**
              * Will save the caught event inside this variable
              * example:
@@ -1483,6 +1516,44 @@ declare namespace Prismeai {
              */
             output?: string;
         };
+    }
+    namespace Wait {
+        namespace Properties {
+            export interface Wait {
+                oneOf: {
+                    /**
+                     * example:
+                     * prismeaiMessenger.message
+                     */
+                    event: string;
+                    /**
+                     * Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator
+                     * example:
+                     * {
+                     *   "automationSlug": "someId",
+                     *   "someObjectField.someNestedField": "foo"
+                     * }
+                     */
+                    filters?: {
+                        [name: string]: any;
+                    };
+                    /**
+                     * If true, do not send this event to the the usual triggers
+                     */
+                    cancelTriggers?: boolean;
+                }[];
+                /**
+                 * After N seconds, timeout & outputs an empty result. Defaults to 20
+                 */
+                timeout?: number;
+                /**
+                 * Will save the caught event inside this variable
+                 * example:
+                 * nameOfResultVariable
+                 */
+                output?: string;
+            }
+        }
     }
     export type When = {
         /**

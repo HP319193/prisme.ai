@@ -195,6 +195,10 @@ export class Broker<CallbackContext = any> {
     return this.driver.on(
       topic,
       async (event) => {
+        if (!event) {
+          // timeouts
+          return cb(<any>null, this, <any>null);
+        }
         return this.processEvent<PayloadType>(event, cb);
       },
       subscriptionOpts

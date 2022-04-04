@@ -9,6 +9,9 @@ export interface SubscriptionOptions {
   // If true, will call user callbacks only once & stop listening to requested events afterwards
   ListenOnlyOnce: boolean;
 
+  // If ListenOnlyOnce is true, this will the the promise timeout in milliseconds
+  ListenOnlyOnceTimeout?: number;
+
   // If true, considers any event as processed as soon as it has been passed to a callback
   NoAck: boolean;
 }

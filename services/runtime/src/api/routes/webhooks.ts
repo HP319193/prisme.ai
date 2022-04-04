@@ -42,7 +42,11 @@ export default function init(runtime: Runtime) {
         query,
       }
     );
-    const outputs = await runtime.processEvent(event, logger, broker);
+    const outputs = await runtime.processEvent(
+      event as Prismeai.PrismeEvent,
+      logger,
+      broker
+    );
     res.send(outputs?.[0]?.output || {});
   }
 

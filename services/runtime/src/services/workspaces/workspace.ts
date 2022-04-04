@@ -1,4 +1,3 @@
-import { PrismeEvent } from '@prisme.ai/broker';
 import { PrismeError } from '../../errors';
 import { Apps } from '../apps';
 
@@ -168,7 +167,7 @@ export class Workspace {
     });
   }
 
-  getEventTriggers(event: PrismeEvent) {
+  getEventTriggers(event: Prismeai.PrismeEvent) {
     const triggers = this.triggers.events[event.type] || [];
     const [firstAppSlug, nestedAppSlugs] = this.parseAppRef(event.type);
     if (firstAppSlug in this.imports) {

@@ -2600,18 +2600,31 @@ components:
         wait:
           type: object
           required:
-            - event
+            - oneOf
           properties:
-            event:
-              type: string
-              example: 'prismeaiMessenger.message'
-            filters:
-              type: object
-              description: "Only match the next intent fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
-              additionalProperties: true
-              example:
-                automationSlug: someId
-                someObjectField.someNestedField: 'foo'
+            oneOf:
+              type: array
+              items:
+                type: object
+                required:
+                  - event
+                properties:
+                  event:
+                    type: string
+                    example: 'prismeaiMessenger.message'
+                  filters:
+                    type: object
+                    description: "Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
+                    additionalProperties: true
+                    example:
+                      automationSlug: someId
+                      someObjectField.someNestedField: 'foo'
+                  cancelTriggers:
+                    type: boolean
+                    description: If true, do not send this event to the the usual triggers
+            timeout:
+              type: number
+              description: After N seconds, timeout & outputs an empty result. Defaults to 20
             output:
               type: string
               description: Will save the caught event inside this variable
@@ -3630,6 +3643,54 @@ components:
           properties:
             contexts:
               type: object
+
+    PendingWait:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.waits.pending
+          enum:
+            - runtime.waits.pending
+        payload:
+          type: object
+          required:
+            - id
+            - expiresAt
+            - wait
+          properties:
+            id:
+              type: string
+            expiresAt:
+              type: number
+            wait:
+              $ref: "#/components/schemas/Wait/properties/wait"
+
+    FulfilledWait:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.waits.fulfilled.{{id}}
+          enum:
+            - runtime.waits.fulfilled.{{id}}
+        payload:
+          type: object
+          required:
+            - wait
+            - event
+          properties:
+            id:
+              type: string
+            event:
+              $ref: "#/components/schemas/PrismeEvent"
+
 
     AppEvent:
       type: object
