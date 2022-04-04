@@ -35,6 +35,8 @@ export async function conditions(
     conditions,
     ctx.publicContexts
   );
-
+  if (!workflowToExecute) {
+    return;
+  }
   return runInstructions(workflowToExecute, { workspace, ctx, logger, broker });
 }

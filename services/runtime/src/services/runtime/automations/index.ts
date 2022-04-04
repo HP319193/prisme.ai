@@ -60,7 +60,7 @@ export async function runInstructions(
     broker: Broker;
   }
 ) {
-  for (let instruction of instructions) {
+  for (let instruction of instructions || []) {
     const instructionName = Object.keys(instruction || {})[0];
     if (instructionName === InstructionType.Break) {
       throw new Break();
