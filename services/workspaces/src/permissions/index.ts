@@ -59,3 +59,10 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
     config
   );
 }
+
+export async function getSuperAdmin(baseAccessManager: AccessManager) {
+  return await baseAccessManager.as({
+    id: 'api',
+    role: Role.SuperAdmin,
+  });
+}

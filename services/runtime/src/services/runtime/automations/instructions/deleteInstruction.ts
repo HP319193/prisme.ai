@@ -4,5 +4,5 @@ export async function deleteInstruction(
   { name }: Prismeai.Delete['delete'],
   ctx: ContextsManager
 ) {
-  ctx.delete(name);
+  await ctx.delete(name);
 }

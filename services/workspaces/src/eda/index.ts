@@ -14,25 +14,34 @@ import { Logger, logger } from '../logger';
 
 export enum EventType {
   Error = 'error',
+
   CreatedWorkspace = 'workspaces.created',
   ConfiguredWorkspace = 'workspaces.configured',
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
+
   WorkspacePermissionsShared = 'workspaces.permissions.shared',
   WorkspacePermissionsDeleted = 'workspaces.permissions.deleted',
+
   InstalledApp = 'workspaces.apps.installed',
   UninstalledApp = 'workspaces.apps.uninstalled',
   ConfiguredApp = 'workspaces.apps.configured',
+
   CreatedAutomation = 'workspaces.automations.created',
   UpdatedAutomation = 'workspaces.automations.updated',
   DeletedAutomation = 'workspaces.automations.deleted',
+
   PublishedApp = 'apps.published',
   DeletedApp = 'apps.deleted',
+
   CreatedPage = 'workspaces.pages.created',
   UpdatedPage = 'workspaces.pages.updated',
   DeletedPage = 'workspaces.pages.deleted',
+
   PagePermissionsShared = 'workspaces.pages.permissions.shared',
   PagePermissionsDeleted = 'workspaces.pages.permissions.deleted',
+
+  UpdatedContexts = 'runtime.contexts.updated',
 }
 
 export class CallbackContext {

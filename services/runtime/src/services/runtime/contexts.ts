@@ -1,3 +1,5 @@
+import { Broker } from '@prisme.ai/broker';
+import _ from 'lodash';
 import {
   CONTEXT_RUN_EXPIRE_TIME,
   CONTEXT_SESSION_EXPIRE_TIME,
@@ -6,6 +8,7 @@ import {
 import { CacheDriver } from '../../cache';
 import { InvalidSetInstructionError, TooManyCallError } from '../../errors';
 import { Logger, logger } from '../../logger';
+import { EventType } from '../../eda';
 import { parseVariableName, SplittedPath } from '../../utils/parseVariableName';
 import { AppContext } from '../workspaces';
 
@@ -53,6 +56,7 @@ export enum ContextType {
   Global = 'global',
   User = 'user',
   Session = 'session',
+  Config = 'config',
   Local = 'local',
 }
 
@@ -62,6 +66,7 @@ export const UserAccessibleContexts: ContextType[] = [
   ContextType.Global,
   ContextType.User,
   ContextType.Session,
+  ContextType.Config,
 ];
 export class ContextsManager {
   private workspaceId: string;
@@ -70,6 +75,7 @@ export class ContextsManager {
   private cache: CacheDriver;
   private contexts: Contexts;
   private logger: Logger;
+  private broker: Broker;
 
   public payload: any;
 
@@ -78,7 +84,8 @@ export class ContextsManager {
     userId: string,
     correlationId: string,
     cache: CacheDriver,
-    payload: any = {}
+    payload: any = {},
+    broker: Broker
   ) {
     this.workspaceId = workspaceId;
     this.userId = userId;
@@ -106,6 +113,7 @@ export class ContextsManager {
     });
 
     this.payload = payload || {};
+    this.broker = broker;
   }
 
   private merge(additionalContexts: RecursivePartial<Contexts> = {}) {
@@ -159,7 +167,7 @@ export class ContextsManager {
   }
 
   async save(context?: ContextType) {
-    const { global, run, user, local: _, session } = this.contexts;
+    const { global, run, user, local: _, config, session } = this.contexts;
 
     if (!context || context === ContextType.Global) {
       await this.cache.setObject(this.cacheKey(ContextType.Global), global);
@@ -176,6 +184,20 @@ export class ContextsManager {
       await this.cache.setObject(this.cacheKey(ContextType.Session), session, {
         ttl: CONTEXT_SESSION_EXPIRE_TIME,
       });
+    }
+
+    if (context === ContextType.Config) {
+      await this.broker.send<Prismeai.UpdatedContexts['payload']>(
+        EventType.UpdatedContexts,
+        {
+          contexts: {
+            config,
+          },
+        },
+        undefined,
+        // Current broker instance topic is normally emit's one, so we have to switch to native events topic :
+        EventType.UpdatedContexts
+      );
     }
   }
 
@@ -211,7 +233,12 @@ export class ContextsManager {
   // Reinstantiate a new ContextsManager for a child execution context
   child(
     additionalContexts: RecursivePartial<Contexts> = {},
-    opts: { resetLocal?: boolean; payload?: any; appContext?: AppContext } = {}
+    opts: {
+      resetLocal?: boolean;
+      payload?: any;
+      appContext?: AppContext;
+      broker?: Broker;
+    } = {}
   ): ContextsManager {
     const resetLocal =
       typeof opts.resetLocal !== 'undefined' ? opts.resetLocal : true;
@@ -243,6 +270,7 @@ export class ContextsManager {
         ...additionalContexts,
       },
       payload: { ...(opts.payload || {}) },
+      broker: opts.broker || this.broker,
     });
     Object.setPrototypeOf(child, ContextsManager.prototype);
     return child;
@@ -283,7 +311,7 @@ export class ContextsManager {
     try {
       const { parent, lastKey, context } =
         this.findParentVariableFor(splittedPath);
-      parent[lastKey] = value;
+      parent[lastKey] = _.cloneDeep(value);
       await this.save(context);
     } catch (error) {
       this.logger.error(error);

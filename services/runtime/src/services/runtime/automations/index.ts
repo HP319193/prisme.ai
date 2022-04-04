@@ -80,18 +80,30 @@ export async function runInstructions(
       ctx,
       logger,
       broker,
-      (nextAutomation, nextCtx = ctx) => {
+      (nextAutomation, payload) => {
+        const childBroker = broker.child({
+          appSlug: nextAutomation.workspace.appContext?.appSlug,
+          appInstanceFullSlug:
+            nextAutomation.workspace.appContext?.appInstanceFullSlug,
+          automationSlug: nextAutomation.slug,
+        });
+        const childCtx = ctx.child(
+          {
+            config: nextAutomation.workspace.config,
+          },
+          {
+            // If we do not reinstantiate payload, writting to local context might mutate this payload (& produces output-related errors)
+            payload: { ...payload },
+            appContext: nextAutomation.workspace?.appContext,
+            broker: childBroker,
+          }
+        );
         return executeAutomation(
           nextAutomation.workspace,
           nextAutomation,
-          nextCtx,
+          childCtx,
           logger,
-          broker.child({
-            appSlug: nextAutomation.workspace.appContext?.appSlug,
-            appInstanceFullSlug:
-              nextAutomation.workspace.appContext?.appInstanceFullSlug,
-            automationSlug: nextAutomation.slug,
-          })
+          childBroker
         );
       }
     );

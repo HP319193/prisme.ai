@@ -52,7 +52,8 @@ export default class Runtime {
       userId,
       correlationId,
       this.cache,
-      payload
+      payload,
+      this.broker
     );
     await ctx.fetch();
     return ctx;
@@ -97,6 +98,18 @@ export default class Runtime {
           });
         }
         try {
+          const childBroker = broker.child(
+            {
+              appSlug: trigger.workspace.appContext?.appSlug,
+              appInstanceFullSlug:
+                trigger.workspace.appContext?.appInstanceFullSlug,
+              automationSlug: automation.slug,
+            },
+            {
+              validateEvents: false,
+              forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+            }
+          );
           const output = await executeAutomation(
             trigger.workspace,
             automation,
@@ -107,21 +120,11 @@ export default class Runtime {
               {
                 resetLocal: false,
                 appContext: trigger.workspace?.appContext,
+                broker: childBroker,
               }
             ),
             logger,
-            broker.child(
-              {
-                appSlug: trigger.workspace.appContext?.appSlug,
-                appInstanceFullSlug:
-                  trigger.workspace.appContext?.appInstanceFullSlug,
-                automationSlug: automation.slug,
-              },
-              {
-                validateEvents: false,
-                forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
-              }
-            )
+            childBroker
           );
           return {
             output,

@@ -2,7 +2,6 @@ import {
   Consumer,
   EventsFactory,
   EventSource,
-  NativeTopic,
   PrismeEvent,
   Topic,
 } from './events';
@@ -146,33 +145,13 @@ export class Broker<CallbackContext = any> {
     topic: Topic | undefined,
     event: Omit<PrismeEvent, 'id'>
   ) {
+    if (topic) {
+      return topic;
+    }
     if (this.forceTopic) {
       return this.forceTopic;
     }
-    if (!topic) {
-      return event.type;
-    }
-
-    switch (topic) {
-      case NativeTopic.WorkspaceUser:
-        if (!event.source.workspaceId || !event.source.userId) {
-          throw new Error(
-            'Cant use workspace user topic without source.correlationId or source.userId defined !'
-          );
-        }
-
-        return `topic:workspace:${event.source.workspaceId!!}:user:${event
-          .source.userId!!}:`;
-      case NativeTopic.WorkspaceId:
-        if (!event.source.workspaceId) {
-          throw new Error(
-            'Cant use workspace topic without source.workspaceId defined !'
-          );
-        }
-        return `topic:workspaceId:${event.source.workspaceId!!}`;
-      default:
-        return topic as string;
-    }
+    return topic || event.type;
   }
 
   async send<PayloadType extends object = object>(

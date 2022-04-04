@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import DSULStorage from '../DSULStorage';
 import yaml from 'js-yaml';
 import { default as Apps } from './crud/apps';
-import { AccessManager, SubjectType, Role } from '../../permissions';
+import { AccessManager, SubjectType, getSuperAdmin } from '../../permissions';
 import { logger } from '../../logger';
 import { Broker } from '@prisme.ai/broker';
 import { areObjectsEqual } from '../../utils/getObjectsDifferences';
@@ -14,10 +14,7 @@ export async function autoinstallApps(
 ) {
   logger.info('Auto-installing apps ...');
 
-  const authorizedAccessManager = await accessManager.as({
-    id: 'api',
-    role: Role.SuperAdmin,
-  });
+  const authorizedAccessManager = await getSuperAdmin(accessManager);
   const apps = new Apps(
     authorizedAccessManager,
     {
