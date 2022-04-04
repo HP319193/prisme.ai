@@ -1,13 +1,13 @@
 import { createContext, ReactNode, useContext } from 'react';
 
 export interface BlockContext {
-  setAppConfig: (config: any) => void;
+  setAppConfig?: (config: any) => void;
   appConfig?: any;
-  setConfig: (config: any) => void;
+  setConfig?: (config: any) => void;
   config?: any;
-  setSetupComponent: (setupComponent: ReactNode) => void;
+  setSetupComponent?: (setupComponent: ReactNode) => void;
   setupComponent?: ReactNode;
-  setButtons: (buttons: ReactNode[]) => void;
+  setButtons?: (buttons: ReactNode[]) => void;
   buttons?: ReactNode[];
 }
 

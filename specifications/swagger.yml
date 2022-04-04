@@ -2465,6 +2465,8 @@ components:
                 type: string
               url:
                 type: string
+              edit:
+                $ref: '#/components/schemas/TypedArgument'
               name:
                 $ref: '#/components/schemas/LocalizedText'
               description:
@@ -2667,6 +2669,8 @@ components:
           $ref: '#/components/schemas/LocalizedText'
         url:
           type: string
+        edit:
+          $ref: '#/components/schemas/TypedArgument'
 
     Page:
       type: object
@@ -2689,8 +2693,9 @@ components:
             properties:
               name:
                 type: string
-              height:
-                type: number
+              config:
+                type: object
+                additionalProperties: true
         id:
           type: string
         slug:

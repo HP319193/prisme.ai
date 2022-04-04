@@ -154,7 +154,7 @@ const AppsSidebarItem = ({
 
 const AppsSidebarItemWithBlock = (props: AppsSidebarItemProps) => {
   return (
-    <BlockProvider>
+    <BlockProvider config={{}} appConfig={{}}>
       <AppsSidebarItem {...props} />
     </BlockProvider>
   );

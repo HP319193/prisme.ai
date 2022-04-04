@@ -12,7 +12,7 @@ export const Widgets = () => {
     workspace: { id: workspaceId },
   } = useWorkspace();
   const { page, widgets = [] } = usePageBuilder();
-  console.log(page.widgets, BuiltinBlocks);
+
   const widgetsInPage = useMemo(() => {
     return (page.widgets || []).flatMap(({ key, name = '' }) => {
       const parts = name.split(/\./);
@@ -26,6 +26,7 @@ export const Widgets = () => {
           key,
           appName: '',
           appInstance: undefined,
+          edit: undefined,
         };
       }
       const app = widgets.find(({ slug }) => slug === appName);
@@ -42,7 +43,7 @@ export const Widgets = () => {
         <AddWidget after={-1} />
       </div>
       {widgetsInPage.map(
-        ({ url, component, key, name, appName, appInstance }, index) => (
+        ({ url, component, key, name, appName, appInstance, edit }, index) => (
           <Fragment key={key}>
             <Widget
               url={url}
@@ -56,6 +57,7 @@ export const Widgets = () => {
               }
               workspaceId={workspaceId}
               appInstance={appInstance}
+              editSchema={edit}
             />
             <AddWidget after={index} />
           </Fragment>

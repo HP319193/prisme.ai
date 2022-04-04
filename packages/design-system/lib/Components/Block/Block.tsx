@@ -3,9 +3,9 @@ import blockContext, { BlockContext } from './context';
 
 interface BlockProviderProps {
   config: any;
-  onConfigUpdate: (config: any) => void;
+  onConfigUpdate?: (config: any) => void;
   appConfig: any;
-  onAppConfigUpdate: (config: any) => void;
+  onAppConfigUpdate?: (config: any) => void;
 }
 
 export const BlockProvider: FC<BlockProviderProps> = ({

@@ -667,6 +667,7 @@ declare namespace Prismeai {
         widgets: {
             slug: string;
             url?: string;
+            edit?: TypedArgument;
             name?: LocalizedText;
             description?: LocalizedText;
             arguments?: {
@@ -1008,6 +1009,7 @@ declare namespace Prismeai {
         widgets: {
             slug: string;
             url?: string;
+            edit?: TypedArgument;
             name?: LocalizedText;
             description?: LocalizedText;
             arguments?: {
@@ -1030,7 +1032,9 @@ declare namespace Prismeai {
         workspaceId?: string;
         widgets: {
             name?: string;
-            height?: number;
+            config?: {
+                [name: string]: any;
+            };
             url?: string;
             appInstance?: string;
         }[];
@@ -1190,7 +1194,9 @@ declare namespace Prismeai {
         workspaceId?: string;
         widgets: {
             name?: string;
-            height?: number;
+            config?: {
+                [name: string]: any;
+            };
         }[];
         id?: string;
         slug?: string;
@@ -1631,6 +1637,7 @@ declare namespace Prismeai {
         description?: LocalizedText;
         name?: LocalizedText;
         url: string;
+        edit?: TypedArgument;
     }
     export type Workspace = DSUL;
     export interface WorkspacePermissionsDeleted {

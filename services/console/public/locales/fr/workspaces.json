@@ -355,7 +355,20 @@
       "add": "Ajouter un widget",
       "remove": "Supprimer le widget",
       "search": "Rechercher un widget",
-      "empty": "Aucun widget n'est disponible dans ce workspace. Ajoutez une App !"
+      "empty": "Aucun widget n'est disponible dans ce workspace. Ajoutez une App !",
+      "settings": {
+        "title": "Paramètres du Block",
+        "toggle_on": "Afficher les réglages",
+        "toggle_off": "Masquer les réglages",
+        "onInit": {
+          "label": "Évènement d'initialisation",
+          "description": "Cet évènement sera déclenché lors de l'initialisation du widget à chaque visualisation de la page."
+        },
+        "updateOn": {
+          "label": "Évènement de mise à jour",
+          "description": "Quand une de vos automatisation émet cet évènement, le contenu du widget sera mis à jour avec le contenu de la payload."
+        }
+      }
     },
     "share": {
       "label": "Partager cette page",
@@ -378,7 +391,14 @@
     },
     "blocks": {
       "description": "",
-      "description_title": "Afficher un titre"
+      "description_title": "Afficher un titre",
+      "title": {
+        "settings": {
+          "title": "Titre",
+          "level": "Niveau de titre",
+          "levelOption": "Niveau {{level}}"
+        }
+      }
     }
   },
   "expert": {

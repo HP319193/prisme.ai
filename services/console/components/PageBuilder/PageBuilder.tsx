@@ -6,6 +6,7 @@ import WidgetForm from './Panel/WidgetForm';
 import Widgets from './Widgets';
 import { nanoid } from 'nanoid';
 import { useApps } from '../AppsProvider';
+import equal from 'fast-deep-equal';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -41,11 +42,12 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
           slug,
           appName,
           widgets: widgets.map(
-            ({ slug, description = slug, name = slug, url = '' }) => ({
+            ({ slug, description = slug, name = slug, url = '', edit }) => ({
               slug,
               name,
               description,
               url,
+              edit,
             })
           ),
         })
@@ -95,8 +97,32 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     [onChange, value]
   );
 
+  const setWidgetConfig: PageBuilderContext['setWidgetConfig'] = useCallback(
+    (key, config) => {
+      const newWidgets = value.widgets.map((widget) =>
+        key === widget.key
+          ? {
+              ...widget,
+              config: {
+                ...widget.config,
+                ...config,
+              },
+            }
+          : widget
+      );
+      if (equal(newWidgets, value.widgets)) return;
+      onChange({
+        ...value,
+        widgets: newWidgets,
+      });
+    },
+    [onChange, value]
+  );
+
   return (
-    <context.Provider value={{ page: value, widgets, addWidget, removeWidget }}>
+    <context.Provider
+      value={{ page: value, widgets, addWidget, removeWidget, setWidgetConfig }}
+    >
       <div className="relative flex flex-1 overflow-x-hidden">
         <Widgets />
         <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>

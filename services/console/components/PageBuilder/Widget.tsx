@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useTranslation } from 'next-i18next';
 import api from '../../utils/api';
 import { usePageBuilder } from './context';
@@ -6,11 +5,14 @@ import {
   BlockProvider,
   Button,
   Loading,
+  StretchContent,
   Tooltip,
   useBlock,
 } from '@prisme.ai/design-system';
 import Block from '../Block';
-import { DeleteOutlined } from '@ant-design/icons';
+import { SettingOutlined } from '@ant-design/icons';
+import { Fragment, useCallback, useMemo, useState } from 'react';
+import Settings from './Settings';
 
 interface WidgetProps {
   url?: string;
@@ -19,6 +21,7 @@ interface WidgetProps {
   title: string | React.ReactNode;
   workspaceId: string;
   appInstance?: string;
+  editSchema?: Prismeai.Widget['edit'];
 }
 export const Widget = ({
   url,
@@ -27,10 +30,12 @@ export const Widget = ({
   title,
   workspaceId,
   appInstance,
+  editSchema,
 }: WidgetProps) => {
   const { t } = useTranslation('workspaces');
   const { removeWidget } = usePageBuilder();
   const { buttons } = useBlock();
+  const [settingsVisible, setSettingsVisible] = useState(false);
 
   return (
     <div
@@ -48,17 +53,25 @@ export const Widget = ({
         <div className="flex flex-row">
           {buttons &&
             buttons.map((button, index) => (
-              <React.Fragment key={index}>{button}</React.Fragment>
+              <Fragment key={index}>{button}</Fragment>
             ))}
           <div className="ml-2">
-            <Tooltip title={t('pages.widgets.remove')} placement="left">
-              <Button onClick={() => removeWidget(id)}>
-                <DeleteOutlined />
+            <Tooltip
+              title={t('pages.widgets.settings.toggle', {
+                context: settingsVisible ? 'off' : 'on',
+              })}
+              placement="left"
+            >
+              <Button onClick={() => setSettingsVisible(!settingsVisible)}>
+                <SettingOutlined />
               </Button>
             </Tooltip>
           </div>
         </div>
       </div>
+      <StretchContent visible={settingsVisible}>
+        <Settings removeWidget={() => removeWidget(id)} schema={editSchema} />
+      </StretchContent>
       {Component && <Component />}
       {url && (
         <Block
@@ -72,32 +85,41 @@ export const Widget = ({
           }
         />
       )}
-      <Tooltip title={t('pages.widgets.resize')}>
-        <div
-          style={{
-            width: '20px',
-            height: '20px',
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-          }}
-        />
-      </Tooltip>
     </div>
   );
 };
 
 const WidgetWithBlock = (props: WidgetProps) => {
-  // TODO change with dsul
-  const [config, setConfig] = React.useState<any>();
-  const [appConfig, setAppConfig] = React.useState<any>();
+  const { page, setWidgetConfig } = usePageBuilder();
+  const config = useMemo(
+    () => (page.widgets.find(({ key }) => props.id === key) || {}).config || {},
+    [page.widgets, props.id]
+  );
+
+  const [appConfig, setAppConfig] = useState<any>();
+
+  const setConfigHandler = useCallback(
+    (config: any) => {
+      setWidgetConfig(props.id, config);
+    },
+    [props.id, setWidgetConfig]
+  );
+
+  const setAppConfigHandler = useCallback(
+    (newConfig: any) =>
+      setAppConfig((config: any) => ({
+        ...config,
+        ...newConfig,
+      })),
+    []
+  );
 
   return (
     <BlockProvider
       config={config}
-      onConfigUpdate={setConfig}
+      onConfigUpdate={setConfigHandler}
       appConfig={appConfig}
-      onAppConfigUpdate={setAppConfig}
+      onAppConfigUpdate={setAppConfigHandler}
     >
       <Widget {...props} />
     </BlockProvider>

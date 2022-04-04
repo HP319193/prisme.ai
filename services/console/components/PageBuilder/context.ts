@@ -11,6 +11,7 @@ export interface PageBuilderContext {
   }[];
   addWidget: (position: number) => void;
   removeWidget: (key: string) => void;
+  setWidgetConfig: (key: string, config: any) => void;
 }
 
 export const context = createContext<PageBuilderContext>({
@@ -18,6 +19,7 @@ export const context = createContext<PageBuilderContext>({
   widgets: [],
   addWidget() {},
   removeWidget() {},
+  setWidgetConfig() {},
 });
 
 export const usePageBuilder = () => useContext(context);
