@@ -375,6 +375,10 @@
       "slug": {
         "label": "Nom technique"
       }
+    },
+    "blocks": {
+      "description": "",
+      "description_title": "Afficher un titre"
     }
   },
   "expert": {

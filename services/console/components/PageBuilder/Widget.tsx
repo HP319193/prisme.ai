@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { memo, useRef } from 'react';
 import { useTranslation } from 'next-i18next';
 import api from '../../utils/api';
 import { usePageBuilder } from './context';
@@ -11,18 +10,19 @@ import {
   useBlock,
 } from '@prisme.ai/design-system';
 import Block from '../Block';
-import useHover from '@react-hook/hover';
 import { DeleteOutlined } from '@ant-design/icons';
 
 interface WidgetProps {
-  url: string;
+  url?: string;
+  component?: Function;
   id: string;
   title: string | React.ReactNode;
   workspaceId: string;
-  appInstance: string;
+  appInstance?: string;
 }
 export const Widget = ({
   url,
+  component: Component,
   id,
   title,
   workspaceId,
@@ -59,16 +59,19 @@ export const Widget = ({
           </div>
         </div>
       </div>
-      <Block
-        url={url}
-        entityId={id}
-        token={`${api.token}`}
-        workspaceId={workspaceId}
-        appInstance={appInstance}
-        renderLoading={
-          <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
-        }
-      />
+      {Component && <Component />}
+      {url && (
+        <Block
+          url={url}
+          entityId={id}
+          token={`${api.token}`}
+          workspaceId={workspaceId}
+          appInstance={appInstance}
+          renderLoading={
+            <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
+          }
+        />
+      )}
       <Tooltip title={t('pages.widgets.resize')}>
         <div
           style={{
@@ -85,8 +88,17 @@ export const Widget = ({
 };
 
 const WidgetWithBlock = (props: WidgetProps) => {
+  // TODO change with dsul
+  const [config, setConfig] = React.useState<any>();
+  const [appConfig, setAppConfig] = React.useState<any>();
+
   return (
-    <BlockProvider>
+    <BlockProvider
+      config={config}
+      onConfigUpdate={setConfig}
+      appConfig={appConfig}
+      onAppConfigUpdate={setAppConfig}
+    >
       <Widget {...props} />
     </BlockProvider>
   );

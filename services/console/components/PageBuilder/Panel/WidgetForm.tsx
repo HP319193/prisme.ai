@@ -12,6 +12,7 @@ import { usePageBuilder } from '../context';
 import IconApps from '../../../icons/icon-apps.svgr';
 import Link from 'next/link';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';
+import * as BuiltinBlocks from '../../Blocks';
 
 interface WidgetFormProps {
   onSubmit: (widgetSlug: string) => void;
@@ -26,7 +27,22 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
   const localize = useLocalizedText();
   const [search, setSearch] = useState('');
   const filteredWidgets = useMemo(() => {
-    return widgets.flatMap(({ appName, slug, widgets }) => {
+    return [
+      {
+        appName: 'Built-In',
+        slug: '',
+        widgets: Object.keys(BuiltinBlocks).map(
+          (name) =>
+            ({
+              name,
+              description: '',
+              slug: name,
+              url: '',
+            } as Prismeai.Widget & { slug: string })
+        ),
+      },
+      ...widgets,
+    ].flatMap(({ appName, slug, widgets }) => {
       if (!widgets || widgets.length === 0) return [];
       const searchIn = `${appName} ${slug} ${widgets.map(
         ({ name, description, slug }) =>
@@ -78,19 +94,32 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
       <Space direction="vertical" className="flex grow overflow-x-auto">
         {filteredWidgets.map(({ appName, slug: appSlug, widgets }) => (
           <Space key={appName} direction="vertical" className="!flex flex-1">
-            {appName && (
+            {
               <Space>
-                <Title level={4}>{`${appSlug} (${appName})`}</Title>
+                <Title level={4}>
+                  {appSlug ? `${appSlug} (${appName})` : appName || 'Workspace'}
+                </Title>
               </Space>
-            )}
+            }
             <Space direction="vertical" className="!flex flex-1">
-              {widgets.map(({ slug, name, description }) => (
+              {widgets.map(({ slug, name, description = '' }) => (
                 <Button
                   key={`${appSlug}.${slug}`}
-                  onClick={() => onSubmit(`${appSlug}.${slug}`)}
+                  onClick={() =>
+                    onSubmit(appSlug ? `${appSlug}.${slug}` : slug)
+                  }
                   className="w-full text-left !h-fit"
                 >
-                  <ListItem title={localize(name)} />
+                  <ListItem
+                    title={localize(name) || slug}
+                    content={
+                      description
+                        ? localize(description)
+                        : t('pages.blocks.description', {
+                            context: localize(name).toLowerCase(),
+                          })
+                    }
+                  />
                 </Button>
               ))}
             </Space>
