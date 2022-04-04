@@ -60,8 +60,9 @@ export async function runInstructions(
     broker: Broker;
   }
 ) {
-  for (const instruction of instructions || []) {
-    if (Object.keys(instruction || {})[0] === InstructionType.Break) {
+  for (let instruction of instructions) {
+    const instructionName = Object.keys(instruction || {})[0];
+    if (instructionName === InstructionType.Break) {
       throw new Break();
     }
 
@@ -96,6 +97,7 @@ export async function runInstructions(
             payload: { ...payload },
             appContext: nextAutomation.workspace?.appContext,
             broker: childBroker,
+            automationSlug: nextAutomation.slug!,
           }
         );
         return executeAutomation(

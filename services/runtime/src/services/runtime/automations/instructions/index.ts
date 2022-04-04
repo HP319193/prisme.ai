@@ -5,6 +5,7 @@ import { DetailedAutomation, Workspace } from '../../../workspaces';
 import { ContextsManager } from '../../contexts';
 import { conditions } from './conditions';
 import { emit } from './emit';
+import { wait } from './wait';
 import { fetch } from './fetch';
 import { set } from './set';
 import { deleteInstruction } from './deleteInstruction';
@@ -17,6 +18,7 @@ export enum InstructionType {
   Set = 'set',
   Delete = 'delete',
   Break = 'break',
+  Wait = 'wait',
   Repeat = 'repeat',
 }
 
@@ -29,19 +31,19 @@ export async function runCustomAutomation(
     payload: any
   ) => Promise<void>
 ) {
-  const automationName = Object.keys(instruction)[0];
-  if (!automationName) {
+  const automationSlug = Object.keys(instruction)[0];
+  if (!automationSlug) {
     return;
   }
-  const calledAutomation = workspace.getAutomation(automationName);
+  const calledAutomation = workspace.getAutomation(automationSlug);
   if (!calledAutomation) {
     throw new ObjectNotFoundError(`Automation not found`, {
       workspaceId: workspace.id,
-      automation: automationName,
+      automation: automationSlug,
     });
   }
 
-  const payload = instruction[automationName] || {};
+  const payload = instruction[automationSlug] || {};
   const result = await executeAutomation(calledAutomation, payload);
   if (typeof result !== 'undefined' && (<any>payload).output!!) {
     ctx.set((<any>payload).output, result);
@@ -71,6 +73,14 @@ export async function runInstruction(
       result = await emit(
         <Prismeai.Emit['emit']>payload,
         broker,
+        workspace.appContext
+      );
+      break;
+    case InstructionType.Wait:
+      result = await wait(
+        <Prismeai.Wait['wait']>payload,
+        broker,
+        ctx,
         workspace.appContext
       );
       break;

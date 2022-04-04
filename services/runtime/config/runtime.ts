@@ -1,5 +1,5 @@
 export const MAXIMUM_SUCCESSIVE_CALLS = parseInt(
-  process.env.MAXIMUM_SUCCESSIVE_CALLS || '20'
+  process.env.MAXIMUM_SUCCESSIVE_CALLS || '4'
 );
 
 export const CONTEXT_RUN_EXPIRE_TIME = parseInt(

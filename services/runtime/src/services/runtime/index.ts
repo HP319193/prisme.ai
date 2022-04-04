@@ -7,6 +7,7 @@ import { ObjectNotFoundError } from '../../errors';
 import { EventType } from '../../eda';
 import { executeAutomation } from './automations';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../config';
+import { jsonPathMatches } from '../../utils';
 
 interface PendingWait {
   event: string;
@@ -31,6 +32,7 @@ export default class Runtime {
     this.broker = broker;
     this.workspaces = workspaces;
     this.cache = cache;
+    this.pendingWaits = {};
   }
 
   async start() {
@@ -154,7 +156,11 @@ export default class Runtime {
     return ctx;
   }
 
-  async processEvent(event: PrismeEvent, logger: Logger, broker: Broker) {
+  async processEvent(
+    event: Prismeai.PrismeEvent,
+    logger: Logger,
+    broker: Broker
+  ) {
     const { userId, workspaceId, correlationId } = event.source;
     if (!correlationId || !workspaceId) {
       throw new Error(
@@ -165,11 +171,6 @@ export default class Runtime {
 
     logger.debug({ msg: 'Starting to process event', event });
     const { triggers, payload } = await this.parseEvent(workspace, event);
-    if (!triggers?.length) {
-      logger.trace('Did not find any matching trigger');
-      return;
-    }
-
     const ctx = await this.getContexts(
       workspaceId!!,
       userId!!,
@@ -177,66 +178,82 @@ export default class Runtime {
       payload
     );
 
+    if (!triggers?.length) {
+      logger.trace('Did not find any matching trigger');
+      return;
+    }
+
     return await Promise.all(
       triggers.map(async (trigger: DetailedTrigger) => {
-        const automation = trigger.workspace.getAutomation(
-          trigger.automationSlug
-        );
-        if (!automation) {
-          logger.trace(
-            `Did not find any matching automation '${trigger.automationSlug}' for trigger '${trigger.endpoint})`
-          );
-          throw new ObjectNotFoundError(`Automation not found`, {
-            workspaceId,
-            automation: trigger.automationSlug,
-            ...trigger.workspace.appContext,
-          });
-        }
-        try {
-          const childBroker = broker.child(
-            {
-              appSlug: trigger.workspace.appContext?.appSlug,
-              appInstanceFullSlug:
-                trigger.workspace.appContext?.appInstanceFullSlug,
-              automationSlug: automation.slug,
-            },
-            {
-              validateEvents: false,
-              forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
-            }
-          );
-          const output = await executeAutomation(
-            trigger.workspace,
-            automation,
-            ctx.child(
-              {
-                config: trigger.workspace.config,
-              },
-              {
-                resetLocal: false,
-                appContext: trigger.workspace?.appContext,
-                broker: childBroker,
-              }
-            ),
-            logger,
-            childBroker
-          );
-          return {
-            output,
-            slug: trigger.automationSlug,
-            ...trigger.workspace.appContext,
-          };
-        } catch (error) {
-          logger.error(error);
-          throw error;
-        }
+        return this.processTrigger(trigger, ctx, logger, broker);
       })
     );
   }
 
+  private async processTrigger(
+    trigger: DetailedTrigger,
+    ctx: ContextsManager,
+    logger: Logger,
+    broker: Broker
+  ) {
+    const automation = trigger.workspace.getAutomation(trigger.automationSlug);
+    if (!automation) {
+      logger.trace(
+        `Did not find any matching automation '${trigger.automationSlug}' for trigger '${trigger.endpoint})`
+      );
+      throw new ObjectNotFoundError(`Automation not found`, {
+        workspaceId: trigger.workspace.id,
+        automation: trigger.automationSlug,
+        ...trigger.workspace.appContext,
+      });
+    }
+    try {
+      const childCtx = ctx.child(
+        {
+          config: automation.workspace.config,
+        },
+        {
+          resetLocal: false,
+          appContext: automation.workspace?.appContext,
+          automationSlug: automation.slug!,
+        }
+      );
+
+      const childBroker = broker.child(
+        {
+          appSlug: automation.workspace.appContext?.appSlug,
+          appInstanceFullSlug:
+            automation.workspace.appContext?.appInstanceFullSlug,
+          automationSlug: automation.slug,
+        },
+        {
+          validateEvents: false,
+          forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+        }
+      );
+
+      const output = await executeAutomation(
+        trigger.workspace,
+        automation,
+        childCtx,
+        logger,
+        childBroker
+      );
+
+      return {
+        output,
+        slug: trigger.automationSlug,
+        ...trigger.workspace.appContext,
+      };
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
+  }
+
   private async parseEvent(
     workspace: Workspace,
-    event: PrismeEvent
+    event: Prismeai.PrismeEvent
   ): Promise<{
     triggers: DetailedTrigger[];
     payload: any;
@@ -289,14 +306,14 @@ export default class Runtime {
               ...event,
               source: {
                 ...event.source,
-                appInstanceSlug: slug,
+                appInstanceFullSlug: slug,
               },
               type: EventType.UninstalledApp,
               payload: {
                 appInstance,
                 slug,
               },
-            } as PrismeEvent<Prismeai.UninstalledAppInstance['payload']>)
+            })
         )
       );
     }

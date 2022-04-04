@@ -71,8 +71,13 @@ export class RedisDriver implements Driver {
     topic: string | string[],
     cb: (event: any) => any,
     overrideSubscriptionOpts?: SubscriptionOptions,
-    lastKnownIds?: Record<string, string> // Internal use only
+    lastKnownIds?: Record<string, string>, // Internal use only,
+    startedAt?: number
   ) {
+    if (!startedAt) {
+      startedAt = Date.now();
+    }
+
     const subscriptionOpts = {
       ...this.subscriptionOpts,
       ...overrideSubscriptionOpts,
@@ -115,6 +120,15 @@ export class RedisDriver implements Driver {
       })
     );
     const receivedData = processedStreams.some(({ events }) => !!events.length);
+    if (
+      !receivedData &&
+      subscriptionOpts.ListenOnlyOnce &&
+      subscriptionOpts.ListenOnlyOnceTimeout &&
+      Date.now() - startedAt > subscriptionOpts.ListenOnlyOnceTimeout
+    ) {
+      cb(null);
+      return true;
+    }
 
     // Acknowledge processed events
     if (!subscriptionOpts.NoAck) {
@@ -159,7 +173,13 @@ export class RedisDriver implements Driver {
           {}
         ),
       };
-      this.on(topics, cb, overrideSubscriptionOpts, updatedLastKnownIds);
+      this.on(
+        topics,
+        cb,
+        overrideSubscriptionOpts,
+        updatedLastKnownIds,
+        startedAt
+      );
     }
 
     return true;

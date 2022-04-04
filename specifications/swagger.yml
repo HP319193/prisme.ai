@@ -3644,6 +3644,54 @@ components:
             contexts:
               type: object
 
+    PendingWait:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.waits.pending
+          enum:
+            - runtime.waits.pending
+        payload:
+          type: object
+          required:
+            - id
+            - expiresAt
+            - wait
+          properties:
+            id:
+              type: string
+            expiresAt:
+              type: number
+            wait:
+              $ref: "#/components/schemas/Wait/properties/wait"
+
+    FulfilledWait:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.waits.fulfilled.{{id}}
+          enum:
+            - runtime.waits.fulfilled.{{id}}
+        payload:
+          type: object
+          required:
+            - wait
+            - event
+          properties:
+            id:
+              type: string
+            event:
+              $ref: "#/components/schemas/PrismeEvent"
+
+
     AppEvent:
       type: object
       required:
