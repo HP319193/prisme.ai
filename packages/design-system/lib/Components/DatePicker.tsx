@@ -5,11 +5,11 @@ import {
 import moment from 'moment';
 import FloatingLabel from './Internal/FloatingLabel';
 
-export interface DatePickerProps {
+export type DatePickerProps = {
   stringValue?: string;
   stringOnChange?: (value: string) => void;
   label?: string;
-}
+} & AntdDatePickerProps;
 
 const dateFormat = ['DD/MM/YYYY', ''];
 
@@ -22,14 +22,8 @@ const DatePicker = ({
   label,
   placeholder,
   ...props
-}: DatePickerProps & AntdDatePickerProps) => {
+}: DatePickerProps) => {
   const _value = stringValue ? moment(stringValue) : value;
-  const _onChange = stringOnChange
-    ? (_: any, dateString: string) => {
-        const date = moment.utc(dateString, dateFormat).format();
-        stringOnChange(date);
-      }
-    : onChange;
 
   return (
     <FloatingLabel
@@ -38,13 +32,14 @@ const DatePicker = ({
         <AntdDatePicker
           format={dateFormat}
           value={_value}
-          onChange={_onChange}
-          className={`h-[50px] basis-[50px] ${className}`}
+          onChange={onChange}
+          className={`h-[50px] basis-[50px] flex flex-1 ${className}`}
           placeholder=""
           {...props}
         />
       }
       raisedPlaceholder={!!(placeholder || _value)}
+      className="flex-1"
     />
   );
 };
