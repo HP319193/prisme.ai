@@ -126,6 +126,7 @@ backend_npm_install:
 ## Console jobs
 console_test:
   extends: .npm_test
+  needs: []
   only:
     changes:
       - 'services/console/**/*'
@@ -134,6 +135,8 @@ console_test:
 
 console_build_docker:
   extends: .build_docker
+  needs:
+    - console_test
   stage: build_docker
   image: docker:stable
   services:
@@ -153,6 +156,8 @@ console_build_docker:
 
 console_deploy:
   extends: .deploy_k8s
+  needs:
+    - console_build_docker
   only:
     refs:
       - main
@@ -177,6 +182,8 @@ workspaces_test:
 
 workspaces_build_docker:
   extends: .build_docker
+  needs:
+    - workspaces_test
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
@@ -197,6 +204,8 @@ workspaces_build_docker:
 
 workspaces_deploy:
   extends: .deploy_k8s
+  needs:
+    - workspaces_build_docker
   only:
     refs:
       - /^feature\/.*$/
@@ -221,6 +230,8 @@ runtime_test:
 
 runtime_build_docker:
   extends: .build_docker
+  needs:
+    - runtime_test
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
@@ -241,6 +252,8 @@ runtime_build_docker:
 
 runtime_deploy:
   extends: .deploy_k8s
+  needs:
+    - runtime_build_docker
   only:
     refs:
       - /^feature\/.*$/
@@ -277,6 +290,8 @@ api-gateway_build_docker:
 
 api-gateway_deploy:
   extends: .deploy_k8s
+  needs:
+    - api-gateway_build_docker
   only:
     refs:
       - /^feature\/.*$/
@@ -301,6 +316,8 @@ events_test:
 
 events_build_docker:
   extends: .build_docker
+  needs:
+    - events_test
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
@@ -321,6 +338,8 @@ events_build_docker:
 
 events_deploy:
   extends: .deploy_k8s
+  needs:
+    - events_build_docker
   only:
     refs:
       - /^feature\/.*$/
@@ -337,6 +356,7 @@ events_deploy:
 # ## Docs jobs
 docs_build_static:
   stage: build_docker
+  needs: []
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   only:
     refs:
@@ -368,6 +388,8 @@ docs_build_static:
 
 docs_deploy:
   extends: .s3_deploy
+  needs:
+    - docs_build_static
   only:
     refs:
       - main
