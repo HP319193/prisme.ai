@@ -43,7 +43,7 @@ export interface CreateEventOptions {
 
 // Must be in sync with SLUG_VALIDATION_REGEXP variable inside workspaces config
 // TODO move to a shared utils package
-const EVENT_NAMES_REGEXP = new RegExp('^[a-zA-Z0-9 ._-]*$');
+const EVENT_NAMES_REGEXP = new RegExp('^[a-zA-Z0-9 _-]*$');
 
 export class EventsFactory {
   public ready: Promise<any>;
