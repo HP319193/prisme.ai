@@ -88,34 +88,32 @@ export class AccessManager<
     this.opts = opts;
     this.permissionsConfig = permissionsConfig;
 
-    const schemas: Record<
-      SubjectType,
-      mongoose.Schema | false
-    > = Object.entries({
-      ...opts.schemas,
-      [NativeSubjectType.Roles]: RolesSchema,
-    }).reduce((schemas, [name, schemaDef]) => {
-      if (<mongoose.Schema | false>schemaDef === false) {
-        return { ...schemas, [name]: false };
-      }
-      const schema =
-        schemaDef instanceof mongoose.Schema
-          ? schemaDef
-          : new mongoose.Schema(schemaDef as Record<string, object>);
+    const schemas: Record<SubjectType, mongoose.Schema | false> =
+      Object.entries({
+        ...opts.schemas,
+        [NativeSubjectType.Roles]: RolesSchema,
+      }).reduce((schemas, [name, schemaDef]) => {
+        if (<mongoose.Schema | false>schemaDef === false) {
+          return { ...schemas, [name]: false };
+        }
+        const schema =
+          schemaDef instanceof mongoose.Schema
+            ? schemaDef
+            : new mongoose.Schema(schemaDef as Record<string, object>);
 
-      (schema as mongoose.Schema).plugin(accessibleRecordsPlugin);
-      (schema as mongoose.Schema).add(BaseSchema);
+        (schema as mongoose.Schema).plugin(accessibleRecordsPlugin);
+        (schema as mongoose.Schema).add(BaseSchema);
 
-      (schema as mongoose.Schema).method(
-        'filterFields',
-        buildFilterFieldsMethod(name as any)
-      );
+        (schema as mongoose.Schema).method(
+          'filterFields',
+          buildFilterFieldsMethod(name as any)
+        );
 
-      return {
-        ...schemas,
-        [name]: schema,
-      };
-    }, {} as Record<SubjectType, mongoose.Schema>);
+        return {
+          ...schemas,
+          [name]: schema,
+        };
+      }, {} as Record<SubjectType, mongoose.Schema>);
 
     validateRules(
       (permissionsConfig.abac || []).concat(
@@ -193,12 +191,12 @@ export class AccessManager<
   async as(
     user: User<Role>,
     apiKey?: string
-  ): Promise<Required<AccessManager<SubjectType, SubjectInterfaces, Role>>> {
-    const child: Required<AccessManager<
-      SubjectType,
-      SubjectInterfaces,
-      Role
-    >> = Object.assign({}, this, {
+  ): Promise<
+    Required<AccessManager<SubjectType, SubjectInterfaces, Role, CustomRules>>
+  > {
+    const child: Required<
+      AccessManager<SubjectType, SubjectInterfaces, Role, CustomRules>
+    > = Object.assign({}, this, {
       permissions: new Permissions(user, this.permissionsConfig),
       user: {
         ...user,
@@ -531,9 +529,9 @@ export class AccessManager<
     >
   ) {
     const { permissions } = this.checkAsUser();
-    const RolesModel = ((await this.model(
+    const RolesModel = (await this.model(
       <any>NativeSubjectType.Roles
-    )) as any) as AccessibleRecordModel<
+    )) as any as AccessibleRecordModel<
       Document<CustomRole<SubjectType, CustomRules>, any>
     >;
 
@@ -544,7 +542,7 @@ export class AccessManager<
     }
     permissions.loadRules(
       docs.flatMap((cur) => {
-        return JSON.parse((cur.toJSON().casl as any) as string);
+        return JSON.parse(cur.toJSON().casl as any as string);
       })
     );
   }
@@ -567,9 +565,9 @@ export class AccessManager<
       role.subjectId
     );
 
-    const RolesModel = ((await this.model(
+    const RolesModel = (await this.model(
       <any>NativeSubjectType.Roles
-    )) as any) as AccessibleRecordModel<
+    )) as any as AccessibleRecordModel<
       Document<CustomRole<SubjectType, CustomRules>, any>
     >;
     const casl = rulesBuilder(role);
@@ -595,9 +593,9 @@ export class AccessManager<
   }
 
   async deleteRole(id: string): Promise<boolean> {
-    const RolesModel = ((await this.model(
+    const RolesModel = (await this.model(
       <any>NativeSubjectType.Roles
-    )) as any) as AccessibleRecordModel<
+    )) as any as AccessibleRecordModel<
       Document<CustomRole<SubjectType, CustomRules>, any>
     >;
 
@@ -628,9 +626,9 @@ export class AccessManager<
       subjectId
     );
 
-    const RolesModel = ((await this.model(
+    const RolesModel = (await this.model(
       <any>NativeSubjectType.Roles
-    )) as any) as AccessibleRecordModel<
+    )) as any as AccessibleRecordModel<
       Document<CustomRole<SubjectType, CustomRules>, any>
     >;
 

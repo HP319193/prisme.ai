@@ -1,5 +1,5 @@
 import sys from './sys';
-import events from './events';
+import * as events from './events';
 
 export { sys, events };
 export default { sys, events };
