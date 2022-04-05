@@ -88,7 +88,7 @@ export async function runInstructions(
             nextAutomation.workspace.appContext?.appInstanceFullSlug,
           automationSlug: nextAutomation.slug,
           appInstanceDepth:
-            nextAutomation.workspace.appContext?.parentAppSlugs?.length,
+            nextAutomation.workspace.appContext?.parentAppSlugs?.length || 0,
         });
         const childCtx = ctx.child(
           {
