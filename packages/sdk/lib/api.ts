@@ -198,6 +198,23 @@ export class Api extends Fetcher {
     }
   }
 
+  async postEvents(
+    workspaceId: PrismeaiAPI.SendWorkspaceEvent.Parameters.WorkspaceId,
+    events: PrismeaiAPI.SendWorkspaceEvent.RequestBody['events']
+  ): Promise<boolean> {
+    try {
+      await this.post<PrismeaiAPI.SendWorkspaceEvent.Responses.$200>(
+        `/workspaces/${workspaceId}/events`,
+        {
+          events,
+        }
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async getPermissions(
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string
