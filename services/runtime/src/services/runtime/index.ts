@@ -225,6 +225,8 @@ export default class Runtime {
           appInstanceFullSlug:
             automation.workspace.appContext?.appInstanceFullSlug,
           automationSlug: automation.slug,
+          appInstanceDepth:
+            automation.workspace.appContext?.parentAppSlugs?.length,
         },
         {
           validateEvents: false,

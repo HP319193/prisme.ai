@@ -34,7 +34,16 @@ const searchFilters: {
       return true;
     }
     return Object.entries(query)
-      .map(([k, v]) => extractObjectsByPath(event, k) === v)
+      .map(([k, expected]) => {
+        const found = extractObjectsByPath(event, k);
+        if (Array.isArray(expected)) {
+          return expected.includes(found);
+        }
+        if (!expected) {
+          return !found;
+        }
+        return found === expected;
+      })
       .every(Boolean);
   },
 

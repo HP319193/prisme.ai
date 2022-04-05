@@ -2901,6 +2901,8 @@ components:
               type: string
             appInstanceFullSlug:
               type: string
+            appInstanceDepth:
+              type: number
             automationSlug:
               type: string
             userId:

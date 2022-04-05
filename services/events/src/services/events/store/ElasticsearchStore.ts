@@ -168,11 +168,21 @@ export class ElasticsearchStore implements EventsStore {
 
     if (options.payloadQuery) {
       Object.entries(options.payloadQuery).forEach(([key, value]) => {
-        must.push({
-          match: {
-            [key]: value,
-          },
-        });
+        must.push(
+          Array.isArray(value)
+            ? {
+                query_string: {
+                  query: `${value
+                    .map((v) => (v ? `${key}:${v}` : `not ${key}`))
+                    .join(' OR ')}`,
+                },
+              }
+            : {
+                match: {
+                  [key]: value,
+                },
+              }
+        );
       });
     }
 

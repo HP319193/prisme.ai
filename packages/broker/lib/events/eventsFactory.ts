@@ -15,6 +15,7 @@ export type Topic = string;
 export interface EventSource {
   appSlug?: string;
   appInstanceFullSlug?: string;
+  appInstanceDepth?: number;
   automationSlug?: string;
   userId?: string;
   workspaceId?: string;
