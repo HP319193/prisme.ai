@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { ActionType, SubjectType } from '../../permissions';
-import services from '../../services';
+import { sendEvent } from '../../services/events';
 import {
   EventsStore,
   PayloadQuery,
@@ -12,22 +12,20 @@ export function initEventsRoutes(eventsStore: EventsStore) {
   async function sendEventHandler(
     {
       logger,
-      context,
       body,
       params: { workspaceId },
       accessManager,
+      broker,
     }: Request<any, any, PrismeaiAPI.SendWorkspaceEvent.RequestBody>,
     res: Response
   ) {
-    for (let event of body.events) {
-      await accessManager.throwUnlessCan(ActionType.Create, SubjectType.Event, {
-        ...event,
-        source: { workspaceId },
-      } as Prismeai.PrismeEvent);
-    }
-    const events = services.events(logger, context);
+    logger.debug({ msg: 'Send events ' + body.events });
 
-    const result = await Promise.all(body.events.map(events.sendEvent));
+    const result = await Promise.all(
+      body.events.map((event) =>
+        sendEvent(workspaceId, event, accessManager, broker)
+      )
+    );
     res.send(result);
   }
 

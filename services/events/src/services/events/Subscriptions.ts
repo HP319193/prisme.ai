@@ -9,6 +9,7 @@ export interface Subscriber {
   callback: (event: PrismeEvent<any>) => void;
   accessManager: Required<AccessManager>;
   searchOptions: SearchOptions;
+  unsubscribe: () => void;
 }
 
 type WorkspaceId = string;
@@ -54,9 +55,9 @@ const searchFilters: {
 };
 
 export class Subscriptions {
-  private broker: Broker;
+  public broker: Broker;
+  public accessManager: AccessManager;
   private subscribers: Record<WorkspaceId, Subscriber[]>;
-  private accessManager: AccessManager;
 
   constructor(broker: Broker, accessManager: AccessManager) {
     this.broker = broker;
@@ -106,8 +107,8 @@ export class Subscriptions {
 
   async subscribe(
     workspaceId: string,
-    subscriber: Omit<Subscriber, 'accessManager'>
-  ): Promise<() => void> {
+    subscriber: Omit<Subscriber, 'accessManager' | 'unsubscribe'>
+  ): Promise<Subscriber> {
     if (!(workspaceId in this.subscribers)) {
       this.subscribers[workspaceId] = [];
     }
@@ -119,15 +120,17 @@ export class Subscriptions {
       subscriber.apiKey
     );
 
-    this.subscribers[workspaceId].push({
+    const fullSubscriber: Subscriber = {
       ...subscriber,
       accessManager: userAccessManager,
-    });
-
-    return () => {
-      this.subscribers[workspaceId] = this.subscribers[workspaceId].filter(
-        (cur) => cur.callback !== subscriber.callback
-      );
+      unsubscribe: () => {
+        this.subscribers[workspaceId] = this.subscribers[workspaceId].filter(
+          (cur) => cur.callback !== subscriber.callback
+        );
+      },
     };
+    this.subscribers[workspaceId].push(fullSubscriber);
+
+    return fullSubscriber;
   }
 }

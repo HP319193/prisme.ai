@@ -3,6 +3,8 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { API_KEY_HEADER, USER_ID_HEADER } from '../../../config';
 import { logger } from '../../logger';
+import sendEvent from '../../services/events/send';
+import { SearchOptions } from '../../services/events/store';
 import { Subscriptions } from '../../services/events/Subscriptions';
 import { cleanSearchQuery } from './events';
 
@@ -37,7 +39,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       return;
     }
     const apiKey = socket.handshake.headers[API_KEY_HEADER];
-    const off = await events.subscribe(workspaceId, {
+    const subscription = await events.subscribe(workspaceId, {
       userId: userId as string,
       apiKey: apiKey as string,
       callback: (event: PrismeEvent<any>) => {
@@ -46,6 +48,25 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       searchOptions: cleanSearchQuery(query),
     });
 
-    socket.on('disconnect', off);
+    // Handle events creation
+    const childBroker = events.broker.child({
+      workspaceId,
+      userId: userId as string,
+    });
+    socket.onAny(
+      async (type, payload: Prismeai.PrismeEvent | SearchOptions) => {
+        if (type === 'event') {
+          sendEvent(
+            workspaceId,
+            payload as Prismeai.PrismeEvent,
+            subscription.accessManager,
+            childBroker
+          );
+        } else if (type === 'filters') {
+          subscription.searchOptions = payload as SearchOptions;
+        }
+      }
+    );
+    socket.on('disconnect', subscription.unsubscribe);
   });
 }
