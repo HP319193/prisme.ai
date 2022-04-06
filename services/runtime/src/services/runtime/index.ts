@@ -5,7 +5,7 @@ import { CacheDriver } from '../../cache';
 import { ContextsManager } from './contexts';
 import { ObjectNotFoundError } from '../../errors';
 import { EventType } from '../../eda';
-import { Break, executeAutomation } from './automations';
+import { executeAutomation } from './automations';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../config';
 import { jsonPathMatches } from '../../utils';
 
@@ -239,7 +239,8 @@ export default class Runtime {
         automation,
         childCtx,
         logger,
-        childBroker
+        childBroker,
+        true
       );
 
       return {
@@ -248,9 +249,6 @@ export default class Runtime {
         ...trigger.workspace.appContext,
       };
     } catch (error) {
-      if (error instanceof Break) {
-        return;
-      }
       logger.error(error);
       throw error;
     }

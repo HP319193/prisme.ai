@@ -4,31 +4,31 @@ import { Logger } from '../../../logger';
 import { interpolate } from '../../../utils';
 import { DetailedAutomation, Workspace } from '../../workspaces';
 import { ContextsManager } from '../contexts';
-import { runInstruction, InstructionType } from './instructions';
-
-export class Break {
-  constructor(public scope: Prismeai.Break['break']['scope'] = 'automation') {
-    this.scope = scope;
-  }
-}
+import { runInstruction, InstructionType, Break } from './instructions';
 
 export async function executeAutomation(
   workspace: Workspace,
   automation: DetailedAutomation,
   ctx: ContextsManager,
   logger: Logger,
-  broker: Broker
+  broker: Broker,
+  rootAutomation?: boolean
 ) {
   await ctx.securityChecks();
+
+  let breakThisAutomation: false | Break = false;
   try {
     await runInstructions(automation.do, { workspace, ctx, logger, broker });
   } catch (error) {
-    if (!(error instanceof Break) || error.scope === 'all') {
+    if (!(error instanceof Break)) {
       (<any>error).source = (<any>error).source || {
         ...broker.parentSource,
         automationSlug: automation.slug,
       };
       throw error;
+    }
+    if (error.scope === 'all' && !rootAutomation) {
+      breakThisAutomation = error;
     }
   }
 
@@ -41,6 +41,10 @@ export async function executeAutomation(
       output,
     }
   );
+
+  if (breakThisAutomation) {
+    throw breakThisAutomation;
+  }
   return output;
 }
 
