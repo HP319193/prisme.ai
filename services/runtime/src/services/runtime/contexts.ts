@@ -81,6 +81,9 @@ export class ContextsManager {
   private broker: Broker;
 
   public payload: any;
+  private depth: number;
+  private appContext?: AppContext;
+  private automationSlug?: string;
 
   constructor(
     workspaceId: string,
@@ -94,6 +97,7 @@ export class ContextsManager {
     this.userId = userId;
     this.correlationId = correlationId;
     this.cache = cache;
+    this.depth = 0;
     this.contexts = {
       local: { ...payload },
       global: {
@@ -105,7 +109,7 @@ export class ContextsManager {
       session: {},
       config: {},
       run: {
-        depth: 0,
+        depth: this.depth,
         correlationId,
       },
     };
@@ -167,16 +171,21 @@ export class ContextsManager {
       session,
       local: this.contexts[ContextType.Local],
     });
+
+    // Restore previous depth
+    if (run?.depth) {
+      this.depth = run.depth;
+    }
   }
 
   async save(context?: ContextType, ttl?: number) {
-    const { global, run, user, local: _, config, session } = this.contexts;
+    const { global, user, local: _, config, session } = this.contexts;
 
     if (!context || context === ContextType.Global) {
       await this.cache.setObject(this.cacheKey(ContextType.Global), global);
     }
     if (!context || context === ContextType.Run) {
-      await this.cache.setObject(this.cacheKey(ContextType.Run), run, {
+      await this.cache.setObject(this.cacheKey(ContextType.Run), this.run, {
         ttl: ttl || CONTEXT_RUN_EXPIRE_TIME,
       });
     }
@@ -230,7 +239,13 @@ export class ContextsManager {
   }
 
   get run(): RunContext {
-    return this.contexts.run;
+    return {
+      ...this.contexts.run,
+      ...this.appContext,
+      automationSlug: this.automationSlug,
+      correlationId: this.correlationId,
+      depth: this.depth,
+    };
   }
 
   // Reinstantiate a new ContextsManager for a child execution context
@@ -246,36 +261,23 @@ export class ContextsManager {
   ): ContextsManager {
     const resetLocal =
       typeof opts.resetLocal !== 'undefined' ? opts.resetLocal : true;
-    const run: Partial<RunContext> = opts.appContext
-      ? {
-          ...opts.appContext,
-          parentAppSlug:
-            (opts.appContext.parentAppSlugs?.length || 0) > 1
-              ? opts.appContext.parentAppSlugs[
-                  opts.appContext.parentAppSlugs.length - 2
-                ]
-              : undefined,
-          automationSlug: opts.automationSlug,
-        }
-      : { automationSlug: opts.automationSlug };
+
     // We do not want to reinstantiate contexts.session/user/global objects as they would prevent calling automations to receive updated fields from their called automations
-    // TODO Problem still exists for run context & any other 'additionalContexts' (i.e config)
+    // TODO Problem still exists for any other 'additionalContexts' (i.e config)
     const child = Object.assign({}, this, {
       contexts: {
         ...this.contexts,
         local: resetLocal
           ? opts.payload || {}
           : { ...this.contexts[ContextType.Local], ...opts.payload },
-        run: {
-          ...this.run,
-          ...run,
-          correlationId: this.contexts?.run?.correlationId,
-        },
         ...additionalContexts,
       },
       payload: { ...(opts.payload || {}) },
       broker: opts.broker || this.broker,
+      appContext: opts.appContext || this.appContext,
+      automationSlug: opts.automationSlug || this.automationSlug,
     });
+
     Object.setPrototypeOf(child, ContextsManager.prototype);
     return child;
   }
@@ -352,17 +354,18 @@ export class ContextsManager {
     return {
       ...local,
       ...publicContexts,
+      run: this.run,
     };
   }
 
   async securityChecks() {
-    if (this.run.depth > MAXIMUM_SUCCESSIVE_CALLS) {
+    if (this.depth > MAXIMUM_SUCCESSIVE_CALLS) {
       throw new TooManyCallError('Reached maximum number of successive calls', {
         limit: MAXIMUM_SUCCESSIVE_CALLS,
       });
     }
     // TODO check memory usage
-    this.run.depth++;
+    this.depth++;
 
     await this.save(ContextType.Run);
   }

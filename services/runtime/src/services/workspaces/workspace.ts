@@ -24,6 +24,7 @@ export interface AppContext {
   appSlug: string;
   appInstanceSlug: string;
   appInstanceFullSlug: string;
+  parentAppSlug?: string;
   parentAppSlugs: string[];
 }
 
@@ -115,17 +116,18 @@ export class Workspace {
   }
 
   async updateImport(slug: string, appInstance: Prismeai.AppInstance) {
+    const { appSlug, appVersion } = appInstance;
     const parentAppSlugs = this.appContext?.parentAppSlugs || [];
-    if (parentAppSlugs.includes(appInstance.appSlug)) {
+    if (parentAppSlugs.includes(appSlug)) {
       throw new PrismeError(
-        `Recursive import detected : cannot import appSlug '${
-          appInstance.appSlug
-        }' inside app '${parentAppSlugs[parentAppSlugs.length - 1]}' `,
+        `Recursive import detected : cannot import appSlug '${appSlug}' inside app '${
+          parentAppSlugs[parentAppSlugs.length - 1]
+        }' `,
         {}
       );
     }
-    const { appSlug, appVersion } = appInstance;
     const dsul = await this.apps.getApp(appSlug, appVersion);
+    const importParentAppSlugs = parentAppSlugs.concat(appSlug);
     this.imports[slug] = await Workspace.create(
       dsul,
       this.apps,
@@ -135,7 +137,11 @@ export class Workspace {
           ? `${this.appContext.appInstanceFullSlug}.${slug}`
           : slug,
         appInstanceSlug: slug,
-        parentAppSlugs: (this.appContext?.parentAppSlugs || []).concat(appSlug),
+        parentAppSlugs: importParentAppSlugs,
+        parentAppSlug:
+          (importParentAppSlugs?.length || 0) > 1
+            ? importParentAppSlugs[importParentAppSlugs.length - 2]
+            : undefined,
       },
       appInstance.config || {}
     );
