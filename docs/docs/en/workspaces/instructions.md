@@ -34,7 +34,7 @@ Stops currently executing automation
 
 **Parameters :**  
 
-No parameter
+* **scope** : If set to **all**, breaks all parents automations
 
 ### All
 Execute the given instructions in parallel  
