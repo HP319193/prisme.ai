@@ -2724,8 +2724,15 @@ components:
       maxProperties: 1
       properties:
         break:
-          description: Stop current automation execution. Does not have any configuration option
+          description: Stop current automation execution. Have one option that allow a break to break all parent automations.
           type: object
+          properties:
+            scope:
+              type: string
+              enum:
+                - all
+                - automation
+              description: The scope argument defines in which scope the break will take effect. It only breaks the current automation by default, it can also break all parent automations. More options might become available in the future.
 
     Fetch:
       type: object

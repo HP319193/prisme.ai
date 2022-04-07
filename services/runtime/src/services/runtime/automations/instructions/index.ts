@@ -11,6 +11,12 @@ import { set } from './set';
 import { deleteInstruction } from './deleteInstruction';
 import { repeat } from './repeat';
 
+export class Break {
+  constructor(public scope: Prismeai.Break['break']['scope'] = 'automation') {
+    this.scope = scope;
+  }
+}
+
 export enum InstructionType {
   Emit = 'emit',
   Fetch = 'fetch',

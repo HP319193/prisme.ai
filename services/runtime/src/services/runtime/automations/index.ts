@@ -4,18 +4,19 @@ import { Logger } from '../../../logger';
 import { interpolate } from '../../../utils';
 import { DetailedAutomation, Workspace } from '../../workspaces';
 import { ContextsManager } from '../contexts';
-import { runInstruction, InstructionType } from './instructions';
-
-class Break {}
+import { runInstruction, InstructionType, Break } from './instructions';
 
 export async function executeAutomation(
   workspace: Workspace,
   automation: DetailedAutomation,
   ctx: ContextsManager,
   logger: Logger,
-  broker: Broker
+  broker: Broker,
+  rootAutomation?: boolean
 ) {
   await ctx.securityChecks();
+
+  let breakThisAutomation: false | Break = false;
   try {
     await runInstructions(automation.do, { workspace, ctx, logger, broker });
   } catch (error) {
@@ -25,6 +26,9 @@ export async function executeAutomation(
         automationSlug: automation.slug,
       };
       throw error;
+    }
+    if (error.scope === 'all' && !rootAutomation) {
+      breakThisAutomation = error;
     }
   }
 
@@ -37,6 +41,10 @@ export async function executeAutomation(
       output,
     }
   );
+
+  if (breakThisAutomation) {
+    throw breakThisAutomation;
+  }
   return output;
 }
 
@@ -63,7 +71,8 @@ export async function runInstructions(
   for (let instruction of instructions || []) {
     const instructionName = Object.keys(instruction || {})[0];
     if (instructionName === InstructionType.Break) {
-      throw new Break();
+      const scope = (<any>instruction)[InstructionType.Break]?.scope;
+      throw new Break(scope);
     }
 
     // Before each run, we interpolate the instruction to replace all the variables based on the context

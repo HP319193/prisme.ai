@@ -789,10 +789,13 @@ declare namespace Prismeai {
     }
     export interface Break {
         /**
-         * Stop current automation execution. Does not have any configuration option
+         * Stop current automation execution. Have one option that allow a break to break all parent automations.
          */
         break: {
-            [key: string]: any;
+            /**
+             * The scope argument defines in which scope the break will take effect. It only breaks the current automation by default, it can also break all parent automations. More options might become available in the future.
+             */
+            scope?: "all" | "automation";
         };
     }
     export interface Conditions {

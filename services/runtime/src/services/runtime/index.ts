@@ -239,7 +239,8 @@ export default class Runtime {
         automation,
         childCtx,
         logger,
-        childBroker
+        childBroker,
+        true
       );
 
       return {
