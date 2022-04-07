@@ -52,6 +52,31 @@ Set a new or existing variable
 * **value** : Variable value (might be a JSON object, a string, a number, ...)  
 * **lifespan** : _Coming soon_
 
+
+When setting object fields, parent objects are created on-the-fly :  
+```
+- set:
+    name: some.house.field
+    value: ok
+```
+Here, `some` and `some.house` are automatically created : 
+```
+  "some": {
+    "house": {
+      "field": "ok
+    }
+  }
+```
+
+It is also possible to create lists and automatically add items to their end with a variable name suffix `[]` : 
+```
+- set:
+    name: session.names[]
+    value: Mickael
+```
+
+Each time this set is executed, `Mickael` is appended to the `session.names` list variable.
+
 ### Delete
 Delete a variable  
 

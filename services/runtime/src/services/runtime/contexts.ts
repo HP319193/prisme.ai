@@ -310,12 +310,24 @@ export class ContextsManager {
   }
 
   async set(path: string, value: any, ttl?: number) {
+    const arrayPush = path.endsWith('[]');
+    if (arrayPush) {
+      path = path.slice(0, -2);
+    }
+
     const splittedPath = parseVariableName(path);
 
     try {
       const { parent, lastKey, context } =
         this.findParentVariableFor(splittedPath);
-      parent[lastKey] = _.cloneDeep(value);
+      if (arrayPush) {
+        if (!Array.isArray(parent[lastKey])) {
+          parent[lastKey] = [];
+        }
+        parent[lastKey].push(_.cloneDeep(value));
+      } else {
+        parent[lastKey] = _.cloneDeep(value);
+      }
       await this.save(context, ttl);
     } catch (error) {
       this.logger.error(error);
