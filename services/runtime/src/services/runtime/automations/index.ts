@@ -15,6 +15,7 @@ export async function executeAutomation(
   rootAutomation?: boolean
 ) {
   await ctx.securityChecks();
+  const startedAt = Date.now();
 
   let breakThisAutomation: false | Break = false;
   try {
@@ -39,6 +40,7 @@ export async function executeAutomation(
       slug: automation.slug!,
       payload: ctx.payload,
       output,
+      duration: Date.now() - startedAt,
     }
   );
 

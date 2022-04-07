@@ -3591,6 +3591,7 @@ components:
             - slug
             - payload
             - output
+            - duration
           properties:
             slug:
               type: string
@@ -3598,6 +3599,8 @@ components:
               type: object
             output:
               $ref: '#/components/schemas/AnyValue'
+            duration:
+              type: number
 
     TriggeredWebhook:
       type: object

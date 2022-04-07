@@ -1058,6 +1058,7 @@ declare namespace Prismeai {
                 [key: string]: any;
             };
             output: AnyValue;
+            duration: number;
         };
     }
     export interface FailedLogin {
