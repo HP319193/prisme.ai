@@ -23,7 +23,7 @@ const isFilteredApp = (app: Prismeai.App): app is FilteredApps => {
 
 const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   const { t } = useTranslation('workspaces');
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
   const { apps, getApps } = useApps();
   const { installApp } = useWorkspaces();
   const {

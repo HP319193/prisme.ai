@@ -1,10 +1,10 @@
 import { createContext, ReactNode, useContext } from 'react';
 
-export interface BlockContext {
+export interface BlockContext<T = any> {
   setAppConfig?: (config: any) => void;
   appConfig?: any;
   setConfig?: (config: any) => void;
-  config?: any;
+  config?: T;
   setSetupComponent?: (setupComponent: ReactNode) => void;
   setupComponent?: ReactNode;
   setButtons?: (buttons: ReactNode[]) => void;
@@ -17,6 +17,7 @@ export const blockContext = createContext<BlockContext>({
   setSetupComponent() {},
   setButtons() {},
 });
-export const useBlock = () => useContext(blockContext);
+export const useBlock = <T = any>() =>
+  useContext<BlockContext<T>>(blockContext);
 
 export default blockContext;

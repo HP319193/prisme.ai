@@ -1,3 +1,4 @@
+import { Schema } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 
@@ -6,7 +7,7 @@ export const useLocalizedText = () => {
     i18n: { language },
   } = useTranslation();
 
-  const translate = useCallback(
+  const localize = useCallback(
     (text: Prismeai.LocalizedText | undefined) => {
       if (!text) return '';
       if (typeof text === 'string') return text;
@@ -17,7 +18,15 @@ export const useLocalizedText = () => {
     [language]
   );
 
-  return translate;
+  const localizeSchemaForm = useCallback(
+    (schema: Schema) => {
+      console.log(schema);
+      return schema;
+    },
+    [language]
+  );
+
+  return { localize, localizeSchemaForm };
 };
 
 export default useLocalizedText;

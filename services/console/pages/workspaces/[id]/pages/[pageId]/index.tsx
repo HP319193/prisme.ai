@@ -12,6 +12,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       'workspaces',
       'errors',
       'user',
+      'pages',
     ])),
   },
 });

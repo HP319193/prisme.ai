@@ -390,14 +390,60 @@
       }
     },
     "blocks": {
+      "name": "{{context}}",
+      "name_Title": "Titre",
+      "name_Cards": "Groupe de cartes",
       "description": "",
-      "description_title": "Afficher un titre",
+      "description_Title": "Afficher un titre",
+      "description_Cards": "Afficher un groupe de cartes",
       "title": {
         "settings": {
           "title": "Titre",
           "level": "Niveau de titre",
           "levelOption": "Niveau {{level}}"
         }
+      },
+      "cards": {
+        "settings": {
+          "cards": "Cartes",
+          "card": "Carte",
+          "title": "Titre",
+          "description": "Description",
+          "cover": "Image de couverture",
+          "content": "Contenu",
+          "type": "Type",
+          "type_text": "Texte",
+          "type_button": "Bouton",
+          "type_accordion": "Accordéon",
+          "text": {
+            "value": "Texte à afficher"
+          },
+          "button": {
+            "value": "Texte du bouton",
+            "url": "Adresse web à afficher",
+            "event": "Évènement à déclencher",
+            "icon": "Icône"
+          },
+          "accordion": {
+            "title": "Titre",
+            "content": "Contenu",
+            "icon": "Icône"
+          },
+          "autoScroll": {
+            "title": "Défilement automatique",
+            "description": "Activez cette option pour que le carousel défile automatiquement toutes les 5 secondes"
+          },
+          "layout": {
+            "title": "Mise en page",
+            "description": "Vous pouvez changer de mode d'affichage. Par défaut, les cartes seront affichées à l'aide d'un carousel.",
+            "noOptions": "Aucune option disponible",
+            "carousel": "Carousel (Défilement horizontal)",
+            "grid": "Grille",
+            "column": "Colonne"
+          }
+        },
+        "prev": "Précédent",
+        "next": "Suivant"
       }
     }
   },

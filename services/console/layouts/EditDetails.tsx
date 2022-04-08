@@ -33,7 +33,7 @@ export const EditDetails = ({
   ...props
 }: EditDetailsprops) => {
   const { t } = useTranslation('workspaces');
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
 
   const confirmDelete = useCallback(() => {
     Modal.confirm({

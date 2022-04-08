@@ -5,9 +5,10 @@ import AddWidget from './AddWidget';
 import { usePageBuilder } from './context';
 import Widget from './Widget';
 import * as BuiltinBlocks from '../Blocks';
+import { Schema } from '@prisme.ai/design-system';
 
 export const Widgets = () => {
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
   const {
     workspace: { id: workspaceId },
   } = useWorkspace();
@@ -38,7 +39,7 @@ export const Widgets = () => {
   }, [page.widgets, widgets]);
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col max-w-[100vw]">
       <div className="m-4">
         <AddWidget after={-1} />
       </div>
@@ -57,7 +58,7 @@ export const Widgets = () => {
               }
               workspaceId={workspaceId}
               appInstance={appInstance}
-              editSchema={edit}
+              editSchema={edit as Schema['properties']}
             />
             <AddWidget after={index} />
           </Fragment>

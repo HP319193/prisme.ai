@@ -5,6 +5,7 @@ import {
   BlockProvider,
   Button,
   Loading,
+  Schema,
   StretchContent,
   Tooltip,
   useBlock,
@@ -13,6 +14,7 @@ import Block from '../Block';
 import { SettingOutlined } from '@ant-design/icons';
 import { Fragment, useCallback, useMemo, useState } from 'react';
 import Settings from './Settings';
+import useLocalizedText from '../../utils/useLocalizedText';
 
 interface WidgetProps {
   url?: string;
@@ -21,7 +23,7 @@ interface WidgetProps {
   title: string | React.ReactNode;
   workspaceId: string;
   appInstance?: string;
-  editSchema?: Prismeai.Widget['edit'];
+  editSchema?: Schema['properties'];
 }
 export const Widget = ({
   url,
@@ -33,9 +35,20 @@ export const Widget = ({
   editSchema,
 }: WidgetProps) => {
   const { t } = useTranslation('workspaces');
+  const { localizeSchemaForm } = useLocalizedText();
   const { removeWidget } = usePageBuilder();
   const { buttons } = useBlock();
   const [settingsVisible, setSettingsVisible] = useState(false);
+
+  const schema: Schema | undefined = useMemo(
+    () =>
+      editSchema &&
+      localizeSchemaForm({
+        type: 'object',
+        properties: editSchema,
+      }),
+    [editSchema, localizeSchemaForm]
+  );
 
   return (
     <div
@@ -70,9 +83,9 @@ export const Widget = ({
         </div>
       </div>
       <StretchContent visible={settingsVisible}>
-        <Settings removeWidget={() => removeWidget(id)} schema={editSchema} />
+        <Settings removeWidget={() => removeWidget(id)} schema={schema} />
       </StretchContent>
-      {Component && <Component />}
+      {Component && <Component edit />}
       {url && (
         <Block
           url={url}
@@ -83,6 +96,7 @@ export const Widget = ({
           renderLoading={
             <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
           }
+          edit
         />
       )}
     </div>

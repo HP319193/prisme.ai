@@ -24,7 +24,7 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
     workspace: { id: workspaceId },
   } = useWorkspace();
   const { t } = useTranslation('workspaces');
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
   const [search, setSearch] = useState('');
   const filteredWidgets = useMemo(() => {
     return [
@@ -111,12 +111,14 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
                   className="w-full text-left !h-fit"
                 >
                   <ListItem
-                    title={localize(name) || slug}
+                    title={t('pages.blocks.name', {
+                      context: localize(name) || slug,
+                    })}
                     content={
                       description
                         ? localize(description)
                         : t('pages.blocks.description', {
-                            context: localize(name).toLowerCase(),
+                            context: localize(name),
                           })
                     }
                   />

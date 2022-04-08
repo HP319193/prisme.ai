@@ -19,7 +19,7 @@ export const PagesSidebar = () => {
     t,
     i18n: { language },
   } = useTranslation('workspaces');
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
   const { pages, createPage } = usePages();
   const { push } = useRouter();
   const {

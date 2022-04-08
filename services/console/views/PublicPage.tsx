@@ -10,6 +10,7 @@ import api, { Events } from '../utils/api';
 import useLocalizedText from '../utils/useLocalizedText';
 import * as BuiltinBlocks from '../components/Blocks';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
+import useBlocksConfigs from '../components/Blocks/useBlocksConfigs';
 
 export interface PublicPageProps {
   page: Prismeai.DetailedPage | null;
@@ -20,7 +21,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     t,
     i18n: { language },
   } = useTranslation('pages');
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
   const { user } = useUser();
   const [currentPage, setCurrentPage] = useState<
     Prismeai.DetailedPage | null | 401
@@ -29,73 +30,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     isReady,
     query: { pageSlug },
   } = useRouter();
-  const [widgetsConfigs, setWidgetsConfigs] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (!page) return;
-    setWidgetsConfigs(page.widgets.map(({ config }) => config));
-  }, [page]);
-
-  const socket = useRef<Events>();
-  useEffect(() => {
-    if (!page || !page.workspaceId) return;
-    const socketAlreadyInstantiatedForId =
-      socket.current && socket.current.workspaceId === page.workspaceId;
-
-    if (!page.workspaceId || socketAlreadyInstantiatedForId) {
-      return;
-    }
-    if (socket.current) {
-      socket.current.destroy();
-    }
-    socket.current = api.streamEvents(page.workspaceId);
-    const off = socket.current.all((e, { payload }) => {
-      const updateEvents = page.widgets.reduce<Record<string, number[]>>(
-        (prev, { config }, index) =>
-          !config || !config.updateOn
-            ? prev
-            : {
-                ...prev,
-                [config.updateOn]: [...(prev[config.updateOn] || []), index],
-              },
-        {}
-      );
-
-      if (Object.keys(updateEvents).includes(e)) {
-        setWidgetsConfigs((configs) => {
-          const newConfigs = [...configs];
-          (updateEvents[e] || []).forEach((id) => {
-            newConfigs[id] = payload;
-          });
-          return newConfigs;
-        });
-      }
-      // http://localhost:3001/v2/workspaces/eQa1CHo/webhooks/update page title
-    });
-
-    return () => {
-      off();
-    };
-  }, [page]);
-  console.log(widgetsConfigs);
-  // Init widgets
-  useEffect(() => {
-    if (!page || !page.workspaceId) return;
-    const initEvents = page.widgets.reduce<string[]>(
-      (prev, { config }) =>
-        !config || !config.onInit ? prev : [...prev, config.onInit],
-      []
-    );
-    api.postEvents(
-      page.workspaceId,
-      initEvents.map((event) => ({
-        type: event,
-        payload: {
-          page: page.id,
-        },
-      }))
-    );
-  }, [page]);
+  const widgetsConfigs = useBlocksConfigs(page);
 
   useEffect(() => {
     // Page is null because it does not exist OR because it need authentication
@@ -145,7 +80,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   }
 
   return (
-    <div className="page flex flex-1 flex-col m-2">
+    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw]">
       <Head>
         <title>{localize(currentPage.name)}</title>
         <meta name="description" content={localize(currentPage.description)} />

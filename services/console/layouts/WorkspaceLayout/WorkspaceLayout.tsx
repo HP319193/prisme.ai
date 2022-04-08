@@ -49,7 +49,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   } = useRouter();
 
   const { t } = useTranslation('workspaces');
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
   const { fetch, update, workspaces } = useWorkspaces();
   const [loading, setLoading] = useState<WorkspaceContext['loading']>(false);
   const lockEvents = useRef(false);

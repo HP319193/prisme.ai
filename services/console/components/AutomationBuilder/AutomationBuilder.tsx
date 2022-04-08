@@ -69,7 +69,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   customInstructions,
 }) => {
   const { t } = useTranslation('workspaces');
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
 
   const zoomPanHelper = useZoomPanHelper();
   const [panelIsOpen, setPanelIsOpen] = useState(false);

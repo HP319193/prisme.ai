@@ -1,15 +1,13 @@
-import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import {
   Button,
-  Input,
   Divider,
-  Tooltip,
   useBlock,
+  SchemaForm,
+  Schema,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
-import Form from '../SchemaForm/Form';
-import { Schema } from '../SchemaForm/types';
 
 const noop = () => null;
 
@@ -41,15 +39,19 @@ export const Settings = ({ removeWidget, schema }: SettingsProps) => {
         },
       },
       'ui:options': {
-        layout: 'columns',
-        lines: [['onInit', 'updateOn']],
+        grid: [[['onInit', 'updateOn']]],
       },
     }),
     [t]
   );
   return (
-    <div className="flex flex-1 flex-col bg-slate-100 p-4 shadow-inner shadow-slate-500 -mx-2 px-6">
-      <Form schema={commonSchema} onChange={setConfig} initialValues={config} />
+    <div className="flex flex-1 flex-col p-4 shadow-inner shadow-slate-500 -mx-2 px-6">
+      <SchemaForm
+        schema={commonSchema}
+        onChange={setConfig}
+        initialValues={config}
+        buttons={[]}
+      />
       <Divider />
       {SetupComponent && (
         <>
@@ -58,10 +60,15 @@ export const Settings = ({ removeWidget, schema }: SettingsProps) => {
         </>
       )}
       {schema && (
-        <>
-          <Form onChange={setConfig} schema={schema} initialValues={config} />
+        <div className="bg-white">
+          <SchemaForm
+            schema={schema}
+            onChange={setConfig}
+            initialValues={config}
+            buttons={[]}
+          />
           <Divider />
-        </>
+        </div>
       )}
       <div>
         <Button onClick={removeWidget}>
