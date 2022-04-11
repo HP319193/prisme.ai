@@ -347,6 +347,7 @@ export class ContextsManager {
         ) {
           this.userId = value;
           await this.fetch([ContextType.User, ContextType.Session]);
+          this.broker.parentSource.userId = value;
           return;
         }
       }

@@ -208,17 +208,6 @@ export default class Runtime {
       });
     }
     try {
-      const childCtx = ctx.child(
-        {
-          config: automation.workspace.config,
-        },
-        {
-          resetLocal: false,
-          appContext: automation.workspace?.appContext,
-          automationSlug: automation.slug!,
-        }
-      );
-
       const childBroker = broker.child(
         {
           appSlug: automation.workspace.appContext?.appSlug,
@@ -231,6 +220,18 @@ export default class Runtime {
         {
           validateEvents: false,
           forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+        }
+      );
+
+      const childCtx = ctx.child(
+        {
+          config: automation.workspace.config,
+        },
+        {
+          resetLocal: false,
+          appContext: automation.workspace?.appContext,
+          broker: childBroker,
+          automationSlug: automation.slug!,
         }
       );
 
