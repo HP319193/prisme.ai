@@ -21,12 +21,13 @@
                         relationalOperator: /<=|>=|>|</,
                         bang: "!",
                         exists:/[Ee][Xx][Ii][Ss][Tt][Ss]/,
+                        inOperator:/[Ii][Nn]/,
                         notExists:/[Nn][Oo][Tt] [Ee][Xx][Ii][Ss][Tt][Ss]/,
                         and:/[Aa][Nn][Dd]|&&/,
                         or:/[Oo][Rr]|\|\|/,
                         "null": /[Nn][Uu][Ll][Ll]/,
-                        "undefined": /[Uu][Nn][Dd][Ee][Ff][Ii][Nn][Ee][Dd]/,	
-                        "true": /[Tt][Rr][Uu][Ee]/,	
+                        "undefined": /[Uu][Nn][Dd][Ee][Ff][Ii][Nn][Ee][Dd]/,
+                        "true": /[Tt][Rr][Uu][Ee]/,
                         "false": /[Ff][Aa][Ll][Ss][Ee]/,
                         word: /[a-zA-Z0-9_]+/,
                         sqstr: /'.*?'/,
@@ -79,22 +80,22 @@ main -> expression {% id %}
 expression -> suffixedExpression {% id %}
 
 suffixedExpression -> booleanExpression {% id %} | booleanExpression %ws suffixOperator {% toConditionalExpression %}
-suffixOperator -> %exists {% id %} | %notExists {% id %} 
+suffixOperator -> %exists {% id %} | %notExists {% id %}
 
-booleanExpression -> 
+booleanExpression ->
         equalityExpression {% id %}
         | equalityExpression %ws booleanOperator %ws booleanExpression {% toConditionalExpression %}
 booleanOperator -> %and {% id %} | %or {% id %}
 
-equalityExpression -> 
+equalityExpression ->
         relationalExpression {% id %}
         | relationalExpression %ws matchOperator %ws %regex insideARegEx:+ %closingP {% ([left,,operator,,,right]) => toConditionalExpression([left,,operator,,right]) %}
         | relationalExpression %ws equalityOperator %ws equalityExpression {% toConditionalExpression %}
 
-matchOperator -> %matches | %notMatches 
+matchOperator -> %matches | %notMatches
 insideARegEx -> %anything {% ([value]) => value.value %} | variable {% id %}
 
-equalityOperator -> %equals {% id %} | %notEquals {% id %} | %matches {% id %} | %notMatches {% id %} 
+equalityOperator -> %equals {% id %} | %notEquals {% id %} | %matches {% id %} | %notMatches {% id %} | %inOperator {% id %}
 
 relationalExpression ->
         unaryExpression {% id %}
@@ -110,7 +111,7 @@ unaryExpression ->
         | %bang _ expression {% ([,,node]) => new NegationExpression(node) %}
         | "(" _ expression _ ")" {% d => d[2] %}
 
-variable -> %dcbl _ variablePath _ %dcbr {% ([,,path]) => new Variable(path)  %}     
+variable -> %dcbl _ variablePath _ %dcbr {% ([,,path]) => new Variable(path)  %}
 
 variablePath ->
         %word {% id %}

@@ -28,6 +28,9 @@ class ConditionalExpression extends Evaluatable {
       case 'matches':
         return !!handleMatches(left, right);
 
+      case 'in':
+        return Array.isArray(right) ? right.includes(left) : left in right;
+
       case 'not matches':
         const result = handleMatches(left, right);
         return !result;

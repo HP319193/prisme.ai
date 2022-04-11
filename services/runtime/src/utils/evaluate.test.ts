@@ -145,6 +145,39 @@ describe('It should handle variables within {{}}', () => {
       })
     ).toEqual(false);
   });
+
+  it('should handle in operator', async () => {
+    const mylist = ['un', 'deux', 'trois'];
+    expect(
+      evaluate(`{{foo}} in {{mylist}}`, {
+        foo: 'un',
+        mylist,
+      })
+    ).toEqual(true);
+    expect(
+      evaluate(`{{foo}} in {{mylist}}`, {
+        foo: 'quatre',
+        mylist,
+      })
+    ).toEqual(false);
+    // Works with objects as well
+    expect(
+      evaluate(`{{foo}} in {{myobject}}`, {
+        foo: 'bla',
+        myobject: {
+          bla: 'hello',
+        },
+      })
+    ).toEqual(true);
+    expect(
+      evaluate(`foo in {{myobject}}`, {
+        foo: 'bla',
+        myobject: {
+          bla: 'hello',
+        },
+      })
+    ).toEqual(false);
+  });
 });
 
 it('works with the regexp() keyword on matches instruction.', () => {
