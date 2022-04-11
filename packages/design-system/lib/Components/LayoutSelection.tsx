@@ -1,10 +1,11 @@
-import { Col, Row, SidePanel } from '../index';
-import { ReactNode } from 'react';
+import { Col, Row, SearchInput, SidePanel } from '../index';
+import { ReactNode, useMemo, useState } from 'react';
 import ListItem, { ListItemProps } from './ListItem';
 import Button from './Button';
 
 interface ListItemWithId extends ListItemProps {
   id: string;
+  title: string;
 }
 
 export interface LayoutSelectionProps {
@@ -50,6 +51,16 @@ const LayoutSelection = ({
   onAdd,
   addLabel = 'add',
 }: LayoutSelectionProps) => {
+  const [searchValue, SetSearchValue] = useState('');
+
+  const filteredItems = useMemo(
+    () =>
+      items.filter((item) =>
+        item.title.toLowerCase().includes(searchValue.toLowerCase())
+      ),
+    [searchValue]
+  );
+
   return (
     <Row className="flex grow h-full">
       <Col span={8} className="h-full">
@@ -57,7 +68,12 @@ const LayoutSelection = ({
           children={
             <div className="flex w-full flex-col space-y-2 overflow-y-auto">
               {Header || null}
-              {items.map((item) => (
+              <SearchInput
+                value={searchValue}
+                onChange={(e) => SetSearchValue(e.target.value)}
+                className="mb-3"
+              />
+              {filteredItems.map((item) => (
                 <ListItemWithSelection
                   {...item}
                   key={item.id}
