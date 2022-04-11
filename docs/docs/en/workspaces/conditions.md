@@ -38,6 +38,10 @@ These conditions are described using a very common syntax across programming lan
 **Is this variable empty ?** :  
 `!{{testedVariable}}`  
 
+**... in ...** :  
+`{{someValue}} in {{someList}}`  
+`{{someKey}} in {{someObject}}`
+
 ## Logical operators  
 
 Multiple conditions can be chained with **AND** or **OR** :    
