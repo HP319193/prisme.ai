@@ -167,6 +167,11 @@ describe('It should handle variables within {{}}', () => {
         mylist,
       })
     ).toEqual(false);
+    expect(
+      evaluate(`{{foo}} in {{mylist}}`, {
+        foo: 'quatre',
+      })
+    ).toEqual(false);
     // Works with objects as well
     expect(
       evaluate(`{{foo}} in {{myobject}}`, {

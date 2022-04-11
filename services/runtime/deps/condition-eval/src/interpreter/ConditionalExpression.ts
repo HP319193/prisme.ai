@@ -29,7 +29,11 @@ class ConditionalExpression extends Evaluatable {
         return !!handleMatches(left, right);
 
       case 'in':
-        return Array.isArray(right) ? right.includes(left) : left in right;
+        try {
+          return Array.isArray(right) ? right.includes(left) : left in right;
+        } catch {
+          return false;
+        }
 
       case 'not matches':
         const result = handleMatches(left, right);
