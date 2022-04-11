@@ -150,31 +150,39 @@ export class ContextsManager {
     };
   }
 
-  async fetch() {
-    const global = await this.cache.getObject<GlobalContext>(
-      this.cacheKey(ContextType.Global)
-    );
-    const run = await this.cache.getObject<RunContext>(
-      this.cacheKey(ContextType.Run)
-    );
-    const user = this.userId
-      ? await this.cache.getObject<UserContext>(this.cacheKey(ContextType.User))
-      : {};
-    const session = await this.cache.getObject(
-      this.cacheKey(ContextType.Session)
-    );
+  async fetch(contexts?: ContextType[]) {
+    const fetchedContexts: Partial<Contexts> = {};
 
-    this.contexts = this.merge({
-      global,
-      run,
-      user,
-      session,
-      local: this.contexts[ContextType.Local],
-    });
+    if (!contexts || contexts.includes(ContextType.Global)) {
+      fetchedContexts.global = await this.cache.getObject<GlobalContext>(
+        this.cacheKey(ContextType.Global)
+      );
+    }
+
+    if (!contexts || contexts.includes(ContextType.Run)) {
+      fetchedContexts.run = await this.cache.getObject<RunContext>(
+        this.cacheKey(ContextType.Run)
+      );
+    }
+
+    if (!contexts || contexts.includes(ContextType.User)) {
+      fetchedContexts.user = this.userId
+        ? await this.cache.getObject<UserContext>(
+            this.cacheKey(ContextType.User)
+          )
+        : {};
+    }
+    if (!contexts || contexts.includes(ContextType.Session)) {
+      fetchedContexts.session = await this.cache.getObject(
+        this.cacheKey(ContextType.Session)
+      );
+    }
+
+    this.contexts = this.merge(fetchedContexts);
 
     // Restore previous depth
-    if (run?.depth) {
-      this.depth = run.depth;
+    if (fetchedContexts?.run?.depth) {
+      this.depth = fetchedContexts.run.depth;
     }
   }
 
@@ -328,8 +336,21 @@ export class ContextsManager {
         }
         parent[lastKey].push(_.cloneDeep(value));
       } else {
+        const prevValue = parent[lastKey];
         parent[lastKey] = _.cloneDeep(value);
+
+        // Handle user/session switching
+        if (
+          context === ContextType.User &&
+          lastKey === 'id' &&
+          prevValue !== value
+        ) {
+          this.userId = value;
+          await this.fetch([ContextType.User, ContextType.Session]);
+          return;
+        }
       }
+      // Persist
       await this.save(context, ttl);
     } catch (error) {
       this.logger.error(error);
