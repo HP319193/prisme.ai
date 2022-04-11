@@ -38,7 +38,7 @@ const ListItemWithSelection = ({
       onSelect(listItemProps.id);
     }}
     className={`!flex-initial ${className || ''} ${
-      selected ? 'text-blue' : ''
+      selected ? '!text-blue-500' : ''
     }`}
   />
 );
@@ -76,7 +76,7 @@ const LayoutSelection = ({
                   className="grow"
                 />
                 {onAdd && (
-                  <Button onClick={onAdd} className="flex items-center">
+                  <Button onClick={onAdd} className="!flex items-center">
                     {addLabel}
                     <PlusCircleOutlined />
                   </Button>
@@ -94,7 +94,7 @@ const LayoutSelection = ({
           }
         />
       </Col>
-      <Col span={16} className="h-full">
+      <Col span={16} className="h-full overflow-x-auto">
         {children}
       </Col>
     </Row>
