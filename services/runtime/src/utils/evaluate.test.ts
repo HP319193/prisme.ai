@@ -79,6 +79,13 @@ describe('Math.js should handle basic conditions features', () => {
     ).toEqual(false);
     expect(evaluate('salut !== salut')).toEqual(false);
   });
+
+  it('should work with strings including operator names', () => {
+    expect(evaluate('bonjor matches "or"')).toEqual(true);
+    // TODO These still fail if not wrapped by double quotes
+    expect(evaluate('bonjour matches "matches"')).toEqual(false);
+    expect(evaluate('"matches" matches "matches"')).toEqual(true);
+  });
 });
 
 describe('It should handle variables within {{}}', () => {

@@ -32,11 +32,18 @@
                         word: /[a-zA-Z0-9_]+/,
                         sqstr: /'.*?'/,
                         dqstr: /".*?"/,
-                        dcbl: { match: /{{/, push: "main" },
+                        dcbl: { match: /{{/, push: "variable" },
+                },
+                variable: {
+                        dcbl: { match: /{{/, push: "variable" },
+                        openingBracket: "[",
+                        dot: ".",
+                        word: /[a-zA-Z0-9_]+/,
+                        closingBracket: "]",
                         dcbr: { match: /}}/, pop: true }
                 },
                 regex: {
-                        dcbl: { match: /{{/, push: "main" },
+                        dcbl: { match: /{{/, push: "variable" },
                         closingP: { match: /\)$/, pop: true },
                         anything: { match: /[^)]+/, lineBreaks: true }
                 }
