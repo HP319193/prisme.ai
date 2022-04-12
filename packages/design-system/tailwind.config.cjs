@@ -13,5 +13,8 @@ module.exports = {
       },
     },
   },
+  safelist: [
+    '!text-blue-500'
+  ],
   plugins: [],
 };
