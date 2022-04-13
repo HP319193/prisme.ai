@@ -63,10 +63,16 @@ export class Workspace {
     overrideConfig?: any
   ) {
     const workspace = new Workspace(dsul, apps, appContext);
-    await workspace.update(dsul);
-    if (overrideConfig) {
-      workspace.config = { ...workspace.config, ...overrideConfig };
-    }
+    await workspace.update({
+      ...dsul,
+      config: {
+        ...dsul.config,
+        value: {
+          ...dsul.config?.value,
+          ...overrideConfig,
+        },
+      },
+    });
     return workspace;
   }
 
