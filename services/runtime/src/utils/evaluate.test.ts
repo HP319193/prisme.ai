@@ -241,3 +241,59 @@ it('works with the regexp() keyword on matches instruction.', () => {
     evaluate(`"bonjour.georges@gmail.com" matches REGEX([0-9]+)`, {})
   ).toEqual(false);
 });
+
+it('works with the date() keyword.', () => {
+  expect(evaluate('date("2022-04-13T08:00:05.493Z").hour == 8', {})).toEqual(
+    true
+  );
+
+  expect(
+    evaluate('date({{mydate}}).minute > 34 && date({{mydate}}).minute < 37', {
+      mydate: '2022-06-23T08:36:05.493Z',
+    })
+  ).toEqual(true);
+
+  expect(
+    evaluate('date({{mydate}}).second >= 5 && date({{mydate}}).second < 6', {
+      mydate: '2022-06-23T08:36:05.493Z',
+    })
+  ).toEqual(true);
+
+  expect(
+    evaluate('date({{mydate}}).date == 23', {
+      mydate: '2022-06-23T08:36:05.493Z',
+    })
+  ).toEqual(true);
+
+  expect(
+    evaluate('date({{mydate}}).month >= 6 && date({{mydate}}).month < 10', {
+      mydate: '2022-06-23T08:36:05.493Z',
+    })
+  ).toEqual(true);
+
+  expect(
+    evaluate('date({{mydate}}).year == 2022', {
+      mydate: '2022-06-23T08:36:05.493Z',
+    })
+  ).toEqual(true);
+
+  expect(
+    evaluate('date({{mydate}}).day == 3', {
+      mydate: '2022-04-13T08:36:05.493Z',
+    })
+  ).toEqual(true);
+
+  expect(
+    evaluate('date({{mydate}}).day in {{allowedDays}}', {
+      mydate: '2022-04-13T08:36:05.493Z',
+      allowedDays: [1, 2, 3, 4],
+    })
+  ).toEqual(true);
+
+  expect(
+    evaluate('date({{mydate}}).day not in {{allowedDays}}', {
+      mydate: '2022-04-09T08:36:05.493Z',
+      allowedDays: [6, 7],
+    })
+  ).toEqual(false);
+});
