@@ -35,14 +35,6 @@ class DateExpression extends Evaluatable {
         default:
           throw new Error(`Unsupported date(...) field ${this.field}`);
       }
-      console.log(
-        'try getting ',
-        this.field,
-        ' from ',
-        date,
-        ' with ',
-        context
-      );
     } catch {
       return undefined;
     }

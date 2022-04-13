@@ -52,7 +52,7 @@
                 date: {
                         dcbl: { match: /{{/, push: "variable" },
                         closingP: { match: /\)/, pop: true },
-                        word: /[a-zA-Z0-9_]+/,
+                        word: /[a-zA-Z0-9_:.-]+/,
                         sqstr: /'.*?'/,
                         dqstr: /".*?"/,
                         anything: { match: /[^)]+/, lineBreaks: true }

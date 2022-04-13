@@ -248,6 +248,12 @@ it('works with the date() keyword.', () => {
   );
 
   expect(
+    evaluate('date(2022-04-13T08:04:05.493Z).minute == 4', {
+      mydate: '2022-04-13T08:04:05.493Z',
+    })
+  ).toEqual(true);
+
+  expect(
     evaluate('date({{mydate}}).minute > 34 && date({{mydate}}).minute < 37', {
       mydate: '2022-06-23T08:36:05.493Z',
     })

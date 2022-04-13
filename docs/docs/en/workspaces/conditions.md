@@ -40,7 +40,8 @@ These conditions are described using a very common syntax across programming lan
 
 **... in ...** :  
 `{{someValue}} in {{someList}}`  
-`{{someKey}} in {{someObject}}`
+`{{someKey}} in {{someObject}}`  
+`{{someKey}} not in {{someObject}}`
 
 ## Logical operators  
 
@@ -66,3 +67,18 @@ When using the `match` operator, a **RegExp** can also be provided with the `reg
 `
 "luke.skywalker@gmail.com" matches regex(luke)
 `
+
+## Dates
+As long as they are ISO8601 dates, dates can be tested directly within conditions :  
+
+`date("2022-04-13T08:00:05.493Z").hour == 8`   
+`date({{mydate}}).minute > 34 && date({{mydate}}).minute < 37`  
+`date({{mydate}}).second >= 5`  
+`date({{mydate}}).date == 23`  
+`date({{mydate}}).month >= 6 && date({{mydate}}).month < 10`  
+`date({{mydate}}).year == 2022`  
+`date({{mydate}}).day == 3`  
+`date({{mydate}}).day in {{allowedDays}}`     
+
+* Tested values are **UTC** based  
+* **day** starts on **0** for **Sunday** (so **3** is **Wednesday**)
