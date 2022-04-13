@@ -8,6 +8,7 @@
                 main: {
                         dot: ".",
                         regex: { match: /[rR][eE][gG][eE][xX]\(/, push: 'regex' },
+                        date: { match: /[dD][aA][tT][eE]\(/, push: 'date' },
                         openingBracket: "[",
                         closingBracket: "]",
                         openP: "(",
@@ -22,6 +23,7 @@
                         bang: "!",
                         exists:/[Ee][Xx][Ii][Ss][Tt][Ss]/,
                         inOperator:/[Ii][Nn]/,
+                        notInOperator:/[Nn][Oo][Tt] [Ii][Nn]/,
                         notExists:/[Nn][Oo][Tt] [Ee][Xx][Ii][Ss][Tt][Ss]/,
                         and:/[Aa][Nn][Dd]|&&/,
                         or:/[Oo][Rr]|\|\|/,
@@ -46,6 +48,14 @@
                         dcbl: { match: /{{/, push: "variable" },
                         closingP: { match: /\)$/, pop: true },
                         anything: { match: /[^)]+/, lineBreaks: true }
+                },
+                date: {
+                        dcbl: { match: /{{/, push: "variable" },
+                        closingP: { match: /\)/, pop: true },
+                        word: /[a-zA-Z0-9_:.-]+/,
+                        sqstr: /'.*?'/,
+                        dqstr: /".*?"/,
+                        anything: { match: /[^)]+/, lineBreaks: true }
                 }
         });
 %}
@@ -65,6 +75,7 @@ const BooleanConstant = require('./interpreter/BooleanConstant').default;
 const NullConstant = require('./interpreter/NullConstant').default;
 const NumberConstant = require('./interpreter/NumberConstant').default;
 const StringConstant = require('./interpreter/StringConstant').default;
+const DateExpression = require('./interpreter/DateExpression').default;
 
 const arrayify = item => Array.isArray(item) ? item : [item];
 const joinFirst =
@@ -102,7 +113,7 @@ equalityExpression ->
 matchOperator -> %matches | %notMatches
 insideARegEx -> %anything {% ([value]) => value.value %} | variable {% id %}
 
-equalityOperator -> %equals {% id %} | %notEquals {% id %} | %matches {% id %} | %notMatches {% id %} | %inOperator {% id %}
+equalityOperator -> %equals {% id %} | %notEquals {% id %} | %matches {% id %} | %notMatches {% id %} | %inOperator {% id %} | %notInOperator {% id %}
 
 relationalExpression ->
         unaryExpression {% id %}
@@ -114,6 +125,7 @@ unaryExpression ->
         | undefinedLiteral {% ([value]) => new Variable(value) %}
         | number {% ([value]) => new NumberConstant(value) %}
         | string {% ([value]) => new StringConstant(value) %}
+        | date {% ([value]) => new DateExpression(value) %}
         | variable {% id %}
         | %bang _ expression {% ([,,node]) => new NegationExpression(node) %}
         | "(" _ expression _ ")" {% d => d[2] %}
@@ -125,6 +137,8 @@ variablePath ->
 		| variablePath %openingBracket expression %closingBracket {% d => [...arrayify(d[0]), d[2]] %}
         | variablePath _ %dot _ %word {% d => [...arrayify(d[0]), d[4]] %}
 
+insideADate -> string {% id %} | variable {% id %}
+date -> %date insideADate %closingP %dot %word {% ([, date, , , elem]) => [date, elem.value] %}
 string ->
         %dqstr {% retrieveActualString(`"`) %}
         | %sqstr {% retrieveActualString(`'`) %}

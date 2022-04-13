@@ -12,6 +12,7 @@ function id(x) { return x[0]; }
                 main: {
                         dot: ".",
                         regex: { match: /[rR][eE][gG][eE][xX]\(/, push: 'regex' },
+                        date: { match: /[dD][aA][tT][eE]\(/, push: 'date' },
                         openingBracket: "[",
                         closingBracket: "]",
                         openP: "(",
@@ -26,6 +27,7 @@ function id(x) { return x[0]; }
                         bang: "!",
                         exists:/[Ee][Xx][Ii][Ss][Tt][Ss]/,
                         inOperator:/[Ii][Nn]/,
+                        notInOperator:/[Nn][Oo][Tt] [Ii][Nn]/,
                         notExists:/[Nn][Oo][Tt] [Ee][Xx][Ii][Ss][Tt][Ss]/,
                         and:/[Aa][Nn][Dd]|&&/,
                         or:/[Oo][Rr]|\|\|/,
@@ -49,6 +51,14 @@ function id(x) { return x[0]; }
                 regex: {
                         dcbl: { match: /{{/, push: "variable" },
                         closingP: { match: /\)$/, pop: true },
+                        anything: { match: /[^)]+/, lineBreaks: true }
+                },
+                date: {
+                        dcbl: { match: /{{/, push: "variable" },
+                        closingP: { match: /\)/, pop: true },
+                        word: /[a-zA-Z0-9_:.-]+/,
+                        sqstr: /'.*?'/,
+                        dqstr: /".*?"/,
                         anything: { match: /[^)]+/, lineBreaks: true }
                 }
         });
@@ -83,6 +93,7 @@ const BooleanConstant = require('./interpreter/BooleanConstant').default;
 const NullConstant = require('./interpreter/NullConstant').default;
 const NumberConstant = require('./interpreter/NumberConstant').default;
 const StringConstant = require('./interpreter/StringConstant').default;
+const DateExpression = require('./interpreter/DateExpression').default;
 
 const arrayify = item => Array.isArray(item) ? item : [item];
 const joinFirst =
@@ -236,6 +247,7 @@ var grammar = {
     {"name": "equalityOperator", "symbols": [(lexer.has("matches") ? {type: "matches"} : matches)], "postprocess": id},
     {"name": "equalityOperator", "symbols": [(lexer.has("notMatches") ? {type: "notMatches"} : notMatches)], "postprocess": id},
     {"name": "equalityOperator", "symbols": [(lexer.has("inOperator") ? {type: "inOperator"} : inOperator)], "postprocess": id},
+    {"name": "equalityOperator", "symbols": [(lexer.has("notInOperator") ? {type: "notInOperator"} : notInOperator)], "postprocess": id},
     {"name": "relationalExpression", "symbols": ["unaryExpression"], "postprocess": id},
     {"name": "relationalExpression", "symbols": ["unaryExpression", (lexer.has("ws") ? {type: "ws"} : ws), (lexer.has("relationalOperator") ? {type: "relationalOperator"} : relationalOperator), (lexer.has("ws") ? {type: "ws"} : ws), "relationalExpression"], "postprocess": toConditionalExpression},
     {"name": "unaryExpression", "symbols": ["boolean"], "postprocess": ([value]) => new BooleanConstant(value)},
@@ -243,6 +255,7 @@ var grammar = {
     {"name": "unaryExpression", "symbols": ["undefinedLiteral"], "postprocess": ([value]) => new Variable(value)},
     {"name": "unaryExpression", "symbols": ["number"], "postprocess": ([value]) => new NumberConstant(value)},
     {"name": "unaryExpression", "symbols": ["string"], "postprocess": ([value]) => new StringConstant(value)},
+    {"name": "unaryExpression", "symbols": ["date"], "postprocess": ([value]) => new DateExpression(value)},
     {"name": "unaryExpression", "symbols": ["variable"], "postprocess": id},
     {"name": "unaryExpression", "symbols": [(lexer.has("bang") ? {type: "bang"} : bang), "_", "expression"], "postprocess": ([,,node]) => new NegationExpression(node)},
     {"name": "unaryExpression", "symbols": [{"literal":"("}, "_", "expression", "_", {"literal":")"}], "postprocess": d => d[2]},
@@ -250,6 +263,9 @@ var grammar = {
     {"name": "variablePath", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
     {"name": "variablePath", "symbols": ["variablePath", (lexer.has("openingBracket") ? {type: "openingBracket"} : openingBracket), "expression", (lexer.has("closingBracket") ? {type: "closingBracket"} : closingBracket)], "postprocess": d => [...arrayify(d[0]), d[2]]},
     {"name": "variablePath", "symbols": ["variablePath", "_", (lexer.has("dot") ? {type: "dot"} : dot), "_", (lexer.has("word") ? {type: "word"} : word)], "postprocess": d => [...arrayify(d[0]), d[4]]},
+    {"name": "insideADate", "symbols": ["string"], "postprocess": id},
+    {"name": "insideADate", "symbols": ["variable"], "postprocess": id},
+    {"name": "date", "symbols": [(lexer.has("date") ? {type: "date"} : date), "insideADate", (lexer.has("closingP") ? {type: "closingP"} : closingP), (lexer.has("dot") ? {type: "dot"} : dot), (lexer.has("word") ? {type: "word"} : word)], "postprocess": ([, date, , , elem]) => [date, elem.value]},
     {"name": "string", "symbols": [(lexer.has("dqstr") ? {type: "dqstr"} : dqstr)], "postprocess": retrieveActualString(`"`)},
     {"name": "string", "symbols": [(lexer.has("sqstr") ? {type: "sqstr"} : sqstr)], "postprocess": retrieveActualString(`'`)},
     {"name": "string", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": ([value]) => `${value}`},

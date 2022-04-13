@@ -35,6 +35,13 @@ class ConditionalExpression extends Evaluatable {
           return false;
         }
 
+      case 'not in':
+        try {
+          return !(Array.isArray(right) ? right.includes(left) : left in right);
+        } catch {
+          return false;
+        }
+
       case 'not matches':
         const result = handleMatches(left, right);
         return !result;
