@@ -1,4 +1,5 @@
 import { PrismeError } from '../../errors';
+import { interpolate } from '../../utils';
 import { Apps } from '../apps';
 
 export type DetailedTrigger = Prismeai.When & {
@@ -71,7 +72,9 @@ export class Workspace {
 
   async update(workspace: Prismeai.Workspace) {
     this.name = workspace.name;
-    this.config = workspace.config?.value || {};
+    this.config = interpolate(workspace.config?.value || {}, {
+      config: workspace.config?.value || {},
+    });
 
     const { automations = {}, imports = {} } = workspace;
     this.triggers = Object.keys(automations).reduce(
@@ -128,6 +131,9 @@ export class Workspace {
     }
     const dsul = await this.apps.getApp(appSlug, appVersion);
     const importParentAppSlugs = parentAppSlugs.concat(appSlug);
+    const interpolatedAppConfig = interpolate(appInstance.config || {}, {
+      config: this.config,
+    });
     this.imports[slug] = await Workspace.create(
       dsul,
       this.apps,
@@ -143,7 +149,7 @@ export class Workspace {
             ? importParentAppSlugs[importParentAppSlugs.length - 2]
             : undefined,
       },
-      appInstance.config || {}
+      interpolatedAppConfig
     );
     return this.imports[slug];
   }
