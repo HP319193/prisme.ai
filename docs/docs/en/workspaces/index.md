@@ -19,6 +19,7 @@ name: MyConfiguredWorkspace
 config:
   value:
     API_URL: https://api.mycompany.com
+    LOGIN_URL: "{{config.API_URL}}/login"
     headers:
       apiKey: someAPIKey
 
@@ -32,6 +33,7 @@ automations:
 ```  
 
 The **config.value** field defined at the top of this workspace is exposed as a **config** variable inside your automations.  
+This **config** variable is also avaible in the workspace config itself, as well as in installed apps config.  
 [More details on variables usage](automations#variables).  
 
 The **config** object accepts an additional field specific to apps : [**config.schema**](apps#defining-an-app-config-schema)
