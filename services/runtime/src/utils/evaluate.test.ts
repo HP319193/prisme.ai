@@ -201,6 +201,12 @@ describe('It should handle variables within {{}}', () => {
         myStringList: 'un,deux,trois',
       })
     ).toEqual(true);
+    expect(
+      evaluate(`{{foo}} in {{myStringList}}`, {
+        foo: 5,
+        myStringList: 'un,deux,5,3',
+      })
+    ).toEqual(true);
   });
 });
 

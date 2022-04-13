@@ -35,7 +35,14 @@ class ConditionalExpression extends Evaluatable {
       case 'in':
         try {
           const parsedRight =
-            right && typeof right === 'string' ? right.split(',') : right;
+            right && typeof right === 'string'
+              ? right.split(',').map((cur) => {
+                  if (isNaN(left) || isNaN(cur as any)) {
+                    return cur;
+                  }
+                  return parseInt(cur);
+                })
+              : right;
           result = Array.isArray(parsedRight)
             ? parsedRight.includes(left)
             : left in parsedRight;

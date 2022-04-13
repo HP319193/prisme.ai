@@ -42,6 +42,9 @@ These conditions are described using a very common syntax across programming lan
 `{{someValue}} in {{someList}}`  
 `{{someKey}} in {{someObject}}`  
 `{{someKey}} not in {{someObject}}`
+`{{someKey}} not in "my,string,list"`
+`{{someKey}} not in {{myStringList}}`
+
 
 ## Logical operators  
 
