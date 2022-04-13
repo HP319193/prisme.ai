@@ -189,6 +189,18 @@ describe('It should handle variables within {{}}', () => {
         },
       })
     ).toEqual(false);
+    // Works with comma separated lists
+    expect(
+      evaluate(`{{foo}} in "un,deux,trois"`, {
+        foo: 'un',
+      })
+    ).toEqual(true);
+    expect(
+      evaluate(`{{foo}} in {{myStringList}}`, {
+        foo: 'un',
+        myStringList: 'un,deux,trois',
+      })
+    ).toEqual(true);
   });
 });
 

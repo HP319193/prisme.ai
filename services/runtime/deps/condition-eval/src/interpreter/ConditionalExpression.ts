@@ -24,65 +24,72 @@ class ConditionalExpression extends Evaluatable {
     const left = evaluateNode(this.leftNode, context);
     const right = evaluateNode(this.rightNode, context);
 
-    switch (`${this.operator}`.toLowerCase()) {
+    const operator = `${this.operator}`.toLowerCase();
+    const negation = operator.startsWith('not ');
+    let result: boolean;
+    switch (negation ? operator.substr(4) : operator) {
       case 'matches':
-        return !!handleMatches(left, right);
+        result = !!handleMatches(left, right);
+        break;
 
       case 'in':
         try {
-          return Array.isArray(right) ? right.includes(left) : left in right;
+          const parsedRight =
+            right && typeof right === 'string' ? right.split(',') : right;
+          result = Array.isArray(parsedRight)
+            ? parsedRight.includes(left)
+            : left in parsedRight;
         } catch {
-          return false;
+          result = false;
         }
-
-      case 'not in':
-        try {
-          return !(Array.isArray(right) ? right.includes(left) : left in right);
-        } catch {
-          return false;
-        }
-
-      case 'not matches':
-        const result = handleMatches(left, right);
-        return !result;
+        break;
 
       case 'exists':
-        return left !== undefined && left !== null;
-
-      case 'not exists':
-        return left === undefined || left === null;
+        result = left !== undefined && left !== null;
+        break;
 
       case 'equals':
       case '==':
       case '===':
-        return left === right;
-      case 'not equals':
+        result = left === right;
+        break;
+
       case '!=':
       case '!==':
-        return left !== right;
+        result = left !== right;
+        break;
 
       case '<=':
-        return left <= right;
+        result = left <= right;
+        break;
 
       case '<':
-        return left < right;
+        result = left < right;
+        break;
 
       case '>=':
-        return left >= right;
+        result = left >= right;
+        break;
 
       case '>':
-        return left > right;
+        result = left > right;
+        break;
 
       case 'and':
       case '&&':
-        return left && right;
+        result = left && right;
+        break;
 
       case 'or':
       case '||':
-        return left || right;
+        result = left || right;
+        break;
+
+      default:
+        throw new Error(this.operator + ' not implemented');
     }
 
-    throw new Error(this.operator + ' not implemented');
+    return negation ? !result : result;
   }
 }
 
