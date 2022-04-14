@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { ReactElement, useEffect, useState } from 'react';
+import ReactDom from 'react-dom';
 import * as prismeaiDS from '@prisme.ai/design-system';
 import * as prismeaiSDK from '../utils/api';
-import { ReactElement, useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 import { useTranslation } from 'next-i18next';
 
@@ -9,6 +10,7 @@ if (process.browser) {
   // @ts-ignore
   window.__external = window.__external || {
     React: { ...React, default: React },
+    ReactDom: { ...ReactDom, default: ReactDom },
     prismeaiDS,
     prismeaiSDK,
   };
