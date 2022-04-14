@@ -1,7 +1,8 @@
 {
   "workspaces": {
-    "title": "Espaces de travails et applications — $t(common:main.title)",
-    "description": "Créez de nouveaux espaces de travails et de nouvelles apps, éditez les et exécutez les",
+    "title": "Espaces de travail — $t(common:main.title)",
+    "description": "Créez de nouveaux espaces de travail et de nouvelles apps, éditez les et exécutez les",
+    "sectionTitle": "Votre gallerie d'espaces de travail",
     "defaultDescription": "Créé par vous"
   },
   "workspace": {
