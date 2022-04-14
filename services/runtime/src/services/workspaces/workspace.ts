@@ -125,9 +125,6 @@ export class Workspace {
   }
 
   async updateImport(slug: string, appInstance: Prismeai.AppInstance) {
-    await new Promise((resolve, reject) => {
-      setTimeout(resolve, 2000);
-    });
     const { appSlug, appVersion } = appInstance;
     const parentAppSlugs = this.appContext?.parentAppSlugs || [];
     if (parentAppSlugs.includes(appSlug)) {
@@ -160,7 +157,6 @@ export class Workspace {
       },
       interpolatedAppConfig
     );
-    console.log('UPDATED IMPORTS !');
     return this.imports[slug];
   }
 
