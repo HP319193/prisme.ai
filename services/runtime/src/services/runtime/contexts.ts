@@ -23,6 +23,7 @@ export interface RunContext {
   depth: number; // Depth of current automation.
   correlationId: string;
   automationSlug?: string;
+  date?: string; // ISO8601 date
 
   // Only set if running inside an app instance :
   appSlug?: string; // App unique slug
@@ -253,6 +254,7 @@ export class ContextsManager {
       automationSlug: this.automationSlug,
       correlationId: this.correlationId,
       depth: this.depth,
+      date: new Date().toISOString(),
     };
   }
 

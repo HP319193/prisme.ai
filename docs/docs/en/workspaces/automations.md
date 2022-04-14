@@ -319,5 +319,9 @@ In case the automation is triggered from a webhook without any session cookie / 
       <td><b>run.parentAppSlug</b></td>
       <td>If parent is also an appInstance, parent app slug</td>
     </tr>       
+    <tr>
+      <td><b>run.date</b></td>
+      <td>Current ISO8601 date</td>
+    </tr>           
   </table>
 </center>
