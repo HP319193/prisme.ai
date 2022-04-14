@@ -679,7 +679,6 @@ declare namespace Prismeai {
   export type AnyValue = any;
   export interface ApiKey {
     apiKey: string;
-
     subjectType: string;
     subjectId: string;
     rules: ApiKeyRules;
