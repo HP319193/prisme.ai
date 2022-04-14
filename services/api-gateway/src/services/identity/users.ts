@@ -56,7 +56,7 @@ export const get = (Users: StorageDriver, ctx?: PrismeContext) =>
 
 export const login = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function (email: string, password: string) {
-    const users = await Users.find({ email: email.toLowerCase() });
+    const users = await Users.find({ email: email.toLowerCase().trim() });
     if (!users.length) {
       throw new AuthenticationError();
     }
@@ -86,7 +86,7 @@ export interface FindUserQuery {
 export const find = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function ({ email, ids }: FindUserQuery) {
     if (email) {
-      return await Users.find({ email: email.toLowerCase() });
+      return await Users.find({ email: email.toLowerCase().trim() });
     }
     if (ids) {
       try {
