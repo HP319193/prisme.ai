@@ -38,15 +38,15 @@ class AppInstances {
       await Promise.all(
         appInstances.map(async (cur: Prismeai.AppInstance) => {
           try {
-            const availableSlugs = await this.apps.getAppDetails(
+            const appDetails = await this.apps.getAppDetails(
               cur.appSlug,
               cur.appVersion
             );
             return {
               ...cur,
-              ...availableSlugs,
+              ...appDetails,
               config: {
-                ...availableSlugs?.config,
+                ...appDetails?.config,
                 value: cur.config || {},
               },
             };
@@ -68,18 +68,19 @@ class AppInstances {
     if (!appInstance) {
       throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
     }
-    const availableSlugs = await this.apps.getAppDetails(
+    const appDetails = await this.apps.getAppDetails(
       appInstance.appSlug,
       appInstance.appVersion
     );
     return {
       ...appInstance,
-      ...availableSlugs,
+      ...appDetails,
       config: {
-        ...availableSlugs?.config,
+        ...appDetails?.config,
         value: appInstance.config || {},
       },
       slug,
+      photo: appDetails.photo,
     };
   };
 

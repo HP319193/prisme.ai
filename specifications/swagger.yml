@@ -2337,6 +2337,8 @@ components:
                 $ref: '#/components/schemas/LocalizedText'
               description:
                 $ref: '#/components/schemas/LocalizedText'
+        photo:
+          type: string
 
     AppInstancePatch:
       type: object

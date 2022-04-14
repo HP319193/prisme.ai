@@ -165,6 +165,7 @@ class Apps {
           description,
           arguments: args,
         })),
+      photo: app.photo,
     };
   };
 

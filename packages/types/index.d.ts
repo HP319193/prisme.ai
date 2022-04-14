@@ -678,6 +678,7 @@ declare namespace Prismeai {
             name: LocalizedText;
             description?: LocalizedText;
         }[];
+        photo?: string;
     }
     export interface AppEvent {
         /**
@@ -1012,6 +1013,7 @@ declare namespace Prismeai {
             name: LocalizedText;
             description?: LocalizedText;
         }[];
+        photo?: string;
     }
     /**
      * Page
