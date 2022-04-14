@@ -19,6 +19,8 @@ export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
     firstName,
     lastName,
   }: PrismeaiAPI.Signup.RequestBody) {
+    email = email.toLowerCase();
+
     const existingUsers = await Users.find({ email });
     if (existingUsers.length) {
       throw new AlreadyUsed('email');
@@ -54,7 +56,7 @@ export const get = (Users: StorageDriver, ctx?: PrismeContext) =>
 
 export const login = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function (email: string, password: string) {
-    const users = await Users.find({ email });
+    const users = await Users.find({ email: email.toLowerCase() });
     if (!users.length) {
       throw new AuthenticationError();
     }
@@ -84,7 +86,7 @@ export interface FindUserQuery {
 export const find = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function ({ email, ids }: FindUserQuery) {
     if (email) {
-      return await Users.find({ email });
+      return await Users.find({ email: email.toLowerCase() });
     }
     if (ids) {
       try {
