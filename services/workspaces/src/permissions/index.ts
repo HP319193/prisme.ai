@@ -2,9 +2,8 @@ import { Schema } from 'mongoose';
 import {
   AccessManager as GenericAccessManager,
   AccessManagerOptions,
-  ActionType,
 } from '@prisme.ai/permissions';
-import { SubjectType, Role, config } from './config';
+import { ActionType, SubjectType, Role, config } from './config';
 
 export { SubjectType, Role, ActionType };
 

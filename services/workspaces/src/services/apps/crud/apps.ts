@@ -1,7 +1,7 @@
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import DSULStorage from '../../DSULStorage';
-import { AccessManager, SubjectType } from '../../../permissions';
+import { AccessManager, ActionType, SubjectType } from '../../../permissions';
 import {
   AlreadyUsedError,
   InvalidSlugError,
@@ -138,7 +138,11 @@ class Apps {
   };
 
   getApp = async (appSlug: string, version?: string) => {
-    await this.accessManager.get(SubjectType.App, appSlug);
+    await this.accessManager.throwUnlessCan(
+      ActionType.GetAppSourceCode,
+      SubjectType.App,
+      appSlug
+    );
     return await this.storage.get(appSlug, version || 'current');
   };
 

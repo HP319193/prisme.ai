@@ -1,4 +1,12 @@
-import { PermissionsConfig, ActionType } from '@prisme.ai/permissions';
+import {
+  ActionType as NativeActionType,
+  PermissionsConfig,
+} from '@prisme.ai/permissions';
+
+export const ActionType = {
+  ...NativeActionType,
+  GetAppSourceCode: 'GetAppSourceCode',
+};
 
 export enum SubjectType {
   Workspace = 'workspaces',
@@ -102,7 +110,11 @@ export const config: PermissionsConfig<
           },
         },
         {
-          action: [ActionType.Update, ActionType.Read],
+          action: [
+            ActionType.Update,
+            ActionType.Read,
+            ActionType.GetAppSourceCode,
+          ],
           subject: SubjectType.App,
           conditions: {
             workspaceId: '${subject.id}',
