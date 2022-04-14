@@ -27,10 +27,10 @@ export const PagesSidebar = () => {
     workspace: { id: workspaceId },
   } = useWorkspace();
 
-  const currentPages = useMemo(() => Array.from(pages.get(workspaceId) || []), [
-    pages,
-    workspaceId,
-  ]);
+  const currentPages = useMemo(
+    () => Array.from(pages.get(workspaceId) || []),
+    [pages, workspaceId]
+  );
 
   const [filter, setFilter] = useState('');
 
@@ -93,7 +93,8 @@ export const PagesSidebar = () => {
       </div>
       {isEmpty && (
         <Button
-          className="flex flex-1 justify-center items-center flex-col"
+          className="!flex flex-1 justify-center items-center flex-col"
+          variant="link"
           onClick={create}
           disabled={creating}
         >

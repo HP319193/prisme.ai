@@ -19,6 +19,7 @@ module.exports = {
         'graph-border': '#BFD7FF',
         'graph-background': '#E7EDF9',
         'graph-accent': '#015DFF',
+        'prisme-darkblue': '#0A1D3B',
       },
     },
   },

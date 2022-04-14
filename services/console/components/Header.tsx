@@ -1,11 +1,11 @@
 import { ReactElement, useMemo } from 'react';
 import { LogoutOutlined } from '@ant-design/icons';
 import {
-  Menu,
-  Dropdown,
-  Space,
-  Divider,
   Avatar,
+  Divider,
+  Dropdown,
+  Menu,
+  Space,
 } from '@prisme.ai/design-system';
 import { useUser } from './UserProvider';
 import { useTranslation } from 'next-i18next';
@@ -49,7 +49,7 @@ const Header = ({ title, leftContent }: HeaderProps) => {
   );
 
   return (
-    <div className="relative px-6 flex flex-row w-full justify-between items-center pr-header z-20 bg-white">
+    <div className="relative px-6 flex flex-row w-full justify-between items-center pr-header z-20 bg-prisme-darkblue text-white">
       <Link href="/workspaces">
         <a>
           <Image {...logo} alt="Prisme.ai" />
@@ -62,7 +62,7 @@ const Header = ({ title, leftContent }: HeaderProps) => {
         {leftContent && <Divider type="vertical" className="mr-4" />}
 
         {user && (
-          <Dropdown Menu={userMenu} placement="bottomRight">
+          <Dropdown Menu={userMenu} placement="bottomRight" arrow={false}>
             <Space>
               {user.firstName}
               {user.photo && <Avatar src={user.photo} />}

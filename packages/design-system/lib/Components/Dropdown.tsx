@@ -1,4 +1,3 @@
-import { DownOutlined } from '@ant-design/icons';
 import {
   Dropdown as AntdDropdown,
   DropDownProps as AntdDropDownProps,
@@ -12,17 +11,19 @@ export interface DropdownProps extends Omit<AntdDropDownProps, 'overlay'> {
   children: ReactElement | string;
 }
 
-const Dropdown = ({ Menu, children, ...props }: DropdownProps) => {
+const Dropdown = ({
+  Menu,
+  children,
+  arrow = true,
+  ...props
+}: DropdownProps) => {
   if (!Menu) {
     return <div className="ant-dropdown-trigger">{children}</div>;
   }
 
   return (
-    <AntdDropdown overlay={Menu} trigger={['click']} {...props}>
-      <Space>
-        {children}
-        <DownOutlined />
-      </Space>
+    <AntdDropdown overlay={Menu} trigger={['click']} arrow={arrow} {...props}>
+      <Space>{children}</Space>
     </AntdDropdown>
   );
 };

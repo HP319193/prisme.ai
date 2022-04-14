@@ -84,7 +84,8 @@ export const AutomationsSidebar: FC = () => {
       </div>
       {isEmpty && (
         <Button
-          className="flex flex-1 justify-center items-center flex-col"
+          className="!flex flex-1 justify-center items-center flex-col"
+          variant="link"
           onClick={create}
           disabled={creating}
         >
