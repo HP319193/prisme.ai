@@ -33,7 +33,7 @@ const MenuTab = ({ items, selected: initialSelected, onSelect }: MenuProps) => {
       onClick={handleSelection}
       selectedKeys={selected ? [selected] : undefined}
       mode="horizontal"
-      className="h-8"
+      className="w-full"
     >
       {items.map((item) => (
         <AntdMenu.Item
