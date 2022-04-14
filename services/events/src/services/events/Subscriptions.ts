@@ -8,7 +8,7 @@ export interface Subscriber {
   apiKey?: string;
   callback: (event: PrismeEvent<any>) => void;
   accessManager: Required<AccessManager>;
-  searchOptions: SearchOptions;
+  searchOptions?: SearchOptions;
   unsubscribe: () => void;
 }
 
@@ -79,7 +79,10 @@ export class Subscriptions {
               SubjectType.Event,
               event
             );
-            if (readable && this.matchSearchOptions(event, searchOptions)) {
+            if (
+              readable &&
+              (!searchOptions || this.matchSearchOptions(event, searchOptions))
+            ) {
               callback(event);
             }
           }

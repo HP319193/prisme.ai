@@ -166,12 +166,13 @@ describe('Basic', () => {
         await sleep(sleepBetweenEmits);
 
         if (sentIdx === subscribeAfter) {
-          unsubscribeCallback = await events.subscribe(WorkspaceA, {
+          const subscription = await events.subscribe(WorkspaceA, {
             userId: UserA,
             callback: (event) => {
               received.push(event.payload);
             },
           });
+          unsubscribeCallback = subscription.unsubscribe;
         } else if (sentIdx === unsubscribeAfter) {
           unsubscribeCallback();
         }
