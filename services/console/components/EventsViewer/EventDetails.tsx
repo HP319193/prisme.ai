@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, MouseEvent } from 'react';
+import { FC, MouseEvent, useCallback, useMemo } from 'react';
 import { Table } from '@prisme.ai/design-system';
 import { Event } from '@prisme.ai/sdk';
 import { useDateFormat } from '../../utils/dates';
@@ -8,7 +8,7 @@ import { truncate } from '../../utils/strings';
 
 interface EventsDetailsProps extends Event<Date> {}
 
-const PAYLOAD_TRUNCATE_LENGTH = 50;
+const PAYLOAD_TRUNCATE_LENGTH = 400;
 
 const truncatePayload = (payloadValue: string) => {
   if (payloadValue && payloadValue.length > PAYLOAD_TRUNCATE_LENGTH) {
@@ -22,6 +22,7 @@ interface EventRecord {
   name: string;
   value: any;
   payloadValue: any;
+  fullPayload: string;
 }
 
 export const EventDetails: FC<EventsDetailsProps> = (event) => {
@@ -31,24 +32,26 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
     () =>
       [
         {
-          key: 'id',
-          name: 'id',
-          value: event.id,
-        },
-        {
           key: 'type',
           name: 'type',
           value: event.type,
         },
         {
-          key: 'createdAt',
-          name: 'createdAt',
-          value: formatDate(event.createdAt, { format: 'yyyy-MM-dd hh:mm' }),
-        },
-        event.source.appSlug && {
-          key: 'source.appSlug',
-          name: 'source.appSlug',
-          value: event.source.appSlug,
+          key: 'payload',
+          name: 'payload',
+          value: (
+            <pre>
+              <code>
+                {truncatePayload(JSON.stringify(event.payload, null, ' '))}
+              </code>
+            </pre>
+          ),
+          payloadValue: event.payload && (
+            <pre>
+              <code>{JSON.stringify(event.payload, null, ' ')}</code>
+            </pre>
+          ),
+          fullPayload: event.payload,
         },
         event.source.appInstanceFullSlug
           ? {
@@ -70,35 +73,9 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
           value: event.source.userId,
         },
         {
-          key: 'source.workspaceId',
-          name: 'source.workspaceId',
-          value: event.source.workspaceId,
-        },
-        {
-          key: 'source.host.service',
-          name: 'source.host.service',
-          value: event.source.host.service,
-        },
-        {
           key: 'source.correlationId',
           name: 'source.correlationId',
           value: event.source.correlationId,
-        },
-        {
-          key: 'payload',
-          name: 'payload',
-          value: (
-            <pre>
-              <code>
-                {truncatePayload(JSON.stringify(event.payload, null, ' '))}
-              </code>
-            </pre>
-          ),
-          payloadValue: event.payload && (
-            <pre>
-              <code>{JSON.stringify(event.payload, null, ' ')}</code>
-            </pre>
-          ),
         },
         event.error
           ? {
@@ -125,8 +102,13 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
               ),
             }
           : false,
+        {
+          key: 'id',
+          name: 'id',
+          value: event.id,
+        },
       ].filter(Boolean) as EventRecord[],
-    [event, formatDate]
+    [event]
   );
   const onRowClick = useCallback(({ target }: MouseEvent) => {
     const valueTd = (
@@ -149,7 +131,9 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
       scroll={{ y: 500 }}
       expandable={{
         expandedRowRender: (record) => record.payloadValue,
-        rowExpandable: (record) => record.name === 'payload',
+        rowExpandable: (record) =>
+          record.name === 'payload' &&
+          record.fullPayload.length > PAYLOAD_TRUNCATE_LENGTH,
       }}
       expandRowByClick
       onRow={() => ({

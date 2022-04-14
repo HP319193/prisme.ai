@@ -109,7 +109,10 @@ export const Workspace = () => {
                   )}
                   placement="left"
                 >
-                  <Button onClick={() => setFullSidebar(!fullSidebar)}>
+                  <Button
+                    onClick={() => setFullSidebar(!fullSidebar)}
+                    className="!text-sm"
+                  >
                     {fullSidebar ? (
                       <DoubleRightOutlined
                         className="color-blue"

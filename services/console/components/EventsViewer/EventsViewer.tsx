@@ -4,6 +4,7 @@ import { useDateFormat } from '../../utils/dates';
 import EventDetails from './EventDetails';
 import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useScrollListener } from '../useScrollListener';
+import useLocalizedText from '../../utils/useLocalizedText';
 import {
   Collapse,
   Feed,
@@ -32,6 +33,10 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   const { t } = useTranslation('workspaces');
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
+  const {
+    workspace: { name: workspaceName },
+  } = useWorkspace();
+  const localize = useLocalizedText();
 
   useEffect(() => {
     if (bottom) {
@@ -50,7 +55,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
               }`}
             >
               <div className="font-bold">
-                {event.source?.appSlug || event.source?.host?.service}
+                {event.source?.appSlug || localize(workspaceName)}
               </div>
               <div className="text-gray font-thin ml-4">
                 {dateFormat(event.createdAt, {
@@ -78,7 +83,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
             relative: true,
             withoutHour: true,
           }),
-          content: <Collapse items={generateSectionContent(events)} />,
+          content: <Collapse items={generateSectionContent(events)} light />,
         })),
     [dateFormat, events, generateSectionContent]
   );
@@ -121,7 +126,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
       }
       className="h-full"
     >
-      <div className="p-2 flex h-full">{content}</div>
+      <div className="flex h-full">{content}</div>
     </Layout>
   );
 });
