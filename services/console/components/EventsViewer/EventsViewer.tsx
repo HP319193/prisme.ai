@@ -115,7 +115,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   return (
     <Layout
       Header={
-        <Space className="h-[70px] border border-gray border-solid">
+        <Space className="h-[70px] border border-gray-200 border-solid w-full !border-x-0 w-full">
           {feedHeaderButtons.map((button) => button)}
         </Space>
       }

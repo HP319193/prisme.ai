@@ -26,7 +26,7 @@ const SidePanel = ({
 
   return (
     <Layout Header={Header} className={`h-full ${className}`}>
-      <div className="flex border border-gray-200 border-solid grow h-full p-4">
+      <div className="flex border border-gray-200 border-solid grow h-full p-4 !border-t-0">
         {children}
       </div>
     </Layout>

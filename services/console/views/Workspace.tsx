@@ -43,7 +43,7 @@ export const Workspace = () => {
       {
         label: (
           <div className="flex items-center">
-            <div className="flex mr-1">
+            <div className="flex mr-2">
               <IconApps width={16} height={16} />
             </div>
             {t('apps.link')}
@@ -54,7 +54,7 @@ export const Workspace = () => {
       {
         label: (
           <div className="flex items-center">
-            <div className="flex mr-1">
+            <div className="flex mr-2">
               <IconAutomations width={16} height={16} />
             </div>
             {t('automations.link')}
@@ -65,7 +65,7 @@ export const Workspace = () => {
       {
         label: (
           <div className="flex items-center">
-            <div className="flex mr-1">
+            <div className="flex mr-2">
               <IconPages width={16} height={16} />
             </div>
             {t('pages.link')}
@@ -93,7 +93,7 @@ export const Workspace = () => {
             ${fullSidebar ? 'w-[90vw] drop-shadow' : 'w-full'}
             transition-all ease-in duration-200`}
             Header={
-              <div className="flex flex-row items-center h-[70px] justify-between border border-gray-200 border-solid !border-b-0">
+              <div className="flex flex-row items-center h-[70px] justify-between border border-gray-200 border-solid !border-t-0">
                 <MenuTab
                   items={menu}
                   selected={
