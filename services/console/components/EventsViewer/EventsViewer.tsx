@@ -7,9 +7,9 @@ import { useScrollListener } from '../useScrollListener';
 import {
   Collapse,
   Feed,
-  FeedHeader,
   Layout,
   Loading,
+  Space,
 } from '@prisme.ai/design-system';
 import { Section } from '@prisme.ai/design-system/lib/Components/Feed';
 import { CollapseItem } from '@prisme.ai/design-system/lib/Components/Collapse';
@@ -114,7 +114,11 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
 
   return (
     <Layout
-      Header={<FeedHeader buttons={feedHeaderButtons} />}
+      Header={
+        <Space className="h-[70px] border border-gray border-solid">
+          {feedHeaderButtons.map((button) => button)}
+        </Space>
+      }
       className="h-full"
     >
       <div className="p-2 flex h-full">{content}</div>

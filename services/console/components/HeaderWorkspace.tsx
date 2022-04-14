@@ -139,7 +139,7 @@ const HeaderWorkspace = () => {
             <Button variant="grey" className="!text-white">
               <Space>
                 {t('share.label')}
-                <ShareAltOutlined />
+                <ShareAltOutlined className="text-lg" />
               </Space>
             </Button>
           </Popover>

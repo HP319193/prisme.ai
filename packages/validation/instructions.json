@@ -34,21 +34,40 @@
       "wait": {
         "type": "object",
         "required": [
-          "event"
+          "oneOf"
         ],
         "properties": {
-          "event": {
-            "type": "string",
-            "example": "prismeaiMessenger.message"
-          },
-          "filters": {
-            "type": "object",
-            "description": "Only match the next intent fulfilling these filters. Multiple filters will be joined with an 'AND' operator ",
-            "additionalProperties": true,
-            "example": {
-              "automationSlug": "someId",
-              "someObjectField.someNestedField": "foo"
+          "oneOf": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "event"
+              ],
+              "properties": {
+                "event": {
+                  "type": "string",
+                  "example": "prismeaiMessenger.message"
+                },
+                "filters": {
+                  "type": "object",
+                  "description": "Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator ",
+                  "additionalProperties": true,
+                  "example": {
+                    "automationSlug": "someId",
+                    "someObjectField.someNestedField": "foo"
+                  }
+                },
+                "cancelTriggers": {
+                  "type": "boolean",
+                  "description": "If true, do not send this event to the the usual triggers"
+                }
+              }
             }
+          },
+          "timeout": {
+            "type": "number",
+            "description": "After N seconds, timeout & outputs an empty result. Defaults to 20"
           },
           "output": {
             "type": "string",
@@ -194,8 +213,18 @@
     "maxProperties": 1,
     "properties": {
       "break": {
-        "description": "Stop current automation execution. Does not have any configuration option",
-        "type": "object"
+        "description": "Stop current automation execution. Have one option that allow a break to break all parent automations.",
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "enum": [
+              "all",
+              "automation"
+            ],
+            "description": "The scope argument defines in which scope the break will take effect. It only breaks the current automation by default, it can also break all parent automations. More options might become available in the future."
+          }
+        }
       }
     }
   },

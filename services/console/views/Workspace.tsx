@@ -87,12 +87,13 @@ export const Workspace = () => {
         </Col>
         <Col span={10} className="flex h-full">
           <SidePanel
+            variant="squared"
             className={`
             absolute top-0 right-0 bottom-0 !bg-white
             ${fullSidebar ? 'w-[90vw] drop-shadow' : 'w-full'}
             transition-all ease-in duration-200`}
             Header={
-              <div className="flex flex-row items-center justify-between">
+              <div className="flex flex-row items-center h-[70px] justify-between border border-gray-200 border-solid !border-b-0">
                 <MenuTab
                   items={menu}
                   selected={
