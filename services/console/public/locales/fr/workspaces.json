@@ -441,9 +441,7 @@
             "grid": "Grille",
             "column": "Colonne"
           }
-        },
-        "prev": "Précédent",
-        "next": "Suivant"
+        }
       }
     }
   },

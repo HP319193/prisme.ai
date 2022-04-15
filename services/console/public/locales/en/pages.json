@@ -1,0 +1,12 @@
+{
+  "signin": {
+    "title": "Access to this page is restricted. Please login to access it."
+  },
+  "preview": "Preview",
+  "blocks": {
+    "cards": {
+      "next": "Next",
+      "prev": "Previous"
+    }
+  }
+}

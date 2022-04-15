@@ -1,0 +1,12 @@
+{
+  "signin": {
+    "title": "El acceso a esta página está restringido. Por favor, inicie sesión para acceder a ella."
+  },
+  "preview": "Vista previa",
+  "blocks": {
+    "cards": {
+      "next": "Siguiente",
+      "prev": "Anteriormente"
+    }
+  }
+}

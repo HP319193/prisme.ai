@@ -355,7 +355,20 @@
       "add": "Add a widget",
       "remove": "Remove the widget",
       "search": "Search a widget",
-      "empty": "No widgets are available in this workspace. Add an App!"
+      "empty": "No widgets are available in this workspace. Add an App!",
+      "settings": {
+        "title": "Block settings",
+        "toggle_on": "Display settings",
+        "toggle_off": "Hide settings",
+        "onInit": {
+          "label": "Initial event",
+          "description": "This event will be triggered during the initialization of the widget each time the page is viewed."
+        },
+        "updateOn": {
+          "label": "Update event",
+          "description": "When one of your automations emits this event, the content of the widget will be updated with the content of the payload."
+        }
+      }
     },
     "share": {
       "label": "Share this page",
@@ -374,6 +387,61 @@
       },
       "slug": {
         "label": "Slug"
+      }
+    },
+    "blocks": {
+      "name": "{{context}}",
+      "name_Title": "Title",
+      "name_Cards": "Cards group",
+      "description": "",
+      "description_Title": "display a title",
+      "description_Cards": "Display a cards group",
+      "title": {
+        "settings": {
+          "title": "Title",
+          "level": "Title level",
+          "levelOption": "Level {{level}}"
+        }
+      },
+      "cards": {
+        "settings": {
+          "cards": "Cards",
+          "card": "Card",
+          "title": "Title",
+          "description": "Description",
+          "cover": "Cover image",
+          "content": "Content",
+          "type": "Type",
+          "type_text": "Text",
+          "type_button": "Button",
+          "type_accordion": "Accordion",
+          "text": {
+            "value": "Text to display"
+          },
+          "button": {
+            "value": "Button text",
+            "url": "Web adress to link",
+            "event": "Event to trigger",
+            "icon": "Icon"
+          },
+          "accordion": {
+            "title": "Title",
+            "content": "Content",
+            "icon": "Icon"
+          },
+          "autoScroll": {
+            "title": "Auto scroll",
+            "description": "Activate this option to have the carousel scroll automatically every 5 seconds"
+          },
+          "layout": {
+            "title": "Layout",
+            "description": "You can change the display mode. By default, maps will be displayed using a carousel.",
+            "noOptions": "No option available",
+            "carousel": "Carousel (Horizontal scroll)",
+            "grid": "grid",
+            "column": "Column"
+          }
+        }
       }
     }
   },
