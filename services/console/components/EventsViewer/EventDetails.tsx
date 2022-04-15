@@ -133,6 +133,7 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
         expandedRowRender: (record) => record.payloadValue,
         rowExpandable: (record) =>
           record.name === 'payload' &&
+          !!record.fullPayload &&
           record.fullPayload.length > PAYLOAD_TRUNCATE_LENGTH,
       }}
       expandRowByClick
