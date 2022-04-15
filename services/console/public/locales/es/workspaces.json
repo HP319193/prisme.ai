@@ -393,9 +393,11 @@
       "name": "{{context}}",
       "name_Title": "Título",
       "name_Cards": "Grupo de tarjetas",
+      "name_DataTable": "Tabla de datos",
       "description": "",
       "description_Title": "Mostrar un título",
       "description_Cards": "Mostrar un grupo de tarjetas",
+      "description_DataTable": "Visualización de una tabla de datos",
       "title": {
         "settings": {
           "title": "Título",

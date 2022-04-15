@@ -7,6 +7,12 @@
     "cards": {
       "next": "Suivant",
       "prev": "Précédent"
+    },
+    "datatable": {
+      "empty": "Aucune donnée",
+      "asc": "Trier par ordre ascendant",
+      "desc": "Trier par ordre descendant",
+      "nosort": "Ne plus trier"
     }
   }
 }

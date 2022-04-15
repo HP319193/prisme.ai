@@ -7,6 +7,12 @@
     "cards": {
       "next": "Next",
       "prev": "Previous"
+    },
+    "datatable": {
+      "empty": "No data",
+      "asc": "Sort ascending",
+      "desc": "Sort descending",
+      "nosort": "Cancel sort"
     }
   }
 }
