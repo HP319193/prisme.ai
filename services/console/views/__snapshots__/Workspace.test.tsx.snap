@@ -3,7 +3,7 @@
 exports[`should render 1`] = `
 Array [
   <div
-    className="p-2 flex h-full"
+    className="flex h-full"
   >
     <div
       className="flex flex-1 justify-around items-center flex-col"
