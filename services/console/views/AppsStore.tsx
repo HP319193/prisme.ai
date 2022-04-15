@@ -42,12 +42,12 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
             : [];
         })
         .filter(isFilteredApp),
-    [apps, filter]
+    [apps, filter, localize]
   );
 
   useEffect(() => {
     if (visible) {
-      getApps();
+      getApps({ limit: 300 });
     }
   }, [getApps, visible]);
 
@@ -59,7 +59,7 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
       });
       onCancel();
     },
-    [installApp, workspaceId]
+    [installApp, onCancel, workspaceId]
   );
 
   return (
