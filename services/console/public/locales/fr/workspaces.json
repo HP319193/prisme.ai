@@ -103,7 +103,7 @@
       },
       "endpoint": {
         "title": "URL",
-        "display": "<a>L'adresse web<icon /></a> est appelée",
+        "display": "<a>L'URL<icon /></a> est appelée",
         "copied": "L'URL a bien été copiée dans votre presse-papier",
         "help": "L'automatisation sera exécutées à chaque fois qu'une url sera appelée.",
         "custom": "Accessible par url",

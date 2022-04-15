@@ -1,6 +1,13 @@
 import Image from 'next/image';
 import useHover from '@react-hook/hover';
-import { FC, memo, useCallback, useRef } from 'react';
+import React, {
+  FC,
+  LegacyRef,
+  memo,
+  ReactNode,
+  useCallback,
+  useRef,
+} from 'react';
 import { NodeProps } from 'react-flow-renderer';
 import { Flow } from './flow';
 import { useAutomationBuilder } from './context';
@@ -12,13 +19,71 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 interface BlockProps {
   removable?: boolean;
   onEdit?: () => void;
+  type?: 'trigger' | 'instruction' | 'output';
 }
+
+interface BlockUI {
+  editSection: ReactNode;
+  topContent: ReactNode;
+  selected: boolean;
+  onEdit?: () => void;
+}
+
+// eslint-disable-next-line react/display-name
+const TriggerBlockUI = React.forwardRef(
+  (
+    { editSection, topContent, selected, onEdit }: BlockUI,
+    ref: LegacyRef<HTMLDivElement> | undefined
+  ) => (
+    <div
+      className={`
+          flex
+          flex-col
+          surface-section
+          border-accent
+          bg-graph-background
+          ${selected ? 'border-4' : 'border-2'}
+          text-accent
+          rounded`}
+      style={{ width: Flow.BLOCK_WIDTH - 50 }}
+      ref={ref}
+    >
+      <div
+        className="
+          flex
+          border-b-2
+          border-accent
+          font-bold
+          p-2
+        "
+      >
+        {topContent}
+      </div>
+      <button
+        onClick={onEdit}
+        className="
+            flex
+            p-2
+          "
+        style={{
+          background: 'none',
+          border: '0',
+          fontSize: 'inherit',
+          cursor: `url(${pencil.src}) 16 16, pointer`,
+        }}
+      >
+        {editSection}
+      </button>
+    </div>
+  )
+);
 
 export const Block: FC<NodeProps & BlockProps> = ({
   data,
   removable = true,
   selected,
   onEdit,
+  type,
 }) => {
   const { t } = useTranslation('workspaces');
   const { removeInstruction, getApp } = useAutomationBuilder();
@@ -84,6 +149,58 @@ export const Block: FC<NodeProps & BlockProps> = ({
     },
     [t]
   );
+
+  if (type === 'trigger') {
+    return (
+      <TriggerBlockUI
+        topContent={
+          <>
+            {icon && (
+              <div className="mr-2">
+                <Image src={icon} width={16} height={16} alt={name} />
+              </div>
+            )}
+            <div className="flex flex-1 justify-between">
+              {data.title
+                ? t('automations.node.title', { context: data.title })
+                : name}
+              {removable && (
+                <button
+                  className="border-none cursor-pointer"
+                  style={{
+                    background: 'none',
+                    visibility: isHover ? 'visible' : 'hidden',
+                  }}
+                  onClick={() => removeInstruction(data.parent, data.index)}
+                >
+                  <CloseCircleOutlined />
+                </button>
+              )}
+            </div>
+          </>
+        }
+        editSection={
+          <button
+            onClick={onEdit}
+            className="
+            flex
+            justify-center
+          "
+            style={{
+              background: 'none',
+              border: '0',
+              fontSize: 'inherit',
+              cursor: `url(${pencil.src}) 16 16, pointer`,
+            }}
+          >
+            {data.component ? <data.component /> : getLabel(data)}
+          </button>
+        }
+        selected={selected}
+        onEdit={onEdit}
+      />
+    );
+  }
 
   return (
     <>
