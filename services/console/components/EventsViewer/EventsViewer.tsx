@@ -34,7 +34,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
   const { workspace: { name: workspaceName } = {} } = useWorkspace();
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
 
   useEffect(() => {
     if (bottom) {
