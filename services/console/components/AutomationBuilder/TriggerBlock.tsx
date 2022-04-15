@@ -61,7 +61,7 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
                   }}
                   href={endpoint}
                   variant="primary"
-                  className="!h-auto !text-[12px] !p-1 !px-2 !leading-none"
+                  className="pr-btn-primary-small !h-auto !text-[12px] !p-1 !px-2 !leading-none !pt-1"
                 />
               ),
               icon: <LinkOutlined />,

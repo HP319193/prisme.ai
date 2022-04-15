@@ -75,3 +75,7 @@ a {
 .centered-collapse .ant-collapse-header {
   align-items: baseline !important;
 }
+
+a.ant-btn.pr-btn-primary-small {
+  padding-top: 0.25rem !important;
+}

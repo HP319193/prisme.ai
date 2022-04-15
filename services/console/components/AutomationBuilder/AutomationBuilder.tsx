@@ -1,7 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import ReactFlow, {
-  Background,
-  BackgroundVariant,
   Controls,
   ReactFlowProvider,
   useZoomPanHelper,
@@ -350,7 +348,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         getSchema,
       }}
     >
-      <div className="relative flex flex-1 overflow-x-hidden">
+      <div className="relative flex flex-1 overflow-x-hidden bg-blue-200">
         <ReactFlow
           elements={elements}
           nodesConnectable={false}
@@ -362,12 +360,6 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
           panOnScrollSpeed={1}
         >
           <Controls />
-          <Background
-            variant={BackgroundVariant.Dots}
-            gap={50}
-            size={2}
-            color="#eee"
-          />
         </ReactFlow>
         <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
           {instructionEditing && <InstructionForm {...instructionEditing} />}

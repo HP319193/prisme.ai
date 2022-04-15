@@ -12,9 +12,8 @@ import { NodeProps } from 'react-flow-renderer';
 import { Flow } from './flow';
 import { useAutomationBuilder } from './context';
 import { Trans, useTranslation } from 'next-i18next';
-import pencil from '../../icons/cursor-pencil.svg';
 import { truncate } from '../../utils/strings';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, EditOutlined } from '@ant-design/icons';
 
 interface BlockProps {
   removable?: boolean;
@@ -22,17 +21,49 @@ interface BlockProps {
   type?: 'trigger' | 'instruction' | 'output';
 }
 
+interface BlockClassName {
+  textClassName: string;
+  bgClassName: string;
+  borderClassName: string;
+  editTextClassName?: string;
+}
+
 interface BlockUI {
   editSection: ReactNode;
   topContent: ReactNode;
   selected: boolean;
   onEdit?: () => void;
+  blockClassName: BlockClassName;
 }
 
+const CLASSNAME_BLOCKS: Record<string, BlockClassName> = {
+  trigger: {
+    textClassName: 'text-accent',
+    bgClassName: 'bg-graph-background',
+    borderClassName: 'border-accent',
+  },
+  instruction: {
+    textClassName: '',
+    bgClassName: 'bg-white',
+    borderClassName: 'border-slate-300',
+  },
+  output: {
+    textClassName: 'text-green-400',
+    bgClassName: 'bg-green-200',
+    borderClassName: 'border-green-400',
+  },
+  condition: {
+    textClassName: '',
+    editTextClassName: '!text-slate-400',
+    bgClassName: 'bg-white',
+    borderClassName: 'border-slate-300',
+  },
+};
+
 // eslint-disable-next-line react/display-name
-const TriggerBlockUI = React.forwardRef(
+const BlockUI = React.forwardRef(
   (
-    { editSection, topContent, selected, onEdit }: BlockUI,
+    { blockClassName, editSection, topContent, selected, onEdit }: BlockUI,
     ref: LegacyRef<HTMLDivElement> | undefined
   ) => (
     <div
@@ -40,39 +71,45 @@ const TriggerBlockUI = React.forwardRef(
           flex
           flex-col
           surface-section
-          border-accent
-          bg-graph-background
-          ${selected ? 'border-4' : 'border-2'}
-          text-accent
+          ${blockClassName.textClassName}
+          ${blockClassName.bgClassName}
+          ${blockClassName.borderClassName}
+          border-[1px]
+          ${selected ? 'drop-shadow-xl' : ''}
+          transition-all ease
           rounded`}
       style={{ width: Flow.BLOCK_WIDTH - 50 }}
       ref={ref}
+      onClick={onEdit}
     >
       <div
-        className="
+        className={`
           flex
-          border-b-2
-          border-accent
+          border-b-[1px]
+          ${blockClassName.borderClassName}
           font-bold
           p-2
-        "
+        `}
       >
         {topContent}
       </div>
       <button
-        onClick={onEdit}
-        className="
-            flex
-            p-2
-          "
+        className={`
+          flex
+          p-2
+          justify-between
+          items-center
+          ${blockClassName.editTextClassName || ''}
+          `}
         style={{
           background: 'none',
           border: '0',
           fontSize: 'inherit',
-          cursor: `url(${pencil.src}) 16 16, pointer`,
+          cursor: `pointer`,
         }}
       >
         {editSection}
+        {onEdit ? <EditOutlined /> : null}
       </button>
     </div>
   )
@@ -150,81 +187,11 @@ export const Block: FC<NodeProps & BlockProps> = ({
     [t]
   );
 
-  if (type === 'trigger') {
-    return (
-      <TriggerBlockUI
-        topContent={
-          <>
-            {icon && (
-              <div className="mr-2">
-                <Image src={icon} width={16} height={16} alt={name} />
-              </div>
-            )}
-            <div className="flex flex-1 justify-between">
-              {data.title
-                ? t('automations.node.title', { context: data.title })
-                : name}
-              {removable && (
-                <button
-                  className="border-none cursor-pointer"
-                  style={{
-                    background: 'none',
-                    visibility: isHover ? 'visible' : 'hidden',
-                  }}
-                  onClick={() => removeInstruction(data.parent, data.index)}
-                >
-                  <CloseCircleOutlined />
-                </button>
-              )}
-            </div>
-          </>
-        }
-        editSection={
-          <button
-            onClick={onEdit}
-            className="
-            flex
-            justify-center
-          "
-            style={{
-              background: 'none',
-              border: '0',
-              fontSize: 'inherit',
-              cursor: `url(${pencil.src}) 16 16, pointer`,
-            }}
-          >
-            {data.component ? <data.component /> : getLabel(data)}
-          </button>
-        }
-        selected={selected}
-        onEdit={onEdit}
-      />
-    );
-  }
-
   return (
-    <>
-      <div
-        className={`
-          flex
-          flex-col
-          surface-section
-          border-graph-border
-          bg-graph-background
-          ${selected ? 'border-4' : 'border-2'}
-          rounded`}
-        style={{ width: Flow.BLOCK_WIDTH - 50 }}
-        ref={ref}
-      >
-        <div
-          className="
-          flex
-          align-center
-          border-b-2
-          border-graph-border
-          p-2
-        "
-        >
+    <BlockUI
+      blockClassName={CLASSNAME_BLOCKS[type] || CLASSNAME_BLOCKS['instruction']}
+      topContent={
+        <>
           {icon && (
             <div className="mr-2">
               <Image src={icon} width={16} height={16} alt={name} />
@@ -247,38 +214,12 @@ export const Block: FC<NodeProps & BlockProps> = ({
               </button>
             )}
           </div>
-        </div>
-        {onEdit && (
-          <button
-            onClick={onEdit}
-            className="
-            flex
-            justify-center
-            p-2
-          "
-            style={{
-              background: 'none',
-              border: '0',
-              fontSize: 'inherit',
-              cursor: `url(${pencil.src}) 16 16, pointer`,
-            }}
-          >
-            {data.component ? <data.component /> : getLabel(data)}
-          </button>
-        )}
-        {!onEdit && (
-          <div
-            className="
-            flex
-            justify-center
-            p-2
-            cursor-default"
-          >
-            {getLabel(data)}
-          </div>
-        )}
-      </div>
-    </>
+        </>
+      }
+      editSection={data.component ? <data.component /> : getLabel(data)}
+      selected={selected}
+      onEdit={onEdit}
+    />
   );
 };
 

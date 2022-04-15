@@ -13,6 +13,7 @@ export const Instruction: FC<NodeProps> = (props) => {
       <Handle type="target" position={Position.Top} style={styles.handle} />
       <Block
         {...props}
+        type="instruction"
         onEdit={
           hasProperties
             ? () => editInstruction(data.parent, data.index)

@@ -20,6 +20,8 @@ module.exports = {
         'graph-background': '#E7EDF9',
         'graph-accent': '#015DFF',
         'prisme-darkblue': '#0A1D3B',
+        'green-400': '#649D9F',
+        'green-200': '#E7F6F6',
       },
     },
   },
