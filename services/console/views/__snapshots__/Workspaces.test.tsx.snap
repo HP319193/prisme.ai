@@ -1,69 +1,115 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should render empty 1`] = `
-<div
-  className="!bg-blue-200 flex grow m-4 rounded relative"
->
+Array [
+  "workspaces.sectionTitle",
   <div
-    className="flex flex-wrap align-start justify-start"
+    className="!bg-blue-200 flex grow m-16 !mt-0 rounded relative pt-6"
   >
     <div
-      className="flex grow items-center justify-between flex-col text-center"
+      className="flex flex-wrap align-start justify-center gap-4"
     >
       <div
-        className="flex items-center flex-col text-center mt-20"
+        className="p-2 bg-slate-100 !m-4 w-[20rem] h-[6rem] flex flex-col justify-between overflow-hidden rounded border border-slate-300 border-dashed"
       >
-        create.label
+        <div
+          className="flex grow flex-row text-center content-center"
+        >
+          <div
+            className="flex mx-3 items-center justify-center"
+          />
+          <div
+            className="flex grow flex-col items-start"
+          >
+            create.label
+            create.description_sub
+          </div>
+        </div>
       </div>
-      create.description_sub
     </div>
-  </div>
-  <div
-    className="absolute bottom-0 right-[15px] text-gray mr-1"
-  >
-    Prisme.ai 
-    6.1.0
-  </div>
-</div>
+    <div
+      className="absolute bottom-0 right-[15px] text-gray mr-1"
+    >
+      Prisme.ai 
+      6.2.0
+    </div>
+  </div>,
+]
 `;
 
 exports[`should render some workspaces 1`] = `
-<div
-  className="!bg-blue-200 flex grow m-4 rounded relative"
->
+Array [
+  "workspaces.sectionTitle",
   <div
-    className="flex flex-wrap align-start justify-start"
+    className="!bg-blue-200 flex grow m-16 !mt-0 rounded relative pt-6"
   >
     <div
-      className="flex grow items-center justify-center flex-col text-center"
-    >
-      <div />
-      foo
-      workspaces.defaultDescription
-    </div>
-    <div
-      className="flex grow items-center justify-center flex-col text-center"
-    >
-      <div />
-      bar
-      workspaces.defaultDescription
-    </div>
-    <div
-      className="flex grow items-center justify-between flex-col text-center"
+      className="flex flex-wrap align-start justify-center gap-4"
     >
       <div
-        className="flex items-center flex-col text-center mt-20"
+        className="p-2 bg-slate-100 !m-4 w-[20rem] h-[6rem] flex flex-col justify-between overflow-hidden rounded border border-slate-300 border-dashed"
       >
-        create.label
+        <div
+          className="flex grow flex-row text-center content-center"
+        >
+          <div
+            className="flex mx-3 items-center justify-center"
+          />
+          <div
+            className="flex grow flex-col items-start"
+          >
+            create.label
+            create.description_sub
+          </div>
+        </div>
       </div>
-      create.description_sub
+      <div
+        className="p-2 bg-white !m-4 w-[20rem] h-[6rem] content-center flex flex-col justify-between overflow-hidden rounded border border-gray-200 border-solid"
+      >
+        <div
+          className="flex grow flex-row text-center"
+        >
+          <div
+            className="flex mx-3"
+          >
+            <div />
+          </div>
+          <div
+            className="flex grow flex-col items-start"
+          >
+            foo
+            
+            edit.label
+          </div>
+        </div>
+      </div>
+      <div
+        className="p-2 bg-white !m-4 w-[20rem] h-[6rem] content-center flex flex-col justify-between overflow-hidden rounded border border-gray-200 border-solid"
+      >
+        <div
+          className="flex grow flex-row text-center"
+        >
+          <div
+            className="flex mx-3"
+          >
+            <div />
+          </div>
+          <div
+            className="flex grow flex-col items-start"
+          >
+            bar
+            
+            edit.label
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div
-    className="absolute bottom-0 right-[15px] text-gray mr-1"
-  >
-    Prisme.ai 
-    6.1.0
-  </div>
-</div>
+    <div
+      className="absolute bottom-0 right-[15px] text-gray mr-1"
+    >
+      Prisme.ai 
+      6.2.0
+    </div>
+  </div>,
+]
 `;

@@ -79,7 +79,7 @@ export const AppsSidebar = () => {
         </div>
         {isEmpty && (
           <Button
-            className="flex flex-1 justify-center items-center flex-col"
+            className="!flex flex-1 justify-center items-center flex-col"
             variant="link"
             onClick={() => setAppStoreVisible(true)}
           >

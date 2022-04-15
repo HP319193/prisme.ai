@@ -3,7 +3,7 @@ import {
   DeleteOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Button, Popover, Modal } from '@prisme.ai/design-system';
+import { Button, Modal, Popover } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 import Form from '../components/SchemaForm/Form';
@@ -92,7 +92,7 @@ export const EditDetails = ({
       overlayClassName="min-w-[50%]"
       {...props}
     >
-      <SettingOutlined />
+      <SettingOutlined className="text-lg" />
     </Popover>
   );
 };

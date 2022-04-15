@@ -13,7 +13,6 @@ export { default as Dropdown } from './Components/Dropdown';
 export { default as Collapse } from './Components/Collapse';
 export { default as SearchInput } from './Components/SearchInput';
 export { default as Feed } from './Components/Feed';
-export { default as FeedHeader } from './Components/FeedHeader';
 export { default as Text } from './Components/Text';
 export { default as ListItem } from './Components/ListItem';
 export { default as Input } from './Components/Input';

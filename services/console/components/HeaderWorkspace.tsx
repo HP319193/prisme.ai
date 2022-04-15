@@ -116,7 +116,7 @@ const HeaderWorkspace = () => {
         title={
           <div className="flex flex-row items-center absolute left-0 right-0 justify-center z-[-1]">
             <Link href={`/workspaces/${workspace.id}`}>
-              <a className="font-bold text-black" onClick={hideSource}>
+              <a className="text-white" onClick={hideSource}>
                 {localize(currentWorkspace)}
               </a>
             </Link>
@@ -136,10 +136,10 @@ const HeaderWorkspace = () => {
             content={() => <ShareComponent />}
             title={label || t('share.label')}
           >
-            <Button variant="grey">
+            <Button variant="grey" className="!text-white">
               <Space>
                 {t('share.label')}
-                <ShareAltOutlined />
+                <ShareAltOutlined className="text-lg" />
               </Space>
             </Button>
           </Popover>
