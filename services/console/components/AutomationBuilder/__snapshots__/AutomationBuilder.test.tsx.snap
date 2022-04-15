@@ -5,7 +5,7 @@ exports[`should render 1`] = `
   className="ReactFlowProvider"
 >
   <div
-    className="relative flex flex-1 overflow-x-hidden"
+    className="relative flex flex-1 overflow-x-hidden bg-blue-200"
   >
     <div>
       ReactFlow

@@ -13,12 +13,12 @@ import { Flow } from './flow';
 import { useAutomationBuilder } from './context';
 import { Trans, useTranslation } from 'next-i18next';
 import { truncate } from '../../utils/strings';
-import { CloseCircleOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 interface BlockProps {
   removable?: boolean;
   onEdit?: () => void;
-  type?: 'trigger' | 'instruction' | 'output';
+  blockType?: 'trigger' | 'instruction' | 'output' | 'condition' | 'repeat';
 }
 
 interface BlockClassName {
@@ -120,7 +120,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
   removable = true,
   selected,
   onEdit,
-  type,
+  blockType,
 }) => {
   const { t } = useTranslation('workspaces');
   const { removeInstruction, getApp } = useAutomationBuilder();
@@ -189,7 +189,11 @@ export const Block: FC<NodeProps & BlockProps> = ({
 
   return (
     <BlockUI
-      blockClassName={CLASSNAME_BLOCKS[type] || CLASSNAME_BLOCKS['instruction']}
+      ref={ref}
+      blockClassName={
+        (blockType && CLASSNAME_BLOCKS[blockType]) ||
+        CLASSNAME_BLOCKS['instruction']
+      }
       topContent={
         <>
           {icon && (
@@ -210,7 +214,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
                 }}
                 onClick={() => removeInstruction(data.parent, data.index)}
               >
-                <CloseCircleOutlined />
+                <DeleteOutlined className="!text-orange-500" />
               </button>
             )}
           </div>

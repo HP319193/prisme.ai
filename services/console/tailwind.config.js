@@ -22,6 +22,7 @@ module.exports = {
         'prisme-darkblue': '#0A1D3B',
         'green-400': '#649D9F',
         'green-200': '#E7F6F6',
+        'orange-500': '#FD6E6E',
       },
     },
   },

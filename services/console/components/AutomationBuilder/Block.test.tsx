@@ -1,7 +1,7 @@
 import Block from './Block';
 import renderer, { act } from 'react-test-renderer';
 import { useAutomationBuilder } from './context';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 
 jest.mock('react-flow-renderer', () => {
   return {
@@ -32,6 +32,7 @@ it('should render', () => {
       <Block
         id="a"
         data={{ label: 'emit', value: { event: 'the event' } }}
+        blockType="instruction"
         type="instruction"
         selected={false}
         isConnectable={false}
@@ -40,6 +41,7 @@ it('should render', () => {
       <Block
         id="a"
         data={{ label: 'repeat', value: { on: '$a', do: [] } }}
+        blockType="instruction"
         type="instruction"
         selected={false}
         isConnectable={false}
@@ -48,6 +50,7 @@ it('should render', () => {
       <Block
         id="a"
         data={{ label: 'set', value: { name: 'foo', value: 'bar' } }}
+        blockType="instruction"
         type="instruction"
         selected={false}
         isConnectable={false}
@@ -56,6 +59,7 @@ it('should render', () => {
       <Block
         id="a"
         data={{ label: 'delete', value: { name: 'foo' } }}
+        blockType="instruction"
         type="instruction"
         selected={false}
         isConnectable={false}
@@ -64,6 +68,7 @@ it('should render', () => {
       <Block
         id="a"
         data={{ label: 'wait' }}
+        blockType="instruction"
         type="instruction"
         selected={false}
         isConnectable={false}
@@ -72,6 +77,7 @@ it('should render', () => {
       <Block
         id="a"
         data={{ label: 'do something' }}
+        blockType="instruction"
         type="instruction"
         selected={false}
         isConnectable={false}
@@ -89,6 +95,7 @@ it('should remove instruction', () => {
       removable
       id="a"
       data={{ parent, index: 0, label: 'emit', value: { event: 'the event' } }}
+      blockType="instruction"
       type="instruction"
       selected={false}
       isConnectable={false}
@@ -96,7 +103,7 @@ it('should remove instruction', () => {
   );
 
   act(() => {
-    root.root.findByType(CloseCircleOutlined).parent!.props.onClick();
+    root.root.findByType(DeleteOutlined).parent!.props.onClick();
   });
   expect(useAutomationBuilder().removeInstruction).toHaveBeenCalledWith(
     parent,

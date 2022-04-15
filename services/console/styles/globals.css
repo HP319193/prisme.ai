@@ -79,3 +79,18 @@ a {
 a.ant-btn.pr-btn-primary-small {
   padding-top: 0.25rem !important;
 }
+
+#react-flow__arrowclosed {
+  /* accent color */
+  stroke: #015dff;
+  fill: #015dff;
+  path: #015dff;
+}
+
+#react-flow__arrow polyline {
+
+  /* accent color */
+  stroke: #015dff;
+  fill: #015dff;
+  path: #015dff;
+}

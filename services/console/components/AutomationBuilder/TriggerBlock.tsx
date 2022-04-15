@@ -93,7 +93,7 @@ export const TriggerBlock: FC<NodeProps> = (props) => {
         data={triggerData}
         removable={false}
         onEdit={editTrigger}
-        type="trigger"
+        blockType="trigger"
       />
       {!data.withButton && (
         <Handle

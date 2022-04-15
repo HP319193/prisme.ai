@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import {
   EdgeProps,
-  getSmoothStepPath,
   getMarkerEnd,
+  getSmoothStepPath,
 } from 'react-flow-renderer';
 
 export const Edge: FC<EdgeProps> = ({
@@ -33,7 +33,7 @@ export const Edge: FC<EdgeProps> = ({
       <path
         id={id}
         style={style}
-        className="react-flow__edge-path"
+        className="react-flow__edge-path !stroke-accent"
         d={edgePath}
         markerEnd={markerEnd}
       />
