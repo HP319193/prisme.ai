@@ -7,8 +7,7 @@ export const Repeat: FC<NodeProps> = (props) => {
   const { data } = props;
   return (
     <>
-      <Handle type="target" position={Position.Top} style={styles.handle} />
-      <Block {...props} />
+      <Block displayAs="repeat" {...props} />
       {!data.edges && (
         <Handle
           type="source"

@@ -1,24 +1,126 @@
 import Image from 'next/image';
 import useHover from '@react-hook/hover';
-import { FC, memo, useCallback, useRef } from 'react';
+import React, {
+  FC,
+  LegacyRef,
+  memo,
+  ReactNode,
+  useCallback,
+  useRef,
+} from 'react';
 import { NodeProps } from 'react-flow-renderer';
 import { Flow } from './flow';
 import { useAutomationBuilder } from './context';
 import { Trans, useTranslation } from 'next-i18next';
-import pencil from '../../icons/cursor-pencil.svg';
 import { truncate } from '../../utils/strings';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 interface BlockProps {
   removable?: boolean;
   onEdit?: () => void;
+  displayAs?: 'trigger' | 'instruction' | 'output' | 'condition' | 'repeat';
 }
+
+interface BlockClassName {
+  textClassName: string;
+  bgClassName: string;
+  borderClassName: string;
+  editTextClassName?: string;
+}
+
+interface BlockUI {
+  editSection: ReactNode;
+  topContent: ReactNode;
+  selected: boolean;
+  onEdit?: () => void;
+  blockClassName: BlockClassName;
+}
+
+const CLASSNAME_BLOCKS: Record<string, BlockClassName> = {
+  trigger: {
+    textClassName: 'text-accent',
+    bgClassName: 'bg-graph-background',
+    borderClassName: 'border-accent',
+  },
+  instruction: {
+    textClassName: '',
+    bgClassName: 'bg-white',
+    borderClassName: 'border-slate-300',
+  },
+  output: {
+    textClassName: 'text-green-400',
+    bgClassName: 'bg-green-200',
+    borderClassName: 'border-green-400',
+  },
+  condition: {
+    textClassName: '',
+    editTextClassName: '!text-slate-400',
+    bgClassName: 'bg-white',
+    borderClassName: 'border-slate-300',
+  },
+};
+
+// eslint-disable-next-line react/display-name
+const BlockUI = React.forwardRef(
+  (
+    { blockClassName, editSection, topContent, selected, onEdit }: BlockUI,
+    ref: LegacyRef<HTMLDivElement> | undefined
+  ) => (
+    <div
+      className={`
+          flex
+          flex-col
+          surface-section
+          ${blockClassName.textClassName}
+          ${blockClassName.bgClassName}
+          ${blockClassName.borderClassName}
+          border-[1px]
+          ${selected ? 'drop-shadow-xl' : ''}
+          transition-all ease
+          rounded`}
+      style={{ width: Flow.BLOCK_WIDTH - 50 }}
+      ref={ref}
+      onClick={onEdit}
+    >
+      <div
+        className={`
+          flex
+          border-b-[1px]
+          ${blockClassName.borderClassName}
+          font-bold
+          p-2
+        `}
+      >
+        {topContent}
+      </div>
+      <button
+        className={`
+          flex
+          p-2
+          justify-between
+          items-center
+          ${blockClassName.editTextClassName || ''}
+          `}
+        style={{
+          background: 'none',
+          border: '0',
+          fontSize: 'inherit',
+          cursor: `pointer`,
+        }}
+      >
+        {editSection}
+        {onEdit ? <EditOutlined /> : null}
+      </button>
+    </div>
+  )
+);
 
 export const Block: FC<NodeProps & BlockProps> = ({
   data,
   removable = true,
   selected,
   onEdit,
+  displayAs,
 }) => {
   const { t } = useTranslation('workspaces');
   const { removeInstruction, getApp } = useAutomationBuilder();
@@ -86,28 +188,14 @@ export const Block: FC<NodeProps & BlockProps> = ({
   );
 
   return (
-    <>
-      <div
-        className={`
-          flex
-          flex-col
-          surface-section
-          border-graph-border
-          bg-graph-background
-          ${selected ? 'border-4' : 'border-2'}
-          rounded`}
-        style={{ width: Flow.BLOCK_WIDTH - 50 }}
-        ref={ref}
-      >
-        <div
-          className="
-          flex
-          align-center
-          border-b-2
-          border-graph-border
-          p-2
-        "
-        >
+    <BlockUI
+      ref={ref}
+      blockClassName={
+        (displayAs && CLASSNAME_BLOCKS[displayAs]) ||
+        CLASSNAME_BLOCKS['instruction']
+      }
+      topContent={
+        <>
           {icon && (
             <div className="mr-2">
               <Image src={icon} width={16} height={16} alt={name} />
@@ -126,42 +214,16 @@ export const Block: FC<NodeProps & BlockProps> = ({
                 }}
                 onClick={() => removeInstruction(data.parent, data.index)}
               >
-                <CloseCircleOutlined />
+                <DeleteOutlined className="!text-orange-500" />
               </button>
             )}
           </div>
-        </div>
-        {onEdit && (
-          <button
-            onClick={onEdit}
-            className="
-            flex
-            justify-center
-            p-2
-          "
-            style={{
-              background: 'none',
-              border: '0',
-              fontSize: 'inherit',
-              cursor: `url(${pencil.src}) 16 16, pointer`,
-            }}
-          >
-            {data.component ? <data.component /> : getLabel(data)}
-          </button>
-        )}
-        {!onEdit && (
-          <div
-            className="
-            flex
-            justify-center
-            p-2
-            cursor-default"
-          >
-            {getLabel(data)}
-          </div>
-        )}
-      </div>
-    </>
+        </>
+      }
+      editSection={data.component ? <data.component /> : getLabel(data)}
+      selected={selected}
+      onEdit={onEdit}
+    />
   );
 };
 

@@ -2,7 +2,7 @@
 
 exports[`should render 1`] = `
 <path
-  className="react-flow__edge-path"
+  className="react-flow__edge-path !stroke-accent"
   d="M 0,0L 0,0Q 0,5 5,5L 5,5Q 10,5 10,10L 10,10"
   id="a"
   markerEnd="none"

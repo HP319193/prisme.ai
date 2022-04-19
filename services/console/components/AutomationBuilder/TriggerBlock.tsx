@@ -5,7 +5,7 @@ import Block from './Block';
 import { useAutomationBuilder } from './context';
 import styles from './styles';
 import { LinkOutlined } from '@ant-design/icons';
-import { notification } from '@prisme.ai/design-system';
+import { Button, notification } from '@prisme.ai/design-system';
 
 interface TriggerDisplayProps {
   value: Prismeai.When;
@@ -53,13 +53,15 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
             }}
             components={{
               a: (
-                <a
+                <Button
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     copyEndpoint();
                   }}
                   href={endpoint}
+                  variant="primary"
+                  className="pr-btn-primary-small !h-auto !text-[12px] !p-1 !px-2 !leading-none !pt-1"
                 />
               ),
               icon: <LinkOutlined />,
@@ -91,6 +93,7 @@ export const TriggerBlock: FC<NodeProps> = (props) => {
         data={triggerData}
         removable={false}
         onEdit={editTrigger}
+        displayAs="trigger"
       />
       {!data.withButton && (
         <Handle

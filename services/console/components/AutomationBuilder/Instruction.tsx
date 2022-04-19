@@ -10,9 +10,9 @@ export const Instruction: FC<NodeProps> = (props) => {
   const hasProperties = !!getSchema(data.label).properties;
   return (
     <>
-      <Handle type="target" position={Position.Top} style={styles.handle} />
       <Block
         {...props}
+        displayAs="instruction"
         onEdit={
           hasProperties
             ? () => editInstruction(data.parent, data.index)

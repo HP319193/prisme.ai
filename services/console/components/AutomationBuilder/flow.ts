@@ -84,6 +84,7 @@ export class Flow {
         type: 'conditionEdge',
         sourceHandle: key,
         arrowHeadType: ArrowHeadType.Arrow,
+        style: { stroke: '#015DFF' },
       };
       this.edges.push(conditionEdge);
     });
@@ -154,6 +155,7 @@ export class Flow {
             index,
           },
           arrowHeadType: ArrowHeadType.Arrow,
+          style: { stroke: '#015DFF' },
         };
         this.edges.push(edge);
       }
@@ -186,6 +188,7 @@ export class Flow {
             target: `${parentId}.${k + 1}`,
             type: 'conditionEdge',
             arrowHeadType: ArrowHeadType.Arrow,
+            style: { stroke: '#015DFF' },
           };
           this.edges.push(edge);
         });
@@ -217,6 +220,7 @@ export class Flow {
             sourceHandle: '0',
             type: 'edge',
             arrowHeadType: ArrowHeadType.Arrow,
+            style: { stroke: '#015DFF' },
           },
           {
             id: `edge-${lastNode.id}-${node.id}`,
@@ -225,6 +229,7 @@ export class Flow {
             targetHandle: '2',
             type: 'edge',
             arrowHeadType: ArrowHeadType.Arrow,
+            style: { stroke: '#015DFF' },
           },
           {
             id: `edge-${node.id}-${parentId}.${k + 1}`,
@@ -233,6 +238,7 @@ export class Flow {
             sourceHandle: '1',
             type: 'edge',
             arrowHeadType: ArrowHeadType.Arrow,
+            style: { stroke: '#015DFF' },
           }
         );
       }
@@ -274,6 +280,7 @@ export class Flow {
               target: child.id,
               type: 'edge',
               arrowHeadType: ArrowHeadType.Arrow,
+              style: { stroke: '#015DFF' },
             },
             {
               id: `edge-${child.id}-${parentId}.${k + 1}`,
@@ -281,6 +288,7 @@ export class Flow {
               target: `${parentId}.${k + 1}`,
               type: 'edge',
               arrowHeadType: ArrowHeadType.Arrow,
+              style: { stroke: '#015DFF' },
             }
           );
         });
@@ -325,6 +333,7 @@ export class Flow {
         },
         type: 'edge',
         arrowHeadType: ArrowHeadType.Arrow,
+        style: { stroke: '#015DFF' },
       };
       this.edges.push(edge);
     }
@@ -353,6 +362,7 @@ export class Flow {
         index: (this.value.do || []).length,
       },
       arrowHeadType: ArrowHeadType.Arrow,
+      style: { stroke: '#015DFF' },
     });
 
     const flow = [...this.nodes, ...this.edges];

@@ -17,6 +17,7 @@ export const OutputBlock: FC<NodeProps> = (props) => {
       />
       <Block
         {...props}
+        displayAs="output"
         data={{ ...data, label: 'output' }}
         removable={false}
         onEdit={editOutput}

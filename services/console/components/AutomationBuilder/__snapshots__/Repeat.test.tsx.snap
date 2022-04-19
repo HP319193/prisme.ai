@@ -2,17 +2,17 @@
 
 exports[`should render 1`] = `
 Array [
-  <div>
-    Handle
-  </div>,
   <div
     className="
           flex
           flex-col
           surface-section
-          border-graph-border
-          bg-graph-background
-          border-2
+          
+          bg-white
+          border-slate-300
+          border-[1px]
+          
+          transition-all ease
           rounded"
     style={
       Object {
@@ -21,7 +21,13 @@ Array [
     }
   >
     <div
-      className=" flex align-center border-b-2 border-graph-border p-2 "
+      className="
+          flex
+          border-b-[1px]
+          border-slate-300
+          font-bold
+          p-2
+        "
     >
       <div
         className="mr-2"
@@ -157,11 +163,25 @@ Array [
         />
       </div>
     </div>
-    <div
-      className=" flex justify-center p-2 cursor-default"
+    <button
+      className="
+          flex
+          p-2
+          justify-between
+          items-center
+          
+          "
+      style={
+        Object {
+          "background": "none",
+          "border": "0",
+          "cursor": "pointer",
+          "fontSize": "inherit",
+        }
+      }
     >
       automations.node.label
-    </div>
+    </button>
   </div>,
   <div>
     Handle

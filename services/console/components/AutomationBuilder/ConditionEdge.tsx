@@ -36,7 +36,7 @@ export const ConditionEdge: FC<EdgeProps> = ({
     <>
       <path
         id={id}
-        style={style}
+        style={{ ...style, strokeDasharray: '5,5' }}
         className="react-flow__edge-path"
         d={edgePath}
         markerEnd={markerEnd}
