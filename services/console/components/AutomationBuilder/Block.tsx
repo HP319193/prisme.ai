@@ -18,7 +18,7 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 interface BlockProps {
   removable?: boolean;
   onEdit?: () => void;
-  blockType?: 'trigger' | 'instruction' | 'output' | 'condition' | 'repeat';
+  displayAs?: 'trigger' | 'instruction' | 'output' | 'condition' | 'repeat';
 }
 
 interface BlockClassName {
@@ -120,7 +120,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
   removable = true,
   selected,
   onEdit,
-  blockType,
+  displayAs,
 }) => {
   const { t } = useTranslation('workspaces');
   const { removeInstruction, getApp } = useAutomationBuilder();
@@ -191,7 +191,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
     <BlockUI
       ref={ref}
       blockClassName={
-        (blockType && CLASSNAME_BLOCKS[blockType]) ||
+        (displayAs && CLASSNAME_BLOCKS[displayAs]) ||
         CLASSNAME_BLOCKS['instruction']
       }
       topContent={

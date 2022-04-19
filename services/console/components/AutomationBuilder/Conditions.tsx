@@ -23,7 +23,7 @@ export const Conditions: FC<NodeProps> = (props) => {
 
   return (
     <>
-      <Block {...props} blockType="condition" />
+      <Block {...props} displayAs="condition" />
       <div className="flex justify-between" style={{ padding: '0 10px' }}>
         {sources.map((key) => (
           <Handle

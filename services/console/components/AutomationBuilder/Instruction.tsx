@@ -12,7 +12,7 @@ export const Instruction: FC<NodeProps> = (props) => {
     <>
       <Block
         {...props}
-        blockType="instruction"
+        displayAs="instruction"
         onEdit={
           hasProperties
             ? () => editInstruction(data.parent, data.index)
