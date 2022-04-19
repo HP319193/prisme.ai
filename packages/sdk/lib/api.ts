@@ -57,7 +57,7 @@ export class Api extends Fetcher {
 
   // Workspaces
   async getWorkspaces(): Promise<Workspace[]> {
-    return await this.get('/workspaces');
+    return await this.get('/workspaces?limit=300');
   }
 
   async getWorkspace(id: string): Promise<Workspace | null> {
@@ -216,20 +216,17 @@ export class Api extends Fetcher {
     );
   }
 
-  async getApps(
-    text:
-      | PrismeaiAPI.SearchApps.QueryParameters['text']
-      | undefined = undefined,
-    page:
-      | PrismeaiAPI.SearchApps.QueryParameters['page']
-      | undefined = undefined,
-    limit:
-      | PrismeaiAPI.SearchApps.QueryParameters['limit']
-      | undefined = undefined,
-    workspaceId:
-      | PrismeaiAPI.SearchApps.QueryParameters['workspaceId']
-      | undefined = undefined
-  ): Promise<PrismeaiAPI.SearchApps.Responses.$200> {
+  async getApps({
+    text,
+    page,
+    limit,
+    workspaceId,
+  }: {
+    text?: PrismeaiAPI.SearchApps.QueryParameters['text'];
+    page?: PrismeaiAPI.SearchApps.QueryParameters['page'];
+    limit?: PrismeaiAPI.SearchApps.QueryParameters['limit'];
+    workspaceId?: PrismeaiAPI.SearchApps.QueryParameters['workspaceId'];
+  }): Promise<PrismeaiAPI.SearchApps.Responses.$200> {
     const params = new URLSearchParams(
       removedUndefinedProperties(
         {
