@@ -92,6 +92,8 @@
     "trigger": {
       "events": {
         "title": "Events",
+        "item": "Event",
+        "add": "Add an event",
         "display_one": "The event {{events}} occurs",
         "display_other": "One of the events {{events}} occurs",
         "help": "Automation will be run everytime one of this event will be fired."
@@ -145,6 +147,7 @@
       "label_empty": "<italic>Set</italic>",
       "edit": {
         "title": "Return value:",
+        "description": "Value returned by the automation. Can be a static value in the form of a string or a JSON object or even a variable generated during the execution of your automation surrounded by braces (ex: {{maVar}})",
         "label": "Value",
         "save": "Add"
       },
@@ -164,6 +167,7 @@
     "condition": {
       "edit": {
         "title": "Condition",
+        "description": "Condition to choose this path",
         "save": "Add",
         "submit_new": "Add"
       }
@@ -227,6 +231,7 @@
     "save": {
       "label": "Save",
       "toast": "Page has been saved",
+      "error_slug": "Slug is already in use, please choose another one",
       "error": "Unknown error has occured"
     },
     "widgets": {
@@ -249,6 +254,9 @@
       },
       "description": {
         "label": "Description"
+      },
+      "slug": {
+        "label": "Slug"
       }
     }
   },
@@ -319,9 +327,6 @@
       },
       "toast_automations": "Automation has been deleted",
       "toast_pages": "Page has been deleted"
-    },
-    "feed": {
-      "filter": "Filters"
     }
   },
   "schema": {
@@ -341,5 +346,8 @@
       "object": "Object",
       "array": "Array"
     }
+  },
+  "feed": {
+    "filter": "Filters"
   }
 }

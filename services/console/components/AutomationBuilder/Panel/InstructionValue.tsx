@@ -1,33 +1,48 @@
-import { FC } from 'react';
-import Form from '../../SchemaForm/Form';
+import { FC, useMemo } from 'react';
 import Fieldset from '../../../layouts/Fieldset';
 import { useTranslation } from 'next-i18next';
+import { SchemaForm } from '@prisme.ai/design-system';
+import { CodeEditorInline } from '../../CodeEditor/lazy';
 
 interface InstructionValueProps {
   instruction: string;
   value: any;
   schema?: any;
-  onSubmit: (values: any) => void;
+  onChange: (values: any) => void;
 }
+
+const EmptyButtons: any[] = [];
+const components = {
+  JSONEditor: (props: any) => <CodeEditorInline {...props} mode="json" />,
+};
 
 export const InstructionValue: FC<InstructionValueProps> = ({
   instruction,
   value,
   schema,
-  onSubmit,
+  onChange,
 }) => {
   const { t } = useTranslation('workspaces');
+  const schemaWithDescription = useMemo(
+    () => ({
+      ...schema,
+      title: t('automations.instruction.description', {
+        context: instruction,
+        default: schema.description,
+      }),
+    }),
+    [instruction, schema, t]
+  );
   if (!schema) return null;
+
   return (
     <Fieldset legend={instruction} hasDivider={false}>
-      <Form
-        schema={schema}
-        onSubmit={onSubmit}
+      <SchemaForm
+        schema={schemaWithDescription}
+        onChange={onChange}
         initialValues={value}
-        description={t('automations.instruction.description', {
-          context: instruction,
-          default: schema.description,
-        })}
+        buttons={EmptyButtons}
+        components={components}
       />
     </Fieldset>
   );

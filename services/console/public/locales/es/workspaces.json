@@ -2,6 +2,7 @@
   "workspaces": {
     "title": "Espacios de trabajo y aplicaciones — $t(common:main.title)",
     "description": "Crear nuevos espacios de trabajo y aplicaciones, editarlos y ejecutarlos",
+    "sectionTitle": "Su galería de espacios de trabajo",
     "defaultDescription": "Creado por ti"
   },
   "workspace": {
@@ -91,6 +92,8 @@
     "trigger": {
       "events": {
         "title": "Eventos",
+        "item": "Evento",
+        "add": "Añadir un evento",
         "display_one": "El evento {{events}} ocurre",
         "display_other": "Uno de los eventos {{events}} ocurre",
         "help": "La automatización se ejecutará siempre que se produzca uno de los siguientes eventos."
@@ -144,6 +147,7 @@
       "label_empty": "<italic>Definir</italic>",
       "edit": {
         "title": "Devuelve el valor :",
+        "description": "Valor devuelto por la automatización. Puede ser un valor estático en forma de cadena u objeto JSON o incluso una variable generada durante la ejecución de su automatización rodeada de llaves (ej: {{maVar}})",
         "label": "Valor",
         "save": "Añadir"
       },
@@ -163,6 +167,7 @@
     "condition": {
       "edit": {
         "title": "Condición",
+        "description": "Condición para elegir esta vía",
         "save": "Registro condición",
         "submit_new": "Añadir"
       }
@@ -226,6 +231,7 @@
     "save": {
       "label": "Registro",
       "toast": "Se ha registrado la Página",
+      "error_slug": "El nombre técnico ya está en uso, por favor elija otro",
       "error": "Se ha producido un error"
     },
     "widgets": {
@@ -248,6 +254,9 @@
       },
       "description": {
         "label": "Descripción"
+      },
+      "slug": {
+        "label": "Técnica Nom"
       }
     }
   },
@@ -320,9 +329,6 @@
       "toast_pages": "Se ha eliminado la página"
     }
   },
-  "feed": {
-    "filter": "Filtros"
-  },
   "schema": {
     "property": {
       "edit": "Editar",
@@ -340,5 +346,8 @@
       "object": "Objeto",
       "array": "Cuadro"
     }
+  },
+  "feed": {
+    "filter": "Filtros"
   }
 }

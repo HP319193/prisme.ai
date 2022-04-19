@@ -1328,9 +1328,7 @@ declare namespace Prismeai {
             /**
              * variable value
              */
-            value: {
-                [name: string]: any;
-            };
+            value: AnyValue;
             lifespan?: /* Rules defining when a variable should be automatically removed */ VariableLifespan;
         };
     }

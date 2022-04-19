@@ -848,7 +848,6 @@ paths:
                           count:
                             type: number
 
-
         '404':
           description: Object not found
           content:
@@ -1655,7 +1654,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
-
 
   ## apps
   /v2/apps:
@@ -2657,10 +2655,10 @@ components:
               type: string
               description: Variable name, might be "foo", "session.sessionScopedFoo", "global.globalScopedFoo", "user.userScopedFoo", ...
             value:
-              type: object
+              $ref: '#/components/schemas/AnyValue'
               description: variable value
-              additionalProperties: true
             lifespan:
+              type: object
               $ref: '#/components/schemas/VariableLifespan'
 
     Delete:
@@ -3471,7 +3469,7 @@ components:
                 slug:
                   type: string
                 name:
-                  $ref: "#/components/schemas/LocalizedText"
+                  $ref: '#/components/schemas/LocalizedText'
 
     CreatedPage:
       type: object
@@ -3681,7 +3679,7 @@ components:
             expiresAt:
               type: number
             wait:
-              $ref: "#/components/schemas/Wait/properties/wait"
+              $ref: '#/components/schemas/Wait/properties/wait'
 
     FulfilledWait:
       type: object
@@ -3703,8 +3701,7 @@ components:
             id:
               type: string
             event:
-              $ref: "#/components/schemas/PrismeEvent"
-
+              $ref: '#/components/schemas/PrismeEvent'
 
     AppEvent:
       type: object
