@@ -28,88 +28,85 @@ interface EventRecord {
 export const EventDetails: FC<EventsDetailsProps> = (event) => {
   const { t } = useTranslation('workspaces');
   const formatDate = useDateFormat();
-  const dataSource = useMemo(
-    () =>
-      [
-        {
-          key: 'type',
-          name: 'type',
-          value: event.type,
-        },
-        {
-          key: 'payload',
-          name: 'payload',
-          value: (
-            <pre>
-              <code>
-                {truncatePayload(JSON.stringify(event.payload, null, ' '))}
-              </code>
-            </pre>
-          ),
-          payloadValue: event.payload && (
-            <pre>
-              <code>{JSON.stringify(event.payload, null, ' ')}</code>
-            </pre>
-          ),
-          fullPayload: event.payload,
-        },
-        event.source.appInstanceFullSlug
-          ? {
-              key: 'source.appInstanceFullSlug',
-              name: 'source.appInstanceFullSlug',
-              value: event.source.appInstanceFullSlug,
-            }
-          : false,
-        event.source.automationSlug
-          ? {
-              key: 'source.automationSlug',
-              name: 'source.automationSlug',
-              value: event.source.automationSlug,
-            }
-          : false,
-        {
-          key: 'source.userId',
-          name: 'source.userId',
-          value: event.source.userId,
-        },
-        {
-          key: 'source.correlationId',
-          name: 'source.correlationId',
-          value: event.source.correlationId,
-        },
-        event.error
-          ? {
-              key: 'error.error',
-              name: 'error.error',
-              value: event.error?.error,
-            }
-          : false,
-        event.error
-          ? {
-              key: 'error.message',
-              name: 'error.message',
-              value: event.error?.message,
-            }
-          : false,
-        event.error
-          ? {
-              key: 'error.details',
-              name: 'error.details',
-              value: event.error?.details && (
-                <pre>
-                  <code>{JSON.stringify(event.error?.details, null, ' ')}</code>
-                </pre>
-              ),
-            }
-          : false,
-        {
-          key: 'id',
-          name: 'id',
-          value: event.id,
-        },
-      ].filter(Boolean) as EventRecord[],
-    [event]
-  );
+  const dataSource = useMemo(() => {
+    const stringifiedPayload = JSON.stringify(event.payload, null, ' ');
+    return [
+      {
+        key: 'type',
+        name: 'type',
+        value: event.type,
+      },
+      {
+        key: 'payload',
+        name: 'payload',
+        value: (
+          <pre>
+            <code>{truncatePayload(stringifiedPayload)}</code>
+          </pre>
+        ),
+        payloadValue: event.payload && (
+          <pre>
+            <code>{stringifiedPayload}</code>
+          </pre>
+        ),
+        fullPayload: stringifiedPayload,
+      },
+      event.source.appInstanceFullSlug
+        ? {
+            key: 'source.appInstanceFullSlug',
+            name: 'source.appInstanceFullSlug',
+            value: event.source.appInstanceFullSlug,
+          }
+        : false,
+      event.source.automationSlug
+        ? {
+            key: 'source.automationSlug',
+            name: 'source.automationSlug',
+            value: event.source.automationSlug,
+          }
+        : false,
+      {
+        key: 'source.userId',
+        name: 'source.userId',
+        value: event.source.userId,
+      },
+      {
+        key: 'source.correlationId',
+        name: 'source.correlationId',
+        value: event.source.correlationId,
+      },
+      event.error
+        ? {
+            key: 'error.error',
+            name: 'error.error',
+            value: event.error?.error,
+          }
+        : false,
+      event.error
+        ? {
+            key: 'error.message',
+            name: 'error.message',
+            value: event.error?.message,
+          }
+        : false,
+      event.error
+        ? {
+            key: 'error.details',
+            name: 'error.details',
+            value: event.error?.details && (
+              <pre>
+                <code>{JSON.stringify(event.error?.details, null, ' ')}</code>
+              </pre>
+            ),
+          }
+        : false,
+      {
+        key: 'id',
+        name: 'id',
+        value: event.id,
+      },
+    ].filter(Boolean) as EventRecord[];
+  }, [event]);
   const onRowClick = useCallback(({ target }: MouseEvent) => {
     const valueTd = (
       target as HTMLTableRowElement
