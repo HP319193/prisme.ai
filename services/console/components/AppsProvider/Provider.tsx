@@ -13,9 +13,14 @@ export const AppsProvider: FC = ({ children }) => {
   const { t } = useTranslation('errors');
 
   const getApps: AppsContext['getApps'] = useCallback(
-    async (query, page, limit, workspaceId) => {
+    async ({ query, page, limit, workspaceId } = {}) => {
       try {
-        const fetchedApps = await api.getApps(query, page, limit, workspaceId);
+        const fetchedApps = await api.getApps({
+          query,
+          page,
+          limit,
+          workspaceId,
+        });
         const appMapUpdate: Map<string, Prismeai.App> = fetchedApps.reduce(
           (newMap, app) => newMap.set(app.slug, app),
           new Map()

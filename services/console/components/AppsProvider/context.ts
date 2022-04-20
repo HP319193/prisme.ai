@@ -4,12 +4,12 @@ export interface AppsContext {
   apps: Map<string, Prismeai.App>;
   appInstances: Map<string, Prismeai.DetailedAppInstance[]>;
   getApps: ({
-    text,
+    query,
     page,
     limit,
     workspaceId,
   }: {
-    text?: PrismeaiAPI.SearchApps.QueryParameters['text'];
+    query?: PrismeaiAPI.SearchApps.QueryParameters['text'];
     page?: PrismeaiAPI.SearchApps.QueryParameters['page'];
     limit?: PrismeaiAPI.SearchApps.QueryParameters['limit'];
     workspaceId?: PrismeaiAPI.SearchApps.QueryParameters['workspaceId'];
