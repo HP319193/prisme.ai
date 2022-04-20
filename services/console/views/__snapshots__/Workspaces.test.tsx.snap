@@ -10,15 +10,22 @@ Array [
       <div
         className="flex flex-wrap align-start justify-center gap-4"
       >
-        <div
+        <button
           className="p-2 bg-slate-100 !m-4 w-[20rem] h-[6rem] flex flex-col justify-between overflow-hidden rounded border border-slate-300 border-dashed"
+          disabled={false}
+          onClick={[Function]}
         >
           <div
             className="flex grow flex-row text-center content-center"
           >
             <div
               className="flex mx-3 items-center justify-center"
-            />
+            >
+              <div
+                className="ant-btn ant-btn-primary !h-12 !w-12 !p-0 !flex items-center justify-center"
+                id="createWorkspaceButton"
+              />
+            </div>
             <div
               className="flex grow flex-col items-start"
             >
@@ -26,15 +33,15 @@ Array [
               create.description_sub
             </div>
           </div>
-        </div>
-      </div>
-      <div
-        className="absolute bottom-0 right-[15px] text-gray mr-1"
-      >
-        Prisme.ai 
-        6.2.0
+        </button>
       </div>
     </div>
+  </div>,
+  <div
+    className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]"
+  >
+    Prisme.ai v
+    6.2.0
   </div>,
 ]
 `;
@@ -49,15 +56,22 @@ Array [
       <div
         className="flex flex-wrap align-start justify-center gap-4"
       >
-        <div
+        <button
           className="p-2 bg-slate-100 !m-4 w-[20rem] h-[6rem] flex flex-col justify-between overflow-hidden rounded border border-slate-300 border-dashed"
+          disabled={false}
+          onClick={[Function]}
         >
           <div
             className="flex grow flex-row text-center content-center"
           >
             <div
               className="flex mx-3 items-center justify-center"
-            />
+            >
+              <div
+                className="ant-btn ant-btn-primary !h-12 !w-12 !p-0 !flex items-center justify-center"
+                id="createWorkspaceButton"
+              />
+            </div>
             <div
               className="flex grow flex-col items-start"
             >
@@ -65,9 +79,11 @@ Array [
               create.description_sub
             </div>
           </div>
-        </div>
-        <div
+        </button>
+        <button
           className="p-2 bg-white !m-4 w-[20rem] h-[6rem] content-center flex flex-col justify-between overflow-hidden rounded border border-gray-200 border-solid"
+          onClick={[Function]}
+          onMouseEnter={[Function]}
         >
           <div
             className="flex grow flex-row text-center"
@@ -82,12 +98,18 @@ Array [
             >
               foo
               
-              edit.label
+              <div
+                className="ant-btn ant-btn-link !p-0"
+              >
+                edit.label
+              </div>
             </div>
           </div>
-        </div>
-        <div
+        </button>
+        <button
           className="p-2 bg-white !m-4 w-[20rem] h-[6rem] content-center flex flex-col justify-between overflow-hidden rounded border border-gray-200 border-solid"
+          onClick={[Function]}
+          onMouseEnter={[Function]}
         >
           <div
             className="flex grow flex-row text-center"
@@ -102,18 +124,22 @@ Array [
             >
               bar
               
-              edit.label
+              <div
+                className="ant-btn ant-btn-link !p-0"
+              >
+                edit.label
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div
-        className="absolute bottom-0 right-[15px] text-gray mr-1"
-      >
-        Prisme.ai 
-        6.2.0
+        </button>
       </div>
     </div>
+  </div>,
+  <div
+    className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]"
+  >
+    Prisme.ai v
+    6.2.0
   </div>,
 ]
 `;

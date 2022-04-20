@@ -25,7 +25,9 @@ jest.mock('next/router', () => {
   };
 });
 jest.mock('next/image', () => {
-  return ({ src }: any) => <div />;
+  const Image = ({ src }: any) => <div />;
+
+  return Image;
 });
 
 beforeEach(() => {
