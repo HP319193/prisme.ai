@@ -124,6 +124,22 @@ backend_npm_install:
     - deploy $CI_COMMIT_BRANCH $K8S_NAME $IMAGE_NAME $FEATURE_TAG
 
 ## Console jobs
+console_check:
+  stage: test
+  script:
+    - >
+      if ! [[ -d node_modules/ ]] ; then
+        BUILD_PACKAGES=0 npm ci
+      fi
+    - npm run build:packages
+    - npm run check:console
+  needs: []
+  only:
+    changes:
+      - 'services/console/**/*'
+  before_script:
+    - export DIRECTORY=services/$CONSOLE_DIRECTORY
+
 console_test:
   extends: .npm_test
   needs: []
@@ -176,7 +192,7 @@ workspaces_test:
   extends: .npm_test
   only:
     changes:
-      - "services/workspaces/*"
+      - 'services/workspaces/*'
   before_script:
     - export DIRECTORY=services/$WORKSPACES_DIRECTORY
 
@@ -416,4 +432,3 @@ load_performance:
   artifacts:
     reports:
       load_performance: load-performance.json
-
