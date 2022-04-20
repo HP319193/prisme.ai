@@ -31,12 +31,9 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   const prevWorkspaceId = usePrevious(workspace.id);
 
   const getCurrentlyPublishedApp = useCallback(async () => {
-    const currentlyPublishedApp = await getApps(
-      undefined,
-      undefined,
-      undefined,
-      workspace.id
-    );
+    const currentlyPublishedApp = await getApps({
+      workspaceId: workspace.id,
+    });
     if (currentlyPublishedApp) {
       const apps = Array.from(currentlyPublishedApp.values());
       if (apps.length > 0 && apps[0] && apps[0].slug) {

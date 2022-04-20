@@ -134,11 +134,16 @@ export class Api extends Fetcher {
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const { createdAt, createdBy, updatedAt, updatedBy, ...newPage } =
-      await this.post<PageWithMetadata>(
-        `/workspaces/${workspaceId}/pages`,
-        page
-      );
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...newPage
+    } = await this.post<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages`,
+      page
+    );
     return newPage;
   }
 
@@ -146,11 +151,16 @@ export class Api extends Fetcher {
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const { createdAt, createdBy, updatedAt, updatedBy, ...updatedPage } =
-      await this.patch<PageWithMetadata>(
-        `/workspaces/${workspaceId}/pages/${page.id}`,
-        page
-      );
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...updatedPage
+    } = await this.patch<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages/${page.id}`,
+      page
+    );
     return updatedPage;
   }
 
@@ -217,12 +227,12 @@ export class Api extends Fetcher {
   }
 
   async getApps({
-    text,
+    query,
     page,
     limit,
     workspaceId,
   }: {
-    text?: PrismeaiAPI.SearchApps.QueryParameters['text'];
+    query?: PrismeaiAPI.SearchApps.QueryParameters['text'];
     page?: PrismeaiAPI.SearchApps.QueryParameters['page'];
     limit?: PrismeaiAPI.SearchApps.QueryParameters['limit'];
     workspaceId?: PrismeaiAPI.SearchApps.QueryParameters['workspaceId'];
@@ -230,7 +240,7 @@ export class Api extends Fetcher {
     const params = new URLSearchParams(
       removedUndefinedProperties(
         {
-          text: `${text || ''}`,
+          text: `${query || ''}`,
           page: `${page || ''}`,
           limit: `${limit || ''}`,
           workspaceId: `${workspaceId || ''}`,
