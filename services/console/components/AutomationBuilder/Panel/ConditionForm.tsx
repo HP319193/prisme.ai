@@ -1,9 +1,6 @@
 import { useTranslation } from 'next-i18next';
-import { Button, Schema, SchemaForm } from '@prisme.ai/design-system';
+import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import { FC, useCallback, useMemo } from 'react';
-import Fieldset from '../../../layouts/Fieldset';
-import { Field } from '../../SchemaForm/Field';
-import { PlusOutlined } from '@ant-design/icons';
 
 interface ConditionFormProps {
   condition?: string;

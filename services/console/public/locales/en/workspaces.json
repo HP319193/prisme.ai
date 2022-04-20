@@ -45,7 +45,7 @@
     "filters": {
       "title": "Filters",
       "correlationId": "Correlation ID",
-      "submit": "Save filters",
+      "submit": "Apply filters",
       "text": "Keyword search",
       "afterDate": "From a specific date",
       "beforeDate": "Until a specific date",
@@ -341,8 +341,11 @@
     },
     "types": {
       "string": "Text",
+      "localized_string": "Localized text",
       "boolean": "Boolean",
+      "localized_boolean": "Localized boolean",
       "number": "Number",
+      "localized_number": "Localized number",
       "object": "Object",
       "array": "Array"
     }

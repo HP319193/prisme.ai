@@ -19,7 +19,7 @@ const components = {
 export const InstructionValue: FC<InstructionValueProps> = ({
   instruction,
   value,
-  schema,
+  schema = {},
   onChange,
 }) => {
   const { t } = useTranslation('workspaces');

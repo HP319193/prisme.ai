@@ -5,10 +5,10 @@ import {
   Divider,
   Tooltip,
   Collapse,
+  Schema,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
-import { Schema } from '../SchemaForm/types';
 import SchemaFormBuilder from './SchemaFormBuilder';
 
 export const Properties = ({ value, onChange }: any) => {
@@ -61,7 +61,7 @@ export const Properties = ({ value, onChange }: any) => {
 
   const items = useMemo(
     () =>
-      Object.keys(value).map((key) => ({
+      Object.keys(value || {}).map((key) => ({
         label: (
           <div
             className="relative flex flex-1"

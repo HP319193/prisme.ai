@@ -27,7 +27,6 @@ interface EventRecord {
 
 export const EventDetails: FC<EventsDetailsProps> = (event) => {
   const { t } = useTranslation('workspaces');
-  const formatDate = useDateFormat();
   const dataSource = useMemo(() => {
     const stringifiedPayload = JSON.stringify(event.payload, null, ' ');
     return [
@@ -108,9 +107,9 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
     ].filter(Boolean) as EventRecord[];
   }, [event]);
   const onRowClick = useCallback(({ target }: MouseEvent) => {
-    const valueTd = (
-      target as HTMLTableRowElement
-    ).parentNode?.querySelectorAll('td');
+    const valueTd = (target as HTMLTableRowElement).parentNode?.querySelectorAll(
+      'td'
+    );
     if (valueTd && valueTd.length === 3) {
       selectText(valueTd[2]);
     }

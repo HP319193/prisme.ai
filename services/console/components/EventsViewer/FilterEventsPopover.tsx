@@ -1,111 +1,142 @@
-import { Button, Collapse, Popover, Tooltip } from '@prisme.ai/design-system';
-import { FilterOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import {
+  Button,
+  FieldProps,
+  Popover,
+  Schema,
+  SchemaForm,
+} from '@prisme.ai/design-system';
+import { FilterOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import Form from '../SchemaForm/Form';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { CodeEditorInline } from '../CodeEditor/lazy';
+import { useField } from 'react-final-form';
 
-const QueryCollapse = ({ value, onChange }: any) => {
-  const { t } = useTranslation('workspaces');
-
-  const onCodeChange = (value: string) => {
-    if (value === '') {
-      onChange(value);
-      return;
-    }
-
-    try {
-      const parsedValue = JSON.parse(value);
-      onChange(parsedValue);
-      return;
-    } catch (e) {}
-  };
-
-  return (
-    <Collapse
-      light
-      className="flex-1"
-      icon={() => (
-        <Tooltip title={t('events.filters.query.description')}>
-          <InfoCircleOutlined className="text-gray" />
-        </Tooltip>
-      )}
-      items={[
-        {
-          label: t('events.filters.query.label'),
-          content: (
-            <CodeEditorInline
-              mode="json"
-              value={value}
-              onChange={onCodeChange}
-            />
-          ),
-        },
-      ]}
-    />
-  );
-};
-
-interface FilterEventsProps {
-  onSubmit: () => void;
-}
-
-const FilterEvents = ({ onSubmit }: FilterEventsProps) => {
-  const { t } = useTranslation('workspaces');
-  const { updateFilters } = useWorkspace();
-
-  return (
-    <div className="w-[60vw]">
-      <Form
-        schema={{
-          type: 'object',
-          properties: {
-            afterDate: {
-              title: t('events.filters.afterDate'),
-              type: 'string',
-              'ui:widget': 'datePicker',
-            },
-            beforeDate: {
-              title: t('events.filters.beforeDate'),
-              type: 'string',
-              'ui:widget': 'datePicker',
-            },
-            text: {
-              title: t('events.filters.text'),
-              type: 'string',
-            },
-          },
-          additionalProperties: {
-            'ui:widget': QueryCollapse,
-          },
-          'ui:options': {
-            layout: 'columns',
-            lines: [
-              ['afterDate', 'beforeDate'],
-              ['text'],
-              ['additionalProperties'],
-            ],
-          },
-        }}
-        onSubmit={(value) => {
-          updateFilters(value);
-          onSubmit();
-        }}
-        submitLabel={t('events.filters.submit')}
-      />
-    </div>
-  );
+const components = {
+  FieldAny: ({ name }: FieldProps) => {
+    const field = useField(name);
+    const [value, setValue] = useState(
+      typeof field.input.value === 'string'
+        ? field.input.value
+        : JSON.stringify(field.input.value, null, '  ')
+    );
+    const onChange = useCallback(
+      (value: string) => {
+        setValue(value);
+        try {
+          const json = JSON.parse(value);
+          field.input.onChange(json);
+        } catch {
+          field.input.onChange(value);
+        }
+      },
+      [field.input]
+    );
+    return (
+      <div className="flex flex-1 mt-5">
+        <CodeEditorInline
+          value={value}
+          onChange={onChange}
+          mode="json"
+          className="flex flex-1 flex-col"
+        />
+      </div>
+    );
+  },
 };
 
 const FilterEventsPopover = () => {
   const { t } = useTranslation('workspaces');
+  const { updateFilters } = useWorkspace();
   const [filterVisible, setFilterVisible] = useState(false);
+  const [values, setValues] = useState<{
+    beforeDate?: string;
+    afterDate?: string;
+  }>({});
+
+  const submit = useCallback(
+    (values) => {
+      updateFilters(values);
+      setFilterVisible(false);
+    },
+    [updateFilters]
+  );
+
+  const schema: Schema = useMemo(
+    () => ({
+      type: 'object',
+      properties: {
+        afterDate: {
+          type: 'string',
+          title: t('events.filters.afterDate'),
+          'ui:widget': 'date',
+          'ui:options': {
+            date: {
+              disabledDate: (current) => {
+                // Only date before now
+                return current.toDate() > new Date();
+              },
+            },
+          },
+        },
+        beforeDate: {
+          type: 'string',
+          title: t('events.filters.beforeDate'),
+          'ui:widget': 'date',
+          'ui:options': {
+            date: {
+              disabledDate: (current) => {
+                // Only date after afterate
+                const limit =
+                  values && values.afterDate && new Date(values.afterDate);
+                return (
+                  (limit && current.toDate() < limit) ||
+                  current.toDate() > new Date()
+                );
+              },
+            },
+          },
+        },
+        text: {
+          type: 'string',
+          title: t('events.filters.text'),
+        },
+      },
+      additionalProperties: {},
+      'ui:options': {
+        grid: [
+          [['afterDate', 'beforeDate']],
+          [['text']],
+          [['additionalProperties']],
+        ],
+      },
+    }),
+    [t, values]
+  );
+
+  const locales = useMemo(
+    () => ({
+      submit: t('events.filters.submit'),
+      addProperty: t('events.filters.query.label'),
+      propertyKey: t('events.filters.query.field'),
+    }),
+    [t]
+  );
 
   return (
     <Popover
       onVisibleChange={() => setFilterVisible(!filterVisible)}
-      content={() => <FilterEvents onSubmit={() => setFilterVisible(false)} />}
+      content={() => (
+        <div className="w-[60vw]">
+          <SchemaForm
+            schema={schema}
+            onSubmit={submit}
+            onChange={setValues}
+            locales={locales}
+            components={components}
+          />
+        </div>
+      )}
       title={t('events.filters.title')}
       visible={filterVisible}
       trigger="click"

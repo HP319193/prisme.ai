@@ -265,7 +265,7 @@ it('should edit condition', async () => {
   expect(root.root.findByType(ConditionForm)).toBeDefined();
 
   await act(async () => {
-    await root.root.findByType(ConditionForm).props.onSubmit('$a == 1');
+    await root.root.findByType(ConditionForm).props.onChange('$a == 1');
   });
 
   expect(onChange).toHaveBeenCalledWith({
@@ -284,7 +284,7 @@ it('should edit condition', async () => {
     (ReactFlow as any).context.editCondition(value.do[0]);
   });
   await act(async () => {
-    await root.root.findByType(ConditionForm).props.onSubmit('$a == 2');
+    await root.root.findByType(ConditionForm).props.onChange('$a == 2');
   });
 
   expect(onChange).toHaveBeenCalledWith({
@@ -317,7 +317,7 @@ it('should edit trigger', async () => {
   expect(root.root.findByType(TriggerForm)).toBeDefined();
 
   await act(async () => {
-    await root.root.findByType(TriggerForm).props.onSubmit({ events: ['foo'] });
+    await root.root.findByType(TriggerForm).props.onChange({ events: ['foo'] });
   });
 
   expect(onChange).toHaveBeenCalledWith({

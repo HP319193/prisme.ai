@@ -4,7 +4,13 @@ import {
   CodeOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons';
-import { Button, notification, Popover, Space } from '@prisme.ai/design-system';
+import {
+  Button,
+  notification,
+  Popover,
+  Schema,
+  Space,
+} from '@prisme.ai/design-system';
 import { useWorkspaces } from './WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useTranslation } from 'next-i18next';
@@ -14,7 +20,6 @@ import ShareWorkspace from './Share/ShareWorkspace';
 import PublishModal from './PublishModal';
 import EditDetails from '../layouts/EditDetails';
 import useLocalizedText from '../utils/useLocalizedText';
-import { Schema } from './SchemaForm/types';
 import Link from 'next/link';
 import PhotoPickr from './PhotoPickr';
 
@@ -47,21 +52,22 @@ const HeaderWorkspace = () => {
       type: 'object',
       properties: {
         name: {
-          type: 'string',
+          type: 'localized:string',
           title: t('workspace.details.name.label'),
-          'ui:options': { localizedText: true },
         },
         description: {
-          'ui:widget': 'textarea',
+          type: 'localized:string',
           title: t('workspace.details.description.label'),
-          'ui:options': { rows: 6, localizedText: true },
+          'ui:widget': 'textarea',
+          'ui:options': { textarea: { rows: 6 } },
         },
         photo: {
-          'ui:widget': PhotoPickr,
+          type: 'string',
+          'ui:widget': 'upload',
         },
         links: {
           'ui:widget': () => (
-            <div className="ant-input !flex flex-1 justify-between">
+            <div className="ant-input !flex flex-1 justify-between !mt-4">
               <Button
                 className="flex items-center"
                 onClick={() => {
@@ -85,10 +91,6 @@ const HeaderWorkspace = () => {
             </div>
           ),
         },
-      },
-      'ui:options': {
-        layout: 'columns',
-        lines: [[['photo'], ['name', 'description']], ['links']],
       },
     }),
     [displaySource, sourceDisplayed, t]

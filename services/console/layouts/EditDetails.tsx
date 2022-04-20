@@ -3,11 +3,15 @@ import {
   DeleteOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Button, Modal, Popover } from '@prisme.ai/design-system';
+import {
+  Button,
+  Modal,
+  Popover,
+  SchemaForm,
+  Schema,
+} from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
-import Form from '../components/SchemaForm/Form';
-import { Schema } from '../components/SchemaForm/types';
 import useLocalizedText from '../utils/useLocalizedText';
 
 interface EditDetailsprops {
@@ -61,7 +65,7 @@ export const EditDetails = ({
       )}
       content={({ setVisible }) => (
         <>
-          <Form
+          <SchemaForm
             schema={schema}
             onSubmit={async (values) => {
               const errors = await onSave(values);
@@ -72,20 +76,19 @@ export const EditDetails = ({
               return errors;
             }}
             initialValues={value}
-            formFieldsClassName="max-h-[75vh] overflow-auto"
-            buttons={
-              <div className="flex flex-1 justify-between">
+            buttons={[
+              <div key="1" className="flex flex-1 justify-between !mt-2">
                 <Button
                   variant="grey"
                   onClick={confirmDelete}
-                  className="flex items-center"
+                  className="!flex items-center"
                 >
                   <DeleteOutlined />
                   {t('details.delete.label', { context })}
                 </Button>
                 <Button type="submit">{t('details.save', { context })}</Button>
-              </div>
-            }
+              </div>,
+            ]}
           />
         </>
       )}

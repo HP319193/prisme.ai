@@ -97,10 +97,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }, [sourceDisplayed]);
 
   // Init socket
-  const workspaceId = useMemo(
-    () => (workspace ? workspace.id : null),
-    [workspace]
-  );
+  const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
+    workspace,
+  ]);
   useEffect(() => {
     const socketAlreadyInstantiatedForId =
       socket.current && socket.current.workspaceId === workspaceId;

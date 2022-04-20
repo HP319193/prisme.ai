@@ -8,6 +8,7 @@ import {
   Loading,
   notification,
   PageHeader,
+  Schema,
 } from '@prisme.ai/design-system';
 import { LoadingOutlined } from '@ant-design/icons';
 import useLocalizedText from '../utils/useLocalizedText';
@@ -15,7 +16,6 @@ import PageBuilder from '../components/PageBuilder';
 import { PageBuilderContext } from '../components/PageBuilder/context';
 import usePages from '../components/PagesProvider/context';
 import EditDetails from '../layouts/EditDetails';
-import { Schema } from '../components/SchemaForm/types';
 import SharePage from '../components/Share/SharePage';
 
 export const Page = () => {
@@ -71,14 +71,14 @@ export const Page = () => {
           title: t('pages.details.slug.label'),
         },
         name: {
-          type: 'string',
+          type: 'localized:string',
           title: t('pages.details.name.label'),
-          'ui:options': { localizedText: true },
         },
         description: {
-          'ui:widget': 'textarea',
+          type: 'localized:string',
           title: t('pages.details.description.label'),
-          'ui:options': { rows: 10, localizedText: true },
+          'ui:widget': 'textarea',
+          'ui:options': { textarea: { rows: 10 } },
         },
       },
     }),

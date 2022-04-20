@@ -3,45 +3,5 @@
 exports[`should render 1`] = `
 <div
   className="overflow-x-auto"
->
-  <form
-    onSubmit={[Function]}
-  >
-    <div
-      className="mt-5"
-    >
-      automations.trigger.events.title
-      <div
-        className="m-2 mb-5 flex-grow "
-      >
-        <span
-          className="flex flex-col "
-        />
-      </div>
-    </div>
-    <div
-      className="mt-5"
-    >
-      automations.trigger.dates.title
-      automations.trigger.dates.help
-    </div>
-    <div
-      className="mt-5"
-    >
-      automations.trigger.endpoint.title
-      <div
-        className="p-field mb-5"
-      >
-        <label
-          className=" flex flex-1 items-center justify-between flex-row"
-        >
-          <div>
-            automations.trigger.endpoint.custom
-          </div>
-        </label>
-      </div>
-    </div>
-    automations.trigger.save
-  </form>
-</div>
+/>
 `;

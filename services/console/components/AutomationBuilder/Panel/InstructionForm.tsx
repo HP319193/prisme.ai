@@ -1,9 +1,9 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import InstructionSelection from './InstructionSelection';
 import InstructionValue from './InstructionValue';
-import { Schema } from '../../SchemaForm/types';
 import { useAutomationBuilder } from '../context';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Schema } from '@prisme.ai/design-system';
 
 const getDefaultValue = (type: string) => {
   switch (type) {
