@@ -14,6 +14,7 @@ const getMockedAccessManager = () => ({
 
 const getMockedApps = () => ({
   getApp: jest.fn(),
+  exists: jest.fn(),
 });
 
 const INIT_WORKSPACE_ID = 'initWorkspaceId';

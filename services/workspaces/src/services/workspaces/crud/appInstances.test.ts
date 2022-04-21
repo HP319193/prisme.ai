@@ -78,6 +78,19 @@ const getMockedApps = () => ({
     }
     return apps[appSlug];
   }),
+  exists: jest.fn((appSlug, version?: string) => {
+    if (!(appSlug in apps)) {
+      throw new ObjectNotFoundError();
+    }
+    if (
+      version &&
+      version !== 'current' &&
+      !(apps[appSlug].versions || []).includes(version)
+    ) {
+      throw new ObjectNotFoundError();
+    }
+    return apps[appSlug];
+  }),
 });
 const getMockedBroker = () => ({ send: jest.fn() });
 
