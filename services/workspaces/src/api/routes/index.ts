@@ -20,7 +20,10 @@ export const init = (
   const root = '/v2';
   app.use(`/sys`, sys);
 
-  app.use(`${root}/workspaces`, initWorkspaces(workspacesStorage, appsStorage));
+  app.use(
+    `${root}/workspaces`,
+    initWorkspaces(workspacesStorage, appsStorage, uploadsStorage)
+  );
   app.use(
     `${root}/workspaces/:workspaceId/automations`,
     initAutomations(workspacesStorage, appsStorage)

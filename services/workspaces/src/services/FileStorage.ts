@@ -113,6 +113,24 @@ class FileStorage extends Storage {
     }
     await accessManager.delete(SubjectType.File, file.id);
   }
+
+  async deleteWorkspace(
+    accessManager: Required<AccessManager>,
+    workspaceId: string
+  ) {
+    const files = await this.list(accessManager, workspaceId, '', {});
+    if (files.length) {
+      await Promise.all(
+        files.map((cur) => accessManager.delete(SubjectType.File, cur.id))
+      );
+    }
+
+    try {
+      await this.driver.delete(workspaceId);
+    } catch (error) {
+      logger.error(error);
+    }
+  }
 }
 
 export default FileStorage;

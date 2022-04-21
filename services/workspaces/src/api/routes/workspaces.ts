@@ -4,12 +4,14 @@ import { nanoid } from 'nanoid';
 import { AccessManager, SubjectType } from '../../permissions';
 import { Apps, Workspaces } from '../../services';
 import DSULStorage from '../../services/DSULStorage';
+import FileStorage from '../../services/FileStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
 
 export default function init(
   workspacesStorage: DSULStorage,
-  appsStorage: DSULStorage
+  appsStorage: DSULStorage,
+  uploadsStorage: FileStorage
 ) {
   const getServices = ({
     context,
@@ -106,6 +108,7 @@ export default function init(
       broker,
     });
     await workspaces.deleteWorkspace(workspaceId);
+    await uploadsStorage.deleteWorkspace(accessManager, workspaceId);
     res.send({ id: workspaceId });
   }
 
