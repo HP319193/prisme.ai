@@ -12,6 +12,7 @@ export enum SubjectType {
   Workspace = 'workspaces',
   App = 'apps',
   Page = 'pages',
+  File = 'files',
 }
 
 export enum Role {
@@ -53,7 +54,13 @@ export const config: PermissionsConfig<
     },
     [SubjectType.Page]: {
       author: {
-        // App permissions should only be indicated by parent workspace permissions
+        // Page permissions should only be indicated by parent workspace permissions
+        disableManagePolicy: true,
+      },
+    },
+    [SubjectType.File]: {
+      author: {
+        // File permissions should only be indicated by parent workspace permissions
         disableManagePolicy: true,
       },
     },
@@ -64,7 +71,7 @@ export const config: PermissionsConfig<
       rules: [
         {
           action: ActionType.Manage,
-          subject: [SubjectType.Workspace, SubjectType.App],
+          subject: [SubjectType.Workspace, SubjectType.App, SubjectType.File],
         },
       ],
     },
@@ -90,6 +97,13 @@ export const config: PermissionsConfig<
         {
           action: ActionType.Manage,
           subject: SubjectType.Page,
+          conditions: {
+            workspaceId: '${subject.id}',
+          },
+        },
+        {
+          action: [ActionType.Manage],
+          subject: SubjectType.File,
           conditions: {
             workspaceId: '${subject.id}',
           },
@@ -123,6 +137,13 @@ export const config: PermissionsConfig<
         {
           action: [ActionType.Update, ActionType.Read],
           subject: SubjectType.Page,
+          conditions: {
+            workspaceId: '${subject.id}',
+          },
+        },
+        {
+          action: [ActionType.Manage],
+          subject: SubjectType.File,
           conditions: {
             workspaceId: '${subject.id}',
           },

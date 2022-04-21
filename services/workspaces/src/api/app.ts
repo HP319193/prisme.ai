@@ -23,11 +23,13 @@ import DSULStorage from '../services/DSULStorage';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../eda';
 import { PrismeError } from '../errors';
+import FileStorage from '../services/FileStorage';
 
 export function initAPI(
   accessManager: AccessManager,
   workspacesStorage: DSULStorage,
   appsStorage: DSULStorage,
+  uploadsStorage: FileStorage,
   broker: Broker
 ) {
   const app = express();
@@ -68,7 +70,7 @@ export function initAPI(
    */
   app.use(
     validationMiddleware({
-      ignorePaths: ['^/sys'],
+      ignorePaths: ['^/sys', '^/v2/files/'],
     }),
     validationErrorMiddleware
   );
@@ -137,7 +139,7 @@ export function initAPI(
   /**
    * User routes
    */
-  initRoutes(app, workspacesStorage, appsStorage);
+  initRoutes(app, workspacesStorage, appsStorage, uploadsStorage);
 
   /**
    * ERROR HANDLING

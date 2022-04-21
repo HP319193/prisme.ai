@@ -7,6 +7,7 @@ import { uniqueId } from '../../utils';
 export interface HTTPContext {
   hostname: string;
   originalUrl: string;
+  baseUrl: string;
   method: string;
   ip: string;
   path: string;
@@ -25,6 +26,7 @@ export function requestDecorator(broker: Broker) {
     const workspaceIdPattern = /^\/v2\/workspaces\/([\w-]+)/;
     const workspaceId = req.path.match(workspaceIdPattern)?.[1];
 
+    const hostname = req.headers['x-forwarded-host'] || req.headers['host'];
     const context: PrismeContext = {
       correlationId: (req.header(CORRELATION_ID_HEADER) ||
         uniqueId()) as string,
@@ -36,6 +38,7 @@ export function requestDecorator(broker: Broker) {
         ip: req.ip,
         path: req.path,
         hostname: req.hostname,
+        baseUrl: `${req.protocol}://${hostname}`,
       },
     };
 

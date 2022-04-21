@@ -1101,10 +1101,10 @@ declare namespace Prismeai {
     export interface File {
         name: string;
         url: string;
-        contentType: string;
-        metadata?: {
-            [key: string]: any;
-        };
+        mimetype: string;
+        size: number;
+        workspaceId: string;
+        path: string;
     }
     export interface ForbiddenError {
         /**
@@ -2280,6 +2280,30 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace ListFiles {
+        namespace Parameters {
+            export type Limit = number;
+            export type Page = number;
+            export interface Query {
+                [name: string]: any;
+            }
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        export interface QueryParameters {
+            page?: Parameters.Page;
+            limit?: Parameters.Limit;
+            query?: Parameters.Query;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.File[];
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace ListPages {
         namespace Parameters {
             export type WorkspaceId = string;
@@ -2518,10 +2542,6 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
         }
         export interface RequestBody {
-            name?: string[];
-            metadata?: {
-                [key: string]: any;
-            }[];
         }
         namespace Responses {
             export type $200 = Prismeai.File[];

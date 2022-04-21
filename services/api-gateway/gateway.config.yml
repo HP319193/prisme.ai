@@ -5,6 +5,11 @@ endpoints:
   workspaces:
     path: '/v2/workspaces*'
 
+  files:
+    path: '/v2/files/*'
+    methods:
+      - get
+
   pages:
     path: '/v2/pages*'
 
@@ -56,6 +61,13 @@ pipelines:
       - authentication: {}
       - proxy:
           service: events
+
+  - name: files
+    endpoints:
+      - files
+    policies:
+      - proxy:
+          service: workspaces
 
   - name: workspaces
     endpoints:

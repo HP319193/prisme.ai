@@ -9,11 +9,13 @@ export interface StorageOptions {
 
 export default class Storage {
   protected driver: IStorage;
+  protected driverType: DriverType;
 
   public constructor(
     driverType: DriverType,
     options: StorageOptions[DriverType]
   ) {
+    this.driverType = driverType;
     switch (driverType) {
       case DriverType.S3_LIKE:
         this.driver = new S3(options as S3Options);

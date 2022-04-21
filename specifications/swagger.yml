@@ -2292,7 +2292,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
-  /v2/workspaces/{workspaceId}/files/:
+  /v2/workspaces/{workspaceId}/files:
     post:
       description: Upload one or more file(s)
       operationId: uploadFile
@@ -2310,15 +2310,6 @@ paths:
           multipart/form-data:
             schema:
               type: object
-              properties:
-                name:
-                  type: array
-                  items:
-                    type: string
-                metadata:
-                  type: array
-                  items:
-                    type: object
 
       responses:
         '200':
@@ -2347,6 +2338,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadParametersError'
+    get:
+      description: List workspace files
+      operationId: listFiles
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'page'
+          in: 'query'
+          description: 'Page number'
+          schema:
+            type: number
+        - name: 'limit'
+          in: 'query'
+          description: 'Page size'
+          required: false
+          schema:
+            type: number
+        - in: query
+          name: query
+          schema:
+            type: object
+            additionalProperties: true
+          style: form
+          explode: false
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/File'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
 
   ## End of APIs
 
@@ -2727,16 +2776,23 @@ components:
       required:
         - name
         - url
-        - contentType
+        - mimetype
+        - size
+        - workspaceId
+        - path
       properties:
         name:
           type: string
         url:
           type: string
-        contentType:
+        mimetype:
           type: string
-        metadata:
-          type: object
+        size:
+          type: number
+        workspaceId:
+          type: string
+        path:
+          type: string
 
     ###############################################################################################################################################
     ############################################################ Automation Instructions ############################################################

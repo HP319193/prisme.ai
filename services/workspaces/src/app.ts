@@ -4,6 +4,8 @@ import {
   APP_NAME,
   PERMISSIONS_STORAGE_MONGODB_OPTIONS,
   PORT,
+  UPLOADS_STORAGE_OPTIONS,
+  UPLOADS_STORAGE_TYPE,
   WORKSPACES_STORAGE_OPTIONS,
   WORKSPACES_STORAGE_TYPE,
 } from '../config';
@@ -15,6 +17,7 @@ import '@prisme.ai/types';
 import { initAccessManager } from './permissions';
 import DSULStorage, { DSULType } from './services/DSULStorage';
 import { autoinstallApps, syncWorkspacesWithConfigContexts } from './services';
+import FileStorage from './services/FileStorage';
 
 process.on('uncaughtException', uncaughtExceptionHandler);
 
@@ -42,11 +45,22 @@ const appsStorage = new DSULStorage(
   WORKSPACES_STORAGE_OPTIONS[WORKSPACES_STORAGE_TYPE]
 );
 
+const uploadsStorage = new FileStorage(
+  UPLOADS_STORAGE_TYPE,
+  UPLOADS_STORAGE_OPTIONS[UPLOADS_STORAGE_TYPE]
+);
+
 setTimeout(() => {
   autoinstallApps(appsStorage, accessManager);
 }, 20000); // Arbitrary 20 sec delay to make sure app API are ready
 
-const app = initAPI(accessManager, workspacesStorage, appsStorage, broker);
+const app = initAPI(
+  accessManager,
+  workspacesStorage,
+  appsStorage,
+  uploadsStorage,
+  broker
+);
 
 syncWorkspacesWithConfigContexts(
   accessManager,

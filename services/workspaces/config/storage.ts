@@ -3,14 +3,22 @@ import { S3Options } from '../src/storage/drivers/s3';
 import { DriverType } from '../src/storage/types';
 import { AccessManagerOptions } from '@prisme.ai/permissions';
 import { StorageOptions } from '../src/storage';
+import { realpathSync } from 'fs';
 
 export const WORKSPACES_STORAGE_TYPE: DriverType =
   (process.env.WORKSPACES_STORAGE_TYPE as DriverType) || DriverType.FILESYSTEM;
+
+export const UPLOADS_STORAGE_TYPE: DriverType =
+  (process.env.UPLOADS_STORAGE_TYPE as DriverType) || WORKSPACES_STORAGE_TYPE;
+
+export const UPLOADS_FILESYSTEM_DOWNLOAD_URL =
+  process.env.UPLOADS_FILESYSTEM_DOWNLOAD_URL;
 
 /*
  * Filesystem Configuration
  */
 
+// Workspace models
 export const WORKSPACES_STORAGE_FILESYSTEM_DIRPATH =
   process.env.WORKSPACES_STORAGE_FILESYSTEM_DIRPATH || '../../data/models/';
 
@@ -18,9 +26,20 @@ export const WORKSPACES_STORAGE_FILESYSTEM_OPTIONS: FilesystemOptions = {
   dirpath: WORKSPACES_STORAGE_FILESYSTEM_DIRPATH,
 };
 
+// Uploads
+export const UPLOADS_STORAGE_FILESYSTEM_DIRPATH =
+  process.env.UPLOADS_STORAGE_FILESYSTEM_DIRPATH ||
+  realpathSync('../../data/uploads/');
+
+export const UPLOADS_STORAGE_FILESYSTEM_OPTIONS: FilesystemOptions = {
+  dirpath: UPLOADS_STORAGE_FILESYSTEM_DIRPATH,
+};
+
 /*
  * S3 Configuration
  */
+
+// Workspace models
 export const WORKSPACES_STORAGE_S3_LIKE_ACCESS_KEY =
   process.env.WORKSPACES_STORAGE_S3_LIKE_ACCESS_KEY!!;
 
@@ -51,6 +70,39 @@ export const WORKSPACES_STORAGE_S3_OPTIONS: S3Options = {
 export const WORKSPACES_STORAGE_OPTIONS: StorageOptions = {
   [DriverType.FILESYSTEM]: WORKSPACES_STORAGE_FILESYSTEM_OPTIONS,
   [DriverType.S3_LIKE]: WORKSPACES_STORAGE_S3_OPTIONS,
+};
+
+// Uploads
+export const UPLOADS_STORAGE_S3_LIKE_ACCESS_KEY =
+  process.env.UPLOADS_STORAGE_S3_LIKE_ACCESS_KEY!!;
+
+export const UPLOADS_STORAGE_S3_LIKE_SECRET_KEY =
+  process.env.UPLOADS_STORAGE_S3_LIKE_SECRET_KEY!!;
+
+export const UPLOADS_STORAGE_S3_LIKE_BASE_URL =
+  process.env.UPLOADS_STORAGE_S3_LIKE_BASE_URL!!;
+
+export const UPLOADS_STORAGE_S3_LIKE_ENDPOINT =
+  process.env.UPLOADS_STORAGE_S3_LIKE_ENDPOINT!!;
+
+export const UPLOADS_STORAGE_S3_LIKE_BUCKET_NAME =
+  process.env.UPLOADS_STORAGE_S3_LIKE_BUCKET_NAME!!;
+
+export const UPLOADS_STORAGE_S3_LIKE_REGION =
+  process.env.UPLOADS_STORAGE_S3_LIKE_REGION!!;
+
+export const UPLOADS_STORAGE_S3_OPTIONS: S3Options = {
+  accessKeyId: UPLOADS_STORAGE_S3_LIKE_ACCESS_KEY,
+  secretAccessKey: UPLOADS_STORAGE_S3_LIKE_SECRET_KEY,
+  baseUrl: UPLOADS_STORAGE_S3_LIKE_BASE_URL,
+  endpoint: UPLOADS_STORAGE_S3_LIKE_ENDPOINT,
+  bucket: UPLOADS_STORAGE_S3_LIKE_BUCKET_NAME,
+  region: UPLOADS_STORAGE_S3_LIKE_REGION,
+};
+
+export const UPLOADS_STORAGE_OPTIONS: StorageOptions = {
+  [DriverType.FILESYSTEM]: UPLOADS_STORAGE_FILESYSTEM_OPTIONS,
+  [DriverType.S3_LIKE]: UPLOADS_STORAGE_S3_OPTIONS,
 };
 
 /**

@@ -16,6 +16,7 @@ export type SubjectInterfaces = {
   };
   [SubjectType.App]: Prismeai.App;
   [SubjectType.Page]: Prismeai.Page;
+  [SubjectType.File]: Omit<Prismeai.File, 'url'>;
 };
 
 export type AccessManager = GenericAccessManager<
@@ -52,6 +53,13 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           description: Schema.Types.Mixed,
           widgets: Schema.Types.Mixed,
           slug: { type: String, sparse: true, unique: true },
+        },
+        [SubjectType.File]: {
+          workspaceId: { type: String, index: true },
+          name: { type: String, text: true },
+          size: Number,
+          mimetype: String,
+          path: String,
         },
       },
     },
