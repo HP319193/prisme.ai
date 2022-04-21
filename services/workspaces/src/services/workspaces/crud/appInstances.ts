@@ -98,18 +98,6 @@ class AppInstances {
     }
   }
 
-  private async validateApp(appSlug: string, appVersion?: string) {
-    try {
-      await this.apps.getApp(appSlug, appVersion);
-    } catch {
-      throw new ObjectNotFoundError(
-        appVersion
-          ? `Unknown app '${appSlug}' or version '${appVersion}'`
-          : `Unknown app '${appSlug}'`
-      );
-    }
-  }
-
   installApp = async (
     workspaceId: string | Prismeai.Workspace,
     appInstance: Prismeai.AppInstance & { slug: string }
@@ -123,7 +111,7 @@ class AppInstances {
         : workspaceId;
 
     this.validateSlug(workspace, appInstance.slug);
-    await this.validateApp(appInstance.appSlug, appInstance.appVersion);
+    await this.apps.exists(appInstance.appSlug, appInstance.appVersion);
 
     const { slug, ...appInstanceWithoutSlug } = appInstance;
     const updatedWorkspace = {
@@ -188,7 +176,7 @@ class AppInstances {
       updatedWorkspace.imports[renamedSlug] = appInstance;
     }
 
-    await this.validateApp(appInstance.appSlug, appInstance.appVersion);
+    await this.apps.exists(appInstance.appSlug, appInstance.appVersion);
 
     // Persist only if we've been given a workspaceId string, otherwise simply return the updated workspace
     if (typeof workspaceId === 'string') {

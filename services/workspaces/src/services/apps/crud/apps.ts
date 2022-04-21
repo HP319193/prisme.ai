@@ -6,6 +6,7 @@ import {
   AlreadyUsedError,
   InvalidSlugError,
   MissingFieldError,
+  ObjectNotFoundError,
   PrismeError,
 } from '../../../errors';
 import { FindOptions } from '@prisme.ai/permissions';
@@ -135,6 +136,19 @@ class Apps {
       }
     );
     return app;
+  };
+
+  exists = async (appSlug: string, version?: string) => {
+    try {
+      await this.storage.get(appSlug, version || 'current');
+      return true;
+    } catch {
+      throw new ObjectNotFoundError(
+        version
+          ? `Unknown app '${appSlug}' or version '${version}'`
+          : `Unknown app '${appSlug}'`
+      );
+    }
   };
 
   getApp = async (appSlug: string, version?: string) => {
