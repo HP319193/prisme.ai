@@ -1,3 +1,4 @@
+import { UPLOADS_MAX_SIZE } from '../../config';
 import { LogLevel } from '../logger';
 
 export * from './handlers';
@@ -59,5 +60,11 @@ export class InvalidSlugError extends PrismeError {
       `Invalid slug '${slug} : only allowed characters are letters, numbers, whitespaces, . _ and -'`,
       {}
     );
+  }
+}
+
+export class InvalidUploadError extends PrismeError {
+  constructor(msg: string, details: any = {}) {
+    super(msg || 'Invalid uploaded file', details);
   }
 }

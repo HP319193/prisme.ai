@@ -8,7 +8,8 @@ import { logger } from '../logger';
 import { AccessManager, Role, SubjectType } from '../permissions';
 import Storage, { StorageOptions } from '../storage';
 import { DriverType } from '../storage/types';
-
+import { UPLOADS_MAX_SIZE } from '../../config';
+import { InvalidUploadError } from '../errors';
 class FileStorage extends Storage {
   constructor(
     driverType: DriverType,
@@ -65,12 +66,23 @@ class FileStorage extends Storage {
     return { ...file, url: this.getUrl(this.driverType, file.path, baseUrl) };
   }
 
+  validateUploads(files: Express.Multer.File[]) {
+    files.forEach((file) => {
+      if (file.size > UPLOADS_MAX_SIZE) {
+        throw new InvalidUploadError(
+          `Invalid uploaded file '${file.originalname}' : size must not exceed ${UPLOADS_MAX_SIZE} bytes`
+        );
+      }
+    });
+  }
+
   async upload(
     accessManager: Required<AccessManager>,
     workspaceId: string,
     baseUrl: string,
     files: Express.Multer.File[]
   ) {
+    this.validateUploads(files);
     // Without this & with multiple files, only first create() call would pull permissions & subsequent ones would throw a PermissionsError
     await accessManager.pullRoleFromSubject(SubjectType.Workspace, workspaceId);
 

@@ -14,6 +14,10 @@ export const UPLOADS_STORAGE_TYPE: DriverType =
 export const UPLOADS_FILESYSTEM_DOWNLOAD_URL =
   process.env.UPLOADS_FILESYSTEM_DOWNLOAD_URL;
 
+export const UPLOADS_MAX_SIZE = parseInt(
+  process.env.UPLOADS_MAX_SIZE || '10000000' // 10MB
+);
+
 /*
  * Filesystem Configuration
  */
