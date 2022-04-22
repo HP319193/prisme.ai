@@ -2,7 +2,7 @@ import yaml from 'js-yaml';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../eda';
 import { ObjectNotFoundError } from '../../errors';
-import Storage from '../../storage';
+import Storage, { StorageOptions } from '../../storage';
 import { DriverType } from '../../storage/types';
 import { Workspace } from './workspace';
 import { Apps } from '../apps';
@@ -15,8 +15,13 @@ export class Workspaces extends Storage {
   private workspaces: Record<string, Workspace>;
   private watchedApps: Record<string, string[]>;
 
-  constructor(driverType: DriverType, apps: Apps, broker: Broker) {
-    super(driverType);
+  constructor(
+    driverType: DriverType,
+    driverOptions: StorageOptions[DriverType],
+    apps: Apps,
+    broker: Broker
+  ) {
+    super(driverType, driverOptions);
     this.workspaces = {};
     this.apps = apps;
     this.broker = broker;

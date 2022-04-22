@@ -23,6 +23,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -58,6 +59,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -92,6 +94,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -126,6 +129,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -160,6 +164,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -194,6 +199,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -228,6 +234,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -262,6 +269,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -296,6 +304,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload?: AnyValue;
         error?: {
@@ -347,6 +356,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -381,6 +391,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -415,6 +426,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -449,6 +461,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -483,6 +496,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -517,6 +531,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -551,6 +566,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -585,6 +601,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -619,6 +636,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload: AnyValue;
         error?: {
@@ -1298,6 +1316,7 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
+            topic?: string;
         };
         payload?: AnyValue;
         error?: {

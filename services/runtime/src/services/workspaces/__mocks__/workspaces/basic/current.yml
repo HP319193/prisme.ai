@@ -1,0 +1,11 @@
+name: basic
+automations:
+  empty:
+    name: empty
+    do: []
+    output:
+      foo: bar
+    when:
+      events:
+        - run.empty
+      endpoint: true
