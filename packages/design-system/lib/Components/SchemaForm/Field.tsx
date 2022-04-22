@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useSchemaForm } from './context';
+import Enum from './Enum';
 import FieldAny from './FieldAny';
 import FieldArray from './FieldArray';
 import FieldBoolean from './FieldBoolean';
@@ -25,6 +26,10 @@ export const Field = (props: FieldProps) => {
     // This widget can be used with any type
     if (UiWidget === 'select') {
       return components.FieldSelect || FieldSelect;
+    }
+
+    if (props.schema.enum) {
+      return Enum;
     }
 
     switch (props.schema.type) {

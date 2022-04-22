@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useField } from 'react-final-form';
-import Select from '../Select';
+import Select, { SelectProps } from '../Select';
 import Description from './Description';
 import { FieldProps, Schema, UiOptionsSelect } from './types';
 import { getLabel } from './utils';
@@ -11,10 +11,16 @@ function isUiOptionsSelect(
   return !!uiOptions && !!(uiOptions as UiOptionsSelect).select;
 }
 
-export const FieldSelect = ({ schema, label, name }: FieldProps) => {
+export const FieldSelect = ({
+  schema,
+  label,
+  name,
+  options,
+}: FieldProps & { options?: SelectProps['selectOptions'] }) => {
   const field = useField(name);
 
-  const options = useMemo(() => {
+  const selectOptions = useMemo(() => {
+    if (options) return options;
     const { 'ui:options': uiOptions } = schema;
     if (!isUiOptionsSelect(uiOptions)) return [];
     return uiOptions.select.options || [];
@@ -25,7 +31,7 @@ export const FieldSelect = ({ schema, label, name }: FieldProps) => {
       <label className="text-[10px] text-gray">
         {label || schema.title || getLabel(name)}
       </label>
-      <Select selectOptions={options} onChange={field.input.onChange} />
+      <Select selectOptions={selectOptions} onChange={field.input.onChange} />
     </Description>
   );
 };

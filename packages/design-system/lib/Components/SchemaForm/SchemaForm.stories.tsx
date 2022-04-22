@@ -77,7 +77,13 @@ Default.args = {
           additionalProperties: true,
         },
       },
-
+      enum: {
+        type: 'string',
+        title: 'with enum',
+        description: 'list of choices',
+        enum: [1, 2, 3],
+        enumNames: ['One', 'Two', 'Three'],
+      },
       free: {
         title: 'Set whatever you want',
       },

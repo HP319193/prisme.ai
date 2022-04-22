@@ -60,6 +60,8 @@ export interface Schema {
   items?: Schema;
   additionalProperties?: boolean | Schema;
   oneOf?: Schema[];
+  enum?: any[];
+  enumNames?: string[];
   pattern?: string;
   'ui:widget'?: UIWidgets | ((props: any) => ReactElement);
   'ui:options'?:
