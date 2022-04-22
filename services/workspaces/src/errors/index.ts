@@ -1,4 +1,3 @@
-import { UPLOADS_MAX_SIZE } from '../../config';
 import { LogLevel } from '../logger';
 
 export * from './handlers';
