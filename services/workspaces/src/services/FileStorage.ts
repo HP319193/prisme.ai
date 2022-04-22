@@ -8,8 +8,12 @@ import { logger } from '../logger';
 import { AccessManager, Role, SubjectType } from '../permissions';
 import Storage, { StorageOptions } from '../storage';
 import { DriverType } from '../storage/types';
-import { UPLOADS_MAX_SIZE } from '../../config';
+import { UPLOADS_MAX_SIZE, UPLOADS_ALLOWED_MIMETYPES } from '../../config';
 import { InvalidUploadError } from '../errors';
+
+const ALLOWED_MIMETYPES_REGEXP = `^(${UPLOADS_ALLOWED_MIMETYPES.map((cur) =>
+  cur.replace(/[*]/g, '.*')
+).join('|')})$`;
 class FileStorage extends Storage {
   constructor(
     driverType: DriverType,
@@ -73,6 +77,14 @@ class FileStorage extends Storage {
           `Invalid uploaded file '${file.originalname}' : size must not exceed ${UPLOADS_MAX_SIZE} bytes`
         );
       }
+
+      if (!file.mimetype.match(new RegExp(ALLOWED_MIMETYPES_REGEXP))) {
+        throw new InvalidUploadError(
+          `Invalid uploaded file '${
+            file.originalname
+          }' : mimetype must be one of ${UPLOADS_ALLOWED_MIMETYPES.join(', ')}`
+        );
+      }
     });
   }
 
@@ -83,6 +95,7 @@ class FileStorage extends Storage {
     files: Express.Multer.File[]
   ) {
     this.validateUploads(files);
+
     // Without this & with multiple files, only first create() call would pull permissions & subsequent ones would throw a PermissionsError
     await accessManager.pullRoleFromSubject(SubjectType.Workspace, workspaceId);
 

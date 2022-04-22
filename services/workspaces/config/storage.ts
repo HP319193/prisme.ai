@@ -18,6 +18,11 @@ export const UPLOADS_MAX_SIZE = parseInt(
   process.env.UPLOADS_MAX_SIZE || '10000000' // 10MB
 );
 
+export const UPLOADS_ALLOWED_MIMETYPES = (
+  process.env.UPLOADS_ALLOWED_MIMETYPES ||
+  'image/*,text/*,video/*,audio/*,application/*'
+).split(',');
+
 /*
  * Filesystem Configuration
  */
