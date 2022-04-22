@@ -3,7 +3,6 @@ import { useSchemaForm } from './context';
 import FieldAny from './FieldAny';
 import FieldArray from './FieldArray';
 import FieldBoolean from './FieldBoolean';
-import FieldDate from './FieldDate';
 import FieldLocalizedBoolean from './FieldLocalizedBoolean';
 import FieldLocalizedText from './FieldLocalizedText';
 import FieldObject from './FieldObject';
@@ -23,12 +22,9 @@ export const Field = (props: FieldProps) => {
       return UiWidget;
     }
 
+    // This widget can be used with any type
     if (UiWidget === 'select') {
       return components.FieldSelect || FieldSelect;
-    }
-
-    if (UiWidget === 'date' && props.schema.type === 'string') {
-      return components.FieldDate || FieldDate;
     }
 
     switch (props.schema.type) {
