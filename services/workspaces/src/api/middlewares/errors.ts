@@ -10,6 +10,7 @@ enum KnownErrorCodes {
   ObjectNotFound = 'ObjectNotFoundError',
   ForbiddenError = 'ForbiddenError',
   BrokerError = 'BrokerError',
+  InvalidAPIKey = 'InvalidAPIKey',
 }
 
 function errorHttpStatus(err: Error, serverError: boolean) {

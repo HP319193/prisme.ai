@@ -1,3 +1,4 @@
+import { Ability, RawRuleOf } from '@casl/ability';
 import {
   ActionType as NativeActionType,
   PermissionsConfig,
@@ -163,6 +164,38 @@ export const config: PermissionsConfig<
     },
   ],
   customRulesBuilder: (role) => {
-    return [];
+    if (role.type !== 'apiKey') {
+      throw new Error('Unsupported custom role ' + JSON.stringify(role));
+    }
+    let rules = [];
+    if (role.subjectType === SubjectType.Workspace) {
+      if (role?.rules?.uploads) {
+        const uploadsRule: RawRuleOf<Ability> = {
+          action: [ActionType.Create, ActionType.Read, ActionType.Delete],
+          subject: SubjectType.File,
+          conditions: {
+            workspaceId: role.subjectId,
+          },
+        };
+
+        if (role.rules.uploads?.mimetypes?.length) {
+          const escapedAllowedUploads = (
+            role.rules.uploads?.mimetypes || []
+          ).map((cur) => cur.replace(/[*]/g, '.*'));
+
+          const allowedUploadsRegex = `^(${escapedAllowedUploads.join('|')})$`;
+
+          uploadsRule.conditions = {
+            ...uploadsRule.conditions,
+            mimetype: {
+              $regex: allowedUploadsRegex,
+            },
+          };
+        }
+        rules.push(uploadsRule);
+      }
+    }
+
+    return rules;
   },
 };

@@ -93,7 +93,7 @@ export const config: PermissionsConfig<
         return [];
       }
 
-      const escapedAllowedEvents = role.rules.events.map((cur) =>
+      const escapedAllowedEvents = (role.rules.events?.types || []).map((cur) =>
         cur.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/[*]/g, '.*')
       );
       const allowedEventsRegex = `^(${escapedAllowedEvents.join('|')})$`;
