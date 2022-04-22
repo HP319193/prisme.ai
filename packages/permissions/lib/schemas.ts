@@ -22,7 +22,7 @@ export type CustomRole<SubjectType extends string, CustomRules = any> = {
   subjectType: SubjectType;
   subjectId: string;
   rules: CustomRules;
-  casl: Rules;
+  casl?: Rules;
 };
 
 export type ApiKey<SubjectType extends string, CustomRules = any> = Omit<

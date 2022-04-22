@@ -645,14 +645,26 @@ declare namespace Prismeai {
         rules: ApiKeyRules;
     }
     export interface ApiKeyRules {
-        /**
-         * example:
-         * [
-         *   "allowedEvent1",
-         *   "allowedEvent2"
-         * ]
-         */
-        events?: string[];
+        events?: {
+            /**
+             * example:
+             * [
+             *   "allowedEvent1",
+             *   "allowedEvent2"
+             * ]
+             */
+            types?: string[];
+        };
+        uploads?: {
+            /**
+             * example:
+             * [
+             *   "image/*",
+             *   "audio/*"
+             * ]
+             */
+            mimetypes?: string[];
+        };
     }
     export interface App {
         workspaceId: string;

@@ -542,23 +542,35 @@ export class AccessManager<
     }
     permissions.loadRules(
       docs.flatMap((cur) => {
-        return JSON.parse(cur.toJSON().casl as any as string);
+        const role = cur.toJSON();
+        if (role.casl) {
+          return JSON.parse(role.casl as any as string);
+        }
+        if (Object.keys(role.rules || {}).length) {
+          return this.buildRules(role);
+        }
+        return [];
       })
     );
   }
 
-  async saveRole(
-    role: Omit<CustomRole<SubjectType, CustomRules>, 'casl'>
-  ): Promise<CustomRole<SubjectType, CustomRules>> {
-    if (!role.id) {
-      throw new PrismeError('A role id is required for saving');
-    }
+  private buildRules(role: CustomRole<SubjectType, CustomRules>) {
     const rulesBuilder = this.permissionsConfig.customRulesBuilder;
     if (!rulesBuilder) {
       throw new Error(
         'Cannot save any custom role without specifying the rules builder inside permissions config !'
       );
     }
+    return rulesBuilder(role);
+  }
+
+  async saveRole(
+    role: CustomRole<SubjectType, CustomRules>
+  ): Promise<CustomRole<SubjectType, CustomRules>> {
+    if (!role.id) {
+      throw new PrismeError('A role id is required for saving');
+    }
+
     await await this.throwUnlessCan(
       ActionType.ManagePermissions,
       role.subjectType,
@@ -570,26 +582,22 @@ export class AccessManager<
     )) as any as AccessibleRecordModel<
       Document<CustomRole<SubjectType, CustomRules>, any>
     >;
-    const casl = rulesBuilder(role);
+
+    // Validate role
+    this.buildRules(role);
 
     const savedApiKey = await RolesModel.findOneAndUpdate(
       {
         id: role.id,
       },
-      {
-        ...role,
-        casl: JSON.stringify(casl), // MongoDB would reject $ characters
-      },
+      role,
       {
         new: true,
         upsert: true,
       }
     );
 
-    return {
-      ...savedApiKey.toJSON(),
-      casl,
-    };
+    return savedApiKey.toJSON();
   }
 
   async deleteRole(id: string): Promise<boolean> {

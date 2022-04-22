@@ -19,10 +19,7 @@ export type AccessManager = GenericAccessManager<
   Prismeai.Role
 >;
 
-export function initAccessManager(
-  storage: AccessManagerOptions['storage'],
-  broker: Broker
-) {
+export function initAccessManager(storage: AccessManagerOptions['storage']) {
   const accessManager = new GenericAccessManager<
     SubjectType,
     SubjectInterfaces,
@@ -38,35 +35,6 @@ export function initAccessManager(
       },
     },
     config
-  );
-
-  broker.on<Prismeai.CreatedApiKey['payload']>(
-    [PermissionsEventType.CreatedApiKey, PermissionsEventType.UpdatedApiKey],
-    async (event) => {
-      const { apiKey, subjectType, subjectId, rules } = event.payload || {};
-      const user = await accessManager.as({ id: event.source.userId!! });
-      await user.updateApiKey(
-        apiKey!!,
-        subjectType as SubjectType,
-        subjectId!!,
-        rules
-      );
-      return true;
-    }
-  );
-
-  broker.on<Prismeai.DeletedApiKey['payload']>(
-    PermissionsEventType.DeletedApiKey,
-    async (event) => {
-      const { apiKey, subjectType, subjectId } = event.payload || {};
-      const user = await accessManager.as({ id: event.source.userId!! });
-      await user.deleteApiKey(
-        apiKey!!,
-        subjectType as SubjectType,
-        subjectId!!
-      );
-      return true;
-    }
   );
 
   return accessManager;
