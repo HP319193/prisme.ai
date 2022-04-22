@@ -21,7 +21,7 @@ exports[`should render buttons 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="flex flex-1 flex-col m-2 p-2 pl-3 border-[1px] border-gray-200 rounded"
+    className="flex flex-1 flex-col my-2"
   >
     <label
       className="text-[10px] text-gray"
@@ -48,7 +48,7 @@ exports[`should render empty form 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="flex flex-1 flex-col m-2 p-2 pl-3 border-[1px] border-gray-200 rounded"
+    className="flex flex-1 flex-col my-2"
   >
     <label
       className="text-[10px] text-gray"
@@ -70,7 +70,7 @@ exports[`should render no button 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="flex flex-1 flex-col m-2 p-2 pl-3 border-[1px] border-gray-200 rounded"
+    className="flex flex-1 flex-col my-2"
   >
     <label
       className="text-[10px] text-gray"
@@ -149,7 +149,7 @@ exports[`should render single all types 1`] = `
       </div>
     </div>
     <div
-      className="m-2 p-2 pl-3 border-[1px] border-gray-200 rounded"
+      className=""
     >
       <label
         className="text-[10px] text-gray"
@@ -165,7 +165,7 @@ exports[`should render single all types 1`] = `
       </div>
     </div>
     <div
-      className="m-2 p-2 pl-3 border-[1px] border-gray-200 rounded"
+      className=""
     >
       <label
         className="text-[10px] text-gray"

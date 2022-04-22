@@ -102,6 +102,25 @@ TextOnly.args = {
   },
 };
 
+export const WithHidden = Template.bind({});
+WithHidden.args = {
+  initialValues: {
+    bar: 42,
+  },
+  schema: {
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+        hidden: true,
+      },
+      bar: {
+        type: 'string',
+      },
+    },
+  },
+};
+
 export const WithOneOf = Template.bind({});
 WithOneOf.args = {
   initialValues: {

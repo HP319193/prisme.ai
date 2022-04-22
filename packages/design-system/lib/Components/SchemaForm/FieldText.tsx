@@ -1,3 +1,4 @@
+import { useCallback, ChangeEvent } from 'react';
 import { useField } from 'react-final-form';
 import Input from '../Input';
 import { useSchemaForm } from './context';
@@ -33,10 +34,18 @@ export const FieldText = (props: FieldProps) => {
       return <Component {...props} />;
   }
 
+  const onChange = useCallback(
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+      field.input.onChange(props.schema.type === 'number' ? +value : value);
+    },
+    []
+  );
+
   return (
     <Description text={props.schema.description}>
       <Input
         {...field.input}
+        onChange={onChange}
         label={props.label || props.schema.title || getLabel(props.name)}
         containerClassName="flex flex-1"
         type={props.schema.type === 'number' ? 'number' : 'text'}

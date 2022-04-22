@@ -137,7 +137,19 @@ export const Block: FC<NodeProps & BlockProps> = ({
             typeof value === 'string' ? value : (value && value.event) || '';
           break;
         case 'repeat':
-          displayedValue = (value && value.on) || '?';
+          if (!value) {
+            displayedValue = '?';
+          }
+          if (value.on) {
+            displayedValue = value.on;
+          }
+          if (value.until) {
+            return t('automations.instruction.label', {
+              context: 'repeat_until',
+              count: +value.until,
+            });
+          }
+          displayedValue = (value && value.on) || value.until || '?';
           break;
         case 'set':
           displayedValue =
@@ -158,7 +170,6 @@ export const Block: FC<NodeProps & BlockProps> = ({
                 : JSON.stringify(value, null, '  ')}
             </div>
           );
-          break;
         case 'output':
           return (
             <Trans

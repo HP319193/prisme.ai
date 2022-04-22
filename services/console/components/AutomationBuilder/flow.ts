@@ -1,3 +1,4 @@
+import { ConsoleSqlOutlined } from '@ant-design/icons';
 import { ArrowHeadType, Edge, Elements, Node } from 'react-flow-renderer';
 
 export class Flow {
@@ -197,7 +198,12 @@ export class Flow {
       if (name === Flow.REPEAT) {
         prevNode = null;
         node.type = Flow.REPEAT;
-        const instructions = (value as Prismeai.Repeat['repeat']).do;
+        const valueRepeat = value as Prismeai.Repeat['repeat'];
+        if (!valueRepeat.do) {
+          valueRepeat.do = [];
+        }
+        const instructions = (valueRepeat as Prismeai.Repeat['repeat']).do;
+
         const nodes = this.buildInstructions({
           instructions,
           parentId: node.id,
@@ -207,7 +213,7 @@ export class Flow {
           },
         });
         const firstNode = nodes[0]!;
-        const lastNode = nodes[nodes.length - 1]!;
+        const lastNode = nodes[nodes.length - 1] || { position: {} };
         position = {
           ...position,
           y: lastNode.position.y,
@@ -252,9 +258,10 @@ export class Flow {
         };
         const i = instruction as Prismeai.All;
         const parent = (i.all = i.all || []);
-        (
-          [...(value || []), { [Flow.NEW_ALL]: {} }] as Prismeai.All['all']
-        ).forEach((instruction, childk) => {
+        ([
+          ...(value || []),
+          { [Flow.NEW_ALL]: {} },
+        ] as Prismeai.All['all']).forEach((instruction, childk) => {
           const [name] = Object.keys(instruction);
           position = {
             ...position,

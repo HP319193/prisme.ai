@@ -119,6 +119,8 @@
       "label": "{{context}}",
       "label_emit": "Émet l'événement",
       "label_repeat": "Répète sur",
+      "label_repeat_until": "Répète {{count}} fois",
+      "label_repeat_until_other": "Répète {{count}} fois",
       "label_all": "Toutes les instructions",
       "label_wait": "Attend l'événement",
       "label_set": "Définit var",
@@ -126,9 +128,10 @@
       "label_conditions": "Conditions",
       "label_fetch": "Requête HTTP",
       "label_break": "Interruption",
+      "label_comment": "Commentaire",
       "description": "{{default}}",
       "description_emit": "Émet un événement de votre choix auquel vous pouvez associer un objet de données. Si vous choisissez de rendre cet évèenment privé, il ne sera pas entendu par les autres espaces de travail et Apps.",
-      "description_repeat": "Répète une liste d'instructions sur chaque élément d'un tableau de données passé en paramètre (`on`) ou jusqu'à un certain nombre d'itération (`until`).",
+      "description_repeat": "Répète une liste d'instructions sur chaque élément d'un tableau de données passé en paramètre ou jusqu'à un certain nombre d'itération.",
       "description_all": "Exécute toutes les instructions du groupe en parallèle. Les instructions suivantes seront exécutées seulement une fois que toutes les intructions de ce groupe seront terminées.",
       "description_wait": "Bloque le traitement de la liste d'instruction jusqu'à ce que l'événement passé en paramètre soit déclenché.",
       "description_set": "Définit une valeur dans une variable.",
@@ -140,6 +143,120 @@
       "item": {
         "add": "Ajouter un item",
         "remove": "Supprimer l'item"
+      },
+      "form": {
+        "addItem": "Ajouter un élément",
+        "removeItem": "Supprimer l'élément",
+        "addProperty": "Ajouter une propriété",
+        "removeProperty": "Supprimer la propriété",
+        "propertyKey": "Propriété",
+        "propertyValue": "Valeur",
+        "uploadLabel": "Choisir un fichier",
+        "uploadRemove": "Supprimer le fichier",
+        "emit": {
+          "event": {
+            "label": "Nom de l'évènement",
+            "description": "Indiquez le nom de l'évènement que vous voulez déclencher."
+          },
+          "payload": {
+            "label": "Données à attacher (optionnel, format JSON)",
+            "description": "Vous pouvez attacher n'importe quel type de données à votre évènement."
+          }
+        },
+        "wait": {
+          "oneOf": {
+            "label": "L'un de ces évènement",
+            "description": "L'automatisation peut attendre jusqu'à ce qu'un évènement particulier se déclenche.",
+            "items": {
+              "label": "Évènement",
+              "event": {
+                "label": "Nom de l'évènement",
+                "description": "Indiquez le nom de l'évènement qui relancera le déroulement de votre automatisation."
+              },
+              "filters": {
+                "label": "Filtres",
+                "description": "Filtrer l'évènement selon les valeurs des propriétés qui l'accompagent."
+              },
+              "cancelTriggers": {
+                "label": "Ne pas traiter l'évènement",
+                "description": "En cochant cette option, l'évènement sera annulé et ne déclenchera pas d'autre automatisation."
+              }
+            }
+          },
+          "timeout": {
+            "label": "Délai en secondes",
+            "description": "Délai en secondes à attendre avant de reprendre l'éxécution de l'automatisation."
+          },
+          "output": {
+            "label": "Sortie dans la variable",
+            "description": "Indiquer le nom d'une variable dans laquelle seront stockées les données accompagnant l'évènement qui a débloqué cette étape."
+          }
+        },
+        "set": {
+          "name": {
+            "label": "Nom de la variable",
+            "description": "Indiquer le nom de la variable dans laquelle sera stocké votre donnée. Vous pourrez ensuite y accéder grâce à la syntaxe d'interpolation. Par exemple, une variable nommée `foo` sera accessible ailleurs grâce à `{{foo}}`."
+          },
+          "value": {
+            "label": "Valeur",
+            "description": "Mettez ici n'importe quelle valeur de n'importe quel type. Vous pouvez aussi utiliser l'interpolation pour stocker une donnée provenant d'une autre variable."
+          }
+        },
+        "delete": {
+          "name": {
+            "label": "Nom de la variable",
+            "description": "Indiquer le nom de la variable que vous voulez supprimer. Sa valeur ne sera plus accessible."
+          }
+        },
+        "break": {
+          "scope": {
+            "label": "Portée",
+            "description": "Portée de l'arrêt. Par défaut, seule cette automatisation sera arrêtée. Si vous choisissez \"$t(automations.instruction.form.break.scope.enum.all)\", les automatisations parentes qui ont fait appel à celle-ci seront aussi arrêtées.",
+            "enum": {
+              "all": "Arrêt complet",
+              "automation": "Arrêter uniquement cette automatisation"
+            }
+          }
+        },
+        "fetch": {
+          "url": {
+            "label": "Adresse HTTP",
+            "description": "URL d'un service web accessible en public."
+          },
+          "method": {
+            "label": "Méthode HTTP",
+            "enum": {
+              "get": "GET",
+              "post": "POST",
+              "put": "PUT",
+              "patch": "PATCH",
+              "delete": "DELETE"
+            },
+            "description": "Méthode HTTP à utiliser lors de la requête."
+          },
+          "headers": {
+            "label": "Entêtes de requête",
+            "description": "Liste de clés valeurs constituant les entêtes de la requête."
+          },
+          "body": {
+            "label": "Corps de la requête",
+            "description": "Le corps accompagnant la requête. Peut être de n'importe quel type."
+          },
+          "output": {
+            "label": "Sortie dans la variable",
+            "description": "Enregistrer la réponse de la requête dans une variable accessible dans la suite de votre automatisation grâce à l'interpolation."
+          }
+        },
+        "repeat": {
+          "on": {
+            "label": "Sur les éléments d'un tableau",
+            "description": "Nom de la variable de type tableau sur laquelle boucler."
+          },
+          "until": {
+            "label": "Durant un nombre de fois",
+            "description": "Boucle un nombre spécifique de fois."
+          }
+        }
       }
     },
     "output": {

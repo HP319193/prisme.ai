@@ -4,7 +4,7 @@ exports[`should not render without schema 1`] = `
 <div
   className="mt-5"
 >
-  emit
+  automations.instruction.label
 </div>
 `;
 
@@ -12,6 +12,6 @@ exports[`should render 1`] = `
 <div
   className="mt-5"
 >
-  emit
+  automations.instruction.label
 </div>
 `;

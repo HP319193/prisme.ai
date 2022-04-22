@@ -52,6 +52,8 @@ export const Field = (props: FieldProps) => {
     }
   }, [props.schema]);
 
+  if (props.schema.hidden) return null;
+
   return <Component {...props} />;
 };
 export default Field;

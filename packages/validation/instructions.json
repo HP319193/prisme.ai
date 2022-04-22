@@ -16,10 +16,7 @@
             "type": "string",
             "example": "prismeaiMessenger.message"
           },
-          "payload": {
-            "type": "object",
-            "additionalProperties": true
-          }
+          "payload": {}
         }
       }
     }
@@ -52,7 +49,9 @@
                 "filters": {
                   "type": "object",
                   "description": "Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator ",
-                  "additionalProperties": true,
+                  "additionalProperties": {
+                    "type": "string"
+                  },
                   "example": {
                     "automationSlug": "someId",
                     "someObjectField.someNestedField": "foo"
@@ -86,6 +85,7 @@
     "maxProperties": 1,
     "properties": {
       "set": {
+        "type": "object",
         "required": [
           "name",
           "value"
@@ -97,20 +97,6 @@
           },
           "value": {
             "description": "variable value"
-          },
-          "lifespan": {
-            "type": "object",
-            "description": "Rules defining when a variable should be automatically removed",
-            "properties": {
-              "messages": {
-                "type": "number",
-                "description": "Number of user messages sent before automatically removing this variable"
-              },
-              "seconds": {
-                "type": "number",
-                "description": "Number of seconds elapsed since this variable initialization, before automatically removing it"
-              }
-            }
           }
         }
       }
@@ -124,6 +110,7 @@
     "maxProperties": 1,
     "properties": {
       "delete": {
+        "type": "object",
         "required": [
           "name"
         ],
@@ -159,32 +146,40 @@
     "maxProperties": 1,
     "properties": {
       "repeat": {
+        "type": "object",
         "oneOf": [
           {
             "required": [
               "on",
               "do"
-            ]
+            ],
+            "properties": {
+              "on": {
+                "type": "string"
+              },
+              "do": {
+                "type": "array",
+                "hidden": true
+              }
+            }
           },
           {
             "required": [
               "until",
               "do"
-            ]
+            ],
+            "properties": {
+              "until": {
+                "type": "number"
+              },
+              "do": {
+                "type": "array",
+                "hidden": true
+              }
+            }
           }
         ],
-        "description": "One of \"on\" or \"until\" is required",
-        "properties": {
-          "on": {
-            "type": "string"
-          },
-          "until": {
-            "type": "number"
-          },
-          "do": {
-            "type": "array"
-          }
-        }
+        "description": "One of \"on\" or \"until\" is required"
       }
     }
   },
@@ -256,18 +251,31 @@
           },
           "headers": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": {
+              "type": "string"
+            }
           },
           "body": {
-            "type": "object",
-            "description": "HTTP request body",
-            "additionalProperties": true
+            "description": "HTTP request body"
           },
           "output": {
             "type": "string",
             "description": "Name of the variable which will hold the result"
           }
         }
+      }
+    }
+  },
+  "comment": {
+    "type": "object",
+    "required": [
+      "comment"
+    ],
+    "maxProperties": 1,
+    "properties": {
+      "comment": {
+        "description": "Do nothing but display a comment in instructions list",
+        "type": "string"
       }
     }
   }

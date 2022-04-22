@@ -19,7 +19,7 @@ const getInitialIndex = (
   uiOptions?: UiOptionsOneOf
 ) => {
   if (!initialValue) return '0';
-  if (uiOptions) {
+  if (uiOptions && uiOptions.oneOf.options.some(({ value }) => value)) {
     const index = (uiOptions.oneOf.options || []).findIndex(({ value }) => {
       if (!value) return false;
       const match = Object.keys(value).every(
@@ -69,6 +69,12 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
       ? uiOptionsOneOf.oneOf.options[+selected]
       : { index: +selected };
     const childSchema: Schema = { ...schema, ...oneOf[index] };
+    if (!oneOf[index].title) {
+      delete childSchema.title;
+    }
+    if (!oneOf[index].description) {
+      delete childSchema.description;
+    }
     delete childSchema.oneOf;
     return childSchema;
   }, [selected]);
@@ -86,14 +92,12 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
     }
   }, [selected]);
 
+  const title = schema.title || getLabel(name);
+
   return (
     <Description text={schema.description} className="pt-1">
-      <Select
-        selectOptions={options}
-        onChange={setSelected}
-        value={selected}
-        label={schema.title || getLabel(name)}
-      />
+      {title && <label className="text-[10px] text-gray">{title}</label>}
+      <Select selectOptions={options} onChange={setSelected} value={selected} />
       <Field schema={childSchema} name={name} label={label} />
     </Description>
   );

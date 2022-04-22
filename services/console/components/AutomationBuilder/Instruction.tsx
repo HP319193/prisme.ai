@@ -3,12 +3,14 @@ import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import Block from './Block';
 import { useAutomationBuilder } from './context';
 import styles from './styles';
+import { instructionHasForm } from './utils';
 
 export const Instruction: FC<NodeProps> = (props) => {
   const { data } = props;
   const { editInstruction, getSchema } = useAutomationBuilder();
 
-  const hasProperties = getSchema(data.label).type !== 'array';
+  const hasProperties = instructionHasForm(data.label, getSchema(data.label));
+
   return (
     <>
       <Block

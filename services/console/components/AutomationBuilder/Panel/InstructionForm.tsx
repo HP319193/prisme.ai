@@ -4,11 +4,18 @@ import InstructionValue from './InstructionValue';
 import { useAutomationBuilder } from '../context';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Schema } from '@prisme.ai/design-system';
+import { instructionHasForm } from '../utils';
 
 const getDefaultValue = (type: string) => {
   switch (type) {
     case 'array':
       return [];
+    case 'string':
+      return '';
+    case 'number':
+      return 0;
+    case 'boolean':
+      return false;
     case 'object':
     default:
       return {};
@@ -43,8 +50,7 @@ export const InstructionForm: FC<InstructionFormProps> = ({
   const setInstruction = useCallback(
     (instructionName: string) => {
       const schema = getSchema(instructionName);
-
-      if (!schema.properties) {
+      if (!instructionHasForm(instructionName, schema)) {
         onSubmit({
           [instructionName]: getDefaultValue(schema.type || ''),
         });
@@ -52,11 +58,8 @@ export const InstructionForm: FC<InstructionFormProps> = ({
       }
       setEdit({
         instruction: instructionName,
-        value: {},
-        schema: {
-          type: 'object',
-          ...schema,
-        },
+        value: getDefaultValue(schema.type || ''),
+        schema,
       });
     },
     [getSchema, onSubmit]

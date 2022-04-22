@@ -119,6 +119,8 @@
       "label": "{{context}}",
       "label_emit": "Emitir el evento",
       "label_repeat": "Repetir en",
+      "label_repeat_until": "Repite {{count}} vece",
+      "label_repeat_until_other": "Repite {{count}} veces",
       "label_all": "Todas las instrucciones",
       "label_wait": "A la espera del evento",
       "label_set": "Define var",
@@ -126,6 +128,7 @@
       "label_conditions": "Condiciones",
       "label_fetch": "Petición HTTP",
       "label_break": "Interrupción",
+      "label_comment": "Comentario",
       "description": "{{default}}",
       "description_emit": "Emite un evento de su elección al que puede asociar un objeto de datos. Si eliges hacer este evento privado, no será escuchado por otros espacios de trabajo y Apps.",
       "description_repeat": "Repite una lista de instrucciones en cada elemento de un array de datos pasado como parámetro (`on`) o hasta un determinado número de iteraciones (`until`).",
@@ -140,6 +143,120 @@
       "item": {
         "add": "Añadir un elemento",
         "remove": "Borrar el elemento"
+      }
+    },
+    "form": {
+      "addItem": "Añadir un elemento",
+      "removeItem": "Eliminar el elemento",
+      "addProperty": "Añadir una propiedad",
+      "removeProperty": "Eliminar la propiedad",
+      "propertyKey": "Propiedad",
+      "propertyValue": "Valor",
+      "uploadLabel": "Elija un archivo",
+      "uploadRemove": "Eliminar el archivo",
+      "emit": {
+        "event": {
+          "label": "Nombre del evento",
+          "description": "Introduzca el nombre del evento que desea activar."
+        },
+        "payload": {
+          "label": "Datos a adjuntar (opcional, formato JSON)",
+          "description": "Puede adjuntar cualquier tipo de datos a su evento."
+        }
+      },
+      "wait": {
+        "oneOf": {
+          "label": "Uno de estos eventos",
+          "description": "La automatización puede esperar hasta que se desencadene un evento determinado.",
+          "items": {
+            "label": "Evento",
+            "event": {
+              "label": "Nombre del evento",
+              "description": "Indique el nombre del evento que reiniciará su automatización."
+            },
+            "filters": {
+              "label": "Filtros",
+              "description": "Filtra el evento según los valores de las propiedades que lo acompañan."
+            },
+            "cancelTriggers": {
+              "label": "No trate el evento",
+              "description": "Al marcar esta opción, el evento se cancelará y no activará ninguna otra automatización."
+            }
+          }
+        },
+        "timeout": {
+          "label": "Retraso en segundos",
+          "description": "Tiempo en segundos a esperar antes de reanudar la ejecución de la automatización."
+        },
+        "output": {
+          "label": "Salida en la variable",
+          "description": "Especifica el nombre de una variable en la que se almacenarán los datos que acompañan al evento que desbloqueó este paso."
+        }
+      },
+      "set": {
+        "name": {
+          "label": "Nombre de la variable",
+          "description": "Introduzca el nombre de la variable en la que se almacenarán los datos. A continuación, puede acceder a ella mediante la sintaxis de interpolación. Por ejemplo, una variable llamada `foo` será accedida en otro lugar usando `{{foo}}`."
+        },
+        "value": {
+          "label": "Valor",
+          "description": "Ponga aquí cualquier valor de cualquier tipo. También puede utilizar la interpolación para almacenar datos de otra variable."
+        }
+      },
+      "delete": {
+        "name": {
+          "label": "Nombre de la variable",
+          "description": "Introduzca el nombre de la variable que desea eliminar. Su valor ya no será accesible."
+        }
+      },
+      "break": {
+        "scope": {
+          "label": "Alcance",
+          "description": "Alcance de la parada. Por defecto, sólo se detendrá esta automatización. Si eliges \"$t(automations.instruction.form.break.scope.enum.all)\", las automatizaciones padre que llamaron a esta también se detendrán.",
+          "enum": {
+            "all": "Punto final",
+            "automation": "Detener sólo esta automatización"
+          }
+        }
+      },
+      "fetch": {
+        "url": {
+          "label": "Dirección HTTP",
+          "description": "URL de un servicio web de acceso público."
+        },
+        "method": {
+          "label": "Método HTTP",
+          "enum": {
+            "get": "GET",
+            "post": "POST",
+            "put": "PUT",
+            "patch": "PATCH",
+            "delete": "DELETE"
+          },
+          "description": "Método HTTP a utilizar en la petición."
+        },
+        "headers": {
+          "label": "Encabezados de consulta",
+          "description": "Lista de valores clave que constituyen las cabeceras de la consulta."
+        },
+        "body": {
+          "label": "Cuerpo de la solicitud",
+          "description": "El cuerpo que acompaña a la solicitud. Puede ser de cualquier tipo."
+        },
+        "output": {
+          "label": "Salida en la variable",
+          "description": "Registre la respuesta de la consulta en una variable a la que pueda acceder en el resto de su automatización mediante interpolación."
+        }
+      },
+      "repeat": {
+        "on": {
+          "label": "Sur les éléments d'un tableau",
+          "description": "Nom de la variable de type tableau sur laquelle boucler."
+        },
+        "until": {
+          "label": "Durant un nombre de fois",
+          "description": "Boucle un nombre spécifique de fois"
+        }
       }
     },
     "output": {

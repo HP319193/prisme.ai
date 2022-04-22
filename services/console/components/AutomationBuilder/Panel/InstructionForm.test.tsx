@@ -9,7 +9,7 @@ jest.mock('../context', () => {
       if (name === 'wait') return {};
       if (name === 'emit')
         return {
-          properties: {},
+          type: 'object',
         };
       if (name === 'conditions')
         return {
