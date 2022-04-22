@@ -1,8 +1,6 @@
-import React from 'react';
-import { Collapse, Feed } from '../index';
+import { Feed } from '../index';
 import { Story } from '@storybook/react';
 import { FeedProps, Section } from './Feed';
-import { itemsWithCollapseContent } from '../mockData';
 
 export default {
   title: 'Components/Feed',
@@ -31,9 +29,4 @@ const Template: Story<FeedProps> = ({ sections }) => (
 export const Default = Template.bind({});
 Default.args = {
   sections: feedItems,
-};
-
-export const WithCollapseSections = Template.bind({});
-WithCollapseSections.args = {
-  sections: itemsWithCollapseContent,
 };
