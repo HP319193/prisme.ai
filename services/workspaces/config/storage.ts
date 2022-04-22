@@ -3,7 +3,6 @@ import { S3Options } from '../src/storage/drivers/s3';
 import { DriverType } from '../src/storage/types';
 import { AccessManagerOptions } from '@prisme.ai/permissions';
 import { StorageOptions } from '../src/storage';
-import { realpathSync } from 'fs';
 
 export const WORKSPACES_STORAGE_TYPE: DriverType =
   (process.env.WORKSPACES_STORAGE_TYPE as DriverType) || DriverType.FILESYSTEM;
@@ -37,8 +36,7 @@ export const WORKSPACES_STORAGE_FILESYSTEM_OPTIONS: FilesystemOptions = {
 
 // Uploads
 export const UPLOADS_STORAGE_FILESYSTEM_DIRPATH =
-  process.env.UPLOADS_STORAGE_FILESYSTEM_DIRPATH ||
-  realpathSync('../../data/uploads/');
+  process.env.UPLOADS_STORAGE_FILESYSTEM_DIRPATH || '../../data/uploads/';
 
 export const UPLOADS_STORAGE_FILESYSTEM_OPTIONS: FilesystemOptions = {
   dirpath: UPLOADS_STORAGE_FILESYSTEM_DIRPATH,
