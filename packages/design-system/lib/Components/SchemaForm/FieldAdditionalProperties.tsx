@@ -5,7 +5,7 @@ import { useField, FieldRenderProps } from 'react-final-form';
 import Button from '../Button';
 import Input from '../Input';
 import TextArea from '../TextArea';
-import { useSchemaForm } from './context';
+import { SchemaFormContext, useSchemaForm } from './context';
 import Field from './Field';
 import { FieldProps, Schema } from './types';
 import { getDefaultValue } from './utils';
@@ -14,11 +14,28 @@ interface AdditionalPropertiesProps extends FieldProps {
   field: FieldRenderProps<any, HTMLElement, any>;
 }
 
+const TextAreaField: SchemaFormContext['components']['JSONEditor'] = ({
+  value,
+  onChange,
+}) => {
+  return (
+    <TextArea
+      onChange={({ target: { value } }) => onChange(value)}
+      defaultValue={
+        typeof value === 'string' ? value : JSON.stringify(value, null, '  ')
+      }
+    />
+  );
+};
+
 const FreeAdditionalProperties = ({
   schema,
   field,
 }: AdditionalPropertiesProps) => {
   const [value, setValue] = useState('');
+  const {
+    components: { JSONEditor = TextAreaField },
+  } = useSchemaForm();
   useEffect(() => {
     try {
       const json = JSON.parse(value);
@@ -43,11 +60,13 @@ const FreeAdditionalProperties = ({
   }, [value]);
 
   return (
-    <TextArea
-      onChange={({ target: { value } }) => setValue(value)}
-      defaultValue={
-        typeof value === 'string' ? value : JSON.stringify(value, null, '  ')
+    <JSONEditor
+      onChange={(value) =>
+        typeof value === 'string'
+          ? setValue(value)
+          : setValue(value.target.value)
       }
+      value={value}
     />
   );
 };
