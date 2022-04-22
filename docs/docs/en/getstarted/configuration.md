@@ -240,7 +240,7 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>WORKSPACES_STORAGE_FILESYSTEM_DIRPATH</td>
     <td>runtime & workspaces</td>
     <td>Workspaces filesystem storage : directory path</td>
-    <td>models/</td>
+    <td>../../data/models/</td>
   </tr>       
   <tr>
     <td>WORKSPACES_STORAGE_S3_LIKE_ACCESS_KEY</td>
@@ -331,4 +331,72 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Some workspace source code yaml file URL to import as an app on startup</td>
     <td>3002</td>
   </tr>     
+
+  <tr>
+    <td>UPLOADS_STORAGE_TYPE</td>
+    <td>workspaces</td>
+    <td>Uploads storage driver (FILESYSTEM | S3_LIKE). Must be the same instance for workspaces.</td>
+    <td>FILESYSTEM</td>
+  </tr>     
+  <tr>
+    <td>UPLOADS_STORAGE_FILESYSTEM_DIRPATH</td>
+    <td>workspaces</td>
+    <td>Uploads filesystem storage : directory path</td>
+    <td>../../data/uploads</td>
+  </tr>       
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_ACCESS_KEY</td>
+    <td>workspaces</td>
+    <td>Uploads s3 like storage : access key</td>
+    <td></td>
+  </tr>           
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_SECRET_KEY</td>
+    <td>workspaces</td>
+    <td>Uploads s3 like storage : secret key</td>
+    <td></td>
+  </tr>     
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_BASE_URL</td>
+    <td>workspaces</td>
+    <td>Uploads s3 like storage : base url</td>
+    <td></td>
+  </tr>       
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_ENDPOINT</td>
+    <td>workspaces</td>
+    <td>Uploads s3 like storage : endpoint</td>
+    <td></td>
+  </tr>       
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_BUCKET_NAME</td>
+    <td>workspaces</td>
+    <td>Uploads s3 like storage : bucket name</td>
+    <td></td>
+  </tr>       
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_REGION</td>
+    <td>workspaces</td>
+    <td>Uploads s3 like storage : region</td>
+    <td></td>
+  </tr>           
+  <tr>
+    <td>UPLOADS_FILESYSTEM_DOWNLOAD_URL</td>
+    <td>workspaces</td>
+    <td>Base download URL for files uploaded to filesystem driver</td>
+    <td>Upload/Get request URL</td>
+  </tr>           
+  <tr>
+    <td>UPLOADS_MAX_SIZE</td>
+    <td>workspaces</td>
+    <td>Max upload size in bytes</td>
+    <td>10000000 (10MB)</td>
+  </tr>       
+  <tr>
+    <td>UPLOADS_ALLOWED_MIMETYPES</td>
+    <td>workspaces</td>
+    <td>Allowed upload mimetypes, comma-separated</td>
+    <td>image/*,text/*,video/*,audio/*,application/*</td>
+  </tr>             
+        
 </table>
