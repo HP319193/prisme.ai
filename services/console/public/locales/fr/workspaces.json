@@ -47,8 +47,8 @@
       "correlationId": "ID de corrélation",
       "submit": "Appliquer les filtres",
       "text": "Recherche par mots clés",
-      "afterDate": "Après une date",
-      "beforeDate": "Avant une date",
+      "afterDate": "À partir du",
+      "beforeDate": "Jusqu'à",
       "query": {
         "label": "Ajouter un champs spécifique",
         "description": "Un objet JSON spécifiant la valeur attendue par chaque champs, par exemple : { \"source.workspaceId\": \"Wl4RRUN\",}",

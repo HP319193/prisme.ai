@@ -1,9 +1,6 @@
-import { Button, Feed, Layout, MenuTab, PageHeader } from '../index';
+import { Button, Layout, MenuTab, PageHeader } from '../index';
 import { LayoutProps } from './Layout';
 import { Story } from '@storybook/react';
-import { FeedLayoutHeader, itemsWithCollapseContent } from '../mockData';
-// @ts-ignore
-import icon from '../../../../services/console/icons/icon-prisme.svg';
 
 export default {
   title: 'Components/Layout',
@@ -56,11 +53,4 @@ export const SidePanelExample = Template.bind({});
 SidePanelExample.args = {
   Header: RightColumnHeader,
   children: BodyComponent,
-};
-
-const LeftContent = <Feed sections={itemsWithCollapseContent} />;
-export const WorkspaceFeedLayout = Template.bind({});
-WorkspaceFeedLayout.args = {
-  Header: FeedLayoutHeader,
-  children: LeftContent,
 };

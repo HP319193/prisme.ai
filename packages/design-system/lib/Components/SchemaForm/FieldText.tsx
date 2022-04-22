@@ -1,6 +1,8 @@
 import { useField } from 'react-final-form';
 import Input from '../Input';
+import { useSchemaForm } from './context';
 import Description from './Description';
+import FieldDate from './FieldDate';
 import FieldTextTextArea from './FieldTextTextArea';
 import FieldTextUpload from './FieldTextUpload';
 import { FieldProps, UiOptionsTextArea, UiOptionsUpload } from './types';
@@ -8,6 +10,7 @@ import { getLabel } from './utils';
 
 export const FieldText = (props: FieldProps) => {
   const field = useField(props.name);
+  const { components } = useSchemaForm();
   const { 'ui:widget': uiWidget, 'ui:options': uiOptions } = props.schema;
 
   switch (uiWidget) {
@@ -25,6 +28,9 @@ export const FieldText = (props: FieldProps) => {
           options={(uiOptions || { upload: {} }) as UiOptionsUpload}
         />
       );
+    case 'date':
+      const Component = components.FieldDate || FieldDate;
+      return <Component {...props} />;
   }
 
   return (

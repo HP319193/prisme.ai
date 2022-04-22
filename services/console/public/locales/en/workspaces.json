@@ -47,8 +47,8 @@
       "correlationId": "Correlation ID",
       "submit": "Apply filters",
       "text": "Keyword search",
-      "afterDate": "From a specific date",
-      "beforeDate": "Until a specific date",
+      "afterDate": "From",
+      "beforeDate": "Until",
       "query": {
         "label": "Filter specific fields",
         "description": "An object specifying the expected value for each field, eg: {\n  \"source.workspaceId\": \"Wl4RRUN\",\n}",
