@@ -26,7 +26,7 @@ export const FieldAny = ({ schema, name, label }: FieldProps) => {
   }, []);
 
   return (
-    <div className="flex flex-1 flex-col m-2 p-2 pl-3 border-[1px] border-gray-200 rounded">
+    <div className="flex flex-1 flex-col my-2">
       <Description text={schema.description}>
         <label className="text-[10px] text-gray">
           {label || schema.title || getLabel(name)}
