@@ -31,3 +31,6 @@ export function DoubleLeftOutlined() {
 export function SettingOutlined() {
   return null;
 }
+export function PictureOutlined() {
+  return null;
+}

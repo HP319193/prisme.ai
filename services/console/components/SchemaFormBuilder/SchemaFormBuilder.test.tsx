@@ -1,12 +1,10 @@
 import SchemaFormBuilder from './SchemaFormBuilder';
 import renderer, { act } from 'react-test-renderer';
-import { Schema } from '../SchemaForm/types';
-import { Button, Select } from '@prisme.ai/design-system';
+import { Button, Schema, Select } from '@prisme.ai/design-system';
 import Properties from './Properties';
 
 it('should render', () => {
   const schema: Schema = {
-    required: ['foo'],
     type: 'object',
     properties: {
       string: {

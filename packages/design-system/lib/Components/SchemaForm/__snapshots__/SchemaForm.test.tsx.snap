@@ -1,0 +1,301 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render a single input 1`] = `
+<form
+  onSubmit={[Function]}
+>
+  <div
+    className="relative flex pr-input   flex flex-1"
+  >
+    <label
+      className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
+    >
+      
+    </label>
+  </div>
+</form>
+`;
+
+exports[`should render buttons 1`] = `
+<form
+  onSubmit={[Function]}
+>
+  <div
+    className="flex flex-1 flex-col m-2 p-2 pl-3 border-[1px] border-gray-200 rounded"
+  >
+    <label
+      className="text-[10px] text-gray"
+    >
+      
+    </label>
+    <textarea
+      className="flex flex-1 w-full outline-none"
+      onChange={[Function]}
+      value=""
+    />
+  </div>
+  <button>
+    foo
+  </button>
+  <button>
+    bar
+  </button>
+</form>
+`;
+
+exports[`should render empty form 1`] = `
+<form
+  onSubmit={[Function]}
+>
+  <div
+    className="flex flex-1 flex-col m-2 p-2 pl-3 border-[1px] border-gray-200 rounded"
+  >
+    <label
+      className="text-[10px] text-gray"
+    >
+      
+    </label>
+    <textarea
+      className="flex flex-1 w-full outline-none"
+      onChange={[Function]}
+      value=""
+    />
+  </div>
+  Submit
+</form>
+`;
+
+exports[`should render no button 1`] = `
+<form
+  onSubmit={[Function]}
+>
+  <div
+    className="flex flex-1 flex-col m-2 p-2 pl-3 border-[1px] border-gray-200 rounded"
+  >
+    <label
+      className="text-[10px] text-gray"
+    >
+      
+    </label>
+    <textarea
+      className="flex flex-1 w-full outline-none"
+      onChange={[Function]}
+      value=""
+    />
+  </div>
+</form>
+`;
+
+exports[`should render single all types 1`] = `
+<form
+  onSubmit={[Function]}
+>
+  <div
+    className=""
+  >
+    <label
+      className="text-[10px] text-gray"
+    >
+      
+    </label>
+    <div
+      className="relative flex pr-input mt-5  flex flex-1"
+    >
+      <label
+        className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
+      >
+        string
+      </label>
+    </div>
+    <div
+      className="relative flex pr-input mt-5  flex flex-1"
+    >
+      <label
+        className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
+      >
+        number
+      </label>
+    </div>
+    <div
+      className="relative flex mt-5 flex-1"
+    >
+      <div
+        className="ant-input flex items-center flex-1 rounded h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500"
+      >
+        <label
+          className="cursor-pointer"
+        >
+          <span
+            className="text-[10px] text-gray ml-2"
+          >
+            boolean
+          </span>
+        </label>
+      </div>
+    </div>
+    <div
+      className="m-2 p-2 border-l-[1px] rounded border-gray-200"
+    >
+      <label
+        className="text-[10px] text-gray"
+      >
+        Localized
+      </label>
+      <div>
+        <div
+          className=""
+        />
+        Add item
+      </div>
+    </div>
+    <div
+      className="m-2 p-2 pl-3 border-[1px] border-gray-200 rounded"
+    >
+      <label
+        className="text-[10px] text-gray"
+      >
+        object
+      </label>
+      <div
+        className="flex-1 relative pr-input "
+      >
+        <label
+          className="duration-75 ease-in absolute top-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none"
+        />
+      </div>
+    </div>
+    <div
+      className="m-2 p-2 pl-3 border-[1px] border-gray-200 rounded"
+    >
+      <label
+        className="text-[10px] text-gray"
+      >
+        objectWithAdditionalProperties
+      </label>
+      <div>
+        Add a property
+      </div>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`should set custom components 1`] = `
+<form
+  onSubmit={[Function]}
+>
+  <div>
+    Custom FieldText
+  </div>
+  Submit
+</form>
+`;
+
+exports[`should set locales 1`] = `
+<form
+  onSubmit={[Function]}
+>
+  <div
+    className="relative flex pr-input   flex flex-1"
+  >
+    <label
+      className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
+    >
+      
+    </label>
+  </div>
+  SUBMIT
+</form>
+`;
+
+exports[`should use ui:widgets 1`] = `
+<form
+  onSubmit={[Function]}
+>
+  <div
+    className=""
+  >
+    <label
+      className="text-[10px] text-gray"
+    >
+      
+    </label>
+    <div
+      className="m-2 p-2 border-l-[1px] rounded border-gray-200"
+    >
+      <label
+        className="text-[10px] text-gray"
+      >
+        array
+      </label>
+      <div>
+        <div
+          className="flex flex-row flex-wrap"
+        />
+        Add item
+      </div>
+    </div>
+    <label
+      className="text-[10px] text-gray"
+    >
+      upload
+      <div
+        className="ant-input"
+      >
+        <div
+          className="relative p-2 "
+        >
+          <div
+            className="flex flex-row border-4 border-dashed border-gray-200 rounded min-h-[50px] p-2 items-center"
+          >
+            <div
+              className="mr-2"
+            />
+            Choose file
+          </div>
+          <input
+            accept="image/jpeg"
+            className="absolute top-0 left-0 right-0 bottom-0 opacity-0 cursor-pointer"
+            multiple={false}
+            onChange={[Function]}
+            type="file"
+          />
+        </div>
+      </div>
+    </label>
+    <div
+      className="flex-1 relative pr-input mt-5"
+    >
+      <label
+        className="duration-75 ease-in absolute top-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none"
+      >
+        textarea
+      </label>
+    </div>
+    <label
+      className="text-[10px] text-gray"
+    >
+      select
+    </label>
+    <div
+      className="relative flex pr-input   undefined"
+    >
+      Foo
+      Bar
+      <label
+        className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none pr-label-top"
+      />
+    </div>
+    <div
+      className="relative flex pr-input mt-5  flex-1"
+    >
+      <label
+        className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
+      >
+        date
+      </label>
+    </div>
+  </div>
+  Submit
+</form>
+`;

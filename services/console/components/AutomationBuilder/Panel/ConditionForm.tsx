@@ -1,49 +1,41 @@
 import { useTranslation } from 'next-i18next';
-import { Button } from '@prisme.ai/design-system';
-import { FC, useCallback } from 'react';
-import { Form } from 'react-final-form';
-import Fieldset from '../../../layouts/Fieldset';
-import { Field } from '../../SchemaForm/Field';
-import { PlusOutlined } from '@ant-design/icons';
+import { Schema, SchemaForm } from '@prisme.ai/design-system';
+import { FC, useCallback, useMemo } from 'react';
 
 interface ConditionFormProps {
   condition?: string;
-  onSubmit: (c: string) => void;
+  onChange: (c: string) => void;
 }
+
+const EmptyArray: any[] = [];
 
 export const ConditionForm: FC<ConditionFormProps> = ({
   condition,
-  onSubmit,
+  onChange,
 }) => {
   const { t } = useTranslation('workspaces');
-  const submit = useCallback(
-    (values) => {
-      onSubmit(values.condition);
+  const handleChange = useCallback(
+    (condition) => {
+      onChange(condition);
     },
-    [onSubmit]
+    [onChange]
+  );
+  const schema: Schema = useMemo(
+    () => ({
+      type: 'string',
+      title: t('automations.condition.edit.title'),
+      description: t('automations.condition.edit.description'),
+    }),
+    [t]
   );
 
   return (
-    <div>
-      <Form onSubmit={submit} initialValues={{ condition }}>
-        {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
-            <Fieldset
-              legend={t('automations.condition.edit.title')}
-              hasDivider={false}
-            >
-              <>
-                <Field field="condition" type="string" required />
-                <Button type="submit">
-                  <PlusOutlined />
-                  {t('automations.condition.edit.save')}
-                </Button>
-              </>
-            </Fieldset>
-          </form>
-        )}
-      </Form>
-    </div>
+    <SchemaForm
+      schema={schema}
+      onChange={handleChange}
+      initialValues={condition}
+      buttons={EmptyArray}
+    />
   );
 };
 

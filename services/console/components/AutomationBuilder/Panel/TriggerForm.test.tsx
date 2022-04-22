@@ -5,9 +5,9 @@ it('should render', () => {
   const trigger = {
     events: ['foo'],
   };
-  const onSubmit = jest.fn();
+  const onChange = jest.fn();
   const root = renderer.create(
-    <TriggerForm trigger={trigger} onSubmit={onSubmit} />
+    <TriggerForm trigger={trigger} onChange={onChange} />
   );
   expect(root.toJSON()).toMatchSnapshot();
 });

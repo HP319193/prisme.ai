@@ -1,9 +1,9 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import InstructionSelection from './InstructionSelection';
 import InstructionValue from './InstructionValue';
-import { Schema } from '../../SchemaForm/types';
 import { useAutomationBuilder } from '../context';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Schema } from '@prisme.ai/design-system';
 
 const getDefaultValue = (type: string) => {
   switch (type) {
@@ -16,11 +16,13 @@ const getDefaultValue = (type: string) => {
 };
 interface InstructionFormProps {
   instruction?: Prismeai.Instruction;
+  onChange: (i: Prismeai.Instruction) => void;
   onSubmit: (i: Prismeai.Instruction) => void;
 }
 
 export const InstructionForm: FC<InstructionFormProps> = ({
   instruction,
+  onChange,
   onSubmit,
 }) => {
   const { getSchema } = useAutomationBuilder();
@@ -41,6 +43,7 @@ export const InstructionForm: FC<InstructionFormProps> = ({
   const setInstruction = useCallback(
     (instructionName: string) => {
       const schema = getSchema(instructionName);
+
       if (!schema.properties) {
         onSubmit({
           [instructionName]: getDefaultValue(schema.type || ''),
@@ -50,7 +53,10 @@ export const InstructionForm: FC<InstructionFormProps> = ({
       setEdit({
         instruction: instructionName,
         value: {},
-        schema,
+        schema: {
+          type: 'object',
+          ...schema,
+        },
       });
     },
     [getSchema, onSubmit]
@@ -67,7 +73,10 @@ export const InstructionForm: FC<InstructionFormProps> = ({
           currentInstruction &&
           instruction &&
           instruction[currentInstruction as keyof typeof instruction],
-        schema: getSchema(currentInstruction),
+        schema: {
+          type: 'object',
+          ...getSchema(currentInstruction),
+        },
       });
     });
   }, [getSchema, instruction, setInstruction]);
@@ -75,11 +84,11 @@ export const InstructionForm: FC<InstructionFormProps> = ({
   const setInstructionValue = useCallback(
     (values: any) => {
       if (!edit || !edit.instruction) return;
-      onSubmit({
+      onChange({
         [edit.instruction]: values,
       });
     },
-    [edit, onSubmit]
+    [edit, onChange]
   );
 
   const unsetInstruction = useCallback(() => {
@@ -108,7 +117,7 @@ export const InstructionForm: FC<InstructionFormProps> = ({
           instruction={edit.instruction}
           value={edit.value}
           schema={edit.schema}
-          onSubmit={setInstructionValue}
+          onChange={setInstructionValue}
         />
       )}
     </div>

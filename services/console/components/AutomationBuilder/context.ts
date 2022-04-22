@@ -1,5 +1,5 @@
+import { Schema } from '@prisme.ai/design-system';
 import { createContext, useContext } from 'react';
-import { Schema } from '../SchemaForm/types';
 
 export interface AutomationBuilderContext {
   addInstruction: (parent: Prismeai.InstructionList, index: number) => void;

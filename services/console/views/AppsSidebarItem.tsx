@@ -1,4 +1,3 @@
-import Form from '../components/SchemaForm/Form';
 import {
   Button,
   Collapse,
@@ -7,6 +6,8 @@ import {
   Tooltip,
   BlockProvider,
   useBlock,
+  SchemaForm,
+  Schema,
 } from '@prisme.ai/design-system';
 import {
   Fragment,
@@ -22,7 +23,6 @@ import api from '../utils/api';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
-import { Schema } from '../components/SchemaForm/types';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 
 interface AppsSidebarItemProps extends Prismeai.DetailedAppInstance {
@@ -75,9 +75,9 @@ const AppsSidebarItem = ({
     if (schema) {
       const s: Schema = {
         type: 'object',
-        properties: schema,
+        properties: schema as Schema['properties'],
       };
-      return <Form schema={s} onSubmit={save} initialValues={value} />;
+      return <SchemaForm schema={s} onSubmit={save} initialValues={value} />;
     }
     if (widget) {
       return (

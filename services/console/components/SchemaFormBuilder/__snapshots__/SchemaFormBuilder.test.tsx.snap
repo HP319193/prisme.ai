@@ -38,9 +38,6 @@ Object {
           "type": "string",
         },
       },
-      "required": Array [
-        "foo",
-      ],
       "type": "object",
     },
   },
@@ -69,16 +66,6 @@ Object {
           onChange={[Function]}
           value=""
         />,
-        <label
-          className="flex text-gray my-4"
-        >
-          <Switch
-            checked={true}
-            className="!mr-2"
-            onChange={[Function]}
-          />
-          schema.property.required
-        </label>,
         <Select
           label="type"
           onChange={[Function]}
@@ -89,12 +76,24 @@ Object {
                 "value": "string",
               },
               Object {
-                "label": "schema.types.boolean",
-                "value": "boolean",
+                "label": "schema.types.localized_string",
+                "value": "localized:string",
               },
               Object {
                 "label": "schema.types.number",
                 "value": "number",
+              },
+              Object {
+                "label": "schema.types.localized_number",
+                "value": "localized:number",
+              },
+              Object {
+                "label": "schema.types.boolean",
+                "value": "boolean",
+              },
+              Object {
+                "label": "schema.types.localized_boolean",
+                "value": "localized:boolean",
               },
               Object {
                 "label": "schema.types.object",
@@ -219,36 +218,6 @@ Object {
       },
       Object {
         "instance": null,
-        "nodeType": "host",
-        "props": Object {
-          "children": Array [
-            <Switch
-              checked={true}
-              className="!mr-2"
-              onChange={[Function]}
-            />,
-            "schema.property.required",
-          ],
-          "className": "flex text-gray my-4",
-        },
-        "rendered": Array [
-          Object {
-            "instance": null,
-            "nodeType": "component",
-            "props": Object {
-              "checked": true,
-              "className": "!mr-2",
-              "onChange": [Function],
-            },
-            "rendered": null,
-            "type": [Function],
-          },
-          "schema.property.required",
-        ],
-        "type": "label",
-      },
-      Object {
-        "instance": null,
         "nodeType": "component",
         "props": Object {
           "label": "type",
@@ -259,12 +228,24 @@ Object {
               "value": "string",
             },
             Object {
-              "label": "schema.types.boolean",
-              "value": "boolean",
+              "label": "schema.types.localized_string",
+              "value": "localized:string",
             },
             Object {
               "label": "schema.types.number",
               "value": "number",
+            },
+            Object {
+              "label": "schema.types.localized_number",
+              "value": "localized:number",
+            },
+            Object {
+              "label": "schema.types.boolean",
+              "value": "boolean",
+            },
+            Object {
+              "label": "schema.types.localized_boolean",
+              "value": "localized:boolean",
             },
             Object {
               "label": "schema.types.object",

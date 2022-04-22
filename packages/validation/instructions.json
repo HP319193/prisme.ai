@@ -96,11 +96,10 @@
             "description": "Variable name, might be \"foo\", \"session.sessionScopedFoo\", \"global.globalScopedFoo\", \"user.userScopedFoo\", ..."
           },
           "value": {
-            "type": "object",
-            "description": "variable value",
-            "additionalProperties": true
+            "description": "variable value"
           },
           "lifespan": {
+            "type": "object",
             "description": "Rules defining when a variable should be automatically removed",
             "properties": {
               "messages": {

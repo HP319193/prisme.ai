@@ -1,41 +1,15 @@
 import { useTranslation } from 'next-i18next';
 import { FC, useMemo } from 'react';
-import { Form, useField } from 'react-final-form';
-import FieldContainer from '../../../layouts/Field';
-import Fieldset from '../../../layouts/Fieldset';
-import { Button, Switch, TagEditable } from '@prisme.ai/design-system';
-import { PlusOutlined } from '@ant-design/icons';
-
-const Endpoint = () => {
-  const { t } = useTranslation('workspaces');
-  const { input } = useField('endpoint');
-
-  return (
-    <div className="p-field mb-5">
-      <label className=" flex flex-1 items-center justify-between flex-row">
-        <div>{t('automations.trigger.endpoint.custom')}</div>
-
-        {/*<Input*/}
-        {/*  disabled={!input.value}*/}
-        {/*  {...input}*/}
-        {/*  label={t('automations.trigger.endpoint.url')}*/}
-        {/*  value={typeof input.value === 'string' ? input.value : ''}*/}
-        {/*/>*/}
-        <Switch
-          checked={input.value !== false}
-          onChange={(value) => input.onChange(value)}
-        />
-      </label>
-    </div>
-  );
-};
+import { Schema, SchemaForm } from '@prisme.ai/design-system';
 
 interface TriggerFormProps {
   trigger?: Prismeai.When;
-  onSubmit: (v: Prismeai.When) => void;
+  onChange: (v: Prismeai.When) => void;
 }
 
-export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onSubmit }) => {
+const buttons: any[] = [];
+
+export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
   const { t } = useTranslation('workspaces');
   const initialValue = useMemo(
     () => ({
@@ -44,38 +18,44 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onSubmit }) => {
     }),
     [trigger]
   );
+  const schema: Schema = useMemo(
+    () => ({
+      type: 'object',
+      properties: {
+        events: {
+          type: 'array',
+          title: t('automations.trigger.events.title'),
+          description: t('automations.trigger.events.help'),
+          items: {
+            type: 'string',
+            title: t('automations.trigger.events.item'),
+          },
+        },
+        // dates: {
+        //   title: t('automations.trigger.dates.title'),
+        //   description: t('automations.trigger.dates.help'),
+        // },
+        endpoint: {
+          type: 'boolean',
+          title: t('automations.trigger.endpoint.custom'),
+          description: t('automations.trigger.endpoint.help'),
+        },
+      },
+    }),
+    [t]
+  );
 
   return (
     <div className="overflow-x-auto">
-      <Form onSubmit={onSubmit} initialValues={initialValue}>
-        {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
-            <Fieldset
-              legend={t('automations.trigger.events.title')}
-              hasDivider={false}
-            >
-              <FieldContainer name="events">
-                {({ input }) => (
-                  <TagEditable
-                    placeholder={t('automations.trigger.events.title')}
-                    {...input}
-                  />
-                )}
-              </FieldContainer>
-            </Fieldset>
-            <Fieldset legend={t('automations.trigger.dates.title')}>
-              {t('automations.trigger.dates.help')}
-            </Fieldset>
-            <Fieldset legend={t('automations.trigger.endpoint.title')}>
-              <Endpoint />
-            </Fieldset>
-            <Button type="submit">
-              <PlusOutlined />
-              {t('automations.trigger.save')}
-            </Button>
-          </form>
-        )}
-      </Form>
+      <SchemaForm
+        schema={schema}
+        initialValues={initialValue}
+        onChange={onChange}
+        locales={{
+          addItem: t('automations.trigger.events.add'),
+        }}
+        buttons={buttons}
+      />
     </div>
   );
 };

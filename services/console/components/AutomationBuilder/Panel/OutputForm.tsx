@@ -1,66 +1,43 @@
-import { FC, useCallback } from 'react';
-import { Form } from 'react-final-form';
-import Fieldset from '../../../layouts/Fieldset';
-import FieldContainer from '../../../layouts/Field';
-import { Button } from '@prisme.ai/design-system';
+import { FC, useCallback, useMemo } from 'react';
+import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { CodeEditorInline } from '../../CodeEditor/lazy';
-import { PlusOutlined } from '@ant-design/icons';
 
 interface OutputFormProps {
   output?: string;
-  onSubmit: (v: { output: any }) => void;
+  onChange: (v: { output: any }) => void;
 }
 
-export const OutputForm: FC<OutputFormProps> = ({ output, onSubmit }) => {
-  const submit = useCallback(
-    ({ output }: { output: string }) => {
-      try {
-        if (typeof output === 'object') {
-          throw new Error('not json');
-        }
-        const parsedValue = JSON.parse(output.replace('\n', ''));
-        onSubmit({ output: parsedValue });
-      } catch (e) {
-        onSubmit({ output });
-      }
-    },
-    [onSubmit]
+const components = {
+  JSONEditor: (props: any) => <CodeEditorInline mode="json" {...props} />,
+};
+
+const buttons: any[] = [];
+
+export const OutputForm: FC<OutputFormProps> = ({ output, onChange }) => {
+  const { t } = useTranslation('workspaces');
+
+  const schema: Schema = useMemo(
+    () => ({
+      title: t('automations.output.edit.title'),
+      description: t('automations.output.edit.description', {
+        interpolation: {
+          skipOnVariables: true,
+        },
+      }),
+    }),
+    [t]
   );
 
-  const { t } = useTranslation('workspaces');
   return (
     <div className="flex flex-1 flex-col h-full overflow-x-auto">
-      <Form onSubmit={submit} initialValues={{ output }}>
-        {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
-            <Fieldset
-              legend={t('automations.output.edit.title')}
-              hasDivider={false}
-            >
-              <FieldContainer
-                name="output"
-                label={t('automations.output.edit.label')}
-              >
-                {({ input }) => (
-                  <div>
-                    <CodeEditorInline
-                      mode="json"
-                      value={input.value}
-                      onChange={input.onChange}
-                    />
-                  </div>
-                )}
-              </FieldContainer>
-            </Fieldset>
-
-            <Button type="submit">
-              <PlusOutlined />
-              {t('automations.output.edit.save')}
-            </Button>
-          </form>
-        )}
-      </Form>
+      <SchemaForm
+        schema={schema}
+        onChange={onChange}
+        initialValues={output}
+        components={components}
+        buttons={buttons}
+      />
     </div>
   );
 };

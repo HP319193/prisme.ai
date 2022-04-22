@@ -1,8 +1,7 @@
-import { Select, Switch } from '@prisme.ai/design-system';
+import { Select, Switch, Schema, schemaTypes } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import LocalizedInput from '../LocalizedInput';
-import { Schema, types } from '../SchemaForm/types';
 import Properties from './Properties';
 
 interface SchemaFormBuilderProps {
@@ -37,8 +36,8 @@ export const SchemaFormBuilder = ({
 
   const options = useMemo(
     () =>
-      types.map((value) => ({
-        label: t(`schema.types.${value}`),
+      schemaTypes.map((value) => ({
+        label: t(`schema.types.${value.replace(':', '_')}`),
         value,
       })),
     [t]
@@ -62,6 +61,8 @@ export const SchemaFormBuilder = ({
         }}
         iconMarginTop={17}
       />
+      {/*
+      // Required is not already available
       <label className="flex text-gray my-4">
         <Switch
           checked={!!value.required}
@@ -69,7 +70,7 @@ export const SchemaFormBuilder = ({
           className="!mr-2"
         />
         {t('schema.property.required')}
-      </label>
+      </label>*/}
       <Select
         selectOptions={options}
         label="type"

@@ -11,11 +11,11 @@ import {
   notification,
   PageHeader,
   Space,
+  Schema,
 } from '@prisme.ai/design-system';
 import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import { usePrevious } from '../utils/usePrevious';
-import { Schema } from '../components/SchemaForm/types';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import EditDetails from '../layouts/EditDetails';
 import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
@@ -59,22 +59,21 @@ export const Automation = () => {
           pattern: SLUG_VALIDATION_REGEXP.source,
         },
         name: {
-          type: 'string',
+          type: 'localized:string',
           title: t('automations.details.name.label'),
-          'ui:options': { localizedText: true },
         },
         description: {
-          'ui:widget': 'textarea',
+          type: 'localized:string',
           title: t('automations.details.description.label'),
-          'ui:options': { rows: 6, localizedText: true },
+          'ui:widget': 'textarea',
+          'ui:options': { textarea: { rows: 6 } },
         },
         arguments: {
           'ui:widget': ArgumentsEditor,
         },
       },
       'ui:options': {
-        layout: 'columns',
-        lines: [[['slug', 'name'], ['description']], ['arguments']],
+        grid: [[['slug', 'name'], ['description']], [['arguments']]],
       },
     }),
     [t]

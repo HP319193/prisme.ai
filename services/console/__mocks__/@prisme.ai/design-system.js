@@ -132,3 +132,18 @@ export function Popover({ children = null }) {
 export function LocalizedInput({ children = null }) {
   return children;
 }
+
+export function SchemaForm({ children = null }) {
+  return children;
+}
+
+export const schemaTypes = [
+  'string',
+  'localized:string',
+  'number',
+  'localized:number',
+  'boolean',
+  'localized:boolean',
+  'object',
+  'array',
+];

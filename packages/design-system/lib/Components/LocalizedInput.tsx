@@ -41,6 +41,7 @@ export interface LocalizedInputProps {
   addLangTooltip?: string;
   deleteTooltip?: string;
   iconMarginTop?: number | string;
+  className?: string;
 }
 
 const DftInput = forwardRef((props: InputProps, ref: any) => (
@@ -58,6 +59,7 @@ export const LocalizedInput = ({
   addLangTooltip = 'Add {{lang}}',
   deleteTooltip = 'remove language',
   iconMarginTop = 0,
+  className,
 }: LocalizedInputProps) => {
   const [selectedLang, setSelectedLang] = useState(
     isLocalizedTextObject(value) ? Object.keys(value)[0] : ''
@@ -178,7 +180,7 @@ export const LocalizedInput = ({
   ]);
 
   return (
-    <div className="flex flex-1 flex-row relative">
+    <div className={`flex flex-1 flex-row relative ${className}`}>
       <Component
         ref={input}
         className="flex flex-1"

@@ -2,6 +2,7 @@
   "workspaces": {
     "title": "Espacios de trabajo y aplicaciones — $t(common:main.title)",
     "description": "Crear nuevos espacios de trabajo y aplicaciones, editarlos y ejecutarlos",
+    "sectionTitle": "Su galería de espacios de trabajo",
     "defaultDescription": "Creado por ti"
   },
   "workspace": {
@@ -42,19 +43,19 @@
   },
   "events": {
     "filters": {
-      "title": "Filters",
-      "correlationId": "Correlation ID",
-      "submit": "Apply",
-      "text": "Text in any field",
-      "afterDate": "From a specific date",
-      "beforeDate": "Until a specific date",
+      "title": "Filtros",
+      "correlationId": "ID de correlación",
+      "submit": "Aplicar filtros",
+      "text": "Búsqueda por palabras clave",
+      "afterDate": "Después de una cita",
+      "beforeDate": "Antes de una cita",
       "query": {
-        "label": "Filter specific fields",
-        "description": "{\n  key: value,\n}",
-        "field": "Field",
-        "value": "Value"
+        "label": "Añadir un campo específico",
+        "description": "Un objeto JSON que especifica el valor esperado por cada campo, por ejemplo: { \"source.workspaceId\": \"Wl4RRUN\",}",
+        "field": "Campos",
+        "value": "Valor"
       },
-      "empty": "No results were found using your filters. Try another search ?"
+      "empty": "No se encontraron resultados con estos filtros. ¿Intentar otra búsqueda?"
     },
     "empty": "Aquí todavía no ha pasado nada…",
     "details": {
@@ -91,6 +92,8 @@
     "trigger": {
       "events": {
         "title": "Eventos",
+        "item": "Evento",
+        "add": "Añadir un evento",
         "display_one": "El evento {{events}} ocurre",
         "display_other": "Uno de los eventos {{events}} ocurre",
         "help": "La automatización se ejecutará siempre que se produzca uno de los siguientes eventos."
@@ -144,6 +147,7 @@
       "label_empty": "<italic>Definir</italic>",
       "edit": {
         "title": "Devuelve el valor :",
+        "description": "Valor devuelto por la automatización. Puede ser un valor estático en forma de cadena u objeto JSON o incluso una variable generada durante la ejecución de su automatización rodeada de llaves (ej: {{maVar}})",
         "label": "Valor",
         "save": "Añadir"
       },
@@ -163,6 +167,7 @@
     "condition": {
       "edit": {
         "title": "Condición",
+        "description": "Condición para elegir esta vía",
         "save": "Registro condición",
         "submit_new": "Añadir"
       }
@@ -226,6 +231,7 @@
     "save": {
       "label": "Registro",
       "toast": "Se ha registrado la Página",
+      "error_slug": "El nombre técnico ya está en uso, por favor elija otro",
       "error": "Se ha producido un error"
     },
     "widgets": {
@@ -248,6 +254,9 @@
       },
       "description": {
         "label": "Descripción"
+      },
+      "slug": {
+        "label": "Técnica Nom"
       }
     }
   },
@@ -320,9 +329,6 @@
       "toast_pages": "Se ha eliminado la página"
     }
   },
-  "feed": {
-    "filter": "Filtros"
-  },
   "schema": {
     "property": {
       "edit": "Editar",
@@ -335,10 +341,16 @@
     },
     "types": {
       "string": "Texto",
+      "localized_string": "Texto localizado",
       "boolean": "Booleano",
+      "localized_boolean": "Booleano localizado",
       "number": "Número",
+      "localized_number": "Número localizado",
       "object": "Objeto",
       "array": "Cuadro"
     }
+  },
+  "feed": {
+    "filter": "Filtros"
   }
 }

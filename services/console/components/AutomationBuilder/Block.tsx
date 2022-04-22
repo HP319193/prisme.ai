@@ -141,7 +141,8 @@ export const Block: FC<NodeProps & BlockProps> = ({
           break;
         case 'set':
           displayedValue =
-            value && `${value.name} = ${truncate(value.value, 10, '…')}`;
+            value &&
+            `${value.name} = ${truncate(JSON.stringify(value.value), 10, '…')}`;
           break;
         case 'delete':
           displayedValue = (value && value.name) || '?';

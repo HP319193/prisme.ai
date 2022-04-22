@@ -20,7 +20,6 @@ import Panel from './Panel';
 import InstructionForm from './Panel/InstructionForm';
 import ConditionForm from './Panel/ConditionForm';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import { Schema } from '../SchemaForm/types';
 import BUILTIN_INSTRUCTIONS from '@prisme.ai/validation/instructions.json';
 import { useTranslation } from 'next-i18next';
 import TriggerForm from './Panel/TriggerForm';
@@ -28,6 +27,7 @@ import { generateEndpoint } from '../../utils/urls';
 import OutputBlock from './OutputBlock';
 import OutputForm from './Panel/OutputForm';
 import useLocalizedText from '../../utils/useLocalizedText';
+import { Schema } from '@prisme.ai/design-system';
 
 type InstructionSchemaTupple = [
   string,
@@ -76,6 +76,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   const [instructionEditing, setInstructionEditing] = useState<
     | {
         instruction?: Prismeai.Instruction;
+        onChange: (v: Prismeai.Instruction) => void;
         onSubmit: (v: Prismeai.Instruction) => void;
       }
     | undefined
@@ -83,21 +84,21 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   const [conditionEditing, setConditionEditing] = useState<
     | {
         condition?: string;
-        onSubmit: (v: string) => void;
+        onChange: (v: string) => void;
       }
     | undefined
   >();
   const [triggerEditing, setTriggerEditing] = useState<
     | {
         trigger?: Prismeai.When;
-        onSubmit: (v: Prismeai.When) => void;
+        onChange: (v: Prismeai.When) => void;
       }
     | undefined
   >();
   const [outputEditing, setOutputEditing] = useState<
     | {
         output?: Prismeai.Automation['output'];
-        onSubmit: (v: { output: Prismeai.Automation['output'] }) => void;
+        onChange: (v: { output: Prismeai.Automation['output'] }) => void;
       }
     | undefined
   >();
@@ -183,124 +184,120 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   }, []);
 
   const editInstructionDetails = useCallback(
-    async (instruction?: Prismeai.Instruction) => {
-      return new Promise<Prismeai.Instruction>((resolve) => {
-        hidePanel();
-        setInstructionEditing({
-          instruction,
-          onSubmit: (instruction: Prismeai.Instruction) => {
-            resolve(instruction);
-            hidePanel();
-          },
-        });
-        setPanelIsOpen(true);
+    async (instruction: Prismeai.Instruction, onChange: any) => {
+      hidePanel();
+      setInstructionEditing({
+        instruction,
+        onChange,
+        onSubmit: (instruction) => {
+          onChange(instruction);
+          hidePanel();
+        },
       });
+      setPanelIsOpen(true);
     },
     [hidePanel]
   );
 
-  const addInstruction: AutomationBuilderContext['addInstruction'] =
-    useCallback(
-      async (parent, index) => {
-        if (!parent) return;
-        try {
-          const instruction = await editInstructionDetails();
-          parent.splice(index, 0, instruction);
-          onChange({ ...value });
-        } catch (e) {}
-      },
-      [editInstructionDetails, onChange, value]
-    );
+  const editInstruction: AutomationBuilderContext['addInstruction'] = useCallback(
+    async (parent, index = 0) => {
+      if (!parent) return;
+      try {
+        const instruction = parent[index];
+        if (!instruction) return;
+        editInstructionDetails(
+          instruction,
+          (updatedInstruction: Prismeai.Instruction) => {
+            parent.splice(index, 1, updatedInstruction);
+            onChange({ ...value });
+          }
+        );
+      } catch (e) {}
+    },
+    [editInstructionDetails, onChange, value]
+  );
 
-  const removeInstruction: AutomationBuilderContext['removeInstruction'] =
-    useCallback(
-      (parent, index) => {
-        parent.splice(index, 1);
-        onChange({ ...value });
-      },
-      [onChange, value]
-    );
+  const addInstruction: AutomationBuilderContext['addInstruction'] = useCallback(
+    async (parent, index = 0) => {
+      console.log('add', parent, index);
+      if (!parent) return;
+      parent.splice(index, 0, {});
+      editInstruction(parent, index);
+    },
+    [editInstruction]
+  );
 
-  const editInstruction: AutomationBuilderContext['editInstruction'] =
-    useCallback(
-      async (parent, index) => {
-        if (!parent || !parent[index]) return;
-        const instruction = await editInstructionDetails(parent[index]);
-        parent.splice(index, 1, instruction);
-        onChange({ ...value });
-      },
-      [editInstructionDetails, onChange, value]
-    );
+  const removeInstruction: AutomationBuilderContext['removeInstruction'] = useCallback(
+    (parent, index) => {
+      parent.splice(index, 1);
+      onChange({ ...value });
+    },
+    [onChange, value]
+  );
 
   const editConditionDetails = useCallback(
-    (condition: string) => {
-      return new Promise<string>((resolve) => {
-        hidePanel();
-        setConditionEditing({
-          condition,
-          onSubmit: (condition: string) => {
-            resolve(condition);
-            hidePanel();
-          },
-        });
-        setPanelIsOpen(true);
+    (condition: string, onChange: (condition: string) => void) => {
+      hidePanel();
+      setConditionEditing({
+        condition,
+        onChange,
       });
+      setPanelIsOpen(true);
     },
     [hidePanel]
   );
 
   const editCondition: AutomationBuilderContext['editCondition'] = useCallback(
     async (parent, key) => {
-      try {
-        const newCondition = await editConditionDetails(key);
-        const { conditions = {} as Prismeai.Conditions } = parent;
-        const newConditions = Array.from(
-          new Set([...Object.keys(conditions), 'default'])
-        )
-          // Sort keys with default at the end
-          .sort((a, b) => (b === 'default' ? -1 : 0))
-          // make a map between key and value
-          .map<[string, Prismeai.InstructionList]>((k) => [
-            k === key ? newCondition : k,
-            conditions[k],
-          ]);
-        if (!newConditions.find(([condition]) => condition === newCondition)) {
-          newConditions.splice(-1, 0, [newCondition, []]);
-        }
-        // Build the new object
-        parent.conditions = newConditions.reduce(
-          (prev, [condition, list = []]) => ({
+      const originalDefault = parent.conditions.default || [];
+      const original: any = Object.keys(parent.conditions)
+        .filter((k) => !['default', key].includes(k))
+        .reduce(
+          (prev, k) => ({
             ...prev,
-            [condition]: list,
+            [k]: parent.conditions[k],
           }),
-          {} as Prismeai.Conditions
+          {}
         );
+      const originalList = parent.conditions[key] || [];
+
+      let prev = key;
+      editConditionDetails(key, (newKey) => {
+        if (!newKey) return;
+        parent.conditions = Array.from(
+          new Set([prev, ...Object.keys(original)])
+        ).reduce(
+          (acc, c) => ({
+            ...acc,
+            [c === prev ? newKey : c]: c === prev ? originalList : original[c],
+          }),
+          original
+        );
+        parent.conditions.default = originalDefault;
+        prev = newKey;
         onChange({ ...value });
-      } catch (e) {}
+      });
     },
     [editConditionDetails, onChange, value]
   );
 
-  const editTrigger: AutomationBuilderContext['editTrigger'] =
-    useCallback(() => {
-      hidePanel();
-      setTriggerEditing({
-        trigger: value.when,
-        onSubmit: (when) => {
-          onChange({ ...value, when });
-          hidePanel();
-        },
-      });
-      setPanelIsOpen(true);
-    }, [hidePanel, onChange, value]);
+  const editTrigger: AutomationBuilderContext['editTrigger'] = useCallback(() => {
+    hidePanel();
+    setTriggerEditing({
+      trigger: value.when,
+      onChange: (when) => {
+        onChange({ ...value, when });
+      },
+    });
+    setPanelIsOpen(true);
+  }, [hidePanel, onChange, value]);
 
   const editOutput: AutomationBuilderContext['editOutput'] = useCallback(() => {
     hidePanel();
     setOutputEditing({
       output: value.output,
-      onSubmit: ({ output }) => {
+      onChange: (output) => {
         onChange({ ...value, output });
-        hidePanel();
       },
     });
     setPanelIsOpen(true);

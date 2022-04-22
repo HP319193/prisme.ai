@@ -2,7 +2,7 @@
   "workspaces": {
     "title": "Espaces de travail — $t(common:main.title)",
     "description": "Créez de nouveaux espaces de travail et de nouvelles apps, éditez les et exécutez les",
-    "sectionTitle": "Votre gallerie d'espaces de travail",
+    "sectionTitle": "Votre galerie d'espaces de travail",
     "defaultDescription": "Créé par vous"
   },
   "workspace": {
@@ -45,12 +45,12 @@
     "filters": {
       "title": "Filtres",
       "correlationId": "ID de corrélation",
-      "submit": "Enregistrer les filtres",
+      "submit": "Appliquer les filtres",
       "text": "Recherche par mots clés",
       "afterDate": "Après une date",
       "beforeDate": "Avant une date",
       "query": {
-        "label": "Filtrer des champs spécifique",
+        "label": "Ajouter un champs spécifique",
         "description": "Un objet JSON spécifiant la valeur attendue par chaque champs, par exemple : { \"source.workspaceId\": \"Wl4RRUN\",}",
         "field": "Champs",
         "value": "Valeur"
@@ -91,7 +91,9 @@
     },
     "trigger": {
       "events": {
-        "title": "événements",
+        "title": "Événements",
+        "item": "Événement",
+        "add": "Ajouter un évènement",
         "display_one": "L'événement {{events}} survient",
         "display_other": "L'un des événements {{events}} survient",
         "help": "L'automatisation sera exécutées à chaque fois que l'un des événements suivants se produira."
@@ -145,6 +147,7 @@
       "label_empty": "<italic>Définir</italic>",
       "edit": {
         "title": "Retourner la valeur :",
+        "description": "Valeur retournée par l'automatisation. Peut être une valeur statique sous forme de chaine de caractères ou un objet JSON ou même une variable générée pendant l'éxécution de votre automatisations entourée d'accolades (ex: {{maVar}})",
         "label": "Valeur",
         "save": "Ajouter"
       },
@@ -164,6 +167,7 @@
     "condition": {
       "edit": {
         "title": "Condition",
+        "description": "Condition pour choisir ce chemin",
         "save": "Ajouter",
         "submit_new": "Ajouter"
       }
@@ -337,8 +341,11 @@
     },
     "types": {
       "string": "Texte",
+      "localized_string": "Texte localisé",
       "boolean": "Booléen",
+      "localized_boolean": "Booléen localisé",
       "number": "Nombre",
+      "localized_number": "Nombre localisé",
       "object": "Objet",
       "array": "Tableau"
     }

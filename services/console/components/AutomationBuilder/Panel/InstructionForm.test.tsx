@@ -30,14 +30,20 @@ jest.mock('../context', () => {
 
 it('should render', () => {
   const onSubmit = jest.fn();
-  const root = renderer.create(<InstructionForm onSubmit={onSubmit} />);
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <InstructionForm onSubmit={onSubmit} onChange={onChange} />
+  );
   expect(root.toJSON()).toMatchSnapshot();
 });
 
 it('should set instruction without params', async () => {
   jest.useFakeTimers();
   const onSubmit = jest.fn();
-  const root = renderer.create(<InstructionForm onSubmit={onSubmit} />);
+  const onChange = jest.fn();
+  const root = renderer.create(
+    <InstructionForm onSubmit={onSubmit} onChange={onChange} />
+  );
 
   await act(async () => {
     await true;
@@ -73,8 +79,11 @@ it('should set instruction without params', async () => {
 
 it('should set instruction with params', async () => {
   jest.useFakeTimers();
+  const onChange = jest.fn();
   const onSubmit = jest.fn();
-  const root = renderer.create(<InstructionForm onSubmit={onSubmit} />);
+  const root = renderer.create(
+    <InstructionForm onChange={onChange} onSubmit={onSubmit} />
+  );
 
   await act(async () => {
     await true;
@@ -92,11 +101,11 @@ it('should set instruction with params', async () => {
   expect(root.root.findAllByType(InstructionSelection).length).toBe(0);
 
   act(() => {
-    root.root.findByType(InstructionValue).props.onSubmit({
+    root.root.findByType(InstructionValue).props.onChange({
       foo: 'bar',
     });
   });
-  expect(onSubmit).toHaveBeenCalledWith({
+  expect(onChange).toHaveBeenCalledWith({
     emit: {
       foo: 'bar',
     },

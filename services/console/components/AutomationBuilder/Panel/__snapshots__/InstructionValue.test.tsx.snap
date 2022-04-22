@@ -1,34 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should not render without schema 1`] = `null`;
+exports[`should not render without schema 1`] = `
+<div
+  className="mt-5"
+>
+  emit
+</div>
+`;
 
 exports[`should render 1`] = `
 <div
   className="mt-5"
 >
   emit
-  <form
-    onSubmit={[Function]}
-  >
-    <div>
-      <div>
-        automations.instruction.description
-      </div>
-      <div>
-        <div
-          className="m-2 mb-5 flex-grow flex flex-1"
-        >
-          <span
-            className="flex flex-col flex flex-1"
-          >
-            <div
-              className="relative flex flex-1"
-            />
-          </span>
-        </div>
-      </div>
-    </div>
-    automations.edit.save
-  </form>
 </div>
 `;
