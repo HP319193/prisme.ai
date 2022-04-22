@@ -7,7 +7,8 @@ import styles from './styles';
 export const Instruction: FC<NodeProps> = (props) => {
   const { data } = props;
   const { editInstruction, getSchema } = useAutomationBuilder();
-  const hasProperties = !!getSchema(data.label).properties;
+
+  const hasProperties = getSchema(data.label).type !== 'array';
   return (
     <>
       <Block

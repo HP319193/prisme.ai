@@ -150,6 +150,15 @@ export const Block: FC<NodeProps & BlockProps> = ({
         case 'wait':
           displayedValue = (value && value.event) || '?';
           break;
+        case 'comment':
+          return (
+            <div className="italic text-neutral-500">
+              {typeof value === 'string'
+                ? value
+                : JSON.stringify(value, null, '  ')}
+            </div>
+          );
+          break;
         case 'output':
           return (
             <Trans
@@ -169,7 +178,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
                 ).replaceAll('{{', '{\u200b{'),
               }}
             >
-              Prout
+              output
             </Trans>
           );
         default:
