@@ -5,21 +5,31 @@ import { isAuthenticated } from '../middlewares/authentication/isAuthenticated';
 export interface Params {
   injectUserIdHeader?: boolean;
   optional?: boolean;
+  allowApiKeyOnly?: boolean;
 }
 
 export const validatorSchema = {
   injectUserIdHeader: 'boolean',
   optional: 'boolean',
+  allowApiKeyOnly: 'boolean',
 };
 
 export async function init(params: Params) {
-  const { injectUserIdHeader = true, optional = false } = params;
+  let {
+    injectUserIdHeader = true,
+    optional = false,
+    allowApiKeyOnly = false,
+  } = params;
 
   return async (
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
   ) => {
+    if (!req.user && allowApiKeyOnly && req.headers[syscfg.API_KEY_HEADER]) {
+      optional = true;
+      // TODO should check api key validity
+    }
     return isAuthenticated(
       req,
       res,

@@ -74,7 +74,8 @@ pipelines:
       - workspaces
       - apps
     policies:
-      - authentication: {}
+      - authentication:
+          allowApiKeyOnly: true
       - proxy:
           service: workspaces
 
