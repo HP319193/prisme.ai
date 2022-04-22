@@ -13,6 +13,7 @@ Array [
         <button
           className="p-2 bg-slate-100 !m-4 w-[20rem] h-[6rem] flex flex-col justify-between overflow-hidden rounded border border-slate-300 border-dashed"
           disabled={false}
+          id="createWorkspaceButton"
           onClick={[Function]}
         >
           <div
@@ -23,7 +24,6 @@ Array [
             >
               <div
                 className="ant-btn ant-btn-primary !h-12 !w-12 !p-0 !flex items-center justify-center"
-                id="createWorkspaceButton"
               />
             </div>
             <div
@@ -59,6 +59,7 @@ Array [
         <button
           className="p-2 bg-slate-100 !m-4 w-[20rem] h-[6rem] flex flex-col justify-between overflow-hidden rounded border border-slate-300 border-dashed"
           disabled={false}
+          id="createWorkspaceButton"
           onClick={[Function]}
         >
           <div
@@ -69,7 +70,6 @@ Array [
             >
               <div
                 className="ant-btn ant-btn-primary !h-12 !w-12 !p-0 !flex items-center justify-center"
-                id="createWorkspaceButton"
               />
             </div>
             <div
