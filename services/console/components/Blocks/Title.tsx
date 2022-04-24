@@ -1,8 +1,8 @@
-import { useBlock } from '@prisme.ai/design-system';
+import { SchemaForm, Schema, useBlock } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import { useEffect, useMemo, useState } from 'react';
-import Form from '../SchemaForm/Form';
-import { Schema } from '../SchemaForm/types';
+import { useEffect, useMemo } from 'react';
+
+const LEVELS = Array.from(new Array(6), (v, k) => k);
 
 const Setup = () => {
   const { t } = useTranslation('workspaces');
@@ -19,25 +19,23 @@ const Setup = () => {
         level: {
           type: 'string',
           title: t('pages.blocks.title.settings.level'),
-          'ui:widget': 'select',
-          'ui:options': {
-            options: Array.from(new Array(6), (v, k) => k).map((k) => ({
-              label: t('pages.blocks.title.settings.levelOption', {
-                level: k + 1,
-              }),
-              value: k + 1,
-            })),
-          },
+          enum: LEVELS,
+          enumNames: LEVELS.map((v) =>
+            t('pages.blocks.title.settings.levelOption', {
+              level: v + 1,
+            })
+          ),
         },
       },
       'ui:options': {
-        layout: 'columns',
-        lines: [['title', 'level']],
+        grid: [[['title', 'level']]],
       },
     }),
     [t]
   );
-  return <Form schema={schema} onChange={setConfig} initialValues={config} />;
+  return (
+    <SchemaForm schema={schema} onChange={setConfig} initialValues={config} />
+  );
 };
 
 export const Title = () => {
