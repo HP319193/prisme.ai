@@ -1,8 +1,10 @@
 {
   "in": {
     "title": "Connection",
-    "header": "Connect\nto Prisme.ai",
-    "description": "If you don't have an account yet\nyou can <a>sign up here !</a>",
+    "header": "What is essential deserves your focus.\n<b>Automate the rest.</b>",
+    "topForm1": "GOOD TO HAVE YOU BACK",
+    "topForm2": "Connect to Prisme.ai",
+    "topForm3": "Don't have an acount yet ? <a>Sign up</a>",
     "email": "Email",
     "password": "Password",
     "submit": "Login",

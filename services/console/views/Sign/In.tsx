@@ -3,9 +3,10 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { useUser } from '../../components/UserProvider';
 import { useRouter } from 'next/router';
-import { Col, Layout, notification, Title } from '@prisme.ai/design-system';
-import SignHeader from '../../components/SignHeader';
+import { notification, Title } from '@prisme.ai/design-system';
 import SigninForm from '../../components/SigninForm';
+import icon from '../../icons/icon-prisme.svg';
+import Image from 'next/image';
 
 export const SignIn = () => {
   const { t } = useTranslation('sign');
@@ -29,15 +30,45 @@ export const SignIn = () => {
   );
 
   return (
-    <Layout Header={<SignHeader />} className="!bg-blue-200 pt-14">
-      <div className="flex grow justify-evenly mt-32">
-        <Col span={12}>
-          <div className="flex items-center flex-col">
-            <div>
-              <Title>{t('in.header')}</Title>
+    <div className="flex grow flex-col-reverse md:flex-row overflow-y-auto">
+      <div className="!flex flex-col bg-gradient-to-br from-[#0A1D3B] to-[#0F2A54] items-center justify-center md:w-[40vw]">
+        <div className="hidden md:flex flex-col grow justify-center w-full space-y-4 lg:space-y-6">
+          <div className="w-1/2 h-4 lg:h-8 bg-accent rounded-r-[100rem]" />
+          <div className="w-1/2 h-4 lg:h-8 bg-pr-orange rounded-r-[100rem]" />
+          <div className="w-1/2 h-4 lg:h-8 bg-pr-grey rounded-r-[100rem]" />
+        </div>
+        <div className="flex grow flex-col justify-end mb-10">
+          <div className="flex items-center flex-col text-white p-[10%]">
+            <div className="font-normal text-xl md:text-2xl xl:text-5xl leading-normal">
               <Trans
                 t={t}
-                i18nKey="in.description"
+                i18nKey="in.header"
+                components={{
+                  b: <span className="font-bold" />,
+                }}
+              />
+
+              <div className="flex flex-row  mt-20">
+                <Image src={icon} width={16} height={16} alt="Prisme.ai" />
+                <div className="ml-2 !font-light tracking-[.4em] text-sm">
+                  PRISME.AI
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="!flex grow items-center justify-center md:w-[60vw] md:h-[100vh]">
+        <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center space-y-4 mb-16 mt-8">
+            <div className="text-accent !font-light tracking-[.3em]">
+              {t('in.topForm1')}
+            </div>
+            <Title className="text-center">{t('in.topForm2')}</Title>
+            <div>
+              <Trans
+                t={t}
+                i18nKey="in.topForm3"
                 values={{
                   url: '/signup',
                 }}
@@ -47,14 +78,10 @@ export const SignIn = () => {
               />
             </div>
           </div>
-        </Col>
-        <Col span={12}>
-          <div className="flex items-center flex-col">
-            <SigninForm onSignin={signedin} />
-          </div>
-        </Col>
+          <SigninForm onSignin={signedin} />
+        </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

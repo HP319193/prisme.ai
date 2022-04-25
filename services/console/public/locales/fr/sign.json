@@ -1,8 +1,10 @@
 {
   "in": {
     "title": "Connexion — $t(common:main.title)",
-    "header": "Connectez\nvous à Prisme.ai",
-    "description": "Si vous n’avez pas encore de compte\nvous pouvez vous <a>inscrire ici !</a>",
+    "header": "Ce qui est essentiel mérite votre attention.\n<b>Automatisez le reste.</b>",
+    "topForm1": "CONTENT DE VOUS REVOIR",
+    "topForm2": "Connectez vous à Prisme.ai",
+    "topForm3": "Pas encore de compte ? <a>S'inscrire</a>",
     "email": "E-mail",
     "password": "Mot de passe",
     "submit": "Se connecter",

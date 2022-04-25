@@ -1,5 +1,5 @@
 import { Form } from 'react-final-form';
-import { Button, Input, Space } from '@prisme.ai/design-system';
+import { Button, Input } from '@prisme.ai/design-system';
 import Field from '../layouts/Field';
 import { useCallback } from 'react';
 import { useUser } from './UserProvider';
@@ -37,9 +37,9 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
   return (
     <Form onSubmit={submit} validate={validate}>
       {({ handleSubmit }) => (
-        <form onSubmit={handleSubmit} className="w-96 flex">
-          <Space size="middle" direction="vertical" className="flex grow">
-            <Field name="email">
+        <form onSubmit={handleSubmit} className="md:w-96 flex">
+          <div className="flex flex-col grow">
+            <Field name="email" containerClassName="!m-0 !mb-4">
               {({ input: { type, ...inputProps }, className }) => (
                 <Input
                   placeholder={t('in.email')}
@@ -48,7 +48,7 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
                 />
               )}
             </Field>
-            <Field name="password">
+            <Field name="password" containerClassName="!m-0 !mb-8">
               {({ input: { type, ...inputProps }, className }) => (
                 <Input
                   placeholder={t('in.password')}
@@ -61,12 +61,12 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
             <Button
               variant="primary"
               disabled={loading}
-              className="w-full !h-12"
+              className="w-full !h-12 !mb-4"
               type="submit"
             >
               {t('in.submit')}
             </Button>
-          </Space>
+          </div>
         </form>
       )}
     </Form>
