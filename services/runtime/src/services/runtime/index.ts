@@ -1,6 +1,11 @@
 import { Broker, PrismeEvent } from '@prisme.ai/broker';
 import { Logger } from '../../logger';
-import { DetailedTrigger, Workspace, Workspaces } from '../workspaces';
+import {
+  DetailedAutomation,
+  DetailedTrigger,
+  Workspace,
+  Workspaces,
+} from '../workspaces';
 import { CacheDriver } from '../../cache';
 import { ContextsManager } from './contexts';
 import { ObjectNotFoundError } from '../../errors';
@@ -235,13 +240,12 @@ export default class Runtime {
         }
       );
 
-      const output = await executeAutomation(
+      const output = await this.executeAutomation(
         trigger.workspace,
         automation,
         childCtx,
         logger,
-        childBroker,
-        true
+        childBroker
       );
 
       return {
@@ -253,6 +257,16 @@ export default class Runtime {
       logger.error(error);
       throw error;
     }
+  }
+
+  private async executeAutomation(
+    workspace: Workspace,
+    automation: DetailedAutomation,
+    ctx: ContextsManager,
+    logger: Logger,
+    broker: Broker
+  ) {
+    return executeAutomation(workspace, automation, ctx, logger, broker, true);
   }
 
   private async parseEvent(

@@ -6,8 +6,8 @@ let memoryCache: Record<string, any> = {};
 export default class Cache implements CacheDriver {
   private cache: Record<string, any>;
 
-  constructor() {
-    this.cache = memoryCache;
+  constructor(useSharedCache: boolean = false) {
+    this.cache = useSharedCache ? memoryCache : {};
   }
 
   async connect() {

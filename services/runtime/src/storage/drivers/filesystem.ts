@@ -31,7 +31,6 @@ export default class Filesystem implements IStorage {
   }
 
   async get(key: string) {
-    console.log('GET ', key, this.getPath(key));
     return await new Promise((resolve: any, reject: any) => {
       fs.readFile(this.getPath(key), (err, data) => {
         if (err) {

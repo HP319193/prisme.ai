@@ -1,17 +1,17 @@
-name: basic
+name: basicApp
 automations:
-  empty:
-    name: empty
+  basicEmpty:
+    name: basicEmpty
     do: []
     output:
-      foo: bar
+      msg: 'result of basicApp.basicEmpty'
     when:
       events:
-        - run.empty
+        - triggerEmpty
       endpoint: true
 
-  error:
-    name: error
+  throw:
+    name: throw
     do:
       - some unknown automation: {}
     when:

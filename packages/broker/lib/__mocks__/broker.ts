@@ -45,9 +45,14 @@ export default class Broker {
         const callbacks = this.callbacks[event.source.topic!];
         if (callbacks) {
           for (const cb of callbacks) {
-            await cb(event, this, {
-              logger: console,
-            });
+            const childBroker = this.child(event.source);
+            try {
+              await cb(event, childBroker, {
+                logger: console,
+              });
+            } catch (error) {
+              childBroker.send('error', error as any);
+            }
           }
         }
       }
@@ -121,8 +126,12 @@ export default class Broker {
     event.id = `${eventType}-${Math.random() * 10000}`;
     event.source.topic = this.getEventTopic(topic, event);
 
-    this.events.push(event);
+    this._send(event);
     return event;
+  }
+
+  _send(event: PrismeEvent) {
+    this.events.push(event);
   }
 
   async on(topic: Topic | Topic[], cb: EventCallback) {

@@ -282,7 +282,7 @@ export class ContextsManager {
           : { ...this.contexts[ContextType.Local], ...opts.payload },
         ...additionalContexts,
       },
-      payload: { ...(opts.payload || {}) },
+      payload: { ...(opts.payload || this.payload || {}) },
       broker: opts.broker || this.broker,
       appContext: opts.appContext || this.appContext,
       automationSlug: opts.automationSlug || this.automationSlug,

@@ -1,0 +1,30 @@
+name: imports
+imports:
+  basicApp:
+    appSlug: basicApp
+
+automations:
+  empty:
+    name: empty
+    do:
+      - emit:
+          event: basicApp.triggerEmpty
+          payload:
+            foo: blah
+    output:
+      foo: bar
+    when:
+      events:
+        - run.empty
+      endpoint: true
+
+
+  throw:
+    name: throw
+    do:
+      - emit:
+          event: basicApp.throw
+    when:
+      events:
+        - throw
+      endpoint: true
