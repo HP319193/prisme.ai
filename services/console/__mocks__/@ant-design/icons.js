@@ -34,3 +34,6 @@ export function SettingOutlined() {
 export function PictureOutlined() {
   return null;
 }
+export function EditOutlined() {
+  return null;
+}

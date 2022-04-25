@@ -119,6 +119,8 @@
       "label": "{{context}}",
       "label_emit": "Emit event",
       "label_repeat": "Repeat on",
+      "label_repeat_until": "Repeat {{count}} time",
+      "label_repeat_until_other": "Repeat {{count}} times",
       "label_all": "All instructions",
       "label_wait": "Wait for event",
       "label_set": "Set var",
@@ -126,6 +128,7 @@
       "label_conditions": "Conditions",
       "label_fetch": "HTTP Request",
       "label_break": "Break",
+      "label_comment": "Comment",
       "description": "{{default}}",
       "description_emit": "Issue an event of your choice to which you can associate a data object. If you choose to make this event private, it will not be heard by other workspaces and Apps.",
       "description_repeat": "Repeats a list of instructions on each element of a data array passed in parameter (`on`) or up to a certain number of iterations (`until`).",
@@ -140,6 +143,120 @@
       "item": {
         "add": "Add an item",
         "remove": "Delete item"
+      }
+    },
+    "form": {
+      "addItem": "Add an item",
+      "removeItem": "Remove item",
+      "addProperty": "Add a property",
+      "removeProperty": "Remove property",
+      "propertyKey": "Property",
+      "propertyValue": "Value",
+      "uploadLabel": "Choose a file",
+      "uploadRemove": "Remove file",
+      "emit": {
+        "event": {
+          "label": "Event name",
+          "description": "Enter the name of the event you want to trigger."
+        },
+        "payload": {
+          "label": "Payload (optional, JSON format)",
+          "description": "You can attach any type of data to your event."
+        }
+      },
+      "wait": {
+        "oneOf": {
+          "label": "One of these events:",
+          "description": "The automation can wait until a particular event is triggered.",
+          "items": {
+            "label": "Event",
+            "event": {
+              "label": "Event name",
+              "description": "Indicate the name of the event that will restart your automation."
+            },
+            "filters": {
+              "label": "Filters",
+              "description": "Filter the event according to the values of the properties that accompany it."
+            },
+            "cancelTriggers": {
+              "label": "Cancel trigger",
+              "description": "By checking this option, the event will be cancelled and will not trigger any other automation."
+            }
+          }
+        },
+        "timeout": {
+          "label": "Timeout in seconds",
+          "description": "Time in seconds to wait before resuming the execution of the automation."
+        },
+        "output": {
+          "label": "Output variable name",
+          "description": "Indicate the name of a variable in which the data accompanying the event that unlocked this step will be stored."
+        }
+      },
+      "set": {
+        "name": {
+          "label": "Variable name",
+          "description": "Indicate the name of the variable in which your data will be stored. You can then access it using the interpolation syntax. For example, a variable named `foo` will be accessible elsewhere using `{{foo}}`."
+        },
+        "value": {
+          "label": "Value",
+          "description": "Put any value of any type here. You can also use interpolation to store data from another variable."
+        }
+      },
+      "delete": {
+        "name": {
+          "label": "Variable name",
+          "description": "Enter the name of the variable you want to delete. Its value will no longer be accessible."
+        }
+      },
+      "break": {
+        "scope": {
+          "label": "Scope",
+          "description": "Scope of the stop. By default, only this automation will be stopped. If you choose \"$t(automations.instruction.form.break.scope.enum.all)\", the parent automations that called this one will also be stopped.",
+          "enum": {
+            "all": "All",
+            "automation": "This automation"
+          }
+        }
+      },
+      "fetch": {
+        "url": {
+          "label": "HTTP address",
+          "description": "URL of a publicly accessible web service."
+        },
+        "method": {
+          "label": "HTTP method",
+          "enum": {
+            "get": "GET",
+            "post": "POST",
+            "put": "PUT",
+            "patch": "PATCH",
+            "delete": "DELETE"
+          },
+          "description": "HTTP method to use for the request."
+        },
+        "headers": {
+          "label": "Headers",
+          "description": "List of key values constituting the headers of the query."
+        },
+        "body": {
+          "label": "Body",
+          "description": "The body accompanying the request. Can be of any type."
+        },
+        "output": {
+          "label": "Output variable name",
+          "description": "Save the answer of the query in a variable accessible in the rest of your automation thanks to the interpolation."
+        }
+      },
+      "repeat": {
+        "on": {
+          "label": "On an array's items",
+          "description": "Name of the array variable to loop on."
+        },
+        "until": {
+          "label": "Until",
+          "description": "Loop a specific number of times"
+        }
       }
     },
     "output": {

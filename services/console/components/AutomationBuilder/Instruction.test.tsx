@@ -10,7 +10,7 @@ jest.mock('./context', () => {
       icon: '/icon.svg',
     }),
     getSchema: () => ({
-      properties: {},
+      type: 'string',
     }),
   };
   return {
@@ -48,7 +48,9 @@ it('should edit', () => {
   const root = renderer.create(
     <Instruction
       id="a"
-      data={{}}
+      data={{
+        label: 'emit',
+      }}
       type="trigger"
       selected={false}
       isConnectable={false}

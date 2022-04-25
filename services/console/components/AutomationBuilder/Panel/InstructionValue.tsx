@@ -1,8 +1,14 @@
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import Fieldset from '../../../layouts/Fieldset';
 import { useTranslation } from 'next-i18next';
-import { SchemaForm } from '@prisme.ai/design-system';
+import {
+  FieldProps,
+  SchemaForm,
+  SchemaFormDescription,
+  getSchemaFormLabel,
+} from '@prisme.ai/design-system';
 import { CodeEditorInline } from '../../CodeEditor/lazy';
+import { useField } from 'react-final-form';
 
 interface InstructionValueProps {
   instruction: string;
@@ -12,8 +18,40 @@ interface InstructionValueProps {
 }
 
 const EmptyButtons: any[] = [];
+const FieldAny = ({ schema, name, label }: FieldProps) => {
+  const field = useField(name);
+  const [value, setValue] = useState(
+    typeof field.input.value === 'string'
+      ? field.input.value
+      : JSON.stringify(field.input.value, null, '  ')
+  );
+  const onChange = useCallback(
+    (value: string) => {
+      setValue(value);
+      try {
+        const json = JSON.parse(value);
+        field.input.onChange(json);
+      } catch {
+        field.input.onChange(value);
+      }
+    },
+    [field.input]
+  );
+
+  return (
+    <div className="flex flex-1 flex-col my-2">
+      <SchemaFormDescription text={schema.description}>
+        <label className="text-[10px] text-gray">
+          {label || schema.title || getSchemaFormLabel(name)}
+        </label>
+        <CodeEditorInline value={value} onChange={onChange} mode="json" />
+      </SchemaFormDescription>
+    </div>
+  );
+};
+
 const components = {
-  JSONEditor: (props: any) => <CodeEditorInline {...props} mode="json" />,
+  FieldAny,
 };
 
 export const InstructionValue: FC<InstructionValueProps> = ({
@@ -23,26 +61,67 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   onChange,
 }) => {
   const { t } = useTranslation('workspaces');
-  const schemaWithDescription = useMemo(
-    () => ({
+  const cleanedSchema = useMemo(() => {
+    const cleaned = {
       ...schema,
       title: t('automations.instruction.description', {
         context: instruction,
         default: schema.description,
       }),
+    };
+    if (instruction === 'repeat') {
+      cleaned['ui:options'] = {
+        oneOf: {
+          options: [
+            {
+              label: t('automations.instruction.form.repeat.on.label'),
+              index: 0,
+              value: {
+                until: undefined,
+              },
+            },
+            {
+              label: t('automations.instruction.form.repeat.until.label'),
+              index: 1,
+              value: {
+                on: undefined,
+              },
+            },
+          ],
+        },
+      };
+    }
+    return cleaned;
+  }, [instruction, schema, t]);
+
+  const locales = useMemo(
+    () => ({
+      addItem: t('automations.instruction.form.addItem'),
+      addProperty: t('automations.instruction.form.addProperty'),
+      propertyKey: t('automations.instruction.form.propertyKey'),
+      propertyValue: t('automations.instruction.form.propertyValue'),
+      removeItem: t('automations.instruction.form.removeItem'),
+      removeProperty: t('automations.instruction.form.removeProperty'),
+      uploadLabel: t('automations.instruction.form.uploadLabel'),
+      uploadRemove: t('automations.instruction.form.uploadRemove'),
     }),
-    [instruction, schema, t]
+    [t]
   );
+
   if (!schema) return null;
 
   return (
-    <Fieldset legend={instruction} hasDivider={false}>
+    <Fieldset
+      legend={t('automations.instruction.label', { context: instruction })}
+      hasDivider={false}
+    >
       <SchemaForm
-        schema={schemaWithDescription}
+        schema={cleanedSchema}
         onChange={onChange}
         initialValues={value}
         buttons={EmptyButtons}
         components={components}
+        locales={locales}
       />
     </Fieldset>
   );

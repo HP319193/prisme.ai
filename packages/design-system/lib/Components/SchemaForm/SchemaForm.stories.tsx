@@ -77,7 +77,13 @@ Default.args = {
           additionalProperties: true,
         },
       },
-
+      enum: {
+        type: 'string',
+        title: 'with enum',
+        description: 'list of choices',
+        enum: [1, 2, 3],
+        enumNames: ['One', 'Two', 'Three'],
+      },
       free: {
         title: 'Set whatever you want',
       },
@@ -93,6 +99,25 @@ TextOnly.args = {
   schema: {
     type: 'string',
     title: 'Juste a single string value',
+  },
+};
+
+export const WithHidden = Template.bind({});
+WithHidden.args = {
+  initialValues: {
+    bar: 42,
+  },
+  schema: {
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+        hidden: true,
+      },
+      bar: {
+        type: 'string',
+      },
+    },
   },
 };
 

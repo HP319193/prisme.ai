@@ -31,6 +31,9 @@ export const typesMatch = (schema: Schema, value: any): boolean => {
         : false;
     });
   }
+
+  if (value === undefined) return false;
+
   switch (schema.type) {
     case 'string':
       return typeof value === 'string';

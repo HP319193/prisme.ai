@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useSchemaForm } from './context';
+import Enum from './Enum';
 import FieldAny from './FieldAny';
 import FieldArray from './FieldArray';
 import FieldBoolean from './FieldBoolean';
@@ -27,6 +28,10 @@ export const Field = (props: FieldProps) => {
       return components.FieldSelect || FieldSelect;
     }
 
+    if (props.schema.enum) {
+      return Enum;
+    }
+
     switch (props.schema.type) {
       case 'localized:string':
       case 'localized:number':
@@ -46,6 +51,8 @@ export const Field = (props: FieldProps) => {
         return components.FieldAny || FieldAny;
     }
   }, [props.schema]);
+
+  if (props.schema.hidden) return null;
 
   return <Component {...props} />;
 };

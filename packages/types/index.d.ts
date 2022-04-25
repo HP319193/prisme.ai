@@ -799,6 +799,12 @@ declare namespace Prismeai {
             scope?: "all" | "automation";
         };
     }
+    export interface Comment {
+        /**
+         * Do nothing but display a comment in instructions list
+         */
+        comment: string;
+    }
     export interface Conditions {
         [name: string]: InstructionList;
         default: InstructionList;
@@ -1043,9 +1049,7 @@ declare namespace Prismeai {
              * prismeaiMessenger.message
              */
             event: string;
-            payload?: {
-                [name: string]: any;
-            };
+            payload?: AnyValue;
         };
     }
     export interface ExecutedAutomation {
@@ -1082,18 +1086,24 @@ declare namespace Prismeai {
             url: string;
             method?: "get" | "post" | "put" | "patch" | "delete";
             headers?: {
-                [name: string]: any;
+                [name: string]: string;
             };
             /**
              * HTTP request body
              */
-            body?: {
-                [name: string]: any;
-            };
+            body?: AnyValue;
             /**
              * Name of the variable which will hold the result
              */
             output?: string;
+        };
+    }
+    export interface File {
+        name: string;
+        url: string;
+        contentType: string;
+        metadata?: {
+            [key: string]: any;
         };
     }
     export interface ForbiddenError {
@@ -1150,7 +1160,7 @@ declare namespace Prismeai {
             slug: string;
         };
     }
-    export type Instruction = Emit | Wait | Set | Delete | Conditions | Repeat | All | Break | Fetch | {
+    export type Instruction = Emit | Wait | Set | Delete | Conditions | Repeat | All | Break | Fetch | Comment | {
         [name: string]: any;
     };
     export type InstructionList = Instruction[];
@@ -1310,10 +1320,8 @@ declare namespace Prismeai {
          */
         repeat: /* One of "on" or "until" is required */ {
             on: string;
-            until?: number;
             do: InstructionList;
         } | {
-            on?: string;
             until: number;
             do: InstructionList;
         };
@@ -1329,7 +1337,6 @@ declare namespace Prismeai {
              * variable value
              */
             value: AnyValue;
-            lifespan?: /* Rules defining when a variable should be automatically removed */ VariableLifespan;
         };
     }
     export interface SucceededLogin {
@@ -1491,19 +1498,6 @@ declare namespace Prismeai {
         role?: Role;
         policies?: Policies;
     };
-    /**
-     * Rules defining when a variable should be automatically removed
-     */
-    export interface VariableLifespan {
-        /**
-         * Number of user messages sent before automatically removing this variable
-         */
-        messages?: number;
-        /**
-         * Number of seconds elapsed since this variable initialization, before automatically removing it
-         */
-        seconds?: number;
-    }
     export interface Wait {
         wait: {
             oneOf: {
@@ -1521,7 +1515,7 @@ declare namespace Prismeai {
                  * }
                  */
                 filters?: {
-                    [name: string]: any;
+                    [name: string]: string;
                 };
                 /**
                  * If true, do not send this event to the the usual triggers
@@ -1558,7 +1552,7 @@ declare namespace Prismeai {
                      * }
                      */
                     filters?: {
-                        [name: string]: any;
+                        [name: string]: string;
                     };
                     /**
                      * If true, do not send this event to the the usual triggers
@@ -1897,6 +1891,24 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace DeleteFile {
+        namespace Parameters {
+            export type Id = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            id: Parameters.Id;
+        }
+        namespace Responses {
+            export interface $200 {
+                id: string;
+            }
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace DeletePage {
         namespace Parameters {
             export type Id = string;
@@ -2078,6 +2090,22 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = /* Full description at (TODO swagger url) */ Prismeai.Automation;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace GetFile {
+        namespace Parameters {
+            export type Id = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            id: Parameters.Id;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.File;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
@@ -2480,6 +2508,26 @@ declare namespace PrismeaiAPI {
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace UploadFile {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        export interface RequestBody {
+            name?: string[];
+            metadata?: {
+                [key: string]: any;
+            }[];
+        }
+        namespace Responses {
+            export type $200 = Prismeai.File[];
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
         }
     }
 }

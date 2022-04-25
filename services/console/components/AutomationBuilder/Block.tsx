@@ -137,7 +137,19 @@ export const Block: FC<NodeProps & BlockProps> = ({
             typeof value === 'string' ? value : (value && value.event) || '';
           break;
         case 'repeat':
-          displayedValue = (value && value.on) || '?';
+          if (!value) {
+            displayedValue = '?';
+          }
+          if (value.on) {
+            displayedValue = value.on;
+          }
+          if (value.until) {
+            return t('automations.instruction.label', {
+              context: 'repeat_until',
+              count: +value.until,
+            });
+          }
+          displayedValue = (value && value.on) || value.until || '?';
           break;
         case 'set':
           displayedValue =
@@ -150,6 +162,14 @@ export const Block: FC<NodeProps & BlockProps> = ({
         case 'wait':
           displayedValue = (value && value.event) || '?';
           break;
+        case 'comment':
+          return (
+            <div className="italic text-neutral-500">
+              {typeof value === 'string'
+                ? value
+                : JSON.stringify(value, null, '  ')}
+            </div>
+          );
         case 'output':
           return (
             <Trans
@@ -169,7 +189,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
                 ).replaceAll('{{', '{\u200b{'),
               }}
             >
-              Prout
+              output
             </Trans>
           );
         default:

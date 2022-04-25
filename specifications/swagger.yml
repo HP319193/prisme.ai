@@ -2755,8 +2755,7 @@ components:
               type: string
               example: 'prismeaiMessenger.message'
             payload:
-              type: object
-              additionalProperties: true
+              $ref: '#/components/schemas/AnyValue'
 
     Wait:
       type: object
@@ -2782,7 +2781,8 @@ components:
                   filters:
                     type: object
                     description: "Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
-                    additionalProperties: true
+                    additionalProperties:
+                      type: string
                     example:
                       automationSlug: someId
                       someObjectField.someNestedField: 'foo'
@@ -2797,16 +2797,6 @@ components:
               description: Will save the caught event inside this variable
               example: nameOfResultVariable
 
-    VariableLifespan:
-      description: Rules defining when a variable should be automatically removed
-      properties:
-        messages:
-          type: number
-          description: Number of user messages sent before automatically removing this variable
-        seconds:
-          type: number
-          description: Number of seconds elapsed since this variable initialization, before automatically removing it
-
     Set:
       type: object
       required:
@@ -2814,6 +2804,7 @@ components:
       maxProperties: 1
       properties:
         set:
+          type: object
           required:
             - name
             - value
@@ -2824,9 +2815,6 @@ components:
             value:
               $ref: '#/components/schemas/AnyValue'
               description: variable value
-            lifespan:
-              type: object
-              $ref: '#/components/schemas/VariableLifespan'
 
     Delete:
       type: object
@@ -2835,6 +2823,7 @@ components:
       maxProperties: 1
       properties:
         delete:
+          type: object
           required:
             - name
           properties:
@@ -2860,17 +2849,23 @@ components:
       maxProperties: 1
       properties:
         repeat:
+          type: object
           oneOf:
             - required: ['on', 'do']
+              properties:
+                on:
+                  type: string
+                do:
+                  $ref: '#/components/schemas/InstructionList'
+                  hidden: true
             - required: ['until', 'do']
+              properties:
+                until:
+                  type: number
+                do:
+                  $ref: '#/components/schemas/InstructionList'
+                  hidden: true
           description: One of "on" or "until" is required
-          properties:
-            on:
-              type: string
-            until:
-              type: number
-            do:
-              $ref: '#/components/schemas/InstructionList'
 
     All:
       type: object
@@ -2925,14 +2920,24 @@ components:
                 - delete
             headers:
               type: object
-              additionalProperties: true
+              additionalProperties:
+                type: 'string'
             body:
-              type: object
               description: HTTP request body
-              additionalProperties: true
+              $ref: '#/components/schemas/AnyValue'
             output:
               type: string
               description: Name of the variable which will hold the result
+
+    Comment:
+      type: object
+      required:
+        - 'comment'
+      maxProperties: 1
+      properties:
+        comment:
+          description: Do nothing but display a comment in instructions list
+          type: string
 
     Instruction:
       anyOf:
@@ -2945,6 +2950,7 @@ components:
         - $ref: '#/components/schemas/All'
         - $ref: '#/components/schemas/Break'
         - $ref: '#/components/schemas/Fetch'
+        - $ref: '#/components/schemas/Comment'
         - type: object
           additionalProperties: true
           minProperties: 1

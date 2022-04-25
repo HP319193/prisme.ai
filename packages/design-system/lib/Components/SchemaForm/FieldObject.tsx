@@ -15,11 +15,15 @@ export const FieldObject = ({ schema, name, label }: FieldProps) => {
   const { additionalProperties, 'ui:options': uiOptions } = schema;
 
   const grid = isUiOptionsGrid(uiOptions) && uiOptions.grid;
-  const rootLevel = name.split(/\./).length === 1;
+  const noBorder =
+    name.split(/\./).length === 1 ||
+    !schema.properties ||
+    Object.keys(schema.properties).length === 0;
+
   return (
     <div
       className={
-        rootLevel ? '' : 'm-2 p-2 pl-3 border-[1px] border-gray-200 rounded'
+        noBorder ? '' : 'm-2 p-2 pl-3 border-[1px] border-gray-200 rounded'
       }
     >
       <Description text={schema.description}>

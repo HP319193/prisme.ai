@@ -231,8 +231,9 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     (parent, index) => {
       parent.splice(index, 1);
       onChange({ ...value });
+      hidePanel();
     },
-    [onChange, value]
+    [hidePanel, onChange, value]
   );
 
   const editConditionDetails = useCallback(
@@ -323,13 +324,48 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         (prev, [, instructions]) => instructions[instructionName] || prev,
         {} as Schema
       );
-      return schema;
-    },
-    [instructionsSchemas]
-  );
 
-  // debug
-  const [nodesDraggable, setNodesDraggable] = useState(false);
+      const localize = (key: string) => {
+        return t(key, {
+          interpolation: {
+            skipOnVariables: true,
+          },
+          defaultValue: '',
+        });
+      };
+      const localizeSchema = (schema: Schema, name: string) => {
+        if (!name) return schema;
+        schema.title = localize(`automations.instruction.form.${name}.label`);
+        schema.description = localize(
+          `automations.instruction.form.${name}.description`
+        );
+        const { properties, type, items, enum: _enum, oneOf } = schema;
+        if (type === 'object' && properties) {
+          Object.keys(properties).forEach((k) =>
+            localizeSchema(properties[k], `${name}.${k}`)
+          );
+        }
+        if (type === 'array' && items) {
+          localizeSchema(items, `${name}.items`);
+        }
+        if (_enum && Array.isArray(_enum) && _enum.length > 0) {
+          const localized = _enum.map((enumName) =>
+            localize(`automations.instruction.form.${name}.enum.${enumName}`)
+          );
+          schema.enumNames = localized;
+        }
+        if (oneOf) {
+          oneOf.forEach((one) => {
+            localizeSchema({ type, ...one }, name);
+          });
+        }
+        return schema;
+      };
+
+      return localizeSchema({ ...schema }, instructionName);
+    },
+    [instructionsSchemas, t]
+  );
 
   return (
     <automationBuilderContext.Provider
@@ -349,12 +385,12 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         <ReactFlow
           elements={elements}
           nodesConnectable={false}
-          nodesDraggable={nodesDraggable}
           elementsSelectable
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           panOnScroll
           panOnScrollSpeed={1}
+          nodesDraggable={false}
         >
           <Controls />
         </ReactFlow>

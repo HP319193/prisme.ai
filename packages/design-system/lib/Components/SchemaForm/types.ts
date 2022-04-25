@@ -53,15 +53,31 @@ export type UiOptionsDate = {
   date: DatePickerProps;
 };
 export interface Schema {
+  // Field type
   type?: SchemaTypes;
+  // Field label
   title?: string;
+  // Description in a help tooltip
   description?: string;
+  // For object type, object properties
   properties?: Record<string, Schema>;
-  items?: Schema;
+  // Schema of object additional properties
   additionalProperties?: boolean | Schema;
+  // For array type, schema of array items
+  items?: Schema;
+  // List of different schemas available
   oneOf?: Schema[];
+  // List of constrainted values
+  enum?: any[];
+  // Labels of constrainted values
+  enumNames?: string[];
+  // Do not display the field
+  hidden?: true;
+  // Validation by regexp
   pattern?: string;
+  // Custom widget
   'ui:widget'?: UIWidgets | ((props: any) => ReactElement);
+  // Options for UI components
   'ui:options'?:
     | UiOptionsGrid
     | UiOptionsOneOf
