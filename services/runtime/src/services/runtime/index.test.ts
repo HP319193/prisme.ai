@@ -244,6 +244,80 @@ describe('Simple execution', () => {
     });
   });
 
+  it('Calls another automation by instruction', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Basic,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = broker.send('callsAnotherAutomation', {
+      someRandomId: Math.random() * 1000,
+    });
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'anotherAutomation',
+          }),
+          payload: expect.objectContaining({
+            slug: 'anotherAutomation',
+            payload: expect.objectContaining({
+              payload: event.payload,
+            }),
+            output: event.payload,
+          }),
+        })
+      );
+    });
+  });
+
+  it('Triggers another automation by emit', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Basic,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = broker.send('triggerAnotherAutomation', {
+      someRandomId: Math.random() * 1000,
+    });
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'anotherAutomation',
+          }),
+          payload: expect.objectContaining({
+            slug: 'anotherAutomation',
+            payload: expect.objectContaining({
+              payload: event.payload,
+            }),
+            output: event.payload,
+          }),
+        })
+      );
+    });
+  });
+
   it('Execution errors are reported with error events', async () => {
     const userId = 'unitTest';
     const { broker, runtime, sendEventSpy } = getMocks(
@@ -320,6 +394,215 @@ describe('Simple execution with appInstances', () => {
             slug: 'basicEmpty',
             output: {
               msg: 'result of basicApp.basicEmpty',
+            },
+          }),
+        })
+      );
+    });
+  });
+
+  it('Calls another automation by instruction', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = broker.send('basicApp.callsAnotherAutomation', {
+      someRandomId: Math.random() * 1000,
+    });
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            appInstanceFullSlug: 'basicApp',
+            appSlug: 'basicApp',
+            automationSlug: 'anotherAutomation',
+          }),
+          payload: expect.objectContaining({
+            slug: 'anotherAutomation',
+            payload: expect.objectContaining({
+              payload: event.payload,
+            }),
+            output: {
+              fromAppInstance: event.payload,
+            },
+          }),
+        })
+      );
+    });
+  });
+
+  it('Triggers another automation by emit', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = broker.send('basicApp.triggerAnotherAutomation', {
+      someRandomId: Math.random() * 1000,
+    });
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            appInstanceFullSlug: 'basicApp',
+            appSlug: 'basicApp',
+            automationSlug: 'anotherAutomation',
+          }),
+          payload: expect.objectContaining({
+            slug: 'anotherAutomation',
+            payload: expect.objectContaining({
+              payload: event.payload,
+            }),
+            output: {
+              fromAppInstance: event.payload,
+            },
+          }),
+        })
+      );
+    });
+  });
+
+  it('Triggers a parent automation by emit', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = broker.send('basicApp.triggerAnotherAutomation', {
+      someRandomId: Math.random() * 1000,
+    });
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: 'basicApp.forParentWorkspace',
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            appInstanceFullSlug: 'basicApp',
+            appSlug: 'basicApp',
+            automationSlug: 'anotherAutomation',
+          }),
+          payload: expect.objectContaining({
+            sourceAutomation: 'anotherAutomation',
+          }),
+        })
+      );
+
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            appInstanceFullSlug: undefined,
+            appSlug: undefined,
+            automationSlug: 'listenBasicAppEvents',
+          }),
+          payload: expect.objectContaining({
+            slug: 'listenBasicAppEvents',
+            payload: expect.objectContaining({
+              payload: expect.objectContaining({
+                sourceAutomation: 'anotherAutomation',
+              }),
+            }),
+            output: expect.objectContaining({
+              sourceAutomation: 'anotherAutomation',
+            }),
+          }),
+        })
+      );
+    });
+  });
+
+  it('Call a child automation that will trigger by event some automation from current workspace', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = broker.send('callChildAutomation', {
+      someRandomId: Math.random() * 1000,
+    });
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: 'basicApp.forParentWorkspace',
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            appInstanceFullSlug: 'basicApp',
+            appSlug: 'basicApp',
+            automationSlug: 'anotherAutomation',
+          }),
+          payload: expect.objectContaining({
+            sourceAutomation: 'anotherAutomation',
+            sourcePayload: {
+              user: userId,
+            },
+          }),
+        })
+      );
+
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            appInstanceFullSlug: undefined,
+            appSlug: undefined,
+            automationSlug: 'listenBasicAppEvents',
+          }),
+          payload: expect.objectContaining({
+            slug: 'listenBasicAppEvents',
+            payload: expect.objectContaining({
+              payload: {
+                sourceAutomation: 'anotherAutomation',
+                sourcePayload: {
+                  user: userId,
+                },
+              },
+            }),
+            output: {
+              sourceAutomation: 'anotherAutomation',
+              sourcePayload: {
+                user: userId,
+              },
             },
           }),
         })

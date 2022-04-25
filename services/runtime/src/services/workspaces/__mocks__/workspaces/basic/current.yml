@@ -17,3 +17,30 @@ automations:
     when:
       events:
         - throw
+
+  triggerAnotherAutomation:
+    name: triggerAnotherAutomation
+    when:
+      events:
+        - triggerAnotherAutomation
+    do:
+      - emit:
+          event: anotherAutomation
+          payload: '{{payload}}'
+
+  callsAnotherAutomation:
+    name: callsAnotherAutomation
+    when:
+      events:
+        - callsAnotherAutomation
+    do:
+      - anotherAutomation:
+          payload: '{{payload}}'
+
+  anotherAutomation:
+    name: anotherAutomation
+    when:
+      events:
+        - anotherAutomation
+    output: '{{payload}}'
+    do: []

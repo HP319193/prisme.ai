@@ -28,3 +28,23 @@ automations:
       events:
         - throw
       endpoint: true
+
+  listenBasicAppEvents:
+    name: listenBasicAppEvents
+    when:
+      events:
+        - basicApp.forParentWorkspace
+    output: '{{payload}}'
+    do: []
+
+  callChildAutomation:
+    name: callChildAutomation
+    output: '{{output}}'
+    when:
+      events:
+        - callChildAutomation
+    do:
+      - basicApp.callsAnotherAutomation:
+          payload:
+            user: '{{user.id}}'
+
