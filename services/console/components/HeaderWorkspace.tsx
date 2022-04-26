@@ -21,7 +21,6 @@ import PublishModal from './PublishModal';
 import EditDetails from '../layouts/EditDetails';
 import useLocalizedText from '../utils/useLocalizedText';
 import Link from 'next/link';
-import PhotoPickr from './PhotoPickr';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
