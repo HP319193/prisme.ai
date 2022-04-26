@@ -113,7 +113,10 @@ export class Workspaces extends Storage {
             const uninstalledAppInstanceSlug = (
               event as any as Prismeai.UninstalledAppInstance
             ).payload.slug;
-            workspace.deleteImport(uninstalledAppInstanceSlug);
+            // TODO better way to enforce this is executed after runtime processEvent
+            new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
+              workspace.deleteImport(uninstalledAppInstanceSlug);
+            });
             break;
         }
         return true;

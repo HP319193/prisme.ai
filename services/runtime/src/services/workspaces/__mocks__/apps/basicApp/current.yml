@@ -76,3 +76,24 @@ automations:
       - nestedApp.config:
           output: output
     output: '{{output}}'
+
+  onInstalled:
+    name: onInstalled
+    when:
+      events:
+        - workspaces.apps.installed
+    output: '{{config}}'
+
+  onConfigured:
+    name: onConfigured
+    when:
+      events:
+        - workspaces.apps.configured
+    output: '{{config}}'
+
+  onUninstalled:
+    name: onUninstalled
+    when:
+      events:
+        - workspaces.apps.uninstalled
+    output: '{{config}}'

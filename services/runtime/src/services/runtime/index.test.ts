@@ -19,12 +19,14 @@ let brokers = [];
 
 const getMocks = (
   partialSource: Partial<EventSource>,
-  mockExecuteAutomation: boolean = true
+  mockExecuteAutomation: boolean = true,
+  opts?: any
 ) => {
   const parentBroker = new Broker();
   const broker = parentBroker.child(partialSource, {
     forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
     validateEvents: false,
+    ...opts,
   });
 
   const modelsStorage: FilesystemOptions = {
@@ -41,6 +43,7 @@ const getMocks = (
   const runtime = new Runtime(broker as any, workspaces, new Cache());
 
   brokers.push(broker);
+  workspaces.startLiveUpdates();
 
   if (mockExecuteAutomation) {
     (runtime as any).executeAutomation = jest.fn();
@@ -48,6 +51,7 @@ const getMocks = (
 
   return {
     broker,
+    workspaces,
     runtime,
     sendEventSpy: jest.spyOn(broker, '_send'),
     processEventSpy: jest.spyOn(runtime, 'processEvent'),
@@ -803,6 +807,206 @@ describe('More advanced execution with appInstances', () => {
           }),
           error: expect.objectContaining({
             error: 'ObjectNotFoundError',
+          }),
+        })
+      );
+    });
+  });
+});
+
+describe("AppInstance's lifecycle events", () => {
+  it('Apps can listen to workspaces.apps.installed, and are executed with updated workspace/appInstance', async () => {
+    const userId = 'unitTest';
+    const { workspaces, broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Basic,
+        userId,
+      },
+      false,
+      {
+        forceTopic: undefined,
+      }
+    );
+    broker.start();
+    runtime.start();
+    const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+    const appInstance = {
+      appSlug: AvailableModels.BasicApp,
+    };
+
+    const event = await broker.send<Prismeai.InstalledAppInstance['payload']>(
+      EventType.InstalledApp,
+      {
+        appInstance,
+        slug: appInstance.appSlug,
+      },
+      {
+        workspaceId: workspace.id,
+        appInstanceFullSlug: appInstance.appSlug,
+      }
+    );
+
+    await waitForExpect(async () => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'onInstalled',
+          }),
+          payload: expect.objectContaining({
+            output: {
+              API_URL: 'https://google.fr',
+            },
+          }),
+        })
+      );
+    });
+  });
+
+  it('Apps can listen to workspaces.apps.configured, and are executed with updated workspace/appInstance', async () => {
+    const userId = 'unitTest';
+    const { workspaces, broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false,
+      {
+        forceTopic: undefined,
+      }
+    );
+    broker.start();
+    runtime.start();
+    const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
+    const appInstance = {
+      appSlug: AvailableModels.BasicApp,
+      config: {
+        randomValue: Math.random(),
+      },
+    };
+
+    const event = await broker.send<Prismeai.ConfiguredAppInstance['payload']>(
+      EventType.ConfiguredApp,
+      {
+        appInstance,
+        slug: appInstance.appSlug,
+      },
+      {
+        workspaceId: workspace.id,
+        appInstanceFullSlug: appInstance.appSlug,
+      }
+    );
+
+    await waitForExpect(async () => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'onConfigured',
+          }),
+          payload: expect.objectContaining({
+            output: {
+              ...appInstance.config,
+              API_URL: 'https://google.fr',
+            },
+          }),
+        })
+      );
+    });
+  });
+
+  it('Apps can listen to workspaces.apps.uninstalled, and are executed with last up to date DSUL before removal', async () => {
+    const userId = 'unitTest';
+    const { workspaces, broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false,
+      {
+        forceTopic: undefined,
+      }
+    );
+    broker.start();
+    runtime.start();
+    const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
+
+    const event = await broker.send<Prismeai.UninstalledAppInstance['payload']>(
+      EventType.UninstalledApp,
+      {
+        appInstance: {
+          appSlug: AvailableModels.BasicApp,
+        },
+        slug: AvailableModels.BasicApp,
+      },
+      {
+        workspaceId: workspace.id,
+        appInstanceFullSlug: AvailableModels.BasicApp,
+      }
+    );
+
+    await waitForExpect(async () => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'onUninstalled',
+          }),
+          payload: expect.objectContaining({
+            output: {
+              API_URL: 'https://google.fr',
+            },
+          }),
+        })
+      );
+    });
+  });
+
+  it('When a workspace is removed, automatically triggers workspaces.apps.uninstalled automations', async () => {
+    const userId = 'unitTest';
+    const { workspaces, broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false,
+      {
+        forceTopic: undefined,
+      }
+    );
+    broker.start();
+    runtime.start();
+    const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
+
+    const event = await broker.send<Prismeai.DeletedWorkspace['payload']>(
+      EventType.DeletedWorkspace,
+      {
+        workspaceId: workspace.id,
+      },
+      {
+        workspaceId: workspace.id,
+      }
+    );
+
+    await waitForExpect(async () => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'onUninstalled',
+          }),
+          payload: expect.objectContaining({
+            output: {
+              API_URL: 'https://google.fr',
+            },
           }),
         })
       );
