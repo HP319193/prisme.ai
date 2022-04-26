@@ -14,7 +14,7 @@ export type CollapseItem = {
   opened?: boolean;
 };
 
-export interface CollapseProps {
+export interface CollapseProps extends AntdCollapseProps {
   items: CollapseItem[];
   className?: string;
   light?: boolean;
@@ -28,6 +28,7 @@ const Collapse = ({
   icon,
   expandIconPosition = 'right',
   className,
+  ...collapseProps
 }: CollapseProps) => {
   const prevClicked = useRef<string[]>([]);
   const click = useCallback(
@@ -59,6 +60,7 @@ const Collapse = ({
           ? 'pr-collapse-light !border !border-solid !border-gray-200 rounded !px-2 !py-1'
           : ''
       }`}
+      {...collapseProps}
     >
       {items.map(({ label, content, className }, index) => (
         <Panel header={label} key={`${index}`} className={className || ''}>
