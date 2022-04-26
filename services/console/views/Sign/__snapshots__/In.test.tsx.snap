@@ -58,7 +58,9 @@ exports[`should have error 1`] = `
           in.topForm1
         </div>
         in.topForm2
-        <div />
+        <div
+          className="text-center"
+        />
       </div>
       <form
         className="md:w-96 flex"
@@ -147,7 +149,9 @@ exports[`should load 1`] = `
           in.topForm1
         </div>
         in.topForm2
-        <div />
+        <div
+          className="text-center"
+        />
       </div>
       <form
         className="md:w-96 flex"
@@ -236,7 +240,9 @@ exports[`should render 1`] = `
           in.topForm1
         </div>
         in.topForm2
-        <div />
+        <div
+          className="text-center"
+        />
       </div>
       <form
         className="md:w-96 flex"
