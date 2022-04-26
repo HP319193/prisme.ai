@@ -1,7 +1,12 @@
 name: imports
+id: imports
 imports:
   basicApp:
     appSlug: basicApp
+  preconfigured:
+    appSlug: basicApp
+    config:
+      preconfigured: 'variable'
 
 automations:
   empty:

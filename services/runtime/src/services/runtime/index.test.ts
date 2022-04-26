@@ -15,9 +15,6 @@ import { EventType } from '../../eda';
 
 global.console.warn = jest.fn();
 
-const sleep = async (delay: number) =>
-  new Promise((resolve) => setTimeout(resolve, delay));
-
 let brokers = [];
 
 const getMocks = (
@@ -244,6 +241,39 @@ describe('Simple execution', () => {
     });
   });
 
+  it('Config variable contains the config defined by the workspace DSUL', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Basic,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = broker.send('config', {});
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'config',
+          }),
+          payload: expect.objectContaining({
+            output: {
+              configFrom: 'workspace',
+            },
+          }),
+        })
+      );
+    });
+  });
+
   it('Calls another automation by instruction', async () => {
     const userId = 'unitTest';
     const { broker, runtime, sendEventSpy } = getMocks(
@@ -350,7 +380,7 @@ describe('Simple execution', () => {
   });
 });
 
-describe('Simple execution with appInstances', () => {
+describe('More advanced execution with appInstances', () => {
   it('Empty automation with an hardcoded output', async () => {
     const userId = 'unitTest';
     const { broker, runtime, sendEventSpy } = getMocks(
@@ -636,6 +666,75 @@ describe('Simple execution with appInstances', () => {
           }),
           error: expect.objectContaining({
             error: 'ObjectNotFoundError',
+          }),
+        })
+      );
+    });
+  });
+
+  it('Inside an appInstance, config variable contains at least the source app config', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = broker.send('basicApp.config', {});
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'config',
+            appInstanceFullSlug: 'basicApp',
+          }),
+          payload: expect.objectContaining({
+            output: {
+              API_URL: 'https://google.fr',
+            },
+          }),
+        })
+      );
+    });
+  });
+
+  it('Inside an appInstance defining a config, config variable will merge its fields with source app config', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = broker.send('preconfigured.config', {});
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'config',
+            appInstanceFullSlug: 'preconfigured',
+          }),
+          payload: expect.objectContaining({
+            output: {
+              API_URL: 'https://google.fr',
+              preconfigured: 'variable',
+            },
           }),
         })
       );

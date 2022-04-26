@@ -1,0 +1,427 @@
+import waitForExpect from 'wait-for-expect';
+import { Broker } from '@prisme.ai/broker/lib/__mocks__';
+import { Workspaces, Workspace } from './workspaces';
+import { DriverType } from '../../storage/types';
+import { FilesystemOptions } from '../../storage/drivers/filesystem';
+import path from 'path';
+import { Apps } from '../apps';
+import { AvailableModels } from '../workspaces/__mocks__/workspaces';
+import { EventType } from '../../eda';
+import { ObjectNotFoundError } from '../../errors';
+
+global.console.warn = jest.fn();
+
+let brokers = [];
+
+const buildTriggers = (
+  automation: Prismeai.Automation,
+  workspace: Workspace
+) => {
+  return [
+    {
+      ...automation.when,
+      automationSlug: automation.name,
+      workspace,
+    },
+  ];
+};
+
+const buildAutomation = (name = 'myNewAutomation') => {
+  return {
+    name,
+    when: {
+      events: [`run.${name}`],
+      endpoint: `customEndpointOf${name}`,
+    },
+    output: 'someOutput',
+    do: [
+      {
+        set: {
+          name: 'session.randomId',
+          value: `${Math.random() * 1000}`,
+        },
+      },
+    ],
+  };
+};
+
+const getMocks = () => {
+  const broker = new Broker();
+
+  const modelsStorage: FilesystemOptions = {
+    dirpath: path.join(__dirname, '../workspaces/__mocks__/'),
+  };
+
+  const apps = new Apps(DriverType.FILESYSTEM, modelsStorage);
+  const workspaces = new Workspaces(
+    DriverType.FILESYSTEM,
+    modelsStorage,
+    apps,
+    broker as any
+  );
+
+  broker.start();
+  brokers.push(broker);
+  workspaces.startLiveUpdates();
+  return {
+    broker,
+    workspaces,
+    sendEventSpy: jest.spyOn(broker, '_send'),
+  };
+};
+
+it('Simple workspace loading', async () => {
+  const { workspaces } = getMocks();
+  expect(
+    workspaces.fetchWorkspace(AvailableModels.Basic)
+  ).resolves.toMatchObject(
+    expect.objectContaining({
+      name: AvailableModels.Basic,
+      automations: expect.objectContaining({
+        empty: expect.objectContaining({
+          when: {
+            events: ['run.empty'],
+            endpoint: true,
+          },
+        }),
+      }),
+    })
+  );
+
+  const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+  expect(workspace).toBeInstanceOf(Workspace);
+  expect(workspace.name).toEqual(AvailableModels.Basic);
+  expect(workspace.getAutomation('empty')).toMatchObject(
+    expect.objectContaining(workspace.dsul.automations.empty)
+  );
+  expect(
+    workspace.getEventTriggers({ type: 'run.empty', source: {} } as any)
+  ).toMatchObject(buildTriggers(workspace.dsul.automations.empty, workspace));
+});
+
+it('Workspaces are kept up to date with workspaces.updated events', async () => {
+  const { workspaces, broker } = getMocks();
+  const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+  expect(workspace.dsul.automations.myNewAutomation).toBeUndefined();
+  const myNewAutomation = buildAutomation();
+
+  await broker.send<Prismeai.UpdatedWorkspace['payload']>(
+    EventType.UpdatedWorkspace,
+    {
+      workspace: {
+        ...workspace.dsul,
+        automations: {
+          ...workspace.dsul.automations,
+          myNewAutomation,
+        },
+      },
+    },
+    {
+      workspaceId: workspace.id,
+    }
+  );
+
+  await waitForExpect(async () => {
+    const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+    expect(workspace.getAutomation('myNewAutomation')).toMatchObject(
+      expect.objectContaining(myNewAutomation)
+    );
+
+    expect(
+      workspace.getEndpointTriggers(myNewAutomation?.when?.endpoint)
+    ).toMatchObject(buildTriggers(myNewAutomation, workspace));
+    expect(
+      workspace.getEventTriggers({
+        type: myNewAutomation?.when?.events[0],
+        source: {},
+      } as any)
+    ).toMatchObject(buildTriggers(myNewAutomation, workspace));
+  });
+});
+
+// Uncomment when the 5000ms setTimeout is removed from DeletedWorkspace handler
+// it('Workspaces are kept up to date with workspaces.deleted events', async () => {
+//   const { workspaces, broker } = getMocks();
+//   const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+//   expect(workspace).toBeTruthy();
+
+//   (workspaces as any).fetchWorkspace = jest.fn(() => {
+//     throw new ObjectNotFoundError('App not found');
+//   });
+//   console.log('MOCKED');
+//   await broker.send<Prismeai.DeletedWorkspace['payload']>(
+//     EventType.DeletedWorkspace,
+//     {
+//       workspaceId: workspace.id,
+//     },
+//     {
+//       workspaceId: workspace.id,
+//     }
+//   );
+
+//   await waitForExpect(async () => {
+//     const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+//     expect(workspace).toBeFalsy();
+//   });
+// });
+
+it('Workspaces are kept up to date with workspaces.automations.created events', async () => {
+  const { workspaces, broker } = getMocks();
+  const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+  expect(workspace.dsul.automations.myNewAutomation).toBeUndefined();
+  const myNewAutomation = {
+    name: 'myNewAutomation',
+    when: {
+      events: ['run.myNewAutomation'],
+      endpoint: 'customEndpoint',
+    },
+    output: 'someOutput',
+    do: [
+      {
+        set: {
+          name: 'session.randomId',
+          value: `${Math.random() * 1000}`,
+        },
+      },
+    ],
+  };
+
+  await broker.send<Prismeai.CreatedAutomation['payload']>(
+    EventType.CreatedAutomation,
+    {
+      automation: myNewAutomation,
+      slug: 'myNewAutomation',
+    },
+    {
+      workspaceId: workspace.id,
+    }
+  );
+
+  await waitForExpect(async () => {
+    const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+    expect(workspace.getAutomation('myNewAutomation')).toMatchObject(
+      expect.objectContaining(myNewAutomation)
+    );
+    expect(
+      workspace.getEndpointTriggers(myNewAutomation?.when?.endpoint)
+    ).toMatchObject(buildTriggers(myNewAutomation, workspace));
+    expect(
+      workspace.getEventTriggers({
+        type: myNewAutomation?.when?.events[0],
+        source: {},
+      } as any)
+    ).toMatchObject(buildTriggers(myNewAutomation, workspace));
+  });
+});
+
+it('Workspaces are kept up to date with workspaces.automations.updated events', async () => {
+  const { workspaces, broker } = getMocks();
+  const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+  expect(workspace.dsul.automations.empty).not.toBeFalsy();
+  const empty = {
+    ...workspace.dsul.automations.empty,
+    do: [
+      {
+        emit: {
+          event: 'empty has been run',
+        },
+      },
+    ],
+    when: {
+      ...workspace.dsul.automations.empty.when,
+      endpoint: 'MyCustomEmptyEndpoint',
+    },
+  };
+
+  await broker.send<Prismeai.UpdatedAutomation['payload']>(
+    EventType.UpdatedAutomation,
+    {
+      automation: empty,
+      slug: 'empty',
+    },
+    {
+      workspaceId: workspace.id,
+    }
+  );
+
+  await waitForExpect(async () => {
+    const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+    expect(workspace.getAutomation('empty')).toMatchObject(
+      expect.objectContaining(empty)
+    );
+    expect(workspace.getEndpointTriggers(empty?.when?.endpoint)).toMatchObject(
+      buildTriggers(empty, workspace)
+    );
+  });
+});
+
+it('Workspaces are kept up to date with workspaces.automations.deleted events', async () => {
+  const { workspaces, broker } = getMocks();
+  const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+  expect(workspace.dsul.automations.empty).not.toBeFalsy();
+
+  await broker.send<Prismeai.DeletedAutomation['payload']>(
+    EventType.DeletedAutomation,
+    {
+      automation: {
+        slug: 'empty',
+        name: 'empty',
+      },
+    },
+    {
+      workspaceId: workspace.id,
+    }
+  );
+
+  await waitForExpect(async () => {
+    const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+    expect(workspace.getAutomation('empty')).toBeNull();
+    expect(
+      workspace.getEventTriggers({ type: 'run.empty', source: {} } as any)
+        .length
+    ).toEqual(0);
+  });
+});
+
+it('Workspaces are kept up to date with workspaces.apps.installed events', async () => {
+  const { workspaces, broker } = getMocks();
+  const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+  expect(workspace.getAutomation('basicApp.basicEmpty')).toBeNull();
+  const appInstance = {
+    appSlug: AvailableModels.BasicApp,
+  };
+
+  await broker.send<Prismeai.InstalledAppInstance['payload']>(
+    EventType.InstalledApp,
+    {
+      appInstance,
+      slug: appInstance.appSlug,
+    },
+    {
+      workspaceId: workspace.id,
+    }
+  );
+
+  await waitForExpect(async () => {
+    const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
+    expect(workspace.getAutomation('basicApp.basicEmpty')).not.toBeFalsy();
+    expect(
+      workspace.getEventTriggers({
+        type: 'basicApp.triggerEmpty',
+        source: {},
+      } as any).length
+    ).toEqual(1);
+    expect(workspace.imports[appInstance.appSlug]).not.toBeFalsy();
+  });
+});
+
+it('Workspaces are kept up to date with workspaces.apps.configured events', async () => {
+  const { workspaces, broker } = getMocks();
+  const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
+  expect(workspace.getAutomation('basicApp.basicEmpty')).not.toBeFalsy();
+  const appInstance = {
+    appSlug: AvailableModels.BasicApp,
+    config: {
+      someConfig: 'someValue',
+    },
+  };
+
+  await broker.send<Prismeai.ConfiguredAppInstance['payload']>(
+    EventType.ConfiguredApp,
+    {
+      appInstance,
+      slug: appInstance.appSlug,
+    },
+    {
+      workspaceId: workspace.id,
+    }
+  );
+
+  await waitForExpect(async () => {
+    const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
+    expect(workspace.getAutomation('basicApp.basicEmpty')).not.toBeFalsy();
+    expect(
+      workspace.getEventTriggers({
+        type: 'basicApp.triggerEmpty',
+        source: {},
+      } as any).length
+    ).toEqual(1);
+    expect(workspace.imports[appInstance.appSlug]).not.toBeFalsy();
+    expect(workspace.imports[appInstance.appSlug].config).toMatchObject({
+      API_URL: 'https://google.fr',
+      ...appInstance.config,
+    });
+  });
+});
+
+it('Workspaces are kept up to date with workspaces.apps.uninstalled events', async () => {
+  const { workspaces, broker } = getMocks();
+  const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
+  expect(workspace.getAutomation('basicApp.basicEmpty')).not.toBeFalsy();
+
+  const appInstance = {
+    appSlug: AvailableModels.BasicApp,
+  };
+  await broker.send<Prismeai.UninstalledAppInstance['payload']>(
+    EventType.UninstalledApp,
+    {
+      appInstance,
+      slug: appInstance.appSlug,
+    },
+    {
+      workspaceId: workspace.id,
+    }
+  );
+
+  await waitForExpect(async () => {
+    const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
+    expect(workspace.getAutomation('basicApp.basicEmpty')).toBeFalsy();
+    expect(
+      workspace.getEventTriggers({
+        type: 'basicApp.triggerEmpty',
+        source: {},
+      } as any).length
+    ).toEqual(0);
+    expect(workspace.imports[appInstance.appSlug]).toBeFalsy();
+  });
+});
+
+it('Workspaces are kept up to date with apps.published events', async () => {
+  const { workspaces, broker } = getMocks();
+  const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
+
+  expect(workspace.imports[AvailableModels.BasicApp].config).toMatchObject({});
+  const app = {
+    ...workspace.imports[AvailableModels.BasicApp],
+    config: {
+      value: {
+        defaultConfigValue: Math.random(),
+      },
+    },
+  };
+
+  (workspaces as any).apps.getApp = jest.fn(() => app);
+
+  await broker.send<Prismeai.PublishedApp['payload']>(
+    EventType.PublishedApp,
+    {
+      app: {
+        slug: AvailableModels.BasicApp,
+      } as any,
+    },
+    {
+      workspaceId: workspace.id,
+    }
+  );
+
+  await waitForExpect(async () => {
+    const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
+    expect(workspace.imports[AvailableModels.BasicApp].config).toMatchObject(
+      app.config.value
+    );
+  });
+});
+
+afterAll(async () => {
+  brokers.forEach((broker) => broker.close());
+});

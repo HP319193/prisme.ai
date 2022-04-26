@@ -113,7 +113,7 @@ export class Workspaces extends Storage {
             const uninstalledAppInstanceSlug = (
               event as any as Prismeai.UninstalledAppInstance
             ).payload.slug;
-            workspace.deleteAutomation(uninstalledAppInstanceSlug);
+            workspace.deleteImport(uninstalledAppInstanceSlug);
             break;
         }
         return true;

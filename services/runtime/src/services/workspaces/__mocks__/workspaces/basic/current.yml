@@ -1,4 +1,8 @@
 name: basic
+id: basic
+config:
+  value:
+    configFrom: 'workspace'
 automations:
   empty:
     name: empty
@@ -44,3 +48,10 @@ automations:
         - anotherAutomation
     output: '{{payload}}'
     do: []
+
+  config:
+    name: get
+    when:
+      events:
+        - config
+    output: '{{config}}'

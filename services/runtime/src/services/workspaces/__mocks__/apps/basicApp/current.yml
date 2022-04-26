@@ -1,4 +1,8 @@
 name: basicApp
+id: basicApp
+config:
+  value:
+    API_URL: https://google.fr
 automations:
   basicEmpty:
     name: basicEmpty
@@ -50,3 +54,11 @@ automations:
           payload:
             sourceAutomation: '{{run.automationSlug}}'
             sourcePayload: '{{payload}}'
+
+
+  config:
+    name: get
+    when:
+      events:
+        - config
+    output: '{{config}}'
