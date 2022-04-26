@@ -3,4 +3,5 @@ export enum AvailableModels {
 
   Imports = 'imports',
   BasicApp = 'basicApp',
+  NestedApp = 'nestedApp',
 }

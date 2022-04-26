@@ -53,3 +53,23 @@ automations:
           payload:
             user: '{{user.id}}'
 
+
+  forbiddenNestedCall:
+    name: forbiddenNestedCall
+    output: '{{output}}'
+    when:
+      events:
+        - forbiddenNestedCall
+    do:
+      - basicApp.nestedApp.config: {}
+
+  getNestedConfig:
+    name: getNestedConfig
+    output: '{{output}}'
+    when:
+      events:
+        - getNestedConfig
+    do:
+      - preconfigured.nestedConfig:
+          output: output
+

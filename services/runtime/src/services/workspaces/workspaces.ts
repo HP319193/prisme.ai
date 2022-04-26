@@ -103,11 +103,11 @@ export class Workspaces extends Storage {
                 oldSlug: appInstanceOldSlug,
               },
             } = event as any as Prismeai.ConfiguredAppInstance;
-            workspace.updateImport(appInstanceSlug, appInstance);
+            await workspace.updateImport(appInstanceSlug, appInstance);
             if (appInstanceOldSlug) {
-              workspace.deleteImport(appInstanceOldSlug);
+              await workspace.deleteImport(appInstanceOldSlug);
             }
-            this.watchAppCurrentVersions(workspaceId, [appInstance]);
+            this.watchAppCurrentVersions(workspace);
             break;
           case EventType.UninstalledApp:
             const uninstalledAppInstanceSlug = (
@@ -131,18 +131,16 @@ export class Workspaces extends Storage {
     return this.workspaces[workspaceId];
   }
 
-  async watchAppCurrentVersions(
-    workspaceId: string,
-    imports: Prismeai.AppInstance[]
-  ) {
-    const requiredApps = Object.values(imports || {})
-      .filter(({ appVersion }) => !appVersion || appVersion === 'current')
-      .map(({ appSlug }) => appSlug);
-    this.watchedApps = requiredApps.reduce(
+  async watchAppCurrentVersions(workspace: Workspace) {
+    const nestedApps = [
+      ...new Set(Object.values(workspace.listNestedImports())),
+    ];
+
+    this.watchedApps = nestedApps.reduce(
       (watchedApps, watchAppId) => ({
         ...watchedApps,
         [watchAppId]: [
-          ...new Set([...(watchedApps[watchAppId] || []), workspaceId]),
+          ...new Set([...(watchedApps[watchAppId] || []), workspace.id]),
         ],
       }),
       this.watchedApps
@@ -159,7 +157,7 @@ export class Workspaces extends Storage {
 
       // Check imported apps & update watched app current versions
       if (dsul.imports) {
-        this.watchAppCurrentVersions(workspaceId, Object.values(dsul.imports));
+        this.watchAppCurrentVersions(this.workspaces[workspaceId]);
       }
 
       return dsul;

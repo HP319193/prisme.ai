@@ -386,13 +386,13 @@ it('Workspaces are kept up to date with workspaces.apps.uninstalled events', asy
   });
 });
 
-it('Workspaces are kept up to date with apps.published events', async () => {
+it('Workspace appInstances are kept up to date with apps.published events', async () => {
   const { workspaces, broker } = getMocks();
   const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
 
   expect(workspace.imports[AvailableModels.BasicApp].config).toMatchObject({});
   const app = {
-    ...workspace.imports[AvailableModels.BasicApp],
+    ...workspace.imports[AvailableModels.BasicApp].dsul,
     config: {
       value: {
         defaultConfigValue: Math.random(),
@@ -400,7 +400,15 @@ it('Workspaces are kept up to date with apps.published events', async () => {
     },
   };
 
-  (workspaces as any).apps.getApp = jest.fn(() => app);
+  const realGetApp = (workspaces as any).apps.getApp.bind(
+    (workspaces as any).apps
+  );
+  (workspaces as any).apps.getApp = jest.fn((appSlug) => {
+    if (appSlug === AvailableModels.BasicApp) {
+      return app;
+    }
+    return realGetApp(appSlug);
+  });
 
   await broker.send<Prismeai.PublishedApp['payload']>(
     EventType.PublishedApp,
@@ -419,6 +427,62 @@ it('Workspaces are kept up to date with apps.published events', async () => {
     expect(workspace.imports[AvailableModels.BasicApp].config).toMatchObject(
       app.config.value
     );
+  });
+});
+
+it('Nested appInstances are kept up to date with apps.published events', async () => {
+  const { workspaces, broker } = getMocks();
+  const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
+
+  expect(
+    workspace.imports['preconfigured'].imports['nestedApp'].config
+  ).toMatchObject({
+    preconfigured: 'variable',
+    API_URL: 'https://google.fr',
+    nestedApp: 'someValue',
+  });
+
+  const app = {
+    ...workspace.imports['preconfigured'].imports[AvailableModels.NestedApp]
+      .dsul,
+    config: {
+      value: {
+        nestedApp: 'someUpdatedValue',
+      },
+    },
+  };
+
+  const realGetApp = (workspaces as any).apps.getApp.bind(
+    (workspaces as any).apps
+  );
+  (workspaces as any).apps.getApp = jest.fn((appSlug) => {
+    if (appSlug === AvailableModels.NestedApp) {
+      return app;
+    }
+    return realGetApp(appSlug);
+  });
+
+  await broker.send<Prismeai.PublishedApp['payload']>(
+    EventType.PublishedApp,
+    {
+      app: {
+        slug: AvailableModels.NestedApp,
+      } as any,
+    },
+    {
+      workspaceId: AvailableModels.NestedApp,
+    }
+  );
+
+  await waitForExpect(async () => {
+    const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
+    expect(
+      workspace.imports['preconfigured'].imports['nestedApp'].config
+    ).toMatchObject({
+      preconfigured: 'variable',
+      API_URL: 'https://google.fr',
+      ...app.config.value,
+    });
   });
 });
 

@@ -740,6 +740,74 @@ describe('More advanced execution with appInstances', () => {
       );
     });
   });
+
+  it('Config can be transmitted from root workspace to lvl2+ nested app', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = broker.send('getNestedConfig', {});
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'config',
+            appSlug: 'nestedApp',
+            appInstanceFullSlug: 'preconfigured.nestedApp',
+          }),
+          payload: expect.objectContaining({
+            output: {
+              preconfigured: 'variable',
+              API_URL: 'https://google.fr',
+              nestedApp: 'someValue',
+            },
+          }),
+        })
+      );
+    });
+  });
+
+  it('Automations can only be called from parent workspace only and no more', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = broker.send('forbiddenNestedCall', {});
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.Error,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'forbiddenNestedCall',
+          }),
+          error: expect.objectContaining({
+            error: 'ObjectNotFoundError',
+          }),
+        })
+      );
+    });
+  });
 });
 
 afterAll(async () => {

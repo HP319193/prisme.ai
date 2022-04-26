@@ -1,0 +1,23 @@
+name: nestedApp
+id: nestedApp
+config:
+  value:
+    nestedApp: someValue
+automations:
+  basicEmpty:
+    name: basicEmpty
+    do: []
+    output:
+      msg: 'result of nestedApp.basicEmpty'
+    when:
+      events:
+        - triggerEmpty
+      endpoint: true
+
+
+  config:
+    name: config
+    when:
+      events:
+        - config
+    output: '{{config}}'
