@@ -325,7 +325,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         {} as Schema
       );
 
-      const localize = (key: string) => {
+      const l = (key: string) => {
         return t(key, {
           interpolation: {
             skipOnVariables: true,
@@ -335,12 +335,14 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
       };
       const localizeSchema = (schema: Schema, name: string) => {
         if (!name) return schema;
-        schema.title = localize(`automations.instruction.form.${name}.label`);
-        schema.description = localize(
-          `automations.instruction.form.${name}.description`
-        );
+        schema.title =
+          localize(schema.title) ||
+          l(`automations.instruction.form.${name}.label`);
+        schema.description =
+          localize(schema.description) ||
+          l(`automations.instruction.form.${name}.description`);
         const { properties, type, items, enum: _enum, oneOf } = schema;
-        if (type === 'object' && properties) {
+        if (properties) {
           Object.keys(properties).forEach((k) =>
             localizeSchema(properties[k], `${name}.${k}`)
           );
@@ -350,7 +352,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         }
         if (_enum && Array.isArray(_enum) && _enum.length > 0) {
           const localized = _enum.map((enumName) =>
-            localize(`automations.instruction.form.${name}.enum.${enumName}`)
+            l(`automations.instruction.form.${name}.enum.${enumName}`)
           );
           schema.enumNames = localized;
         }
@@ -364,7 +366,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
 
       return localizeSchema({ ...schema }, instructionName);
     },
-    [instructionsSchemas, t]
+    [instructionsSchemas, localize, t]
   );
 
   return (
