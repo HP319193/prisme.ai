@@ -68,7 +68,9 @@ automations:
           value: '{{body.value}}'
       - emit:
           event: noop
-          payload: {}
+          payload:
+            name: '{{body.field}}'
+            value: '{{body.value}}'
     output:
       session: '{{session}}'
       user: '{{user}}'
@@ -95,6 +97,83 @@ automations:
       field: '{{{{body.field}}}}'
     when:
       endpoint: true
+
+  transformListToObject:
+    name: transformListToObject
+    do:
+      - set:
+          name: myList
+          value:
+            - un
+            - deux
+            - trois
+            - quatre
+      - repeat:
+          on: '{{myList}}'
+          do:
+            - set:
+                name: myObj[{{item}}]
+                value: true
+    output: '{{myObj}}'
+    when:
+      endpoint: true
+
+  conditionalOutput:
+    name: conditionalOutput
+    do:
+      - conditions:
+          '{{body.age}} > 80':
+            - set:
+                name: output
+                value: "Papi !"
+          '{{body.age}} < 12':
+            - set:
+                name: output
+                value: "Marmot !"
+          default:
+            - set:
+                name: output
+                value: "Toujours dans la force de l'age !"
+    output: '{{output}}'
+    when:
+      endpoint: true
+
+  conditionallyTransformListToObject:
+    name: conditionallyTransformListToObject
+    do:
+      - set:
+          name: myList
+          value:
+            - un
+            - deux
+            - trois
+            - quatre
+      - repeat:
+          on: '{{myList}}'
+          do:
+            - conditions:
+                '{{item}} == "trois"':
+                  - set:
+                      name: item
+                      value: blouh
+            - set:
+                name: myObj[{{item}}]
+                value: true
+    output: '{{myObj}}'
+    when:
+      endpoint: true
+
+  simpleWait:
+    name: simpleWait
+    when:
+      endpoint: true
+    do:
+      - wait:
+          oneOf:
+            - event: '{{body.event}}'
+          output: waited
+    output: '{{waited.payload}}'
+
 
 
 

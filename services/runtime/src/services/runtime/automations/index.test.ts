@@ -55,15 +55,16 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
     workspaces,
     sendEventSpy: jest.spyOn(broker, '_send'),
     execute: async (automationSlug: string, payload: any) => {
+      const correlationId = `${Date.now()}`;
       const childBroker = broker.child({
-        correlationId: 'unitTests',
+        correlationId,
       });
       const output = await runtime.processEvent(
         {
           type: EventType.TriggeredWebhook,
           source: {
             workspaceId: AvailableModels.Instructions,
-            correlationId: 'unitTests',
+            correlationId,
             userId: 'unitTests',
           },
           payload: {
@@ -183,7 +184,6 @@ describe('Variables & Contexts', () => {
     const initial = await execute('noop', {});
     expect(initial.user).toEqual({ id: 'unitTests' });
     expect(initial.session).toEqual({});
-    console.log('initiall: ', initial.user);
 
     // Fill them
     await execute('mySet', {
@@ -227,6 +227,66 @@ describe('Variables & Contexts', () => {
     const afterDelete = await execute('myDelete', { field: 'session.value' });
     expect(afterDelete.session).toEqual({});
   });
+});
+
+describe('Logic', () => {
+  it('Simple repeat', async () => {
+    const { execute } = getMocks();
+
+    const obj = await execute('transformListToObject', {});
+    expect(obj).toEqual({
+      un: true,
+      deux: true,
+      trois: true,
+      quatre: true,
+    });
+  });
+
+  it('Repeat with condition inside', async () => {
+    const { execute } = getMocks();
+
+    const obj = await execute('conditionallyTransformListToObject', {});
+    expect(obj).toEqual({
+      un: true,
+      deux: true,
+      blouh: true,
+      quatre: true,
+    });
+  });
+
+  it('Simple conditions', async () => {
+    const { execute } = getMocks();
+
+    await expect(execute('conditionalOutput', { age: 90 })).resolves.toEqual(
+      'Papi !'
+    );
+    await expect(execute('conditionalOutput', { age: 6 })).resolves.toEqual(
+      'Marmot !'
+    );
+    await expect(execute('conditionalOutput', { age: 40 })).resolves.toEqual(
+      "Toujours dans la force de l'age !"
+    );
+  });
+
+  // it('Simple wait', async () => {
+  //   const { execute, broker } = getMocks();
+
+  //   const waitPromise = execute('simpleWait', {
+  //     event: 'myEvent',
+  //   });
+
+  //   // Sleep 100ms
+  //   await new Promise((resolve) => setTimeout(resolve, 100));
+  //   const event = await broker.send('myEvent', {
+  //     foo: 'bar',
+  //   });
+  //   console.log('sent : ', event);
+
+  //   const output = await waitPromise;
+  //   expect(output).toEqual({
+  //     foo: 'bar',
+  //   });
+  // });
 });
 
 afterAll(async () => {
