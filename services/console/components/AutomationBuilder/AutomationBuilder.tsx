@@ -153,16 +153,19 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
             appName,
             Object.keys(automations).reduce((prev, name) => {
               if (name === id) return prev;
-              const schema = { ...automations[name].arguments } || {};
-              schema.output = schema.output || {
+              const properties =
+                {
+                  ...automations[name].arguments,
+                } || {};
+              properties.output = properties.output || {
                 type: 'string',
                 description: t('automations.output.description'),
               };
-
               return {
                 ...prev,
                 [name]: {
-                  properties: schema,
+                  type: 'object',
+                  properties,
                   description: localize(automations[name].description),
                 },
               };
@@ -324,7 +327,6 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         (prev, [, instructions]) => instructions[instructionName] || prev,
         {} as Schema
       );
-
       const l = (key: string) => {
         return t(key, {
           interpolation: {
