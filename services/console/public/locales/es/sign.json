@@ -1,8 +1,10 @@
 {
   "in": {
     "title": "Conexión",
-    "header": "Conectar\na Prisme.ai",
-    "description": "Si aún no tienes una cuenta\npuedes <a>regístrate aquí!</a>",
+    "header": "Lo que es esencial merece tu atención.\n<b>Automatiza el resto.</b>",
+    "topForm1": "ME ALEGRO DE TENERTE DE VUELTA",
+    "topForm2": "Conéctate a Prisme.ai",
+    "topForm3": "¿Aún no tienes una cuenta? <a>Regístrate</a>",
     "email": "Correo electrónico",
     "password": "Contraseña",
     "submit": "Conexión",
@@ -11,17 +13,20 @@
   },
   "up": {
     "title": "Inscripción — $t(common:main.title)",
-    "header": "Prueba Prisme.ai",
-    "description": "Si ya tienes una cuenta\n<a>regístrate</a>",
+    "topForm1": "HOLA",
+    "topForm2": "Prueba Prisme.ai",
+    "topForm3": "¿Ya tiene una cuenta?\n<a>regístrate</a>",
     "email": "Correo electrónico",
     "password": "Contraseña",
     "firstName": "Appelido",
     "lastName": "Nombre",
     "submit": "Registro",
-    "signin": "Ya tengo una cuenta",
     "error": "Se ha producido un error, póngase en contacto con el servicio de asistencia técnica",
     "error_AuthenticationError": "Ya existe una cuenta para este correo electrónico, pero la contraseña no es válida.",
     "error_InvalidEmail": "El correo electrónico no es válido.",
     "error_InvalidPassword": "La contraseña no es válida : debe tener al menos 8 caracteres."
+  },
+  "out": {
+    "link": "Cierre de sesión"
   }
 }
