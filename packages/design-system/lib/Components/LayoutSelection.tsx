@@ -17,6 +17,7 @@ export interface LayoutSelectionProps {
   Header?: ReactNode;
   onAdd?: () => void;
   addLabel?: string;
+  searchLabel?: string;
 }
 
 interface ListItemWithSelection extends ListItemWithId {
@@ -38,7 +39,7 @@ const ListItemWithSelection = ({
       onSelect(listItemProps.id);
     }}
     className={`!flex-initial ${className || ''} ${
-      selected ? '!text-blue-500' : ''
+      selected ? '!text-blue-500 !border-blue-500' : ''
     }`}
   />
 );
@@ -51,6 +52,7 @@ const LayoutSelection = ({
   onSelect,
   onAdd,
   addLabel = 'add',
+  searchLabel = '',
 }: LayoutSelectionProps) => {
   const [searchValue, SetSearchValue] = useState('');
 
@@ -74,6 +76,7 @@ const LayoutSelection = ({
                   value={searchValue}
                   onChange={(e) => SetSearchValue(e.target.value)}
                   className="grow"
+                  placeholder={searchLabel}
                 />
                 {onAdd && (
                   <Button onClick={onAdd} className="!flex items-center">
