@@ -5,10 +5,12 @@ export interface LayoutProps extends HTMLAttributes<HTMLDivElement> {
   Header?: ReactNode;
   children: ReactNode;
   PageHeader?: ReactNode;
+  classNameContent?: string;
 }
 
 const Layout = ({
   className,
+  classNameContent,
   Header,
   PageHeader,
   children,
@@ -19,7 +21,7 @@ const Layout = ({
       {Header}
       {PageHeader || null}
     </AntdLayout.Header>
-    <AntdLayout.Content className="flex flex-col	">
+    <AntdLayout.Content className={`flex flex-col ${classNameContent}`}>
       {children}
     </AntdLayout.Content>
   </AntdLayout>
