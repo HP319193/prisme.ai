@@ -222,12 +222,23 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
 
   const addInstruction: AutomationBuilderContext['addInstruction'] = useCallback(
     async (parent, index = 0) => {
-      console.log('add', parent, index);
       if (!parent) return;
-      parent.splice(index, 0, {});
-      editInstruction(parent, index);
+      let instruction = {};
+      editInstructionDetails(
+        instruction,
+        (updatedInstruction: Prismeai.Instruction) => {
+          parent.splice(
+            index,
+            Object.keys(instruction).length === 0 ? 0 : 1,
+            updatedInstruction
+          );
+          instruction = updatedInstruction;
+
+          onChange({ ...value });
+        }
+      );
     },
-    [editInstruction]
+    [editInstructionDetails, onChange, value]
   );
 
   const removeInstruction: AutomationBuilderContext['removeInstruction'] = useCallback(

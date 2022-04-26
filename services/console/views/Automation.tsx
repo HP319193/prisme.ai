@@ -21,6 +21,56 @@ import EditDetails from '../layouts/EditDetails';
 import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
 import { ApiError } from '../utils/api';
 
+const cleanInstruction = (instruction: Prismeai.Instruction) => {
+  const [type] = Object.keys(instruction);
+  if (type === 'conditions') {
+    cleanConditions(instruction as { conditions: Prismeai.Conditions });
+  }
+  if (type === 'repeat') {
+    cleanDo((instruction as Prismeai.Repeat).repeat);
+  }
+  if (type === 'all') {
+    cleanDo(instruction as Prismeai.All);
+  }
+};
+const cleanConditions = (instruction: { conditions: Prismeai.Conditions }) => {
+  Object.keys(instruction.conditions).forEach((key) => {
+    instruction.conditions[key] = instruction.conditions[key].filter(
+      (i) => Object.keys(i).length === 1
+    );
+    instruction.conditions[key].forEach(cleanInstruction);
+  });
+};
+const isDoList = (
+  parent: { do: Prismeai.InstructionList } | { all: Prismeai.InstructionList }
+): parent is { do: Prismeai.InstructionList } => {
+  return !!(parent as { do: Prismeai.InstructionList }).do;
+};
+const isAllList = (
+  parent: { do: Prismeai.InstructionList } | { all: Prismeai.InstructionList }
+): parent is { all: Prismeai.InstructionList } => {
+  return !!(parent as { all: Prismeai.InstructionList }).all;
+};
+const cleanDo = (
+  parent: Prismeai.Automation | Prismeai.Repeat['repeat'] | Prismeai.All
+) => {
+  const filter = (instruction: Prismeai.Instruction) =>
+    Object.keys(instruction).length === 1;
+  let doList: Prismeai.InstructionList = [];
+  if (isDoList(parent)) {
+    doList = parent.do = parent.do.filter(filter);
+  }
+  if (isAllList(parent)) {
+    doList = parent.all = parent.all.filter(filter);
+  }
+  doList.forEach(cleanInstruction);
+};
+const cleanAutomation = (automation: Prismeai.Automation) => {
+  if (!automation.do) return automation;
+  cleanDo(automation);
+  return automation;
+};
+
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
   const localize = useLocalizedText();
@@ -83,7 +133,10 @@ export const Automation = () => {
     async (automationId: string, automation: Prismeai.Automation) => {
       setSaving(true);
       try {
-        const saved = await updateAutomation(automationId, automation);
+        const saved = await updateAutomation(
+          automationId,
+          cleanAutomation(automation)
+        );
         notification.success({
           message: t('automations.save.toast'),
           placement: 'bottomRight',
