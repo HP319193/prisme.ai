@@ -130,9 +130,7 @@ export default class Runtime {
         '{{id}}',
         cur.request.id
       );
-      const fulfilledEvent = await broker.send<
-        Prismeai.FulfilledWait['payload']
-      >(FulfilledWaitEvent, {
+      await broker.send<Prismeai.FulfilledWait['payload']>(FulfilledWaitEvent, {
         id: cur.request.id,
         event,
       });
