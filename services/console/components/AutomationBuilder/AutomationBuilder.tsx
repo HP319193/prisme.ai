@@ -231,7 +231,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     (parent, index) => {
       parent.splice(index, 1);
       onChange({ ...value });
-      hidePanel();
+      setTimeout(hidePanel);
     },
     [hidePanel, onChange, value]
   );
