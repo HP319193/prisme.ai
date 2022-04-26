@@ -13,17 +13,20 @@
   },
   "up": {
     "title": "Signup — $t(common:main.title)",
-    "header": "Try Prisme.ai",
-    "description": "If you already have an account\n<a>sign in</a>",
+    "topForm1": "HELLO",
+    "topForm2": "Try Prisme.ai",
+    "topForm3": "Already have an account? <a>sign in</a>",
     "email": "Email",
     "password": "Password",
     "firstName": "Firstname",
     "lastName": "Lastname",
-    "submit": "Signup",
-    "signin": "I already have an account",
+    "submit": "Start",
     "error": "An error has occurred, please contact support",
     "error_AuthenticationError": "An account already exists for this email, but the password is invalid.",
     "error_InvalidEmail": "The email is invalid.",
     "error_InvalidPassword": "The password is invalid : must be at least 8 characters long."
+  },
+  "out": {
+    "link": "Logout"
   }
 }

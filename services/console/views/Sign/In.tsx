@@ -65,7 +65,7 @@ export const SignIn = () => {
               {t('in.topForm1')}
             </div>
             <Title className="text-center">{t('in.topForm2')}</Title>
-            <div>
+            <div className="text-center">
               <Trans
                 t={t}
                 i18nKey="in.topForm3"

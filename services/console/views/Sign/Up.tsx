@@ -14,6 +14,8 @@ import {
   Title,
 } from '@prisme.ai/design-system';
 import SignHeader from '../../components/SignHeader';
+import icon from '../../icons/icon-prisme.svg';
+import Image from 'next/image';
 
 interface Values {
   email: string;
@@ -65,6 +67,113 @@ export const SignIn = () => {
   };
 
   return (
+    <div className="flex grow flex-col-reverse md:flex-row overflow-y-auto">
+      <div className="!flex flex-col bg-gradient-to-br from-[#0A1D3B] to-[#0F2A54] items-center justify-center md:w-[40vw]">
+        <div className="hidden md:flex flex-col grow justify-center w-full space-y-4 lg:space-y-6">
+          <div className="w-1/2 h-4 lg:h-8 bg-accent rounded-r-[100rem]" />
+          <div className="w-1/2 h-4 lg:h-8 bg-pr-orange rounded-r-[100rem]" />
+          <div className="w-1/2 h-4 lg:h-8 bg-pr-grey rounded-r-[100rem]" />
+        </div>
+        <div className="flex grow flex-col justify-end mb-10">
+          <div className="flex items-center flex-col text-white p-[10%]">
+            <div className="font-normal text-xl md:text-2xl xl:text-5xl leading-normal">
+              <Trans
+                t={t}
+                i18nKey="in.header"
+                components={{
+                  b: <span className="font-bold" />,
+                }}
+              />
+
+              <div className="flex flex-row  mt-20">
+                <Image src={icon} width={16} height={16} alt="Prisme.ai" />
+                <div className="ml-2 !font-light tracking-[.4em] text-sm">
+                  PRISME.AI
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="!flex grow items-center justify-center md:w-[60vw] md:h-[100vh]">
+        <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center space-y-4 mb-16 mt-8">
+            <div className="text-accent !font-light tracking-[.3em]">
+              {t('up.topForm1')}
+            </div>
+            <Title className="text-center">{t('up.topForm2')}</Title>
+            <div className="text-center">
+              <Trans
+                t={t}
+                i18nKey="up.topForm3"
+                values={{
+                  url: '/signup',
+                }}
+                components={{
+                  a: <a href={`signup`} />,
+                }}
+              />
+            </div>
+          </div>
+          <Form onSubmit={submit} validate={validate}>
+            {({ handleSubmit }) => (
+              <form onSubmit={handleSubmit} className="w-96 flex">
+                <Space size="middle" direction="vertical" className="flex grow">
+                  <Field name="email">
+                    {({ input: { type, ...inputProps }, className }) => (
+                      <Input
+                        placeholder={t('up.email')}
+                        className={`${className} h-12`}
+                        {...inputProps}
+                      />
+                    )}
+                  </Field>
+                  <Field name="password">
+                    {({ input: { type, ...inputProps }, className }) => (
+                      <Input
+                        placeholder={t('up.password')}
+                        className={`${className} h-12`}
+                        inputType={'password' as any}
+                        {...inputProps}
+                      />
+                    )}
+                  </Field>
+                  <Field name="firstName">
+                    {({ input: { type, ...inputProps }, className }) => (
+                      <Input
+                        placeholder={t('up.firstName')}
+                        className={`${className} h-12`}
+                        {...inputProps}
+                      />
+                    )}
+                  </Field>
+                  <Field name="lastName">
+                    {({ input: { type, ...inputProps }, className }) => (
+                      <Input
+                        placeholder={t('up.lastName')}
+                        className={`${className} h-12`}
+                        {...inputProps}
+                      />
+                    )}
+                  </Field>
+                  <Button
+                    variant="primary"
+                    disabled={loading}
+                    className="w-full !h-12"
+                    type="submit"
+                  >
+                    {t('up.submit')}
+                  </Button>
+                </Space>
+              </form>
+            )}
+          </Form>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
     <Layout Header={<SignHeader />} className="!bg-blue-200 pt-14">
       <div className="flex grow justify-evenly mt-32">
         <Col span={12}>
@@ -97,7 +206,7 @@ export const SignIn = () => {
                     <Field name="email">
                       {({ input: { type, ...inputProps }, className }) => (
                         <Input
-                          placeholder={t('in.email')}
+                          placeholder={t('up.email')}
                           className={`${className} h-12`}
                           {...inputProps}
                         />
@@ -106,7 +215,7 @@ export const SignIn = () => {
                     <Field name="password">
                       {({ input: { type, ...inputProps }, className }) => (
                         <Input
-                          placeholder={t('in.password')}
+                          placeholder={t('up.password')}
                           className={`${className} h-12`}
                           inputType={'password' as any}
                           {...inputProps}
