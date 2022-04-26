@@ -1,7 +1,7 @@
 import { CacheDriver } from '..';
 import { SetOptions } from '../types';
 
-let memoryCache: Record<string, any> = {};
+export let memoryCache: Record<string, any> = {};
 
 export default class Cache implements CacheDriver {
   private cache: Record<string, any>;

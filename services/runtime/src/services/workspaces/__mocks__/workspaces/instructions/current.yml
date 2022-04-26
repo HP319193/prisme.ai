@@ -1,0 +1,101 @@
+name: instructions
+id: instructions
+config:
+  value:
+    petite: maison
+
+automations:
+  noop:
+    name: noop
+    do: []
+    output:
+      session: '{{session}}'
+      user: '{{user}}'
+      run: '{{run}}'
+      field: '{{local}}'
+    when:
+      endpoint: true
+      events:
+        - noop
+
+  mySet:
+    name: mySet
+    do:
+      - set:
+          name: '{{body.field}}'
+          value: '{{body.value}}'
+    output:
+      session: '{{session}}'
+      user: '{{user}}'
+      run: '{{run}}'
+      field: '{{{{body.field}}}}'
+    when:
+      endpoint: true
+
+
+  setAndNoop:
+    name: set
+    do:
+      - set:
+          name: '{{body.field}}'
+          value: '{{body.value}}'
+      - noop:
+          output: output
+    output: '{{output}}'
+    when:
+      endpoint: true
+
+
+  readUserVarSetByChildAutomation:
+    name: readUserVarSetByChildAutomation
+    when:
+      endpoint: true
+    do:
+      - setAndNoop:
+          body:
+            field: user.myBro
+            value: bruh
+    output: '{{user.myBro}}'
+
+
+  setAndEmitNoop:
+    name: setAndEmitNoop
+    when:
+      endpoint: true
+    do:
+      - set:
+          name: '{{body.field}}'
+          value: '{{body.value}}'
+      - emit:
+          event: noop
+          payload: {}
+    output:
+      session: '{{session}}'
+      user: '{{user}}'
+      run: '{{run}}'
+
+  setConfig:
+    name: setConfig
+    when:
+      endpoint: true
+    do:
+      - set:
+          name: config.foo
+          value: bar
+
+  myDelete:
+    name: myDelete
+    do:
+      - delete:
+          name: '{{body.field}}'
+    output:
+      session: '{{session}}'
+      user: '{{user}}'
+      run: '{{run}}'
+      field: '{{{{body.field}}}}'
+    when:
+      endpoint: true
+
+
+
+

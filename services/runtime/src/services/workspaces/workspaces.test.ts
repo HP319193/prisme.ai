@@ -390,7 +390,9 @@ it('Workspace appInstances are kept up to date with apps.published events', asyn
   const { workspaces, broker } = getMocks();
   const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
 
-  expect(workspace.imports[AvailableModels.BasicApp].config).toMatchObject({});
+  expect(workspace.imports[AvailableModels.BasicApp].config).toEqual({
+    API_URL: 'https://google.fr',
+  });
   const app = {
     ...workspace.imports[AvailableModels.BasicApp].dsul,
     config: {
@@ -424,7 +426,7 @@ it('Workspace appInstances are kept up to date with apps.published events', asyn
 
   await waitForExpect(async () => {
     const workspace = await workspaces.getWorkspace(AvailableModels.Imports);
-    expect(workspace.imports[AvailableModels.BasicApp].config).toMatchObject(
+    expect(workspace.imports[AvailableModels.BasicApp].config).toEqual(
       app.config.value
     );
   });
