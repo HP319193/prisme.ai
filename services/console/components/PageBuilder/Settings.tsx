@@ -44,6 +44,21 @@ export const Settings = ({ removeWidget, schema }: SettingsProps) => {
     }),
     [t]
   );
+
+  const locales = useMemo(
+    () => ({
+      addItem: t('automations.instruction.form.addItem'),
+      addProperty: t('automations.instruction.form.addProperty'),
+      propertyKey: t('automations.instruction.form.propertyKey'),
+      propertyValue: t('automations.instruction.form.propertyValue'),
+      removeItem: t('automations.instruction.form.removeItem'),
+      removeProperty: t('automations.instruction.form.removeProperty'),
+      uploadLabel: t('automations.instruction.form.uploadLabel'),
+      uploadRemove: t('automations.instruction.form.uploadRemove'),
+    }),
+    [t]
+  );
+
   return (
     <div className="flex flex-1 flex-col p-4 shadow-inner shadow-slate-500 -mx-2 px-6">
       <SchemaForm
@@ -51,6 +66,7 @@ export const Settings = ({ removeWidget, schema }: SettingsProps) => {
         onChange={setConfig}
         initialValues={config}
         buttons={[]}
+        locales={locales}
       />
       <Divider />
       {SetupComponent && (

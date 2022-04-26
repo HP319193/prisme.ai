@@ -18,15 +18,7 @@ export const useLocalizedText = () => {
     [language]
   );
 
-  const localizeSchemaForm = useCallback(
-    (schema: Schema) => {
-      console.log(schema);
-      return schema;
-    },
-    [language]
-  );
-
-  return { localize, localizeSchemaForm };
+  return { localize };
 };
 
 export default useLocalizedText;
