@@ -8,7 +8,6 @@ import { Apps } from '../../apps';
 import Cache from '../../../cache/__mocks__/cache';
 import { AvailableModels } from '../../workspaces/__mocks__/workspaces';
 import { EventType } from '../../../eda';
-import { ObjectNotFoundError } from '../../../errors';
 import Runtime from '..';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../config';
 import { EventSource } from '@prisme.ai/broker';
@@ -26,9 +25,16 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
       ...partialSource,
     },
     {
-      forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
       validateEvents: false,
       ...opts,
+    }
+  );
+
+  const emitBroker = broker.child(
+    {},
+    {
+      forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+      validateEvents: false,
     }
   );
 
@@ -51,6 +57,7 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
 
   return {
     broker,
+    emitBroker,
     runtime,
     workspaces,
     sendEventSpy: jest.spyOn(broker, '_send'),
@@ -249,7 +256,7 @@ describe('Logic', () => {
     expect(obj).toEqual({
       un: true,
       deux: true,
-      blouh: true,
+      'trois blouh': true,
       quatre: true,
     });
   });
@@ -268,25 +275,73 @@ describe('Logic', () => {
     );
   });
 
-  // it('Simple wait', async () => {
-  //   const { execute, broker } = getMocks();
+  it('Simple wait', async () => {
+    const { execute, emitBroker } = getMocks();
 
-  //   const waitPromise = execute('simpleWait', {
-  //     event: 'myEvent',
-  //   });
+    const waitPromise = execute('simpleWait', {
+      event: 'myEvent',
+    });
 
-  //   // Sleep 100ms
-  //   await new Promise((resolve) => setTimeout(resolve, 100));
-  //   const event = await broker.send('myEvent', {
-  //     foo: 'bar',
-  //   });
-  //   console.log('sent : ', event);
+    // Sleep 100ms
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const event = await emitBroker.send('myEvent', {
+      foo: 'bar',
+    });
 
-  //   const output = await waitPromise;
-  //   expect(output).toEqual({
-  //     foo: 'bar',
-  //   });
-  // });
+    const output = await waitPromise;
+    expect(output).toEqual({
+      foo: 'bar',
+    });
+  });
+
+  it('Wait with filters', async () => {
+    const { execute, emitBroker } = getMocks();
+
+    const waitPromise = execute('simpleWait', {
+      event: 'myEvent',
+      filters: {
+        'payload.foo': 'baz',
+      },
+    });
+
+    // Sleep 100ms
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await emitBroker.send('myEvent', {
+      foo: 'bar',
+    });
+    await emitBroker.send('myEvent', {
+      foo: 'baz',
+    });
+
+    const output = await waitPromise;
+    expect(output).toEqual({
+      foo: 'baz',
+    });
+  });
+
+  it('Simple break', async () => {
+    const { execute, emitBroker } = getMocks();
+
+    const output = await execute('simpleBreak', {});
+
+    expect(output).toEqual('beforeBreak');
+  });
+
+  it('Default break only breaks current automation', async () => {
+    const { execute, emitBroker } = getMocks();
+
+    const output = await execute('breakFromChildAutomation', {});
+
+    expect(output).toEqual('afterBreak');
+  });
+
+  it('Break with scope: all breaks all automations', async () => {
+    const { execute, emitBroker } = getMocks();
+
+    const output = await execute('breakFromChildAutomation', { scope: 'all' });
+
+    expect(output).toEqual('beforeBreak');
+  });
 });
 
 afterAll(async () => {

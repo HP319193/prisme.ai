@@ -146,19 +146,26 @@ automations:
           value:
             - un
             - deux
-            - trois
-            - quatre
-      - repeat:
-          on: '{{myList}}'
-          do:
-            - conditions:
-                '{{item}} == "trois"':
-                  - set:
-                      name: item
-                      value: blouh
+      - conditions:
+          '{{myList.length}} > 1':
             - set:
-                name: myObj[{{item}}]
-                value: true
+                name: myList
+                value:
+                  - un
+                  - deux
+                  - trois
+                  - quatre
+            - repeat:
+                on: '{{myList}}'
+                do:
+                  - conditions:
+                      '{{item}} == "trois"':
+                        - set:
+                            name: item
+                            value: "{{item}} blouh"
+                  - set:
+                      name: myObj[{{item}}]
+                      value: true
     output: '{{myObj}}'
     when:
       endpoint: true
@@ -171,8 +178,43 @@ automations:
       - wait:
           oneOf:
             - event: '{{body.event}}'
+              filters: '{{body.filters}}'
           output: waited
     output: '{{waited.payload}}'
+
+  simpleBreak:
+    name: simpleBreak
+    when:
+      endpoint: true
+    do:
+      - set:
+          name: output
+          value: beforeBreak
+      - break:
+          scope: '{{body.scope}}'
+      - set:
+          name: output
+          value: afterBreak
+    output: '{{output}}'
+
+
+  breakFromChildAutomation:
+    name: breakFromChildAutomation
+    when:
+      endpoint: true
+    do:
+      - set:
+          name: output
+          value: beforeBreak
+      - simpleBreak:
+          body:
+            scope: '{{body.scope}}'
+      - set:
+          name: output
+          value: afterBreak
+    output: '{{output}}'
+
+
 
 
 

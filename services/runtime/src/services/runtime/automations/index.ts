@@ -72,19 +72,18 @@ export async function runInstructions(
 ) {
   for (let instruction of instructions || []) {
     const instructionName = Object.keys(instruction || {})[0];
+    // Before each run, we interpolate the instruction to replace all the variables based on the context
+    const interpolatedInstruction = interpolate(
+      instruction,
+      ctx.publicContexts,
+      ['do', 'conditions'] // Do not interpolate 'do' fields nor conditions as they include nested instruction lists
+    );
+
     if (instructionName === InstructionType.Break) {
-      const scope = (<any>instruction)[InstructionType.Break]?.scope;
+      const scope = (<any>interpolatedInstruction)[InstructionType.Break]
+        ?.scope;
       throw new Break(scope);
     }
-
-    // Before each run, we interpolate the instruction to replace all the variables based on the context
-    const interpolatedInstruction = (<any>instruction).conditions
-      ? instruction
-      : interpolate(
-          instruction,
-          ctx.publicContexts,
-          ['do'] // Do not interpolate 'do' fields as they include nested instruction lists
-        );
 
     await runInstruction(
       workspace,
