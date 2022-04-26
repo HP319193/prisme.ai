@@ -4,9 +4,21 @@ import { runInstructions } from '..';
 import { Workspace } from '../../../workspaces';
 import { ContextsManager } from '../../contexts';
 
+type RepeatOn = Extract<Prismeai.Repeat['repeat'], { on: string }>;
+type RepeatUntil = Extract<Prismeai.Repeat['repeat'], { until: number }>;
+
+const isRepeatOn = (value: Prismeai.Repeat['repeat']): value is RepeatOn => {
+  return !!(value as RepeatOn).on;
+};
+const isRepeatUntil = (
+  value: Prismeai.Repeat['repeat']
+): value is RepeatUntil => {
+  return !!(value as RepeatUntil).until;
+};
+
 export const REPEAT_ITEM_VAR_NAME = 'item';
 export async function repeat(
-  { on, until, do: doInstructions }: Prismeai.Repeat['repeat'],
+  value: Prismeai.Repeat['repeat'],
   {
     workspace,
     logger,
@@ -19,6 +31,9 @@ export async function repeat(
     ctx: ContextsManager;
   }
 ) {
+  const until = isRepeatUntil(value) ? value.until : undefined;
+  const on = isRepeatOn(value) ? value.on : undefined;
+  const { do: doInstructions } = value;
   const maxIterations =
     typeof until !== 'undefined' ? until : (<any>on)?.length || 0;
   for (let i = 0; i < maxIterations; i++) {
