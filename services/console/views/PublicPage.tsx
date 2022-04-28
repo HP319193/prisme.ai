@@ -102,7 +102,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
                   '-'
                 )} block-${name.replace(/\s/g, '-')}`}
               >
-                {Component && <Component />}
+                {Component && <Component edit={false} />}
                 {url && (
                   <Block
                     entityId={`${index}`}

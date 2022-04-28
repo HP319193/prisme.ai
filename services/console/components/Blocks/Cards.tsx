@@ -269,7 +269,7 @@ const Accordion: FC<{
   );
 };
 
-export const Cards = ({ edit }: { edit: boolean }) => {
+export const Cards = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation('pages');
   const { localize } = useLocalizedText();
   const { config = {}, setSetupComponent } = useBlock();
