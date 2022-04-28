@@ -167,11 +167,12 @@ export class ContextsManager {
     }
 
     if (!contexts || contexts.includes(ContextType.User)) {
-      fetchedContexts.user = this.userId
-        ? await this.cache.getObject<UserContext>(
+      fetchedContexts.user =
+        (this.userId &&
+          (await this.cache.getObject<UserContext>(
             this.cacheKey(ContextType.User)
-          )
-        : {};
+          ))) ||
+        {};
     }
     if (!contexts || contexts.includes(ContextType.Session)) {
       fetchedContexts.session = await this.cache.getObject(
@@ -282,7 +283,7 @@ export class ContextsManager {
           : { ...this.contexts[ContextType.Local], ...opts.payload },
         ...additionalContexts,
       },
-      payload: { ...(opts.payload || {}) },
+      payload: { ...(opts.payload || this.payload || {}) },
       broker: opts.broker || this.broker,
       appContext: opts.appContext || this.appContext,
       automationSlug: opts.automationSlug || this.automationSlug,
@@ -348,6 +349,8 @@ export class ContextsManager {
           prevValue !== value
         ) {
           this.userId = value;
+          this.contexts.user = { id: value };
+          this.contexts.session = {};
           await this.fetch([ContextType.User, ContextType.Session]);
           this.broker.parentSource.userId = value;
           return;

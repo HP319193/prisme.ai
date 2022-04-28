@@ -1,0 +1,57 @@
+name: basic
+id: basic
+config:
+  value:
+    configFrom: 'workspace'
+automations:
+  empty:
+    name: empty
+    do: []
+    output:
+      foo: bar
+    when:
+      events:
+        - run.empty
+      endpoint: true
+
+  error:
+    name: error
+    do:
+      - some unknown automation: {}
+    when:
+      events:
+        - throw
+
+  triggerAnotherAutomation:
+    name: triggerAnotherAutomation
+    when:
+      events:
+        - triggerAnotherAutomation
+    do:
+      - emit:
+          event: anotherAutomation
+          payload: '{{payload}}'
+
+  callsAnotherAutomation:
+    name: callsAnotherAutomation
+    when:
+      events:
+        - callsAnotherAutomation
+    do:
+      - anotherAutomation:
+          payload: '{{payload}}'
+
+  anotherAutomation:
+    name: anotherAutomation
+    when:
+      events:
+        - anotherAutomation
+    output: '{{payload}}'
+    do: []
+
+  config:
+    name: get
+    when:
+      events:
+        - config
+    output: '{{config}}'

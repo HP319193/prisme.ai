@@ -185,6 +185,18 @@ export class Workspace {
     });
   }
 
+  listNestedImports(): Record<string, string> {
+    return Object.values(this.imports).reduce(
+      (imports, workspace) => ({
+        ...imports,
+        [workspace.appContext?.appInstanceFullSlug!]:
+          workspace.appContext?.appSlug,
+        ...workspace.listNestedImports(),
+      }),
+      {}
+    );
+  }
+
   getEventTriggers(event: Prismeai.PrismeEvent) {
     const triggers = this.triggers.events[event.type] || [];
     const [firstAppSlug, nestedAppSlugs] = this.parseAppRef(event.type);
@@ -229,16 +241,19 @@ export class Workspace {
       : ['', name];
   }
 
-  getAutomation(slug: string): DetailedAutomation | null {
+  getAutomation(
+    slug: string,
+    allowNested: boolean = true
+  ): DetailedAutomation | null {
     const [appSlug, name] = this.parseAppRef(slug);
-    if (appSlug) {
+    if (appSlug && allowNested) {
       if (!(appSlug in this.imports)) {
         return null;
       }
-      return this.imports[appSlug].getAutomation(name);
+      return this.imports[appSlug].getAutomation(name, false);
     }
 
-    const automation = (this.dsul.automations || {})[name];
+    const automation = (this.dsul.automations || {})[appSlug ? slug : name];
 
     if (!automation) return null;
 

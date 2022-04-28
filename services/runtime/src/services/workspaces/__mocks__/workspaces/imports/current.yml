@@ -1,0 +1,75 @@
+name: imports
+id: imports
+imports:
+  basicApp:
+    appSlug: basicApp
+  preconfigured:
+    appSlug: basicApp
+    config:
+      preconfigured: 'variable'
+
+automations:
+  empty:
+    name: empty
+    do:
+      - emit:
+          event: basicApp.triggerEmpty
+          payload:
+            foo: blah
+    output:
+      foo: bar
+    when:
+      events:
+        - run.empty
+      endpoint: true
+
+
+  throw:
+    name: throw
+    do:
+      - emit:
+          event: basicApp.throw
+    when:
+      events:
+        - throw
+      endpoint: true
+
+  listenBasicAppEvents:
+    name: listenBasicAppEvents
+    when:
+      events:
+        - basicApp.forParentWorkspace
+    output: '{{payload}}'
+    do: []
+
+  callChildAutomation:
+    name: callChildAutomation
+    output: '{{output}}'
+    when:
+      events:
+        - callChildAutomation
+    do:
+      - basicApp.callsAnotherAutomation:
+          payload:
+            user: '{{user.id}}'
+
+
+  forbiddenNestedCall:
+    name: forbiddenNestedCall
+    output: '{{output}}'
+    when:
+      events:
+        - forbiddenNestedCall
+    do:
+      - basicApp.nestedApp.config: {}
+
+  getNestedConfig:
+    name: getNestedConfig
+    output: '{{output}}'
+    when:
+      events:
+        - getNestedConfig
+    do:
+      - preconfigured.nestedConfig:
+          output: output
+

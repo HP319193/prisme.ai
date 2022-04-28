@@ -1,0 +1,42 @@
+name: nestedApp
+id: nestedApp
+config:
+  value:
+    nestedApp: someValue
+automations:
+  basicEmpty:
+    name: basicEmpty
+    do: []
+    output:
+      msg: 'result of nestedApp.basicEmpty'
+    when:
+      events:
+        - triggerEmpty
+      endpoint: true
+
+
+  config:
+    name: config
+    when:
+      events:
+        - config
+    output: '{{config}}'
+
+  testRunContext:
+    name: testRunContext
+    when:
+      endpoint: true
+      events:
+        - testRunContext
+    do:
+      - set:
+          name: run.runs[]
+          value:
+            appSlug: '{{run.appSlug}}'
+            appInstanceSlug: '{{run.appInstanceSlug}}'
+            appInstanceFullSlug: '{{run.appInstanceFullSlug}}'
+            automationSlug: '{{run.automationSlug}}'
+            parentAppSlug: '{{run.parentAppSlug}}'
+      - emit:
+          event: testRunContext.finished
+    output: '{{run.runs}}'

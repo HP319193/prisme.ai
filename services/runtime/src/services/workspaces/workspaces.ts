@@ -2,7 +2,7 @@ import yaml from 'js-yaml';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../eda';
 import { ObjectNotFoundError } from '../../errors';
-import Storage from '../../storage';
+import Storage, { StorageOptions } from '../../storage';
 import { DriverType } from '../../storage/types';
 import { Workspace } from './workspace';
 import { Apps } from '../apps';
@@ -15,8 +15,13 @@ export class Workspaces extends Storage {
   private workspaces: Record<string, Workspace>;
   private watchedApps: Record<string, string[]>;
 
-  constructor(driverType: DriverType, apps: Apps, broker: Broker) {
-    super(driverType);
+  constructor(
+    driverType: DriverType,
+    driverOptions: StorageOptions[DriverType],
+    apps: Apps,
+    broker: Broker
+  ) {
+    super(driverType, driverOptions);
     this.workspaces = {};
     this.apps = apps;
     this.broker = broker;
@@ -98,17 +103,20 @@ export class Workspaces extends Storage {
                 oldSlug: appInstanceOldSlug,
               },
             } = event as any as Prismeai.ConfiguredAppInstance;
-            workspace.updateImport(appInstanceSlug, appInstance);
+            await workspace.updateImport(appInstanceSlug, appInstance);
             if (appInstanceOldSlug) {
-              workspace.deleteImport(appInstanceOldSlug);
+              await workspace.deleteImport(appInstanceOldSlug);
             }
-            this.watchAppCurrentVersions(workspaceId, [appInstance]);
+            this.watchAppCurrentVersions(workspace);
             break;
           case EventType.UninstalledApp:
             const uninstalledAppInstanceSlug = (
               event as any as Prismeai.UninstalledAppInstance
             ).payload.slug;
-            workspace.deleteAutomation(uninstalledAppInstanceSlug);
+            // TODO better way to enforce this is executed after runtime processEvent
+            new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
+              workspace.deleteImport(uninstalledAppInstanceSlug);
+            });
             break;
         }
         return true;
@@ -126,18 +134,16 @@ export class Workspaces extends Storage {
     return this.workspaces[workspaceId];
   }
 
-  async watchAppCurrentVersions(
-    workspaceId: string,
-    imports: Prismeai.AppInstance[]
-  ) {
-    const requiredApps = Object.values(imports || {})
-      .filter(({ appVersion }) => !appVersion || appVersion === 'current')
-      .map(({ appSlug }) => appSlug);
-    this.watchedApps = requiredApps.reduce(
+  async watchAppCurrentVersions(workspace: Workspace) {
+    const nestedApps = [
+      ...new Set(Object.values(workspace.listNestedImports())),
+    ];
+
+    this.watchedApps = nestedApps.reduce(
       (watchedApps, watchAppId) => ({
         ...watchedApps,
         [watchAppId]: [
-          ...new Set([...(watchedApps[watchAppId] || []), workspaceId]),
+          ...new Set([...(watchedApps[watchAppId] || []), workspace.id]),
         ],
       }),
       this.watchedApps
@@ -154,7 +160,7 @@ export class Workspaces extends Storage {
 
       // Check imported apps & update watched app current versions
       if (dsul.imports) {
-        this.watchAppCurrentVersions(workspaceId, Object.values(dsul.imports));
+        this.watchAppCurrentVersions(this.workspaces[workspaceId]);
       }
 
       return dsul;

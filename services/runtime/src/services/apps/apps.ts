@@ -1,6 +1,6 @@
 import yaml from 'js-yaml';
 import { ObjectNotFoundError } from '../../errors';
-import Storage from '../../storage';
+import Storage, { StorageOptions } from '../../storage';
 import { DriverType } from '../../storage/types';
 
 type AppSlug = string;
@@ -12,8 +12,11 @@ interface App {
 export class Apps extends Storage {
   private apps: Record<AppSlug, App>;
 
-  constructor(driverType: DriverType) {
-    super(driverType);
+  constructor(
+    driverType: DriverType,
+    driverOptions: StorageOptions[DriverType]
+  ) {
+    super(driverType, driverOptions);
     this.apps = {};
   }
 

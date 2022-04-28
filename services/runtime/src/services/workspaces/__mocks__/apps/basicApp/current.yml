@@ -1,0 +1,125 @@
+name: basicApp
+id: basicApp
+imports:
+  nestedApp:
+    appSlug: nestedApp
+    config: '{{config}}'
+config:
+  value:
+    API_URL: https://google.fr
+automations:
+  basicEmpty:
+    name: basicEmpty
+    do: []
+    output:
+      msg: 'result of basicApp.basicEmpty'
+    when:
+      events:
+        - triggerEmpty
+      endpoint: true
+
+  throw:
+    name: throw
+    do:
+      - some unknown automation: {}
+    when:
+      events:
+        - throw
+
+  triggerAnotherAutomation:
+    name: triggerAnotherAutomation
+    when:
+      events:
+        - triggerAnotherAutomation
+    do:
+      - emit:
+          event: anotherAutomation
+          payload: '{{payload}}'
+
+  callsAnotherAutomation:
+    name: callsAnotherAutomation
+    when:
+      events:
+        - callsAnotherAutomation
+    do:
+      - anotherAutomation:
+          payload: '{{payload}}'
+
+  anotherAutomation:
+    name: anotherAutomation
+    when:
+      events:
+        - anotherAutomation
+    output:
+      fromAppInstance: '{{payload}}'
+    do:
+      - emit:
+          event: forParentWorkspace
+          payload:
+            sourceAutomation: '{{run.automationSlug}}'
+            sourcePayload: '{{payload}}'
+
+
+  config:
+    name: config
+    when:
+      events:
+        - config
+    output: '{{config}}'
+
+  nestedConfig:
+    name: nestedConfig
+    when:
+      events:
+        - nestedConfig
+    do:
+      - nestedApp.config:
+          output: output
+    output: '{{output}}'
+
+  onInstalled:
+    name: onInstalled
+    when:
+      events:
+        - workspaces.apps.installed
+    output: '{{config}}'
+
+  onConfigured:
+    name: onConfigured
+    when:
+      events:
+        - workspaces.apps.configured
+    output: '{{config}}'
+
+  onUninstalled:
+    name: onUninstalled
+    when:
+      events:
+        - workspaces.apps.uninstalled
+    output: '{{config}}'
+
+  testRunContext:
+    name: testRunContext
+    when:
+      endpoint: true
+    do:
+      - set:
+          name: run.runs[]
+          value:
+            appSlug: '{{run.appSlug}}'
+            appInstanceSlug: '{{run.appInstanceSlug}}'
+            appInstanceFullSlug: '{{run.appInstanceFullSlug}}'
+            automationSlug: '{{run.automationSlug}}'
+            parentAppSlug: '{{run.parentAppSlug}}'
+      - nestedApp.testRunContext: {}
+      - emit:
+          event: nestedApp.testRunContext
+      - wait:
+          oneOf:
+            - event: nestedApp.testRunContext.finished
+              filters:
+                source.correlationId: '{{run.correlationId}}'
+      - break: {}
+    output: '{{run.runs}}'
+
+

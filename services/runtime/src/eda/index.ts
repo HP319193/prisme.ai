@@ -43,36 +43,39 @@ export class CallbackContext {
   }
 }
 
-export const broker = new Broker<CallbackContext>(
-  {
-    service: APP_NAME,
-  },
-  {
-    driver: {
-      type: BROKER_DRIVER,
-      host: BROKER_HOST,
-      password: BROKER_PASSWORD,
-      namespace: BROKER_NAMESPACE,
-      topicsMaxLen: BROKER_TOPIC_MAXLEN,
+export function initEDA() {
+  const broker = new Broker<CallbackContext>(
+    {
+      service: APP_NAME,
     },
-    validator: {
-      oasFilepath: EVENTS_OAS_PATH,
-      whitelistEventPrefixes: BROKER_WHITELIST_EVENT_PREFIXES.concat([
-        'runtime.waits.fulfilled.',
-      ]),
-    },
-    CallbackContextCtor: CallbackContext,
-  }
-);
+    {
+      driver: {
+        type: BROKER_DRIVER,
+        host: BROKER_HOST,
+        password: BROKER_PASSWORD,
+        namespace: BROKER_NAMESPACE,
+        topicsMaxLen: BROKER_TOPIC_MAXLEN,
+      },
+      validator: {
+        oasFilepath: EVENTS_OAS_PATH,
+        whitelistEventPrefixes: BROKER_WHITELIST_EVENT_PREFIXES.concat([
+          'runtime.waits.fulfilled.',
+        ]),
+      },
+      CallbackContextCtor: CallbackContext,
+    }
+  );
 
-broker.onErrorCallback = (event, err) => {
-  logger.debug({ event, err });
-};
+  broker.onErrorCallback = (event, err) => {
+    logger.debug({ event, err });
+  };
 
+  return broker;
+}
 export interface EventMetrics {
   pending: PendingEvents;
 }
-export async function getMetrics(): Promise<EventMetrics> {
+export async function getMetrics(broker: Broker): Promise<EventMetrics> {
   return {
     pending: await broker.pending(),
   };

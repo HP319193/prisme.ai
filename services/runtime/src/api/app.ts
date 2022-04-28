@@ -14,8 +14,9 @@ import {
   validationMiddleware,
 } from './middlewares/validation';
 import Runtime from '../services/runtime';
+import { Broker } from '@prisme.ai/broker';
 
-export function init(runtime: Runtime) {
+export function init(runtime: Runtime, broker: Broker) {
   const app = express();
 
   /**
@@ -33,7 +34,7 @@ export function init(runtime: Runtime) {
   /**
    * Metrics
    */
-  initMetrics(app);
+  initMetrics(app, broker);
 
   /**
    * Traceability
@@ -45,7 +46,7 @@ export function init(runtime: Runtime) {
    */
   app.set('trust proxy', true);
 
-  app.use(requestDecorator);
+  app.use(requestDecorator(broker));
 
   /**
    * Validation
