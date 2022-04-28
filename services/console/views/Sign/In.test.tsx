@@ -13,6 +13,11 @@ jest.mock('../../components/UserProvider', () => {
     useUser: () => mock,
   };
 });
+jest.mock('next/image', () => {
+  const Image = ({ src }: any) => <div />;
+
+  return Image;
+});
 jest.mock('next/router', () => {
   const push = jest.fn();
   return {
