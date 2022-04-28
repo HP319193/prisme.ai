@@ -107,10 +107,10 @@ export const SignIn = () => {
                 t={t}
                 i18nKey="up.topForm3"
                 values={{
-                  url: '/signup',
+                  url: '/signin',
                 }}
                 components={{
-                  a: <a href={`signup`} />,
+                  a: <a href={`signin`} />,
                 }}
               />
             </div>
