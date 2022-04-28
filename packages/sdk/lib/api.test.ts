@@ -45,7 +45,7 @@ it('should call get /workspaces', () => {
   const api = new Api('/fake/');
   api.get = jest.fn();
   api.getWorkspaces();
-  expect(api.get).toHaveBeenCalledWith('/workspaces');
+  expect(api.get).toHaveBeenCalledWith('/workspaces?limit=300');
 });
 
 it('should call get /workspaces/42', () => {
