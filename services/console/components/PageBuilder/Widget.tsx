@@ -40,15 +40,16 @@ export const Widget = ({
   const { buttons } = useBlock();
   const [settingsVisible, setSettingsVisible] = useState(false);
 
-  const schema: Schema | undefined = useMemo(
-    () =>
-      editSchema &&
-      localizeSchemaForm({
-        type: 'object',
-        properties: editSchema,
-      }),
-    [editSchema, localizeSchemaForm]
-  );
+  const schema: Schema | undefined = useMemo(() => {
+    if (!editSchema) return;
+    const schema: Schema = editSchema.type
+      ? editSchema
+      : {
+          type: 'object',
+          properties: editSchema,
+        };
+    return localizeSchemaForm(schema);
+  }, [editSchema, localizeSchemaForm]);
 
   return (
     <div
