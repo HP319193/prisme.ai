@@ -122,7 +122,7 @@
       "label_repeat_until": "Repeat {{count}} time",
       "label_repeat_until_other": "Repeat {{count}} times",
       "label_all": "All instructions",
-      "label_wait": "Wait for event",
+      "label_wait": "Wait",
       "label_set": "Set var",
       "label_delete": "Delete var",
       "label_conditions": "Conditions",

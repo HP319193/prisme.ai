@@ -122,7 +122,7 @@
       "label_repeat_until": "Répète {{count}} fois",
       "label_repeat_until_other": "Répète {{count}} fois",
       "label_all": "Toutes les instructions",
-      "label_wait": "Attend l'événement",
+      "label_wait": "Attend",
       "label_set": "Définit var",
       "label_delete": "Supprime var",
       "label_conditions": "Conditions",
