@@ -1,4 +1,4 @@
-import { Button, Layout, Text, Title } from '@prisme.ai/design-system';
+import { Tooltip, Layout, Text, Title } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -76,49 +76,55 @@ export const WorkspacesView = () => {
                 </div>
               </button>
               {workspacesList.map(
-                ({ name, id, photo, description, createdBy }) => (
-                  <Link href={`/workspaces/${id}`} key="1">
-                    <button
-                      key={id}
-                      className="p-2 bg-white !m-4 w-[20rem] h-[6rem] content-center flex flex-col justify-between overflow-hidden rounded border border-gray-200 border-solid"
-                    >
-                      <div className="flex grow flex-row text-center">
-                        <div className="flex mx-3">
-                          {photo ? (
-                            <div className="flex grow items-center justify-center">
-                              <img
-                                src={photo}
-                                className="rounded text-blue h-[48px] w-[48px] object-cover"
+                ({ name, id, photo, description, createdBy }) => {
+                  const descriptionDisplayed =
+                    localize(description) ||
+                    (user &&
+                      user.id === createdBy &&
+                      t('workspaces.defaultDescription')) ||
+                    '';
+                  return (
+                    <Link href={`/workspaces/${id}`} key={id}>
+                      <button className="p-2 bg-white !m-4 w-[20rem] h-[6rem] content-center flex flex-col justify-between overflow-hidden rounded border border-gray-200 border-solid">
+                        <div className="flex grow flex-row text-center">
+                          <div className="flex mx-3">
+                            {photo ? (
+                              <div className="flex grow items-center justify-center">
+                                <img
+                                  src={photo}
+                                  className="rounded text-blue h-[48px] w-[48px] object-cover"
+                                  alt={name}
+                                />
+                              </div>
+                            ) : (
+                              <Image
+                                src={icon}
+                                width={48}
+                                height={48}
+                                className="rounded text-blue"
                                 alt={name}
                               />
+                            )}
+                          </div>
+                          <div className="flex grow flex-col items-start">
+                            <Title level={4}>{name}</Title>
+                            <Tooltip title={descriptionDisplayed}>
+                              <Text
+                                type="grey"
+                                className="overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]"
+                              >
+                                {descriptionDisplayed}
+                              </Text>
+                            </Tooltip>
+                            <div className="ant-btn ant-btn-link !p-0">
+                              {t('edit.label')}
                             </div>
-                          ) : (
-                            <Image
-                              src={icon}
-                              width={48}
-                              height={48}
-                              className="rounded text-blue"
-                              alt={name}
-                            />
-                          )}
-                        </div>
-                        <div className="flex grow flex-col items-start">
-                          <Title level={4}>{name}</Title>
-                          <Text type="grey">
-                            {localize(description) ||
-                              (user &&
-                                user.id === createdBy &&
-                                t('workspaces.defaultDescription')) ||
-                              ''}
-                          </Text>
-                          <div className="ant-btn ant-btn-link !p-0">
-                            {t('edit.label')}
                           </div>
                         </div>
-                      </div>
-                    </button>
-                  </Link>
-                )
+                      </button>
+                    </Link>
+                  );
+                }
               )}
             </div>
           </div>
