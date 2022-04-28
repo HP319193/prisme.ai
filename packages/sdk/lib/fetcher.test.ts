@@ -11,6 +11,9 @@ it('should fetch', async () => {
     json() {
       return undefined;
     },
+    clone() {
+      return { ...this };
+    },
   }));
   const o = await fetcher.get('url');
   expect(o.headers).toEqual({ foo: 'bar' });
@@ -31,6 +34,9 @@ it('should fetch with auth', async () => {
     headers: {},
     json() {
       return {};
+    },
+    clone() {
+      return { ...this };
     },
   }));
   fetcher.token = 'token';
@@ -108,6 +114,9 @@ it('should post', async () => {
     json() {
       return {};
     },
+    clone() {
+      return { ...this };
+    },
   }));
   await fetcher.post('url');
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
@@ -127,6 +136,9 @@ it('should post with body', async () => {
     headers: {},
     json() {
       return {};
+    },
+    clone() {
+      return { ...this };
     },
   }));
   await fetcher.post('url', {});
@@ -149,6 +161,9 @@ it('should patch', async () => {
     json() {
       return {};
     },
+    clone() {
+      return { ...this };
+    },
   }));
   await fetcher.patch('url', {});
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
@@ -169,6 +184,9 @@ it('should delete', async () => {
     headers: {},
     json() {
       return {};
+    },
+    clone() {
+      return { ...this };
     },
   }));
   await fetcher.delete('url');
