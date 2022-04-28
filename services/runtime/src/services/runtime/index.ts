@@ -125,12 +125,12 @@ export default class Runtime {
     });
 
     let cancelTriggers = false;
-    matchingWaits.map(async (cur) => {
+    matchingWaits.map((cur) => {
       const FulfilledWaitEvent = EventType.FulfilledWait.replace(
         '{{id}}',
         cur.request.id
       );
-      await broker.send<Prismeai.FulfilledWait['payload']>(FulfilledWaitEvent, {
+      broker.send<Prismeai.FulfilledWait['payload']>(FulfilledWaitEvent, {
         id: cur.request.id,
         event,
       });

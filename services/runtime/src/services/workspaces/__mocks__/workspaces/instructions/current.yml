@@ -179,6 +179,7 @@ automations:
           oneOf:
             - event: '{{body.event}}'
               filters: '{{body.filters}}'
+              cancelTriggers: '{{body.cancelTriggers}}'
           output: waited
     output: '{{waited.payload}}'
 

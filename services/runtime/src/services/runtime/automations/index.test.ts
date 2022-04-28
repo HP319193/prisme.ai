@@ -276,21 +276,41 @@ describe('Logic', () => {
   });
 
   it('Simple wait', async () => {
-    const { execute, emitBroker } = getMocks();
+    const { execute, emitBroker, sendEventSpy } = getMocks();
 
     const waitPromise = execute('simpleWait', {
-      event: 'myEvent',
+      event: 'noop',
     });
 
     // Sleep 100ms
     await new Promise((resolve) => setTimeout(resolve, 100));
-    const event = await emitBroker.send('myEvent', {
+    const event = await emitBroker.send('noop', {
       foo: 'bar',
     });
 
     const output = await waitPromise;
     expect(output).toEqual({
       foo: 'bar',
+    });
+
+    // Usual automations should also be triggered
+    await waitForExpect(async () => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            automationSlug: 'noop',
+            correlationId: event.source.correlationId,
+          }),
+          payload: expect.objectContaining({
+            output: expect.objectContaining({
+              run: expect.objectContaining({
+                automationSlug: 'noop',
+              }),
+            }),
+          }),
+        })
+      );
     });
   });
 
@@ -317,6 +337,44 @@ describe('Logic', () => {
     expect(output).toEqual({
       foo: 'baz',
     });
+  });
+
+  it('Wait with cancelTriggers: true', async () => {
+    const { execute, emitBroker, sendEventSpy } = getMocks();
+
+    const waitPromise = execute('simpleWait', {
+      event: 'noop',
+      cancelTriggers: true,
+    });
+
+    // Sleep 100ms
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const event = await emitBroker.send('noop', {
+      foo: 'bar',
+    });
+
+    const output = await waitPromise;
+    expect(output).toEqual({
+      foo: 'bar',
+    });
+
+    // Usual automations should not be triggered
+    expect(sendEventSpy).not.toBeCalledWith(
+      expect.objectContaining({
+        type: EventType.ExecutedAutomation,
+        source: expect.objectContaining({
+          automationSlug: 'noop',
+          correlationId: event.source.correlationId,
+        }),
+        payload: expect.objectContaining({
+          output: expect.objectContaining({
+            run: expect.objectContaining({
+              automationSlug: 'noop',
+            }),
+          }),
+        }),
+      })
+    );
   });
 
   it('Simple break', async () => {
