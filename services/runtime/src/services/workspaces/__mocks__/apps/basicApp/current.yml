@@ -97,3 +97,29 @@ automations:
       events:
         - workspaces.apps.uninstalled
     output: '{{config}}'
+
+  testRunContext:
+    name: testRunContext
+    when:
+      endpoint: true
+    do:
+      - set:
+          name: run.runs[]
+          value:
+            appSlug: '{{run.appSlug}}'
+            appInstanceSlug: '{{run.appInstanceSlug}}'
+            appInstanceFullSlug: '{{run.appInstanceFullSlug}}'
+            automationSlug: '{{run.automationSlug}}'
+            parentAppSlug: '{{run.parentAppSlug}}'
+      - nestedApp.testRunContext: {}
+      - emit:
+          event: nestedApp.testRunContext
+      - wait:
+          oneOf:
+            - event: nestedApp.testRunContext.finished
+              filters:
+                source.correlationId: '{{run.correlationId}}'
+      - break: {}
+    output: '{{run.runs}}'
+
+

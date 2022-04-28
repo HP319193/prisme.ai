@@ -234,6 +234,42 @@ describe('Variables & Contexts', () => {
     const afterDelete = await execute('myDelete', { field: 'session.value' });
     expect(afterDelete.session).toEqual({});
   });
+
+  it('Run context should always reflect current automation / appInstance', async () => {
+    const { execute } = getMocks();
+
+    const output = await execute('testRunContext', {});
+    expect(output).toEqual([
+      expect.objectContaining({
+        automationSlug: 'testRunContext',
+        appSlug: '',
+        appInstanceSlug: '',
+        appInstanceFullSlug: '',
+        parentAppSlug: '',
+      }),
+      expect.objectContaining({
+        automationSlug: 'testRunContext',
+        appSlug: 'basicApp',
+        appInstanceSlug: 'basicApp',
+        appInstanceFullSlug: 'basicApp',
+        parentAppSlug: '',
+      }),
+      expect.objectContaining({
+        automationSlug: 'testRunContext',
+        appSlug: 'nestedApp',
+        appInstanceSlug: 'nestedApp',
+        appInstanceFullSlug: 'basicApp.nestedApp',
+        parentAppSlug: 'basicApp',
+      }),
+      expect.objectContaining({
+        automationSlug: 'testRunContext',
+        appSlug: 'nestedApp',
+        appInstanceSlug: 'nestedApp',
+        appInstanceFullSlug: 'basicApp.nestedApp',
+        parentAppSlug: 'basicApp',
+      }),
+    ]);
+  });
 });
 
 describe('Logic', () => {

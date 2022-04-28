@@ -1,5 +1,8 @@
 name: instructions
 id: instructions
+imports:
+  basicApp:
+    appSlug: basicApp
 config:
   value:
     petite: maison
@@ -215,6 +218,21 @@ automations:
           value: afterBreak
     output: '{{output}}'
 
+  testRunContext:
+    name: testRunContext
+    when:
+      endpoint: true
+    do:
+      - set:
+          name: run.runs[]
+          value:
+            appSlug: '{{run.appSlug}}'
+            appInstanceSlug: '{{run.appInstanceSlug}}'
+            appInstanceFullSlug: '{{run.appInstanceFullSlug}}'
+            automationSlug: '{{run.automationSlug}}'
+            parentAppSlug: '{{run.parentAppSlug}}'
+      - basicApp.testRunContext: {}
+    output: '{{run.runs}}'
 
 
 
