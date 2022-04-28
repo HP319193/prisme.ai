@@ -35,7 +35,7 @@ const EmptyObject = {};
 const AppsSidebarItem = ({
   workspaceId,
   slug = '',
-  config: { schema, widget } = EmptyObject,
+  config: { schema, block } = EmptyObject,
   onToggle,
 }: AppsSidebarItemProps) => {
   const { uninstallApp } = useWorkspaces();
@@ -79,10 +79,10 @@ const AppsSidebarItem = ({
       };
       return <SchemaForm schema={s} onSubmit={save} initialValues={value} />;
     }
-    if (widget) {
+    if (block) {
       return (
         <Block
-          url={widget}
+          url={block}
           entityId={slug}
           token={`${api.token}`}
           workspaceId={workspaceId}
@@ -91,7 +91,7 @@ const AppsSidebarItem = ({
       );
     }
     return null;
-  }, [save, schema, slug, value, widget, workspaceId]);
+  }, [save, schema, slug, value, block, workspaceId]);
 
   if (!configComponent)
     return (

@@ -30,7 +30,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     isReady,
     query: { pageSlug },
   } = useRouter();
-  const widgetsConfigs = useBlocksConfigs(page);
+  const blocksConfigs = useBlocksConfigs(page);
 
   useEffect(() => {
     // Page is null because it does not exist OR because it need authentication
@@ -45,10 +45,10 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     fetchPage();
   }, [pageSlug, user]);
 
-  const widgets = useMemo(
+  const blocks = useMemo(
     () =>
       currentPage && typeof currentPage === 'object'
-        ? currentPage.widgets.map(({ name = '', url, config, appInstance }) => {
+        ? currentPage.blocks.map(({ name = '', url, config, appInstance }) => {
             if (Object.keys(BuiltinBlocks).includes(name)) {
               return {
                 name,
@@ -86,14 +86,14 @@ export const PublicPage = ({ page }: PublicPageProps) => {
         <meta name="description" content={localize(currentPage.description)} />
       </Head>
       <div className="page-blocks">
-        {widgets.map(
+        {blocks.map(
           (
             { name = '', appInstance = '', url = '', component: Component },
             index
           ) => (
             <BlockProvider
               key={index}
-              config={widgetsConfigs[index]}
+              config={blocksConfigs[index]}
               appConfig={{}}
             >
               <div

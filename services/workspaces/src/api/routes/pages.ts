@@ -87,7 +87,7 @@ export default function init(
       $or: [{ id }, { slug: id }],
     });
 
-    // Get widgets urls from workspace and apps
+    // Get blocks urls from workspace and apps
     const authorizedAccessManager = await accessManager.as({
       id: 'api',
       role: Role.SuperAdmin,
@@ -104,16 +104,16 @@ export default function init(
       page.workspaceId || workspaceId
     );
 
-    const getWidgetDetails = (name: string) => {
-      if (workspace.widgets && workspace.widgets[name]) {
-        return { url: workspace.widgets[name].url };
+    const getBlockDetails = (name: string) => {
+      if (workspace.blocks && workspace.blocks[name]) {
+        return { url: workspace.blocks[name].url };
       }
       const details = apps.reduce<{
         url: string;
         appInstance: string;
-      } | null>((prev, { slug: appInstance, widgets }) => {
+      } | null>((prev, { slug: appInstance, blocks }) => {
         if (prev) return prev;
-        const found = widgets.find(
+        const found = blocks.find(
           ({ slug }) => `${appInstance}.${slug}` === name
         );
         return found
@@ -127,10 +127,10 @@ export default function init(
     };
     const detailedPage: Prismeai.DetailedPage = {
       ...page,
-      widgets: page.widgets.map((widget) => ({
-        ...widget,
-        ...(widget.name
-          ? getWidgetDetails(widget.name)
+      blocks: page.blocks.map((block) => ({
+        ...block,
+        ...(block.name
+          ? getBlockDetails(block.name)
           : { url: '', appInstance: '' }),
       })),
     };

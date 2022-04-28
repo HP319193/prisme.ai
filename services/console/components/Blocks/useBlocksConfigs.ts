@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import api, { Events } from '../../utils/api';
 
 export const useBlocksConfigs = (page: Prismeai.Page | null) => {
-  const [widgetsConfigs, setWidgetsConfigs] = useState<any[]>([]);
+  const [blocksConfigs, setBlocksConfigs] = useState<any[]>([]);
 
   useEffect(() => {
     if (!page) return;
-    setWidgetsConfigs(page.widgets.map(({ config }) => config));
+    setBlocksConfigs(page.blocks.map(({ config }) => config));
   }, [page]);
 
   const socket = useRef<Events>();
@@ -24,7 +24,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
     socket.current = api.streamEvents(page.workspaceId);
 
     const off = socket.current.all((e, { payload }) => {
-      const updateEvents = page.widgets.reduce<Record<string, number[]>>(
+      const updateEvents = page.blocks.reduce<Record<string, number[]>>(
         (prev, { config }, index) =>
           !config || !config.updateOn
             ? prev
@@ -36,7 +36,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
       );
 
       if (Object.keys(updateEvents).includes(e)) {
-        setWidgetsConfigs((configs) => {
+        setBlocksConfigs((configs) => {
           const newConfigs = [...configs];
           (updateEvents[e] || []).forEach((id) => {
             newConfigs[id] = payload;
@@ -51,10 +51,10 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
     };
   }, [page]);
 
-  // Init widgets
+  // Init blocks
   useEffect(() => {
     if (!page || !page.workspaceId) return;
-    const initEvents = page.widgets.reduce<string[]>(
+    const initEvents = page.blocks.reduce<string[]>(
       (prev, { config }) =>
         !config || !config.onInit ? prev : [...prev, config.onInit],
       []
@@ -70,7 +70,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
     );
   }, [page]);
 
-  return widgetsConfigs;
+  return blocksConfigs;
 };
 
 export default useBlocksConfigs;

@@ -14,37 +14,37 @@ import Link from 'next/link';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';
 import * as BuiltinBlocks from '../../Blocks';
 
-interface WidgetFormProps {
-  onSubmit: (widgetSlug: string) => void;
+interface PageBlockFormProps {
+  onSubmit: (blockSlug: string) => void;
 }
 
-export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
-  const { widgets } = usePageBuilder();
+export const PageBlockForm = ({ onSubmit }: PageBlockFormProps) => {
+  const { blocks } = usePageBuilder();
   const {
     workspace: { id: workspaceId },
   } = useWorkspace();
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const [search, setSearch] = useState('');
-  const filteredWidgets = useMemo(() => {
+  const filteredBlocks = useMemo(() => {
     return [
       {
         appName: 'Built-In',
         slug: '',
-        widgets: Object.keys(BuiltinBlocks).map(
+        blocks: Object.keys(BuiltinBlocks).map(
           (name) =>
             ({
               name,
               description: '',
               slug: name,
               url: '',
-            } as Prismeai.Widget & { slug: string })
+            } as Prismeai.Block & { slug: string })
         ),
       },
-      ...widgets,
-    ].flatMap(({ appName, slug, widgets }) => {
-      if (!widgets || widgets.length === 0) return [];
-      const searchIn = `${appName} ${slug} ${widgets.map(
+      ...blocks,
+    ].flatMap(({ appName, slug, blocks }) => {
+      if (!blocks || blocks.length === 0) return [];
+      const searchIn = `${appName} ${slug} ${blocks.map(
         ({ name, description, slug }) =>
           `${slug} ${localize(name)} ${localize(description)}`
       )}`.toLowerCase();
@@ -52,19 +52,19 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
       return {
         appName,
         slug,
-        widgets: widgets.filter(({ name, description, slug }) =>
+        blocks: blocks.filter(({ name, description, slug }) =>
           `${localize(name)} ${localize(description)} ${slug}`
             .toLowerCase()
             .match(search.toLowerCase())
         ),
       };
     });
-  }, [localize, search, widgets]);
+  }, [localize, search, blocks]);
 
   const isEmpty =
-    !widgets ||
-    !widgets.reduce<boolean>(
-      (prev, { widgets = [] }) => prev || widgets.length > 0,
+    !blocks ||
+    !blocks.reduce<boolean>(
+      (prev, { blocks = [] }) => prev || blocks.length > 0,
       false
     );
 
@@ -75,7 +75,7 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
           <a className="flex flex-1 justify-center items-center flex-col">
             <IconApps height={100} width={100} className="text-gray-200" />
             <div className="mt-4 text-gray text-center">
-              {t('pages.widgets.empty')}
+              {t('pages.blocks.empty')}
             </div>
           </a>
         </Link>
@@ -88,11 +88,11 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
       <SearchInput
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder={t('pages.widgets.search')}
+        placeholder={t('pages.blocks.search')}
         className="mb-6"
       />
       <Space direction="vertical" className="flex grow overflow-x-auto">
-        {filteredWidgets.map(({ appName, slug: appSlug, widgets }) => (
+        {filteredBlocks.map(({ appName, slug: appSlug, blocks }) => (
           <Space key={appName} direction="vertical" className="!flex flex-1">
             {
               <Space>
@@ -102,7 +102,7 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
               </Space>
             }
             <Space direction="vertical" className="!flex flex-1">
-              {widgets.map(({ slug, name, description = '' }) => (
+              {blocks.map(({ slug, name, description = '' }) => (
                 <Button
                   key={`${appSlug}.${slug}`}
                   onClick={() =>
@@ -132,4 +132,4 @@ export const WidgetForm = ({ onSubmit }: WidgetFormProps) => {
   );
 };
 
-export default WidgetForm;
+export default PageBlockForm;

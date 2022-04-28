@@ -324,7 +324,7 @@
         "title": "Publicar el espacio de trabajo como una aplicación",
         "ok": "Publicar",
         "toast": "Aplicación publicada",
-        "content": "Las automatizaciones, las páginas, el widget y la configuración del espacio de trabajo serán accesibles para cualquier persona que instale su aplicación.\nElimine cualquier clave de API privada que desee mantener privada primero"
+        "content": "Las automatizaciones, las páginas, el block y la configuración del espacio de trabajo serán accesibles para cualquier persona que instale su aplicación.\nElimine cualquier clave de API privada que desee mantener privada primero"
       }
     }
   },
@@ -351,25 +351,6 @@
       "error_slug": "El nombre técnico ya está en uso, por favor elija otro",
       "error": "Se ha producido un error"
     },
-    "widgets": {
-      "add": "Añadir un widget",
-      "remove": "Eliminar el widget",
-      "search": "Buscar un widget",
-      "empty": "No hay widgets disponibles en este espacio de trabajo. Instale una App",
-      "settings": {
-        "title": "Parámetros del Block",
-        "toggle_on": "Mostrar configuración",
-        "toggle_off": "Ocultar la configuración",
-        "onInit": {
-          "label": "Evento de inicialización",
-          "description": "Este evento se activará durante la inicialización del widget cada vez que se vea la página."
-        },
-        "updateOn": {
-          "label": "Actualización del evento",
-          "description": "Cuando una de sus automatizaciones emita este evento, el contenido del widget se actualizará con el contenido del payload."
-        }
-      }
-    },
     "share": {
       "label": "Compartir el acceso a la página",
       "access": "Acceda",
@@ -390,6 +371,23 @@
       }
     },
     "blocks": {
+      "add": "Añadir un block",
+      "remove": "Eliminar el block",
+      "search": "Buscar un block",
+      "empty": "No hay blocks disponibles en este espacio de trabajo. Instale una App",
+      "settings": {
+        "title": "Parámetros del Block",
+        "toggle_on": "Mostrar configuración",
+        "toggle_off": "Ocultar la configuración",
+        "onInit": {
+          "label": "Evento de inicialización",
+          "description": "Este evento se activará durante la inicialización del block cada vez que se vea la página."
+        },
+        "updateOn": {
+          "label": "Actualización del evento",
+          "description": "Cuando una de sus automatizaciones emita este evento, el contenido del block se actualizará con el contenido del payload."
+        }
+      },
       "name": "{{context}}",
       "name_Title": "Título",
       "name_Cards": "Grupo de tarjetas",

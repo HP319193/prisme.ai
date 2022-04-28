@@ -16,7 +16,7 @@ import { Fragment, useCallback, useMemo, useState } from 'react';
 import Settings from './Settings';
 import useLocalizedText from '../../utils/useLocalizedText';
 
-interface WidgetProps {
+interface PageBlockProps {
   url?: string;
   component?: Function;
   id: string;
@@ -25,7 +25,7 @@ interface WidgetProps {
   appInstance?: string;
   editSchema?: Schema['properties'];
 }
-export const Widget = ({
+export const PageBlock = ({
   url,
   component: Component,
   id,
@@ -33,10 +33,10 @@ export const Widget = ({
   workspaceId,
   appInstance,
   editSchema,
-}: WidgetProps) => {
+}: PageBlockProps) => {
   const { t } = useTranslation('workspaces');
   const { localizeSchemaForm } = useLocalizedText();
-  const { removeWidget } = usePageBuilder();
+  const { removeBlock } = usePageBuilder();
   const { buttons } = useBlock();
   const [settingsVisible, setSettingsVisible] = useState(false);
 
@@ -71,7 +71,7 @@ export const Widget = ({
             ))}
           <div className="ml-2">
             <Tooltip
-              title={t('pages.widgets.settings.toggle', {
+              title={t('pages.blocks.settings.toggle', {
                 context: settingsVisible ? 'off' : 'on',
               })}
               placement="left"
@@ -84,7 +84,7 @@ export const Widget = ({
         </div>
       </div>
       <StretchContent visible={settingsVisible}>
-        <Settings removeWidget={() => removeWidget(id)} schema={schema} />
+        <Settings removeBlock={() => removeBlock(id)} schema={schema} />
       </StretchContent>
       {Component && <Component edit />}
       {url && (
@@ -104,20 +104,20 @@ export const Widget = ({
   );
 };
 
-const WidgetWithBlock = (props: WidgetProps) => {
-  const { page, setWidgetConfig } = usePageBuilder();
+const PageBlockWithProvider = (props: PageBlockProps) => {
+  const { page, setBlockConfig } = usePageBuilder();
   const config = useMemo(
-    () => (page.widgets.find(({ key }) => props.id === key) || {}).config || {},
-    [page.widgets, props.id]
+    () => (page.blocks.find(({ key }) => props.id === key) || {}).config || {},
+    [page.blocks, props.id]
   );
 
   const [appConfig, setAppConfig] = useState<any>();
 
   const setConfigHandler = useCallback(
     (config: any) => {
-      setWidgetConfig(props.id, config);
+      setBlockConfig(props.id, config);
     },
-    [props.id, setWidgetConfig]
+    [props.id, setBlockConfig]
   );
 
   const setAppConfigHandler = useCallback(
@@ -136,9 +136,9 @@ const WidgetWithBlock = (props: WidgetProps) => {
       appConfig={appConfig}
       onAppConfigUpdate={setAppConfigHandler}
     >
-      <Widget {...props} />
+      <PageBlock {...props} />
     </BlockProvider>
   );
 };
 
-export default WidgetWithBlock;
+export default PageBlockWithProvider;

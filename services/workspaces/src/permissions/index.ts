@@ -50,7 +50,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           workspaceId: { type: String, index: true },
           name: Schema.Types.Mixed,
           description: Schema.Types.Mixed,
-          widgets: Schema.Types.Mixed,
+          blocks: Schema.Types.Mixed,
           slug: { type: String, sparse: true, unique: true },
         },
       },

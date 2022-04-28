@@ -27,10 +27,10 @@ export const PagesSidebar = () => {
     workspace: { id: workspaceId },
   } = useWorkspace();
 
-  const currentPages = useMemo(
-    () => Array.from(pages.get(workspaceId) || []),
-    [pages, workspaceId]
-  );
+  const currentPages = useMemo(() => Array.from(pages.get(workspaceId) || []), [
+    pages,
+    workspaceId,
+  ]);
 
   const [filter, setFilter] = useState('');
 
@@ -69,7 +69,7 @@ export const PagesSidebar = () => {
         name: {
           [language]: name,
         },
-        widgets: [],
+        blocks: [],
       });
 
       if (createdPage) {

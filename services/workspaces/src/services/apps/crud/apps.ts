@@ -167,7 +167,7 @@ class Apps {
     const app = await this.storage.get(appId, version || 'current');
     return {
       config: app.config,
-      widgets: Object.entries(app.widgets || {}).map(
+      blocks: Object.entries(app.blocks || {}).map(
         ([slug, { name, description, url, edit }]) => ({
           slug,
           url,
@@ -194,7 +194,7 @@ class Apps {
   ): Promise<Prismeai.AppDetails> => {
     const app = await this.storage.get(appId, version || 'current');
     return {
-      widgets: Object.entries(app.widgets || {}).map(
+      blocks: Object.entries(app.blocks || {}).map(
         ([slug, { name, description }]) => ({
           slug,
           name,

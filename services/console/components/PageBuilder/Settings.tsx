@@ -12,11 +12,11 @@ import { useMemo } from 'react';
 const noop = () => null;
 
 interface SettingsProps {
-  removeWidget: () => void;
+  removeBlock: () => void;
   schema?: Schema;
 }
 
-export const Settings = ({ removeWidget, schema }: SettingsProps) => {
+export const Settings = ({ removeBlock, schema }: SettingsProps) => {
   const { t } = useTranslation('workspaces');
   const {
     setupComponent: SetupComponent,
@@ -29,13 +29,13 @@ export const Settings = ({ removeWidget, schema }: SettingsProps) => {
       properties: {
         onInit: {
           type: 'string',
-          title: t('pages.widgets.settings.onInit.label'),
-          description: t('pages.widgets.settings.onInit.description'),
+          title: t('pages.blocks.settings.onInit.label'),
+          description: t('pages.blocks.settings.onInit.description'),
         },
         updateOn: {
           type: 'string',
-          title: t('pages.widgets.settings.updateOn.label'),
-          description: t('pages.widgets.settings.updateOn.description'),
+          title: t('pages.blocks.settings.updateOn.label'),
+          description: t('pages.blocks.settings.updateOn.description'),
         },
       },
       'ui:options': {
@@ -87,8 +87,8 @@ export const Settings = ({ removeWidget, schema }: SettingsProps) => {
         </div>
       )}
       <div>
-        <Button onClick={removeWidget}>
-          <DeleteOutlined /> {t('pages.widgets.remove')}
+        <Button onClick={removeBlock}>
+          <DeleteOutlined /> {t('pages.blocks.remove')}
         </Button>
       </div>
     </div>
