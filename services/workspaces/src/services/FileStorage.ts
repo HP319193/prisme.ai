@@ -1,3 +1,4 @@
+import { remove as removeDiacritics } from 'diacritics';
 import { FilterQuery, FindOptions } from '@prisme.ai/permissions';
 import { nanoid } from 'nanoid';
 import {
@@ -53,11 +54,7 @@ class FileStorage extends Storage {
     );
     return result.map((file) => ({
       ...file,
-      url: this.getUrl(
-        this.driverType,
-        this.getPath(workspaceId, file.name, file.id),
-        baseUrl
-      ),
+      url: this.getUrl(this.driverType, file.path, baseUrl),
     }));
   }
 
@@ -70,7 +67,7 @@ class FileStorage extends Storage {
     return { ...file, url: this.getUrl(this.driverType, file.path, baseUrl) };
   }
 
-  validateUploads(files: Express.Multer.File[]) {
+  private validateUploads(files: Express.Multer.File[]) {
     files.forEach((file) => {
       if (file.size > UPLOADS_MAX_SIZE) {
         throw new InvalidUploadError(
@@ -100,12 +97,15 @@ class FileStorage extends Storage {
     await accessManager.pullRoleFromSubject(SubjectType.Workspace, workspaceId);
 
     const fileDetails = await Promise.all(
-      files.map(async ({ size, originalname: filename, mimetype }) => {
+      files.map(async ({ size, originalname, mimetype }) => {
         const id = nanoid();
+        const filename = removeDiacritics(originalname)
+          .slice(0, 250)
+          .replace(/\0/g, '');
         const path = this.getPath(workspaceId, filename, id);
         const details = await accessManager.create(SubjectType.File, {
           mimetype,
-          name: filename,
+          name: originalname,
           size,
           workspaceId,
           path,
