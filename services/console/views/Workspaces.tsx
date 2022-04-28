@@ -42,7 +42,7 @@ export const WorkspacesView = () => {
         <title>{t('workspaces.title')}</title>
         <meta name="description" content={t('workspaces.description')} />§
       </Head>
-      <Layout Header={<Header />}>
+      <Layout Header={<Header />} contentClassName="overflow-y-auto">
         <Title level={3} className="!ml-16 !m-8">
           {t('workspaces.sectionTitle')}
         </Title>
