@@ -52,15 +52,18 @@ export const AppsProvider: FC = ({ children }) => {
         fetchedAppInstanceForWorkspace
       );
 
-      if (!isEqual(fetchAppInstanceArray, appInstances.get(workspaceId))) {
+      setAppInstances((appInstances) => {
+        if (isEqual(fetchAppInstanceArray, appInstances.get(workspaceId))) {
+          return appInstances;
+        }
         const newAppInstances = new Map(appInstances);
         newAppInstances.set(workspaceId, fetchAppInstanceArray);
-        setAppInstances(newAppInstances);
-      }
+        return newAppInstances;
+      });
 
       return fetchAppInstanceArray;
     },
-    [appInstances]
+    []
   );
 
   return (
