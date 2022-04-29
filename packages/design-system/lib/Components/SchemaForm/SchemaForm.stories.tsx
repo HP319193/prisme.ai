@@ -373,15 +373,18 @@ const FieldContainer: FC<FieldProps> = ({ name, children }) => {
           : JSON.stringify(field.input.value, null, '  ')
       );
     }
-  }, [displayRaw]);
-  const onChange = useCallback((value: string) => {
-    setValue(value);
-    try {
-      field.input.onChange(JSON.parse(value));
-    } catch {
-      field.input.onChange(value);
-    }
-  }, []);
+  }, [displayRaw, field.input.value]);
+  const onChange = useCallback(
+    (value: string) => {
+      setValue(value);
+      try {
+        field.input.onChange(JSON.parse(value));
+      } catch {
+        field.input.onChange(value);
+      }
+    },
+    [field.input]
+  );
   return (
     <div className="flex flex-1 flex-col">
       <button onClick={toggle}>toggle raw</button>
@@ -425,5 +428,31 @@ WithCustomFieldContainer.args = {
   },
   components: {
     FieldContainer,
+  },
+};
+
+export const ObjectWithMixedPropertiesAndFreeAdditionnals = Template.bind({});
+ObjectWithMixedPropertiesAndFreeAdditionnals.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      body: {
+        type: 'object',
+        additionalProperties: true,
+        properties: {
+          foo: {
+            type: 'string',
+          },
+        },
+      },
+    },
+    description: '',
+    title: '',
+  },
+  initialValues: {
+    body: {
+      foo: 'bar',
+      other: 'coin',
+    },
   },
 };
