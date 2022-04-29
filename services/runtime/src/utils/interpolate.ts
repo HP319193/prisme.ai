@@ -32,22 +32,29 @@ export const interpolate = (
   }
   if (typeof target === 'string') {
     try {
-      const match = pattern.exec(target);
-      if (pattern.lastIndex) {
-        pattern.lastIndex = 0; // reset last index if there is a g flag
-      }
-      if (match && match[0].length === target.length) {
-        return evaluate(match[1], context); // meaning the match is the whole string, thus we can return the actual value
-      }
-      // Keep matching pattern until noting is matched in order to interpolate deepest vars first (nested variables)
-      let replaceAgain = false;
+      // First replace nested variables
+      let replaceAgain = true;
       do {
         replaceAgain = false;
-        target = target.replace(pattern, (_: any, expr: any) => {
-          replaceAgain = true;
-          return evaluate(expr, context, { asString: true });
-        });
+        target = target.replace(
+          pattern,
+          (_: any, expr: any, index: number, fullStr: string) => {
+            // Do not replace the last & full string variable as it would break objects into "[object Object]"
+            if (index == 0 && expr.length + 4 === fullStr.length) {
+              // Stringify only if current substr does not span the whole string)
+              return fullStr;
+            }
+            replaceAgain = true;
+            return evaluate(expr, context, {
+              asString: true,
+            });
+          }
+        );
       } while (replaceAgain);
+      // If remaining variable name spans the whole string, we can return the variable itself as it is
+      if (target.startsWith('{{') && target.endsWith('}}')) {
+        return evaluate(target.substring(2, target.length - 2), context);
+      }
       return target;
     } catch (e) {
       throw new Error(`Could not interpolate string "${target}": ${e}`);

@@ -17,14 +17,14 @@ A **default** branch is automatically added to configure what instructions to ex
 [More details on Conditions syntax](../conditions)
 
 ### Repeat
-Execute a list of instructions N times, or for each record from an array variable
+Execute a list of instructions N times, or for each record from an array or object variable
 
 **Parameters :**  
 
-* **on** : An array variable name to loop on. Each record will be available inside an **item** variable  
+* **on** : An array or object variable name to loop on. Each record will be available inside an **item** variable  
 * **until** : A number of times to repeat this loop. Each iteration number will be stored inside an **item** variable  
 
-**on** and **until** parameters cannot be used together.  
+If **on** and **until** parameters are used together, only the first **until** items from **on** will be iterated.  
 
 **Children nodes :**  
 When adding a **Repeat** instruction, a new graph branch will appear, allowing you to create the instructions that will be repeated.  

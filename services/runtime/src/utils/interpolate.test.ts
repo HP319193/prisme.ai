@@ -203,6 +203,36 @@ it('should replace and display a stringify object for objet parameters', async (
   ]);
 });
 
+it('should replace without stringifying in case of nested variables', async () => {
+  const slots = {
+    entity: 'outil',
+    entities: {
+      outil: {
+        vocabulary: {
+          Visio: ['Visio', 'Visio', 'Visio'],
+          Imprimante: ['Imprimante', 'Imprimante', 'Imprimante'],
+        },
+      },
+    },
+  };
+  const replacedStream = interpolate(
+    {
+      repeat: {
+        on: '{{entities[{{entity}}].vocabulary}}',
+        do: [],
+      },
+    },
+    slots
+  );
+
+  expect(replacedStream).toEqual({
+    repeat: {
+      on: slots.entities[slots.entity].vocabulary,
+      do: [],
+    },
+  });
+});
+
 it('should not replace a parameter which starts with the name of another parameter', async () => {
   const user = { email: 'john.doe@mail.com', name: 'John Doe' };
   const replacedStream = interpolate(

@@ -34,10 +34,18 @@ export async function repeat(
   const until = isRepeatUntil(value) ? value.until : undefined;
   const on = isRepeatOn(value) ? value.on : undefined;
   const { do: doInstructions } = value;
+
+  const values =
+    typeof on === 'object' && !Array.isArray(on)
+      ? Object.entries(on).map(([key, value]) => ({ key, value }))
+      : on || [];
+
   const maxIterations =
-    typeof until !== 'undefined' ? until : (<any>on)?.length || 0;
+    typeof until !== 'undefined' && until < ((<any>values)?.length || 0)
+      ? until
+      : (<any>values)?.length || 0;
   for (let i = 0; i < maxIterations; i++) {
-    ctx.set(REPEAT_ITEM_VAR_NAME, on?.length ? on[i] : i);
+    ctx.set(REPEAT_ITEM_VAR_NAME, values?.length ? values[i] : i);
     await runInstructions(doInstructions, {
       workspace,
       ctx,
