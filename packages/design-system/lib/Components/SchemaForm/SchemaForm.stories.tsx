@@ -1,9 +1,10 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { Story } from '@storybook/react';
 import { useState } from 'react';
 import SchemaForm, { FormProps } from './SchemaForm';
 import { useField } from 'react-final-form';
 import { FieldProps } from './types';
+import TextArea from '../TextArea';
 
 export default {
   title: 'Components/SchemaForm',
@@ -361,11 +362,38 @@ Localized.args = {
 export const WithCustomFieldContainer = Template.bind({});
 const FieldContainer: FC<FieldProps> = ({ name, children }) => {
   const field = useField(name);
+  const [value, setValue] = useState('');
   const [displayRaw, setDisplayRaw] = useState(false);
+  const toggle = useCallback(() => {
+    setDisplayRaw(!displayRaw);
+    if (!displayRaw) {
+      setValue(
+        typeof field.input.value === 'string'
+          ? field.input.value
+          : JSON.stringify(field.input.value, null, '  ')
+      );
+    }
+  }, [displayRaw]);
+  const onChange = useCallback((value: string) => {
+    setValue(value);
+    try {
+      field.input.onChange(JSON.parse(value));
+    } catch {
+      field.input.onChange(value);
+    }
+  }, []);
   return (
-    <div>
-      <button onClick={() => setDisplayRaw(!displayRaw)}>toggle raw</button>
-      {displayRaw && <textarea {...field.input} />}
+    <div className="flex flex-1 flex-col">
+      <button onClick={toggle}>toggle raw</button>
+      {displayRaw && (
+        <div>
+          <TextArea
+            value={value}
+            onChange={({ target: { value } }) => onChange(value)}
+            label="Now, you can set any value as you want"
+          />
+        </div>
+      )}
       {!displayRaw && children}
     </div>
   );
@@ -374,10 +402,22 @@ WithCustomFieldContainer.args = {
   schema: {
     type: 'object',
     properties: {
-      foo: {
+      string: {
         type: 'string',
       },
-      bar: {
+      number: {
+        type: 'number',
+      },
+      boolean: {
+        type: 'boolean',
+      },
+      array: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+      object: {
         type: 'object',
         additionalProperties: true,
       },

@@ -1,23 +1,27 @@
 import { Switch } from 'antd';
 import { useField } from 'react-final-form';
+import { useSchemaForm } from './context';
 import Description from './Description';
 import { FieldProps } from './types';
 import { getLabel } from './utils';
 
-export const FieldBoolean = ({ schema, name, label }: FieldProps) => {
-  const field = useField(name);
+export const FieldBoolean = (props: FieldProps) => {
+  const field = useField(props.name);
+  const { components } = useSchemaForm();
 
   return (
     <div className="relative flex mt-5 flex-1">
-      <Description text={schema.description}>
-        <div className="ant-input flex items-center flex-1 rounded h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500">
-          <label className="cursor-pointer">
-            <Switch {...field.input} checked={field.input.value} />
-            <span className="text-[10px] text-gray ml-2">
-              {label || schema.title || getLabel(name)}
-            </span>
-          </label>
-        </div>
+      <Description text={props.schema.description}>
+        <components.FieldContainer {...props}>
+          <div className="ant-input flex items-center flex-1 rounded h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500">
+            <label className="cursor-pointer">
+              <Switch {...field.input} checked={field.input.value} />
+              <span className="text-[10px] text-gray ml-2">
+                {props.label || props.schema.title || getLabel(props.name)}
+              </span>
+            </label>
+          </div>
+        </components.FieldContainer>
       </Description>
     </div>
   );

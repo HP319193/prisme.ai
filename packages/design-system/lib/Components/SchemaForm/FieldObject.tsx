@@ -1,3 +1,4 @@
+import { useSchemaForm } from './context';
 import Description from './Description';
 import FieldAdditionalProperties from './FieldAdditionalProperties';
 import LayoutBasic from './LayoutBasic';
@@ -11,14 +12,15 @@ function isUiOptionsGrid(
   return !!uiOptions && !!(uiOptions as UiOptionsGrid).grid;
 }
 
-export const FieldObject = ({ schema, name, label }: FieldProps) => {
-  const { additionalProperties, 'ui:options': uiOptions } = schema;
+export const FieldObject = (props: FieldProps) => {
+  const { additionalProperties, 'ui:options': uiOptions } = props.schema;
+  const { components } = useSchemaForm();
 
   const grid = isUiOptionsGrid(uiOptions) && uiOptions.grid;
   const noBorder =
-    name.split(/\./).length === 1 ||
-    !schema.properties ||
-    Object.keys(schema.properties).length === 0;
+    props.name.split(/\./).length === 1 ||
+    !props.schema.properties ||
+    Object.keys(props.schema.properties).length === 0;
 
   return (
     <div
@@ -26,17 +28,15 @@ export const FieldObject = ({ schema, name, label }: FieldProps) => {
         noBorder ? '' : 'm-2 p-2 pl-3 border-[1px] border-gray-200 rounded'
       }
     >
-      <Description text={schema.description}>
-        <label className="text-[10px] text-gray">
-          {label || schema.title || getLabel(name)}
-        </label>
-        {grid && (
-          <LayoutGrid grid={grid} schema={schema} name={name} label={label} />
-        )}
-        {!grid && <LayoutBasic schema={schema} name={name} label={label} />}
-        {additionalProperties && (
-          <FieldAdditionalProperties schema={schema} name={name} />
-        )}
+      <Description text={props.schema.description}>
+        <components.FieldContainer {...props}>
+          <label className="text-[10px] text-gray">
+            {props.label || props.schema.title || getLabel(props.name)}
+          </label>
+          {grid && <LayoutGrid grid={grid} {...props} />}
+          {!grid && <LayoutBasic {...props} />}
+          {additionalProperties && <FieldAdditionalProperties {...props} />}
+        </components.FieldContainer>
       </Description>
     </div>
   );

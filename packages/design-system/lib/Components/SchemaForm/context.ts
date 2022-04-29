@@ -2,7 +2,7 @@ import { createContext, FC, ReactElement, useContext } from 'react';
 import { SelectProps } from '../Select';
 import { FieldProps } from './types';
 
-type FieldComponent<T = any> = (props: FieldProps & T) => ReactElement;
+type FieldComponent<T = any> = (props: FieldProps & T) => ReactElement | null;
 type InputComponent = (props: {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement> | string) => void;
