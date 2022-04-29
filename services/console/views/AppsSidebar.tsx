@@ -9,6 +9,7 @@ import { useApps } from '../components/AppsProvider';
 
 export const AppsSidebar = () => {
   const { t } = useTranslation('workspaces');
+  const { t: commonT } = useTranslation();
 
   const {
     workspace,
@@ -91,7 +92,7 @@ export const AppsSidebar = () => {
         {!isEmpty && (
           <>
             <SearchInput
-              placeholder={t('search')}
+              placeholder={commonT('search')}
               className="mb-6"
               onChange={({ target: { value } }) => setFilter(value)}
             />

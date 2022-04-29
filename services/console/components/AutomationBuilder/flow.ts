@@ -1,11 +1,10 @@
-import { ConsoleSqlOutlined } from '@ant-design/icons';
 import { ArrowHeadType, Edge, Elements, Node } from 'react-flow-renderer';
 
 export class Flow {
   static BLOCK_HEIGHT = 200;
   static BLOCK_WIDTH = 300;
   static BLOCK_EMPTY = 'empty block';
-  static NEW_CONDITION = 'new condition';
+  static NEW_CONDITION = 'Add condition';
   static NEW_ALL = 'new all';
   static CONDITIONS = 'conditions';
   static REPEAT = 'repeat';

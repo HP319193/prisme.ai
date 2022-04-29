@@ -19,6 +19,7 @@ export const PagesSidebar = () => {
     t,
     i18n: { language },
   } = useTranslation('workspaces');
+  const { t: commonT } = useTranslation();
   const { localize } = useLocalizedText();
   const { pages, createPage } = usePages();
   const { push } = useRouter();
@@ -27,10 +28,10 @@ export const PagesSidebar = () => {
     workspace: { id: workspaceId },
   } = useWorkspace();
 
-  const currentPages = useMemo(() => Array.from(pages.get(workspaceId) || []), [
-    pages,
-    workspaceId,
-  ]);
+  const currentPages = useMemo(
+    () => Array.from(pages.get(workspaceId) || []),
+    [pages, workspaceId]
+  );
 
   const [filter, setFilter] = useState('');
 
@@ -106,7 +107,7 @@ export const PagesSidebar = () => {
       {!isEmpty && (
         <>
           <SearchInput
-            placeholder={t('search')}
+            placeholder={commonT('search')}
             className="mb-6"
             onChange={({ target: { value } }) => setFilter(value)}
           />

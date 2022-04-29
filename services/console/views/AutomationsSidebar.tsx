@@ -17,6 +17,7 @@ const emptyObject: Prismeai.Workspace['automations'] = {};
 
 export const AutomationsSidebar: FC = () => {
   const { t } = useTranslation('workspaces');
+  const { t: commonT } = useTranslation();
   const { localize } = useLocalizedText();
   const { push } = useRouter();
   const {
@@ -97,7 +98,7 @@ export const AutomationsSidebar: FC = () => {
       {!isEmpty && (
         <>
           <SearchInput
-            placeholder={t('search')}
+            placeholder={commonT('search')}
             className="mb-6"
             onChange={({ target: { value } }) => setFilter(value)}
           />

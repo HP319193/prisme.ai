@@ -69,13 +69,13 @@ export const Page = () => {
     () => ({
       type: 'object',
       properties: {
-        slug: {
-          type: 'string',
-          title: t('pages.details.slug.label'),
-        },
         name: {
           type: 'localized:string',
           title: t('pages.details.name.label'),
+        },
+        slug: {
+          type: 'string',
+          title: t('pages.details.slug.label'),
         },
         description: {
           type: 'localized:string',
@@ -92,10 +92,9 @@ export const Page = () => {
     (value: Prismeai.Page) => {
       return {
         ...value,
-        blocks: ((value.blocks ||
-          []) as PageBuilderContext['page']['blocks']).map(
-          ({ key, ...block }) => block
-        ),
+        blocks: (
+          (value.blocks || []) as PageBuilderContext['page']['blocks']
+        ).map(({ key, ...block }) => block),
         id: page ? page.id : '',
       };
     },

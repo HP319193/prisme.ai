@@ -10,8 +10,8 @@ import {
   Loading,
   notification,
   PageHeader,
-  Space,
   Schema,
+  Space,
 } from '@prisme.ai/design-system';
 import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
@@ -103,14 +103,14 @@ export const Automation = () => {
     () => ({
       type: 'object',
       properties: {
+        name: {
+          type: 'localized:string',
+          title: t('automations.details.name.label'),
+        },
         slug: {
           type: 'string',
           title: t('automations.details.slug.label'),
           pattern: SLUG_VALIDATION_REGEXP.source,
-        },
-        name: {
-          type: 'localized:string',
-          title: t('automations.details.name.label'),
         },
         description: {
           type: 'localized:string',
@@ -123,7 +123,7 @@ export const Automation = () => {
         },
       },
       'ui:options': {
-        grid: [[['slug', 'name'], ['description']], [['arguments']]],
+        grid: [[['name', 'slug'], ['description']], [['arguments']]],
       },
     }),
     [t]

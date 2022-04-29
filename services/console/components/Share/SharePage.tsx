@@ -146,8 +146,8 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
           <Switch
             checked={isPublic}
             onChange={togglePublic}
-            checkedChildren={'Public'}
-            unCheckedChildren={'privé'}
+            checkedChildren={t('pages.public')}
+            unCheckedChildren={t('pages.private')}
           />
         </Space>
       </label>

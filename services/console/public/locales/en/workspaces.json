@@ -28,6 +28,9 @@
       },
       "description": {
         "label": "Description"
+      },
+      "photo": {
+        "label": "Photo"
       }
     }
   },
@@ -35,8 +38,7 @@
     "description_first": "Create your first workspace to start automating your work",
     "description": "New workspace",
     "label": "Create a workspace",
-    "defaultName": "Workspace",
-    "description_sub": "And start automating and enhancing"
+    "defaultName": "Workspace"
   },
   "edit": {
     "label": "Edit"
@@ -111,7 +113,6 @@
         "custom": "Accessible by URL",
         "url": "Custom URL"
       },
-      "add": "Save",
       "save": "Save"
     },
     "instruction": {
@@ -126,6 +127,8 @@
       "label_set": "Set var",
       "label_delete": "Delete var",
       "label_conditions": "Conditions",
+      "label_conditions_default": "Else",
+      "label_conditions_add": "Add condition",
       "label_fetch": "HTTP Request",
       "label_break": "Break",
       "label_comment": "Comment",
@@ -143,125 +146,124 @@
       "item": {
         "add": "Add an item",
         "remove": "Delete item"
-      }
-    },
-    "form": {
-      "addItem": "Add an item",
-      "removeItem": "Remove item",
-      "addProperty": "Add a property",
-      "removeProperty": "Remove property",
-      "propertyKey": "Property",
-      "propertyValue": "Value",
-      "uploadLabel": "Choose a file",
-      "uploadRemove": "Remove file",
-      "emit": {
-        "event": {
-          "label": "Event name",
-          "description": "Enter the name of the event you want to trigger."
-        },
-        "payload": {
-          "label": "Payload (optional, JSON format)",
-          "description": "You can attach any type of data to your event."
-        }
       },
-      "wait": {
-        "oneOf": {
-          "label": "One of these events:",
-          "description": "The automation can wait until a particular event is triggered.",
-          "items": {
-            "label": "Event",
-            "event": {
-              "label": "Event name",
-              "description": "Indicate the name of the event that will restart your automation."
-            },
-            "filters": {
-              "label": "Filters",
-              "description": "Filter the event according to the values of the properties that accompany it."
-            },
-            "cancelTriggers": {
-              "label": "Cancel trigger",
-              "description": "By checking this option, the event will be cancelled and will not trigger any other automation."
+      "form": {
+        "addItem": "Add an item",
+        "removeItem": "Remove item",
+        "addProperty": "Add a property",
+        "removeProperty": "Remove property",
+        "propertyKey": "Property",
+        "propertyValue": "Value",
+        "uploadLabel": "Choose a file",
+        "uploadRemove": "Remove file",
+        "emit": {
+          "event": {
+            "label": "Event name",
+            "description": "Enter the name of the event you want to trigger."
+          },
+          "payload": {
+            "label": "Payload (optional, JSON format)",
+            "description": "You can attach any type of data to your event."
+          }
+        },
+        "wait": {
+          "oneOf": {
+            "label": "One of these events:",
+            "description": "The automation can wait until a particular event is triggered.",
+            "items": {
+              "label": "Event",
+              "event": {
+                "label": "Event name",
+                "description": "Indicate the name of the event that will restart your automation."
+              },
+              "filters": {
+                "label": "Filters",
+                "description": "Filter the event according to the values of the properties that accompany it."
+              },
+              "cancelTriggers": {
+                "label": "Cancel trigger",
+                "description": "By checking this option, the event will be cancelled and will not trigger any other automation."
+              }
+            }
+          },
+          "timeout": {
+            "label": "Timeout in seconds",
+            "description": "Time in seconds to wait before resuming the execution of the automation."
+          },
+          "output": {
+            "label": "Output variable name",
+            "description": "Indicate the name of a variable in which the data accompanying the event that unlocked this step will be stored."
+          }
+        },
+        "set": {
+          "name": {
+            "label": "Variable name",
+            "description": "Indicate the name of the variable in which your data will be stored. You can then access it using the interpolation syntax. For example, a variable named `foo` will be accessible elsewhere using `{{foo}}`."
+          },
+          "value": {
+            "label": "Value",
+            "description": "Put any value of any type here. You can also use interpolation to store data from another variable."
+          }
+        },
+        "delete": {
+          "name": {
+            "label": "Variable name",
+            "description": "Enter the name of the variable you want to delete. Its value will no longer be accessible."
+          }
+        },
+        "break": {
+          "scope": {
+            "label": "Scope",
+            "description": "Scope of the stop. By default, only this automation will be stopped. If you choose \"$t(automations.instruction.form.break.scope.enum.all)\", the parent automations that called this one will also be stopped.",
+            "enum": {
+              "all": "All",
+              "automation": "This automation"
             }
           }
         },
-        "timeout": {
-          "label": "Timeout in seconds",
-          "description": "Time in seconds to wait before resuming the execution of the automation."
-        },
-        "output": {
-          "label": "Output variable name",
-          "description": "Indicate the name of a variable in which the data accompanying the event that unlocked this step will be stored."
-        }
-      },
-      "set": {
-        "name": {
-          "label": "Variable name",
-          "description": "Indicate the name of the variable in which your data will be stored. You can then access it using the interpolation syntax. For example, a variable named `foo` will be accessible elsewhere using `{{foo}}`."
-        },
-        "value": {
-          "label": "Value",
-          "description": "Put any value of any type here. You can also use interpolation to store data from another variable."
-        }
-      },
-      "delete": {
-        "name": {
-          "label": "Variable name",
-          "description": "Enter the name of the variable you want to delete. Its value will no longer be accessible."
-        }
-      },
-      "break": {
-        "scope": {
-          "label": "Scope",
-          "description": "Scope of the stop. By default, only this automation will be stopped. If you choose \"$t(automations.instruction.form.break.scope.enum.all)\", the parent automations that called this one will also be stopped.",
-          "enum": {
-            "all": "All",
-            "automation": "This automation"
-          }
-        }
-      },
-      "fetch": {
-        "url": {
-          "label": "HTTP address",
-          "description": "URL of a publicly accessible web service."
-        },
-        "method": {
-          "label": "HTTP method",
-          "enum": {
-            "get": "GET",
-            "post": "POST",
-            "put": "PUT",
-            "patch": "PATCH",
-            "delete": "DELETE"
+        "fetch": {
+          "url": {
+            "label": "HTTP address",
+            "description": "URL of a publicly accessible web service."
           },
-          "description": "HTTP method to use for the request."
+          "method": {
+            "label": "HTTP method",
+            "enum": {
+              "get": "GET",
+              "post": "POST",
+              "put": "PUT",
+              "patch": "PATCH",
+              "delete": "DELETE"
+            },
+            "description": "HTTP method to use for the request."
+          },
+          "headers": {
+            "label": "Headers",
+            "description": "List of key values constituting the headers of the query."
+          },
+          "body": {
+            "label": "Body",
+            "description": "The body accompanying the request. Can be of any type."
+          },
+          "output": {
+            "label": "Output variable name",
+            "description": "Save the answer of the query in a variable accessible in the rest of your automation thanks to the interpolation."
+          }
         },
-        "headers": {
-          "label": "Headers",
-          "description": "List of key values constituting the headers of the query."
-        },
-        "body": {
-          "label": "Body",
-          "description": "The body accompanying the request. Can be of any type."
-        },
-        "output": {
-          "label": "Output variable name",
-          "description": "Save the answer of the query in a variable accessible in the rest of your automation thanks to the interpolation."
-        }
-      },
-      "repeat": {
-        "on": {
-          "label": "On an array's items",
-          "description": "Name of the array variable to loop on."
-        },
-        "until": {
-          "label": "Until",
-          "description": "Loop a specific number of times"
+        "repeat": {
+          "on": {
+            "label": "On an array's items",
+            "description": "Name of the array variable to loop on."
+          },
+          "until": {
+            "label": "Until",
+            "description": "Loop a specific number of times"
+          }
         }
       }
     },
     "output": {
       "label": "<pre><code>{{output}}</code></pre>",
-      "label_empty": "<italic>Set</italic>",
       "edit": {
         "title": "Return value:",
         "description": "Value returned by the automation. Can be a static value in the form of a string or a JSON object or even a variable generated during the execution of your automation surrounded by braces (ex: {{maVar}})",
@@ -329,6 +331,8 @@
     }
   },
   "pages": {
+    "private": "Private",
+    "public": "Public",
     "link": "Pages",
     "create": {
       "label": "Add a Page",
@@ -354,7 +358,7 @@
     "share": {
       "label": "Share this page",
       "access": "Access",
-      "access_private": "Choose which users can view your page",
+      "access_private": "Users",
       "copy": "Copy the public address of the page",
       "copied": "The address is copied into your clipboard",
       "notme": "You are already the owner of this Page."

@@ -1,4 +1,4 @@
-import { Tooltip, Layout, Text, Title } from '@prisme.ai/design-system';
+import { Layout, Text, Title, Tooltip } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -61,17 +61,12 @@ export const WorkspacesView = () => {
                       <PlusOutlined className="text-[20px]" />
                     </div>
                   </div>
-                  <div className="flex grow flex-col items-start">
+                  <div className="flex grow flex-col justify-center">
                     <Title level={4}>
                       {t('create.label', {
                         context: workspaces.size === 0 ? 'first' : '',
                       })}
                     </Title>
-                    <Text type="grey" className="text-left text-gray">
-                      {t('create.description_sub', {
-                        context: workspaces.size === 0 ? 'first' : '',
-                      })}
-                    </Text>
                   </div>
                 </div>
               </button>
