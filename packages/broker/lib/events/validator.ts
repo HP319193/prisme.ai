@@ -6,7 +6,6 @@ import fetch from 'node-fetch';
 import { EventValidationError } from '../errors';
 
 const ajValidator = new ajv({ allErrors: true, strict: 'log' });
-let OAS_URL: string;
 let schemaMapping: Record<string, string> = {};
 let whitelistedEventPrefixes: string[] = [];
 
@@ -44,7 +43,6 @@ async function fetchOAS(
         }
       }
 
-      OAS_URL = url;
       const oas = yaml.load(resp as any);
       return {
         data: oas as object,
@@ -75,7 +73,7 @@ export async function init({
   ajvInitialized = true;
   whitelistedEventPrefixes = whitelistEventPrefixes || [];
 
-  const { url, data } = await fetchOAS(oasFilepath, oasUrl);
+  const { data } = await fetchOAS(oasFilepath, oasUrl);
   delete data.openapi;
   delete data.info;
   delete data.servers;
@@ -99,7 +97,6 @@ export async function init({
     }
   );
 
-  OAS_URL = url;
   Object.entries(data.components?.schemas).forEach(([type, schema]: any) => {
     ajValidator.addSchema(schema, type);
   });
