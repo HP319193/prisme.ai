@@ -10,6 +10,7 @@ import { fetch } from './fetch';
 import { set } from './set';
 import { deleteInstruction } from './deleteInstruction';
 import { repeat } from './repeat';
+import { all } from './all';
 
 export class Break {
   constructor(public scope: Prismeai.Break['break']['scope'] = 'automation') {
@@ -26,6 +27,7 @@ export enum InstructionType {
   Break = 'break',
   Wait = 'wait',
   Repeat = 'repeat',
+  All = 'all',
 }
 
 export async function runCustomAutomation(
@@ -109,6 +111,14 @@ export async function runInstruction(
       break;
     case InstructionType.Repeat:
       result = await repeat(<Prismeai.Repeat['repeat']>payload, {
+        workspace,
+        logger,
+        broker,
+        ctx,
+      });
+      break;
+    case InstructionType.All:
+      result = await all(<Prismeai.All['all']>payload, {
         workspace,
         logger,
         broker,
