@@ -9,9 +9,16 @@ module.exports = () => {
     },
     testEnvironment: 'jsdom',
     coveragePathIgnorePatterns: [
+      // Console
       '<rootDir>/services/console/.*/context.ts',
       '<rootDir>/services/console/utils/yaml.ts',
       '<rootDir>/packages/validation',
+
+      // Runtime
+      '<rootDir>/services/runtime/src/eda',
+      '<rootDir>/services/runtime/src/cache',
+      '<rootDir>/services/runtime/src/storage',
+      '<rootDir>/packages/broker',
     ],
     setupFiles: ['<rootDir>/.jest/setEnvVars.js'],
   };
