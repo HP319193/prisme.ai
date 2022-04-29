@@ -10,7 +10,7 @@ Array [
           transition-transform
           transition-duration-200
           transition-ease-in
-          z-10
+          z-[11]
           -translate-y-full
         "
   />,
@@ -34,7 +34,7 @@ Array [
           transition-transform
           transition-duration-200
           transition-ease-in
-          z-10
+          z-[11]
           -translate-y-full
         "
   />,
@@ -52,7 +52,7 @@ Array [
           transition-transform
           transition-duration-200
           transition-ease-in
-          z-10
+          z-[11]
           -translate-y-full
         "
   />,

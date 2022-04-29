@@ -423,7 +423,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
           transition-transform
           transition-duration-200
           transition-ease-in
-          z-10
+          z-[11]
           ${displaySourceView ? '' : '-translate-y-full'}
         `}
       >
