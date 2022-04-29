@@ -34,6 +34,7 @@ export const PagesProvider: FC<PagesProvider> = ({ children }) => {
   );
   const savePage: PagesContext['savePage'] = useCallback(
     async (workspaceId, page) => {
+      console.log(page);
       const savedPage = await api.updatePage(workspaceId, page);
       setPages((prev) => {
         const newPages = new Map(prev);
