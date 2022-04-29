@@ -1,7 +1,8 @@
-import { createContext, ReactElement, useContext } from 'react';
+import { createContext, FC, ReactElement, useContext } from 'react';
+import { SelectProps } from '../Select';
 import { FieldProps } from './types';
 
-type FieldComponent = (props: FieldProps) => ReactElement;
+type FieldComponent<T = any> = (props: FieldProps & T) => ReactElement;
 type InputComponent = (props: {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement> | string) => void;
@@ -21,6 +22,7 @@ export interface SchemaFormContext {
     uploadRemove?: string;
   };
   components: {
+    FieldContainer: FC<FieldProps>;
     FieldLocalizedText?: FieldComponent;
     FieldText?: FieldComponent;
     FieldBoolean?: FieldComponent;
@@ -29,15 +31,19 @@ export interface SchemaFormContext {
     FieldArray?: FieldComponent;
     FieldAny?: FieldComponent;
     FieldFreeAdditionalProperties?: FieldComponent;
-    FieldSelect?: FieldComponent;
+    FieldSelect?: FieldComponent<{ options?: SelectProps['selectOptions'] }>;
     FieldDate?: FieldComponent;
     JSONEditor?: InputComponent;
   };
 }
 
+export const FieldContainer: FC<FieldProps> = ({ children }) =>
+  children as ReactElement;
 export const context = createContext<SchemaFormContext>({
   locales: {},
-  components: {},
+  components: {
+    FieldContainer,
+  },
 });
 
 export const useSchemaForm = () => useContext(context);

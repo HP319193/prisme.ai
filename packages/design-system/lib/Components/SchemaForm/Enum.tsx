@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useSchemaForm } from './context';
-import FieldSelect from './FieldSelect';
 import { FieldProps } from './types';
 
 export const Enum = (props: FieldProps) => {
-  const { components } = useSchemaForm();
-  const Component = components.FieldSelect || FieldSelect;
+  const {
+    components: { FieldSelect },
+  } = useSchemaForm();
   const options = useMemo(
     () =>
       (props.schema.enum || []).map((value, k) => ({
@@ -15,7 +15,8 @@ export const Enum = (props: FieldProps) => {
       })),
     []
   );
-  return <Component {...props} options={options} />;
+  if (!FieldSelect) return null;
+  return <FieldSelect {...props} options={options} />;
 };
 
 export default Enum;

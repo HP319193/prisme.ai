@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useField } from 'react-final-form';
 import Select, { SelectProps } from '../Select';
 import Description from './Description';

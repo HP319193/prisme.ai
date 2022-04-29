@@ -1,14 +1,6 @@
 import { useMemo } from 'react';
 import { useSchemaForm } from './context';
 import Enum from './Enum';
-import FieldAny from './FieldAny';
-import FieldArray from './FieldArray';
-import FieldBoolean from './FieldBoolean';
-import FieldLocalizedBoolean from './FieldLocalizedBoolean';
-import FieldLocalizedText from './FieldLocalizedText';
-import FieldObject from './FieldObject';
-import FieldSelect from './FieldSelect';
-import FieldText from './FieldText';
 import OneOf from './OneOf';
 import { FieldProps } from './types';
 
@@ -25,7 +17,7 @@ export const Field = (props: FieldProps) => {
 
     // This widget can be used with any type
     if (UiWidget === 'select') {
-      return components.FieldSelect || FieldSelect;
+      return components.FieldSelect;
     }
 
     if (props.schema.enum) {
@@ -35,24 +27,24 @@ export const Field = (props: FieldProps) => {
     switch (props.schema.type) {
       case 'localized:string':
       case 'localized:number':
-        return components.FieldLocalizedText || FieldLocalizedText;
+        return components.FieldLocalizedText;
       case 'string':
       case 'number':
-        return components.FieldText || FieldText;
+        return components.FieldText;
       case 'boolean':
-        return components.FieldBoolean || FieldBoolean;
+        return components.FieldBoolean;
       case 'localized:boolean':
-        return components.FieldLocalizedBoolean || FieldLocalizedBoolean;
+        return components.FieldLocalizedBoolean;
       case 'object':
-        return components.FieldObject || FieldObject;
+        return components.FieldObject;
       case 'array':
-        return components.FieldArray || FieldArray;
+        return components.FieldArray;
       default:
-        return components.FieldAny || FieldAny;
+        return components.FieldAny;
     }
   }, [props.schema]);
 
-  if (props.schema.hidden) return null;
+  if (props.schema.hidden || !Component) return null;
 
   return <Component {...props} />;
 };

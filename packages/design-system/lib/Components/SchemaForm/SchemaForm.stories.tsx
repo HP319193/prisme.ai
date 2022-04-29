@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import { Story } from '@storybook/react';
 import { useState } from 'react';
 import SchemaForm, { FormProps } from './SchemaForm';
@@ -354,5 +355,35 @@ Localized.args = {
         title: 'Localized boolean',
       },
     },
+  },
+};
+
+export const WithCustomFieldContainer = Template.bind({});
+const FieldContainer: FC<FieldProps> = ({ name, children }) => {
+  const field = useField(name);
+  const [displayRaw, setDisplayRaw] = useState(false);
+  return (
+    <div>
+      <button onClick={() => setDisplayRaw(!displayRaw)}>toggle raw</button>
+      {displayRaw && <textarea {...field.input} />}
+      {!displayRaw && children}
+    </div>
+  );
+};
+WithCustomFieldContainer.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+      },
+      bar: {
+        type: 'object',
+        additionalProperties: true,
+      },
+    },
+  },
+  components: {
+    FieldContainer,
   },
 };
