@@ -17,7 +17,7 @@ const emptyObject: Prismeai.Workspace['automations'] = {};
 
 export const AutomationsSidebar: FC = () => {
   const { t } = useTranslation('workspaces');
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
   const { push } = useRouter();
   const {
     workspace,

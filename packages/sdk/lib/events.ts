@@ -34,6 +34,14 @@ export class Events {
 
     return () => this.client.offAny(listener);
   }
+
+  on(
+    ev: string,
+    listener: (eventName: string, eventData: Prismeai.PrismeEvent) => void
+  ) {
+    this.client.on(ev, listener);
+    return () => this.client.off(ev, listener);
+  }
 }
 
 export default Events;

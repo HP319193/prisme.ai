@@ -17,12 +17,13 @@ import { PageBuilderContext } from '../components/PageBuilder/context';
 import usePages from '../components/PagesProvider/context';
 import EditDetails from '../layouts/EditDetails';
 import SharePage from '../components/Share/SharePage';
+import useBlocksConfigs from '../components/Blocks/useBlocksConfigs';
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
   const { workspace, setShare } = useWorkspace();
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
   const { pages, savePage, deletePage } = usePages();
 
   const {
@@ -37,6 +38,8 @@ export const Page = () => {
 
   const [value, setValue] = useState<Prismeai.Page>();
   const [saving, setSaving] = useState(false);
+
+  const blocksConfigs = useBlocksConfigs(page || null);
 
   useEffect(() => {
     setShare({
@@ -58,7 +61,7 @@ export const Page = () => {
     if (!page) return;
     setValue({
       ...page,
-      widgets: (page.widgets || []).map((widget) => ({ ...widget })),
+      blocks: (page.blocks || []).map((block) => ({ ...block })),
     });
   }, [page]);
 
@@ -89,9 +92,9 @@ export const Page = () => {
     (value: Prismeai.Page) => {
       return {
         ...value,
-        widgets: ((value.widgets ||
-          []) as PageBuilderContext['page']['widgets']).map(
-          ({ key, ...widget }) => widget
+        blocks: ((value.blocks ||
+          []) as PageBuilderContext['page']['blocks']).map(
+          ({ key, ...block }) => block
         ),
         id: page ? page.id : '',
       };

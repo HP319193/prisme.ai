@@ -24,7 +24,7 @@ import Link from 'next/link';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
   const { remove, update } = useWorkspaces();
   const [popoverIsVisible, setPopoverIsVisible] = useState(false);
   const {

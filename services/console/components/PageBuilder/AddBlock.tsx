@@ -3,18 +3,18 @@ import { PlusOutlined } from '@ant-design/icons';
 import { usePageBuilder } from './context';
 import { useTranslation } from 'next-i18next';
 
-interface AddWidgetProps {
+interface AddBlockProps {
   after: number;
 }
-export const AddWidget = ({ after }: AddWidgetProps) => {
+export const AddBlock = ({ after }: AddBlockProps) => {
   const { t } = useTranslation('workspaces');
-  const { addWidget } = usePageBuilder();
+  const { addBlock } = usePageBuilder();
   return (
     <div className="flex justify-center">
-      <Tooltip title={t('pages.widgets.add')}>
+      <Tooltip title={t('pages.blocks.add')}>
         <button
           className="bg-graph-accent text-white rounded w-10 h-10"
-          onClick={() => addWidget(after + 1)}
+          onClick={() => addBlock(after + 1)}
         >
           <PlusOutlined />
         </button>
@@ -23,4 +23,4 @@ export const AddWidget = ({ after }: AddWidgetProps) => {
   );
 };
 
-export default AddWidget;
+export default AddBlock;

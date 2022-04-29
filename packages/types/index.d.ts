@@ -694,9 +694,10 @@ declare namespace Prismeai {
     }
     export interface AppDetails {
         config?: Config;
-        widgets: {
+        blocks: {
             slug: string;
             url?: string;
+            edit?: TypedArgument;
             name?: LocalizedText;
             description?: LocalizedText;
             arguments?: {
@@ -818,6 +819,15 @@ declare namespace Prismeai {
             [key: string]: any;
         }[];
     }
+    /**
+     * Block
+     */
+    export interface Block {
+        description?: LocalizedText;
+        name?: LocalizedText;
+        url: string;
+        edit?: TypedArgument;
+    }
     export interface Break {
         /**
          * Stop current automation execution. Have one option that allow a break to break all parent automations.
@@ -843,7 +853,7 @@ declare namespace Prismeai {
         schema?: {
             [name: string]: TypedArgument;
         };
-        widget?: string;
+        block?: string;
         value?: any;
     }
     export interface ConfiguredAppInstance {
@@ -947,8 +957,8 @@ declare namespace Prismeai {
         automations?: {
             [name: string]: /* Full description at (TODO swagger url) */ Automation;
         };
-        widgets?: {
-            [name: string]: /* Widget */ Widget;
+        blocks?: {
+            [name: string]: /* Block */ Block;
         };
         createdAt?: string;
         updatedAt?: string;
@@ -1035,9 +1045,10 @@ declare namespace Prismeai {
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
         slug?: string;
-        widgets: {
+        blocks: {
             slug: string;
             url?: string;
+            edit?: TypedArgument;
             name?: LocalizedText;
             description?: LocalizedText;
             arguments?: {
@@ -1058,9 +1069,11 @@ declare namespace Prismeai {
         name: LocalizedText;
         description?: LocalizedText;
         workspaceId?: string;
-        widgets: {
+        blocks: {
             name?: string;
-            height?: number;
+            config?: {
+                [name: string]: any;
+            };
             url?: string;
             appInstance?: string;
         }[];
@@ -1218,9 +1231,11 @@ declare namespace Prismeai {
         name: LocalizedText;
         description?: LocalizedText;
         workspaceId?: string;
-        widgets: {
+        blocks: {
             name?: string;
-            height?: number;
+            config?: {
+                [name: string]: any;
+            };
         }[];
         id?: string;
         slug?: string;
@@ -1655,14 +1670,6 @@ declare namespace Prismeai {
         dates?: string[];
         endpoint: boolean | string;
     };
-    /**
-     * Widget
-     */
-    export interface Widget {
-        description?: LocalizedText;
-        name?: LocalizedText;
-        url: string;
-    }
     export type Workspace = DSUL;
     export interface WorkspacePermissionsDeleted {
         /**

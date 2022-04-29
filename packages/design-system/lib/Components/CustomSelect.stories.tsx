@@ -12,7 +12,7 @@ const Template: Story<CustomSelectProps> = (props: CustomSelectProps) => {
   const [value, setValue] = useState(
     props.options[0] as string | { value: string }
   );
-  console.log(value);
+
   return (
     <CustomSelect
       {...props}
@@ -34,7 +34,6 @@ Default.args = {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              console.log('clicked');
             }}
           >
             Click

@@ -5,7 +5,7 @@ exports[`should render a single input 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="relative flex pr-input   flex flex-1"
+    className="relative flex flex-1 pr-input   flex flex-1"
   >
     <label
       className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
@@ -99,7 +99,7 @@ exports[`should render single all types 1`] = `
       
     </label>
     <div
-      className="relative flex pr-input mt-5  flex flex-1"
+      className="relative flex flex-1 pr-input mt-5  flex flex-1"
     >
       <label
         className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
@@ -108,7 +108,7 @@ exports[`should render single all types 1`] = `
       </label>
     </div>
     <div
-      className="relative flex pr-input mt-5  flex flex-1"
+      className="relative flex flex-1 pr-input mt-5  flex flex-1"
     >
       <label
         className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
@@ -196,7 +196,7 @@ exports[`should set locales 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="relative flex pr-input   flex flex-1"
+    className="relative flex flex-1 pr-input   flex flex-1"
   >
     <label
       className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
@@ -272,22 +272,19 @@ exports[`should use ui:widgets 1`] = `
         textarea
       </label>
     </div>
-    <label
-      className="text-[10px] text-gray"
-    >
-      select
-    </label>
     <div
-      className="relative flex pr-input   undefined"
+      className="relative flex flex-1 pr-input mt-5  undefined"
     >
       Foo
       Bar
       <label
         className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none pr-label-top"
-      />
+      >
+        select
+      </label>
     </div>
     <div
-      className="relative flex pr-input mt-5  flex-1"
+      className="relative flex flex-1 pr-input mt-5  flex-1"
     >
       <label
         className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "

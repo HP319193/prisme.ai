@@ -69,7 +69,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   customInstructions,
 }) => {
   const { t } = useTranslation('workspaces');
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
 
   const zoomPanHelper = useZoomPanHelper();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
@@ -354,13 +354,13 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         schema.description =
           localize(schema.description) ||
           l(`automations.instruction.form.${name}.description`);
-        const { properties, type, items, enum: _enum, oneOf } = schema;
+        const { properties, items, enum: _enum, oneOf } = schema;
         if (properties) {
           Object.keys(properties).forEach((k) =>
             localizeSchema(properties[k], `${name}.${k}`)
           );
         }
-        if (type === 'array' && items) {
+        if (items) {
           localizeSchema(items, `${name}.items`);
         }
         if (_enum && Array.isArray(_enum) && _enum.length > 0) {
@@ -371,7 +371,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         }
         if (oneOf) {
           oneOf.forEach((one) => {
-            localizeSchema({ type, ...one }, name);
+            localizeSchema({ ...one }, name);
           });
         }
         return schema;

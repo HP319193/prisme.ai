@@ -2,10 +2,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
-import WidgetForm from './Panel/WidgetForm';
-import Widgets from './Widgets';
+import PageBlockForm from './Panel/PageBlockForm';
+import PageBlocks from './PageBlocks';
 import { nanoid } from 'nanoid';
 import { useApps } from '../AppsProvider';
+import equal from 'fast-deep-equal';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -15,92 +16,117 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const { workspace } = useWorkspace();
   const { appInstances } = useApps();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
-  const [widgetEditing, setWidgetEditing] = useState<
+  const [blockEditing, setBlockEditing] = useState<
     | {
         onSubmit: (v: string) => void;
       }
     | undefined
   >();
   const hidePanel = useCallback(() => {
-    setWidgetEditing(undefined);
+    setBlockEditing(undefined);
     setPanelIsOpen(false);
   }, []);
 
-  const widgets: PageBuilderContext['widgets'] = useMemo(() => {
+  const blocks: PageBuilderContext['blocks'] = useMemo(() => {
     return [
       {
         slug: '',
         appName: '',
-        widgets: Object.keys(workspace.widgets || {}).map((slug) => ({
+        blocks: Object.keys(workspace.blocks || {}).map((slug) => ({
           slug,
-          ...(workspace.widgets || {})[slug],
+          ...(workspace.blocks || {})[slug],
         })),
       },
       ...(appInstances.get(workspace.id) || []).map(
-        ({ slug = '', appName = '', widgets = [] }) => ({
+        ({ slug = '', appName = '', blocks = [] }) => ({
           slug,
           appName,
-          widgets: widgets.map(
-            ({ slug, description = slug, name = slug, url = '' }) => ({
+          blocks: blocks.map(
+            ({ slug, description = slug, name = slug, url = '', edit }) => ({
               slug,
               name,
               description,
               url,
+              edit,
             })
           ),
         })
       ),
     ];
-  }, [appInstances, workspace.id, workspace.widgets]);
+  }, [appInstances, workspace.id, workspace.blocks]);
 
   // Generate keys
-  (value.widgets || []).forEach((widget: { key?: string }) => {
-    if (widget.key) return;
-    widget.key = nanoid();
+  (value.blocks || []).forEach((block: { key?: string }) => {
+    if (block.key) return;
+    block.key = nanoid();
   });
 
-  const addWidgetDetails = useCallback(async () => {
+  const addBlockDetails = useCallback(async () => {
     return new Promise<string>((resolve) => {
       hidePanel();
-      setWidgetEditing({
-        onSubmit: (widgetSlug: string) => {
-          resolve(widgetSlug);
+      setBlockEditing({
+        onSubmit: (blockSlug: string) => {
+          resolve(blockSlug);
           hidePanel();
         },
       });
       setPanelIsOpen(true);
     });
   }, [hidePanel]);
-  const addWidget: PageBuilderContext['addWidget'] = useCallback(
+  const addBlock: PageBuilderContext['addBlock'] = useCallback(
     async (position) => {
-      const widget = await addWidgetDetails();
-      const newWidgets = [...value.widgets];
-      newWidgets.splice(position, 0, { name: widget, key: nanoid() });
+      const block = await addBlockDetails();
+      const newBlocks = [...value.blocks];
+      newBlocks.splice(position, 0, { name: block, key: nanoid() });
       onChange({
         ...value,
-        widgets: newWidgets,
+        blocks: newBlocks,
       });
     },
-    [addWidgetDetails, onChange, value]
+    [addBlockDetails, onChange, value]
   );
 
-  const removeWidget: PageBuilderContext['removeWidget'] = useCallback(
+  const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
     (key) => {
-      const newWidgets = value.widgets.filter(({ key: k }) => k !== key);
+      const newBlocks = value.blocks.filter(({ key: k }) => k !== key);
       onChange({
         ...value,
-        widgets: newWidgets,
+        blocks: newBlocks,
+      });
+    },
+    [onChange, value]
+  );
+
+  const setBlockConfig: PageBuilderContext['setBlockConfig'] = useCallback(
+    (key, config) => {
+      const newBlocks = value.blocks.map((block) =>
+        key === block.key
+          ? {
+              ...block,
+              config: {
+                ...block.config,
+                ...config,
+              },
+            }
+          : block
+      );
+      if (equal(newBlocks, value.blocks)) return;
+      onChange({
+        ...value,
+        blocks: newBlocks,
       });
     },
     [onChange, value]
   );
 
   return (
-    <context.Provider value={{ page: value, widgets, addWidget, removeWidget }}>
+    <context.Provider
+      value={{ page: value, blocks, addBlock, removeBlock, setBlockConfig }}
+    >
       <div className="relative flex flex-1 overflow-x-hidden">
-        <Widgets />
+        <PageBlocks />
         <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
-          {widgetEditing && <WidgetForm {...widgetEditing} />}
+          {blockEditing && <PageBlockForm {...blockEditing} />}
         </Panel>
       </div>
     </context.Provider>

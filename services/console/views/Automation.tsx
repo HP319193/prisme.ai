@@ -73,7 +73,7 @@ const cleanAutomation = (automation: Prismeai.Automation) => {
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
   const { workspace, updateAutomation, deleteAutomation } = useWorkspace();
   const { getAppInstances, appInstances } = useApps();
   useEffect(() => {

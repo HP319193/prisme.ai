@@ -15,7 +15,9 @@ const FloatingLabel = ({
 }: FloatingLabelProps) => {
   return (
     <div
-      className={`relative flex pr-input ${label ? 'mt-5' : ''}  ${className}`}
+      className={`relative flex flex-1 pr-input ${
+        label ? 'mt-5' : ''
+      }  ${className}`}
     >
       {component}
       <label

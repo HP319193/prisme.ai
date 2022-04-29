@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useField } from 'react-final-form';
 import Select, { SelectProps } from '../Select';
 import Description from './Description';
@@ -28,10 +28,11 @@ export const FieldSelect = ({
 
   return (
     <Description text={schema.description}>
-      <label className="text-[10px] text-gray">
-        {label || schema.title || getLabel(name)}
-      </label>
-      <Select selectOptions={selectOptions} onChange={field.input.onChange} />
+      <Select
+        selectOptions={selectOptions}
+        onChange={field.input.onChange}
+        label={label || schema.title || getLabel(name)}
+      />
     </Description>
   );
 };

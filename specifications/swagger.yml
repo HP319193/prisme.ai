@@ -2499,11 +2499,11 @@ components:
       type: object
       required:
         - automations
-        - widgets
+        - blocks
       properties:
         config:
           $ref: '#/components/schemas/Config'
-        widgets:
+        blocks:
           type: array
           items:
             type: object
@@ -2514,6 +2514,8 @@ components:
                 type: string
               url:
                 type: string
+              edit:
+                $ref: '#/components/schemas/TypedArgument'
               name:
                 $ref: '#/components/schemas/LocalizedText'
               description:
@@ -2583,10 +2585,10 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/Automation'
-        widgets:
+        blocks:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/Widget'
+            $ref: '#/components/schemas/Block'
         createdAt:
           type: string
         updatedAt:
@@ -2601,7 +2603,7 @@ components:
         schema:
           additionalProperties:
             $ref: '#/components/schemas/TypedArgument'
-        widget:
+        block:
           type: string
         value: {}
 
@@ -2703,11 +2705,11 @@ components:
           type: string
           description: Unique & human readable id across current workspace's automations
 
-    Widget:
+    Block:
       type: object
       required:
         - url
-      description: Widget
+      description: Block
       additionalProperties: false
       properties:
         description:
@@ -2716,12 +2718,14 @@ components:
           $ref: '#/components/schemas/LocalizedText'
         url:
           type: string
+        edit:
+          $ref: '#/components/schemas/TypedArgument'
 
     Page:
       type: object
       required:
         - name
-        - widgets
+        - blocks
       description: Page
       additionalProperties: false
       properties:
@@ -2731,15 +2735,16 @@ components:
           $ref: '#/components/schemas/LocalizedText'
         workspaceId:
           type: string
-        widgets:
+        blocks:
           type: array
           items:
             type: object
             properties:
               name:
                 type: string
-              height:
-                type: number
+              config:
+                type: object
+                additionalProperties: true
         id:
           type: string
         slug:
@@ -2759,7 +2764,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/Page'
         - properties:
-            widgets:
+            blocks:
               type: array
               items:
                 type: object

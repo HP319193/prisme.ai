@@ -27,7 +27,7 @@ export const WorkspacesView = () => {
       })[],
     [workspaces]
   );
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
 
   const createWorkspace = useCallback(async () => {
     setLoading(true);

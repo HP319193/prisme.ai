@@ -40,7 +40,7 @@ class BlockErrorBoundary extends React.Component {
   }
 }
 
-interface BlockComponentProps {
+export interface BlockComponentProps {
   entityId: string;
   token?: string;
   workspaceId?: string;

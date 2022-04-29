@@ -10,7 +10,7 @@ import { SLUG_MATCH_INVALID_CHARACTERS } from '../../utils/regex';
 import useLocalizedText from '../../utils/useLocalizedText';
 
 export const WorkspacesProvider: FC = ({ children }) => {
-  const localize = useLocalizedText();
+  const { localize } = useLocalizedText();
   const { t: errorT } = useTranslation('errors');
   const { user } = useUser();
   const [workspaces, setWorkspaces] = useState<WorkspacesContext['workspaces']>(

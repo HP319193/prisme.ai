@@ -324,7 +324,7 @@
         "title": "Publier le workspace en tant qu'App",
         "ok": "Publier",
         "toast": "Application publiée",
-        "content": "Les Automatisations, Pages, Widgets ainsi que la configuration du Workspace seront accessibles à tous les utilisateurs qui installent votre App.\nSupprimez toute clé privée d'API avant de publier."
+        "content": "Les Automatisations, Pages, Blocks ainsi que la configuration du Workspace seront accessibles à tous les utilisateurs qui installent votre App.\nSupprimez toute clé privée d'API avant de publier."
       }
     }
   },
@@ -351,12 +351,6 @@
       "error_slug": "Le nom technique est déjà utilisé, veuillez en choisir un autre",
       "error": "Une erreur est survenue"
     },
-    "widgets": {
-      "add": "Ajouter un widget",
-      "remove": "Supprimer le widget",
-      "search": "Rechercher un widget",
-      "empty": "Aucun widget n'est disponible dans ce workspace. Ajoutez une App !"
-    },
     "share": {
       "label": "Partager cette page",
       "access": "Accès",
@@ -374,6 +368,80 @@
       },
       "slug": {
         "label": "Nom technique"
+      }
+    },
+    "blocks": {
+      "add": "Ajouter un block",
+      "remove": "Supprimer le block",
+      "search": "Rechercher un block",
+      "empty": "Aucun block n'est disponible dans ce workspace. Ajoutez une App !",
+      "settings": {
+        "title": "Paramètres du Block",
+        "toggle_on": "Afficher les réglages",
+        "toggle_off": "Masquer les réglages",
+        "onInit": {
+          "label": "Évènement d'initialisation",
+          "description": "Cet évènement sera déclenché lors de l'initialisation du block à chaque visualisation de la page."
+        },
+        "updateOn": {
+          "label": "Évènement de mise à jour",
+          "description": "Quand une de vos automatisation émet cet évènement, le contenu du block sera mis à jour avec le contenu de la payload."
+        }
+      },
+      "name": "{{context}}",
+      "name_Title": "Titre",
+      "name_Cards": "Groupe de cartes",
+      "name_DataTable": "Tableau de données",
+      "description": "",
+      "description_Title": "Afficher un titre",
+      "description_Cards": "Afficher un groupe de cartes",
+      "description_DataTable": "Afficher un tableau de données",
+      "title": {
+        "settings": {
+          "title": "Titre",
+          "level": "Niveau de titre",
+          "levelOption": "Niveau {{level}}"
+        }
+      },
+      "cards": {
+        "settings": {
+          "cards": "Cartes",
+          "card": "Carte",
+          "title": "Titre",
+          "description": "Description",
+          "cover": "Image de couverture",
+          "content": "Contenu",
+          "type": "Type",
+          "type_text": "Texte",
+          "type_button": "Bouton",
+          "type_accordion": "Accordéon",
+          "text": {
+            "value": "Texte à afficher"
+          },
+          "button": {
+            "value": "Texte du bouton",
+            "url": "Adresse web à afficher",
+            "event": "Évènement à déclencher",
+            "icon": "Icône"
+          },
+          "accordion": {
+            "title": "Titre",
+            "content": "Contenu",
+            "icon": "Icône"
+          },
+          "autoScroll": {
+            "title": "Défilement automatique",
+            "description": "Activez cette option pour que le carousel défile automatiquement toutes les 5 secondes"
+          },
+          "layout": {
+            "title": "Mise en page",
+            "description": "Vous pouvez changer de mode d'affichage. Par défaut, les cartes seront affichées à l'aide d'un carousel.",
+            "noOptions": "Aucune option disponible",
+            "carousel": "Carousel (Défilement horizontal)",
+            "grid": "Grille",
+            "column": "Colonne"
+          }
+        }
       }
     }
   },
