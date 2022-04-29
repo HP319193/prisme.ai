@@ -6,7 +6,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
 
   useEffect(() => {
     if (!page) return;
-    setBlocksConfigs(page.blocks.map(({ config }) => config));
+    setBlocksConfigs((page.blocks || []).map(({ config }) => config));
   }, [page]);
 
   const socket = useRef<Events>();
@@ -24,7 +24,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
     socket.current = api.streamEvents(page.workspaceId);
 
     const off = socket.current.all((e, { payload }) => {
-      const updateEvents = page.blocks.reduce<Record<string, number[]>>(
+      const updateEvents = (page.blocks || []).reduce<Record<string, number[]>>(
         (prev, { config }, index) =>
           !config || !config.updateOn
             ? prev
@@ -54,7 +54,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
   // Init blocks
   useEffect(() => {
     if (!page || !page.workspaceId) return;
-    const initEvents = page.blocks.reduce<string[]>(
+    const initEvents = (page.blocks || []).reduce<string[]>(
       (prev, { config }) =>
         !config || !config.onInit ? prev : [...prev, config.onInit],
       []
