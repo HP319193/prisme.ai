@@ -307,7 +307,10 @@ export default class Runtime {
           ?.config?.value || {};
     }
 
-    if (event.type === EventType.ConfiguredApp) {
+    if (
+      event.type === EventType.ConfiguredApp ||
+      event.type === EventType.InstalledApp
+    ) {
       const payload = (<PrismeEvent<Prismeai.ConfiguredAppInstance['payload']>>(
         event
       ))?.payload;
