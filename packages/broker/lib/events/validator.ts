@@ -100,7 +100,9 @@ export async function init({
   );
 
   OAS_URL = url;
-  ajValidator.addSchema(data, url);
+  Object.entries(data.components?.schemas).forEach(([type, schema]: any) => {
+    ajValidator.addSchema(schema, type);
+  });
   return true;
 }
 
@@ -115,12 +117,11 @@ export function validate(eventType: string, payload: any) {
   if (!componentName) {
     throw new EventValidationError(`Unknown event ${eventType}`, []);
   }
-  const validated = ajValidator.validate(
-    {
-      $ref: `${OAS_URL}#/components/schemas/${componentName}`,
-    },
-    { type: eventType, payload }
-  );
+  const validated = ajValidator.validate(componentName, {
+    type: eventType,
+    payload,
+  });
+
   if (!validated) {
     throw new EventValidationError(
       `Trying to send an invalid '${eventType}' event`,
