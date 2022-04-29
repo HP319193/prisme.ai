@@ -28,6 +28,7 @@ export enum InstructionType {
   Wait = 'wait',
   Repeat = 'repeat',
   All = 'all',
+  Comment = 'comment',
 }
 
 export async function runCustomAutomation(
@@ -124,6 +125,8 @@ export async function runInstruction(
         broker,
         ctx,
       });
+      break;
+    case InstructionType.Comment:
       break;
     default:
       result = await runCustomAutomation(
