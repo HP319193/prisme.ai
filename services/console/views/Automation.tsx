@@ -271,6 +271,7 @@ export const Automation = () => {
             disabled={saving}
             key="1"
             className="!flex flex-row"
+            variant="primary"
           >
             <Space>
               {t('automations.save.label')}

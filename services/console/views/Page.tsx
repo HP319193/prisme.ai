@@ -190,7 +190,7 @@ export const Page = () => {
         }
         onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
-          <Button onClick={save} disabled={saving} key="save">
+          <Button onClick={save} disabled={saving} key="save" variant="primary">
             {saving && <LoadingOutlined />}
             {t('pages.save.label')}
           </Button>,
