@@ -22,6 +22,7 @@ const Input = forwardRef(
       inputType = 'text',
       className,
       containerClassName = '',
+      defaultValue,
       ...otherProps
     }: InputProps,
     ref: any
@@ -60,7 +61,7 @@ const Input = forwardRef(
         className={containerClassName}
         label={label}
         component={inputComponent}
-        raisedPlaceholder={!!(placeholder || otherProps.value)}
+        raisedPlaceholder={!!(defaultValue || placeholder || otherProps.value)}
       />
     );
   }
