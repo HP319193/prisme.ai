@@ -12,7 +12,12 @@ const PageHeader = ({
   onBack = () => null,
   RightButtons,
 }: PageHeaderProps) => (
-  <AntdPageHeader onBack={onBack} title={title} extra={RightButtons} />
+  <AntdPageHeader
+    className="h-[72px] flex items-center"
+    onBack={onBack}
+    title={title}
+    extra={RightButtons}
+  />
 );
 
 export default PageHeader;
