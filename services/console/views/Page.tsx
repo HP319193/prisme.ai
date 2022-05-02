@@ -196,7 +196,7 @@ export const Page = () => {
           </Button>,
         ]}
       />
-      <div className="relative flex flex-1">
+      <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
         <PageBuilder value={value} onChange={setValue} />
       </div>
     </>

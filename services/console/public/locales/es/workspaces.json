@@ -376,6 +376,7 @@
     },
     "blocks": {
       "add": "Añadir un block",
+      "edit": "Editar",
       "remove": "Eliminar el block",
       "search": "Buscar un block",
       "settings": {

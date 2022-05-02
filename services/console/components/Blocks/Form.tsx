@@ -1,4 +1,5 @@
 import {
+  Schema,
   SchemaForm,
   useBlock,
   SchemaFormDescription,
@@ -41,7 +42,7 @@ const SchemaField = ({ name }: FieldProps) => {
   );
 };
 
-const schema = {
+const schema: Schema = {
   type: 'object',
   properties: {
     onSubmit: {

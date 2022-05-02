@@ -1,4 +1,4 @@
-import { useBlock, Table } from '@prisme.ai/design-system';
+import { Schema, Table, useBlock } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 
@@ -71,5 +71,5 @@ DataTable.schema = {
       },
     },
   },
-};
+} as Schema;
 export default DataTable;
