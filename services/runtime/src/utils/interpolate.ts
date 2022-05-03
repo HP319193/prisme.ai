@@ -4,18 +4,22 @@ import { parseVariableName } from './parseVariableName';
 
 const getValueFromCtx = (pathStr: string, context: any) => {
   const path = parseVariableName(pathStr);
-  return path.reduce(
-    (prev: any, nextPath: any) =>
-      typeof prev === 'object' ? prev[nextPath] || '' : '',
-    context
-  );
+  return path.reduce((prev: any, nextPath: any) => {
+    return typeof prev === 'object' && typeof prev[nextPath] !== 'undefined'
+      ? prev[nextPath]
+      : undefined;
+  }, context);
 };
 
 const evaluate = (expr: any, ctx: any, { asString = false } = {}) => {
   const value = getValueFromCtx(expr, ctx);
-
   if (typeof value !== 'string') {
-    return asString ? JSON.stringify(value, null, '  ') : value;
+    if (asString) {
+      return typeof value === 'undefined'
+        ? ''
+        : JSON.stringify(value, null, '  ');
+    }
+    return value;
   }
 
   return value;
