@@ -101,6 +101,40 @@ automations:
     when:
       endpoint: true
 
+  simpleRepeatUntil:
+    name: simpleRepeatUntil
+    do:
+      - repeat:
+          until: 4
+          do:
+            - set:
+                name: numbers[]
+                value: '{{item}}'
+    output: '{{numbers}}'
+    when:
+      endpoint: true
+
+  simpleRepeatOnAndUntil:
+    name: simpleRepeatOnAndUntil
+    do:
+      - set:
+          name: numbers
+          value:
+            - un
+            - deux
+            - trois
+            - quatre
+      - repeat:
+          on: '{{numbers}}'
+          until: 2
+          do:
+            - set:
+                name: output[]
+                value: '{{item}}'
+    output: '{{output}}'
+    when:
+      endpoint: true
+
   transformListToObject:
     name: transformListToObject
     do:

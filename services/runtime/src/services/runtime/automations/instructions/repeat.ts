@@ -41,7 +41,8 @@ export async function repeat(
       : on || [];
 
   const maxIterations =
-    typeof until !== 'undefined' && until < ((<any>values)?.length || 0)
+    typeof until !== 'undefined' &&
+    (!on || until < ((<any>values)?.length || 0))
       ? until
       : (<any>values)?.length || 0;
   for (let i = 0; i < maxIterations; i++) {
