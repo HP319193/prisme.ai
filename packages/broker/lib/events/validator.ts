@@ -97,9 +97,7 @@ export async function init({
     }
   );
 
-  Object.entries(data.components?.schemas).forEach(([type, schema]: any) => {
-    ajValidator.addSchema(schema, `#/components/schemas/${type}`);
-  });
+  ajValidator.addSchema(data, 'swagger.yml');
   return true;
 }
 
@@ -112,7 +110,7 @@ export function validate(eventType: string, payload: any) {
   }
   const componentName = schemaMapping[eventType];
   const validate = ajValidator.getSchema(
-    `#/components/schemas/${componentName}`
+    `swagger.yml#/components/schemas/${componentName}`
   );
   if (!componentName || !validate) {
     throw new EventValidationError(`Unknown event ${eventType}`, []);
