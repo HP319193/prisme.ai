@@ -13,7 +13,7 @@ export const validationMiddleware = ({ ignorePaths = [] }: ValidationOpts) => {
   return OpenApiValidator.middleware({
     apiSpec: OPENAPI_FILEPATH,
     validateRequests: true,
-    validateResponses: false,
+    validateResponses: DEBUG,
     validateSecurity: false,
     ignorePaths: !ignorePaths.length
       ? undefined
