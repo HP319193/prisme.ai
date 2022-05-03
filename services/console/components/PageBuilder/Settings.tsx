@@ -5,6 +5,7 @@ import {
   useBlock,
   SchemaForm,
   Schema,
+  Collapse,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
@@ -37,9 +38,11 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
           title: t('pages.blocks.settings.updateOn.label'),
           description: t('pages.blocks.settings.updateOn.description'),
         },
-      },
-      'ui:options': {
-        grid: [[['onInit', 'updateOn']]],
+        automation: {
+          type: 'string',
+          title: t('pages.blocks.settings.automation.label'),
+          description: t('pages.blocks.settings.automation.description'),
+        },
       },
     }),
     [t]
@@ -59,15 +62,27 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
     [t]
   );
 
+  const collapseItems = useMemo(
+    () => [
+      {
+        label: t('pages.blocks.settings.advanced'),
+        content: (
+          <SchemaForm
+            schema={commonSchema}
+            onChange={setConfig}
+            initialValues={config}
+            buttons={[]}
+            locales={locales}
+          />
+        ),
+      },
+    ],
+    []
+  );
+
   return (
     <div className="flex flex-1 flex-col p-4 shadow-inner shadow-slate-500 -mx-2 px-6">
-      <SchemaForm
-        schema={commonSchema}
-        onChange={setConfig}
-        initialValues={config}
-        buttons={[]}
-        locales={locales}
-      />
+      <Collapse items={collapseItems} />
       <Divider />
       {SetupComponent && (
         <>

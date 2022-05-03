@@ -376,6 +376,7 @@
       "search": "Buscar un block",
       "empty": "No hay blocks disponibles en este espacio de trabajo. Instale una App",
       "settings": {
+        "advanced": "Configuración avanzada",
         "title": "Parámetros del Block",
         "toggle_on": "Mostrar configuración",
         "toggle_off": "Ocultar la configuración",
@@ -386,6 +387,10 @@
         "updateOn": {
           "label": "Actualización del evento",
           "description": "Cuando una de sus automatizaciones emita este evento, el contenido del block se actualizará con el contenido del payload."
+        },
+        "automation": {
+          "label": "Automatización",
+          "description": "Ejecuta una automatización al cargar la página para recuperar la configuración del bloque."
         }
       },
       "name": "{{context}}",

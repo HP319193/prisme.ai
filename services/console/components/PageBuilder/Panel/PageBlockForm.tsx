@@ -9,9 +9,6 @@ import { useTranslation } from 'next-i18next';
 import { useMemo, useState } from 'react';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import { usePageBuilder } from '../context';
-import IconApps from '../../../icons/icon-apps.svgr';
-import Link from 'next/link';
-import { useWorkspace } from '../../../layouts/WorkspaceLayout';
 import * as BuiltinBlocks from '../../Blocks';
 
 interface PageBlockFormProps {
@@ -20,9 +17,7 @@ interface PageBlockFormProps {
 
 export const PageBlockForm = ({ onSubmit }: PageBlockFormProps) => {
   const { blocks } = usePageBuilder();
-  const {
-    workspace: { id: workspaceId },
-  } = useWorkspace();
+
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const [search, setSearch] = useState('');

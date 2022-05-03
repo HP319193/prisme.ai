@@ -45,7 +45,12 @@ const FieldAny = ({ schema, name, label }: FieldProps) => {
         <label className="text-[10px] text-gray">
           {label || schema.title || getSchemaFormLabel(name)}
         </label>
-        <CodeEditorInline value={value} onChange={onChange} mode="json" />
+        <CodeEditorInline
+          value={value}
+          onChange={onChange}
+          mode="json"
+          style={{ flex: 'auto' }}
+        />
       </SchemaFormDescription>
     </div>
   );

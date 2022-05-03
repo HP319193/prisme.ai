@@ -1,7 +1,7 @@
 import io, { Socket } from 'socket.io-client';
 
 export class Events {
-  private client: Socket;
+  protected client: Socket;
   public workspaceId: string;
 
   constructor(
@@ -15,6 +15,10 @@ export class Events {
         'x-prismeai-session-token': token,
       },
     });
+  }
+
+  get socket() {
+    return this.client;
   }
 
   destroy() {
@@ -41,6 +45,24 @@ export class Events {
   ) {
     this.client.on(ev, listener);
     return () => this.client.off(ev, listener);
+  }
+
+  emit(event: string, payload?: any) {
+    this.client.emit('event', {
+      type: event,
+      payload,
+    });
+  }
+
+  once(
+    ev: string,
+    listener: (eventName: string, eventData: Prismeai.PrismeEvent) => void
+  ) {
+    this.client.once(ev, listener);
+  }
+
+  close() {
+    this.client.close();
   }
 }
 

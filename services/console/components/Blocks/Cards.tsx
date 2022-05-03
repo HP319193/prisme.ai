@@ -412,7 +412,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     <div className="relative">
       <div ref={container} className={styles.container}>
         {(cards as Card[]).map(
-          ({ title, description, cover, content }, index) => (
+          ({ title, description, cover, content = [] }, index) => (
             <div
               key={index}
               className="flex flex-col snap-start my-4 pl-[10px] group w-[325px]"
@@ -443,80 +443,85 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                   <div className="text-[10px] my-2 text-neutral-500 text-center">
                     {localize(description)}
                   </div>
-                  {(content || []).map((item, index) => (
-                    <div key={index} className="flex mb-4">
-                      {item.type === 'text' && (
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: localize(item.value),
-                          }}
-                        />
-                      )}
-                      {item.type === 'button' && (
-                        <button
-                          className="flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left"
-                          onClick={() => {
-                            if (item.url) {
-                              window.open(localize(item.url));
-                            }
-                            if (item.event) {
-                              // TODO send event
-                              console.log('send event', item.event);
-                            }
-                          }}
-                        >
-                          <div className="flex mr-2">
-                            {item.icon ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={item.icon}
-                                alt={localize(item.value)}
-                                height={16}
-                                width={16}
-                              />
-                            ) : (
-                              <IconLink height={16} width={16} />
-                            )}
-                          </div>
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: localize(item.value).replace(
-                                /\n/g,
-                                '<br />'
-                              ),
-                            }}
-                          />
-                        </button>
-                      )}
-                      {item.type === 'accordion' && (
-                        <div className="flex flex-1 border-[1px] border-neutral-200 rounded p-2">
-                          <Accordion
-                            title={
-                              <div className="flex flex-row items-center">
-                                {item.icon && (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img
-                                    src={item.icon}
-                                    alt={localize(item.title)}
-                                    width={16}
-                                    height={16}
-                                    className="mr-2"
-                                  />
-                                )}{' '}
-                                {localize(item.title)}
-                              </div>
-                            }
-                          >
+                  {content &&
+                    Array.isArray(content) &&
+                    content.map((item, index) => (
+                      <div key={index} className="flex mb-4">
+                        {item.type === 'text' && (
+                          <div>
+                            {item.value}
                             <div
                               dangerouslySetInnerHTML={{
-                                __html: localize(item.content),
+                                __html: localize(item.value),
                               }}
                             />
-                          </Accordion>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                          </div>
+                        )}
+                        {item.type === 'button' && (
+                          <button
+                            className="flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left"
+                            onClick={() => {
+                              if (item.url) {
+                                window.open(localize(item.url));
+                              }
+                              if (item.event) {
+                                // TODO send event
+                                console.log('send event', item.event);
+                              }
+                            }}
+                          >
+                            <div className="flex mr-2">
+                              {item.icon ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={item.icon}
+                                  alt={localize(item.value)}
+                                  height={16}
+                                  width={16}
+                                />
+                              ) : (
+                                <IconLink height={16} width={16} />
+                              )}
+                            </div>
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: localize(item.value).replace(
+                                  /\n/g,
+                                  '<br />'
+                                ),
+                              }}
+                            />
+                          </button>
+                        )}
+                        {item.type === 'accordion' && (
+                          <div className="flex flex-1 border-[1px] border-neutral-200 rounded p-2">
+                            <Accordion
+                              title={
+                                <div className="flex flex-row items-center">
+                                  {item.icon && (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img
+                                      src={item.icon}
+                                      alt={localize(item.title)}
+                                      width={16}
+                                      height={16}
+                                      className="mr-2"
+                                    />
+                                  )}{' '}
+                                  {localize(item.title)}
+                                </div>
+                              }
+                            >
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: localize(item.content),
+                                }}
+                              />
+                            </Accordion>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>

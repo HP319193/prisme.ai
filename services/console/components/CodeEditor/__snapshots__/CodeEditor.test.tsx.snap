@@ -6,7 +6,7 @@ exports[`should render 1`] = `
   style={
     Object {
       "display": "flex",
-      "flex": 1,
+      "flex": "auto",
       "height": "auto",
       "width": "auto",
     }
