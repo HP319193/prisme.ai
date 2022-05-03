@@ -1,24 +1,26 @@
 import { useField } from 'react-final-form';
 import TextArea from '../TextArea';
+import { useSchemaForm } from './context';
 import Description from './Description';
 import { FieldProps, UiOptionsTextArea } from './types';
 import { getLabel } from './utils';
 
 export const FieldTextTextArea = ({
-  schema,
-  label,
-  name,
   options,
+  ...props
 }: FieldProps & { options: UiOptionsTextArea }) => {
-  const field = useField(name);
+  const field = useField(props.name);
+  const { components } = useSchemaForm();
 
   return (
-    <Description text={schema.description}>
-      <TextArea
-        {...field.input}
-        {...(options && options.textarea)}
-        label={label || schema.title || getLabel(name)}
-      />
+    <Description text={props.schema.description}>
+      <components.FieldContainer {...props}>
+        <TextArea
+          {...field.input}
+          {...(options && options.textarea)}
+          label={props.label || props.schema.title || getLabel(props.name)}
+        />
+      </components.FieldContainer>
     </Description>
   );
 };

@@ -1,11 +1,20 @@
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Form, FormSpy } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import Field from './Field';
 import { Schema } from './types';
 import Button from '../Button';
 import { root } from './utils';
-import { context, SchemaFormContext } from './context';
+import { context, SchemaFormContext, FieldContainer } from './context';
+import FieldAny from './FieldAny';
+import FieldBoolean from './FieldBoolean';
+import FieldDate from './FieldDate';
+import FieldLocalizedBoolean from './FieldLocalizedBoolean';
+import FieldLocalizedText from './FieldLocalizedText';
+import FieldObject from './FieldObject';
+import FieldArray from './FieldArray';
+import FieldSelect from './FieldSelect';
+import FieldText from './FieldText';
 
 export interface FormProps {
   schema: Schema;
@@ -14,7 +23,7 @@ export interface FormProps {
   onChange?: (values: any) => void;
   initialValues?: any;
   locales?: SchemaFormContext['locales'];
-  components?: SchemaFormContext['components'];
+  components?: Partial<SchemaFormContext['components']>;
 }
 
 const OnChange = ({
@@ -31,7 +40,7 @@ const OnChange = ({
   return null;
 };
 
-const EmptyObject = {};
+const DefaultLocales = {};
 
 export const SchemaForm = ({
   schema,
@@ -39,8 +48,8 @@ export const SchemaForm = ({
   buttons,
   onChange,
   initialValues,
-  locales = EmptyObject,
-  components = EmptyObject,
+  locales = DefaultLocales,
+  components,
 }: FormProps) => {
   if (!schema) return null;
   const values = useRef({ values: initialValues });
@@ -52,9 +61,25 @@ export const SchemaForm = ({
     },
     [onSubmit]
   );
+  const componentsWithDefault = useMemo(
+    () => ({
+      FieldContainer,
+      FieldArray,
+      FieldAny,
+      FieldBoolean,
+      FieldDate,
+      FieldLocalizedBoolean,
+      FieldLocalizedText,
+      FieldObject,
+      FieldSelect,
+      FieldText,
+      ...components,
+    }),
+    [components]
+  );
 
   return (
-    <context.Provider value={{ locales, components }}>
+    <context.Provider value={{ locales, components: componentsWithDefault }}>
       <Form
         onSubmit={onSubmitHandle}
         initialValues={values.current}

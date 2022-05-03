@@ -43,13 +43,15 @@ export const FieldText = (props: FieldProps) => {
 
   return (
     <Description text={props.schema.description}>
-      <Input
-        {...field.input}
-        onChange={onChange}
-        label={props.label || props.schema.title || getLabel(props.name)}
-        containerClassName="flex flex-1"
-        type={props.schema.type === 'number' ? 'number' : 'text'}
-      />
+      <components.FieldContainer {...props}>
+        <Input
+          {...field.input}
+          onChange={onChange}
+          label={props.label || props.schema.title || getLabel(props.name)}
+          containerClassName="flex flex-1"
+          type={props.schema.type === 'number' ? 'number' : 'text'}
+        />
+      </components.FieldContainer>
     </Description>
   );
 };

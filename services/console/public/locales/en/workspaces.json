@@ -537,5 +537,9 @@
   },
   "feed": {
     "filter": "Filters"
+  },
+  "form": {
+    "raw": "Insert a raw value (allows you to enter text, and therefore interpolated variables)",
+    "raw_hide": "Respect the type of data required"
   }
 }

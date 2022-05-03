@@ -9,6 +9,7 @@ import {
 } from '@prisme.ai/design-system';
 import { CodeEditorInline } from '../../CodeEditor/lazy';
 import { useField } from 'react-final-form';
+import FieldContainerWithRaw from '../../FieldContainerWithRaw';
 
 interface InstructionValueProps {
   instruction: string;
@@ -52,6 +53,7 @@ const FieldAny = ({ schema, name, label }: FieldProps) => {
 
 const components = {
   FieldAny,
+  FieldContainer: FieldContainerWithRaw,
 };
 
 export const InstructionValue: FC<InstructionValueProps> = ({

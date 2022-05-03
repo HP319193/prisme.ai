@@ -1,8 +1,10 @@
+import { FC, useCallback } from 'react';
 import { Story } from '@storybook/react';
 import { useState } from 'react';
 import SchemaForm, { FormProps } from './SchemaForm';
 import { useField } from 'react-final-form';
 import { FieldProps } from './types';
+import TextArea from '../TextArea';
 
 export default {
   title: 'Components/SchemaForm',
@@ -353,6 +355,104 @@ Localized.args = {
         type: 'localized:boolean',
         title: 'Localized boolean',
       },
+    },
+  },
+};
+
+export const WithCustomFieldContainer = Template.bind({});
+const FieldContainer: FC<FieldProps> = ({ name, children }) => {
+  const field = useField(name);
+  const [value, setValue] = useState('');
+  const [displayRaw, setDisplayRaw] = useState(false);
+  const toggle = useCallback(() => {
+    setDisplayRaw(!displayRaw);
+    if (!displayRaw) {
+      setValue(
+        typeof field.input.value === 'string'
+          ? field.input.value
+          : JSON.stringify(field.input.value, null, '  ')
+      );
+    }
+  }, [displayRaw, field.input.value]);
+  const onChange = useCallback(
+    (value: string) => {
+      setValue(value);
+      try {
+        field.input.onChange(JSON.parse(value));
+      } catch {
+        field.input.onChange(value);
+      }
+    },
+    [field.input]
+  );
+  return (
+    <div className="flex flex-1 flex-col">
+      <button onClick={toggle}>toggle raw</button>
+      {displayRaw && (
+        <div>
+          <TextArea
+            value={value}
+            onChange={({ target: { value } }) => onChange(value)}
+            label="Now, you can set any value as you want"
+          />
+        </div>
+      )}
+      {!displayRaw && children}
+    </div>
+  );
+};
+WithCustomFieldContainer.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      string: {
+        type: 'string',
+      },
+      number: {
+        type: 'number',
+      },
+      boolean: {
+        type: 'boolean',
+      },
+      array: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+      object: {
+        type: 'object',
+        additionalProperties: true,
+      },
+    },
+  },
+  components: {
+    FieldContainer,
+  },
+};
+
+export const ObjectWithMixedPropertiesAndFreeAdditionnals = Template.bind({});
+ObjectWithMixedPropertiesAndFreeAdditionnals.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      body: {
+        type: 'object',
+        additionalProperties: true,
+        properties: {
+          foo: {
+            type: 'string',
+          },
+        },
+      },
+    },
+    description: '',
+    title: '',
+  },
+  initialValues: {
+    body: {
+      foo: 'bar',
+      other: 'coin',
     },
   },
 };

@@ -28,11 +28,31 @@ const TextAreaField: SchemaFormContext['components']['JSONEditor'] = ({
   );
 };
 
+const cleanValue = (schema: Schema, value: any) => {
+  const keys = Object.keys(schema.properties || {});
+  return Object.keys(value || {}).reduce(
+    (prev, key) =>
+      keys.includes(key)
+        ? prev
+        : {
+            ...prev,
+            [key]: value[key],
+          },
+    {}
+  );
+};
+const getInitialValue = (schema: Schema, value: any) => {
+  if (typeof value === 'string') return value;
+  return JSON.stringify(cleanValue(schema, value), null, '  ');
+};
+
 const FreeAdditionalProperties = ({
   schema,
   field,
 }: AdditionalPropertiesProps) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(
+    getInitialValue(schema, field.input.value)
+  );
   const {
     components: { JSONEditor = TextAreaField },
   } = useSchemaForm();

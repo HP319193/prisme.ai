@@ -14,10 +14,10 @@ function isUiOptionsArray(
   return !!uiOptions && !!(uiOptions as UiOptionsArray).array;
 }
 
-export const FieldArray = ({ schema, name, label }: FieldProps) => {
-  const { items = {} } = schema;
-  const { locales = {} } = useSchemaForm();
-  const { 'ui:options': uiOptions } = schema;
+export const FieldArray = (props: FieldProps) => {
+  const { items = {} } = props.schema;
+  const { locales = {}, components } = useSchemaForm();
+  const { 'ui:options': uiOptions } = props.schema;
 
   if (!items) return null;
 
@@ -25,42 +25,46 @@ export const FieldArray = ({ schema, name, label }: FieldProps) => {
 
   return (
     <div className="m-2 p-2 border-l-[1px] rounded border-gray-200">
-      <Description text={schema.description}>
-        <label className="text-[10px] text-gray">
-          {label || schema.title || getLabel(name)}
-        </label>
-        <FFFieldArray name={name}>
-          {({ fields }) => (
-            <div>
-              <div className={asRow ? 'flex flex-row flex-wrap' : ''}>
-                {fields.map((field, index) => (
-                  <div
-                    key={field}
-                    className={`relative ${asRow ? 'min-w-[30%]' : ''}`}
-                  >
-                    <div className={asRow ? 'min-w-full' : ''}>
-                      <Field schema={items} name={field} />
-                      <Button
-                        onClick={() => fields.remove(index)}
-                        className="!absolute top-2 right-1"
-                      >
-                        <Tooltip
-                          title={locales.removeItem || 'Remove'}
-                          placement="left"
+      <Description text={props.schema.description}>
+        <components.FieldContainer {...props}>
+          <label className="text-[10px] text-gray">
+            {props.label || props.schema.title || getLabel(props.name)}
+          </label>
+          <FFFieldArray name={props.name}>
+            {({ fields }) => (
+              <div>
+                <div className={asRow ? 'flex flex-row flex-wrap' : ''}>
+                  {fields.map((field, index) => (
+                    <div
+                      key={field}
+                      className={`relative ${asRow ? 'min-w-[30%]' : ''}`}
+                    >
+                      <div className={asRow ? 'min-w-full' : ''}>
+                        <Field schema={items} name={field} />
+                        <Button
+                          onClick={() => fields.remove(index)}
+                          className="!absolute top-2 right-1"
                         >
-                          <DeleteOutlined />
-                        </Tooltip>
-                      </Button>
+                          <Tooltip
+                            title={locales.removeItem || 'Remove'}
+                            placement="left"
+                          >
+                            <DeleteOutlined />
+                          </Tooltip>
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                <Button
+                  onClick={() => fields.push(getDefaultValue(items.type))}
+                >
+                  {locales.addItem || 'Add item'}
+                </Button>
               </div>
-              <Button onClick={() => fields.push(getDefaultValue(items.type))}>
-                {locales.addItem || 'Add item'}
-              </Button>
-            </div>
-          )}
-        </FFFieldArray>
+            )}
+          </FFFieldArray>
+        </components.FieldContainer>
       </Description>
     </div>
   );

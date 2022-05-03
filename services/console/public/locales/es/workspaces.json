@@ -537,5 +537,9 @@
   },
   "feed": {
     "filter": "Filtros"
+  },
+  "form": {
+    "raw": "Insertar un valor bruto (permite introducir texto y, por tanto, variables interpoladas)",
+    "raw_hide": "Respetar el tipo de datos requeridos"
   }
 }
