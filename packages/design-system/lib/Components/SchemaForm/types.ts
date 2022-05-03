@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { DatePickerProps } from '../DatePicker';
 import { TextAreaProps } from '../TextArea';
 
@@ -44,7 +44,7 @@ export type UiOptionsUpload = {
 export type UiOptionsSelect = {
   select: {
     options: {
-      label: string;
+      label: string | ReactNode;
       value: any;
     }[];
   };

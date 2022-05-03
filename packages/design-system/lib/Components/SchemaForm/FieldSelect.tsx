@@ -29,6 +29,7 @@ export const FieldSelect = ({
   return (
     <Description text={schema.description}>
       <Select
+        value={field.input.value}
         selectOptions={selectOptions}
         onChange={field.input.onChange}
         label={label || schema.title || getLabel(name)}
