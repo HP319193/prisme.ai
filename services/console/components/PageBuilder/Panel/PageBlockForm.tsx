@@ -61,28 +61,6 @@ export const PageBlockForm = ({ onSubmit }: PageBlockFormProps) => {
     });
   }, [localize, search, blocks]);
 
-  const isEmpty =
-    !blocks ||
-    !blocks.reduce<boolean>(
-      (prev, { blocks = [] }) => prev || blocks.length > 0,
-      false
-    );
-
-  if (isEmpty) {
-    return (
-      <div className="flex grow h-full flex-col overflow-auto">
-        <Link href={`/workspaces/${workspaceId}`}>
-          <a className="flex flex-1 justify-center items-center flex-col">
-            <IconApps height={100} width={100} className="text-gray-200" />
-            <div className="mt-4 text-gray text-center">
-              {t('pages.blocks.empty')}
-            </div>
-          </a>
-        </Link>
-      </div>
-    );
-  }
-
   return (
     <div className="flex grow h-full flex-col overflow-auto">
       <SearchInput
