@@ -73,6 +73,28 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
     };
   }, [initSocket, page]);
 
+  const initWithAutomation = useCallback(
+    async (workspaceId: string, automation: string, index: number) => {
+      try {
+        const res = await api.callAutomation(workspaceId, automation);
+        setBlocksConfigs((blocksConfigs) => {
+          const newBlocksConfigs = [...blocksConfigs];
+          newBlocksConfigs[index] = { ...newBlocksConfigs[index], ...res };
+          return newBlocksConfigs;
+        });
+      } catch {}
+    },
+    []
+  );
+  useEffect(() => {
+    if (!page) return;
+    page.blocks.forEach(({ config: { automation } = {} }, index) => {
+      if (!automation || !page.workspaceId) return;
+
+      initWithAutomation(page.workspaceId, automation, index);
+    });
+  }, [initWithAutomation, page]);
+
   return { blocksConfigs, error, events: socket.current };
 };
 

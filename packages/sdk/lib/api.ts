@@ -430,6 +430,10 @@ export class Api extends Fetcher {
 
     return replaced;
   }
+
+  async callAutomation(workspaceId: string, automation: string): Promise<any> {
+    return this._fetch(`/workspaces/${workspaceId}/webhooks/${automation}`);
+  }
 }
 
 export default new Api('https://api.eda.prisme.ai');
