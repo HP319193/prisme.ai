@@ -122,7 +122,7 @@ describe('Variables & Contexts', () => {
     };
     const { field } = await execute('setAndNoop', payload);
 
-    expect(field).toEqual('');
+    expect(field).toEqual(undefined);
   });
 
   it('Call an automation setting user.myBro & check that current automation can read it afterwards', async () => {
@@ -242,17 +242,17 @@ describe('Variables & Contexts', () => {
     expect(output).toEqual([
       expect.objectContaining({
         automationSlug: 'testRunContext',
-        appSlug: '',
-        appInstanceSlug: '',
-        appInstanceFullSlug: '',
-        parentAppSlug: '',
+        appSlug: undefined,
+        appInstanceSlug: undefined,
+        appInstanceFullSlug: undefined,
+        parentAppSlug: undefined,
       }),
       expect.objectContaining({
         automationSlug: 'testRunContext',
         appSlug: 'basicApp',
         appInstanceSlug: 'basicApp',
         appInstanceFullSlug: 'basicApp',
-        parentAppSlug: '',
+        parentAppSlug: undefined,
       }),
       expect.objectContaining({
         automationSlug: 'testRunContext',
@@ -283,6 +283,20 @@ describe('Logic', () => {
       trois: true,
       quatre: true,
     });
+  });
+
+  it('Simple repeat with until', async () => {
+    const { execute } = getMocks();
+
+    const obj = await execute('simpleRepeatUntil', {});
+    expect(obj).toEqual([0, 1, 2, 3]);
+  });
+
+  it('Simple repeat with on and until', async () => {
+    const { execute } = getMocks();
+
+    const obj = await execute('simpleRepeatOnAndUntil', {});
+    expect(obj).toEqual(['un', 'deux']);
   });
 
   it('Repeat with condition inside', async () => {

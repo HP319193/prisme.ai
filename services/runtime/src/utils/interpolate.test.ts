@@ -31,6 +31,14 @@ it('should replace successfully a singled-out param by its value', async () => {
   expect(replacedStream).toEqual(['Hello', 'beautiful', 'array']);
 });
 
+it('should replace successfully a singled-out param with value 0', async () => {
+  const replacedStream = interpolate('{{param}}', {
+    param: 0,
+  });
+
+  expect(replacedStream).toEqual(0);
+});
+
 it('should not replace anything and return exact same stream', async () => {
   const replacedStream = interpolate(
     [{ type: 'text', value: 'Nothing to replace.' }],
