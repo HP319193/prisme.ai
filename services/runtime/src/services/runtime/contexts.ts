@@ -85,6 +85,7 @@ export class ContextsManager {
   private depth: number;
   private appContext?: AppContext;
   private automationSlug?: string;
+  public additionalGlobals?: Record<string, any>;
 
   constructor(
     workspaceId: string,
@@ -377,11 +378,15 @@ export class ContextsManager {
   }
 
   get publicContexts(): PublicContexts {
-    const { local, ...publicContexts } = this.contexts;
+    const { local, global, ...publicContexts } = this.contexts;
     return {
       ...local,
       ...publicContexts,
       run: this.run,
+      global: {
+        ...global,
+        ...this.additionalGlobals,
+      },
     };
   }
 

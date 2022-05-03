@@ -11,7 +11,10 @@ import { ContextsManager } from './contexts';
 import { ObjectNotFoundError } from '../../errors';
 import { EventType } from '../../eda';
 import { executeAutomation } from './automations';
-import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../config';
+import {
+  RUNTIME_EMITS_BROKER_TOPIC,
+  ADDITIONAL_GLOBAL_VARS,
+} from '../../../config';
 import { jsonPathMatches } from '../../utils';
 
 interface PendingWait {
@@ -157,6 +160,7 @@ export default class Runtime {
       payload,
       this.broker
     );
+    ctx.additionalGlobals = ADDITIONAL_GLOBAL_VARS;
     await ctx.fetch();
     return ctx;
   }

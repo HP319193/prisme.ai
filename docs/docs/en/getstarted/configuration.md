@@ -317,6 +317,13 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>900 (15 minutes)</td>
   </tr>       
 
+  <tr>
+    <td>ADDITIONAL_GLOBAL_VARS_*</td>
+    <td>runtime</td>
+    <td>Additional variables that will be available from global context (ADDITIONAL_GLOBAL_VARS_apiUrl will be available as {{global.apiUrl}}).</td>
+    <td>None</td>
+  </tr>         
+
   <!-- Workspaces -->          
   <tr>
     <td>PORT</td>

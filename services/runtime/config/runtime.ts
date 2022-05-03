@@ -16,3 +16,14 @@ export const RUNTIME_EMITS_BROKER_TOPIC =
 export const WAIT_DEFAULT_TIMEOUT = parseInt(
   process.env.WAIT_DEFAULT_TIMEOUT || `20`
 );
+
+const ADDITIONAL_GLOBAL_VARS_PREFIX = 'ADDITIONAL_GLOBAL_VARS_';
+export const ADDITIONAL_GLOBAL_VARS = Object.entries(process.env)
+  .filter(([key]) => key.startsWith(ADDITIONAL_GLOBAL_VARS_PREFIX))
+  .reduce(
+    (acc, [key, value]) => ({
+      ...acc,
+      [key.slice(ADDITIONAL_GLOBAL_VARS_PREFIX.length)]: value,
+    }),
+    {}
+  );
