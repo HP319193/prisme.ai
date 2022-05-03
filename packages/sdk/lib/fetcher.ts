@@ -18,18 +18,28 @@ export class Fetcher {
     this.host = host;
   }
 
-  private async _fetch<T>(url: string, options: RequestInit = {}): Promise<T> {
-    const headers: any = options.headers || {};
-    if (this.token && !headers['x-prismeai-session-token']) {
-      headers['x-prismeai-session-token'] = this.token;
+  protected async _fetch<T>(
+    url: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    const headers = new Headers(options.headers || {});
+
+    if (this.token && !headers.has('x-prismeai-session-token')) {
+      headers.append('x-prismeai-session-token', this.token);
     }
+
+    if (
+      (!options.body || !(options.body instanceof FormData)) &&
+      !headers.has('Content-Type')
+    ) {
+      headers.append('Content-Type', 'application/json');
+    }
+
+    headers.append('Access-Control-Allow-Origin', '*');
+
     const res = await global.fetch(`${this.host}${url}`, {
       ...options,
-      headers: {
-        ...headers,
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
-      },
+      headers,
     });
 
     if (!res.ok) {
@@ -66,7 +76,7 @@ export class Fetcher {
   async post<T>(url: string, body?: Record<string, any>) {
     return this._fetch<T>(url, {
       method: 'POST',
-      body: body && JSON.stringify(body),
+      body: body && !(body instanceof FormData) ? JSON.stringify(body) : body,
     });
   }
 

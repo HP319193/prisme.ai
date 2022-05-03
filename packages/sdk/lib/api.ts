@@ -69,7 +69,10 @@ export class Api extends Fetcher {
   }
 
   async updateWorkspace(workspace: Workspace): Promise<Workspace> {
-    return await this.patch(`/workspaces/${workspace.id}`, workspace);
+    return await this.patch(
+      `/workspaces/${workspace.id}`,
+      await this.replaceAllImagesData(workspace, workspace.id)
+    );
   }
 
   async deleteWorkspace(workspaceId: Workspace['id']): Promise<Workspace> {
@@ -93,7 +96,7 @@ export class Api extends Fetcher {
   ): Promise<Prismeai.Automation & { slug: string }> {
     return await this.patch(
       `/workspaces/${workspace.id}/automations/${slug}`,
-      automation
+      await this.replaceAllImagesData(automation, workspace.id)
     );
   }
 
@@ -147,6 +150,8 @@ export class Api extends Fetcher {
     return newPage;
   }
 
+  // Replace images as dataurl to uploaded url in any type of data
+
   async updatePage(
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
@@ -159,7 +164,7 @@ export class Api extends Fetcher {
       ...updatedPage
     } = await this.patch<PageWithMetadata>(
       `/workspaces/${workspaceId}/pages/${page.id}`,
-      page
+      await this.replaceAllImagesData(page, workspaceId)
     );
     return updatedPage;
   }
@@ -328,6 +333,93 @@ export class Api extends Fetcher {
       { ...config }
     );
     return config;
+  }
+
+  async uploadFiles(files: string | string[], workspaceId: string) {
+    function dataURItoBlob(dataURI: string): [Blob, string] {
+      // convert base64/URLEncoded data component to raw binary data held in a string
+      let byteString;
+      if (dataURI.split(',')[0].indexOf('base64') >= 0)
+        byteString = atob(dataURI.split(',')[1]);
+      else byteString = unescape(dataURI.split(',')[1]);
+
+      // separate out the mime component
+      const metadata = dataURI
+        .split(';')
+        .filter((v, k, all) => k < all.length - 1)
+        .map((v) => v.split(/:/));
+      const [, mimeString = ''] = metadata.find(([k, v]) => k === 'data') || [];
+      const [, ext] = mimeString.split(/\//);
+      const [, fileName = `file.${ext}`] =
+        metadata.find(([k, v]) => k === 'filename') || [];
+
+      // write the bytes of the string to a typed array
+      let ia = new Uint8Array(byteString.length);
+      for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+
+      return [new Blob([ia], { type: mimeString }), fileName];
+    }
+    const formData = new FormData();
+    (Array.isArray(files) ? files : [files]).forEach((file) => {
+      formData.append('file', ...dataURItoBlob(file));
+    });
+
+    try {
+      return await this._fetch<PrismeaiAPI.UploadFile.Responses.$200>(
+        `/workspaces/${workspaceId}/files`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+    } catch (e) {}
+    return [];
+  }
+
+  async replaceAllImagesData(original: any, workspaceId: string) {
+    const key = '…uploading-';
+    const toUpload: string[] = [];
+    const searchImages = (mayHaveImage: any, uploaded?: string[]) => {
+      switch (typeof mayHaveImage) {
+        case 'string':
+          if (uploaded && mayHaveImage.match(key)) {
+            // Replace with url
+            const [, index] = mayHaveImage.split(key);
+            return uploaded[+index];
+          }
+          if (mayHaveImage.match(/^data:/)) {
+            toUpload.push(mayHaveImage);
+            return `${key}${toUpload.length - 1}`;
+          }
+          return mayHaveImage;
+        case 'object':
+          const isArray = Array.isArray(mayHaveImage);
+          const withImagesUrl = isArray
+            ? [...mayHaveImage]
+            : { ...mayHaveImage };
+          for (const key of Object.keys(withImagesUrl)) {
+            withImagesUrl[key] = searchImages(withImagesUrl[key], uploaded);
+          }
+          return withImagesUrl;
+        default:
+          return original;
+      }
+    };
+
+    const searching = searchImages(original);
+
+    if (toUpload.length === 0) return original;
+
+    const uploaded = await this.uploadFiles(toUpload, workspaceId);
+
+    const replaced = searchImages(
+      searching,
+      uploaded.map(({ url }) => url)
+    );
+
+    return replaced;
   }
 }
 

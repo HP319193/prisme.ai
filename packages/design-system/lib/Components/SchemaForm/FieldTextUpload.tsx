@@ -22,12 +22,20 @@ export const FieldTextUpload = ({
 
   const readFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
     const reader = new FileReader();
     reader.onload = ({ target }) => {
       if (!target) return;
-      field.input.onChange(target.result);
+      field.input.onChange(
+        typeof target.result === 'string'
+          ? target.result.replace(
+              /base64/,
+              `filename:${file.name.replace(/;/g, '-')}; base64`
+            )
+          : target.result
+      );
     };
-    reader.readAsDataURL(e.target.files[0]);
+    reader.readAsDataURL(file);
   }, []);
 
   return (

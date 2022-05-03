@@ -64,10 +64,10 @@ it('should call post /workspaces', () => {
   });
 });
 
-it('should call patch /workspaces/42', () => {
+it('should call patch /workspaces/42', async () => {
   const api = new Api('/fake/');
   api.patch = jest.fn();
-  api.updateWorkspace({
+  await api.updateWorkspace({
     id: '42',
     name: 'foo',
     automations: {},
@@ -105,10 +105,10 @@ it('should call post /workspaces/42/automations', () => {
   });
 });
 
-it('should call patch /workspaces/42/automations', () => {
+it('should call patch /workspaces/42/automations', async () => {
   const api = new Api('/fake/');
   api.patch = jest.fn();
-  api.updateAutomation(
+  await api.updateAutomation(
     {
       id: '42',
       name: 'foo',
@@ -164,4 +164,66 @@ it('should call get /workspaces/42/events', async () => {
       createdAt: new Date('2021-01-01'),
     },
   ]);
+});
+
+it('should replace all images data', async () => {
+  const api = new Api('/fake/');
+  api.uploadFiles = jest.fn(async () => [
+    { url: 'http://image1.jpg' } as any,
+    { url: 'http://image2.jpg' } as any,
+    { url: 'http://image3.jpg' } as any,
+    { url: 'http://image4.jpg' } as any,
+    { url: 'http://image5.jpg' } as any,
+  ]);
+  const original = {
+    foo: 'data:image/jpeg;base64…',
+    bar: {
+      pic: 'data:image/jpeg;base64…',
+      pics: [
+        'data:image/jpeg;base64…',
+        'data:image/jpeg;base64…',
+        'data:image/jpeg;base64…',
+      ],
+      nopics: 'http://alreadyUpImage.jpg',
+    },
+  };
+  expect(await api.replaceAllImagesData(original, '42')).toEqual({
+    foo: 'http://image1.jpg',
+    bar: {
+      pic: 'http://image2.jpg',
+      pics: ['http://image3.jpg', 'http://image4.jpg', 'http://image5.jpg'],
+      nopics: 'http://alreadyUpImage.jpg',
+    },
+  });
+  expect(api.uploadFiles).toHaveBeenCalledWith(
+    [
+      'data:image/jpeg;base64…',
+      'data:image/jpeg;base64…',
+      'data:image/jpeg;base64…',
+      'data:image/jpeg;base64…',
+      'data:image/jpeg;base64…',
+    ],
+    '42'
+  );
+  expect(api.uploadFiles).toHaveBeenCalledTimes(1);
+});
+
+it('should upload file', async () => {
+  const api = new Api('/fake/');
+  // @ts-ignore
+  api._fetch = jest.fn(() => [{}]);
+  await api.uploadFiles(
+    'data:image/jpeg;filename:foo.jpg;base64,abcdefg',
+    '42'
+  );
+  // @ts-ignore
+  expect(api._fetch).toHaveBeenCalledWith('/workspaces/42/files', {
+    method: 'POST',
+    body: expect.any(FormData),
+  });
+  const { body }: { body: FormData } =
+    // @ts-ignore
+    api._fetch.mock.calls[0][1];
+  expect(body.getAll('file').length).toBe(1);
+  expect((body.getAll('file')[0] as File).name).toBe('foo.jpg');
 });

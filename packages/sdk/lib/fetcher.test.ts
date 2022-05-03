@@ -18,12 +18,12 @@ it('should fetch', async () => {
   const o = await fetcher.get('url');
   expect(o.headers).toEqual({ foo: 'bar' });
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    },
+    headers: expect.any(Headers),
     method: 'GET',
   });
+  const headers = (global.fetch as jest.Mock).mock.calls[0][1].headers;
+  expect(headers.get('Access-Control-Allow-Origin')).toBe('*');
+  expect(headers.get('Content-Type')).toBe('application/json');
 });
 
 it('should fetch with auth', async () => {
@@ -42,13 +42,12 @@ it('should fetch with auth', async () => {
   fetcher.token = 'token';
   await fetcher.get('url');
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-      'x-prismeai-session-token': 'token',
-    },
+    headers: expect.any(Headers),
     method: 'GET',
   });
+  const headers = (global.fetch as jest.Mock).mock.calls[0][1].headers;
+  expect(headers.get('Access-Control-Allow-Origin')).toBe('*');
+  expect(headers.get('x-prismeai-session-token')).toBe('token');
 });
 
 it('should fail to fetch', async () => {
@@ -72,10 +71,7 @@ it('should fail to fetch', async () => {
     }
   }
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    },
+    headers: expect.any(Headers),
     method: 'GET',
   });
 });
@@ -97,10 +93,7 @@ it('should fail to fetch with unformatted error', async () => {
     }
   }
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    },
+    headers: expect.any(Headers),
     method: 'GET',
   });
 });
@@ -120,10 +113,7 @@ it('should post', async () => {
   }));
   await fetcher.post('url');
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    },
+    headers: expect.any(Headers),
     method: 'POST',
   });
 });
@@ -143,10 +133,7 @@ it('should post with body', async () => {
   }));
   await fetcher.post('url', {});
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    },
+    headers: expect.any(Headers),
     method: 'POST',
     body: '{}',
   });
@@ -167,10 +154,7 @@ it('should patch', async () => {
   }));
   await fetcher.patch('url', {});
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    },
+    headers: expect.any(Headers),
     method: 'PATCH',
     body: '{}',
   });
@@ -191,10 +175,26 @@ it('should delete', async () => {
   }));
   await fetcher.delete('url');
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    },
+    headers: expect.any(Headers),
     method: 'DELETE',
   });
+});
+
+it('should use formData', async () => {
+  const fetcher = new Fetcher('http/');
+  // @ts-ignore
+  global.fetch = jest.fn(() => ({
+    ok: true,
+    headers: {},
+    json() {
+      return {};
+    },
+    clone() {
+      return { ...this };
+    },
+  }));
+  const formData = new FormData();
+  await fetcher.post('url', formData);
+  const headers = (global.fetch as jest.Mock).mock.calls[0][1].headers;
+  expect(headers.has('Content-Type')).toBe(false);
 });
