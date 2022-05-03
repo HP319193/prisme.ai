@@ -98,7 +98,7 @@ export async function init({
   );
 
   Object.entries(data.components?.schemas).forEach(([type, schema]: any) => {
-    ajValidator.addSchema(schema, type);
+    ajValidator.addSchema(schema, `#/components/schemas/${type}`);
   });
   return true;
 }
@@ -111,10 +111,13 @@ export function validate(eventType: string, payload: any) {
     return true;
   }
   const componentName = schemaMapping[eventType];
-  if (!componentName) {
+  const validate = ajValidator.getSchema(
+    `#/components/schemas/${componentName}`
+  );
+  if (!componentName || !validate) {
     throw new EventValidationError(`Unknown event ${eventType}`, []);
   }
-  const validated = ajValidator.validate(componentName, {
+  const validated = validate({
     type: eventType,
     payload,
   });
