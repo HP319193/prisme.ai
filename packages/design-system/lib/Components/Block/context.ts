@@ -1,3 +1,4 @@
+import { Events } from '@prisme.ai/sdk';
 import { createContext, ReactNode, useContext } from 'react';
 
 export interface BlockContext<T = any> {
@@ -9,6 +10,7 @@ export interface BlockContext<T = any> {
   setupComponent?: ReactNode;
   setButtons?: (buttons: ReactNode[]) => void;
   buttons?: ReactNode[];
+  events?: Events;
 }
 
 export const blockContext = createContext<BlockContext>({

@@ -2,11 +2,12 @@ import { BlockProvider, Loading, Title } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import DefaultErrorPage from 'next/error';
 import { useEffect, useMemo, useState } from 'react';
 import Block from '../components/Block';
 import SigninForm from '../components/SigninForm';
 import { useUser } from '../components/UserProvider';
-import api from '../utils/api';
+import api, { HTTPError } from '../utils/api';
 import useLocalizedText from '../utils/useLocalizedText';
 import * as BuiltinBlocks from '../components/Blocks';
 import useBlocksConfigs from '../components/Blocks/useBlocksConfigs';
@@ -24,13 +25,13 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   const { localize } = useLocalizedText();
   const { user } = useUser();
   const [currentPage, setCurrentPage] = useState<
-    Prismeai.DetailedPage | null | 401
+    Prismeai.DetailedPage | null | number
   >(page);
   const {
     isReady,
     query: { pageSlug },
   } = useRouter();
-  const [blocksConfigs, error] = useBlocksConfigs(page);
+  const { blocksConfigs, error, events } = useBlocksConfigs(page);
 
   useEffect(() => {
     // Page is null because it does not exist OR because it need authentication
@@ -39,7 +40,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
         const page = await api.getPageBySlug(`${pageSlug}`);
         setCurrentPage(page);
       } catch (e) {
-        setCurrentPage(401);
+        setCurrentPage((e as HTTPError).code || 404);
       }
     };
     fetchPage();
@@ -70,6 +71,10 @@ export const PublicPage = ({ page }: PublicPageProps) => {
 
   if (!isReady || currentPage === null) return <Loading />;
 
+  if (typeof currentPage === 'number' && currentPage !== 401) {
+    return <DefaultErrorPage statusCode={currentPage} />;
+  }
+
   if (currentPage === 401 || error) {
     return (
       <div className="flex flex-1 justify-center items-center flex-col">
@@ -95,6 +100,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
               key={index}
               config={blocksConfigs[index]}
               appConfig={{}}
+              events={events}
             >
               <div
                 className={`page-block block-${appInstance.replace(
@@ -112,6 +118,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
                       token={api.token || undefined}
                       workspaceId={`${currentPage.workspaceId}`}
                       appInstance={appInstance}
+                      events={events}
                       {...blocksConfigs[index]}
                     />
                   )}

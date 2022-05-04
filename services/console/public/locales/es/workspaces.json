@@ -374,7 +374,6 @@
       "add": "Añadir un block",
       "remove": "Eliminar el block",
       "search": "Buscar un block",
-      "empty": "No hay blocks disponibles en este espacio de trabajo. Instale una App",
       "settings": {
         "advanced": "Configuración avanzada",
         "title": "Parámetros del Block",

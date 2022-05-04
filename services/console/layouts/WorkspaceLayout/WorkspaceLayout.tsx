@@ -113,7 +113,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     socket.current = await api.streamEvents(workspaceId);
   }, [workspaceId]);
   useEffect(() => {
-    initSocket;
+    initSocket();
   }, [initSocket]);
 
   useEffect(() => {

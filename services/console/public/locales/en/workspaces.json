@@ -374,7 +374,6 @@
       "add": "Add a block",
       "remove": "Remove the block",
       "search": "Search a block",
-      "empty": "No blocks are available in this workspace. Add an App!",
       "settings": {
         "advanced": "Advanced settings",
         "title": "Block settings",
