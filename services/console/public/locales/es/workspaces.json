@@ -398,14 +398,17 @@
           "description": "Ejecuta una automatización al cargar la página para recuperar la configuración del bloque."
         }
       },
+      "builtin": "Blocks básicos",
       "name": "{{context}}",
       "name_Title": "Título",
       "name_Cards": "Grupo de tarjetas",
       "name_DataTable": "Tabla de datos",
+      "name_Form": "Formulario",
       "description": "",
       "description_Title": "Mostrar un título",
       "description_Cards": "Mostrar un grupo de tarjetas",
       "description_DataTable": "Visualización de una tabla de datos",
+      "description_Form": "Mostrar un formulario",
       "title": {
         "settings": {
           "title": "Título",
@@ -468,6 +471,20 @@
               "description": "Las claves del objeto serán las columnas de la tabla."
             }
           }
+        }
+      },
+      "form": {
+        "onSubmit": {
+          "label": "Evento en la validación",
+          "description": "Cuando se valide el formulario, se enviará el evento con todos sus valores."
+        },
+        "onChange": {
+          "label": "Evento de escritura",
+          "description": "Cada vez que se modifique el formulario, se enviará el evento con todos sus valores."
+        },
+        "schema": {
+          "label": "Especificación del formulario",
+          "description": "Utilice la interfaz del constructor de formularios para añadir los campos que desee."
         }
       }
     }
@@ -549,7 +566,9 @@
       "name": "Nombre de la propiedad :",
       "details": "Detalles",
       "items": "Elementos de la mesa",
-      "required": "Requerido"
+      "required": "Requerido",
+      "title": "Etiqueta de campo",
+      "description": "Descripción del campo"
     },
     "types": {
       "string": "Texto",
