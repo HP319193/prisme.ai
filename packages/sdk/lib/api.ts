@@ -404,7 +404,7 @@ export class Api extends Fetcher {
           }
           return withImagesUrl;
         default:
-          return original;
+          return mayHaveImage;
       }
     };
 
