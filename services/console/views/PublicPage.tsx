@@ -30,7 +30,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     isReady,
     query: { pageSlug },
   } = useRouter();
-  const [blocksConfigs, error] = useBlocksConfigs(page);
+  const { blocksConfigs, error, events } = useBlocksConfigs(page);
 
   useEffect(() => {
     // Page is null because it does not exist OR because it need authentication
@@ -95,6 +95,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
               key={index}
               config={blocksConfigs[index]}
               appConfig={{}}
+              events={events}
             >
               <div
                 className={`page-block block-${appInstance.replace(
@@ -112,6 +113,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
                       token={api.token || undefined}
                       workspaceId={`${currentPage.workspaceId}`}
                       appInstance={appInstance}
+                      events={events}
                       {...blocksConfigs[index]}
                     />
                   )}

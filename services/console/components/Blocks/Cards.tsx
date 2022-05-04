@@ -82,8 +82,13 @@ const Setup = () => {
                           title: t('pages.blocks.cards.settings.button.url'),
                         },
                         event: {
-                          type: 'localized:string',
+                          type: 'string',
                           title: t('pages.blocks.cards.settings.button.event'),
+                        },
+                        payload: {
+                          title: t(
+                            'pages.blocks.cards.settings.button.payload'
+                          ),
                         },
                         icon: {
                           type: 'string',
@@ -235,7 +240,8 @@ interface Card {
         type: 'button';
         value: Prismeai.LocalizedText;
         url?: Prismeai.LocalizedText;
-        event?: Prismeai.LocalizedText;
+        event?: string;
+        payload?: any;
         icon?: string;
       }
     | {
@@ -272,7 +278,7 @@ const Accordion: FC<{
 export const Cards = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation('pages');
   const { localize } = useLocalizedText();
-  const { config = {}, setSetupComponent } = useBlock();
+  const { config = {}, setSetupComponent, events } = useBlock();
 
   const container = useRef<HTMLDivElement>(null);
 
@@ -464,9 +470,8 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                               if (item.url) {
                                 window.open(localize(item.url));
                               }
-                              if (item.event) {
-                                // TODO send event
-                                console.log('send event', item.event);
+                              if (item.event && events) {
+                                events.emit(item.event, item.payload);
                               }
                             }}
                           >

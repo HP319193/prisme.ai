@@ -73,7 +73,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
     };
   }, [initSocket, page]);
 
-  return [blocksConfigs, error];
+  return { blocksConfigs, error, events: socket.current };
 };
 
 export default useBlocksConfigs;
