@@ -2,7 +2,7 @@ import { BlockProvider, Loading, Title } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Block from '../components/Block';
 import SigninForm from '../components/SigninForm';
 import { useUser } from '../components/UserProvider';
@@ -68,6 +68,43 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     [currentPage]
   );
 
+  const [appConfigs, setAppConfigs] = useState(new Map());
+  const fetchAppConfig = useCallback(
+    async (appInstance: string, workspaceId: string) => {
+      try {
+        const appConfig = await api.getAppConfig(workspaceId, appInstance);
+        setAppConfigs((appConfigs) => {
+          const newAppConfigs = new Map(appConfigs);
+          newAppConfigs.set(appInstance, appConfig);
+          return newAppConfigs;
+        });
+      } catch {
+        return;
+      }
+    },
+    []
+  );
+  const updateAppConfig = useCallback(
+    (appInstance: string) => async (value: any) => {
+      if (!page || !page.workspaceId) return;
+      setAppConfigs((appConfigs) => {
+        const newAppConfigs = new Map(appConfigs);
+        newAppConfigs.set(appInstance, value);
+        return newAppConfigs;
+      });
+      await api.updateAppConfig(page.workspaceId, appInstance, value);
+    },
+    [page]
+  );
+  useEffect(() => {
+    if (!page || !page.workspaceId) return;
+    const { workspaceId } = page;
+    page.blocks.forEach(({ appInstance }) => {
+      if (!appInstance) return;
+      fetchAppConfig(appInstance, workspaceId);
+    });
+  }, [fetchAppConfig, page]);
+
   if (!isReady || currentPage === null) return <Loading />;
 
   if (currentPage === 401 || error) {
@@ -94,7 +131,8 @@ export const PublicPage = ({ page }: PublicPageProps) => {
             <BlockProvider
               key={index}
               config={blocksConfigs[index]}
-              appConfig={{}}
+              appConfig={appConfigs.get(appInstance)}
+              onAppConfigUpdate={updateAppConfig(appInstance)}
               events={events}
             >
               <div
@@ -113,6 +151,8 @@ export const PublicPage = ({ page }: PublicPageProps) => {
                       token={api.token || undefined}
                       workspaceId={`${currentPage.workspaceId}`}
                       appInstance={appInstance}
+                      appConfig={appConfigs.get(appInstance)}
+                      setAppConfig={updateAppConfig(appInstance)}
                       events={events}
                       {...blocksConfigs[index]}
                     />
