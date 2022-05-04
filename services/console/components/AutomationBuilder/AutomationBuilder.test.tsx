@@ -183,7 +183,8 @@ it('should add instruction', async () => {
       .props.onSubmit({ foo: undefined });
   });
 
-  expect(onChange).toHaveBeenCalledWith({
+  expect(onChange).toHaveBeenCalledWith(expect.any(Function));
+  expect(onChange.mock.calls[0][0](value)).toEqual({
     name: 'Automation',
     do: [
       {
@@ -210,7 +211,8 @@ it('should remove instruction', async () => {
     (ReactFlow as any).context.removeInstruction(value.do, 0);
   });
 
-  expect(onChange).toHaveBeenCalledWith({
+  expect(onChange).toHaveBeenCalledWith(expect.any(Function));
+  expect(onChange.mock.calls[0][0](value)).toEqual({
     name: 'Automation',
     do: [],
   });
@@ -235,7 +237,8 @@ it('should edit instruction', async () => {
     await root.root.findByType(InstructionForm).props.onSubmit({ foo: true });
   });
 
-  expect(onChange).toHaveBeenCalledWith({
+  expect(onChange).toHaveBeenCalledWith(expect.any(Function));
+  expect(onChange.mock.calls[0][0](value)).toEqual({
     name: 'Automation',
     do: [
       {
@@ -268,7 +271,8 @@ it('should edit condition', async () => {
     await root.root.findByType(ConditionForm).props.onChange('$a == 1');
   });
 
-  expect(onChange).toHaveBeenCalledWith({
+  expect(onChange).toHaveBeenCalledWith(expect.any(Function));
+  expect(onChange.mock.calls[0][0](value)).toEqual({
     name: 'Automation',
     do: [
       {
@@ -279,6 +283,7 @@ it('should edit condition', async () => {
       },
     ],
   });
+  jest.clearAllMocks();
 
   act(() => {
     (ReactFlow as any).context.editCondition(value.do[0]);
@@ -287,7 +292,8 @@ it('should edit condition', async () => {
     await root.root.findByType(ConditionForm).props.onChange('$a == 2');
   });
 
-  expect(onChange).toHaveBeenCalledWith({
+  expect(onChange).toHaveBeenCalledWith(expect.any(Function));
+  expect(onChange.mock.calls[0][0](value)).toEqual({
     name: 'Automation',
     do: [
       {
@@ -320,7 +326,8 @@ it('should edit trigger', async () => {
     await root.root.findByType(TriggerForm).props.onChange({ events: ['foo'] });
   });
 
-  expect(onChange).toHaveBeenCalledWith({
+  expect(onChange).toHaveBeenCalledWith(expect.any(Function));
+  expect(onChange.mock.calls[0][0](value)).toEqual({
     name: 'Automation',
     when: { events: ['foo'] },
     do: [

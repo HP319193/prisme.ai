@@ -1,4 +1,13 @@
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import ReactFlow, {
   Controls,
   ReactFlowProvider,
@@ -37,7 +46,7 @@ type InstructionSchemaTupple = [
 interface AutomationBuilderProps {
   id?: string;
   value: Prismeai.Automation;
-  onChange: (value: Prismeai.Automation) => void;
+  onChange: Dispatch<SetStateAction<Prismeai.Automation>>;
   customInstructions?: {
     appName?: string;
     icon?: string;
@@ -186,6 +195,13 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     setOutputEditing(undefined);
   }, []);
 
+  const prevValue = useRef(value);
+  useEffect(() => {
+    if (value === prevValue.current) return;
+    prevValue.current = value;
+    hidePanel();
+  }, [hidePanel, value]);
+
   const editInstructionDetails = useCallback(
     async (instruction: Prismeai.Instruction, onChange: any) => {
       hidePanel();
@@ -208,16 +224,20 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
       try {
         const instruction = parent[index];
         if (!instruction) return;
+
         editInstructionDetails(
           instruction,
           (updatedInstruction: Prismeai.Instruction) => {
             parent.splice(index, 1, updatedInstruction);
-            onChange({ ...value });
+            onChange((value) => {
+              prevValue.current = { ...value };
+              return prevValue.current;
+            });
           }
         );
       } catch (e) {}
     },
-    [editInstructionDetails, onChange, value]
+    [editInstructionDetails, onChange]
   );
 
   const addInstruction: AutomationBuilderContext['addInstruction'] = useCallback(
@@ -234,20 +254,26 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
           );
           instruction = updatedInstruction;
 
-          onChange({ ...value });
+          onChange((value) => {
+            prevValue.current = { ...value };
+            return prevValue.current;
+          });
         }
       );
     },
-    [editInstructionDetails, onChange, value]
+    [editInstructionDetails, onChange]
   );
 
   const removeInstruction: AutomationBuilderContext['removeInstruction'] = useCallback(
     (parent, index) => {
       parent.splice(index, 1);
-      onChange({ ...value });
+      onChange((value) => {
+        prevValue.current = { ...value };
+        return prevValue.current;
+      });
       setTimeout(hidePanel);
     },
-    [hidePanel, onChange, value]
+    [hidePanel, onChange]
   );
 
   const editConditionDetails = useCallback(
@@ -290,10 +316,13 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         );
         parent.conditions.default = originalDefault;
         prev = newKey;
-        onChange({ ...value });
+        onChange((value) => {
+          prevValue.current = { ...value };
+          return prevValue.current;
+        });
       });
     },
-    [editConditionDetails, onChange, value]
+    [editConditionDetails, onChange]
   );
 
   const editTrigger: AutomationBuilderContext['editTrigger'] = useCallback(() => {
@@ -301,7 +330,10 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     setTriggerEditing({
       trigger: value.when,
       onChange: (when) => {
-        onChange({ ...value, when });
+        onChange((value) => {
+          prevValue.current = { ...value, when };
+          return prevValue.current;
+        });
       },
     });
     setPanelIsOpen(true);
@@ -312,7 +344,10 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     setOutputEditing({
       output: value.output,
       onChange: (output) => {
-        onChange({ ...value, output });
+        onChange((value) => {
+          prevValue.current = { ...value, output };
+          return prevValue.current;
+        });
       },
     });
     setPanelIsOpen(true);
