@@ -54,4 +54,22 @@ export const DataTable = ({ edit }: { edit: boolean }) => {
 
   return <Table dataSource={data} columns={columns} locale={locales} />;
 };
+DataTable.schema = {
+  type: 'object',
+  properties: {
+    data: {
+      type: 'array',
+      title: 'pages.blocks.datatable.settings.data.label',
+      description: 'pages.blocks.datatable.settings.data.description',
+      items: {
+        type: 'object',
+        additionalProperties: {
+          type: 'string',
+        },
+        title: 'pages.blocks.datatable.settings.data.items.label',
+        description: 'pages.blocks.datatable.settings.data.items.description',
+      },
+    },
+  },
+};
 export default DataTable;

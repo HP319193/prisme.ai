@@ -6,7 +6,6 @@ import {
 import {
   useBlock,
   Schema,
-  SchemaForm,
   StretchContent,
   Tooltip,
 } from '@prisme.ai/design-system';
@@ -23,208 +22,170 @@ import {
 import IconLink from '../../icons/icon-link.svgr';
 import useLocalizedText from '../../utils/useLocalizedText';
 
-const Setup = () => {
-  const { t } = useTranslation('workspaces');
-  const { config, setConfig } = useBlock();
-  const schema: Schema = useMemo(
-    () => ({
-      type: 'object',
-      properties: {
-        cards: {
-          type: 'array',
-          title: t('pages.blocks.cards.settings.cards'),
-          items: {
-            type: 'object',
-            title: t('pages.blocks.cards.settings.card'),
-            properties: {
-              title: {
-                type: 'localized:string',
-                title: t('pages.blocks.cards.settings.title'),
-              },
-              description: {
-                type: 'localized:string',
-                title: t('pages.blocks.cards.settings.description'),
-              },
-              cover: {
-                type: 'string',
-                title: t('pages.blocks.cards.settings.cover'),
-                'ui:widget': 'upload',
-              },
-              content: {
-                type: 'array',
-                title: t('pages.blocks.cards.settings.content'),
-                items: {
-                  type: 'object',
-                  title: t('pages.blocks.cards.settings.type'),
-                  oneOf: [
-                    {
-                      title: t('pages.blocks.cards.settings.type', {
-                        context: 'text',
-                      }),
-                      properties: {
-                        value: {
-                          type: 'localized:string',
-                          title: t('pages.blocks.cards.settings.text.value'),
-                        },
-                      } as Record<string, Schema>,
-                    },
-                    {
-                      title: t('pages.blocks.cards.settings.type', {
-                        context: 'button',
-                      }),
-                      properties: {
-                        value: {
-                          type: 'localized:string',
-                          title: t('pages.blocks.cards.settings.button.value'),
-                        },
-                        url: {
-                          type: 'localized:string',
-                          title: t('pages.blocks.cards.settings.button.url'),
-                        },
-                        event: {
-                          type: 'string',
-                          title: t('pages.blocks.cards.settings.button.event'),
-                        },
-                        payload: {
-                          title: t(
-                            'pages.blocks.cards.settings.button.payload'
-                          ),
-                        },
-                        icon: {
-                          type: 'string',
-                          title: t('pages.blocks.cards.settings.button.icon'),
-                          'ui:widget': 'upload',
-                        },
-                      },
-                    },
-                    {
-                      title: t('pages.blocks.cards.settings.type', {
-                        context: 'accordion',
-                      }),
-                      properties: {
-                        title: {
-                          type: 'localized:string',
-                          title: t(
-                            'pages.blocks.cards.settings.accordion.title'
-                          ),
-                        },
-                        content: {
-                          type: 'localized:string',
-                          title: t(
-                            'pages.blocks.cards.settings.accordion.content'
-                          ),
-                        },
-                        icon: {
-                          type: 'string',
-                          title: t(
-                            'pages.blocks.cards.settings.accordion.icon'
-                          ),
-                          'ui:widget': 'upload',
-                        },
-                      },
-                    },
-                  ],
-                  'ui:options': {
-                    oneOf: {
-                      options: [
-                        {
-                          label: t('pages.blocks.cards.settings.type', {
-                            context: 'text',
-                          }),
-                          index: 0,
-                          value: {
-                            type: 'text',
-                          },
-                        },
-                        {
-                          label: t('pages.blocks.cards.settings.type', {
-                            context: 'button',
-                          }),
-                          index: 1,
-                          value: {
-                            type: 'button',
-                          },
-                        },
-                        {
-                          label: t('pages.blocks.cards.settings.type', {
-                            context: 'accordion',
-                          }),
-                          index: 2,
-                          value: {
-                            type: 'accordion',
-                          },
-                        },
-                      ],
-                    },
-                  },
-                },
-              },
-            },
+const schema = {
+  type: 'object',
+  properties: {
+    cards: {
+      type: 'array',
+      title: 'pages.blocks.cards.settings.cards',
+      items: {
+        type: 'object',
+        title: 'pages.blocks.cards.settings.card',
+        properties: {
+          title: {
+            type: 'localized:string',
+            title: 'pages.blocks.cards.settings.title',
           },
-          'ui:options': {
-            array: 'row',
+          description: {
+            type: 'localized:string',
+            title: 'pages.blocks.cards.settings.description',
           },
-        },
-        layout: {
-          type: 'object',
-          oneOf: [
-            {
-              title: t('pages.blocks.cards.settings.layout.carousel'),
-              properties: {
-                autoScroll: {
-                  type: 'boolean',
-                  title: t('pages.blocks.cards.settings.autoScroll.title'),
-                  description: t(
-                    'pages.blocks.cards.settings.autoScroll.description'
-                  ),
-                },
-              },
-            },
-            {
-              title: t('pages.blocks.cards.settings.layout.noOptions'),
-            },
-          ],
-          'ui:options': {
-            oneOf: {
-              options: [
+          cover: {
+            type: 'string',
+            title: 'pages.blocks.cards.settings.cover',
+            'ui:widget': 'upload',
+          },
+          content: {
+            type: 'array',
+            title: 'pages.blocks.cards.settings.content',
+            items: {
+              type: 'object',
+              title: 'pages.blocks.cards.settings.type',
+              oneOf: [
                 {
-                  label: t('pages.blocks.cards.settings.layout.carousel'),
-                  index: 0,
-                  value: {
-                    type: 'carousel',
+                  title: 'pages.blocks.cards.settings.type_text',
+                  properties: {
+                    value: {
+                      type: 'localized:string',
+                      title: 'pages.blocks.cards.settings.text.value',
+                    },
+                  } as Record<string, Schema>,
+                },
+                {
+                  title: 'pages.blocks.cards.settings.type_button',
+                  properties: {
+                    value: {
+                      type: 'localized:string',
+                      title: 'pages.blocks.cards.settings.button.value',
+                    },
+                    url: {
+                      type: 'localized:string',
+                      title: 'pages.blocks.cards.settings.button.url',
+                    },
+                    event: {
+                      type: 'string',
+                      title: 'pages.blocks.cards.settings.button.event',
+                    },
+                    payload: {
+                      title: 'pages.blocks.cards.settings.button.payload',
+                    },
+                    icon: {
+                      type: 'string',
+                      title: 'pages.blocks.cards.settings.button.icon',
+                      'ui:widget': 'upload',
+                    },
                   },
                 },
                 {
-                  label: t('pages.blocks.cards.settings.layout.grid'),
-                  index: 1,
-                  value: {
-                    type: 'grid',
-                  },
-                },
-                {
-                  label: t('pages.blocks.cards.settings.layout.column'),
-                  index: 1,
-                  value: {
-                    type: 'column',
+                  title: 'pages.blocks.cards.settings.type_accordion',
+                  properties: {
+                    title: {
+                      type: 'localized:string',
+                      title: 'pages.blocks.cards.settings.accordion.title',
+                    },
+                    content: {
+                      type: 'localized:string',
+                      title: 'pages.blocks.cards.settings.accordion.content',
+                    },
+                    icon: {
+                      type: 'string',
+                      title: 'pages.blocks.cards.settings.accordion.icon',
+                      'ui:widget': 'upload',
+                    },
                   },
                 },
               ],
+              'ui:options': {
+                oneOf: {
+                  options: [
+                    {
+                      label: 'pages.blocks.cards.settings.type_text',
+                      index: 0,
+                      value: {
+                        type: 'text',
+                      },
+                    },
+                    {
+                      label: 'pages.blocks.cards.settings.type_button',
+                      index: 1,
+                      value: {
+                        type: 'button',
+                      },
+                    },
+                    {
+                      label: 'pages.blocks.cards.settings.type_accordion',
+                      index: 2,
+                      value: {
+                        type: 'accordion',
+                      },
+                    },
+                  ],
+                },
+              },
             },
           },
         },
       },
-    }),
-    [t]
-  );
-
-  return (
-    <SchemaForm
-      schema={schema}
-      onChange={setConfig}
-      initialValues={config}
-      buttons={[]}
-    />
-  );
+      'ui:options': {
+        array: 'row',
+      },
+    },
+    layout: {
+      type: 'object',
+      oneOf: [
+        {
+          title: 'pages.blocks.cards.settings.layout.carousel',
+          properties: {
+            autoScroll: {
+              type: 'boolean',
+              title: 'pages.blocks.cards.settings.autoScroll.title',
+              description: 'pages.blocks.cards.settings.autoScroll.description',
+            },
+          },
+        },
+        {
+          title: 'pages.blocks.cards.settings.layout.noOptions',
+        },
+      ],
+      'ui:options': {
+        oneOf: {
+          options: [
+            {
+              label: 'pages.blocks.cards.settings.layout.carousel',
+              index: 0,
+              value: {
+                type: 'carousel',
+              },
+            },
+            {
+              label: 'pages.blocks.cards.settings.layout.grid',
+              index: 1,
+              value: {
+                type: 'grid',
+              },
+            },
+            {
+              label: 'pages.blocks.cards.settings.layout.column',
+              index: 1,
+              value: {
+                type: 'column',
+              },
+            },
+          ],
+        },
+      },
+    },
+  },
 };
 
 interface Card {
@@ -278,14 +239,9 @@ const Accordion: FC<{
 export const Cards = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation('pages');
   const { localize } = useLocalizedText();
-  const { config = {}, setSetupComponent, events } = useBlock();
+  const { config = {}, events } = useBlock();
 
   const container = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!setSetupComponent) return;
-    setSetupComponent(<Setup />);
-  }, [setSetupComponent]);
 
   const colors = useRef<string[]>([]);
 
@@ -554,5 +510,5 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     </div>
   );
 };
-
+Cards.schema = schema;
 export default Cards;

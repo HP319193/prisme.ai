@@ -1,53 +1,53 @@
-import { Schema } from '@prisme.ai/design-system';
+import { Schema, UiOptionsOneOf } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 
+const isUiOptionsOneOf = (
+  uiOptions: Schema['ui:options']
+): uiOptions is UiOptionsOneOf => {
+  return !!(uiOptions as UiOptionsOneOf).oneOf;
+};
+
 export const useLocalizedText = () => {
   const {
+    t,
     i18n: { language },
-  } = useTranslation();
+  } = useTranslation('workspaces');
 
   const localize = useCallback(
     (text: Prismeai.LocalizedText | undefined) => {
       if (!text) return '';
-      if (typeof text === 'string') return text;
+      if (typeof text === 'string') return t(text);
       if (text[language]) return text[language];
       if (text.en) return text.en;
       return text[Object.keys(text)[0]];
     },
-    [language]
+    [language, t]
   );
 
   const localizeSchemaForm = useCallback(
-    (original: Schema) => {
-      const schema = { ...original };
-      const { properties, items, enumNames, oneOf } = schema;
+    (original: any) => {
+      const translatable = ['title', 'description', 'label'];
+      const localizeSchemaForm = (mayBeTranslatable: any) => {
+        if (typeof mayBeTranslatable === 'object') {
+          const isArray = Array.isArray(mayBeTranslatable);
+          const newObject = isArray
+            ? [...mayBeTranslatable]
+            : { ...mayBeTranslatable };
+          for (const key of Object.keys(newObject)) {
+            const value = newObject[key];
+            newObject[key] =
+              (translatable.includes(key) || isArray) &&
+              typeof value === 'string'
+                ? localize(value)
+                : localizeSchemaForm(value);
+          }
+          return newObject;
+        }
+        return mayBeTranslatable;
+      };
 
-      if (schema.title) {
-        schema.title = localize(schema.title);
-      }
-      if (schema.description) {
-        schema.description = localize(schema.description);
-      }
-
-      if (enumNames) {
-        schema.enumNames = enumNames.map((enumName) => localize(enumName));
-      }
-
-      if (oneOf) {
-        schema.oneOf = oneOf.map((one) => localizeSchemaForm(one));
-      }
-
-      if (properties) {
-        Object.keys(properties).forEach((key) => {
-          properties[key] = localizeSchemaForm(properties[key]);
-        });
-      }
-      if (items) {
-        schema.items = localizeSchemaForm(items);
-      }
-
-      return schema;
+      return localizeSchemaForm(original);
     },
     [localize]
   );

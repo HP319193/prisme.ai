@@ -405,7 +405,12 @@
         "settings": {
           "title": "Título",
           "level": "Nivel del título",
-          "levelOption": "Nivel {{level}}"
+          "levelOption_1": "Nivel 1",
+          "levelOption_2": "Nivel 2",
+          "levelOption_3": "Nivel 3",
+          "levelOption_4": "Nivel 4",
+          "levelOption_5": "Nivel 5",
+          "levelOption_6": "Nivel 6"
         }
       },
       "cards": {
@@ -445,6 +450,18 @@
             "carousel": "Carrusel (Desplazamiento horizontal)",
             "grid": "Rejilla",
             "column": "Columna"
+          }
+        }
+      },
+      "datatable": {
+        "settings": {
+          "data": {
+            "label": "Tabla de datos a mostrar",
+            "description": "Este bloque espera un array de objetos con una estructura de su elección pero idéntica para cada elemento del array.",
+            "items": {
+              "label": "Línea",
+              "description": "Las claves del objeto serán las columnas de la tabla."
+            }
           }
         }
       }
