@@ -186,6 +186,7 @@ it('should replace all images data', async () => {
       ],
       nopics: 'http://alreadyUpImage.jpg',
     },
+    anythingElse: 42,
   };
   expect(await api.replaceAllImagesData(original, '42')).toEqual({
     foo: 'http://image1.jpg',
@@ -194,6 +195,7 @@ it('should replace all images data', async () => {
       pics: ['http://image3.jpg', 'http://image4.jpg', 'http://image5.jpg'],
       nopics: 'http://alreadyUpImage.jpg',
     },
+    anythingElse: 42,
   });
   expect(api.uploadFiles).toHaveBeenCalledWith(
     [
