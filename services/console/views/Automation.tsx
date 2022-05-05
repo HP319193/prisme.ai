@@ -158,7 +158,8 @@ export const Automation = () => {
   );
 
   const save = useCallback(async () => {
-    await saveAutomation.current(`${automationId}`, value);
+    const saved = await saveAutomation.current(`${automationId}`, value);
+    saved && setValue({ ...saved });
   }, [automationId, value]);
 
   useKeyboardShortcut([
