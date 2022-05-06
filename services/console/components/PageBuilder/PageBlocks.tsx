@@ -20,14 +20,15 @@ export const PageBlocks = () => {
       parts.reverse();
       const [blockName, appName = ''] = parts;
       if (!appName && Object.keys(BuiltinBlocks).includes(blockName)) {
+        const Block = BuiltinBlocks[blockName as keyof typeof BuiltinBlocks];
         return {
           url: undefined,
-          component: BuiltinBlocks[blockName as keyof typeof BuiltinBlocks],
+          component: Block,
           name: blockName,
           key,
           appName: '',
           appInstance: undefined,
-          edit: undefined,
+          edit: Block.schema,
         };
       }
       const app = blocks.find(({ slug }) => slug === appName);

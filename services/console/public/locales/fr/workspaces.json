@@ -404,7 +404,12 @@
         "settings": {
           "title": "Titre",
           "level": "Niveau de titre",
-          "levelOption": "Niveau {{level}}"
+          "levelOption_1": "Niveau 1",
+          "levelOption_2": "Niveau 2",
+          "levelOption_3": "Niveau 3",
+          "levelOption_4": "Niveau 4",
+          "levelOption_5": "Niveau 5",
+          "levelOption_6": "Niveau 6"
         }
       },
       "cards": {
@@ -444,6 +449,18 @@
             "carousel": "Carousel (Défilement horizontal)",
             "grid": "Grille",
             "column": "Colonne"
+          }
+        }
+      },
+      "datatable": {
+        "settings": {
+          "data": {
+            "label": "Tableau de données à afficher",
+            "description": "Ce Block attends un tableau d'objets dont la structure est à votre convenance mais identique pour chaque élément du tableau.",
+            "items": {
+              "label": "Ligne",
+              "description": "Les clés de l'objet seront les colonnes du tableau."
+            }
           }
         }
       }

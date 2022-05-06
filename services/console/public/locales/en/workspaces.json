@@ -404,7 +404,12 @@
         "settings": {
           "title": "Title",
           "level": "Title level",
-          "levelOption": "Level {{level}}"
+          "levelOption_1": "Level 1",
+          "levelOption_2": "Level 2",
+          "levelOption_3": "Level 3",
+          "levelOption_4": "Level 4",
+          "levelOption_5": "Level 5",
+          "levelOption_6": "Level 6"
         }
       },
       "cards": {
@@ -444,6 +449,18 @@
             "carousel": "Carousel (Horizontal scroll)",
             "grid": "grid",
             "column": "Column"
+          }
+        }
+      },
+      "datatable": {
+        "settings": {
+          "data": {
+            "label": "Table of data to be displayed",
+            "description": "This block waits for an array of objects whose structure is at your convenience but identical for each element of the array.",
+            "items": {
+              "label": "Line",
+              "description": "The keys of the object will be the columns of the table."
+            }
           }
         }
       }
