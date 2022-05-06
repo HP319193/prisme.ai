@@ -88,7 +88,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
 
   const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
     (key) => {
-      const newBlocks = value.blocks.filter(({ key: k }) => k !== key);
+      const newBlocks = (value.blocks || []).filter(({ key: k }) => k !== key);
       onChange({
         ...value,
         blocks: newBlocks,
@@ -99,7 +99,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
 
   const setBlockConfig: PageBuilderContext['setBlockConfig'] = useCallback(
     (key, config) => {
-      const newBlocks = value.blocks.map((block) =>
+      const newBlocks = (value.blocks || []).map((block) =>
         key === block.key
           ? {
               ...block,

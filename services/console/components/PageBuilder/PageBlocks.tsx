@@ -33,7 +33,7 @@ export const PageBlocks = () => {
       }
       const app = blocks.find(({ slug }) => slug === appName);
       if (!app) return [];
-      const block = app.blocks.find(({ slug }) => slug === blockName);
+      const block = (app.blocks || []).find(({ slug }) => slug === blockName);
       if (!block) return [];
       return { ...block, key, appName: app.appName, appInstance: app.slug };
     });

@@ -107,7 +107,7 @@ export const PageBlock = ({
 const PageBlockWithProvider = (props: PageBlockProps) => {
   const { page, setBlockConfig } = usePageBuilder();
   const config = useMemo(
-    () => (page.blocks.find(({ key }) => props.id === key) || {}).config || {},
+    () => ((page.blocks || []).find(({ key }) => props.id === key) || {}).config || {},
     [page.blocks, props.id]
   );
 
