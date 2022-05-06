@@ -1,4 +1,4 @@
-import { Select, Switch, Schema, schemaTypes } from '@prisme.ai/design-system';
+import { Select, Schema, schemaTypes } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import LocalizedInput from '../LocalizedInput';
@@ -10,7 +10,7 @@ interface SchemaFormBuilderProps {
 }
 
 export const SchemaFormBuilder = ({
-  value,
+  value = {},
   onChange,
 }: SchemaFormBuilderProps) => {
   const { t } = useTranslation('workspaces');
@@ -49,7 +49,7 @@ export const SchemaFormBuilder = ({
         value={value.title || ''}
         onChange={update('title')}
         InputProps={{
-          label: 'title',
+          label: t('schema.property.title'),
         }}
         iconMarginTop={17}
       />
@@ -57,7 +57,7 @@ export const SchemaFormBuilder = ({
         value={value.description || ''}
         onChange={update('description')}
         InputProps={{
-          label: 'description',
+          label: t('schema.property.description'),
         }}
         iconMarginTop={17}
       />

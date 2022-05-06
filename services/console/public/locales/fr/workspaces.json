@@ -396,14 +396,17 @@
           "description": "Éxécuter une automatisation au chargement de la page pour récupérer la configuration du block."
         }
       },
+      "builtin": "Blocks de base",
       "name": "{{context}}",
       "name_Title": "Titre",
       "name_Cards": "Groupe de cartes",
       "name_DataTable": "Tableau de données",
+      "name_Form": "Formulaire",
       "description": "",
       "description_Title": "Afficher un titre",
       "description_Cards": "Afficher un groupe de cartes",
       "description_DataTable": "Afficher un tableau de données",
+      "description_Form": "Afficher un formulaire",
       "title": {
         "settings": {
           "title": "Titre",
@@ -466,6 +469,20 @@
               "description": "Les clés de l'objet seront les colonnes du tableau."
             }
           }
+        }
+      },
+      "form": {
+        "onSubmit": {
+          "label": "Évènement à la validation",
+          "description": "Lors de la validation du formulaire, l'évènement sera envoyé avec l'ensemble des ses valeurs."
+        },
+        "onChange": {
+          "label": "Évènement à la frappe",
+          "description": "Lors de chaque modification du formulaire, l'évènement sera envoyé avec l'ensemble des ses valeurs."
+        },
+        "schema": {
+          "label": "Spécification du formulaire",
+          "description": "Utilisez l'interface de construction de formulaire pour ajouter les champs de votre choix."
         }
       }
     }
@@ -547,7 +564,9 @@
       "name": "Nom de la propriété :",
       "details": "Détails",
       "items": "Éléments du tableau",
-      "required": "Requis"
+      "required": "Requis",
+      "title": "Label du champs",
+      "description": "Description du champs"
     },
     "types": {
       "string": "Texte",

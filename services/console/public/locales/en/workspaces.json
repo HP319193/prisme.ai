@@ -396,14 +396,17 @@
           "description": "Run an automation at page load to retrieve the block configuration."
         }
       },
+      "builtin": "Built-in Blocks",
       "name": "{{context}}",
       "name_Title": "Title",
       "name_Cards": "Cards group",
       "name_DataTable": "Data table",
+      "name_Form": "Form",
       "description": "",
       "description_Title": "display a title",
       "description_Cards": "Display a cards group",
       "description_DataTable": "Display a data table",
+      "description_Form": "Display form",
       "title": {
         "settings": {
           "title": "Title",
@@ -466,6 +469,20 @@
               "description": "The keys of the object will be the columns of the table."
             }
           }
+        }
+      },
+      "form": {
+        "onSubmit": {
+          "label": "On submit event",
+          "description": "When the form is validated, the event will be sent with all its values."
+        },
+        "onChange": {
+          "label": "On change event",
+          "description": "Each time the form is modified, the event will be sent with all its values."
+        },
+        "schema": {
+          "label": "Form specification",
+          "description": "Use the form builder interface to add the fields of your choice."
         }
       }
     }
@@ -547,7 +564,9 @@
       "name": "Property name:",
       "details": "Details",
       "items": "Array items",
-      "required": "Required"
+      "required": "Required",
+      "title": "Field label",
+      "description": "Field description"
     },
     "types": {
       "string": "Text",

@@ -49,7 +49,7 @@ Object {
         <LocalizedInput
           InputProps={
             Object {
-              "label": "title",
+              "label": "schema.property.title",
             }
           }
           iconMarginTop={17}
@@ -59,7 +59,7 @@ Object {
         <LocalizedInput
           InputProps={
             Object {
-              "label": "description",
+              "label": "schema.property.description",
             }
           }
           iconMarginTop={17}
@@ -157,7 +157,7 @@ Object {
         "nodeType": "component",
         "props": Object {
           "InputProps": Object {
-            "label": "title",
+            "label": "schema.property.title",
           },
           "iconMarginTop": 17,
           "onChange": [Function],
@@ -168,7 +168,7 @@ Object {
           "nodeType": "component",
           "props": Object {
             "InputProps": Object {
-              "label": "title",
+              "label": "schema.property.title",
             },
             "addLangTooltip": "languages.add.tooltip",
             "availableLangsTitle": "languages.available.title",
@@ -189,7 +189,7 @@ Object {
         "nodeType": "component",
         "props": Object {
           "InputProps": Object {
-            "label": "description",
+            "label": "schema.property.description",
           },
           "iconMarginTop": 17,
           "onChange": [Function],
@@ -200,7 +200,7 @@ Object {
           "nodeType": "component",
           "props": Object {
             "InputProps": Object {
-              "label": "description",
+              "label": "schema.property.description",
             },
             "addLangTooltip": "languages.add.tooltip",
             "availableLangsTitle": "languages.available.title",

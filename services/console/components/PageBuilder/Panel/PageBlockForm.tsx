@@ -24,7 +24,7 @@ export const PageBlockForm = ({ onSubmit }: PageBlockFormProps) => {
   const filteredBlocks = useMemo(() => {
     return [
       {
-        appName: 'Built-In',
+        appName: t('pages.blocks.builtin'),
         slug: '',
         blocks: Object.keys(BuiltinBlocks).map(
           (name) =>
@@ -54,7 +54,7 @@ export const PageBlockForm = ({ onSubmit }: PageBlockFormProps) => {
         ),
       };
     });
-  }, [localize, search, blocks]);
+  }, [t, blocks, search, localize]);
 
   return (
     <div className="flex grow h-full flex-col overflow-auto">
