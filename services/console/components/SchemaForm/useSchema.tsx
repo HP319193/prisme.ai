@@ -2,12 +2,14 @@ import { Schema, UiOptionsSelect } from '@prisme.ai/design-system';
 import { useCallback } from 'react';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 
+type SelectDataSource = 'select:automations' | 'select:endpoints';
+
 export interface EnhancedSchema
   extends Omit<
     Schema,
     'ui:widget' | 'properties' | 'additionalProperties' | 'items' | 'oneOf'
   > {
-  'ui:widget'?: Schema['ui:widget'] | 'select:endpoints';
+  'ui:widget'?: Schema['ui:widget'] | SelectDataSource;
   properties?: Record<string, EnhancedSchema>;
   additionalProperties?: boolean | EnhancedSchema;
   items?: EnhancedSchema;
@@ -52,30 +54,36 @@ export const useSchema = () => {
           fixedSchema.oneOf = fixedSchema.oneOf.map((one) => parseSchema(one));
         }
 
-        switch (fixedSchema['ui:widget']) {
+        const widget = fixedSchema['ui:widget'];
+        switch (widget) {
+          case 'select:automations':
           case 'select:endpoints':
             fixedSchema['ui:widget'] = 'select';
             fixedSchema['ui:options'] = {
               select: {
-                options: Object.keys(automations)
-                  .map((key) => {
-                    const { slug = key, name, description, when } = automations[
-                      key
-                    ];
-                    if (!when || !when.endpoint) return false;
-                    return {
-                      label: (
-                        <div className="flex flex-col">
-                          <div>{name}</div>
-                          <div className="text-neutral-500 text-xs">
-                            {description}
-                          </div>
+                options: Object.keys(automations).flatMap((key) => {
+                  const { slug = key, name, description, when } = automations[
+                    key
+                  ];
+
+                  if (
+                    widget === 'select:endpoints' &&
+                    (!when || !when.endpoint)
+                  ) {
+                    return [];
+                  }
+                  return {
+                    label: (
+                      <div className="flex flex-col">
+                        <div>{name}</div>
+                        <div className="text-neutral-500 text-xs">
+                          {description}
                         </div>
-                      ),
-                      value: slug,
-                    };
-                  })
-                  .filter(Boolean) as UiOptionsSelect['select']['options'],
+                      </div>
+                    ),
+                    value: slug,
+                  };
+                }),
               },
             };
         }
