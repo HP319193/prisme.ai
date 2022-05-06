@@ -3,9 +3,9 @@ import Fieldset from '../../../layouts/Fieldset';
 import { useTranslation } from 'next-i18next';
 import {
   FieldProps,
+  getSchemaFormLabel,
   SchemaForm,
   SchemaFormDescription,
-  getSchemaFormLabel,
 } from '@prisme.ai/design-system';
 import { CodeEditorInline } from '../../CodeEditor/lazy';
 import { useField } from 'react-final-form';

@@ -62,6 +62,7 @@ const HeaderWorkspace = () => {
         },
         photo: {
           type: 'string',
+          title: t('workspace.details.photo.label'),
           'ui:widget': 'upload',
         },
         links: {

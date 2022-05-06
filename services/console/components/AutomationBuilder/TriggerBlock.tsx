@@ -26,11 +26,7 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
   };
 
   if (!endpoint && (!value.events || !value.events.length)) {
-    return (
-      <div className="text-xs text-gray-50 italic">
-        {t('automations.trigger.add')}
-      </div>
-    );
+    return <div />;
   }
 
   return (

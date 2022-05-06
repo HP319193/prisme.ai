@@ -27,10 +27,9 @@ Array [
               />
             </div>
             <div
-              className="flex grow flex-col items-start"
+              className="flex grow flex-col justify-center"
             >
               create.label
-              create.description_sub
             </div>
           </div>
         </button>
@@ -73,10 +72,9 @@ Array [
               />
             </div>
             <div
-              className="flex grow flex-col items-start"
+              className="flex grow flex-col justify-center"
             >
               create.label
-              create.description_sub
             </div>
           </div>
         </button>

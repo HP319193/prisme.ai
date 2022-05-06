@@ -1,10 +1,12 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import {
   EdgeProps,
   getMarkerEnd,
   getSmoothStepPath,
 } from 'react-flow-renderer';
 import { useAutomationBuilder } from './context';
+import { Flow } from './flow';
+import { useTranslation } from 'react-i18next';
 
 export const ConditionEdge: FC<EdgeProps> = ({
   id,
@@ -22,6 +24,7 @@ export const ConditionEdge: FC<EdgeProps> = ({
   markerEndId,
 }) => {
   const { editCondition } = useAutomationBuilder();
+  const { t } = useTranslation('workspaces');
   const edgePath = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -31,6 +34,21 @@ export const ConditionEdge: FC<EdgeProps> = ({
     targetPosition,
   });
   const markerEnd = getMarkerEnd(arrowHeadType, markerEndId);
+
+  console.log('data', data && data.label);
+
+  const dataLabel = (data || {}).label;
+
+  const displayedLabel = useMemo(() => {
+    switch (dataLabel) {
+      case 'default':
+        return t('automations.instruction.label_conditions_default');
+      case Flow.NEW_CONDITION:
+        return t('automations.instruction.label_conditions_add');
+      default:
+        return dataLabel;
+    }
+  }, [t, dataLabel]);
 
   return (
     <>
@@ -63,7 +81,7 @@ export const ConditionEdge: FC<EdgeProps> = ({
                 data.parent && (() => editCondition(data.parent, data.key))
               }
             >
-              {data.label}
+              {displayedLabel}
             </button>
           </div>
         </foreignObject>

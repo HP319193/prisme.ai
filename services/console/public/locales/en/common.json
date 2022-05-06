@@ -1,7 +1,7 @@
 {
   "main": {
-    "title": "Prisme.ai Pyramide",
-    "description": "Automation low code no code platform"
+    "title": "Prisme.ai",
+    "description": "All-in-one, low-code, automation platform."
   },
   "home": {
     "signin": "Signin"
@@ -9,5 +9,6 @@
   "save": "Save",
   "add": "Add",
   "cancel": "Cancel",
-  "soon": "coming soon"
+  "soon": "coming soon",
+  "search": "Search"
 }

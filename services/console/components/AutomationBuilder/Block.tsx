@@ -181,7 +181,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
                 italic: <div className="text-xs text-gray-50 italic" />,
               }}
               values={{
-                context: value.output ? 'json' : 'empty',
+                context: value.output ? 'json' : '',
                 output: (
                   (typeof value.output === 'string'
                     ? value.output

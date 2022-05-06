@@ -28,6 +28,9 @@
       },
       "description": {
         "label": "Description"
+      },
+      "photo": {
+        "label": "Photo"
       }
     }
   },
@@ -35,8 +38,7 @@
     "description_first": "Créez votre premier workspace pour commencer à automatiser votre travail",
     "description": "Nouveau workspace",
     "label": "Créer un workspace",
-    "defaultName": "Workspace",
-    "description_sub": "Et commencez à automatiser et valoriser"
+    "defaultName": "Workspace"
   },
   "edit": {
     "label": "Éditer"
@@ -111,7 +113,6 @@
         "custom": "Accessible par url",
         "url": "URL personnalisée"
       },
-      "add": "Ajouter",
       "save": "Ajouter"
     },
     "instruction": {
@@ -126,6 +127,8 @@
       "label_set": "Définit var",
       "label_delete": "Supprime var",
       "label_conditions": "Conditions",
+      "label_conditions_default": "Sinon",
+      "label_conditions_add": "Ajouter condition",
       "label_fetch": "Requête HTTP",
       "label_break": "Interruption",
       "label_comment": "Commentaire",
@@ -261,7 +264,6 @@
     },
     "output": {
       "label": "<pre><code>{{output}}</code></pre>",
-      "label_empty": "<italic>Définir</italic>",
       "edit": {
         "title": "Retourner la valeur :",
         "description": "Valeur retournée par l'automatisation. Peut être une valeur statique sous forme de chaine de caractères ou un objet JSON ou même une variable générée pendant l'éxécution de votre automatisations entourée d'accolades (ex: {{maVar}})",
@@ -329,6 +331,8 @@
     }
   },
   "pages": {
+    "private": "Privé",
+    "public": "Public",
     "link": "Pages",
     "create": {
       "label": "Ajouter une Page",
@@ -354,7 +358,7 @@
     "share": {
       "label": "Partager cette page",
       "access": "Accès",
-      "access_private": "Choisissez quels utilisateurs peuvent consulter votre page",
+      "access_private": "Utilisateurs",
       "copy": "Copier l'adresse publique de la page",
       "copied": "L'adresse est copiée dans votre presse papier",
       "notme": "Vous êtes déjà le propriétaire de cette Page."
@@ -490,8 +494,8 @@
     "actions": "Actions",
     "delete": "Supprimer les accès",
     "roles": {
-      "owner": "Administrateur",
-      "editor": "Editeur"
+      "owner": "Owner",
+      "editor": "Editor"
     },
     "leave": "Vous n'avez plus accès au Workspace {{name}}.",
     "notme": "Vous êtes déjà le propriétaire de ce Workspace."
