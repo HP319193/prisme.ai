@@ -1,6 +1,7 @@
+const t = (str) => str;
 export const useTranslation = () => {
   return {
-    t: (str) => str,
+    t,
     i18n: {
       language: 'en',
     },

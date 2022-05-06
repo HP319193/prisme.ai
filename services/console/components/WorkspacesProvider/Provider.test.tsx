@@ -35,7 +35,7 @@ it('should access context', async () => {
   expect(context.update).toBeInstanceOf(Function);
 });
 
-xit('should fetch workspaces', async () => {
+it('should fetch workspaces', async () => {
   jest.spyOn(api, 'getWorkspaces').mockReturnValue(
     Promise.resolve([
       {
@@ -44,6 +44,7 @@ xit('should fetch workspaces', async () => {
       },
     ] as any)
   );
+
   useUser().user = {} as any;
   let context: any = {};
   const Test = () => {
@@ -72,7 +73,7 @@ xit('should fetch workspaces', async () => {
   );
 });
 
-xit('should not fetch workspaces', async () => {
+it('should not fetch workspaces', async () => {
   jest.spyOn(api, 'getWorkspaces').mockReturnValue(
     Promise.resolve([
       {
@@ -99,7 +100,7 @@ xit('should not fetch workspaces', async () => {
   expect(context.workspaces).toEqual(new Map());
 });
 
-xit('should create a workspace', async () => {
+it('should create a workspace', async () => {
   jest.spyOn(api, 'getWorkspaces').mockReturnValue(Promise.resolve([]));
   jest.spyOn(api, 'createWorkspace').mockReturnValue(
     Promise.resolve({
@@ -127,7 +128,7 @@ xit('should create a workspace', async () => {
   });
 });
 
-xit('should create many workspace', async () => {
+it('should create many workspace', async () => {
   jest.spyOn(api, 'getWorkspaces').mockReturnValue(Promise.resolve([]));
   jest.spyOn(api, 'createWorkspace').mockReturnValue(
     Promise.resolve({
@@ -158,7 +159,7 @@ xit('should create many workspace', async () => {
   });
 });
 
-xit('should fetch a workspace', async () => {
+it('should fetch a workspace', async () => {
   jest.spyOn(api, 'getWorkspaces').mockReturnValue(Promise.resolve([]));
   jest.spyOn(api, 'getWorkspace').mockReturnValue(
     Promise.resolve({
@@ -186,7 +187,7 @@ xit('should fetch a workspace', async () => {
   });
 });
 
-xit('should get a workspace', async () => {
+it('should get a workspace', async () => {
   useUser().user = {} as any;
   jest.spyOn(api, 'getWorkspaces').mockReturnValue(
     Promise.resolve([
@@ -216,7 +217,7 @@ xit('should get a workspace', async () => {
   });
 });
 
-xit('should update a workspace', async () => {
+it('should update a workspace', async () => {
   jest.spyOn(api, 'getWorkspaces').mockReturnValue(Promise.resolve([]));
   jest.spyOn(api, 'updateWorkspace').mockReturnValue(
     Promise.resolve({
@@ -254,7 +255,7 @@ xit('should update a workspace', async () => {
   });
 });
 
-xit('should fail to update a workspace', async () => {
+it('should fail to update a workspace', async () => {
   useUser().user = {} as any;
   jest.spyOn(api, 'getWorkspaces').mockReturnValue(
     Promise.resolve([
@@ -291,7 +292,7 @@ xit('should fail to update a workspace', async () => {
   });
 });
 
-xit('should install a new app', async () => {
+it('should install a new app', async () => {
   const newAppInstance = {
     appSlug: 'monappId',
     appName: "le nom de l'app",
@@ -350,7 +351,7 @@ xit('should install a new app', async () => {
   });
 });
 
-xit('should update an app', async () => {
+it('should update an app', async () => {
   const updatedAppInstance = {
     appId: 'new id',
     appName: 'new name',
@@ -418,7 +419,7 @@ xit('should update an app', async () => {
   });
 });
 
-xit('should uninstall an app', async () => {
+it('should uninstall an app', async () => {
   const workspace = {
     id: '42',
     name: 'foo',

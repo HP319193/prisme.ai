@@ -2,12 +2,6 @@ import { Schema, UiOptionsOneOf } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 
-const isUiOptionsOneOf = (
-  uiOptions: Schema['ui:options']
-): uiOptions is UiOptionsOneOf => {
-  return !!(uiOptions as UiOptionsOneOf).oneOf;
-};
-
 export const useLocalizedText = () => {
   const {
     t,

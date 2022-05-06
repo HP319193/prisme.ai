@@ -21,5 +21,6 @@ module.exports = () => {
       '<rootDir>/packages/broker',
     ],
     setupFiles: ['<rootDir>/.jest/setEnvVars.js'],
+    testTimeout: 500,
   };
 };
