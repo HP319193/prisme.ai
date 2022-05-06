@@ -411,7 +411,6 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                       <div key={index} className="flex mb-4">
                         {item.type === 'text' && (
                           <div>
-                            {item.value}
                             <div
                               dangerouslySetInnerHTML={{
                                 __html: localize(item.value),
