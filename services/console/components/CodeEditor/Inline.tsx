@@ -32,13 +32,14 @@ export const CodeEditorInline: React.FC<CodeEditorProps> = ({
           borderRadius: '10px',
           padding: '10px',
           ...(singleLine ? undefined : { background: 'white' }),
+          ...props.style,
         }}
         value={
-          typeof value === 'object' ? JSON.stringify(value, null, '  ') : value
+          typeof value === 'string' ? value : JSON.stringify(value, null, '  ')
         }
         maxLines={Infinity}
         ref={ref}
-        showGutter={!lineHeight || !singleLine}
+        showGutter={!singleLine}
         className={value ? 'filled' : ''}
       />
     </React.Suspense>

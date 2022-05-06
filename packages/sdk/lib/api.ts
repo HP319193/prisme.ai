@@ -177,8 +177,17 @@ export class Api extends Fetcher {
   }
 
   // Events
-  streamEvents(workspaceId: string) {
-    return new Events(workspaceId, this.token || '', this.host);
+  streamEvents(workspaceId: string): Promise<Events> {
+    const events = new Events(workspaceId, this.token || '', this.host);
+    return new Promise((resolve, reject) => {
+      events.once('connect', () => {
+        resolve(events);
+      });
+      events.once('connect_error', () => {
+        reject();
+        events.close();
+      });
+    });
   }
 
   async getEvents(

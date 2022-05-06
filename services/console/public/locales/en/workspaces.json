@@ -374,8 +374,8 @@
       "add": "Add a block",
       "remove": "Remove the block",
       "search": "Search a block",
-      "empty": "No blocks are available in this workspace. Add an App!",
       "settings": {
+        "advanced": "Advanced settings",
         "title": "Block settings",
         "toggle_on": "Display settings",
         "toggle_off": "Hide settings",
@@ -386,6 +386,10 @@
         "updateOn": {
           "label": "Update event",
           "description": "When one of your automations emits this event, the content of the block will be updated with the content of the payload."
+        },
+        "automation": {
+          "label": "Automation",
+          "description": "Run an automation at page load to retrieve the block configuration."
         }
       },
       "name": "{{context}}",

@@ -100,7 +100,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
     workspace,
   ]);
-  useEffect(() => {
+  const initSocket = useCallback(async () => {
     const socketAlreadyInstantiatedForId =
       socket.current && socket.current.workspaceId === workspaceId;
 
@@ -110,8 +110,11 @@ export const WorkspaceLayout: FC = ({ children }) => {
     if (socket.current) {
       socket.current.destroy();
     }
-    socket.current = api.streamEvents(workspaceId);
-  }, [pagination, workspaceId]);
+    socket.current = await api.streamEvents(workspaceId);
+  }, [workspaceId]);
+  useEffect(() => {
+    initSocket();
+  }, [initSocket]);
 
   useEffect(() => {
     return () => {

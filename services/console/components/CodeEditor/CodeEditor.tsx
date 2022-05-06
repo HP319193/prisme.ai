@@ -126,7 +126,7 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
         ref={aceRef}
         style={{
           display: 'flex',
-          flex: 1,
+          flex: 'auto',
           ...style,
         }}
         mode={mode}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import api, { Events } from '../../utils/api';
 
 export const useBlocksConfigs = (page: Prismeai.Page | null) => {
@@ -10,7 +10,10 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
   }, [page]);
 
   const socket = useRef<Events>();
-  useEffect(() => {
+  const off = useRef<Function>();
+  const [error, setError] = useState(false);
+
+  const initSocket = useCallback(async () => {
     if (!page || !page.workspaceId) return;
     const socketAlreadyInstantiatedForId =
       socket.current && socket.current.workspaceId === page.workspaceId;
@@ -21,56 +24,56 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
     if (socket.current) {
       socket.current.destroy();
     }
-    socket.current = api.streamEvents(page.workspaceId);
+    try {
+      socket.current = await api.streamEvents(page.workspaceId);
+      setError(false);
+    } catch (e) {
+      setError(true);
+      return null;
+    }
 
-    const off = socket.current.all((e, { payload }) => {
-      const updateEvents = (page.blocks || []).reduce<Record<string, number[]>>(
-        (prev, { config }, index) =>
-          !config || !config.updateOn
-            ? prev
-            : {
-                ...prev,
-                [config.updateOn]: [...(prev[config.updateOn] || []), index],
-              },
-        {}
-      );
+    const s = socket.current;
 
+    const updateEvents = (page.blocks || []).reduce<Record<string, number[]>>(
+      (prev, { config }, index) =>
+        !config || !config.updateOn
+          ? prev
+          : {
+              ...prev,
+              [config.updateOn]: [...(prev[config.updateOn] || []), index],
+            },
+      {}
+    );
+
+    off.current = socket.current.all((e, { payload }) => {
       if (Object.keys(updateEvents).includes(e)) {
         setBlocksConfigs((configs) => {
           const newConfigs = [...configs];
           (updateEvents[e] || []).forEach((id) => {
-            newConfigs[id] = payload;
+            newConfigs[id] = { ...newConfigs[id], ...payload };
           });
           return newConfigs;
         });
       }
     });
 
-    return () => {
-      off();
-    };
-  }, [page]);
-
-  // Init blocks
-  useEffect(() => {
-    if (!page || !page.workspaceId) return;
-    const initEvents = (page.blocks || []).reduce<string[]>(
-      (prev, { config }) =>
-        !config || !config.onInit ? prev : [...prev, config.onInit],
-      []
-    );
-    api.postEvents(
-      page.workspaceId,
-      initEvents.map((event) => ({
-        type: event,
-        payload: {
+    (page.blocks || []).forEach(({ config: { onInit } = {} }) => {
+      if (onInit) {
+        s.emit(onInit, {
           page: page.id,
-        },
-      }))
-    );
+        });
+      }
+    });
   }, [page]);
 
-  return blocksConfigs;
+  useEffect(() => {
+    initSocket();
+    return () => {
+      off.current && off.current();
+    };
+  }, [initSocket, page]);
+
+  return { blocksConfigs, error, events: socket.current };
 };
 
 export default useBlocksConfigs;

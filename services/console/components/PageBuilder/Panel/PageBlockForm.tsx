@@ -9,9 +9,6 @@ import { useTranslation } from 'next-i18next';
 import { useMemo, useState } from 'react';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import { usePageBuilder } from '../context';
-import IconApps from '../../../icons/icon-apps.svgr';
-import Link from 'next/link';
-import { useWorkspace } from '../../../layouts/WorkspaceLayout';
 import * as BuiltinBlocks from '../../Blocks';
 
 interface PageBlockFormProps {
@@ -20,9 +17,7 @@ interface PageBlockFormProps {
 
 export const PageBlockForm = ({ onSubmit }: PageBlockFormProps) => {
   const { blocks } = usePageBuilder();
-  const {
-    workspace: { id: workspaceId },
-  } = useWorkspace();
+
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const [search, setSearch] = useState('');
@@ -60,28 +55,6 @@ export const PageBlockForm = ({ onSubmit }: PageBlockFormProps) => {
       };
     });
   }, [localize, search, blocks]);
-
-  const isEmpty =
-    !blocks ||
-    !blocks.reduce<boolean>(
-      (prev, { blocks = [] }) => prev || blocks.length > 0,
-      false
-    );
-
-  if (isEmpty) {
-    return (
-      <div className="flex grow h-full flex-col overflow-auto">
-        <Link href={`/workspaces/${workspaceId}`}>
-          <a className="flex flex-1 justify-center items-center flex-col">
-            <IconApps height={100} width={100} className="text-gray-200" />
-            <div className="mt-4 text-gray text-center">
-              {t('pages.blocks.empty')}
-            </div>
-          </a>
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className="flex grow h-full flex-col overflow-auto">

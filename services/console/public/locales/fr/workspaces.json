@@ -374,8 +374,8 @@
       "add": "Ajouter un block",
       "remove": "Supprimer le block",
       "search": "Rechercher un block",
-      "empty": "Aucun block n'est disponible dans ce workspace. Ajoutez une App !",
       "settings": {
+        "advanced": "Paramètres avancés",
         "title": "Paramètres du Block",
         "toggle_on": "Afficher les réglages",
         "toggle_off": "Masquer les réglages",
@@ -386,6 +386,10 @@
         "updateOn": {
           "label": "Évènement de mise à jour",
           "description": "Quand une de vos automatisation émet cet évènement, le contenu du block sera mis à jour avec le contenu de la payload."
+        },
+        "automation": {
+          "label": "Automatisation",
+          "description": "Éxécuter une automatisation au chargement de la page pour récupérer la configuration du block."
         }
       },
       "name": "{{context}}",
