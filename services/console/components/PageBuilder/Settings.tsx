@@ -6,9 +6,12 @@ import {
   SchemaForm,
   Schema,
   Collapse,
+  UiOptionsSelect,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
+import { useWorkspace } from '../../layouts/WorkspaceLayout';
+import useSchema, { EnhancedSchema } from '../SchemaForm/useSchema';
 
 const noop = () => null;
 
@@ -19,33 +22,40 @@ interface SettingsProps {
 
 export const Settings = ({ removeBlock, schema }: SettingsProps) => {
   const { t } = useTranslation('workspaces');
+  const { makeSchema } = useSchema();
   const {
     setupComponent: SetupComponent,
     config = {},
     setConfig = noop,
   } = useBlock();
+  const {
+    workspace: { automations = {} },
+  } = useWorkspace();
+
   const commonSchema: Schema = useMemo(
-    () => ({
-      type: 'object',
-      properties: {
-        onInit: {
-          type: 'string',
-          title: t('pages.blocks.settings.onInit.label'),
-          description: t('pages.blocks.settings.onInit.description'),
+    () =>
+      makeSchema({
+        type: 'object',
+        properties: {
+          onInit: {
+            type: 'string',
+            title: t('pages.blocks.settings.onInit.label'),
+            description: t('pages.blocks.settings.onInit.description'),
+          },
+          updateOn: {
+            type: 'string',
+            title: t('pages.blocks.settings.updateOn.label'),
+            description: t('pages.blocks.settings.updateOn.description'),
+          },
+          automation: {
+            type: 'string',
+            title: t('pages.blocks.settings.automation.label'),
+            description: t('pages.blocks.settings.automation.description'),
+            'ui:widget': 'select:endpoints',
+          },
         },
-        updateOn: {
-          type: 'string',
-          title: t('pages.blocks.settings.updateOn.label'),
-          description: t('pages.blocks.settings.updateOn.description'),
-        },
-        automation: {
-          type: 'string',
-          title: t('pages.blocks.settings.automation.label'),
-          description: t('pages.blocks.settings.automation.description'),
-        },
-      },
-    }),
-    [t]
+      }),
+    [makeSchema, t]
   );
 
   const locales = useMemo(
@@ -77,7 +87,7 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
         ),
       },
     ],
-    []
+    [commonSchema, config, locales, setConfig, t]
   );
 
   return (
