@@ -24,7 +24,7 @@ export const FieldArray = (props: FieldProps) => {
   const asRow = isUiOptionsArray(uiOptions) && uiOptions.array === 'row';
 
   return (
-    <div className="m-2 p-2 border-l-[1px] rounded border-gray-200">
+    <div className="m-2 p-2 border-l-[1px] border-gray-200">
       <Description text={props.schema.description}>
         <components.FieldContainer {...props}>
           <label className="text-[10px] text-gray">
