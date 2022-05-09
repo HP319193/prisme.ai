@@ -31,7 +31,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     isReady,
     query: { pageSlug },
   } = useRouter();
-  const { blocksConfigs, error, events } = useBlocksConfigs(page);
+  const { blocksConfigs, error, events } = useBlocksConfigs(currentPage);
 
   useEffect(() => {
     // Page is null because it does not exist OR because it need authentication
@@ -145,6 +145,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
                   /\s/g,
                   '-'
                 )} block-${name.replace(/\s/g, '-')}`}
+                id={blocksConfigs[index] && blocksConfigs[index].sectionId}
               >
                 <ErrorBoundary>
                   {Component && <Component edit={false} />}

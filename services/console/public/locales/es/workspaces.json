@@ -113,7 +113,6 @@
         "custom": "Ejecuta esta automatización llamando a una URL",
         "url": "URL"
       },
-      "add": "Añadir",
       "save": "Registro"
     },
     "instruction": {
@@ -265,7 +264,6 @@
     },
     "output": {
       "label": "<pre><code>{{output}}</code></pre>",
-      "label_empty": "<italic>Definir</italic>",
       "edit": {
         "title": "Devuelve el valor :",
         "description": "Valor devuelto por la automatización. Puede ser un valor estático en forma de cadena u objeto JSON o incluso una variable generada durante la ejecución de su automatización rodeada de llaves (ej: {{maVar}})",
@@ -396,29 +394,59 @@
         "automation": {
           "label": "Automatización",
           "description": "Ejecuta una automatización al cargar la página para recuperar la configuración del bloque."
+        },
+        "sectionId": {
+          "label": "Identificador HTML de la sección",
+          "description": "Permite identificar la sección para aplicarle estilos CSS particulares o para dirigir un enlace hacia ella, como un desplazamiento automático. Opcional."
         }
       },
       "builtin": "Blocks básicos",
       "name": "{{context}}",
-      "name_Title": "Título",
+      "name_Header": "Cabecera",
       "name_Cards": "Grupo de tarjetas",
       "name_DataTable": "Tabla de datos",
       "name_Form": "Formulario",
       "description": "",
-      "description_Title": "Mostrar un título",
+      "description_Header": "Encabezado de página",
       "description_Cards": "Mostrar un grupo de tarjetas",
       "description_DataTable": "Visualización de una tabla de datos",
       "description_Form": "Mostrar un formulario",
-      "title": {
-        "settings": {
-          "title": "Título",
-          "level": "Nivel del título",
-          "levelOption_1": "Nivel 1",
-          "levelOption_2": "Nivel 2",
-          "levelOption_3": "Nivel 3",
-          "levelOption_4": "Nivel 4",
-          "levelOption_5": "Nivel 5",
-          "levelOption_6": "Nivel 6"
+      "nav": {
+        "label": "Navegación",
+        "description": "Puedes añadir enlaces a direcciones web o botones de envío de eventos.",
+        "items": {
+          "external": {
+            "label": "Navegar a una página web externa",
+            "value": {
+              "label": "Dirección web",
+              "description": "Introduzca la dirección web de la página (https://...)."
+            }
+          },
+          "internal": {
+            "label": "Navegue hasta una página de su espacio de trabajo",
+            "value": {
+              "label": "Página",
+              "description": "Elija una página en su espacio de trabajo."
+            }
+          },
+          "inside": {
+            "label": "Desplácese a una sección de esta página",
+            "value": {
+              "label": "Identificación del bloque",
+              "description": "Elija uno de los bloques de su página para desplazarse."
+            }
+          },
+          "event": {
+            "label": "Activación de un evento",
+            "value": {
+              "label": "Evento",
+              "description": "Especifique el nombre del evento que se va a activar."
+            }
+          },
+          "text": {
+            "label": "Texto del botón",
+            "description": "Texto mostrado en el botón de navegación."
+          }
         }
       },
       "cards": {

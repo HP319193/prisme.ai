@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import api, { Events } from '../../utils/api';
 
-export const useBlocksConfigs = (page: Prismeai.Page | null) => {
+const isPage = (page: any): page is Prismeai.Page =>
+  page && typeof page !== 'number';
+
+export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
   const [blocksConfigs, setBlocksConfigs] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!page) return;
+    if (!isPage(page)) return;
     setBlocksConfigs((page.blocks || []).map(({ config }) => config));
   }, [page]);
 
@@ -14,7 +17,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
   const [error, setError] = useState(false);
 
   const initSocket = useCallback(async () => {
-    if (!page || !page.workspaceId) return;
+    if (!isPage(page) || !page.workspaceId) return;
     const socketAlreadyInstantiatedForId =
       socket.current && socket.current.workspaceId === page.workspaceId;
 
@@ -87,7 +90,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null) => {
     []
   );
   useEffect(() => {
-    if (!page) return;
+    if (!isPage(page)) return;
     page.blocks.forEach(({ config: { automation } = {} }, index) => {
       if (!automation || !page.workspaceId) return;
 

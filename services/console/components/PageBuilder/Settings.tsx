@@ -53,6 +53,11 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
             description: t('pages.blocks.settings.automation.description'),
             'ui:widget': 'select:endpoints',
           },
+          sectionId: {
+            type: 'string',
+            title: t('pages.blocks.settings.sectionId.label'),
+            description: t('pages.blocks.settings.sectionId.description'),
+          },
         },
       }),
     [makeSchema, t]
