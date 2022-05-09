@@ -1,8 +1,8 @@
 import {
   Schema,
   SchemaForm,
-  useBlock,
   SchemaFormDescription,
+  useBlock,
 } from '@prisme.ai/design-system';
 import { FieldProps } from '@prisme.ai/design-system/lib/Components/SchemaForm/types';
 import { useTranslation } from 'next-i18next';
@@ -82,11 +82,13 @@ export const Form = ({}) => {
   );
 
   return (
-    <SchemaForm
-      schema={config.schema || defaultSchema}
-      onChange={onChange}
-      onSubmit={onSubmit}
-    />
+    <div className="p-4">
+      <SchemaForm
+        schema={config.schema || defaultSchema}
+        onChange={onChange}
+        onSubmit={onSubmit}
+      />
+    </div>
   );
 };
 
