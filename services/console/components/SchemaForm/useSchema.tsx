@@ -1,8 +1,12 @@
 import { Schema, UiOptionsSelect } from '@prisme.ai/design-system';
 import { useCallback } from 'react';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
+import usePages from '../PagesProvider/context';
 
-type SelectDataSource = 'select:automations' | 'select:endpoints';
+type SelectDataSource =
+  | 'select:automations'
+  | 'select:endpoints'
+  | 'select:pages';
 
 export interface EnhancedSchema
   extends Omit<
@@ -18,8 +22,9 @@ export interface EnhancedSchema
 
 export const useSchema = () => {
   const {
-    workspace: { automations = {} },
+    workspace: { id: workspaceId, automations = {} },
   } = useWorkspace();
+  const { pages } = usePages();
 
   const makeSchema = useCallback(
     (schema: EnhancedSchema) => {
@@ -86,6 +91,28 @@ export const useSchema = () => {
                 }),
               },
             };
+          case 'select:pages':
+            fixedSchema['ui:widget'] = 'select';
+            fixedSchema['ui:options'] = {
+              select: {
+                options: Array.from(pages.get(workspaceId) || []).flatMap(
+                  (page) => {
+                    const { slug, name = slug, description } = page;
+                    return {
+                      label: (
+                        <div className="flex flex-col">
+                          <div>{name}</div>
+                          <div className="text-neutral-500 text-xs">
+                            {description}
+                          </div>
+                        </div>
+                      ),
+                      value: slug,
+                    };
+                  }
+                ),
+              },
+            };
         }
 
         return fixedSchema as Schema;
@@ -93,7 +120,7 @@ export const useSchema = () => {
 
       return parseSchema(schema);
     },
-    [automations]
+    [automations, pages, workspaceId]
   );
 
   return { makeSchema };
