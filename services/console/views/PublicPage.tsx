@@ -63,22 +63,24 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   const blocks = useMemo(
     () =>
       currentPage && typeof currentPage === 'object'
-        ? currentPage.blocks.map(({ name = '', url, config, appInstance }) => {
-            if (Object.keys(BuiltinBlocks).includes(name)) {
+        ? (currentPage.blocks || []).map(
+            ({ name = '', url, config, appInstance }) => {
+              if (Object.keys(BuiltinBlocks).includes(name)) {
+                return {
+                  name,
+                  appInstance,
+                  component: BuiltinBlocks[name as keyof typeof BuiltinBlocks],
+                  config,
+                };
+              }
               return {
                 name,
+                url,
                 appInstance,
-                component: BuiltinBlocks[name as keyof typeof BuiltinBlocks],
                 config,
               };
             }
-            return {
-              name,
-              url,
-              appInstance,
-              config,
-            };
-          })
+          )
         : [],
     [currentPage]
   );
@@ -114,7 +116,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   useEffect(() => {
     if (!page || !page.workspaceId) return;
     const { workspaceId } = page;
-    page.blocks.forEach(({ appInstance }) => {
+    (page.blocks || []).forEach(({ appInstance }) => {
       if (!appInstance) return;
       fetchAppConfig(appInstance, workspaceId);
     });
