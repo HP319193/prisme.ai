@@ -1,14 +1,7 @@
 import { useBlock } from '@prisme.ai/design-system';
 import getConfig from 'next/config';
 import Link from 'next/link';
-import {
-  FC,
-  HTMLAttributes,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { FC, HTMLAttributes, useCallback, useEffect, useState } from 'react';
 import api from '../../utils/api';
 import { EnhancedSchema } from '../SchemaForm/useSchema';
 
@@ -253,6 +246,8 @@ const Button = ({ text, type, value }: Config['nav'][number]) => {
           <button className="block-header__nav-item-button">{text}</button>
         </a>
       );
+    default:
+      return null;
   }
 };
 

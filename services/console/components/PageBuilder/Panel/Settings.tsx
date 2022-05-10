@@ -1,17 +1,15 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import {
   Button,
-  Divider,
-  useBlock,
-  SchemaForm,
-  Schema,
   Collapse,
-  UiOptionsSelect,
+  Divider,
+  Schema,
+  SchemaForm,
+  useBlock,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import useSchema, { EnhancedSchema } from '../SchemaForm/useSchema';
+import useSchema from '../../SchemaForm/useSchema';
 
 const noop = () => null;
 
@@ -23,14 +21,7 @@ interface SettingsProps {
 export const Settings = ({ removeBlock, schema }: SettingsProps) => {
   const { t } = useTranslation('workspaces');
   const { makeSchema } = useSchema();
-  const {
-    setupComponent: SetupComponent,
-    config = {},
-    setConfig = noop,
-  } = useBlock();
-  const {
-    workspace: { automations = {} },
-  } = useWorkspace();
+  const { config = {}, setConfig = noop } = useBlock();
 
   const commonSchema: Schema = useMemo(
     () =>
@@ -96,28 +87,23 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
   );
 
   return (
-    <div className="flex flex-1 flex-col p-4 shadow-inner shadow-slate-500 -mx-2 px-6">
-      <Collapse items={collapseItems} />
-      <Divider />
-      {SetupComponent && (
-        <>
-          {SetupComponent}
-          <Divider />
-        </>
-      )}
-      {schema && (
-        <div className="bg-white">
-          <SchemaForm
-            schema={schema}
-            onChange={setConfig}
-            initialValues={config}
-            buttons={[]}
-          />
-          <Divider />
-        </div>
-      )}
+    <div className="flex flex-1 flex-col justify-between overflow-x-auto">
       <div>
-        <Button onClick={removeBlock}>
+        {schema && (
+          <div className="bg-white">
+            <SchemaForm
+              schema={schema}
+              onChange={setConfig}
+              initialValues={config}
+              buttons={[]}
+            />
+            <Divider />
+          </div>
+        )}
+        <Collapse items={collapseItems} />
+      </div>
+      <div>
+        <Button onClick={removeBlock} className="!text-pr-orange">
           <DeleteOutlined /> {t('pages.blocks.remove')}
         </Button>
       </div>

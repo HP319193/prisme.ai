@@ -244,6 +244,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
             disabled={saving}
             key="1"
             className="!flex flex-row"
+            variant="primary"
           >
             <Space>
               {t('automations.save.label')}

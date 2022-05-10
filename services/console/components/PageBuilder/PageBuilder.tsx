@@ -2,11 +2,13 @@ import { useCallback, useMemo, useState } from 'react';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
-import PageBlockForm from './Panel/PageBlockForm';
+import PageNewBlockForm from './Panel/PageNewBlockForm';
 import PageBlocks from './PageBlocks';
 import { nanoid } from 'nanoid';
 import { useApps } from '../AppsProvider';
 import equal from 'fast-deep-equal';
+import PageEditBlockForm from './Panel/PageEditBlockForm';
+import * as BuiltinBlocks from '../Blocks';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -16,13 +18,16 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const { workspace } = useWorkspace();
   const { appInstances } = useApps();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
-  const [blockEditing, setBlockEditing] = useState<
+  const [blockSelecting, setBlockSelecting] = useState<
     | {
         onSubmit: (v: string) => void;
       }
     | undefined
   >();
+  const [blockEditing, setBlockEditing] = useState<string>();
+
   const hidePanel = useCallback(() => {
+    setBlockSelecting(undefined);
     setBlockEditing(undefined);
     setPanelIsOpen(false);
   }, []);
@@ -61,40 +66,13 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     block.key = nanoid();
   });
 
-  const addBlockDetails = useCallback(async () => {
-    return new Promise<string>((resolve) => {
+  const setEditBlock = useCallback(
+    async (blockId: string) => {
       hidePanel();
-      setBlockEditing({
-        onSubmit: (blockSlug: string) => {
-          resolve(blockSlug);
-          hidePanel();
-        },
-      });
+      setBlockEditing(blockId);
       setPanelIsOpen(true);
-    });
-  }, [hidePanel]);
-  const addBlock: PageBuilderContext['addBlock'] = useCallback(
-    async (position) => {
-      const block = await addBlockDetails();
-      const newBlocks = [...value.blocks];
-      newBlocks.splice(position, 0, { name: block, key: nanoid() });
-      onChange({
-        ...value,
-        blocks: newBlocks,
-      });
     },
-    [addBlockDetails, onChange, value]
-  );
-
-  const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
-    (key) => {
-      const newBlocks = (value.blocks || []).filter(({ key: k }) => k !== key);
-      onChange({
-        ...value,
-        blocks: newBlocks,
-      });
-    },
-    [onChange, value]
+    [hidePanel]
   );
 
   const setBlockConfig: PageBuilderContext['setBlockConfig'] = useCallback(
@@ -108,7 +86,6 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
           : block
       );
       if (equal(newBlocks, value.blocks)) return;
-
       onChange({
         ...value,
         blocks: newBlocks,
@@ -117,14 +94,90 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     [onChange, value]
   );
 
+  const addBlockDetails = useCallback(async () => {
+    return new Promise<string>((resolve) => {
+      hidePanel();
+      setBlockSelecting({
+        onSubmit: (blockSlug: string) => {
+          resolve(blockSlug);
+        },
+      });
+      setPanelIsOpen(true);
+    });
+  }, [hidePanel]);
+
+  const addBlock: PageBuilderContext['addBlock'] = useCallback(
+    async (position) => {
+      const block = await addBlockDetails();
+      const newBlocks = [...value.blocks];
+      const blockKey = nanoid();
+      newBlocks.splice(position, 0, { name: block, key: blockKey });
+      onChange({
+        ...value,
+        blocks: newBlocks,
+      });
+      setEditBlock(blockKey);
+    },
+    [addBlockDetails, onChange, setEditBlock, value]
+  );
+
+  const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
+    (key) => {
+      const newBlocks = (value.blocks || []).filter(({ key: k }) => k !== key);
+      onChange({
+        ...value,
+        blocks: newBlocks,
+      });
+      hidePanel();
+    },
+    [hidePanel, onChange, value]
+  );
+
+  const blocksInPage: PageBuilderContext['blocksInPage'] = useMemo(() => {
+    return (value.blocks || []).flatMap(({ key, name = '' }) => {
+      if (!key) return [];
+      const parts = name.split(/\./);
+      parts.reverse();
+      const [blockName, appName = ''] = parts;
+      if (!appName && Object.keys(BuiltinBlocks).includes(blockName)) {
+        const Block = BuiltinBlocks[blockName as keyof typeof BuiltinBlocks];
+        return {
+          url: undefined,
+          component: Block,
+          name: blockName,
+          key,
+          appName: '',
+          appInstance: undefined,
+          edit: Block.schema,
+        };
+      }
+      const app = blocks.find(({ slug }: { slug: string }) => slug === appName);
+      if (!app) return [];
+      const block = (app.blocks || []).find(
+        ({ slug }: { slug: string }) => slug === blockName
+      );
+      if (!block) return [];
+      return { ...block, key, appName: app.appName, appInstance: app.slug };
+    });
+  }, [value.blocks, blocks]);
+
   return (
     <context.Provider
-      value={{ page: value, blocks, addBlock, removeBlock, setBlockConfig }}
+      value={{
+        page: value,
+        blocks,
+        blocksInPage,
+        addBlock,
+        removeBlock,
+        setBlockConfig,
+        setEditBlock,
+      }}
     >
-      <div className="relative flex flex-1 overflow-x-hidden">
+      <div className="relative flex flex-1 overflow-x-hidden h-full">
         <PageBlocks />
         <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
-          {blockEditing && <PageBlockForm {...blockEditing} />}
+          {blockSelecting && <PageNewBlockForm {...blockSelecting} />}
+          {blockEditing && <PageEditBlockForm blockId={blockEditing} />}
         </Panel>
       </div>
     </context.Provider>

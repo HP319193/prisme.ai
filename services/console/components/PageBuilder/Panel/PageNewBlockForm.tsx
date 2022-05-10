@@ -11,11 +11,11 @@ import useLocalizedText from '../../../utils/useLocalizedText';
 import { usePageBuilder } from '../context';
 import * as BuiltinBlocks from '../../Blocks';
 
-interface PageBlockFormProps {
+interface PageNewBlockFormProps {
   onSubmit: (blockSlug: string) => void;
 }
 
-export const PageBlockForm = ({ onSubmit }: PageBlockFormProps) => {
+export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
   const { blocks } = usePageBuilder();
 
   const { t } = useTranslation('workspaces');
@@ -105,4 +105,4 @@ export const PageBlockForm = ({ onSubmit }: PageBlockFormProps) => {
   );
 };
 
-export default PageBlockForm;
+export default PageNewBlockForm;

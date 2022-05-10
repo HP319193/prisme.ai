@@ -4,10 +4,10 @@ import {
   RightCircleOutlined,
 } from '@ant-design/icons';
 import {
-  useBlock,
   Schema,
   StretchContent,
   Tooltip,
+  useBlock,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import {
@@ -22,7 +22,7 @@ import {
 import IconLink from '../../icons/icon-link.svgr';
 import useLocalizedText from '../../utils/useLocalizedText';
 
-const schema = {
+const schema: Schema = {
   type: 'object',
   properties: {
     cards: {

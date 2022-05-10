@@ -1,7 +1,8 @@
 import {
+  Schema,
   SchemaForm,
-  useBlock,
   SchemaFormDescription,
+  useBlock,
 } from '@prisme.ai/design-system';
 import { FieldProps } from '@prisme.ai/design-system/lib/Components/SchemaForm/types';
 import { useTranslation } from 'next-i18next';
@@ -41,7 +42,7 @@ const SchemaField = ({ name }: FieldProps) => {
   );
 };
 
-const schema = {
+const schema: Schema = {
   type: 'object',
   properties: {
     onSubmit: {
@@ -81,11 +82,13 @@ export const Form = ({}) => {
   );
 
   return (
-    <SchemaForm
-      schema={config.schema || defaultSchema}
-      onChange={onChange}
-      onSubmit={onSubmit}
-    />
+    <div className="p-4">
+      <SchemaForm
+        schema={config.schema || defaultSchema}
+        onChange={onChange}
+        onSubmit={onSubmit}
+      />
+    </div>
   );
 };
 

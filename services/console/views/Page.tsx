@@ -190,13 +190,13 @@ export const Page = () => {
         }
         onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
-          <Button onClick={save} disabled={saving} key="save">
+          <Button onClick={save} disabled={saving} key="save" variant="primary">
             {saving && <LoadingOutlined />}
             {t('pages.save.label')}
           </Button>,
         ]}
       />
-      <div className="relative flex flex-1">
+      <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
         <PageBuilder value={value} onChange={setValue} />
       </div>
     </>
