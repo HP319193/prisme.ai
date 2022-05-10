@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import multer from 'multer';
 import { EventType } from '../../eda';
 import Runtime from '../../services/runtime';
 import { asyncRoute } from '../utils/async';
@@ -12,6 +13,7 @@ export default function init(runtime: Runtime) {
       headers,
       method,
       query,
+      files,
       logger,
       params: { workspaceId, automationSlug },
       body,
@@ -31,12 +33,30 @@ export default function init(runtime: Runtime) {
         {}
       );
 
+    const filesBody = Array.isArray(files)
+      ? files
+          ?.map((cur) => (cur.fieldname ? cur : { ...cur, fieldname: 'file' }))
+          .reduce(
+            (body, { fieldname, buffer, ...file }) => ({
+              ...body,
+              [fieldname]: {
+                ...file,
+                base64: buffer.toString('base64'),
+              },
+            }),
+            {}
+          )
+      : files;
+
     const event = await broker.send<Prismeai.TriggeredWebhook['payload']>(
       EventType.TriggeredWebhook,
       {
         workspaceId,
         automationSlug,
-        body,
+        body: {
+          ...body,
+          ...filesBody,
+        },
         headers: filteredHeaders,
         method,
         query,
@@ -52,7 +72,15 @@ export default function init(runtime: Runtime) {
 
   const app = express.Router({ mergeParams: true });
 
-  app.use(`/:automationSlug`, asyncRoute(webhookHandler));
+  const upload = multer({
+    limits: {
+      fieldSize: 1024, // 1KB
+      fileSize: 500 * 1024, // 500KB
+      files: 1,
+      parts: 50,
+    },
+  });
+  app.use(`/:automationSlug`, upload.any(), asyncRoute(webhookHandler));
 
   return app;
 }
