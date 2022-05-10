@@ -633,6 +633,11 @@ paths:
           description: Match every events created before given eventId
           schema:
             type: string
+        - name: appInstanceDepth
+          in: query
+          description: Match only events from appInstances not exceeding that depth
+          schema:
+            type: number
         - in: query
           name: query
           schema:
@@ -784,6 +789,11 @@ paths:
           description: Match every events created before given eventId
           schema:
             type: string
+        - name: appInstanceDepth
+          in: query
+          description: Match only events from appInstances not exceeding that depth
+          schema:
+            type: number
         - in: query
           name: query
           schema:

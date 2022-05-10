@@ -1984,6 +1984,7 @@ declare namespace PrismeaiAPI {
     namespace EventsLongpolling {
         namespace Parameters {
             export type AfterDate = string;
+            export type AppInstanceDepth = number;
             export type BeforeDate = string;
             export type BeforeId = string;
             export type Limit = number;
@@ -2001,6 +2002,7 @@ declare namespace PrismeaiAPI {
         export interface QueryParameters {
             text?: Parameters.Text;
             beforeId?: Parameters.BeforeId;
+            appInstanceDepth?: Parameters.AppInstanceDepth;
             query?: Parameters.Query;
             types?: Parameters.Types;
             afterDate?: Parameters.AfterDate;
@@ -2023,6 +2025,7 @@ declare namespace PrismeaiAPI {
     namespace EventsValues {
         namespace Parameters {
             export type AfterDate = string;
+            export type AppInstanceDepth = number;
             export type BeforeDate = string;
             export type BeforeId = string;
             export type Fields = string;
@@ -2041,6 +2044,7 @@ declare namespace PrismeaiAPI {
         export interface QueryParameters {
             text?: Parameters.Text;
             beforeId?: Parameters.BeforeId;
+            appInstanceDepth?: Parameters.AppInstanceDepth;
             query?: Parameters.Query;
             types?: Parameters.Types;
             afterDate?: Parameters.AfterDate;

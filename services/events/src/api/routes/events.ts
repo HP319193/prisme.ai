@@ -111,15 +111,25 @@ export function cleanSearchQuery({
   page,
   limit,
   text,
+  appInstanceDepth,
   ...payloadQuery
 }: PrismeaiAPI.EventsLongpolling.QueryParameters): SearchOptions {
-  return {
+  const opts: SearchOptions = {
     afterDate,
     beforeDate,
     page,
     limit,
     text,
+    appInstanceDepth,
     payloadQuery: payloadQuery as PayloadQuery,
     types: types ? types.split(',') : undefined,
   };
+
+  if (
+    typeof appInstanceDepth !== 'number' &&
+    typeof (payloadQuery as any)?.['source.appInstanceDepth'] === 'undefined'
+  ) {
+    opts.appInstanceDepth = 1;
+  }
+  return opts;
 }

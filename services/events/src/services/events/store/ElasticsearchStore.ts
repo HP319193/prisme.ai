@@ -166,6 +166,31 @@ export class ElasticsearchStore implements EventsStore {
       });
     }
 
+    if (typeof options.appInstanceDepth === 'number') {
+      filter.push({
+        bool: {
+          should: [
+            {
+              range: {
+                'source.appInstanceDepth': {
+                  lte: `${options.appInstanceDepth}`,
+                },
+              },
+            },
+            {
+              bool: {
+                must_not: {
+                  exists: {
+                    field: 'source.appInstanceDepth',
+                  },
+                },
+              },
+            },
+          ],
+        },
+      });
+    }
+
     if (options.payloadQuery) {
       Object.entries(options.payloadQuery).forEach(([key, value]) => {
         must.push(
