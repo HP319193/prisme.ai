@@ -24,9 +24,10 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   } = useTranslation('pages');
   const { localize } = useLocalizedText();
   const { user } = useUser();
-  const [currentPage, setCurrentPage] = useState<
-    Prismeai.DetailedPage | null | number
-  >(page);
+  const [currentPage, setCurrentPage] = useState<Prismeai.DetailedPage | null>(
+    page
+  );
+  const [loadingError, setLoadingError] = useState<number | null>(null);
   const {
     isReady,
     query: { pageSlug },
@@ -52,9 +53,11 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     const fetchPage = async () => {
       try {
         const page = await api.getPageBySlug(`${pageSlug}`);
+        setLoadingError(null);
         setCurrentPage(page);
       } catch (e) {
-        setCurrentPage((e as HTTPError).code || 404);
+        setCurrentPage(null);
+        setLoadingError((e as HTTPError).code || 404);
       }
     };
     fetchPage();
@@ -128,7 +131,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     return <DefaultErrorPage statusCode={currentPage} />;
   }
 
-  if (currentPage === 401 || error) {
+  if (loadingError === 401 || error) {
     return (
       <div className="flex flex-1 justify-center items-center flex-col">
         <Title className="!text-sm !my-8">{t('signin.title')}</Title>
@@ -191,5 +194,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
     </div>
   );
 };
+
+PublicPage.isPublic = true;
 
 export default PublicPage;

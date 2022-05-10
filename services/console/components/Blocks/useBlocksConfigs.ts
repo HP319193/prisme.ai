@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import api, { Events } from '../../utils/api';
+import { useUser } from '../UserProvider';
 
 const isPage = (page: any): page is Prismeai.Page =>
   page && typeof page !== 'number';
 
 export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
   const [blocksConfigs, setBlocksConfigs] = useState<any[]>([]);
+  const { user } = useUser();
 
   const [cachedPage, setCachedPage] = useState(page);
 
@@ -40,7 +42,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
         socket.current.destroy();
       }
       try {
-        socket.current = await api.streamEvents(page.workspaceId);
+        socket.current = await api.streamEvents(page.workspaceId, user.id);
         setError(false);
       } catch (e) {
         setError(true);
@@ -80,7 +82,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
         });
       }
     });
-  }, [cachedPage]);
+  }, [cachedPage, user.id]);
 
   useEffect(() => {
     initSocket();

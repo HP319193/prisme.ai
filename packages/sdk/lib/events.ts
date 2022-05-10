@@ -4,17 +4,36 @@ export class Events {
   protected client: Socket;
   public workspaceId: string;
 
-  constructor(
-    workspaceId: string,
-    token: string,
-    apiHost: string = 'https://api.eda.prisme.ai'
-  ) {
+  constructor({
+    workspaceId,
+    token,
+    apiHost = 'https://api.eda.prisme.ai',
+    userId,
+  }: {
+    workspaceId: string;
+    token: string;
+    apiHost?: string;
+    userId?: string;
+  }) {
     this.workspaceId = workspaceId;
-    this.client = io(`${apiHost}/workspaces/${workspaceId}/events`, {
-      extraHeaders: {
-        'x-prismeai-session-token': token,
-      },
-    });
+    const filters: Record<string, string> = {};
+    if (userId) {
+      filters['source.userId'] = userId;
+    }
+    const queryString =
+      Object.keys(filters).length > 0
+        ? `?${Object.keys(filters)
+            .map((key) => `${key}=${filters[key]}`)
+            .join('&')}`
+        : '';
+    this.client = io(
+      `${apiHost}/workspaces/${workspaceId}/events${queryString}?source.userId=${userId}`,
+      {
+        extraHeaders: {
+          'x-prismeai-session-token': token,
+        },
+      }
+    );
   }
 
   get socket() {

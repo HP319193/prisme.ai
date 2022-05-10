@@ -81,13 +81,8 @@ it('should signin with success', async () => {
   await act(async () => {
     await true;
   });
-  let promise: Promise<any>;
-  act(() => {
-    promise = context.signin('email', 'password');
-  });
-  expect(context.loading).toBe(true);
   await act(async () => {
-    await promise;
+    await context.signin('email', 'password');
   });
   expect(api.signin).toHaveBeenCalledWith('email', 'password');
   expect(context.loading).toBe(false);
@@ -103,7 +98,6 @@ it('should signin without success', async () => {
     .mockRejectedValue(
       new ApiError({ error: 'auth failed', message: 'auth failed' }, 401)
     );
-  let promise: Promise<any>;
   let context: any = {};
   const Test = () => {
     context = useUser();
@@ -114,12 +108,12 @@ it('should signin without success', async () => {
       <Test />
     </UserProvider>
   );
-  act(() => {
-    promise = context.signin('email', 'password');
-  });
-  expect(context.loading).toBe(true);
+
   await act(async () => {
-    await promise;
+    await true;
+  });
+  await act(async () => {
+    await context.signin('email', 'password');
   });
   expect(api.signin).toHaveBeenCalledWith('email', 'password');
   expect(context.loading).toBe(false);
@@ -142,6 +136,9 @@ it('should signout', async () => {
       <Test />
     </UserProvider>
   );
+  await act(async () => {
+    await true;
+  });
   context.signout();
   expect(api.signout).toHaveBeenCalled();
   expect(context.user).toBeNull();
@@ -170,12 +167,8 @@ it('should signup with a new account', async () => {
     lastName: 'lastname',
     token: 'dev-token',
   }));
-  act(() => {
-    promise = context.signup('email', 'password', 'firstname', 'lastname');
-  });
-  expect(context.loading).toBe(true);
   await act(async () => {
-    await promise;
+    await context.signup('email', 'password', 'firstname', 'lastname');
   });
   expect(api.signup).toHaveBeenCalledWith(
     'email',

@@ -9,7 +9,14 @@ import { Loading } from '@prisme.ai/design-system';
 const REDIRECT_IF_SIGNED = ['/signin', '/signup', '/'];
 const PUBLIC_URLS = ['/signin', '/signup', '/pages/[pageSlug]'];
 
-export const UserProvider: FC = ({ children }) => {
+interface UserProviderProps {
+  anonymous?: boolean;
+}
+
+export const UserProvider: FC<UserProviderProps> = ({
+  anonymous,
+  children,
+}) => {
   const [user, setUser] = useState<UserContext['user']>(null);
   const [loading, setLoading] = useState<UserContext['loading']>(true);
   const [error, setError] = useState<ApiError>();
@@ -92,6 +99,9 @@ export const UserProvider: FC = ({ children }) => {
     setLoading(true);
     try {
       const user = await api.me();
+      if (!user) {
+        throw new Error('no user found');
+      }
       setUser(user);
       setLoading(false);
       if (user.id && REDIRECT_IF_SIGNED.includes(route)) {
@@ -101,11 +111,19 @@ export const UserProvider: FC = ({ children }) => {
         push('/signin');
       }
     } catch (e) {
+      if (anonymous) {
+        const { token, ...user } = await api.createAnonymousSession();
+        api.token = token;
+        Storage.set('auth-token', token);
+        setUser(user);
+        setLoading(false);
+        return;
+      }
       setError(e as ApiError);
       signout(false);
       setLoading(false);
     }
-  }, [push, route, signout]);
+  }, [anonymous, push, route, signout]);
 
   const initialFetch = useRef(fetchMe);
 
@@ -114,10 +132,6 @@ export const UserProvider: FC = ({ children }) => {
   }, []);
 
   if (!PUBLIC_URLS.includes(route) && loading) return <Loading />;
-
-  if (error) {
-    console.error(error);
-  }
 
   return (
     <context.Provider value={{ user, loading, error, signin, signup, signout }}>
