@@ -10,6 +10,12 @@ import {
 import { CodeEditorInline } from '../../CodeEditor/lazy';
 import { useField } from 'react-final-form';
 import FieldContainerWithRaw from '../../FieldContainerWithRaw';
+import useSchema, {
+  EnhancedSchema,
+  isUiOptionsPath,
+} from '../../SchemaForm/useSchema';
+import { useWorkspace } from '../../../layouts/WorkspaceLayout';
+import { readAppConfig } from './readAppConfig';
 
 interface InstructionValueProps {
   instruction: string;
@@ -67,7 +73,16 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   schema = {},
   onChange,
 }) => {
+  const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
+  const { makeSchema } = useSchema();
+  const appInstance = useMemo(() => {
+    if (!workspace.imports) return null;
+    const [appName] = instruction.split(/\./);
+    if (!workspace.imports[appName]) return null;
+    return workspace.imports[appName].config || null;
+  }, [instruction, workspace.imports]);
+
   const cleanedSchema = useMemo(() => {
     const cleaned = {
       ...schema,
@@ -81,14 +96,14 @@ export const InstructionValue: FC<InstructionValueProps> = ({
         oneOf: {
           options: [
             {
-              label: t('automations.instruction.form.repeat.on.label'),
+              label: 'automations.instruction.form.repeat.on.label',
               index: 0,
               value: {
                 until: undefined,
               },
             },
             {
-              label: t('automations.instruction.form.repeat.until.label'),
+              label: 'automations.instruction.form.repeat.until.label',
               index: 1,
               value: {
                 on: undefined,
@@ -98,8 +113,25 @@ export const InstructionValue: FC<InstructionValueProps> = ({
         },
       };
     }
-    return cleaned;
-  }, [instruction, schema, t]);
+    return makeSchema(cleaned, {
+      'select:config': (schema) => {
+        if (!isUiOptionsPath(schema['ui:options'])) return schema;
+        const { path } = schema['ui:options'];
+        if (!path) return schema;
+        const values: string[] = readAppConfig(appInstance, path);
+        schema['ui:widget'] = 'select';
+        schema['ui:options'] = {
+          select: {
+            options: values.map((value) => ({
+              label: value,
+              value,
+            })),
+          },
+        };
+        return schema;
+      },
+    });
+  }, [instruction, makeSchema, schema, t]);
 
   const locales = useMemo(
     () => ({

@@ -9,17 +9,30 @@ type SelectDataSource =
   | 'select:endpoints'
   | 'select:pages';
 
+interface UiOptionsPath {
+  path: string;
+}
+
 export interface EnhancedSchema
   extends Omit<
     Schema,
-    'ui:widget' | 'properties' | 'additionalProperties' | 'items' | 'oneOf'
+    | 'ui:widget'
+    | 'ui:options'
+    | 'properties'
+    | 'additionalProperties'
+    | 'items'
+    | 'oneOf'
   > {
   'ui:widget'?: Schema['ui:widget'] | SelectDataSource | string;
+  'ui:options'?: Schema['ui:options'] | UiOptionsPath;
   properties?: Record<string, EnhancedSchema>;
   additionalProperties?: boolean | EnhancedSchema;
   items?: EnhancedSchema;
   oneOf?: EnhancedSchema[];
 }
+
+export const isUiOptionsPath = (uiOptions: any): uiOptions is UiOptionsPath =>
+  !!(uiOptions && (uiOptions as UiOptionsPath).path);
 
 type CustomSources = Record<string, (schema: EnhancedSchema) => EnhancedSchema>;
 
