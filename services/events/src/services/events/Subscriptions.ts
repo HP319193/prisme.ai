@@ -30,6 +30,10 @@ const searchFilters: {
     !date || new Date(event.createdAt).getTime() < new Date(date).getTime(),
   afterDate: (event, date) =>
     !date || new Date(event.createdAt).getTime() > new Date(date).getTime(),
+  appInstanceDepth: (event, depth) =>
+    typeof depth === 'number' && event.source?.appInstanceDepth
+      ? event.source?.appInstanceDepth <= depth
+      : true,
   payloadQuery: (event, query) => {
     if (!query) {
       return true;
