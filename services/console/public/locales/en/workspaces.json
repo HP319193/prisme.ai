@@ -394,29 +394,79 @@
         "automation": {
           "label": "Automation",
           "description": "Run an automation at page load to retrieve the block configuration."
+        },
+        "sectionId": {
+          "label": "HTML identifier of the section",
+          "description": "Allows you to identify the section to apply particular CSS styles or point a link to it like an automatic scroll. Optional."
         }
       },
       "builtin": "Built-in Blocks",
       "name": "{{context}}",
-      "name_Title": "Title",
+      "name_Header": "Header",
       "name_Cards": "Cards group",
       "name_DataTable": "Data table",
       "name_Form": "Form",
       "description": "",
-      "description_Title": "display a title",
+      "description_Header": "Page header",
       "description_Cards": "Display a cards group",
       "description_DataTable": "Display a data table",
       "description_Form": "Display form",
-      "title": {
+      "header": {
         "settings": {
-          "title": "Title",
-          "level": "Title level",
-          "levelOption_1": "Level 1",
-          "levelOption_2": "Level 2",
-          "levelOption_3": "Level 3",
-          "levelOption_4": "Level 4",
-          "levelOption_5": "Level 5",
-          "levelOption_6": "Level 6"
+          "title": {
+            "label": "Title",
+            "description": "Title of your page."
+          },
+          "logo": {
+            "label": "Logo",
+            "description": "Image displayed next to the title. Optional.",
+            "src": {
+              "label": "Image",
+              "description": "Choose an image"
+            },
+            "alt": {
+              "label": "Texts alternatif",
+              "description": "Text displayed in place of the image for non-graphical browsers."
+            }
+          },
+          "nav": {
+            "label": "Navigation",
+            "description": "You can add links to web addresses or buttons sending events.",
+            "items": {
+              "external": {
+                "label": "Navigate to an external web page",
+                "value": {
+                  "label": "Adresse web",
+                  "description": "Indicate the web address of the page (https://...)."
+                }
+              },
+              "internal": {
+                "label": "Navigate to a page in your Workspace",
+                "value": {
+                  "label": "Page",
+                  "description": "Choose a page in your Workspace."
+                }
+              },
+              "inside": {
+                "label": "Scroll to a section of this page",
+                "value": {
+                  "label": "Block ID",
+                  "description": "Choose one of the blocks on your page to scroll to."
+                }
+              },
+              "event": {
+                "label": "Trigger an event",
+                "value": {
+                  "label": "Event",
+                  "description": "Indicate the name of the event to be triggered."
+                }
+              },
+              "text": {
+                "label": "Button text",
+                "description": "Text displayed in the navigation button."
+              }
+            }
+          }
         }
       },
       "cards": {

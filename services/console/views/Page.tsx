@@ -39,8 +39,6 @@ export const Page = () => {
   const [value, setValue] = useState<Prismeai.Page>();
   const [saving, setSaving] = useState(false);
 
-  const blocksConfigs = useBlocksConfigs(page || null);
-
   useEffect(() => {
     setShare({
       label: t('pages.share.label'),
@@ -92,9 +90,10 @@ export const Page = () => {
     (value: Prismeai.Page) => {
       return {
         ...value,
-        blocks: (
-          (value.blocks || []) as PageBuilderContext['page']['blocks']
-        ).map(({ key, ...block }) => block),
+        blocks: ((value.blocks ||
+          []) as PageBuilderContext['page']['blocks']).map(
+          ({ key, ...block }) => block
+        ),
         id: page ? page.id : '',
       };
     },

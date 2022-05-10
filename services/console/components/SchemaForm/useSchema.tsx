@@ -1,6 +1,7 @@
 import { Schema, UiOptionsSelect } from '@prisme.ai/design-system';
 import { useCallback } from 'react';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
+import useLocalizedText from '../../utils/useLocalizedText';
 import usePages from '../PagesProvider/context';
 
 type SelectDataSource =
@@ -13,21 +14,24 @@ export interface EnhancedSchema
     Schema,
     'ui:widget' | 'properties' | 'additionalProperties' | 'items' | 'oneOf'
   > {
-  'ui:widget'?: Schema['ui:widget'] | SelectDataSource;
+  'ui:widget'?: Schema['ui:widget'] | SelectDataSource | string;
   properties?: Record<string, EnhancedSchema>;
   additionalProperties?: boolean | EnhancedSchema;
   items?: EnhancedSchema;
   oneOf?: EnhancedSchema[];
 }
 
+type CustomSources = Record<string, (schema: EnhancedSchema) => EnhancedSchema>;
+
 export const useSchema = () => {
   const {
     workspace: { id: workspaceId, automations = {} },
   } = useWorkspace();
+  const { localize } = useLocalizedText();
   const { pages } = usePages();
 
   const makeSchema = useCallback(
-    (schema: EnhancedSchema) => {
+    (schema: EnhancedSchema, customSources?: CustomSources) => {
       const parseSchema = (schema: EnhancedSchema): Schema => {
         const fixedSchema = { ...schema };
 
@@ -60,6 +64,12 @@ export const useSchema = () => {
         }
 
         const widget = fixedSchema['ui:widget'];
+
+        if (typeof widget !== 'string') return fixedSchema as Schema;
+
+        if (customSources && customSources[widget]) {
+          return customSources[widget](fixedSchema) as Schema;
+        }
         switch (widget) {
           case 'select:automations':
           case 'select:endpoints':
@@ -80,9 +90,9 @@ export const useSchema = () => {
                   return {
                     label: (
                       <div className="flex flex-col">
-                        <div>{name}</div>
+                        <div>{localize(name) || slug}</div>
                         <div className="text-neutral-500 text-xs">
-                          {description}
+                          {localize(description)}
                         </div>
                       </div>
                     ),
@@ -91,28 +101,30 @@ export const useSchema = () => {
                 }),
               },
             };
+            break;
           case 'select:pages':
             fixedSchema['ui:widget'] = 'select';
             fixedSchema['ui:options'] = {
               select: {
                 options: Array.from(pages.get(workspaceId) || []).flatMap(
                   (page) => {
-                    const { slug, name = slug, description } = page;
+                    const { id, slug, name = slug, description } = page;
                     return {
                       label: (
                         <div className="flex flex-col">
-                          <div>{name}</div>
+                          <div>{localize(name)}</div>
                           <div className="text-neutral-500 text-xs">
-                            {description}
+                            {localize(description)}
                           </div>
                         </div>
                       ),
-                      value: slug,
+                      value: id,
                     };
                   }
                 ),
               },
             };
+            break;
         }
 
         return fixedSchema as Schema;
@@ -120,7 +132,7 @@ export const useSchema = () => {
 
       return parseSchema(schema);
     },
-    [automations, pages, workspaceId]
+    [automations, localize, pages, workspaceId]
   );
 
   return { makeSchema };

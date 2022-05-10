@@ -103,14 +103,12 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
         key === block.key
           ? {
               ...block,
-              config: {
-                ...block.config,
-                ...config,
-              },
+              config,
             }
           : block
       );
       if (equal(newBlocks, value.blocks)) return;
+
       onChange({
         ...value,
         blocks: newBlocks,

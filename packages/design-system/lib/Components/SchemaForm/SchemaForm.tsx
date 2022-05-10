@@ -34,7 +34,7 @@ const OnChange = ({
   onChange: FormProps['onChange'];
 }) => {
   useEffect(() => {
-    if (!onChange || !values || !values.values) return;
+    if (!onChange || !values) return;
     onChange(values.values);
   }, [values]);
   return null;

@@ -15,6 +15,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { Fragment, useCallback, useMemo, useState } from 'react';
 import Settings from './Settings';
 import useLocalizedText from '../../utils/useLocalizedText';
+import useSchema, { EnhancedSchema } from '../SchemaForm/useSchema';
 
 interface PageBlockProps {
   url?: string;
@@ -25,6 +26,7 @@ interface PageBlockProps {
   appInstance?: string;
   editSchema?: Schema['properties'];
 }
+
 export const PageBlock = ({
   url,
   component: Component,
@@ -36,9 +38,11 @@ export const PageBlock = ({
 }: PageBlockProps) => {
   const { t } = useTranslation('workspaces');
   const { localizeSchemaForm } = useLocalizedText();
-  const { removeBlock } = usePageBuilder();
+  const { page, removeBlock } = usePageBuilder();
   const { buttons } = useBlock();
   const [settingsVisible, setSettingsVisible] = useState(false);
+
+  const { makeSchema } = useSchema();
 
   const schema: Schema | undefined = useMemo(() => {
     if (!editSchema) return;
@@ -48,8 +52,28 @@ export const PageBlock = ({
           type: 'object',
           properties: editSchema,
         };
-    return localizeSchemaForm(schema);
-  }, [editSchema, localizeSchemaForm]);
+    return makeSchema(localizeSchemaForm(schema), {
+      'select:pageSections': (schema: EnhancedSchema) => {
+        const sectionsIds = page.blocks.flatMap(
+          ({ config: { sectionId } = {} }) => (sectionId ? sectionId : [])
+        );
+        if (sectionsIds.length === 0) return schema;
+
+        schema['ui:widget'] = 'select';
+        schema['ui:options'] = {
+          select: {
+            options: sectionsIds.flatMap((sectionId) => {
+              return {
+                label: sectionId,
+                value: sectionId,
+              };
+            }),
+          },
+        };
+        return schema;
+      },
+    });
+  }, [editSchema, localizeSchemaForm, makeSchema, page]);
 
   return (
     <div
@@ -107,7 +131,9 @@ export const PageBlock = ({
 const PageBlockWithProvider = (props: PageBlockProps) => {
   const { page, setBlockConfig } = usePageBuilder();
   const config = useMemo(
-    () => ((page.blocks || []).find(({ key }) => props.id === key) || {}).config || {},
+    () =>
+      ((page.blocks || []).find(({ key }) => props.id === key) || {}).config ||
+      {},
     [page.blocks, props.id]
   );
 

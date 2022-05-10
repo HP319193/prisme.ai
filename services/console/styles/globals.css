@@ -22,6 +22,7 @@ body {
   padding: 0;
   margin: 0;
   white-space: pre-line;
+  scroll-behavior: smooth;
 }
 
 a {
@@ -88,7 +89,6 @@ a.ant-btn.pr-btn-primary-small {
 }
 
 #react-flow__arrow polyline {
-
   /* accent color */
   stroke: #015dff;
   fill: #015dff;

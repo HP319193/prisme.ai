@@ -1,0 +1,86 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should select:automations 1`] = `
+Array [
+  <div
+    className="flex flex-col"
+  >
+    <div>
+      Foo
+    </div>
+    <div
+      className="text-neutral-500 text-xs"
+    >
+      Some foo
+    </div>
+  </div>,
+  <div
+    className="flex flex-col"
+  >
+    <div>
+      bar
+    </div>
+    <div
+      className="text-neutral-500 text-xs"
+    >
+      
+    </div>
+  </div>,
+]
+`;
+
+exports[`should select:endpoints 1`] = `
+<div
+  className="flex flex-col"
+>
+  <div>
+    Foo
+  </div>
+  <div
+    className="text-neutral-500 text-xs"
+  >
+    Some foo
+  </div>
+</div>
+`;
+
+exports[`should select:pages 1`] = `
+Array [
+  <div
+    className="flex flex-col"
+  >
+    <div>
+      Page Un
+    </div>
+    <div
+      className="text-neutral-500 text-xs"
+    >
+      La première page
+    </div>
+  </div>,
+  <div
+    className="flex flex-col"
+  >
+    <div>
+      
+    </div>
+    <div
+      className="text-neutral-500 text-xs"
+    >
+      
+    </div>
+  </div>,
+  <div
+    className="flex flex-col"
+  >
+    <div>
+      Page trois
+    </div>
+    <div
+      className="text-neutral-500 text-xs"
+    >
+      
+    </div>
+  </div>,
+]
+`;

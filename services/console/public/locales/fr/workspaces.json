@@ -394,29 +394,79 @@
         "automation": {
           "label": "Automatisation",
           "description": "Éxécuter une automatisation au chargement de la page pour récupérer la configuration du block."
+        },
+        "sectionId": {
+          "label": "Identifiant HTML de la section",
+          "description": "Permet d'identifier la section pour y appliquer des styles CSS particulier ou y faire pointer un lien de type défilement automatique. Optionnel."
         }
       },
       "builtin": "Blocks de base",
       "name": "{{context}}",
-      "name_Title": "Titre",
+      "name_Header": "Entête",
       "name_Cards": "Groupe de cartes",
       "name_DataTable": "Tableau de données",
       "name_Form": "Formulaire",
       "description": "",
-      "description_Title": "Afficher un titre",
+      "description_Header": "Entête de page",
       "description_Cards": "Afficher un groupe de cartes",
       "description_DataTable": "Afficher un tableau de données",
       "description_Form": "Afficher un formulaire",
-      "title": {
+      "header": {
         "settings": {
-          "title": "Titre",
-          "level": "Niveau de titre",
-          "levelOption_1": "Niveau 1",
-          "levelOption_2": "Niveau 2",
-          "levelOption_3": "Niveau 3",
-          "levelOption_4": "Niveau 4",
-          "levelOption_5": "Niveau 5",
-          "levelOption_6": "Niveau 6"
+          "title": {
+            "label": "Titre",
+            "description": "Titre de votre page."
+          },
+          "logo": {
+            "label": "Logo",
+            "description": "Image affichée à côté du titre. Optionnel.",
+            "src": {
+              "label": "Image",
+              "description": "Choisissez une image"
+            },
+            "alt": {
+              "label": "Texte alternatif",
+              "description": "Texte affiché à la place de l'image pour les navigateurs non graphiques."
+            }
+          },
+          "nav": {
+            "label": "Navigation",
+            "description": "Vous pouvez ajouter des liens vers des adresses web ou des boutons envoyant des évènements.",
+            "items": {
+              "external": {
+                "label": "Naviguer vers une page web externe",
+                "value": {
+                  "label": "Adresse web",
+                  "description": "Indiquez l'adresse web de la page (https://…)."
+                }
+              },
+              "internal": {
+                "label": "Naviguer vers une page de votre Workspace",
+                "value": {
+                  "label": "Page",
+                  "description": "Choisissez une page de votre Workspace."
+                }
+              },
+              "inside": {
+                "label": "Défiler vers une section de cette page",
+                "value": {
+                  "label": "Identifiant du Block",
+                  "description": "Choisissez un des blocks de votre page vers lequel faire défiler."
+                }
+              },
+              "event": {
+                "label": "Déclencher un évènement",
+                "value": {
+                  "label": "Évènement",
+                  "description": "Indiquez le nom de l'évènement à déclencher."
+                }
+              },
+              "text": {
+                "label": "Texte du bouton",
+                "description": "Texte affiché dans le bouton de navigation."
+              }
+            }
+          }
         }
       },
       "cards": {
