@@ -406,6 +406,28 @@ export class AccessManager<
     await subject.delete();
   }
 
+  async deleteMany<returnType extends SubjectType>(
+    subjectType: returnType,
+    query: FilterQuery<SubjectInterfaces[returnType], Role>
+  ): Promise<SubjectInterfaces[returnType][]> {
+    const subjects = await this.findAll(subjectType, query);
+
+    const toRemove = await this.filterSubjectsBy(
+      ActionType.Delete,
+      subjectType,
+      subjects
+    );
+
+    const Model = this.model(subjectType);
+    await Model.deleteMany({
+      id: {
+        $in: toRemove.map((subject) => subject.id),
+      },
+    });
+
+    return toRemove;
+  }
+
   async grant<returnType extends SubjectType>(
     subjectType: returnType,
     id: string,

@@ -8,6 +8,7 @@ export interface IStorage {
   save(id: string, data: any): Promise<any>;
 
   delete(id: string): any;
+  deleteMany(ids: string[]): any;
 }
 
 export enum DriverType {

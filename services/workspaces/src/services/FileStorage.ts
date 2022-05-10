@@ -15,6 +15,14 @@ import { InvalidUploadError } from '../errors';
 const ALLOWED_MIMETYPES_REGEXP = `^(${UPLOADS_ALLOWED_MIMETYPES.map((cur) =>
   cur.replace(/[*]/g, '.*')
 ).join('|')})$`;
+
+export type FileUploadRequest = Omit<
+  Prismeai.File,
+  'url' | 'workspaceId' | 'path'
+> & {
+  buffer: Buffer;
+};
+
 class FileStorage extends Storage {
   constructor(
     driverType: DriverType,
@@ -39,19 +47,11 @@ class FileStorage extends Storage {
 
   async list(
     accessManager: Required<AccessManager>,
-    workspaceId: string,
     baseUrl: string,
     query: any,
     opts?: FindOptions
   ) {
-    const result = await accessManager.findAll(
-      SubjectType.File,
-      {
-        ...query,
-        workspaceId,
-      },
-      opts
-    );
+    const result = await accessManager.findAll(SubjectType.File, query, opts);
     return result.map((file) => ({
       ...file,
       url: this.getUrl(this.driverType, file.path, baseUrl),
@@ -60,25 +60,25 @@ class FileStorage extends Storage {
 
   async get(
     accessManager: Required<AccessManager>,
-    id: string | FilterQuery<Prismeai.Page, Role>,
+    id: string | FilterQuery<Prismeai.File, Role>,
     baseUrl: string
   ) {
     const file = await accessManager.get(SubjectType.File, id);
     return { ...file, url: this.getUrl(this.driverType, file.path, baseUrl) };
   }
 
-  private validateUploads(files: Express.Multer.File[]) {
+  private validateUploads(files: FileUploadRequest[]) {
     files.forEach((file) => {
       if (file.size > UPLOADS_MAX_SIZE) {
         throw new InvalidUploadError(
-          `Invalid uploaded file '${file.originalname}' : size must not exceed ${UPLOADS_MAX_SIZE} bytes`
+          `Invalid uploaded file '${file.name}' : size must not exceed ${UPLOADS_MAX_SIZE} bytes`
         );
       }
 
       if (!file.mimetype.match(new RegExp(ALLOWED_MIMETYPES_REGEXP))) {
         throw new InvalidUploadError(
           `Invalid uploaded file '${
-            file.originalname
+            file.name
           }' : mimetype must be one of ${UPLOADS_ALLOWED_MIMETYPES.join(', ')}`
         );
       }
@@ -89,34 +89,54 @@ class FileStorage extends Storage {
     accessManager: Required<AccessManager>,
     workspaceId: string,
     baseUrl: string,
-    files: Express.Multer.File[]
-  ) {
+    files: FileUploadRequest[]
+  ): Promise<Prismeai.File[]> {
     this.validateUploads(files);
 
     // Without this & with multiple files, only first create() call would pull permissions & subsequent ones would throw a PermissionsError
     await accessManager.pullRoleFromSubject(SubjectType.Workspace, workspaceId);
 
     const fileDetails = await Promise.all(
-      files.map(async ({ size, originalname, mimetype }) => {
-        const id = nanoid();
-        const filename = removeDiacritics(originalname)
-          .slice(0, 250)
-          .replace(/\0/g, '');
-        const path = this.getPath(workspaceId, filename, id);
-        const details = await accessManager.create(SubjectType.File, {
-          mimetype,
-          name: originalname,
+      files.map(
+        async ({
           size,
-          workspaceId,
-          path,
-          id,
-        });
-        return {
-          ...details,
-          url: this.getUrl(this.driverType, path, baseUrl),
-        };
-      })
+          name: originalname,
+          expiresAfter,
+          mimetype,
+          metadata,
+        }) => {
+          const id = nanoid();
+          const filename = removeDiacritics(originalname)
+            .slice(0, 250)
+            .replace(/\0/g, '');
+          const path = this.getPath(workspaceId, filename, id);
+          let expiresAt;
+          if (expiresAfter) {
+            expiresAt = new Date(
+              new Date().getTime() + expiresAfter * 1000
+            ).toISOString();
+          }
+
+          const details = await accessManager.create(SubjectType.File, {
+            mimetype,
+            name: originalname,
+            size,
+            workspaceId,
+            path,
+            id,
+            expiresAt,
+            expiresAfter,
+            metadata,
+          });
+
+          return {
+            ...details,
+            url: this.getUrl(this.driverType, path, baseUrl),
+          };
+        }
+      )
     );
+
     await Promise.all(
       fileDetails.map(async (file, idx) => {
         await this.driver.save(file.path, files[idx].buffer);
@@ -128,9 +148,10 @@ class FileStorage extends Storage {
 
   async delete(
     accessManager: Required<AccessManager>,
-    id: string | FilterQuery<Prismeai.Page, Role>
+    id: string | FilterQuery<Prismeai.File, Role>
   ) {
     const file = await this.get(accessManager, id, '');
+
     try {
       await this.driver.delete(file.path);
     } catch (error) {
@@ -139,11 +160,28 @@ class FileStorage extends Storage {
     await accessManager.delete(SubjectType.File, file.id);
   }
 
+  async deleteMany(
+    accessManager: Required<AccessManager>,
+    query: FilterQuery<Prismeai.File, Role>
+  ) {
+    const files = await accessManager.deleteMany(SubjectType.File, query);
+
+    try {
+      await this.driver.deleteMany(files.map((cur) => cur.path));
+    } catch (error) {
+      logger.error(error);
+    }
+
+    return files;
+  }
+
   async deleteWorkspace(
     accessManager: Required<AccessManager>,
     workspaceId: string
   ) {
-    const files = await this.list(accessManager, workspaceId, '', {});
+    const files = await this.list(accessManager, '', {
+      workspaceId,
+    });
     if (files.length) {
       await Promise.all(
         files.map((cur) => accessManager.delete(SubjectType.File, cur.id))

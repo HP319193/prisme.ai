@@ -18,6 +18,7 @@ import { initAccessManager } from './permissions';
 import DSULStorage, { DSULType } from './services/DSULStorage';
 import { autoinstallApps, syncWorkspacesWithConfigContexts } from './services';
 import FileStorage from './services/FileStorage';
+import { autoremoveExpiredUploads } from './services/uploads';
 
 process.on('uncaughtException', uncaughtExceptionHandler);
 
@@ -53,6 +54,8 @@ const uploadsStorage = new FileStorage(
 setTimeout(() => {
   autoinstallApps(appsStorage, accessManager);
 }, 20000); // Arbitrary 20 sec delay to make sure app API are ready
+
+autoremoveExpiredUploads(uploadsStorage, accessManager);
 
 const app = initAPI(
   accessManager,

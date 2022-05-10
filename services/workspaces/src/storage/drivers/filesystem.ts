@@ -87,4 +87,12 @@ export default class Filesystem implements IStorage {
       }
     });
   }
+
+  async deleteMany(keys: string[]) {
+    return await Promise.all(
+      keys.map((key) => {
+        return this.delete(key);
+      })
+    );
+  }
 }
