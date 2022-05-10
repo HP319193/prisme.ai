@@ -1,154 +1,73 @@
-import { Schema, UiOptionsSelect } from '@prisme.ai/design-system';
+import { Schema } from '@prisme.ai/design-system';
 import { useCallback } from 'react';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import useLocalizedText from '../../utils/useLocalizedText';
-import usePages from '../PagesProvider/context';
+import { readAppConfig } from '../AutomationBuilder/Panel/readAppConfig';
 
-type SelectDataSource =
-  | 'select:automations'
-  | 'select:endpoints'
-  | 'select:pages';
-
-interface UiOptionsPath {
-  path: string;
-}
-
-export interface EnhancedSchema
-  extends Omit<
-    Schema,
-    | 'ui:widget'
-    | 'ui:options'
-    | 'properties'
-    | 'additionalProperties'
-    | 'items'
-    | 'oneOf'
-  > {
-  'ui:widget'?: Schema['ui:widget'] | SelectDataSource | string;
-  'ui:options'?: Schema['ui:options'] | UiOptionsPath;
-  properties?: Record<string, EnhancedSchema>;
-  additionalProperties?: boolean | EnhancedSchema;
-  items?: EnhancedSchema;
-  oneOf?: EnhancedSchema[];
-}
-
-export const isUiOptionsPath = (uiOptions: any): uiOptions is UiOptionsPath =>
-  !!(uiOptions && (uiOptions as UiOptionsPath).path);
-
-type CustomSources = Record<string, (schema: EnhancedSchema) => EnhancedSchema>;
-
-export const useSchema = () => {
-  const {
-    workspace: { id: workspaceId, automations = {} },
-  } = useWorkspace();
+export const useSchema = (store: Record<string, any> = {}) => {
   const { localize } = useLocalizedText();
-  const { pages } = usePages();
+  const extractSelectOptions = useCallback(
+    (schema: Schema) => {
+      const { 'ui:options': uiOptions = {} } = schema;
 
-  const makeSchema = useCallback(
-    (schema: EnhancedSchema, customSources?: CustomSources) => {
-      const parseSchema = (schema: EnhancedSchema): Schema => {
-        const fixedSchema = { ...schema };
+      switch (uiOptions.from) {
+        case 'config':
+          const { path = '' } = uiOptions;
+          if (!path) return null;
+          const values: string[] = readAppConfig(store.config, path);
+          return values.map((value) => ({
+            label: value,
+            value,
+          }));
+        case 'pageSections':
+          return (store.pageSections || []).map((sectionId: string) => ({
+            label: sectionId,
+            value: sectionId,
+          }));
+        case 'automations':
+          if (!store.automations) return [];
+          return Object.keys(store.automations).flatMap((key) => {
+            const { slug = key, name, description, when } = store.automations[
+              key
+            ];
 
-        if (fixedSchema.properties) {
-          const { properties } = fixedSchema;
-          fixedSchema.properties = Object.keys(properties).reduce(
-            (prev, key) => ({
-              ...prev,
-              [key]: parseSchema(properties[key]),
-            }),
-            {}
-          );
-        }
-
-        if (
-          fixedSchema.additionalProperties &&
-          typeof fixedSchema.additionalProperties === 'object'
-        ) {
-          fixedSchema.additionalProperties = parseSchema(
-            fixedSchema.additionalProperties
-          );
-        }
-
-        if (fixedSchema.items) {
-          fixedSchema.items = parseSchema(fixedSchema.items);
-        }
-
-        if (fixedSchema.oneOf) {
-          fixedSchema.oneOf = fixedSchema.oneOf.map((one) => parseSchema(one));
-        }
-
-        const widget = fixedSchema['ui:widget'];
-
-        if (typeof widget !== 'string') return fixedSchema as Schema;
-
-        if (customSources && customSources[widget]) {
-          return customSources[widget](fixedSchema) as Schema;
-        }
-        switch (widget) {
-          case 'select:automations':
-          case 'select:endpoints':
-            fixedSchema['ui:widget'] = 'select';
-            fixedSchema['ui:options'] = {
-              select: {
-                options: Object.keys(automations).flatMap((key) => {
-                  const { slug = key, name, description, when } = automations[
-                    key
-                  ];
-
-                  if (
-                    widget === 'select:endpoints' &&
-                    (!when || !when.endpoint)
-                  ) {
-                    return [];
-                  }
-                  return {
-                    label: (
-                      <div className="flex flex-col">
-                        <div>{localize(name) || slug}</div>
-                        <div className="text-neutral-500 text-xs">
-                          {localize(description)}
-                        </div>
-                      </div>
-                    ),
-                    value: slug,
-                  };
-                }),
-              },
+            if (uiOptions.filter === 'endpoint' && (!when || !when.endpoint)) {
+              return [];
+            }
+            return {
+              label: (
+                <div className="flex flex-col">
+                  <div>{localize(name) || slug}</div>
+                  <div className="text-neutral-500 text-xs">
+                    {localize(description)}
+                  </div>
+                </div>
+              ),
+              value: slug,
             };
-            break;
-          case 'select:pages':
-            fixedSchema['ui:widget'] = 'select';
-            fixedSchema['ui:options'] = {
-              select: {
-                options: Array.from(pages.get(workspaceId) || []).flatMap(
-                  (page) => {
-                    const { id, slug, name = slug, description } = page;
-                    return {
-                      label: (
-                        <div className="flex flex-col">
-                          <div>{localize(name)}</div>
-                          <div className="text-neutral-500 text-xs">
-                            {localize(description)}
-                          </div>
-                        </div>
-                      ),
-                      value: id,
-                    };
-                  }
-                ),
-              },
+          });
+        case 'pages':
+          if (!store.pages) return null;
+          return Array.from<Prismeai.Page>(store.pages).flatMap((page) => {
+            const { id, slug, name = slug, description } = page;
+            return {
+              label: (
+                <div className="flex flex-col">
+                  <div>{localize(name)}</div>
+                  <div className="text-neutral-500 text-xs">
+                    {localize(description)}
+                  </div>
+                </div>
+              ),
+              value: id,
             };
-            break;
-        }
-
-        return fixedSchema as Schema;
-      };
-
-      return parseSchema(schema);
+          });
+      }
+      return null;
     },
-    [automations, localize, pages, workspaceId]
+    [localize, store.automations, store.config, store.pageSections, store.pages]
   );
 
-  return { makeSchema };
+  return { extractSelectOptions };
 };
 
 export default useSchema;

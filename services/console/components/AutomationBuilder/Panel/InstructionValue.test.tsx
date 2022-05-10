@@ -1,6 +1,16 @@
 import InstructionValue from './InstructionValue';
 import renderer from 'react-test-renderer';
 
+jest.mock('../../../utils/useYaml', () => {
+  const toJSON = jest.fn();
+  const toYaml = jest.fn();
+  const useYaml = jest.fn(() => ({
+    toJSON,
+    toYaml,
+  }));
+  return useYaml;
+});
+
 it('should render', () => {
   const onChange = jest.fn();
   const root = renderer.create(

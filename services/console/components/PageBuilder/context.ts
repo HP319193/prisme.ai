@@ -1,6 +1,5 @@
 import { createContext, useContext } from 'react';
 import { Schema } from '@prisme.ai/design-system';
-import { EnhancedSchema } from '../SchemaForm/useSchema';
 
 export type blockWithKey = Prismeai.Page['blocks'][number] & { key?: string };
 
@@ -18,7 +17,7 @@ export interface PageBuilderContext {
     appName: string;
     component?: any;
     name?: Prismeai.LocalizedText;
-    edit?: Schema | Prismeai.TypedArgument | EnhancedSchema;
+    edit?: Schema | Prismeai.TypedArgument;
     appInstance?: string;
     url?: string;
   }[];

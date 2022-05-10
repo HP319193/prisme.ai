@@ -9,7 +9,11 @@ import {
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
+import { useWorkspace } from '../../../layouts/WorkspaceLayout';
+import useLocalizedText from '../../../utils/useLocalizedText';
+import usePages from '../../PagesProvider/context';
 import useSchema from '../../SchemaForm/useSchema';
+import { usePageBuilder } from '../context';
 
 const noop = () => null;
 
@@ -20,38 +24,55 @@ interface SettingsProps {
 
 export const Settings = ({ removeBlock, schema }: SettingsProps) => {
   const { t } = useTranslation('workspaces');
-  const { makeSchema } = useSchema();
+  const { page } = usePageBuilder();
+  const {
+    workspace: { id: workspaceId, automations },
+  } = useWorkspace();
+  const { pages } = usePages();
+
+  const { extractSelectOptions } = useSchema({
+    pageSections: page.blocks.flatMap(({ config: { sectionId } = {} }) =>
+      sectionId ? sectionId : []
+    ),
+    automations,
+    pages: pages.get(workspaceId),
+  });
+  const { localizeSchemaForm } = useLocalizedText();
   const { config = {}, setConfig = noop } = useBlock();
 
   const commonSchema: Schema = useMemo(
     () =>
-      makeSchema({
+      localizeSchemaForm({
         type: 'object',
         properties: {
           onInit: {
             type: 'string',
-            title: t('pages.blocks.settings.onInit.label'),
-            description: t('pages.blocks.settings.onInit.description'),
+            title: 'pages.blocks.settings.onInit.label',
+            description: 'pages.blocks.settings.onInit.description',
           },
           updateOn: {
             type: 'string',
-            title: t('pages.blocks.settings.updateOn.label'),
-            description: t('pages.blocks.settings.updateOn.description'),
+            title: 'pages.blocks.settings.updateOn.label',
+            description: 'pages.blocks.settings.updateOn.description',
           },
           automation: {
             type: 'string',
-            title: t('pages.blocks.settings.automation.label'),
-            description: t('pages.blocks.settings.automation.description'),
-            'ui:widget': 'select:endpoints',
+            title: 'pages.blocks.settings.automation.label',
+            description: 'pages.blocks.settings.automation.description',
+            'ui:widget': 'select',
+            'ui:options': {
+              from: 'automations',
+              filter: 'endpoint',
+            },
           },
           sectionId: {
             type: 'string',
-            title: t('pages.blocks.settings.sectionId.label'),
-            description: t('pages.blocks.settings.sectionId.description'),
+            title: 'pages.blocks.settings.sectionId.label',
+            description: 'pages.blocks.settings.sectionId.description',
           },
         },
       }),
-    [makeSchema, t]
+    [localizeSchemaForm]
   );
 
   const locales = useMemo(
@@ -79,11 +100,12 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
             initialValues={config}
             buttons={[]}
             locales={locales}
+            utils={{ extractSelectOptions }}
           />
         ),
       },
     ],
-    [commonSchema, config, locales, setConfig, t]
+    [commonSchema, config, extractSelectOptions, locales, setConfig, t]
   );
 
   return (
@@ -96,6 +118,7 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
               onChange={setConfig}
               initialValues={config}
               buttons={[]}
+              utils={{ extractSelectOptions }}
             />
             <Divider />
           </div>

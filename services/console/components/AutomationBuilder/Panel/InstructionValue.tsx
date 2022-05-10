@@ -10,12 +10,9 @@ import {
 import { CodeEditorInline } from '../../CodeEditor/lazy';
 import { useField } from 'react-final-form';
 import FieldContainerWithRaw from '../../FieldContainerWithRaw';
-import useSchema, {
-  EnhancedSchema,
-  isUiOptionsPath,
-} from '../../SchemaForm/useSchema';
+import useSchema from '../../SchemaForm/useSchema';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';
-import { readAppConfig } from './readAppConfig';
+import usePages from '../../PagesProvider/context';
 
 interface InstructionValueProps {
   instruction: string;
@@ -74,14 +71,21 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   onChange,
 }) => {
   const { workspace } = useWorkspace();
+  const { pages } = usePages();
   const { t } = useTranslation('workspaces');
-  const { makeSchema } = useSchema();
+
   const appInstance = useMemo(() => {
     if (!workspace.imports) return null;
     const [appName] = instruction.split(/\./);
-    if (!workspace.imports[appName]) return null;
+    if (!workspace.imports[appName]) return workspace.config;
     return workspace.imports[appName].config || null;
-  }, [instruction, workspace.imports]);
+  }, [instruction, workspace.config, workspace.imports]);
+
+  const { extractSelectOptions } = useSchema({
+    config: appInstance,
+    automations: workspace.automations,
+    pages: pages.get(workspace.id),
+  });
 
   const cleanedSchema = useMemo(() => {
     const cleaned = {
@@ -113,25 +117,8 @@ export const InstructionValue: FC<InstructionValueProps> = ({
         },
       };
     }
-    return makeSchema(cleaned, {
-      'select:config': (schema) => {
-        if (!isUiOptionsPath(schema['ui:options'])) return schema;
-        const { path } = schema['ui:options'];
-        if (!path) return schema;
-        const values: string[] = readAppConfig(appInstance, path);
-        schema['ui:widget'] = 'select';
-        schema['ui:options'] = {
-          select: {
-            options: values.map((value) => ({
-              label: value,
-              value,
-            })),
-          },
-        };
-        return schema;
-      },
-    });
-  }, [instruction, makeSchema, schema, t]);
+    return cleaned;
+  }, [instruction, schema, t]);
 
   const locales = useMemo(
     () => ({
@@ -161,6 +148,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
         buttons={EmptyButtons}
         components={components}
         locales={locales}
+        utils={{ extractSelectOptions }}
       />
     </Fieldset>
   );

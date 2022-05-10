@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useField } from 'react-final-form';
 import Select, { SelectProps } from '../Select';
+import { useSchemaForm } from './context';
 import Description from './Description';
 import { FieldProps, Schema, UiOptionsSelect } from './types';
 import { getLabel } from './utils';
@@ -18,13 +19,19 @@ export const FieldSelect = ({
   options,
 }: FieldProps & { options?: SelectProps['selectOptions'] }) => {
   const field = useField(name);
+  const {
+    utils: { extractSelectOptions },
+  } = useSchemaForm();
 
   const selectOptions = useMemo(() => {
     if (options) return options;
     const { 'ui:options': uiOptions } = schema;
-    if (!isUiOptionsSelect(uiOptions)) return [];
-    return uiOptions.select.options || [];
-  }, []);
+    if (isUiOptionsSelect(uiOptions)) return uiOptions.select.options;
+
+    const _options = extractSelectOptions(schema);
+
+    return Array.isArray(_options) ? _options : [];
+  }, [extractSelectOptions]);
 
   return (
     <Description text={schema.description}>

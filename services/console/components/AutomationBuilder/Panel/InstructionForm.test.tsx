@@ -3,6 +3,16 @@ import renderer, { act } from 'react-test-renderer';
 import InstructionSelection from './InstructionSelection';
 import InstructionValue from './InstructionValue';
 
+jest.mock('../../../utils/useYaml', () => {
+  const toJSON = jest.fn();
+  const toYaml = jest.fn();
+  const useYaml = jest.fn(() => ({
+    toJSON,
+    toYaml,
+  }));
+  return useYaml;
+});
+
 jest.mock('../context', () => {
   const mock = {
     getSchema: (name: string) => {

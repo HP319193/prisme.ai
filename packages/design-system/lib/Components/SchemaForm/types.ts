@@ -85,7 +85,8 @@ export interface Schema {
     | UiOptionsTextArea
     | UiOptionsUpload
     | UiOptionsSelect
-    | UiOptionsDate;
+    | UiOptionsDate
+    | Record<string, any>;
 }
 
 export interface FieldProps {

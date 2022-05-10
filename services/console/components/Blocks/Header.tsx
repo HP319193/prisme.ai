@@ -1,9 +1,8 @@
-import { useBlock } from '@prisme.ai/design-system';
+import { Schema, useBlock } from '@prisme.ai/design-system';
 import getConfig from 'next/config';
 import Link from 'next/link';
 import { FC, HTMLAttributes, useCallback, useEffect, useState } from 'react';
 import api from '../../utils/api';
-import { EnhancedSchema } from '../SchemaForm/useSchema';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = '' },
@@ -22,7 +21,7 @@ interface Config {
   }[];
 }
 
-const schema: EnhancedSchema = {
+const schema: Schema = {
   type: 'object',
   properties: {
     title: {
@@ -93,7 +92,10 @@ const schema: EnhancedSchema = {
                   'pages.blocks.header.settings.nav.items.internal.value.label',
                 description:
                   'pages.blocks.header.settings.nav.items.internal.value.description',
-                'ui:widget': 'select:pages',
+                'ui:widget': 'select',
+                'ui:options': {
+                  from: 'pages',
+                },
               },
             },
           },
@@ -114,7 +116,10 @@ const schema: EnhancedSchema = {
                   'pages.blocks.header.settings.nav.items.inside.value.label',
                 description:
                   'pages.blocks.header.settings.nav.items.inside.value.description',
-                'ui:widget': 'select:pageSections',
+                'ui:widget': 'select',
+                'ui:options': {
+                  from: 'pageSections',
+                },
               },
             },
           },
