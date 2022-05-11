@@ -17,7 +17,6 @@ import { PageBuilderContext } from '../components/PageBuilder/context';
 import usePages from '../components/PagesProvider/context';
 import EditDetails from '../layouts/EditDetails';
 import SharePage from '../components/Share/SharePage';
-import useBlocksConfigs from '../components/Blocks/useBlocksConfigs';
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');

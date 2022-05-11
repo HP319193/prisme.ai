@@ -7,7 +7,6 @@ import AddBlock from './AddBlock';
 import EditBlock from './EditBlock';
 import { truncate } from '../../utils/strings';
 import PageBlockProvider from './PageBlockProvider';
-import LocalizedText = Prismeai.LocalizedText;
 
 interface PageBlockProps {
   url?: string;
@@ -33,7 +32,7 @@ const PageBlockWithProvider = ({
   hovered: boolean;
   blockId: string;
   index: number;
-  name?: LocalizedText;
+  name?: Prismeai.LocalizedText;
 }) => {
   const { localize } = useLocalizedText();
   const { setEditBlock } = usePageBuilder();
