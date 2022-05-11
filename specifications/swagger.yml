@@ -2406,7 +2406,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
-
   ## End of APIs
 
 components:
@@ -2758,6 +2757,8 @@ components:
         id:
           type: string
         slug:
+          type: string
+        styles:
           type: string
         createdBy:
           type: string
@@ -3123,7 +3124,6 @@ components:
               example:
                 - image/*
                 - audio/*
-
 
     ApiKey:
       type: object

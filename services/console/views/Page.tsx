@@ -5,10 +5,13 @@ import Error404 from './Errors/404';
 import { useTranslation } from 'next-i18next';
 import {
   Button,
+  Collapse,
+  FieldProps,
   Loading,
   notification,
   PageHeader,
   Schema,
+  SchemaFormDescription,
 } from '@prisme.ai/design-system';
 import { LoadingOutlined } from '@ant-design/icons';
 import useLocalizedText from '../utils/useLocalizedText';
@@ -17,6 +20,41 @@ import { PageBuilderContext } from '../components/PageBuilder/context';
 import usePages from '../components/PagesProvider/context';
 import EditDetails from '../layouts/EditDetails';
 import SharePage from '../components/Share/SharePage';
+import { useField } from 'react-final-form';
+import { CodeEditor } from '../components/CodeEditor/lazy';
+
+const CSSEditor = ({ name }: FieldProps) => {
+  const { t } = useTranslation('workspaces');
+  const field = useField(name);
+  const items = useMemo(
+    () => [
+      {
+        label: (
+          <SchemaFormDescription text={t('pages.details.css.description')}>
+            <label className="text-[10px] text-gray cursor-pointer">
+              {t('pages.details.css.label')}
+            </label>
+          </SchemaFormDescription>
+        ),
+        content: (
+          <div className="flex h-80 -m-[1rem] mt-0 rounded-b overflow-hidden">
+            <CodeEditor
+              mode="css"
+              value={field.input.value}
+              onChange={field.input.onChange}
+            />
+          </div>
+        ),
+      },
+    ],
+    [field.input.onChange, field.input.value, t]
+  );
+  return (
+    <div className="my-2 p-0 border-[1px] border-gray-200 rounded">
+      <Collapse items={items} />
+    </div>
+  );
+};
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
@@ -80,22 +118,24 @@ export const Page = () => {
           'ui:widget': 'textarea',
           'ui:options': { textarea: { rows: 10 } },
         },
+        styles: {
+          type: 'string',
+          'ui:widget': CSSEditor,
+        },
       },
     }),
     [t]
   );
 
   const cleanValue = useCallback(
-    (value: Prismeai.Page) => {
-      return {
-        ...value,
-        blocks: ((value.blocks ||
-          []) as PageBuilderContext['page']['blocks']).map(
-          ({ key, ...block }) => block
-        ),
-        id: page ? page.id : '',
-      };
-    },
+    (value: Prismeai.Page) => ({
+      ...value,
+      blocks: ((value.blocks ||
+        []) as PageBuilderContext['page']['blocks']).map(
+        ({ key, ...block }) => block
+      ),
+      id: page ? page.id : '',
+    }),
     [page]
   );
 
@@ -133,13 +173,21 @@ export const Page = () => {
       slug,
       name,
       description,
+      styles,
     }: {
       slug: string;
       name: Prismeai.LocalizedText;
       description: Prismeai.LocalizedText;
+      styles: string;
     }) => {
       if (!value) return;
-      const newValue = { ...cleanValue(value), slug, name, description };
+      const newValue = {
+        ...cleanValue(value),
+        slug,
+        name,
+        description,
+        styles,
+      };
       setValue(newValue);
       try {
         await savePage(workspace.id, newValue);

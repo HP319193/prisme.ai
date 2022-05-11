@@ -372,6 +372,10 @@
       },
       "slug": {
         "label": "Nom technique"
+      },
+      "css": {
+        "label": "Styles CSS de la page",
+        "description": "Vous pouvez éditer la feuille de style de votre page web pour la personnaliser. N'hésitez pas à ajouter des identifiants à vos blocks pour pouvoir les cibler à l'aide du préfixe # dans votre CSS."
       }
     },
     "blocks": {
