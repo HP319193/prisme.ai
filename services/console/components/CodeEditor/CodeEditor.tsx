@@ -78,8 +78,17 @@ export const CodeEditor = forwardRef<AceEditor, CodeEditorProps>(
       );
       // This code automatically opens autocomplete menu when typing `.` character
       editor.commands.on('afterExec', (e) => {
-        if (e.command.name === 'insertstring' && /^[\w.]$/.test(`${e.args}`)) {
-          if (!aceRef.current) return;
+        if (!aceRef.current) return;
+        const tests = [
+          /^[\w.]$/,
+          ...editor.completers.flatMap(
+            ({ identifierRegexps }) => identifierRegexps || []
+          ),
+        ];
+        if (
+          e.command.name === 'insertstring' &&
+          tests.some((test) => test.test(`${e.args}`))
+        ) {
           aceRef.current.editor.execCommand('startAutocomplete');
         }
       });

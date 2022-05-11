@@ -24,7 +24,10 @@ import SharePage from '../components/Share/SharePage';
 import { useField } from 'react-final-form';
 import { CodeEditor } from '../components/CodeEditor/lazy';
 
-const CSSEditor = ({ name }: FieldProps) => {
+const CSSEditor = ({
+  name,
+  sectionIds,
+}: FieldProps & { sectionIds: { id: string; name: string }[] }) => {
   const { t } = useTranslation('workspaces');
   const field = useField(name, {
     defaultValue: defaultStyles,
@@ -35,6 +38,31 @@ const CSSEditor = ({ name }: FieldProps) => {
     field.input.onChange(defaultStyles);
     setReseting(false);
   }, [field.input, reseting]);
+  const completers = useMemo(
+    () => [
+      {
+        identifierRegexps: [/^#/],
+        getCompletions(
+          editor: any,
+          session: any,
+          pos: any,
+          prefix: any,
+          callback: Function
+        ) {
+          callback(
+            null,
+            sectionIds.map(({ id, name }) => ({
+              name,
+              value: `#${id}`,
+              score: 1,
+              meta: name,
+            }))
+          );
+        },
+      },
+    ],
+    []
+  );
   const items = useMemo(
     () => [
       {
@@ -52,6 +80,7 @@ const CSSEditor = ({ name }: FieldProps) => {
                 mode="css"
                 value={field.input.value}
                 onChange={field.input.onChange}
+                completers={completers}
               />
             )}
             <Tooltip title={t('pages.details.styles.reset.description')}>
@@ -67,7 +96,7 @@ const CSSEditor = ({ name }: FieldProps) => {
         ),
       },
     ],
-    [field.input.onChange, field.input.value, reseting, t]
+    [completers, field.input.onChange, field.input.value, reseting, t]
   );
   return (
     <div className="my-2 p-0 border-[1px] border-gray-200 rounded">
@@ -140,11 +169,23 @@ export const Page = () => {
         },
         styles: {
           type: 'string',
-          'ui:widget': CSSEditor,
+          'ui:widget': (props: FieldProps) => (
+            <CSSEditor
+              {...props}
+              sectionIds={
+                page
+                  ? page.blocks.flatMap(
+                      ({ config: { sectionId, name = sectionId } = {} }) =>
+                        sectionId ? { id: sectionId, name } : []
+                    )
+                  : []
+              }
+            />
+          ),
         },
       },
     }),
-    [t]
+    [page, t]
   );
 
   const cleanValue = useCallback(
