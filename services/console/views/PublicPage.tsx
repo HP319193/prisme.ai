@@ -127,6 +127,9 @@ export const PublicPage = ({ page }: PublicPageProps) => {
         <title>{localize(currentPage.name)}</title>
         <meta name="description" content={localize(currentPage.description)} />
       </Head>
+      {currentPage.styles && (
+        <style dangerouslySetInnerHTML={{ __html: currentPage.styles }} />
+      )}
       <div className="page-blocks">
         {blocks.map(
           (
