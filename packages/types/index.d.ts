@@ -1148,6 +1148,14 @@ declare namespace Prismeai {
         size: number;
         workspaceId: string;
         path: string;
+        expiresAt?: string;
+        /**
+         * Number of seconds after which the file will be automatically removed
+         */
+        expiresAfter?: number;
+        metadata?: {
+            [name: string]: any;
+        };
     }
     export interface ForbiddenError {
         /**
@@ -2584,6 +2592,12 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
         }
         export interface RequestBody {
+            [name: string]: any;
+            file: string; // binary
+            /**
+             * File expiration time in seconds
+             */
+            expiresAfter?: string;
         }
         namespace Responses {
             export type $200 = Prismeai.File[];

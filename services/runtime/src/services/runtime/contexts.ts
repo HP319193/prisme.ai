@@ -269,6 +269,7 @@ export class ContextsManager {
       appContext?: AppContext;
       broker?: Broker;
       automationSlug: string;
+      additionalGlobals?: any;
     }
   ): ContextsManager {
     const resetLocal =
@@ -288,6 +289,10 @@ export class ContextsManager {
       broker: opts.broker || this.broker,
       appContext: opts.appContext || this.appContext,
       automationSlug: opts.automationSlug || this.automationSlug,
+      additionalGlobals: {
+        ...this.additionalGlobals,
+        ...opts.additionalGlobals,
+      },
     });
 
     Object.setPrototypeOf(child, ContextsManager.prototype);

@@ -61,7 +61,7 @@ export default class Filesystem implements IStorage {
     return await new Promise((resolve: any, reject: any) => {
       try {
         //@ts-ignore l'option recursive apparu avec node12 n'est visiblement pas encore typée !
-        fs.rmdirSync(this.getPath(key), { recursive: true });
+        fs.rmSync(this.getPath(key), { recursive: true });
         resolve({ success: true });
       } catch (e) {
         reject(

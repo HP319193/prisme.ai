@@ -143,6 +143,14 @@ export default class S3Like implements IStorage {
     });
   }
 
+  async deleteMany(keys: string[]) {
+    return await Promise.all(
+      keys.map((key) => {
+        return this.delete(key);
+      })
+    );
+  }
+
   public save(key: string, data: any) {
     const params = {
       Bucket: this.options.bucket,

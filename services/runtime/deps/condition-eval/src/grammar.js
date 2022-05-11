@@ -266,6 +266,7 @@ var grammar = {
     {"name": "insideADate", "symbols": ["string"], "postprocess": id},
     {"name": "insideADate", "symbols": ["variable"], "postprocess": id},
     {"name": "date", "symbols": [(lexer.has("date") ? {type: "date"} : date), "insideADate", (lexer.has("closingP") ? {type: "closingP"} : closingP), (lexer.has("dot") ? {type: "dot"} : dot), (lexer.has("word") ? {type: "word"} : word)], "postprocess": ([, date, , , elem]) => [date, elem.value]},
+    {"name": "date", "symbols": [(lexer.has("date") ? {type: "date"} : date), "insideADate", (lexer.has("closingP") ? {type: "closingP"} : closingP)], "postprocess": ([, date]) => [date]},
     {"name": "string", "symbols": [(lexer.has("dqstr") ? {type: "dqstr"} : dqstr)], "postprocess": retrieveActualString(`"`)},
     {"name": "string", "symbols": [(lexer.has("sqstr") ? {type: "sqstr"} : sqstr)], "postprocess": retrieveActualString(`'`)},
     {"name": "string", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": ([value]) => `${value}`},

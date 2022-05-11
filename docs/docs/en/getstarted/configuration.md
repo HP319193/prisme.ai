@@ -318,6 +318,12 @@ Then, for when you want to run this service directly from its docker image, you 
   </tr>       
 
   <tr>
+    <td>PUBLIC_API_URL</td>
+    <td>runtime</td>
+    <td>Runtime public URL (with ending **/v2**), fulfills **global.apiUrl** and **global.endpoints** variables</td>
+    <td>None</td>
+  </tr>         
+  <tr>
     <td>ADDITIONAL_GLOBAL_VARS_*</td>
     <td>runtime</td>
     <td>Additional variables that will be available from global context (ADDITIONAL_GLOBAL_VARS_apiUrl will be available as {{global.apiUrl}}).</td>

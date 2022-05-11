@@ -1,23 +1,49 @@
 import express, { Request, Response } from 'express';
 import { asyncRoute } from '../utils/async';
 import multer from 'multer';
-import FileStorage from '../../services/FileStorage';
+import FileStorage, { FileUploadRequest } from '../../services/FileStorage';
 
 export default function init(fileStorage: FileStorage) {
   async function uploadFileHandler(
     {
       context,
+      body,
       files,
       params: { workspaceId },
       accessManager,
     }: Request<PrismeaiAPI.ListFiles.PathParameters, any>,
     res: Response<PrismeaiAPI.ListFiles.Responses.$200>
   ) {
+    const fileUploadRequests: FileUploadRequest[] = (
+      (files as Express.Multer.File[]) || []
+    ).map(({ size, originalname: name, buffer, mimetype }, idx) => {
+      const { expiresAfter, ...metadata } = body || {};
+
+      return {
+        name,
+        buffer,
+        size,
+        mimetype,
+        expiresAfter: Array.isArray(expiresAfter)
+          ? expiresAfter[idx]
+          : expiresAfter,
+        metadata: Object.entries(metadata)
+          .filter(([k, v]) => !Array.isArray(v) || v.length > idx)
+          .reduce(
+            (obj, [k, v]) => ({
+              ...obj,
+              [k]: Array.isArray(v) ? v[idx] : v,
+            }),
+            {}
+          ),
+      };
+    });
+
     const result = await fileStorage.upload(
       accessManager,
       workspaceId,
       context?.http?.baseUrl!,
-      (files || []) as Express.Multer.File[]
+      fileUploadRequests
     );
     res.send(result);
   }
@@ -64,9 +90,11 @@ export default function init(fileStorage: FileStorage) {
   ) {
     const result = await fileStorage.list(
       accessManager,
-      workspaceId,
       context?.http?.baseUrl!,
-      query,
+      {
+        ...query,
+        workspaceId,
+      },
       {
         pagination: {
           limit,
@@ -80,7 +108,7 @@ export default function init(fileStorage: FileStorage) {
   const app = express.Router({ mergeParams: true });
 
   const upload = multer();
-  app.post(`/`, upload.single('file'), asyncRoute(uploadFileHandler));
+  app.post(`/`, upload.any(), asyncRoute(uploadFileHandler));
   app.delete(`/:id`, asyncRoute(deleteFileHandler));
   app.get(`/`, asyncRoute(listFilesHandler));
   app.get(`/:id`, asyncRoute(getFileHandler));

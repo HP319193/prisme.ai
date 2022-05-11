@@ -18,7 +18,9 @@ export const WAIT_DEFAULT_TIMEOUT = parseInt(
 );
 
 const ADDITIONAL_GLOBAL_VARS_PREFIX = 'ADDITIONAL_GLOBAL_VARS_';
-export const ADDITIONAL_GLOBAL_VARS = Object.entries(process.env)
+export const ADDITIONAL_GLOBAL_VARS: Record<string, string> = Object.entries(
+  process.env
+)
   .filter(([key]) => key.startsWith(ADDITIONAL_GLOBAL_VARS_PREFIX))
   .reduce(
     (acc, [key, value]) => ({
@@ -27,3 +29,8 @@ export const ADDITIONAL_GLOBAL_VARS = Object.entries(process.env)
     }),
     {}
   );
+
+export const PUBLIC_API_URL =
+  process.env.PUBLIC_API_URL ||
+  ADDITIONAL_GLOBAL_VARS['apiUrl'] ||
+  'http://localhost:3001/v2';

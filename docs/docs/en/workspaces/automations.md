@@ -275,6 +275,14 @@ In case the automation is triggered from a webhook without any session cookie / 
       <td><b>global.workspaceId</b></td>
       <td>Current workspaceId</td>
     </tr>       
+    <tr>
+      <td><b>global.apiUrl</b></td>
+      <td>Current API instance public url (fulfilled by runtime **PUBLIC_API_URL** variable)</td>
+    </tr>           
+    <tr>
+      <td><b>global.endpoints</b></td>
+      <td>Map of available endpoint slugs to the corresponding public url</td>
+    </tr>               
   </table>
 </center>
 

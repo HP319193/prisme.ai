@@ -2320,6 +2320,16 @@ paths:
           multipart/form-data:
             schema:
               type: object
+              required:
+                - file
+              additionalProperties: true
+              properties:
+                file:
+                  type: string
+                  format: binary
+                expiresAfter:
+                  type: string
+                  description: File expiration time in seconds
 
       responses:
         '200':
@@ -2808,6 +2818,14 @@ components:
           type: string
         path:
           type: string
+        expiresAt:
+          type: string
+        expiresAfter:
+          type: number
+          description: Number of seconds after which the file will be automatically removed
+        metadata:
+          type: object
+          additionalProperties: true
 
     ###############################################################################################################################################
     ############################################################ Automation Instructions ############################################################

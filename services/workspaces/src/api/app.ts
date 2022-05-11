@@ -70,7 +70,7 @@ export function initAPI(
    */
   app.use(
     validationMiddleware({
-      ignorePaths: ['^/sys', '^/v2/files/'],
+      ignorePaths: ['^/sys', '^/v2/files/', '^/v2/workspaces/.*/files'],
     }),
     validationErrorMiddleware
   );
