@@ -320,4 +320,36 @@ it('works with the date() keyword.', () => {
       allowedDays: [6, 7],
     })
   ).toEqual(false);
+
+  expect(
+    evaluate('date({{dateBefore}}) < date({{dateAfter}})', {
+      dateBefore: '2022-04-09T08:36:05.493Z',
+      dateAfter: '2022-04-09T08:39:05.493Z',
+    })
+  ).toEqual(true);
+
+  expect(
+    evaluate('date({{dateAfter}}) < date({{dateBefore}})', {
+      dateBefore: '2022-04-09T08:36:05.493Z',
+      dateAfter: '2022-04-09T08:39:05.493Z',
+    })
+  ).toEqual(false);
+
+  expect(
+    evaluate('date({{dates[{{after}}]}}) < date({{dates[{{before}}]}})', {
+      dates: {
+        before: '2022-04-09T08:36:05.493Z',
+        after: '2022-04-09T08:39:05.493Z',
+      },
+      after: 'after',
+      before: 'before',
+    })
+  ).toEqual(false);
+
+  expect(
+    evaluate(
+      '{{global.googlespeech.cache[{{audioId}}].url}} && date({{global.googlespeech.cache[{{audioId}}].expiresAt}}) > date({{run.date}})',
+      {}
+    )
+  ).toEqual(false);
 });

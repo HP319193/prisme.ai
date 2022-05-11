@@ -101,6 +101,7 @@ export class ElasticsearchStore implements EventsStore {
               },
               payload: {
                 type: 'flattened',
+                ignore_above: 32700,
               },
               'error.error': {
                 type: 'keyword',

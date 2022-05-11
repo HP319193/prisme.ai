@@ -138,7 +138,9 @@ variablePath ->
         | variablePath _ %dot _ %word {% d => [...arrayify(d[0]), d[4]] %}
 
 insideADate -> string {% id %} | variable {% id %}
-date -> %date insideADate %closingP %dot %word {% ([, date, , , elem]) => [date, elem.value] %}
+date ->
+        %date insideADate %closingP %dot %word {% ([, date, , , elem]) => [date, elem.value] %}
+        | %date insideADate %closingP {% ([, date]) => [date] %}
 string ->
         %dqstr {% retrieveActualString(`"`) %}
         | %sqstr {% retrieveActualString(`'`) %}

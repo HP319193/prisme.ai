@@ -32,6 +32,8 @@ class DateExpression extends Evaluatable {
           return date.getUTCSeconds();
         case 'date':
           return date.getUTCDate();
+        case undefined:
+          return date.getTime();
         default:
           throw new Error(`Unsupported date(...) field ${this.field}`);
       }
