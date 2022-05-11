@@ -372,6 +372,14 @@
       },
       "slug": {
         "label": "Slug"
+      },
+      "styles": {
+        "label": "CSS styles of the page",
+        "description": "You can edit the style sheet of your web page to customize it. Don't hesitate to add identifiers to your blocks to be able to target them with the # prefix in your CSS.",
+        "reset": {
+          "label": "Reset",
+          "description": "Revert to the default theme. ⚠️ You will lose your changes."
+        }
       }
     },
     "blocks": {

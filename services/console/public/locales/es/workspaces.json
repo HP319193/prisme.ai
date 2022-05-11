@@ -372,6 +372,14 @@
       },
       "slug": {
         "label": "Técnica Nom"
+      },
+      "styles": {
+        "label": "Estilos de página CSS",
+        "description": "Puede editar la hoja de estilo de su página web para personalizarla. No dudes en añadir identificadores a tus bloques para que puedas orientarlos con el prefijo # en tu CSS.",
+        "reset": {
+          "label": "Reiniciar",
+          "description": "Volver al tema por defecto. ⚠️ Perderás tus cambios."
+        }
       }
     },
     "blocks": {

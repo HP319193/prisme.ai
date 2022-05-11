@@ -4,6 +4,18 @@ import { PagesContext, pagesContext } from './context';
 
 interface PagesProvider {}
 
+export const defaultStyles = `body {
+  background-color: rgb(248, 250, 255);
+}
+.page-blocks {
+  max-width: 768px;
+  min-height: 100vh;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+  background-color: white;
+}`;
+
 export const PagesProvider: FC<PagesProvider> = ({ children }) => {
   const [pages, setPages] = useState<PagesContext['pages']>(new Map());
   const fetchPages: PagesContext['fetchPages'] = useCallback(
@@ -20,6 +32,7 @@ export const PagesProvider: FC<PagesProvider> = ({ children }) => {
   );
   const createPage: PagesContext['createPage'] = useCallback(
     async (workspaceId, page) => {
+      page.styles = defaultStyles;
       const newPage = await api.createPage(workspaceId, page);
       setPages((prev) => {
         const newPages = new Map(prev);

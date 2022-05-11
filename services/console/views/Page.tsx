@@ -12,12 +12,13 @@ import {
   PageHeader,
   Schema,
   SchemaFormDescription,
+  Tooltip,
 } from '@prisme.ai/design-system';
 import { LoadingOutlined } from '@ant-design/icons';
 import useLocalizedText from '../utils/useLocalizedText';
 import PageBuilder from '../components/PageBuilder';
 import { PageBuilderContext } from '../components/PageBuilder/context';
-import usePages from '../components/PagesProvider/context';
+import { usePages, defaultStyles } from '../components/PagesProvider';
 import EditDetails from '../layouts/EditDetails';
 import SharePage from '../components/Share/SharePage';
 import { useField } from 'react-final-form';
@@ -25,29 +26,48 @@ import { CodeEditor } from '../components/CodeEditor/lazy';
 
 const CSSEditor = ({ name }: FieldProps) => {
   const { t } = useTranslation('workspaces');
-  const field = useField(name);
+  const field = useField(name, {
+    defaultValue: defaultStyles,
+  });
+  const [reseting, setReseting] = useState(false);
+  useEffect(() => {
+    if (!reseting) return;
+    field.input.onChange(defaultStyles);
+    setReseting(false);
+  }, [field.input, reseting]);
   const items = useMemo(
     () => [
       {
         label: (
-          <SchemaFormDescription text={t('pages.details.css.description')}>
+          <SchemaFormDescription text={t('pages.details.styles.description')}>
             <label className="text-[10px] text-gray cursor-pointer">
-              {t('pages.details.css.label')}
+              {t('pages.details.styles.label')}
             </label>
           </SchemaFormDescription>
         ),
         content: (
-          <div className="flex h-80 -m-[1rem] mt-0 rounded-b overflow-hidden">
-            <CodeEditor
-              mode="css"
-              value={field.input.value}
-              onChange={field.input.onChange}
-            />
+          <div className="relative flex h-80 -m-[1rem] mt-0 rounded-b overflow-hidden">
+            {!reseting && (
+              <CodeEditor
+                mode="css"
+                value={field.input.value}
+                onChange={field.input.onChange}
+              />
+            )}
+            <Tooltip title={t('pages.details.styles.reset.description')}>
+              <button
+                type="button"
+                className="absolute bottom-0 right-0 text-xs pr-2"
+                onClick={() => setReseting(true)}
+              >
+                {t('pages.details.styles.reset.label')}
+              </button>
+            </Tooltip>
           </div>
         ),
       },
     ],
-    [field.input.onChange, field.input.value, t]
+    [field.input.onChange, field.input.value, reseting, t]
   );
   return (
     <div className="my-2 p-0 border-[1px] border-gray-200 rounded">
