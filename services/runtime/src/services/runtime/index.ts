@@ -14,6 +14,7 @@ import { executeAutomation } from './automations';
 import {
   RUNTIME_EMITS_BROKER_TOPIC,
   ADDITIONAL_GLOBAL_VARS,
+  PUBLIC_API_URL,
 } from '../../../config';
 import { jsonPathMatches } from '../../utils';
 
@@ -160,7 +161,10 @@ export default class Runtime {
       payload,
       this.broker
     );
-    ctx.additionalGlobals = ADDITIONAL_GLOBAL_VARS;
+    ctx.additionalGlobals = {
+      ...ADDITIONAL_GLOBAL_VARS,
+      apiUrl: PUBLIC_API_URL,
+    };
     await ctx.fetch();
     return ctx;
   }
@@ -241,6 +245,11 @@ export default class Runtime {
           appContext: automation.workspace?.appContext,
           broker: childBroker,
           automationSlug: automation.slug!,
+          additionalGlobals: {
+            endpoints: automation.workspace.getEndpointUrls(
+              ctx.global.workspaceId
+            ),
+          },
         }
       );
 

@@ -110,6 +110,11 @@ export async function runInstructions(
             appContext: nextAutomation.workspace?.appContext,
             broker: childBroker,
             automationSlug: nextAutomation.slug!,
+            additionalGlobals: {
+              endpoints: nextAutomation.workspace.getEndpointUrls(
+                ctx.global.workspaceId
+              ),
+            },
           }
         );
         return executeAutomation(
