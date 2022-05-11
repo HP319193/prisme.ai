@@ -236,17 +236,19 @@ export class Workspace {
   }
 
   getEndpointUrls(workspaceId: string) {
-    return Object.keys(this.triggers.endpoints).reduce(
-      (urls, slug) => ({
-        ...urls,
-        [slug]: `${PUBLIC_API_URL}/workspaces/${workspaceId}/webhooks/${
+    return Object.keys(this.triggers.endpoints).reduce((urls, slug) => {
+      const fullEndpointSlug = encodeURIComponent(
+        `${
           this.appContext?.appInstanceFullSlug
             ? this.appContext?.appInstanceFullSlug + '.'
             : ''
-        }${slug}`,
-      }),
-      {}
-    );
+        }${slug}`
+      );
+      return {
+        ...urls,
+        [slug]: `${PUBLIC_API_URL}/workspaces/${workspaceId}/webhooks/${fullEndpointSlug}`,
+      };
+    }, {});
   }
 
   private parseAppRef(name: string): ParsedAutomationName {
