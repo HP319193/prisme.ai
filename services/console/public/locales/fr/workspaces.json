@@ -355,6 +355,10 @@
       "error_slug": "Le nom technique est déjà utilisé, veuillez en choisir un autre",
       "error": "Une erreur est survenue"
     },
+    "preview": {
+      "label": "Prévisualiser",
+      "label_hide": "Masquer la prévisualisation"
+    },
     "share": {
       "label": "Partager cette page",
       "access": "Accès",

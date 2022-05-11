@@ -34,6 +34,20 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   const { blocksConfigs, error, events } = useBlocksConfigs(currentPage);
 
   useEffect(() => {
+    // For preview in console
+    const listener = (e: MessageEvent) => {
+      const { type, page } = e.data;
+      if (type === 'updatePagePreview') {
+        setCurrentPage(page);
+      }
+    };
+    window.addEventListener('message', listener);
+    return () => {
+      window.removeEventListener('message', listener);
+    };
+  }, []);
+
+  useEffect(() => {
     // Page is null because it does not exist OR because it need authentication
     const fetchPage = async () => {
       try {

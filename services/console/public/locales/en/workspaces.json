@@ -355,6 +355,10 @@
       "error_slug": "Slug is already in use, please choose another one",
       "error": "Unknown error has occured"
     },
+    "preview": {
+      "label": "Preview",
+      "label_hide": "Hide preview"
+    },
     "share": {
       "label": "Share this page",
       "access": "Access",
