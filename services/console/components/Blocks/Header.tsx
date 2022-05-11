@@ -186,17 +186,6 @@ const schema: Schema = {
   },
 };
 
-const LinkOrNot: FC<{ href?: string }> = ({ href, children }) => {
-  if (href) {
-    return (
-      <Link href={href}>
-        <a className="block-header__nav-item-link">{children}</a>
-      </Link>
-    );
-  }
-  return <>{children}</>;
-};
-
 const PageLink: FC<{ pageId: string } & HTMLAttributes<HTMLAnchorElement>> = ({
   pageId,
   ...props
@@ -287,7 +276,13 @@ export const Header = ({ edit }: { edit?: boolean }) => {
               if (edit) e.preventDefault();
             }}
           >
-            <Button {...props} />
+            {edit ? (
+              <button className="block-header__nav-item-button">
+                {props.text}
+              </button>
+            ) : (
+              <Button {...props} />
+            )}
           </div>
         ))}
       </nav>
