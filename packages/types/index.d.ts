@@ -1079,6 +1079,7 @@ declare namespace Prismeai {
         }[];
         id?: string;
         slug?: string;
+        styles?: string;
         createdBy?: string;
         updatedBy?: string;
         createdAt?: string;
@@ -1247,6 +1248,7 @@ declare namespace Prismeai {
         }[];
         id?: string;
         slug?: string;
+        styles?: string;
         createdBy?: string;
         updatedBy?: string;
         createdAt?: string;
