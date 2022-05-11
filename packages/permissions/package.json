@@ -26,5 +26,4 @@
   "devDependencies": {
     "mongodb-memory-server": "^8.2.0"
   }
-
 }

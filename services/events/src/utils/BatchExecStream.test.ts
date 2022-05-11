@@ -1,5 +1,7 @@
 import BatchExecStream, { BatchExecStreamOptions } from './BatchExecStream';
 
+jest.setTimeout(5000);
+
 const streams: BatchExecStream<Chunk>[] = [];
 const getStream = (opts: BatchExecStreamOptions<Chunk>) => {
   const stream = new BatchExecStream<Chunk>({ flushEvery: 1000, ...opts });

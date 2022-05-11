@@ -1,6 +1,7 @@
 import { Broker, CallbackContext, EventCallback } from '@prisme.ai/broker';
 import { Subscriptions } from './Subscriptions';
 
+jest.setTimeout(5000);
 const WorkspaceA = 'myFirstWorkspace';
 const UserA = 'myFirstUser';
 
