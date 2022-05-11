@@ -38,7 +38,7 @@ const PageBlockWithProvider = ({
   const { setEditBlock } = usePageBuilder();
 
   return (
-    <div className="flex grow flex-col">
+    <div className="flex grow flex-col max-w-full">
       <div className={`relative ${!hovered ? 'invisible' : ''}`}>
         <AddBlock after={index - 1} />
         <EditBlock onEdit={() => setEditBlock(blockId)} />
