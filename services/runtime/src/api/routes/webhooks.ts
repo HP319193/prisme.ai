@@ -52,7 +52,7 @@ export default function init(runtime: Runtime) {
       EventType.TriggeredWebhook,
       {
         workspaceId,
-        automationSlug,
+        automationSlug: decodeURIComponent(automationSlug),
         body: {
           ...body,
           ...filesBody,
