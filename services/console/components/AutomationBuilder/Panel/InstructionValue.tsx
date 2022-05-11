@@ -10,6 +10,9 @@ import {
 import { CodeEditorInline } from '../../CodeEditor/lazy';
 import { useField } from 'react-final-form';
 import FieldContainerWithRaw from '../../FieldContainerWithRaw';
+import useSchema from '../../SchemaForm/useSchema';
+import { useWorkspace } from '../../../layouts/WorkspaceLayout';
+import usePages from '../../PagesProvider/context';
 
 interface InstructionValueProps {
   instruction: string;
@@ -67,7 +70,23 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   schema = {},
   onChange,
 }) => {
+  const { workspace } = useWorkspace();
+  const { pages } = usePages();
   const { t } = useTranslation('workspaces');
+
+  const appInstance = useMemo(() => {
+    if (!workspace.imports) return null;
+    const [appName] = instruction.split(/\./);
+    if (!workspace.imports[appName]) return workspace.config;
+    return workspace.imports[appName].config || null;
+  }, [instruction, workspace.config, workspace.imports]);
+
+  const { extractSelectOptions } = useSchema({
+    config: appInstance,
+    automations: workspace.automations,
+    pages: pages.get(workspace.id),
+  });
+
   const cleanedSchema = useMemo(() => {
     const cleaned = {
       ...schema,
@@ -81,14 +100,14 @@ export const InstructionValue: FC<InstructionValueProps> = ({
         oneOf: {
           options: [
             {
-              label: t('automations.instruction.form.repeat.on.label'),
+              label: 'automations.instruction.form.repeat.on.label',
               index: 0,
               value: {
                 until: undefined,
               },
             },
             {
-              label: t('automations.instruction.form.repeat.until.label'),
+              label: 'automations.instruction.form.repeat.until.label',
               index: 1,
               value: {
                 on: undefined,
@@ -129,6 +148,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
         buttons={EmptyButtons}
         components={components}
         locales={locales}
+        utils={{ extractSelectOptions }}
       />
     </Fieldset>
   );

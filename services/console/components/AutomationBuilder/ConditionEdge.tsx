@@ -35,8 +35,6 @@ export const ConditionEdge: FC<EdgeProps> = ({
   });
   const markerEnd = getMarkerEnd(arrowHeadType, markerEndId);
 
-  console.log('data', data && data.label);
-
   const dataLabel = (data || {}).label;
 
   const displayedLabel = useMemo(() => {

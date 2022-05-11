@@ -1,9 +1,9 @@
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { Story } from '@storybook/react';
 import { useState } from 'react';
 import SchemaForm, { FormProps } from './SchemaForm';
 import { useField } from 'react-final-form';
-import { FieldProps } from './types';
+import { FieldProps, Schema } from './types';
 import TextArea from '../TextArea';
 
 export default {
@@ -251,7 +251,7 @@ GridLayout.args = {
   },
 };
 
-const CustomUIWidget = ({ schema, name, label }: FieldProps) => {
+const CustomUIWidget = ({ schema, name }: FieldProps) => {
   const field = useField(name);
 
   return (
@@ -453,6 +453,68 @@ ObjectWithMixedPropertiesAndFreeAdditionnals.args = {
     body: {
       foo: 'bar',
       other: 'coin',
+    },
+  },
+};
+
+export const WithCustomSelect = (props: FormProps) => {
+  const [value, setValue] = useState<{ values: any }>(props.initialValues);
+  const extractSelectOptions = useCallback((schema: Schema) => {
+    return [
+      {
+        label: 'This',
+        value: 'this',
+      },
+      {
+        label: 'Is',
+        value: 'is',
+      },
+      {
+        label: 'Generated',
+        value: 'generated',
+      },
+      {
+        label: 'From',
+        value: 'from',
+      },
+      {
+        label: 'External',
+        value: 'external',
+      },
+      {
+        label: 'Function',
+        value: 'function',
+      },
+    ];
+  }, []);
+  return (
+    <div>
+      <SchemaForm
+        {...props}
+        initialValues={value}
+        onSubmit={setValue}
+        onChange={setValue}
+        utils={{
+          extractSelectOptions,
+        }}
+      />
+      <pre>
+        <code>{value && JSON.stringify(value, null, '  ')}</code>
+      </pre>
+    </div>
+  );
+};
+WithCustomSelect.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      value: {
+        type: 'string',
+        'ui:widget': 'select',
+        'ui:options': {
+          test: Math.random(),
+        },
+      },
     },
   },
 };

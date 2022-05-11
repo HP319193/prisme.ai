@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should select:automations 1`] = `
+exports[`should build a select from automations 1`] = `
 Array [
   <div
     className="flex flex-col"
@@ -11,58 +11,46 @@ Array [
     <div
       className="text-neutral-500 text-xs"
     >
-      Some foo
+      
     </div>
   </div>,
   <div
     className="flex flex-col"
   >
     <div>
-      bar
+      Bar
     </div>
     <div
       className="text-neutral-500 text-xs"
     >
-      
+      Bar automation
     </div>
   </div>,
 ]
 `;
 
-exports[`should select:endpoints 1`] = `
+exports[`should build a select from endpoint automations  1`] = `
 <div
   className="flex flex-col"
 >
   <div>
-    Foo
+    Bar
   </div>
   <div
     className="text-neutral-500 text-xs"
   >
-    Some foo
+    Bar automation
   </div>
 </div>
 `;
 
-exports[`should select:pages 1`] = `
+exports[`should build a select from pages 1`] = `
 Array [
   <div
     className="flex flex-col"
   >
     <div>
-      Page Un
-    </div>
-    <div
-      className="text-neutral-500 text-xs"
-    >
-      La première page
-    </div>
-  </div>,
-  <div
-    className="flex flex-col"
-  >
-    <div>
-      
+      Foo
     </div>
     <div
       className="text-neutral-500 text-xs"
@@ -74,12 +62,12 @@ Array [
     className="flex flex-col"
   >
     <div>
-      Page trois
+      Bar
     </div>
     <div
       className="text-neutral-500 text-xs"
     >
-      
+      Bar automation
     </div>
   </div>,
 ]

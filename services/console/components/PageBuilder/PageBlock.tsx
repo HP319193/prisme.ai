@@ -27,7 +27,6 @@ const PageBlockWithProvider = ({
   id,
   workspaceId,
   appInstance,
-  ...props
 }: PageBlockProps & {
   hovered: boolean;
   blockId: string;

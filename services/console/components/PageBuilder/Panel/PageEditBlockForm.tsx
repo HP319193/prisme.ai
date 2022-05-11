@@ -4,7 +4,6 @@ import Settings from './Settings';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import { usePageBuilder } from '../context';
 import PageBlockProvider from '../PageBlockProvider';
-import useSchema, { EnhancedSchema } from '../../SchemaForm/useSchema';
 
 interface PageEditBlockFormProps {
   blockId: string;
@@ -12,8 +11,7 @@ interface PageEditBlockFormProps {
 
 const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
   const { localizeSchemaForm } = useLocalizedText();
-  const { blocksInPage, removeBlock, page } = usePageBuilder();
-  const { makeSchema } = useSchema();
+  const { blocksInPage, removeBlock } = usePageBuilder();
 
   const editedBlock = blocksInPage.find(({ key }) => key === blockId);
   const editSchema = editedBlock && (editedBlock.edit as Schema['properties']);
@@ -26,28 +24,8 @@ const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
           type: 'object',
           properties: editSchema,
         };
-    return makeSchema(localizeSchemaForm(schema), {
-      'select:pageSections': (schema: EnhancedSchema) => {
-        const sectionsIds = page.blocks.flatMap(
-          ({ config: { sectionId } = {} }) => (sectionId ? sectionId : [])
-        );
-        if (sectionsIds.length === 0) return schema;
-
-        schema['ui:widget'] = 'select';
-        schema['ui:options'] = {
-          select: {
-            options: sectionsIds.flatMap((sectionId) => {
-              return {
-                label: sectionId,
-                value: sectionId,
-              };
-            }),
-          },
-        };
-        return schema;
-      },
-    });
-  }, [editSchema, localizeSchemaForm, makeSchema, page]);
+    return localizeSchemaForm(schema);
+  }, [editSchema, localizeSchemaForm]);
 
   return (
     <PageBlockProvider blockId={blockId}>

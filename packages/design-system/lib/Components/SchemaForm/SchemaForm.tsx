@@ -2,7 +2,7 @@ import { ReactElement, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Form, FormSpy } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import Field from './Field';
-import { Schema } from './types';
+import { Schema, UiOptionsSelect } from './types';
 import Button from '../Button';
 import { root } from './utils';
 import { context, SchemaFormContext, FieldContainer } from './context';
@@ -24,6 +24,7 @@ export interface FormProps {
   initialValues?: any;
   locales?: SchemaFormContext['locales'];
   components?: Partial<SchemaFormContext['components']>;
+  utils?: Partial<SchemaFormContext['utils']>;
 }
 
 const OnChange = ({
@@ -50,6 +51,7 @@ export const SchemaForm = ({
   initialValues,
   locales = DefaultLocales,
   components,
+  utils,
 }: FormProps) => {
   if (!schema) return null;
   const values = useRef({ values: initialValues });
@@ -78,8 +80,22 @@ export const SchemaForm = ({
     [components]
   );
 
+  const utilsWithDefault = useMemo(
+    () => ({
+      extractSelectOptions: () => [],
+      ...utils,
+    }),
+    [utils]
+  );
+
   return (
-    <context.Provider value={{ locales, components: componentsWithDefault }}>
+    <context.Provider
+      value={{
+        locales,
+        components: componentsWithDefault,
+        utils: utilsWithDefault,
+      }}
+    >
       <Form
         onSubmit={onSubmitHandle}
         initialValues={values.current}
