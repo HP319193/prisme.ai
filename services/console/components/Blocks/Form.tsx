@@ -6,9 +6,10 @@ import {
 } from '@prisme.ai/design-system';
 import { FieldProps } from '@prisme.ai/design-system/lib/Components/SchemaForm/types';
 import { useTranslation } from 'next-i18next';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useField } from 'react-final-form';
 import SchemaFormBuilder from '../SchemaFormBuilder';
+import useLocalizedText from '../../utils/useLocalizedText';
 
 const defaultSchema = {
   type: 'string',
@@ -64,6 +65,7 @@ const schema: Schema = {
 
 export const Form = ({}) => {
   const { config = {}, events } = useBlock();
+  const { localizeSchemaForm } = useLocalizedText();
 
   const onChange = useCallback(
     (values: any) => {
@@ -81,10 +83,14 @@ export const Form = ({}) => {
     [config.onSubmit, events]
   );
 
+  const localizedSchema = useMemo(() => {
+    return localizeSchemaForm(config.schema || defaultSchema);
+  }, [config.schema, localizeSchemaForm]);
+
   return (
     <div className="p-8">
       <SchemaForm
-        schema={config.schema || defaultSchema}
+        schema={localizedSchema}
         onChange={onChange}
         onSubmit={onSubmit}
       />
