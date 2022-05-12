@@ -1,6 +1,18 @@
-import { Schema, UiOptionsOneOf } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
+
+const translatable = ['title', 'description', 'label'];
+const isTranslatedElement = (key: string, value: any) => {
+  if (translatable.includes(key)) {
+    if (
+      typeof value === 'string' ||
+      Object.keys(value).every((key) => key.length === 2)
+    ) {
+      return true;
+    }
+  }
+  return false;
+};
 
 export const useLocalizedText = () => {
   const {
@@ -21,7 +33,6 @@ export const useLocalizedText = () => {
 
   const localizeSchemaForm = useCallback(
     (original: any) => {
-      const translatable = ['title', 'description', 'label'];
       const localizeSchemaForm = (mayBeTranslatable: any) => {
         if (typeof mayBeTranslatable === 'object') {
           const isArray = Array.isArray(mayBeTranslatable);
@@ -30,11 +41,11 @@ export const useLocalizedText = () => {
             : { ...mayBeTranslatable };
           for (const key of Object.keys(newObject)) {
             const value = newObject[key];
-            newObject[key] =
-              (translatable.includes(key) || isArray) &&
-              typeof value === 'string'
-                ? localize(value)
-                : localizeSchemaForm(value);
+            if (isTranslatedElement(key, value) || isArray) {
+              newObject[key] = localize(value);
+            } else {
+              newObject[key] = localizeSchemaForm(value);
+            }
           }
           return newObject;
         }
