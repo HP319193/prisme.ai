@@ -427,41 +427,42 @@
       "header": {
         "settings": {
           "title": {
-            "label": "Titre",
-            "description": "Titre de votre page."
+            "label": "Título",
+            "description": "Título de su página".
           },
           "logo": {
             "label": "Logo",
-            "description": "Image affichée à côté du titre. Optionnel.",
+            "description": "Imagen mostrada junto al título. Opcional",
             "src": {
-              "label": "Image",
-              "description": "Choisissez une image"
+              "label": "Imagen",
+              "description": "Elige una imagen"
             },
             "alt": {
-              "label": "Texte alternatif",
-              "description": "Texte affiché à la place de l'image pour les navigateurs non graphiques."
+              "label": "Texto alternativo",
+              "description": "Texto que se muestra en lugar de la imagen para los navegadores no gráficos".
             }
           },
           "nav": {
             "label": "Navegación",
             "description": "Puedes añadir enlaces a direcciones web o botones de envío de eventos.",
             "items": {
+              "label": "Botones",
               "external": {
-                "label": "Navegar a una página web externa",
+                "label": "Página externa",
                 "value": {
                   "label": "Dirección web",
                   "description": "Introduzca la dirección web de la página (https://...)."
                 }
               },
               "internal": {
-                "label": "Navegue hasta una página de su espacio de trabajo",
+                "label": "Página del espacio de trabajo",
                 "value": {
                   "label": "Página",
                   "description": "Elija una página en su espacio de trabajo."
                 }
               },
               "inside": {
-                "label": "Desplácese a una sección de esta página",
+                "label": "Desplácese a una sección",
                 "value": {
                   "label": "Identificación del bloque",
                   "description": "Elija uno de los bloques de su página para desplazarse."
@@ -516,7 +517,7 @@
             "title": "Diseño",
             "description": "Puedes cambiar el modo de visualización. Por defecto, los mapas se mostrarán mediante un carrusel.",
             "noOptions": "No hay opciones disponibles",
-            "carousel": "Carrusel (Desplazamiento horizontal)",
+            "carousel": "Carrusel",
             "grid": "Rejilla",
             "column": "Columna"
           }
