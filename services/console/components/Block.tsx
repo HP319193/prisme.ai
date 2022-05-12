@@ -5,6 +5,7 @@ import * as prismeaiDS from '@prisme.ai/design-system';
 import * as prismeaiSDK from '../utils/api';
 import { nanoid } from 'nanoid';
 import { useTranslation } from 'next-i18next';
+import { Block as TBlock } from '@prisme.ai/design-system';
 
 if (process.browser) {
   // @ts-ignore
@@ -53,9 +54,15 @@ type BlockComponent = (props: BlockComponentProps) => ReactElement;
 interface BlockProps extends BlockComponentProps {
   url: string;
   renderLoading?: ReactElement;
+  onLoad?: (component: TBlock) => void;
 }
 
-export const ReactBlock = ({ url, renderLoading, ...props }: BlockProps) => {
+export const ReactBlock = ({
+  url,
+  renderLoading,
+  onLoad,
+  ...props
+}: BlockProps) => {
   const {
     i18n: { language },
   } = useTranslation('workspaces');
@@ -69,6 +76,7 @@ export const ReactBlock = ({ url, renderLoading, ...props }: BlockProps) => {
       setComponent(() => {
         return module.default;
       });
+      onLoad && onLoad(module.default);
       setLoading(false);
     };
     const s = document.createElement('script');
@@ -86,7 +94,7 @@ export const ReactBlock = ({ url, renderLoading, ...props }: BlockProps) => {
       // @ts-ignore
       delete window[uniqMethod];
     };
-  }, [url]);
+  }, [onLoad, url]);
 
   return (
     <>
@@ -153,7 +161,7 @@ export const IFrameBlock = ({
 };
 
 export const Block = ({ url, ...props }: BlockProps) => {
-  const isJs = url.match(/\.js$/);
+  const isJs = url.replace(/\?.*$/, '').match(/\.js$/);
   if (isJs) {
     return (
       <BlockErrorBoundary>

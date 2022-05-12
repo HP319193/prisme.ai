@@ -424,11 +424,13 @@
       "name_Cards": "Cards group",
       "name_DataTable": "Data table",
       "name_Form": "Form",
+      "name_Development": "Development",
       "description": "",
       "description_Header": "Page header",
       "description_Cards": "Display a cards group",
       "description_DataTable": "Display a data table",
       "description_Form": "Display form",
+      "description_Development": "Allows you to develop your own Block. Intended for developers.",
       "header": {
         "settings": {
           "title": {
@@ -555,6 +557,21 @@
         "schema": {
           "label": "Form specification",
           "description": "Use the form builder interface to add the fields of your choice."
+        }
+      },
+      "development": {
+        "error": "Unknown error",
+        "error_url": "Please choose a valid javascript module url",
+        "error_loading": "Unable to load your Block. Please check that your development environment is running and that you have copied the correct URL.",
+        "settings": {
+          "url": {
+            "label": "URL of the Block",
+            "description": "Issue the command `npm start`. A URL will be displayed. Paste it into this field to load your Block into the console."
+          },
+          "block": {
+            "label": "Block configuration",
+            "description": "The configuration of your Block. If nothing is displayed, add a static property `schema` to your React component."
+          }
         }
       }
     }

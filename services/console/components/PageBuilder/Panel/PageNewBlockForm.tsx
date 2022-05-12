@@ -4,6 +4,7 @@ import {
   SearchInput,
   Space,
   Title,
+  Tooltip,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo, useState } from 'react';
@@ -88,11 +89,22 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
                       context: localize(name) || slug,
                     })}
                     content={
-                      description
-                        ? localize(description)
-                        : t('pages.blocks.description', {
-                            context: localize(name),
-                          })
+                      <Tooltip
+                        title={
+                          description
+                            ? localize(description)
+                            : t('pages.blocks.description', {
+                                context: localize(name),
+                              })
+                        }
+                        placement="topLeft"
+                      >
+                        {description
+                          ? localize(description)
+                          : t('pages.blocks.description', {
+                              context: localize(name),
+                            })}
+                      </Tooltip>
                     }
                   />
                 </Button>
