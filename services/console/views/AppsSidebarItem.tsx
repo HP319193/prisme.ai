@@ -41,7 +41,6 @@ const AppsSidebarItem = ({
   const { uninstallApp } = useWorkspaces();
   const { getAppConfig, saveAppConfig } = useWorkspace();
   const { t } = useTranslation('workspaces');
-  const { buttons } = useBlock();
 
   const [value, setValue] = useState();
   const fetchConfig = useRef(async (slug: string) => {
@@ -99,7 +98,6 @@ const AppsSidebarItem = ({
         title={slug}
         rightContent={
           <>
-            {buttons}
             <Button onClick={onDelete} className="!h-full !p-0 !pr-4">
               <Tooltip title={t('apps.uninstallTooltip')}>
                 <DeleteOutlined className="!text-gray hover:!text-accent" />
@@ -127,12 +125,6 @@ const AppsSidebarItem = ({
 
         return (
           <div>
-            <div className="inline-block" onClick={(e) => e.stopPropagation()}>
-              {buttons &&
-                buttons.map((button, index) => (
-                  <Fragment key={index}>{button}</Fragment>
-                ))}
-            </div>
             <Button onClick={() => onToggle(slug, !!isActive)}>
               <Tooltip title={t('apps.configTooltip')}>
                 <SettingOutlined

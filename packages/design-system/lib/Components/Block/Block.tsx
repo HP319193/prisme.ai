@@ -18,11 +18,6 @@ export const BlockProvider: FC<BlockProviderProps> = ({
   onAppConfigUpdate,
   events,
 }) => {
-  const [setupComponent, setSetupComponent] = useState<
-    BlockContext['setupComponent']
-  >();
-  const [buttons, setButtons] = useState<BlockContext['buttons']>();
-
   return (
     <blockContext.Provider
       value={{
@@ -30,10 +25,6 @@ export const BlockProvider: FC<BlockProviderProps> = ({
         setAppConfig: onAppConfigUpdate,
         config,
         setConfig: onConfigUpdate,
-        setupComponent,
-        setSetupComponent,
-        setButtons,
-        buttons,
         events,
       }}
     >
