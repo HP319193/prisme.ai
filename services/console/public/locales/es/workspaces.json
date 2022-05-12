@@ -355,6 +355,10 @@
       "error_slug": "El nombre técnico ya está en uso, por favor elija otro",
       "error": "Se ha producido un error"
     },
+    "preview": {
+      "label": "Vista previa",
+      "label_hide": "Ocultar la vista previa"
+    },
     "share": {
       "label": "Compartir el acceso a la página",
       "access": "Acceda",
@@ -420,41 +424,61 @@
       "description_Cards": "Mostrar un grupo de tarjetas",
       "description_DataTable": "Visualización de una tabla de datos",
       "description_Form": "Mostrar un formulario",
-      "nav": {
-        "label": "Navegación",
-        "description": "Puedes añadir enlaces a direcciones web o botones de envío de eventos.",
-        "items": {
-          "external": {
-            "label": "Navegar a una página web externa",
-            "value": {
-              "label": "Dirección web",
-              "description": "Introduzca la dirección web de la página (https://...)."
+      "header": {
+        "settings": {
+          "title": {
+            "label": "Titre",
+            "description": "Titre de votre page."
+          },
+          "logo": {
+            "label": "Logo",
+            "description": "Image affichée à côté du titre. Optionnel.",
+            "src": {
+              "label": "Image",
+              "description": "Choisissez une image"
+            },
+            "alt": {
+              "label": "Texte alternatif",
+              "description": "Texte affiché à la place de l'image pour les navigateurs non graphiques."
             }
           },
-          "internal": {
-            "label": "Navegue hasta una página de su espacio de trabajo",
-            "value": {
-              "label": "Página",
-              "description": "Elija una página en su espacio de trabajo."
+          "nav": {
+            "label": "Navegación",
+            "description": "Puedes añadir enlaces a direcciones web o botones de envío de eventos.",
+            "items": {
+              "external": {
+                "label": "Navegar a una página web externa",
+                "value": {
+                  "label": "Dirección web",
+                  "description": "Introduzca la dirección web de la página (https://...)."
+                }
+              },
+              "internal": {
+                "label": "Navegue hasta una página de su espacio de trabajo",
+                "value": {
+                  "label": "Página",
+                  "description": "Elija una página en su espacio de trabajo."
+                }
+              },
+              "inside": {
+                "label": "Desplácese a una sección de esta página",
+                "value": {
+                  "label": "Identificación del bloque",
+                  "description": "Elija uno de los bloques de su página para desplazarse."
+                }
+              },
+              "event": {
+                "label": "Activación de un evento",
+                "value": {
+                  "label": "Evento",
+                  "description": "Especifique el nombre del evento que se va a activar."
+                }
+              },
+              "text": {
+                "label": "Texto del botón",
+                "description": "Texto mostrado en el botón de navegación."
+              }
             }
-          },
-          "inside": {
-            "label": "Desplácese a una sección de esta página",
-            "value": {
-              "label": "Identificación del bloque",
-              "description": "Elija uno de los bloques de su página para desplazarse."
-            }
-          },
-          "event": {
-            "label": "Activación de un evento",
-            "value": {
-              "label": "Evento",
-              "description": "Especifique el nombre del evento que se va a activar."
-            }
-          },
-          "text": {
-            "label": "Texto del botón",
-            "description": "Texto mostrado en el botón de navegación."
           }
         }
       },

@@ -23,6 +23,7 @@ import EditDetails from '../layouts/EditDetails';
 import SharePage from '../components/Share/SharePage';
 import { useField } from 'react-final-form';
 import { CodeEditor } from '../components/CodeEditor/lazy';
+import PagePreview from '../components/PagePreview';
 
 const CSSEditor = ({
   name,
@@ -61,7 +62,7 @@ const CSSEditor = ({
         },
       },
     ],
-    []
+    [sectionIds]
   );
   const items = useMemo(
     () => [
@@ -111,6 +112,7 @@ export const Page = () => {
   const { workspace, setShare } = useWorkspace();
   const { localize } = useLocalizedText();
   const { pages, savePage, deletePage } = usePages();
+  const [displayPreview, setDisplayPreview] = useState(false);
 
   const {
     query: { id: workspaceId, pageId },
@@ -298,13 +300,40 @@ export const Page = () => {
         }
         onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
-          <Button onClick={save} disabled={saving} key="save" variant="primary">
+          <Button
+            key="preview"
+            onClick={() => setDisplayPreview(!displayPreview)}
+          >
+            {t('pages.preview.label', {
+              context: displayPreview ? 'hide' : '',
+            })}
+          </Button>,
+          <Button key="save" onClick={save} disabled={saving} variant="primary">
             {saving && <LoadingOutlined />}
             {t('pages.save.label')}
           </Button>,
         ]}
       />
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
+        <div
+          className={`
+          rounded
+          border-[1px]
+          border-gray-200
+          overflow-hidden
+          absolute top-4 bottom-4 right-4 left-4
+          shadow-lg
+          bg-white
+          flex flex-1
+          transition-transform
+          transition-duration-200
+          transition-ease-in
+          z-[11]
+          ${displayPreview ? '' : '-translate-x-[110%]'}
+        `}
+        >
+          <PagePreview page={cleanValue(value)} />
+        </div>
         <PageBuilder value={value} onChange={setValue} />
       </div>
     </>
