@@ -26,10 +26,10 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   >();
   const [blockEditing, setBlockEditing] = useState<string>();
 
-  const hidePanel = useCallback(() => {
-    setBlockSelecting(undefined);
-    setBlockEditing(undefined);
-    setPanelIsOpen(false);
+  const hidePanel = useCallback(async () => {
+    await setBlockSelecting(undefined);
+    await setBlockEditing(undefined);
+    await setPanelIsOpen(false);
   }, []);
 
   const blocks: PageBuilderContext['blocks'] = useMemo(() => {
@@ -68,7 +68,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
 
   const setEditBlock = useCallback(
     async (blockId: string) => {
-      hidePanel();
+      await hidePanel();
       setBlockEditing(blockId);
       setPanelIsOpen(true);
     },
@@ -95,8 +95,8 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   );
 
   const addBlockDetails = useCallback(async () => {
-    return new Promise<string>((resolve) => {
-      hidePanel();
+    return new Promise<string>(async (resolve) => {
+      await hidePanel();
       setBlockSelecting({
         onSubmit: (blockSlug: string) => {
           resolve(blockSlug);
@@ -122,13 +122,13 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   );
 
   const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
-    (key) => {
+    async (key) => {
       const newBlocks = (value.blocks || []).filter(({ key: k }) => k !== key);
       onChange({
         ...value,
         blocks: newBlocks,
       });
-      hidePanel();
+      await hidePanel();
     },
     [hidePanel, onChange, value]
   );
