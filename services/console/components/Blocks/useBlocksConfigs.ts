@@ -7,6 +7,7 @@ const isPage = (page: any): page is Prismeai.Page =>
 export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
   const [blocksConfigs, setBlocksConfigs] = useState<any[]>([]);
 
+  const cachedPage = useRef(page);
   useEffect(() => {
     if (!isPage(page)) return;
     setBlocksConfigs((page.blocks || []).map(({ config }) => config));
@@ -17,6 +18,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
   const [error, setError] = useState(false);
 
   const initSocket = useCallback(async () => {
+    const page = cachedPage.current;
     if (!isPage(page) || !page.workspaceId) return;
     const socketAlreadyInstantiatedForId =
       socket.current && socket.current.workspaceId === page.workspaceId;
@@ -67,14 +69,14 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
         });
       }
     });
-  }, [page]);
+  }, []);
 
   useEffect(() => {
     initSocket();
     return () => {
       off.current && off.current();
     };
-  }, [initSocket, page]);
+  }, [initSocket]);
 
   const initWithAutomation = useCallback(
     async (workspaceId: string, automation: string, index: number) => {
