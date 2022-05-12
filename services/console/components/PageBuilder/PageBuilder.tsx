@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
@@ -13,8 +13,13 @@ import * as BuiltinBlocks from '../Blocks';
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
   onChange: (value: Prismeai.Page) => void;
+  setOnSave: (fn: () => void) => void;
 }
-export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
+export const PageBuilder = ({
+  value,
+  onChange,
+  setOnSave,
+}: PageBuilderProps) => {
   const { workspace } = useWorkspace();
   const { appInstances } = useApps();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
@@ -31,6 +36,10 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     await setBlockEditing(undefined);
     await setPanelIsOpen(false);
   }, []);
+
+  useEffect(() => {
+    setOnSave(hidePanel);
+  }, [hidePanel, setOnSave]);
 
   const blocks: PageBuilderContext['blocks'] = useMemo(() => {
     return [
