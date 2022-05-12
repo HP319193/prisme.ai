@@ -317,6 +317,10 @@ export const Page = () => {
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
         <div
           className={`
+          rounded
+          border-[1px]
+          border-gray-200
+          overflow-hidden
           absolute top-4 bottom-4 right-4 left-4
           shadow-lg
           bg-white

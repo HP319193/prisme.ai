@@ -2,10 +2,10 @@
 
 exports[`should render 1`] = `
 <div
-  className="block-header block-header__container flex flex-1 flex-col sm:!flex-row justify-between sm:items-center"
+  className="block-header block-header__container flex flex-1 flex-col md:!flex-row justify-between md:items-center"
 >
   <div
-    className="block-header__left flex sm:justify-center"
+    className="block-header__left flex md:justify-center"
   >
     <div
       className="block-header__logo flex justify-center m-2 ml-4"

@@ -24,7 +24,7 @@ export const PageBlocks = () => {
 
   return (
     <div className="flex grow flex-col items-center overflow-y-auto h-full">
-      <div className="flex flex-1 flex-col w-[50rem] py-8">
+      <div className="flex flex-1 flex-col w-[768px] py-8">
         {blocksInPage.length === 0 && (
           <div className="relative">
             <AddBlock after={-1} centered />
