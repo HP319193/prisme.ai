@@ -45,6 +45,10 @@ const SchemaField = ({ name }: FieldProps) => {
 const schema: Schema = {
   type: 'object',
   properties: {
+    schema: {
+      type: 'object',
+      'ui:widget': SchemaField,
+    },
     onSubmit: {
       type: 'string',
       title: 'pages.blocks.form.onSubmit.label',
@@ -54,10 +58,6 @@ const schema: Schema = {
       type: 'string',
       title: 'pages.blocks.form.onChange.label',
       description: 'pages.blocks.form.onChange.description',
-    },
-    schema: {
-      type: 'object',
-      'ui:widget': SchemaField,
     },
   },
 };
