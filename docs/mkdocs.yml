@@ -1,6 +1,6 @@
 site_name: i18n.site_name
 site_url: https://docs.eda.prisme.ai
-console_url: https://console.eda.prisme.ai/login
+console_url: https://console.eda.prisme.ai/signin
 site_author: Prisme.ai
 site_description: i18n.site_description
 start: i18n.start
