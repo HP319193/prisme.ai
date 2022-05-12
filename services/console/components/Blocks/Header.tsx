@@ -251,7 +251,7 @@ export const Header = ({ edit }: { edit?: boolean }) => {
   const nav = config.nav && Array.isArray(config.nav) ? config.nav : [];
 
   return (
-    <div className="block-header block-header__container flex flex-1 flex-col md:!flex-row justify-between md:items-center">
+    <div className="block-header block-header__container flex flex-1 flex-col md:!flex-row justify-between md:items-center px-4 py-2">
       <div className="block-header__left flex md:justify-center">
         <div className="block-header__logo flex justify-center m-2 ml-4">
           {config.logo && config.logo.src && (

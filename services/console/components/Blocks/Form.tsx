@@ -82,7 +82,7 @@ export const Form = ({}) => {
   );
 
   return (
-    <div className="p-4">
+    <div className="p-8">
       <SchemaForm
         schema={config.schema || defaultSchema}
         onChange={onChange}

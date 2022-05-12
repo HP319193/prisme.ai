@@ -1,8 +1,4 @@
-import {
-  DownOutlined,
-  LeftCircleOutlined,
-  RightCircleOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import {
   Schema,
   StretchContent,
@@ -161,22 +157,22 @@ const schema: Schema = {
         oneOf: {
           options: [
             {
-              label: 'pages.blocks.cards.settings.layout.carousel',
-              index: 0,
-              value: {
-                type: 'carousel',
-              },
-            },
-            {
               label: 'pages.blocks.cards.settings.layout.grid',
-              index: 1,
+              index: 0,
               value: {
                 type: 'grid',
               },
             },
             {
-              label: 'pages.blocks.cards.settings.layout.column',
+              label: 'pages.blocks.cards.settings.layout.carousel',
               index: 1,
+              value: {
+                type: 'carousel',
+              },
+            },
+            {
+              label: 'pages.blocks.cards.settings.layout.column',
+              index: 2,
               value: {
                 type: 'column',
               },
@@ -371,7 +367,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
   );
 
   return (
-    <div className="relative">
+    <div className="relative p-6">
       <div ref={container} className={styles.container}>
         {(cards as Card[]).map(
           ({ title, description, cover, content = [] }, index) => (
@@ -489,18 +485,18 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
         )}
       </div>
       {canScroll && (
-        <div className="text-accent text-3xl">
-          <div className="absolute flex justify-center top-12 left-1">
+        <div className="text-accent text-l">
+          <div className="absolute flex justify-center top-16 left-6 h-8 w-8 bg-white rounded-[100%] shadow-lg">
             <Tooltip title={t('blocks.cards.prev')} placement="right">
               <button onClick={scroll(-1)} className="outline-none">
-                <LeftCircleOutlined className="bg-white rounded-[50%]" />
+                <LeftOutlined className="bg-white rounded-[50%]" />
               </button>
             </Tooltip>
           </div>
-          <div className="absolute flex justify-center top-12 right-1">
+          <div className="absolute flex justify-center top-16 right-6 h-8 w-8 bg-white rounded-[100%] shadow-lg">
             <Tooltip title={t('blocks.cards.next')} placement="left">
               <button onClick={scroll(1)} className="outline-none">
-                <RightCircleOutlined className="bg-white rounded-[50%]" />
+                <RightOutlined className="bg-white rounded-[50%]" />
               </button>
             </Tooltip>
           </div>
