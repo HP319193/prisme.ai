@@ -2,7 +2,6 @@ import { DeleteOutlined } from '@ant-design/icons';
 import {
   Button,
   Collapse,
-  Divider,
   Schema,
   SchemaForm,
   useBlock,
@@ -89,10 +88,10 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
     [t]
   );
 
-  const collapseItems = useMemo(
-    () => [
+  const collapseItems = useMemo(() => {
+    let collapseItems = [
       {
-        label: t('pages.blocks.settings.advanced'),
+        label: t('pages.blocks.settings.generic'),
         content: (
           <SchemaForm
             schema={commonSchema}
@@ -104,15 +103,13 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
           />
         ),
       },
-    ],
-    [commonSchema, config, extractSelectOptions, locales, setConfig, t]
-  );
+    ];
 
-  return (
-    <div className="flex flex-1 flex-col justify-between overflow-x-auto">
-      <div>
-        {schema && (
-          <div className="bg-white">
+    if (schema) {
+      collapseItems = [
+        {
+          label: t('pages.blocks.settings.schema'),
+          content: (
             <SchemaForm
               schema={schema}
               onChange={setConfig}
@@ -120,10 +117,27 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
               buttons={[]}
               utils={{ extractSelectOptions }}
             />
-            <Divider />
-          </div>
-        )}
-        <Collapse items={collapseItems} />
+          ),
+        },
+        ...collapseItems,
+      ];
+    }
+
+    return collapseItems;
+  }, [
+    commonSchema,
+    config,
+    extractSelectOptions,
+    locales,
+    schema,
+    setConfig,
+    t,
+  ]);
+
+  return (
+    <div className="flex flex-1 flex-col justify-between overflow-y-auto overflow-x-hidden">
+      <div>
+        <Collapse items={collapseItems} defaultActiveKey={0} />
       </div>
       <div>
         <Button onClick={removeBlock} className="!text-pr-orange">

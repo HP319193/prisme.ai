@@ -392,7 +392,8 @@
       "remove": "Remove the block",
       "search": "Search a block",
       "settings": {
-        "advanced": "Advanced settings",
+        "generic": "Dynamic values",
+        "schema": "Configuration",
         "title": "Block settings",
         "toggle_on": "Display settings",
         "toggle_off": "Hide settings",

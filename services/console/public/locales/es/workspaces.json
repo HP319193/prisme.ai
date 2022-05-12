@@ -392,7 +392,8 @@
       "remove": "Eliminar el block",
       "search": "Buscar un block",
       "settings": {
-        "advanced": "Configuración avanzada",
+        "generic": "Datos dinámicos",
+        "schema": "Configuración",
         "title": "Parámetros del Block",
         "toggle_on": "Mostrar configuración",
         "toggle_off": "Ocultar la configuración",
