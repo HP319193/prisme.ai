@@ -104,7 +104,11 @@ Object {
                 "value": "array",
               },
               Object {
-                "label": "schema.types.fileUpload",
+                "label": "schema.types.textarea",
+                "value": "textarea",
+              },
+              Object {
+                "label": "schema.types.upload",
                 "value": "upload",
               },
             ]
@@ -260,7 +264,11 @@ Object {
               "value": "array",
             },
             Object {
-              "label": "schema.types.fileUpload",
+              "label": "schema.types.textarea",
+              "value": "textarea",
+            },
+            Object {
+              "label": "schema.types.upload",
               "value": "upload",
             },
           ],
