@@ -541,6 +541,9 @@
         }
       },
       "form": {
+        "submitLabel": {
+          "label": "Texto del botón de envío"
+        },
         "onSubmit": {
           "label": "Evento en la validación",
           "description": "Cuando se valide el formulario, se enviará el evento con todos sus valores."

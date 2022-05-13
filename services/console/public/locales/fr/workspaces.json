@@ -540,6 +540,9 @@
         }
       },
       "form": {
+        "submitLabel": {
+          "label": "Texte de validation"
+        },
         "onSubmit": {
           "label": "Évènement à la validation",
           "description": "Lors de la validation du formulaire, l'évènement sera envoyé avec l'ensemble des ses valeurs."

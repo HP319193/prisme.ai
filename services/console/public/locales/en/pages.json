@@ -4,6 +4,9 @@
   },
   "preview": "Preview",
   "blocks": {
+    "form": {
+      "submit": "Submit"
+    },
     "cards": {
       "next": "Next",
       "prev": "Previous"

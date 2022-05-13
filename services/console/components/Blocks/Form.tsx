@@ -1,4 +1,5 @@
 import {
+  Button,
   Schema,
   SchemaForm,
   SchemaFormDescription,
@@ -56,6 +57,10 @@ const schema: Schema = {
       type: 'object',
       'ui:widget': SchemaField,
     },
+    submitLabel: {
+      type: 'string',
+      title: 'pages.blocks.form.submitLabel.label',
+    },
     onSubmit: {
       type: 'string',
       title: 'pages.blocks.form.onSubmit.label',
@@ -71,7 +76,8 @@ const schema: Schema = {
 
 export const Form = ({}) => {
   const { config = {}, events } = useBlock();
-  const { localizeSchemaForm } = useLocalizedText();
+  const { localizeSchemaForm, localize } = useLocalizedText();
+  const { t } = useTranslation('pages');
 
   const onChange = useCallback(
     (values: any) => {
@@ -100,6 +106,17 @@ export const Form = ({}) => {
         schema={localizedSchema}
         onChange={onChange}
         onSubmit={onSubmit}
+        buttons={[
+          <div key={0} className="flex grow justify-end mt-2 pt-4">
+            <Button
+              type="submit"
+              variant="primary"
+              className="!py-4 !px-8 !h-max"
+            >
+              {localize(config.submitLabel) || t('blocks.form.submit')}
+            </Button>
+          </div>,
+        ]}
       />
     </div>
   );
