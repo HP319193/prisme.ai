@@ -259,3 +259,118 @@ it('should localize with i18n', () => {
     },
   });
 });
+
+it('should localize with select options', () => {
+  let localizeSchemaForm = (schema: any): any => {};
+  const Test = () => {
+    localizeSchemaForm = useLocalizedText().localizeSchemaForm;
+    return null;
+  };
+
+  const root = renderer.create(<Test />);
+  act(() => {});
+
+  const schemaWithTranslations = {
+    type: 'object',
+    properties: {
+      layout: {
+        type: 'object',
+        oneOf: [
+          {
+            title: 'pages.blocks.form.onSubmit.label',
+            properties: {
+              autoScroll: {
+                type: 'boolean',
+                title: 'pages.blocks.form.onSubmit.label',
+                description: 'pages.blocks.form.onSubmit.label',
+              },
+            },
+          },
+          {
+            title: 'pages.blocks.form.onSubmit.label',
+          },
+        ],
+        'ui:options': {
+          oneOf: {
+            options: [
+              {
+                label: 'pages.blocks.form.onSubmit.label',
+                index: 0,
+                value: {
+                  type: 'grid',
+                },
+              },
+              {
+                label: 'pages.blocks.form.onSubmit.label',
+                index: 1,
+                value: {
+                  type: 'carousel',
+                },
+              },
+              {
+                label: 'pages.blocks.form.onSubmit.label',
+                index: 1,
+                value: {
+                  type: 'column',
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+
+  const parsedTranslatedSchema = localizeSchemaForm(schemaWithTranslations);
+
+  expect(parsedTranslatedSchema).toStrictEqual({
+    type: 'object',
+    properties: {
+      layout: {
+        type: 'object',
+        oneOf: [
+          {
+            title: 'onSubmitLabel',
+            properties: {
+              autoScroll: {
+                type: 'boolean',
+                title: 'onSubmitLabel',
+                description: 'onSubmitLabel',
+              },
+            },
+          },
+          {
+            title: 'onSubmitLabel',
+          },
+        ],
+        'ui:options': {
+          oneOf: {
+            options: [
+              {
+                label: 'onSubmitLabel',
+                index: 0,
+                value: {
+                  type: 'grid',
+                },
+              },
+              {
+                label: 'onSubmitLabel',
+                index: 1,
+                value: {
+                  type: 'carousel',
+                },
+              },
+              {
+                label: 'onSubmitLabel',
+                index: 1,
+                value: {
+                  type: 'column',
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  });
+});

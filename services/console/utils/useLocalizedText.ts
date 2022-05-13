@@ -41,7 +41,7 @@ export const useLocalizedText = () => {
             : { ...mayBeTranslatable };
           for (const key of Object.keys(newObject)) {
             const value = newObject[key];
-            if (isTranslatedElement(key, value) || isArray) {
+            if (isTranslatedElement(key, value)) {
               newObject[key] = localize(value);
             } else {
               newObject[key] = localizeSchemaForm(value);
