@@ -1,4 +1,4 @@
-import { useCallback, ChangeEvent } from 'react';
+import { ChangeEvent, useCallback } from 'react';
 import { useField } from 'react-final-form';
 import Input from '../Input';
 import { useSchemaForm } from './context';
@@ -13,6 +13,13 @@ export const FieldText = (props: FieldProps) => {
   const field = useField(props.name);
   const { components } = useSchemaForm();
   const { 'ui:widget': uiWidget, 'ui:options': uiOptions } = props.schema;
+
+  const onChange = useCallback(
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+      field.input.onChange(props.schema.type === 'number' ? +value : value);
+    },
+    []
+  );
 
   switch (uiWidget) {
     case 'textarea':
@@ -33,13 +40,6 @@ export const FieldText = (props: FieldProps) => {
       const Component = components.FieldDate || FieldDate;
       return <Component {...props} />;
   }
-
-  const onChange = useCallback(
-    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-      field.input.onChange(props.schema.type === 'number' ? +value : value);
-    },
-    []
-  );
 
   return (
     <Description text={props.schema.description}>
