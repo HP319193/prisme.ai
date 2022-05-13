@@ -24,9 +24,9 @@ export const FieldObject = (props: FieldProps) => {
 
   return (
     <div
-      className={
+      className={`space-y-5 ${
         noBorder ? '' : 'm-2 p-2 pl-3 border-[1px] border-gray-200 rounded'
-      }
+      }`}
     >
       <Description text={props.schema.description}>
         <components.FieldContainer {...props}>

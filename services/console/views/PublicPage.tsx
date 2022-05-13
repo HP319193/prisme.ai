@@ -136,7 +136,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   }
 
   return (
-    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw]">
+    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-scroll min-h-full">
       <Head>
         <title>{localize(currentPage.name)}</title>
         <meta name="description" content={localize(currentPage.description)} />
@@ -144,7 +144,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
       {currentPage.styles && (
         <style dangerouslySetInnerHTML={{ __html: currentPage.styles }} />
       )}
-      <div className="page-blocks">
+      <div className="flex flex-1 flex-col page-blocks w-full">
         {blocks.map(
           (
             { name = '', appInstance = '', url = '', component: Component },

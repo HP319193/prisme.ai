@@ -6,9 +6,11 @@ import {
 } from '@prisme.ai/design-system';
 import { FieldProps } from '@prisme.ai/design-system/lib/Components/SchemaForm/types';
 import { useTranslation } from 'next-i18next';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useField } from 'react-final-form';
 import SchemaFormBuilder from '../SchemaFormBuilder';
+import useLocalizedText from '../../utils/useLocalizedText';
+import BlockTitle from './Components/BlockTitle';
 
 const defaultSchema = {
   type: 'string',
@@ -45,6 +47,15 @@ const SchemaField = ({ name }: FieldProps) => {
 const schema: Schema = {
   type: 'object',
   properties: {
+    title: {
+      type: 'localized:string',
+      title: 'pages.blocks.settings.blockTitle.label',
+      description: 'pages.blocks.settings.blockTitle.description',
+    },
+    schema: {
+      type: 'object',
+      'ui:widget': SchemaField,
+    },
     onSubmit: {
       type: 'string',
       title: 'pages.blocks.form.onSubmit.label',
@@ -55,15 +66,12 @@ const schema: Schema = {
       title: 'pages.blocks.form.onChange.label',
       description: 'pages.blocks.form.onChange.description',
     },
-    schema: {
-      type: 'object',
-      'ui:widget': SchemaField,
-    },
   },
 };
 
 export const Form = ({}) => {
   const { config = {}, events } = useBlock();
+  const { localizeSchemaForm } = useLocalizedText();
 
   const onChange = useCallback(
     (values: any) => {
@@ -81,10 +89,15 @@ export const Form = ({}) => {
     [config.onSubmit, events]
   );
 
+  const localizedSchema = useMemo(() => {
+    return localizeSchemaForm(config.schema || defaultSchema);
+  }, [config.schema, localizeSchemaForm]);
+
   return (
-    <div className="p-4">
+    <div className="p-8">
+      {config.title && <BlockTitle value={config.title} />}
       <SchemaForm
-        schema={config.schema || defaultSchema}
+        schema={localizedSchema}
         onChange={onChange}
         onSubmit={onSubmit}
       />

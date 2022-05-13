@@ -2,7 +2,7 @@
 
 exports[`should render 1`] = `
 <div
-  className="block-header block-header__container flex flex-1 flex-col md:!flex-row justify-between md:items-center"
+  className="block-header block-header__container flex flex-1 flex-col md:!flex-row justify-between md:items-center px-4 py-2"
 >
   <div
     className="block-header__left flex md:justify-center"

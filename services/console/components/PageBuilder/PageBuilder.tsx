@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
@@ -13,8 +13,13 @@ import * as BuiltinBlocks from '../Blocks';
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
   onChange: (value: Prismeai.Page) => void;
+  setOnSave: (fn: () => void) => void;
 }
-export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
+export const PageBuilder = ({
+  value,
+  onChange,
+  setOnSave,
+}: PageBuilderProps) => {
   const { workspace } = useWorkspace();
   const { appInstances } = useApps();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
@@ -26,11 +31,15 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   >();
   const [blockEditing, setBlockEditing] = useState<string>();
 
-  const hidePanel = useCallback(() => {
-    setBlockSelecting(undefined);
-    setBlockEditing(undefined);
-    setPanelIsOpen(false);
+  const hidePanel = useCallback(async () => {
+    await setBlockSelecting(undefined);
+    await setBlockEditing(undefined);
+    await setPanelIsOpen(false);
   }, []);
+
+  useEffect(() => {
+    setOnSave(hidePanel);
+  }, [hidePanel, setOnSave]);
 
   const blocks: PageBuilderContext['blocks'] = useMemo(() => {
     return [
@@ -68,7 +77,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
 
   const setEditBlock = useCallback(
     async (blockId: string) => {
-      hidePanel();
+      await hidePanel();
       setBlockEditing(blockId);
       setPanelIsOpen(true);
     },
@@ -95,8 +104,8 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   );
 
   const addBlockDetails = useCallback(async () => {
-    return new Promise<string>((resolve) => {
-      hidePanel();
+    return new Promise<string>(async (resolve) => {
+      await hidePanel();
       setBlockSelecting({
         onSubmit: (blockSlug: string) => {
           resolve(blockSlug);
@@ -122,13 +131,13 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   );
 
   const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
-    (key) => {
+    async (key) => {
       const newBlocks = (value.blocks || []).filter(({ key: k }) => k !== key);
       onChange({
         ...value,
         blocks: newBlocks,
       });
-      hidePanel();
+      await hidePanel();
     },
     [hidePanel, onChange, value]
   );

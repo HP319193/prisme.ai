@@ -1,8 +1,4 @@
-import {
-  DownOutlined,
-  LeftCircleOutlined,
-  RightCircleOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import {
   Schema,
   StretchContent,
@@ -21,10 +17,16 @@ import {
 } from 'react';
 import IconLink from '../../icons/icon-link.svgr';
 import useLocalizedText from '../../utils/useLocalizedText';
+import BlockTitle from './Components/BlockTitle';
 
 const schema: Schema = {
   type: 'object',
   properties: {
+    title: {
+      type: 'localized:string',
+      title: 'pages.blocks.settings.blockTitle.label',
+      description: 'pages.blocks.settings.blockTitle.description',
+    },
     cards: {
       type: 'array',
       title: 'pages.blocks.cards.settings.cards',
@@ -161,17 +163,17 @@ const schema: Schema = {
         oneOf: {
           options: [
             {
-              label: 'pages.blocks.cards.settings.layout.carousel',
+              label: 'pages.blocks.cards.settings.layout.grid',
               index: 0,
               value: {
-                type: 'carousel',
+                type: 'grid',
               },
             },
             {
-              label: 'pages.blocks.cards.settings.layout.grid',
+              label: 'pages.blocks.cards.settings.layout.carousel',
               index: 1,
               value: {
-                type: 'grid',
+                type: 'carousel',
               },
             },
             {
@@ -371,141 +373,148 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
   );
 
   return (
-    <div className="relative">
-      <div ref={container} className={styles.container}>
-        {(cards as Card[]).map(
-          ({ title, description, cover, content = [] }, index) => (
-            <div
-              key={index}
-              className="flex flex-col snap-start my-4 pl-[10px] group w-[325px]"
-              style={{
-                flex: '0 0 325px',
-              }}
-            >
-              <div className="relative flex flex-1 flex-col mx-2 rounded-[20px]">
-                <div
-                  className="h-[303px] p-[-1px] rounded-[20px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top"
-                  style={{
-                    backgroundImage: cover ? `url(${cover})` : undefined,
-                    backgroundColor: cover ? undefined : getRandomColor(index),
-                  }}
-                />
-                <div
-                  className="
+    <div>
+      <div className="pt-8 pl-8">
+        {config.title && <BlockTitle value={config.title} />}
+      </div>
+      <div className="relative p-4 !pt-0">
+        <div ref={container} className={styles.container}>
+          {(cards as Card[]).map(
+            ({ title, description, cover, content = [] }, index) => (
+              <div
+                key={index}
+                className="flex flex-col snap-start my-4 pl-[10px] group w-[325px]"
+                style={{
+                  flex: '0 0 325px',
+                }}
+              >
+                <div className="relative flex flex-1 flex-col mx-2 rounded-[20px]">
+                  <div
+                    className="h-[303px] p-[-1px] rounded-[20px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top"
+                    style={{
+                      backgroundImage: cover ? `url(${cover})` : undefined,
+                      backgroundColor: cover
+                        ? undefined
+                        : getRandomColor(index),
+                    }}
+                  />
+                  <div
+                    className="
                     relative flex flex-col min-h-[203px] mt-[103px]
                     rounded-[20px] p-4 border-[1px] border-gray-200
                   bg-white
                     transition-transform
                     group-hover:translate-y-3 group-hover:scale-105 shadow-sm group-hover:shadow-lg
                   "
-                >
-                  <div className="font-bold text-sm text-accent text-center">
-                    {localize(title)}
-                  </div>
-                  <div className="text-[10px] my-2 text-neutral-500 text-center">
-                    {localize(description)}
-                  </div>
-                  {content &&
-                    Array.isArray(content) &&
-                    content.map((item, index) => (
-                      <div key={index} className="flex mb-4">
-                        {item.type === 'text' && (
-                          <div>
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: localize(item.value),
-                              }}
-                            />
-                          </div>
-                        )}
-                        {item.type === 'button' && (
-                          <button
-                            className="flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left"
-                            onClick={() => {
-                              if (item.url) {
-                                window.open(localize(item.url));
-                              }
-                              if (item.event && events) {
-                                events.emit(item.event, item.payload);
-                              }
-                            }}
-                          >
-                            <div className="flex mr-2">
-                              {item.icon ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                  src={item.icon}
-                                  alt={localize(item.value)}
-                                  height={16}
-                                  width={16}
-                                />
-                              ) : (
-                                <IconLink height={16} width={16} />
-                              )}
-                            </div>
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: localize(item.value).replace(
-                                  /\n/g,
-                                  '<br />'
-                                ),
-                              }}
-                            />
-                          </button>
-                        )}
-                        {item.type === 'accordion' && (
-                          <div className="flex flex-1 border-[1px] border-neutral-200 rounded p-2">
-                            <Accordion
-                              title={
-                                <div className="flex flex-row items-center">
-                                  {item.icon && (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img
-                                      src={item.icon}
-                                      alt={localize(item.title)}
-                                      width={16}
-                                      height={16}
-                                      className="mr-2"
-                                    />
-                                  )}{' '}
-                                  {localize(item.title)}
-                                </div>
-                              }
-                            >
+                  >
+                    <div className="font-bold text-sm text-accent text-center">
+                      {localize(title)}
+                    </div>
+                    <div className="text-[10px] my-2 text-neutral-500 text-center">
+                      {localize(description)}
+                    </div>
+                    {content &&
+                      Array.isArray(content) &&
+                      content.map((item, index) => (
+                        <div key={index} className="flex mb-4">
+                          {item.type === 'text' && (
+                            <div>
                               <div
                                 dangerouslySetInnerHTML={{
-                                  __html: localize(item.content),
+                                  __html: localize(item.value),
                                 }}
                               />
-                            </Accordion>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                            </div>
+                          )}
+                          {item.type === 'button' && (
+                            <button
+                              className="flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left"
+                              onClick={() => {
+                                if (item.url) {
+                                  window.open(localize(item.url));
+                                }
+                                if (item.event && events) {
+                                  events.emit(item.event, item.payload);
+                                }
+                              }}
+                            >
+                              <div className="flex mr-2">
+                                {item.icon ? (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img
+                                    src={item.icon}
+                                    alt={localize(item.value)}
+                                    height={16}
+                                    width={16}
+                                  />
+                                ) : (
+                                  <IconLink height={16} width={16} />
+                                )}
+                              </div>
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: localize(item.value).replace(
+                                    /\n/g,
+                                    '<br />'
+                                  ),
+                                }}
+                              />
+                            </button>
+                          )}
+                          {item.type === 'accordion' && (
+                            <div className="flex flex-1 border-[1px] border-neutral-200 rounded p-2">
+                              <Accordion
+                                title={
+                                  <div className="flex flex-row items-center">
+                                    {item.icon && (
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      <img
+                                        src={item.icon}
+                                        alt={localize(item.title)}
+                                        width={16}
+                                        height={16}
+                                        className="mr-2"
+                                      />
+                                    )}{' '}
+                                    {localize(item.title)}
+                                  </div>
+                                }
+                              >
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: localize(item.content),
+                                  }}
+                                />
+                              </Accordion>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                  </div>
                 </div>
               </div>
+            )
+          )}
+        </div>
+        {canScroll && (
+          <div className="text-accent text-l">
+            <div className="absolute flex justify-center top-16 left-6 h-8 w-8 bg-white rounded-[100%] shadow-lg">
+              <Tooltip title={t('blocks.cards.prev')} placement="right">
+                <button onClick={scroll(-1)} className="outline-none">
+                  <LeftOutlined className="bg-white rounded-[50%]" />
+                </button>
+              </Tooltip>
             </div>
-          )
+            <div className="absolute flex justify-center top-16 right-6 h-8 w-8 bg-white rounded-[100%] shadow-lg">
+              <Tooltip title={t('blocks.cards.next')} placement="left">
+                <button onClick={scroll(1)} className="outline-none">
+                  <RightOutlined className="bg-white rounded-[50%]" />
+                </button>
+              </Tooltip>
+            </div>
+          </div>
         )}
       </div>
-      {canScroll && (
-        <div className="text-accent text-3xl">
-          <div className="absolute flex justify-center top-12 left-1">
-            <Tooltip title={t('blocks.cards.prev')} placement="right">
-              <button onClick={scroll(-1)} className="outline-none">
-                <LeftCircleOutlined className="bg-white rounded-[50%]" />
-              </button>
-            </Tooltip>
-          </div>
-          <div className="absolute flex justify-center top-12 right-1">
-            <Tooltip title={t('blocks.cards.next')} placement="left">
-              <button onClick={scroll(1)} className="outline-none">
-                <RightCircleOutlined className="bg-white rounded-[50%]" />
-              </button>
-            </Tooltip>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -392,7 +392,11 @@
       "remove": "Supprimer le block",
       "search": "Rechercher un block",
       "settings": {
-        "advanced": "Paramètres avancés",
+        "blockTitle": {
+          "label": "Titre",
+          "description": "Titre affiché au dessus du block"
+        },
+        "generic": "Données dynamiques",
         "title": "Paramètres du Block",
         "toggle_on": "Afficher les réglages",
         "toggle_off": "Masquer les réglages",
@@ -446,22 +450,23 @@
             "label": "Navigation",
             "description": "Vous pouvez ajouter des liens vers des adresses web ou des boutons envoyant des évènements.",
             "items": {
+              "label": "Boutons",
               "external": {
-                "label": "Naviguer vers une page web externe",
+                "label": "Page externe",
                 "value": {
                   "label": "Adresse web",
                   "description": "Indiquez l'adresse web de la page (https://…)."
                 }
               },
               "internal": {
-                "label": "Naviguer vers une page de votre Workspace",
+                "label": "Page de workspace",
                 "value": {
                   "label": "Page",
                   "description": "Choisissez une page de votre Workspace."
                 }
               },
               "inside": {
-                "label": "Défiler vers une section de cette page",
+                "label": "Défiler vers une section",
                 "value": {
                   "label": "Identifiant du Block",
                   "description": "Choisissez un des blocks de votre page vers lequel faire défiler."
@@ -516,7 +521,7 @@
             "title": "Mise en page",
             "description": "Vous pouvez changer de mode d'affichage. Par défaut, les cartes seront affichées à l'aide d'un carousel.",
             "noOptions": "Aucune option disponible",
-            "carousel": "Carousel (Défilement horizontal)",
+            "carousel": "Carousel",
             "grid": "Grille",
             "column": "Colonne"
           }

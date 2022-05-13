@@ -2,10 +2,10 @@ import { ReactElement, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Form, FormSpy } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import Field from './Field';
-import { Schema, UiOptionsSelect } from './types';
+import { Schema } from './types';
 import Button from '../Button';
 import { root } from './utils';
-import { context, SchemaFormContext, FieldContainer } from './context';
+import { context, FieldContainer, SchemaFormContext } from './context';
 import FieldAny from './FieldAny';
 import FieldBoolean from './FieldBoolean';
 import FieldDate from './FieldDate';
@@ -112,7 +112,9 @@ export const SchemaForm = ({
             )}
             <Field schema={schema} name={root} />
             {buttons || (
-              <Button type="submit">{locales.submit || 'Submit'}</Button>
+              <Button type="submit" className="!p-1">
+                {locales.submit || 'Submit'}
+              </Button>
             )}
           </form>
         )}

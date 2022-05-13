@@ -392,7 +392,12 @@
       "remove": "Remove the block",
       "search": "Search a block",
       "settings": {
-        "advanced": "Advanced settings",
+        "blockTitle": {
+          "label": "Title",
+          "description": "Title shown above the block"
+        },
+        "generic": "Dynamic values",
+        "schema": "Configuration",
         "title": "Block settings",
         "toggle_on": "Display settings",
         "toggle_off": "Hide settings",
@@ -438,7 +443,7 @@
               "description": "Choose an image"
             },
             "alt": {
-              "label": "Texts alternatif",
+              "label": "Alternative text",
               "description": "Text displayed in place of the image for non-graphical browsers."
             }
           },
@@ -446,22 +451,23 @@
             "label": "Navigation",
             "description": "You can add links to web addresses or buttons sending events.",
             "items": {
+              "label": "Buttons",
               "external": {
-                "label": "Navigate to an external web page",
+                "label": "External page",
                 "value": {
-                  "label": "Adresse web",
+                  "label": "Web address",
                   "description": "Indicate the web address of the page (https://...)."
                 }
               },
               "internal": {
-                "label": "Navigate to a page in your Workspace",
+                "label": "Workspace's page",
                 "value": {
                   "label": "Page",
                   "description": "Choose a page in your Workspace."
                 }
               },
               "inside": {
-                "label": "Scroll to a section of this page",
+                "label": "Scroll to a section",
                 "value": {
                   "label": "Block ID",
                   "description": "Choose one of the blocks on your page to scroll to."
@@ -471,7 +477,7 @@
                 "label": "Trigger an event",
                 "value": {
                   "label": "Event",
-                  "description": "Indicate the name of the event to be triggered."
+                  "description": "Specify the name of the event to be triggered."
                 }
               },
               "text": {
@@ -516,8 +522,8 @@
             "title": "Layout",
             "description": "You can change the display mode. By default, maps will be displayed using a carousel.",
             "noOptions": "No option available",
-            "carousel": "Carousel (Horizontal scroll)",
-            "grid": "grid",
+            "carousel": "Carousel",
+            "grid": "Grid",
             "column": "Column"
           }
         }

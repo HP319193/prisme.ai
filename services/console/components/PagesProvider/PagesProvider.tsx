@@ -9,10 +9,8 @@ export const defaultStyles = `body {
 }
 .page-blocks {
   max-width: 768px;
-  min-height: 100vh;
   margin-left: auto;
   margin-right: auto;
-  overflow: hidden;
   background-color: white;
 }`;
 
