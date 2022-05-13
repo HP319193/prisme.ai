@@ -1,6 +1,7 @@
 import { Schema, Table, useBlock } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
+import BlockTitle from './Components/BlockTitle';
 
 const previewData = Array.from(new Array(100000), (v, k) => ({
   Id: k,
@@ -52,11 +53,21 @@ export const DataTable = ({ edit }: { edit: boolean }) => {
     [t]
   );
 
-  return <Table dataSource={data} columns={columns} locale={locales} />;
+  return (
+    <div className="p-8">
+      {config.title && <BlockTitle value={config.title} />}
+      <Table dataSource={data} columns={columns} locale={locales} />
+    </div>
+  );
 };
 DataTable.schema = {
   type: 'object',
   properties: {
+    title: {
+      type: 'localized:string',
+      title: 'pages.blocks.settings.blockTitle.label',
+      description: 'pages.blocks.settings.blockTitle.description',
+    },
     data: {
       type: 'array',
       title: 'pages.blocks.datatable.settings.data.label',

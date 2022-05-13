@@ -392,6 +392,10 @@
       "remove": "Eliminar el block",
       "search": "Buscar un block",
       "settings": {
+        "blockTitle": {
+          "label": "Título",
+          "description": "Título que se muestra encima del block"
+        },
         "generic": "Datos dinámicos",
         "schema": "Configuración",
         "title": "Parámetros del Block",

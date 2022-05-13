@@ -392,8 +392,11 @@
       "remove": "Supprimer le block",
       "search": "Rechercher un block",
       "settings": {
+        "blockTitle": {
+          "label": "Titre",
+          "description": "Titre affiché au dessus du block"
+        },
         "generic": "Données dynamiques",
-        "title": "Configuration",
         "title": "Paramètres du Block",
         "toggle_on": "Afficher les réglages",
         "toggle_off": "Masquer les réglages",

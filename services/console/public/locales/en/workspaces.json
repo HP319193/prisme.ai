@@ -392,6 +392,10 @@
       "remove": "Remove the block",
       "search": "Search a block",
       "settings": {
+        "blockTitle": {
+          "label": "Title",
+          "description": "Title shown above the block"
+        },
         "generic": "Dynamic values",
         "schema": "Configuration",
         "title": "Block settings",

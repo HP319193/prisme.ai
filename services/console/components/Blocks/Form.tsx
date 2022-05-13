@@ -10,6 +10,7 @@ import { useCallback, useMemo } from 'react';
 import { useField } from 'react-final-form';
 import SchemaFormBuilder from '../SchemaFormBuilder';
 import useLocalizedText from '../../utils/useLocalizedText';
+import BlockTitle from './Components/BlockTitle';
 
 const defaultSchema = {
   type: 'string',
@@ -46,6 +47,11 @@ const SchemaField = ({ name }: FieldProps) => {
 const schema: Schema = {
   type: 'object',
   properties: {
+    title: {
+      type: 'localized:string',
+      title: 'pages.blocks.settings.blockTitle.label',
+      description: 'pages.blocks.settings.blockTitle.description',
+    },
     schema: {
       type: 'object',
       'ui:widget': SchemaField,
@@ -89,6 +95,7 @@ export const Form = ({}) => {
 
   return (
     <div className="p-8">
+      {config.title && <BlockTitle value={config.title} />}
       <SchemaForm
         schema={localizedSchema}
         onChange={onChange}
