@@ -146,6 +146,9 @@ const schema: Schema = {
       type: 'object',
       oneOf: [
         {
+          title: 'pages.blocks.cards.settings.layout.noOptions',
+        },
+        {
           title: 'pages.blocks.cards.settings.layout.carousel',
           properties: {
             autoScroll: {
@@ -154,9 +157,6 @@ const schema: Schema = {
               description: 'pages.blocks.cards.settings.autoScroll.description',
             },
           },
-        },
-        {
-          title: 'pages.blocks.cards.settings.layout.noOptions',
         },
       ],
       'ui:options': {
@@ -170,17 +170,17 @@ const schema: Schema = {
               },
             },
             {
+              label: 'pages.blocks.cards.settings.layout.column',
+              index: 0,
+              value: {
+                type: 'column',
+              },
+            },
+            {
               label: 'pages.blocks.cards.settings.layout.carousel',
               index: 1,
               value: {
                 type: 'carousel',
-              },
-            },
-            {
-              label: 'pages.blocks.cards.settings.layout.column',
-              index: 1,
-              value: {
-                type: 'column',
               },
             },
           ],
