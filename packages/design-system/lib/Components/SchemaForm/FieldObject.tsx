@@ -30,7 +30,7 @@ export const FieldObject = (props: FieldProps) => {
     >
       <Description text={props.schema.description}>
         <components.FieldContainer {...props}>
-          <label className="text-[10px] text-gray">
+          <label className="text-[10px] text-gray max-w-[80%]">
             {props.label || props.schema.title || getLabel(props.name)}
           </label>
           {grid && <LayoutGrid grid={grid} {...props} />}
