@@ -648,7 +648,9 @@
       "number": "Number",
       "localized_number": "Localized number",
       "object": "Object",
-      "array": "Array"
+      "array": "Array",
+      "upload": "File upload",
+      "textarea": "Text area"
     }
   },
   "feed": {

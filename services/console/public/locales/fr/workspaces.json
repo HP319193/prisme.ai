@@ -647,7 +647,9 @@
       "number": "Nombre",
       "localized_number": "Nombre localisé",
       "object": "Objet",
-      "array": "Tableau"
+      "array": "Tableau",
+      "upload": "Envoi de fichier",
+      "textarea": "Zone de texte"
     }
   },
   "feed": {

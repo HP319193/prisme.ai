@@ -648,7 +648,9 @@
       "number": "Número",
       "localized_number": "Número localizado",
       "object": "Objeto",
-      "array": "Cuadro"
+      "array": "Cuadro",
+      "upload": "Carga de archivos",
+      "textarea": "Área de texto"
     }
   },
   "feed": {

@@ -1,4 +1,9 @@
-import { Schema, schemaTypes, Select } from '@prisme.ai/design-system';
+import {
+  Schema,
+  schemaTypes,
+  Select,
+  UIWidgets,
+} from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import LocalizedInput from '../LocalizedInput';
@@ -6,6 +11,9 @@ import Properties from './Properties';
 
 const UIWIDGET_DEFAULTS: Record<string, any> = {
   upload: {
+    type: 'string',
+  },
+  textarea: {
     type: 'string',
   },
 }; // not yet implemented: select, date, textarea
@@ -62,7 +70,11 @@ export const SchemaFormBuilder = ({
         value,
       })),
       {
-        label: t('schema.types.fileUpload'),
+        label: t('schema.types.textarea'),
+        value: 'textarea',
+      },
+      {
+        label: t('schema.types.upload'),
         value: 'upload',
       },
     ],
@@ -70,12 +82,13 @@ export const SchemaFormBuilder = ({
   );
 
   const selectedValue = useMemo(() => {
-    switch (value['ui:widget']) {
-      case 'upload':
-        return 'upload';
-      default:
-        return value.type;
+    if (
+      Object.keys(UIWIDGET_DEFAULTS).includes(value['ui:widget'] as UIWidgets)
+    ) {
+      return value['ui:widget'];
     }
+
+    return value.type;
   }, [value]);
 
   return (
