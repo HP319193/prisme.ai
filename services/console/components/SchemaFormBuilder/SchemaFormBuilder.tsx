@@ -1,8 +1,14 @@
-import { Select, Schema, schemaTypes } from '@prisme.ai/design-system';
+import { Schema, schemaTypes, Select } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import LocalizedInput from '../LocalizedInput';
 import Properties from './Properties';
+
+const UIWIDGET_DEFAULTS: Record<string, any> = {
+  upload: {
+    type: 'string',
+  },
+}; // not yet implemented: select, date, textarea
 
 interface SchemaFormBuilderProps {
   value: Schema;
@@ -16,7 +22,7 @@ export const SchemaFormBuilder = ({
   const { t } = useTranslation('workspaces');
   const update = useCallback(
     (type: string) => (v: any) => {
-      const newValue = { ...value };
+      let newValue = { ...value };
       if (type === 'type') {
         if (v !== 'array') {
           delete newValue.items;
@@ -25,6 +31,21 @@ export const SchemaFormBuilder = ({
           delete newValue.properties;
           delete newValue.additionalProperties;
         }
+
+        if (Object.keys(UIWIDGET_DEFAULTS).includes(v)) {
+          newValue = {
+            ...newValue,
+            ...UIWIDGET_DEFAULTS[v],
+            'ui:widget': v,
+          };
+        } else {
+          newValue.type = v;
+          delete newValue['ui:widget'];
+        }
+
+        return onChange({
+          ...newValue,
+        });
       }
       onChange({
         ...newValue,
@@ -35,13 +56,27 @@ export const SchemaFormBuilder = ({
   );
 
   const options = useMemo(
-    () =>
-      schemaTypes.map((value) => ({
+    () => [
+      ...schemaTypes.map((value) => ({
         label: t(`schema.types.${value.replace(':', '_')}`),
         value,
       })),
+      {
+        label: t('schema.types.fileUpload'),
+        value: 'upload',
+      },
+    ],
     [t]
   );
+
+  const selectedValue = useMemo(() => {
+    switch (value['ui:widget']) {
+      case 'upload':
+        return 'upload';
+      default:
+        return value.type;
+    }
+  }, [value]);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -74,7 +109,7 @@ export const SchemaFormBuilder = ({
       <Select
         selectOptions={options}
         label="type"
-        value={value.type}
+        value={selectedValue}
         onChange={update('type')}
       />
       {value.type === 'array' && (

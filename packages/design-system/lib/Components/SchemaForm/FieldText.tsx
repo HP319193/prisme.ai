@@ -18,7 +18,7 @@ export const FieldText = (props: FieldProps) => {
     ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
       field.input.onChange(props.schema.type === 'number' ? +value : value);
     },
-    []
+    [field.input.onChange, props.schema.type]
   );
 
   switch (uiWidget) {

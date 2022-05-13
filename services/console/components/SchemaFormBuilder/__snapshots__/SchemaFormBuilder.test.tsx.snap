@@ -103,6 +103,10 @@ Object {
                 "label": "schema.types.array",
                 "value": "array",
               },
+              Object {
+                "label": "schema.types.fileUpload",
+                "value": "upload",
+              },
             ]
           }
           value="object"
@@ -254,6 +258,10 @@ Object {
             Object {
               "label": "schema.types.array",
               "value": "array",
+            },
+            Object {
+              "label": "schema.types.fileUpload",
+              "value": "upload",
             },
           ],
           "value": "object",
