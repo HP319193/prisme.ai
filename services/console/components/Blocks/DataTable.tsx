@@ -56,7 +56,9 @@ export const DataTable = ({ edit }: { edit: boolean }) => {
   return (
     <div className="p-8">
       {config.title && <BlockTitle value={config.title} />}
-      <Table dataSource={data} columns={columns} locale={locales} />
+      <div className="overflow-scroll">
+        <Table dataSource={data} columns={columns} locale={locales} />
+      </div>
     </div>
   );
 };
