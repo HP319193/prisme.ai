@@ -113,7 +113,6 @@ export const Page = () => {
   const { localize } = useLocalizedText();
   const { pages, savePage, deletePage } = usePages();
   const [displayPreview, setDisplayPreview] = useState(false);
-  const [additionalSaveAction, setAdditionalSaveAction] = useState<Function>();
 
   const {
     query: { id: workspaceId, pageId },
@@ -206,7 +205,6 @@ export const Page = () => {
   const save = useCallback(async () => {
     if (!value || !page || !page.id) return;
     setSaving(true);
-    if (additionalSaveAction) additionalSaveAction();
     try {
       await savePage(workspace.id, cleanValue(value));
 
@@ -221,15 +219,7 @@ export const Page = () => {
       });
     }
     setSaving(false);
-  }, [
-    additionalSaveAction,
-    cleanValue,
-    page,
-    savePage,
-    t,
-    value,
-    workspace.id,
-  ]);
+  }, [cleanValue, page, savePage, t, value, workspace.id]);
 
   const confirmDeletePage = useCallback(async () => {
     await push(`/workspaces/${workspace.id}`);
@@ -344,11 +334,7 @@ export const Page = () => {
         >
           <PagePreview page={cleanValue(value)} />
         </div>
-        <PageBuilder
-          value={value}
-          onChange={setValue}
-          setOnSave={(fn: Function) => setAdditionalSaveAction(() => fn)}
-        />
+        <PageBuilder value={value} onChange={setValue} />
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
@@ -13,13 +13,8 @@ import * as BuiltinBlocks from '../Blocks';
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
   onChange: (value: Prismeai.Page) => void;
-  setOnSave: (fn: () => void) => void;
 }
-export const PageBuilder = ({
-  value,
-  onChange,
-  setOnSave,
-}: PageBuilderProps) => {
+export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const { workspace } = useWorkspace();
   const { appInstances } = useApps();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
@@ -37,9 +32,12 @@ export const PageBuilder = ({
     await setPanelIsOpen(false);
   }, []);
 
+  const prevValue = useRef(value);
   useEffect(() => {
-    setOnSave(hidePanel);
-  }, [hidePanel, setOnSave]);
+    if (value === prevValue.current) return;
+    prevValue.current = value;
+    hidePanel();
+  }, [hidePanel, value]);
 
   const blocks: PageBuilderContext['blocks'] = useMemo(() => {
     return [
@@ -95,10 +93,11 @@ export const PageBuilder = ({
           : block
       );
       if (equal(newBlocks, value.blocks)) return;
-      onChange({
+      prevValue.current = {
         ...value,
         blocks: newBlocks,
-      });
+      };
+      onChange(prevValue.current);
     },
     [onChange, value]
   );
@@ -121,10 +120,11 @@ export const PageBuilder = ({
       const newBlocks = [...value.blocks];
       const blockKey = nanoid();
       newBlocks.splice(position, 0, { name: block, key: blockKey });
-      onChange({
+      prevValue.current = {
         ...value,
         blocks: newBlocks,
-      });
+      };
+      onChange(prevValue.current);
       setEditBlock(blockKey);
     },
     [addBlockDetails, onChange, setEditBlock, value]
@@ -133,10 +133,11 @@ export const PageBuilder = ({
   const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
     async (key) => {
       const newBlocks = (value.blocks || []).filter(({ key: k }) => k !== key);
-      onChange({
+      prevValue.current = {
         ...value,
         blocks: newBlocks,
-      });
+      };
+      onChange(prevValue.current);
       await hidePanel();
     },
     [hidePanel, onChange, value]
