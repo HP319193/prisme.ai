@@ -104,7 +104,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
   useEffect(() => {
     const page = cachedPage;
     if (!isPage(page)) return;
-    page.blocks.forEach(({ config: { automation } = {} }, index) => {
+    (page.blocks || []).forEach(({ config: { automation } = {} }, index) => {
       if (!automation || !page.workspaceId) return;
 
       initWithAutomation(page.workspaceId, automation, index);
