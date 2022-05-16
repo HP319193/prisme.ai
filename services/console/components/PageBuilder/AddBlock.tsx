@@ -13,7 +13,7 @@ const AddBlock = ({ after, centered = false }: AddBlockProps) => {
   return (
     <div
       className={`flex justify-center absolute ${
-        centered ? 'right-0 left-0' : 'right-[-10px] top-[-10px]'
+        centered ? 'right-0 left-0' : 'left-[-10px] top-[-10px]'
       } z-10`}
     >
       <Tooltip title={t('pages.blocks.add')}>

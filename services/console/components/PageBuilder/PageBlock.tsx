@@ -47,7 +47,7 @@ const PageBlockWithProvider = ({
       </div>
 
       <PageBlockProvider blockId={id}>
-        <div className="flex grow  relative flex-col surface-section border-slate-100 bg-white  border overflow-hidden z-2">
+        <div className="flex grow relative flex-col surface-section border-slate-100 bg-white  border overflow-hidden z-2">
           {Component && <Component edit />}
           {url && (
             <Block
