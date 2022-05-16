@@ -143,6 +143,8 @@
       "description_fetch": "Envía una petición HTTP.",
       "description_break": "Detiene la ejecución de una automatización.",
       "search": "Investigador",
+      "anyFieldError": "JSON inválido",
+      "anyFieldErrorTooltip": "Esto es sólo una advertencia, la instrucción seguirá guardando",
       "item": {
         "add": "Añadir un elemento",
         "remove": "Borrar el elemento"

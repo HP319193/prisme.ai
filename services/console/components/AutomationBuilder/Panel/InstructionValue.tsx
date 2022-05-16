@@ -6,6 +6,7 @@ import {
   getSchemaFormLabel,
   SchemaForm,
   SchemaFormDescription,
+  Tooltip,
 } from '@prisme.ai/design-system';
 import { CodeEditorInline } from '../../CodeEditor/lazy';
 import { useField } from 'react-final-form';
@@ -13,6 +14,7 @@ import FieldContainerWithRaw from '../../FieldContainerWithRaw';
 import useSchema from '../../SchemaForm/useSchema';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';
 import usePages from '../../PagesProvider/context';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 interface InstructionValueProps {
   instruction: string;
@@ -23,6 +25,9 @@ interface InstructionValueProps {
 
 const EmptyButtons: any[] = [];
 const FieldAny = ({ schema, name, label }: FieldProps) => {
+  const { t } = useTranslation('workspaces');
+  const [invalidJSON, setInvalidJSON] = useState(false);
+
   const field = useField(name);
   const [value, setValue] = useState(
     typeof field.input.value === 'string'
@@ -35,12 +40,20 @@ const FieldAny = ({ schema, name, label }: FieldProps) => {
       try {
         const json = JSON.parse(value);
         field.input.onChange(json);
+        setInvalidJSON(false);
       } catch {
         field.input.onChange(value);
+        setInvalidJSON(true);
       }
     },
     [field.input]
   );
+
+  const codeStyle = useMemo(() => {
+    const style: any = { flex: 'auto' };
+    if (invalidJSON) style.border = 'solid #FF9261 1px';
+    return style;
+  }, [invalidJSON]);
 
   return (
     <div className="flex flex-1 flex-col my-2">
@@ -52,8 +65,20 @@ const FieldAny = ({ schema, name, label }: FieldProps) => {
           value={value}
           onChange={onChange}
           mode="json"
-          style={{ flex: 'auto' }}
+          style={codeStyle}
         />
+        <div
+          className={`flex items-center justify-end text-pr-orange text-xs mr-2 ${
+            invalidJSON ? '' : 'invisible'
+          }`}
+        >
+          <Tooltip title={t('automations.instruction.anyFieldErrorTooltip')}>
+            <div>
+              {t('automations.instruction.anyFieldError')}
+              <InfoCircleOutlined className="ml-2" />
+            </div>
+          </Tooltip>
+        </div>
       </SchemaFormDescription>
     </div>
   );
