@@ -19,9 +19,9 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
   }, [cachedPage, page]);
 
   useEffect(() => {
-    if (!isPage(page)) return;
-    setBlocksConfigs((page.blocks || []).map(({ config }) => config));
-  }, [page]);
+    if (!isPage(cachedPage)) return;
+    setBlocksConfigs((cachedPage.blocks || []).map(({ config }) => config));
+  }, [cachedPage]);
 
   const socket = useRef<Events>();
   const off = useRef<Function>();
@@ -47,8 +47,6 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
       return null;
     }
 
-    const s = socket.current;
-
     const updateEvents = (page.blocks || []).reduce<Record<string, number[]>>(
       (prev, { config }, index) =>
         !config || !config.updateOn
@@ -73,8 +71,8 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
     });
 
     (page.blocks || []).forEach(({ config: { onInit } = {} }) => {
-      if (onInit) {
-        s.emit(onInit, {
+      if (onInit && socket.current) {
+        socket.current.emit(onInit, {
           page: page.id,
         });
       }
