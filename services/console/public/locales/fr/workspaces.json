@@ -397,6 +397,7 @@
           "description": "Titre affiché au dessus du block"
         },
         "generic": "Données dynamiques",
+        "schema": "Configuration",
         "title": "Paramètres du Block",
         "toggle_on": "Afficher les réglages",
         "toggle_off": "Masquer les réglages",
@@ -423,11 +424,13 @@
       "name_Cards": "Groupe de cartes",
       "name_DataTable": "Tableau de données",
       "name_Form": "Formulaire",
+      "name_Development": "Développement",
       "description": "",
       "description_Header": "Entête de page",
       "description_Cards": "Afficher un groupe de cartes",
       "description_DataTable": "Afficher un tableau de données",
       "description_Form": "Afficher un formulaire",
+      "description_Development": "Permet de développer votre propre Block. Destiné aux développeurs.",
       "header": {
         "settings": {
           "title": {
@@ -554,6 +557,21 @@
         "schema": {
           "label": "Spécification du formulaire",
           "description": "Utilisez l'interface de construction de formulaire pour ajouter les champs de votre choix."
+        }
+      },
+      "development": {
+        "error": "Erreur inconnue",
+        "error_url": "Veuillez choisir une url de module javascript valide",
+        "error_loading": "Impossible de charger votre Block. Veuillez vérifier que votre environnement de développement est bien lancé et que vous avez bien copié la bonne URL.",
+        "settings": {
+          "url": {
+            "label": "URL du Block",
+            "description": "Lancez la commande `npm start`. Une URL sera affichée. Collez là dans ce champs afin de charger votre Block dans la console."
+          },
+          "block": {
+            "label": "Configuration du Block",
+            "description": "La configuration de votre Block. Si rien ne s'affiche, ajouter une propriété statique `schema` à votre composant React."
+          }
         }
       }
     }

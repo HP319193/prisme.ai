@@ -424,16 +424,18 @@
       "name_Cards": "Grupo de tarjetas",
       "name_DataTable": "Tabla de datos",
       "name_Form": "Formulario",
+      "name_Development": "Desarrollo",
       "description": "",
       "description_Header": "Encabezado de página",
       "description_Cards": "Mostrar un grupo de tarjetas",
       "description_DataTable": "Visualización de una tabla de datos",
       "description_Form": "Mostrar un formulario",
+      "description_Development": "Le permite desarrollar su propio bloque. Para los desarrolladores.",
       "header": {
         "settings": {
           "title": {
             "label": "Título",
-            "description": "Título de su página".
+            "description": "Título de su página."
           },
           "logo": {
             "label": "Logo",
@@ -444,7 +446,7 @@
             },
             "alt": {
               "label": "Texto alternativo",
-              "description": "Texto que se muestra en lugar de la imagen para los navegadores no gráficos".
+              "description": "Texto que se muestra en lugar de la imagen para los navegadores no gráficos."
             }
           },
           "nav": {
@@ -555,6 +557,21 @@
         "schema": {
           "label": "Especificación del formulario",
           "description": "Utilice la interfaz del constructor de formularios para añadir los campos que desee."
+        }
+      },
+      "development": {
+        "error": "Error desconocido",
+        "error_url": "Por favor, elija una url de módulo javascript válida.",
+        "error_loading": "No se ha podido cargar el Block. Compruebe que su entorno de desarrollo está funcionando y que ha copiado la URL correcta.",
+        "settings": {
+          "url": {
+            "label": "URL del Block",
+            "description": "Emita el comando `npm start`. Se mostrará una URL. Pégalo en este campo para cargar tu bloque en la consola."
+          },
+          "block": {
+            "label": "Configuración de Block",
+            "description": "La configuración de su Block. Si no se muestra nada, añada una propiedad estática `schema` a su componente React."
+          }
         }
       }
     }

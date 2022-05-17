@@ -29,6 +29,8 @@
     "dev:docs": "npm run dev --prefix docs",
     "publish:types": "npm publish --workspace=@prisme.ai/types --access=public",
     "publish:broker": "npm publish --workspace=@prisme.ai/broker --access=public",
+    "publish:design-system": "npm publish --workspace=@prisme.ai/design-system --access=public",
+    "publish:sdk": "npm publish --workspace=@prisme.ai/sdk --access=public",
     "check:console": "tsc -p services/console/tsconfig.json",
     "test": "jest --collect-coverage"
   },
