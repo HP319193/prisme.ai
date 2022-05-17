@@ -28,24 +28,26 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
   const [error, setError] = useState(false);
 
   const initSocket = useCallback(async () => {
+    off.current && off.current();
+
     const page = cachedPage;
     if (!isPage(page) || !page.workspaceId) return;
-    const socketAlreadyInstantiatedForId =
+    const socketAlreadyInstantiatedForWorkspace =
       socket.current && socket.current.workspaceId === page.workspaceId;
 
-    if (!page.workspaceId || socketAlreadyInstantiatedForId) {
-      return;
+    if (!socketAlreadyInstantiatedForWorkspace) {
+      if (socket.current) {
+        socket.current.destroy();
+      }
+      try {
+        socket.current = await api.streamEvents(page.workspaceId);
+        setError(false);
+      } catch (e) {
+        setError(true);
+      }
     }
-    if (socket.current) {
-      socket.current.destroy();
-    }
-    try {
-      socket.current = await api.streamEvents(page.workspaceId);
-      setError(false);
-    } catch (e) {
-      setError(true);
-      return null;
-    }
+
+    if (!socket.current) return null;
 
     const updateEvents = (page.blocks || []).reduce<Record<string, number[]>>(
       (prev, { config }, index) =>
@@ -71,7 +73,8 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
     });
 
     (page.blocks || []).forEach(({ config: { onInit } = {} }) => {
-      if (onInit && socket.current) {
+      if (!socket.current) return;
+      if (onInit) {
         socket.current.emit(onInit, {
           page: page.id,
         });
@@ -81,10 +84,13 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
 
   useEffect(() => {
     initSocket();
+  }, [initSocket]);
+
+  useEffect(() => {
     return () => {
       off.current && off.current();
     };
-  }, [initSocket]);
+  }, []);
 
   const initWithAutomation = useCallback(
     async (workspaceId: string, automation: string, index: number) => {
