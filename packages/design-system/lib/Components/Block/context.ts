@@ -6,18 +6,12 @@ export interface BlockContext<T = any> {
   appConfig?: any;
   setConfig?: (config: any) => void;
   config?: T;
-  setSetupComponent?: (setupComponent: ReactNode) => void;
-  setupComponent?: ReactNode;
-  setButtons?: (buttons: ReactNode[]) => void;
-  buttons?: ReactNode[];
   events?: Events;
 }
 
 export const blockContext = createContext<BlockContext>({
   setAppConfig() {},
   setConfig() {},
-  setSetupComponent() {},
-  setButtons() {},
 });
 export const useBlock = <T = any>() =>
   useContext<BlockContext<T>>(blockContext);

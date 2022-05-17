@@ -1,23 +1,43 @@
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { BlockProvider } from '@prisme.ai/design-system';
 import { usePageBuilder } from './context';
+import api from '../../utils/api';
 
 interface PageBlockProviderProps {
   blockId: string;
+  appInstance?: string;
+  workspaceId: string;
   children: ReactNode;
 }
 
-const PageBlockProvider = ({ blockId, children }: PageBlockProviderProps) => {
+const PageBlockProvider = ({
+  blockId,
+  appInstance,
+  workspaceId,
+  children,
+}: PageBlockProviderProps) => {
   const { setBlockConfig, page } = usePageBuilder();
   const [appConfig, setAppConfig] = useState<any>();
 
+  useEffect(() => {
+    if (!appInstance) return;
+    const fetchAppConfig = async () => {
+      try {
+        const appConfig = await api.getAppConfig(workspaceId, appInstance);
+        setAppConfig(appConfig || null);
+      } catch {
+        return;
+      }
+    };
+    fetchAppConfig();
+  }, [appInstance, workspaceId]);
   const setAppConfigHandler = useCallback(
-    (newConfig: any) =>
-      setAppConfig((config: any) => ({
-        ...config,
-        ...newConfig,
-      })),
-    []
+    async (newConfig: any) => {
+      setAppConfig(() => newConfig);
+      if (!page.workspaceId || !appInstance) return;
+      await api.updateAppConfig(page.workspaceId, appInstance, newConfig);
+    },
+    [appInstance, page.workspaceId]
   );
 
   const config = useMemo(
