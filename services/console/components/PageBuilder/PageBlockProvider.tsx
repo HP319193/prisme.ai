@@ -19,7 +19,7 @@ const PageBlockProvider = ({
 }: PageBlockProviderProps) => {
   const { setBlockConfig, page } = usePageBuilder();
   const [appConfig, setAppConfig] = useState<any>();
-  const { workspace } = useWorkspace();
+  const { workspace, socket } = useWorkspace();
 
   useEffect(() => {
     if (!appInstance) {
@@ -66,6 +66,7 @@ const PageBlockProvider = ({
       onConfigUpdate={setConfigHandler}
       appConfig={appConfig}
       onAppConfigUpdate={setAppConfigHandler}
+      events={socket}
     >
       {children}
     </BlockProvider>

@@ -1,5 +1,5 @@
-import { FC, useState } from 'react';
-import blockContext, { BlockContext } from './context';
+import { FC } from 'react';
+import blockContext from './context';
 import { Events } from '@prisme.ai/sdk';
 
 interface BlockProviderProps {
