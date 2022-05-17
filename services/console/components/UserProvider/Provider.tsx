@@ -5,7 +5,8 @@ import { ApiError } from '@prisme.ai/sdk';
 import { useRouter } from 'next/router';
 import Storage from '../../utils/Storage';
 
-const PUBLIC_URLS = ['/signin', '/signup', '/page/[pageSlug]'];
+const REDIRECT_IF_SIGNED = ['/signin', '/signup', '/'];
+const PUBLIC_URLS = ['/signin', '/signup', '/pages/[pageSlug]'];
 
 export const UserProvider: FC = ({ children }) => {
   const [user, setUser] = useState<UserContext['user']>(null);
@@ -80,7 +81,7 @@ export const UserProvider: FC = ({ children }) => {
       }
       setUser(null);
       if (!PUBLIC_URLS.includes(route)) {
-        push('/');
+        push('/signin');
       }
     },
     [push, route]
@@ -92,11 +93,17 @@ export const UserProvider: FC = ({ children }) => {
       const user = await api.me();
       setUser(user);
       setLoading(false);
+      if (user.id && REDIRECT_IF_SIGNED.includes(route)) {
+        push('/workspaces');
+      }
+      if (!user.id && !PUBLIC_URLS.includes(route)) {
+        push('/signin');
+      }
     } catch (e) {
       signout(false);
       setTimeout(() => setLoading(false), 200);
     }
-  }, [signout]);
+  }, [push, route, signout]);
 
   const initialFetch = useRef(fetchMe);
 
