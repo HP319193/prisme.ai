@@ -57,7 +57,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     WorkspaceContext['workspace'] | null
   >();
   const [events, setEvents] = useState<WorkspaceContext['events']>('loading');
-  const [socket, setSocket] = useState<Events>(new Events('', ''));
+  const socket = useRef<Events>();
   const latest = useRef<Date | undefined | null>();
   const [readEvents, setReadEvents] = useState<WorkspaceContext['readEvents']>(
     new Set()
@@ -101,19 +101,26 @@ export const WorkspaceLayout: FC = ({ children }) => {
     workspace,
   ]);
   const initSocket = useCallback(async () => {
-    const socketAlreadyInstantiatedForId = socket.workspaceId === workspaceId;
+    const socketAlreadyInstantiatedForId =
+      socket.current && socket.current.workspaceId === workspaceId;
 
     if (!workspaceId || socketAlreadyInstantiatedForId) {
       return;
     }
-    if (socket) {
-      socket.destroy();
+    if (socket.current) {
+      socket.current.destroy();
     }
-    setSocket(await api.streamEvents(workspaceId));
-  }, [socket, workspaceId]);
+    socket.current = await api.streamEvents(workspaceId);
+  }, [workspaceId]);
   useEffect(() => {
     initSocket();
   }, [initSocket]);
+
+  useEffect(() => {
+    return () => {
+      socket.current && socket.current.destroy();
+    };
+  }, []);
 
   const fetchNextEvents = useCallback(
     async (
@@ -175,13 +182,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     fetchNextEvents();
   }, [fetchNextEvents, nextEvents, prevWorkspaceId, workspace]);
 
-  useEffect(() => {
-    return () => {
-      if (!workspace || workspace.id === prevWorkspaceId) return;
-      socket.destroy();
-    };
-  }, [prevWorkspaceId, socket, workspace]);
-
   const readEvent = useCallback(
     (eventId: string) => {
       if (!workspace) return;
@@ -206,6 +206,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   // Listen to new events
   useEffect(() => {
+    if (!socket.current) return;
+
     const listener = async (
       eventName: string,
       eventData: Prismeai.PrismeEvent
@@ -223,7 +225,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         debouncedFetchWorkspace();
       }
     };
-    const off = socket.all(listener);
+    const off = socket.current.all(listener);
     return () => {
       off();
     };
@@ -403,7 +405,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
         createAutomation,
         updateAutomation,
         deleteAutomation,
-        socket: socket,
       }}
     >
       <Head>

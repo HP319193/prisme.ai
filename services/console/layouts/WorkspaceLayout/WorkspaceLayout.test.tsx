@@ -143,12 +143,18 @@ it('should get layout', async () => {
 });
 
 it('should destroy socket', async () => {
-  (Events as any).destroyMock.mockClear();
   const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
+  await act(async () => {
+    await true;
+  });
   expect((Events as any).destroyMock).not.toHaveBeenCalled();
 
   act(() => {
     useRouter().query.id = '43';
+  });
+  await act(async () => {
+    root.update(<WorkspaceLayout>Foo</WorkspaceLayout>);
+    await true;
   });
   expect((Events as any).destroyMock).toHaveBeenCalled();
 });

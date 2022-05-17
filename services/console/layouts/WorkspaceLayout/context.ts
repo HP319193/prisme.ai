@@ -1,5 +1,5 @@
 import { createContext, FC, useContext } from 'react';
-import { Event, EventsFilters, Workspace, Events } from '@prisme.ai/sdk';
+import { Event, EventsFilters, Workspace } from '@prisme.ai/sdk';
 import { ValidationError } from '../../utils/yaml';
 
 export type Pagination = {
@@ -44,7 +44,6 @@ export interface WorkspaceContext {
     automation: Prismeai.Automation
   ) => Promise<(Prismeai.Automation & { slug: string }) | null>;
   deleteAutomation: (slug: string) => Promise<Prismeai.Automation | null>;
-  socket: Events;
 }
 
 export const workspaceContext = createContext<WorkspaceContext>({
@@ -73,7 +72,6 @@ export const workspaceContext = createContext<WorkspaceContext>({
   createAutomation: async () => ({} as Prismeai.Automation & { slug: string }),
   updateAutomation: async () => ({} as Prismeai.Automation & { slug: string }),
   deleteAutomation: async () => ({} as Prismeai.Automation),
-  socket: {} as Events,
 });
 
 export const useWorkspace = () => useContext(workspaceContext);
