@@ -5,12 +5,10 @@ import {
   Modal,
   Tooltip,
   BlockProvider,
-  useBlock,
   SchemaForm,
   Schema,
 } from '@prisme.ai/design-system';
 import {
-  Fragment,
   ReactElement,
   useCallback,
   useEffect,
@@ -145,8 +143,35 @@ const AppsSidebarItem = ({
 };
 
 const AppsSidebarItemWithBlock = (props: AppsSidebarItemProps) => {
+  const [appConfig, setAppConfig] = useState<any>();
+  useEffect(() => {
+    if (!props.slug) return;
+    const fetchAppConfig = async () => {
+      if (!props.slug) return;
+      try {
+        const appConfig = await api.getAppConfig(props.workspaceId, props.slug);
+        setAppConfig(appConfig || null);
+      } catch {
+        return;
+      }
+    };
+    fetchAppConfig();
+  }, [props.slug, props.workspaceId]);
+  const setAppConfigHandler = useCallback(
+    async (newConfig: any) => {
+      setAppConfig(newConfig);
+      if (!props.slug) return;
+      await api.updateAppConfig(props.workspaceId, props.slug, newConfig);
+    },
+    [props.slug, props.workspaceId]
+  );
+
   return (
-    <BlockProvider config={{}} appConfig={{}}>
+    <BlockProvider
+      config={{}}
+      appConfig={appConfig}
+      onAppConfigUpdate={setAppConfigHandler}
+    >
       <AppsSidebarItem {...props} />
     </BlockProvider>
   );
