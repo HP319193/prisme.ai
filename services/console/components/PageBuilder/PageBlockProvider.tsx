@@ -2,6 +2,7 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { BlockProvider } from '@prisme.ai/design-system';
 import { usePageBuilder } from './context';
 import api from '../../utils/api';
+import { useWorkspace } from '../../layouts/WorkspaceLayout';
 
 interface PageBlockProviderProps {
   blockId: string;
@@ -18,9 +19,15 @@ const PageBlockProvider = ({
 }: PageBlockProviderProps) => {
   const { setBlockConfig, page } = usePageBuilder();
   const [appConfig, setAppConfig] = useState<any>();
+  const { workspace } = useWorkspace();
 
   useEffect(() => {
-    if (!appInstance) return;
+    if (!appInstance) {
+      if (workspace && workspace.config) {
+        setAppConfig(workspace.config.value);
+      }
+      return;
+    }
     const fetchAppConfig = async () => {
       try {
         const appConfig = await api.getAppConfig(workspaceId, appInstance);
@@ -30,7 +37,7 @@ const PageBlockProvider = ({
       }
     };
     fetchAppConfig();
-  }, [appInstance, workspaceId]);
+  }, [appInstance, workspace, workspaceId]);
   const setAppConfigHandler = useCallback(
     async (newConfig: any) => {
       setAppConfig(() => newConfig);

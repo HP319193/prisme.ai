@@ -75,10 +75,10 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   const { t } = useTranslation('workspaces');
 
   const appInstance = useMemo(() => {
-    if (!workspace.imports) return null;
+    if (!workspace.imports) return workspace.config;
     const [appName] = instruction.split(/\./);
     if (!workspace.imports[appName]) return workspace.config;
-    return workspace.imports[appName].config || null;
+    return workspace.imports[appName].config || {};
   }, [instruction, workspace.config, workspace.imports]);
 
   const { extractSelectOptions } = useSchema({
