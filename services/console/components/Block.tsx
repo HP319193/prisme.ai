@@ -81,7 +81,7 @@ export const ReactBlock = ({
     };
     const s = document.createElement('script');
 
-    s.innerText = `
+    s.innerHTML = `
     import * as module from '${url}';
     try {
       window['${uniqMethod}'](module);
@@ -93,6 +93,7 @@ export const ReactBlock = ({
     return () => {
       // @ts-ignore
       delete window[uniqMethod];
+      document.body.removeChild(s);
     };
   }, [onLoad, url]);
 
