@@ -95,7 +95,7 @@
       "events": {
         "title": "Événements",
         "item": "Événement",
-        "add": "Ajouter un évènement",
+        "add": "Ajouter un événement",
         "display_one": "L'événement {{events}} survient",
         "display_other": "L'un des événements {{events}} survient",
         "help": "L'automatisation sera exécutées à chaque fois que l'un des événements suivants se produira."
@@ -133,7 +133,7 @@
       "label_break": "Interruption",
       "label_comment": "Commentaire",
       "description": "{{default}}",
-      "description_emit": "Émet un événement de votre choix auquel vous pouvez associer un objet de données. Si vous choisissez de rendre cet évèenment privé, il ne sera pas entendu par les autres espaces de travail et Apps.",
+      "description_emit": "Émet un événement de votre choix auquel vous pouvez associer un objet de données. Si vous choisissez de rendre cet événement privé, il ne sera pas entendu par les autres espaces de travail et Apps.",
       "description_repeat": "Répète une liste d'instructions sur chaque élément d'un tableau de données passé en paramètre ou jusqu'à un certain nombre d'itération.",
       "description_all": "Exécute toutes les instructions du groupe en parallèle. Les instructions suivantes seront exécutées seulement une fois que toutes les intructions de ce groupe seront terminées.",
       "description_wait": "Bloque le traitement de la liste d'instruction jusqu'à ce que l'événement passé en paramètre soit déclenché.",
@@ -158,31 +158,31 @@
         "uploadRemove": "Supprimer le fichier",
         "emit": {
           "event": {
-            "label": "Nom de l'évènement",
-            "description": "Indiquez le nom de l'évènement que vous voulez déclencher."
+            "label": "Nom de l'événement",
+            "description": "Indiquez le nom de l'événement que vous voulez déclencher."
           },
           "payload": {
             "label": "Données à attacher (optionnel, format JSON)",
-            "description": "Vous pouvez attacher n'importe quel type de données à votre évènement."
+            "description": "Vous pouvez attacher n'importe quel type de données à votre événement."
           }
         },
         "wait": {
           "oneOf": {
-            "label": "L'un de ces évènement",
-            "description": "L'automatisation peut attendre jusqu'à ce qu'un évènement particulier se déclenche.",
+            "label": "L'un de ces événement",
+            "description": "L'automatisation peut attendre jusqu'à ce qu'un événement particulier se déclenche.",
             "items": {
-              "label": "Évènement",
+              "label": "Événement",
               "event": {
-                "label": "Nom de l'évènement",
-                "description": "Indiquez le nom de l'évènement qui relancera le déroulement de votre automatisation."
+                "label": "Nom de l'événement",
+                "description": "Indiquez le nom de l'événement qui relancera le déroulement de votre automatisation."
               },
               "filters": {
                 "label": "Filtres",
-                "description": "Filtrer l'évènement selon les valeurs des propriétés qui l'accompagent."
+                "description": "Filtrer l'événement selon les valeurs des propriétés qui l'accompagent."
               },
               "cancelTriggers": {
-                "label": "Ne pas traiter l'évènement",
-                "description": "En cochant cette option, l'évènement sera annulé et ne déclenchera pas d'autre automatisation."
+                "label": "Ne pas traiter l'événement",
+                "description": "En cochant cette option, l'événement sera annulé et ne déclenchera pas d'autre automatisation."
               }
             }
           },
@@ -192,7 +192,7 @@
           },
           "output": {
             "label": "Sortie dans la variable",
-            "description": "Indiquer le nom d'une variable dans laquelle seront stockées les données accompagnant l'évènement qui a débloqué cette étape."
+            "description": "Indiquer le nom d'une variable dans laquelle seront stockées les données accompagnant l'événement qui a débloqué cette étape."
           }
         },
         "set": {
@@ -397,12 +397,12 @@
         "toggle_on": "Afficher les réglages",
         "toggle_off": "Masquer les réglages",
         "onInit": {
-          "label": "Évènement d'initialisation",
-          "description": "Cet évènement sera déclenché lors de l'initialisation du block à chaque visualisation de la page."
+          "label": "Événement d'initialisation",
+          "description": "Cet événement sera déclenché lors de l'initialisation du block à chaque visualisation de la page."
         },
         "updateOn": {
-          "label": "Évènement de mise à jour",
-          "description": "Quand une de vos automatisation émet cet évènement, le contenu du block sera mis à jour avec le contenu de la payload."
+          "label": "Événement de mise à jour",
+          "description": "Quand une de vos automatisation émet cet événement, le contenu du block sera mis à jour avec le contenu de la payload."
         },
         "automation": {
           "label": "Automatisation",
@@ -444,7 +444,7 @@
           },
           "nav": {
             "label": "Navigation",
-            "description": "Vous pouvez ajouter des liens vers des adresses web ou des boutons envoyant des évènements.",
+            "description": "Vous pouvez ajouter des liens vers des adresses web ou des boutons envoyant des événements.",
             "items": {
               "external": {
                 "label": "Naviguer vers une page web externe",
@@ -468,10 +468,10 @@
                 }
               },
               "event": {
-                "label": "Déclencher un évènement",
+                "label": "Déclencher un événement",
                 "value": {
-                  "label": "Évènement",
-                  "description": "Indiquez le nom de l'évènement à déclencher."
+                  "label": "Événement",
+                  "description": "Indiquez le nom de l'événement à déclencher."
                 }
               },
               "text": {
@@ -500,7 +500,7 @@
           "button": {
             "value": "Texte du bouton",
             "url": "Adresse web à afficher",
-            "event": "Évènement à déclencher",
+            "event": "Événement à déclencher",
             "icon": "Icône"
           },
           "accordion": {
@@ -536,12 +536,12 @@
       },
       "form": {
         "onSubmit": {
-          "label": "Évènement à la validation",
-          "description": "Lors de la validation du formulaire, l'évènement sera envoyé avec l'ensemble des ses valeurs."
+          "label": "Événement à la validation",
+          "description": "Lors de la validation du formulaire, l'événement sera envoyé avec l'ensemble des ses valeurs."
         },
         "onChange": {
-          "label": "Évènement à la frappe",
-          "description": "Lors de chaque modification du formulaire, l'évènement sera envoyé avec l'ensemble des ses valeurs."
+          "label": "Événement à la frappe",
+          "description": "Lors de chaque modification du formulaire, l'événement sera envoyé avec l'ensemble des ses valeurs."
         },
         "schema": {
           "label": "Spécification du formulaire",
