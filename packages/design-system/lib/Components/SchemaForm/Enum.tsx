@@ -13,7 +13,7 @@ export const Enum = (props: FieldProps) => {
           (props.schema.enumNames && props.schema.enumNames[k]) || `${value}`,
         value,
       })),
-    []
+    [props.schema]
   );
   if (!FieldSelect) return null;
   return <FieldSelect {...props} options={options} />;

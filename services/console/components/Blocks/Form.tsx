@@ -58,7 +58,7 @@ const schema: Schema = {
       'ui:widget': SchemaField,
     },
     submitLabel: {
-      type: 'string',
+      type: 'localized:string',
       title: 'pages.blocks.form.submitLabel.label',
     },
     onSubmit: {

@@ -4,11 +4,11 @@ import {
   schemaTypes,
   Select,
   UIWidgetsByType,
-  UIWidgetsForString,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import LocalizedInput from '../LocalizedInput';
+import Enum from './Enum';
 import Properties from './Properties';
 
 interface SchemaFormBuilderProps {
@@ -45,6 +45,22 @@ export const SchemaFormBuilder = ({
         });
       }
 
+      if (type === 'enum') {
+        const newValueWithEnum = {
+          ...newValue,
+          enum: v.enum,
+          enumNames: v.enumNames,
+        };
+        if (!newValueWithEnum.enum) {
+          delete newValueWithEnum.enum;
+        }
+        if (!newValueWithEnum.enumNames) {
+          delete newValueWithEnum.enumNames;
+        }
+
+        return onChange(newValueWithEnum);
+      }
+
       onChange({
         ...newValue,
         [type]: v,
@@ -69,9 +85,7 @@ export const SchemaFormBuilder = ({
 
   const uiWidget = useMemo(() => {
     const widgets =
-      UIWidgetsByType[
-        (value.type || 'string') as keyof typeof UIWidgetsByType
-      ] || [];
+      UIWidgetsByType[value.type as keyof typeof UIWidgetsByType] || [];
     if (widgets.length === 0) return null;
     return [
       {
@@ -159,6 +173,11 @@ export const SchemaFormBuilder = ({
             value={value.properties || {}}
             onChange={update('properties')}
           />
+        </div>
+      )}
+      {value.type === 'string' && (
+        <div className="flex flex-1 pl-4 border-l-[1px] border-gray-200">
+          <Enum value={value} onChange={update('enum')} />
         </div>
       )}
     </div>

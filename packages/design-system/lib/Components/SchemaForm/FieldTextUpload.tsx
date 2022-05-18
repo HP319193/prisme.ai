@@ -10,7 +10,7 @@ import { useSchemaForm } from './context';
 
 const defaultAccept = 'image/gif,image/jpeg,image/png,image/svg+xml,';
 export const FieldTextUpload = ({
-  schema,
+  schema = {},
   label,
   name,
   options,
