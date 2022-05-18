@@ -43,18 +43,20 @@ jest.mock('next/router', () => {
 });
 
 jest.mock('@prisme.ai/sdk', () => {
-  class Events {
+  class FakeEvents {
     static destroyMock = jest.fn();
     static listeners: any[] = [];
     all(listener: Function) {
-      Events.listeners.push(listener);
-      return () => {};
+      FakeEvents.listeners.push(listener);
+      return () => {
+        FakeEvents.listeners = [];
+      };
     }
     destroy() {
-      Events.destroyMock();
+      FakeEvents.destroyMock();
     }
   }
-  const mockEvents = new Events();
+  const mockEvents = new FakeEvents();
 
   class Api {
     streamEvents() {
@@ -76,7 +78,10 @@ jest.mock('@prisme.ai/sdk', () => {
     }));
   }
 
-  return { Api, Events };
+  const api: any = new Api();
+  api.Api = Api;
+  api.Events = FakeEvents;
+  return api;
 });
 
 beforeEach(() => {
@@ -144,11 +149,13 @@ it('should get layout', async () => {
 
 it('should destroy socket', async () => {
   (Events as any).destroyMock.mockClear();
+  useRouter().query.id = '42';
   const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
   expect((Events as any).destroyMock).not.toHaveBeenCalled();
 
-  act(() => {
+  await act(async () => {
     useRouter().query.id = '43';
+    await true;
   });
   expect((Events as any).destroyMock).toHaveBeenCalled();
 });
@@ -249,6 +256,7 @@ it('should listen to events on socket', async () => {
   await act(async () => {
     await true;
   });
+
   act(() => {
     (Events as any).listeners.forEach((listener: Function) => {
       listener('apps.event', {

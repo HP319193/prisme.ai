@@ -71,6 +71,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [displaySourceView, setDisplaySourceView] = useState(false);
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
   const [fullSidebar, setFullSidebar] = useState(false);
+  const unmount = useRef(false);
 
   const { fetchPages } = usePages();
   useEffect(() => {
@@ -100,21 +101,24 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
     workspace,
   ]);
+
   const initSocket = useCallback(async () => {
     if (!workspaceId) return;
-    setSocket((socket) => {
-      const socketAlreadyInstantiatedForId =
-        socket && socket.workspaceId === workspaceId;
 
-      if (!workspaceId || socketAlreadyInstantiatedForId) {
-        return socket;
-      }
+    const socketAlreadyInstantiatedForId =
+      socket && socket.workspaceId === workspaceId;
 
-      socket && socket.destroy();
-      return socket;
-    });
-    setSocket(await api.streamEvents(workspaceId));
-  }, [workspaceId]);
+    if (socketAlreadyInstantiatedForId) return socket;
+
+    if (socket) {
+      socket.destroy();
+    }
+
+    const newSocket = await api.streamEvents(workspaceId);
+
+    setSocket(newSocket);
+  }, [socket, workspaceId]);
+
   useEffect(() => {
     initSocket();
   }, [initSocket]);
@@ -140,7 +144,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         ...(newPagination || pagination),
       });
 
-      await setEvents((events) => {
+      setEvents((events) => {
         const baseEvents =
           events === 'loading' || emptyEventsList ? [] : events;
 
@@ -181,8 +185,18 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   useEffect(() => {
     return () => {
-      if (!workspace || workspace.id === prevWorkspaceId) return;
-      socket && socket.destroy();
+      unmount.current = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (
+        !socket ||
+        (!unmount.current && (!workspace || workspace.id === prevWorkspaceId))
+      )
+        return;
+      socket.destroy();
     };
   }, [prevWorkspaceId, socket, workspace]);
 
@@ -210,6 +224,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   // Listen to new events
   useEffect(() => {
+    if (!socket) return;
+
     const listener = async (
       eventName: string,
       eventData: Prismeai.PrismeEvent
@@ -219,7 +235,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         createdAt: new Date(eventData.createdAt || ''),
       };
 
-      await setEvents(
+      setEvents((events) =>
         addEventToMap(new Map(events === 'loading' ? [] : events), event)
       );
 
@@ -227,11 +243,12 @@ export const WorkspaceLayout: FC = ({ children }) => {
         debouncedFetchWorkspace();
       }
     };
-    const off = () => socket && socket.all(listener);
+    const off = socket.all(listener);
+
     return () => {
       off();
     };
-  }, [socket, events, workspace, debouncedFetchWorkspace]);
+  }, [socket, workspace, debouncedFetchWorkspace]);
 
   const [invalid, setInvalid] = useState<WorkspaceContext['invalid']>(false);
   const [newSource, setNewSource] = useState<WorkspaceContext['newSource']>();
