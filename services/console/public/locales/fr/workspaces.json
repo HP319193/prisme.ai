@@ -657,7 +657,18 @@
       "items": "Éléments du tableau",
       "required": "Requis",
       "title": "Label du champs",
-      "description": "Description du champs"
+      "description": {
+        "label": "Description du champs",
+        "description": "Ce texte sera affiché dans une bulle exactement comme celle-ci."
+      },
+      "type": {
+        "label": "Type de valeur",
+        "description": "La valeur sera du type que vous aurez spécifié"
+      },
+      "widget": {
+        "label": "Mode d'affichage",
+        "description": "Chaque type propose un affichage particulier, mais certaons proposent des alternatives. Vous pouvez par exemple forcer le choix d'une date avec l'affichage en Date."
+      }
     },
     "types": {
       "string": "Texte",
@@ -668,8 +679,15 @@
       "localized_number": "Nombre localisé",
       "object": "Objet",
       "array": "Tableau",
-      "upload": "Envoi de fichier",
-      "textarea": "Zone de texte"
+      "any": "N'importe quel type"
+    },
+    "widget": {
+      "default_string": "Champ texte simple",
+      "default_localized:string": "Champ texte simple",
+      "name": "{{context}}",
+      "name_upload": "Envoi de fichier",
+      "name_textarea": "Zone de texte",
+      "name_date": "Date et/ou heure"
     }
   },
   "feed": {

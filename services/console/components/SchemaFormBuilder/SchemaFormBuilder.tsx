@@ -1,22 +1,15 @@
 import {
   Schema,
+  SchemaFormDescription,
   schemaTypes,
   Select,
-  UIWidgets,
+  UIWidgetsByType,
+  UIWidgetsForString,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import LocalizedInput from '../LocalizedInput';
 import Properties from './Properties';
-
-const UIWIDGET_DEFAULTS: Record<string, any> = {
-  upload: {
-    type: 'string',
-  },
-  textarea: {
-    type: 'string',
-  },
-}; // not yet implemented: select, date, textarea
 
 interface SchemaFormBuilderProps {
   value: Schema;
@@ -40,21 +33,18 @@ export const SchemaFormBuilder = ({
           delete newValue.additionalProperties;
         }
 
-        if (Object.keys(UIWIDGET_DEFAULTS).includes(v)) {
-          newValue = {
-            ...newValue,
-            ...UIWIDGET_DEFAULTS[v],
-            'ui:widget': v,
-          };
-        } else {
+        if (v) {
           newValue.type = v;
-          delete newValue['ui:widget'];
+        } else {
+          delete newValue.type;
         }
+        delete newValue['ui:widget'];
 
         return onChange({
           ...newValue,
         });
       }
+
       onChange({
         ...newValue,
         [type]: v,
@@ -65,34 +55,66 @@ export const SchemaFormBuilder = ({
 
   const options = useMemo(
     () => [
+      {
+        label: t('schema.types.any'),
+        value: '',
+      },
       ...schemaTypes.map((value) => ({
         label: t(`schema.types.${value.replace(':', '_')}`),
         value,
       })),
-      {
-        label: t('schema.types.textarea'),
-        value: 'textarea',
-      },
-      {
-        label: t('schema.types.upload'),
-        value: 'upload',
-      },
     ],
     [t]
   );
 
-  const selectedValue = useMemo(() => {
-    if (
-      Object.keys(UIWIDGET_DEFAULTS).includes(value['ui:widget'] as UIWidgets)
-    ) {
-      return value['ui:widget'];
-    }
-
-    return value.type;
-  }, [value]);
+  const uiWidget = useMemo(() => {
+    const widgets =
+      UIWidgetsByType[
+        (value.type || 'string') as keyof typeof UIWidgetsByType
+      ] || [];
+    if (widgets.length === 0) return null;
+    return [
+      {
+        label: t('schema.widget.default', { context: value.type || 'string' }),
+        value: '',
+      },
+      ...widgets.map((widget) => ({
+        label: t('schema.widget.name', {
+          context: widget,
+        }),
+        value: widget,
+      })),
+    ];
+  }, [t, value]);
 
   return (
     <div className="flex flex-1 flex-col">
+      <div className="flex flex-row">
+        <SchemaFormDescription
+          className="flex-1"
+          text={t('schema.property.type.description')}
+        >
+          <Select
+            selectOptions={options}
+            label={t('schema.property.type.label')}
+            value={value.type || ''}
+            onChange={update('type')}
+          />
+        </SchemaFormDescription>
+        {uiWidget && (
+          <SchemaFormDescription
+            className="flex-1 ml-2"
+            text={t('schema.property.widget.description')}
+          >
+            <Select
+              selectOptions={uiWidget}
+              label={t('schema.property.widget.label')}
+              value={value['ui:widget'] || ''}
+              onChange={update('ui:widget')}
+            />
+          </SchemaFormDescription>
+        )}
+      </div>
       <LocalizedInput
         value={value.title || ''}
         onChange={update('title')}
@@ -101,14 +123,18 @@ export const SchemaFormBuilder = ({
         }}
         iconMarginTop={17}
       />
-      <LocalizedInput
-        value={value.description || ''}
-        onChange={update('description')}
-        InputProps={{
-          label: t('schema.property.description'),
-        }}
-        iconMarginTop={17}
-      />
+      <SchemaFormDescription
+        text={t('schema.property.description.description')}
+      >
+        <LocalizedInput
+          value={value.description || ''}
+          onChange={update('description')}
+          InputProps={{
+            label: t('schema.property.description.label'),
+          }}
+          iconMarginTop={17}
+        />
+      </SchemaFormDescription>
       {/*
       // Required is not already available
       <label className="flex text-gray my-4">
@@ -119,12 +145,6 @@ export const SchemaFormBuilder = ({
         />
         {t('schema.property.required')}
       </label>*/}
-      <Select
-        selectOptions={options}
-        label="type"
-        value={selectedValue}
-        onChange={update('type')}
-      />
       {value.type === 'array' && (
         <div className="flex flex-1 pl-4 border-l-[1px] border-gray-200">
           <SchemaFormBuilder

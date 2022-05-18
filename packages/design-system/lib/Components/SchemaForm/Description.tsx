@@ -18,7 +18,7 @@ export const Description: FC<DescriptionProps> = ({
     <div className={`relative w-full ${className}`}>
       {children}
       <Tooltip title={text} placement="left">
-        <button className="absolute top-0 right-2">
+        <button type="button" className="absolute top-0 right-2">
           <InfoCircleOutlined />
         </button>
       </Tooltip>
