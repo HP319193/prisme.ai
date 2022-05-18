@@ -57,7 +57,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     WorkspaceContext['workspace'] | null
   >();
   const [events, setEvents] = useState<WorkspaceContext['events']>('loading');
-  const [socket, setSocket] = useState<Events>(new Events('', ''));
+  const [socket, setSocket] = useState<Events>();
   const latest = useRef<Date | undefined | null>();
   const [readEvents, setReadEvents] = useState<WorkspaceContext['readEvents']>(
     new Set()
@@ -101,16 +101,20 @@ export const WorkspaceLayout: FC = ({ children }) => {
     workspace,
   ]);
   const initSocket = useCallback(async () => {
-    const socketAlreadyInstantiatedForId = socket.workspaceId === workspaceId;
+    if (!workspaceId) return;
+    setSocket((socket) => {
+      const socketAlreadyInstantiatedForId =
+        socket && socket.workspaceId === workspaceId;
 
-    if (!workspaceId || socketAlreadyInstantiatedForId) {
-      return;
-    }
-    if (socket) {
-      socket.destroy();
-    }
+      if (!workspaceId || socketAlreadyInstantiatedForId) {
+        return socket;
+      }
+
+      socket && socket.destroy();
+      return socket;
+    });
     setSocket(await api.streamEvents(workspaceId));
-  }, [socket, workspaceId]);
+  }, [workspaceId]);
   useEffect(() => {
     initSocket();
   }, [initSocket]);
@@ -178,7 +182,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   useEffect(() => {
     return () => {
       if (!workspace || workspace.id === prevWorkspaceId) return;
-      socket.destroy();
+      socket && socket.destroy();
     };
   }, [prevWorkspaceId, socket, workspace]);
 
@@ -223,7 +227,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         debouncedFetchWorkspace();
       }
     };
-    const off = socket.all(listener);
+    const off = () => socket && socket.all(listener);
     return () => {
       off();
     };
