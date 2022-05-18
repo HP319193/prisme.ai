@@ -62,6 +62,7 @@ export const Properties = ({ value, onChange }: any) => {
   const items = useMemo(
     () =>
       Object.keys(value || {}).map((key) => ({
+        isEmpty: !key,
         label: (
           <div
             className="relative flex flex-1"
@@ -85,21 +86,28 @@ export const Properties = ({ value, onChange }: any) => {
             </Tooltip>
           </div>
         ),
-        content: (
+        content: key ? (
           <div>
             <div className="pl-4 border-l-[1px] border-x-gray-200">
               <SchemaFormBuilder value={value[key]} onChange={update(key)} />
             </div>
             <Divider />
           </div>
-        ),
+        ) : null,
       })),
     [remove, t, update, updateKey, value]
   );
 
   return (
     <div className="flex flex-1 flex-col mt-[1rem] centered-collapse">
-      <Collapse items={items} expandIconPosition="left" />
+      {items.map((item, key) => (
+        <Collapse
+          key={key}
+          items={[item]}
+          expandIconPosition="left"
+          icon={item.isEmpty ? () => <div className="w-3" /> : undefined}
+        />
+      ))}
       <Button onClick={add}>{t('schema.property.add')}</Button>
     </div>
   );
