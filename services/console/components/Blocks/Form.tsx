@@ -2,45 +2,52 @@ import {
   Button,
   Schema,
   SchemaForm,
-  SchemaFormDescription,
+  Tooltip,
   useBlock,
 } from '@prisme.ai/design-system';
 import { FieldProps } from '@prisme.ai/design-system/lib/Components/SchemaForm/types';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import { useField } from 'react-final-form';
-import SchemaFormBuilder from '../SchemaFormBuilder';
 import useLocalizedText from '../../utils/useLocalizedText';
 import BlockTitle from './Components/BlockTitle';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import Properties from '../SchemaFormBuilder/Properties';
 
 const defaultSchema = {
   type: 'string',
   title: 'preview',
 };
 
-const defaultValue = {
-  type: 'object',
-  properties: {
-    '': {
-      type: 'string',
-    },
-  },
-};
-
-const SchemaField = ({ name }: FieldProps) => {
-  const { t } = useTranslation('workspaces');
+export const SchemaEditor = ({ name }: FieldProps) => {
   const field = useField(name);
+  const { t } = useTranslation('workspaces');
+
   return (
-    <div className="my-4 p-4 border-[1px] border-gray-200 rounded">
-      <SchemaFormDescription text={t('pages.blocks.form.schema.description')}>
-        <label className="text-[10px] text-gray">
+    <div className="flex flex-1 mt-4">
+      <div className="ant-input ">
+        <div className="text-gray pl-4 flex flex-1 flex-row justify-between">
           {t('pages.blocks.form.schema.label')}
-        </label>
-        <SchemaFormBuilder
-          {...field.input}
-          value={field.input.value || defaultValue}
+          <div className="text-accent mr-2">
+            <Tooltip
+              title={t('pages.blocks.form.schema.description')}
+              placement="left"
+            >
+              <InfoCircleOutlined />
+            </Tooltip>
+          </div>
+        </div>
+        <Properties
+          value={field.input.value.properties}
+          onChange={(v: Record<string, Schema>) =>
+            field.input.onChange({
+              type: 'object',
+              properties: v,
+            })
+          }
+          addLabel={t('pages.blocks.form.schema.add')}
         />
-      </SchemaFormDescription>
+      </div>
     </div>
   );
 };
@@ -55,7 +62,7 @@ const schema: Schema = {
     },
     schema: {
       type: 'object',
-      'ui:widget': SchemaField,
+      'ui:widget': SchemaEditor,
     },
     submitLabel: {
       type: 'localized:string',

@@ -14,12 +14,13 @@ export const schemaTypes = [
 ] as const;
 export type SchemaTypes = typeof schemaTypes[number];
 
-export const UIWidgetsForString = ['upload', 'textarea', 'date'];
+export const UIWidgetsForString = ['upload', 'textarea', 'date'] as const;
+export const UIWidgetsForLocalizedString = ['textarea'];
 export const UIWidgetsByType = {
   [schemaTypes[0]]: UIWidgetsForString,
-  [schemaTypes[1]]: UIWidgetsForString,
+  [schemaTypes[1]]: UIWidgetsForLocalizedString,
 };
-export type UIWidgets = typeof UIWidgetsForString;
+export type UIWidgets = typeof UIWidgetsForString[number];
 
 export type UiOptionsGrid = {
   grid: string[][][];

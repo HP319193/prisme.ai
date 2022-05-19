@@ -11,7 +11,17 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import SchemaFormBuilder from './SchemaFormBuilder';
 
-export const Properties = ({ value, onChange }: any) => {
+interface PropertiesProps {
+  value: Record<string, Schema>;
+  onChange: (v: Record<string, Schema>) => void;
+  addLabel?: string;
+}
+
+export const Properties = ({
+  value,
+  onChange,
+  addLabel = 'schema.property.add',
+}: PropertiesProps) => {
   const { t } = useTranslation('workspaces');
   const update = useCallback(
     (updatedKey: keyof typeof value) => (schema: Schema) => {
@@ -108,7 +118,7 @@ export const Properties = ({ value, onChange }: any) => {
           icon={item.isEmpty ? () => <div className="w-3" /> : undefined}
         />
       ))}
-      <Button onClick={add}>{t('schema.property.add')}</Button>
+      <Button onClick={add}>{t(addLabel)}</Button>
     </div>
   );
 };

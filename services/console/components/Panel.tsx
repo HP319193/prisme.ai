@@ -39,7 +39,7 @@ export const Panel: FC<PanelProps> = ({
         duration-200
         overflow-hidden
         ${hidden ? '' : '-translate-x-full'}
-        ${className}
+        ${className || ''}
       `}
     >
       <SidePanel className="!bg-white overflow-hidden h-full rounded !p-0 m-2">

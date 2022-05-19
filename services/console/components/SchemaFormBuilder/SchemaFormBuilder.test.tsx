@@ -58,7 +58,7 @@ it('should add properties in object', () => {
   expect(root.root.findAllByType(Properties).length).toBe(0);
 
   act(() => {
-    root.root.findByType(Select).props.onChange('object');
+    root.root.findAllByType(Select)[1].props.onChange('object');
   });
 
   expect(onChange).toHaveBeenCalledWith({
@@ -120,7 +120,7 @@ it('should clean items when changing type', () => {
     />
   );
   act(() => {
-    root.root.findAllByType(Select)[0].props.onChange('string');
+    root.root.findAllByType(Select)[1].props.onChange('string');
   });
   expect(onChange).toHaveBeenCalledWith({
     type: 'string',
@@ -136,7 +136,7 @@ it('should clean property when changing type', () => {
     />
   );
   act(() => {
-    root.root.findAllByType(Select)[0].props.onChange('string');
+    root.root.findAllByType(Select)[1].props.onChange('string');
   });
   expect(onChange).toHaveBeenCalledWith({
     type: 'string',

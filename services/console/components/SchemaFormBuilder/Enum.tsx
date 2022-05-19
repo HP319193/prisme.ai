@@ -1,6 +1,12 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import { Button, Input, SchemaFormDescription } from '@prisme.ai/design-system';
-import { ChangeEvent, useCallback, useMemo } from 'react';
+import {
+  Button,
+  Input,
+  SchemaFormDescription,
+  Tooltip,
+} from '@prisme.ai/design-system';
+import { useTranslation } from 'next-i18next';
+import { ChangeEvent, useCallback } from 'react';
 
 interface Value {
   enum?: string[];
@@ -11,6 +17,7 @@ interface EnumProps {
   onChange: (v: Value) => void;
 }
 export const Enum = ({ value, onChange }: EnumProps) => {
+  const { t } = useTranslation('workspaces');
   const addValue = useCallback(() => {
     const newValue = { enum: value.enum || [] };
     const index = newValue.enum.push('');
@@ -65,9 +72,12 @@ export const Enum = ({ value, onChange }: EnumProps) => {
   );
 
   return (
-    <SchemaFormDescription text="wesh" className="flex-1 flex-col">
+    <SchemaFormDescription
+      text={t('schema.property.enum.description')}
+      className="flex-1 flex-col"
+    >
       <label className="text-[10px] text-gray">
-        Liste de valeurs spécifiques
+        {t('schema.property.enum.label')}
       </label>
       <div>
         {(value.enum || []).map((v, k) => (
@@ -75,26 +85,28 @@ export const Enum = ({ value, onChange }: EnumProps) => {
             key={k}
             className="relative flex flex-1 flex-row items-center mb-2"
           >
-            <Input label="value" value={v} onChange={updateValue(k)} />
-            <span className="flex m-1">:</span>
             <Input
               label="label"
               placeholder={(value.enumNames || [])[k] || v}
               value={(value.enumNames || [])[k]}
               onChange={updateLabel(k)}
             />
-            <button
-              type="button"
-              className="absolute top-[50%] right-2 text-neutral-500 text-xs"
-              onClick={deleteValue(k)}
-            >
-              <DeleteOutlined />
-            </button>
+            <span className="flex m-1">:</span>
+            <Input label="value" value={v} onChange={updateValue(k)} />
+            <Tooltip title={t('schema.property.enum.remove')}>
+              <button
+                type="button"
+                className="absolute top-[50%] right-2 text-neutral-500 text-xs"
+                onClick={deleteValue(k)}
+              >
+                <DeleteOutlined />
+              </button>
+            </Tooltip>
           </div>
         ))}
       </div>
       <Button type="button" onClick={addValue}>
-        Ajouter une valeur
+        {t('schema.property.enum.add')}
       </Button>
     </SchemaFormDescription>
   );

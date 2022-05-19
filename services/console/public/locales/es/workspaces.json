@@ -558,7 +558,8 @@
         },
         "schema": {
           "label": "Especificación del formulario",
-          "description": "Utilice la interfaz del constructor de formularios para añadir los campos que desee."
+          "description": "Utilice la interfaz del constructor de formularios para añadir los campos que desee.",
+          "add": "Añadir un campo"
         }
       },
       "development": {
@@ -657,7 +658,24 @@
       "items": "Elementos de la mesa",
       "required": "Requerido",
       "title": "Etiqueta de campo",
-      "description": "Descripción del campo"
+      "description": {
+        "label": "Descripción del campo",
+        "description": "Este texto se mostrará en una burbuja exactamente igual a esta."
+      },
+      "type": {
+        "label": "Tipo de valor",
+        "description": "El valor será del tipo que usted especifique."
+      },
+      "widget": {
+        "label": "Modo de visualización",
+        "description": "Cada tipo ofrece una visualización particular, pero algunos ofrecen alternativas. Por ejemplo, puede forzar la elección de una fecha con la visualización de la fecha."
+      },
+      "enum": {
+        "label": "Lista de valores específicos",
+        "description": "Puede imponer un valor de una selección específica. A continuación, se mostrará al usuario un menú desplegable.",
+        "add": "Añadir un valor",
+        "remove": "Borrar este valor"
+      }
     },
     "types": {
       "string": "Texto",
@@ -668,8 +686,20 @@
       "localized_number": "Número localizado",
       "object": "Objeto",
       "array": "Cuadro",
-      "upload": "Carga de archivos",
-      "textarea": "Área de texto"
+      "any": "Cualquier tipo"
+    },
+    "widget": {
+      "default": "Por defecto",
+      "default_description": "Un campo básico relativo al tipo de valor.",
+      "name": "{{context}}",
+      "name_upload": "Envío de un archivo",
+      "description_upload": "Aparecerá un área de carga. El archivo se subirá a nuestra nube y la url se almacenará como un valor en su objeto de datos.",
+      "name_textarea": "Cuadro de texto",
+      "description_textarea": "Una zona de escritura más cómoda que un simple campo.",
+      "name_date": "Fecha",
+      "description_date": "Se mostrará un calendario. El valor será formateado como una fecha.",
+      "name_enum": "Lista desplegable",
+      "description_enum": "Usted elige la lista de valores posibles. Sólo se permitirá uno de estos valores."
     }
   },
   "feed": {

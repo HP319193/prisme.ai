@@ -46,6 +46,83 @@ Object {
     "nodeType": "host",
     "props": Object {
       "children": Array [
+        <div
+          className="flex flex-row"
+        >
+          <SchemaFormDescription
+            className="flex-1 mr-2"
+            text="schema.property.widget.description"
+          >
+            <Select
+              label="schema.property.widget.label"
+              onChange={[Function]}
+              selectOptions={
+                Array [
+                  Object {
+                    "label": <Tooltip
+                      title="schema.widget.default_description"
+                    >
+                      schema.widget.default
+                    </Tooltip>,
+                    "value": "",
+                  },
+                ]
+              }
+              value=""
+            />
+          </SchemaFormDescription>
+          <SchemaFormDescription
+            className="flex-1"
+            text="schema.property.type.description"
+          >
+            <Select
+              label="schema.property.type.label"
+              onChange={[Function]}
+              selectOptions={
+                Array [
+                  Object {
+                    "label": "schema.types.any",
+                    "value": "",
+                  },
+                  Object {
+                    "label": "schema.types.string",
+                    "value": "string",
+                  },
+                  Object {
+                    "label": "schema.types.localized_string",
+                    "value": "localized:string",
+                  },
+                  Object {
+                    "label": "schema.types.number",
+                    "value": "number",
+                  },
+                  Object {
+                    "label": "schema.types.localized_number",
+                    "value": "localized:number",
+                  },
+                  Object {
+                    "label": "schema.types.boolean",
+                    "value": "boolean",
+                  },
+                  Object {
+                    "label": "schema.types.localized_boolean",
+                    "value": "localized:boolean",
+                  },
+                  Object {
+                    "label": "schema.types.object",
+                    "value": "object",
+                  },
+                  Object {
+                    "label": "schema.types.array",
+                    "value": "array",
+                  },
+                ]
+              }
+              value="object"
+            />
+          </SchemaFormDescription>
+        </div>,
+        false,
         <LocalizedInput
           InputProps={
             Object {
@@ -56,65 +133,20 @@ Object {
           onChange={[Function]}
           value=""
         />,
-        <LocalizedInput
-          InputProps={
-            Object {
-              "label": "schema.property.description",
+        <SchemaFormDescription
+          text="schema.property.description.description"
+        >
+          <LocalizedInput
+            InputProps={
+              Object {
+                "label": "schema.property.description.label",
+              }
             }
-          }
-          iconMarginTop={17}
-          onChange={[Function]}
-          value=""
-        />,
-        <Select
-          label="type"
-          onChange={[Function]}
-          selectOptions={
-            Array [
-              Object {
-                "label": "schema.types.string",
-                "value": "string",
-              },
-              Object {
-                "label": "schema.types.localized_string",
-                "value": "localized:string",
-              },
-              Object {
-                "label": "schema.types.number",
-                "value": "number",
-              },
-              Object {
-                "label": "schema.types.localized_number",
-                "value": "localized:number",
-              },
-              Object {
-                "label": "schema.types.boolean",
-                "value": "boolean",
-              },
-              Object {
-                "label": "schema.types.localized_boolean",
-                "value": "localized:boolean",
-              },
-              Object {
-                "label": "schema.types.object",
-                "value": "object",
-              },
-              Object {
-                "label": "schema.types.array",
-                "value": "array",
-              },
-              Object {
-                "label": "schema.types.textarea",
-                "value": "textarea",
-              },
-              Object {
-                "label": "schema.types.upload",
-                "value": "upload",
-              },
-            ]
-          }
-          value="object"
-        />,
+            iconMarginTop={17}
+            onChange={[Function]}
+            value=""
+          />
+        </SchemaFormDescription>,
         false,
         <div
           className="flex flex-1 pl-4 border-l-[1px] border-gray-200"
@@ -162,6 +194,240 @@ Object {
     "rendered": Array [
       Object {
         "instance": null,
+        "nodeType": "host",
+        "props": Object {
+          "children": Array [
+            <SchemaFormDescription
+              className="flex-1 mr-2"
+              text="schema.property.widget.description"
+            >
+              <Select
+                label="schema.property.widget.label"
+                onChange={[Function]}
+                selectOptions={
+                  Array [
+                    Object {
+                      "label": <Tooltip
+                        title="schema.widget.default_description"
+                      >
+                        schema.widget.default
+                      </Tooltip>,
+                      "value": "",
+                    },
+                  ]
+                }
+                value=""
+              />
+            </SchemaFormDescription>,
+            <SchemaFormDescription
+              className="flex-1"
+              text="schema.property.type.description"
+            >
+              <Select
+                label="schema.property.type.label"
+                onChange={[Function]}
+                selectOptions={
+                  Array [
+                    Object {
+                      "label": "schema.types.any",
+                      "value": "",
+                    },
+                    Object {
+                      "label": "schema.types.string",
+                      "value": "string",
+                    },
+                    Object {
+                      "label": "schema.types.localized_string",
+                      "value": "localized:string",
+                    },
+                    Object {
+                      "label": "schema.types.number",
+                      "value": "number",
+                    },
+                    Object {
+                      "label": "schema.types.localized_number",
+                      "value": "localized:number",
+                    },
+                    Object {
+                      "label": "schema.types.boolean",
+                      "value": "boolean",
+                    },
+                    Object {
+                      "label": "schema.types.localized_boolean",
+                      "value": "localized:boolean",
+                    },
+                    Object {
+                      "label": "schema.types.object",
+                      "value": "object",
+                    },
+                    Object {
+                      "label": "schema.types.array",
+                      "value": "array",
+                    },
+                  ]
+                }
+                value="object"
+              />
+            </SchemaFormDescription>,
+          ],
+          "className": "flex flex-row",
+        },
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "nodeType": "component",
+            "props": Object {
+              "children": <Select
+                label="schema.property.widget.label"
+                onChange={[Function]}
+                selectOptions={
+                  Array [
+                    Object {
+                      "label": <Tooltip
+                        title="schema.widget.default_description"
+                      >
+                        schema.widget.default
+                      </Tooltip>,
+                      "value": "",
+                    },
+                  ]
+                }
+                value=""
+              />,
+              "className": "flex-1 mr-2",
+              "text": "schema.property.widget.description",
+            },
+            "rendered": Object {
+              "instance": null,
+              "nodeType": "component",
+              "props": Object {
+                "label": "schema.property.widget.label",
+                "onChange": [Function],
+                "selectOptions": Array [
+                  Object {
+                    "label": <Tooltip
+                      title="schema.widget.default_description"
+                    >
+                      schema.widget.default
+                    </Tooltip>,
+                    "value": "",
+                  },
+                ],
+                "value": "",
+              },
+              "rendered": null,
+              "type": [Function],
+            },
+            "type": [Function],
+          },
+          Object {
+            "instance": null,
+            "nodeType": "component",
+            "props": Object {
+              "children": <Select
+                label="schema.property.type.label"
+                onChange={[Function]}
+                selectOptions={
+                  Array [
+                    Object {
+                      "label": "schema.types.any",
+                      "value": "",
+                    },
+                    Object {
+                      "label": "schema.types.string",
+                      "value": "string",
+                    },
+                    Object {
+                      "label": "schema.types.localized_string",
+                      "value": "localized:string",
+                    },
+                    Object {
+                      "label": "schema.types.number",
+                      "value": "number",
+                    },
+                    Object {
+                      "label": "schema.types.localized_number",
+                      "value": "localized:number",
+                    },
+                    Object {
+                      "label": "schema.types.boolean",
+                      "value": "boolean",
+                    },
+                    Object {
+                      "label": "schema.types.localized_boolean",
+                      "value": "localized:boolean",
+                    },
+                    Object {
+                      "label": "schema.types.object",
+                      "value": "object",
+                    },
+                    Object {
+                      "label": "schema.types.array",
+                      "value": "array",
+                    },
+                  ]
+                }
+                value="object"
+              />,
+              "className": "flex-1",
+              "text": "schema.property.type.description",
+            },
+            "rendered": Object {
+              "instance": null,
+              "nodeType": "component",
+              "props": Object {
+                "label": "schema.property.type.label",
+                "onChange": [Function],
+                "selectOptions": Array [
+                  Object {
+                    "label": "schema.types.any",
+                    "value": "",
+                  },
+                  Object {
+                    "label": "schema.types.string",
+                    "value": "string",
+                  },
+                  Object {
+                    "label": "schema.types.localized_string",
+                    "value": "localized:string",
+                  },
+                  Object {
+                    "label": "schema.types.number",
+                    "value": "number",
+                  },
+                  Object {
+                    "label": "schema.types.localized_number",
+                    "value": "localized:number",
+                  },
+                  Object {
+                    "label": "schema.types.boolean",
+                    "value": "boolean",
+                  },
+                  Object {
+                    "label": "schema.types.localized_boolean",
+                    "value": "localized:boolean",
+                  },
+                  Object {
+                    "label": "schema.types.object",
+                    "value": "object",
+                  },
+                  Object {
+                    "label": "schema.types.array",
+                    "value": "array",
+                  },
+                ],
+                "value": "object",
+              },
+              "rendered": null,
+              "type": [Function],
+            },
+            "type": [Function],
+          },
+        ],
+        "type": "div",
+      },
+      Object {
+        "instance": null,
         "nodeType": "component",
         "props": Object {
           "InputProps": Object {
@@ -196,85 +462,50 @@ Object {
         "instance": null,
         "nodeType": "component",
         "props": Object {
-          "InputProps": Object {
-            "label": "schema.property.description",
-          },
-          "iconMarginTop": 17,
-          "onChange": [Function],
-          "value": "",
+          "children": <LocalizedInput
+            InputProps={
+              Object {
+                "label": "schema.property.description.label",
+              }
+            }
+            iconMarginTop={17}
+            onChange={[Function]}
+            value=""
+          />,
+          "text": "schema.property.description.description",
         },
         "rendered": Object {
           "instance": null,
           "nodeType": "component",
           "props": Object {
             "InputProps": Object {
-              "label": "schema.property.description",
+              "label": "schema.property.description.label",
             },
-            "addLangTooltip": "languages.add.tooltip",
-            "availableLangsTitle": "languages.available.title",
-            "deleteTooltip": "languages.delete.tooltip",
             "iconMarginTop": 17,
             "onChange": [Function],
-            "setLangTooltip": "languages.set.tooltip",
-            "setLangsTitle": "languages.set.title",
             "value": "",
           },
-          "rendered": null,
+          "rendered": Object {
+            "instance": null,
+            "nodeType": "component",
+            "props": Object {
+              "InputProps": Object {
+                "label": "schema.property.description.label",
+              },
+              "addLangTooltip": "languages.add.tooltip",
+              "availableLangsTitle": "languages.available.title",
+              "deleteTooltip": "languages.delete.tooltip",
+              "iconMarginTop": 17,
+              "onChange": [Function],
+              "setLangTooltip": "languages.set.tooltip",
+              "setLangsTitle": "languages.set.title",
+              "value": "",
+            },
+            "rendered": null,
+            "type": [Function],
+          },
           "type": [Function],
         },
-        "type": [Function],
-      },
-      Object {
-        "instance": null,
-        "nodeType": "component",
-        "props": Object {
-          "label": "type",
-          "onChange": [Function],
-          "selectOptions": Array [
-            Object {
-              "label": "schema.types.string",
-              "value": "string",
-            },
-            Object {
-              "label": "schema.types.localized_string",
-              "value": "localized:string",
-            },
-            Object {
-              "label": "schema.types.number",
-              "value": "number",
-            },
-            Object {
-              "label": "schema.types.localized_number",
-              "value": "localized:number",
-            },
-            Object {
-              "label": "schema.types.boolean",
-              "value": "boolean",
-            },
-            Object {
-              "label": "schema.types.localized_boolean",
-              "value": "localized:boolean",
-            },
-            Object {
-              "label": "schema.types.object",
-              "value": "object",
-            },
-            Object {
-              "label": "schema.types.array",
-              "value": "array",
-            },
-            Object {
-              "label": "schema.types.textarea",
-              "value": "textarea",
-            },
-            Object {
-              "label": "schema.types.upload",
-              "value": "upload",
-            },
-          ],
-          "value": "object",
-        },
-        "rendered": null,
         "type": [Function],
       },
       Object {
@@ -362,194 +593,221 @@ Object {
               "nodeType": "host",
               "props": Object {
                 "children": Array [
-                  <Collapse
-                    expandIconPosition="left"
-                    items={
-                      Array [
-                        Object {
-                          "content": <div>
-                            <div
-                              className="pl-4 border-l-[1px] border-x-gray-200"
-                            >
-                              <SchemaFormBuilder
-                                onChange={[Function]}
-                                value={
-                                  Object {
-                                    "type": "string",
-                                  }
-                                }
-                              />
-                            </div>
-                            <Divider />
-                          </div>,
-                          "label": <div
-                            className="relative flex flex-1"
-                            onClick={[Function]}
-                          >
-                            <Input
-                              containerClassName="flex flex-1"
-                              label="schema.property.name"
-                              onChange={[Function]}
-                              pattern="^[a-zA-Z0-9_]+$"
-                              value="string"
-                            />
-                            <Tooltip
-                              placement="left"
-                              title="schema.property.delete"
-                            >
-                              <button
-                                className="absolute top-[30px] right-3"
-                                onClick={[Function]}
-                                type="button"
+                  Array [
+                    <Collapse
+                      expandIconPosition="left"
+                      items={
+                        Array [
+                          Object {
+                            "content": <div>
+                              <div
+                                className="pl-4 border-l-[1px] border-x-gray-200"
                               >
-                                <DeleteOutlined />
-                              </button>
-                            </Tooltip>
-                          </div>,
-                        },
-                        Object {
-                          "content": <div>
-                            <div
-                              className="pl-4 border-l-[1px] border-x-gray-200"
-                            >
-                              <SchemaFormBuilder
-                                onChange={[Function]}
-                                value={
-                                  Object {
-                                    "type": "number",
+                                <SchemaFormBuilder
+                                  onChange={[Function]}
+                                  value={
+                                    Object {
+                                      "type": "string",
+                                    }
                                   }
-                                }
-                              />
-                            </div>
-                            <Divider />
-                          </div>,
-                          "label": <div
-                            className="relative flex flex-1"
-                            onClick={[Function]}
-                          >
-                            <Input
-                              containerClassName="flex flex-1"
-                              label="schema.property.name"
-                              onChange={[Function]}
-                              pattern="^[a-zA-Z0-9_]+$"
-                              value="number"
-                            />
-                            <Tooltip
-                              placement="left"
-                              title="schema.property.delete"
+                                />
+                              </div>
+                              <Divider />
+                            </div>,
+                            "isEmpty": false,
+                            "label": <div
+                              className="relative flex flex-1"
+                              onClick={[Function]}
                             >
-                              <button
-                                className="absolute top-[30px] right-3"
-                                onClick={[Function]}
-                                type="button"
-                              >
-                                <DeleteOutlined />
-                              </button>
-                            </Tooltip>
-                          </div>,
-                        },
-                        Object {
-                          "content": <div>
-                            <div
-                              className="pl-4 border-l-[1px] border-x-gray-200"
-                            >
-                              <SchemaFormBuilder
+                              <Input
+                                containerClassName="flex flex-1"
+                                label="schema.property.name"
                                 onChange={[Function]}
-                                value={
-                                  Object {
-                                    "type": "boolean",
+                                pattern="^[a-zA-Z0-9_]+$"
+                                value="string"
+                              />
+                              <Tooltip
+                                placement="left"
+                                title="schema.property.delete"
+                              >
+                                <button
+                                  className="absolute top-[30px] right-3"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  <DeleteOutlined />
+                                </button>
+                              </Tooltip>
+                            </div>,
+                          },
+                        ]
+                      }
+                    />,
+                    <Collapse
+                      expandIconPosition="left"
+                      items={
+                        Array [
+                          Object {
+                            "content": <div>
+                              <div
+                                className="pl-4 border-l-[1px] border-x-gray-200"
+                              >
+                                <SchemaFormBuilder
+                                  onChange={[Function]}
+                                  value={
+                                    Object {
+                                      "type": "number",
+                                    }
                                   }
-                                }
-                              />
-                            </div>
-                            <Divider />
-                          </div>,
-                          "label": <div
-                            className="relative flex flex-1"
-                            onClick={[Function]}
-                          >
-                            <Input
-                              containerClassName="flex flex-1"
-                              label="schema.property.name"
-                              onChange={[Function]}
-                              pattern="^[a-zA-Z0-9_]+$"
-                              value="boolean"
-                            />
-                            <Tooltip
-                              placement="left"
-                              title="schema.property.delete"
+                                />
+                              </div>
+                              <Divider />
+                            </div>,
+                            "isEmpty": false,
+                            "label": <div
+                              className="relative flex flex-1"
+                              onClick={[Function]}
                             >
-                              <button
-                                className="absolute top-[30px] right-3"
-                                onClick={[Function]}
-                                type="button"
-                              >
-                                <DeleteOutlined />
-                              </button>
-                            </Tooltip>
-                          </div>,
-                        },
-                        Object {
-                          "content": <div>
-                            <div
-                              className="pl-4 border-l-[1px] border-x-gray-200"
-                            >
-                              <SchemaFormBuilder
+                              <Input
+                                containerClassName="flex flex-1"
+                                label="schema.property.name"
                                 onChange={[Function]}
-                                value={
-                                  Object {
-                                    "properties": Object {
-                                      "a": Object {
-                                        "type": "string",
-                                      },
-                                      "b": Object {
-                                        "items": Object {
+                                pattern="^[a-zA-Z0-9_]+$"
+                                value="number"
+                              />
+                              <Tooltip
+                                placement="left"
+                                title="schema.property.delete"
+                              >
+                                <button
+                                  className="absolute top-[30px] right-3"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  <DeleteOutlined />
+                                </button>
+                              </Tooltip>
+                            </div>,
+                          },
+                        ]
+                      }
+                    />,
+                    <Collapse
+                      expandIconPosition="left"
+                      items={
+                        Array [
+                          Object {
+                            "content": <div>
+                              <div
+                                className="pl-4 border-l-[1px] border-x-gray-200"
+                              >
+                                <SchemaFormBuilder
+                                  onChange={[Function]}
+                                  value={
+                                    Object {
+                                      "type": "boolean",
+                                    }
+                                  }
+                                />
+                              </div>
+                              <Divider />
+                            </div>,
+                            "isEmpty": false,
+                            "label": <div
+                              className="relative flex flex-1"
+                              onClick={[Function]}
+                            >
+                              <Input
+                                containerClassName="flex flex-1"
+                                label="schema.property.name"
+                                onChange={[Function]}
+                                pattern="^[a-zA-Z0-9_]+$"
+                                value="boolean"
+                              />
+                              <Tooltip
+                                placement="left"
+                                title="schema.property.delete"
+                              >
+                                <button
+                                  className="absolute top-[30px] right-3"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  <DeleteOutlined />
+                                </button>
+                              </Tooltip>
+                            </div>,
+                          },
+                        ]
+                      }
+                    />,
+                    <Collapse
+                      expandIconPosition="left"
+                      items={
+                        Array [
+                          Object {
+                            "content": <div>
+                              <div
+                                className="pl-4 border-l-[1px] border-x-gray-200"
+                              >
+                                <SchemaFormBuilder
+                                  onChange={[Function]}
+                                  value={
+                                    Object {
+                                      "properties": Object {
+                                        "a": Object {
+                                          "type": "string",
+                                        },
+                                        "b": Object {
                                           "items": Object {
                                             "items": Object {
-                                              "type": "string",
+                                              "items": Object {
+                                                "type": "string",
+                                              },
+                                              "type": "array",
                                             },
                                             "type": "array",
                                           },
                                           "type": "array",
                                         },
-                                        "type": "array",
                                       },
-                                    },
-                                    "type": "object",
+                                      "type": "object",
+                                    }
                                   }
-                                }
-                              />
-                            </div>
-                            <Divider />
-                          </div>,
-                          "label": <div
-                            className="relative flex flex-1"
-                            onClick={[Function]}
-                          >
-                            <Input
-                              containerClassName="flex flex-1"
-                              label="schema.property.name"
-                              onChange={[Function]}
-                              pattern="^[a-zA-Z0-9_]+$"
-                              value="lorem"
-                            />
-                            <Tooltip
-                              placement="left"
-                              title="schema.property.delete"
+                                />
+                              </div>
+                              <Divider />
+                            </div>,
+                            "isEmpty": false,
+                            "label": <div
+                              className="relative flex flex-1"
+                              onClick={[Function]}
                             >
-                              <button
-                                className="absolute top-[30px] right-3"
-                                onClick={[Function]}
-                                type="button"
+                              <Input
+                                containerClassName="flex flex-1"
+                                label="schema.property.name"
+                                onChange={[Function]}
+                                pattern="^[a-zA-Z0-9_]+$"
+                                value="lorem"
+                              />
+                              <Tooltip
+                                placement="left"
+                                title="schema.property.delete"
                               >
-                                <DeleteOutlined />
-                              </button>
-                            </Tooltip>
-                          </div>,
-                        },
-                      ]
-                    }
-                  />,
+                                <button
+                                  className="absolute top-[30px] right-3"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  <DeleteOutlined />
+                                </button>
+                              </Tooltip>
+                            </div>,
+                          },
+                        ]
+                      }
+                    />,
+                  ],
                   <Button
                     onClick={[Function]}
                   >
@@ -564,6 +822,7 @@ Object {
                   "nodeType": "component",
                   "props": Object {
                     "expandIconPosition": "left",
+                    "icon": undefined,
                     "items": Array [
                       Object {
                         "content": <div>
@@ -581,6 +840,7 @@ Object {
                           </div>
                           <Divider />
                         </div>,
+                        "isEmpty": false,
                         "label": <div
                           className="relative flex flex-1"
                           onClick={[Function]}
@@ -606,6 +866,18 @@ Object {
                           </Tooltip>
                         </div>,
                       },
+                    ],
+                  },
+                  "rendered": null,
+                  "type": [Function],
+                },
+                Object {
+                  "instance": null,
+                  "nodeType": "component",
+                  "props": Object {
+                    "expandIconPosition": "left",
+                    "icon": undefined,
+                    "items": Array [
                       Object {
                         "content": <div>
                           <div
@@ -622,6 +894,7 @@ Object {
                           </div>
                           <Divider />
                         </div>,
+                        "isEmpty": false,
                         "label": <div
                           className="relative flex flex-1"
                           onClick={[Function]}
@@ -647,6 +920,18 @@ Object {
                           </Tooltip>
                         </div>,
                       },
+                    ],
+                  },
+                  "rendered": null,
+                  "type": [Function],
+                },
+                Object {
+                  "instance": null,
+                  "nodeType": "component",
+                  "props": Object {
+                    "expandIconPosition": "left",
+                    "icon": undefined,
+                    "items": Array [
                       Object {
                         "content": <div>
                           <div
@@ -663,6 +948,7 @@ Object {
                           </div>
                           <Divider />
                         </div>,
+                        "isEmpty": false,
                         "label": <div
                           className="relative flex flex-1"
                           onClick={[Function]}
@@ -688,6 +974,18 @@ Object {
                           </Tooltip>
                         </div>,
                       },
+                    ],
+                  },
+                  "rendered": null,
+                  "type": [Function],
+                },
+                Object {
+                  "instance": null,
+                  "nodeType": "component",
+                  "props": Object {
+                    "expandIconPosition": "left",
+                    "icon": undefined,
+                    "items": Array [
                       Object {
                         "content": <div>
                           <div
@@ -721,6 +1019,7 @@ Object {
                           </div>
                           <Divider />
                         </div>,
+                        "isEmpty": false,
                         "label": <div
                           className="relative flex flex-1"
                           onClick={[Function]}

@@ -67,7 +67,7 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
       />
       <Space direction="vertical" className="flex grow overflow-x-auto">
         {filteredBlocks.map(({ appName, slug: appSlug, blocks }) => (
-          <Space key={appName} direction="vertical" className="!flex flex-1">
+          <Space key={appSlug} direction="vertical" className="!flex flex-1">
             {
               <Space>
                 <Title level={4}>

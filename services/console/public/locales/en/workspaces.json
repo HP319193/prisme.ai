@@ -558,7 +558,8 @@
         },
         "schema": {
           "label": "Form specification",
-          "description": "Use the form builder interface to add the fields of your choice."
+          "description": "Use the form builder interface to add the fields of your choice.",
+          "add": "Add a control"
         }
       },
       "development": {
@@ -657,7 +658,24 @@
       "items": "Array items",
       "required": "Required",
       "title": "Field label",
-      "description": "Field description"
+      "description": {
+        "label": "Field description",
+        "description": "This text will be displayed in a bubble exactly like this one."
+      },
+      "type": {
+        "label": "Type of value",
+        "description": "The value will be of the type you specify"
+      },
+      "widget": {
+        "label": "Display mode",
+        "description": "Each type offers a particular display, but some offer alternatives. For example, you can force the choice of a date with the Date display."
+      },
+      "enum": {
+        "label": "List of specific values",
+        "description": "You can impose a value from a specific selection. A drop-down menu will then be displayed to the user.",
+        "add": "Add a value",
+        "remove": "Delete this value"
+      }
     },
     "types": {
       "string": "Text",
@@ -668,9 +686,21 @@
       "localized_number": "Localized number",
       "object": "Object",
       "array": "Array",
-      "upload": "File upload",
-      "textarea": "Text area"
+      "any": "Any type"
     }
+  },
+  "widget": {
+    "default": "By default",
+    "default_description": "A basic field related to the value type.",
+    "name": "{{context}}",
+    "name_upload": "Sending a file",
+    "description_upload": "An upload area will be displayed. The file will be uploaded to our cloud and the url will be stored as a value in your data object.",
+    "name_textarea": "Text area",
+    "description_textarea": "A more comfortable writing area than a simple field.",
+    "name_date": "Date",
+    "description_date": "A calendar will be displayed. The value will be formatted as a date.",
+    "name_enum": "Drop-down list",
+    "description_enum": "You choose the list of possible values. Only one of these values will be allowed."
   },
   "feed": {
     "filter": "Filters"

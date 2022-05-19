@@ -558,7 +558,8 @@
         },
         "schema": {
           "label": "Spécification du formulaire",
-          "description": "Utilisez l'interface de construction de formulaire pour ajouter les champs de votre choix."
+          "description": "Utilisez l'interface de construction de formulaire pour ajouter les champs de votre choix.",
+          "add": "Ajouter un champs"
         }
       },
       "development": {
@@ -663,11 +664,17 @@
       },
       "type": {
         "label": "Type de valeur",
-        "description": "La valeur sera du type que vous aurez spécifié"
+        "description": "La valeur sera du type que vous aurez spécifié."
       },
       "widget": {
         "label": "Mode d'affichage",
-        "description": "Chaque type propose un affichage particulier, mais certaons proposent des alternatives. Vous pouvez par exemple forcer le choix d'une date avec l'affichage en Date."
+        "description": "Chaque type propose un affichage particulier, mais certains proposent des alternatives. Vous pouvez par exemple forcer le choix d'une date avec l'affichage en Date."
+      },
+      "enum": {
+        "label": "Liste de valeurs spécifiques",
+        "description": "Vous pouvez imposer une valeur parmi une sélection spécifique. Un menu déroulant sera alors affiché à l'utilisateur.",
+        "add": "Ajouter une valeur",
+        "remove": "Supprimer cette valeur"
       }
     },
     "types": {
@@ -682,12 +689,17 @@
       "any": "N'importe quel type"
     },
     "widget": {
-      "default_string": "Champ texte simple",
-      "default_localized:string": "Champ texte simple",
+      "default": "Par défaut",
+      "default_description": "Un champs basique relatif au type de valeur.",
       "name": "{{context}}",
       "name_upload": "Envoi de fichier",
+      "description_upload": "Une zone d'upload sera affichée. Le fichier sera uploadé sur notre cloud et l'url sera stockée en tant que valeur de votre object de données.",
       "name_textarea": "Zone de texte",
-      "name_date": "Date et/ou heure"
+      "description_textarea": "Une zone de rédaction plus confortable qu'un simple champs.",
+      "name_date": "Date",
+      "description_date": "Un calendrier sera affiché. La valeur sera formatté en tant que date.",
+      "name_enum": "Liste déroulante",
+      "description_enum": "Vous choisissez la liste des valeurs possibles. Seule une de ces valeurs sera autorisée."
     }
   },
   "feed": {

@@ -137,6 +137,10 @@ export function SchemaForm({ children = null }) {
   return children;
 }
 
+export function SchemaFormDescription({ children = null }) {
+  return children;
+}
+
 export const schemaTypes = [
   'string',
   'localized:string',
@@ -147,3 +151,7 @@ export const schemaTypes = [
   'object',
   'array',
 ];
+
+export const UIWidgetsByType = {
+  string: ['upload', 'select'],
+};

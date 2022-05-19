@@ -4,12 +4,18 @@ import {
   schemaTypes,
   Select,
   UIWidgetsByType,
+  Tooltip,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import LocalizedInput from '../LocalizedInput';
 import Enum from './Enum';
 import Properties from './Properties';
+
+const WidgetsByType = {
+  ...UIWidgetsByType,
+  string: Array.from(new Set([...UIWidgetsByType.string, 'enum'])),
+};
 
 interface SchemaFormBuilderProps {
   value: Schema;
@@ -45,6 +51,29 @@ export const SchemaFormBuilder = ({
         });
       }
 
+      if (type === 'ui:widget') {
+        const newValue = { ...value };
+        if (v === 'enum') {
+          newValue.enum = newValue.enum || [];
+          newValue.type = 'string';
+          delete newValue['ui:widget'];
+        } else {
+          delete newValue.enum;
+          newValue['ui:widget'] = v;
+          if (
+            newValue.type &&
+            v &&
+            !(
+              WidgetsByType[newValue.type as keyof typeof WidgetsByType] || []
+            ).includes(v)
+          ) {
+            delete newValue.type;
+          }
+        }
+
+        return onChange(newValue);
+      }
+
       if (type === 'enum') {
         const newValueWithEnum = {
           ...newValue,
@@ -69,33 +98,58 @@ export const SchemaFormBuilder = ({
     [onChange, value]
   );
 
-  const options = useMemo(
-    () => [
+  const options = useMemo(() => {
+    const uiWidget = value['ui:widget'];
+
+    const uiWidgetIsSet = !!(uiWidget && typeof uiWidget === 'string');
+    const filteredTypes = uiWidgetIsSet
+      ? Object.keys(WidgetsByType).flatMap((type) =>
+          WidgetsByType[type as keyof typeof WidgetsByType].includes(uiWidget)
+            ? [type]
+            : []
+        )
+      : schemaTypes;
+
+    return [
       {
         label: t('schema.types.any'),
         value: '',
       },
-      ...schemaTypes.map((value) => ({
+      ...filteredTypes.map((value) => ({
         label: t(`schema.types.${value.replace(':', '_')}`),
         value,
       })),
-    ],
-    [t]
-  );
+    ];
+  }, [t, value]);
 
   const uiWidget = useMemo(() => {
-    const widgets =
-      UIWidgetsByType[value.type as keyof typeof UIWidgetsByType] || [];
-    if (widgets.length === 0) return null;
+    const filteredWidgets = value.type
+      ? WidgetsByType[value.type as keyof typeof WidgetsByType] || []
+      : Array.from(
+          new Set(Object.values(WidgetsByType).flatMap((widgets) => widgets))
+        );
+
     return [
       {
-        label: t('schema.widget.default', { context: value.type || 'string' }),
+        label: (
+          <Tooltip title={t('schema.widget.default_description')}>
+            {t('schema.widget.default')}
+          </Tooltip>
+        ),
         value: '',
       },
-      ...widgets.map((widget) => ({
-        label: t('schema.widget.name', {
-          context: widget,
-        }),
+      ...filteredWidgets.map((widget) => ({
+        label: (
+          <Tooltip
+            title={t('schema.widget.description', {
+              context: widget,
+            })}
+          >
+            {t('schema.widget.name', {
+              context: widget,
+            })}
+          </Tooltip>
+        ),
         value: widget,
       })),
     ];
@@ -104,6 +158,18 @@ export const SchemaFormBuilder = ({
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex flex-row">
+        <SchemaFormDescription
+          className="flex-1 mr-2"
+          text={t('schema.property.widget.description')}
+        >
+          <Select
+            selectOptions={uiWidget || []}
+            label={t('schema.property.widget.label')}
+            value={value.enum ? 'enum' : value['ui:widget'] || ''}
+            onChange={update('ui:widget')}
+          />
+        </SchemaFormDescription>
+
         <SchemaFormDescription
           className="flex-1"
           text={t('schema.property.type.description')}
@@ -115,20 +181,12 @@ export const SchemaFormBuilder = ({
             onChange={update('type')}
           />
         </SchemaFormDescription>
-        {uiWidget && (
-          <SchemaFormDescription
-            className="flex-1 ml-2"
-            text={t('schema.property.widget.description')}
-          >
-            <Select
-              selectOptions={uiWidget}
-              label={t('schema.property.widget.label')}
-              value={value['ui:widget'] || ''}
-              onChange={update('ui:widget')}
-            />
-          </SchemaFormDescription>
-        )}
       </div>
+      {!!value.enum && (
+        <div className="flex flex-1 mt-2 pl-4 border-l-[1px] border-gray-200">
+          <Enum value={value} onChange={update('enum')} />
+        </div>
+      )}
       <LocalizedInput
         value={value.title || ''}
         onChange={update('title')}
@@ -149,6 +207,7 @@ export const SchemaFormBuilder = ({
           iconMarginTop={17}
         />
       </SchemaFormDescription>
+
       {/*
       // Required is not already available
       <label className="flex text-gray my-4">
@@ -173,11 +232,6 @@ export const SchemaFormBuilder = ({
             value={value.properties || {}}
             onChange={update('properties')}
           />
-        </div>
-      )}
-      {value.type === 'string' && (
-        <div className="flex flex-1 pl-4 border-l-[1px] border-gray-200">
-          <Enum value={value} onChange={update('enum')} />
         </div>
       )}
     </div>
