@@ -14,7 +14,12 @@ export const schemaTypes = [
 ] as const;
 export type SchemaTypes = typeof schemaTypes[number];
 
-export const UIWidgetsForString = ['upload', 'textarea', 'date'] as const;
+export const UIWidgetsForString = [
+  'upload',
+  'textarea',
+  'date',
+  'select',
+] as const;
 export const UIWidgetsForLocalizedString = ['textarea'];
 export const UIWidgetsByType = {
   [schemaTypes[0]]: UIWidgetsForString,
