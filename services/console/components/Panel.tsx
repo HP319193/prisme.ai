@@ -6,10 +6,12 @@ const noop = () => null;
 interface PanelProps {
   visible: boolean;
   onVisibleChange?: (v: boolean) => void;
+  className?: string;
 }
 export const Panel: FC<PanelProps> = ({
   visible,
   onVisibleChange = noop,
+  className,
   children,
 }) => {
   const [hidden, setHidden] = useState(true);
@@ -37,6 +39,7 @@ export const Panel: FC<PanelProps> = ({
         duration-200
         overflow-hidden
         ${hidden ? '' : '-translate-x-full'}
+        ${className}
       `}
     >
       <SidePanel className="!bg-white overflow-hidden h-full rounded !p-0 m-2">

@@ -185,7 +185,11 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">
         <PageBlocks />
-        <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
+        <Panel
+          visible={panelIsOpen}
+          onVisibleChange={hidePanel}
+          className="-right-1/2 w-1/2"
+        >
           {blockSelecting && <PageNewBlockForm {...blockSelecting} />}
           {blockEditing && <PageEditBlockForm blockId={blockEditing} />}
         </Panel>
