@@ -20,7 +20,16 @@ export const DataTable = ({ edit }: { edit: boolean }) => {
     return Array.isArray(rawData)
       ? rawData.map((item: any, k: number) => ({
           key: k,
-          ...item,
+          ...Object.keys(item).reduce(
+            (prev, key) => ({
+              ...prev,
+              [key]:
+                typeof item[key] === 'string'
+                  ? item[key]
+                  : JSON.stringify(item[key]),
+            }),
+            {}
+          ),
         }))
       : [];
   }, [config.data, preview]);
