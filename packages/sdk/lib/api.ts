@@ -32,6 +32,14 @@ export class Api extends Fetcher {
     });
   }
 
+  async createAnonymousSession(): Promise<
+    Prismeai.User & {
+      token: string;
+    }
+  > {
+    return await this.post('/login/anonymous');
+  }
+
   async signup(
     email: string,
     password: string,
@@ -177,8 +185,13 @@ export class Api extends Fetcher {
   }
 
   // Events
-  streamEvents(workspaceId: string): Promise<Events> {
-    const events = new Events(workspaceId, this.token || '', this.host);
+  streamEvents(workspaceId: string, userId?: string): Promise<Events> {
+    const events = new Events({
+      workspaceId,
+      token: this.token || '',
+      apiHost: this.host,
+      userId,
+    });
     return new Promise((resolve, reject) => {
       events.once('connect', () => {
         resolve(events);
