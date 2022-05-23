@@ -42,7 +42,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
         socket.current.destroy();
       }
       try {
-        socket.current = await api.streamEvents(page.workspaceId, user.id);
+        socket.current = await api.streamEvents(page.workspaceId, user?.id);
         setError(false);
       } catch (e) {
         setError(true);
@@ -82,7 +82,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
         });
       }
     });
-  }, [cachedPage, user.id]);
+  }, [cachedPage, user?.id]);
 
   useEffect(() => {
     initSocket();
