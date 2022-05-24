@@ -13,27 +13,29 @@ export async function wait(
   const waitId = Date.now() + '-' + (Math.random() * 100000).toFixed(0);
   const timeout = (wait.timeout || WAIT_DEFAULT_TIMEOUT) * 1000;
   const expiresAt = Date.now() + timeout;
-  await broker.send<Prismeai.PendingWait['payload']>(
-    EventType.PendingWait,
-    {
-      id: waitId,
-      expiresAt,
-      wait: {
-        ...wait,
-        oneOf: (wait.oneOf || []).map((cur) => ({
-          ...cur,
-          event: appContext?.appInstanceFullSlug
-            ? `${appContext?.appInstanceFullSlug}.${cur.event}`
-            : cur.event,
-        })),
+  broker
+    .send<Prismeai.PendingWait['payload']>(
+      EventType.PendingWait,
+      {
+        id: waitId,
+        expiresAt,
+        wait: {
+          ...wait,
+          oneOf: (wait.oneOf || []).map((cur) => ({
+            ...cur,
+            event: appContext?.appInstanceFullSlug
+              ? `${appContext?.appInstanceFullSlug}.${cur.event}`
+              : cur.event,
+          })),
+        },
       },
-    },
-    appContext,
-    EventType.PendingWait
-  );
+      appContext,
+      EventType.PendingWait
+    )
+    .catch(console.error);
 
   // Make current run context last longer than usually permitted
-  await ctx.save(ContextType.Run, timeout / 1000);
+  ctx.save(ContextType.Run, timeout / 1000).catch(console.error);
 
   const FulfilledWaitEvent = EventType.FulfilledWait.replace('{{id}}', waitId);
 
