@@ -163,11 +163,17 @@ export const Block: FC<NodeProps & BlockProps> = ({
           displayedValue = (value && value.event) || '?';
           break;
         case 'comment':
+          const actualValue =
+            typeof value === 'string'
+              ? value
+              : JSON.stringify(value, null, '  ');
+          displayedValue = truncate(actualValue, 150, '…');
           return (
-            <div className="italic text-neutral-500">
-              {typeof value === 'string'
-                ? value
-                : JSON.stringify(value, null, '  ')}
+            <div
+              className="italic text-xs text-neutral-500"
+              title={actualValue}
+            >
+              {displayedValue}
             </div>
           );
         case 'output':
