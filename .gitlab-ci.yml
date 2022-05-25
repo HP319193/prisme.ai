@@ -48,6 +48,7 @@ backend_npm_install:
       - 'packages/**/*'
     refs:
       - main
+      - tags
       - /^feature\/.*$/
       - /^fix\/.*$/
       - /^pipeline\/.*$/
@@ -56,10 +57,12 @@ backend_npm_install:
     - docker:stable-dind
   script:
     - >
-      if [ -z $CI_COMMIT_BRANCH ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
+      if [ -n "$CI_COMMIT_TAG" ] ; then
+        export FEATURE_TAG=prod
+      elif [ -z "$CI_COMMIT_BRANCH" ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
         export FEATURE_TAG=latest
       else
-        export FEATURE_TAG=$(echo ${CI_COMMIT_BRANCH} | tr \/ -)
+        export FEATURE_TAG=$(echo "${CI_COMMIT_BRANCH}" | tr \/ -)
       fi
 
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
@@ -95,16 +98,25 @@ backend_npm_install:
   services:
     - docker:stable-dind
   script:
+    - echo "sha = $CI_COMMIT_SHORT_SHA"
+    - echo "tag = $CI_COMMIT_TAG"
+    - export CACHE_FROM=latest
     - >
-      if [ -z $CI_COMMIT_BRANCH ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
+      if [ -n "$CI_COMMIT_TAG" ] ; then
+        export FEATURE_TAG=$CI_COMMIT_TAG
+        export DEPENDENCIES_TAG=prod
+      elif [ -z "$CI_COMMIT_BRANCH" ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
         export FEATURE_TAG=latest
+        export DEPENDENCIES_TAG=$FEATURE_TAG
       else
-        export FEATURE_TAG=$(echo ${CI_COMMIT_BRANCH} | tr \/ -)
+        export FEATURE_TAG=$(echo "${CI_COMMIT_BRANCH}" | tr \/ -)
+        export DEPENDENCIES_TAG=$FEATURE_TAG
+        export CACHE_FROM=$FEATURE_TAG
       fi
 
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker pull $IMAGE_NAME:latest || true
-    - docker build  --build-arg DEPENDENCIES_TAG=$FEATURE_TAG --cache-from $IMAGE_NAME:$FEATURE_TAG -t $IMAGE_NAME:$FEATURE_TAG . -f $DIRECTORY/Dockerfile
+    - docker build  --build-arg DEPENDENCIES_TAG=$DEPENDENCIES_TAG --cache-from $IMAGE_NAME:$CACHE_FROM -t $IMAGE_NAME:$FEATURE_TAG . -f $DIRECTORY/Dockerfile
     - docker push $IMAGE_NAME:$FEATURE_TAG
 
 .deploy_k8s:
@@ -115,11 +127,17 @@ backend_npm_install:
     name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
     entrypoint: ['/bin/sh', '-c']
   script:
+    - echo "sha = $CI_COMMIT_SHORT_SHA"
+    - echo "tag = $CI_COMMIT_TAG"
+    - echo "branch = $CI_COMMIT_BRANCH"
     - >
-      if [ -z $CI_COMMIT_BRANCH ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
+      if [ -n "$CI_COMMIT_TAG"  ] ; then
+        export FEATURE_TAG=$CI_COMMIT_TAG
+        export CI_COMMIT_BRANCH=prod
+      elif [ -z "$CI_COMMIT_BRANCH" ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
         export FEATURE_TAG=latest
       else
-        export FEATURE_TAG=$(echo ${CI_COMMIT_BRANCH} | tr \/ -)
+        export FEATURE_TAG=$(echo "${CI_COMMIT_BRANCH}" | tr \/ -)
       fi
     - deploy $CI_COMMIT_BRANCH $K8S_NAME $IMAGE_NAME $FEATURE_TAG
 
@@ -160,6 +178,7 @@ console_build_docker:
   only:
     refs:
       - main
+      - tags
       - master
       - /^feature\/.*$/
       - /^pipeline\/.*$/
@@ -177,6 +196,7 @@ console_deploy:
   only:
     refs:
       - main
+      - tags
       - master
       - /^feature\/.*$/
       - /^pipeline\/.*$/
@@ -187,7 +207,7 @@ console_deploy:
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
     - export K8S_NAME=$CONSOLE_K8S_NAME
 
-# ## Workspaces jobs
+## Workspaces jobs
 workspaces_test:
   extends: .npm_test
   only:
@@ -211,6 +231,7 @@ workspaces_build_docker:
       - /^pipeline\/.*$/
       - main
       - master
+      - tags
     changes:
       - 'services/workspaces/**/*'
   before_script:
@@ -222,12 +243,18 @@ workspaces_deploy:
   extends: .deploy_k8s
   needs:
     - workspaces_build_docker
+  tags:
+    - internal-runner
+  image:
+    name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
+    entrypoint: ['/bin/sh', '-c']
   only:
     refs:
       - /^feature\/.*$/
       - /^pipeline\/.*$/
       - main
       - master
+      - tags
     changes:
       - 'services/workspaces/**/*'
   before_script:
@@ -235,7 +262,7 @@ workspaces_deploy:
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME
     - export K8S_NAME=$WORKSPACES_K8S_NAME
 
-# ## Runtime jobs
+## Runtime jobs
 runtime_test:
   extends: .npm_test
   only:
@@ -259,6 +286,7 @@ runtime_build_docker:
       - /^pipeline\/.*$/
       - main
       - master
+      - tags
     changes:
       - 'services/runtime/**/*'
   before_script:
@@ -276,6 +304,7 @@ runtime_deploy:
       - /^pipeline\/.*$/
       - main
       - master
+      - tags
     changes:
       - 'services/runtime/**/*'
   before_script:
@@ -283,7 +312,7 @@ runtime_deploy:
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
     - export K8S_NAME=$RUNTIME_K8S_NAME
 
-# ## API Gateway jobs
+## API Gateway jobs
 api-gateway_build_docker:
   extends: .build_docker
   interruptible: true # Stop this job if a new one has been triggered by the same branch
@@ -297,6 +326,7 @@ api-gateway_build_docker:
       - /^pipeline\/.*$/
       - main
       - master
+      - tags
     changes:
       - 'services/api-gateway/**/*'
   before_script:
@@ -314,6 +344,7 @@ api-gateway_deploy:
       - /^pipeline\/.*$/
       - main
       - master
+      - tags
     changes:
       - 'services/api-gateway/**/*'
   before_script:
@@ -321,7 +352,7 @@ api-gateway_deploy:
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME
     - export K8S_NAME=$API_GATEWAY_K8S_NAME
 
-# ## Events jobs
+## Events jobs
 events_test:
   extends: .npm_test
   only:
@@ -345,6 +376,7 @@ events_build_docker:
       - /^pipeline\/.*$/
       - main
       - master
+      - tags
     changes:
       - 'services/events/**/*'
   before_script:
@@ -362,6 +394,7 @@ events_deploy:
       - /^pipeline\/.*$/
       - main
       - master
+      - tags
     changes:
       - 'services/events/**/*'
   before_script:
@@ -369,7 +402,7 @@ events_deploy:
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME
     - export K8S_NAME=$EVENTS_K8S_NAME
 
-# ## Docs jobs
+## Docs jobs
 docs_build_static:
   stage: build_docker
   needs: []
