@@ -687,20 +687,20 @@
       "object": "Object",
       "array": "Array",
       "any": "Any type"
+    },
+    "widget": {
+      "default": "By default",
+      "default_description": "A basic field related to the value type.",
+      "name": "{{context}}",
+      "name_upload": "Sending a file",
+      "description_upload": "An upload area will be displayed. The file will be uploaded to our cloud and the url will be stored as a value in your data object.",
+      "name_textarea": "Text area",
+      "description_textarea": "A more comfortable writing area than a simple field.",
+      "name_date": "Date",
+      "description_date": "A calendar will be displayed. The value will be formatted as a date.",
+      "name_enum": "Drop-down list",
+      "description_enum": "You choose the list of possible values. Only one of these values will be allowed."
     }
-  },
-  "widget": {
-    "default": "By default",
-    "default_description": "A basic field related to the value type.",
-    "name": "{{context}}",
-    "name_upload": "Sending a file",
-    "description_upload": "An upload area will be displayed. The file will be uploaded to our cloud and the url will be stored as a value in your data object.",
-    "name_textarea": "Text area",
-    "description_textarea": "A more comfortable writing area than a simple field.",
-    "name_date": "Date",
-    "description_date": "A calendar will be displayed. The value will be formatted as a date.",
-    "name_enum": "Drop-down list",
-    "description_enum": "You choose the list of possible values. Only one of these values will be allowed."
   },
   "feed": {
     "filter": "Filters"
