@@ -99,7 +99,7 @@ export default class Broker {
     return topic || event.type;
   }
 
-  send<PayloadType extends object = object>(
+  async send<PayloadType extends object = object>(
     eventType: string,
     payload: PayloadType,
     partialSource?: Partial<EventSource>,
@@ -127,7 +127,7 @@ export default class Broker {
     event.source.topic = this.getEventTopic(topic, event);
 
     this._send(event);
-    return event;
+    return Promise.resolve(event);
   }
 
   _send(event: PrismeEvent) {

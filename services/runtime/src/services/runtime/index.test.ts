@@ -71,7 +71,7 @@ describe('Simple events processing', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('run.empty', {
+    const event = await broker.send('run.empty', {
       someRandomId: Math.random() * 1000,
     });
 
@@ -153,7 +153,7 @@ describe('Simple events processing', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('basicApp.triggerEmpty', {
+    const event = await broker.send('basicApp.triggerEmpty', {
       someRandomId: Math.random() * 1000,
     });
 
@@ -217,7 +217,7 @@ describe('Simple execution', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('run.empty', {
+    const event = await broker.send('run.empty', {
       someRandomId: Math.random() * 1000,
     });
 
@@ -257,7 +257,7 @@ describe('Simple execution', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('config', {});
+    const event = await broker.send('config', {});
 
     await waitForExpect(() => {
       expect(sendEventSpy).toBeCalledWith(
@@ -290,7 +290,7 @@ describe('Simple execution', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('callsAnotherAutomation', {
+    const event = await broker.send('callsAnotherAutomation', {
       someRandomId: Math.random() * 1000,
     });
 
@@ -327,7 +327,7 @@ describe('Simple execution', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('triggerAnotherAutomation', {
+    const event = await broker.send('triggerAnotherAutomation', {
       someRandomId: Math.random() * 1000,
     });
 
@@ -364,7 +364,7 @@ describe('Simple execution', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('throw', {});
+    const event = await broker.send('throw', {});
 
     await waitForExpect(() => {
       expect(sendEventSpy).toBeCalledWith(
@@ -397,7 +397,7 @@ describe('More advanced execution with appInstances', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('run.empty', {
+    const event = await broker.send('run.empty', {
       someRandomId: Math.random() * 1000,
     });
 
@@ -447,7 +447,7 @@ describe('More advanced execution with appInstances', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('basicApp.callsAnotherAutomation', {
+    const event = await broker.send('basicApp.callsAnotherAutomation', {
       someRandomId: Math.random() * 1000,
     });
 
@@ -488,7 +488,7 @@ describe('More advanced execution with appInstances', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('basicApp.triggerAnotherAutomation', {
+    const event = await broker.send('basicApp.triggerAnotherAutomation', {
       someRandomId: Math.random() * 1000,
     });
 
@@ -529,7 +529,7 @@ describe('More advanced execution with appInstances', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('basicApp.triggerAnotherAutomation', {
+    const event = await broker.send('basicApp.triggerAnotherAutomation', {
       someRandomId: Math.random() * 1000,
     });
 
@@ -588,7 +588,7 @@ describe('More advanced execution with appInstances', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('callChildAutomation', {
+    const event = await broker.send('callChildAutomation', {
       someRandomId: Math.random() * 1000,
     });
 
@@ -656,7 +656,7 @@ describe('More advanced execution with appInstances', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('basicApp.throw', {});
+    const event = await broker.send('basicApp.throw', {});
 
     await waitForExpect(() => {
       expect(sendEventSpy).toBeCalledWith(
@@ -688,7 +688,7 @@ describe('More advanced execution with appInstances', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('basicApp.config', {});
+    const event = await broker.send('basicApp.config', {});
 
     await waitForExpect(() => {
       expect(sendEventSpy).toBeCalledWith(
@@ -722,7 +722,7 @@ describe('More advanced execution with appInstances', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('preconfigured.config', {});
+    const event = await broker.send('preconfigured.config', {});
 
     await waitForExpect(() => {
       expect(sendEventSpy).toBeCalledWith(
@@ -757,7 +757,7 @@ describe('More advanced execution with appInstances', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('getNestedConfig', {});
+    const event = await broker.send('getNestedConfig', {});
 
     await waitForExpect(() => {
       expect(sendEventSpy).toBeCalledWith(
@@ -794,7 +794,7 @@ describe('More advanced execution with appInstances', () => {
     broker.start();
     runtime.start();
 
-    const event = broker.send('forbiddenNestedCall', {});
+    const event = await broker.send('forbiddenNestedCall', {});
 
     await waitForExpect(() => {
       expect(sendEventSpy).toBeCalledWith(
