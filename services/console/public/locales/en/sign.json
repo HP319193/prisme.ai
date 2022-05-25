@@ -9,7 +9,8 @@
     "password": "Password",
     "submit": "Login",
     "signup": "Signup ?",
-    "error": "Wrong password"
+    "error": "An error has occurred.",
+    "error_AuthenticationError": "Wrong email or password."
   },
   "up": {
     "title": "Signup — $t(common:main.title)",
