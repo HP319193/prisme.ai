@@ -98,9 +98,11 @@ backend_npm_install:
   services:
     - docker:stable-dind
   script:
+    - echo "sha = $CI_COMMIT_SHORT_SHA"
+    - echo "tag = $CI_COMMIT_TAG"
     - export CACHE_FROM=latest
     - >
-      if [ -z "$CI_COMMIT_TAG"  ] || [ "$CI_COMMIT_BRANCH" == "prod" ]; then
+      if [ -z "$CI_COMMIT_TAG"  ] && [ "$CI_COMMIT_BRANCH" == "prod" ]; then
         export FEATURE_TAG=$CI_COMMIT_SHORT_SHA
         export DEPENDENCIES_TAG=prod
       elif [ "$CI_COMMIT_BRANCH" == "prod" ]; then
@@ -128,8 +130,10 @@ backend_npm_install:
     name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
     entrypoint: ['/bin/sh', '-c']
   script:
+    - echo "sha = $CI_COMMIT_SHORT_SHA"
+    - echo "tag = $CI_COMMIT_TAG"
     - >
-      if [ -z "$CI_COMMIT_TAG"  ] || [ "$CI_COMMIT_BRANCH" == "prod" ]; then
+      if [ -z "$CI_COMMIT_TAG"  ] && [ "$CI_COMMIT_BRANCH" == "prod" ]; then
         export FEATURE_TAG=$CI_COMMIT_SHORT_SHA
       elif [ "$CI_COMMIT_BRANCH" == "prod" ]; then
         export FEATURE_TAG=$CI_COMMIT_TAG
