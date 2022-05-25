@@ -100,7 +100,7 @@ export const UserProvider: FC<UserProviderProps> = ({
     try {
       const user = await api.me();
       if (!user) {
-        throw new Error('no user found');
+        throw { message: 'No user found', error: 'NoUserFound' };
       }
       setUser(user);
       setLoading(false);
@@ -119,7 +119,11 @@ export const UserProvider: FC<UserProviderProps> = ({
         setLoading(false);
         return;
       }
-      setError(e as ApiError);
+      const { error } = e as ApiError;
+
+      if (error !== 'NoUserFound') {
+        setError(e as ApiError);
+      }
       signout(false);
       setLoading(false);
     }
