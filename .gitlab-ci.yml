@@ -49,6 +49,7 @@ backend_npm_install:
     refs:
       - main
       - prod
+      - tags
       - /^feature\/.*$/
       - /^fix\/.*$/
       - /^pipeline\/.*$/
@@ -178,6 +179,7 @@ backend_npm_install:
 #     refs:
 #       - main
 #       - prod
+#       - tags
 #       - master
 #       - /^feature\/.*$/
 #       - /^pipeline\/.*$/
@@ -196,6 +198,7 @@ backend_npm_install:
 #     refs:
 #       - main
 #       - prod
+#       - tags
 #       - master
 #       - /^feature\/.*$/
 #       - /^pipeline\/.*$/
@@ -231,6 +234,7 @@ workspaces_build_docker:
       - main
       - master
       - prod
+      - tags
     changes:
       - 'services/workspaces/**/*'
   before_script:
@@ -254,6 +258,7 @@ workspaces_deploy:
       - main
       - master
       - prod
+      - tags
     changes:
       - 'services/workspaces/**/*'
   before_script:
@@ -286,6 +291,7 @@ workspaces_deploy:
 #       - main
 #       - master
 #       - prod
+#       - tags
 #     changes:
 #       - 'services/runtime/**/*'
 #   before_script:
@@ -304,6 +310,7 @@ workspaces_deploy:
 #       - main
 #       - master
 #       - prod
+#       - tags
 #     changes:
 #       - 'services/runtime/**/*'
 #   before_script:
@@ -326,6 +333,7 @@ workspaces_deploy:
 #       - main
 #       - master
 #       - prod
+#       - tags
 #     changes:
 #       - 'services/api-gateway/**/*'
 #   before_script:
@@ -344,6 +352,7 @@ workspaces_deploy:
 #       - main
 #       - master
 #       - prod
+#       - tags
 #     changes:
 #       - 'services/api-gateway/**/*'
 #   before_script:
@@ -376,6 +385,7 @@ workspaces_deploy:
 #       - main
 #       - master
 #       - prod
+#       - tags
 #     changes:
 #       - 'services/events/**/*'
 #   before_script:
@@ -394,6 +404,7 @@ workspaces_deploy:
 #       - main
 #       - master
 #       - prod
+#       - tags
 #     changes:
 #       - 'services/events/**/*'
 #   before_script:
