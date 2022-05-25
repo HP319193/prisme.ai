@@ -20,14 +20,11 @@ export class Events {
     if (userId) {
       filters['source.userId'] = userId;
     }
-    const queryString =
-      Object.keys(filters).length > 0
-        ? `?${Object.keys(filters)
-            .map((key) => `${key}=${filters[key]}`)
-            .join('&')}`
-        : '';
+    const queryString = new URLSearchParams(filters).toString();
+    const fullQueryString = queryString ? `?${queryString}` : '';
+
     this.client = io(
-      `${apiHost}/workspaces/${workspaceId}/events${queryString}?source.userId=${userId}`,
+      `${apiHost}/workspaces/${workspaceId}/events${fullQueryString}`,
       {
         extraHeaders: {
           'x-prismeai-session-token': token,
