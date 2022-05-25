@@ -48,6 +48,7 @@ backend_npm_install:
       - 'packages/**/*'
     refs:
       - main
+      - prod
       - /^feature\/.*$/
       - /^fix\/.*$/
       - /^pipeline\/.*$/
@@ -56,10 +57,12 @@ backend_npm_install:
     - docker:stable-dind
   script:
     - >
-      if [ -z $CI_COMMIT_BRANCH ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
+      if [ "$CI_COMMIT_BRANCH" == "prod" ]; then
+        export FEATURE_TAG=prod
+      elif [ -z "$CI_COMMIT_BRANCH" ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
         export FEATURE_TAG=latest
       else
-        export FEATURE_TAG=$(echo ${CI_COMMIT_BRANCH} | tr \/ -)
+        export FEATURE_TAG=$(echo "${CI_COMMIT_BRANCH}" | tr \/ -)
       fi
 
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
@@ -95,16 +98,26 @@ backend_npm_install:
   services:
     - docker:stable-dind
   script:
+    - export CACHE_FROM=latest
     - >
-      if [ -z $CI_COMMIT_BRANCH ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
+      if [ -z "$CI_COMMIT_TAG"  ] || [ "$CI_COMMIT_BRANCH" == "prod" ]; then
+        export FEATURE_TAG=$CI_COMMIT_SHORT_SHA
+        export DEPENDENCIES_TAG=prod
+      elif [ "$CI_COMMIT_BRANCH" == "prod" ]; then
+        export FEATURE_TAG=$CI_COMMIT_TAG
+        export DEPENDENCIES_TAG=prod
+      elif [ -z "$CI_COMMIT_BRANCH" ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
         export FEATURE_TAG=latest
+        export DEPENDENCIES_TAG=$FEATURE_TAG
       else
-        export FEATURE_TAG=$(echo ${CI_COMMIT_BRANCH} | tr \/ -)
+        export FEATURE_TAG=$(echo "${CI_COMMIT_BRANCH}" | tr \/ -)
+        export DEPENDENCIES_TAG=$FEATURE_TAG
+        export CACHE_FROM=$FEATURE_TAG
       fi
 
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker pull $IMAGE_NAME:latest || true
-    - docker build  --build-arg DEPENDENCIES_TAG=$FEATURE_TAG --cache-from $IMAGE_NAME:$FEATURE_TAG -t $IMAGE_NAME:$FEATURE_TAG . -f $DIRECTORY/Dockerfile
+    - docker build  --build-arg DEPENDENCIES_TAG=$DEPENDENCIES_TAG --cache-from $IMAGE_NAME:$CACHE_FROM -t $IMAGE_NAME:$FEATURE_TAG . -f $DIRECTORY/Dockerfile
     - docker push $IMAGE_NAME:$FEATURE_TAG
 
 .deploy_k8s:
@@ -116,90 +129,96 @@ backend_npm_install:
     entrypoint: ['/bin/sh', '-c']
   script:
     - >
-      if [ -z $CI_COMMIT_BRANCH ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
+      if [ -z "$CI_COMMIT_TAG"  ] || [ "$CI_COMMIT_BRANCH" == "prod" ]; then
+        export FEATURE_TAG=$CI_COMMIT_SHORT_SHA
+      elif [ "$CI_COMMIT_BRANCH" == "prod" ]; then
+        export FEATURE_TAG=$CI_COMMIT_TAG
+      elif [ -z "$CI_COMMIT_BRANCH" ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
         export FEATURE_TAG=latest
       else
-        export FEATURE_TAG=$(echo ${CI_COMMIT_BRANCH} | tr \/ -)
+        export FEATURE_TAG=$(echo "${CI_COMMIT_BRANCH}" | tr \/ -)
       fi
     - deploy $CI_COMMIT_BRANCH $K8S_NAME $IMAGE_NAME $FEATURE_TAG
 
 ## Console jobs
-console_check:
-  stage: test
-  script:
-    - >
-      if ! [[ -d node_modules/ ]] ; then
-        BUILD_PACKAGES=0 npm ci
-      fi
-    - npm run build:packages
-    - npm run check:console
-  needs: []
-  only:
-    changes:
-      - 'services/console/**/*'
-  before_script:
-    - export DIRECTORY=services/$CONSOLE_DIRECTORY
+# console_check:
+#   stage: test
+#   script:
+#     - >
+#       if ! [[ -d node_modules/ ]] ; then
+#         BUILD_PACKAGES=0 npm ci
+#       fi
+#     - npm run build:packages
+#     - npm run check:console
+#   needs: []
+#   only:
+#     changes:
+#       - 'services/console/**/*'
+#   before_script:
+#     - export DIRECTORY=services/$CONSOLE_DIRECTORY
 
-console_test:
-  extends: .npm_test
-  needs: []
-  only:
-    changes:
-      - 'services/console/**/*'
-  before_script:
-    - export DIRECTORY=services/$CONSOLE_DIRECTORY
+# console_test:
+#   extends: .npm_test
+#   needs: []
+#   only:
+#     changes:
+#       - 'services/console/**/*'
+#   before_script:
+#     - export DIRECTORY=services/$CONSOLE_DIRECTORY
 
-console_build_docker:
-  extends: .build_docker
-  needs:
-    - console_test
-  stage: build_docker
-  image: docker:stable
-  services:
-    - docker:stable-dind
-  only:
-    refs:
-      - main
-      - master
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-    changes:
-      - 'services/console/**/*'
-  before_script:
-    - export DIRECTORY=services/$CONSOLE_DIRECTORY
-    - export DOCKER_HOST=tcp://docker:2375
-    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
+# console_build_docker:
+#   extends: .build_docker
+#   needs:
+#     - console_test
+#   stage: build_docker
+#   image: docker:stable
+#   services:
+#     - docker:stable-dind
+#   only:
+#     refs:
+#       - main
+#       - prod
+#       - master
+#       - /^feature\/.*$/
+#       - /^pipeline\/.*$/
+#     changes:
+#       - 'services/console/**/*'
+#   before_script:
+#     - export DIRECTORY=services/$CONSOLE_DIRECTORY
+#     - export DOCKER_HOST=tcp://docker:2375
+#     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
 
-console_deploy:
-  extends: .deploy_k8s
-  needs:
-    - console_build_docker
-  only:
-    refs:
-      - main
-      - master
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-    changes:
-      - 'services/console/**/*'
-  before_script:
-    - export KUBECONFIG=$KUBECONFIG
-    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
-    - export K8S_NAME=$CONSOLE_K8S_NAME
+# console_deploy:
+#   extends: .deploy_k8s
+#   needs:
+#     - console_build_docker
+#   only:
+#     refs:
+#       - main
+#       - prod
+#       - master
+#       - /^feature\/.*$/
+#       - /^pipeline\/.*$/
+#     changes:
+#       - 'services/console/**/*'
+#   before_script:
+#     - export KUBECONFIG=$KUBECONFIG
+#     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
+#     - export K8S_NAME=$CONSOLE_K8S_NAME
 
 # ## Workspaces jobs
-workspaces_test:
-  extends: .npm_test
-  only:
-    changes:
-      - 'services/workspaces/*'
-  before_script:
-    - export DIRECTORY=services/$WORKSPACES_DIRECTORY
+# workspaces_test:
+#   extends: .npm_test
+#   only:
+#     changes:
+#       - 'services/workspaces/*'
+#   before_script:
+#     - export DIRECTORY=services/$WORKSPACES_DIRECTORY
 
 workspaces_build_docker:
   extends: .build_docker
-  needs:
-    - workspaces_test
+  # needs:
+  #   - workspaces_test
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
@@ -211,6 +230,7 @@ workspaces_build_docker:
       - /^pipeline\/.*$/
       - main
       - master
+      - prod
     changes:
       - 'services/workspaces/**/*'
   before_script:
@@ -222,12 +242,18 @@ workspaces_deploy:
   extends: .deploy_k8s
   needs:
     - workspaces_build_docker
+  tags:
+    - internal-runner
+  image:
+    name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
+    entrypoint: ['/bin/sh', '-c']
   only:
     refs:
       - /^feature\/.*$/
       - /^pipeline\/.*$/
       - main
       - master
+      - prod
     changes:
       - 'services/workspaces/**/*'
   before_script:
@@ -236,199 +262,205 @@ workspaces_deploy:
     - export K8S_NAME=$WORKSPACES_K8S_NAME
 
 # ## Runtime jobs
-runtime_test:
-  extends: .npm_test
-  only:
-    changes:
-      - 'services/runtime/**/*'
-  before_script:
-    - export DIRECTORY=services/$RUNTIME_DIRECTORY
+# runtime_test:
+#   extends: .npm_test
+#   only:
+#     changes:
+#       - 'services/runtime/**/*'
+#   before_script:
+#     - export DIRECTORY=services/$RUNTIME_DIRECTORY
 
-runtime_build_docker:
-  extends: .build_docker
-  needs:
-    - runtime_test
-  interruptible: true # Stop this job if a new one has been triggered by the same branch
-  stage: build_docker
-  image: docker:stable
-  services:
-    - docker:stable-dind
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-    changes:
-      - 'services/runtime/**/*'
-  before_script:
-    - export DIRECTORY=services/$RUNTIME_DIRECTORY
-    - export DOCKER_HOST=tcp://docker:2375
-    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
+# runtime_build_docker:
+#   extends: .build_docker
+#   needs:
+#     - runtime_test
+#   interruptible: true # Stop this job if a new one has been triggered by the same branch
+#   stage: build_docker
+#   image: docker:stable
+#   services:
+#     - docker:stable-dind
+#   only:
+#     refs:
+#       - /^feature\/.*$/
+#       - /^pipeline\/.*$/
+#       - main
+#       - master
+#       - prod
+#     changes:
+#       - 'services/runtime/**/*'
+#   before_script:
+#     - export DIRECTORY=services/$RUNTIME_DIRECTORY
+#     - export DOCKER_HOST=tcp://docker:2375
+#     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
 
-runtime_deploy:
-  extends: .deploy_k8s
-  needs:
-    - runtime_build_docker
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-    changes:
-      - 'services/runtime/**/*'
-  before_script:
-    - export KUBECONFIG=$KUBECONFIG
-    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
-    - export K8S_NAME=$RUNTIME_K8S_NAME
+# runtime_deploy:
+#   extends: .deploy_k8s
+#   needs:
+#     - runtime_build_docker
+#   only:
+#     refs:
+#       - /^feature\/.*$/
+#       - /^pipeline\/.*$/
+#       - main
+#       - master
+#       - prod
+#     changes:
+#       - 'services/runtime/**/*'
+#   before_script:
+#     - export KUBECONFIG=$KUBECONFIG
+#     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
+#     - export K8S_NAME=$RUNTIME_K8S_NAME
 
-# ## API Gateway jobs
-api-gateway_build_docker:
-  extends: .build_docker
-  interruptible: true # Stop this job if a new one has been triggered by the same branch
-  stage: build_docker
-  image: docker:stable
-  services:
-    - docker:stable-dind
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-    changes:
-      - 'services/api-gateway/**/*'
-  before_script:
-    - export DIRECTORY=services/$API_GATEWAY_DIRECTORY
-    - export DOCKER_HOST=tcp://docker:2375
-    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME
+# # ## API Gateway jobs
+# api-gateway_build_docker:
+#   extends: .build_docker
+#   interruptible: true # Stop this job if a new one has been triggered by the same branch
+#   stage: build_docker
+#   image: docker:stable
+#   services:
+#     - docker:stable-dind
+#   only:
+#     refs:
+#       - /^feature\/.*$/
+#       - /^pipeline\/.*$/
+#       - main
+#       - master
+#       - prod
+#     changes:
+#       - 'services/api-gateway/**/*'
+#   before_script:
+#     - export DIRECTORY=services/$API_GATEWAY_DIRECTORY
+#     - export DOCKER_HOST=tcp://docker:2375
+#     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME
 
-api-gateway_deploy:
-  extends: .deploy_k8s
-  needs:
-    - api-gateway_build_docker
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-    changes:
-      - 'services/api-gateway/**/*'
-  before_script:
-    - export KUBECONFIG=$KUBECONFIG
-    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME
-    - export K8S_NAME=$API_GATEWAY_K8S_NAME
+# api-gateway_deploy:
+#   extends: .deploy_k8s
+#   needs:
+#     - api-gateway_build_docker
+#   only:
+#     refs:
+#       - /^feature\/.*$/
+#       - /^pipeline\/.*$/
+#       - main
+#       - master
+#       - prod
+#     changes:
+#       - 'services/api-gateway/**/*'
+#   before_script:
+#     - export KUBECONFIG=$KUBECONFIG
+#     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME
+#     - export K8S_NAME=$API_GATEWAY_K8S_NAME
 
-# ## Events jobs
-events_test:
-  extends: .npm_test
-  only:
-    changes:
-      - 'services/events/**/*'
-  before_script:
-    - export DIRECTORY=services/$EVENTS_DIRECTORY
+# # ## Events jobs
+# events_test:
+#   extends: .npm_test
+#   only:
+#     changes:
+#       - 'services/events/**/*'
+#   before_script:
+#     - export DIRECTORY=services/$EVENTS_DIRECTORY
 
-events_build_docker:
-  extends: .build_docker
-  needs:
-    - events_test
-  interruptible: true # Stop this job if a new one has been triggered by the same branch
-  stage: build_docker
-  image: docker:stable
-  services:
-    - docker:stable-dind
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-    changes:
-      - 'services/events/**/*'
-  before_script:
-    - export DIRECTORY=services/$EVENTS_DIRECTORY
-    - export DOCKER_HOST=tcp://docker:2375
-    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME
+# events_build_docker:
+#   extends: .build_docker
+#   needs:
+#     - events_test
+#   interruptible: true # Stop this job if a new one has been triggered by the same branch
+#   stage: build_docker
+#   image: docker:stable
+#   services:
+#     - docker:stable-dind
+#   only:
+#     refs:
+#       - /^feature\/.*$/
+#       - /^pipeline\/.*$/
+#       - main
+#       - master
+#       - prod
+#     changes:
+#       - 'services/events/**/*'
+#   before_script:
+#     - export DIRECTORY=services/$EVENTS_DIRECTORY
+#     - export DOCKER_HOST=tcp://docker:2375
+#     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME
 
-events_deploy:
-  extends: .deploy_k8s
-  needs:
-    - events_build_docker
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-    changes:
-      - 'services/events/**/*'
-  before_script:
-    - export KUBECONFIG=$KUBECONFIG
-    - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME
-    - export K8S_NAME=$EVENTS_K8S_NAME
+# events_deploy:
+#   extends: .deploy_k8s
+#   needs:
+#     - events_build_docker
+#   only:
+#     refs:
+#       - /^feature\/.*$/
+#       - /^pipeline\/.*$/
+#       - main
+#       - master
+#       - prod
+#     changes:
+#       - 'services/events/**/*'
+#   before_script:
+#     - export KUBECONFIG=$KUBECONFIG
+#     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME
+#     - export K8S_NAME=$EVENTS_K8S_NAME
 
-# ## Docs jobs
-docs_build_static:
-  stage: build_docker
-  needs: []
-  interruptible: true # Stop this job if a new one has been triggered by the same branch
-  only:
-    refs:
-      - main
-      - master
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - /^doc\/.*$/
-    changes:
-      - 'docs/**/*'
-      - 'specifications/*'
-  image: python:latest
-  script:
-    - cp ./specifications/swagger.yml docs/public/api/swagger.yml
-    - cd docs
-    - apt-get update && apt-get install -y nodejs npm
-    - npm ci
-    - pip install mkdocs-material==6.2.5
-    - bash ./build.sh all
-  artifacts:
-    paths:
-      - docs/public
+# # ## Docs jobs
+# docs_build_static:
+#   stage: build_docker
+#   needs: []
+#   interruptible: true # Stop this job if a new one has been triggered by the same branch
+#   only:
+#     refs:
+#       - main
+#       - master
+#       - /^feature\/.*$/
+#       - /^pipeline\/.*$/
+#       - /^doc\/.*$/
+#     changes:
+#       - 'docs/**/*'
+#       - 'specifications/*'
+#   image: python:latest
+#   script:
+#     - cp ./specifications/swagger.yml docs/public/api/swagger.yml
+#     - cd docs
+#     - apt-get update && apt-get install -y nodejs npm
+#     - npm ci
+#     - pip install mkdocs-material==6.2.5
+#     - bash ./build.sh all
+#   artifacts:
+#     paths:
+#       - docs/public
 
-.s3_deploy:
-  stage: deploy
-  image: python:alpine
-  before_script:
-    - pip install awscli
+# .s3_deploy:
+#   stage: deploy
+#   image: python:alpine
+#   before_script:
+#     - pip install awscli
 
-docs_deploy:
-  extends: .s3_deploy
-  needs:
-    - docs_build_static
-  only:
-    refs:
-      - main
-      - /^doc\/.*$/
-    changes:
-      - 'docs/**/*'
-      - 'specifications/*'
-  script:
-    - aws s3 rm s3://$DOCS_S3_BUCKET_NAME --recursive
-    - aws s3 cp docs/public/ s3://$DOCS_S3_BUCKET_NAME/ --recursive --include "*"
-    - aws cloudfront create-invalidation --distribution-id $DOCS_CDN_DISTRIBUTION_ID --paths "/*"
+# docs_deploy:
+#   extends: .s3_deploy
+#   needs:
+#     - docs_build_static
+#   only:
+#     refs:
+#       - main
+#       - /^doc\/.*$/
+#     changes:
+#       - 'docs/**/*'
+#       - 'specifications/*'
+#   script:
+#     - aws s3 rm s3://$DOCS_S3_BUCKET_NAME --recursive
+#     - aws s3 cp docs/public/ s3://$DOCS_S3_BUCKET_NAME/ --recursive --include "*"
+#     - aws cloudfront create-invalidation --distribution-id $DOCS_CDN_DISTRIBUTION_ID --paths "/*"
 
-load_performance:
-  stage: performance
-  when: manual
-  image:
-    name: loadimpact/k6:latest
-    entrypoint: ['']
-  variables:
-    K6_TEST_FILE: scripts/loadPerformanceTesting.js
-    K6_OPTIONS: ''
-  script:
-    - k6 run $K6_TEST_FILE --summary-export=load-performance.json $K6_OPTIONS
-  artifacts:
-    reports:
-      load_performance: load-performance.json
+# load_performance:
+#   stage: performance
+#   when: manual
+#   image:
+#     name: loadimpact/k6:latest
+#     entrypoint: ['']
+#   variables:
+#     K6_TEST_FILE: scripts/loadPerformanceTesting.js
+#     K6_OPTIONS: ''
+#   script:
+#     - k6 run $K6_TEST_FILE --summary-export=load-performance.json $K6_OPTIONS
+#   artifacts:
+#     reports:
+#       load_performance: load-performance.json
