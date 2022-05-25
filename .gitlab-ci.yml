@@ -57,7 +57,7 @@ backend_npm_install:
     - docker:stable-dind
   script:
     - >
-      if [ "$CI_COMMIT_BRANCH" == "prod" ]; then
+      if [ -n "$CI_COMMIT_TAG" ] ; then
         export FEATURE_TAG=prod
       elif [ -z "$CI_COMMIT_BRANCH" ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
         export FEATURE_TAG=latest
@@ -102,10 +102,7 @@ backend_npm_install:
     - echo "tag = $CI_COMMIT_TAG"
     - export CACHE_FROM=latest
     - >
-      if [ -z "$CI_COMMIT_TAG"  ] && [ "$CI_COMMIT_BRANCH" == "prod" ]; then
-        export FEATURE_TAG=$CI_COMMIT_SHORT_SHA
-        export DEPENDENCIES_TAG=prod
-      elif [ "$CI_COMMIT_BRANCH" == "prod" ]; then
+      if [ -n "$CI_COMMIT_TAG" ] ; then
         export FEATURE_TAG=$CI_COMMIT_TAG
         export DEPENDENCIES_TAG=prod
       elif [ -z "$CI_COMMIT_BRANCH" ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
@@ -132,11 +129,11 @@ backend_npm_install:
   script:
     - echo "sha = $CI_COMMIT_SHORT_SHA"
     - echo "tag = $CI_COMMIT_TAG"
+    - echo "branch = $CI_COMMIT_BRANCH"
     - >
-      if [ -z "$CI_COMMIT_TAG"  ] && [ "$CI_COMMIT_BRANCH" == "prod" ]; then
-        export FEATURE_TAG=$CI_COMMIT_SHORT_SHA
-      elif [ "$CI_COMMIT_BRANCH" == "prod" ]; then
+      if [ -n "$CI_COMMIT_TAG"  ] ; then
         export FEATURE_TAG=$CI_COMMIT_TAG
+        export CI_COMMIT_BRANCH=prod
       elif [ -z "$CI_COMMIT_BRANCH" ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
         export FEATURE_TAG=latest
       else
