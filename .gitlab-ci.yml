@@ -48,7 +48,6 @@ backend_npm_install:
       - 'packages/**/*'
     refs:
       - main
-      - prod
       - tags
       - /^feature\/.*$/
       - /^fix\/.*$/
@@ -178,7 +177,6 @@ console_build_docker:
   only:
     refs:
       - main
-      - prod
       - tags
       - master
       - /^feature\/.*$/
@@ -197,7 +195,6 @@ console_deploy:
   only:
     refs:
       - main
-      - prod
       - tags
       - master
       - /^feature\/.*$/
@@ -233,7 +230,6 @@ workspaces_build_docker:
       - /^pipeline\/.*$/
       - main
       - master
-      - prod
       - tags
     changes:
       - 'services/workspaces/**/*'
@@ -257,7 +253,6 @@ workspaces_deploy:
       - /^pipeline\/.*$/
       - main
       - master
-      - prod
       - tags
     changes:
       - 'services/workspaces/**/*'
@@ -290,7 +285,6 @@ runtime_build_docker:
       - /^pipeline\/.*$/
       - main
       - master
-      - prod
       - tags
     changes:
       - 'services/runtime/**/*'
@@ -309,7 +303,6 @@ runtime_deploy:
       - /^pipeline\/.*$/
       - main
       - master
-      - prod
       - tags
     changes:
       - 'services/runtime/**/*'
@@ -332,7 +325,6 @@ api-gateway_build_docker:
       - /^pipeline\/.*$/
       - main
       - master
-      - prod
       - tags
     changes:
       - 'services/api-gateway/**/*'
@@ -351,7 +343,6 @@ api-gateway_deploy:
       - /^pipeline\/.*$/
       - main
       - master
-      - prod
       - tags
     changes:
       - 'services/api-gateway/**/*'
@@ -384,7 +375,6 @@ events_build_docker:
       - /^pipeline\/.*$/
       - main
       - master
-      - prod
       - tags
     changes:
       - 'services/events/**/*'
@@ -403,7 +393,6 @@ events_deploy:
       - /^pipeline\/.*$/
       - main
       - master
-      - prod
       - tags
     changes:
       - 'services/events/**/*'
