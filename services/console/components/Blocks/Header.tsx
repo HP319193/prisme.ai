@@ -193,6 +193,7 @@ const PageLink: FC<{ pageId: string } & HTMLAttributes<HTMLAnchorElement>> = ({
   const [href, setHref] = useState('');
   const fetchHref = useCallback(async (pageId: string) => {
     try {
+      if (!pageId) return;
       const { slug = pageId } = await api.getPageBySlug(pageId);
       setHref(slug);
     } catch {}

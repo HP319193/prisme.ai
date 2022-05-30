@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Socket } from 'socket.io-client';
 import api, { Events } from '../../utils/api';
 import { useUser } from '../UserProvider';
 
@@ -25,31 +26,34 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
     setBlocksConfigs((cachedPage.blocks || []).map(({ config }) => config));
   }, [cachedPage]);
 
-  const socket = useRef<Events>();
+  const [socket, setSocket] = useState<Events>();
   const off = useRef<Function>();
   const [error, setError] = useState(false);
 
+  const prevSocket = useRef<Events>();
   const initSocket = useCallback(async () => {
+    if (prevSocket.current && prevSocket.current === socket) return;
     off.current && off.current();
 
     const page = cachedPage;
     if (!isPage(page) || !page.workspaceId) return;
     const socketAlreadyInstantiatedForWorkspace =
-      socket.current && socket.current.workspaceId === page.workspaceId;
+      socket && socket.workspaceId === page.workspaceId;
 
     if (!socketAlreadyInstantiatedForWorkspace) {
-      if (socket.current) {
-        socket.current.destroy();
+      if (socket) {
+        socket.destroy();
       }
       try {
-        socket.current = await api.streamEvents(page.workspaceId, user?.id);
+        prevSocket.current = await api.streamEvents(page.workspaceId, user?.id);
+        setSocket(prevSocket.current);
         setError(false);
       } catch (e) {
         setError(true);
       }
     }
 
-    if (!socket.current) return null;
+    if (!prevSocket.current) return null;
 
     const updateEvents = (page.blocks || []).reduce<Record<string, number[]>>(
       (prev, { config }, index) =>
@@ -62,7 +66,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
       {}
     );
 
-    off.current = socket.current.all((e, { payload }) => {
+    off.current = prevSocket.current.all((e, { payload }) => {
       if (Object.keys(updateEvents).includes(e)) {
         setBlocksConfigs((configs) => {
           const newConfigs = [...configs];
@@ -75,14 +79,14 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
     });
 
     (page.blocks || []).forEach(({ config: { onInit } = {} }) => {
-      if (!socket.current) return;
+      if (!prevSocket.current) return;
       if (onInit) {
-        socket.current.emit(onInit, {
+        prevSocket.current.emit(onInit, {
           page: page.id,
         });
       }
     });
-  }, [cachedPage, user?.id]);
+  }, [cachedPage, socket, user?.id]);
 
   useEffect(() => {
     initSocket();
@@ -117,7 +121,7 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
     });
   }, [cachedPage, initWithAutomation]);
 
-  return { blocksConfigs, error, events: socket.current };
+  return { blocksConfigs, error, events: socket };
 };
 
 export default useBlocksConfigs;
