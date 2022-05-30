@@ -15,7 +15,7 @@ const evaluate = (expr: any, ctx: any, { asString = false } = {}) => {
   const value = getValueFromCtx(expr, ctx);
   if (typeof value !== 'string') {
     if (asString) {
-      return typeof value === 'undefined'
+      return typeof value === 'undefined' || value == null
         ? ''
         : JSON.stringify(value, null, '  ');
     }
