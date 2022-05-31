@@ -3,6 +3,7 @@ module.exports = {
     '../lib/**/*.stories.mdx',
     '../lib/**/*.stories.@(js|jsx|ts|tsx)',
     '../../../services/console/components/**/*.stories.@(js|jsx|ts|tsx)',
+    '../../blocks/lib/**/*.stories.@(js|jsx|ts|tsx)',
   ],
   addons: [
     '@storybook/addon-links',

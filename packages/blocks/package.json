@@ -1,0 +1,13 @@
+{
+  "name": "@prisme.ai/blocks",
+  "version": "1.0.0",
+  "description": "Prisme.ai builtin blocks",
+  "main": "./dist/index.js",
+  "scripts": {},
+  "dependencies": {
+    "@prisme.ai/design-system": "1.0.3"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2"
+  }
+}
