@@ -62,11 +62,11 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   useEffect(() => {
     const askForConfirmation = async (path: string) => {
       await Modal.confirm({
-        okText: t('expert.exit.cancel'),
-        cancelText: t('expert.exit.confirm'),
+        okText: t('expert.exit.confirm'),
+        cancelText: t('expert.exit.cancel'),
         title: t('expert.exit.confirm_title'),
         content: t('expert.exit.confirm_message'),
-        onCancel: () => {
+        onOk: () => {
           setConfirm(true);
           displaySource(false);
           setTimeout(() => push(path), 1);
