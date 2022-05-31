@@ -1,21 +1,25 @@
 import { Story } from '@storybook/react';
-import { BlockProvider } from './Block';
+import { useBlock } from '@prisme.ai/Blocks';
+import { Input, Loading } from '@prisme.ai/design-system';
 import { useState } from 'react';
-import { useBlock } from './Block/context';
-import Input from './Input';
-import { Title } from '../index';
+import { BlockLoader } from './BlockLoader';
 
 export default {
-  title: 'Components/Block',
+  title: 'Blocks/BlockLoader',
 };
 
 const FakeBlock = () => {
   const { config = {}, setConfig, appConfig = {}, setAppConfig } = useBlock();
+
+  if (!setConfig || !setAppConfig) {
+    return <Loading />;
+  }
+
   return (
     <div>
       <div>This Block uses `useBlock` to communicate with its host.</div>
       <div>
-        Add a foo value to Block config:
+        config:
         <Input
           value={config.foo || ''}
           onChange={({ target: { value } }) =>
@@ -24,9 +28,10 @@ const FakeBlock = () => {
             })
           }
         />
+        {JSON.stringify(config)}
       </div>
       <div>
-        Add a bar value to app instance config:
+        app instance config:
         <Input
           value={appConfig.bar || ''}
           onChange={({ target: { value } }) =>
@@ -35,6 +40,7 @@ const FakeBlock = () => {
             })
           }
         />
+        {JSON.stringify(appConfig)}
       </div>
     </div>
   );
@@ -45,25 +51,16 @@ const Template: Story<any> = () => {
   const [appConfig, setAppConfig] = useState<any>();
 
   return (
-    <BlockProvider
+    <BlockLoader
       config={config}
       onConfigUpdate={setConfig}
       appConfig={appConfig}
       onAppConfigUpdate={setAppConfig}
+      prismeaiSDK={{}}
+      entityId={'0'}
     >
-      <>
-        <Title level={2}>Block exemple:</Title>
-        <FakeBlock />
-        <Title level={2}>Current block config:</Title>
-        <pre>
-          <code>{JSON.stringify(config, null, '  ')}</code>
-        </pre>
-        <Title level={2}>Current App instance config:</Title>
-        <pre>
-          <code>{JSON.stringify(appConfig, null, '  ')}</code>
-        </pre>
-      </>
-    </BlockProvider>
+      <FakeBlock />
+    </BlockLoader>
   );
 };
 

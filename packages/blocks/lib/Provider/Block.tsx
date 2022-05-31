@@ -2,12 +2,13 @@ import { FC } from 'react';
 import blockContext from './context';
 import { Events } from '@prisme.ai/sdk';
 
-interface BlockProviderProps {
+export interface BlockProviderProps {
   config: any;
   onConfigUpdate?: (config: any) => void;
-  appConfig: any;
+  appConfig: Prismeai.DetailedAppInstance['config'];
   onAppConfigUpdate?: (config: any) => void;
   events?: Events;
+  api?: any;
 }
 
 export const BlockProvider: FC<BlockProviderProps> = ({
@@ -17,6 +18,7 @@ export const BlockProvider: FC<BlockProviderProps> = ({
   appConfig,
   onAppConfigUpdate,
   events,
+  api,
 }) => {
   return (
     <blockContext.Provider
@@ -26,6 +28,7 @@ export const BlockProvider: FC<BlockProviderProps> = ({
         config,
         setConfig: onConfigUpdate,
         events,
+        api,
       }}
     >
       {children}

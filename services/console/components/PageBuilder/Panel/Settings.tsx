@@ -1,11 +1,6 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Collapse,
-  Schema,
-  SchemaForm,
-  useBlock,
-} from '@prisme.ai/design-system';
+import { Button, Collapse, Schema, SchemaForm } from '@prisme.ai/design-system';
+import { useBlock } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';

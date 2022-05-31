@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Schema } from '../SchemaForm';
+import { Schema } from '@prisme.ai/design-system';
 
 export type Block = ((props: {
   workspaceId: string;

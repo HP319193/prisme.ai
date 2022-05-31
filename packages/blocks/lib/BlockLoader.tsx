@@ -1,21 +1,10 @@
 import * as React from 'react';
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import ReactDom from 'react-dom';
 import * as prismeaiDS from '@prisme.ai/design-system';
-import * as prismeaiSDK from '../utils/api';
 import { nanoid } from 'nanoid';
-import { useTranslation } from 'next-i18next';
-import { Block as TBlock } from '@prisme.ai/design-system';
-
-if (process.browser) {
-  // @ts-ignore
-  window.__external = window.__external || {
-    React: { ...React, default: React },
-    ReactDom: { ...ReactDom, default: ReactDom },
-    prismeaiDS,
-    prismeaiSDK,
-  };
-}
+import { useTranslation } from 'react-i18next';
+import { Block as TBlock, BlockProvider, BlockProviderProps } from './Provider';
 
 class BlockErrorBoundary extends React.Component {
   state = {
@@ -51,22 +40,38 @@ export interface BlockComponentProps {
 }
 type BlockComponent = (props: BlockComponentProps) => ReactElement;
 
-interface BlockProps extends BlockComponentProps {
-  url: string;
+export interface BlockLoaderProps extends BlockComponentProps {
+  children?: ReactNode;
+  url?: string;
+  prismeaiSDK: any;
   renderLoading?: ReactElement;
-  onLoad?: (component: TBlock) => void;
+  onLoad?: (block: any) => void;
 }
 
 export const ReactBlock = ({
   url,
   renderLoading,
   onLoad,
+  prismeaiSDK,
   ...props
-}: BlockProps) => {
+}: BlockLoaderProps) => {
   const {
     i18n: { language },
   } = useTranslation('workspaces');
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // @ts-ignore
+    if (process.browser) {
+      // @ts-ignore
+      window.__external = window.__external || {
+        React: { ...React, default: React },
+        ReactDom: { ...ReactDom, default: ReactDom },
+        prismeaiDS,
+        prismeaiSDK,
+      };
+    }
+  });
 
   const [Component, setComponent] = useState<BlockComponent | null>(null);
   useEffect(() => {
@@ -110,7 +115,7 @@ export const IFrameBlock = ({
   entityId,
   token,
   renderLoading,
-}: BlockProps) => {
+}: BlockLoaderProps) => {
   const [loading, setLoading] = useState(true);
   const [height, setHeight] = useState(100);
   const handleLoad = React.useCallback(
@@ -161,8 +166,12 @@ export const IFrameBlock = ({
   );
 };
 
-export const Block = ({ url, ...props }: BlockProps) => {
-  const isJs = url.replace(/\?.*$/, '').match(/\.js$/);
+const BlockRenderMethod = ({ children, url, ...props }: BlockLoaderProps) => {
+  if (children) {
+    return <>{children}</>;
+  }
+
+  const isJs = url && url.replace(/\?.*$/, '').match(/\.js$/);
   if (isJs) {
     return (
       <BlockErrorBoundary>
@@ -170,7 +179,27 @@ export const Block = ({ url, ...props }: BlockProps) => {
       </BlockErrorBoundary>
     );
   }
+
   return <IFrameBlock url={url} {...props} />;
 };
 
-export default Block;
+export const BlockLoader = ({
+  config,
+  onConfigUpdate,
+  onAppConfigUpdate,
+  api,
+  ...props
+}: BlockLoaderProps & BlockProviderProps) => {
+  return (
+    <BlockProvider
+      config={config}
+      onConfigUpdate={onConfigUpdate}
+      appConfig={props.appConfig}
+      onAppConfigUpdate={onAppConfigUpdate}
+      events={props.events}
+      api={api}
+    >
+      <BlockRenderMethod {...props} />
+    </BlockProvider>
+  );
+};

@@ -1,0 +1,26 @@
+import { Story } from '@storybook/react';
+import { useState } from 'react';
+import { BlockProvider } from '@prisme.ai/blocks';
+import { DataTable } from './index';
+
+export default {
+  title: 'Blocks/DataTable',
+};
+
+const Template: Story<any> = () => {
+  const [config, setConfig] = useState<any>();
+  const [appConfig, setAppConfig] = useState<any>();
+
+  return (
+    <BlockProvider
+      config={config}
+      onConfigUpdate={setConfig}
+      appConfig={appConfig}
+      onAppConfigUpdate={setAppConfig}
+    >
+      <DataTable edit={false} />
+    </BlockProvider>
+  );
+};
+
+export const Default = Template.bind({});

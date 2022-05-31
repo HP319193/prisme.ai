@@ -1,17 +1,17 @@
-import { BlockProvider, Loading, Title } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import DefaultErrorPage from 'next/error';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Block from '../components/Block';
+import BlockLoader from '@prisme.ai/blocks';
+import { Loading, Title } from '@prisme.ai/design-system';
 import SigninForm from '../components/SigninForm';
 import { useUser } from '../components/UserProvider';
 import api, { HTTPError } from '../utils/api';
 import useLocalizedText from '../utils/useLocalizedText';
-import * as BuiltinBlocks from '../components/Blocks';
 import useBlocksConfigs from '../components/Blocks/useBlocksConfigs';
-import ErrorBoundary from '../components/Blocks/ErrorBoundary';
+
+import BuiltinBlocks from '../components/Blocks/builtinBlocks';
 
 export interface PublicPageProps {
   page: Prismeai.DetailedPage | null;
@@ -157,39 +157,32 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
             { name = '', appInstance = '', url = '', component: Component },
             index
           ) => (
-            <BlockProvider
+            <div
               key={index}
-              config={blocksConfigs[index]}
-              appConfig={appConfigs.get(appInstance)}
-              onAppConfigUpdate={updateAppConfig(appInstance)}
-              events={events}
+              className={`page-block block-${appInstance.replace(
+                /\s/g,
+                '-'
+              )} block-${name.replace(/\s/g, '-')}`}
+              id={blocksConfigs[index] && blocksConfigs[index].sectionId}
             >
-              <div
-                className={`page-block block-${appInstance.replace(
-                  /\s/g,
-                  '-'
-                )} block-${name.replace(/\s/g, '-')}`}
-                id={blocksConfigs[index] && blocksConfigs[index].sectionId}
+              <BlockLoader
+                entityId={`${index}`}
+                url={url}
+                language={language}
+                token={api.token || undefined}
+                workspaceId={`${currentPage.workspaceId}`}
+                appInstance={appInstance}
+                appConfig={appConfigs.get(appInstance)}
+                setAppConfig={updateAppConfig(appInstance)}
+                events={events}
+                config={blocksConfigs[index]}
+                onAppConfigUpdate={updateAppConfig(appInstance)}
+                api={api}
+                {...blocksConfigs[index]}
               >
-                <ErrorBoundary>
-                  {Component && <Component edit={false} />}
-                  {url && (
-                    <Block
-                      entityId={`${index}`}
-                      url={url}
-                      language={language}
-                      token={api.token || undefined}
-                      workspaceId={`${currentPage.workspaceId}`}
-                      appInstance={appInstance}
-                      appConfig={appConfigs.get(appInstance)}
-                      setAppConfig={updateAppConfig(appInstance)}
-                      events={events}
-                      {...blocksConfigs[index]}
-                    />
-                  )}
-                </ErrorBoundary>
-              </div>
-            </BlockProvider>
+                {Component && <Component edit={false} />}
+              </BlockLoader>
+            </div>
           )
         )}
       </div>

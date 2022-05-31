@@ -1,5 +1,5 @@
 import { Events } from '@prisme.ai/sdk';
-import { createContext, ReactNode, useContext } from 'react';
+import { createContext, useContext } from 'react';
 
 export interface BlockContext<T = any> {
   setAppConfig?: (config: any) => void;
@@ -7,6 +7,7 @@ export interface BlockContext<T = any> {
   setConfig?: (config: any) => void;
   config?: T;
   events?: Events;
+  api?: any;
 }
 
 export const blockContext = createContext<BlockContext>({

@@ -3,10 +3,9 @@ import {
   Collapse,
   ListItem,
   Modal,
-  Tooltip,
-  BlockProvider,
-  SchemaForm,
   Schema,
+  SchemaForm,
+  Tooltip,
 } from '@prisme.ai/design-system';
 import {
   ReactElement,
@@ -16,14 +15,21 @@ import {
   useRef,
   useState,
 } from 'react';
-import Block from '../components/Block';
-import api from '../utils/api';
+import BlockLoader, { BlockProviderProps, Test } from '@prisme.ai/blocks';
+import api, * as prismeaiSDK from '../utils/api';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
 
 interface AppsSidebarItemProps extends Prismeai.DetailedAppInstance {
+  workspaceId: string;
+  onToggle: (app: string, state: boolean) => void;
+  appConfig: BlockProviderProps['appConfig'];
+  onAppConfigUpdate: BlockProviderProps['onAppConfigUpdate'];
+}
+
+interface AppsSidebarItemWithBlockProps extends Prismeai.DetailedAppInstance {
   workspaceId: string;
   onToggle: (app: string, state: boolean) => void;
 }
@@ -35,6 +41,9 @@ const AppsSidebarItem = ({
   slug = '',
   config: { schema, block } = EmptyObject,
   onToggle,
+  appConfig,
+  config,
+  onAppConfigUpdate,
 }: AppsSidebarItemProps) => {
   const { uninstallApp } = useWorkspaces();
   const { getAppConfig, saveAppConfig } = useWorkspace();
@@ -76,19 +85,34 @@ const AppsSidebarItem = ({
       };
       return <SchemaForm schema={s} onSubmit={save} initialValues={value} />;
     }
-    if (block) {
-      return (
-        <Block
-          url={block}
-          entityId={slug}
-          token={`${api.token}`}
-          workspaceId={workspaceId}
-          appInstance={slug}
-        />
-      );
-    }
+    return <Test />;
+    // if (block) {
+    //   return (
+    //     <BlockLoader
+    //       url={block}
+    //       entityId={slug}
+    //       token={`${api.token}`}
+    //       workspaceId={workspaceId}
+    //       appInstance={slug}
+    //       config={config}
+    //       appConfig={appConfig}
+    //       onAppConfigUpdate={onAppConfigUpdate}
+    //       prismeaiSDK={prismeaiSDK}
+    //     />
+    //   );
+    // }
     return null;
-  }, [save, schema, slug, value, block, workspaceId]);
+  }, [
+    schema,
+    block,
+    save,
+    value,
+    slug,
+    workspaceId,
+    config,
+    appConfig,
+    onAppConfigUpdate,
+  ]);
 
   if (!configComponent)
     return (
@@ -142,7 +166,7 @@ const AppsSidebarItem = ({
   );
 };
 
-const AppsSidebarItemWithBlock = (props: AppsSidebarItemProps) => {
+const AppsSidebarItemWithBlock = (props: AppsSidebarItemWithBlockProps) => {
   const [appConfig, setAppConfig] = useState<any>();
   useEffect(() => {
     if (!props.slug) return;
@@ -166,15 +190,16 @@ const AppsSidebarItemWithBlock = (props: AppsSidebarItemProps) => {
     [props.slug, props.workspaceId]
   );
 
-  return (
-    <BlockProvider
-      config={{}}
-      appConfig={appConfig}
-      onAppConfigUpdate={setAppConfigHandler}
-    >
-      <AppsSidebarItem {...props} />
-    </BlockProvider>
-  );
+  return null;
+
+  // return (
+  //   <AppsSidebarItem
+  //     config={{}}
+  //     appConfig={appConfig}
+  //     onAppConfigUpdate={setAppConfigHandler}
+  //     {...props}
+  //   />
+  // );
 };
 
 export default AppsSidebarItemWithBlock;

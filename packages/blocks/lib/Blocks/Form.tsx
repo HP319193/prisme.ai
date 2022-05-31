@@ -1,25 +1,21 @@
-import {
-  Button,
-  Schema,
-  SchemaForm,
-  Tooltip,
-  useBlock,
-} from '@prisme.ai/design-system';
+import { Button, Schema, SchemaForm, Tooltip } from '@prisme.ai/design-system';
+import { useBlock } from '@prisme.ai/blocks';
 import { FieldProps } from '@prisme.ai/design-system/lib/Components/SchemaForm/types';
-import { useTranslation } from 'next-i18next';
-import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ElementType, useCallback, useMemo } from 'react';
 import { useField } from 'react-final-form';
-import useLocalizedText from '../../utils/useLocalizedText';
-import BlockTitle from './Components/BlockTitle';
+import BlockTitle from './Internal/BlockTitle';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import Properties from '../SchemaFormBuilder/Properties';
 
 const defaultSchema = {
   type: 'string',
   title: 'preview',
 };
 
-export const SchemaEditor = ({ name }: FieldProps) => {
+export const SchemaEditor = ({
+  name,
+  Properties,
+}: FieldProps & { Properties: ElementType }) => {
   const field = useField(name);
   const { t } = useTranslation('workspaces');
 
@@ -81,9 +77,8 @@ const schema: Schema = {
   },
 };
 
-export const Form = ({}) => {
+export const Form = () => {
   const { config = {}, events } = useBlock();
-  const { localizeSchemaForm, localize } = useLocalizedText();
   const { t } = useTranslation('pages');
 
   const onChange = useCallback(

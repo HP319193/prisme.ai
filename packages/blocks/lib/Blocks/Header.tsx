@@ -1,12 +1,7 @@
-import { Schema, useBlock } from '@prisme.ai/design-system';
-import getConfig from 'next/config';
-import Link from 'next/link';
-import { FC, HTMLAttributes, useCallback, useEffect, useState } from 'react';
-import api from '../../utils/api';
+import { Schema } from '@prisme.ai/design-system';
+import { useBlock } from '@prisme.ai/blocks';
 
-const {
-  publicRuntimeConfig: { PAGES_HOST = '' },
-} = getConfig();
+import { FC, HTMLAttributes, useCallback, useEffect, useState } from 'react';
 
 interface Config {
   title?: string;
@@ -191,9 +186,9 @@ const PageLink: FC<{ pageId: string } & HTMLAttributes<HTMLAnchorElement>> = ({
   ...props
 }) => {
   const [href, setHref] = useState('');
+  const { api } = useBlock();
   const fetchHref = useCallback(async (pageId: string) => {
     try {
-      if (!pageId) return;
       const { slug = pageId } = await api.getPageBySlug(pageId);
       setHref(slug);
     } catch {}
@@ -201,11 +196,10 @@ const PageLink: FC<{ pageId: string } & HTMLAttributes<HTMLAnchorElement>> = ({
   useEffect(() => {
     fetchHref(pageId);
   }, [fetchHref, pageId]);
-  return (
-    <Link href={href}>
-      <a {...props} />
-    </Link>
-  );
+
+  // TODO test if this work like next/link
+
+  return <a href={href} {...props} />;
 };
 
 const Button = ({ text, type, value }: Config['nav'][number]) => {

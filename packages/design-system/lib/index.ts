@@ -27,7 +27,6 @@ export { default as SidePanel } from './Components/SidePanel';
 export { default as DatePicker } from './Components/DatePicker';
 export { default as StretchContent } from './Components/StretchContent';
 export * from './Components/SchemaForm';
-export * from './Components/Block';
 
 export {
   Row,

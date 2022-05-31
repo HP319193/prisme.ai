@@ -3,9 +3,14 @@
   "version": "1.0.0",
   "description": "Prisme.ai builtin blocks",
   "main": "./dist/index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "rollup -c rollup.config.js"
+  },
   "dependencies": {
-    "@prisme.ai/design-system": "1.0.3"
+    "@prisme.ai/design-system": "1.0.3",
+    "i18next": "^21.6.12",
+    "react-i18next": "^11.15.5",
+    "@ant-design/icons": "^4.7.0"
   },
   "peerDependencies": {
     "react": "^17.0.2"

@@ -8,6 +8,7 @@
     "test": "jest --collect-coverage"
   },
   "dependencies": {
+    "@prisme.ai/blocks": "*",
     "@react-hook/hover": "^4.0.0",
     "@sentry/browser": "^6.16.1",
     "@sentry/tracing": "^6.16.1",

@@ -1,14 +1,20 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import { BlockProvider } from '@prisme.ai/design-system';
+import { BlockLoader, BlockLoaderProps } from '@prisme.ai/blocks';
 import { usePageBuilder } from './context';
-import api from '../../utils/api';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
+import api, * as prismeaiSDK from '../../utils/api';
+import { Loading } from '@prisme.ai/design-system';
 
 interface PageBlockProviderProps {
   blockId: string;
-  appInstance?: string;
   workspaceId: string;
-  children: ReactNode;
+  children?: ReactNode;
+  url?: BlockLoaderProps['url'];
+  onLoad?: BlockLoaderProps['onLoad'];
+  entityId: BlockLoaderProps['entityId'];
+  appInstance?: BlockLoaderProps['appInstance'];
+  language?: BlockLoaderProps['language'];
+  edit?: BlockLoaderProps['edit'];
 }
 
 const PageBlockProvider = ({
@@ -16,6 +22,8 @@ const PageBlockProvider = ({
   appInstance,
   workspaceId,
   children,
+  onLoad,
+  ...BlockLoaderProps
 }: PageBlockProviderProps) => {
   const { setBlockConfig, page, events } = usePageBuilder();
   const [appConfig, setAppConfig] = useState<any>();
@@ -61,15 +69,23 @@ const PageBlockProvider = ({
   );
 
   return (
-    <BlockProvider
+    <BlockLoader
       config={config}
       onConfigUpdate={setConfigHandler}
       appConfig={appConfig}
       onAppConfigUpdate={setAppConfigHandler}
       events={events}
+      token={`${api.token}`}
+      renderLoading={
+        <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
+      }
+      edit
+      prismeaiSDK={prismeaiSDK}
+      onLoad={onLoad}
+      {...BlockLoaderProps}
     >
       {children}
-    </BlockProvider>
+    </BlockLoader>
   );
 };
 

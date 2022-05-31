@@ -10,7 +10,8 @@ import { useTranslation } from 'next-i18next';
 import { useMemo, useState } from 'react';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import { usePageBuilder } from '../context';
-import * as BuiltinBlocks from '../../Blocks';
+
+import BuiltinBlocks from '../../Blocks/builtinBlocks';
 
 interface PageNewBlockFormProps {
   onSubmit: (blockSlug: string) => void;

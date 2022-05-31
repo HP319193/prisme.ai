@@ -1,7 +1,8 @@
-import { Schema, Table, useBlock } from '@prisme.ai/design-system';
-import { useTranslation } from 'next-i18next';
+import { Schema, Table } from '@prisme.ai/design-system';
+import { useBlock } from '@prisme.ai/blocks';
+import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
-import BlockTitle from './Components/BlockTitle';
+import BlockTitle from './Internal/BlockTitle';
 
 const previewData = Array.from(new Array(100000), (v, k) => ({
   Id: k,
@@ -20,16 +21,7 @@ export const DataTable = ({ edit }: { edit: boolean }) => {
     return Array.isArray(rawData)
       ? rawData.map((item: any, k: number) => ({
           key: k,
-          ...Object.keys(item).reduce(
-            (prev, key) => ({
-              ...prev,
-              [key]:
-                typeof item[key] === 'string'
-                  ? item[key]
-                  : JSON.stringify(item[key]),
-            }),
-            {}
-          ),
+          ...item,
         }))
       : [];
   }, [config.data, preview]);

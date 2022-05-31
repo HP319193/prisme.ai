@@ -1,10 +1,5 @@
 import { DownOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
-import {
-  Schema,
-  StretchContent,
-  Tooltip,
-  useBlock,
-} from '@prisme.ai/design-system';
+import { Schema, StretchContent, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import {
   FC,
@@ -15,9 +10,11 @@ import {
   useRef,
   useState,
 } from 'react';
-import IconLink from '../../icons/icon-link.svgr';
+import BlockTitle from './Internal/BlockTitle';
+import { useBlock } from '../Provider';
+import { LinkOutlined } from '@ant-design/icons';
+
 import useLocalizedText from '../../utils/useLocalizedText';
-import BlockTitle from './Components/BlockTitle';
 
 const schema: Schema = {
   type: 'object',
@@ -448,7 +445,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                                     width={16}
                                   />
                                 ) : (
-                                  <IconLink height={16} width={16} />
+                                  <LinkOutlined height={16} width={16} />
                                 )}
                               </div>
                               <div

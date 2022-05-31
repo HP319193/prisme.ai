@@ -8,7 +8,7 @@ import { nanoid } from 'nanoid';
 import { useApps } from '../AppsProvider';
 import equal from 'fast-deep-equal';
 import PageEditBlockForm from './Panel/PageEditBlockForm';
-import * as BuiltinBlocks from '../Blocks';
+import BuiltinBlocks from '../Blocks/builtinBlocks';
 import useBlocksConfigs from '../Blocks/useBlocksConfigs';
 import { Schema } from '@prisme.ai/design-system';
 

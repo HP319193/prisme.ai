@@ -1,7 +1,7 @@
-import api from '../../utils/api';
+import api, * as prismeaiSDK from '../../utils/api';
 import { usePageBuilder } from './context';
 import { Loading } from '@prisme.ai/design-system';
-import Block from '../Block';
+import BlockLoader from '@prisme.ai/blocks';
 import useLocalizedText from '../../utils/useLocalizedText';
 import AddBlock from './AddBlock';
 import EditBlock from './EditBlock';
@@ -54,29 +54,18 @@ const PageBlockWithProvider = ({
         </div>
       </div>
 
-      <PageBlockProvider
-        blockId={id}
-        appInstance={appInstance}
-        workspaceId={workspaceId}
-      >
-        <div className="flex grow  relative flex-col surface-section border-slate-100 bg-white  border overflow-hidden z-2">
+      <div className="flex grow  relative flex-col surface-section border-slate-100 bg-white  border overflow-hidden z-2">
+        <PageBlockProvider
+          blockId={id}
+          appInstance={appInstance}
+          workspaceId={workspaceId}
+          url={url}
+          entityId={id}
+          onLoad={onLoad}
+        >
           {Component && <Component edit />}
-          {url && (
-            <Block
-              url={url}
-              entityId={id}
-              token={`${api.token}`}
-              workspaceId={workspaceId}
-              appInstance={appInstance}
-              renderLoading={
-                <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
-              }
-              edit
-              onLoad={onLoad}
-            />
-          )}
-        </div>
-      </PageBlockProvider>
+        </PageBlockProvider>
+      </div>
 
       <div className={`relative ${!hovered ? 'invisible' : ''}`}>
         <AddBlock after={index} />
