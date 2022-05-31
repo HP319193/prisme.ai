@@ -101,7 +101,7 @@ export const SchemaFormBuilder = ({
   );
 
   const options = useMemo(() => {
-    const uiWidget = value['ui:widget'];
+    const uiWidget = value['ui:widget'] || value.enum ? 'enum' : null;
 
     const uiWidgetIsSet = !!(uiWidget && typeof uiWidget === 'string');
     const filteredTypes = uiWidgetIsSet
