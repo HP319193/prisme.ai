@@ -14,7 +14,9 @@ import Properties from './Properties';
 
 const WidgetsByType = {
   ...UIWidgetsByType,
-  string: Array.from(new Set([...UIWidgetsByType.string, 'enum'])),
+  string: Array.from(
+    new Set([...UIWidgetsByType.string.filter((t) => t !== 'select'), 'enum'])
+  ),
 };
 
 interface SchemaFormBuilderProps {
