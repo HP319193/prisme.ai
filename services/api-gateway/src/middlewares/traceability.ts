@@ -18,6 +18,7 @@ export interface PrismeContext {
   app?: string;
   correlationId: string;
   userId: string;
+  sessionId: string;
   workspaceId?: string;
   http?: HTTPContext;
 }
@@ -38,6 +39,7 @@ export function requestDecorator(
   const context: PrismeContext = {
     correlationId,
     userId,
+    sessionId,
     workspaceId: workspaceId,
     http: {
       originalUrl: req.originalUrl,

@@ -35,21 +35,6 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
         name: 'type',
         value: event.type,
       },
-      {
-        key: 'payload',
-        name: 'payload',
-        value: (
-          <pre>
-            <code>{truncatePayload(stringifiedPayload)}</code>
-          </pre>
-        ),
-        payloadValue: event.payload && (
-          <pre>
-            <code>{stringifiedPayload}</code>
-          </pre>
-        ),
-        fullPayload: stringifiedPayload,
-      },
       event.source.appInstanceFullSlug
         ? {
             key: 'source.appInstanceFullSlug',
@@ -65,9 +50,29 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
           }
         : false,
       {
+        key: 'payload',
+        name: 'payload',
+        value: (
+          <pre>
+            <code>{truncatePayload(stringifiedPayload)}</code>
+          </pre>
+        ),
+        payloadValue: event.payload && (
+          <pre>
+            <code>{stringifiedPayload}</code>
+          </pre>
+        ),
+        fullPayload: stringifiedPayload,
+      },
+      {
         key: 'source.userId',
         name: 'source.userId',
         value: event.source.userId,
+      },
+      {
+        key: 'source.sessionId',
+        name: 'source.sessionId',
+        value: event.source.sessionId,
       },
       {
         key: 'source.correlationId',
@@ -107,9 +112,9 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
     ].filter(Boolean) as EventRecord[];
   }, [event]);
   const onRowClick = useCallback(({ target }: MouseEvent) => {
-    const valueTd = (target as HTMLTableRowElement).parentNode?.querySelectorAll(
-      'td'
-    );
+    const valueTd = (
+      target as HTMLTableRowElement
+    ).parentNode?.querySelectorAll('td');
     if (valueTd && valueTd.length === 3) {
       selectText(valueTd[2]);
     }

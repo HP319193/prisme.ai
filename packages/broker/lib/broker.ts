@@ -109,6 +109,7 @@ export class Broker<CallbackContext = any> {
         ...this.parentSource,
         ...parentSource,
         userId: parentSource.userId || this.parentSource.userId,
+        sessionId: parentSource.sessionId || this.parentSource.sessionId,
         workspaceId: parentSource.workspaceId || this.parentSource.workspaceId,
         correlationId:
           parentSource.correlationId || this.parentSource.correlationId,
