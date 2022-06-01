@@ -15,6 +15,12 @@ export const BROKER_HOST =
 
 export const BROKER_PASSWORD = process.env.BROKER_PASSWORD;
 
+export const SOCKETIO_REDIS_HOST =
+  process.env.SOCKETIO_REDIS_HOST || BROKER_HOST;
+
+export const SOCKETIO_REDIS_PASSWORD =
+  process.env.SOCKETIO_REDIS_PASSWORD || BROKER_PASSWORD;
+
 export const BROKER_WHITELIST_EVENT_PREFIXES = (
   process.env.BROKER_WHITELIST_EVENT_PREFIXES || 'apps.'
 ).split(',');

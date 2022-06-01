@@ -1,7 +1,14 @@
 import { PrismeEvent } from '@prisme.ai/broker';
 import http from 'http';
 import { Server } from 'socket.io';
-import { API_KEY_HEADER, USER_ID_HEADER } from '../../../config';
+import { createAdapter } from '@socket.io/redis-adapter';
+import { createClient } from '@node-redis/client';
+import {
+  API_KEY_HEADER,
+  SOCKETIO_REDIS_HOST,
+  SOCKETIO_REDIS_PASSWORD,
+  USER_ID_HEADER,
+} from '../../../config';
 import { logger } from '../../logger';
 import sendEvent from '../../services/events/send';
 import { SearchOptions } from '../../services/events/store';
@@ -16,6 +23,16 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       origin: true,
       credentials: true,
     },
+  });
+
+  const redisPubClient = createClient({
+    url: SOCKETIO_REDIS_HOST,
+    password: SOCKETIO_REDIS_PASSWORD,
+  });
+  const redisSubClient = redisPubClient.duplicate();
+
+  Promise.all([redisPubClient.connect(), redisSubClient.connect()]).then(() => {
+    io.adapter(createAdapter(redisPubClient, redisSubClient) as any);
   });
 
   const workspaces = io.of(WORKSPACE_PATH);
