@@ -29,7 +29,7 @@ export default () => {
 
   check(webhookRes, {
     'webhook run successfully': (resp) => resp.status === 200,
-    'is body present': (resp) => resp.json().hasOwnProperty('body'),
+    'is body present': (resp) => resp.json().content === 'Doe',
   });
 
   sleep(1);
