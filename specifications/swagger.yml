@@ -54,8 +54,11 @@ paths:
                   - type: object
                     required:
                       - token
+                      - sessionId
                     properties:
                       token:
+                        type: string
+                      sessionId:
                         type: string
         '401':
           description: AuthenticationError
@@ -92,7 +95,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    required:
+                      - sessionId
+                    properties:
+                      sessionId:
+                        type: string
         '401':
           description: Unauthenticated
           content:

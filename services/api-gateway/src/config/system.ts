@@ -16,6 +16,8 @@ export default {
     process.env.CORRELATION_ID_HEADER || 'x-correlation-id',
   USER_ID_HEADER: process.env.USER_ID_HEADER || 'x-prismeai-user-id',
 
+  SESSION_ID_HEADER: process.env.SESSION_ID_HEADER || 'x-prismeai-session-id',
+
   API_KEY_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-api-key',
 
   SESSION_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-session-token',
