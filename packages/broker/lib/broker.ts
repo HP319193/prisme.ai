@@ -100,15 +100,18 @@ export class Broker<CallbackContext = any> {
   child(
     parentSource: Partial<EventSource>,
     opts?: {
-      validateEvents: boolean;
+      validateEvents?: boolean;
       forceTopic?: string;
+      clearUser?: boolean;
     }
   ): Broker<CallbackContext> {
     const child = Object.assign({}, this, {
       parentSource: {
         ...this.parentSource,
         ...parentSource,
-        userId: parentSource.userId || this.parentSource.userId,
+        userId: opts?.clearUser
+          ? undefined
+          : parentSource.userId || this.parentSource.userId,
         sessionId: parentSource.sessionId || this.parentSource.sessionId,
         workspaceId: parentSource.workspaceId || this.parentSource.workspaceId,
         correlationId:
@@ -211,7 +214,7 @@ export class Broker<CallbackContext = any> {
     cb: EventCallback<CallbackContext, PayloadType>
   ) {
     // From now on, make any broker send/rcv calls using same source as in this event
-    const childBroker = this.child(event.source);
+    const childBroker = this.child(event.source, { clearUser: true });
 
     try {
       const startTime = Date.now();
