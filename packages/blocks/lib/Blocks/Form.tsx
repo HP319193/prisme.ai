@@ -6,6 +6,7 @@ import { ElementType, useCallback, useMemo } from 'react';
 import { useField } from 'react-final-form';
 import BlockTitle from './Internal/BlockTitle';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import useLocalizedTextBlock from '../useLocalizedTextBlock';
 
 const defaultSchema = {
   type: 'string',
@@ -80,6 +81,7 @@ const schema: Schema = {
 export const Form = () => {
   const { config = {}, events } = useBlock();
   const { t } = useTranslation('pages');
+  const { localize, localizeSchemaForm } = useLocalizedTextBlock();
 
   const onChange = useCallback(
     (values: any) => {

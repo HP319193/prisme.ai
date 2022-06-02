@@ -13,8 +13,7 @@ import {
 import BlockTitle from './Internal/BlockTitle';
 import { useBlock } from '../Provider';
 import { LinkOutlined } from '@ant-design/icons';
-
-import useLocalizedText from '../../utils/useLocalizedText';
+import useLocalizedTextBlock from '../useLocalizedTextBlock';
 
 const schema: Schema = {
   type: 'object',
@@ -237,7 +236,7 @@ const Accordion: FC<{
 
 export const Cards = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation('pages');
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextBlock();
   const { config = {}, events } = useBlock();
 
   const container = useRef<HTMLDivElement>(null);

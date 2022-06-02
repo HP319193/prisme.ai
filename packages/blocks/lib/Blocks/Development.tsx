@@ -1,19 +1,15 @@
 import { ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import {
-  BlockProvider,
   Loading,
   Schema,
   SchemaForm,
   SchemaFormDescription,
-  useBlock,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useField } from 'react-final-form';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import Block from '../Block';
-import { usePages } from '../PagesProvider';
-import useSchema from '../SchemaForm/useSchema';
+import { BlockLoader } from '../BlockLoader';
+import { useBlock } from '../Provider';
 
 export const Development = (props: any) => {
   const { t } = useTranslation('workspaces');
@@ -48,49 +44,50 @@ export const Development = (props: any) => {
   }, [config]);
 
   return (
-    <BlockProvider config={config.debug} appConfig={{}} {...blockSetup}>
-      <div className="group">
-        {error || !config.url ? (
-          <div className="flex flex-1 justify-center items-center p-2 text-center">
-            <WarningOutlined className="self-start mt-1 mr-2 text-2xl" />
-            {t('pages.blocks.development.error', { context: error })}
-          </div>
-        ) : (
-          <Block
-            url={`${config.url}?${version}`}
-            onLoad={(block) =>
-              setConfig && setConfig({ ...config, schema: block.schema })
-            }
-            entityId="dev"
-            {...props}
-            renderLoading={
-              <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
-            }
-            edit
-          />
-        )}
-        <button
-          className="absolute top-2 right-2 invisible group-hover:visible"
-          onClick={reload}
-        >
-          <ReloadOutlined />
-        </button>
-      </div>
-    </BlockProvider>
+    <div className="group">
+      {error || !config.url ? (
+        <div className="flex flex-1 justify-center items-center p-2 text-center">
+          <WarningOutlined className="self-start mt-1 mr-2 text-2xl" />
+          {t('pages.blocks.development.error', { context: error })}
+        </div>
+      ) : (
+        <BlockLoader
+          config={config.debug}
+          appConfig={{}}
+          url={`${config.url}?${version}`}
+          onLoad={(block) =>
+            setConfig && setConfig({ ...config, schema: block.schema })
+          }
+          entityId="dev"
+          {...props}
+          renderLoading={
+            <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
+          }
+          edit
+          {...blockSetup}
+        />
+      )}
+      <button
+        className="absolute top-2 right-2 invisible group-hover:visible"
+        onClick={reload}
+      >
+        <ReloadOutlined />
+      </button>
+    </div>
   );
 };
 
 const Debug = (props: any) => {
   const { t } = useTranslation('workspaces');
   const { config: { schema } = {} } = useBlock();
-  const {
-    workspace: { id: workspaceId },
-  } = useWorkspace();
-  const { pages } = usePages();
+  // const {
+  //   workspace: { id: workspaceId },
+  // } = useWorkspace();
+  // const { pages } = usePages();
   const savedSchema = useRef(schema);
-  const { extractSelectOptions } = useSchema({
-    pages: pages.get(workspaceId),
-  });
+  // const { extractSelectOptions } = useSchema({
+  //   pages: pages.get(workspaceId),
+  // });
 
   useEffect(() => {
     if (schema) {
@@ -112,7 +109,7 @@ const Debug = (props: any) => {
         buttons={[]}
         initialValues={field.input.value}
         onChange={field.input.onChange}
-        utils={{ extractSelectOptions }}
+        // utils={{ extractSelectOptions }}
       />
     </SchemaFormDescription>
   );
