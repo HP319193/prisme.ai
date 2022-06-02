@@ -2990,7 +2990,7 @@ components:
         - 'fetch'
       maxProperties: 1
       properties:
-        fetch:
+        fetch: &fetchBody
           description: Send an HTTP request
           type: object
           required:
@@ -3978,6 +3978,38 @@ components:
               type: string
             event:
               $ref: '#/components/schemas/PrismeEvent'
+
+    FailedFetch:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.fetch.failed
+          enum:
+            - runtime.fetch.failed
+        payload:
+          type: object
+          required:
+            - request
+            - response
+          properties:
+            request: *fetchBody
+            response:
+              type: object
+              required:
+                - status
+                - body
+                - headers
+              properties:
+                status:
+                  type: number
+                body: {}
+                headers:
+                  type: object
+
 
     AppEvent:
       type: object

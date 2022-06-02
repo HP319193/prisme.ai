@@ -19,6 +19,7 @@ export enum EventType {
   UpdatedContexts = 'runtime.contexts.updated',
   PendingWait = 'runtime.waits.pending',
   FulfilledWait = 'runtime.waits.fulfilled.{{id}}',
+  FailedFetch = 'runtime.fetch.failed',
 
   CreatedWorkspace = 'workspaces.created',
   ConfiguredWorkspace = 'workspaces.configured',

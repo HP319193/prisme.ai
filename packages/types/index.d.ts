@@ -1111,6 +1111,40 @@ declare namespace Prismeai {
             duration: number;
         };
     }
+    export interface FailedFetch {
+        /**
+         * example:
+         * runtime.fetch.failed
+         */
+        type: "runtime.fetch.failed";
+        payload: {
+            /**
+             * Send an HTTP request
+             */
+            request: {
+                url: string;
+                method?: "get" | "post" | "put" | "patch" | "delete";
+                headers?: {
+                    [name: string]: string;
+                };
+                /**
+                 * HTTP request body
+                 */
+                body?: AnyValue;
+                /**
+                 * Name of the variable which will hold the result
+                 */
+                output?: string;
+            };
+            response: {
+                status: number;
+                body: any;
+                headers: {
+                    [key: string]: any;
+                };
+            };
+        };
+    }
     export interface FailedLogin {
         /**
          * example:

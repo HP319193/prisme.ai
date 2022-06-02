@@ -12,14 +12,16 @@ export interface PermissionsRoutesCallbacks<SubjectType extends string> {
     req: Request<any, any, any> & ExtendedRequest<SubjectType>,
     subjectType: string,
     subjectId: string,
-    permissions: Prismeai.UserPermissions
+    permissions: Prismeai.UserPermissions,
+    subject: object & { id: string }
   ) => any;
 
   onRevoked: (
     req: Request<any, any, any> & ExtendedRequest<SubjectType>,
     subjectType: string,
     subjectId: string,
-    userId: string
+    userId: string,
+    subject: object & { id: string }
   ) => any;
 }
 export function initCollaboratorRoutes<SubjectType extends string>(
@@ -111,10 +113,16 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     );
 
     if (callbacks?.onShared) {
-      callbacks.onShared(req, subjectType, subjectId, {
-        ...body,
-        id: (<any>collaborator)?.id,
-      });
+      callbacks.onShared(
+        req,
+        subjectType,
+        subjectId,
+        {
+          ...body,
+          id: (<any>collaborator)?.id,
+        },
+        sharedSubject
+      );
     }
 
     if (collaborator === PublicAccess) {
@@ -145,7 +153,7 @@ export function initCollaboratorRoutes<SubjectType extends string>(
       params: { subjectType, subjectId, userId },
       accessManager,
     } = req;
-    await accessManager.revoke(
+    const subject = await accessManager.revoke(
       <any>subjectType,
       subjectId,
       userId === PublicAccess
@@ -156,7 +164,7 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     );
 
     if (callbacks?.onRevoked) {
-      callbacks.onRevoked(req, subjectType, subjectId, userId);
+      callbacks.onRevoked(req, subjectType, subjectId, userId, subject);
     }
 
     return res.send({ id: userId });
