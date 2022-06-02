@@ -97,6 +97,7 @@ Sends an HTTP request to call external web services
 * **body** : Request body (might be a JSON object, a string, a number, ...)  
 * **output** : Name of the variable that will store the response body  
 
+When receiving 4xx or 5xx HTTP errors, a native event `runtime.fetch.failed` is automatically emitted, including both request & response contents.  
 
 ### Emit
 Emit a new event.  
