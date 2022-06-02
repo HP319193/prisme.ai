@@ -1,4 +1,4 @@
-import useLocalizedText from './useLocalizedText';
+import useLocalizedTextConsole from './useLocalizedTextConsole';
 import renderer, { act } from 'react-test-renderer';
 
 jest.mock('react-i18next', () => {
@@ -42,7 +42,7 @@ jest.mock('react-i18next', () => {
 it('should localize string', () => {
   let localize = (schema: any): any => {};
   const Test = () => {
-    localize = useLocalizedText().localize;
+    localize = useLocalizedTextConsole().localize;
     return null;
   };
 
@@ -62,7 +62,7 @@ it('should localize string', () => {
 it('should localize schema form', () => {
   let localizeSchemaForm = (schema: any): any => {};
   const Test = () => {
-    localizeSchemaForm = useLocalizedText().localizeSchemaForm;
+    localizeSchemaForm = useLocalizedTextConsole().localizeSchemaForm;
     return null;
   };
 
@@ -98,7 +98,7 @@ it('should localize schema form', () => {
 it('should localize nested schema form', () => {
   let localizeSchemaForm = (schema: any): any => {};
   const Test = () => {
-    localizeSchemaForm = useLocalizedText().localizeSchemaForm;
+    localizeSchemaForm = useLocalizedTextConsole().localizeSchemaForm;
     return null;
   };
 
@@ -177,7 +177,7 @@ it('should localize nested schema form', () => {
 it('should localize with i18n', () => {
   let localizeSchemaForm = (schema: any): any => {};
   const Test = () => {
-    localizeSchemaForm = useLocalizedText().localizeSchemaForm;
+    localizeSchemaForm = useLocalizedTextConsole().localizeSchemaForm;
     return null;
   };
 
@@ -228,7 +228,7 @@ it('should localize with i18n', () => {
 it('should localize with i18n', () => {
   let localizeSchemaForm = (schema: any): any => {};
   const Test = () => {
-    localizeSchemaForm = useLocalizedText().localizeSchemaForm;
+    localizeSchemaForm = useLocalizedTextConsole().localizeSchemaForm;
     return null;
   };
 
@@ -263,7 +263,7 @@ it('should localize with i18n', () => {
 it('should localize with select options', () => {
   let localizeSchemaForm = (schema: any): any => {};
   const Test = () => {
-    localizeSchemaForm = useLocalizedText().localizeSchemaForm;
+    localizeSchemaForm = useLocalizedTextConsole().localizeSchemaForm;
     return null;
   };
 

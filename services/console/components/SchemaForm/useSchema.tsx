@@ -1,10 +1,10 @@
 import { Schema } from '@prisme.ai/design-system';
 import { useCallback } from 'react';
-import useLocalizedText from '../../utils/useLocalizedText';
+import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
 import { readAppConfig } from '../AutomationBuilder/Panel/readAppConfig';
 
 export const useSchema = (store: Record<string, any> = {}) => {
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const extractSelectOptions = useCallback(
     (schema: Schema) => {
       const { 'ui:options': uiOptions = {} } = schema;
@@ -26,9 +26,12 @@ export const useSchema = (store: Record<string, any> = {}) => {
         case 'automations':
           if (!store.automations) return [];
           return Object.keys(store.automations).flatMap((key) => {
-            const { slug = key, name, description, when } = store.automations[
-              key
-            ];
+            const {
+              slug = key,
+              name,
+              description,
+              when,
+            } = store.automations[key];
 
             if (uiOptions.filter === 'endpoint' && (!when || !when.endpoint)) {
               return [];

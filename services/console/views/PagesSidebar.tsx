@@ -12,7 +12,7 @@ import { useCallback, useMemo, useState } from 'react';
 import usePages from '../components/PagesProvider/context';
 import IconPages from '../icons/icon-pages.svgr';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
-import useLocalizedText from '../utils/useLocalizedText';
+import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
 
 export const PagesSidebar = () => {
   const {
@@ -20,7 +20,7 @@ export const PagesSidebar = () => {
     i18n: { language },
   } = useTranslation('workspaces');
   const { t: commonT } = useTranslation();
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const { pages, createPage } = usePages();
   const { push } = useRouter();
   const {

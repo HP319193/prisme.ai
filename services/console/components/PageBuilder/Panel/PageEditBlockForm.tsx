@@ -1,7 +1,7 @@
 import { Schema } from '@prisme.ai/design-system';
 import { useMemo } from 'react';
 import Settings from './Settings';
-import useLocalizedText from '../../../utils/useLocalizedText';
+import useLocalizedTextConsole from '../../../utils/useLocalizedTextConsole';
 import { usePageBuilder } from '../context';
 import PageBlockProvider from '../PageBlockProvider';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';
@@ -11,7 +11,7 @@ interface PageEditBlockFormProps {
 }
 
 const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
-  const { localizeSchemaForm } = useLocalizedText();
+  const { localizeSchemaForm } = useLocalizedTextConsole();
   const { blocksInPage, removeBlock } = usePageBuilder();
   const {
     workspace: { id: workspaceId },
@@ -31,8 +31,14 @@ const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
     return localizeSchemaForm(schema);
   }, [editSchema, localizeSchemaForm]);
 
+  // TODO test if entityId with empty string work here
+
   return (
-    <PageBlockProvider blockId={blockId} workspaceId={workspaceId}>
+    <PageBlockProvider
+      blockId={blockId}
+      workspaceId={workspaceId}
+      entityId={''}
+    >
       <Settings schema={schema} removeBlock={() => removeBlock(blockId)} />
     </PageBlockProvider>
   );

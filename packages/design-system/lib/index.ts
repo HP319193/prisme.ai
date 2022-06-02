@@ -17,7 +17,7 @@ export { default as Text } from './Components/Text';
 export { default as ListItem } from './Components/ListItem';
 export { default as Input } from './Components/Input';
 export { default as TextArea } from './Components/TextArea';
-export { default as LocalizedInput } from './Components/LocalizedInput';
+export { default as LocalizedInput } from './Components/Localized/LocalizedInput';
 export { default as TagEditable } from './Components/TagEditable';
 export { default as EditableTitle } from './Components/EditableTitle';
 export { default as EditableText } from './Components/EditableText';
@@ -26,7 +26,10 @@ export { default as Popover } from './Components/Popover';
 export { default as SidePanel } from './Components/SidePanel';
 export { default as DatePicker } from './Components/DatePicker';
 export { default as StretchContent } from './Components/StretchContent';
+
 export * from './Components/SchemaForm';
+
+export { default as useLocalizedText } from './Components/Localized/useLocalizedText';
 
 export {
   Row,

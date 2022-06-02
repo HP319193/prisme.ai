@@ -17,7 +17,7 @@ import usePages from '../../components/PagesProvider/context';
 import { useApps } from '../../components/AppsProvider';
 import debounce from 'lodash/debounce';
 import { usePrevious } from '../../utils/usePrevious';
-import useLocalizedText from '../../utils/useLocalizedText';
+import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
 import { Workspace } from '../../utils/api';
 
 const PAGINATION_LIMIT = 15;
@@ -50,7 +50,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const { setPages } = usePages();
 
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const { fetch, update, workspaces } = useWorkspaces();
   const [loading, setLoading] = useState<WorkspaceContext['loading']>(false);
   const lockEvents = useRef(false);
@@ -99,9 +99,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }, [sourceDisplayed]);
 
   // Init socket
-  const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
-    workspace,
-  ]);
+  const workspaceId = useMemo(
+    () => (workspace ? workspace.id : null),
+    [workspace]
+  );
 
   const initSocket = useCallback(async () => {
     if (!workspaceId) return;

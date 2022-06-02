@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import useLocalizedText from '../../utils/useLocalizedText';
+import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
 import { usePageBuilder } from './context';
 import PageBlock from './PageBlock';
 import debounce from 'lodash/debounce';
 import AddBlock from './AddBlock';
 
 export const PageBlocks = () => {
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const {
     workspace: { id: workspaceId },
   } = useWorkspace();

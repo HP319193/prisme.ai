@@ -19,12 +19,12 @@ import Header from './Header';
 import ShareWorkspace from './Share/ShareWorkspace';
 import PublishModal from './PublishModal';
 import EditDetails from '../layouts/EditDetails';
-import useLocalizedText from '../utils/useLocalizedText';
+import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
 import Link from 'next/link';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const { remove, update } = useWorkspaces();
   const [popoverIsVisible, setPopoverIsVisible] = useState(false);
   const {

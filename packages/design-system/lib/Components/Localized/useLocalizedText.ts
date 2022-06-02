@@ -1,5 +1,5 @@
-import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
+import Prismeai from '@prisme.ai/sdk';
 
 const translatable = ['title', 'description', 'label'];
 const isTranslatedElement = (key: string, value: any) => {
@@ -14,11 +14,11 @@ const isTranslatedElement = (key: string, value: any) => {
   return false;
 };
 
-export const useLocalizedText = () => {
-  const {
-    t,
-    i18n: { language },
-  } = useTranslation('workspaces');
+export const useLocalizedText = (t: any, language: string) => {
+  // const {
+  //   t,
+  //   i18n: { language },
+  // } = useTranslation('workspaces');
 
   const localize = useCallback(
     (text: Prismeai.LocalizedText | undefined) => {

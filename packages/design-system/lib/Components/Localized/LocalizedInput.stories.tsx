@@ -1,7 +1,7 @@
 import { LocalizedInput, LocalizedInputProps } from './LocalizedInput';
 import { Story } from '@storybook/react';
 import { useState } from 'react';
-import TextArea from './TextArea';
+import TextArea from '../TextArea';
 
 export default {
   title: 'Components/LocalizedInput',

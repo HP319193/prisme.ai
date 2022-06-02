@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { removedUndefinedProperties } from '../../utils/objects';
 import { notification } from '@prisme.ai/design-system';
 import { SLUG_MATCH_INVALID_CHARACTERS } from '../../utils/regex';
-import useLocalizedText from '../../utils/useLocalizedText';
+import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
 
 export const WorkspacesProvider: FC = ({ children }) => {
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const { t: errorT } = useTranslation('errors');
   const { user } = useUser();
   const [workspaces, setWorkspaces] = useState<WorkspacesContext['workspaces']>(
@@ -137,16 +137,14 @@ export const WorkspacesProvider: FC = ({ children }) => {
   );
 
   // set role to editor for the postpermissions
-  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] = useCallback(
-    async (workspaceId) => {
+  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] =
+    useCallback(async (workspaceId) => {
       const { result: userPermissions } = await api.getPermissions(
         'workspaces',
         workspaceId
       );
       return userPermissions;
-    },
-    []
-  );
+    }, []);
 
   const installApp: WorkspacesContext['installApp'] = useCallback(
     async (workspaceId, body) => {

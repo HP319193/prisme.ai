@@ -9,7 +9,7 @@ import {
 } from '../utils/regex';
 import { useApps } from './AppsProvider';
 import { usePrevious } from '../utils/usePrevious';
-import useLocalizedText from '../utils/useLocalizedText';
+import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
 
 interface PublishModalProps {
   visible: boolean;
@@ -21,7 +21,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   const { publishApp } = useWorkspaces();
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const { t: commonT } = useTranslation('common');
   const { t: errorT } = useTranslation('errors');
   const [publishSlug, setPublishSlug] = useState(

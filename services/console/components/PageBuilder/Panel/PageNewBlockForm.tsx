@@ -8,7 +8,7 @@ import {
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo, useState } from 'react';
-import useLocalizedText from '../../../utils/useLocalizedText';
+import useLocalizedTextConsole from '../../../utils/useLocalizedTextConsole';
 import { usePageBuilder } from '../context';
 
 import BuiltinBlocks from '../../Blocks/builtinBlocks';
@@ -21,7 +21,7 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
   const { blocks } = usePageBuilder();
 
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const [search, setSearch] = useState('');
   const filteredBlocks = useMemo(() => {
     return [

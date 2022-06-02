@@ -10,7 +10,7 @@ import {
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
-import useLocalizedText from '../utils/useLocalizedText';
+import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
 import IconAutomations from '../icons/icon-automations.svgr';
 
 const emptyObject: Prismeai.Workspace['automations'] = {};
@@ -18,7 +18,7 @@ const emptyObject: Prismeai.Workspace['automations'] = {};
 export const AutomationsSidebar: FC = () => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation();
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const { push } = useRouter();
   const {
     workspace: { id: workspaceId, automations = emptyObject },

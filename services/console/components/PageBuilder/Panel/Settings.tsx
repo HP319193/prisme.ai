@@ -4,7 +4,7 @@ import { useBlock } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';
-import useLocalizedText from '../../../utils/useLocalizedText';
+import useLocalizedTextConsole from '../../../utils/useLocalizedTextConsole';
 import usePages from '../../PagesProvider/context';
 import useSchema from '../../SchemaForm/useSchema';
 import { usePageBuilder } from '../context';
@@ -31,7 +31,7 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
     automations,
     pages: pages.get(workspaceId),
   });
-  const { localizeSchemaForm } = useLocalizedText();
+  const { localizeSchemaForm } = useLocalizedTextConsole();
   const { config = {}, setConfig = noop } = useBlock();
 
   const commonSchema: Schema = useMemo(

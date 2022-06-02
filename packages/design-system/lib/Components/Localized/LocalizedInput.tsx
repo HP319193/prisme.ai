@@ -7,14 +7,14 @@ import {
   useState,
 } from 'react';
 import { locales } from 'iso-lang-codes';
-import Input, { InputProps } from './Input';
+import Input, { InputProps } from '../Input';
 import {
   DeleteOutlined,
   GlobalOutlined,
   PlusCircleOutlined,
 } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import CustomSelect from './CustomSelect';
+import CustomSelect from '../CustomSelect';
 
 const allLangs = locales();
 const availableLangs = Object.keys(allLangs).reduce((prev, next) => {

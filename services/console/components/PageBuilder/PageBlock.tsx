@@ -1,8 +1,5 @@
-import api, * as prismeaiSDK from '../../utils/api';
 import { usePageBuilder } from './context';
-import { Loading } from '@prisme.ai/design-system';
-import BlockLoader from '@prisme.ai/blocks';
-import useLocalizedText from '../../utils/useLocalizedText';
+import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
 import AddBlock from './AddBlock';
 import EditBlock from './EditBlock';
 import { truncate } from '../../utils/strings';
@@ -34,7 +31,7 @@ const PageBlockWithProvider = ({
   index: number;
   name?: Prismeai.LocalizedText;
 }) => {
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const { setEditBlock, setBlockSchema } = usePageBuilder();
   const onLoad = useCallback(
     (module: any) => {

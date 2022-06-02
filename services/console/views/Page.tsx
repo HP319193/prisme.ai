@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from '@prisme.ai/design-system';
 import { LoadingOutlined } from '@ant-design/icons';
-import useLocalizedText from '../utils/useLocalizedText';
+import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
 import PageBuilder from '../components/PageBuilder';
 import { PageBuilderContext } from '../components/PageBuilder/context';
 import { usePages, defaultStyles } from '../components/PagesProvider';
@@ -111,7 +111,7 @@ export const Page = () => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
   const { workspace, setShare } = useWorkspace();
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const { pages, savePage, deletePage } = usePages();
   const [displayPreview, setDisplayPreview] = useState(false);
 
@@ -196,10 +196,9 @@ export const Page = () => {
   const cleanValue = useCallback(
     (value: Prismeai.Page) => ({
       ...value,
-      blocks: ((value.blocks ||
-        []) as PageBuilderContext['page']['blocks']).map(
-        ({ key, ...block }) => block
-      ),
+      blocks: (
+        (value.blocks || []) as PageBuilderContext['page']['blocks']
+      ).map(({ key, ...block }) => block),
       id: page ? page.id : '',
     }),
     [page]

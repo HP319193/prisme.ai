@@ -8,7 +8,7 @@ import { Loading, Title } from '@prisme.ai/design-system';
 import SigninForm from '../components/SigninForm';
 import { useUser } from '../components/UserProvider';
 import api, { HTTPError } from '../utils/api';
-import useLocalizedText from '../utils/useLocalizedText';
+import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
 import useBlocksConfigs from '../components/Blocks/useBlocksConfigs';
 
 import BuiltinBlocks from '../components/Blocks/builtinBlocks';
@@ -23,7 +23,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
     t,
     i18n: { language },
   } = useTranslation('pages');
-  const { localize } = useLocalizedText();
+  const { localize } = useLocalizedTextConsole();
   const { user } = useUser();
   const [currentPage, setCurrentPage] = useState<Prismeai.DetailedPage | null>(
     page
