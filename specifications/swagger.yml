@@ -2437,7 +2437,7 @@ components:
     SessionHeaderAuth:
       type: apiKey
       in: header
-      name: x-prismeai-session-token
+      name: x-prismeai-token
     ApiKeyAuth:
       type: apiKey
       in: header

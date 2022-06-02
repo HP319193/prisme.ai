@@ -20,7 +20,7 @@ export default {
 
   API_KEY_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-api-key',
 
-  SESSION_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-session-token',
+  SESSION_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-token',
 
   SESSION_COOKIES_MAX_AGE: parseInt(
     process.env.SESSION_COOKIES_MAX_AGE || <any>(30 * 24 * 60 * 60)

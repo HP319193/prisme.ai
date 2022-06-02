@@ -27,7 +27,7 @@ export class Events {
       `${apiHost}/workspaces/${workspaceId}/events${fullQueryString}`,
       {
         extraHeaders: {
-          'x-prismeai-session-token': token,
+          'x-prismeai-token': token,
         },
       }
     );

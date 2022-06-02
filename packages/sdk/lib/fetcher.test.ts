@@ -47,7 +47,7 @@ it('should fetch with auth', async () => {
   });
   const headers = (global.fetch as jest.Mock).mock.calls[0][1].headers;
   expect(headers.get('Access-Control-Allow-Origin')).toBe('*');
-  expect(headers.get('x-prismeai-session-token')).toBe('token');
+  expect(headers.get('x-prismeai-token')).toBe('token');
 });
 
 it('should fail to fetch', async () => {
