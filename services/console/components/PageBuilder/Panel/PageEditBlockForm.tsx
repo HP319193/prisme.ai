@@ -5,6 +5,7 @@ import useLocalizedTextConsole from '../../../utils/useLocalizedTextConsole';
 import { usePageBuilder } from '../context';
 import PageBlockProvider from '../PageBlockProvider';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';
+import getEditSchema from '../../Blocks/EditSchema/getEditSchema';
 
 interface PageEditBlockFormProps {
   blockId: string;
@@ -18,7 +19,7 @@ const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
   } = useWorkspace();
 
   const editedBlock = blocksInPage.find(({ key }) => key === blockId);
-  const editSchema = editedBlock && (editedBlock.edit as Schema['properties']);
+  const editSchema = editedBlock && getEditSchema(`${editedBlock.name}`);
 
   const schema: Schema | undefined = useMemo(() => {
     if (!editSchema) return;

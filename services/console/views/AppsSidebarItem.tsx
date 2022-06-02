@@ -15,7 +15,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import BlockLoader, { BlockProviderProps, Test } from '@prisme.ai/blocks';
+import BlockLoader, { BlockProviderProps } from '@prisme.ai/blocks';
 import api, * as prismeaiSDK from '../utils/api';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
@@ -85,22 +85,21 @@ const AppsSidebarItem = ({
       };
       return <SchemaForm schema={s} onSubmit={save} initialValues={value} />;
     }
-    return <Test />;
-    // if (block) {
-    //   return (
-    //     <BlockLoader
-    //       url={block}
-    //       entityId={slug}
-    //       token={`${api.token}`}
-    //       workspaceId={workspaceId}
-    //       appInstance={slug}
-    //       config={config}
-    //       appConfig={appConfig}
-    //       onAppConfigUpdate={onAppConfigUpdate}
-    //       prismeaiSDK={prismeaiSDK}
-    //     />
-    //   );
-    // }
+    if (block) {
+      return (
+        <BlockLoader
+          url={block}
+          entityId={slug}
+          token={`${api.token}`}
+          workspaceId={workspaceId}
+          appInstance={slug}
+          config={config}
+          appConfig={appConfig}
+          onAppConfigUpdate={onAppConfigUpdate}
+          prismeaiSDK={prismeaiSDK}
+        />
+      );
+    }
     return null;
   }, [
     schema,
@@ -190,16 +189,14 @@ const AppsSidebarItemWithBlock = (props: AppsSidebarItemWithBlockProps) => {
     [props.slug, props.workspaceId]
   );
 
-  return null;
-
-  // return (
-  //   <AppsSidebarItem
-  //     config={{}}
-  //     appConfig={appConfig}
-  //     onAppConfigUpdate={setAppConfigHandler}
-  //     {...props}
-  //   />
-  // );
+  return (
+    <AppsSidebarItem
+      config={{}}
+      appConfig={appConfig}
+      onAppConfigUpdate={setAppConfigHandler}
+      {...props}
+    />
+  );
 };
 
 export default AppsSidebarItemWithBlock;

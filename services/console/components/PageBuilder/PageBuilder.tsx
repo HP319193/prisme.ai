@@ -165,7 +165,6 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
           key,
           appName: '',
           appInstance: undefined,
-          edit: Block.schema,
         };
       }
       const app = blocks.find(({ slug }: { slug: string }) => slug === appName);

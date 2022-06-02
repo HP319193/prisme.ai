@@ -31,10 +31,7 @@ export const PageBlocks = () => {
           </div>
         )}
         {blocksInPage.map(
-          (
-            { url, component, key, name, appName, appInstance, edit },
-            index
-          ) => (
+          ({ url, component, key, name, appName, appInstance }, index) => (
             <div
               key={key}
               onMouseEnter={() => {

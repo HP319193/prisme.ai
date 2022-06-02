@@ -18,7 +18,6 @@ export interface PageBuilderContext {
     appName: string;
     component?: any;
     name?: Prismeai.LocalizedText;
-    edit?: Schema | Prismeai.TypedArgument;
     appInstance?: string;
     url?: string;
   }[];

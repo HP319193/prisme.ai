@@ -1,5 +1,6 @@
-import { Schema, Table } from '@prisme.ai/design-system';
-import { useBlock } from '@prisme.ai/blocks';
+import { Table } from '@prisme.ai/design-system';
+import { tw } from 'twind';
+import { useBlock } from '../Provider';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import BlockTitle from './Internal/BlockTitle';
@@ -55,35 +56,12 @@ export const DataTable = ({ edit }: { edit: boolean }) => {
   );
 
   return (
-    <div className="p-8">
+    <div className={tw`p-8`}>
       {config.title && <BlockTitle value={config.title} />}
-      <div className="overflow-scroll">
+      <div className={tw`overflow-scroll`}>
         <Table dataSource={data} columns={columns} locale={locales} />
       </div>
     </div>
   );
 };
-DataTable.schema = {
-  type: 'object',
-  properties: {
-    title: {
-      type: 'localized:string',
-      title: 'pages.blocks.settings.blockTitle.label',
-      description: 'pages.blocks.settings.blockTitle.description',
-    },
-    data: {
-      type: 'array',
-      title: 'pages.blocks.datatable.settings.data.label',
-      description: 'pages.blocks.datatable.settings.data.description',
-      items: {
-        type: 'object',
-        additionalProperties: {
-          type: 'string',
-        },
-        title: 'pages.blocks.datatable.settings.data.items.label',
-        description: 'pages.blocks.datatable.settings.data.items.description',
-      },
-    },
-  },
-} as Schema;
 export default DataTable;

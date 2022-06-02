@@ -1,13 +1,8 @@
 import { ReloadOutlined, WarningOutlined } from '@ant-design/icons';
-import {
-  Loading,
-  Schema,
-  SchemaForm,
-  SchemaFormDescription,
-} from '@prisme.ai/design-system';
-import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useField } from 'react-final-form';
+import { Loading } from '@prisme.ai/design-system';
+import { useTranslation } from 'react-i18next';
+import { useCallback, useEffect, useState } from 'react';
+import { tw } from 'twind';
 import { BlockLoader } from '../BlockLoader';
 import { useBlock } from '../Provider';
 
@@ -44,10 +39,12 @@ export const Development = (props: any) => {
   }, [config]);
 
   return (
-    <div className="group">
+    <div className={tw`group`}>
       {error || !config.url ? (
-        <div className="flex flex-1 justify-center items-center p-2 text-center">
-          <WarningOutlined className="self-start mt-1 mr-2 text-2xl" />
+        <div
+          className={tw`flex flex-1 justify-center items-center p-2 text-center`}
+        >
+          <WarningOutlined className={tw`self-start mt-1 mr-2 text-2xl`} />
           {t('pages.blocks.development.error', { context: error })}
         </div>
       ) : (
@@ -61,14 +58,16 @@ export const Development = (props: any) => {
           entityId="dev"
           {...props}
           renderLoading={
-            <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
+            <Loading
+              className={tw`bg-white absolute top-0 right-0 bottom-0 left-0`}
+            />
           }
           edit
           {...blockSetup}
         />
       )}
       <button
-        className="absolute top-2 right-2 invisible group-hover:visible"
+        className={tw`absolute top-2 right-2 invisible group-hover:visible`}
         onClick={reload}
       >
         <ReloadOutlined />
@@ -76,57 +75,4 @@ export const Development = (props: any) => {
     </div>
   );
 };
-
-const Debug = (props: any) => {
-  const { t } = useTranslation('workspaces');
-  const { config: { schema } = {} } = useBlock();
-  // const {
-  //   workspace: { id: workspaceId },
-  // } = useWorkspace();
-  // const { pages } = usePages();
-  const savedSchema = useRef(schema);
-  // const { extractSelectOptions } = useSchema({
-  //   pages: pages.get(workspaceId),
-  // });
-
-  useEffect(() => {
-    if (schema) {
-      savedSchema.current = schema;
-    }
-  }, [schema]);
-
-  const field = useField(props.name);
-
-  return (
-    <SchemaFormDescription
-      text={t('pages.blocks.development.settings.block.description')}
-    >
-      <label className="text-[10px] text-gray">
-        {t('pages.blocks.development.settings.block.label')}
-      </label>
-      <SchemaForm
-        schema={schema || savedSchema.current}
-        buttons={[]}
-        initialValues={field.input.value}
-        onChange={field.input.onChange}
-        // utils={{ extractSelectOptions }}
-      />
-    </SchemaFormDescription>
-  );
-};
-
-const schema: Schema = {
-  type: 'object',
-  properties: {
-    url: {
-      type: 'string',
-      title: 'pages.blocks.development.settings.url.label',
-      description: 'pages.blocks.development.settings.url.description',
-    },
-    debug: {
-      'ui:widget': Debug,
-    },
-  },
-};
-Development.schema = schema;
 export default Development;

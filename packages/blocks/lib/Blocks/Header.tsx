@@ -1,5 +1,5 @@
-import { Schema } from '@prisme.ai/design-system';
-import { useBlock } from '@prisme.ai/blocks';
+import { tw } from 'twind';
+import { useBlock } from '../Provider';
 
 import { FC, HTMLAttributes, useCallback, useEffect, useState } from 'react';
 
@@ -15,171 +15,6 @@ interface Config {
     value: string;
   }[];
 }
-
-const schema: Schema = {
-  type: 'object',
-  properties: {
-    title: {
-      type: 'string',
-      title: 'pages.blocks.header.settings.title.label',
-      description: 'pages.blocks.header.settings.title.description',
-    },
-    logo: {
-      type: 'object',
-      title: 'pages.blocks.header.settings.logo.label',
-      description: 'pages.blocks.header.settings.logo.description',
-      properties: {
-        src: {
-          type: 'string',
-          title: 'pages.blocks.header.settings.logo.src.label',
-          description: 'pages.blocks.header.settings.logo.src.description',
-          'ui:widget': 'upload',
-        },
-        alt: {
-          type: 'string',
-          title: 'pages.blocks.header.settings.logo.alt.label',
-          description: 'pages.blocks.header.settings.logo.alt.description',
-        },
-      },
-    },
-    nav: {
-      type: 'array',
-      title: 'pages.blocks.header.settings.nav.label',
-      description: 'pages.blocks.header.settings.nav.description',
-      items: {
-        type: 'object',
-        title: 'pages.blocks.header.settings.nav.items.label',
-        description: 'pages.blocks.header.settings.nav.items.description',
-        oneOf: [
-          {
-            title: 'pages.blocks.header.settings.nav.items.external.label',
-            description: 'pages.blocks.header.settings.nav.items.description',
-            properties: {
-              text: {
-                type: 'string',
-                title: 'pages.blocks.header.settings.nav.items.text.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.text.description',
-              },
-              value: {
-                type: 'string',
-                title:
-                  'pages.blocks.header.settings.nav.items.external.value.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.external.value.description',
-              },
-            },
-          },
-          {
-            title: 'pages.blocks.header.settings.nav.items.internal.label',
-            description:
-              'pages.blocks.header.settings.nav.items.internal.description',
-            properties: {
-              text: {
-                type: 'string',
-                title: 'pages.blocks.header.settings.nav.items.text.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.text.description',
-              },
-              value: {
-                type: 'string',
-                title:
-                  'pages.blocks.header.settings.nav.items.internal.value.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.internal.value.description',
-                'ui:widget': 'select',
-                'ui:options': {
-                  from: 'pages',
-                },
-              },
-            },
-          },
-          {
-            title: 'pages.blocks.header.settings.nav.items.inside.label',
-            description:
-              'pages.blocks.header.settings.nav.items.inside.description',
-            properties: {
-              text: {
-                type: 'string',
-                title: 'pages.blocks.header.settings.nav.items.text.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.text.description',
-              },
-              value: {
-                type: 'string',
-                title:
-                  'pages.blocks.header.settings.nav.items.inside.value.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.inside.value.description',
-                'ui:widget': 'select',
-                'ui:options': {
-                  from: 'pageSections',
-                },
-              },
-            },
-          },
-          {
-            title: 'pages.blocks.header.settings.nav.items.event.label',
-            description:
-              'pages.blocks.header.settings.nav.items.event.description',
-            properties: {
-              text: {
-                type: 'string',
-                title: 'pages.blocks.header.settings.nav.items.text.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.text.description',
-              },
-              value: {
-                type: 'string',
-                title:
-                  'pages.blocks.header.settings.nav.items.event.value.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.event.value.description',
-              },
-            },
-          },
-        ],
-        'ui:options': {
-          oneOf: {
-            options: [
-              {
-                label: 'pages.blocks.header.settings.nav.items.external.label',
-                index: 0,
-                value: {
-                  type: 'external',
-                },
-              },
-              {
-                label: 'pages.blocks.header.settings.nav.items.internal.label',
-                index: 1,
-                value: {
-                  type: 'internal',
-                },
-              },
-              {
-                label: 'pages.blocks.header.settings.nav.items.inside.label',
-                index: 2,
-                value: {
-                  type: 'inside',
-                },
-              },
-              {
-                label: 'pages.blocks.header.settings.nav.items.event.label',
-                index: 3,
-                value: {
-                  type: 'event',
-                },
-              },
-            ],
-          },
-        },
-      },
-      'ui:options': {
-        array: 'row',
-      },
-    },
-  },
-};
 
 const PageLink: FC<{ pageId: string } & HTMLAttributes<HTMLAnchorElement>> = ({
   pageId,
@@ -212,27 +47,27 @@ const Button = ({ text, type, value }: Config['nav'][number]) => {
             if (!events || !value) return;
             events.emit(value);
           }}
-          className="block-header__nav-item-button"
+          className={tw`block-header__nav-item-button`}
         >
           {text}
         </button>
       );
     case 'external':
       return (
-        <a href={value} className="block-header__nav-item-link">
-          <button className="block-header__nav-item-button">{text}</button>
+        <a href={value} className={tw`block-header__nav-item-link`}>
+          <button className={tw`block-header__nav-item-button`}>{text}</button>
         </a>
       );
     case 'internal':
       return (
-        <PageLink pageId={value} className="block-header__nav-item-link">
-          <button className="block-header__nav-item-button">{text}</button>
+        <PageLink pageId={value} className={tw`block-header__nav-item-link`}>
+          <button className={tw`block-header__nav-item-button`}>{text}</button>
         </PageLink>
       );
     case 'inside':
       return (
-        <a href={`#${value}`} className="block-header__nav-item-link">
-          <button className="block-header__nav-item-button">{text}</button>
+        <a href={`#${value}`} className={tw`block-header__nav-item-link`}>
+          <button className={tw`block-header__nav-item-button`}>{text}</button>
         </a>
       );
     default:
@@ -245,34 +80,38 @@ export const Header = ({ edit }: { edit?: boolean }) => {
 
   const nav = config.nav && Array.isArray(config.nav) ? config.nav : [];
 
+  console.log('config', config);
+
   return (
-    <div className="block-header block-header__container flex flex-1 flex-col md:!flex-row justify-between md:items-center px-4 py-2">
-      <div className="block-header__left flex md:justify-center">
-        <div className="block-header__logo flex justify-center m-2 ml-4">
+    <div
+      className={tw`block-header block-header__container flex flex-1 flex-col md:!flex-row justify-between md:items-center px-4 py-2`}
+    >
+      <div className={tw`block-header__left flex md:justify-center`}>
+        <div className={tw`block-header__logo flex justify-center m-2 ml-4`}>
           {config.logo && config.logo.src && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={config.logo.src}
               alt={config.logo.alt}
-              className="block-header__logo-image max-h-12"
+              className={tw`block-header__logo-image max-h-12`}
             />
           )}
         </div>
-        <h1 className="block-header__title flex items-center m-0 font-bold">
+        <h1 className={tw`block-header__title flex items-center m-0 font-bold`}>
           {config.title}
         </h1>
       </div>
-      <nav className="block-header__right flex m-4">
+      <nav className={tw`block-header__right flex m-4`}>
         {nav.map((props, k) => (
           <div
             key={k}
-            className="mx-2"
+            className={tw`mx-2`}
             onClick={(e) => {
               if (edit) e.preventDefault();
             }}
           >
             {edit ? (
-              <button className="block-header__nav-item-button">
+              <button className={tw`block-header__nav-item-button`}>
                 {props.text}
               </button>
             ) : (
@@ -284,7 +123,5 @@ export const Header = ({ edit }: { edit?: boolean }) => {
     </div>
   );
 };
-
-Header.schema = schema;
 
 export default Header;

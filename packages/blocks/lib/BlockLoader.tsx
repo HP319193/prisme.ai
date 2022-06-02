@@ -4,7 +4,12 @@ import ReactDom from 'react-dom';
 import * as prismeaiDS from '@prisme.ai/design-system';
 import { nanoid } from 'nanoid';
 import { useTranslation } from 'react-i18next';
-import { Block as TBlock, BlockProvider, BlockProviderProps } from './Provider';
+import {
+  Block as TBlock,
+  BlockProvider,
+  BlockProviderProps,
+  useBlock,
+} from './Provider';
 
 class BlockErrorBoundary extends React.Component {
   state = {
@@ -167,6 +172,9 @@ export const IFrameBlock = ({
 };
 
 const BlockRenderMethod = ({ children, url, ...props }: BlockLoaderProps) => {
+  const { config } = useBlock();
+  console.log('BlockRenderMethod', config);
+
   if (children) {
     return <>{children}</>;
   }

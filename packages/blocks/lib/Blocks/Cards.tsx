@@ -1,6 +1,11 @@
-import { DownOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { Schema, StretchContent, Tooltip } from '@prisme.ai/design-system';
-import { useTranslation } from 'next-i18next';
+import {
+  DownOutlined,
+  LeftOutlined,
+  LinkOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
+import { StretchContent, Tooltip } from '@prisme.ai/design-system';
+import { useTranslation } from 'react-i18next';
 import {
   FC,
   ReactNode,
@@ -12,179 +17,8 @@ import {
 } from 'react';
 import BlockTitle from './Internal/BlockTitle';
 import { useBlock } from '../Provider';
-import { LinkOutlined } from '@ant-design/icons';
+import { tw } from 'twind';
 import useLocalizedTextBlock from '../useLocalizedTextBlock';
-
-const schema: Schema = {
-  type: 'object',
-  properties: {
-    title: {
-      type: 'localized:string',
-      title: 'pages.blocks.settings.blockTitle.label',
-      description: 'pages.blocks.settings.blockTitle.description',
-    },
-    cards: {
-      type: 'array',
-      title: 'pages.blocks.cards.settings.cards',
-      items: {
-        type: 'object',
-        title: 'pages.blocks.cards.settings.card',
-        properties: {
-          title: {
-            type: 'localized:string',
-            title: 'pages.blocks.cards.settings.title',
-          },
-          description: {
-            type: 'localized:string',
-            title: 'pages.blocks.cards.settings.description',
-          },
-          cover: {
-            type: 'string',
-            title: 'pages.blocks.cards.settings.cover',
-            'ui:widget': 'upload',
-          },
-          content: {
-            type: 'array',
-            title: 'pages.blocks.cards.settings.content',
-            items: {
-              type: 'object',
-              title: 'pages.blocks.cards.settings.type',
-              oneOf: [
-                {
-                  title: 'pages.blocks.cards.settings.type_text',
-                  properties: {
-                    value: {
-                      type: 'localized:string',
-                      title: 'pages.blocks.cards.settings.text.value',
-                    },
-                  } as Record<string, Schema>,
-                },
-                {
-                  title: 'pages.blocks.cards.settings.type_button',
-                  properties: {
-                    value: {
-                      type: 'localized:string',
-                      title: 'pages.blocks.cards.settings.button.value',
-                    },
-                    url: {
-                      type: 'localized:string',
-                      title: 'pages.blocks.cards.settings.button.url',
-                    },
-                    event: {
-                      type: 'string',
-                      title: 'pages.blocks.cards.settings.button.event',
-                    },
-                    payload: {
-                      title: 'pages.blocks.cards.settings.button.payload',
-                    },
-                    icon: {
-                      type: 'string',
-                      title: 'pages.blocks.cards.settings.button.icon',
-                      'ui:widget': 'upload',
-                    },
-                  },
-                },
-                {
-                  title: 'pages.blocks.cards.settings.type_accordion',
-                  properties: {
-                    title: {
-                      type: 'localized:string',
-                      title: 'pages.blocks.cards.settings.accordion.title',
-                    },
-                    content: {
-                      type: 'localized:string',
-                      title: 'pages.blocks.cards.settings.accordion.content',
-                    },
-                    icon: {
-                      type: 'string',
-                      title: 'pages.blocks.cards.settings.accordion.icon',
-                      'ui:widget': 'upload',
-                    },
-                  },
-                },
-              ],
-              'ui:options': {
-                oneOf: {
-                  options: [
-                    {
-                      label: 'pages.blocks.cards.settings.type_text',
-                      index: 0,
-                      value: {
-                        type: 'text',
-                      },
-                    },
-                    {
-                      label: 'pages.blocks.cards.settings.type_button',
-                      index: 1,
-                      value: {
-                        type: 'button',
-                      },
-                    },
-                    {
-                      label: 'pages.blocks.cards.settings.type_accordion',
-                      index: 2,
-                      value: {
-                        type: 'accordion',
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-      },
-      'ui:options': {
-        array: 'row',
-      },
-    },
-    layout: {
-      type: 'object',
-      oneOf: [
-        {
-          title: 'pages.blocks.cards.settings.layout.noOptions',
-        },
-        {
-          title: 'pages.blocks.cards.settings.layout.carousel',
-          properties: {
-            autoScroll: {
-              type: 'boolean',
-              title: 'pages.blocks.cards.settings.autoScroll.title',
-              description: 'pages.blocks.cards.settings.autoScroll.description',
-            },
-          },
-        },
-      ],
-      'ui:options': {
-        oneOf: {
-          options: [
-            {
-              label: 'pages.blocks.cards.settings.layout.grid',
-              index: 0,
-              value: {
-                type: 'grid',
-              },
-            },
-            {
-              label: 'pages.blocks.cards.settings.layout.column',
-              index: 0,
-              value: {
-                type: 'column',
-              },
-            },
-            {
-              label: 'pages.blocks.cards.settings.layout.carousel',
-              index: 1,
-              value: {
-                type: 'carousel',
-              },
-            },
-          ],
-        },
-      },
-    },
-  },
-};
 
 interface Card {
   title?: Prismeai.LocalizedText;
@@ -217,18 +51,18 @@ const Accordion: FC<{
 }> = ({ title, children }) => {
   const [visible, setVisible] = useState(false);
   return (
-    <div className="flex flex-1 flex-col">
+    <div className={tw`flex flex-1 flex-col`}>
       <button
-        className="flex flex-1 justify-between items-center p-2"
+        className={tw`flex flex-1 justify-between items-center p-2`}
         onClick={() => setVisible(!visible)}
       >
         {title}
         <DownOutlined
-          className={`transition-transform ${visible ? '-rotate-180' : ''}`}
+          className={tw`transition-transform ${visible ? '-rotate-180' : ''}`}
         />
       </button>
       <StretchContent visible={visible}>
-        <div className="p-2">{children}</div>
+        <div className={tw`p-2`}>{children}</div>
       </StretchContent>
     </div>
   );
@@ -370,23 +204,25 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
 
   return (
     <div>
-      <div className="pt-8 pl-8">
+      <div className={tw`pt-8 pl-8`}>
         {config.title && <BlockTitle value={config.title} />}
       </div>
-      <div className="relative p-4 !pt-0">
+      <div className={tw`relative p-4 !pt-0`}>
         <div ref={container} className={styles.container}>
           {(cards as Card[]).map(
             ({ title, description, cover, content = [] }, index) => (
               <div
                 key={index}
-                className="flex flex-col snap-start my-4 pl-[10px] group w-[325px]"
+                className={tw`flex flex-col snap-start my-4 pl-[10px] group w-[325px]`}
                 style={{
                   flex: '0 0 325px',
                 }}
               >
-                <div className="relative flex flex-1 flex-col mx-2 rounded-[20px]">
+                <div
+                  className={tw`relative flex flex-1 flex-col mx-2 rounded-[20px]`}
+                >
                   <div
-                    className="h-[303px] p-[-1px] rounded-[20px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top"
+                    className={tw`h-[303px] p-[-1px] rounded-[20px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top`}
                     style={{
                       backgroundImage: cover ? `url(${cover})` : undefined,
                       backgroundColor: cover
@@ -395,24 +231,28 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                     }}
                   />
                   <div
-                    className="
-                    relative flex flex-col min-h-[203px] mt-[103px]
-                    rounded-[20px] p-4 border-[1px] border-gray-200
-                  bg-white
-                    transition-transform
-                    group-hover:translate-y-3 group-hover:scale-105 shadow-sm group-hover:shadow-lg
-                  "
+                    className={tw`
+                      relative flex flex-col min-h-[203px] mt-[103px]
+                      rounded-[20px] p-4 border-[1px] border-gray-200
+                      bg-white
+                      transition-transform
+                      group-hover:translate-y-3 group-hover:scale-105 shadow-sm group-hover:shadow-lg
+                      `}
                   >
-                    <div className="font-bold text-sm text-accent text-center">
+                    <div
+                      className={tw`font-bold text-sm text-accent text-center`}
+                    >
                       {localize(title)}
                     </div>
-                    <div className="text-[10px] my-2 text-neutral-500 text-center">
+                    <div
+                      className={tw`text-[10px] my-2 text-neutral-500 text-center`}
+                    >
                       {localize(description)}
                     </div>
                     {content &&
                       Array.isArray(content) &&
                       content.map((item, index) => (
-                        <div key={index} className="flex mb-4">
+                        <div key={index} className={tw`flex mb-4`}>
                           {item.type === 'text' && (
                             <div>
                               <div
@@ -424,7 +264,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                           )}
                           {item.type === 'button' && (
                             <button
-                              className="flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left"
+                              className={tw`flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}
                               onClick={() => {
                                 if (item.url) {
                                   window.open(localize(item.url));
@@ -434,7 +274,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                                 }
                               }}
                             >
-                              <div className="flex mr-2">
+                              <div className={tw`flex mr-2`}>
                                 {item.icon ? (
                                   // eslint-disable-next-line @next/next/no-img-element
                                   <img
@@ -458,10 +298,14 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                             </button>
                           )}
                           {item.type === 'accordion' && (
-                            <div className="flex flex-1 border-[1px] border-neutral-200 rounded p-2">
+                            <div
+                              className={tw`flex flex-1 border-[1px] border-neutral-200 rounded p-2`}
+                            >
                               <Accordion
                                 title={
-                                  <div className="flex flex-row items-center">
+                                  <div
+                                    className={tw`flex flex-row items-center`}
+                                  >
                                     {item.icon && (
                                       // eslint-disable-next-line @next/next/no-img-element
                                       <img
@@ -469,7 +313,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                                         alt={localize(item.title)}
                                         width={16}
                                         height={16}
-                                        className="mr-2"
+                                        className={tw`mr-2`}
                                       />
                                     )}{' '}
                                     {localize(item.title)}
@@ -493,18 +337,22 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
           )}
         </div>
         {canScroll && (
-          <div className="text-accent text-l">
-            <div className="absolute flex justify-center top-16 left-6 h-8 w-8 bg-white rounded-[100%] shadow-lg">
+          <div className={tw`text-accent text-l`}>
+            <div
+              className={tw`absolute flex justify-center top-16 left-6 h-8 w-8 bg-white rounded-[100%] shadow-lg`}
+            >
               <Tooltip title={t('blocks.cards.prev')} placement="right">
-                <button onClick={scroll(-1)} className="outline-none">
-                  <LeftOutlined className="bg-white rounded-[50%]" />
+                <button onClick={scroll(-1)} className={'outline-none'}>
+                  <LeftOutlined className={tw`bg-white rounded-[50%]`} />
                 </button>
               </Tooltip>
             </div>
-            <div className="absolute flex justify-center top-16 right-6 h-8 w-8 bg-white rounded-[100%] shadow-lg">
+            <div
+              className={tw`absolute flex justify-center top-16 right-6 h-8 w-8 bg-white rounded-[100%] shadow-lg`}
+            >
               <Tooltip title={t('blocks.cards.next')} placement="left">
-                <button onClick={scroll(1)} className="outline-none">
-                  <RightOutlined className="bg-white rounded-[50%]" />
+                <button onClick={scroll(1)} className={tw`outline-none`}>
+                  <RightOutlined className={tw`bg-white rounded-[50%]`} />
                 </button>
               </Tooltip>
             </div>
@@ -514,5 +362,4 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     </div>
   );
 };
-Cards.schema = schema;
 export default Cards;

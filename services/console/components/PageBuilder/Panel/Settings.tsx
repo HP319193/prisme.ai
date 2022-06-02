@@ -34,6 +34,8 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
   const { localizeSchemaForm } = useLocalizedTextConsole();
   const { config = {}, setConfig = noop } = useBlock();
 
+  console.log('config', config);
+
   const commonSchema: Schema = useMemo(
     () =>
       localizeSchemaForm({

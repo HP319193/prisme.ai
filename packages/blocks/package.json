@@ -7,10 +7,11 @@
     "build": "rollup -c rollup.config.js"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@prisme.ai/design-system": "1.0.3",
     "i18next": "^21.6.12",
     "react-i18next": "^11.15.5",
-    "@ant-design/icons": "^4.7.0"
+    "twind": "^0.16.16"
   },
   "peerDependencies": {
     "react": "^17.0.2"
