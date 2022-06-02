@@ -3456,6 +3456,28 @@ components:
             id:
               type: string
 
+    SucceededSignup:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.signup.succeeded
+          enum:
+            - gateway.signup.succeeded
+        payload:
+          type: object
+          required:
+            - ip
+            - user
+          properties:
+            ip:
+              type: string
+            user:
+              $ref: "#/components/schemas/User"
+
     ########################## Apps events ##########################
     PublishedApp:
       type: object

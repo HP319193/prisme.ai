@@ -60,7 +60,11 @@ async function signupHandler(
 ) {
   const { context, body } = req;
   const identity = services.identity(context);
-  await identity.signup(body);
+  const user = await identity.signup(body);
+  await req.broker.send(EventType.SucceededSignup, {
+    ip: req.context?.http?.ip,
+    user,
+  });
   loginHandler('local')(req, res, next);
 }
 

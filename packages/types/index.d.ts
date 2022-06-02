@@ -1426,6 +1426,17 @@ declare namespace Prismeai {
             id: string;
         };
     }
+    export interface SucceededSignup {
+        /**
+         * example:
+         * gateway.signup.succeeded
+         */
+        type: "gateway.signup.succeeded";
+        payload: {
+            ip: string;
+            user: User;
+        };
+    }
     export interface TriggeredWebhook {
         /**
          * example:
