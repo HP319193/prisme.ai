@@ -9,10 +9,13 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
 
   useEffect(() => {
     if (!ref.current || !ref.current.contentWindow) return;
-    ref.current.contentWindow.postMessage(
-      { type: 'updatePagePreview', page },
-      '*'
-    );
+
+    try {
+      ref.current.contentWindow.postMessage(
+        { type: 'updatePagePreview', page: JSON.parse(JSON.stringify(page)) },
+        '*'
+      );
+    } catch {}
   }, [page]);
 
   return (
