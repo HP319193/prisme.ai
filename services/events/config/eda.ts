@@ -21,6 +21,10 @@ export const SOCKETIO_REDIS_HOST =
 export const SOCKETIO_REDIS_PASSWORD =
   process.env.SOCKETIO_REDIS_PASSWORD || BROKER_PASSWORD;
 
+export const SOCKETIO_COOKIE_MAX_AGE = process.env.SOCKETIO_COOKIE_MAX_AGE
+  ? parseInt(process.env.SOCKETIO_COOKIE_MAX_AGE)
+  : undefined;
+
 export const BROKER_WHITELIST_EVENT_PREFIXES = (
   process.env.BROKER_WHITELIST_EVENT_PREFIXES || 'apps.'
 ).split(',');

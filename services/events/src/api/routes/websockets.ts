@@ -6,6 +6,7 @@ import { createClient } from '@node-redis/client';
 import {
   API_KEY_HEADER,
   SESSION_ID_HEADER,
+  SOCKETIO_COOKIE_MAX_AGE,
   SOCKETIO_REDIS_HOST,
   SOCKETIO_REDIS_PASSWORD,
   USER_ID_HEADER,
@@ -23,6 +24,10 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     cors: {
       origin: true,
       credentials: true,
+    },
+    cookie: {
+      name: 'io',
+      maxAge: SOCKETIO_COOKIE_MAX_AGE,
     },
   });
 
