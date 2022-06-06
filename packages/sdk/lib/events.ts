@@ -25,6 +25,7 @@ export class Events {
         extraHeaders: {
           'x-prismeai-token': token,
         },
+        withCredentials: true,
       }
     );
   }
