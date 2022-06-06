@@ -63,7 +63,7 @@ export class Fetcher {
       });
       return response;
     } catch (e) {
-      return (await clone.text()) as unknown as T;
+      return ((await clone.text()) as unknown) as T;
     }
   }
 

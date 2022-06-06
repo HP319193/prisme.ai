@@ -9,6 +9,7 @@ import { useApps } from '../AppsProvider';
 import equal from 'fast-deep-equal';
 import PageEditBlockForm from './Panel/PageEditBlockForm';
 import * as BuiltinBlocks from '../Blocks';
+import useBlocksConfigs from '../Blocks/useBlocksConfigs';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -25,6 +26,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     | undefined
   >();
   const [blockEditing, setBlockEditing] = useState<string>();
+  const { events } = useBlocksConfigs(value);
 
   const hidePanel = useCallback(async () => {
     await setBlockSelecting(undefined);
@@ -181,6 +183,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
         removeBlock,
         setBlockConfig,
         setEditBlock,
+        events,
       }}
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">
