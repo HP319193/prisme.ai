@@ -5,6 +5,7 @@ import { createAdapter } from '@socket.io/redis-adapter';
 import { createClient } from '@node-redis/client';
 import {
   API_KEY_HEADER,
+  SESSION_ID_HEADER,
   SOCKETIO_REDIS_HOST,
   SOCKETIO_REDIS_PASSWORD,
   USER_ID_HEADER,
@@ -55,6 +56,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       );
       return;
     }
+    const sessionId = socket.handshake.headers[SESSION_ID_HEADER];
     const apiKey = socket.handshake.headers[API_KEY_HEADER];
     const subscription = await events.subscribe(workspaceId, {
       userId: userId as string,
@@ -69,6 +71,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     const childBroker = events.broker.child({
       workspaceId,
       userId: userId as string,
+      sessionId: sessionId as string,
     });
     socket.onAny(
       async (type, payload: Prismeai.PrismeEvent | SearchOptions) => {
