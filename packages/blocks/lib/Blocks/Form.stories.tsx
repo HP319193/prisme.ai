@@ -17,8 +17,6 @@ const Template: Story<any> = ({ defaultConfig }) => {
       onConfigUpdate={setConfig}
       appConfig={appConfig}
       onAppConfigUpdate={setAppConfig}
-      localize={(str: string) => str}
-      localizeSchemaForm={(strObj: any) => strObj}
     >
       <Form />
     </BlockProvider>

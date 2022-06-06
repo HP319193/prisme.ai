@@ -1,3 +1,4 @@
+import '../i18n';
 import { ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import { Loading } from '@prisme.ai/design-system';
 import { useTranslation } from 'react-i18next';

@@ -1,3 +1,4 @@
+import '../i18n';
 import { Table } from '@prisme.ai/design-system';
 import { tw } from 'twind';
 import { useBlock } from '../Provider';

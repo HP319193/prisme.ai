@@ -56,7 +56,6 @@ const Template: Story<any> = () => {
       onConfigUpdate={setConfig}
       appConfig={appConfig}
       onAppConfigUpdate={setAppConfig}
-      prismeaiSDK={{}}
       entityId={'0'}
     >
       <FakeBlock />

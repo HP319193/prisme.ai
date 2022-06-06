@@ -1,3 +1,4 @@
+import '../i18n';
 import { Button, SchemaForm } from '@prisme.ai/design-system';
 import { useBlock } from '../Provider';
 import { useTranslation } from 'react-i18next';

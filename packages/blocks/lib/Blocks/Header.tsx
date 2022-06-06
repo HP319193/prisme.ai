@@ -1,3 +1,4 @@
+import '../i18n';
 import { tw } from 'twind';
 import { useBlock } from '../Provider';
 
@@ -79,8 +80,6 @@ export const Header = ({ edit }: { edit?: boolean }) => {
   const { config = {} as Config } = useBlock<Config>();
 
   const nav = config.nav && Array.isArray(config.nav) ? config.nav : [];
-
-  console.log('config', config);
 
   return (
     <div

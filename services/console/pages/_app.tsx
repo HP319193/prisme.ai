@@ -1,9 +1,13 @@
 import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
+import ReactDom from 'react-dom';
+import * as prismeaiDS from '@prisme.ai/design-system';
+import { BlocksProvider } from '@prisme.ai/blocks';
+import * as prismeaiSDK from '../utils/api';
 import UserProvider from '../components/UserProvider';
 import WorkspacesProvider from '../components/WorkspacesProvider';
 import { NextPage } from 'next';
-import { ReactElement, ReactNode } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
@@ -25,6 +29,13 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
+const externals = {
+  React: { ...React, default: React },
+  ReactDom: { ...ReactDom, default: ReactDom },
+  prismeaiDS,
+  prismeaiSDK,
+};
+
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t } = useTranslation('common');
@@ -33,13 +44,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     return (
       <UserProvider anonymous>
         <PagesProvider>
-          <Head>
-            <title>{t('main.title')}</title>
-            <meta name="description" content={t('main.description')} />
-            <link rel="icon" href="/favicon.png" />
-          </Head>
-          <Sentry />
-          {getLayout(<Component {...pageProps} />)}
+          <BlocksProvider externals={externals}>
+            <Head>
+              <title>{t('main.title')}</title>
+              <meta name="description" content={t('main.description')} />
+              <link rel="icon" href="/favicon.png" />
+            </Head>
+            <Sentry />
+            {getLayout(<Component {...pageProps} />)}
+          </BlocksProvider>
         </PagesProvider>
       </UserProvider>
     );
@@ -51,13 +64,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <PermissionsProvider>
           <AppsProvider>
             <PagesProvider>
-              <Head>
-                <title>{t('main.title')}</title>
-                <meta name="description" content={t('main.description')} />
-                <link rel="icon" href="/favicon.png" />
-              </Head>
-              <Sentry />
-              {getLayout(<Component {...pageProps} />)}
+              <BlocksProvider externals={externals}>
+                <Head>
+                  <title>{t('main.title')}</title>
+                  <meta name="description" content={t('main.description')} />
+                  <link rel="icon" href="/favicon.png" />
+                </Head>
+                <Sentry />
+                {getLayout(<Component {...pageProps} />)}
+              </BlocksProvider>
             </PagesProvider>
           </AppsProvider>
         </PermissionsProvider>

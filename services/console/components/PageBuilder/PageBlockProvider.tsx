@@ -1,9 +1,9 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { Loading } from '@prisme.ai/design-system';
 import { BlockLoader, BlockLoaderProps } from '@prisme.ai/blocks';
 import { usePageBuilder } from './context';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import api, * as prismeaiSDK from '../../utils/api';
-import { Loading } from '@prisme.ai/design-system';
+import api from '../../utils/api';
 
 interface PageBlockProviderProps {
   blockId: string;

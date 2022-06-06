@@ -1,14 +1,13 @@
+import './i18n';
 import * as React from 'react';
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
-import ReactDom from 'react-dom';
-import * as prismeaiDS from '@prisme.ai/design-system';
 import { nanoid } from 'nanoid';
 import { useTranslation } from 'react-i18next';
 import {
   Block as TBlock,
   BlockProvider,
   BlockProviderProps,
-  useBlock,
+  useBlocks,
 } from './Provider';
 
 class BlockErrorBoundary extends React.Component {
@@ -48,7 +47,6 @@ type BlockComponent = (props: BlockComponentProps) => ReactElement;
 export interface BlockLoaderProps extends BlockComponentProps {
   children?: ReactNode;
   url?: string;
-  prismeaiSDK: any;
   renderLoading?: ReactElement;
   onLoad?: (block: any) => void;
 }
@@ -57,24 +55,19 @@ export const ReactBlock = ({
   url,
   renderLoading,
   onLoad,
-  prismeaiSDK,
   ...props
 }: BlockLoaderProps) => {
   const {
     i18n: { language },
   } = useTranslation('workspaces');
   const [loading, setLoading] = useState(true);
+  const { externals } = useBlocks();
 
   useEffect(() => {
     // @ts-ignore
     if (process.browser) {
       // @ts-ignore
-      window.__external = window.__external || {
-        React: { ...React, default: React },
-        ReactDom: { ...ReactDom, default: ReactDom },
-        prismeaiDS,
-        prismeaiSDK,
-      };
+      window.__external = window.__external || externals;
     }
   });
 
@@ -172,9 +165,6 @@ export const IFrameBlock = ({
 };
 
 const BlockRenderMethod = ({ children, url, ...props }: BlockLoaderProps) => {
-  const { config } = useBlock();
-  console.log('BlockRenderMethod', config);
-
   if (children) {
     return <>{children}</>;
   }
@@ -197,7 +187,7 @@ export const BlockLoader = ({
   onAppConfigUpdate,
   api,
   ...props
-}: BlockLoaderProps & BlockProviderProps) => {
+}: BlockProviderProps & BlockLoaderProps) => {
   return (
     <BlockProvider
       config={config}
