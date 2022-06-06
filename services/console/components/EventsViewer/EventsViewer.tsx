@@ -45,6 +45,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   const generateSectionContent = useCallback(
     (events: Set<Event<Date>>): CollapseItem[] =>
       Array.from(events).map((event) => ({
+        key: event.id,
         label: (
           <div className="flex flex-col">
             <div
@@ -69,7 +70,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
           readEvent(event.id);
         },
       })),
-    [dateFormat, readEvent, readEvents]
+    [dateFormat, localize, readEvent, readEvents, workspaceName]
   );
 
   const feedSections: Section[] = useMemo(
