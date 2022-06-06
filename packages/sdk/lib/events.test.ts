@@ -21,7 +21,7 @@ it('should connect to Websocket', () => {
     `https://api.eda.prisme.ai/workspaces/1/events`,
     {
       extraHeaders: {
-        'x-prismeai-session-token': 'abcde',
+        'x-prismeai-token': 'abcde',
       },
     }
   );

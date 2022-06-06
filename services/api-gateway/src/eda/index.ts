@@ -18,6 +18,7 @@ export enum EventType {
   Error = 'error',
   SucceededLogin = 'gateway.login.succeeded',
   FailedLogin = 'gateway.login.failed',
+  SucceededSignup = 'gateway.signup.succeeded',
 }
 export class CallbackContext {
   public logger: Logger;
