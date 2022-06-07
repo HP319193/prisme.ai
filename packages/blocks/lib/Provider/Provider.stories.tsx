@@ -31,7 +31,7 @@ const Template: Story<any> = () => {
     foo: 'from the block',
   };
   const appConfig = {
-    foo: 'from an app',
+    value: 'from an app',
   };
   return (
     <BlockProvider config={config} appConfig={appConfig}>

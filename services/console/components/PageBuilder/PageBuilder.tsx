@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { builtinBlocksList } from '@prisme.ai/blocks/lib/Blocks';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
@@ -8,7 +9,6 @@ import { nanoid } from 'nanoid';
 import { useApps } from '../AppsProvider';
 import equal from 'fast-deep-equal';
 import PageEditBlockForm from './Panel/PageEditBlockForm';
-import BuiltinBlocks from '../Blocks/builtinBlocks';
 import useBlocksConfigs from '../Blocks/useBlocksConfigs';
 import { Schema } from '@prisme.ai/design-system';
 
@@ -156,11 +156,9 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
       const parts = name.split(/\./);
       parts.reverse();
       const [blockName, appName = ''] = parts;
-      if (!appName && Object.keys(BuiltinBlocks).includes(blockName)) {
-        const Block = BuiltinBlocks[blockName as keyof typeof BuiltinBlocks];
+      if (!appName && builtinBlocksList.includes(blockName)) {
         return {
           url: undefined,
-          component: Block,
           name: blockName,
           key,
           appName: '',

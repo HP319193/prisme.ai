@@ -9,6 +9,7 @@ import {
   BlockProviderProps,
   useBlocks,
 } from './Provider';
+import * as builtinBlocks from './Blocks';
 
 class BlockErrorBoundary extends React.Component {
   state = {
@@ -35,7 +36,6 @@ class BlockErrorBoundary extends React.Component {
 }
 
 export interface BlockComponentProps {
-  entityId: string;
   token?: string;
   workspaceId?: string;
   appInstance?: string;
@@ -47,6 +47,7 @@ type BlockComponent = (props: BlockComponentProps) => ReactElement;
 export interface BlockLoaderProps extends BlockComponentProps {
   children?: ReactNode;
   url?: string;
+  name?: string;
   renderLoading?: ReactElement;
   onLoad?: (block: any) => void;
 }
@@ -110,7 +111,6 @@ export const ReactBlock = ({
 
 export const IFrameBlock = ({
   url,
-  entityId,
   token,
   renderLoading,
 }: BlockLoaderProps) => {
@@ -123,30 +123,29 @@ export const IFrameBlock = ({
         {
           source: 'prisme.ai',
           token,
-          id: entityId,
         },
         '*'
       );
     },
-    [entityId, token]
+    [token]
   );
-  useEffect(() => {
-    const listener = (e: MessageEvent) => {
-      if (e.data.source === entityId) {
-        Object.keys(e.data).forEach((method) => {
-          switch (method) {
-            case 'init':
-              setHeight(+e.data[method].height);
-          }
-        });
-      }
-    };
-    window.addEventListener('message', listener);
-
-    return () => {
-      window.removeEventListener('message', listener);
-    };
-  }, [entityId, height]);
+  // useEffect(() => {
+  //   const listener = (e: MessageEvent) => {
+  //     if (e.data.source === entityId) {
+  //       Object.keys(e.data).forEach((method) => {
+  //         switch (method) {
+  //           case 'init':
+  //             setHeight(+e.data[method].height);
+  //         }
+  //       });
+  //     }
+  //   };
+  //   window.addEventListener('message', listener);
+  //
+  //   return () => {
+  //     window.removeEventListener('message', listener);
+  //   };
+  // }, [entityId, height]);
 
   return (
     <>
@@ -164,13 +163,34 @@ export const IFrameBlock = ({
   );
 };
 
-const BlockRenderMethod = ({ children, url, ...props }: BlockLoaderProps) => {
-  if (children) {
-    return <>{children}</>;
+const getComponentByName = (name: string) => {
+  switch (name) {
+    case 'Cards':
+      return builtinBlocks.Cards;
+    case 'DataTable':
+      return builtinBlocks.DataTable;
+    case 'Development':
+      return builtinBlocks.Development;
+    case 'Form':
+      return builtinBlocks.Form;
+    case 'Header':
+      return builtinBlocks.Header;
+    default:
+      return null;
+  }
+};
+
+const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
+  if (name) {
+    const Component = getComponentByName(name);
+    if (Component) {
+      return <Component edit={!!props.edit} />;
+    }
   }
 
   const isJs = url && url.replace(/\?.*$/, '').match(/\.js$/);
   if (isJs) {
+    // TODO ajouter un provider ici
     return (
       <BlockErrorBoundary>
         <ReactBlock url={url} {...props} />

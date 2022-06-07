@@ -1,6 +1,5 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Collapse, Schema, SchemaForm } from '@prisme.ai/design-system';
-import { useBlock } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';
@@ -14,9 +13,16 @@ const noop = () => null;
 interface SettingsProps {
   removeBlock: () => void;
   schema?: Schema;
+  onConfigUpdate?: (config: any) => void;
+  config?: any;
 }
 
-export const Settings = ({ removeBlock, schema }: SettingsProps) => {
+export const Settings = ({
+  removeBlock,
+  schema,
+  config,
+  onConfigUpdate,
+}: SettingsProps) => {
   const { t } = useTranslation('workspaces');
   const { page } = usePageBuilder();
   const {
@@ -32,7 +38,6 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
     pages: pages.get(workspaceId),
   });
   const { localizeSchemaForm } = useLocalizedTextConsole();
-  const { config = {}, setConfig = noop } = useBlock();
 
   const commonSchema: Schema = useMemo(
     () =>
@@ -90,7 +95,7 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
         content: (
           <SchemaForm
             schema={commonSchema}
-            onChange={setConfig}
+            onChange={onConfigUpdate}
             initialValues={config}
             buttons={[]}
             locales={locales}
@@ -107,7 +112,7 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
           content: (
             <SchemaForm
               schema={schema}
-              onChange={setConfig}
+              onChange={onConfigUpdate}
               initialValues={config}
               buttons={[]}
               utils={{ extractSelectOptions }}
@@ -125,7 +130,7 @@ export const Settings = ({ removeBlock, schema }: SettingsProps) => {
     extractSelectOptions,
     locales,
     schema,
-    setConfig,
+    onConfigUpdate,
     t,
   ]);
 

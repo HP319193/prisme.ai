@@ -3,11 +3,9 @@ import { ElementType } from 'react';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { useField } from 'react-final-form';
 import { useTranslation } from 'next-i18next';
+import Properties from '../../SchemaFormBuilder/Properties';
 
-const SchemaEditor = ({
-  name,
-  Properties,
-}: FieldProps & { Properties: ElementType }) => {
+const SchemaEditor = ({ name }: FieldProps & { Properties: ElementType }) => {
   const field = useField(name);
   const { t } = useTranslation('workspaces');
 

@@ -3,9 +3,9 @@ import { useMemo } from 'react';
 import Settings from './Settings';
 import useLocalizedTextConsole from '../../../utils/useLocalizedTextConsole';
 import { usePageBuilder } from '../context';
-import PageBlockProvider from '../PageBlockProvider';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';
 import getEditSchema from '../../Blocks/EditSchema/getEditSchema';
+import useBlockConfig from '../useBlockConfig';
 
 interface PageEditBlockFormProps {
   blockId: string;
@@ -17,6 +17,8 @@ const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
   const {
     workspace: { id: workspaceId },
   } = useWorkspace();
+
+  const { config, onConfigUpdate } = useBlockConfig({ blockId, workspaceId });
 
   const editedBlock = blocksInPage.find(({ key }) => key === blockId);
   const editSchema = editedBlock && getEditSchema(`${editedBlock.name}`);
@@ -32,16 +34,13 @@ const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
     return localizeSchemaForm(schema);
   }, [editSchema, localizeSchemaForm]);
 
-  // TODO test if entityId with empty string work here
-
   return (
-    <PageBlockProvider
-      blockId={blockId}
-      workspaceId={workspaceId}
-      entityId={''}
-    >
-      <Settings schema={schema} removeBlock={() => removeBlock(blockId)} />
-    </PageBlockProvider>
+    <Settings
+      schema={schema}
+      removeBlock={() => removeBlock(blockId)}
+      config={config}
+      onConfigUpdate={onConfigUpdate}
+    />
   );
 };
 

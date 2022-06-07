@@ -15,8 +15,8 @@ import {
   useRef,
   useState,
 } from 'react';
-import BlockLoader, { BlockProviderProps } from '@prisme.ai/blocks';
-import api, * as prismeaiSDK from '../utils/api';
+import { BlockLoader, BlockProviderProps } from '@prisme.ai/blocks';
+import api from '../utils/api';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
@@ -89,14 +89,12 @@ const AppsSidebarItem = ({
       return (
         <BlockLoader
           url={block}
-          entityId={slug}
           token={`${api.token}`}
           workspaceId={workspaceId}
           appInstance={slug}
           config={config}
           appConfig={appConfig}
           onAppConfigUpdate={onAppConfigUpdate}
-          prismeaiSDK={prismeaiSDK}
         />
       );
     }

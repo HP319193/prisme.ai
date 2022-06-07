@@ -7,11 +7,10 @@ import {
   Tooltip,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
+import { builtinBlocksList } from '@prisme.ai/blocks/lib/Blocks';
 import { useMemo, useState } from 'react';
 import useLocalizedTextConsole from '../../../utils/useLocalizedTextConsole';
 import { usePageBuilder } from '../context';
-
-import BuiltinBlocks from '../../Blocks/builtinBlocks';
 
 interface PageNewBlockFormProps {
   onSubmit: (blockSlug: string) => void;
@@ -28,7 +27,7 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
       {
         appName: t('pages.blocks.builtin'),
         slug: '',
-        blocks: Object.keys(BuiltinBlocks).map(
+        blocks: builtinBlocksList.map(
           (name) =>
             ({
               name,

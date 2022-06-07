@@ -30,37 +30,34 @@ export const PageBlocks = () => {
             <AddBlock after={-1} centered />
           </div>
         )}
-        {blocksInPage.map(
-          ({ url, component, key, name, appName, appInstance }, index) => (
-            <div
-              key={key}
-              onMouseEnter={() => {
-                setHoveredKey(key);
-                debouncedOnMouseLeave.cancel();
-              }}
-              onMouseLeave={debouncedOnMouseLeave}
-              className="flex basis-14"
-            >
-              <PageBlock
-                url={url}
-                component={component}
-                id={`${key || index}`}
-                title={
-                  <div className="flex flex-row">
-                    <strong className="mr-2">{localize(appName)}</strong>{' '}
-                    {localize(name)}
-                  </div>
-                }
-                workspaceId={workspaceId}
-                appInstance={appInstance}
-                hovered={hoveredKey === key}
-                blockId={key}
-                index={index}
-                name={name}
-              />
-            </div>
-          )
-        )}
+        {blocksInPage.map(({ url, key, name, appName, appInstance }, index) => (
+          <div
+            key={key}
+            onMouseEnter={() => {
+              setHoveredKey(key);
+              debouncedOnMouseLeave.cancel();
+            }}
+            onMouseLeave={debouncedOnMouseLeave}
+            className="flex basis-14"
+          >
+            <PageBlock
+              url={url}
+              id={`${key || index}`}
+              title={
+                <div className="flex flex-row">
+                  <strong className="mr-2">{localize(appName)}</strong>{' '}
+                  {localize(name)}
+                </div>
+              }
+              workspaceId={workspaceId}
+              appInstance={appInstance}
+              hovered={hoveredKey === key}
+              blockId={key}
+              index={index}
+              name={name}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

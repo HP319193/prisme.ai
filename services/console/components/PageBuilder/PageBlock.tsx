@@ -3,7 +3,10 @@ import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
 import AddBlock from './AddBlock';
 import EditBlock from './EditBlock';
 import { truncate } from '../../utils/strings';
-import PageBlockProvider from './PageBlockProvider';
+import useBlockConfig from './useBlockConfig';
+import api from '../../utils/api';
+import { Loading } from '@prisme.ai/design-system';
+import { BlockLoader } from '@prisme.ai/blocks'
 import { useCallback } from 'react';
 
 interface PageBlockProps {
@@ -20,9 +23,7 @@ const PageBlockWithProvider = ({
   blockId,
   index,
   name,
-  component: Component,
   url,
-  id,
   workspaceId,
   appInstance,
 }: PageBlockProps & {
@@ -40,6 +41,8 @@ const PageBlockWithProvider = ({
     },
     [blockId, setBlockSchema]
   );
+  const { config, onConfigUpdate, appConfig, onAppConfigUpdate, events } =
+    useBlockConfig({ workspaceId, appInstance, blockId });
 
   return (
     <div className="flex grow flex-col max-w-full">
@@ -52,16 +55,22 @@ const PageBlockWithProvider = ({
       </div>
 
       <div className="flex grow  relative flex-col surface-section border-slate-100 bg-white  border overflow-hidden z-2">
-        <PageBlockProvider
-          blockId={id}
-          appInstance={appInstance}
-          workspaceId={workspaceId}
+        <BlockLoader
+          // TODO is it really localized, or 'system' name of the component ?
+          name={`${name}`}
           url={url}
-          entityId={id}
+          config={config}
+          onConfigUpdate={onConfigUpdate}
+          appConfig={appConfig}
+          onAppConfigUpdate={onAppConfigUpdate}
+          events={events}
+          token={`${api.token}`}
+          renderLoading={
+            <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
+          }
+          edit
           onLoad={onLoad}
-        >
-          {Component && <Component edit />}
-        </PageBlockProvider>
+        />
       </div>
 
       <div className={`relative ${!hovered ? 'invisible' : ''}`}>

@@ -1,30 +1,26 @@
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loading } from '@prisme.ai/design-system';
-import { BlockLoader, BlockLoaderProps } from '@prisme.ai/blocks';
+import { BlockLoaderProps } from '@prisme.ai/blocks';
 import { usePageBuilder } from './context';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import api from '../../utils/api';
 
-interface PageBlockProviderProps {
+interface BlockConfigProviderProps {
   blockId: string;
   workspaceId: string;
-  children?: ReactNode;
+  name?: string;
   url?: BlockLoaderProps['url'];
-  onLoad?: BlockLoaderProps['onLoad'];
-  entityId: BlockLoaderProps['entityId'];
   appInstance?: BlockLoaderProps['appInstance'];
   language?: BlockLoaderProps['language'];
   edit?: BlockLoaderProps['edit'];
 }
 
-const PageBlockProvider = ({
+const useBlockConfig = ({
   blockId,
   appInstance,
   workspaceId,
-  children,
-  onLoad,
   ...BlockLoaderProps
-}: PageBlockProviderProps) => {
+}: BlockConfigProviderProps) => {
   const { setBlockConfig, page, events } = usePageBuilder();
   const [appConfig, setAppConfig] = useState<any>();
   const { workspace } = useWorkspace();
@@ -46,7 +42,7 @@ const PageBlockProvider = ({
     };
     fetchAppConfig();
   }, [appInstance, workspace, workspaceId]);
-  const setAppConfigHandler = useCallback(
+  const onAppConfigUpdate = useCallback(
     async (newConfig: any) => {
       setAppConfig(() => newConfig);
       if (!page.workspaceId || !appInstance) return;
@@ -61,32 +57,23 @@ const PageBlockProvider = ({
       {},
     [page.blocks, blockId]
   );
-  const setConfigHandler = useCallback(
+  const onConfigUpdate = useCallback(
     (config: any) => {
       setBlockConfig(blockId, config);
     },
     [blockId, setBlockConfig]
   );
 
-  return (
-    <BlockLoader
-      config={config}
-      onConfigUpdate={setConfigHandler}
-      appConfig={appConfig}
-      onAppConfigUpdate={setAppConfigHandler}
-      events={events}
-      token={`${api.token}`}
-      renderLoading={
-        <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
-      }
-      edit
-      prismeaiSDK={prismeaiSDK}
-      onLoad={onLoad}
-      {...BlockLoaderProps}
-    >
-      {children}
-    </BlockLoader>
-  );
+  return {
+    config,
+    appConfig,
+    onConfigUpdate,
+    onAppConfigUpdate,
+    events,
+    renderLoading: (
+      <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
+    ),
+  };
 };
 
-export default PageBlockProvider;
+export default useBlockConfig;

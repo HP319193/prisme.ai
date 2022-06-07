@@ -2,6 +2,7 @@ import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import ReactDom from 'react-dom';
 import * as prismeaiDS from '@prisme.ai/design-system';
+import * as prismeaiBlocks from '@prisme.ai/blocks';
 import { BlocksProvider } from '@prisme.ai/blocks';
 import * as prismeaiSDK from '../utils/api';
 import UserProvider from '../components/UserProvider';
@@ -34,6 +35,7 @@ const externals = {
   ReactDom: { ...ReactDom, default: ReactDom },
   prismeaiDS,
   prismeaiSDK,
+  prismeaiBlocks,
 };
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {

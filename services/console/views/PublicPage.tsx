@@ -3,15 +3,13 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import DefaultErrorPage from 'next/error';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import BlockLoader from '@prisme.ai/blocks';
+import { BlockLoader } from '@prisme.ai/blocks';
 import { Loading, Title } from '@prisme.ai/design-system';
 import SigninForm from '../components/SigninForm';
 import { useUser } from '../components/UserProvider';
 import api, { HTTPError } from '../utils/api';
 import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
 import useBlocksConfigs from '../components/Blocks/useBlocksConfigs';
-
-import BuiltinBlocks from '../components/Blocks/builtinBlocks';
 
 export interface PublicPageProps {
   page: Prismeai.DetailedPage | null;
@@ -70,14 +68,6 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
       currentPage && typeof currentPage === 'object'
         ? (currentPage.blocks || []).map(
             ({ name = '', url, config, appInstance }) => {
-              if (Object.keys(BuiltinBlocks).includes(name)) {
-                return {
-                  name,
-                  appInstance,
-                  component: BuiltinBlocks[name as keyof typeof BuiltinBlocks],
-                  config,
-                };
-              }
               return {
                 name,
                 url,
@@ -152,39 +142,32 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
         <style dangerouslySetInnerHTML={{ __html: currentPage.styles }} />
       )}
       <div className="flex flex-1 flex-col page-blocks w-full">
-        {blocks.map(
-          (
-            { name = '', appInstance = '', url = '', component: Component },
-            index
-          ) => (
-            <div
-              key={index}
-              className={`page-block block-${appInstance.replace(
-                /\s/g,
-                '-'
-              )} block-${name.replace(/\s/g, '-')}`}
-              id={blocksConfigs[index] && blocksConfigs[index].sectionId}
-            >
-              <BlockLoader
-                entityId={`${index}`}
-                url={url}
-                language={language}
-                token={api.token || undefined}
-                workspaceId={`${currentPage.workspaceId}`}
-                appInstance={appInstance}
-                appConfig={appConfigs.get(appInstance)}
-                setAppConfig={updateAppConfig(appInstance)}
-                events={events}
-                config={blocksConfigs[index]}
-                onAppConfigUpdate={updateAppConfig(appInstance)}
-                api={api}
-                {...blocksConfigs[index]}
-              >
-                {Component && <Component edit={false} />}
-              </BlockLoader>
-            </div>
-          )
-        )}
+        {blocks.map(({ name = '', appInstance = '', url = '' }, index) => (
+          <div
+            key={index}
+            className={`page-block block-${appInstance.replace(
+              /\s/g,
+              '-'
+            )} block-${name.replace(/\s/g, '-')}`}
+            id={blocksConfigs[index] && blocksConfigs[index].sectionId}
+          >
+            <BlockLoader
+              url={url}
+              language={language}
+              token={api.token || undefined}
+              workspaceId={`${currentPage.workspaceId}`}
+              appInstance={appInstance}
+              appConfig={appConfigs.get(appInstance)}
+              setAppConfig={updateAppConfig(appInstance)}
+              events={events}
+              config={blocksConfigs[index]}
+              onAppConfigUpdate={updateAppConfig(appInstance)}
+              api={api}
+              name={name}
+              {...blocksConfigs[index]}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

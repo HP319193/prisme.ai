@@ -56,7 +56,6 @@ export const Development = (props: any) => {
           onLoad={(block) =>
             setConfig && setConfig({ ...config, schema: block.schema })
           }
-          entityId="dev"
           {...props}
           renderLoading={
             <Loading
