@@ -1497,7 +1497,7 @@ declare namespace Prismeai {
         };
     }
     export interface TypedArgument {
-        type?: "string" | "number" | "object" | "array" | "boolean";
+        type?: "string" | "number" | "object" | "array" | "boolean" | "localized:string" | "localized:number" | "localized:boolean";
         description?: LocalizedText;
         items?: TypedArgument;
         "ui:widget"?: string;
