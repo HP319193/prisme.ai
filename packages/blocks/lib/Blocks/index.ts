@@ -4,4 +4,3 @@ export { default as DataTable } from './DataTable';
 export { default as Form } from './Form';
 // Keep this to the bottom
 export { default as Development } from './Development';
-export { default as builtinBlocksList } from './builtinBlocksList';

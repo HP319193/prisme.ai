@@ -2,14 +2,14 @@ import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import DefaultErrorPage from 'next/error';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { BlockLoader } from '@prisme.ai/blocks';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { Loading, Title } from '@prisme.ai/design-system';
 import SigninForm from '../components/SigninForm';
 import { useUser } from '../components/UserProvider';
 import api, { HTTPError } from '../utils/api';
 import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
-import useBlocksConfigs from '../components/Blocks/useBlocksConfigs';
+import usePublicBlocksConfigs from '../components/Blocks/usePublicBlocksConfigs';
+import PublicPageBlock from '../components/Blocks/PublicPageBlock';
 
 export interface PublicPageProps {
   page: Prismeai.DetailedPage | null;
@@ -17,10 +17,7 @@ export interface PublicPageProps {
 }
 
 export const PublicPageRenderer = ({ page }: PublicPageProps) => {
-  const {
-    t,
-    i18n: { language },
-  } = useTranslation('pages');
+  const { t } = useTranslation('pages');
   const { localize } = useLocalizedTextConsole();
   const { user } = useUser();
   const [currentPage, setCurrentPage] = useState<Prismeai.DetailedPage | null>(
@@ -32,7 +29,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
     isReady,
     query: { pageSlug },
   } = useRouter();
-  const { blocksConfigs, error, events } = useBlocksConfigs(currentPage);
+  const { blocksConfigs, error, events } = usePublicBlocksConfigs(currentPage);
 
   useEffect(() => {
     // For preview in console
@@ -80,43 +77,6 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
     [currentPage]
   );
 
-  const [appConfigs, setAppConfigs] = useState(new Map());
-  const fetchAppConfig = useCallback(
-    async (appInstance: string, workspaceId: string) => {
-      try {
-        const appConfig = await api.getAppConfig(workspaceId, appInstance);
-        setAppConfigs((appConfigs) => {
-          const newAppConfigs = new Map(appConfigs);
-          newAppConfigs.set(appInstance, appConfig);
-          return newAppConfigs;
-        });
-      } catch {
-        return;
-      }
-    },
-    []
-  );
-  const updateAppConfig = useCallback(
-    (appInstance: string) => async (value: any) => {
-      if (!page || !page.workspaceId) return;
-      setAppConfigs((appConfigs) => {
-        const newAppConfigs = new Map(appConfigs);
-        newAppConfigs.set(appInstance, value);
-        return newAppConfigs;
-      });
-      await api.updateAppConfig(page.workspaceId, appInstance, value);
-    },
-    [page]
-  );
-  useEffect(() => {
-    if (!page || !page.workspaceId) return;
-    const { workspaceId } = page;
-    (page.blocks || []).forEach(({ appInstance }) => {
-      if (!appInstance) return;
-      fetchAppConfig(appInstance, workspaceId);
-    });
-  }, [fetchAppConfig, page]);
-
   if (!isReady || currentPage === null) return <Loading />;
 
   if (typeof currentPage === 'number' && currentPage !== 401) {
@@ -151,20 +111,13 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
             )} block-${name.replace(/\s/g, '-')}`}
             id={blocksConfigs[index] && blocksConfigs[index].sectionId}
           >
-            <BlockLoader
+            <PublicPageBlock
               url={url}
-              language={language}
-              token={api.token || undefined}
+              name={name}
               workspaceId={`${currentPage.workspaceId}`}
               appInstance={appInstance}
-              appConfig={appConfigs.get(appInstance)}
-              setAppConfig={updateAppConfig(appInstance)}
-              events={events}
-              config={blocksConfigs[index]}
-              onAppConfigUpdate={updateAppConfig(appInstance)}
-              api={api}
-              name={name}
-              {...blocksConfigs[index]}
+              blockIndex={index}
+              page={currentPage}
             />
           </div>
         ))}

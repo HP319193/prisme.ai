@@ -7,29 +7,15 @@ import {
   SchemaForm,
   Tooltip,
 } from '@prisme.ai/design-system';
-import {
-  ReactElement,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { BlockLoader, BlockProviderProps } from '@prisme.ai/blocks';
+import { ReactElement, useCallback, useMemo } from 'react';
+import { BlockLoader } from '@prisme.ai/blocks';
 import api from '../utils/api';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
+import useBlockAppConfig from '../components/Blocks/useBlockAppConfig';
 
 interface AppsSidebarItemProps extends Prismeai.DetailedAppInstance {
-  workspaceId: string;
-  onToggle: (app: string, state: boolean) => void;
-  appConfig: BlockProviderProps['appConfig'];
-  onAppConfigUpdate: BlockProviderProps['onAppConfigUpdate'];
-}
-
-interface AppsSidebarItemWithBlockProps extends Prismeai.DetailedAppInstance {
   workspaceId: string;
   onToggle: (app: string, state: boolean) => void;
 }
@@ -41,28 +27,13 @@ const AppsSidebarItem = ({
   slug = '',
   config: { schema, block } = EmptyObject,
   onToggle,
-  appConfig,
-  config,
-  onAppConfigUpdate,
 }: AppsSidebarItemProps) => {
   const { uninstallApp } = useWorkspaces();
-  const { getAppConfig, saveAppConfig } = useWorkspace();
-  const { t } = useTranslation('workspaces');
-
-  const [value, setValue] = useState();
-  const fetchConfig = useRef(async (slug: string) => {
-    setValue(await getAppConfig(slug));
+  const { appConfig, onAppConfigUpdate } = useBlockAppConfig({
+    workspaceId,
+    appInstance: slug,
   });
-  useEffect(() => {
-    fetchConfig.current(slug);
-  }, [slug]);
-
-  const save = useCallback(
-    (values: any) => {
-      saveAppConfig(slug, values);
-    },
-    [saveAppConfig, slug]
-  );
+  const { t } = useTranslation('workspaces');
 
   const onDelete = useCallback(
     (event) => {
@@ -83,7 +54,13 @@ const AppsSidebarItem = ({
         type: 'object',
         properties: schema as Schema['properties'],
       };
-      return <SchemaForm schema={s} onSubmit={save} initialValues={value} />;
+      return (
+        <SchemaForm
+          schema={s}
+          onSubmit={onAppConfigUpdate}
+          initialValues={appConfig}
+        />
+      );
     }
     if (block) {
       return (
@@ -92,24 +69,14 @@ const AppsSidebarItem = ({
           token={`${api.token}`}
           workspaceId={workspaceId}
           appInstance={slug}
-          config={config}
+          config={{}}
           appConfig={appConfig}
           onAppConfigUpdate={onAppConfigUpdate}
         />
       );
     }
     return null;
-  }, [
-    schema,
-    block,
-    save,
-    value,
-    slug,
-    workspaceId,
-    config,
-    appConfig,
-    onAppConfigUpdate,
-  ]);
+  }, [schema, block, onAppConfigUpdate, appConfig, slug, workspaceId]);
 
   if (!configComponent)
     return (
@@ -163,38 +130,4 @@ const AppsSidebarItem = ({
   );
 };
 
-const AppsSidebarItemWithBlock = (props: AppsSidebarItemWithBlockProps) => {
-  const [appConfig, setAppConfig] = useState<any>();
-  useEffect(() => {
-    if (!props.slug) return;
-    const fetchAppConfig = async () => {
-      if (!props.slug) return;
-      try {
-        const appConfig = await api.getAppConfig(props.workspaceId, props.slug);
-        setAppConfig(appConfig || null);
-      } catch {
-        return;
-      }
-    };
-    fetchAppConfig();
-  }, [props.slug, props.workspaceId]);
-  const setAppConfigHandler = useCallback(
-    async (newConfig: any) => {
-      setAppConfig(newConfig);
-      if (!props.slug) return;
-      await api.updateAppConfig(props.workspaceId, props.slug, newConfig);
-    },
-    [props.slug, props.workspaceId]
-  );
-
-  return (
-    <AppsSidebarItem
-      config={{}}
-      appConfig={appConfig}
-      onAppConfigUpdate={setAppConfigHandler}
-      {...props}
-    />
-  );
-};
-
-export default AppsSidebarItemWithBlock;
+export default AppsSidebarItem;

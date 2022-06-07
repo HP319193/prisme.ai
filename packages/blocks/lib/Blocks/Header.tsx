@@ -78,7 +78,6 @@ const Button = ({ text, type, value }: Config['nav'][number]) => {
 
 export const Header = ({ edit }: { edit?: boolean }) => {
   const { config = {} as Config } = useBlock<Config>();
-  console.log('header', { config });
 
   const nav = config.nav && Array.isArray(config.nav) ? config.nav : [];
 

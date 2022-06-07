@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { builtinBlocksList } from '@prisme.ai/blocks/lib/Blocks';
+import builtinBlocksList from '@prisme.ai/blocks/lib/Blocks/builtinBlocksList';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
@@ -9,7 +9,7 @@ import { nanoid } from 'nanoid';
 import { useApps } from '../AppsProvider';
 import equal from 'fast-deep-equal';
 import PageEditBlockForm from './Panel/PageEditBlockForm';
-import useBlocksConfigs from '../Blocks/useBlocksConfigs';
+import useBlocksConfigs from '../Blocks/usePublicBlocksConfigs';
 import { Schema } from '@prisme.ai/design-system';
 
 interface PageBuilderProps {

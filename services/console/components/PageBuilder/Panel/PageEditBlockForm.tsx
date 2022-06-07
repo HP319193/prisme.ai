@@ -3,9 +3,8 @@ import { useMemo } from 'react';
 import Settings from './Settings';
 import useLocalizedTextConsole from '../../../utils/useLocalizedTextConsole';
 import { usePageBuilder } from '../context';
-import { useWorkspace } from '../../../layouts/WorkspaceLayout';
 import getEditSchema from '../../Blocks/EditSchema/getEditSchema';
-import useBlockConfig from '../useBlockConfig';
+import useBlockPageConfig from '../../PageBuilder/useBlockPageConfig';
 
 interface PageEditBlockFormProps {
   blockId: string;
@@ -14,11 +13,10 @@ interface PageEditBlockFormProps {
 const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
   const { localizeSchemaForm } = useLocalizedTextConsole();
   const { blocksInPage, removeBlock } = usePageBuilder();
-  const {
-    workspace: { id: workspaceId },
-  } = useWorkspace();
 
-  const { config, onConfigUpdate } = useBlockConfig({ blockId, workspaceId });
+  const { config, onConfigUpdate } = useBlockPageConfig({
+    blockId,
+  });
 
   const editedBlock = blocksInPage.find(({ key }) => key === blockId);
   const editSchema = editedBlock && getEditSchema(`${editedBlock.name}`);

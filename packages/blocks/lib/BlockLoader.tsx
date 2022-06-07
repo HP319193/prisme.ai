@@ -10,6 +10,7 @@ import {
   useBlocks,
 } from './Provider';
 import * as builtinBlocks from './Blocks';
+import { Loading } from '@prisme.ai/design-system';
 
 class BlockErrorBoundary extends React.Component {
   state = {
@@ -48,15 +49,13 @@ export interface BlockLoaderProps extends BlockComponentProps {
   children?: ReactNode;
   url?: string;
   name?: string;
-  renderLoading?: ReactElement;
   onLoad?: (block: any) => void;
 }
 
 export const ReactBlock = ({
   url,
-  renderLoading,
   onLoad,
-  ...props
+  ...componentProps
 }: BlockLoaderProps) => {
   const {
     i18n: { language },
@@ -103,17 +102,15 @@ export const ReactBlock = ({
 
   return (
     <>
-      {(loading && renderLoading) || null}
-      {Component && <Component {...props} language={language} />}
+      {loading && componentProps.edit && (
+        <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
+      )}
+      {Component && <Component {...componentProps} language={language} />}
     </>
   );
 };
 
-export const IFrameBlock = ({
-  url,
-  token,
-  renderLoading,
-}: BlockLoaderProps) => {
+export const IFrameBlock = ({ url, token, edit }: BlockLoaderProps) => {
   const [loading, setLoading] = useState(true);
   const [height, setHeight] = useState(100);
   const handleLoad = React.useCallback(
@@ -149,7 +146,9 @@ export const IFrameBlock = ({
 
   return (
     <>
-      {(loading && renderLoading) || null}
+      {loading && edit && (
+        <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
+      )}
       <iframe
         src={url}
         onLoad={handleLoad}
