@@ -5,10 +5,9 @@ import { AuthenticationError } from '../../types/errors';
 export function isAuthenticated(
   req: Request,
   res: Response,
-  next: NextFunction,
-  optional?: boolean
+  next: NextFunction
 ) {
-  if (!req.user && !optional) {
+  if (!req.user) {
     throw new AuthenticationError();
   }
 

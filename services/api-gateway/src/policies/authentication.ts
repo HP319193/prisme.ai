@@ -1,6 +1,6 @@
 import express from 'express';
 import { syscfg } from '../config';
-import { isAuthenticated } from '../middlewares/authentication/isAuthenticated';
+import { AuthenticationError } from '../types/errors';
 
 export interface Params {
   injectUserIdHeader?: boolean;
@@ -30,16 +30,12 @@ export async function init(params: Params) {
       optional = true;
       // TODO should check api key validity
     }
-    return isAuthenticated(
-      req,
-      res,
-      (user) => {
-        if (user && injectUserIdHeader) {
-          req.headers[syscfg.USER_ID_HEADER] = req.user?.id;
-        }
-        next();
-      },
-      optional
-    );
+    if (req.user && injectUserIdHeader) {
+      req.headers[syscfg.USER_ID_HEADER] = req.user?.id;
+    }
+    if (!req.user && !optional) {
+      throw new AuthenticationError();
+    }
+    next();
   };
 }
