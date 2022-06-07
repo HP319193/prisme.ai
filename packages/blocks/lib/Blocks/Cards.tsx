@@ -174,7 +174,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
   const previewText = t('preview');
   const cards = useMemo(
     () =>
-      config.cards ||
+      (Array.isArray(config.cards) && config.cards) ||
       (preview
         ? Array.from(
             new Array(6),
