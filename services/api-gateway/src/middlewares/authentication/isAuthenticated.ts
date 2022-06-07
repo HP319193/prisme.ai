@@ -11,7 +11,7 @@ export function isAuthenticated(
     throw new AuthenticationError();
   }
 
-  return next(req.user);
+  return next();
 }
 
 export function isInternallyAuthenticated(
