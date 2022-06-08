@@ -119,9 +119,9 @@ export const UserProvider: FC<UserProviderProps> = ({
         setLoading(false);
         return;
       }
-      const { error } = e as ApiError;
+      const { error, code } = e as ApiError;
 
-      if (error !== 'NoUserFound') {
+      if (error !== 'NoUserFound' && code !== 401) {
         setError(e as ApiError);
       }
       signout(false);
