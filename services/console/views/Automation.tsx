@@ -116,9 +116,18 @@ export const Automation = () => {
         arguments: {
           'ui:widget': ArgumentsEditor,
         },
+        private: {
+          type: 'boolean',
+          title: t('automations.details.private.label'),
+          description: t('automations.details.private.description'),
+        },
       },
       'ui:options': {
-        grid: [[['name', 'slug'], ['description']], [['arguments']]],
+        grid: [
+          [['name', 'slug'], ['description']],
+          [['arguments']],
+          [['private']],
+        ],
       },
     }),
     [t]
@@ -205,11 +214,13 @@ export const Automation = () => {
       name,
       description,
       arguments: args,
+      private: _private,
     }: {
       slug: string;
       name: Prismeai.LocalizedText;
       description: Prismeai.LocalizedText;
       arguments: Prismeai.Automation['arguments'];
+      private: boolean;
     }) => {
       const { slug: prevSlug } = value;
       const cleanedArguments =
@@ -218,13 +229,17 @@ export const Automation = () => {
           (prev, key) => (key ? { ...prev, [key]: args[key] } : prev),
           {}
         );
-      const newValue = {
-        ...value,
+      const { private: p, ...cleanedValue } = value;
+      const newValue: typeof value = {
+        ...cleanedValue,
         name,
         slug,
         description,
         arguments: cleanedArguments,
       };
+      if (_private) {
+        newValue.private = true;
+      }
       setValue(newValue);
       try {
         await saveAutomation.current(`${automationId}`, newValue);

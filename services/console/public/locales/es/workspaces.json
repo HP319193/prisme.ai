@@ -302,6 +302,10 @@
       },
       "description": {
         "label": "Descripción"
+      },
+      "private": {
+        "label": "Uso interno",
+        "description": "Si habilita esta configuración, la Automatización sólo será visible como una instrucción en este mismo Espacio de Trabajo. Cuando publiques tu aplicación, sus usuarios no la verán."
       }
     },
     "arguments": {

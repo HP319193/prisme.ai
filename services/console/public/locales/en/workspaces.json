@@ -302,6 +302,10 @@
       },
       "description": {
         "label": "Description"
+      },
+      "private": {
+        "label": "Internal use",
+        "description": "If you enable this setting, Automation will be visible as an instruction only in this same Workspace. When you publish your app, its users will not see it."
       }
     },
     "arguments": {
