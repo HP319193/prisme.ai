@@ -97,6 +97,7 @@ export const UserProvider: FC<UserProviderProps> = ({
 
   const fetchMe = useCallback(async () => {
     setLoading(true);
+    setError(undefined);
     try {
       const user = await api.me();
       if (!user) {
@@ -118,11 +119,6 @@ export const UserProvider: FC<UserProviderProps> = ({
         setUser(user);
         setLoading(false);
         return;
-      }
-      const { error } = e as ApiError;
-
-      if (error !== 'NoUserFound') {
-        setError(e as ApiError);
       }
       signout(false);
       setLoading(false);
