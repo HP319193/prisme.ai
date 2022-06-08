@@ -1,12 +1,16 @@
-import nodeFetch, { RequestInit } from 'node-fetch';
+import nodeFetch, { RequestInit, Response } from 'node-fetch';
 import { ContextsManager } from '../../contexts';
 import { CORRELATION_ID_HEADER } from '../../../../../config';
 import { URLSearchParams } from 'url';
+import { Broker } from '@prisme.ai/broker';
+import { EventType } from '../../../../eda';
 
 export async function fetch(
-  { url, body, headers, method }: Prismeai.Fetch['fetch'],
-  ctx: ContextsManager
+  fetch: Prismeai.Fetch['fetch'],
+  ctx: ContextsManager,
+  broker: Broker
 ) {
+  let { url, body, headers, method } = fetch;
   const lowercasedHeaders: Record<string, string> = Object.entries(
     headers || {}
   )
@@ -46,8 +50,25 @@ export async function fetch(
     }
   }
   const result = await nodeFetch(url, params);
-  if ((result.headers.get('Content-Type') || '').includes('application/json')) {
-    return await result.json();
+  const responseBody = await getResponseBody(result);
+  if (result.status >= 400 && result.status < 600) {
+    broker.send<Prismeai.FailedFetch['payload']>(EventType.FailedFetch, {
+      request: fetch,
+      response: {
+        status: result.status,
+        body: responseBody,
+        headers: result.headers,
+      },
+    });
   }
-  return await result.text();
+  return responseBody;
+}
+
+async function getResponseBody(response: Response) {
+  if (
+    (response.headers.get('Content-Type') || '').includes('application/json')
+  ) {
+    return await response.json();
+  }
+  return await response.text();
 }

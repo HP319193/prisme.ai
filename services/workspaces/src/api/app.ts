@@ -79,13 +79,16 @@ export function initAPI(
    * Sharing routes
    */
   initCollaboratorRoutes<SubjectType>(app, {
-    onShared: async (req, subjectType, subjectId, permissions) => {
+    onShared: async (req, subjectType, subjectId, permissions, subject) => {
       const payload = {
         subjectId,
         permissions,
       };
       const source = { workspaceId: req.context.workspaceId };
       if (subjectType === SubjectType.Page) {
+        if (!source.workspaceId) {
+          source.workspaceId = (subject as Prismeai.Page).workspaceId;
+        }
         await req.broker.send<Prismeai.PagePermissionsShared['payload']>(
           EventType.PagePermissionsShared,
           payload,
@@ -104,13 +107,16 @@ export function initAPI(
         );
       }
     },
-    onRevoked: async (req, subjectType, subjectId, userId) => {
+    onRevoked: async (req, subjectType, subjectId, userId, subject) => {
       const payload = {
         subjectId,
         userId,
       };
       const source = { workspaceId: req.context.workspaceId };
       if (subjectType === SubjectType.Page) {
+        if (!source.workspaceId) {
+          source.workspaceId = (subject as Prismeai.Page).workspaceId;
+        }
         await req.broker.send<Prismeai.PagePermissionsDeleted['payload']>(
           EventType.PagePermissionsDeleted,
           payload,

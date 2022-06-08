@@ -8,6 +8,7 @@ import {
 import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { FindUserQuery } from '../services/identity/users';
+import { v4 as uuid } from 'uuid';
 
 const loginHandler = (strategy: string) =>
   async function (
@@ -35,9 +36,12 @@ const loginHandler = (strategy: string) =>
               new AuthenticationError('Unknown authentication error')
             );
           }
+
+          req.session.prismeaiSessionId = uuid();
           res.send({
             ...user,
             token: req.sessionID,
+            sessionId: req.session.prismeaiSessionId,
           });
           await req.broker.send(EventType.SucceededLogin, {
             email: user.email || user.firstName,
@@ -56,7 +60,11 @@ async function signupHandler(
 ) {
   const { context, body } = req;
   const identity = services.identity(context);
-  await identity.signup(body);
+  const user = await identity.signup(body);
+  await req.broker.send(EventType.SucceededSignup, {
+    ip: req.context?.http?.ip,
+    user,
+  });
   loginHandler('local')(req, res, next);
 }
 
@@ -64,7 +72,10 @@ async function meHandler(
   req: Request,
   res: Response<PrismeaiAPI.GetMyProfile.Responses.$200>
 ) {
-  res.send(req.user);
+  res.send({
+    ...(req.user as any),
+    sessionId: req.session.prismeaiSessionId,
+  });
 }
 
 async function logoutHandler(req: Request, res: Response) {

@@ -8,27 +8,24 @@ export class Events {
     workspaceId,
     token,
     apiHost = 'https://api.eda.prisme.ai',
-    userId,
+    filters,
   }: {
     workspaceId: string;
     token: string;
     apiHost?: string;
-    userId?: string;
+    filters?: Record<string, any>;
   }) {
     this.workspaceId = workspaceId;
-    const filters: Record<string, string> = {};
-    if (userId) {
-      filters['source.userId'] = userId;
-    }
-    const queryString = new URLSearchParams(filters).toString();
+    const queryString = new URLSearchParams(filters || {}).toString();
     const fullQueryString = queryString ? `?${queryString}` : '';
 
     this.client = io(
       `${apiHost}/workspaces/${workspaceId}/events${fullQueryString}`,
       {
         extraHeaders: {
-          'x-prismeai-session-token': token,
+          'x-prismeai-token': token,
         },
+        withCredentials: true,
       }
     );
   }

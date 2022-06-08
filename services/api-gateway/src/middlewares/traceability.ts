@@ -18,6 +18,7 @@ export interface PrismeContext {
   app?: string;
   correlationId: string;
   userId: string;
+  sessionId: string;
   workspaceId?: string;
   http?: HTTPContext;
 }
@@ -31,12 +32,14 @@ export function requestDecorator(
   const workspaceId = req.path.match(workspaceIdPattern)?.[1];
 
   const userId = req.user?.id as string;
+  const sessionId = req.session.prismeaiSessionId;
   const correlationId = (req.header(syscfg.CORRELATION_ID_HEADER) ||
     uuid()) as string;
 
   const context: PrismeContext = {
     correlationId,
     userId,
+    sessionId,
     workspaceId: workspaceId,
     http: {
       originalUrl: req.originalUrl,
@@ -63,6 +66,11 @@ export function requestDecorator(
 
   if (userId) {
     req.headers[syscfg.USER_ID_HEADER] = userId;
+  }
+
+  if (sessionId) {
+    req.headers[syscfg.SESSION_ID_HEADER] = sessionId;
+    res.set(syscfg.SESSION_ID_HEADER, sessionId);
   }
 
   next();

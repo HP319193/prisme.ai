@@ -1,7 +1,16 @@
 import { PrismeEvent } from '@prisme.ai/broker';
 import http from 'http';
 import { Server } from 'socket.io';
-import { API_KEY_HEADER, USER_ID_HEADER } from '../../../config';
+import { createAdapter } from '@socket.io/redis-adapter';
+import { createClient } from '@node-redis/client';
+import {
+  API_KEY_HEADER,
+  SESSION_ID_HEADER,
+  SOCKETIO_COOKIE_MAX_AGE,
+  SOCKETIO_REDIS_HOST,
+  SOCKETIO_REDIS_PASSWORD,
+  USER_ID_HEADER,
+} from '../../../config';
 import { logger } from '../../logger';
 import sendEvent from '../../services/events/send';
 import { SearchOptions } from '../../services/events/store';
@@ -16,6 +25,20 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       origin: true,
       credentials: true,
     },
+    cookie: {
+      name: 'io',
+      maxAge: SOCKETIO_COOKIE_MAX_AGE,
+    },
+  });
+
+  const redisPubClient = createClient({
+    url: SOCKETIO_REDIS_HOST,
+    password: SOCKETIO_REDIS_PASSWORD,
+  });
+  const redisSubClient = redisPubClient.duplicate();
+
+  Promise.all([redisPubClient.connect(), redisSubClient.connect()]).then(() => {
+    io.adapter(createAdapter(redisPubClient, redisSubClient) as any);
   });
 
   const workspaces = io.of(WORKSPACE_PATH);
@@ -38,6 +61,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       );
       return;
     }
+    const sessionId = socket.handshake.headers[SESSION_ID_HEADER];
     const apiKey = socket.handshake.headers[API_KEY_HEADER];
     const subscription = await events.subscribe(workspaceId, {
       userId: userId as string,
@@ -52,6 +76,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     const childBroker = events.broker.child({
       workspaceId,
       userId: userId as string,
+      sessionId: sessionId as string,
     });
     socket.onAny(
       async (type, payload: Prismeai.PrismeEvent | SearchOptions) => {

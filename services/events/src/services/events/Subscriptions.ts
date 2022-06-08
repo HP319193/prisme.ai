@@ -77,7 +77,7 @@ export class Subscriptions {
         if (!event.source.workspaceId) return true;
         const subscribers = this.subscribers[event.source.workspaceId];
         (subscribers || []).forEach(
-          async ({ callback, accessManager, searchOptions }) => {
+          async ({ callback, accessManager, searchOptions, userId }) => {
             const readable = await accessManager.can(
               ActionType.Read,
               SubjectType.Event,
@@ -85,6 +85,7 @@ export class Subscriptions {
             );
             if (
               readable &&
+              (!event.source.userId || event.source.userId !== userId) &&
               (!searchOptions || this.matchSearchOptions(event, searchOptions))
             ) {
               callback(event);

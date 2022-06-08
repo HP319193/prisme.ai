@@ -94,7 +94,7 @@ export async function runInstruction(
       );
       break;
     case InstructionType.Fetch:
-      result = await fetch(<Prismeai.Fetch['fetch']>payload, ctx);
+      result = await fetch(<Prismeai.Fetch['fetch']>payload, ctx, broker);
       break;
     case InstructionType.Conditions:
       result = await conditions(<Prismeai.Conditions>payload, {

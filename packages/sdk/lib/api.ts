@@ -14,8 +14,12 @@ interface PageWithMetadata extends Prismeai.Page {
 }
 
 export class Api extends Fetcher {
+  private sessionId?: string;
+
   async me() {
-    return await this.get('/me');
+    const me = await this.get('/me');
+    this.sessionId = me.headers['x-prismeai-session-id'];
+    return me;
   }
 
   async signin(
@@ -185,12 +189,22 @@ export class Api extends Fetcher {
   }
 
   // Events
-  streamEvents(workspaceId: string, userId?: string): Promise<Events> {
+  streamEvents(
+    workspaceId: string,
+    filters?: Record<string, any>
+  ): Promise<Events> {
+    if (filters && filters['source.sessionId'] === true) {
+      if (this.sessionId) {
+        filters['source.sessionId'] = this.sessionId;
+      } else {
+        delete filters['source.sessionId'];
+      }
+    }
     const events = new Events({
       workspaceId,
       token: this.token || '',
       apiHost: this.host,
-      userId,
+      filters,
     });
     return new Promise((resolve, reject) => {
       events.once('connect', () => {

@@ -24,8 +24,8 @@ export class Fetcher {
   ): Promise<T> {
     const headers = new Headers(options.headers || {});
 
-    if (this.token && !headers.has('x-prismeai-session-token')) {
-      headers.append('x-prismeai-session-token', this.token);
+    if (this.token && !headers.has('x-prismeai-token')) {
+      headers.append('x-prismeai-token', this.token);
     }
 
     if (

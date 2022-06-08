@@ -302,6 +302,10 @@
       },
       "description": {
         "label": "Description"
+      },
+      "private": {
+        "label": "Usage interne",
+        "description": "Si vous activez ce paramètre, l'Automatisation ne sera visible en tant qu'instruction que dans ce même Workspace. Quand vous publierez votre App, ses utilisateurs ne la verront pas."
       }
     },
     "arguments": {

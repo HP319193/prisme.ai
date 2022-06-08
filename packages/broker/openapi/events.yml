@@ -46,7 +46,7 @@ paths:
         '200':
           description: Success Response
           headers:
-            X-Prismeai-Session-Token:
+            x-prismeai-token:
               schema:
                 type: string
               description: Created session token
@@ -71,7 +71,7 @@ paths:
         '200':
           description: Success Response
           headers:
-            X-Prismeai-Session-Token:
+            x-prismeai-token:
               schema:
                 type: string
               description: Created session token
@@ -950,7 +950,7 @@ components:
     BearerAuth:
       type: apiKey
       in: header
-      name: X-Prismeai-Session-Token
+      name: x-prismeai-token
     ApiKeyAuth:
       type: apiKey
       in: header

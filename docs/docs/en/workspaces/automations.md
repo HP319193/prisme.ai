@@ -28,7 +28,7 @@ From inside the automation defining an **URL** triger, 4 [variables](#variables)
 
 ### Events  
 An automation can also listen to a list of events.  
-Whenever such events are received, the automation is executed & can access event payload with **payload** variable.  
+Whenever such events are received, the automation is executed & can access event payload with **payload** variable, and event source (source IP, correlationId, userId, automation, ...) with **source** variable.  
 
 These events can be :  
 
@@ -126,7 +126,23 @@ Workspaces can only listen to a limited subset of the available native events :
         }
         ```
       </td>
-    </tr>                        
+    </tr>              
+    <tr>
+      <td><b>runtime.fetch.failed</b></td>
+      <td>A fetch received a 4xx or 5xx HTTP status</td>
+      <td>
+        ```
+        {
+          "request": fetchInstructionBody,
+          "response": {
+            "status": 500,
+            "body": {...},
+            "headers": {...}
+          }
+        }
+        ```
+      </td>
+    </tr>                            
   </table>    
 </center>
 

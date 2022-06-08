@@ -14,7 +14,9 @@ import Properties from './Properties';
 
 const WidgetsByType = {
   ...UIWidgetsByType,
-  string: Array.from(new Set([...UIWidgetsByType.string, 'enum'])),
+  string: Array.from(
+    new Set([...UIWidgetsByType.string.filter((t) => t !== 'select'), 'enum'])
+  ),
 };
 
 interface SchemaFormBuilderProps {
@@ -99,7 +101,7 @@ export const SchemaFormBuilder = ({
   );
 
   const options = useMemo(() => {
-    const uiWidget = value['ui:widget'];
+    const uiWidget = value['ui:widget'] || value.enum ? 'enum' : null;
 
     const uiWidgetIsSet = !!(uiWidget && typeof uiWidget === 'string');
     const filteredTypes = uiWidgetIsSet

@@ -227,7 +227,26 @@ Then, for when you want to run this service directly from its docker image, you 
       Number of days events are kept inside the datalake before being removed
     </td>
     <td>180</td>
-  </tr>                
+  </tr>         
+
+  <tr>
+    <td>SOCKETIO_REDIS_HOST</td>
+    <td>events</td>
+    <td>Redis host for socket.io redis adapter</td>
+    <td>Same as BROKER_HOST env var</td>
+  </tr>         
+  <tr>
+    <td>SOCKETIO_REDIS_PASSWORD</td>
+    <td>events</td>
+    <td>Redis password for socket.io redis adapter</td>
+    <td>Same as BROKER_PASSWORD env var</td>
+  </tr>             
+  <tr>
+    <td>SOCKETIO_COOKIE_MAX_AGE</td>
+    <td>events</td>
+    <td>Socket.io cookie maxAge</td>
+    <td>Default value from 'cookie' NodeJS module</td>
+  </tr>                  
 
   <!-- runtime & workspaces -->
   <tr>

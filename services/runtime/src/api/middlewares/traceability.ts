@@ -1,6 +1,10 @@
 import { Broker } from '@prisme.ai/broker';
 import { NextFunction, Request, Response } from 'express';
-import { CORRELATION_ID_HEADER, USER_ID_HEADER } from '../../../config';
+import {
+  CORRELATION_ID_HEADER,
+  USER_ID_HEADER,
+  SESSION_ID_HEADER,
+} from '../../../config';
 import { logger } from '../../logger';
 import { uniqueId } from '../../utils';
 
@@ -16,6 +20,7 @@ export interface PrismeContext {
   app?: string;
   correlationId: string;
   userId: string;
+  sessionId: string;
   workspaceId?: string;
   http?: HTTPContext;
 }
@@ -29,6 +34,7 @@ export function requestDecorator(broker: Broker) {
       correlationId: (req.header(CORRELATION_ID_HEADER) ||
         uniqueId()) as string,
       userId: req.header(USER_ID_HEADER) as string,
+      sessionId: req.header(SESSION_ID_HEADER) as string,
       workspaceId: workspaceId,
       http: {
         originalUrl: req.originalUrl,

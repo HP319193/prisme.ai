@@ -54,8 +54,11 @@ paths:
                   - type: object
                     required:
                       - token
+                      - sessionId
                     properties:
                       token:
+                        type: string
+                      sessionId:
                         type: string
         '401':
           description: AuthenticationError
@@ -92,7 +95,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    required:
+                      - sessionId
+                    properties:
+                      sessionId:
+                        type: string
         '401':
           description: Unauthenticated
           content:
@@ -2427,7 +2437,7 @@ components:
     SessionHeaderAuth:
       type: apiKey
       in: header
-      name: x-prismeai-session-token
+      name: x-prismeai-token
     ApiKeyAuth:
       type: apiKey
       in: header
@@ -2675,6 +2685,9 @@ components:
             - object
             - array
             - boolean
+            - localized:string
+            - localized:number
+            - localized:boolean
         description:
           $ref: '#/components/schemas/LocalizedText'
         items:
@@ -2990,7 +3003,7 @@ components:
         - 'fetch'
       maxProperties: 1
       properties:
-        fetch:
+        fetch: &fetchBody
           description: Send an HTTP request
           type: object
           required:
@@ -3187,6 +3200,8 @@ components:
             automationSlug:
               type: string
             userId:
+              type: string
+            sessionId:
               type: string
             workspaceId:
               type: string
@@ -3443,6 +3458,28 @@ components:
               type: string
             id:
               type: string
+
+    SucceededSignup:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.signup.succeeded
+          enum:
+            - gateway.signup.succeeded
+        payload:
+          type: object
+          required:
+            - ip
+            - user
+          properties:
+            ip:
+              type: string
+            user:
+              $ref: "#/components/schemas/User"
 
     ########################## Apps events ##########################
     PublishedApp:
@@ -3978,6 +4015,38 @@ components:
               type: string
             event:
               $ref: '#/components/schemas/PrismeEvent'
+
+    FailedFetch:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.fetch.failed
+          enum:
+            - runtime.fetch.failed
+        payload:
+          type: object
+          required:
+            - request
+            - response
+          properties:
+            request: *fetchBody
+            response:
+              type: object
+              required:
+                - status
+                - body
+                - headers
+              properties:
+                status:
+                  type: number
+                body: {}
+                headers:
+                  type: object
+
 
     AppEvent:
       type: object

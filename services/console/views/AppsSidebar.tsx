@@ -69,7 +69,7 @@ export const AppsSidebar = () => {
         visible={appStoreVisible}
         onCancel={() => setAppStoreVisible(false)}
       />
-      <div className="flex grow h-full flex-col">
+      <div className="flex grow h-full flex-col w-full">
         <div className="flex justify-between items-center mb-6">
           <Title level={4} className="mb-0">
             {t('apps.link')}

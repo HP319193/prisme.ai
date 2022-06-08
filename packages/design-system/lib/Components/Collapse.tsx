@@ -7,6 +7,7 @@ import { ReactElement, useCallback, useRef } from 'react';
 const { Panel } = AntdCollapse;
 
 export type CollapseItem = {
+  key?: string;
   label: string | ReactElement;
   content: ReactElement | string | null;
   className?: string;
@@ -62,8 +63,12 @@ const Collapse = ({
       }`}
       {...collapseProps}
     >
-      {items.map(({ label, content, className }, index) => (
-        <Panel header={label} key={`${index}`} className={className || ''}>
+      {items.map(({ key, label, content, className }, index) => (
+        <Panel
+          header={label}
+          key={key || `${index}`}
+          className={className || ''}
+        >
           {content}
         </Panel>
       ))}

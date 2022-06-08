@@ -43,9 +43,9 @@ export const EditDetails = ({
         context,
       }),
       content: t('details.delete.confirm.content', { context }),
-      cancelText: t('details.delete.confirm.ok', { context }),
-      okText: t('details.delete.confirm.cancel', { context }),
-      onCancel: () => {
+      cancelText: t('details.delete.confirm.cancel', { context }),
+      okText: t('details.delete.confirm.ok', { context }),
+      onOk: () => {
         onDelete();
       },
       zIndex: 1031,
