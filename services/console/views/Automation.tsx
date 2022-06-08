@@ -89,15 +89,10 @@ export const Automation = () => {
   const automation = (workspace.automations || {})[`${automationId}`];
   const [value, setValue] = useState<Prismeai.Automation>(automation || {});
   const [saving, setSaving] = useState(false);
-  const prevAutomationId = usePrevious(automationId);
-  const automationDidChange = useRef(true);
 
   useEffect(() => {
-    if (automationDidChange.current && prevAutomationId !== automationId) {
-      setValue(automation);
-    }
-    automationDidChange.current = true;
-  }, [automation, automationId, prevAutomationId]);
+    setValue(automation);
+  }, [automation]);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -231,7 +226,6 @@ export const Automation = () => {
         arguments: cleanedArguments,
       };
       setValue(newValue);
-      automationDidChange.current = false;
       try {
         await saveAutomation.current(`${automationId}`, newValue);
         if (prevSlug === slug) return;
