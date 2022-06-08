@@ -96,7 +96,7 @@ const ManagedAdditionalProperties = ({
   field,
   name,
 }: AdditionalPropertiesProps) => {
-  const [value, setValue] = useState<Record<string, any>>({});
+  const [value, setValue] = useState<Record<string, any>>(field.input.value);
   const { locales = {} } = useSchemaForm();
 
   const lock = useRef(false);
