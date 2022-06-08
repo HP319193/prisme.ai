@@ -24,6 +24,7 @@ import SharePage from '../components/Share/SharePage';
 import { useField } from 'react-final-form';
 import { CodeEditor } from '../components/CodeEditor/lazy';
 import PagePreview from '../components/PagePreview';
+import useKeyboardShortcut from '../components/useKeyboardShortcut';
 
 const CSSEditor = ({
   name,
@@ -220,6 +221,17 @@ export const Page = () => {
     }
     setSaving(false);
   }, [cleanValue, page, savePage, t, value, workspace.id]);
+
+  useKeyboardShortcut([
+    {
+      key: 's',
+      meta: true,
+      command: (e) => {
+        e.preventDefault();
+        save();
+      },
+    },
+  ]);
 
   const confirmDeletePage = useCallback(async () => {
     await push(`/workspaces/${workspace.id}`);
