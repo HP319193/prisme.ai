@@ -20,6 +20,7 @@ export const Development = (props: any) => {
   const {
     config = { url: 'http://localhost:9090/main.js' },
     setConfig,
+    ...blockSetup
   } = useBlock();
   const [error, setError] = useState<string | false>(false);
   const [version, setVersion] = useState(Math.random());
@@ -47,7 +48,7 @@ export const Development = (props: any) => {
   }, [config]);
 
   return (
-    <BlockProvider config={config.debug} appConfig={{}}>
+    <BlockProvider config={config.debug} appConfig={{}} {...blockSetup}>
       <div className="group">
         {error || !config.url ? (
           <div className="flex flex-1 justify-center items-center p-2 text-center">
