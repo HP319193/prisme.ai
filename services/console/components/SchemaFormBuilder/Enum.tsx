@@ -19,13 +19,13 @@ interface EnumProps {
 export const Enum = ({ value, onChange }: EnumProps) => {
   const { t } = useTranslation('workspaces');
   const addValue = useCallback(() => {
-    const newValue = { enum: value.enum || [] };
+    const newValue = { ...value, enum: value.enum || [] };
     const index = newValue.enum.push('');
     if (value.enumNames && !value.enumNames[index]) {
       value.enumNames[index] = '';
     }
     onChange(newValue);
-  }, [onChange, value.enum, value.enumNames]);
+  }, [onChange, value]);
 
   const deleteValue = useCallback(
     (index: number) => () => {
@@ -50,11 +50,11 @@ export const Enum = ({ value, onChange }: EnumProps) => {
     (index: number) => ({
       target: { value: v },
     }: ChangeEvent<HTMLInputElement>) => {
-      const newValue = { enum: value.enum || [] };
+      const newValue = { ...value, enum: value.enum || [] };
       newValue.enum[index] = v;
       onChange(newValue);
     },
-    [onChange, value.enum]
+    [onChange, value]
   );
   const updateLabel = useCallback(
     (index: number) => ({
@@ -62,7 +62,6 @@ export const Enum = ({ value, onChange }: EnumProps) => {
     }: ChangeEvent<HTMLInputElement>) => {
       const newEnumNames = [...(value.enumNames || [])];
       newEnumNames[index] = v;
-
       onChange({
         ...value,
         enumNames: newEnumNames.map((v) => v || ''),

@@ -36,7 +36,7 @@ module.exports = {
   },
   webpackFinal: (config) => {
     config.resolve.alias['next-i18next'] = require.resolve(
-      '../../../__mocks__/next-i18next.js'
+      '../../../__mocks_sb__/next-i18next.js'
     );
     return config;
   },
