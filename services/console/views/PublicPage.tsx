@@ -15,9 +15,10 @@ import ErrorBoundary from '../components/Blocks/ErrorBoundary';
 
 export interface PublicPageProps {
   page: Prismeai.DetailedPage | null;
+  error?: number;
 }
 
-export const PublicPage = ({ page }: PublicPageProps) => {
+export const PublicPageRenderer = ({ page }: PublicPageProps) => {
   const {
     t,
     i18n: { language },
@@ -27,6 +28,7 @@ export const PublicPage = ({ page }: PublicPageProps) => {
   const [currentPage, setCurrentPage] = useState<Prismeai.DetailedPage | null>(
     page
   );
+
   const [loadingError, setLoadingError] = useState<number | null>(null);
   const {
     isReady,
@@ -191,6 +193,43 @@ export const PublicPage = ({ page }: PublicPageProps) => {
           )
         )}
       </div>
+    </div>
+  );
+};
+
+export const PublicPage = ({
+  page: pageFromServer,
+  error,
+}: PublicPageProps) => {
+  const [page, setPage] = useState(pageFromServer);
+  const [loading, setLoading] = useState(true);
+  const {
+    query: { pageSlug },
+  } = useRouter();
+
+  const fetchPage = useCallback(async () => {
+    try {
+      const page = await api.getPageBySlug(`${pageSlug}`);
+      setPage(page);
+    } catch (e) {}
+    setLoading(false);
+  }, [pageSlug]);
+
+  useEffect(() => {
+    if (pageFromServer || error !== 403) return;
+    // Server didn't fetch page because it needs permissions
+    // User should have them
+
+    fetchPage();
+  }, [pageSlug, error, pageFromServer, fetchPage]);
+
+  if (!page && loading) return <Loading />;
+
+  if (page) return <PublicPageRenderer page={page} />;
+
+  return (
+    <div className="flex m-auto">
+      <SigninForm onSignin={fetchPage} />
     </div>
   );
 };
