@@ -1,5 +1,9 @@
 module.exports = {
-  stories: ['../lib/**/*.stories.mdx', '../lib/**/*.stories.@(js|jsx|ts|tsx)'],
+  stories: [
+    '../lib/**/*.stories.mdx',
+    '../lib/**/*.stories.@(js|jsx|ts|tsx)',
+    '../../../services/console/components/**/*.stories.@(js|jsx|ts|tsx)',
+  ],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
@@ -29,5 +33,11 @@ module.exports = {
   framework: '@storybook/react',
   core: {
     builder: 'webpack5',
+  },
+  webpackFinal: (config) => {
+    config.resolve.alias['next-i18next'] = require.resolve(
+      '../../../__mocks__/next-i18next.js'
+    );
+    return config;
   },
 };
