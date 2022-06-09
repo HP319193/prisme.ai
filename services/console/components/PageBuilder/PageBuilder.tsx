@@ -34,13 +34,6 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     await setPanelIsOpen(false);
   }, []);
 
-  const prevValue = useRef(value);
-  useEffect(() => {
-    if (value === prevValue.current) return;
-    prevValue.current = value;
-    hidePanel();
-  }, [hidePanel, value]);
-
   const blocks: PageBuilderContext['blocks'] = useMemo(() => {
     return [
       {
@@ -95,11 +88,10 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
           : block
       );
       if (equal(newBlocks, value.blocks)) return;
-      prevValue.current = {
+      onChange({
         ...value,
         blocks: newBlocks,
-      };
-      onChange(prevValue.current);
+      });
     },
     [onChange, value]
   );
@@ -122,11 +114,10 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
       const newBlocks = [...value.blocks];
       const blockKey = nanoid();
       newBlocks.splice(position, 0, { name: block, key: blockKey });
-      prevValue.current = {
+      onChange({
         ...value,
         blocks: newBlocks,
-      };
-      onChange(prevValue.current);
+      });
       setEditBlock(blockKey);
     },
     [addBlockDetails, onChange, setEditBlock, value]
@@ -135,11 +126,10 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
     async (key) => {
       const newBlocks = (value.blocks || []).filter(({ key: k }) => k !== key);
-      prevValue.current = {
+      onChange({
         ...value,
         blocks: newBlocks,
-      };
-      onChange(prevValue.current);
+      });
       await hidePanel();
     },
     [hidePanel, onChange, value]
