@@ -15,11 +15,6 @@ const isTranslatedElement = (key: string, value: any) => {
 };
 
 export const useLocalizedText = (t: any, language: string) => {
-  // const {
-  //   t,
-  //   i18n: { language },
-  // } = useTranslation('workspaces');
-
   const localize = useCallback(
     (text: Prismeai.LocalizedText | undefined) => {
       if (!text) return '';
