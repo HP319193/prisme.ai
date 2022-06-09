@@ -65,7 +65,6 @@ const PageBlockWithProvider = ({
       <div className="flex grow  relative flex-col surface-section border-slate-100 bg-white  border overflow-hidden z-2">
         <BlockLoader
           url={url}
-          // TODO is it really localized, or 'system' name of the component ?
           name={`${name}`}
           config={config}
           onConfigUpdate={onConfigUpdate}
