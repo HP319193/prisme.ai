@@ -19,9 +19,21 @@ Array [
 `;
 
 exports[`should render 404 1`] = `
-<div
-  className="flex flex-1 justify-center align-center"
-/>
+Array [
+  <div
+    className="
+          absolute top-[75px] bottom-0 right-0 left-0
+          bg-white
+          flex flex-1
+          transition-transform
+          transition-duration-200
+          transition-ease-in
+          z-[11]
+          -translate-y-full
+        "
+  />,
+  "Foo",
+]
 `;
 
 exports[`should render empty 1`] = `
