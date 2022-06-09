@@ -177,7 +177,9 @@ export const Page = () => {
               {...props}
               sectionIds={
                 page
-                  ? page.blocks.flatMap(
+                  ? (
+                      page.blocks || []
+                    ).flatMap(
                       ({ config: { sectionId, name = sectionId } = {} }) =>
                         sectionId ? { id: sectionId, name } : []
                     )
