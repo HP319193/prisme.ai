@@ -76,6 +76,11 @@ jest.mock('@prisme.ai/sdk', () => {
     deleteAutomation = jest.fn((w: any, slug: string) => ({
       slug,
     }));
+    getWorkspace = jest.fn((id: string) => ({
+      id: '42',
+      name: 'foo',
+      automations: [],
+    }));
   }
 
   const api: any = new Api();
@@ -517,7 +522,7 @@ it('should update an automation slug', async () => {
   });
 });
 
-it('should delete an automation', async () => {
+it('s' + 'hould delete an automation', async () => {
   let context: WorkspaceContext = {} as WorkspaceContext;
   const Test = () => {
     context = useWorkspace();
