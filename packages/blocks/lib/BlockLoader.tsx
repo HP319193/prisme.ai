@@ -126,23 +126,6 @@ export const IFrameBlock = ({ url, token, edit }: BlockLoaderProps) => {
     },
     [token]
   );
-  // useEffect(() => {
-  //   const listener = (e: MessageEvent) => {
-  //     if (e.data.source === entityId) {
-  //       Object.keys(e.data).forEach((method) => {
-  //         switch (method) {
-  //           case 'init':
-  //             setHeight(+e.data[method].height);
-  //         }
-  //       });
-  //     }
-  //   };
-  //   window.addEventListener('message', listener);
-  //
-  //   return () => {
-  //     window.removeEventListener('message', listener);
-  //   };
-  // }, [entityId, height]);
 
   return (
     <>
@@ -189,7 +172,6 @@ const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
 
   const isJs = url && url.replace(/\?.*$/, '').match(/\.js$/);
   if (isJs) {
-    // TODO ajouter un provider ici
     return (
       <BlockErrorBoundary>
         <ReactBlock url={url} {...props} />
