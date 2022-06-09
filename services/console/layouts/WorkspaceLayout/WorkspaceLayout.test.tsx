@@ -522,7 +522,7 @@ it('should update an automation slug', async () => {
   });
 });
 
-it('s' + 'hould delete an automation', async () => {
+it('should delete an automation', async () => {
   let context: WorkspaceContext = {} as WorkspaceContext;
   const Test = () => {
     context = useWorkspace();
