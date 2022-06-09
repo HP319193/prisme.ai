@@ -255,18 +255,14 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [saving, setSaving] = useState(false);
   const [share, setShare] = useState<WorkspaceContext['share']>();
 
-  const setCurrent = useRef(async (id: string) => {
-    setLoading(true);
-    await fetch(id);
-    setLoading(false);
-  });
-
   useEffect(() => {
-    setCurrent.current(`${id}`);
-  }, [id]);
-
-  useEffect(() => {
-    setCurrentWorkspace(workspaces.get(`${id}`));
+    const fetchWorkspace = async () => {
+      setLoading(true);
+      const workspace = await api.getWorkspace(`${id}`);
+      setCurrentWorkspace(workspace);
+      setLoading(false);
+    };
+    fetchWorkspace();
   }, [id, workspaces]);
 
   const saveSource = useCallback(async () => {
