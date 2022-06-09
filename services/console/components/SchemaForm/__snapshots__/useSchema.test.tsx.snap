@@ -10,9 +10,7 @@ Array [
     </div>
     <div
       className="text-neutral-500 text-xs"
-    >
-      
-    </div>
+    />
   </div>,
   <div
     className="flex flex-col"
@@ -54,9 +52,7 @@ Array [
     </div>
     <div
       className="text-neutral-500 text-xs"
-    >
-      
-    </div>
+    />
   </div>,
   <div
     className="flex flex-col"

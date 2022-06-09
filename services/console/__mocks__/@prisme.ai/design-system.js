@@ -155,3 +155,13 @@ export const schemaTypes = [
 export const UIWidgetsByType = {
   string: ['upload', 'select'],
 };
+
+const localize = (text) => text;
+const localizeSchemaForm = (schema) => schema;
+
+export function useLocalizedText(t, language) {
+  return {
+    localize,
+    localizeSchemaForm,
+  };
+}

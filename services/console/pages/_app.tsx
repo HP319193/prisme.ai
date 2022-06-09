@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
-import Link from 'next/Link';
+import Link from 'next/link';
 import ReactDom from 'react-dom';
 import * as prismeaiDS from '@prisme.ai/design-system';
 import * as prismeaiBlocks from '@prisme.ai/blocks';

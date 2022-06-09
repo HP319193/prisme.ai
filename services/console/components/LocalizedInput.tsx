@@ -1,5 +1,5 @@
 import { LocalizedInput as LI } from '@prisme.ai/design-system';
-import { LocalizedInputProps } from '@prisme.ai/design-system/lib/Components/LocalizedInput';
+import { LocalizedInputProps } from '@prisme.ai/design-system/lib/Components/Localized/LocalizedInput';
 import { useTranslation } from 'next-i18next';
 
 export const LocalizedInput = (props: LocalizedInputProps) => {

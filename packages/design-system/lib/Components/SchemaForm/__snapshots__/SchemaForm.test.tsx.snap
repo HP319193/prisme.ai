@@ -91,10 +91,10 @@ exports[`should render single all types 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className=""
+    className="space-y-5 "
   >
     <label
-      className="text-[10px] text-gray"
+      className="text-[10px] text-gray max-w-[80%]"
     >
       
     </label>
@@ -134,7 +134,7 @@ exports[`should render single all types 1`] = `
       </div>
     </div>
     <div
-      className="m-2 p-2 border-l-[1px] rounded border-gray-200"
+      className="m-2 p-2 border-l-[1px] border-gray-200"
     >
       <label
         className="text-[10px] text-gray"
@@ -149,10 +149,10 @@ exports[`should render single all types 1`] = `
       </div>
     </div>
     <div
-      className=""
+      className="space-y-5 "
     >
       <label
-        className="text-[10px] text-gray"
+        className="text-[10px] text-gray max-w-[80%]"
       >
         object
       </label>
@@ -165,10 +165,10 @@ exports[`should render single all types 1`] = `
       </div>
     </div>
     <div
-      className=""
+      className="space-y-5 "
     >
       <label
-        className="text-[10px] text-gray"
+        className="text-[10px] text-gray max-w-[80%]"
       >
         objectWithAdditionalProperties
       </label>
@@ -213,15 +213,15 @@ exports[`should use ui:widgets 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className=""
+    className="space-y-5 "
   >
     <label
-      className="text-[10px] text-gray"
+      className="text-[10px] text-gray max-w-[80%]"
     >
       
     </label>
     <div
-      className="m-2 p-2 border-l-[1px] rounded border-gray-200"
+      className="m-2 p-2 border-l-[1px] border-gray-200"
     >
       <label
         className="text-[10px] text-gray"

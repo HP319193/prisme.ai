@@ -1,48 +1,29 @@
-import useLocalizedTextConsole from './useLocalizedTextConsole';
+import useLocalizedText from './useLocalizedText';
 import renderer, { act } from 'react-test-renderer';
 
-jest.mock('react-i18next', () => {
-  const t = (str: string) => {
-    switch (str) {
-      case 'pages.blocks.form.onSubmit.label':
-        return 'onSubmitLabel';
-      case 'pages.blocks.form.onSubmit.description':
-        return 'onSubmitDescription';
-      case 'pages.blocks.form.onChange.label':
-        return 'onChangeLabel';
-      case 'pages.blocks.form.onChange.description':
-        return 'onSubmitDescription';
-      case 'pages.blocks.datatable.settings.title.label':
-        return 'titleLabel';
-      case 'pages.blocks.datatable.settings.title.description':
-        return 'titleDescription';
-      default:
-        return str;
-    }
-  };
-  const useTranslation = () => {
-    return {
-      t,
-      i18n: {
-        language: 'en',
-      },
-    };
-  };
-
-  const Trans = ({ children = null }) => {
-    return children;
-  };
-
-  return {
-    useTranslation,
-    Trans,
-  };
-});
+const t = (str: string) => {
+  switch (str) {
+    case 'pages.blocks.form.onSubmit.label':
+      return 'onSubmitLabel';
+    case 'pages.blocks.form.onSubmit.description':
+      return 'onSubmitDescription';
+    case 'pages.blocks.form.onChange.label':
+      return 'onChangeLabel';
+    case 'pages.blocks.form.onChange.description':
+      return 'onSubmitDescription';
+    case 'pages.blocks.datatable.settings.title.label':
+      return 'titleLabel';
+    case 'pages.blocks.datatable.settings.title.description':
+      return 'titleDescription';
+    default:
+      return str;
+  }
+};
 
 it('should localize string', () => {
   let localize = (schema: any): any => {};
   const Test = () => {
-    localize = useLocalizedTextConsole().localize;
+    localize = useLocalizedText(t, 'en').localize;
     return null;
   };
 
@@ -62,7 +43,7 @@ it('should localize string', () => {
 it('should localize schema form', () => {
   let localizeSchemaForm = (schema: any): any => {};
   const Test = () => {
-    localizeSchemaForm = useLocalizedTextConsole().localizeSchemaForm;
+    localizeSchemaForm = useLocalizedText(t, 'en').localizeSchemaForm;
     return null;
   };
 
@@ -98,7 +79,7 @@ it('should localize schema form', () => {
 it('should localize nested schema form', () => {
   let localizeSchemaForm = (schema: any): any => {};
   const Test = () => {
-    localizeSchemaForm = useLocalizedTextConsole().localizeSchemaForm;
+    localizeSchemaForm = useLocalizedText(t, 'en').localizeSchemaForm;
     return null;
   };
 
@@ -177,7 +158,7 @@ it('should localize nested schema form', () => {
 it('should localize with i18n', () => {
   let localizeSchemaForm = (schema: any): any => {};
   const Test = () => {
-    localizeSchemaForm = useLocalizedTextConsole().localizeSchemaForm;
+    localizeSchemaForm = useLocalizedText(t, 'en').localizeSchemaForm;
     return null;
   };
 
@@ -228,7 +209,7 @@ it('should localize with i18n', () => {
 it('should localize with i18n', () => {
   let localizeSchemaForm = (schema: any): any => {};
   const Test = () => {
-    localizeSchemaForm = useLocalizedTextConsole().localizeSchemaForm;
+    localizeSchemaForm = useLocalizedText(t, 'en').localizeSchemaForm;
     return null;
   };
 
@@ -263,7 +244,7 @@ it('should localize with i18n', () => {
 it('should localize with select options', () => {
   let localizeSchemaForm = (schema: any): any => {};
   const Test = () => {
-    localizeSchemaForm = useLocalizedTextConsole().localizeSchemaForm;
+    localizeSchemaForm = useLocalizedText(t, 'en').localizeSchemaForm;
     return null;
   };
 

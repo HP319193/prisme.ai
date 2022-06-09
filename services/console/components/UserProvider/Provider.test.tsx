@@ -139,7 +139,11 @@ it('should signout', async () => {
   await act(async () => {
     await true;
   });
-  context.signout();
+
+  await act(async () => {
+    await context.signout();
+  });
+
   expect(api.signout).toHaveBeenCalled();
   expect(context.user).toBeNull();
 });
