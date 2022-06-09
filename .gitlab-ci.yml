@@ -103,19 +103,23 @@ backend_npm_install:
       if [ -n "$CI_COMMIT_TAG" ] ; then
         export FEATURE_TAG=$CI_COMMIT_TAG
         export DEPENDENCIES_TAG=prod
+        export ALIAS_TAG=prod
       elif [ -z "$CI_COMMIT_BRANCH" ] || [ "$CI_COMMIT_BRANCH" == "main" ] || [ "$CI_COMMIT_BRANCH" == "master" ]; then
         export FEATURE_TAG=latest
         export DEPENDENCIES_TAG=$FEATURE_TAG
+        export ALIAS_TAG=latest
       else
         export FEATURE_TAG=$(echo "${CI_COMMIT_BRANCH}" | tr \/ -)
         export DEPENDENCIES_TAG=$FEATURE_TAG
         export CACHE_FROM=$FEATURE_TAG
+        export ALIAS_TAG=$FEATURE_TAG
       fi
 
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker pull $IMAGE_NAME:latest || true
-    - docker build  --build-arg DEPENDENCIES_TAG=$DEPENDENCIES_TAG --cache-from $IMAGE_NAME:$CACHE_FROM -t $IMAGE_NAME:$FEATURE_TAG . -f $DIRECTORY/Dockerfile
+    - docker build  --build-arg DEPENDENCIES_TAG=$DEPENDENCIES_TAG --cache-from $IMAGE_NAME:$CACHE_FROM -t $IMAGE_NAME:$FEATURE_TAG -t $IMAGE_NAME:$ALIAS_TAG . -f $DIRECTORY/Dockerfile
     - docker push $IMAGE_NAME:$FEATURE_TAG
+    - docker push $IMAGE_NAME:$ALIAS_TAG
 
 .deploy_k8s:
   stage: deploy
