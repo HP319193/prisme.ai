@@ -49,7 +49,7 @@ export const Form = () => {
             <Button
               type="submit"
               variant="primary"
-              className={tw`!py-4 !px-8 !h-max`}
+              className={tw`!py-4 !px-8 h-full`}
             >
               {localize(config.submitLabel) || t('blocks.form.submit')}
             </Button>
