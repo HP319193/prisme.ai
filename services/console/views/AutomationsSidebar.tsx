@@ -21,7 +21,6 @@ export const AutomationsSidebar: FC = () => {
   const { localize } = useLocalizedText();
   const { push } = useRouter();
   const {
-    workspace,
     workspace: { id: workspaceId, automations = emptyObject },
   } = useWorkspace();
 

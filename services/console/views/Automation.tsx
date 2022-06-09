@@ -15,7 +15,6 @@ import {
 } from '@prisme.ai/design-system';
 import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
-import { usePrevious } from '../utils/usePrevious';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import EditDetails from '../layouts/EditDetails';
 import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
@@ -87,6 +86,7 @@ export const Automation = () => {
   } = useRouter();
 
   const automation = (workspace.automations || {})[`${automationId}`];
+
   const [value, setValue] = useState<Prismeai.Automation>(automation || {});
   const [saving, setSaving] = useState(false);
 
