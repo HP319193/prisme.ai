@@ -3,6 +3,7 @@ import { tw } from 'twind';
 import { useBlock, useBlocks } from '../Provider';
 
 import { FC, HTMLAttributes, useCallback, useEffect, useState } from 'react';
+import { withI18nProvider } from '../i18n';
 
 interface Config {
   title?: string;
@@ -124,4 +125,4 @@ export const Header = ({ edit }: { edit?: boolean }) => {
   );
 };
 
-export default Header;
+export default withI18nProvider(Header);

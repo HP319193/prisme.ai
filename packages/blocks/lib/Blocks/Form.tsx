@@ -6,6 +6,7 @@ import { useCallback, useMemo } from 'react';
 import { tw } from 'twind';
 import BlockTitle from './Internal/BlockTitle';
 import useLocalizedTextBlock from '../useLocalizedTextBlock';
+import { withI18nProvider } from '../i18n';
 
 const defaultSchema = {
   type: 'string',
@@ -14,7 +15,7 @@ const defaultSchema = {
 
 export const Form = () => {
   const { config = {}, events } = useBlock();
-  const { t } = useTranslation('pages');
+  const { t } = useTranslation();
   const { localize, localizeSchemaForm } = useLocalizedTextBlock();
 
   const onChange = useCallback(
@@ -51,7 +52,7 @@ export const Form = () => {
               variant="primary"
               className={tw`!py-4 !px-8 h-full`}
             >
-              {localize(config.submitLabel) || t('blocks.form.submit')}
+              {localize(config.submitLabel) || t('form.submit')}
             </Button>
           </div>,
         ]}
@@ -60,4 +61,4 @@ export const Form = () => {
   );
 };
 
-export default Form;
+export default withI18nProvider(Form);

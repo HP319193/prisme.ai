@@ -5,6 +5,7 @@ import { useBlock } from '../Provider';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import BlockTitle from './Internal/BlockTitle';
+import { withI18nProvider } from '../i18n';
 
 const previewData = Array.from(new Array(100000), (v, k) => ({
   Id: k,
@@ -12,7 +13,7 @@ const previewData = Array.from(new Array(100000), (v, k) => ({
 }));
 
 export const DataTable = ({ edit }: { edit: boolean }) => {
-  const { t } = useTranslation('pages');
+  const { t } = useTranslation();
   const { config = {} } = useBlock();
 
   const preview = !!(!config.data && edit);
@@ -48,10 +49,10 @@ export const DataTable = ({ edit }: { edit: boolean }) => {
 
   const locales = useMemo(
     () => ({
-      emptyText: t('blocks.datatable.empty'),
-      triggerAsc: t('blocks.datatable.asc'),
-      triggerDesc: t('blocks.datatable.desc'),
-      cancelSort: t('blocks.datatable.nosort'),
+      emptyText: t('datatable.empty'),
+      triggerAsc: t('datatable.asc'),
+      triggerDesc: t('datatable.desc'),
+      cancelSort: t('datatable.nosort'),
     }),
     [t]
   );
@@ -65,4 +66,4 @@ export const DataTable = ({ edit }: { edit: boolean }) => {
     </div>
   );
 };
-export default DataTable;
+export default withI18nProvider(DataTable);

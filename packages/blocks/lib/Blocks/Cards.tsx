@@ -1,4 +1,3 @@
-import '../i18n';
 import {
   DownOutlined,
   LeftOutlined,
@@ -20,6 +19,7 @@ import BlockTitle from './Internal/BlockTitle';
 import { useBlock } from '../Provider';
 import { tw } from 'twind';
 import useLocalizedTextBlock from '../useLocalizedTextBlock';
+import { withI18nProvider } from '../i18n';
 
 interface Card {
   title?: Prismeai.LocalizedText;
@@ -70,7 +70,7 @@ const Accordion: FC<{
 };
 
 export const Cards = ({ edit }: { edit?: boolean }) => {
-  const { t } = useTranslation('pages');
+  const { t } = useTranslation();
   const { localize } = useLocalizedTextBlock();
   const { config = {}, events } = useBlock();
 
@@ -342,7 +342,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
             <div
               className={tw`absolute flex justify-center top-16 left-6 h-8 w-8 bg-white rounded-[100%] shadow-lg`}
             >
-              <Tooltip title={t('blocks.cards.prev')} placement="right">
+              <Tooltip title={t('cards.prev')} placement="right">
                 <button onClick={scroll(-1)} className={'outline-none'}>
                   <LeftOutlined className={tw`bg-white rounded-[50%]`} />
                 </button>
@@ -351,7 +351,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
             <div
               className={tw`absolute flex justify-center top-16 right-6 h-8 w-8 bg-white rounded-[100%] shadow-lg`}
             >
-              <Tooltip title={t('blocks.cards.next')} placement="left">
+              <Tooltip title={t('cards.next')} placement="left">
                 <button onClick={scroll(1)} className={tw`outline-none`}>
                   <RightOutlined className={tw`bg-white rounded-[50%]`} />
                 </button>
@@ -363,4 +363,5 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     </div>
   );
 };
-export default Cards;
+
+export default withI18nProvider(Cards);

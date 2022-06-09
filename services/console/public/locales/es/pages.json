@@ -2,20 +2,5 @@
   "signin": {
     "title": "El acceso a esta página está restringido. Por favor, inicie sesión para acceder a ella."
   },
-  "preview": "Vista previa",
-  "blocks": {
-    "form": {
-      "submit": "Enviar"
-    },
-    "cards": {
-      "next": "Siguiente",
-      "prev": "Anteriormente"
-    },
-    "datatable": {
-      "empty": "No hay datos",
-      "asc": "Ordenar en forma ascendente",
-      "desc": "Clasificar en orden descendente",
-      "nosort": "Ya no se clasifica"
-    }
-  }
+  "preview": "Vista previa"
 }

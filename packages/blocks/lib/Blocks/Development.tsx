@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { tw } from 'twind';
 import { BlockLoader } from '../BlockLoader';
 import { useBlock } from '../Provider';
+import { withI18nProvider } from '../i18n';
 
 export const Development = (props: any) => {
   const { t } = useTranslation('workspaces');
@@ -46,7 +47,7 @@ export const Development = (props: any) => {
           className={tw`flex flex-1 justify-center items-center p-2 text-center`}
         >
           <WarningOutlined className={tw`self-start mt-1 mr-2 text-2xl`} />
-          {t('pages.blocks.development.error', { context: error })}
+          {t('development.error', { context: error })}
         </div>
       ) : (
         <BlockLoader
@@ -75,4 +76,4 @@ export const Development = (props: any) => {
     </div>
   );
 };
-export default Development;
+export default withI18nProvider(Development);
