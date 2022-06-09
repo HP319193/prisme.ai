@@ -1,6 +1,6 @@
 import '../i18n';
 import { tw } from 'twind';
-import { useBlock } from '../Provider';
+import { useBlock, useBlocks } from '../Provider';
 
 import { FC, HTMLAttributes, useCallback, useEffect, useState } from 'react';
 
@@ -23,6 +23,7 @@ const PageLink: FC<{ pageId: string } & HTMLAttributes<HTMLAnchorElement>> = ({
 }) => {
   const [href, setHref] = useState('');
   const { api } = useBlock();
+  const { linkGenerator } = useBlocks();
   const fetchHref = useCallback(async (pageId: string) => {
     try {
       const { slug = pageId } = await api.getPageBySlug(pageId);
@@ -33,8 +34,9 @@ const PageLink: FC<{ pageId: string } & HTMLAttributes<HTMLAnchorElement>> = ({
     fetchHref(pageId);
   }, [fetchHref, pageId]);
 
-  // TODO test if this work like next/link
-
+  if (linkGenerator) {
+    return linkGenerator(href, props);
+  }
   return <a href={href} {...props} />;
 };
 
@@ -88,7 +90,6 @@ export const Header = ({ edit }: { edit?: boolean }) => {
       <div className={tw`block-header__left flex md:justify-center`}>
         <div className={tw`block-header__logo flex justify-center m-2 ml-4`}>
           {config.logo && config.logo.src && (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={config.logo.src}
               alt={config.logo.alt}

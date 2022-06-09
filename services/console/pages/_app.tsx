@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
+import Link from 'next/Link';
 import ReactDom from 'react-dom';
 import * as prismeaiDS from '@prisme.ai/design-system';
 import * as prismeaiBlocks from '@prisme.ai/blocks';
@@ -38,6 +39,12 @@ const externals = {
   prismeaiBlocks,
 };
 
+const linkGenerator = (url: string, props: any) => (
+  <Link href={url}>
+    <a {...props} />
+  </Link>
+);
+
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t } = useTranslation('common');
@@ -46,7 +53,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     return (
       <UserProvider anonymous>
         <PagesProvider>
-          <BlocksProvider externals={externals}>
+          <BlocksProvider externals={externals} linkGenerator={linkGenerator}>
             <Head>
               <title>{t('main.title')}</title>
               <meta name="description" content={t('main.description')} />
@@ -66,7 +73,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <PermissionsProvider>
           <AppsProvider>
             <PagesProvider>
-              <BlocksProvider externals={externals}>
+              <BlocksProvider
+                externals={externals}
+                linkGenerator={linkGenerator}
+              >
                 <Head>
                   <title>{t('main.title')}</title>
                   <meta name="description" content={t('main.description')} />

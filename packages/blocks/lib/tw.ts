@@ -1,6 +1,5 @@
-
 // Tailwind setup
-import { setup } from 'twind';
+import {setup} from 'twind';
 
 setup({
   theme: {
