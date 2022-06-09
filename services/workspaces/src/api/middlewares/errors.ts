@@ -24,6 +24,10 @@ function errorHttpStatus(err: Error, serverError: boolean) {
   if ((err as any).error == KnownErrorCodes.ForbiddenError) {
     return 403;
   }
+  if (((<any>err)?.message || '').includes('request entity too large')) {
+    return 413;
+  }
+
   return serverError ? 500 : 400;
 }
 
@@ -81,7 +85,6 @@ export const finalErrorHandler = (
   next: NextFunction
 ) => {
   if (res.headersSent) return next(err);
-
   const status = err.httpStatus || 500;
   return res
     .status(status)

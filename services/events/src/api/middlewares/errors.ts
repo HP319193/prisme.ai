@@ -25,6 +25,9 @@ function errorHttpStatus(err: Error, serverError: boolean) {
   if ((err as any).error == KnownErrorCodes.ForbiddenError) {
     return 403;
   }
+  if (((<any>err)?.message || '').includes('request entity too large')) {
+    return 413;
+  }
   return serverError ? 500 : 400;
 }
 
