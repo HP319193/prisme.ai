@@ -19,6 +19,7 @@ export const UIWidgetsForString = [
   'textarea',
   'date',
   'select',
+  'color',
 ] as const;
 export const UIWidgetsForLocalizedString = ['textarea'];
 export const UIWidgetsByType = {
@@ -82,6 +83,8 @@ export interface Schema {
   enum?: any[];
   // Labels of constrainted values
   enumNames?: string[];
+  // Default value
+  default?: any;
   // Do not display the field
   hidden?: true;
   // Validation by regexp

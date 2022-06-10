@@ -4,6 +4,7 @@ import Input from '../Input';
 import { useSchemaForm } from './context';
 import Description from './Description';
 import FieldDate from './FieldDate';
+import FieldTextColor from './FieldTextColor';
 import FieldTextTextArea from './FieldTextTextArea';
 import FieldTextUpload from './FieldTextUpload';
 import { FieldProps, UiOptionsTextArea, UiOptionsUpload } from './types';
@@ -39,6 +40,8 @@ export const FieldText = (props: FieldProps) => {
     case 'date':
       const Component = components.FieldDate || FieldDate;
       return <Component {...props} />;
+    case 'color':
+      return <FieldTextColor {...props} />;
   }
 
   return (

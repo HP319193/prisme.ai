@@ -316,6 +316,12 @@ UIWidgets.args = {
         description: 'Display a date picker. Only available for string types.',
         'ui:widget': 'date',
       },
+      color: {
+        type: 'string',
+        title: 'color',
+        description: 'Display a color picker. Only available for string types.',
+        'ui:widget': 'color',
+      },
       custom: {
         type: 'string',
         title: 'React Component',
@@ -514,6 +520,55 @@ WithCustomSelect.args = {
         'ui:options': {
           test: Math.random(),
         },
+      },
+    },
+  },
+};
+
+export const WithDefaultValues = (props: FormProps) => {
+  const [value, setValue] = useState<{ values: any }>(props.initialValues);
+
+  return (
+    <div>
+      <SchemaForm
+        {...props}
+        initialValues={value}
+        onSubmit={setValue}
+        onChange={setValue}
+      />
+      <pre>
+        <code>{value && JSON.stringify(value, null, '  ')}</code>
+      </pre>
+    </div>
+  );
+};
+WithDefaultValues.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      string: {
+        type: 'string',
+        default: 'foo',
+      },
+      number: {
+        type: 'number',
+        default: 42,
+      },
+      boolean: {
+        type: 'boolean',
+        default: true,
+      },
+      array: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+        default: ['foo', 'bar'],
+      },
+      object: {
+        type: 'object',
+        additionalProperties: true,
+        default: { foo: 'bar' },
       },
     },
   },
