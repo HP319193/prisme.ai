@@ -1,12 +1,12 @@
 import { usePageBuilder } from './context';
-import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
+import useLocalizedText from '../../utils/useLocalizedText';
 import AddBlock from './AddBlock';
 import EditBlock from './EditBlock';
 import { truncate } from '../../utils/strings';
 import api from '../../utils/api';
 import { BlockLoader } from '@prisme.ai/blocks';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import useBlockAppConfig from '../Blocks/useBlockAppConfig';
+import useAppConfig from '../../utils/useAppConfig';
 import useBlockPageConfig from './useBlockPageConfig';
 import { useCallback } from 'react';
 
@@ -33,7 +33,7 @@ const PageBlockWithProvider = ({
   index: number;
   name?: Prismeai.LocalizedText;
 }) => {
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
   const { setEditBlock, setBlockSchema } = usePageBuilder();
   const onLoad = useCallback(
     (module: any) => {
@@ -44,7 +44,7 @@ const PageBlockWithProvider = ({
   );
 
   const { socket } = useWorkspace();
-  const { appConfig, onAppConfigUpdate } = useBlockAppConfig({
+  const { appConfig, onAppConfigUpdate } = useAppConfig({
     workspaceId,
     appInstance,
   });

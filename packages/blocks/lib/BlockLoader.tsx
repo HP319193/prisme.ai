@@ -3,14 +3,9 @@ import * as React from 'react';
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 import { useTranslation } from 'react-i18next';
-import {
-  Block as TBlock,
-  BlockProvider,
-  BlockProviderProps,
-  useBlocks,
-} from './Provider';
+import { Block as TBlock, BlockProvider, BlockProviderProps } from './Provider';
+import { useBlocks } from './Provider/blocksContext';
 import * as builtinBlocks from './Blocks';
-import { Loading } from '@prisme.ai/design-system';
 
 class BlockErrorBoundary extends React.Component {
   state = {
@@ -61,7 +56,10 @@ export const ReactBlock = ({
     i18n: { language },
   } = useTranslation('workspaces');
   const [loading, setLoading] = useState(true);
-  const { externals } = useBlocks();
+  const {
+    externals,
+    components: { Loading },
+  } = useBlocks();
 
   useEffect(() => {
     // @ts-ignore
@@ -102,9 +100,7 @@ export const ReactBlock = ({
 
   return (
     <>
-      {loading && componentProps.edit && (
-        <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
-      )}
+      {loading && componentProps.edit && <Loading />}
       {Component && <Component {...componentProps} language={language} />}
     </>
   );
@@ -113,6 +109,9 @@ export const ReactBlock = ({
 export const IFrameBlock = ({ url, token, edit }: BlockLoaderProps) => {
   const [loading, setLoading] = useState(true);
   const [height, setHeight] = useState(100);
+  const {
+    components: { Loading },
+  } = useBlocks();
   const handleLoad = React.useCallback(
     (e) => {
       setLoading(false);
@@ -129,9 +128,7 @@ export const IFrameBlock = ({ url, token, edit }: BlockLoaderProps) => {
 
   return (
     <>
-      {loading && edit && (
-        <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
-      )}
+      {loading && edit && <Loading />}
       <iframe
         src={url}
         onLoad={handleLoad}

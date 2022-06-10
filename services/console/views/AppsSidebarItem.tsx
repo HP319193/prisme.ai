@@ -13,7 +13,7 @@ import api from '../utils/api';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
-import useBlockAppConfig from '../components/Blocks/useBlockAppConfig';
+import useAppConfig from '../utils/useAppConfig';
 
 interface AppsSidebarItemProps extends Prismeai.DetailedAppInstance {
   workspaceId: string;
@@ -29,7 +29,7 @@ const AppsSidebarItem = ({
   onToggle,
 }: AppsSidebarItemProps) => {
   const { uninstallApp } = useWorkspaces();
-  const { appConfig, onAppConfigUpdate } = useBlockAppConfig({
+  const { appConfig, onAppConfigUpdate } = useAppConfig({
     workspaceId,
     appInstance: slug,
   });

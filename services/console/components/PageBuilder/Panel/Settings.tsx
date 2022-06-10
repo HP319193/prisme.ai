@@ -3,7 +3,7 @@ import { Button, Collapse, Schema, SchemaForm } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import { useWorkspace } from '../../../layouts/WorkspaceLayout';
-import useLocalizedTextConsole from '../../../utils/useLocalizedTextConsole';
+import useLocalizedText from '../../../utils/useLocalizedText';
 import usePages from '../../PagesProvider/context';
 import useSchema from '../../SchemaForm/useSchema';
 import { usePageBuilder } from '../context';
@@ -37,7 +37,7 @@ export const Settings = ({
     automations,
     pages: pages.get(workspaceId),
   });
-  const { localizeSchemaForm } = useLocalizedTextConsole();
+  const { localizeSchemaForm } = useLocalizedText();
 
   const commonSchema: Schema = useMemo(
     () =>

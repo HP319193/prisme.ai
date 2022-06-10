@@ -1,9 +1,9 @@
 import { BlockLoader, BlockLoaderProps } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
 import api from '../../utils/api';
-import useBlockAppConfig from './useBlockAppConfig';
+import useAppConfig from '../../utils/useAppConfig';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import usePublicBlocksConfigs from './usePublicBlocksConfigs';
+import usePageBlocksConfigs from './usePageBlocksConfigs';
 
 interface PublicPageBlockProps {
   url: BlockLoaderProps['url'];
@@ -14,7 +14,7 @@ interface PublicPageBlockProps {
   page: Prismeai.DetailedPage;
 }
 
-const PublicPageBlock = ({
+const PageBlock = ({
   url,
   name,
   workspaceId,
@@ -23,14 +23,13 @@ const PublicPageBlock = ({
   page,
 }: PublicPageBlockProps) => {
   const { socket } = useWorkspace();
-  const { blocksConfigs } = usePublicBlocksConfigs(page);
-  const { appConfig, onAppConfigUpdate } = useBlockAppConfig({
+  const { blocksConfigs } = usePageBlocksConfigs(page);
+  const { appConfig, onAppConfigUpdate } = useAppConfig({
     workspaceId,
     appInstance,
   });
 
   const {
-    t,
     i18n: { language },
   } = useTranslation('pages');
 
@@ -51,4 +50,4 @@ const PublicPageBlock = ({
   );
 };
 
-export default PublicPageBlock;
+export default PageBlock;

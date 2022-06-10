@@ -5,7 +5,7 @@ import { useApps } from '../components/AppsProvider';
 import IconApps from '../icons/icon-apps.svgr';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useWorkspace } from '../layouts/WorkspaceLayout';
-import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
+import useLocalizedText from '../utils/useLocalizedText';
 
 interface AppStoreProps {
   visible: boolean;
@@ -23,7 +23,7 @@ const isFilteredApp = (app: Prismeai.App): app is FilteredApps => {
 
 const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
   const { apps, getApps } = useApps();
   const { installApp } = useWorkspaces();
   const {

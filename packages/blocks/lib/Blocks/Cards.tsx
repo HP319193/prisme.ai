@@ -18,7 +18,7 @@ import {
 import BlockTitle from './Internal/BlockTitle';
 import { useBlock } from '../Provider';
 import { tw } from 'twind';
-import useLocalizedTextBlock from '../useLocalizedTextBlock';
+import useLocalizedText from '../useLocalizedText';
 import { withI18nProvider } from '../i18n';
 
 interface Card {
@@ -71,7 +71,7 @@ const Accordion: FC<{
 
 export const Cards = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
-  const { localize } = useLocalizedTextBlock();
+  const { localize } = useLocalizedText();
   const { config = {}, events } = useBlock();
 
   const container = useRef<HTMLDivElement>(null);

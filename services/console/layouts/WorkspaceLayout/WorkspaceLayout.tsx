@@ -5,7 +5,7 @@ import Head from 'next/head';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
 import workspaceContext, { Pagination, WorkspaceContext } from './context';
 import { EventsByDay } from '.';
-import api from '../../utils/api';
+import api, { Workspace } from '../../utils/api';
 import { Event, Events, EventsFilters } from '@prisme.ai/sdk';
 import Error404 from '../../views/Errors/404';
 import { Layout, Loading, notification } from '@prisme.ai/design-system';
@@ -17,8 +17,7 @@ import usePages from '../../components/PagesProvider/context';
 import { useApps } from '../../components/AppsProvider';
 import debounce from 'lodash/debounce';
 import { usePrevious } from '../../utils/usePrevious';
-import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
-import { Workspace } from '../../utils/api';
+import useLocalizedText from '../../utils/useLocalizedText';
 
 const PAGINATION_LIMIT = 15;
 
@@ -50,7 +49,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const { setPages } = usePages();
 
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
   const { fetch, update, workspaces } = useWorkspaces();
   const [loading, setLoading] = useState<WorkspaceContext['loading']>(false);
   const lockEvents = useRef(false);

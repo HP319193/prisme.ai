@@ -1,18 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { BlockLoaderProps } from '@prisme.ai/blocks';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import api from '../../utils/api';
+import { useWorkspace } from '../layouts/WorkspaceLayout';
+import api from './api';
 
-interface BlockConfigProviderProps {
+interface AppConfigProviderProps {
   workspaceId: string;
   blockId?: string;
   appInstance?: BlockLoaderProps['appInstance'];
 }
 
-const useBlockAppConfig = ({
-  workspaceId,
-  appInstance,
-}: BlockConfigProviderProps) => {
+const useAppConfig = ({ workspaceId, appInstance }: AppConfigProviderProps) => {
   const [appConfig, setAppConfig] = useState<any>();
   const { workspace } = useWorkspace();
 
@@ -48,4 +45,4 @@ const useBlockAppConfig = ({
   };
 };
 
-export default useBlockAppConfig;
+export default useAppConfig;

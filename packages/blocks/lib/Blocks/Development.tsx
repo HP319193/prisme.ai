@@ -1,12 +1,13 @@
 import '../i18n';
 import { ReloadOutlined, WarningOutlined } from '@ant-design/icons';
-import { Loading } from '@prisme.ai/design-system';
 import { useTranslation } from 'react-i18next';
+import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { tw } from 'twind';
 import { BlockLoader } from '../BlockLoader';
 import { useBlock } from '../Provider';
 import { withI18nProvider } from '../i18n';
+import { useBlocks } from '../Provider/blocksContext';
 
 export const Development = (props: any) => {
   const { t } = useTranslation('workspaces');
@@ -15,6 +16,9 @@ export const Development = (props: any) => {
     setConfig,
     ...blockSetup
   } = useBlock();
+  const {
+    components: { Loading },
+  } = useBlocks();
   const [error, setError] = useState<string | false>(false);
   const [version, setVersion] = useState(Math.random());
 
@@ -58,11 +62,7 @@ export const Development = (props: any) => {
             setConfig && setConfig({ ...config, schema: block.schema })
           }
           {...props}
-          renderLoading={
-            <Loading
-              className={tw`bg-white absolute top-0 right-0 bottom-0 left-0`}
-            />
-          }
+          renderLoading={<Loading />}
           edit
           {...blockSetup}
         />

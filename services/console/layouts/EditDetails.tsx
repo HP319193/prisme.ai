@@ -7,12 +7,12 @@ import {
   Button,
   Modal,
   Popover,
-  SchemaForm,
   Schema,
+  SchemaForm,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
-import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
+import useLocalizedText from '../utils/useLocalizedText';
 
 interface EditDetailsprops {
   schema: Schema;
@@ -33,7 +33,7 @@ export const EditDetails = ({
   ...props
 }: EditDetailsprops) => {
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
 
   const confirmDelete = useCallback(() => {
     Modal.confirm({

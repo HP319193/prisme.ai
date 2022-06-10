@@ -7,9 +7,9 @@ import {
   Tooltip,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import builtinBlocksList from '@prisme.ai/blocks/lib/Blocks/builtinBlocksList';
+import * as builtinBlocks from '@prisme.ai/blocks/lib/Blocks/';
 import { useMemo, useState } from 'react';
-import useLocalizedTextConsole from '../../../utils/useLocalizedTextConsole';
+import useLocalizedText from '../../../utils/useLocalizedText';
 import { usePageBuilder } from '../context';
 
 interface PageNewBlockFormProps {
@@ -20,14 +20,14 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
   const { blocks } = usePageBuilder();
 
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
   const [search, setSearch] = useState('');
   const filteredBlocks = useMemo(() => {
     return [
       {
         appName: t('pages.blocks.builtin'),
         slug: '',
-        blocks: builtinBlocksList.map(
+        blocks: Object.keys(builtinBlocks).map(
           (name) =>
             ({
               name,

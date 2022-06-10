@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { removedUndefinedProperties } from '../../utils/objects';
 import { notification } from '@prisme.ai/design-system';
 import { SLUG_MATCH_INVALID_CHARACTERS } from '../../utils/regex';
-import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
+import useLocalizedText from '../../utils/useLocalizedText';
 
 export const WorkspacesProvider: FC = ({ children }) => {
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
   const { t: errorT } = useTranslation('errors');
   const { user } = useUser();
   const [workspaces, setWorkspaces] = useState<WorkspacesContext['workspaces']>(

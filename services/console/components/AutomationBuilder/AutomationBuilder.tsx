@@ -35,7 +35,7 @@ import TriggerForm from './Panel/TriggerForm';
 import { generateEndpoint } from '../../utils/urls';
 import OutputBlock from './OutputBlock';
 import OutputForm from './Panel/OutputForm';
-import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
+import useLocalizedText from '../../utils/useLocalizedText';
 import { Schema } from '@prisme.ai/design-system';
 
 type InstructionSchemaTupple = [
@@ -81,7 +81,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     t,
     i18n: { language },
   } = useTranslation('workspaces');
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
 
   const zoomPanHelper = useZoomPanHelper();
   const [panelIsOpen, setPanelIsOpen] = useState(false);

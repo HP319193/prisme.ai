@@ -4,7 +4,7 @@ import { useDateFormat } from '../../utils/dates';
 import EventDetails from './EventDetails';
 import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useScrollListener } from '../useScrollListener';
-import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
+import useLocalizedText from '../../utils/useLocalizedText';
 import {
   Collapse,
   Feed,
@@ -34,7 +34,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
   const { workspace: { name: workspaceName } = {} } = useWorkspace();
-  const { localize } = useLocalizedTextConsole('pages');
+  const { localize } = useLocalizedText('pages');
 
   useEffect(() => {
     if (bottom) {

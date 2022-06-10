@@ -14,8 +14,7 @@ import {
   Space,
 } from '@prisme.ai/design-system';
 import { useApps } from '../components/AppsProvider';
-import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
-import { usePrevious } from '../utils/usePrevious';
+import useLocalizedText from '../utils/useLocalizedText';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import EditDetails from '../layouts/EditDetails';
 import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
@@ -73,7 +72,7 @@ const cleanAutomation = (automation: Prismeai.Automation) => {
 
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
   const { workspace, updateAutomation, deleteAutomation } = useWorkspace();
   const { getAppInstances, appInstances } = useApps();
   useEffect(() => {

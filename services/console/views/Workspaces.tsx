@@ -11,7 +11,7 @@ import { Workspace } from '@prisme.ai/sdk';
 import Header from '../components/Header';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import icon from '../icons/icon-workspace.svg';
-import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
+import useLocalizedText from '../utils/useLocalizedText';
 import { useUser } from '../components/UserProvider';
 
 export const WorkspacesView = () => {
@@ -27,7 +27,7 @@ export const WorkspacesView = () => {
       })[],
     [workspaces]
   );
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
 
   const createWorkspace = useCallback(async () => {
     setLoading(true);

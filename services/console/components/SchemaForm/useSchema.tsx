@@ -1,10 +1,10 @@
 import { Schema } from '@prisme.ai/design-system';
 import { useCallback } from 'react';
-import useLocalizedTextConsole from '../../utils/useLocalizedTextConsole';
+import useLocalizedText from '../../utils/useLocalizedText';
 import { readAppConfig } from '../AutomationBuilder/Panel/readAppConfig';
 
 export const useSchema = (store: Record<string, any> = {}) => {
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
   const extractSelectOptions = useCallback(
     (schema: Schema) => {
       const { 'ui:options': uiOptions = {} } = schema;

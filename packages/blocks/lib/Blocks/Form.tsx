@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useCallback, useMemo } from 'react';
 import { tw } from 'twind';
 import BlockTitle from './Internal/BlockTitle';
-import useLocalizedTextBlock from '../useLocalizedTextBlock';
+import useLocalizedText from '../useLocalizedText';
 import { withI18nProvider } from '../i18n';
 
 const defaultSchema = {
@@ -16,7 +16,7 @@ const defaultSchema = {
 export const Form = () => {
   const { config = {}, events } = useBlock();
   const { t } = useTranslation();
-  const { localize, localizeSchemaForm } = useLocalizedTextBlock();
+  const { localize, localizeSchemaForm } = useLocalizedText();
 
   const onChange = useCallback(
     (values: any) => {

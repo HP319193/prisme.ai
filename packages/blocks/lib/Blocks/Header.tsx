@@ -1,6 +1,7 @@
 import '../i18n';
 import { tw } from 'twind';
-import { useBlock, useBlocks } from '../Provider';
+import { useBlock } from '../Provider';
+import { useBlocks } from '../Provider/blocksContext';
 
 import { FC, HTMLAttributes, useCallback, useEffect, useState } from 'react';
 import { withI18nProvider } from '../i18n';
@@ -24,7 +25,9 @@ const PageLink: FC<{ pageId: string } & HTMLAttributes<HTMLAnchorElement>> = ({
 }) => {
   const [href, setHref] = useState('');
   const { api } = useBlock();
-  const { linkGenerator } = useBlocks();
+  const {
+    components: { Link },
+  } = useBlocks();
   const fetchHref = useCallback(async (pageId: string) => {
     try {
       const { slug = pageId } = await api.getPageBySlug(pageId);
@@ -35,10 +38,7 @@ const PageLink: FC<{ pageId: string } & HTMLAttributes<HTMLAnchorElement>> = ({
     fetchHref(pageId);
   }, [fetchHref, pageId]);
 
-  if (linkGenerator) {
-    return linkGenerator(href, props);
-  }
-  return <a href={href} {...props} />;
+  return <Link href={href} {...props} />;
 };
 
 const Button = ({ text, type, value }: Config['nav'][number]) => {

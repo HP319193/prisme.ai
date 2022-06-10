@@ -4,7 +4,7 @@ import api, { Events } from '../../utils/api';
 const isPage = (page: any): page is Prismeai.Page =>
   page && typeof page !== 'number';
 
-export const usePublicBlocksConfigs = (page: Prismeai.Page | null | number) => {
+export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
   const [blocksConfigs, setBlocksConfigs] = useState<any[]>([]);
 
   const [cachedPage, setCachedPage] = useState(page);
@@ -124,4 +124,4 @@ export const usePublicBlocksConfigs = (page: Prismeai.Page | null | number) => {
   return { blocksConfigs, error, events: socket };
 };
 
-export default usePublicBlocksConfigs;
+export default usePageBlocksConfigs;

@@ -15,10 +15,10 @@ import {
   Tooltip,
 } from '@prisme.ai/design-system';
 import { LoadingOutlined } from '@ant-design/icons';
-import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
+import useLocalizedText from '../utils/useLocalizedText';
 import PageBuilder from '../components/PageBuilder';
 import { PageBuilderContext } from '../components/PageBuilder/context';
-import { usePages, defaultStyles } from '../components/PagesProvider';
+import { defaultStyles, usePages } from '../components/PagesProvider';
 import EditDetails from '../layouts/EditDetails';
 import SharePage from '../components/Share/SharePage';
 import { useField } from 'react-final-form';
@@ -111,7 +111,7 @@ export const Page = () => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
   const { workspace, setShare } = useWorkspace();
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
   const { pages, savePage, deletePage } = usePages();
   const [displayPreview, setDisplayPreview] = useState(false);
 
@@ -177,9 +177,7 @@ export const Page = () => {
               {...props}
               sectionIds={
                 page
-                  ? (
-                      page.blocks || []
-                    ).flatMap(
+                  ? (page.blocks || []).flatMap(
                       ({ config: { sectionId, name = sectionId } = {} }) =>
                         sectionId ? { id: sectionId, name } : []
                     )

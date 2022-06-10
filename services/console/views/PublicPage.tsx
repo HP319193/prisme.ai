@@ -2,14 +2,14 @@ import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import DefaultErrorPage from 'next/error';
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loading, Title } from '@prisme.ai/design-system';
 import SigninForm from '../components/SigninForm';
 import { useUser } from '../components/UserProvider';
 import api, { HTTPError } from '../utils/api';
-import useLocalizedTextConsole from '../utils/useLocalizedTextConsole';
-import usePublicBlocksConfigs from '../components/Blocks/usePublicBlocksConfigs';
-import PublicPageBlock from '../components/Blocks/PublicPageBlock';
+import useLocalizedText from '../utils/useLocalizedText';
+import usePageBlocksConfigs from '../components/Page/usePageBlocksConfigs';
+import PublicPageBlock from '../components/Page/PageBlock';
 
 export interface PublicPageProps {
   page: Prismeai.DetailedPage | null;
@@ -18,7 +18,7 @@ export interface PublicPageProps {
 
 export const PublicPageRenderer = ({ page }: PublicPageProps) => {
   const { t } = useTranslation('pages');
-  const { localize } = useLocalizedTextConsole();
+  const { localize } = useLocalizedText();
   const { user } = useUser();
   const [currentPage, setCurrentPage] = useState<Prismeai.DetailedPage | null>(
     page
@@ -29,7 +29,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
     isReady,
     query: { pageSlug },
   } = useRouter();
-  const { blocksConfigs, error, events } = usePublicBlocksConfigs(currentPage);
+  const { blocksConfigs, error, events } = usePageBlocksConfigs(currentPage);
 
   useEffect(() => {
     // For preview in console

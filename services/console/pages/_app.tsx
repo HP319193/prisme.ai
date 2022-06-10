@@ -1,8 +1,9 @@
 import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import ReactDom from 'react-dom';
 import * as prismeaiDS from '@prisme.ai/design-system';
+import { Loading as DSLoading } from '@prisme.ai/design-system';
 import * as prismeaiBlocks from '@prisme.ai/blocks';
 import { BlocksProvider } from '@prisme.ai/blocks';
 import * as prismeaiSDK from '../utils/api';
@@ -39,10 +40,13 @@ const externals = {
   prismeaiBlocks,
 };
 
-const linkGenerator = (url: string, props: any) => (
-  <Link href={url}>
+const Loading = () => (
+  <DSLoading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
+);
+const Link = ({ href, ...props }: { href: string } & any) => (
+  <NextLink href={href}>
     <a {...props} />
-  </Link>
+  </NextLink>
 );
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
@@ -53,7 +57,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     return (
       <UserProvider anonymous>
         <PagesProvider>
-          <BlocksProvider externals={externals} linkGenerator={linkGenerator}>
+          <BlocksProvider externals={externals} components={{ Link, Loading }}>
             <Head>
               <title>{t('main.title')}</title>
               <meta name="description" content={t('main.description')} />
@@ -75,7 +79,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             <PagesProvider>
               <BlocksProvider
                 externals={externals}
-                linkGenerator={linkGenerator}
+                components={{ Link, Loading }}
               >
                 <Head>
                   <title>{t('main.title')}</title>

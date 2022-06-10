@@ -1,9 +1,9 @@
 import { Schema } from '@prisme.ai/design-system';
 import { useMemo } from 'react';
 import Settings from './Settings';
-import useLocalizedTextConsole from '../../../utils/useLocalizedTextConsole';
+import useLocalizedText from '../../../utils/useLocalizedText';
 import { usePageBuilder } from '../context';
-import getEditSchema from '../../Blocks/EditSchema/getEditSchema';
+import getEditSchema from '../../PageBuilder/Panel/EditSchema/getEditSchema';
 import useBlockPageConfig from '../../PageBuilder/useBlockPageConfig';
 
 interface PageEditBlockFormProps {
@@ -11,7 +11,7 @@ interface PageEditBlockFormProps {
 }
 
 const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
-  const { localizeSchemaForm } = useLocalizedTextConsole();
+  const { localizeSchemaForm } = useLocalizedText();
   const { blocksInPage, removeBlock } = usePageBuilder();
 
   const { config, onConfigUpdate } = useBlockPageConfig({
