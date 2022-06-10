@@ -10,6 +10,7 @@ import equal from 'fast-deep-equal';
 import PageEditBlockForm from './Panel/PageEditBlockForm';
 import * as BuiltinBlocks from '../Blocks';
 import useBlocksConfigs from '../Blocks/useBlocksConfigs';
+import { Schema } from '@prisme.ai/design-system';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -26,6 +27,9 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     | undefined
   >();
   const [blockEditing, setBlockEditing] = useState<string>();
+  const [blocksSchemas, setBlocksSchemas] = useState<Map<string, Schema>>(
+    new Map()
+  );
   const { events } = useBlocksConfigs(value);
 
   const hidePanel = useCallback(async () => {
@@ -135,6 +139,17 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     [hidePanel, onChange, value]
   );
 
+  const setBlockSchema: PageBuilderContext['setBlockSchema'] = useCallback(
+    (blockId, schema) => {
+      setBlocksSchemas((schemas) => {
+        const newSchemas = new Map(schemas);
+        newSchemas.set(blockId, schema);
+        return newSchemas;
+      });
+    },
+    []
+  );
+
   const blocksInPage: PageBuilderContext['blocksInPage'] = useMemo(() => {
     return (value.blocks || []).flatMap(({ key, name = '' }) => {
       if (!key) return [];
@@ -158,8 +173,15 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
       const block = (app.blocks || []).find(
         ({ slug }: { slug: string }) => slug === blockName
       );
+
       if (!block) return [];
-      return { ...block, key, appName: app.appName, appInstance: app.slug };
+      return {
+        edit: blocksSchemas.get(key),
+        ...block,
+        key,
+        appName: app.appName,
+        appInstance: app.slug,
+      };
     });
   }, [value.blocks, blocks]);
 
@@ -174,6 +196,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
         setBlockConfig,
         setEditBlock,
         events,
+        setBlockSchema,
       }}
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">

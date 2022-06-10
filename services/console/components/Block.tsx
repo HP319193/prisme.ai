@@ -76,7 +76,7 @@ export const ReactBlock = ({
       setComponent(() => {
         return module.default;
       });
-      onLoad && onLoad(module.default);
+      loading && onLoad && onLoad(module.default);
       setLoading(false);
     };
     const s = document.createElement('script');

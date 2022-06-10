@@ -7,6 +7,7 @@ import AddBlock from './AddBlock';
 import EditBlock from './EditBlock';
 import { truncate } from '../../utils/strings';
 import PageBlockProvider from './PageBlockProvider';
+import { useCallback } from 'react';
 
 interface PageBlockProps {
   url?: string;
@@ -34,7 +35,14 @@ const PageBlockWithProvider = ({
   name?: Prismeai.LocalizedText;
 }) => {
   const { localize } = useLocalizedText();
-  const { setEditBlock } = usePageBuilder();
+  const { setEditBlock, setBlockSchema } = usePageBuilder();
+  const onLoad = useCallback(
+    (module: any) => {
+      if (!module.schema) return;
+      setBlockSchema(blockId, module.schema);
+    },
+    [blockId, setBlockSchema]
+  );
 
   return (
     <div className="flex grow flex-col max-w-full">
@@ -64,6 +72,7 @@ const PageBlockWithProvider = ({
                 <Loading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
               }
               edit
+              onLoad={onLoad}
             />
           )}
         </div>
