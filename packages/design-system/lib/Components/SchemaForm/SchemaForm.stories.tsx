@@ -316,6 +316,12 @@ UIWidgets.args = {
         description: 'Display a date picker. Only available for string types.',
         'ui:widget': 'date',
       },
+      color: {
+        type: 'string',
+        title: 'color',
+        description: 'Display a color picker. Only available for string types.',
+        'ui:widget': 'color',
+      },
       custom: {
         type: 'string',
         title: 'React Component',

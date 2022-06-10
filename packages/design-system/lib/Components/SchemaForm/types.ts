@@ -19,6 +19,7 @@ export const UIWidgetsForString = [
   'textarea',
   'date',
   'select',
+  'color',
 ] as const;
 export const UIWidgetsForLocalizedString = ['textarea'];
 export const UIWidgetsByType = {
