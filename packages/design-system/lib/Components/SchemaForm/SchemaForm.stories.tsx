@@ -524,3 +524,52 @@ WithCustomSelect.args = {
     },
   },
 };
+
+export const WithDefaultValues = (props: FormProps) => {
+  const [value, setValue] = useState<{ values: any }>(props.initialValues);
+
+  return (
+    <div>
+      <SchemaForm
+        {...props}
+        initialValues={value}
+        onSubmit={setValue}
+        onChange={setValue}
+      />
+      <pre>
+        <code>{value && JSON.stringify(value, null, '  ')}</code>
+      </pre>
+    </div>
+  );
+};
+WithDefaultValues.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      string: {
+        type: 'string',
+        default: 'foo',
+      },
+      number: {
+        type: 'number',
+        default: 42,
+      },
+      boolean: {
+        type: 'boolean',
+        default: true,
+      },
+      array: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+        default: ['foo', 'bar'],
+      },
+      object: {
+        type: 'object',
+        additionalProperties: true,
+        default: { foo: 'bar' },
+      },
+    },
+  },
+};
