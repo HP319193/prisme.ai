@@ -77,11 +77,12 @@ export const useBlocksConfigs = (page: Prismeai.Page | null | number) => {
       }
     });
 
-    (page.blocks || []).forEach(({ config: { onInit } = {} }) => {
+    (page.blocks || []).forEach(({ config, config: { onInit } = {} }) => {
       if (!prevSocket.current) return;
       if (onInit) {
         prevSocket.current.emit(onInit, {
           page: page.id,
+          config,
         });
       }
     });
