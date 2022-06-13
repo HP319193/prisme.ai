@@ -185,7 +185,11 @@ class AppInstances {
 
     this.broker.send<Prismeai.ConfiguredAppInstance['payload']>(
       EventType.ConfiguredApp,
-      { appInstance, slug: renamedSlug || slug, oldSlug },
+      {
+        appInstance: { ...appInstance, oldConfig: currentAppInstance.config },
+        slug: renamedSlug || slug,
+        oldSlug,
+      },
       {
         appSlug: appInstance.appSlug,
         appInstanceFullSlug: renamedSlug || slug,

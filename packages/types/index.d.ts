@@ -881,7 +881,26 @@ declare namespace Prismeai {
          */
         type: "workspaces.apps.configured";
         payload: {
-            appInstance: AppInstance;
+            appInstance: {
+                /**
+                 * App unique id
+                 */
+                appSlug: string;
+                /**
+                 * App name
+                 */
+                appName?: string;
+                /**
+                 * Defaults to the latest known app version
+                 */
+                appVersion?: string;
+                config?: any;
+                /**
+                 * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+                 */
+                slug?: string;
+                oldConfig: any;
+            };
             slug: string;
             /**
              * Filled with the previous appInstance slug when renamed
@@ -897,6 +916,7 @@ declare namespace Prismeai {
         type: "workspaces.configured";
         payload: {
             config: Config;
+            oldConfig: any;
         };
     }
     export interface Contact {

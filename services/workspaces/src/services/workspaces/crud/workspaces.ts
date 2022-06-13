@@ -62,6 +62,7 @@ class Workspaces {
             EventType.ConfiguredWorkspace,
             {
               config: allDiffs[0].value,
+              oldConfig: allDiffs[0].oldValue,
             }
           );
         },

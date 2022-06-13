@@ -3593,9 +3593,11 @@ components:
           type: object
           required:
             - config
+            - oldConfig
           properties:
             config:
               $ref: '#/components/schemas/Config'
+            oldConfig: {}
 
     WorkspacePermissionsShared:
       type: object
@@ -3703,7 +3705,13 @@ components:
             - slug
           properties:
             appInstance:
-              $ref: '#/components/schemas/AppInstance'
+              allOf:
+                - $ref: '#/components/schemas/AppInstance'
+                - type: object
+                  required:
+                    - oldConfig
+                  properties:
+                    oldConfig: {}
             slug:
               type: string
             oldSlug:
