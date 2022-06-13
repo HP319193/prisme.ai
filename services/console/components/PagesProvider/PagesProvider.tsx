@@ -81,7 +81,7 @@ export const PagesProvider: FC<PagesProvider> = ({ children }) => {
 
   return (
     <pagesContext.Provider
-      value={{ pages, fetchPages, createPage, savePage, deletePage }}
+      value={{ pages, setPages, fetchPages, createPage, savePage, deletePage }}
     >
       {children}
     </pagesContext.Provider>
