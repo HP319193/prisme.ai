@@ -162,7 +162,7 @@ describe('Variables & Contexts', () => {
     });
   });
 
-  it('Set config.foo should emit runtime.contects.updated ', async () => {
+  it('Set config.foo should emit runtime.contexts.updated ', async () => {
     const { execute, sendEventSpy } = getMocks();
 
     await execute('setConfig', {});
@@ -176,6 +176,7 @@ describe('Variables & Contexts', () => {
               config: {
                 foo: 'bar',
                 petite: 'maison',
+                password: 'REDACTED',
               },
             },
           }),
@@ -449,6 +450,56 @@ describe('Logic', () => {
     const output = await execute('breakFromChildAutomation', { scope: 'all' });
 
     expect(output).toEqual('beforeBreak');
+  });
+});
+
+it('Arguments with secret: true are removed from native events', async () => {
+  const { execute, sendEventSpy } = getMocks();
+
+  await execute('secretArguments', { token: 'mySecretToken' });
+
+  await waitForExpect(async () => {
+    expect(sendEventSpy).toBeCalledWith(
+      expect.objectContaining({
+        type: EventType.ExecutedAutomation,
+        payload: expect.objectContaining({
+          payload: {
+            body: expect.objectContaining({
+              token: 'REDACTED',
+            }),
+          },
+          output: 'REDACTED',
+        }),
+      })
+    );
+  });
+});
+
+it('Arguments with secret: true remain redacted in native events from child automation calls', async () => {
+  const { execute, sendEventSpy } = getMocks();
+
+  await execute('secretArguments', { token: 'mySecretToken' });
+
+  await waitForExpect(async () => {
+    expect(sendEventSpy).toBeCalledWith(
+      expect.objectContaining({
+        type: EventType.ExecutedAutomation,
+        payload: expect.objectContaining({
+          slug: 'secretArgumentsBis',
+          payload: {
+            data: expect.objectContaining({
+              token: 'REDACTED',
+            }),
+            hello: 'world',
+          },
+          output: {
+            token: 'REDACTED',
+            hello: 'world',
+            password: 'REDACTED',
+          },
+        }),
+      })
+    );
   });
 });
 

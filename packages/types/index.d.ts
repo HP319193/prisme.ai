@@ -1498,12 +1498,16 @@ declare namespace Prismeai {
     }
     export interface TypedArgument {
         type?: "string" | "number" | "object" | "array" | "boolean" | "localized:string" | "localized:number" | "localized:boolean";
+        properties?: {
+            [name: string]: TypedArgument;
+        };
         description?: LocalizedText;
         items?: TypedArgument;
         "ui:widget"?: string;
         "ui:options"?: {
             [key: string]: any;
         };
+        secret?: boolean;
     }
     export interface UninstalledAppInstance {
         /**

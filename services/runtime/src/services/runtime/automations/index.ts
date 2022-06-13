@@ -41,7 +41,9 @@ export async function executeAutomation(
       payload: ctx.payload,
       output,
       duration: Date.now() - startedAt,
-    }
+    },
+    {},
+    EventType.ExecutedAutomation
   );
 
   if (breakThisAutomation) {
@@ -100,22 +102,10 @@ export async function runInstructions(
           appInstanceDepth:
             nextAutomation.workspace.appContext?.parentAppSlugs?.length || 0,
         });
-        const childCtx = ctx.child(
-          {
-            config: nextAutomation.workspace.config,
-          },
-          {
-            // If we do not reinstantiate payload, writting to local context might mutate this payload (& produces output-related errors)
-            payload: { ...payload },
-            appContext: nextAutomation.workspace?.appContext,
-            broker: childBroker,
-            automationSlug: nextAutomation.slug!,
-            additionalGlobals: {
-              endpoints: nextAutomation.workspace.getEndpointUrls(
-                ctx.global.workspaceId
-              ),
-            },
-          }
+        const childCtx = ctx.childAutomation(
+          nextAutomation,
+          payload,
+          childBroker
         );
         return executeAutomation(
           nextAutomation.workspace,

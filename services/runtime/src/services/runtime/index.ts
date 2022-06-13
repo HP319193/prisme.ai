@@ -16,7 +16,7 @@ import {
   ADDITIONAL_GLOBAL_VARS,
   PUBLIC_API_URL,
 } from '../../../config';
-import { jsonPathMatches } from '../../utils';
+import { jsonPathMatches, redact } from '../../utils';
 
 interface PendingWait {
   event: string;
@@ -36,15 +36,31 @@ export default class Runtime {
   private cache: CacheDriver;
 
   private pendingWaits: Record<EventName, PendingWait[]>;
+  private contexts: Record<string, ContextsManager>;
 
   constructor(broker: Broker, workspaces: Workspaces, cache: CacheDriver) {
     this.broker = broker;
     this.workspaces = workspaces;
     this.cache = cache;
     this.pendingWaits = {};
+    this.contexts = {};
   }
 
   async start() {
+    this.broker.beforeSendEventCallback = (event) => {
+      const ctx =
+        event?.source?.correlationId &&
+        this.contexts[event?.source?.correlationId];
+      if (
+        event.payload &&
+        event.source.topic !== RUNTIME_EMITS_BROKER_TOPIC &&
+        ctx &&
+        ctx.secrets
+      ) {
+        event.payload = redact(event.payload, ctx.secrets);
+      }
+    };
+
     this.broker.on(
       [
         RUNTIME_EMITS_BROKER_TOPIC,
@@ -150,15 +166,13 @@ export default class Runtime {
   async getContexts(
     workspaceId: string,
     userId: string,
-    correlationId: string,
-    payload: any
+    correlationId: string
   ): Promise<ContextsManager> {
     const ctx = new ContextsManager(
       workspaceId,
       userId,
       correlationId,
       this.cache,
-      payload,
       this.broker
     );
     ctx.additionalGlobals = {
@@ -166,6 +180,10 @@ export default class Runtime {
       apiUrl: PUBLIC_API_URL,
     };
     await ctx.fetch();
+
+    if (!(correlationId in this.contexts)) {
+      this.contexts[correlationId] = ctx;
+    }
     return ctx;
   }
 
@@ -184,27 +202,33 @@ export default class Runtime {
 
     logger.debug({ msg: 'Starting to process event', event });
     const { triggers, payload } = await this.parseEvent(workspace, event);
-    const ctx = await this.getContexts(
-      workspaceId!!,
-      userId!!,
-      correlationId!!,
-      payload
-    );
-
     if (!triggers?.length) {
       logger.trace('Did not find any matching trigger');
       return;
     }
 
-    return await Promise.all(
-      triggers.map(async (trigger: DetailedTrigger) => {
-        return this.processTrigger(trigger, ctx, logger, broker);
-      })
+    const ctx = await this.getContexts(
+      workspaceId!!,
+      userId!!,
+      correlationId!!
     );
+
+    let result;
+    try {
+      result = await Promise.all(
+        triggers.map(async (trigger: DetailedTrigger) => {
+          return this.processTrigger(trigger, payload, ctx, logger, broker);
+        })
+      );
+    } finally {
+      delete this.contexts[correlationId];
+    }
+    return result;
   }
 
   private async processTrigger(
     trigger: DetailedTrigger,
+    payload: any,
     ctx: ContextsManager,
     logger: Logger,
     broker: Broker
@@ -236,22 +260,7 @@ export default class Runtime {
         }
       );
 
-      const childCtx = ctx.child(
-        {
-          config: automation.workspace.config,
-        },
-        {
-          resetLocal: false,
-          appContext: automation.workspace?.appContext,
-          broker: childBroker,
-          automationSlug: automation.slug!,
-          additionalGlobals: {
-            endpoints: automation.workspace.getEndpointUrls(
-              ctx.global.workspaceId
-            ),
-          },
-        }
-      );
+      const childCtx = ctx.childAutomation(automation, payload, broker);
 
       const output = await this.executeAutomation(
         trigger.workspace,

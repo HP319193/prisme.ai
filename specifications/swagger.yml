@@ -2688,6 +2688,9 @@ components:
             - localized:string
             - localized:number
             - localized:boolean
+        properties:
+          additionalProperties:
+            $ref: "#/components/schemas/TypedArgument"
         description:
           $ref: '#/components/schemas/LocalizedText'
         items:
@@ -2696,6 +2699,8 @@ components:
           type: string
         ui:options:
           type: object
+        secret:
+          type: boolean
 
     InstructionList:
       type: array
