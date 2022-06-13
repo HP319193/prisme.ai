@@ -85,7 +85,6 @@ export class Subscriptions {
             );
             if (
               readable &&
-              (!event.source.userId || event.source.userId !== userId) &&
               (!searchOptions || this.matchSearchOptions(event, searchOptions))
             ) {
               callback(event);
