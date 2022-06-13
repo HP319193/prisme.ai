@@ -47,6 +47,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const {
     query: { id },
   } = useRouter();
+  const { setPages } = usePages();
 
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
@@ -116,8 +117,92 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
     const newSocket = await api.streamEvents(workspaceId);
 
+    // listen to workspace update events
+    newSocket.all((event, { payload }) => {
+      switch (event) {
+        case 'workspaces.updated':
+          setCurrentWorkspace(() => {
+            return payload.workspace;
+          });
+          return;
+        case 'workspaces.apps.installed':
+        case 'workspaces.apps.configured':
+        case 'workspaces.apps.uninstalled':
+          setCurrentWorkspace((workspace) => {
+            if (!workspace) return workspace;
+            const newImports = Object.keys(workspace.imports || {})
+              .filter((key) => key !== payload.slug)
+              .reduce(
+                (prev, key) => ({
+                  ...prev,
+                  [key]: (workspace.imports || {})[key],
+                }),
+                {} as Record<string, Prismeai.AppInstance>
+              );
+
+            const newWorkspace = {
+              ...workspace,
+              imports: newImports,
+            };
+            if (event !== 'workspaces.apps.uninstalled') {
+              newWorkspace.imports[payload.appInstance.appSlug] =
+                payload.appInstance.config;
+            }
+
+            return newWorkspace;
+          });
+          return;
+        case 'workspaces.automations.created':
+        case 'workspaces.automations.updated':
+        case 'workspaces.automations.deleted':
+          setCurrentWorkspace((workspace) => {
+            if (!workspace) return workspace;
+            const newAutomations = Object.keys(workspace.automations || {})
+              .filter((key) => key !== payload.oldSlug)
+              .reduce(
+                (prev, key) => ({
+                  ...prev,
+                  [key]: (workspace.automations || {})[key],
+                }),
+                {} as Record<string, Prismeai.Automation>
+              );
+            const newWorkspace = {
+              ...workspace,
+              automations: newAutomations,
+            };
+
+            if (event !== 'workspaces.automations.deleted') {
+              newWorkspace.automations[payload.slug] = payload.automation;
+            }
+
+            return newWorkspace;
+          });
+          return;
+        case 'workspaces.pages.created':
+        case 'workspaces.pages.updated':
+        case 'workspaces.pages.deleted':
+          if (!workspace) return;
+          setPages((pages) => {
+            const newPages = new Map(pages);
+            const newPagesList = new Set(newPages.get(workspaceId));
+            const existingPage = Array.from(newPagesList).find(
+              ({ id }) => id === payload.page.id
+            );
+            if (existingPage) {
+              newPagesList.delete(existingPage);
+            }
+            if (event !== 'workspaces.pages.deleted') {
+              newPagesList.add(payload.page);
+            }
+            newPages.set(workspaceId, newPagesList);
+            return newPages;
+          });
+          return;
+      }
+    });
+
     setSocket(newSocket);
-  }, [socket, workspaceId]);
+  }, [setPages, socket, workspace, workspaceId]);
 
   useEffect(() => {
     initSocket();
