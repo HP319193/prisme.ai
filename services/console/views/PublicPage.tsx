@@ -15,7 +15,7 @@ import ErrorBoundary from '../components/Blocks/ErrorBoundary';
 
 export interface PublicPageProps {
   page: Prismeai.DetailedPage | null;
-  error?: number;
+  error?: number | null;
 }
 
 export const PublicPageRenderer = ({ page }: PublicPageProps) => {

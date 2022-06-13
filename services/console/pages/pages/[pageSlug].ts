@@ -10,7 +10,7 @@ export const getServerSideProps: GetServerSideProps<
   { pageSlug: string }
 > = async ({ locale = '', params: { pageSlug } = {} }) => {
   let page: PublicPageProps['page'] = null;
-  let error: number | undefined = undefined;
+  let error: number | null = null;
   try {
     if (!pageSlug) {
       throw new Error('nope');
@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       page,
-      error,
+      error: error,
       ...(await serverSideTranslations(locale, ['common', 'sign', 'pages'])),
     },
   };
