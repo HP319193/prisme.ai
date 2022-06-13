@@ -280,7 +280,9 @@ export class Workspace {
 
     const automation = (this.dsul.automations || {})[appSlug ? slug : name];
 
-    if (!automation) return null;
+    if (!automation || (automation.private && !allowNested)) {
+      return null;
+    }
 
     return {
       slug: name,

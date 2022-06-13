@@ -68,6 +68,21 @@ As described above, during execution, AppInstances' automations are isolated fro
 
 This has a few consequences :   
 
+## Private automations  
+For security reasons, some apps might have internal automations which must not be called from parent workspace. To protect these automations, a `private: true` option can be set, as follows :  
+
+```yaml
+  privateAutomation:
+    name: privateAutomation
+    private: true
+    output: '{{output}}'
+    do:
+      - ...
+
+```
+
+This way, only automations from current app will be able to call **privateAutomation**.  
+
 ### Config variable
 
 In the context of an AppInstance, the [**config**](../automations#contexts) variable will hold current AppInstance config only. In case some config fields are left undefined, they will retrieve the value from the source App config as a default value.  

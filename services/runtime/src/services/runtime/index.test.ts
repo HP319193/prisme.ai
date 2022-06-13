@@ -812,6 +812,53 @@ describe('More advanced execution with appInstances', () => {
       );
     });
   });
+
+  it('Private automations can only be called from current workspace and not from parents', async () => {
+    const userId = 'unitTest';
+    const { broker, runtime, sendEventSpy } = getMocks(
+      {
+        workspaceId: AvailableModels.Imports,
+        userId,
+      },
+      false
+    );
+    broker.start();
+    runtime.start();
+
+    const event = await broker.send('forbiddenPrivateCall', {});
+    const event2 = await broker.send('allowedPrivateCall', {});
+
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.Error,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId,
+            automationSlug: 'forbiddenPrivateCall',
+          }),
+          error: expect.objectContaining({
+            error: 'ObjectNotFoundError',
+          }),
+        })
+      );
+
+      // But we can call private automations from current workspace
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event2.source.correlationId,
+            userId,
+            automationSlug: 'privateAutomation',
+          }),
+          payload: expect.objectContaining({
+            output: 'private',
+          }),
+        })
+      );
+    });
+  });
 });
 
 describe("AppInstance's lifecycle events", () => {

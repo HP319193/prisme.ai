@@ -53,6 +53,31 @@ automations:
           payload:
             user: '{{user.id}}'
 
+  forbiddenPrivateCall:
+    name: forbiddenPrivateCall
+    output: '{{output}}'
+    when:
+      events:
+        - forbiddenPrivateCall
+    do:
+      - basicApp.privateAutomation:
+          output: output
+
+  allowedPrivateCall:
+    name: allowedPrivateCall
+    output: '{{output}}'
+    when:
+      events:
+        - allowedPrivateCall
+    do:
+      - privateAutomation:
+          output: output
+
+  privateAutomation:
+    name: privateAutomation
+    private: true
+    output: 'private'
+    do: []
 
   forbiddenNestedCall:
     name: forbiddenNestedCall
