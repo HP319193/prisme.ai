@@ -355,7 +355,8 @@ export default class Runtime {
     // Dispatch apps.published event to installed apps (as their instance config will be packaged as a new app)
     if (
       event.type === EventType.PublishedApp ||
-      event.type === EventType.DeletedApp
+      event.type === EventType.DeletedApp ||
+      event.type === EventType.DeletedWorkspace
     ) {
       triggers.push(
         ...Object.values(workspace.imports || {}).flatMap((workspace) =>
