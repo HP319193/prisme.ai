@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import multer from 'multer';
-import { EventType } from '../../eda';
 import Runtime from '../../services/runtime';
 import { asyncRoute } from '../utils/async';
 
