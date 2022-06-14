@@ -92,8 +92,9 @@ export const config: PermissionsConfig<
       if (!role?.rules?.events) {
         return [];
       }
+      const { types, filters } = role.rules.events;
 
-      const escapedAllowedEvents = (role.rules.events?.types || []).map((cur) =>
+      const escapedAllowedEvents = (types || []).map((cur) =>
         cur.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/[*]/g, '.*')
       );
       const allowedEventsRegex = `^(${escapedAllowedEvents.join('|')})$`;
@@ -106,6 +107,7 @@ export const config: PermissionsConfig<
             type: {
               $regex: allowedEventsRegex,
             },
+            ...filters,
             'source.workspaceId': role.subjectId,
           },
         },

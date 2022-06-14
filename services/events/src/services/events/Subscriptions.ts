@@ -5,6 +5,7 @@ import { SearchOptions } from './store';
 
 export interface Subscriber {
   userId: string;
+  sessionId: string;
   apiKey?: string;
   callback: (event: PrismeEvent<any>) => void;
   accessManager: Required<AccessManager>;
@@ -123,6 +124,7 @@ export class Subscriptions {
     const userAccessManager = await this.accessManager.as(
       {
         id: subscriber.userId,
+        sessionId: subscriber.sessionId,
       },
       subscriber.apiKey
     );

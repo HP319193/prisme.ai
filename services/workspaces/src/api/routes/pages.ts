@@ -90,6 +90,7 @@ export default function init(
     // Get blocks urls from workspace and apps
     const authorizedAccessManager = await accessManager.as({
       id: 'api',
+      sessionId: 'adminSession',
       role: Role.SuperAdmin,
     });
     const { workspaces: workspacesAsRoot } = getServices({
