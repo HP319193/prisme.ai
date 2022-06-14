@@ -1,7 +1,6 @@
 import './i18n';
 import * as React from 'react';
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
-import { nanoid } from 'nanoid';
 import { useTranslation } from 'react-i18next';
 import { Block as TBlock, BlockProvider, BlockProviderProps } from './Provider';
 import { useBlocks } from './Provider/blocksContext';
@@ -71,7 +70,7 @@ export const ReactBlock = ({
 
   const [Component, setComponent] = useState<BlockComponent | null>(null);
   useEffect(() => {
-    const uniqMethod = `__load_${nanoid()}`;
+    const uniqMethod = `__load_${Math.random()}`;
     // @ts-ignore
     window[uniqMethod] = (module) => {
       setComponent(() => {
