@@ -37,7 +37,7 @@ export type Subject<
 
 export interface User<Role extends string> {
   id: UserId;
-  sessionId: string;
+  sessionId?: string;
   role?: Role;
 }
 
