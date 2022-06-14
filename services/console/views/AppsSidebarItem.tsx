@@ -35,6 +35,7 @@ const AppsSidebarItem = ({
   slug = '',
   config: { schema, block } = EmptyObject,
   onToggle,
+  photo,
 }: AppsSidebarItemProps) => {
   const { uninstallApp } = useWorkspaces();
   const { getAppConfig, saveAppConfig } = useWorkspace();
@@ -93,7 +94,15 @@ const AppsSidebarItem = ({
   if (!configComponent)
     return (
       <ListItem
-        title={slug}
+        title={
+          <div className="flex flex-row items-center">
+            {photo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photo} className="w-10 h-10 mr-2" alt={slug} />
+            )}
+            {slug}
+          </div>
+        }
         rightContent={
           <>
             <Button onClick={onDelete} className="!h-full !p-0 !pr-4">
@@ -113,7 +122,15 @@ const AppsSidebarItem = ({
       key={slug}
       items={[
         {
-          label: `${slug}`,
+          label: (
+            <div className="flex flex-row items-center">
+              {photo && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={photo} className="w-10 h-10 mr-2" alt={slug} />
+              )}
+              {slug}
+            </div>
+          ),
           content: configComponent,
         },
       ]}
