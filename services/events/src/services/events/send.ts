@@ -11,6 +11,8 @@ const sendEvent = async (
 ) => {
   const partialSource: Partial<EventSource> = {
     workspaceId: workspaceId,
+    userId: accessManager.user.id,
+    sessionId: accessManager.user.sessionId,
   };
   await accessManager.throwUnlessCan(ActionType.Create, SubjectType.Event, {
     ...event,

@@ -65,6 +65,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     const apiKey = socket.handshake.headers[API_KEY_HEADER];
     const subscription = await events.subscribe(workspaceId, {
       userId: userId as string,
+      sessionId: sessionId as string,
       apiKey: apiKey as string,
       callback: (event: PrismeEvent<any>) => {
         socket.emit(event.type, event);

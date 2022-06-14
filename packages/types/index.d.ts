@@ -690,6 +690,17 @@ declare namespace Prismeai {
              * ]
              */
             types?: string[];
+            /**
+             * Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator
+             * example:
+             * {
+             *   "automationSlug": "someId",
+             *   "someObjectField.someNestedField": "foo"
+             * }
+             */
+            filters?: {
+                [name: string]: string;
+            };
         };
         uploads?: {
             /**

@@ -14,7 +14,8 @@ function injectPlaceholders(value: any, ctx: RuleContext) {
   }
   return value
     .replace('${user.id}', ctx.user.id)
-    .replace('${subject.id}', ctx.subject?.id || '');
+    .replace('${subject.id}', ctx.subject?.id || '')
+    .replace('${user.sessionId}', ctx.user.sessionId || '');
 }
 
 function injectConditions(conditions: object, ctx: RuleContext): MongoQuery {

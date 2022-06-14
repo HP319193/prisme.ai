@@ -3143,6 +3143,13 @@ components:
               example:
                 - allowedEvent1
                 - allowedEvent2
+            filters:
+              description: "Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
+              additionalProperties:
+                type: string
+              example:
+                automationSlug: someId
+                someObjectField.someNestedField: 'foo'
         uploads:
           type: object
           properties:

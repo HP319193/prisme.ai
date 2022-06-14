@@ -74,6 +74,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
 export async function getSuperAdmin(baseAccessManager: AccessManager) {
   return await baseAccessManager.as({
     id: 'api',
+    sessionId: 'adminSession',
     role: Role.SuperAdmin,
   });
 }
