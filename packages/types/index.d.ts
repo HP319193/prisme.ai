@@ -1505,25 +1505,20 @@ declare namespace Prismeai {
              * post
              */
             method: string;
-            headers: {
-                [key: string]: any;
-            };
-            query: {
-                [key: string]: any;
-            };
-            body: {
-                [key: string]: any;
-            };
         };
     }
     export interface TypedArgument {
         type?: "string" | "number" | "object" | "array" | "boolean" | "localized:string" | "localized:number" | "localized:boolean";
+        properties?: {
+            [name: string]: TypedArgument;
+        };
         description?: LocalizedText;
         items?: TypedArgument;
         "ui:widget"?: string;
         "ui:options"?: {
             [key: string]: any;
         };
+        secret?: boolean;
     }
     export interface UninstalledAppInstance {
         /**

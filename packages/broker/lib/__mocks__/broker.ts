@@ -16,6 +16,8 @@ export default class Broker {
 
   private callbacks: Record<Topic, EventCallback[]>;
 
+  public beforeSendEventCallback?: (event: Omit<PrismeEvent, 'id'>) => void;
+
   constructor(delay: number = 25) {
     this.running = false;
     this.events = [];
@@ -131,6 +133,9 @@ export default class Broker {
   }
 
   _send(event: PrismeEvent) {
+    if (this.beforeSendEventCallback) {
+      this.beforeSendEventCallback(event);
+    }
     this.events.push(event);
   }
 

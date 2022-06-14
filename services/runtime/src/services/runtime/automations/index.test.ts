@@ -66,20 +66,21 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
       const childBroker = broker.child({
         correlationId,
       });
-      const output = await runtime.processEvent(
+      const output = await runtime.triggerWebhook(
         {
-          type: EventType.TriggeredWebhook,
-          source: {
-            workspaceId: AvailableModels.Instructions,
-            correlationId,
-            userId: 'unitTests',
-          },
-          payload: {
-            workspaceId: AvailableModels.Instructions,
-            automationSlug,
-            body: payload,
-          },
-        } as Prismeai.PrismeEvent,
+          workspaceId: AvailableModels.Instructions,
+          automationSlug,
+          body: payload,
+          headers: {},
+          query: {},
+          method: 'post',
+        },
+        {
+          workspaceId: AvailableModels.Instructions,
+          correlationId,
+          userId: 'unitTests',
+          sessionId: 'mysessionId',
+        },
         console as any,
         childBroker as any
       );
@@ -162,7 +163,7 @@ describe('Variables & Contexts', () => {
     });
   });
 
-  it('Set config.foo should emit runtime.contects.updated ', async () => {
+  it('Set config.foo should emit runtime.contexts.updated ', async () => {
     const { execute, sendEventSpy } = getMocks();
 
     await execute('setConfig', {});
@@ -176,6 +177,7 @@ describe('Variables & Contexts', () => {
               config: {
                 foo: 'bar',
                 petite: 'maison',
+                password: 'REDACTED',
               },
             },
           }),
@@ -449,6 +451,56 @@ describe('Logic', () => {
     const output = await execute('breakFromChildAutomation', { scope: 'all' });
 
     expect(output).toEqual('beforeBreak');
+  });
+});
+
+it('Arguments with secret: true are removed from native events', async () => {
+  const { execute, sendEventSpy } = getMocks();
+
+  await execute('secretArguments', { token: 'mySecretToken' });
+
+  await waitForExpect(async () => {
+    expect(sendEventSpy).toBeCalledWith(
+      expect.objectContaining({
+        type: EventType.ExecutedAutomation,
+        payload: expect.objectContaining({
+          payload: expect.objectContaining({
+            body: expect.objectContaining({
+              token: 'REDACTED',
+            }),
+          }),
+          output: 'REDACTED',
+        }),
+      })
+    );
+  });
+});
+
+it('Arguments with secret: true remain redacted in native events from child automation calls', async () => {
+  const { execute, sendEventSpy } = getMocks();
+
+  await execute('secretArguments', { token: 'mySecretToken' });
+
+  await waitForExpect(async () => {
+    expect(sendEventSpy).toBeCalledWith(
+      expect.objectContaining({
+        type: EventType.ExecutedAutomation,
+        payload: expect.objectContaining({
+          slug: 'secretArgumentsBis',
+          payload: {
+            data: expect.objectContaining({
+              token: 'REDACTED',
+            }),
+            hello: 'world',
+          },
+          output: {
+            token: 'REDACTED',
+            hello: 'world',
+            password: 'REDACTED',
+          },
+        }),
+      })
+    );
   });
 });
 

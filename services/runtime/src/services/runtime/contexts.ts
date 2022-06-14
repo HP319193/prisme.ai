@@ -10,7 +10,8 @@ import { InvalidSetInstructionError, TooManyCallError } from '../../errors';
 import { Logger, logger } from '../../logger';
 import { EventType } from '../../eda';
 import { parseVariableName, SplittedPath } from '../../utils/parseVariableName';
-import { AppContext } from '../workspaces';
+import { AppContext, DetailedAutomation } from '../workspaces';
+import { findSecretValues } from '../../utils/secrets';
 
 type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
@@ -86,13 +87,13 @@ export class ContextsManager {
   private appContext?: AppContext;
   private automationSlug?: string;
   public additionalGlobals?: Record<string, any>;
+  public secrets: Set<string>;
 
   constructor(
     workspaceId: string,
     userId: string,
     correlationId: string,
     cache: CacheDriver,
-    payload: any = {},
     broker: Broker
   ) {
     this.workspaceId = workspaceId;
@@ -101,7 +102,7 @@ export class ContextsManager {
     this.cache = cache;
     this.depth = 0;
     this.contexts = {
-      local: { ...payload },
+      local: {},
       global: {
         workspaceId,
       },
@@ -121,8 +122,9 @@ export class ContextsManager {
       correlationId,
     });
 
-    this.payload = payload || {};
+    this.payload = {};
     this.broker = broker;
+    this.secrets = new Set();
   }
 
   private merge(additionalContexts: RecursivePartial<Contexts> = {}) {
@@ -261,31 +263,25 @@ export class ContextsManager {
   }
 
   // Reinstantiate a new ContextsManager for a child execution context
-  child(
+  private child(
     additionalContexts: RecursivePartial<Contexts> = {},
     opts: {
-      resetLocal?: boolean;
-      payload?: any;
+      payload: any;
       appContext?: AppContext;
       broker?: Broker;
       automationSlug: string;
       additionalGlobals?: any;
     }
   ): ContextsManager {
-    const resetLocal =
-      typeof opts.resetLocal !== 'undefined' ? opts.resetLocal : true;
-
     // We do not want to reinstantiate contexts.session/user/global objects as they would prevent calling automations to receive updated fields from their called automations
     // TODO Problem still exists for any other 'additionalContexts' (i.e config)
     const child = Object.assign({}, this, {
       contexts: {
         ...this.contexts,
-        local: resetLocal
-          ? opts.payload || {}
-          : { ...this.contexts[ContextType.Local], ...opts.payload },
+        local: opts.payload || {},
         ...additionalContexts,
       },
-      payload: { ...(opts.payload || this.payload || {}) },
+      payload: opts.payload,
       broker: opts.broker || this.broker,
       appContext: opts.appContext || this.appContext,
       automationSlug: opts.automationSlug || this.automationSlug,
@@ -297,6 +293,31 @@ export class ContextsManager {
 
     Object.setPrototypeOf(child, ContextsManager.prototype);
     return child;
+  }
+
+  childAutomation(
+    automation: DetailedAutomation,
+    payload: any,
+    broker: Broker
+  ): ContextsManager {
+    findSecretValues(payload, automation.secretPaths, this.secrets);
+    automation.workspace.secrets.forEach((secret) => this.secrets.add(secret));
+
+    return this.child(
+      {
+        config: automation.workspace.config,
+      },
+      {
+        // If we do not reinstantiate payload, writting to local context might mutate this payload (& produces output-related errors)
+        payload: { ...payload },
+        appContext: automation.workspace?.appContext,
+        broker: broker,
+        automationSlug: automation.slug!,
+        additionalGlobals: {
+          endpoints: automation.workspace.getEndpointUrls(this.workspaceId),
+        },
+      }
+    );
   }
 
   private findParentVariableFor(splittedPath: SplittedPath) {

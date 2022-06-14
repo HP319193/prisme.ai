@@ -4,8 +4,13 @@ imports:
   basicApp:
     appSlug: basicApp
 config:
+  schema:
+    password:
+      type: string
+      secret: true
   value:
     petite: maison
+    password: myAmazingAndPrivatePassword
 
 automations:
   noop:
@@ -268,6 +273,34 @@ automations:
       - basicApp.testRunContext: {}
     output: '{{run.runs}}'
 
+  secretArguments:
+    name: secretArguments
+    output: '{{body.token}}'
+    when:
+      endpoint: true
+    arguments:
+      body:
+        type: object
+        properties:
+          token:
+            type: string
+            secret: true
+      rootToken:
+        type: string
+        secret: true
+    do:
+      - secretArgumentsBis:
+          data:
+            token: '{{body.token}}'
+          hello: 'world'
+
+  secretArgumentsBis:
+    name: secretArgumentsBis
+    output:
+      token: '{{data.token}}'
+      hello: '{{hello}}'
+      password: '{{config.password}}'
+    do: []
 
 
 

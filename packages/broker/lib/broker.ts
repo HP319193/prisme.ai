@@ -65,6 +65,7 @@ export class Broker<CallbackContext = any> {
     metrics: ProcessedEventMetrics
   ) => void;
   public onErrorCallback?: (event: PrismeEvent, error: Error) => void;
+  public beforeSendEventCallback?: (event: Omit<PrismeEvent, 'id'>) => void;
 
   constructor(
     consumer: Omit<Consumer, 'name'> & {
@@ -183,6 +184,10 @@ export class Broker<CallbackContext = any> {
       }
     );
     event.source.topic = this.getEventTopic(topic, event);
+
+    if (this.beforeSendEventCallback) {
+      this.beforeSendEventCallback(event);
+    }
 
     if (this._buffer) {
       this._buffer.push(event);

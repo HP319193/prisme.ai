@@ -1,6 +1,7 @@
 import { PUBLIC_API_URL } from '../../../config';
 import { PrismeError } from '../../errors';
 import { interpolate } from '../../utils';
+import { findSecretValues, findSecretPaths } from '../../utils/secrets';
 import { Apps } from '../apps';
 
 export type DetailedTrigger = Prismeai.When & {
@@ -10,6 +11,7 @@ export type DetailedTrigger = Prismeai.When & {
 
 export type DetailedAutomation = Prismeai.Automation & {
   workspace: Workspace;
+  secretPaths: string[];
 };
 export type AppName = string;
 export type AutomationName = string;
@@ -40,6 +42,7 @@ export class Workspace {
 
   public appContext?: AppContext;
   private apps: Apps;
+  public secrets: Set<string>;
 
   private constructor(
     workspace: Prismeai.Workspace,
@@ -55,6 +58,7 @@ export class Workspace {
     this.dsul = workspace;
     this.imports = {};
     this.appContext = appContext;
+    this.secrets = new Set();
   }
 
   static async create(
@@ -82,6 +86,10 @@ export class Workspace {
     this.config = interpolate(workspace.config?.value || {}, {
       config: workspace.config?.value || {},
     });
+    this.secrets = findSecretValues(
+      this.config,
+      findSecretPaths(workspace.config?.schema || {})
+    );
 
     const { automations = {}, imports = {} } = workspace;
     this.triggers = Object.keys(automations).reduce(
@@ -272,12 +280,17 @@ export class Workspace {
 
     const automation = (this.dsul.automations || {})[appSlug ? slug : name];
 
-    if (!automation) return null;
+    if (!automation || (automation.private && !allowNested)) {
+      return null;
+    }
 
     return {
       slug: name,
       ...automation,
       workspace: this,
+      secretPaths: automation.arguments
+        ? findSecretPaths(automation.arguments)
+        : [],
     };
   }
 }

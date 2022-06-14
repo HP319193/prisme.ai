@@ -77,6 +77,12 @@ automations:
           output: output
     output: '{{output}}'
 
+  privateAutomation:
+    name: privateAutomation
+    private: true
+    do: []
+    output: 'nop'
+
   onInstalled:
     name: onInstalled
     when:

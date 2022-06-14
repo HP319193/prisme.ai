@@ -16,7 +16,8 @@ import {
   ADDITIONAL_GLOBAL_VARS,
   PUBLIC_API_URL,
 } from '../../../config';
-import { jsonPathMatches } from '../../utils';
+import { jsonPathMatches, redact } from '../../utils';
+import { PrismeContext } from '../../api/middlewares';
 
 interface PendingWait {
   event: string;
@@ -29,6 +30,25 @@ interface PendingWait {
   };
 }
 
+export interface Webhook {
+  workspaceId: string;
+  automationSlug: string;
+  /**
+   * example:
+   * post
+   */
+  method: string;
+  headers: {
+    [key: string]: any;
+  };
+  query: {
+    [key: string]: any;
+  };
+  body: {
+    [key: string]: any;
+  };
+}
+
 type EventName = string;
 export default class Runtime {
   private broker: Broker;
@@ -36,15 +56,31 @@ export default class Runtime {
   private cache: CacheDriver;
 
   private pendingWaits: Record<EventName, PendingWait[]>;
+  private contexts: Record<string, ContextsManager>;
 
   constructor(broker: Broker, workspaces: Workspaces, cache: CacheDriver) {
     this.broker = broker;
     this.workspaces = workspaces;
     this.cache = cache;
     this.pendingWaits = {};
+    this.contexts = {};
   }
 
   async start() {
+    this.broker.beforeSendEventCallback = (event) => {
+      const ctx =
+        event?.source?.correlationId &&
+        this.contexts[event?.source?.correlationId];
+      if (
+        event.payload &&
+        event.source.topic !== RUNTIME_EMITS_BROKER_TOPIC &&
+        ctx &&
+        ctx.secrets
+      ) {
+        event.payload = redact(event.payload, ctx.secrets);
+      }
+    };
+
     this.broker.on(
       [
         RUNTIME_EMITS_BROKER_TOPIC,
@@ -150,15 +186,13 @@ export default class Runtime {
   async getContexts(
     workspaceId: string,
     userId: string,
-    correlationId: string,
-    payload: any
+    correlationId: string
   ): Promise<ContextsManager> {
     const ctx = new ContextsManager(
       workspaceId,
       userId,
       correlationId,
       this.cache,
-      payload,
       this.broker
     );
     ctx.additionalGlobals = {
@@ -166,6 +200,10 @@ export default class Runtime {
       apiUrl: PUBLIC_API_URL,
     };
     await ctx.fetch();
+
+    if (!(correlationId in this.contexts)) {
+      this.contexts[correlationId] = ctx;
+    }
     return ctx;
   }
 
@@ -174,7 +212,7 @@ export default class Runtime {
     logger: Logger,
     broker: Broker
   ) {
-    const { userId, workspaceId, correlationId } = event.source;
+    const { workspaceId, correlationId } = event.source;
     if (!correlationId || !workspaceId) {
       throw new Error(
         `Can't process event '${event.type}' without source correlationId or workspaceId !`
@@ -184,27 +222,89 @@ export default class Runtime {
 
     logger.debug({ msg: 'Starting to process event', event });
     const { triggers, payload } = await this.parseEvent(workspace, event);
-    const ctx = await this.getContexts(
-      workspaceId!!,
-      userId!!,
-      correlationId!!,
-      payload
-    );
-
     if (!triggers?.length) {
       logger.trace('Did not find any matching trigger');
       return;
     }
 
-    return await Promise.all(
-      triggers.map(async (trigger: DetailedTrigger) => {
-        return this.processTrigger(trigger, ctx, logger, broker);
-      })
+    return await this.processTriggers(
+      triggers,
+      payload,
+      event.source as PrismeContext,
+      logger,
+      broker
     );
+  }
+
+  public async triggerWebhook(
+    webhook: Webhook,
+    ctx: PrismeContext,
+    logger: Logger,
+    broker: Broker
+  ) {
+    const { workspaceId, correlationId } = ctx;
+    const { automationSlug, method } = webhook;
+    if (!correlationId || !workspaceId) {
+      throw new Error(
+        `Can't process webhook '${automationSlug}' without source correlationId or workspaceId !`
+      );
+    }
+    const workspace = await this.workspaces.getWorkspace(workspaceId);
+
+    logger.info({
+      msg: 'Starting to process webhook ' + automationSlug,
+      endpoint: automationSlug,
+    });
+
+    broker.send<Prismeai.TriggeredWebhook['payload']>(
+      EventType.TriggeredWebhook,
+      {
+        workspaceId,
+        automationSlug: decodeURIComponent(automationSlug),
+        method,
+      }
+    );
+
+    const triggers = workspace.getEndpointTriggers(automationSlug);
+    if (!triggers?.length) {
+      throw new ObjectNotFoundError(
+        `Did not find any matching trigger for endpoint ${automationSlug}`,
+        { workspaceId: workspaceId, endpoint: automationSlug }
+      );
+    }
+
+    return await this.processTriggers(triggers, webhook, ctx, logger, broker);
+  }
+
+  private async processTriggers(
+    triggers: DetailedTrigger[],
+    payload: any,
+    source: PrismeContext,
+    logger: Logger,
+    broker: Broker
+  ) {
+    const ctx = await this.getContexts(
+      source.workspaceId!!,
+      source.userId!!,
+      source.correlationId!!
+    );
+
+    let result;
+    try {
+      result = await Promise.all(
+        triggers.map(async (trigger: DetailedTrigger) => {
+          return this.processTrigger(trigger, payload, ctx, logger, broker);
+        })
+      );
+    } finally {
+      delete this.contexts[source.correlationId];
+    }
+    return result;
   }
 
   private async processTrigger(
     trigger: DetailedTrigger,
+    payload: any,
     ctx: ContextsManager,
     logger: Logger,
     broker: Broker
@@ -236,22 +336,7 @@ export default class Runtime {
         }
       );
 
-      const childCtx = ctx.child(
-        {
-          config: automation.workspace.config,
-        },
-        {
-          resetLocal: false,
-          appContext: automation.workspace?.appContext,
-          broker: childBroker,
-          automationSlug: automation.slug!,
-          additionalGlobals: {
-            endpoints: automation.workspace.getEndpointUrls(
-              ctx.global.workspaceId
-            ),
-          },
-        }
-      );
+      const childCtx = ctx.childAutomation(automation, payload, broker);
 
       const output = await this.executeAutomation(
         trigger.workspace,
@@ -289,29 +374,6 @@ export default class Runtime {
     triggers: DetailedTrigger[];
     payload: any;
   }> {
-    if (event.type === EventType.TriggeredWebhook) {
-      const { automationSlug, body, headers, query, method } = (<
-        Prismeai.TriggeredWebhook
-      >event).payload;
-      const parsed = {
-        triggers: workspace.getEndpointTriggers(automationSlug),
-        payload: {
-          body,
-          headers,
-          query,
-          method,
-        },
-      };
-      if (!parsed.triggers?.length) {
-        throw new ObjectNotFoundError(
-          `Did not find any matching trigger for endpoint ${automationSlug}`,
-          { workspaceId: workspace.id, endpoint: automationSlug }
-        );
-      }
-
-      return parsed;
-    }
-
     // In case our in-memory workspace has not been updated yet, force its config update
     // In the future, we might have a callback ordered queue natively handled by prisme.ai/broker
     if (event.type === EventType.ConfiguredWorkspace) {

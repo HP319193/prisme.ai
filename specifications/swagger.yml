@@ -2688,6 +2688,9 @@ components:
             - localized:string
             - localized:number
             - localized:boolean
+        properties:
+          additionalProperties:
+            $ref: "#/components/schemas/TypedArgument"
         description:
           $ref: '#/components/schemas/LocalizedText'
         items:
@@ -2696,6 +2699,8 @@ components:
           type: string
         ui:options:
           type: object
+        secret:
+          type: boolean
 
     InstructionList:
       type: array
@@ -3939,10 +3944,7 @@ components:
           required:
             - workspaceId
             - automationSlug
-            - query
             - method
-            - headers
-            - body
           properties:
             workspaceId:
               type: string
@@ -3951,12 +3953,6 @@ components:
             method:
               type: string
               example: post
-            headers:
-              type: object
-            query:
-              type: object
-            body:
-              type: object
 
     UpdatedContexts:
       type: object
