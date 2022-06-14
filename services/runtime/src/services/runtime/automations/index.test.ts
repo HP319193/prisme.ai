@@ -66,20 +66,21 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
       const childBroker = broker.child({
         correlationId,
       });
-      const output = await runtime.processEvent(
+      const output = await runtime.triggerWebhook(
         {
-          type: EventType.TriggeredWebhook,
-          source: {
-            workspaceId: AvailableModels.Instructions,
-            correlationId,
-            userId: 'unitTests',
-          },
-          payload: {
-            workspaceId: AvailableModels.Instructions,
-            automationSlug,
-            body: payload,
-          },
-        } as Prismeai.PrismeEvent,
+          workspaceId: AvailableModels.Instructions,
+          automationSlug,
+          body: payload,
+          headers: {},
+          query: {},
+          method: 'post',
+        },
+        {
+          workspaceId: AvailableModels.Instructions,
+          correlationId,
+          userId: 'unitTests',
+          sessionId: 'mysessionId',
+        },
         console as any,
         childBroker as any
       );
@@ -463,11 +464,11 @@ it('Arguments with secret: true are removed from native events', async () => {
       expect.objectContaining({
         type: EventType.ExecutedAutomation,
         payload: expect.objectContaining({
-          payload: {
+          payload: expect.objectContaining({
             body: expect.objectContaining({
               token: 'REDACTED',
             }),
-          },
+          }),
           output: 'REDACTED',
         }),
       })

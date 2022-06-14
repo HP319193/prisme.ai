@@ -1485,15 +1485,6 @@ declare namespace Prismeai {
              * post
              */
             method: string;
-            headers: {
-                [key: string]: any;
-            };
-            query: {
-                [key: string]: any;
-            };
-            body: {
-                [key: string]: any;
-            };
         };
     }
     export interface TypedArgument {

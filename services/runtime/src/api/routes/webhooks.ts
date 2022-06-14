@@ -13,6 +13,7 @@ export default function init(runtime: Runtime) {
       headers,
       method,
       query,
+      context,
       files,
       logger,
       params: { workspaceId, automationSlug },
@@ -48,8 +49,7 @@ export default function init(runtime: Runtime) {
           )
       : files;
 
-    const event = await broker.send<Prismeai.TriggeredWebhook['payload']>(
-      EventType.TriggeredWebhook,
+    const outputs = await runtime.triggerWebhook(
       {
         workspaceId,
         automationSlug: decodeURIComponent(automationSlug),
@@ -60,10 +60,8 @@ export default function init(runtime: Runtime) {
         headers: filteredHeaders,
         method,
         query,
-      }
-    );
-    const outputs = await runtime.processEvent(
-      event as Prismeai.PrismeEvent,
+      },
+      context,
       logger,
       broker
     );
