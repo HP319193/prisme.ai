@@ -7,7 +7,7 @@ import {
   Tooltip,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import * as builtinBlocks from '@prisme.ai/blocks/lib/Blocks/';
+import { builtinBlocks } from '@prisme.ai/blocks';
 import { useMemo, useState } from 'react';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import { usePageBuilder } from '../context';

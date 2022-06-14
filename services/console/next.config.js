@@ -1,12 +1,7 @@
 const { i18n } = require('./next-i18next.config');
 
-// Use the first withTM if you want to not use /dist of @prisme.ai projects.
-// Use the second one for the regular /dist usage.
-const withTM = require('next-transpile-modules')(['@prisme.ai/blocks']);
-// const withTM = (config) => config;
-
 /** @type {import('next').NextConfig} */
-module.exports = withTM({
+module.exports = {
   reactStrictMode: true,
   i18n,
   publicRuntimeConfig: {
@@ -21,7 +16,12 @@ module.exports = withTM({
       issuer: /\.[jt]sx?$/,
       use: ['@svgr/webpack'],
     });
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      crypto: false,
+      stream: false,
+    };
 
     return config;
   },
-});
+};

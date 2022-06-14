@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import * as builtinBlocks from '@prisme.ai/blocks/lib/Blocks/';
+import { builtinBlocks } from '@prisme.ai/blocks';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
