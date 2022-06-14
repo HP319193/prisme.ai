@@ -84,7 +84,7 @@ export const WorkspacesView = () => {
                         <div className="flex grow flex-row text-center">
                           <div className="flex mx-3">
                             {photo ? (
-                              <div className="flex grow items-center justify-center">
+                              <div className="flex grow items-center justify-center flex-none">
                                 <img
                                   src={photo}
                                   className="rounded text-blue h-[48px] w-[48px] object-cover"
