@@ -8,6 +8,7 @@ export interface BlockContext<T = any> {
   config?: T;
   events?: Events;
   api?: any;
+  onLoad?: (block: any) => void;
 }
 
 export const blockContext = createContext<BlockContext>({

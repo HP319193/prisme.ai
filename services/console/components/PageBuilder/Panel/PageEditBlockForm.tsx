@@ -19,16 +19,17 @@ const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
   });
 
   const editedBlock = blocksInPage.find(({ key }) => key === blockId);
-  const editSchema = editedBlock && getEditSchema(`${editedBlock.name}`);
+  const editSchema =
+    editedBlock && (editedBlock.edit || getEditSchema(`${editedBlock.name}`));
 
   const schema: Schema | undefined = useMemo(() => {
     if (!editSchema) return;
     const schema: Schema = editSchema.type
       ? editSchema
-      : {
+      : ({
           type: 'object',
           properties: editSchema,
-        };
+        } as Schema);
     return localizeSchemaForm(schema);
   }, [editSchema, localizeSchemaForm]);
 

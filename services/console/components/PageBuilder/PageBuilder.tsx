@@ -180,7 +180,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
         appInstance: app.slug,
       };
     });
-  }, [value.blocks, blocks]);
+  }, [value.blocks, blocks, blocksSchemas]);
 
   return (
     <context.Provider

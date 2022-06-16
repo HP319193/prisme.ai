@@ -58,9 +58,6 @@ export const Development = (props: any) => {
           config={config.debug}
           appConfig={{}}
           url={`${config.url}?${version}`}
-          onLoad={(block) =>
-            setConfig && setConfig({ ...config, schema: block.schema })
-          }
           {...props}
           renderLoading={<Loading />}
           edit

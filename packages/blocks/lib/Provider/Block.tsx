@@ -9,6 +9,7 @@ export interface BlockProviderProps {
   onAppConfigUpdate?: (config: any) => void;
   events?: Events;
   api?: any;
+  onLoad?: (block: any) => void; // onLoad is needed on Provider for the Development block to send it to child
 }
 
 export const BlockProvider: FC<BlockProviderProps> = ({
@@ -19,6 +20,7 @@ export const BlockProvider: FC<BlockProviderProps> = ({
   onAppConfigUpdate,
   events,
   api,
+  onLoad,
 }) => {
   return (
     <blockContext.Provider
@@ -29,6 +31,7 @@ export const BlockProvider: FC<BlockProviderProps> = ({
         setConfig: onConfigUpdate,
         events,
         api,
+        onLoad,
       }}
     >
       {children}

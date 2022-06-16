@@ -2,7 +2,7 @@ import './i18n';
 import * as React from 'react';
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Block as TBlock, BlockProvider, BlockProviderProps } from './Provider';
+import { BlockProvider, BlockProviderProps } from './Provider';
 import { useBlocks } from './Provider/blocksContext';
 import * as builtinBlocks from './Blocks';
 
@@ -16,8 +16,7 @@ class BlockErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error: any, errorInfo: any) {
-    // Vous pouvez aussi enregistrer l'erreur au sein d'un service de rapport.
-    console.error(error, errorInfo);
+    // Vous pouvez aussi enregistrer l'erreur au sein d'un service de rapport.console.error(error, errorInfo);
   }
 
   render() {
@@ -193,6 +192,7 @@ export const BlockLoader = ({
       onAppConfigUpdate={onAppConfigUpdate}
       events={props.events}
       api={api}
+      onLoad={props.onLoad}
     >
       <BlockRenderMethod {...props} />
     </BlockProvider>
