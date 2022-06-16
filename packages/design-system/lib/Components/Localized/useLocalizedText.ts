@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import Prismeai from '@prisme.ai/sdk';
+import { Schema } from '../SchemaForm';
 
 const translatable = ['title', 'description', 'label'];
 const isTranslatedElement = (key: string, value: any) => {
@@ -26,7 +27,9 @@ export const useLocalizedText = (t: any, language: string) => {
     [language, t]
   );
 
-  const localizeSchemaForm = useCallback(
+  const localizeSchemaForm = useCallback<
+    (schema: Schema | Prismeai.TypedArgument) => Schema
+  >(
     (original: any) => {
       const localizeSchemaForm = (mayBeTranslatable: any) => {
         if (typeof mayBeTranslatable === 'object') {

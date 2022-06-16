@@ -173,8 +173,8 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
 
       if (!block) return [];
       return {
-        edit: blocksSchemas.get(key),
         ...block,
+        edit: block.edit || blocksSchemas.get(key),
         key,
         appName: app.appName,
         appInstance: app.slug,

@@ -24,7 +24,7 @@ const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
 
   const schema: Schema | undefined = useMemo(() => {
     if (!editSchema) return;
-    const schema: Schema = editSchema.type
+    const schema = editSchema.type
       ? editSchema
       : ({
           type: 'object',

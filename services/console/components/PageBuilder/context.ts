@@ -19,7 +19,7 @@ export interface PageBuilderContext {
     name?: Prismeai.LocalizedText;
     appInstance?: string;
     url?: string;
-    edit?: Schema;
+    edit?: Schema | Prismeai.TypedArgument;
   }[];
   addBlock: (position: number) => void;
   setEditBlock: (blockId: string) => void;
