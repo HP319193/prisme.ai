@@ -26,6 +26,7 @@ export interface PageBuilderContext {
   setEditBlock: (blockId: string) => void;
   removeBlock: (key: string) => void;
   setBlockConfig: (key: string, config: any) => void;
+  setBlockSchema: (blockId: string, schema: Schema) => void;
   events?: Events;
 }
 
@@ -37,6 +38,7 @@ export const context = createContext<PageBuilderContext>({
   setEditBlock() {},
   removeBlock() {},
   setBlockConfig() {},
+  setBlockSchema() {},
 });
 
 export const usePageBuilder = () => useContext(context);
