@@ -29,6 +29,7 @@ const PageLink: FC<{ pageId: string } & HTMLAttributes<HTMLAnchorElement>> = ({
     components: { Link },
   } = useBlocks();
   const fetchHref = useCallback(async (pageId: string) => {
+    if (!api) return;
     try {
       const { slug = pageId } = await api.getPageBySlug(pageId);
       setHref(slug);

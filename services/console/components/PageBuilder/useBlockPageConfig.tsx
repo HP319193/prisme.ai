@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { usePageBuilder } from './context';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 
 interface BlockConfigProviderProps {
   blockId: string;
