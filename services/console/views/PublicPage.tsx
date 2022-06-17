@@ -118,6 +118,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
               appInstance={appInstance}
               blockIndex={index}
               page={currentPage}
+              events={events}
             />
           </div>
         ))}

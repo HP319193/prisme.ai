@@ -1,8 +1,7 @@
 import { BlockLoader, BlockLoaderProps } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
-import api from '../../utils/api';
+import api, { Events } from '../../utils/api';
 import useAppConfig from '../../utils/useAppConfig';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import usePageBlocksConfigs from './usePageBlocksConfigs';
 
 interface PublicPageBlockProps {
@@ -12,6 +11,7 @@ interface PublicPageBlockProps {
   appInstance: string;
   blockIndex: number;
   page: Prismeai.DetailedPage;
+  events?: Events;
 }
 
 const PageBlock = ({
@@ -21,8 +21,8 @@ const PageBlock = ({
   appInstance,
   blockIndex,
   page,
+  events,
 }: PublicPageBlockProps) => {
-  const { socket } = useWorkspace();
   const { blocksConfigs } = usePageBlocksConfigs(page);
   const { appConfig, onAppConfigUpdate } = useAppConfig({
     workspaceId,
@@ -41,7 +41,7 @@ const PageBlock = ({
       workspaceId={workspaceId}
       appInstance={appInstance}
       appConfig={appConfig}
-      events={socket}
+      events={events}
       config={blocksConfigs[blockIndex]}
       onAppConfigUpdate={onAppConfigUpdate}
       api={api}
