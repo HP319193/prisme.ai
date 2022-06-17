@@ -156,7 +156,8 @@ export const UIWidgetsByType = {
   string: ['upload', 'select'],
 };
 
-const localize = (text) => text;
+const localize = (text) =>
+  text && typeof text === 'object' ? text.en || '' : text;
 const localizeSchemaForm = (schema) => schema;
 
 export function useLocalizedText(t, language) {

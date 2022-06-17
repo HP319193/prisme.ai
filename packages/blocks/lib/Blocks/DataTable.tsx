@@ -12,7 +12,7 @@ const previewData = Array.from(new Array(100000), (v, k) => ({
   label: `Preview ${k}`,
 }));
 
-export const DataTable = ({ edit }: { edit: boolean }) => {
+export const DataTable = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
   const { config = {} } = useBlock();
 

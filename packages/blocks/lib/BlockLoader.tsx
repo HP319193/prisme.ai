@@ -140,22 +140,8 @@ export const IFrameBlock = ({ url, token, edit }: BlockLoaderProps) => {
   );
 };
 
-const getComponentByName = (name: string) => {
-  switch (name) {
-    case 'Cards':
-      return builtinBlocks.Cards;
-    case 'DataTable':
-      return builtinBlocks.DataTable;
-    case 'Development':
-      return builtinBlocks.Development;
-    case 'Form':
-      return builtinBlocks.Form;
-    case 'Header':
-      return builtinBlocks.Header;
-    default:
-      return null;
-  }
-};
+const getComponentByName = (name: string) =>
+  builtinBlocks[name as keyof typeof builtinBlocks] || null;
 
 const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
   if (name) {

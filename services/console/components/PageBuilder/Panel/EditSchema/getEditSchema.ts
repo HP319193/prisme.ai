@@ -5,22 +5,11 @@ import DataTable from './DataTable';
 import Development from './Development';
 import Form from './Form';
 import Header from './Header';
+import RichText from './RichText';
 
-const getEditSchema = (blockName: string): Schema | null => {
-  switch (blockName) {
-    case 'Cards':
-      return Cards as Schema;
-    case 'DataTable':
-      return DataTable as Schema;
-    case 'Development':
-      return Development as Schema;
-    case 'Form':
-      return Form as Schema;
-    case 'Header':
-      return Header as Schema;
-    default:
-      return null;
-  }
-};
+const Schemas = { Cards, DataTable, Development, Form, Header, RichText };
+
+const getEditSchema = (blockName: string): Schema | null =>
+  Schemas[blockName as keyof typeof Schemas] || null;
 
 export default getEditSchema;
