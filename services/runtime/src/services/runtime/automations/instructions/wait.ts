@@ -4,6 +4,7 @@ import { EventType } from '../../../../eda';
 import { AppContext } from '../../../workspaces';
 import { ContextsManager, ContextType } from '../../contexts';
 
+const ALLOWED_NATIVE_EVENTS = [EventType.ExecutedAutomation];
 export async function wait(
   wait: Prismeai.Wait['wait'],
   broker: Broker,
@@ -23,9 +24,11 @@ export async function wait(
           ...wait,
           oneOf: (wait.oneOf || []).map((cur) => ({
             ...cur,
-            event: appContext?.appInstanceFullSlug
-              ? `${appContext?.appInstanceFullSlug}.${cur.event}`
-              : cur.event,
+            event:
+              appContext?.appInstanceFullSlug &&
+              !ALLOWED_NATIVE_EVENTS.includes(cur.event as any)
+                ? `${appContext?.appInstanceFullSlug}.${cur.event}`
+                : cur.event,
           })),
         },
       },

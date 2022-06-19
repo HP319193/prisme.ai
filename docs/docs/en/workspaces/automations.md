@@ -347,5 +347,13 @@ In case the automation is triggered from a webhook without any session cookie / 
       <td><b>run.date</b></td>
       <td>Current ISO8601 date</td>
     </tr>           
+    <tr>
+      <td><b>run.trigger.type</b></td>
+      <td>Trigger type of the current automation run (event, endpoint, automation)</td>
+    </tr>        
+    <tr>
+      <td><b>run.trigger.value</b></td>
+      <td>Trigger value of the current automation run (event/endpoint/ automation name)</td>
+    </tr>                   
   </table>
 </center>
