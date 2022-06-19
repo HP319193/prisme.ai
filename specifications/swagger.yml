@@ -3986,10 +3986,30 @@ components:
         payload:
           type: object
           required:
-            - contexts
+            - updates
           properties:
-            contexts:
-              type: object
+            updates:
+              type: array
+              items:
+                type: object
+                required:
+                  - type
+                  - path
+                  - context
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - set
+                      - push
+                      - delete
+                  path:
+                    type: string
+                  fullPath:
+                    type: string
+                  context:
+                    type: string
+                  value: {}
 
     PendingWait:
       type: object

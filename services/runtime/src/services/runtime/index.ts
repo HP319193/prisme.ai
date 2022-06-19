@@ -7,7 +7,7 @@ import {
   Workspaces,
 } from '../workspaces';
 import { CacheDriver } from '../../cache';
-import { ContextsManager } from './contexts';
+import { ContextsManager, ContextType, ContextUpdateOpLog } from './contexts';
 import { ObjectNotFoundError } from '../../errors';
 import { EventType } from '../../eda';
 import { executeAutomation } from './automations';
@@ -56,7 +56,7 @@ export default class Runtime {
   private cache: CacheDriver;
 
   private pendingWaits: Record<EventName, PendingWait[]>;
-  private contexts: Record<string, ContextsManager>;
+  private contexts: Record<string, ContextsManager[]>;
 
   constructor(broker: Broker, workspaces: Workspaces, cache: CacheDriver) {
     this.broker = broker;
@@ -67,20 +67,45 @@ export default class Runtime {
   }
 
   async start() {
+    // Redact emitted native events
     this.broker.beforeSendEventCallback = (event) => {
-      const ctx =
+      const contexts =
         event?.source?.correlationId &&
         this.contexts[event?.source?.correlationId];
       if (
         event.payload &&
         event.source.topic !== RUNTIME_EMITS_BROKER_TOPIC &&
-        ctx &&
-        ctx.secrets
+        contexts &&
+        contexts.length
       ) {
-        event.payload = redact(event.payload, ctx.secrets);
+        event.payload = contexts.reduce(
+          (payload, ctx) => redact(payload, ctx.secrets),
+          event.payload
+        );
       }
     };
 
+    // Sync contexts
+    this.broker.on<Prismeai.UpdatedContexts['payload']>(
+      EventType.UpdatedContexts,
+      (event) => {
+        const updates = event.payload?.updates.filter(
+          (cur) => cur.context === ContextType.Run
+        );
+        const contexts = this.contexts[event.source.correlationId!];
+        if (updates?.length && contexts.length) {
+          contexts.forEach((cur) => {
+            cur.applyUpdateOpLogs(updates as ContextUpdateOpLog[]);
+          });
+        }
+        return true;
+      },
+      {
+        GroupPartitions: false,
+      }
+    );
+
+    // Start processing events
     this.broker.on(
       [
         RUNTIME_EMITS_BROKER_TOPIC,
@@ -204,8 +229,9 @@ export default class Runtime {
     await ctx.fetch();
 
     if (!(correlationId in this.contexts)) {
-      this.contexts[correlationId] = ctx;
+      this.contexts[correlationId] = [];
     }
+    this.contexts[correlationId].push(ctx);
     return ctx;
   }
 
@@ -299,7 +325,12 @@ export default class Runtime {
         })
       );
     } finally {
-      delete this.contexts[source.correlationId];
+      this.contexts[source.correlationId] = this.contexts[
+        source.correlationId
+      ].filter((cur) => cur != ctx);
+      if (!this.contexts[source.correlationId]?.length) {
+        delete this.contexts[source.correlationId];
+      }
     }
     return result;
   }

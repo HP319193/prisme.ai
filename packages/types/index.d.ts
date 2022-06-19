@@ -1582,9 +1582,13 @@ declare namespace Prismeai {
          */
         type: "runtime.contexts.updated";
         payload: {
-            contexts: {
-                [key: string]: any;
-            };
+            updates: {
+                type: "set" | "push" | "delete";
+                path: string;
+                fullPath?: string;
+                context: string;
+                value?: any;
+            }[];
         };
     }
     export interface UpdatedPage {
