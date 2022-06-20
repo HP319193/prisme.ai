@@ -80,10 +80,22 @@ export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
     (page.blocks || []).forEach(({ config, config: { onInit } = {} }) => {
       if (!prevSocket.current) return;
       if (onInit) {
-        prevSocket.current.emit(onInit, {
+        const payload: any = {
           page: page.id,
           config,
-        });
+        };
+        if (window.location.search) {
+          payload.query = Array.from(
+            new URLSearchParams(window.location.search).entries()
+          ).reduce(
+            (prev, [key, value]) => ({
+              ...prev,
+              [key]: value,
+            }),
+            {}
+          );
+        }
+        prevSocket.current.emit(onInit, payload);
       }
     });
   }, [cachedPage, socket]);
