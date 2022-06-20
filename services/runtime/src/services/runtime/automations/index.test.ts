@@ -243,7 +243,6 @@ describe('Variables & Contexts', () => {
     const { execute } = getMocks();
 
     const output = await execute('testRunContext', {});
-    console.log(JSON.stringify(output, null, 2));
     expect(output[0]).toMatchObject(
       expect.objectContaining({
         automationSlug: 'testRunContext',
