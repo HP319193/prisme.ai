@@ -91,6 +91,7 @@ export default class Runtime {
         EventType.DeletedWorkspace,
         EventType.DeletedApp,
         EventType.PublishedApp,
+        EventType.ExecutedAutomation,
       ],
       async (event, broker, { logger }) => {
         if (!event.source.workspaceId || !event.source.correlationId) {
@@ -100,7 +101,8 @@ export default class Runtime {
           event as Prismeai.PrismeEvent,
           broker
         );
-        if (!cancelTriggers) {
+        // ExecutedAutomation listening is only allowed within waits, as it would cause an infinite loop in a regular trigger
+        if (!cancelTriggers && event.type !== EventType.ExecutedAutomation) {
           await this.processEvent(
             event as Prismeai.PrismeEvent,
             logger,
@@ -312,7 +314,7 @@ export default class Runtime {
     const automation = trigger.workspace.getAutomation(trigger.automationSlug);
     if (!automation) {
       logger.trace(
-        `Did not find any matching automation '${trigger.automationSlug}' for trigger '${trigger.endpoint})`
+        `Did not find any matching automation '${trigger.automationSlug}' for ${trigger.type} trigger '${trigger.value})`
       );
       throw new ObjectNotFoundError(`Automation not found`, {
         workspaceId: trigger.workspace.id,
@@ -336,7 +338,11 @@ export default class Runtime {
         }
       );
 
-      const childCtx = ctx.childAutomation(automation, payload, broker);
+      const childCtx = ctx.childAutomation(automation, payload, broker, {
+        type: trigger.type,
+        value: trigger.value,
+        id: trigger.type === 'event' ? payload.id : undefined,
+      });
 
       const output = await this.executeAutomation(
         trigger.workspace,
@@ -430,6 +436,7 @@ export default class Runtime {
     return {
       triggers,
       payload: {
+        id: event.id,
         source: event.source,
         payload: event.payload,
       },

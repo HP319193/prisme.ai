@@ -4,7 +4,9 @@ import { interpolate } from '../../utils';
 import { findSecretValues, findSecretPaths } from '../../utils/secrets';
 import { Apps } from '../apps';
 
-export type DetailedTrigger = Prismeai.When & {
+export type DetailedTrigger = {
+  type: 'event' | 'endpoint';
+  value: string;
   automationSlug: string;
   workspace: Workspace;
 };
@@ -102,7 +104,8 @@ export class Workspace {
             prev.events[event] = [
               ...(prev.events[event] || []),
               {
-                ...when,
+                type: 'event',
+                value: event,
                 automationSlug: key,
                 workspace: this,
               },
@@ -114,7 +117,8 @@ export class Workspace {
           prev.endpoints[endpointName] = [
             ...(prev.endpoints[endpointName] || []),
             {
-              ...when,
+              type: 'endpoint',
+              value: endpointName,
               automationSlug: key,
               workspace: this,
             },

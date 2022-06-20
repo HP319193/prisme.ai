@@ -25,12 +25,19 @@ export interface RunContext {
   correlationId: string;
   automationSlug?: string;
   date?: string; // ISO8601 date
+  trigger?: Trigger; // Current call origin (event/endpoint/automation)
 
   // Only set if running inside an app instance :
   appSlug?: string; // App unique slug
   appInstanceSlug?: string; // Current instance slug defined by parent workspace/app
   appInstanceFullSlug?: string; // Current instance full slug (from root workspace)
   parentAppSlug?: string; // Only if parent context is also an app instance
+}
+
+export interface Trigger {
+  type: 'event' | 'endpoint' | 'automation';
+  value: string;
+  id?: string;
 }
 
 export interface GlobalContext {
@@ -85,6 +92,7 @@ export class ContextsManager {
   public payload: any;
   private depth: number;
   private appContext?: AppContext;
+  public trigger?: Trigger;
   private automationSlug?: string;
   public additionalGlobals?: Record<string, any>;
   public secrets: Set<string>;
@@ -183,7 +191,7 @@ export class ContextsManager {
       );
     }
 
-    this.contexts = this.merge(fetchedContexts);
+    this.contexts = this.merge(fetchedContexts) as Contexts;
 
     // Restore previous depth
     if (fetchedContexts?.run?.depth) {
@@ -259,6 +267,7 @@ export class ContextsManager {
       correlationId: this.correlationId,
       depth: this.depth,
       date: new Date().toISOString(),
+      trigger: this.trigger,
     };
   }
 
@@ -271,6 +280,7 @@ export class ContextsManager {
       broker?: Broker;
       automationSlug: string;
       additionalGlobals?: any;
+      trigger?: Trigger;
     }
   ): ContextsManager {
     // We do not want to reinstantiate contexts.session/user/global objects as they would prevent calling automations to receive updated fields from their called automations
@@ -289,6 +299,7 @@ export class ContextsManager {
         ...this.additionalGlobals,
         ...opts.additionalGlobals,
       },
+      trigger: opts.trigger || this.trigger,
     });
 
     Object.setPrototypeOf(child, ContextsManager.prototype);
@@ -298,7 +309,8 @@ export class ContextsManager {
   childAutomation(
     automation: DetailedAutomation,
     payload: any,
-    broker: Broker
+    broker: Broker,
+    trigger?: Trigger
   ): ContextsManager {
     findSecretValues(payload, automation.secretPaths, this.secrets);
     automation.workspace.secrets.forEach((secret) => this.secrets.add(secret));
@@ -315,6 +327,10 @@ export class ContextsManager {
         automationSlug: automation.slug!,
         additionalGlobals: {
           endpoints: automation.workspace.getEndpointUrls(this.workspaceId),
+        },
+        trigger: trigger || {
+          type: 'automation',
+          value: this.automationSlug || '',
         },
       }
     );
@@ -412,6 +428,7 @@ export class ContextsManager {
       global: {
         ...global,
         ...this.additionalGlobals,
+        workspaceId: this.workspaceId,
       },
     };
   }

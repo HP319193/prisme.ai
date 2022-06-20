@@ -41,6 +41,8 @@ export async function executeAutomation(
       payload: ctx.payload,
       output,
       duration: Date.now() - startedAt,
+      trigger: ctx.trigger!,
+      break: !!breakThisAutomation,
     },
     {},
     EventType.ExecutedAutomation

@@ -109,6 +109,7 @@ describe('Simple events processing', () => {
           automationSlug: 'empty',
           depth: 0,
           payload: {
+            id: event.id,
             source: event.source,
             payload: event.payload,
           },
@@ -185,6 +186,7 @@ describe('Simple events processing', () => {
           }),
           automationSlug: 'basicEmpty',
           payload: {
+            id: event.id,
             source: event.source,
             payload: event.payload,
           },
@@ -233,9 +235,15 @@ describe('Simple execution', () => {
           payload: expect.objectContaining({
             slug: 'empty',
             payload: {
+              id: event.id,
               source: event.source,
               payload: event.payload,
             },
+            trigger: expect.objectContaining({
+              type: 'event',
+              value: 'run.empty',
+            }),
+            break: false,
             output: {
               foo: 'bar',
             },
@@ -426,6 +434,11 @@ describe('More advanced execution with appInstances', () => {
           }),
           payload: expect.objectContaining({
             slug: 'basicEmpty',
+            trigger: expect.objectContaining({
+              type: 'event',
+              value: 'triggerEmpty',
+            }),
+            break: false,
             output: {
               msg: 'result of basicApp.basicEmpty',
             },

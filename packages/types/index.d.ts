@@ -1153,11 +1153,16 @@ declare namespace Prismeai {
         type: "runtime.automations.executed";
         payload: {
             slug: string;
+            trigger: {
+                type?: string;
+                value?: string;
+            };
             payload: {
                 [key: string]: any;
             };
             output: AnyValue;
             duration: number;
+            break: boolean;
         };
     }
     export interface FailedFetch {
