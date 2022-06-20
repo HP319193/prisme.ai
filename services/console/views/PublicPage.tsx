@@ -93,7 +93,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
   }
 
   return (
-    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-scroll min-h-full">
+    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-scroll min-h-full snap-y snap-mandatory">
       <Head>
         <title>{localize(currentPage.name)}</title>
         <meta name="description" content={localize(currentPage.description)} />
@@ -108,7 +108,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
             className={`page-block block-${appInstance.replace(
               /\s/g,
               '-'
-            )} block-${name.replace(/\s/g, '-')}`}
+            )} block-${name.replace(/\s/g, '-')} snap-start`}
             id={blocksConfigs[index] && blocksConfigs[index].sectionId}
           >
             <PublicPageBlock
