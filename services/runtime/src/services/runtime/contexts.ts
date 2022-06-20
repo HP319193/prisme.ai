@@ -101,6 +101,7 @@ export class ContextsManager {
   public secrets: Set<string>;
 
   private opLogs: ContextUpdateOpLog[];
+  private alreadyProcessedUpdateIds: Set<string>;
 
   constructor(
     workspaceId: string,
@@ -139,6 +140,7 @@ export class ContextsManager {
     this.broker = broker;
     this.secrets = new Set();
     this.opLogs = [];
+    this.alreadyProcessedUpdateIds = new Set();
   }
 
   private merge(additionalContexts: RecursivePartial<Contexts> = {}) {
@@ -232,7 +234,9 @@ export class ContextsManager {
 
     this.opLogs = [];
     if (updates.length) {
-      await this.broker.send<Prismeai.UpdatedContexts['payload']>(
+      const updatedEvent = await this.broker.send<
+        Prismeai.UpdatedContexts['payload']
+      >(
         EventType.UpdatedContexts,
         {
           updates,
@@ -241,10 +245,18 @@ export class ContextsManager {
         // Current broker instance topic is normally emit's one, so we have to switch to native events topic :
         EventType.UpdatedContexts
       );
+      this.alreadyProcessedUpdateIds.add(updatedEvent.id);
     }
   }
 
-  public async applyUpdateOpLogs(updates: ContextUpdateOpLog[]) {
+  public async applyUpdateOpLogs(
+    updates: ContextUpdateOpLog[],
+    updateId: string
+  ) {
+    if (this.alreadyProcessedUpdateIds.has(updateId)) {
+      return;
+    }
+    this.alreadyProcessedUpdateIds.add(updateId);
     for (const update of updates) {
       const path =
         update.type === 'push' ? update.fullPath + '[]' : update.fullPath;

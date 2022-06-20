@@ -173,13 +173,15 @@ describe('Variables & Contexts', () => {
         expect.objectContaining({
           type: EventType.UpdatedContexts,
           payload: expect.objectContaining({
-            contexts: {
-              config: {
-                foo: 'bar',
-                petite: 'maison',
-                password: 'REDACTED',
-              },
-            },
+            updates: [
+              expect.objectContaining({
+                type: 'set',
+                path: 'foo',
+                fullPath: 'config.foo',
+                context: 'config',
+                value: 'bar',
+              }),
+            ],
           }),
         })
       );
@@ -241,36 +243,41 @@ describe('Variables & Contexts', () => {
     const { execute } = getMocks();
 
     const output = await execute('testRunContext', {});
-    expect(output).toEqual([
+    console.log(JSON.stringify(output, null, 2));
+    expect(output[0]).toMatchObject(
       expect.objectContaining({
         automationSlug: 'testRunContext',
-        appSlug: undefined,
-        appInstanceSlug: undefined,
-        appInstanceFullSlug: undefined,
-        parentAppSlug: undefined,
-      }),
+      })
+    );
+
+    expect(output[1]).toMatchObject(
       expect.objectContaining({
         automationSlug: 'testRunContext',
         appSlug: 'basicApp',
         appInstanceSlug: 'basicApp',
         appInstanceFullSlug: 'basicApp',
-        parentAppSlug: undefined,
-      }),
+      })
+    );
+
+    expect(output[2]).toMatchObject(
       expect.objectContaining({
         automationSlug: 'testRunContext',
         appSlug: 'nestedApp',
         appInstanceSlug: 'nestedApp',
         appInstanceFullSlug: 'basicApp.nestedApp',
         parentAppSlug: 'basicApp',
-      }),
+      })
+    );
+
+    expect(output[3]).toMatchObject(
       expect.objectContaining({
         automationSlug: 'testRunContext',
         appSlug: 'nestedApp',
         appInstanceSlug: 'nestedApp',
         appInstanceFullSlug: 'basicApp.nestedApp',
         parentAppSlug: 'basicApp',
-      }),
-    ]);
+      })
+    );
   });
 });
 
