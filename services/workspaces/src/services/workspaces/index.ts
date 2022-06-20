@@ -3,6 +3,7 @@ import { Apps } from '..';
 import { EventType } from '../../eda';
 import { logger } from '../../logger';
 import { getSuperAdmin, AccessManager } from '../../permissions';
+import { applyObjectUpdateOpLogs } from '../../utils/applyObjectUpdateOpLogs';
 import DSULStorage from '../DSULStorage';
 import Workspaces from './crud/workspaces';
 
@@ -21,15 +22,13 @@ export async function syncWorkspacesWithConfigContexts(
     EventType.UpdatedContexts,
     async (event) => {
       const { appInstanceFullSlug, workspaceId } = event.source || {};
-      if (
-        !workspaceId ||
-        !event.payload?.contexts ||
-        !event.payload?.contexts?.config
-      ) {
+      const updates = event.payload?.updates.filter(
+        (cur) => cur.context === 'config'
+      );
+      if (!workspaceId || !updates) {
         return true;
       }
 
-      const updatedConfig = event.payload.contexts.config;
       try {
         const workspaces = new Workspaces(
           superAdmin,
@@ -37,7 +36,13 @@ export async function syncWorkspacesWithConfigContexts(
           broker.child(event.source),
           workspaceStorage
         );
+        const currentWorkspace = await workspaces.getWorkspace(workspaceId);
+
         if (appInstanceFullSlug) {
+          const updatedConfig = applyObjectUpdateOpLogs(
+            currentWorkspace.imports?.[appInstanceFullSlug]?.config || {},
+            updates
+          );
           await workspaces.appInstances.configureApp(
             workspaceId!,
             appInstanceFullSlug!,
@@ -46,6 +51,10 @@ export async function syncWorkspacesWithConfigContexts(
             }
           );
         } else {
+          const updatedConfig = applyObjectUpdateOpLogs(
+            currentWorkspace.config?.value || {},
+            updates
+          );
           await workspaces.configureWorkspace(workspaceId, updatedConfig);
         }
       } catch (error) {

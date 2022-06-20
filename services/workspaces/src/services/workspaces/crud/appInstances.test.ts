@@ -239,7 +239,13 @@ describe('configureApp', () => {
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
       'workspaces.apps.configured',
-      { appInstance, slug: APP_INSTANCE_SLUG },
+      {
+        appInstance: {
+          ...appInstance,
+          oldConfig: expect.objectContaining({}),
+        },
+        slug: APP_INSTANCE_SLUG,
+      },
       expect.anything()
     );
   });

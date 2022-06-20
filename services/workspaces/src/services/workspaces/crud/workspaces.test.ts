@@ -181,7 +181,10 @@ it('updateWorkspace should emit specific events corresponding to each updated pa
   expect(mockedBroker.send).toHaveBeenCalledWith(
     'workspaces.apps.configured',
     {
-      appInstance: willBeChangedAppInstance,
+      appInstance: {
+        ...willBeChangedAppInstance,
+        oldConfig: expect.objectContaining({}),
+      },
       slug: 'willBeChangedAppInstance',
       oldSlug: undefined,
     },

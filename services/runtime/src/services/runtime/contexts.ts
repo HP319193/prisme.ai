@@ -62,6 +62,9 @@ export interface Contexts {
   config: object;
 }
 
+export type ContextUpdateOpLog =
+  Prismeai.UpdatedContexts['payload']['updates'][0];
+
 export enum ContextType {
   Run = 'run',
   Global = 'global',
@@ -96,6 +99,9 @@ export class ContextsManager {
   private automationSlug?: string;
   public additionalGlobals?: Record<string, any>;
   public secrets: Set<string>;
+
+  private opLogs: ContextUpdateOpLog[];
+  private alreadyProcessedUpdateIds: Set<string>;
 
   constructor(
     workspaceId: string,
@@ -133,6 +139,8 @@ export class ContextsManager {
     this.payload = {};
     this.broker = broker;
     this.secrets = new Set();
+    this.opLogs = [];
+    this.alreadyProcessedUpdateIds = new Set();
   }
 
   private merge(additionalContexts: RecursivePartial<Contexts> = {}) {
@@ -200,7 +208,7 @@ export class ContextsManager {
   }
 
   async save(context?: ContextType, ttl?: number) {
-    const { global, user, local: _, config, session } = this.contexts;
+    const { global, user, local: _, session } = this.contexts;
 
     if (!context || context === ContextType.Global) {
       await this.cache.setObject(this.cacheKey(ContextType.Global), global);
@@ -219,18 +227,44 @@ export class ContextsManager {
       });
     }
 
-    if (context === ContextType.Config) {
-      await this.broker.send<Prismeai.UpdatedContexts['payload']>(
+    const updates = this.opLogs.filter(
+      (cur) =>
+        cur.context === ContextType.Config || cur.context === ContextType.Run
+    );
+
+    this.opLogs = [];
+    if (updates.length) {
+      const updatedEvent = await this.broker.send<
+        Prismeai.UpdatedContexts['payload']
+      >(
         EventType.UpdatedContexts,
         {
-          contexts: {
-            config,
-          },
+          updates,
         },
         undefined,
         // Current broker instance topic is normally emit's one, so we have to switch to native events topic :
         EventType.UpdatedContexts
       );
+      this.alreadyProcessedUpdateIds.add(updatedEvent.id);
+    }
+  }
+
+  public async applyUpdateOpLogs(
+    updates: ContextUpdateOpLog[],
+    updateId: string
+  ) {
+    if (this.alreadyProcessedUpdateIds.has(updateId)) {
+      return;
+    }
+    this.alreadyProcessedUpdateIds.add(updateId);
+    for (const update of updates) {
+      const path =
+        update.type === 'push' ? update.fullPath + '[]' : update.fullPath;
+      if (update.type === 'set' || update.type === 'push') {
+        await this.set(path, update.value, undefined, false);
+      } else if (update.type === 'delete') {
+        await this.set(path, false);
+      }
     }
   }
 
@@ -362,10 +396,14 @@ export class ContextsManager {
       parent,
       lastKey,
       context,
+      subPath:
+        splittedPath.length > 1 && context !== ContextType.Local
+          ? splittedPath.slice(1).join('.')
+          : `${splittedPath[0]}`,
     };
   }
 
-  async set(path: string, value: any, ttl?: number) {
+  async set(path: string, value: any, ttl?: number, persist = true) {
     const arrayPush = path.endsWith('[]');
     if (arrayPush) {
       path = path.slice(0, -2);
@@ -374,8 +412,16 @@ export class ContextsManager {
     const splittedPath = parseVariableName(path);
 
     try {
-      const { parent, lastKey, context } =
+      const { parent, lastKey, context, subPath } =
         this.findParentVariableFor(splittedPath);
+      const opLog: ContextUpdateOpLog = {
+        type: arrayPush ? 'push' : 'set',
+        path: subPath,
+        fullPath: path,
+        context,
+        value,
+      };
+
       if (arrayPush) {
         if (!Array.isArray(parent[lastKey])) {
           parent[lastKey] = [];
@@ -400,7 +446,10 @@ export class ContextsManager {
         }
       }
       // Persist
-      await this.save(context, ttl);
+      if (persist) {
+        this.opLogs.push(opLog);
+        await this.save(context, ttl);
+      }
     } catch (error) {
       this.logger.error(error);
       throw new InvalidSetInstructionError('Invalid set instruction', {
@@ -410,13 +459,21 @@ export class ContextsManager {
     }
   }
 
-  async delete(path: string) {
+  async delete(path: string, persist = true) {
     const splittedPath = parseVariableName(path);
 
-    const { parent, lastKey, context } =
+    const { parent, lastKey, context, subPath } =
       this.findParentVariableFor(splittedPath);
     delete parent[lastKey];
-    await this.save(context);
+    if (persist) {
+      await this.save(context);
+      this.opLogs.push({
+        type: 'delete',
+        path: subPath,
+        fullPath: path,
+        context,
+      });
+    }
   }
 
   get publicContexts(): PublicContexts {
