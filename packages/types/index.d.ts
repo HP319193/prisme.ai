@@ -1585,7 +1585,7 @@ declare namespace Prismeai {
             updates: {
                 type: "set" | "push" | "delete";
                 path: string;
-                fullPath?: string;
+                fullPath: string;
                 context: string;
                 value?: any;
             }[];

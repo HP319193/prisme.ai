@@ -3995,6 +3995,7 @@ components:
                 required:
                   - type
                   - path
+                  - fullPath
                   - context
                 properties:
                   type:

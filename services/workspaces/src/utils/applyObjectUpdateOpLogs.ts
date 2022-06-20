@@ -1,5 +1,3 @@
-import { extractObjectsByPath } from './extractObjectsByPath';
-
 export type ContextUpdateOpLog =
   Prismeai.UpdatedContexts['payload']['updates'][0];
 
