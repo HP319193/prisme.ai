@@ -213,6 +213,9 @@ Here is the source code for an automation leveraging every supported graphical i
       someRawJSON:
         type: object
         additionalProperties: true          
+      someToken:
+        type: string        
+        secret: true
     do:
       ...
 ```  
@@ -238,7 +241,7 @@ When calling this automation, this form will show up :
           custom: JSON
 ```
 
-
+The last **someToken** argument defined with **secret: true** does not differ visually, but is automatically redacted from native runtime events (i.e runtime.automations.executed, runtime.contexts.updated, ...). This avoids accidental leaks of sensitive information through native Prisme.ai events.
 
 ## Output  
 Native instructions & automations can return some data that will be :   
@@ -316,6 +319,9 @@ In case the automation is triggered from a webhook without any session cookie / 
   </table>
 </center>
 
+When an automation [sets](../instructions#set) **user.id** field, **user** and **session** contexts are automatically reloaded with values from the targeted user contexts.  
+This allows unauthenticated webhooks to retrieve persisted user / sessions contexts identified by custom webhook fields (i.e a facebook userId, ...).
+
 #### Run
 <center>
   <table>
@@ -349,3 +355,5 @@ In case the automation is triggered from a webhook without any session cookie / 
     </tr>           
   </table>
 </center>
+
+Custom **run** variables (defined through **set** instruction) are automatically synchronized between concurrent automations running for the same correlationId (i.e cascading automations triggered by events)
