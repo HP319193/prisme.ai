@@ -182,11 +182,13 @@ class AppInstances {
     if (typeof workspaceId === 'string') {
       await this.workspaces.save(workspaceId, updatedWorkspace);
     }
-
     this.broker.send<Prismeai.ConfiguredAppInstance['payload']>(
       EventType.ConfiguredApp,
       {
-        appInstance: { ...appInstance, oldConfig: currentAppInstance.config },
+        appInstance: {
+          ...appInstance,
+          oldConfig: currentAppInstance.config || {},
+        },
         slug: renamedSlug || slug,
         oldSlug,
       },

@@ -62,13 +62,8 @@ export interface Contexts {
   config: object;
 }
 
-export interface ContextUpdateOpLog {
-  context: ContextType;
-  type: 'set' | 'push' | 'delete';
-  path: string;
-  fullPath: string;
-  value?: any;
-}
+export type ContextUpdateOpLog =
+  Prismeai.UpdatedContexts['payload']['updates'][0];
 
 export enum ContextType {
   Run = 'run',
