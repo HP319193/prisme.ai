@@ -1,6 +1,6 @@
 import { Story } from '@storybook/react';
 import { useState } from 'react';
-import { BlockProvider } from '@prisme.ai/blocks';
+import { BlockProvider } from '../Provider';
 import Cards from './Cards';
 
 export default {

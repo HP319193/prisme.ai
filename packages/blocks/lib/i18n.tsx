@@ -69,7 +69,7 @@ type i18nHOC<T> = (
   Component: JSXElementConstructor<T>
 ) => (props: T) => ReactElement<T>;
 
-export const withI18nProvider: i18nHOC<{ edit: boolean }> = (Component) => {
+export const withI18nProvider: i18nHOC<{ edit?: boolean }> = (Component) => {
   return (props) => (
     <I18nextProvider i18n={i18n}>
       <Component {...props} />

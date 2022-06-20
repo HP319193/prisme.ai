@@ -580,6 +580,14 @@
             "description": "La configuración de su Block. Si no se muestra nada, añada una propiedad estática `schema` a su componente React."
           }
         }
+      },
+      "richtext": {
+        "settings": {
+          "content": {
+            "label": "Contenido en formato HTML o Markdown",
+            "description": "Aquí puedes mostrar cualquier contenido rico usando HTML o Markdown. Incluso se pueden mezclar los dos."
+          }
+        }
       }
     }
   },

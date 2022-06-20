@@ -19,7 +19,6 @@ COPY services/events/package* /www/services/events/
 
 # Packages
 COPY packages/ /www/packages
-RUN rm -rf packages/design-system packages/sdk
 
 RUN BUILD_PACKAGES=0 npm ci
 
