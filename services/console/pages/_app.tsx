@@ -61,6 +61,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             <Head>
               <title>{t('main.title')}</title>
               <meta name="description" content={t('main.description')} />
+              <meta
+                name="viewport"
+                content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+              />
               <link rel="icon" href="/favicon.png" />
             </Head>
             <Sentry />
@@ -83,6 +87,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
               >
                 <Head>
                   <title>{t('main.title')}</title>
+                  <meta
+                    name="viewport"
+                    content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+                  />
                   <meta name="description" content={t('main.description')} />
                   <link rel="icon" href="/favicon.png" />
                 </Head>
