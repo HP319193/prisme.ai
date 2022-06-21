@@ -1,15 +1,21 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface PagePreviewProps {
   page: Prismeai.Page;
+  visible: boolean;
 }
 
-export const PagePreview = ({ page }: PagePreviewProps) => {
+export const PagePreview = ({ page, visible }: PagePreviewProps) => {
   const ref = useRef<HTMLIFrameElement>(null);
+  const [unmounted, setUnmounted] = useState(true);
+
+  useEffect(() => {
+    if (!visible) return;
+    setUnmounted(false);
+  }, [visible]);
 
   useEffect(() => {
     if (!ref.current || !ref.current.contentWindow) return;
-
     try {
       ref.current.contentWindow.postMessage(
         { type: 'updatePagePreview', page: JSON.parse(JSON.stringify(page)) },
@@ -17,6 +23,8 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
       );
     } catch {}
   }, [page]);
+
+  if (unmounted) return null;
 
   return (
     <iframe

@@ -25,6 +25,7 @@ import { useField } from 'react-final-form';
 import { CodeEditor } from '../components/CodeEditor/lazy';
 import PagePreview from '../components/PagePreview';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
+import { useApps } from '../components/AppsProvider';
 
 const CSSEditor = ({
   name,
@@ -177,7 +178,9 @@ export const Page = () => {
               {...props}
               sectionIds={
                 page
-                  ? (page.blocks || []).flatMap(
+                  ? (
+                      page.blocks || []
+                    ).flatMap(
                       ({ config: { sectionId, name = sectionId } = {} }) =>
                         sectionId ? { id: sectionId, name } : []
                     )
@@ -194,9 +197,10 @@ export const Page = () => {
   const cleanValue = useCallback(
     (value: Prismeai.Page) => ({
       ...value,
-      blocks: (
-        (value.blocks || []) as PageBuilderContext['page']['blocks']
-      ).map(({ key, ...block }) => block),
+      blocks: ((value.blocks ||
+        []) as PageBuilderContext['page']['blocks']).map(
+        ({ key, ...block }) => block
+      ),
       id: page ? page.id : '',
     }),
     [page]
@@ -286,6 +290,51 @@ export const Page = () => {
     [cleanValue, savePage, t, value, workspace.id]
   );
 
+  const { appInstances } = useApps();
+  const blocks: PageBuilderContext['blocks'] = useMemo(() => {
+    return [
+      {
+        slug: '',
+        appName: '',
+        blocks: Object.keys(workspace.blocks || {}).map((slug) => ({
+          slug,
+          ...(workspace.blocks || {})[slug],
+        })),
+      },
+      ...(appInstances.get(workspace.id) || []).map(
+        ({ slug = '', appName = '', blocks = [] }) => ({
+          slug,
+          appName,
+          blocks: blocks.map(
+            ({ slug, description = slug, name = slug, url = '', edit }) => ({
+              slug,
+              name,
+              description,
+              url,
+              edit,
+            })
+          ),
+        })
+      ),
+    ];
+  }, [appInstances, workspace.id, workspace.blocks]);
+
+  const detailedPage = useCallback(
+    (page: Prismeai.Page) => {
+      const detailedBlocks = blocks.flatMap(({ slug, blocks }) =>
+        blocks.map((block) => ({ ...block, slug: `${slug}.${block.slug}` }))
+      );
+      return {
+        ...page,
+        blocks: page.blocks.map((block) => ({
+          ...block,
+          url: detailedBlocks.find(({ slug }) => slug === block.name)?.url,
+        })),
+      };
+    },
+    [blocks]
+  );
+
   if (!page) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
   }
@@ -343,9 +392,12 @@ export const Page = () => {
           ${displayPreview ? '' : '-translate-x-[110%]'}
         `}
         >
-          <PagePreview page={cleanValue(value)} />
+          <PagePreview
+            page={detailedPage(cleanValue(value))}
+            visible={displayPreview}
+          />
         </div>
-        <PageBuilder value={value} onChange={setValue} />
+        <PageBuilder value={value} onChange={setValue} blocks={blocks} />
       </div>
     </>
   );
