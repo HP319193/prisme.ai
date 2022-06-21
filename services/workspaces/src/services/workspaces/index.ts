@@ -25,7 +25,7 @@ export async function syncWorkspacesWithConfigContexts(
       const updates = event.payload?.updates.filter(
         (cur) => cur.context === 'config'
       );
-      if (!workspaceId || !updates) {
+      if (!workspaceId || !updates || !updates.length) {
         return true;
       }
 
