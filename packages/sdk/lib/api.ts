@@ -18,7 +18,7 @@ export class Api extends Fetcher {
 
   async me() {
     const me = await this.get('/me');
-    this.sessionId = me.headers['x-prismeai-session-id'];
+    this.sessionId = me.sessionId;
     return me;
   }
 
