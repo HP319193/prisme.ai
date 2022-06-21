@@ -15,8 +15,9 @@ import { Schema } from '@prisme.ai/design-system';
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
   onChange: (value: Prismeai.Page) => void;
+  blocks: PageBuilderContext['blocks'];
 }
-export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
+export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
   const { workspace } = useWorkspace();
   const { appInstances } = useApps();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
@@ -37,34 +38,6 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     await setBlockEditing(undefined);
     await setPanelIsOpen(false);
   }, []);
-
-  const blocks: PageBuilderContext['blocks'] = useMemo(() => {
-    return [
-      {
-        slug: '',
-        appName: '',
-        blocks: Object.keys(workspace.blocks || {}).map((slug) => ({
-          slug,
-          ...(workspace.blocks || {})[slug],
-        })),
-      },
-      ...(appInstances.get(workspace.id) || []).map(
-        ({ slug = '', appName = '', blocks = [] }) => ({
-          slug,
-          appName,
-          blocks: blocks.map(
-            ({ slug, description = slug, name = slug, url = '', edit }) => ({
-              slug,
-              name,
-              description,
-              url,
-              edit,
-            })
-          ),
-        })
-      ),
-    ];
-  }, [appInstances, workspace.id, workspace.blocks]);
 
   // Generate keys
   (value.blocks || []).forEach((block: { key?: string }) => {
