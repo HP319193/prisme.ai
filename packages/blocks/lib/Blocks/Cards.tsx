@@ -204,17 +204,17 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
   );
 
   return (
-    <div>
+    <div className={tw`flex flex-col w-full`}>
       <div className={tw`pt-8 pl-8`}>
         {config.title && <BlockTitle value={config.title} />}
       </div>
-      <div className={tw`relative p-4 !pt-0`}>
+      <div className={tw`relative !pt-0 w-full`}>
         <div ref={container} className={styles.container}>
           {(cards as Card[]).map(
             ({ title, description, cover, content = [] }, index) => (
               <div
                 key={index}
-                className={tw`flex flex-col snap-start my-4 pl-[10px] group w-[325px]`}
+                className={tw`flex flex-col snap-start my-6 pl-[10px] group w-[325px]`}
                 style={{
                   flex: '0 0 325px',
                 }}
@@ -237,7 +237,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                       rounded-[20px] p-4 border-[1px] border-gray-200
                       bg-white
                       transition-transform
-                      group-hover:translate-y-3 group-hover:scale-105 shadow-sm group-hover:shadow-lg
+                      hover:translate-y-3 hover:scale-105 shadow-sm hover:shadow-lg
                       `}
                   >
                     <div
