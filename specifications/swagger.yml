@@ -3605,7 +3605,6 @@ components:
           type: object
           required:
             - config
-            - oldConfig
           properties:
             config:
               $ref: '#/components/schemas/Config'
