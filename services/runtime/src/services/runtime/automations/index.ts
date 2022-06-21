@@ -17,7 +17,8 @@ export async function executeAutomation(
   await ctx.securityChecks();
   const startedAt = Date.now();
 
-  let breakThisAutomation: false | Break = false;
+  let breakThisAutomation: false | Break = false,
+    breakRaised = false;
   try {
     await runInstructions(automation.do, { workspace, ctx, logger, broker });
   } catch (error) {
@@ -28,6 +29,7 @@ export async function executeAutomation(
       };
       throw error;
     }
+    breakRaised = true;
     if (error.scope === 'all' && !rootAutomation) {
       breakThisAutomation = error;
     }
@@ -42,7 +44,7 @@ export async function executeAutomation(
       output,
       duration: Date.now() - startedAt,
       trigger: ctx.trigger!,
-      break: !!breakThisAutomation,
+      break: breakRaised,
     },
     {},
     EventType.ExecutedAutomation
