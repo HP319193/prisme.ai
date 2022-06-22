@@ -1,0 +1,8 @@
+[
+  {
+    "topics": ["gateway.login.succeeded"],
+    "fields": ["payload.session.token"],
+    "action": "redact",
+    "id": "redactUserTokens"
+  }
+]

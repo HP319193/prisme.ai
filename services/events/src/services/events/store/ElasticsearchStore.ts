@@ -3,6 +3,7 @@ import { StoreDriverOptions } from '.';
 import { EVENTS_RETENTION_DAYS } from '../../../../config';
 import { InvalidFiltersError, ObjectNotFoundError } from '../../../errors';
 import { logger } from '../../../logger';
+import { preprocess } from './preprocess';
 import { EventsStore, SearchOptions } from './types';
 
 export class ElasticsearchStore implements EventsStore {
@@ -345,6 +346,10 @@ export class ElasticsearchStore implements EventsStore {
         a.source.workspaceId!! > b.source.workspaceId!! ? 1 : -1
       )
       .flatMap((cur) => {
+        const preprocessedEvent = preprocess(cur);
+        if (!preprocessedEvent) {
+          return [];
+        }
         return [
           {
             // Automatically initialize data stream with "create" action
@@ -357,7 +362,7 @@ export class ElasticsearchStore implements EventsStore {
           },
           {
             '@timestamp': cur.createdAt,
-            ...cur,
+            ...preprocessedEvent,
           },
         ];
       });
