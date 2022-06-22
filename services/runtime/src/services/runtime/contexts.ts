@@ -2,7 +2,6 @@ import { Broker } from '@prisme.ai/broker';
 import _ from 'lodash';
 import {
   CONTEXT_RUN_EXPIRE_TIME,
-  CONTEXT_SESSION_EXPIRE_TIME,
   MAXIMUM_SUCCESSIVE_CALLS,
 } from '../../../config';
 import { CacheDriver } from '../../cache';
@@ -38,6 +37,13 @@ export interface Trigger {
   type: 'event' | 'endpoint' | 'automation';
   value: string;
   id?: string;
+}
+
+export interface PrismeaiSession {
+  userId: string;
+  sessionId: string;
+  token?: string;
+  expiresIn?: number;
 }
 
 export interface GlobalContext {
@@ -86,6 +92,7 @@ export const UserAccessibleContexts: ContextType[] = [
 export class ContextsManager {
   private workspaceId: string;
   private userId?: string;
+  public session?: PrismeaiSession;
   private correlationId: string;
   private cache: CacheDriver;
   private contexts: Contexts;
@@ -105,13 +112,14 @@ export class ContextsManager {
 
   constructor(
     workspaceId: string,
-    userId: string,
+    session: PrismeaiSession,
     correlationId: string,
     cache: CacheDriver,
     broker: Broker
   ) {
     this.workspaceId = workspaceId;
-    this.userId = userId;
+    this.userId = session.userId;
+    this.session = session;
     this.correlationId = correlationId;
     this.cache = cache;
     this.depth = 0;
@@ -121,7 +129,7 @@ export class ContextsManager {
         workspaceId,
       },
       user: {
-        id: userId,
+        id: session.userId,
       },
       session: {},
       config: {},
@@ -131,7 +139,7 @@ export class ContextsManager {
       },
     };
     this.logger = logger.child({
-      userId,
+      userId: session.userId,
       workspaceId,
       correlationId,
     });
@@ -223,7 +231,7 @@ export class ContextsManager {
     }
     if (!context || context === ContextType.Session) {
       await this.cache.setObject(this.cacheKey(ContextType.Session), session, {
-        ttl: CONTEXT_SESSION_EXPIRE_TIME,
+        ttl: this.session?.expiresIn || 60 * 15,
       });
     }
 
@@ -279,7 +287,8 @@ export class ContextsManager {
       return `contexts:${this.workspaceId}:run:${this.correlationId}`;
     }
     if (context === ContextType.Session) {
-      const sessionId = this.userId || this.correlationId;
+      const sessionId =
+        this.session?.sessionId || this.userId || this.correlationId;
       return `contexts:${this.workspaceId}:session:${sessionId}`;
     }
     throw new Error(`Unknown context '${context} inside context store'`);
@@ -439,6 +448,7 @@ export class ContextsManager {
         ) {
           this.userId = value;
           this.contexts.user = { id: value };
+          this.session = { userId: value, sessionId: value };
           this.contexts.session = {};
           await this.fetch([ContextType.User, ContextType.Session]);
           this.broker.parentSource.userId = value;

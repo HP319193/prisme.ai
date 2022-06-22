@@ -1,16 +1,20 @@
 import nodeFetch, { RequestInit, Response } from 'node-fetch';
 import { ContextsManager } from '../../contexts';
-import { CORRELATION_ID_HEADER } from '../../../../../config';
+import { CORRELATION_ID_HEADER, PUBLIC_API_URL } from '../../../../../config';
 import { URLSearchParams } from 'url';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
+
+const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces'].map(
+  (cur) => `${PUBLIC_API_URL}${cur}`
+);
 
 export async function fetch(
   fetch: Prismeai.Fetch['fetch'],
   ctx: ContextsManager,
   broker: Broker
 ) {
-  let { url, body, headers, method } = fetch;
+  let { url, body, headers = {}, method } = fetch;
   const lowercasedHeaders: Record<string, string> = Object.entries(
     headers || {}
   )
@@ -28,6 +32,14 @@ export async function fetch(
       ...headers,
       'content-type': 'application/json',
     };
+  }
+
+  if (
+    AUTHENTICATE_PRISMEAI_URLS.some((cur) => url.startsWith(cur)) &&
+    !('x-prismeai-token' in lowercasedHeaders) &&
+    ctx?.session?.token
+  ) {
+    headers['x-prismeai-token'] = ctx?.session?.token;
   }
 
   const params: RequestInit = {

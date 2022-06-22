@@ -14,6 +14,8 @@ import { Logger, logger } from '../logger';
 
 export enum EventType {
   Error = 'error',
+  SuccededLogin = 'gateway.login.succeeded',
+
   ExecutedAutomation = 'runtime.automations.executed',
   TriggeredWebhook = 'runtime.webhooks.triggered',
   UpdatedContexts = 'runtime.contexts.updated',
