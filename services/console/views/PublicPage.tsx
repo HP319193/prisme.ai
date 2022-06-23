@@ -116,9 +116,9 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
               name={name}
               workspaceId={`${currentPage.workspaceId}`}
               appInstance={appInstance}
-              blockIndex={index}
               page={currentPage}
               events={events}
+              config={blocksConfigs[index]}
             />
           </div>
         ))}
