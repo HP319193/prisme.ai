@@ -75,6 +75,7 @@ it('should build a select from config', () => {
       },
     })
   ).toEqual([
+    { label: '', value: '' },
     {
       label: 'a',
       value: 'a',
@@ -108,6 +109,7 @@ it('should build a select from pageSections', () => {
       },
     })
   ).toEqual([
+    { label: '', value: '' },
     {
       label: 'foo',
       value: 'foo',
@@ -145,6 +147,7 @@ it('should build a select from automations', () => {
     },
   });
   expect(options).toEqual([
+    { label: '', value: '' },
     {
       label: expect.any(Object),
       value: 'foo',
@@ -188,7 +191,9 @@ it('should build a select from endpoint automations ', () => {
       filter: 'endpoint',
     },
   });
+
   expect(options).toEqual([
+    { label: '', value: '' },
     {
       label: expect.any(Object),
       value: 'do-bar',
@@ -227,6 +232,7 @@ it('should build a select from pages', () => {
     },
   });
   expect(options).toEqual([
+    { label: '', value: '' },
     {
       label: expect.any(Object),
       value: '123',

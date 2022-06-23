@@ -2,6 +2,7 @@
 
 exports[`should build a select from automations 1`] = `
 Array [
+  "",
   <div
     className="flex flex-col"
   >
@@ -28,22 +29,26 @@ Array [
 `;
 
 exports[`should build a select from endpoint automations  1`] = `
-<div
-  className="flex flex-col"
->
-  <div>
-    Bar
-  </div>
+Array [
+  "",
   <div
-    className="text-neutral-500 text-xs"
+    className="flex flex-col"
   >
-    Bar automation
-  </div>
-</div>
+    <div>
+      Bar
+    </div>
+    <div
+      className="text-neutral-500 text-xs"
+    >
+      Bar automation
+    </div>
+  </div>,
+]
 `;
 
 exports[`should build a select from pages 1`] = `
 Array [
+  "",
   <div
     className="flex flex-col"
   >
