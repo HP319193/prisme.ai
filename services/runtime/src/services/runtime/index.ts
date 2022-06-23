@@ -88,13 +88,19 @@ export default class Runtime {
   }
 
   async getSession(sessionId: string) {
-    const session = this.sessionsLRU.get(sessionId);
-    if (session) {
-      return session;
+    const session =
+      this.sessionsLRU.get(sessionId) ||
+      ((await this.cache.getObject(
+        `runtime:session:${sessionId}`
+      )) as PrismeaiSession);
+    if (session && session.expires) {
+      const expiresIn =
+        (new Date(session.expires).getTime() - Date.now()) / 1000;
+      if (expiresIn > 0) {
+        session.expiresIn = Math.round(expiresIn);
+      }
     }
-    return (await this.cache.getObject(
-      `runtime:session:${sessionId}`
-    )) as PrismeaiSession;
+    return session;
   }
 
   async start() {
@@ -124,6 +130,7 @@ export default class Runtime {
           token,
           id: sessionId,
           expiresIn = 30 * 24 * 60 * 60,
+          expires,
         } = event?.payload?.session || {};
         const userId = event?.payload?.id;
         if (!token || !userId || !sessionId) {
@@ -134,6 +141,7 @@ export default class Runtime {
           sessionId,
           token,
           expiresIn,
+          expires,
         });
         return true;
       }

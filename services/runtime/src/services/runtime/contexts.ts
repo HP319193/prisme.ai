@@ -44,6 +44,7 @@ export interface PrismeaiSession {
   sessionId: string;
   token?: string;
   expiresIn?: number;
+  expires?: string;
 }
 
 export interface GlobalContext {
