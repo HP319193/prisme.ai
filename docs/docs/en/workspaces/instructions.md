@@ -130,3 +130,39 @@ List of event candidates with the following parameters :
         source.correlationId: '{{run.correlationId}}'
 ```
 * **cancelTriggers** : If true, cancels the execution of the usual triggers for this event. Other **waits** still receive this event.  
+
+**Waiting for an event triggered automation to finish**  
+
+In addition to every regular events which might be directly listened by automations, **wait** instruction can also waits for **runtime.automations.executed** event.  
+This native events tells when an automation finishes executing, with its source trigger & output.  
+Waiting for this allows you to emit an event, than hang until whichever automation that received it finishes processing :  
+
+```yaml
+  AutomationA:
+    name: AutomationA
+    when:
+      endpoint: true
+    output: '{{output}}'
+    do:
+      - emit:
+          event: 'someEvent'
+          output: emittedIntentEvent
+      - wait:
+          oneOf:
+            - event: runtime.automations.executed
+              # Filters specifically for our emited event
+              filters:
+                payload.trigger.id: '{{emittedIntentEvent.id}}'
+          output: event
+      - set:
+          name: output
+          value: '{{event.payload.output}}'
+
+  AutomationB:
+    name: AutomationB
+    when:
+      events:
+        - someEvent
+    output: 'someOutput'
+    do: []
+```
