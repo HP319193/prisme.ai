@@ -225,6 +225,34 @@ WithOneOfWithArray.args = {
   },
 };
 
+export const WithOneOfWithMergedProperties = Template.bind({});
+WithOneOfWithMergedProperties.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      label: {
+        type: 'string',
+      },
+    },
+    oneOf: [
+      {
+        properties: {
+          url: {
+            type: 'string',
+          },
+        },
+      },
+      {
+        properties: {
+          event: {
+            type: 'string',
+          },
+        },
+      },
+    ],
+  },
+};
+
 export const GridLayout = Template.bind({});
 GridLayout.args = {
   schema: {
