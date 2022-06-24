@@ -13,5 +13,4 @@ EXPOSE 3003
 ENV OPENAPI_FILEPATH /www/specifications/swagger.yml
 ENV NODE_ENV production
 
-
 CMD [ "node", "--abort-on-uncaught-exception", "services/workspaces/dist/index.js"]

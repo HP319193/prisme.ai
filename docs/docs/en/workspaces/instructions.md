@@ -12,7 +12,7 @@ No parameter
 **Children nodes :**  
 Every conditions will be represented as parallel branches on your graph, each beginning with a blue box allowing you to edit the condition itself, followed by the instruction that you will add for that specific condition.  
 
-A **default** branch is automatically added to configure what instructions to execute when no other condition matches.  
+A **default** branch is automatically added to configure what instructions to execute when no other condition matches.   
 
 [More details on Conditions syntax](../conditions)
 
