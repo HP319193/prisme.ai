@@ -32,8 +32,8 @@ export const FieldArray = (props: FieldProps) => {
           </label>
           <FFFieldArray name={props.name}>
             {({ fields }) => (
-              <div>
-                <div className={asRow ? 'flex flex-row flex-wrap' : ''}>
+              <>
+                <div className={asRow ? 'flex flex-row flex-wrap' : 'flex-1'}>
                   {fields.map((field, index) => (
                     <div
                       key={field}
@@ -41,7 +41,7 @@ export const FieldArray = (props: FieldProps) => {
                         asRow ? 'min-w-[30%]' : ''
                       }`}
                     >
-                      <div className={asRow ? 'min-w-full' : ''}>
+                      <div className={asRow ? 'min-w-full' : 'flex-1'}>
                         <Field schema={items} name={field} />
                         <Button
                           onClick={() => fields.remove(index)}
@@ -63,7 +63,7 @@ export const FieldArray = (props: FieldProps) => {
                 >
                   {locales.addItem || 'Add item'}
                 </Button>
-              </div>
+              </>
             )}
           </FFFieldArray>
         </components.FieldContainer>
