@@ -160,6 +160,11 @@ WithOneOfWithValues.args = {
     title: 'Type',
     description:
       'Choose a type, it will set the type value and display a specific form',
+    properties: {
+      value: {
+        type: 'string',
+      },
+    },
     oneOf: [
       {
         properties: {
@@ -248,6 +253,50 @@ WithOneOfWithMergedProperties.args = {
             type: 'string',
           },
         },
+      },
+    ],
+  },
+};
+
+export const WithNestedOneOf = Template.bind({});
+WithNestedOneOf.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+      },
+    },
+    oneOf: [
+      {
+        properties: {
+          bar: {
+            type: 'string',
+          },
+        },
+      },
+      {
+        properties: {
+          bar: {
+            type: 'boolean',
+          },
+        },
+        oneOf: [
+          {
+            properties: {
+              babar: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              fofoo: {
+                type: 'string',
+              },
+            },
+          },
+        ],
       },
     ],
   },
