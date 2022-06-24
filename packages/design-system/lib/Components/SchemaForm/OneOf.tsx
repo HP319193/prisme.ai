@@ -68,8 +68,10 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
     const { index = 0 } = uiOptionsOneOf
       ? uiOptionsOneOf.oneOf.options[+selected]
       : { index: +selected };
+    const cleanedSchema = { ...schema };
+    delete cleanedSchema.oneOf;
     const partialSchema = oneOf[index] || {};
-    const childSchema: Schema = { ...schema, ...partialSchema };
+    const childSchema: Schema = { ...cleanedSchema, ...partialSchema };
 
     if (!partialSchema.title) {
       delete childSchema.title;
@@ -84,7 +86,6 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
       };
     }
 
-    delete childSchema.oneOf;
     return childSchema;
   }, [selected]);
 

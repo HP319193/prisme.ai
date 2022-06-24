@@ -258,6 +258,50 @@ WithOneOfWithMergedProperties.args = {
   },
 };
 
+export const WithNestedOneOf = Template.bind({});
+WithNestedOneOf.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+      },
+    },
+    oneOf: [
+      {
+        properties: {
+          bar: {
+            type: 'string',
+          },
+        },
+      },
+      {
+        properties: {
+          bar: {
+            type: 'boolean',
+          },
+        },
+        oneOf: [
+          {
+            properties: {
+              babar: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              fofoo: {
+                type: 'string',
+              },
+            },
+          },
+        ],
+      },
+    ],
+  },
+};
+
 export const GridLayout = Template.bind({});
 GridLayout.args = {
   schema: {
