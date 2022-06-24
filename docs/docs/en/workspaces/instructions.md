@@ -96,11 +96,25 @@ Sends an HTTP request to call external web services
 * **headers** : Request headers  
 * **query** : Query string (as an object)
 * **body** : Request body (might be a JSON object, a string, a number, ...)  
+* **multipart** : List of field definitions for multipart/form-data requests
 * **output** : Name of the variable that will store the response body  
 
 When receiving 4xx or 5xx HTTP errors, a native event `runtime.fetch.failed` is automatically emitted, including both request & response contents.  
 
 If **Content-Type** header is set to 'application/x-www-form-urlencoded', the **body** will be automatically transformed as an urlencoded body.  
+
+**multipart**  
+
+```
+- fetch:
+    url: ..
+    multipart:
+      - fieldname: file
+        value: someBase64EncodedFile
+        flename: filename.png # Required if value is a file 
+      - fieldname: metadata
+        value: some random metadata
+```
 
 ### Emit
 Emit a new event.  

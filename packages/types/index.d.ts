@@ -1192,6 +1192,20 @@ declare namespace Prismeai {
                  */
                 body?: AnyValue;
                 /**
+                 * Sends a multipart/form-data HTTP request
+                 */
+                multipart?: {
+                    fieldname: string;
+                    /**
+                     * Must be a string. Raw files must be given as base64
+                     */
+                    value: string;
+                    /**
+                     * Filename is required when value is a base64 encoded file
+                     */
+                    filename?: string;
+                }[];
+                /**
                  * Name of the variable which will hold the result
                  */
                 output?: string;
@@ -1236,6 +1250,20 @@ declare namespace Prismeai {
              * HTTP request body
              */
             body?: AnyValue;
+            /**
+             * Sends a multipart/form-data HTTP request
+             */
+            multipart?: {
+                fieldname: string;
+                /**
+                 * Must be a string. Raw files must be given as base64
+                 */
+                value: string;
+                /**
+                 * Filename is required when value is a base64 encoded file
+                 */
+                filename?: string;
+            }[];
             /**
              * Name of the variable which will hold the result
              */

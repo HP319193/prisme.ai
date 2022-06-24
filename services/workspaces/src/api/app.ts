@@ -24,6 +24,7 @@ import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../eda';
 import { PrismeError } from '../errors';
 import FileStorage from '../services/FileStorage';
+import { UPLOADS_MAX_SIZE } from '../../config';
 
 export function initAPI(
   accessManager: AccessManager,
@@ -42,8 +43,8 @@ export function initAPI(
   /**
    * Morgan logger
    */
-  app.use(bodyParser.json());
-  app.use(express.json());
+  app.use(bodyParser.json({ limit: UPLOADS_MAX_SIZE }));
+  app.use(express.json({}));
   app.use(express.urlencoded({ extended: false }));
 
   /**

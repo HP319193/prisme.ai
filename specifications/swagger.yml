@@ -3034,6 +3034,23 @@ components:
             body:
               description: HTTP request body
               $ref: '#/components/schemas/AnyValue'
+            multipart:
+              description: Sends a multipart/form-data HTTP request
+              type: array
+              items:
+                type: object
+                required:
+                  - fieldname
+                  - value
+                properties:
+                  fieldname:
+                    type: string
+                  value:
+                    type: string
+                    description: Must be a string. Raw files must be given as base64
+                  filename:
+                    type: string
+                    description: "Filename is required when value is a base64 encoded file"
             output:
               type: string
               description: Name of the variable which will hold the result

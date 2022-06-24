@@ -1,4 +1,5 @@
 import { URL, URLSearchParams } from 'url';
+import FormData from 'form-data';
 import nodeFetch, { RequestInit, Response } from 'node-fetch';
 import { ContextsManager } from '../../contexts';
 import { CORRELATION_ID_HEADER, PUBLIC_API_URL } from '../../../../../config';
@@ -9,12 +10,15 @@ const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces'].map(
   (cur) => `${PUBLIC_API_URL}${cur}`
 );
 
+const base64Regex =
+  /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+
 export async function fetch(
   fetch: Prismeai.Fetch['fetch'],
   ctx: ContextsManager,
   broker: Broker
 ) {
-  let { url, body, headers = {}, method, query } = fetch;
+  let { url, body, headers = {}, method, query, multipart } = fetch;
   const lowercasedHeaders: Record<string, string> = Object.entries(
     headers || {}
   )
@@ -49,7 +53,19 @@ export async function fetch(
     },
     method: method,
   };
-  if (body && (method || 'get')?.toLowerCase() !== 'get') {
+
+  if (multipart) {
+    delete (params.headers as any)['content-type'];
+    params.body = new FormData();
+    for (const { fieldname, value, ...opts } of multipart) {
+      const isBase64 = base64Regex.test(value as any);
+      (params.body as FormData).append(
+        fieldname,
+        isBase64 ? Buffer.from(value as any, 'base64') : value,
+        opts
+      );
+    }
+  } else if (body && (method || 'get')?.toLowerCase() !== 'get') {
     if (
       lowercasedHeaders['content-type'] &&
       (lowercasedHeaders['content-type'] || '').includes(
@@ -84,7 +100,8 @@ async function getResponseBody(response: Response) {
   if (
     (response.headers.get('Content-Type') || '').includes('application/json')
   ) {
-    return await response.json();
+    const json = await response.json();
+    return json;
   }
   return await response.text();
 }
