@@ -329,12 +329,6 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Run context expiration time in seconds.</td>
     <td>60</td>
   </tr>       
-  <tr>
-    <td>CONTEXT_SESSION_EXPIRE_TIME</td>
-    <td>runtime</td>
-    <td>Session context expiration time in seconds.</td>
-    <td>900 (15 minutes)</td>
-  </tr>       
 
   <tr>
     <td>PUBLIC_API_URL</td>

@@ -1,4 +1,6 @@
 import { Broker, PrismeEvent } from '@prisme.ai/broker';
+//@ts-ignore
+import LRU from 'lru-cache';
 import { Logger } from '../../logger';
 import {
   DetailedAutomation,
@@ -7,7 +9,12 @@ import {
   Workspaces,
 } from '../workspaces';
 import { CacheDriver } from '../../cache';
-import { ContextsManager, ContextType, ContextUpdateOpLog } from './contexts';
+import {
+  ContextsManager,
+  ContextType,
+  ContextUpdateOpLog,
+  PrismeaiSession,
+} from './contexts';
 import { ObjectNotFoundError } from '../../errors';
 import { EventType } from '../../eda';
 import { executeAutomation } from './automations';
@@ -54,6 +61,7 @@ export default class Runtime {
   private broker: Broker;
   private workspaces: Workspaces;
   private cache: CacheDriver;
+  private sessionsLRU: LRU<string, PrismeaiSession>;
 
   private pendingWaits: Record<EventName, PendingWait[]>;
   private contexts: Record<string, ContextsManager[]>;
@@ -64,6 +72,36 @@ export default class Runtime {
     this.cache = cache;
     this.pendingWaits = {};
     this.contexts = {};
+    this.sessionsLRU = new LRU({
+      max: 2000,
+    });
+  }
+
+  async registerSession(session: PrismeaiSession) {
+    this.sessionsLRU.set(session.sessionId, session);
+    await this.cache.setObject(
+      `runtime:session:${session.sessionId}`,
+      session,
+      {
+        ttl: session.expiresIn,
+      }
+    );
+  }
+
+  async getSession(sessionId: string) {
+    const session =
+      this.sessionsLRU.get(sessionId) ||
+      ((await this.cache.getObject(
+        `runtime:session:${sessionId}`
+      )) as PrismeaiSession);
+    if (session && session.expires) {
+      const expiresIn =
+        (new Date(session.expires).getTime() - Date.now()) / 1000;
+      if (expiresIn > 0) {
+        session.expiresIn = Math.round(expiresIn);
+      }
+    }
+    return session;
   }
 
   async start() {
@@ -84,6 +122,31 @@ export default class Runtime {
         );
       }
     };
+
+    // Pull session tokens to inhect them within their corresponding context
+    this.broker.on<Prismeai.SucceededLogin['payload']>(
+      [EventType.SuccededLogin],
+      async (event) => {
+        const {
+          token,
+          id: sessionId,
+          expiresIn = 30 * 24 * 60 * 60,
+          expires,
+        } = event?.payload?.session || {};
+        const userId = event?.payload?.id;
+        if (!token || !userId || !sessionId) {
+          return true;
+        }
+        await this.registerSession({
+          userId,
+          sessionId,
+          token,
+          expiresIn,
+          expires,
+        });
+        return true;
+      }
+    );
 
     // Sync contexts
     this.broker.on<Prismeai.UpdatedContexts['payload']>(
@@ -212,12 +275,12 @@ export default class Runtime {
 
   async getContexts(
     workspaceId: string,
-    userId: string,
+    session: PrismeaiSession,
     correlationId: string
   ): Promise<ContextsManager> {
     const ctx = new ContextsManager(
       workspaceId,
-      userId,
+      session,
       correlationId,
       this.cache,
       this.broker
@@ -311,9 +374,13 @@ export default class Runtime {
     logger: Logger,
     broker: Broker
   ) {
+    const session = (await this.getSession(source.sessionId)) || {
+      userId: source.userId!!,
+      sessionId: source.sessionId!!,
+    };
     const ctx = await this.getContexts(
       source.workspaceId!!,
-      source.userId!!,
+      session,
       source.correlationId!!
     );
 

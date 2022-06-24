@@ -7,7 +7,7 @@ export default {
 
   BROKER_DRIVER: process.env.BROKER_DRIVER || 'redis',
 
-  BROKER_HOST: process.env.BROKER_HOST || 'redis://localhost:6379/0',
+  BROKER_HOST: process.env.BROKER_HOST || 'redis://localhost:6379/10',
 
   BROKER_PASSWORD: process.env.BROKER_PASSWORD,
 

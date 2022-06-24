@@ -927,7 +927,7 @@ declare namespace Prismeai {
         type: "workspaces.configured";
         payload: {
             config: Config;
-            oldConfig: any;
+            oldConfig?: any;
         };
     }
     export interface Contact {
@@ -1494,6 +1494,18 @@ declare namespace Prismeai {
             ip: string;
             email: string;
             id: string;
+            session: {
+                id: string;
+                token: string;
+                /**
+                 * Expires in N seconds
+                 */
+                expiresIn: number;
+                /**
+                 * Expires ISODate
+                 */
+                expires: string;
+            };
         };
     }
     export interface SucceededSignup {

@@ -272,7 +272,7 @@ If `session.myObjectVariable` equals to `{"mickey": "house"}` and `item.field` e
 
 * **global** : this context is shared by all authenticated users for the same workspace.  
 * **user** : this context holds user-specific data and spans accross sessions    
-* **session** : this context holds session-specific data. It is automatically removed **15 minutes** (configurable with **CONTEXT_SESSION_EXPIRE_TIME** env var) after the last write access (i.e by **set** or **output**)  
+* **session** : this context holds session-specific data. It is automatically removed when user session expires, as defined by Gateway API.  
 * **run** : this context holds some technical information about current run, and is automatically removed **60 seconds** after the initial trigger (configurable with **CONTEXT_RUN_EXPIRE_TIME** env var)  
 * **config** : this context holds current [workspace](../#config) or [AppInstance](../apps#config-variable) config 
 

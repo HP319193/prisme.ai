@@ -23,6 +23,6 @@
     "types": ["node", "jest"],
     "lib": ["ES6", "es2018", "es2019", "es2020.string"]
   },
-  "include": ["./index.ts", "src/**/*.ts"],
+  "include": ["./index.ts", "src/**/*.ts", "src/utils/lru-cache.d.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

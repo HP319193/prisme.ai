@@ -4,7 +4,7 @@ declare namespace Express {
     logger: Logger;
     service: string;
     user?: Prismeai.User;
-    broker: Broker;
+    broker: import('@prisme.ai/broker').Broker;
     session: import('express-session').Session &
       Partial<import('express-session').SessionData> &
       CustomSessionFields;

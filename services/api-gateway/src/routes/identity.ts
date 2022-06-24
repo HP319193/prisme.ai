@@ -9,6 +9,7 @@ import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { FindUserQuery } from '../services/identity/users';
 import { v4 as uuid } from 'uuid';
+import { syscfg } from '../config';
 
 const loginHandler = (strategy: string) =>
   async function (
@@ -43,11 +44,22 @@ const loginHandler = (strategy: string) =>
             token: req.sessionID,
             sessionId: req.session.prismeaiSessionId,
           });
-          await req.broker.send(EventType.SucceededLogin, {
-            email: user.email || user.firstName,
-            ip: req.context?.http?.ip,
-            id: user.id,
-          });
+          await req.broker.send<Prismeai.SucceededLogin['payload']>(
+            EventType.SucceededLogin,
+            {
+              email: user.email || user.firstName,
+              ip: req.context?.http?.ip,
+              id: user.id,
+              session: {
+                id: req.session.prismeaiSessionId,
+                token: req.sessionID,
+                expiresIn: syscfg.SESSION_COOKIES_MAX_AGE,
+                expires: new Date(
+                  Date.now() + syscfg.SESSION_COOKIES_MAX_AGE * 1000
+                ).toISOString(),
+              },
+            }
+          );
         });
       }
     )(req, res, next);

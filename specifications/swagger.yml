@@ -3463,6 +3463,7 @@ components:
             - ip
             - email
             - id
+            - session
           properties:
             ip:
               type: string
@@ -3470,6 +3471,25 @@ components:
               type: string
             id:
               type: string
+            session:
+              type: object
+              required:
+                - id
+                - token
+                - expiresIn
+                - expires
+              properties:
+                id:
+                  type: string
+                token:
+                  type: string
+                expiresIn:
+                  type: number
+                  description: "Expires in N seconds"
+                expires:
+                  type: string
+                  description: "Expires ISODate"
+
 
     SucceededSignup:
       type: object
