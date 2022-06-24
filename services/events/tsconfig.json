@@ -3,6 +3,7 @@
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "declaration": true,
     "strict": true,
     "noImplicitAny": true,
@@ -22,6 +23,6 @@
     "types": ["node", "jest"],
     "lib": ["ES6", "es2018", "es2019", "es2020.string"]
   },
-  "include": ["./index.ts", "src/**/*.ts"],
+  "include": ["./index.ts", "./config/*.json", "src/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }
