@@ -1204,6 +1204,10 @@ declare namespace Prismeai {
                      * Filename is required when value is a base64 encoded file
                      */
                     filename?: string;
+                    /**
+                     * Optional MIME content-type
+                     */
+                    contentType?: string;
                 }[];
                 /**
                  * Name of the variable which will hold the result
@@ -1263,6 +1267,10 @@ declare namespace Prismeai {
                  * Filename is required when value is a base64 encoded file
                  */
                 filename?: string;
+                /**
+                 * Optional MIME content-type
+                 */
+                contentType?: string;
             }[];
             /**
              * Name of the variable which will hold the result

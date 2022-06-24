@@ -111,7 +111,8 @@ If **Content-Type** header is set to 'application/x-www-form-urlencoded', the **
     multipart:
       - fieldname: file
         value: someBase64EncodedFile
-        flename: filename.png # Required if value is a file 
+        filename: filename.png # Required if value is a file 
+        contentType: image/png # Optional
       - fieldname: metadata
         value: some random metadata
 ```
