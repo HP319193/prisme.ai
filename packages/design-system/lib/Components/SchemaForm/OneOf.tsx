@@ -68,11 +68,13 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
     const { index = 0 } = uiOptionsOneOf
       ? uiOptionsOneOf.oneOf.options[+selected]
       : { index: +selected };
-    const childSchema: Schema = { ...schema, ...oneOf[index] };
-    if (!oneOf[index].title) {
+    const partialSchema = oneOf[index] || {};
+    const childSchema: Schema = { ...schema, ...partialSchema };
+
+    if (!partialSchema.title) {
       delete childSchema.title;
     }
-    if (!oneOf[index].description) {
+    if (!partialSchema.description) {
       delete childSchema.description;
     }
     if (childSchema.properties && schema.properties) {
@@ -89,13 +91,25 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
   useEffect(() => {
     if (!uiOptionsOneOf) return;
     const { value } = uiOptionsOneOf.oneOf.options[+selected] || {};
+
     if (!value || typeof value !== 'object') return;
+
+    const newValue: typeof value = Object.keys(
+      childSchema.properties || {}
+    ).reduce(
+      (prev, key) => ({
+        ...prev,
+        [key]: value[key] || field.input.value[key],
+      }),
+      {}
+    );
+
     if (
-      !Object.keys(value).every(
-        (name) => value[name] === field.input.value[name]
+      !Object.keys(newValue).every(
+        (name) => newValue[name] === field.input.value[name]
       )
     ) {
-      field.input.onChange({ ...value });
+      field.input.onChange({ ...newValue });
     }
   }, [selected]);
 

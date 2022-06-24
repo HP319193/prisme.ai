@@ -160,6 +160,11 @@ WithOneOfWithValues.args = {
     title: 'Type',
     description:
       'Choose a type, it will set the type value and display a specific form',
+    properties: {
+      value: {
+        type: 'string',
+      },
+    },
     oneOf: [
       {
         properties: {
