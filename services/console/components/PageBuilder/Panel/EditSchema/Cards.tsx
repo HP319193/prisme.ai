@@ -34,15 +34,15 @@ const schema: Schema = {
             items: {
               type: 'object',
               title: 'pages.blocks.cards.settings.type',
+              properties: {
+                value: {
+                  type: 'localized:string',
+                  title: 'pages.blocks.cards.settings.text.value',
+                },
+              },
               oneOf: [
                 {
                   title: 'pages.blocks.cards.settings.type_text',
-                  properties: {
-                    value: {
-                      type: 'localized:string',
-                      title: 'pages.blocks.cards.settings.text.value',
-                    },
-                  } as Record<string, Schema>,
                 },
                 {
                   title: 'pages.blocks.cards.settings.type_button',
@@ -51,21 +51,64 @@ const schema: Schema = {
                       type: 'localized:string',
                       title: 'pages.blocks.cards.settings.button.value',
                     },
-                    url: {
-                      type: 'localized:string',
-                      title: 'pages.blocks.cards.settings.button.url',
-                    },
-                    event: {
-                      type: 'string',
-                      title: 'pages.blocks.cards.settings.button.event',
-                    },
-                    payload: {
-                      title: 'pages.blocks.cards.settings.button.payload',
-                    },
                     icon: {
                       type: 'string',
                       title: 'pages.blocks.cards.settings.button.icon',
                       'ui:widget': 'upload',
+                    },
+                  },
+                  oneOf: [
+                    {
+                      title: 'pages.blocks.cards.settings.button.type_page',
+                      properties: {
+                        url: {
+                          type: 'localized:string',
+                          title: 'pages.blocks.cards.settings.button.page',
+                          'ui:widget': 'select',
+                          'ui:options': {
+                            from: 'pages',
+                          },
+                        },
+                      },
+                    },
+                    {
+                      title: 'pages.blocks.cards.settings.button.type_page',
+                      properties: {
+                        url: {
+                          type: 'localized:string',
+                          title: 'pages.blocks.cards.settings.button.url',
+                        },
+                      },
+                    },
+                    {
+                      title: 'pages.blocks.cards.settings.button.type_page',
+                      properties: {
+                        event: {
+                          type: 'localized:string',
+                          title: 'pages.blocks.cards.settings.button.event',
+                        },
+                        payload: {
+                          title: 'pages.blocks.cards.settings.button.payload',
+                        },
+                      },
+                    },
+                  ],
+                  'ui:options': {
+                    oneOf: {
+                      options: [
+                        {
+                          label: 'pages.blocks.cards.settings.button.page',
+                          index: 0,
+                        },
+                        {
+                          label: 'pages.blocks.cards.settings.button.url',
+                          index: 1,
+                        },
+                        {
+                          label: 'pages.blocks.cards.settings.button.event',
+                          index: 2,
+                        },
+                      ],
                     },
                   },
                 },

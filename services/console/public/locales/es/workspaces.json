@@ -512,9 +512,14 @@
             "value": "Texto a mostrar"
           },
           "button": {
+            "type_page": "Enlace a una página",
+            "type_url": "Enlace a una dirección web externa",
+            "type_event": "Activación de un evento",
+            "page": "Elija una de sus páginas",
             "value": "Texto del botón",
             "url": "Dirección web que debe mostrarse",
             "event": "Evento que debe activarse",
+            "payload": "Datos adjuntos",
             "icon": "Icono"
           },
           "accordion": {

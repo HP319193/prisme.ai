@@ -43,11 +43,15 @@ const externals = {
 const Loading = () => (
   <DSLoading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
 );
-const Link = ({ href, ...props }: { href: string } & any) => (
-  <NextLink href={href}>
-    <a {...props} />
-  </NextLink>
-);
+const Link = ({ href, ...props }: { href: string } & any) => {
+  const link = href.match(/^http/) ? href : `/pages/${href}`;
+
+  return (
+    <NextLink href={link}>
+      <a {...props} />
+    </NextLink>
+  );
+};
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
