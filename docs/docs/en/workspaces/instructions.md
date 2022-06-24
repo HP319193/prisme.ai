@@ -94,10 +94,13 @@ Sends an HTTP request to call external web services
 * **URL** : Target URL
 * **method** : Request method (get | post | put | patch | delete)
 * **headers** : Request headers  
+* **query** : Query string (as an object)
 * **body** : Request body (might be a JSON object, a string, a number, ...)  
 * **output** : Name of the variable that will store the response body  
 
 When receiving 4xx or 5xx HTTP errors, a native event `runtime.fetch.failed` is automatically emitted, including both request & response contents.  
+
+If **Content-Type** header is set to 'application/x-www-form-urlencoded', the **body** will be automatically transformed as an urlencoded body.  
 
 ### Emit
 Emit a new event.  

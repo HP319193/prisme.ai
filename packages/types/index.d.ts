@@ -1182,6 +1182,12 @@ declare namespace Prismeai {
                     [name: string]: string;
                 };
                 /**
+                 * Object defining querystring parameters
+                 */
+                query?: {
+                    [key: string]: any;
+                };
+                /**
                  * HTTP request body
                  */
                 body?: AnyValue;
@@ -1219,6 +1225,12 @@ declare namespace Prismeai {
             method?: "get" | "post" | "put" | "patch" | "delete";
             headers?: {
                 [name: string]: string;
+            };
+            /**
+             * Object defining querystring parameters
+             */
+            query?: {
+                [key: string]: any;
             };
             /**
              * HTTP request body

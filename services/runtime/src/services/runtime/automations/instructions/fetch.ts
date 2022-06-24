@@ -1,7 +1,7 @@
+import { URL, URLSearchParams } from 'url';
 import nodeFetch, { RequestInit, Response } from 'node-fetch';
 import { ContextsManager } from '../../contexts';
 import { CORRELATION_ID_HEADER, PUBLIC_API_URL } from '../../../../../config';
-import { URLSearchParams } from 'url';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
 
@@ -14,7 +14,7 @@ export async function fetch(
   ctx: ContextsManager,
   broker: Broker
 ) {
-  let { url, body, headers = {}, method } = fetch;
+  let { url, body, headers = {}, method, query } = fetch;
   const lowercasedHeaders: Record<string, string> = Object.entries(
     headers || {}
   )
@@ -61,7 +61,11 @@ export async function fetch(
       params.body = typeof body === 'object' ? JSON.stringify(body) : body;
     }
   }
-  const result = await nodeFetch(url, params);
+  const parsedURL = new URL(url);
+  for (let [key, val] of Object.entries(query || {})) {
+    parsedURL.searchParams.append(key, val);
+  }
+  const result = await nodeFetch(parsedURL, params);
   const responseBody = await getResponseBody(result);
   if (result.status >= 400 && result.status < 600) {
     broker.send<Prismeai.FailedFetch['payload']>(EventType.FailedFetch, {

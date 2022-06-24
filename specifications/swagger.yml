@@ -3028,6 +3028,9 @@ components:
               type: object
               additionalProperties:
                 type: 'string'
+            query:
+              type: object
+              description: Object defining querystring parameters
             body:
               description: HTTP request body
               $ref: '#/components/schemas/AnyValue'
