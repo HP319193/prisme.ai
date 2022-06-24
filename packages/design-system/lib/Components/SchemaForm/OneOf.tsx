@@ -75,6 +75,13 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
     if (!oneOf[index].description) {
       delete childSchema.description;
     }
+    if (childSchema.properties && schema.properties) {
+      childSchema.properties = {
+        ...schema.properties,
+        ...childSchema.properties,
+      };
+    }
+
     delete childSchema.oneOf;
     return childSchema;
   }, [selected]);
