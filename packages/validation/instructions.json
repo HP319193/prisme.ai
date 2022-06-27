@@ -255,8 +255,40 @@
               "type": "string"
             }
           },
+          "query": {
+            "type": "object",
+            "description": "Object defining querystring parameters"
+          },
           "body": {
             "description": "HTTP request body"
+          },
+          "multipart": {
+            "description": "Sends a multipart/form-data HTTP request",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "fieldname",
+                "value"
+              ],
+              "properties": {
+                "fieldname": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Must be a string. Raw files must be given as base64"
+                },
+                "filename": {
+                  "type": "string",
+                  "description": "Filename is required when value is a base64 encoded file"
+                },
+                "contentType": {
+                  "type": "string",
+                  "description": "Optional MIME content-type"
+                }
+              }
+            }
           },
           "output": {
             "type": "string",
