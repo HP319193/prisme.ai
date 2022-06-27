@@ -87,33 +87,33 @@ export const Header = ({ edit }: { edit?: boolean }) => {
 
   return (
     <div
-      className={tw`block-header block-header__container flex flex-1 flex-col md:!flex-row justify-between md:items-center px-4 py-2`}
+      className={tw`block-header flex flex-1 flex-col md:!flex-row justify-between md:items-center px-4 py-2`}
     >
-      <div className={tw`block-header__left flex md:justify-center`}>
-        <div className={tw`block-header__logo flex justify-center m-2 ml-4`}>
+      <div className={tw`block-header__left left flex md:justify-center`}>
+        <div className={tw`left__logo logo flex justify-center m-2 ml-4`}>
           {config.logo && config.logo.src && (
             <img
               src={config.logo.src}
               alt={config.logo.alt}
-              className={tw`block-header__logo-image max-h-12`}
+              className={tw`logo__image image max-h-12`}
             />
           )}
         </div>
-        <h1 className={tw`block-header__title flex items-center m-0 font-bold`}>
+        <h1 className={tw`left__title title flex items-center m-0 font-bold`}>
           {config.title}
         </h1>
       </div>
-      <nav className={tw`block-header__right flex m-4`}>
+      <nav className={tw`block-header__right right flex m-4`}>
         {nav.map((props, k) => (
           <div
             key={k}
-            className={tw`mx-2`}
+            className={tw`right__nav nav mx-2`}
             onClick={(e) => {
               if (edit) e.preventDefault();
             }}
           >
             {edit ? (
-              <button className={tw`block-header__nav-item-button`}>
+              <button className={tw`nav__nav-item nav-item`}>
                 {props.text}
               </button>
             ) : (
