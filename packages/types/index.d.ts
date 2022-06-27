@@ -1134,6 +1134,7 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
+        apiKey?: string;
     }
     export interface Emit {
         emit: {
@@ -1390,6 +1391,7 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
+        apiKey?: string;
     }
     export interface PagePermissionsDeleted {
         /**

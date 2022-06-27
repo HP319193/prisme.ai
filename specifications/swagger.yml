@@ -2690,7 +2690,7 @@ components:
             - localized:boolean
         properties:
           additionalProperties:
-            $ref: "#/components/schemas/TypedArgument"
+            $ref: '#/components/schemas/TypedArgument'
         description:
           $ref: '#/components/schemas/LocalizedText'
         items:
@@ -2796,6 +2796,8 @@ components:
           type: string
         permissions:
           $ref: '#/components/schemas/PermissionsMap'
+        apiKey:
+          type: string
 
     DetailedPage:
       allOf:
@@ -3050,7 +3052,7 @@ components:
                     description: Must be a string. Raw files must be given as base64
                   filename:
                     type: string
-                    description: "Filename is required when value is a base64 encoded file"
+                    description: 'Filename is required when value is a base64 encoded file'
                   contentType:
                     type: string
                     description: Optional MIME content-type
@@ -3508,11 +3510,10 @@ components:
                   type: string
                 expiresIn:
                   type: number
-                  description: "Expires in N seconds"
+                  description: 'Expires in N seconds'
                 expires:
                   type: string
-                  description: "Expires ISODate"
-
+                  description: 'Expires ISODate'
 
     SucceededSignup:
       type: object
@@ -3534,7 +3535,7 @@ components:
             ip:
               type: string
             user:
-              $ref: "#/components/schemas/User"
+              $ref: '#/components/schemas/User'
 
     ########################## Apps events ##########################
     PublishedApp:
@@ -4131,7 +4132,6 @@ components:
                 body: {}
                 headers:
                   type: object
-
 
     AppEvent:
       type: object

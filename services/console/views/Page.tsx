@@ -128,6 +128,15 @@ export const Page = () => {
 
   const [value, setValue] = useState<Prismeai.Page>();
   const [saving, setSaving] = useState(false);
+  const [eventsInPage, setEventsInPage] = useState<string[]>([]);
+
+  const updateValue = useCallback(
+    (page: Prismeai.Page, events: string[] = []) => {
+      setValue(page);
+      setEventsInPage(Array.from(new Set(events)));
+    },
+    []
+  );
 
   useEffect(() => {
     setShare({
@@ -210,7 +219,7 @@ export const Page = () => {
     if (!value || !page || !page.id) return;
     setSaving(true);
     try {
-      await savePage(workspace.id, cleanValue(value));
+      await savePage(workspace.id, cleanValue(value), eventsInPage);
 
       notification.success({
         message: t('pages.save.toast'),
@@ -223,7 +232,7 @@ export const Page = () => {
       });
     }
     setSaving(false);
-  }, [cleanValue, page, savePage, t, value, workspace.id]);
+  }, [cleanValue, eventsInPage, page, savePage, t, value, workspace.id]);
 
   useKeyboardShortcut([
     {
@@ -397,7 +406,7 @@ export const Page = () => {
             visible={displayPreview}
           />
         </div>
-        <PageBuilder value={value} onChange={setValue} blocks={blocks} />
+        <PageBuilder value={value} onChange={updateValue} blocks={blocks} />
       </div>
     </>
   );

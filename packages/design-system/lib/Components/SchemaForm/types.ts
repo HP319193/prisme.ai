@@ -64,7 +64,7 @@ export type UiOptionsSelect = {
 export type UiOptionsDate = {
   date: DatePickerProps;
 };
-export interface Schema {
+export interface Schema extends Record<string, any> {
   // Field type
   type?: SchemaTypes;
   // Field label

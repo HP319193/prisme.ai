@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import api, { Events } from '../../utils/api';
+import { useUser } from '../UserProvider';
 
 const isPage = (page: any): page is Prismeai.Page =>
   page && typeof page !== 'number';
 
 export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
+  const { user } = useUser();
   const [blocksConfigs, setBlocksConfigs] = useState<any[]>([]);
 
   const [cachedPage, setCachedPage] = useState(page);
@@ -29,7 +31,7 @@ export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
 
   const prevSocket = useRef<Events>();
   const initSocket = useCallback(async () => {
-    if (prevSocket.current && prevSocket.current === socket) return;
+    if (!user || (prevSocket.current && prevSocket.current === socket)) return;
     off.current && off.current();
 
     const page = cachedPage;
@@ -98,7 +100,7 @@ export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
         prevSocket.current.emit(onInit, payload);
       }
     });
-  }, [cachedPage, socket]);
+  }, [cachedPage, socket, user]);
 
   useEffect(() => {
     initSocket();

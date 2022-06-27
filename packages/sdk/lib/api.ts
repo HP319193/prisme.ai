@@ -91,6 +91,39 @@ export class Api extends Fetcher {
     return await this.delete(`/workspaces/${workspaceId}`);
   }
 
+  async generateApiKey(workspaceId: Workspace['id'], events: string[]) {
+    const { apiKey } = await this.post(`/workspaces/${workspaceId}/apiKeys`, {
+      rules: {
+        events: {
+          types: events,
+          filters: {
+            'source.sessionId': '${user.sessionId}',
+          },
+        },
+      },
+    });
+
+    return apiKey;
+  }
+  async updateApiKey(
+    workspaceId: Workspace['id'],
+    apiKey: string,
+    events: string[]
+  ) {
+    await this.put(`/workspaces/${workspaceId}/apiKeys/${apiKey}`, {
+      rules: {
+        events: {
+          types: events,
+          filters: {
+            'source.sessionId': '${user.sessionId}',
+          },
+        },
+      },
+    });
+
+    return apiKey;
+  }
+
   // Automations
   async createAutomation(
     workspace: Workspace,
@@ -203,6 +236,7 @@ export class Api extends Fetcher {
     const events = new Events({
       workspaceId,
       token: this.token || '',
+      apiKey: this._apiKey ? this._apiKey : undefined,
       apiHost: this.host,
       filters,
     });
