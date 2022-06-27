@@ -141,12 +141,10 @@ exports[`should render single all types 1`] = `
       >
         Localized
       </label>
-      <div>
-        <div
-          className=""
-        />
-        Add item
-      </div>
+      <div
+        className="flex-1"
+      />
+      Add item
     </div>
     <div
       className="space-y-5 "
@@ -228,12 +226,10 @@ exports[`should use ui:widgets 1`] = `
       >
         array
       </label>
-      <div>
-        <div
-          className="flex flex-row flex-wrap"
-        />
-        Add item
-      </div>
+      <div
+        className="flex flex-row flex-wrap"
+      />
+      Add item
     </div>
     <label
       className="text-[10px] text-gray"
