@@ -90,6 +90,7 @@ const CardButton: FC<CardButton> = ({
     return (
       <Link
         className={`${tw`flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}`}
+        target={'_blank'}
         href={url}
       >
         <div className={tw`flex mr-2`}>
