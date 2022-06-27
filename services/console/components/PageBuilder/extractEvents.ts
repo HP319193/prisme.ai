@@ -28,8 +28,8 @@ export const extractEvents = (
   const events = schemas.flatMap((schema) => {
     const { onInit, updateOn } = config;
     const events = new Set(extractEventFromSchema(schema, config));
-    events.add(onInit);
-    events.add(updateOn);
+    onInit && events.add(onInit);
+    updateOn && events.add(updateOn);
     return Array.from(events);
   });
   return events;
