@@ -53,7 +53,7 @@ const uploadsStorage = new FileStorage(
 
 setTimeout(() => {
   autoinstallApps(appsStorage, accessManager);
-}, 20000); // Arbitrary 20 sec delay to make sure app API are ready.
+}, 20000); // Arbitrary 20 sec delay to make sure app API are ready
 
 autoremoveExpiredUploads(uploadsStorage, accessManager);
 
