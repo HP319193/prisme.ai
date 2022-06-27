@@ -20,6 +20,17 @@ import { useBlock } from '../Provider';
 import { tw } from 'twind';
 import useLocalizedText from '../useLocalizedText';
 import { withI18nProvider } from '../i18n';
+import { useBlocks } from '../Provider/blocksContext';
+import RichText from './RichText';
+
+interface CardButton {
+  type: 'button';
+  value: Prismeai.LocalizedText;
+  url?: Prismeai.LocalizedText;
+  event?: string;
+  payload?: any;
+  icon?: string;
+}
 
 interface Card {
   title?: Prismeai.LocalizedText;
@@ -30,14 +41,7 @@ interface Card {
         type: 'text';
         value: Prismeai.LocalizedText;
       }
-    | {
-        type: 'button';
-        value: Prismeai.LocalizedText;
-        url?: Prismeai.LocalizedText;
-        event?: string;
-        payload?: any;
-        icon?: string;
-      }
+    | CardButton
     | {
         type: 'accordion';
         title: Prismeai.LocalizedText;
@@ -69,10 +73,72 @@ const Accordion: FC<{
   );
 };
 
+const CardButton: FC<CardButton> = ({
+  url,
+  event,
+  icon,
+  value,
+  payload,
+  children,
+}) => {
+  const { localize } = useLocalizedText();
+  const { events } = useBlock();
+  const {
+    components: { Link },
+  } = useBlocks();
+  if (url) {
+    return (
+      <Link
+        className={`${tw`flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}`}
+        href={url}
+      >
+        <div className={tw`flex mr-2`}>
+          {icon ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={icon} alt={localize(value)} height={16} width={16} />
+          ) : (
+            <LinkOutlined height={16} width={16} />
+          )}
+        </div>
+        <RichText content={localize(value)} />
+      </Link>
+    );
+  }
+  if (event) {
+    return (
+      <button
+        type="button"
+        className={`${tw`flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}`}
+        onClick={() => events?.emit(event, payload)}
+      >
+        <div className={tw`flex mr-2`}>
+          {icon ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={icon} alt={localize(value)} height={16} width={16} />
+          ) : (
+            <LinkOutlined height={16} width={16} />
+          )}
+        </div>
+        <RichText content={localize(value)} />
+      </button>
+    );
+  }
+  return <RichText content={localize(value)} />;
+};
+
+interface CardsConfig {
+  title?: string;
+  cards?: Card[];
+  layout?: {
+    type: 'grid' | 'column' | 'carousel';
+    autoScroll?: boolean;
+  };
+}
+
 export const Cards = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
   const { localize } = useLocalizedText();
-  const { config = {}, events } = useBlock();
+  const { config = {} } = useBlock();
   const [canScroll, setCanScroll] = useState<boolean | null>(false);
 
   const container = useRef<HTMLDivElement>(null);
@@ -220,13 +286,13 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
             ({ title, description, cover, content = [] }, index) => (
               <div
                 key={index}
-                className={tw`flex flex-col snap-start my-6 pl-[10px] group w-[325px]`}
+                className={`${tw`flex flex-col snap-start my-6 pl-[10px] group w-[325px]`}`}
                 style={{
                   flex: '0 0 325px',
                 }}
               >
                 <div
-                  className={tw`relative flex flex-1 flex-col mx-2 rounded-[20px]`}
+                  className={`${tw`relative flex flex-1 flex-col mx-2 rounded-[20px]`}`}
                 >
                   <div
                     className={tw`h-[303px] p-[-1px] rounded-[20px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top`}
@@ -247,19 +313,19 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                       `}
                   >
                     <div
-                      className={tw`font-bold text-sm text-accent text-center`}
+                      className={`${tw`font-bold text-sm text-accent text-center`}`}
                     >
                       {localize(title)}
                     </div>
                     <div
-                      className={tw`text-[10px] my-2 text-neutral-500 text-center`}
+                      className={`${tw`text-[10px] my-2 text-neutral-500 text-center`}`}
                     >
                       {localize(description)}
                     </div>
                     {content &&
                       Array.isArray(content) &&
                       content.map((item, index) => (
-                        <div key={index} className={tw`flex mb-4`}>
+                        <div key={index} className={`${tw`flex mb-4`}`}>
                           {item.type === 'text' && (
                             <div>
                               <div
@@ -269,44 +335,10 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                               />
                             </div>
                           )}
-                          {item.type === 'button' && (
-                            <button
-                              className={tw`flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}
-                              onClick={() => {
-                                if (item.url) {
-                                  window.open(localize(item.url));
-                                }
-                                if (item.event && events) {
-                                  events.emit(item.event, item.payload);
-                                }
-                              }}
-                            >
-                              <div className={tw`flex mr-2`}>
-                                {item.icon ? (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img
-                                    src={item.icon}
-                                    alt={localize(item.value)}
-                                    height={16}
-                                    width={16}
-                                  />
-                                ) : (
-                                  <LinkOutlined height={16} width={16} />
-                                )}
-                              </div>
-                              <div
-                                dangerouslySetInnerHTML={{
-                                  __html: localize(item.value).replace(
-                                    /\n/g,
-                                    '<br />'
-                                  ),
-                                }}
-                              />
-                            </button>
-                          )}
+                          {item.type === 'button' && <CardButton {...item} />}
                           {item.type === 'accordion' && (
                             <div
-                              className={tw`flex flex-1 border-[1px] border-neutral-200 rounded p-2`}
+                              className={`${tw`flex flex-1 border-[1px] border-neutral-200 rounded p-2`}`}
                             >
                               <Accordion
                                 title={
@@ -344,7 +376,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
           )}
         </div>
         {canScroll && (
-          <div className={tw`text-accent text-l`}>
+          <div className={`${tw`text-accent text-l`}`}>
             <div
               className={tw`absolute flex justify-center top-16 left-6 h-8 w-8 bg-white rounded-[100%] shadow-lg`}
             >

@@ -512,9 +512,14 @@
             "value": "Texte à afficher"
           },
           "button": {
+            "type_page": "Lien vers une Page",
+            "type_url": "Lien vers une adresse web externe",
+            "type_event": "Déclencher un évènement",
+            "page": "Choisissez une de vos pages",
             "value": "Texte du bouton",
-            "url": "Adresse web à afficher",
+            "url": "Lien vers la page web",
             "event": "Événement à déclencher",
+            "payload": "Données attachées",
             "icon": "Icône"
           },
           "accordion": {

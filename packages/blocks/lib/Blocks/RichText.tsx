@@ -5,11 +5,13 @@ import { useBlocks } from '../Provider/blocksContext';
 import useLocalizedText from '../useLocalizedText';
 
 interface Config {
-  content: string;
+  content?: string;
 }
 
-export const RichText = () => {
-  const { config: { content } = {} } = useBlock<Config>();
+interface RichTextProps extends Config {}
+
+export const RichText = ({ content: initialContent }: RichTextProps) => {
+  const { config: { content = initialContent } = {} } = useBlock<Config>();
   const { localize } = useLocalizedText();
   const {
     components: { Link },
