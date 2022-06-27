@@ -39,7 +39,7 @@ export const Form = () => {
   }, [config.schema, localizeSchemaForm]);
 
   return (
-    <div className={tw`p-8`}>
+    <div className={tw`p-8 flex-1`}>
       {config.title && <BlockTitle value={config.title} />}
       <SchemaForm
         schema={localizedSchema}
