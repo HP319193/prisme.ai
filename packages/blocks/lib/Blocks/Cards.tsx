@@ -73,6 +73,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
   const { localize } = useLocalizedText();
   const { config = {}, events } = useBlock();
+  const [canScroll, setCanScroll] = useState<boolean | null>(false);
 
   const container = useRef<HTMLDivElement>(null);
 
@@ -142,13 +143,18 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     };
   });
 
-  const canScroll =
-    (!config.layout ||
-      !config.layout.type ||
-      config.layout.type === 'carousel') &&
-    container.current &&
-    container.current.scrollWidth >
-      container.current.getBoundingClientRect().width;
+  useEffect(
+    () =>
+      setCanScroll(
+        (!config.layout ||
+          !config.layout.type ||
+          config.layout.type === 'carousel') &&
+          container.current &&
+          container.current.scrollWidth >
+            container.current.getBoundingClientRect().width
+      ),
+    [config.layout]
+  );
 
   const styles = useMemo(() => {
     const { layout: { type = 'carousel' } = {} } = config;
