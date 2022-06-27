@@ -6,7 +6,12 @@ it('should export an instance', () => {
 
 it('should call /me', () => {
   const api = new Api('/fake/');
-  api.get = jest.fn();
+  api.get = jest.fn(
+    async () =>
+      ({
+        sessionId: 'session',
+      } as any)
+  );
   api.me();
   expect(api.get).toHaveBeenCalledWith('/me');
 });
@@ -228,4 +233,56 @@ it('should upload file', async () => {
     api._fetch.mock.calls[0][1];
   expect(body.getAll('file').length).toBe(1);
   expect((body.getAll('file')[0] as File).name).toBe('foo.jpg');
+});
+
+it('should generate api key', async () => {
+  const api = new Api('/fake/');
+  // @ts-ignore
+  api._fetch = jest.fn(() => ({
+    apiKey: 'api-key',
+  }));
+  const apiKey = await api.generateApiKey('42', ['event1', 'event2']);
+  expect(apiKey).toBe('api-key');
+  // @ts-ignore
+  expect(api._fetch).toHaveBeenCalledWith('/workspaces/42/apiKeys', {
+    method: 'POST',
+    body: JSON.stringify({
+      rules: {
+        events: {
+          types: ['event1', 'event2'],
+          filters: {
+            'source.sessionId': '${user.sessionId}',
+          },
+        },
+      },
+    }),
+  });
+});
+
+it('should update api key', async () => {
+  const api = new Api('/fake/');
+  // @ts-ignore
+  api._fetch = jest.fn(() => ({
+    apiKey: 'api-key',
+  }));
+  const apiKey = await api.updateApiKey('42', 'api-key', [
+    'event1',
+    'event2',
+    'event3',
+  ]);
+  expect(apiKey).toBe('api-key');
+  // @ts-ignore
+  expect(api._fetch).toHaveBeenCalledWith('/workspaces/42/apiKeys/api-key', {
+    method: 'PUT',
+    body: JSON.stringify({
+      rules: {
+        events: {
+          types: ['event1', 'event2', 'event3'],
+          filters: {
+            'source.sessionId': '${user.sessionId}',
+          },
+        },
+      },
+    }),
+  });
 });

@@ -12,7 +12,8 @@ export interface PagesContext {
   ) => Promise<Prismeai.Page>;
   savePage: (
     workspaceId: NonNullable<Prismeai.Workspace['id']>,
-    p: Prismeai.Page
+    p: Prismeai.Page,
+    events?: string[]
   ) => Promise<Prismeai.Page>;
   deletePage: (
     workspaceId: NonNullable<Prismeai.Workspace['id']>,

@@ -16,13 +16,28 @@ jest.mock('socket.io-client', () => {
 });
 
 it('should connect to Websocket', () => {
-  const client = new Events({ workspaceId: '1', token: 'abcde' });
+  new Events({ workspaceId: '1', token: 'abcde' });
   expect(io).toHaveBeenCalledWith(
     `https://api.eda.prisme.ai/workspaces/1/events`,
     {
       extraHeaders: {
         'x-prismeai-token': 'abcde',
       },
+      withCredentials: true,
+    }
+  );
+});
+
+it('should connect to Websocket with apiKey', () => {
+  new Events({ workspaceId: '1', token: 'abcde', apiKey: 'fghij' });
+  expect(io).toHaveBeenCalledWith(
+    `https://api.eda.prisme.ai/workspaces/1/events`,
+    {
+      extraHeaders: {
+        'x-prismeai-token': 'abcde',
+        'x-prismeai-api-key': 'fghij',
+      },
+      withCredentials: true,
     }
   );
 });

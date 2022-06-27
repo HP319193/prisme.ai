@@ -50,6 +50,32 @@ it('should fetch with auth', async () => {
   expect(headers.get('x-prismeai-token')).toBe('token');
 });
 
+it('should fetch with api key', async () => {
+  const fetcher = new Fetcher('http/');
+  // @ts-ignore
+  global.fetch = jest.fn(() => ({
+    ok: true,
+    headers: {},
+    json() {
+      return {};
+    },
+    clone() {
+      return { ...this };
+    },
+  }));
+  fetcher.token = 'token';
+  fetcher.apiKey = 'api-key';
+  await fetcher.get('url');
+  expect(global.fetch).toHaveBeenCalledWith('http/url', {
+    headers: expect.any(Headers),
+    method: 'GET',
+  });
+  const headers = (global.fetch as jest.Mock).mock.calls[0][1].headers;
+  expect(headers.get('Access-Control-Allow-Origin')).toBe('*');
+  expect(headers.get('x-prismeai-token')).toBe('token');
+  expect(headers.get('x-prismeai-api-key')).toBe('api-key');
+});
+
 it('should fail to fetch', async () => {
   const fetcher = new Fetcher('http/');
   // @ts-ignore
@@ -135,6 +161,27 @@ it('should post with body', async () => {
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
     headers: expect.any(Headers),
     method: 'POST',
+    body: '{}',
+  });
+});
+
+it('should put', async () => {
+  const fetcher = new Fetcher('http/');
+  // @ts-ignore
+  global.fetch = jest.fn(() => ({
+    ok: true,
+    headers: {},
+    json() {
+      return {};
+    },
+    clone() {
+      return { ...this };
+    },
+  }));
+  await fetcher.put('url', {});
+  expect(global.fetch).toHaveBeenCalledWith('http/url', {
+    headers: expect.any(Headers),
+    method: 'PUT',
     body: '{}',
   });
 });

@@ -155,7 +155,12 @@ export const PublicPage = ({
 
   if (!page && loading) return <Loading />;
 
-  if (page) return <PublicPageRenderer page={page} />;
+  if (page) {
+    if (page.apiKey) {
+      api.apiKey = page.apiKey;
+    }
+    return <PublicPageRenderer page={page} />;
+  }
 
   return (
     <div className="flex m-auto">

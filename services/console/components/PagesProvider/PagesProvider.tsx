@@ -44,7 +44,17 @@ export const PagesProvider: FC<PagesProvider> = ({ children }) => {
     []
   );
   const savePage: PagesContext['savePage'] = useCallback(
-    async (workspaceId, page) => {
+    async (workspaceId, page, events = []) => {
+      if (events.length > 0) {
+        if (page.apiKey) {
+          await api.updateApiKey(workspaceId, page.apiKey, events);
+        } else {
+          const apiKey = await api.generateApiKey(workspaceId, events);
+          if (apiKey) {
+            page.apiKey = apiKey;
+          }
+        }
+      }
       const savedPage = await api.updatePage(workspaceId, page);
       setPages((prev) => {
         const newPages = new Map(prev);
