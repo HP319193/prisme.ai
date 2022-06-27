@@ -93,7 +93,13 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
             subscription.searchOptions = payload as SearchOptions;
           }
         } catch (err) {
-          logger.error({ userId, sessionId, err });
+          logger.error({
+            msg: 'An error raised while trying to send event from websocket',
+            event: payload,
+            userId,
+            sessionId,
+            err,
+          });
         }
       }
     );
