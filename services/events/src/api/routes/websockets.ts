@@ -81,15 +81,19 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     });
     socket.onAny(
       async (type, payload: Prismeai.PrismeEvent | SearchOptions) => {
-        if (type === 'event') {
-          sendEvent(
-            workspaceId,
-            payload as Prismeai.PrismeEvent,
-            subscription.accessManager,
-            childBroker
-          );
-        } else if (type === 'filters') {
-          subscription.searchOptions = payload as SearchOptions;
+        try {
+          if (type === 'event') {
+            await sendEvent(
+              workspaceId,
+              payload as Prismeai.PrismeEvent,
+              subscription.accessManager,
+              childBroker
+            );
+          } else if (type === 'filters') {
+            subscription.searchOptions = payload as SearchOptions;
+          }
+        } catch (err) {
+          logger.error({ userId, sessionId, err });
         }
       }
     );
