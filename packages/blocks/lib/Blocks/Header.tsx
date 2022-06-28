@@ -3,7 +3,6 @@ import { tw } from 'twind';
 import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
 
-import { FC, HTMLAttributes, useCallback, useEffect, useState } from 'react';
 import { withI18nProvider } from '../i18n';
 
 interface Config {
@@ -19,31 +18,11 @@ interface Config {
   }[];
 }
 
-const PageLink: FC<{ pageId: string } & HTMLAttributes<HTMLAnchorElement>> = ({
-  pageId,
-  ...props
-}) => {
-  const [href, setHref] = useState('');
-  const { api } = useBlock();
+const Button = ({ text, type, value }: Config['nav'][number]) => {
+  const { events } = useBlock<Config>();
   const {
     components: { Link },
   } = useBlocks();
-  const fetchHref = useCallback(async (pageId: string) => {
-    if (!api) return;
-    try {
-      const { slug = pageId } = await api.getPageBySlug(pageId);
-      setHref(slug);
-    } catch {}
-  }, []);
-  useEffect(() => {
-    fetchHref(pageId);
-  }, [fetchHref, pageId]);
-
-  return <Link href={href} {...props} />;
-};
-
-const Button = ({ text, type, value }: Config['nav'][number]) => {
-  const { events } = useBlock<Config>();
   switch (type) {
     case 'event':
       return (
@@ -58,16 +37,11 @@ const Button = ({ text, type, value }: Config['nav'][number]) => {
         </button>
       );
     case 'external':
-      return (
-        <a href={value} className={tw`block-header__nav-item-link`}>
-          <button className={tw`block-header__nav-item-button`}>{text}</button>
-        </a>
-      );
     case 'internal':
       return (
-        <PageLink pageId={value} className={tw`block-header__nav-item-link`}>
+        <Link href={value} className={tw`block-header__nav-item-link`}>
           <button className={tw`block-header__nav-item-button`}>{text}</button>
-        </PageLink>
+        </Link>
       );
     case 'inside':
       return (

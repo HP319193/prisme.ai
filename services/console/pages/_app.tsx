@@ -43,8 +43,8 @@ const externals = {
 const Loading = () => (
   <DSLoading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
 );
-const Link = ({ href, target, ...props }: { href: string } & any) => {
-  const link = href.match(/^http/) ? href : `/pages/${href}`;
+const Link = ({ href = '', target, ...props }: { href: string } & any) => {
+  const link = `${href}`.match(/^http/) ? href : `/pages/${href}`;
 
   if (target === '_blank') {
     return <a href={link} target={target} {...props} />;

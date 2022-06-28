@@ -34,17 +34,22 @@ export const schema: Schema = {
         type: 'object',
         title: 'pages.blocks.header.settings.nav.items.label',
         description: 'pages.blocks.header.settings.nav.items.description',
+        properties: {
+          type: {
+            hidden: true,
+          },
+          text: {
+            type: 'string',
+            title: 'pages.blocks.header.settings.nav.items.text.label',
+            description:
+              'pages.blocks.header.settings.nav.items.text.description',
+          },
+        },
         oneOf: [
           {
             title: 'pages.blocks.header.settings.nav.items.external.label',
             description: 'pages.blocks.header.settings.nav.items.description',
             properties: {
-              text: {
-                type: 'string',
-                title: 'pages.blocks.header.settings.nav.items.text.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.text.description',
-              },
               value: {
                 type: 'string',
                 title:
@@ -59,12 +64,6 @@ export const schema: Schema = {
             description:
               'pages.blocks.header.settings.nav.items.internal.description',
             properties: {
-              text: {
-                type: 'string',
-                title: 'pages.blocks.header.settings.nav.items.text.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.text.description',
-              },
               value: {
                 type: 'string',
                 title:
@@ -83,12 +82,6 @@ export const schema: Schema = {
             description:
               'pages.blocks.header.settings.nav.items.inside.description',
             properties: {
-              text: {
-                type: 'string',
-                title: 'pages.blocks.header.settings.nav.items.text.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.text.description',
-              },
               value: {
                 type: 'string',
                 title:
@@ -107,12 +100,6 @@ export const schema: Schema = {
             description:
               'pages.blocks.header.settings.nav.items.event.description',
             properties: {
-              text: {
-                type: 'string',
-                title: 'pages.blocks.header.settings.nav.items.text.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.text.description',
-              },
               value: {
                 type: 'string',
                 title:

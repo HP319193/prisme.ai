@@ -1,6 +1,6 @@
 import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
-import { Component, JSXElementConstructor, ReactElement } from 'react';
+import { JSXElementConstructor, ReactElement } from 'react';
 
 const i18n = createInstance({
   resources: {
