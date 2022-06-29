@@ -2480,10 +2480,12 @@ components:
             email:
               type: string
               example: foo@prisme.ai
-            authData:
+            authData: &AUTH_DATA
               type: object
               properties:
                 facebook:
+                  type: object
+                anonymous:
                   type: object
               additionalProperties: true
         - $ref: '#/components/schemas/Contact'
@@ -3495,6 +3497,7 @@ components:
             - email
             - id
             - session
+            - authData
           properties:
             ip:
               type: string
@@ -3502,6 +3505,7 @@ components:
               type: string
             id:
               type: string
+            authData: *AUTH_DATA
             session:
               type: object
               required:

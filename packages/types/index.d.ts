@@ -1552,6 +1552,15 @@ declare namespace Prismeai {
             ip: string;
             email: string;
             id: string;
+            authData: {
+                [name: string]: any;
+                facebook?: {
+                    [key: string]: any;
+                };
+                anonymous?: {
+                    [key: string]: any;
+                };
+            };
             session: {
                 id: string;
                 token: string;
@@ -1690,6 +1699,9 @@ declare namespace Prismeai {
         authData?: {
             [name: string]: any;
             facebook?: {
+                [key: string]: any;
+            };
+            anonymous?: {
                 [key: string]: any;
             };
         };
@@ -1887,6 +1899,9 @@ declare namespace PrismeaiAPI {
                     facebook?: {
                         [key: string]: any;
                     };
+                    anonymous?: {
+                        [key: string]: any;
+                    };
                 };
                 /**
                  * Name
@@ -2030,6 +2045,9 @@ declare namespace PrismeaiAPI {
                 authData?: {
                     [name: string]: any;
                     facebook?: {
+                        [key: string]: any;
+                    };
+                    anonymous?: {
                         [key: string]: any;
                     };
                 };
@@ -2345,6 +2363,9 @@ declare namespace PrismeaiAPI {
                 authData?: {
                     [name: string]: any;
                     facebook?: {
+                        [key: string]: any;
+                    };
+                    anonymous?: {
                         [key: string]: any;
                     };
                 };

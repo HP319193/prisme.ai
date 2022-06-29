@@ -213,7 +213,11 @@ describe('Variables & Contexts', () => {
       field: 'user.id',
       value: 'someRandomId',
     });
-    expect(afterUserSwitching.user).toEqual({ id: 'someRandomId' });
+    expect(afterUserSwitching.user).toEqual({
+      authData: {},
+      email: undefined,
+      id: 'someRandomId',
+    });
     expect(afterUserSwitching.session).toEqual({});
 
     // Get back to our first user

@@ -139,7 +139,6 @@ describe('Simple events processing', () => {
             workspaceId: AvailableModels.Basic,
             automationSlug: 'empty',
           }),
-          forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
         })
       );
     });

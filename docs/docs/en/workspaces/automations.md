@@ -332,6 +332,14 @@ In case the automation is triggered from a webhook without any session cookie / 
       <td><b>user.id</b></td>
       <td>Current user id</td>
     </tr>       
+    <tr>
+      <td><b>user.email</b></td>
+      <td>If available, current user email</td>
+    </tr>           
+    <tr>
+      <td><b>user.authData</b></td>
+      <td>For now, basic & empty object containing either <b>prismeai</b> or <b>anonymous</b> key, depending on user authentication mode</td>
+    </tr>               
   </table>
 </center>
 

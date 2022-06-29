@@ -143,6 +143,8 @@ export default class Runtime {
           token,
           expiresIn,
           expires,
+          authData: event?.payload?.authData,
+          email: event?.payload?.email,
         });
         return true;
       }

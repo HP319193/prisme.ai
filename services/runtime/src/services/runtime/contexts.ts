@@ -41,6 +41,8 @@ export interface Trigger {
 
 export interface PrismeaiSession {
   userId: string;
+  email?: string;
+  authData: Prismeai.User['authData'];
   sessionId: string;
   token?: string;
   expiresIn?: number;
@@ -449,7 +451,7 @@ export class ContextsManager {
         ) {
           this.userId = value;
           this.contexts.user = { id: value };
-          this.session = { userId: value, sessionId: value };
+          this.session = { userId: value, sessionId: value, authData: {} };
           this.contexts.session = {};
           await this.fetch([ContextType.User, ContextType.Session]);
           this.broker.parentSource.userId = value;
@@ -492,6 +494,11 @@ export class ContextsManager {
     return {
       ...local,
       ...publicContexts,
+      user: {
+        ...publicContexts.user,
+        email: this.session?.email,
+        authData: this.session?.authData,
+      },
       run: this.run,
       global: {
         ...global,

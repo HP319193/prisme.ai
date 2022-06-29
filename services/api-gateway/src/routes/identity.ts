@@ -44,12 +44,16 @@ const loginHandler = (strategy: string) =>
             token: req.sessionID,
             sessionId: req.session.prismeaiSessionId,
           });
+          const provider = strategy === 'local' ? 'prismeai' : strategy;
           await req.broker.send<Prismeai.SucceededLogin['payload']>(
             EventType.SucceededLogin,
             {
               email: user.email || user.firstName,
               ip: req.context?.http?.ip,
               id: user.id,
+              authData: {
+                [provider]: {},
+              },
               session: {
                 id: req.session.prismeaiSessionId,
                 token: req.sessionID,
