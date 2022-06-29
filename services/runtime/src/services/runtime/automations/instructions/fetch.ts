@@ -18,7 +18,15 @@ export async function fetch(
   ctx: ContextsManager,
   broker: Broker
 ) {
-  let { url, body, headers = {}, method, query, multipart } = fetch;
+  let {
+    url,
+    body,
+    headers = {},
+    method,
+    query,
+    multipart,
+    emitErrors = true,
+  } = fetch;
   const lowercasedHeaders: Record<string, string> = Object.entries(
     headers || {}
   )
@@ -83,7 +91,7 @@ export async function fetch(
   }
   const result = await nodeFetch(parsedURL, params);
   const responseBody = await getResponseBody(result);
-  if (result.status >= 400 && result.status < 600) {
+  if (result.status >= 400 && result.status < 600 && emitErrors) {
     broker.send<Prismeai.FailedFetch['payload']>(EventType.FailedFetch, {
       request: fetch,
       response: {
