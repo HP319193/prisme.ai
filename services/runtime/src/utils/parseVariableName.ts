@@ -72,7 +72,7 @@ export function parseVariableName(fullVariable: string): SplittedPath {
     }
   }
 
-  if (!splitted) {
+  if (!splitted.length) {
     throw new InvalidVariableNameError('Invalid variable name : empty', {
       fullVariable,
     });
