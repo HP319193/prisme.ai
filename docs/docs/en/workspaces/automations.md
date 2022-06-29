@@ -142,7 +142,23 @@ Workspaces can only listen to a limited subset of the available native events :
         }
         ```
       </td>
-    </tr>                            
+    </tr>  
+    <tr>
+      <td><b>runtime.webhooks.triggered</b></td>
+      <td>A webhook has been called</td>
+      <td>
+        ```
+        {
+          "request": fetchInstructionBody,
+          "response": {
+            workspaceId: "workspace id",
+            automationSlug: "webhook slug",
+            method: "httm method"
+          }
+        }
+        ```
+      </td>
+    </tr>                                
   </table>    
 </center>
 

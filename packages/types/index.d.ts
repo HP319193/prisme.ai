@@ -1193,6 +1193,10 @@ declare namespace Prismeai {
                  */
                 body?: AnyValue;
                 /**
+                 * If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default
+                 */
+                emitErrors?: boolean;
+                /**
                  * Sends a multipart/form-data HTTP request
                  */
                 multipart?: {
@@ -1255,6 +1259,10 @@ declare namespace Prismeai {
              * HTTP request body
              */
             body?: AnyValue;
+            /**
+             * If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default
+             */
+            emitErrors?: boolean;
             /**
              * Sends a multipart/form-data HTTP request
              */
