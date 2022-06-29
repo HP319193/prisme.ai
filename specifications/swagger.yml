@@ -638,6 +638,7 @@ paths:
           description: 'Search these keywords'
           schema:
             type: string
+          allowReserved: true
         - name: beforeId
           in: query
           description: Match every events created before given eventId
@@ -655,12 +656,14 @@ paths:
             additionalProperties: true
           style: form
           explode: false
+          allowReserved: true
         - name: 'types'
           in: 'query'
           example: message,notification
           description: 'Comma separated list of listened event types '
           schema:
             type: string
+          allowReserved: true
         - name: 'afterDate'
           in: 'query'
           description: 'Retrieve events created after this ISO8601 formatted date'

@@ -46,6 +46,7 @@ backend_npm_install:
       - 'services/workspaces/package.json'
       - 'services/events/package.json'
       - 'packages/**/*'
+      - 'specifications/swagger.yml'
     refs:
       - main
       - tags
