@@ -1,40 +1,81 @@
 import { InvalidVariableNameError } from '../errors';
-
 export type SplittedPath = (string | number)[];
-const VariableNameValidationRegexp = new RegExp(/^[a-zA-Z0-9 _-]+$/);
 
 export function parseVariableName(fullVariable: string): SplittedPath {
-  const enforcedDotNotation = fullVariable
-    .split('][')
-    .join('.')
-    .split('].')
-    .join('.')
-    .split('[')
-    .join('.');
-  // Last operation might leave a final ] (i.e some.final[brackets])
-  const splittedPath =
-    enforcedDotNotation[enforcedDotNotation.length - 1] === ']'
-      ? enforcedDotNotation.slice(0, enforcedDotNotation.length - 1).split('.')
-      : enforcedDotNotation.split('.');
+  if (fullVariable.endsWith('.')) {
+    throw new InvalidVariableNameError('Invalid variable name : unterminated', {
+      fullVariable,
+    });
+  }
+  if (fullVariable.startsWith('[')) {
+    throw new InvalidVariableNameError(
+      'Invalid variable name : cannot start with an opening bracket',
+      {
+        fullVariable,
+      }
+    );
+  }
+  let openedBracket: boolean | string = false,
+    newKey = null;
+  const splitted = [];
 
-  return splittedPath.map((name) => {
-    if (
-      (name[0] === "'" && name[name.length - 1] === "'") ||
-      (name[0] === '"' && name[name.length - 1] === '"')
+  let currentPart = '';
+  for (let i = 0; i < fullVariable.length + 1; i++) {
+    const remains = fullVariable.slice(i);
+    if (i === fullVariable.length) {
+      if (currentPart) {
+        newKey = currentPart;
+      }
+    } else if (
+      (!openedBracket && remains[0] == '.') ||
+      (openedBracket === true && remains[0] == ']') ||
+      (openedBracket && remains[0] === openedBracket && remains[1] == ']')
     ) {
-      name = name.slice(1, name.length - 1);
+      if (openedBracket && remains[0] === openedBracket) {
+        i++;
+      }
+      if (remains[0] !== '.' && fullVariable[i + 1] === '.') {
+        i++;
+      }
+
+      newKey = currentPart;
+      openedBracket = false;
+    } else if (!openedBracket && remains[0] == '[') {
+      if (currentPart) {
+        newKey = currentPart;
+      }
+      openedBracket = true;
+      if (remains[1] == '"' || remains[1] == "'") {
+        i++;
+        openedBracket = remains[1];
+      }
+    } else {
+      currentPart += remains[0];
     }
 
-    if (!name.length || !VariableNameValidationRegexp.test(name)) {
-      throw new InvalidVariableNameError(
-        "Invalid variable name. Only allowed characters are : a-z, A-Z, 0-9, '_' et '-'.",
-        {
-          invalidPart: name,
-          fullVariable,
-        }
+    if (newKey !== null) {
+      if (!newKey) {
+        throw new InvalidVariableNameError(
+          'Invalid variable name : missing key',
+          {
+            fullVariable,
+            positition: i,
+            at: remains,
+          }
+        );
+      }
+      splitted.push(
+        !isNaN(newKey as any as number) ? parseInt(newKey) : newKey
       );
+      currentPart = '';
+      newKey = null;
     }
+  }
 
-    return !isNaN(<any>name) ? parseInt(name) : name;
-  });
+  if (!splitted) {
+    throw new InvalidVariableNameError('Invalid variable name : empty', {
+      fullVariable,
+    });
+  }
+  return splitted;
 }

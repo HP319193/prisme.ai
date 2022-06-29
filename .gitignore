@@ -10,3 +10,4 @@ services/*/docker-compose-dev.yml
 docker-compose-dev.yml
 **/**/local.env
 services/console/.next
+test.js
