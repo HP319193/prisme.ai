@@ -1,22 +1,17 @@
 import Markdown from 'markdown-to-jsx';
-import { useMemo } from 'react';
+import { HTMLAttributes, useMemo } from 'react';
 import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
 import useLocalizedText from '../useLocalizedText';
 
-interface Config {
-  content?: string;
-}
-
-interface RichTextProps extends Config {}
-
-export const RichText = ({ content: initialContent }: RichTextProps) => {
-  const { config: { content = initialContent } = {} } = useBlock<Config>();
+export const RichTextRenderer = ({
+  children,
+  ...props
+}: { children: string } & HTMLAttributes<HTMLDivElement>) => {
   const { localize } = useLocalizedText();
   const {
     components: { Link },
   } = useBlocks();
-
   const options = useMemo(
     () => ({
       overrides: {
@@ -26,12 +21,19 @@ export const RichText = ({ content: initialContent }: RichTextProps) => {
     []
   );
 
-  if (!content) return null;
+  if (!children) return null;
 
   return (
-    <Markdown className="block-rich-text" options={options}>
-      {localize(content)}
+    <Markdown {...props} options={options}>
+      {localize(children)}
     </Markdown>
+  );
+};
+
+export const RichText = () => {
+  const { config: { content } = {} } = useBlock();
+  return (
+    <RichTextRenderer className="block-rich-text">{content}</RichTextRenderer>
   );
 };
 

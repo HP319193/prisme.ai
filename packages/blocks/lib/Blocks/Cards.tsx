@@ -20,7 +20,7 @@ import { useBlock } from '../Provider';
 import useLocalizedText from '../useLocalizedText';
 import { withI18nProvider } from '../i18n';
 import { useBlocks } from '../Provider/blocksContext';
-import RichText from './RichText';
+import RichText, { RichTextRenderer } from './RichText';
 import tw from '../tw';
 
 interface CardButton {
@@ -120,7 +120,7 @@ const CardButton: FC<CardButton> = ({ url, event, icon, value, payload }) => {
             />
           )}
         </div>
-        <RichText content={localize(value)} />
+        <RichTextRenderer>{localize(value)}</RichTextRenderer>
       </Link>
     );
   }
@@ -151,11 +151,11 @@ const CardButton: FC<CardButton> = ({ url, event, icon, value, payload }) => {
             />
           )}
         </div>
-        <RichText content={localize(value)} />
+        <RichTextRenderer>{localize(value)}</RichTextRenderer>
       </button>
     );
   }
-  return <RichText content={localize(value)} />;
+  return <RichTextRenderer>{localize(value)}</RichTextRenderer>;
 };
 
 export const Cards = ({ edit }: { edit?: boolean }) => {
