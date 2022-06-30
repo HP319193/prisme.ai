@@ -188,12 +188,22 @@ export class ContextsManager {
       fetchedContexts.global = await this.cache.getObject<GlobalContext>(
         this.cacheKey(ContextType.Global)
       );
+      this.contexts.global = {
+        ...this.contexts?.global,
+        ...fetchedContexts.global,
+        workspaceId: this.workspaceId,
+      };
     }
 
     if (!contexts || contexts.includes(ContextType.Run)) {
       fetchedContexts.run = await this.cache.getObject<RunContext>(
         this.cacheKey(ContextType.Run)
       );
+      this.contexts.run = {
+        ...this.contexts?.run,
+        ...fetchedContexts.run,
+        correlationId: this.correlationId,
+      };
     }
 
     if (!contexts || contexts.includes(ContextType.User)) {
@@ -203,14 +213,21 @@ export class ContextsManager {
             this.cacheKey(ContextType.User)
           ))) ||
         {};
+      this.contexts.user = {
+        ...this.contexts?.user,
+        ...fetchedContexts.user,
+        id: this.userId,
+      };
     }
     if (!contexts || contexts.includes(ContextType.Session)) {
       fetchedContexts.session = await this.cache.getObject(
         this.cacheKey(ContextType.Session)
       );
+      this.contexts.session = {
+        ...this.contexts?.session,
+        ...fetchedContexts.session,
+      };
     }
-
-    this.contexts = this.merge(fetchedContexts) as Contexts;
 
     // Restore previous depth
     if (fetchedContexts?.run?.depth) {

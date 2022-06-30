@@ -514,6 +514,16 @@ it('Arguments with secret: true remain redacted in native events from child auto
   });
 });
 
+it('Run context is synchronized between event-triggered cascading automations', async () => {
+  const { execute, emitBroker } = getMocks();
+
+  const output = await execute('runSynchronization', {});
+
+  expect(output).toEqual({
+    run: ['bar'],
+  });
+});
+
 afterAll(async () => {
   brokers.forEach((broker) => broker.close());
 });
