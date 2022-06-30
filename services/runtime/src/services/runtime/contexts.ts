@@ -154,33 +154,6 @@ export class ContextsManager {
     this.alreadyProcessedUpdateIds = new Set();
   }
 
-  private merge(additionalContexts: RecursivePartial<Contexts> = {}) {
-    return {
-      ...this.contexts,
-      ...additionalContexts,
-      config: additionalContexts.config || this.contexts.config || {},
-      global: {
-        ...this.contexts?.global,
-        ...additionalContexts?.global,
-        workspaceId: this.workspaceId,
-      },
-      user: {
-        ...this.contexts?.user,
-        ...additionalContexts?.user,
-        id: this.userId,
-      },
-      run: {
-        ...this.contexts?.run,
-        ...additionalContexts?.run,
-        correlationId: this.correlationId,
-      },
-      session: {
-        ...this.contexts?.session,
-        ...additionalContexts?.session,
-      },
-    };
-  }
-
   async fetch(contexts?: ContextType[]) {
     const fetchedContexts: Partial<Contexts> = {};
 
