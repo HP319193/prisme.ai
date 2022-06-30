@@ -520,7 +520,8 @@
             "url": "Lien vers la page web",
             "event": "Événement à déclencher",
             "payload": "Données attachées",
-            "icon": "Icône"
+            "icon": "Icône",
+            "popup": "Ouvrir dans une nouvelle fenêtre"
           },
           "accordion": {
             "title": "Titre",

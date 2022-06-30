@@ -10,7 +10,7 @@ import * as prismeaiSDK from '../utils/api';
 import UserProvider from '../components/UserProvider';
 import WorkspacesProvider from '../components/WorkspacesProvider';
 import { NextPage } from 'next';
-import React, { ReactElement, ReactNode } from 'react';
+import React, { HTMLAttributes, ReactElement, ReactNode } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
@@ -43,12 +43,11 @@ const externals = {
 const Loading = () => (
   <DSLoading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
 );
-const Link = ({ href = '', target, ...props }: { href: string } & any) => {
+const Link = ({
+  href = '',
+  ...props
+}: { href: string } & HTMLAttributes<HTMLAnchorElement>) => {
   const link = `${href}`.match(/^http/) ? href : `/pages/${href}`;
-
-  if (target === '_blank') {
-    return <a href={link} target={target} {...props} />;
-  }
 
   return (
     <NextLink href={link}>
