@@ -31,10 +31,35 @@ export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
 
   const prevSocket = useRef<Events>();
   const initEvents = useCallback(() => {
-    if (!cachedPage || typeof cachedPage !== 'object') return;
+    if (!cachedPage || typeof cachedPage !== 'object' || !prevSocket.current)
+      return;
     const blocks = cachedPage.blocks || [];
+    const { current: socket } = prevSocket;
+
+    const updateEvents = blocks.reduce<Record<string, number[]>>(
+      (prev, { config }, index) =>
+        !config || !config.updateOn
+          ? prev
+          : {
+              ...prev,
+              [config.updateOn]: [...(prev[config.updateOn] || []), index],
+            },
+      {}
+    );
+
+    off.current = socket.all((e, { payload }) => {
+      if (Object.keys(updateEvents).includes(e)) {
+        setBlocksConfigs((configs) => {
+          const newConfigs = [...configs];
+          (updateEvents[e] || []).forEach((id) => {
+            newConfigs[id] = { ...newConfigs[id], ...payload };
+          });
+          return newConfigs;
+        });
+      }
+    });
+
     blocks.forEach(({ config, config: { onInit } = {} }) => {
-      if (!prevSocket.current) return;
       if (onInit) {
         const payload: any = {
           page: cachedPage.id,
@@ -51,9 +76,13 @@ export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
             {}
           );
         }
-        prevSocket.current.emit(onInit, payload);
+        socket.emit(onInit, payload);
       }
     });
+
+    return () => {
+      off.current && off.current();
+    };
   }, [cachedPage]);
 
   const initSocket = useCallback(async () => {
@@ -82,28 +111,6 @@ export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
 
     if (!prevSocket.current) return null;
 
-    const updateEvents = (page.blocks || []).reduce<Record<string, number[]>>(
-      (prev, { config }, index) =>
-        !config || !config.updateOn
-          ? prev
-          : {
-              ...prev,
-              [config.updateOn]: [...(prev[config.updateOn] || []), index],
-            },
-      {}
-    );
-
-    off.current = prevSocket.current.all((e, { payload }) => {
-      if (Object.keys(updateEvents).includes(e)) {
-        setBlocksConfigs((configs) => {
-          const newConfigs = [...configs];
-          (updateEvents[e] || []).forEach((id) => {
-            newConfigs[id] = { ...newConfigs[id], ...payload };
-          });
-          return newConfigs;
-        });
-      }
-    });
     initEvents();
   }, [cachedPage, initEvents, socket, user]);
 
@@ -114,12 +121,6 @@ export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
   useEffect(() => {
     initSocket();
   }, [initSocket]);
-
-  useEffect(() => {
-    return () => {
-      off.current && off.current();
-    };
-  }, []);
 
   const initWithAutomation = useCallback(
     async (workspaceId: string, automation: string, index: number) => {

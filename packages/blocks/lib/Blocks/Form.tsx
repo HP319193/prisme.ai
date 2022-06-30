@@ -48,7 +48,7 @@ export const Form = () => {
         buttons={[
           <div
             key={0}
-            className={tw`block-form__buttons-container buttons-container lex grow justify-end mt-2 pt-4`}
+            className={tw`block-form__buttons-container buttons-container flex flex-1 justify-end mt-2 pt-4`}
           >
             <Button
               type="submit"
