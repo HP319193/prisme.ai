@@ -59,11 +59,18 @@ export const Header = ({ edit }: { edit?: boolean }) => {
 
   const nav = config.nav && Array.isArray(config.nav) ? config.nav : [];
 
+  const inlineLinks = nav.length < 2;
   return (
     <div
-      className={tw`block-header flex flex-1 flex-col md:!flex-row justify-between md:items-center px-4 py-2`}
+      className={tw`block-header flex flex-1 flex-col ${
+        inlineLinks ? '!flex-row' : 'md:!flex-row'
+      } justify-between md:items-center px-4 py-2`}
     >
-      <div className={tw`block-header__left left flex md:justify-center`}>
+      <div
+        className={tw`block-header__left left flex ${
+          inlineLinks ? '' : 'md:justify-center'
+        }`}
+      >
         <div className={tw`left__logo logo flex justify-center m-2 ml-4`}>
           {config.logo && config.logo.src && (
             <img
