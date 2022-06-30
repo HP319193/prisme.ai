@@ -1625,7 +1625,7 @@ declare namespace Prismeai {
         type: "gateway.login.succeeded";
         payload: {
             ip: string;
-            email: string;
+            email?: string;
             id: string;
             authData: {
                 [name: string]: any;
@@ -1766,7 +1766,7 @@ declare namespace Prismeai {
         };
     }
     export interface UsageMetrics {
-        transactions?: number;
+        transactions: number;
         automationRuns: number;
         httpTransactions: number;
         eventTransactions: number;

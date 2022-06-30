@@ -20,6 +20,8 @@ import { filterEmpty } from '../../utils/prismeAi';
 import { ExceptionOutlined } from '@ant-design/icons';
 import { useWorkspace, WorkspaceContext } from '../WorkspaceProvider';
 import ShareWorkspace from '../Share/ShareWorkspace';
+import SourceDetails from '../SourceDetails';
+import SectionContent from './SectionContent';
 
 export const EventsViewerRenderer = memo(function EventsViewerRender({
   events,
@@ -36,7 +38,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
   const { workspace: { name: workspaceName } = {} } = useWorkspace();
   const { localize } = useLocalizedText('pages');
-
+  console.log(events);
   useEffect(() => {
     if (bottom) {
       nextEvents();
@@ -48,23 +50,19 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
       Array.from(events).map((event) => ({
         key: event.id,
         label: (
-          <div className="flex flex-col">
-            <div
-              className={`flex flex-row ${
-                readEvents.has(event.id) ? 'opacity-50' : ''
-              }`}
-            >
-              <div className="font-bold">
-                {event.source?.appSlug || localize(workspaceName)}
-              </div>
-              <div className="text-gray font-thin ml-4">
-                {dateFormat(event.createdAt, {
-                  relative: true,
-                })}
-              </div>
-            </div>
-            <div className="font-normal">{event.type}</div>
-          </div>
+          <SourceDetails
+            workspaceId={event.source.workspaceId}
+            appSlug={event.source.appSlug}
+          >
+            <SectionContent
+              title={event.source?.appSlug || localize(workspaceName)}
+              date={dateFormat(event.createdAt, {
+                relative: true,
+              })}
+              type={event.type}
+              read={readEvents.has(event.id)}
+            />
+          </SourceDetails>
         ),
         content: <EventDetails {...event} />,
         onClick: () => {
@@ -101,8 +99,8 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
       content = <Empty />;
     } else {
       content = (
-        <div className="flex grow justify-center items-center">
-          <div className="flex grow justify-center items-center flex-col">
+        <div className="flex flex-1 justify-center items-center">
+          <div className="flex flex-1 justify-center items-center flex-col">
             <ExceptionOutlined className="text-[50px] !text-gray mb-5" />
             {t('events.filters.empty')}
           </div>
@@ -133,8 +131,14 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
 
 export const EventsViewer = () => {
   const { t } = useTranslation('workspaces');
-  const { setShare, events, nextEvents, readEvents, readEvent, filters } =
-    useWorkspace();
+  const {
+    setShare,
+    events,
+    nextEvents,
+    readEvents,
+    readEvent,
+    filters,
+  } = useWorkspace();
 
   useEffect(() => {
     setShare({
