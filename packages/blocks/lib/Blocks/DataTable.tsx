@@ -1,6 +1,6 @@
 import '../i18n';
 import { Table } from '@prisme.ai/design-system';
-import { tw } from 'twind';
+import tw from '../tw';
 import { useBlock } from '../Provider';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';

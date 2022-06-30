@@ -17,11 +17,11 @@ import {
 } from 'react';
 import BlockTitle from './Internal/BlockTitle';
 import { useBlock } from '../Provider';
-import { tw } from 'twind';
 import useLocalizedText from '../useLocalizedText';
 import { withI18nProvider } from '../i18n';
 import { useBlocks } from '../Provider/blocksContext';
 import RichText from './RichText';
+import tw from '../tw';
 
 interface CardButton {
   type: 'button';
@@ -49,6 +49,15 @@ interface Card {
         icon?: string;
       }
   )[];
+}
+
+interface CardsConfig {
+  title: string;
+  cards: Card[];
+  layout: {
+    type: 'grid' | 'column' | 'carousel';
+    autoScroll?: boolean;
+  };
 }
 
 const Accordion: FC<{
@@ -79,14 +88,7 @@ const Accordion: FC<{
   );
 };
 
-const CardButton: FC<CardButton> = ({
-  url,
-  event,
-  icon,
-  value,
-  payload,
-  children,
-}) => {
+const CardButton: FC<CardButton> = ({ url, event, icon, value, payload }) => {
   const { localize } = useLocalizedText();
   const { events } = useBlock();
   const {
@@ -96,7 +98,6 @@ const CardButton: FC<CardButton> = ({
     return (
       <Link
         className={`${tw`card-content-outer__button-link button-link flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}`}
-        target={'_blank'}
         href={url}
       >
         <div
@@ -160,7 +161,7 @@ const CardButton: FC<CardButton> = ({
 export const Cards = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
   const { localize } = useLocalizedText();
-  const { config = {} } = useBlock();
+  const { config = {} as CardsConfig } = useBlock<CardsConfig>();
   const [canScroll, setCanScroll] = useState<boolean | null>(false);
 
   const container = useRef<HTMLDivElement>(null);
@@ -249,17 +250,16 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     switch (type) {
       case 'grid':
         return {
-          container: 'flex flex-row flex-wrap justify-center',
+          container: tw`flex flex-row flex-wrap justify-center`,
         };
       case 'column':
         return {
-          container: 'flex flex-wrap flex-col items-center',
+          container: tw`flex flex-wrap flex-col items-center`,
         };
       case 'carousel':
       default:
         return {
-          container:
-            'flex flex-row flex-nowrap overflow-auto pr-[100vw] snap-x snap-mandatory pb-6',
+          container: tw`flex flex-row flex-nowrap overflow-auto pr-[100vw] snap-x snap-mandatory pb-6`,
         };
     }
   }, [config]);
@@ -305,7 +305,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
         {config.title && <BlockTitle value={config.title} />}
       </div>
       <div
-        className={tw`block-cards__cards-container cards-container relative !pt-0 w-full`}
+        className={tw`block-cards__cards-container cards-container relative !pt-0 w-full overflow-hidden`}
       >
         <div
           ref={container}

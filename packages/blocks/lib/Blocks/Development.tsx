@@ -1,9 +1,8 @@
 import '../i18n';
 import { ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { tw } from 'twind';
+import tw from '../tw';
 import { BlockLoader } from '../BlockLoader';
 import { useBlock } from '../Provider';
 import { withI18nProvider } from '../i18n';

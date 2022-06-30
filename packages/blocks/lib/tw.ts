@@ -1,7 +1,19 @@
 // Tailwind setup
-import {setup} from 'twind';
+import { tw, setup } from 'twind';
 
 setup({
+  plugins: {
+    snap: (parts) => {
+      switch (parts[0]) {
+        case 'start':
+          return { 'scroll-snap-align': 'start' };
+        case 'x':
+          return { 'scroll-snap-type': 'x mandatory' };
+        case 'mandatory':
+          return { 'scroll-snap-type': 'mandatory' };
+      }
+    },
+  },
   theme: {
     borderRadius: {
       DEFAULT: '10px',
@@ -26,3 +38,5 @@ setup({
     },
   },
 });
+
+export default tw;

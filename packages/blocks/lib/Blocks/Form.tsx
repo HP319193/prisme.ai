@@ -3,7 +3,7 @@ import { Button, SchemaForm } from '@prisme.ai/design-system';
 import { useBlock } from '../Provider';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useMemo } from 'react';
-import { tw } from 'twind';
+import tw from '../tw';
 import BlockTitle from './Internal/BlockTitle';
 import useLocalizedText from '../useLocalizedText';
 import { withI18nProvider } from '../i18n';
