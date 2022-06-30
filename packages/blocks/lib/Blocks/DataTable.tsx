@@ -58,9 +58,11 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
   );
 
   return (
-    <div className={tw`p-8`}>
+    <div className={tw`block-data-table p-8`}>
       {config.title && <BlockTitle value={config.title} />}
-      <div className={tw`overflow-scroll`}>
+      <div
+        className={tw`block-data-table__table-container table-container overflow-scroll`}
+      >
         <Table dataSource={data} columns={columns} locale={locales} />
       </div>
     </div>

@@ -28,7 +28,11 @@ export const RichText = ({ content: initialContent }: RichTextProps) => {
 
   if (!content) return null;
 
-  return <Markdown options={options}>{localize(content)}</Markdown>;
+  return (
+    <Markdown className="block-rich-text" options={options}>
+      {localize(content)}
+    </Markdown>
+  );
 };
 
 export default RichText;

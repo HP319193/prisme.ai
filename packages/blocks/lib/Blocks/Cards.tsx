@@ -56,18 +56,24 @@ const Accordion: FC<{
 }> = ({ title, children }) => {
   const [visible, setVisible] = useState(false);
   return (
-    <div className={tw`flex flex-1 flex-col`}>
+    <div className={tw`accordion__container container flex flex-1 flex-col`}>
       <button
-        className={tw`flex flex-1 justify-between items-center p-2`}
+        className={tw`container__button button flex flex-1 justify-between items-center p-2`}
         onClick={() => setVisible(!visible)}
       >
         {title}
         <DownOutlined
-          className={tw`transition-transform ${visible ? '-rotate-180' : ''}`}
+          className={tw`button__icon icon transition-transform ${
+            visible ? '-rotate-180' : ''
+          }`}
         />
       </button>
       <StretchContent visible={visible}>
-        <div className={tw`p-2`}>{children}</div>
+        <div
+          className={tw`container__accordion-content-container accordion-content-container p-2`}
+        >
+          {children}
+        </div>
       </StretchContent>
     </div>
   );
@@ -89,16 +95,28 @@ const CardButton: FC<CardButton> = ({
   if (url) {
     return (
       <Link
-        className={`${tw`flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}`}
+        className={`${tw`card-content-outer__button-link button-link flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}`}
         target={'_blank'}
         href={url}
       >
-        <div className={tw`flex mr-2`}>
+        <div
+          className={tw`button-link__image-container image-container flex mr-2`}
+        >
           {icon ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={icon} alt={localize(value)} height={16} width={16} />
+            <img
+              className="image-container__image image image-container__image--custom image--custom"
+              src={icon}
+              alt={localize(value)}
+              height={16}
+              width={16}
+            />
           ) : (
-            <LinkOutlined height={16} width={16} />
+            <LinkOutlined
+              className="image-container__image image image-container__image--default image--default"
+              height={16}
+              width={16}
+            />
           )}
         </div>
         <RichText content={localize(value)} />
@@ -109,15 +127,27 @@ const CardButton: FC<CardButton> = ({
     return (
       <button
         type="button"
-        className={`${tw`flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}`}
+        className={`${tw`block-cards__button-event button-event flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}`}
         onClick={() => events?.emit(event, payload)}
       >
-        <div className={tw`flex mr-2`}>
+        <div
+          className={tw`button-event__image-container image-container flex mr-2`}
+        >
           {icon ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={icon} alt={localize(value)} height={16} width={16} />
+            <img
+              className="image-container__image--custom image--custom"
+              src={icon}
+              alt={localize(value)}
+              height={16}
+              width={16}
+            />
           ) : (
-            <LinkOutlined height={16} width={16} />
+            <LinkOutlined
+              className="image-container__image--default image--default"
+              height={16}
+              width={16}
+            />
           )}
         </div>
         <RichText content={localize(value)} />
@@ -126,15 +156,6 @@ const CardButton: FC<CardButton> = ({
   }
   return <RichText content={localize(value)} />;
 };
-
-interface CardsConfig {
-  title?: string;
-  cards?: Card[];
-  layout?: {
-    type: 'grid' | 'column' | 'carousel';
-    autoScroll?: boolean;
-  };
-}
 
 export const Cards = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
@@ -277,26 +298,33 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
   );
 
   return (
-    <div className={tw`flex flex-col w-full`}>
-      <div className={tw`pt-8 pl-8`}>
+    <div className={tw`block-cards flex flex-col w-full`}>
+      <div
+        className={tw`block-cards__title-container title-container pt-8 pl-8`}
+      >
         {config.title && <BlockTitle value={config.title} />}
       </div>
-      <div className={tw`relative !pt-0 w-full`}>
-        <div ref={container} className={styles.container}>
+      <div
+        className={tw`block-cards__cards-container cards-container relative !pt-0 w-full`}
+      >
+        <div
+          ref={container}
+          className={`cards-container__cards-container cards-container ${styles.container}`}
+        >
           {(cards as Card[]).map(
             ({ title, description, cover, content = [] }, index) => (
               <div
                 key={index}
-                className={`${tw`flex flex-col snap-start my-6 pl-[10px] group w-[325px]`}`}
+                className={`${tw`cards-container__card-container card-container flex flex-col snap-start my-6 pl-[10px] group w-[325px]`}`}
                 style={{
                   flex: '0 0 325px',
                 }}
               >
                 <div
-                  className={`${tw`relative flex flex-1 flex-col mx-2 rounded-[20px]`}`}
+                  className={`${tw`card-container__card card relative flex flex-1 flex-col mx-2 rounded-[20px]`}`}
                 >
                   <div
-                    className={tw`h-[303px] p-[-1px] rounded-[20px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top`}
+                    className={tw`card__card-image card-image h-[303px] p-[-1px] rounded-[20px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top`}
                     style={{
                       backgroundImage: cover ? `url(${cover})` : undefined,
                       backgroundColor: cover
@@ -306,6 +334,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                   />
                   <div
                     className={tw`
+                      card__card-content card-content
                       relative flex flex-col min-h-[203px] mt-[103px]
                       rounded-[20px] p-4 border-[1px] border-gray-200
                       bg-white
@@ -314,22 +343,26 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                       `}
                   >
                     <div
-                      className={`${tw`font-bold text-sm text-accent text-center`}`}
+                      className={`${tw`card__card-title card-content font-bold text-sm text-accent text-center`}`}
                     >
                       {localize(title)}
                     </div>
                     <div
-                      className={`${tw`text-[10px] my-2 text-neutral-500 text-center`}`}
+                      className={`${tw`card__card-description card-description text-[10px] my-2 text-neutral-500 text-center`}`}
                     >
                       {localize(description)}
                     </div>
                     {content &&
                       Array.isArray(content) &&
                       content.map((item, index) => (
-                        <div key={index} className={`${tw`flex mb-4`}`}>
+                        <div
+                          key={index}
+                          className={`${tw`card__card-content-outer card-content-outer flex mb-4`}`}
+                        >
                           {item.type === 'text' && (
-                            <div>
+                            <div className="card-content-outer__content-text content-text">
                               <div
+                                className="content-text__content content"
                                 dangerouslySetInnerHTML={{
                                   __html: localize(item.value),
                                 }}
@@ -339,12 +372,12 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                           {item.type === 'button' && <CardButton {...item} />}
                           {item.type === 'accordion' && (
                             <div
-                              className={`${tw`flex flex-1 border-[1px] border-neutral-200 rounded p-2`}`}
+                              className={`${tw`card-content-outer__accordion accordion flex flex-1 border-[1px] border-neutral-200 rounded p-2`}`}
                             >
                               <Accordion
                                 title={
                                   <div
-                                    className={tw`flex flex-row items-center`}
+                                    className={tw`accordion__accordion-title accordion-title flex flex-row items-center`}
                                   >
                                     {item.icon && (
                                       // eslint-disable-next-line @next/next/no-img-element
@@ -353,7 +386,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                                         alt={localize(item.title)}
                                         width={16}
                                         height={16}
-                                        className={tw`mr-2`}
+                                        className={tw`accordion-title__image image`}
                                       />
                                     )}{' '}
                                     {localize(item.title)}
@@ -361,6 +394,9 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                                 }
                               >
                                 <div
+                                  className={
+                                    'accordion-content-container__content content'
+                                  }
                                   dangerouslySetInnerHTML={{
                                     __html: localize(item.content),
                                   }}
@@ -377,22 +413,32 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
           )}
         </div>
         {canScroll && (
-          <div className={`${tw`text-accent text-l`}`}>
+          <div className={`${tw`block-cards__scroll text-accent text-l`}`}>
             <div
-              className={tw`absolute flex justify-center top-16 left-6 h-8 w-8 bg-white rounded-[100%] shadow-lg`}
+              className={tw`block-cards__scroll__left absolute flex justify-center top-16 left-6 h-8 w-8 bg-white rounded-[100%] shadow-lg`}
             >
               <Tooltip title={t('cards.prev')} placement="right">
-                <button onClick={scroll(-1)} className={'outline-none'}>
-                  <LeftOutlined className={tw`bg-white rounded-[50%]`} />
+                <button
+                  onClick={scroll(-1)}
+                  className={'block-cards__scroll__left__button outline-none'}
+                >
+                  <LeftOutlined
+                    className={tw`block-cards__scroll__left__button__icon bg-white rounded-[50%]`}
+                  />
                 </button>
               </Tooltip>
             </div>
             <div
-              className={tw`absolute flex justify-center top-16 right-6 h-8 w-8 bg-white rounded-[100%] shadow-lg`}
+              className={tw`block-cards__scroll__right absolute flex justify-center top-16 right-6 h-8 w-8 bg-white rounded-[100%] shadow-lg`}
             >
               <Tooltip title={t('cards.next')} placement="left">
-                <button onClick={scroll(1)} className={tw`outline-none`}>
-                  <RightOutlined className={tw`bg-white rounded-[50%]`} />
+                <button
+                  onClick={scroll(1)}
+                  className={tw`block-cards__scroll__right__button outline-none`}
+                >
+                  <RightOutlined
+                    className={tw`block-cards__scroll__right__button__icon bg-white rounded-[50%]`}
+                  />
                 </button>
               </Tooltip>
             </div>
