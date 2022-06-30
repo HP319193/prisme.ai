@@ -1,6 +1,7 @@
 import { Schema } from '@prisme.ai/design-system';
 
 const extractEventFromSchema = (schema: Schema, value: any): string[] => {
+  if (!value) return [];
   if (schema.type === 'object') {
     return Object.keys(schema.properties || {}).flatMap((key) =>
       value[key]
@@ -26,7 +27,7 @@ export const extractEvents = (
 ) => {
   const schemas = Array.from(blocksSchemas.values());
   const events = schemas.flatMap((schema) => {
-    const { onInit, updateOn } = config;
+    const { onInit, updateOn } = config || {};
     const events = new Set(extractEventFromSchema(schema, config));
     onInit && events.add(onInit);
     updateOn && events.add(updateOn);
