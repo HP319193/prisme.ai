@@ -262,6 +262,10 @@
           "body": {
             "description": "HTTP request body"
           },
+          "emitErrors": {
+            "description": "If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default",
+            "type": "boolean"
+          },
           "multipart": {
             "description": "Sends a multipart/form-data HTTP request",
             "type": "array",

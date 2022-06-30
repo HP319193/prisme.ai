@@ -1,5 +1,5 @@
 import '../i18n';
-import { tw } from 'twind';
+import tw from '../tw';
 import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
 
