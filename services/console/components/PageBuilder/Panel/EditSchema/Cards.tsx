@@ -35,6 +35,9 @@ const schema: Schema = {
               type: 'object',
               title: 'pages.blocks.cards.settings.type',
               properties: {
+                type: {
+                  hidden: true,
+                },
                 value: {
                   type: 'localized:string',
                   title: 'pages.blocks.cards.settings.text.value',
