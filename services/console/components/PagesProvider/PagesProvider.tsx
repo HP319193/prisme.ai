@@ -45,6 +45,7 @@ export const PagesProvider: FC<PagesProvider> = ({ children }) => {
   );
   const savePage: PagesContext['savePage'] = useCallback(
     async (workspaceId, page, events = []) => {
+      events.push('*');
       if (events.length > 0) {
         if (page.apiKey) {
           await api.updateApiKey(workspaceId, page.apiKey, events);
