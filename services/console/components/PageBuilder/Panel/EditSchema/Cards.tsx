@@ -72,6 +72,11 @@ const schema: Schema = {
                             from: 'pages',
                           },
                         },
+                        popup: {
+                          type: 'boolean',
+                          title: 'pages.blocks.cards.settings.button.popup',
+                          default: true,
+                        },
                       },
                     },
                     {
@@ -80,6 +85,11 @@ const schema: Schema = {
                         url: {
                           type: 'localized:string',
                           title: 'pages.blocks.cards.settings.button.url',
+                        },
+                        popup: {
+                          type: 'boolean',
+                          title: 'pages.blocks.cards.settings.button.popup',
+                          default: true,
                         },
                       },
                     },

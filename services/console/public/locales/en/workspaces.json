@@ -520,7 +520,8 @@
             "url": "Web adress to link",
             "event": "Event to trigger",
             "payload": "Attached data",
-            "icon": "Icon"
+            "icon": "Icon",
+            "popup": "Open in a new window"
           },
           "accordion": {
             "title": "Title",

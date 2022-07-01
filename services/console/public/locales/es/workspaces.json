@@ -520,7 +520,8 @@
             "url": "Dirección web que debe mostrarse",
             "event": "Evento que debe activarse",
             "payload": "Datos adjuntos",
-            "icon": "Icono"
+            "icon": "Icono",
+            "popup": "Abrir en una nueva ventana"
           },
           "accordion": {
             "title": "Título",
