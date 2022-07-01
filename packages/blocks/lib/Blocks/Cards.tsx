@@ -183,14 +183,27 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
       if (!container.current) return;
       const { current } = container;
       const currentLeft = current.scrollLeft;
-      current.scrollBy({ left: step, top: 0, behavior: 'smooth' });
+      const cardWidth = current.firstChild
+        ? (current.firstChild as Element).getBoundingClientRect().width
+        : 1;
+
       setTimeout(() => {
         if (currentLeft === current.scrollLeft) {
+          const from = current.scrollLeft;
           current.scrollBy({
-            left: current.scrollWidth * -step,
+            left: step * cardWidth,
             top: 0,
             behavior: 'smooth',
           });
+          setTimeout(() => {
+            if (from !== current.scrollLeft) return;
+            // Go back to the start or the the end
+            current.scrollTo({
+              left: from === 0 ? current.scrollWidth : 0,
+              top: 0,
+              behavior: 'smooth',
+            });
+          }, 50);
         }
       }, 50);
     },
