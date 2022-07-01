@@ -76,6 +76,9 @@ const FilterEventsPopover = () => {
                 // Only date before now
                 return current.toDate() > new Date();
               },
+              showNow: true,
+              showTime: true,
+              format: 'DD/MM/YYYY HH:mm:ss',
             },
           },
         },
@@ -94,6 +97,9 @@ const FilterEventsPopover = () => {
                   current.toDate() > new Date()
                 );
               },
+              showNow: true,
+              showTime: true,
+              format: 'DD/MM/YYYY HH:mm:ss',
             },
           },
         },
