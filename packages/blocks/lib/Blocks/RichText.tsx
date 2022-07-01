@@ -25,7 +25,7 @@ export const RichTextRenderer = ({
 
   return (
     <Markdown {...props} options={options}>
-      {localize(children)}
+      {`<div>${localize(children)}</div>`}
     </Markdown>
   );
 };

@@ -39,13 +39,20 @@ const Template: Story<any> = ({ defaultConfig }) => {
 export const Default = Template.bind({});
 Default.args = {
   defaultConfig: {
-    content: `<div>
+    content: `
 <h1>HTML</h1>
 <p>Hello <a href="https://prisme.ai">World</a></p>
 
 # Markdown
 
 This is some __markdown__ content with [link](https://prisme.ai).
-</div>`,
+`,
+  },
+};
+
+export const OneTag = Template.bind({});
+OneTag.args = {
+  defaultConfig: {
+    content: `# Just a title`,
   },
 };
