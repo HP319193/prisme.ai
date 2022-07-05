@@ -1,5 +1,5 @@
 import '../i18n';
-import { Button, SchemaForm } from '@prisme.ai/design-system';
+import { Button, Schema, SchemaForm } from '@prisme.ai/design-system';
 import { useBlock } from '../Provider';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useMemo } from 'react';
@@ -13,8 +13,16 @@ const defaultSchema = {
   title: 'preview',
 };
 
+interface FormConfig {
+  title?: string;
+  schema: Schema;
+  onChange?: string;
+  onSubmit?: string;
+  submitLabel?: string;
+}
+
 export const Form = () => {
-  const { config = {}, events } = useBlock();
+  const { config, events } = useBlock<FormConfig>();
   const { t } = useTranslation();
   const { localize, localizeSchemaForm } = useLocalizedText();
 

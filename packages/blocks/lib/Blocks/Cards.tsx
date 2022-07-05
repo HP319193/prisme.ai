@@ -20,7 +20,7 @@ import { useBlock } from '../Provider';
 import useLocalizedText from '../useLocalizedText';
 import { withI18nProvider } from '../i18n';
 import { useBlocks } from '../Provider/blocksContext';
-import RichText, { RichTextRenderer } from './RichText';
+import { RichTextRenderer } from './RichText';
 import tw from '../tw';
 
 interface CardButton {
