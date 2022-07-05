@@ -32,7 +32,7 @@ export default {
   INTERNAL_API_KEY: process.env.INTERNAL_API_KEY || '#pZFT>2.g9x8p9D',
 
   PASSWORD_VALIDATION_REGEXP: new RegExp(
-    process.env.PASSWORD_VALIDATION_REGEXP || '.{8,32}'
+    process.env.PASSWORD_VALIDATION_REGEXP || '^.{8,32}$'
   ),
 
   X_FORWARDED_HEADERS: ['yes', 'enabled', 'enable', 'true'].includes(
