@@ -144,7 +144,7 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>PASSWORD_VALIDATION_REGEXP</td>
     <td>api-gateway</td>
     <td>Password validation regexp</td>
-    <td>.{8,}</td>
+    <td>.{8,32}</td>
   </tr>    
 
   <tr>
