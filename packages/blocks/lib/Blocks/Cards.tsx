@@ -320,6 +320,18 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     [config.cards, preview, previewText]
   );
 
+  const getCoverStyle = useCallback(
+    (index: number) => {
+      const { cover } = cards[index] || {};
+      const isUrl = cover && cover.match(/^http/);
+      return {
+        backgroundImage: isUrl ? `url(${cover})` : undefined,
+        backgroundColor: isUrl ? undefined : cover || getRandomColor(index),
+      };
+    },
+    [cards]
+  );
+
   return (
     <div className={tw`block-cards flex flex-col w-full`}>
       <div
@@ -348,12 +360,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                 >
                   <div
                     className={tw`card__card-image card-image h-[303px] p-[-1px] rounded-[20px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top`}
-                    style={{
-                      backgroundImage: cover ? `url(${cover})` : undefined,
-                      backgroundColor: cover
-                        ? undefined
-                        : getRandomColor(index),
-                    }}
+                    style={getCoverStyle(index)}
                   />
                   <div
                     className={tw`
