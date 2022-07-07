@@ -650,7 +650,7 @@ export class AccessManager<
     subjectType: SubjectType,
     subjectId: string
   ): Promise<CustomRole<SubjectType, CustomRules>[]> {
-    await await this.throwUnlessCan(
+    await this.throwUnlessCan(
       ActionType.ManagePermissions,
       subjectType,
       subjectId
@@ -670,7 +670,7 @@ export class AccessManager<
       .map((cur) => cur.toJSON())
       .map((cur) => ({
         ...cur,
-        casl: JSON.parse(cur.casl as any),
+        casl: cur.casl ? JSON.parse(cur.casl as any) : undefined,
       }));
   }
 
