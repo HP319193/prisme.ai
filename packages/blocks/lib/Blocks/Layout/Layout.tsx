@@ -17,7 +17,7 @@ export const Layout = ({ edit }: LayoutProps) => {
   const [history, setHistory] = useState<LayoutConfig['content'][]>([]);
   const headEl = useRef<HTMLDivElement>(null);
   const [headBox, setHeadBox] = useState<DOMRect>();
-  console.log({ config });
+
   useEffect(() => {
     if (!headEl.current) return;
 

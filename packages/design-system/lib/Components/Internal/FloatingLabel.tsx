@@ -24,9 +24,8 @@ const FloatingLabel = ({
         className={`duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none ${
           raisedPlaceholder ? 'pr-label-top' : ''
         }`}
-      >
-        {label}
-      </label>
+        dangerouslySetInnerHTML={{ __html: label || '' }}
+      />
     </div>
   );
 };

@@ -12,7 +12,7 @@ interface ContentProps {
 }
 
 export const ContentRenderer = ({
-  content: { title, blocks },
+  content: { blocks = [] },
   className,
   onUnmount,
   removed,
@@ -36,14 +36,15 @@ export const ContentRenderer = ({
   return (
     <div className={`${className} transition-transform  ${animationClassName}`}>
       {blocks.map(({ block, url, ...config }, index) => (
-        <BlockLoader
-          key={index}
-          config={config}
-          name={block}
-          url={url}
-          api={api}
-          events={events}
-        />
+        <div key={index} className={tw`flex snap-start`}>
+          <BlockLoader
+            config={config}
+            name={block}
+            url={url}
+            api={api}
+            events={events}
+          />
+        </div>
       ))}
     </div>
   );

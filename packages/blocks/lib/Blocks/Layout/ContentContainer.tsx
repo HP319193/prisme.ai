@@ -74,7 +74,7 @@ export const ContentContainerRenderer = ({
         {pages.map(({ content, removed }, index) => (
           <Content
             key={index}
-            className={tw`absolute overflow-auto top-0 left-0 right-0 bottom-0 bg-white`}
+            className={tw`absolute overflow-auto snap-x top-0 left-0 right-0 bottom-0 bg-white`}
             content={content}
             onUnmount={onUnmount}
             removed={removed}
@@ -87,7 +87,7 @@ export const ContentContainerRenderer = ({
 
 export const ContentContainer = () => {
   const { history, headBox } = useLayout();
-  const marginTop = headBox ? headBox.height : 0;
+  const marginTop = headBox ? +headBox.height.toFixed() : 0;
   return useMemo(
     () => (
       <ContentContainerRenderer
