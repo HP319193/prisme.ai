@@ -56,7 +56,7 @@ export function initAPI(
    * Traceability
    */
   /**
-   * When running Express app behind a proxy we need to detect client IP address correctly.
+   * When running Express app behind a proxy we need to detect client IP address correctly
    * For NGINX the following must be configured 'proxy_set_header X-Forwarded-For $remote_addr;'
    * @link http://expressjs.com/en/guide/behind-proxies.html
    */
