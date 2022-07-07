@@ -512,10 +512,16 @@
             "value": "Text to display"
           },
           "button": {
+            "type_page": "Link to a Page",
+            "type_url": "Link to an external web address",
+            "type_event": "Trigger an event",
+            "page": "Choose one of your pages",
             "value": "Button text",
             "url": "Web adress to link",
             "event": "Event to trigger",
-            "icon": "Icon"
+            "payload": "Attached data",
+            "icon": "Icon",
+            "popup": "Open in a new window"
           },
           "accordion": {
             "title": "Title",

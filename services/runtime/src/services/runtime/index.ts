@@ -143,6 +143,8 @@ export default class Runtime {
           token,
           expiresIn,
           expires,
+          authData: event?.payload?.authData,
+          email: event?.payload?.email,
         });
         return true;
       }
@@ -180,6 +182,8 @@ export default class Runtime {
         EventType.DeletedApp,
         EventType.PublishedApp,
         EventType.ExecutedAutomation,
+        EventType.FailedFetch,
+        EventType.TriggeredWebhook,
       ],
       async (event, broker, { logger }) => {
         if (!event.source.workspaceId || !event.source.correlationId) {
@@ -432,7 +436,8 @@ export default class Runtime {
         },
         {
           validateEvents: false,
-          forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+          // Even if coming from emit topic, do not send in emit topic by default, as native events must all be redacted
+          forceTopic: undefined,
         }
       );
 

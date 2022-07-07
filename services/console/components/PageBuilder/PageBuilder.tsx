@@ -1,25 +1,22 @@
 import { useCallback, useMemo, useState } from 'react';
 import { builtinBlocks } from '@prisme.ai/blocks';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
 import PageNewBlockForm from './Panel/PageNewBlockForm';
 import PageBlocks from './PageBlocks';
 import { nanoid } from 'nanoid';
-import { useApps } from '../AppsProvider';
 import equal from 'fast-deep-equal';
 import PageEditBlockForm from './Panel/PageEditBlockForm';
 import useBlocksConfigs from '../Page/usePageBlocksConfigs';
 import { Schema } from '@prisme.ai/design-system';
+import { extractEvents } from './extractEvents';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
-  onChange: (value: Prismeai.Page) => void;
+  onChange: (value: Prismeai.Page, events?: string[]) => void;
   blocks: PageBuilderContext['blocks'];
 }
 export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
-  const { workspace } = useWorkspace();
-  const { appInstances } = useApps();
   const [panelIsOpen, setPanelIsOpen] = useState(false);
   const [blockSelecting, setBlockSelecting] = useState<
     | {
@@ -65,12 +62,17 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
           : block
       );
       if (equal(newBlocks, value.blocks)) return;
-      onChange({
+      const newValue = {
         ...value,
         blocks: newBlocks,
-      });
+      };
+
+      onChange(
+        newValue,
+        newBlocks.flatMap(({ config }) => extractEvents(blocksSchemas, config))
+      );
     },
-    [onChange, value]
+    [blocksSchemas, onChange, value]
   );
 
   const addBlockDetails = useCallback(async () => {

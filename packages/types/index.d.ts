@@ -1134,6 +1134,7 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
+        apiKey?: string;
     }
     export interface Emit {
         emit: {
@@ -1191,6 +1192,10 @@ declare namespace Prismeai {
                  * HTTP request body
                  */
                 body?: AnyValue;
+                /**
+                 * If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default
+                 */
+                emitErrors?: boolean;
                 /**
                  * Sends a multipart/form-data HTTP request
                  */
@@ -1254,6 +1259,10 @@ declare namespace Prismeai {
              * HTTP request body
              */
             body?: AnyValue;
+            /**
+             * If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default
+             */
+            emitErrors?: boolean;
             /**
              * Sends a multipart/form-data HTTP request
              */
@@ -1390,6 +1399,7 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
+        apiKey?: string;
     }
     export interface PagePermissionsDeleted {
         /**
@@ -1542,6 +1552,15 @@ declare namespace Prismeai {
             ip: string;
             email: string;
             id: string;
+            authData: {
+                [name: string]: any;
+                facebook?: {
+                    [key: string]: any;
+                };
+                anonymous?: {
+                    [key: string]: any;
+                };
+            };
             session: {
                 id: string;
                 token: string;
@@ -1680,6 +1699,9 @@ declare namespace Prismeai {
         authData?: {
             [name: string]: any;
             facebook?: {
+                [key: string]: any;
+            };
+            anonymous?: {
                 [key: string]: any;
             };
         };
@@ -1877,6 +1899,9 @@ declare namespace PrismeaiAPI {
                     facebook?: {
                         [key: string]: any;
                     };
+                    anonymous?: {
+                        [key: string]: any;
+                    };
                 };
                 /**
                  * Name
@@ -2020,6 +2045,9 @@ declare namespace PrismeaiAPI {
                 authData?: {
                     [name: string]: any;
                     facebook?: {
+                        [key: string]: any;
+                    };
+                    anonymous?: {
                         [key: string]: any;
                     };
                 };
@@ -2335,6 +2363,9 @@ declare namespace PrismeaiAPI {
                 authData?: {
                     [name: string]: any;
                     facebook?: {
+                        [key: string]: any;
+                    };
+                    anonymous?: {
                         [key: string]: any;
                     };
                 };

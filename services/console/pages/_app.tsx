@@ -10,7 +10,7 @@ import * as prismeaiSDK from '../utils/api';
 import UserProvider from '../components/UserProvider';
 import WorkspacesProvider from '../components/WorkspacesProvider';
 import { NextPage } from 'next';
-import React, { ReactElement, ReactNode } from 'react';
+import React, { HTMLAttributes, ReactElement, ReactNode } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
@@ -43,11 +43,18 @@ const externals = {
 const Loading = () => (
   <DSLoading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
 );
-const Link = ({ href, ...props }: { href: string } & any) => (
-  <NextLink href={href}>
-    <a {...props} />
-  </NextLink>
-);
+const Link = ({
+  href = '',
+  ...props
+}: { href: string } & HTMLAttributes<HTMLAnchorElement>) => {
+  const link = `${href}`.match(/^http/) ? href : `/pages/${href}`;
+
+  return (
+    <NextLink href={link}>
+      <a {...props} />
+    </NextLink>
+  );
+};
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);

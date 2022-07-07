@@ -9,6 +9,7 @@
     "ts-node": "ts-node",
     "dev": "ts-node-dev -r dotenv/config --inspect=9230 --transpile-only --respawn ./src/app.ts"
   },
+
   "dependencies": {
     "@prisme.ai/broker": "^0.1.2",
     "@prisme.ai/permissions": "^1.0.0",

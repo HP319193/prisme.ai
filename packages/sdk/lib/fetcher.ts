@@ -13,9 +13,14 @@ const headersAsObject = (headers: Headers) =>
 export class Fetcher {
   public host: string;
   public token: string | null = null;
+  protected _apiKey: string | null = null;
 
   constructor(host: string) {
     this.host = host;
+  }
+
+  set apiKey(apiKey: string) {
+    this._apiKey = apiKey;
   }
 
   protected async _fetch<T>(
@@ -26,6 +31,10 @@ export class Fetcher {
 
     if (this.token && !headers.has('x-prismeai-token')) {
       headers.append('x-prismeai-token', this.token);
+    }
+
+    if (this._apiKey && !headers.has('x-prismeai-apikey')) {
+      headers.append('x-prismeai-api-key', this._apiKey);
     }
 
     if (
@@ -77,6 +86,13 @@ export class Fetcher {
     return this._fetch<T>(url, {
       method: 'POST',
       body: body && !(body instanceof FormData) ? JSON.stringify(body) : body,
+    });
+  }
+
+  async put<T>(url: string, body: Record<string, any>) {
+    return this._fetch<T>(url, {
+      method: 'PUT',
+      body: JSON.stringify(body),
     });
   }
 

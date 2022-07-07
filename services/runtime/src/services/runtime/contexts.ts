@@ -41,6 +41,8 @@ export interface Trigger {
 
 export interface PrismeaiSession {
   userId: string;
+  email?: string;
+  authData: Prismeai.User['authData'];
   sessionId: string;
   token?: string;
   expiresIn?: number;
@@ -152,33 +154,6 @@ export class ContextsManager {
     this.alreadyProcessedUpdateIds = new Set();
   }
 
-  private merge(additionalContexts: RecursivePartial<Contexts> = {}) {
-    return {
-      ...this.contexts,
-      ...additionalContexts,
-      config: additionalContexts.config || this.contexts.config || {},
-      global: {
-        ...this.contexts?.global,
-        ...additionalContexts?.global,
-        workspaceId: this.workspaceId,
-      },
-      user: {
-        ...this.contexts?.user,
-        ...additionalContexts?.user,
-        id: this.userId,
-      },
-      run: {
-        ...this.contexts?.run,
-        ...additionalContexts?.run,
-        correlationId: this.correlationId,
-      },
-      session: {
-        ...this.contexts?.session,
-        ...additionalContexts?.session,
-      },
-    };
-  }
-
   async fetch(contexts?: ContextType[]) {
     const fetchedContexts: Partial<Contexts> = {};
 
@@ -186,12 +161,22 @@ export class ContextsManager {
       fetchedContexts.global = await this.cache.getObject<GlobalContext>(
         this.cacheKey(ContextType.Global)
       );
+      this.contexts.global = {
+        ...this.contexts?.global,
+        ...fetchedContexts.global,
+        workspaceId: this.workspaceId,
+      };
     }
 
     if (!contexts || contexts.includes(ContextType.Run)) {
       fetchedContexts.run = await this.cache.getObject<RunContext>(
         this.cacheKey(ContextType.Run)
       );
+      this.contexts.run = {
+        ...this.contexts?.run,
+        ...fetchedContexts.run,
+        correlationId: this.correlationId,
+      };
     }
 
     if (!contexts || contexts.includes(ContextType.User)) {
@@ -201,14 +186,21 @@ export class ContextsManager {
             this.cacheKey(ContextType.User)
           ))) ||
         {};
+      this.contexts.user = {
+        ...this.contexts?.user,
+        ...fetchedContexts.user,
+        id: this.userId,
+      };
     }
     if (!contexts || contexts.includes(ContextType.Session)) {
       fetchedContexts.session = await this.cache.getObject(
         this.cacheKey(ContextType.Session)
       );
+      this.contexts.session = {
+        ...this.contexts?.session,
+        ...fetchedContexts.session,
+      };
     }
-
-    this.contexts = this.merge(fetchedContexts) as Contexts;
 
     // Restore previous depth
     if (fetchedContexts?.run?.depth) {
@@ -449,7 +441,7 @@ export class ContextsManager {
         ) {
           this.userId = value;
           this.contexts.user = { id: value };
-          this.session = { userId: value, sessionId: value };
+          this.session = { userId: value, sessionId: value, authData: {} };
           this.contexts.session = {};
           await this.fetch([ContextType.User, ContextType.Session]);
           this.broker.parentSource.userId = value;
@@ -492,6 +484,11 @@ export class ContextsManager {
     return {
       ...local,
       ...publicContexts,
+      user: {
+        ...publicContexts.user,
+        email: this.session?.email,
+        authData: this.session?.authData,
+      },
       run: this.run,
       global: {
         ...global,

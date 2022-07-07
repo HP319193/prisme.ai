@@ -54,6 +54,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           blocks: Schema.Types.Mixed,
           slug: { type: String, sparse: true, unique: true },
           styles: { type: String },
+          apiKey: { type: String },
         },
         [SubjectType.File]: {
           workspaceId: { type: String, index: true },

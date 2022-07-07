@@ -142,7 +142,23 @@ Workspaces can only listen to a limited subset of the available native events :
         }
         ```
       </td>
-    </tr>                            
+    </tr>  
+    <tr>
+      <td><b>runtime.webhooks.triggered</b></td>
+      <td>A webhook has been called</td>
+      <td>
+        ```
+        {
+          "request": fetchInstructionBody,
+          "response": {
+            workspaceId: "workspace id",
+            automationSlug: "webhook slug",
+            method: "httm method"
+          }
+        }
+        ```
+      </td>
+    </tr>                                
   </table>    
 </center>
 
@@ -316,6 +332,14 @@ In case the automation is triggered from a webhook without any session cookie / 
       <td><b>user.id</b></td>
       <td>Current user id</td>
     </tr>       
+    <tr>
+      <td><b>user.email</b></td>
+      <td>If available, current user email</td>
+    </tr>           
+    <tr>
+      <td><b>user.authData</b></td>
+      <td>For now, basic & empty object containing either <b>prismeai</b> or <b>anonymous</b> key, depending on user authentication mode</td>
+    </tr>               
   </table>
 </center>
 

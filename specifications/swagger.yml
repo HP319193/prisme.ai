@@ -638,6 +638,7 @@ paths:
           description: 'Search these keywords'
           schema:
             type: string
+          allowReserved: true
         - name: beforeId
           in: query
           description: Match every events created before given eventId
@@ -655,12 +656,14 @@ paths:
             additionalProperties: true
           style: form
           explode: false
+          allowReserved: true
         - name: 'types'
           in: 'query'
           example: message,notification
           description: 'Comma separated list of listened event types '
           schema:
             type: string
+          allowReserved: true
         - name: 'afterDate'
           in: 'query'
           description: 'Retrieve events created after this ISO8601 formatted date'
@@ -2477,10 +2480,12 @@ components:
             email:
               type: string
               example: foo@prisme.ai
-            authData:
+            authData: &AUTH_DATA
               type: object
               properties:
                 facebook:
+                  type: object
+                anonymous:
                   type: object
               additionalProperties: true
         - $ref: '#/components/schemas/Contact'
@@ -2690,7 +2695,7 @@ components:
             - localized:boolean
         properties:
           additionalProperties:
-            $ref: "#/components/schemas/TypedArgument"
+            $ref: '#/components/schemas/TypedArgument'
         description:
           $ref: '#/components/schemas/LocalizedText'
         items:
@@ -2796,6 +2801,8 @@ components:
           type: string
         permissions:
           $ref: '#/components/schemas/PermissionsMap'
+        apiKey:
+          type: string
 
     DetailedPage:
       allOf:
@@ -3034,6 +3041,9 @@ components:
             body:
               description: HTTP request body
               $ref: '#/components/schemas/AnyValue'
+            emitErrors:
+              description: "If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default"
+              type: boolean
             multipart:
               description: Sends a multipart/form-data HTTP request
               type: array
@@ -3050,7 +3060,7 @@ components:
                     description: Must be a string. Raw files must be given as base64
                   filename:
                     type: string
-                    description: "Filename is required when value is a base64 encoded file"
+                    description: 'Filename is required when value is a base64 encoded file'
                   contentType:
                     type: string
                     description: Optional MIME content-type
@@ -3487,6 +3497,7 @@ components:
             - email
             - id
             - session
+            - authData
           properties:
             ip:
               type: string
@@ -3494,6 +3505,7 @@ components:
               type: string
             id:
               type: string
+            authData: *AUTH_DATA
             session:
               type: object
               required:
@@ -3508,11 +3520,10 @@ components:
                   type: string
                 expiresIn:
                   type: number
-                  description: "Expires in N seconds"
+                  description: 'Expires in N seconds'
                 expires:
                   type: string
-                  description: "Expires ISODate"
-
+                  description: 'Expires ISODate'
 
     SucceededSignup:
       type: object
@@ -3534,7 +3545,7 @@ components:
             ip:
               type: string
             user:
-              $ref: "#/components/schemas/User"
+              $ref: '#/components/schemas/User'
 
     ########################## Apps events ##########################
     PublishedApp:
@@ -4131,7 +4142,6 @@ components:
                 body: {}
                 headers:
                   type: object
-
 
     AppEvent:
       type: object

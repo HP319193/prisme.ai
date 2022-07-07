@@ -8,7 +8,28 @@ export default {
 };
 
 const Template: Story<any> = () => {
-  const [config, setConfig] = useState<any>();
+  const [config, setConfig] = useState<any>({
+    cards: [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+    ],
+  });
   const [appConfig, setAppConfig] = useState<any>();
 
   return (

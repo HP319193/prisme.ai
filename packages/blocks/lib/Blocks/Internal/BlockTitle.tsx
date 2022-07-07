@@ -5,7 +5,11 @@ interface BlockTitleProps {
 }
 
 const BlockTitle = ({ value }: BlockTitleProps) => {
-  return <Title level={4}>{value}</Title>;
+  return (
+    <Title level={4} className="block-title">
+      {value}
+    </Title>
+  );
 };
 
 export default BlockTitle;

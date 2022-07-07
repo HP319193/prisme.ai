@@ -213,7 +213,11 @@ describe('Variables & Contexts', () => {
       field: 'user.id',
       value: 'someRandomId',
     });
-    expect(afterUserSwitching.user).toEqual({ id: 'someRandomId' });
+    expect(afterUserSwitching.user).toEqual({
+      authData: {},
+      email: undefined,
+      id: 'someRandomId',
+    });
     expect(afterUserSwitching.session).toEqual({});
 
     // Get back to our first user
@@ -507,6 +511,16 @@ it('Arguments with secret: true remain redacted in native events from child auto
         }),
       })
     );
+  });
+});
+
+it('Run context is synchronized between event-triggered cascading automations', async () => {
+  const { execute, emitBroker } = getMocks();
+
+  const output = await execute('runSynchronization', {});
+
+  expect(output).toEqual({
+    run: ['bar'],
   });
 });
 

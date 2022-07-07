@@ -303,6 +303,44 @@ automations:
     do: []
 
 
+  runSynchronization:
+    name: runSynchronization
+    when:
+      endpoint: true
+    do:
+      - set:
+          name: user.id
+          value: martin
+      - emit:
+          event: myUser
+          payload:
+            user: '{{user}}'
+            session: "{{session}}"
+      - emit:
+          event: runSynchronization
+          payload:
+            foo: bar
+          output: emittedIntentEvent
+      - wait:
+          oneOf:
+            - event: runtime.automations.executed
+              filters:
+                payload.trigger.id: '{{emittedIntentEvent.id}}'
+          output: event
+    output:
+      run: '{{run.foo}}'
+
+  runSynchronizationWith:
+    name: runSynchronizationWith
+    do:
+      - set:
+          name: run.foo[]
+          value: "{{payload.foo}}"
+    output: '{{bla}}'
+    when:
+      events:
+        - runSynchronization
+      endpoint: true
 
 
 

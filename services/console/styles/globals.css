@@ -94,3 +94,32 @@ a.ant-btn.pr-btn-primary-small {
   fill: #015dff;
   path: #015dff;
 }
+
+.block-rich-text h1,
+.block-rich-text h2,
+.block-rich-text h3,
+.block-rich-text h4,
+.block-rich-text h5,
+.block-rich-text h6 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+.block-rich-text h1 {
+  font-size: 2rem;
+}
+.block-rich-text h2 {
+  font-size: 1.8rem;
+}
+.block-rich-text h3 {
+  font-size: 1.6rem;
+}
+.block-rich-text h4 {
+  font-size: 1.4rem;
+}
+.block-rich-text h5 {
+  font-size: 1.2rem;
+}
+.block-rich-text h6 {
+  font-size: 1rem;
+}
