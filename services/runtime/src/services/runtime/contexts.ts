@@ -69,6 +69,7 @@ export interface Contexts {
   session: Record<string, any>;
   local: LocalContext;
   config: object;
+  $workspace: Partial<Prismeai.DSUL>;
 }
 
 export type ContextUpdateOpLog =
@@ -127,6 +128,7 @@ export class ContextsManager {
     this.cache = cache;
     this.depth = 0;
     this.contexts = {
+      $workspace: {},
       local: {},
       global: {
         workspaceId,
@@ -354,6 +356,7 @@ export class ContextsManager {
     return this.child(
       {
         config: automation.workspace.config,
+        $workspace: automation.workspace.dsul,
       },
       {
         // If we do not reinstantiate payload, writting to local context might mutate this payload (& produces output-related errors)

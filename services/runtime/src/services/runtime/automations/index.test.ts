@@ -1,6 +1,7 @@
 import waitForExpect from 'wait-for-expect';
+import yaml from 'js-yaml';
 import { Broker } from '@prisme.ai/broker/lib/__mocks__';
-import { Workspaces, Workspace } from '../../workspaces';
+import { Workspaces } from '../../workspaces';
 import { DriverType } from '../../../storage/types';
 import { FilesystemOptions } from '../../../storage/drivers/filesystem';
 import path from 'path';
@@ -57,6 +58,7 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
 
   return {
     broker,
+    workspaceId: AvailableModels.Instructions,
     emitBroker,
     runtime,
     workspaces,
@@ -281,6 +283,18 @@ describe('Variables & Contexts', () => {
         parentAppSlug: 'basicApp',
       })
     );
+  });
+
+  it('$workspace context should be equal to current workspace DSUL', async () => {
+    const { execute, workspaceId, workspaces } = getMocks();
+
+    const workspace: any = yaml.load(
+      await (workspaces as any).driver.get(
+        `workspaces/${workspaceId}/current.yml`
+      )
+    );
+    const output = await execute('testWorkspaceContext', {});
+    expect(output).toMatchObject(workspace);
   });
 });
 

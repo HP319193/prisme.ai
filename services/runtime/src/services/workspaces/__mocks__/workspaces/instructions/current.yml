@@ -273,6 +273,13 @@ automations:
       - basicApp.testRunContext: {}
     output: '{{run.runs}}'
 
+  testWorkspaceContext:
+    name: testWorkspaceContext
+    when:
+      endpoint: true
+    do: []
+    output: '{{$workspace}}'
+
   secretArguments:
     name: secretArguments
     output: '{{body.token}}'
