@@ -1,6 +1,7 @@
 import express from 'express';
 import { logger } from '../logger';
 import { errors } from '../types';
+import { PayloadTooLarge } from '../types/errors';
 
 export default function (
   err: Error,
@@ -9,6 +10,10 @@ export default function (
   next: express.NextFunction
 ) {
   if (err) {
+    if (((<any>err)?.message || '').includes('request entity too large')) {
+      err = new PayloadTooLarge((<any>err).length, (<any>err).limit);
+    }
+
     if (
       err instanceof errors.PrismeError ||
       (err.stack || '').includes('PrismeError')
