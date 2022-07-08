@@ -37,7 +37,7 @@ export const FieldArray = (props: FieldProps) => {
                   {fields.map((field, index) => (
                     <div
                       key={field}
-                      className={`flex grow relative ${
+                      className={`flex flex-1 relative ${
                         asRow ? 'min-w-[30%]' : ''
                       }`}
                     >

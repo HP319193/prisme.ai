@@ -558,6 +558,9 @@
         "submitLabel": {
           "label": "Texte de validation"
         },
+        "hideSubmit": {
+          "label": "Cacher le bouton de validation"
+        },
         "onSubmit": {
           "label": "Événement à la validation",
           "description": "Lors de la validation du formulaire, l'événement sera envoyé avec l'ensemble des ses valeurs."

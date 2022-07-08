@@ -4,6 +4,10 @@ import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
 import useLocalizedText from '../useLocalizedText';
 
+interface RichTextConfig {
+  content: string;
+}
+
 export const RichTextRenderer = ({
   children,
   ...props
@@ -31,7 +35,8 @@ export const RichTextRenderer = ({
 };
 
 export const RichText = () => {
-  const { config: { content } = {} } = useBlock();
+  const { config } = useBlock<RichTextConfig>();
+  const { content = '' } = config || {};
   return (
     <RichTextRenderer className="block-rich-text">{content}</RichTextRenderer>
   );
