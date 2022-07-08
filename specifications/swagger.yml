@@ -2340,6 +2340,7 @@ paths:
                 file:
                   type: string
                   format: binary
+                  description: Accepts both binary data or dataURI (i.e data:...,base64:...)
                 expiresAfter:
                   type: string
                   description: File expiration time in seconds
