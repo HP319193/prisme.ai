@@ -22,7 +22,7 @@ export interface EventSource {
   workspaceId?: string;
   host?: Host;
   correlationId?: string;
-  topic?: Topic;
+  serviceTopic?: Topic;
 }
 
 export interface PrismeEvent<T extends object = object> {
@@ -40,6 +40,7 @@ export interface EventsFactoryOptions {
 
 export interface CreateEventOptions {
   validateEvent: boolean;
+  additionalFields?: any;
 }
 
 // Must be in sync with SLUG_VALIDATION_REGEXP variable inside workspaces config
@@ -57,7 +58,7 @@ export class EventsFactory {
     eventType: string,
     payload: object,
     partialSource: Partial<EventSource>,
-    { validateEvent }: CreateEventOptions
+    { validateEvent, additionalFields }: CreateEventOptions
   ): Omit<PrismeEvent, 'id'> {
     if (!EVENT_NAMES_REGEXP.test(eventType)) {
       throw new EventValidationError(
@@ -86,6 +87,7 @@ export class EventsFactory {
     );
 
     return {
+      ...additionalFields,
       type: eventType,
       source,
       createdAt: new Date().toISOString(),

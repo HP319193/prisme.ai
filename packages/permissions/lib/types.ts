@@ -39,6 +39,7 @@ export interface User<Role extends string> {
   id: UserId;
   sessionId?: string;
   role?: Role;
+  [k: string]: any;
 }
 
 export type Rules = RawRuleOf<Ability>[];

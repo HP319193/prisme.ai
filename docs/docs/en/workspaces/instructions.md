@@ -124,7 +124,15 @@ Emit a new event.
 
 * **event** : Event name  
 * **payload** : JSON object that will be sent as the event payload  
+* **target** : An optional object specifying this event target
 
+**target parameters :**  
+
+* **userId** : target user id 
+* **sessionId** : target session id
+* **userTopic** : target userTopic  
+
+Event targets are automatically granted read access to the event
 
 ### Wait
 Wait for an event. Pauses the current execution until the requested event is received.  
@@ -184,3 +192,24 @@ Waiting for this allows you to emit an event, than hang until whichever automati
     output: 'someOutput'
     do: []
 ```
+
+
+### createUserTopic
+Create a new userTopic.  
+
+User topics allow sending events to multiple users without knowing who they are in advance, automatically granting them read access to these events without requiring any API Key.
+
+**Parameters :**  
+
+* **topic** : Topic name  
+* **userIds** : List of the first userIds to join this topic
+
+### joinUserTopic
+Makes a given user join a userTopic.  
+
+Joining a userTopic automatically grants read access to any event sent within this topic.  
+
+**Parameters :**  
+
+* **topic** : Topic name to join
+* **userIds** : List of the userIds to join this topic. If not defined, automatically pick current user's id

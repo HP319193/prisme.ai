@@ -4,7 +4,7 @@ import { InvalidEventError } from '../../../../errors';
 import { AppContext } from '../../../workspaces';
 
 export async function emit(
-  { event, payload }: Prismeai.Emit['emit'],
+  { event, payload, target }: Prismeai.Emit['emit'],
   broker: Broker,
   appContext?: AppContext
 ) {
@@ -15,7 +15,8 @@ export async function emit(
         : event,
       payload || {},
       appContext,
-      RUNTIME_EMITS_BROKER_TOPIC
+      RUNTIME_EMITS_BROKER_TOPIC,
+      { target }
     );
   } catch (error) {
     if (

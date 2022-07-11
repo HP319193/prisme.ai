@@ -2870,6 +2870,37 @@ components:
               example: 'prismeaiMessenger.message'
             payload:
               $ref: '#/components/schemas/AnyValue'
+            target:
+              $ref: "#/components/schemas/PrismeEventTarget"
+
+    CreateUserTopic:
+      type: object
+      required:
+        - createUserTopic
+      maxProperties: 1
+      properties:
+        createUserTopic:
+          $ref: "#/components/schemas/UserTopic"
+
+    JoinUserTopic:
+      type: object
+      required:
+        - joinUserTopic
+      maxProperties: 1
+      properties:
+        joinUserTopic:
+          type: object
+          required:
+            - topic
+          properties:
+            topic:
+              type: string
+              example: 'conversation:56'
+            userIds:
+              type: array
+              items:
+                type: string
+              description: Subscribing user ids. If undefined, defaults to current user
 
     Wait:
       type: object
@@ -3220,6 +3251,16 @@ components:
 
     ################################################################################################################################
     ############################################################ Events ############################################################
+    PrismeEventTarget:
+      type: object
+      properties:
+        userTopic:
+          type: string
+        userId:
+          type: string
+        sessionId:
+          type: string
+
     PrismeEvent:
       type: object
       required:
@@ -3260,10 +3301,12 @@ components:
                   type: string
             correlationId:
               type: string
-            topic:
+            serviceTopic:
               type: string
         payload:
           $ref: '#/components/schemas/AnyValue'
+        target:
+          $ref: "#/components/schemas/PrismeEventTarget"
         error:
           type: object
           properties:
@@ -4143,6 +4186,60 @@ components:
                 body: {}
                 headers:
                   type: object
+
+    ########################## Topics events ##########################
+    UserTopic:
+      type: object
+      required:
+        - topic
+      properties:
+        topic:
+          type: string
+          example: 'conversation:56'
+        userIds:
+          type: array
+          items:
+            type: string
+          description: Subscribing user ids
+
+    CreatedUserTopic:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: userTopics.created
+          enum:
+            - userTopics.created
+        payload:
+          $ref: "#/components/schemas/UserTopic"
+
+    JoinedUserTopic:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: userTopics.joined
+          enum:
+            - userTopics.joined
+        payload:
+          type: object
+          required:
+            - topic
+            - user
+          properties:
+            user:
+              type: object
+              properties:
+                id:
+                  type: string
+            topic:
+              type: string
 
     AppEvent:
       type: object

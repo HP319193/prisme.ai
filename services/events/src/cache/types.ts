@@ -23,17 +23,9 @@ export interface SetOptions {
 }
 
 export enum CacheKeyType {
-  Session = 'session',
   UserTopics = 'userTopics',
-  AllUserTopics = 'allUserTopics',
 }
 type CacheKeyArguments = {
-  [CacheKeyType.Session]: {
-    sessionId: string;
-  };
-  [CacheKeyType.AllUserTopics]: {
-    workspaceId: string;
-  };
   [CacheKeyType.UserTopics]: {
     userId: string;
     workspaceId: string;
@@ -45,18 +37,10 @@ export function getCacheKey<T extends CacheKeyType>(
   opts: CacheKeyArguments[T]
 ) {
   switch (type) {
-    case CacheKeyType.Session:
-      const session = opts as any as CacheKeyArguments[CacheKeyType.Session];
-      return `runtime:session:${session.sessionId}`;
-    case CacheKeyType.AllUserTopics: {
-      const { workspaceId } =
-        opts as any as CacheKeyArguments[CacheKeyType.AllUserTopics];
-      return `runtime:workspace:${workspaceId}:userTopics`;
-    }
     case CacheKeyType.UserTopics: {
       const { userId, workspaceId } =
         opts as any as CacheKeyArguments[CacheKeyType.UserTopics];
-      return `runtime:workspace:${workspaceId}:user:${userId}:topics`;
+      return `events:workspace:${workspaceId}:user:${userId}:topics`;
     }
   }
 

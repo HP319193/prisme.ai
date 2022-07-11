@@ -24,9 +24,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             [name: string]: any;
             error?: string;
@@ -61,9 +62,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -97,9 +99,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -133,9 +136,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -169,9 +173,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -205,9 +210,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -241,9 +247,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -277,9 +284,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -313,9 +321,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload?: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -366,9 +375,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -402,9 +412,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -438,9 +449,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -474,9 +486,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -510,9 +523,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -546,9 +560,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -582,9 +597,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -618,9 +634,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -654,9 +671,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -948,6 +966,9 @@ declare namespace Prismeai {
          */
         id?: string;
     }
+    export interface CreateUserTopic {
+        createUserTopic: UserTopic;
+    }
     export interface CreatedApiKey {
         /**
          * example:
@@ -981,6 +1002,14 @@ declare namespace Prismeai {
         payload: {
             page: /* Page */ Page;
         };
+    }
+    export interface CreatedUserTopic {
+        /**
+         * example:
+         * userTopics.created
+         */
+        type: "userTopics.created";
+        payload: UserTopic;
     }
     export interface CreatedWorkspace {
         /**
@@ -1144,6 +1173,7 @@ declare namespace Prismeai {
              */
             event: string;
             payload?: AnyValue;
+            target?: PrismeEventTarget;
         };
     }
     export interface ExecutedAutomation {
@@ -1361,6 +1391,32 @@ declare namespace Prismeai {
         [name: string]: any;
     };
     export type InstructionList = Instruction[];
+    export interface JoinUserTopic {
+        joinUserTopic: {
+            /**
+             * example:
+             * conversation:56
+             */
+            topic: string;
+            /**
+             * Subscribing user ids. If undefined, defaults to current user
+             */
+            userIds?: string[];
+        };
+    }
+    export interface JoinedUserTopic {
+        /**
+         * example:
+         * userTopics.joined
+         */
+        type: "userTopics.joined";
+        payload: {
+            user: {
+                id?: string;
+            };
+            topic: string;
+        };
+    }
     export type LocalizedText = {
         [name: string]: string;
     } | string;
@@ -1488,9 +1544,10 @@ declare namespace Prismeai {
                 service: string;
             };
             correlationId: string;
-            topic?: string;
+            serviceTopic?: string;
         };
         payload?: AnyValue;
+        target?: PrismeEventTarget;
         error?: {
             error?: string;
             message?: string;
@@ -1506,6 +1563,11 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+    }
+    export interface PrismeEventTarget {
+        userTopic?: string;
+        userId?: string;
+        sessionId?: string;
     }
     export interface PublishedApp {
         /**
@@ -1735,6 +1797,17 @@ declare namespace Prismeai {
         role?: Role;
         policies?: Policies;
     };
+    export interface UserTopic {
+        /**
+         * example:
+         * conversation:56
+         */
+        topic: string;
+        /**
+         * Subscribing user ids
+         */
+        userIds?: string[];
+    }
     export interface Wait {
         wait: {
             oneOf: {
@@ -2816,6 +2889,9 @@ declare namespace PrismeaiAPI {
         }
         export interface RequestBody {
             [name: string]: any;
+            /**
+             * Accepts both binary data or dataURI (i.e data:...,base64:...)
+             */
             file: string; // binary
             /**
              * File expiration time in seconds

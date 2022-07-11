@@ -82,7 +82,36 @@ export const config: PermissionsConfig<
       ],
     },
   ],
-  abac: [],
+  abac: [
+    {
+      action: [ActionType.Read, ActionType.GetValues],
+      subject: SubjectType.Event,
+      conditions: {
+        // This role only applies to a specific workspace !
+        'target.userTopic': {
+          $in: '${user.topics}',
+        },
+      },
+    },
+
+    {
+      action: [ActionType.Read, ActionType.GetValues],
+      subject: SubjectType.Event,
+      conditions: {
+        // This role only applies to a specific workspace !
+        'target.userId': '${user.id}',
+      },
+    },
+
+    {
+      action: [ActionType.Read, ActionType.GetValues],
+      subject: SubjectType.Event,
+      conditions: {
+        // This role only applies to a specific workspace !
+        'target.sessionId': '${user.sessionId}',
+      },
+    },
+  ],
   customRulesBuilder: (role) => {
     if (role.type !== 'apiKey') {
       throw new Error('Unsupported custom role ' + JSON.stringify(role));

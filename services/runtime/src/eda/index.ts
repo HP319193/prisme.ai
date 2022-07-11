@@ -37,6 +37,9 @@ export enum EventType {
 
   DeletedApp = 'apps.deleted',
   PublishedApp = 'apps.published',
+
+  CreatedUserTopic = 'events.userTopics.created',
+  JoinedUserTopic = 'events.userTopics.joined',
 }
 export class CallbackContext {
   public logger: Logger;

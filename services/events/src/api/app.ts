@@ -17,13 +17,15 @@ import { Subscriptions } from '../services/events/Subscriptions';
 import { EventsStore } from '../services/events/store';
 import { AccessManager } from '../permissions';
 import { accessManagerMiddleware } from './middlewares/accessManager';
+import { Cache } from '../cache';
 
 export function initAPI(
   app: Application,
   httpServer: http.Server,
   eventsSubscription: Subscriptions,
   eventsStore: EventsStore,
-  accessManager: AccessManager
+  accessManager: AccessManager,
+  cache: Cache
 ) {
   /**
    * Get NODE_ENV from environment and store in Express.
@@ -54,7 +56,7 @@ export function initAPI(
 
   app.use(requestDecorator);
 
-  app.use(accessManagerMiddleware(accessManager));
+  app.use(accessManagerMiddleware(accessManager, cache));
 
   /**
    * Validation

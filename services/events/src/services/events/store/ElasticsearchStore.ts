@@ -100,6 +100,12 @@ export class ElasticsearchStore implements EventsStore {
               'source.topic': {
                 type: 'keyword',
               },
+              'source.userTopic': {
+                type: 'keyword',
+              },
+              'source.serviceTopic': {
+                type: 'keyword',
+              },
               payload: {
                 type: 'flattened',
                 ignore_above: 32700,
@@ -200,7 +206,7 @@ export class ElasticsearchStore implements EventsStore {
             ? {
                 query_string: {
                   query: `${value
-                    .map((v) => (v ? `${key}:${v}` : `not ${key}`))
+                    .map((v) => (v ? `${key}:"${v}"` : `not ${key}`))
                     .join(' OR ')}`,
                 },
               }
