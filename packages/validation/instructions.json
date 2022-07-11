@@ -16,7 +16,21 @@
             "type": "string",
             "example": "prismeaiMessenger.message"
           },
-          "payload": {}
+          "payload": {},
+          "target": {
+            "type": "object",
+            "properties": {
+              "userTopic": {
+                "type": "string"
+              },
+              "userId": {
+                "type": "string"
+              },
+              "sessionId": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     }
