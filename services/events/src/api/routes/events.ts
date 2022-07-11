@@ -104,6 +104,7 @@ export function initEventsRoutes(eventsStore: EventsStore) {
   return app;
 }
 
+const SESSION_TOPIC = 'prismeai:session:';
 export function cleanSearchQuery({
   types,
   afterDate,
@@ -131,5 +132,6 @@ export function cleanSearchQuery({
   ) {
     opts.appInstanceDepth = 1;
   }
+
   return opts;
 }

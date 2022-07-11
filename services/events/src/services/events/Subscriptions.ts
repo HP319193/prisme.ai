@@ -36,9 +36,12 @@ const searchFilters: {
     typeof depth === 'number' && event.source?.appInstanceDepth
       ? event.source?.appInstanceDepth <= depth
       : true,
-  payloadQuery: (event, query) => {
+  payloadQuery: function matchQuery(event, query): boolean {
     if (!query) {
       return true;
+    }
+    if (Array.isArray(query)) {
+      return query.some((query) => matchQuery(event, query));
     }
     return Object.entries(query)
       .map(([k, expected]) => {
