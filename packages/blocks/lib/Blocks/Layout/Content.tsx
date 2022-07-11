@@ -34,9 +34,14 @@ export const ContentRenderer = ({
   }, [removed]);
 
   return (
-    <div className={`${className} transition-transform  ${animationClassName}`}>
+    <div
+      className={`${className} content-stack__content content transition-transform  ${animationClassName}`}
+    >
       {blocks.map(({ block, url, ...config }, index) => (
-        <div key={index} className={tw`flex snap-start`}>
+        <div
+          key={index}
+          className={tw`flex content__block-container block-container snap-start`}
+        >
           <BlockLoader
             config={config}
             name={block}

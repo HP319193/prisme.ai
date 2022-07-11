@@ -69,7 +69,9 @@ export const ContentContainerRenderer = ({
   }, [pages]);
 
   return (
-    <div className={tw`h-screen flex`}>
+    <div
+      className={tw`block-layout__content-stack content-stack h-screen flex`}
+    >
       <div className={tw`flex-1 relative mt-[${marginTop}px]`}>
         {pages.map(({ content, removed }, index) => (
           <Content

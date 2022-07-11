@@ -402,7 +402,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                           {item.type === 'button' && <CardButton {...item} />}
                           {item.type === 'accordion' && (
                             <div
-                              className={`${tw`card-content-outer__accordion accordion flex flex-1 border-[1px] border-neutral-200 rounded p-2`}`}
+                              className={`${tw`card-content-outer__accordion accordion flex flex-1 border-[1px] border-neutral-200 rounded p-2 max-w-full`}`}
                             >
                               <Accordion
                                 title={

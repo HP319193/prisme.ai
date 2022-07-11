@@ -38,7 +38,11 @@ export const HeadRenderer = ({
       <div
         className={`flex flex-row flex-1 transition-transform ${animationClassName}`}
       >
-        <button onClick={onBack} className={tw`ml-2`} ref={buttonEl}>
+        <button
+          onClick={onBack}
+          className={tw`head__button-back button-back ml-2`}
+          ref={buttonEl}
+        >
           <LeftCircleOutlined />
         </button>
         {blocks.map(({ block, ...config }, index) => (
