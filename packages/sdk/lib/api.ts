@@ -15,10 +15,16 @@ interface PageWithMetadata extends Prismeai.Page {
 
 export class Api extends Fetcher {
   private sessionId?: string;
+  private _user?: Prismeai.User;
+
+  get user() {
+    return this._user;
+  }
 
   async me() {
     const me = await this.get('/me');
     this.sessionId = me.sessionId;
+    this._user = me;
     return me;
   }
 
