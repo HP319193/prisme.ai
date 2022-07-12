@@ -44,4 +44,12 @@ export default class Cache implements CacheDriver {
   listSet(key: string): Promise<any> {
     throw new Error('Not implemented');
   }
+
+  listUserTopics() {
+    return Promise.resolve([]);
+  }
+
+  joinUserTopic() {
+    return Promise.resolve(1);
+  }
 }

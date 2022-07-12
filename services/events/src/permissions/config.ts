@@ -87,7 +87,6 @@ export const config: PermissionsConfig<
       action: [ActionType.Read, ActionType.GetValues],
       subject: SubjectType.Event,
       conditions: {
-        // This role only applies to a specific workspace !
         'target.userTopic': {
           $in: '${user.topics}',
         },
@@ -98,7 +97,6 @@ export const config: PermissionsConfig<
       action: [ActionType.Read, ActionType.GetValues],
       subject: SubjectType.Event,
       conditions: {
-        // This role only applies to a specific workspace !
         'target.userId': '${user.id}',
       },
     },
@@ -107,7 +105,6 @@ export const config: PermissionsConfig<
       action: [ActionType.Read, ActionType.GetValues],
       subject: SubjectType.Event,
       conditions: {
-        // This role only applies to a specific workspace !
         'target.sessionId': '${user.sessionId}',
       },
     },

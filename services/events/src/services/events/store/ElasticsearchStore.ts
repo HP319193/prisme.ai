@@ -100,7 +100,7 @@ export class ElasticsearchStore implements EventsStore {
               'source.topic': {
                 type: 'keyword',
               },
-              'source.userTopic': {
+              'target.userTopic': {
                 type: 'keyword',
               },
               'source.serviceTopic': {
