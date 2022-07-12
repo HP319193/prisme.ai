@@ -110,11 +110,14 @@ export class Subscriptions {
     >(
       [EventType.CreatedUserTopic, EventType.JoinedUserTopic],
       async (event) => {
-        const userIds: string[] = (<any>event?.payload)?.user?.id
-          ? [(<any>event?.payload)?.user?.id]
-          : (<any>event?.payload)?.topic?.userIds;
-        const topicName =
-          (event?.payload?.topic as any)?.topic || event?.payload?.topic;
+        if (!event?.payload) {
+          return true;
+        }
+
+        const userIds: string[] = (<any>event.payload).user?.id
+          ? [(<any>event.payload).user?.id]
+          : (<any>event.payload).userIds;
+        const topicName = event.payload.topic;
         await Promise.all(
           userIds.map(async (userId) => {
             return await this.cache.joinUserTopic(

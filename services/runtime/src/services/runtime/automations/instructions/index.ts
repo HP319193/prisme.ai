@@ -108,6 +108,7 @@ export async function runInstruction(
         logger,
         broker,
         ctx,
+        cache,
       });
       break;
     case InstructionType.Set:
@@ -122,6 +123,7 @@ export async function runInstruction(
         logger,
         broker,
         ctx,
+        cache,
       });
       break;
     case InstructionType.All:
@@ -130,6 +132,7 @@ export async function runInstruction(
         logger,
         broker,
         ctx,
+        cache,
       });
       break;
     case InstructionType.Comment:

@@ -4,6 +4,7 @@ import { runInstructions } from '..';
 import { evaluate } from '../../../../utils/evaluate';
 import { Workspace } from '../../../workspaces';
 import { ContextsManager } from '../../contexts';
+import { Cache } from '../../../../cache';
 
 const getFirstTruthyCondition = (
   { default: defaultWorkflow, ...conditions }: Prismeai.Conditions,
@@ -24,11 +25,13 @@ export async function conditions(
     logger,
     broker,
     ctx,
+    cache,
   }: {
     workspace: Workspace;
     logger: Logger;
     broker: Broker;
     ctx: ContextsManager;
+    cache: Cache;
   }
 ) {
   const workflowToExecute = getFirstTruthyCondition(
@@ -38,5 +41,11 @@ export async function conditions(
   if (!workflowToExecute) {
     return;
   }
-  return runInstructions(workflowToExecute, { workspace, ctx, logger, broker });
+  return runInstructions(workflowToExecute, {
+    workspace,
+    ctx,
+    logger,
+    broker,
+    cache,
+  });
 }

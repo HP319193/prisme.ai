@@ -20,7 +20,7 @@ export async function createUserTopic(
   }
   return await broker.send<Prismeai.CreatedUserTopic['payload']>(
     EventType.CreatedUserTopic,
-    { topic },
+    topic,
     appContext
   );
 }
