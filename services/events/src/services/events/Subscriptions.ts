@@ -61,6 +61,7 @@ const searchFilters: {
   beforeId: () => true,
   page: () => true,
   limit: () => true,
+  sort: () => true,
 };
 
 export class Subscriptions {
