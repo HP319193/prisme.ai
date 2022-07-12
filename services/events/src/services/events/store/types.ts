@@ -10,13 +10,14 @@ export interface StoreDriverOptions {
   driverOptions: any;
 }
 
-export type PayloadQuery = Record<string, string>;
+export type PayloadQuery = Record<string, string | string[]>;
+export type OrQuery = PayloadQuery[];
 
 export type SearchOptions = Omit<
   PrismeaiAPI.EventsLongpolling.QueryParameters,
   'query' | 'types'
 > & {
-  payloadQuery?: PayloadQuery;
+  payloadQuery?: PayloadQuery | OrQuery;
   types?: string[];
 };
 

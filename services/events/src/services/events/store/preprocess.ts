@@ -13,12 +13,12 @@ export interface PreprocessRule {
 
 export function preprocess(event: Prismeai.PrismeEvent) {
   const alreadyPreprocessed = new Set();
-  const matchingRules = (rules.topics[event?.source?.topic || ''] || [])
+  const matchingRules = (rules.topics[event?.source?.serviceTopic || ''] || [])
     .concat(rules.events[event?.type] || [])
     .filter(
       (cur) =>
         (!cur.topics?.length ||
-          cur.topics.includes(event.source?.topic || '')) &&
+          cur.topics.includes(event.source?.serviceTopic || '')) &&
         (!cur.events?.length || cur.events?.includes(event.type))
     );
   for (const rule of matchingRules) {

@@ -109,6 +109,7 @@ export function cleanSearchQuery({
   afterDate,
   beforeDate,
   page,
+  sort,
   limit,
   text,
   appInstanceDepth,
@@ -120,6 +121,7 @@ export function cleanSearchQuery({
     page,
     limit,
     text,
+    sort,
     appInstanceDepth,
     payloadQuery: payloadQuery as PayloadQuery,
     types: types ? types.split(',') : undefined,
@@ -131,5 +133,6 @@ export function cleanSearchQuery({
   ) {
     opts.appInstanceDepth = 1;
   }
+
   return opts;
 }

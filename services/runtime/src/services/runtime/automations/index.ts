@@ -1,4 +1,5 @@
 import { Broker } from '@prisme.ai/broker';
+import { Cache } from '../../../cache';
 import { EventType } from '../../../eda';
 import { Logger } from '../../../logger';
 import { interpolate } from '../../../utils';
@@ -12,6 +13,7 @@ export async function executeAutomation(
   ctx: ContextsManager,
   logger: Logger,
   broker: Broker,
+  cache: Cache,
   rootAutomation?: boolean
 ) {
   await ctx.securityChecks();
@@ -20,7 +22,13 @@ export async function executeAutomation(
   let breakThisAutomation: false | Break = false,
     breakRaised = false;
   try {
-    await runInstructions(automation.do, { workspace, ctx, logger, broker });
+    await runInstructions(automation.do, {
+      workspace,
+      ctx,
+      logger,
+      broker,
+      cache,
+    });
   } catch (error) {
     if (!(error instanceof Break)) {
       (<any>error).source = (<any>error).source || {
@@ -69,11 +77,13 @@ export async function runInstructions(
     ctx,
     logger,
     broker,
+    cache,
   }: {
     workspace: Workspace;
     ctx: ContextsManager;
     logger: Logger;
     broker: Broker;
+    cache: Cache;
   }
 ) {
   for (let instruction of instructions || []) {
@@ -98,6 +108,7 @@ export async function runInstructions(
       ctx,
       logger,
       broker,
+      cache,
       (nextAutomation, payload) => {
         const childBroker = broker.child({
           appSlug: nextAutomation.workspace.appContext?.appSlug,
@@ -117,7 +128,8 @@ export async function runInstructions(
           nextAutomation,
           childCtx,
           logger,
-          childBroker
+          childBroker,
+          cache
         );
       }
     );

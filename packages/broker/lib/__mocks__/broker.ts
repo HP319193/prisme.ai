@@ -44,7 +44,7 @@ export default class Broker {
     while (this.running) {
       const event = this.events.shift();
       if (event) {
-        const callbacks = this.callbacks[event.source.topic!];
+        const callbacks = this.callbacks[event.source.serviceTopic!];
         if (callbacks) {
           for (const cb of callbacks) {
             const childBroker = this.child(event.source);
@@ -126,7 +126,7 @@ export default class Broker {
       }
     ) as PrismeEvent;
     event.id = `${eventType}-${Math.random() * 10000}`;
-    event.source.topic = this.getEventTopic(topic, event);
+    event.source.serviceTopic = this.getEventTopic(topic, event);
 
     this._send(event);
     return Promise.resolve(event);

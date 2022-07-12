@@ -1,5 +1,6 @@
 import { Broker, CallbackContext, EventCallback } from '@prisme.ai/broker';
 import { Subscriptions } from './Subscriptions';
+import Cache from '../../cache/__mocks__/cache';
 
 jest.setTimeout(5000);
 const WorkspaceA = 'myFirstWorkspace';
@@ -73,9 +74,12 @@ const getSubscriptions = (
             } as CallbackContext
           )
         );
+        return Promise.resolve(true);
       },
+      on: () => Promise.resolve(),
     } as Pick<Broker, 'all'> as Broker,
-    new DummyAccessManager() as any
+    new DummyAccessManager() as any,
+    new Cache()
   );
 };
 
@@ -102,7 +106,8 @@ describe('Basic', () => {
 
     // Subscribe before starting emitting events
     await events.subscribe(WorkspaceA, {
-      userId: UserA,
+      id: UserA,
+      sessionId: 'mySessionId',
       callback: (event) => {
         received.push(event.payload);
       },
@@ -132,7 +137,8 @@ describe('Basic', () => {
 
         if (sentIdx === subscribeAfter) {
           await events.subscribe(WorkspaceA, {
-            userId: UserA,
+            id: UserA,
+            sessionId: 'mySessionId',
             callback: (event) => {
               received.push(event.payload);
             },
@@ -168,7 +174,8 @@ describe('Basic', () => {
 
         if (sentIdx === subscribeAfter) {
           const subscription = await events.subscribe(WorkspaceA, {
-            userId: UserA,
+            id: UserA,
+            sessionId: 'mySessionId',
             callback: (event) => {
               received.push(event.payload);
             },

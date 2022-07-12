@@ -22,6 +22,9 @@ export enum EventType {
   CreatedAutomation = 'workspaces.automations.created',
   UpdatedAutomation = 'workspaces.automations.updated',
   DeletedAutomation = 'workspaces.automations.deleted',
+
+  CreatedUserTopic = 'events.userTopics.created',
+  JoinedUserTopic = 'events.userTopics.joined',
 }
 
 export class CallbackContext {

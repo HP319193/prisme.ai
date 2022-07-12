@@ -1,17 +1,18 @@
 import { Broker, PrismeEvent } from '@prisme.ai/broker';
+import { Cache } from '../../cache';
+import { EventType } from '../../eda';
 import { AccessManager, SubjectType, ActionType } from '../../permissions';
 import { extractObjectsByPath } from '../../utils';
 import { SearchOptions } from './store';
+import { getWorkspaceUser, WorkspaceUser } from './users';
 
-export interface Subscriber {
-  userId: string;
-  sessionId: string;
+export type Subscriber = WorkspaceUser & {
   apiKey?: string;
   callback: (event: PrismeEvent<any>) => void;
   accessManager: Required<AccessManager>;
   searchOptions?: SearchOptions;
   unsubscribe: () => void;
-}
+};
 
 type WorkspaceId = string;
 
@@ -35,9 +36,12 @@ const searchFilters: {
     typeof depth === 'number' && event.source?.appInstanceDepth
       ? event.source?.appInstanceDepth <= depth
       : true,
-  payloadQuery: (event, query) => {
+  payloadQuery: function matchQuery(event, query): boolean {
     if (!query) {
       return true;
+    }
+    if (Array.isArray(query)) {
+      return query.some((query) => matchQuery(event, query));
     }
     return Object.entries(query)
       .map(([k, expected]) => {
@@ -57,17 +61,20 @@ const searchFilters: {
   beforeId: () => true,
   page: () => true,
   limit: () => true,
+  sort: () => true,
 };
 
 export class Subscriptions {
   public broker: Broker;
   public accessManager: AccessManager;
   private subscribers: Record<WorkspaceId, Subscriber[]>;
+  private cache: Cache;
 
-  constructor(broker: Broker, accessManager: AccessManager) {
+  constructor(broker: Broker, accessManager: AccessManager, cache: Cache) {
     this.broker = broker;
     this.subscribers = {};
     this.accessManager = accessManager;
+    this.cache = cache;
   }
 
   start() {
@@ -78,7 +85,7 @@ export class Subscriptions {
         if (!event.source.workspaceId) return true;
         const subscribers = this.subscribers[event.source.workspaceId];
         (subscribers || []).forEach(
-          async ({ callback, accessManager, searchOptions, userId }) => {
+          async ({ callback, accessManager, searchOptions }) => {
             const readable = await accessManager.can(
               ActionType.Read,
               SubjectType.Event,
@@ -98,6 +105,32 @@ export class Subscriptions {
         GroupPartitions: false,
       }
     );
+
+    this.broker.on<
+      Prismeai.CreatedUserTopic['payload'] | Prismeai.JoinedUserTopic['payload']
+    >(
+      [EventType.CreatedUserTopic, EventType.JoinedUserTopic],
+      async (event) => {
+        if (!event?.payload) {
+          return true;
+        }
+
+        const userIds: string[] = (<any>event.payload).user?.id
+          ? [(<any>event.payload).user?.id]
+          : (<any>event.payload).userIds;
+        const topicName = event.payload.topic;
+        await Promise.all(
+          userIds.map(async (userId) => {
+            return await this.cache.joinUserTopic(
+              event?.source?.workspaceId!,
+              userId,
+              topicName
+            );
+          })
+        );
+        return true;
+      }
+    );
   }
 
   matchSearchOptions(data: PrismeEvent, searchOptions: SearchOptions) {
@@ -115,22 +148,28 @@ export class Subscriptions {
 
   async subscribe(
     workspaceId: string,
-    subscriber: Omit<Subscriber, 'accessManager' | 'unsubscribe'>
+    subscriber: Omit<Subscriber, 'accessManager' | 'unsubscribe' | 'topics'>
   ): Promise<Subscriber> {
     if (!(workspaceId in this.subscribers)) {
       this.subscribers[workspaceId] = [];
     }
 
-    const userAccessManager = await this.accessManager.as(
+    const workspaceUser = await getWorkspaceUser(
+      workspaceId,
       {
-        id: subscriber.userId,
+        id: subscriber.id,
         sessionId: subscriber.sessionId,
       },
+      this.cache
+    );
+    const userAccessManager = await this.accessManager.as(
+      workspaceUser,
       subscriber.apiKey
     );
 
     const fullSubscriber: Subscriber = {
       ...subscriber,
+      ...workspaceUser,
       accessManager: userAccessManager,
       unsubscribe: () => {
         this.subscribers[workspaceId] = this.subscribers[workspaceId].filter(

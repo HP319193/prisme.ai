@@ -8,7 +8,7 @@ import {
   Workspace,
   Workspaces,
 } from '../workspaces';
-import { CacheDriver } from '../../cache';
+import { Cache } from '../../cache';
 import {
   ContextsManager,
   ContextType,
@@ -60,13 +60,13 @@ type EventName = string;
 export default class Runtime {
   private broker: Broker;
   private workspaces: Workspaces;
-  private cache: CacheDriver;
+  private cache: Cache;
   private sessionsLRU: LRU<string, PrismeaiSession>;
 
   private pendingWaits: Record<EventName, PendingWait[]>;
   private contexts: Record<string, ContextsManager[]>;
 
-  constructor(broker: Broker, workspaces: Workspaces, cache: CacheDriver) {
+  constructor(broker: Broker, workspaces: Workspaces, cache: Cache) {
     this.broker = broker;
     this.workspaces = workspaces;
     this.cache = cache;
@@ -79,21 +79,13 @@ export default class Runtime {
 
   async registerSession(session: PrismeaiSession) {
     this.sessionsLRU.set(session.sessionId, session);
-    await this.cache.setObject(
-      `runtime:session:${session.sessionId}`,
-      session,
-      {
-        ttl: session.expiresIn,
-      }
-    );
+    await this.cache.setSession(session);
   }
 
   async getSession(sessionId: string) {
     const session =
       this.sessionsLRU.get(sessionId) ||
-      ((await this.cache.getObject(
-        `runtime:session:${sessionId}`
-      )) as PrismeaiSession);
+      ((await this.cache.getSession(sessionId)) as PrismeaiSession);
     if (session && session.expires) {
       const expiresIn =
         (new Date(session.expires).getTime() - Date.now()) / 1000;
@@ -112,7 +104,7 @@ export default class Runtime {
         this.contexts[event?.source?.correlationId];
       if (
         event.payload &&
-        event.source.topic !== RUNTIME_EMITS_BROKER_TOPIC &&
+        event.source.serviceTopic !== RUNTIME_EMITS_BROKER_TOPIC &&
         contexts &&
         contexts.length
       ) {
@@ -473,7 +465,15 @@ export default class Runtime {
     logger: Logger,
     broker: Broker
   ) {
-    return executeAutomation(workspace, automation, ctx, logger, broker, true);
+    return executeAutomation(
+      workspace,
+      automation,
+      ctx,
+      logger,
+      broker,
+      this.cache,
+      true
+    );
   }
 
   private async parseEvent(

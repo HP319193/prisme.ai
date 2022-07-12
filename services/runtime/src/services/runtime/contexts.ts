@@ -94,11 +94,11 @@ export const UserAccessibleContexts: ContextType[] = [
   ContextType.Run,
 ];
 export class ContextsManager {
-  private workspaceId: string;
+  public workspaceId: string;
   private userId?: string;
   public session?: PrismeaiSession;
   private correlationId: string;
-  private cache: CacheDriver;
+  public cache: CacheDriver;
   private contexts: Contexts;
   private logger: Logger;
   private broker: Broker;
