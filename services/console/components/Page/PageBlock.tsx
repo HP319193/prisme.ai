@@ -11,6 +11,7 @@ interface PublicPageBlockProps {
   page: Prismeai.DetailedPage;
   events?: Events;
   config?: any;
+  container?: HTMLElement;
 }
 
 const PageBlock = ({
@@ -20,6 +21,7 @@ const PageBlock = ({
   appInstance,
   events,
   config,
+  container,
 }: PublicPageBlockProps) => {
   const { appConfig, onAppConfigUpdate } = useAppConfig({
     workspaceId,
@@ -43,6 +45,9 @@ const PageBlock = ({
       onAppConfigUpdate={onAppConfigUpdate}
       api={api}
       name={name}
+      layout={{
+        container,
+      }}
     />
   );
 };

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BlockLoader } from '../../BlockLoader';
 import { BlockContext, useBlock } from '../../Provider';
 import { Content as IContent } from './context';
@@ -22,6 +22,7 @@ export const ContentRenderer = ({
   const [animationClassName, setAnimationClassName] = useState(
     tw`translate-x-full`
   );
+  const containerEl = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     setTimeout(() => setAnimationClassName(''));
@@ -34,15 +35,22 @@ export const ContentRenderer = ({
   }, [removed]);
 
   return (
-    <div className={`${className} transition-transform  ${animationClassName}`}>
+    <div
+      ref={containerEl}
+      className={`${className} content-stack__content content transition-transform  ${animationClassName}`}
+    >
       {blocks.map(({ block, url, ...config }, index) => (
-        <div key={index} className={tw`flex snap-start`}>
+        <div
+          key={index}
+          className={tw`flex content__block-container block-container snap-start`}
+        >
           <BlockLoader
             config={config}
             name={block}
             url={url}
             api={api}
             events={events}
+            layout={{ container: containerEl.current || undefined }}
           />
         </div>
       ))}

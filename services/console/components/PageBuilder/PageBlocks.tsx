@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { usePageBuilder } from './context';
@@ -13,6 +13,7 @@ export const PageBlocks = () => {
   } = useWorkspace();
   const { blocksInPage } = usePageBuilder();
   const [hoveredKey, setHoveredKey] = useState<string | undefined>();
+  const containerEl = useRef<HTMLDivElement>(null);
 
   const debouncedOnMouseLeave = useMemo(
     () =>
@@ -25,7 +26,7 @@ export const PageBlocks = () => {
   return (
     <div className="page-blocks flex grow flex-col items-center overflow-y-auto h-full snap-y snap-mandatory">
       <div className="snap-start" />
-      <div className="flex flex-1 flex-col w-[768px] py-8">
+      <div ref={containerEl} className="flex flex-1 flex-col w-[768px] py-8">
         {blocksInPage.length === 0 && (
           <div className="relative">
             <AddBlock after={-1} centered />
@@ -56,6 +57,7 @@ export const PageBlocks = () => {
               blockId={key}
               index={index}
               name={name}
+              container={containerEl.current || undefined}
             />
           </div>
         ))}

@@ -68,7 +68,10 @@ export const Layout = ({ edit }: LayoutProps) => {
         headBox,
       }}
     >
-      <div className={tw`fixed top-0 left-0 right-0 z-50`} ref={headEl}>
+      <div
+        className={tw`block-layout__head head fixed top-0 left-0 right-0 z-50`}
+        ref={headEl}
+      >
         <Head />
       </div>
       <ContentContainer />
