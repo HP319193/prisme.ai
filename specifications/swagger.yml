@@ -685,6 +685,15 @@ paths:
           required: false
           schema:
             type: number
+        - name: sort
+          in: 'query'
+          description: "Sort order, asc for oldest first & 'desc' for earliest first. Earliest first by default"
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
       responses:
         '200':
           description: Success Response

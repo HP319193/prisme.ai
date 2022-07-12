@@ -141,7 +141,7 @@ export class ElasticsearchStore implements EventsStore {
   }
 
   private buildSearchBody(options: SearchOptions) {
-    let createdAtSort = 'desc';
+    let createdAtSort = options.sort || 'desc';
     const additionalBody: any = {};
     const filter = [],
       must: any = [];

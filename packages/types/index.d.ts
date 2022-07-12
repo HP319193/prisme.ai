@@ -2264,6 +2264,7 @@ declare namespace PrismeaiAPI {
             export interface Query {
                 [name: string]: any;
             }
+            export type Sort = "asc" | "desc";
             export type Text = string;
             export type Types = string;
             export type WorkspaceId = string;
@@ -2281,6 +2282,7 @@ declare namespace PrismeaiAPI {
             beforeDate?: Parameters.BeforeDate;
             page?: Parameters.Page;
             limit?: Parameters.Limit;
+            sort?: Parameters.Sort;
         }
         namespace Responses {
             export interface $200 {
