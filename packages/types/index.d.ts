@@ -2816,6 +2816,9 @@ declare namespace PrismeaiAPI {
         }
         export interface RequestBody {
             [name: string]: any;
+            /**
+             * Accepts both binary data or dataURI (i.e data:...,base64:...)
+             */
             file: string; // binary
             /**
              * File expiration time in seconds
