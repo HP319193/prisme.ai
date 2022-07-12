@@ -79,10 +79,11 @@ export async function runInstructions(
   for (let instruction of instructions || []) {
     const instructionName = Object.keys(instruction || {})[0];
     // Before each run, we interpolate the instruction to replace all the variables based on the context
-    const interpolatedInstruction = interpolate(
+    // Do not interpolate 'do' fields nor conditions as they include nested instruction lists
+    const interpolatedInstruction = interpolateInstruction(
+      instructionName,
       instruction,
-      ctx.publicContexts,
-      ['do', 'conditions'] // Do not interpolate 'do' fields nor conditions as they include nested instruction lists
+      ctx.publicContexts
     );
 
     if (instructionName === InstructionType.Break) {
@@ -121,4 +122,18 @@ export async function runInstructions(
       }
     );
   }
+}
+
+function interpolateInstruction(
+  instructionName: string,
+  instruction: Prismeai.Instruction,
+  ctx: any
+) {
+  const interpolationExclude: string[] = [];
+  if (instructionName == InstructionType.Repeat) {
+    interpolationExclude.push('do');
+  } else if (instructionName == InstructionType.Conditions) {
+    interpolationExclude.push('conditions');
+  }
+  return interpolate(instruction, ctx, interpolationExclude);
 }

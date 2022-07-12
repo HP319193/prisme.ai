@@ -175,6 +175,13 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>yes</td>
   </tr>            
 
+  <tr>
+    <td>REQUEST_MAX_SIZE</td>
+    <td>api-gateway</td>
+    <td>Maximum request body size (format from bodyParser.json)</td>
+    <td>1mb</td>
+  </tr>           
+
   <!-- Events -->
   <tr>
     <td>PORT</td>

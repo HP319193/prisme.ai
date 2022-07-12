@@ -38,4 +38,6 @@ export default {
   X_FORWARDED_HEADERS: ['yes', 'enabled', 'enable', 'true'].includes(
     process.env.X_FORWARDED_HEADERS || 'yes'
   ),
+
+  REQUEST_MAX_SIZE: process.env.REQUEST_MAX_SIZE || '1mb',
 };
