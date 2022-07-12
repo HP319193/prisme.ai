@@ -2,7 +2,13 @@ import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import DefaultErrorPage from 'next/error';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Loading, Title } from '@prisme.ai/design-system';
 import SigninForm from '../components/SigninForm';
 import { useUser } from '../components/UserProvider';
@@ -30,6 +36,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
     query: { pageSlug },
   } = useRouter();
   const { blocksConfigs, error, events } = usePageBlocksConfigs(currentPage);
+  const containerEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // For preview in console
@@ -101,7 +108,10 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
       {currentPage.styles && (
         <style dangerouslySetInnerHTML={{ __html: currentPage.styles }} />
       )}
-      <div className="flex flex-1 flex-col page-blocks w-full">
+      <div
+        className="flex flex-1 flex-col page-blocks w-full"
+        ref={containerEl}
+      >
         {blocks.map(({ name = '', appInstance = '', url = '' }, index) => (
           <div
             key={index}
@@ -119,6 +129,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
               page={currentPage}
               events={events}
               config={blocksConfigs[index]}
+              container={containerEl.current || undefined}
             />
           </div>
         ))}

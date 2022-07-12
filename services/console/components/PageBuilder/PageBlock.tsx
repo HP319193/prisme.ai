@@ -17,6 +17,7 @@ interface PageBlockProps {
   title: string | React.ReactNode;
   workspaceId: string;
   appInstance?: string;
+  container?: HTMLDivElement;
 }
 
 const PageBlockWithProvider = ({
@@ -27,6 +28,7 @@ const PageBlockWithProvider = ({
   url,
   workspaceId,
   appInstance,
+  container,
 }: PageBlockProps & {
   hovered: boolean;
   blockId: string;
@@ -74,6 +76,7 @@ const PageBlockWithProvider = ({
           token={`${api.token}`}
           edit
           onLoad={onLoad}
+          layout={{ container }}
         />
       </div>
 

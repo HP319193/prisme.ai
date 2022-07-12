@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BlockLoader } from '../../BlockLoader';
 import { BlockContext, useBlock } from '../../Provider';
 import { Content as IContent } from './context';
@@ -22,6 +22,7 @@ export const ContentRenderer = ({
   const [animationClassName, setAnimationClassName] = useState(
     tw`translate-x-full`
   );
+  const containerEl = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     setTimeout(() => setAnimationClassName(''));
@@ -35,6 +36,7 @@ export const ContentRenderer = ({
 
   return (
     <div
+      ref={containerEl}
       className={`${className} content-stack__content content transition-transform  ${animationClassName}`}
     >
       {blocks.map(({ block, url, ...config }, index) => (
@@ -48,6 +50,7 @@ export const ContentRenderer = ({
             url={url}
             api={api}
             events={events}
+            layout={{ container: containerEl.current || undefined }}
           />
         </div>
       ))}
