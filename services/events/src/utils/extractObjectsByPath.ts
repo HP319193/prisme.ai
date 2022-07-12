@@ -11,8 +11,8 @@ export function extractObjectsByPath(
   if (!splittedPath.length) {
     return rootObject;
   }
-  for (let i = 0; i < splittedPath.length - 1; i++) {
+  for (let i = 0; rootObject && i < splittedPath.length - 1; i++) {
     rootObject = rootObject[splittedPath[i]];
   }
-  return rootObject[splittedPath[splittedPath.length - 1]];
+  return rootObject?.[splittedPath[splittedPath.length - 1]];
 }
