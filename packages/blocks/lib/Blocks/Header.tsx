@@ -32,21 +32,26 @@ const Button = ({ text, type, value }: Config['nav'][number]) => {
             events.emit(value);
           }}
           className={tw`block-header__nav-item-button`}
-        >
-          {text}
-        </button>
+          dangerouslySetInnerHTML={{ __html: text }}
+        />
       );
     case 'external':
     case 'internal':
       return (
         <Link href={value} className={tw`block-header__nav-item-link`}>
-          <button className={tw`block-header__nav-item-button`}>{text}</button>
+          <button
+            className={tw`block-header__nav-item-button`}
+            dangerouslySetInnerHTML={{ __html: text }}
+          />
         </Link>
       );
     case 'inside':
       return (
         <a href={`#${value}`} className={tw`block-header__nav-item-link`}>
-          <button className={tw`block-header__nav-item-button`}>{text}</button>
+          <button
+            className={tw`block-header__nav-item-button`}
+            dangerouslySetInnerHTML={{ __html: text }}
+          />
         </a>
       );
     default:
