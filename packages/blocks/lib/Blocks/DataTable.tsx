@@ -43,6 +43,13 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
             if (_a > _b) return 1;
             return 0;
           },
+          render: (_: any, item: any) => {
+            const _a = item[key];
+            if (typeof _a === 'object') {
+              return JSON.stringify(_a);
+            }
+            return _a;
+          },
         }))
       : [];
   }, [config.data, preview]);
