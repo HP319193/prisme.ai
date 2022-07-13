@@ -20,23 +20,22 @@ export const HeadRenderer = ({
   const buttonEl = useRef<HTMLButtonElement>(null);
   const [animationClassName, setAnimationClassName] = useState('');
 
+  const margin = buttonEl.current
+    ? buttonEl.current.getBoundingClientRect().width * 2
+    : 0;
   useLayoutEffect(() => {
     if (hasHistory) {
       setAnimationClassName('');
     } else {
-      if (!buttonEl.current) return;
-      setAnimationClassName(
-        tw`-translate-x-[${
-          buttonEl.current.getBoundingClientRect().width * 2
-        }px]`
-      );
+      setAnimationClassName(tw`-translate-x-[${margin}px]`);
     }
-  }, [hasHistory]);
+  }, [hasHistory, margin]);
 
   return (
     <div className={tw`flex flex-1 bg-white transition-transform`}>
       <div
         className={`flex flex-row flex-1 transition-transform ${animationClassName}`}
+        style={{ marginRight: `-${margin}px` }}
       >
         <button
           onClick={onBack}
