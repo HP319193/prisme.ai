@@ -2,7 +2,18 @@ import { Col, Row, SearchInput, SidePanel } from '../index';
 import { ReactNode, useMemo, useState } from 'react';
 import ListItem, { ListItemProps } from './ListItem';
 import Button from './Button';
-import { PlusCircleOutlined } from '@ant-design/icons';
+import {
+  LeftOutlined,
+  PlusCircleOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
+
+const DEFAULT_ITEM_PER_PAGE = 10;
+
+const paginate = (array: any[], page_size: number, page_number: number) => {
+  // human-readable page numbers usually start with 1, so we reduce 1 in the first argument
+  return array.slice((page_number - 1) * page_size, page_number * page_size);
+};
 
 interface ListItemWithId extends ListItemProps {
   id: string;
@@ -18,6 +29,8 @@ export interface LayoutSelectionProps {
   onAdd?: () => void;
   addLabel?: string;
   searchLabel?: string;
+  itemPerPage?: number;
+  leftPanelWidth?: number;
 }
 
 interface ListItemWithSelection extends ListItemWithId {
@@ -53,20 +66,33 @@ const LayoutSelection = ({
   onAdd,
   addLabel = 'add',
   searchLabel = '',
+  leftPanelWidth = 8,
+  itemPerPage = DEFAULT_ITEM_PER_PAGE,
 }: LayoutSelectionProps) => {
   const [searchValue, SetSearchValue] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const rightPanelWidth = 24 - leftPanelWidth;
 
   const filteredItems = useMemo(
     () =>
-      items.filter((item) =>
-        item.title.toLowerCase().includes(searchValue.toLowerCase())
+      paginate(
+        items.filter(
+          (item) =>
+            item.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+            (typeof item.content === 'string' &&
+              item.content.toLowerCase().includes(searchValue.toLowerCase()))
+        ),
+        itemPerPage,
+        currentPage
       ),
-    [searchValue, items]
+    [searchValue, items, itemPerPage, currentPage]
   );
+
+  const totalPages = Math.round(items.length / itemPerPage);
 
   return (
     <Row className="flex grow h-full">
-      <Col span={8} className="h-full">
+      <Col span={leftPanelWidth} className="h-full">
         <SidePanel
           children={
             <div className="flex w-full flex-col space-y-2 overflow-y-auto">
@@ -85,19 +111,40 @@ const LayoutSelection = ({
                   placeholder={searchLabel}
                 />
               </div>
-              {filteredItems.map((item) => (
-                <ListItemWithSelection
-                  {...item}
-                  key={item.id}
-                  selected={item.id === selected}
-                  onSelect={onSelect}
-                />
-              ))}
+              <div className={'flex flex-1 flex-col overflow-x-auto space-y-2'}>
+                {filteredItems.map((item) => (
+                  <ListItemWithSelection
+                    {...item}
+                    key={item.id}
+                    selected={item.id === selected}
+                    onSelect={onSelect}
+                  />
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className="flex flex-row justify-between items-center">
+                  <Button
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <LeftOutlined />
+                  </Button>
+                  <div>
+                    {currentPage} / {totalPages}
+                  </div>
+                  <Button
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <RightOutlined />
+                  </Button>
+                </div>
+              )}
             </div>
           }
         />
       </Col>
-      <Col span={16} className="h-full overflow-x-auto">
+      <Col span={rightPanelWidth} className="h-full">
         {children}
       </Col>
     </Row>
