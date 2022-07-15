@@ -77,6 +77,7 @@ const PageBlockWithProvider = ({
           edit
           onLoad={onLoad}
           layout={{ container }}
+          api={api}
         />
       </div>
 
