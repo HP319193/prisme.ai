@@ -212,6 +212,10 @@ export class AccessManager<
     return child;
   }
 
+  async updatePermissions(user: User<Role>) {
+    this.permissions = new Permissions(user, this.permissionsConfig);
+  }
+
   async pullRoleFromSubjectFieldRefs<returnType extends SubjectType>(
     subjectType: returnType,
     subject: SubjectInterfaces[returnType]
