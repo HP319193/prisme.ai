@@ -22,7 +22,7 @@ interface FormConfig {
   hideSubmit?: boolean;
 }
 
-export const Form = () => {
+export const Form = ({ edit }: { edit?: boolean }) => {
   const { config, events } = useBlock<FormConfig>();
   const { t } = useTranslation();
   const { localize, localizeSchemaForm } = useLocalizedText();
@@ -46,6 +46,8 @@ export const Form = () => {
   const localizedSchema = useMemo(() => {
     return localizeSchemaForm(config.schema || defaultSchema);
   }, [config.schema, localizeSchemaForm]);
+
+  if (!config.schema && !edit) return null;
 
   return (
     <div className={tw`block-form p-8 flex-1`}>
