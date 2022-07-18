@@ -196,7 +196,7 @@ describe('Variables & Contexts', () => {
     // Our contexts are initially empty
     const initial = await execute('noop', {});
     expect(initial.user).toEqual({ id: 'unitTests' });
-    expect(initial.session).toEqual({});
+    expect(initial.session).toEqual({ id: 'mysessionId' });
 
     // Fill them
     await execute('mySet', {
@@ -220,7 +220,7 @@ describe('Variables & Contexts', () => {
       email: undefined,
       id: 'someRandomId',
     });
-    expect(afterUserSwitching.session).toEqual({});
+    expect(afterUserSwitching.session).toEqual({ id: 'someRandomId' });
 
     // Get back to our first user
     const getBack = await execute('mySet', {
@@ -239,10 +239,13 @@ describe('Variables & Contexts', () => {
       value: Math.random(),
     };
     const afterSet = await execute('mySet', payload);
-    expect(afterSet.session).toEqual({ value: payload.value });
+    expect(afterSet.session).toEqual({
+      id: 'mysessionId',
+      value: payload.value,
+    });
 
     const afterDelete = await execute('myDelete', { field: 'session.value' });
-    expect(afterDelete.session).toEqual({});
+    expect(afterDelete.session).toEqual({ id: 'mysessionId' });
   });
 
   it('Run context should always reflect current automation / appInstance', async () => {
