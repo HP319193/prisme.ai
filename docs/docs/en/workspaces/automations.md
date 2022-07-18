@@ -288,7 +288,7 @@ If `session.myObjectVariable` equals to `{"mickey": "house"}` and `item.field` e
 
 * **global** : this context is shared by all authenticated users for the same workspace.  
 * **user** : this context holds user-specific data and spans accross sessions    
-* **session** : this context holds session-specific data. It is automatically removed when user session expires, as defined by Gateway API.  
+* **session** : this context holds session-specific data. It is automatically removed when the user session expires, as defined by Gateway API.  
 * **run** : this context holds some technical information about current run, and is automatically removed **60 seconds** after the initial trigger (configurable with **CONTEXT_RUN_EXPIRE_TIME** env var)  
 * **config** : this context holds current [workspace](../#config) or [AppInstance](../apps#config-variable) config 
 * **$workspace** : this read-only context holds current workspace definition, allowing to read any of its sections like installed apps config (i.e $workspace.imports.myApp.config)
@@ -345,7 +345,21 @@ In case the automation is triggered from a webhook without any session cookie / 
 </center>
 
 When an automation [sets](../instructions#set) **user.id** field, **user** and **session** contexts are automatically reloaded with values from the targeted user contexts.  
-This allows unauthenticated webhooks to retrieve persisted user / sessions contexts identified by custom webhook fields (i.e a facebook userId, ...).
+This allows unauthenticated webhooks to retrieve persisted user / sessions contexts identified by custom webhook fields (i.e a facebook userId, ...).  
+
+#### Session
+<center>
+  <table>
+    <tr>
+      <td>Variable name</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><b>session.id</b></td>
+      <td>Current session id</td>
+    </tr>     
+  </table>
+</center>  
 
 #### Run
 <center>

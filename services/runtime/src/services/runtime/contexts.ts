@@ -483,7 +483,7 @@ export class ContextsManager {
   }
 
   get publicContexts(): PublicContexts {
-    const { local, global, ...publicContexts } = this.contexts;
+    const { local, global, session, ...publicContexts } = this.contexts;
     return {
       ...local,
       ...publicContexts,
@@ -491,6 +491,10 @@ export class ContextsManager {
         ...publicContexts.user,
         email: this.session?.email,
         authData: this.session?.authData,
+      },
+      session: {
+        ...session,
+        id: this.session?.sessionId,
       },
       run: this.run,
       global: {
