@@ -100,9 +100,12 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
             sessionId,
             err,
           });
+          socket.emit('error', err);
         }
       }
     );
-    socket.on('disconnect', subscription.unsubscribe);
+    socket.on('disconnect', () => {
+      subscription.unsubscribe();
+    });
   });
 }

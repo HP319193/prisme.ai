@@ -34,12 +34,14 @@ export class Permissions<
   private rules: Rules;
   private loadedRoleIds: Set<string>;
   public ability: Ability;
+  private config: PermissionsConfig<SubjectType, Role>;
 
   constructor(user: User<Role>, config: PermissionsConfig<SubjectType, Role>) {
     this.user = user;
     const { rbac, abac, subjects } = config;
     this.roleTemplates = rbac;
     this.subjects = subjects;
+    this.config = config;
 
     this.loadedRoleIds = new Set();
     this.rules = sortRules([
@@ -234,6 +236,11 @@ export class Permissions<
     }
 
     return this.loadRules(roleTemplate?.rules || [], { subject });
+  }
+
+  updateUserRules(user: User<Role>) {
+    this.user = user;
+    this.loadRules(this.config?.abac);
   }
 
   loadRules(rules: Rules, context: Record<string, any> = {}) {

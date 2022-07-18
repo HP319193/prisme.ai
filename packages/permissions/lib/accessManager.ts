@@ -213,7 +213,7 @@ export class AccessManager<
   }
 
   async updatePermissions(user: User<Role>) {
-    this.permissions = new Permissions(user, this.permissionsConfig);
+    this.permissions?.updateUserRules(user);
   }
 
   async pullRoleFromSubjectFieldRefs<returnType extends SubjectType>(
