@@ -11,8 +11,8 @@
                         date: { match: /[dD][aA][tT][eE]\(/, push: 'date' },
                         openingBracket: "[",
                         closingBracket: "]",
-                        openP: "(",
-                        closingP: ")",
+                        openP: { match: "(", push: "main" },
+                        closingP: { match: ")", pop: true },
                         ws:     /[ \t]+/,
                         number: /[0-9]+/,
                         matches: /[Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
@@ -127,8 +127,8 @@ unaryExpression ->
         | string {% ([value]) => new StringConstant(value) %}
         | date {% ([value]) => new DateExpression(value) %}
         | variable {% id %}
-        | %bang _ expression {% ([,,node]) => new NegationExpression(node) %}
-        | "(" _ expression _ ")" {% d => d[2] %}
+        | %bang _ unaryExpression {% ([,,node]) => new NegationExpression(node) %}
+        | %openP _ expression _ %closingP {% d => d[2] %}
 
 variable -> %dcbl _ variablePath _ %dcbr {% ([,,path]) => new Variable(path)  %}
 

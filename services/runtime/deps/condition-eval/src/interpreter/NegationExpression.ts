@@ -10,7 +10,8 @@ class NegationExpression extends Evaluatable {
   }
 
   evaluate(context: any) {
-    return !evaluateNode(this.node, context);
+    const result = !evaluateNode(this.node, context);
+    return result;
   }
 }
 
