@@ -21,7 +21,7 @@ Execute a list of instructions N times, or for each record from an array or obje
 
 **Parameters :**  
 
-* **on** : An array or object variable name to loop on. Each record will be available inside an **item** variable  
+* **on** : An array or object variable name to loop on. Each record will be available inside an **item** variable, and current index will be inside an **$index** variable.  
 * **until** : A number of times to repeat this loop. Each iteration number will be stored inside an **item** variable  
 
 If **on** and **until** parameters are used together, only the first **until** items from **on** will be iterated.  
