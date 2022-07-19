@@ -11,6 +11,9 @@ import { set } from './set';
 import { deleteInstruction } from './deleteInstruction';
 import { repeat } from './repeat';
 import { all } from './all';
+import { createUserTopic } from './createUserTopic';
+import { joinUserTopic } from './joinUserTopic';
+import { Cache } from '../../../../cache';
 
 export class Break {
   constructor(public scope: Prismeai.Break['break']['scope'] = 'automation') {
@@ -29,6 +32,8 @@ export enum InstructionType {
   Repeat = 'repeat',
   All = 'all',
   Comment = 'comment',
+  createUserTopic = 'createUserTopic',
+  joinUserTopic = 'joinUserTopic',
 }
 
 export async function runCustomAutomation(
@@ -65,6 +70,7 @@ export async function runInstruction(
   ctx: ContextsManager,
   logger: Logger,
   broker: Broker,
+  cache: Cache,
   executeAutomation: (
     automation: DetailedAutomation,
     context?: any
@@ -82,6 +88,7 @@ export async function runInstruction(
       result = await emit(
         <Prismeai.Emit['emit']>payload,
         broker,
+        ctx,
         workspace.appContext
       );
       break;
@@ -102,6 +109,7 @@ export async function runInstruction(
         logger,
         broker,
         ctx,
+        cache,
       });
       break;
     case InstructionType.Set:
@@ -116,6 +124,7 @@ export async function runInstruction(
         logger,
         broker,
         ctx,
+        cache,
       });
       break;
     case InstructionType.All:
@@ -124,10 +133,30 @@ export async function runInstruction(
         logger,
         broker,
         ctx,
+        cache,
       });
       break;
     case InstructionType.Comment:
       break;
+    case InstructionType.createUserTopic:
+      result = await createUserTopic(
+        <Prismeai.CreateUserTopic['createUserTopic']>payload,
+        broker,
+        ctx,
+        cache,
+        workspace.appContext
+      );
+      break;
+    case InstructionType.joinUserTopic:
+      result = await joinUserTopic(
+        <Prismeai.JoinUserTopic['joinUserTopic']>payload,
+        broker,
+        ctx,
+        cache,
+        workspace.appContext
+      );
+      break;
+
     default:
       result = await runCustomAutomation(
         workspace,

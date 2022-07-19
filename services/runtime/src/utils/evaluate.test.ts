@@ -1,8 +1,10 @@
 import { evaluate } from './evaluate';
 
-describe('Math.js should handle basic conditions features', () => {
+describe('Should handle basic conditions features', () => {
   it('should handle parenthesis', () => {
     expect(evaluate('(true || false) and true')).toEqual(true);
+    expect(evaluate('true and (!false || true)')).toEqual(true);
+    expect(evaluate('true and !(false && true)')).toEqual(true);
     expect(evaluate('( false || false ) and true')).toEqual(false);
     expect(evaluate('(false || false) and true')).toEqual(false);
     expect(evaluate('true || false and false')).toEqual(true);

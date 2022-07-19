@@ -149,9 +149,9 @@ export class AccessManager<
           if (inverted || !conditions || childSubject == parentSubject) {
             return false;
           }
-          const childField = Object.keys(conditions).find(
+          const childField: string = Object.keys(conditions).find(
             (field) => conditions[field] === '${subject.id}'
-          );
+          ) as string;
           return {
             field: childField,
             subject: childSubject,
@@ -210,6 +210,10 @@ export class AccessManager<
       await child.pullApiKey(apiKey);
     }
     return child;
+  }
+
+  async updatePermissions(user: User<Role>) {
+    this.permissions?.updateUserRules(user);
   }
 
   async pullRoleFromSubjectFieldRefs<returnType extends SubjectType>(

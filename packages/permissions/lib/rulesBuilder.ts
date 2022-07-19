@@ -2,6 +2,7 @@ import { Schema } from 'mongoose';
 import { Ability, RawRuleOf, MongoQuery } from '@casl/ability';
 import { User, ActionType } from './types';
 import { RoleTemplates, SubjectOptions } from '..';
+import { extractObjectsByPath } from './utils';
 
 export interface RuleContext {
   user: User<string>;
@@ -12,13 +13,18 @@ function injectPlaceholders(value: any, ctx: RuleContext) {
   if (typeof value !== 'string') {
     return value;
   }
-  return value
-    .replace('${user.id}', ctx.user.id)
-    .replace('${subject.id}', ctx.subject?.id || '')
-    .replace('${user.sessionId}', ctx.user.sessionId || '');
+
+  if (value.startsWith('${') && value.endsWith('}')) {
+    const variableName = value.slice(2, -1);
+    return extractObjectsByPath(ctx, variableName);
+  }
+  return value;
 }
 
-function injectConditions(conditions: object, ctx: RuleContext): MongoQuery {
+export function injectConditions(
+  conditions: object,
+  ctx: RuleContext
+): MongoQuery {
   return Object.entries(conditions).reduce((injected, [k, v]) => {
     const injectedKey = injectPlaceholders(k, ctx);
     if (typeof v === 'object' && !Array.isArray(v)) {
@@ -27,9 +33,13 @@ function injectConditions(conditions: object, ctx: RuleContext): MongoQuery {
         [injectedKey]: injectConditions(v, ctx),
       };
     }
+    const injectedValue = injectPlaceholders(v, ctx);
     return {
       ...injected,
-      [injectedKey]: injectPlaceholders(v, ctx),
+      [injectedKey]:
+        injectedKey == '$in' && !Array.isArray(injectedValue)
+          ? []
+          : injectedValue,
     };
   }, {});
 }

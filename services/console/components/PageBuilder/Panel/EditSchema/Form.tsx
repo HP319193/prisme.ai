@@ -54,6 +54,10 @@ const schema: Schema = {
       type: 'localized:string',
       title: 'pages.blocks.form.submitLabel.label',
     },
+    hideSubmit: {
+      type: 'boolean',
+      title: 'pages.blocks.form.hideSubmit.label',
+    },
     onSubmit: {
       type: 'string',
       title: 'pages.blocks.form.onSubmit.label',

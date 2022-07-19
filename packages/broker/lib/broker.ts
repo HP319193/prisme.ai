@@ -136,7 +136,7 @@ export class Broker<CallbackContext = any> {
       );
     }
     const results = this._buffer.map((event) =>
-      this.driver.send(event, event.source.topic!)
+      this.driver.send(event, event.source.serviceTopic!)
     );
     this._buffer = disableBuffer ? false : [];
     return await Promise.all(results);
@@ -163,7 +163,8 @@ export class Broker<CallbackContext = any> {
     eventType: string,
     payload: PayloadType,
     partialSource?: Partial<EventSource>,
-    topic?: Topic
+    topic?: Topic,
+    additionalFields?: any
   ) {
     const overrideSource =
       payload instanceof Error ? (<any>payload).source : partialSource;
@@ -181,9 +182,10 @@ export class Broker<CallbackContext = any> {
       },
       {
         validateEvent: this.validateEvents,
+        additionalFields,
       }
     );
-    event.source.topic = this.getEventTopic(topic, event);
+    event.source.serviceTopic = this.getEventTopic(topic, event);
 
     if (this.beforeSendEventCallback) {
       this.beforeSendEventCallback(event);
@@ -193,7 +195,7 @@ export class Broker<CallbackContext = any> {
       this._buffer.push(event);
       return { type: 'buffered event' } as PrismeEvent;
     }
-    return this.driver.send(event, event.source.topic);
+    return this.driver.send(event, event.source.serviceTopic);
   }
 
   async on<PayloadType extends object = object>(

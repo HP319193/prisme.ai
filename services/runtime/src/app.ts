@@ -32,6 +32,7 @@ const broker = initEDA();
 (async function () {
   await broker.ready;
   const cache = await buildCache(CONTEXTS_CACHE);
+  await cache.connect();
 
   const apps = new Apps(
     WORKSPACES_STORAGE_TYPE,

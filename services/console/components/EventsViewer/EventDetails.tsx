@@ -104,6 +104,17 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
             ),
           }
         : false,
+      event.target
+        ? {
+            key: 'target',
+            name: 'target',
+            value: event.target && (
+              <pre>
+                <code>{JSON.stringify(event.target, null, ' ')}</code>
+              </pre>
+            ),
+          }
+        : false,
       {
         key: 'id',
         name: 'id',

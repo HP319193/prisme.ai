@@ -64,7 +64,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     const sessionId = socket.handshake.headers[SESSION_ID_HEADER];
     const apiKey = socket.handshake.headers[API_KEY_HEADER];
     const subscription = await events.subscribe(workspaceId, {
-      userId: userId as string,
+      id: userId as string,
       sessionId: sessionId as string,
       apiKey: apiKey as string,
       callback: (event: PrismeEvent<any>) => {
@@ -100,9 +100,12 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
             sessionId,
             err,
           });
+          socket.emit('error', err);
         }
       }
     );
-    socket.on('disconnect', subscription.unsubscribe);
+    socket.on('disconnect', () => {
+      subscription.unsubscribe();
+    });
   });
 }

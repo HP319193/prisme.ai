@@ -175,6 +175,13 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>yes</td>
   </tr>            
 
+  <tr>
+    <td>REQUEST_MAX_SIZE</td>
+    <td>api-gateway</td>
+    <td>Maximum request body size (format from bodyParser.json)</td>
+    <td>1mb</td>
+  </tr>           
+
   <!-- Events -->
   <tr>
     <td>PORT</td>
@@ -199,7 +206,19 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>events</td>
     <td>Elasticsearch password for events persistance</td>
     <td></td>
-  </tr>           
+  </tr>      
+  <tr>
+    <td>EVENTS_TOPICS_CACHE_HOST</td>
+    <td>events</td>
+    <td>Redis URL for event userTopics persistance.</td>
+    <td>BROKER_HOST variable</td>
+  </tr>    
+  <tr>
+    <td>EVENTS_TOPICS_CACHE_PASSWORD</td>
+    <td>events</td>
+    <td>Redis password for event userTopics persistance.</td>
+    <td></td>
+  </tr>                   
   <tr>
     <td>EVENTS_BUFFER_FLUSH_AT</td>
     <td>events</td>

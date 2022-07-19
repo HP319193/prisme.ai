@@ -65,3 +65,16 @@ export class InvalidPassword extends PrismeError {
     super(msg, undefined, 400);
   }
 }
+
+export class PayloadTooLarge extends PrismeError {
+  constructor(length: number, limit: number) {
+    super(
+      `request too large`,
+      {
+        length,
+        limit,
+      },
+      413
+    );
+  }
+}

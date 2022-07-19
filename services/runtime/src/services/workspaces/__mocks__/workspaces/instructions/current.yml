@@ -40,6 +40,22 @@ automations:
     when:
       endpoint: true
 
+  setUserAndEmit:
+    name: mySet
+    do:
+      - set:
+          name: 'user.id'
+          value: '{{body.userId}}'
+      - emit:
+          event: cascadingWithNewUser
+          payload: {}
+    output:
+      session: '{{session}}'
+      user: '{{user}}'
+      run: '{{run}}'
+    when:
+      endpoint: true
+
 
   setAndNoop:
     name: set
@@ -155,7 +171,7 @@ automations:
           do:
             - set:
                 name: myObj[{{item}}]
-                value: true
+                value: '{{$index}}'
     output: '{{myObj}}'
     when:
       endpoint: true
@@ -272,6 +288,13 @@ automations:
             parentAppSlug: '{{run.parentAppSlug}}'
       - basicApp.testRunContext: {}
     output: '{{run.runs}}'
+
+  testWorkspaceContext:
+    name: testWorkspaceContext
+    when:
+      endpoint: true
+    do: []
+    output: '{{$workspace}}'
 
   secretArguments:
     name: secretArguments

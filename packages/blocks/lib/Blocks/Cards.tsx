@@ -20,7 +20,7 @@ import { useBlock } from '../Provider';
 import useLocalizedText from '../useLocalizedText';
 import { withI18nProvider } from '../i18n';
 import { useBlocks } from '../Provider/blocksContext';
-import RichText, { RichTextRenderer } from './RichText';
+import { RichTextRenderer } from './RichText';
 import tw from '../tw';
 
 interface CardButton {
@@ -320,6 +320,18 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     [config.cards, preview, previewText]
   );
 
+  const getCoverStyle = useCallback(
+    (index: number) => {
+      const { cover } = cards[index] || {};
+      const isUrl = cover && cover.match(/^http/);
+      return {
+        backgroundImage: isUrl ? `url(${cover})` : undefined,
+        backgroundColor: isUrl ? undefined : cover || getRandomColor(index),
+      };
+    },
+    [cards]
+  );
+
   return (
     <div className={tw`block-cards flex flex-col w-full`}>
       <div
@@ -348,12 +360,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                 >
                   <div
                     className={tw`card__card-image card-image h-[303px] p-[-1px] rounded-[20px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top`}
-                    style={{
-                      backgroundImage: cover ? `url(${cover})` : undefined,
-                      backgroundColor: cover
-                        ? undefined
-                        : getRandomColor(index),
-                    }}
+                    style={getCoverStyle(index)}
                   />
                   <div
                     className={tw`
@@ -395,7 +402,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                           {item.type === 'button' && <CardButton {...item} />}
                           {item.type === 'accordion' && (
                             <div
-                              className={`${tw`card-content-outer__accordion accordion flex flex-1 border-[1px] border-neutral-200 rounded p-2`}`}
+                              className={`${tw`card-content-outer__accordion accordion flex flex-1 border-[1px] border-neutral-200 rounded p-2 max-w-full`}`}
                             >
                               <Accordion
                                 title={

@@ -55,6 +55,14 @@ class Apps {
     if (!app.workspaceId) {
       throw new PrismeError('Please specify app.workspaceId', {});
     }
+    if (!dsul.photo || !dsul.description) {
+      throw new MissingFieldError('Missing photo or description', {
+        fields: [
+          dsul.photo ? false : 'photo',
+          dsul.description ? false : 'description',
+        ].filter(Boolean),
+      });
+    }
 
     // Fetch existing workspace app
     let existingApp = await this.accessManager.findAll(SubjectType.App, {
@@ -201,9 +209,9 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(
-        app.automations || {}
-      ).map(([slug, { name, description }]) => ({ slug, name, description })),
+      automations: Object.entries(app.automations || {}).map(
+        ([slug, { name, description }]) => ({ slug, name, description })
+      ),
     };
   };
 

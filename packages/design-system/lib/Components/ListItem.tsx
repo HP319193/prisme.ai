@@ -1,4 +1,5 @@
 import { Space } from 'antd';
+import { tw } from 'twind';
 import { RightOutlined } from '@ant-design/icons';
 import { Text } from '../';
 import { MouseEventHandler, ReactElement } from 'react';
@@ -24,7 +25,7 @@ const ListItem = ({
   >
     <Space direction="vertical" className="items-baseline overflow-hidden">
       <Text>{title}</Text>
-      {content && <Text>{content}</Text>}
+      {content && <Text className={tw`text-gray`}>{content}</Text>}
     </Space>
     <Space>{rightContent || <RightOutlined />}</Space>
   </div>

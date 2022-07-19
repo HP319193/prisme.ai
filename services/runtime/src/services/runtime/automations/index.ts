@@ -1,4 +1,5 @@
 import { Broker } from '@prisme.ai/broker';
+import { Cache } from '../../../cache';
 import { EventType } from '../../../eda';
 import { Logger } from '../../../logger';
 import { interpolate } from '../../../utils';
@@ -12,6 +13,7 @@ export async function executeAutomation(
   ctx: ContextsManager,
   logger: Logger,
   broker: Broker,
+  cache: Cache,
   rootAutomation?: boolean
 ) {
   await ctx.securityChecks();
@@ -20,7 +22,13 @@ export async function executeAutomation(
   let breakThisAutomation: false | Break = false,
     breakRaised = false;
   try {
-    await runInstructions(automation.do, { workspace, ctx, logger, broker });
+    await runInstructions(automation.do, {
+      workspace,
+      ctx,
+      logger,
+      broker,
+      cache,
+    });
   } catch (error) {
     if (!(error instanceof Break)) {
       (<any>error).source = (<any>error).source || {
@@ -69,20 +77,23 @@ export async function runInstructions(
     ctx,
     logger,
     broker,
+    cache,
   }: {
     workspace: Workspace;
     ctx: ContextsManager;
     logger: Logger;
     broker: Broker;
+    cache: Cache;
   }
 ) {
   for (let instruction of instructions || []) {
     const instructionName = Object.keys(instruction || {})[0];
     // Before each run, we interpolate the instruction to replace all the variables based on the context
-    const interpolatedInstruction = interpolate(
+    // Do not interpolate 'do' fields nor conditions as they include nested instruction lists
+    const interpolatedInstruction = interpolateInstruction(
+      instructionName,
       instruction,
-      ctx.publicContexts,
-      ['do', 'conditions'] // Do not interpolate 'do' fields nor conditions as they include nested instruction lists
+      ctx.publicContexts
     );
 
     if (instructionName === InstructionType.Break) {
@@ -97,6 +108,7 @@ export async function runInstructions(
       ctx,
       logger,
       broker,
+      cache,
       (nextAutomation, payload) => {
         const childBroker = broker.child({
           appSlug: nextAutomation.workspace.appContext?.appSlug,
@@ -116,9 +128,24 @@ export async function runInstructions(
           nextAutomation,
           childCtx,
           logger,
-          childBroker
+          childBroker,
+          cache
         );
       }
     );
   }
+}
+
+function interpolateInstruction(
+  instructionName: string,
+  instruction: Prismeai.Instruction,
+  ctx: any
+) {
+  const interpolationExclude: string[] = [];
+  if (instructionName == InstructionType.Repeat) {
+    interpolationExclude.push('do');
+  } else if (instructionName == InstructionType.Conditions) {
+    interpolationExclude.push('conditions');
+  }
+  return interpolate(instruction, ctx, interpolationExclude);
 }

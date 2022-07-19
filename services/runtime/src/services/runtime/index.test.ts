@@ -104,7 +104,6 @@ describe('Simple events processing', () => {
         expect.anything(),
         expect.objectContaining({
           correlationId: event.source.correlationId,
-          userId,
           appContext: undefined,
           automationSlug: 'empty',
           depth: 0,
@@ -177,7 +176,6 @@ describe('Simple events processing', () => {
         expect.anything(),
         expect.objectContaining({
           correlationId: event.source.correlationId,
-          userId,
           appContext: expect.objectContaining({
             appSlug: AvailableModels.BasicApp,
             appInstanceSlug: 'basicApp',

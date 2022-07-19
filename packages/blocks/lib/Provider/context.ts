@@ -5,13 +5,14 @@ export interface BlockContext<T = any> {
   setAppConfig?: (config: any) => void;
   appConfig?: any;
   setConfig?: (config: any) => void;
-  config?: T;
+  config: T;
   events?: Events;
   api?: Api;
   onLoad?: (block: any) => void;
 }
 
 export const blockContext = createContext<BlockContext>({
+  config: {},
   setAppConfig() {},
   setConfig() {},
 });

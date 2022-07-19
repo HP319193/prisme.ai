@@ -49,6 +49,9 @@ export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
 
     off.current = socket.all((e, { payload }) => {
       if (Object.keys(updateEvents).includes(e)) {
+        if (payload.userTopics) {
+          socket.listenTopics(payload.userTopics);
+        }
         setBlocksConfigs((configs) => {
           const newConfigs = [...configs];
           (updateEvents[e] || []).forEach((id) => {

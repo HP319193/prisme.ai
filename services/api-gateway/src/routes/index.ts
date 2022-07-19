@@ -1,6 +1,6 @@
 import express from 'express';
 import initPipelines from '../pipelines';
-import { GatewayConfig } from '../config';
+import { GatewayConfig, syscfg } from '../config';
 import errorHandler from '../middlewares/errorHandler';
 import { requestDecorator } from '../middlewares/traceability';
 import httpLogger from '../middlewares/httpLogger';
@@ -28,7 +28,7 @@ export default async function initRoutes(
   });
 
   app.use(
-    bodyParser.json(),
+    bodyParser.json({ limit: syscfg.REQUEST_MAX_SIZE }),
     validationMiddleware({
       ignorePaths: ['^/sys', '^/v2/contacts'],
     }),

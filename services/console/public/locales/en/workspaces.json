@@ -558,6 +558,9 @@
         "submitLabel": {
           "label": "Submit button text"
         },
+        "hideSubmit": {
+          "label": "Hide submit button"
+        },
         "onSubmit": {
           "label": "On submit event",
           "description": "When the form is validated, the event will be sent with all its values."

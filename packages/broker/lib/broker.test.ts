@@ -528,7 +528,7 @@ describe('Basic messaging with partitions', () => {
       })
     ).then((results) => {
       expect(results).not.toBe(false);
-      expect(results.source.topic).toBe(topic);
+      expect(results.source.serviceTopic).toBe(topic);
       expect(results.type).toBe(EventType.InstalledApp);
     });
   });

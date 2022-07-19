@@ -16,9 +16,13 @@ export const FieldBoolean = (props: FieldProps) => {
           <div className="ant-input flex items-center flex-1 rounded h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500">
             <label className="cursor-pointer">
               <Switch {...field.input} checked={field.input.value} />
-              <span className="text-[10px] text-gray ml-2">
-                {props.label || props.schema.title || getLabel(props.name)}
-              </span>
+              <span
+                className="text-[10px] text-gray ml-2"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    props.label || props.schema.title || getLabel(props.name),
+                }}
+              />
             </label>
           </div>
         </components.FieldContainer>

@@ -100,6 +100,12 @@ export class ElasticsearchStore implements EventsStore {
               'source.topic': {
                 type: 'keyword',
               },
+              'target.userTopic': {
+                type: 'keyword',
+              },
+              'source.serviceTopic': {
+                type: 'keyword',
+              },
               payload: {
                 type: 'flattened',
                 ignore_above: 32700,
@@ -135,7 +141,7 @@ export class ElasticsearchStore implements EventsStore {
   }
 
   private buildSearchBody(options: SearchOptions) {
-    let createdAtSort = 'desc';
+    let createdAtSort = options.sort || 'desc';
     const additionalBody: any = {};
     const filter = [],
       must: any = [];
@@ -200,7 +206,7 @@ export class ElasticsearchStore implements EventsStore {
             ? {
                 query_string: {
                   query: `${value
-                    .map((v) => (v ? `${key}:${v}` : `not ${key}`))
+                    .map((v) => (v ? `${key}:"${v}"` : `not ${key}`))
                     .join(' OR ')}`,
                 },
               }

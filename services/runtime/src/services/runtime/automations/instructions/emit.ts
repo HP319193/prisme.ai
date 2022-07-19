@@ -2,10 +2,12 @@ import { Broker } from '@prisme.ai/broker';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../../config';
 import { InvalidEventError } from '../../../../errors';
 import { AppContext } from '../../../workspaces';
+import { ContextsManager } from '../../contexts';
 
 export async function emit(
-  { event, payload }: Prismeai.Emit['emit'],
+  { event, payload, target }: Prismeai.Emit['emit'],
   broker: Broker,
+  ctx: ContextsManager,
   appContext?: AppContext
 ) {
   try {
@@ -14,8 +16,14 @@ export async function emit(
         ? `${appContext?.appInstanceFullSlug}.${event}`
         : event,
       payload || {},
-      appContext,
-      RUNTIME_EMITS_BROKER_TOPIC
+      {
+        ...appContext,
+        // userId / sessionId might have been manually changed since given broker initialization
+        userId: ctx.session?.userId || broker.parentSource?.userId,
+        sessionId: ctx.session?.sessionId || broker.parentSource?.sessionId,
+      },
+      RUNTIME_EMITS_BROKER_TOPIC,
+      { target }
     );
   } catch (error) {
     if (

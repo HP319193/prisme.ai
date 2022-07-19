@@ -1,6 +1,7 @@
 import { Broker } from '@prisme.ai/broker';
 import { Logger } from 'pino';
 import { runInstructions } from '..';
+import { Cache } from '../../../../cache';
 import { Workspace } from '../../../workspaces';
 import { ContextsManager } from '../../contexts';
 
@@ -17,6 +18,7 @@ const isRepeatUntil = (
 };
 
 export const REPEAT_ITEM_VAR_NAME = 'item';
+export const REPEAT_INDEX_VAR_NAME = '$index';
 export async function repeat(
   value: Prismeai.Repeat['repeat'],
   {
@@ -24,11 +26,13 @@ export async function repeat(
     logger,
     broker,
     ctx,
+    cache,
   }: {
     workspace: Workspace;
     logger: Logger;
     broker: Broker;
     ctx: ContextsManager;
+    cache: Cache;
   }
 ) {
   const until = isRepeatUntil(value) ? value.until : undefined;
@@ -47,11 +51,13 @@ export async function repeat(
       : (<any>values)?.length || 0;
   for (let i = 0; i < maxIterations; i++) {
     ctx.set(REPEAT_ITEM_VAR_NAME, values?.length ? values[i] : i);
+    ctx.set(REPEAT_INDEX_VAR_NAME, i);
     await runInstructions(doInstructions, {
       workspace,
       ctx,
       logger,
       broker,
+      cache,
     });
   }
   ctx.delete(REPEAT_ITEM_VAR_NAME);

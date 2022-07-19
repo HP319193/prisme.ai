@@ -1,6 +1,7 @@
 import waitForExpect from 'wait-for-expect';
+import yaml from 'js-yaml';
 import { Broker } from '@prisme.ai/broker/lib/__mocks__';
-import { Workspaces, Workspace } from '../../workspaces';
+import { Workspaces } from '../../workspaces';
 import { DriverType } from '../../../storage/types';
 import { FilesystemOptions } from '../../../storage/drivers/filesystem';
 import path from 'path';
@@ -57,6 +58,7 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
 
   return {
     broker,
+    workspaceId: AvailableModels.Instructions,
     emitBroker,
     runtime,
     workspaces,
@@ -194,7 +196,7 @@ describe('Variables & Contexts', () => {
     // Our contexts are initially empty
     const initial = await execute('noop', {});
     expect(initial.user).toEqual({ id: 'unitTests' });
-    expect(initial.session).toEqual({});
+    expect(initial.session).toEqual({ id: 'mysessionId' });
 
     // Fill them
     await execute('mySet', {
@@ -218,7 +220,7 @@ describe('Variables & Contexts', () => {
       email: undefined,
       id: 'someRandomId',
     });
-    expect(afterUserSwitching.session).toEqual({});
+    expect(afterUserSwitching.session).toEqual({ id: 'someRandomId' });
 
     // Get back to our first user
     const getBack = await execute('mySet', {
@@ -229,6 +231,33 @@ describe('Variables & Contexts', () => {
     expect(getBack.session).toEqual(afterSets.session);
   });
 
+  it('Set user.id also updates source.userId / source.sessionId in emitted events', async () => {
+    const { execute, sendEventSpy } = getMocks();
+
+    // Switch to a new empty user
+    const userId = 'user' + Math.round(Math.random() * 1000);
+    const afterUserSwitching = await execute('setUserAndEmit', {
+      userId: userId,
+    });
+    expect(afterUserSwitching.user).toEqual({
+      authData: {},
+      email: undefined,
+      id: userId,
+    });
+    expect(afterUserSwitching.session).toEqual({ id: userId });
+
+    expect(sendEventSpy).toBeCalledWith(
+      expect.objectContaining({
+        type: 'cascadingWithNewUser',
+        source: expect.objectContaining({
+          userId,
+          sessionId: userId,
+        }),
+        payload: expect.objectContaining({}),
+      })
+    );
+  });
+
   it('Set a session.value variable then delete it', async () => {
     const { execute } = getMocks();
 
@@ -237,10 +266,13 @@ describe('Variables & Contexts', () => {
       value: Math.random(),
     };
     const afterSet = await execute('mySet', payload);
-    expect(afterSet.session).toEqual({ value: payload.value });
+    expect(afterSet.session).toEqual({
+      id: 'mysessionId',
+      value: payload.value,
+    });
 
     const afterDelete = await execute('myDelete', { field: 'session.value' });
-    expect(afterDelete.session).toEqual({});
+    expect(afterDelete.session).toEqual({ id: 'mysessionId' });
   });
 
   it('Run context should always reflect current automation / appInstance', async () => {
@@ -282,6 +314,18 @@ describe('Variables & Contexts', () => {
       })
     );
   });
+
+  it('$workspace context should be equal to current workspace DSUL', async () => {
+    const { execute, workspaceId, workspaces } = getMocks();
+
+    const workspace: any = yaml.load(
+      await (workspaces as any).driver.get(
+        `workspaces/${workspaceId}/current.yml`
+      )
+    );
+    const output = await execute('testWorkspaceContext', {});
+    expect(output).toMatchObject(workspace);
+  });
 });
 
 describe('Logic', () => {
@@ -290,10 +334,10 @@ describe('Logic', () => {
 
     const obj = await execute('transformListToObject', {});
     expect(obj).toEqual({
-      un: true,
-      deux: true,
-      trois: true,
-      quatre: true,
+      un: 0,
+      deux: 1,
+      trois: 2,
+      quatre: 3,
     });
   });
 

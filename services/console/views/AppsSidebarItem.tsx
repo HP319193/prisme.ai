@@ -66,6 +66,7 @@ const AppsSidebarItem = ({
     if (block) {
       return (
         <BlockLoader
+          api={api}
           url={block}
           token={`${api.token}`}
           workspaceId={workspaceId}

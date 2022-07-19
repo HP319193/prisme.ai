@@ -28,23 +28,25 @@ export const FieldTextColor = (props: FieldProps) => {
   return (
     <Description text={props.schema.description} className="flex items-center">
       <components.FieldContainer {...props}>
-        <Input
-          {...field.input}
-          id={id.current}
-          onChange={onChange}
-          type="color"
-          className="!min-w-[5rem] !w-auto"
-        />
-        <label
-          htmlFor={id.current}
-          className="ml-2 p-2 rounded text-black"
-          style={{
-            color: colorIsLight ? '' : field.input.value,
-            backgroundColor: colorIsLight ? field.input.value : '',
-          }}
-        >
-          {props.label || props.schema.title || getLabel(props.name)}
-        </label>
+        <div>
+          <Input
+            {...field.input}
+            id={id.current}
+            onChange={onChange}
+            type="color"
+            className="!min-w-[5rem] !w-auto"
+          />
+          <label
+            htmlFor={id.current}
+            className="ml-2 p-2 rounded text-black"
+            style={{
+              color: colorIsLight ? '' : field.input.value,
+              backgroundColor: colorIsLight ? field.input.value : '',
+            }}
+          >
+            {props.label || props.schema.title || getLabel(props.name)}
+          </label>
+        </div>
       </components.FieldContainer>
     </Description>
   );

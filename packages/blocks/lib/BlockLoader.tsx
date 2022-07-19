@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { BlockProvider, BlockProviderProps } from './Provider';
 import { useBlocks } from './Provider/blocksContext';
 import * as builtinBlocks from './Blocks';
+import { Schema } from '@prisme.ai/design-system';
 
 class BlockErrorBoundary extends React.Component {
   state = {
@@ -35,8 +36,15 @@ export interface BlockComponentProps {
   appInstance?: string;
   language?: string;
   edit?: boolean;
+  layout?: {
+    container?: HTMLElement;
+  };
 }
-type BlockComponent = (props: BlockComponentProps) => ReactElement;
+export type BlockComponent = (
+  props: BlockComponentProps
+) => ReactElement & {
+  schema?: Schema;
+};
 
 export interface BlockLoaderProps extends BlockComponentProps {
   children?: ReactNode;
@@ -147,7 +155,7 @@ const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
   if (name) {
     const Component = getComponentByName(name);
     if (Component) {
-      return <Component edit={!!props.edit} />;
+      return <Component edit={!!props.edit} {...props} />;
     }
   }
 

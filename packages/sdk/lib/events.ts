@@ -1,8 +1,21 @@
 import io, { Socket } from 'socket.io-client';
 
+export type PayloadQuery = Record<string, string | string[]>;
+export type OrQuery = PayloadQuery[];
+
+export type SearchOptions = Omit<
+  PrismeaiAPI.EventsLongpolling.QueryParameters,
+  'query' | 'types'
+> & {
+  payloadQuery?: PayloadQuery | OrQuery;
+  types?: string[];
+};
+
 export class Events {
   protected client: Socket;
   public workspaceId: string;
+  private filters: Record<string, any>;
+  private listenedUserTopics: Set<string>;
 
   constructor({
     workspaceId,
@@ -34,6 +47,9 @@ export class Events {
         withCredentials: true,
       }
     );
+
+    this.filters = filters || {};
+    this.listenedUserTopics = new Set();
   }
 
   get socket() {
@@ -71,6 +87,31 @@ export class Events {
       type: event,
       payload,
     });
+  }
+
+  listenTopics(topics: string | string[]) {
+    topics = Array.isArray(topics) ? topics : [topics];
+
+    const initialTopicsNb = this.listenedUserTopics.size;
+    topics.forEach((topic) => {
+      this.listenedUserTopics.add(topic);
+    });
+    if (initialTopicsNb === this.listenedUserTopics.size) {
+      return;
+    }
+
+    const topicsFilter = {
+      'target.userTopic': Array.from(this.listenedUserTopics),
+    };
+    this.updateFilters({
+      payloadQuery: Object.keys(this.filters).length
+        ? [this.filters, topicsFilter]
+        : topicsFilter,
+    });
+  }
+
+  updateFilters(filters: SearchOptions) {
+    this.client.emit('filters', filters);
   }
 
   once(

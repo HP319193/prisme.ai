@@ -69,6 +69,7 @@ export interface Contexts {
   session: Record<string, any>;
   local: LocalContext;
   config: object;
+  $workspace: Partial<Prismeai.DSUL>;
 }
 
 export type ContextUpdateOpLog =
@@ -93,11 +94,10 @@ export const UserAccessibleContexts: ContextType[] = [
   ContextType.Run,
 ];
 export class ContextsManager {
-  private workspaceId: string;
-  private userId?: string;
+  public workspaceId: string;
   public session?: PrismeaiSession;
   private correlationId: string;
-  private cache: CacheDriver;
+  public cache: CacheDriver;
   private contexts: Contexts;
   private logger: Logger;
   private broker: Broker;
@@ -121,12 +121,12 @@ export class ContextsManager {
     broker: Broker
   ) {
     this.workspaceId = workspaceId;
-    this.userId = session.userId;
     this.session = session;
     this.correlationId = correlationId;
     this.cache = cache;
     this.depth = 0;
     this.contexts = {
+      $workspace: {},
       local: {},
       global: {
         workspaceId,
@@ -181,7 +181,7 @@ export class ContextsManager {
 
     if (!contexts || contexts.includes(ContextType.User)) {
       fetchedContexts.user =
-        (this.userId &&
+        (this.session?.userId &&
           (await this.cache.getObject<UserContext>(
             this.cacheKey(ContextType.User)
           ))) ||
@@ -189,7 +189,7 @@ export class ContextsManager {
       this.contexts.user = {
         ...this.contexts?.user,
         ...fetchedContexts.user,
-        id: this.userId,
+        id: this.session?.userId,
       };
     }
     if (!contexts || contexts.includes(ContextType.Session)) {
@@ -219,7 +219,7 @@ export class ContextsManager {
         ttl: ttl || CONTEXT_RUN_EXPIRE_TIME,
       });
     }
-    if ((!context || context === ContextType.User) && this.userId) {
+    if ((!context || context === ContextType.User) && this.session?.userId) {
       await this.cache.setObject(this.cacheKey(ContextType.User), user);
     }
     if (!context || context === ContextType.Session) {
@@ -271,7 +271,7 @@ export class ContextsManager {
 
   private cacheKey(context: Omit<ContextType, ContextType.Local>) {
     if (context === ContextType.User) {
-      return `contexts:${this.workspaceId}:user:${this.userId}`;
+      return `contexts:${this.workspaceId}:user:${this.session?.userId}`;
     }
     if (context === ContextType.Global) {
       return `contexts:${this.workspaceId}:global`;
@@ -281,7 +281,7 @@ export class ContextsManager {
     }
     if (context === ContextType.Session) {
       const sessionId =
-        this.session?.sessionId || this.userId || this.correlationId;
+        this.session?.sessionId || this.session?.userId || this.correlationId;
       return `contexts:${this.workspaceId}:session:${sessionId}`;
     }
     throw new Error(`Unknown context '${context} inside context store'`);
@@ -354,6 +354,7 @@ export class ContextsManager {
     return this.child(
       {
         config: automation.workspace.config,
+        $workspace: automation.workspace.dsul,
       },
       {
         // If we do not reinstantiate payload, writting to local context might mutate this payload (& produces output-related errors)
@@ -439,10 +440,9 @@ export class ContextsManager {
           lastKey === 'id' &&
           prevValue !== value
         ) {
-          this.userId = value;
           this.contexts.user = { id: value };
           this.session = { userId: value, sessionId: value, authData: {} };
-          this.contexts.session = {};
+          this.contexts.session = { id: value };
           await this.fetch([ContextType.User, ContextType.Session]);
           this.broker.parentSource.userId = value;
           return;
@@ -480,7 +480,7 @@ export class ContextsManager {
   }
 
   get publicContexts(): PublicContexts {
-    const { local, global, ...publicContexts } = this.contexts;
+    const { local, global, session, ...publicContexts } = this.contexts;
     return {
       ...local,
       ...publicContexts,
@@ -488,6 +488,10 @@ export class ContextsManager {
         ...publicContexts.user,
         email: this.session?.email,
         authData: this.session?.authData,
+      },
+      session: {
+        ...session,
+        id: this.session?.sessionId,
       },
       run: this.run,
       global: {

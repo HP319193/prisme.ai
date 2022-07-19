@@ -8,7 +8,10 @@ export const Enum = (props: FieldProps) => {
   } = useSchemaForm();
   const options = useMemo(
     () =>
-      (props.schema.enum || []).map((value, k) => ({
+      (props.schema.enum && Array.isArray(props.schema.enum)
+        ? props.schema.enum
+        : []
+      ).map((value, k) => ({
         label:
           (props.schema.enumNames && props.schema.enumNames[k]) || `${value}`,
         value,
