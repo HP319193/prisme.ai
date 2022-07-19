@@ -1,3 +1,4 @@
+import ResizeObserver from 'resize-observer-polyfill';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBlock } from '../../Provider';
 import ContentContainer from './ContentContainer';
