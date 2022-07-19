@@ -307,10 +307,10 @@ describe('Logic', () => {
 
     const obj = await execute('transformListToObject', {});
     expect(obj).toEqual({
-      un: true,
-      deux: true,
-      trois: true,
-      quatre: true,
+      un: 0,
+      deux: 1,
+      trois: 2,
+      quatre: 3,
     });
   });
 

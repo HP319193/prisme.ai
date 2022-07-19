@@ -155,7 +155,7 @@ automations:
           do:
             - set:
                 name: myObj[{{item}}]
-                value: true
+                value: '{{$index}}'
     output: '{{myObj}}'
     when:
       endpoint: true
