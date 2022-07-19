@@ -5,7 +5,7 @@ import {
   MAXIMUM_SUCCESSIVE_CALLS,
 } from '../../../config';
 import { CacheDriver } from '../../cache';
-import { InvalidSetInstructionError, TooManyCallError } from '../../errors';
+import { InvalidInstructionError, TooManyCallError } from '../../errors';
 import { Logger, logger } from '../../logger';
 import { EventType } from '../../eda';
 import { parseVariableName, SplittedPath } from '../../utils/parseVariableName';
@@ -455,7 +455,7 @@ export class ContextsManager {
       }
     } catch (error) {
       this.logger.error(error);
-      throw new InvalidSetInstructionError('Invalid set instruction', {
+      throw new InvalidInstructionError('Invalid set instruction', {
         variable: path,
         value,
       });

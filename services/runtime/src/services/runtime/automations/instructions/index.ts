@@ -1,5 +1,8 @@
 import { Broker } from '@prisme.ai/broker';
-import { ObjectNotFoundError } from '../../../../errors';
+import {
+  InvalidInstructionError,
+  ObjectNotFoundError,
+} from '../../../../errors';
 import { Logger } from '../../../../logger';
 import { DetailedAutomation, Workspace } from '../../../workspaces';
 import { ContextsManager } from '../../contexts';
@@ -83,6 +86,14 @@ export async function runInstruction(
     return true;
   }
   const payload = (<any>instruction)[instructionName] as Prismeai.Instruction;
+  if (typeof payload === 'undefined' || payload == null) {
+    throw new InvalidInstructionError(
+      `Invalid ${instructionName} instruction : undefined or null payload`,
+      {
+        instructionName,
+      }
+    );
+  }
   switch (instructionName) {
     case InstructionType.Emit:
       result = await emit(

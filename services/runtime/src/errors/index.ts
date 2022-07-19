@@ -66,8 +66,8 @@ export class InvalidVariableNameError extends PrismeError {
   }
 }
 
-export class InvalidSetInstructionError extends PrismeError {
-  constructor(msg: string = 'Invalid set instruction', details?: any) {
+export class InvalidInstructionError extends PrismeError {
+  constructor(msg: string = 'Invalid instruction', details?: any) {
     super(msg, details);
   }
 }
