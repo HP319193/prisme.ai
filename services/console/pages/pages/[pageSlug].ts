@@ -8,7 +8,7 @@ export { default } from '../../views/PublicPage';
 export const getServerSideProps: GetServerSideProps<
   PublicPageProps,
   { pageSlug: string }
-> = async ({ locale = '', params: { pageSlug } = {} }) => {
+> = async ({ res, locale = '', params: { pageSlug } = {} }) => {
   let page: PublicPageProps['page'] = null;
   let error: number | null = null;
   try {
@@ -17,7 +17,7 @@ export const getServerSideProps: GetServerSideProps<
     }
     page = await api.getPageBySlug(pageSlug);
   } catch (e) {
-    error = (<HTTPError>e).code;
+    res.statusCode = error = (<HTTPError>e).code;
   }
 
   return {
