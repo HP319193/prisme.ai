@@ -88,6 +88,7 @@ export async function runInstruction(
       result = await emit(
         <Prismeai.Emit['emit']>payload,
         broker,
+        ctx,
         workspace.appContext
       );
       break;

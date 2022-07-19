@@ -231,6 +231,33 @@ describe('Variables & Contexts', () => {
     expect(getBack.session).toEqual(afterSets.session);
   });
 
+  it('Set user.id also updates source.userId / source.sessionId in emitted events', async () => {
+    const { execute, sendEventSpy } = getMocks();
+
+    // Switch to a new empty user
+    const userId = 'user' + Math.round(Math.random() * 1000);
+    const afterUserSwitching = await execute('setUserAndEmit', {
+      userId: userId,
+    });
+    expect(afterUserSwitching.user).toEqual({
+      authData: {},
+      email: undefined,
+      id: userId,
+    });
+    expect(afterUserSwitching.session).toEqual({ id: userId });
+
+    expect(sendEventSpy).toBeCalledWith(
+      expect.objectContaining({
+        type: 'cascadingWithNewUser',
+        source: expect.objectContaining({
+          userId,
+          sessionId: userId,
+        }),
+        payload: expect.objectContaining({}),
+      })
+    );
+  });
+
   it('Set a session.value variable then delete it', async () => {
     const { execute } = getMocks();
 
