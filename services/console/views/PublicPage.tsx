@@ -12,7 +12,7 @@ import React, {
 import { Loading, Title } from '@prisme.ai/design-system';
 import SigninForm from '../components/SigninForm';
 import { useUser } from '../components/UserProvider';
-import api, { HTTPError } from '../utils/api';
+import api, { Events, HTTPError } from '../utils/api';
 import useLocalizedText from '../utils/useLocalizedText';
 import usePageBlocksConfigs from '../components/Page/usePageBlocksConfigs';
 import PublicPageBlock from '../components/Page/PageBlock';
@@ -20,6 +20,17 @@ import PublicPageBlock from '../components/Page/PageBlock';
 export interface PublicPageProps {
   page: Prismeai.DetailedPage | null;
   error?: number | null;
+}
+
+declare global {
+  interface Window {
+    Prisme: {
+      ai: {
+        api: typeof api;
+        events?: Events;
+      };
+    };
+  }
 }
 
 export const PublicPageRenderer = ({ page }: PublicPageProps) => {
@@ -36,6 +47,14 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
     query: { pageSlug },
   } = useRouter();
   const { blocksConfigs, error, events } = usePageBlocksConfigs(currentPage);
+
+  useEffect(() => {
+    window.Prisme = window.Prisme || {};
+    window.Prisme.ai = window.Prisme.ai || {};
+    window.Prisme.ai.api = api;
+    window.Prisme.ai.events = events;
+  }, [events]);
+
   const containerEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
