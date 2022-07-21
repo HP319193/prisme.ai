@@ -30,12 +30,14 @@ export interface FormProps {
 const OnChange = ({
   values,
   onChange,
+  dirty,
 }: {
   values: any;
   onChange: FormProps['onChange'];
+  dirty: boolean;
 }) => {
   useEffect(() => {
-    if (!onChange || !values) return;
+    if (!dirty || !onChange || !values) return;
     onChange(values.values);
   }, [values]);
   return null;
@@ -101,12 +103,12 @@ export const SchemaForm = ({
         initialValues={values.current}
         mutators={{ ...arrayMutators }}
       >
-        {({ handleSubmit }) => (
+        {({ handleSubmit, dirty }) => (
           <form onSubmit={handleSubmit}>
             {onChange && (
               <FormSpy subscription={{ values: true }}>
                 {({ values }) => (
-                  <OnChange values={values} onChange={onChange} />
+                  <OnChange values={values} onChange={onChange} dirty={dirty} />
                 )}
               </FormSpy>
             )}
