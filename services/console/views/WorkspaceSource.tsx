@@ -23,6 +23,7 @@ import {
 import { useRouter } from 'next/router';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useWorkspace } from '../components/WorkspaceProvider';
+import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 
 interface Annotation {
   row: number;
@@ -41,15 +42,9 @@ interface WorkspaceSourceProps {
 }
 export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const { t } = useTranslation('workspaces');
-  const {
-    workspace,
-    setInvalid,
-    setNewSource,
-    invalid,
-    saveSource,
-    saving,
-    displaySource,
-  } = useWorkspace();
+  const { workspace, saveSource } = useWorkspace();
+  const { setInvalid, setNewSource, invalid, saving, displaySource } =
+    useWorkspaceLayout();
   const { fetch } = useWorkspaces();
   const [dirty, setDirty] = useState(false);
   const [value, setValue] = useState<string | undefined>();

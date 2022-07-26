@@ -15,7 +15,7 @@ jest.mock('../components/WorkspacesProvider', () => {
     }),
   };
 });
-jest.mock('../layouts/WorkspaceLayout', () => {
+jest.mock('../components/WorkspaceProvider', () => {
   const mock = {
     workspace: {
       id: '42',

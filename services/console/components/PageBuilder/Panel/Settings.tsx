@@ -6,6 +6,7 @@ import useLocalizedText from '../../../utils/useLocalizedText';
 import usePages from '../../PagesProvider/context';
 import useSchema from '../../SchemaForm/useSchema';
 import { usePageBuilder } from '../context';
+import { useWorkspace } from '../../WorkspaceProvider';
 
 const noop = () => null;
 

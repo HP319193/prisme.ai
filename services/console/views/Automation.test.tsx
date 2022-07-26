@@ -7,7 +7,17 @@ import { notification, PageHeader } from '@prisme.ai/design-system';
 import EditDetails from '../layouts/EditDetails';
 import { useWorkspace } from '../components/WorkspaceProvider';
 
-jest.mock('../layouts/WorkspaceLayout', () => {
+jest.mock('../utils/useYaml', () => {
+  const toJSON = jest.fn();
+  const toYaml = jest.fn();
+  const useYaml = jest.fn(() => ({
+    toJSON,
+    toYaml,
+  }));
+  return useYaml;
+});
+
+jest.mock('../components/WorkspaceProvider', () => {
   const mock = {
     workspace: {
       id: '42',

@@ -8,6 +8,7 @@ import {
   useWorkspace,
   WorkspaceContext,
 } from '../components/WorkspaceProvider';
+import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 
 jest.mock('../utils/useYaml', () => {
   const toJSON = jest.fn();
@@ -32,7 +33,16 @@ jest.mock('next/router', () => {
   };
 });
 
-jest.mock('../layouts/WorkspaceLayout', () => {
+jest.mock('../layouts/WorkspaceLayout/context', () => {
+  const mock = {
+    setInvalid: jest.fn(),
+  };
+  return {
+    useWorkspaceLayout: () => mock,
+  };
+});
+
+jest.mock('../components/WorkspaceProvider', () => {
   const mock = {
     setNewSource: () => null,
   };
@@ -126,7 +136,7 @@ it('should check workspace format', async () => {
   (useWorkspace() as any).workspace = {
     name: 'foo',
   };
-  (useWorkspace() as any).setInvalid = jest.fn();
+  (useWorkspaceLayout() as any).setInvalid = jest.fn();
   (useYaml().toYaml as jest.Mock).mockImplementation(
     () => `
   name: foo
@@ -165,7 +175,7 @@ automations: []
   await act(async () => {
     await true;
   });
-  expect((useWorkspace() as any).setInvalid).toHaveBeenCalledWith([
+  expect((useWorkspaceLayout() as any).setInvalid).toHaveBeenCalledWith([
     {
       instancePath: '/automations',
       keyword: '',
@@ -340,7 +350,7 @@ automations:
         - bar
 `
   );
-  (useWorkspace() as any).invalid = [
+  (useWorkspaceLayout() as any).invalid = [
     {
       instancePath: '/automations/foo/trigger',
       keyword: 'trigger',

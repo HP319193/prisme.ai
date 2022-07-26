@@ -17,11 +17,12 @@ jest.mock('@prisme.ai/sdk', () => {
   return { Api, Events };
 });
 
-jest.mock('../../layouts/WorkspaceLayout', () => {
+jest.mock('../WorkspaceProvider', () => {
   const mock = {
     events: new Map(),
     filters: {},
     readEvents: new Set(),
+    setShare() {},
   };
   return {
     useWorkspace: () => mock,
