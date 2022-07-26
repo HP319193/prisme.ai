@@ -12,7 +12,6 @@ import { CodeEditorInline } from '../../CodeEditor/lazy';
 import { useField } from 'react-final-form';
 import FieldContainerWithRaw from '../../FieldContainerWithRaw';
 import useSchema from '../../SchemaForm/useSchema';
-import { useWorkspace } from '../../../layouts/WorkspaceLayout';
 import usePages from '../../PagesProvider/context';
 import { InfoCircleOutlined } from '@ant-design/icons';
 

@@ -1,10 +1,13 @@
 import WorkspaceSource from './WorkspaceSource';
 import renderer, { act } from 'react-test-renderer';
-import { useWorkspace, WorkspaceContext } from '../layouts/WorkspaceLayout';
 import useYaml from '../utils/useYaml';
 import CodeEditor from '../components/CodeEditor/lazy';
 import { YAMLException } from 'js-yaml';
 import { validateWorkspace } from '@prisme.ai/validation';
+import {
+  useWorkspace,
+  WorkspaceContext,
+} from '../components/WorkspaceProvider';
 
 jest.mock('../utils/useYaml', () => {
   const toJSON = jest.fn();

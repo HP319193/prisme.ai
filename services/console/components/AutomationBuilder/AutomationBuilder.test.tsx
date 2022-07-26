@@ -1,7 +1,6 @@
 import AutomationBuilder from './AutomationBuilder';
 import renderer, { act } from 'react-test-renderer';
 import ReactFlow, { useZoomPanHelper } from 'react-flow-renderer';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import Panel from './Panel';
 import InstructionForm from './Panel/InstructionForm';
 import ConditionForm from './Panel/ConditionForm';

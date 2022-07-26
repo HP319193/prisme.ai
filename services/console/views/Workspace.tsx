@@ -9,7 +9,7 @@ import {
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { EventsViewer } from '../components/EventsViewer';
-import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
+import getLayout from '../layouts/WorkspaceLayout';
 import AutomationsSidebar from './AutomationsSidebar';
 import IconApps from '../icons/icon-apps.svgr';
 import IconAutomations from '../icons/icon-automations.svgr';
@@ -19,6 +19,7 @@ import PagesSidebar from './PagesSidebar';
 import { DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import ShareWorkspace from '../components/Share/ShareWorkspace';
 import Storage from '../utils/Storage';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 export const Workspace = () => {
   const { t } = useTranslation('workspaces');
@@ -76,6 +77,7 @@ export const Workspace = () => {
     ],
     [t]
   );
+  console.log('wp', workspace);
 
   if (!workspace) return null;
 

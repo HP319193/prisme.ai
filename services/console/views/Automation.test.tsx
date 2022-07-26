@@ -2,10 +2,10 @@ import Automation from './Automation';
 import renderer, { act } from 'react-test-renderer';
 import AutomationBuilder from '../components/AutomationBuilder';
 import { useRouter } from 'next/router';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { notification, PageHeader } from '@prisme.ai/design-system';
 import EditDetails from '../layouts/EditDetails';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 jest.mock('../layouts/WorkspaceLayout', () => {
   const mock = {

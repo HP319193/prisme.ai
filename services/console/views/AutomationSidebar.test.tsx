@@ -1,8 +1,8 @@
 import AutomationsSidebar from './AutomationsSidebar';
 import renderer, { act } from 'react-test-renderer';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useRouter } from 'next/router';
 import { Button } from '@prisme.ai/design-system';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 jest.mock('../components/WorkspacesProvider', () => {
   const createAutomation = jest.fn((w, automation) => ({

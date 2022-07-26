@@ -11,8 +11,8 @@ import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import usePages from '../components/PagesProvider/context';
 import IconPages from '../icons/icon-pages.svgr';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useLocalizedText from '../utils/useLocalizedText';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 export const PagesSidebar = () => {
   const {

@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { YAMLException } from 'js-yaml';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { Workspace } from '@prisme.ai/sdk';
 import useYaml from '../utils/useYaml';
 import {
@@ -23,6 +22,7 @@ import {
 } from '@prisme.ai/design-system';
 import { useRouter } from 'next/router';
 import { useWorkspaces } from '../components/WorkspacesProvider';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 interface Annotation {
   row: number;

@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AutomationBuilder from '../components/AutomationBuilder';
-import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
+import getLayout from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useTranslation } from 'next-i18next';
@@ -19,6 +19,7 @@ import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import EditDetails from '../layouts/EditDetails';
 import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
 import { ApiError } from '../utils/api';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);

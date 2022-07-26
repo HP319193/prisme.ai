@@ -4,8 +4,8 @@ import { Modal, SearchInput, Title } from '@prisme.ai/design-system';
 import { useApps } from '../components/AppsProvider';
 import IconApps from '../icons/icon-apps.svgr';
 import { useWorkspaces } from '../components/WorkspacesProvider';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useLocalizedText from '../utils/useLocalizedText';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 interface AppStoreProps {
   visible: boolean;

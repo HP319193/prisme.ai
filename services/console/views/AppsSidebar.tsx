@@ -2,10 +2,10 @@ import { Button, SearchInput, Space, Title } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import IconApps from '../icons/icon-apps.svgr';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import AppsStore from './AppsStore';
 import AppsSidebarItem from './AppsSidebarItem';
 import { useApps } from '../components/AppsProvider';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 export const AppsSidebar = () => {
   const { t } = useTranslation('workspaces');

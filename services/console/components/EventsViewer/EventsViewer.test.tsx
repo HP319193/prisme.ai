@@ -1,7 +1,7 @@
 import EventsViewer from './EventsViewer';
 import renderer, { act } from 'react-test-renderer';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import { Event } from '@prisme.ai/sdk';
+import { useWorkspace } from '../WorkspaceProvider';
 
 jest.mock('@prisme.ai/sdk', () => {
   class Events {

@@ -9,9 +9,9 @@ import {
 } from '@prisme.ai/design-system';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useLocalizedText from '../utils/useLocalizedText';
 import IconAutomations from '../icons/icon-automations.svgr';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 const emptyObject: Prismeai.Workspace['automations'] = {};
 

@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
 import { useTranslation } from 'next-i18next';
 import {
@@ -26,6 +25,8 @@ import { CodeEditor } from '../components/CodeEditor/lazy';
 import PagePreview from '../components/PagePreview';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useApps } from '../components/AppsProvider';
+import { useWorkspace } from '../components/WorkspaceProvider';
+import getLayout from '../layouts/WorkspaceLayout';
 
 const CSSEditor = ({
   name,
@@ -187,9 +188,7 @@ export const Page = () => {
               {...props}
               sectionIds={
                 page
-                  ? (
-                      page.blocks || []
-                    ).flatMap(
+                  ? (page.blocks || []).flatMap(
                       ({ config: { sectionId, name = sectionId } = {} }) =>
                         sectionId ? { id: sectionId, name } : []
                     )
@@ -206,10 +205,9 @@ export const Page = () => {
   const cleanValue = useCallback(
     (value: Prismeai.Page) => ({
       ...value,
-      blocks: ((value.blocks ||
-        []) as PageBuilderContext['page']['blocks']).map(
-        ({ key, ...block }) => block
-      ),
+      blocks: (
+        (value.blocks || []) as PageBuilderContext['page']['blocks']
+      ).map(({ key, ...block }) => block),
       id: page ? page.id : '',
     }),
     [page]

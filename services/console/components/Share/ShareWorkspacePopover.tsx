@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   Button,
   Input,
+  notification,
   Select,
   Space,
   Table,
   Tooltip,
-  notification,
 } from '@prisme.ai/design-system';
 import { Form, useField } from 'react-final-form';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { useUser } from '../UserProvider';
 import { useWorkspaces } from '../WorkspacesProvider';
 import { useRouter } from 'next/router';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
+import { useWorkspace } from '../WorkspaceProvider';
 
 interface SharePopoverProps {
   subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType;

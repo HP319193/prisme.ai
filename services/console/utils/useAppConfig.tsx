@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { BlockLoaderProps } from '@prisme.ai/blocks';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import api from './api';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 interface AppConfigProviderProps {
   workspaceId: string;

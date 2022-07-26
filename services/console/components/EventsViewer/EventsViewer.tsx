@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { useWorkspace, WorkspaceContext } from '../../layouts/WorkspaceLayout';
 import { useDateFormat } from '../../utils/dates';
 import EventDetails from './EventDetails';
 import { memo, useCallback, useEffect, useMemo } from 'react';
@@ -19,6 +18,7 @@ import Empty from './Empty';
 import FilterEventsPopover from './FilterEventsPopover';
 import { filterEmpty } from '../../utils/prismeAi';
 import { ExceptionOutlined } from '@ant-design/icons';
+import { useWorkspace, WorkspaceContext } from '../WorkspaceProvider';
 
 export const EventsViewerRenderer = memo(function EventsViewerRender({
   events,
