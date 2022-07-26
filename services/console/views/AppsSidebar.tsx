@@ -6,6 +6,7 @@ import AppsStore from './AppsStore';
 import AppsSidebarItem from './AppsSidebarItem';
 import { useApps } from '../components/AppsProvider';
 import { useWorkspace } from '../components/WorkspaceProvider';
+import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 
 export const AppsSidebar = () => {
   const { t } = useTranslation('workspaces');
@@ -14,8 +15,9 @@ export const AppsSidebar = () => {
   const {
     workspace,
     workspace: { id: workspaceId },
-    setFullSidebar,
   } = useWorkspace();
+
+  const { setFullSidebar } = useWorkspaceLayout();
 
   const { appInstances, getAppInstances } = useApps();
 

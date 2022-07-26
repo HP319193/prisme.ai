@@ -291,7 +291,7 @@ export const Automation = () => {
         ]}
       />
 
-      <div className="relative flex flex-1">
+      <div className="relative flex flex-1 h-full">
         <AutomationBuilder
           id={`${automationId}`}
           value={value}

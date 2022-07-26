@@ -14,6 +14,7 @@ import FieldContainerWithRaw from '../../FieldContainerWithRaw';
 import useSchema from '../../SchemaForm/useSchema';
 import usePages from '../../PagesProvider/context';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { useWorkspace } from '../../WorkspaceProvider';
 
 interface InstructionValueProps {
   instruction: string;

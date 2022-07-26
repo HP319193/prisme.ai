@@ -19,6 +19,7 @@ import FilterEventsPopover from './FilterEventsPopover';
 import { filterEmpty } from '../../utils/prismeAi';
 import { ExceptionOutlined } from '@ant-design/icons';
 import { useWorkspace, WorkspaceContext } from '../WorkspaceProvider';
+import ShareWorkspace from '../Share/ShareWorkspace';
 
 export const EventsViewerRenderer = memo(function EventsViewerRender({
   events,
@@ -131,7 +132,16 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
 });
 
 export const EventsViewer = () => {
-  const { events, nextEvents, readEvents, readEvent, filters } = useWorkspace();
+  const { t } = useTranslation('workspaces');
+  const { setShare, events, nextEvents, readEvents, readEvent, filters } =
+    useWorkspace();
+
+  useEffect(() => {
+    setShare({
+      label: t('workspace.share'),
+      component: ShareWorkspace,
+    });
+  }, [setShare, t]);
 
   return (
     <EventsViewerRenderer
