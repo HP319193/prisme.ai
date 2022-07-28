@@ -2015,8 +2015,7 @@ declare namespace PrismeaiAPI {
         /**
          * Entire body will be passed as a payload to the triggered automation
          */
-        export interface RequestBody {
-        }
+        export type RequestBody = Prismeai.AnyValue;
         namespace Responses {
             export type $200 = Prismeai.AnyValue;
             export type $400 = Prismeai.GenericError;

@@ -1,31 +1,32 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
-import {
-  Button,
-  Col,
-  Layout,
-  MenuTab,
-  Row,
-  SidePanel,
-  Tooltip,
-} from '@prisme.ai/design-system';
+import { useRouter } from 'next/router';
+import { Layout, SidePanel, Tree } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import { useWorkspace } from '../../components/WorkspaceProvider';
 import workspaceLayoutContext, { WorkspaceLayoutContext } from './context';
 import useLocalizedText from '../../utils/useLocalizedText';
-import { DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
-import AppsSidebar from '../../views/AppsSidebar';
-import AutomationsSidebar from '../../views/AutomationsSidebar';
-import PagesSidebar from '../../views/PagesSidebar';
 import Storage from '../../utils/Storage';
 import IconApps from '../../icons/icon-apps.svgr';
 import IconAutomations from '../../icons/icon-automations.svgr';
 import IconPages from '../../icons/icon-pages.svgr';
+import { appInstanceWithSlug, useApps } from '../../components/AppsProvider';
+import usePages from '../../components/PagesProvider/context';
+
+const TREE_CONTENT_TYPE = {
+  automation: 'automation',
+  page: 'page',
+  app: 'app',
+};
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const { workspace } = useWorkspace();
+  const { appInstances } = useApps();
+  const { pages, createPage } = usePages();
+  const router = useRouter();
+
   const { localize } = useLocalizedText();
   const { t } = useTranslation('workspaces');
 
@@ -99,6 +100,38 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [t]
   );
 
+  const onSelect = useCallback(
+    (selectedKey, _) => {
+      console.log('selectedKey', selectedKey);
+      const [type, slug] = selectedKey[0].split(':');
+      switch (type) {
+        case TREE_CONTENT_TYPE.automation: {
+          router.push(`/workspaces/${workspace.id}/automations/${slug}`);
+          break;
+        }
+        case TREE_CONTENT_TYPE.page: {
+          router.push(`/workspaces/${workspace.id}/pages/${slug}`);
+          break;
+        }
+        case TREE_CONTENT_TYPE.app: {
+          break;
+        }
+      }
+    },
+    [router, workspace.id]
+  );
+
+  const workspaceAppInstances = appInstances.get(
+    workspace.id
+  ) as appInstanceWithSlug[];
+
+  const currentPages = useMemo(
+    () => Array.from(pages.get(workspace.id) || []),
+    [pages, workspace.id]
+  );
+
+  console.log('currentPages', currentPages);
+
   return (
     <workspaceLayoutContext.Provider
       value={{
@@ -142,62 +175,80 @@ export const WorkspaceLayout: FC = ({ children }) => {
         )}
       </div>
       <Layout Header={<HeaderWorkspace />}>
-        <Row className="h-full">
-          <Col span={8} className="flex h-full">
-            <SidePanel
-              variant="squared"
-              className={`
-                z-10 absolute top-0 left-0 bottom-0 !bg-white
-                ${fullSidebar ? 'w-[90vw] drop-shadow' : 'w-full'}
-                transition-all ease-in duration-200`}
-              Header={
-                <div className="flex flex-row items-center h-[70px] justify-between border border-gray-200 border-solid !border-t-0">
-                  <MenuTab
-                    items={menu}
-                    selected={
-                      (menu.find(({ key }) => sidebar === key) || menu[0]).key
-                    }
-                    onSelect={setSidebar}
-                  />
-                  <Tooltip
-                    title={t(
-                      fullSidebar
-                        ? 'workspace.collapseSidebar'
-                        : 'workspace.expandSidebar'
-                    )}
-                    placement="left"
-                  >
-                    <Button
-                      onClick={() => setFullSidebar(!fullSidebar)}
-                      className="!text-sm"
-                    >
-                      {fullSidebar ? (
-                        <DoubleLeftOutlined
-                          className="color-blue"
-                          alt="workspace.expandSidebar"
-                        />
-                      ) : (
-                        <DoubleRightOutlined
-                          className="color-blue"
-                          alt="workspace.collapseSidebar"
-                        />
-                      )}
-                    </Button>
-                  </Tooltip>
-                </div>
-              }
-            >
-              <>
-                {sidebar === 'apps' && <AppsSidebar />}
-                {sidebar === 'automations' && <AutomationsSidebar />}
-                {sidebar === 'pages' && <PagesSidebar />}
-              </>
-            </SidePanel>
-          </Col>
-          <Col span={16} className="flex h-full flex-col">
-            {children}
-          </Col>
-        </Row>
+        <div className="h-full flex flex-row">
+          <SidePanel
+            variant="squared"
+            className={`w-1 max-w-xs`}
+            // Header={
+            //   <div className="flex flex-row items-center h-[70px] justify-between border border-gray-200 border-solid !border-t-0">
+            //     <Tooltip
+            //       title={t(
+            //         fullSidebar
+            //           ? 'workspace.collapseSidebar'
+            //           : 'workspace.expandSidebar'
+            //       )}
+            //       placement="left"
+            //     >
+            //       <Button
+            //         onClick={() => setFullSidebar(!fullSidebar)}
+            //         className="!text-sm"
+            //       >
+            //         {fullSidebar ? (
+            //           <DoubleLeftOutlined
+            //             className="color-blue"
+            //             alt="workspace.expandSidebar"
+            //           />
+            //         ) : (
+            //           <DoubleRightOutlined
+            //             className="color-blue"
+            //             alt="workspace.collapseSidebar"
+            //           />
+            //         )}
+            //       </Button>
+            //     </Tooltip>
+            //   </div>
+            // }
+          >
+            <Tree
+              defaultExpandAll={true}
+              onSelect={onSelect}
+              data={[
+                {
+                  title: 'Automations',
+                  key: 'Automations',
+                  selectable: false,
+                  children: (
+                    Object.values(workspace.automations || {}) || []
+                  ).map((automation) => ({
+                    title: automation.name,
+                    key: `${TREE_CONTENT_TYPE.automation}:${automation.name}`,
+                  })),
+                },
+                {
+                  title: 'Pages',
+                  key: 'Pages',
+                  selectable: false,
+                  children: (currentPages || []).map((page) => ({
+                    title: localize(page.name),
+                    key: `${TREE_CONTENT_TYPE.page}:${page.id}`,
+                  })),
+                },
+                {
+                  title: 'Apps',
+                  key: 'Apps',
+                  selectable: false,
+                  children: (workspaceAppInstances || []).map(
+                    (appInstance) => ({
+                      title: appInstance.appName,
+                      key: `${TREE_CONTENT_TYPE.app}:${appInstance.slug}`,
+                    })
+                  ),
+                },
+              ]}
+            />
+          </SidePanel>
+          <div className="flex h-full flex-col grow">{children}</div>
+        </div>
       </Layout>
     </workspaceLayoutContext.Provider>
   );

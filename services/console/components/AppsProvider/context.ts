@@ -1,5 +1,9 @@
 import { createContext, useContext } from 'react';
 
+export interface appInstanceWithSlug extends Prismeai.DetailedAppInstance {
+  slug: string;
+}
+
 export interface AppsContext {
   apps: Map<string, Prismeai.App>;
   appInstances: Map<string, Prismeai.DetailedAppInstance[]>;

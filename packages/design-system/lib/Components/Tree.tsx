@@ -1,8 +1,7 @@
-import { Input, Tree as AntdTree, TreeProps as AntdTreeProps } from 'antd';
+import { Tree as AntdTree, TreeProps as AntdTreeProps } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import React, { useMemo, useState } from 'react';
-
-const { Search } = Input;
+import { SearchInput } from '../index';
 
 const getParentKey = (key: React.Key, tree: DataNode[]): React.Key => {
   let parentKey: React.Key;
@@ -21,22 +20,28 @@ const getParentKey = (key: React.Key, tree: DataNode[]): React.Key => {
 
 export interface TreeData {
   children?: TreeData[];
-  key: string | number;
+  key: React.Key;
   title: string;
+  selectable?: boolean;
 }
 
 export interface TreeProps extends AntdTreeProps {
   data: TreeData[] | undefined;
 }
 
-const Tree = ({ data, defaultExpandAll, ...treeProps }: TreeProps) => {
+const Tree = ({
+  data,
+  defaultExpandAll,
+  onSelect,
+  ...treeProps
+}: TreeProps) => {
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>(
     defaultExpandAll && data ? data.map((data) => data.key) : []
   );
   const [searchValue, setSearchValue] = useState('');
   const [autoExpandParent, setAutoExpandParent] = useState(true);
 
-  const onExpand = (newExpandedKeys: string[]) => {
+  const onExpand = (newExpandedKeys: React.Key[]) => {
     setExpandedKeys(newExpandedKeys);
     setAutoExpandParent(false);
   };
@@ -121,7 +126,7 @@ const Tree = ({ data, defaultExpandAll, ...treeProps }: TreeProps) => {
 
   return (
     <div>
-      <Search
+      <SearchInput
         style={{ marginBottom: 8 }}
         placeholder="Search"
         onChange={onChange}
@@ -131,6 +136,7 @@ const Tree = ({ data, defaultExpandAll, ...treeProps }: TreeProps) => {
         expandedKeys={expandedKeys}
         autoExpandParent={autoExpandParent}
         treeData={treeData}
+        onSelect={onSelect}
         {...treeProps}
       />
     </div>
