@@ -14,16 +14,18 @@ import IconAutomations from '../../icons/icon-automations.svgr';
 import IconPages from '../../icons/icon-pages.svgr';
 import { appInstanceWithSlug, useApps } from '../../components/AppsProvider';
 import usePages from '../../components/PagesProvider/context';
+import AppsStore from '../../views/AppsStore';
 
 const TREE_CONTENT_TYPE = {
   automation: 'automation',
   page: 'page',
   app: 'app',
+  activity: 'activity',
 };
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const { workspace } = useWorkspace();
-  const { appInstances } = useApps();
+  const { appInstances, getAppInstances } = useApps();
   const { pages, createPage } = usePages();
   const router = useRouter();
 
@@ -45,10 +47,15 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [sidebar, setSidebar] = useState(
     Storage.get('__workpaceSidebar') || 'automations'
   );
+  const [appStoreVisible, setAppStoreVisible] = useState(false);
 
   useEffect(() => {
     Storage.set('__workpaceSidebar', sidebar);
   }, [sidebar]);
+
+  useEffect(() => {
+    getAppInstances(workspace.id);
+  }, [getAppInstances, workspace]);
 
   // Manage source panel display
   useEffect(() => {
@@ -109,6 +116,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
         return;
       const [type, slug] = selectedKey[0].split(':');
       switch (type) {
+        case TREE_CONTENT_TYPE.activity: {
+          router.push(`/workspaces/${workspace.id}/`);
+          break;
+        }
         case TREE_CONTENT_TYPE.automation: {
           router.push(`/workspaces/${workspace.id}/automations/${slug}`);
           break;
@@ -211,10 +222,16 @@ export const WorkspaceLayout: FC = ({ children }) => {
       }
     } catch (e) {}
     setCreating(false);
-  }, [generatePageName, createPage, workspace, language, router, workspace.id]);
+  }, [generatePageName, createPage, workspace, language, router]);
 
+  // i18n nom des categories
   const treeData = useMemo(
     () => [
+      {
+        title: 'Activity',
+        key: `${TREE_CONTENT_TYPE.activity}:activity`,
+        selectable: false,
+      },
       {
         onAdd: onCreateAutomation,
         title: 'Automations',
@@ -238,7 +255,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         })),
       },
       {
-        onAdd: () => {},
+        onAdd: () => setAppStoreVisible(true),
         title: 'Apps',
         key: 'Apps',
         selectable: false,
@@ -252,10 +269,13 @@ export const WorkspaceLayout: FC = ({ children }) => {
       currentPages,
       localize,
       onCreateAutomation,
+      onCreatePage,
       workspace.automations,
       workspaceAppInstances,
     ]
   );
+
+  console.log('workspaceAppInstances', workspaceAppInstances);
 
   return (
     <workspaceLayoutContext.Provider
@@ -300,10 +320,14 @@ export const WorkspaceLayout: FC = ({ children }) => {
         )}
       </div>
       <Layout Header={<HeaderWorkspace />}>
+        <AppsStore
+          visible={appStoreVisible}
+          onCancel={() => setAppStoreVisible(false)}
+        />
         <div className="h-full flex flex-row">
           <SidePanel
             variant="squared"
-            className={`w-1 max-w-xs`}
+            className={`min-w-xs max-w-xs`}
             // Header={
             //   <div className="flex flex-row items-center h-[70px] justify-between border border-gray-200 border-solid !border-t-0">
             //     <Tooltip
@@ -336,7 +360,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
           >
             <Tree defaultExpandAll={true} onSelect={onSelect} data={treeData} />
           </SidePanel>
-          <div className="flex h-full flex-col grow">{children}</div>
+          <div className="flex h-full flex-col flex-1">{children}</div>
         </div>
       </Layout>
     </workspaceLayoutContext.Provider>
