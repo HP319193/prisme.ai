@@ -31,15 +31,7 @@ export const PagesProvider: FC<PagesProvider> = ({ children }) => {
   const createPage: PagesContext['createPage'] = useCallback(
     async (workspaceId, page) => {
       page.styles = defaultStyles;
-      const newPage = await api.createPage(workspaceId, page);
-      setPages((prev) => {
-        const newPages = new Map(prev);
-        const workspacePages = new Set(newPages.get(workspaceId) || []);
-        workspacePages.add(newPage);
-        newPages.set(workspaceId, workspacePages);
-        return newPages;
-      });
-      return newPage;
+      return api.createPage(workspaceId, page);
     },
     []
   );
