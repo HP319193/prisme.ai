@@ -102,7 +102,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   const onSelect = useCallback(
     (selectedKey, _) => {
-      console.log('selectedKey', selectedKey);
+      if (!selectedKey || !selectedKey[0] || selectedKey[0].indexOf(':') === -1)
+        return;
       const [type, slug] = selectedKey[0].split(':');
       switch (type) {
         case TREE_CONTENT_TYPE.automation: {
@@ -130,7 +131,90 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [pages, workspace.id]
   );
 
-  console.log('currentPages', currentPages);
+  // TODO refacto in hook
+  const { createAutomation } = useWorkspace();
+
+  const [creating, setCreating] = useState(false);
+
+  const generateAutomationName = useCallback(() => {
+    const defaultName = t('automations.create.defaultName');
+    let version = 0;
+    const generateName = () =>
+      `${defaultName}${version ? ` (${version})` : ''}`;
+    const names = Object.keys(workspace.automations || {}).map((key) =>
+      localize(workspace.automations?.[key]?.name)
+    );
+    while (names.find((name) => name === generateName())) {
+      version++;
+    }
+    return generateName();
+  }, [workspace.automations, localize, t]);
+
+  const onCreateAutomation = useCallback(
+    async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      event.stopPropagation();
+
+      setCreating(true);
+
+      const name = generateAutomationName();
+      const createdAutomation = await createAutomation({
+        name,
+        do: [],
+      });
+
+      setCreating(false);
+      if (createdAutomation) {
+        await router.push(
+          `/workspaces/${workspace.id}/automations/${createdAutomation.slug}`
+        );
+      }
+    },
+    [generateAutomationName, createAutomation, router, workspace.id]
+  );
+
+  const treeData = useMemo(
+    () => [
+      {
+        onAdd: onCreateAutomation,
+        title: 'Automations',
+        key: 'Automations',
+        selectable: false,
+        children: (Object.entries(workspace.automations || {}) || []).map(
+          ([slug, automation]) => ({
+            title: automation.name,
+            key: `${TREE_CONTENT_TYPE.automation}:${slug}`,
+          })
+        ),
+      },
+      {
+        onAdd: onCreateAutomation,
+        title: 'Pages',
+        key: 'Pages',
+        selectable: false,
+        children: (currentPages || []).map((page) => ({
+          title: localize(page.name),
+          key: `${TREE_CONTENT_TYPE.page}:${page.id}`,
+        })),
+      },
+      {
+        onAdd: onCreateAutomation,
+        title: 'Apps',
+        key: 'Apps',
+        selectable: false,
+        children: (workspaceAppInstances || []).map((appInstance) => ({
+          title: `${appInstance.appName}`,
+          key: `${TREE_CONTENT_TYPE.app}:${appInstance.slug}`,
+        })),
+      },
+    ],
+    [
+      currentPages,
+      localize,
+      onCreateAutomation,
+      workspace.automations,
+      workspaceAppInstances,
+    ]
+  );
 
   return (
     <workspaceLayoutContext.Provider
@@ -209,43 +293,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
             //   </div>
             // }
           >
-            <Tree
-              defaultExpandAll={true}
-              onSelect={onSelect}
-              data={[
-                {
-                  title: 'Automations',
-                  key: 'Automations',
-                  selectable: false,
-                  children: (
-                    Object.values(workspace.automations || {}) || []
-                  ).map((automation) => ({
-                    title: automation.name,
-                    key: `${TREE_CONTENT_TYPE.automation}:${automation.name}`,
-                  })),
-                },
-                {
-                  title: 'Pages',
-                  key: 'Pages',
-                  selectable: false,
-                  children: (currentPages || []).map((page) => ({
-                    title: localize(page.name),
-                    key: `${TREE_CONTENT_TYPE.page}:${page.id}`,
-                  })),
-                },
-                {
-                  title: 'Apps',
-                  key: 'Apps',
-                  selectable: false,
-                  children: (workspaceAppInstances || []).map(
-                    (appInstance) => ({
-                      title: appInstance.appName,
-                      key: `${TREE_CONTENT_TYPE.app}:${appInstance.slug}`,
-                    })
-                  ),
-                },
-              ]}
-            />
+            <Tree defaultExpandAll={true} onSelect={onSelect} data={treeData} />
           </SidePanel>
           <div className="flex h-full flex-col grow">{children}</div>
         </div>

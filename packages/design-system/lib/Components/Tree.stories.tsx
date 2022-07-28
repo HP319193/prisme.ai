@@ -1,5 +1,5 @@
 import React from 'react';
-import { TreeProps } from './Tree';
+import { TreeData, TreeProps } from './Tree';
 import { Tree } from '../index';
 import { Story } from '@storybook/react';
 import { DataNode } from 'antd/es/tree';
@@ -80,6 +80,7 @@ WorkspaceSidebar.args = {
   defaultExpandAll: true,
   data: [
     {
+      onAdd: () => {},
       title: 'Automations',
       key: 'Automations',
       selectable: false,
@@ -90,6 +91,7 @@ WorkspaceSidebar.args = {
       ],
     },
     {
+      onAdd: () => {},
       title: 'Pages',
       key: 'Pages',
       selectable: false,
@@ -100,6 +102,7 @@ WorkspaceSidebar.args = {
       ],
     },
     {
+      onAdd: () => {},
       title: 'Apps',
       key: 'Apps',
       selectable: false,
@@ -109,5 +112,5 @@ WorkspaceSidebar.args = {
         { title: 'my app 3', key: 'my app 3' },
       ],
     },
-  ] as DataNode[],
+  ] as TreeData[],
 };

@@ -2,6 +2,7 @@ import { Tree as AntdTree, TreeProps as AntdTreeProps } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import React, { useMemo, useState } from 'react';
 import { SearchInput } from '../index';
+import { PlusSquareOutlined } from '@ant-design/icons';
 
 const getParentKey = (key: React.Key, tree: DataNode[]): React.Key => {
   let parentKey: React.Key;
@@ -23,6 +24,7 @@ export interface TreeData {
   key: React.Key;
   title: string;
   selectable?: boolean;
+  onAdd?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 export interface TreeProps extends AntdTreeProps {
@@ -70,8 +72,6 @@ const Tree = ({
     const { value } = e.target;
     const newExpandedKeys = flatennedData
       .map((item) => {
-        console.log('item', item.title.toLowerCase());
-        console.log('value', value.toLowerCase());
         if (
           item.title &&
           item.title.toLowerCase().indexOf(value.toLowerCase()) > -1
@@ -89,26 +89,31 @@ const Tree = ({
   const treeData = useMemo(() => {
     if (!data) return;
 
-    const loop = (data: DataNode[]): DataNode[] =>
+    const loop = (data: TreeData[]): DataNode[] =>
       data.map((item) => {
         const strTitle = item.title as string;
         const index = strTitle.toLowerCase().indexOf(searchValue.toLowerCase());
         const beforeStr = strTitle.substring(0, index);
         const afterStr = strTitle.slice(index + searchValue.length);
         const title =
-          index > -1 && searchValue.length > 0 ? (
-            <span className="p-1 m-1 rounded border-solid border-b border-graph-background text-gray-200">
+          index > -1 && searchValue.length > 0 && !item.children ? (
+            <span className="rounded border-solid border-b border-graph-background text-gray-200">
               {beforeStr}
               <span className="text-black">{searchValue}</span>
               {afterStr}
             </span>
           ) : (
             <span
-              className={`p-1 m-1 ${
+              className={`flex w-full justify-between items-center ${
                 searchValue.length > 0 ? 'text-gray-200' : ''
               }`}
             >
               {strTitle}
+              {item.onAdd && (
+                <div onClick={item.onAdd}>
+                  <PlusSquareOutlined />
+                </div>
+              )}
             </span>
           );
         if (item.children) {
@@ -122,7 +127,7 @@ const Tree = ({
       });
 
     return loop(data);
-  }, [searchValue]);
+  }, [data, searchValue]);
 
   return (
     <div>
