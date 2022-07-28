@@ -28,7 +28,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const router = useRouter();
 
   const { localize } = useLocalizedText();
-  const { t } = useTranslation('workspaces');
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation('workspaces');
 
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
   const [mountSourceComponent, setMountComponent] = useState(false);
@@ -134,7 +137,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   // TODO refacto in hook
   const { createAutomation } = useWorkspace();
 
-  const [creating, setCreating] = useState(false);
+  // const [creating, setCreating] = useState(false);
 
   const generateAutomationName = useCallback(() => {
     const defaultName = t('automations.create.defaultName');
@@ -172,6 +175,44 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [generateAutomationName, createAutomation, router, workspace.id]
   );
 
+  // Todo centraliser le generatename
+
+  const [creating, setCreating] = useState(false);
+  const generatePageName = useCallback(() => {
+    const defaultName = t('pages.create.defaultName');
+    let version = 0;
+    const generateName = () =>
+      `${defaultName}${version ? ` (${version})` : ''}`;
+    const names = currentPages.map(({ name }) => {
+      return localize(name);
+    });
+    while (names.find((name) => name === generateName())) {
+      version++;
+    }
+    return generateName();
+  }, [currentPages, localize, t]);
+
+  const onCreatePage = useCallback(async () => {
+    setCreating(true);
+
+    const name = generatePageName();
+    try {
+      const createdPage = await createPage(workspace.id, {
+        name: {
+          [language]: name,
+        },
+        blocks: [],
+      });
+
+      if (createdPage) {
+        await router.push(
+          `/workspaces/${workspace.id}/pages/${createdPage.id}`
+        );
+      }
+    } catch (e) {}
+    setCreating(false);
+  }, [generatePageName, createPage, workspace, language, router, workspace.id]);
+
   const treeData = useMemo(
     () => [
       {
@@ -187,7 +228,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         ),
       },
       {
-        onAdd: onCreateAutomation,
+        onAdd: onCreatePage,
         title: 'Pages',
         key: 'Pages',
         selectable: false,
@@ -197,7 +238,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         })),
       },
       {
-        onAdd: onCreateAutomation,
+        onAdd: () => {},
         title: 'Apps',
         key: 'Apps',
         selectable: false,
