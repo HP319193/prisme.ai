@@ -389,7 +389,7 @@ export class ContextsManager {
         : this.contexts;
     for (let i = 0; i < splittedPath.length - 1; i++) {
       const key = splittedPath[i];
-      if (!(key in parent)) {
+      if (!(key in parent) || parent[key] == undefined || parent[key] == null) {
         parent[key] = {};
       }
       parent = parent[key];
