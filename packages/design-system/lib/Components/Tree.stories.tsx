@@ -84,21 +84,19 @@ WorkspaceSidebar.args = {
       title: 'Automations',
       key: 'Automations',
       selectable: false,
+      alwaysShown: true,
       children: [
         {
           title: 'my automation 1',
           key: 'my automation 1',
-          onDelete: (...props) => console.log(props),
         },
         {
           title: 'my automation 2',
           key: 'my automation 2',
-          onDelete: (...props) => console.log(props),
         },
         {
           title: 'my automation 3',
           key: 'my automation 3',
-          onDelete: (...props) => console.log(props),
         },
       ],
     },
@@ -107,21 +105,19 @@ WorkspaceSidebar.args = {
       title: 'Pages',
       key: 'Pages',
       selectable: false,
+      alwaysShown: true,
       children: [
         {
           title: 'my Page 1',
           key: 'my Page 1',
-          onDelete: (...props) => console.log(props),
         },
         {
           title: 'my Page 2',
           key: 'my Page 2',
-          onDelete: (...props) => console.log(props),
         },
         {
           title: 'my Page 3',
           key: 'my Page 3',
-          onDelete: (...props) => console.log(props),
         },
       ],
     },
@@ -130,21 +126,19 @@ WorkspaceSidebar.args = {
       title: 'Apps',
       key: 'Apps',
       selectable: false,
+      alwaysShown: true,
       children: [
         {
           title: 'my app 1',
           key: 'my app 1',
-          onDelete: (...props) => console.log(props),
         },
         {
           title: 'my app 2',
           key: 'my app 2',
-          onDelete: (...props) => console.log(props),
         },
         {
           title: 'my app 3',
           key: 'my app 3',
-          onDelete: (...props) => console.log(props),
         },
       ],
     },

@@ -104,7 +104,11 @@ const Tree = ({
 
         const title = (
           <div className="flex w-full m-1">
-            <span className={`flex w-full justify-between items-center`}>
+            <span
+              className={`flex w-full justify-between items-center ${
+                item.alwaysShown ? 'font-semibold' : ''
+              }`}
+            >
               {item.title}
               {item.onAdd && (
                 <Button variant={'grey'} onClick={item.onAdd}>
