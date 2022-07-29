@@ -232,7 +232,6 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   return (
     <div className="flex flex-1 flex-col" ref={ref}>
       <PageHeader
-        onBack={() => displaySource(false)}
         RightButtons={[
           <Button
             onClick={save}

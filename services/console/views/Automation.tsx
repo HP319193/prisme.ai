@@ -274,7 +274,6 @@ export const Automation = () => {
             />
           </div>
         }
-        onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
           <Button
             onClick={save}

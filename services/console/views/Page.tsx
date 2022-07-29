@@ -365,7 +365,6 @@ export const Page = () => {
             />
           </div>
         }
-        onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
           <Button
             key="preview"

@@ -3,7 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import IconApps from '../icons/icon-apps.svgr';
 import AppsStore from './AppsStore';
-import AppsSidebarItem from './AppsSidebarItem';
+import AppsSidebarItem from './Apps';
 import { useApps } from '../components/AppsProvider';
 import { useWorkspace } from '../components/WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';

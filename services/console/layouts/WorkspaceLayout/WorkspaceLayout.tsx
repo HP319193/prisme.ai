@@ -129,6 +129,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
           break;
         }
         case TREE_CONTENT_TYPE.app: {
+          router.push(`/workspaces/${workspace.id}/apps/${slug}`);
           break;
         }
       }
@@ -275,8 +276,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     ]
   );
 
-  console.log('workspaceAppInstances', workspaceAppInstances);
-
   return (
     <workspaceLayoutContext.Provider
       value={{
@@ -358,7 +357,13 @@ export const WorkspaceLayout: FC = ({ children }) => {
             //   </div>
             // }
           >
-            <Tree defaultExpandAll={true} onSelect={onSelect} data={treeData} />
+            <div className="flex w-full overflow-auto">
+              <Tree
+                defaultExpandAll={true}
+                onSelect={onSelect}
+                data={treeData}
+              />
+            </div>
           </SidePanel>
           <div className="flex h-full flex-col flex-1">{children}</div>
         </div>
