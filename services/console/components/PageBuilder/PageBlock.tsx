@@ -46,10 +46,10 @@ const PageBlockWithProvider = ({
   );
 
   const { socket } = useWorkspace();
-  const { appConfig, onAppConfigUpdate } = useAppConfig({
+  const { appConfig, onAppConfigUpdate } = useAppConfig(
     workspaceId,
-    appInstance,
-  });
+    appInstance
+  );
   const { config, onConfigUpdate } = useBlockPageConfig({
     blockId,
   });

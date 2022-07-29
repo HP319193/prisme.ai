@@ -283,9 +283,7 @@ export const WorkspaceProvider: FC = ({ children }) => {
   const debouncedFetchWorkspace = useMemo(
     () =>
       debounce(() => {
-        console.log('here', workspaceId);
         if (!workspaceId) return;
-        console.log('there');
         fetch(workspaceId);
       }, 2000),
     [fetch, workspaceId]

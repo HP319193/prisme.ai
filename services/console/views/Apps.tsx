@@ -3,21 +3,18 @@ import {
   notification,
   PageHeader,
   Schema,
-  SchemaForm,
 } from '@prisme.ai/design-system';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { BlockLoader } from '@prisme.ai/blocks';
-import api from '../utils/api';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import useAppConfig from '../utils/useAppConfig';
 import getLayout from '../layouts/WorkspaceLayout';
 import { useWorkspace } from '../components/WorkspaceProvider';
 import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import EditDetails from '../layouts/EditDetails';
+import AppEditor from '../components/AppEditor';
 
 interface AppsProps extends Prismeai.DetailedAppInstance {
   workspaceId: string;
@@ -51,60 +48,21 @@ const Apps = ({}: AppsProps) => {
   }) as Prismeai.DetailedAppInstance;
 
   const { uninstallApp } = useWorkspaces();
-  const { appConfig, onAppConfigUpdate } = useAppConfig({
-    workspaceId: workspace.id,
-    appInstance: `${appId}`, //todo properly type
-  });
   const { t } = useTranslation('workspaces');
 
-  const onDelete = useCallback(
-    (event) => {
-      if (typeof appId !== 'string') return;
-
-      event.stopPropagation();
-      Modal.confirm({
-        icon: <DeleteOutlined />,
-        content: t('apps.uninstall', { appName: appId }),
-        onOk: () => uninstallApp(workspace.id, appId),
-        okText: t('apps.uninstallConfirm', { appName: appId }),
-      });
-    },
-    [appId, t, uninstallApp, workspace.id]
-  );
-
-  const content = useMemo(() => {
+  const onDelete = useCallback(() => {
     if (typeof appId !== 'string') return;
 
-    if (schema) {
-      const s: Schema = {
-        type: 'object',
-        properties: schema as Schema['properties'],
-      };
-      return (
-        <SchemaForm
-          schema={s}
-          onSubmit={onAppConfigUpdate}
-          initialValues={appConfig}
-        />
-      );
-    }
-    if (block) {
-      return (
-        <BlockLoader
-          api={api}
-          url={block}
-          token={`${api.token}`}
-          workspaceId={workspace.id}
-          appInstance={appId}
-          config={{}}
-          appConfig={appConfig}
-          onAppConfigUpdate={onAppConfigUpdate}
-        />
-      );
-    }
-
-    return null;
-  }, [appConfig, appId, block, onAppConfigUpdate, schema, workspace.id]);
+    Modal.confirm({
+      icon: <DeleteOutlined />,
+      content: t('apps.uninstall', { appName: appId }),
+      onOk: () => {
+        push(`/workspaces/${workspace.id}`);
+        uninstallApp(workspace.id, appId);
+      },
+      okText: t('apps.uninstallConfirm', { appName: appId }),
+    });
+  }, [appId, push, t, uninstallApp, workspace.id]);
 
   const [value, setValue] = useState<{
     slug: string;
@@ -112,9 +70,7 @@ const Apps = ({}: AppsProps) => {
   }>();
 
   useEffect(() => {
-    console.log('here? before');
     if (!currentApp) return;
-    console.log('here?');
     const { slug = '', appName = '' } = currentApp;
     setValue({
       slug,
@@ -138,6 +94,7 @@ const Apps = ({}: AppsProps) => {
       setValue(newValue);
       try {
         await saveAppInstance(workspace.id, currentApp.slug, newValue);
+        push(`/workspaces/${workspace.id}/apps/${slug}`);
         notification.success({
           message: t('apps.save.toast'),
           placement: 'bottomRight',
@@ -156,20 +113,8 @@ const Apps = ({}: AppsProps) => {
         throw e;
       }
     },
-    [currentApp, saveAppInstance, t, value, workspace.id]
+    [currentApp, push, saveAppInstance, t, value, workspace.id]
   );
-
-  const confirmDeleteApp = useCallback(async () => {
-    if (!currentApp) return;
-
-    await push(`/workspaces/${workspace.id}`);
-
-    uninstallApp(workspace.id, `${currentApp.slug}`);
-    notification.success({
-      message: t('apps.delete.toast'),
-      placement: 'bottomRight',
-    });
-  }, [currentApp, push, workspace.id, uninstallApp, t]);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -204,14 +149,14 @@ const Apps = ({}: AppsProps) => {
               schema={detailsFormSchema}
               value={{ ...value }}
               onSave={updateDetails}
-              onDelete={confirmDeleteApp}
+              onDelete={onDelete}
               context="apps"
               key={currentApp.slug}
             />
           </div>
         }
       />
-      {content}
+      <AppEditor schema={schema} block={block} appId={appId} key={appId} />
     </>
   );
 };

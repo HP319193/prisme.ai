@@ -23,10 +23,10 @@ const PageBlock = ({
   config,
   container,
 }: PublicPageBlockProps) => {
-  const { appConfig, onAppConfigUpdate } = useAppConfig({
+  const { appConfig, onAppConfigUpdate } = useAppConfig(
     workspaceId,
-    appInstance,
-  });
+    appInstance
+  );
 
   const {
     i18n: { language },

@@ -12,6 +12,7 @@ import Storage from '../../utils/Storage';
 import { appInstanceWithSlug, useApps } from '../../components/AppsProvider';
 import usePages from '../../components/PagesProvider/context';
 import AppsStore from '../../views/AppsStore';
+import { generateNewName } from '../../utils/generateNewName';
 
 const TREE_CONTENT_TYPE = {
   automations: 'automations',
@@ -106,30 +107,17 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [pages, workspace.id]
   );
 
-  const generateName = useCallback(
-    (type: typeof TREE_CONTENT_TYPE[TREE_CONTENT_TYPE_Keys]) => {
-      const defaultName = t(`${type}.create.defaultName`);
-      let version = 0;
-      const generateName = () =>
-        `${defaultName}${version ? ` (${version})` : ''}`;
-      const names = currentPages.map(({ name }) => {
-        return localize(name);
-      });
-      while (names.find((name) => name === generateName())) {
-        version++;
-      }
-      return generateName();
-    },
-    [currentPages, localize, t]
-  );
-
   const onCreateAutomation = useCallback(
     async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       event.stopPropagation();
 
       setCreating(true);
 
-      const name = generateName(TREE_CONTENT_TYPE.automations);
+      const name = generateNewName(
+        t(`automations.create.defaultName`),
+        Object.values(workspace.automations || {}).map(({ name }) => name),
+        localize
+      );
       const createdAutomation = await createAutomation({
         name,
         do: [],
@@ -142,13 +130,18 @@ export const WorkspaceLayout: FC = ({ children }) => {
         );
       }
     },
-    [generateName, createAutomation, router, workspace.id]
+    [createAutomation, localize, router, t, workspace.automations, workspace.id]
   );
 
   const onCreatePage = useCallback(async () => {
     setCreating(true);
 
-    const name = generateName(TREE_CONTENT_TYPE.pages);
+    const name = generateNewName(
+      t(`pages.create.defaultName`),
+      currentPages.map(({ name }) => name),
+      localize
+    );
+
     try {
       const createdPage = await createPage(workspace.id, {
         name: {
@@ -164,7 +157,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       }
     } catch (e) {}
     setCreating(false);
-  }, [generateName, createPage, workspace.id, language, router]);
+  }, [t, currentPages, localize, createPage, workspace.id, language, router]);
 
   // i18n nom des categories
   const treeData = useMemo(
