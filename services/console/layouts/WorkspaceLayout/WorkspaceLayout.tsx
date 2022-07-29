@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Layout, SidePanel, Tree } from '@prisme.ai/design-system';
+import { Layout, Loading, SidePanel, Tree } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
 import WorkspaceSource from '../../views/WorkspaceSource';
@@ -271,7 +271,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
               />
             </div>
           </SidePanel>
-          <div className="flex h-full flex-col flex-1">{children}</div>
+          <div className="flex h-full flex-col flex-1">
+            {creating ? <Loading /> : children}
+          </div>
         </div>
       </Layout>
     </workspaceLayoutContext.Provider>
