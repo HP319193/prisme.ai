@@ -1,12 +1,10 @@
 import {
-  Button,
-  ListItem,
   Modal,
+  PageHeader,
   Schema,
   SchemaForm,
-  Tooltip,
 } from '@prisme.ai/design-system';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BlockLoader } from '@prisme.ai/blocks';
 import api from '../utils/api';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -17,6 +15,7 @@ import useAppConfig from '../utils/useAppConfig';
 import getLayout from '../layouts/WorkspaceLayout';
 import { useWorkspace } from '../components/WorkspaceProvider';
 import { useApps } from '../components/AppsProvider';
+import useLocalizedText from '../utils/useLocalizedText';
 
 interface AppsProps extends Prismeai.DetailedAppInstance {
   workspaceId: string;
@@ -26,13 +25,13 @@ interface AppsProps extends Prismeai.DetailedAppInstance {
 const Apps = ({}: AppsProps) => {
   const { workspace } = useWorkspace();
   const { appInstances } = useApps();
+  const { localize } = useLocalizedText();
+
   const [currentApp, setCurrentApp] = useState<Prismeai.DetailedAppInstance>();
 
   const {
     query: { appId },
   } = useRouter();
-
-  // const appId = slug as string;
 
   useEffect(() => {
     if (!appInstances) return;
@@ -40,7 +39,7 @@ const Apps = ({}: AppsProps) => {
     if (!workspaceApps) return;
 
     setCurrentApp(
-      workspaceApps.find((appInstance) => appInstance.appSlug === appId)
+      workspaceApps.find((appInstance) => appInstance.slug === appId)
     );
   }, [appId, appInstances, workspace.id]);
 
@@ -70,62 +69,57 @@ const Apps = ({}: AppsProps) => {
     [appId, t, uninstallApp, workspace.id]
   );
 
-  console.log('schema', schema);
-  console.log('block', block);
-  console.log('currentApp', currentApp);
+  const content = useMemo(() => {
+    if (typeof appId !== 'string') return;
 
-  if (typeof appId !== 'string') return null;
+    if (schema) {
+      const s: Schema = {
+        type: 'object',
+        properties: schema as Schema['properties'],
+      };
+      return (
+        <SchemaForm
+          schema={s}
+          onSubmit={onAppConfigUpdate}
+          initialValues={appConfig}
+        />
+      );
+    }
+    if (block) {
+      return (
+        <BlockLoader
+          api={api}
+          url={block}
+          token={`${api.token}`}
+          workspaceId={workspace.id}
+          appInstance={appId}
+          config={{}}
+          appConfig={appConfig}
+          onAppConfigUpdate={onAppConfigUpdate}
+        />
+      );
+    }
 
-  if (schema) {
-    const s: Schema = {
-      type: 'object',
-      properties: schema as Schema['properties'],
-    };
-    return (
-      <SchemaForm
-        schema={s}
-        onSubmit={onAppConfigUpdate}
-        initialValues={appConfig}
-      />
-    );
-  }
-  if (block) {
-    return (
-      <BlockLoader
-        api={api}
-        url={block}
-        token={`${api.token}`}
-        workspaceId={workspace.id}
-        appInstance={appId}
-        config={{}}
-        appConfig={appConfig}
-        onAppConfigUpdate={onAppConfigUpdate}
-      />
-    );
-  }
+    return null;
+  }, [appConfig, appId, block, onAppConfigUpdate, schema, workspace.id]);
+
+  if (typeof appId !== 'string' || !currentApp) return null;
 
   return (
-    <ListItem
-      title={
-        <div className="flex flex-row items-center">
-          {photo && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={photo} className="w-10 h-10 mr-2" alt={appId} />
-          )}
-          {appId}
-        </div>
-      }
-      rightContent={
-        <>
-          <Button onClick={onDelete} className="!h-full !p-0 !pr-4">
-            <Tooltip title={t('apps.uninstallTooltip')}>
-              <DeleteOutlined className="!text-gray hover:!text-accent" />
-            </Tooltip>
-          </Button>
-        </>
-      }
-      className="!cursor-default"
-    />
+    <>
+      <PageHeader
+        title={
+          <div className="flex flex-row items-center">
+            {photo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photo} className="w-10 h-10 mr-2" alt={appId} />
+            )}
+            {localize(currentApp.appName)}
+          </div>
+        }
+      />
+      {content}
+    </>
   );
 };
 

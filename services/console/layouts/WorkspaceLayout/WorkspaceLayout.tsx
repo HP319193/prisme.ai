@@ -9,22 +9,20 @@ import { useWorkspace } from '../../components/WorkspaceProvider';
 import workspaceLayoutContext, { WorkspaceLayoutContext } from './context';
 import useLocalizedText from '../../utils/useLocalizedText';
 import Storage from '../../utils/Storage';
-import IconApps from '../../icons/icon-apps.svgr';
-import IconAutomations from '../../icons/icon-automations.svgr';
-import IconPages from '../../icons/icon-pages.svgr';
 import { appInstanceWithSlug, useApps } from '../../components/AppsProvider';
 import usePages from '../../components/PagesProvider/context';
 import AppsStore from '../../views/AppsStore';
 
 const TREE_CONTENT_TYPE = {
-  automation: 'automation',
-  page: 'page',
-  app: 'app',
+  automations: 'automations',
+  pages: 'pages',
+  apps: 'apps',
   activity: 'activity',
 };
+type TREE_CONTENT_TYPE_Keys = keyof typeof TREE_CONTENT_TYPE;
 
 export const WorkspaceLayout: FC = ({ children }) => {
-  const { workspace } = useWorkspace();
+  const { workspace, createAutomation } = useWorkspace();
   const { appInstances, getAppInstances } = useApps();
   const { pages, createPage } = usePages();
   const router = useRouter();
@@ -35,6 +33,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     i18n: { language },
   } = useTranslation('workspaces');
 
+  const [creating, setCreating] = useState(false);
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
@@ -71,45 +70,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     setSourceDisplayed(v);
   }, []);
 
-  const menu = useMemo(
-    () => [
-      {
-        label: (
-          <div className="flex items-center">
-            <div className="flex mr-2">
-              <IconApps width={16} height={16} />
-            </div>
-            {t('apps.link')}
-          </div>
-        ),
-        key: 'apps',
-      },
-      {
-        label: (
-          <div className="flex items-center">
-            <div className="flex mr-2">
-              <IconAutomations width={16} height={16} />
-            </div>
-            {t('automations.link')}
-          </div>
-        ),
-        key: 'automations',
-      },
-      {
-        label: (
-          <div className="flex items-center">
-            <div className="flex mr-2">
-              <IconPages width={16} height={16} />
-            </div>
-            {t('pages.link')}
-          </div>
-        ),
-        key: 'pages',
-      },
-    ],
-    [t]
-  );
-
   const onSelect = useCallback(
     (selectedKey, _) => {
       if (!selectedKey || !selectedKey[0] || selectedKey[0].indexOf(':') === -1)
@@ -120,15 +80,15 @@ export const WorkspaceLayout: FC = ({ children }) => {
           router.push(`/workspaces/${workspace.id}/`);
           break;
         }
-        case TREE_CONTENT_TYPE.automation: {
+        case TREE_CONTENT_TYPE.automations: {
           router.push(`/workspaces/${workspace.id}/automations/${slug}`);
           break;
         }
-        case TREE_CONTENT_TYPE.page: {
+        case TREE_CONTENT_TYPE.pages: {
           router.push(`/workspaces/${workspace.id}/pages/${slug}`);
           break;
         }
-        case TREE_CONTENT_TYPE.app: {
+        case TREE_CONTENT_TYPE.apps: {
           router.push(`/workspaces/${workspace.id}/apps/${slug}`);
           break;
         }
@@ -146,24 +106,22 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [pages, workspace.id]
   );
 
-  // TODO refacto in hook
-  const { createAutomation } = useWorkspace();
-
-  // const [creating, setCreating] = useState(false);
-
-  const generateAutomationName = useCallback(() => {
-    const defaultName = t('automations.create.defaultName');
-    let version = 0;
-    const generateName = () =>
-      `${defaultName}${version ? ` (${version})` : ''}`;
-    const names = Object.keys(workspace.automations || {}).map((key) =>
-      localize(workspace.automations?.[key]?.name)
-    );
-    while (names.find((name) => name === generateName())) {
-      version++;
-    }
-    return generateName();
-  }, [workspace.automations, localize, t]);
+  const generateName = useCallback(
+    (type: typeof TREE_CONTENT_TYPE[TREE_CONTENT_TYPE_Keys]) => {
+      const defaultName = t(`${type}.create.defaultName`);
+      let version = 0;
+      const generateName = () =>
+        `${defaultName}${version ? ` (${version})` : ''}`;
+      const names = currentPages.map(({ name }) => {
+        return localize(name);
+      });
+      while (names.find((name) => name === generateName())) {
+        version++;
+      }
+      return generateName();
+    },
+    [currentPages, localize, t]
+  );
 
   const onCreateAutomation = useCallback(
     async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -171,7 +129,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
       setCreating(true);
 
-      const name = generateAutomationName();
+      const name = generateName(TREE_CONTENT_TYPE.automations);
       const createdAutomation = await createAutomation({
         name,
         do: [],
@@ -184,30 +142,13 @@ export const WorkspaceLayout: FC = ({ children }) => {
         );
       }
     },
-    [generateAutomationName, createAutomation, router, workspace.id]
+    [generateName, createAutomation, router, workspace.id]
   );
-
-  // Todo centraliser le generatename
-
-  const [creating, setCreating] = useState(false);
-  const generatePageName = useCallback(() => {
-    const defaultName = t('pages.create.defaultName');
-    let version = 0;
-    const generateName = () =>
-      `${defaultName}${version ? ` (${version})` : ''}`;
-    const names = currentPages.map(({ name }) => {
-      return localize(name);
-    });
-    while (names.find((name) => name === generateName())) {
-      version++;
-    }
-    return generateName();
-  }, [currentPages, localize, t]);
 
   const onCreatePage = useCallback(async () => {
     setCreating(true);
 
-    const name = generatePageName();
+    const name = generateName(TREE_CONTENT_TYPE.pages);
     try {
       const createdPage = await createPage(workspace.id, {
         name: {
@@ -223,7 +164,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       }
     } catch (e) {}
     setCreating(false);
-  }, [generatePageName, createPage, workspace, language, router]);
+  }, [generateName, createPage, workspace.id, language, router]);
 
   // i18n nom des categories
   const treeData = useMemo(
@@ -232,16 +173,18 @@ export const WorkspaceLayout: FC = ({ children }) => {
         title: 'Activity',
         key: `${TREE_CONTENT_TYPE.activity}:activity`,
         selectable: false,
+        alwaysShown: true,
       },
       {
         onAdd: onCreateAutomation,
         title: 'Automations',
         key: 'Automations',
         selectable: false,
+        alwaysShown: true,
         children: (Object.entries(workspace.automations || {}) || []).map(
           ([slug, automation]) => ({
-            title: automation.name,
-            key: `${TREE_CONTENT_TYPE.automation}:${slug}`,
+            title: localize(automation.name),
+            key: `${TREE_CONTENT_TYPE.automations}:${slug}`,
           })
         ),
       },
@@ -250,9 +193,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
         title: 'Pages',
         key: 'Pages',
         selectable: false,
+        alwaysShown: true,
         children: (currentPages || []).map((page) => ({
           title: localize(page.name),
-          key: `${TREE_CONTENT_TYPE.page}:${page.id}`,
+          key: `${TREE_CONTENT_TYPE.pages}:${page.id}`,
         })),
       },
       {
@@ -260,9 +204,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
         title: 'Apps',
         key: 'Apps',
         selectable: false,
+        alwaysShown: true,
         children: (workspaceAppInstances || []).map((appInstance) => ({
           title: `${appInstance.appName}`,
-          key: `${TREE_CONTENT_TYPE.app}:${appInstance.slug}`,
+          key: `${TREE_CONTENT_TYPE.apps}:${appInstance.slug}`,
         })),
       },
     ],
@@ -324,39 +269,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
           onCancel={() => setAppStoreVisible(false)}
         />
         <div className="h-full flex flex-row">
-          <SidePanel
-            variant="squared"
-            className={`min-w-xs max-w-xs`}
-            // Header={
-            //   <div className="flex flex-row items-center h-[70px] justify-between border border-gray-200 border-solid !border-t-0">
-            //     <Tooltip
-            //       title={t(
-            //         fullSidebar
-            //           ? 'workspace.collapseSidebar'
-            //           : 'workspace.expandSidebar'
-            //       )}
-            //       placement="left"
-            //     >
-            //       <Button
-            //         onClick={() => setFullSidebar(!fullSidebar)}
-            //         className="!text-sm"
-            //       >
-            //         {fullSidebar ? (
-            //           <DoubleLeftOutlined
-            //             className="color-blue"
-            //             alt="workspace.expandSidebar"
-            //           />
-            //         ) : (
-            //           <DoubleRightOutlined
-            //             className="color-blue"
-            //             alt="workspace.collapseSidebar"
-            //           />
-            //         )}
-            //       </Button>
-            //     </Tooltip>
-            //   </div>
-            // }
-          >
+          <SidePanel variant="squared" className={`min-w-xs max-w-xs`}>
             <div className="flex w-full overflow-auto">
               <Tree
                 defaultExpandAll={true}
