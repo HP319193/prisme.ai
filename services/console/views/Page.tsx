@@ -362,6 +362,7 @@ export const Page = () => {
               onSave={updateDetails}
               onDelete={confirmDeletePage}
               context="pages"
+              key={`${pageId}`}
             />
           </div>
         }

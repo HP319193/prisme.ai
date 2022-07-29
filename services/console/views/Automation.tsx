@@ -271,6 +271,7 @@ export const Automation = () => {
               onSave={updateDetails}
               onDelete={confirmDeleteAutomation}
               context="automations"
+              key={`${automationId}`}
             />
           </div>
         }

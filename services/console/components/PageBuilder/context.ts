@@ -10,7 +10,7 @@ export interface PageBuilderContext {
   };
   blocks: {
     slug: string;
-    appName: string;
+    appName: Prismeai.LocalizedText;
     blocks: (Prismeai.Block & { slug: string })[];
   }[];
   blocksInPage: {

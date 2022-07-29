@@ -344,10 +344,7 @@ declare namespace Prismeai {
          * App unique id
          */
         appSlug: string;
-        /**
-         * App name
-         */
-        appName?: string;
+        appName?: LocalizedText;
         /**
          * Defaults to the latest known app version
          */
@@ -771,10 +768,7 @@ declare namespace Prismeai {
          * App unique id
          */
         appSlug: string;
-        /**
-         * App name
-         */
-        appName?: string;
+        appName?: LocalizedText;
         /**
          * Defaults to the latest known app version
          */
@@ -791,10 +785,7 @@ declare namespace Prismeai {
          * App unique id
          */
         appSlug?: string;
-        /**
-         * App name
-         */
-        appName?: string;
+        appName?: LocalizedText;
         /**
          * Defaults to the latest known app version
          */
@@ -915,10 +906,7 @@ declare namespace Prismeai {
                  * App unique id
                  */
                 appSlug: string;
-                /**
-                 * App name
-                 */
-                appName?: string;
+                appName?: LocalizedText;
                 /**
                  * Defaults to the latest known app version
                  */
@@ -1110,10 +1098,7 @@ declare namespace Prismeai {
          * App unique id
          */
         appSlug: string;
-        /**
-         * App name
-         */
-        appName?: string;
+        appName?: LocalizedText;
         /**
          * Defaults to the latest known app version
          */

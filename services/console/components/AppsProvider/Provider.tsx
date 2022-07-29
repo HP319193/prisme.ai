@@ -4,9 +4,11 @@ import isEqual from 'lodash/isEqual';
 import context, { AppsContext } from './context';
 import api from '../../utils/api';
 import { notification } from '@prisme.ai/design-system';
+import { useWorkspace } from '../WorkspaceProvider';
 
 export const AppsProvider: FC = ({ children }) => {
   const [apps, setApps] = useState<AppsContext['apps']>(new Map());
+  const { workspace } = useWorkspace();
   const [appInstances, setAppInstances] = useState<AppsContext['appInstances']>(
     new Map()
   );
@@ -66,6 +68,20 @@ export const AppsProvider: FC = ({ children }) => {
     []
   );
 
+  const saveAppInstance = useCallback(
+    async (
+      workspaceId: string,
+      slug: string,
+      appInstance: Prismeai.AppInstancePatch
+    ) => {
+      console.log('?wpid');
+      if (!workspaceId) return;
+      console.log('wpid');
+      return api.saveAppInstance(workspaceId, slug, appInstance);
+    },
+    []
+  );
+
   return (
     <context.Provider
       value={{
@@ -73,6 +89,7 @@ export const AppsProvider: FC = ({ children }) => {
         appInstances,
         getApps,
         getAppInstances,
+        saveAppInstance,
       }}
     >
       {children}
