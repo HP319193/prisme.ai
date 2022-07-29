@@ -5,6 +5,7 @@ import api from '../../utils/api';
 import { Event, Events } from '@prisme.ai/sdk';
 import { useWorkspace, WorkspaceContext } from './context';
 import WorkspaceProvider from './Provider';
+import Provider from '../WorkspacesProvider/Provider';
 
 jest.useFakeTimers();
 
@@ -78,6 +79,14 @@ jest.mock('@prisme.ai/sdk', () => {
       name: 'foo',
       automations: [],
     }));
+    getWorkspaces = jest.fn((id: string) => [
+      {
+        id: '42',
+        name: 'foo',
+        automations: [],
+      },
+    ]);
+    installApp = jest.fn();
   }
 
   const api: any = new Api();
@@ -233,6 +242,64 @@ it('should listen to events on socket', async () => {
     ])
   );
 });
+
+// it('should install a new app', async () => {
+//   const newAppInstance = {
+//     appSlug: 'monappId',
+//     appName: "le nom de l'app",
+//     appVersion: '1',
+//     slug: 'monappId',
+//   };
+//   jest.spyOn(api, 'getWorkspace').mockReturnValue(
+//     Promise.resolve({
+//       id: '42',
+//       name: 'foo',
+//       automations: [],
+//     } as any)
+//   );
+//
+//   jest
+//     .spyOn(api, 'installApp')
+//     .mockReturnValue(Promise.resolve(newAppInstance as any));
+//
+//   let context: any = {};
+//   const Test = () => {
+//     context = useWorkspace();
+//     return null;
+//   };
+//   const root = renderer.create(
+//     <Provider>
+//       <Test />
+//     </Provider>
+//   );
+//   await act(async () => {
+//     await true;
+//   });
+//
+//   await act(async () => {
+//     context.installApp('42', {
+//       appSlug: 'monappId',
+//       appName: "le nom de l'app",
+//       appVersion: '1',
+//     });
+//   });
+//
+//   await act(async () => {
+//     const w = await context.workspace;
+//     expect(w).toEqual({
+//       id: '42',
+//       name: 'foo',
+//       imports: {
+//         monappId: {
+//           appSlug: 'monappId',
+//           appName: "le nom de l'app",
+//           appVersion: '1',
+//           slug: 'monappId',
+//         },
+//       },
+//     });
+//   });
+// });
 
 // it('should save', async () => {
 //   useWorkspaces().update = jest.fn(async () => ({} as Workspace));

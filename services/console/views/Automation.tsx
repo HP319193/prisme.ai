@@ -101,6 +101,7 @@ export const Automation = () => {
   }, [automation]);
 
   useEffect(() => {
+    if (!value) return;
     const { slug, ...valueWithoutSlug } = value;
 
     if (

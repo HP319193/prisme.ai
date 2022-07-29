@@ -151,7 +151,7 @@ const Tree = ({
   }, [data, searchValue]);
 
   return (
-    <div>
+    <>
       <SearchInput
         style={{ marginBottom: 8 }}
         placeholder="Search"
@@ -165,7 +165,7 @@ const Tree = ({
         onSelect={onSelect}
         {...treeProps}
       />
-    </div>
+    </>
   );
 };
 

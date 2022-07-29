@@ -3,7 +3,7 @@ export const generateNewName = (
   currentList: any[],
   localize: (localizedField: any) => string,
   startingVersion: number = 0,
-  useHyphen: boolean
+  useHyphen?: boolean
 ) => {
   // const defaultName = t(`${type}.create.defaultName`);
   let version = startingVersion;

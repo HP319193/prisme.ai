@@ -292,65 +292,6 @@ it('should fail to update a workspace', async () => {
   });
 });
 
-it('should install a new app', async () => {
-  const newAppInstance = {
-    appSlug: 'monappId',
-    appName: "le nom de l'app",
-    appVersion: '1',
-    slug: 'monappId',
-  };
-  const workspace = {
-    id: '42',
-    name: 'foo',
-  };
-  jest
-    .spyOn(api, 'getWorkspaces')
-    .mockReturnValue(Promise.resolve([workspace] as any));
-
-  // useUser().user = {} as any;
-  jest
-    .spyOn(api, 'installApp')
-    .mockReturnValue(Promise.resolve(newAppInstance as any));
-
-  let context: any = {};
-  const Test = () => {
-    context = useWorkspaces();
-    return null;
-  };
-  const root = renderer.create(
-    <Provider>
-      <Test />
-    </Provider>
-  );
-  await act(async () => {
-    await true;
-  });
-
-  await act(async () => {
-    context.installApp('42', {
-      appSlug: 'monappId',
-      appName: "le nom de l'app",
-      appVersion: '1',
-    });
-  });
-
-  await act(async () => {
-    const w = await context.workspaces.get('42');
-    expect(w).toEqual({
-      id: '42',
-      name: 'foo',
-      imports: {
-        monappId: {
-          appSlug: 'monappId',
-          appName: "le nom de l'app",
-          appVersion: '1',
-          slug: 'monappId',
-        },
-      },
-    });
-  });
-});
-
 it('should update an app', async () => {
   const updatedAppInstance = {
     appId: 'new id',

@@ -9,6 +9,7 @@ import {
   Tree,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
+import useResizeObserver from 'use-resize-observer';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import { useWorkspace } from '../../components/WorkspaceProvider';
@@ -56,6 +57,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
   );
   const [appStoreVisible, setAppStoreVisible] = useState(false);
   const [dirty, setDirty] = useState(false);
+
+  const { ref: sidebarRef, height: sidebarHeight } =
+    useResizeObserver<HTMLDivElement>();
 
   useEffect(() => {
     Storage.set('__workpaceSidebar', sidebar);
@@ -119,7 +123,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         changeRoute();
       }
     },
-    [dirty, setDirty, router, t, workspace.id]
+    [dirty, router, workspace.id, t, commonT]
   );
 
   const workspaceAppInstances = appInstances.get(
@@ -255,6 +259,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       localize,
       onCreateAutomation,
       onCreatePage,
+      t,
       workspace.automations,
       workspaceAppInstances,
     ]
@@ -311,8 +316,13 @@ export const WorkspaceLayout: FC = ({ children }) => {
         />
         <div className="h-full flex flex-row">
           <SidePanel variant="squared" className={`min-w-xs max-w-xs`}>
-            <div className="flex w-full overflow-auto">
-              <Tree onSelect={onSelect} data={treeData} />
+            <div className="flex w-full flex-col" ref={sidebarRef}>
+              <Tree
+                className="w-full"
+                onSelect={onSelect}
+                data={treeData}
+                height={sidebarHeight}
+              />
             </div>
           </SidePanel>
           <div className="flex h-full flex-col flex-1">
