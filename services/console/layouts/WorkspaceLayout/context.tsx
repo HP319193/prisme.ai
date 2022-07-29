@@ -13,6 +13,8 @@ export interface WorkspaceLayoutContext {
   setNewSource: (fn: WorkspaceLayoutContext['newSource']) => void;
   fullSidebar: boolean;
   setFullSidebar: (s: boolean) => void;
+  dirty: boolean;
+  setDirty: (bool: boolean) => void;
 }
 
 export const workspaceLayoutContext = createContext<WorkspaceLayoutContext>({
@@ -25,6 +27,8 @@ export const workspaceLayoutContext = createContext<WorkspaceLayoutContext>({
   setNewSource() {},
   fullSidebar: false,
   setFullSidebar() {},
+  dirty: false,
+  setDirty() {},
 });
 
 export const useWorkspaceLayout = () => useContext(workspaceLayoutContext);

@@ -3,6 +3,7 @@ import { BlockLoader } from '@prisme.ai/blocks';
 import api from '../utils/api';
 import useAppConfig from '../utils/useAppConfig';
 import { useWorkspace } from './WorkspaceProvider';
+import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 
 interface AppEditorProps {
   schema?: Schema;
@@ -14,6 +15,7 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
   const {
     workspace: { id: workspaceId },
   } = useWorkspace();
+  const { setDirty } = useWorkspaceLayout();
   const { appConfig, onAppConfigUpdate } = useAppConfig(workspaceId, appId);
 
   if (!appConfig) return <Loading />;
@@ -27,7 +29,11 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
     return (
       <SchemaForm
         schema={s}
-        onSubmit={onAppConfigUpdate}
+        onChange={() => setDirty(true)}
+        onSubmit={() => {
+          onAppConfigUpdate;
+          setDirty(false);
+        }}
         initialValues={appConfig}
       />
     );

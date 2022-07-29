@@ -1,7 +1,13 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Layout, Loading, SidePanel, Tree } from '@prisme.ai/design-system';
+import {
+  Layout,
+  Loading,
+  Modal,
+  SidePanel,
+  Tree,
+} from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
 import WorkspaceSource from '../../views/WorkspaceSource';
@@ -13,7 +19,7 @@ import { appInstanceWithSlug, useApps } from '../../components/AppsProvider';
 import usePages from '../../components/PagesProvider/context';
 import AppsStore from '../../views/AppsStore';
 import { generateNewName } from '../../utils/generateNewName';
-import { HomeOutlined } from '@ant-design/icons';
+import { HomeOutlined, WarningOutlined } from '@ant-design/icons';
 
 const TREE_CONTENT_TYPE = {
   automations: 'automations',
@@ -21,7 +27,6 @@ const TREE_CONTENT_TYPE = {
   apps: 'apps',
   activity: 'activity',
 };
-type TREE_CONTENT_TYPE_Keys = keyof typeof TREE_CONTENT_TYPE;
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const { workspace, createAutomation } = useWorkspace();
@@ -49,6 +54,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     Storage.get('__workpaceSidebar') || 'automations'
   );
   const [appStoreVisible, setAppStoreVisible] = useState(false);
+  const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
     Storage.set('__workpaceSidebar', sidebar);
@@ -76,27 +82,42 @@ export const WorkspaceLayout: FC = ({ children }) => {
     (selectedKey, _) => {
       if (!selectedKey || !selectedKey[0] || selectedKey[0].indexOf(':') === -1)
         return;
-      const [type, slug] = selectedKey[0].split(':');
-      switch (type) {
-        case TREE_CONTENT_TYPE.activity: {
-          router.push(`/workspaces/${workspace.id}/`);
-          break;
+
+      const changeRoute = () => {
+        const [type, slug] = selectedKey[0].split(':');
+        switch (type) {
+          case TREE_CONTENT_TYPE.activity: {
+            router.push(`/workspaces/${workspace.id}/`);
+            break;
+          }
+          case TREE_CONTENT_TYPE.automations: {
+            router.push(`/workspaces/${workspace.id}/automations/${slug}`);
+            break;
+          }
+          case TREE_CONTENT_TYPE.pages: {
+            router.push(`/workspaces/${workspace.id}/pages/${slug}`);
+            break;
+          }
+          case TREE_CONTENT_TYPE.apps: {
+            router.push(`/workspaces/${workspace.id}/apps/${slug}`);
+            break;
+          }
         }
-        case TREE_CONTENT_TYPE.automations: {
-          router.push(`/workspaces/${workspace.id}/automations/${slug}`);
-          break;
-        }
-        case TREE_CONTENT_TYPE.pages: {
-          router.push(`/workspaces/${workspace.id}/pages/${slug}`);
-          break;
-        }
-        case TREE_CONTENT_TYPE.apps: {
-          router.push(`/workspaces/${workspace.id}/apps/${slug}`);
-          break;
-        }
+        setDirty(false);
+      };
+
+      if (dirty) {
+        Modal.confirm({
+          icon: <WarningOutlined />,
+          content: t('navigation.dirtyWarning'),
+          onOk: changeRoute,
+          okText: t('ok'),
+        });
+      } else {
+        changeRoute();
       }
     },
-    [router, workspace.id]
+    [dirty, setDirty, router, t, workspace.id]
   );
 
   const workspaceAppInstances = appInstances.get(
@@ -177,12 +198,12 @@ export const WorkspaceLayout: FC = ({ children }) => {
         selectable: false,
         alwaysShown: true,
         bold: true,
-        children: (Object.entries(workspace.automations || {}) || []).map(
-          ([slug, automation]) => ({
+        children: (Object.entries(workspace.automations || {}) || [])
+          .map(([slug, automation]) => ({
             title: localize(automation.name),
             key: `${TREE_CONTENT_TYPE.automations}:${slug}`,
-          })
-        ),
+          }))
+          .sort((el1, el2) => el1.key.localeCompare(el2.key)),
       },
       {
         onAdd: onCreatePage,
@@ -191,10 +212,12 @@ export const WorkspaceLayout: FC = ({ children }) => {
         selectable: false,
         alwaysShown: true,
         bold: true,
-        children: (currentPages || []).map((page) => ({
-          title: localize(page.name),
-          key: `${TREE_CONTENT_TYPE.pages}:${page.id}`,
-        })),
+        children: (currentPages || [])
+          .map((page) => ({
+            title: localize(page.name),
+            key: `${TREE_CONTENT_TYPE.pages}:${page.id}`,
+          }))
+          .sort((el1, el2) => el1.key.localeCompare(el2.key)),
       },
       {
         onAdd: () => setAppStoreVisible(true),
@@ -203,21 +226,23 @@ export const WorkspaceLayout: FC = ({ children }) => {
         selectable: false,
         alwaysShown: true,
         bold: true,
-        children: (workspaceAppInstances || []).map((appInstance) => ({
-          title: `${appInstance.appName}`,
-          key: `${TREE_CONTENT_TYPE.apps}:${appInstance.slug}`,
-          icon:
-            appInstance.photo && appInstance.photo.length > 0 ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={`${appInstance.photo}`}
-                className="h-[22px] w-[22px]"
-                alt=""
-              />
-            ) : (
-              <div className="h-[22px] w-[22px]" />
-            ),
-        })),
+        children: (workspaceAppInstances || [])
+          .map((appInstance) => ({
+            title: `${appInstance.appName}`,
+            key: `${TREE_CONTENT_TYPE.apps}:${appInstance.slug}`,
+            icon:
+              appInstance.photo && appInstance.photo.length > 0 ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={`${appInstance.photo}`}
+                  className="h-[22px] w-[22px]"
+                  alt=""
+                />
+              ) : (
+                <div className="h-[22px] w-[22px]" />
+              ),
+          }))
+          .sort((el1, el2) => el1.key.localeCompare(el2.key)),
       },
     ],
     [
@@ -243,6 +268,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
         setNewSource,
         fullSidebar,
         setFullSidebar,
+        dirty,
+        setDirty,
       }}
     >
       <Head>
