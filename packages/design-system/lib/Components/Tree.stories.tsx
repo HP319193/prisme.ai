@@ -85,9 +85,21 @@ WorkspaceSidebar.args = {
       key: 'Automations',
       selectable: false,
       children: [
-        { title: 'my automation 1', key: 'my automation 1' },
-        { title: 'my automation 2', key: 'my automation 2' },
-        { title: 'my automation 3', key: 'my automation 3' },
+        {
+          title: 'my automation 1',
+          key: 'my automation 1',
+          onDelete: (...props) => console.log(props),
+        },
+        {
+          title: 'my automation 2',
+          key: 'my automation 2',
+          onDelete: (...props) => console.log(props),
+        },
+        {
+          title: 'my automation 3',
+          key: 'my automation 3',
+          onDelete: (...props) => console.log(props),
+        },
       ],
     },
     {
@@ -96,9 +108,21 @@ WorkspaceSidebar.args = {
       key: 'Pages',
       selectable: false,
       children: [
-        { title: 'my Page 1', key: 'my Page 1' },
-        { title: 'my Page 2', key: 'my Page 2' },
-        { title: 'my Page 3', key: 'my Page 3' },
+        {
+          title: 'my Page 1',
+          key: 'my Page 1',
+          onDelete: (...props) => console.log(props),
+        },
+        {
+          title: 'my Page 2',
+          key: 'my Page 2',
+          onDelete: (...props) => console.log(props),
+        },
+        {
+          title: 'my Page 3',
+          key: 'my Page 3',
+          onDelete: (...props) => console.log(props),
+        },
       ],
     },
     {
@@ -107,9 +131,21 @@ WorkspaceSidebar.args = {
       key: 'Apps',
       selectable: false,
       children: [
-        { title: 'my app 1', key: 'my app 1' },
-        { title: 'my app 2', key: 'my app 2' },
-        { title: 'my app 3', key: 'my app 3' },
+        {
+          title: 'my app 1',
+          key: 'my app 1',
+          onDelete: (...props) => console.log(props),
+        },
+        {
+          title: 'my app 2',
+          key: 'my app 2',
+          onDelete: (...props) => console.log(props),
+        },
+        {
+          title: 'my app 3',
+          key: 'my app 3',
+          onDelete: (...props) => console.log(props),
+        },
       ],
     },
   ] as TreeData[],

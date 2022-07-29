@@ -1,8 +1,8 @@
 import { Tree as AntdTree, TreeProps as AntdTreeProps } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import React, { useMemo, useState } from 'react';
-import { SearchInput } from '../index';
-import { PlusSquareOutlined } from '@ant-design/icons';
+import { Button, SearchInput } from '../index';
+import { DeleteOutlined, PlusSquareOutlined } from '@ant-design/icons';
 
 const getParentKey = (key: React.Key, tree: DataNode[]): React.Key => {
   let parentKey: React.Key;
@@ -24,7 +24,9 @@ export interface TreeData {
   key: React.Key;
   title: string;
   selectable?: boolean;
+  alwaysShown?: boolean;
   onAdd?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onDelete?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 export interface TreeProps extends AntdTreeProps {
@@ -94,7 +96,8 @@ const Tree = ({
         if (
           !item.children &&
           searchValue.length > 0 &&
-          !item.title.toLowerCase().includes(searchValue.toLowerCase())
+          !item.title.toLowerCase().includes(searchValue.toLowerCase()) &&
+          !item.alwaysShown
         ) {
           return [];
         }
@@ -104,15 +107,27 @@ const Tree = ({
             <span className={`flex w-full justify-between items-center`}>
               {item.title}
               {item.onAdd && (
-                <div onClick={item.onAdd}>
+                <Button variant={'grey'} onClick={item.onAdd}>
                   <PlusSquareOutlined />
-                </div>
+                </Button>
+              )}
+              {item.onDelete && (
+                <Button variant={'grey'} onClick={item.onDelete}>
+                  <DeleteOutlined />
+                </Button>
               )}
             </span>
           </div>
         );
         if (item.children) {
-          return [{ title, key: item.key, children: loop(item.children) }];
+          return [
+            {
+              title,
+              key: item.key,
+              children: loop(item.children),
+              selectable: item.selectable,
+            },
+          ];
         }
 
         return [
