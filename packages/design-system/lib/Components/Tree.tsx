@@ -90,40 +90,37 @@ const Tree = ({
     if (!data) return;
 
     const loop = (data: TreeData[]): DataNode[] =>
-      data.map((item) => {
-        const strTitle = item.title as string;
-        const index = strTitle.toLowerCase().indexOf(searchValue.toLowerCase());
-        const beforeStr = strTitle.substring(0, index);
-        const afterStr = strTitle.slice(index + searchValue.length);
-        const title =
-          index > -1 && searchValue.length > 0 && !item.children ? (
-            <span className="rounded border-solid border-b border-graph-background text-gray-200">
-              {beforeStr}
-              <span className="text-black">{searchValue}</span>
-              {afterStr}
-            </span>
-          ) : (
-            <span
-              className={`flex w-full justify-between items-center ${
-                searchValue.length > 0 ? 'text-gray-200' : ''
-              }`}
-            >
-              {strTitle}
+      data.flatMap((item) => {
+        if (
+          !item.children &&
+          searchValue.length > 0 &&
+          !item.title.toLowerCase().includes(searchValue.toLowerCase())
+        ) {
+          return [];
+        }
+
+        const title = (
+          <div className="flex w-full m-1">
+            <span className={`flex w-full justify-between items-center`}>
+              {item.title}
               {item.onAdd && (
                 <div onClick={item.onAdd}>
                   <PlusSquareOutlined />
                 </div>
               )}
             </span>
-          );
+          </div>
+        );
         if (item.children) {
-          return { title, key: item.key, children: loop(item.children) };
+          return [{ title, key: item.key, children: loop(item.children) }];
         }
 
-        return {
-          title,
-          key: item.key,
-        };
+        return [
+          {
+            title,
+            key: item.key,
+          },
+        ];
       });
 
     return loop(data);
