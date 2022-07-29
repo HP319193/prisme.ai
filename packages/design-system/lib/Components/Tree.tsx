@@ -25,6 +25,8 @@ export interface TreeData {
   title: string;
   selectable?: boolean;
   alwaysShown?: boolean;
+  bold?: boolean;
+  icon?: React.ReactNode;
   onAdd?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onDelete?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
@@ -106,10 +108,13 @@ const Tree = ({
           <div className="flex w-full m-1">
             <span
               className={`flex w-full justify-between items-center ${
-                item.alwaysShown ? 'font-semibold' : ''
+                item.bold ? 'font-semibold' : ''
               }`}
             >
-              {item.title}
+              <div className="flex justify-center items-center space-x-2">
+                {item.icon ? item.icon : null}
+                <span>{item.title}</span>
+              </div>
               {item.onAdd && (
                 <Button variant={'grey'} onClick={item.onAdd}>
                   <PlusSquareOutlined />
@@ -152,7 +157,7 @@ const Tree = ({
         placeholder="Search"
         onChange={onChange}
       />
-      <AntdTree
+      <AntdTree.DirectoryTree
         onExpand={onExpand}
         expandedKeys={expandedKeys}
         autoExpandParent={autoExpandParent}

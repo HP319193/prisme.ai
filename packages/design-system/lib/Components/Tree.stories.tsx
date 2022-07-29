@@ -3,6 +3,7 @@ import { TreeData, TreeProps } from './Tree';
 import { Tree } from '../index';
 import { Story } from '@storybook/react';
 import { DataNode } from 'antd/es/tree';
+import { HomeOutlined } from '@ant-design/icons';
 
 const x = 3;
 const y = 2;
@@ -77,18 +78,34 @@ Default.args = {
 
 export const WorkspaceSidebar = Template.bind({});
 WorkspaceSidebar.args = {
-  defaultExpandAll: true,
+  defaultExpandAll: false,
   data: [
+    {
+      title: 'Activity',
+      key: 'Activity',
+      selectable: false,
+      alwaysShown: true,
+      icon: <HomeOutlined />,
+    },
     {
       onAdd: () => {},
       title: 'Automations',
       key: 'Automations',
       selectable: false,
       alwaysShown: true,
+      bold: true,
       children: [
         {
           title: 'my automation 1',
           key: 'my automation 1',
+          icon: (
+            <img
+              src="https://gitlab.com/uploads/-/system/group/avatar/6227756/Prisme.ai_Embleme_.png"
+              alt=""
+              width="20"
+              height="20"
+            />
+          ),
         },
         {
           title: 'my automation 2',
@@ -106,6 +123,7 @@ WorkspaceSidebar.args = {
       key: 'Pages',
       selectable: false,
       alwaysShown: true,
+      bold: true,
       children: [
         {
           title: 'my Page 1',
@@ -127,6 +145,7 @@ WorkspaceSidebar.args = {
       key: 'Apps',
       selectable: false,
       alwaysShown: true,
+      bold: true,
       children: [
         {
           title: 'my app 1',

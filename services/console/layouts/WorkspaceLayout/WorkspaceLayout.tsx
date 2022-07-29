@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Layout, Loading, SidePanel, Tree } from '@prisme.ai/design-system';
@@ -13,6 +13,7 @@ import { appInstanceWithSlug, useApps } from '../../components/AppsProvider';
 import usePages from '../../components/PagesProvider/context';
 import AppsStore from '../../views/AppsStore';
 import { generateNewName } from '../../utils/generateNewName';
+import { HomeOutlined } from '@ant-design/icons';
 
 const TREE_CONTENT_TYPE = {
   automations: 'automations',
@@ -167,6 +168,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         key: `${TREE_CONTENT_TYPE.activity}:activity`,
         selectable: false,
         alwaysShown: true,
+        icon: <HomeOutlined />,
       },
       {
         onAdd: onCreateAutomation,
@@ -174,6 +176,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         key: 'Automations',
         selectable: false,
         alwaysShown: true,
+        bold: true,
         children: (Object.entries(workspace.automations || {}) || []).map(
           ([slug, automation]) => ({
             title: localize(automation.name),
@@ -187,6 +190,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         key: 'Pages',
         selectable: false,
         alwaysShown: true,
+        bold: true,
         children: (currentPages || []).map((page) => ({
           title: localize(page.name),
           key: `${TREE_CONTENT_TYPE.pages}:${page.id}`,
@@ -198,9 +202,21 @@ export const WorkspaceLayout: FC = ({ children }) => {
         key: 'Apps',
         selectable: false,
         alwaysShown: true,
+        bold: true,
         children: (workspaceAppInstances || []).map((appInstance) => ({
           title: `${appInstance.appName}`,
           key: `${TREE_CONTENT_TYPE.apps}:${appInstance.slug}`,
+          icon:
+            appInstance.photo && appInstance.photo.length > 0 ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={`${appInstance.photo}`}
+                className="h-[22px] w-[22px]"
+                alt=""
+              />
+            ) : (
+              <div className="h-[22px] w-[22px]" />
+            ),
         })),
       },
     ],
@@ -264,11 +280,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         <div className="h-full flex flex-row">
           <SidePanel variant="squared" className={`min-w-xs max-w-xs`}>
             <div className="flex w-full overflow-auto">
-              <Tree
-                defaultExpandAll={true}
-                onSelect={onSelect}
-                data={treeData}
-              />
+              <Tree onSelect={onSelect} data={treeData} />
             </div>
           </SidePanel>
           <div className="flex h-full flex-col flex-1">
