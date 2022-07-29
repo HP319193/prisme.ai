@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, SearchInput, Title } from '@prisme.ai/design-system';
+import { useRouter } from 'next/router';
+import {
+  Modal,
+  notification,
+  SearchInput,
+  Title,
+} from '@prisme.ai/design-system';
 import { useApps } from '../components/AppsProvider';
 import IconApps from '../icons/icon-apps.svgr';
-import { useWorkspaces } from '../components/WorkspacesProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import { useWorkspace } from '../components/WorkspaceProvider';
 
@@ -23,12 +28,14 @@ const isFilteredApp = (app: Prismeai.App): app is FilteredApps => {
 
 const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   const { t } = useTranslation('workspaces');
+  const { t: errorT } = useTranslation('errors');
   const { localize } = useLocalizedText();
   const { apps, getApps } = useApps();
-  const { installApp } = useWorkspaces();
   const {
+    installApp,
     workspace: { id: workspaceId },
   } = useWorkspace();
+  const { push } = useRouter();
   const [filter, setFilter] = useState('');
 
   const filteredApps: FilteredApps[] = useMemo(
@@ -53,13 +60,21 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
 
   const onAppClick = useCallback(
     async (id: string, name: string) => {
-      await installApp(workspaceId, {
-        appSlug: id,
-        appName: name,
-      });
+      try {
+        await installApp(workspaceId, {
+          appSlug: id,
+          appName: name,
+        });
+        push(`/workspaces/${workspaceId}/apps/${id}`);
+      } catch (e) {
+        notification.error({
+          message: errorT('unknown', { errorName: e }),
+          placement: 'bottomRight',
+        });
+      }
       onCancel();
     },
-    [installApp, onCancel, workspaceId]
+    [installApp, onCancel, push, workspaceId]
   );
 
   return (

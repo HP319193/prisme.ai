@@ -18,6 +18,9 @@ import usePages from '../../components/PagesProvider/context';
 import { useApps } from '../AppsProvider';
 import { usePrevious } from '../../utils/usePrevious';
 import { useWorkspaceLayout } from '../../layouts/WorkspaceLayout/context';
+import { generateNewName } from '../../utils/generateNewName';
+import { SLUG_MATCH_INVALID_CHARACTERS } from '../../utils/regex';
+import useLocalizedText from '../../utils/useLocalizedText';
 
 const PAGINATION_LIMIT = 15;
 
@@ -42,12 +45,13 @@ const getLatest = (events: Event<Date>[]) => {
 };
 
 export const WorkspaceProvider: FC = ({ children }) => {
-  const { saving, newSource, setSaving } = useWorkspaceLayout();
+  const { newSource, setSaving } = useWorkspaceLayout();
   const { user } = useUser();
   const {
     query: { id },
   } = useRouter();
   const { setPages } = usePages();
+  const { localize } = useLocalizedText();
 
   const { t } = useTranslation('workspaces');
   const { fetch, update, workspaces } = useWorkspaces();
@@ -442,6 +446,46 @@ export const WorkspaceProvider: FC = ({ children }) => {
     [workspace]
   );
 
+  const installApp: WorkspaceContext['installApp'] = useCallback(
+    async (workspaceId, body) => {
+      if (!workspace) {
+        throw new Error("Can't add an app to an empty workspace");
+      }
+
+      const slug = generateNewName(
+        body.appSlug.replace(SLUG_MATCH_INVALID_CHARACTERS, ''),
+        Object.keys(workspace.imports || {}),
+        localize,
+        0,
+        true
+      );
+
+      const fetchedAppInstance = await api.installApp(workspaceId, {
+        ...body,
+        slug,
+        appName: slug,
+      });
+
+      // Typescript check, this route should always return a slug
+      if (!fetchedAppInstance.slug) {
+        throw new Error('Received app instance has no slug');
+      }
+
+      const updatedWorkspace = {
+        ...workspace,
+        imports: {
+          ...(workspace.imports || {}),
+          [fetchedAppInstance.slug]: fetchedAppInstance,
+        },
+      };
+
+      setCurrentWorkspace(updatedWorkspace);
+
+      return fetchedAppInstance;
+    },
+    [localize, workspace]
+  );
+
   if (!workspace || !user) {
     return (
       <div className="flex flex-1 justify-center align-center">
@@ -471,6 +515,7 @@ export const WorkspaceProvider: FC = ({ children }) => {
         setShare,
         getAppConfig,
         saveAppConfig,
+        installApp,
         createAutomation,
         updateAutomation,
         deleteAutomation,

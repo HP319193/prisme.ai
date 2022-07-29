@@ -32,7 +32,7 @@ const useAppConfig = (
     async (newConfig: any) => {
       setAppConfig(() => newConfig);
       if (!workspaceId || !appInstance) return;
-      await api.updateAppConfig(workspaceId, appInstance, newConfig);
+      return api.updateAppConfig(workspaceId, appInstance, newConfig);
     },
     [appInstance, workspaceId]
   );

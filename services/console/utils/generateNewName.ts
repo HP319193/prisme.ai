@@ -1,14 +1,22 @@
 export const generateNewName = (
   defaultName: string,
   currentList: any[],
-  localize: (localizedField: any) => string
+  localize: (localizedField: any) => string,
+  startingVersion: number = 0,
+  useHyphen: boolean
 ) => {
   // const defaultName = t(`${type}.create.defaultName`);
-  let version = 0;
-  const generateName = () => `${defaultName}${version ? ` (${version})` : ''}`;
+  let version = startingVersion;
+  let generateName: Function;
+  if (useHyphen) {
+    generateName = () => `${defaultName}${version ? `_${version}` : ''}`;
+  } else {
+    generateName = () => `${defaultName}${version ? ` (${version})` : ''}`;
+  }
   const names = currentList.map((name) => {
     return localize(name);
   });
+
   while (names.find((name) => name === generateName())) {
     version++;
   }

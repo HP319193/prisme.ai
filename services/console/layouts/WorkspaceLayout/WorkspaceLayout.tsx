@@ -35,6 +35,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const router = useRouter();
 
   const { localize } = useLocalizedText();
+  const { t: commonT } = useTranslation('common');
   const {
     t,
     i18n: { language },
@@ -109,9 +110,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
       if (dirty) {
         Modal.confirm({
           icon: <WarningOutlined />,
-          content: t('navigation.dirtyWarning'),
+          content: t('workspace.dirtyWarning'),
           onOk: changeRoute,
-          okText: t('ok'),
+          okText: t('workspace.dirtyOk'),
+          cancelText: commonT('cancel'),
         });
       } else {
         changeRoute();
@@ -185,7 +187,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const treeData = useMemo(
     () => [
       {
-        title: 'Activity',
+        title: t('workspace.sections.activity'),
         key: `${TREE_CONTENT_TYPE.activity}:activity`,
         selectable: false,
         alwaysShown: true,
@@ -193,7 +195,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       },
       {
         onAdd: onCreateAutomation,
-        title: 'Automations',
+        title: t('workspace.sections.automations'),
         key: 'Automations',
         selectable: false,
         alwaysShown: true,
@@ -207,7 +209,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       },
       {
         onAdd: onCreatePage,
-        title: 'Pages',
+        title: t('workspace.sections.pages'),
         key: 'Pages',
         selectable: false,
         alwaysShown: true,
@@ -220,8 +222,11 @@ export const WorkspaceLayout: FC = ({ children }) => {
           .sort((el1, el2) => el1.key.localeCompare(el2.key)),
       },
       {
-        onAdd: () => setAppStoreVisible(true),
-        title: 'Apps',
+        onAdd: (event) => {
+          event.stopPropagation();
+          setAppStoreVisible(true);
+        },
+        title: t('workspace.sections.apps'),
         key: 'Apps',
         selectable: false,
         alwaysShown: true,

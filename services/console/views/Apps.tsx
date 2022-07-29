@@ -96,7 +96,7 @@ const Apps = ({}: AppsProps) => {
         await saveAppInstance(workspace.id, currentApp.slug, newValue);
         push(`/workspaces/${workspace.id}/apps/${slug}`);
         notification.success({
-          message: t('apps.save.toast'),
+          message: t('apps.saveSuccess'),
           placement: 'bottomRight',
         });
       } catch (e) {

@@ -24,6 +24,10 @@ export interface WorkspaceContext {
   setShare: (share: WorkspaceContext['share']) => void;
   getAppConfig: (appInstance: string) => any;
   saveAppConfig: (appInstance: string, config: any) => void;
+  installApp: (
+    workspaceId: PrismeaiAPI.InstallAppInstance.PathParameters['workspaceId'],
+    body: PrismeaiAPI.InstallAppInstance.RequestBody
+  ) => Promise<Prismeai.AppInstance | null>;
   createAutomation: (
     automation: Prismeai.Automation
   ) => Promise<(Prismeai.Automation & { slug: string }) | null>;
@@ -49,6 +53,7 @@ export const workspaceProviderContext = createContext<WorkspaceContext>({
   setShare() {},
   getAppConfig() {},
   saveAppConfig() {},
+  installApp: () => ({} as any),
   createAutomation: async () => ({} as Prismeai.Automation & { slug: string }),
   updateAutomation: async () => ({} as Prismeai.Automation & { slug: string }),
   deleteAutomation: async () => ({} as Prismeai.Automation),

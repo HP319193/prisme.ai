@@ -10,6 +10,8 @@
     "description": "Édition du workspace \"{{name}}\"",
     "share": "Partager ce workspace",
     "empty": "<button>Créez votre première automatisation</button> pour voir votre workspace s'animer",
+    "dirtyWarning": "Votre travail en cours n'a pas été sauvegarder. Changer de page tout de même ?",
+    "dirtyOk": "Changer de page",
     "delete": {
       "label": "Supprimer le workspace",
       "confirm": {
@@ -32,6 +34,12 @@
       "photo": {
         "label": "Photo"
       }
+    },
+    "sections": {
+      "activity": "Activité",
+      "automations": "Automatisations",
+      "pages": "Pages",
+      "apps": "Apps"
     }
   },
   "create": {
@@ -323,6 +331,7 @@
     "configTooltip": "Paramétrer",
     "search": "Chercher une app...",
     "title": "App Store",
+    "saveSuccess": "Configuration d'App sauvegardée avec succès",
     "publish": {
       "menuLabel": "Publier en tant qu'App",
       "confirm": {

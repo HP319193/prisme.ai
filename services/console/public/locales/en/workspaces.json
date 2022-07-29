@@ -9,7 +9,9 @@
     "title": "\"{{name}}\" Workspace — $t(common:main.title)",
     "description": "Editing Workspace \"{{name}}\"",
     "share": "Share this workspace",
-    "empty": "<button>Créez votre première automatisation</button> pour voir votre espace de travail s'animer",
+    "empty": "<button>Create your first automation</button>",
+    "dirtyWarning": "Your current work haven't been saved. Change page anyway ?",
+    "dirtyOk": "Change page",
     "delete": {
       "label": "Delete Workspace",
       "confirm": {
@@ -32,6 +34,12 @@
       "photo": {
         "label": "Photo"
       }
+    },
+    "sections": {
+      "activity": "Activity",
+      "automations": "Automations",
+      "pages": "Pages",
+      "apps": "Apps"
     }
   },
   "create": {
@@ -323,6 +331,7 @@
     "configTooltip": "Configuration",
     "search": "Search for an app...",
     "title": "App Store",
+    "saveSuccess": "App config saved successfully",
     "publish": {
       "menuLabel": "Publish as an app",
       "confirm": {
