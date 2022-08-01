@@ -25,7 +25,7 @@ import TriggerBlock from './TriggerBlock';
 import Conditions from './Conditions';
 import iconPrisme from '../../icons/icon-prisme.svg';
 import iconWorkspace from '../../icons/icon-workspace.svg';
-import Panel from './Panel';
+import Panel from '../Panel';
 import InstructionForm from './Panel/InstructionForm';
 import ConditionForm from './Panel/ConditionForm';
 import BUILTIN_INSTRUCTIONS from '@prisme.ai/validation/instructions.json';
@@ -452,7 +452,11 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         >
           <Controls />
         </ReactFlow>
-        <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
+        <Panel
+          title={t('details.title_automations')}
+          visible={panelIsOpen}
+          onVisibleChange={hidePanel}
+        >
           {instructionEditing && <InstructionForm {...instructionEditing} />}
           {conditionEditing && <ConditionForm {...conditionEditing} />}
           {triggerEditing && <TriggerForm {...triggerEditing} />}

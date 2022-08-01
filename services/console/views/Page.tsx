@@ -364,16 +364,20 @@ export const Page = () => {
     <>
       <PageHeader
         title={
-          <div className="flex flex-row items-center">
-            {localize(value.name)}
-            <EditDetails
-              schema={detailsFormSchema}
-              value={{ ...value }}
-              onSave={updateDetails}
-              onDelete={confirmDeletePage}
-              context="pages"
-              key={`${pageId}`}
-            />
+          <div className="flex flex-row items-center text-base">
+            <span className="font-medium">{localize(value.name)}</span>
+            {/*<span className="w-[20px]" />*/}
+            {/*<span className="border-l border-solid border-pr-grey text-gray flex h-[26px] w-[20px]" />*/}
+            <span className="text-gray flex">
+              <EditDetails
+                schema={detailsFormSchema}
+                value={{ ...value }}
+                onSave={updateDetails}
+                onDelete={confirmDeletePage}
+                context="pages"
+                key={`${pageId}`}
+              />
+            </span>
           </div>
         }
         RightButtons={[
