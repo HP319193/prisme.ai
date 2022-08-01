@@ -13,7 +13,7 @@ module.exports = {
         'pr-grey': '#939CA6',
         'gray-200': '#E5E5E5',
         'blue-200': '#F8FAFF',
-        'graph-border': '#BFD7FF',
+        'graph-border': '#ced2d8',
         'graph-background': '#E7EDF9',
         'graph-accent': '#015DFF',
         'prisme-darkblue': '#0A1D3B',

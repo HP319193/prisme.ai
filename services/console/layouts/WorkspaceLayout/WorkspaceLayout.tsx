@@ -318,7 +318,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
           <SidePanel variant="squared" className={`min-w-xs max-w-xs`}>
             <div className="flex w-full flex-col" ref={sidebarRef}>
               <Tree
-                className="w-full"
+                className="w-full pr-align-tree"
                 onSelect={onSelect}
                 data={treeData}
                 height={sidebarHeight}

@@ -282,16 +282,20 @@ export const Automation = () => {
     <>
       <PageHeader
         title={
-          <div className="flex flex-row items-center">
-            {localize(value.name)}
-            <EditDetails
-              schema={detailsFormSchema}
-              value={{ ...value, slug: automationId }}
-              onSave={updateDetails}
-              onDelete={confirmDeleteAutomation}
-              context="automations"
-              key={`${automationId}`}
-            />
+          <div className="flex flex-row items-center text-base">
+            <span className="font-medium">{localize(value.name)}</span>
+            {/*<span className="w-[20px]" />*/}
+            {/*<span className="border-l border-solid border-pr-grey text-gray flex h-[26px] w-[20px]" />*/}
+            <span className="text-gray flex">
+              <EditDetails
+                schema={detailsFormSchema}
+                value={{ ...value, slug: automationId }}
+                onSave={updateDetails}
+                onDelete={confirmDeleteAutomation}
+                context="automations"
+                key={`${automationId}`}
+              />
+            </span>
           </div>
         }
         RightButtons={[

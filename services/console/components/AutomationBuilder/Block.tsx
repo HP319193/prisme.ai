@@ -25,6 +25,7 @@ interface BlockClassName {
   textClassName: string;
   bgClassName: string;
   borderClassName: string;
+  selectedBorderClassName?: string;
   editTextClassName?: string;
 }
 
@@ -40,17 +41,20 @@ const CLASSNAME_BLOCKS: Record<string, BlockClassName> = {
   trigger: {
     textClassName: 'text-accent',
     bgClassName: 'bg-graph-background',
-    borderClassName: 'border-accent',
+    borderClassName: 'border-graph-accent',
+    selectedBorderClassName: 'border-graph-selected-accent',
   },
   instruction: {
     textClassName: '',
     bgClassName: 'bg-white',
-    borderClassName: 'border-slate-300',
+    borderClassName: 'border-graph-border',
+    selectedBorderClassName: 'border-pr-grey',
   },
   output: {
     textClassName: 'text-green-400',
     bgClassName: 'bg-green-200',
     borderClassName: 'border-green-400',
+    selectedBorderClassName: 'border-green-100',
   },
   condition: {
     textClassName: '',
@@ -73,12 +77,15 @@ const BlockUI = React.forwardRef(
           surface-section
           ${blockClassName.textClassName}
           ${blockClassName.bgClassName}
-          ${blockClassName.borderClassName}
+          ${
+            (selected && blockClassName.selectedBorderClassName) ||
+            blockClassName.borderClassName
+          }
           border-[1px]
           ${selected ? 'drop-shadow-xl' : ''}
           transition-all ease
           rounded`}
-      style={{ width: Flow.BLOCK_WIDTH - 50 }}
+      style={{ width: Flow.BLOCK_WIDTH - 40 }}
       ref={ref}
       onClick={onEdit}
     >
@@ -86,9 +93,13 @@ const BlockUI = React.forwardRef(
         className={`
           flex
           border-b-[1px]
-          ${blockClassName.borderClassName}
-          font-bold
-          p-2
+          ${
+            (selected && blockClassName.selectedBorderClassName) ||
+            blockClassName.borderClassName
+          }
+          font-semibold
+          p-[1.15rem]
+          pb-3.5
         `}
       >
         {topContent}
@@ -96,10 +107,11 @@ const BlockUI = React.forwardRef(
       <button
         className={`
           flex
-          p-2
+          p-3.5
           justify-between
           items-center
           ${blockClassName.editTextClassName || ''}
+          font-light
           `}
         style={{
           background: 'none',
@@ -109,7 +121,7 @@ const BlockUI = React.forwardRef(
         }}
       >
         {editSection}
-        {onEdit ? <EditOutlined /> : null}
+        {onEdit ? <EditOutlined className="!text-accent" /> : null}
       </button>
     </div>
   )
@@ -182,9 +194,9 @@ export const Block: FC<NodeProps & BlockProps> = ({
               t={t}
               i18nKey="automations.output.label"
               components={{
-                pre: <pre className="text-left text-xs" />,
-                code: <code />,
-                italic: <div className="text-xs text-gray-50 italic" />,
+                pre: <pre className="text-left font-sans" />,
+                code: <span />,
+                italic: <div className="text-gray-50 italic" />,
               }}
               values={{
                 context: value.output ? 'json' : '',
@@ -224,7 +236,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
       topContent={
         <>
           {icon && (
-            <div className="mr-2">
+            <div className="mr-3 flex">
               <Image src={icon} width={16} height={16} alt={name} />
             </div>
           )}

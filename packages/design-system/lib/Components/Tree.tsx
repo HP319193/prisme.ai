@@ -156,6 +156,7 @@ const Tree = ({
         style={{ marginBottom: 8 }}
         placeholder="Search"
         onChange={onChange}
+        className="!text-gray"
       />
       <AntdTree.DirectoryTree
         onExpand={onExpand}
