@@ -6,6 +6,7 @@ import { useAutomationBuilder } from './context';
 import styles from './styles';
 import { LinkOutlined } from '@ant-design/icons';
 import { Button, notification } from '@prisme.ai/design-system';
+import { truncate } from '../../utils/strings';
 
 interface TriggerDisplayProps {
   value: Prismeai.When;
@@ -34,7 +35,7 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
       {value.events && value.events.length > 0 && (
         <div>
           {t('automations.trigger.events.display', {
-            events: value.events,
+            events: value.events.map((event) => truncate(event, 10)),
             count: value.events.length,
           })}
         </div>

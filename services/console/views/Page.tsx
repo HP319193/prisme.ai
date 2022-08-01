@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
 import { useTranslation } from 'next-i18next';
+import cloneDeep from 'lodash/cloneDeep';
 import {
   Button,
   Collapse,
@@ -10,11 +10,13 @@ import {
   Loading,
   notification,
   PageHeader,
+  Popover,
   Schema,
   SchemaFormDescription,
+  Space,
   Tooltip,
 } from '@prisme.ai/design-system';
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, ShareAltOutlined } from '@ant-design/icons';
 import useLocalizedText from '../utils/useLocalizedText';
 import PageBuilder from '../components/PageBuilder';
 import { PageBuilderContext } from '../components/PageBuilder/context';
@@ -26,6 +28,10 @@ import { CodeEditor } from '../components/CodeEditor/lazy';
 import PagePreview from '../components/PagePreview';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useApps } from '../components/AppsProvider';
+import { useWorkspace } from '../components/WorkspaceProvider';
+import getLayout from '../layouts/WorkspaceLayout';
+import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
+import { usePrevious } from '../utils/usePrevious';
 
 const CSSEditor = ({
   name,
@@ -110,8 +116,8 @@ const CSSEditor = ({
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
-  const { t: commonT } = useTranslation('common');
-  const { workspace, setShare } = useWorkspace();
+  const { workspace } = useWorkspace();
+  const { setDirty } = useWorkspaceLayout();
   const { localize } = useLocalizedText();
   const { pages, savePage, deletePage } = usePages();
   const [displayPreview, setDisplayPreview] = useState(false);
@@ -120,6 +126,8 @@ export const Page = () => {
     query: { id: workspaceId, pageId },
     push,
   } = useRouter();
+  const prevPageId = usePrevious(pageId);
+
   const page = useMemo(() => {
     return Array.from(pages.get(`${workspaceId}`) || []).find(
       ({ id }) => pageId === id
@@ -139,20 +147,23 @@ export const Page = () => {
   );
 
   useEffect(() => {
-    setShare({
-      label: t('pages.share.label'),
-      component: () => (
-        <SharePage
-          pageId={`${pageId}`}
-          pageSlug={(page && page.slug) || `${pageId}`}
-        />
-      ),
-    });
+    const clonedValue = cloneDeep(value) as PageBuilderContext['page'];
+    if (clonedValue && clonedValue.blocks) {
+      clonedValue.blocks.forEach((block) => {
+        delete block.key;
+      });
+    }
 
-    return () => {
-      setShare(undefined);
-    };
-  }, [commonT, page, pageId, setShare, t]);
+    if (
+      pageId === prevPageId &&
+      JSON.stringify(page) !== JSON.stringify(clonedValue)
+    ) {
+      console.log('page', page);
+      console.log('value', clonedValue);
+
+      setDirty(true);
+    }
+  }, [value, pageId, prevPageId, setDirty, page]);
 
   useEffect(() => {
     if (!page) return;
@@ -187,9 +198,7 @@ export const Page = () => {
               {...props}
               sectionIds={
                 page
-                  ? (
-                      page.blocks || []
-                    ).flatMap(
+                  ? (page.blocks || []).flatMap(
                       ({ config: { sectionId, name = sectionId } = {} }) =>
                         sectionId ? { id: sectionId, name } : []
                     )
@@ -206,10 +215,9 @@ export const Page = () => {
   const cleanValue = useCallback(
     (value: Prismeai.Page) => ({
       ...value,
-      blocks: ((value.blocks ||
-        []) as PageBuilderContext['page']['blocks']).map(
-        ({ key, ...block }) => block
-      ),
+      blocks: (
+        (value.blocks || []) as PageBuilderContext['page']['blocks']
+      ).map(({ key, ...block }) => block),
       id: page ? page.id : '',
     }),
     [page]
@@ -364,10 +372,10 @@ export const Page = () => {
               onSave={updateDetails}
               onDelete={confirmDeletePage}
               context="pages"
+              key={`${pageId}`}
             />
           </div>
         }
-        onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
           <Button
             key="preview"
@@ -377,6 +385,23 @@ export const Page = () => {
               context: displayPreview ? 'hide' : '',
             })}
           </Button>,
+          <Popover
+            content={() => (
+              <SharePage
+                pageId={`${pageId}`}
+                pageSlug={(page && page.slug) || `${pageId}`}
+              />
+            )}
+            title={t('pages.share.label')}
+            key="share"
+          >
+            <Button>
+              <Space>
+                {t('pages.share.label')}
+                <ShareAltOutlined className="text-lg" />
+              </Space>
+            </Button>
+          </Popover>,
           <Button key="save" onClick={save} disabled={saving} variant="primary">
             {saving && <LoadingOutlined />}
             {t('pages.save.label')}

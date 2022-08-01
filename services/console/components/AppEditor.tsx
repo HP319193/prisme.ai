@@ -1,0 +1,84 @@
+import {
+  Loading,
+  notification,
+  Schema,
+  SchemaForm,
+} from '@prisme.ai/design-system';
+import { BlockLoader } from '@prisme.ai/blocks';
+import api from '../utils/api';
+import useAppConfig from '../utils/useAppConfig';
+import { useWorkspace } from './WorkspaceProvider';
+import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
+import { useTranslation } from 'next-i18next';
+
+interface AppEditorProps {
+  schema?: Schema;
+  block?: string;
+  appId: string;
+}
+
+const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
+  const {
+    workspace: { id: workspaceId },
+  } = useWorkspace();
+  const { t } = useTranslation('workspaces');
+  const { t: errorT } = useTranslation('errors');
+  const { setDirty } = useWorkspaceLayout();
+  const { appConfig, onAppConfigUpdate } = useAppConfig(workspaceId, appId);
+
+  const onSubmit = async (value: any) => {
+    try {
+      await onAppConfigUpdate(value);
+      notification.success({
+        message: t('apps.saveSuccess'),
+        placement: 'bottomRight',
+      });
+      setDirty(false);
+    } catch (e) {
+      notification.error({
+        message: errorT('unknown', { errorName: e }),
+        placement: 'bottomRight',
+      });
+    }
+  };
+
+  if (!appConfig) return <Loading />;
+
+  if (schema) {
+    const s: Schema = {
+      type: 'object',
+      properties: schema as Schema['properties'],
+    };
+
+    return (
+      <div className="p-6">
+        <SchemaForm
+          schema={s}
+          onChange={(value) => {
+            setDirty(true);
+          }}
+          onSubmit={onSubmit}
+          initialValues={appConfig}
+        />
+      </div>
+    );
+  }
+  if (block) {
+    return (
+      <BlockLoader
+        api={api}
+        url={block}
+        token={`${api.token}`}
+        workspaceId={workspaceId}
+        appInstance={appId}
+        config={{}}
+        appConfig={appConfig}
+        onAppConfigUpdate={onAppConfigUpdate}
+      />
+    );
+  }
+
+  return null;
+};
+
+export default AppEditor;

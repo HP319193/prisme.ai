@@ -6,10 +6,10 @@ import {
 import { useBlock } from '@prisme.ai/blocks';
 import { useField } from 'react-final-form';
 import { useTranslation } from 'next-i18next';
-import { useWorkspace } from '../../../../layouts/WorkspaceLayout';
 import { usePages } from '../../../PagesProvider';
 import useSchema from '../../../SchemaForm/useSchema';
 import { useEffect, useRef } from 'react';
+import { useWorkspace } from '../../../WorkspaceProvider';
 
 const Debug = (props: any) => {
   const { t } = useTranslation('workspaces');

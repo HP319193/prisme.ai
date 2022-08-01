@@ -5,10 +5,10 @@ import EditBlock from './EditBlock';
 import { truncate } from '../../utils/strings';
 import api from '../../utils/api';
 import { BlockLoader } from '@prisme.ai/blocks';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import useAppConfig from '../../utils/useAppConfig';
 import useBlockPageConfig from './useBlockPageConfig';
 import { useCallback } from 'react';
+import { useWorkspace } from '../WorkspaceProvider';
 
 interface PageBlockProps {
   url?: string;
@@ -46,10 +46,10 @@ const PageBlockWithProvider = ({
   );
 
   const { socket } = useWorkspace();
-  const { appConfig, onAppConfigUpdate } = useAppConfig({
+  const { appConfig, onAppConfigUpdate } = useAppConfig(
     workspaceId,
-    appInstance,
-  });
+    appInstance
+  );
   const { config, onConfigUpdate } = useBlockPageConfig({
     blockId,
   });

@@ -7,10 +7,10 @@ import {
 } from '@prisme.ai/design-system';
 import { FilterOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import { useCallback, useMemo, useState } from 'react';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import { useField } from 'react-final-form';
+import { useWorkspace } from '../WorkspaceProvider';
 
 const components = {
   FieldAny: ({ name }: FieldProps) => {
