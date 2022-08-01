@@ -16,7 +16,6 @@ async function metricsMiddleware(req: Request, res: Response) {
 // Create a Registry to register the metrics
 const registry = new client.Registry();
 client.collectDefaultMetrics({
-  prefix: 'node_',
   gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5],
   register: registry,
 });
