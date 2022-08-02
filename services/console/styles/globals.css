@@ -23,7 +23,6 @@ body {
   margin: 0;
   white-space: pre-line;
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
 
 a {

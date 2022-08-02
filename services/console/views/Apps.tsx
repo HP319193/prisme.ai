@@ -146,8 +146,8 @@ const Apps = ({}: AppsProps) => {
             )}
 
             <span className="font-medium">{localize(currentApp.appName)}</span>
-            {/*<span className="w-[20px]" />*/}
-            {/*<span className="border-l border-solid border-pr-grey text-gray flex h-[26px] w-[20px]" />*/}
+            <span className="w-[20px]" />
+            <span className="border-l border-solid border-pr-gray-200 text-gray flex h-[26px] w-[20px]" />
             <span className="text-gray flex">
               <EditDetails
                 schema={detailsFormSchema}

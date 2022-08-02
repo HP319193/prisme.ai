@@ -10,7 +10,28 @@ export default {
 const Template: Story<any> = () => {
   const [config, setConfig] = useState<any>({
     cards: [
-      {},
+      {
+        title: 'Les Anis de Flavigny',
+        description: 'Confiseur(s)',
+        cover: '',
+        content: [
+          {
+            type: 'button',
+            url: 'test',
+            value: 'test',
+          },
+          {
+            type: 'accordion',
+            title: 'Contact',
+            content: '',
+          },
+          {
+            type: 'accordion',
+            title: 'Produits',
+            content: '',
+          },
+        ],
+      },
       {},
       {},
       {},
