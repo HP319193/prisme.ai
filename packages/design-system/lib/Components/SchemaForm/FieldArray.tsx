@@ -1,4 +1,4 @@
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { FieldArray as FFFieldArray } from 'react-final-form-arrays';
 import Button from '../Button';
@@ -45,7 +45,7 @@ export const FieldArray = (props: FieldProps) => {
                         <Field schema={items} name={field} />
                         <Button
                           onClick={() => fields.remove(index)}
-                          className="!absolute top-2 right-1"
+                          className="!absolute top-[1.7rem] right-1 text-gray hover:text-orange-500"
                         >
                           <Tooltip
                             title={locales.removeItem || 'Remove'}
@@ -58,11 +58,17 @@ export const FieldArray = (props: FieldProps) => {
                     </div>
                   ))}
                 </div>
-                <Button
-                  onClick={() => fields.push(getDefaultValue(items.type))}
-                >
-                  {locales.addItem || 'Add item'}
-                </Button>
+                <div className="flex w-full justify-end">
+                  <Button
+                    onClick={() => fields.push(getDefaultValue(items.type))}
+                    className="flex items-center"
+                  >
+                    <span className="underline">
+                      {locales.addItem || 'Add item'}
+                    </span>
+                    <PlusCircleOutlined />
+                  </Button>
+                </div>
               </>
             )}
           </FFFieldArray>

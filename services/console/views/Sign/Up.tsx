@@ -76,7 +76,7 @@ export const SignIn = () => {
         </div>
         <div className="flex grow flex-col justify-end mb-10">
           <div className="flex items-center flex-col text-white p-[10%]">
-            <div className="font-normal text-xl md:text-2xl xl:text-5xl leading-normal">
+            <div className="font-normal text-[1rem] md:text-[2rem] xl:text-[3.375rem] leading-normal">
               <Trans
                 t={t}
                 i18nKey="in.header"
@@ -87,7 +87,7 @@ export const SignIn = () => {
 
               <div className="flex flex-row  mt-20">
                 <Image src={icon} width={16} height={16} alt="Prisme.ai" />
-                <div className="ml-2 !font-light tracking-[.4em] text-sm">
+                <div className="ml-2 !font-light tracking-[.4em] text-[1.125rem]">
                   PRISME.AI
                 </div>
               </div>
@@ -119,6 +119,24 @@ export const SignIn = () => {
             {({ handleSubmit }) => (
               <form onSubmit={handleSubmit} className="w-96 flex">
                 <Space size="middle" direction="vertical" className="flex grow">
+                  <Field name="firstName">
+                    {({ input: { type, ...inputProps }, className }) => (
+                      <Input
+                        placeholder={t('up.firstName')}
+                        className={`${className} h-12`}
+                        {...inputProps}
+                      />
+                    )}
+                  </Field>
+                  <Field name="lastName">
+                    {({ input: { type, ...inputProps }, className }) => (
+                      <Input
+                        placeholder={t('up.lastName')}
+                        className={`${className} h-12`}
+                        {...inputProps}
+                      />
+                    )}
+                  </Field>
                   <Field name="email">
                     {({ input: { type, ...inputProps }, className }) => (
                       <Input
@@ -134,24 +152,6 @@ export const SignIn = () => {
                         placeholder={t('up.password')}
                         className={`${className} h-12`}
                         inputType={'password' as any}
-                        {...inputProps}
-                      />
-                    )}
-                  </Field>
-                  <Field name="firstName">
-                    {({ input: { type, ...inputProps }, className }) => (
-                      <Input
-                        placeholder={t('up.firstName')}
-                        className={`${className} h-12`}
-                        {...inputProps}
-                      />
-                    )}
-                  </Field>
-                  <Field name="lastName">
-                    {({ input: { type, ...inputProps }, className }) => (
-                      <Input
-                        placeholder={t('up.lastName')}
-                        className={`${className} h-12`}
                         {...inputProps}
                       />
                     )}
