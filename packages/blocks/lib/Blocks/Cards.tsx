@@ -65,18 +65,26 @@ const Accordion: FC<{
   title: ReactNode;
 }> = ({ title, children }) => {
   const [visible, setVisible] = useState(false);
+  const {
+    components: { DownIcon },
+  } = useBlocks();
+
   return (
     <div className={tw`accordion__container container flex flex-1 flex-col`}>
       <button
-        className={tw`container__button button flex flex-1 justify-between items-center p-2`}
+        className={tw`container__button button flex flex-1 justify-between items-center p-1`}
         onClick={() => setVisible(!visible)}
       >
         {title}
-        <DownOutlined
-          className={tw`button__icon icon transition-transform ${
-            visible ? '-rotate-180' : ''
-          }`}
-        />
+        {DownIcon ? (
+          <DownIcon />
+        ) : (
+          <DownOutlined
+            className={tw`button__icon icon transition-transform ${
+              visible ? '-rotate-180' : ''
+            }`}
+          />
+        )}
       </button>
       <StretchContent visible={visible}>
         <div
@@ -350,26 +358,27 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
             ({ title, description, cover, content = [] }, index) => (
               <div
                 key={index}
-                className={`${tw`cards-container__card-container card-container flex flex-col snap-start my-6 pl-[10px] group w-[325px]`}`}
+                className={`${tw`cards-container__card-container card-container flex flex-col snap-start my-6 pl-[10px] group w-[15rem] min-h-[23rem]`}`}
                 style={{
-                  flex: '0 0 325px',
+                  flex: '0 0 15rem',
                 }}
               >
                 <div
-                  className={`${tw`card-container__card card relative flex flex-1 flex-col mx-2 rounded-[20px]`}`}
+                  className={`${tw`card-container__card card relative flex flex-1 flex-col mx-2 rounded-[20px] `}`}
                 >
                   <div
-                    className={tw`card__card-image card-image h-[303px] p-[-1px] rounded-[20px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top`}
+                    className={tw`card__card-image card-image h-[10rem] p-[-1px] rounded-[15px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top`}
                     style={getCoverStyle(index)}
                   />
                   <div
                     className={tw`
                       card__card-content card-content
                       relative flex flex-col min-h-[203px] mt-[103px]
-                      rounded-[20px] p-4 border-[1px] border-gray-200
+                      rounded-[15px] p-[1.375rem] border-[1px] border-gray-200
                       bg-white
                       transition-transform
                       hover:translate-y-3 hover:scale-105 shadow-sm hover:shadow-lg
+                      text-[0.938rem]
                       `}
                   >
                     <div
@@ -387,7 +396,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                       content.map((item, index) => (
                         <div
                           key={index}
-                          className={`${tw`card__card-content-outer card-content-outer flex mb-4`}`}
+                          className={`${tw`card__card-content-outer card-content-outer flex mb-4 text-[0.625rem]`}`}
                         >
                           {item.type === 'text' && (
                             <div className="card-content-outer__content-text content-text">

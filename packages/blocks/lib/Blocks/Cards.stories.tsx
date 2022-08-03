@@ -13,7 +13,8 @@ const Template: Story<any> = () => {
       {
         title: 'Les Anis de Flavigny',
         description: 'Confiseur(s)',
-        cover: '',
+        cover:
+          'https://i.postimg.cc/Hx1yXdjj/Capture-d-e-cran-2021-04-29-a-16-03-1.png',
         content: [
           {
             type: 'button',

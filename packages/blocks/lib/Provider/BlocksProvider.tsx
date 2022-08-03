@@ -8,7 +8,10 @@ export const BlocksProvider: FC<BlocksDependenciesContext> = ({
   components,
 }) => (
   <blocksContext.Provider
-    value={{ externals, components: { ...defaultComponents, ...components } }}
+    value={{
+      externals,
+      components: { ...defaultComponents, ...components },
+    }}
   >
     {children}
   </blocksContext.Provider>
