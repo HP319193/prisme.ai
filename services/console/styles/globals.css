@@ -127,3 +127,11 @@ a.ant-btn.pr-btn-primary-small {
 .pr-align-tree .ant-tree-list-holder-inner>.ant-tree-treenode:nth-child(1) .ant-tree-switcher {
     display: none;
 }
+
+.pr-align-tree .ant-tree-indent {
+  display: none;
+}
+
+.pr-align-tree .ant-tree-switcher-noop {
+  display: none;
+}

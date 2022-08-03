@@ -23,6 +23,7 @@ export interface TreeData {
   children?: TreeData[];
   key: React.Key;
   title: string;
+  renderTitle?: React.ReactNode;
   selectable?: boolean;
   alwaysShown?: boolean;
   bold?: boolean;
@@ -58,7 +59,11 @@ const Tree = ({
 
     const getData = (children: TreeData[]) => {
       children.forEach((childrenData) => {
-        currentData.push({ title: childrenData.title, key: childrenData.key });
+        currentData.push({
+          title: childrenData.title,
+          key: childrenData.key,
+          renderTitle: childrenData.renderTitle,
+        });
         if (childrenData.children) {
           getData(childrenData.children);
         }
@@ -113,7 +118,7 @@ const Tree = ({
             >
               <div className="flex justify-center items-center space-x-2">
                 {item.icon ? item.icon : null}
-                <span>{item.title}</span>
+                <span>{item.renderTitle || item.title}</span>
               </div>
               {item.onAdd && (
                 <Button variant={'grey'} onClick={item.onAdd}>

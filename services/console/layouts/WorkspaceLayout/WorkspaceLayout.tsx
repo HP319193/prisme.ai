@@ -20,7 +20,12 @@ import { appInstanceWithSlug, useApps } from '../../components/AppsProvider';
 import usePages from '../../components/PagesProvider/context';
 import AppsStore from '../../views/AppsStore';
 import { generateNewName } from '../../utils/generateNewName';
-import { HomeOutlined, WarningOutlined } from '@ant-design/icons';
+import {
+  BranchesOutlined,
+  FileOutlined,
+  HomeOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
 
 const TREE_CONTENT_TYPE = {
   automations: 'automations',
@@ -207,7 +212,11 @@ export const WorkspaceLayout: FC = ({ children }) => {
         children: (Object.entries(workspace.automations || {}) || [])
           .map(([slug, automation]) => ({
             title: localize(automation.name),
+            renderTitle: (
+              <span className="ml-2">{localize(automation.name)}</span>
+            ),
             key: `${TREE_CONTENT_TYPE.automations}:${slug}`,
+            icon: <BranchesOutlined />,
           }))
           .sort((el1, el2) => el1.key.localeCompare(el2.key)),
       },
@@ -221,12 +230,14 @@ export const WorkspaceLayout: FC = ({ children }) => {
         children: (currentPages || [])
           .map((page) => ({
             title: localize(page.name),
+            renderTitle: <span className="ml-2">{localize(page.name)}</span>,
             key: `${TREE_CONTENT_TYPE.pages}:${page.id}`,
+            icon: <FileOutlined />,
           }))
           .sort((el1, el2) => el1.key.localeCompare(el2.key)),
       },
       {
-        onAdd: (event) => {
+        onAdd: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
           event.stopPropagation();
           setAppStoreVisible(true);
         },

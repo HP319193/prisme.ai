@@ -180,7 +180,6 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
           title={t('details.title_pages')}
           visible={panelIsOpen}
           onVisibleChange={hidePanel}
-          className="-right-1/2 w-1/2"
         >
           {blockSelecting && <PageNewBlockForm {...blockSelecting} />}
           {blockEditing && <PageEditBlockForm blockId={blockEditing} />}
