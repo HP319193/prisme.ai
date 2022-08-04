@@ -42,7 +42,8 @@ interface WorkspaceSourceProps {
 }
 export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const { t } = useTranslation('workspaces');
-  const { workspace, saveSource } = useWorkspace();
+  const { workspace } = useWorkspace();
+  const { onSaveSource } = useWorkspaceLayout();
   const { setInvalid, setNewSource, invalid, saving, displaySource } =
     useWorkspaceLayout();
   const { fetch } = useWorkspaces();
@@ -127,15 +128,18 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const update = useCallback(
     async (newValue: string) => {
+      console.log('update here 1');
       setDirty(true);
       try {
         const json = await checkSyntaxAndReturnYAML(newValue);
+        console.log('update here 2');
 
         if (!json) return;
         validateWorkspace(json);
         setInvalid((validateWorkspace.errors as ValidationError[]) || false);
         setNewSource(json);
         setDirty(true);
+        console.log('update here 3');
       } catch (e) {}
     },
     [checkSyntaxAndReturnYAML, setDirty, setInvalid, setNewSource]
@@ -209,9 +213,9 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   }, [allAnnotations, ref, t]);
 
   const save = useCallback(() => {
-    saveSource();
+    onSaveSource();
     setDirty(false);
-  }, [saveSource]);
+  }, [onSaveSource]);
 
   const shortcuts = useMemo(
     () => [
@@ -232,6 +236,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   return (
     <div className="flex flex-1 flex-col" ref={ref}>
       <PageHeader
+        onBack={() => displaySource(false)}
         RightButtons={[
           <Button
             onClick={save}

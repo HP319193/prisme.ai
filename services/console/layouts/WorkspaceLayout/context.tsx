@@ -9,6 +9,8 @@ export interface WorkspaceLayoutContext {
   setInvalid: (invalid: WorkspaceLayoutContext['invalid']) => void;
   saving: boolean;
   setSaving: (s: WorkspaceLayoutContext['saving']) => void;
+  onSave: (workspace: Workspace) => void;
+  onSaveSource: () => void;
   newSource?: Workspace;
   setNewSource: (fn: WorkspaceLayoutContext['newSource']) => void;
   fullSidebar: boolean;
@@ -24,6 +26,8 @@ export const workspaceLayoutContext = createContext<WorkspaceLayoutContext>({
   setInvalid() {},
   saving: false,
   setSaving() {},
+  onSave() {},
+  onSaveSource() {},
   setNewSource() {},
   fullSidebar: false,
   setFullSidebar() {},

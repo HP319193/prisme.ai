@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { builtinBlocks } from '@prisme.ai/blocks';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
@@ -19,6 +19,7 @@ interface PageBuilderProps {
 }
 export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
   const { t } = useTranslation('workspaces');
+  const { t: commonT } = useTranslation('common');
 
   const [panelIsOpen, setPanelIsOpen] = useState(false);
   const [blockSelecting, setBlockSelecting] = useState<
@@ -175,6 +176,9 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
       }}
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">
+        <div className="absolute left-10 bottom-10 text-[0.75rem] text-pr-grey">
+          {commonT('powered')}
+        </div>
         <PageBlocks />
         <Panel
           title={t('details.title_pages')}

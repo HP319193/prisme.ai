@@ -57,7 +57,7 @@ const Link = ({
     </NextLink>
   );
 };
-const DownIcon = ({ className }: { className: string }) => (
+const DownIcon = ({ className }: { className?: string }) => (
   <Image src={down.src} width={14} height={14} alt="" className={className} />
 );
 

@@ -5,6 +5,7 @@ import {
   Layout,
   Loading,
   Modal,
+  notification,
   SidePanel,
   Tree,
 } from '@prisme.ai/design-system';
@@ -26,6 +27,7 @@ import {
   HomeOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
+import { Workspace } from '@prisme.ai/sdk';
 
 const TREE_CONTENT_TYPE = {
   automations: 'automations',
@@ -35,7 +37,7 @@ const TREE_CONTENT_TYPE = {
 };
 
 export const WorkspaceLayout: FC = ({ children }) => {
-  const { workspace, createAutomation } = useWorkspace();
+  const { workspace, createAutomation, saveSource, save } = useWorkspace();
   const { appInstances, getAppInstances } = useApps();
   const { pages, createPage } = usePages();
   const router = useRouter();
@@ -83,6 +85,35 @@ export const WorkspaceLayout: FC = ({ children }) => {
       setTimeout(() => setMountComponent(false), 200);
     }
   }, [sourceDisplayed]);
+
+  const onSaveSource = useCallback(async () => {
+    if (!newSource) return;
+
+    setSaving(true);
+    try {
+      await saveSource(newSource);
+      notification.success({
+        message: t('expert.save.confirm'),
+        placement: 'bottomRight',
+      });
+    } catch {}
+    setSaving(false);
+  }, [newSource, saveSource, t]);
+
+  const onSave = useCallback(
+    async (workspace: Workspace) => {
+      setSaving(true);
+      try {
+        await save(workspace);
+        notification.success({
+          message: t('save.confirm'),
+          placement: 'bottomRight',
+        });
+      } catch {}
+      setSaving(false);
+    },
+    [save, t]
+  );
 
   const displaySource = useCallback((v: boolean) => {
     setSourceDisplayed(v);
@@ -276,6 +307,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
     ]
   );
 
+  console.log('newSource', newSource);
+
   return (
     <workspaceLayoutContext.Provider
       value={{
@@ -283,6 +316,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
         sourceDisplayed,
         saving,
         setSaving,
+        onSave,
+        onSaveSource,
         invalid,
         setInvalid,
         newSource,

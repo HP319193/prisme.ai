@@ -12,7 +12,7 @@ export interface WorkspaceContext {
   filters: EventsFilters;
   updateFilters: (newFilters: EventsFilters) => void;
   save: (workspace: Workspace) => void;
-  saveSource: () => void;
+  saveSource: (newSource: Workspace) => void;
   events: EventsByDay | 'loading';
   nextEvents: () => void;
   readEvents: Set<string>;

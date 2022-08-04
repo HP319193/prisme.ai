@@ -35,6 +35,7 @@ declare global {
 
 export const PublicPageRenderer = ({ page }: PublicPageProps) => {
   const { t } = useTranslation('pages');
+  const { t: commonT } = useTranslation('common');
   const { localize } = useLocalizedText();
   const { user } = useUser();
   const [currentPage, setCurrentPage] = useState<Prismeai.DetailedPage | null>(
@@ -127,6 +128,9 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
       {currentPage.styles && (
         <style dangerouslySetInnerHTML={{ __html: currentPage.styles }} />
       )}
+      <div className="absolute left-10 bottom-10 text-[0.75rem] text-pr-grey">
+        {commonT('powered')}
+      </div>
       <div
         className="flex flex-1 flex-col page-blocks w-full"
         ref={containerEl}
