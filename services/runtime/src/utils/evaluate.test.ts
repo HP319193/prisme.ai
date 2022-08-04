@@ -138,6 +138,18 @@ describe('It should handle variables within {{}}', () => {
         hub: { verify_token: 'ok' },
       })
     ).toEqual(true);
+
+    expect(
+      evaluate('{{hub[verify_token]}} === "ok"', {
+        hub: { verify_token: 'ok' },
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate('{{hub["verify_token"]}} === "ok"', {
+        hub: { verify_token: 'ok' },
+      })
+    ).toEqual(true);
   });
 
   it('does not work yet with array or object comparaisons', () => {

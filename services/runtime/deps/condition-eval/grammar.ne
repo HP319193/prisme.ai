@@ -41,9 +41,12 @@
                         openingBracket: "[",
                         dot: ".",
                         word: /[a-zA-Z0-9_]+/,
+                        sqstr: /'.*?'/,
+                        dqstr: /".*?"/,
                         closingBracket: "]",
                         dcbr: { match: /}}/, pop: true }
                 },
+
                 regex: {
                         dcbl: { match: /{{/, push: "variable" },
                         closingP: { match: /\)$/, pop: true },
