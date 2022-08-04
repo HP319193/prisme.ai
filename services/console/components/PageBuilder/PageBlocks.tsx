@@ -24,7 +24,7 @@ export const PageBlocks = () => {
   );
 
   return (
-    <div className="page-blocks flex grow flex-col items-center overflow-y-auto h-full snap-y snap-mandatory">
+    <div className="page-blocks flex grow flex-col items-center overflow-y-auto h-full snap-mandatory">
       <div className="snap-start" />
       <div ref={containerEl} className="flex flex-1 flex-col w-[768px] py-8">
         {blocksInPage.length === 0 && (
