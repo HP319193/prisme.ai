@@ -1,11 +1,11 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import {
   Button,
-  Input,
-  Divider,
-  Tooltip,
   Collapse,
+  Divider,
+  Input,
   Schema,
+  Tooltip,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
@@ -89,7 +89,7 @@ export const Properties = ({
               <button
                 type="button"
                 onClick={remove(key)}
-                className="absolute top-[30px] right-3"
+                className="absolute top-[2.8rem] right-3 text-gray hover:text-orange-500"
               >
                 <DeleteOutlined />
               </button>
@@ -109,7 +109,7 @@ export const Properties = ({
   );
 
   return (
-    <div className="flex flex-1 flex-col mt-[1rem] centered-collapse">
+    <div className="flex flex-1 flex-col centered-collapse">
       {items.map((item, key) => (
         <Collapse
           key={key}

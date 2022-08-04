@@ -1,5 +1,4 @@
 import { FC, useCallback, useMemo, useState } from 'react';
-import Fieldset from '../../../layouts/Fieldset';
 import { useTranslation } from 'next-i18next';
 import {
   FieldProps,
@@ -115,7 +114,8 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   const cleanedSchema = useMemo(() => {
     const cleaned = {
       ...schema,
-      title: t('automations.instruction.description', {
+      title: t('automations.instruction.label', { context: instruction }),
+      description: t('automations.instruction.description', {
         context: instruction,
         default: schema.description,
       }),
@@ -162,20 +162,15 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   if (!schema) return null;
 
   return (
-    <Fieldset
-      legend={t('automations.instruction.label', { context: instruction })}
-      hasDivider={false}
-    >
-      <SchemaForm
-        schema={cleanedSchema}
-        onChange={onChange}
-        initialValues={value}
-        buttons={EmptyButtons}
-        components={components}
-        locales={locales}
-        utils={{ extractSelectOptions }}
-      />
-    </Fieldset>
+    <SchemaForm
+      schema={cleanedSchema}
+      onChange={onChange}
+      initialValues={value}
+      buttons={EmptyButtons}
+      components={components}
+      locales={locales}
+      utils={{ extractSelectOptions }}
+    />
   );
 };
 

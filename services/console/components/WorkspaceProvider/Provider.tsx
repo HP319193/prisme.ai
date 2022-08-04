@@ -468,7 +468,6 @@ export const WorkspaceProvider: FC = ({ children }) => {
           [fetchedAppInstance.slug]: fetchedAppInstance,
         },
       };
-      console.log('updated', updatedWorkspace);
 
       setCurrentWorkspace(updatedWorkspace);
 

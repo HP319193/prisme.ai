@@ -67,7 +67,7 @@ const HeaderWorkspace = () => {
         },
         links: {
           'ui:widget': () => (
-            <div className="ant-input !flex flex-1 justify-between !mt-4">
+            <div className="!flex flex-1 justify-between !mt-4 !mb-6">
               <Button
                 className="flex items-center"
                 onClick={() => {

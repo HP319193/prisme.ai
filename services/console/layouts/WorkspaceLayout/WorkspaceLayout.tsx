@@ -307,8 +307,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     ]
   );
 
-  console.log('newSource', newSource);
-
   return (
     <workspaceLayoutContext.Provider
       value={{

@@ -1,5 +1,5 @@
 import { Select as AntdSelect, SelectProps as AntdSelectProps } from 'antd';
-import FloatingLabel from './Internal/FloatingLabel';
+import { WithLabel } from '../';
 import { ReactNode } from 'react';
 
 const { Option, OptGroup } = AntdSelect;
@@ -20,39 +20,41 @@ const isSelectGroup = (i: SelectGroup | SelectOption): i is SelectGroup =>
 export interface SelectProps extends AntdSelectProps {
   selectOptions: SelectOption[] | SelectGroup[];
   label?: string;
+  overrideContainerClassName?: string;
 }
 
-const Select = ({ selectOptions, label, ...otherProps }: SelectProps) => (
-  <FloatingLabel
-    label={label}
-    component={
-      <AntdSelect
-        {...otherProps}
-        className={`flex grow ${otherProps.className || ''}`}
-        dropdownMatchSelectWidth={false}
-      >
-        {selectOptions.map((item, index) => {
-          if (isSelectGroup(item)) {
-            return (
-              <OptGroup key={index} label={item.label}>
-                {item.options.map((item, k) => (
-                  <Option key={`${index}-${k}`} value={item.value}>
-                    {item.label}
-                  </Option>
-                ))}
-              </OptGroup>
-            );
-          }
+const Select = ({
+  selectOptions,
+  label,
+  overrideContainerClassName,
+  ...otherProps
+}: SelectProps) => (
+  <WithLabel label={label} overrideClassName={overrideContainerClassName}>
+    <AntdSelect
+      {...otherProps}
+      className={`flex grow ${otherProps.className || ''}`}
+      dropdownMatchSelectWidth={false}
+    >
+      {selectOptions.map((item, index) => {
+        if (isSelectGroup(item)) {
           return (
-            <Option key={index} value={item.value}>
-              {item.label}
-            </Option>
+            <OptGroup key={index} label={item.label}>
+              {item.options.map((item, k) => (
+                <Option key={`${index}-${k}`} value={item.value}>
+                  {item.label}
+                </Option>
+              ))}
+            </OptGroup>
           );
-        })}
-      </AntdSelect>
-    }
-    raisedPlaceholder={true}
-  />
+        }
+        return (
+          <Option key={index} value={item.value}>
+            {item.label}
+          </Option>
+        );
+      })}
+    </AntdSelect>
+  </WithLabel>
 );
 
 export default Select;

@@ -20,6 +20,10 @@ h5.ant-typography,
   letter-spacing: 2px;
 }
 
+body {
+  font-weight: 300;
+}
+
 // Layout
 
 @layout-body-background: transparent;
@@ -184,16 +188,15 @@ h5.ant-typography,
 
 // Input
 
-.pr-label-top,
-.pr-input:focus-within label {
-  transform: scale(0.75) translateY(-3rem) translateX(-1.15rem);
-  color: @text-color-secondary;
-}
-
 .ant-input-affix-wrapper {
   min-height: 50px;
   height: 50px;
   flex-basis: 50px;
+}
+
+
+.ant-input {
+  border-radius: 0.3rem;
 }
 
 // Checkbox
@@ -205,6 +208,7 @@ h5.ant-typography,
 // Select
 .ant-select:not(.ant-select-customize-input) .ant-select-selector {
   height: 50px;
+  border-radius: 0.3rem
 }
 
 .ant-select-selection-item {
@@ -239,8 +243,25 @@ h5.ant-typography,
   border-radius: 2px;
 }
 
+// Fix for a weird tree interaction which grows the page beyond 100vw
+.ant-tree-node-content-wrapper, .ant-tree-treenode, .ant-tree-list-holder-inner{
+  width: unset !important;
+;
+}
+
 // Modal
 
 .ant-modal-body {
   padding: 0;
+}
+
+// Popover
+
+.ant-popover-title {
+  padding: 0;
+}
+
+.ant-popover-inner-content {
+  max-height: 75vh;
+  overflow: auto;
 }

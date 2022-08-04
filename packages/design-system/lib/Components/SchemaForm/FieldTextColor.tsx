@@ -38,7 +38,7 @@ export const FieldTextColor = (props: FieldProps) => {
           />
           <label
             htmlFor={id.current}
-            className="ml-2 p-2 rounded text-black"
+            className="ml-2 p-2 !rounded-[0.3rem] text-black"
             style={{
               color: colorIsLight ? '' : field.input.value,
               backgroundColor: colorIsLight ? field.input.value : '',

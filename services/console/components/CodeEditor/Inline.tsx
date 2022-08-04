@@ -16,7 +16,7 @@ export const CodeEditorInline: React.FC<CodeEditorProps> = ({
           flex: 1,
           minHeight: '50px',
           border: '1px solid #E5E5E5',
-          borderRadius: '10px',
+          borderRadius: '0.3rem',
           padding: '10px',
           ...(singleLine ? undefined : { background: 'white' }),
           ...props.style,

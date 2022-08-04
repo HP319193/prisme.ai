@@ -3,8 +3,8 @@ import {
   SchemaFormDescription,
   schemaTypes,
   Select,
-  UIWidgetsByType,
   Tooltip,
+  UIWidgetsByType,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
@@ -158,7 +158,7 @@ export const SchemaFormBuilder = ({
   }, [t, value]);
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col space-y-5">
       <div className="flex flex-row">
         <SchemaFormDescription
           className="flex-1 mr-2"
@@ -195,7 +195,7 @@ export const SchemaFormBuilder = ({
         InputProps={{
           label: t('schema.property.title'),
         }}
-        iconMarginTop={17}
+        iconMarginTop={'2.3rem'}
       />
       <SchemaFormDescription
         text={t('schema.property.description.description')}
@@ -206,7 +206,7 @@ export const SchemaFormBuilder = ({
           InputProps={{
             label: t('schema.property.description.label'),
           }}
-          iconMarginTop={17}
+          iconMarginTop={'2.3rem'}
         />
       </SchemaFormDescription>
 

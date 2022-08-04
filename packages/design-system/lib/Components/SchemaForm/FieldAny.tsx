@@ -28,7 +28,7 @@ export const FieldAny = ({ schema, name, label }: FieldProps) => {
   return (
     <div className="flex flex-1 flex-col my-2">
       <Description text={schema.description}>
-        <label className="text-[10px] text-gray">
+        <label className="flex">
           {label || schema.title || getLabel(name)}
         </label>
         <JSONEditor
