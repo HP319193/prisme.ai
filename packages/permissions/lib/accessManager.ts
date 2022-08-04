@@ -539,7 +539,6 @@ export class AccessManager<
     subjects: SubjectInterfaces[returnType][]
   ): Promise<SubjectInterfaces[returnType][]> {
     await this.pullRoleFromSubjectFieldRefs(subjectType, subjects[0]);
-
     const filtered = await Promise.all(
       subjects.map(async (cur) => {
         const accessible = await this.can(actionType, subjectType, cur);

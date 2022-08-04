@@ -34,6 +34,9 @@ export function injectConditions(
       };
     }
     const injectedValue = injectPlaceholders(v, ctx);
+    if (injectedValue == undefined) {
+      return injected;
+    }
     return {
       ...injected,
       [injectedKey]:
@@ -45,13 +48,19 @@ export function injectConditions(
 }
 
 export function injectRules(rules: RawRuleOf<Ability>[], ctx: RuleContext) {
-  return rules.map((cur) => {
-    let conditions = cur.conditions;
-    if (conditions) {
-      conditions = injectConditions({ ...conditions }, ctx);
-    }
-    return { ...cur, conditions };
-  });
+  return rules
+    .map((cur) => {
+      let conditions = cur.conditions;
+      if (conditions && Object.keys(conditions).length) {
+        conditions = injectConditions({ ...conditions }, ctx);
+        // Some placeholders are missing : skip this rule
+        if (!Object.keys(conditions).length) {
+          return false;
+        }
+      }
+      return { ...cur, conditions };
+    })
+    .filter(Boolean);
 }
 
 // Sort rules from the most generic to the most specific (otherwise 'cannot' rules could be overriden by 'can')
