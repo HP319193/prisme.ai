@@ -1,4 +1,5 @@
 import {
+  Button,
   Loading,
   notification,
   Schema,
@@ -22,6 +23,7 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
     workspace: { id: workspaceId },
   } = useWorkspace();
   const { t } = useTranslation('workspaces');
+  const { t: commmonT } = useTranslation('common');
   const { t: errorT } = useTranslation('errors');
   const { setDirty } = useWorkspaceLayout();
   const { appConfig, onAppConfigUpdate } = useAppConfig(workspaceId, appId);
@@ -59,6 +61,18 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
           }}
           onSubmit={onSubmit}
           initialValues={appConfig}
+          buttons={[
+            <div className="flex w-full justify-end mt-5">
+              <Button
+                type="submit"
+                className="!p-1"
+                variant="primary"
+                key="submit"
+              >
+                {commmonT('save')}
+              </Button>
+            </div>,
+          ]}
         />
       </div>
     );

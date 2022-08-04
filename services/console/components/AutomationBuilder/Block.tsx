@@ -246,7 +246,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
               : name}
             {removable && (
               <button
-                className="border-none cursor-pointer"
+                className="border-none cursor-pointer flex justify-center items-center"
                 style={{
                   background: 'none',
                   visibility: isHover ? 'visible' : 'hidden',

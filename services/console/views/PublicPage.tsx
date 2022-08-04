@@ -128,7 +128,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
       {currentPage.styles && (
         <style dangerouslySetInnerHTML={{ __html: currentPage.styles }} />
       )}
-      <div className="absolute left-10 bottom-10 text-[0.75rem] text-pr-grey">
+      <div className="absolute left-2 bottom-2 text-[0.75rem] text-pr-grey z-0">
         {commonT('powered')}
       </div>
       <div
@@ -141,7 +141,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
             className={`page-block block-${appInstance.replace(
               /\s/g,
               '-'
-            )} block-${name.replace(/\s/g, '-')} snap-start`}
+            )} block-${name.replace(/\s/g, '-')} snap-start z-10`}
             id={blocksConfigs[index] && blocksConfigs[index].sectionId}
           >
             <PublicPageBlock
