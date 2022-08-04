@@ -20,7 +20,6 @@ import { useUser } from '../UserProvider';
 import { useWorkspaces } from '../WorkspacesProvider';
 import { useRouter } from 'next/router';
 import { useWorkspace } from '../WorkspaceProvider';
-import Role = Prismeai.Role;
 
 interface SharePopoverProps {
   subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType;
@@ -33,7 +32,7 @@ interface userPermissionForm {
 }
 
 type SelectOption = {
-  value: Role;
+  value: Prismeai.Role;
   label: string;
 };
 
@@ -65,7 +64,9 @@ const ShareWorkspacePopover = ({
   );
 
   const [emailInput, setEmailInput] = useState('');
-  const [roleInput, setRoleInput] = useState<Role>(rolesOptions[0].value);
+  const [roleInput, setRoleInput] = useState<Prismeai.Role>(
+    rolesOptions[0].value
+  );
 
   const generateRowButtons = useCallback(
     (onDelete: Function) => (
@@ -153,7 +154,7 @@ const ShareWorkspacePopover = ({
   ]);
 
   return (
-    <div className="w-[60vw] space-y-5">
+    <div className="w-[42rem] space-y-5">
       <div className="flex flex-grow flex-row items-center justify-center">
         <Input
           placeholder={t('share.email')}

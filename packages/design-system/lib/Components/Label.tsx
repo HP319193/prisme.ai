@@ -26,7 +26,11 @@ export const WithLabel = ({
   label,
 }: WithLabelProps) => {
   return (
-    <div className={overrideClassName || `flex flex-1 flex-col ${className}`}>
+    <div
+      className={
+        overrideClassName || `flex flex-1 flex-col justify-between ${className}`
+      }
+    >
       {label && (
         <label
           className={`flex mb-[0.625rem]`}

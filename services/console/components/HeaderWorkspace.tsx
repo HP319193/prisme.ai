@@ -137,6 +137,7 @@ const HeaderWorkspace = () => {
           <Popover
             content={() => <ShareComponent />}
             title={label || t('share.label')}
+            titleClassName="!bg-white !text-black"
           >
             <Button variant="grey" className="!text-white">
               <Space>

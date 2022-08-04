@@ -32,7 +32,7 @@ const Select = ({
   <WithLabel label={label} overrideClassName={overrideContainerClassName}>
     <AntdSelect
       {...otherProps}
-      className={`flex grow ${otherProps.className || ''}`}
+      className={`flex ${otherProps.className || ''}`}
       dropdownMatchSelectWidth={false}
     >
       {selectOptions.map((item, index) => {

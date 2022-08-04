@@ -16,6 +16,7 @@ export interface PopoverProps extends AntdPopoverProps {
   initialVisible?: boolean;
   visible?: boolean;
   onVisibleChange?: (visible: boolean) => void;
+  titleClassName?: string;
 }
 
 const Popover: FC<PopoverProps> = ({
@@ -25,6 +26,7 @@ const Popover: FC<PopoverProps> = ({
   initialVisible = false,
   visible: controlledVisible,
   onVisibleChange,
+  titleClassName,
   ...otherProps
 }) => {
   const [visible, setVisible] = useState(initialVisible);
@@ -50,7 +52,11 @@ const Popover: FC<PopoverProps> = ({
         </div>
       }
       title={
-        <div className="flex w-full items-center justify-between flex-row p-5 bg-accent text-white font-semibold overflow-hidden rounded-t-[0.6rem]">
+        <div
+          className={`flex w-full items-center justify-between flex-row p-[2.5rem] !pb-[1.4rem] font-semibold overflow-hidden rounded-t-[0.6rem] ${
+            titleClassName || ''
+          }`}
+        >
           {typeof title === 'function' ? title({ setVisible }) : title}
         </div>
       }

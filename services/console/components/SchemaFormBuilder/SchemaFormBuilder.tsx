@@ -161,7 +161,7 @@ export const SchemaFormBuilder = ({
     <div className="flex flex-1 flex-col space-y-5">
       <div className="flex flex-row">
         <SchemaFormDescription
-          className="flex-1 mr-2"
+          className="flex flex-1 mr-2"
           text={t('schema.property.widget.description')}
         >
           <Select
@@ -173,7 +173,7 @@ export const SchemaFormBuilder = ({
         </SchemaFormDescription>
 
         <SchemaFormDescription
-          className="flex-1"
+          className="flex flex-1"
           text={t('schema.property.type.description')}
         >
           <Select

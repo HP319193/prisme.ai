@@ -154,7 +154,7 @@ Array [
       >
         App
         <button
-          className="border-none cursor-pointer"
+          className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
           style={
             Object {
