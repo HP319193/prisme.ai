@@ -31,6 +31,22 @@ it('should replace successfully a singled-out param by its value', async () => {
   expect(replacedStream).toEqual(['Hello', 'beautiful', 'array']);
 });
 
+it('should replace successfully a nested param', async () => {
+  const replacedStream = interpolate('{{param[0]}}', {
+    param: ['Hello', 'beautiful', 'array'],
+  });
+
+  expect(replacedStream).toEqual('Hello');
+});
+
+it('should replace successfully a specific char by string index', async () => {
+  const replacedStream = interpolate('{{param[0]}}', {
+    param: 'Hello',
+  });
+
+  expect(replacedStream).toEqual('H');
+});
+
 it('should replace successfully a singled-out param with value 0', async () => {
   const replacedStream = interpolate('{{param}}', {
     param: 0,
