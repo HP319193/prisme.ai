@@ -2,6 +2,7 @@ import { Broker } from '@prisme.ai/broker';
 import _ from 'lodash';
 import {
   CONTEXT_RUN_EXPIRE_TIME,
+  CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME,
   MAXIMUM_SUCCESSIVE_CALLS,
 } from '../../../config';
 import { CacheDriver } from '../../cache';
@@ -224,7 +225,9 @@ export class ContextsManager {
     }
     if (!context || context === ContextType.Session) {
       await this.cache.setObject(this.cacheKey(ContextType.Session), session, {
-        ttl: this.session?.expiresIn || 60 * 15,
+        ttl:
+          this.session?.expiresIn ||
+          CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME,
       });
     }
 
