@@ -47,20 +47,27 @@ export function injectConditions(
   }, {});
 }
 
-export function injectRules(rules: RawRuleOf<Ability>[], ctx: RuleContext) {
+export function injectRules(
+  rules: RawRuleOf<Ability>[],
+  ctx: RuleContext
+): RawRuleOf<Ability>[] {
   return rules
-    .map((cur) => {
-      let conditions = cur.conditions;
-      if (conditions && Object.keys(conditions).length) {
+    .map((cur): RawRuleOf<Ability> | false => {
+      let conditions: MongoQuery = cur.conditions || {};
+      const rulesNb = Object.keys(conditions).length;
+      if (rulesNb) {
         conditions = injectConditions({ ...conditions }, ctx);
         // Some placeholders are missing : skip this rule
-        if (!Object.keys(conditions).length) {
+        if (Object.keys(conditions).length !== rulesNb) {
           return false;
         }
       }
       return { ...cur, conditions };
     })
-    .filter(Boolean);
+    .filter(
+      (cur: RawRuleOf<Ability> | false): cur is RawRuleOf<Ability> =>
+        cur !== false
+    );
 }
 
 // Sort rules from the most generic to the most specific (otherwise 'cannot' rules could be overriden by 'can')
