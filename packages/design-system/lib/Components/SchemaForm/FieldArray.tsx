@@ -22,6 +22,8 @@ export const FieldArray = (props: FieldProps) => {
   if (!items) return null;
 
   const asRow = isUiOptionsArray(uiOptions) && uiOptions.array === 'row';
+  console.log('schema', props.schema);
+  console.log('row', asRow);
 
   return (
     <div className="p-2">

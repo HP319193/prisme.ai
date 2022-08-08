@@ -10,8 +10,8 @@
     "description": "Editing Workspace \"{{name}}\"",
     "share": "Share this workspace",
     "empty": "<button>Create your first automation</button>",
-    "dirtyWarning": "Your current work haven't been saved. Change page anyway ?",
-    "dirtyOk": "Change page",
+    "dirtyWarning": "Your current work haven't been saved. Quit anyway ?",
+    "dirtyOk": "Quit",
     "delete": {
       "label": "Delete Workspace",
       "confirm": {
@@ -332,6 +332,14 @@
     "search": "Search for an app...",
     "title": "App Store",
     "saveSuccess": "App config saved successfully",
+    "details": {
+      "appName": {
+        "label": "App Name"
+      },
+      "slug": {
+        "label": "Technical name"
+      }
+    },
     "publish": {
       "menuLabel": "Publish as an app",
       "confirm": {
@@ -659,6 +667,7 @@
     "title_workspaces": "Workspace settings",
     "title_automations": "Automation settings",
     "title_pages": "Block settings",
+    "title_apps": "App settings",
     "save": "Save",
     "delete": {
       "label": "Delete",
