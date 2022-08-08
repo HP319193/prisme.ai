@@ -16,7 +16,11 @@ import {
   Space,
   Tooltip,
 } from '@prisme.ai/design-system';
-import { LoadingOutlined, ShareAltOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  LoadingOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons';
 import useLocalizedText from '../utils/useLocalizedText';
 import PageBuilder from '../components/PageBuilder';
 import { PageBuilderContext } from '../components/PageBuilder/context';
@@ -77,13 +81,27 @@ const CSSEditor = ({
       {
         label: (
           <SchemaFormDescription text={t('pages.details.styles.description')}>
-            <label className="text-[10px] text-gray cursor-pointer">
-              {t('pages.details.styles.label')}
-            </label>
+            <div className="flex w-[95%] justify-between items-center">
+              <label className="font-normal cursor-pointer">
+                {t('pages.details.styles.label')}
+              </label>
+              <Tooltip title={t('pages.details.styles.reset.description')}>
+                <button
+                  type="button"
+                  className="text-gray hover:text-orange-500 text-xs pr-2 flex items-center"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setReseting(true);
+                  }}
+                >
+                  <DeleteOutlined />
+                </button>
+              </Tooltip>
+            </div>
           </SchemaFormDescription>
         ),
         content: (
-          <div className="relative flex h-80 -m-[1rem] mt-0 rounded-b overflow-hidden">
+          <div className="relative flex h-80 mt-0 rounded-b overflow-hidden">
             {!reseting && (
               <CodeEditor
                 mode="css"
@@ -92,15 +110,6 @@ const CSSEditor = ({
                 completers={completers}
               />
             )}
-            <Tooltip title={t('pages.details.styles.reset.description')}>
-              <button
-                type="button"
-                className="absolute bottom-0 right-0 text-xs pr-2"
-                onClick={() => setReseting(true)}
-              >
-                {t('pages.details.styles.reset.label')}
-              </button>
-            </Tooltip>
           </div>
         ),
       },
@@ -158,9 +167,6 @@ export const Page = () => {
       pageId === prevPageId &&
       JSON.stringify(page) !== JSON.stringify(clonedValue)
     ) {
-      console.log('page', page);
-      console.log('value', clonedValue);
-
       setDirty(true);
     }
   }, [value, pageId, prevPageId, setDirty, page]);

@@ -22,18 +22,24 @@ export const FieldArray = (props: FieldProps) => {
   if (!items) return null;
 
   const asRow = isUiOptionsArray(uiOptions) && uiOptions.array === 'row';
+  console.log('schema', props.schema);
+  console.log('row', asRow);
 
   return (
-    <div className="m-2 p-2 border-l-[1px] border-gray-200">
+    <div className="p-2">
       <Description text={props.schema.description}>
         <components.FieldContainer {...props}>
-          <label className="text-[10px] text-gray">
+          <label className="flex mb-5">
             {props.label || props.schema.title || getLabel(props.name)}
           </label>
           <FFFieldArray name={props.name}>
             {({ fields }) => (
               <>
-                <div className={asRow ? 'flex flex-row flex-wrap' : 'flex-1'}>
+                <div
+                  className={
+                    asRow ? 'flex flex-row flex-wrap' : 'ml-2 flex-1 space-y-5'
+                  }
+                >
                   {fields.map((field, index) => (
                     <div
                       key={field}
@@ -41,7 +47,9 @@ export const FieldArray = (props: FieldProps) => {
                         asRow ? 'min-w-[30%]' : ''
                       }`}
                     >
-                      <div className={asRow ? 'min-w-full' : 'flex-1'}>
+                      <div
+                        className={asRow ? 'min-w-full' : 'flex-1 space-y-5'}
+                      >
                         <Field schema={items} name={field} />
                         <Button
                           onClick={() => fields.remove(index)}
@@ -58,7 +66,7 @@ export const FieldArray = (props: FieldProps) => {
                     </div>
                   ))}
                 </div>
-                <div className="flex w-full justify-end">
+                <div className="flex w-full justify-end mt-5">
                   <Button
                     onClick={() => fields.push(getDefaultValue(items.type))}
                     className="flex items-center"

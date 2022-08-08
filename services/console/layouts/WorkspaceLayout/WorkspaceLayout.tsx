@@ -5,6 +5,7 @@ import {
   Layout,
   Loading,
   Modal,
+  notification,
   SidePanel,
   Tree,
 } from '@prisme.ai/design-system';
@@ -20,7 +21,13 @@ import { appInstanceWithSlug, useApps } from '../../components/AppsProvider';
 import usePages from '../../components/PagesProvider/context';
 import AppsStore from '../../views/AppsStore';
 import { generateNewName } from '../../utils/generateNewName';
-import { HomeOutlined, WarningOutlined } from '@ant-design/icons';
+import {
+  BranchesOutlined,
+  FileOutlined,
+  HomeOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
+import { Workspace } from '@prisme.ai/sdk';
 
 const TREE_CONTENT_TYPE = {
   automations: 'automations',
@@ -30,7 +37,7 @@ const TREE_CONTENT_TYPE = {
 };
 
 export const WorkspaceLayout: FC = ({ children }) => {
-  const { workspace, createAutomation } = useWorkspace();
+  const { workspace, createAutomation, saveSource, save } = useWorkspace();
   const { appInstances, getAppInstances } = useApps();
   const { pages, createPage } = usePages();
   const router = useRouter();
@@ -78,6 +85,35 @@ export const WorkspaceLayout: FC = ({ children }) => {
       setTimeout(() => setMountComponent(false), 200);
     }
   }, [sourceDisplayed]);
+
+  const onSaveSource = useCallback(async () => {
+    if (!newSource) return;
+
+    setSaving(true);
+    try {
+      await saveSource(newSource);
+      notification.success({
+        message: t('expert.save.confirm'),
+        placement: 'bottomRight',
+      });
+    } catch {}
+    setSaving(false);
+  }, [newSource, saveSource, t]);
+
+  const onSave = useCallback(
+    async (workspace: Workspace) => {
+      setSaving(true);
+      try {
+        await save(workspace);
+        notification.success({
+          message: t('save.confirm'),
+          placement: 'bottomRight',
+        });
+      } catch {}
+      setSaving(false);
+    },
+    [save, t]
+  );
 
   const displaySource = useCallback((v: boolean) => {
     setSourceDisplayed(v);
@@ -207,7 +243,11 @@ export const WorkspaceLayout: FC = ({ children }) => {
         children: (Object.entries(workspace.automations || {}) || [])
           .map(([slug, automation]) => ({
             title: localize(automation.name),
+            renderTitle: (
+              <span className="ml-2">{localize(automation.name)}</span>
+            ),
             key: `${TREE_CONTENT_TYPE.automations}:${slug}`,
+            icon: <BranchesOutlined />,
           }))
           .sort((el1, el2) => el1.key.localeCompare(el2.key)),
       },
@@ -221,12 +261,14 @@ export const WorkspaceLayout: FC = ({ children }) => {
         children: (currentPages || [])
           .map((page) => ({
             title: localize(page.name),
+            renderTitle: <span className="ml-2">{localize(page.name)}</span>,
             key: `${TREE_CONTENT_TYPE.pages}:${page.id}`,
+            icon: <FileOutlined />,
           }))
           .sort((el1, el2) => el1.key.localeCompare(el2.key)),
       },
       {
-        onAdd: (event) => {
+        onAdd: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
           event.stopPropagation();
           setAppStoreVisible(true);
         },
@@ -272,6 +314,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
         sourceDisplayed,
         saving,
         setSaving,
+        onSave,
+        onSaveSource,
         invalid,
         setInvalid,
         newSource,
@@ -325,7 +369,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
               />
             </div>
           </SidePanel>
-          <div className="flex h-full flex-col flex-1">
+          <div className="flex h-full flex-col flex-1 min-w-[500px]">
             {creating ? <Loading /> : children}
           </div>
         </div>

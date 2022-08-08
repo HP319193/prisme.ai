@@ -1,13 +1,11 @@
 import { Popover as AntdPopover, PopoverProps as AntdPopoverProps } from 'antd';
 import {
-  Dispatch,
   FC,
   ReactElement,
   ReactNode,
-  SetStateAction,
-  useState,
-  useEffect,
   useCallback,
+  useEffect,
+  useState,
 } from 'react';
 
 type SetVisible = (visible: boolean) => void;
@@ -18,6 +16,7 @@ export interface PopoverProps extends AntdPopoverProps {
   initialVisible?: boolean;
   visible?: boolean;
   onVisibleChange?: (visible: boolean) => void;
+  titleClassName?: string;
 }
 
 const Popover: FC<PopoverProps> = ({
@@ -27,6 +26,7 @@ const Popover: FC<PopoverProps> = ({
   initialVisible = false,
   visible: controlledVisible,
   onVisibleChange,
+  titleClassName,
   ...otherProps
 }) => {
   const [visible, setVisible] = useState(initialVisible);
@@ -46,8 +46,20 @@ const Popover: FC<PopoverProps> = ({
 
   return (
     <AntdPopover
-      content={() => content({ setVisible: toggleVisible })}
-      title={typeof title === 'function' ? title({ setVisible }) : title}
+      content={
+        <div className="flex flex-1 h-full overflow-auto">
+          {content({ setVisible: toggleVisible })}
+        </div>
+      }
+      title={
+        <div
+          className={`flex w-full items-center justify-between flex-row p-[2.5rem] !pb-[1.4rem] font-semibold overflow-hidden rounded-t-[0.6rem] ${
+            titleClassName || ''
+          }`}
+        >
+          {typeof title === 'function' ? title({ setVisible }) : title}
+        </div>
+      }
       trigger="click"
       visible={visible}
       onVisibleChange={(visible) => toggleVisible(visible)}

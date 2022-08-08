@@ -175,9 +175,6 @@ const schema: Schema = {
           },
         },
       },
-      'ui:options': {
-        array: 'row',
-      },
     },
     layout: {
       type: 'object',

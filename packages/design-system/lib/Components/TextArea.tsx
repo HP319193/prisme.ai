@@ -1,6 +1,7 @@
 import { Input as AntdInput } from 'antd';
 import { TextAreaProps as AntdTextareaProps } from 'antd/lib/input/TextArea';
 import { forwardRef } from 'react';
+import { WithLabel } from './Label';
 
 const { TextArea: AntdTextarea } = AntdInput;
 
@@ -16,23 +17,14 @@ const TextArea = forwardRef(
     ref: any
   ) => {
     return (
-      <div className={`flex-1 relative pr-input ${label ? 'mt-5' : ''}`}>
+      <WithLabel label={label}>
         <AntdTextarea
           ref={ref}
           placeholder={placeholder}
-          className={`${className} rounded h-[50px] basis-[50px]`}
+          className={`${className} !rounded-[0.3rem] h-[50px] basis-[50px]`}
           {...otherProps}
         />
-        {placeholder || otherProps.value ? (
-          <label className="duration-75 ease-in absolute top-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none pr-label-top">
-            {label}
-          </label>
-        ) : (
-          <label className="duration-75 ease-in absolute top-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none">
-            {label}
-          </label>
-        )}
-      </div>
+      </WithLabel>
     );
   }
 );

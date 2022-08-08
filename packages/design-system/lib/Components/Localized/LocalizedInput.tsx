@@ -45,7 +45,7 @@ export interface LocalizedInputProps {
 }
 
 const DftInput = forwardRef((props: InputProps, ref: any) => (
-  <Input ref={ref} containerClassName="flex flex-1" {...props} />
+  <Input ref={ref} {...props} />
 ));
 
 export const LocalizedInput = ({
@@ -183,7 +183,6 @@ export const LocalizedInput = ({
     <div className={`flex flex-1 flex-row relative ${className}`}>
       <Component
         ref={input}
-        className="flex flex-1"
         value={isLocalizedTextObject(value) ? value[selectedLang] : value}
         onChange={({ target: { value } }: ChangeEvent<HTMLInputElement>) =>
           setValue(value, selectedLang)
@@ -205,7 +204,9 @@ export const LocalizedInput = ({
             onChange={(lang) => {
               addLang(lang);
             }}
-            renderValue={() => <GlobalOutlined />}
+            renderValue={() => (
+              <GlobalOutlined className="text-gray hover:text-accent" />
+            )}
             showSearch
             placement="bottomRight"
           />

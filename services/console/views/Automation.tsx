@@ -163,7 +163,6 @@ export const Automation = () => {
           message: t('automations.save.toast'),
           placement: 'bottomRight',
         });
-        console.log('false');
         setDirty(false);
         setSaving(false);
         return saved;

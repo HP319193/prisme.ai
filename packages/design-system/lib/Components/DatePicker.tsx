@@ -3,7 +3,7 @@ import {
   DatePickerProps as AntdDatePickerProps,
 } from 'antd';
 import moment from 'moment';
-import FloatingLabel from './Internal/FloatingLabel';
+import { WithLabel } from '../';
 
 export type DatePickerProps = {
   stringValue?: string;
@@ -26,21 +26,16 @@ const DatePicker = ({
   const _value = stringValue ? moment(stringValue) : value;
 
   return (
-    <FloatingLabel
-      label={label}
-      component={
-        <AntdDatePicker
-          format={dateFormat}
-          value={_value}
-          onChange={onChange}
-          className={`h-[50px] basis-[50px] flex flex-1 ${className}`}
-          placeholder=""
-          {...props}
-        />
-      }
-      raisedPlaceholder={!!(placeholder || _value)}
-      className="flex-1"
-    />
+    <WithLabel label={label} className="flex-1">
+      <AntdDatePicker
+        format={dateFormat}
+        value={_value}
+        onChange={onChange}
+        className={`h-[50px] basis-[50px] flex flex-1 ${className}`}
+        placeholder=""
+        {...props}
+      />
+    </WithLabel>
   );
 };
 

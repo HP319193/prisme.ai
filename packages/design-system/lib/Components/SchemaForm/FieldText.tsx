@@ -51,7 +51,6 @@ export const FieldText = (props: FieldProps) => {
           {...field.input}
           onChange={onChange}
           label={props.label || props.schema.title || getLabel(props.name)}
-          containerClassName="flex flex-1"
           type={props.schema.type === 'number' ? 'number' : 'text'}
         />
       </components.FieldContainer>

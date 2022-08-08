@@ -35,6 +35,7 @@ declare global {
 
 export const PublicPageRenderer = ({ page }: PublicPageProps) => {
   const { t } = useTranslation('pages');
+  const { t: commonT } = useTranslation('common');
   const { localize } = useLocalizedText();
   const { user } = useUser();
   const [currentPage, setCurrentPage] = useState<Prismeai.DetailedPage | null>(
@@ -119,7 +120,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
   }
 
   return (
-    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-scroll min-h-full snap-y snap-mandatory">
+    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-auto min-h-full snap-mandatory">
       <Head>
         <title>{localize(currentPage.name)}</title>
         <meta name="description" content={localize(currentPage.description)} />
@@ -127,6 +128,9 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
       {currentPage.styles && (
         <style dangerouslySetInnerHTML={{ __html: currentPage.styles }} />
       )}
+      <div className="absolute left-2 bottom-2 text-[0.75rem] text-pr-grey z-0">
+        {commonT('powered')}
+      </div>
       <div
         className="flex flex-1 flex-col page-blocks w-full"
         ref={containerEl}
@@ -137,7 +141,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
             className={`page-block block-${appInstance.replace(
               /\s/g,
               '-'
-            )} block-${name.replace(/\s/g, '-')} snap-start`}
+            )} block-${name.replace(/\s/g, '-')} snap-start z-10`}
             id={blocksConfigs[index] && blocksConfigs[index].sectionId}
           >
             <PublicPageBlock

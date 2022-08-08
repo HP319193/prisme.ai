@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import NextLink from 'next/link';
+import Image from 'next/image';
 import ReactDom from 'react-dom';
 import * as prismeaiDS from '@prisme.ai/design-system';
 import { Loading as DSLoading } from '@prisme.ai/design-system';
@@ -20,6 +21,7 @@ import '@prisme.ai/design-system/styles/theme.css';
 import PermissionsProvider from '../components/PermissionsProvider';
 import { AppsProvider } from '../components/AppsProvider';
 import PagesProvider from '../components/PagesProvider/PagesProvider';
+import down from '../icons/down.svg';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -55,6 +57,9 @@ const Link = ({
     </NextLink>
   );
 };
+const DownIcon = ({ className }: { className?: string }) => (
+  <Image src={down.src} width={14} height={14} alt="" className={className} />
+);
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
@@ -64,7 +69,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     return (
       <UserProvider anonymous>
         <PagesProvider>
-          <BlocksProvider externals={externals} components={{ Link, Loading }}>
+          <BlocksProvider
+            externals={externals}
+            components={{ Link, Loading, DownIcon }}
+          >
             <Head>
               <title>{t('main.title')}</title>
               <meta name="description" content={t('main.description')} />
@@ -90,7 +98,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             <PagesProvider>
               <BlocksProvider
                 externals={externals}
-                components={{ Link, Loading }}
+                components={{ Link, Loading, DownIcon }}
               >
                 <Head>
                   <title>{t('main.title')}</title>

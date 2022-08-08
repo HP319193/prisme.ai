@@ -39,7 +39,7 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
       {({ handleSubmit }) => (
         <form onSubmit={handleSubmit} className="md:w-96 flex">
           <div className="flex flex-col grow">
-            <Field name="email" containerClassName="!m-0 !mb-4">
+            <Field name="email" containerClassName="!mx-0 !mb-4">
               {({ input: { type, ...inputProps }, className }) => (
                 <Input
                   placeholder={t('in.email')}
@@ -48,7 +48,7 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
                 />
               )}
             </Field>
-            <Field name="password" containerClassName="!m-0 !mb-8">
+            <Field name="password" containerClassName="!mx-0 !mb-8">
               {({ input: { type, ...inputProps }, className }) => (
                 <Input
                   placeholder={t('in.password')}

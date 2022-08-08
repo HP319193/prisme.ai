@@ -44,7 +44,7 @@ export const FieldLocalizedText = (props: FieldProps) => {
         {...field.input}
         Input={Input}
         InputProps={InputProps}
-        iconMarginTop="1rem"
+        iconMarginTop="2.3rem"
       />
     </Description>
   );

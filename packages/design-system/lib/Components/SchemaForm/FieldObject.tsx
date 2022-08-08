@@ -23,22 +23,23 @@ export const FieldObject = (props: FieldProps) => {
     Object.keys(props.schema.properties).length === 0;
 
   return (
-    <div
+    <Description
+      text={props.schema.description}
       className={`space-y-5 ${
-        noBorder ? '' : 'm-2 p-2 pl-3 border-[1px] border-gray-200 rounded'
+        noBorder
+          ? ''
+          : 'p-2 pl-3 border-[1px] border-gray-200 !rounded-[0.3rem]'
       }`}
     >
-      <Description text={props.schema.description}>
-        <components.FieldContainer {...props}>
-          <label className="text-[10px] text-gray max-w-[80%]">
-            {props.label || props.schema.title || getLabel(props.name)}
-          </label>
-          {grid && <LayoutGrid grid={grid} {...props} />}
-          {!grid && <LayoutBasic {...props} />}
-          {additionalProperties && <FieldAdditionalProperties {...props} />}
-        </components.FieldContainer>
-      </Description>
-    </div>
+      <components.FieldContainer {...props}>
+        <label className="flex font-semibold max-w-[80%]">
+          {props.label || props.schema.title || getLabel(props.name)}
+        </label>
+        {grid && <LayoutGrid grid={grid} {...props} />}
+        {!grid && <LayoutBasic {...props} />}
+        {additionalProperties && <FieldAdditionalProperties {...props} />}
+      </components.FieldContainer>
+    </Description>
   );
 };
 

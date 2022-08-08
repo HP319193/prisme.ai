@@ -118,7 +118,7 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
 
   return (
     <Description text={schema.description} className="pt-1">
-      {title && <label className="text-[10px] text-gray">{title}</label>}
+      {title && <label className="flex">{title}</label>}
       <Select selectOptions={options} onChange={setSelected} value={selected} />
       <Field schema={childSchema} name={name} label={label} />
     </Description>

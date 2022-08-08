@@ -1,7 +1,7 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useField, FieldRenderProps } from 'react-final-form';
+import { FieldRenderProps, useField } from 'react-final-form';
 import Button from '../Button';
 import Input from '../Input';
 import TextArea from '../TextArea';
@@ -195,7 +195,6 @@ const ManagedAdditionalProperties = ({
       {Object.keys(value).map((key, index) => (
         <div key={index} className="flex flex-1 flex-row items-center">
           <Input
-            containerClassName="flex flex-1"
             value={key}
             onChange={({ target: { value } }) => updateKey(key)(value)}
             label={locales.propertyKey || 'Key'}

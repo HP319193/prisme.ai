@@ -11,7 +11,7 @@ import workspaceProviderContext, {
 import api, { Workspace } from '../../utils/api';
 import { Event, Events, EventsFilters } from '@prisme.ai/sdk';
 import Error404 from '../../views/Errors/404';
-import { Loading, notification } from '@prisme.ai/design-system';
+import { Loading } from '@prisme.ai/design-system';
 import { useUser } from '../UserProvider';
 import Storage from '../../utils/Storage';
 import usePages from '../../components/PagesProvider/context';
@@ -333,36 +333,26 @@ export const WorkspaceProvider: FC = ({ children }) => {
     fetchWorkspace();
   }, [id, workspaces]);
 
-  const saveSource = useCallback(async () => {
-    if (!newSource) return;
-    setSaving(true);
-    const newWorkspace = await update(newSource);
-    setSaving(false);
-    if (!newWorkspace) {
-      return;
-    }
-    setCurrentWorkspace(newWorkspace);
-    notification.success({
-      message: t('expert.save.confirm'),
-      placement: 'bottomRight',
-    });
-  }, [newSource, setSaving, t, update]);
+  const saveSource = useCallback(
+    async (newSource: Workspace) => {
+      const newWorkspace = await update(newSource);
+      if (!newWorkspace) {
+        throw new Error();
+      }
+      return setCurrentWorkspace(newWorkspace);
+    },
+    [update]
+  );
 
   const save = useCallback(
     async (workspace: Workspace) => {
-      setSaving(true);
       const newWorkspace = await update(workspace);
-      setSaving(false);
       if (!newWorkspace) {
-        return;
+        throw new Error();
       }
       setCurrentWorkspace(newWorkspace);
-      notification.success({
-        message: t('save.confirm'),
-        placement: 'bottomRight',
-      });
     },
-    [setSaving, t, update]
+    [update]
   );
 
   const getAppConfig = useCallback(
@@ -478,7 +468,6 @@ export const WorkspaceProvider: FC = ({ children }) => {
           [fetchedAppInstance.slug]: fetchedAppInstance,
         },
       };
-      console.log('updated', updatedWorkspace);
 
       setCurrentWorkspace(updatedWorkspace);
 

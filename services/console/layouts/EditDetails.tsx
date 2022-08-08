@@ -86,7 +86,9 @@ export const EditDetails = ({
                   <DeleteOutlined />
                   {t('details.delete.label', { context })}
                 </Button>
-                <Button type="submit">{t('details.save', { context })}</Button>
+                <Button type="submit" variant="primary">
+                  {t('details.save', { context })}
+                </Button>
               </div>,
             ]}
           />

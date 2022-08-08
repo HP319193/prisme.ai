@@ -23,6 +23,7 @@ body {
   margin: 0;
   white-space: pre-line;
   scroll-behavior: smooth;
+  font-weight: 300;
 }
 
 a {
@@ -126,4 +127,20 @@ a.ant-btn.pr-btn-primary-small {
 
 .pr-align-tree .ant-tree-list-holder-inner>.ant-tree-treenode:nth-child(1) .ant-tree-switcher {
     display: none;
+}
+
+.pr-align-tree .ant-tree-indent {
+  display: none;
+}
+
+.pr-align-tree .ant-tree-switcher-noop {
+  display: none;
+}
+
+.pr-noLeftSelect .ant-select-selector {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-left-width: 0 !important;
+  border-top-right-radius: 0.94rem !important;
+  border-bottom-right-radius: 0.94rem !important;
 }

@@ -70,14 +70,14 @@ exports[`should have error 1`] = `
           className="flex flex-col grow"
         >
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-4"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-4"
           >
             <span
               className="flex flex-col "
             />
           </div>
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-8"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-8"
           >
             <span
               className="flex flex-col "
@@ -161,14 +161,14 @@ exports[`should load 1`] = `
           className="flex flex-col grow"
         >
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-4"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-4"
           >
             <span
               className="flex flex-col "
             />
           </div>
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-8"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-8"
           >
             <span
               className="flex flex-col "
@@ -252,14 +252,14 @@ exports[`should render 1`] = `
           className="flex flex-col grow"
         >
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-4"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-4"
           >
             <span
               className="flex flex-col "
             />
           </div>
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-8"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-8"
           >
             <span
               className="flex flex-col "
