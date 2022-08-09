@@ -342,6 +342,10 @@
       },
       "slug": {
         "label": "Nom technique"
+      },
+      "disabled": {
+        "label": "Désactivée",
+        "description": "Cocher cette option désactivera l'exécution de l'app"
       }
     },
     "publish": {

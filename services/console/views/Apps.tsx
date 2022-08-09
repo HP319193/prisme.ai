@@ -67,14 +67,16 @@ const Apps = ({}: AppsProps) => {
   const [value, setValue] = useState<{
     slug: string;
     appName: Prismeai.LocalizedText;
+    disabled: boolean;
   }>();
 
   useEffect(() => {
     if (!currentApp) return;
-    const { slug = '', appName = '' } = currentApp;
+    const { slug = '', appName = '', disabled = false } = currentApp;
     setValue({
       slug,
       appName,
+      disabled,
     });
   }, [currentApp]);
 
@@ -82,14 +84,17 @@ const Apps = ({}: AppsProps) => {
     async ({
       slug,
       appName,
+      disabled,
     }: {
       slug: string;
       appName: Prismeai.LocalizedText;
+      disabled: boolean;
     }) => {
       if (!value || !currentApp || !currentApp.slug) return;
       const newValue = {
         appName,
         slug,
+        disabled: !!disabled,
       };
       setValue(newValue);
       try {
@@ -127,6 +132,11 @@ const Apps = ({}: AppsProps) => {
         slug: {
           type: 'string',
           title: t('apps.details.slug.label'),
+        },
+        disabled: {
+          type: 'boolean',
+          title: t('apps.details.disabled.label'),
+          description: t('apps.details.disabled.description'),
         },
       },
     }),

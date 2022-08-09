@@ -342,6 +342,10 @@
       },
       "slug": {
         "label": "Technical name"
+      },
+      "disabled": {
+        "label": "Disabled",
+        "description": "A disabled app will never be executed but simply ignored"
       }
     },
     "publish": {

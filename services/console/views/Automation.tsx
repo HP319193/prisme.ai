@@ -240,12 +240,14 @@ export const Automation = () => {
       description,
       arguments: args,
       private: _private,
+      disabled,
     }: {
       slug: string;
       name: Prismeai.LocalizedText;
       description: Prismeai.LocalizedText;
       arguments: Prismeai.Automation['arguments'];
       private: boolean;
+      disabled: boolean;
     }) => {
       const { slug: prevSlug } = value;
       const cleanedArguments =
@@ -257,6 +259,7 @@ export const Automation = () => {
       const { private: p, ...cleanedValue } = value;
       const newValue: typeof value = {
         ...cleanedValue,
+        disabled,
         name,
         slug,
         description,
