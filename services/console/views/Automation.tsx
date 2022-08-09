@@ -139,12 +139,18 @@ export const Automation = () => {
           title: t('automations.details.private.label'),
           description: t('automations.details.private.description'),
         },
+        disabled: {
+          type: 'boolean',
+          title: t('automations.details.disabled.label'),
+          description: t('automations.details.private.description'),
+        },
       },
       'ui:options': {
         grid: [
           [['name', 'slug'], ['description']],
           [['arguments']],
           [['private']],
+          [['disabled']],
         ],
       },
     }),
