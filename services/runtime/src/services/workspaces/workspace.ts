@@ -97,8 +97,8 @@ export class Workspace {
     this.triggers = Object.keys(automations).reduce(
       (prev, key) => {
         const automation = automations[key];
-        const { when, when: { events, endpoint } = {} } = automation;
-        if (!when) return prev;
+        const { when, when: { events, endpoint } = {}, disabled } = automation;
+        if (!when || disabled) return prev;
         if (events) {
           events.forEach((event) => {
             prev.events[event] = [
