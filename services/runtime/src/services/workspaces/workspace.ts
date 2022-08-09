@@ -138,6 +138,11 @@ export class Workspace {
   }
 
   async updateImport(slug: string, appInstance: Prismeai.AppInstance) {
+    if (appInstance.disabled) {
+      // Remove any existing appInstance
+      delete this.imports[slug];
+      return;
+    }
     const { appSlug, appVersion } = appInstance;
     const parentAppSlugs = this.appContext?.parentAppSlugs || [];
     if (parentAppSlugs.includes(appSlug)) {
@@ -284,7 +289,11 @@ export class Workspace {
 
     const automation = (this.dsul.automations || {})[appSlug ? slug : name];
 
-    if (!automation || (automation.private && !allowNested)) {
+    if (
+      !automation ||
+      automation.disabled ||
+      (automation.private && !allowNested)
+    ) {
       return null;
     }
 

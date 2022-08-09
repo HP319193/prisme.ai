@@ -354,6 +354,10 @@ declare namespace Prismeai {
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
         slug?: string;
+        /**
+         * If disabled, this appInstance will be ignored during execution
+         */
+        disabled?: boolean;
     } | {
         /**
          * example:
@@ -778,6 +782,10 @@ declare namespace Prismeai {
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
         slug?: string;
+        /**
+         * If disabled, this appInstance will be ignored during execution
+         */
+        disabled?: boolean;
     }
     export type AppInstanceDetailedList = DetailedAppInstance[];
     export interface AppInstancePatch {
@@ -795,6 +803,10 @@ declare namespace Prismeai {
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
         slug?: string;
+        /**
+         * If disabled, this appInstance will be ignored during execution
+         */
+        disabled?: boolean;
     }
     export interface AuthenticationError {
         /**
@@ -916,6 +928,10 @@ declare namespace Prismeai {
                  * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
                  */
                 slug?: string;
+                /**
+                 * If disabled, this appInstance will be ignored during execution
+                 */
+                disabled?: boolean;
                 oldConfig: any;
             };
             slug: string;
@@ -1108,6 +1124,10 @@ declare namespace Prismeai {
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
         slug?: string;
+        /**
+         * If disabled, this appInstance will be ignored during execution
+         */
+        disabled?: boolean;
         blocks: {
             slug: string;
             url?: string;

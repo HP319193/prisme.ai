@@ -59,10 +59,6 @@ export async function runCustomAutomation(
       automation: automationSlug,
     });
   }
-  // Ignore disabled automations
-  if (calledAutomation.disabled) {
-    return;
-  }
 
   const payload = instruction[automationSlug] || {};
   const result = await executeAutomation(calledAutomation, payload);

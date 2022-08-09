@@ -2537,6 +2537,9 @@ components:
         slug:
           type: string
           description: Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+        disabled:
+          type: boolean
+          description: If disabled, this appInstance will be ignored during execution
 
     AppDetails:
       type: object
