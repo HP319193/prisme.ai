@@ -905,6 +905,62 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
+  /v2/workspaces/{workspaceId}/usage:
+    get:
+      description: Retrieve workspace usage stats
+      operationId: workspaceUsage
+      tags:
+        - 'Prisme.ai Events'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'ID of workspace to listen to'
+          required: true
+          schema:
+            type: string
+        - name: 'afterDate'
+          in: 'query'
+          description: 'Retrieve usage stats after this ISO8601 formatted date. If both beforeDate / afterDate are left undefined, take current month period'
+          schema:
+            type: string
+        - name: 'beforeDate'
+          in: 'query'
+          description: 'Retrieve usage stats before this ISO8601 formatted date. If both beforeDate / afterDate are left undefined, take current month period'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceUsage'
+
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
   ############################################# runtime
   /v2/workspaces/{workspaceId}/webhooks/{automationSlug}:
     post: &POST_WEBHOOK
@@ -3257,6 +3313,38 @@ components:
         rules:
           $ref: '#/components/schemas/ApiKeyRules'
 
+    ################################################################################################################################
+    ############################################################ Workspace Usage ############################################################
+    WorkspaceUsage:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        beforeDate:
+          type: string
+        afterDate:
+          type: string
+        inputTraffic:
+          type: object
+          properties:
+            total:
+              $ref: "#/components/schemas/InputTrafficMetrics"
+        apps:
+
+
+
+
+    InputTrafficMetrics:
+      type: object
+      required:
+        - events
+        - httpRequests
+      additionalProperties: false
+      properties:
+        events:
+          type: number
+        httpRequests:
+          type: number
     ################################################################################################################################
     ############################################################ Events ############################################################
     PrismeEventTarget:
