@@ -2,7 +2,11 @@ import { URL, URLSearchParams } from 'url';
 import FormData from 'form-data';
 import nodeFetch, { RequestInit, Response } from 'node-fetch';
 import { ContextsManager } from '../../contexts';
-import { CORRELATION_ID_HEADER, PUBLIC_API_URL } from '../../../../../config';
+import {
+  CORRELATION_ID_HEADER,
+  FETCH_USER_AGENT_HEADER,
+  PUBLIC_API_URL,
+} from '../../../../../config';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
 
@@ -58,23 +62,25 @@ export async function fetch(
     headers: {
       [CORRELATION_ID_HEADER]: ctx.run.correlationId,
       ...headers,
+      'User-Agent': FETCH_USER_AGENT_HEADER,
     },
     method: method,
   };
 
-  if (multipart) {
-    delete (params.headers as any)['content-type'];
-    params.body = new FormData();
-    for (const { fieldname, value, ...opts } of multipart) {
-      const isBase64 = base64Regex.test(value as any);
-      (params.body as FormData).append(
-        fieldname,
-        isBase64 ? Buffer.from(value as any, 'base64') : value,
-        opts
-      );
-    }
-  } else if (body && (method || 'get')?.toLowerCase() !== 'get') {
-    if (
+  // Process body
+  if (body && (method || 'get')?.toLowerCase() !== 'get') {
+    if (multipart) {
+      delete (params.headers as any)['content-type'];
+      params.body = new FormData();
+      for (const { fieldname, value, ...opts } of multipart) {
+        const isBase64 = base64Regex.test(value as any);
+        (params.body as FormData).append(
+          fieldname,
+          isBase64 ? Buffer.from(value as any, 'base64') : value,
+          opts
+        );
+      }
+    } else if (
       lowercasedHeaders['content-type'] &&
       (lowercasedHeaders['content-type'] || '').includes(
         'application/x-www-form-urlencoded'
