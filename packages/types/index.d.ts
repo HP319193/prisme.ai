@@ -796,6 +796,14 @@ declare namespace Prismeai {
          */
         slug?: string;
     }
+    export interface AppUsageMetrics {
+        slug: string;
+        total: UsageMetrics;
+        appInstances?: {
+            slug: string;
+            total: UsageMetrics;
+        }[];
+    }
     export interface AuthenticationError {
         /**
          * example:
@@ -1737,6 +1745,13 @@ declare namespace Prismeai {
             workspace: Workspace;
         };
     }
+    export interface UsageMetrics {
+        transactions?: number;
+        automationRuns: number;
+        httpTransactions: number;
+        eventTransactions: number;
+        sessions: number;
+    }
     export interface User {
         /**
          * example:
@@ -1941,6 +1956,13 @@ declare namespace Prismeai {
             subjectId: string;
             permissions: UserPermissions;
         };
+    }
+    export interface WorkspaceUsage {
+        workspaceId: string;
+        beforeDate: string;
+        afterDate: string;
+        total: UsageMetrics;
+        apps: AppUsageMetrics[];
     }
 }
 declare namespace PrismeaiAPI {
@@ -2889,6 +2911,29 @@ declare namespace PrismeaiAPI {
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
+        }
+    }
+    namespace WorkspaceUsage {
+        namespace Parameters {
+            export type AfterDate = string;
+            export type BeforeDate = string;
+            export type Details = boolean;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        export interface QueryParameters {
+            afterDate: Parameters.AfterDate;
+            beforeDate: Parameters.BeforeDate;
+            details?: Parameters.Details;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.WorkspaceUsage;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
 }

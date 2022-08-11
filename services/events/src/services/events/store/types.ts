@@ -32,4 +32,8 @@ export interface EventsStore {
     fields: string[]
   ): Promise<PrismeaiAPI.EventsValues.Responses.$200['result']>;
   bulkInsert(events: Prismeai.PrismeEvent[]): Promise<any>;
+  workspaceUsage(
+    workspaceId: string,
+    opts: PrismeaiAPI.WorkspaceUsage.QueryParameters
+  ): Promise<Prismeai.WorkspaceUsage>;
 }

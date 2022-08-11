@@ -6,6 +6,7 @@ import {
 export const ActionType = {
   ...NativeActionType,
   GetValues: 'GetValues',
+  GetUsage: 'GetUsage',
 };
 
 export enum SubjectType {
@@ -45,7 +46,12 @@ export const config: PermissionsConfig<
       subjectType: SubjectType.Workspace,
       rules: [
         {
-          action: [ActionType.Create, ActionType.Read, ActionType.GetValues],
+          action: [
+            ActionType.Create,
+            ActionType.Read,
+            ActionType.GetValues,
+            ActionType.GetUsage,
+          ],
           subject: SubjectType.Event,
           conditions: {
             // This role only applies to a specific workspace !
@@ -60,7 +66,12 @@ export const config: PermissionsConfig<
       subjectType: SubjectType.Workspace,
       rules: [
         {
-          action: [ActionType.Create, ActionType.Read, ActionType.GetValues],
+          action: [
+            ActionType.Create,
+            ActionType.Read,
+            ActionType.GetValues,
+            ActionType.GetUsage,
+          ],
           subject: SubjectType.Event,
           conditions: {
             // This role only applies to a specific workspace !

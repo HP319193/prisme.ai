@@ -921,13 +921,20 @@ paths:
         - name: 'afterDate'
           in: 'query'
           description: 'Retrieve usage stats after this ISO8601 formatted date. If both beforeDate / afterDate are left undefined, take current month period'
+          required: true
           schema:
             type: string
         - name: 'beforeDate'
           in: 'query'
+          required: true
           description: 'Retrieve usage stats before this ISO8601 formatted date. If both beforeDate / afterDate are left undefined, take current month period'
           schema:
             type: string
+        - name: 'details'
+          in: 'query'
+          description: 'Includes individual appInstances details'
+          schema:
+            type: boolean
       responses:
         '200':
           description: Success Response
@@ -3317,6 +3324,12 @@ components:
     ############################################################ Workspace Usage ############################################################
     WorkspaceUsage:
       type: object
+      required:
+        - workspaceId
+        - beforeDate
+        - afterDate
+        - total
+        - apps
       properties:
         workspaceId:
           type: string
@@ -3324,27 +3337,56 @@ components:
           type: string
         afterDate:
           type: string
-        inputTraffic:
-          type: object
-          properties:
-            total:
-              $ref: "#/components/schemas/InputTrafficMetrics"
+        total:
+          $ref: "#/components/schemas/UsageMetrics"
         apps:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppUsageMetrics"
 
-
-
-
-    InputTrafficMetrics:
+    UsageMetrics:
       type: object
       required:
-        - events
-        - httpRequests
+        - automationRuns
+        - httpTransactions
+        - eventTransactions
+        - sessions
       additionalProperties: false
       properties:
-        events:
+        transactions:
           type: number
-        httpRequests:
+        automationRuns:
           type: number
+        httpTransactions:
+          type: number
+        eventTransactions:
+          type: number
+        sessions:
+          type: number
+
+    AppUsageMetrics:
+      type: object
+      required:
+        - slug
+        - total
+      properties:
+        slug:
+          type: string
+        total:
+          $ref: "#/components/schemas/UsageMetrics"
+        appInstances:
+          type: array
+          items:
+            type: object
+            required:
+              - slug
+              - total
+            properties:
+              slug:
+                type: string
+              total:
+                $ref: "#/components/schemas/UsageMetrics"
+
     ################################################################################################################################
     ############################################################ Events ############################################################
     PrismeEventTarget:
