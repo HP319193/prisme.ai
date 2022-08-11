@@ -11,7 +11,7 @@ Array [
         className="flex flex-wrap align-start justify-center gap-4"
       >
         <button
-          className="p-2 bg-slate-100 !m-4 w-[20rem] h-[6rem] flex flex-col justify-between overflow-hidden rounded border border-slate-300 border-dashed"
+          className="p-2 bg-slate-100 !m-4 w-[21.625rem] h-[7.5rem] flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-pr-grey border-dashed"
           disabled={false}
           id="createWorkspaceButton"
           onClick={[Function]}
@@ -20,14 +20,16 @@ Array [
             className="flex grow flex-row text-center content-center"
           >
             <div
-              className="flex mx-3 items-center justify-center"
+              className="flex ml-3 mr-5 items-center justify-center"
             >
               <div
-                className="ant-btn ant-btn-primary !h-12 !w-12 !p-0 !flex items-center justify-center"
-              />
+                className="ant-btn ant-btn-primary !h-[4.25rem] !w-[4.25rem] !p-0 !flex items-center justify-center"
+              >
+                <div />
+              </div>
             </div>
             <div
-              className="flex grow flex-col justify-center"
+              className="flex flex-col justify-center"
             >
               create.label
             </div>
@@ -56,7 +58,7 @@ Array [
         className="flex flex-wrap align-start justify-center gap-4"
       >
         <button
-          className="p-2 bg-slate-100 !m-4 w-[20rem] h-[6rem] flex flex-col justify-between overflow-hidden rounded border border-slate-300 border-dashed"
+          className="p-2 bg-slate-100 !m-4 w-[21.625rem] h-[7.5rem] flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-pr-grey border-dashed"
           disabled={false}
           id="createWorkspaceButton"
           onClick={[Function]}
@@ -65,21 +67,23 @@ Array [
             className="flex grow flex-row text-center content-center"
           >
             <div
-              className="flex mx-3 items-center justify-center"
+              className="flex ml-3 mr-5 items-center justify-center"
             >
               <div
-                className="ant-btn ant-btn-primary !h-12 !w-12 !p-0 !flex items-center justify-center"
-              />
+                className="ant-btn ant-btn-primary !h-[4.25rem] !w-[4.25rem] !p-0 !flex items-center justify-center"
+              >
+                <div />
+              </div>
             </div>
             <div
-              className="flex grow flex-col justify-center"
+              className="flex flex-col justify-center"
             >
               create.label
             </div>
           </div>
         </button>
         <button
-          className="p-2 bg-white !m-4 w-[20rem] h-[6rem] content-center flex flex-col justify-between overflow-hidden rounded border border-gray-200 border-solid"
+          className="p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid"
           onClick={[Function]}
           onMouseEnter={[Function]}
         >
@@ -87,25 +91,21 @@ Array [
             className="flex grow flex-row text-center"
           >
             <div
-              className="flex mx-3"
+              className="flex ml-3 mr-5"
             >
               <div />
             </div>
             <div
-              className="flex grow flex-col items-start"
+              className="flex grow flex-col items-start justify-center space-y-2"
             >
               foo
               
-              <div
-                className="ant-btn ant-btn-link !p-0"
-              >
-                edit.label
-              </div>
+              edit.label
             </div>
           </div>
         </button>
         <button
-          className="p-2 bg-white !m-4 w-[20rem] h-[6rem] content-center flex flex-col justify-between overflow-hidden rounded border border-gray-200 border-solid"
+          className="p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid"
           onClick={[Function]}
           onMouseEnter={[Function]}
         >
@@ -113,20 +113,16 @@ Array [
             className="flex grow flex-row text-center"
           >
             <div
-              className="flex mx-3"
+              className="flex ml-3 mr-5"
             >
               <div />
             </div>
             <div
-              className="flex grow flex-col items-start"
+              className="flex grow flex-col items-start justify-center space-y-2"
             >
               bar
               
-              <div
-                className="ant-btn ant-btn-link !p-0"
-              >
-                edit.label
-              </div>
+              edit.label
             </div>
           </div>
         </button>

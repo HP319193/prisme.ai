@@ -1,11 +1,11 @@
 import AutomationBuilder from './AutomationBuilder';
 import renderer, { act } from 'react-test-renderer';
 import ReactFlow, { useZoomPanHelper } from 'react-flow-renderer';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
-import Panel from './Panel';
+import Panel from '../Panel';
 import InstructionForm from './Panel/InstructionForm';
 import ConditionForm from './Panel/ConditionForm';
 import TriggerForm from './Panel/TriggerForm';
+import { useWorkspace } from '../WorkspaceProvider';
 
 jest.mock('react-flow-renderer', () => {
   const { useAutomationBuilder } = require('./context');
@@ -34,14 +34,14 @@ jest.mock('react-flow-renderer', () => {
   return ReactFlow;
 });
 
-jest.mock('../../layouts/WorkspaceLayout', () => {
+jest.mock('../WorkspaceProvider', () => {
   const mock = {};
   return {
     useWorkspace: () => mock,
   };
 });
 
-jest.mock('./Panel', () => {
+jest.mock('../Panel', () => {
   const Panel = ({ children }: any) => <div className="Panel">{children}</div>;
   return Panel;
 });

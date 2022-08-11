@@ -1,5 +1,9 @@
 import { createContext, useContext } from 'react';
 
+export interface appInstanceWithSlug extends Prismeai.DetailedAppInstance {
+  slug: string;
+}
+
 export interface AppsContext {
   apps: Map<string, Prismeai.App>;
   appInstances: Map<string, Prismeai.DetailedAppInstance[]>;
@@ -17,6 +21,11 @@ export interface AppsContext {
   getAppInstances: (
     workspaceId: PrismeaiAPI.ListAppInstances.PathParameters['workspaceId']
   ) => Promise<Prismeai.DetailedAppInstance[]>;
+  saveAppInstance: (
+    workspaceId: PrismeaiAPI.ConfigureAppInstance.PathParameters['workspaceId'],
+    slug: PrismeaiAPI.ConfigureAppInstance.PathParameters['slug'],
+    newAppInstance: PrismeaiAPI.ConfigureAppInstance.RequestBody
+  ) => Promise<PrismeaiAPI.ConfigureAppInstance.Responses.$200 | undefined>;
 }
 
 export const appsContext = createContext<AppsContext>({
@@ -24,6 +33,7 @@ export const appsContext = createContext<AppsContext>({
   appInstances: new Map(),
   getApps: async () => ({} as any),
   getAppInstances: async () => ({} as any),
+  saveAppInstance: () => ({} as any),
 });
 
 export const useApps = () => useContext(appsContext);

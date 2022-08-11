@@ -27,14 +27,14 @@ exports[`should have error 1`] = `
         className="flex items-center flex-col text-white p-[10%]"
       >
         <div
-          className="font-normal text-xl md:text-2xl xl:text-5xl leading-normal"
+          className="font-normal text-[1rem] md:text-[2rem] xl:text-[3.375rem] leading-normal"
         >
           <div
             className="flex flex-row  mt-20"
           >
             <div />
             <div
-              className="ml-2 !font-light tracking-[.4em] text-sm"
+              className="ml-2 !font-light tracking-[.4em] text-[1.125rem]"
             >
               PRISME.AI
             </div>
@@ -70,14 +70,14 @@ exports[`should have error 1`] = `
           className="flex flex-col grow"
         >
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-4"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-4"
           >
             <span
               className="flex flex-col "
             />
           </div>
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-8"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-8"
           >
             <span
               className="flex flex-col "
@@ -118,14 +118,14 @@ exports[`should load 1`] = `
         className="flex items-center flex-col text-white p-[10%]"
       >
         <div
-          className="font-normal text-xl md:text-2xl xl:text-5xl leading-normal"
+          className="font-normal text-[1rem] md:text-[2rem] xl:text-[3.375rem] leading-normal"
         >
           <div
             className="flex flex-row  mt-20"
           >
             <div />
             <div
-              className="ml-2 !font-light tracking-[.4em] text-sm"
+              className="ml-2 !font-light tracking-[.4em] text-[1.125rem]"
             >
               PRISME.AI
             </div>
@@ -161,14 +161,14 @@ exports[`should load 1`] = `
           className="flex flex-col grow"
         >
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-4"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-4"
           >
             <span
               className="flex flex-col "
             />
           </div>
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-8"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-8"
           >
             <span
               className="flex flex-col "
@@ -209,14 +209,14 @@ exports[`should render 1`] = `
         className="flex items-center flex-col text-white p-[10%]"
       >
         <div
-          className="font-normal text-xl md:text-2xl xl:text-5xl leading-normal"
+          className="font-normal text-[1rem] md:text-[2rem] xl:text-[3.375rem] leading-normal"
         >
           <div
             className="flex flex-row  mt-20"
           >
             <div />
             <div
-              className="ml-2 !font-light tracking-[.4em] text-sm"
+              className="ml-2 !font-light tracking-[.4em] text-[1.125rem]"
             >
               PRISME.AI
             </div>
@@ -252,14 +252,14 @@ exports[`should render 1`] = `
           className="flex flex-col grow"
         >
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-4"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-4"
           >
             <span
               className="flex flex-col "
             />
           </div>
           <div
-            className="m-2 mb-5 flex-grow !m-0 !mb-8"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-8"
           >
             <span
               className="flex flex-col "

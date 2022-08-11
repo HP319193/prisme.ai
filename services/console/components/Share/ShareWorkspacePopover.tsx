@@ -1,22 +1,25 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Button,
   Input,
+  notification,
   Select,
-  Space,
   Table,
   Tooltip,
-  notification,
 } from '@prisme.ai/design-system';
-import { Form, useField } from 'react-final-form';
 import { useTranslation } from 'react-i18next';
-import FieldContainer from '../../layouts/Field';
 import { usePermissions } from '../PermissionsProvider';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useUser } from '../UserProvider';
 import { useWorkspaces } from '../WorkspacesProvider';
 import { useRouter } from 'next/router';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
+import { useWorkspace } from '../WorkspaceProvider';
 
 interface SharePopoverProps {
   subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType;
@@ -29,29 +32,8 @@ interface userPermissionForm {
 }
 
 type SelectOption = {
-  value: string;
+  value: Prismeai.Role;
   label: string;
-};
-
-const RoleSelect = ({
-  rolesOptions,
-  t,
-}: {
-  rolesOptions: SelectOption[];
-  t: Function;
-}) => {
-  const { input: roleInput } = useField('role', {
-    initialValue: rolesOptions[0].value,
-  });
-
-  return (
-    <Select
-      {...roleInput}
-      selectOptions={rolesOptions}
-      label={t('share.role')}
-      className="w-40"
-    />
-  );
 };
 
 const ShareWorkspacePopover = ({
@@ -73,6 +55,19 @@ const ShareWorkspacePopover = ({
   } = useWorkspace();
   const { push } = useRouter();
 
+  const rolesOptions = useMemo<SelectOption[]>(
+    () => [
+      { value: 'owner', label: t('share.roles.owner') },
+      { value: 'editor', label: t('share.roles.editor') },
+    ],
+    [t]
+  );
+
+  const [emailInput, setEmailInput] = useState('');
+  const [roleInput, setRoleInput] = useState<Prismeai.Role>(
+    rolesOptions[0].value
+  );
+
   const generateRowButtons = useCallback(
     (onDelete: Function) => (
       <div className="flex flex-row justify-center">
@@ -83,14 +78,6 @@ const ShareWorkspacePopover = ({
         </Tooltip>
       </div>
     ),
-    [t]
-  );
-
-  const rolesOptions = useMemo<SelectOption[]>(
-    () => [
-      { value: 'owner', label: t('share.roles.owner') },
-      { value: 'editor', label: t('share.roles.editor') },
-    ],
     [t]
   );
 
@@ -144,40 +131,56 @@ const ShareWorkspacePopover = ({
     usersPermissions,
   ]);
 
-  const onSubmit = ({ email, role }: userPermissionForm) => {
-    if (email === user.email) {
+  const onSubmit = useCallback(() => {
+    if (emailInput === user.email) {
       notification.warning({
         message: t('share.notme'),
         placement: 'bottomRight',
       });
       return;
     }
-    addUserPermissions(subjectType, subjectId, { email, role });
-  };
+    addUserPermissions(subjectType, subjectId, {
+      email: emailInput,
+      role: roleInput,
+    });
+  }, [
+    addUserPermissions,
+    emailInput,
+    roleInput,
+    subjectId,
+    subjectType,
+    t,
+    user.email,
+  ]);
 
   return (
-    <Space direction="vertical" className="w-[60vw]">
-      <Form onSubmit={onSubmit} initialValues={{ email: '', role: '' }}>
-        {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit} className="flex flex-1">
-            <div className="flex flex-row flex-1 items-center">
-              <FieldContainer
-                name="email"
-                className="mx-2"
-                containerClassName="flex-1"
-              >
-                {({ input }) => <Input label={t('share.email')} {...input} />}
-              </FieldContainer>
-              <div className="mb-5">
-                <span className={`flex flex-col`}>
-                  <RoleSelect rolesOptions={rolesOptions} t={t} />
-                </span>
-              </div>
-              <Button type="submit">{commonT('add')}</Button>
-            </div>
-          </form>
-        )}
-      </Form>
+    <div className="w-[42rem] space-y-5">
+      <div className="flex flex-grow flex-row items-center justify-center">
+        <Input
+          placeholder={t('share.email')}
+          value={emailInput}
+          onChange={({ target: { value } }) => setEmailInput(value)}
+          className="!rounded-r-[0] !border-r-[0] !rounded-l-[0.94rem]"
+          overrideContainerClassName="flex-grow"
+        />
+        <Select
+          value={roleInput}
+          onChange={(value) => {
+            setRoleInput(value);
+          }}
+          selectOptions={rolesOptions}
+          className="w-40 pr-noLeftSelect"
+          overrideContainerClassName="flex mr-2"
+        />
+        <Button
+          type="submit"
+          variant="primary"
+          onClick={onSubmit}
+          className="flex items-center justify-center !w-[9.375rem] !h-[50px] !rounded-[0.94rem]"
+        >
+          {commonT('add')}
+        </Button>
+      </div>
       <Table
         dataSource={dataSource}
         columns={[
@@ -198,7 +201,7 @@ const ShareWorkspacePopover = ({
         pagination={{ pageSize: 10, position: [] }}
         scroll={{ y: 500 }}
       />
-    </Space>
+    </div>
   );
 };
 

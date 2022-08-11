@@ -1,9 +1,8 @@
-import { Layout, Text, Title, Tooltip } from '@prisme.ai/design-system';
+import { Button, Layout, Text, Title, Tooltip } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { PlusOutlined } from '@ant-design/icons';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import packageJson from '../../../package.json';
@@ -13,6 +12,7 @@ import { useWorkspaces } from '../components/WorkspacesProvider';
 import icon from '../icons/icon-workspace.svg';
 import useLocalizedText from '../utils/useLocalizedText';
 import { useUser } from '../components/UserProvider';
+import plus from '../icons/plus.svg';
 
 export const WorkspacesView = () => {
   const { t } = useTranslation('workspaces');
@@ -43,7 +43,7 @@ export const WorkspacesView = () => {
         <meta name="description" content={t('workspaces.description')} />§
       </Head>
       <Layout Header={<Header />} contentClassName="overflow-y-auto">
-        <Title level={3} className="!ml-16 !m-8">
+        <Title level={3} className="!ml-16 !m-8 text-[1.5rem]">
           {t('workspaces.sectionTitle')}
         </Title>
         <div className="!bg-blue-200 flex grow m-16 !mt-0 rounded relative pt-6">
@@ -53,16 +53,16 @@ export const WorkspacesView = () => {
                 id="createWorkspaceButton"
                 onClick={createWorkspace}
                 disabled={loading}
-                className="p-2 bg-slate-100 !m-4 w-[20rem] h-[6rem] flex flex-col justify-between overflow-hidden rounded border border-slate-300 border-dashed"
+                className="p-2 bg-slate-100 !m-4 w-[21.625rem] h-[7.5rem] flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-pr-grey border-dashed"
               >
                 <div className="flex grow flex-row text-center content-center">
-                  <div className="flex mx-3 items-center justify-center">
-                    <div className="ant-btn ant-btn-primary !h-12 !w-12 !p-0 !flex items-center justify-center">
-                      <PlusOutlined className="text-[20px]" />
+                  <div className="flex ml-3 mr-5 items-center justify-center">
+                    <div className="ant-btn ant-btn-primary !h-[4.25rem] !w-[4.25rem] !p-0 !flex items-center justify-center">
+                      <Image src={plus.src} width={27} height={27} alt="" />
                     </div>
                   </div>
-                  <div className="flex grow flex-col justify-center">
-                    <Title level={4}>
+                  <div className="flex flex-col justify-center">
+                    <Title level={4} className="mb-0">
                       {t('create.label', {
                         context: workspaces.size === 0 ? 'first' : '',
                       })}
@@ -80,9 +80,9 @@ export const WorkspacesView = () => {
                     '';
                   return (
                     <Link href={`/workspaces/${id}`} key={id}>
-                      <button className="p-2 bg-white !m-4 w-[20rem] h-[6rem] content-center flex flex-col justify-between overflow-hidden rounded border border-gray-200 border-solid">
+                      <button className="p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid">
                         <div className="flex grow flex-row text-center">
-                          <div className="flex mx-3">
+                          <div className="flex ml-3 mr-5">
                             {photo ? (
                               <div className="flex grow items-center justify-center flex-none">
                                 <img
@@ -101,8 +101,10 @@ export const WorkspacesView = () => {
                               />
                             )}
                           </div>
-                          <div className="flex grow flex-col items-start">
-                            <Title level={4}>{name}</Title>
+                          <div className="flex grow flex-col items-start justify-center space-y-2">
+                            <Title level={4} className="mb-0">
+                              {name}
+                            </Title>
                             <Tooltip title={descriptionDisplayed}>
                               <Text
                                 type="grey"
@@ -111,9 +113,9 @@ export const WorkspacesView = () => {
                                 {descriptionDisplayed}
                               </Text>
                             </Tooltip>
-                            <div className="ant-btn ant-btn-link !p-0">
+                            <Button variant="link" className="!p-0 !h-[unset]">
                               {t('edit.label')}
-                            </div>
+                            </Button>
                           </div>
                         </div>
                       </button>

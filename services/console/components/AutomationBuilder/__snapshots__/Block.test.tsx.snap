@@ -9,14 +9,14 @@ Array [
           surface-section
           
           bg-white
-          border-slate-300
+          border-graph-border
           border-[1px]
           
           transition-all ease
           rounded"
     style={
       Object {
-        "width": 250,
+        "width": 260,
       }
     }
   >
@@ -24,13 +24,14 @@ Array [
       className="
           flex
           border-b-[1px]
-          border-slate-300
-          font-bold
-          p-2
+          border-graph-border
+          font-semibold
+          p-[1.15rem]
+          pb-3.5
         "
     >
       <div
-        className="mr-2"
+        className="mr-3 flex"
       >
         <span
           style={
@@ -152,7 +153,7 @@ Array [
       >
         Logical
         <button
-          className="border-none cursor-pointer"
+          className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
           style={
             Object {
@@ -166,10 +167,11 @@ Array [
     <button
       className="
           flex
-          p-2
+          p-3.5
           justify-between
           items-center
           
+          font-light
           "
       style={
         Object {
@@ -191,14 +193,14 @@ Array [
           surface-section
           
           bg-white
-          border-slate-300
+          border-graph-border
           border-[1px]
           
           transition-all ease
           rounded"
     style={
       Object {
-        "width": 250,
+        "width": 260,
       }
     }
   >
@@ -206,13 +208,14 @@ Array [
       className="
           flex
           border-b-[1px]
-          border-slate-300
-          font-bold
-          p-2
+          border-graph-border
+          font-semibold
+          p-[1.15rem]
+          pb-3.5
         "
     >
       <div
-        className="mr-2"
+        className="mr-3 flex"
       >
         <span
           style={
@@ -334,7 +337,7 @@ Array [
       >
         Logical
         <button
-          className="border-none cursor-pointer"
+          className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
           style={
             Object {
@@ -348,10 +351,11 @@ Array [
     <button
       className="
           flex
-          p-2
+          p-3.5
           justify-between
           items-center
           
+          font-light
           "
       style={
         Object {
@@ -373,14 +377,14 @@ Array [
           surface-section
           
           bg-white
-          border-slate-300
+          border-graph-border
           border-[1px]
           
           transition-all ease
           rounded"
     style={
       Object {
-        "width": 250,
+        "width": 260,
       }
     }
   >
@@ -388,13 +392,14 @@ Array [
       className="
           flex
           border-b-[1px]
-          border-slate-300
-          font-bold
-          p-2
+          border-graph-border
+          font-semibold
+          p-[1.15rem]
+          pb-3.5
         "
     >
       <div
-        className="mr-2"
+        className="mr-3 flex"
       >
         <span
           style={
@@ -516,7 +521,7 @@ Array [
       >
         Logical
         <button
-          className="border-none cursor-pointer"
+          className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
           style={
             Object {
@@ -530,10 +535,11 @@ Array [
     <button
       className="
           flex
-          p-2
+          p-3.5
           justify-between
           items-center
           
+          font-light
           "
       style={
         Object {
@@ -555,14 +561,14 @@ Array [
           surface-section
           
           bg-white
-          border-slate-300
+          border-graph-border
           border-[1px]
           
           transition-all ease
           rounded"
     style={
       Object {
-        "width": 250,
+        "width": 260,
       }
     }
   >
@@ -570,13 +576,14 @@ Array [
       className="
           flex
           border-b-[1px]
-          border-slate-300
-          font-bold
-          p-2
+          border-graph-border
+          font-semibold
+          p-[1.15rem]
+          pb-3.5
         "
     >
       <div
-        className="mr-2"
+        className="mr-3 flex"
       >
         <span
           style={
@@ -698,7 +705,7 @@ Array [
       >
         Logical
         <button
-          className="border-none cursor-pointer"
+          className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
           style={
             Object {
@@ -712,10 +719,11 @@ Array [
     <button
       className="
           flex
-          p-2
+          p-3.5
           justify-between
           items-center
           
+          font-light
           "
       style={
         Object {
@@ -737,14 +745,14 @@ Array [
           surface-section
           
           bg-white
-          border-slate-300
+          border-graph-border
           border-[1px]
           
           transition-all ease
           rounded"
     style={
       Object {
-        "width": 250,
+        "width": 260,
       }
     }
   >
@@ -752,13 +760,14 @@ Array [
       className="
           flex
           border-b-[1px]
-          border-slate-300
-          font-bold
-          p-2
+          border-graph-border
+          font-semibold
+          p-[1.15rem]
+          pb-3.5
         "
     >
       <div
-        className="mr-2"
+        className="mr-3 flex"
       >
         <span
           style={
@@ -880,7 +889,7 @@ Array [
       >
         Logical
         <button
-          className="border-none cursor-pointer"
+          className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
           style={
             Object {
@@ -894,10 +903,11 @@ Array [
     <button
       className="
           flex
-          p-2
+          p-3.5
           justify-between
           items-center
           
+          font-light
           "
       style={
         Object {
@@ -919,14 +929,14 @@ Array [
           surface-section
           
           bg-white
-          border-slate-300
+          border-graph-border
           border-[1px]
           
           transition-all ease
           rounded"
     style={
       Object {
-        "width": 250,
+        "width": 260,
       }
     }
   >
@@ -934,13 +944,14 @@ Array [
       className="
           flex
           border-b-[1px]
-          border-slate-300
-          font-bold
-          p-2
+          border-graph-border
+          font-semibold
+          p-[1.15rem]
+          pb-3.5
         "
     >
       <div
-        className="mr-2"
+        className="mr-3 flex"
       >
         <span
           style={
@@ -1062,7 +1073,7 @@ Array [
       >
         Logical
         <button
-          className="border-none cursor-pointer"
+          className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
           style={
             Object {
@@ -1076,10 +1087,11 @@ Array [
     <button
       className="
           flex
-          p-2
+          p-3.5
           justify-between
           items-center
           
+          font-light
           "
       style={
         Object {

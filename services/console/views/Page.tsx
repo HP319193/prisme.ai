@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
 import { useTranslation } from 'next-i18next';
+import cloneDeep from 'lodash/cloneDeep';
 import {
   Button,
   Collapse,
@@ -10,11 +10,17 @@ import {
   Loading,
   notification,
   PageHeader,
+  Popover,
   Schema,
   SchemaFormDescription,
+  Space,
   Tooltip,
 } from '@prisme.ai/design-system';
-import { LoadingOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  LoadingOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons';
 import useLocalizedText from '../utils/useLocalizedText';
 import PageBuilder from '../components/PageBuilder';
 import { PageBuilderContext } from '../components/PageBuilder/context';
@@ -26,6 +32,10 @@ import { CodeEditor } from '../components/CodeEditor/lazy';
 import PagePreview from '../components/PagePreview';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useApps } from '../components/AppsProvider';
+import { useWorkspace } from '../components/WorkspaceProvider';
+import getLayout from '../layouts/WorkspaceLayout';
+import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
+import { usePrevious } from '../utils/usePrevious';
 
 const CSSEditor = ({
   name,
@@ -71,13 +81,27 @@ const CSSEditor = ({
       {
         label: (
           <SchemaFormDescription text={t('pages.details.styles.description')}>
-            <label className="text-[10px] text-gray cursor-pointer">
-              {t('pages.details.styles.label')}
-            </label>
+            <div className="flex w-[95%] justify-between items-center">
+              <label className="font-normal cursor-pointer">
+                {t('pages.details.styles.label')}
+              </label>
+              <Tooltip title={t('pages.details.styles.reset.description')}>
+                <button
+                  type="button"
+                  className="text-gray hover:text-orange-500 text-xs pr-2 flex items-center"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setReseting(true);
+                  }}
+                >
+                  <DeleteOutlined />
+                </button>
+              </Tooltip>
+            </div>
           </SchemaFormDescription>
         ),
         content: (
-          <div className="relative flex h-80 -m-[1rem] mt-0 rounded-b overflow-hidden">
+          <div className="relative flex h-80 mt-0 rounded-b overflow-hidden">
             {!reseting && (
               <CodeEditor
                 mode="css"
@@ -86,15 +110,6 @@ const CSSEditor = ({
                 completers={completers}
               />
             )}
-            <Tooltip title={t('pages.details.styles.reset.description')}>
-              <button
-                type="button"
-                className="absolute bottom-0 right-0 text-xs pr-2"
-                onClick={() => setReseting(true)}
-              >
-                {t('pages.details.styles.reset.label')}
-              </button>
-            </Tooltip>
           </div>
         ),
       },
@@ -110,8 +125,8 @@ const CSSEditor = ({
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
-  const { t: commonT } = useTranslation('common');
-  const { workspace, setShare } = useWorkspace();
+  const { workspace } = useWorkspace();
+  const { setDirty } = useWorkspaceLayout();
   const { localize } = useLocalizedText();
   const { pages, savePage, deletePage } = usePages();
   const [displayPreview, setDisplayPreview] = useState(false);
@@ -120,6 +135,8 @@ export const Page = () => {
     query: { id: workspaceId, pageId },
     push,
   } = useRouter();
+  const prevPageId = usePrevious(pageId);
+
   const page = useMemo(() => {
     return Array.from(pages.get(`${workspaceId}`) || []).find(
       ({ id }) => pageId === id
@@ -139,20 +156,20 @@ export const Page = () => {
   );
 
   useEffect(() => {
-    setShare({
-      label: t('pages.share.label'),
-      component: () => (
-        <SharePage
-          pageId={`${pageId}`}
-          pageSlug={(page && page.slug) || `${pageId}`}
-        />
-      ),
-    });
+    const clonedValue = cloneDeep(value) as PageBuilderContext['page'];
+    if (clonedValue && clonedValue.blocks) {
+      clonedValue.blocks.forEach((block) => {
+        delete block.key;
+      });
+    }
 
-    return () => {
-      setShare(undefined);
-    };
-  }, [commonT, page, pageId, setShare, t]);
+    if (
+      pageId === prevPageId &&
+      JSON.stringify(page) !== JSON.stringify(clonedValue)
+    ) {
+      setDirty(true);
+    }
+  }, [value, pageId, prevPageId, setDirty, page]);
 
   useEffect(() => {
     if (!page) return;
@@ -187,9 +204,7 @@ export const Page = () => {
               {...props}
               sectionIds={
                 page
-                  ? (
-                      page.blocks || []
-                    ).flatMap(
+                  ? (page.blocks || []).flatMap(
                       ({ config: { sectionId, name = sectionId } = {} }) =>
                         sectionId ? { id: sectionId, name } : []
                     )
@@ -206,10 +221,9 @@ export const Page = () => {
   const cleanValue = useCallback(
     (value: Prismeai.Page) => ({
       ...value,
-      blocks: ((value.blocks ||
-        []) as PageBuilderContext['page']['blocks']).map(
-        ({ key, ...block }) => block
-      ),
+      blocks: (
+        (value.blocks || []) as PageBuilderContext['page']['blocks']
+      ).map(({ key, ...block }) => block),
       id: page ? page.id : '',
     }),
     [page]
@@ -356,18 +370,22 @@ export const Page = () => {
     <>
       <PageHeader
         title={
-          <div className="flex flex-row items-center">
-            {localize(value.name)}
-            <EditDetails
-              schema={detailsFormSchema}
-              value={{ ...value }}
-              onSave={updateDetails}
-              onDelete={confirmDeletePage}
-              context="pages"
-            />
+          <div className="flex flex-row items-center text-base">
+            <span className="font-medium">{localize(value.name)}</span>
+            <span className="w-[20px]" />
+            <span className="border-l border-solid border-pr-gray-200 text-gray flex h-[26px] w-[20px]" />
+            <span className="text-gray flex">
+              <EditDetails
+                schema={detailsFormSchema}
+                value={{ ...value }}
+                onSave={updateDetails}
+                onDelete={confirmDeletePage}
+                context="pages"
+                key={`${pageId}`}
+              />
+            </span>
           </div>
         }
-        onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
           <Button
             key="preview"
@@ -377,6 +395,23 @@ export const Page = () => {
               context: displayPreview ? 'hide' : '',
             })}
           </Button>,
+          <Popover
+            content={() => (
+              <SharePage
+                pageId={`${pageId}`}
+                pageSlug={(page && page.slug) || `${pageId}`}
+              />
+            )}
+            title={t('pages.share.label')}
+            key="share"
+          >
+            <Button>
+              <Space>
+                {t('pages.share.label')}
+                <ShareAltOutlined className="text-lg" />
+              </Space>
+            </Button>
+          </Popover>,
           <Button key="save" onClick={save} disabled={saving} variant="primary">
             {saving && <LoadingOutlined />}
             {t('pages.save.label')}

@@ -13,11 +13,11 @@ export const FieldBoolean = (props: FieldProps) => {
     <div className="relative flex mt-5 flex-1">
       <Description text={props.schema.description}>
         <components.FieldContainer {...props}>
-          <div className="ant-input flex items-center flex-1 rounded h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500">
-            <label className="cursor-pointer">
+          <div className="flex items-center flex-1 !rounded-[0.3rem] h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500">
+            <label className="flex cursor-pointer">
               <Switch {...field.input} checked={field.input.value} />
               <span
-                className="text-[10px] text-gray ml-2"
+                className="ml-2"
                 dangerouslySetInnerHTML={{
                   __html:
                     props.label || props.schema.title || getLabel(props.name),

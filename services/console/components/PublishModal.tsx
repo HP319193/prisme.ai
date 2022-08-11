@@ -2,7 +2,6 @@ import { Input, Modal, notification, Tooltip } from '@prisme.ai/design-system';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspaces } from './WorkspacesProvider';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import {
   SLUG_MATCH_INVALID_CHARACTERS,
   SLUG_VALIDATION_REGEXP,
@@ -10,6 +9,7 @@ import {
 import { useApps } from './AppsProvider';
 import { usePrevious } from '../utils/usePrevious';
 import useLocalizedText from '../utils/useLocalizedText';
+import { useWorkspace } from './WorkspaceProvider';
 
 interface PublishModalProps {
   visible: boolean;

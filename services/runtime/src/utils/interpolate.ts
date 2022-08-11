@@ -5,9 +5,7 @@ import { parseVariableName } from './parseVariableName';
 const getValueFromCtx = (pathStr: string, context: any) => {
   const path = parseVariableName(pathStr);
   return path.reduce((prev: any, nextPath: any) => {
-    return typeof prev === 'object' && typeof prev[nextPath] !== 'undefined'
-      ? prev[nextPath]
-      : undefined;
+    return typeof prev?.[nextPath] !== 'undefined' ? prev[nextPath] : undefined;
   }, context);
 };
 

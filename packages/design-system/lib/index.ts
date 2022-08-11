@@ -26,6 +26,9 @@ export { default as Popover } from './Components/Popover';
 export { default as SidePanel } from './Components/SidePanel';
 export { default as DatePicker } from './Components/DatePicker';
 export { default as StretchContent } from './Components/StretchContent';
+export { default as Tree } from './Components/Tree';
+export { Label } from './Components/Label';
+export { WithLabel } from './Components/Label';
 
 export * from './Components/SchemaForm';
 

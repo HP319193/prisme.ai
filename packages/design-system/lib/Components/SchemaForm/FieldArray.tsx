@@ -1,4 +1,4 @@
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { FieldArray as FFFieldArray } from 'react-final-form-arrays';
 import Button from '../Button';
@@ -22,18 +22,24 @@ export const FieldArray = (props: FieldProps) => {
   if (!items) return null;
 
   const asRow = isUiOptionsArray(uiOptions) && uiOptions.array === 'row';
+  console.log('schema', props.schema);
+  console.log('row', asRow);
 
   return (
-    <div className="m-2 p-2 border-l-[1px] border-gray-200">
+    <div className="p-2">
       <Description text={props.schema.description}>
         <components.FieldContainer {...props}>
-          <label className="text-[10px] text-gray">
+          <label className="flex mb-5">
             {props.label || props.schema.title || getLabel(props.name)}
           </label>
           <FFFieldArray name={props.name}>
             {({ fields }) => (
               <>
-                <div className={asRow ? 'flex flex-row flex-wrap' : 'flex-1'}>
+                <div
+                  className={
+                    asRow ? 'flex flex-row flex-wrap' : 'ml-2 flex-1 space-y-5'
+                  }
+                >
                   {fields.map((field, index) => (
                     <div
                       key={field}
@@ -41,11 +47,13 @@ export const FieldArray = (props: FieldProps) => {
                         asRow ? 'min-w-[30%]' : ''
                       }`}
                     >
-                      <div className={asRow ? 'min-w-full' : 'flex-1'}>
+                      <div
+                        className={asRow ? 'min-w-full' : 'flex-1 space-y-5'}
+                      >
                         <Field schema={items} name={field} />
                         <Button
                           onClick={() => fields.remove(index)}
-                          className="!absolute top-2 right-1"
+                          className="!absolute top-[1.7rem] right-1 text-gray hover:text-orange-500"
                         >
                           <Tooltip
                             title={locales.removeItem || 'Remove'}
@@ -58,11 +66,17 @@ export const FieldArray = (props: FieldProps) => {
                     </div>
                   ))}
                 </div>
-                <Button
-                  onClick={() => fields.push(getDefaultValue(items.type))}
-                >
-                  {locales.addItem || 'Add item'}
-                </Button>
+                <div className="flex w-full justify-end mt-5">
+                  <Button
+                    onClick={() => fields.push(getDefaultValue(items.type))}
+                    className="flex items-center"
+                  >
+                    <span className="underline">
+                      {locales.addItem || 'Add item'}
+                    </span>
+                    <PlusCircleOutlined />
+                  </Button>
+                </div>
               </>
             )}
           </FFFieldArray>

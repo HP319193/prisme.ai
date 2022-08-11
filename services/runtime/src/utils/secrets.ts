@@ -28,7 +28,7 @@ export function redact(payload: any, secretSet: Set<string>) {
 
   const redactedString = [...secretSet.values()].reduce((acc, secret) => {
     try {
-      return acc.replace(new RegExp(secret, 'g'), 'REDACTED');
+      return acc.replace(new RegExp(escapeRegex(secret), 'g'), 'REDACTED');
     } catch (err) {
       logger.error({ msg: 'Could not redact a secret value', err });
       return acc;
@@ -36,6 +36,10 @@ export function redact(payload: any, secretSet: Set<string>) {
   }, JSON.stringify(payload));
 
   return JSON.parse(redactedString);
+}
+
+function escapeRegex(str: string) {
+  return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
 function get(obj: any, path: string) {
@@ -60,8 +64,12 @@ export function findSecretValues(
 
   for (const path of secretPaths) {
     const [parent, lastKey] = get(payload, path);
-    if (parent && typeof parent[lastKey] === 'string') {
-      secretSet.add(parent[lastKey]);
+    if (
+      parent &&
+      typeof parent[lastKey] === 'string' &&
+      parent[lastKey].trim()
+    ) {
+      secretSet.add(parent[lastKey].trim());
     }
   }
 

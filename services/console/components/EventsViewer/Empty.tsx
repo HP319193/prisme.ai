@@ -4,13 +4,12 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import icon from '../../icons/workspace.svg';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
+import { useWorkspace } from '../WorkspaceProvider';
 
 export const Empty = () => {
   const { t } = useTranslation('workspaces');
   const [creating, setCreating] = useState(false);
-  const { createAutomation } = useWorkspace();
-  const { workspace } = useWorkspace();
+  const { workspace, createAutomation } = useWorkspace();
   const { push } = useRouter();
   const createNewAutomation = useCallback(async () => {
     setCreating(true);

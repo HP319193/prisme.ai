@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, SearchInput, Title } from '@prisme.ai/design-system';
+import { useRouter } from 'next/router';
+import {
+  Modal,
+  notification,
+  SearchInput,
+  Title,
+} from '@prisme.ai/design-system';
 import { useApps } from '../components/AppsProvider';
 import IconApps from '../icons/icon-apps.svgr';
-import { useWorkspaces } from '../components/WorkspacesProvider';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import useLocalizedText from '../utils/useLocalizedText';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 interface AppStoreProps {
   visible: boolean;
@@ -23,12 +28,14 @@ const isFilteredApp = (app: Prismeai.App): app is FilteredApps => {
 
 const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   const { t } = useTranslation('workspaces');
+  const { t: errorT } = useTranslation('errors');
   const { localize } = useLocalizedText();
   const { apps, getApps } = useApps();
-  const { installApp } = useWorkspaces();
   const {
+    installApp,
     workspace: { id: workspaceId },
   } = useWorkspace();
+  const { push } = useRouter();
   const [filter, setFilter] = useState('');
 
   const filteredApps: FilteredApps[] = useMemo(
@@ -53,13 +60,21 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
 
   const onAppClick = useCallback(
     async (id: string, name: string) => {
-      await installApp(workspaceId, {
-        appSlug: id,
-        appName: name,
-      });
+      try {
+        await installApp(workspaceId, {
+          appSlug: id,
+          appName: name,
+        });
+        push(`/workspaces/${workspaceId}/apps/${id}`);
+      } catch (e) {
+        notification.error({
+          message: errorT('unknown', { errorName: e }),
+          placement: 'bottomRight',
+        });
+      }
       onCancel();
     },
-    [installApp, onCancel, workspaceId]
+    [installApp, onCancel, push, workspaceId]
   );
 
   return (
@@ -71,9 +86,9 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
       width="80vw"
     >
       <div className="flex flex-col h-[70vh] overflow-hidden">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between ml-10 mt-3">
           <SearchInput
-            className="!min-w-[20rem]"
+            className="!min-w-[20rem] !text-gray"
             onChange={({ target: { value } }) => setFilter(value)}
             placeholder={t('apps.search')}
           />
@@ -82,11 +97,12 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
           {filteredApps.map(({ slug, name, description, photo }) => (
             <div
               key={slug}
-              className="flex flex-row w-[25rem] align-center items-center border rounded border-gray-200 p-4 m-2 h-[9rem] cursor-pointer hover:bg-blue-200"
+              className="flex flex-row w-[25rem] align-center items-center border rounded border-gray-500 p-4 m-[0.8rem] h-[9rem] cursor-pointer hover:bg-blue-200"
               onClick={() => onAppClick(slug, name)}
             >
               <div className="flex align-center justify-center w-[6rem] mr-4 flex-none">
                 {photo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={photo}
                     className="rounded text-blue h-[80px] w-[80px] object-cover"
@@ -97,8 +113,10 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
                 )}
               </div>
               <div className="flex flex-col grow justify-start h-full mt-3 overflow-hidden text-ellipsis leading-[1.3rem]">
-                <Title level={4}>{name}</Title>
-                <div>{localize(description)}</div>
+                <Title level={4} className="!text-[16px]">
+                  {name}
+                </Title>
+                <div className="text-[14px]">{localize(description)}</div>
                 {/*  Get description language, fallback to en */}
               </div>
             </div>

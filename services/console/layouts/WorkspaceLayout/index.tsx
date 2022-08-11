@@ -1,11 +1,15 @@
 import { ReactElement } from 'react';
 import WorkspaceLayout from './WorkspaceLayout';
+import { WorkspaceProvider } from '../../components/WorkspaceProvider';
 
-export * from './context';
 export * from './WorkspaceLayout';
 
 export const getLayout = (page: ReactElement) => {
-  return <WorkspaceLayout>{page}</WorkspaceLayout>;
+  return (
+    <WorkspaceProvider>
+      <WorkspaceLayout>{page}</WorkspaceLayout>
+    </WorkspaceProvider>
+  );
 };
 
 export default getLayout;

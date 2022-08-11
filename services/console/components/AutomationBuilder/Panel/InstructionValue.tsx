@@ -1,5 +1,4 @@
 import { FC, useCallback, useMemo, useState } from 'react';
-import Fieldset from '../../../layouts/Fieldset';
 import { useTranslation } from 'next-i18next';
 import {
   FieldProps,
@@ -12,9 +11,9 @@ import { CodeEditorInline } from '../../CodeEditor/lazy';
 import { useField } from 'react-final-form';
 import FieldContainerWithRaw from '../../FieldContainerWithRaw';
 import useSchema from '../../SchemaForm/useSchema';
-import { useWorkspace } from '../../../layouts/WorkspaceLayout';
 import usePages from '../../PagesProvider/context';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { useWorkspace } from '../../WorkspaceProvider';
 
 interface InstructionValueProps {
   instruction: string;
@@ -115,7 +114,8 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   const cleanedSchema = useMemo(() => {
     const cleaned = {
       ...schema,
-      title: t('automations.instruction.description', {
+      title: t('automations.instruction.label', { context: instruction }),
+      description: t('automations.instruction.description', {
         context: instruction,
         default: schema.description,
       }),
@@ -162,20 +162,15 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   if (!schema) return null;
 
   return (
-    <Fieldset
-      legend={t('automations.instruction.label', { context: instruction })}
-      hasDivider={false}
-    >
-      <SchemaForm
-        schema={cleanedSchema}
-        onChange={onChange}
-        initialValues={value}
-        buttons={EmptyButtons}
-        components={components}
-        locales={locales}
-        utils={{ extractSelectOptions }}
-      />
-    </Fieldset>
+    <SchemaForm
+      schema={cleanedSchema}
+      onChange={onChange}
+      initialValues={value}
+      buttons={EmptyButtons}
+      components={components}
+      locales={locales}
+      utils={{ extractSelectOptions }}
+    />
   );
 };
 

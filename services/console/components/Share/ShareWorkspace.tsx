@@ -1,5 +1,5 @@
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import ShareWorkspacePopover from './ShareWorkspacePopover';
+import { useWorkspace } from '../WorkspaceProvider';
 
 export const ShareWorkspace = () => {
   const {

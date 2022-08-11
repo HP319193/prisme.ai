@@ -10,6 +10,8 @@
     "description": "Editar el espacio de trabajo \"{{name}}\"",
     "share": "Compartir",
     "empty": "<button>Crea tu primera automatización</button> para ver cómo cobra vida tu espacio de trabajo",
+    "dirtyWarning": "Tu trabajo actual no se ha guardado. ¿Cambiar de página de todos modos?",
+    "dirtyOk": "Cambiar de página",
     "delete": {
       "label": "Eliminar la espacio de trabajo",
       "confirm": {
@@ -32,6 +34,12 @@
       "photo": {
         "label": "Photo"
       }
+    },
+    "sections": {
+      "activity": "Actividad",
+      "automations": "Automatizaciones",
+      "pages": "Páginas",
+      "apps": "Apps"
     }
   },
   "create": {
@@ -323,6 +331,7 @@
     "configTooltip": "Configuración",
     "search": "Buscar una aplicación...",
     "title": "Apps Store",
+    "saveSuccess": "\nLa configuración de la aplicación se ha guardado correctamente",
     "publish": {
       "menuLabel": "Publicar como aplicación",
       "confirm": {

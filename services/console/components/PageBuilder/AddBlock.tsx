@@ -1,7 +1,8 @@
 import { Tooltip } from '@prisme.ai/design-system';
-import { PlusOutlined } from '@ant-design/icons';
+import Image from 'next/image';
 import { usePageBuilder } from './context';
 import { useTranslation } from 'next-i18next';
+import plus from '../../icons/plus.svg';
 
 interface AddBlockProps {
   after: number;
@@ -18,12 +19,14 @@ const AddBlock = ({ after, centered = false }: AddBlockProps) => {
     >
       <Tooltip title={t('pages.blocks.add')}>
         <button
-          className={`bg-graph-accent text-white ${
-            centered ? 'rounded p-3' : 'rounded-[0.3rem] w-5 h-5'
-          } text-sm`}
+          className={`flex justify-center items-center bg-graph-accent text-white ${
+            centered ? 'rounded-[.5rem] p-1 px-3' : 'rounded-[0.3rem] w-5 h-5'
+          } !text-[0.81rem]`}
           onClick={() => addBlock(after + 1)}
         >
-          <PlusOutlined className={centered ? 'mr-2' : ''} />
+          <span className={`flex ${centered ? 'mr-2' : ''}`}>
+            <Image src={plus.src} width={11} height={11} alt="" />
+          </span>
           {centered && t('pages.blocks.add')}
         </button>
       </Tooltip>

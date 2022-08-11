@@ -1,20 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import { BlockLoaderProps } from '@prisme.ai/blocks';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import api from './api';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
-interface AppConfigProviderProps {
-  workspaceId: string;
-  blockId?: string;
-  appInstance?: BlockLoaderProps['appInstance'];
-}
-
-const useAppConfig = ({ workspaceId, appInstance }: AppConfigProviderProps) => {
+const useAppConfig = (
+  workspaceId: string,
+  appInstance: BlockLoaderProps['appInstance']
+) => {
   const [appConfig, setAppConfig] = useState<any>();
   const { workspace } = useWorkspace();
 
   useEffect(() => {
-    if (!appInstance) {
+    if (!appInstance || !workspaceId) {
       if (workspace && workspace.config) {
         setAppConfig(workspace.config.value);
       }
@@ -30,11 +27,12 @@ const useAppConfig = ({ workspaceId, appInstance }: AppConfigProviderProps) => {
     };
     fetchAppConfig();
   }, [appInstance, workspace, workspaceId]);
+
   const onAppConfigUpdate = useCallback(
     async (newConfig: any) => {
       setAppConfig(() => newConfig);
       if (!workspaceId || !appInstance) return;
-      await api.updateAppConfig(workspaceId, appInstance, newConfig);
+      return api.updateAppConfig(workspaceId, appInstance, newConfig);
     },
     [appInstance, workspaceId]
   );

@@ -25,10 +25,9 @@ import TriggerBlock from './TriggerBlock';
 import Conditions from './Conditions';
 import iconPrisme from '../../icons/icon-prisme.svg';
 import iconWorkspace from '../../icons/icon-workspace.svg';
-import Panel from './Panel';
+import Panel from '../Panel';
 import InstructionForm from './Panel/InstructionForm';
 import ConditionForm from './Panel/ConditionForm';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import BUILTIN_INSTRUCTIONS from '@prisme.ai/validation/instructions.json';
 import { useTranslation } from 'next-i18next';
 import TriggerForm from './Panel/TriggerForm';
@@ -37,6 +36,7 @@ import OutputBlock from './OutputBlock';
 import OutputForm from './Panel/OutputForm';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { Schema } from '@prisme.ai/design-system';
+import { useWorkspace } from '../WorkspaceProvider';
 
 type InstructionSchemaTupple = [
   string,
@@ -452,7 +452,11 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         >
           <Controls />
         </ReactFlow>
-        <Panel visible={panelIsOpen} onVisibleChange={hidePanel}>
+        <Panel
+          title={t('details.title_automations')}
+          visible={panelIsOpen}
+          onVisibleChange={hidePanel}
+        >
           {instructionEditing && <InstructionForm {...instructionEditing} />}
           {conditionEditing && <ConditionForm {...conditionEditing} />}
           {triggerEditing && <TriggerForm {...triggerEditing} />}

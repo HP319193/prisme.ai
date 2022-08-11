@@ -6,6 +6,7 @@ import { useAutomationBuilder } from './context';
 import styles from './styles';
 import { LinkOutlined } from '@ant-design/icons';
 import { Button, notification } from '@prisme.ai/design-system';
+import { truncate } from '../../utils/strings';
 
 interface TriggerDisplayProps {
   value: Prismeai.When;
@@ -30,17 +31,17 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
   }
 
   return (
-    <div className="text-xs">
+    <div>
       {value.events && value.events.length > 0 && (
         <div>
           {t('automations.trigger.events.display', {
-            events: value.events,
+            events: value.events.map((event) => truncate(event, 10)),
             count: value.events.length,
           })}
         </div>
       )}
       {endpoint && (
-        <div>
+        <div className="flex items-center justify-center">
           <Trans
             t={t}
             i18nKey="automations.trigger.endpoint.display"
@@ -57,7 +58,7 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
                   }}
                   href={endpoint}
                   variant="primary"
-                  className="pr-btn-primary-small !h-auto !text-[12px] !p-1 !px-2 !leading-none !pt-1"
+                  className="pr-btn-primary-small !h-auto !text-[12px] !p-1.5 !px-2 !leading-none !rounded-[0.7rem] align-bottom mr-2"
                 />
               ),
               icon: <LinkOutlined />,

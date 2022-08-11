@@ -1,10 +1,10 @@
 import { useMemo, useRef, useState } from 'react';
-import { useWorkspace } from '../../layouts/WorkspaceLayout';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { usePageBuilder } from './context';
 import PageBlock from './PageBlock';
 import debounce from 'lodash/debounce';
 import AddBlock from './AddBlock';
+import { useWorkspace } from '../WorkspaceProvider';
 
 export const PageBlocks = () => {
   const { localize } = useLocalizedText();
@@ -24,7 +24,7 @@ export const PageBlocks = () => {
   );
 
   return (
-    <div className="page-blocks flex grow flex-col items-center overflow-y-auto h-full snap-y snap-mandatory">
+    <div className="page-blocks flex grow flex-col items-center overflow-y-auto h-full snap-mandatory z-10">
       <div className="snap-start" />
       <div ref={containerEl} className="flex flex-1 flex-col w-[768px] py-8">
         {blocksInPage.length === 0 && (

@@ -139,19 +139,19 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
   }, [link, t]);
 
   return (
-    <Space direction="vertical" className="w-[60vw]">
-      <label className="flex flex-row">
-        <Space className="flex flex-row">
-          <Text>{t('pages.share.access')}</Text>
-          <Switch
-            checked={isPublic}
-            onChange={togglePublic}
-            checkedChildren={t('pages.public')}
-            unCheckedChildren={t('pages.private')}
-          />
-        </Space>
-      </label>
-      <div>
+    <div className="w-[42rem] space-y-5">
+      <div className="flex flex-row">
+        <div className="flex flex-row">
+          <Space className="flex flex-row">
+            <Text>{t('pages.share.access')}</Text>
+            <Switch
+              checked={isPublic}
+              onChange={togglePublic}
+              checkedChildren={t('pages.public')}
+              unCheckedChildren={t('pages.private')}
+            />
+          </Space>
+        </div>
         <Button variant="grey" onClick={copyLink}>
           <LinkOutlined />
           {link}
@@ -159,25 +159,32 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
       </div>
       {!isPublic && (
         <>
-          <Form onSubmit={onSubmit} initialValues={{ email: '', role: '' }}>
+          <Form onSubmit={onSubmit} initialValues={{ email: '' }}>
             {({ handleSubmit }) => (
               <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
-                <Text>
+                <div className="font-semibold">
                   {t('pages.share.access', {
                     context: 'private',
                   })}
-                </Text>
-                <div className="flex flex-row flex-1 items-center">
+                </div>
+                <div className="flex flex-row flex-1 items-end">
                   <FieldContainer
                     name="email"
-                    className="mx-2"
-                    containerClassName="flex-1"
+                    containerClassName="flex-1 !ml-0 !mb-0 !mt-[0.635rem] flex-row"
                   >
                     {({ input }) => (
-                      <Input label={t('share.email')} {...input} />
+                      <>
+                        <Input label={t('share.email')} {...input} />
+                      </>
                     )}
                   </FieldContainer>
-                  <Button type="submit">{commonT('add')}</Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    className="flex items-center justify-center !w-[9.375rem] !h-[50px] !rounded-[0.94rem]"
+                  >
+                    {commonT('add')}
+                  </Button>
                 </div>
               </form>
             )}
@@ -199,7 +206,7 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
           />
         </>
       )}
-    </Space>
+    </div>
   );
 };
 

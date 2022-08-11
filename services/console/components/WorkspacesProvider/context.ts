@@ -12,11 +12,6 @@ export interface WorkspacesContext {
   getWorkspaceUsersPermissions: (
     workspaceId: string
   ) => Promise<Prismeai.PermissionsList>;
-
-  installApp: (
-    workspaceId: PrismeaiAPI.InstallAppInstance.PathParameters['workspaceId'],
-    body: PrismeaiAPI.InstallAppInstance.RequestBody
-  ) => Promise<Prismeai.AppInstance | null>;
   updateApp: (
     workspaceId: PrismeaiAPI.ConfigureAppInstance.PathParameters['workspaceId'],
     slug: PrismeaiAPI.ConfigureAppInstance.PathParameters['slug'],
@@ -38,7 +33,6 @@ export const workspacesContext = createContext<WorkspacesContext>({
   update: async () => ({} as Workspace),
   remove: async () => null,
   getWorkspaceUsersPermissions: async () => [] as Prismeai.PermissionsList,
-  installApp: async () => ({} as any),
   updateApp: async () => ({} as any),
   uninstallApp: async () => ({} as any),
   publishApp: async () => ({} as any),

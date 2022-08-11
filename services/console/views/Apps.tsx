@@ -1,0 +1,170 @@
+import {
+  Modal,
+  notification,
+  PageHeader,
+  Schema,
+} from '@prisme.ai/design-system';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { DeleteOutlined } from '@ant-design/icons';
+import { useWorkspaces } from '../components/WorkspacesProvider';
+import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
+import getLayout from '../layouts/WorkspaceLayout';
+import { useWorkspace } from '../components/WorkspaceProvider';
+import { useApps } from '../components/AppsProvider';
+import useLocalizedText from '../utils/useLocalizedText';
+import EditDetails from '../layouts/EditDetails';
+import AppEditor from '../components/AppEditor';
+
+interface AppsProps extends Prismeai.DetailedAppInstance {
+  workspaceId: string;
+  onToggle: (app: string, state: boolean) => void;
+}
+
+const Apps = ({}: AppsProps) => {
+  const { workspace } = useWorkspace();
+  const { appInstances, saveAppInstance } = useApps();
+  const { localize } = useLocalizedText();
+
+  const [currentApp, setCurrentApp] = useState<Prismeai.DetailedAppInstance>();
+
+  const {
+    push,
+    query: { appId },
+  } = useRouter();
+
+  useEffect(() => {
+    if (!appInstances) return;
+    const workspaceApps = appInstances.get(workspace.id);
+    if (!workspaceApps) return;
+
+    setCurrentApp(
+      workspaceApps.find((appInstance) => appInstance.slug === appId)
+    );
+  }, [appId, appInstances, workspace.id]);
+
+  const { photo, config: { schema, block } = {} } = (currentApp || {
+    config: {},
+  }) as Prismeai.DetailedAppInstance;
+
+  const { uninstallApp } = useWorkspaces();
+  const { t } = useTranslation('workspaces');
+
+  const onDelete = useCallback(() => {
+    if (typeof appId !== 'string') return;
+
+    Modal.confirm({
+      icon: <DeleteOutlined />,
+      content: t('apps.uninstall', { appName: appId }),
+      onOk: () => {
+        push(`/workspaces/${workspace.id}`);
+        uninstallApp(workspace.id, appId);
+      },
+      okText: t('apps.uninstallConfirm', { appName: appId }),
+    });
+  }, [appId, push, t, uninstallApp, workspace.id]);
+
+  const [value, setValue] = useState<{
+    slug: string;
+    appName: Prismeai.LocalizedText;
+  }>();
+
+  useEffect(() => {
+    if (!currentApp) return;
+    const { slug = '', appName = '' } = currentApp;
+    setValue({
+      slug,
+      appName,
+    });
+  }, [currentApp]);
+
+  const updateDetails = useCallback(
+    async ({
+      slug,
+      appName,
+    }: {
+      slug: string;
+      appName: Prismeai.LocalizedText;
+    }) => {
+      if (!value || !currentApp || !currentApp.slug) return;
+      const newValue = {
+        appName,
+        slug,
+      };
+      setValue(newValue);
+      try {
+        await saveAppInstance(workspace.id, currentApp.slug, newValue);
+        push(`/workspaces/${workspace.id}/apps/${slug}`);
+        notification.success({
+          message: t('apps.saveSuccess'),
+          placement: 'bottomRight',
+        });
+      } catch (e) {
+        const error: any = e;
+        if (error.details) {
+          notification.error({
+            message: t('apps.save.error', {
+              context: Object.keys(error.details || {})[0],
+            }),
+            placement: 'bottomRight',
+          });
+          return error.details;
+        }
+        throw e;
+      }
+    },
+    [currentApp, push, saveAppInstance, t, value, workspace.id]
+  );
+
+  const detailsFormSchema: Schema = useMemo(
+    () => ({
+      type: 'object',
+      properties: {
+        appName: {
+          type: 'localized:string',
+          title: t('apps.details.appName.label'),
+        },
+        slug: {
+          type: 'string',
+          title: t('apps.details.slug.label'),
+        },
+      },
+    }),
+    [t]
+  );
+
+  if (typeof appId !== 'string' || !currentApp) return null;
+
+  return (
+    <>
+      <PageHeader
+        title={
+          <div className="flex flex-row items-center text-base">
+            {photo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photo} className="w-10 h-10 mr-2" alt={appId} />
+            )}
+
+            <span className="font-medium">{localize(currentApp.appName)}</span>
+            <span className="w-[20px]" />
+            <span className="border-l border-solid border-pr-gray-200 text-gray flex h-[26px] w-[20px]" />
+            <span className="text-gray flex">
+              <EditDetails
+                schema={detailsFormSchema}
+                value={{ ...value }}
+                onSave={updateDetails}
+                onDelete={onDelete}
+                context="apps"
+                key={currentApp.slug}
+              />
+            </span>
+          </div>
+        }
+      />
+      <AppEditor schema={schema} block={block} appId={appId} key={appId} />
+    </>
+  );
+};
+
+Apps.getLayout = getLayout;
+export default Apps;

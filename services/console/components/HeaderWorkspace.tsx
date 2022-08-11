@@ -12,7 +12,6 @@ import {
   Space,
 } from '@prisme.ai/design-system';
 import { useWorkspaces } from './WorkspacesProvider';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import Header from './Header';
@@ -21,6 +20,8 @@ import PublishModal from './PublishModal';
 import EditDetails from '../layouts/EditDetails';
 import useLocalizedText from '../utils/useLocalizedText';
 import Link from 'next/link';
+import { useWorkspace } from './WorkspaceProvider';
+import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
@@ -30,12 +31,11 @@ const HeaderWorkspace = () => {
   const {
     workspace,
     workspace: { id, name: currentWorkspace },
-    displaySource,
-    sourceDisplayed,
     share: { label, component: ShareComponent = ShareWorkspace } = {},
   } = useWorkspace();
   const { push } = useRouter();
   const [publishVisible, setPublishVisible] = useState(false);
+  const { displaySource, sourceDisplayed } = useWorkspaceLayout();
 
   const confirmDelete = useCallback(() => {
     push('/workspaces');
@@ -67,7 +67,7 @@ const HeaderWorkspace = () => {
         },
         links: {
           'ui:widget': () => (
-            <div className="ant-input !flex flex-1 justify-between !mt-4">
+            <div className="!flex flex-1 justify-between !mt-4 !mb-6">
               <Button
                 className="flex items-center"
                 onClick={() => {
@@ -137,6 +137,7 @@ const HeaderWorkspace = () => {
           <Popover
             content={() => <ShareComponent />}
             title={label || t('share.label')}
+            titleClassName="!bg-white !text-black"
           >
             <Button variant="grey" className="!text-white">
               <Space>

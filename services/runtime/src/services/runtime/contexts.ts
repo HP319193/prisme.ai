@@ -2,10 +2,11 @@ import { Broker } from '@prisme.ai/broker';
 import _ from 'lodash';
 import {
   CONTEXT_RUN_EXPIRE_TIME,
+  CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME,
   MAXIMUM_SUCCESSIVE_CALLS,
 } from '../../../config';
 import { CacheDriver } from '../../cache';
-import { InvalidSetInstructionError, TooManyCallError } from '../../errors';
+import { InvalidInstructionError, TooManyCallError } from '../../errors';
 import { Logger, logger } from '../../logger';
 import { EventType } from '../../eda';
 import { parseVariableName, SplittedPath } from '../../utils/parseVariableName';
@@ -224,7 +225,9 @@ export class ContextsManager {
     }
     if (!context || context === ContextType.Session) {
       await this.cache.setObject(this.cacheKey(ContextType.Session), session, {
-        ttl: this.session?.expiresIn || 60 * 15,
+        ttl:
+          this.session?.expiresIn ||
+          CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME,
       });
     }
 
@@ -389,7 +392,7 @@ export class ContextsManager {
         : this.contexts;
     for (let i = 0; i < splittedPath.length - 1; i++) {
       const key = splittedPath[i];
-      if (!(key in parent)) {
+      if (!(key in parent) || parent[key] == undefined || parent[key] == null) {
         parent[key] = {};
       }
       parent = parent[key];
@@ -455,7 +458,7 @@ export class ContextsManager {
       }
     } catch (error) {
       this.logger.error(error);
-      throw new InvalidSetInstructionError('Invalid set instruction', {
+      throw new InvalidInstructionError('Invalid set instruction', {
         variable: path,
         value,
       });

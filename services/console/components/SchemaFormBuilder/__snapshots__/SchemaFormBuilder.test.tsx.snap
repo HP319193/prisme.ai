@@ -50,7 +50,7 @@ Object {
           className="flex flex-row"
         >
           <SchemaFormDescription
-            className="flex-1 mr-2"
+            className="flex flex-1 mr-2"
             text="schema.property.widget.description"
           >
             <Select
@@ -72,7 +72,7 @@ Object {
             />
           </SchemaFormDescription>
           <SchemaFormDescription
-            className="flex-1"
+            className="flex flex-1"
             text="schema.property.type.description"
           >
             <Select
@@ -129,7 +129,7 @@ Object {
               "label": "schema.property.title",
             }
           }
-          iconMarginTop={17}
+          iconMarginTop="2.3rem"
           onChange={[Function]}
           value=""
         />,
@@ -142,7 +142,7 @@ Object {
                 "label": "schema.property.description.label",
               }
             }
-            iconMarginTop={17}
+            iconMarginTop="2.3rem"
             onChange={[Function]}
             value=""
           />
@@ -189,7 +189,7 @@ Object {
           />
         </div>,
       ],
-      "className": "flex flex-1 flex-col",
+      "className": "flex flex-1 flex-col space-y-5",
     },
     "rendered": Array [
       Object {
@@ -198,7 +198,7 @@ Object {
         "props": Object {
           "children": Array [
             <SchemaFormDescription
-              className="flex-1 mr-2"
+              className="flex flex-1 mr-2"
               text="schema.property.widget.description"
             >
               <Select
@@ -220,7 +220,7 @@ Object {
               />
             </SchemaFormDescription>,
             <SchemaFormDescription
-              className="flex-1"
+              className="flex flex-1"
               text="schema.property.type.description"
             >
               <Select
@@ -294,7 +294,7 @@ Object {
                 }
                 value=""
               />,
-              "className": "flex-1 mr-2",
+              "className": "flex flex-1 mr-2",
               "text": "schema.property.widget.description",
             },
             "rendered": Object {
@@ -369,7 +369,7 @@ Object {
                 }
                 value="object"
               />,
-              "className": "flex-1",
+              "className": "flex flex-1",
               "text": "schema.property.type.description",
             },
             "rendered": Object {
@@ -433,7 +433,7 @@ Object {
           "InputProps": Object {
             "label": "schema.property.title",
           },
-          "iconMarginTop": 17,
+          "iconMarginTop": "2.3rem",
           "onChange": [Function],
           "value": "",
         },
@@ -447,7 +447,7 @@ Object {
             "addLangTooltip": "languages.add.tooltip",
             "availableLangsTitle": "languages.available.title",
             "deleteTooltip": "languages.delete.tooltip",
-            "iconMarginTop": 17,
+            "iconMarginTop": "2.3rem",
             "onChange": [Function],
             "setLangTooltip": "languages.set.tooltip",
             "setLangsTitle": "languages.set.title",
@@ -468,7 +468,7 @@ Object {
                 "label": "schema.property.description.label",
               }
             }
-            iconMarginTop={17}
+            iconMarginTop="2.3rem"
             onChange={[Function]}
             value=""
           />,
@@ -481,7 +481,7 @@ Object {
             "InputProps": Object {
               "label": "schema.property.description.label",
             },
-            "iconMarginTop": 17,
+            "iconMarginTop": "2.3rem",
             "onChange": [Function],
             "value": "",
           },
@@ -495,7 +495,7 @@ Object {
               "addLangTooltip": "languages.add.tooltip",
               "availableLangsTitle": "languages.available.title",
               "deleteTooltip": "languages.delete.tooltip",
-              "iconMarginTop": 17,
+              "iconMarginTop": "2.3rem",
               "onChange": [Function],
               "setLangTooltip": "languages.set.tooltip",
               "setLangsTitle": "languages.set.title",
@@ -631,7 +631,7 @@ Object {
                                 title="schema.property.delete"
                               >
                                 <button
-                                  className="absolute top-[30px] right-3"
+                                  className="absolute top-[2.8rem] right-3 text-gray hover:text-orange-500"
                                   onClick={[Function]}
                                   type="button"
                                 >
@@ -680,7 +680,7 @@ Object {
                                 title="schema.property.delete"
                               >
                                 <button
-                                  className="absolute top-[30px] right-3"
+                                  className="absolute top-[2.8rem] right-3 text-gray hover:text-orange-500"
                                   onClick={[Function]}
                                   type="button"
                                 >
@@ -729,7 +729,7 @@ Object {
                                 title="schema.property.delete"
                               >
                                 <button
-                                  className="absolute top-[30px] right-3"
+                                  className="absolute top-[2.8rem] right-3 text-gray hover:text-orange-500"
                                   onClick={[Function]}
                                   type="button"
                                 >
@@ -795,7 +795,7 @@ Object {
                                 title="schema.property.delete"
                               >
                                 <button
-                                  className="absolute top-[30px] right-3"
+                                  className="absolute top-[2.8rem] right-3 text-gray hover:text-orange-500"
                                   onClick={[Function]}
                                   type="button"
                                 >
@@ -814,7 +814,7 @@ Object {
                     schema.property.add
                   </Button>,
                 ],
-                "className": "flex flex-1 flex-col mt-[1rem] centered-collapse",
+                "className": "flex flex-1 flex-col centered-collapse",
               },
               "rendered": Array [
                 Object {
@@ -857,7 +857,7 @@ Object {
                             title="schema.property.delete"
                           >
                             <button
-                              className="absolute top-[30px] right-3"
+                              className="absolute top-[2.8rem] right-3 text-gray hover:text-orange-500"
                               onClick={[Function]}
                               type="button"
                             >
@@ -911,7 +911,7 @@ Object {
                             title="schema.property.delete"
                           >
                             <button
-                              className="absolute top-[30px] right-3"
+                              className="absolute top-[2.8rem] right-3 text-gray hover:text-orange-500"
                               onClick={[Function]}
                               type="button"
                             >
@@ -965,7 +965,7 @@ Object {
                             title="schema.property.delete"
                           >
                             <button
-                              className="absolute top-[30px] right-3"
+                              className="absolute top-[2.8rem] right-3 text-gray hover:text-orange-500"
                               onClick={[Function]}
                               type="button"
                             >
@@ -1036,7 +1036,7 @@ Object {
                             title="schema.property.delete"
                           >
                             <button
-                              className="absolute top-[30px] right-3"
+                              className="absolute top-[2.8rem] right-3 text-gray hover:text-orange-500"
                               onClick={[Function]}
                               type="button"
                             >

@@ -2529,8 +2529,7 @@ components:
           type: string
           description: 'App unique id'
         appName:
-          type: string
-          description: 'App name'
+          $ref: '#/components/schemas/LocalizedText'
         appVersion:
           type: string
           description: 'Defaults to the latest known app version'

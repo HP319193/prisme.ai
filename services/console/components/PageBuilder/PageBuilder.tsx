@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { builtinBlocks } from '@prisme.ai/blocks';
 import Panel from '../Panel';
 import { context, PageBuilderContext } from './context';
@@ -10,6 +10,7 @@ import PageEditBlockForm from './Panel/PageEditBlockForm';
 import useBlocksConfigs from '../Page/usePageBlocksConfigs';
 import { Schema } from '@prisme.ai/design-system';
 import { extractEvents } from './extractEvents';
+import { useTranslation } from 'next-i18next';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -17,6 +18,9 @@ interface PageBuilderProps {
   blocks: PageBuilderContext['blocks'];
 }
 export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
+  const { t } = useTranslation('workspaces');
+  const { t: commonT } = useTranslation('common');
+
   const [panelIsOpen, setPanelIsOpen] = useState(false);
   const [blockSelecting, setBlockSelecting] = useState<
     | {
@@ -172,11 +176,14 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
       }}
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">
+        <div className="absolute left-10 bottom-10 text-[0.75rem] text-pr-grey z-0">
+          {commonT('powered')}
+        </div>
         <PageBlocks />
         <Panel
+          title={t('details.title_pages')}
           visible={panelIsOpen}
           onVisibleChange={hidePanel}
-          className="-right-1/2 w-1/2"
         >
           {blockSelecting && <PageNewBlockForm {...blockSelecting} />}
           {blockEditing && <PageEditBlockForm blockId={blockEditing} />}

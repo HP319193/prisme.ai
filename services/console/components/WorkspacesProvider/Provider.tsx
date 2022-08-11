@@ -6,7 +6,6 @@ import { useUser } from '../UserProvider';
 import { useTranslation } from 'react-i18next';
 import { removedUndefinedProperties } from '../../utils/objects';
 import { notification } from '@prisme.ai/design-system';
-import { SLUG_MATCH_INVALID_CHARACTERS } from '../../utils/regex';
 import useLocalizedText from '../../utils/useLocalizedText';
 
 export const WorkspacesProvider: FC = ({ children }) => {
@@ -146,64 +145,6 @@ export const WorkspacesProvider: FC = ({ children }) => {
       return userPermissions;
     }, []);
 
-  const installApp: WorkspacesContext['installApp'] = useCallback(
-    async (workspaceId, body) => {
-      try {
-        const currentWorkspace = workspaces.get(workspaceId);
-
-        if (!currentWorkspace) {
-          throw new Error("Can't add an app to an empty workspace");
-        }
-
-        // Generate app instance slug
-        let version = 0;
-        const newAppInstanceSlug = () =>
-          `${body.appSlug.replace(SLUG_MATCH_INVALID_CHARACTERS, '')}${
-            version ? ` ${version}` : ''
-          }`;
-        while (
-          Object.keys(currentWorkspace.imports || {}).find(
-            (appInstanceSlug) => appInstanceSlug === newAppInstanceSlug()
-          )
-        ) {
-          version++;
-        }
-
-        const fetchedAppInstance = await api.installApp(workspaceId, {
-          ...body,
-          slug: newAppInstanceSlug(),
-        });
-
-        // Typescript check, this route should always return a slug
-        if (!fetchedAppInstance.slug) {
-          throw new Error('Received app instance has no slug');
-        }
-
-        const updatedWorkspace = {
-          ...currentWorkspace,
-          imports: {
-            ...(currentWorkspace.imports || {}),
-            [fetchedAppInstance.slug]: fetchedAppInstance,
-          },
-        };
-
-        const newWorkspaces = new Map(workspaces);
-        newWorkspaces.set(workspaceId, updatedWorkspace);
-        setWorkspaces(newWorkspaces);
-
-        return fetchedAppInstance;
-      } catch (e) {
-        notification.error({
-          message: errorT('unknown', { errorName: e }),
-          placement: 'bottomRight',
-        });
-        console.error(e);
-        return null;
-      }
-    },
-    [errorT, workspaces]
-  );
-
   const updateApp: WorkspacesContext['updateApp'] = useCallback(
     async (workspaceId, slug, body) => {
       try {
@@ -294,7 +235,6 @@ export const WorkspacesProvider: FC = ({ children }) => {
         update,
         remove,
         getWorkspaceUsersPermissions,
-        installApp,
         updateApp,
         uninstallApp,
         publishApp,

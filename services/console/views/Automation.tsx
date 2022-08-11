@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AutomationBuilder from '../components/AutomationBuilder';
-import getLayout, { useWorkspace } from '../layouts/WorkspaceLayout';
+import getLayout from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useTranslation } from 'next-i18next';
@@ -19,6 +19,9 @@ import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import EditDetails from '../layouts/EditDetails';
 import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
 import { ApiError } from '../utils/api';
+import { useWorkspace } from '../components/WorkspaceProvider';
+import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
+import { usePrevious } from '../utils/usePrevious';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -74,7 +77,9 @@ export const Automation = () => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const { workspace, updateAutomation, deleteAutomation } = useWorkspace();
+  const { setDirty } = useWorkspaceLayout();
   const { getAppInstances, appInstances } = useApps();
+
   useEffect(() => {
     getAppInstances(workspace.id);
   }, [getAppInstances, workspace.id]);
@@ -86,6 +91,7 @@ export const Automation = () => {
   } = useRouter();
 
   const automation = (workspace.automations || {})[`${automationId}`];
+  const prevAutomationId = usePrevious(automationId);
 
   const [value, setValue] = useState<Prismeai.Automation>(automation || {});
   const [saving, setSaving] = useState(false);
@@ -93,6 +99,18 @@ export const Automation = () => {
   useEffect(() => {
     setValue(automation);
   }, [automation]);
+
+  useEffect(() => {
+    if (!value) return;
+    const { slug, ...valueWithoutSlug } = value;
+
+    if (
+      automationId === prevAutomationId &&
+      JSON.stringify(automation) !== JSON.stringify(valueWithoutSlug)
+    ) {
+      setDirty(true);
+    }
+  }, [value, automationId, prevAutomationId, setDirty, automation]);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -145,6 +163,7 @@ export const Automation = () => {
           message: t('automations.save.toast'),
           placement: 'bottomRight',
         });
+        setDirty(false);
         setSaving(false);
         return saved;
       } catch (e) {
@@ -262,18 +281,22 @@ export const Automation = () => {
     <>
       <PageHeader
         title={
-          <div className="flex flex-row items-center">
-            {localize(value.name)}
-            <EditDetails
-              schema={detailsFormSchema}
-              value={{ ...value, slug: automationId }}
-              onSave={updateDetails}
-              onDelete={confirmDeleteAutomation}
-              context="automations"
-            />
+          <div className="flex flex-row items-center text-base">
+            <span className="font-medium">{localize(value.name)}</span>
+            <span className="w-[20px]" />
+            <span className="border-l border-solid border-pr-gray-200 text-gray flex h-[26px] w-[20px]" />
+            <span className="text-gray flex">
+              <EditDetails
+                schema={detailsFormSchema}
+                value={{ ...value, slug: automationId }}
+                onSave={updateDetails}
+                onDelete={confirmDeleteAutomation}
+                context="automations"
+                key={`${automationId}`}
+              />
+            </span>
           </div>
         }
-        onBack={() => push(`/workspaces/${workspace.id}`)}
         RightButtons={[
           <Button
             onClick={save}
@@ -290,7 +313,7 @@ export const Automation = () => {
         ]}
       />
 
-      <div className="relative flex flex-1">
+      <div className="relative flex flex-1 h-full">
         <AutomationBuilder
           id={`${automationId}`}
           value={value}

@@ -12,7 +12,7 @@ import React, {
 import { Loading, Title } from '@prisme.ai/design-system';
 import SigninForm from '../components/SigninForm';
 import { useUser } from '../components/UserProvider';
-import api, { HTTPError } from '../utils/api';
+import api, { Events, HTTPError } from '../utils/api';
 import useLocalizedText from '../utils/useLocalizedText';
 import usePageBlocksConfigs from '../components/Page/usePageBlocksConfigs';
 import PublicPageBlock from '../components/Page/PageBlock';
@@ -22,8 +22,20 @@ export interface PublicPageProps {
   error?: number | null;
 }
 
+declare global {
+  interface Window {
+    Prisme: {
+      ai: {
+        api: typeof api;
+        events?: Events;
+      };
+    };
+  }
+}
+
 export const PublicPageRenderer = ({ page }: PublicPageProps) => {
   const { t } = useTranslation('pages');
+  const { t: commonT } = useTranslation('common');
   const { localize } = useLocalizedText();
   const { user } = useUser();
   const [currentPage, setCurrentPage] = useState<Prismeai.DetailedPage | null>(
@@ -36,6 +48,14 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
     query: { pageSlug },
   } = useRouter();
   const { blocksConfigs, error, events } = usePageBlocksConfigs(currentPage);
+
+  useEffect(() => {
+    window.Prisme = window.Prisme || {};
+    window.Prisme.ai = window.Prisme.ai || {};
+    window.Prisme.ai.api = api;
+    window.Prisme.ai.events = events;
+  }, [events]);
+
   const containerEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -100,7 +120,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
   }
 
   return (
-    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-scroll min-h-full snap-y snap-mandatory">
+    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-auto min-h-full snap-mandatory">
       <Head>
         <title>{localize(currentPage.name)}</title>
         <meta name="description" content={localize(currentPage.description)} />
@@ -108,6 +128,9 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
       {currentPage.styles && (
         <style dangerouslySetInnerHTML={{ __html: currentPage.styles }} />
       )}
+      <div className="absolute left-2 bottom-2 text-[0.75rem] text-pr-grey z-0">
+        {commonT('powered')}
+      </div>
       <div
         className="flex flex-1 flex-col page-blocks w-full"
         ref={containerEl}
@@ -118,7 +141,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
             className={`page-block block-${appInstance.replace(
               /\s/g,
               '-'
-            )} block-${name.replace(/\s/g, '-')} snap-start`}
+            )} block-${name.replace(/\s/g, '-')} snap-start z-10`}
             id={blocksConfigs[index] && blocksConfigs[index].sectionId}
           >
             <PublicPageBlock

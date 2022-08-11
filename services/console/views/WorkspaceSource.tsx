@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { YAMLException } from 'js-yaml';
-import { useWorkspace } from '../layouts/WorkspaceLayout';
 import { Workspace } from '@prisme.ai/sdk';
 import useYaml from '../utils/useYaml';
 import {
@@ -23,6 +22,8 @@ import {
 } from '@prisme.ai/design-system';
 import { useRouter } from 'next/router';
 import { useWorkspaces } from '../components/WorkspacesProvider';
+import { useWorkspace } from '../components/WorkspaceProvider';
+import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 
 interface Annotation {
   row: number;
@@ -41,15 +42,10 @@ interface WorkspaceSourceProps {
 }
 export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const { t } = useTranslation('workspaces');
-  const {
-    workspace,
-    setInvalid,
-    setNewSource,
-    invalid,
-    saveSource,
-    saving,
-    displaySource,
-  } = useWorkspace();
+  const { workspace } = useWorkspace();
+  const { onSaveSource } = useWorkspaceLayout();
+  const { setInvalid, setNewSource, invalid, saving, displaySource } =
+    useWorkspaceLayout();
   const { fetch } = useWorkspaces();
   const [dirty, setDirty] = useState(false);
   const [value, setValue] = useState<string | undefined>();
@@ -214,9 +210,9 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   }, [allAnnotations, ref, t]);
 
   const save = useCallback(() => {
-    saveSource();
+    onSaveSource();
     setDirty(false);
-  }, [saveSource]);
+  }, [onSaveSource]);
 
   const shortcuts = useMemo(
     () => [

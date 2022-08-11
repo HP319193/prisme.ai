@@ -13,7 +13,7 @@ export const LayoutGrid = ({ grid, name, schema }: LayoutGridProps) => {
   return (
     <>
       {grid.map((lines, lindex) => (
-        <div key={`${lindex}`} className="flex flex-col">
+        <div key={`${lindex}`} className="flex flex-col space-y-5">
           {lines.map((rows, rindex) => (
             <div key={`${rindex}`} className="flex flex-row">
               {rows.map(
