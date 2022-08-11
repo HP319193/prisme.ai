@@ -42,7 +42,7 @@ Array [
     className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]"
   >
     Prisme.ai v
-    6.3.0
+    6.8.0
   </div>,
 ]
 `;
@@ -133,7 +133,7 @@ Array [
     className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]"
   >
     Prisme.ai v
-    6.3.0
+    6.8.0
   </div>,
 ]
 `;
