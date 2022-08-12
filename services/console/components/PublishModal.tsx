@@ -102,7 +102,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
       cancelText={commonT('cancel')}
       onCancel={close}
     >
-      <div>
+      <div className="p-10">
         <div className="mb-10">{t('apps.publish.confirm.content')}</div>
         <Tooltip
           title={
