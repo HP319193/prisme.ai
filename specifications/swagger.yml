@@ -3348,6 +3348,7 @@ components:
       type: object
       required:
         - automationRuns
+        - transactions
         - httpTransactions
         - eventTransactions
         - sessions
