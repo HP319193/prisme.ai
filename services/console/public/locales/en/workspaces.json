@@ -1,4 +1,5 @@
 {
+  "page_title": "{{elementName}} · Prisme.ai",
   "workspaces": {
     "title": "Workspaces — $t(common:main.title)",
     "description": "Create new Workspaces and new Apps, edit them, and run them",

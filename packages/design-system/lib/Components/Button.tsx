@@ -10,6 +10,7 @@ export const Button = ({
   children,
   variant = 'default',
   type = 'button',
+  // className,
   ...props
 }: ButtonProps) => {
   const antdType = useMemo(() => {
@@ -18,7 +19,12 @@ export const Button = ({
   }, [variant]);
 
   return (
-    <AntdButton type={antdType} htmlType={type} {...props}>
+    <AntdButton
+      type={antdType}
+      htmlType={type}
+      {...props}
+      // className={`${className} ${props.disabled ? 'cursor-not-allowed' : ''}`}
+    >
       {children}
     </AntdButton>
   );

@@ -920,14 +920,14 @@ paths:
             type: string
         - name: 'afterDate'
           in: 'query'
-          description: 'Retrieve usage stats after this ISO8601 formatted date. If both beforeDate / afterDate are left undefined, take current month period'
+          description: 'Retrieve usage stats after this ISO8601 formatted date.'
           required: true
           schema:
             type: string
         - name: 'beforeDate'
           in: 'query'
           required: true
-          description: 'Retrieve usage stats before this ISO8601 formatted date. If both beforeDate / afterDate are left undefined, take current month period'
+          description: 'Retrieve usage stats before this ISO8601 formatted date.'
           schema:
             type: string
         - name: 'details'
