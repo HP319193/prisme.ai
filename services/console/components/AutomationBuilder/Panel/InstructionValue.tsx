@@ -125,14 +125,14 @@ export const InstructionValue: FC<InstructionValueProps> = ({
         oneOf: {
           options: [
             {
-              label: 'automations.instruction.form.repeat.on.label',
+              label: t('automations.instruction.form.repeat.on.label'),
               index: 0,
               value: {
                 until: undefined,
               },
             },
             {
-              label: 'automations.instruction.form.repeat.until.label',
+              label: t('automations.instruction.form.repeat.until.label'),
               index: 1,
               value: {
                 on: undefined,
