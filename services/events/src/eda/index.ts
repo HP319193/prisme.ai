@@ -25,6 +25,8 @@ export enum EventType {
 
   CreatedUserTopic = 'events.userTopics.created',
   JoinedUserTopic = 'events.userTopics.joined',
+
+  ExecutedAutomation = 'runtime.automations.executed',
 }
 
 export class CallbackContext {

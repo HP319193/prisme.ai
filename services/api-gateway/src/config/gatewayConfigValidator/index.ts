@@ -22,7 +22,7 @@ const rootSchema = {
 
 const endpointSchema = {
   path: 'required_without_all:paths,pathRegexp|string',
-  paths: 'array|string',
+  paths: 'array:string',
   pathRegexp: 'string',
   methods: 'array:string',
   hosts: 'array:string',

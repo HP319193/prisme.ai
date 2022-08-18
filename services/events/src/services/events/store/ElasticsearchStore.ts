@@ -1,6 +1,7 @@
 import elasticsearch from '@elastic/elasticsearch';
 import { StoreDriverOptions } from '.';
 import { EVENTS_RETENTION_DAYS } from '../../../../config';
+import { EventType } from '../../../eda';
 import { InvalidFiltersError, ObjectNotFoundError } from '../../../errors';
 import { logger } from '../../../logger';
 import { preprocess } from './preprocess';
@@ -83,6 +84,9 @@ export class ElasticsearchStore implements EventsStore {
                 type: 'keyword',
               },
               'source.userId': {
+                type: 'keyword',
+              },
+              'source.sessionId': {
                 type: 'keyword',
               },
               'source.workspaceId': {
@@ -387,4 +391,168 @@ export class ElasticsearchStore implements EventsStore {
       });
     }
   }
+
+  async workspaceUsage(
+    workspaceId: string,
+    options: PrismeaiAPI.WorkspaceUsage.QueryParameters
+  ): Promise<Prismeai.WorkspaceUsage> {
+    const filter: any = [
+      { term: { 'source.serviceTopic': EventType.ExecutedAutomation } },
+    ];
+    if (options.afterDate) {
+      filter.push({
+        range: {
+          createdAt: {
+            gt: options.afterDate,
+          },
+        },
+      });
+    }
+
+    if (options.beforeDate) {
+      filter.push({
+        range: {
+          createdAt: {
+            lt: options.beforeDate,
+          },
+        },
+      });
+    }
+
+    const metricAggs = {
+      triggerTypes: {
+        terms: { field: 'payload.trigger.type' },
+      },
+      transactions: {
+        cardinality: {
+          field: 'source.correlationId',
+          missing: 'N/A',
+        },
+      },
+      sessions: {
+        cardinality: {
+          field: 'source.sessionId',
+        },
+      },
+    };
+    type MetricsElasticBucket = ElasticBucket<{
+      triggerTypes: ElasticBucket;
+      transactions: { value: number };
+      users: { value: number };
+    }>;
+
+    const result: any = await this._search(
+      workspaceId,
+      { limit: 0 },
+      {
+        query: {
+          bool: {
+            filter,
+          },
+        },
+
+        aggs: {
+          ...metricAggs,
+          apps: {
+            terms: { field: 'source.appSlug' },
+            aggs: {
+              ...metricAggs,
+              appInstances: {
+                terms: { field: 'source.appInstanceFullSlug' },
+                aggs: metricAggs,
+              },
+            },
+          },
+        },
+      }
+    );
+    const { _shards, hits, aggregations } = result;
+    if (_shards?.failed) {
+      logger.warn({
+        msg: 'Some Elasticsearch shards failed when agggregating workspace usage',
+        shards: _shards,
+      });
+    }
+
+    const mapMetricsElasticBuckets = (
+      elasticBuckets: MetricsElasticBucket,
+      automationRuns: number
+    ): Prismeai.UsageMetrics => {
+      const nonEventTriggers = (
+        elasticBuckets.triggerTypes?.buckets || []
+      ).reduce((total: number, { key, doc_count }: ElasticBucket) => {
+        return key === 'event' || key === 'automation'
+          ? total
+          : total + doc_count;
+      }, 0);
+      const triggerTypes = mapElasticBuckets(
+        elasticBuckets.triggerTypes?.buckets || []
+      );
+      const transactions = elasticBuckets?.transactions?.value || 0;
+      const metrics: Prismeai.UsageMetrics = {
+        automationRuns,
+        transactions,
+        httpTransactions: triggerTypes?.endpoint?.count || 0,
+        eventTransactions: transactions - nonEventTriggers,
+        sessions: aggregations?.sessions?.value,
+      };
+
+      return metrics;
+    };
+
+    const usage: Prismeai.WorkspaceUsage = {
+      workspaceId,
+      beforeDate: options.beforeDate,
+      afterDate: options.afterDate,
+      total: mapMetricsElasticBuckets(aggregations, hits?.total?.value || 0),
+      apps: (aggregations?.apps?.buckets || []).map(
+        ({ key: slug, doc_count, appInstances, ...metricBuckets }: any) => {
+          const appUsage: Prismeai.AppUsageMetrics = {
+            slug,
+            total: mapMetricsElasticBuckets(metricBuckets, doc_count),
+          };
+          if (options.details) {
+            appUsage.appInstances = (appInstances?.buckets || []).map(
+              ({ key: slug, doc_count, ...metricBuckets }: any) => {
+                return {
+                  slug,
+                  total: mapMetricsElasticBuckets(metricBuckets, doc_count),
+                };
+              }
+            );
+          }
+
+          return appUsage;
+        }
+      ),
+    };
+
+    return usage;
+  }
+}
+
+type ElasticBucket<
+  AdditionalBuckets = Record<
+    string,
+    {
+      buckets: ElasticBucket[];
+    }
+  >
+> = {
+  key: string;
+  doc_count: number;
+  buckets: ElasticBucket[];
+} & AdditionalBuckets;
+
+function mapElasticBuckets(buckets: ElasticBucket[]) {
+  return buckets.reduce(
+    (prev: any, { key, doc_count, ...buckets }: any) => ({
+      ...prev,
+      [key]: {
+        count: doc_count,
+        buckets,
+      },
+    }),
+    {}
+  );
 }
