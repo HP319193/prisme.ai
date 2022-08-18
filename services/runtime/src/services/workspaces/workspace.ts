@@ -1,5 +1,6 @@
 import { PUBLIC_API_URL } from '../../../config';
 import { PrismeError } from '../../errors';
+import { logger } from '../../logger';
 import { interpolate } from '../../utils';
 import { findSecretValues, findSecretPaths } from '../../utils/secrets';
 import { Apps } from '../apps';
@@ -153,29 +154,39 @@ export class Workspace {
         {}
       );
     }
-    const dsul = await this.apps.getApp(appSlug, appVersion);
-    const importParentAppSlugs = parentAppSlugs.concat(appSlug);
-    const interpolatedAppConfig = interpolate(appInstance.config || {}, {
-      config: this.config,
-    });
-    this.imports[slug] = await Workspace.create(
-      dsul,
-      this.apps,
-      {
-        appSlug: appSlug,
-        appInstanceFullSlug: this.appContext
-          ? `${this.appContext.appInstanceFullSlug}.${slug}`
-          : slug,
-        appInstanceSlug: slug,
-        parentAppSlugs: importParentAppSlugs,
-        parentAppSlug:
-          (importParentAppSlugs?.length || 0) > 1
-            ? importParentAppSlugs[importParentAppSlugs.length - 2]
-            : undefined,
-      },
-      interpolatedAppConfig
-    );
-    return this.imports[slug];
+    try {
+      const dsul = await this.apps.getApp(appSlug, appVersion);
+      const importParentAppSlugs = parentAppSlugs.concat(appSlug);
+      const interpolatedAppConfig = interpolate(appInstance.config || {}, {
+        config: this.config,
+      });
+      this.imports[slug] = await Workspace.create(
+        dsul,
+        this.apps,
+        {
+          appSlug: appSlug,
+          appInstanceFullSlug: this.appContext
+            ? `${this.appContext.appInstanceFullSlug}.${slug}`
+            : slug,
+          appInstanceSlug: slug,
+          parentAppSlugs: importParentAppSlugs,
+          parentAppSlug:
+            (importParentAppSlugs?.length || 0) > 1
+              ? importParentAppSlugs[importParentAppSlugs.length - 2]
+              : undefined,
+        },
+        interpolatedAppConfig
+      );
+      return this.imports[slug];
+    } catch (err) {
+      logger.warn({
+        msg: `Could not import app ${appSlug} in workspace ${this.id}`,
+        workspaceId: this.id,
+        appSlug,
+        err,
+      });
+      return;
+    }
   }
 
   deleteImport(slug: string) {
