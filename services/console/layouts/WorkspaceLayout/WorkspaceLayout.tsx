@@ -369,7 +369,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
               />
             </div>
           </SidePanel>
-          <div className="flex h-full flex-col flex-1 min-w-[500px]">
+          <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-[calc(100vw-20rem)]">
             {creating ? <Loading /> : children}
           </div>
         </div>
