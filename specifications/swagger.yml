@@ -3549,7 +3549,6 @@ components:
           type: object
           required:
             - ip
-            - email
             - id
             - session
             - authData

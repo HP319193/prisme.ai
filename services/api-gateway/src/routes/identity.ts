@@ -48,7 +48,7 @@ const loginHandler = (strategy: string) =>
           await req.broker.send<Prismeai.SucceededLogin['payload']>(
             EventType.SucceededLogin,
             {
-              email: user.email || user.firstName,
+              email: user.email,
               ip: req.context?.http?.ip,
               id: user.id,
               authData: {
