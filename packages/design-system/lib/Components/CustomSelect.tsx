@@ -55,7 +55,7 @@ export const CustomSelect = ({
             : item
         }`
           .toLowerCase()
-          .match(search.toLowerCase());
+          .includes(search.toLowerCase());
       });
     const renderOptions = (
       items: (string | Option | OptionGroup)[],
