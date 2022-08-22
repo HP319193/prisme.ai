@@ -267,6 +267,13 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Default value from 'cookie' NodeJS module</td>
   </tr>                  
 
+  <tr>
+    <td>EVENTS_STORAGE_ES_BULK_REFRESH</td>
+    <td>events</td>
+    <td>Enable Elastic "refresh" option when bulk inserting events (might induce overhead)</td>
+    <td>no</td>
+  </tr>                    
+
   <!-- runtime & workspaces -->
   <tr>
     <td>WORKSPACES_STORAGE_TYPE</td>

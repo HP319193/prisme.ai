@@ -1,6 +1,9 @@
 import elasticsearch from '@elastic/elasticsearch';
 import { StoreDriverOptions } from '.';
-import { EVENTS_RETENTION_DAYS } from '../../../../config';
+import {
+  EVENTS_RETENTION_DAYS,
+  EVENTS_STORAGE_ES_BULK_REFRESH,
+} from '../../../../config';
 import { EventType } from '../../../eda';
 import { InvalidFiltersError, ObjectNotFoundError } from '../../../errors';
 import { logger } from '../../../logger';
@@ -381,7 +384,7 @@ export class ElasticsearchStore implements EventsStore {
   async bulkInsert(events: Prismeai.PrismeEvent[]): Promise<any> {
     const body = this.prepareBulkInsertBody(events);
     const result = await this.client.bulk({
-      refresh: true,
+      refresh: EVENTS_STORAGE_ES_BULK_REFRESH,
       body,
     });
     if (result.body.errors) {
