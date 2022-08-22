@@ -38,7 +38,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   const { ref, bottom } = useScrollListener<HTMLDivElement>();
   const { workspace: { name: workspaceName } = {} } = useWorkspace();
   const { localize } = useLocalizedText('pages');
-  console.log(events);
+
   useEffect(() => {
     if (bottom) {
       nextEvents();
@@ -61,6 +61,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
               })}
               type={event.type}
               read={readEvents.has(event.id)}
+              event={event}
             />
           </SourceDetails>
         ),

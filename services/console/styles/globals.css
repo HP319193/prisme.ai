@@ -11,6 +11,11 @@
   font-style: italic;
   font-weight: auto;
 }
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-SemiBold.ttf');
+  font-weight: bold;
+}
 
 #__next {
   height: 100%;
@@ -125,8 +130,11 @@ a.ant-btn.pr-btn-primary-small {
   font-size: 1rem;
 }
 
-.pr-align-tree .ant-tree-list-holder-inner>.ant-tree-treenode:nth-child(1) .ant-tree-switcher {
-    display: none;
+.pr-align-tree
+  .ant-tree-list-holder-inner
+  > .ant-tree-treenode:nth-child(1)
+  .ant-tree-switcher {
+  display: none;
 }
 
 .pr-align-tree .ant-tree-indent {
