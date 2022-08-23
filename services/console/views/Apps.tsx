@@ -4,11 +4,12 @@ import {
   PageHeader,
   Schema,
 } from '@prisme.ai/design-system';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import getLayout from '../layouts/WorkspaceLayout';
 import { useWorkspace } from '../components/WorkspaceProvider';
 import { useApps } from '../components/AppsProvider';
@@ -171,6 +172,13 @@ const Apps = ({}: AppsProps) => {
           </div>
         }
       />
+      <Head>
+        <title>
+          {t('page_title', {
+            elementName: localize(currentApp.appName),
+          })}
+        </title>
+      </Head>
       <AppEditor schema={schema} block={block} appId={appId} key={appId} />
     </>
   );
