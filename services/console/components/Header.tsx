@@ -51,7 +51,7 @@ const Header = ({ title, leftContent }: HeaderProps) => {
   return (
     <div className="relative px-6 flex flex-row w-full justify-between items-center pr-header z-20 bg-prisme-darkblue text-white">
       <Link href="/workspaces">
-        <a>
+        <a className="flex items-center justify-center">
           <Image {...logo} width="25px" height="20px" alt="Prisme.ai" />
         </a>
       </Link>
