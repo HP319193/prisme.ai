@@ -44,14 +44,14 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
         ({ name, description, slug }) =>
           `${slug} ${localize(name)} ${localize(description)}`
       )}`.toLowerCase();
-      if (!searchIn.match(search.toLowerCase())) return [];
+      if (!searchIn.includes(search.toLowerCase())) return [];
       return {
         appName,
         slug,
         blocks: blocks.filter(({ name, description, slug }) =>
           `${localize(name)} ${localize(description)} ${slug}`
             .toLowerCase()
-            .match(search.toLowerCase())
+            .includes(search.toLowerCase())
         ),
       };
     });
