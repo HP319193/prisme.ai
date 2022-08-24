@@ -3,7 +3,10 @@ import { Loading } from '@prisme.ai/design-system';
 
 const IFrameLoader = ({
   ...props
-}: React.HTMLAttributes<HTMLIFrameElement>) => {
+}: React.HTMLAttributes<HTMLIFrameElement> & {
+  src: string;
+  className: string;
+}) => {
   const [isReady, setIsReady] = useState(false);
 
   return (

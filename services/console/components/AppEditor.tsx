@@ -62,7 +62,7 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
           onSubmit={onSubmit}
           initialValues={appConfig}
           buttons={[
-            <div className="flex w-full justify-end mt-5">
+            <div className="flex w-full justify-end mt-5" key="submit">
               <Button
                 type="submit"
                 className="!p-1"
