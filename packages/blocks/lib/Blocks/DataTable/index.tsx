@@ -215,7 +215,7 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
       triggerDesc: t('datatable.desc'),
       cancelSort: t('datatable.nosort'),
     }),
-    [t]
+    [t, language]
   );
 
   return (
