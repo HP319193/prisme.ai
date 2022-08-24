@@ -24,4 +24,34 @@ module.exports = {
 
     return config;
   },
+
+  async headers() {
+    const xFrameOptions = {
+      key: 'X-Frame-Options',
+      value: 'SAMEORIGIN',
+    };
+
+    return [
+      {
+        source: '/',
+        headers: [xFrameOptions],
+      },
+      {
+        source: '/signin',
+        headers: [xFrameOptions],
+      },
+      {
+        source: '/signup',
+        headers: [xFrameOptions],
+      },
+      {
+        source: '/workspaces(.*)',
+        headers: [xFrameOptions],
+      },
+      {
+        source: '/account(.*)',
+        headers: [xFrameOptions],
+      },
+    ];
+  },
 };
