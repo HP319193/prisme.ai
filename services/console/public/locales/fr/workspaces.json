@@ -642,6 +642,8 @@
     }
   },
   "404": "Ce workspace n'existe pas. Revenez à votre page d'accueil.",
+  "whatsNew": "Nouveautés",
+  "help": "Aide?",
   "share": {
     "label": "Partager",
     "email": "Email",

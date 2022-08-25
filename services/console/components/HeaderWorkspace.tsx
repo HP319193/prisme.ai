@@ -22,6 +22,7 @@ import useLocalizedText from '../utils/useLocalizedText';
 import Link from 'next/link';
 import { useWorkspace } from './WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
+import IFrameLoader from './IFrameLoader';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
@@ -116,7 +117,7 @@ const HeaderWorkspace = () => {
       />
       <Header
         title={
-          <div className="flex flex-row items-center absolute left-0 right-0 justify-center z-[-1]">
+          <div className="flex flex-row items-center absolute left-0 right-0 lg:justify-center z-[-1] justify-start lg:ml-0 ml-[5rem]">
             <Link href={`/workspaces/${workspace.id}`}>
               <a className="text-white" onClick={hideSource}>
                 {localize(currentWorkspace)}
@@ -134,18 +135,55 @@ const HeaderWorkspace = () => {
           </div>
         }
         leftContent={
-          <Popover
-            content={() => <ShareComponent />}
-            title={label || t('share.label')}
-            titleClassName="!bg-white !text-black"
-          >
-            <Button variant="grey" className="!text-white">
-              <Space>
-                {t('share.label')}
-                <ShareAltOutlined className="text-lg" />
-              </Space>
-            </Button>
-          </Popover>
+          <div className="flex flex-row items-center justify-center">
+            <Popover
+              content={() => (
+                <div className="flex h-[75vh] w-[30rem]">
+                  <IFrameLoader
+                    className="flex grow"
+                    src="https://pages.prisme.ai/pages/I55NTRH"
+                  />
+                </div>
+              )}
+              title={t('help')}
+              titleClassName="!bg-white !text-black"
+              overlayClassName="pr-full-popover"
+            >
+              <Button variant="grey" className="!text-white">
+                <Space>{t('help')}</Space>
+              </Button>
+            </Popover>
+            <Popover
+              content={() => (
+                <div className="flex h-[75vh] w-[30rem]">
+                  <IFrameLoader
+                    className="flex grow"
+                    src="https://studio.prisme.ai/pages/xDe6PaQ"
+                  />
+                </div>
+              )}
+              title={t('whatsNew')}
+              titleClassName="!bg-white !text-black"
+              overlayClassName="pr-full-popover"
+            >
+              <Button variant="grey" className="!text-white">
+                <Space>{t('whatsNew')}</Space>
+              </Button>
+            </Popover>
+            <Popover
+              content={() => <ShareComponent />}
+              title={label || t('share.label')}
+              titleClassName="!bg-white !text-black"
+            >
+              <Button variant="grey" className="!text-white">
+                <Space>
+                  {t('share.label')}
+                  <ShareAltOutlined className="text-lg" />
+                </Space>
+              </Button>
+            </Popover>
+            <div className="mx-[1.875rem] h-[1.625rem] border-r border-white border-solid" />
+          </div>
         }
       />
     </>

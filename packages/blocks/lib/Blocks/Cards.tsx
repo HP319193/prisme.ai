@@ -433,10 +433,11 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                                   className={
                                     'accordion-content-container__content content'
                                   }
-                                  dangerouslySetInnerHTML={{
-                                    __html: localize(item.content),
-                                  }}
-                                />
+                                >
+                                  <RichTextRenderer>
+                                    {localize(item.content)}
+                                  </RichTextRenderer>
+                                </div>
                               </Accordion>
                             </div>
                           )}

@@ -152,3 +152,11 @@ a.ant-btn.pr-btn-primary-small {
   border-top-right-radius: 0.94rem !important;
   border-bottom-right-radius: 0.94rem !important;
 }
+
+.pr-full-popover .ant-popover-inner-content {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border-bottom-left-radius: 0.6rem;
+  border-bottom-right-radius: 0.6rem;
+}
