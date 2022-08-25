@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import { Event } from '../../utils/api';
 import { useApps } from '../AppsProvider';
 import { useSourceDetails } from '../SourceDetails';
-import { useWorkspace } from '../WorkspaceProvider';
 import { AutomationLabel, ErrorLabel, EventLabel, PageLabel } from './Labels';
 
 interface SectionContentProps {
@@ -84,16 +83,20 @@ export const SectionContent = ({
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={photo}
-              height={32}
-              width={32}
-              className="mr-2"
+              height={25}
+              width={25}
+              className="mr-2 rounded-[0.3rem] object-cover"
               alt={name}
             />
           )}
-          <div className="font-bold">{title}</div>
-          <div className="text-gray font-thin ml-4">{date}</div>
+          <div className="font-bold text-[1rem]">{title}</div>
+          <div className="text-gray font-thin ml-4 text-[0.875rem]">{date}</div>
         </div>
-        <div className="font-normal">
+        <div
+          className={`font-light text-[1rem] mt-[0.625rem] ${
+            photo ? 'ml-[2rem]' : ''
+          }`}
+        >
           <Trans
             t={t}
             i18nKey="feed.type"

@@ -131,7 +131,7 @@ exports[`should render events 1`] = `
   className="flex h-full"
 >
   <div
-    className="w-full overflow-auto"
+    className="w-full"
   />
 </div>
 `;
