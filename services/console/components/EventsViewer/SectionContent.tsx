@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import { Event } from '../../utils/api';
 import { useApps } from '../AppsProvider';
 import { useSourceDetails } from '../SourceDetails';
-import { useWorkspace } from '../WorkspaceProvider';
 import { AutomationLabel, ErrorLabel, EventLabel, PageLabel } from './Labels';
 
 interface SectionContentProps {
@@ -84,9 +83,9 @@ export const SectionContent = ({
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={photo}
-              height={32}
-              width={32}
-              className="mr-2"
+              height={25}
+              width={25}
+              className="mr-2 rounded-[0.3rem] object-cover"
               alt={name}
             />
           )}
