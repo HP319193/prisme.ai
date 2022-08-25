@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 import { ApiError } from '@prisme.ai/sdk';
 
-interface AppUsageMetricsWithPhoto extends Prismeai.AppUsageMetrics {
+export interface AppUsageMetricsWithPhoto extends Prismeai.AppUsageMetrics {
   photo?: string;
 }
 

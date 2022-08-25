@@ -31,12 +31,16 @@ export const WorkspacesUsageProvider: FC<WorkspacesUsageProviderProps> = ({
           1
         ).toISOString();
 
-        const workspaceUsage = await api.getWorkspaceUsage(workspaceId, {
-          afterDate,
-          beforeDate,
-        });
-        const appInstances = (await api.listAppInstances(workspaceId)).flatMap(
-          (app) => (app.slug ? [app] : [])
+        const [workspaceUsage, appInstancesReq] = await Promise.all([
+          api.getWorkspaceUsage(workspaceId, {
+            afterDate,
+            beforeDate,
+          }),
+          api.listAppInstances(workspaceId),
+        ]);
+
+        const appInstances = appInstancesReq.flatMap((app) =>
+          app.slug ? [app] : []
         );
 
         // Add photo to workspaceUsages apps
@@ -62,7 +66,6 @@ export const WorkspacesUsageProvider: FC<WorkspacesUsageProviderProps> = ({
         return workspaceUsage;
       } catch (e) {
         setError(e as ApiError);
-        console.error(`failed to fetch usages for workspace: ${workspaceId}`);
         setLoading(false);
         return null;
       }

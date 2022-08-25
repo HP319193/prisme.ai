@@ -32,7 +32,7 @@ const Header = ({ title, leftContent }: HeaderProps) => {
               <Space>
                 <UserOutlined />
 
-                {t('acount')}
+                {t('account')}
               </Space>
             ),
             key: 'account',

@@ -2,6 +2,7 @@ import Header from '../../components/Header';
 import { Button, Layout } from '@prisme.ai/design-system';
 import { ReactNode } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
 import Avatar from '../../icons/avatar.svgr';
@@ -27,18 +28,19 @@ const AccountLayout = ({ children }: AccountLayoutProps) => {
     <Layout Header={<Header />} contentClassName="overflow-y-auto">
       <div className="flex flex-row h-full">
         <div className="flex flex-col grow space-y-5 h-full min-w-xs max-w-xs border-r border-gray-200 border-solid p-4 overflow-auto">
-          <Button
-            variant="grey"
-            className={`!flex justify-start items-center hover:!text-accent !h-[3.125rem] hover:!bg-[#E6EFFF] ${
-              !workspaceId ? selectedClassName : '!text-base'
-            }`}
-            onClick={() => push('/account')}
-          >
-            <div className="flex items-center justify-start h-[3.125rem]">
-              <Avatar width={17} height={17} />
-              <div className="ml-[0.813rem]">{t('account_my')}</div>
-            </div>
-          </Button>
+          <Link href="/account" passHref>
+            <Button
+              variant="grey"
+              className={`!flex justify-start items-center hover:!text-accent !h-[3.125rem] hover:!bg-[#E6EFFF] ${
+                !workspaceId ? selectedClassName : '!text-base'
+              }`}
+            >
+              <div className="flex items-center justify-start h-[3.125rem]">
+                <Avatar width={17} height={17} />
+                <div className="ml-[0.813rem]">{t('account_my')}</div>
+              </div>
+            </Button>
+          </Link>
           <Button
             disabled
             variant="grey"
@@ -53,18 +55,22 @@ const AccountLayout = ({ children }: AccountLayoutProps) => {
             {Array.from(workspaces).flatMap(([curWorkspaceId, workspace]) =>
               !!workspace
                 ? [
-                    <Button
+                    <Link
+                      href={`/account/workspaces/${curWorkspaceId}`}
+                      passHref
                       key={curWorkspaceId}
-                      variant="grey"
-                      className={`!flex items-center justify-start !h-[3.125rem] hover:!bg-[#E6EFFF] ${
-                        workspaceId === curWorkspaceId ? selectedClassName : ''
-                      }`}
-                      onClick={() =>
-                        push(`/account/workspaces/${curWorkspaceId}`)
-                      }
                     >
-                      {workspace.name}
-                    </Button>,
+                      <Button
+                        variant="grey"
+                        className={`!flex items-center justify-start !h-[3.125rem] hover:!bg-[#E6EFFF] ${
+                          workspaceId === curWorkspaceId
+                            ? selectedClassName
+                            : ''
+                        }`}
+                      >
+                        {workspace.name}
+                      </Button>
+                    </Link>,
                   ]
                 : []
             )}

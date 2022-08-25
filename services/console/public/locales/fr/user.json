@@ -26,6 +26,6 @@
   "coming_soon": "Pas encore disponible, restez connectés !",
   "title": {
     "myAccount": "Mon compte · Prisme.ai",
-    "workspaceManagement": "{workspaceName} · Gestion · Prisme.ai"
+    "workspaceManagement": "{{workspaceName}} · Gestion · Prisme.ai"
   }
 }
