@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Error404 from './Errors/404';
 import { useTranslation } from 'next-i18next';
 import cloneDeep from 'lodash/cloneDeep';
@@ -16,6 +16,7 @@ import {
   Space,
   Tooltip,
 } from '@prisme.ai/design-system';
+import Head from 'next/head';
 import {
   DeleteOutlined,
   LoadingOutlined,
@@ -418,6 +419,13 @@ export const Page = () => {
           </Button>,
         ]}
       />
+      <Head>
+        <title>
+          {t('page_title', {
+            elementName: localize(page.name),
+          })}
+        </title>
+      </Head>
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
         <div
           className={`

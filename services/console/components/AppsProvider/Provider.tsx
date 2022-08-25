@@ -74,9 +74,7 @@ export const AppsProvider: FC = ({ children }) => {
       slug: string,
       appInstance: Prismeai.AppInstancePatch
     ) => {
-      console.log('?wpid');
       if (!workspaceId) return;
-      console.log('wpid');
       return api.saveAppInstance(workspaceId, slug, appInstance);
     },
     []

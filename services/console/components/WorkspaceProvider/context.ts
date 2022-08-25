@@ -19,7 +19,7 @@ export interface WorkspaceContext {
   readEvent: (eventId: string) => void;
   share?: {
     label: string;
-    component: FC;
+    component: FC<any>;
   };
   setShare: (share: WorkspaceContext['share']) => void;
   getAppConfig: (appInstance: string) => any;

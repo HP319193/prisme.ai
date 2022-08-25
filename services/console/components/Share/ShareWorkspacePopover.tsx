@@ -89,6 +89,8 @@ const ShareWorkspacePopover = ({
     initialFetch.current();
   }, [initialFetch]);
 
+  const userId = user?.id;
+
   const dataSource = useMemo(() => {
     const data = usersPermissions.get(`${subjectType}:${subjectId}`);
 
@@ -104,7 +106,7 @@ const ShareWorkspacePopover = ({
         role,
         actions: generateRowButtons(() => {
           if (!id) return;
-          if (id === user.id) {
+          if (id === userId) {
             // User is removing himself his access to the workspace
             push('/workspaces');
             remove({ id: subjectId }, true);
@@ -127,7 +129,7 @@ const ShareWorkspacePopover = ({
     subjectId,
     subjectType,
     t,
-    user.id,
+    userId,
     usersPermissions,
   ]);
 

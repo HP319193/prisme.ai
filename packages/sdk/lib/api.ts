@@ -513,6 +513,32 @@ export class Api extends Fetcher {
   async callAutomation(workspaceId: string, automation: string): Promise<any> {
     return this._fetch(`/workspaces/${workspaceId}/webhooks/${automation}`);
   }
+
+  async getWorkspaceUsage(
+    workspaceId: PrismeaiAPI.WorkspaceUsage.Parameters.WorkspaceId,
+    {
+      afterDate,
+      beforeDate,
+      details,
+    }: {
+      afterDate?: PrismeaiAPI.WorkspaceUsage.Parameters.AfterDate;
+      beforeDate?: PrismeaiAPI.WorkspaceUsage.Parameters.BeforeDate;
+      details?: PrismeaiAPI.WorkspaceUsage.Parameters.Details;
+    } = {}
+  ): Promise<PrismeaiAPI.WorkspaceUsage.Responses.$200> {
+    const params = new URLSearchParams(
+      removedUndefinedProperties(
+        {
+          afterDate: `${afterDate || ''}`,
+          beforeDate: `${beforeDate || ''}`,
+          details: `${details || ''}`,
+        },
+        true
+      )
+    );
+
+    return this.get(`/workspaces/${workspaceId}/usage?${params.toString()}`);
+  }
 }
 
 export default new Api('https://api.eda.prisme.ai');

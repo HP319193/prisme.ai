@@ -1,5 +1,5 @@
 import { ReactElement, useMemo } from 'react';
-import { LogoutOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import {
   Avatar,
   Divider,
@@ -12,6 +12,7 @@ import { useTranslation } from 'next-i18next';
 import logo from '../icons/icon-prisme.svg';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 interface HeaderProps {
   title?: string | ReactElement;
@@ -20,11 +21,22 @@ interface HeaderProps {
 const Header = ({ title, leftContent }: HeaderProps) => {
   const { t } = useTranslation('user');
   const { user, signout } = useUser();
+  const { push } = useRouter();
 
   const userMenu = useMemo(
     () => (
       <Menu
         items={[
+          {
+            label: (
+              <Space>
+                <UserOutlined />
+
+                {t('account')}
+              </Space>
+            ),
+            key: 'account',
+          },
           {
             label: (
               <Space>
@@ -41,6 +53,10 @@ const Header = ({ title, leftContent }: HeaderProps) => {
           switch (item.key) {
             case 'signout':
               signout();
+              break;
+            case 'account':
+              push('/account');
+              break;
           }
         }}
       />
