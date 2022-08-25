@@ -87,9 +87,7 @@ const EditableCell: FC<EditableCellProps> = ({
         toggleEdit();
       }
       handleSave({ ...record, ...values });
-    } catch (errInfo) {
-      console.log('Save failed:', errInfo);
-    }
+    } catch {}
   };
 
   const childNode = useMemo(() => {
