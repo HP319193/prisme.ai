@@ -57,9 +57,7 @@ const Collapse = ({
       expandIconPosition={expandIconPosition}
       onChange={click}
       className={`${className || ''} ${
-        light
-          ? 'pr-collapse-light !border !border-solid !border-gray-200 rounded !px-2 !py-1'
-          : ''
+        light ? 'pr-collapse-light rounded' : ''
       }`}
       {...collapseProps}
     >

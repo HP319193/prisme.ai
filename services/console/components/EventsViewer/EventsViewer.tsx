@@ -81,7 +81,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
           title: dateFormat(new Date(date), {
             relative: true,
             withoutHour: true,
-          }),
+          }).toUpperCase(),
           content: <Collapse items={generateSectionContent(events)} light />,
         })),
     [dateFormat, events, generateSectionContent]
@@ -110,7 +110,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
     }
   } else {
     content = (
-      <div className="w-full overflow-auto" ref={ref}>
+      <div className="w-full" ref={ref}>
         <Feed sections={feedSections} />
       </div>
     );
@@ -132,14 +132,8 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
 
 export const EventsViewer = () => {
   const { t } = useTranslation('workspaces');
-  const {
-    setShare,
-    events,
-    nextEvents,
-    readEvents,
-    readEvent,
-    filters,
-  } = useWorkspace();
+  const { setShare, events, nextEvents, readEvents, readEvent, filters } =
+    useWorkspace();
 
   useEffect(() => {
     setShare({

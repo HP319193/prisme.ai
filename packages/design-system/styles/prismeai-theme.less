@@ -148,6 +148,16 @@ body {
 // Collapse
 @collapse-header-bg: @component-background;
 
+.pr-collapse-light > .ant-collapse-item {
+  border-bottom: 1px solid #F2F4F9;
+  padding: 1.25rem 1.875rem;
+  .ant-collapse-header {
+    padding: 0;
+  }
+  .ant-collapse-content {
+    margin-top: 1.5rem;
+  }
+}
 .ant-collapse-borderless > .ant-collapse-item:last-child,
 .ant-collapse-borderless > .ant-collapse-item:last-child .ant-collapse-header {
   border-radius: inherit;

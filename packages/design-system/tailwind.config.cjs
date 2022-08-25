@@ -12,6 +12,7 @@ module.exports = {
         'pr-orange': '#FF9261',
         'pr-grey': '#939CA6',
         'gray-200': '#E5E5E5',
+        'gray-500': '#F2F4F9',
         'blue-200': '#F8FAFF',
         'graph-border': '#ced2d8',
         'graph-background': '#E7EDF9',
