@@ -13,7 +13,7 @@ export interface TextAreaProps extends AntdTextareaProps {
 
 const TextArea = forwardRef(
   (
-    { placeholder, label, className, ...otherProps }: TextAreaProps,
+    { placeholder, label, className, rows, ...otherProps }: TextAreaProps,
     ref: any
   ) => {
     return (
@@ -21,7 +21,8 @@ const TextArea = forwardRef(
         <AntdTextarea
           ref={ref}
           placeholder={placeholder}
-          className={`${className} !rounded-[0.3rem] h-[50px] basis-[50px]`}
+          className={`${className} !rounded-[0.3rem]`}
+          rows={rows || 3}
           {...otherProps}
         />
       </WithLabel>
