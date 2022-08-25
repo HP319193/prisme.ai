@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Content from './Content';
 import { Content as IContent, LayoutContext, useLayout } from './context';
 import tw from '../../tw';
@@ -76,7 +76,7 @@ export const ContentContainerRenderer = ({
         {pages.map(({ content, removed }, index) => (
           <Content
             key={index}
-            className={tw`absolute overflow-auto snap-x top-0 left-0 right-0 bottom-0 bg-white`}
+            className={tw`absolute overflow-auto snap-both top-0 left-0 right-0 bottom-0 bg-white`}
             content={content}
             onUnmount={onUnmount}
             removed={removed}

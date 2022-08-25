@@ -11,6 +11,8 @@ setup({
           return { 'scroll-snap-type': 'x mandatory' };
         case 'mandatory':
           return { 'scroll-snap-type': 'mandatory' };
+        case 'both':
+          return { 'scroll-snap-type': 'both mandatory' };
       }
     },
   },
