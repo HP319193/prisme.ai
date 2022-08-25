@@ -1,4 +1,5 @@
 {
+  "page_title": "{{elementName}} · Prisme.ai",
   "workspaces": {
     "title": "Espacios de trabajo y aplicaciones — $t(common:main.title)",
     "description": "Crear nuevos espacios de trabajo y aplicaciones, editarlos y ejecutarlos",
