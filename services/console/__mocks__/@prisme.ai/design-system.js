@@ -141,6 +141,10 @@ export function SchemaFormDescription({ children = null }) {
   return children;
 }
 
+export function Tree({ children = null }) {
+  return children;
+}
+
 export const schemaTypes = [
   'string',
   'localized:string',

@@ -12,7 +12,7 @@ export interface WorkspaceContext {
   filters: EventsFilters;
   updateFilters: (newFilters: EventsFilters) => void;
   save: (workspace: Workspace) => void;
-  saveSource: (newSource: Workspace) => void;
+  saveSource: (newSource: Workspace) => Promise<Workspace>;
   events: EventsByDay | 'loading';
   nextEvents: () => void;
   readEvents: Set<string>;
@@ -45,7 +45,7 @@ export const workspaceProviderContext = createContext<WorkspaceContext>({
   filters: {} as EventsFilters,
   updateFilters: () => {},
   save() {},
-  saveSource() {},
+  saveSource: async () => ({} as Workspace),
   events: 'loading',
   nextEvents() {},
   readEvents: new Set(),

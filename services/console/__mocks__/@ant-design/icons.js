@@ -37,3 +37,6 @@ export function PictureOutlined() {
 export function EditOutlined() {
   return null;
 }
+export function HomeOutlined() {
+  return null;
+}

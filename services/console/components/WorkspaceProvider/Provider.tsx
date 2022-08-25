@@ -84,9 +84,10 @@ export const WorkspaceProvider: FC = ({ children }) => {
   }, [getAppInstances, id]);
 
   // Init socket
-  const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
-    workspace,
-  ]);
+  const workspaceId = useMemo(
+    () => (workspace ? workspace.id : null),
+    [workspace]
+  );
 
   const initSocket = useCallback(async () => {
     if (!workspaceId) return;
@@ -335,10 +336,14 @@ export const WorkspaceProvider: FC = ({ children }) => {
   const saveSource = useCallback(
     async (newSource: Workspace) => {
       const newWorkspace = await update(newSource);
+      console.log(newWorkspace);
       if (!newWorkspace) {
+        console.log('throw');
         throw new Error();
       }
-      return setCurrentWorkspace(newWorkspace);
+      setCurrentWorkspace(newWorkspace);
+
+      return newWorkspace;
     },
     [update]
   );
