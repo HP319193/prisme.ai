@@ -78,10 +78,12 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
       Array.from(events === 'loading' ? [] : events)
         .sort(([date1], [date2]) => date2 - date1)
         .map(([date, events]) => ({
-          title: dateFormat(new Date(date), {
-            relative: true,
-            withoutHour: true,
-          }).toUpperCase(),
+          title: (
+            dateFormat(new Date(date), {
+              relative: true,
+              withoutHour: true,
+            }) || ''
+          ).toUpperCase(),
           content: <Collapse items={generateSectionContent(events)} light />,
         })),
     [dateFormat, events, generateSectionContent]

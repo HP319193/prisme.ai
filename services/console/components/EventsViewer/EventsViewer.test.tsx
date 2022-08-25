@@ -17,6 +17,14 @@ jest.mock('@prisme.ai/sdk', () => {
   return { Api, Events };
 });
 
+jest.mock('../../utils/dates', () => {
+  return {
+    useDateFormat: () => () => {
+      return '';
+    },
+  };
+});
+
 jest.mock('../WorkspaceProvider', () => {
   const mock = {
     events: new Map(),
