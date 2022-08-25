@@ -6,12 +6,6 @@ import { useWorkspaces } from '../../components/WorkspacesProvider';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import { useWorkspaceLayout, WorkspaceLayoutContext } from './context';
 
-describe('temporarily disable this test suite', () => {
-  test.only('temporarily disable this test suite', () => {
-    expect(1 + 1).toEqual(2);
-  });
-});
-
 jest.useFakeTimers();
 
 jest.mock('../../components/UserProvider', () => {
