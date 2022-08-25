@@ -314,6 +314,10 @@
       "private": {
         "label": "Uso interno",
         "description": "Si habilita esta configuración, la Automatización sólo será visible como una instrucción en este mismo Espacio de Trabajo. Cuando publiques tu aplicación, sus usuarios no la verán."
+      },
+      "disabled": {
+        "label": "Fuera de",
+        "description": "Si activa este parámetro, la Automatización dejará de ejecutarse y será simplemente ignorada"
       }
     },
     "arguments": {
@@ -332,6 +336,18 @@
     "search": "Buscar una aplicación...",
     "title": "Apps Store",
     "saveSuccess": "\nLa configuración de la aplicación se ha guardado correctamente",
+    "details": {
+      "appName": {
+        "label": "Nombre de la aplicación"
+      },
+      "slug": {
+        "label": "Técnica Nom"
+      },
+      "disabled": {
+        "label": "Fuera de",
+        "description": "Si se marca esta opción, se desactivará la ejecución de la aplicación"
+      }
+    },
     "publish": {
       "menuLabel": "Publicar como aplicación",
       "confirm": {
@@ -560,6 +576,68 @@
               "label": "Línea",
               "description": "Las claves del objeto serán las columnas de la tabla."
             }
+          },
+          "columns": {
+            "label": "Columnas",
+            "description": "Especificación de las columnas. Si no cambia nada, todos sus datos se mostrarán en bruto.",
+            "items": {
+              "label": "Columna",
+              "description": "Especificación de la columna",
+              "add": "Añadir una columna",
+              "remove": "Borrar la columna",
+              "_label": {
+                "label": "Título",
+                "description": "El título de su columna"
+              },
+              "key": {
+                "label": "Clave",
+                "description": "La clave correspondiente a los datos que se van a mostrar"
+              },
+              "type": {
+                "label": "Tipo",
+                "description": "El tipo de formato de los datos. Por defecto, los datos se muestran como texto",
+                "string": "Texto",
+                "number": "Número",
+                "boolean": "Booleano",
+                "date": "Fecha",
+                "tags": "Etiquetas"
+              },
+              "format": {
+                "label": "Formato",
+                "description": "Formato a aplicar a los datos en caso de ser de tipo número o fecha."
+              },
+              "actions": {
+                "label": "Acciones",
+                "description": "Puede mostrar los botones de acción si no ha elegido una tecla",
+                "items": {
+                  "label": "Acción",
+                  "description": "Especificación de la acción",
+                  "add": "Añadir una acción",
+                  "remove": "Eliminar la acción",
+                  "_label": {
+                    "label": "Etiqueta",
+                    "description": "Texto del botón"
+                  },
+                  "event": {
+                    "label": "Evento",
+                    "description": "Un clic en el botón enviará un evento"
+                  },
+                  "payload": {
+                    "label": "Datos",
+                    "description": "El evento puede ser enviado con datos"
+                  },
+                  "url": {
+                    "label": "URL",
+                    "description": "Un clic en el botón abrirá una nueva página. La URL puede contener parámetros de la forma {{key}}. Por ejemplo, si los datos contienen una propiedad \"_id\", la URL puede ser \"http://host/user/{{_id}}\" y se rellenará con el valor de la línea correspondiente"
+                  }
+                }
+              },
+
+              "onEdit": {
+                "label": "Evento a la edición",
+                "description": "Hace que la celda sea editable. El valor del evento pasado se enviará cada vez que se modifique"
+              }
+            }
           }
         }
       },
@@ -659,6 +737,7 @@
     "title_workspaces": "Ajustes del espacio de trabajo",
     "title_automations": "Ajustes de la automatización",
     "title_pages": "Configuración de la página",
+    "title_apps": "Configuración de la aplicación",
     "save": "Registro",
     "delete": {
       "label": "Eliminar",
