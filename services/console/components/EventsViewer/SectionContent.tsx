@@ -5,7 +5,13 @@ import { useMemo } from 'react';
 import { Event } from '../../utils/api';
 import { useApps } from '../AppsProvider';
 import { useSourceDetails } from '../SourceDetails';
-import { AutomationLabel, ErrorLabel, EventLabel, PageLabel } from './Labels';
+import {
+  AppLabel,
+  AutomationLabel,
+  ErrorLabel,
+  EventLabel,
+  PageLabel,
+} from './Labels';
 
 interface SectionContentProps {
   title: string;
@@ -68,6 +74,8 @@ export const SectionContent = ({
       page: event?.payload?.page?.name && localize(event.payload.page.name),
       event: event?.payload?.event?.type,
       waits: getWaits(),
+      appSlug: event?.payload?.appInstance?.appSlug,
+      appName: event?.payload?.appInstance?.appName,
     };
   }, [appInstances, event, localize, t]);
 
@@ -106,6 +114,7 @@ export const SectionContent = ({
               automation: <AutomationLabel {...event} />,
               page: <PageLabel {...event} />,
               event: <EventLabel {...event} />,
+              app: <AppLabel {...event} />,
               error: <ErrorLabel {...event} />,
             }}
           />
