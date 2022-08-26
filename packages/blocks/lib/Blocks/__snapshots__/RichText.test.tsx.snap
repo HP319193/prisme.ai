@@ -1,5 +1,30 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`should render 1`] = `
+<div
+  className="block-rich-text"
+>
+  <h1
+    id="title"
+  >
+    Title
+  </h1>
+  <h2
+    id="subtitle"
+  >
+    Subtitle
+  </h2>
+  <p>
+    Some content with 
+    <a>
+      HTML
+    </a>
+  </p>
+  
+
+</div>
+`;
+
 exports[`should rneder 1`] = `
 <div
   className="block-rich-text"
@@ -20,5 +45,7 @@ exports[`should rneder 1`] = `
       HTML
     </a>
   </p>
+  
+
 </div>
 `;

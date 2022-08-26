@@ -54,7 +54,9 @@ export const FieldArray = (props: FieldProps) => {
                           className="!absolute top-[1.7rem] right-1 text-gray hover:text-orange-500"
                         >
                           <Tooltip
-                            title={locales.removeItem || 'Remove'}
+                            title={
+                              items.remove || locales.removeItem || 'Remove'
+                            }
                             placement="left"
                           >
                             <DeleteOutlined />
@@ -70,7 +72,7 @@ export const FieldArray = (props: FieldProps) => {
                     className="flex items-center"
                   >
                     <span className="underline">
-                      {locales.addItem || 'Add item'}
+                      {items.add || locales.addItem || 'Add item'}
                     </span>
                     <PlusCircleOutlined />
                   </Button>

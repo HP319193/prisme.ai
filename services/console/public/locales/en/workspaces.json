@@ -577,6 +577,68 @@
               "label": "Line",
               "description": "The keys of the object will be the columns of the table."
             }
+          },
+          "columns": {
+            "label": "Columns",
+            "description": "Specifying the columns. If you don't change anything, all your data will be displayed as raw.",
+            "items": {
+              "label": "Column",
+              "description": "Specification of the column",
+              "add": "Add a column",
+              "remove": "Delete the column",
+              "_label": {
+                "label": "Title",
+                "description": "Column title"
+              },
+              "key": {
+                "label": "Key",
+                "description": "The key corresponding to the data to be displayed"
+              },
+              "type": {
+                "label": "Type",
+                "description": "The type of data format. By default, the data is displayed as text",
+                "string": "Text",
+                "number": "Number",
+                "boolean": "Boolean",
+                "date": "Date",
+                "tags": "Tags"
+              },
+              "format": {
+                "label": "Format",
+                "description": "Format to apply to the data in case of number or date type."
+              },
+              "actions": {
+                "label": "Actions",
+                "description": "You can display action buttons if you have not chosen a key",
+                "items": {
+                  "label": "Action",
+                  "description": "Specification of the action",
+                  "add": "Add an action",
+                  "remove": "Delete action",
+                  "_label": {
+                    "label": "Label",
+                    "description": "Button text"
+                  },
+                  "event": {
+                    "label": "Event",
+                    "description": "A click on the button will send an event"
+                  },
+                  "payload": {
+                    "label": "Payload",
+                    "description": "The event can be sent with data"
+                  },
+                  "url": {
+                    "label": "URL",
+                    "description": "A click on the button will open a new page. The URL can contain parameters in the form {{key}}. For example, if data contains a \"_id\" property, the URL can be \"http://host/user/{{_id}}\" and will be filled with the value of the concerned line"
+                  }
+                }
+              },
+
+              "onEdit": {
+                "label": "Event on edition",
+                "description": "Makes the cell editable. The event passed in value will be sent each time it is modified"
+              }
+            }
           }
         }
       },

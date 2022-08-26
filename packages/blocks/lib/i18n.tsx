@@ -1,6 +1,6 @@
 import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
-import { JSXElementConstructor, ReactElement } from 'react';
+import { JSXElementConstructor, ReactElement, useEffect } from 'react';
 
 const i18n = createInstance({
   resources: {
@@ -70,11 +70,17 @@ type i18nHOC<T> = (
 ) => (props: T) => ReactElement<T>;
 
 export const withI18nProvider: i18nHOC<{ edit?: boolean }> = (Component) => {
-  return (props) => (
-    <I18nextProvider i18n={i18n}>
-      <Component {...props} />
-    </I18nextProvider>
-  );
+  return (props: any & { language: string }) => {
+    useEffect(() => {
+      i18n.changeLanguage(props.language);
+    }, [props.language]);
+
+    return (
+      <I18nextProvider i18n={i18n}>
+        <Component {...props} />
+      </I18nextProvider>
+    );
+  };
 };
 
 export default i18n;

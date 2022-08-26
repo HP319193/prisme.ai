@@ -61,6 +61,8 @@ Default.args = {
         type: 'array',
         items: {
           type: 'string',
+          add: 'Add an item',
+          remove: 'Remove this',
         },
       },
       objectsArray: {
@@ -91,6 +93,8 @@ Default.args = {
     },
     additionalProperties: {
       type: 'string',
+      add: 'Add an object with a string',
+      remove: 'Sorry, remove that',
     },
   },
 };

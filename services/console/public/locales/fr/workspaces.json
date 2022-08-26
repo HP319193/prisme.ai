@@ -577,6 +577,68 @@
               "label": "Ligne",
               "description": "Les clés de l'objet seront les colonnes du tableau."
             }
+          },
+          "columns": {
+            "label": "Colonnes",
+            "description": "Spécification des colonnes. Si vous ne changez rien, toutes vos données seront affichées de façon brutes.",
+            "items": {
+              "label": "Colonne",
+              "description": "Spécification de la colonne",
+              "add": "Ajouter une colonne",
+              "remove": "Supprimer la colonne",
+              "_label": {
+                "label": "Titre",
+                "description": "Le titre de votre colonne"
+              },
+              "key": {
+                "label": "Clé",
+                "description": "La clé correspondant à la donnée à afficher"
+              },
+              "type": {
+                "label": "Type",
+                "description": "Le type de format de données. Par défaut, la donnée est affichée en tant que texte",
+                "string": "Texte",
+                "number": "Nombre",
+                "boolean": "Booléen",
+                "date": "Date",
+                "tags": "Étiquettes"
+              },
+              "format": {
+                "label": "Format",
+                "description": "Format à appliquer à la donnée en cas de type nombre ou date."
+              },
+              "actions": {
+                "label": "Actions",
+                "description": "Vous pouvez afficher des boutons d'action si vous n'avez pas choisi de clé",
+                "items": {
+                  "label": "Action",
+                  "description": "Spécification de l'action",
+                  "add": "Ajouter une action",
+                  "remove": "Supprimer l'action",
+                  "_label": {
+                    "label": "Label",
+                    "description": "Texte du bouton"
+                  },
+                  "event": {
+                    "label": "Évènement",
+                    "description": "Un click sur le bouton enverra un évènement"
+                  },
+                  "payload": {
+                    "label": "Données",
+                    "description": "L'évènement peut être envoyé avec des données"
+                  },
+                  "url": {
+                    "label": "URL",
+                    "description": "Un click sur le bouton ouvrira une nouvelle page. L'URL peut contenir des paramètres sous la forme {{clé}}. Par exemple, si data contient une propriété \"_id\", l'URL peut valoir \"http://host/user/{{_id}}\" et sera remplie avec la valeur de la ligne concernée"
+                  }
+                }
+              },
+
+              "onEdit": {
+                "label": "Évènement à l'édition",
+                "description": "Rend la cellule éditable. L'évènement passé en valeur sera envoyé à chaque modification de celle-ci"
+              }
+            }
           }
         }
       },
