@@ -204,8 +204,15 @@ WithMetaData.args = {
             event: 'delete',
           },
           {
+            label: 'Update',
+            event: 'delete',
+            payload: {
+              id: '${_id}',
+            },
+          },
+          {
             label: 'View',
-            url: 'http://prisme.ai/item/{{_id}}',
+            url: 'http://prisme.ai/item/${_id}',
           },
         ],
         onEdit: 'cannotEdit',
