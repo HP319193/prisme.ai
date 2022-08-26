@@ -3,6 +3,7 @@ import { Events } from '@prisme.ai/sdk';
 import { Tag } from 'antd';
 import Color from 'color';
 import { ColumnDefinition } from './types';
+import { interpolate } from '../../interpolate';
 
 const generateColor = (str: string) => {
   const cyrb53 = function (str = '', seed = 0) {
@@ -99,14 +100,14 @@ export const renderValue = ({
                 onClick={() => {
                   const { key, ...data } = item;
                   if (event) {
-                    events?.emit(event, { ...payload, data, key });
+                    events?.emit(event, {
+                      ...interpolate(payload, data),
+                      data,
+                      key,
+                    });
                   }
                   if (url) {
-                    const computedUrl = url.replace(
-                      /\{\{([^}]+)\}\}/g,
-                      (_, m) => item[m] || ''
-                    );
-                    window.open(computedUrl);
+                    window.open(interpolate(url, data));
                   }
                 }}
               >
