@@ -135,7 +135,7 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
     <div className={tw`block-data-table p-8`}>
       {config.title && <BlockTitle value={config.title} />}
       <div
-        className={tw`block-data-table__table-container table-container overflow-scroll`}
+        className={tw`block-data-table__table-container table-container overflow-auto`}
       >
         <Table
           dataSource={dataSource}

@@ -2,6 +2,7 @@ import { FC, forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { Input, InputRef, Form, Switch } from 'antd';
 import { useEditable } from './EditableContext';
 import { DataType } from './types';
+import tw from '../../tw';
 
 interface Item {
   key: string;
@@ -103,8 +104,7 @@ const EditableCell: FC<EditableCellProps> = ({
         />
       ) : (
         <div
-          className="editable-cell-value-wrap"
-          style={{ paddingRight: 24 }}
+          className={tw`cursor-pointer py-2 px-3 min-w-[145px]`}
           onClick={toggleEdit}
         >
           {children}
