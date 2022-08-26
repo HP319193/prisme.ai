@@ -29,6 +29,7 @@ export const AutomationLabel: FC<Event<Date>> = ({
   }
   return <span className="font-bold">{children}</span>;
 };
+
 export const PageLabel: FC<Event<Date>> = ({ children, payload, source }) => {
   return (
     <Link href={`/workspaces/${source.workspaceId}/pages/${payload.page.id}`}>
@@ -36,6 +37,17 @@ export const PageLabel: FC<Event<Date>> = ({ children, payload, source }) => {
     </Link>
   );
 };
+
+export const AppLabel: FC<Event<Date>> = ({ children, payload, source }) => {
+  return (
+    <Link
+      href={`/workspaces/${source.workspaceId}/apps/${payload?.appInstance?.appName}`}
+    >
+      <a className="font-bold">{children}</a>
+    </Link>
+  );
+};
+
 export const ErrorLabel: FC<Event<Date>> = ({ children, type }) => {
   return (
     <div className="flex items-center">
