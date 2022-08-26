@@ -67,7 +67,7 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
         key,
         label: key,
         type: 'string',
-        actions: [],
+        actions: undefined,
         onEdit: undefined,
         format: undefined,
       }));

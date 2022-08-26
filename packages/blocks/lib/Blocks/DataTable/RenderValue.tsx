@@ -41,20 +41,29 @@ export const renderValue = ({
   events,
 }: RenderValueAttributes) => (_: any, item: any) => {
   const value = key ? item[key] : undefined;
+
   switch (type) {
     case 'number': {
-      const formatter = new Intl.NumberFormat(
-        language,
-        format as Intl.NumberFormatOptions
-      );
-      return formatter.format(+value);
+      try {
+        const formatter = new Intl.NumberFormat(
+          language,
+          format as Intl.NumberFormatOptions
+        );
+        return formatter.format(+value);
+      } catch {
+        return +value;
+      }
     }
     case 'date': {
-      const formatter = new Intl.DateTimeFormat(
-        language,
-        format as Intl.DateTimeFormatOptions
-      );
-      return formatter.format(new Date(value));
+      try {
+        const formatter = new Intl.DateTimeFormat(
+          language,
+          format as Intl.DateTimeFormatOptions
+        );
+        return formatter.format(new Date(value));
+      } catch {
+        return value;
+      }
     }
     case 'boolean':
       return <Switch defaultChecked={!!value} disabled={!onEdit} />;
