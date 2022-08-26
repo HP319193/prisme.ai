@@ -1,4 +1,5 @@
 {
+  "page_title": "{{elementName}} · Prisme.ai",
   "workspaces": {
     "title": "Workspaces — $t(common:main.title)",
     "description": "Create new Workspaces and new Apps, edit them, and run them",
@@ -314,6 +315,10 @@
       "private": {
         "label": "Internal use",
         "description": "If you enable this setting, Automation will be visible as an instruction only in this same Workspace. When you publish your app, its users will not see it."
+      },
+      "disabled": {
+        "label": "Disabled",
+        "description": "If you enable this setting, Automation will not be executed anymore and simply ignored"
       }
     },
     "arguments": {
@@ -338,6 +343,10 @@
       },
       "slug": {
         "label": "Technical name"
+      },
+      "disabled": {
+        "label": "Disabled",
+        "description": "A disabled app will never be executed but simply ignored"
       }
     },
     "publish": {
@@ -568,6 +577,68 @@
               "label": "Line",
               "description": "The keys of the object will be the columns of the table."
             }
+          },
+          "columns": {
+            "label": "Columns",
+            "description": "Specifying the columns. If you don't change anything, all your data will be displayed as raw.",
+            "items": {
+              "label": "Column",
+              "description": "Specification of the column",
+              "add": "Add a column",
+              "remove": "Delete the column",
+              "_label": {
+                "label": "Title",
+                "description": "Column title"
+              },
+              "key": {
+                "label": "Key",
+                "description": "The key corresponding to the data to be displayed"
+              },
+              "type": {
+                "label": "Type",
+                "description": "The type of data format. By default, the data is displayed as text",
+                "string": "Text",
+                "number": "Number",
+                "boolean": "Boolean",
+                "date": "Date",
+                "tags": "Tags"
+              },
+              "format": {
+                "label": "Format",
+                "description": "Format to apply to the data in case of number or date type."
+              },
+              "actions": {
+                "label": "Actions",
+                "description": "You can display action buttons if you have not chosen a key",
+                "items": {
+                  "label": "Action",
+                  "description": "Specification of the action",
+                  "add": "Add an action",
+                  "remove": "Delete action",
+                  "_label": {
+                    "label": "Label",
+                    "description": "Button text"
+                  },
+                  "event": {
+                    "label": "Event",
+                    "description": "A click on the button will send an event"
+                  },
+                  "payload": {
+                    "label": "Payload",
+                    "description": "The event can be sent with data"
+                  },
+                  "url": {
+                    "label": "URL",
+                    "description": "A click on the button will open a new page. The URL can contain parameters in the form {{key}}. For example, if data contains a \"_id\" property, the URL can be \"http://host/user/{{_id}}\" and will be filled with the value of the concerned line"
+                  }
+                }
+              },
+
+              "onEdit": {
+                "label": "Event on edition",
+                "description": "Makes the cell editable. The event passed in value will be sent each time it is modified"
+              }
+            }
           }
         }
       },
@@ -633,6 +704,8 @@
     }
   },
   "404": "This workspace does not exist. Return to your home page.",
+  "whatsNew": "What's new",
+  "help": "Help?",
   "share": {
     "label": "Share",
     "email": "Email",
@@ -742,7 +815,33 @@
     }
   },
   "feed": {
-    "filter": "Filters"
+    "filter": "Filters",
+    "type": "The <event>{{context}}</event> event has been fired",
+    "type_workspaces.created": "The Workspace was created",
+    "type_workspaces.updated": "The Workspace has been updated",
+    "type_workspaces.deleted": "The Workspace has been removed",
+    "type_workspaces.configured": "The Workspace configuration has been updated",
+    "type_workspaces.apps.installed": "The {{appSlug}} app has been installed as <app>{{appName}}</app>",
+    "type_workspaces.apps.uninstalled": "The app {{appName}} has been uninstalled",
+    "type_workspaces.apps.configured": "The app <app>{{appName}}</app> has been configured",
+    "type_workspaces.automations.created": "The automation <automation>{{automation}}</automation> has been created",
+    "type_workspaces.automations.updated": "The <automation>{{automation}}</automation> has been updated",
+    "type_workspaces.automations.deleted": "The <automation>{{automation}}</automation> has been removed",
+    "type_workspaces.pages.updated": "The <page>{{page}}</page> has been updated",
+    "type_apps.published": "The app {{appName}} has been published",
+    "type_runtime.automations.executed": "The <automation>{{automation}}</automation> has been executed",
+    "type_runtime.webhooks.triggered": "The <automation>{{automation}}</automation> was triggered by URL",
+    "type_runtime.waits.pending": "Automation <automation>{{automation}}</automation> is pending {{waits}}",
+    "type_runtime.waits.pending_oneOf_one": "of the event <event>{{events}}</event>",
+    "type_runtime.waits.pending_oneOf_other": "of events <event>{{events}}</event>",
+    "type_runtime.waits.pending_timeout": "for {{timeout}}s",
+    "type_runtime.waits.fulfilled": "The <automation>{{automation}}</automation> has resumed following the <event>{{event}}</event>",
+    "type_runtime.fetch.failed": "HTTP request failed",
+    "type_runtime.contexts.updated": "Updated context",
+    "type_apikeys.updated": "An API key has been updated",
+    "type_apikeys.created": "An API key has been created",
+    "type_apikeys.deleted": "An API key has been deleted",
+    "type_error": "<error>An error has occurred</error>"
   },
   "form": {
     "raw": "Insert a raw value (allows you to enter text, and therefore interpolated variables)",

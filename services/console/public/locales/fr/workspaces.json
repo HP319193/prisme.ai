@@ -1,4 +1,5 @@
 {
+  "page_title": "{{elementName}} · Prisme.ai",
   "workspaces": {
     "title": "Espaces de travail — $t(common:main.title)",
     "description": "Créez de nouveaux espaces de travail et de nouvelles apps, éditez les et exécutez les",
@@ -314,6 +315,10 @@
       "private": {
         "label": "Usage interne",
         "description": "Si vous activez ce paramètre, l'Automatisation ne sera visible en tant qu'instruction que dans ce même Workspace. Quand vous publierez votre App, ses utilisateurs ne la verront pas."
+      },
+      "disabled": {
+        "label": "Désactivée",
+        "description": "Si vous activez ce paramètre, l'Automatisation ne sera plus exécutée et simplement ignorée"
       }
     },
     "arguments": {
@@ -338,6 +343,10 @@
       },
       "slug": {
         "label": "Nom technique"
+      },
+      "disabled": {
+        "label": "Désactivée",
+        "description": "Cocher cette option désactivera l'exécution de l'app"
       }
     },
     "publish": {
@@ -568,6 +577,68 @@
               "label": "Ligne",
               "description": "Les clés de l'objet seront les colonnes du tableau."
             }
+          },
+          "columns": {
+            "label": "Colonnes",
+            "description": "Spécification des colonnes. Si vous ne changez rien, toutes vos données seront affichées de façon brutes.",
+            "items": {
+              "label": "Colonne",
+              "description": "Spécification de la colonne",
+              "add": "Ajouter une colonne",
+              "remove": "Supprimer la colonne",
+              "_label": {
+                "label": "Titre",
+                "description": "Le titre de votre colonne"
+              },
+              "key": {
+                "label": "Clé",
+                "description": "La clé correspondant à la donnée à afficher"
+              },
+              "type": {
+                "label": "Type",
+                "description": "Le type de format de données. Par défaut, la donnée est affichée en tant que texte",
+                "string": "Texte",
+                "number": "Nombre",
+                "boolean": "Booléen",
+                "date": "Date",
+                "tags": "Étiquettes"
+              },
+              "format": {
+                "label": "Format",
+                "description": "Format à appliquer à la donnée en cas de type nombre ou date."
+              },
+              "actions": {
+                "label": "Actions",
+                "description": "Vous pouvez afficher des boutons d'action si vous n'avez pas choisi de clé",
+                "items": {
+                  "label": "Action",
+                  "description": "Spécification de l'action",
+                  "add": "Ajouter une action",
+                  "remove": "Supprimer l'action",
+                  "_label": {
+                    "label": "Label",
+                    "description": "Texte du bouton"
+                  },
+                  "event": {
+                    "label": "Évènement",
+                    "description": "Un click sur le bouton enverra un évènement"
+                  },
+                  "payload": {
+                    "label": "Données",
+                    "description": "L'évènement peut être envoyé avec des données"
+                  },
+                  "url": {
+                    "label": "URL",
+                    "description": "Un click sur le bouton ouvrira une nouvelle page. L'URL peut contenir des paramètres sous la forme {{clé}}. Par exemple, si data contient une propriété \"_id\", l'URL peut valoir \"http://host/user/{{_id}}\" et sera remplie avec la valeur de la ligne concernée"
+                  }
+                }
+              },
+
+              "onEdit": {
+                "label": "Évènement à l'édition",
+                "description": "Rend la cellule éditable. L'évènement passé en valeur sera envoyé à chaque modification de celle-ci"
+              }
+            }
           }
         }
       },
@@ -633,6 +704,8 @@
     }
   },
   "404": "Ce workspace n'existe pas. Revenez à votre page d'accueil.",
+  "whatsNew": "Nouveautés",
+  "help": "Aide?",
   "share": {
     "label": "Partager",
     "email": "Email",
@@ -742,7 +815,33 @@
     }
   },
   "feed": {
-    "filter": "Filtres"
+    "filter": "Filtres",
+    "type": "L'évènement <event>{{context}}</event> a été émis",
+    "type_workspaces.created": "Le Workspace a été créé",
+    "type_workspaces.updated": "Le Workspace a été mis à jour",
+    "type_workspaces.deleted": "Le Workspace a été supprimé",
+    "type_workspaces.configured": "La configuration du Workspace a été mise à jour",
+    "type_workspaces.apps.installed": "L'app {{appSlug}} a été installée sous le nom <app>{{appName}}</app>",
+    "type_workspaces.apps.uninstalled": "L'app {{appName}} a été désinstallée",
+    "type_workspaces.apps.configured": "L'app <app>{{appName}}</app> a été configurée",
+    "type_workspaces.automations.created": "L'automatisation <automation>{{automation}}</automation> a été crée",
+    "type_workspaces.automations.updated": "L'automatisation <automation>{{automation}}</automation> a été mise à jour",
+    "type_workspaces.automations.deleted": "L'automatisation <automation>{{automation}}</automation> a été supprimée",
+    "type_workspaces.pages.updated": "La page <page>{{page}}</page> a été mise à jour",
+    "type_apps.published": "L'app {{appName}} a été publiée",
+    "type_runtime.automations.executed": "L'automatisation <automation>{{automation}}</automation> a été exécutée",
+    "type_runtime.webhooks.triggered": "L'automatisation <automation>{{automation}}</automation> a été déclenchée par URL",
+    "type_runtime.waits.pending": "L'automatisation <automation>{{automation}}</automation> est en attente {{waits}}",
+    "type_runtime.waits.pending_oneOf_one": "de l'évènement <event>{{events}}</event>",
+    "type_runtime.waits.pending_oneOf_other": "des évènements <event>{{events}}</event>",
+    "type_runtime.waits.pending_timeout": "pendant {{timeout}}s",
+    "type_runtime.waits.fulfilled": "L'automatisation <automation>{{automation}}</automation> a repris suite à l'évènement <event>{{event}}</event>",
+    "type_runtime.fetch.failed": "Requête HTTP échouée",
+    "type_runtime.contexts.updated": "Contexte mis à jour",
+    "type_apikeys.updated": "Une clé d'API a été mise à jour",
+    "type_apikeys.created": "Une clé d'API a été crée",
+    "type_apikeys.deleted": "Une clé d'API a été supprimée",
+    "type_error": "<error>Une erreur est survenue</error>"
   },
   "form": {
     "raw": "Insérer une valeur brute (permet notamment de saisir du texte, et donc des variables interpolées)",

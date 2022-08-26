@@ -214,7 +214,11 @@ const ManagedAdditionalProperties = ({
 
           <Button onClick={removeKey(key)}>
             <Tooltip
-              title={locales.removeProperty || 'Remove'}
+              title={
+                (schema.additionalProperties as Schema)?.remove ||
+                locales.removeProperty ||
+                'Remove'
+              }
               placement="left"
             >
               <button>
@@ -225,7 +229,9 @@ const ManagedAdditionalProperties = ({
         </div>
       ))}
       <Button onClick={addKey}>
-        {locales.addProperty || 'Add a property'}
+        {(schema.additionalProperties as Schema)?.add ||
+          locales.addProperty ||
+          'Add a property'}
       </Button>
     </div>
   );

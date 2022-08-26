@@ -905,6 +905,69 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
+  /v2/workspaces/{workspaceId}/usage:
+    get:
+      description: Retrieve workspace usage stats
+      operationId: workspaceUsage
+      tags:
+        - 'Prisme.ai Events'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'ID of workspace to listen to'
+          required: true
+          schema:
+            type: string
+        - name: 'afterDate'
+          in: 'query'
+          description: 'Retrieve usage stats after this ISO8601 formatted date.'
+          required: true
+          schema:
+            type: string
+        - name: 'beforeDate'
+          in: 'query'
+          required: true
+          description: 'Retrieve usage stats before this ISO8601 formatted date.'
+          schema:
+            type: string
+        - name: 'details'
+          in: 'query'
+          description: 'Includes individual appInstances details'
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceUsage'
+
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
   ############################################# runtime
   /v2/workspaces/{workspaceId}/webhooks/{automationSlug}:
     post: &POST_WEBHOOK
@@ -2537,6 +2600,9 @@ components:
         slug:
           type: string
           description: Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+        disabled:
+          type: boolean
+          description: If disabled, this appInstance will be ignored during execution
 
     AppDetails:
       type: object
@@ -3258,6 +3324,74 @@ components:
           $ref: '#/components/schemas/ApiKeyRules'
 
     ################################################################################################################################
+    ############################################################ Workspace Usage ############################################################
+    WorkspaceUsage:
+      type: object
+      required:
+        - workspaceId
+        - beforeDate
+        - afterDate
+        - total
+        - apps
+      properties:
+        workspaceId:
+          type: string
+        beforeDate:
+          type: string
+        afterDate:
+          type: string
+        total:
+          $ref: "#/components/schemas/UsageMetrics"
+        apps:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppUsageMetrics"
+
+    UsageMetrics:
+      type: object
+      required:
+        - automationRuns
+        - transactions
+        - httpTransactions
+        - eventTransactions
+        - sessions
+      additionalProperties: false
+      properties:
+        transactions:
+          type: number
+        automationRuns:
+          type: number
+        httpTransactions:
+          type: number
+        eventTransactions:
+          type: number
+        sessions:
+          type: number
+
+    AppUsageMetrics:
+      type: object
+      required:
+        - slug
+        - total
+      properties:
+        slug:
+          type: string
+        total:
+          $ref: "#/components/schemas/UsageMetrics"
+        appInstances:
+          type: array
+          items:
+            type: object
+            required:
+              - slug
+              - total
+            properties:
+              slug:
+                type: string
+              total:
+                $ref: "#/components/schemas/UsageMetrics"
+
+    ################################################################################################################################
     ############################################################ Events ############################################################
     PrismeEventTarget:
       type: object
@@ -3546,7 +3680,6 @@ components:
           type: object
           required:
             - ip
-            - email
             - id
             - session
             - authData

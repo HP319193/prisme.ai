@@ -4,11 +4,12 @@ import {
   PageHeader,
   Schema,
 } from '@prisme.ai/design-system';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import getLayout from '../layouts/WorkspaceLayout';
 import { useWorkspace } from '../components/WorkspaceProvider';
 import { useApps } from '../components/AppsProvider';
@@ -67,14 +68,16 @@ const Apps = ({}: AppsProps) => {
   const [value, setValue] = useState<{
     slug: string;
     appName: Prismeai.LocalizedText;
+    disabled: boolean;
   }>();
 
   useEffect(() => {
     if (!currentApp) return;
-    const { slug = '', appName = '' } = currentApp;
+    const { slug = '', appName = '', disabled = false } = currentApp;
     setValue({
       slug,
       appName,
+      disabled,
     });
   }, [currentApp]);
 
@@ -82,14 +85,17 @@ const Apps = ({}: AppsProps) => {
     async ({
       slug,
       appName,
+      disabled,
     }: {
       slug: string;
       appName: Prismeai.LocalizedText;
+      disabled: boolean;
     }) => {
       if (!value || !currentApp || !currentApp.slug) return;
       const newValue = {
         appName,
         slug,
+        disabled: !!disabled,
       };
       setValue(newValue);
       try {
@@ -128,6 +134,11 @@ const Apps = ({}: AppsProps) => {
           type: 'string',
           title: t('apps.details.slug.label'),
         },
+        disabled: {
+          type: 'boolean',
+          title: t('apps.details.disabled.label'),
+          description: t('apps.details.disabled.description'),
+        },
       },
     }),
     [t]
@@ -161,6 +172,13 @@ const Apps = ({}: AppsProps) => {
           </div>
         }
       />
+      <Head>
+        <title>
+          {t('page_title', {
+            elementName: localize(currentApp.appName),
+          })}
+        </title>
+      </Head>
       <AppEditor schema={schema} block={block} appId={appId} key={appId} />
     </>
   );

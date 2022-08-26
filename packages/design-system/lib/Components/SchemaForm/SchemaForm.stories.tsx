@@ -1,6 +1,5 @@
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { Story } from '@storybook/react';
-import { useState } from 'react';
 import SchemaForm, { FormProps } from './SchemaForm';
 import { useField } from 'react-final-form';
 import { FieldProps, Schema } from './types';
@@ -62,6 +61,8 @@ Default.args = {
         type: 'array',
         items: {
           type: 'string',
+          add: 'Add an item',
+          remove: 'Remove this',
         },
       },
       objectsArray: {
@@ -92,6 +93,8 @@ Default.args = {
     },
     additionalProperties: {
       type: 'string',
+      add: 'Add an object with a string',
+      remove: 'Sorry, remove that',
     },
   },
 };
@@ -366,6 +369,11 @@ UIWidgets.args = {
         title: 'textarea',
         description: 'Display a textarea. Only available for string types.',
         'ui:widget': 'textarea',
+        'ui:options': {
+          textarea: {
+            rows: 3,
+          },
+        },
       },
       select: {
         type: 'string',

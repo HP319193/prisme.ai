@@ -20,7 +20,9 @@ endpoints:
     path: '/socket.io*'
 
   events:
-    path: '/v2/workspaces/*/events*'
+    paths:
+      - '/v2/workspaces/*/events*'
+      - '/v2/workspaces/*/usage*'
 
   console:
     path: '*'
@@ -58,7 +60,6 @@ pipelines:
     endpoints:
       - events
     policies:
-      - authentication: {}
       - proxy:
           service: events
 

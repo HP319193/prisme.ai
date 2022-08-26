@@ -22,6 +22,7 @@ import PermissionsProvider from '../components/PermissionsProvider';
 import { AppsProvider } from '../components/AppsProvider';
 import PagesProvider from '../components/PagesProvider/PagesProvider';
 import down from '../icons/down.svg';
+import { WorkspacesUsageProvider } from '../components/WorkspacesUsage';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -93,28 +94,30 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <UserProvider>
       <WorkspacesProvider>
-        <PermissionsProvider>
-          <AppsProvider>
-            <PagesProvider>
-              <BlocksProvider
-                externals={externals}
-                components={{ Link, Loading, DownIcon }}
-              >
-                <Head>
-                  <title>{t('main.title')}</title>
-                  <meta
-                    name="viewport"
-                    content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
-                  />
-                  <meta name="description" content={t('main.description')} />
-                  <link rel="icon" href="/favicon.png" />
-                </Head>
-                <Sentry />
-                {getLayout(<Component {...pageProps} />)}
-              </BlocksProvider>
-            </PagesProvider>
-          </AppsProvider>
-        </PermissionsProvider>
+        <WorkspacesUsageProvider>
+          <PermissionsProvider>
+            <AppsProvider>
+              <PagesProvider>
+                <BlocksProvider
+                  externals={externals}
+                  components={{ Link, Loading, DownIcon }}
+                >
+                  <Head>
+                    <title>{t('main.title')}</title>
+                    <meta
+                      name="viewport"
+                      content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+                    />
+                    <meta name="description" content={t('main.description')} />
+                    <link rel="icon" href="/favicon.png" />
+                  </Head>
+                  <Sentry />
+                  {getLayout(<Component {...pageProps} />)}
+                </BlocksProvider>
+              </PagesProvider>
+            </AppsProvider>
+          </PermissionsProvider>
+        </WorkspacesUsageProvider>
       </WorkspacesProvider>
     </UserProvider>
   );

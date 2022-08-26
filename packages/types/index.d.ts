@@ -354,6 +354,10 @@ declare namespace Prismeai {
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
         slug?: string;
+        /**
+         * If disabled, this appInstance will be ignored during execution
+         */
+        disabled?: boolean;
     } | {
         /**
          * example:
@@ -778,6 +782,10 @@ declare namespace Prismeai {
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
         slug?: string;
+        /**
+         * If disabled, this appInstance will be ignored during execution
+         */
+        disabled?: boolean;
     }
     export type AppInstanceDetailedList = DetailedAppInstance[];
     export interface AppInstancePatch {
@@ -795,6 +803,18 @@ declare namespace Prismeai {
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
         slug?: string;
+        /**
+         * If disabled, this appInstance will be ignored during execution
+         */
+        disabled?: boolean;
+    }
+    export interface AppUsageMetrics {
+        slug: string;
+        total: UsageMetrics;
+        appInstances?: {
+            slug: string;
+            total: UsageMetrics;
+        }[];
     }
     export interface AuthenticationError {
         /**
@@ -916,6 +936,10 @@ declare namespace Prismeai {
                  * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
                  */
                 slug?: string;
+                /**
+                 * If disabled, this appInstance will be ignored during execution
+                 */
+                disabled?: boolean;
                 oldConfig: any;
             };
             slug: string;
@@ -1108,6 +1132,10 @@ declare namespace Prismeai {
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
         slug?: string;
+        /**
+         * If disabled, this appInstance will be ignored during execution
+         */
+        disabled?: boolean;
         blocks: {
             slug: string;
             url?: string;
@@ -1597,7 +1625,7 @@ declare namespace Prismeai {
         type: "gateway.login.succeeded";
         payload: {
             ip: string;
-            email: string;
+            email?: string;
             id: string;
             authData: {
                 [name: string]: any;
@@ -1736,6 +1764,13 @@ declare namespace Prismeai {
         payload: {
             workspace: Workspace;
         };
+    }
+    export interface UsageMetrics {
+        transactions: number;
+        automationRuns: number;
+        httpTransactions: number;
+        eventTransactions: number;
+        sessions: number;
     }
     export interface User {
         /**
@@ -1941,6 +1976,13 @@ declare namespace Prismeai {
             subjectId: string;
             permissions: UserPermissions;
         };
+    }
+    export interface WorkspaceUsage {
+        workspaceId: string;
+        beforeDate: string;
+        afterDate: string;
+        total: UsageMetrics;
+        apps: AppUsageMetrics[];
     }
 }
 declare namespace PrismeaiAPI {
@@ -2889,6 +2931,29 @@ declare namespace PrismeaiAPI {
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
+        }
+    }
+    namespace WorkspaceUsage {
+        namespace Parameters {
+            export type AfterDate = string;
+            export type BeforeDate = string;
+            export type Details = boolean;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        export interface QueryParameters {
+            afterDate: Parameters.AfterDate;
+            beforeDate: Parameters.BeforeDate;
+            details?: Parameters.Details;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.WorkspaceUsage;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
 }

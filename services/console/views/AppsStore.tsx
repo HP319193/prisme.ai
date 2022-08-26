@@ -44,7 +44,7 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
         .flatMap(([key, app]) => {
           return `${localize(app.name)}`
             .toLowerCase()
-            .match(filter.toLowerCase())
+            .includes(filter.toLowerCase())
             ? { ...app }
             : [];
         })

@@ -1,10 +1,17 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import AutomationBuilder from '../components/AutomationBuilder';
 import getLayout from '../layouts/WorkspaceLayout';
 import Error404 from './Errors/404';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useTranslation } from 'next-i18next';
+import Head from 'next/head';
 import {
   Button,
   Loading,
@@ -139,12 +146,18 @@ export const Automation = () => {
           title: t('automations.details.private.label'),
           description: t('automations.details.private.description'),
         },
+        disabled: {
+          type: 'boolean',
+          title: t('automations.details.disabled.label'),
+          description: t('automations.details.private.description'),
+        },
       },
       'ui:options': {
         grid: [
           [['name', 'slug'], ['description']],
           [['arguments']],
           [['private']],
+          [['disabled']],
         ],
       },
     }),
@@ -234,12 +247,14 @@ export const Automation = () => {
       description,
       arguments: args,
       private: _private,
+      disabled,
     }: {
       slug: string;
       name: Prismeai.LocalizedText;
       description: Prismeai.LocalizedText;
       arguments: Prismeai.Automation['arguments'];
       private: boolean;
+      disabled: boolean;
     }) => {
       const { slug: prevSlug } = value;
       const cleanedArguments =
@@ -251,6 +266,7 @@ export const Automation = () => {
       const { private: p, ...cleanedValue } = value;
       const newValue: typeof value = {
         ...cleanedValue,
+        disabled,
         name,
         slug,
         description,
@@ -312,7 +328,13 @@ export const Automation = () => {
           </Button>,
         ]}
       />
-
+      <Head>
+        <title>
+          {t('page_title', {
+            elementName: localize((automation || { name: '' }).name),
+          })}
+        </title>
+      </Head>
       <div className="relative flex flex-1 h-full">
         <AutomationBuilder
           id={`${automationId}`}

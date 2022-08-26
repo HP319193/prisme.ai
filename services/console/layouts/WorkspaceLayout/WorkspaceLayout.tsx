@@ -28,6 +28,7 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import { Workspace } from '@prisme.ai/sdk';
+import Link from 'next/link';
 
 const TREE_CONTENT_TYPE = {
   automations: 'automations',
@@ -244,7 +245,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
           .map(([slug, automation]) => ({
             title: localize(automation.name),
             renderTitle: (
-              <span className="ml-2">{localize(automation.name)}</span>
+              <Link href={`/workspaces/${workspace.id}/automations/${slug}`}>
+                <a className="ml-2">{localize(automation.name)}</a>
+              </Link>
             ),
             key: `${TREE_CONTENT_TYPE.automations}:${slug}`,
             icon: <BranchesOutlined />,
@@ -261,7 +264,15 @@ export const WorkspaceLayout: FC = ({ children }) => {
         children: (currentPages || [])
           .map((page) => ({
             title: localize(page.name),
-            renderTitle: <span className="ml-2">{localize(page.name)}</span>,
+            renderTitle: (
+              <Link
+                href={`/workspaces/${workspace.id}/pages/${
+                  page.slug || page.id
+                }`}
+              >
+                <a className="ml-2">{localize(page.name)}</a>
+              </Link>
+            ),
             key: `${TREE_CONTENT_TYPE.pages}:${page.id}`,
             icon: <FileOutlined />,
           }))
@@ -281,6 +292,13 @@ export const WorkspaceLayout: FC = ({ children }) => {
           .map((appInstance) => ({
             title: `${appInstance.appName}`,
             key: `${TREE_CONTENT_TYPE.apps}:${appInstance.slug}`,
+            renderTitle: (
+              <Link
+                href={`/workspaces/${workspace.id}/apps/${appInstance.slug}`}
+              >
+                <a>{appInstance.appName}</a>
+              </Link>
+            ),
             icon:
               appInstance.photo && appInstance.photo.length > 0 ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -302,7 +320,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       onCreateAutomation,
       onCreatePage,
       t,
-      workspace.automations,
+      workspace,
       workspaceAppInstances,
     ]
   );
@@ -369,7 +387,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
               />
             </div>
           </SidePanel>
-          <div className="flex h-full flex-col flex-1 min-w-[500px]">
+          <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-[calc(100vw-20rem)]">
             {creating ? <Loading /> : children}
           </div>
         </div>

@@ -1,12 +1,20 @@
+import { Events } from '@prisme.ai/sdk';
 import { Story } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 import { useState } from 'react';
 import { BlockProvider } from '../Provider';
+import { DataTableConfig } from './DataTable';
 import { DataTable } from './index';
 
 export default {
   title: 'Blocks/DataTable',
 };
 
+const events = {
+  emit(event: string, payload?: any) {
+    action(event)(payload);
+  },
+};
 const Template: Story<any> = ({ defaultConfig }) => {
   const [config, setConfig] = useState<any>(defaultConfig);
   const [appConfig, setAppConfig] = useState<any>();
@@ -17,6 +25,7 @@ const Template: Story<any> = ({ defaultConfig }) => {
       onConfigUpdate={setConfig}
       appConfig={appConfig}
       onAppConfigUpdate={setAppConfig}
+      events={events as Events}
     >
       <DataTable edit={false} />
     </BlockProvider>
@@ -58,8 +67,8 @@ Simple.args = {
   },
 };
 
-export const WihObjects = Template.bind({});
-WihObjects.args = {
+export const WithObjects = Template.bind({});
+WithObjects.args = {
   defaultConfig: {
     data: [
       {
@@ -128,4 +137,86 @@ WihObjects.args = {
       },
     ],
   },
+};
+
+export const WithMetaData = Template.bind({});
+WithMetaData.args = {
+  defaultConfig: {
+    data: [
+      {
+        _id: '62b1cc7ee806595bf47ed230',
+        title: 'Foo',
+        count: 42,
+        startAt: '2022-01-01',
+        colors: ['red', 'orange'],
+        checked: true,
+      },
+      {
+        _id: '62bf07425609f172d1ac12a2',
+        title: 'Bar',
+        count: 123,
+        startAt: '2022-05-06',
+        colors: ['green', 'pink', 'purple'],
+        checked: false,
+      },
+    ],
+    columns: [
+      {
+        label: 'Title',
+        key: 'title',
+        onEdit: 'editTitle',
+      },
+      {
+        label: 'Count',
+        key: 'count',
+        type: 'number',
+        onEdit: 'editCount',
+      },
+      {
+        label: 'Checked ?',
+        key: 'checked',
+        type: 'boolean',
+        onEdit: 'editChecked',
+      },
+      {
+        label: 'Colors',
+        key: 'colors',
+        type: 'tags',
+        onEdit: 'cannotEdit',
+      },
+      {
+        label: 'Start at',
+        key: 'startAt',
+        type: 'date',
+        format: {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        },
+        onEdit: 'editDate',
+      },
+      {
+        label: 'Actions',
+        actions: [
+          {
+            label: 'Delete',
+            event: 'delete',
+          },
+          {
+            label: 'Update',
+            event: 'delete',
+            payload: {
+              id: '${_id}',
+            },
+          },
+          {
+            label: 'View',
+            url: 'http://prisme.ai/item/${_id}',
+          },
+        ],
+        onEdit: 'cannotEdit',
+      },
+    ],
+  } as DataTableConfig,
 };

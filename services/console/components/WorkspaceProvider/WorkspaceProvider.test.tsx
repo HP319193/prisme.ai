@@ -2,10 +2,9 @@ import renderer, { act } from 'react-test-renderer';
 import { useRouter } from 'next/router';
 import { useWorkspaces } from '../../components/WorkspacesProvider';
 import api from '../../utils/api';
-import { Event, Events } from '@prisme.ai/sdk';
+import { Event, Events, Workspace } from '@prisme.ai/sdk';
 import { useWorkspace, WorkspaceContext } from './context';
 import WorkspaceProvider from './Provider';
-import Provider from '../WorkspacesProvider/Provider';
 
 jest.useFakeTimers();
 
@@ -243,160 +242,124 @@ it('should listen to events on socket', async () => {
   );
 });
 
-// it('should install a new app', async () => {
-//   const newAppInstance = {
-//     appSlug: 'monappId',
-//     appName: "le nom de l'app",
-//     appVersion: '1',
-//     slug: 'monappId',
-//   };
-//   jest.spyOn(api, 'getWorkspace').mockReturnValue(
-//     Promise.resolve({
-//       id: '42',
-//       name: 'foo',
-//       automations: [],
-//     } as any)
-//   );
-//
-//   jest
-//     .spyOn(api, 'installApp')
-//     .mockReturnValue(Promise.resolve(newAppInstance as any));
-//
-//   let context: any = {};
-//   const Test = () => {
-//     context = useWorkspace();
-//     return null;
-//   };
-//   const root = renderer.create(
-//     <Provider>
-//       <Test />
-//     </Provider>
-//   );
-//   await act(async () => {
-//     await true;
-//   });
-//
-//   await act(async () => {
-//     context.installApp('42', {
-//       appSlug: 'monappId',
-//       appName: "le nom de l'app",
-//       appVersion: '1',
-//     });
-//   });
-//
-//   await act(async () => {
-//     const w = await context.workspace;
-//     expect(w).toEqual({
-//       id: '42',
-//       name: 'foo',
-//       imports: {
-//         monappId: {
-//           appSlug: 'monappId',
-//           appName: "le nom de l'app",
-//           appVersion: '1',
-//           slug: 'monappId',
-//         },
-//       },
-//     });
-//   });
-// });
+it('should install a new app', async () => {
+  const newAppInstance = {
+    appSlug: 'monappId',
+    appName: "le nom de l'app",
+    appVersion: '1',
+    slug: 'monappId',
+  };
+  jest.spyOn(api, 'getWorkspace').mockReturnValue(
+    Promise.resolve({
+      id: '42',
+      name: 'foo',
+      automations: [],
+    } as any)
+  );
 
-// it('should save', async () => {
-//   useWorkspaces().update = jest.fn(async () => ({} as Workspace));
-//   let context: WorkspaceContext = {} as WorkspaceContext;
-//   const Test = () => {
-//     context = useWorkspace();
-//     return null;
-//   };
-//   const root = renderer.create(
-//         <WorkspaceLayout>
-//           <WorkspaceProvider>
-//             <Test />
-//           </WorkspaceProvider>
-//         </WorkspaceLayout>
-//   );
-//   await act(async () => {
-//     await true;
-//   });
-//   act(() => {
-//     context.setNewSource({
-//       name: 'win',
-//       automations: {},
-//       createdAt: '',
-//       updatedAt: '',
-//       id: '',
-//     });
-//   });
-//   await act(async () => {
-//     await context.saveSource();
-//   });
-//
-//   expect(useWorkspaces().update).toHaveBeenCalledWith({
-//     name: 'win',
-//     automations: {},
-//     createdAt: '',
-//     updatedAt: '',
-//     id: '',
-//   });
-//   expect(notification.success).toHaveBeenCalledWith({
-//     message: 'expert.save.confirm',
-//     placement: 'bottomRight',
-//   });
-// });
+  jest
+    .spyOn(api, 'installApp')
+    .mockReturnValue(Promise.resolve(newAppInstance as any));
 
-// it('should fail to save', async () => {
-//   useWorkspaces().update = jest.fn();
-//   let context: WorkspaceContext = {} as WorkspaceContext;
-//   const Test = () => {
-//     context = useWorkspace();
-//     return null;
-//   };
-//   const root = renderer.create(
-//     <WorkspaceLayout>
-//       <WorkspaceProvider>
-//         <Test />
-//       </WorkspaceProvider>
-//     </WorkspaceLayout>
-//   );
-//   await act(async () => {
-//     await true;
-//   });
-//   act(() => {
-//     context.setNewSource({
-//       name: 'win',
-//       automations: {},
-//       createdAt: '',
-//       updatedAt: '',
-//       id: '',
-//     });
-//   });
-//   await act(async () => {
-//     await context.saveSource();
-//   });
-//
-//   expect(useWorkspaces().update).toHaveBeenCalledWith({
-//     name: 'win',
-//     automations: {},
-//     createdAt: '',
-//     updatedAt: '',
-//     id: '',
-//   });
-// });
+  let context: any = {};
+  const Test = () => {
+    context = useWorkspace();
+    return null;
+  };
+  const root = renderer.create(
+    <WorkspaceProvider>
+      <Test />
+    </WorkspaceProvider>
+  );
+  await act(async () => {
+    await true;
+  });
 
-// it('should destroy socket', async () => {
-//   (Events as any).destroyMock.mockClear();
-//   useRouter().query.id = '42';
-//   const root = renderer.create(<WorkspaceProvider>Foo</WorkspaceProvider>);
-//   expect((Events as any).destroyMock).not.toHaveBeenCalled();
-//
-//   await act(async () => {
-//     useRouter().query.id = '43';
-//     await true;
-//   });
-//   expect((Events as any).destroyMock).toHaveBeenCalled();
-// });
+  await act(async () => {
+    context.installApp('42', {
+      appSlug: 'monappId',
+      appName: "le nom de l'app",
+      appVersion: '1',
+    });
+  });
+
+  await act(async () => {
+    const w = await context.workspace;
+    expect(w).toEqual({
+      id: '42',
+      name: 'foo',
+      automations: [],
+      imports: {
+        monappId: {
+          appSlug: 'monappId',
+          appName: "le nom de l'app",
+          appVersion: '1',
+          slug: 'monappId',
+        },
+      },
+    });
+  });
+});
+
+it('should save', async () => {
+  useWorkspaces().update = jest.fn(async (input: Workspace) => input);
+  let context: WorkspaceContext = {} as WorkspaceContext;
+  const Test = () => {
+    context = useWorkspace();
+    return null;
+  };
+  const root = renderer.create(
+    <WorkspaceProvider>
+      <Test />
+    </WorkspaceProvider>
+  );
+  await act(async () => {
+    await true;
+  });
+
+  let saveSourceResponse;
+
+  await act(async () => {
+    saveSourceResponse = await context.saveSource({
+      name: 'win',
+      automations: {},
+      createdAt: '',
+      updatedAt: '',
+      id: '',
+    });
+  });
+
+  expect(useWorkspaces().update).toHaveBeenCalledWith({
+    name: 'win',
+    automations: {},
+    createdAt: '',
+    updatedAt: '',
+    id: '',
+  });
+  expect(saveSourceResponse).toEqual({
+    name: 'win',
+    automations: {},
+    createdAt: '',
+    updatedAt: '',
+    id: '',
+  });
+});
+
+it('should destroy socket', async () => {
+  (Events as any).destroyMock.mockClear();
+  useRouter().query.id = '42';
+  const root = renderer.create(<WorkspaceProvider>Foo</WorkspaceProvider>);
+  expect((Events as any).destroyMock).not.toHaveBeenCalled();
+
+  await act(async () => {
+    useRouter().query.id = '43';
+    await true;
+  });
+  expect((Events as any).destroyMock).toHaveBeenCalled();
+});
 
 it('should create an automation', async () => {
+  useWorkspaces().update = jest.fn(async (input: Workspace) => input);
   let context: WorkspaceContext = {} as WorkspaceContext;
   const Test = () => {
     context = useWorkspace();

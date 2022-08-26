@@ -1,7 +1,6 @@
 import { FC, MouseEvent, useCallback, useMemo } from 'react';
 import { Table } from '@prisme.ai/design-system';
 import { Event } from '@prisme.ai/sdk';
-import { useDateFormat } from '../../utils/dates';
 import { useTranslation } from 'next-i18next';
 import { selectText } from '../../utils/dom';
 import { truncate } from '../../utils/strings';
@@ -123,9 +122,9 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
     ].filter(Boolean) as EventRecord[];
   }, [event]);
   const onRowClick = useCallback(({ target }: MouseEvent) => {
-    const valueTd = (
-      target as HTMLTableRowElement
-    ).parentNode?.querySelectorAll('td');
+    const valueTd = (target as HTMLTableRowElement).parentNode?.querySelectorAll(
+      'td'
+    );
     if (valueTd && valueTd.length === 3) {
       selectText(valueTd[2]);
     }

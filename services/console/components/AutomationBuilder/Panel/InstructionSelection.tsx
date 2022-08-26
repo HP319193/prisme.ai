@@ -32,7 +32,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
           const matching = (
             search
               ? Object.keys(list).filter((a) =>
-                  `${name} ${a}`.toLowerCase().match(search.toLowerCase())
+                  `${name} ${a}`.toLowerCase().includes(search.toLowerCase())
                 )
               : Object.keys(list)
           ).map((name) => ({

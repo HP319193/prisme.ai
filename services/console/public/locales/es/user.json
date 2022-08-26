@@ -1,5 +1,31 @@
 {
   "sign": {
     "out": "Desconexión"
+  },
+  "account": "account",
+  "account_my": "Mi cuenta",
+  "workspaces": "Espacios de trabajo",
+  "billing": {
+    "title": "PLAN DE FACTURACIÓN",
+    "free": "Plan gratuito",
+    "change": "Cambiar plan de facturación",
+    "limit_ok": "Todas sus bases están dentro de los límites de interacción de su plan actual (gratuito)",
+    "cta_premium": "Más información sobre los planes premium",
+    "payment": "PAGO",
+    "payment_add": "Añadir datos de pago",
+    "invoice": "FACTURA",
+    "invoice_details": "Detalles de la factura",
+    "history": "LONG HISTORY"
+  },
+  "usage": {
+    "title": "USAGE",
+    "interaction": "interacciones",
+    "access": "accesos",
+    "old": "Este espacio de trabajo se realizó durante una versión anterior de Prisme.ai y no tiene acceso a Usos"
+  },
+  "coming_soon": "Todavía no está disponible, ¡estén atentos!",
+  "title": {
+    "myAccount": "Mi cuenta - Prisme.ai",
+    "workspaceManagement": "{{workspaceName}} - Gestión - Prisme.ai"
   }
 }

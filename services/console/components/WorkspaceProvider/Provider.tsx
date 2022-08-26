@@ -310,7 +310,7 @@ export const WorkspaceProvider: FC = ({ children }) => {
         addEventToMap(new Map(events === 'loading' ? [] : events), event)
       );
 
-      if (workspace && eventName.startsWith('workspaces.')) {
+      if (workspace && `${eventName}`.startsWith('workspaces.')) {
         debouncedFetchWorkspace();
       }
     };
@@ -336,10 +336,14 @@ export const WorkspaceProvider: FC = ({ children }) => {
   const saveSource = useCallback(
     async (newSource: Workspace) => {
       const newWorkspace = await update(newSource);
+      console.log(newWorkspace);
       if (!newWorkspace) {
+        console.log('throw');
         throw new Error();
       }
-      return setCurrentWorkspace(newWorkspace);
+      setCurrentWorkspace(newWorkspace);
+
+      return newWorkspace;
     },
     [update]
   );

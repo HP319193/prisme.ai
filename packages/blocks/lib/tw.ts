@@ -11,6 +11,8 @@ setup({
           return { 'scroll-snap-type': 'x mandatory' };
         case 'mandatory':
           return { 'scroll-snap-type': 'mandatory' };
+        case 'both':
+          return { 'scroll-snap-type': 'both mandatory' };
       }
     },
   },
@@ -19,6 +21,9 @@ setup({
       DEFAULT: '10px',
     },
     extend: {
+      flex: {
+        card: '0 0 15rem',
+      },
       colors: {
         // Antdesign secondary text color
         gray: '#939CA6',

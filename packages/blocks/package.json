@@ -10,6 +10,7 @@
     "@ant-design/icons": "^4.7.0",
     "@prisme.ai/design-system": "1.0.3",
     "i18next": "^21.6.12",
+    "lodash.get": "^4.4.2",
     "markdown-to-jsx": "^7.1.7",
     "react-i18next": "^11.15.5",
     "resize-observer-polyfill": "^1.5.1",

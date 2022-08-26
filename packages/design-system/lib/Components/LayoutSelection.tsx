@@ -88,7 +88,7 @@ const LayoutSelection = ({
     [searchValue, items, itemPerPage, currentPage]
   );
 
-  const totalPages = Math.round(items.length / itemPerPage);
+  const totalPages = Math.ceil(items.length / itemPerPage);
 
   return (
     <Row className="flex grow h-full">

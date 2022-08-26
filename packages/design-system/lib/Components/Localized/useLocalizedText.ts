@@ -1,16 +1,18 @@
 import { useCallback } from 'react';
-import Prismeai from '@prisme.ai/sdk';
+import '@prisme.ai/types';
 import { Schema } from '../SchemaForm';
 
-const translatable = ['title', 'description', 'label'];
+const valueIsALocale = (value: any) => {
+  return (
+    typeof value === 'string' ||
+    (typeof value === 'object' &&
+      Object.keys(value).every((key) => key.length === 2))
+  );
+};
+const translatable = ['title', 'description', 'label', 'add', 'remove'];
 const isTranslatedElement = (key: string, value: any) => {
   if (translatable.includes(key)) {
-    if (
-      typeof value === 'string' ||
-      Object.keys(value).every((key) => key.length === 2)
-    ) {
-      return true;
-    }
+    return valueIsALocale(value);
   }
   return false;
 };
@@ -34,6 +36,12 @@ export const useLocalizedText = (t: any, language: string) => {
       const localizeSchemaForm = (mayBeTranslatable: any) => {
         if (typeof mayBeTranslatable === 'object') {
           const isArray = Array.isArray(mayBeTranslatable);
+          if (
+            isArray &&
+            mayBeTranslatable.every((key) => valueIsALocale(key))
+          ) {
+            return mayBeTranslatable.map((key) => localize(key));
+          }
           const newObject = isArray
             ? [...mayBeTranslatable]
             : { ...mayBeTranslatable };

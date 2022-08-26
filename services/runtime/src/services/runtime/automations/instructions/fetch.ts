@@ -68,7 +68,7 @@ export async function fetch(
   };
 
   // Process body
-  if (body && (method || 'get')?.toLowerCase() !== 'get') {
+  if ((body || multipart) && (method || 'get')?.toLowerCase() !== 'get') {
     if (multipart) {
       delete (params.headers as any)['content-type'];
       params.body = new FormData();

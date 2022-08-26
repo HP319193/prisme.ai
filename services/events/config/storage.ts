@@ -31,6 +31,10 @@ export const EVENTS_STORAGE_ES_OPTIONS: StoreDriverOptions = {
   driverOptions: {},
 };
 
+export const EVENTS_STORAGE_ES_BULK_REFRESH = ['true', 'yes', 'y'].includes(
+  (process.env.EVENTS_STORAGE_ES_BULK_REFRESH || 'no').toLowerCase()
+);
+
 /**
  * Permissions MongoDB
  */

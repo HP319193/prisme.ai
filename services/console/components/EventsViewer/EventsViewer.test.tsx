@@ -17,6 +17,14 @@ jest.mock('@prisme.ai/sdk', () => {
   return { Api, Events };
 });
 
+jest.mock('../../utils/dates', () => {
+  return {
+    useDateFormat: () => () => {
+      return '';
+    },
+  };
+});
+
 jest.mock('../WorkspaceProvider', () => {
   const mock = {
     events: new Map(),
@@ -64,18 +72,42 @@ it('should render events', async () => {
     [
       1325376000000,
       new Set([
-        { id: '1', createdAt: new Date('2012-01-01 16:12') } as Event<Date>,
-        { id: '2', createdAt: new Date('2012-01-01 12:12') } as Event<Date>,
-        { id: '3', createdAt: new Date('2012-01-01 01:12') } as Event<Date>,
+        {
+          id: '1',
+          createdAt: new Date('2012-01-01 16:12'),
+          source: { workspaceId: '42' },
+        } as Event<Date>,
+        {
+          id: '2',
+          createdAt: new Date('2012-01-01 12:12'),
+          source: { workspaceId: '42' },
+        } as Event<Date>,
+        {
+          id: '3',
+          createdAt: new Date('2012-01-01 01:12'),
+          source: { workspaceId: '42' },
+        } as Event<Date>,
       ]),
     ],
     [
       1325548800000,
-      new Set([{ id: '4', createdAt: new Date('2012-01-03') } as Event<Date>]),
+      new Set([
+        {
+          id: '4',
+          createdAt: new Date('2012-01-03'),
+          source: { workspaceId: '42' },
+        } as Event<Date>,
+      ]),
     ],
     [
       1325462400000,
-      new Set([{ id: '5', createdAt: new Date('2012-01-02') } as Event<Date>]),
+      new Set([
+        {
+          id: '5',
+          createdAt: new Date('2012-01-02'),
+          source: { workspaceId: '42' },
+        } as Event<Date>,
+      ]),
     ],
   ]);
   const root = renderer.create(<EventsViewer />);

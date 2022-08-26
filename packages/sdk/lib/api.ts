@@ -188,11 +188,16 @@ export class Api extends Fetcher {
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const { createdAt, createdBy, updatedAt, updatedBy, ...newPage } =
-      await this.post<PageWithMetadata>(
-        `/workspaces/${workspaceId}/pages`,
-        page
-      );
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...newPage
+    } = await this.post<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages`,
+      page
+    );
     return newPage;
   }
 
@@ -202,11 +207,16 @@ export class Api extends Fetcher {
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const { createdAt, createdBy, updatedAt, updatedBy, ...updatedPage } =
-      await this.patch<PageWithMetadata>(
-        `/workspaces/${workspaceId}/pages/${page.id}`,
-        await this.replaceAllImagesData(page, workspaceId)
-      );
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...updatedPage
+    } = await this.patch<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages/${page.id}`,
+      await this.replaceAllImagesData(page, workspaceId)
+    );
     return updatedPage;
   }
 
@@ -328,7 +338,7 @@ export class Api extends Fetcher {
     const params = new URLSearchParams(
       removedUndefinedProperties(
         {
-          text: `${query || ''}`,
+          text: `${encodeURIComponent(query || '')}`,
           page: `${page || ''}`,
           limit: `${limit || ''}`,
           workspaceId: `${workspaceId || ''}`,
@@ -502,6 +512,32 @@ export class Api extends Fetcher {
 
   async callAutomation(workspaceId: string, automation: string): Promise<any> {
     return this._fetch(`/workspaces/${workspaceId}/webhooks/${automation}`);
+  }
+
+  async getWorkspaceUsage(
+    workspaceId: PrismeaiAPI.WorkspaceUsage.Parameters.WorkspaceId,
+    {
+      afterDate,
+      beforeDate,
+      details,
+    }: {
+      afterDate?: PrismeaiAPI.WorkspaceUsage.Parameters.AfterDate;
+      beforeDate?: PrismeaiAPI.WorkspaceUsage.Parameters.BeforeDate;
+      details?: PrismeaiAPI.WorkspaceUsage.Parameters.Details;
+    } = {}
+  ): Promise<PrismeaiAPI.WorkspaceUsage.Responses.$200> {
+    const params = new URLSearchParams(
+      removedUndefinedProperties(
+        {
+          afterDate: `${afterDate || ''}`,
+          beforeDate: `${beforeDate || ''}`,
+          details: `${details || ''}`,
+        },
+        true
+      )
+    );
+
+    return this.get(`/workspaces/${workspaceId}/usage?${params.toString()}`);
   }
 }
 

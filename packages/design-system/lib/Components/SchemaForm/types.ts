@@ -71,6 +71,10 @@ export interface Schema extends Record<string, any> {
   title?: string;
   // Description in a help tooltip
   description?: string;
+  // Add button label when in a list of items or properties
+  add?: string;
+  // Remove button label when in a list of items or properties
+  remove?: string;
   // For object type, object properties
   properties?: Record<string, Schema>;
   // Schema of object additional properties

@@ -20,6 +20,8 @@ import { filterEmpty } from '../../utils/prismeAi';
 import { ExceptionOutlined } from '@ant-design/icons';
 import { useWorkspace, WorkspaceContext } from '../WorkspaceProvider';
 import ShareWorkspace from '../Share/ShareWorkspace';
+import SourceDetails from '../SourceDetails';
+import SectionContent from './SectionContent';
 
 export const EventsViewerRenderer = memo(function EventsViewerRender({
   events,
@@ -48,23 +50,20 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
       Array.from(events).map((event) => ({
         key: event.id,
         label: (
-          <div className="flex flex-col">
-            <div
-              className={`flex flex-row ${
-                readEvents.has(event.id) ? 'opacity-50' : ''
-              }`}
-            >
-              <div className="font-bold">
-                {event.source?.appSlug || localize(workspaceName)}
-              </div>
-              <div className="text-gray font-thin ml-4">
-                {dateFormat(event.createdAt, {
-                  relative: true,
-                })}
-              </div>
-            </div>
-            <div className="font-normal">{event.type}</div>
-          </div>
+          <SourceDetails
+            workspaceId={event.source.workspaceId}
+            appSlug={event.source.appSlug}
+          >
+            <SectionContent
+              title={event.source?.appSlug || localize(workspaceName)}
+              date={dateFormat(event.createdAt, {
+                relative: true,
+              })}
+              type={event.type}
+              read={readEvents.has(event.id)}
+              event={event}
+            />
+          </SourceDetails>
         ),
         content: <EventDetails {...event} />,
         onClick: () => {
@@ -79,10 +78,12 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
       Array.from(events === 'loading' ? [] : events)
         .sort(([date1], [date2]) => date2 - date1)
         .map(([date, events]) => ({
-          title: dateFormat(new Date(date), {
-            relative: true,
-            withoutHour: true,
-          }),
+          title: (
+            dateFormat(new Date(date), {
+              relative: true,
+              withoutHour: true,
+            }) || ''
+          ).toUpperCase(),
           content: <Collapse items={generateSectionContent(events)} light />,
         })),
     [dateFormat, events, generateSectionContent]
@@ -101,8 +102,8 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
       content = <Empty />;
     } else {
       content = (
-        <div className="flex grow justify-center items-center">
-          <div className="flex grow justify-center items-center flex-col">
+        <div className="flex flex-1 justify-center items-center">
+          <div className="flex flex-1 justify-center items-center flex-col">
             <ExceptionOutlined className="text-[50px] !text-gray mb-5" />
             {t('events.filters.empty')}
           </div>
@@ -111,7 +112,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
     }
   } else {
     content = (
-      <div className="w-full overflow-auto" ref={ref}>
+      <div className="w-full" ref={ref}>
         <Feed sections={feedSections} />
       </div>
     );
