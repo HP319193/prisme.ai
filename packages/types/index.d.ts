@@ -758,6 +758,18 @@ declare namespace Prismeai {
             description?: LocalizedText;
         }[];
         photo?: string;
+        events?: {
+            emit?: {
+                event: string;
+                source?: {
+                    [name: string]: {
+                        from?: string;
+                        path?: string;
+                    };
+                };
+            }[];
+            listen?: string[];
+        };
     }
     export interface AppEvent {
         /**
@@ -1152,6 +1164,18 @@ declare namespace Prismeai {
             description?: LocalizedText;
         }[];
         photo?: string;
+        events?: {
+            emit?: {
+                event: string;
+                source?: {
+                    [name: string]: {
+                        from?: string;
+                        path?: string;
+                    };
+                };
+            }[];
+            listen?: string[];
+        };
     }
     /**
      * Page
@@ -1187,6 +1211,13 @@ declare namespace Prismeai {
             event: string;
             payload?: AnyValue;
             target?: PrismeEventTarget;
+            private?: boolean;
+            source?: {
+                [name: string]: {
+                    from?: string;
+                    config?: string;
+                };
+            };
         };
     }
     export interface ExecutedAutomation {

@@ -173,6 +173,40 @@ class Apps {
     version?: string
   ): Promise<Prismeai.AppDetails> => {
     const app = await this.storage.get(appId, version || 'current');
+    const events = Object.keys(app.automations || {}).reduce<
+      Required<Prismeai.AppDetails>['events']
+    >(
+      (prev, key) => {
+        const automation = app?.automations?.[key];
+        if (!automation || automation.disabled || automation.private)
+          return prev;
+
+        const listen = [
+          ...(prev.listen || []),
+          ...(automation.when?.events || []),
+        ];
+
+        const emit = [
+          ...(prev.emit || []),
+          ...(automation.do || []).flatMap((instruction) => {
+            const [name] = Object.keys(instruction);
+            if (name !== 'emit') return [];
+            const {
+              emit: { event, private: isPrivate, source },
+            } = instruction as Prismeai.Emit;
+            if (isPrivate) return [];
+
+            return {
+              event,
+              source,
+            };
+          }),
+        ];
+
+        return { listen, emit };
+      },
+      { emit: [], listen: [] }
+    );
     return {
       config: app.config,
       blocks: Object.entries(app.blocks || {}).map(
@@ -193,6 +227,7 @@ class Apps {
           arguments: args,
         })),
       photo: app.photo,
+      events,
     };
   };
 
@@ -209,9 +244,9 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(app.automations || {}).map(
-        ([slug, { name, description }]) => ({ slug, name, description })
-      ),
+      automations: Object.entries(
+        app.automations || {}
+      ).map(([slug, { name, description }]) => ({ slug, name, description })),
     };
   };
 

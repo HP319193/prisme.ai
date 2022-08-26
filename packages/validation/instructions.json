@@ -30,6 +30,23 @@
                 "type": "string"
               }
             }
+          },
+          "private": {
+            "type": "boolean"
+          },
+          "source": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "config": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
