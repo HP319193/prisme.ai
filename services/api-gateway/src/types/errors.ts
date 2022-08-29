@@ -43,8 +43,8 @@ export class RequestValidationError extends PrismeError {
 }
 
 export class NotFoundError extends PrismeError {
-  constructor() {
-    super('Route not found', undefined, 404);
+  constructor(msg: string = 'Route not found') {
+    super(msg, undefined, 404);
   }
 }
 
@@ -62,6 +62,12 @@ export class InvalidEmail extends PrismeError {
 
 export class InvalidPassword extends PrismeError {
   constructor(msg: string = `Invalid password`) {
+    super(msg, undefined, 400);
+  }
+}
+
+export class InvalidOrExpiredToken extends PrismeError {
+  constructor(msg: string = `Invalid or expired token`) {
     super(msg, undefined, 400);
   }
 }

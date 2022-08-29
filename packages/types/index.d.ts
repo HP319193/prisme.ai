@@ -2708,6 +2708,23 @@ declare namespace PrismeaiAPI {
             export type $403 = Prismeai.ForbiddenError;
         }
     }
+    namespace ResetPassword {
+        export type RequestBody = {
+            email: string;
+        } | {
+            token: string;
+            /**
+             * New user password
+             */
+            password: string;
+        };
+        namespace Responses {
+            export type $200 = Prismeai.AnyValue;
+            export type $400 = Prismeai.BadParametersError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace RevokePermissions {
         namespace Parameters {
             export type SubjectId = string;

@@ -1,10 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import services from '../services';
 import passport from 'passport';
-import {
-  isAuthenticated,
-  isInternallyAuthenticated,
-} from '../middlewares/authentication';
+import { isAuthenticated } from '../middlewares/authentication';
 import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { FindUserQuery } from '../services/identity/users';
@@ -84,6 +81,36 @@ async function signupHandler(
   loginHandler('local')(req, res, next);
 }
 
+async function resetPasswordHandler(
+  req: Request<any, any, any>, // <any, any, PrismeaiAPI.ResetPassword.RequestBody> seems not well supported because of oneOf
+  res: Response<PrismeaiAPI.ResetPassword.Responses.$200>,
+  next: NextFunction
+) {
+  const {
+    context,
+    body: { email, token, password },
+  } = req;
+  const identity = services.identity(context);
+
+  if (token && password) {
+    const user = await identity.resetPassword({ password, token });
+    /*  
+    await req.broker.send(EventType.SucceededPasswordReset, {
+    ip: req.context?.http?.ip,
+    user,
+    }); */
+    return res.send(user);
+  }
+
+  const result = await identity.sendResetPasswordLink({ email });
+  /*  
+  await req.broker.send(EventType.SucceededPasswordResetRequest, {
+  ip: req.context?.http?.ip,
+  user,
+  }); */
+  return res.send(result);
+}
+
 async function meHandler(
   req: Request,
   res: Response<PrismeaiAPI.GetMyProfile.Responses.$200>
@@ -124,8 +151,8 @@ app.post(`/login/anonymous`, loginHandler('anonymous'));
 app.post(`/signup`, signupHandler);
 app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/logout`, logoutHandler);
-
+app.post(`/user/password`, resetPasswordHandler);
 // Internal routes
-app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);
+app.post(`/contacts`, findContactsHandler);
 
 export default app;

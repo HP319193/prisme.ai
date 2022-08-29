@@ -13,6 +13,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 servers:
   - url: https://api.eda.prisme.ai
+  - url: http://localhost:3001
 security:
   - ApiKeyAuth: []
     CookieAuth: []
@@ -194,6 +195,60 @@ paths:
       responses:
         '200':
           description: Success Response
+
+  /v2/user/password:
+    post:
+      description: Ask to reset a password for a specific user given an email. If the email is unknown, the API call will not fail.
+      operationId: resetPassword
+      tags:
+        - API Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required:
+                    - email
+                  properties:
+                    email:
+                      type: string  
+                - type: object
+                  required:
+                    - token
+                    - password
+                  properties:
+                    token:
+                      type: string
+                    password:
+                      type: string
+                      description: New user password  
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnyValue'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'        
+        '403':
+          description: Bad permissions (such as an invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError' 
 
   ############################################# permissions routes
   /v2/{subjectType}/{subjectId}/permissions:

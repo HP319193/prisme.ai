@@ -1,3 +1,8 @@
+import crypto from 'crypto';
+import isEmail from 'is-email';
+import { ObjectId } from 'mongodb';
+import path from 'path';
+import { URL } from 'url';
 import { PrismeContext } from '../../middlewares';
 import { StorageDriver } from '../../storage';
 import {
@@ -6,11 +11,90 @@ import {
   InvalidEmail,
   PrismeError,
   InvalidPassword,
+  InvalidOrExpiredToken,
 } from '../../types/errors';
 import { comparePasswords, hashPassword } from './utils';
-import isEmail from 'is-email';
-import { ObjectId } from 'mongodb';
-import { syscfg } from '../../config';
+import { emailSender } from '../../utils/email';
+import { syscfg, mails as mailConfig } from '../../config';
+
+const { RESET_PASSWORD_URL } = mailConfig;
+
+export interface ResetPasswordRequest {
+  token: string;
+  expiresIn: number;
+  userId: string;
+}
+
+export const sendResetPasswordLink =
+  (Users: StorageDriver, ctx?: PrismeContext) =>
+  async ({ email = '' }: any) => {
+    const existingUsers = await Users.find({
+      email: email.toLowerCase().trim(),
+    });
+
+    if (!existingUsers.length) {
+      console.warn(`Password reset asked for a non-existent user : ${email}.`);
+      return {};
+    }
+
+    const { firstName = '' } = existingUsers[0];
+
+    const token = crypto.randomUUID();
+
+    // Save the token in the user
+    await Users.save({
+      ...existingUsers[0],
+      resetPassword: { token, expiresAt: Date.now() + 3600000 },
+    });
+
+    // Send email to the user
+    const resetLink = new URL(RESET_PASSWORD_URL);
+    resetLink.searchParams.append('token', token);
+
+    await emailSender.send({
+      template: path.join(__dirname, '../../utils/emails/forgotPassword'),
+      message: {
+        to: email,
+      },
+      locals: {
+        name: firstName,
+        resetLink,
+      },
+    });
+
+    return {};
+  };
+
+export const resetPassword =
+  (Users: StorageDriver, ctx?: PrismeContext) =>
+  async ({ password, token }: any) => {
+    const users = await Users.find({
+      'resetPassword.token': token,
+      'resetPassword.expiresAt': { $gte: Date.now() },
+    });
+
+    if (!users || !users.length) {
+      throw new InvalidOrExpiredToken();
+    }
+
+    if (!syscfg.PASSWORD_VALIDATION_REGEXP.test(password)) {
+      throw new InvalidPassword(
+        'Invalid password : must be at least 8 characters long.'
+      );
+    }
+
+    // Update the user with given password.
+    const hash = await hashPassword(password);
+
+    const savedUser = await Users.save({
+      ...users[0],
+      password: hash,
+      resetPassword: {},
+    });
+
+    delete savedUser.password;
+    return savedUser;
+  };
 
 export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function ({
@@ -19,7 +103,7 @@ export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
     firstName,
     lastName,
   }: PrismeaiAPI.Signup.RequestBody) {
-    email = email.toLowerCase();
+    email = email.toLowerCase().trim();
 
     const existingUsers = await Users.find({ email });
     if (existingUsers.length) {

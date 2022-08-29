@@ -1,7 +1,15 @@
 import { storage } from '../../config';
 import { PrismeContext } from '../../middlewares';
 import { buildStorage, StorageDriver } from '../../storage';
-import { anonymousLogin, find, get, login, signup } from './users';
+import {
+  anonymousLogin,
+  find,
+  get,
+  login,
+  signup,
+  sendResetPasswordLink,
+  resetPassword,
+} from './users';
 
 const Users: StorageDriver = buildStorage('Users', storage.Users);
 
@@ -12,5 +20,7 @@ export default (ctx?: PrismeContext) => {
     login: login(Users, ctx),
     anonymousLogin: anonymousLogin(Users, ctx),
     find: find(Users, ctx),
+    sendResetPasswordLink: sendResetPasswordLink(Users, ctx),
+    resetPassword: resetPassword(Users, ctx),
   };
 };
