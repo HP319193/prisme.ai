@@ -85,6 +85,7 @@ export const SchemaForm = ({
   const utilsWithDefault = useMemo(
     () => ({
       extractSelectOptions: () => [],
+      extractAutocompleteOptions: () => [],
       ...utils,
     }),
     [utils]
