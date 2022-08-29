@@ -42,26 +42,19 @@ export const FieldAutocomplete = ({ schema, name, label }: FieldProps) => {
     return [];
   }, [extractAutocompleteOptions, schema, uiOptions]);
 
-  const filteredOptions = useMemo(
-    () =>
-      options.filter(
-        ({ label, value }) =>
-          field.input.value &&
-          `${label} ${value}`
-            .toLowerCase()
-            .includes(field.input.value.toLowerCase())
-      ),
-    [options, field.input.value]
-  );
-
   return (
     <Description text={schema.description} className="flex flex-1">
       <AutoComplete
         className="!flex flex-1 cursor-default schema-form-autocomplete"
-        options={filteredOptions}
+        options={options}
         value={field.input.value}
         onSelect={field.input.onChange}
         onChange={field.input.onChange}
+        filterOption={(inputValue, option) =>
+          `${option?.value || ''}`
+            .toUpperCase()
+            .indexOf(`${inputValue || ''}`.toUpperCase()) !== -1
+        }
       >
         <Input label={label || schema.title || getLabel(name)} />
       </AutoComplete>

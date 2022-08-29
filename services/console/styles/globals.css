@@ -163,4 +163,5 @@ a.ant-btn.pr-btn-primary-small {
 
 .schema-form-autocomplete .ant-select-selector {
   flex: 1;
+  border: none;
 }

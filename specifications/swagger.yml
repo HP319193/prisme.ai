@@ -2610,6 +2610,8 @@ components:
         - automations
         - blocks
       properties:
+        appName:
+          type: string
         config:
           $ref: '#/components/schemas/Config'
         blocks:

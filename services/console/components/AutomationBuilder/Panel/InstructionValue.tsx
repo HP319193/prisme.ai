@@ -14,6 +14,7 @@ import useSchema from '../../SchemaForm/useSchema';
 import usePages from '../../PagesProvider/context';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { useWorkspace } from '../../WorkspaceProvider';
+import { useApps } from '../../AppsProvider';
 
 interface InstructionValueProps {
   instruction: string;
@@ -97,6 +98,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   const { workspace } = useWorkspace();
   const { pages } = usePages();
   const { t } = useTranslation('workspaces');
+  const { appInstances } = useApps();
 
   const appInstance = useMemo(() => {
     if (!workspace.imports) return workspace.config;
@@ -105,10 +107,12 @@ export const InstructionValue: FC<InstructionValueProps> = ({
     return workspace.imports[appName].config || {};
   }, [instruction, workspace.config, workspace.imports]);
 
-  const { extractSelectOptions } = useSchema({
+  const { extractSelectOptions, extractAutocompleteOptions } = useSchema({
     config: appInstance,
     automations: workspace.automations,
     pages: pages.get(workspace.id),
+    apps: appInstances.get(workspace.id),
+    workspace,
   });
 
   const cleanedSchema = useMemo(() => {
@@ -142,6 +146,12 @@ export const InstructionValue: FC<InstructionValueProps> = ({
         },
       };
     }
+    if (instruction === 'emit') {
+      cleaned.properties.event['ui:widget'] = 'autocomplete';
+      cleaned.properties.event['ui:options'] = {
+        autocomplete: 'events:emit',
+      };
+    }
     return cleaned;
   }, [instruction, schema, t]);
 
@@ -169,7 +179,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
       buttons={EmptyButtons}
       components={components}
       locales={locales}
-      utils={{ extractSelectOptions }}
+      utils={{ extractSelectOptions, extractAutocompleteOptions }}
     />
   );
 };

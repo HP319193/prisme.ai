@@ -94,7 +94,50 @@ export const useSchema = (store: Record<string, any> = {}) => {
     [localize, store.automations, store.config, store.pageSections, store.pages]
   );
 
-  return { extractSelectOptions };
+  const extractAutocompleteOptions = useCallback(
+    (schema: Schema) => {
+      const { ['ui:options']: uiOptions = {} } = schema;
+
+      switch (uiOptions.autocomplete) {
+        case 'events:emit': {
+          const apps: Prismeai.AppDetails[] = store.apps || [];
+          const automations = store.workspace?.automations || {};
+          const when: string[] = Object.keys(automations)
+            .flatMap((key) => {
+              const { events } = (automations[key] || {}).when;
+              return events || [];
+            }, [])
+            .filter(Boolean);
+
+          return [
+            ...(when.length > 0
+              ? [
+                  {
+                    label: store.workspace.name,
+                    options: when.map((event) => ({
+                      label: event,
+                      value: event,
+                    })),
+                  },
+                ]
+              : []),
+            ...apps.map(({ appName, events: { listen } = {} }) => ({
+              label: appName,
+              options: (listen || []).map((event) => ({
+                label: event,
+                value: event,
+              })),
+            })),
+          ];
+        }
+      }
+
+      return [];
+    },
+    [store.apps, store.workspace]
+  );
+
+  return { extractSelectOptions, extractAutocompleteOptions };
 };
 
 export default useSchema;
