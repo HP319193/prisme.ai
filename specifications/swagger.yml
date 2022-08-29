@@ -2982,7 +2982,7 @@ components:
                 properties:
                   from:
                     type: string
-                  config:
+                  path:
                     type: string
     CreateUserTopic:
       type: object

@@ -69,7 +69,8 @@ export type UiOptionsAutocomplete = {
   autocomplete: {
     options: {
       label: string | ReactNode;
-      value: any;
+      value?: any;
+      options?: { label: string | ReactNode; value?: any }[];
     }[];
   };
 };

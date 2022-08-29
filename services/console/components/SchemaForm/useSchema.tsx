@@ -130,6 +130,74 @@ export const useSchema = (store: Record<string, any> = {}) => {
             })),
           ];
         }
+        case 'events:listen':
+          const apps: Prismeai.AppDetails[] = store.apps || [];
+          const automations =
+            (store.workspace as Prismeai.Workspace)?.automations || {};
+          const events = Object.keys(automations).flatMap((key) => {
+            const automation = automations[key];
+            if (!automation.do || automation.do.length === 0) return [];
+            return automation.do.flatMap((instruction) => {
+              const [name] = Object.keys(instruction);
+              if (name !== 'emit') return [];
+              return (instruction as Prismeai.Emit).emit;
+            });
+          });
+
+          const generateEventsFromSource = (
+            event: string,
+            source: Prismeai.Emit['emit']['source'],
+            config: any
+          ) => {
+            if (!source || Object.keys(source).length === 0) return [event];
+
+            // Only read first parameter while the UI is simple
+            // To manage many parameters, we would need an autocomplete inside
+            // the value autocompleted
+            return Object.keys(source).flatMap((key) => {
+              if (!event.match(`{{${key}}}`)) return;
+              const { from, path } = source[key];
+              if (!from || !path) return [];
+              const values = readAppConfig(config, path);
+              return (Array.isArray(values)
+                ? values
+                : [values]
+              ).flatMap((value) => event.replace(`{{${key}}}`, value));
+            });
+          };
+
+          return [
+            ...(events.length > 0
+              ? [
+                  {
+                    label: store.workspace.name,
+                    options: events.flatMap(({ event, source }) => ({
+                      label: event,
+                      value: event,
+                    })),
+                  },
+                ]
+              : []),
+            ...apps
+              .filter(({ events: { emit = [] } = {} }) => emit.length > 0)
+              .flatMap(
+                ({
+                  events: { emit = [] } = {},
+                  appName,
+                  config: { value: config } = {},
+                }) => ({
+                  label: appName,
+                  options: emit.flatMap(({ event, source }) =>
+                    generateEventsFromSource(event, source, config).flatMap(
+                      (value) => ({
+                        label: value,
+                        value,
+                      })
+                    )
+                  ),
+                })
+              ),
+          ];
       }
 
       return [];
