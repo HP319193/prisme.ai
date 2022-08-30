@@ -35,7 +35,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
 >) {
   const { t } = useTranslation('workspaces');
   const dateFormat = useDateFormat();
-  const { ref, bottom } = useScrollListener<HTMLDivElement>();
+  const { ref, bottom } = useScrollListener<HTMLDivElement>({ margin: -1 });
   const { workspace: { name: workspaceName } = {} } = useWorkspace();
   const { localize } = useLocalizedText('pages');
 
@@ -112,7 +112,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
     }
   } else {
     content = (
-      <div className="w-full" ref={ref}>
+      <div className="w-full">
         <Feed sections={feedSections} />
       </div>
     );
@@ -127,15 +127,23 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
       }
       className="h-full"
     >
-      <div className="flex h-full">{content}</div>
+      <div className="flex h-full overflow-auto" ref={ref}>
+        {content}
+      </div>
     </Layout>
   );
 });
 
 export const EventsViewer = () => {
   const { t } = useTranslation('workspaces');
-  const { setShare, events, nextEvents, readEvents, readEvent, filters } =
-    useWorkspace();
+  const {
+    setShare,
+    events,
+    nextEvents,
+    readEvents,
+    readEvent,
+    filters,
+  } = useWorkspace();
 
   useEffect(() => {
     setShare({
