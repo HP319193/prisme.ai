@@ -2610,6 +2610,8 @@ components:
         - automations
         - blocks
       properties:
+        slug:
+          type: string
         appName:
           type: string
         config:

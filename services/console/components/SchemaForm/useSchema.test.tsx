@@ -305,6 +305,7 @@ it('should autocomplete emit events', () => {
   const apps = [
     {
       appName: 'App A',
+      slug: 'App A',
       events: {
         emit: [
           {
@@ -325,6 +326,7 @@ it('should autocomplete emit events', () => {
     },
     {
       appName: 'App B',
+      slug: 'App B',
       events: {
         emit: [
           {
@@ -374,15 +376,15 @@ it('should autocomplete emit events', () => {
       options: [
         {
           label: 'App A emit A',
-          value: 'App A emit A',
+          value: 'App A.App A emit A',
         },
         {
           label: 'App A emit B foo',
-          value: 'App A emit B foo',
+          value: 'App A.App A emit B foo',
         },
         {
           label: 'App A emit B bar',
-          value: 'App A emit B bar',
+          value: 'App A.App A emit B bar',
         },
       ],
     },
@@ -391,7 +393,7 @@ it('should autocomplete emit events', () => {
       options: [
         {
           label: 'App B emit A',
-          value: 'App B emit A',
+          value: 'App B.App B emit A',
         },
       ],
     },
@@ -456,6 +458,7 @@ it('should autocomplete emit events', () => {
   const apps = [
     {
       appName: 'App A',
+      slug: 'App A',
       events: {
         emit: [
           {
@@ -476,6 +479,7 @@ it('should autocomplete emit events', () => {
     },
     {
       appName: 'App B',
+      slug: 'App B',
       events: {
         emit: [
           {

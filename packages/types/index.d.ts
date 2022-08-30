@@ -741,6 +741,7 @@ declare namespace Prismeai {
         slug?: string;
     }
     export interface AppDetails {
+        slug?: string;
         appName?: string;
         config?: Config;
         blocks: {

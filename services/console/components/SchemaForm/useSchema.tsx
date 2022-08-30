@@ -183,17 +183,19 @@ export const useSchema = (store: Record<string, any> = {}) => {
               : []),
             ...apps
               .filter(({ events: { emit = [] } = {} }) => emit.length > 0)
-              .flatMap(({ events: { emit = [] } = {}, appName = '' }) => ({
-                label: appName,
-                options: emit.flatMap(({ event, source }) =>
-                  generateEventsFromSource(appName)(event, source).flatMap(
-                    (value) => ({
-                      label: value,
-                      value,
-                    })
-                  )
-                ),
-              })),
+              .flatMap(
+                ({ events: { emit = [] } = {}, appName = '', slug = '' }) => ({
+                  label: appName,
+                  options: emit.flatMap(({ event, source }) =>
+                    generateEventsFromSource(appName)(event, source).flatMap(
+                      (value) => ({
+                        label: value,
+                        value: `${slug}.${value}`,
+                      })
+                    )
+                  ),
+                })
+              ),
           ];
       }
 
