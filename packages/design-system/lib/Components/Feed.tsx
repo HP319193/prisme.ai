@@ -17,9 +17,7 @@ const Feed = ({ sections, className }: FeedProps) => (
   <Space
     direction="vertical"
     size="large"
-    className={`flex w-full h-full bg-blue-200 grow p-6 overflow-auto ${
-      className || ''
-    }`}
+    className={`flex w-full bg-blue-200 flex-1 p-6 ${className || ''}`}
   >
     {sections.map(({ title, key = title, content }) => (
       <div key={key}>

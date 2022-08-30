@@ -2,6 +2,6 @@
 
 exports[`should render 1`] = `
 <div
-  className="flex h-full"
+  className="flex h-full overflow-auto"
 />
 `;
