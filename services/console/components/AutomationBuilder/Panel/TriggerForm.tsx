@@ -43,7 +43,7 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
             title: t('automations.trigger.events.item'),
             'ui:widget': 'autocomplete',
             'ui:options': {
-              autocomplete: 'events:listen',
+              autocomplete: 'events:emit',
             },
           },
         },

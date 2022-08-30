@@ -99,12 +99,12 @@ export const useSchema = (store: Record<string, any> = {}) => {
       const { ['ui:options']: uiOptions = {} } = schema;
 
       switch (uiOptions.autocomplete) {
-        case 'events:emit': {
+        case 'events:listen': {
           const apps: Prismeai.AppDetails[] = store.apps || [];
           const automations = store.workspace?.automations || {};
           const when: string[] = Object.keys(automations)
             .flatMap((key) => {
-              const { events } = (automations[key] || {}).when;
+              const { events } = (automations[key] || {}).when || {};
               return events || [];
             }, [])
             .filter(Boolean);
@@ -121,19 +121,23 @@ export const useSchema = (store: Record<string, any> = {}) => {
                   },
                 ]
               : []),
-            ...apps.map(({ appName, events: { listen } = {} }) => ({
-              label: appName,
-              options: (listen || []).map((event) => ({
-                label: event,
-                value: event,
-              })),
-            })),
+            ...apps.flatMap(({ appName, events: { listen = [] } = {} }) =>
+              listen.length === 0
+                ? []
+                : {
+                    label: appName,
+                    options: (listen || []).map((event) => ({
+                      label: event,
+                      value: event,
+                    })),
+                  }
+            ),
           ];
         }
-        case 'events:listen':
+        case 'events:emit':
+          const workspace = store.workspace as Prismeai.Workspace;
           const apps: Prismeai.AppDetails[] = store.apps || [];
-          const automations =
-            (store.workspace as Prismeai.Workspace)?.automations || {};
+          const automations = workspace?.automations || {};
           const events = Object.keys(automations).flatMap((key) => {
             const automation = automations[key];
             if (!automation.do || automation.do.length === 0) return [];
@@ -144,13 +148,12 @@ export const useSchema = (store: Record<string, any> = {}) => {
             });
           });
 
-          const generateEventsFromSource = (
+          const generateEventsFromSource = (appName: string) => (
             event: string,
-            source: Prismeai.Emit['emit']['source'],
-            config: any
+            source: Prismeai.Emit['emit']['source']
           ) => {
             if (!source || Object.keys(source).length === 0) return [event];
-
+            const config = workspace.imports?.[appName]?.config || {};
             // Only read first parameter while the UI is simple
             // To manage many parameters, we would need an autocomplete inside
             // the value autocompleted
@@ -180,23 +183,17 @@ export const useSchema = (store: Record<string, any> = {}) => {
               : []),
             ...apps
               .filter(({ events: { emit = [] } = {} }) => emit.length > 0)
-              .flatMap(
-                ({
-                  events: { emit = [] } = {},
-                  appName,
-                  config: { value: config } = {},
-                }) => ({
-                  label: appName,
-                  options: emit.flatMap(({ event, source }) =>
-                    generateEventsFromSource(event, source, config).flatMap(
-                      (value) => ({
-                        label: value,
-                        value,
-                      })
-                    )
-                  ),
-                })
-              ),
+              .flatMap(({ events: { emit = [] } = {}, appName = '' }) => ({
+                label: appName,
+                options: emit.flatMap(({ event, source }) =>
+                  generateEventsFromSource(appName)(event, source).flatMap(
+                    (value) => ({
+                      label: value,
+                      value,
+                    })
+                  )
+                ),
+              })),
           ];
       }
 

@@ -246,3 +246,332 @@ it('should build a select from pages', () => {
   const labels = renderer.create(options.map(({ label }: any) => label));
   expect(labels).toMatchSnapshot();
 });
+
+it('should autocomplete emit events', () => {
+  let extractAutocompleteOptionsFn: Function = () => null;
+  const workspace = {
+    name: 'workspace',
+    imports: {
+      'App A': {
+        appSlug: 'App A',
+        appName: 'App A',
+        config: {
+          items: {
+            foo: {},
+            bar: {},
+          },
+        },
+      },
+    },
+    automations: {
+      foo: {
+        when: {
+          events: ['listen A', 'listen B'],
+        },
+        do: [
+          {
+            emit: {
+              event: 'emit A',
+            },
+          },
+          {
+            wait: {
+              timeout: 42,
+            },
+          },
+          {
+            emit: {
+              event: 'emit B',
+            },
+          },
+        ],
+      },
+      bar: {
+        when: {
+          events: ['listen C'],
+        },
+      },
+      empty: {
+        do: [
+          {
+            emit: {
+              event: 'emit C',
+            },
+          },
+        ],
+      },
+    },
+  };
+  const apps = [
+    {
+      appName: 'App A',
+      events: {
+        emit: [
+          {
+            event: 'App A emit A',
+          },
+          {
+            event: 'App A emit B {{foo}}',
+            source: {
+              foo: {
+                from: 'appConfig',
+                path: 'items[*]~',
+              },
+            },
+          },
+        ],
+        listen: ['App A listen A'],
+      },
+    },
+    {
+      appName: 'App B',
+      events: {
+        emit: [
+          {
+            event: 'App B emit A',
+          },
+        ],
+        listen: ['App B listen A', 'App B listen B'],
+      },
+    },
+  ];
+  const C = () => {
+    const { extractAutocompleteOptions } = useSchema({
+      workspace,
+      apps,
+    });
+    extractAutocompleteOptionsFn = extractAutocompleteOptions;
+    return null;
+  };
+  renderer.create(<C />);
+
+  expect(
+    extractAutocompleteOptionsFn({
+      'ui:options': {
+        autocomplete: 'events:emit',
+      },
+    })
+  ).toEqual([
+    {
+      label: 'workspace',
+      options: [
+        {
+          label: 'emit A',
+          value: 'emit A',
+        },
+        {
+          label: 'emit B',
+          value: 'emit B',
+        },
+        {
+          label: 'emit C',
+          value: 'emit C',
+        },
+      ],
+    },
+    {
+      label: 'App A',
+      options: [
+        {
+          label: 'App A emit A',
+          value: 'App A emit A',
+        },
+        {
+          label: 'App A emit B foo',
+          value: 'App A emit B foo',
+        },
+        {
+          label: 'App A emit B bar',
+          value: 'App A emit B bar',
+        },
+      ],
+    },
+    {
+      label: 'App B',
+      options: [
+        {
+          label: 'App B emit A',
+          value: 'App B emit A',
+        },
+      ],
+    },
+  ]);
+});
+
+it('should autocomplete emit events', () => {
+  let extractAutocompleteOptionsFn: Function = () => null;
+  const workspace = {
+    name: 'workspace',
+    imports: {
+      'App A': {
+        appSlug: 'App A',
+        appName: 'App A',
+        config: {
+          items: {
+            foo: {},
+            bar: {},
+          },
+        },
+      },
+    },
+    automations: {
+      foo: {
+        when: {
+          events: ['listen A', 'listen B'],
+        },
+        do: [
+          {
+            emit: {
+              event: 'emit A',
+            },
+          },
+          {
+            wait: {
+              timeout: 42,
+            },
+          },
+          {
+            emit: {
+              event: 'emit B',
+            },
+          },
+        ],
+      },
+      bar: {
+        when: {
+          events: ['listen C'],
+        },
+      },
+      empty: {
+        do: [
+          {
+            emit: {
+              event: 'emit C',
+            },
+          },
+        ],
+      },
+    },
+  };
+  const apps = [
+    {
+      appName: 'App A',
+      events: {
+        emit: [
+          {
+            event: 'App A emit A',
+          },
+          {
+            event: 'App A emit B {{foo}}',
+            source: {
+              foo: {
+                from: 'appConfig',
+                path: 'items[*]~',
+              },
+            },
+          },
+        ],
+        listen: ['App A listen A'],
+      },
+    },
+    {
+      appName: 'App B',
+      events: {
+        emit: [
+          {
+            event: 'App B emit A',
+          },
+        ],
+        listen: ['App B listen A', 'App B listen B'],
+      },
+    },
+  ];
+  const C = () => {
+    const { extractAutocompleteOptions } = useSchema({
+      workspace,
+      apps,
+    });
+    extractAutocompleteOptionsFn = extractAutocompleteOptions;
+    return null;
+  };
+  renderer.create(<C />);
+
+  expect(
+    extractAutocompleteOptionsFn({
+      'ui:options': {
+        autocomplete: 'events:listen',
+      },
+    })
+  ).toEqual([
+    {
+      label: 'workspace',
+      options: [
+        {
+          label: 'listen A',
+          value: 'listen A',
+        },
+        {
+          label: 'listen B',
+          value: 'listen B',
+        },
+        {
+          label: 'listen C',
+          value: 'listen C',
+        },
+      ],
+    },
+    {
+      label: 'App A',
+      options: [
+        {
+          label: 'App A listen A',
+          value: 'App A listen A',
+        },
+      ],
+    },
+    {
+      label: 'App B',
+      options: [
+        {
+          label: 'App B listen A',
+          value: 'App B listen A',
+        },
+        {
+          label: 'App B listen B',
+          value: 'App B listen B',
+        },
+      ],
+    },
+  ]);
+});
+
+it('should autocomplete events with no value', () => {
+  let extractAutocompleteOptionsFn: Function = () => null;
+  const workspace = {};
+  const apps = [{}];
+  const C = () => {
+    const { extractAutocompleteOptions } = useSchema({
+      workspace,
+      apps,
+    });
+    extractAutocompleteOptionsFn = extractAutocompleteOptions;
+    return null;
+  };
+  renderer.create(<C />);
+
+  expect(
+    extractAutocompleteOptionsFn({
+      'ui:options': {
+        autocomplete: 'events:emit',
+      },
+    })
+  ).toEqual([]);
+
+  expect(
+    extractAutocompleteOptionsFn({
+      'ui:options': {
+        autocomplete: 'events:listen',
+      },
+    })
+  ).toEqual([]);
+});
