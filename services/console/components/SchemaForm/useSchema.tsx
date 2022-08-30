@@ -3,6 +3,27 @@ import { useCallback } from 'react';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { readAppConfig } from '../AutomationBuilder/Panel/readAppConfig';
 
+function getEmitEvents(
+  doList: Prismeai.InstructionList
+): Prismeai.Emit['emit'][] {
+  return doList.flatMap((instruction) => {
+    const [name] = Object.keys(instruction);
+    const value = instruction[name as keyof typeof instruction];
+
+    if (Array.isArray(value)) {
+      return getEmitEvents(value as Prismeai.InstructionList);
+    }
+    if (name === 'conditions') {
+      return Object.keys(value).flatMap((key) => getEmitEvents(value[key]));
+    }
+    if (name === 'repeat') {
+      return getEmitEvents((value as Prismeai.Repeat['repeat']).do);
+    }
+    if (name !== 'emit') return [];
+    return (instruction as Prismeai.Emit).emit;
+  });
+}
+
 export const useSchema = (store: Record<string, any> = {}) => {
   const { localize } = useLocalizedText();
   const extractSelectOptions = useCallback(
@@ -138,14 +159,11 @@ export const useSchema = (store: Record<string, any> = {}) => {
           const workspace = store.workspace as Prismeai.Workspace;
           const apps: Prismeai.AppDetails[] = store.apps || [];
           const automations = workspace?.automations || {};
+
           const events = Object.keys(automations).flatMap((key) => {
             const automation = automations[key];
             if (!automation.do || automation.do.length === 0) return [];
-            return automation.do.flatMap((instruction) => {
-              const [name] = Object.keys(instruction);
-              if (name !== 'emit') return [];
-              return (instruction as Prismeai.Emit).emit;
-            });
+            return getEmitEvents(automation.do);
           });
 
           const generateEventsFromSource = (appName: string) => (

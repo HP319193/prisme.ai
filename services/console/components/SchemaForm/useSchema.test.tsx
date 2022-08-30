@@ -579,3 +579,127 @@ it('should autocomplete events with no value', () => {
     })
   ).toEqual([]);
 });
+
+it('should autocomplete nested emit events', () => {
+  let extractAutocompleteOptionsFn: Function = () => null;
+  const workspace = {
+    name: 'workspace',
+    automations: {
+      foo: {
+        do: [
+          {
+            emit: {
+              event: 'level 1',
+            },
+          },
+          {
+            conditions: {
+              bar: [
+                {
+                  emit: {
+                    event: 'level 2',
+                  },
+                },
+              ],
+              default: [
+                {
+                  conditions: {
+                    bar: [
+                      {
+                        emit: {
+                          event: 'level 3',
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+      bar: {
+        do: [
+          {
+            all: [
+              {
+                emit: {
+                  event: 'all 1',
+                },
+              },
+              {
+                emit: {
+                  event: 'all 2',
+                },
+              },
+            ],
+          },
+        ],
+      },
+      doo: {
+        do: [
+          {
+            repeat: {
+              on: 'boo',
+              do: [
+                {
+                  emit: {
+                    event: 'repeat 1',
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  };
+  const apps = [{}];
+  const C = () => {
+    const { extractAutocompleteOptions } = useSchema({
+      workspace,
+      apps,
+    });
+    extractAutocompleteOptionsFn = extractAutocompleteOptions;
+    return null;
+  };
+  renderer.create(<C />);
+
+  expect(
+    extractAutocompleteOptionsFn({
+      'ui:options': {
+        autocomplete: 'events:emit',
+      },
+    })
+  ).toEqual([
+    {
+      label: 'workspace',
+      options: [
+        {
+          label: 'level 1',
+          value: 'level 1',
+        },
+        {
+          label: 'level 2',
+          value: 'level 2',
+        },
+        {
+          label: 'level 3',
+          value: 'level 3',
+        },
+        {
+          label: 'all 1',
+          value: 'all 1',
+        },
+        {
+          label: 'all 2',
+          value: 'all 2',
+        },
+        {
+          label: 'repeat 1',
+          value: 'repeat 1',
+        },
+      ],
+    },
+  ]);
+});
