@@ -32,6 +32,8 @@ export const userContext = createContext<UserContext>({
   signin: async () => null,
   signup: async () => null,
   signout() {},
+  sendPasswordResetMail: async () => null,
+  passwordReset: async () => null,
 });
 
 export function useUser(throwIfNotExist?: boolean): UserContext;

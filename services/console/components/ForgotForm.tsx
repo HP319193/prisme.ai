@@ -25,9 +25,6 @@ export const ForgotForm = ({}: ForgotFormProps) => {
 
   const submit = useCallback(
     async ({ email }: Values) => {
-      console.info(
-        `User asked for a password reset for the following email: ${email}`
-      );
       await sendPasswordResetMail(email, language);
     },
     [language, sendPasswordResetMail]

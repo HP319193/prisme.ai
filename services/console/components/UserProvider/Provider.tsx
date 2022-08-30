@@ -32,9 +32,9 @@ export const UserProvider: FC<UserProviderProps> = ({
         setError(undefined);
         setSuccess({ type: OperationSuccess.emailSent });
         setLoading(false);
-      } catch (error) {
+      } catch (e) {
         setLoading(false);
-        setError(error);
+        setError(e as ApiError);
         return null;
       }
     }, []);
@@ -48,9 +48,9 @@ export const UserProvider: FC<UserProviderProps> = ({
         setSuccess({ type: OperationSuccess.passwordReset });
         setLoading(false);
         setTimeout(() => push('/signin'), 3000);
-      } catch (error) {
+      } catch (e) {
         setLoading(false);
-        setError(error);
+        setError(e as ApiError);
         return null;
       }
     },
