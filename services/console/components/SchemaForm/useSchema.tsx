@@ -177,13 +177,16 @@ export const useSchema = (store: Record<string, any> = {}) => {
             // the value autocompleted
             return Object.keys(source).flatMap((key) => {
               if (!event.match(`{{${key}}}`)) return;
+              const template = source[key].value || '${value}';
               const { from, path } = source[key];
               if (!from || !path) return [];
-              const values = readAppConfig(config, path);
+              const values = readAppConfig(config, path).filter(Boolean);
               return (Array.isArray(values)
                 ? values
                 : [values]
-              ).flatMap((value) => event.replace(`{{${key}}}`, value));
+              ).flatMap((value) =>
+                template.replace('${value}', event.replace(`{{${key}}}`, value))
+              );
             });
           };
 

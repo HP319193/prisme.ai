@@ -1218,6 +1218,7 @@ declare namespace Prismeai {
                 [name: string]: {
                     from?: string;
                     path?: string;
+                    value?: string;
                 };
             };
         };

@@ -14,8 +14,9 @@ function getEmitEvents(
     if (name === 'repeat') {
       return getEmitEvents((value as Prismeai.Repeat['repeat']).do);
     }
-    if (name !== 'emit') return [];
-    return (instruction as Prismeai.Emit).emit;
+
+    if (name !== 'emit' || (value as Prismeai.Emit['emit']).private) return [];
+    return value;
   });
 }
 
