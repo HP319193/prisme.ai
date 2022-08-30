@@ -147,6 +147,8 @@ export const InstructionValue: FC<InstructionValueProps> = ({
       };
     }
     if (instruction === 'emit') {
+      cleaned.properties = cleaned.properties || {};
+      cleaned.properties.event = cleaned.properties.event || {};
       cleaned.properties.event['ui:widget'] = 'autocomplete';
       cleaned.properties.event['ui:options'] = {
         autocomplete: 'events:listen',
