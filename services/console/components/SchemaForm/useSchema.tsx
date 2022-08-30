@@ -122,7 +122,8 @@ export const useSchema = (store: Record<string, any> = {}) => {
       switch (uiOptions.autocomplete) {
         case 'events:listen': {
           const apps: Prismeai.AppDetails[] = store.apps || [];
-          const automations = store.workspace?.automations || {};
+          const automations =
+            store?.automations || store.workspace?.automations || {};
           const when: string[] = Object.keys(automations)
             .flatMap((key) => {
               const { events } = (automations[key] || {}).when || {};
@@ -158,7 +159,8 @@ export const useSchema = (store: Record<string, any> = {}) => {
         case 'events:emit':
           const workspace = store.workspace as Prismeai.Workspace;
           const apps: Prismeai.AppDetails[] = store.apps || [];
-          const automations = workspace?.automations || {};
+          const automations =
+            store?.automations || workspace?.automations || {};
 
           const events = Object.keys(automations).flatMap((key) => {
             const automation = automations[key];

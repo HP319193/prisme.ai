@@ -15,6 +15,8 @@ import usePages from '../../PagesProvider/context';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { useWorkspace } from '../../WorkspaceProvider';
 import { useApps } from '../../AppsProvider';
+import { useRouter } from 'next/router';
+import { useAutomationBuilder } from '../context';
 
 interface InstructionValueProps {
   instruction: string;
@@ -96,6 +98,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   onChange,
 }) => {
   const { workspace } = useWorkspace();
+  const { automationId } = useAutomationBuilder();
   const { pages } = usePages();
   const { t } = useTranslation('workspaces');
   const { appInstances } = useApps();
@@ -109,7 +112,13 @@ export const InstructionValue: FC<InstructionValueProps> = ({
 
   const { extractSelectOptions, extractAutocompleteOptions } = useSchema({
     config: appInstance,
-    automations: workspace.automations,
+    automations: Object.keys(workspace.automations || {}).reduce(
+      (prev, key) =>
+        key === automationId
+          ? prev
+          : { ...prev, [key]: (workspace.automations || {})[key] },
+      {}
+    ),
     pages: pages.get(workspace.id),
     apps: appInstances.get(workspace.id),
     workspace,

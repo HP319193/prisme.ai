@@ -2,6 +2,7 @@ import { Schema } from '@prisme.ai/design-system';
 import { createContext, useContext } from 'react';
 
 export interface AutomationBuilderContext {
+  automationId: string;
   addInstruction: (parent: Prismeai.InstructionList, index: number) => void;
   removeInstruction: (parent: Prismeai.InstructionList, index: number) => void;
   editInstruction: (parent: Prismeai.InstructionList, index: number) => void;
@@ -26,6 +27,7 @@ export interface AutomationBuilderContext {
 }
 export const automationBuilderContext = createContext<AutomationBuilderContext>(
   {
+    automationId: '',
     addInstruction() {},
     removeInstruction() {},
     editInstruction() {},

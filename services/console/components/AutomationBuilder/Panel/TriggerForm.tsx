@@ -4,6 +4,7 @@ import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
 import { useWorkspace } from '../../WorkspaceProvider';
 import { useApps } from '../../AppsProvider';
+import { useAutomationBuilder } from '../context';
 
 interface TriggerFormProps {
   trigger?: Prismeai.When;
@@ -17,9 +18,20 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
 
   const { workspace } = useWorkspace();
   const { appInstances } = useApps();
+  const { automationId } = useAutomationBuilder();
   const { extractAutocompleteOptions } = useSchema({
     config: workspace.config,
     apps: appInstances.get(workspace.id),
+    automations: Object.keys(workspace.automations || {}).reduce(
+      (prev, key) =>
+        key === automationId
+          ? prev
+          : {
+              ...prev,
+              [key]: (workspace.automations || {})[key],
+            },
+      {}
+    ),
     workspace,
   });
 
