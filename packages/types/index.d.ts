@@ -2711,6 +2711,7 @@ declare namespace PrismeaiAPI {
     namespace ResetPassword {
         export type RequestBody = {
             email: string;
+            language?: string;
         } | {
             token: string;
             /**

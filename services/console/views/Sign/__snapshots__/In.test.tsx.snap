@@ -77,12 +77,15 @@ exports[`should have error 1`] = `
             />
           </div>
           <div
-            className="m-2 mb-5 flex-grow !mx-0 !mb-8"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-2"
           >
             <span
               className="flex flex-col "
             />
           </div>
+          <div
+            className="!mx-0 !mb-8 text-right text-xs"
+          />
           in.submit
         </div>
       </form>
@@ -168,12 +171,15 @@ exports[`should load 1`] = `
             />
           </div>
           <div
-            className="m-2 mb-5 flex-grow !mx-0 !mb-8"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-2"
           >
             <span
               className="flex flex-col "
             />
           </div>
+          <div
+            className="!mx-0 !mb-8 text-right text-xs"
+          />
           in.submit
         </div>
       </form>
@@ -259,12 +265,15 @@ exports[`should render 1`] = `
             />
           </div>
           <div
-            className="m-2 mb-5 flex-grow !mx-0 !mb-8"
+            className="m-2 mb-5 flex-grow !mx-0 !mb-2"
           >
             <span
               className="flex flex-col "
             />
           </div>
+          <div
+            className="!mx-0 !mb-8 text-right text-xs"
+          />
           in.submit
         </div>
       </form>

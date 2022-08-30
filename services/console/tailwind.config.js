@@ -8,6 +8,7 @@ module.exports = {
   theme: {
     fontSize: {
       base: '0.938rem', // 15px
+      xs: '0.75rem', // 12px
     },
     fontFamily: {
       sans: [

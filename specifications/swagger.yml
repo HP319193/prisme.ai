@@ -214,6 +214,8 @@ paths:
                   properties:
                     email:
                       type: string  
+                    language:
+                      type: string  
                 - type: object
                   required:
                     - token

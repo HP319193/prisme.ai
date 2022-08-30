@@ -2,29 +2,27 @@
 
 exports[`should render a single input 1`] = `
 <form
+  className="flex-grow space-y-5"
   onSubmit={[Function]}
 >
   <div
-    className="relative flex flex-1 pr-input   flex flex-1"
+    className="flex flex-1 flex-col justify-between "
   >
-    <label
-      className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
-    >
-      
-    </label>
+    
   </div>
 </form>
 `;
 
 exports[`should render buttons 1`] = `
 <form
+  className="flex-grow space-y-5"
   onSubmit={[Function]}
 >
   <div
     className="flex flex-1 flex-col my-2"
   >
     <label
-      className="text-[10px] text-gray"
+      className="flex"
     >
       
     </label>
@@ -45,13 +43,14 @@ exports[`should render buttons 1`] = `
 
 exports[`should render empty form 1`] = `
 <form
+  className="flex-grow space-y-5"
   onSubmit={[Function]}
 >
   <div
     className="flex flex-1 flex-col my-2"
   >
     <label
-      className="text-[10px] text-gray"
+      className="flex"
     >
       
     </label>
@@ -67,13 +66,14 @@ exports[`should render empty form 1`] = `
 
 exports[`should render no button 1`] = `
 <form
+  className="flex-grow space-y-5"
   onSubmit={[Function]}
 >
   <div
     className="flex flex-1 flex-col my-2"
   >
     <label
-      className="text-[10px] text-gray"
+      className="flex"
     >
       
     </label>
@@ -88,98 +88,101 @@ exports[`should render no button 1`] = `
 
 exports[`should render single all types 1`] = `
 <form
+  className="flex-grow space-y-5"
   onSubmit={[Function]}
 >
+  <label
+    className="flex font-semibold max-w-[80%]"
+  >
+    
+  </label>
   <div
-    className="space-y-5 "
+    className="flex flex-1 flex-col justify-between "
   >
     <label
-      className="text-[10px] text-gray max-w-[80%]"
+      className="flex mb-[0.625rem]"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "string",
+        }
+      }
+    />
+  </div>
+  <div
+    className="flex flex-1 flex-col justify-between "
+  >
+    <label
+      className="flex mb-[0.625rem]"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "number",
+        }
+      }
+    />
+  </div>
+  <div
+    className="relative flex flex-1"
+  >
+    <div
+      className="flex items-center flex-1 !rounded-[0.3rem] h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500"
     >
-      
+      <label
+        className="flex cursor-pointer"
+      >
+        <span
+          className="ml-2"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "boolean",
+            }
+          }
+        />
+      </label>
+    </div>
+  </div>
+  <div
+    className="p-2"
+  >
+    <label
+      className="flex mb-5"
+    >
+      Localized
     </label>
     <div
-      className="relative flex flex-1 pr-input mt-5  flex flex-1"
-    >
-      <label
-        className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
-      >
-        string
-      </label>
-    </div>
+      className="ml-2 flex-1 space-y-5"
+    />
     <div
-      className="relative flex flex-1 pr-input mt-5  flex flex-1"
+      className="flex w-full justify-end mt-5"
     >
-      <label
-        className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
+      <span
+        className="underline"
       >
-        number
-      </label>
+        Add item
+      </span>
     </div>
-    <div
-      className="relative flex mt-5 flex-1"
-    >
-      <div
-        className="ant-input flex items-center flex-1 rounded h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500"
-      >
-        <label
-          className="cursor-pointer"
-        >
-          <span
-            className="text-[10px] text-gray ml-2"
-          >
-            boolean
-          </span>
-        </label>
-      </div>
-    </div>
-    <div
-      className="m-2 p-2 border-l-[1px] border-gray-200"
-    >
-      <label
-        className="text-[10px] text-gray"
-      >
-        Localized
-      </label>
-      <div
-        className="flex-1"
-      />
-      Add item
-    </div>
-    <div
-      className="space-y-5 "
-    >
-      <label
-        className="text-[10px] text-gray max-w-[80%]"
-      >
-        object
-      </label>
-      <div
-        className="flex-1 relative pr-input "
-      >
-        <label
-          className="duration-75 ease-in absolute top-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none"
-        />
-      </div>
-    </div>
-    <div
-      className="space-y-5 "
-    >
-      <label
-        className="text-[10px] text-gray max-w-[80%]"
-      >
-        objectWithAdditionalProperties
-      </label>
-      <div>
-        Add a property
-      </div>
-    </div>
+  </div>
+  <label
+    className="flex font-semibold max-w-[80%]"
+  >
+    object
+  </label>
+  <div
+    className="flex flex-1 flex-col justify-between "
+  />
+  <label
+    className="flex font-semibold max-w-[80%]"
+  >
+    objectWithAdditionalProperties
+  </label>
+  <div>
+    Add a property
   </div>
 </form>
 `;
 
 exports[`should set custom components 1`] = `
 <form
+  className="flex-grow space-y-5"
   onSubmit={[Function]}
 >
   <div>
@@ -191,16 +194,13 @@ exports[`should set custom components 1`] = `
 
 exports[`should set locales 1`] = `
 <form
+  className="flex-grow space-y-5"
   onSubmit={[Function]}
 >
   <div
-    className="relative flex flex-1 pr-input   flex flex-1"
+    className="flex flex-1 flex-col justify-between "
   >
-    <label
-      className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
-    >
-      
-    </label>
+    
   </div>
   SUBMIT
 </form>
@@ -208,86 +208,107 @@ exports[`should set locales 1`] = `
 
 exports[`should use ui:widgets 1`] = `
 <form
+  className="flex-grow space-y-5"
   onSubmit={[Function]}
 >
+  <label
+    className="flex font-semibold max-w-[80%]"
+  >
+    
+  </label>
   <div
-    className="space-y-5 "
+    className="p-2"
   >
     <label
-      className="text-[10px] text-gray max-w-[80%]"
+      className="flex mb-5"
     >
-      
+      array
     </label>
     <div
-      className="m-2 p-2 border-l-[1px] border-gray-200"
+      className="flex flex-row flex-wrap"
+    />
+    <div
+      className="flex w-full justify-end mt-5"
     >
-      <label
-        className="text-[10px] text-gray"
+      <span
+        className="underline"
       >
-        array
-      </label>
-      <div
-        className="flex flex-row flex-wrap"
-      />
-      Add item
+        Add item
+      </span>
     </div>
+  </div>
+  <div
+    className="flex flex-1 flex-col justify-between "
+  >
     <label
-      className="text-[10px] text-gray"
+      className="flex mb-[0.625rem]"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "upload",
+        }
+      }
+    />
+    <div
+      className="ant-input"
     >
-      upload
       <div
-        className="ant-input"
+        className="relative p-2 "
       >
         <div
-          className="relative p-2 "
+          className="flex flex-row border-4 border-dashed border-gray-200 !rounded-[0.3rem] min-h-[50px] p-2 items-center"
         >
           <div
-            className="flex flex-row border-4 border-dashed border-gray-200 rounded min-h-[50px] p-2 items-center"
-          >
-            <div
-              className="mr-2"
-            />
-            Choose file
-          </div>
-          <input
-            accept="image/jpeg"
-            className="absolute top-0 left-0 right-0 bottom-0 opacity-0 cursor-pointer"
-            multiple={false}
-            onChange={[Function]}
-            type="file"
+            className="mr-2"
           />
+          Choose file
         </div>
+        <input
+          accept="image/jpeg"
+          className="absolute top-0 left-0 right-0 bottom-0 opacity-0 cursor-pointer"
+          multiple={false}
+          onChange={[Function]}
+          type="file"
+        />
       </div>
-    </label>
-    <div
-      className="flex-1 relative pr-input mt-5"
-    >
-      <label
-        className="duration-75 ease-in absolute top-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none"
-      >
-        textarea
-      </label>
     </div>
-    <div
-      className="relative flex flex-1 pr-input mt-5  undefined"
-    >
-      Foo
-      Bar
-      <label
-        className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none pr-label-top"
-      >
-        select
-      </label>
-    </div>
-    <div
-      className="relative flex flex-1 pr-input mt-5  flex-1"
-    >
-      <label
-        className="duration-75 ease-in absolute bottom-[15px] origin-0 left-[11px] text-gray font-normal pointer-events-none "
-      >
-        date
-      </label>
-    </div>
+  </div>
+  <div
+    className="flex flex-1 flex-col justify-between "
+  >
+    <label
+      className="flex mb-[0.625rem]"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "textarea",
+        }
+      }
+    />
+  </div>
+  <div
+    className="flex flex-1 flex-col justify-between "
+  >
+    <label
+      className="flex mb-[0.625rem]"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "select",
+        }
+      }
+    />
+    Foo
+    Bar
+  </div>
+  <div
+    className="flex flex-1 flex-col justify-between flex-1"
+  >
+    <label
+      className="flex mb-[0.625rem]"
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "date",
+        }
+      }
+    />
   </div>
   Submit
 </form>

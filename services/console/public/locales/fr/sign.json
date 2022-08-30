@@ -5,6 +5,7 @@
     "topForm1": "CONTENT DE VOUS REVOIR",
     "topForm2": "Connectez vous à Prisme.ai",
     "topForm3": "Pas encore de compte ? <a>S'inscrire</a>",
+    "forgot": "<a>Réinitialiser votre mot de passe</a>",
     "email": "E-mail",
     "password": "Mot de passe",
     "submit": "Se connecter",
@@ -29,5 +30,27 @@
   },
   "out": {
     "link": "Déconnexion"
+  },
+  "forgot": {
+    "title": "Réinitialisation de mot de passe",
+    "topForm1": "PAS D'INQUIÉTUDE",
+    "topForm2": "Réinitialisez votre mot de passe",
+    "topForm3": "Pas encore de compte ? <a>S'inscrire</a>",
+    "signin": "<a>Vous vous rappelez de votre mot de passe?</a>",
+    "email": "Email",
+    "error": "Une erreur est survenue.",
+    "error_InvalidPassword": "Le mot de passe est invalide : celui-ci doit avoir au moins 8 caractère.",
+    "success": "L'opération s'est déroulée avec succès !",
+    "success_emailSent": "Nous venons de vous envoyer un email, veuillez verifier votre boîte de réception !",
+    "success_passwordReset": "Vous avez modifié votre mot de passe ! Vous allez être redirigé vers la page de connexion...",
+    "submit": "Envoyez moi un email"
+  },
+  "reset": {
+    "topForm1": "ON Y EST PRESQUE",
+    "topForm2": "Choisissez un nouveau mot de passe",
+    "topForm3": "Pas encore de compte ? <a>S'inscrire</a>",
+    "password": "Nouveau mot de passe",
+    "confirm": "Confirmez votre nouveau mot de passe",
+    "submit": "Sauvegarder le mot de passe"
   }
 }

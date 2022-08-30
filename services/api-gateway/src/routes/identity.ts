@@ -88,7 +88,7 @@ async function resetPasswordHandler(
 ) {
   const {
     context,
-    body: { email, token, password },
+    body: { email, language, token, password },
   } = req;
   const identity = services.identity(context);
 
@@ -102,7 +102,7 @@ async function resetPasswordHandler(
     return res.send(user);
   }
 
-  const result = await identity.sendResetPasswordLink({ email });
+  const result = await identity.sendResetPasswordLink({ email, language });
   /*  
   await req.broker.send(EventType.SucceededPasswordResetRequest, {
   ip: req.context?.http?.ip,

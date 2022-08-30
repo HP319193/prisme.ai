@@ -29,5 +29,8 @@ export const emailSender = new Email({
     from: EMAIL_FROM,
   },
   transport: initTransport(),
-  i18n: {},
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'fr', 'es'],
+  },
 });

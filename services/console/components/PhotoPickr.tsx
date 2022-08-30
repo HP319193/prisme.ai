@@ -24,7 +24,7 @@ export const PhotoPickr = ({ label, value, onChange }: PhotoPickrProps) => {
   );
   return (
     <div className="flex flex-1 flex-col mb-5">
-      <div className="text-gray pl-4 flex flex-1 flex-row justify-between text-xs mb-1">
+      <div className="text-gray pl-4 flex flex-1 flex-row justify-between mb-1">
         {label}
       </div>
       <div

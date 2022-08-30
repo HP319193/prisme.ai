@@ -27,7 +27,7 @@ export interface ResetPasswordRequest {
 
 export const sendResetPasswordLink =
   (Users: StorageDriver, ctx?: PrismeContext) =>
-  async ({ email = '' }: any) => {
+  async ({ email = '', language = '' }: any) => {
     const existingUsers = await Users.find({
       email: email.toLowerCase().trim(),
     });
@@ -57,6 +57,7 @@ export const sendResetPasswordLink =
         to: email,
       },
       locals: {
+        locale: language,
         name: firstName,
         resetLink,
       },

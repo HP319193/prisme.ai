@@ -1,10 +1,19 @@
 import { createContext, useContext } from 'react';
 import { ApiError } from '@prisme.ai/sdk';
 
+export enum OperationSuccess {
+  emailSent = 'emailSent',
+  passwordReset = 'passwordReset',
+}
+
+export interface ApiSuccess {
+  type: OperationSuccess;
+}
 export interface UserContext<T = Prismeai.User | null> {
   user: T;
   loading: boolean;
   error?: ApiError;
+  success?: ApiSuccess;
   signin: (email: string, password: string) => Promise<Prismeai.User | null>;
   signup: (
     email: string,
@@ -13,6 +22,8 @@ export interface UserContext<T = Prismeai.User | null> {
     lastName: string
   ) => Promise<Prismeai.User | null>;
   signout: (onServer?: boolean) => void;
+  sendPasswordResetMail: (email: string, language: string) => Promise<any>;
+  passwordReset: (token: string, password: string) => Promise<any>;
 }
 
 export const userContext = createContext<UserContext>({

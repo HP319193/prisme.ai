@@ -1,13 +1,13 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import context, { UserContext } from './context';
+import context, { OperationSuccess, UserContext } from './context';
 import api from '../../utils/api';
 import { ApiError } from '@prisme.ai/sdk';
 import { useRouter } from 'next/router';
 import Storage from '../../utils/Storage';
 import { Loading } from '@prisme.ai/design-system';
 
-const REDIRECT_IF_SIGNED = ['/signin', '/signup', '/'];
-const PUBLIC_URLS = ['/signin', '/signup', '/pages/[pageSlug]'];
+const REDIRECT_IF_SIGNED = ['/forgot', '/signin', '/signup', '/'];
+const PUBLIC_URLS = ['/forgot', '/signin', '/signup', '/pages/[pageSlug]'];
 
 interface UserProviderProps {
   anonymous?: boolean;
@@ -20,8 +20,42 @@ export const UserProvider: FC<UserProviderProps> = ({
   const [user, setUser] = useState<UserContext['user']>(null);
   const [loading, setLoading] = useState<UserContext['loading']>(true);
   const [error, setError] = useState<ApiError>();
+  const [success, setSuccess] = useState<any>();
 
   const { push, route } = useRouter();
+
+  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] =
+    useCallback(async (email: string, language: string) => {
+      setLoading(true);
+      try {
+        await api.sendPasswordResetMail(email, language);
+        setError(undefined);
+        setSuccess({ type: OperationSuccess.emailSent });
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        setError(error);
+        return null;
+      }
+    }, []);
+
+  const passwordReset: UserContext['passwordReset'] = useCallback(
+    async (token: string, password: string) => {
+      setLoading(true);
+      try {
+        const result = await api.passwordReset(token, password);
+        setError(undefined);
+        setSuccess({ type: OperationSuccess.passwordReset });
+        setLoading(false);
+        setTimeout(() => push('/signin'), 3000);
+      } catch (error) {
+        setLoading(false);
+        setError(error);
+        return null;
+      }
+    },
+    [push]
+  );
 
   const signin: UserContext['signin'] = useCallback(async (email, password) => {
     setLoading(true);
@@ -134,7 +168,19 @@ export const UserProvider: FC<UserProviderProps> = ({
   if (!PUBLIC_URLS.includes(route) && loading) return <Loading />;
 
   return (
-    <context.Provider value={{ user, loading, error, signin, signup, signout }}>
+    <context.Provider
+      value={{
+        user,
+        loading,
+        error,
+        success,
+        signin,
+        signup,
+        signout,
+        sendPasswordResetMail,
+        passwordReset,
+      }}
+    >
       {children}
     </context.Provider>
   );

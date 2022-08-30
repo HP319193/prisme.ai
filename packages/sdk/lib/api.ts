@@ -73,6 +73,14 @@ export class Api extends Fetcher {
     this.token = null;
   }
 
+  async sendPasswordResetMail(email: string, language: string) {
+    return await this.post('/user/password', { email, language });
+  }
+
+  async passwordReset(token: string, password: string) {
+    return await this.post('/user/password', { token, password });
+  }
+
   // Workspaces
   async getWorkspaces(): Promise<Workspace[]> {
     return await this.get('/workspaces?limit=300');
