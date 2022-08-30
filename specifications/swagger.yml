@@ -2664,7 +2664,7 @@ components:
                 properties:
                   event:
                     type: string
-                  source:
+                  autocomplete:
                     type: object
                     additionalProperties:
                       type: object
@@ -2672,6 +2672,8 @@ components:
                         from:
                           type: string
                         path:
+                          type: string
+                        template:
                           type: string
             listen:
               type: array
@@ -2977,7 +2979,7 @@ components:
               $ref: '#/components/schemas/PrismeEventTarget'
             private:
               type: boolean
-            source:
+            autocomplete:
               type: object
               additionalProperties:
                 type: object
@@ -2986,7 +2988,7 @@ components:
                     type: string
                   path:
                     type: string
-                  value:
+                  template:
                     type: string
     CreateUserTopic:
       type: object

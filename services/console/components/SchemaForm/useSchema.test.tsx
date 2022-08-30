@@ -313,7 +313,7 @@ it('should autocomplete emit events', () => {
           },
           {
             event: 'App A emit B {{foo}}',
-            source: {
+            autocomplete: {
               foo: {
                 from: 'appConfig',
                 path: 'items[*]~',
@@ -466,7 +466,7 @@ it('should autocomplete emit events', () => {
           },
           {
             event: 'App A emit B {{foo}}',
-            source: {
+            autocomplete: {
               foo: {
                 from: 'appConfig',
                 path: 'items[*]~',
@@ -698,6 +698,98 @@ it('should autocomplete nested emit events', () => {
         {
           label: 'repeat 1',
           value: 'repeat 1',
+        },
+      ],
+    },
+  ]);
+});
+
+it('should autocomplete with template', () => {
+  let extractAutocompleteOptionsFn: Function = () => null;
+  const workspace = {
+    name: 'workspace',
+    config: {
+      values: ['A', 'B'],
+    },
+    automations: {
+      foo: {
+        do: [
+          {
+            emit: {
+              event: '{{var}}',
+              autocomplete: {
+                var: {
+                  from: 'config',
+                  path: 'values[*]',
+                  template: 'foo.bar.${value}',
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+  };
+  const apps = [
+    {
+      slug: 'App A',
+      appName: 'App A',
+      events: {
+        emit: [
+          {
+            event: '{{var}}',
+            autocomplete: {
+              var: {
+                from: 'config',
+                path: 'values[*]',
+                template: 'foo.bar.${value}',
+              },
+            },
+          },
+        ],
+      },
+    },
+  ];
+  const C = () => {
+    const { extractAutocompleteOptions } = useSchema({
+      workspace,
+      apps,
+    });
+    extractAutocompleteOptionsFn = extractAutocompleteOptions;
+    return null;
+  };
+  renderer.create(<C />);
+
+  expect(
+    extractAutocompleteOptionsFn({
+      'ui:options': {
+        autocomplete: 'events:emit',
+      },
+    })
+  ).toEqual([
+    {
+      label: 'workspace',
+      options: [
+        {
+          label: 'foo.bar.A',
+          value: 'foo.bar.A',
+        },
+        {
+          label: 'foo.bar.B',
+          value: 'foo.bar.B',
+        },
+      ],
+    },
+    {
+      label: 'App A',
+      options: [
+        {
+          label: 'foo.bar.A',
+          value: 'App A.foo.bar.A',
+        },
+        {
+          label: 'foo.bar.B',
+          value: 'App A.foo.bar.B',
         },
       ],
     },

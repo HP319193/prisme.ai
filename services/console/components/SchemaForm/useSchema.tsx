@@ -166,20 +166,24 @@ export const useSchema = (store: Record<string, any> = {}) => {
             return getEmitEvents(automation.do);
           });
 
-          const generateEventsFromSource = (appName: string) => (
+          const generateEventsAutomations = (appName: string) => (
             event: string,
-            source: Prismeai.Emit['emit']['source']
+            autocomplete: Prismeai.Emit['emit']['autocomplete']
           ) => {
-            if (!source || Object.keys(source).length === 0) return [event];
-            const config = workspace.imports?.[appName]?.config || {};
+            if (!autocomplete || Object.keys(autocomplete).length === 0)
+              return [event];
             // Only read first parameter while the UI is simple
             // To manage many parameters, we would need an autocomplete inside
             // the value autocompleted
-            return Object.keys(source).flatMap((key) => {
+            return Object.keys(autocomplete).flatMap((key) => {
               if (!event.match(`{{${key}}}`)) return;
-              const template = source[key].value || '${value}';
-              const { from, path } = source[key];
+              const template = autocomplete[key].template || '${value}';
+              const { from, path } = autocomplete[key];
               if (!from || !path) return [];
+              let config = workspace.config || {};
+              if (from === 'appConfig') {
+                config = workspace.imports?.[appName]?.config || {};
+              }
               const values = readAppConfig(config, path).filter(Boolean);
               return (Array.isArray(values)
                 ? values
@@ -195,10 +199,14 @@ export const useSchema = (store: Record<string, any> = {}) => {
               ? [
                   {
                     label: store.workspace.name,
-                    options: events.flatMap(({ event, source }) => ({
-                      label: event,
-                      value: event,
-                    })),
+                    options: events
+                      .flatMap(({ event, autocomplete }) =>
+                        generateEventsAutomations('')(event, autocomplete)
+                      )
+                      .flatMap((event) => ({
+                        label: event,
+                        value: event,
+                      })),
                   },
                 ]
               : []),
@@ -207,13 +215,14 @@ export const useSchema = (store: Record<string, any> = {}) => {
               .flatMap(
                 ({ events: { emit = [] } = {}, appName = '', slug = '' }) => ({
                   label: appName,
-                  options: emit.flatMap(({ event, source }) =>
-                    generateEventsFromSource(appName)(event, source).flatMap(
-                      (value) => ({
-                        label: value,
-                        value: `${slug}.${value}`,
-                      })
-                    )
+                  options: emit.flatMap(({ event, autocomplete }) =>
+                    generateEventsAutomations(appName)(
+                      event,
+                      autocomplete
+                    ).flatMap((value) => ({
+                      label: value,
+                      value: `${slug}.${value}`,
+                    }))
                   ),
                 })
               ),

@@ -763,10 +763,11 @@ declare namespace Prismeai {
         events?: {
             emit?: {
                 event: string;
-                source?: {
+                autocomplete?: {
                     [name: string]: {
                         from?: string;
                         path?: string;
+                        template?: string;
                     };
                 };
             }[];
@@ -1169,10 +1170,11 @@ declare namespace Prismeai {
         events?: {
             emit?: {
                 event: string;
-                source?: {
+                autocomplete?: {
                     [name: string]: {
                         from?: string;
                         path?: string;
+                        template?: string;
                     };
                 };
             }[];
@@ -1214,11 +1216,11 @@ declare namespace Prismeai {
             payload?: AnyValue;
             target?: PrismeEventTarget;
             private?: boolean;
-            source?: {
+            autocomplete?: {
                 [name: string]: {
                     from?: string;
                     path?: string;
-                    value?: string;
+                    template?: string;
                 };
             };
         };
