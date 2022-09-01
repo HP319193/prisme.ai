@@ -662,18 +662,6 @@ WithDefaultValues.args = {
 export const WithAutocompletee = (props: FormProps) => {
   const [value, setValue] = useState<{ values: any }>(props.initialValues);
 
-  const extractAutocompleteOptions = useCallback(() => {
-    return [
-      {
-        label: 'Foo',
-        value: 'foo',
-      },
-      {
-        label: 'Bar',
-        value: 'bar',
-      },
-    ];
-  }, []);
   return (
     <div>
       <SchemaForm
@@ -681,7 +669,6 @@ export const WithAutocompletee = (props: FormProps) => {
         initialValues={value}
         onSubmit={setValue}
         onChange={setValue}
-        utils={{ extractAutocompleteOptions }}
       />
       <pre>
         <code>{value && JSON.stringify(value, null, '  ')}</code>

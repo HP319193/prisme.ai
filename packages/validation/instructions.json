@@ -34,7 +34,7 @@
           "private": {
             "type": "boolean"
           },
-          "source": {
+          "autocomplete": {
             "type": "object",
             "additionalProperties": {
               "type": "object",
@@ -42,7 +42,10 @@
                 "from": {
                   "type": "string"
                 },
-                "config": {
+                "path": {
+                  "type": "string"
+                },
+                "template": {
                   "type": "string"
                 }
               }
