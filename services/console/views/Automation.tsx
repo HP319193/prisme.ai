@@ -115,10 +115,12 @@ export const Automation = () => {
 
   useEffect(() => {
     if (!value) return;
+    const { slug, ...original } = originalAutomation.current || {};
+    const { slug: slug1, ...currentValue } = value;
 
     if (
       automationId === prevAutomationId &&
-      JSON.stringify(originalAutomation.current) !== JSON.stringify(value)
+      JSON.stringify(original) !== JSON.stringify(currentValue)
     ) {
       setDirty(true);
     }
