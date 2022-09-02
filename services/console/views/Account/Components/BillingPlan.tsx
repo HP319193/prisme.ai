@@ -17,7 +17,7 @@ const BillingPlan = ({ wpName }: BillingPlanProps) => {
       <div className="flex flex-col">
         <div className="flex flex-row items-center text-gray font-semibold">
           <Image src={lightning.src} width={17} height={17} alt="" />
-          <div className="ml-2">{t('billing.title')}</div>
+          <div className="ml-2 uppercase">{t('billing.title')}</div>
         </div>
         <div className="flex flex-col ml-6">
           <div className="flex flex-row font-semibold text-[1.125rem]">
