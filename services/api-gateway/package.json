@@ -4,7 +4,8 @@
   "description": "Official Prisme.ai API Gateway",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && npm run copy-files",
+    "copy-files": "cp -r src/utils/emails dist/utils/emails",
     "start": "node --abort-on-uncaught-exception dist/index.js",
     "dev": "ts-node-dev -r dotenv/config --inspect=9231 --respawn ./src"
   },
