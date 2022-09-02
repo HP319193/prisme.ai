@@ -98,6 +98,7 @@ export const Automation = () => {
   } = useRouter();
 
   const automation = (workspace.automations || {})[`${automationId}`];
+  const originalAutomation = useRef(automation);
   const prevAutomationId = usePrevious(automationId);
 
   const [value, setValue] = useState<Prismeai.Automation>(automation || {});
@@ -108,12 +109,16 @@ export const Automation = () => {
   }, [automation]);
 
   useEffect(() => {
+    if (prevAutomationId === automationId) return;
+    originalAutomation.current = automation;
+  }, [automation, automationId, prevAutomationId]);
+
+  useEffect(() => {
     if (!value) return;
-    const { slug, ...valueWithoutSlug } = value;
 
     if (
       automationId === prevAutomationId &&
-      JSON.stringify(automation) !== JSON.stringify(valueWithoutSlug)
+      JSON.stringify(originalAutomation.current) !== JSON.stringify(value)
     ) {
       setDirty(true);
     }
@@ -178,6 +183,9 @@ export const Automation = () => {
         });
         setDirty(false);
         setSaving(false);
+        if (saved) {
+          originalAutomation.current = saved;
+        }
         return saved;
       } catch (e) {
         const { details } = e as ApiError;
