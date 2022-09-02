@@ -16,6 +16,7 @@ import {
 import { comparePasswords, hashPassword } from './utils';
 import { emailSender } from '../../utils/email';
 import { syscfg, mails as mailConfig } from '../../config';
+import { Logger } from '../../logger';
 
 const { RESET_PASSWORD_URL } = mailConfig;
 
@@ -26,14 +27,16 @@ export interface ResetPasswordRequest {
 }
 
 export const sendResetPasswordLink =
-  (Users: StorageDriver, ctx?: PrismeContext) =>
+  (Users: StorageDriver, ctx?: PrismeContext, logger?: Logger) =>
   async ({ email = '', language = '' }: any) => {
     const existingUsers = await Users.find({
       email: email.toLowerCase().trim(),
     });
 
     if (!existingUsers.length) {
-      console.warn(`Password reset asked for a non-existent user : ${email}.`);
+      (logger || console).warn(
+        `Password reset asked for a non-existent user : ${email}.`
+      );
       return {};
     }
 
@@ -51,23 +54,30 @@ export const sendResetPasswordLink =
     const resetLink = new URL(RESET_PASSWORD_URL);
     resetLink.searchParams.append('token', token);
 
-    await emailSender.send({
-      template: path.join(__dirname, '../../utils/emails/forgotPassword'),
-      message: {
-        to: email,
-      },
-      locals: {
-        locale: language,
-        name: firstName,
-        resetLink,
-      },
-    });
-
-    return {};
+    try {
+      await emailSender.send({
+        template: path.join(__dirname, '../../utils/emails/forgotPassword'),
+        message: {
+          to: email,
+        },
+        locals: {
+          locale: language,
+          name: firstName,
+          resetLink,
+        },
+      });
+    } catch (err) {
+      (logger || console).warn({
+        msg: 'Could not send password reset email',
+        err,
+      });
+      return false;
+    }
+    return true;
   };
 
 export const resetPassword =
-  (Users: StorageDriver, ctx?: PrismeContext) =>
+  (Users: StorageDriver, ctx?: PrismeContext, logger?: Logger) =>
   async ({ password, token }: any) => {
     const users = await Users.find({
       'resetPassword.token': token,

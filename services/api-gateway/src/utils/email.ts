@@ -28,6 +28,8 @@ export const emailSender = new Email({
   message: {
     from: EMAIL_FROM,
   },
+  send: true,
+  preview: false,
   transport: initTransport(),
   i18n: {
     defaultLocale: 'en',

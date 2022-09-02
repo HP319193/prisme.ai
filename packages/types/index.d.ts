@@ -1650,6 +1650,28 @@ declare namespace Prismeai {
             };
         };
     }
+    export interface SucceededPasswordReset {
+        /**
+         * example:
+         * gateway.passwordReset.succeeded
+         */
+        type: "gateway.passwordReset.succeeded";
+        payload: {
+            ip: string;
+            email: string;
+        };
+    }
+    export interface SucceededPasswordResetRequested {
+        /**
+         * example:
+         * gateway.passwordReset.requested
+         */
+        type: "gateway.passwordReset.requested";
+        payload: {
+            ip: string;
+            email: string;
+        };
+    }
     export interface SucceededSignup {
         /**
          * example:

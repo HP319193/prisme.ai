@@ -72,7 +72,7 @@ async function signupHandler(
   next: NextFunction
 ) {
   const { context, body } = req;
-  const identity = services.identity(context);
+  const identity = services.identity(context, req.logger);
   const user = await identity.signup(body);
   await req.broker.send(EventType.SucceededSignup, {
     ip: req.context?.http?.ip,
@@ -90,25 +90,37 @@ async function resetPasswordHandler(
     context,
     body: { email, language, token, password },
   } = req;
-  const identity = services.identity(context);
+  const identity = services.identity(context, req.logger);
 
   if (token && password) {
     const user = await identity.resetPassword({ password, token });
-    /*  
-    await req.broker.send(EventType.SucceededPasswordReset, {
-    ip: req.context?.http?.ip,
-    user,
-    }); */
+    req.broker
+      .send<Prismeai.SucceededPasswordReset['payload']>(
+        EventType.SucceededPasswordReset,
+        {
+          ip: req.context?.http?.ip,
+          email: user?.email,
+        }
+      )
+      .catch((err) => req.logger.error(err));
     return res.send(user);
   }
 
-  const result = await identity.sendResetPasswordLink({ email, language });
-  /*  
-  await req.broker.send(EventType.SucceededPasswordResetRequest, {
-  ip: req.context?.http?.ip,
-  user,
-  }); */
-  return res.send(result);
+  try {
+    await identity.sendResetPasswordLink({ email, language });
+    req.broker
+      .send<Prismeai.SucceededPasswordReset['payload']>(
+        EventType.SucceededPasswordResetRequested,
+        {
+          ip: req.context?.http?.ip,
+          email,
+        }
+      )
+      .catch(req.logger.error);
+  } catch (error) {
+    (req.logger || console).error(error);
+  }
+  return res.send();
 }
 
 async function meHandler(
@@ -130,12 +142,12 @@ async function logoutHandler(req: Request, res: Response) {
  * Internal route
  */
 async function findContactsHandler(
-  { context, body: { email, ids } }: Request<any, any, FindUserQuery>,
+  { context, body: { email, ids }, logger }: Request<any, any, FindUserQuery>,
   res: Response<{
     contacts: Prismeai.User[];
   }>
 ) {
-  const identity = services.identity(context);
+  const identity = services.identity(context, logger);
   return res.send({
     contacts: await identity.find({
       email,

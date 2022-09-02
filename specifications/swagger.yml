@@ -213,9 +213,9 @@ paths:
                     - email
                   properties:
                     email:
-                      type: string  
+                      type: string
                     language:
-                      type: string  
+                      type: string
                 - type: object
                   required:
                     - token
@@ -225,7 +225,7 @@ paths:
                       type: string
                     password:
                       type: string
-                      description: New user password  
+                      description: New user password
       responses:
         '200':
           description: Success Response
@@ -238,7 +238,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BadParametersError'        
+                $ref: '#/components/schemas/BadParametersError'
         '403':
           description: Bad permissions (such as an invalid token)
           content:
@@ -250,7 +250,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ObjectNotFoundError' 
+                $ref: '#/components/schemas/ObjectNotFoundError'
 
   ############################################# permissions routes
   /v2/{subjectType}/{subjectId}/permissions:
@@ -3788,6 +3788,51 @@ components:
               type: string
             user:
               $ref: '#/components/schemas/User'
+
+    SucceededPasswordReset:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.passwordReset.succeeded
+          enum:
+            - gateway.passwordReset.succeeded
+        payload:
+          type: object
+          required:
+            - ip
+            - email
+          properties:
+            ip:
+              type: string
+            email:
+              type: string
+
+    SucceededPasswordResetRequested:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.passwordReset.requested
+          enum:
+            - gateway.passwordReset.requested
+        payload:
+          type: object
+          required:
+            - ip
+            - email
+          properties:
+            ip:
+              type: string
+            email:
+              type: string
+
 
     ########################## Apps events ##########################
     PublishedApp:
