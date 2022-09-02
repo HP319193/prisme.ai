@@ -90,7 +90,7 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
 
     return columnsSpecification.map(
       ({ key, label = key, type = 'string', actions, onEdit, format }) => ({
-        title: label,
+        title: localize(label),
         dataIndex: key,
         key,
         sorter: key
@@ -116,12 +116,15 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
           language,
           format,
           onEdit,
-          actions,
+          actions: actions?.map((action) => ({
+            ...action,
+            label: localize(action.label),
+          })),
           events,
         }),
       })
     );
-  }, [dataSource]);
+  }, [dataSource, localize]);
 
   const locales = useMemo(
     () => ({
