@@ -11,7 +11,12 @@ import * as prismeaiSDK from '../utils/api';
 import UserProvider from '../components/UserProvider';
 import WorkspacesProvider from '../components/WorkspacesProvider';
 import { NextPage } from 'next';
-import React, { HTMLAttributes, ReactElement, ReactNode } from 'react';
+import React, {
+  HTMLAttributes,
+  ReactElement,
+  ReactNode,
+  useEffect,
+} from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
@@ -64,8 +69,16 @@ const DownIcon = ({ className }: { className?: string }) => (
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
 
+  useEffect(() => {
+    if (i18n.language === 'default') {
+      const availableLanguages: string[] = (i18n.options as any).locales;
+      const navLang = window.navigator.language.substring(0, 2);
+      const currentLang = availableLanguages.includes(navLang) ? navLang : 'en';
+      location.pathname = `${currentLang}/${location.pathname}`;
+    }
+  }, [i18n]);
   if (Component.isPublic) {
     return (
       <UserProvider anonymous>
