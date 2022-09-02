@@ -141,7 +141,7 @@ const HeaderWorkspace = () => {
                 <div className="flex h-[75vh] w-[30rem]">
                   <IFrameLoader
                     className="flex grow"
-                    src="https://pages.prisme.ai/pages/I55NTRH"
+                    src="https://studio.prisme.ai/pages/I55NTRH"
                   />
                 </div>
               )}
