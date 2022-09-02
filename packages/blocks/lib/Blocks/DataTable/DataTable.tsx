@@ -11,6 +11,7 @@ import EditableRow from './EditableRow';
 import EditableCell from './EditableCell';
 import { ColumnDefinition } from './types';
 import renderValue from './RenderValue';
+import useLocalizedText from '../../useLocalizedText';
 
 const previewData = Array.from(new Array(100000), (v, k) => ({
   Id: k,
@@ -18,7 +19,7 @@ const previewData = Array.from(new Array(100000), (v, k) => ({
 }));
 
 export interface DataTableConfig {
-  title?: string;
+  title?: Prismeai.LocalizedText;
   data: Record<string, any>[];
   columns?: ColumnDefinition[];
 }
@@ -37,6 +38,7 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
     t,
     i18n: { language },
   } = useTranslation();
+  const { localize } = useLocalizedText();
   const { config = { data: emptyArray }, events } = useBlock<DataTableConfig>();
 
   const preview = !!(!config.data && edit);
@@ -133,7 +135,7 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
 
   return (
     <div className={tw`block-data-table p-8`}>
-      {config.title && <BlockTitle value={config.title} />}
+      {config.title && <BlockTitle value={localize(config.title)} />}
       <div
         className={tw`block-data-table__table-container table-container overflow-auto`}
       >
