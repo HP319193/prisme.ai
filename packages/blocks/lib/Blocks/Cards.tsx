@@ -53,7 +53,7 @@ interface Card {
 }
 
 interface CardsConfig {
-  title: string;
+  title: Prismeai.LocalizedText;
   cards: Card[];
   layout: {
     type: 'grid' | 'column' | 'carousel';
@@ -345,7 +345,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
       <div
         className={tw`block-cards__title-container title-container pt-8 pl-8`}
       >
-        {config.title && <BlockTitle value={config.title} />}
+        {config.title && <BlockTitle value={localize(config.title)} />}
       </div>
       <div
         className={tw`block-cards__cards-container cards-container relative !pt-0 w-full overflow-hidden`}

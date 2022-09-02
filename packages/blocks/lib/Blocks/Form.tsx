@@ -14,7 +14,7 @@ const defaultSchema = {
 };
 
 interface FormConfig {
-  title?: string;
+  title?: Prismeai.LocalizedText;
   schema: Schema;
   onChange?: string;
   onSubmit?: string;
@@ -51,7 +51,7 @@ export const Form = ({ edit }: { edit?: boolean }) => {
 
   return (
     <div className={tw`block-form p-8 flex-1`}>
-      {config.title && <BlockTitle value={config.title} />}
+      {config.title && <BlockTitle value={localize(config.title)} />}
       <SchemaForm
         schema={localizedSchema}
         onChange={onChange}
