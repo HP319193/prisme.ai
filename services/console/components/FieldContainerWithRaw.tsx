@@ -60,31 +60,38 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
   );
 
   return (
-    <div className="flex flex-1 flex-col relative">
-      <Tooltip title={t('form.raw', { context: displayRaw ? 'hide' : '' })}>
-        <button
-          className={`absolute top-0 mt-[0.35rem] ${
-            schema.description ? 'right-8' : 'right-1'
-          } flex flex-1 flex-row z-[1] text-[10px] items-center`}
-          onClick={toggle}
-        >
-          <div className="mr-1">
-            {displayRaw ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-          </div>
-          raw
-        </button>
-      </Tooltip>
-      {displayRaw && (
-        <div className={`flex flex-1 flex-col`}>
-          <WithLabel
-            label={label || schema.title || name.replace(/^values./, '')}
+    <>
+      <div className="flex flex-1 flex-col relative">
+        <Tooltip title={t('form.raw', { context: displayRaw ? 'hide' : '' })}>
+          <button
+            className={`absolute top-0 mt-[0.35rem] ${
+              schema.description ? 'right-8' : 'right-1'
+            } flex flex-1 flex-row z-[1] text-[10px] items-center`}
+            onClick={toggle}
           >
-            <CodeEditorInline mode="json" value={value} onChange={onChange} />
-          </WithLabel>
-        </div>
+            <div className="mr-1">
+              {displayRaw ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+            </div>
+            raw
+          </button>
+        </Tooltip>
+
+        <div className="space-y-5">{!displayRaw && children}</div>
+      </div>
+      {displayRaw && (
+        <>
+          <div className="!m-0">
+            {label || schema.title || name.replace(/^values./, '')}
+          </div>
+          <CodeEditorInline
+            mode="json"
+            value={value}
+            onChange={onChange}
+            className="flex-auto"
+          />
+        </>
       )}
-      <div className="space-y-5">{!displayRaw && children}</div>
-    </div>
+    </>
   );
 };
 

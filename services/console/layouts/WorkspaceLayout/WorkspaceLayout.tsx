@@ -54,10 +54,12 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
-  const [invalid, setInvalid] =
-    useState<WorkspaceLayoutContext['invalid']>(false);
-  const [newSource, setNewSource] =
-    useState<WorkspaceLayoutContext['newSource']>();
+  const [invalid, setInvalid] = useState<WorkspaceLayoutContext['invalid']>(
+    false
+  );
+  const [newSource, setNewSource] = useState<
+    WorkspaceLayoutContext['newSource']
+  >();
   const [saving, setSaving] = useState(false);
   const [fullSidebar, setFullSidebar] = useState(false);
   const [sidebar, setSidebar] = useState(
@@ -66,8 +68,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const [appStoreVisible, setAppStoreVisible] = useState(false);
   const [dirty, setDirty] = useState(false);
 
-  const { ref: sidebarRef, height: sidebarHeight } =
-    useResizeObserver<HTMLDivElement>();
+  const { ref: sidebarRef, height: sidebarHeight } = useResizeObserver<
+    HTMLDivElement
+  >();
 
   useEffect(() => {
     Storage.set('__workpaceSidebar', sidebar);
@@ -245,9 +248,16 @@ export const WorkspaceLayout: FC = ({ children }) => {
           .map(([slug, automation]) => ({
             title: localize(automation.name),
             renderTitle: (
-              <Link href={`/workspaces/${workspace.id}/automations/${slug}`}>
-                <a className="ml-2">{localize(automation.name)}</a>
-              </Link>
+              <a
+                href={`/workspaces/${workspace.id}/automations/${slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onSelect(`Automations:${slug}`, null);
+                }}
+                className="ml-2"
+              >
+                {localize(automation.name)}
+              </a>
             ),
             key: `${TREE_CONTENT_TYPE.automations}:${slug}`,
             icon: <BranchesOutlined />,
@@ -265,13 +275,18 @@ export const WorkspaceLayout: FC = ({ children }) => {
           .map((page) => ({
             title: localize(page.name),
             renderTitle: (
-              <Link
+              <a
                 href={`/workspaces/${workspace.id}/pages/${
                   page.slug || page.id
                 }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onSelect(`Pages:${page.slug}`, null);
+                }}
+                className="ml-2"
               >
-                <a className="ml-2">{localize(page.name)}</a>
-              </Link>
+                {localize(page.name)}
+              </a>
             ),
             key: `${TREE_CONTENT_TYPE.pages}:${page.id}`,
             icon: <FileOutlined />,
@@ -293,11 +308,15 @@ export const WorkspaceLayout: FC = ({ children }) => {
             title: `${appInstance.appName}`,
             key: `${TREE_CONTENT_TYPE.apps}:${appInstance.slug}`,
             renderTitle: (
-              <Link
+              <a
                 href={`/workspaces/${workspace.id}/apps/${appInstance.slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onSelect(`Apps:${appInstance.slug}`, null);
+                }}
               >
-                <a>{appInstance.appName}</a>
-              </Link>
+                {appInstance.appName}
+              </a>
             ),
             icon:
               appInstance.photo && appInstance.photo.length > 0 ? (
