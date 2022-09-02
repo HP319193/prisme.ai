@@ -9,6 +9,7 @@ import useAppConfig from '../../utils/useAppConfig';
 import useBlockPageConfig from './useBlockPageConfig';
 import { useCallback } from 'react';
 import { useWorkspace } from '../WorkspaceProvider';
+import { useTranslation } from 'next-i18next';
 
 interface PageBlockProps {
   url?: string;
@@ -35,6 +36,9 @@ const PageBlockWithProvider = ({
   index: number;
   name?: Prismeai.LocalizedText;
 }) => {
+  const {
+    i18n: { language },
+  } = useTranslation();
   const { localize } = useLocalizedText();
   const { setEditBlock, setBlockSchema } = usePageBuilder();
   const onLoad = useCallback(
@@ -77,6 +81,7 @@ const PageBlockWithProvider = ({
           edit
           onLoad={onLoad}
           layout={{ container }}
+          language={language}
           api={api}
         />
       </div>
