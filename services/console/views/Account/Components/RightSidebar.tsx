@@ -9,7 +9,9 @@ const RightSidebar = ({}: RightSidebarProps) => {
   return (
     <div className="flex flex-col m-4 space-y-5 w-1/5">
       <div className="space-y-1">
-        <div className="text-gray font-semibold">{t('billing.payment')}</div>
+        <div className="text-gray font-semibold uppercase">
+          {t('billing.payment')}
+        </div>
         <DisabledButton>{t('billing.payment_add')}</DisabledButton>
         {/*<Button*/}
         {/*  variant="link"*/}
@@ -20,7 +22,9 @@ const RightSidebar = ({}: RightSidebarProps) => {
         {/*</Button>*/}
       </div>
       <div className="space-y-1">
-        <div className="text-gray font-semibold">{t('billing.invoice')}</div>
+        <div className="text-gray font-semibold uppercase">
+          {t('billing.invoice')}
+        </div>
         <DisabledButton>{t('billing.invoice_details')}</DisabledButton>
         {/*<Button*/}
         {/*  variant="link"*/}
@@ -31,7 +35,9 @@ const RightSidebar = ({}: RightSidebarProps) => {
         {/*</Button>*/}
       </div>
       <div className="space-y-1">
-        <div className="text-gray font-semibold">{t('billing.history')}</div>
+        <div className="text-gray font-semibold uppercase">
+          {t('billing.history')}
+        </div>
       </div>
     </div>
   );

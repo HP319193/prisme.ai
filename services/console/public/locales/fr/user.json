@@ -6,19 +6,19 @@
   "account_my": "Mon compte",
   "workspaces": "Espaces de travail",
   "billing": {
-    "title": "FACTURATION",
+    "title": "Facturation",
     "free": "Offre gratuite",
     "change": "Changer d'offre",
     "limit_ok": "Toutes vos bases sont dans les limites d'interaction de votre offre courante (gratuite)",
     "cta_premium": "En savoir plus sur les offres premium",
-    "payment": "PAIEMENT",
+    "payment": "Paiement",
     "payment_add": "Ajouter des informations de paiement",
-    "invoice": "FACTURES",
+    "invoice": "Factures",
     "invoice_details": "Détail des factures",
     "history": "Historique"
   },
   "usage": {
-    "title": "UTILISATION",
+    "title": "Usage mensuel",
     "interaction": "interactions",
     "access": "Accès",
     "old": "Cet espace de travail a été créé sur une ancienne version de Prisme.ai et ne supporte pas la consultation des interactions"

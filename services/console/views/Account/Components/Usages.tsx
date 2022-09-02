@@ -24,7 +24,7 @@ const Usages = ({ currentWorkspaceUsages, nbUser, error }: UsagesProps) => {
     <div className="space-y-5">
       <div className="flex flex-row items-center text-gray font-semibold">
         <Image src={stat.src} width={17} height={17} alt="" />
-        <div className="ml-2">{t('usage.title')}</div>
+        <div className="ml-2 uppercase">{t('usage.title')}</div>
       </div>
       <div className="flex flex-col space-y-5">
         {error && (
