@@ -4,7 +4,7 @@ exports[`should render empty 1`] = `
 Array [
   "workspaces.sectionTitle",
   <div
-    className="!bg-blue-200 flex grow m-16 !mt-0 rounded relative pt-6"
+    className="!bg-blue-200 flex flex-1 m-16 !mt-0 rounded relative pt-6"
   >
     <div>
       <div
@@ -17,7 +17,7 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="flex grow flex-row text-center content-center"
+            className="flex flex-1 flex-row text-center content-center"
           >
             <div
               className="flex ml-3 mr-5 items-center justify-center"
@@ -51,7 +51,7 @@ exports[`should render some workspaces 1`] = `
 Array [
   "workspaces.sectionTitle",
   <div
-    className="!bg-blue-200 flex grow m-16 !mt-0 rounded relative pt-6"
+    className="!bg-blue-200 flex flex-1 m-16 !mt-0 rounded relative pt-6"
   >
     <div>
       <div
@@ -64,7 +64,7 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="flex grow flex-row text-center content-center"
+            className="flex flex-1 flex-row text-center content-center"
           >
             <div
               className="flex ml-3 mr-5 items-center justify-center"
@@ -96,7 +96,7 @@ Array [
               <div />
             </div>
             <div
-              className="flex grow flex-col items-start justify-center space-y-2"
+              className="flex flex-1 flex-col items-start justify-center space-y-2"
             >
               foo
               
@@ -118,7 +118,7 @@ Array [
               <div />
             </div>
             <div
-              className="flex grow flex-col items-start justify-center space-y-2"
+              className="flex flex-1 flex-col items-start justify-center space-y-2"
             >
               bar
               

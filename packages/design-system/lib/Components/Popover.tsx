@@ -12,7 +12,7 @@ type SetVisible = (visible: boolean) => void;
 export interface PopoverProps extends AntdPopoverProps {
   children?: ReactElement;
   content: FC<{ setVisible: SetVisible }>;
-  title: string | ReactNode | FC<{ setVisible: SetVisible }>;
+  title?: string | ReactNode | FC<{ setVisible: SetVisible }>;
   initialVisible?: boolean;
   visible?: boolean;
   onVisibleChange?: (visible: boolean) => void;
@@ -52,13 +52,19 @@ const Popover: FC<PopoverProps> = ({
         </div>
       }
       title={
-        <div
-          className={`flex w-full items-center justify-between flex-row p-[2.5rem] !pb-[1.4rem] font-semibold overflow-hidden rounded-t-[0.6rem] ${
-            titleClassName || ''
-          }`}
-        >
-          {typeof title === 'function' ? title({ setVisible }) : title}
-        </div>
+        title ? (
+          <div
+            className={`flex w-full items-center justify-between flex-row p-[2.5rem] !pb-[1.4rem] font-semibold overflow-hidden rounded-t-[0.6rem] ${
+              titleClassName || ''
+            }`}
+          >
+            {typeof title === 'function' ? title({ setVisible }) : title}
+          </div>
+        ) : (
+          <div
+            className={`flex w-full items-center justify-between flex-row font-semibold overflow-hidden rounded-t-[0.6rem]`}
+          />
+        )
       }
       trigger="click"
       visible={visible}

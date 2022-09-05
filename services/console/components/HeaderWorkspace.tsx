@@ -25,7 +25,10 @@ import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import IFrameLoader from './IFrameLoader';
 
 const HeaderWorkspace = () => {
-  const { t } = useTranslation('workspaces');
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const { remove, update } = useWorkspaces();
   const [popoverIsVisible, setPopoverIsVisible] = useState(false);
@@ -140,13 +143,11 @@ const HeaderWorkspace = () => {
               content={() => (
                 <div className="flex h-[75vh] w-[30rem]">
                   <IFrameLoader
-                    className="flex grow"
-                    src="https://pages.prisme.ai/pages/I55NTRH"
+                    className="flex flex-1"
+                    src={`https://studio.prisme.ai/${language}/pages/I55NTRH`}
                   />
                 </div>
               )}
-              title={t('help')}
-              titleClassName="!bg-white !text-black"
               overlayClassName="pr-full-popover"
             >
               <Button variant="grey" className="!text-white">
@@ -157,13 +158,11 @@ const HeaderWorkspace = () => {
               content={() => (
                 <div className="flex h-[75vh] w-[30rem]">
                   <IFrameLoader
-                    className="flex grow"
-                    src="https://studio.prisme.ai/pages/xDe6PaQ"
+                    className="flex flex-1"
+                    src={`https://studio.prisme.ai/${language}/pages/xDe6PaQ`}
                   />
                 </div>
               )}
-              title={t('whatsNew')}
-              titleClassName="!bg-white !text-black"
               overlayClassName="pr-full-popover"
             >
               <Button variant="grey" className="!text-white">

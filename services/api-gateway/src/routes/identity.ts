@@ -1,10 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import services from '../services';
 import passport from 'passport';
-import {
-  isAuthenticated,
-  isInternallyAuthenticated,
-} from '../middlewares/authentication';
+import { isAuthenticated } from '../middlewares/authentication';
 import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { FindUserQuery } from '../services/identity/users';
@@ -75,13 +72,55 @@ async function signupHandler(
   next: NextFunction
 ) {
   const { context, body } = req;
-  const identity = services.identity(context);
+  const identity = services.identity(context, req.logger);
   const user = await identity.signup(body);
   await req.broker.send(EventType.SucceededSignup, {
     ip: req.context?.http?.ip,
     user,
   });
   loginHandler('local')(req, res, next);
+}
+
+async function resetPasswordHandler(
+  req: Request<any, any, any>, // <any, any, PrismeaiAPI.ResetPassword.RequestBody> seems not well supported because of oneOf
+  res: Response<PrismeaiAPI.ResetPassword.Responses.$200>,
+  next: NextFunction
+) {
+  const {
+    context,
+    body: { email, language, token, password },
+  } = req;
+  const identity = services.identity(context, req.logger);
+
+  if (token && password) {
+    const user = await identity.resetPassword({ password, token });
+    req.broker
+      .send<Prismeai.SucceededPasswordReset['payload']>(
+        EventType.SucceededPasswordReset,
+        {
+          ip: req.context?.http?.ip,
+          email: user?.email,
+        }
+      )
+      .catch((err) => req.logger.error(err));
+    return res.send(user);
+  }
+
+  try {
+    await identity.sendResetPasswordLink({ email, language });
+    req.broker
+      .send<Prismeai.SucceededPasswordReset['payload']>(
+        EventType.SucceededPasswordResetRequested,
+        {
+          ip: req.context?.http?.ip,
+          email,
+        }
+      )
+      .catch(req.logger.error);
+  } catch (error) {
+    (req.logger || console).error(error);
+  }
+  return res.send();
 }
 
 async function meHandler(
@@ -103,12 +142,12 @@ async function logoutHandler(req: Request, res: Response) {
  * Internal route
  */
 async function findContactsHandler(
-  { context, body: { email, ids } }: Request<any, any, FindUserQuery>,
+  { context, body: { email, ids }, logger }: Request<any, any, FindUserQuery>,
   res: Response<{
     contacts: Prismeai.User[];
   }>
 ) {
-  const identity = services.identity(context);
+  const identity = services.identity(context, logger);
   return res.send({
     contacts: await identity.find({
       email,
@@ -124,8 +163,8 @@ app.post(`/login/anonymous`, loginHandler('anonymous'));
 app.post(`/signup`, signupHandler);
 app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/logout`, logoutHandler);
-
+app.post(`/user/password`, resetPasswordHandler);
 // Internal routes
-app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);
+app.post(`/contacts`, findContactsHandler);
 
 export default app;

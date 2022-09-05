@@ -5,6 +5,7 @@
     "topForm1": "ME ALEGRO DE TENERTE DE VUELTA",
     "topForm2": "Conéctate a Prisme.ai",
     "topForm3": "¿Aún no tienes una cuenta? <a>Regístrate</a>",
+    "forgot": "<a>Restablecer la contraseña</a>",
     "email": "Correo electrónico",
     "password": "Contraseña",
     "submit": "Conexión",
@@ -29,5 +30,27 @@
   },
   "out": {
     "link": "Cierre de sesión"
+  },
+  "forgot": {
+    "title": "Restablecer la contraseña",
+    "topForm1": "SIN PREOCUPACIONES",
+    "topForm2": "Restablecer la contraseña",
+    "topForm3": "¿Aún no tienes una cuenta? <a>Regístrate</a>",
+    "signin": "<a>¿Recuerdas tu contraseña?</a>",
+    "email": "Correo electrónico",
+    "error": "Se ha producido un error",
+    "error_InvalidPassword": "La contraseña no es válida : debe tener al menos 8 caracteres",
+    "success": "Operación realizada con éxito",
+    "success_emailSent": "Acabamos de enviarle un correo electrónico, por favor revise su bandeja de entrada",
+    "success_passwordReset": "Su contraseña ha sido cambiada. Será redirigido a la página de inicio de sesión...",
+    "submit": "Envíeme un correo electrónico"
+  },
+  "reset": {
+    "topForm1": "CASI ESTÁ",
+    "topForm2": "Elige una nueva contraseña",
+    "topForm3": "¿Aún no tienes una cuenta? <a>Regístrate</a>",
+    "password": "Nueva contraseña",
+    "confirm": "Confirma tu nueva contraseña",
+    "submit": "Guardar mi contraseña"
   }
 }

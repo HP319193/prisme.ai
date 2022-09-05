@@ -24,7 +24,10 @@ import plus from '../icons/plus.svg';
 import IFrameLoader from '../components/IFrameLoader';
 
 export const WorkspacesView = () => {
-  const { t } = useTranslation('workspaces');
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation('workspaces');
   const { push } = useRouter();
   const { workspaces, create } = useWorkspaces();
   const { user } = useUser();
@@ -60,13 +63,11 @@ export const WorkspacesView = () => {
                   content={() => (
                     <div className="flex h-[75vh] w-[30rem]">
                       <IFrameLoader
-                        className="flex grow"
-                        src="https://pages.prisme.ai/pages/I55NTRH"
+                        className="flex flex-1"
+                        src={`https://studio.prisme.ai/${language}/pages/I55NTRH`}
                       />
                     </div>
                   )}
-                  title={t('help')}
-                  titleClassName="!bg-white !text-black"
                   overlayClassName="pr-full-popover"
                 >
                   <Button variant="grey" className="!text-white">
@@ -77,13 +78,11 @@ export const WorkspacesView = () => {
                   content={() => (
                     <div className="flex h-[75vh] w-[30rem]">
                       <IFrameLoader
-                        className="flex grow"
-                        src="https://studio.prisme.ai/pages/xDe6PaQ"
+                        className="flex flex-1"
+                        src={`https://studio.prisme.ai/${language}/pages/xDe6PaQ`}
                       />
                     </div>
                   )}
-                  title={t('whatsNew')}
-                  titleClassName="!bg-white !text-black"
                   overlayClassName="pr-full-popover"
                 >
                   <Button variant="grey" className="!text-white">
@@ -99,7 +98,7 @@ export const WorkspacesView = () => {
         <Title level={3} className="!ml-16 !m-8 text-[1.5rem]">
           {t('workspaces.sectionTitle')}
         </Title>
-        <div className="!bg-blue-200 flex grow m-16 !mt-0 rounded relative pt-6">
+        <div className="!bg-blue-200 flex flex-1 m-16 !mt-0 rounded relative pt-6">
           <div>
             <div className="flex flex-wrap align-start justify-center gap-4">
               <button
@@ -108,7 +107,7 @@ export const WorkspacesView = () => {
                 disabled={loading}
                 className="p-2 bg-slate-100 !m-4 w-[21.625rem] h-[7.5rem] flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-pr-grey border-dashed"
               >
-                <div className="flex grow flex-row text-center content-center">
+                <div className="flex flex-1 flex-row text-center content-center">
                   <div className="flex ml-3 mr-5 items-center justify-center">
                     <div className="ant-btn ant-btn-primary !h-[4.25rem] !w-[4.25rem] !p-0 !flex items-center justify-center">
                       <Image src={plus.src} width={27} height={27} alt="" />
@@ -137,7 +136,7 @@ export const WorkspacesView = () => {
                         <div className="flex grow flex-row text-center">
                           <div className="flex ml-3 mr-5">
                             {photo ? (
-                              <div className="flex grow items-center justify-center flex-none">
+                              <div className="flex flex-1 items-center justify-center flex-none">
                                 <img
                                   src={photo}
                                   className="rounded text-blue h-[48px] w-[48px] object-cover"
@@ -154,7 +153,7 @@ export const WorkspacesView = () => {
                               />
                             )}
                           </div>
-                          <div className="flex grow flex-col items-start justify-center space-y-2">
+                          <div className="flex flex-1 flex-col items-start justify-center space-y-2">
                             <Title level={4} className="mb-0">
                               {name}
                             </Title>

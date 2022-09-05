@@ -6,19 +6,19 @@
   "account_my": "My account",
   "workspaces": "Workspaces",
   "billing": {
-    "title": "BILLING PLAN",
+    "title": "Billing plan",
     "free": "Free plan",
     "change": "Change billing plan",
     "limit_ok": "All of your bases are within the interactions limits for your current plan (free).",
     "cta_premium": "Learn more about premium plans",
-    "payment": "PAYMENT",
+    "payment": "Payment",
     "payment_add": "Add payment details",
-    "invoice": "INVOICE",
+    "invoice": "Invoice",
     "invoice_details": "Invoice details",
-    "history": "LONG HISTORY"
+    "history": "Long history"
   },
   "usage": {
-    "title": "USAGE",
+    "title": "Monthly usage",
     "interaction": "interactions",
     "access": "Accesses",
     "old": "This workspace was made during a previous Prisme.ai version and has no access to Usages"

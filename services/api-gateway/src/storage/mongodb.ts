@@ -38,8 +38,16 @@ export class MongodbDriver implements StorageDriver {
   }
 
   async save(data: Data): Promise<SavedData> {
+    const { _id, id, ...object } = data;
     const collection = await this.collection();
-    await collection.insertOne(data);
+
+    _id || id
+      ? await collection.updateOne(
+          { _id: new ObjectId(_id || id) },
+          { $set: object }
+        )
+      : await collection.insertOne(object);
+
     return this.prepareData(data);
   }
 

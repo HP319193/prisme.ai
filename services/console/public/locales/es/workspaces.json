@@ -72,7 +72,8 @@
     "details": {
       "name": "Atributo",
       "value": "Valor"
-    }
+    },
+    "more": "Cargar eventos antiguos"
   },
   "automations": {
     "link": "Automatizaciones",

@@ -11,6 +11,7 @@ import {
 } from '../../../errors';
 import { FindOptions } from '@prisme.ai/permissions';
 import { SLUG_VALIDATION_REGEXP } from '../../../../config';
+import { extractEvents } from './extractEvents';
 
 export interface ListAppsQuery {
   text?: string;
@@ -173,6 +174,7 @@ class Apps {
     version?: string
   ): Promise<Prismeai.AppDetails> => {
     const app = await this.storage.get(appId, version || 'current');
+
     return {
       config: app.config,
       blocks: Object.entries(app.blocks || {}).map(
@@ -193,6 +195,7 @@ class Apps {
           arguments: args,
         })),
       photo: app.photo,
+      events: extractEvents(app),
     };
   };
 
@@ -209,9 +212,9 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(app.automations || {}).map(
-        ([slug, { name, description }]) => ({ slug, name, description })
-      ),
+      automations: Object.entries(
+        app.automations || {}
+      ).map(([slug, { name, description }]) => ({ slug, name, description })),
     };
   };
 

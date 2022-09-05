@@ -72,7 +72,8 @@
     "details": {
       "name": "Field",
       "value": "Value"
-    }
+    },
+    "more": "Load older events"
   },
   "automations": {
     "link": "Automations",

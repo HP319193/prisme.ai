@@ -4,11 +4,12 @@
     "header": "What is essential deserves your focus.\n<b>Automate the rest.</b>",
     "topForm1": "GOOD TO HAVE YOU BACK",
     "topForm2": "Connect to Prisme.ai",
-    "topForm3": "Don't have an acount yet ? <a>Sign up</a>",
+    "topForm3": "Don't have an account yet? <a>Sign up</a>",
+    "forgot": "<a>Reset your password</a>",
     "email": "Email",
     "password": "Password",
     "submit": "Login",
-    "signup": "Signup ?",
+    "signup": "Signup?",
     "error": "An error has occurred.",
     "error_AuthenticationError": "Wrong email or password."
   },
@@ -16,7 +17,7 @@
     "title": "Signup — $t(common:main.title)",
     "topForm1": "HELLO",
     "topForm2": "Try Prisme.ai",
-    "topForm3": "Already have an account? <a>sign in</a>",
+    "topForm3": "Already have an account? <a>Sign in</a>",
     "email": "Email",
     "password": "Password",
     "firstName": "Firstname",
@@ -29,5 +30,27 @@
   },
   "out": {
     "link": "Logout"
+  },
+  "forgot": {
+    "title": "Reset your password",
+    "topForm1": "NO WORRIES",
+    "topForm2": "Reset your password",
+    "topForm3": "Don't have an account yet? <a>Sign up</a>",
+    "signin": "<a>Remembered your password?</a>",
+    "email": "Email",
+    "error": "An error has occurred.",
+    "error_InvalidPassword": "The password is invalid : must be at least 8 characters long.",
+    "success": "Operation successful!",
+    "success_emailSent": "We just sent you an email, please check your inbox!",
+    "success_passwordReset": "Your password has been changed! You will be redirected to the login page...",
+    "submit": "Send me an email"
+  },
+  "reset": {
+    "topForm1": "ALMOST THERE",
+    "topForm2": "Pick a new password",
+    "topForm3": "Don't have an account yet? <a>Sign up</a>",
+    "password": "New password",
+    "confirm": "Confirm your new password",
+    "submit": "Save my password"
   }
 }

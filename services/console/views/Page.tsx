@@ -89,7 +89,7 @@ const CSSEditor = ({
               <Tooltip title={t('pages.details.styles.reset.description')}>
                 <button
                   type="button"
-                  className="text-gray hover:text-orange-500 text-xs pr-2 flex items-center"
+                  className="text-gray hover:text-orange-500 pr-2 flex items-center"
                   onClick={(event) => {
                     event.stopPropagation();
                     setReseting(true);

@@ -1,6 +1,10 @@
 import { useTranslation } from 'next-i18next';
 import { FC, useMemo } from 'react';
 import { Schema, SchemaForm } from '@prisme.ai/design-system';
+import useSchema from '../../SchemaForm/useSchema';
+import { useWorkspace } from '../../WorkspaceProvider';
+import { useApps } from '../../AppsProvider';
+import { useAutomationBuilder } from '../context';
 
 interface TriggerFormProps {
   trigger?: Prismeai.When;
@@ -11,6 +15,26 @@ const buttons: any[] = [];
 
 export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
   const { t } = useTranslation('workspaces');
+
+  const { workspace } = useWorkspace();
+  const { appInstances } = useApps();
+  const { automationId } = useAutomationBuilder();
+  const { extractAutocompleteOptions } = useSchema({
+    config: workspace.config,
+    apps: appInstances.get(workspace.id),
+    automations: Object.keys(workspace.automations || {}).reduce(
+      (prev, key) =>
+        key === automationId
+          ? prev
+          : {
+              ...prev,
+              [key]: (workspace.automations || {})[key],
+            },
+      {}
+    ),
+    workspace,
+  });
+
   const initialValue = useMemo(
     () => ({
       events: trigger?.events || [],
@@ -29,6 +53,10 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
           items: {
             type: 'string',
             title: t('automations.trigger.events.item'),
+            'ui:widget': 'autocomplete',
+            'ui:options': {
+              autocomplete: 'events:emit',
+            },
           },
         },
         // dates: {
@@ -55,6 +83,7 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
           addItem: t('automations.trigger.events.add'),
         }}
         buttons={buttons}
+        utils={{ extractAutocompleteOptions }}
       />
     </div>
   );

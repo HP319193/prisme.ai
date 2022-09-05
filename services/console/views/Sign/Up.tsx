@@ -66,7 +66,7 @@ export const SignIn = () => {
   return (
     <div className="flex grow flex-col-reverse md:flex-row overflow-y-auto">
       <div className="!flex flex-col bg-gradient-to-br from-[#0A1D3B] to-[#0F2A54] items-center justify-center md:w-[40vw]">
-        <div className="hidden md:flex flex-col grow justify-center w-full space-y-4 lg:space-y-6">
+        <div className="flex invisible md:visible flex-col grow justify-center w-full space-y-4 lg:space-y-6">
           <div className="w-1/2 h-4 lg:h-8 bg-accent rounded-r-[100rem]" />
           <div className="w-1/2 h-4 lg:h-8 bg-pr-orange rounded-r-[100rem]" />
           <div className="w-1/2 h-4 lg:h-8 bg-pr-grey rounded-r-[100rem]" />

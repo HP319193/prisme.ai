@@ -5,6 +5,7 @@ import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useScrollListener } from '../useScrollListener';
 import useLocalizedText from '../../utils/useLocalizedText';
 import {
+  Button,
   Collapse,
   Feed,
   Layout,
@@ -127,8 +128,9 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
       }
       className="h-full"
     >
-      <div className="flex h-full overflow-auto" ref={ref}>
+      <div className="flex h-full overflow-auto flex-col" ref={ref}>
         {content}
+        <Button onClick={nextEvents}>{t('events.more')}</Button>
       </div>
     </Layout>
   );

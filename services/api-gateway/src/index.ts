@@ -43,5 +43,6 @@ async function gracefulShutdown() {
   await broker.close();
   process.exit(0);
 }
+
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);

@@ -13,6 +13,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 servers:
   - url: https://api.eda.prisme.ai
+  - url: http://localhost:3001
 security:
   - ApiKeyAuth: []
     CookieAuth: []
@@ -194,6 +195,62 @@ paths:
       responses:
         '200':
           description: Success Response
+
+  /v2/user/password:
+    post:
+      description: Ask to reset a password for a specific user given an email. If the email is unknown, the API call will not fail.
+      operationId: resetPassword
+      tags:
+        - API Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required:
+                    - email
+                  properties:
+                    email:
+                      type: string
+                    language:
+                      type: string
+                - type: object
+                  required:
+                    - token
+                    - password
+                  properties:
+                    token:
+                      type: string
+                    password:
+                      type: string
+                      description: New user password
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnyValue'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+        '403':
+          description: Bad permissions (such as an invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
 
   ############################################# permissions routes
   /v2/{subjectType}/{subjectId}/permissions:
@@ -2610,6 +2667,10 @@ components:
         - automations
         - blocks
       properties:
+        slug:
+          type: string
+        appName:
+          type: string
         config:
           $ref: '#/components/schemas/Config'
         blocks:
@@ -2648,6 +2709,33 @@ components:
                 $ref: '#/components/schemas/LocalizedText'
         photo:
           type: string
+        events:
+          type: object
+          properties:
+            emit:
+              type: array
+              items:
+                type: object
+                required:
+                  - event
+                properties:
+                  event:
+                    type: string
+                  autocomplete:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        from:
+                          type: string
+                        path:
+                          type: string
+                        template:
+                          type: string
+            listen:
+              type: array
+              items:
+                type: string
 
     AppInstancePatch:
       type: object
@@ -2945,8 +3033,20 @@ components:
             payload:
               $ref: '#/components/schemas/AnyValue'
             target:
-              $ref: "#/components/schemas/PrismeEventTarget"
-
+              $ref: '#/components/schemas/PrismeEventTarget'
+            private:
+              type: boolean
+            autocomplete:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  from:
+                    type: string
+                  path:
+                    type: string
+                  template:
+                    type: string
     CreateUserTopic:
       type: object
       required:
@@ -2954,7 +3054,7 @@ components:
       maxProperties: 1
       properties:
         createUserTopic:
-          $ref: "#/components/schemas/UserTopic"
+          $ref: '#/components/schemas/UserTopic'
 
     JoinUserTopic:
       type: object
@@ -3148,7 +3248,7 @@ components:
               description: HTTP request body
               $ref: '#/components/schemas/AnyValue'
             emitErrors:
-              description: "If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default"
+              description: 'If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default'
               type: boolean
             multipart:
               description: Sends a multipart/form-data HTTP request
@@ -3341,11 +3441,11 @@ components:
         afterDate:
           type: string
         total:
-          $ref: "#/components/schemas/UsageMetrics"
+          $ref: '#/components/schemas/UsageMetrics'
         apps:
           type: array
           items:
-            $ref: "#/components/schemas/AppUsageMetrics"
+            $ref: '#/components/schemas/AppUsageMetrics'
 
     UsageMetrics:
       type: object
@@ -3377,7 +3477,7 @@ components:
         slug:
           type: string
         total:
-          $ref: "#/components/schemas/UsageMetrics"
+          $ref: '#/components/schemas/UsageMetrics'
         appInstances:
           type: array
           items:
@@ -3389,7 +3489,7 @@ components:
               slug:
                 type: string
               total:
-                $ref: "#/components/schemas/UsageMetrics"
+                $ref: '#/components/schemas/UsageMetrics'
 
     ################################################################################################################################
     ############################################################ Events ############################################################
@@ -3448,7 +3548,7 @@ components:
         payload:
           $ref: '#/components/schemas/AnyValue'
         target:
-          $ref: "#/components/schemas/PrismeEventTarget"
+          $ref: '#/components/schemas/PrismeEventTarget'
         error:
           type: object
           properties:
@@ -3731,6 +3831,51 @@ components:
               type: string
             user:
               $ref: '#/components/schemas/User'
+
+    SucceededPasswordReset:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.passwordReset.succeeded
+          enum:
+            - gateway.passwordReset.succeeded
+        payload:
+          type: object
+          required:
+            - ip
+            - email
+          properties:
+            ip:
+              type: string
+            email:
+              type: string
+
+    SucceededPasswordResetRequested:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.passwordReset.requested
+          enum:
+            - gateway.passwordReset.requested
+        payload:
+          type: object
+          required:
+            - ip
+            - email
+          properties:
+            ip:
+              type: string
+            email:
+              type: string
+
 
     ########################## Apps events ##########################
     PublishedApp:
@@ -4355,7 +4500,7 @@ components:
           enum:
             - userTopics.created
         payload:
-          $ref: "#/components/schemas/UserTopic"
+          $ref: '#/components/schemas/UserTopic'
 
     JoinedUserTopic:
       type: object

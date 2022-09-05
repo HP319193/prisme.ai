@@ -34,7 +34,7 @@ const schema = {
         remove: 'pages.blocks.datatable.settings.columns.items.remove',
         properties: {
           label: {
-            type: 'string',
+            type: 'localized:string',
             title: 'pages.blocks.datatable.settings.columns.items._label.label',
             description:
               'pages.blocks.datatable.settings.columns.items._label.description',
@@ -82,7 +82,7 @@ const schema = {
                 'pages.blocks.datatable.settings.columns.items.actions.items.remove',
               properties: {
                 label: {
-                  type: 'string',
+                  type: 'localized:string',
                   title:
                     'pages.blocks.datatable.settings.columns.items.actions.items._label.label',
                   description:

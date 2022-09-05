@@ -3,7 +3,7 @@ import { Button, Input } from '@prisme.ai/design-system';
 import Field from '../layouts/Field';
 import { useCallback } from 'react';
 import { useUser } from './UserProvider';
-import { useTranslation } from 'next-i18next';
+import { Trans, useTranslation } from 'next-i18next';
 
 interface Values {
   email: string;
@@ -48,7 +48,7 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
                 />
               )}
             </Field>
-            <Field name="password" containerClassName="!mx-0 !mb-8">
+            <Field name="password" containerClassName="!mx-0 !mb-2">
               {({ input: { type, ...inputProps }, className }) => (
                 <Input
                   placeholder={t('in.password')}
@@ -58,6 +58,18 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
                 />
               )}
             </Field>
+            <div className="!mx-0 !mb-8 text-right text-xs">
+              <Trans
+                t={t}
+                i18nKey="in.forgot"
+                values={{
+                  url: '/forgot',
+                }}
+                components={{
+                  a: <a href={`forgot`} />,
+                }}
+              />
+            </div>
             <Button
               variant="primary"
               disabled={loading}
