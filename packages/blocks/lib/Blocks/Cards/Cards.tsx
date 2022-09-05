@@ -1,20 +1,30 @@
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import BlockTitle from '../Internal/BlockTitle';
 import { useBlock } from '../../Provider';
-import useLocalizedText from '../../useLocalizedText';
 import { withI18nProvider } from '../../i18n';
-import { RichTextRenderer } from '../RichText';
 import tw from '../../tw';
-import { Card, CardsConfig } from './types';
-import CardButton from './CardButton';
-import Accordion from './Accordion';
+import {
+  CardAction,
+  CardArticle,
+  CardClassic,
+  CardsConfig,
+  CardShort,
+  CardSquare,
+  CardsType,
+} from './types';
+import Classic from './Variants/Classic';
+import Square from './Variants/Square';
+import Article from './Variants/Article';
+import Short from './Variants/Short';
+import Actions from './Variants/Actions';
+
+const cardsIsShort = (
+  cards: CardsType,
+  variant: CardsConfig['variant']
+): cards is CardShort[] => variant === 'short';
 
 export const Cards = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
-  const { localize } = useLocalizedText();
   const { config = {} as CardsConfig } = useBlock<CardsConfig>();
   const [canScroll, setCanScroll] = useState<boolean | null>(false);
 
@@ -158,7 +168,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
                     content: previewText,
                   },
                 ],
-              } as Card)
+              } as CardClassic)
           )
         : []),
     [config.cards, preview, previewText]
@@ -166,160 +176,86 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
 
   const getCoverStyle = useCallback(
     (index: number) => {
-      const { cover } = cards[index] || {};
+      const currentCards = cards;
+
+      if (cardsIsShort(currentCards, config.variant)) return;
+
+      const cover = (currentCards[index] || {}).cover;
       const isUrl = cover && cover.match(/^http/);
+
       return {
-        backgroundImage: isUrl ? `url(${cover})` : undefined,
-        backgroundColor: isUrl ? undefined : cover || getRandomColor(index),
+        background: `${
+          isUrl
+            ? `url(${cover})`
+            : 'linear-gradient(rgba(81, 81, 81, 0), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.20)), rgb(54, 54, 54)'
+        }`,
       };
     },
     [cards]
   );
 
-  return (
-    <div className={tw`block-cards flex flex-col w-full`}>
-      <div
-        className={tw`block-cards__title-container title-container pt-8 pl-8`}
-      >
-        {config.title && <BlockTitle value={localize(config.title)} />}
-      </div>
-      <div
-        className={tw`block-cards__cards-container cards-container relative !pt-0 w-full overflow-hidden`}
-      >
-        <div
-          ref={container}
-          className={`cards-container__cards-container cards-container ${styles.container}`}
-        >
-          {(cards as Card[]).map(
-            ({ title, description, cover, content = [] }, index) => (
-              <div
-                key={index}
-                className={`${tw`cards-container__card-container card-container flex flex-col snap-start my-6 pl-[10px] group w-[15rem] min-h-[23rem] flex-card`}`}
-              >
-                <div
-                  className={`${tw`card-container__card card relative flex flex-1 flex-col mx-2 rounded-[20px] `}`}
-                >
-                  <div
-                    className={tw`card__card-image card-image h-[10rem] p-[-1px] rounded-[15px] absolute top-0 left-0 right-0 bg-no-repeat bg-contain bg-top`}
-                    style={getCoverStyle(index)}
-                  />
-                  <div
-                    className={tw`
-                      card__card-content card-content
-                      relative flex flex-col min-h-[203px] mt-[103px]
-                      rounded-[15px] p-[1.375rem] border-[1px] border-gray-200
-                      bg-white
-                      transition-transform
-                      hover:translate-y-3 hover:scale-105 shadow-sm hover:shadow-lg
-                      text-[0.938rem]
-                      `}
-                  >
-                    <div
-                      className={`${tw`card__card-title card-content font-bold text-sm text-accent text-center`}`}
-                    >
-                      {localize(title)}
-                    </div>
-                    <div
-                      className={`${tw`card__card-description card-description text-[10px] my-2 text-neutral-500 text-center`}`}
-                    >
-                      {localize(description)}
-                    </div>
-                    {content &&
-                      Array.isArray(content) &&
-                      content.map((item, index) => (
-                        <div
-                          key={index}
-                          className={`${tw`card__card-content-outer card-content-outer flex mb-4 text-[0.625rem]`}`}
-                        >
-                          {item.type === 'text' && (
-                            <div className="card-content-outer__content-text content-text">
-                              <div
-                                className="content-text__content content"
-                                dangerouslySetInnerHTML={{
-                                  __html: localize(item.value),
-                                }}
-                              />
-                            </div>
-                          )}
-                          {item.type === 'button' && <CardButton {...item} />}
-                          {item.type === 'accordion' && (
-                            <div
-                              className={`${tw`card-content-outer__accordion accordion flex flex-1 border-[1px] border-neutral-200 rounded p-2 max-w-full`}`}
-                            >
-                              <Accordion
-                                title={
-                                  <div
-                                    className={tw`accordion__accordion-title accordion-title flex flex-row items-center`}
-                                  >
-                                    {item.icon && (
-                                      // eslint-disable-next-line @next/next/no-img-element
-                                      <img
-                                        src={item.icon}
-                                        alt={localize(item.title)}
-                                        width={16}
-                                        height={16}
-                                        className={tw`accordion-title__image image`}
-                                      />
-                                    )}{' '}
-                                    {localize(item.title)}
-                                  </div>
-                                }
-                              >
-                                <div
-                                  className={
-                                    'accordion-content-container__content content'
-                                  }
-                                >
-                                  <RichTextRenderer>
-                                    {localize(item.content)}
-                                  </RichTextRenderer>
-                                </div>
-                              </Accordion>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </div>
-            )
-          )}
-        </div>
-        {canScroll && (
-          <div className={`${tw`block-cards__scroll text-accent text-l`}`}>
-            <div
-              className={tw`block-cards__scroll__left absolute flex justify-center top-16 left-6 h-8 w-8 bg-white rounded-[100%] shadow-lg`}
-            >
-              <Tooltip title={t('cards.prev')} placement="right">
-                <button
-                  onClick={scroll(-1)}
-                  className={'block-cards__scroll__left__button outline-none'}
-                >
-                  <LeftOutlined
-                    className={tw`block-cards__scroll__left__button__icon bg-white rounded-[50%]`}
-                  />
-                </button>
-              </Tooltip>
-            </div>
-            <div
-              className={tw`block-cards__scroll__right absolute flex justify-center top-16 right-6 h-8 w-8 bg-white rounded-[100%] shadow-lg`}
-            >
-              <Tooltip title={t('cards.next')} placement="left">
-                <button
-                  onClick={scroll(1)}
-                  className={tw`block-cards__scroll__right__button outline-none`}
-                >
-                  <RightOutlined
-                    className={tw`block-cards__scroll__right__button__icon bg-white rounded-[50%]`}
-                  />
-                </button>
-              </Tooltip>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  switch (config.variant) {
+    case 'square':
+      return (
+        <Square
+          styles={styles}
+          container={container}
+          canScroll={canScroll}
+          scroll={scroll}
+          {...config}
+          cards={cards as CardSquare[]}
+        />
+      );
+    case 'article':
+      return (
+        <Article
+          styles={styles}
+          container={container}
+          getCoverStyle={getCoverStyle}
+          canScroll={canScroll}
+          scroll={scroll}
+          {...config}
+          cards={cards as CardArticle[]}
+        />
+      );
+    case 'short':
+      return (
+        <Short
+          styles={styles}
+          container={container}
+          getCoverStyle={getCoverStyle}
+          canScroll={canScroll}
+          scroll={scroll}
+          {...config}
+          cards={cards as CardShort[]}
+        />
+      );
+    case 'actions':
+      return (
+        <Actions
+          styles={styles}
+          container={container}
+          getCoverStyle={getCoverStyle}
+          canScroll={canScroll}
+          scroll={scroll}
+          {...config}
+          cards={cards as CardAction[]}
+        />
+      );
+    case 'classic':
+    default:
+      return (
+        <Classic
+          styles={styles}
+          container={container}
+          getCoverStyle={getCoverStyle}
+          canScroll={canScroll}
+          scroll={scroll}
+          {...config}
+          cards={cards as CardClassic[]}
+        />
+      );
+  }
 };
 
 export default withI18nProvider(Cards);

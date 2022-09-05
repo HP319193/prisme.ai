@@ -1,4 +1,5 @@
 import './i18n';
+import './styles.css';
 import * as React from 'react';
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -40,9 +41,7 @@ export interface BlockComponentProps {
     container?: HTMLElement;
   };
 }
-export type BlockComponent = (
-  props: BlockComponentProps
-) => ReactElement & {
+export type BlockComponent = (props: BlockComponentProps) => ReactElement & {
   schema?: Schema;
 };
 

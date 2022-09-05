@@ -8,7 +8,43 @@ export interface CardButtonType {
   icon?: string;
 }
 
-export interface Card {
+export interface CardAction {
+  title?: Prismeai.LocalizedText;
+  description?: Prismeai.LocalizedText;
+  cover?: string;
+  content?: {
+    type: 'event' | 'url';
+    text: Prismeai.LocalizedText;
+    value: string;
+  }[];
+}
+
+export interface CardSquare {
+  title?: Prismeai.LocalizedText;
+  description?: Prismeai.LocalizedText;
+  cover?: string;
+}
+
+export interface CardShort {
+  title?: Prismeai.LocalizedText;
+  subtitle?: Prismeai.LocalizedText;
+  description?: Prismeai.LocalizedText;
+  backgroundColor?:
+    | 'black'
+    | 'white'
+    | 'transparent-white'
+    | 'transparent-black';
+}
+
+export interface CardArticle {
+  title?: Prismeai.LocalizedText;
+  subtitle?: Prismeai.LocalizedText;
+  tag?: Prismeai.LocalizedText;
+  description?: Prismeai.LocalizedText;
+  cover?: string;
+}
+
+export interface CardClassic {
   title?: Prismeai.LocalizedText;
   description?: Prismeai.LocalizedText;
   cover?: string;
@@ -27,10 +63,17 @@ export interface Card {
   )[];
 }
 
+export type CardsType =
+  | CardArticle[]
+  | CardAction[]
+  | CardClassic[]
+  | CardSquare[]
+  | CardShort[];
+
 export interface CardsConfig {
   title: Prismeai.LocalizedText;
-  cards: Card[];
-  type: 'classic' | 'square' | 'withButtons';
+  cards: CardsType;
+  variant: 'classic' | 'short' | 'article' | 'square' | 'actions';
   layout: {
     type: 'grid' | 'column' | 'carousel';
     autoScroll?: boolean;

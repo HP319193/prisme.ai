@@ -3,6 +3,9 @@ import { setup, tw } from 'twind';
 
 setup({
   plugins: {
+    basis: (parts) => ({
+      'flex-basis': '150rem',
+    }),
     snap: (parts) => {
       switch (parts[0]) {
         case 'start':
