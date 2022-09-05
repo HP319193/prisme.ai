@@ -15,13 +15,13 @@ import {
   useRef,
   useState,
 } from 'react';
-import BlockTitle from './Internal/BlockTitle';
-import { useBlock } from '../Provider';
-import useLocalizedText from '../useLocalizedText';
-import { withI18nProvider } from '../i18n';
-import { useBlocks } from '../Provider/blocksContext';
-import { RichTextRenderer } from './RichText';
-import tw from '../tw';
+import BlockTitle from '../Internal/BlockTitle';
+import { useBlock } from '../../Provider';
+import useLocalizedText from '../../useLocalizedText';
+import { withI18nProvider } from '../../i18n';
+import { useBlocks } from '../../Provider/blocksContext';
+import { RichTextRenderer } from '../RichText';
+import tw from '../../tw';
 
 interface CardButton {
   type: 'button';
@@ -55,6 +55,7 @@ interface Card {
 interface CardsConfig {
   title: Prismeai.LocalizedText;
   cards: Card[];
+  type: 'classic' | 'square' | 'withButtons';
   layout: {
     type: 'grid' | 'column' | 'carousel';
     autoScroll?: boolean;
