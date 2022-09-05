@@ -1,3 +1,4 @@
+import path from 'path';
 import nodemailer from 'nodemailer';
 import mailgunTransport from 'nodemailer-mailgun-transport';
 import Email from 'email-templates';
@@ -24,14 +25,15 @@ const initTransport = () => {
 };
 
 // Prepare email-templates sender instance with default options
+// In development mode emails will not be send but previewed in your browser.
+// If you want to really send the email you wil lhav to change process.env.NODE_ENV to "production"
 export const emailSender = new Email({
   message: {
     from: EMAIL_FROM,
   },
-  send: true,
-  preview: false,
   transport: initTransport(),
   i18n: {
+    directory: path.join(__dirname, '../../locales'),
     defaultLocale: 'en',
     locales: ['en', 'fr', 'es'],
   },
