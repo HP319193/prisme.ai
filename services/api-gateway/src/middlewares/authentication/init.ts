@@ -10,7 +10,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as CustomStrategy } from 'passport-custom';
 import { logger } from '../../logger';
 import services from '../../services';
-import { AuthenticationError } from '../../types/errors';
+import { AuthenticationError, NotFoundError } from '../../types/errors';
 
 export async function init(app: Application) {
   app.use(cookieParser());
@@ -50,6 +50,10 @@ export async function init(app: Application) {
       const user = await users.get(<string>id);
       done(undefined, user);
     } catch (err) {
+      if (err instanceof NotFoundError) {
+        done(undefined, null);
+        return;
+      }
       done(err, undefined);
     }
   });

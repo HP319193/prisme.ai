@@ -12,11 +12,12 @@ import {
   PrismeError,
   InvalidPassword,
   InvalidOrExpiredToken,
+  NotFoundError,
 } from '../../types/errors';
 import { comparePasswords, hashPassword } from './utils';
 import { emailSender } from '../../utils/email';
 import { syscfg, mails as mailConfig } from '../../config';
-import { Logger } from '../../logger';
+import { logger, Logger } from '../../logger';
 
 const { RESET_PASSWORD_URL } = mailConfig;
 
@@ -144,9 +145,18 @@ export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
 
 export const get = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function (id: string) {
-    const user = await Users.get(id);
-    delete user.password;
-    return user;
+    try {
+      const user = await Users.get(id);
+      delete user.password;
+      return user;
+    } catch (err) {
+      logger.warn({
+        msg: `An error occured while trying to fetch user ${id}`,
+        userId: id,
+        err,
+      });
+      throw new NotFoundError('User not found', { userId: id });
+    }
   };
 
 export const login = (Users: StorageDriver, ctx?: PrismeContext) =>
