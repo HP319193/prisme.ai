@@ -30,6 +30,26 @@
                 "type": "string"
               }
             }
+          },
+          "private": {
+            "type": "boolean"
+          },
+          "autocomplete": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "template": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }

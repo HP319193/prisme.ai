@@ -20,6 +20,7 @@ export const UIWidgetsForString = [
   'date',
   'select',
   'color',
+  'autocomplete',
 ] as const;
 export const UIWidgetsForLocalizedString = ['textarea'];
 export const UIWidgetsByType = {
@@ -58,6 +59,18 @@ export type UiOptionsSelect = {
     options: {
       label: string | ReactNode;
       value: any;
+    }[];
+  };
+};
+export type UiOptionsDynamicAutocomplete = {
+  autocomplete: string;
+};
+export type UiOptionsAutocomplete = {
+  autocomplete: {
+    options: {
+      label: string | ReactNode;
+      value?: any;
+      options?: { label: string | ReactNode; value?: any }[];
     }[];
   };
 };
@@ -104,6 +117,8 @@ export interface Schema extends Record<string, any> {
     | UiOptionsUpload
     | UiOptionsSelect
     | UiOptionsDate
+    | UiOptionsAutocomplete
+    | UiOptionsDynamicAutocomplete
     | Record<string, any>;
 }
 

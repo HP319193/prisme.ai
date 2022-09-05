@@ -2667,6 +2667,10 @@ components:
         - automations
         - blocks
       properties:
+        slug:
+          type: string
+        appName:
+          type: string
         config:
           $ref: '#/components/schemas/Config'
         blocks:
@@ -2705,6 +2709,33 @@ components:
                 $ref: '#/components/schemas/LocalizedText'
         photo:
           type: string
+        events:
+          type: object
+          properties:
+            emit:
+              type: array
+              items:
+                type: object
+                required:
+                  - event
+                properties:
+                  event:
+                    type: string
+                  autocomplete:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        from:
+                          type: string
+                        path:
+                          type: string
+                        template:
+                          type: string
+            listen:
+              type: array
+              items:
+                type: string
 
     AppInstancePatch:
       type: object
@@ -3002,8 +3033,20 @@ components:
             payload:
               $ref: '#/components/schemas/AnyValue'
             target:
-              $ref: "#/components/schemas/PrismeEventTarget"
-
+              $ref: '#/components/schemas/PrismeEventTarget'
+            private:
+              type: boolean
+            autocomplete:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  from:
+                    type: string
+                  path:
+                    type: string
+                  template:
+                    type: string
     CreateUserTopic:
       type: object
       required:
@@ -3011,7 +3054,7 @@ components:
       maxProperties: 1
       properties:
         createUserTopic:
-          $ref: "#/components/schemas/UserTopic"
+          $ref: '#/components/schemas/UserTopic'
 
     JoinUserTopic:
       type: object
@@ -3205,7 +3248,7 @@ components:
               description: HTTP request body
               $ref: '#/components/schemas/AnyValue'
             emitErrors:
-              description: "If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default"
+              description: 'If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default'
               type: boolean
             multipart:
               description: Sends a multipart/form-data HTTP request
@@ -3398,11 +3441,11 @@ components:
         afterDate:
           type: string
         total:
-          $ref: "#/components/schemas/UsageMetrics"
+          $ref: '#/components/schemas/UsageMetrics'
         apps:
           type: array
           items:
-            $ref: "#/components/schemas/AppUsageMetrics"
+            $ref: '#/components/schemas/AppUsageMetrics'
 
     UsageMetrics:
       type: object
@@ -3434,7 +3477,7 @@ components:
         slug:
           type: string
         total:
-          $ref: "#/components/schemas/UsageMetrics"
+          $ref: '#/components/schemas/UsageMetrics'
         appInstances:
           type: array
           items:
@@ -3446,7 +3489,7 @@ components:
               slug:
                 type: string
               total:
-                $ref: "#/components/schemas/UsageMetrics"
+                $ref: '#/components/schemas/UsageMetrics'
 
     ################################################################################################################################
     ############################################################ Events ############################################################
@@ -3505,7 +3548,7 @@ components:
         payload:
           $ref: '#/components/schemas/AnyValue'
         target:
-          $ref: "#/components/schemas/PrismeEventTarget"
+          $ref: '#/components/schemas/PrismeEventTarget'
         error:
           type: object
           properties:
@@ -4457,7 +4500,7 @@ components:
           enum:
             - userTopics.created
         payload:
-          $ref: "#/components/schemas/UserTopic"
+          $ref: '#/components/schemas/UserTopic'
 
     JoinedUserTopic:
       type: object

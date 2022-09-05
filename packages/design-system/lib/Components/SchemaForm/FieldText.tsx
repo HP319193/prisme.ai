@@ -3,6 +3,7 @@ import { useField } from 'react-final-form';
 import Input from '../Input';
 import { useSchemaForm } from './context';
 import Description from './Description';
+import FieldAutocomplete from './FieldAutocomplete';
 import FieldDate from './FieldDate';
 import FieldTextColor from './FieldTextColor';
 import FieldTextTextArea from './FieldTextTextArea';
@@ -42,6 +43,8 @@ export const FieldText = (props: FieldProps) => {
       return <Component {...props} />;
     case 'color':
       return <FieldTextColor {...props} />;
+    case 'autocomplete':
+      return <FieldAutocomplete {...props} />;
   }
 
   return (

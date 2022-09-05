@@ -1,7 +1,7 @@
 import { UiOptionsSelect, Schema } from '@prisme.ai/design-system';
 import { createContext, FC, ReactElement, useContext } from 'react';
 import { SelectProps } from '../Select';
-import { FieldProps } from './types';
+import { FieldProps, UiOptionsAutocomplete } from './types';
 
 type FieldComponent<T = any> = (props: FieldProps & T) => ReactElement | null;
 type InputComponent = (props: {
@@ -40,6 +40,9 @@ export interface SchemaFormContext {
     extractSelectOptions: (
       schema: Schema
     ) => UiOptionsSelect['select']['options'] | null;
+    extractAutocompleteOptions: (
+      schema: Schema
+    ) => UiOptionsAutocomplete['autocomplete']['options'] | null;
   };
 }
 
@@ -52,6 +55,7 @@ export const context = createContext<SchemaFormContext>({
   },
   utils: {
     extractSelectOptions: () => [],
+    extractAutocompleteOptions: () => [],
   },
 });
 

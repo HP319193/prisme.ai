@@ -658,3 +658,35 @@ WithDefaultValues.args = {
     },
   },
 };
+
+export const WithAutocompletee = (props: FormProps) => {
+  const [value, setValue] = useState<{ values: any }>(props.initialValues);
+
+  return (
+    <div>
+      <SchemaForm
+        {...props}
+        initialValues={value}
+        onSubmit={setValue}
+        onChange={setValue}
+      />
+      <pre>
+        <code>{value && JSON.stringify(value, null, '  ')}</code>
+      </pre>
+    </div>
+  );
+};
+WithAutocompletee.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      events: {
+        type: 'string',
+        'ui:widget': 'autocomplete',
+        'ui:options': {
+          autocomplete: 'events',
+        },
+      },
+    },
+  },
+};

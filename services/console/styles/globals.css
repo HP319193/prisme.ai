@@ -160,3 +160,8 @@ a.ant-btn.pr-btn-primary-small {
   border-bottom-left-radius: 0.6rem;
   border-bottom-right-radius: 0.6rem;
 }
+
+.schema-form-autocomplete .ant-select-selector {
+  flex: 1;
+  border: none;
+}

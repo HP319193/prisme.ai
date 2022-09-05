@@ -741,6 +741,8 @@ declare namespace Prismeai {
         slug?: string;
     }
     export interface AppDetails {
+        slug?: string;
+        appName?: string;
         config?: Config;
         blocks: {
             slug: string;
@@ -758,6 +760,19 @@ declare namespace Prismeai {
             description?: LocalizedText;
         }[];
         photo?: string;
+        events?: {
+            emit?: {
+                event: string;
+                autocomplete?: {
+                    [name: string]: {
+                        from?: string;
+                        path?: string;
+                        template?: string;
+                    };
+                };
+            }[];
+            listen?: string[];
+        };
     }
     export interface AppEvent {
         /**
@@ -1152,6 +1167,19 @@ declare namespace Prismeai {
             description?: LocalizedText;
         }[];
         photo?: string;
+        events?: {
+            emit?: {
+                event: string;
+                autocomplete?: {
+                    [name: string]: {
+                        from?: string;
+                        path?: string;
+                        template?: string;
+                    };
+                };
+            }[];
+            listen?: string[];
+        };
     }
     /**
      * Page
@@ -1187,6 +1215,14 @@ declare namespace Prismeai {
             event: string;
             payload?: AnyValue;
             target?: PrismeEventTarget;
+            private?: boolean;
+            autocomplete?: {
+                [name: string]: {
+                    from?: string;
+                    path?: string;
+                    template?: string;
+                };
+            };
         };
     }
     export interface ExecutedAutomation {
