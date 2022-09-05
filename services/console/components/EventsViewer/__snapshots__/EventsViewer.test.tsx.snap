@@ -2,7 +2,7 @@
 
 exports[`should render empty 1`] = `
 <div
-  className="flex h-full overflow-auto"
+  className="flex h-full overflow-auto flex-col"
 >
   <div
     className="flex flex-1 justify-around items-center flex-col"
@@ -123,22 +123,24 @@ exports[`should render empty 1`] = `
     </span>
     <div />
   </div>
+  events.more
 </div>
 `;
 
 exports[`should render events 1`] = `
 <div
-  className="flex h-full overflow-auto"
+  className="flex h-full overflow-auto flex-col"
 >
   <div
     className="w-full"
   />
+  events.more
 </div>
 `;
 
 exports[`should render loading 1`] = `
 <div
-  className="flex h-full overflow-auto"
+  className="flex h-full overflow-auto flex-col"
 >
   <div
     className="flex flex-1 justify-around items-center flex-col"
@@ -259,5 +261,6 @@ exports[`should render loading 1`] = `
     </span>
     <div />
   </div>
+  events.more
 </div>
 `;
