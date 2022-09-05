@@ -43,8 +43,8 @@ export class RequestValidationError extends PrismeError {
 }
 
 export class NotFoundError extends PrismeError {
-  constructor(msg: string = 'Route not found') {
-    super(msg, undefined, 404);
+  constructor(msg: string = 'Route not found', details?: any) {
+    super(msg, details, 404);
   }
 }
 
