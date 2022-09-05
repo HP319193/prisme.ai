@@ -143,7 +143,7 @@ const HeaderWorkspace = () => {
               content={() => (
                 <div className="flex h-[75vh] w-[30rem]">
                   <IFrameLoader
-                    className="flex grow"
+                    className="flex flex-1"
                     src={`https://studio.prisme.ai/${language}/pages/I55NTRH`}
                   />
                 </div>
@@ -158,7 +158,7 @@ const HeaderWorkspace = () => {
               content={() => (
                 <div className="flex h-[75vh] w-[30rem]">
                   <IFrameLoader
-                    className="flex grow"
+                    className="flex flex-1"
                     src={`https://studio.prisme.ai/${language}/pages/xDe6PaQ`}
                   />
                 </div>
