@@ -37,6 +37,9 @@ import { useWorkspace } from '../components/WorkspaceProvider';
 import getLayout from '../layouts/WorkspaceLayout';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import { usePrevious } from '../utils/usePrevious';
+import { PublicPageRenderer } from './PublicPage';
+import { usePageEndpoint } from '../utils/urls';
+import FramePortal from '../components/FramePortal';
 
 const CSSEditor = ({
   name,
@@ -126,6 +129,7 @@ const CSSEditor = ({
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
+  const pageHost = usePageEndpoint();
   const { workspace } = useWorkspace();
   const { setDirty } = useWorkspaceLayout();
   const { localize } = useLocalizedText();
@@ -205,7 +209,9 @@ export const Page = () => {
               {...props}
               sectionIds={
                 page
-                  ? (page.blocks || []).flatMap(
+                  ? (
+                      page.blocks || []
+                    ).flatMap(
                       ({ config: { sectionId, name = sectionId } = {} }) =>
                         sectionId ? { id: sectionId, name } : []
                     )
@@ -222,9 +228,10 @@ export const Page = () => {
   const cleanValue = useCallback(
     (value: Prismeai.Page) => ({
       ...value,
-      blocks: (
-        (value.blocks || []) as PageBuilderContext['page']['blocks']
-      ).map(({ key, ...block }) => block),
+      blocks: ((value.blocks ||
+        []) as PageBuilderContext['page']['blocks']).map(
+        ({ key, ...block }) => block
+      ),
       id: page ? page.id : '',
     }),
     [page]
@@ -427,29 +434,7 @@ export const Page = () => {
         </title>
       </Head>
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
-        <div
-          className={`
-          rounded
-          border-[1px]
-          border-gray-200
-          overflow-hidden
-          absolute top-4 bottom-4 right-4 left-4
-          shadow-lg
-          bg-white
-          flex flex-1
-          transition-transform
-          transition-duration-200
-          transition-ease-in
-          z-[11]
-          ${displayPreview ? '' : '-translate-x-[110%]'}
-        `}
-        >
-          <PagePreview
-            page={detailedPage(cleanValue(value))}
-            visible={displayPreview}
-          />
-        </div>
-        <PageBuilder value={value} onChange={updateValue} blocks={blocks} />
+        <PagePreview page={page} />
       </div>
     </>
   );

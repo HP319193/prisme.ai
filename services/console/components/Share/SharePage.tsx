@@ -14,12 +14,8 @@ import { useTranslation } from 'react-i18next';
 import FieldContainer from '../../layouts/Field';
 import { usePermissions } from '../PermissionsProvider';
 import { DeleteOutlined, LinkOutlined } from '@ant-design/icons';
-import getConfig from 'next/config';
 import { useUser } from '../UserProvider';
-
-const {
-  publicRuntimeConfig: { PAGES_HOST = '' },
-} = getConfig();
+import { usePageEndpoint } from '../../utils/urls';
 
 interface SharePageProps {
   pageId: string;
@@ -33,6 +29,7 @@ interface userPermissionForm {
 const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
+  const pageHost = usePageEndpoint();
   const { user } = useUser();
   const {
     usersPermissions,
@@ -129,7 +126,7 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
     });
   };
 
-  const link = `${PAGES_HOST || global.location.origin}/${pageSlug}`;
+  const link = `${pageHost}/${pageSlug}`;
   const copyLink = useCallback(() => {
     window.navigator.clipboard.writeText(link);
     notification.success({
