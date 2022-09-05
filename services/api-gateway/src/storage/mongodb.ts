@@ -46,7 +46,7 @@ export class MongodbDriver implements StorageDriver {
           { _id: new ObjectId(_id || id) },
           { $set: object }
         )
-      : await collection.insertOne(object);
+      : await collection.insertOne(data);
 
     return this.prepareData(data);
   }
