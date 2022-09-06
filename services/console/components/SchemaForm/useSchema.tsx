@@ -184,11 +184,19 @@ export const useSchema = (store: Record<string, any> = {}) => {
           const automations =
             store?.automations || workspace?.automations || {};
 
-          const events = Object.keys(automations).flatMap((key) => {
-            const automation = automations[key];
-            if (!automation.do || automation.do.length === 0) return [];
-            return getEmitEvents(automation.do);
-          });
+          const events = Object.keys(automations)
+            .flatMap((key) => {
+              const automation = automations[key];
+              if (!automation.do || automation.do.length === 0) return [];
+              return getEmitEvents(automation.do);
+            })
+            // Remove empty and dedup
+            .filter(
+              ({ event }, index, all) =>
+                event &&
+                !all.slice(0, index).find(({ event: e }) => e === event)
+            );
+
           const pagesEvents = Array.from(
             pages
           ).flatMap(({ name, blocks = [] }) =>
