@@ -13,7 +13,7 @@
     "start": "npm run build-tailwind && concurrently --kill-others \"npm run watch-less\" \"npm run storybook\""
   },
   "dependencies": {
-    "antd": "^4.19.1",
+    "antd": "^4.20.0",
     "color": "^4.2.3",
     "final-form": "^4.20.6",
     "final-form-arrays": "^3.0.2",

@@ -1,5 +1,11 @@
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import Error404 from './Errors/404';
 import { useTranslation } from 'next-i18next';
 import cloneDeep from 'lodash/cloneDeep';
@@ -17,8 +23,11 @@ import {
   Tooltip,
 } from '@prisme.ai/design-system';
 import Head from 'next/head';
+import { Segmented } from 'antd';
 import {
   DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
   LoadingOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons';
@@ -37,9 +46,6 @@ import { useWorkspace } from '../components/WorkspaceProvider';
 import getLayout from '../layouts/WorkspaceLayout';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import { usePrevious } from '../utils/usePrevious';
-import { PublicPageRenderer } from './PublicPage';
-import { usePageEndpoint } from '../utils/urls';
-import FramePortal from '../components/FramePortal';
 
 const CSSEditor = ({
   name,
@@ -129,18 +135,23 @@ const CSSEditor = ({
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
-  const pageHost = usePageEndpoint();
+  const [viewMode, setViewMode] = useState(0);
   const { workspace } = useWorkspace();
   const { setDirty } = useWorkspaceLayout();
   const { localize } = useLocalizedText();
   const { pages, savePage, deletePage } = usePages();
-  const [displayPreview, setDisplayPreview] = useState(false);
 
   const {
     query: { id: workspaceId, pageId },
     push,
   } = useRouter();
   const prevPageId = usePrevious(pageId);
+
+  useEffect(() => {
+    if (pageId !== prevPageId) {
+      setViewMode(0);
+    }
+  }, [pageId, prevPageId]);
 
   const page = useMemo(() => {
     return Array.from(pages.get(`${workspaceId}`) || []).find(
@@ -350,21 +361,20 @@ export const Page = () => {
     ];
   }, [appInstances, workspace.id, workspace.blocks]);
 
-  const detailedPage = useCallback(
-    (page: Prismeai.Page) => {
-      const detailedBlocks = blocks.flatMap(({ slug, blocks }) =>
-        blocks.map((block) => ({ ...block, slug: `${slug}.${block.slug}` }))
-      );
-      return {
-        ...page,
-        blocks: page.blocks.map((block) => ({
-          ...block,
-          url: detailedBlocks.find(({ slug }) => slug === block.name)?.url,
-        })),
-      };
-    },
-    [blocks]
-  );
+  const pagePreview = useMemo(() => {
+    if (!value) return value;
+    const detailedBlocks = blocks.flatMap(({ slug, blocks }) =>
+      blocks.map((block) => ({ ...block, slug: `${slug}.${block.slug}` }))
+    );
+    const cleaned = cleanValue(value);
+    return {
+      ...cleaned,
+      blocks: cleaned.blocks.map((block) => ({
+        ...block,
+        url: detailedBlocks.find(({ slug }) => slug === block.name)?.url,
+      })),
+    };
+  }, [blocks, cleanValue, value]);
 
   if (!page) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
@@ -379,10 +389,8 @@ export const Page = () => {
       <PageHeader
         title={
           <div className="flex flex-row items-center text-base">
-            <span className="font-medium">{localize(value.name)}</span>
-            <span className="w-[20px]" />
-            <span className="border-l border-solid border-pr-gray-200 text-gray flex h-[26px] w-[20px]" />
-            <span className="text-gray flex">
+            <span className="font-medium ">{localize(value.name)}</span>
+            <span className="text-gray flex border-r border-solid border-pr-gray-200 h-[26px] items-center px-3">
               <EditDetails
                 schema={detailsFormSchema}
                 value={{ ...value }}
@@ -392,17 +400,30 @@ export const Page = () => {
                 key={`${pageId}`}
               />
             </span>
+            <div>
+              <div className="ml-3">
+                <Segmented
+                  key="nav"
+                  options={[
+                    {
+                      label: t('pages.preview'),
+                      value: 0,
+                      icon: <EyeOutlined />,
+                    },
+                    {
+                      label: t('pages.edit'),
+                      value: 1,
+                      icon: <EditOutlined />,
+                    },
+                  ]}
+                  value={(page.blocks || []).length === 0 ? 1 : viewMode}
+                  onChange={(v) => setViewMode(+v)}
+                />
+              </div>
+            </div>
           </div>
         }
         RightButtons={[
-          <Button
-            key="preview"
-            onClick={() => setDisplayPreview(!displayPreview)}
-          >
-            {t('pages.preview.label', {
-              context: displayPreview ? 'hide' : '',
-            })}
-          </Button>,
           <Popover
             content={() => (
               <SharePage
@@ -415,8 +436,9 @@ export const Page = () => {
           >
             <Button>
               <Space>
-                {t('pages.share.label')}
-                <ShareAltOutlined className="text-lg" />
+                <Tooltip title={t('pages.share.label')}>
+                  <ShareAltOutlined className="text-lg" />
+                </Tooltip>
               </Space>
             </Button>
           </Popover>,
@@ -434,7 +456,12 @@ export const Page = () => {
         </title>
       </Head>
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
-        <PagePreview page={page} />
+        {pagePreview && <PagePreview page={pagePreview} />}
+        {((page.blocks || []).length === 0 || viewMode === 1) && (
+          <div className="absolute top-0 bottom-0 left-0 right-0 bg-white">
+            <PageBuilder value={value} onChange={updateValue} blocks={blocks} />
+          </div>
+        )}
       </div>
     </>
   );

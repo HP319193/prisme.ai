@@ -61,7 +61,7 @@ const Header = ({ title, leftContent }: HeaderProps) => {
         }}
       />
     ),
-    [signout, t]
+    [push, signout, t]
   );
 
   return (

@@ -309,9 +309,7 @@ export const Automation = () => {
         title={
           <div className="flex flex-row items-center text-base">
             <span className="font-medium">{localize(value.name)}</span>
-            <span className="w-[20px]" />
-            <span className="border-l border-solid border-pr-gray-200 text-gray flex h-[26px] w-[20px]" />
-            <span className="text-gray flex">
+            <span className="text-gray flex border-r border-solid border-pr-gray-200 h-[26px] items-center px-3">
               <EditDetails
                 schema={detailsFormSchema}
                 value={{ ...value, slug: automationId }}

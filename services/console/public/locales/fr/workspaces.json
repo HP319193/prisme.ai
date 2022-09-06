@@ -367,6 +367,8 @@
     "private": "Privé",
     "public": "Public",
     "link": "Pages",
+    "preview": "Prévisualiser",
+    "edit": "Éditer",
     "create": {
       "label": "Ajouter une Page",
       "defaultName": "Page"
@@ -387,10 +389,6 @@
       "toast": "La page a bien été enregistrée",
       "error_slug": "Le nom technique est déjà utilisé, veuillez en choisir un autre",
       "error": "Une erreur est survenue"
-    },
-    "preview": {
-      "label": "Prévisualiser",
-      "label_hide": "Masquer la prévisualisation"
     },
     "share": {
       "label": "Partager cette page",
