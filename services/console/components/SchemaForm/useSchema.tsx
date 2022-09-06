@@ -159,7 +159,15 @@ export const useSchema = (store: Record<string, any> = {}) => {
                   {
                     label: t('pages.link'),
                     options: pagesEvents.map(({ name, event }) => ({
-                      label: <Tooltip title={name}>{event}</Tooltip>,
+                      label: (
+                        <div>
+                          {event}
+                          <span className="text-[10px] text-neutral-500">
+                            {' '}
+                            — {name}
+                          </span>
+                        </div>
+                      ),
                       value: event,
                     })),
                   },
@@ -190,7 +198,7 @@ export const useSchema = (store: Record<string, any> = {}) => {
               if (!automation.do || automation.do.length === 0) return [];
               return getEmitEvents(automation.do);
             })
-            // Remove empty and dedup
+            // Remove empty and deduplicate
             .filter(
               ({ event }, index, all) =>
                 event &&
@@ -254,7 +262,15 @@ export const useSchema = (store: Record<string, any> = {}) => {
                   {
                     label: t('pages.link'),
                     options: pagesEvents.map(({ name, event }) => ({
-                      label: <Tooltip title={name}>{event}</Tooltip>,
+                      label: (
+                        <div>
+                          {event}
+                          <span className="text-[10px] text-neutral-500">
+                            {' '}
+                            — {name}
+                          </span>
+                        </div>
+                      ),
                       value: event,
                     })),
                   },
