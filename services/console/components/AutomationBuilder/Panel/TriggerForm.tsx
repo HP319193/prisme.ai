@@ -5,6 +5,7 @@ import useSchema from '../../SchemaForm/useSchema';
 import { useWorkspace } from '../../WorkspaceProvider';
 import { useApps } from '../../AppsProvider';
 import { useAutomationBuilder } from '../context';
+import { usePages } from '../../PagesProvider';
 
 interface TriggerFormProps {
   trigger?: Prismeai.When;
@@ -19,6 +20,7 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
   const { workspace } = useWorkspace();
   const { appInstances } = useApps();
   const { automationId } = useAutomationBuilder();
+  const { pages } = usePages();
   const { extractAutocompleteOptions } = useSchema({
     config: workspace.config,
     apps: appInstances.get(workspace.id),
@@ -33,6 +35,7 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
       {}
     ),
     workspace,
+    pages: pages.get(workspace.id),
   });
 
   const initialValue = useMemo(
