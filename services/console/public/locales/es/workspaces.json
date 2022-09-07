@@ -530,12 +530,16 @@
       "name_Cards": "Grupo de mapas",
       "name_DataTable": "Tabla de datos",
       "name_Form": "Formulario",
+      "name_RichText": "Texto enriquecido",
+      "name_Layout": "Navegación",
       "name_Development": "Desarrollo",
       "description": "",
       "description_Header": "Encabezado de página",
       "description_Cards": "Mostrar un grupo de mapas",
       "description_DataTable": "Visualización de una tabla de datos",
       "description_Form": "Mostrar un formulario",
+      "description_RichText": "Visualización de texto formateado mediante Markdown o HTML",
+      "description_Layout": "Mostrar páginas de bloques navegables. Debe utilizarse a través de automatizaciones.",
       "description_Development": "Le permite desarrollar su propio bloque. Para los desarrolladores.",
       "header": {
         "settings": {

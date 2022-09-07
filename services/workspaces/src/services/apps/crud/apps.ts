@@ -80,6 +80,7 @@ class Apps {
       description: dsul.description,
       photo: dsul.photo,
     };
+
     // Fetch existing workspace app
     let existingApp = await this.accessManager.findAll(SubjectType.App, {
       workspaceId: publish.workspaceId,
@@ -152,6 +153,16 @@ class Apps {
       }
     }
 
+    if (dsul.blocks) {
+      const { blocks } = dsul;
+      Object.entries(blocks).forEach(([key, { block }]) => {
+        if (!block || block.match(/\./)) return;
+        if (Object.keys(blocks).includes(block)) {
+          blocks[key].block = `${app.slug}.${block}`;
+        }
+      });
+    }
+
     // Store corresponding DSUL
     this.storage.save(app.slug!, dsul, 'current');
     await this.storage.save(app.slug!, dsul, newVersion.name);
@@ -198,12 +209,15 @@ class Apps {
     return {
       config: app.config,
       blocks: Object.entries(app.blocks || {}).map(
-        ([slug, { name, description, url, edit }]) => ({
+        ([slug, { name, description, url, edit, block, config, photo }]) => ({
           slug,
           url,
           name,
           description,
           edit,
+          block,
+          config,
+          photo,
         })
       ),
       automations: Object.entries(app.automations || {})
@@ -232,9 +246,9 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(app.automations || {}).map(
-        ([slug, { name, description }]) => ({ slug, name, description })
-      ),
+      automations: Object.entries(
+        app.automations || {}
+      ).map(([slug, { name, description }]) => ({ slug, name, description })),
     };
   };
 

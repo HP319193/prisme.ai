@@ -11,6 +11,7 @@ import useBlocksConfigs from '../Page/usePageBlocksConfigs';
 import { Schema } from '@prisme.ai/design-system';
 import { extractEvents } from './extractEvents';
 import { useTranslation } from 'next-i18next';
+import useBlocks, { BlockInCatalog } from './useBlocks';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -20,6 +21,7 @@ interface PageBuilderProps {
 export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
   const { t } = useTranslation('workspaces');
   const { t: commonT } = useTranslation('common');
+  const { available, variants } = useBlocks();
 
   const [panelIsOpen, setPanelIsOpen] = useState(false);
   const [blockSelecting, setBlockSelecting] = useState<
@@ -93,17 +95,36 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
 
   const addBlock: PageBuilderContext['addBlock'] = useCallback(
     async (position) => {
+      function getOriginalBlock(block: string): BlockInCatalog | null {
+        const originalBlock = available.find(({ slug }) => slug === block);
+        if (!originalBlock) return null;
+        if (originalBlock.block) {
+          return getOriginalBlock(originalBlock.block);
+        }
+        return originalBlock;
+      }
       const block = await addBlockDetails();
       const newBlocks = [...value.blocks];
       const blockKey = nanoid();
-      newBlocks.splice(position, 0, { name: block, key: blockKey });
+
+      const originalBlock = getOriginalBlock(block);
+      if (!originalBlock) return;
+      const newBlock = originalBlock.block
+        ? {
+            name: originalBlock.block,
+            config: originalBlock.config,
+          }
+        : {
+            name: originalBlock.slug,
+          };
+      newBlocks.splice(position, 0, { ...newBlock, key: blockKey });
       onChange({
         ...value,
         blocks: newBlocks,
       });
       setEditBlock(blockKey);
     },
-    [addBlockDetails, onChange, setEditBlock, value]
+    [addBlockDetails, available, onChange, setEditBlock, value]
   );
 
   const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
@@ -129,6 +150,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
     []
   );
 
+  // Deprecated
   const blocksInPage: PageBuilderContext['blocksInPage'] = useMemo(() => {
     return (value.blocks || []).flatMap(({ key, name = '' }) => {
       if (!key) return [];
@@ -173,6 +195,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
         setEditBlock,
         events,
         setBlockSchema,
+        catalog: variants,
       }}
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">

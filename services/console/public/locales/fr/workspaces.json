@@ -530,12 +530,16 @@
       "name_Cards": "Groupe de cartes",
       "name_DataTable": "Tableau de données",
       "name_Form": "Formulaire",
+      "name_RichText": "Texte enrichi",
+      "name_Layout": "Navigation",
       "name_Development": "Développement",
       "description": "",
-      "description_Header": "Entête de page",
+      "description_Header": "Afficher une entête de page",
       "description_Cards": "Afficher un groupe de cartes",
       "description_DataTable": "Afficher un tableau de données",
       "description_Form": "Afficher un formulaire",
+      "description_RichText": "Afficher du texte mis en page grâce à Markdown ou HTML",
+      "description_Layout": "Afficher des pages de blocks navigable. Doit être utilisé par le biais d'automatisations.",
       "description_Development": "Permet de développer votre propre Block. Destiné aux développeurs.",
       "header": {
         "settings": {
