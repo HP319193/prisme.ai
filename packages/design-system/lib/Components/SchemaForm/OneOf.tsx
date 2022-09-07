@@ -16,9 +16,12 @@ function isUiOptionsOneOf(
 const getInitialIndex = (
   initialValue: any,
   oneOf: Schema['oneOf'] = [],
+  // @deprecated
   uiOptions?: UiOptionsOneOf
 ) => {
   if (!initialValue) return '0';
+
+  // Deprecated
   if (uiOptions && uiOptions.oneOf.options.some(({ value }) => value)) {
     const index = (uiOptions.oneOf.options || []).findIndex(({ value }) => {
       if (!value) return false;
@@ -29,6 +32,11 @@ const getInitialIndex = (
     });
     return `${Math.max(0, index)}`;
   }
+
+  // from oneOf value
+  const oneOfValue = oneOf.findIndex(({ value }) => value === initialValue);
+
+  if (oneOfValue > -1) return `${oneOfValue}`;
 
   // Check types
   const index = oneOf.findIndex((schema) => typesMatch(schema, initialValue));
@@ -52,16 +60,14 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
 
   const options = useMemo(
     () =>
-      uiOptionsOneOf
-        ? uiOptionsOneOf.oneOf.options.map(({ label }, index) => ({
-            label,
-            value: `${index}`,
-          }))
-        : oneOf.map((option, index) => ({
-            label: `${locales.oneOfOption || 'Option'} ${index}`,
-            value: `${index}`,
-          })),
-    [oneOf]
+      oneOf.map((option, index) => ({
+        label:
+          uiOptionsOneOf?.oneOf?.options?.[index]?.label ||
+          option.title ||
+          `${locales.oneOfOption || 'Option'} ${index}`,
+        value: `${index}`,
+      })),
+    [oneOf, uiOptionsOneOf]
   );
 
   const childSchema = useMemo(() => {
@@ -73,9 +79,7 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
     const partialSchema = oneOf[index] || {};
     const childSchema: Schema = { ...cleanedSchema, ...partialSchema };
 
-    if (!partialSchema.title) {
-      delete childSchema.title;
-    }
+    delete childSchema.title;
     if (!partialSchema.description) {
       delete childSchema.description;
     }
@@ -90,6 +94,13 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
   }, [selected]);
 
   useEffect(() => {
+    const value = oneOf?.[isNaN(+selected) ? 0 : +selected]?.value;
+    if (value === undefined) return;
+    setTimeout(() => field.input.onChange(value));
+  }, [selected]);
+
+  useEffect(() => {
+    // Deprecated
     if (!uiOptionsOneOf) return;
     const { value } = uiOptionsOneOf.oneOf.options[+selected] || {};
 
@@ -120,7 +131,9 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
     <Description text={schema.description} className="pt-1">
       {title && <label className="flex">{title}</label>}
       <Select selectOptions={options} onChange={setSelected} value={selected} />
-      <Field schema={childSchema} name={name} label={label} />
+      {schema.type !== undefined && (
+        <Field schema={childSchema} name={name} label={label} />
+      )}
     </Description>
   );
 };
