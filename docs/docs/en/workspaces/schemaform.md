@@ -17,7 +17,7 @@ properties:
 
 This simple structure will make a form with thwo fields and the final value will be an object with two properties : `firstname` and `lastname` :
 
-![Simple form](/assets/images/architecture/schemaform1.png)
+![Simple form](/assets/images/workspaces/schemaform1.png)
 
 ## Define a field
 
@@ -47,7 +47,7 @@ The root object and all its children are made with the same structure:
 * `default`: Optional default value.
 * `hidden`: Set to true if you want to hide the field.
 * `pattern`: A regular expression to validate the value choose by user.
-* `oneOf`: Let the user choose between any options and have different child fields. Takes an array of `Schema Form`. Display a select drop down with the title of each child.
+* `oneOf`: Let the user choose between any options and have different child fields. Takes an array of `Schema Form`. Display a select drop down with the title of each child. ([See more](#oneof))
 * `ui:widget`: You can set a different input with this attribute. Each type comes with some alternative inputs and you can pass a React component if you write your `Schema Form` as javascript.
     * string type:
         * `textarea`: Replaces the text input by a textarea for more space.
@@ -77,7 +77,7 @@ The root object and all its children are made with the same structure:
             * "events:listen": Retreive all events listened by current workspace and all its installed apps
     * or any other key/value to be used with your custom widgets.
 
-## Exemple
+### Example
 
 ```yaml
 type: object
@@ -118,3 +118,83 @@ properties:
           type: string
           title: Type an artist name
 ```
+
+## oneOf
+
+This helper display a select with a list of labels. It's more than `enum` and `enumNames` because the selected value can alter the structure of the schema. It is an array of schemas describing the properties to merge with the parent.
+
+### Example
+
+```yaml
+type: object
+properties:
+  foo:
+    type: string
+oneOf:
+  - properties:
+      bar:
+        type: string
+  - properties:
+      bar:
+        type: number
+      babar:
+        type: string
+```
+
+Will display an input "foo", then a select with "Option 0" and "Option 1" labels. The first option will add a new field "bar" of string type. The second option will display a "bar" field of number type and a "babar" field of string type.
+
+![oneOf 1](/assets/images/workspaces/schemaform2.png)
+
+The label can be set with the `title` property :
+
+```yaml
+type: object
+properties:
+  foo:
+    type: string
+oneOf:
+  - title: Just a string
+    properties:
+      bar:
+        type: string
+  - title: A string and a number
+    properties:
+      bar:
+        type: number
+      babar:
+        type: string
+```
+
+![oneOf 2](/assets/images/workspaces/schemaform3.png)
+
+More, you can alter the current object field by setting only a oneOf property in one of your field property. This makes possible to place the select in a specific position :
+
+```yaml
+type: object
+properties:
+  foo:
+    type: string
+  bar:
+    oneOf:
+      - title: As string
+        value: string
+        properties:
+          value:
+            type: string
+            title: String value
+      - title: As currency
+        value: currency
+        properties:
+          value:
+            type: number
+            title: Number value
+          currency:
+            type: string
+            title: Currency
+            enum:
+              - €
+              - $
+              - ¥
+```
+
+![oneOf 3](/assets/images/workspaces/schemaform4.png)
