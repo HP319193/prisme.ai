@@ -525,47 +525,97 @@
       },
       "cards": {
         "settings": {
-          "cards": "Cards",
-          "card": "Card",
           "title": "Title",
           "description": "Description",
           "cover": "Cover image",
-          "content": "Content",
-          "type": "Type",
-          "type_text": "Text",
-          "type_button": "Button",
-          "type_accordion": "Accordion",
-          "text": {
-            "value": "Text to display"
+          "variant": {
+            "label": "Cards style"
           },
-          "button": {
-            "type_page": "Link to a Page",
-            "type_url": "Link to an external web address",
-            "type_event": "Trigger an event",
-            "page": "Choose one of your pages",
-            "value": "Button text",
-            "url": "Web adress to link",
-            "event": "Event to trigger",
-            "payload": "Attached data",
-            "icon": "Icon",
-            "popup": "Open in a new window"
+          "classic": {
+            "label": "Classic",
+            "content": {
+              "label": "Content",
+              "item": "Line",
+              "add": "Add a line",
+              "remove": "Remove line",
+              "type": "Type",
+              "type_text": "Text",
+              "type_button": "Button",
+              "type_accordion": "Accorieon",
+              "text": {
+                "value": "Text",
+                "value_description": "You can use HTML or Markdown."
+              },
+              "button": {
+                "value": "Label",
+                "value_description": "Button label.",
+                "url": "Web address",
+                "url_description": "The button can be a link to a web page.",
+                "popup": "Open the link in a new tab",
+                "popup_description": "The link will open in a new tab.",
+                "event": "Event",
+                "event_description": "The button can trigger an event.",
+                "payload": "Payload",
+                "payload_description": "Data accompanying the event.",
+                "icon": "Icon"
+              },
+              "accordion": {
+                "title": "Title",
+                "title_description": "Always displayed text.",
+                "content": "Content",
+                "content_description": "Hidden content. Can be HTML or markdown.",
+                "icon": "Icon"
+              }
+            }
           },
-          "accordion": {
-            "title": "Title",
-            "content": "Content",
-            "icon": "Icon"
+          "short": {
+            "label": "Short",
+            "subtitle": "Subtitle",
+            "backgroundColor": "Background color",
+            "backgroundColor_black": "Black",
+            "backgroundColor_white": "White",
+            "backgroundColor_transparent-white": "Transparent white",
+            "backgroundColor_transparent-black": "Transparent black"
           },
-          "autoScroll": {
-            "title": "Auto scroll",
-            "description": "Activate this option to have the carousel scroll automatically every 5 seconds"
+          "article": {
+            "label": "Article",
+            "subtitle": "Subtitle",
+            "tag": "Tag"
           },
+          "square": {
+            "label": "Square"
+          },
+          "actions": {
+            "label": "Actions",
+            "content": {
+              "label": "Buttons",
+              "add": "Add a button",
+              "remove": "Remove button",
+              "item": "Button",
+              "type": "Type",
+              "type_event": "Event",
+              "text": "Text",
+              "value_event": "Event name",
+              "payload": "Payload",
+              "type_url": "Web address",
+              "value_url": "Web address"
+            }
+          },
+          "cards": "Cards",
+          "cards_add": "Add a card",
+          "cards_remove": "Remove card",
+          "card": "Card",
           "layout": {
             "title": "Layout",
-            "description": "You can change the display mode. By default, maps will be displayed using a carousel.",
-            "noOptions": "No option available",
+            "description": "You can change the display mode. By default, cards will be displayed using a carousel.",
+            "style": "Style",
             "carousel": "Carousel",
             "grid": "Grid",
-            "column": "Column"
+            "column": "Column",
+            "autoScroll": {
+              "title": "Auto scroll",
+              "description": "Activate this option to have the carousel scroll automatically every 5 seconds"
+            }
           }
         }
       },

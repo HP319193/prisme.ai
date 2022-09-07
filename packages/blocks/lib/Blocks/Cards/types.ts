@@ -63,13 +63,6 @@ export interface CardClassic {
   )[];
 }
 
-export type Cards =
-  | CardArticle[]
-  | CardAction[]
-  | CardClassic[]
-  | CardSquare[]
-  | CardShort[];
-
 export const cardVariants = [
   'classic',
   'short',
@@ -77,7 +70,15 @@ export const cardVariants = [
   'square',
   'actions',
 ] as const;
+
 export type CardVariant = typeof cardVariants[number];
+
+export type Cards =
+  | CardClassic[]
+  | CardShort[]
+  | CardArticle[]
+  | CardSquare[]
+  | CardAction[];
 
 export interface CardsConfig {
   title: Prismeai.LocalizedText;

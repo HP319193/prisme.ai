@@ -454,13 +454,13 @@
       "builtin": "Blocks básicos",
       "name": "{{context}}",
       "name_Header": "Cabecera",
-      "name_Cards": "Grupo de tarjetas",
+      "name_Cards": "Grupo de mapas",
       "name_DataTable": "Tabla de datos",
       "name_Form": "Formulario",
       "name_Development": "Desarrollo",
       "description": "",
       "description_Header": "Encabezado de página",
-      "description_Cards": "Mostrar un grupo de tarjetas",
+      "description_Cards": "Mostrar un grupo de mapas",
       "description_DataTable": "Visualización de una tabla de datos",
       "description_Form": "Mostrar un formulario",
       "description_Development": "Le permite desarrollar su propio bloque. Para los desarrolladores.",
@@ -525,47 +525,97 @@
       },
       "cards": {
         "settings": {
-          "cards": "Tarjetas",
-          "card": "Tarjeta",
           "title": "Título",
           "description": "Descripción",
           "cover": "Imagen de portada",
-          "content": "Contenido",
-          "type": "Tipo",
-          "type_text": "Texto",
-          "type_button": "Botón",
-          "type_accordion": "Acordeón",
-          "text": {
-            "value": "Texto a mostrar"
+          "variant": {
+            "label": "Estilo de mapa"
           },
-          "button": {
-            "type_page": "Enlace a una página",
-            "type_url": "Enlace a una dirección web externa",
-            "type_event": "Activación de un evento",
-            "page": "Elija una de sus páginas",
-            "value": "Texto del botón",
-            "url": "Dirección web que debe mostrarse",
-            "event": "Evento que debe activarse",
-            "payload": "Datos adjuntos",
-            "icon": "Icono",
-            "popup": "Abrir en una nueva ventana"
+          "classic": {
+            "label": "Clásico",
+            "content": {
+              "label": "Contenido",
+              "item": "Línea",
+              "add": "Añadir una línea",
+              "remove": "Borrar la línea",
+              "type": "Tipo",
+              "type_text": "Texto",
+              "type_button": "Botón",
+              "type_accordion": "Acordeón",
+              "text": {
+                "value": "Texto",
+                "value_description": "Puedes usar HTML o Markdown."
+              },
+              "button": {
+                "value": "Etiqueta",
+                "value_description": "Etiqueta del botón.",
+                "url": "Dirección web",
+                "url_description": "El botón puede ser un enlace a una página web.",
+                "popup": "Abrir el enlace en una nueva pestaña",
+                "popup_description": "El enlace se abrirá en una nueva pestaña.",
+                "event": "Evento",
+                "event_description": "El botón puede activar un evento.",
+                "payload": "Datos",
+                "payload_description": "Datos que acompañan al evento.",
+                "icon": "Icono"
+              },
+              "accordion": {
+                "title": "Título",
+                "title_description": "El texto siempre aparece.",
+                "content": "Contenido",
+                "content_description": "Contenido oculto. Puede ser HTML o markdown.",
+                "icon": "Icono"
+              }
+            }
           },
-          "accordion": {
-            "title": "Título",
-            "content": "Contenido",
-            "icon": "Icono"
+          "short": {
+            "label": "Corto",
+            "subtitle": "Subtítulo",
+            "backgroundColor": "Color de fondo",
+            "backgroundColor_black": "Negro",
+            "backgroundColor_white": "Blanco",
+            "backgroundColor_transparent-white": "Blanco translúcido",
+            "backgroundColor_transparent-black": "Negro translúcido"
           },
-          "autoScroll": {
-            "title": "Desplazamiento automático",
-            "description": "Active esta opción para que el carrusel se desplace automáticamente cada 5 segundos"
+          "article": {
+            "label": "Artículo",
+            "subtitle": "Subtítulo",
+            "tag": "Categoría"
           },
+          "square": {
+            "label": "Cuadrado"
+          },
+          "actions": {
+            "label": "Acciones",
+            "content": {
+              "label": "Botones",
+              "add": "Añadir un botón",
+              "remove": "Borrar el botón",
+              "item": "Botón",
+              "type": "Tipo",
+              "type_event": "Evento",
+              "text": "Texto",
+              "value_event": "Nombre del evento",
+              "payload": "Datos",
+              "type_url": "Dirección web",
+              "value_url": "Dirección web"
+            }
+          },
+          "cards": "Mapas",
+          "cards_add": "Añadir un mapa",
+          "cards_remove": "Supprimer la carte",
+          "card": "Mapa",
           "layout": {
             "title": "Diseño",
             "description": "Puedes cambiar el modo de visualización. Por defecto, los mapas se mostrarán mediante un carrusel.",
-            "noOptions": "No hay opciones disponibles",
+            "style": "Estilo",
             "carousel": "Carrusel",
             "grid": "Rejilla",
-            "column": "Columna"
+            "column": "Colona",
+            "autoScroll": {
+              "title": "Desplazamiento automático",
+              "description": "Active esta opción para que el carrusel se desplace automáticamente cada 5 segundos."
+            }
           }
         }
       },
@@ -705,6 +755,8 @@
     }
   },
   "404": "Este espacio de trabajo no existe. Vuelve a tu página de inicio.",
+  "whatsNew": "Noticias",
+  "help": "¿Ayuda?",
   "share": {
     "label": "Compartir",
     "email": "Correo electrónico",

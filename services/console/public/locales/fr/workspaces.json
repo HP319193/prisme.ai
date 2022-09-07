@@ -525,47 +525,97 @@
       },
       "cards": {
         "settings": {
-          "cards": "Cartes",
-          "card": "Carte",
           "title": "Titre",
           "description": "Description",
           "cover": "Image de couverture",
-          "content": "Contenu",
-          "type": "Type",
-          "type_text": "Texte",
-          "type_button": "Bouton",
-          "type_accordion": "Accordéon",
-          "text": {
-            "value": "Texte à afficher"
+          "variant": {
+            "label": "Style de cartes"
           },
-          "button": {
-            "type_page": "Lien vers une Page",
-            "type_url": "Lien vers une adresse web externe",
-            "type_event": "Déclencher un évènement",
-            "page": "Choisissez une de vos pages",
-            "value": "Texte du bouton",
-            "url": "Lien vers la page web",
-            "event": "Événement à déclencher",
-            "payload": "Données attachées",
-            "icon": "Icône",
-            "popup": "Ouvrir dans une nouvelle fenêtre"
+          "classic": {
+            "label": "Classique",
+            "content": {
+              "label": "Contenu",
+              "item": "Ligne",
+              "add": "Ajouter une ligne",
+              "remove": "Supprimer la ligne",
+              "type": "Type",
+              "type_text": "Texte",
+              "type_button": "Bouton",
+              "type_accordion": "Accordéon",
+              "text": {
+                "value": "Texte",
+                "value_description": "Vous pouvez utiliser du HTML ou du Markdown."
+              },
+              "button": {
+                "value": "Libellé",
+                "value_description": "Libellé du bouton.",
+                "url": "Adresse web",
+                "url_description": "Le bouton peut être un lien vers une page web.",
+                "popup": "Ouvrir le lien dans un nouvel onglet",
+                "popup_description": "Le lien s'ouvrira dans un nouvel onglet.",
+                "event": "Évènement",
+                "event_description": "Le bouton peut déclencher un évènement.",
+                "payload": "Données",
+                "payload_description": "Données accompagnant l'évènement.",
+                "icon": "Icone"
+              },
+              "accordion": {
+                "title": "Titre",
+                "title_description": "Texte toujours affiché.",
+                "content": "Contenu",
+                "content_description": "Contenu masqué. Peut être du HTML ou du markdown.",
+                "icon": "Icone"
+              }
+            }
           },
-          "accordion": {
-            "title": "Titre",
-            "content": "Contenu",
-            "icon": "Icône"
+          "short": {
+            "label": "Court",
+            "subtitle": "Sous-titre",
+            "backgroundColor": "Couleur de fond",
+            "backgroundColor_black": "Noir",
+            "backgroundColor_white": "Blanc",
+            "backgroundColor_transparent-white": "Blanc translucide",
+            "backgroundColor_transparent-black": "Noir translucide"
           },
-          "autoScroll": {
-            "title": "Défilement automatique",
-            "description": "Activez cette option pour que le carousel défile automatiquement toutes les 5 secondes"
+          "article": {
+            "label": "Article",
+            "subtitle": "Sous-titre",
+            "tag": "Catégorie"
           },
+          "square": {
+            "label": "Carré"
+          },
+          "actions": {
+            "label": "Actions",
+            "content": {
+              "label": "Boutons",
+              "add": "Ajouter un bouton",
+              "remove": "Supprimer le bouton",
+              "item": "Bouton",
+              "type": "Type",
+              "type_event": "Évènement",
+              "text": "Texte",
+              "value_event": "Nom de l'évènement",
+              "payload": "Données",
+              "type_url": "Adresse web",
+              "value_url": "Adresse web"
+            }
+          },
+          "cards": "Cartes",
+          "cards_add": "Ajouter une carte",
+          "cards_remove": "Supprimer la carte",
+          "card": "Carte",
           "layout": {
             "title": "Mise en page",
             "description": "Vous pouvez changer de mode d'affichage. Par défaut, les cartes seront affichées à l'aide d'un carousel.",
-            "noOptions": "Aucune option disponible",
+            "style": "Style",
             "carousel": "Carousel",
             "grid": "Grille",
-            "column": "Colonne"
+            "column": "Colonne",
+            "autoScroll": {
+              "title": "Défilement automatique",
+              "description": "Activez cette option pour que le carousel défile automatiquement toutes les 5 secondes."
+            }
           }
         }
       },
