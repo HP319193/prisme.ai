@@ -10,7 +10,7 @@ import {
   CardsConfig,
   CardShort,
   CardSquare,
-  CardsType,
+  Cards as TCards,
 } from './types';
 import Classic from './Variants/Classic';
 import Square from './Variants/Square';
@@ -19,7 +19,7 @@ import Short from './Variants/Short';
 import Actions from './Variants/Actions';
 
 const cardsIsShort = (
-  cards: CardsType,
+  cards: TCards,
   variant: CardsConfig['variant']
 ): cards is CardShort[] => variant === 'short';
 
@@ -29,18 +29,6 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
   const [canScroll, setCanScroll] = useState<boolean | null>(false);
 
   const container = useRef<HTMLDivElement>(null);
-
-  const colors = useRef<string[]>([]);
-
-  const getRandomColor = useCallback((index: number) => {
-    if (!colors.current[index]) {
-      colors.current[index] = (Math.random() * Math.random() * 1000000000)
-        .toString(16)
-        .substring(0, 6);
-    }
-
-    return `#${colors.current[index]}`;
-  }, []);
 
   const scroll = useCallback(
     (step: number) => () => {
