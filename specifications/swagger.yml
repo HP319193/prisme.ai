@@ -3134,6 +3134,12 @@ components:
             value:
               $ref: '#/components/schemas/AnyValue'
               description: variable value
+            type:
+              type: string
+              enum:
+                - replace
+                - merge
+              description: "Choose merge in order to merge target variable with value. Value takes precedence."
 
     Delete:
       type: object
@@ -4355,6 +4361,14 @@ components:
               type: string
               example: post
 
+    ContextSetType:
+        type: string
+        enum:
+          - replace
+          - merge
+          - push
+          - delete
+
     UpdatedContexts:
       type: object
       required:
@@ -4382,11 +4396,7 @@ components:
                   - context
                 properties:
                   type:
-                    type: string
-                    enum:
-                      - set
-                      - push
-                      - delete
+                    $ref: "#/components/schemas/ContextSetType"
                   path:
                     type: string
                   fullPath:

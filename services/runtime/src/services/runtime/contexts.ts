@@ -262,13 +262,10 @@ export class ContextsManager {
     }
     this.alreadyProcessedUpdateIds.add(updateId);
     for (const update of updates) {
-      const path =
-        update.type === 'push' ? update.fullPath + '[]' : update.fullPath;
-      if (update.type === 'set' || update.type === 'push') {
-        await this.set(path, update.value, undefined, false);
-      } else if (update.type === 'delete') {
-        await this.set(path, false);
-      }
+      await this.set(update.fullPath, update.value, {
+        persist: false,
+        type: update.type,
+      });
     }
   }
 
@@ -409,32 +406,59 @@ export class ContextsManager {
     };
   }
 
-  async set(path: string, value: any, ttl?: number, persist = true) {
-    const arrayPush = path.endsWith('[]');
-    if (arrayPush) {
+  async set(
+    path: string,
+    value: any,
+    opts?: {
+      ttl?: number;
+      persist?: boolean;
+      type?: Prismeai.ContextSetType;
+    }
+  ) {
+    const { ttl, persist = true } = opts || {};
+    let type: Prismeai.ContextSetType = opts?.type || 'replace';
+    if (path.endsWith('[]')) {
+      type = 'push';
       path = path.slice(0, -2);
     }
-
     const splittedPath = parseVariableName(path);
 
     try {
       const { parent, lastKey, context, subPath } =
         this.findParentVariableFor(splittedPath);
+      const prevValue = parent[lastKey];
+
       const opLog: ContextUpdateOpLog = {
-        type: arrayPush ? 'push' : 'set',
+        type,
         path: subPath,
         fullPath: path,
         context,
         value,
       };
 
-      if (arrayPush) {
+      if (type == 'delete') {
+        delete parent[lastKey];
+      } else if (
+        type === 'push' ||
+        (opts?.type == 'merge' && Array.isArray(prevValue))
+      ) {
+        // Push to an array
         if (!Array.isArray(parent[lastKey])) {
           parent[lastKey] = [];
         }
-        parent[lastKey].push(_.cloneDeep(value));
+        if (opts?.type == 'merge' && Array.isArray(value)) {
+          parent[lastKey].push(..._.cloneDeep(value));
+        } else {
+          parent[lastKey].push(_.cloneDeep(value));
+        }
+      } else if (type == 'merge' && typeof prevValue === 'object') {
+        // Merge 2 objects together
+        if (typeof value !== 'object' || Array.isArray(value)) {
+          return;
+        }
+        parent[lastKey] = { ...parent[lastKey], ..._.cloneDeep(value) };
       } else {
-        const prevValue = parent[lastKey];
+        // Replace target var with given value
         parent[lastKey] = _.cloneDeep(value);
 
         // Handle user/session switching
@@ -451,6 +475,7 @@ export class ContextsManager {
           return;
         }
       }
+
       // Persist
       if (persist) {
         this.opLogs.push(opLog);
@@ -466,20 +491,10 @@ export class ContextsManager {
   }
 
   async delete(path: string, persist = true) {
-    const splittedPath = parseVariableName(path);
-
-    const { parent, lastKey, context, subPath } =
-      this.findParentVariableFor(splittedPath);
-    delete parent[lastKey];
-    if (persist) {
-      await this.save(context);
-      this.opLogs.push({
-        type: 'delete',
-        path: subPath,
-        fullPath: path,
-        context,
-      });
-    }
+    await this.set(path, undefined, {
+      persist,
+      type: 'delete',
+    });
   }
 
   get publicContexts(): PublicContexts {

@@ -55,7 +55,7 @@ Set a new or existing variable
 
 - **name** : Variable name
 - **value** : Variable value (might be a JSON object, a string, a number, ...)
-- **lifespan** : _Coming soon_
+- **type** : **replace** to replace target variable with given value, or **merge** to try merging objects or arrays. **replace** by default
 
 When setting object fields, parent objects are created on-the-fly :
 
@@ -83,7 +83,44 @@ It is also possible to create lists and automatically add items to their end wit
     value: Mickael
 ```
 
-Each time this set is executed, `Mickael` is appended to the `session.names` list variable.
+Each time this set is executed, `Mickael` is appended to the `session.names` list variable.  
+
+Same feature with **type: merge** option :  
+```
+- set:
+    name: session.names
+    type: merge
+    value: Mickael
+```
+
+When both previous value and **value** are arrays, **type: merge** concatenate **value** at the end of the previous value :  
+```yaml
+- set:
+    name: myArray
+    value:
+      - one
+- set:
+    name: myArray
+    type: merge
+    value:
+      - two
+      - three
+# {{myArray}} = ['one', 'two', 'three']
+```  
+
+When both previous value and **value** are objects, **type: merge** merge them together :  
+```yaml
+- set:
+    name: 'myObject'
+    value:
+      firstName: Martin
+- set:
+    name: 'myObject'
+    type: merge
+    value:
+      age: 25 
+# {{myObject}} = { "firstName": "Martin", "age": 25 }
+```  
 
 ### Delete
 

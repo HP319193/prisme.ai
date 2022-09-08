@@ -993,6 +993,7 @@ declare namespace Prismeai {
          */
         id?: string;
     }
+    export type ContextSetType = "replace" | "merge" | "push" | "delete";
     export interface CreateUserTopic {
         createUserTopic: UserTopic;
     }
@@ -1651,6 +1652,10 @@ declare namespace Prismeai {
              * variable value
              */
             value: AnyValue;
+            /**
+             * Choose merge in order to merge target variable with value. Value takes precedence.
+             */
+            type?: "replace" | "merge";
         };
     }
     export interface SucceededLogin {
@@ -1795,7 +1800,7 @@ declare namespace Prismeai {
         type: "runtime.contexts.updated";
         payload: {
             updates: {
-                type: "set" | "push" | "delete";
+                type: ContextSetType;
                 path: string;
                 fullPath: string;
                 context: string;

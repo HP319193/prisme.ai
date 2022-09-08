@@ -104,6 +104,26 @@ describe('Variables & Contexts', () => {
     expect(session).toMatchObject({ value: payload.value });
   });
 
+  it('Set with merge mode', async () => {
+    const { execute } = getMocks();
+
+    const { basicMerge, arrayMerge, brokenObj } = await execute(
+      'myMergeSet',
+      {}
+    );
+    expect(basicMerge).toMatchObject({ firstName: 'Martin', age: 25 });
+    expect(arrayMerge).toMatchObject([
+      'un',
+      'deux',
+      'trois',
+      'quatre',
+      {
+        cinq: 5,
+      },
+    ]);
+    expect(brokenObj).toMatchObject({ is: 'fixed' });
+  });
+
   it('Set a session.value variable & calls a next automation using this new variable', async () => {
     const { execute } = getMocks();
 
@@ -177,7 +197,7 @@ describe('Variables & Contexts', () => {
           payload: expect.objectContaining({
             updates: [
               expect.objectContaining({
-                type: 'set',
+                type: 'replace',
                 path: 'foo',
                 fullPath: 'config.foo',
                 context: 'config',

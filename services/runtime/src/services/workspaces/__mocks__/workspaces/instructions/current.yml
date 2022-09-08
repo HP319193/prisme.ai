@@ -40,6 +40,66 @@ automations:
     when:
       endpoint: true
 
+  myMergeSet:
+    name: mySet
+    do:
+      - set:
+          name: 'basicMerge'
+          value:
+            firstName: Martin
+      - set:
+          name: 'basicMerge'
+          type: merge
+          value:
+            age: 25 # this should be merged into previous object
+      - set:
+          name: 'basicMerge'
+          type: merge
+          value: 'erg' # This should be ignored
+      - set:
+          name: 'basicMerge'
+          type: merge
+          value: [] # This should be ignored
+      - set:
+          name: 'basicMerge'
+          type: merge
+          value: # This should be ignored
+
+      - set:
+          name: 'arrayMerge'
+          value:
+            - un
+      - set:
+          name: 'arrayMerge'
+          type: merge
+          value:
+            - deux
+            - trois
+      - set:
+          name: 'arrayMerge'
+          type: merge
+          value: quatre
+      - set:
+          name: 'arrayMerge'
+          type: merge
+          value:
+            cinq: 5
+
+      - set:
+          name: brokenObj
+          value:
+      - set:
+          name: brokenObj
+          type: merge
+          value:
+            is: fixed
+    output:
+      basicMerge: '{{basicMerge}}'
+      arrayMerge: '{{arrayMerge}}'
+      brokenObj: '{{brokenObj}}'
+    when:
+      endpoint: true
+
   setUserAndEmit:
     name: mySet
     do:
