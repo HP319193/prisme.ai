@@ -305,6 +305,50 @@ WithNestedOneOf.args = {
   },
 };
 
+export const WithSortedOneOf = Template.bind({});
+WithSortedOneOf.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+      },
+      bar: {
+        oneOf: [
+          {
+            title: 'As string',
+            value: 'string',
+            properties: {
+              value: {
+                type: 'string',
+                title: 'String value',
+              },
+            },
+          },
+          {
+            title: 'As number',
+            value: 'number',
+            properties: {
+              value: {
+                type: 'number',
+                title: 'Number value',
+              },
+              currency: {
+                type: 'string',
+                enum: ['€', '$', '¥'],
+              },
+            },
+          },
+        ],
+      },
+    },
+  } as Schema,
+  initialValues: {
+    bar: 'number',
+    currency: '$',
+  },
+};
+
 export const GridLayout = Template.bind({});
 GridLayout.args = {
   schema: {

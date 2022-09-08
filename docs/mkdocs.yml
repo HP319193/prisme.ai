@@ -52,7 +52,8 @@ nav:
       - Pages:
           - Pages: workspaces/pages.md
           - Blocks:
-              - Form: blocks/form
+              - Form: blocks/form.md
+      - Schema Form: workspaces/schemaform.md
   - API: /api
   - i18n.architecture:
       - i18n.index: architecture/index.md

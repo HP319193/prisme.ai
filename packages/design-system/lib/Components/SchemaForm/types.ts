@@ -96,6 +96,8 @@ export interface Schema extends Record<string, any> {
   items?: Schema;
   // List of different schemas available
   oneOf?: Schema[];
+  // Value of the oneOf field.
+  value?: any;
   // List of constrainted values
   enum?: any[];
   // Labels of constrainted values
