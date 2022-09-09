@@ -1,3 +1,5 @@
+import { RefObject } from 'react';
+
 export interface CardButtonType {
   type: 'button';
   value: Prismeai.LocalizedText;
@@ -88,4 +90,15 @@ export interface CardsConfig {
     type: 'grid' | 'column' | 'carousel';
     autoScroll?: boolean;
   };
+}
+
+export interface CardProps<T = Cards> extends Omit<CardsConfig, 'cards'> {
+  styles: {
+    container: string;
+  };
+  container: RefObject<HTMLDivElement>;
+  canScroll: boolean | null;
+  scroll: (step: number) => () => void;
+  cards: T;
+  getCoverStyle: (index: number) => any;
 }

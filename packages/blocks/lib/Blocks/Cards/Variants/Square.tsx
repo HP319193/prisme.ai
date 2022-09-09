@@ -1,21 +1,12 @@
-import { RefObject, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useCallback } from 'react';
 import tw from '../../../tw';
 import BlockTitle from '../../Internal/BlockTitle';
-import { CardsConfig, CardSquare } from '../types';
+import { CardProps, CardSquare } from '../types';
 import useLocalizedText from '../../../useLocalizedText';
-import ScrollElements from '../ScrollElements';
+import CarouselNavigation from '../CarouselNavigation';
 import { truncate } from '../../../utils/truncate';
 
-interface SquareProps extends Omit<CardsConfig, 'cards'> {
-  styles: {
-    container: string;
-  };
-  container: RefObject<HTMLDivElement>;
-  canScroll: boolean | null;
-  scroll: (step: number) => () => void;
-  cards: CardSquare[];
-}
+interface SquareProps extends CardProps<CardSquare[]> {}
 
 const Square = ({
   title,
@@ -26,7 +17,6 @@ const Square = ({
   scroll,
 }: SquareProps) => {
   const { localize } = useLocalizedText();
-  const { t } = useTranslation();
 
   const getCoverStyle = useCallback(
     (index: number) => {
@@ -79,7 +69,7 @@ const Square = ({
           )}
         </div>
 
-        {canScroll && <ScrollElements scroll={scroll} />}
+        {canScroll && <CarouselNavigation scroll={scroll} />}
       </div>
     </div>
   );

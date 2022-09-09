@@ -1,23 +1,11 @@
-import { RefObject } from 'react';
-import { useTranslation } from 'react-i18next';
 import tw from '../../../tw';
 import BlockTitle from '../../Internal/BlockTitle';
-import { CardAction, CardsConfig } from '../types';
+import { CardAction, CardProps } from '../types';
 import useLocalizedText from '../../../useLocalizedText';
 import { truncate } from '../../../utils/truncate';
-import ScrollElements from '../ScrollElements';
-import { useBlocks } from '../../../Provider/blocksContext';
+import CarouselNavigation from '../CarouselNavigation';
 
-interface ActionsProps extends Omit<CardsConfig, 'cards'> {
-  styles: {
-    container: string;
-  };
-  container: RefObject<HTMLDivElement>;
-  getCoverStyle: (index: number) => any;
-  canScroll: boolean | null;
-  scroll: (step: number) => () => void;
-  cards: CardAction[];
-}
+interface ActionsProps extends CardProps<CardAction[]> {}
 
 const Actions = ({
   title,
@@ -29,10 +17,6 @@ const Actions = ({
   scroll,
 }: ActionsProps) => {
   const { localize } = useLocalizedText();
-  const { t } = useTranslation();
-  const {
-    components: { Link },
-  } = useBlocks();
 
   return (
     <div className={tw`block-cards variant-article flex flex-col w-full`}>
@@ -78,28 +62,25 @@ const Actions = ({
                 >
                   {content &&
                     Array.isArray(content) &&
-                    (content.length > 3 ? content.slice(2) : content).map(
-                      (item, index) => (
+                    content.map((item, index) => (
+                      <div
+                        key={index}
+                        className={`${tw`card__card-content-outer card-content-outer flex w-full py-[0.625rem] px-[1.25rem] font-semibold`}`}
+                      >
                         <div
-                          key={index}
-                          className={`${tw`card__card-content-outer card-content-outer flex w-full py-[0.625rem] px-[1.25rem] font-semibold`}`}
+                          className={tw`flex flex-grow bg-white rounded-[0.625rem] h-[3.125rem] items-center justify-center `}
                         >
-                          <div
-                            className={tw`flex flex-grow bg-white rounded-[0.625rem] h-[3.125rem] items-center justify-center `}
-                          >
-                            {truncate(localize(item.text), 20)}
-                            {/*{item.type === 'button' && <CardButton {...item} />}*/}
-                          </div>
+                          {truncate(localize(item.text), 20)}
                         </div>
-                      )
-                    )}
+                      </div>
+                    ))}
                 </div>
               </div>
             )
           )}
         </div>
 
-        {canScroll && <ScrollElements scroll={scroll} />}
+        {canScroll && <CarouselNavigation scroll={scroll} />}
       </div>
     </div>
   );

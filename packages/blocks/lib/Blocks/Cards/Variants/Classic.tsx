@@ -1,24 +1,13 @@
-import { RefObject } from 'react';
-import { useTranslation } from 'react-i18next';
 import tw from '../../../tw';
 import BlockTitle from '../../Internal/BlockTitle';
-import { CardClassic, CardsConfig } from '../types';
+import { CardClassic, CardProps } from '../types';
 import CardButton from '../CardButton';
 import Accordion from '../Accordion';
 import { RichTextRenderer } from '../../RichText';
 import useLocalizedText from '../../../useLocalizedText';
-import ScrollElements from '../ScrollElements';
+import CarouselNavigation from '../CarouselNavigation';
 
-interface ClassicProps extends Omit<CardsConfig, 'cards'> {
-  styles: {
-    container: string;
-  };
-  container: RefObject<HTMLDivElement>;
-  getCoverStyle: (index: number) => any;
-  canScroll: boolean | null;
-  scroll: (step: number) => () => void;
-  cards: CardClassic[];
-}
+interface ClassicProps extends CardProps<CardClassic[]> {}
 
 const Classic = ({
   title,
@@ -30,7 +19,6 @@ const Classic = ({
   scroll,
 }: ClassicProps) => {
   const { localize } = useLocalizedText();
-  const { t } = useTranslation();
 
   return (
     <div className={tw`block-cards variant-classic flex flex-col w-full`}>
@@ -142,7 +130,7 @@ const Classic = ({
           )}
         </div>
 
-        {canScroll && <ScrollElements scroll={scroll} />}
+        {canScroll && <CarouselNavigation scroll={scroll} />}
       </div>
     </div>
   );

@@ -3,11 +3,11 @@ import { Tooltip } from '@prisme.ai/design-system';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 
-interface ScrollElementsProps {
+interface CarouselNavigationProps {
   scroll: (step: number) => () => void;
 }
 
-const ScrollElements = ({ scroll }: ScrollElementsProps) => {
+const CarouselNavigation = ({ scroll }: CarouselNavigationProps) => {
   const { t } = useTranslation();
 
   return (
@@ -44,4 +44,4 @@ const ScrollElements = ({ scroll }: ScrollElementsProps) => {
   );
 };
 
-export default ScrollElements;
+export default CarouselNavigation;

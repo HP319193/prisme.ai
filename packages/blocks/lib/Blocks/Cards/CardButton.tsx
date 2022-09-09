@@ -57,7 +57,7 @@ const CardButton: FC<CardButtonType> = ({
     return (
       <button
         type="button"
-        className={`${tw`block-cards__button-event button-event flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}`}
+        className={tw`block-cards__button-event button-event flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}
         onClick={() => events?.emit(event, payload)}
       >
         <div

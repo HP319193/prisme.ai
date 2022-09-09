@@ -4,19 +4,50 @@ import { useBlock } from '../../Provider';
 import { withI18nProvider } from '../../i18n';
 import tw from '../../tw';
 import {
-  CardAction,
-  CardArticle,
   CardClassic,
   CardsConfig,
   CardShort,
   CardSquare,
   Cards as TCards,
+  CardArticle,
+  CardAction,
 } from './types';
 import Classic from './Variants/Classic';
 import Square from './Variants/Square';
 import Article from './Variants/Article';
 import Short from './Variants/Short';
 import Actions from './Variants/Actions';
+
+const getComponent = (variant: CardsConfig['variant']) => {
+  switch (variant) {
+    case 'square':
+      return Square;
+    case 'article':
+      return Article;
+    case 'short':
+      return Short;
+    case 'actions':
+      return Actions;
+    case 'classic':
+    default:
+      return Classic;
+  }
+};
+const typeCards = (variant: CardsConfig['variant'], cards: TCards) => {
+  switch (variant) {
+    case 'square':
+      return cards as CardSquare[];
+    case 'article':
+      return cards as CardArticle[];
+    case 'short':
+      return cards as CardShort[];
+    case 'actions':
+      return cards as CardAction[];
+    case 'classic':
+    default:
+      return cards as CardClassic[];
+  }
+};
 
 const cardsIsShort = (
   cards: TCards,
@@ -182,68 +213,19 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     [cards]
   );
 
-  switch (config.variant) {
-    case 'square':
-      return (
-        <Square
-          styles={styles}
-          container={container}
-          canScroll={canScroll}
-          scroll={scroll}
-          {...config}
-          cards={cards as CardSquare[]}
-        />
-      );
-    case 'article':
-      return (
-        <Article
-          styles={styles}
-          container={container}
-          getCoverStyle={getCoverStyle}
-          canScroll={canScroll}
-          scroll={scroll}
-          {...config}
-          cards={cards as CardArticle[]}
-        />
-      );
-    case 'short':
-      return (
-        <Short
-          styles={styles}
-          container={container}
-          getCoverStyle={getCoverStyle}
-          canScroll={canScroll}
-          scroll={scroll}
-          {...config}
-          cards={cards as CardShort[]}
-        />
-      );
-    case 'actions':
-      return (
-        <Actions
-          styles={styles}
-          container={container}
-          getCoverStyle={getCoverStyle}
-          canScroll={canScroll}
-          scroll={scroll}
-          {...config}
-          cards={cards as CardAction[]}
-        />
-      );
-    case 'classic':
-    default:
-      return (
-        <Classic
-          styles={styles}
-          container={container}
-          getCoverStyle={getCoverStyle}
-          canScroll={canScroll}
-          scroll={scroll}
-          {...config}
-          cards={cards as CardClassic[]}
-        />
-      );
-  }
+  const Component = getComponent(config.variant);
+
+  return (
+    <Component
+      styles={styles}
+      container={container}
+      canScroll={canScroll}
+      scroll={scroll}
+      {...config}
+      cards={typeCards(config.variant, cards)}
+      getCoverStyle={getCoverStyle}
+    />
+  );
 };
 
 export default withI18nProvider(Cards);
