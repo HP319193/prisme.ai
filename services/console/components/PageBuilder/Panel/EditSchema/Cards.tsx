@@ -1,3 +1,4 @@
+import { CardVariants } from '@prisme.ai/blocks/';
 import { Schema } from '@prisme.ai/design-system';
 
 const schema: Schema = {
@@ -8,213 +9,384 @@ const schema: Schema = {
       title: 'pages.blocks.settings.blockTitle.label',
       description: 'pages.blocks.settings.blockTitle.description',
     },
-    cards: {
-      type: 'array',
-      title: 'pages.blocks.cards.settings.cards',
-      items: {
-        type: 'object',
-        title: 'pages.blocks.cards.settings.card',
-        properties: {
-          title: {
-            type: 'localized:string',
-            title: 'pages.blocks.cards.settings.title',
-          },
-          description: {
-            type: 'localized:string',
-            title: 'pages.blocks.cards.settings.description',
-          },
-          cover: {
-            type: 'string',
-            title: 'pages.blocks.cards.settings.cover',
-            'ui:widget': 'upload',
-          },
-          content: {
-            type: 'array',
-            title: 'pages.blocks.cards.settings.content',
-            items: {
-              type: 'object',
-              title: 'pages.blocks.cards.settings.type',
-              properties: {
-                type: {
-                  hidden: true,
-                },
-                value: {
-                  type: 'localized:string',
-                  title: 'pages.blocks.cards.settings.text.value',
-                },
-              },
-              oneOf: [
-                {
-                  title: 'pages.blocks.cards.settings.type_text',
-                },
-                {
-                  title: 'pages.blocks.cards.settings.type_button',
-                  properties: {
-                    value: {
-                      type: 'localized:string',
-                      title: 'pages.blocks.cards.settings.button.value',
-                    },
-                    icon: {
-                      type: 'string',
-                      title: 'pages.blocks.cards.settings.button.icon',
-                      'ui:widget': 'upload',
+    variant: {
+      title: 'pages.blocks.cards.settings.variant.label',
+      oneOf: [
+        {
+          title: 'pages.blocks.cards.settings.classic.label',
+          value: CardVariants[0],
+          properties: {
+            cards: {
+              type: 'array',
+              title: 'pages.blocks.cards.settings.cards',
+              items: {
+                add: 'pages.blocks.cards.settings.cards_add',
+                remove: 'pages.blocks.cards.settings.cards_remove',
+                type: 'object',
+                title: 'pages.blocks.cards.settings.card',
+                properties: {
+                  title: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.title',
+                  },
+                  description: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.description',
+                  },
+                  cover: {
+                    type: 'string',
+                    title: 'pages.blocks.cards.settings.cover',
+                    'ui:widget': 'upload',
+                  },
+                  content: {
+                    type: 'array',
+                    title: 'pages.blocks.cards.settings.classic.content.label',
+                    items: {
+                      add: 'pages.blocks.cards.settings.classic.content.add',
+                      remove:
+                        'pages.blocks.cards.settings.classic.content.remove',
+                      type: 'object',
+                      title: 'pages.blocks.cards.settings.classic.content.item',
+                      properties: {
+                        type: {
+                          title:
+                            'pages.blocks.cards.settings.classic.content.type',
+                          oneOf: [
+                            {
+                              title:
+                                'pages.blocks.cards.settings.classic.content.type_text',
+                              value: 'text',
+                              properties: {
+                                value: {
+                                  type: 'localized:string',
+                                  title:
+                                    'pages.blocks.cards.settings.classic.content.text.value',
+                                  description:
+                                    'pages.blocks.cards.settings.classic.content.text.value_description',
+                                },
+                              },
+                            },
+                            {
+                              title:
+                                'pages.blocks.cards.settings.classic.content.type_button',
+                              value: 'button',
+                              properties: {
+                                value: {
+                                  type: 'localized:string',
+                                  title:
+                                    'pages.blocks.cards.settings.classic.content.button.value',
+                                  description:
+                                    'pages.blocks.cards.settings.classic.content.button.value_description',
+                                },
+                                url: {
+                                  type: 'localized:string',
+                                  title:
+                                    'pages.blocks.cards.settings.classic.content.button.url',
+                                  description:
+                                    'pages.blocks.cards.settings.classic.content.button.url_description',
+                                },
+                                popup: {
+                                  type: 'boolean',
+                                  title:
+                                    'pages.blocks.cards.settings.classic.content.button.popup',
+                                  description:
+                                    'pages.blocks.cards.settings.classic.content.button.popup_description',
+                                },
+                                event: {
+                                  type: 'string',
+                                  title:
+                                    'pages.blocks.cards.settings.classic.content.button.event',
+                                  description:
+                                    'pages.blocks.cards.settings.classic.content.button.event_description',
+                                },
+                                payload: {
+                                  type: 'object',
+                                  additionalProperties: true,
+                                  title:
+                                    'pages.blocks.cards.settings.classic.content.button.payload',
+                                  description:
+                                    'pages.blocks.cards.settings.classic.content.button.payload_description',
+                                },
+                                icon: {
+                                  type: 'string',
+                                  'ui:widget': 'upload',
+                                  title:
+                                    'pages.blocks.cards.settings.classic.content.button.icon',
+                                },
+                              },
+                            },
+                            {
+                              title:
+                                'pages.blocks.cards.settings.classic.content.type_accordion',
+                              value: 'accordion',
+                              properties: {
+                                title: {
+                                  type: 'localized:string',
+                                  title:
+                                    'pages.blocks.cards.settings.classic.content.accordion.title',
+                                  description:
+                                    'pages.blocks.cards.settings.classic.content.accordion.title_description',
+                                },
+                                content: {
+                                  type: 'localized:string',
+                                  title:
+                                    'pages.blocks.cards.settings.classic.content.accordion.content',
+                                  description:
+                                    'pages.blocks.cards.settings.classic.content.accordion.content_description',
+                                },
+                                icon: {
+                                  type: 'string',
+                                  'ui:widget': 'upload',
+                                  title:
+                                    'pages.blocks.cards.settings.classic.content.accordion.icon',
+                                },
+                              },
+                            },
+                          ],
+                        },
+                      },
                     },
                   },
-                  oneOf: [
-                    {
-                      title: 'pages.blocks.cards.settings.button.type_page',
-                      properties: {
-                        url: {
-                          type: 'localized:string',
-                          title: 'pages.blocks.cards.settings.button.page',
-                          'ui:widget': 'select',
-                          'ui:options': {
-                            from: 'pages',
-                          },
-                        },
-                        popup: {
-                          type: 'boolean',
-                          title: 'pages.blocks.cards.settings.button.popup',
-                          default: true,
-                        },
-                      },
-                    },
-                    {
-                      title: 'pages.blocks.cards.settings.button.type_page',
-                      properties: {
-                        url: {
-                          type: 'localized:string',
-                          title: 'pages.blocks.cards.settings.button.url',
-                        },
-                        popup: {
-                          type: 'boolean',
-                          title: 'pages.blocks.cards.settings.button.popup',
-                          default: true,
-                        },
-                      },
-                    },
-                    {
-                      title: 'pages.blocks.cards.settings.button.type_page',
-                      properties: {
-                        event: {
-                          type: 'localized:string',
-                          title: 'pages.blocks.cards.settings.button.event',
-                        },
-                        payload: {
-                          title: 'pages.blocks.cards.settings.button.payload',
-                        },
-                      },
-                    },
-                  ],
-                  'ui:options': {
-                    oneOf: {
-                      options: [
-                        {
-                          label: 'pages.blocks.cards.settings.button.page',
-                          index: 0,
-                        },
-                        {
-                          label: 'pages.blocks.cards.settings.button.url',
-                          index: 1,
-                        },
-                        {
-                          label: 'pages.blocks.cards.settings.button.event',
-                          index: 2,
-                        },
-                      ],
-                    },
-                  },
-                },
-                {
-                  title: 'pages.blocks.cards.settings.type_accordion',
-                  properties: {
-                    title: {
-                      type: 'localized:string',
-                      title: 'pages.blocks.cards.settings.accordion.title',
-                    },
-                    content: {
-                      type: 'localized:string',
-                      title: 'pages.blocks.cards.settings.accordion.content',
-                    },
-                    icon: {
-                      type: 'string',
-                      title: 'pages.blocks.cards.settings.accordion.icon',
-                      'ui:widget': 'upload',
-                    },
-                  },
-                },
-              ],
-              'ui:options': {
-                oneOf: {
-                  options: [
-                    {
-                      label: 'pages.blocks.cards.settings.type_text',
-                      index: 0,
-                      value: {
-                        type: 'text',
-                      },
-                    },
-                    {
-                      label: 'pages.blocks.cards.settings.type_button',
-                      index: 1,
-                      value: {
-                        type: 'button',
-                      },
-                    },
-                    {
-                      label: 'pages.blocks.cards.settings.type_accordion',
-                      index: 2,
-                      value: {
-                        type: 'accordion',
-                      },
-                    },
-                  ],
                 },
               },
             },
           },
         },
-      },
-    },
-    layout: {
-      type: 'object',
-      oneOf: [
         {
-          title: 'pages.blocks.cards.settings.layout.noOptions',
+          title: 'pages.blocks.cards.settings.short.label',
+          value: CardVariants[1],
+          properties: {
+            cards: {
+              type: 'array',
+              title: 'pages.blocks.cards.settings.cards',
+              items: {
+                add: 'pages.blocks.cards.settings.cards_add',
+                remove: 'pages.blocks.cards.settings.cards_remove',
+                type: 'object',
+                title: 'pages.blocks.cards.settings.card',
+                properties: {
+                  title: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.title',
+                  },
+                  subtitle: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.short.subtitle',
+                  },
+                  description: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.description',
+                    'ui:widget': 'textarea',
+                  },
+                  backgroundColor: {
+                    type: 'string',
+                    title: 'pages.blocks.cards.settings.short.backgroundColor',
+                    enum: [
+                      'black',
+                      'white',
+                      'transparent-white',
+                      'transparent-black',
+                    ],
+                    enumNames: [
+                      'pages.blocks.cards.settings.short.backgroundColor_black',
+                      'pages.blocks.cards.settings.short.backgroundColor_white',
+                      'pages.blocks.cards.settings.short.backgroundColor_transparent-white',
+                      'pages.blocks.cards.settings.short.backgroundColor_transparent-black',
+                    ],
+                  },
+                },
+              },
+            },
+          },
         },
         {
-          title: 'pages.blocks.cards.settings.layout.carousel',
+          title: 'pages.blocks.cards.settings.article.label',
+          value: CardVariants[2],
           properties: {
-            autoScroll: {
-              type: 'boolean',
-              title: 'pages.blocks.cards.settings.autoScroll.title',
-              description: 'pages.blocks.cards.settings.autoScroll.description',
+            cards: {
+              type: 'array',
+              title: 'pages.blocks.cards.settings.cards',
+              items: {
+                type: 'object',
+                title: 'pages.blocks.cards.settings.card',
+                add: 'pages.blocks.cards.settings.cards_add',
+                remove: 'pages.blocks.cards.settings.cards_remove',
+                properties: {
+                  title: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.title',
+                  },
+                  subtitle: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.article.subtitle',
+                  },
+                  tag: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.article.tag',
+                  },
+                  description: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.description',
+                  },
+                  cover: {
+                    type: 'string',
+                    title: 'pages.blocks.cards.settings.cover',
+                    'ui:widget': 'upload',
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          title: 'pages.blocks.cards.settings.square.label',
+          value: CardVariants[3],
+          properties: {
+            cards: {
+              type: 'array',
+              title: 'pages.blocks.cards.settings.cards',
+              items: {
+                type: 'object',
+                title: 'pages.blocks.cards.settings.card',
+                add: 'pages.blocks.cards.settings.cards_add',
+                remove: 'pages.blocks.cards.settings.cards_remove',
+                properties: {
+                  title: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.title',
+                  },
+                  description: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.description',
+                  },
+                  cover: {
+                    type: 'string',
+                    title: 'pages.blocks.cards.settings.cover',
+                    'ui:widget': 'upload',
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          title: 'pages.blocks.cards.settings.actions.label',
+          value: CardVariants[4],
+          properties: {
+            cards: {
+              type: 'array',
+              title: 'pages.blocks.cards.settings.cards',
+              items: {
+                type: 'object',
+                title: 'pages.blocks.cards.settings.card',
+                add: 'pages.blocks.cards.settings.cards_add',
+                remove: 'pages.blocks.cards.settings.cards_remove',
+                properties: {
+                  title: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.title',
+                  },
+                  description: {
+                    type: 'localized:string',
+                    title: 'pages.blocks.cards.settings.description',
+                  },
+                  cover: {
+                    type: 'string',
+                    title: 'pages.blocks.cards.settings.cover',
+                    'ui:widget': 'upload',
+                  },
+                  content: {
+                    type: 'array',
+                    title: 'pages.blocks.cards.settings.actions.content.label',
+                    items: {
+                      add: 'pages.blocks.cards.settings.actions.content.add',
+                      remove:
+                        'pages.blocks.cards.settings.actions.content.remove',
+                      type: 'object',
+                      title: 'pages.blocks.cards.settings.actions.content.item',
+                      properties: {
+                        type: {
+                          title:
+                            'pages.blocks.cards.settings.actions.content.type',
+                          oneOf: [
+                            {
+                              title:
+                                'pages.blocks.cards.settings.actions.content.type_event',
+                              value: 'event',
+                              properties: {
+                                text: {
+                                  type: 'localized:string',
+                                  title:
+                                    'pages.blocks.cards.settings.actions.content.text',
+                                },
+                                value: {
+                                  type: 'string',
+                                  title:
+                                    'pages.blocks.cards.settings.actions.content.value_event',
+                                },
+                                payload: {
+                                  type: 'object',
+                                  additionalProperties: true,
+                                  title:
+                                    'pages.blocks.cards.settings.actions.content.payload',
+                                },
+                              },
+                            },
+                            {
+                              title:
+                                'pages.blocks.cards.settings.actions.content.type_url',
+                              value: 'url',
+                              properties: {
+                                text: {
+                                  type: 'localized:string',
+                                  title:
+                                    'pages.blocks.cards.settings.actions.content.text',
+                                },
+                                value: {
+                                  type: 'string',
+                                  title:
+                                    'pages.blocks.cards.settings.actions.content.value_url',
+                                },
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
         },
       ],
-      'ui:options': {
-        oneOf: {
-          options: [
+    },
+    layout: {
+      type: 'object',
+      title: 'pages.blocks.cards.settings.layout.title',
+      description: 'pages.blocks.cards.settings.layout.description',
+      properties: {
+        type: {
+          title: 'pages.blocks.cards.settings.layout.style',
+          oneOf: [
             {
-              label: 'pages.blocks.cards.settings.layout.grid',
-              index: 0,
-              value: {
-                type: 'grid',
-              },
+              title: 'pages.blocks.cards.settings.layout.grid',
+              value: 'grid',
             },
             {
-              label: 'pages.blocks.cards.settings.layout.column',
-              index: 0,
-              value: {
-                type: 'column',
-              },
+              title: 'pages.blocks.cards.settings.layout.column',
+              value: 'column',
             },
             {
-              label: 'pages.blocks.cards.settings.layout.carousel',
-              index: 1,
-              value: {
-                type: 'carousel',
+              title: 'pages.blocks.cards.settings.layout.carousel',
+              value: 'carousel',
+              properties: {
+                autoScroll: {
+                  type: 'boolean',
+                  title: 'pages.blocks.cards.settings.layout.autoScroll.title',
+                  description:
+                    'pages.blocks.cards.settings.layout.autoScroll.description',
+                },
               },
             },
           ],
@@ -223,5 +395,4 @@ const schema: Schema = {
     },
   },
 };
-
 export default schema;
