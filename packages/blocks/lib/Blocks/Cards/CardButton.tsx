@@ -14,6 +14,7 @@ const CardButton: FC<CardButtonType> = ({
   icon,
   value,
   payload,
+  className = 'flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left',
 }) => {
   const { localize } = useLocalizedText();
   const { events } = useBlock();
@@ -21,11 +22,10 @@ const CardButton: FC<CardButtonType> = ({
   const {
     components: { Link },
   } = useBlocks();
-
   if (url) {
     return (
       <Link
-        className={`${tw`card-content-outer__button-link button-link flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}`}
+        className={tw`card-content-outer__button-link button-link ${className}`}
         href={url}
         target={popup ? '_blank' : undefined}
       >
@@ -57,7 +57,7 @@ const CardButton: FC<CardButtonType> = ({
     return (
       <button
         type="button"
-        className={tw`block-cards__button-event button-event flex flex-1 flex-row bg-[#E6EFFF] text-[10px] text-accent p-4 rounded text-left`}
+        className={tw`block-cards__button-event button-event ${className}`}
         onClick={() => events?.emit(event, payload)}
       >
         <div

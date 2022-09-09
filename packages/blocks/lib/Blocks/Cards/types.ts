@@ -8,6 +8,7 @@ export interface CardButtonType {
   event?: string;
   payload?: any;
   icon?: string;
+  className?: string;
 }
 
 export interface CardAction {
@@ -18,6 +19,8 @@ export interface CardAction {
     type: 'event' | 'url';
     text: Prismeai.LocalizedText;
     value: string;
+    payload?: any;
+    popup?: boolean;
   }[];
 }
 

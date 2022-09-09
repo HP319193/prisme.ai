@@ -4,6 +4,7 @@ import { CardAction, CardProps } from '../types';
 import useLocalizedText from '../../../useLocalizedText';
 import { truncate } from '../../../utils/truncate';
 import CarouselNavigation from '../CarouselNavigation';
+import CardButton from '../CardButton';
 
 interface ActionsProps extends CardProps<CardAction[]> {}
 
@@ -62,7 +63,7 @@ const Actions = ({
                 >
                   {content &&
                     Array.isArray(content) &&
-                    content.map((item, index) => (
+                    content.slice(0, 3).map((item, index) => (
                       <div
                         key={index}
                         className={`${tw`card__card-content-outer card-content-outer flex w-full py-[0.625rem] px-[1.25rem] font-semibold`}`}
@@ -70,7 +71,16 @@ const Actions = ({
                         <div
                           className={tw`flex flex-grow bg-white rounded-[0.625rem] h-[3.125rem] items-center justify-center `}
                         >
-                          {truncate(localize(item.text), 20)}
+                          <CardButton
+                            type="button"
+                            url={item.type === 'url' ? item.value : undefined}
+                            event={
+                              item.type === 'event' ? item.value : undefined
+                            }
+                            payload={item.payload}
+                            value={truncate(localize(item.text), 20)}
+                            popup={item.popup}
+                          />
                         </div>
                       </div>
                     ))}
