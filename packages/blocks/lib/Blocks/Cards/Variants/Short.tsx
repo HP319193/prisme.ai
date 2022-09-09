@@ -10,9 +10,9 @@ interface ShortProps extends CardProps<CardShort[]> {}
 const getBgClassName = (bgColor: CardShort['backgroundColor']) => {
   switch (bgColor) {
     case 'transparent-black':
-      return tw`bg-transparent text-black border-[1px] border-[rgba(0,0,0,0.2)]`;
+      return tw`bg-[rgba(0,0,0,0.05)] text-black border-[1px] border-[rgba(0,0,0,0.2)]`;
     case 'transparent-white':
-      return tw`bg-transparent text-white border-[1px] border-[rgba(255,255,255,0.2)]`;
+      return tw`bg-[rgba(0,0,0,0.05)] text-white border-[1px] border-[rgba(255,255,255,0.2)]`;
     case 'white':
       return tw`bg-white text-black`;
     case 'black':
