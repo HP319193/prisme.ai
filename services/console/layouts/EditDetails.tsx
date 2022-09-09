@@ -54,7 +54,6 @@ export const EditDetails = ({
 
   return (
     <Popover
-      className="ml-2"
       title={({ setVisible }) => (
         <div className="flex flex-1 justify-between">
           {t('details.title', { context })}

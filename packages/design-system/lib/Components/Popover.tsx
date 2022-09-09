@@ -67,8 +67,8 @@ const Popover: FC<PopoverProps> = ({
         )
       }
       trigger="click"
-      visible={visible}
-      onVisibleChange={(visible) => toggleVisible(visible)}
+      open={visible}
+      onOpenChange={(visible) => toggleVisible(visible)}
       {...otherProps}
     >
       {children}

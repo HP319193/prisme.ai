@@ -87,7 +87,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       title={t('apps.publish.confirm.title', {
         name: localize(workspace.name),
       })}

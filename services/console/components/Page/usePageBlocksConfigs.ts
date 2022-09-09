@@ -5,7 +5,10 @@ import { useUser } from '../UserProvider';
 const isPage = (page: any): page is Prismeai.Page =>
   page && typeof page !== 'number';
 
-export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
+export const usePageBlocksConfigs = (
+  page: Prismeai.Page | null | number,
+  force?: boolean
+) => {
   const { user } = useUser();
   const [blocksConfigs, setBlocksConfigs] = useState<any[]>([]);
 
@@ -15,10 +18,10 @@ export const usePageBlocksConfigs = (page: Prismeai.Page | null | number) => {
     if (typeof cachedPage === 'number' || typeof page === 'number') {
       return;
     }
-    if ((cachedPage || {}).id !== (page || {}).id) {
+    if (force || (cachedPage || {}).id !== (page || {}).id) {
       setCachedPage(page);
     }
-  }, [cachedPage, page]);
+  }, [cachedPage, force, page]);
 
   useEffect(() => {
     if (!isPage(cachedPage)) return;

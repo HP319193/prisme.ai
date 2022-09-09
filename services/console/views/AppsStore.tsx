@@ -74,13 +74,13 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
       }
       onCancel();
     },
-    [installApp, onCancel, push, workspaceId]
+    [errorT, installApp, onCancel, push, workspaceId]
   );
 
   return (
     <Modal
       onCancel={onCancel}
-      visible={visible}
+      open={visible}
       footer={null}
       title={<div>{t('apps.title')}</div>}
       width="80vw"

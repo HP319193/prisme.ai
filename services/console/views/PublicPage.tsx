@@ -47,7 +47,11 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
     isReady,
     query: { pageSlug },
   } = useRouter();
-  const { blocksConfigs, error, events } = usePageBlocksConfigs(currentPage);
+  const [forceReloadPage, setForceReloadPage] = useState(false);
+  const { blocksConfigs, error, events } = usePageBlocksConfigs(
+    currentPage,
+    forceReloadPage
+  );
 
   useEffect(() => {
     window.Prisme = window.Prisme || {};
@@ -63,6 +67,7 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
     const listener = (e: MessageEvent) => {
       const { type, page } = e.data;
       if (type === 'updatePagePreview') {
+        setForceReloadPage(true);
         setCurrentPage(page);
       }
     };
