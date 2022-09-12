@@ -4,13 +4,13 @@ import { useBlock } from '../../Provider';
 import { withI18nProvider } from '../../i18n';
 import tw from '../../tw';
 import {
+  CardAction,
+  CardArticle,
   CardClassic,
+  Cards as TCards,
   CardsConfig,
   CardShort,
   CardSquare,
-  Cards as TCards,
-  CardArticle,
-  CardAction,
 } from './types';
 import Classic from './Variants/Classic';
 import Square from './Variants/Square';
@@ -206,7 +206,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
         background: `${
           isUrl
             ? `url(${cover})`
-            : 'linear-gradient(rgba(81, 81, 81, 0), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.20)), rgb(54, 54, 54)'
+            : 'linear-gradient(rgba(81, 81, 81, 0), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.20)), rgb(140, 140, 140)'
         }`,
       };
     },
