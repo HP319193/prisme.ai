@@ -1,6 +1,6 @@
 {
   "name": "@prisme.ai/design-system",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Prisme.ai design system",
   "main": "./dist/index.js",
   "scripts": {
