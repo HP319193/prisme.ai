@@ -11,7 +11,7 @@ export function applyObjectUpdateOpLogs(
       splittedPath.length > 1 ? splittedPath.slice(0, -1) : undefined;
     const lastKey = splittedPath[splittedPath.length - 1];
     const parent = parentPath ? extractSubPath(obj, parentPath) : obj;
-    if (update.type === 'set') {
+    if (update.type === 'replace') {
       parent[lastKey] = update.value;
     } else if (update.type === 'push') {
       parent[lastKey] = Array.isArray(parent[lastKey])
