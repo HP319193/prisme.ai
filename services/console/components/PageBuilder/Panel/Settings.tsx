@@ -1,34 +1,45 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Collapse, Schema, SchemaForm } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import debounce from 'lodash/debounce';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import usePages from '../../PagesProvider/context';
 import useSchema from '../../SchemaForm/useSchema';
 import { usePageBuilder } from '../context';
 import { useWorkspace } from '../../WorkspaceProvider';
-
-const noop = () => null;
+import useBlockPageConfig from '../useBlockPageConfig';
 
 interface SettingsProps {
   removeBlock: () => void;
   schema?: Schema;
-  onConfigUpdate?: (config: any) => void;
-  config?: any;
+  blockId: string;
 }
 
-export const Settings = ({
-  removeBlock,
-  schema,
-  config,
-  onConfigUpdate,
-}: SettingsProps) => {
+export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
   const { t } = useTranslation('workspaces');
   const { page } = usePageBuilder();
   const {
     workspace: { id: workspaceId, automations },
   } = useWorkspace();
   const { pages } = usePages();
+  const { config, onConfigUpdate } = useBlockPageConfig({
+    blockId,
+  });
+
+  const mergeConfig = useCallback(
+    (newConfig: Record<string, any>) =>
+      onConfigUpdate({ ...config, ...newConfig }),
+    [config, onConfigUpdate]
+  );
+
+  const debouncedMergeConfig = useMemo(
+    () =>
+      debounce((newConfig: Record<string, any>) => {
+        mergeConfig(newConfig);
+      }, 500),
+    [mergeConfig]
+  );
 
   const { extractSelectOptions } = useSchema({
     pageSections: page.blocks.flatMap(({ config: { sectionId } = {} }) =>
@@ -95,7 +106,7 @@ export const Settings = ({
         content: (
           <SchemaForm
             schema={commonSchema}
-            onChange={onConfigUpdate}
+            onChange={debouncedMergeConfig}
             initialValues={config}
             buttons={[]}
             locales={locales}
@@ -112,7 +123,7 @@ export const Settings = ({
           content: (
             <SchemaForm
               schema={schema}
-              onChange={onConfigUpdate}
+              onChange={debouncedMergeConfig}
               initialValues={config}
               buttons={[]}
               utils={{ extractSelectOptions }}
@@ -130,7 +141,7 @@ export const Settings = ({
     extractSelectOptions,
     locales,
     schema,
-    onConfigUpdate,
+    mergeConfig,
     t,
   ]);
 

@@ -4,7 +4,6 @@ import Settings from './Settings';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import { usePageBuilder } from '../context';
 import getEditSchema from '../../PageBuilder/Panel/EditSchema/getEditSchema';
-import useBlockPageConfig from '../../PageBuilder/useBlockPageConfig';
 
 interface PageEditBlockFormProps {
   blockId: string;
@@ -13,10 +12,6 @@ interface PageEditBlockFormProps {
 const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
   const { localizeSchemaForm } = useLocalizedText();
   const { blocksInPage, removeBlock } = usePageBuilder();
-
-  const { config, onConfigUpdate } = useBlockPageConfig({
-    blockId,
-  });
 
   const editedBlock = blocksInPage.find(({ key }) => key === blockId);
   const editSchema =
@@ -37,8 +32,7 @@ const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
     <Settings
       schema={schema}
       removeBlock={() => removeBlock(blockId)}
-      config={config}
-      onConfigUpdate={onConfigUpdate}
+      blockId={blockId}
     />
   );
 };
