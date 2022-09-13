@@ -204,8 +204,8 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
 
       return {
         background: `${
-          isUrl
-            ? `url(${cover})`
+          cover
+            ? `url("${cover}")`
             : 'linear-gradient(rgba(81, 81, 81, 0), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.20)), rgb(140, 140, 140)'
         }`,
       };

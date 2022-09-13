@@ -20,11 +20,7 @@ const Article = ({
 
   return (
     <div className={tw`block-cards variant-article flex flex-col w-full`}>
-      <div
-        className={tw`block-cards__title-container title-container pt-8 pl-8`}
-      >
-        {title && <BlockTitle value={localize(title)} />}
-      </div>
+      {title && <BlockTitle value={localize(title)} />}
       <div
         className={tw`block-cards__cards-container cards-container relative !pt-0 w-full overflow-hidden`}
       >
@@ -47,7 +43,7 @@ const Article = ({
                 >
                   <div
                     className={tw`card-container__card-cover card-cover flex flex-row m-[0.438rem]
-                  mb-0 min-h-[10.25rem] h-[10.25rem] rounded-[0.625rem] bg-cover`}
+                  mb-0 min-h-[10.25rem] h-[10.25rem] rounded-[0.625rem] !bg-cover`}
                     style={getCoverStyle(index)}
                   >
                     {tag && (

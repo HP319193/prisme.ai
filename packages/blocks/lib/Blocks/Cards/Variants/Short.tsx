@@ -33,11 +33,7 @@ const Short = ({
 
   return (
     <div className={tw`block-cards variant-article flex flex-col w-full`}>
-      <div
-        className={tw`block-cards__title-container title-container pt-8 pl-8`}
-      >
-        {title && <BlockTitle value={localize(title)} />}
-      </div>
+      {title && <BlockTitle value={localize(title)} />}
       <div
         className={tw`block-cards__cards-container cards-container relative !pt-0 w-full overflow-hidden`}
       >

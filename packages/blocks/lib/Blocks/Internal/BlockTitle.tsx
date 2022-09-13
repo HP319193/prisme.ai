@@ -1,4 +1,5 @@
 import { Title } from '@prisme.ai/design-system';
+import tw from '../../tw';
 
 interface BlockTitleProps {
   value: string;
@@ -6,9 +7,11 @@ interface BlockTitleProps {
 
 const BlockTitle = ({ value }: BlockTitleProps) => {
   return (
-    <Title level={4} className="block-title">
-      {value}
-    </Title>
+    <div className={tw`block-cards__title-container title-container pt-8 pl-8`}>
+      <Title level={4} className="block-title text-[2.5rem]">
+        {value}
+      </Title>
+    </div>
   );
 };
 
