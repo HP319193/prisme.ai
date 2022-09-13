@@ -12,7 +12,7 @@ export const LayoutBasic = ({ name, schema }: FieldProps) => {
         <Field
           key={property}
           name={`${name}.${property}`}
-          schema={properties[property]}
+          schema={{ disabled: schema.disabled, ...properties[property] }}
         />
       ))}
     </>

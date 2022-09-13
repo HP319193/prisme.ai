@@ -52,6 +52,7 @@ export const FieldArray = (props: FieldProps) => {
                         <Button
                           onClick={() => fields.remove(index)}
                           className="!absolute top-[1.7rem] right-1 text-gray hover:text-orange-500"
+                          disabled={props.schema.disabled}
                         >
                           <Tooltip
                             title={
@@ -70,6 +71,7 @@ export const FieldArray = (props: FieldProps) => {
                   <Button
                     onClick={() => fields.push(getDefaultValue(items.type))}
                     className="flex items-center"
+                    disabled={props.schema.disabled}
                   >
                     <span className="underline">
                       {items.add || locales.addItem || 'Add item'}

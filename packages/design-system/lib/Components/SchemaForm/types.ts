@@ -106,6 +106,8 @@ export interface Schema extends Record<string, any> {
   default?: any;
   // Do not display the field
   hidden?: true;
+  // Disable the field
+  disabled?: true;
   // Validation by regexp
   pattern?: string;
   // Custom widget

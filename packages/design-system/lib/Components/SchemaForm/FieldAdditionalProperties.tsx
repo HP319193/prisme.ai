@@ -200,17 +200,18 @@ const ManagedAdditionalProperties = ({
             label={locales.propertyKey || 'Key'}
           />
           {' : '}
-          {key && (
-            <Field
-              schema={schema.additionalProperties as Schema}
-              label={
-                locales.propertyValue === undefined
-                  ? 'Value'
-                  : locales.propertyValue
-              }
-              name={`${name}.${key}`}
-            />
-          )}
+          <Field
+            schema={{
+              ...(schema.additionalProperties as Schema),
+              disabled: key ? undefined : true,
+            }}
+            label={
+              locales.propertyValue === undefined
+                ? 'Value'
+                : locales.propertyValue
+            }
+            name={`${name}.${key}`}
+          />
 
           <Button onClick={removeKey(key)}>
             <Tooltip
