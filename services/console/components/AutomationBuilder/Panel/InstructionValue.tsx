@@ -17,6 +17,7 @@ import { useWorkspace } from '../../WorkspaceProvider';
 import { useApps } from '../../AppsProvider';
 import { useRouter } from 'next/router';
 import { useAutomationBuilder } from '../context';
+import useLocalizedText from '../../../utils/useLocalizedText';
 
 interface InstructionValueProps {
   instruction: string;
@@ -101,6 +102,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   const { automationId } = useAutomationBuilder();
   const { pages } = usePages();
   const { t } = useTranslation('workspaces');
+  const { localizeSchemaForm } = useLocalizedText();
   const { appInstances } = useApps();
 
   const appInstance = useMemo(() => {
@@ -126,7 +128,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
 
   const cleanedSchema = useMemo(() => {
     const cleaned = {
-      ...schema,
+      ...localizeSchemaForm(schema),
       title: t('automations.instruction.label', { context: instruction }),
       description: t('automations.instruction.description', {
         context: instruction,
