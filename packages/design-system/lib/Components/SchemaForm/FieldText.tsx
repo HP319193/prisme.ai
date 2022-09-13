@@ -52,6 +52,7 @@ export const FieldText = (props: FieldProps) => {
       <components.FieldContainer {...props}>
         <Input
           {...field.input}
+          placeholder={props.schema.placeholder || ''}
           onChange={onChange}
           label={props.label || props.schema.title || getLabel(props.name)}
           type={props.schema.type === 'number' ? 'number' : 'text'}

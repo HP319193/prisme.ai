@@ -825,6 +825,10 @@
         "label": "Field description",
         "description": "This text will be displayed in a bubble exactly like this one."
       },
+      "placeholder": {
+        "label": "Placeholder",
+        "description": "This text will be shown inside the input."
+      },
       "type": {
         "label": "Type of value",
         "description": "The value will be of the type you specify"

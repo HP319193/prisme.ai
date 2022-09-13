@@ -209,6 +209,20 @@ export const SchemaFormBuilder = ({
           iconMarginTop={'2.3rem'}
         />
       </SchemaFormDescription>
+      {value.type && (
+        <SchemaFormDescription
+          text={t('schema.property.placeholder.description')}
+        >
+          <LocalizedInput
+            value={value.placeholder || ''}
+            onChange={update('placeholder')}
+            InputProps={{
+              label: t('schema.property.placeholder.label'),
+            }}
+            iconMarginTop={'2.3rem'}
+          />
+        </SchemaFormDescription>
+      )}
 
       {/*
       // Required is not already available
