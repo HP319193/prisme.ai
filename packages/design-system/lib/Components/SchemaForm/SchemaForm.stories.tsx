@@ -335,6 +335,7 @@ WithSortedOneOf.args = {
               },
               currency: {
                 type: 'string',
+                title: 'Currency',
                 enum: ['€', '$', '¥'],
               },
             },
@@ -345,6 +346,7 @@ WithSortedOneOf.args = {
   } as Schema,
   initialValues: {
     bar: 'number',
+    value: 42,
     currency: '$',
   },
 };
@@ -729,6 +731,67 @@ WithAutocompletee.args = {
         'ui:widget': 'autocomplete',
         'ui:options': {
           autocomplete: 'events',
+        },
+      },
+    },
+  },
+};
+
+export const WithDisabledFields = Template.bind({});
+WithDisabledFields.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      text: {
+        type: 'string',
+        disabled: true,
+      },
+      boolean: {
+        type: 'boolean',
+        disabled: true,
+      },
+      number: {
+        type: 'number',
+        disabled: true,
+      },
+      array: {
+        type: 'array',
+        disabled: true,
+      },
+      object: {
+        type: 'object',
+        properties: {
+          foo: {
+            type: 'string',
+          },
+        },
+        disabled: true,
+      },
+      insideArray: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            disabled: {
+              type: 'string',
+              disabled: true,
+            },
+            enabled: {
+              type: 'string',
+            },
+          },
+        },
+      },
+      insideObject: {
+        type: 'object',
+        properties: {
+          disabled: {
+            type: 'string',
+            disabled: true,
+          },
+          enabled: {
+            type: 'string',
+          },
         },
       },
     },

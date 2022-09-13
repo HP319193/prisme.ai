@@ -28,7 +28,10 @@ export const LayoutGrid = ({ grid, name, schema }: LayoutGridProps) => {
                       <Field
                         key={field}
                         name={`${name}.${field}`}
-                        schema={properties[field]}
+                        schema={{
+                          disabled: schema.disabled,
+                          ...properties[field],
+                        }}
                       />
                     </div>
                   )

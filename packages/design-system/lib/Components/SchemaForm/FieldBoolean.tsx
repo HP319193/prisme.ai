@@ -15,7 +15,11 @@ export const FieldBoolean = (props: FieldProps) => {
         <components.FieldContainer {...props}>
           <div className="flex items-center flex-1 !rounded-[0.3rem] h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500">
             <label className="flex cursor-pointer">
-              <Switch {...field.input} checked={field.input.value} />
+              <Switch
+                {...field.input}
+                checked={field.input.value}
+                disabled={props.schema.disabled}
+              />
               <span
                 className="ml-2"
                 dangerouslySetInnerHTML={{

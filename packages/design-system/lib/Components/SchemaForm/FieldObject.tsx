@@ -58,6 +58,7 @@ export const FieldObject = (props: FieldProps) => {
   }, [props.schema, field.input.value]);
 
   useEffect(() => {
+    if (props.schema.additionalProperties) return;
     const keys = Object.keys(schemaWithPropertiesWithOneOf.properties || {});
     const valueKeys = Object.keys(field.input.value);
     const hasTooMuchKeys = valueKeys.some((key) => !keys.includes(key));
@@ -72,7 +73,6 @@ export const FieldObject = (props: FieldProps) => {
       }),
       {}
     );
-
     field.input.onChange(cleanedValue);
   }, [field.input.value, schemaWithPropertiesWithOneOf]);
 

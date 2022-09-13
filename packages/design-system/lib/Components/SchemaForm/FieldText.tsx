@@ -55,6 +55,7 @@ export const FieldText = (props: FieldProps) => {
           onChange={onChange}
           label={props.label || props.schema.title || getLabel(props.name)}
           type={props.schema.type === 'number' ? 'number' : 'text'}
+          disabled={props.schema.disabled}
         />
       </components.FieldContainer>
     </Description>
