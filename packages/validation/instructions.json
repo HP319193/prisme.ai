@@ -131,6 +131,14 @@
           },
           "value": {
             "description": "variable value"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "replace",
+              "merge"
+            ],
+            "description": "Choose merge in order to merge target variable with value. Value takes precedence."
           }
         }
       }
