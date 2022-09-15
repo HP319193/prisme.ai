@@ -1834,6 +1834,7 @@ declare namespace Prismeai {
         httpTransactions: number;
         eventTransactions: number;
         sessions: number;
+        users: number;
     }
     export interface User {
         /**

@@ -437,6 +437,11 @@ export class ElasticsearchStore implements EventsStore {
           field: 'source.sessionId',
         },
       },
+      users: {
+        cardinality: {
+          field: 'source.userId',
+        },
+      },
     };
     type MetricsElasticBucket = ElasticBucket<{
       triggerTypes: ElasticBucket;
@@ -498,6 +503,7 @@ export class ElasticsearchStore implements EventsStore {
         httpTransactions: triggerTypes?.endpoint?.count || 0,
         eventTransactions: transactions - nonEventTriggers,
         sessions: aggregations?.sessions?.value,
+        users: aggregations?.users?.value,
       };
 
       return metrics;

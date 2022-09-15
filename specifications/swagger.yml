@@ -3461,6 +3461,7 @@ components:
         - httpTransactions
         - eventTransactions
         - sessions
+        - users
       additionalProperties: false
       properties:
         transactions:
@@ -3472,6 +3473,8 @@ components:
         eventTransactions:
           type: number
         sessions:
+          type: number
+        users:
           type: number
 
     AppUsageMetrics:
