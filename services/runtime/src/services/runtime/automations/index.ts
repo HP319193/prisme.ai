@@ -54,7 +54,9 @@ export async function executeAutomation(
       trigger: ctx.trigger!,
       break: breakRaised,
     },
-    {},
+    {
+      userId: ctx?.user?.id,
+    },
     EventType.ExecutedAutomation
   );
 
