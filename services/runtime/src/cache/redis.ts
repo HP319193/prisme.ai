@@ -40,7 +40,7 @@ export default class RedisCache implements CacheDriver {
   }
 
   async setObject(key: string, object: object, opts?: SetOptions) {
-    const raw = JSON.stringify(object);
+    const raw = JSON.stringify(object || {});
     return await this.set(key, raw, opts);
   }
 
