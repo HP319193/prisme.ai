@@ -823,6 +823,10 @@
         "label": "Description du champs",
         "description": "Ce texte sera affiché dans une bulle exactement comme celle-ci."
       },
+      "placeholder": {
+        "label": "Balise",
+        "description": "Ce texte sera affiché dans le champs."
+      },
       "type": {
         "label": "Type de valeur",
         "description": "La valeur sera du type que vous aurez spécifié."
