@@ -179,7 +179,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
         <div className="absolute left-10 bottom-10 text-[0.75rem] text-pr-grey z-0">
           {commonT('powered')}
         </div>
-        <PageBlocks />
+        <PageBlocks panelIsOpen={panelIsOpen} />
         <Panel
           title={t('details.title_pages')}
           visible={panelIsOpen}
