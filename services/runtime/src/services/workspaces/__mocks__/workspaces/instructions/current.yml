@@ -45,6 +45,7 @@ automations:
     do:
       - set:
           name: 'basicMerge'
+          type: 'merge'
           value:
             firstName: Martin
       - set:

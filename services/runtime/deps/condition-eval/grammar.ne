@@ -17,7 +17,7 @@
                         number: /[0-9]+/,
                         matches: /[Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
                         notMatches: /[Nn][Oo][Tt] [Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
-                        equals: /[Ee][Qq][Uu][Aa][Ll][Ss]|===|==/,
+                        equals: /[Ee][Qq][Uu][Aa][Ll][Ss]|===|==|=/,
                         notEquals: /[Nn][Oo][Tt] [Ee][Qq][Uu][Aa][Ll][Ss]|!==|!=/,
                         relationalOperator: /<=|>=|>|</,
                         bang: "!",
@@ -98,9 +98,8 @@ const toConditionalExpression = (items) => new ConditionalExpression(items[0], i
 
 main -> expression {% id %}
 
-expression -> suffixedExpression {% id %}
+expression -> booleanExpression {% id %}
 
-suffixedExpression -> booleanExpression {% id %} | booleanExpression %ws suffixOperator {% toConditionalExpression %}
 suffixOperator -> %exists {% id %} | %notExists {% id %}
 
 booleanExpression ->
@@ -112,6 +111,7 @@ equalityExpression ->
         relationalExpression {% id %}
         | relationalExpression %ws matchOperator %ws %regex insideARegEx:+ %closingP {% ([left,,operator,,,right]) => toConditionalExpression([left,,operator,,right]) %}
         | relationalExpression %ws equalityOperator %ws equalityExpression {% toConditionalExpression %}
+        | relationalExpression %ws suffixOperator {% toConditionalExpression %}
 
 matchOperator -> %matches | %notMatches
 insideARegEx -> %anything {% ([value]) => value.value %} | variable {% id %}

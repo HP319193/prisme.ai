@@ -57,6 +57,10 @@ class ConditionalExpression extends Evaluatable {
 
       case 'equals':
       case '==':
+      case '=':
+        result = left == right;
+        break;
+
       case '===':
         result = left === right;
         break;

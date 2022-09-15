@@ -24,6 +24,7 @@ describe('Should handle basic conditions features', () => {
   it('should handle equality', async () => {
     expect(evaluate(`"maVariable" === "maVariable"`)).toEqual(true);
     expect(evaluate(`"maVariable" == "maVariable"`)).toEqual(true);
+    expect(evaluate(`"maVariable" = "maVariable"`)).toEqual(true);
     expect(evaluate(`"maVariable" equals "maVariable"`)).toEqual(true);
   });
 
@@ -51,6 +52,7 @@ describe('Should handle basic conditions features', () => {
 
   it('should handle exists and not-exists operators', async () => {
     expect(evaluate(`undefined exists`)).toEqual(false);
+    expect(evaluate(`"ola" exists && undefined exists`)).toEqual(false);
     expect(evaluate(`null exists`)).toEqual(false);
     expect(evaluate(`0 exists`)).toEqual(true);
     expect(evaluate(`"ba" not exists`)).toEqual(false);
