@@ -8,10 +8,21 @@ export const defaultStyles = `body {
   background-color: rgb(248, 250, 255);
 }
 .page-blocks {
-  max-width: 768px;
-  margin-left: auto;
-  margin-right: auto;
   background-color: white;
+  padding: 2rem;
+}
+
+.block-form {
+  padding: 0;
+}
+
+.block-form .ant-input {
+  border-radius: 0.625rem;
+  border-color: black;
+}
+
+.block-form .ant-input::placeholder {
+  color: black;
 }`;
 
 export const PagesProvider: FC<PagesProvider> = ({ children }) => {

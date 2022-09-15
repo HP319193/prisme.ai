@@ -69,14 +69,14 @@ export const Header = ({ edit }: { edit?: boolean }) => {
     <div
       className={tw`block-header flex flex-1 flex-col ${
         inlineLinks ? '!flex-row' : 'md:!flex-row'
-      } justify-between md:items-center px-4 py-2`}
+      } justify-between md:items-center`}
     >
       <div
         className={tw`block-header__left left flex ${
           inlineLinks ? '' : 'md:justify-center'
         }`}
       >
-        <div className={tw`left__logo logo flex justify-center m-2 ml-4`}>
+        <div className={tw`left__logo logo flex justify-center`}>
           {config.logo && config.logo.src && (
             <img
               src={config.logo.src}
@@ -89,11 +89,11 @@ export const Header = ({ edit }: { edit?: boolean }) => {
           {config.title}
         </h1>
       </div>
-      <nav className={tw`block-header__right right flex m-4`}>
+      <nav className={tw`block-header__right right flex`}>
         {nav.map((props, k) => (
           <div
             key={k}
-            className={tw`right__nav nav mx-2`}
+            className={tw`right__nav nav mx-2 text-[0.875rem]`}
             onClick={(e) => {
               if (edit) e.preventDefault();
             }}
