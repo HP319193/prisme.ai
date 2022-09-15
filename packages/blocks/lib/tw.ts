@@ -3,9 +3,8 @@ import { setup, tw } from 'twind';
 
 setup({
   plugins: {
-    basis: (parts) => ({
-      'flex-basis': '150rem',
-    }),
+    'no-scrollbar': { '-ms-overflow-style': 'none', 'scrollbar-width': 'none' },
+    'no-scrollbar::-webkit-scrollbar': { display: 'none' },
     snap: (parts) => {
       switch (parts[0]) {
         case 'start':

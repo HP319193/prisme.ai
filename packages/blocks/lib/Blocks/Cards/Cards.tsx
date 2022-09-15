@@ -155,7 +155,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
       case 'carousel':
       default:
         return {
-          container: tw`flex flex-row flex-nowrap overflow-auto pr-[100vw] snap-x snap-mandatory pb-6`,
+          container: tw`flex flex-row flex-nowrap overflow-auto no-scrollbar pr-[100vw] snap-x snap-mandatory pb-6`,
         };
     }
   }, [config]);

@@ -7,8 +7,8 @@ interface BlockTitleProps {
 
 const BlockTitle = ({ value }: BlockTitleProps) => {
   return (
-    <div className={tw`block-cards__title-container title-container pt-8 pl-8`}>
-      <Title level={4} className="block-title text-[2.5rem]">
+    <div className={tw`block-cards__title-container title-container pt-8`}>
+      <Title level={4} className={`block-title ${tw`!text-[2.5rem]`}`}>
         {value}
       </Title>
     </div>
