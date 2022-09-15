@@ -3,7 +3,6 @@ import useLocalizedText from '../../useLocalizedText';
 import { useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
 import tw from '../../tw';
-import { LinkOutlined } from '@ant-design/icons';
 import { RichTextRenderer } from '../RichText';
 import { CardButtonType } from './types';
 
@@ -32,18 +31,12 @@ const CardButton: FC<CardButtonType> = ({
         <div
           className={tw`button-link__image-container image-container flex mr-2`}
         >
-          {icon ? (
+          {icon && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               className="image-container__image image image-container__image--custom image--custom"
               src={icon}
               alt={localize(value)}
-              height={16}
-              width={16}
-            />
-          ) : (
-            <LinkOutlined
-              className="image-container__image image image-container__image--default image--default"
               height={16}
               width={16}
             />
@@ -63,18 +56,12 @@ const CardButton: FC<CardButtonType> = ({
         <div
           className={tw`button-event__image-container image-container flex mr-2`}
         >
-          {icon ? (
+          {icon && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               className="image-container__image--custom image--custom"
               src={icon}
               alt={localize(value)}
-              height={16}
-              width={16}
-            />
-          ) : (
-            <LinkOutlined
-              className="image-container__image--default image--default"
               height={16}
               width={16}
             />

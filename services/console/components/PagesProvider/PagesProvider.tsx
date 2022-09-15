@@ -4,11 +4,16 @@ import { PagesContext, pagesContext } from './context';
 
 interface PagesProvider {}
 
-export const defaultStyles = `body {
-  background-color: rgb(248, 250, 255);
+export const defaultStyles = `
+body {
+  --color-background: #B41040;
+  --color-text: white;
+  --color-border: white;
+  --color-background-transparent: rgba(0,0,0,0.05)
+  background-color: var(--background-color);
 }
+
 .page-blocks {
-  background-color: white;
   padding: 2rem;
 }
 

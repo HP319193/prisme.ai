@@ -200,7 +200,6 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
       if (cardsIsShort(currentCards, config.variant)) return;
 
       const cover = (currentCards[index] || {}).cover;
-      const isUrl = cover && cover.match(/^http/);
 
       return {
         background: `${

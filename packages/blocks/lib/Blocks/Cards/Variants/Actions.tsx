@@ -8,6 +8,30 @@ import CardButton from '../CardButton';
 
 interface ActionsProps extends CardProps<CardAction[]> {}
 
+const getBgClassName = (bgColor: CardAction['backgroundColor']) => {
+  switch (bgColor) {
+    case 'white':
+    case 'transparent-white':
+      return tw`text-white bg-[rgba(255,255,255,0.1)]`;
+    case 'black':
+    case 'transparent-black':
+    default:
+      return tw`text-black bg-[rgba(0,0,0,0.05)]`;
+  }
+};
+
+const getBtnClassName = (bgColor: CardAction['backgroundColor']) => {
+  switch (bgColor) {
+    case 'white':
+    case 'transparent-white':
+      return tw`text-white border border-solid border-white bg-transparent`;
+    case 'black':
+    case 'transparent-black':
+    default:
+      return tw`text-black bg-white`;
+  }
+};
+
 const Actions = ({
   title,
   styles,
@@ -35,12 +59,17 @@ const Actions = ({
             className={`cards-container__cards-container cards-container ${styles.container}`}
           >
             {(cards as CardAction[]).map(
-              ({ title, description, cover, content = [] }, index) => (
+              (
+                { title, description, cover, content = [], backgroundColor },
+                index
+              ) => (
                 <div
                   key={index}
                   className={`${tw`cards-container__card-container card-container flex flex-col
                   snap-start m-[0.625rem] group h-[23.188rem] rounded-[0.938rem]
-                  min-w-[19.563rem] max-w-[19.563rem] bg-[rgba(0,0,0,0.05)] overflow-hidden background-actions`}`}
+                  min-w-[19.563rem] max-w-[19.563rem] overflow-hidden ${getBgClassName(
+                    backgroundColor
+                  )}`}`}
                 >
                   <div className={tw`flex flex-row m-[1.25rem]`}>
                     <div
@@ -70,7 +99,7 @@ const Actions = ({
                           className={`${tw`card__card-content-outer card-content-outer flex w-full py-[0.625rem] px-[1.25rem] font-semibold`}`}
                         >
                           <div
-                            className={tw`flex flex-grow bg-white rounded-[0.625rem] h-[3.125rem] items-center justify-center `}
+                            className={tw`flex flex-grow rounded-[0.625rem] h-[3.125rem] items-center justify-center `}
                           >
                             <CardButton
                               type="button"
@@ -81,7 +110,9 @@ const Actions = ({
                               payload={item.payload}
                               value={truncate(localize(item.text), 20)}
                               popup={item.popup}
-                              className={tw`flex flex-grow bg-white rounded-[0.625rem] h-[3.125rem] items-center justify-center font-semibold text-[0.875rem]`}
+                              className={tw`flex flex-grow rounded-[0.625rem] h-[3.125rem] items-center justify-center font-semibold text-[0.875rem] ${getBtnClassName(
+                                backgroundColor
+                              )}`}
                             />
                           </div>
                         </div>
