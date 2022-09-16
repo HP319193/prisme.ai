@@ -1,4 +1,4 @@
-import { Schema, Tooltip } from '@prisme.ai/design-system';
+import { Schema } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 import useLocalizedText from '../../utils/useLocalizedText';
@@ -297,7 +297,7 @@ export const useSchema = (store: Record<string, any> = {}) => {
 
       return [];
     },
-    [store]
+    [localize, store, t]
   );
 
   return { extractSelectOptions, extractAutocompleteOptions };

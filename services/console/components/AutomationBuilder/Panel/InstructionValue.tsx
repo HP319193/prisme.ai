@@ -15,7 +15,6 @@ import usePages from '../../PagesProvider/context';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { useWorkspace } from '../../WorkspaceProvider';
 import { useApps } from '../../AppsProvider';
-import { useRouter } from 'next/router';
 import { useAutomationBuilder } from '../context';
 import useLocalizedText from '../../../utils/useLocalizedText';
 
@@ -166,7 +165,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
       };
     }
     return cleaned;
-  }, [instruction, schema, t]);
+  }, [instruction, localizeSchemaForm, schema, t]);
 
   const locales = useMemo(
     () => ({

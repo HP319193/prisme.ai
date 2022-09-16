@@ -136,13 +136,13 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
 
     return collapseItems;
   }, [
-    commonSchema,
-    config,
-    extractSelectOptions,
-    locales,
-    schema,
-    mergeConfig,
     t,
+    commonSchema,
+    debouncedMergeConfig,
+    config,
+    locales,
+    extractSelectOptions,
+    schema,
   ]);
 
   return (
