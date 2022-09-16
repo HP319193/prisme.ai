@@ -82,13 +82,14 @@ Array [
             </div>
           </div>
         </button>
-        <button
+        <a
           className="p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid"
+          href="/workspaces/1"
           onClick={[Function]}
           onMouseEnter={[Function]}
         >
           <div
-            className="flex grow flex-row text-center"
+            className="flex flex-1 flex-row text-center max-w-full"
           >
             <div
               className="flex ml-3 mr-5"
@@ -96,21 +97,22 @@ Array [
               <div />
             </div>
             <div
-              className="flex flex-1 flex-col items-start justify-center space-y-2"
+              className="flex flex-1 flex-col items-start justify-center space-y-2 max-w-[250px]"
             >
               foo
               
               edit.label
             </div>
           </div>
-        </button>
-        <button
+        </a>
+        <a
           className="p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid"
+          href="/workspaces/42"
           onClick={[Function]}
           onMouseEnter={[Function]}
         >
           <div
-            className="flex grow flex-row text-center"
+            className="flex flex-1 flex-row text-center max-w-full"
           >
             <div
               className="flex ml-3 mr-5"
@@ -118,14 +120,14 @@ Array [
               <div />
             </div>
             <div
-              className="flex flex-1 flex-col items-start justify-center space-y-2"
+              className="flex flex-1 flex-col items-start justify-center space-y-2 max-w-[250px]"
             >
               bar
               
               edit.label
             </div>
           </div>
-        </button>
+        </a>
       </div>
     </div>
   </div>,

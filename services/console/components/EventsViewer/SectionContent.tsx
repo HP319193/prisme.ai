@@ -97,7 +97,11 @@ export const SectionContent = ({
               alt={name}
             />
           )}
-          <div className="font-bold text-[1rem]">{title}</div>
+          <Tooltip title={title}>
+            <div className="font-bold text-[1rem] whitespace-nowrap text-ellipsis overflow-hidden max-w-[25%]">
+              {title}
+            </div>
+          </Tooltip>
           <div className="text-gray font-thin ml-4 text-[0.875rem]">{date}</div>
         </div>
         <div
