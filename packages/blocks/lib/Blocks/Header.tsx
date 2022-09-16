@@ -3,7 +3,6 @@ import '../i18n';
 import tw from '../tw';
 import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
-import './Header-style.css';
 
 import { withI18nProvider } from '../i18n';
 
