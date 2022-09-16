@@ -136,14 +136,16 @@ export const WorkspacesProvider: FC = ({ children }) => {
   );
 
   // set role to editor for the postpermissions
-  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] =
-    useCallback(async (workspaceId) => {
+  const getWorkspaceUsersPermissions: WorkspacesContext['getWorkspaceUsersPermissions'] = useCallback(
+    async (workspaceId) => {
       const { result: userPermissions } = await api.getPermissions(
         'workspaces',
         workspaceId
       );
       return userPermissions;
-    }, []);
+    },
+    []
+  );
 
   const updateApp: WorkspacesContext['updateApp'] = useCallback(
     async (workspaceId, slug, body) => {

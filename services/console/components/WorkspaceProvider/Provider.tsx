@@ -17,7 +17,6 @@ import Storage from '../../utils/Storage';
 import usePages from '../../components/PagesProvider/context';
 import { useApps } from '../AppsProvider';
 import { usePrevious } from '../../utils/usePrevious';
-import { useWorkspaceLayout } from '../../layouts/WorkspaceLayout/context';
 import { generateNewName } from '../../utils/generateNewName';
 import { SLUG_MATCH_INVALID_CHARACTERS } from '../../utils/regex';
 import useLocalizedText from '../../utils/useLocalizedText';
@@ -45,7 +44,6 @@ const getLatest = (events: Event<Date>[]) => {
 };
 
 export const WorkspaceProvider: FC = ({ children }) => {
-  const { newSource, setSaving } = useWorkspaceLayout();
   const { user } = useUser();
   const {
     query: { id },
@@ -72,21 +70,22 @@ export const WorkspaceProvider: FC = ({ children }) => {
     limit: PAGINATION_LIMIT,
   });
   const unmount = useRef(false);
-
-  const { fetchPages } = usePages();
-  useEffect(() => {
-    fetchPages(`${id}`);
-  }, [fetchPages, id]);
-
-  const { getAppInstances } = useApps();
-  useEffect(() => {
-    getAppInstances(`${id}`);
-  }, [getAppInstances, id]);
-
   // Init socket
   const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
     workspace,
   ]);
+
+  const { fetchPages } = usePages();
+  useEffect(() => {
+    if (!workspaceId) return;
+    fetchPages(`${id}`);
+  }, [fetchPages, id, workspaceId]);
+
+  const { getAppInstances } = useApps();
+  useEffect(() => {
+    if (!workspaceId) return;
+    getAppInstances(`${id}`);
+  }, [getAppInstances, id, workspaceId]);
 
   const initSocket = useCallback(async () => {
     if (!workspaceId) return;
@@ -285,7 +284,7 @@ export const WorkspaceProvider: FC = ({ children }) => {
 
   const debouncedFetchWorkspace = useMemo(
     () =>
-      debounce(() => {
+      debounce(async () => {
         if (!workspaceId) return;
         fetch(workspaceId);
       }, 2000),
@@ -325,8 +324,12 @@ export const WorkspaceProvider: FC = ({ children }) => {
   useEffect(() => {
     const fetchWorkspace = async () => {
       setLoading(true);
-      const workspace = await api.getWorkspace(`${id}`);
-      setCurrentWorkspace(workspace);
+      try {
+        const workspace = await api.getWorkspace(`${id}`);
+        setCurrentWorkspace(workspace);
+      } catch (e) {
+        setCurrentWorkspace(null);
+      }
       setLoading(false);
     };
     fetchWorkspace();
@@ -477,16 +480,16 @@ export const WorkspaceProvider: FC = ({ children }) => {
     [localize, workspace]
   );
 
+  if (!loading && workspace === null) {
+    return <Error404 link="/workspaces" reason={t('404')} />;
+  }
+
   if (!workspace || !user) {
     return (
       <div className="flex flex-1 justify-center align-center">
         <Loading />
       </div>
     );
-  }
-
-  if (!loading && workspace === null) {
-    return <Error404 link="/workspaces" reason={t('404')} />;
   }
 
   return (

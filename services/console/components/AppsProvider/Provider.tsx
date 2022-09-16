@@ -4,11 +4,9 @@ import isEqual from 'lodash/isEqual';
 import context, { AppsContext } from './context';
 import api from '../../utils/api';
 import { notification } from '@prisme.ai/design-system';
-import { useWorkspace } from '../WorkspaceProvider';
 
 export const AppsProvider: FC = ({ children }) => {
   const [apps, setApps] = useState<AppsContext['apps']>(new Map());
-  const { workspace } = useWorkspace();
   const [appInstances, setAppInstances] = useState<AppsContext['appInstances']>(
     new Map()
   );
