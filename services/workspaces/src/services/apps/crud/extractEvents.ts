@@ -20,8 +20,20 @@ function getEmitEvents(
   });
 }
 
+function deduplicateEmit(
+  emits: Required<Prismeai.AppDetails>['events']['emit'] = []
+) {
+  const allEvents = emits.map(({ event }) => event);
+  return emits.filter(({ event }, k) => !allEvents.slice(0, k).includes(event));
+}
+function deduplicateListen(
+  listens: Required<Prismeai.AppDetails>['events']['listen'] = []
+) {
+  return Array.from(new Set(listens));
+}
+
 export function extractEvents(app: Prismeai.Workspace) {
-  return Object.keys(app.automations || {}).reduce<
+  const { emit, listen } = Object.keys(app.automations || {}).reduce<
     Required<Prismeai.AppDetails>['events']
   >(
     (prev, key) => {
@@ -36,9 +48,13 @@ export function extractEvents(app: Prismeai.Workspace) {
         ...(prev.emit || []),
         ...getEmitEvents(automation.do || []),
       ];
-
       return { listen, emit };
     },
     { emit: [], listen: [] }
   );
+
+  return {
+    emit: deduplicateEmit(emit),
+    listen: deduplicateListen(listen),
+  };
 }
