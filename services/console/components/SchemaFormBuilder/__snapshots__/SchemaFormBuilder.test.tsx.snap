@@ -147,6 +147,20 @@ Object {
             value=""
           />
         </SchemaFormDescription>,
+        <SchemaFormDescription
+          text="schema.property.placeholder.description"
+        >
+          <LocalizedInput
+            InputProps={
+              Object {
+                "label": "schema.property.placeholder.label",
+              }
+            }
+            iconMarginTop="2.3rem"
+            onChange={[Function]}
+            value=""
+          />
+        </SchemaFormDescription>,
         false,
         <div
           className="flex flex-1 pl-4 border-l-[1px] border-gray-200"
@@ -491,6 +505,56 @@ Object {
             "props": Object {
               "InputProps": Object {
                 "label": "schema.property.description.label",
+              },
+              "addLangTooltip": "languages.add.tooltip",
+              "availableLangsTitle": "languages.available.title",
+              "deleteTooltip": "languages.delete.tooltip",
+              "iconMarginTop": "2.3rem",
+              "onChange": [Function],
+              "setLangTooltip": "languages.set.tooltip",
+              "setLangsTitle": "languages.set.title",
+              "value": "",
+            },
+            "rendered": null,
+            "type": [Function],
+          },
+          "type": [Function],
+        },
+        "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "nodeType": "component",
+        "props": Object {
+          "children": <LocalizedInput
+            InputProps={
+              Object {
+                "label": "schema.property.placeholder.label",
+              }
+            }
+            iconMarginTop="2.3rem"
+            onChange={[Function]}
+            value=""
+          />,
+          "text": "schema.property.placeholder.description",
+        },
+        "rendered": Object {
+          "instance": null,
+          "nodeType": "component",
+          "props": Object {
+            "InputProps": Object {
+              "label": "schema.property.placeholder.label",
+            },
+            "iconMarginTop": "2.3rem",
+            "onChange": [Function],
+            "value": "",
+          },
+          "rendered": Object {
+            "instance": null,
+            "nodeType": "component",
+            "props": Object {
+              "InputProps": Object {
+                "label": "schema.property.placeholder.label",
               },
               "addLangTooltip": "languages.add.tooltip",
               "availableLangsTitle": "languages.available.title",
