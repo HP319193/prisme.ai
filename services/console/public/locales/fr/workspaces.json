@@ -754,7 +754,7 @@
   },
   "404": "Ce workspace n'existe pas. Revenez à votre page d'accueil.",
   "whatsNew": "Nouveautés",
-  "help": "Aide?",
+  "help": "Aide ?",
   "share": {
     "label": "Partager",
     "email": "Email",
@@ -788,7 +788,7 @@
     "title": "",
     "title_workspaces": "Réglages du Workspace",
     "title_automations": "Réglages de l'automatisation",
-    "title_pages": "Réglages du block",
+    "title_pages": "Réglages de la page",
     "title_apps": "Réglages de l'app",
     "save": "Enregistrer",
     "delete": {
