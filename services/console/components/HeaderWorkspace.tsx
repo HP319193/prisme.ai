@@ -10,6 +10,7 @@ import {
   Popover,
   Schema,
   Space,
+  Tooltip,
 } from '@prisme.ai/design-system';
 import { useWorkspaces } from './WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
@@ -121,11 +122,18 @@ const HeaderWorkspace = () => {
       <Header
         title={
           <div className="flex flex-row items-center absolute left-0 right-0 lg:justify-center z-[-1] justify-start lg:ml-0 ml-[5rem]">
-            <Link href={`/workspaces/${workspace.id}`}>
-              <a className="text-white" onClick={hideSource}>
-                {localize(currentWorkspace)}
-              </a>
-            </Link>
+            <Tooltip title={localize(currentWorkspace)} placement="bottom">
+              <div className="flex max-w-[20%]">
+                <Link href={`/workspaces/${workspace.id}`}>
+                  <a
+                    className="text-white whitespace-nowrap text-ellipsis overflow-hidden"
+                    onClick={hideSource}
+                  >
+                    {localize(currentWorkspace)}
+                  </a>
+                </Link>
+              </div>
+            </Tooltip>
             <EditDetails
               schema={detailsFormSchema}
               value={workspace}

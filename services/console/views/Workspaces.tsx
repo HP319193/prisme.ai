@@ -132,11 +132,12 @@ export const WorkspacesView = () => {
                     '';
                   return (
                     <Link href={`/workspaces/${id}`} key={id}>
-                      <button className="p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid">
-                        <div className="flex grow flex-row text-center">
+                      <a className="p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid">
+                        <div className="flex flex-1 flex-row text-center max-w-full">
                           <div className="flex ml-3 mr-5">
                             {photo ? (
-                              <div className="flex flex-1 items-center justify-center flex-none">
+                              <div className="flex items-center justify-center flex-none">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
                                   src={photo}
                                   className="rounded text-blue h-[48px] w-[48px] object-cover"
@@ -153,10 +154,15 @@ export const WorkspacesView = () => {
                               />
                             )}
                           </div>
-                          <div className="flex flex-1 flex-col items-start justify-center space-y-2">
-                            <Title level={4} className="mb-0">
-                              {name}
-                            </Title>
+                          <div className="flex flex-1 flex-col items-start justify-center space-y-2 max-w-[250px]">
+                            <Tooltip title={name}>
+                              <Title
+                                level={4}
+                                className="mb-0 max-w-full text-ellipsis overflow-hidden whitespace-nowrap"
+                              >
+                                {name}
+                              </Title>
+                            </Tooltip>
                             <Tooltip title={descriptionDisplayed}>
                               <Text
                                 type="grey"
@@ -170,7 +176,7 @@ export const WorkspacesView = () => {
                             </Button>
                           </div>
                         </div>
-                      </button>
+                      </a>
                     </Link>
                   );
                 }
