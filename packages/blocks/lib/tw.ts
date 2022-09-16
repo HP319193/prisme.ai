@@ -3,9 +3,8 @@ import { setup, tw } from 'twind';
 
 setup({
   plugins: {
-    basis: (parts) => ({
-      'flex-basis': '150rem',
-    }),
+    'no-scrollbar': { '-ms-overflow-style': 'none', 'scrollbar-width': 'none' },
+    'no-scrollbar::-webkit-scrollbar': { display: 'none' },
     snap: (parts) => {
       switch (parts[0]) {
         case 'start':
@@ -42,6 +41,10 @@ setup({
         'green-400': '#649D9F',
         'green-200': '#E7F6F6',
         'orange-500': '#FD6E6E',
+        'theme-text': 'var(--color-text)',
+        'theme-border': 'var(--color-border)',
+        'theme-background': 'var(--color-background)',
+        'theme-background-transparent': 'var(--color-background-transparent)',
       },
     },
   },

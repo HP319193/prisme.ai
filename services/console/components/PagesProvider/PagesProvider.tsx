@@ -4,14 +4,30 @@ import { PagesContext, pagesContext } from './context';
 
 interface PagesProvider {}
 
-export const defaultStyles = `body {
-  background-color: rgb(248, 250, 255);
+export const defaultStyles = `
+body {
+  --color-background: #B41040;
+  --color-text: white;
+  --color-border: white;
+  --color-background-transparent: rgba(0,0,0,0.05)
+  background-color: var(--background-color);
 }
+
 .page-blocks {
-  max-width: 768px;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: white;
+  padding: 2rem;
+}
+
+.block-form {
+  padding: 0;
+}
+
+.block-form .ant-input {
+  border-radius: 0.625rem;
+  border-color: black;
+}
+
+.block-form .ant-input::placeholder {
+  color: black;
 }`;
 
 export const PagesProvider: FC<PagesProvider> = ({ children }) => {

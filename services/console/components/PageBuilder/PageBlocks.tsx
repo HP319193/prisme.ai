@@ -6,7 +6,7 @@ import debounce from 'lodash/debounce';
 import AddBlock from './AddBlock';
 import { useWorkspace } from '../WorkspaceProvider';
 
-export const PageBlocks = () => {
+export const PageBlocks = ({ panelIsOpen }: { panelIsOpen: boolean }) => {
   const { localize } = useLocalizedText();
   const {
     workspace: { id: workspaceId },
@@ -24,9 +24,16 @@ export const PageBlocks = () => {
   );
 
   return (
-    <div className="page-blocks flex grow flex-col items-center overflow-y-auto h-full snap-mandatory z-10">
+    <div
+      className={`page-blocks flex grow flex-col transition-all items-center overflow-y-auto h-full snap-mandatory z-10`}
+    >
       <div className="snap-start" />
-      <div ref={containerEl} className="flex flex-1 flex-col w-[768px] py-8">
+      <div
+        ref={containerEl}
+        className={`flex flex-1 flex-col w-[768px] transition-transform ease-in-out duration-200 m-8 ${
+          panelIsOpen ? '-translate-x-[10rem]' : ''
+        }`}
+      >
         {blocksInPage.length === 0 && (
           <div className="relative">
             <AddBlock after={-1} centered />

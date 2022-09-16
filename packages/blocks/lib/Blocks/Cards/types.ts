@@ -22,6 +22,11 @@ export interface CardAction {
     payload?: any;
     popup?: boolean;
   }[];
+  backgroundColor?:
+    | 'black'
+    | 'white'
+    | 'transparent-white'
+    | 'transparent-black';
 }
 
 export interface CardSquare {

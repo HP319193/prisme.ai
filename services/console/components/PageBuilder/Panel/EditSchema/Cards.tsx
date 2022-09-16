@@ -295,6 +295,15 @@ const schema: Schema = {
                     title: 'pages.blocks.cards.settings.cover',
                     'ui:widget': 'upload',
                   },
+                  backgroundColor: {
+                    type: 'string',
+                    title: 'pages.blocks.cards.settings.short.backgroundColor',
+                    enum: ['transparent-black', 'transparent-white'],
+                    enumNames: [
+                      'pages.blocks.cards.settings.short.backgroundColor_transparent-black',
+                      'pages.blocks.cards.settings.short.backgroundColor_transparent-white',
+                    ],
+                  },
                   content: {
                     type: 'array',
                     title: 'pages.blocks.cards.settings.actions.content.label',
