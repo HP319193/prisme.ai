@@ -25,6 +25,7 @@ export const ConditionForm: FC<ConditionFormProps> = ({
       type: 'string',
       title: t('automations.condition.edit.title'),
       description: t('automations.condition.edit.description'),
+      'ui:widget': 'textarea',
     }),
     [t]
   );

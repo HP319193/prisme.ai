@@ -166,7 +166,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
       };
     }
     return cleaned;
-  }, [instruction, schema, t]);
+  }, [instruction, localizeSchemaForm, schema, t]);
 
   const locales = useMemo(
     () => ({
