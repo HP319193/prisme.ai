@@ -28,7 +28,6 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import { Workspace } from '@prisme.ai/sdk';
-import Link from 'next/link';
 
 const TREE_CONTENT_TYPE = {
   automations: 'automations',
@@ -338,8 +337,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
       localize,
       onCreateAutomation,
       onCreatePage,
+      onSelect,
       t,
-      workspace,
+      workspace.automations,
+      workspace.id,
       workspaceAppInstances,
     ]
   );
