@@ -77,11 +77,18 @@ export default function init(
       accessManager,
       broker,
     });
+    const currentAppInstance = await workspaces.appInstances.get(
+      workspaceId,
+      slug
+    );
     const updatedAppInstance = await workspaces.appInstances.configureApp(
       workspaceId,
       slug,
       {
-        config: body,
+        config: {
+          ...currentAppInstance?.config?.value,
+          ...body,
+        },
       }
     );
     res.send(updatedAppInstance);
