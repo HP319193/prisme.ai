@@ -42,6 +42,7 @@ setup({
         'green-200': '#E7F6F6',
         'orange-500': '#FD6E6E',
         'theme-text': 'var(--color-text)',
+        'theme-accent': 'var(--color-accent)',
         'theme-border': 'var(--color-border)',
         'theme-background': 'var(--color-background)',
         'theme-background-transparent': 'var(--color-background-transparent)',

@@ -70,6 +70,13 @@ const Template: Story<any> = () => {
           'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
         cover:
           'https://i.postimg.cc/Hx1yXdjj/Capture-d-e-cran-2021-04-29-a-16-03-1.png',
+        action: {
+          type: 'event',
+          value: 'http://google.com',
+          payload: {
+            test: 'hoy',
+          },
+        },
       },
       {
         title:

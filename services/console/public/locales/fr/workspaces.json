@@ -529,6 +529,16 @@
           "variant": {
             "label": "Style de cartes"
           },
+          "action": {
+            "title": "Action",
+            "description": "Action déclenchée au click sur une carte",
+            "event": "Evénement",
+            "url": "Lien",
+            "valueEvent": "Evénement à déclencher",
+            "valueLink": "Url",
+            "newTab": "Ouvrir dans un nouvel onglet",
+            "payload": "Contenu de l'événement"
+          },
           "classic": {
             "label": "Classique",
             "content": {

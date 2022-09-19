@@ -6,6 +6,7 @@ interface PagesProvider {}
 
 export const defaultStyles = `
 body {
+  --color-accent: #015dff;
   --color-background: #B41040;
   --color-text: white;
   --color-border: white;

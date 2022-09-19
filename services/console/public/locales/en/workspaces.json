@@ -529,6 +529,16 @@
           "variant": {
             "label": "Cards style"
           },
+          "action": {
+            "title": "Action",
+            "description": "Action triggered by a click on the card",
+            "event": "Event",
+            "url": "Link",
+            "valueEvent": "Event to trigger",
+            "valueLink": "Url",
+            "newTab": "Open in new tab",
+            "payload": "Event's payload"
+          },
           "classic": {
             "label": "Classic",
             "content": {

@@ -1,5 +1,12 @@
 import { RefObject } from 'react';
 
+export interface Action {
+  type: 'event' | 'url';
+  value: string;
+  newTab?: boolean;
+  payload?: any;
+}
+
 export interface CardButtonType {
   type: 'button';
   value: Prismeai.LocalizedText;
@@ -33,6 +40,7 @@ export interface CardSquare {
   title?: Prismeai.LocalizedText;
   description?: Prismeai.LocalizedText;
   cover?: string;
+  action?: Action;
 }
 
 export interface CardShort {
@@ -44,6 +52,7 @@ export interface CardShort {
     | 'white'
     | 'transparent-white'
     | 'transparent-black';
+  action?: Action;
 }
 
 export interface CardArticle {
@@ -52,6 +61,7 @@ export interface CardArticle {
   tag?: Prismeai.LocalizedText;
   description?: Prismeai.LocalizedText;
   cover?: string;
+  action?: Action;
 }
 
 export interface CardClassic {
