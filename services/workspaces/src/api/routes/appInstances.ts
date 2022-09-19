@@ -77,6 +77,7 @@ export default function init(
       accessManager,
       broker,
     });
+
     const currentAppInstance = await workspaces.appInstances.get(
       workspaceId,
       slug
