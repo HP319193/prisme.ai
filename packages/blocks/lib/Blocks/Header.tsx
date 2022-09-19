@@ -111,6 +111,7 @@ export const Header = ({ edit }: { edit?: boolean }) => {
           width: '65%',
           justifyContent: 'flex-end',
           color: 'var(--color-text)',
+          backgroundColor: 'transparent',
         }}
       />
     </div>
