@@ -4,6 +4,7 @@ import { CardProps, CardShort } from '../types';
 import useLocalizedText from '../../../useLocalizedText';
 import { truncate } from '../../../utils/truncate';
 import CarouselNavigation from '../CarouselNavigation';
+import ActionOrLink from '../ActionOrLink';
 
 interface ShortProps extends CardProps<CardShort[]> {}
 
@@ -47,29 +48,34 @@ const Short = ({
             className={`cards-container__cards-container cards-container ${styles.container}`}
           >
             {(cards as CardShort[]).map(
-              ({ title, subtitle, description, backgroundColor }, index) => (
-                <div
-                  key={index}
-                  className={tw`cards-container__card-container card-container flex flex-col
+              (
+                { title, subtitle, description, backgroundColor, action },
+                index
+              ) => (
+                <ActionOrLink action={action}>
+                  <div
+                    key={index}
+                    className={tw`cards-container__card-container card-container flex flex-col
                   snap-start m-[0.625rem] group h-[10rem] rounded-[0.938rem] border border-[rgba(0, 0, 0, 0.20)]
                   min-w-[19.563rem] max-w-[19.563rem] overflow-hidden ${getBgClassName(
                     backgroundColor
                   )}`}
-                >
-                  <div className={tw`space-y-[0.625rem] m-[1.25rem]`}>
-                    {subtitle && (
-                      <div className={tw`text-[0.75rem]`}>
-                        {truncate(localize(subtitle), 40)}
+                  >
+                    <div className={tw`space-y-[0.625rem] m-[1.25rem]`}>
+                      {subtitle && (
+                        <div className={tw`text-[0.75rem]`}>
+                          {truncate(localize(subtitle), 40)}
+                        </div>
+                      )}
+                      <div className={tw`font-bold text-[0.875rem]`}>
+                        {truncate(localize(title), 60)}
                       </div>
-                    )}
-                    <div className={tw`font-bold text-[0.875rem]`}>
-                      {truncate(localize(title), 60)}
-                    </div>
-                    <div className={tw`text-[0.875rem]`}>
-                      {truncate(localize(description), 73)}
+                      <div className={tw`text-[0.875rem]`}>
+                        {truncate(localize(description), 73)}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </ActionOrLink>
               )
             )}
           </div>

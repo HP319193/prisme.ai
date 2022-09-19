@@ -212,19 +212,28 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     [cards]
   );
 
-  const Component = getComponent(config.variant);
+  const cardsProps = {
+    styles,
+    container,
+    canScroll,
+    scroll,
+    getCoverStyle,
+    ...config,
+  };
 
-  return (
-    <Component
-      styles={styles}
-      container={container}
-      canScroll={canScroll}
-      scroll={scroll}
-      {...config}
-      cards={typeCards(config.variant, cards)}
-      getCoverStyle={getCoverStyle}
-    />
-  );
+  switch (config.variant) {
+    case 'square':
+      return <Square {...cardsProps} cards={cards as CardSquare[]} />;
+    case 'article':
+      return <Article {...cardsProps} cards={cards as CardArticle[]} />;
+    case 'short':
+      return <Short {...cardsProps} cards={cards as CardShort[]} />;
+    case 'actions':
+      return <Actions {...cardsProps} cards={cards as CardAction[]} />;
+    case 'classic':
+    default:
+      return <Classic {...cardsProps} cards={cards as CardClassic[]} />;
+  }
 };
 
 export default withI18nProvider(Cards);
