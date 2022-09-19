@@ -14,6 +14,7 @@ import { useAutomationBuilder } from './context';
 import { Trans, useTranslation } from 'next-i18next';
 import { truncate } from '../../utils/strings';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import useLocalizedText from '../../utils/useLocalizedText';
 
 interface BlockProps {
   removable?: boolean;
@@ -135,10 +136,11 @@ export const Block: FC<NodeProps & BlockProps> = ({
   displayAs,
 }) => {
   const { t } = useTranslation('workspaces');
+  const { localize } = useLocalizedText();
   const { removeInstruction, getApp } = useAutomationBuilder();
   const ref = useRef(null);
   const isHover = useHover(ref);
-  const { icon, name } = getApp(data.label);
+  const { icon, name, instructionName = '' } = getApp(data.label);
 
   const getLabel = useCallback(
     ({ label, value }: { label: string; value: any }) => {
@@ -215,7 +217,9 @@ export const Block: FC<NodeProps & BlockProps> = ({
             typeof value === 'string' ? value : (value && value.event) || '';
       }
       return t('automations.node.label', {
-        instruction: t('automations.instruction.label', { context: label }),
+        instruction: t('automations.instruction.label', {
+          context: localize(instructionName) || label,
+        }),
         value: displayedValue,
         display: ':',
         interpolation: {
@@ -223,7 +227,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
         },
       });
     },
-    [t]
+    [t, localize, instructionName]
   );
 
   return (

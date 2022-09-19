@@ -12,11 +12,10 @@ export interface AutomationBuilderContext {
   ) => void;
   editTrigger: () => void;
   editOutput: () => void;
-  getApp: (
-    instruction: string
-  ) => {
+  getApp: (instruction: string) => {
     name: string;
     icon: string;
+    instructionName: string;
   };
   instructionsSchemas: [
     string,
@@ -38,6 +37,7 @@ export const automationBuilderContext = createContext<AutomationBuilderContext>(
       return {
         name: '',
         icon: '',
+        instructionName: '',
       };
     },
     instructionsSchemas: [],

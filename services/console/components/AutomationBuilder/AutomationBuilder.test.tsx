@@ -159,6 +159,7 @@ it('should get app', () => {
   expect((ReactFlow as any).context.getApp('automationFoo')).toEqual({
     name: 'foo',
     icon: '/file.svg',
+    instructionName: 'Foo',
   });
 });
 

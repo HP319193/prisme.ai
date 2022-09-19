@@ -176,6 +176,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
                   type: 'object',
                   properties,
                   description: localize(automations[name].description),
+                  name: automations[name].name,
                 },
               };
             }, {}),
@@ -355,13 +356,18 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
 
   const getApp: AutomationBuilderContext['getApp'] = useCallback(
     (instruction) => {
-      const [name, , { icon }] =
+      const [
+        name,
+        { [instruction]: { name: instructionName = '' } = {} },
+        { icon },
+      ] =
         instructionsSchemas.find(([, instructions]) => {
           return Object.keys(instructions).includes(instruction);
         }) || instructionsSchemas[0];
       return {
         name,
         icon,
+        instructionName,
       };
     },
     [instructionsSchemas]
