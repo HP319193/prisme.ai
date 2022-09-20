@@ -11,6 +11,7 @@ import useAppConfig from '../utils/useAppConfig';
 import { useWorkspace } from './WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import { useTranslation } from 'next-i18next';
+import { useCallback } from 'react';
 
 interface AppEditorProps {
   schema?: Schema;
@@ -44,6 +45,22 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
     }
   };
 
+  const onChange = useCallback(
+    (value: any) => {
+      const keys = Object.keys(value);
+      const prevValue = keys.reduce(
+        (prev, key) => ({
+          ...prev,
+          [key]: appConfig[key],
+        }),
+        {}
+      );
+      if (JSON.stringify(prevValue) === JSON.stringify(value)) return;
+      setDirty(true);
+    },
+    [appConfig, setDirty]
+  );
+
   if (!appConfig) return <Loading />;
 
   if (schema) {
@@ -56,9 +73,7 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
       <div className="p-6">
         <SchemaForm
           schema={s}
-          onChange={(value) => {
-            setDirty(true);
-          }}
+          onChange={onChange}
           onSubmit={onSubmit}
           initialValues={appConfig}
           buttons={[
