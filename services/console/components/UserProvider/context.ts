@@ -19,7 +19,8 @@ export interface UserContext<T = Prismeai.User | null> {
     email: string,
     password: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    language: string
   ) => Promise<Prismeai.User | null>;
   signout: (onServer?: boolean) => void;
   sendPasswordResetMail: (email: string, language: string) => Promise<any>;

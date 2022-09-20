@@ -1914,6 +1914,8 @@ declare namespace Prismeai {
          * foo@prisme.ai
          */
         email?: string;
+        status?: "pending" | "validated" | "deactivated";
+        language?: string;
         authData?: {
             [name: string]: any;
             facebook?: {
@@ -2163,6 +2165,8 @@ declare namespace PrismeaiAPI {
                  * foo@prisme.ai
                  */
                 email?: string;
+                status?: "pending" | "validated" | "deactivated";
+                language?: string;
                 authData?: {
                     [name: string]: any;
                     facebook?: {
@@ -2310,6 +2314,8 @@ declare namespace PrismeaiAPI {
                  * foo@prisme.ai
                  */
                 email?: string;
+                status?: "pending" | "validated" | "deactivated";
+                language?: string;
                 authData?: {
                     [name: string]: any;
                     facebook?: {
@@ -2648,6 +2654,8 @@ declare namespace PrismeaiAPI {
                  * foo@prisme.ai
                  */
                 email?: string;
+                status?: "pending" | "validated" | "deactivated";
+                language?: string;
                 authData?: {
                     [name: string]: any;
                     facebook?: {
@@ -3076,6 +3084,7 @@ declare namespace PrismeaiAPI {
             password: string;
             firstName: string;
             lastName: string;
+            language?: string;
         }
         namespace Responses {
             export type $200 = Prismeai.User;
@@ -3216,6 +3225,20 @@ declare namespace PrismeaiAPI {
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
+        }
+    }
+    namespace ValidateAccount {
+        export type RequestBody = {
+            email: string;
+            language?: string;
+        } | {
+            token: string;
+        };
+        namespace Responses {
+            export type $200 = Prismeai.AnyValue;
+            export type $400 = Prismeai.BadParametersError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
     namespace WorkspaceUsage {

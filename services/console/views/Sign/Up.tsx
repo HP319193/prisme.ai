@@ -25,15 +25,18 @@ interface Values {
 }
 
 export const SignIn = () => {
-  const { t } = useTranslation('sign');
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation('sign');
   const { push } = useRouter();
   const { user, loading, error, signup } = useUser();
 
   const submit = useCallback(
     async ({ email, password, firstName, lastName }: Values) => {
-      await signup(email, password, firstName, lastName);
+      await signup(email, password, firstName, lastName, language);
     },
-    [signup]
+    [signup, language]
   );
 
   useEffect(() => {

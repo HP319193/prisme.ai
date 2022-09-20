@@ -172,13 +172,20 @@ it('should signup with a new account', async () => {
     token: 'dev-token',
   }));
   await act(async () => {
-    await context.signup('email', 'password', 'firstname', 'lastname');
+    await context.signup(
+      'email',
+      'password',
+      'firstname',
+      'lastname',
+      'language'
+    );
   });
   expect(api.signup).toHaveBeenCalledWith(
     'email',
     'password',
     'firstname',
-    'lastname'
+    'lastname',
+    'language'
   );
   expect(context.loading).toBe(false);
 

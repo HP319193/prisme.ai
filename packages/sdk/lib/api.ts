@@ -54,7 +54,8 @@ export class Api extends Fetcher {
     email: string,
     password: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    language: string
   ): Promise<
     Prismeai.User & {
       token: string;
@@ -65,6 +66,7 @@ export class Api extends Fetcher {
       password,
       firstName,
       lastName,
+      language,
     });
   }
 

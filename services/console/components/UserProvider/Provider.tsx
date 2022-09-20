@@ -79,14 +79,15 @@ export const UserProvider: FC<UserProviderProps> = ({
   }, []);
 
   const signup: UserContext['signup'] = useCallback(
-    async (email, password, firstName, lastName) => {
+    async (email, password, firstName, lastName, language) => {
       setLoading(true);
       try {
         const { token, ...user } = await api.signup(
           email,
           password,
           firstName,
-          lastName
+          lastName,
+          language
         );
         api.token = token;
         Storage.set('auth-token', token);
