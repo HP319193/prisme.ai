@@ -10,9 +10,6 @@ module.exports = {
     PAGES_HOST: process.env.PAGES_HOST,
     SENTRY_DSN: process.env.SENTRY_DSN || '',
   },
-  images: {
-    domains: ['localhost'],
-  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svgr$/i,
