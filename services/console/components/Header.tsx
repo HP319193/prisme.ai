@@ -79,7 +79,7 @@ const Header = ({ title, leftContent }: HeaderProps) => {
 
         {user && (
           <Dropdown Menu={userMenu} placement="bottomRight" arrow={false}>
-            <Space>
+            <Space className="text-lg">
               {user.firstName}
               {user.photo && <Avatar src={user.photo} />}
             </Space>

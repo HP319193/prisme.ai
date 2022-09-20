@@ -37,7 +37,7 @@ export const Panel: FC<PanelProps> = ({
     <div
       className={`
         flex
-        absolute top-0 bottom-0 -right-[24rem] w-[24rem] z-10 flex-col
+        absolute top-0 bottom-0 -right-[30rem] w-[30rem] z-10 flex-col
         transition-transform
         ease-in
         duration-200

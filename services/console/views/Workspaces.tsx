@@ -71,7 +71,7 @@ export const WorkspacesView = () => {
                   overlayClassName="pr-full-popover"
                 >
                   <Button variant="grey" className="!text-white">
-                    <Space>{t('help')}</Space>
+                    <Space className="text-lg">{t('help')}</Space>
                   </Button>
                 </Popover>
                 <Popover
@@ -86,7 +86,7 @@ export const WorkspacesView = () => {
                   overlayClassName="pr-full-popover"
                 >
                   <Button variant="grey" className="!text-white">
-                    <Space>{t('whatsNew')}</Space>
+                    <Space className="text-lg">{t('whatsNew')}</Space>
                   </Button>
                 </Popover>
               </div>

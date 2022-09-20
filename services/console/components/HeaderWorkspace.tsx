@@ -126,7 +126,7 @@ const HeaderWorkspace = () => {
               <div className="flex max-w-[20%] mr-2">
                 <Link href={`/workspaces/${workspace.id}`}>
                   <a
-                    className="text-white whitespace-nowrap text-ellipsis overflow-hidden"
+                    className="text-white text-xl whitespace-nowrap text-ellipsis overflow-hidden"
                     onClick={hideSource}
                   >
                     {localize(currentWorkspace)}
@@ -159,7 +159,7 @@ const HeaderWorkspace = () => {
               overlayClassName="pr-full-popover"
             >
               <Button variant="grey" className="!text-white">
-                <Space>{t('help')}</Space>
+                <Space className="text-lg">{t('help')}</Space>
               </Button>
             </Popover>
             <Popover
@@ -174,7 +174,7 @@ const HeaderWorkspace = () => {
               overlayClassName="pr-full-popover"
             >
               <Button variant="grey" className="!text-white">
-                <Space>{t('whatsNew')}</Space>
+                <Space className="text-lg">{t('whatsNew')}</Space>
               </Button>
             </Popover>
             <Popover
@@ -183,7 +183,7 @@ const HeaderWorkspace = () => {
               titleClassName="!bg-white !text-black"
             >
               <Button variant="grey" className="!text-white">
-                <Space>
+                <Space className="text-lg">
                   {t('share.label')}
                   <ShareAltOutlined className="text-lg" />
                 </Space>
