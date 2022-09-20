@@ -39,7 +39,7 @@ const OnChange = ({
   useEffect(() => {
     if (!dirty || !onChange || !values) return;
     onChange(values.values);
-  }, [values]);
+  }, [values, onChange, dirty]);
   return null;
 };
 
