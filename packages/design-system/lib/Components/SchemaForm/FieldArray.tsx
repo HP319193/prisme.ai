@@ -48,21 +48,23 @@ export const FieldArray = (props: FieldProps) => {
                       <div
                         className={asRow ? 'min-w-full' : 'flex-1 space-y-5'}
                       >
-                        <Field schema={items} name={field} />
-                        <Button
-                          onClick={() => fields.remove(index)}
-                          className="!absolute top-[1.7rem] right-1 text-gray hover:text-orange-500"
-                          disabled={props.schema.disabled}
-                        >
-                          <Tooltip
-                            title={
-                              items.remove || locales.removeItem || 'Remove'
-                            }
-                            placement="left"
+                        <div className="flex flex-row items-center">
+                          <Field schema={items} name={field} />
+                          <Button
+                            onClick={() => fields.remove(index)}
+                            className="text-gray hover:text-orange-500"
+                            disabled={props.schema.disabled}
                           >
-                            <DeleteOutlined />
-                          </Tooltip>
-                        </Button>
+                            <Tooltip
+                              title={
+                                items.remove || locales.removeItem || 'Remove'
+                              }
+                              placement="left"
+                            >
+                              <DeleteOutlined />
+                            </Tooltip>
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ))}

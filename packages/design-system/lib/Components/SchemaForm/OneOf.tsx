@@ -129,11 +129,17 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
 
   return (
     <Description text={schema.description} className="pt-1">
-      {title && <label className="flex">{title}</label>}
-      <Select selectOptions={options} onChange={setSelected} value={selected} />
-      {schema.type !== undefined && (
-        <Field schema={childSchema} name={name} label={label} />
-      )}
+      <div className="flex flex-1 flex-col">
+        {title && <label className="flex">{title}</label>}
+        <Select
+          selectOptions={options}
+          onChange={setSelected}
+          value={selected}
+        />
+        {schema.type !== undefined && (
+          <Field schema={childSchema} name={name} label={label} />
+        )}
+      </div>
     </Description>
   );
 };
