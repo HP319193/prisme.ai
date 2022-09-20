@@ -101,14 +101,14 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   const { automationId } = useAutomationBuilder();
   const { pages } = usePages();
   const { t } = useTranslation('workspaces');
-  const { localizeSchemaForm } = useLocalizedText();
+  const { localizeSchemaForm, localize } = useLocalizedText();
   const { appInstances } = useApps();
 
-  const appInstance = useMemo(() => {
-    if (!workspace.imports) return workspace.config;
+  const { config: appInstance, appName } = useMemo(() => {
+    if (!workspace.imports) return { config: workspace.config };
     const [appName] = instruction.split(/\./);
-    if (!workspace.imports[appName]) return workspace.config;
-    return workspace.imports[appName].config || {};
+    if (!workspace.imports[appName]) return { config: workspace.config };
+    return { config: workspace.imports[appName].config || {}, appName };
   }, [instruction, workspace.config, workspace.imports]);
 
   const { extractSelectOptions, extractAutocompleteOptions } = useSchema({
@@ -128,7 +128,12 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   const cleanedSchema = useMemo(() => {
     const cleaned = {
       ...localizeSchemaForm(schema),
-      title: t('automations.instruction.label', { context: instruction }),
+      title: t('automations.instruction.label', {
+        context:
+          appName && localize(schema.name)
+            ? `${localize(schema.name)} (${appName})`
+            : instruction,
+      }),
       description: t('automations.instruction.description', {
         context: instruction,
         default: schema.description,
@@ -165,7 +170,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
       };
     }
     return cleaned;
-  }, [instruction, localizeSchemaForm, schema, t]);
+  }, [instruction, localizeSchemaForm, localize, appName, schema, t]);
 
   const locales = useMemo(
     () => ({

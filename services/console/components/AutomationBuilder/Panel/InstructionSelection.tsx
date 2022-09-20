@@ -27,23 +27,27 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
   const [search, setSearch] = useState('');
   const filteredInstructions = useMemo(() => {
     return instructionsSchemas
-      .reduce<[string, string, { name: string; description?: string }[]][]>(
-        (prev, [name, list, more]) => {
-          const matching = (
-            search
-              ? Object.keys(list).filter((a) =>
-                  `${name} ${a}`.toLowerCase().includes(search.toLowerCase())
-                )
-              : Object.keys(list)
-          ).map((name) => ({
-            name,
-            description: (list[name] || {}).description,
-          }));
-          if (!matching) return prev;
-          return [...prev, [name, more.icon, matching]];
-        },
-        []
-      )
+      .reduce<
+        [
+          string,
+          string,
+          { name: string; description?: string; slug: string }[]
+        ][]
+      >((prev, [name, list, more]) => {
+        const matching = (
+          search
+            ? Object.keys(list).filter((a) =>
+                `${name} ${a}`.toLowerCase().includes(search.toLowerCase())
+              )
+            : Object.keys(list)
+        ).map((name) => ({
+          name: list[name]?.name || name,
+          slug: name,
+          description: (list[name] || {}).description,
+        }));
+        if (!matching) return prev;
+        return [...prev, [name, more.icon, matching]];
+      }, [])
       .filter(([, , list]) => list.length);
   }, [instructionsSchemas, search]);
 
@@ -66,10 +70,10 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
               <Title level={4}>{section}</Title>
             </Space>
             <Space direction="vertical" className="!flex flex-1">
-              {instructions.map(({ name, description }) => (
+              {instructions.map(({ name, description, slug }) => (
                 <Button
-                  key={name}
-                  onClick={() => onSubmit(name)}
+                  key={slug}
+                  onClick={() => onSubmit(slug)}
                   className="w-full text-left !h-fit"
                 >
                   <ListItem

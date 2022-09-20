@@ -231,9 +231,9 @@ export const Automation = () => {
   const customInstructions = useMemo(
     () =>
       (appInstances.get(workspace.id) || []).map(
-        ({ slug: appSlug, automations, appName }) => ({
+        ({ slug: appSlug, automations, appName, photo = '' }) => ({
           appName: `${appSlug} (${appName})`,
-          icon: '',
+          icon: photo,
           automations: automations.reduce(
             (prev, { slug, name, description, ...rest }) => ({
               ...prev,
