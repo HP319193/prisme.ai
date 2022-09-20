@@ -64,8 +64,8 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
         {filteredInstructions.map(([section, icon, instructions]) => (
           <Space key={section} direction="vertical" className="!flex flex-1">
             <Space>
-              {icon && (
-                <Image src={icon} width={16} height={16} alt={section} />
+              {icon && ( // eslint-disable-next-line @next/next/no-img-element
+                <img src={icon} width={16} height={16} alt={section} />
               )}
               <Title level={4}>{section}</Title>
             </Space>
