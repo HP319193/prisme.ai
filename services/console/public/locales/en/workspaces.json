@@ -152,6 +152,7 @@
       "description_conditions": "Test conditions in order to execute this or that group of instructions.",
       "description_fetch": "Send an HTTP request.",
       "description_break": "Stop current automation execution.",
+      "description_comment": "Do nothing more than display a comment in the list of instructions.",
       "search": "Search",
       "anyFieldError": "Invalid JSON",
       "anyFieldErrorTooltip": "This is just a warning, the instruction will still save",
@@ -176,6 +177,30 @@
           "payload": {
             "label": "Payload (optional, JSON format)",
             "description": "You can attach any type of data to your event."
+          },
+          "target": {
+            "label": "Target",
+            "description": "By default, the event is sent to everyone. You can target a specific recipient with these settings.",
+            "userTopic": {
+              "label": "Topic",
+              "description": "Specify a topic to categorize the message."
+            },
+            "userId": {
+              "label": "User ID",
+              "description": "Target a particular user by his ID."
+            },
+            "sessionId": {
+              "label": "Session ID",
+              "description": "Target a particular user session by its ID."
+            }
+          },
+          "private": {
+            "label": "Private",
+            "description": "The event will not be autocomplete for users of your workspace once it is transformed into an App."
+          },
+          "autocomplete": {
+            "label": "Autocompletion (ADVANCED)",
+            "description": "Specifies how your event will be offered to autocomplete for users of your workspace once transformed into an App."
           }
         },
         "wait": {
@@ -184,6 +209,8 @@
             "description": "The automation can wait until a particular event is triggered.",
             "items": {
               "label": "Event",
+              "add": "Add an event",
+              "remove": "Remove event",
               "event": {
                 "label": "Event name",
                 "description": "Indicate the name of the event that will restart your automation."
@@ -215,6 +242,10 @@
           "value": {
             "label": "Value",
             "description": "Put any value of any type here. You can also use interpolation to store data from another variable."
+          },
+          "type": {
+            "label": "Merge type",
+            "description": "Choose merge to merge the target variable with the value. The value has priority."
           }
         },
         "delete": {
@@ -253,9 +284,41 @@
             "label": "Headers",
             "description": "List of key values constituting the headers of the query."
           },
+          "query": {
+            "label": "Query string",
+            "description": "Query string parameters"
+          },
           "body": {
             "label": "Body",
             "description": "The body accompanying the request. Can be of any type."
+          },
+          "emitErrors": {
+            "label": "Émettre un évènement lors des erreurs",
+            "description": "Si le code d'état de la réponse HTTP est 4xx ou 5xx, émet un événement runtime.fetch.failed par défaut."
+          },
+          "multipart": {
+            "label": "multipart/form-data",
+            "description": "Data to be sent as multipart/form-data.",
+            "items": {
+              "label": "Fields",
+              "add": "Add a field",
+              "remove": "Delete field",
+              "fieldname": {
+                "label": "Field name"
+              },
+              "value": {
+                "label": "Value",
+                "description": "Must be a string. Raw files must be given in base64."
+              },
+              "filename": {
+                "label": "File name",
+                "description": "The file name is required when the value is a base64 encoded file."
+              },
+              "contentType": {
+                "label": "Content type",
+                "description": "Optional MIME content type"
+              }
+            }
           },
           "output": {
             "label": "Output variable name",

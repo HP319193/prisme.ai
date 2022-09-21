@@ -152,6 +152,7 @@
       "description_conditions": "Teste des conditions afin d'exécuter tel ou tel groupe d'instructions.",
       "description_fetch": "Envoie une requête HTTP.",
       "description_break": "Arrête l'exécution d'une automatisation.",
+      "description_comment": "Ne rien faire d'autre que d'afficher un commentaire dans la liste des instructions.",
       "search": "Rechercher",
       "anyFieldError": "JSON Invalide",
       "anyFieldErrorTooltip": "Il s'agit d'un avertissement, l'instruction sera quand même sauvegardée",
@@ -176,6 +177,30 @@
           "payload": {
             "label": "Données à attacher (optionnel, format JSON)",
             "description": "Vous pouvez attacher n'importe quel type de données à votre événement."
+          },
+          "target": {
+            "label": "Cible",
+            "description": "Par défaut, l'évènement est envoyé à tous. Vous pouvez cibler un destinataire précis grâce à ces paramètres.",
+            "userTopic": {
+              "label": "Sujet",
+              "description": "Spécifiez un sujet pour catégoriser le message."
+            },
+            "userId": {
+              "label": "Identifiant d'utilisateur",
+              "description": "Ciblez un utilisateur particulier par son identifiant."
+            },
+            "sessionId": {
+              "label": "Identifiant de session",
+              "description": "Ciblez une session utilisateur particulière par son identifiant."
+            }
+          },
+          "private": {
+            "label": "Privé",
+            "description": "L'évènement ne sera pas proposé à l'autocompletion pour les utilisateurs de votre workspace une fois transformé en tant qu'App."
+          },
+          "autocomplete": {
+            "label": "Auto-completion (AVANCÉ)",
+            "description": "Spécifie la façon dont votre évènement sera proposé à l'autocompletion pour les utilisateurs de votre workspace une fois transformé en tant qu'App."
           }
         },
         "wait": {
@@ -184,6 +209,8 @@
             "description": "L'automatisation peut attendre jusqu'à ce qu'un événement particulier se déclenche.",
             "items": {
               "label": "Événement",
+              "add": "Ajouter un évènement",
+              "remove": "Supprimer l'évènement",
               "event": {
                 "label": "Nom de l'événement",
                 "description": "Indiquez le nom de l'événement qui relancera le déroulement de votre automatisation."
@@ -215,6 +242,10 @@
           "value": {
             "label": "Valeur",
             "description": "Mettez ici n'importe quelle valeur de n'importe quel type. Vous pouvez aussi utiliser l'interpolation pour stocker une donnée provenant d'une autre variable."
+          },
+          "type": {
+            "label": "Type de fusion",
+            "description": "Choisissez merge afin de fusionner la variable cible avec la valeur. La valeur est prioritaire."
           }
         },
         "delete": {
@@ -253,9 +284,41 @@
             "label": "Entêtes de requête",
             "description": "Liste de clés valeurs constituant les entêtes de la requête."
           },
+          "query": {
+            "label": "Paramètres d'URL",
+            "description": "Indiquez la liste des paramètres à ajouter à l'url."
+          },
           "body": {
             "label": "Corps de la requête",
             "description": "Le corps accompagnant la requête. Peut être de n'importe quel type."
+          },
+          "emitErrors": {
+            "label": "Émettre un évènement lors des erreurs",
+            "description": "Si le code d'état de la réponse HTTP est 4xx ou 5xx, émet un événement runtime.fetch.failed par défaut."
+          },
+          "multipart": {
+            "label": "multipart/form-data",
+            "description": "Données à envoyer sous forme de multipart/form-data.",
+            "items": {
+              "label": "Champs",
+              "add": "Ajouter un champs",
+              "remove": "Supprimer le champs",
+              "fieldname": {
+                "label": "Nom du champs"
+              },
+              "value": {
+                "label": "Valeur",
+                "description": "Doit être une chaîne. Les fichiers bruts doivent être donnés en base64."
+              },
+              "filename": {
+                "label": "Nom du fichier",
+                "description": "Le nom de fichier est requis lorsque la valeur est un fichier encodé en base64."
+              },
+              "contentType": {
+                "label": "Type de contenu (ContentType)",
+                "description": "Type de contenu MIME facultatif"
+              }
+            }
           },
           "output": {
             "label": "Sortie dans la variable",

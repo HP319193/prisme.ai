@@ -1266,7 +1266,7 @@ declare namespace Prismeai {
                  * Object defining querystring parameters
                  */
                 query?: {
-                    [key: string]: any;
+                    [name: string]: string;
                 };
                 /**
                  * HTTP request body
@@ -1333,7 +1333,7 @@ declare namespace Prismeai {
              * Object defining querystring parameters
              */
             query?: {
-                [key: string]: any;
+                [name: string]: string;
             };
             /**
              * HTTP request body
