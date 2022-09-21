@@ -1,12 +1,6 @@
 import { useRouter } from 'next/router';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import Error404 from './Errors/404';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import Error404 from '../Errors/404';
 import { useTranslation } from 'next-i18next';
 import cloneDeep from 'lodash/cloneDeep';
 import {
@@ -31,21 +25,22 @@ import {
   LoadingOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons';
-import useLocalizedText from '../utils/useLocalizedText';
-import PageBuilder from '../components/PageBuilder';
-import { PageBuilderContext } from '../components/PageBuilder/context';
-import { defaultStyles, usePages } from '../components/PagesProvider';
-import EditDetails from '../layouts/EditDetails';
-import SharePage from '../components/Share/SharePage';
+import useLocalizedText from '../../utils/useLocalizedText';
+import PageBuilder from '../../components/PageBuilder';
+import { PageBuilderContext } from '../../components/PageBuilder/context';
+import { defaultStyles, usePages } from '../../components/PagesProvider';
+import EditDetails from '../../layouts/EditDetails';
+import SharePage from '../../components/Share/SharePage';
 import { useField } from 'react-final-form';
-import { CodeEditor } from '../components/CodeEditor/lazy';
-import PagePreview from '../components/PagePreview';
-import useKeyboardShortcut from '../components/useKeyboardShortcut';
-import { useApps } from '../components/AppsProvider';
-import { useWorkspace } from '../components/WorkspaceProvider';
-import getLayout from '../layouts/WorkspaceLayout';
-import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
-import { usePrevious } from '../utils/usePrevious';
+import { CodeEditor } from '../../components/CodeEditor/lazy';
+import PagePreview from '../../components/PagePreview';
+import useKeyboardShortcut from '../../components/useKeyboardShortcut';
+import { useApps } from '../../components/AppsProvider';
+import { useWorkspace } from '../../components/WorkspaceProvider';
+import getLayout from '../../layouts/WorkspaceLayout';
+import { useWorkspaceLayout } from '../../layouts/WorkspaceLayout/context';
+import { usePrevious } from '../../utils/usePrevious';
+import RightButtons from './RightButtons';
 
 const CSSEditor = ({
   name,
@@ -430,28 +425,15 @@ export const Page = () => {
           </div>
         }
         RightButtons={[
-          <Popover
-            content={() => (
-              <SharePage
-                pageId={`${pageId}`}
-                pageSlug={(page && page.slug) || `${pageId}`}
-              />
-            )}
-            title={t('pages.share.label')}
-            key="share"
-          >
-            <Button>
-              <Space>
-                <Tooltip title={t('pages.share.label')}>
-                  <ShareAltOutlined className="text-lg" />
-                </Tooltip>
-              </Space>
-            </Button>
-          </Popover>,
-          <Button key="save" onClick={save} disabled={saving} variant="primary">
-            {saving && <LoadingOutlined />}
-            {t('pages.save.label')}
-          </Button>,
+          <div className="overflow-hidden" key="buttons">
+            <RightButtons
+              page={page}
+              pageId={`${pageId}`}
+              viewMode={viewMode}
+              save={save}
+              saving={saving}
+            />
+          </div>,
         ]}
       />
       <Head>
