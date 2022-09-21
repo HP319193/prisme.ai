@@ -4,20 +4,28 @@ exports[`should filter 1`] = `
 <div
   className="flex grow h-full flex-col overflow-auto"
 >
-  <img
-    alt="logical"
-    height={16}
-    src="/icon"
-    width={16}
-  />
-  logical
-  <img
-    alt="workspace"
-    height={16}
-    src="/icon"
-    width={16}
-  />
-  workspace
+  <div
+    className="flex flex-row items-center space-x-3"
+  >
+    <img
+      alt="logical"
+      height={16}
+      src="/icon"
+      width={16}
+    />
+    logical
+  </div>
+  <div
+    className="flex flex-row items-center space-x-3"
+  >
+    <img
+      alt="workspace"
+      height={16}
+      src="/icon"
+      width={16}
+    />
+    workspace
+  </div>
 </div>
 `;
 
@@ -25,19 +33,27 @@ exports[`should render 1`] = `
 <div
   className="flex grow h-full flex-col overflow-auto"
 >
-  <img
-    alt="logical"
-    height={16}
-    src="/icon"
-    width={16}
-  />
-  logical
-  <img
-    alt="workspace"
-    height={16}
-    src="/icon"
-    width={16}
-  />
-  workspace
+  <div
+    className="flex flex-row items-center space-x-3"
+  >
+    <img
+      alt="logical"
+      height={16}
+      src="/icon"
+      width={16}
+    />
+    logical
+  </div>
+  <div
+    className="flex flex-row items-center space-x-3"
+  >
+    <img
+      alt="workspace"
+      height={16}
+      src="/icon"
+      width={16}
+    />
+    workspace
+  </div>
 </div>
 `;
