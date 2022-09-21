@@ -28,9 +28,9 @@ const square: Schema = {
             title: 'pages.blocks.cards.settings.cover',
             'ui:widget': 'upload',
           },
+          action: eventOrLink,
         },
       },
-      action: eventOrLink,
     },
   },
 };
