@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import useHover from '@react-hook/hover';
 import React, {
   FC,
@@ -240,8 +239,13 @@ export const Block: FC<NodeProps & BlockProps> = ({
       topContent={
         <>
           {icon && (
-            <div className="mr-3 flex">
-              <Image src={icon} width={16} height={16} alt={name} />
+            <div className="mr-3 flex justify-center items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={icon}
+                alt={name}
+                className="object-contain h-[1rem] w-[1rem]"
+              />
             </div>
           )}
           <div className="flex flex-1 justify-between">
