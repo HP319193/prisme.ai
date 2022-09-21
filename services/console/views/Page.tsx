@@ -367,10 +367,16 @@ export const Page = () => {
       blocks.map((block) => ({ ...block, slug: `${slug}.${block.slug}` }))
     );
     const cleaned = cleanValue(value);
+    function getAppInstance(name: string) {
+      const [, appInstance] = name.match(/^(.*)\./) || [];
+      return appInstance;
+    }
+
     return {
       ...cleaned,
       blocks: cleaned.blocks.map((block) => ({
         ...block,
+        appInstance: getAppInstance(block.name || ''),
         url: detailedBlocks.find(({ slug }) => slug === block.name)?.url,
       })),
     };
