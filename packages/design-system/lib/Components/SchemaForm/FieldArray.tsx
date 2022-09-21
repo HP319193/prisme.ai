@@ -52,7 +52,7 @@ export const FieldArray = (props: FieldProps) => {
                           <Field schema={items} name={field} />
                           <Button
                             onClick={() => fields.remove(index)}
-                            className="text-gray hover:text-orange-500"
+                            className="text-gray hover:text-orange-500 !px-1"
                             disabled={props.schema.disabled}
                           >
                             <Tooltip
