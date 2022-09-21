@@ -379,31 +379,35 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         (prev, [, instructions]) => instructions[instructionName] || prev,
         {} as Schema
       );
-      const l = (key: string) => {
-        return t(key, {
+      const l = (key: string) =>
+        t(key, {
           interpolation: {
             skipOnVariables: true,
           },
           defaultValue: '',
         });
-      };
       const localizeSchema = (schema: Schema, name: string) => {
         if (!name) return schema;
         const localizedSchema = { ...schema };
         localizedSchema.title =
-          localize(localizedSchema.title) ||
-          l(`automations.instruction.form.${name}.label`);
+          l(`automations.instruction.form.${name}.label`) ||
+          localize(localizedSchema.title);
         localizedSchema.description =
-          localize(localizedSchema.description) ||
-          l(`automations.instruction.form.${name}.description`);
+          l(`automations.instruction.form.${name}.description`) ||
+          localize(localizedSchema.description);
+        localizedSchema.add = l(`automations.instruction.form.${name}.add`);
+        localizedSchema.remove = l(
+          `automations.instruction.form.${name}.remove`
+        );
         const { properties, items, enum: _enum, oneOf } = localizedSchema;
         if (properties) {
-          Object.keys(properties).forEach((k) =>
-            localizeSchema(properties[k], `${name}.${k}`)
+          Object.keys(properties).forEach(
+            (k) =>
+              (properties[k] = localizeSchema(properties[k], `${name}.${k}`))
           );
         }
         if (items) {
-          localizeSchema(items, `${name}.items`);
+          localizedSchema.items = localizeSchema(items, `${name}.items`);
         }
         if (_enum && Array.isArray(_enum) && _enum.length > 0) {
           const localized = _enum.map((enumName) =>
@@ -412,13 +416,12 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
           localizedSchema.enumNames = localized;
         }
         if (oneOf) {
-          oneOf.forEach((one) => {
-            localizeSchema({ ...one }, name);
+          oneOf.forEach((one, k) => {
+            oneOf[k] = localizeSchema(one, name);
           });
         }
         return localizedSchema;
       };
-
       return localizeSchema({ ...schema }, instructionName);
     },
     [instructionsSchemas, localize, t]

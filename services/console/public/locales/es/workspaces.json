@@ -152,6 +152,7 @@
       "description_conditions": "Comprueba las condiciones para ejecutar un determinado grupo de instrucciones.",
       "description_fetch": "Envía una petición HTTP.",
       "description_break": "Detiene la ejecución de una automatización.",
+      "description_comment": "No hace más que mostrar un comentario en la lista de instrucciones.",
       "search": "Investigador",
       "anyFieldError": "JSON inválido",
       "anyFieldErrorTooltip": "Esto es sólo una advertencia, la instrucción seguirá guardando",
@@ -176,6 +177,30 @@
           "payload": {
             "label": "Datos a adjuntar (opcional, formato JSON)",
             "description": "Puede adjuntar cualquier tipo de datos a su evento."
+          },
+          "target": {
+            "label": "Objetivo",
+            "description": "Por defecto, el evento se envía a todo el mundo. Con estos ajustes puede dirigirse a un destinatario específico.",
+            "userTopic": {
+              "label": "Asunto",
+              "description": "Especifique un asunto para clasificar el mensaje."
+            },
+            "userId": {
+              "label": "ID de usuario",
+              "description": "Dirigirse a un usuario concreto por su ID."
+            },
+            "sessionId": {
+              "label": "ID de la sesión",
+              "description": "Dirigirse a una sesión de usuario en particular por su ID."
+            }
+          },
+          "private": {
+            "label": "Privado",
+            "description": "El evento no se autocompletará para los usuarios de su espacio de trabajo una vez que se haya transformado en una App."
+          },
+          "autocomplete": {
+            "label": "Autocompletar (AVANZADO)",
+            "description": "Especifica cómo se ofrecerá su evento para autocompletar a los usuarios en su espacio de trabajo una vez que se haya convertido en una App."
           }
         },
         "wait": {
@@ -184,6 +209,8 @@
             "description": "La automatización puede esperar hasta que se desencadene un evento determinado.",
             "items": {
               "label": "Evento",
+              "add": "Añadir un evento",
+              "remove": "Eliminar el evento",
               "event": {
                 "label": "Nombre del evento",
                 "description": "Indique el nombre del evento que reiniciará su automatización."
@@ -215,6 +242,10 @@
           "value": {
             "label": "Valor",
             "description": "Ponga aquí cualquier valor de cualquier tipo. También puede utilizar la interpolación para almacenar datos de otra variable."
+          },
+          "type": {
+            "label": "Tipo de fusión",
+            "description": "Seleccione fusionar para fusionar la variable de destino con el valor. El valor tiene prioridad."
           }
         },
         "delete": {
@@ -253,9 +284,41 @@
             "label": "Encabezados de consulta",
             "description": "Lista de valores clave que constituyen las cabeceras de la consulta."
           },
+          "query": {
+            "label": "Configuración de la URL",
+            "description": "Especifica la lista de parámetros a añadir a la url."
+          },
           "body": {
             "label": "Cuerpo de la solicitud",
             "description": "El cuerpo que acompaña a la solicitud. Puede ser de cualquier tipo."
+          },
+          "emitErrors": {
+            "label": "Émettre un évènement lors des erreurs",
+            "description": "Si le code d'état de la réponse HTTP est 4xx ou 5xx, émet un événement runtime.fetch.failed par défaut."
+          },
+          "multipart": {
+            "label": "multipart/form-data",
+            "description": "Datos a enviar como multipart/form-data.",
+            "items": {
+              "label": "Campos",
+              "add": "Añadir un campo",
+              "remove": "Borrar el campo",
+              "fieldname": {
+                "label": "Nombre del campo"
+              },
+              "value": {
+                "label": "Valor",
+                "description": "Debe ser una cadena. Los archivos sin procesar deben darse en base64."
+              },
+              "filename": {
+                "label": "Nombre del archivo",
+                "description": "El nombre del archivo es necesario cuando el valor es un archivo codificado en base64."
+              },
+              "contentType": {
+                "label": "Tipo de contenido (ContentType)",
+                "description": "Tipo de contenido MIME opcional"
+              }
+            }
           },
           "output": {
             "label": "Salida en la variable",

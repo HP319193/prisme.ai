@@ -299,14 +299,18 @@
           },
           "query": {
             "type": "object",
-            "description": "Object defining querystring parameters"
+            "description": "Object defining querystring parameters",
+            "additionalProperties": {
+              "type": "string"
+            }
           },
           "body": {
             "description": "HTTP request body"
           },
           "emitErrors": {
             "description": "If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default",
-            "type": "boolean"
+            "type": "boolean",
+            "default": true
           },
           "multipart": {
             "description": "Sends a multipart/form-data HTTP request",
