@@ -105,7 +105,7 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={photo}
-                    className="rounded text-blue h-[80px] w-[80px] object-cover"
+                    className="rounded text-blue h-[80px] w-[80px] object-contain"
                     alt={t('apps.photoAlt')}
                   />
                 ) : (

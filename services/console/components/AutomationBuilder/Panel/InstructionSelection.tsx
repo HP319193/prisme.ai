@@ -7,7 +7,6 @@ import {
   Tooltip,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import Image from 'next/image';
 import { FC, useMemo, useState } from 'react';
 import { useAutomationBuilder } from '../context';
 import { truncate } from '../../../utils/strings';
@@ -61,14 +60,20 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
         className="mb-6"
       />
       <Space direction="vertical" className="flex grow overflow-x-auto">
-        {filteredInstructions.map(([section, icon, instructions]) => (
-          <Space key={section} direction="vertical" className="!flex flex-1">
-            <Space>
+        {filteredInstructions.map(([section, icon, instructions], index) => (
+          <Space
+            key={section}
+            direction="vertical"
+            className={`!flex flex-1 ${index !== 0 ? 'mt-8' : ''}`}
+          >
+            <div className="flex flex-row items-center space-x-3">
               {icon && ( // eslint-disable-next-line @next/next/no-img-element
                 <img src={icon} width={16} height={16} alt={section} />
               )}
-              <Title level={4}>{section}</Title>
-            </Space>
+              <Title level={4} className="!mb-0">
+                {section}
+              </Title>
+            </div>
             <Space direction="vertical" className="!flex flex-1">
               {instructions.map(({ name, description, slug }) => (
                 <Button
