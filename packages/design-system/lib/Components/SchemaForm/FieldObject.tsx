@@ -85,27 +85,29 @@ export const FieldObject = (props: FieldProps) => {
           : 'p-2 pl-3 border-[1px] border-gray-200 !rounded-[0.3rem]'
       }`}
     >
-      <components.FieldContainer {...props}>
-        <label className="flex font-semibold max-w-[80%]">
-          {props.label || props.schema.title || getLabel(props.name)}
-        </label>
-        {grid && (
-          <LayoutGrid
-            grid={grid}
-            {...props}
-            schema={schemaWithPropertiesWithOneOf}
-          />
-        )}
-        {!grid && (
-          <LayoutBasic {...props} schema={schemaWithPropertiesWithOneOf} />
-        )}
-        {additionalProperties && (
-          <FieldAdditionalProperties
-            {...props}
-            schema={schemaWithPropertiesWithOneOf}
-          />
-        )}
-      </components.FieldContainer>
+      <div className="flex flex-1 flex-col">
+        <components.FieldContainer {...props}>
+          <label className="flex font-semibold max-w-[80%]">
+            {props.label || props.schema.title || getLabel(props.name)}
+          </label>
+          {grid && (
+            <LayoutGrid
+              grid={grid}
+              {...props}
+              schema={schemaWithPropertiesWithOneOf}
+            />
+          )}
+          {!grid && (
+            <LayoutBasic {...props} schema={schemaWithPropertiesWithOneOf} />
+          )}
+          {additionalProperties && (
+            <FieldAdditionalProperties
+              {...props}
+              schema={schemaWithPropertiesWithOneOf}
+            />
+          )}
+        </components.FieldContainer>
+      </div>
     </Description>
   );
 };
