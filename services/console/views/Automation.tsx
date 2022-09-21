@@ -183,7 +183,6 @@ export const Automation = () => {
           message: t('automations.save.toast'),
           placement: 'bottomRight',
         });
-        setDirty(false);
         setSaving(false);
         if (saved) {
           originalAutomation.current = saved;
@@ -205,8 +204,9 @@ export const Automation = () => {
 
   const save = useCallback(async () => {
     const saved = await saveAutomation.current(`${automationId}`, value);
+    setDirty(false);
     saved && setValue({ ...saved });
-  }, [automationId, value]);
+  }, [automationId, setDirty, value]);
 
   useKeyboardShortcut([
     {

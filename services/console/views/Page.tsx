@@ -253,7 +253,7 @@ export const Page = () => {
     setSaving(true);
     try {
       await savePage(workspace.id, cleanValue(value), eventsInPage);
-
+      setDirty(false);
       notification.success({
         message: t('pages.save.toast'),
         placement: 'bottomRight',
@@ -265,7 +265,16 @@ export const Page = () => {
       });
     }
     setSaving(false);
-  }, [cleanValue, eventsInPage, page, savePage, t, value, workspace.id]);
+  }, [
+    cleanValue,
+    eventsInPage,
+    page,
+    savePage,
+    setDirty,
+    t,
+    value,
+    workspace.id,
+  ]);
 
   useKeyboardShortcut([
     {
@@ -315,6 +324,7 @@ export const Page = () => {
           message: t('pages.save.toast'),
           placement: 'bottomRight',
         });
+        setDirty(false);
       } catch (e) {
         const error: any = e;
         if (error.details) {
@@ -329,7 +339,7 @@ export const Page = () => {
         throw e;
       }
     },
-    [cleanValue, savePage, t, value, workspace.id]
+    [cleanValue, savePage, setDirty, t, value, workspace.id]
   );
 
   const { appInstances } = useApps();
