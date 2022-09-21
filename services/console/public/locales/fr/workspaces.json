@@ -898,7 +898,7 @@
     "type_runtime.waits.pending_oneOf_one": "de l'évènement <event>{{events}}</event>",
     "type_runtime.waits.pending_oneOf_other": "des évènements <event>{{events}}</event>",
     "type_runtime.waits.pending_timeout": "pendant {{timeout}}s",
-    "type_runtime.waits.fulfilled": "L'automatisation <automation>{{automation}}</automation> a repris suite à l'évènement <event>{{event}}</event>",
+    "type_runtime.waits.fulfilled": "L'automatisation <automation>{{automation}}</automation> a permis la reprise d'une automation suite à l'évènement <event>{{event}}</event>",
     "type_runtime.fetch.failed": "Requête HTTP échouée",
     "type_runtime.contexts.updated": "Contexte mis à jour",
     "type_apikeys.updated": "Une clé d'API a été mise à jour",
