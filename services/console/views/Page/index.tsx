@@ -4,33 +4,23 @@ import Error404 from '../Errors/404';
 import { useTranslation } from 'next-i18next';
 import cloneDeep from 'lodash/cloneDeep';
 import {
-  Button,
   Collapse,
   FieldProps,
   Loading,
   notification,
   PageHeader,
-  Popover,
   Schema,
   SchemaFormDescription,
-  Space,
   Tooltip,
 } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import { Segmented } from 'antd';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-  LoadingOutlined,
-  ShareAltOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import useLocalizedText from '../../utils/useLocalizedText';
 import PageBuilder from '../../components/PageBuilder';
 import { PageBuilderContext } from '../../components/PageBuilder/context';
 import { defaultStyles, usePages } from '../../components/PagesProvider';
 import EditDetails from '../../layouts/EditDetails';
-import SharePage from '../../components/Share/SharePage';
 import { useField } from 'react-final-form';
 import { CodeEditor } from '../../components/CodeEditor/lazy';
 import PagePreview from '../../components/PagePreview';
@@ -142,17 +132,17 @@ export const Page = () => {
   } = useRouter();
   const prevPageId = usePrevious(pageId);
 
-  useEffect(() => {
-    if (pageId !== prevPageId) {
-      setViewMode(0);
-    }
-  }, [pageId, prevPageId]);
-
   const page = useMemo(() => {
     return Array.from(pages.get(`${workspaceId}`) || []).find(
       ({ id }) => pageId === id
     );
   }, [pageId, pages, workspaceId]);
+
+  useEffect(() => {
+    if (pageId !== prevPageId) {
+      setViewMode((page?.blocks || []).length === 0 ? 1 : 0);
+    }
+  }, [page?.blocks, pageId, prevPageId]);
 
   const [value, setValue] = useState<Prismeai.Page>();
   const [saving, setSaving] = useState(false);
@@ -215,9 +205,7 @@ export const Page = () => {
               {...props}
               sectionIds={
                 page
-                  ? (
-                      page.blocks || []
-                    ).flatMap(
+                  ? (page.blocks || []).flatMap(
                       ({ config: { sectionId, name = sectionId } = {} }) =>
                         sectionId ? { id: sectionId, name } : []
                     )
@@ -234,10 +222,9 @@ export const Page = () => {
   const cleanValue = useCallback(
     (value: Prismeai.Page) => ({
       ...value,
-      blocks: ((value.blocks ||
-        []) as PageBuilderContext['page']['blocks']).map(
-        ({ key, ...block }) => block
-      ),
+      blocks: (
+        (value.blocks || []) as PageBuilderContext['page']['blocks']
+      ).map(({ key, ...block }) => block),
       id: page ? page.id : '',
     }),
     [page]
@@ -420,6 +407,7 @@ export const Page = () => {
                       label: t('pages.preview'),
                       value: 0,
                       icon: <EyeOutlined />,
+                      disabled: (page?.blocks || []).length === 0,
                     },
                     {
                       label: t('pages.edit'),
