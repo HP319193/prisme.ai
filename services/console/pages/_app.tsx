@@ -17,7 +17,7 @@ import dynamic from 'next/dynamic';
 import '../styles/globals.css';
 import '../styles/tailwind-console.css';
 import '@prisme.ai/design-system/styles/index.css';
-import '@prisme.ai/design-system/styles/prismeai-theme.css';
+import '@prisme.ai/design-system/styles/theme.css';
 import PermissionsProvider from '../components/PermissionsProvider';
 import { AppsProvider } from '../components/AppsProvider';
 import PagesProvider from '../components/PagesProvider/PagesProvider';

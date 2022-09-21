@@ -213,18 +213,20 @@ const ManagedAdditionalProperties = ({
             name={`${name}.${key}`}
           />
 
-          <Tooltip
-            title={
-              (schema.additionalProperties as Schema)?.remove ||
-              locales.removeProperty ||
-              'Remove'
-            }
-            placement="left"
-          >
-            <Button onClick={removeKey(key)} className="!px-1">
-              <DeleteOutlined />
-            </Button>
-          </Tooltip>
+          <Button onClick={removeKey(key)}>
+            <Tooltip
+              title={
+                (schema.additionalProperties as Schema)?.remove ||
+                locales.removeProperty ||
+                'Remove'
+              }
+              placement="left"
+            >
+              <button>
+                <DeleteOutlined />
+              </button>
+            </Tooltip>
+          </Button>
         </div>
       ))}
       <Button onClick={addKey}>

@@ -50,7 +50,7 @@ const Input = forwardRef(
           <AntdInput
             ref={ref}
             placeholder={placeholder}
-            className={`${className} h-[2.5rem] basis-[2.5rem] invalid:border-red-500 invalid:text-red-500`}
+            className={`${className} h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500`}
             type={inputType}
             {...otherProps}
           />

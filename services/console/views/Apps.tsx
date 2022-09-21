@@ -150,7 +150,7 @@ const Apps = ({}: AppsProps) => {
     <>
       <PageHeader
         title={
-          <div className="flex flex-row items-center text-lg">
+          <div className="flex flex-row items-center text-base">
             {photo && (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={photo} className="w-10 h-10 mr-2" alt={appId} />

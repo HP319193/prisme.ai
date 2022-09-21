@@ -307,7 +307,7 @@ export const Automation = () => {
     <>
       <PageHeader
         title={
-          <div className="flex flex-row items-center text-lg">
+          <div className="flex flex-row items-center text-base">
             <span className="font-medium">{localize(value.name)}</span>
             <span className="text-gray flex border-r border-solid border-pr-gray-200 h-[26px] items-center px-3">
               <EditDetails

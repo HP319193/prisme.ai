@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "build-tailwind": "npx tailwindcss -c ./tailwind.config.cjs -i ./styles/tailwind.css -o ./styles/index.css",
-    "build-styles": "npm run build-tailwind && npx lessc --js ./styles/prismeai-theme.less ./styles/prismeai-theme.css",
+    "build-styles": "npm run build-tailwind && npx lessc --js ./styles/prismeai-theme.less ./styles/theme.css",
     "build": "npm run build-styles && rollup -c rollup.config.js",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
