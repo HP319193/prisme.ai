@@ -594,6 +594,16 @@
           "variant": {
             "label": "Estilo de mapa"
           },
+          "action": {
+            "title": "Acción",
+            "description": "Acción desencadenada por un clic en la tarjeta",
+            "event": "Evento",
+            "url": "Link",
+            "valueEvent": "Evento a desencadenar",
+            "valueLink": "Url",
+            "popup": "Abrir en una nueva pestaña",
+            "payload": "Carga útil del evento"
+          },
           "classic": {
             "label": "Clásico",
             "content": {
