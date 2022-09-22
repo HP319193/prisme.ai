@@ -47,7 +47,7 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
 
   const onChange = useCallback(
     (value: any) => {
-      const keys = Object.keys(value);
+      const keys = Object.keys(value || {});
       const prevValue = keys.reduce(
         (prev, key) => ({
           ...prev,
@@ -55,7 +55,7 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
         }),
         {}
       );
-      if (JSON.stringify(prevValue) === JSON.stringify(value)) return;
+      if (JSON.stringify(prevValue) === JSON.stringify(value || {})) return;
       setDirty(true);
     },
     [appConfig, setDirty]

@@ -40,9 +40,7 @@ export interface BlockComponentProps {
     container?: HTMLElement;
   };
 }
-export type BlockComponent = (
-  props: BlockComponentProps
-) => ReactElement & {
+export type BlockComponent = (props: BlockComponentProps) => ReactElement & {
   schema?: Schema;
 };
 
@@ -161,11 +159,7 @@ const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
 
   const isJs = url && url.replace(/\?.*$/, '').match(/\.js$/);
   if (isJs) {
-    return (
-      <BlockErrorBoundary>
-        <ReactBlock url={url} {...props} />
-      </BlockErrorBoundary>
-    );
+    return <ReactBlock url={url} {...props} />;
   }
 
   return <IFrameBlock url={url} {...props} />;
@@ -179,16 +173,18 @@ export const BlockLoader = ({
   ...props
 }: BlockProviderProps & BlockLoaderProps) => {
   return (
-    <BlockProvider
-      config={config}
-      onConfigUpdate={onConfigUpdate}
-      appConfig={props.appConfig}
-      onAppConfigUpdate={onAppConfigUpdate}
-      events={props.events}
-      api={api}
-      onLoad={props.onLoad}
-    >
-      <BlockRenderMethod {...props} />
-    </BlockProvider>
+    <BlockErrorBoundary>
+      <BlockProvider
+        config={config}
+        onConfigUpdate={onConfigUpdate}
+        appConfig={props.appConfig}
+        onAppConfigUpdate={onAppConfigUpdate}
+        events={props.events}
+        api={api}
+        onLoad={props.onLoad}
+      >
+        <BlockRenderMethod {...props} />
+      </BlockProvider>
+    </BlockErrorBoundary>
   );
 };
