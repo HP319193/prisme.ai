@@ -31,7 +31,7 @@ const ActionOrLink = ({ action, children }: ActionOrLinkProps) => {
       return (
         <Link
           href={action.value}
-          {...(action.newTab ? { target: '_blank' } : {})}
+          {...(action.popup ? { target: '_blank' } : {})}
         >
           <a className={tw`hover:text-theme-accent hover:border-theme-accent`}>
             {children}

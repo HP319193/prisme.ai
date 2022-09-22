@@ -599,7 +599,7 @@
             "url": "Link",
             "valueEvent": "Event to trigger",
             "valueLink": "Url",
-            "newTab": "Open in new tab",
+            "popup": "Open in new tab",
             "payload": "Event's payload"
           },
           "classic": {
