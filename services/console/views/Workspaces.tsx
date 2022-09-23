@@ -71,7 +71,7 @@ export const WorkspacesView = () => {
                   overlayClassName="pr-full-popover"
                 >
                   <Button variant="grey" className="!text-white">
-                    <Space className="text-lg">{t('help')}</Space>
+                    <Space>{t('help')}</Space>
                   </Button>
                 </Popover>
                 <Popover
@@ -86,7 +86,7 @@ export const WorkspacesView = () => {
                   overlayClassName="pr-full-popover"
                 >
                   <Button variant="grey" className="!text-white">
-                    <Space className="text-lg">{t('whatsNew')}</Space>
+                    <Space>{t('whatsNew')}</Space>
                   </Button>
                 </Popover>
               </div>
@@ -95,7 +95,7 @@ export const WorkspacesView = () => {
         }
         contentClassName="overflow-y-auto"
       >
-        <Title level={3} className="!ml-16 !m-8 text-[1.5rem]">
+        <Title level={3} className="!ml-16 !m-8 !text-lg">
           {t('workspaces.sectionTitle')}
         </Title>
         <div className="!bg-blue-200 flex flex-1 m-16 !mt-0 rounded relative pt-6">

@@ -1,7 +1,7 @@
 @import './antd.less';
 
 // global
-@font-size-base: 12px;
+@font-size-base: 1rem;
 @primary-color: #015dff;
 @primary-color-hover: #2d7dff;
 @border-color-base: #e5e5e5;
@@ -33,6 +33,7 @@ body {
   border: none;
   box-shadow: none;
   background-color: transparent;
+  padding: 0.5rem 1rem;
 
   &:hover {
     color: @primary-color-hover;
@@ -205,11 +206,13 @@ body {
   min-height: 2.5rem;
   height: 2.5rem;
   flex-basis: 2.5rem;
+  padding: 0.5rem 1rem;
 }
 
 .ant-input-password,
 .ant-input {
   border-radius: 0.3rem;
+  padding: 0.5rem 1rem;
 }
 
 // Checkbox
@@ -292,4 +295,8 @@ body {
 }
 .ant-popover-inner {
   border-radius: 0.94rem;
+}
+
+.ant-notification-notice-with-icon .ant-notification-notice-message {
+  font-size: 1.1rem;
 }

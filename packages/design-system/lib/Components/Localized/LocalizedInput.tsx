@@ -193,7 +193,7 @@ export const LocalizedInput = ({
         <div
           className="absolute top-2 right-2"
           style={{
-            top: `calc(0.5rem + ${iconMarginTop}${
+            top: `calc(0.3rem + ${iconMarginTop}${
               typeof iconMarginTop == 'number' ? 'px' : ''
             })`,
           }}

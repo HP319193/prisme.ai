@@ -193,25 +193,27 @@ const ManagedAdditionalProperties = ({
   return (
     <div>
       {Object.keys(value).map((key, index) => (
-        <div key={index} className="flex flex-1 flex-row items-center">
+        <div key={index} className="flex flex-1 flex-row items-start">
           <Input
             value={key}
             onChange={({ target: { value } }) => updateKey(key)(value)}
             label={locales.propertyKey || 'Key'}
           />
-          {' : '}
-          <Field
-            schema={{
-              ...(schema.additionalProperties as Schema),
-              disabled: key ? undefined : true,
-            }}
-            label={
-              locales.propertyValue === undefined
-                ? 'Value'
-                : locales.propertyValue
-            }
-            name={`${name}.${key}`}
-          />
+          <span className="mt-[2rem]"> : </span>
+          <div className="mt-[1rem] flex flex-1">
+            <Field
+              schema={{
+                ...(schema.additionalProperties as Schema),
+                disabled: key ? undefined : true,
+              }}
+              label={
+                locales.propertyValue === undefined
+                  ? 'Value'
+                  : locales.propertyValue
+              }
+              name={`${name}.${key}`}
+            />
+          </div>
 
           <Tooltip
             title={

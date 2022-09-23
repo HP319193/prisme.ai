@@ -24,7 +24,7 @@ export const FieldArray = (props: FieldProps) => {
   const asRow = isUiOptionsArray(uiOptions) && uiOptions.array === 'row';
 
   return (
-    <div className="p-2">
+    <div className="flex flex-1 flex-col">
       <Description text={props.schema.description}>
         <components.FieldContainer {...props}>
           <label className="flex mb-5">
@@ -48,11 +48,11 @@ export const FieldArray = (props: FieldProps) => {
                       <div
                         className={asRow ? 'min-w-full' : 'flex-1 space-y-5'}
                       >
-                        <div className="flex flex-row items-center">
+                        <div className="flex flex-row items-start">
                           <Field schema={items} name={field} />
                           <Button
                             onClick={() => fields.remove(index)}
-                            className="text-gray hover:text-orange-500 !px-1"
+                            className="text-gray hover:text-orange-500 !px-1 mt-[1rem]"
                             disabled={props.schema.disabled}
                           >
                             <Tooltip

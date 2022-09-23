@@ -29,7 +29,15 @@ body {
   white-space: pre-line;
   scroll-behavior: smooth;
   font-weight: 300;
-  font-size: 12px;
+  font-size: 13px;
+}
+body h1.ant-typography,
+body h2.ant-typography,
+body h3.ant-typography,
+body h4.ant-typography,
+body h5.ant-typography,
+body h6.ant-typography {
+  font-size: 1rem;
 }
 
 a {
