@@ -3,7 +3,7 @@ import { RefObject } from 'react';
 export interface Action {
   type: 'event' | 'url';
   value: string;
-  newTab?: boolean;
+  popup?: boolean;
   payload?: any;
 }
 

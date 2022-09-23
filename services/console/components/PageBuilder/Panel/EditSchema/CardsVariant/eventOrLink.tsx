@@ -31,8 +31,8 @@ const eventOrLink: Schema = {
               title: 'pages.blocks.cards.settings.action.valueLink',
               type: 'string',
             },
-            newTab: {
-              title: 'pages.blocks.cards.settings.action.newTab',
+            popup: {
+              title: 'pages.blocks.cards.settings.action.popup',
               type: 'boolean',
             },
           },

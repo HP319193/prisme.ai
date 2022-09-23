@@ -599,7 +599,7 @@
             "url": "Lien",
             "valueEvent": "Evénement à déclencher",
             "valueLink": "Url",
-            "newTab": "Ouvrir dans un nouvel onglet",
+            "popup": "Ouvrir dans un nouvel onglet",
             "payload": "Contenu de l'événement"
           },
           "classic": {
