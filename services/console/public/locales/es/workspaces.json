@@ -41,7 +41,13 @@
       "automations": "Automatizaciones",
       "pages": "Páginas",
       "apps": "Apps"
-    }
+    },
+    "add": {
+      "automation": "Crear una Automatización",
+      "page": "Crear una Página",
+      "app": "Instalación de una App"
+    },
+    "search": "Investigador"
   },
   "create": {
     "description_first": "Cree su primer espacio de trabajo para empezar a automatizar su trabajo",

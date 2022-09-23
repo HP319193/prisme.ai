@@ -2018,7 +2018,28 @@ declare namespace Prismeai {
         dates?: string[];
         endpoint: boolean | string;
     };
-    export type Workspace = DSUL;
+    export interface Workspace {
+        createdBy?: string;
+        name: string;
+        description?: LocalizedText;
+        photo?: string;
+        owner?: {
+            id?: string;
+        };
+        imports?: {
+            [name: string]: AppInstance;
+        };
+        config?: Config;
+        automations?: {
+            [name: string]: /* Full description at (TODO swagger url) */ Automation;
+        };
+        blocks?: {
+            [name: string]: /* Block */ Block;
+        };
+        createdAt?: string;
+        updatedAt?: string;
+        id?: string;
+    }
     export interface WorkspacePermissionsDeleted {
         /**
          * example:

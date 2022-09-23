@@ -2753,7 +2753,12 @@ components:
         $ref: '#/components/schemas/DetailedAppInstance'
 
     Workspace:
-      $ref: '#/components/schemas/DSUL'
+      allOf:
+        - type: object
+          properties:
+            createdBy:
+              type: string
+        - $ref: '#/components/schemas/DSUL'
 
     DSUL:
       type: object
