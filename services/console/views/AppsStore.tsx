@@ -100,12 +100,12 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
               className="flex flex-row w-[25rem] align-center items-center border rounded border-gray-500 p-4 m-[0.8rem] h-[9rem] cursor-pointer hover:bg-blue-200"
               onClick={() => onAppClick(slug, name)}
             >
-              <div className="flex align-center justify-center w-[6rem] mr-4 flex-none">
+              <div className="flex align-start justify-center w-[6rem] mr-4 flex-none">
                 {photo ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={photo}
-                    className="rounded text-blue h-[80px] w-[80px] object-contain"
+                    className="rounded text-blue h-[64px] w-[64px] object-contain"
                     alt={t('apps.photoAlt')}
                   />
                 ) : (
@@ -113,10 +113,8 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
                 )}
               </div>
               <div className="flex flex-col grow justify-start h-full mt-3 overflow-hidden text-ellipsis leading-[1.3rem]">
-                <Title level={4} className="!text-[16px]">
-                  {name}
-                </Title>
-                <div className="text-[14px]">{localize(description)}</div>
+                <Title level={4}>{name}</Title>
+                <div>{localize(description)}</div>
                 {/*  Get description language, fallback to en */}
               </div>
             </div>
