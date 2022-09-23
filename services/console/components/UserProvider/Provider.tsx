@@ -24,8 +24,8 @@ export const UserProvider: FC<UserProviderProps> = ({
 
   const { push, route } = useRouter();
 
-  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] =
-    useCallback(async (email: string, language: string) => {
+  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] = useCallback(
+    async (email: string, language: string) => {
       setLoading(true);
       try {
         await api.sendPasswordResetMail(email, language);
@@ -37,7 +37,9 @@ export const UserProvider: FC<UserProviderProps> = ({
         setError(e as ApiError);
         return null;
       }
-    }, []);
+    },
+    []
+  );
 
   const passwordReset: UserContext['passwordReset'] = useCallback(
     async (token: string, password: string) => {
@@ -165,7 +167,9 @@ export const UserProvider: FC<UserProviderProps> = ({
     initialFetch.current();
   }, []);
 
-  if (!PUBLIC_URLS.includes(route) && loading) return <Loading />;
+  const isPublicUrl = PUBLIC_URLS.includes(route);
+
+  if (!isPublicUrl && loading) return <Loading />;
 
   return (
     <context.Provider
@@ -181,6 +185,13 @@ export const UserProvider: FC<UserProviderProps> = ({
         passwordReset,
       }}
     >
+      {isPublicUrl && (
+        <style>{`
+html {
+  font-size: 15px;
+}
+`}</style>
+      )}
       {children}
     </context.Provider>
   );

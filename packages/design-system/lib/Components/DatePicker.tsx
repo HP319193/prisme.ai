@@ -31,7 +31,7 @@ const DatePicker = ({
         format={dateFormat}
         value={_value}
         onChange={onChange}
-        className={`h-[50px] basis-[50px] flex flex-1 ${className}`}
+        className={`h-[2.5rem] basis-[2.5rem] flex flex-1 ${className}`}
         placeholder=""
         {...props}
       />

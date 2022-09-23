@@ -178,7 +178,7 @@ const ShareWorkspacePopover = ({
           type="submit"
           variant="primary"
           onClick={onSubmit}
-          className="flex items-center justify-center !w-[9.375rem] !h-[50px] !rounded-[0.94rem]"
+          className="flex items-center justify-center !w-[9.375rem] !h-[2.5rem] !rounded-[0.94rem]"
         >
           {commonT('add')}
         </Button>

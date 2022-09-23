@@ -82,7 +82,7 @@ export const FieldObject = (props: FieldProps) => {
       className={`space-y-5 ${
         noBorder
           ? ''
-          : 'p-2 pl-3 border-[1px] border-gray-200 !rounded-[0.3rem]'
+          : 'p-2 pl-3 pr-1 border-[1px] border-gray-200 !rounded-[0.3rem] mt-[1rem]'
       }`}
     >
       <div className="flex flex-1 flex-col">

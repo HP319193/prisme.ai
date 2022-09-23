@@ -95,7 +95,7 @@ export const WorkspacesView = () => {
         }
         contentClassName="overflow-y-auto"
       >
-        <Title level={3} className="!ml-16 !m-8 text-[1.5rem]">
+        <Title level={3} className="!ml-16 !m-8 !text-lg">
           {t('workspaces.sectionTitle')}
         </Title>
         <div className="!bg-blue-200 flex flex-1 m-16 !mt-0 rounded relative pt-6">

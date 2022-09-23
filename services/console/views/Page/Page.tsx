@@ -1,5 +1,11 @@
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import Error404 from '../Errors/404';
 import { useTranslation } from 'next-i18next';
 import cloneDeep from 'lodash/cloneDeep';
@@ -29,7 +35,6 @@ import { useApps } from '../../components/AppsProvider';
 import { useWorkspace } from '../../components/WorkspaceProvider';
 import getLayout from '../../layouts/WorkspaceLayout';
 import { useWorkspaceLayout } from '../../layouts/WorkspaceLayout/context';
-import { usePrevious } from '../../utils/usePrevious';
 import RightButtons from './RightButtons';
 
 const CSSEditor = ({
@@ -130,7 +135,7 @@ export const Page = () => {
     query: { id: workspaceId, pageId },
     push,
   } = useRouter();
-  const prevPageId = usePrevious(pageId);
+  const prevPageId = useRef('');
 
   const page = useMemo(() => {
     return Array.from(pages.get(`${workspaceId}`) || []).find(
@@ -139,10 +144,12 @@ export const Page = () => {
   }, [pageId, pages, workspaceId]);
 
   useEffect(() => {
-    if (pageId !== prevPageId) {
+    if (!page || !page.id) return;
+    if (page.id !== prevPageId.current) {
+      prevPageId.current = page.id;
       setViewMode((page?.blocks || []).length === 0 ? 1 : 0);
     }
-  }, [page?.blocks, pageId, prevPageId]);
+  }, [page, prevPageId]);
 
   const [value, setValue] = useState<Prismeai.Page>();
   const [saving, setSaving] = useState(false);
@@ -157,6 +164,10 @@ export const Page = () => {
   );
 
   useEffect(() => {
+    if (!value || !page || value.id !== page.id) {
+      setDirty(false);
+      return;
+    }
     const clonedValue = cloneDeep(value) as PageBuilderContext['page'];
     if (clonedValue && clonedValue.blocks) {
       clonedValue.blocks.forEach((block) => {
@@ -165,7 +176,7 @@ export const Page = () => {
     }
 
     if (
-      pageId === prevPageId &&
+      pageId === prevPageId.current &&
       JSON.stringify(page) !== JSON.stringify(clonedValue)
     ) {
       setDirty(true);
@@ -205,7 +216,9 @@ export const Page = () => {
               {...props}
               sectionIds={
                 page
-                  ? (page.blocks || []).flatMap(
+                  ? (
+                      page.blocks || []
+                    ).flatMap(
                       ({ config: { sectionId, name = sectionId } = {} }) =>
                         sectionId ? { id: sectionId, name } : []
                     )
@@ -222,9 +235,10 @@ export const Page = () => {
   const cleanValue = useCallback(
     (value: Prismeai.Page) => ({
       ...value,
-      blocks: (
-        (value.blocks || []) as PageBuilderContext['page']['blocks']
-      ).map(({ key, ...block }) => block),
+      blocks: ((value.blocks ||
+        []) as PageBuilderContext['page']['blocks']).map(
+        ({ key, ...block }) => block
+      ),
       id: page ? page.id : '',
     }),
     [page]
@@ -386,7 +400,7 @@ export const Page = () => {
     <>
       <PageHeader
         title={
-          <div className="flex flex-row items-center text-base">
+          <div className="flex flex-row items-center text-lg">
             <span className="font-medium ">{localize(value.name)}</span>
             <span className="text-gray flex border-r border-solid border-pr-gray-200 h-[26px] items-center px-3">
               <EditDetails
