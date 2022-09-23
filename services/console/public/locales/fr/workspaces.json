@@ -42,7 +42,13 @@
       "automations": "Automatisations",
       "pages": "Pages",
       "apps": "Apps"
-    }
+    },
+    "add": {
+      "automation": "Créer une Automatisation",
+      "page": "Créer une Page",
+      "app": "Installer une App"
+    },
+    "search": "Rechercher"
   },
   "create": {
     "description_first": "Créez votre premier workspace pour commencer à automatiser votre travail",

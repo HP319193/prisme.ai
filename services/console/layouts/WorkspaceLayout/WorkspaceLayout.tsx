@@ -1,49 +1,33 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import {
   Layout,
   Loading,
-  Modal,
   notification,
   SidePanel,
-  Tree,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import useResizeObserver from 'use-resize-observer';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import { useWorkspace } from '../../components/WorkspaceProvider';
 import workspaceLayoutContext, { WorkspaceLayoutContext } from './context';
 import useLocalizedText from '../../utils/useLocalizedText';
 import Storage from '../../utils/Storage';
-import { appInstanceWithSlug, useApps } from '../../components/AppsProvider';
+import { useApps } from '../../components/AppsProvider';
 import usePages from '../../components/PagesProvider/context';
 import AppsStore from '../../views/AppsStore';
 import { generateNewName } from '../../utils/generateNewName';
-import {
-  BranchesOutlined,
-  FileOutlined,
-  HomeOutlined,
-  WarningOutlined,
-} from '@ant-design/icons';
 import { Workspace } from '@prisme.ai/sdk';
-
-const TREE_CONTENT_TYPE = {
-  automations: 'automations',
-  pages: 'pages',
-  apps: 'apps',
-  activity: 'activity',
-};
+import Navigation from './Navigation';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const { workspace, createAutomation, saveSource, save } = useWorkspace();
-  const { appInstances, getAppInstances } = useApps();
+  const { getAppInstances } = useApps();
   const { pages, createPage } = usePages();
   const router = useRouter();
 
   const { localize } = useLocalizedText();
-  const { t: commonT } = useTranslation('common');
   const {
     t,
     i18n: { language },
@@ -61,15 +45,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
   >();
   const [saving, setSaving] = useState(false);
   const [fullSidebar, setFullSidebar] = useState(false);
-  const [sidebar, setSidebar] = useState(
-    Storage.get('__workpaceSidebar') || 'automations'
-  );
+  const [sidebar] = useState(Storage.get('__workpaceSidebar') || 'automations');
   const [appStoreVisible, setAppStoreVisible] = useState(false);
   const [dirty, setDirty] = useState(false);
-
-  const { ref: sidebarRef, height: sidebarHeight } = useResizeObserver<
-    HTMLDivElement
-  >();
 
   useEffect(() => {
     Storage.set('__workpaceSidebar', sidebar);
@@ -122,90 +100,40 @@ export const WorkspaceLayout: FC = ({ children }) => {
     setSourceDisplayed(v);
   }, []);
 
-  const onSelect = useCallback(
-    (selectedKey, _) => {
-      if (!selectedKey || !selectedKey[0] || selectedKey[0].indexOf(':') === -1)
-        return;
+  const createAutomationHandler = useCallback(async () => {
+    setCreating(true);
 
-      const changeRoute = () => {
-        const [type, slug] = selectedKey[0].split(':');
-        switch (type) {
-          case TREE_CONTENT_TYPE.activity: {
-            router.push(`/workspaces/${workspace.id}/`);
-            break;
-          }
-          case TREE_CONTENT_TYPE.automations: {
-            router.push(`/workspaces/${workspace.id}/automations/${slug}`);
-            break;
-          }
-          case TREE_CONTENT_TYPE.pages: {
-            router.push(`/workspaces/${workspace.id}/pages/${slug}`);
-            break;
-          }
-          case TREE_CONTENT_TYPE.apps: {
-            router.push(`/workspaces/${workspace.id}/apps/${slug}`);
-            break;
-          }
-        }
-        setDirty(false);
-      };
+    const name = generateNewName(
+      t(`automations.create.defaultName`),
+      Object.values(workspace.automations || {}).map(({ name }) => name),
+      localize
+    );
+    const createdAutomation = await createAutomation({
+      name,
+      do: [],
+    });
 
-      if (dirty) {
-        Modal.confirm({
-          icon: <WarningOutlined />,
-          content: t('workspace.dirtyWarning'),
-          onOk: changeRoute,
-          okText: t('workspace.dirtyOk'),
-          cancelText: commonT('cancel'),
-        });
-      } else {
-        changeRoute();
-      }
-    },
-    [dirty, router, workspace.id, t, commonT]
-  );
-
-  const workspaceAppInstances = appInstances.get(
-    workspace.id
-  ) as appInstanceWithSlug[];
-
-  const currentPages = useMemo(
-    () => Array.from(pages.get(workspace.id) || []),
-    [pages, workspace.id]
-  );
-
-  const onCreateAutomation = useCallback(
-    async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      event.stopPropagation();
-
-      setCreating(true);
-
-      const name = generateNewName(
-        t(`automations.create.defaultName`),
-        Object.values(workspace.automations || {}).map(({ name }) => name),
-        localize
+    setCreating(false);
+    if (createdAutomation) {
+      await router.push(
+        `/workspaces/${workspace.id}/automations/${createdAutomation.slug}`
       );
-      const createdAutomation = await createAutomation({
-        name,
-        do: [],
-      });
+    }
+  }, [
+    createAutomation,
+    localize,
+    router,
+    t,
+    workspace.automations,
+    workspace.id,
+  ]);
 
-      setCreating(false);
-      if (createdAutomation) {
-        await router.push(
-          `/workspaces/${workspace.id}/automations/${createdAutomation.slug}`
-        );
-      }
-    },
-    [createAutomation, localize, router, t, workspace.automations, workspace.id]
-  );
-
-  const onCreatePage = useCallback(async () => {
+  const createPageHandler = useCallback(async () => {
     setCreating(true);
 
     const name = generateNewName(
       t(`pages.create.defaultName`),
-      currentPages.map(({ name }) => name),
+      Array.from(pages.get(workspace.id) || []).map(({ name }) => name),
       localize
     );
 
@@ -224,127 +152,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
       }
     } catch (e) {}
     setCreating(false);
-  }, [t, currentPages, localize, createPage, workspace.id, language, router]);
+  }, [t, pages, workspace.id, localize, createPage, language, router]);
 
-  // i18n nom des categories
-  const treeData = useMemo(
-    () => [
-      {
-        title: t('workspace.sections.activity'),
-        key: `${TREE_CONTENT_TYPE.activity}:activity`,
-        selectable: false,
-        alwaysShown: true,
-        icon: <HomeOutlined />,
-      },
-      {
-        onAdd: onCreateAutomation,
-        title: t('workspace.sections.automations'),
-        key: 'Automations',
-        selectable: false,
-        alwaysShown: true,
-        bold: true,
-        children: (Object.entries(workspace.automations || {}) || [])
-          .map(([slug, automation]) => ({
-            title: localize(automation.name),
-            renderTitle: (
-              <a
-                href={`/workspaces/${workspace.id}/automations/${slug}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onSelect(`Automations:${slug}`, null);
-                }}
-                className="ml-2"
-              >
-                {localize(automation.name)}
-              </a>
-            ),
-            key: `${TREE_CONTENT_TYPE.automations}:${slug}`,
-            icon: <BranchesOutlined />,
-          }))
-          .sort((el1, el2) => el1.key.localeCompare(el2.key)),
-      },
-      {
-        onAdd: onCreatePage,
-        title: t('workspace.sections.pages'),
-        key: 'Pages',
-        selectable: false,
-        alwaysShown: true,
-        bold: true,
-        children: (currentPages || [])
-          .map((page) => ({
-            title: localize(page.name),
-            renderTitle: (
-              <a
-                href={`/workspaces/${workspace.id}/pages/${
-                  page.slug || page.id
-                }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onSelect(`Pages:${page.slug}`, null);
-                }}
-                className="ml-2"
-              >
-                {localize(page.name)}
-              </a>
-            ),
-            key: `${TREE_CONTENT_TYPE.pages}:${page.id}`,
-            icon: <FileOutlined />,
-          }))
-          .sort((el1, el2) => el1.key.localeCompare(el2.key)),
-      },
-      {
-        onAdd: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-          event.stopPropagation();
-          setAppStoreVisible(true);
-        },
-        title: t('workspace.sections.apps'),
-        key: 'Apps',
-        selectable: false,
-        alwaysShown: true,
-        bold: true,
-        children: (workspaceAppInstances || [])
-          .map((appInstance) => ({
-            title: `${appInstance.appName}`,
-            key: `${TREE_CONTENT_TYPE.apps}:${appInstance.slug}`,
-            renderTitle: (
-              <a
-                href={`/workspaces/${workspace.id}/apps/${appInstance.slug}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onSelect(`Apps:${appInstance.slug}`, null);
-                }}
-              >
-                {appInstance.appName}
-              </a>
-            ),
-            icon:
-              appInstance.photo && appInstance.photo.length > 0 ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={`${appInstance.photo}`}
-                  className="h-[22px] w-[22px]"
-                  alt=""
-                />
-              ) : (
-                <div className="h-[22px] w-[22px]" />
-              ),
-          }))
-          .sort((el1, el2) => el1.key.localeCompare(el2.key)),
-      },
-    ],
-    [
-      currentPages,
-      localize,
-      onCreateAutomation,
-      onCreatePage,
-      onSelect,
-      t,
-      workspace.automations,
-      workspace.id,
-      workspaceAppInstances,
-    ]
-  );
-
+  const installAppHandler = useCallback(() => setAppStoreVisible(true), []);
   return (
     <workspaceLayoutContext.Provider
       value={{
@@ -398,12 +208,11 @@ export const WorkspaceLayout: FC = ({ children }) => {
         />
         <div className="h-full flex flex-row">
           <SidePanel variant="squared" className={`min-w-xs max-w-xs`}>
-            <div className="flex w-full flex-col" ref={sidebarRef}>
-              <Tree
-                className="w-full pr-align-tree"
-                onSelect={onSelect}
-                data={treeData}
-                height={sidebarHeight}
+            <div className="flex w-full flex-col">
+              <Navigation
+                onCreateAutomation={createAutomationHandler}
+                onCreatePage={createPageHandler}
+                onInstallApp={installAppHandler}
               />
             </div>
           </SidePanel>
