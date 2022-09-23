@@ -6,10 +6,6 @@ module.exports = {
     './views/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    fontSize: {
-      base: '0.938rem', // 15px
-      xs: '0.75rem', // 12px
-    },
     fontFamily: {
       sans: [
         'Montserrat',

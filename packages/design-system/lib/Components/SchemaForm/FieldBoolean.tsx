@@ -13,7 +13,7 @@ export const FieldBoolean = (props: FieldProps) => {
     <div className="relative flex flex-1">
       <Description text={props.schema.description}>
         <components.FieldContainer {...props}>
-          <div className="flex items-center flex-1 !rounded-[0.3rem] h-[50px] basis-[50px] invalid:border-red-500 invalid:text-red-500">
+          <div className="flex items-center flex-1 !rounded-[0.3rem] h-[2.5rem] basis-[2.5rem] invalid:border-red-500 invalid:text-red-500">
             <label className="flex cursor-pointer">
               <Switch
                 {...field.input}
