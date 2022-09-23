@@ -35,7 +35,6 @@ import { useApps } from '../../components/AppsProvider';
 import { useWorkspace } from '../../components/WorkspaceProvider';
 import getLayout from '../../layouts/WorkspaceLayout';
 import { useWorkspaceLayout } from '../../layouts/WorkspaceLayout/context';
-import { usePrevious } from '../../utils/usePrevious';
 import RightButtons from './RightButtons';
 
 const CSSEditor = ({
@@ -165,6 +164,10 @@ export const Page = () => {
   );
 
   useEffect(() => {
+    if (!value || !page || value.id !== page.id) {
+      setDirty(false);
+      return;
+    }
     const clonedValue = cloneDeep(value) as PageBuilderContext['page'];
     if (clonedValue && clonedValue.blocks) {
       clonedValue.blocks.forEach((block) => {
