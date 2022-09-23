@@ -51,6 +51,9 @@ exports[`should render some workspaces 1`] = `
 Array [
   "workspaces.sectionTitle",
   <div
+    className="flex mx-16 my-2 !mt-0 rounded relative pt-6"
+  />,
+  <div
     className="!bg-blue-200 flex flex-1 m-16 !mt-0 rounded relative pt-6"
   >
     <div>

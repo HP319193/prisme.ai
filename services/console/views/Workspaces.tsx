@@ -1,5 +1,6 @@
 import {
   Button,
+  Input,
   Layout,
   Popover,
   Space,
@@ -14,7 +15,6 @@ import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import packageJson from '../../../package.json';
-import { Workspace } from '@prisme.ai/sdk';
 import Header from '../components/Header';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import icon from '../icons/icon-workspace.svg';
@@ -22,6 +22,12 @@ import useLocalizedText from '../utils/useLocalizedText';
 import { useUser } from '../components/UserProvider';
 import plus from '../icons/plus.svg';
 import IFrameLoader from '../components/IFrameLoader';
+import { removeEmpty, search } from '../utils/filterUtils';
+import {
+  CloseOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 
 export const WorkspacesView = () => {
   const {
@@ -32,12 +38,17 @@ export const WorkspacesView = () => {
   const { workspaces, create } = useWorkspaces();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const workspacesList = useMemo(
-    () =>
-      Array.from(workspaces.values()).filter(Boolean) as (Workspace & {
-        createdBy: string;
-      })[],
+    () => Array.from(workspaces.values()).filter(removeEmpty),
     [workspaces]
+  );
+  const filtredWorkspacesList = useMemo(
+    () =>
+      workspacesList.filter(({ name, description }) =>
+        search(searchValue)(`${name} ${description}`)
+      ),
+    [searchValue, workspacesList]
   );
   const { localize } = useLocalizedText();
 
@@ -98,6 +109,23 @@ export const WorkspacesView = () => {
         <Title level={3} className="!ml-16 !m-8 !text-lg">
           {t('workspaces.sectionTitle')}
         </Title>
+        {workspacesList.length > 1 && (
+          <div className="flex mx-16 my-2 !mt-0 rounded relative pt-6">
+            <Input
+              type="search"
+              value={searchValue}
+              onChange={({ target: { value } }) => setSearchValue(value)}
+              placeholder={t('workspaces.search')}
+              prefix={<SearchOutlined />}
+              suffix={
+                searchValue && (
+                  <CloseOutlined onClick={() => setSearchValue('')} />
+                )
+              }
+              autoFocus
+            />
+          </div>
+        )}
         <div className="!bg-blue-200 flex flex-1 m-16 !mt-0 rounded relative pt-6">
           <div>
             <div className="flex flex-wrap align-start justify-center gap-4">
@@ -122,7 +150,7 @@ export const WorkspacesView = () => {
                   </div>
                 </div>
               </button>
-              {workspacesList.map(
+              {filtredWorkspacesList.map(
                 ({ name, id, photo, description, createdBy }) => {
                   const descriptionDisplayed =
                     localize(description) ||
