@@ -148,6 +148,8 @@ export const get = (Users: StorageDriver, ctx?: PrismeContext) =>
     try {
       const user = await Users.get(id);
       delete user.password;
+      delete user.validationToken;
+      delete user.resetPassword;
       return user;
     } catch (err) {
       logger.warn({
