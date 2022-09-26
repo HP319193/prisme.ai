@@ -194,16 +194,20 @@ export const Navigation = ({
   }, [appInstances, asPath, automations, id, pages, toggle]);
 
   return (
-    <div className="flex flex-col max-h-full" {...props}>
+    <div className={`flex flex-col max-h-full ${props.className}`} {...props}>
       <div className="mb-2">
         <Input
           prefix={<SearchOutlined />}
           placeholder={t('workspace.search')}
           value={searchValue}
           onChange={({ target: { value } }) => setSearchValue(value)}
+          className="!px-[0.5rem]"
         />
       </div>
-      <div role="navigation" className="flex flex-1 flex-col overflow-auto">
+      <div
+        role="navigation"
+        className="flex flex-1 flex-col overflow-auto w-[17.5rem] max-h-[calc(100%-3rem)]"
+      >
         <Item href={`/workspaces/${id}`} icon={<HomeOutlined />}>
           {t('workspace.sections.activity')}
         </Item>

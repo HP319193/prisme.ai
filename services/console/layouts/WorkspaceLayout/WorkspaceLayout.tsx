@@ -6,6 +6,7 @@ import {
   Loading,
   notification,
   SidePanel,
+  Tooltip,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
@@ -20,6 +21,7 @@ import AppsStore from '../../views/AppsStore';
 import { generateNewName } from '../../utils/generateNewName';
 import { Workspace } from '@prisme.ai/sdk';
 import Navigation from './Navigation';
+import { DoubleLeftOutlined } from '@ant-design/icons';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const { workspace, createAutomation, saveSource, save } = useWorkspace();
@@ -44,14 +46,19 @@ export const WorkspaceLayout: FC = ({ children }) => {
     WorkspaceLayoutContext['newSource']
   >();
   const [saving, setSaving] = useState(false);
-  const [fullSidebar, setFullSidebar] = useState(false);
-  const [sidebar] = useState(Storage.get('__workpaceSidebar') || 'automations');
+  const [fullSidebar, setFullSidebar] = useState(
+    !Storage.get('__workpaceSidebarMinimized')
+  );
   const [appStoreVisible, setAppStoreVisible] = useState(false);
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
-    Storage.set('__workpaceSidebar', sidebar);
-  }, [sidebar]);
+    if (fullSidebar) {
+      Storage.set('__workpaceSidebarMinimized', 0);
+    } else {
+      Storage.set('__workpaceSidebarMinimized', 1);
+    }
+  }, [fullSidebar]);
 
   useEffect(() => {
     getAppInstances(workspace.id);
@@ -207,16 +214,37 @@ export const WorkspaceLayout: FC = ({ children }) => {
           onCancel={() => setAppStoreVisible(false)}
         />
         <div className="h-full flex flex-row">
-          <SidePanel variant="squared" className={`min-w-xs max-w-xs`}>
-            <div className="flex w-full flex-col">
+          <SidePanel
+            variant="squared"
+            className={`min-w-xs ${
+              fullSidebar ? 'max-w-xs' : 'max-w-[4rem]'
+            } transition-all`}
+          >
+            <div className="flex w-full flex-col justify-between overflow-hidden">
               <Navigation
                 onCreateAutomation={createAutomationHandler}
                 onCreatePage={createPageHandler}
                 onInstallApp={installAppHandler}
+                className="max-h-[calc(100%-1rem)]"
               />
+              <div className="flex justify-end bg-white">
+                <Tooltip
+                  title={t('workspace.sidebar', {
+                    context: fullSidebar ? 'minimize' : 'extend',
+                  })}
+                  placement="right"
+                >
+                  <DoubleLeftOutlined
+                    className={`transition-all ${
+                      fullSidebar ? '' : 'rotate-180'
+                    }`}
+                    onClick={() => setFullSidebar(!fullSidebar)}
+                  />
+                </Tooltip>
+              </div>
             </div>
           </SidePanel>
-          <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-[calc(100vw-20rem)]">
+          <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-full">
             {creating ? <Loading /> : children}
           </div>
         </div>
