@@ -1,5 +1,7 @@
 import io, { Socket } from 'socket.io-client';
 
+import { Api } from './api';
+
 export type PayloadQuery = Record<string, string | string[]>;
 export type OrQuery = PayloadQuery[];
 
@@ -14,8 +16,9 @@ export type SearchOptions = Omit<
 export class Events {
   protected client: Socket;
   public workspaceId: string;
-  private filters: Record<string, any>;
+  private filters: Record<string, any>[];
   private listenedUserTopics: Set<string>;
+  private listeners: Map<string, Function[]> = new Map();
 
   constructor({
     workspaceId,
@@ -23,12 +26,14 @@ export class Events {
     apiKey,
     apiHost = 'https://api.eda.prisme.ai',
     filters,
+    api,
   }: {
     workspaceId: string;
     token: string;
     apiKey?: string;
     apiHost?: string;
     filters?: Record<string, any>;
+    api: Api;
   }) {
     this.workspaceId = workspaceId;
     const queryString = new URLSearchParams(filters || {}).toString();
@@ -48,13 +53,27 @@ export class Events {
       }
     );
 
-    this.client.on('disconnect', () => {
-      setTimeout(() => {
-        this.client.connect();
+    let lastConnectionTime = new Date();
+    const onConnect = () => {
+      setTimeout(async () => {
+        const events = await api.getEvents(workspaceId, {
+          ...this.filters[this.filters.length - 1],
+          afterDate: lastConnectionTime.toISOString(),
+        });
+        events.reverse().forEach((event) => {
+          (this.listeners.get(event.type) || []).forEach((listener) =>
+            listener(event)
+          );
+        });
       }, 2000);
+    };
+    this.client.on('disconnect', () => {
+      lastConnectionTime = new Date();
+      this.client.off('connect', onConnect);
+      this.client.on('connect', onConnect);
     });
 
-    this.filters = filters || {};
+    this.filters = [filters || {}];
     this.listenedUserTopics = new Set();
   }
 
@@ -84,8 +103,16 @@ export class Events {
     ev: string,
     listener: (eventName: string, eventData: Prismeai.PrismeEvent) => void
   ) {
+    this.listeners.set(ev, [...(this.listeners.get(ev) || []), listener]);
+
     this.client.on(ev, listener);
-    return () => this.client.off(ev, listener);
+    return () => {
+      this.listeners.set(
+        ev,
+        (this.listeners.get(ev) || []).filter((l) => l !== listener)
+      );
+      this.client.off(ev, listener);
+    };
   }
 
   emit(event: string, payload?: any) {
@@ -106,13 +133,14 @@ export class Events {
       return;
     }
 
-    const topicsFilter = {
-      'target.userTopic': Array.from(this.listenedUserTopics),
-    };
+    this.filters = [
+      { ...this.filters[0] },
+      {
+        'target.userTopic': Array.from(this.listenedUserTopics),
+      },
+    ];
     this.updateFilters({
-      payloadQuery: Object.keys(this.filters).length
-        ? [this.filters, topicsFilter]
-        : topicsFilter,
+      payloadQuery: this.filters,
     });
   }
 
@@ -125,6 +153,9 @@ export class Events {
     listener: (eventName: string, eventData: Prismeai.PrismeEvent) => void
   ) {
     this.client.once(ev, listener);
+    return () => {
+      this.client.off(ev, listener);
+    };
   }
 
   close() {

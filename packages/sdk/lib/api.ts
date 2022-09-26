@@ -253,21 +253,23 @@ export class Api extends Fetcher {
       apiKey: this._apiKey ? this._apiKey : undefined,
       apiHost: this.host,
       filters,
+      api: this,
     });
     return new Promise((resolve, reject) => {
-      events.once('connect', () => {
-        resolve(events);
-      });
-      events.once('connect_error', () => {
+      const off = events.once('connect_error', () => {
         reject();
         events.close();
+      });
+      events.once('connect', () => {
+        off();
+        resolve(events);
       });
     });
   }
 
   async getEvents(
     workspaceId: string,
-    options: { beforeDate?: Date | string } = {}
+    options: Record<string, any> = {}
   ): Promise<Event<Date>[]> {
     try {
       const query = QueryString.stringify(options);
