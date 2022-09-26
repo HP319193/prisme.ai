@@ -48,6 +48,12 @@ export class Events {
       }
     );
 
+    this.client.on('disconnect', () => {
+      setTimeout(() => {
+        this.client.connect();
+      }, 2000);
+    });
+
     this.filters = filters || {};
     this.listenedUserTopics = new Set();
   }
