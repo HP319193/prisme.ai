@@ -113,7 +113,12 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   >();
 
   useEffect(() => {
-    setTimeout(() => zoomPanHelper.fitView());
+    setTimeout(() =>
+      zoomPanHelper.fitView({
+        maxZoom: 0.8,
+        duration: 200,
+      })
+    );
   }, [zoomPanHelper, id]);
 
   const {
