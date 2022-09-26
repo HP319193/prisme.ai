@@ -40,15 +40,15 @@ interface ItemProps {
 const Item: FC<ItemProps> = ({ href, icon, children }) => {
   const { asPath } = useRouter();
   return (
-    <div className="flex flex-1 leading-[2.5rem]">
+    <div className="flex flex-1 leading-10">
       <Link href={href}>
         <a
-          className={`flex flex-row items-center ${
-            decodeURIComponent(asPath) === href ? 'underline' : ''
+          className={`flex flex-row items-baseline ${
+            decodeURIComponent(asPath) === href ? 'text-accent' : ''
           }`}
         >
           <div className="flex m-2">{icon}</div>
-          <div className="flex flex-1">{children}</div>
+          <div className="flex flex-1 leading-7">{children}</div>
         </a>
       </Link>
     </div>
@@ -72,7 +72,7 @@ const ItemsGroup: FC<ItemsGroupProps> = ({
 }) => {
   return (
     <div className="flex flex-1 leading-[2.5rem]">
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col max-w-full">
         <div className="flex flex-1 flex-row items-center">
           <button
             className="flex flex-1 flex-row items-center outline-none focus:outline-none"
