@@ -16,6 +16,7 @@ import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import EditDetails from '../layouts/EditDetails';
 import AppEditor from '../components/AppEditor';
+import EditableTitle from '../components/AutomationBuilder/EditableTitle';
 
 interface AppsProps extends Prismeai.DetailedAppInstance {
   workspaceId: string;
@@ -156,10 +157,18 @@ const Apps = ({}: AppsProps) => {
               <img src={photo} className="w-10 h-10 mr-2" alt={appId} />
             )}
 
-            <span className="font-medium">{localize(currentApp.appName)}</span>
-            <span className="w-[20px]" />
-            <span className="border-l border-solid border-pr-gray-200 text-gray flex h-[26px] w-[20px]" />
-            <span className="text-gray flex">
+            <span className="font-medium -mt-[0.3rem]">
+              <EditableTitle
+                value={currentApp.appName || ''}
+                onChange={(appName) =>
+                  setCurrentApp({
+                    ...currentApp,
+                    appName,
+                  })
+                }
+              />
+            </span>
+            <span className="text-gray flex border-r border-l border-solid border-pr-gray-200 h-[26px] items-center px-3">
               <EditDetails
                 schema={detailsFormSchema}
                 value={{ ...value }}
