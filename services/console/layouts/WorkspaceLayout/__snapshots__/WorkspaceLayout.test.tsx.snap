@@ -28,10 +28,14 @@ Array [
     className="h-full flex flex-row"
   >
     <div
-      className="flex w-full flex-col"
-    />
+      className="flex w-full flex-col justify-between overflow-hidden"
+    >
+      <div
+        className="flex justify-end bg-white"
+      />
+    </div>
     <div
-      className="flex h-full flex-col flex-1 min-w-[500px] max-w-[calc(100vw-20rem)]"
+      className="flex h-full flex-col flex-1 min-w-[500px] max-w-full"
     >
       <div />
     </div>
@@ -67,10 +71,14 @@ Array [
     className="h-full flex flex-row"
   >
     <div
-      className="flex w-full flex-col"
-    />
+      className="flex w-full flex-col justify-between overflow-hidden"
+    >
+      <div
+        className="flex justify-end bg-white"
+      />
+    </div>
     <div
-      className="flex h-full flex-col flex-1 min-w-[500px] max-w-[calc(100vw-20rem)]"
+      className="flex h-full flex-col flex-1 min-w-[500px] max-w-full"
     >
       Foo
     </div>
@@ -106,10 +114,14 @@ Array [
     className="h-full flex flex-row"
   >
     <div
-      className="flex w-full flex-col"
-    />
+      className="flex w-full flex-col justify-between overflow-hidden"
+    >
+      <div
+        className="flex justify-end bg-white"
+      />
+    </div>
     <div
-      className="flex h-full flex-col flex-1 min-w-[500px] max-w-[calc(100vw-20rem)]"
+      className="flex h-full flex-col flex-1 min-w-[500px] max-w-full"
     >
       Foo
     </div>
@@ -145,10 +157,14 @@ Array [
     className="h-full flex flex-row"
   >
     <div
-      className="flex w-full flex-col"
-    />
+      className="flex w-full flex-col justify-between overflow-hidden"
+    >
+      <div
+        className="flex justify-end bg-white"
+      />
+    </div>
     <div
-      className="flex h-full flex-col flex-1 min-w-[500px] max-w-[calc(100vw-20rem)]"
+      className="flex h-full flex-col flex-1 min-w-[500px] max-w-full"
     >
       Foo
     </div>

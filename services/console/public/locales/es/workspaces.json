@@ -48,7 +48,9 @@
       "page": "Crear una Página",
       "app": "Instalación de una App"
     },
-    "search": "Investigador"
+    "search": "Investigador",
+    "sidebar_extend": "Ampliar la navegación",
+    "sidebar_minimize": "Reducir la navegación"
   },
   "create": {
     "description_first": "Cree su primer espacio de trabajo para empezar a automatizar su trabajo",

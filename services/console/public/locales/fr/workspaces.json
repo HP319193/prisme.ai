@@ -48,7 +48,9 @@
       "page": "Créer une Page",
       "app": "Installer une App"
     },
-    "search": "Rechercher"
+    "search": "Rechercher",
+    "sidebar_extend": "Étendre la navigation",
+    "sidebar_minimize": "Réduire la navigation"
   },
   "create": {
     "description_first": "Créez votre premier workspace pour commencer à automatiser votre travail",
