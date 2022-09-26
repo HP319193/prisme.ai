@@ -5,6 +5,7 @@ import useLocalizedText from '../../../useLocalizedText';
 import { truncate } from '../../../utils/truncate';
 import CarouselNavigation from '../CarouselNavigation';
 import ActionOrLink from '../ActionOrLink';
+import { RichTextRenderer } from '../../RichText';
 
 interface ShortProps extends CardProps<CardShort[]> {}
 
@@ -71,7 +72,9 @@ const Short = ({
                         {truncate(localize(title), 60)}
                       </div>
                       <div className={tw`text-[0.875rem]`}>
-                        {truncate(localize(description), 73)}
+                        <RichTextRenderer>
+                          {truncate(localize(description), 73)}
+                        </RichTextRenderer>
                       </div>
                     </div>
                   </div>
