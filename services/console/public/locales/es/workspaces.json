@@ -4,7 +4,8 @@
     "title": "Espacios de trabajo y aplicaciones — $t(common:main.title)",
     "description": "Crear nuevos espacios de trabajo y aplicaciones, editarlos y ejecutarlos",
     "sectionTitle": "Su galería de espacios de trabajo",
-    "defaultDescription": "Creado por ti"
+    "defaultDescription": "Creado por ti",
+    "search": "Encuentra un espacio de trabajo"
   },
   "workspace": {
     "title": "\"{{name}}\" Espacios de trabajo — $t(common:main.title)",
