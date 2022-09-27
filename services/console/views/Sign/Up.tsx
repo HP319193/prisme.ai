@@ -6,6 +6,7 @@ import { useUser } from '../../components/UserProvider';
 import { useRouter } from 'next/router';
 import {
   Button,
+  Checkbox,
   Input,
   notification,
   Space,
@@ -13,12 +14,14 @@ import {
 } from '@prisme.ai/design-system';
 import icon from '../../icons/icon-prisme.svg';
 import Image from 'next/image';
+import { isFormFieldValid } from '../../utils/forms';
 
 interface Values {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
+  cgu: boolean;
 }
 
 export const SignIn = () => {
@@ -47,7 +50,10 @@ export const SignIn = () => {
   }, [loading, push, user]);
 
   const validate = (values: Values) => {
-    const errors: Partial<Values> = {};
+    const errors: Partial<Record<keyof Values, string>> = {};
+    if (!values.cgu) {
+      errors.cgu = 'required';
+    }
     if (!values.email) {
       errors.email = 'required';
     }
@@ -64,14 +70,14 @@ export const SignIn = () => {
   };
 
   return (
-    <div className="flex grow flex-col-reverse md:flex-row overflow-y-auto">
+    <div className="flex flex-1 flex-col-reverse md:flex-row overflow-y-auto">
       <div className="!flex flex-col bg-gradient-to-br from-[#0A1D3B] to-[#0F2A54] items-center justify-center md:w-[40vw]">
-        <div className="flex invisible md:visible flex-col grow justify-center w-full space-y-4 lg:space-y-6">
+        <div className="flex invisible md:visible flex-col flex-1 justify-center w-full space-y-4 lg:space-y-6">
           <div className="w-1/2 h-4 lg:h-8 bg-accent rounded-r-[100rem]" />
           <div className="w-1/2 h-4 lg:h-8 bg-pr-orange rounded-r-[100rem]" />
           <div className="w-1/2 h-4 lg:h-8 bg-pr-grey rounded-r-[100rem]" />
         </div>
-        <div className="flex grow flex-col justify-end mb-10">
+        <div className="flex flex-1 flex-col justify-end mb-10">
           <div className="flex items-center flex-col text-white p-[10%]">
             <div className="font-normal text-[1rem] md:text-[2rem] xl:text-[3.375rem] leading-normal">
               <Trans
@@ -92,7 +98,7 @@ export const SignIn = () => {
           </div>
         </div>
       </div>
-      <div className="!flex grow items-center justify-center md:w-[60vw] md:h-[100vh]">
+      <div className="!flex flex-1 items-center justify-center md:w-[60vw] md:h-[100vh]">
         <div className="flex flex-col items-center">
           <div className="flex flex-col items-center space-y-4 mb-16 mt-8">
             <div className="text-accent !font-light tracking-[.3em]">
@@ -115,7 +121,11 @@ export const SignIn = () => {
           <Form onSubmit={submit} validate={validate}>
             {({ handleSubmit }) => (
               <form onSubmit={handleSubmit} className="w-96 flex">
-                <Space size="middle" direction="vertical" className="flex grow">
+                <Space
+                  size="middle"
+                  direction="vertical"
+                  className="flex flex-1"
+                >
                   <Field name="firstName">
                     {({ input: { type, ...inputProps }, className }) => (
                       <Input
@@ -151,6 +161,38 @@ export const SignIn = () => {
                         inputType={'password' as any}
                         {...inputProps}
                       />
+                    )}
+                  </Field>
+                  <Field name="cgu" className="text-xs">
+                    {({ input, meta }) => (
+                      <div>
+                        <Checkbox
+                          checked={input.value}
+                          onChange={({ target: { checked } }) =>
+                            input.onChange(checked)
+                          }
+                        >
+                          <span
+                            className={
+                              isFormFieldValid(meta) ? 'text-error' : ''
+                            }
+                          >
+                            <Trans
+                              t={t}
+                              i18nKey="up.cgu"
+                              components={{
+                                a: (
+                                  <a
+                                    href="https://www.prisme.ai/mentions-legales"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  />
+                                ),
+                              }}
+                            />
+                          </span>
+                        </Checkbox>
+                      </div>
                     )}
                   </Field>
                   <Button

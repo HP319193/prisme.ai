@@ -22,6 +22,7 @@
     "password": "Mot de passe",
     "firstName": "Prénom",
     "lastName": "Nom",
+    "cgu": "En continuant vous acceptez les <a>conditions générales de service</a>.",
     "submit": "Démarrer",
     "error": "Une erreur est survenue, veuillez contacter le support",
     "error_AuthenticationError": "Un compte existe déjà pour cet email, mais le mot de passe est invalide.",

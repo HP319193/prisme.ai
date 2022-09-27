@@ -46,6 +46,7 @@ module.exports = {
         'green-200': '#E7F6F6',
         'orange-500': '#FD6E6E',
         base: '#0A1D3B',
+        error: '#ff4d4f',
       },
     },
   },

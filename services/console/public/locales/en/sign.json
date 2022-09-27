@@ -22,6 +22,7 @@
     "password": "Password",
     "firstName": "Firstname",
     "lastName": "Lastname",
+    "cgu": "By continuing you agree to the <a>Terms of Service</a>.",
     "submit": "Start",
     "error": "An error has occurred, please contact support",
     "error_AuthenticationError": "An account already exists for this email, but the password is invalid.",
