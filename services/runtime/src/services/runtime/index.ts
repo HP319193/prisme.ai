@@ -1,6 +1,4 @@
 import { Broker, PrismeEvent } from '@prisme.ai/broker';
-//@ts-ignore
-import LRU from 'lru-cache';
 import { Logger } from '../../logger';
 import {
   DetailedAutomation,
@@ -61,7 +59,6 @@ export default class Runtime {
   private broker: Broker;
   private workspaces: Workspaces;
   private cache: Cache;
-  private sessionsLRU: LRU<string, PrismeaiSession>;
 
   private pendingWaits: Record<EventName, PendingWait[]>;
   private contexts: Record<string, ContextsManager[]>;
@@ -72,28 +69,6 @@ export default class Runtime {
     this.cache = cache;
     this.pendingWaits = {};
     this.contexts = {};
-    this.sessionsLRU = new LRU({
-      max: 2000,
-    });
-  }
-
-  async registerSession(session: PrismeaiSession) {
-    this.sessionsLRU.set(session.sessionId, session);
-    await this.cache.setSession(session);
-  }
-
-  async getSession(sessionId: string) {
-    const session =
-      this.sessionsLRU.get(sessionId) ||
-      ((await this.cache.getSession(sessionId)) as PrismeaiSession);
-    if (session && session.expires) {
-      const expiresIn =
-        (new Date(session.expires).getTime() - Date.now()) / 1000;
-      if (expiresIn > 0) {
-        session.expiresIn = Math.round(expiresIn);
-      }
-    }
-    return session;
   }
 
   async start() {
@@ -129,7 +104,7 @@ export default class Runtime {
         if (!token || !userId || !sessionId) {
           return true;
         }
-        await this.registerSession({
+        await this.cache.setSession({
           userId,
           sessionId,
           token,
@@ -370,9 +345,10 @@ export default class Runtime {
     logger: Logger,
     broker: Broker
   ) {
-    const session = (await this.getSession(source.sessionId)) || {
+    const session = (await this.cache.getSession(source.sessionId)) || {
       userId: source.userId!!,
       sessionId: source.sessionId!!,
+      authData: {},
     };
     const ctx = await this.getContexts(
       source.workspaceId!!,

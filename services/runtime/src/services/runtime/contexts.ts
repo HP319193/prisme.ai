@@ -473,7 +473,18 @@ export class ContextsManager {
           await this.fetch([ContextType.User, ContextType.Session]);
           this.broker.parentSource.userId = value;
           return;
-        }
+        } /* else if (
+          context === ContextType.Session &&
+          lastKey === 'id' &&
+          prevValue !== value
+        ) {
+          this.contexts.user = { id: value };
+          this.session = { userId: value, sessionId: value, authData: {} };
+          this.contexts.session = { id: value };
+          await this.fetch([ContextType.User, ContextType.Session]);
+          this.broker.parentSource.userId = value;
+          return;
+        }*/
       }
 
       // Persist

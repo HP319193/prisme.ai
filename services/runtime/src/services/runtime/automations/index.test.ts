@@ -215,8 +215,14 @@ describe('Variables & Contexts', () => {
 
     // Our contexts are initially empty
     const initial = await execute('noop', {});
-    expect(initial.user).toEqual({ id: 'unitTests' });
-    expect(initial.session).toEqual({ id: 'mysessionId' });
+    expect(initial.user).toEqual({
+      id: 'unitTests',
+      email: undefined,
+      authData: {},
+    });
+    expect(initial.session).toEqual({
+      id: 'mysessionId',
+    });
 
     // Fill them
     await execute('mySet', {
@@ -247,8 +253,8 @@ describe('Variables & Contexts', () => {
       field: 'user.id',
       value: 'unitTests',
     });
-    expect(getBack.user).toEqual(afterSets.user);
-    expect(getBack.session).toEqual(afterSets.session);
+    expect(getBack.user).toMatchObject(afterSets.user);
+    expect(getBack.session).toMatchObject(afterSets.session);
   });
 
   it('Set user.id also updates source.userId / source.sessionId in emitted events', async () => {
