@@ -6,6 +6,7 @@ import useLocalizedText from '../../../useLocalizedText';
 import CarouselNavigation from '../CarouselNavigation';
 import { truncate } from '../../../utils/truncate';
 import ActionOrLink from '../ActionOrLink';
+import { RichTextRenderer } from '../../RichText';
 
 interface SquareProps extends CardProps<CardSquare[]> {}
 
@@ -62,7 +63,9 @@ const Square = ({
                           {truncate(localize(title), 25)}
                         </div>
                         <div className={tw`text-[0.875rem]`}>
-                          {truncate(localize(description), 65)}
+                          <RichTextRenderer>
+                            {truncate(localize(description), 65)}
+                          </RichTextRenderer>
                         </div>
                       </div>
                     </div>
