@@ -174,7 +174,7 @@ export const Navigation = ({
         (slug) => `/workspaces/${id}/automations/${slug}`
       ),
       pages: Array.from(pages.get(id) || []).map(
-        ({ id: pageId, slug }) => `/workspaces/${id}/pages/${slug || pageId}`
+        ({ id: pageId }) => `/workspaces/${id}/pages/${pageId}`
       ),
       apps: Array.from(appInstances.get(id) || []).map(
         ({ appSlug }) => `/workspaces/${id}/apps/${appSlug}`
