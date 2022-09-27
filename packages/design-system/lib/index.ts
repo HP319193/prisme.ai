@@ -29,6 +29,7 @@ export { default as StretchContent } from './Components/StretchContent';
 export { default as Tree } from './Components/Tree';
 export { Label } from './Components/Label';
 export { WithLabel } from './Components/Label';
+export { default as useContentEditable } from './utils/useContentEditable';
 
 export * from './Components/SchemaForm';
 

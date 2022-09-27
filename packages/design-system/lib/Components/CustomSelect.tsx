@@ -84,7 +84,9 @@ export const CustomSelect = ({
               setSearch('');
             }}
           >
-            {option.label}
+            <span className={value === option.value ? 'text-accent' : ''}>
+              {option.label}
+            </span>
           </Menu.Item>
         );
       });

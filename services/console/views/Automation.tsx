@@ -29,6 +29,7 @@ import { ApiError } from '../utils/api';
 import { useWorkspace } from '../components/WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import { usePrevious } from '../utils/usePrevious';
+import EditableTitle from '../components/AutomationBuilder/EditableTitle';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -308,8 +309,18 @@ export const Automation = () => {
       <PageHeader
         title={
           <div className="flex flex-row items-center text-lg">
-            <span className="font-medium">{localize(value.name)}</span>
-            <span className="text-gray flex border-r border-solid border-pr-gray-200 h-[26px] items-center px-3">
+            <span className="font-medium -mt-[0.3rem]">
+              <EditableTitle
+                value={value.name}
+                onChange={(name) =>
+                  setValue({
+                    ...value,
+                    name,
+                  })
+                }
+              />
+            </span>
+            <span className="text-gray flex border-r border-l border-solid border-pr-gray-200 h-[26px] items-center px-3">
               <EditDetails
                 schema={detailsFormSchema}
                 value={{ ...value, slug: automationId }}
