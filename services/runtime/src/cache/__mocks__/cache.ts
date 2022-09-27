@@ -1,13 +1,20 @@
 import { CacheDriver } from '..';
 import { CacheKeyType, getCacheKey, SetOptions } from '../types';
 
-export let memoryCache: Record<string, any> = {};
+const unitTestsCache = {
+  'runtime:session:mysessionId': {
+    userId: 'unitTests',
+    sessionId: 'mysessionId',
+    authData: {},
+  },
+};
+export let memoryCache: Record<string, any> = { ...unitTestsCache };
 
 export default class Cache implements CacheDriver {
   private cache: Record<string, any>;
 
   constructor(useSharedCache: boolean = false) {
-    this.cache = useSharedCache ? memoryCache : {};
+    this.cache = useSharedCache ? memoryCache : { ...unitTestsCache };
   }
 
   async connect() {

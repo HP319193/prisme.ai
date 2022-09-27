@@ -1,3 +1,5 @@
+//@ts-ignore
+import LRU from 'lru-cache';
 import { PrismeaiSession } from '../services/runtime/contexts';
 import RedisCache from './redis';
 import { CacheDriver, CacheOptions, CacheKeyType, getCacheKey } from './types';
@@ -9,7 +11,7 @@ export enum CacheType {
 }
 
 export interface Cache extends CacheDriver {
-  getSession(sessionId: string): Promise<PrismeaiSession>;
+  getSession(sessionId: string): Promise<PrismeaiSession | undefined>;
   setSession(session: PrismeaiSession): Promise<PrismeaiSession>;
 
   createUserTopic(workspaceId: string, topic: string): Promise<number>;
@@ -31,17 +33,36 @@ export function buildCache(opts: CacheOptions): Cache {
       throw new Error(`Cache driver '${opts.type}' does not exist.`);
   }
   const DriverClass = class extends parent implements Cache {
+    private sessionsLRU: LRU<string, PrismeaiSession>;
+
     constructor(opts: CacheOptions) {
       super(opts);
+      this.sessionsLRU = new LRU({
+        max: 2000,
+      });
     }
 
-    async getSession(sessionId: string): Promise<PrismeaiSession> {
-      return (await this.getObject(
-        getCacheKey(CacheKeyType.Session, { sessionId })
-      )) as PrismeaiSession;
+    async getSession(sessionId: string): Promise<PrismeaiSession | undefined> {
+      let session;
+
+      session = this.sessionsLRU.get(sessionId);
+      if (!session) {
+        session = (await this.getObject(
+          getCacheKey(CacheKeyType.Session, { sessionId })
+        )) as PrismeaiSession;
+      }
+      if (session?.expires) {
+        const expiresIn =
+          (new Date(session.expires).getTime() - Date.now()) / 1000;
+        if (expiresIn > 0) {
+          session.expiresIn = Math.round(expiresIn);
+        }
+      }
+      return session;
     }
 
     async setSession(session: PrismeaiSession) {
+      this.sessionsLRU.set(session.sessionId, session);
       return await this.setObject(
         getCacheKey(CacheKeyType.Session, session),
         session,

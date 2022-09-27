@@ -344,7 +344,7 @@ In case the automation is triggered from a webhook without any session cookie / 
   </table>
 </center>
 
-When an automation [sets](../instructions#set) **user.id** field, **user** and **session** contexts are automatically reloaded with values from the targeted user contexts.  
+When an automation [sets](../instructions#set) **session.id** field, **user** and **session** contexts are automatically reloaded with values from the targeted user contexts.  
 This allows unauthenticated webhooks to retrieve persisted user / sessions contexts identified by custom webhook fields (i.e a facebook userId, ...).  
 
 #### Session
@@ -360,6 +360,9 @@ This allows unauthenticated webhooks to retrieve persisted user / sessions conte
     </tr>     
   </table>
 </center>  
+
+If current user has been authenticated through the Gateway API (whether anonymously or not), the **session** context expiration depends on the value configured in the Gateway API (1 month by default).  
+If current user comes from an unauthenticated [**endpoint**](#url) call, its **session** context will expire after **1 hour**, configurable from **CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME** environment variable.  
 
 #### Run
 <center>

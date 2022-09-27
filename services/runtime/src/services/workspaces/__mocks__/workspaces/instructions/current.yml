@@ -29,6 +29,11 @@ automations:
   mySet:
     name: mySet
     do:
+      - conditions:
+          '{{body.switchSessionBefore}}':
+            - set:
+                name: session.id
+                value: '{{body.switchSessionBefore}}'
       - set:
           name: '{{body.field}}'
           value: '{{body.value}}'
