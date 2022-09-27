@@ -208,7 +208,14 @@ export const Navigation = ({
         role="navigation"
         className="flex flex-1 flex-col overflow-auto w-[17.5rem] max-h-[calc(100%-3rem)]"
       >
-        <Item href={`/workspaces/${id}`} icon={<HomeOutlined />}>
+        <Item
+          href={`/workspaces/${id}`}
+          icon={
+            <Tooltip title={t('workspace.sections.activity')} placement="right">
+              <HomeOutlined />
+            </Tooltip>
+          }
+        >
           {t('workspace.sections.activity')}
         </Item>
         {!(searchValue && filteredAutomations.length === 0) && (
@@ -226,7 +233,11 @@ export const Navigation = ({
               <Item
                 key={slug}
                 href={`/workspaces/${id}/automations/${slug}`}
-                icon={<BranchesOutlined />}
+                icon={
+                  <Tooltip title={localize(name)} placement="right">
+                    <BranchesOutlined />
+                  </Tooltip>
+                }
               >
                 {localize(name)}
               </Item>
@@ -248,7 +259,11 @@ export const Navigation = ({
               <Item
                 key={slug}
                 href={`/workspaces/${id}/pages/${slug}`}
-                icon={<FileOutlined />}
+                icon={
+                  <Tooltip title={localize(name)} placement="right">
+                    <FileOutlined />
+                  </Tooltip>
+                }
               >
                 {localize(name)}
               </Item>
@@ -270,17 +285,19 @@ export const Navigation = ({
                 key={slug}
                 href={`/workspaces/${id}/apps/${slug}`}
                 icon={
-                  photo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={photo}
-                      height={22}
-                      width={22}
-                      alt={localize(name)}
-                    />
-                  ) : (
-                    <AppstoreOutlined />
-                  )
+                  <Tooltip title={localize(name)} placement="right">
+                    {photo ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={photo}
+                        height={22}
+                        width={22}
+                        alt={localize(name)}
+                      />
+                    ) : (
+                      <AppstoreOutlined />
+                    )}
+                  </Tooltip>
                 }
               >
                 {localize(name)}
