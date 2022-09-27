@@ -30,6 +30,7 @@ body {
   scroll-behavior: smooth;
   font-weight: 300;
   font-size: 13px;
+  font-family: Montserrat, sans-serif;
 }
 body h1.ant-typography,
 body h2.ant-typography,
@@ -173,4 +174,8 @@ a.ant-btn.pr-btn-primary-small {
 .schema-form-autocomplete .ant-select-selector {
   flex: 1;
   border: none;
+}
+
+body .font-sans {
+  font-family: Montserrat, sans-serif;
 }
