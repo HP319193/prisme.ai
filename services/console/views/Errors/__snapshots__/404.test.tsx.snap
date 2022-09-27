@@ -5,6 +5,7 @@ exports[`should render 1`] = `
   href="/"
   onClick={[Function]}
   onMouseEnter={[Function]}
+  onTouchStart={[Function]}
 >
   404
 </a>
@@ -15,6 +16,7 @@ exports[`should render with a link 1`] = `
   href="https://prisme.ai"
   onClick={[Function]}
   onMouseEnter={[Function]}
+  onTouchStart={[Function]}
 >
   404
 </a>
@@ -25,6 +27,7 @@ exports[`should render with a reason 1`] = `
   href="/"
   onClick={[Function]}
   onMouseEnter={[Function]}
+  onTouchStart={[Function]}
 >
   why not
 </a>

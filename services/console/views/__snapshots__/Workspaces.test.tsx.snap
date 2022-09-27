@@ -90,6 +90,7 @@ Array [
           href="/workspaces/1"
           onClick={[Function]}
           onMouseEnter={[Function]}
+          onTouchStart={[Function]}
         >
           <div
             className="flex flex-1 flex-row text-center max-w-full"
@@ -113,6 +114,7 @@ Array [
           href="/workspaces/42"
           onClick={[Function]}
           onMouseEnter={[Function]}
+          onTouchStart={[Function]}
         >
           <div
             className="flex flex-1 flex-row text-center max-w-full"
