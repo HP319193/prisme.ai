@@ -7,11 +7,12 @@ interface PagesProvider {}
 export const defaultStyles = `
 body {
   --color-accent: #015dff;
-  --color-background: #B41040;
-  --color-text: white;
-  --color-border: white;
-  --color-background-transparent: rgba(0,0,0,0.05)
-  background-color: var(--background-color);
+  --color-background: white;
+  --color-text: black;
+  --color-border: black;
+  --color-background-transparent: rgba(0,0,0,0.05);
+  --color-input-background: white;
+  background-color: var(--color-background);
 }
 
 .page-blocks {
@@ -22,9 +23,15 @@ body {
   padding: 0;
 }
 
+.block-form label {
+  color: var(--color-text)
+}
+
 .block-form .ant-input {
   border-radius: 0.625rem;
-  border-color: black;
+  border-color: var(--color-border);
+  color: var(--color-text);
+  background-color: var(--color-input-background);
 }
 
 .block-form .ant-input::placeholder {
