@@ -284,6 +284,63 @@ describe('Variables & Contexts', () => {
     );
   });
 
+  it('Set session.id allow switching between user / session contexts ', async () => {
+    const { execute, sendEventSpy } = getMocks();
+
+    // Our contexts are initially empty
+    const initial = await execute('noop', {});
+    expect(initial.user).toEqual({
+      id: 'unitTests',
+      email: undefined,
+      authData: {},
+    });
+    expect(initial.session).toEqual({ id: 'mysessionId' });
+
+    // Fill them
+    await execute('mySet', {
+      field: 'user.name',
+      value: 'Martin',
+    });
+    const afterSets = await execute('mySet', {
+      field: 'session.age',
+      value: '24',
+    });
+    expect(afterSets.user).toMatchObject({ name: 'Martin' });
+    expect(afterSets.session).toMatchObject({ age: '24' });
+
+    // Switch to a new empty session
+    const afterUserSwitching = await execute('mySet', {
+      switchSessionBefore: 'someOtherRandomId',
+      field: 'session.foo',
+      value: 'someRandomField',
+    });
+    expect(afterUserSwitching.user).toEqual({
+      authData: {},
+      email: undefined,
+      id: 'someOtherRandomId',
+    });
+    expect(afterUserSwitching.session).toEqual({
+      id: 'someOtherRandomId',
+      foo: 'someRandomField',
+    });
+
+    // Get back to our first session
+    const getBack = await execute('mySet', {
+      field: 'session.id',
+      value: 'mysessionId',
+    });
+    expect(getBack.user).toMatchObject(afterSets.user);
+    expect(getBack.session).toMatchObject(afterSets.session);
+
+    // Check that our previous new session has been saved
+    const newSession = await execute('mySet', {
+      field: 'session.id',
+      value: 'someOtherRandomId',
+    });
+    expect(newSession.user).toEqual(afterUserSwitching.user);
+    expect(newSession.session).toEqual(afterUserSwitching.session);
+  });
+
   it('Set a session.value variable then delete it', async () => {
     const { execute } = getMocks();
 

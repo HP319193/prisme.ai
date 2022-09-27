@@ -344,7 +344,7 @@ In case the automation is triggered from a webhook without any session cookie / 
   </table>
 </center>
 
-When an automation [sets](../instructions#set) **user.id** field, **user** and **session** contexts are automatically reloaded with values from the targeted user contexts.  
+When an automation [sets](../instructions#set) **session.id** field, **user** and **session** contexts are automatically reloaded with values from the targeted user contexts.  
 This allows unauthenticated webhooks to retrieve persisted user / sessions contexts identified by custom webhook fields (i.e a facebook userId, ...).  
 
 #### Session

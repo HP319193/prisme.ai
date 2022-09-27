@@ -5,7 +5,7 @@ import {
   CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME,
   MAXIMUM_SUCCESSIVE_CALLS,
 } from '../../../config';
-import { CacheDriver } from '../../cache';
+import { Cache } from '../../cache';
 import { InvalidInstructionError, TooManyCallError } from '../../errors';
 import { Logger, logger } from '../../logger';
 import { EventType } from '../../eda';
@@ -98,7 +98,7 @@ export class ContextsManager {
   public workspaceId: string;
   public session?: PrismeaiSession;
   private correlationId: string;
-  public cache: CacheDriver;
+  public cache: Cache;
   private contexts: Contexts;
   private logger: Logger;
   private broker: Broker;
@@ -118,7 +118,7 @@ export class ContextsManager {
     workspaceId: string,
     session: PrismeaiSession,
     correlationId: string,
-    cache: CacheDriver,
+    cache: Cache,
     broker: Broker
   ) {
     this.workspaceId = workspaceId;
@@ -473,18 +473,24 @@ export class ContextsManager {
           await this.fetch([ContextType.User, ContextType.Session]);
           this.broker.parentSource.userId = value;
           return;
-        } /* else if (
+        } else if (
           context === ContextType.Session &&
           lastKey === 'id' &&
           prevValue !== value
         ) {
-          this.contexts.user = { id: value };
-          this.session = { userId: value, sessionId: value, authData: {} };
+          const targetSession = await this.cache.getSession(value);
+          const userId = targetSession?.userId || value;
+          this.contexts.user = { id: userId };
+          this.session = targetSession || {
+            userId: value,
+            sessionId: value,
+            authData: {},
+          };
           this.contexts.session = { id: value };
           await this.fetch([ContextType.User, ContextType.Session]);
-          this.broker.parentSource.userId = value;
+          this.broker.parentSource.userId = userId;
           return;
-        }*/
+        }
       }
 
       // Persist
