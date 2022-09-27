@@ -45,7 +45,7 @@ export const UserProvider: FC<UserProviderProps> = ({
     async (token: string, password: string) => {
       setLoading(true);
       try {
-        const result = await api.passwordReset(token, password);
+        await api.passwordReset(token, password);
         setError(undefined);
         setSuccess({ type: OperationSuccess.passwordReset });
         setLoading(false);
@@ -136,6 +136,12 @@ export const UserProvider: FC<UserProviderProps> = ({
     setError(undefined);
     try {
       const user = await api.me();
+      if (user.authData && user.authData.anonymous && !anonymous) {
+        throw {
+          message: 'Anonymous user not allowed',
+          error: 'AnonymousNotAllowed',
+        };
+      }
       if (!user) {
         throw { message: 'No user found', error: 'NoUserFound' };
       }
