@@ -361,6 +361,9 @@ This allows unauthenticated webhooks to retrieve persisted user / sessions conte
   </table>
 </center>  
 
+If current user has been authenticated through the Gateway API (whether anonymously or not), the **session** context expiration depends on the value configured in the Gateway API (1 month by default).  
+If current user comes from an unauthenticated [**endpoint**](#url) call, its **session** context will expire after **1 hour**, configurable from **CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME** environment variable.  
+
 #### Run
 <center>
   <table>
