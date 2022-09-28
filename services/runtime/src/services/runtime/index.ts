@@ -346,7 +346,7 @@ export default class Runtime {
     broker: Broker
   ) {
     const session = (await this.cache.getSession(source.sessionId)) || {
-      userId: source.userId!!,
+      userId: source.userId!! || source.sessionId!!, // For unauthenticated sessions, keep sessionId as a fake userId
       sessionId: source.sessionId!!,
       authData: {},
     };
