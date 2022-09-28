@@ -106,18 +106,18 @@ automations:
     when:
       endpoint: true
 
-  setUserAndEmit:
+  setSessionAndEmit:
     name: mySet
     do:
       - set:
-          name: 'user.id'
-          value: '{{body.userId}}'
+          name: 'session.id'
+          value: '{{body.sessionId}}'
       - emit:
-          event: cascadingWithNewUser
+          event: cascadingWithNewSession
           payload: {}
     output:
-      session: '{{session}}'
       user: '{{user}}'
+      session: '{{session}}'
       run: '{{run}}'
     when:
       endpoint: true

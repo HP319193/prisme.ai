@@ -257,33 +257,6 @@ describe('Variables & Contexts', () => {
     expect(getBack.session).toMatchObject(afterSets.session);
   });
 
-  it('Set user.id also updates source.userId / source.sessionId in emitted events', async () => {
-    const { execute, sendEventSpy } = getMocks();
-
-    // Switch to a new empty user
-    const userId = 'user' + Math.round(Math.random() * 1000);
-    const afterUserSwitching = await execute('setUserAndEmit', {
-      userId: userId,
-    });
-    expect(afterUserSwitching.user).toEqual({
-      authData: {},
-      email: undefined,
-      id: userId,
-    });
-    expect(afterUserSwitching.session).toEqual({ id: userId });
-
-    expect(sendEventSpy).toBeCalledWith(
-      expect.objectContaining({
-        type: 'cascadingWithNewUser',
-        source: expect.objectContaining({
-          userId,
-          sessionId: userId,
-        }),
-        payload: expect.objectContaining({}),
-      })
-    );
-  });
-
   it('Set session.id allow switching between user / session contexts ', async () => {
     const { execute, sendEventSpy } = getMocks();
 
@@ -339,6 +312,33 @@ describe('Variables & Contexts', () => {
     });
     expect(newSession.user).toEqual(afterUserSwitching.user);
     expect(newSession.session).toEqual(afterUserSwitching.session);
+  });
+
+  it('Set session.id also updates source.sessionId in emitted events', async () => {
+    const { execute, sendEventSpy } = getMocks();
+
+    // Switch to a new empty session
+    const sessionId = 'session' + Math.round(Math.random() * 1000);
+    const afterUserSwitching = await execute('setSessionAndEmit', {
+      sessionId: sessionId,
+    });
+    expect(afterUserSwitching.user).toEqual({
+      authData: {},
+      email: undefined,
+      id: sessionId, // Unauthenticated sessions have their user.id = session.id
+    });
+    expect(afterUserSwitching.session).toEqual({ id: sessionId });
+
+    expect(sendEventSpy).toBeCalledWith(
+      expect.objectContaining({
+        type: 'cascadingWithNewSession',
+        source: expect.objectContaining({
+          userId: undefined, // Cascading events always keep their source.userId undefined
+          sessionId,
+        }),
+        payload: expect.objectContaining({}),
+      })
+    );
   });
 
   it('Set a session.value variable then delete it', async () => {
