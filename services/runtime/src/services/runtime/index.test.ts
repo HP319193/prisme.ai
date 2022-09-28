@@ -326,6 +326,7 @@ describe('Simple execution', () => {
       {
         workspaceId: AvailableModels.Basic,
         userId,
+        sessionId: userId,
       },
       false
     );
@@ -343,6 +344,7 @@ describe('Simple execution', () => {
           source: expect.objectContaining({
             correlationId: event.source.correlationId,
             userId,
+            sessionId: userId,
             automationSlug: 'anotherAutomation',
           }),
           payload: expect.objectContaining({
@@ -396,6 +398,7 @@ describe('More advanced execution with appInstances', () => {
       {
         workspaceId: AvailableModels.Imports,
         userId,
+        sessionId: userId,
       },
       false
     );
@@ -412,7 +415,8 @@ describe('More advanced execution with appInstances', () => {
           type: 'basicApp.triggerEmpty',
           source: expect.objectContaining({
             correlationId: event.source.correlationId,
-            userId,
+            userId: undefined,
+            sessionId: userId,
             automationSlug: 'empty',
             workspaceId: AvailableModels.Imports,
           }),
@@ -426,6 +430,7 @@ describe('More advanced execution with appInstances', () => {
           source: expect.objectContaining({
             correlationId: event.source.correlationId,
             userId,
+            sessionId: userId,
             automationSlug: 'basicEmpty',
             appInstanceFullSlug: 'basicApp',
           }),
@@ -492,6 +497,7 @@ describe('More advanced execution with appInstances', () => {
       {
         workspaceId: AvailableModels.Imports,
         userId,
+        sessionId: userId,
       },
       false
     );
@@ -509,6 +515,7 @@ describe('More advanced execution with appInstances', () => {
           source: expect.objectContaining({
             correlationId: event.source.correlationId,
             userId,
+            sessionId: userId,
             appInstanceFullSlug: 'basicApp',
             appSlug: 'basicApp',
             automationSlug: 'anotherAutomation',
@@ -533,6 +540,7 @@ describe('More advanced execution with appInstances', () => {
       {
         workspaceId: AvailableModels.Imports,
         userId,
+        sessionId: userId,
       },
       false
     );
@@ -549,7 +557,7 @@ describe('More advanced execution with appInstances', () => {
           type: 'basicApp.forParentWorkspace',
           source: expect.objectContaining({
             correlationId: event.source.correlationId,
-            userId,
+            sessionId: userId,
             appInstanceFullSlug: 'basicApp',
             appSlug: 'basicApp',
             automationSlug: 'anotherAutomation',
@@ -565,6 +573,7 @@ describe('More advanced execution with appInstances', () => {
           type: EventType.ExecutedAutomation,
           source: expect.objectContaining({
             correlationId: event.source.correlationId,
+            sessionId: userId,
             userId,
             appInstanceFullSlug: undefined,
             appSlug: undefined,
@@ -592,6 +601,7 @@ describe('More advanced execution with appInstances', () => {
       {
         workspaceId: AvailableModels.Imports,
         userId,
+        sessionId: userId,
       },
       false
     );
@@ -608,7 +618,7 @@ describe('More advanced execution with appInstances', () => {
           type: 'basicApp.forParentWorkspace',
           source: expect.objectContaining({
             correlationId: event.source.correlationId,
-            userId,
+            sessionId: userId,
             appInstanceFullSlug: 'basicApp',
             appSlug: 'basicApp',
             automationSlug: 'anotherAutomation',
@@ -627,6 +637,7 @@ describe('More advanced execution with appInstances', () => {
           type: EventType.ExecutedAutomation,
           source: expect.objectContaining({
             correlationId: event.source.correlationId,
+            sessionId: userId,
             userId,
             appInstanceFullSlug: undefined,
             appSlug: undefined,
