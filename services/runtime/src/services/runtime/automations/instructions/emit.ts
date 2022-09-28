@@ -18,8 +18,8 @@ export async function emit(
       payload || {},
       {
         ...appContext,
-        // userId / sessionId might have been manually changed since given broker initialization
-        userId: ctx.session?.userId || broker.parentSource?.userId,
+        userId: undefined, // Only custom events sent from API or Websocket have their source userId sent
+        // sessionId might have been manually changed since given broker initialization
         sessionId: ctx.session?.sessionId || broker.parentSource?.sessionId,
       },
       RUNTIME_EMITS_BROKER_TOPIC,
