@@ -324,10 +324,10 @@ export class ContextsManager {
     const child = Object.assign({}, this, {
       contexts: {
         ...this.contexts,
-        local: opts.payload || {},
+        local: _.cloneDeep(opts.payload || {}),
         ...additionalContexts,
       },
-      payload: opts.payload,
+      payload: _.cloneDeep(opts.payload),
       broker: opts.broker || this.broker,
       appContext: opts.appContext || this.appContext,
       automationSlug: opts.automationSlug || this.automationSlug,
