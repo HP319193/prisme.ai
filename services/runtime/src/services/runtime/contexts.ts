@@ -288,11 +288,11 @@ export class ContextsManager {
   }
 
   get global(): GlobalContext {
-    return this.contexts.global;
+    return this.publicContexts.global;
   }
 
   get user(): UserContext {
-    return this.contexts.user;
+    return this.publicContexts.user;
   }
 
   get run(): RunContext {
