@@ -2,7 +2,11 @@ import { nanoid } from 'nanoid';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import DSULStorage from '../../DSULStorage';
-import { AccessManager, SubjectType } from '../../../permissions';
+import {
+  AccessManager,
+  SubjectType,
+  WorkspaceMetadata,
+} from '../../../permissions';
 import AppInstances from './appInstances';
 import Apps from '../../apps/crud/apps';
 import Automations from './automations';
@@ -13,6 +17,9 @@ import {
   getObjectsDifferences,
 } from '../../../utils/getObjectsDifferences';
 import { extractObjectsByPath } from '../../../utils/extractObjectsByPath';
+import { logger } from '../../../logger';
+import { MAXIMUM_WORKSPACE_VERSION } from '../../../../config';
+import { InvalidVersionError } from '../../../errors';
 
 interface DSULDiff {
   type: DiffType;
@@ -191,20 +198,63 @@ class Workspaces {
     return workspace;
   };
 
-  getWorkspace = async (workspaceId: string) => {
-    await this.accessManager.get(SubjectType.Workspace, workspaceId);
-    return await this.storage.get(workspaceId);
+  getWorkspace = async (workspaceId: string, version?: string) => {
+    const metadata = await this.accessManager.get(
+      SubjectType.Workspace,
+      workspaceId
+    );
+    if (
+      version &&
+      version !== 'current' &&
+      !(metadata.versions || []).some((cur) => cur.name == version)
+    ) {
+      throw new InvalidVersionError(`Unknown version name '${version}'`);
+    }
+    return await this.storage.get(workspaceId, version || 'current');
   };
 
-  save = async (workspaceId: string, workspace: Prismeai.Workspace) => {
-    await this.accessManager.update(SubjectType.Workspace, {
+  save = async (
+    workspaceId: string,
+    workspace: Prismeai.Workspace,
+    versionRequest?: Prismeai.WorkspaceVersion
+  ) => {
+    const updatedWorkspaceMetadata: WorkspaceMetadata = {
       id: workspaceId,
       name: workspace.name,
       photo: workspace.photo,
       description: workspace.description,
-    });
+    };
+
+    let deleteVersions;
+    if (versionRequest) {
+      const { newVersion, allVersions, expiredVersions } =
+        await this.prepareNewWorkspaceVersion(workspaceId, versionRequest);
+      updatedWorkspaceMetadata.versions = allVersions;
+      Object.assign(versionRequest, newVersion);
+      deleteVersions = expiredVersions;
+    }
+    await this.accessManager.update(
+      SubjectType.Workspace,
+      updatedWorkspaceMetadata
+    );
 
     await this.storage.save(workspaceId, workspace);
+    if (versionRequest) {
+      await this.storage.save(workspaceId, workspace, versionRequest.name);
+      this.broker
+        .send<Prismeai.PublishedWorkspaceVersion['payload']>(
+          EventType.PublishedWorkspaceVersion,
+          {
+            version: versionRequest,
+          }
+        )
+        .catch((err) => logger.error(err));
+      (deleteVersions || [])
+        .filter((cur) => cur?.name?.length && cur.name !== 'current') // an empty version would delete workspace directory
+        .map(async (cur) => await this.storage.delete(workspaceId, cur.name));
+    }
+
+    return versionRequest;
   };
 
   updateWorkspace = async (
@@ -247,6 +297,125 @@ class Workspaces {
 
     await this.updateWorkspace(workspaceId, updatedWorkspace);
     return updatedWorkspace.config;
+  };
+
+  listWorkspaceVersions = async (workspaceId: string) => {
+    const workspaceMetadata = await this.accessManager.get(
+      SubjectType.Workspace,
+      workspaceId
+    );
+    return workspaceMetadata.versions || [];
+  };
+
+  prepareNewWorkspaceVersion = async (
+    workspaceId: string,
+    versionRequest: Prismeai.WorkspaceVersion
+  ): Promise<{
+    newVersion: Required<Prismeai.WorkspaceVersion>;
+    allVersions: Required<Prismeai.WorkspaceVersion>[];
+    expiredVersions: Required<Prismeai.WorkspaceVersion>[];
+  }> => {
+    const currentVersions = await this.listWorkspaceVersions(workspaceId);
+    if (
+      versionRequest.name &&
+      !/^[a-zA-Z0-9_.-]{1,15}$/.test(versionRequest.name)
+    ) {
+      throw new InvalidVersionError(
+        `Invalid version name '${versionRequest.name}' : must be between 1 & 15 characters and include only alphabetical letters, numbers, _, - and .`
+      );
+    }
+    if (
+      versionRequest.name &&
+      currentVersions.some((cur) => cur.name == versionRequest.name)
+    ) {
+      throw new InvalidVersionError(
+        `Invalid version name '${versionRequest.name}' : already used`
+      );
+    }
+    if (versionRequest.name == 'current') {
+      throw new InvalidVersionError(
+        `Invalid version name '${versionRequest.name}' : reserved name`
+      );
+    }
+    const generateName = () => {
+      const curDate = new Date()
+        .toLocaleDateString('en-US')
+        .replace(/\//g, '-');
+      let idx = 1;
+      let curName = `${curDate}.${idx}`;
+      while (currentVersions.some((cur) => cur.name == curName)) {
+        idx++;
+        curName = `${curDate}.${idx}`;
+      }
+      return curName;
+    };
+    const newVersion = {
+      createdAt: `${new Date().toISOString()}`,
+      ...versionRequest,
+      name: versionRequest?.name || generateName(),
+    };
+    const expiredVersions =
+      currentVersions.length + 1 > MAXIMUM_WORKSPACE_VERSION
+        ? currentVersions.slice(MAXIMUM_WORKSPACE_VERSION - 1)
+        : [];
+
+    return {
+      newVersion,
+      allVersions: [
+        newVersion,
+        ...currentVersions.slice(0, MAXIMUM_WORKSPACE_VERSION - 1),
+      ],
+      expiredVersions,
+    };
+  };
+
+  publishWorkspaceVersion = async (
+    workspaceId: string,
+    version: Prismeai.WorkspaceVersion
+  ): Promise<Required<Prismeai.WorkspaceVersion>> => {
+    const currentWorkspace = await this.getWorkspace(workspaceId);
+    return (await this.save(
+      workspaceId,
+      currentWorkspace,
+      version
+    )) as Required<Prismeai.WorkspaceVersion>;
+  };
+
+  deleteWorkspaceVersion = async (
+    workspaceId: string,
+    version: string
+  ): Promise<Required<Prismeai.WorkspaceVersion>> => {
+    if (version == 'current') {
+      throw new InvalidVersionError('Cannot delete current version');
+    }
+    const workspaceMetadata = await this.accessManager.get(
+      SubjectType.Workspace,
+      workspaceId
+    );
+    const targetVersion = (workspaceMetadata.versions || []).find(
+      (cur) => cur.name == version
+    );
+    if (!targetVersion) {
+      throw new InvalidVersionError(`Unknown version name '${version}'`);
+    }
+    await this.accessManager.update(SubjectType.Workspace, {
+      ...workspaceMetadata,
+      versions: (workspaceMetadata.versions || []).filter(
+        (cur) => cur.name !== version
+      ),
+    });
+    await this.storage.delete(workspaceId, version);
+
+    this.broker
+      .send<Prismeai.DeletedWorkspaceVersion['payload']>(
+        EventType.DeletedWorkspaceVersion,
+        {
+          version: targetVersion,
+        }
+      )
+      .catch((err) => logger.error(err));
+
+    return targetVersion;
   };
 
   private async processEveryDiffs(

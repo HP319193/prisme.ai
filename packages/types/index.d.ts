@@ -1133,6 +1133,16 @@ declare namespace Prismeai {
             workspaceId: string;
         };
     }
+    export interface DeletedWorkspaceVersion {
+        /**
+         * example:
+         * workspaces.versions.deleted
+         */
+        type: "workspaces.versions.deleted";
+        payload: {
+            version: WorkspaceVersion;
+        };
+    }
     export interface DetailedAppInstance {
         /**
          * App unique id
@@ -1629,6 +1639,16 @@ declare namespace Prismeai {
             app: App;
         };
     }
+    export interface PublishedWorkspaceVersion {
+        /**
+         * example:
+         * workspaces.versions.published
+         */
+        type: "workspaces.versions.published";
+        payload: {
+            version: WorkspaceVersion;
+        };
+    }
     export interface Repeat {
         /**
          * One of "on" or "until" is required
@@ -1642,6 +1662,16 @@ declare namespace Prismeai {
         };
     }
     export type Role = "owner" | "editor";
+    export interface RollbackWorkspaceVersion {
+        /**
+         * example:
+         * workspaces.versions.rollback
+         */
+        type: "workspaces.versions.rollback";
+        payload: {
+            version: WorkspaceVersion;
+        };
+    }
     export interface Set {
         set: {
             /**
@@ -2069,6 +2099,14 @@ declare namespace Prismeai {
         total: UsageMetrics;
         apps: AppUsageMetrics[];
     }
+    export interface WorkspaceVersion {
+        /**
+         * Version name. If left empty, will be auto generated
+         */
+        name?: string;
+        createdAt?: string;
+        description: string;
+    }
 }
 declare namespace PrismeaiAPI {
     namespace AnonymousAuth {
@@ -2354,6 +2392,24 @@ declare namespace PrismeaiAPI {
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
+        }
+        namespace Responses {
+            export interface $200 {
+                id: string;
+            }
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace DeleteWorkspaceVersion {
+        namespace Parameters {
+            export type VersionId = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            versionId: Parameters.VersionId;
         }
         namespace Responses {
             export interface $200 {
@@ -2661,10 +2717,14 @@ declare namespace PrismeaiAPI {
     }
     namespace GetWorkspace {
         namespace Parameters {
+            export type Version = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
+        }
+        export interface QueryParameters {
+            version?: Parameters.Version;
         }
         namespace Responses {
             export type $200 = Prismeai.Workspace;
@@ -2778,6 +2838,20 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace ListWorkspaceVersions {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.WorkspaceVersion[];
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace Logout {
         namespace Responses {
             export interface $200 {
@@ -2788,6 +2862,21 @@ declare namespace PrismeaiAPI {
         export type RequestBody = Prismeai.App;
         namespace Responses {
             export type $200 = Prismeai.App;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+        }
+    }
+    namespace PublishWorkspaceVersion {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        export type RequestBody = Prismeai.WorkspaceVersion;
+        namespace Responses {
+            export type $200 = Prismeai.WorkspaceVersion;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -2827,6 +2916,22 @@ declare namespace PrismeaiAPI {
                 id: string;
             }
             export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace RollbackWorkspaceVersion {
+        namespace Parameters {
+            export type VersionId = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            versionId: Parameters.VersionId;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.Workspace;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;

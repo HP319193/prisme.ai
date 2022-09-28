@@ -54,7 +54,7 @@ export default class DSULStorage extends Storage {
     );
   }
 
-  async delete(appId: string) {
-    await this.driver.delete(this.getPath(appId, ''));
+  async delete(appId: string, version: string = '') {
+    await this.driver.delete(this.getPath(appId, version));
   }
 }

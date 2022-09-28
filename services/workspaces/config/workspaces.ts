@@ -3,3 +3,7 @@
 export const SLUG_VALIDATION_REGEXP = new RegExp(
   process.env.SLUG_VALIDATION_REGEXP || '^[a-zA-Z0-9 _-]*$'
 );
+
+export const MAXIMUM_WORKSPACE_VERSION = parseInt(
+  process.env.MAXIMUM_WORKSPACE_VERSION || '20'
+);

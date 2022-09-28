@@ -62,6 +62,12 @@ export class InvalidSlugError extends PrismeError {
   }
 }
 
+export class InvalidVersionError extends PrismeError {
+  constructor(msg: string) {
+    super(msg, {});
+  }
+}
+
 export class InvalidUploadError extends PrismeError {
   constructor(msg: string, details: any = {}) {
     super(msg || 'Invalid uploaded file', details);

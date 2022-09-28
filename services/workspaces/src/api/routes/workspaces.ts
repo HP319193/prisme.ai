@@ -1,6 +1,7 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
 import { nanoid } from 'nanoid';
+import { EventType } from '../../eda';
 import { AccessManager, SubjectType } from '../../permissions';
 import { Apps, Workspaces } from '../../services';
 import DSULStorage from '../../services/DSULStorage';
@@ -56,9 +57,15 @@ export default function init(
     {
       context,
       params: { workspaceId },
+      query: { version },
       accessManager,
       broker,
-    }: Request<PrismeaiAPI.GetWorkspace.PathParameters>,
+    }: Request<
+      PrismeaiAPI.GetWorkspace.PathParameters,
+      any,
+      any,
+      PrismeaiAPI.GetWorkspace.QueryParameters
+    >,
     res: Response<PrismeaiAPI.GetWorkspace.Responses.$200>
   ) {
     const { workspaces } = getServices({
@@ -66,7 +73,7 @@ export default function init(
       accessManager,
       broker,
     });
-    const result = await workspaces.getWorkspace(workspaceId);
+    const result = await workspaces.getWorkspace(workspaceId, version);
     res.send(result);
   }
 
@@ -132,6 +139,99 @@ export default function init(
     res.send(result);
   }
 
+  async function listWorkspaceVersionsHandler(
+    {
+      accessManager,
+      params: { workspaceId },
+      context,
+      broker,
+    }: Request<PrismeaiAPI.ListWorkspaceVersions.PathParameters, any, any, any>,
+    res: Response<PrismeaiAPI.ListWorkspaceVersions.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const versions = await workspaces.listWorkspaceVersions(workspaceId);
+    res.send(versions);
+  }
+
+  async function publishWorkspaceVersionHandler(
+    {
+      accessManager,
+      params: { workspaceId },
+      body,
+      context,
+      broker,
+    }: Request<
+      PrismeaiAPI.PublishWorkspaceVersion.PathParameters,
+      any,
+      PrismeaiAPI.PublishWorkspaceVersion.RequestBody,
+      any
+    >,
+    res: Response<PrismeaiAPI.PublishWorkspaceVersion.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const version = await workspaces.publishWorkspaceVersion(workspaceId, body);
+    res.send(version);
+  }
+
+  async function deleteWorkspaceVersionHandler(
+    {
+      accessManager,
+      params: { workspaceId, versionId },
+      context,
+      broker,
+    }: Request<PrismeaiAPI.DeleteWorkspaceVersion.PathParameters>,
+    res: Response<PrismeaiAPI.DeleteWorkspaceVersion.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    await workspaces.deleteWorkspaceVersion(workspaceId, versionId);
+    res.send({ id: versionId });
+  }
+
+  async function rollbackWorkspaceVersionHandler(
+    {
+      accessManager,
+      params: { workspaceId, versionId },
+      context,
+      broker,
+    }: Request<PrismeaiAPI.RollbackWorkspaceVersion.PathParameters>,
+    res: Response<PrismeaiAPI.RollbackWorkspaceVersion.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const targetVersion = await workspaces.getWorkspace(workspaceId, versionId);
+    const result = await workspaces.updateWorkspace(workspaceId, targetVersion);
+
+    const availableVersions = await workspaces.listWorkspaceVersions(
+      workspaceId
+    );
+    broker.send<Prismeai.RollbackWorkspaceVersion['payload']>(
+      EventType.RollbackWorkspaceVersion,
+      {
+        version: availableVersions.find((cur) => cur.name == versionId) || {
+          name: versionId,
+          description: '',
+        },
+      }
+    );
+
+    res.send(result);
+  }
+
   const app = express.Router();
 
   app.post(`/`, asyncRoute(createWorkspaceHandler));
@@ -139,6 +239,20 @@ export default function init(
   app.get(`/`, asyncRoute(getWorkspacesHandler));
   app.delete(`/:workspaceId`, asyncRoute(deleteWorkspaceHandler));
   app.get(`/:workspaceId`, asyncRoute(getWorkspaceHandler));
+
+  app.get(`/:workspaceId/versions`, asyncRoute(listWorkspaceVersionsHandler));
+  app.post(
+    `/:workspaceId/versions`,
+    asyncRoute(publishWorkspaceVersionHandler)
+  );
+  app.delete(
+    `/:workspaceId/versions/:versionId`,
+    asyncRoute(deleteWorkspaceVersionHandler)
+  );
+  app.post(
+    `/:workspaceId/versions/:versionId/rollback`,
+    asyncRoute(rollbackWorkspaceVersionHandler)
+  );
 
   return app;
 }

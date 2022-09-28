@@ -1192,6 +1192,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: 'version'
+          in: 'query'
+          description: 'Optional version'
+          schema:
+            type: string
       responses:
         '200':
           description: Success Response
@@ -1293,6 +1298,187 @@ paths:
                 properties:
                   id:
                     type: string
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  /v2/workspaces/{workspaceId}/versions:
+    get:
+      description: List workspace versions
+      operationId: listWorkspaceVersions
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkspaceVersion'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+    post:
+      description: Publish a new workspace version
+      operationId: publishWorkspaceVersion
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceVersion'
+
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceVersion'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+
+  /v2/workspaces/{workspaceId}/versions/{versionId}:
+    delete:
+      description: Delete a workspace version
+      operationId: deleteWorkspaceVersion
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'versionId'
+          in: 'path'
+          description: 'Version name'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    type: string
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  /v2/workspaces/{workspaceId}/versions/{versionId}/rollback:
+    post:
+      description: Rollback to a workspace version
+      operationId: rollbackWorkspaceVersion
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'versionId'
+          in: 'path'
+          description: 'Version name'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
         '404':
           description: Object not found
           content:
@@ -2760,6 +2946,19 @@ components:
               type: string
         - $ref: '#/components/schemas/DSUL'
 
+    WorkspaceVersion:
+      type: object
+      required:
+        - description
+      properties:
+        name:
+          type: string
+          description: "Version name. If left empty, will be auto generated"
+        createdAt:
+          type: string
+        description:
+          type: string
+
     DSUL:
       type: object
       additionalProperties: false
@@ -4009,6 +4208,63 @@ components:
             config:
               $ref: '#/components/schemas/Config'
             oldConfig: {}
+
+    PublishedWorkspaceVersion:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.versions.published
+          enum:
+            - workspaces.versions.published
+        payload:
+          type: object
+          required:
+            - version
+          properties:
+            version:
+              $ref: '#/components/schemas/WorkspaceVersion'
+
+    DeletedWorkspaceVersion:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.versions.deleted
+          enum:
+            - workspaces.versions.deleted
+        payload:
+          type: object
+          required:
+            - version
+          properties:
+            version:
+              $ref: '#/components/schemas/WorkspaceVersion'
+
+    RollbackWorkspaceVersion:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.versions.rollback
+          enum:
+            - workspaces.versions.rollback
+        payload:
+          type: object
+          required:
+            - version
+          properties:
+            version:
+              $ref: '#/components/schemas/WorkspaceVersion'
 
     WorkspacePermissionsShared:
       type: object
