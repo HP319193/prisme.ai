@@ -51,12 +51,12 @@ export async function autoinstallApps(
       await apps.publishApp(
         {
           workspaceId: workspaceId || app.name,
-          name: app.name,
           slug: app.name,
-          photo: app.photo,
-          description: app.description,
         },
-        app
+        app,
+        {
+          description: 'Automatically installed',
+        }
       );
       logger.info(
         `Succesfully ${workspaceId ? 'updated' : 'installed'} app '${app.name}'`

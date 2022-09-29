@@ -2059,7 +2059,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/App'
+              type: object
+              required:
+                - workspaceId
+              properties:
+                workspaceId:
+                  type: string
+                workspaceVersion:
+                  type: string
+                  description: "An optional workspace version. If empty, will publish latest workspace version"
+                slug:
+                  description: "App slug : Required on first publish"
+                  type: string
+                description:
+                  type: string
+                  $ref: "#/components/schemas/LocalizedText"
+                name:
+                  type: string
+                  description: "An optional version name"
 
       responses:
         '200':
@@ -2814,9 +2831,13 @@ components:
         workspaceId:
           type: string
         versions:
-          type: array
-          items:
-            type: string
+          oneOf:
+            - type: array
+              items:
+                type: string
+            - type: array
+              items:
+                $ref: "#/components/schemas/WorkspaceVersion"
         name:
           type: string
         description:
@@ -2957,7 +2978,7 @@ components:
         createdAt:
           type: string
         description:
-          type: string
+          $ref: '#/components/schemas/LocalizedText'
 
     DSUL:
       type: object

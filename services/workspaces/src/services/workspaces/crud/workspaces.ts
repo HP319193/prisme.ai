@@ -18,8 +18,8 @@ import {
 } from '../../../utils/getObjectsDifferences';
 import { extractObjectsByPath } from '../../../utils/extractObjectsByPath';
 import { logger } from '../../../logger';
-import { MAXIMUM_WORKSPACE_VERSION } from '../../../../config';
 import { InvalidVersionError } from '../../../errors';
+import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 
 interface DSULDiff {
   type: DiffType;
@@ -227,8 +227,10 @@ class Workspaces {
 
     let deleteVersions;
     if (versionRequest) {
+      const currentVersions = await this.listWorkspaceVersions(workspaceId);
       const { newVersion, allVersions, expiredVersions } =
-        await this.prepareNewWorkspaceVersion(workspaceId, versionRequest);
+        prepareNewDSULVersion(currentVersions, versionRequest);
+
       updatedWorkspaceMetadata.versions = allVersions;
       Object.assign(versionRequest, newVersion);
       deleteVersions = expiredVersions;
@@ -305,68 +307,6 @@ class Workspaces {
       workspaceId
     );
     return workspaceMetadata.versions || [];
-  };
-
-  prepareNewWorkspaceVersion = async (
-    workspaceId: string,
-    versionRequest: Prismeai.WorkspaceVersion
-  ): Promise<{
-    newVersion: Required<Prismeai.WorkspaceVersion>;
-    allVersions: Required<Prismeai.WorkspaceVersion>[];
-    expiredVersions: Required<Prismeai.WorkspaceVersion>[];
-  }> => {
-    const currentVersions = await this.listWorkspaceVersions(workspaceId);
-    if (
-      versionRequest.name &&
-      !/^[a-zA-Z0-9_.-]{1,15}$/.test(versionRequest.name)
-    ) {
-      throw new InvalidVersionError(
-        `Invalid version name '${versionRequest.name}' : must be between 1 & 15 characters and include only alphabetical letters, numbers, _, - and .`
-      );
-    }
-    if (
-      versionRequest.name &&
-      currentVersions.some((cur) => cur.name == versionRequest.name)
-    ) {
-      throw new InvalidVersionError(
-        `Invalid version name '${versionRequest.name}' : already used`
-      );
-    }
-    if (versionRequest.name == 'current') {
-      throw new InvalidVersionError(
-        `Invalid version name '${versionRequest.name}' : reserved name`
-      );
-    }
-    const generateName = () => {
-      const curDate = new Date()
-        .toLocaleDateString('en-US')
-        .replace(/\//g, '-');
-      let idx = 1;
-      let curName = `${curDate}.${idx}`;
-      while (currentVersions.some((cur) => cur.name == curName)) {
-        idx++;
-        curName = `${curDate}.${idx}`;
-      }
-      return curName;
-    };
-    const newVersion = {
-      createdAt: `${new Date().toISOString()}`,
-      ...versionRequest,
-      name: versionRequest?.name || generateName(),
-    };
-    const expiredVersions =
-      currentVersions.length + 1 > MAXIMUM_WORKSPACE_VERSION
-        ? currentVersions.slice(MAXIMUM_WORKSPACE_VERSION - 1)
-        : [];
-
-    return {
-      newVersion,
-      allVersions: [
-        newVersion,
-        ...currentVersions.slice(0, MAXIMUM_WORKSPACE_VERSION - 1),
-      ],
-      expiredVersions,
-    };
   };
 
   publishWorkspaceVersion = async (

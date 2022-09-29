@@ -734,7 +734,7 @@ declare namespace Prismeai {
     }
     export interface App {
         workspaceId: string;
-        versions?: string[];
+        versions?: string[] | WorkspaceVersion[];
         name?: string;
         description?: LocalizedText;
         photo?: string;
@@ -2105,7 +2105,7 @@ declare namespace Prismeai {
          */
         name?: string;
         createdAt?: string;
-        description: string;
+        description: LocalizedText;
     }
 }
 declare namespace PrismeaiAPI {
@@ -2859,7 +2859,22 @@ declare namespace PrismeaiAPI {
         }
     }
     namespace PublishApp {
-        export type RequestBody = Prismeai.App;
+        export interface RequestBody {
+            workspaceId: string;
+            /**
+             * An optional workspace version. If empty, will publish latest workspace version
+             */
+            workspaceVersion?: string;
+            /**
+             * App slug : Required on first publish
+             */
+            slug?: string;
+            description?: Prismeai.LocalizedText;
+            /**
+             * An optional version name
+             */
+            name?: string;
+        }
         namespace Responses {
             export type $200 = Prismeai.App;
             export type $400 = Prismeai.BadParametersError;

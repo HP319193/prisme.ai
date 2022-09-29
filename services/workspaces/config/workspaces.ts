@@ -7,3 +7,7 @@ export const SLUG_VALIDATION_REGEXP = new RegExp(
 export const MAXIMUM_WORKSPACE_VERSION = parseInt(
   process.env.MAXIMUM_WORKSPACE_VERSION || '20'
 );
+
+export const MAXIMUM_APP_VERSION = parseInt(
+  process.env.MAXIMUM_APP_VERSION || '1000'
+);

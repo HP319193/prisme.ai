@@ -43,8 +43,24 @@ export default function init(
       accessManager,
       broker,
     });
-    const dsul = await workspaces.getWorkspace(body.workspaceId);
-    const result = await apps.publishApp(body, dsul);
+    const workspaceVersions = await workspaces.listWorkspaceVersions(
+      body.workspaceId
+    );
+    const dsul = await workspaces.getWorkspace(
+      body.workspaceId,
+      body.workspaceVersion
+    );
+    const versionRequest = {
+      description: '',
+      ...workspaceVersions.find((cur) => cur.name == body.workspaceVersion),
+    };
+    if (body.name) {
+      versionRequest.name = body.name;
+    }
+    if (body.description) {
+      versionRequest.description = body.description;
+    }
+    const result = await apps.publishApp(body, dsul, versionRequest);
     res.send(result);
   }
 
