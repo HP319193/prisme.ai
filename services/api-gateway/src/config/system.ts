@@ -1,8 +1,11 @@
 import path from 'path';
 
+const DEBUG = ['dev', 'development'].includes(
+  process.env.NODE_ENV || 'production'
+);
 export default {
   PORT: process.env.PORT || 3001,
-  DEBUG: ['dev', 'development'].includes(process.env.NODE_ENV || 'production'),
+  DEBUG,
 
   GATEWAY_CONFIG:
     process.env.GATEWAY_CONFIG_PATH ||
@@ -15,6 +18,10 @@ export default {
   CORRELATION_ID_HEADER:
     process.env.CORRELATION_ID_HEADER || 'x-correlation-id',
   USER_ID_HEADER: process.env.USER_ID_HEADER || 'x-prismeai-user-id',
+  OVERWRITE_CORRELATION_ID_HEADER:
+    typeof process.env.OVERWRITE_CORRELATION_ID_HEADER !== 'undefined'
+      ? process.env.OVERWRITE_CORRELATION_ID_HEADER != 'no'
+      : !DEBUG,
 
   SESSION_ID_HEADER: process.env.SESSION_ID_HEADER || 'x-prismeai-session-id',
 

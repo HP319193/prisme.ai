@@ -33,8 +33,11 @@ export function requestDecorator(
 
   const userId = req.user?.id as string;
   const sessionId = req.session.prismeaiSessionId;
-  const correlationId = (req.header(syscfg.CORRELATION_ID_HEADER) ||
-    uuid()) as string;
+  const correlationId =
+    syscfg.OVERWRITE_CORRELATION_ID_HEADER ||
+    !req.header(syscfg.CORRELATION_ID_HEADER)
+      ? uuid()
+      : (req.header(syscfg.CORRELATION_ID_HEADER) as string);
 
   const context: PrismeContext = {
     correlationId,

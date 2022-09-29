@@ -52,9 +52,6 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
     try {
       await publishApp({
         workspaceId: workspace.id,
-        description: workspace.description,
-        photo: workspace.photo,
-        name: publishSlug,
         slug: publishSlug,
       });
       notification.success({

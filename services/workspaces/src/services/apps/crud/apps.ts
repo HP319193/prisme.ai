@@ -10,8 +10,12 @@ import {
   PrismeError,
 } from '../../../errors';
 import { FindOptions } from '@prisme.ai/permissions';
-import { SLUG_VALIDATION_REGEXP } from '../../../../config';
+import {
+  MAXIMUM_APP_VERSION,
+  SLUG_VALIDATION_REGEXP,
+} from '../../../../config';
 import { extractEvents } from './extractEvents';
+import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 
 export interface ListAppsQuery {
   text?: string;
@@ -52,9 +56,13 @@ class Apps {
     );
   };
 
-  publishApp = async (app: Prismeai.App, dsul: Prismeai.DSUL) => {
-    if (!app.workspaceId) {
-      throw new PrismeError('Please specify app.workspaceId', {});
+  publishApp = async (
+    publish: PrismeaiAPI.PublishApp.RequestBody,
+    dsul: Prismeai.DSUL,
+    versionRequest: Prismeai.WorkspaceVersion
+  ) => {
+    if (!publish.workspaceId) {
+      throw new PrismeError('Please specify workspaceId', {});
     }
     if (!dsul.photo || !dsul.description) {
       throw new MissingFieldError('Missing photo or description', {
@@ -65,14 +73,21 @@ class Apps {
       });
     }
 
+    const app: Prismeai.App = {
+      workspaceId: publish.workspaceId,
+      slug: publish.slug,
+      name: dsul.name,
+      description: dsul.description,
+      photo: dsul.photo,
+    };
     // Fetch existing workspace app
     let existingApp = await this.accessManager.findAll(SubjectType.App, {
-      workspaceId: app.workspaceId,
+      workspaceId: publish.workspaceId,
     });
 
     // If workspace app already exists, prevents any slug renaming
     if (existingApp?.length) {
-      if (app.slug && existingApp[0].slug !== app.slug) {
+      if (publish.slug && existingApp[0].slug !== publish.slug) {
         throw new PrismeError(
           'Once published, an app slug cannot be updated.',
           {}
@@ -82,7 +97,7 @@ class Apps {
     } else {
       // New app
       if (!app.slug) {
-        throw new MissingFieldError('Please specify app.slug', {
+        throw new MissingFieldError('Please specify slug', {
           field: 'slug',
         });
       }
@@ -91,26 +106,31 @@ class Apps {
       }
     }
 
-    if (!app.photo && !existingApp?.[0]?.photo && dsul.photo) {
-      app.photo = dsul.photo;
-    }
-
-    if (
-      !app.description &&
-      !existingApp?.[0]?.description &&
-      dsul.description
-    ) {
-      app.description = dsul.description;
-    }
-
-    if (!app.name) {
-      app.name = existingApp?.[0]?.name || dsul.name;
-    }
-
     // Build updated versions list
-    const existingVersions = existingApp?.[0]?.versions || [];
-    const releaseName = `${(parseInt(existingVersions[0]) || 0) + 1}`;
-    app.versions = [releaseName, ...(existingVersions || [])];
+    let oldVersions = existingApp?.[0]?.versions || [];
+    let existingVersions;
+    // Old app version conversion
+    if (typeof oldVersions[0] !== 'object') {
+      const createdAt = `${new Date().toISOString()}`;
+      existingVersions = oldVersions.map<Required<Prismeai.WorkspaceVersion>>(
+        (cur) =>
+          typeof cur == 'object'
+            ? (cur as Required<Prismeai.WorkspaceVersion>)
+            : {
+                name: cur,
+                description: `Version ${cur}`,
+                createdAt,
+              }
+      );
+    } else {
+      existingVersions = oldVersions as Required<Prismeai.WorkspaceVersion>[];
+    }
+    const { newVersion, allVersions } = prepareNewDSULVersion(
+      existingVersions,
+      versionRequest,
+      MAXIMUM_APP_VERSION
+    );
+    app.versions = allVersions;
 
     // Check permissions & create/update App object
     (<any>app).id = app.slug!;
@@ -134,7 +154,7 @@ class Apps {
 
     // Store corresponding DSUL
     this.storage.save(app.slug!, dsul, 'current');
-    await this.storage.save(app.slug!, dsul, releaseName);
+    await this.storage.save(app.slug!, dsul, newVersion.name);
     this.broker.send<Prismeai.PublishedApp['payload']>(
       EventType.PublishedApp,
       {
@@ -212,9 +232,9 @@ class Apps {
           description,
         })
       ),
-      automations: Object.entries(
-        app.automations || {}
-      ).map(([slug, { name, description }]) => ({ slug, name, description })),
+      automations: Object.entries(app.automations || {}).map(
+        ([slug, { name, description }]) => ({ slug, name, description })
+      ),
     };
   };
 

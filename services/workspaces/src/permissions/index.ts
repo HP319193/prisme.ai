@@ -7,13 +7,16 @@ import { ActionType, SubjectType, Role, config } from './config';
 
 export { SubjectType, Role, ActionType };
 
+export interface WorkspaceMetadata {
+  id: string;
+  name: string;
+  photo?: string;
+  versions?: Required<Prismeai.WorkspaceVersion>[];
+  description?: Prismeai.LocalizedText;
+}
+
 export type SubjectInterfaces = {
-  [SubjectType.Workspace]: {
-    id: string;
-    name: string;
-    photo?: string;
-    description?: Prismeai.LocalizedText;
-  };
+  [SubjectType.Workspace]: WorkspaceMetadata;
   [SubjectType.App]: Prismeai.App;
   [SubjectType.Page]: Prismeai.Page;
   [SubjectType.File]: Omit<Prismeai.File, 'url'>;
@@ -38,6 +41,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           name: String,
           photo: String,
           description: Schema.Types.Mixed,
+          versions: Schema.Types.Mixed,
         },
         [SubjectType.App]: {
           workspaceId: { type: String, index: true },
