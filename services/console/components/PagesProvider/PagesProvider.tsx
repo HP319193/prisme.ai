@@ -15,6 +15,12 @@ body {
   background-color: var(--color-background);
 }
 
+.content-stack__content {
+  background-color: var(--color-background);
+  padding: 0 2rem;
+  margin-top: 2rem;
+}
+
 .page-blocks {
   padding: 2rem;
 }
