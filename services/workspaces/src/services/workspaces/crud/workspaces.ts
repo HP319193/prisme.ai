@@ -1,4 +1,6 @@
 import { nanoid } from 'nanoid';
+//@ts-ignore
+import { hri } from 'human-readable-ids';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import DSULStorage from '../../DSULStorage';
@@ -59,7 +61,7 @@ class Workspaces {
     this.storage = storage;
     this.automations = new Automations(this, broker);
     this.appInstances = new AppInstances(this, this.apps, broker);
-    this.pages = new Pages(this.accessManager, broker);
+    this.pages = new Pages(this, this.accessManager, broker);
 
     this.diffHandlers = [
       {
@@ -170,6 +172,80 @@ class Workspaces {
           }
         },
       },
+      {
+        path: 'pages.*',
+        handler: async (allDiffs: DSULDiff[]) => {
+          // First find slug renaming to merge their create+delete diff into a single update
+          // Without this, corresponding permission entry would be recreated from scratch (& thus emptied)
+          const createdDiffs = allDiffs.filter(
+            (cur) => cur.type == DiffType.ValueCreated
+          );
+          const removeDiffIdxs = new Set();
+          for (let creation of createdDiffs) {
+            const sameIdDeletion = allDiffs.findIndex(
+              (cur) =>
+                cur.type == DiffType.ValueDeleted &&
+                cur.value.id == creation.value.id
+            );
+            if (sameIdDeletion !== -1) {
+              removeDiffIdxs.add(sameIdDeletion);
+              creation.type = DiffType.ValueUpdated;
+            }
+          }
+          // Merge & clean
+          allDiffs = allDiffs
+            .map((cur, idx) => {
+              if (removeDiffIdxs.has(idx)) {
+                return false;
+              }
+              delete cur?.value?.createdAt;
+              delete cur?.value?.createdBy;
+              delete cur?.value?.updatedAt;
+              delete cur?.value?.updatedBy;
+              delete cur?.value?.permissions;
+              delete cur?.value?.workspaceId;
+              delete cur?.value?.workspaceSlug;
+              if (cur?.value?.__migrate) {
+                cur.type = DiffType.ValueUpdated;
+              }
+              return cur;
+            })
+            .filter(Boolean) as DSULDiff[];
+
+          let deleteUnlinkedPages = false;
+          for (let { type, value, root, parentKey: pageSlug } of allDiffs) {
+            const page = value as Prismeai.Page;
+            page.slug = pageSlug;
+            switch (type) {
+              case DiffType.ValueCreated:
+                await this.pages.createPage(root, page);
+                deleteUnlinkedPages = true;
+                break;
+              case DiffType.ValueUpdated:
+                await this.pages.updatePage(root, { slug: pageSlug }, page);
+                break;
+              case DiffType.ValueDeleted:
+                deleteUnlinkedPages = true;
+                break;
+            }
+          }
+          if (deleteUnlinkedPages) {
+            setTimeout(async () => {
+              const workspace: Prismeai.Workspace = allDiffs?.[0]
+                ?.root as Prismeai.Workspace;
+              const knownIds = Object.values(workspace?.pages || {})
+                .map((cur) => cur.id)
+                .filter(Boolean);
+              if (knownIds?.length) {
+                await this.pages.deleteUnlinkedPages(
+                  workspace.id!,
+                  knownIds as any
+                );
+              }
+            }, 2000);
+          }
+        },
+      },
     ];
   }
 
@@ -178,6 +254,10 @@ class Workspaces {
    */
 
   createWorkspace = async (workspace: Prismeai.Workspace) => {
+    if (!workspace.slug) {
+      workspace.slug = hri.random();
+    }
+
     this.broker.buffer(true);
     this.broker.send<Prismeai.CreatedWorkspace['payload']>(
       EventType.CreatedWorkspace,
@@ -190,12 +270,29 @@ class Workspaces {
     await this.accessManager.create(SubjectType.Workspace, {
       id: workspace.id,
       name: workspace.name,
+      slug: workspace.slug!,
     });
     await this.storage.save(workspace.id || nanoid(7), workspace);
 
     // Send events
     await this.broker.flush(true);
     return workspace;
+  };
+
+  findWorkspaces = async (
+    query?: PrismeaiAPI.GetWorkspaces.QueryParameters
+  ) => {
+    const { limit, page } = query || {};
+    return await this.accessManager.findAll(
+      SubjectType.Workspace,
+      {},
+      {
+        pagination: {
+          limit,
+          page,
+        },
+      }
+    );
   };
 
   getWorkspace = async (workspaceId: string, version?: string) => {
@@ -210,6 +307,10 @@ class Workspaces {
     ) {
       throw new InvalidVersionError(`Unknown version name '${version}'`);
     }
+    return await this.getWorkspaceAsAdmin(workspaceId, version);
+  };
+
+  getWorkspaceAsAdmin = async (workspaceId: string, version?: string) => {
     return await this.storage.get(workspaceId, version || 'current');
   };
 
@@ -223,6 +324,7 @@ class Workspaces {
       name: workspace.name,
       photo: workspace.photo,
       description: workspace.description,
+      slug: workspace.slug || hri.random(),
     };
 
     let deleteVersions;
@@ -263,6 +365,9 @@ class Workspaces {
     workspaceId: string,
     workspace: Prismeai.Workspace
   ) => {
+    if (!workspace.slug) {
+      workspace.slug = hri.random();
+    }
     this.broker.buffer(true);
     this.broker.send<Prismeai.UpdatedWorkspace['payload']>(
       EventType.UpdatedWorkspace,
@@ -394,6 +499,7 @@ class Workspaces {
         await handler(dsulDiffs);
       }
     }
+
     return diffs;
   }
 

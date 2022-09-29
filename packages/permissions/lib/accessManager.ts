@@ -265,7 +265,7 @@ export class AccessManager<
     return subject;
   }
 
-  private model<returnType extends SubjectType>(
+  public model<returnType extends SubjectType>(
     subjectType: returnType
   ): AccessibleRecordModel<Document<SubjectInterfaces[returnType], Role>> {
     if (!(subjectType in this.models)) {

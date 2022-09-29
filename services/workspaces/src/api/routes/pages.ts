@@ -6,7 +6,7 @@ import DSULStorage from '../../services/DSULStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
 
-export default function init(
+export function initPagesBackoffice(
   workspacesStorage: DSULStorage,
   appsStorage: DSULStorage
 ) {
@@ -72,10 +72,7 @@ export default function init(
       params: { workspaceId, id },
       accessManager,
       broker,
-    }: Request<
-      PrismeaiAPI.GetPage.PathParameters &
-        PrismeaiAPI.GetPageBySlug.PathParameters
-    >,
+    }: Request<PrismeaiAPI.GetPage.PathParameters>,
     res: Response<PrismeaiAPI.GetPage.Responses.$200>
   ) {
     const { workspaces } = getServices({
@@ -83,10 +80,10 @@ export default function init(
       accessManager,
       broker,
     });
-    const page = await workspaces.pages.getPage({
-      $or: [{ id }, { slug: id }],
-    });
-
+    // Handle Legacy "slug" query
+    const query =
+      typeof workspaceId == 'undefined' ? { $or: [{ id }, { slug: id }] } : id;
+    const page = await workspaces.pages.getPage(query as any);
     // Get blocks urls from workspace and apps
     const authorizedAccessManager = await accessManager.as({
       id: 'api',
@@ -98,43 +95,13 @@ export default function init(
       accessManager: authorizedAccessManager,
       broker,
     });
-    const workspace = await workspacesAsRoot.getWorkspace(
-      page.workspaceId || workspaceId
+    const workspace = await workspacesAsRoot.getWorkspace(page.workspaceId!);
+    const apps = await workspacesAsRoot.appInstances.list(page.workspaceId!);
+    const detailedPage = workspaces.pages.getDetailedPage(
+      page,
+      workspace,
+      apps
     );
-    const apps = await workspacesAsRoot.appInstances.list(
-      page.workspaceId || workspaceId
-    );
-
-    const getBlockDetails = (name: string) => {
-      if (workspace.blocks && workspace.blocks[name]) {
-        return { url: workspace.blocks[name].url };
-      }
-      const details = apps.reduce<{
-        url: string;
-        appInstance: string;
-      } | null>((prev, { slug: appInstance, blocks }) => {
-        if (prev) return prev;
-        const found = blocks.find(
-          ({ slug }) => `${appInstance}.${slug}` === name
-        );
-        return found
-          ? {
-              url: found.url || '',
-              appInstance,
-            }
-          : null;
-      }, null);
-      return details || { url: '', appInstance: '' };
-    };
-    const detailedPage: Prismeai.DetailedPage = {
-      ...page,
-      blocks: page.blocks.map((block) => ({
-        ...block,
-        ...(block.name
-          ? getBlockDetails(block.name)
-          : { url: '', appInstance: '' }),
-      })),
-    };
 
     res.send(detailedPage);
   }
@@ -142,7 +109,7 @@ export default function init(
   async function updatePageHandler(
     {
       context,
-      params: { id },
+      params: { workspaceId, id },
       body,
       accessManager,
       broker,
@@ -158,7 +125,7 @@ export default function init(
       accessManager,
       broker,
     });
-    const result = await workspaces.pages.updatePage(id, body);
+    const result = await workspaces.pages.updatePage(workspaceId, { id }, body);
     res.send(result);
   }
 
@@ -188,6 +155,79 @@ export default function init(
   app.patch(`/:id`, asyncRoute(updatePageHandler));
   app.delete(`/:id`, asyncRoute(deletePageHandler));
   app.get(`/:id`, asyncRoute(getPageHandler));
+
+  return app;
+}
+
+export function initPagesPublic(
+  workspacesStorage: DSULStorage,
+  appsStorage: DSULStorage
+) {
+  const getServices = ({
+    context,
+    accessManager,
+    broker,
+  }: {
+    context: PrismeContext;
+    accessManager: Required<AccessManager>;
+    broker: Broker;
+  }) => {
+    const apps = new Apps(accessManager, broker.child(context), appsStorage);
+    const workspaces = new Workspaces(
+      accessManager,
+      apps,
+      broker.child(context),
+      workspacesStorage
+    );
+    return { workspaces };
+  };
+
+  async function getPageHandler(
+    {
+      context,
+      params: { workspaceSlug, pageSlug },
+      accessManager,
+      broker,
+    }: Request<
+      PrismeaiAPI.GetPageBySlug.PathParameters &
+        PrismeaiAPI.GetPageBySlug.PathParameters
+    >,
+    res: Response<PrismeaiAPI.GetPage.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const page = await workspaces.pages.getPage({
+      workspaceSlug,
+      slug: pageSlug,
+    });
+    // Get blocks urls from workspace and apps
+    const authorizedAccessManager = await accessManager.as({
+      id: 'api',
+      sessionId: 'adminSession',
+      role: Role.SuperAdmin,
+    });
+    const { workspaces: workspacesAsRoot } = getServices({
+      context,
+      accessManager: authorizedAccessManager,
+      broker,
+    });
+    const workspace = await workspacesAsRoot.getWorkspace(page.workspaceId!);
+    const apps = await workspacesAsRoot.appInstances.list(page.workspaceId!);
+    const detailedPage = workspaces.pages.getDetailedPage(
+      page,
+      workspace,
+      apps
+    );
+
+    res.send(detailedPage);
+  }
+
+  const app = express.Router({ mergeParams: true });
+
+  app.get(`/:workspaceSlug/:pageSlug`, asyncRoute(getPageHandler));
 
   return app;
 }

@@ -2,7 +2,7 @@ import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
 import { nanoid } from 'nanoid';
 import { EventType } from '../../eda';
-import { AccessManager, SubjectType } from '../../permissions';
+import { AccessManager } from '../../permissions';
 import { Apps, Workspaces } from '../../services';
 import DSULStorage from '../../services/DSULStorage';
 import FileStorage from '../../services/FileStorage';
@@ -122,20 +122,18 @@ export default function init(
   async function getWorkspacesHandler(
     {
       accessManager,
-      query: { limit, page },
+      query,
+      context,
+      broker,
     }: Request<any, any, any, PrismeaiAPI.GetWorkspaces.QueryParameters>,
     res: Response<PrismeaiAPI.GetWorkspaces.Responses.$200>
   ) {
-    const result = await accessManager.findAll(
-      SubjectType.Workspace,
-      {},
-      {
-        pagination: {
-          limit,
-          page,
-        },
-      }
-    );
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const result = await workspaces.findWorkspaces(query);
     res.send(result);
   }
 

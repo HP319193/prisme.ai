@@ -72,7 +72,12 @@ export const config: PermissionsConfig<
       rules: [
         {
           action: ActionType.Manage,
-          subject: [SubjectType.Workspace, SubjectType.App, SubjectType.File],
+          subject: [
+            SubjectType.Workspace,
+            SubjectType.App,
+            SubjectType.File,
+            SubjectType.Page,
+          ],
         },
       ],
     },

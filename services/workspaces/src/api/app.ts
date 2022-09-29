@@ -146,7 +146,14 @@ export function initAPI(
   /**
    * User routes
    */
-  initRoutes(app, workspacesStorage, appsStorage, uploadsStorage);
+  initRoutes(
+    app,
+    workspacesStorage,
+    appsStorage,
+    uploadsStorage,
+    accessManager,
+    broker
+  );
 
   /**
    * ERROR HANDLING
