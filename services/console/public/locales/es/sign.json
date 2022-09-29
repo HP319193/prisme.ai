@@ -22,6 +22,7 @@
     "password": "Contraseña",
     "firstName": "Appelido",
     "lastName": "Nombre",
+    "cgu": "Al continuar, usted acepta los <a>Términos de Servicio</a>.",
     "submit": "Registro",
     "error": "Se ha producido un error, póngase en contacto con el servicio de asistencia técnica",
     "error_AuthenticationError": "Ya existe una cuenta para este correo electrónico, pero la contraseña no es válida.",
