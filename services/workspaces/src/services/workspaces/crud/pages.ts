@@ -97,9 +97,9 @@ class Pages {
       workspaceId,
     });
     return pagesPerms
-      .filter((cur) => workspace.pages?.[cur.slug!])
+      .filter((cur) => cur.blocks || workspace.pages?.[cur.slug!])
       .map((perms) => ({
-        ...workspace.pages?.[perms.slug!],
+        ...(workspace.pages?.[perms.slug!] || { ...perms, __migrate: true }),
         slug: perms.slug,
         workspaceId: perms.workspaceId,
         workspaceSlug: perms.workspaceSlug,
@@ -114,11 +114,11 @@ class Pages {
       perms.workspaceId!
     );
     const page = workspace.pages?.[perms.slug!];
-    if (!page) {
+    if (!page && !perms.blocks) {
       throw new ObjectNotFoundError(`Unknown page ${JSON.stringify(pageId)}`);
     }
     return {
-      ...page,
+      ...(page || { ...perms, __migrate: true }),
       slug: perms.slug,
       workspaceId: perms.workspaceId,
       workspaceSlug: perms.workspaceSlug,
@@ -197,9 +197,13 @@ class Pages {
     }
 
     // Migration from db pages, remove someday
-    if ((page as any).__migrate) {
+    if (!currentPageDSUL && (page as any).__migrate) {
       delete (page as any).__migrate;
       currentPageDSUL = page;
+      if (!newSlug) {
+        newSlug = hri.random();
+        currentPageDSUL.slug = newSlug;
+      }
     }
 
     if (!currentPageDSUL) {

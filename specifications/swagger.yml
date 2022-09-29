@@ -3245,6 +3245,9 @@ components:
           $ref: '#/components/schemas/PermissionsMap'
         apiKey:
           type: string
+        __migrate:
+          type: boolean
+          description: "Temporary field for old pages conversion to DSUL"
 
     DetailedPage:
       allOf:

@@ -1221,6 +1221,10 @@ declare namespace Prismeai {
         updatedAt?: string;
         permissions?: PermissionsMap;
         apiKey?: string;
+        /**
+         * Temporary field for old pages conversion to DSUL
+         */
+        __migrate?: boolean;
     }
     export interface Emit {
         emit: {
@@ -1522,6 +1526,10 @@ declare namespace Prismeai {
         updatedAt?: string;
         permissions?: PermissionsMap;
         apiKey?: string;
+        /**
+         * Temporary field for old pages conversion to DSUL
+         */
+        __migrate?: boolean;
     }
     export interface PagePermissionsDeleted {
         /**
