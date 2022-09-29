@@ -291,6 +291,30 @@ class Pages {
       });
     }
   };
+
+  updatePagesWorkspaceSlug = async (
+    workspaceId: string,
+    workspaceSlug: string
+  ) => {
+    const Pages = await this.accessManager.model(SubjectType.Page);
+    try {
+      await Pages.updateMany(
+        {
+          workspaceId,
+        },
+        {
+          $set: {
+            workspaceSlug,
+          },
+        }
+      );
+    } catch (err) {
+      logger.warn({
+        msg: 'An error occured while updating pages workspaceSlug',
+        err,
+      });
+    }
+  };
 }
 
 export default Pages;

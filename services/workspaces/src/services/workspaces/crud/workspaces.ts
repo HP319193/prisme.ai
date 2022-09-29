@@ -20,7 +20,7 @@ import {
 } from '../../../utils/getObjectsDifferences';
 import { extractObjectsByPath } from '../../../utils/extractObjectsByPath';
 import { logger } from '../../../logger';
-import { InvalidVersionError } from '../../../errors';
+import { AlreadyUsedError, InvalidVersionError } from '../../../errors';
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 
 interface DSULDiff {
@@ -64,6 +64,23 @@ class Workspaces {
     this.pages = new Pages(this, this.accessManager, broker);
 
     this.diffHandlers = [
+      {
+        path: 'slug',
+        handler: async (allDiffs: DSULDiff[]) => {
+          if (allDiffs?.[0]?.type !== DiffType.ValueUpdated) {
+            return;
+          }
+          const workspace = allDiffs[0].root as Prismeai.Workspace;
+          const workspaceSlug = allDiffs[0].value as string;
+          if (!workspace?.id || !workspaceSlug) {
+            return;
+          }
+          await this.pages.updatePagesWorkspaceSlug(
+            workspace.id!,
+            workspaceSlug
+          );
+        },
+      },
       {
         path: 'config',
         handler: async (allDiffs: DSULDiff[]) => {
@@ -337,10 +354,19 @@ class Workspaces {
       Object.assign(versionRequest, newVersion);
       deleteVersions = expiredVersions;
     }
-    await this.accessManager.update(
-      SubjectType.Workspace,
-      updatedWorkspaceMetadata
-    );
+    try {
+      await this.accessManager.update(
+        SubjectType.Workspace,
+        updatedWorkspaceMetadata
+      );
+    } catch (err) {
+      if ((err as { code: number }).code === 11000) {
+        throw new AlreadyUsedError(
+          `Workspaceslug '${updatedWorkspaceMetadata.slug}' is already used`,
+          { slug: 'AlreadyUsedError' }
+        );
+      }
+    }
 
     await this.storage.save(workspaceId, workspace);
     if (versionRequest) {
