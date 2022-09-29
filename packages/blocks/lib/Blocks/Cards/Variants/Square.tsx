@@ -4,8 +4,8 @@ import BlockTitle from '../../Internal/BlockTitle';
 import { CardProps, CardSquare } from '../types';
 import useLocalizedText from '../../../useLocalizedText';
 import CarouselNavigation from '../CarouselNavigation';
-import { truncate } from '../../../utils/truncate';
 import ActionOrLink from '../ActionOrLink';
+import Truncated from '../Truncated';
 import { RichTextRenderer } from '../../RichText';
 
 interface SquareProps extends CardProps<CardSquare[]> {}
@@ -59,14 +59,19 @@ const Square = ({
                       style={getCoverStyle(index)}
                     >
                       <div className={tw`flex flex-col text-white`}>
-                        <div className={tw`font-bold text-[1.25rem]`}>
-                          {truncate(localize(title), 25)}
-                        </div>
-                        <div className={tw`text-[0.875rem]`}>
+                        <Truncated
+                          className={tw`font-bold text-[1.25rem] mb-2 leading-[1.2] max-h-[3rem] overflow-hidden`}
+                        >
+                          {localize(title)}
+                        </Truncated>
+                        <Truncated
+                          className={tw`text-[0.875rem] leading-[1.2] max-h-[4.2rem] overflow-hidden`}
+                          ellipsis="…"
+                        >
                           <RichTextRenderer>
-                            {truncate(localize(description), 65)}
+                            {localize(description)}
                           </RichTextRenderer>
-                        </div>
+                        </Truncated>
                       </div>
                     </div>
                   </div>

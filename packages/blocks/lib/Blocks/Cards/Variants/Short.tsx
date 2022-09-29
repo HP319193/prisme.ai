@@ -2,9 +2,9 @@ import tw from '../../../tw';
 import BlockTitle from '../../Internal/BlockTitle';
 import { CardProps, CardShort } from '../types';
 import useLocalizedText from '../../../useLocalizedText';
-import { truncate } from '../../../utils/truncate';
 import CarouselNavigation from '../CarouselNavigation';
 import ActionOrLink from '../ActionOrLink';
+import Truncated from '../Truncated';
 import { RichTextRenderer } from '../../RichText';
 
 interface ShortProps extends CardProps<CardShort[]> {}
@@ -64,18 +64,25 @@ const Short = ({
                   >
                     <div className={tw`space-y-[0.625rem] m-[1.25rem]`}>
                       {subtitle && (
-                        <div className={tw`text-[0.75rem]`}>
-                          {truncate(localize(subtitle), 40)}
-                        </div>
+                        <Truncated
+                          className={tw`text-[0.75rem] leading-[1.2] max-h-[1rem] overflow-hidden`}
+                        >
+                          {localize(subtitle)}
+                        </Truncated>
                       )}
-                      <div className={tw`font-bold text-[0.875rem]`}>
-                        {truncate(localize(title), 60)}
-                      </div>
-                      <div className={tw`text-[0.875rem]`}>
+                      <Truncated
+                        className={tw`font-bold text-[0.875rem] leading-[1.2] max-h-[1.2rem] overflow-hidden`}
+                      >
+                        {localize(title)}
+                      </Truncated>
+                      <Truncated
+                        className={tw`text-[0.875rem] leading-[1.2] max-h-[4.2rem] overflow-hidden`}
+                        ellipsis="…"
+                      >
                         <RichTextRenderer>
-                          {truncate(localize(description), 73)}
+                          {localize(description)}
                         </RichTextRenderer>
-                      </div>
+                      </Truncated>
                     </div>
                   </div>
                 </ActionOrLink>

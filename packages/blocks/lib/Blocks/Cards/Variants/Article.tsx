@@ -2,9 +2,9 @@ import tw from '../../../tw';
 import BlockTitle from '../../Internal/BlockTitle';
 import { CardArticle, CardProps } from '../types';
 import useLocalizedText from '../../../useLocalizedText';
-import { truncate } from '../../../utils/truncate';
 import CarouselNavigation from '../CarouselNavigation';
 import ActionOrLink from '../ActionOrLink';
+import Truncated from '../Truncated';
 import { RichTextRenderer } from '../../RichText';
 
 interface ArticleProps extends CardProps<CardArticle[]> {}
@@ -50,31 +50,38 @@ const Article = ({
                       style={getCoverStyle(index)}
                     >
                       {tag && (
-                        <div
-                          className={tw`card-cover__card-tag card-tag max-h-[2rem] m-[0.625rem] px-[0.938rem] py-[0.45rem]
+                        <Truncated
+                          className={tw`card-cover__card-tag card-tag leading-[1.7] max-h-[2rem] overflow-hidden m-[0.625rem] px-[0.938rem] py-[0.45rem]
                       rounded-[0.938rem] text-[12px] text-white`}
                           style={{
                             backgroundColor: 'rgba(0,0,0, 0.75)',
                           }}
                         >
-                          {truncate(localize(tag), 25)}
-                        </div>
+                          {localize(tag)}
+                        </Truncated>
                       )}
                     </div>
                     <div className={tw`space-y-[0.625rem] m-[1.25rem]`}>
                       {subtitle && (
-                        <div className={tw`text-[0.75rem]`}>
-                          {truncate(localize(subtitle), 40)}
-                        </div>
+                        <Truncated
+                          className={tw`text-[0.75rem] leading-[1.2] max-h-[1rem] overflow-hidden`}
+                        >
+                          {localize(subtitle)}
+                        </Truncated>
                       )}
-                      <div className={tw`font-bold text-[1.25rem]`}>
-                        {truncate(localize(title), 40)}
-                      </div>
-                      <div className={tw`text-[0.875rem]`}>
+                      <Truncated
+                        className={tw`font-bold text-[1.25rem] leading-[1.2] max-h-[3rem] overflow-hidden`}
+                      >
+                        {localize(title)}
+                      </Truncated>
+                      <Truncated
+                        className={tw`text-[0.875rem] leading-[1.2] max-h-[4.2rem] overflow-hidden`}
+                        ellipsis="…"
+                      >
                         <RichTextRenderer>
-                          {truncate(localize(description), 110)}
+                          {localize(description)}
                         </RichTextRenderer>
-                      </div>
+                      </Truncated>
                     </div>
                   </div>
                 </ActionOrLink>
