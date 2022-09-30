@@ -2,12 +2,8 @@ import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import NextLink from 'next/link';
 import Image from 'next/image';
-import ReactDom from 'react-dom';
-import * as prismeaiDS from '@prisme.ai/design-system';
 import { Loading as DSLoading } from '@prisme.ai/design-system';
-import * as prismeaiBlocks from '@prisme.ai/blocks';
 import { BlocksProvider } from '@prisme.ai/blocks';
-import * as prismeaiSDK from '../utils/api';
 import UserProvider from '../components/UserProvider';
 import WorkspacesProvider from '../components/WorkspacesProvider';
 import { NextPage } from 'next';
@@ -23,6 +19,7 @@ import { AppsProvider } from '../components/AppsProvider';
 import PagesProvider from '../components/PagesProvider/PagesProvider';
 import down from '../icons/down.svg';
 import { WorkspacesUsageProvider } from '../components/WorkspacesUsage';
+import externals from '../utils/externals';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -33,14 +30,6 @@ type NextPageWithLayout = NextPage & {
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
-};
-
-const externals = {
-  React: { ...React, default: React },
-  ReactDom: { ...ReactDom, default: ReactDom },
-  prismeaiDS,
-  prismeaiSDK,
-  prismeaiBlocks,
 };
 
 const Loading = () => (

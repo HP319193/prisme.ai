@@ -4,6 +4,7 @@ import { usePageBuilder } from './context';
 
 import AddBlock from './AddBlock';
 import { EditOutlined } from '@ant-design/icons';
+import ExternalSchemaLoader from './ExternalSchemaLoader';
 
 export const PageBlocks = () => {
   const { localize } = useLocalizedText();
@@ -19,7 +20,7 @@ export const PageBlocks = () => {
         <div className="mb-6">
           <AddBlock after={-1} />
         </div>
-        {blocksInPage.map(({ key, name }, index) => (
+        {blocksInPage.map(({ key, name, url, appInstance }, index) => (
           <div key={key} className="flex flex-col snap-start">
             <button
               className="flex flex-1 max-w-full mb-6"
@@ -30,6 +31,14 @@ export const PageBlocks = () => {
                   {localize(name)}
                   <EditOutlined />
                 </span>
+                {appInstance && url && (
+                  <ExternalSchemaLoader
+                    blockId={key}
+                    appInstance={appInstance}
+                    url={url}
+                    name={name}
+                  />
+                )}
               </div>
             </button>
             <div className="mb-6">
