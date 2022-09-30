@@ -108,9 +108,9 @@ const Actions = ({
                                 item.type === 'event' ? item.value : undefined
                               }
                               payload={item.payload}
-                              value={truncate(localize(item.text), 20)}
+                              value={truncate(localize(item.text), 60)}
                               popup={item.popup}
-                              className={tw`flex flex-grow rounded-[0.625rem] h-[3.125rem] items-center justify-center font-semibold text-[0.875rem] ${getBtnClassName(
+                              className={tw`flex flex-grow rounded-[0.625rem] h-[3.125rem] items-center justify-center text-center font-semibold text-[0.875rem] ${getBtnClassName(
                                 backgroundColor
                               )}`}
                             />
