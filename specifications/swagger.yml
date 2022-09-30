@@ -1954,10 +1954,56 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
+  /v2/pages/{workspaceSlug}/{pageSlug}:
+    get:
+      description: Fetch a page by slugs
+      operationId: getPageBySlug
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceSlug'
+          in: 'path'
+          description: 'Workspace slug'
+          required: true
+          schema:
+            type: string
+        - name: 'pageSlug'
+          in: 'path'
+          description: 'Page slug'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedPage'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  # Retro-compatibility
   /v2/pages/{slug}:
     get:
       description: Fetch a page by slug
-      operationId: getPageBySlug
+      operationId: getPageBySlugLegacy
       tags:
         - 'Prisme.ai Workspaces'
       parameters:
@@ -2961,11 +3007,11 @@ components:
 
     Workspace:
       allOf:
+        - $ref: '#/components/schemas/DSUL'
         - type: object
           properties:
             createdBy:
               type: string
-        - $ref: '#/components/schemas/DSUL'
 
     WorkspaceVersion:
       type: object
@@ -3016,6 +3062,12 @@ components:
         updatedAt:
           type: string
         id:
+          type: string
+        pages:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/Page"
+        slug:
           type: string
 
     Config:
@@ -3150,10 +3202,16 @@ components:
           $ref: '#/components/schemas/TypedArgument'
 
     Page:
+      allOf:
+        - $ref: '#/components/schemas/PageWithoutBlocks'
+        - required:
+            - name
+            - blocks
+
+    PageWithoutBlocks: 
       type: object
       required:
         - name
-        - blocks
       description: Page
       additionalProperties: false
       properties:
@@ -3162,6 +3220,8 @@ components:
         description:
           $ref: '#/components/schemas/LocalizedText'
         workspaceId:
+          type: string
+        workspaceSlug:
           type: string
         blocks:
           type: array
@@ -3191,6 +3251,9 @@ components:
           $ref: '#/components/schemas/PermissionsMap'
         apiKey:
           type: string
+        __migrate:
+          type: boolean
+          description: "Temporary field for old pages conversion to DSUL"     
 
     DetailedPage:
       allOf:
@@ -4535,7 +4598,7 @@ components:
             - page
           properties:
             page:
-              $ref: '#/components/schemas/Page'
+              $ref: '#/components/schemas/PageWithoutBlocks'
 
     PagePermissionsShared:
       type: object

@@ -89,7 +89,7 @@ it('createWorkspace should call accessManager, DSULStorage, broker', async () =>
   expect(result).toBe(workspace);
   expect(mockedAccessManager.create).toHaveBeenCalledWith(
     SubjectType.Workspace,
-    { id: workspace.id, name: workspace.name }
+    expect.objectContaining({ id: workspace.id, name: workspace.name })
   );
   expect(mockedStorage.save).toHaveBeenCalledWith('123456', workspace);
   expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.created', {
@@ -118,7 +118,7 @@ it('updateWorkspace should call accessManager, DSULStorage, broker', async () =>
   expect(result).toBe(workspace);
   expect(mockedAccessManager.update).toHaveBeenCalledWith(
     SubjectType.Workspace,
-    { id: workspace.id, name: workspace.name }
+    expect.objectContaining({ id: workspace.id, name: workspace.name })
   );
   expect(mockedStorage.save).toHaveBeenCalledWith('123456', workspace);
   expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.updated', {
@@ -256,11 +256,13 @@ it('save should call accessManager & DSULStorage', async () => {
     mockedStorage
   );
 
-  await workspaceCrud.save(workspace.id, workspace);
+  await workspaceCrud.save(workspace.id!, {
+    ...workspace,
+  });
 
   expect(mockedAccessManager.update).toHaveBeenCalledWith(
     SubjectType.Workspace,
-    { id: workspace.id, name: workspace.name }
+    expect.objectContaining({ id: workspace.id, name: workspace.name })
   );
   expect(mockedStorage.save).toHaveBeenCalledWith('123456', workspace);
 });

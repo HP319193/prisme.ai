@@ -10,6 +10,7 @@ export { SubjectType, Role, ActionType };
 export interface WorkspaceMetadata {
   id: string;
   name: string;
+  slug: string;
   photo?: string;
   versions?: Required<Prismeai.WorkspaceVersion>[];
   description?: Prismeai.LocalizedText;
@@ -29,7 +30,7 @@ export type AccessManager = GenericAccessManager<
 >;
 
 export function initAccessManager(storage: AccessManagerOptions['storage']) {
-  return new GenericAccessManager<
+  const accessManager = new GenericAccessManager<
     SubjectType,
     SubjectInterfaces,
     Prismeai.Role | Role.SuperAdmin
@@ -42,6 +43,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           photo: String,
           description: Schema.Types.Mixed,
           versions: Schema.Types.Mixed,
+          slug: { type: String, index: true, unique: true, sparse: true },
         },
         [SubjectType.App]: {
           workspaceId: { type: String, index: true },
@@ -53,10 +55,11 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
         },
         [SubjectType.Page]: {
           workspaceId: { type: String, index: true },
+          workspaceSlug: { type: String, index: true },
           name: Schema.Types.Mixed,
           description: Schema.Types.Mixed,
           blocks: Schema.Types.Mixed,
-          slug: { type: String, sparse: true, unique: true },
+          slug: { type: String },
           styles: { type: String },
           apiKey: { type: String },
         },
@@ -74,6 +77,20 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
     },
     config
   );
+
+  // Compound indices for pages
+  accessManager.model(SubjectType.Page).schema.index(
+    {
+      workspaceSlug: 1,
+      slug: 1,
+    },
+    {
+      unique: true,
+      sparse: true,
+    }
+  );
+
+  return accessManager;
 }
 
 export async function getSuperAdmin(baseAccessManager: AccessManager) {

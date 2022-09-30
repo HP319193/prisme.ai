@@ -4,3 +4,5 @@ export const HEAPDUMPS_DIRECTORY =
 export const DEBUG = ['dev', 'development'].includes(
   process.env.NODE_ENV || 'production'
 );
+
+export const MIGRATION_TOKEN = process.env.MIGRATION_TOKEN;

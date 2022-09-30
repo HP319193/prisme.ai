@@ -71,7 +71,12 @@ export function initAPI(
    */
   app.use(
     validationMiddleware({
-      ignorePaths: ['^/sys', '^/v2/files/', '^/v2/workspaces/.*/files'],
+      ignorePaths: [
+        '^/sys',
+        '^/v2/files/',
+        '^/v2/workspaces/.*/files',
+        '^/v2/pages/.*/permissions',
+      ],
     }),
     validationErrorMiddleware
   );
@@ -146,7 +151,14 @@ export function initAPI(
   /**
    * User routes
    */
-  initRoutes(app, workspacesStorage, appsStorage, uploadsStorage);
+  initRoutes(
+    app,
+    workspacesStorage,
+    appsStorage,
+    uploadsStorage,
+    accessManager,
+    broker
+  );
 
   /**
    * ERROR HANDLING

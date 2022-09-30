@@ -1069,6 +1069,10 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         id?: string;
+        pages?: {
+            [name: string]: /* Page */ Page;
+        };
+        slug?: string;
     }
     export interface Delete {
         delete: {
@@ -1120,7 +1124,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.pages.deleted";
         payload: {
-            page: /* Page */ Page;
+            page: /* Page */ PageWithoutBlocks;
         };
     }
     export interface DeletedWorkspace {
@@ -1199,6 +1203,7 @@ declare namespace Prismeai {
         name: LocalizedText;
         description?: LocalizedText;
         workspaceId?: string;
+        workspaceSlug?: string;
         blocks: {
             name?: string;
             config?: {
@@ -1216,6 +1221,10 @@ declare namespace Prismeai {
         updatedAt?: string;
         permissions?: PermissionsMap;
         apiKey?: string;
+        /**
+         * Temporary field for old pages conversion to DSUL
+         */
+        __migrate?: boolean;
     }
     export interface Emit {
         emit: {
@@ -1501,6 +1510,7 @@ declare namespace Prismeai {
         name: LocalizedText;
         description?: LocalizedText;
         workspaceId?: string;
+        workspaceSlug?: string;
         blocks: {
             name?: string;
             config?: {
@@ -1516,6 +1526,10 @@ declare namespace Prismeai {
         updatedAt?: string;
         permissions?: PermissionsMap;
         apiKey?: string;
+        /**
+         * Temporary field for old pages conversion to DSUL
+         */
+        __migrate?: boolean;
     }
     export interface PagePermissionsDeleted {
         /**
@@ -1538,6 +1552,34 @@ declare namespace Prismeai {
             subjectId: string;
             permissions: UserPermissions;
         };
+    }
+    /**
+     * Page
+     */
+    export interface PageWithoutBlocks {
+        name: LocalizedText;
+        description?: LocalizedText;
+        workspaceId?: string;
+        workspaceSlug?: string;
+        blocks?: {
+            name?: string;
+            config?: {
+                [name: string]: any;
+            };
+        }[];
+        id?: string;
+        slug?: string;
+        styles?: string;
+        createdBy?: string;
+        updatedBy?: string;
+        createdAt?: string;
+        updatedAt?: string;
+        permissions?: PermissionsMap;
+        apiKey?: string;
+        /**
+         * Temporary field for old pages conversion to DSUL
+         */
+        __migrate?: boolean;
     }
     export interface PendingWait {
         /**
@@ -2049,7 +2091,6 @@ declare namespace Prismeai {
         endpoint: boolean | string;
     };
     export interface Workspace {
-        createdBy?: string;
         name: string;
         description?: LocalizedText;
         photo?: string;
@@ -2069,6 +2110,11 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         id?: string;
+        pages?: {
+            [name: string]: /* Page */ Page;
+        };
+        slug?: string;
+        createdBy?: string;
     }
     export interface WorkspacePermissionsDeleted {
         /**
@@ -2649,6 +2695,22 @@ declare namespace PrismeaiAPI {
         }
     }
     namespace GetPageBySlug {
+        namespace Parameters {
+            export type PageSlug = string;
+            export type WorkspaceSlug = string;
+        }
+        export interface PathParameters {
+            workspaceSlug: Parameters.WorkspaceSlug;
+            pageSlug: Parameters.PageSlug;
+        }
+        namespace Responses {
+            export type $200 = /* Page */ Prismeai.DetailedPage;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace GetPageBySlugLegacy {
         namespace Parameters {
             export type Slug = string;
         }
