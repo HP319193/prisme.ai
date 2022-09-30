@@ -2118,7 +2118,6 @@ paths:
                   description: "App slug : Required on first publish"
                   type: string
                 description:
-                  type: string
                   $ref: "#/components/schemas/LocalizedText"
                 name:
                   type: string
@@ -3208,7 +3207,7 @@ components:
             - name
             - blocks
 
-    PageWithoutBlocks: 
+    PageWithoutBlocks:
       type: object
       required:
         - name
@@ -3253,7 +3252,7 @@ components:
           type: string
         __migrate:
           type: boolean
-          description: "Temporary field for old pages conversion to DSUL"     
+          description: "Temporary field for old pages conversion to DSUL"
 
     DetailedPage:
       allOf:
