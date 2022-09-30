@@ -155,7 +155,7 @@ class Pages {
     };
     const detailedPage: Prismeai.DetailedPage = {
       ...page,
-      blocks: page.blocks.map((block) => ({
+      blocks: page.blocks?.map((block) => ({
         ...block,
         ...(block.name
           ? getBlockDetails(block.name)
