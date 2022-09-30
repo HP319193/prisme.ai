@@ -1,11 +1,12 @@
 import './i18n';
 import * as React from 'react';
-import { ReactElement, ReactNode, useEffect, useState } from 'react';
+import { ReactElement, ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BlockProvider, BlockProviderProps } from './Provider';
 import { useBlocks } from './Provider/blocksContext';
 import * as builtinBlocks from './Blocks';
 import { Schema } from '@prisme.ai/design-system';
+import useExternalModule from './utils/useExternalModule';
 
 class BlockErrorBoundary extends React.Component {
   state = {
@@ -40,7 +41,9 @@ export interface BlockComponentProps {
     container?: HTMLElement;
   };
 }
-export type BlockComponent = (props: BlockComponentProps) => ReactElement & {
+export type BlockComponent = (
+  props: BlockComponentProps
+) => ReactElement & {
   schema?: Schema;
 };
 
@@ -52,55 +55,22 @@ export interface BlockLoaderProps extends BlockComponentProps {
 }
 
 export const ReactBlock = ({
-  url,
+  url = '',
   onLoad,
   ...componentProps
 }: BlockLoaderProps) => {
   const {
     i18n: { language },
   } = useTranslation('workspaces');
-  const [loading, setLoading] = useState(true);
   const {
     externals,
     components: { Loading },
   } = useBlocks();
 
-  useEffect(() => {
-    // @ts-ignore
-    if (process.browser) {
-      // @ts-ignore
-      window.__external = window.__external || externals;
-    }
+  const { module: Component, loading } = useExternalModule({
+    url,
+    externals,
   });
-
-  const [Component, setComponent] = useState<BlockComponent | null>(null);
-  useEffect(() => {
-    const uniqMethod = `__load_${Math.random()}`;
-    // @ts-ignore
-    window[uniqMethod] = (module) => {
-      setComponent(() => {
-        return module.default;
-      });
-      loading && onLoad && onLoad(module.default);
-      setLoading(false);
-    };
-    const s = document.createElement('script');
-
-    s.innerHTML = `
-    import * as module from '${url}';
-    try {
-      window['${uniqMethod}'](module);
-    } catch (e) {}
-    `;
-    s.type = 'module';
-    document.body.appendChild(s);
-
-    return () => {
-      // @ts-ignore
-      delete window[uniqMethod];
-      document.body.removeChild(s);
-    };
-  }, [onLoad, url]);
 
   return (
     <>
