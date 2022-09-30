@@ -7,10 +7,10 @@ interface BlockTitleProps {
 
 const BlockTitle = ({ value }: BlockTitleProps) => {
   return (
-    <div className={tw`block-cards__title-container title-container pt-8`}>
+    <div className={tw`block-cards__title-container title-container pt-4`}>
       <Title
         level={4}
-        className={`block-title ${tw`!text-[2.5rem] !text-theme-text`}`}
+        className={`block-title ${tw`!text-[1.333rem] !text-theme-text md:!text-[2.5rem]`}`}
       >
         {value}
       </Title>
