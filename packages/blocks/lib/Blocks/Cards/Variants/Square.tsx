@@ -69,7 +69,7 @@ const Square = ({
                           ellipsis="…"
                         >
                           <RichTextRenderer>
-                            {localize(description)}
+                            {description || ''}
                           </RichTextRenderer>
                         </Truncated>
                       </div>

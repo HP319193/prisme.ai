@@ -78,9 +78,7 @@ const Article = ({
                         className={tw`text-[0.875rem] leading-[1.2] max-h-[4.2rem] overflow-hidden`}
                         ellipsis="…"
                       >
-                        <RichTextRenderer>
-                          {localize(description)}
-                        </RichTextRenderer>
+                        <RichTextRenderer>{description || ''}</RichTextRenderer>
                       </Truncated>
                     </div>
                   </div>

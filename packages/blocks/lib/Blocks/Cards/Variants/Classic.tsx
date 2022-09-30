@@ -67,7 +67,7 @@ const Classic = ({
                       <div
                         className={`${tw`card__card-description card-description text-[10px] my-2 text-neutral-500 text-center`}`}
                       >
-                        <RichTextRenderer>{`${description}`}</RichTextRenderer>
+                        <RichTextRenderer>{description || ''}</RichTextRenderer>
                       </div>
                       {content &&
                         Array.isArray(content) &&

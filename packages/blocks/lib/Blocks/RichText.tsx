@@ -11,7 +11,9 @@ interface RichTextConfig {
 export const RichTextRenderer = ({
   children,
   ...props
-}: { children: string } & HTMLAttributes<HTMLDivElement>) => {
+}: {
+  children: string | Prismeai.LocalizedText;
+} & HTMLAttributes<HTMLDivElement>) => {
   const { localize } = useLocalizedText();
   const {
     components: { Link },
