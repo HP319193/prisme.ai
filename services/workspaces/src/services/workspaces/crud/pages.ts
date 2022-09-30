@@ -280,6 +280,9 @@ class Pages {
   };
 
   deleteUnlinkedPages = async (workspaceId: string, knownIds: string[]) => {
+    if (!workspaceId) {
+      return;
+    }
     const Pages = await this.accessManager.model(SubjectType.Page);
     try {
       await Pages.deleteMany({
