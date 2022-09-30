@@ -211,15 +211,17 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   const editInstructionDetails = useCallback(
     async (instruction: Prismeai.Instruction, onChange: any) => {
       hidePanel();
-      setInstructionEditing({
-        instruction,
-        onChange,
-        onSubmit: (instruction) => {
-          onChange(instruction);
-          hidePanel();
-        },
+      setTimeout(() => {
+        setInstructionEditing({
+          instruction,
+          onChange,
+          onSubmit: (instruction) => {
+            onChange(instruction);
+            hidePanel();
+          },
+        });
+        setPanelIsOpen(true);
       });
-      setPanelIsOpen(true);
     },
     [hidePanel]
   );
