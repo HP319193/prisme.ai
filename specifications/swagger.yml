@@ -3205,7 +3205,6 @@ components:
       type: object
       required:
         - name
-        - blocks
       description: Page
       additionalProperties: false
       properties:

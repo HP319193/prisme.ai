@@ -1204,7 +1204,7 @@ declare namespace Prismeai {
         description?: LocalizedText;
         workspaceId?: string;
         workspaceSlug?: string;
-        blocks: {
+        blocks?: {
             name?: string;
             config?: {
                 [name: string]: any;
@@ -1511,7 +1511,7 @@ declare namespace Prismeai {
         description?: LocalizedText;
         workspaceId?: string;
         workspaceSlug?: string;
-        blocks: {
+        blocks?: {
             name?: string;
             config?: {
                 [name: string]: any;
