@@ -3202,6 +3202,13 @@ components:
           $ref: '#/components/schemas/TypedArgument'
 
     Page:
+      allOf:
+        - $ref: '#/components/schemas/PageWithoutBlocks'
+        - required:
+            - name
+            - blocks
+
+    PageWithoutBlocks: 
       type: object
       required:
         - name
@@ -3246,7 +3253,7 @@ components:
           type: string
         __migrate:
           type: boolean
-          description: "Temporary field for old pages conversion to DSUL"
+          description: "Temporary field for old pages conversion to DSUL"     
 
     DetailedPage:
       allOf:
@@ -4591,7 +4598,7 @@ components:
             - page
           properties:
             page:
-              $ref: '#/components/schemas/Page'
+              $ref: '#/components/schemas/PageWithoutBlocks'
 
     PagePermissionsShared:
       type: object

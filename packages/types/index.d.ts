@@ -1124,7 +1124,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.pages.deleted";
         payload: {
-            page: /* Page */ Page;
+            page: /* Page */ PageWithoutBlocks;
         };
     }
     export interface DeletedWorkspace {
@@ -1204,7 +1204,7 @@ declare namespace Prismeai {
         description?: LocalizedText;
         workspaceId?: string;
         workspaceSlug?: string;
-        blocks?: {
+        blocks: {
             name?: string;
             config?: {
                 [name: string]: any;
@@ -1511,7 +1511,7 @@ declare namespace Prismeai {
         description?: LocalizedText;
         workspaceId?: string;
         workspaceSlug?: string;
-        blocks?: {
+        blocks: {
             name?: string;
             config?: {
                 [name: string]: any;
@@ -1552,6 +1552,34 @@ declare namespace Prismeai {
             subjectId: string;
             permissions: UserPermissions;
         };
+    }
+    /**
+     * Page
+     */
+    export interface PageWithoutBlocks {
+        name: LocalizedText;
+        description?: LocalizedText;
+        workspaceId?: string;
+        workspaceSlug?: string;
+        blocks?: {
+            name?: string;
+            config?: {
+                [name: string]: any;
+            };
+        }[];
+        id?: string;
+        slug?: string;
+        styles?: string;
+        createdBy?: string;
+        updatedBy?: string;
+        createdAt?: string;
+        updatedAt?: string;
+        permissions?: PermissionsMap;
+        apiKey?: string;
+        /**
+         * Temporary field for old pages conversion to DSUL
+         */
+        __migrate?: boolean;
     }
     export interface PendingWait {
         /**
