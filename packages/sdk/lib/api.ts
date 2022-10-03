@@ -75,6 +75,16 @@ export class Api extends Fetcher {
     this.token = null;
   }
 
+  // Mail validation
+  async sendValidationMail(email: string, language: string) {
+    return await this.post('/user/validate', { email, language });
+  }
+
+  async validateMail(token: string) {
+    return await this.post('/user/validate', { token });
+  }
+
+  // Password reset
   async sendPasswordResetMail(email: string, language: string) {
     return await this.post('/user/password', { email, language });
   }

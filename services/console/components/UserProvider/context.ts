@@ -4,6 +4,8 @@ import { ApiError } from '@prisme.ai/sdk';
 export enum OperationSuccess {
   emailSent = 'emailSent',
   passwordReset = 'passwordReset',
+  mailValidated = 'mailValidated',
+  signupSuccess = 'signupsuccess',
 }
 
 export interface ApiSuccess {
@@ -25,6 +27,8 @@ export interface UserContext<T = Prismeai.User | null> {
   signout: (onServer?: boolean) => void;
   sendPasswordResetMail: (email: string, language: string) => Promise<any>;
   passwordReset: (token: string, password: string) => Promise<any>;
+  sendValidationMail: (email: string, language: string) => Promise<any>;
+  validateMail: (token: string) => Promise<any>;
 }
 
 export const userContext = createContext<UserContext>({
@@ -35,6 +39,8 @@ export const userContext = createContext<UserContext>({
   signout() {},
   sendPasswordResetMail: async () => null,
   passwordReset: async () => null,
+  sendValidationMail: async () => null,
+  validateMail: async () => null,
 });
 
 export function useUser(throwIfNotExist?: boolean): UserContext;

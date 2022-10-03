@@ -11,7 +11,11 @@
     "submit": "Conexión",
     "signup": "¿ Inscríbase en ?",
     "error": "Se ha producido un error",
-    "error_AuthenticationError": "Contraseña o correo electrónico incorrecta"
+    "error_AuthenticationError": "Contraseña o correo electrónico incorrecta",
+    "error_ValidateEmailError": "Por favor, verifique su correo electrónico",
+    "error_InvalidOrExpiredToken": "Este enlace de validación no es válido. Es posible que su cuenta ya esté activada, intente conectarse.",
+    "success": "¡Operación realizada con éxito!",
+    "success_mailValidated": "Su correo electrónico ha sido validado. Ya puede iniciar sesión."
   },
   "up": {
     "title": "Inscripción — $t(common:main.title)",
@@ -27,7 +31,10 @@
     "error": "Se ha producido un error, póngase en contacto con el servicio de asistencia técnica",
     "error_AuthenticationError": "Ya existe una cuenta para este correo electrónico, pero la contraseña no es válida.",
     "error_InvalidEmail": "El correo electrónico no es válido.",
-    "error_InvalidPassword": "La contraseña no es válida : debe tener al menos 8 caracteres."
+    "error_InvalidPassword": "La contraseña no es válida : debe tener al menos 8 caracteres.",
+    "error_ValidateEmailError": "Por favor, verifique su correo electrónico",
+    "success": "¡Operación realizada con éxito!",
+    "success_signupSuccess": "Acaba de crear su cuenta. Le hemos enviado un correo electrónico de validación, por favor, compruebe su correo electrónico antes de iniciar la sesión."
   },
   "out": {
     "link": "Cierre de sesión"
@@ -41,7 +48,7 @@
     "email": "Correo electrónico",
     "error": "Se ha producido un error",
     "error_InvalidPassword": "La contraseña no es válida : debe tener al menos 8 caracteres",
-    "success": "Operación realizada con éxito",
+    "success": "¡Operación realizada con éxito!",
     "success_emailSent": "Acabamos de enviarle un correo electrónico, por favor revise su bandeja de entrada",
     "success_passwordReset": "Su contraseña ha sido cambiada. Será redirigido a la página de inicio de sesión...",
     "submit": "Envíeme un correo electrónico"
@@ -53,5 +60,17 @@
     "password": "Nueva contraseña",
     "confirm": "Confirma tu nueva contraseña",
     "submit": "Guardar mi contraseña"
+  },
+  "validate": {
+    "topForm1": "CASI ESTÁ",
+    "topForm2": "Valide su correo electrónico",
+    "topForm3": "Compruebe su buzón de correo electrónico",
+    "email": "Correo electrónico",
+    "submit": "Enviar otro correo electrónico de validación",
+    "error": "Se ha producido un error",
+    "success": "¡Operación realizada con éxito!",
+    "success_emailSent": "Te acabamos de enviar un nuevo correo electrónico, ¡revisa tu bandeja de entrada!",
+    "emailSentAt": "Te hemos enviado un correo electrónico a :",
+    "followInstructions": "Por favor, sigue sus instrucciones para validar tu cuenta"
   }
 }
