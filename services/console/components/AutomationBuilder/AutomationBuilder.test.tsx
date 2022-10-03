@@ -115,6 +115,7 @@ it('should build instructions schemas', () => {
 });
 
 it('should hide panel', async () => {
+  jest.useFakeTimers();
   const value = {
     name: 'Automation',
     do: [],
@@ -127,6 +128,7 @@ it('should hide panel', async () => {
   await act(async () => {
     (ReactFlow as any).context.editInstruction([{ emit: {} }], 0);
     await true;
+    jest.runAllTimers();
   });
   expect(root.root.findByType(Panel).props.visible).toBe(true);
   act(() => {
@@ -164,6 +166,7 @@ it('should get app', () => {
 });
 
 it('should add instruction', async () => {
+  jest.useFakeTimers();
   const value = {
     name: 'Automation',
     do: [],
@@ -174,6 +177,7 @@ it('should add instruction', async () => {
   );
   act(() => {
     (ReactFlow as any).context.addInstruction(value.do, 0);
+    jest.runAllTimers();
   });
 
   expect(root.root.findByType(InstructionForm)).toBeDefined();
@@ -220,6 +224,7 @@ it('should remove instruction', async () => {
 });
 
 it('should edit instruction', async () => {
+  jest.useFakeTimers();
   const value = {
     name: 'Automation',
     do: [{ foo: undefined }],
@@ -230,6 +235,7 @@ it('should edit instruction', async () => {
   );
   act(() => {
     (ReactFlow as any).context.editInstruction(value.do, 0);
+    jest.runAllTimers();
   });
 
   expect(root.root.findByType(InstructionForm)).toBeDefined();
