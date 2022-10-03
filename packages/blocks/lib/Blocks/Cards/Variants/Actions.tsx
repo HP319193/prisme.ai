@@ -74,7 +74,7 @@ const Actions = ({
                   <div className={tw`flex flex-row m-[1.25rem]`}>
                     <div
                       className={tw`card-container__card-cover card-cover flex flex-row
-                  mb-0 h-[5.5rem] w-[5.25rem] min-w-[5.25rem] rounded-[0.625rem] !bg-cover`}
+                  mb-0 h-[5.5rem] w-[5.25rem] min-w-[5.25rem] rounded-[0.625rem] !bg-cover !bg-center`}
                       style={getCoverStyle(index)}
                     />
                     <div

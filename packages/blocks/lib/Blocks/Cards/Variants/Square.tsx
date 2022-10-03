@@ -55,7 +55,7 @@ const Square = ({
                     className={`${tw`cards-container__card-container card-container flex flex-col snap-start m-[0.625rem] group max-w-[12.625rem] w-[12.625rem] h-[12.625rem] flex-card`}`}
                   >
                     <div
-                      className={tw`flex flex-grow items-end p-[0.938rem] rounded-[0.625rem] overflow-hidden !bg-cover`}
+                      className={tw`flex flex-grow items-end p-[0.938rem] rounded-[0.625rem] overflow-hidden !bg-cover !bg-center`}
                       style={getCoverStyle(index)}
                     >
                       <div className={tw`flex flex-col text-white`}>
