@@ -10,6 +10,7 @@ import { useTranslation } from 'next-i18next';
 import { FC, useMemo, useState } from 'react';
 import { useAutomationBuilder } from '../context';
 import { truncate } from '../../../utils/strings';
+import useLocalizedText from '../../../utils/useLocalizedText';
 
 export interface InstructionSelectionProps {
   onSubmit: (key: string) => void;
@@ -21,6 +22,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
   focus,
 }) => {
   const { t } = useTranslation('workspaces');
+  const { localize } = useLocalizedText();
   const { instructionsSchemas } = useAutomationBuilder();
 
   const [search, setSearch] = useState('');
@@ -33,12 +35,11 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
           { name: string; description?: string; slug: string }[]
         ][]
       >((prev, [name, list, more]) => {
-        const matching = (
-          search
-            ? Object.keys(list).filter((a) =>
-                `${name} ${a}`.toLowerCase().includes(search.toLowerCase())
-              )
-            : Object.keys(list)
+        const matching = (search
+          ? Object.keys(list).filter((a) =>
+              `${name} ${a}`.toLowerCase().includes(search.toLowerCase())
+            )
+          : Object.keys(list)
         ).map((name) => ({
           name: list[name]?.name || name,
           slug: name,
@@ -51,7 +52,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
   }, [instructionsSchemas, search]);
 
   return (
-    <div className="flex grow h-full flex-col overflow-auto">
+    <div className="flex flex-1 h-full flex-col overflow-auto">
       <SearchInput
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -67,9 +68,8 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
             className={`!flex flex-1 ${index !== 0 ? 'mt-8' : ''}`}
           >
             <div className="flex flex-row items-center space-x-3">
-              {icon && ( // eslint-disable-next-line @next/next/no-img-element
-                <img src={icon} width={16} height={16} alt={section} />
-              )}
+              {icon && <img src={icon // eslint-disable-next-line @next/next/no-img-element
+                  } width={16} height={16} alt={section} />}
               <Title level={4} className="!mb-0">
                 {section}
               </Title>
@@ -83,7 +83,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
                 >
                   <ListItem
                     title={t('automations.instruction.label', {
-                      context: name,
+                      context: localize(name),
                     })}
                     content={
                       <Tooltip
