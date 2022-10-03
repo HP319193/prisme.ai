@@ -46,7 +46,7 @@ const Article = ({
                   >
                     <div
                       className={tw`card-container__card-cover card-cover flex flex-row m-[0.438rem]
-                  mb-0 min-h-[10.25rem] h-[10.25rem] rounded-[0.625rem] !bg-cover`}
+                  mb-0 min-h-[10.25rem] h-[10.25rem] rounded-[0.625rem] !bg-cover !bg-center`}
                       style={getCoverStyle(index)}
                     >
                       {tag && (

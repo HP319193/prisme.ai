@@ -17,8 +17,15 @@ body {
 
 .content-stack__content {
   background-color: var(--color-background);
-  padding: 0 2rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
+}
+
+.content-stack__content .block-form {
+  padding-left: 2rem !important;
+}
+.content-stack__content .block-cards,
+.content-stack__content .block-rich-text {
+  padding-left: 2rem;
 }
 
 .page-blocks {
@@ -34,6 +41,7 @@ body {
 }
 
 .block-form .ant-input {
+  width: calc(100% - 2rem);
   border-radius: 0.625rem;
   border-color: var(--color-border);
   color: var(--color-text);
