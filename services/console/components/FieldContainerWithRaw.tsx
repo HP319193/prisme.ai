@@ -1,11 +1,16 @@
 import { CodeFilled, CodeOutlined } from '@ant-design/icons';
 import { FieldProps, Schema, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import { FC, useCallback, useState } from 'react';
+import {
+  Children,
+  FC,
+  ReactElement,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { useField } from 'react-final-form';
 import { CodeEditorInline } from './CodeEditor/lazy';
-
-1;
 
 const typeIsOk = (value: any, type: Schema['type']) => {
   if (!type || !value) return true;
@@ -66,10 +71,24 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
     [field.input]
   );
 
+  const labelClassName = useMemo(() => {
+    let className = '';
+    if (!displayRaw) return className;
+    Children.map(children, (child) => {
+      const c = child as ReactElement;
+      if (!c || c.type !== 'label') return;
+      className = c.props.className;
+    });
+    return className;
+  }, [children, displayRaw]);
+
   return (
     <>
       <div className="flex flex-1 flex-col relative">
-        <Tooltip title={t('form.raw', { context: displayRaw ? 'hide' : '' })}>
+        <Tooltip
+          title={t('form.raw', { context: displayRaw ? 'hide' : '' })}
+          placement="left"
+        >
           <button
             className={`absolute top-0 mt-[0.35rem] ${
               schema.description ? 'right-8' : 'right-1'
@@ -84,9 +103,9 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
       </div>
       {displayRaw && (
         <>
-          <div className="!m-0">
+          <label className={labelClassName}>
             {label || schema.title || name.replace(/^values./, '')}
-          </div>
+          </label>
           <div className="space-y-5">
             <CodeEditorInline
               mode="json"
