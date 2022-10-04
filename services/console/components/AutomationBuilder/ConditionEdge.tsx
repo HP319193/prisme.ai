@@ -9,6 +9,8 @@ import { Flow } from './flow';
 import { useTranslation } from 'react-i18next';
 import useHover from '@react-hook/hover';
 import { DeleteOutlined } from '@ant-design/icons';
+import ConfirmPrompt from 'inquirer/lib/prompts/confirm';
+import { Popconfirm } from 'antd';
 
 export const ConditionEdge: FC<EdgeProps> = ({
   id,
@@ -77,29 +79,45 @@ export const ConditionEdge: FC<EdgeProps> = ({
             style={{ height: `${40}px` }}
             ref={ref}
           >
-            <button
+            <div
               className={`
-                bg-graph-accent p-1 rounded z-1 text-xs min-w-sm text-white px-4
+                relative flex flex-row bg-graph-accent p-1 rounded z-1 text-xs min-w-sm text-white px-5
                 ${data.parent ? 'cursor-pointer' : ''}
                 `}
-              onClick={
-                data.parent && (() => editCondition(data.parent, data.key))
-              }
             >
-              {displayedLabel}
-            </button>
-            {removable && (
               <button
-                className="border-none cursor-pointer flex justify-center items-center"
-                style={{
-                  background: 'none',
-                  visibility: isHover ? 'visible' : 'hidden',
-                }}
-                onClick={() => removeCondition(data.parent, data.key)}
+                onClick={
+                  data.parent && (() => editCondition(data.parent, data.key))
+                }
               >
-                <DeleteOutlined className="!text-orange-500" />
+                {displayedLabel}
               </button>
-            )}
+              {removable && (
+                <Popconfirm
+                  title={t('automations.instruction.delete', {
+                    context: 'condition',
+                  })}
+                  okText={t('yes', { ns: 'common' })}
+                  cancelText={t('no', { ns: 'common' })}
+                  onConfirm={(e) => {
+                    e?.stopPropagation();
+                    removeCondition(data.parent, data.key);
+                  }}
+                  onCancel={(e) => e?.stopPropagation()}
+                >
+                  <button
+                    className="absolute top-[38%] right-1 border-none cursor-pointer flex justify-center items-center"
+                    style={{
+                      background: 'none',
+                      visibility: isHover ? 'visible' : 'hidden',
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <DeleteOutlined className="!text-orange-500" />
+                  </button>
+                </Popconfirm>
+              )}
+            </div>
           </div>
         </foreignObject>
       )}
