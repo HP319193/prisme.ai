@@ -12,6 +12,17 @@ const typeIsOk = (value: any, type: Schema['type']) => {
 
   const valueType = typeof value;
 
+  switch (type) {
+    case 'object':
+      if (valueType === 'object') return true;
+      try {
+        JSON.parse(value);
+        return true;
+      } catch {
+        return false;
+      }
+  }
+
   switch (valueType) {
     case 'string':
       return ['string', 'localized:string'].includes(type);
@@ -42,6 +53,7 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
       );
     }
   }, [displayRaw, field.input.value]);
+
   const onChange = useCallback(
     (value: string) => {
       setValue(value);
