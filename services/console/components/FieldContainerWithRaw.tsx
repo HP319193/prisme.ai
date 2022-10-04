@@ -1,4 +1,4 @@
-import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import { CodeFilled, CodeOutlined } from '@ant-design/icons';
 import { FieldProps, Schema, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { FC, useCallback, useState } from 'react';
@@ -73,13 +73,10 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
           <button
             className={`absolute top-0 mt-[0.35rem] ${
               schema.description ? 'right-8' : 'right-1'
-            } flex flex-1 flex-row z-[1] text-[10px] items-center`}
+            } flex flex-1 flex-row z-[1] text-[12px] items-center`}
             onClick={toggle}
           >
-            <div className="mr-1">
-              {displayRaw ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-            </div>
-            raw
+            {displayRaw ? <CodeFilled /> : <CodeOutlined />}
           </button>
         </Tooltip>
 
