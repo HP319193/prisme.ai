@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo, useRef } from 'react';
 import {
   EdgeProps,
   getMarkerEnd,
@@ -7,6 +7,8 @@ import {
 import { useAutomationBuilder } from './context';
 import { Flow } from './flow';
 import { useTranslation } from 'react-i18next';
+import useHover from '@react-hook/hover';
+import { DeleteOutlined } from '@ant-design/icons';
 
 export const ConditionEdge: FC<EdgeProps> = ({
   id,
@@ -23,7 +25,7 @@ export const ConditionEdge: FC<EdgeProps> = ({
   arrowHeadType,
   markerEndId,
 }) => {
-  const { editCondition } = useAutomationBuilder();
+  const { editCondition, removeCondition } = useAutomationBuilder();
   const { t } = useTranslation('workspaces');
   const edgePath = getSmoothStepPath({
     sourceX,
@@ -34,6 +36,8 @@ export const ConditionEdge: FC<EdgeProps> = ({
     targetPosition,
   });
   const markerEnd = getMarkerEnd(arrowHeadType, markerEndId);
+  const ref = useRef(null);
+  const isHover = useHover(ref);
 
   const dataLabel = (data || {}).label;
 
@@ -47,6 +51,8 @@ export const ConditionEdge: FC<EdgeProps> = ({
         return dataLabel;
     }
   }, [t, dataLabel]);
+
+  const removable = data && data.key && !['', 'default'].includes(data.key);
 
   return (
     <>
@@ -69,6 +75,7 @@ export const ConditionEdge: FC<EdgeProps> = ({
           <div
             className="flex justify-center align-center"
             style={{ height: `${40}px` }}
+            ref={ref}
           >
             <button
               className={`
@@ -81,6 +88,18 @@ export const ConditionEdge: FC<EdgeProps> = ({
             >
               {displayedLabel}
             </button>
+            {removable && (
+              <button
+                className="border-none cursor-pointer flex justify-center items-center"
+                style={{
+                  background: 'none',
+                  visibility: isHover ? 'visible' : 'hidden',
+                }}
+                onClick={() => removeCondition(data.parent, data.key)}
+              >
+                <DeleteOutlined className="!text-orange-500" />
+              </button>
+            )}
           </div>
         </foreignObject>
       )}

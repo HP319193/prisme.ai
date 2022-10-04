@@ -10,9 +10,15 @@ export interface AutomationBuilderContext {
     parent: { conditions: Prismeai.Conditions },
     key: string
   ) => void;
+  removeCondition: (
+    parent: { conditions: Prismeai.Conditions },
+    key: string
+  ) => void;
   editTrigger: () => void;
   editOutput: () => void;
-  getApp: (instruction: string) => {
+  getApp: (
+    instruction: string
+  ) => {
     name: string;
     icon: string;
     instructionName: string;
@@ -31,6 +37,7 @@ export const automationBuilderContext = createContext<AutomationBuilderContext>(
     removeInstruction() {},
     editInstruction() {},
     editCondition() {},
+    removeCondition() {},
     editTrigger() {},
     editOutput() {},
     getApp() {
