@@ -110,6 +110,8 @@ export interface Schema extends Record<string, any> {
   disabled?: true;
   // Validation by regexp
   pattern?: string;
+  // Validation errors messages
+  errors?: Record<string, string>;
   // Custom widget
   'ui:widget'?: UIWidgets | ((props: any) => ReactElement);
   // Options for UI components

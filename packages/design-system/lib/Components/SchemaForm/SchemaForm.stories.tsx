@@ -797,3 +797,19 @@ WithDisabledFields.args = {
     },
   },
 };
+
+export const WithValidators = Template.bind({});
+WithValidators.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      pattern: {
+        type: 'string',
+        pattern: '^[a-zA-Z]+$',
+        errors: {
+          pattern: 'Pattern is invalid',
+        },
+      },
+    },
+  },
+};

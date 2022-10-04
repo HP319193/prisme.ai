@@ -47,6 +47,7 @@ The root object and all its children are made with the same structure:
 * `default`: Optional default value.
 * `hidden`: Set to true if you want to hide the field.
 * `pattern`: A regular expression to validate the value choose by user.
+* `errors`: An object with a list of validation error message. Key is the validator name and value is a string which will be displayed. ex: `{ pattern: "Value cannot contains numbers" 
 * `oneOf`: Let the user choose between any options and have different child fields. Takes an array of `Schema Form`. Display a select drop down with the title of each child. ([See more](#oneof))
 * `ui:widget`: You can set a different input with this attribute. Each type comes with some alternative inputs and you can pass a React component if you write your `Schema Form` as javascript.
     * string type:

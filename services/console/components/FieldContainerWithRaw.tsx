@@ -1,10 +1,5 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
-import {
-  FieldProps,
-  Schema,
-  Tooltip,
-  WithLabel,
-} from '@prisme.ai/design-system';
+import { FieldProps, Schema, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { FC, useCallback, useState } from 'react';
 import { useField } from 'react-final-form';

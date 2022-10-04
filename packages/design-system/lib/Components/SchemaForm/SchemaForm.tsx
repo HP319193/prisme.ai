@@ -18,7 +18,9 @@ import FieldText from './FieldText';
 
 export interface FormProps {
   schema: Schema;
-  onSubmit?: (values: any) => void;
+  onSubmit?: (
+    values: any
+  ) => void | Record<string, any> | Promise<Record<string, any>>;
   buttons?: ReactElement[];
   onChange?: (values: any) => void;
   initialValues?: any;
@@ -59,9 +61,11 @@ export const SchemaForm = ({
   const values = useRef({ values: initialValues });
 
   const onSubmitHandle = useCallback(
-    (values: any) => {
+    async (values: any) => {
       if (!onSubmit) return;
-      onSubmit(values.values);
+      const errors = await onSubmit(values.values);
+      if (!errors) return;
+      return { values: errors };
     },
     [onSubmit]
   );

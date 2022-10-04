@@ -1,3 +1,4 @@
+import { FieldMetaState, UseFieldConfig } from 'react-final-form';
 import { Schema } from './types';
 
 export const root = 'values';
@@ -49,3 +50,23 @@ export const typesMatch = (schema: Schema, value: any): boolean => {
       return false;
   }
 };
+
+export function getFieldOptions({
+  pattern,
+  errors = {},
+  default: defaultValue,
+}: Schema = {}): UseFieldConfig<any, any> {
+  return {
+    validate: (value: any) => {
+      if (pattern && !new RegExp(pattern).test(`${value}`)) {
+        return errors.pattern || 'pattern';
+      }
+    },
+    defaultValue,
+  };
+}
+
+export function getError({ dirty, error, submitError }: FieldMetaState<any>) {
+  const hasError = dirty && (error || submitError);
+  return typeof hasError === 'string' ? hasError : '';
+}

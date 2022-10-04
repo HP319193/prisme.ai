@@ -105,6 +105,7 @@
       "label": "Registro",
       "toast": "Se ha registrado la automatización",
       "error_slug": "El nombre técnico ya está en uso, por favor elija otro",
+      "error_InvalidSlugError": "El nombre técnico contiene caracteres no válidos",
       "error": "Se ha producido un error"
     },
     "endpoint": {

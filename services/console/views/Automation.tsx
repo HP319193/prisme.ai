@@ -139,6 +139,9 @@ export const Automation = () => {
           type: 'string',
           title: t('automations.details.slug.label'),
           pattern: SLUG_VALIDATION_REGEXP.source,
+          errors: {
+            pattern: t('automations.save.error_InvalidSlugError'),
+          },
         },
         description: {
           type: 'localized:string',
@@ -190,7 +193,8 @@ export const Automation = () => {
         }
         return saved;
       } catch (e) {
-        const { details } = e as ApiError;
+        const { details, error } = e as ApiError;
+
         notification.error({
           message: t('automations.save.error', {
             context: Object.keys(details || {})[0],
@@ -198,6 +202,9 @@ export const Automation = () => {
           placement: 'bottomRight',
         });
         setSaving(false);
+        if (error === 'InvalidSlugError') {
+          details.slug = t('automations.save.error_InvalidSlugError');
+        }
         throw details;
       }
     }
