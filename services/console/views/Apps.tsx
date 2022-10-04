@@ -83,15 +83,7 @@ const Apps = ({}: AppsProps) => {
   }, [currentApp]);
 
   const updateDetails = useCallback(
-    async ({
-      slug,
-      appName,
-      disabled,
-    }: {
-      slug: string;
-      appName: Prismeai.LocalizedText;
-      disabled: boolean;
-    }) => {
+    async ({ slug = '', appName = '', disabled }: Prismeai.AppInstance) => {
       if (!value || !currentApp || !currentApp.slug) return;
       const newValue = {
         appName,
@@ -162,6 +154,12 @@ const Apps = ({}: AppsProps) => {
                 value={currentApp.appName || ''}
                 onChange={(appName) =>
                   setCurrentApp({
+                    ...currentApp,
+                    appName,
+                  })
+                }
+                onEnter={(appName) =>
+                  updateDetails({
                     ...currentApp,
                     appName,
                   })
