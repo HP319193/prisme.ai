@@ -87,12 +87,14 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
           <div className="!m-0">
             {label || schema.title || name.replace(/^values./, '')}
           </div>
-          <CodeEditorInline
-            mode="json"
-            value={value}
-            onChange={onChange}
-            className="flex-auto"
-          />
+          <div className="space-y-5">
+            <CodeEditorInline
+              mode="json"
+              value={value}
+              onChange={onChange}
+              className="flex-auto"
+            />
+          </div>
         </>
       )}
     </>
