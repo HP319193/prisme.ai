@@ -33,6 +33,9 @@ jest.mock('next/router', () => {
     query,
     route: '/workspace/42',
     push: jest.fn(),
+    events: {
+      on: jest.fn(),
+    },
   };
   return {
     useRouter: () => mock,
