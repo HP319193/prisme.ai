@@ -6,7 +6,6 @@ import { Schema } from '@prisme.ai/design-system';
 
 interface ExternalSchemaLoaderProps extends Prismeai.Block {
   blockId: string;
-  appInstance: string;
 }
 
 export const ExternalSchemaLoader = ({
