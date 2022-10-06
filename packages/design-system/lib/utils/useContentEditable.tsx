@@ -4,9 +4,14 @@ interface ContentEditable {
   onInput?: (value: string) => void;
   onChange?: (value: string) => void;
   onRemove?: () => void;
+  onEnter?: (value: string) => void;
 }
 
-export const useContentEditable = ({ onChange, onInput }: ContentEditable) => {
+export const useContentEditable = ({
+  onChange,
+  onInput,
+  onEnter,
+}: ContentEditable) => {
   const onFieldInput = useCallback(
     (e: FormEvent<HTMLSpanElement>) => {
       const target = e.target as HTMLSpanElement;
@@ -19,6 +24,7 @@ export const useContentEditable = ({ onChange, onInput }: ContentEditable) => {
       if (e.key === 'Enter') {
         e.preventDefault();
         onInput && onInput(e.target.innerText);
+        onEnter && onEnter(e.target.innerText);
       }
     },
     [onInput]
