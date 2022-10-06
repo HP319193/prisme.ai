@@ -1,3 +1,4 @@
+import { Tooltip } from 'antd';
 import { ChangeEvent, useCallback } from 'react';
 import { useField } from 'react-final-form';
 import Input from '../Input';
@@ -9,7 +10,7 @@ import FieldTextColor from './FieldTextColor';
 import FieldTextTextArea from './FieldTextTextArea';
 import FieldTextUpload from './FieldTextUpload';
 import { FieldProps, UiOptionsTextArea, UiOptionsUpload } from './types';
-import { getLabel } from './utils';
+import { getFieldOptions, getLabel, getError } from './utils';
 
 export const FieldText = (props: FieldProps) => {
   const field = useField(props.name);
@@ -47,17 +48,21 @@ export const FieldText = (props: FieldProps) => {
       return <FieldAutocomplete {...props} />;
   }
 
+  const hasError = getError(field.meta);
   return (
     <Description text={props.schema.description}>
       <components.FieldContainer {...props}>
-        <Input
-          {...field.input}
-          placeholder={props.schema.placeholder || ''}
-          onChange={onChange}
-          label={props.label || props.schema.title || getLabel(props.name)}
-          type={props.schema.type === 'number' ? 'number' : 'text'}
-          disabled={props.schema.disabled}
-        />
+        <Tooltip title={hasError} color="#ff4d4f">
+          <Input
+            {...field.input}
+            placeholder={props.schema.placeholder || ''}
+            onChange={onChange}
+            label={props.label || props.schema.title || getLabel(props.name)}
+            type={props.schema.type === 'number' ? 'number' : 'text'}
+            disabled={props.schema.disabled}
+            status={hasError ? 'error' : ''}
+          />
+        </Tooltip>
       </components.FieldContainer>
     </Description>
   );

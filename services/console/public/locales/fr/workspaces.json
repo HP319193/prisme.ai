@@ -105,6 +105,7 @@
       "label": "Enregistrer",
       "toast": "L'automatisation a bien été enregistrée",
       "error_slug": "Le nom technique est déjà utilisé, veuillez en choisir un autre",
+      "error_InvalidSlugError": "Le nom technique contient des caractères invalides",
       "error": "Une erreur est survenue"
     },
     "endpoint": {
