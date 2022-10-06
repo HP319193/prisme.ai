@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import isEmail from 'is-email';
 import { ObjectId } from 'mongodb';
-import path from 'path';
 import { URL } from 'url';
 import { PrismeContext } from '../../middlewares';
 import { StorageDriver } from '../../storage';
@@ -13,18 +12,25 @@ import {
   InvalidPassword,
   InvalidOrExpiredToken,
   NotFoundError,
+  ValidateEmailError,
 } from '../../types/errors';
 import { comparePasswords, hashPassword } from './utils';
-import { emailSender } from '../../utils/email';
+import { EmailTemplate, sendMail } from '../../utils/email';
 import { syscfg, mails as mailConfig } from '../../config';
 import { logger, Logger } from '../../logger';
 
-const { RESET_PASSWORD_URL } = mailConfig;
+const { RESET_PASSWORD_URL, LOGIN_URL } = mailConfig;
 
 export interface ResetPasswordRequest {
   token: string;
   expiresIn: number;
   userId: string;
+}
+
+export enum UserStatus {
+  Pending = 'pending',
+  Validated = 'validated',
+  Deactivated = 'deactivated',
 }
 
 export const sendResetPasswordLink =
@@ -56,17 +62,15 @@ export const sendResetPasswordLink =
     resetLink.searchParams.append('token', token);
 
     try {
-      await emailSender.send({
-        template: path.join(__dirname, '../../utils/emails/forgotPassword'),
-        message: {
-          to: email,
-        },
-        locals: {
+      await sendMail(
+        EmailTemplate.ForgotPassword,
+        {
           locale: language,
           name: firstName,
-          resetLink,
+          resetLink: `${resetLink}`,
         },
-      });
+        email
+      );
     } catch (err) {
       (logger || console).warn({
         msg: 'Could not send password reset email',
@@ -108,12 +112,81 @@ export const resetPassword =
     return savedUser;
   };
 
+export const sendAccountValidationLink =
+  (Users: StorageDriver, ctx?: PrismeContext, logger?: Logger) =>
+  async ({ email = '', language = '' }: any) => {
+    const existingUsers = await Users.find({
+      email: email.toLowerCase().trim(),
+    });
+
+    if (!existingUsers.length) {
+      (logger || console).warn(
+        `Account validation link asked for a non-existent user : ${email}.`
+      );
+      return;
+    }
+
+    const { firstName, status } = existingUsers[0];
+    if (status !== UserStatus.Pending) {
+      return;
+    }
+
+    const token = crypto.randomUUID();
+    await Users.save({
+      ...existingUsers[0],
+      validationToken: {
+        token,
+        expiresAt: Date.now() + 3600000,
+      },
+    });
+
+    // Send email to the user
+    const validateLink = new URL(LOGIN_URL);
+    validateLink.searchParams.append('validationToken', token);
+
+    await sendMail(
+      EmailTemplate.ValidateAccount,
+      {
+        locale: language,
+        name: firstName,
+        validateLink: `${validateLink}`,
+      },
+      email
+    );
+    return true;
+  };
+
+export const validateAccount =
+  (Users: StorageDriver, ctx?: PrismeContext, logger?: Logger) =>
+  async ({ token }: any) => {
+    const users = await Users.find({
+      'validationToken.token': token,
+      'validationToken.expiresAt': { $gte: Date.now() },
+      status: UserStatus.Pending,
+    });
+
+    if (!users || !users.length) {
+      throw new InvalidOrExpiredToken();
+    }
+
+    const savedUser = await Users.save({
+      ...users[0],
+      validationToken: {},
+      status: 'validated',
+    });
+
+    delete savedUser.password;
+    delete savedUser.validationToken;
+    return savedUser;
+  };
+
 export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
   async function ({
     email,
     password,
     firstName,
     lastName,
+    language,
   }: PrismeaiAPI.Signup.RequestBody) {
     email = email.toLowerCase().trim();
 
@@ -137,14 +210,29 @@ export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
       email,
       firstName,
       lastName,
+      status: UserStatus.Pending,
+      language,
     };
-    const savedUser = await Users.save({ ...user, password: hash });
+    const savedUser = await Users.save({
+      ...user,
+      password: hash,
+    });
     delete savedUser.password;
+
+    try {
+      await sendAccountValidationLink(Users, ctx)({ email, language });
+    } catch (err) {
+      (logger || console).warn({
+        msg: 'Could not send account validation email',
+        err,
+      });
+    }
+
     return Promise.resolve(savedUser);
   };
 
 export const get = (Users: StorageDriver, ctx?: PrismeContext) =>
-  async function (id: string) {
+  async function (id: string): Promise<Prismeai.User> {
     try {
       const user = await Users.get(id);
       delete user.password;
@@ -170,7 +258,11 @@ export const login = (Users: StorageDriver, ctx?: PrismeContext) =>
     if (!(await comparePasswords(password, users[0].password))) {
       throw new AuthenticationError();
     }
+    if (users[0].status && users[0].status !== UserStatus.Validated) {
+      throw new ValidateEmailError();
+    }
     delete users[0].password;
+    delete users[0].resetPassword;
     return users[0];
   };
 
@@ -203,7 +295,7 @@ export const find = (Users: StorageDriver, ctx?: PrismeContext) =>
             $in: mongoIds,
           },
         });
-        return users.map(({ password, ...user }) => user);
+        return users.map(({ password, validationToken, ...user }) => user);
       } catch (error) {
         throw new PrismeError(`Invalid id (${ids.join(',')})`, { ids }, 400);
       }

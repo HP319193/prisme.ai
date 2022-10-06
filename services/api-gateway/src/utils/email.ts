@@ -38,3 +38,35 @@ export const emailSender = new Email({
     locales: ['en', 'fr', 'es'],
   },
 });
+
+export enum EmailTemplate {
+  ForgotPassword = 'forgotPassword',
+  ValidateAccount = 'validateAccount',
+}
+
+export type EmailTemplateVariables = {
+  [EmailTemplate.ForgotPassword]: {
+    locale: string;
+    name: string;
+    resetLink: string;
+  };
+  [EmailTemplate.ValidateAccount]: {
+    locale: string;
+    name: string;
+    validateLink: string;
+  };
+};
+
+export async function sendMail<t extends EmailTemplate>(
+  template: t,
+  variables: EmailTemplateVariables[t],
+  email: string
+) {
+  return await emailSender.send({
+    template: path.join(__dirname, `emails/${template}`),
+    message: {
+      to: email,
+    },
+    locals: variables,
+  });
+}

@@ -11,7 +11,11 @@
     "submit": "Se connecter",
     "signup": "Inscription ?",
     "error": "Une erreur est survenue.",
-    "error_AuthenticationError": "Mot de passe ou email invalide."
+    "error_AuthenticationError": "Mot de passe ou email invalide.",
+    "error_ValidateEmailError": "Veuillez vérifier votre email",
+    "error_InvalidOrExpiredToken": "Ce lien de validation est invalide. Votre compte est peut-être déjà activé, essayez de vous connecter.",
+    "success": "L'opération s'est déroulée avec succès !",
+    "success_mailValidated": "Votre email a été validé ! Vous pouvez désormais vous connecter."
   },
   "up": {
     "title": "Inscription — $t(common:main.title)",
@@ -27,7 +31,10 @@
     "error": "Une erreur est survenue, veuillez contacter le support",
     "error_AuthenticationError": "Un compte existe déjà pour cet email, mais le mot de passe est invalide.",
     "error_InvalidEmail": "L'email est invalide.",
-    "error_InvalidPassword": "Le mot de passe est invalide : celui-ci doit avoir au moins 8 caractère."
+    "error_InvalidPassword": "Le mot de passe est invalide : celui-ci doit avoir au moins 8 caractère.",
+    "error_ValidateEmailError": "Veuillez vérifier votre email",
+    "success": "L'opération s'est déroulée avec succès !",
+    "success_signupSuccess": "Vous venez de créer votre compte. Nous vous avons envoyé un email de validation, veuillez vérifier cet email avant de vous connecter."
   },
   "out": {
     "link": "Déconnexion"
@@ -53,5 +60,17 @@
     "password": "Nouveau mot de passe",
     "confirm": "Confirmez votre nouveau mot de passe",
     "submit": "Sauvegarder le mot de passe"
+  },
+  "validate": {
+    "topForm1": "ON Y EST PRESQUE",
+    "topForm2": "Valider votre email",
+    "topForm3": "Vérifier votre boîte de réception électronique",
+    "email": "Email",
+    "submit": "Envoyer un autre email de validation",
+    "error": "Une erreur s'est produite",
+    "success": "Opération réussie !",
+    "success_emailSent": "Nous venons de vous envoyer un nouvel email, veuillez vérifier votre boîte de réception !",
+    "emailSentAt": "Nous vous avons envoyé un email à l'adresse suivante :",
+    "followInstructions": "Veuillez suivre les instructions de cet email afin de valider votre compte"
   }
 }

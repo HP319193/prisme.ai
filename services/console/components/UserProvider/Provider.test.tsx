@@ -148,8 +148,7 @@ it('should signout', async () => {
   expect(context.user).toBeNull();
 });
 
-it('should signup with a new account', async () => {
-  let promise: Promise<any>;
+it('should not signup with a new account, as a new account should be validated', async () => {
   let context: any = {};
   const Test = () => {
     context = useUser();
@@ -172,22 +171,24 @@ it('should signup with a new account', async () => {
     token: 'dev-token',
   }));
   await act(async () => {
-    await context.signup('email', 'password', 'firstname', 'lastname');
+    await context.signup(
+      'email',
+      'password',
+      'firstname',
+      'lastname',
+      'language'
+    );
   });
   expect(api.signup).toHaveBeenCalledWith(
     'email',
     'password',
     'firstname',
-    'lastname'
+    'lastname',
+    'language'
   );
   expect(context.loading).toBe(false);
 
-  expect(context.user).toEqual({
-    id: '42',
-    email: 'email',
-    firstName: 'firstname',
-    lastName: 'lastname',
-  });
+  expect(context.user).toEqual(null);
 });
 
 it('should signup with an existing account', async () => {

@@ -10,6 +10,8 @@ import {
   signup,
   sendResetPasswordLink,
   resetPassword,
+  validateAccount,
+  sendAccountValidationLink,
 } from './users';
 
 const Users: StorageDriver = buildStorage('Users', storage.Users);
@@ -23,5 +25,7 @@ export default (ctx?: PrismeContext, logger?: Logger) => {
     find: find(Users, ctx),
     sendResetPasswordLink: sendResetPasswordLink(Users, ctx, logger),
     resetPassword: resetPassword(Users, ctx, logger),
+    validateAccount: validateAccount(Users, ctx, logger),
+    sendAccountValidationLink: sendAccountValidationLink(Users, ctx, logger),
   };
 };

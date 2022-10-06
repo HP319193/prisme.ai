@@ -32,7 +32,13 @@ export class ForbiddenError extends PrismeError {
 }
 
 export class AuthenticationError extends PrismeError {
-  constructor(msg = 'Unauthenticated') {
+  constructor(msg = 'Incorrect email or password.') {
+    super(msg, undefined, 401);
+  }
+}
+
+export class ValidateEmailError extends PrismeError {
+  constructor(msg = 'Please verify your email') {
     super(msg, undefined, 401);
   }
 }

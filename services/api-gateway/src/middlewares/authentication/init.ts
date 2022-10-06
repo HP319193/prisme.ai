@@ -10,7 +10,8 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as CustomStrategy } from 'passport-custom';
 import { logger } from '../../logger';
 import services from '../../services';
-import { AuthenticationError, NotFoundError } from '../../types/errors';
+import { NotFoundError, PrismeError } from '../../types/errors';
+import { UserStatus } from '../../services/identity/users';
 
 export async function init(app: Application) {
   app.use(cookieParser());
@@ -48,6 +49,10 @@ export async function init(app: Application) {
     try {
       const users = services.identity();
       const user = await users.get(<string>id);
+      if (user.status && user.status !== UserStatus.Validated) {
+        done(undefined, null);
+        return;
+      }
       done(undefined, user);
     } catch (err) {
       if (err instanceof NotFoundError) {
@@ -74,12 +79,17 @@ async function initPassportStrategies(
           const user = await users.login(email, password);
           return done(null, user);
         } catch (err) {
-          done(null, false, { message: 'Incorrect email or password.' });
-          if (!(err instanceof AuthenticationError)) {
+          if (!(err instanceof PrismeError)) {
+            done(null, false, {
+              message:
+                'Internal error. Please try again or contact us at support@prisme.ai',
+            });
             logger.error({
               msg: 'Unexpected error raised during passport authenticate',
               err,
             });
+          } else {
+            done(null, false, err);
           }
         }
       }
