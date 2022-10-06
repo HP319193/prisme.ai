@@ -31,13 +31,8 @@ export const PageBlocks = () => {
                   {localize(name)}
                   <EditOutlined />
                 </span>
-                {appInstance && url && (
-                  <ExternalSchemaLoader
-                    blockId={key}
-                    appInstance={appInstance}
-                    url={url}
-                    name={name}
-                  />
+                {url && (
+                  <ExternalSchemaLoader blockId={key} url={url} name={name} />
                 )}
               </div>
             </button>
