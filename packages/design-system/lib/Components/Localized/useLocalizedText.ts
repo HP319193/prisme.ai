@@ -21,7 +21,7 @@ export const useLocalizedText = (t: any, language: string) => {
   const localize = useCallback(
     (text: Prismeai.LocalizedText | undefined) => {
       if (!text) return '';
-      if (typeof text === 'string') return t(text);
+      if (typeof text === 'string' || typeof text === 'number') return t(text);
       if (text[language]) return text[language];
       if (text.en) return text.en;
       return text[Object.keys(text)[0]];
