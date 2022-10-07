@@ -39,13 +39,9 @@ const Link = ({
   href = '',
   ...props
 }: { href: string } & HTMLAttributes<HTMLAnchorElement>) => {
-  const link = `${href}`.match(/^http/) ? href : `/pages/${href}`;
+  const link = `${href}`.match(/^[a-z]+:/) ? href : `/pages/${href}`;
 
-  return (
-    <NextLink href={link}>
-      <a {...props} />
-    </NextLink>
-  );
+  return <NextLink {...props} href={link} />;
 };
 const DownIcon = ({ className }: { className?: string }) => (
   <Image src={down.src} width={14} height={14} alt="" className={className} />
