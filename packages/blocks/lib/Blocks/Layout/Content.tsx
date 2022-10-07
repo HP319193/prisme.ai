@@ -1,4 +1,11 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { BlockLoader } from '../../BlockLoader';
 import { BlockContext, useBlock } from '../../Provider';
 import { Content as IContent } from './context';
@@ -34,12 +41,20 @@ export const ContentRenderer = ({
     setTimeout(onUnmount, 200);
   }, [removed]);
 
+  const onLoad = useCallback(
+    (onInit: any) => () => {
+      if (!events) return;
+      events.emit(onInit);
+    },
+    [events]
+  );
+
   return (
     <div
       ref={containerEl}
       className={`${className} content-stack__content content transition-transform  ${animationClassName}`}
     >
-      {blocks.map(({ block, url, ...config }, index) => (
+      {blocks.map(({ block, url, onInit, ...config }, index) => (
         <div
           key={index}
           className={tw`flex content__block-container block-container snap-start`}
@@ -51,6 +66,7 @@ export const ContentRenderer = ({
             api={api}
             events={events}
             layout={{ container: containerEl.current || undefined }}
+            onLoad={onInit && onLoad(onInit)}
           />
         </div>
       ))}
