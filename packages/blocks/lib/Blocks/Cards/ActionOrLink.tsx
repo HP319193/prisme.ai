@@ -29,11 +29,11 @@ const ActionOrLink = ({ action, children }: ActionOrLinkProps) => {
       );
     case 'url':
       return (
-        <Link
-          href={action.value}
-          {...(action.popup ? { target: '_blank' } : {})}
-        >
-          <a className={tw`hover:text-theme-accent hover:border-theme-accent`}>
+        <Link href={action.value}>
+          <a
+            className={tw`hover:text-theme-accent hover:border-theme-accent`}
+            target={action.popup ? '_blank' : undefined}
+          >
             {children}
           </a>
         </Link>
