@@ -28,21 +28,23 @@ const CardButton: FC<CardButtonType> = ({
         href={url}
         target={popup ? '_blank' : undefined}
       >
-        <div
-          className={tw`button-link__image-container image-container flex mr-2`}
-        >
-          {icon && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              className="image-container__image image image-container__image--custom image--custom"
-              src={icon}
-              alt={localize(value)}
-              height={16}
-              width={16}
-            />
-          )}
-        </div>
-        <RichTextRenderer>{localize(value)}</RichTextRenderer>
+        <a>
+          <div
+            className={tw`button-link__image-container image-container flex mr-2`}
+          >
+            {icon && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                className="image-container__image image image-container__image--custom image--custom"
+                src={icon}
+                alt={localize(value)}
+                height={16}
+                width={16}
+              />
+            )}
+          </div>
+          <RichTextRenderer>{localize(value)}</RichTextRenderer>
+        </a>
       </Link>
     );
   }
