@@ -23,12 +23,10 @@ const CardButton: FC<CardButtonType> = ({
   } = useBlocks();
   if (url) {
     return (
-      <Link
-        className={tw`card-content-outer__button-link button-link ${className}`}
-        href={url}
-        target={popup ? '_blank' : undefined}
-      >
-        <a>
+      <Link href={url} target={popup ? '_blank' : undefined}>
+        <a
+          className={tw`card-content-outer__button-link button-link ${className}`}
+        >
           <div
             className={tw`button-link__image-container image-container flex mr-2`}
           >
