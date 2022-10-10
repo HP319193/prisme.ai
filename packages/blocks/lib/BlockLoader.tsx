@@ -72,6 +72,11 @@ export const ReactBlock = ({
     externals,
   });
 
+  React.useEffect(() => {
+    if (!onLoad || !module || loading) return;
+    onLoad(module);
+  }, [onLoad, module, loading]);
+
   return (
     <>
       {loading && componentProps.edit && <Loading />}
