@@ -61,6 +61,14 @@ it('should localize schema form', () => {
       cs: 'hello',
       es: 'hola',
     },
+    description: {
+      cs: 'hello',
+      es: 'hola',
+    },
+    placeholder: {
+      cs: 'hello',
+      es: 'hola',
+    },
   };
 
   const parsedSchemaForm = localizeSchemaForm(localizedSchemaForm);
@@ -73,6 +81,8 @@ it('should localize schema form', () => {
       },
     },
     title: 'hello',
+    description: 'hello',
+    placeholder: 'hello',
   });
 });
 
