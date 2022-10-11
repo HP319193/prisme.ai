@@ -5,22 +5,32 @@ import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
 
 import { withI18nProvider } from '../i18n';
+import { ReactChild } from 'react';
+
+interface Action {
+  type: 'external' | 'internal' | 'inside' | 'event';
+  value: string;
+}
 
 interface Config {
   title?: string;
   logo?: {
     src: string;
     alt: string;
+    action?: Action;
   };
-  nav: {
-    text: string;
-    type: 'external' | 'internal' | 'inside' | 'event';
-    value: string;
+  nav: (Action & {
+    text: string | ReactChild;
     edit: boolean;
-  }[];
+  })[];
 }
 
-const Button = ({ text, type, value, edit }: Config['nav'][number]) => {
+const Button = ({
+  text,
+  type,
+  value,
+  edit,
+}: Partial<Config['nav'][number]>) => {
   const { events } = useBlock<Config>();
   const {
     components: { Link },
@@ -35,20 +45,25 @@ const Button = ({ text, type, value, edit }: Config['nav'][number]) => {
             events.emit(value);
           }}
           className={tw`block-header__nav-item-button`}
-          dangerouslySetInnerHTML={{ __html: text }}
+          dangerouslySetInnerHTML={
+            typeof text === 'string' ? { __html: text } : undefined
+          }
+          children={typeof text === 'string' ? undefined : text}
         />
       );
     case 'external':
     case 'internal':
       return (
-        <Link
-          href={edit ? '' : value}
-          className={tw`block-header__nav-item-link`}
-        >
-          <button
-            className={tw`block-header__nav-item-button`}
-            dangerouslySetInnerHTML={{ __html: text }}
-          />
+        <Link href={edit ? '' : value}>
+          <a className={tw`block-header__nav-item-link`}>
+            <button
+              className={tw`block-header__nav-item-button`}
+              dangerouslySetInnerHTML={
+                typeof text === 'string' ? { __html: text } : undefined
+              }
+              children={typeof text === 'string' ? undefined : text}
+            />
+          </a>
         </Link>
       );
     case 'inside':
@@ -59,12 +74,15 @@ const Button = ({ text, type, value, edit }: Config['nav'][number]) => {
         >
           <button
             className={tw`block-header__nav-item-button`}
-            dangerouslySetInnerHTML={{ __html: text }}
+            dangerouslySetInnerHTML={
+              typeof text === 'string' ? { __html: text } : undefined
+            }
+            children={typeof text === 'string' ? undefined : text}
           />
         </a>
       );
     default:
-      return null;
+      return <>{text}</>;
   }
 };
 
@@ -83,10 +101,15 @@ export const Header = ({ edit }: { edit?: boolean }) => {
       <div className={tw`block-header__left left flex min-w-[6.25rem]`}>
         <div className={tw`left__logo logo flex justify-center`}>
           {config.logo && config.logo.src && (
-            <img
-              src={config.logo.src}
-              alt={config.logo.alt}
-              className={tw`logo__image image max-h-12`}
+            <Button
+              {...config.logo.action}
+              text={
+                <img
+                  src={config.logo.src}
+                  alt={config.logo.alt}
+                  className={tw`logo__image image max-h-12`}
+                />
+              }
             />
           )}
         </div>
