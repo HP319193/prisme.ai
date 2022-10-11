@@ -9,7 +9,14 @@ const valueIsALocale = (value: any) => {
       Object.keys(value).every((key) => key.length === 2))
   );
 };
-const translatable = ['title', 'description', 'label', 'add', 'remove'];
+const translatable = [
+  'title',
+  'description',
+  'label',
+  'add',
+  'remove',
+  'placeholder',
+];
 const isTranslatedElement = (key: string, value: any) => {
   if (translatable.includes(key)) {
     return valueIsALocale(value);

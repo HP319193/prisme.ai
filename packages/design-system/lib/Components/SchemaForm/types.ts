@@ -84,6 +84,8 @@ export interface Schema extends Record<string, any> {
   title?: string;
   // Description in a help tooltip
   description?: string;
+  // Input placeholder
+  placeholder?: string;
   // Add button label when in a list of items or properties
   add?: string;
   // Remove button label when in a list of items or properties
