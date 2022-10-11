@@ -18,10 +18,18 @@ export const RichTextRenderer = ({
   const {
     components: { Link },
   } = useBlocks();
+  const A = useMemo<typeof Link>(
+    () => ({ href, ...props }) => (
+      <Link href={href}>
+        <a {...props} />
+      </Link>
+    ),
+    [Link]
+  );
   const options = useMemo(
     () => ({
       overrides: {
-        a: Link,
+        a: A,
       },
     }),
     []
