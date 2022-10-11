@@ -180,3 +180,13 @@ a.ant-btn.pr-btn-primary-small {
 body .font-sans {
   font-family: Montserrat, sans-serif;
 }
+
+body .ant-popover-inner-content {
+  padding: 1rem;
+}
+body .ant-popover-message-title {
+  padding-left: 2rem;
+}
+body .ant-popover-buttons button {
+  line-height: 1;
+}

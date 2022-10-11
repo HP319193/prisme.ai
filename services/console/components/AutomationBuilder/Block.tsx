@@ -14,6 +14,7 @@ import { Trans, useTranslation } from 'next-i18next';
 import { truncate } from '../../utils/strings';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import useLocalizedText from '../../utils/useLocalizedText';
+import { Popconfirm } from 'antd';
 
 interface BlockProps {
   removable?: boolean;
@@ -253,16 +254,27 @@ export const Block: FC<NodeProps & BlockProps> = ({
               ? t('automations.node.title', { context: data.title })
               : name}
             {removable && (
-              <button
-                className="border-none cursor-pointer flex justify-center items-center"
-                style={{
-                  background: 'none',
-                  visibility: isHover ? 'visible' : 'hidden',
+              <Popconfirm
+                title={t('automations.instruction.delete')}
+                okText={t('yes', { ns: 'common' })}
+                cancelText={t('no', { ns: 'common' })}
+                onConfirm={(e) => {
+                  e?.stopPropagation();
+                  removeInstruction(data.parent, data.index);
                 }}
-                onClick={() => removeInstruction(data.parent, data.index)}
+                onCancel={(e) => e?.stopPropagation()}
               >
-                <DeleteOutlined className="!text-orange-500" />
-              </button>
+                <button
+                  className="border-none cursor-pointer flex justify-center items-center"
+                  style={{
+                    background: 'none',
+                    visibility: isHover ? 'visible' : 'hidden',
+                  }}
+                  onClick={(e) => e?.stopPropagation()}
+                >
+                  <DeleteOutlined className="!text-orange-500" />
+                </button>
+              </Popconfirm>
             )}
           </div>
         </>

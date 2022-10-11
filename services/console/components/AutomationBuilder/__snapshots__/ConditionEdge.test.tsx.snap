@@ -29,12 +29,14 @@ Array [
         }
       }
     >
-      <button
+      <div
         className="
-                bg-graph-accent p-1 rounded z-1 text-xs min-w-sm text-white px-4
+                relative flex flex-row bg-graph-accent p-1 rounded z-1 text-xs min-w-sm text-white px-5
                 
                 "
-      />
+      >
+        <button />
+      </div>
     </div>
   </foreignObject>,
 ]
@@ -69,13 +71,16 @@ Array [
         }
       }
     >
-      <button
+      <div
         className="
-                bg-graph-accent p-1 rounded z-1 text-xs min-w-sm text-white px-4
+                relative flex flex-row bg-graph-accent p-1 rounded z-1 text-xs min-w-sm text-white px-5
                 cursor-pointer
                 "
-        onClick={[Function]}
-      />
+      >
+        <button
+          onClick={[Function]}
+        />
+      </div>
     </div>
   </foreignObject>,
 ]
