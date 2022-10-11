@@ -161,8 +161,8 @@ export const Navigation = ({
     () =>
       Array.from(
         appInstances.get(id) || []
-      ).filter(({ appSlug: slug, appName: name }) =>
-        search(searchValue)(`${slug} ${localize(name)}}`)
+      ).filter(({ appSlug, slug, appName: name }) =>
+        search(searchValue)(`${appSlug} ${slug} ${localize(name)}}`)
       ),
     [appInstances, id, localize, searchValue]
   );
@@ -280,7 +280,7 @@ export const Navigation = ({
             onAdd={onInstallApp}
             tooltip={t('workspace.add.app')}
           >
-            {filteredApps.map(({ appSlug: slug, appName: name, photo }) => (
+            {filteredApps.map(({ slug, appName: name, photo }) => (
               <Item
                 key={slug}
                 href={`/workspaces/${id}/apps/${slug}`}
