@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import {
   Layout,
   Loading,
+  Modal,
   notification,
   SidePanel,
   Tooltip,
@@ -21,7 +22,7 @@ import AppsStore from '../../views/AppsStore';
 import { generateNewName } from '../../utils/generateNewName';
 import { Workspace } from '@prisme.ai/sdk';
 import Navigation from './Navigation';
-import { DoubleLeftOutlined } from '@ant-design/icons';
+import { DoubleLeftOutlined, WarningOutlined } from '@ant-design/icons';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const { workspace, createAutomation, saveSource, save } = useWorkspace();
@@ -51,6 +52,28 @@ export const WorkspaceLayout: FC = ({ children }) => {
   );
   const [appStoreVisible, setAppStoreVisible] = useState(false);
   const [dirty, setDirty] = useState(false);
+
+  useEffect(() => {
+    const onRouteChangeStart = (url: string) => {
+      if (!dirty) return;
+      Modal.confirm({
+        icon: <WarningOutlined />,
+        content: t('workspace.dirtyWarning'),
+        onOk: () => {
+          setDirty(false);
+          setTimeout(() => router.push(url));
+        },
+        okText: t('workspace.dirtyOk'),
+        cancelText: t('cancel', { ns: 'common' }),
+      });
+      throw 'wait for warning';
+    };
+    router.events.on('routeChangeStart', onRouteChangeStart);
+
+    return () => {
+      router.events.off('routeChangeStart', onRouteChangeStart);
+    };
+  }, [dirty, router, t]);
 
   useEffect(() => {
     if (fullSidebar) {
