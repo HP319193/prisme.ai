@@ -23,11 +23,9 @@ import { useUser } from '../components/UserProvider';
 import plus from '../icons/plus.svg';
 import IFrameLoader from '../components/IFrameLoader';
 import { removeEmpty, search } from '../utils/filterUtils';
-import {
-  CloseOutlined,
-  DeleteOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
+import WorkspaceMenu from '../components/Workspaces/WorkspaceMenu';
+import { Workspace } from '../utils/api';
 
 export const WorkspacesView = () => {
   const {
@@ -35,7 +33,7 @@ export const WorkspacesView = () => {
     i18n: { language },
   } = useTranslation('workspaces');
   const { push } = useRouter();
-  const { workspaces, create } = useWorkspaces();
+  const { workspaces, create, duplicate } = useWorkspaces();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState('');
@@ -58,6 +56,17 @@ export const WorkspacesView = () => {
     push(`/workspaces/${id}`);
     setLoading(false);
   }, [create, push, t]);
+
+  const duplicateWorkspace = useCallback(
+    (id: Workspace['id']) => async () => {
+      const workspace = workspaces.get(id);
+      if (!workspace) return;
+      const newW = await duplicate(workspace);
+      if (!newW) return;
+      push(`/workspaces/${newW.id}`);
+    },
+    [duplicate, push, workspaces]
+  );
 
   return (
     <>
@@ -160,7 +169,7 @@ export const WorkspacesView = () => {
                     '';
                   return (
                     <Link href={`/workspaces/${id}`} key={id}>
-                      <a className="p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid">
+                      <a className="relative p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid group">
                         <div className="flex flex-1 flex-row text-center max-w-full">
                           <div className="flex ml-3 mr-5">
                             {photo ? (
@@ -204,6 +213,10 @@ export const WorkspacesView = () => {
                             </Button>
                           </div>
                         </div>
+                        <WorkspaceMenu
+                          className="absolute top-2 right-2 invisible group-hover:visible"
+                          onDuplicate={duplicateWorkspace(id)}
+                        />
                       </a>
                     </Link>
                   );

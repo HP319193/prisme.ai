@@ -86,7 +86,7 @@ Array [
           </div>
         </button>
         <a
-          className="p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid"
+          className="relative p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid group"
           href="/workspaces/1"
           onClick={[Function]}
           onMouseEnter={[Function]}
@@ -108,9 +108,13 @@ Array [
               edit.label
             </div>
           </div>
+          <button
+            className="rotate-90"
+            onClick={[Function]}
+          />
         </a>
         <a
-          className="p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid"
+          className="relative p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid group"
           href="/workspaces/42"
           onClick={[Function]}
           onMouseEnter={[Function]}
@@ -132,6 +136,10 @@ Array [
               edit.label
             </div>
           </div>
+          <button
+            className="rotate-90"
+            onClick={[Function]}
+          />
         </a>
       </div>
     </div>
