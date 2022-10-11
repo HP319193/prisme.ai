@@ -551,6 +551,16 @@
             "alt": {
               "label": "Alternative text",
               "description": "Text displayed in place of the image for non-graphical browsers."
+            },
+            "action": {
+              "label": "Action",
+              "description": "Action on logo click.",
+              "type": {
+                "label": "Action type"
+              },
+              "none": {
+                "label": "None"
+              }
             }
           },
           "nav": {

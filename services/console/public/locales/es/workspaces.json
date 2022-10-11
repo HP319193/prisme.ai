@@ -553,6 +553,16 @@
             "alt": {
               "label": "Texto alternativo",
               "description": "Texto que se muestra en lugar de la imagen para los navegadores no gráficos."
+            },
+            "action": {
+              "label": "Acción",
+              "description": "Acción al logotipo.",
+              "type": {
+                "label": "Tipo de Acción"
+              },
+              "none": {
+                "label": "No"
+              }
             }
           },
           "nav": {
