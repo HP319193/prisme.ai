@@ -15,6 +15,10 @@ import FieldObject from './FieldObject';
 import FieldArray from './FieldArray';
 import FieldSelect from './FieldSelect';
 import FieldText from './FieldText';
+import {
+  FreeAdditionalProperties,
+  ManagedAdditionalProperties,
+} from './FieldAdditionalProperties';
 
 export interface FormProps {
   schema: Schema;
@@ -81,6 +85,8 @@ export const SchemaForm = ({
       FieldObject,
       FieldSelect,
       FieldText,
+      FreeAdditionalProperties,
+      ManagedAdditionalProperties,
       ...components,
     }),
     [components]
