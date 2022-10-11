@@ -32,7 +32,11 @@ export const PageBlocks = () => {
                   <EditOutlined />
                 </span>
                 {url && (
-                  <ExternalSchemaLoader blockId={key} url={url} name={name} />
+                  <ExternalSchemaLoader
+                    blockId={key}
+                    url={url}
+                    name={name || ''}
+                  />
                 )}
               </div>
             </button>
