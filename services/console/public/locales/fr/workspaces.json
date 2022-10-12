@@ -541,6 +541,8 @@
       "description_RichText": "Afficher du texte mis en page grâce à Markdown ou HTML",
       "description_Layout": "Afficher des pages de blocks navigable. Doit être utilisé par le biais d'automatisations.",
       "description_Development": "Permet de développer votre propre Block. Destiné aux développeurs.",
+      "panelTitle_adding": "Ajouter un Block",
+      "panelTitle_editing": "Éditer le Block $t(pages.blocks.name_{{block}})",
       "header": {
         "settings": {
           "title": {

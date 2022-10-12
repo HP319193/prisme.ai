@@ -190,6 +190,10 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
     });
   }, [value.blocks, blocks, blocksSchemas]);
 
+  const { name: editingBlockName } =
+    (blockEditing && blocksInPage.find(({ key }) => key === blockEditing)) ||
+    {};
+
   return (
     <context.Provider
       value={{
@@ -211,7 +215,10 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
         </div>
         <PageBlocks />
         <Panel
-          title={t('details.title_pages')}
+          title={t('pages.blocks.panelTitle', {
+            context: blockSelecting ? 'adding' : 'editing',
+            block: editingBlockName,
+          })}
           visible={panelIsOpen}
           onVisibleChange={hidePanel}
         >

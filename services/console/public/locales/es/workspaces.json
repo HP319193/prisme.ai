@@ -540,7 +540,8 @@
       "description_Form": "Mostrar un formulario",
       "description_RichText": "Visualización de texto formateado mediante Markdown o HTML",
       "description_Layout": "Mostrar páginas de bloques navegables. Debe utilizarse a través de automatizaciones.",
-      "description_Development": "Le permite desarrollar su propio bloque. Para los desarrolladores.",
+      "panelTitle_adding": "Añadir un Block",
+      "panelTitle_editing": "Editar el Block $t(pages.blocks.name_{{block}})",
       "header": {
         "settings": {
           "title": {

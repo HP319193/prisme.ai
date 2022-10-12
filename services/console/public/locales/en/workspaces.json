@@ -538,7 +538,8 @@
       "description_Form": "Display form",
       "description_RichText": "Display text formatted with Markdown or HTML",
       "description_Layout": "Display navigable block pages. Must be used through automations.",
-      "description_Development": "Allows you to develop your own Block. Intended for developers.",
+      "panelTitle_adding": "Add a Block",
+      "panelTitle_editing": "Edit Block $t(pages.blocks.name_{{block}})",
       "header": {
         "settings": {
           "title": {
