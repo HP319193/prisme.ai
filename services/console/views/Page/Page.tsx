@@ -165,7 +165,7 @@ export const Page = () => {
   );
 
   useEffect(() => {
-    if (!value || !page || value.id !== page.id) {
+    if (!value || !page || value.id !== page.id || saving) {
       setDirty(false);
       return;
     }
@@ -182,7 +182,7 @@ export const Page = () => {
     ) {
       setDirty(true);
     }
-  }, [value, pageId, prevPageId, setDirty, page]);
+  }, [value, pageId, prevPageId, setDirty, page, saving]);
 
   useEffect(() => {
     if (!page) return;
