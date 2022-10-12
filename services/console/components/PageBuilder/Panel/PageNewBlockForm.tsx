@@ -1,4 +1,4 @@
-import { SearchInput, Space } from '@prisme.ai/design-system';
+import { Collapse, SearchInput, Space } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import useLocalizedText from '../../../utils/useLocalizedText';
@@ -42,22 +42,13 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
     return catalog.flatMap((block) => searchInBlock(block, search));
   }, [catalog, search, searchInBlock]);
 
-  return (
-    <div className="flex flex-1 h-full flex-col overflow-auto">
-      <SearchInput
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder={t('pages.blocks.search')}
-        className="mb-6"
-      />
-      <Space direction="vertical" className="flex flex-1 overflow-x-auto">
-        {filteredCatalog.map(({ slug, name, variants, hidden, ...block }) => (
-          <Space
-            key={slug}
-            direction="vertical"
-            className="!flex flex-1 pb-2 border-b-2"
-          >
-            <div className="font-bold">{localize(name)}</div>
+  const collapses = useMemo(
+    () =>
+      filteredCatalog.map(({ slug, name, variants, hidden, ...block }) => {
+        return {
+          key: slug,
+          label: localize(name),
+          content: (
             <div className={`flex flex-wrap ${hidden ? '' : '-mt-8'}`}>
               {!hidden && (
                 <BlockButton
@@ -79,8 +70,22 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
                   />
                 ))}
             </div>
-          </Space>
-        ))}
+          ),
+        };
+      }),
+    [filteredCatalog, localize, onSubmit]
+  );
+
+  return (
+    <div className="flex flex-1 h-full flex-col overflow-auto">
+      <SearchInput
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder={t('pages.blocks.search')}
+        className="mb-6"
+      />
+      <Space direction="vertical" className="flex flex-1 overflow-x-auto">
+        <Collapse items={collapses} />
       </Space>
     </div>
   );
