@@ -1,6 +1,29 @@
 import renderer from 'react-test-renderer';
 import useBlocks from './useBlocks';
 
+jest.mock('./builtinBlocksVariants', () => [
+  {
+    name: 'Contact Form',
+    slug: 'Form_Contact',
+    block: 'Form',
+    description: 'Un form de contact avec email et message',
+    photo: '/images/blocks/preview.jpg',
+    config: {
+      schema: {
+        type: 'object',
+        properties: {
+          email: {
+            type: 'string',
+          },
+          message: {
+            type: 'string',
+            'ui:widget': 'textarea',
+          },
+        },
+      },
+    },
+  },
+]);
 jest.mock('../WorkspaceProvider', () => {
   const useWorkspace = () => ({
     workspace: {
@@ -105,14 +128,14 @@ it('should get available Blocks', () => {
       slug: 'Form',
       name: 'pages.blocks.name',
       description: 'pages.blocks.description',
-      photo: '/images/blocks/preview-Form.jpg',
+      photo: '/images/blocks/preview-Form.png',
     },
     {
       builtIn: true,
       slug: 'Cards',
       name: 'pages.blocks.name',
       description: 'pages.blocks.description',
-      photo: '/images/blocks/preview-Cards.jpg',
+      photo: '/images/blocks/preview-Cards.png',
     },
     {
       builtIn: true,
@@ -192,7 +215,7 @@ it('should get available Blocks', () => {
       slug: 'Form',
       name: 'pages.blocks.name',
       description: 'pages.blocks.description',
-      photo: '/images/blocks/preview-Form.jpg',
+      photo: '/images/blocks/preview-Form.png',
       variants: [
         {
           builtIn: true,
@@ -256,8 +279,7 @@ it('should get available Blocks', () => {
       slug: 'Cards',
       name: 'pages.blocks.name',
       description: 'pages.blocks.description',
-      photo: '/images/blocks/preview-Cards.jpg',
-      icon: undefined,
+      photo: '/images/blocks/preview-Cards.png',
     },
     {
       description: 'some text',
