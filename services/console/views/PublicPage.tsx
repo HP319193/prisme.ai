@@ -12,7 +12,7 @@ import React, {
 import { Loading, Title } from '@prisme.ai/design-system';
 import SigninForm from '../components/SigninForm';
 import { useUser } from '../components/UserProvider';
-import api, { Events, HTTPError } from '../utils/api';
+import api, { Events } from '../utils/api';
 import useLocalizedText from '../utils/useLocalizedText';
 import usePageBlocksConfigs from '../components/Page/usePageBlocksConfigs';
 import PublicPageBlock from '../components/Page/PageBlock';
@@ -37,16 +37,12 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
   const { t } = useTranslation('pages');
   const { t: commonT } = useTranslation('common');
   const { localize } = useLocalizedText();
-  const { user } = useUser();
   const [currentPage, setCurrentPage] = useState<Prismeai.DetailedPage | null>(
     page
   );
 
   const [loadingError, setLoadingError] = useState<number | null>(null);
-  const {
-    isReady,
-    query: { pageSlug },
-  } = useRouter();
+  const { isReady } = useRouter();
   const [forceReloadPage, setForceReloadPage] = useState(false);
   const { blocksConfigs, error, events } = usePageBlocksConfigs(
     currentPage,
@@ -76,21 +72,6 @@ export const PublicPageRenderer = ({ page }: PublicPageProps) => {
       window.removeEventListener('message', listener);
     };
   }, []);
-
-  useEffect(() => {
-    // Page is null because it does not exist OR because it need authentication
-    const fetchPage = async () => {
-      try {
-        const page = await api.getPageBySlug(`${pageSlug}`);
-        setLoadingError(null);
-        setCurrentPage(page);
-      } catch (e) {
-        setCurrentPage(null);
-        setLoadingError((e as HTTPError).code || 404);
-      }
-    };
-    fetchPage();
-  }, [pageSlug, user]);
 
   const blocks = useMemo(
     () =>
@@ -173,16 +154,19 @@ export const PublicPage = ({
   const [page, setPage] = useState(pageFromServer);
   const [loading, setLoading] = useState(true);
   const {
-    query: { pageSlug },
+    query: { slug },
   } = useRouter();
 
   const fetchPage = useCallback(async () => {
     try {
-      const page = await api.getPageBySlug(`${pageSlug}`);
+      const [, workspaceSlug] =
+        window.location.hostname.match(/^([^\.]+)\./) || [];
+      console.log(workspaceSlug, slug);
+      const page = await api.getPageBySlug(workspaceSlug, `${slug}`);
       setPage(page);
     } catch (e) {}
     setLoading(false);
-  }, [pageSlug]);
+  }, [slug]);
 
   useEffect(() => {
     if (pageFromServer || error !== 403) return;
@@ -190,7 +174,7 @@ export const PublicPage = ({
     // User should have them
 
     fetchPage();
-  }, [pageSlug, error, pageFromServer, fetchPage]);
+  }, [slug, error, pageFromServer, fetchPage]);
 
   if (!page && loading) return <Loading />;
 

@@ -26,3 +26,7 @@ export const usePageEndpoint = () => {
 
   return PAGES_HOST.replace(/\{\{lang\}\}/, language);
 };
+
+export function getSubmodain(host: string) {
+  return host.split(PAGES_HOST)[0];
+}

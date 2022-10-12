@@ -17,10 +17,12 @@ const PUBLIC_URLS = [
 
 interface UserProviderProps {
   anonymous?: boolean;
+  redirectTo?: string;
 }
 
 export const UserProvider: FC<UserProviderProps> = ({
   anonymous,
+  redirectTo,
   children,
 }) => {
   const [user, setUser] = useState<UserContext['user']>(null);
@@ -66,8 +68,8 @@ export const UserProvider: FC<UserProviderProps> = ({
     []
   );
 
-  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] =
-    useCallback(async (email: string, language: string) => {
+  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] = useCallback(
+    async (email: string, language: string) => {
       setLoading(true);
       setError(undefined);
       setSuccess(undefined);
@@ -80,7 +82,9 @@ export const UserProvider: FC<UserProviderProps> = ({
         setError(e as ApiError);
         return null;
       }
-    }, []);
+    },
+    []
+  );
 
   const passwordReset: UserContext['passwordReset'] = useCallback(
     async (token: string, password: string) => {
@@ -216,8 +220,8 @@ export const UserProvider: FC<UserProviderProps> = ({
       }
       setUser(user);
       setLoading(false);
-      if (user.id && REDIRECT_IF_SIGNED.includes(route)) {
-        push('/workspaces');
+      if (user.id && REDIRECT_IF_SIGNED.includes(route) && redirectTo) {
+        push(redirectTo);
       }
       if (!user.id && !PUBLIC_URLS.includes(route)) {
         push('/signin');

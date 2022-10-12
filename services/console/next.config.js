@@ -9,6 +9,7 @@ module.exports = {
     ENDPOINT: `${process.env.API_HOST}/workspaces/{{workspaceId}}/webhooks/{{slug}}`,
     PAGES_HOST: process.env.PAGES_HOST,
     SENTRY_DSN: process.env.SENTRY_DSN || '',
+    CONSOLE_SUBDOMAIN: process.env.CONSOLE_SUBDOMAIN || '',
   },
   webpack(config) {
     config.module.rules.push({
