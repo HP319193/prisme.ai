@@ -190,3 +190,11 @@ body .ant-popover-message-title {
 body .ant-popover-buttons button {
   line-height: 1;
 }
+
+body .ant-modal-confirm-body .anticon {
+  margin-top: 0.2rem;
+}
+body .ant-modal-confirm-title {
+  font-size: 1.4rem;
+  padding: 0;
+}
