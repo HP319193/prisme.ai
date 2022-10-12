@@ -159,10 +159,9 @@ export const Navigation = ({
   );
   const filteredApps = useMemo(
     () =>
-      Array.from(
-        appInstances.get(id) || []
-      ).filter(({ appSlug, slug, appName: name }) =>
-        search(searchValue)(`${appSlug} ${slug} ${localize(name)}}`)
+      Array.from(appInstances.get(id) || []).filter(
+        ({ appSlug, slug, appName: name }) =>
+          search(searchValue)(`${appSlug} ${slug} ${localize(name)}}`)
       ),
     [appInstances, id, localize, searchValue]
   );
@@ -177,7 +176,7 @@ export const Navigation = ({
         ({ id: pageId }) => `/workspaces/${id}/pages/${pageId}`
       ),
       apps: Array.from(appInstances.get(id) || []).map(
-        ({ appSlug }) => `/workspaces/${id}/apps/${appSlug}`
+        ({ slug }) => `/workspaces/${id}/apps/${slug}`
       ),
     };
     setOpens((opens) => {
