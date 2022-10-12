@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { builtinBlocks } from '@prisme.ai/blocks';
 import Panel from '../Panel';
-import { context, PageBuilderContext } from './context';
+import { blockWithKey, context, PageBuilderContext } from './context';
 import PageNewBlockForm from './Panel/PageNewBlockForm';
 import PageBlocks from './PageBlocks';
 import { nanoid } from 'nanoid';
@@ -107,16 +107,23 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
       const newBlocks = [...value.blocks];
       const blockKey = nanoid();
 
+      const blockDetails = available.find(({ slug }) => slug === block);
+
+      if (!blockDetails) return;
+
       const originalBlock = getOriginalBlock(block);
+
       if (!originalBlock) return;
-      const newBlock = originalBlock.block
+
+      const newBlock = blockDetails.block
         ? {
-            name: originalBlock.block,
-            config: originalBlock.config,
+            name: originalBlock.slug,
+            config: blockDetails.config,
           }
         : {
             name: originalBlock.slug,
           };
+
       newBlocks.splice(position, 0, { ...newBlock, key: blockKey });
       onChange({
         ...value,
