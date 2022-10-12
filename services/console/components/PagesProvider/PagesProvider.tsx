@@ -87,6 +87,7 @@ export const PagesProvider: FC<PagesProvider> = ({ children }) => {
         }
       }
       const savedPage = await api.updatePage(workspaceId, page);
+
       setPages((prev) => {
         const newPages = new Map(prev);
         const workspacePages = new Set(
@@ -94,7 +95,7 @@ export const PagesProvider: FC<PagesProvider> = ({ children }) => {
             ({ id }) => id !== savedPage.id
           )
         );
-        workspacePages.add(savedPage);
+        workspacePages.add({ ...savedPage, workspaceId });
         newPages.set(workspaceId, workspacePages);
         return newPages;
       });
