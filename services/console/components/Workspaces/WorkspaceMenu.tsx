@@ -35,7 +35,7 @@ export const WorkspaceMenu = ({
   return (
     <Dropdown overlay={menu} className={className} trigger={['click']}>
       <button onClick={(e) => e.preventDefault()} className="rotate-90">
-        <EllipsisOutlined />
+        <EllipsisOutlined className="text-2xl" />
       </button>
     </Dropdown>
   );
