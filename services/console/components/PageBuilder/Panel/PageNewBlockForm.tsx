@@ -20,18 +20,46 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
 
   const searchInBlock = useCallback(
     (block: BlockInCatalog, search: string) => {
-      const isFound = (block: BlockInCatalog, search: string) => {
-        return removeAccents(
-          `${localize(block.name)} ${localize(block.description)}`.toLowerCase()
-        ).includes(removeAccents(search.toLowerCase()));
-      };
-      if (!block.variants) {
-        return isFound(block, search) ? [block] : [];
+      if (!search) return block;
+
+      function lookIn(into: string) {
+        return removeAccents(into)
+          .toLowerCase()
+          .includes(removeAccents(search.toLowerCase()));
       }
-      return {
-        ...block,
-        hidden: !isFound(block, search),
-      };
+
+      const fullBlockSearchIn = `${localize(block.name)} ${localize(
+        block.description
+      )} ${block.slug} ${(block.variants || [])
+        .map(
+          ({ name, slug, description }) =>
+            `${localize(name)} ${localize(description)} ${slug}`
+        )
+        .join(' ')}`;
+
+      if (!lookIn(fullBlockSearchIn)) return [];
+
+      const filteredVariants = block.variants
+        ? block.variants.filter(({ name, description, slug }) =>
+            lookIn(`${localize(name)} ${localize(description)} ${slug}`)
+          )
+        : undefined;
+
+      if (filteredVariants === undefined) return block;
+
+      if (filteredVariants.length === 0) return [];
+
+      return [
+        {
+          ...block,
+          hidden: !lookIn(
+            `${localize(block.name)} ${localize(block.description)} ${
+              block.slug
+            }`
+          ),
+          variants: filteredVariants,
+        },
+      ];
     },
     [localize]
   );
@@ -85,7 +113,10 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
         className="mb-6"
       />
       <Space direction="vertical" className="flex flex-1 overflow-x-auto -m-5">
-        <Collapse items={collapses} />
+        <Collapse
+          items={collapses}
+          defaultActiveKey={collapses.map(({ key }) => key)}
+        />
       </Space>
     </div>
   );
