@@ -27,6 +27,7 @@ export const extractEvents = (
 ) => {
   const schemas = Array.from(blocksSchemas.values());
   const events = schemas.flatMap((schema) => {
+    if (!schema) return [];
     const { onInit, updateOn } = config || {};
     const events = new Set(extractEventFromSchema(schema, config));
     onInit && events.add(onInit);

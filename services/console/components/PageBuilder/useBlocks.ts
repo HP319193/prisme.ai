@@ -51,7 +51,7 @@ export const useBlocks = () => {
         slug: key,
         name: t('pages.blocks.name', { context: key }),
         description: t('pages.blocks.description', { context: key }),
-        photo: `/images/blocks/preview-${key}.jpg`,
+        photo: `/images/blocks/preview-${key}.png`,
       })),
       // Builtin variants
       ...builtinBlocksVariants.map((variant) => ({

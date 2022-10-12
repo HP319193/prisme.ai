@@ -77,14 +77,14 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
   );
 
   return (
-    <div className="flex flex-1 h-full flex-col overflow-auto">
+    <div className="flex flex-1 h-full flex-col">
       <SearchInput
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder={t('pages.blocks.search')}
         className="mb-6"
       />
-      <Space direction="vertical" className="flex flex-1 overflow-x-auto">
+      <Space direction="vertical" className="flex flex-1 overflow-x-auto -m-5">
         <Collapse items={collapses} />
       </Space>
     </div>

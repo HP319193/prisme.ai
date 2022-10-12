@@ -30,7 +30,7 @@ export const BlockButton = ({
         </>
       }
     >
-      <button className="flex flex-col m-1 relative" onClick={onClick}>
+      <button className="flex flex-col m-5 relative" onClick={onClick}>
         {icon && (
           <Tooltip title={from}>
             {
@@ -38,7 +38,7 @@ export const BlockButton = ({
               <img
                 src={icon}
                 alt={localize(name)}
-                className="absolute bottom-1 left-1 w-8 h-8"
+                className="absolute bottom-2 left-2 w-7 h-7"
               />
             }
           </Tooltip>
@@ -49,12 +49,8 @@ export const BlockButton = ({
         {/* eslint-disable-next-line @next/next/no-img-element*/}
         <img
           className="rounded-[2px]"
-          style={{
-            outline: '1px solid rgba(0,0,0,.1)',
-          }}
           src={photo || '/images/blocks/preview.jpg'}
           alt={localize(name)}
-          width="145"
         />
       </button>
     </Tooltip>
