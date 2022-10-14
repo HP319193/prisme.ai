@@ -207,7 +207,9 @@ export class AccessManager<
     Object.setPrototypeOf(child, AccessManager.prototype);
 
     if (apiKey) {
-      await child.pullApiKey(apiKey);
+      try {
+        await child.pullApiKey(apiKey);
+      } catch {}
     }
     return child;
   }
@@ -681,6 +683,7 @@ export class AccessManager<
     try {
       return await this.pullRole({ name: apiKey });
     } catch (error) {
+      console.log(error);
       throw new InvalidAPIKey();
     }
   }
