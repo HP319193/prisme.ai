@@ -59,3 +59,7 @@ export function Button({ children = null }) {
 export function DatePicker({ children = null }) {
   return children;
 }
+
+export function Popconfirm({ children = null }) {
+  return children;
+}

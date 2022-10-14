@@ -333,6 +333,18 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [editConditionDetails, onChange]
   );
 
+  const removeCondition: AutomationBuilderContext['removeCondition'] = useCallback(
+    (parent, key) => {
+      delete parent.conditions[key as keyof typeof parent.conditions];
+      onChange((value) => {
+        prevValue.current = { ...value };
+        return prevValue.current;
+      });
+      setTimeout(hidePanel);
+    },
+    [hidePanel, onChange]
+  );
+
   const editTrigger: AutomationBuilderContext['editTrigger'] = useCallback(() => {
     hidePanel();
     setTriggerEditing({
@@ -442,6 +454,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         removeInstruction,
         editInstruction,
         editCondition,
+        removeCondition,
         editTrigger,
         editOutput,
         getApp,

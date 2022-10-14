@@ -171,6 +171,8 @@ paths:
                   type: string
                 lastName:
                   type: string
+                language:
+                  type: string
 
       responses:
         '200':
@@ -226,6 +228,58 @@ paths:
                     password:
                       type: string
                       description: New user password
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnyValue'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+        '403':
+          description: Bad permissions (such as an invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+
+  /v2/user/validate:
+    post:
+      description: Ask to send again the account validation link, or verify a validation token to validate the corresponding account
+      operationId: validateAccount
+      tags:
+        - API Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required:
+                    - email
+                  properties:
+                    email:
+                      type: string
+                    language:
+                      type: string
+                - type: object
+                  required:
+                    - token
+                  properties:
+                    token:
+                      type: string
       responses:
         '200':
           description: Success Response
@@ -2858,6 +2912,14 @@ components:
             email:
               type: string
               example: foo@prisme.ai
+            status:
+              type: string
+              enum:
+                - pending
+                - validated
+                - deactivated
+            language:
+              type: string
             authData: &AUTH_DATA
               type: object
               properties:

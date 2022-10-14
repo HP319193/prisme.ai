@@ -159,10 +159,9 @@ export const Navigation = ({
   );
   const filteredApps = useMemo(
     () =>
-      Array.from(
-        appInstances.get(id) || []
-      ).filter(({ appSlug: slug, appName: name }) =>
-        search(searchValue)(`${slug} ${localize(name)}}`)
+      Array.from(appInstances.get(id) || []).filter(
+        ({ appSlug, slug, appName: name }) =>
+          search(searchValue)(`${appSlug} ${slug} ${localize(name)}}`)
       ),
     [appInstances, id, localize, searchValue]
   );
@@ -177,7 +176,7 @@ export const Navigation = ({
         ({ id: pageId }) => `/workspaces/${id}/pages/${pageId}`
       ),
       apps: Array.from(appInstances.get(id) || []).map(
-        ({ appSlug }) => `/workspaces/${id}/apps/${appSlug}`
+        ({ slug }) => `/workspaces/${id}/apps/${slug}`
       ),
     };
     setOpens((opens) => {
@@ -280,7 +279,7 @@ export const Navigation = ({
             onAdd={onInstallApp}
             tooltip={t('workspace.add.app')}
           >
-            {filteredApps.map(({ appSlug: slug, appName: name, photo }) => (
+            {filteredApps.map(({ slug, appName: name, photo }) => (
               <Item
                 key={slug}
                 href={`/workspaces/${id}/apps/${slug}`}

@@ -2,17 +2,16 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { notification } from '@prisme.ai/design-system';
-import ForgotForm from '../../components/ForgotForm';
-import ResetForm from '../../components/ResetForm';
 
 import { useRouter } from 'next/router';
 import { useUser } from '../../components/UserProvider';
 import { SignLayout, SignType } from '../../components/SignLayout';
+import ValidateForm from '../../components/ValidateForm';
 
 export const Forgot = () => {
   const { t } = useTranslation('sign');
   const router = useRouter();
-  const { token } = router.query;
+  const { email, sent } = router.query;
 
   const { error, success } = useUser();
 
@@ -32,17 +31,9 @@ export const Forgot = () => {
     });
   }, [success, t]);
 
-  if (token && typeof token === 'string') {
-    return (
-      <SignLayout type={SignType.Reset} link="signup">
-        <ResetForm token={token} />
-      </SignLayout>
-    );
-  }
-
   return (
-    <SignLayout type={SignType.Forgot} link="signup">
-      <ForgotForm />
+    <SignLayout type={SignType.Validate} link="signup">
+      <ValidateForm email={email as string} sent={!!sent} />
     </SignLayout>
   );
 };

@@ -2,6 +2,7 @@ import Block from './Block';
 import renderer, { act } from 'react-test-renderer';
 import { useAutomationBuilder } from './context';
 import { DeleteOutlined } from '@ant-design/icons';
+import { Popconfirm } from 'antd';
 
 jest.mock('react-flow-renderer', () => {
   return {
@@ -103,7 +104,7 @@ it('should remove instruction', () => {
   );
 
   act(() => {
-    root.root.findByType(DeleteOutlined).parent!.props.onClick();
+    root.root.findByType(Popconfirm).props.onConfirm();
   });
   expect(useAutomationBuilder().removeInstruction).toHaveBeenCalledWith(
     parent,

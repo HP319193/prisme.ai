@@ -1,22 +1,13 @@
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
-import {
-  FieldProps,
-  getSchemaFormLabel,
-  SchemaForm,
-  SchemaFormDescription,
-  Tooltip,
-} from '@prisme.ai/design-system';
-import { CodeEditorInline } from '../../CodeEditor/lazy';
-import { useField } from 'react-final-form';
-import FieldContainerWithRaw from '../../FieldContainerWithRaw';
+import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
 import usePages from '../../PagesProvider/context';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { useWorkspace } from '../../WorkspaceProvider';
 import { useApps } from '../../AppsProvider';
 import { useAutomationBuilder } from '../context';
 import useLocalizedText from '../../../utils/useLocalizedText';
+import components from './schemaFormComponents';
 
 interface InstructionValueProps {
   instruction: string;
@@ -26,70 +17,6 @@ interface InstructionValueProps {
 }
 
 const EmptyButtons: any[] = [];
-const FieldAny = ({ schema, name, label }: FieldProps) => {
-  const { t } = useTranslation('workspaces');
-  const [invalidJSON, setInvalidJSON] = useState(false);
-
-  const field = useField(name);
-  const [value, setValue] = useState(
-    typeof field.input.value === 'string'
-      ? field.input.value
-      : JSON.stringify(field.input.value, null, '  ')
-  );
-  const onChange = useCallback(
-    (value: string) => {
-      setValue(value);
-      try {
-        const json = JSON.parse(value);
-        field.input.onChange(json);
-        setInvalidJSON(false);
-      } catch {
-        field.input.onChange(value);
-        setInvalidJSON(true);
-      }
-    },
-    [field.input]
-  );
-
-  const codeStyle = useMemo(() => {
-    const style: any = { flex: 'auto' };
-    if (invalidJSON) style.border = 'solid #FF9261 1px';
-    return style;
-  }, [invalidJSON]);
-
-  return (
-    <div className="flex flex-1 flex-col my-2">
-      <SchemaFormDescription text={schema.description}>
-        <label className="text-[10px] text-gray">
-          {label || schema.title || getSchemaFormLabel(name)}
-        </label>
-        <CodeEditorInline
-          value={value}
-          onChange={onChange}
-          mode="json"
-          style={codeStyle}
-        />
-        <div
-          className={`flex items-center justify-end text-pr-orange text-xs mr-2 ${
-            invalidJSON ? '' : 'invisible'
-          }`}
-        >
-          <Tooltip title={t('automations.instruction.anyFieldErrorTooltip')}>
-            <div>
-              {t('automations.instruction.anyFieldError')}
-              <InfoCircleOutlined className="ml-2" />
-            </div>
-          </Tooltip>
-        </div>
-      </SchemaFormDescription>
-    </div>
-  );
-};
-
-const components = {
-  FieldAny,
-  FieldContainer: FieldContainerWithRaw,
-};
 
 export const InstructionValue: FC<InstructionValueProps> = ({
   instruction,
@@ -125,7 +52,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
     workspace,
   });
 
-  const cleanedSchema = useMemo(() => {
+  const cleanedSchema = useMemo<Schema>(() => {
     const cleaned = {
       ...localizeSchemaForm(schema),
       title: t('automations.instruction.label', {

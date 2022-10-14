@@ -24,6 +24,86 @@ export const schema: Schema = {
           title: 'pages.blocks.header.settings.logo.alt.label',
           description: 'pages.blocks.header.settings.logo.alt.description',
         },
+        action: {
+          type: 'object',
+          title: 'pages.blocks.header.settings.logo.action.label',
+          description: 'pages.blocks.header.settings.logo.action.description',
+          properties: {
+            type: {
+              title: 'pages.blocks.header.settings.logo.action.type.label',
+              oneOf: [
+                {
+                  title: 'pages.blocks.header.settings.logo.action.none.label',
+                  value: '',
+                },
+                {
+                  title:
+                    'pages.blocks.header.settings.nav.items.external.label',
+                  value: 'external',
+                  properties: {
+                    value: {
+                      type: 'string',
+                      title:
+                        'pages.blocks.header.settings.nav.items.external.value.label',
+                      description:
+                        'pages.blocks.header.settings.nav.items.external.value.description',
+                    },
+                  },
+                },
+                {
+                  title:
+                    'pages.blocks.header.settings.nav.items.internal.label',
+                  value: 'internal',
+                  properties: {
+                    value: {
+                      type: 'string',
+                      title:
+                        'pages.blocks.header.settings.nav.items.internal.value.label',
+                      description:
+                        'pages.blocks.header.settings.nav.items.internal.value.description',
+                      'ui:widget': 'select',
+                      'ui:options': {
+                        from: 'pages',
+                      },
+                    },
+                  },
+                },
+                {
+                  title: 'pages.blocks.header.settings.nav.items.inside.label',
+                  value: 'inside',
+                  properties: {
+                    value: {
+                      type: 'string',
+                      title:
+                        'pages.blocks.header.settings.nav.items.inside.value.label',
+                      description:
+                        'pages.blocks.header.settings.nav.items.inside.value.description',
+                      'ui:widget': 'select',
+                      'ui:options': {
+                        from: 'pageSections',
+                      },
+                    },
+                  },
+                },
+                {
+                  title: 'pages.blocks.header.settings.nav.items.event.label',
+                  description:
+                    'pages.blocks.header.settings.nav.items.event.description',
+                  value: 'event',
+                  properties: {
+                    value: {
+                      type: 'string',
+                      title:
+                        'pages.blocks.header.settings.nav.items.event.value.label',
+                      description:
+                        'pages.blocks.header.settings.nav.items.event.value.description',
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
       },
     },
     nav: {

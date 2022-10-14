@@ -7,7 +7,13 @@ import Storage from '../../utils/Storage';
 import { Loading } from '@prisme.ai/design-system';
 
 const REDIRECT_IF_SIGNED = ['/forgot', '/signin', '/signup', '/'];
-const PUBLIC_URLS = ['/forgot', '/signin', '/signup', '/pages/[pageSlug]'];
+const PUBLIC_URLS = [
+  '/forgot',
+  '/signin',
+  '/signup',
+  '/validate',
+  '/pages/[pageSlug]',
+];
 
 interface UserProviderProps {
   anonymous?: boolean;
@@ -24,12 +30,13 @@ export const UserProvider: FC<UserProviderProps> = ({
 
   const { push, route } = useRouter();
 
-  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] = useCallback(
+  const sendValidationMail: UserContext['sendValidationMail'] = useCallback(
     async (email: string, language: string) => {
       setLoading(true);
+      setError(undefined);
+      setSuccess(undefined);
       try {
-        await api.sendPasswordResetMail(email, language);
-        setError(undefined);
+        await api.sendValidationMail(email, language);
         setSuccess({ type: OperationSuccess.emailSent });
         setLoading(false);
       } catch (e) {
@@ -41,15 +48,53 @@ export const UserProvider: FC<UserProviderProps> = ({
     []
   );
 
+  const validateMail: UserContext['validateMail'] = useCallback(
+    async (token: string) => {
+      setLoading(true);
+      setError(undefined);
+      setSuccess(undefined);
+      try {
+        await api.validateMail(token);
+        setSuccess({ type: OperationSuccess.mailValidated });
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        setError(e as ApiError);
+        return null;
+      }
+    },
+    []
+  );
+
+  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] =
+    useCallback(async (email: string, language: string) => {
+      setLoading(true);
+      setError(undefined);
+      setSuccess(undefined);
+      try {
+        await api.sendPasswordResetMail(email, language);
+        setSuccess({ type: OperationSuccess.emailSent });
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        setError(e as ApiError);
+        return null;
+      }
+    }, []);
+
   const passwordReset: UserContext['passwordReset'] = useCallback(
     async (token: string, password: string) => {
       setLoading(true);
+      setError(undefined);
+      setSuccess(undefined);
       try {
         await api.passwordReset(token, password);
-        setError(undefined);
         setSuccess({ type: OperationSuccess.passwordReset });
         setLoading(false);
-        setTimeout(() => push('/signin'), 3000);
+        setTimeout(() => {
+          setSuccess(undefined);
+          push('/signin'), 2000;
+        });
       } catch (e) {
         setLoading(false);
         setError(e as ApiError);
@@ -59,41 +104,65 @@ export const UserProvider: FC<UserProviderProps> = ({
     [push]
   );
 
-  const signin: UserContext['signin'] = useCallback(async (email, password) => {
-    setLoading(true);
-    try {
-      const { token, ...user } = await api.signin(email, password);
-      api.token = token;
-      Storage.set('auth-token', token);
+  const signin: UserContext['signin'] = useCallback(
+    async (email, password) => {
+      setLoading(true);
       setError(undefined);
-      setUser(user);
-      setLoading(false);
-      return user;
-    } catch (e) {
-      api.token = null;
-      setUser(null);
-      setLoading(false);
-      setError(e as ApiError);
-      return null;
-    }
-  }, []);
+      setSuccess(undefined);
+      try {
+        const { token, ...user } = await api.signin(email, password);
+        api.token = token;
+        Storage.set('auth-token', token);
+        setUser(user);
+        setLoading(false);
+        return user;
+      } catch (e) {
+        const { error } = e as ApiError;
+
+        api.token = null;
+        setUser(null);
+        setLoading(false);
+        setError(e as ApiError);
+        if (error === 'ValidateEmailError') {
+          setTimeout(() => {
+            setError(undefined);
+            push(
+              `/validate?${new URLSearchParams({
+                email: email,
+              }).toString()}`
+            );
+          }, 2000);
+        }
+        return null;
+      }
+    },
+    [push]
+  );
 
   const signup: UserContext['signup'] = useCallback(
-    async (email, password, firstName, lastName) => {
+    async (email, password, firstName, lastName, language) => {
       setLoading(true);
+      setError(undefined);
+      setSuccess(undefined);
       try {
         const { token, ...user } = await api.signup(
           email,
           password,
           firstName,
-          lastName
+          lastName,
+          language
         );
-        api.token = token;
-        Storage.set('auth-token', token);
-        setError(undefined);
-        setUser(user);
-
+        setSuccess({ type: OperationSuccess.signupSuccess });
         setLoading(false);
+        setTimeout(() => {
+          setSuccess(undefined);
+          push(
+            `/validate?${new URLSearchParams({
+              email: email,
+              sent: 'true',
+            }).toString()}`
+          );
+        }, 2000);
         return user;
       } catch (e) {
         const { error } = e as ApiError;
@@ -113,7 +182,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         return null;
       }
     },
-    [signin]
+    [signin, push]
   );
 
   const signout: UserContext['signout'] = useCallback(
@@ -189,6 +258,8 @@ export const UserProvider: FC<UserProviderProps> = ({
         signout,
         sendPasswordResetMail,
         passwordReset,
+        sendValidationMail,
+        validateMail,
       }}
     >
       {isPublicUrl && (

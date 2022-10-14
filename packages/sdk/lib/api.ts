@@ -54,7 +54,8 @@ export class Api extends Fetcher {
     email: string,
     password: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    language: string
   ): Promise<
     Prismeai.User & {
       token: string;
@@ -65,6 +66,7 @@ export class Api extends Fetcher {
       password,
       firstName,
       lastName,
+      language,
     });
   }
 
@@ -73,6 +75,16 @@ export class Api extends Fetcher {
     this.token = null;
   }
 
+  // Mail validation
+  async sendValidationMail(email: string, language: string) {
+    return await this.post('/user/validate', { email, language });
+  }
+
+  async validateMail(token: string) {
+    return await this.post('/user/validate', { token });
+  }
+
+  // Password reset
   async sendPasswordResetMail(email: string, language: string) {
     return await this.post('/user/password', { email, language });
   }

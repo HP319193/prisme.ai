@@ -139,6 +139,9 @@ export const Automation = () => {
           type: 'string',
           title: t('automations.details.slug.label'),
           pattern: SLUG_VALIDATION_REGEXP.source,
+          errors: {
+            pattern: t('automations.save.error_InvalidSlugError'),
+          },
         },
         description: {
           type: 'localized:string',
@@ -190,7 +193,8 @@ export const Automation = () => {
         }
         return saved;
       } catch (e) {
-        const { details } = e as ApiError;
+        const { details, error } = e as ApiError;
+
         notification.error({
           message: t('automations.save.error', {
             context: Object.keys(details || {})[0],
@@ -198,6 +202,9 @@ export const Automation = () => {
           placement: 'bottomRight',
         });
         setSaving(false);
+        if (error === 'InvalidSlugError') {
+          details.slug = t('automations.save.error_InvalidSlugError');
+        }
         throw details;
       }
     }
@@ -259,14 +266,7 @@ export const Automation = () => {
       arguments: args,
       private: _private,
       disabled,
-    }: {
-      slug: string;
-      name: Prismeai.LocalizedText;
-      description: Prismeai.LocalizedText;
-      arguments: Prismeai.Automation['arguments'];
-      private: boolean;
-      disabled: boolean;
-    }) => {
+    }: Prismeai.Automation) => {
       const { slug: prevSlug } = value;
       const cleanedArguments =
         args &&
@@ -318,6 +318,12 @@ export const Automation = () => {
                     name,
                   })
                 }
+                onEnter={(name) => {
+                  updateDetails({
+                    ...value,
+                    name,
+                  });
+                }}
               />
             </span>
             <span className="text-gray flex border-r border-l border-solid border-pr-gray-200 h-[26px] items-center px-3">

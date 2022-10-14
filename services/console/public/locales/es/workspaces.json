@@ -105,6 +105,7 @@
       "label": "Registro",
       "toast": "Se ha registrado la automatización",
       "error_slug": "El nombre técnico ya está en uso, por favor elija otro",
+      "error_InvalidSlugError": "El nombre técnico contiene caracteres no válidos",
       "error": "Se ha producido un error"
     },
     "endpoint": {
@@ -552,6 +553,16 @@
             "alt": {
               "label": "Texto alternativo",
               "description": "Texto que se muestra en lugar de la imagen para los navegadores no gráficos."
+            },
+            "action": {
+              "label": "Acción",
+              "description": "Acción al logotipo.",
+              "type": {
+                "label": "Tipo de Acción"
+              },
+              "none": {
+                "label": "No"
+              }
             }
           },
           "nav": {

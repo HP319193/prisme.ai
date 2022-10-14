@@ -6,7 +6,7 @@ interface EditableTitleProps
   extends Omit<HTMLAttributes<HTMLInputElement>, 'onChange'> {
   value: Prismeai.LocalizedText;
   onChange: (v: Prismeai.LocalizedText) => void;
-  onEnter?: () => void;
+  onEnter?: (v: Prismeai.LocalizedText) => void;
 }
 
 const Input = forwardRef<any, any>(function Input(
@@ -15,6 +15,7 @@ const Input = forwardRef<any, any>(function Input(
 ) {
   const contentEditable = useContentEditable({
     onInput: (v) => onChange({ target: { value: v } }),
+    onEnter,
   });
 
   return (
@@ -26,19 +27,29 @@ const Input = forwardRef<any, any>(function Input(
       }}
       onKeyDown={(e) => {
         contentEditable.onKeyDown(e);
-        if (e.key === 'Enter' && onEnter) onEnter();
       }}
       ref={ref}
       {...props}
-      className={`min-w-[5rem] max-w-[60vw] text-ellipsis overflow-hidden mr-8 mt-[0.4rem] ${props.className}`}
+      className={`min-w-[5rem] max-w-[50vw] text-ellipsis overflow-hidden mr-8 mt-[0.4rem] ${props.className}`}
     >
       {value}
     </span>
   );
 });
 
-export const EditableTitle = ({ value, onChange }: EditableTitleProps) => {
-  return <LocalizedInput value={value} onChange={onChange} Input={Input} />;
+export const EditableTitle = ({
+  value,
+  onChange,
+  onEnter,
+}: EditableTitleProps) => {
+  return (
+    <LocalizedInput
+      value={value}
+      onChange={onChange}
+      Input={Input}
+      InputProps={{ onEnter }}
+    />
+  );
 };
 
 export default EditableTitle;

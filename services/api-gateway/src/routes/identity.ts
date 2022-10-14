@@ -1,7 +1,10 @@
 import express, { NextFunction, Request, Response } from 'express';
 import services from '../services';
 import passport from 'passport';
-import { isAuthenticated } from '../middlewares/authentication';
+import {
+  isAuthenticated,
+  isInternallyAuthenticated,
+} from '../middlewares/authentication';
 import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { FindUserQuery } from '../services/identity/users';
@@ -19,7 +22,7 @@ const loginHandler = (strategy: string) =>
       { session: true },
       async (err, user, info) => {
         if (err || !user) {
-          next(new AuthenticationError(info.message));
+          next(info);
           await req.broker.send(EventType.FailedLogin, {
             email: req.body.email,
             ip: req.context?.http?.ip,
@@ -78,7 +81,7 @@ async function signupHandler(
     ip: req.context?.http?.ip,
     user,
   });
-  loginHandler('local')(req, res, next);
+  return res.send(user);
 }
 
 async function resetPasswordHandler(
@@ -123,6 +126,26 @@ async function resetPasswordHandler(
   return res.send();
 }
 
+async function validateAccountHandler(
+  req: Request<any, any, any>,
+  res: Response<PrismeaiAPI.ResetPassword.Responses.$200>,
+  next: NextFunction
+) {
+  const {
+    context,
+    body: { email, language, token },
+  } = req;
+  const identity = services.identity(context, req.logger);
+
+  if (token) {
+    await identity.validateAccount({ token });
+    return res.send({ success: true });
+  }
+
+  await identity.sendAccountValidationLink({ email, language });
+  return res.send({ success: true });
+}
+
 async function meHandler(
   req: Request,
   res: Response<PrismeaiAPI.GetMyProfile.Responses.$200>
@@ -164,7 +187,8 @@ app.post(`/signup`, signupHandler);
 app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/logout`, logoutHandler);
 app.post(`/user/password`, resetPasswordHandler);
+app.post(`/user/validate`, validateAccountHandler);
 // Internal routes
-app.post(`/contacts`, findContactsHandler);
+app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);
 
 export default app;

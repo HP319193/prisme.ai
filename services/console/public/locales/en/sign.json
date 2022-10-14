@@ -11,7 +11,11 @@
     "submit": "Login",
     "signup": "Signup?",
     "error": "An error has occurred.",
-    "error_AuthenticationError": "Wrong email or password."
+    "error_AuthenticationError": "Wrong email or password.",
+    "error_ValidateEmailError": "Please verify your email",
+    "error_InvalidOrExpiredToken": "This validation link is invalid. Your account might already be validated, try to sign in.",
+    "success": "Operation successful!",
+    "success_mailValidated": "Your email was succesfully validated, you can now login!"
   },
   "up": {
     "title": "Signup — $t(common:main.title)",
@@ -27,7 +31,10 @@
     "error": "An error has occurred, please contact support",
     "error_AuthenticationError": "An account already exists for this email, but the password is invalid.",
     "error_InvalidEmail": "The email is invalid.",
-    "error_InvalidPassword": "The password is invalid : must be at least 8 characters long."
+    "error_InvalidPassword": "The password is invalid : must be at least 8 characters long.",
+    "error_ValidateEmailError": "Please verify your email",
+    "success": "Operation successful!",
+    "success_signupSuccess": "You just created your account. We sent you a validation email, please check your inbox before logging in."
   },
   "out": {
     "link": "Logout"
@@ -53,5 +60,17 @@
     "password": "New password",
     "confirm": "Confirm your new password",
     "submit": "Save my password"
+  },
+  "validate": {
+    "topForm1": "ALMOST THERE",
+    "topForm2": "Validate your email",
+    "topForm3": "Check your email inbox",
+    "email": "Email",
+    "submit": "Send another validation email",
+    "error": "An error has occurred",
+    "success": "Operation successful!",
+    "success_emailSent": "We just sent you a new email, please check your inbox!",
+    "emailSentAt": "We sent you an email at:",
+    "followInstructions": "Please, follow its instructions in order to validate your account"
   }
 }

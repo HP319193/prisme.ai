@@ -46,7 +46,7 @@ const getInitialValue = (schema: Schema, value: any) => {
   return JSON.stringify(cleanValue(schema, value), null, '  ');
 };
 
-const FreeAdditionalProperties = ({
+export const FreeAdditionalProperties = ({
   schema,
   field,
 }: AdditionalPropertiesProps) => {
@@ -91,7 +91,7 @@ const FreeAdditionalProperties = ({
   );
 };
 
-const ManagedAdditionalProperties = ({
+export const ManagedAdditionalProperties = ({
   schema,
   field,
   name,
@@ -240,18 +240,20 @@ const ManagedAdditionalProperties = ({
 
 export const FieldAdditionalProperties = ({ schema, name }: FieldProps) => {
   const field = useField(name);
+  const {
+    components: {
+      FreeAdditionalProperties: Free = FreeAdditionalProperties,
+      ManagedAdditionalProperties: Managed = ManagedAdditionalProperties,
+    },
+  } = useSchemaForm();
 
   if (!schema || !schema.additionalProperties) return null;
 
   if (schema.additionalProperties === true) {
-    return (
-      <FreeAdditionalProperties field={field} schema={schema} name={name} />
-    );
+    return <Free field={field} schema={schema} name={name} />;
   }
 
-  return (
-    <ManagedAdditionalProperties schema={schema} field={field} name={name} />
-  );
+  return <Managed schema={schema} field={field} name={name} />;
 };
 
 export default FieldAdditionalProperties;

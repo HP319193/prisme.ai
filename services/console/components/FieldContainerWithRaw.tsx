@@ -1,21 +1,32 @@
-import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
-import {
-  FieldProps,
-  Schema,
-  Tooltip,
-  WithLabel,
-} from '@prisme.ai/design-system';
+import { CodeFilled, CodeOutlined } from '@ant-design/icons';
+import { FieldProps, Schema, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import { FC, useCallback, useState } from 'react';
+import {
+  Children,
+  FC,
+  ReactElement,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { useField } from 'react-final-form';
 import { CodeEditorInline } from './CodeEditor/lazy';
-
-1;
 
 const typeIsOk = (value: any, type: Schema['type']) => {
   if (!type || !value) return true;
 
   const valueType = typeof value;
+
+  switch (type) {
+    case 'object':
+      if (valueType === 'object') return true;
+      try {
+        JSON.parse(value);
+        return true;
+      } catch {
+        return false;
+      }
+  }
 
   switch (valueType) {
     case 'string':
@@ -47,6 +58,7 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
       );
     }
   }, [displayRaw, field.input.value]);
+
   const onChange = useCallback(
     (value: string) => {
       setValue(value);
@@ -59,20 +71,31 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
     [field.input]
   );
 
+  const labelClassName = useMemo(() => {
+    let className = '';
+    if (!displayRaw) return className;
+    Children.map(children, (child) => {
+      const c = child as ReactElement;
+      if (!c || c.type !== 'label') return;
+      className = c.props.className;
+    });
+    return className;
+  }, [children, displayRaw]);
+
   return (
     <>
       <div className="flex flex-1 flex-col relative">
-        <Tooltip title={t('form.raw', { context: displayRaw ? 'hide' : '' })}>
+        <Tooltip
+          title={t('form.raw', { context: displayRaw ? 'hide' : '' })}
+          placement="left"
+        >
           <button
             className={`absolute top-0 mt-[0.35rem] ${
               schema.description ? 'right-8' : 'right-1'
-            } flex flex-1 flex-row z-[1] text-[10px] items-center`}
+            } flex flex-1 flex-row z-[1] text-[12px] items-center`}
             onClick={toggle}
           >
-            <div className="mr-1">
-              {displayRaw ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-            </div>
-            raw
+            {displayRaw ? <CodeFilled /> : <CodeOutlined />}
           </button>
         </Tooltip>
 
@@ -80,15 +103,17 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
       </div>
       {displayRaw && (
         <>
-          <div className="!m-0">
+          <label className={labelClassName}>
             {label || schema.title || name.replace(/^values./, '')}
+          </label>
+          <div className="space-y-5">
+            <CodeEditorInline
+              mode="json"
+              value={value}
+              onChange={onChange}
+              className="flex-auto"
+            />
           </div>
-          <CodeEditorInline
-            mode="json"
-            value={value}
-            onChange={onChange}
-            className="flex-auto"
-          />
         </>
       )}
     </>

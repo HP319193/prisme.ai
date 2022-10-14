@@ -4,10 +4,11 @@ import { useSchemaForm } from './context';
 import Enum from './Enum';
 import OneOf from './OneOf';
 import { FieldProps } from './types';
+import { getFieldOptions } from './utils';
 
 export const Field = (props: FieldProps) => {
+  useField(props.name, getFieldOptions(props.schema));
   // Set default value
-  useField(props.name, { defaultValue: props.schema.default });
   const { components } = useSchemaForm();
   const Component = useMemo(() => {
     if (props.schema.oneOf) {

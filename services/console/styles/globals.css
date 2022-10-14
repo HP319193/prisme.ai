@@ -31,6 +31,7 @@ body {
   font-weight: 300;
   font-size: 13px;
   font-family: Montserrat, sans-serif;
+  min-height: 100vh;
 }
 body h1.ant-typography,
 body h2.ant-typography,
@@ -178,4 +179,22 @@ a.ant-btn.pr-btn-primary-small {
 
 body .font-sans {
   font-family: Montserrat, sans-serif;
+}
+
+body .ant-popover-inner-content {
+  padding: 1rem;
+}
+body .ant-popover-message-title {
+  padding-left: 2rem;
+}
+body .ant-popover-buttons button {
+  line-height: 1;
+}
+
+body .ant-modal-confirm-body .anticon {
+  margin-top: 0.2rem;
+}
+body .ant-modal-confirm-title {
+  font-size: 1.4rem;
+  padding: 0;
 }

@@ -48,7 +48,7 @@ const Square = ({
             className={`cards-container__cards-container cards-container ${styles.container}`}
           >
             {(cards as CardSquare[]).map(
-              ({ title, description, cover, action }, index) => (
+              ({ title, description, action }, index) => (
                 <ActionOrLink action={action}>
                   <div
                     key={index}

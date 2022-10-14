@@ -19,6 +19,7 @@ const useAppConfig = (
     }
     const fetchAppConfig = async () => {
       try {
+        if (!workspaceId) return;
         const appConfig = await api.getAppConfig(workspaceId, appInstance);
         setAppConfig(appConfig || null);
       } catch {

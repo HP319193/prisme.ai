@@ -165,7 +165,7 @@ export const Page = () => {
   );
 
   useEffect(() => {
-    if (!value || !page || value.id !== page.id) {
+    if (!value || !page || value.id !== page.id || saving) {
       setDirty(false);
       return;
     }
@@ -182,7 +182,7 @@ export const Page = () => {
     ) {
       setDirty(true);
     }
-  }, [value, pageId, prevPageId, setDirty, page]);
+  }, [value, pageId, prevPageId, setDirty, page, saving]);
 
   useEffect(() => {
     if (!page) return;
@@ -295,17 +295,7 @@ export const Page = () => {
   }, [deletePage, pageId, push, t, workspace]);
 
   const updateDetails = useCallback(
-    async ({
-      slug,
-      name,
-      description,
-      styles,
-    }: {
-      slug: string;
-      name: Prismeai.LocalizedText;
-      description: Prismeai.LocalizedText;
-      styles: string;
-    }) => {
+    async ({ slug, name, description, styles }: Prismeai.Page) => {
       if (!value) return;
       const newValue = {
         ...cleanValue(value),
@@ -411,6 +401,12 @@ export const Page = () => {
                     name,
                   })
                 }
+                onEnter={(name) => {
+                  updateDetails({
+                    ...value,
+                    name,
+                  });
+                }}
               />
             </span>
             <span className="text-gray flex border-r border-l border-solid border-pr-gray-200 h-[26px] items-center px-3">
