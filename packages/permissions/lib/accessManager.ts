@@ -207,7 +207,9 @@ export class AccessManager<
     Object.setPrototypeOf(child, AccessManager.prototype);
 
     if (apiKey) {
-      await child.pullApiKey(apiKey);
+      try {
+        await child.pullApiKey(apiKey);
+      } catch {}
     }
     return child;
   }
