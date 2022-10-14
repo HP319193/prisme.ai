@@ -118,16 +118,19 @@ export class Api extends Fetcher {
   }
 
   async generateApiKey(workspaceId: Workspace['id'], events: string[]) {
-    const { apiKey } = await this.post(`/workspaces/${workspaceId}/apiKeys`, {
-      rules: {
-        events: {
-          types: events,
-          filters: {
-            'source.sessionId': '${user.sessionId}',
+    const { apiKey } = await this.post<{ apiKey: string }>(
+      `/workspaces/${workspaceId}/apiKeys`,
+      {
+        rules: {
+          events: {
+            types: events,
+            filters: {
+              'source.sessionId': '${user.sessionId}',
+            },
           },
         },
-      },
-    });
+      }
+    );
 
     return apiKey;
   }
