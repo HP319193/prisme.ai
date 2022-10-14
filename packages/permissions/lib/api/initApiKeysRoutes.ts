@@ -28,7 +28,7 @@ export function initApiKeysRoutes<
       subjectType as SubjectType,
       subjectId
     );
-    return res.send(apiKeys);
+    return res.send(apiKeys as PrismeaiAPI.ListApiKeys.Responses.$200);
   }
 
   async function createApiKeyHandler(
@@ -114,8 +114,7 @@ export function initApiKeysRoutes<
     if (broker) {
       broker.send<Prismeai.DeletedApiKey['payload']>(EventType.DeletedApiKey, {
         apiKey,
-        subjectType:
-          subjectType as Prismeai.DeletedApiKey['payload']['subjectType'],
+        subjectType: subjectType as Prismeai.DeletedApiKey['payload']['subjectType'],
         subjectId,
       });
     }
