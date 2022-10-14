@@ -681,6 +681,7 @@ export class AccessManager<
     try {
       return await this.pullRole({ name: apiKey });
     } catch (error) {
+      console.log(error);
       throw new InvalidAPIKey();
     }
   }
