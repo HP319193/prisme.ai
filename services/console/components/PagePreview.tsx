@@ -1,5 +1,5 @@
 import { Loading } from '@prisme.ai/design-system';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useWorkspace } from './WorkspaceProvider';
 import getConfig from 'next/config';
 
@@ -19,13 +19,8 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
     workspace: { id, slug = id },
   } = useWorkspace();
 
-  useEffect(() => {
+  const updatePage = useCallback(() => {
     if (!ref.current || !ref.current.contentWindow) return;
-    if (pageId.current !== page.id) {
-      pageId.current = page.id;
-      setLoading(true);
-      return;
-    }
     try {
       ref.current.contentWindow.postMessage(
         { type: 'updatePagePreview', page: JSON.parse(JSON.stringify(page)) },
@@ -34,6 +29,20 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
       setLoading(false);
     } catch {}
   }, [page]);
+
+  useEffect(() => {
+    if (pageId.current !== page.id) {
+      pageId.current = page.id;
+      setLoading(true);
+      return;
+    }
+    updatePage();
+  }, [page, updatePage]);
+
+  const onLoad = useCallback(() => {
+    setLoading(false);
+    setTimeout(updatePage, 500);
+  }, [updatePage]);
 
   const initialPage = useRef(page);
   const url = useMemo(
@@ -48,12 +57,7 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
 
   return (
     <div className="flex flex-1 relative">
-      <iframe
-        ref={ref}
-        src={url}
-        className="flex flex-1"
-        onLoad={() => setLoading(false)}
-      />
+      <iframe ref={ref} src={url} className="flex flex-1" onLoad={onLoad} />
       {loading && (
         <div className="flex absolute top-0 left-0 bottom-0 right-0 items-center">
           <Loading />

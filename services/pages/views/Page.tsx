@@ -7,6 +7,7 @@ import api from '../../console/utils/api';
 import PageRenderer, {
   PageProps as PageRendererProps,
 } from '../components/Page/Page';
+import { usePreview } from '../components/usePreview';
 
 export interface PageProps extends Omit<PageRendererProps, 'page'> {
   page: PageRendererProps['page'] | null;
@@ -41,19 +42,7 @@ export const Page = ({ page: pageFromServer, error }: PageProps) => {
     fetchPage();
   }, [slug, error, pageFromServer, fetchPage]);
 
-  useEffect(() => {
-    // For preview in console
-    const listener = (e: MessageEvent) => {
-      const { type, page } = e.data;
-      if (type === 'updatePagePreview') {
-        setPage(page);
-      }
-    };
-    window.addEventListener('message', listener);
-    return () => {
-      window.removeEventListener('message', listener);
-    };
-  }, []);
+  usePreview(setPage);
 
   if (!page && loading) return <Loading />;
 
