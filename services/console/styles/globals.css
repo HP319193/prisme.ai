@@ -194,7 +194,7 @@ body .ant-popover-buttons button {
 body .ant-modal-confirm-body .anticon {
   margin-top: 0.2rem;
 }
-body .ant-modal-confirm-title {
+body .ant-modal-confirm-body .ant-modal-confirm-title {
   font-size: 1.4rem;
   padding: 0;
 }
