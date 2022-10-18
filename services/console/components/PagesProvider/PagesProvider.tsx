@@ -1,5 +1,6 @@
 import { FC, useCallback, useState } from 'react';
 import api from '../../utils/api';
+import { mimetypes } from '../../utils/mimetypes';
 import { PagesContext, pagesContext } from './context';
 
 interface PagesProvider {}
@@ -76,14 +77,19 @@ export const PagesProvider: FC<PagesProvider> = ({ children }) => {
   const savePage: PagesContext['savePage'] = useCallback(
     async (workspaceId, page, events = []) => {
       events.push('*');
-      if (events.length > 0) {
-        if (page.apiKey) {
-          await api.updateApiKey(workspaceId, page.apiKey, events);
-        } else {
-          const apiKey = await api.generateApiKey(workspaceId, events);
-          if (apiKey) {
-            page.apiKey = apiKey;
-          }
+      const files = [
+        'image/*',
+        'application/*',
+        'audio/*',
+        'video/*',
+        'text/*',
+      ];
+      if (page.apiKey) {
+        await api.updateApiKey(workspaceId, page.apiKey, events, files);
+      } else {
+        const apiKey = await api.generateApiKey(workspaceId, events, files);
+        if (apiKey) {
+          page.apiKey = apiKey;
         }
       }
       const savedPage = await api.updatePage(workspaceId, page);

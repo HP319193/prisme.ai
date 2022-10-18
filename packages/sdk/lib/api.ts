@@ -150,7 +150,11 @@ export class Api extends Fetcher {
     return await this.delete(`/workspaces/${workspaceId}`);
   }
 
-  async generateApiKey(workspaceId: Workspace['id'], events: string[]) {
+  async generateApiKey(
+    workspaceId: Workspace['id'],
+    events: string[],
+    uploads?: string[]
+  ) {
     const { apiKey } = await this.post<{ apiKey: string }>(
       `/workspaces/${workspaceId}/apiKeys`,
       {
@@ -162,6 +166,11 @@ export class Api extends Fetcher {
             },
           },
         },
+        uploads: uploads
+          ? {
+              mimetypes: uploads,
+            }
+          : undefined,
       }
     );
 
@@ -170,7 +179,8 @@ export class Api extends Fetcher {
   async updateApiKey(
     workspaceId: Workspace['id'],
     apiKey: string,
-    events: string[]
+    events: string[],
+    uploads?: string[]
   ) {
     await this.put(`/workspaces/${workspaceId}/apiKeys/${apiKey}`, {
       rules: {
@@ -180,6 +190,11 @@ export class Api extends Fetcher {
             'source.sessionId': '${user.sessionId}',
           },
         },
+        uploads: uploads
+          ? {
+              mimetypes: uploads,
+            }
+          : undefined,
       },
     });
 

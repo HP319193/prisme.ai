@@ -1,3 +1,4 @@
+import { SchemaFormContext } from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
 import { createContext, FC, useContext } from 'react';
 import { TBlockLoader } from './types';
 
@@ -8,7 +9,7 @@ export interface BlocksDependenciesContext {
     Loading: FC;
     DownIcon: FC<{ className?: string }>;
   };
-  utils: {
+  utils: Partial<SchemaFormContext['utils']> & {
     BlockLoader: TBlockLoader;
   };
 }
@@ -22,6 +23,7 @@ export const blocksContext = createContext<BlocksDependenciesContext>({
   },
   utils: {
     BlockLoader: () => null,
+    uploadFile: async () => '',
   },
 });
 export const useBlocks = () => useContext(blocksContext);
