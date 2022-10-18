@@ -96,6 +96,7 @@ export const SchemaForm = ({
     () => ({
       extractSelectOptions: () => [],
       extractAutocompleteOptions: () => [],
+      uploadFile: async (file: string) => file,
       ...utils,
     }),
     [utils]
