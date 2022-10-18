@@ -10,6 +10,7 @@ const DEV_SERVICE_CONFIG_PATH = '/tmp/prismeai';
 const GATEWAY_SERVICE: string = 'api-gateway';
 const SERVICES_PORTS: Record<string, string> = {
   console: '3000',
+  pages: '3100',
   [GATEWAY_SERVICE]: '3001',
   workspaces: '3002',
   runtime: '3003',

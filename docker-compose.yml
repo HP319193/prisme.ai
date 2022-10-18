@@ -41,6 +41,14 @@ services:
       - '3000:3000'
     environment:
       API_HOST: 'http://localhost:3001/v2'
+  pages:
+    entrypoint: npm start  --prefix services/pages
+    restart: on-failure
+    image: 'registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-console:latest'
+    ports:
+      - '3000:3100'
+    environment:
+      API_HOST: 'http://localhost:3001/v2'
   elastic:
     image: 'docker.elastic.co/elasticsearch/elasticsearch:7.14.0'
     container_name: elastic

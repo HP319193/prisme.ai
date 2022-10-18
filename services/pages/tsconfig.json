@@ -15,6 +15,13 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "external.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "__mocks__/react-i18next.js",
+    "utils/yaml.worker.ts"
+  ],
+  "exclude": ["node_modules", "*.test.tsx"]
 }

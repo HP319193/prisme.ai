@@ -7,7 +7,6 @@ import { BlocksProvider } from '@prisme.ai/blocks';
 import UserProvider from '../../console/components/UserProvider';
 import { NextPage } from 'next';
 import React, {
-  Children,
   HTMLAttributes,
   ReactElement,
   ReactNode,
@@ -56,10 +55,8 @@ const Link = ({
   usePreview(setPreview);
 
   return (
-    <NextLink
-      href={href}
-      {...props}
-      children={React.cloneElement(children, {
+    <NextLink href={href} {...props}>
+      {React.cloneElement(children, {
         onClick(e: any) {
           if (children.props.onClick) children.props.onClick(e);
           if (!isPreview) return;
@@ -69,7 +66,7 @@ const Link = ({
           );
         },
       })}
-    />
+    </NextLink>
   );
 };
 

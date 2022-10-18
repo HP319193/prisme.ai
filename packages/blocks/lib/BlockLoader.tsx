@@ -8,7 +8,7 @@ import * as builtinBlocks from './Blocks';
 import { Schema } from '@prisme.ai/design-system';
 import useExternalModule from './utils/useExternalModule';
 
-class BlockErrorBoundary extends React.Component {
+class BlockErrorBoundary extends React.Component<{ children: ReactElement }> {
   state = {
     hasError: false,
   };
@@ -92,7 +92,7 @@ export const IFrameBlock = ({ url, token, edit }: BlockLoaderProps) => {
     components: { Loading },
   } = useBlocks();
   const handleLoad = React.useCallback(
-    (e) => {
+    (e: any) => {
       setLoading(false);
       e.target.contentWindow.postMessage(
         {
