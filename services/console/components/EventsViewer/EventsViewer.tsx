@@ -67,11 +67,8 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
           </SourceDetails>
         ),
         content: <EventDetails {...event} />,
-        onClick: () => {
-          readEvent(event.id);
-        },
       })),
-    [dateFormat, localize, readEvent, readEvents, workspaceName]
+    [dateFormat, localize, readEvents, workspaceName]
   );
 
   const feedSections: Section[] = useMemo(
@@ -85,9 +82,19 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
               withoutHour: true,
             }) || ''
           ).toUpperCase(),
-          content: <Collapse items={generateSectionContent(events)} light />,
+          content: (
+            <Collapse
+              items={generateSectionContent(events)}
+              light
+              onChange={(ids) => {
+                const id = ids[0];
+                if (!id) return;
+                readEvent(id);
+              }}
+            />
+          ),
         })),
-    [dateFormat, events, generateSectionContent]
+    [dateFormat, events, generateSectionContent, readEvent]
   );
 
   const feedHeaderButtons = useMemo(
