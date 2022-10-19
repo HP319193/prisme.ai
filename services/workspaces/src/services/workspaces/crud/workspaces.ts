@@ -283,12 +283,12 @@ class Workspaces {
       }
     );
 
-    await this.processEveryDiffs({} as any, workspace);
     await this.accessManager.create(SubjectType.Workspace, {
       id: workspace.id,
       name: workspace.name,
       slug: workspace.slug!,
     });
+    await this.processEveryDiffs({} as any, workspace);
     await this.storage.save(workspace.id || nanoid(7), workspace);
 
     // Send events

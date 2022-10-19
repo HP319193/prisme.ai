@@ -40,3 +40,6 @@ export function EditOutlined() {
 export function HomeOutlined() {
   return null;
 }
+export function EllipsisOutlined() {
+  return null;
+}

@@ -24,6 +24,9 @@
       },
       "toast": "le workspace a bien été supprimé"
     },
+    "duplicate": {
+      "label": "Dupliquer"
+    },
     "expandSidebar": "Agrandir",
     "collapseSidebar": "Réduire",
     "details": {

@@ -85,6 +85,28 @@ export const WorkspacesProvider: FC = ({ children }) => {
     [localize, workspaces]
   );
 
+  const duplicate: WorkspacesContext['duplicate'] = useCallback(
+    async (workspace: Workspace) => {
+      const { name, id } = workspace;
+      let version = 0;
+      const lastName = () => `${name}${version ? ` (${version})` : ''}`;
+      while (
+        Array.from(workspaces.values()).find(
+          (workspace) => workspace && localize(workspace.name) === lastName()
+        )
+      ) {
+        version++;
+      }
+      const created = await api.duplicateWorkspace({ name: lastName(), id });
+      if (!created) return;
+      const newWorkspaces = new Map(workspaces);
+      newWorkspaces.set(created.id, created);
+      setWorkspaces(newWorkspaces);
+      return created;
+    },
+    [localize, workspaces]
+  );
+
   const update = useCallback(
     async (workspace: Workspace) => {
       try {
@@ -234,6 +256,7 @@ export const WorkspacesProvider: FC = ({ children }) => {
         get,
         fetch,
         create,
+        duplicate,
         update,
         remove,
         getWorkspaceUsersPermissions,

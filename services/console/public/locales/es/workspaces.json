@@ -24,6 +24,9 @@
       },
       "toast": "Se ha eliminado la espacio de trabajo"
     },
+    "duplicate": {
+      "label": "Duplicar"
+    },
     "expandSidebar": "Expandir",
     "collapseSidebar": "Contraer",
     "details": {

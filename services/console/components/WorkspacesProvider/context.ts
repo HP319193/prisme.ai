@@ -7,6 +7,7 @@ export interface WorkspacesContext {
   get: (name: string) => Workspace | null | undefined;
   fetch: (name: string) => Promise<Workspace | null>;
   create: (name: string) => Promise<Workspace>;
+  duplicate: (workspace: Workspace) => Promise<Workspace | undefined>;
   update: (workspace: Workspace) => Promise<Workspace | null>;
   remove: (workspace: Pick<Workspace, 'id'>, dry?: boolean) => Promise<null>;
   getWorkspaceUsersPermissions: (
@@ -30,6 +31,7 @@ export const workspacesContext = createContext<WorkspacesContext>({
   get: () => null,
   fetch: async () => null,
   create: async () => ({} as Workspace),
+  duplicate: async (workspace: Workspace) => ({} as Workspace),
   update: async () => ({} as Workspace),
   remove: async () => null,
   getWorkspaceUsersPermissions: async () => [] as Prismeai.PermissionsList,

@@ -63,3 +63,11 @@ export function DatePicker({ children = null }) {
 export function Popconfirm({ children = null }) {
   return children;
 }
+
+export function Menu({ children = null }) {
+  return children;
+}
+
+export function Dropdown({ children = null }) {
+  return children;
+}
