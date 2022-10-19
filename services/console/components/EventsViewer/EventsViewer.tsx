@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../../utils/dates';
 import EventDetails from './EventDetails';
-import { memo, useCallback, useEffect, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useScrollListener } from '../useScrollListener';
 import useLocalizedText from '../../utils/useLocalizedText';
 import {
@@ -30,14 +30,14 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   readEvents,
   readEvent,
   filters,
+  workspaceName,
 }: Pick<
   WorkspaceContext,
   'events' | 'nextEvents' | 'readEvent' | 'readEvents' | 'filters'
->) {
+> & { workspaceName?: Prismeai.LocalizedText }) {
   const { t } = useTranslation('workspaces');
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>({ margin: -1 });
-  const { workspace: { name: workspaceName } = {} } = useWorkspace();
   const { localize } = useLocalizedText('pages');
 
   useEffect(() => {
@@ -145,6 +145,7 @@ export const EventsViewer = () => {
     readEvents,
     readEvent,
     filters,
+    workspace: { name: workspaceName } = {},
   } = useWorkspace();
 
   useEffect(() => {
@@ -154,14 +155,31 @@ export const EventsViewer = () => {
     });
   }, [setShare, t]);
 
-  return (
-    <EventsViewerRenderer
-      events={events}
-      nextEvents={nextEvents}
-      readEvents={readEvents}
-      readEvent={readEvent}
-      filters={filters}
-    />
-  );
+  const [props, setProps] = useState({
+    events,
+    nextEvents,
+    readEvents,
+    readEvent,
+    filters,
+    workspaceName,
+  });
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setProps({
+        events,
+        nextEvents,
+        readEvents,
+        readEvent,
+        filters,
+        workspaceName,
+      });
+    }, 10);
+    return () => {
+      clearTimeout(t);
+    };
+  }, [events, nextEvents, readEvents, readEvent, filters, workspaceName]);
+
+  return <EventsViewerRenderer {...props} />;
 };
 export default EventsViewer;
