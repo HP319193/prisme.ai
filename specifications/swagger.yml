@@ -2998,6 +2998,8 @@ components:
                 type: string
               url:
                 type: string
+              block:
+                type: string
               edit:
                 $ref: '#/components/schemas/TypedArgument'
               name:
@@ -3249,7 +3251,7 @@ components:
     Block:
       type: object
       required:
-        - url
+        - name
       description: Block
       additionalProperties: false
       properties:
@@ -3257,10 +3259,19 @@ components:
           $ref: '#/components/schemas/LocalizedText'
         name:
           $ref: '#/components/schemas/LocalizedText'
+        photo:
+          type: string
         url:
           type: string
+          description: 'A block can be a javascript bundled file. Host it on the internet and put its url here.'
         edit:
           $ref: '#/components/schemas/TypedArgument'
+        block:
+          type: string
+          description: A block can extends another one by giving its name here
+        config:
+          $ref: '#/components/schemas/AnyValue'
+          description: 'default config applied to the Block. Usefull for extended Blocks.'
 
     Page:
       allOf:

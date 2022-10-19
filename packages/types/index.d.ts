@@ -747,6 +747,7 @@ declare namespace Prismeai {
         blocks: {
             slug: string;
             url?: string;
+            block?: string;
             edit?: TypedArgument;
             name?: LocalizedText;
             description?: LocalizedText;
@@ -897,9 +898,21 @@ declare namespace Prismeai {
      */
     export interface Block {
         description?: LocalizedText;
-        name?: LocalizedText;
-        url: string;
+        name: LocalizedText;
+        photo?: string;
+        /**
+         * A block can be a javascript bundled file. Host it on the internet and put its url here.
+         */
+        url?: string;
         edit?: TypedArgument;
+        /**
+         * A block can extends another one by giving its name here
+         */
+        block?: string;
+        /**
+         * default config applied to the Block. Usefull for extended Blocks.
+         */
+        config?: AnyValue;
     }
     export interface Break {
         /**
@@ -1169,6 +1182,7 @@ declare namespace Prismeai {
         blocks: {
             slug: string;
             url?: string;
+            block?: string;
             edit?: TypedArgument;
             name?: LocalizedText;
             description?: LocalizedText;

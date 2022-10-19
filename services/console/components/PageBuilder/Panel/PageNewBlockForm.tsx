@@ -1,117 +1,122 @@
-import {
-  Button,
-  ListItem,
-  SearchInput,
-  Space,
-  Title,
-  Tooltip,
-} from '@prisme.ai/design-system';
+import { Collapse, SearchInput, Space } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import { builtinBlocks } from '@prisme.ai/blocks';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import { usePageBuilder } from '../context';
+import { BlockInCatalog } from '../useBlocks';
+import BlockButton from './BlockButton';
+import removeAccents from 'remove-accents';
 
 interface PageNewBlockFormProps {
   onSubmit: (blockSlug: string) => void;
 }
 
 export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
-  const { blocks } = usePageBuilder();
+  const { catalog } = usePageBuilder();
 
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const [search, setSearch] = useState('');
-  const filteredBlocks = useMemo(() => {
-    return [
-      {
-        appName: t('pages.blocks.builtin'),
-        slug: '',
-        blocks: Object.keys(builtinBlocks).map(
-          (name) =>
-            ({
-              name,
-              description: '',
-              slug: name,
-              url: '',
-            } as Prismeai.Block & { slug: string })
-        ),
-      },
-      ...blocks,
-    ].flatMap(({ appName, slug, blocks }) => {
-      if (!blocks || blocks.length === 0) return [];
-      const searchIn = `${appName} ${slug} ${blocks.map(
-        ({ name, description, slug }) =>
-          `${slug} ${localize(name)} ${localize(description)}`
-      )}`.toLowerCase();
-      if (!searchIn.includes(search.toLowerCase())) return [];
-      return {
-        appName,
-        slug,
-        blocks: blocks.filter(({ name, description, slug }) =>
-          `${localize(name)} ${localize(description)} ${slug}`
-            .toLowerCase()
-            .includes(search.toLowerCase())
-        ),
-      };
-    });
-  }, [t, blocks, search, localize]);
+
+  const searchInBlock = useCallback(
+    (block: BlockInCatalog, search: string) => {
+      if (!search) return block;
+
+      function lookIn(into: string) {
+        return removeAccents(into)
+          .toLowerCase()
+          .includes(removeAccents(search.toLowerCase()));
+      }
+
+      const fullBlockSearchIn = `${localize(block.name)} ${localize(
+        block.description
+      )} ${block.slug} ${(block.variants || [])
+        .map(
+          ({ name, slug, description }) =>
+            `${localize(name)} ${localize(description)} ${slug}`
+        )
+        .join(' ')}`;
+
+      if (!lookIn(fullBlockSearchIn)) return [];
+
+      const filteredVariants = block.variants
+        ? block.variants.filter(({ name, description, slug }) =>
+            lookIn(`${localize(name)} ${localize(description)} ${slug}`)
+          )
+        : undefined;
+
+      if (filteredVariants === undefined) return block;
+
+      if (filteredVariants.length === 0) return [];
+
+      return [
+        {
+          ...block,
+          hidden: !lookIn(
+            `${localize(block.name)} ${localize(block.description)} ${
+              block.slug
+            }`
+          ),
+          variants: filteredVariants,
+        },
+      ];
+    },
+    [localize]
+  );
+
+  const filteredCatalog: (BlockInCatalog & {
+    hidden?: boolean;
+  })[] = useMemo(() => {
+    return catalog.flatMap((block) => searchInBlock(block, search));
+  }, [catalog, search, searchInBlock]);
+
+  const collapses = useMemo(
+    () =>
+      filteredCatalog.map(({ slug, name, variants, hidden, ...block }) => {
+        return {
+          key: slug,
+          label: localize(name),
+          content: (
+            <div className={`flex flex-wrap ${hidden ? '' : '-mt-8'}`}>
+              {!hidden && (
+                <BlockButton
+                  slug={slug}
+                  name={name}
+                  {...block}
+                  onClick={() => onSubmit(slug)}
+                />
+              )}
+
+              {variants &&
+                Array.isArray(variants) &&
+                variants.map((block) => (
+                  <BlockButton
+                    key={block.slug}
+                    {...block}
+                    onClick={() => onSubmit(block.slug)}
+                    isVariant
+                  />
+                ))}
+            </div>
+          ),
+        };
+      }),
+    [filteredCatalog, localize, onSubmit]
+  );
 
   return (
-    <div className="flex grow h-full flex-col overflow-auto">
+    <div className="flex flex-1 h-full flex-col">
       <SearchInput
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder={t('pages.blocks.search')}
         className="mb-6"
       />
-      <Space direction="vertical" className="flex grow overflow-x-auto">
-        {filteredBlocks.map(({ appName, slug: appSlug, blocks }) => (
-          <Space key={appSlug} direction="vertical" className="!flex flex-1">
-            {
-              <Space>
-                <Title level={4}>
-                  {appSlug ? `${appSlug} (${appName})` : appName || 'Workspace'}
-                </Title>
-              </Space>
-            }
-            <Space direction="vertical" className="!flex flex-1">
-              {blocks.map(({ slug, name, description = '' }) => (
-                <Button
-                  key={`${appSlug}.${slug}`}
-                  onClick={() =>
-                    onSubmit(appSlug ? `${appSlug}.${slug}` : slug)
-                  }
-                  className="w-full text-left !h-fit"
-                >
-                  <ListItem
-                    title={t('pages.blocks.name', {
-                      context: localize(name) || slug,
-                    })}
-                    content={
-                      <Tooltip
-                        title={
-                          description
-                            ? localize(description)
-                            : t('pages.blocks.description', {
-                                context: localize(name),
-                              })
-                        }
-                        placement="topLeft"
-                      >
-                        {description
-                          ? localize(description)
-                          : t('pages.blocks.description', {
-                              context: localize(name),
-                            })}
-                      </Tooltip>
-                    }
-                  />
-                </Button>
-              ))}
-            </Space>
-          </Space>
-        ))}
+      <Space direction="vertical" className="flex flex-1 overflow-x-auto -m-5">
+        <Collapse
+          items={collapses}
+          defaultActiveKey={collapses.map(({ key }) => key)}
+        />
       </Space>
     </div>
   );

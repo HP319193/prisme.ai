@@ -5,8 +5,10 @@ import { usePageBuilder } from './context';
 import AddBlock from './AddBlock';
 import { EditOutlined } from '@ant-design/icons';
 import ExternalSchemaLoader from './ExternalSchemaLoader';
+import { useTranslation } from 'next-i18next';
 
 export const PageBlocks = () => {
+  const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const { blocksInPage, setEditBlock } = usePageBuilder();
   const containerEl = useRef<HTMLDivElement>(null);
@@ -28,11 +30,15 @@ export const PageBlocks = () => {
             >
               <div className="flex flex-1 relative surface-section border-slate-100 bg-white border height-[18rem] rounded-[1rem]">
                 <span className="flex m-8 font-bold flex-1 justify-between">
-                  {localize(name)}
+                  {t('pages.blocks.name', { context: localize(name) })}
                   <EditOutlined />
                 </span>
                 {url && (
-                  <ExternalSchemaLoader blockId={key} url={url} name={name} />
+                  <ExternalSchemaLoader
+                    blockId={key}
+                    url={url}
+                    name={name || ''}
+                  />
                 )}
               </div>
             </button>

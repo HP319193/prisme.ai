@@ -330,6 +330,7 @@ export const Page = () => {
   );
 
   const { appInstances } = useApps();
+
   const blocks: PageBuilderContext['blocks'] = useMemo(() => {
     return [
       {

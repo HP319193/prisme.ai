@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 import { Schema } from '@prisme.ai/design-system';
 import { Events } from '../../utils/api';
+import { BlockInCatalog } from './useBlocks';
 
 export type blockWithKey = Prismeai.Page['blocks'][number] & { key?: string };
 
@@ -27,6 +28,7 @@ export interface PageBuilderContext {
   setBlockConfig: (key: string, config: any) => void;
   setBlockSchema: (blockId: string, schema: Schema) => void;
   events?: Events;
+  catalog: BlockInCatalog[];
 }
 
 export const context = createContext<PageBuilderContext>({
@@ -38,6 +40,7 @@ export const context = createContext<PageBuilderContext>({
   removeBlock() {},
   setBlockConfig() {},
   setBlockSchema() {},
+  catalog: [],
 });
 
 export const usePageBuilder = () => useContext(context);

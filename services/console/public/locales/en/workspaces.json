@@ -528,13 +528,18 @@
       "name_Cards": "Cards group",
       "name_DataTable": "Data table",
       "name_Form": "Form",
+      "name_RichText": "Rich text",
+      "name_Layout": "Navigation",
       "name_Development": "Development",
       "description": "",
-      "description_Header": "Page header",
+      "description_Header": "Display page header",
       "description_Cards": "Display a cards group",
       "description_DataTable": "Display a data table",
       "description_Form": "Display form",
-      "description_Development": "Allows you to develop your own Block. Intended for developers.",
+      "description_RichText": "Display text formatted with Markdown or HTML",
+      "description_Layout": "Display navigable block pages. Must be used through automations.",
+      "panelTitle_adding": "Add a Block",
+      "panelTitle_editing": "Edit Block $t(pages.blocks.name_{{block}})",
       "header": {
         "settings": {
           "title": {

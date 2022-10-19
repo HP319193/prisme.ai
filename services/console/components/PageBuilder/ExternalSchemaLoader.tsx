@@ -10,7 +10,7 @@ interface ExternalSchemaLoaderProps extends Prismeai.Block {
 
 export const ExternalSchemaLoader = ({
   blockId,
-  url,
+  url = '',
 }: ExternalSchemaLoaderProps) => {
   const { setBlockSchema } = usePageBuilder();
   const { module, loading } = useExternalModule<{
