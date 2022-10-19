@@ -1,6 +1,5 @@
 import { FC, useCallback, useState } from 'react';
 import api from '../../utils/api';
-import { mimetypes } from '../../utils/mimetypes';
 import { PagesContext, pagesContext } from './context';
 
 interface PagesProvider {}
@@ -70,7 +69,19 @@ export const PagesProvider: FC<PagesProvider> = ({ children }) => {
   const createPage: PagesContext['createPage'] = useCallback(
     async (workspaceId, page) => {
       page.styles = defaultStyles;
-      return api.createPage(workspaceId, page);
+      const newPage = await api.createPage(workspaceId, page);
+      setPages((prev) => {
+        const newPages = new Map(prev);
+        const workspacePages = new Set(
+          Array.from(newPages.get(workspaceId) || []).filter(
+            ({ id }) => id !== newPage.id
+          )
+        );
+        workspacePages.add({ ...newPage, workspaceId });
+        newPages.set(workspaceId, workspacePages);
+        return newPages;
+      });
+      return newPage;
     },
     []
   );
