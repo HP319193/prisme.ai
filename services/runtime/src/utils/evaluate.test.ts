@@ -169,6 +169,50 @@ describe('It should handle variables within {{}}', () => {
     ).toEqual(false);
   });
 
+  it('should handle array length', async () => {
+    const empty = [];
+    const one = ['one'];
+    const two = ['two', 'three'];
+
+    expect(
+      evaluate(`{{mylist.length}}`, {
+        mylist: empty,
+      })
+    ).toEqual(false);
+
+    expect(
+      evaluate(`{{mylist.length}}`, {
+        mylist: one,
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate(`{{mylist.length}} > 0`, {
+        mylist: empty,
+      })
+    ).toEqual(false);
+
+    expect(
+      evaluate(`{{mylist.length}} > 0`, {
+        mylist: one,
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate(`{{mylist.length}} > {{mySecondList.length}}`, {
+        mylist: one,
+        mySecondList: two,
+      })
+    ).toEqual(false);
+
+    expect(
+      evaluate(`{{mylist.length}} < {{mySecondList.length}}`, {
+        mylist: one,
+        mySecondList: two,
+      })
+    ).toEqual(true);
+  });
+
   it('should handle in operator', async () => {
     const mylist = ['un', 'deux', 'trois'];
     expect(
