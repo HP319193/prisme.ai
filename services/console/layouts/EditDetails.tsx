@@ -56,24 +56,6 @@ export const EditDetails = ({
     });
   }, [context, localize, onDelete, t, value.name]);
 
-  const publishVersion = useCallback(async () => {
-    const errors = await onSave(value);
-    if (errors) return;
-    await api
-      .workspaces(value.id)
-      .versions.create({ description: `${new Date()}` });
-  }, [onSave, value]);
-
-  // This force form to be rerender with fresh values
-  const [mountedForm, setMountedForm] = useState(false);
-  useEffect(() => {
-    if (props.visible) {
-      setMountedForm(true);
-    } else {
-      setTimeout(() => setMountedForm(false), 200);
-    }
-  }, [props.visible]);
-
   return (
     <Popover
       title={({ setVisible }) => (
@@ -84,68 +66,35 @@ export const EditDetails = ({
           </button>
         </div>
       )}
+      destroyTooltipOnHide
       content={({ setVisible }) => (
-        <>
-          {mountedForm && (
-            <SchemaForm
-              schema={schema}
-              onSubmit={async (values) => {
-                const errors = await onSave(values);
-                if (!errors || Object.keys(errors).length === 0) {
-                  setVisible(false);
-                  return;
-                }
-                return errors;
-              }}
-              initialValues={value}
-              buttons={[
-                <div key="1" className="flex flex-1 justify-between !mt-2">
-                  <Button
-                    variant="grey"
-                    onClick={confirmDelete}
-                    className="!flex items-center"
-                  >
-                    <DeleteOutlined />
-                    {t('details.delete.label', { context })}
-                  </Button>
-                  <Dropdown.Button
-                    type="primary"
-                    htmlType="submit"
-                    icon={<DownOutlined />}
-                    overlay={
-                      <Menu
-                        onClick={(item) => {
-                          const key =
-                            typeof item === 'string' ? item : item.key;
-                          switch (key) {
-                            case 'newVersion':
-                              return publishVersion();
-                          }
-                        }}
-                        items={[
-                          {
-                            key: 'newVersion',
-                            label: (
-                              <Tooltip
-                                title={t(
-                                  'workspace.versions.create.description'
-                                )}
-                              >
-                                {t('workspace.versions.create.label')}
-                              </Tooltip>
-                            ),
-                          },
-                        ]}
-                      />
-                    }
-                  >
-                    {t('details.save', { context })}
-                  </Dropdown.Button>
-                </div>,
-              ]}
-            />
-          )}
-        </>
+        <SchemaForm
+          schema={schema}
+          onSubmit={async (values) => {
+            const errors = await onSave(values);
+            if (!errors || Object.keys(errors).length === 0) {
+              setVisible(false);
+              return;
+            }
+            return errors;
+          }}
+          initialValues={value}
+          buttons={[
+            <div key="1" className="flex flex-1 justify-between !mt-2">
+              <Button
+                variant="grey"
+                onClick={confirmDelete}
+                className="!flex items-center"
+              >
+                <DeleteOutlined />
+                {t('details.delete.label', { context })}
+              </Button>
+              <Button variant="primary" type="submit">
+                {t('details.save', { context })}
+              </Button>
+            </div>,
+          ]}
+        />
       )}
       overlayClassName="min-w-[50%]"
       {...props}

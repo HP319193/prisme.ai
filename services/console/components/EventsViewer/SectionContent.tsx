@@ -134,6 +134,7 @@ export const SectionContent = ({
             app: <AppLabel {...event} />,
             error: <ErrorLabel {...event} />,
             rollback: <RollbackVersion {...event} />,
+            tooltip: <Tooltip />,
           }}
         />
       </div>
