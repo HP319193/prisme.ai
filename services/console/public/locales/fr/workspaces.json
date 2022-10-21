@@ -53,7 +53,17 @@
     },
     "search": "Rechercher",
     "sidebar_extend": "Étendre la navigation",
-    "sidebar_minimize": "Réduire la navigation"
+    "sidebar_minimize": "Réduire la navigation",
+    "versions": {
+      "create": {
+        "label": "Créer une version",
+        "description": "Créer une nouvelle version vers laquelle vous pourrez revenir à tout instant."
+      },
+      "rollback": {
+        "label": "Revenir à cette version",
+        "description": "Revenir à cette version. Attention, l'état actuel de votre Workspace ne sera pas conservé."
+      }
+    }
   },
   "create": {
     "description_first": "Créez votre premier workspace pour commencer à automatiser votre travail",

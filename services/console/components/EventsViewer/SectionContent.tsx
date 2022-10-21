@@ -1,10 +1,11 @@
 import useLocalizedText from '@prisme.ai/blocks/lib/useLocalizedText';
-import { Tooltip } from '@prisme.ai/design-system';
+import { Button, Tooltip } from '@prisme.ai/design-system';
 import { Trans, useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import { Event } from '../../utils/api';
 import { useApps } from '../AppsProvider';
 import { useSourceDetails } from '../SourceDetails';
+import useActionsByEvent, { getActionsByEvent } from './useActionsByEvent';
 import {
   AppLabel,
   AutomationLabel,
@@ -83,48 +84,77 @@ export const SectionContent = ({
     ? 'runtime.waits.fulfilled'
     : type;
 
+  const buttons = useActionsByEvent(event);
+
   return (
-    <Tooltip title={localize(description)}>
-      <div className="flex flex-col">
-        <div className={`flex flex-row ${read ? 'opacity-50' : ''}`}>
-          {photo && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={photo}
-              height={25}
-              width={25}
-              className="mr-2 rounded-[0.3rem] object-cover"
-              alt={name}
-            />
-          )}
-          <Tooltip title={title}>
-            <div className="font-bold text-[1rem] whitespace-nowrap text-ellipsis overflow-hidden max-w-[25%]">
-              {title}
-            </div>
-          </Tooltip>
-          <div className="text-gray font-thin ml-4 text-[0.875rem]">{date}</div>
-        </div>
-        <div
-          className={`font-light text-[1rem] mt-[0.625rem] ${
-            photo ? 'ml-[2rem]' : ''
-          }`}
-        >
-          <Trans
-            t={t}
-            i18nKey="feed.type"
-            context={type}
-            values={{ ...labelValues, context: cleanedType }}
-            components={{
-              automation: <AutomationLabel {...event} />,
-              page: <PageLabel {...event} />,
-              event: <EventLabel {...event} />,
-              app: <AppLabel {...event} />,
-              error: <ErrorLabel {...event} />,
-            }}
+    <div className="flex flex-col">
+      <div className="flex flex-row">
+        {photo && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={photo}
+            height={25}
+            width={25}
+            className={`${
+              read ? 'opacity-50' : ''
+            } mr-2 rounded-[0.3rem] object-cover`}
+            alt={name}
           />
-        </div>
+        )}
+        <Tooltip
+          title={
+            <>
+              <div className="font-bold">{title}</div>
+              <div>{localize(description)}</div>
+            </>
+          }
+        >
+          <div
+            className={`${
+              read ? 'opacity-50' : ''
+            } font-bold text-[1rem] whitespace-nowrap text-ellipsis overflow-hidden max-w-[25%]`}
+          >
+            {title}
+          </div>
+        </Tooltip>
+        <div className="text-gray font-thin ml-4 text-[0.875rem]">{date}</div>
+        {buttons && buttons.length > 0 && (
+          <div className="flex flex-1 mr-16 justify-end">
+            {buttons.map(({ label, description, onClick }, k) => (
+              <Tooltip key={k} title={description}>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onClick();
+                  }}
+                >
+                  {label}
+                </Button>
+              </Tooltip>
+            ))}
+          </div>
+        )}
       </div>
-    </Tooltip>
+      <div
+        className={`font-light text-[1rem] mt-[0.625rem] ${
+          photo ? 'ml-[2rem]' : ''
+        }`}
+      >
+        <Trans
+          t={t}
+          i18nKey="feed.type"
+          context={type}
+          values={{ ...labelValues, context: cleanedType }}
+          components={{
+            automation: <AutomationLabel {...event} />,
+            page: <PageLabel {...event} />,
+            event: <EventLabel {...event} />,
+            app: <AppLabel {...event} />,
+            error: <ErrorLabel {...event} />,
+          }}
+        />
+      </div>
+    </div>
   );
 };
 
