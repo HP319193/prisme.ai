@@ -1,4 +1,6 @@
 import api, { Api } from './api';
+import WorkspacesEndpoint from './endpoints/workspaces';
+import WorkspacesVersionsEndpoint from './endpoints/workspacesVersions';
 
 it('should export an instance', () => {
   expect(api).toBeInstanceOf(Api);
@@ -284,5 +286,31 @@ it('should update api key', async () => {
         },
       },
     }),
+  });
+});
+
+describe('Workspaces', () => {
+  it('should access workspaces methods', () => {
+    expect(api.workspaces('42')).toBeInstanceOf(WorkspacesEndpoint);
+  });
+  describe('Versions', () => {
+    it('should access versions methods', () => {
+      expect(api.workspaces('42').versions).toBeInstanceOf(
+        WorkspacesVersionsEndpoint
+      );
+    });
+    it('create', () => {
+      api.post = jest.fn();
+      const dsul = <Prismeai.DSUL>{};
+      api.workspaces('42').versions.create(dsul);
+      expect(api.post).toHaveBeenCalledWith('/v2/workspaces/42/versions', dsul);
+    });
+    it('rollback', () => {
+      api.post = jest.fn();
+      api.workspaces('42').versions.rollback('v1.0.0');
+      expect(api.post).toHaveBeenCalledWith(
+        '/v2/workspaces/42/versions/v1.0.0/rollback'
+      );
+    });
   });
 });
