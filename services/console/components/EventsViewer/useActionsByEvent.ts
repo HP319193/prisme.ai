@@ -1,6 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Event } from '../../utils/api';
+import api, { Event } from '../../utils/api';
 
 interface Action {
   label: string;
@@ -8,21 +8,27 @@ interface Action {
   onClick: () => void;
 }
 
-function getActionsByEvent({ type }: Event<Date>) {
-  console.log(type);
-  if (
-    type.match(/^workspaces\.(.*\.)?(created|updated|deleted)$/) ||
-    type.match(/^workspaces\.apps\./)
-  ) {
-    return [
-      {
-        label: 'workspace.versions.create.label',
-        description: 'workspace.versions.create.description',
-        onClick: () => console.log('create version'),
-      },
-    ];
+function getActionsByEvent({
+  type,
+  payload,
+  source: { workspaceId },
+}: Event<Date>) {
+  switch (type) {
+    case 'workspaces.versions.published':
+      if (!workspaceId || !payload.version.name) return [];
+      return [
+        {
+          label: 'workspace.versions.rollback.label',
+          description: 'workspace.versions.rollback.description',
+          onClick: async () => {
+            if (!workspaceId || !payload.version.name) return;
+            const a = await api
+              .workspaces(workspaceId)
+              .versions.rollback(payload.version.name);
+          },
+        },
+      ];
   }
-
   return [];
 }
 

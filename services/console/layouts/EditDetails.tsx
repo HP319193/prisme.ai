@@ -1,17 +1,21 @@
 import {
   CloseCircleOutlined,
   DeleteOutlined,
+  DownOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import {
   Button,
+  Menu,
   Modal,
   Popover,
   Schema,
   SchemaForm,
 } from '@prisme.ai/design-system';
+import { Dropdown, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
+import api from '../utils/api';
 import useLocalizedText from '../utils/useLocalizedText';
 
 interface EditDetailsprops {
@@ -52,6 +56,14 @@ export const EditDetails = ({
     });
   }, [context, localize, onDelete, t, value.name]);
 
+  const publishVersion = useCallback(async () => {
+    const errors = await onSave(value);
+    if (errors) return;
+    const version = await api
+      .workspaces(value.id)
+      .versions.create({ description: `${new Date()}` });
+  }, [onSave, value]);
+
   return (
     <Popover
       title={({ setVisible }) => (
@@ -85,9 +97,36 @@ export const EditDetails = ({
                   <DeleteOutlined />
                   {t('details.delete.label', { context })}
                 </Button>
-                <Button type="submit" variant="primary">
+                <Dropdown.Button
+                  type="primary"
+                  htmlType="submit"
+                  icon={<DownOutlined />}
+                  overlay={
+                    <Menu
+                      onClick={(item) => {
+                        const key = typeof item === 'string' ? item : item.key;
+                        switch (key) {
+                          case 'newVersion':
+                            return publishVersion();
+                        }
+                      }}
+                      items={[
+                        {
+                          key: 'newVersion',
+                          label: (
+                            <Tooltip
+                              title={t('workspace.versions.create.description')}
+                            >
+                              {t('workspace.versions.create.label')}
+                            </Tooltip>
+                          ),
+                        },
+                      ]}
+                    />
+                  }
+                >
                   {t('details.save', { context })}
-                </Button>
+                </Dropdown.Button>
               </div>,
             ]}
           />

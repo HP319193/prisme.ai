@@ -9,12 +9,14 @@ export class WorkspacesVersionsEndpoint {
     this.api = api;
   }
 
-  create(dsul: Prismeai.DSUL) {
-    this.api.post(`/v2/workspaces/${this.workspaceId}/versions`, dsul);
+  create(version?: PrismeaiAPI.PublishWorkspaceVersion.RequestBody) {
+    this.api.post(`/workspaces/${this.workspaceId}/versions`, version);
   }
-  rollback(versionId: string) {
+  rollback(
+    versionId: PrismeaiAPI.RollbackWorkspaceVersion.PathParameters['versionId']
+  ) {
     this.api.post(
-      `/v2/workspaces/${this.workspaceId}/versions/${versionId}/rollback`
+      `/workspaces/${this.workspaceId}/versions/${versionId}/rollback`
     );
   }
 }

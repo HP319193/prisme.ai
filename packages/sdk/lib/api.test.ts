@@ -301,15 +301,16 @@ describe('Workspaces', () => {
     });
     it('create', () => {
       api.post = jest.fn();
-      const dsul = <Prismeai.DSUL>{};
-      api.workspaces('42').versions.create(dsul);
-      expect(api.post).toHaveBeenCalledWith('/v2/workspaces/42/versions', dsul);
+      api.workspaces('42').versions.create({ description: 'foo' });
+      expect(api.post).toHaveBeenCalledWith('/workspaces/42/versions', {
+        description: 'foo',
+      });
     });
     it('rollback', () => {
       api.post = jest.fn();
       api.workspaces('42').versions.rollback('v1.0.0');
       expect(api.post).toHaveBeenCalledWith(
-        '/v2/workspaces/42/versions/v1.0.0/rollback'
+        '/workspaces/42/versions/v1.0.0/rollback'
       );
     });
   });
