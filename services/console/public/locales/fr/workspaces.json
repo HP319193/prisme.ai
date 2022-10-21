@@ -91,7 +91,8 @@
         "field": "Champs",
         "value": "Valeur"
       },
-      "empty": "Aucun résultat n'a été trouvé avec ces filtres. Essayez une autre recherche ?"
+      "empty": "Aucun résultat n'a été trouvé avec ces filtres. Essayez une autre recherche ?",
+      "label_versions": "Toutes les versions"
     },
     "empty": "Il ne s'est encore rien passé ici…",
     "details": {

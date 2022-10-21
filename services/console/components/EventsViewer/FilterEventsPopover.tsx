@@ -7,10 +7,12 @@ import {
 } from '@prisme.ai/design-system';
 import { FilterOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import { useField } from 'react-final-form';
 import { useWorkspace } from '../WorkspaceProvider';
+import { filters } from './filters';
+import { filter } from 'lodash';
 
 const components = {
   FieldAny: ({ name }: FieldProps) => {
@@ -45,14 +47,17 @@ const components = {
   },
 };
 
+type FiltersValue = Record<string, string> & {
+  beforeDate?: string;
+  afterDate?: string;
+  text?: string;
+};
+
 const FilterEventsPopover = () => {
   const { t } = useTranslation('workspaces');
   const { updateFilters } = useWorkspace();
   const [filterVisible, setFilterVisible] = useState(false);
-  const [values, setValues] = useState<{
-    beforeDate?: string;
-    afterDate?: string;
-  }>({});
+  const [values, setValues] = useState<FiltersValue>({});
 
   const submit = useCallback(
     (values) => {
@@ -129,21 +134,65 @@ const FilterEventsPopover = () => {
     [t]
   );
 
+  const builtinFilters = useMemo(
+    () =>
+      Object.entries(filters).map(([key, filter]) => ({
+        value: key,
+        label: t('events.filters.label', { context: key }),
+        filter,
+      })),
+    [t]
+  );
+  const [mountedForm, setMountedForm] = useState(true);
+  useEffect(() => {
+    if (!mountedForm) {
+      setMountedForm(true);
+    }
+  }, [mountedForm]);
+
   return (
     <Popover
       onVisibleChange={() => setFilterVisible(!filterVisible)}
       content={() => (
         <div className="w-[60vw]">
-          <SchemaForm
-            schema={schema}
-            onSubmit={submit}
-            onChange={setValues}
-            locales={locales}
-            components={components}
-          />
+          {mountedForm && (
+            <SchemaForm
+              schema={schema}
+              onSubmit={submit}
+              onChange={setValues}
+              locales={locales}
+              components={components}
+              initialValues={values}
+            />
+          )}
         </div>
       )}
-      title={t('events.filters.title')}
+      title={
+        <div className="flex flex-1">
+          <div className="flex-1">{t('events.filters.title')}</div>
+          <div className="flex">
+            Suggestion :
+            <select
+              onChange={({ target }) => {
+                const { filter } =
+                  builtinFilters.find(({ value }) => target.value === value) ||
+                  {};
+                setValues(filter || {});
+                setMountedForm(false);
+                target.value = '';
+                target.blur();
+              }}
+            >
+              <option></option>
+              {builtinFilters.map(({ label, value }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      }
       visible={filterVisible}
       trigger="click"
     >
