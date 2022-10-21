@@ -1,4 +1,7 @@
 import { WarningOutlined } from '@ant-design/icons';
+import { Button } from '@prisme.ai/design-system';
+import { Popconfirm } from 'antd';
+import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { FC } from 'react';
 import { Event } from '../../utils/api';
@@ -61,4 +64,24 @@ export const ErrorLabel: FC<Event<Date>> = ({ children, type }) => {
 
 export const EventLabel: FC<Event<Date>> = ({ children }) => {
   return <span className="font-bold">{children}</span>;
+};
+
+export const RollbackVersion: FC<Event<Date>> = ({ children }) => {
+  const { t } = useTranslation('workspaces');
+  return (
+    <Popconfirm
+      title={t('workspace.versions.rollback.confirm')}
+      okText={t('workspace.versions.rollback.confirm_ok')}
+      cancelText={t('workspace.versions.rollback.confirm_cancel')}
+      onCancel={(e) => e?.stopPropagation()}
+      onConfirm={(e) => {
+        e?.stopPropagation();
+        console.log('go rollback', e);
+      }}
+    >
+      <Button className="font-bold" onClick={(e) => e.stopPropagation()}>
+        {children}
+      </Button>
+    </Popconfirm>
+  );
 };

@@ -1,17 +1,17 @@
 import useLocalizedText from '@prisme.ai/blocks/lib/useLocalizedText';
-import { Button, Tooltip } from '@prisme.ai/design-system';
+import { Tooltip } from '@prisme.ai/design-system';
 import { Trans, useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import { Event } from '../../utils/api';
 import { useApps } from '../AppsProvider';
 import { useSourceDetails } from '../SourceDetails';
-import useActionsByEvent, { getActionsByEvent } from './useActionsByEvent';
 import {
   AppLabel,
   AutomationLabel,
   ErrorLabel,
   EventLabel,
   PageLabel,
+  RollbackVersion,
 } from './Labels';
 
 interface SectionContentProps {
@@ -84,8 +84,6 @@ export const SectionContent = ({
     ? 'runtime.waits.fulfilled'
     : type;
 
-  const buttons = useActionsByEvent(event);
-
   return (
     <div className="flex flex-col">
       <div className="flex flex-row">
@@ -118,22 +116,6 @@ export const SectionContent = ({
           </div>
         </Tooltip>
         <div className="text-gray font-thin ml-4 text-[0.875rem]">{date}</div>
-        {buttons && buttons.length > 0 && (
-          <div className="flex flex-1 mr-16 justify-end">
-            {buttons.map(({ label, description, onClick }, k) => (
-              <Tooltip key={k} title={description}>
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onClick();
-                  }}
-                >
-                  {label}
-                </Button>
-              </Tooltip>
-            ))}
-          </div>
-        )}
       </div>
       <div
         className={`font-light text-[1rem] mt-[0.625rem] ${
@@ -144,13 +126,14 @@ export const SectionContent = ({
           t={t}
           i18nKey="feed.type"
           context={type}
-          values={{ ...labelValues, context: cleanedType }}
+          values={{ ...labelValues, context: cleanedType, event }}
           components={{
             automation: <AutomationLabel {...event} />,
             page: <PageLabel {...event} />,
             event: <EventLabel {...event} />,
             app: <AppLabel {...event} />,
             error: <ErrorLabel {...event} />,
+            rollback: <RollbackVersion {...event} />,
           }}
         />
       </div>

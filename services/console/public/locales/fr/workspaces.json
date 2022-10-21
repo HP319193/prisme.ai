@@ -61,7 +61,10 @@
       },
       "rollback": {
         "label": "Revenir à cette version",
-        "description": "Revenir à cette version. Attention, l'état actuel de votre Workspace ne sera pas conservé."
+        "description": "Revenir à cette version. Attention, l'état actuel de votre Workspace ne sera pas conservé.",
+        "confirm": "Attention, l'état actuel de votre Workspace sera perdu si vous n'en avez pas enregistré une version.",
+        "confirm_ok": "Revenir à cette version",
+        "confirm_cancel": "Alors, en fait non"
       }
     }
   },
@@ -994,6 +997,8 @@
     "type_workspaces.automations.updated": "L'automatisation <automation>{{automation}}</automation> a été mise à jour",
     "type_workspaces.automations.deleted": "L'automatisation <automation>{{automation}}</automation> a été supprimée",
     "type_workspaces.pages.updated": "La page <page>{{page}}</page> a été mise à jour",
+    "type_workspaces.versions.published": "La version {{event.payload.version.name}} a été créée. <rollback>Revenir à cette version</rollback>",
+    "type_workspaces.versions.rollback": "La version {{event.payload.version.name}} a été récupérée",
     "type_apps.published": "L'app {{appName}} a été publiée",
     "type_runtime.automations.executed": "L'automatisation <automation>{{automation}}</automation> a été exécutée",
     "type_runtime.webhooks.triggered": "L'automatisation <automation>{{automation}}</automation> a été déclenchée par URL",

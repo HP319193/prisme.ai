@@ -14,7 +14,7 @@ import {
 } from '@prisme.ai/design-system';
 import { Dropdown, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import api from '../utils/api';
 import useLocalizedText from '../utils/useLocalizedText';
 
@@ -59,10 +59,20 @@ export const EditDetails = ({
   const publishVersion = useCallback(async () => {
     const errors = await onSave(value);
     if (errors) return;
-    const version = await api
+    await api
       .workspaces(value.id)
       .versions.create({ description: `${new Date()}` });
   }, [onSave, value]);
+
+  // This force form to be rerender with fresh values
+  const [mountedForm, setMountedForm] = useState(false);
+  useEffect(() => {
+    if (props.visible) {
+      setMountedForm(true);
+    } else {
+      setTimeout(() => setMountedForm(false), 200);
+    }
+  }, [props.visible]);
 
   return (
     <Popover
@@ -76,60 +86,65 @@ export const EditDetails = ({
       )}
       content={({ setVisible }) => (
         <>
-          <SchemaForm
-            schema={schema}
-            onSubmit={async (values) => {
-              const errors = await onSave(values);
-              if (!errors || Object.keys(errors).length === 0) {
-                setVisible(false);
-                return;
-              }
-              return errors;
-            }}
-            initialValues={value}
-            buttons={[
-              <div key="1" className="flex flex-1 justify-between !mt-2">
-                <Button
-                  variant="grey"
-                  onClick={confirmDelete}
-                  className="!flex items-center"
-                >
-                  <DeleteOutlined />
-                  {t('details.delete.label', { context })}
-                </Button>
-                <Dropdown.Button
-                  type="primary"
-                  htmlType="submit"
-                  icon={<DownOutlined />}
-                  overlay={
-                    <Menu
-                      onClick={(item) => {
-                        const key = typeof item === 'string' ? item : item.key;
-                        switch (key) {
-                          case 'newVersion':
-                            return publishVersion();
-                        }
-                      }}
-                      items={[
-                        {
-                          key: 'newVersion',
-                          label: (
-                            <Tooltip
-                              title={t('workspace.versions.create.description')}
-                            >
-                              {t('workspace.versions.create.label')}
-                            </Tooltip>
-                          ),
-                        },
-                      ]}
-                    />
-                  }
-                >
-                  {t('details.save', { context })}
-                </Dropdown.Button>
-              </div>,
-            ]}
-          />
+          {mountedForm && (
+            <SchemaForm
+              schema={schema}
+              onSubmit={async (values) => {
+                const errors = await onSave(values);
+                if (!errors || Object.keys(errors).length === 0) {
+                  setVisible(false);
+                  return;
+                }
+                return errors;
+              }}
+              initialValues={value}
+              buttons={[
+                <div key="1" className="flex flex-1 justify-between !mt-2">
+                  <Button
+                    variant="grey"
+                    onClick={confirmDelete}
+                    className="!flex items-center"
+                  >
+                    <DeleteOutlined />
+                    {t('details.delete.label', { context })}
+                  </Button>
+                  <Dropdown.Button
+                    type="primary"
+                    htmlType="submit"
+                    icon={<DownOutlined />}
+                    overlay={
+                      <Menu
+                        onClick={(item) => {
+                          const key =
+                            typeof item === 'string' ? item : item.key;
+                          switch (key) {
+                            case 'newVersion':
+                              return publishVersion();
+                          }
+                        }}
+                        items={[
+                          {
+                            key: 'newVersion',
+                            label: (
+                              <Tooltip
+                                title={t(
+                                  'workspace.versions.create.description'
+                                )}
+                              >
+                                {t('workspace.versions.create.label')}
+                              </Tooltip>
+                            ),
+                          },
+                        ]}
+                      />
+                    }
+                  >
+                    {t('details.save', { context })}
+                  </Dropdown.Button>
+                </div>,
+              ]}
+            />
+          )}
         </>
       )}
       overlayClassName="min-w-[50%]"
