@@ -8,6 +8,9 @@ import PageRenderer, {
   PageProps as PageRendererProps,
 } from '../components/Page/Page';
 import { usePreview } from '../components/usePreview';
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
 
 export interface PageProps extends Omit<PageRendererProps, 'page'> {
   page: PageRendererProps['page'] | null;
@@ -32,21 +35,36 @@ export const Page = ({ page: pageFromServer, error }: PageProps) => {
   }, [slug]);
 
   useEffect(() => {
-    if (pageFromServer || error !== 403) {
+    if (pageFromServer || (error && ![401, 403].includes(error))) {
       setPage(pageFromServer);
       return;
     }
     // Server didn't fetch page because it needs permissions
     // User should have them
+    const listener = (e: MessageEvent) => {
+      const { type, token } = e.data;
+      if (type === 'api.token') {
+        api.token = token;
+      }
+    };
+    window.addEventListener('message', listener);
+    window.parent.postMessage(
+      { type: 'pageError', code: error },
+      publicRuntimeConfig.CONSOLE_HOST
+    );
 
     fetchPage();
+
+    return () => {
+      window.removeEventListener('message', listener);
+    };
   }, [slug, error, pageFromServer, fetchPage]);
 
   usePreview(setPage);
 
   if (!page && loading) return <Loading />;
 
-  if (error && error !== 401) {
+  if (error && ![401, 403].includes(error)) {
     return <DefaultErrorPage statusCode={error} />;
   }
 

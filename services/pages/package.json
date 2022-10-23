@@ -1,6 +1,7 @@
 {
   "name": "@prisme.ai/pages",
   "scripts": {
+    "install": "npx link ../../node_modules/react",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

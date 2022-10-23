@@ -400,7 +400,7 @@ export const Page = () => {
     return () => {
       window.removeEventListener('message', listener);
     };
-  }, []);
+  }, [push, workspace.id, workspace.slug]);
 
   if (!page) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;

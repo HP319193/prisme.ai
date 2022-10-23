@@ -2,6 +2,7 @@ import { Loading } from '@prisme.ai/design-system';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useWorkspace } from './WorkspaceProvider';
 import getConfig from 'next/config';
+import api from '../utils/api';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = '' },
@@ -41,8 +42,7 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
 
   const onLoad = useCallback(() => {
     setLoading(false);
-    setTimeout(updatePage, 500);
-  }, [updatePage]);
+  }, []);
 
   const initialPage = useRef(page);
   const url = useMemo(
@@ -54,6 +54,25 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
       }`,
     [slug]
   );
+
+  useEffect(() => {
+    // For preview in console
+    const listener = async (e: MessageEvent) => {
+      const { type } = e.data || {};
+
+      if (type === 'pageError' && e.origin.match(PAGES_HOST)) {
+        ref.current?.contentWindow?.postMessage(
+          { type: 'api.token', token: api.token },
+          url
+        );
+        updatePage();
+      }
+    };
+    window.addEventListener('message', listener);
+    return () => {
+      window.removeEventListener('message', listener);
+    };
+  }, [updatePage, url]);
 
   return (
     <div className="flex flex-1 relative">
