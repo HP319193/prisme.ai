@@ -23,7 +23,7 @@ export const blocksContext = createContext<BlocksDependenciesContext>({
   },
   utils: {
     BlockLoader: () => null,
-    uploadFile: async () => '',
+    uploadFile: async (base64: string) => '',
   },
 });
 export const useBlocks = () => useContext(blocksContext);

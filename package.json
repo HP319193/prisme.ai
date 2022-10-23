@@ -36,6 +36,7 @@
     "publish:blocks": "npm publish --workspace=@prisme.ai/blocks --access=public",
     "publish:sdk": "npm publish --workspace=@prisme.ai/sdk --access=public",
     "check:console": "tsc -p services/console/tsconfig.json",
+    "check:pages": "tsc -p services/pages/tsconfig.json",
     "test": "jest --collect-coverage"
   },
   "repository": {

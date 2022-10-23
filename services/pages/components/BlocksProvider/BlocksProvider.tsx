@@ -7,6 +7,7 @@ import { getPreview } from './getPreview';
 import Link from './Link';
 import DownIcon from './DownIcon';
 import Loading from './Loading';
+import BlockLoader from '../Page/BlockLoader';
 
 export const BlocksProvider: FC = ({ children }) => {
   const { id } = useWorkspace();
@@ -27,7 +28,7 @@ export const BlocksProvider: FC = ({ children }) => {
     <Provider
       externals={externals}
       components={{ Link, Loading, DownIcon }}
-      utils={{ uploadFile }}
+      utils={{ uploadFile, BlockLoader }}
     >
       {children}
     </Provider>
