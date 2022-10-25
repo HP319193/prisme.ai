@@ -4,7 +4,11 @@ WORKDIR /www
 COPY ./package.json ./package-lock.json ./rollup.config.js ./dtsgen.json /www/
 COPY ./scripts/buildInstructions.ts /www/scripts/
 COPY ./packages /www/packages
-COPY ./services/console/package*  /www/services/console/
+COPY ./services/pages/package*  /www/services/pages/
+
+# Pages dependencies
+COPY ./services/console/  /www/services/console/
+RUN rm -rf /www/services/console/package*
 
 RUN npm ci
 
@@ -15,7 +19,7 @@ RUN rm -rf /www/services/pages/.next && \
 
 COPY ./specifications /www/specifications
 RUN npm run build:packages && \
-    npm run build:console && \
+    npm run build:pages && \
     npm prune --production
 
 FROM node:16-alpine as runtime
@@ -35,7 +39,5 @@ ENV NODE_ENV production
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry.
 # ENV NEXT_TELEMETRY_DISABLED 1
-
-
 
 CMD ["npm", "--prefix", "services/pages", "start"]

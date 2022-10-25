@@ -44,7 +44,7 @@ services:
   pages:
     entrypoint: npm start  --prefix services/pages
     restart: on-failure
-    image: 'registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-console:latest'
+    image: 'registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-pages:latest'
     ports:
       - '3000:3100'
     environment:
