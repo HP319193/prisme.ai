@@ -79,6 +79,7 @@ export interface CardClassic {
         title: Prismeai.LocalizedText;
         content: Prismeai.LocalizedText;
         icon?: string;
+        collapsed?: boolean;
       }
   )[];
 }
