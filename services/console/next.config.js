@@ -6,11 +6,9 @@ module.exports = {
   i18n,
   publicRuntimeConfig: {
     API_HOST: process.env.API_HOST,
-    ENDPOINT: `${process.env.API_HOST}/workspaces/{{workspaceId}}/webhooks/{{slug}}`,
-    CONSOLE_HOST: process.env.CONSOLE_HOST,
-    PAGES_HOST: process.env.PAGES_HOST,
+    CONSOLE_HOST: process.env.CONSOLE_HOST || '',
+    PAGES_HOST: process.env.PAGES_HOST || '',
     SENTRY_DSN: process.env.SENTRY_DSN || '',
-    CONSOLE_SUBDOMAIN: process.env.CONSOLE_SUBDOMAIN || '',
   },
   webpack(config) {
     config.module.rules.push({

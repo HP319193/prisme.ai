@@ -5,15 +5,12 @@ import { useWorkspace } from '../components/WorkspaceProvider';
 const {
   publicRuntimeConfig: {
     PAGES_HOST = `${global?.location?.origin}/pages`,
-    ENDPOINT = '',
+    API_HOST = '',
   },
 } = getConfig();
 
 export const generateEndpoint = (workspaceId: string, slug: string) =>
-  ENDPOINT.replace(/\{\{workspaceId\}\}/, workspaceId).replace(
-    /\{\{slug\}\}/,
-    slug
-  );
+  `${API_HOST}/workspaces/${workspaceId}/webhooks/${slug}`;
 
 const urls = {
   generateEndpoint,

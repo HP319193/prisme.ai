@@ -4,8 +4,7 @@ import { mock } from '../components/WorkspaceProvider';
 
 jest.mock('next/config', () => () => ({
   publicRuntimeConfig: {
-    ENDPOINT:
-      'https://localhost:3000/api/workspaces/{{workspaceId}}/webhooks/{{slug}}',
+    API_HOST: 'https://api',
     PAGES_HOST: '.pages.prisme.ai',
   },
 }));
@@ -24,7 +23,7 @@ jest.mock('../components/WorkspaceProvider', () => {
 
 it('should generate endpoint', () => {
   expect(generateEndpoint('42', 'hello')).toBe(
-    'https://localhost:3000/api/workspaces/42/webhooks/hello'
+    'https://api/workspaces/42/webhooks/hello'
   );
 });
 
