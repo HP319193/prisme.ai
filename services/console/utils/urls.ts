@@ -1,5 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import getConfig from 'next/config';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 const {
   publicRuntimeConfig: {
@@ -23,8 +24,13 @@ export const usePageEndpoint = () => {
   const {
     i18n: { language },
   } = useTranslation();
+  const {
+    workspace: { slug },
+  } = useWorkspace();
 
-  return PAGES_HOST.replace(/\{\{lang\}\}/, language);
+  if (!slug) return '';
+
+  return `https://${slug}${PAGES_HOST}/${language}`;
 };
 
 export function getSubmodain(host: string) {
