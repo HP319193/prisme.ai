@@ -173,6 +173,8 @@
         "add": "Add an item",
         "remove": "Delete item"
       },
+      "delete": "Delete instruction?",
+      "delete_condition": "Delete condition?",
       "form": {
         "addItem": "Add an item",
         "removeItem": "Remove item",

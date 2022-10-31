@@ -173,6 +173,8 @@
         "add": "Añadir un elemento",
         "remove": "Borrar el elemento"
       },
+      "delete": "¿Borrar la instrucción?",
+      "delete_condition": "¿Quitar la condición?",
       "form": {
         "addItem": "Añadir un elemento",
         "removeItem": "Eliminar el elemento",
@@ -443,6 +445,8 @@
     "private": "Privado",
     "public": "Público",
     "link": "Páginas",
+    "preview": "Vista previa",
+    "edit": "Éditer",
     "create": {
       "label": "Crear una nueva Página",
       "defaultName": "Página"
@@ -463,10 +467,6 @@
       "toast": "Se ha registrado la Página",
       "error_slug": "El nombre técnico ya está en uso, por favor elija otro",
       "error": "Se ha producido un error"
-    },
-    "preview": {
-      "label": "Vista previa",
-      "label_hide": "Ocultar la vista previa"
     },
     "share": {
       "label": "Compartir el acceso a la página",
@@ -925,6 +925,10 @@
       "description": {
         "label": "Descripción del campo",
         "description": "Este texto se mostrará en una burbuja exactamente igual a esta."
+      },
+      "placeholder": {
+        "label": "Marcador",
+        "description": "Este texto aparecerá en el campo."
       },
       "type": {
         "label": "Tipo de valor",
