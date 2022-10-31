@@ -1,23 +1,30 @@
 # Prisme.ai
 
-# Overview
+# Mission 
 
-Our mission is to help developers to enjoy their daily work.
+Connect Product Builders & Low-coder & Developers to work on the same plateform to build new products or/and features. 
 
-Connect everything, automate everything, show everywhere and enjoy.
+# Approach 
 
-Prisme.ai allows you to collect the interactions of Apps: an app can be a customer channel (phone, mail, live chat,
-social networks, sms, form...) or software (CRM, ERP, AD, DMP, Analytics. ..) or your Custom App.
-The solution then allows you to enrich these interactions by connecting them to each other, to boost certain processes
-thanks to automation and AI, to finally expose them in the form of a Page according to needs and profiles. All this in
-accordance with the regulations regarding private data.
+Our work is at the crossroads of two categories of technologies. On the one hand, omnichannel digit services, to address the needs of users in the most seamless way. On the other hand, low code approaches, to build simply even complex software applications. In this twofold context, we propose Prisme.ai platform as [DSUL](https://docs.eda.prisme.ai/api/)(Digital Service Universal Language) Editor and Runner. 
+It allows to build and run omnichannel services with minimal work from their designers.
 
-All of these interactions are collected, enriched and distributed in real time with a low-code approach and event driven.
+# Requirements
+
+- Easiness of coding: our framework provides a significant saving in the time and the complexity to develop the components. Part of the work of creation of services can be automated;
+- Omnichannel uses: [DSUL](https://docs.eda.prisme.ai/api/) allows to develop services accessible from any targeted channel; besides, it proposes natively to integrate all channels for a given service;
+- Extended coding possibilities, notably for structure controls;
+- Openness to other systems: thanks to the possibility to wrap any customized code in [DSUL](https://docs.eda.prisme.ai/api/);
+- Possible use for Machine Learning purposes: accelerated evaluation of models and algorithms, deployment, training. This requirement also covers scientific uses, for instance quick prototyping for evaluations;
+- Standardization: with all the features described above, [DSUL](https://docs.eda.prisme.ai/api/) is aimed to be a standard for creating any omnichannel digital service with one single language. Standardization is important in computer application, since it allows to focus on a single framework and support interoperability;
+- Green coding considerations: the development easiness, in turn, entails a lesser consumption of resources needed to handle the digital service.
+
 
 # Documentation
 
 The reference documentation is directly available [here](https://docs.eda.prisme.ai/en/index.html) of
 this monorepo.
+
 
 # Contributing
 
