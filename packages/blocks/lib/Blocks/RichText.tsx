@@ -31,6 +31,7 @@ export const RichTextRenderer = ({
       overrides: {
         a: A,
       },
+      forceBlock: true,
     }),
     []
   );
@@ -39,7 +40,7 @@ export const RichTextRenderer = ({
 
   return (
     <Markdown {...props} options={options}>
-      {`<div>${localize(children)}</div>`}
+      {localize(children)}
     </Markdown>
   );
 };
