@@ -92,7 +92,11 @@
         "value": "Value"
       },
       "empty": "No results were found using your filters. Try another search ?",
-      "label_versions": "All versions"
+      "suggestions": {
+        "title": "Filter suggestions",
+        "help": "Selection of pre-set filters to help you find your most useful events.",
+        "label_versions": "All Workspace versions"
+      }
     },
     "empty": "Nothing has happened here yet…",
     "details": {

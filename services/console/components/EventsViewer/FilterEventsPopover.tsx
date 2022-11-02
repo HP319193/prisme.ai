@@ -1,18 +1,18 @@
 import {
   Button,
-  FieldProps,
   Popover,
+  FieldProps,
   Schema,
   SchemaForm,
+  Tooltip,
 } from '@prisme.ai/design-system';
-import { FilterOutlined } from '@ant-design/icons';
+import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import { useField } from 'react-final-form';
 import { useWorkspace } from '../WorkspaceProvider';
 import { filters } from './filters';
-import { filter } from 'lodash';
 
 const components = {
   FieldAny: ({ name }: FieldProps) => {
@@ -138,7 +138,7 @@ const FilterEventsPopover = () => {
     () =>
       Object.entries(filters).map(([key, filter]) => ({
         value: key,
-        label: t('events.filters.label', { context: key }),
+        label: t('events.filters.suggestions.label', { context: key }),
         filter,
       })),
     [t]
@@ -149,6 +149,7 @@ const FilterEventsPopover = () => {
       setMountedForm(true);
     }
   }, [mountedForm]);
+  const [suggestionsPopupState, setSuggestionsPopupState] = useState(false);
 
   return (
     <Popover
@@ -171,25 +172,42 @@ const FilterEventsPopover = () => {
         <div className="flex flex-1">
           <div className="flex-1">{t('events.filters.title')}</div>
           <div className="flex">
-            Suggestion :
-            <select
-              onChange={({ target }) => {
-                const { filter } =
-                  builtinFilters.find(({ value }) => target.value === value) ||
-                  {};
-                setValues(filter || {});
-                setMountedForm(false);
-                target.value = '';
-                target.blur();
-              }}
+            <Popover
+              title={t('events.filters.suggestions.title')}
+              placement="bottom"
+              titleClassName="!p-4"
+              onOpenChange={setSuggestionsPopupState}
+              open={suggestionsPopupState}
+              content={() => (
+                <div>
+                  {builtinFilters.map(({ label, filter }) => (
+                    <Button
+                      key={label}
+                      onClick={() => {
+                        setValues(filter || {});
+                        setMountedForm(false);
+                        setSuggestionsPopupState(false);
+                      }}
+                      icon={<FilterOutlined />}
+                    >
+                      {label}
+                    </Button>
+                  ))}
+                </div>
+              )}
             >
-              <option></option>
-              {builtinFilters.map(({ label, value }) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
+              <Button>
+                <Tooltip
+                  title={t('events.filters.suggestions.help')}
+                  placement="left"
+                >
+                  <div className="relative">
+                    <SearchOutlined className="text-2xl" />
+                    <FilterOutlined className="absolute text-sm -top-1 -left-2" />
+                  </div>
+                </Tooltip>
+              </Button>
+            </Popover>
           </div>
         </div>
       }
