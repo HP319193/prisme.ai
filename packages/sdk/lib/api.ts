@@ -3,6 +3,7 @@ import Fetcher from './fetcher';
 import { Event, Workspace } from './types';
 import { Events } from './events';
 import { removedUndefinedProperties } from './utils';
+import WorkspacesEndpoint from './endpoints/workspaces';
 
 type UserPermissions = Prismeai.UserPermissions;
 
@@ -595,6 +596,10 @@ export class Api extends Fetcher {
     );
 
     return this.get(`/workspaces/${workspaceId}/usage?${params.toString()}`);
+  }
+
+  workspaces(id: string) {
+    return new WorkspacesEndpoint(id, this);
   }
 }
 

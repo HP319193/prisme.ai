@@ -67,15 +67,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
       console.error(error);
       return null;
     }
-  }, [
-    errorT,
-    publishApp,
-    publishSlug,
-    t,
-    workspace.description,
-    workspace.id,
-    workspace.photo,
-  ]);
+  }, [errorT, publishApp, publishSlug, t, workspace.id]);
 
   const isSlugValid = useMemo(
     () => publishSlug.length > 0 && SLUG_VALIDATION_REGEXP.test(publishSlug),

@@ -11,6 +11,7 @@ import {
   ErrorLabel,
   EventLabel,
   PageLabel,
+  RollbackVersion,
 } from './Labels';
 
 interface SectionContentProps {
@@ -84,47 +85,60 @@ export const SectionContent = ({
     : type;
 
   return (
-    <Tooltip title={localize(description)}>
-      <div className="flex flex-col">
-        <div className={`flex flex-row ${read ? 'opacity-50' : ''}`}>
-          {photo && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={photo}
-              height={25}
-              width={25}
-              className="mr-2 rounded-[0.3rem] object-cover"
-              alt={name}
-            />
-          )}
-          <Tooltip title={title}>
-            <div className="font-bold text-[1rem] whitespace-nowrap text-ellipsis overflow-hidden max-w-[25%]">
-              {title}
-            </div>
-          </Tooltip>
-          <div className="text-gray font-thin ml-4 text-[0.875rem]">{date}</div>
-        </div>
-        <div
-          className={`font-light text-[1rem] mt-[0.625rem] ${
-            photo ? 'ml-[2rem]' : ''
-          }`}
-        >
-          <Trans
-            t={t}
-            i18nKey="feed.type"
-            context={type}
-            values={{ ...labelValues, context: cleanedType }}
-            components={{
-              automation: <AutomationLabel {...event} />,
-              page: <PageLabel {...event} />,
-              event: <EventLabel {...event} />,
-              app: <AppLabel {...event} />,
-              error: <ErrorLabel {...event} />,
-            }}
+    <div className="flex flex-col">
+      <div className="flex flex-row">
+        {photo && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={photo}
+            height={25}
+            width={25}
+            className={`${
+              read ? 'opacity-50' : ''
+            } mr-2 rounded-[0.3rem] object-cover`}
+            alt={name}
           />
-        </div>
+        )}
+        <Tooltip
+          title={
+            <>
+              <div className="font-bold">{title}</div>
+              <div>{localize(description)}</div>
+            </>
+          }
+        >
+          <div
+            className={`${
+              read ? 'opacity-50' : ''
+            } font-bold text-[1rem] whitespace-nowrap text-ellipsis overflow-hidden max-w-[25%]`}
+          >
+            {title}
+          </div>
+        </Tooltip>
+        <div className="text-gray font-thin ml-4 text-[0.875rem]">{date}</div>
       </div>
-    </Tooltip>
+      <div
+        className={`font-light text-[1rem] mt-[0.625rem] ${
+          photo ? 'ml-[2rem]' : ''
+        }`}
+      >
+        <Trans
+          t={t}
+          i18nKey="feed.type"
+          context={type}
+          values={{ ...labelValues, context: cleanedType, event }}
+          components={{
+            automation: <AutomationLabel {...event} />,
+            page: <PageLabel {...event} />,
+            event: <EventLabel {...event} />,
+            app: <AppLabel {...event} />,
+            error: <ErrorLabel {...event} />,
+            rollback: <RollbackVersion {...event} />,
+            tooltip: <Tooltip />,
+          }}
+        />
+      </div>
+    </div>
   );
 };
 

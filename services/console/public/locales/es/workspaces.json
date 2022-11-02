@@ -53,7 +53,20 @@
     },
     "search": "Investigador",
     "sidebar_extend": "Ampliar la navegación",
-    "sidebar_minimize": "Reducir la navegación"
+    "sidebar_minimize": "Reducir la navegación",
+    "versions": {
+      "create": {
+        "label": "Crear una versión",
+        "description": "Cree una nueva versión a la que pueda volver en cualquier momento incluso después de guardar los cambios en su Espacio de Trabajo.",
+        "name": "Describa su versión si lo desea"
+      },
+      "rollback": {
+        "label": "Volver a esta versión",
+        "description": "Vuelve a esta versión. Tenga en cuenta que el estado actual de su espacio de trabajo no se conservará.",
+        "confirm": "Tenga en cuenta que el estado actual de su espacio de trabajo se perderá si no ha guardado una versión.",
+        "confirm_ok": "Volver a esta versión"
+      }
+    }
   },
   "create": {
     "description_first": "Cree su primer espacio de trabajo para empezar a automatizar su trabajo",
@@ -78,7 +91,12 @@
         "field": "Campos",
         "value": "Valor"
       },
-      "empty": "No se encontraron resultados con estos filtros. ¿Intentar otra búsqueda?"
+      "empty": "No se encontraron resultados con estos filtros. ¿Intentar otra búsqueda?",
+      "suggestions": {
+        "title": "Sugerencias de filtros",
+        "help": "Una selección de filtros prediseñados para ayudarle a encontrar los eventos más útiles.",
+        "label_versions": "Todas las versiones del Workspace"
+      }
     },
     "empty": "Aquí todavía no ha pasado nada…",
     "details": {
@@ -446,7 +464,7 @@
     "public": "Público",
     "link": "Páginas",
     "preview": "Vista previa",
-    "edit": "Éditer",
+    "edit": "Editar",
     "create": {
       "label": "Crear una nueva Página",
       "defaultName": "Página"
@@ -535,7 +553,6 @@
       "name_Form": "Formulario",
       "name_RichText": "Texto enriquecido",
       "name_Layout": "Navegación",
-      "name_Development": "Desarrollo",
       "description": "",
       "description_Header": "Encabezado de página",
       "description_Cards": "Mostrar un grupo de mapas",
@@ -984,6 +1001,8 @@
     "type_workspaces.automations.updated": "Automatización <automation>{{automation}}</automation> se ha actualizado",
     "type_workspaces.automations.deleted": "Se ha eliminado el <automation>{{automation}}</automation>",
     "type_workspaces.pages.updated": "La página <page>{{page}}</page> ha sido actualizada",
+    "type_workspaces.versions.published": "Se ha creado la versión <tooltip title=\"{{event.payload.version.description}}\">{{event.payload.version.name}}</tooltip>. <rollback>Volver a esta versión<rollback>",
+    "type_workspaces.versions.rollback": "Se ha recuperado la versión {{event.payload.version.name}}",
     "type_apps.published": "La aplicación {{appName}} ha sido publicada",
     "type_runtime.automations.executed": "Se ha ejecutado la automatización <automation>{{automation}}</automation>",
     "type_runtime.webhooks.triggered": "La <automation>{{automation}}</automation> fue activada por la URL",
