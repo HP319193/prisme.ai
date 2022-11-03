@@ -3,7 +3,9 @@ Build a form with file upload and send the result by email & post data to salesf
 
 ## [Live Demo](https://form-mail-salesforce.pages.prisme.ai)
 
-## DSUL 
+<details>
+  <summary>See DSUL </summary>
+
 ```
 name: Form
 slug: form-mail-salesforce
@@ -144,9 +146,15 @@ automations:
 
 ```
 
+</details>
+
 # Mini Marketplace
 A projetct starter to have a marketplace to manage freelances & projects
 ## [Live Demo](https://mini-marketplace.pages.prisme.ai)
+
+
+<details>
+  <summary>See DSUL </summary>
 
 ## DSUL
 ```
@@ -623,6 +631,7 @@ automations:
 
 ```
 
+</details>
 
 # API Creation 
 Create an API with Custom Code & managing errors with events.
@@ -632,7 +641,8 @@ Create an API with Custom Code & managing errors with events.
 Curl https://api.studio.prisme.ai/v2/workspaces/qnSDuiG/webhooks/helloworld
 ```
 
-## DSUL 
+<details>
+  <summary>See DSUL</summary> 
 
 ```
 name: API
@@ -688,13 +698,17 @@ automations:
 
 ```
 
+</details>
+
 
 # Chatbot with slot filling
 Type message such as " I Love fruits" or "I love kiwi"
 
 ## [Online demo](https://prefered-fruits.pages.prisme.ai/en)
 
-## DSUL
+<details>
+  <summary>See DSUL</summary> 
+  
 ```
 name: Chatbot
 slug: prefered-fruits
@@ -866,4 +880,6 @@ automations:
                 text: '{{payload.message.text}}'
 
 ```
+</details>
+
 
