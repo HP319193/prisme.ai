@@ -1,4 +1,4 @@
-import { injectConditions } from './rulesBuilder';
+import { injectConditions, injectRules } from './rulesBuilder';
 
 it('injectConditions should replace user & subject variables', () => {
   const replaced = injectConditions(
@@ -30,7 +30,7 @@ it('injectConditions should replace user & subject variables', () => {
   });
 });
 
-it('injectConditions should prevent broken conditions', () => {
+it('injectConditions should mark conditions with missing vars as invalid', () => {
   const replaced = injectConditions(
     {
       'target.topic': {
@@ -52,15 +52,35 @@ it('injectConditions should prevent broken conditions', () => {
     }
   );
 
-  expect(replaced).toEqual({
-    'target.topic': {
-      $in: [],
+  expect(replaced).toEqual(false);
+});
+
+it('injectRules should replace user & subject variables while skipping rules with missing vars', () => {
+  const user = {
+    id: 'userID',
+  };
+
+  expect(
+    injectRules(
+      [
+        {
+          action: 'manage',
+          subject: 'all',
+          conditions: { 'permissions.${user.id}.policies.manage': true },
+        },
+        {
+          action: 'manage',
+          subject: 'files',
+          conditions: { 'permissions.${user.sessionId}.policies.manage': true },
+        },
+      ],
+      { user }
+    )
+  ).toEqual([
+    {
+      action: 'manage',
+      subject: 'all',
+      conditions: { 'permissions.userID.policies.manage': true },
     },
-    'target.otherTopic': {
-      $in: [],
-    },
-    'target.otherTopicBis': {
-      $in: [],
-    },
-  });
+  ]);
 });

@@ -14,37 +14,64 @@ function injectPlaceholders(value: any, ctx: RuleContext) {
     return value;
   }
 
-  if (value.startsWith('${') && value.endsWith('}')) {
-    const variableName = value.slice(2, -1);
-    return extractObjectsByPath(ctx, variableName);
+  const placeholders = Array.from(value.matchAll(/\$\{[a-zA-Z.]+\}/g));
+  const initLength = value.length;
+  for (let placeholder of placeholders) {
+    const variableName = placeholder[0].slice(2, -1);
+    const variableValue = extractObjectsByPath(ctx, variableName);
+    if (variableValue == undefined) {
+      return;
+    }
+    if (placeholder[0].length == initLength) {
+      return variableValue;
+    }
+
+    value = value.replace(placeholder[0], variableValue);
   }
+
   return value;
 }
 
 export function injectConditions(
   conditions: object,
   ctx: RuleContext
-): MongoQuery {
-  return Object.entries(conditions).reduce((injected, [k, v]) => {
-    const injectedKey = injectPlaceholders(k, ctx);
-    if (typeof v === 'object' && !Array.isArray(v)) {
+): MongoQuery | false {
+  const initialCondsNb = Object.keys(conditions).length;
+  const injectedConditions = Object.entries(conditions).reduce(
+    (injected, [k, v]) => {
+      const injectedKey = injectPlaceholders(k, ctx);
+      if (!injectedKey) {
+        return injected;
+      }
+      if (typeof v === 'object' && !Array.isArray(v)) {
+        const nestedConds = injectConditions(v, ctx);
+        if (!nestedConds) {
+          return injected;
+        }
+        return {
+          ...injected,
+          [injectedKey]: nestedConds,
+        };
+      }
+      const injectedValue = injectPlaceholders(v, ctx);
+      if (
+        injectedValue == undefined ||
+        (injectedKey == '$in' && !Array.isArray(injectedValue))
+      ) {
+        return injected;
+      }
       return {
         ...injected,
-        [injectedKey]: injectConditions(v, ctx),
+        [injectedKey]: injectedValue,
       };
-    }
-    const injectedValue = injectPlaceholders(v, ctx);
-    if (injectedValue == undefined) {
-      return injected;
-    }
-    return {
-      ...injected,
-      [injectedKey]:
-        injectedKey == '$in' && !Array.isArray(injectedValue)
-          ? []
-          : injectedValue,
-    };
-  }, {});
+    },
+    {}
+  );
+  // Some vars was missing : mark given conditions as invalid
+  if (Object.keys(injectedConditions).length !== initialCondsNb) {
+    return false;
+  }
+  return injectedConditions;
 }
 
 export function injectRules(
@@ -56,9 +83,11 @@ export function injectRules(
       let conditions: MongoQuery = cur.conditions || {};
       const rulesNb = Object.keys(conditions).length;
       if (rulesNb) {
-        conditions = injectConditions({ ...conditions }, ctx);
+        console.log('gonna inject ', conditions);
+        conditions = injectConditions({ ...conditions }, ctx) as MongoQuery;
+        console.log('=> ', conditions);
         // Some placeholders are missing : skip this rule
-        if (Object.keys(conditions).length !== rulesNb) {
+        if (!conditions) {
           return false;
         }
       }
@@ -165,7 +194,8 @@ export function nativeRules(
     ...anySubjectRoleGrantReadAccess,
   ];
 
-  return injectRules(rules, { user });
+  const injectedRules = injectRules(rules, { user });
+  return injectedRules;
 }
 
 export async function validateRules(
