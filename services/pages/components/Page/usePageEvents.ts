@@ -1,9 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import api, { Events } from '../../../console/utils/api';
-import { useUser } from '../../../console/components/UserProvider';
 
-export const usePage = (page: Prismeai.Page) => {
-  const { user } = useUser();
+export const usePageEvents = (page: Prismeai.Page | null) => {
   const [events, setEvents] = useState<Events>();
   const [blocksConfigs, setBlocksConfigs] = useState<
     NonNullable<Prismeai.Page['blocks'][number]['config']>[]
@@ -11,6 +9,7 @@ export const usePage = (page: Prismeai.Page) => {
 
   // Init blocks config
   useEffect(() => {
+    if (!page) return;
     setBlocksConfigs((page.blocks || []).map(({ config }) => config || {}));
   }, [page]);
 
@@ -19,6 +18,7 @@ export const usePage = (page: Prismeai.Page) => {
   useEffect(() => {
     async function initEvents() {
       if (
+        !page ||
         !page.workspaceId ||
         prevSocketWorkspaceId.current === page.workspaceId
       )
@@ -36,7 +36,7 @@ export const usePage = (page: Prismeai.Page) => {
       });
     }
     initEvents();
-  }, [page.id, page.workspaceId]);
+  }, [page]);
   useEffect(() => {
     return () => {
       events?.destroy();
@@ -44,7 +44,7 @@ export const usePage = (page: Prismeai.Page) => {
   }, [events]);
 
   useEffect(() => {
-    if (!events) return;
+    if (!events || !page) return;
     const updateEvents = (page.blocks || []).reduce<Record<string, number[]>>(
       (prev, { config }, index) =>
         !config || !config.updateOn
@@ -95,10 +95,11 @@ export const usePage = (page: Prismeai.Page) => {
     return () => {
       off();
     };
-  }, [events, page.blocks, page.id]);
+  }, [events, page]);
 
   // Init automation
   useEffect(() => {
+    if (!page) return;
     const initWithAutomation = async (
       workspaceId: string,
       automation: string,
@@ -122,4 +123,4 @@ export const usePage = (page: Prismeai.Page) => {
   return { blocksConfigs, events };
 };
 
-export default usePage;
+export default usePageEvents;

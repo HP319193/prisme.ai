@@ -43,3 +43,6 @@ export function HomeOutlined() {
 export function EllipsisOutlined() {
   return null;
 }
+export function LeftCircleOutlined() {
+  return null;
+}

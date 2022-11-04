@@ -7,40 +7,18 @@ import api from '../../console/utils/api';
 import PageRenderer, {
   PageProps as PageRendererProps,
 } from '../components/Page/Page';
-import { usePreview } from '../components/usePreview';
+import { usePage } from '../components/Page/PageProvider';
 
 export interface PageProps extends Omit<PageRendererProps, 'page'> {
   page: PageRendererProps['page'] | null;
 }
 
 export const Page = ({ page: pageFromServer, error }: PageProps) => {
-  const [page, setPage] = useState(pageFromServer);
-  const [loading, setLoading] = useState(true);
-  const {
-    query: { slug = 'index' },
-  } = useRouter();
-
-  const fetchPage = useCallback(async () => {
-    try {
-      const [, workspaceSlug] =
-        window.location.hostname.match(/^([^\.]+)\./) || [];
-
-      const page = await api.getPageBySlug(workspaceSlug, `${slug}`);
-      setPage(page);
-    } catch (e) {}
-    setLoading(false);
-  }, [slug]);
+  const { page, setPage, loading, fetchPage } = usePage();
 
   useEffect(() => {
-    if (pageFromServer || (error && ![401, 403].includes(error))) {
-      setPage(pageFromServer);
-      return;
-    }
-
-    fetchPage();
-  }, [slug, error, pageFromServer, fetchPage]);
-
-  usePreview(setPage);
+    setPage(pageFromServer, error);
+  }, [pageFromServer, error, setPage]);
 
   if (!page && loading) return <Loading />;
 

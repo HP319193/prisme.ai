@@ -153,6 +153,23 @@ class Pages {
       }, null);
       return details || { url: '', appInstance: '' };
     };
+
+    const appInstances = Object.entries(workspace.imports || {}).map(
+      ([slug, { config: appConfig }]) => ({
+        slug,
+        appConfig,
+        blocks: Object.values(
+          (apps.find(({ slug: s }) => slug === s) || { blocks: {} }).blocks
+        ).reduce(
+          (prev, { slug: name, url }) => ({
+            ...prev,
+            [`${slug}.${name}`]: url,
+          }),
+          {}
+        ),
+      })
+    );
+
     const detailedPage: Prismeai.DetailedPage = {
       ...page,
       blocks: page.blocks?.map((block) => ({
@@ -161,6 +178,7 @@ class Pages {
           ? getBlockDetails(block.name)
           : { url: '', appInstance: '' }),
       })),
+      appInstances,
     };
     return detailedPage;
   }

@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render blocks 1`] = `
+<div
+  className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-auto min-h-full snap-mandatory"
+>
+  <div
+    className="absolute left-2 bottom-2 text-[0.75rem] text-pr-grey z-0"
+  >
+    powered
+  </div>
+  <div
+    className="flex flex-1 flex-col page-blocks w-full"
+  >
+    <div
+      className="page-block block- block-Header snap-start z-10"
+    />
+    <div
+      className="page-block block- block-RichText snap-start z-10"
+    />
+  </div>
+</div>
+`;
+
+exports[`should render empty page 1`] = `
+<div
+  className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-auto min-h-full snap-mandatory"
+>
+  <div
+    className="absolute left-2 bottom-2 text-[0.75rem] text-pr-grey z-0"
+  >
+    powered
+  </div>
+  <div
+    className="flex flex-1 flex-col page-blocks w-full"
+  />
+</div>
+`;

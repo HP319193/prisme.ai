@@ -1,15 +1,8 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { BlockLoader } from '../../BlockLoader';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BlockContext, useBlock } from '../../Provider';
 import { Content as IContent } from './context';
 import tw from '../../tw';
+import { useBlocks } from '../../Provider/blocksContext';
 
 interface ContentProps {
   content: IContent;
@@ -18,14 +11,15 @@ interface ContentProps {
   className?: string;
 }
 
-export const ContentRenderer = ({
-  content: { blocks = [] },
+export const Content = ({
+  content: { blocks },
   className,
   onUnmount,
   removed,
-  api,
-  events,
-}: ContentProps & Pick<BlockContext, 'api' | 'events'>) => {
+}: ContentProps) => {
+  const {
+    utils: { BlockLoader },
+  } = useBlocks();
   const [animationClassName, setAnimationClassName] = useState(
     tw`translate-x-full`
   );
@@ -41,46 +35,25 @@ export const ContentRenderer = ({
     setTimeout(onUnmount, 200);
   }, [removed]);
 
-  const onLoad = useCallback(
-    (onInit: any) => () => {
-      if (!events) return;
-      events.emit(onInit);
-    },
-    [events]
-  );
-
   return (
     <div
       ref={containerEl}
-      className={`${className} content-stack__content content transition-transform  ${animationClassName}`}
+      className={tw`${className} content-stack__content content transition-transform  ${animationClassName}`}
     >
-      {blocks.map(({ block, url, onInit, ...config }, index) => (
-        <div
-          key={index}
-          className={tw`flex content__block-container block-container snap-start`}
-        >
-          <BlockLoader
-            config={config}
-            name={block}
-            url={url}
-            api={api}
-            events={events}
-            layout={{ container: containerEl.current || undefined }}
-            onLoad={onInit && onLoad(onInit)}
-          />
-        </div>
-      ))}
+      {blocks &&
+        blocks.map(({ block, url, onInit, ...config }, index) => (
+          <div
+            key={index}
+            className={tw`flex content__block-container block-container snap-start`}
+          >
+            <BlockLoader
+              config={config}
+              name={block}
+              container={containerEl.current || undefined}
+            />
+          </div>
+        ))}
     </div>
   );
 };
-
-export const Content = (props: ContentProps) => {
-  const { api, events } = useBlock();
-
-  return useMemo(
-    () => <ContentRenderer {...props} api={api} events={events} />,
-    [api, events, props]
-  );
-};
-
 export default Content;

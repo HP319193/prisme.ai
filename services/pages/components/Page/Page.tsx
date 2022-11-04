@@ -2,9 +2,9 @@ import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useRef } from 'react';
 import useLocalizedText from '../../../console/utils/useLocalizedText';
-import usePage from './usePage';
 import api, { Events } from '../../../console/utils/api';
-import PageBlock from './PageBlock';
+import { BlockLoader } from './BlockLoader';
+import { usePage } from './PageProvider';
 
 declare global {
   interface Window {
@@ -25,7 +25,7 @@ export interface PageProps {
 export const Page = ({ page }: PageProps) => {
   const { t } = useTranslation('common');
   const { localize } = useLocalizedText();
-  const { blocksConfigs, events } = usePage(page);
+  const { blocksConfigs, events } = usePage();
   const containerEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,29 +66,18 @@ export const Page = ({ page }: PageProps) => {
         className="flex flex-1 flex-col page-blocks w-full"
         ref={containerEl}
       >
-        {blocks.map(
-          ({ name = '', appInstance = '', url = '', config = {} }, index) => (
-            <div
-              key={index}
-              className={`page-block block-${appInstance.replace(
-                /\s/g,
-                '-'
-              )} block-${name.replace(/\s/g, '-')} snap-start z-10`}
-              id={(blocksConfigs[index] || {}).sectionId}
-            >
-              <PageBlock
-                url={url}
-                name={name}
-                workspaceId={`${page.workspaceId}`}
-                appInstance={appInstance}
-                page={page}
-                events={events}
-                config={blocksConfigs[index]}
-                container={containerEl.current || undefined}
-              />
-            </div>
-          )
-        )}
+        {blocks.map(({ name = '', appInstance = '' }, index) => (
+          <div
+            key={index}
+            className={`page-block block-${appInstance.replace(
+              /\s/g,
+              '-'
+            )} block-${name.replace(/\s/g, '-')} snap-start z-10`}
+            id={(blocksConfigs[index] || {}).sectionId}
+          >
+            <BlockLoader name={name} config={blocksConfigs[index]} />
+          </div>
+        ))}
       </div>
     </div>
   );
