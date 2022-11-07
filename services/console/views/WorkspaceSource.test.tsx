@@ -153,7 +153,7 @@ it('should check workspace format', async () => {
     name: 'foo',
     automations: [],
   }));
-  (validateWorkspace as any as jest.Mock).mockImplementation(() => {
+  ((validateWorkspace as any) as jest.Mock).mockImplementation(() => {
     validateWorkspace.errors = [
       {
         instancePath: '/automations',
@@ -224,7 +224,7 @@ automations:
     {
       column: 0,
       row: 4,
-      text: 'http://localhost:3000/api/workspace/42/webhook/foo',
+      text: 'http://localhost:3000/api/workspaces/42/webhooks/foo',
       type: 'endpoint',
     },
   ]);
@@ -241,7 +241,7 @@ automations:
   );
 
   expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
-    'http://localhost:3000/api/workspace/42/webhook/foo'
+    'http://localhost:3000/api/workspaces/42/webhooks/foo'
   );
 });
 
@@ -267,7 +267,7 @@ automations:
     {
       column: 0,
       row: 4,
-      text: 'http://localhost:3000/api/workspace/42/webhook/custom',
+      text: 'http://localhost:3000/api/workspaces/42/webhooks/custom',
       type: 'endpoint',
     },
   ]);

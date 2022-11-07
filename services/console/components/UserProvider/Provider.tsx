@@ -5,6 +5,11 @@ import { ApiError } from '@prisme.ai/sdk';
 import { useRouter } from 'next/router';
 import Storage from '../../utils/Storage';
 import { Loading } from '@prisme.ai/design-system';
+import getConfig from 'next/config';
+
+const {
+  publicRuntimeConfig: { PAGES_HOST = '', CONSOLE_HOST = '' },
+} = getConfig();
 
 const REDIRECT_IF_SIGNED = ['/forgot', '/signin', '/signup', '/'];
 const PUBLIC_URLS = [
@@ -17,10 +22,32 @@ const PUBLIC_URLS = [
 
 interface UserProviderProps {
   anonymous?: boolean;
+  redirectTo?: string;
+}
+
+async function authFromConsole() {
+  return new Promise((resolve, reject) => {
+    if (!window.parent) reject('no parent window found');
+    const t = setTimeout(() => {
+      reject('no response');
+    }, 100);
+    // Ask console for auth token if present
+    const listener = (e: MessageEvent) => {
+      const { type, token } = e.data;
+      if (type === 'api.token') {
+        api.token = token;
+        clearTimeout(t);
+        resolve(token);
+      }
+    };
+    window.addEventListener('message', listener);
+    window.parent.postMessage({ type: 'askAuthToken' }, CONSOLE_HOST);
+  });
 }
 
 export const UserProvider: FC<UserProviderProps> = ({
   anonymous,
+  redirectTo,
   children,
 }) => {
   const [user, setUser] = useState<UserContext['user']>(null);
@@ -66,8 +93,8 @@ export const UserProvider: FC<UserProviderProps> = ({
     []
   );
 
-  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] =
-    useCallback(async (email: string, language: string) => {
+  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] = useCallback(
+    async (email: string, language: string) => {
       setLoading(true);
       setError(undefined);
       setSuccess(undefined);
@@ -80,7 +107,9 @@ export const UserProvider: FC<UserProviderProps> = ({
         setError(e as ApiError);
         return null;
       }
-    }, []);
+    },
+    []
+  );
 
   const passwordReset: UserContext['passwordReset'] = useCallback(
     async (token: string, password: string) => {
@@ -204,6 +233,11 @@ export const UserProvider: FC<UserProviderProps> = ({
     setLoading(true);
     setError(undefined);
     try {
+      if (anonymous) {
+        try {
+          await authFromConsole();
+        } catch {}
+      }
       const user = await api.me();
       if (user.authData && user.authData.anonymous && !anonymous) {
         throw {
@@ -216,8 +250,8 @@ export const UserProvider: FC<UserProviderProps> = ({
       }
       setUser(user);
       setLoading(false);
-      if (user.id && REDIRECT_IF_SIGNED.includes(route)) {
-        push('/workspaces');
+      if (user.id && REDIRECT_IF_SIGNED.includes(route) && redirectTo) {
+        push(redirectTo);
       }
       if (!user.id && !PUBLIC_URLS.includes(route)) {
         push('/signin');
@@ -234,12 +268,27 @@ export const UserProvider: FC<UserProviderProps> = ({
       signout(false);
       setLoading(false);
     }
-  }, [anonymous, push, route, signout]);
+  }, [anonymous, push, redirectTo, route, signout]);
 
   const initialFetch = useRef(fetchMe);
 
   useEffect(() => {
     initialFetch.current();
+  }, []);
+
+  useEffect(() => {
+    // For preview in console
+    const listener = async (e: MessageEvent) => {
+      const { type } = e.data || {};
+      const source = e.source as Window;
+      if (type === 'askAuthToken' && e.origin.match(PAGES_HOST)) {
+        source.postMessage({ type: 'api.token', token: api.token }, e.origin);
+      }
+    };
+    window.addEventListener('message', listener);
+    return () => {
+      window.removeEventListener('message', listener);
+    };
   }, []);
 
   const isPublicUrl = PUBLIC_URLS.includes(route);

@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+//@ts-ignore
 import isEmail from 'is-email';
 import { ObjectId } from 'mongodb';
 import { URL } from 'url';

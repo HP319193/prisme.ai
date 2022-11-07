@@ -26,7 +26,9 @@ jest.mock('react-flow-renderer', () => {
   ReactFlow.ArrowHeadType = {
     Arrow: 'arrow',
   };
-  ReactFlow.Background = () => null;
+  ReactFlow.Background = function Background() {
+    return null;
+  };
   ReactFlow.BackgroundVariant = {
     Dots: 'dots',
   };

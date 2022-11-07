@@ -11,6 +11,7 @@
     "postinstall": "patch-package",
     "clean": "npx rimraf packages/**/dist",
     "build:console": "npm run build --prefix services/console",
+    "build:pages": "npm run build --prefix services/pages",
     "build:workspaces": "npm run build --prefix services/workspaces",
     "build:gateway": "npm run build --prefix services/api-gateway",
     "build:runtime": "npm run build --prefix services/runtime",
@@ -21,6 +22,7 @@
     "build:types": "npx dtsgen --out ./packages/types/index.d.ts ./specifications/swagger.yml",
     "build:packages": "npm run build:types && npm run build:validation:instruction && npx rollup -c",
     "dev:console": "npm run dev --prefix services/console",
+    "dev:pages": "PORT=3100 npm run dev --prefix services/pages",
     "dev:design-system": "npm start --prefix packages/design-system",
     "dev:workspaces": "npm run dev --prefix services/workspaces",
     "dev:api-gateway": "npm run dev --prefix services/api-gateway",
@@ -100,6 +102,7 @@
     "storybook-addon-react-docgen": "^1.2.42",
     "storybook-preset-less": "^1.1.2",
     "tailwindcss": "^3.0.19",
+    "ts-node": "^10.9.1",
     "tslib": "^2.3.1",
     "typescript": "^4.4.3"
   },

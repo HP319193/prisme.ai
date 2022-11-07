@@ -85,7 +85,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   }
 
   return (
-    <UserProvider>
+    <UserProvider redirectTo="/workspaces">
       <WorkspacesProvider>
         <WorkspacesUsageProvider>
           <PermissionsProvider>

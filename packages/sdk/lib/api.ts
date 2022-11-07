@@ -235,9 +235,10 @@ export class Api extends Fetcher {
   }
 
   async getPageBySlug(
+    workspaceSlug: PrismeaiAPI.GetPageBySlug.Parameters.WorkspaceSlug,
     pageSlug: PrismeaiAPI.GetPageBySlug.Parameters.PageSlug
   ): Promise<Prismeai.DetailedPage> {
-    return await this.get(`/pages/${pageSlug}`);
+    return await this.get(`/pages/${workspaceSlug}/${pageSlug}`);
   }
 
   async createPage(

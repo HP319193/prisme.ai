@@ -1,0 +1,200 @@
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/Montserrat-VariableFont_wght.ttf');
+  font-style: normal;
+  font-weight: auto;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/Montserrat-italic-VariableFont_wght.ttf');
+  font-style: italic;
+  font-weight: auto;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-SemiBold.ttf');
+  font-weight: bold;
+}
+
+#__next {
+  height: 100%;
+  display: flex;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  white-space: pre-line;
+  scroll-behavior: smooth;
+  font-weight: 300;
+  font-size: 13px;
+  font-family: Montserrat, sans-serif;
+  min-height: 100vh;
+}
+body h1.ant-typography,
+body h2.ant-typography,
+body h3.ant-typography,
+body h4.ant-typography,
+body h5.ant-typography,
+body h6.ant-typography {
+  font-size: 1rem;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.ace_gutter-cell.ace_endpoint:before {
+  position: absolute;
+  content: '';
+  background-image: url('/images/link.png');
+  background-size: contain;
+  width: 12px;
+  height: 12px;
+  left: 4px;
+  top: 2px;
+}
+
+.prisme-events-viewer__event.p-accordion
+  .p-accordion-header
+  .p-accordion-header-link {
+  justify-content: space-between;
+  font-weight: inherit;
+  color: inherit;
+}
+
+.prisme-events-viewer__event.p-accordion
+  .p-accordion-header
+  .p-accordion-header-text {
+  color: inherit;
+}
+
+.prisme-events-viewer__event.p-accordion .p-accordion-content {
+  padding: 0;
+}
+
+.prisme-events-viewer__event .p-accordion-toggle-icon {
+  order: 1;
+}
+
+.p-float-label .ace_focus ~ label,
+.p-float-label .filled ~ label {
+  top: -0.75rem;
+  font-size: 12px;
+}
+
+.centered-collapse .ant-collapse-header {
+  align-items: baseline !important;
+}
+
+a.ant-btn.pr-btn-primary-small {
+  padding-top: 0.25rem !important;
+}
+
+#react-flow__arrowclosed {
+  /* accent color */
+  stroke: #015dff;
+  fill: #015dff;
+  path: #015dff;
+}
+
+#react-flow__arrow polyline {
+  /* accent color */
+  stroke: #015dff;
+  fill: #015dff;
+  path: #015dff;
+}
+
+.block-rich-text h1,
+.block-rich-text h2,
+.block-rich-text h3,
+.block-rich-text h4,
+.block-rich-text h5,
+.block-rich-text h6 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+.block-rich-text h1 {
+  font-size: 2rem;
+}
+.block-rich-text h2 {
+  font-size: 1.8rem;
+}
+.block-rich-text h3 {
+  font-size: 1.6rem;
+}
+.block-rich-text h4 {
+  font-size: 1.4rem;
+}
+.block-rich-text h5 {
+  font-size: 1.2rem;
+}
+.block-rich-text h6 {
+  font-size: 1rem;
+}
+
+.pr-align-tree
+  .ant-tree-list-holder-inner
+  > .ant-tree-treenode:nth-child(1)
+  .ant-tree-switcher {
+  display: none;
+}
+
+.pr-align-tree .ant-tree-indent {
+  display: none;
+}
+
+.pr-align-tree .ant-tree-switcher-noop {
+  display: none;
+}
+
+.pr-noLeftSelect .ant-select-selector {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-left-width: 0 !important;
+  border-top-right-radius: 0.94rem !important;
+  border-bottom-right-radius: 0.94rem !important;
+}
+
+.pr-full-popover .ant-popover-inner-content {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border-bottom-left-radius: 0.6rem;
+  border-bottom-right-radius: 0.6rem;
+}
+
+.schema-form-autocomplete .ant-select-selector {
+  flex: 1;
+  border: none;
+}
+
+body .font-sans {
+  font-family: Montserrat, sans-serif;
+}
+
+body .ant-popover-inner-content {
+  padding: 1rem;
+}
+body .ant-popover-message-title {
+  padding-left: 2rem;
+}
+body .ant-popover-buttons button {
+  line-height: 1;
+}
+
+body .ant-modal-confirm-body .anticon {
+  margin-top: 0.2rem;
+}
+body .ant-modal-confirm-title {
+  font-size: 1.4rem;
+  padding: 0;
+}

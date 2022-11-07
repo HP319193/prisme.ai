@@ -37,6 +37,7 @@ import getLayout from '../../layouts/WorkspaceLayout';
 import { useWorkspaceLayout } from '../../layouts/WorkspaceLayout/context';
 import RightButtons from './RightButtons';
 import EditableTitle from '../../components/AutomationBuilder/EditableTitle';
+import api from '../../utils/api';
 
 const CSSEditor = ({
   name,
@@ -379,6 +380,27 @@ export const Page = () => {
       })),
     };
   }, [blocks, cleanValue, value]);
+
+  useEffect(() => {
+    // For preview in console
+    const listener = async (e: MessageEvent) => {
+      const { type, href } = e.data || {};
+      if (type === 'pagePreviewNavigation') {
+        const [, slug] = href.match(/^\/(.+$)/);
+        if (!slug) return;
+        const page = await api.getPageBySlug(
+          workspace.slug || workspace.id,
+          slug
+        );
+        if (!page) return;
+        push(`/workspaces/${workspace.id}/pages/${page.id}`);
+      }
+    };
+    window.addEventListener('message', listener);
+    return () => {
+      window.removeEventListener('message', listener);
+    };
+  }, [push, workspace.id, workspace.slug]);
 
   if (!page) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
