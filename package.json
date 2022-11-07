@@ -23,6 +23,7 @@
     "build:packages": "npm run build:types && npm run build:validation:instruction && npx rollup -c",
     "dev:console": "npm run dev --prefix services/console",
     "dev:pages": "PORT=3100 npm run dev --prefix services/pages",
+    "dev:front": "concurrently \"npm run dev:console\" \"npm run dev:pages\"",
     "dev:design-system": "npm start --prefix packages/design-system",
     "dev:workspaces": "npm run dev --prefix services/workspaces",
     "dev:api-gateway": "npm run dev --prefix services/api-gateway",
