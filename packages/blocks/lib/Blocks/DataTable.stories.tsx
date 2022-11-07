@@ -220,3 +220,32 @@ WithMetaData.args = {
     ],
   } as DataTableConfig,
 };
+
+export const WithEventBasedPagination = Template.bind({});
+WithEventBasedPagination.args = {
+  defaultConfig: {
+    data: [
+      {
+        _id: '62b1cc7ee806595bf47ed230',
+        title: 'Foo',
+        count: 42,
+        startAt: '2022-01-01',
+        colors: ['red', 'orange'],
+        checked: true,
+      },
+      {
+        _id: '62bf07425609f172d1ac12a2',
+        title: 'Bar',
+        count: 123,
+        startAt: '2022-05-06',
+        colors: ['green', 'pink', 'purple'],
+        checked: false,
+      },
+    ],
+    pagination: {
+      event: 'paginate',
+      page: 3,
+      pages: 42,
+    },
+  } as DataTableConfig,
+};
