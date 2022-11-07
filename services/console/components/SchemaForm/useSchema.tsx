@@ -1,8 +1,10 @@
 import { Schema } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
+import { generatePageUrl } from '../../utils/urls';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { readAppConfig } from '../AutomationBuilder/Panel/readAppConfig';
+import { useWorkspace } from '../WorkspaceProvider';
 
 function getEmitEvents(
   doList: Prismeai.InstructionList
@@ -28,6 +30,9 @@ function getEmitEvents(
 export const useSchema = (store: Record<string, any> = {}) => {
   const { localize } = useLocalizedText();
   const { t } = useTranslation('workspaces');
+  const {
+    workspace: { slug: workspaceSlug = '' },
+  } = useWorkspace();
   const extractSelectOptions = useCallback(
     (schema: Schema) => {
       const { 'ui:options': uiOptions = {} } = schema;
@@ -98,23 +103,35 @@ export const useSchema = (store: Record<string, any> = {}) => {
             },
             ...Array.from<Prismeai.Page>(store.pages).flatMap((page) => {
               const { id, slug, name = slug, description } = page;
+
               return {
                 label: (
-                  <div className="flex flex-col">
+                  <div
+                    className={`flex flex-col ${
+                      !slug ? 'text-neutral-200' : ''
+                    }`}
+                  >
                     <div>{localize(name)}</div>
                     <div className="text-neutral-500 text-xs">
                       {localize(description)}
                     </div>
                   </div>
                 ),
-                value: id,
+                value: slug ? generatePageUrl(workspaceSlug, slug) : id,
               };
             }),
           ];
       }
       return null;
     },
-    [localize, store.automations, store.config, store.pageSections, store.pages]
+    [
+      localize,
+      store.automations,
+      store.config,
+      store.pageSections,
+      store.pages,
+      workspaceSlug,
+    ]
   );
 
   const extractAutocompleteOptions = useCallback(
