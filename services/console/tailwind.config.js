@@ -29,7 +29,13 @@ module.exports = {
       colors: {
         // Antdesign secondary text color
         gray: '#939CA6',
+        'light-gray': '#E5E5E5',
         accent: '#015dff',
+        'ultra-light-accent': '#F8FAFF',
+        base: '#0A1D3B',
+        error: '#ff4d4f',
+        info: '#E6EFFF',
+
         'pr-orange': '#FF9261',
         'pr-grey': '#939CA6',
         'gray-200': '#E5E5E5',
@@ -45,8 +51,6 @@ module.exports = {
         'green-100': '#4c7072',
         'green-200': '#E7F6F6',
         'orange-500': '#FD6E6E',
-        base: '#0A1D3B',
-        error: '#ff4d4f',
       },
     },
   },

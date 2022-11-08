@@ -3,7 +3,17 @@
   "workspaces": {
     "title": "Espaces de travail — $t(common:main.title)",
     "description": "Créez de nouveaux espaces de travail et de nouvelles apps, éditez les et exécutez les",
-    "sectionTitle": "Votre galerie d'espaces de travail",
+    "welcome": {
+      "title": "Bienvenue {{name}},",
+      "title_noname": "Bienvenue,",
+      "content": "Voici votre galerie, retrouvez-y nos suggestions pour vous aider a démarrer un workspace ou recherchez parmis vos workspaces déjà créés.",
+      "help": "<a href=\"https://docs.eda.prisme.ai/fr\">Besoin d’aide ?</a>"
+    },
+    "suggestions": {
+      "title": "Suggestions",
+      "error": "Une erreur s'est produite. Contactez le support si le problème persiste"
+    },
+    "sectionTitle": "Mes Workspaces",
     "defaultDescription": "Créé par vous",
     "search": "Recherche un workspace"
   },

@@ -198,3 +198,11 @@ body .ant-modal-confirm-body .ant-modal-confirm-title {
   font-size: 1.4rem;
   padding: 0;
 }
+
+body .ant-dropdown-menu-item {
+  margin: 0.2rem 0.5rem;
+}
+body .ant-dropdown-menu-item:hover {
+  background: #e6efff;
+  border-radius: 5px;
+}

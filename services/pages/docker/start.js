@@ -1,6 +1,12 @@
 const fs = require('fs');
 
-const ENVS = ['API_HOST', 'PAGES_HOST', 'SENTRY_DSN', 'CONSOLE_HOST'];
+const ENVS = [
+  'API_HOST',
+  'PAGES_HOST',
+  'SENTRY_DSN',
+  'CONSOLE_HOST',
+  'SUGGESTIONS_ENDPOINT',
+];
 
 //services/pages/.next/server/pages/default/404.html
 function rewriteConfig() {

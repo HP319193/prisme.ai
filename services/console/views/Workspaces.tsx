@@ -1,38 +1,29 @@
-import {
-  Button,
-  Input,
-  Layout,
-  Popover,
-  Space,
-  Text,
-  Title,
-  Tooltip,
-} from '@prisme.ai/design-system';
+import { Input, Layout, notification } from '@prisme.ai/design-system';
 import Head from 'next/head';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import packageJson from '../../../package.json';
 import Header from '../components/Header';
 import { useWorkspaces } from '../components/WorkspacesProvider';
-import icon from '../icons/icon-workspace.svg';
-import useLocalizedText from '../utils/useLocalizedText';
 import { useUser } from '../components/UserProvider';
 import plus from '../icons/plus.svg';
-import IFrameLoader from '../components/IFrameLoader';
 import { removeEmpty, search } from '../utils/filterUtils';
 import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import WorkspaceMenu from '../components/Workspaces/WorkspaceMenu';
 import { Workspace } from '../utils/api';
 import HeaderPopovers from './HeaderPopovers';
+import CardButton from '../components/Workspaces/CardButton';
+import WorkspaceCardButton from '../components/Workspaces/WorkspaceCardButton';
+import getConfig from 'next/config';
+
+const {
+  publicRuntimeConfig: { SUGGESTIONS_ENDPOINT = '' },
+} = getConfig();
 
 export const WorkspacesView = () => {
-  const {
-    t,
-    i18n: { language },
-  } = useTranslation('workspaces');
+  const { t } = useTranslation('workspaces');
   const { push } = useRouter();
   const { workspaces, create, duplicate } = useWorkspaces();
   const { user } = useUser();
@@ -49,7 +40,6 @@ export const WorkspacesView = () => {
       ),
     [searchValue, workspacesList]
   );
-  const { localize } = useLocalizedText();
 
   const createWorkspace = useCallback(async () => {
     setLoading(true);
@@ -61,13 +51,38 @@ export const WorkspacesView = () => {
   const duplicateWorkspace = useCallback(
     (id: Workspace['id']) => async () => {
       const workspace = workspaces.get(id);
-      if (!workspace) return;
+      if (!workspace) {
+        notification.warn({
+          message: t('workspaces.suggestions.error', { context: 'duplicate' }),
+          placement: 'bottomRight',
+        });
+        return;
+      }
       const newW = await duplicate(workspace);
       if (!newW) return;
       push(`/workspaces/${newW.id}`);
     },
-    [duplicate, push, workspaces]
+    [duplicate, push, t, workspaces]
   );
+
+  const [suggestions, setSuggestions] = useState<Workspace[]>([]);
+  useEffect(() => {
+    if (!SUGGESTIONS_ENDPOINT) return;
+    async function fetchSuggestions() {
+      try {
+        const res = await fetch(SUGGESTIONS_ENDPOINT);
+        if (!res.ok) {
+          throw new Error();
+        }
+        const suggestions: Workspace[] = await res.json();
+        if (!Array.isArray(suggestions)) return;
+        setSuggestions(suggestions.filter(({ id, name }) => id && name));
+      } catch (e) {
+        return;
+      }
+    }
+    fetchSuggestions();
+  }, []);
 
   return (
     <>
@@ -86,12 +101,29 @@ export const WorkspacesView = () => {
           />
         }
         contentClassName="overflow-y-auto"
+        className="max-w-full"
       >
-        <Title level={3} className="!ml-16 !m-8 !text-lg">
-          {t('workspaces.sectionTitle')}
-        </Title>
-        {workspacesList.length > 1 && (
-          <div className="flex mx-16 my-2 !mt-0 rounded relative pt-6">
+        <div className="mx-32 my-16">
+          <div className="bg-info px-14 py-8 rounded-[15px]">
+            <div className="text-2xl py-3 font-bold">
+              {t('workspaces.welcome.title', {
+                name: user && user.firstName,
+                context: !user || !user.firstName ? 'noname' : '',
+              })}
+            </div>
+            <div className="text-prisme-darkblue">
+              {t('workspaces.welcome.content')}
+            </div>
+            <div className="text-accent mt-4 text-sm">
+              <Trans
+                t={t}
+                i18nKey="workspaces.welcome.help"
+                components={{ a: <a target="_blank" /> }}
+              />
+            </div>
+          </div>
+
+          <div className="pt-6">
             <Input
               type="search"
               value={searchValue}
@@ -106,97 +138,63 @@ export const WorkspacesView = () => {
               autoFocus
             />
           </div>
-        )}
-        <div className="!bg-blue-200 flex flex-1 m-16 !mt-0 rounded relative pt-6">
-          <div>
-            <div className="flex flex-wrap align-start justify-center gap-4">
-              <button
-                id="createWorkspaceButton"
+          <div className="pt-10">
+            <div className="text-xl py-3 font-bold">
+              {t('workspaces.suggestions.title')}
+            </div>
+            <div className="flex flex-wrap -mx-2">
+              <CardButton
                 onClick={createWorkspace}
                 disabled={loading}
-                className="p-2 bg-slate-100 !m-4 w-[21.625rem] h-[7.5rem] flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-pr-grey border-dashed"
+                className="p-6 flex border-accent border-dashed bg-ultra-light-accent items-center !justify-start"
               >
-                <div className="flex flex-1 flex-row text-center content-center">
-                  <div className="flex ml-3 mr-5 items-center justify-center">
-                    <div className="ant-btn ant-btn-primary !h-[4.25rem] !w-[4.25rem] !p-0 !flex items-center justify-center">
-                      <Image src={plus.src} width={27} height={27} alt="" />
-                    </div>
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    <Title level={4} className="mb-0">
-                      {t('create.label', {
-                        context: workspaces.size === 0 ? 'first' : '',
-                      })}
-                    </Title>
-                  </div>
-                </div>
-              </button>
-              {filtredWorkspacesList.map(
-                ({ name, id, photo, description, createdBy }) => {
-                  const descriptionDisplayed =
-                    localize(description) ||
-                    (user &&
-                      user.id === createdBy &&
-                      t('workspaces.defaultDescription')) ||
-                    '';
-                  return (
-                    <Link href={`/workspaces/${id}`} key={id}>
-                      <a className="relative p-2 bg-white !m-4 w-[21.625rem] h-[7.5rem] content-center flex flex-col justify-between overflow-hidden rounded-[0.938rem] border border-gray-200 border-solid group">
-                        <div className="flex flex-1 flex-row text-center max-w-full">
-                          <div className="flex ml-3 mr-5">
-                            {photo ? (
-                              <div className="flex items-center justify-center flex-none">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src={photo}
-                                  className="rounded text-blue h-[48px] w-[48px] object-cover"
-                                  alt={name}
-                                />
-                              </div>
-                            ) : (
-                              <Image
-                                src={icon}
-                                width={48}
-                                height={48}
-                                className="rounded text-blue"
-                                alt={name}
-                              />
-                            )}
-                          </div>
-                          <div className="flex flex-1 flex-col items-start justify-center space-y-2 max-w-[250px]">
-                            <Tooltip title={name}>
-                              <Title
-                                level={4}
-                                className="mb-0 max-w-full text-ellipsis overflow-hidden whitespace-nowrap"
-                              >
-                                {name}
-                              </Title>
-                            </Tooltip>
-                            <Tooltip title={descriptionDisplayed}>
-                              <Text
-                                type="grey"
-                                className="overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]"
-                              >
-                                {descriptionDisplayed}
-                              </Text>
-                            </Tooltip>
-                            <Button variant="link" className="!p-0 !h-[unset]">
-                              {t('edit.label')}
-                            </Button>
-                          </div>
-                        </div>
-                        <WorkspaceMenu
-                          className="absolute top-2 right-2 invisible group-hover:visible"
-                          onDuplicate={duplicateWorkspace(id)}
-                        />
-                      </a>
-                    </Link>
-                  );
-                }
+                <span className="flex min-w-[50px] bg-accent p-4 rounded">
+                  <Image src={plus.src} width={27} height={27} alt="" />
+                </span>
+                <span className="flex font-bold ml-4 ">
+                  {t('create.label', {
+                    context: workspaces.size === 0 ? 'first' : '',
+                  })}
+                </span>
+              </CardButton>
+              {suggestions.map((workspace) => (
+                <WorkspaceCardButton
+                  key={workspace.id}
+                  workspace={workspace}
+                  className="cursor-default"
+                >
+                  <WorkspaceMenu
+                    className="absolute top-2 right-2 invisible group-hover:visible"
+                    onDuplicate={duplicateWorkspace(workspace.id)}
+                  />
+                </WorkspaceCardButton>
+              ))}
+            </div>
+          </div>
+          <div className="pt-10 flex flex-col">
+            <div className="text-xl py-3 font-bold">
+              {t('workspaces.sectionTitle')}
+            </div>
+            <div className="flex flex-wrap -mx-2">
+              {filtredWorkspacesList.map((workspace) => (
+                <WorkspaceCardButton
+                  key={workspace.id}
+                  workspace={workspace}
+                  href={`/workspaces/${workspace.id}`}
+                >
+                  <WorkspaceMenu
+                    className="absolute top-2 right-2 invisible group-hover:visible"
+                    onDuplicate={duplicateWorkspace(workspace.id)}
+                  />
+                </WorkspaceCardButton>
+              ))}
+              {filtredWorkspacesList.length === 0 && (
+                <CardButton>Prout</CardButton>
               )}
             </div>
           </div>
         </div>
+
         <div className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]">
           Prisme.ai v{packageJson.version}
         </div>
