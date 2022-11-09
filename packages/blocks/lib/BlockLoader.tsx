@@ -40,6 +40,7 @@ export interface BlockComponentProps {
   layout?: {
     container?: HTMLElement;
   };
+  config?: Record<any, any>;
 }
 export type BlockComponent = {
   (props: BlockComponentProps): ReactElement | null;

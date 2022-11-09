@@ -76,9 +76,14 @@ export async function getBlockComponent({
   blockName,
 }: GetBlockUrlAttrs) {
   if (!CACHES.has(blockName)) {
-    console.log(builtinBlocks);
     const blocks: Record<string, BlockComponent | string> = {
-      ...workspaceBlocks,
+      ...Object.entries(workspaceBlocks || {}).reduce(
+        (prev, [slug, { url }]) => ({
+          ...prev,
+          [slug]: url,
+        }),
+        {}
+      ),
       ...apps.reduce(
         (prev, { appSlug, blocks }) => ({
           ...prev,
