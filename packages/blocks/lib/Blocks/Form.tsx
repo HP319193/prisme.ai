@@ -6,8 +6,8 @@ import { useCallback, useMemo } from 'react';
 import tw from '../tw';
 import BlockTitle from './Internal/BlockTitle';
 import useLocalizedText from '../useLocalizedText';
-import { withI18nProvider } from '../i18n';
 import { useBlocks } from '../Provider/blocksContext';
+import { BlockComponent } from '../BlockLoader';
 
 const defaultSchema = {
   type: 'string',
@@ -23,7 +23,7 @@ interface FormConfig {
   hideSubmit?: boolean;
 }
 
-export const Form = ({ edit }: { edit?: boolean }) => {
+export const Form: BlockComponent = () => {
   const { config, events } = useBlock<FormConfig>();
   const { t } = useTranslation();
   const { localize, localizeSchemaForm } = useLocalizedText();
@@ -51,7 +51,7 @@ export const Form = ({ edit }: { edit?: boolean }) => {
     return localizeSchemaForm(config.schema || defaultSchema);
   }, [config.schema, localizeSchemaForm]);
 
-  if (!config.schema && !edit) return null;
+  if (!config.schema) return null;
 
   return (
     <div className={tw`block-form p-8 flex-1`}>
@@ -86,4 +86,8 @@ export const Form = ({ edit }: { edit?: boolean }) => {
   );
 };
 
-export default withI18nProvider(Form);
+Form.Preview = () => {
+  return <div>Je suis la preview du form</div>;
+};
+
+export default Form;

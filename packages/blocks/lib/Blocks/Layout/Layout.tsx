@@ -5,14 +5,11 @@ import ContentContainer from './ContentContainer';
 import { LayoutConfig, layoutContext } from './context';
 import Head from './Head';
 import tw from '../../tw';
-
-interface LayoutProps {
-  edit?: boolean;
-}
+import { BlockComponent } from '../../BlockLoader';
 
 const EmptyArray: any[] = [];
 
-export const Layout = ({ edit }: LayoutProps) => {
+export const Layout: BlockComponent = () => {
   const { config } = useBlock<LayoutConfig>();
   const { head = EmptyArray, content } = config || {};
   const [history, setHistory] = useState<LayoutConfig['content'][]>([]);
@@ -55,10 +52,6 @@ export const Layout = ({ edit }: LayoutProps) => {
       return history;
     });
   }, []);
-
-  if (edit) {
-    return <div>…</div>;
-  }
 
   return (
     <layoutContext.Provider
