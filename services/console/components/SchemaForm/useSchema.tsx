@@ -7,7 +7,8 @@ import { readAppConfig } from '../AutomationBuilder/Panel/readAppConfig';
 function getEmitEvents(
   doList: Prismeai.InstructionList
 ): Prismeai.Emit['emit'][] {
-  return doList.flatMap((instruction) => {
+  if (!Array.isArray(doList)) return [];
+  return (doList || []).flatMap((instruction) => {
     const [name] = Object.keys(instruction);
     const value = instruction[name as keyof typeof instruction];
 
