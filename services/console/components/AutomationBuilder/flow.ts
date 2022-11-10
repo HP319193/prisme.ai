@@ -211,7 +211,10 @@ export class Flow {
             x: position.x + Flow.BLOCK_WIDTH,
           },
         });
-        const firstNode = nodes[0]!;
+        const firstNode = nodes[0];
+
+        if (!firstNode) return node;
+
         const lastNode = nodes[nodes.length - 1] || { position: {} };
         position = {
           ...position,
