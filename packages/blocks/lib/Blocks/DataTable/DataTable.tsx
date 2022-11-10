@@ -12,6 +12,7 @@ import EditableCell from './EditableCell';
 import { ColumnDefinition } from './types';
 import renderValue from './RenderValue';
 import useLocalizedText from '../../useLocalizedText';
+import { TableProps } from 'antd';
 
 const previewData = Array.from(new Array(100000), (v, k) => ({
   Id: k,
@@ -22,6 +23,11 @@ export interface DataTableConfig {
   title?: Prismeai.LocalizedText;
   data: Record<string, any>[];
   columns?: ColumnDefinition[];
+  pagination?: {
+    event: string;
+    page: number;
+    pages: number;
+  };
 }
 
 const components = {
@@ -136,6 +142,20 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
     [t, language]
   );
 
+  const pagination = useMemo(() => {
+    if (!config.pagination || !config.pagination.event) return undefined;
+    const { event, page, pages } = config.pagination;
+    return {
+      total: pages,
+      current: page,
+      onChange: (page) => {
+        events?.emit(event, {
+          page,
+        });
+      },
+    } as TableProps<any>['pagination'];
+  }, []);
+
   return (
     <div className={tw`block-data-table p-8`}>
       {config.title && <BlockTitle value={localize(config.title)} />}
@@ -147,6 +167,7 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
           columns={columns}
           locale={locales}
           components={components}
+          pagination={pagination}
         />
       </div>
     </div>
