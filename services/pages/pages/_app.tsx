@@ -22,6 +22,8 @@ import '@prisme.ai/design-system/styles/prismeai-theme.css';
 import down from '../../console//icons/down.svg';
 import externals from '../../console/utils/externals';
 import { usePreview } from '../components/usePreview';
+import BlockLoader from '../components/Page/BlockLoader';
+import { PageProvider } from '../components/Page/PageProvider';
 
 const Sentry = dynamic(import('../../console/utils/Sentry'), { ssr: false });
 
@@ -70,6 +72,10 @@ const Link = ({
   );
 };
 
+const utils = {
+  BlockLoader,
+};
+
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
@@ -84,22 +90,25 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <UserProvider anonymous>
-      <BlocksProvider
-        externals={externals}
-        components={{ Link, Loading, DownIcon }}
-      >
-        <Head>
-          <title>{t('main.title')}</title>
-          <meta name="description" content={t('main.description')} />
-          <meta
-            name="viewport"
-            content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
-          />
-          <link rel="icon" href="/favicon.png" />
-        </Head>
-        <Sentry />
-        {getLayout(<Component {...pageProps} />)}
-      </BlocksProvider>
+      <PageProvider>
+        <BlocksProvider
+          externals={externals}
+          components={{ Link, Loading, DownIcon }}
+          utils={utils}
+        >
+          <Head>
+            <title>{t('main.title')}</title>
+            <meta name="description" content={t('main.description')} />
+            <meta
+              name="viewport"
+              content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+            />
+            <link rel="icon" href="/favicon.png" />
+          </Head>
+          <Sentry />
+          {getLayout(<Component {...pageProps} />)}
+        </BlocksProvider>
+      </PageProvider>
     </UserProvider>
   );
 }
