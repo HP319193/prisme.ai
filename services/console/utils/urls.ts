@@ -33,3 +33,9 @@ export const usePageEndpoint = () => {
 export function getSubmodain(host: string) {
   return host.split(PAGES_HOST)[0];
 }
+
+export function generatePageUrl(workspaceSlug: string, pageSlug: string) {
+  return `${window.location.protocol}//${workspaceSlug}${PAGES_HOST}/${
+    pageSlug === 'index' ? '' : pageSlug
+  }`;
+}

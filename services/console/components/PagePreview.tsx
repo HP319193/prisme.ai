@@ -2,6 +2,7 @@ import { Loading } from '@prisme.ai/design-system';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useWorkspace } from './WorkspaceProvider';
 import getConfig from 'next/config';
+import { generatePageUrl } from '../utils/urls';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = '' },
@@ -45,12 +46,7 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
 
   const initialPage = useRef(page);
   const url = useMemo(
-    () =>
-      `${window.location.protocol}//${slug}${PAGES_HOST}/${
-        initialPage.current.slug === 'index'
-          ? ''
-          : initialPage.current.slug || initialPage.current.id
-      }`,
+    () => generatePageUrl(slug, initialPage.current.slug || ''),
     [slug]
   );
 

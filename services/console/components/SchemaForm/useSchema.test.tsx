@@ -1,6 +1,12 @@
 import useSchema from './useSchema';
 import renderer from 'react-test-renderer';
 
+jest.mock('../../utils/urls', () => ({
+  generatePageUrl: jest.fn(
+    (workspaceSlug, pageSlug) => `http://page/${pageSlug}`
+  ),
+}));
+
 it('should fail to build a select from config with empty store', () => {
   let extractSelectOptionsFn: Function = () => null;
   const C = () => {
@@ -239,7 +245,7 @@ it('should build a select from pages', () => {
     },
     {
       label: expect.any(Object),
-      value: '456',
+      value: 'http://page/do-bar',
     },
   ]);
   // @ts-ignore
