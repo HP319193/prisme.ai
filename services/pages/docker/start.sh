@@ -7,11 +7,11 @@ const ENVS = ['API_HOST', 'PAGES_HOST', 'SENTRY_DSN', 'CONSOLE_HOST'];
 //services/pages/.next/server/pages/default/404.html
 function rewriteConfig() {
   const errorFile = fs.readFileSync(
-    './services/pages/.next/server/pages/default/404.html'
+    '/www/services/pages/.next/server/pages/default/404.html'
   );
 
   fs.writeFileSync(
-    './services/pages/.next/server/pages/default/404.html',
+    '/www/services/pages/.next/server/pages/default/404.html',
     ENVS.reduce(
       (prev, env) =>
         prev.replace(
