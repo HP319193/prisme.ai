@@ -43,4 +43,4 @@ ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-CMD ["./docker/start.sh", "&&", "npm", "--prefix", "services/pages", "start"]
+CMD ["/www/services/pages/docker/start.sh", "&&", "npm", "--prefix", "services/pages", "start"]
