@@ -5,6 +5,7 @@ import useLocalizedText from '../../../console/utils/useLocalizedText';
 import api, { Events } from '../../../console/utils/api';
 import { BlockLoader } from './BlockLoader';
 import { usePage } from './PageProvider';
+import PoweredBy from '../../../console/components/PoweredBy';
 
 declare global {
   interface Window {
@@ -59,9 +60,7 @@ export const Page = ({ page }: PageProps) => {
       {page.styles && (
         <style dangerouslySetInnerHTML={{ __html: page.styles }} />
       )}
-      <div className="absolute left-2 bottom-2 text-[0.75rem] text-pr-grey z-0">
-        {t('powered')}
-      </div>
+      <PoweredBy />
       <div
         className="flex flex-1 flex-col page-blocks w-full"
         ref={containerEl}

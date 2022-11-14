@@ -10,8 +10,9 @@ import PageEditBlockForm from './Panel/PageEditBlockForm';
 import useBlocksConfigs from '../Page/usePageBlocksConfigs';
 import { Schema } from '@prisme.ai/design-system';
 import { extractEvents } from './extractEvents';
-import { useTranslation } from 'next-i18next';
+import { Trans, useTranslation } from 'next-i18next';
 import useBlocks, { BlockInCatalog } from './useBlocks';
+import PoweredBy from '../PoweredBy';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -210,9 +211,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
       }}
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">
-        <div className="absolute left-10 bottom-10 text-[0.75rem] text-pr-grey z-0">
-          {commonT('powered')}
-        </div>
+        <PoweredBy />
         <PageBlocks />
         <Panel
           title={t('pages.blocks.panelTitle', {
