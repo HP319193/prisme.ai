@@ -225,9 +225,6 @@ export const schema: Schema = {
           },
         },
       },
-      'ui:options': {
-        array: 'row',
-      },
     },
   },
 };
