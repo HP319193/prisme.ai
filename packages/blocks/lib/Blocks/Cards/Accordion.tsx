@@ -6,8 +6,9 @@ import { StretchContent } from '@prisme.ai/design-system';
 
 const Accordion: FC<{
   title: ReactNode;
-}> = ({ title, children }) => {
-  const [visible, setVisible] = useState(false);
+  collapsed: boolean | undefined;
+}> = ({ title, children, collapsed = true }) => {
+  const [visible, setVisible] = useState(!collapsed);
   const {
     components: { DownIcon },
   } = useBlocks();

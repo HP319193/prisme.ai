@@ -53,7 +53,20 @@
     },
     "search": "Rechercher",
     "sidebar_extend": "Étendre la navigation",
-    "sidebar_minimize": "Réduire la navigation"
+    "sidebar_minimize": "Réduire la navigation",
+    "versions": {
+      "create": {
+        "label": "Créer une version",
+        "description": "Créez une nouvelle version vers laquelle vous pourrez revenir à tout instant même après avoir enregistré des modification sur votre Workspace.",
+        "name": "Décrivez votre version si vous le désirez"
+      },
+      "rollback": {
+        "label": "Revenir à cette version",
+        "description": "Revenir à cette version. Attention, l'état actuel de votre Workspace ne sera pas conservé.",
+        "confirm": "Attention, l'état actuel de votre Workspace sera perdu si vous n'en avez pas enregistré une version.",
+        "confirm_ok": "Revenir à cette version"
+      }
+    }
   },
   "create": {
     "description_first": "Créez votre premier workspace pour commencer à automatiser votre travail",
@@ -78,7 +91,12 @@
         "field": "Champs",
         "value": "Valeur"
       },
-      "empty": "Aucun résultat n'a été trouvé avec ces filtres. Essayez une autre recherche ?"
+      "empty": "Aucun résultat n'a été trouvé avec ces filtres. Essayez une autre recherche ?",
+      "suggestions": {
+        "title": "Suggestions de filtres",
+        "help": "Sélection de filtres pré-concus pour vous aider à trouver vos évènements les plus utiles.",
+        "label_versions": "Toutes les versions du Workspace"
+      }
     },
     "empty": "Il ne s'est encore rien passé ici…",
     "details": {
@@ -535,7 +553,6 @@
       "name_Form": "Formulaire",
       "name_RichText": "Texte enrichi",
       "name_Layout": "Navigation",
-      "name_Development": "Développement",
       "description": "",
       "description_Header": "Afficher une entête de page",
       "description_Cards": "Afficher un groupe de cartes",
@@ -543,7 +560,6 @@
       "description_Form": "Afficher un formulaire",
       "description_RichText": "Afficher du texte mis en page grâce à Markdown ou HTML",
       "description_Layout": "Afficher des pages de blocks navigable. Doit être utilisé par le biais d'automatisations.",
-      "description_Development": "Permet de développer votre propre Block. Destiné aux développeurs.",
       "panelTitle_adding": "Ajouter un Block",
       "panelTitle_editing": "Éditer le Block $t(pages.blocks.name_{{block}})",
       "header": {
@@ -792,6 +808,22 @@
                 "description": "Rend la cellule éditable. L'évènement passé en valeur sera envoyé à chaque modification de celle-ci"
               }
             }
+          },
+          "pagination": {
+            "label": "Pagination manuelle",
+            "description": "Par défaut, la pagination se fait automatiquement sur l'ensemble des données envoyées. Si vous voulez paginer côté serveur, utiliser cette structure de configuration.",
+            "event": {
+              "label": "Évènement",
+              "description": "Nom de l'évènement envoyé lors d'un changement de page. Le numéro de la page demandée l'accompagnera."
+            },
+            "page": {
+              "label": "Numéro de la page courante",
+              "description": "Affichera le numéro de la page affichée."
+            },
+            "pages": {
+              "label": "Nombre de pages",
+              "description": "Nombre de pages disponibles."
+            }
           }
         }
       },
@@ -928,7 +960,7 @@
         "description": "Ce texte sera affiché dans une bulle exactement comme celle-ci."
       },
       "placeholder": {
-        "label": "Balise",
+        "label": "Exemple de valeur",
         "description": "Ce texte sera affiché dans le champs."
       },
       "type": {
@@ -985,6 +1017,8 @@
     "type_workspaces.automations.updated": "L'automatisation <automation>{{automation}}</automation> a été mise à jour",
     "type_workspaces.automations.deleted": "L'automatisation <automation>{{automation}}</automation> a été supprimée",
     "type_workspaces.pages.updated": "La page <page>{{page}}</page> a été mise à jour",
+    "type_workspaces.versions.published": "La version <tooltip title=\"{{event.payload.version.description}}\">{{event.payload.version.name}}</tooltip> a été créée. <rollback>Revenir à cette version</rollback>",
+    "type_workspaces.versions.rollback": "La version {{event.payload.version.name}} a été récupérée",
     "type_apps.published": "L'app {{appName}} a été publiée",
     "type_runtime.automations.executed": "L'automatisation <automation>{{automation}}</automation> a été exécutée",
     "type_runtime.webhooks.triggered": "L'automatisation <automation>{{automation}}</automation> a été déclenchée par URL",

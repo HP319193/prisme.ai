@@ -1,17 +1,21 @@
 import {
   CloseCircleOutlined,
   DeleteOutlined,
+  DownOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import {
   Button,
+  Menu,
   Modal,
   Popover,
   Schema,
   SchemaForm,
 } from '@prisme.ai/design-system';
+import { Dropdown, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import api from '../utils/api';
 import useLocalizedText from '../utils/useLocalizedText';
 
 interface EditDetailsprops {
@@ -62,36 +66,35 @@ export const EditDetails = ({
           </button>
         </div>
       )}
+      destroyTooltipOnHide
       content={({ setVisible }) => (
-        <>
-          <SchemaForm
-            schema={schema}
-            onSubmit={async (values) => {
-              const errors = await onSave(values);
-              if (!errors || Object.keys(errors).length === 0) {
-                setVisible(false);
-                return;
-              }
-              return errors;
-            }}
-            initialValues={value}
-            buttons={[
-              <div key="1" className="flex flex-1 justify-between !mt-2">
-                <Button
-                  variant="grey"
-                  onClick={confirmDelete}
-                  className="!flex items-center"
-                >
-                  <DeleteOutlined />
-                  {t('details.delete.label', { context })}
-                </Button>
-                <Button type="submit" variant="primary">
-                  {t('details.save', { context })}
-                </Button>
-              </div>,
-            ]}
-          />
-        </>
+        <SchemaForm
+          schema={schema}
+          onSubmit={async (values) => {
+            const errors = await onSave(values);
+            if (!errors || Object.keys(errors).length === 0) {
+              setVisible(false);
+              return;
+            }
+            return errors;
+          }}
+          initialValues={value}
+          buttons={[
+            <div key="1" className="flex flex-1 justify-between !mt-2">
+              <Button
+                variant="grey"
+                onClick={confirmDelete}
+                className="!flex items-center"
+              >
+                <DeleteOutlined />
+                {t('details.delete.label', { context })}
+              </Button>
+              <Button variant="primary" type="submit">
+                {t('details.save', { context })}
+              </Button>
+            </div>,
+          ]}
+        />
       )}
       overlayClassName="min-w-[50%]"
       {...props}

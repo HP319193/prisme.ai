@@ -3,6 +3,7 @@ import {
   AppstoreAddOutlined,
   CodeOutlined,
   ShareAltOutlined,
+  TagOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -24,6 +25,8 @@ import Link from 'next/link';
 import { useWorkspace } from './WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import IFrameLoader from './IFrameLoader';
+import api from '../utils/api';
+import VersionModal from './VersionModal';
 
 const HeaderWorkspace = () => {
   const {
@@ -40,6 +43,7 @@ const HeaderWorkspace = () => {
   } = useWorkspace();
   const { push } = useRouter();
   const [publishVisible, setPublishVisible] = useState(false);
+  const [versionVisible, setVersionVisible] = useState(false);
   const { displaySource, sourceDisplayed } = useWorkspaceLayout();
 
   const confirmDelete = useCallback(() => {
@@ -50,6 +54,13 @@ const HeaderWorkspace = () => {
       placement: 'bottomRight',
     });
   }, [id, push, remove, t]);
+
+  const publishVersion = useCallback(async () => {
+    await update(workspace);
+    await api
+      .workspaces(workspace.id)
+      .versions.create({ description: `${new Date()}` });
+  }, [update, workspace]);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -83,16 +94,27 @@ const HeaderWorkspace = () => {
                 <CodeOutlined className="mr-2" />
                 {t(`expert.${sourceDisplayed ? 'hide' : 'show'}`)}
               </Button>
-              <Button
-                className="flex items-center"
-                onClick={() => {
-                  setPublishVisible(true);
-                  setPopoverIsVisible(false);
-                }}
-              >
-                <AppstoreAddOutlined className="mr-2" />
-                {t(`apps.publish.menuLabel`)}
-              </Button>
+              <div className="flex flex-col items-start">
+                <Button
+                  className="flex items-center"
+                  onClick={() => {
+                    setPublishVisible(true);
+                    setPopoverIsVisible(false);
+                  }}
+                >
+                  <AppstoreAddOutlined className="mr-2" />
+                  {t(`apps.publish.menuLabel`)}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setVersionVisible(true);
+                    setPopoverIsVisible(false);
+                  }}
+                >
+                  <TagOutlined className="mr-2" />
+                  {t('workspace.versions.create.label')}
+                </Button>
+              </div>
             </div>
           ),
         },
@@ -118,6 +140,10 @@ const HeaderWorkspace = () => {
       <PublishModal
         visible={publishVisible}
         close={() => setPublishVisible(false)}
+      />
+      <VersionModal
+        visible={versionVisible}
+        close={() => setVersionVisible(false)}
       />
       <Header
         title={

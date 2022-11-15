@@ -1,4 +1,5 @@
 import { createContext, FC, useContext } from 'react';
+import { TBlockLoader } from './types';
 
 export interface BlocksDependenciesContext {
   externals: any;
@@ -6,6 +7,9 @@ export interface BlocksDependenciesContext {
     Link: FC<{ href: string } & any>;
     Loading: FC;
     DownIcon: FC<{ className?: string }>;
+  };
+  utils: {
+    BlockLoader: TBlockLoader;
   };
 }
 
@@ -15,6 +19,9 @@ export const blocksContext = createContext<BlocksDependenciesContext>({
     Link: () => null,
     Loading: () => null,
     DownIcon: () => null,
+  },
+  utils: {
+    BlockLoader: () => null,
   },
 });
 export const useBlocks = () => useContext(blocksContext);

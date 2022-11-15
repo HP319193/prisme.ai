@@ -221,18 +221,39 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     ...config,
   };
 
+  const filteredCards = useMemo(() => (cards as []).filter(Boolean), [cards]);
+
   switch (config.variant) {
     case 'square':
-      return <Square {...cardsProps} cards={cards as CardSquare[]} />;
+      return (
+        <Square {...cardsProps} cards={(filteredCards as CardSquare[]) || []} />
+      );
     case 'article':
-      return <Article {...cardsProps} cards={cards as CardArticle[]} />;
+      return (
+        <Article
+          {...cardsProps}
+          cards={(filteredCards as CardArticle[]) || []}
+        />
+      );
     case 'short':
-      return <Short {...cardsProps} cards={cards as CardShort[]} />;
+      return (
+        <Short {...cardsProps} cards={(filteredCards as CardShort[]) || []} />
+      );
     case 'actions':
-      return <Actions {...cardsProps} cards={cards as CardAction[]} />;
+      return (
+        <Actions
+          {...cardsProps}
+          cards={(filteredCards as CardAction[]) || []}
+        />
+      );
     case 'classic':
     default:
-      return <Classic {...cardsProps} cards={cards as CardClassic[]} />;
+      return (
+        <Classic
+          {...cardsProps}
+          cards={(filteredCards as CardClassic[]) || []}
+        />
+      );
   }
 };
 

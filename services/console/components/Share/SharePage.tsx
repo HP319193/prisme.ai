@@ -128,7 +128,11 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
 
   const link = `${pageHost}/${pageSlug}`;
   const copyLink = useCallback(() => {
-    window.navigator.clipboard.writeText(link);
+    try {
+      window.navigator.clipboard.writeText(link);
+    } catch (e) {
+      console.log(link);
+    }
     notification.success({
       message: t('pages.share.copied'),
       placement: 'bottomRight',

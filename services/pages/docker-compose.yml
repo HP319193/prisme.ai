@@ -1,0 +1,10 @@
+version: '3'
+services:
+  pages:
+    entrypoint: npm start  --prefix services/pages
+    restart: on-failure
+    image: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-pages:latest
+    ports:
+      - '3100:3100'
+    environment:
+      API_HOST: http://localhost:3001/v2

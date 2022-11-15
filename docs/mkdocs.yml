@@ -69,6 +69,8 @@ nav:
       - i18n.workspaces:
           - i18n.specifications: architecture/technical/workspaces/specifications.md
       - Schema Form: architecture/technical/schemaform.md
+  - i18n.examples:
+      - i18n.index: examples/index.md
   - i18n.contributing:
       - i18n.index: contributing/index.md
 

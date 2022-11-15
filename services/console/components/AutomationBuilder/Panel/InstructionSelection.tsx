@@ -36,8 +36,12 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
         ][]
       >((prev, [name, list, more]) => {
         const matching = (search
-          ? Object.keys(list).filter((a) =>
-              `${name} ${a}`.toLowerCase().includes(search.toLowerCase())
+          ? Object.keys(list).filter((slug) =>
+              `${slug} ${(list[slug] || {}).title || ''} ${
+                (list[slug] || {}).description || ''
+              }`
+                .toLowerCase()
+                .match(`${search}`.replace(/\s/g, '.*').toLowerCase())
             )
           : Object.keys(list)
         ).map((name) => ({
@@ -68,8 +72,16 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
             className={`!flex flex-1 ${index !== 0 ? 'mt-8' : ''}`}
           >
             <div className="flex flex-row items-center space-x-3">
-              {icon && <img src={icon // eslint-disable-next-line @next/next/no-img-element
-                  } width={16} height={16} alt={section} />}
+              {icon && (
+                <img
+                  src={
+                    icon // eslint-disable-next-line @next/next/no-img-element
+                  }
+                  width={16}
+                  height={16}
+                  alt={section}
+                />
+              )}
               <Title level={4} className="!mb-0">
                 {section}
               </Title>

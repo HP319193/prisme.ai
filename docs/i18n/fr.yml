@@ -1,0 +1,25 @@
+home: Home
+index: Index
+start: Documentation
+site_name: Prisme.ai
+site_description: Everything you need to know about Prisme.ai
+
+getstarted: Getting Started
+definitions: Definitions
+configuration: Configuration
+contributing: Contributing
+functionnalRequirements: Functionnal Requirements
+architecture: Architecture
+console: Console
+runtime: Runtime
+events: Events
+apiGateway: API Gateway
+workspaces: Workspaces
+projects: Projects
+specifications: Specifications
+permissions: Permissions and API Keys
+authentication_access_control: Authentication and Authorization
+automations: Automatisations
+instructions: Instructions
+conditions: Conditions
+examples: Exemples

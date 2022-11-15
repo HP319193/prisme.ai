@@ -1,18 +1,16 @@
 import { useTranslation } from 'next-i18next';
 import getConfig from 'next/config';
+import { useWorkspace } from '../components/WorkspaceProvider';
 
 const {
   publicRuntimeConfig: {
     PAGES_HOST = `${global?.location?.origin}/pages`,
-    ENDPOINT = '',
+    API_HOST = '',
   },
 } = getConfig();
 
 export const generateEndpoint = (workspaceId: string, slug: string) =>
-  ENDPOINT.replace(/\{\{workspaceId\}\}/, workspaceId).replace(
-    /\{\{slug\}\}/,
-    slug
-  );
+  `${API_HOST}/workspaces/${workspaceId}/webhooks/${slug}`;
 
 const urls = {
   generateEndpoint,
@@ -23,6 +21,21 @@ export const usePageEndpoint = () => {
   const {
     i18n: { language },
   } = useTranslation();
+  const {
+    workspace: { slug },
+  } = useWorkspace();
 
-  return PAGES_HOST.replace(/\{\{lang\}\}/, language);
+  if (!slug) return '';
+
+  return `https://${slug}${PAGES_HOST}/${language}`;
 };
+
+export function getSubmodain(host: string) {
+  return host.split(PAGES_HOST)[0];
+}
+
+export function generatePageUrl(workspaceSlug: string, pageSlug: string) {
+  return `${window.location.protocol}//${workspaceSlug}${PAGES_HOST}/${
+    pageSlug === 'index' ? '' : pageSlug
+  }`;
+}

@@ -39,9 +39,7 @@ const Link = ({
   href = '',
   ...props
 }: { href: string } & HTMLAttributes<HTMLAnchorElement>) => {
-  const link = `${href}`.match(/^[a-z]+:/) ? href : `/pages/${href}`;
-
-  return <NextLink {...props} href={link} />;
+  return <NextLink {...props} href={href || ''} />;
 };
 const DownIcon = ({ className }: { className?: string }) => (
   <Image src={down.src} width={14} height={14} alt="" className={className} />
@@ -85,7 +83,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   }
 
   return (
-    <UserProvider>
+    <UserProvider redirectTo="/workspaces">
       <WorkspacesProvider>
         <WorkspacesUsageProvider>
           <PermissionsProvider>

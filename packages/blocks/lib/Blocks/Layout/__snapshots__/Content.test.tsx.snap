@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should be removed 1`] = `
+<div
+  className="content-stack__content content transition-transform translate-x-full"
+/>
+`;
+
+exports[`should be removed 2`] = `
+<div
+  className="content-stack__content content transition-transform translate-x-full"
+/>
+`;
+
+exports[`should render with blocks 1`] = `
+<div
+  className="content-stack__content content transition-transform translate-x-full"
+>
+  <div
+    className="flex content__block-container block-container snap-start"
+  />
+</div>
+`;
+
+exports[`should render with only a title 1`] = `
+<div
+  className="content-stack__content content transition-transform translate-x-full"
+/>
+`;
+
+exports[`should render with only a title 2`] = `
+<div
+  className="content-stack__content content transition-transform"
+/>
+`;

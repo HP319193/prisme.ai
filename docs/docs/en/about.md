@@ -2,8 +2,8 @@
 
 ## Description
 
-Prisme.ai is an Event Driven Architected platform designed to help creating software without coding skills.
+Prisme.ai is an Event Driven Architected (EDA) platform designed to allow Product Owners & low-coders & Developers to work together on the same plateform. 
 
-The platform is built as an orchestrator of backend micro service and frontend clients.
+Here you have documentation for low-coders & Developers. 
 
 Complete code base is structured into a mono-repository.

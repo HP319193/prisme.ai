@@ -1,9 +1,8 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { LayoutContext, useLayout } from './context';
 import tw from '../../tw';
-import { BlockLoader } from '../../BlockLoader';
-import { BlockContext, useBlock } from '../../Provider';
 import { LeftCircleOutlined } from '@ant-design/icons';
+import { useBlocks } from '../../Provider/blocksContext';
 
 interface HeadRendererProps {
   blocks: LayoutContext['head'];
@@ -14,9 +13,10 @@ export const HeadRenderer = ({
   blocks,
   onBack,
   hasHistory,
-  api,
-  events,
-}: HeadRendererProps & Pick<BlockContext, 'api' | 'events'>) => {
+}: HeadRendererProps) => {
+  const {
+    utils: { BlockLoader },
+  } = useBlocks();
   const buttonEl = useRef<HTMLButtonElement>(null);
   const [animationClassName, setAnimationClassName] = useState('');
 
@@ -45,13 +45,7 @@ export const HeadRenderer = ({
           <LeftCircleOutlined />
         </button>
         {blocks.map(({ block, ...config }, index) => (
-          <BlockLoader
-            key={index}
-            config={config}
-            name={block}
-            api={api}
-            events={events}
-          />
+          <BlockLoader key={index} config={config} name={block} />
         ))}
       </div>
     </div>
@@ -60,18 +54,16 @@ export const HeadRenderer = ({
 
 export const Head = () => {
   const { back, history, head } = useLayout();
-  const { api, events } = useBlock();
+
   return useMemo(
     () => (
       <HeadRenderer
         onBack={back}
         hasHistory={history.length > 1}
         blocks={head}
-        api={api}
-        events={events}
       />
     ),
-    [back, history, api, events, head]
+    [back, history, head]
   );
 };
 

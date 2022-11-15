@@ -53,7 +53,20 @@
     },
     "search": "Search",
     "sidebar_extend": "Extend navigation",
-    "sidebar_minimize": "Minimize navigation"
+    "sidebar_minimize": "Minimize navigation",
+    "versions": {
+      "create": {
+        "label": "Create a version",
+        "description": "Create a new version to which you can return at any time even after saving changes to your Workspace.",
+        "name": "Describe your version if you wish"
+      },
+      "rollback": {
+        "label": "Rollback to this version",
+        "description": "Rollback to this version. Please note that the current state of your Workspace will not be kept.",
+        "confirm": "Please note that the current state of your Workspace will be lost if you have not saved a version.",
+        "confirm_ok": "Rollback to this version"
+      }
+    }
   },
   "create": {
     "description_first": "Create your first workspace to start automating your work",
@@ -78,7 +91,12 @@
         "field": "Field",
         "value": "Value"
       },
-      "empty": "No results were found using your filters. Try another search ?"
+      "empty": "No results were found using your filters. Try another search ?",
+      "suggestions": {
+        "title": "Filter suggestions",
+        "help": "Selection of pre-set filters to help you find your most useful events.",
+        "label_versions": "All Workspace versions"
+      }
     },
     "empty": "Nothing has happened here yet…",
     "details": {
@@ -173,6 +191,8 @@
         "add": "Add an item",
         "remove": "Delete item"
       },
+      "delete": "Delete instruction?",
+      "delete_condition": "Delete condition?",
       "form": {
         "addItem": "Add an item",
         "removeItem": "Remove item",
@@ -533,7 +553,6 @@
       "name_Form": "Form",
       "name_RichText": "Rich text",
       "name_Layout": "Navigation",
-      "name_Development": "Development",
       "description": "",
       "description_Header": "Display page header",
       "description_Cards": "Display a cards group",
@@ -789,6 +808,22 @@
                 "description": "Makes the cell editable. The event passed in value will be sent each time it is modified"
               }
             }
+          },
+          "pagination": {
+            "label": "Manual pagination",
+            "description": "By default, paging is done automatically on all the data sent. If you want to paginate on the server side, use this configuration structure.",
+            "event": {
+              "label": "Event",
+              "description": "Name of the event sent when a page is changed. The number of the requested page will be send in payload."
+            },
+            "page": {
+              "label": "Current page number",
+              "description": "Will display the number of the page displayed."
+            },
+            "pages": {
+              "label": "Pages count",
+              "description": "Number of pages available."
+            }
           }
         }
       },
@@ -982,6 +1017,8 @@
     "type_workspaces.automations.updated": "The <automation>{{automation}}</automation> has been updated",
     "type_workspaces.automations.deleted": "The <automation>{{automation}}</automation> has been removed",
     "type_workspaces.pages.updated": "The <page>{{page}}</page> has been updated",
+    "type_workspaces.versions.published": "The <tooltip title=\"{{event.payload.version.description}}\">{{event.payload.version.name}}</tooltip> version has been created. <rollback>Rollback to this version</rollback>",
+    "type_workspaces.versions.rollback": "Version {{event.payload.version.name}} has been rollbacked",
     "type_apps.published": "The app {{appName}} has been published",
     "type_runtime.automations.executed": "The <automation>{{automation}}</automation> has been executed",
     "type_runtime.webhooks.triggered": "The <automation>{{automation}}</automation> was triggered by URL",

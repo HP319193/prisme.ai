@@ -56,3 +56,15 @@ OneTag.args = {
     content: `# Just a title`,
   },
 };
+
+export const NestedDivs = Template.bind({});
+NestedDivs.args = {
+  defaultConfig: {
+    content: `<div class="contacts">
+                    <div class="contactElement">
+                      Hello 
+                    </div>
+                    </div>
+`,
+  },
+};

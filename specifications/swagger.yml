@@ -2167,15 +2167,15 @@ paths:
                   type: string
                 workspaceVersion:
                   type: string
-                  description: "An optional workspace version. If empty, will publish latest workspace version"
+                  description: 'An optional workspace version. If empty, will publish latest workspace version'
                 slug:
-                  description: "App slug : Required on first publish"
+                  description: 'App slug : Required on first publish'
                   type: string
                 description:
-                  $ref: "#/components/schemas/LocalizedText"
+                  $ref: '#/components/schemas/LocalizedText'
                 name:
                   type: string
-                  description: "An optional version name"
+                  description: 'An optional version name'
 
       responses:
         '200':
@@ -2944,7 +2944,7 @@ components:
                 type: string
             - type: array
               items:
-                $ref: "#/components/schemas/WorkspaceVersion"
+                $ref: '#/components/schemas/WorkspaceVersion'
         name:
           type: string
         description:
@@ -3083,7 +3083,7 @@ components:
       properties:
         name:
           type: string
-          description: "Version name. If left empty, will be auto generated"
+          description: 'Version name. If left empty, will be auto generated'
         createdAt:
           type: string
         description:
@@ -3129,7 +3129,7 @@ components:
         pages:
           type: object
           additionalProperties:
-            $ref: "#/components/schemas/Page"
+            $ref: '#/components/schemas/Page'
         slug:
           type: string
 
@@ -3325,7 +3325,7 @@ components:
           type: string
         __migrate:
           type: boolean
-          description: "Temporary field for old pages conversion to DSUL"
+          description: 'Temporary field for old pages conversion to DSUL'
 
     DetailedPage:
       allOf:
@@ -3342,6 +3342,15 @@ components:
                     type: string
                   appInstance:
                     type: string
+            appInstances:
+              type: array
+              items:
+                type: 'object'
+                properties:
+                  slug:
+                    type: string
+                  appConfig: {}
+                  blocks: {}
 
     File:
       type: object

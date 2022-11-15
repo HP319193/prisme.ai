@@ -83,9 +83,7 @@ export function injectRules(
       let conditions: MongoQuery = cur.conditions || {};
       const rulesNb = Object.keys(conditions).length;
       if (rulesNb) {
-        console.log('gonna inject ', conditions);
         conditions = injectConditions({ ...conditions }, ctx) as MongoQuery;
-        console.log('=> ', conditions);
         // Some placeholders are missing : skip this rule
         if (!conditions) {
           return false;

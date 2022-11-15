@@ -20,6 +20,7 @@ import { usePrevious } from '../../utils/usePrevious';
 import { generateNewName } from '../../utils/generateNewName';
 import { SLUG_MATCH_INVALID_CHARACTERS } from '../../utils/regex';
 import useLocalizedText from '../../utils/useLocalizedText';
+import { map } from 'lodash';
 
 const PAGINATION_LIMIT = 15;
 
@@ -74,6 +75,14 @@ export const WorkspaceProvider: FC = ({ children }) => {
   const workspaceId = useMemo(() => (workspace ? workspace.id : null), [
     workspace,
   ]);
+
+  useEffect(() => {
+    try {
+      const saved: [] = Storage.get(`readEvents-${workspaceId}`);
+      if (!saved || saved.length === 0) return;
+      setReadEvents(new Set(saved));
+    } catch {}
+  }, [workspaceId]);
 
   const { fetchPages } = usePages();
   useEffect(() => {

@@ -109,6 +109,7 @@ const Classic = ({
                                       {localize(item.title)}
                                     </div>
                                   }
+                                  collapsed={item.collapsed}
                                 >
                                   <div
                                     className={

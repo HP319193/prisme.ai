@@ -1239,6 +1239,11 @@ declare namespace Prismeai {
          * Temporary field for old pages conversion to DSUL
          */
         __migrate?: boolean;
+        appInstances?: {
+            slug?: string;
+            appConfig?: any;
+            blocks?: any;
+        }[];
     }
     export interface Emit {
         emit: {
