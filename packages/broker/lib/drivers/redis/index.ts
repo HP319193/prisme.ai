@@ -36,9 +36,6 @@ export class RedisDriver implements Driver {
     this.ready = this.client.ready;
     this.ready.then(() => {
       this.detectServerTimeOffset();
-      setInterval(() => {
-        this.detectServerTimeOffset();
-      }, 5000);
     });
   }
 
@@ -67,7 +64,15 @@ export class RedisDriver implements Driver {
   async send(event: any, topic: string) {
     const stream = this.getTopicStreams([topic])[0];
     this.client.send(event, this.getTopicStreams([RedisKey.CatchAllStream])[0]);
-    return this.client.send(event, stream);
+    const result = await this.client.send(event, stream);
+
+    const [curTime] = (result?.id || '').split('-');
+    if (curTime) {
+      const localTime = Date.now();
+      this.serverTimeOffset = localTime - parseInt(curTime);
+    }
+
+    return result;
   }
 
   async on(
