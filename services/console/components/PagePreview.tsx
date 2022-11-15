@@ -44,11 +44,19 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
     setLoading(false);
   }, []);
 
-  const initialPage = useRef(page);
-  const url = useMemo(
-    () => generatePageUrl(slug, initialPage.current.slug || ''),
-    [slug]
-  );
+  const [initialSlug, setInitialSlug] = useState(page.slug);
+
+  useEffect(() => {
+    setInitialSlug((slug) => {
+      if (slug || !page.slug) return slug;
+      return page.slug;
+    });
+  }, [page]);
+
+  const url = useMemo(() => generatePageUrl(slug, initialSlug || ''), [
+    slug,
+    initialSlug,
+  ]);
 
   return (
     <div className="flex flex-1 relative">

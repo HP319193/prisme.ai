@@ -33,25 +33,24 @@ export const RightButtons = ({
             : undefined,
       }}
     >
-      <div ref={shareElRef}>
-        <Popover
-          content={() => (
-            <SharePage
-              pageId={`${pageId}`}
-              pageSlug={(page && page.slug) || `${pageId}`}
-            />
-          )}
-          title={t('pages.share.label')}
-        >
-          <Button>
-            <Space>
-              <Tooltip title={t('pages.share.label')}>
-                <ShareAltOutlined className="text-lg" />
-              </Tooltip>
-            </Space>
-          </Button>
-        </Popover>
-      </div>
+      {page.slug && (
+        <div ref={shareElRef}>
+          <Popover
+            content={() => (
+              <SharePage pageId={`${pageId}`} pageSlug={page.slug || ''} />
+            )}
+            title={t('pages.share.label')}
+          >
+            <Button>
+              <Space>
+                <Tooltip title={t('pages.share.label')}>
+                  <ShareAltOutlined className="text-lg" />
+                </Tooltip>
+              </Space>
+            </Button>
+          </Popover>
+        </div>
+      )}
       <Button onClick={save} disabled={saving} variant="primary">
         {saving && <LoadingOutlined />}
         {t('pages.save.label')}
