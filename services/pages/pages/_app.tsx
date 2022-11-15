@@ -57,7 +57,7 @@ const Link = ({
   usePreview(setPreview);
 
   return (
-    <NextLink href={href} {...props}>
+    <NextLink href={href || ''} {...props}>
       {React.cloneElement(children, {
         onClick(e: any) {
           if (children.props.onClick) children.props.onClick(e);

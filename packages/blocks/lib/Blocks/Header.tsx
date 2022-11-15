@@ -6,6 +6,7 @@ import { useBlocks } from '../Provider/blocksContext';
 
 import { withI18nProvider } from '../i18n';
 import { ReactChild } from 'react';
+import { BlockComponent } from '../BlockLoader';
 
 interface Action {
   type: 'external' | 'internal' | 'inside' | 'event';
@@ -21,16 +22,10 @@ interface Config {
   };
   nav: (Action & {
     text: string | ReactChild;
-    edit: boolean;
   })[];
 }
 
-const Button = ({
-  text,
-  type,
-  value,
-  edit,
-}: Partial<Config['nav'][number]>) => {
+const Button = ({ text, type, value }: Partial<Config['nav'][number]>) => {
   const { events } = useBlock<Config>();
   const {
     components: { Link },
@@ -40,7 +35,6 @@ const Button = ({
       return (
         <button
           onClick={() => {
-            if (edit) return;
             if (!events || !value) return;
             events.emit(value);
           }}
@@ -54,10 +48,10 @@ const Button = ({
     case 'external':
     case 'internal':
       return (
-        <Link href={edit ? '' : value}>
-          <a className={tw`block-header__nav-item-link`}>
+        <Link href={value}>
+          <a className="block-header__nav-item-link">
             <button
-              className={tw`block-header__nav-item-button`}
+              className="block-header__nav-item-button"
               dangerouslySetInnerHTML={
                 typeof text === 'string' ? { __html: text } : undefined
               }
@@ -68,12 +62,9 @@ const Button = ({
       );
     case 'inside':
       return (
-        <a
-          href={edit ? '' : `#${value}`}
-          className={tw`block-header__nav-item-link`}
-        >
+        <a href={`#${value}`} className="block-header__nav-item-link">
           <button
-            className={tw`block-header__nav-item-button`}
+            className="block-header__nav-item-button"
             dangerouslySetInnerHTML={
               typeof text === 'string' ? { __html: text } : undefined
             }
@@ -86,7 +77,7 @@ const Button = ({
   }
 };
 
-export const Header = ({ edit }: { edit?: boolean }) => {
+export const Header: BlockComponent = () => {
   const { config = {} as Config, events } = useBlock<Config>();
   const {
     components: { Link },
@@ -120,12 +111,7 @@ export const Header = ({ edit }: { edit?: boolean }) => {
       <Menu
         items={nav.map((props, k) => ({
           label: (
-            <Button
-              type={props.type}
-              value={props.value}
-              text={props.text}
-              edit={!!edit}
-            />
+            <Button type={props.type} value={props.value} text={props.text} />
           ),
           key: `${k}`,
         }))}
