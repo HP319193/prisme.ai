@@ -808,6 +808,22 @@
                 "description": "Makes the cell editable. The event passed in value will be sent each time it is modified"
               }
             }
+          },
+          "pagination": {
+            "label": "Manual pagination",
+            "description": "By default, paging is done automatically on all the data sent. If you want to paginate on the server side, use this configuration structure.",
+            "event": {
+              "label": "Event",
+              "description": "Name of the event sent when a page is changed. The number of the requested page will be send in payload."
+            },
+            "page": {
+              "label": "Current page number",
+              "description": "Will display the number of the page displayed."
+            },
+            "pages": {
+              "label": "Pages count",
+              "description": "Number of pages available."
+            }
           }
         }
       },

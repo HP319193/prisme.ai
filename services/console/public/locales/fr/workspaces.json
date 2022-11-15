@@ -808,6 +808,22 @@
                 "description": "Rend la cellule éditable. L'évènement passé en valeur sera envoyé à chaque modification de celle-ci"
               }
             }
+          },
+          "pagination": {
+            "label": "Pagination manuelle",
+            "description": "Par défaut, la pagination se fait automatiquement sur l'ensemble des données envoyées. Si vous voulez paginer côté serveur, utiliser cette structure de configuration.",
+            "event": {
+              "label": "Évènement",
+              "description": "Nom de l'évènement envoyé lors d'un changement de page. Le numéro de la page demandée l'accompagnera."
+            },
+            "page": {
+              "label": "Numéro de la page courante",
+              "description": "Affichera le numéro de la page affichée."
+            },
+            "pages": {
+              "label": "Nombre de pages",
+              "description": "Nombre de pages disponibles."
+            }
           }
         }
       },

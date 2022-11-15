@@ -155,6 +155,31 @@ const schema = {
         },
       },
     },
+    pagination: {
+      type: 'object',
+      title: 'pages.blocks.datatable.settings.pagination.label',
+      description: 'pages.blocks.datatable.settings.pagination.description',
+      properties: {
+        event: {
+          type: 'string',
+          title: 'pages.blocks.datatable.settings.pagination.event.label',
+          description:
+            'pages.blocks.datatable.settings.pagination.event.description',
+        },
+        page: {
+          type: 'number',
+          title: 'pages.blocks.datatable.settings.pagination.page.label',
+          description:
+            'pages.blocks.datatable.settings.pagination.page.description',
+        },
+        pages: {
+          type: 'number',
+          title: 'pages.blocks.datatable.settings.pagination.pages.label',
+          description:
+            'pages.blocks.datatable.settings.pagination.pages.description',
+        },
+      },
+    },
   },
 } as Schema;
 
