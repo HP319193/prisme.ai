@@ -36,6 +36,9 @@ export class RedisDriver implements Driver {
     this.ready = this.client.ready;
     this.ready.then(() => {
       this.detectServerTimeOffset();
+      setInterval(() => {
+        this.detectServerTimeOffset();
+      }, 5000);
     });
   }
 
@@ -91,7 +94,7 @@ export class RedisDriver implements Driver {
       streams.reduce(
         (ids, stream) => ({
           ...ids,
-          [stream]: `${this.getTime()}-0`,
+          [stream]: `${subscriptionOpts.ListenFrom || this.getTime()}-0`,
         }),
         {}
       );

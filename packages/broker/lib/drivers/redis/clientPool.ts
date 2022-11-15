@@ -68,7 +68,6 @@ export class ClientPool {
 
     // Create another client
     const clientInfo = this.createClient(this.opts, true);
-    this.clients.push(clientInfo);
     if (streams) {
       this.clientsByStreams[key] = clientInfo;
     }
