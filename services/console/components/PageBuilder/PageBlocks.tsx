@@ -26,10 +26,11 @@ export const PageBlocks = () => {
         </div>
         {blocks.map(
           ({ key, config, name }, index) =>
-            name && (
+            name &&
+            key && (
               <div key={key} className="flex flex-col snap-start">
                 <div className="flex flex-1 max-w-full mb-6">
-                  <div className="flex flex-1 flex-col relative p-8 surface-section border-slate-100 bg-white border height-[18rem] rounded-[1rem]">
+                  <div className="flex flex-1 flex-col max-w-full overflow-hidden relative p-8 surface-section border-slate-100 bg-white border height-[18rem] rounded-[1rem]">
                     <button
                       className="flex font-bold flex-1 justify-between focus:outline-none"
                       onClick={() => setEditBlock(key)}
@@ -37,7 +38,11 @@ export const PageBlocks = () => {
                       {t('pages.blocks.name', { context: localize(name) })}
                       <EditOutlined />
                     </button>
-                    <BlockPreview id={key} name={name} config={config} />
+                    <BlockPreview
+                      id={key || name}
+                      name={name}
+                      config={config}
+                    />
                   </div>
                 </div>
                 <div className="mb-6">

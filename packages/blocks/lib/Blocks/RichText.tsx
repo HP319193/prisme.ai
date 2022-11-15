@@ -54,4 +54,6 @@ export const RichText: BlockComponent = () => {
   );
 };
 
+RichText.Preview = (props) => <RichText {...props} />;
+
 export default RichText;

@@ -86,8 +86,4 @@ export const Form: BlockComponent = () => {
   );
 };
 
-Form.Preview = () => {
-  return <div>Je suis la preview du form</div>;
-};
-
 export default Form;

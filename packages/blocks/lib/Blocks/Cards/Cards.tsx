@@ -23,6 +23,24 @@ const cardsIsShort = (
   variant: CardsConfig['variant']
 ): cards is CardShort[] => variant === 'short';
 
+const getContainerStyle = (type: CardsConfig['layout']['type']) => {
+  switch (type) {
+    case 'grid':
+      return {
+        container: tw`flex flex-row flex-wrap justify-center`,
+      };
+    case 'column':
+      return {
+        container: tw`flex flex-wrap flex-col items-center`,
+      };
+    case 'carousel':
+    default:
+      return {
+        container: tw`flex flex-row flex-nowrap overflow-auto no-scrollbar pr-[100vw] snap-x snap-mandatory pb-6`,
+      };
+  }
+};
+
 export const Cards: BlockComponent = () => {
   const { config = {} as CardsConfig } = useBlock<CardsConfig>();
   const [canScroll, setCanScroll] = useState<boolean | null>(false);
@@ -111,21 +129,7 @@ export const Cards: BlockComponent = () => {
 
   const styles = useMemo(() => {
     const { layout: { type = 'carousel' } = {} } = config;
-    switch (type) {
-      case 'grid':
-        return {
-          container: tw`flex flex-row flex-wrap justify-center`,
-        };
-      case 'column':
-        return {
-          container: tw`flex flex-wrap flex-col items-center`,
-        };
-      case 'carousel':
-      default:
-        return {
-          container: tw`flex flex-row flex-nowrap overflow-auto no-scrollbar pr-[100vw] snap-x snap-mandatory pb-6`,
-        };
-    }
+    return getContainerStyle(type);
   }, [config]);
 
   const getCoverStyle = useCallback(
@@ -194,8 +198,24 @@ export const Cards: BlockComponent = () => {
   }
 };
 
-Cards.Preview = () => {
-  return <div>Je suis une preview</div>;
+const previews = Array.from(new Array(4), (v, k) => k);
+Cards.Preview = ({ config = {} }) => {
+  const type: CardsConfig['layout']['type'] =
+    config?.layout?.type || 'carousel';
+  console.log(type);
+  return (
+    <div>
+      {config.title && <div>{config.title}</div>}
+      <div className={getContainerStyle(type).container}>
+        {previews.map((k) => (
+          <div
+            key={k}
+            className={tw`flex snap-start m-2 w-[10rem] h-[10rem] flex-card bg-gray rounded`}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default withI18nProvider(Cards);

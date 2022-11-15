@@ -3,6 +3,8 @@ import { action } from '@storybook/addon-actions';
 import { FC, LinkHTMLAttributes, useState } from 'react';
 import { BlockProvider, BlocksProvider } from '../Provider';
 import RichText from './RichText';
+import { tw } from 'twind';
+import { PreviewInStory } from './PreviewInStory';
 
 export default {
   title: 'Blocks/RichText',
@@ -18,21 +20,25 @@ const Link: FC = ({
 const Loading = () => {
   return <div>wait for it</div>;
 };
+const DownIcon = () => null;
 const Template: Story<any> = ({ defaultConfig }) => {
   const [config, setConfig] = useState<any>(defaultConfig);
   const [appConfig, setAppConfig] = useState<any>();
 
   return (
-    <BlocksProvider components={{ Link, Loading }} externals={{}}>
-      <BlockProvider
-        config={config}
-        onConfigUpdate={setConfig}
-        appConfig={appConfig}
-        onAppConfigUpdate={setAppConfig}
-      >
-        <RichText />
-      </BlockProvider>
-    </BlocksProvider>
+    <div className={tw`flex flex-1 flex-col justify-between`}>
+      <BlocksProvider components={{ Link, Loading, DownIcon }} externals={{}}>
+        <BlockProvider
+          config={config}
+          onConfigUpdate={setConfig}
+          appConfig={appConfig}
+          onAppConfigUpdate={setAppConfig}
+        >
+          <RichText />
+          {RichText.Preview && <PreviewInStory Preview={RichText.Preview} />}
+        </BlockProvider>
+      </BlocksProvider>
+    </div>
   );
 };
 
