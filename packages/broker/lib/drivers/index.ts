@@ -14,6 +14,10 @@ export interface SubscriptionOptions {
 
   // If true, considers any event as processed as soon as it has been passed to a callback
   NoAck: boolean;
+
+  // Only if GroupPartitions is false
+  // Allows checking for events emitted before the broker.on() call
+  ListenFrom?: number;
 }
 
 export interface PendingEvents {
