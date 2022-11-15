@@ -808,6 +808,22 @@
                 "description": "Hace que la celda sea editable. El valor del evento pasado se enviará cada vez que se modifique"
               }
             }
+          },
+          "pagination": {
+            "label": "Paginación manual",
+            "description": "Por defecto, la paginación se realiza automáticamente en todos los datos enviados. Si quieres hacer una página en el lado del servidor, utiliza esta estructura de configuración.",
+            "event": {
+              "label": "Evento",
+              "description": "Nombre del evento que se envía cuando se cambia una página. El número de la página solicitada lo acompañará."
+            },
+            "page": {
+              "label": "Número de página actual",
+              "description": "Mostrará el número de la página mostrada."
+            },
+            "pages": {
+              "label": "Número de páginas",
+              "description": "Número de páginas disponibles."
+            }
           }
         }
       },
