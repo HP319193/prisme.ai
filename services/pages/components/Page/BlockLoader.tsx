@@ -1,6 +1,6 @@
 import { TBlockLoader, BlockLoader as BLoader } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import api from '../../../console/utils/api';
 import { usePage } from './PageProvider';
 
@@ -16,8 +16,10 @@ export const BlockLoader: TBlockLoader = ({
   const {
     i18n: { language },
   } = useTranslation();
+  const lock = useRef(false);
 
   useEffect(() => {
+    if (lock.current) return;
     if (name.match(/^http/)) {
       setUrl(name);
       return;
@@ -36,7 +38,6 @@ export const BlockLoader: TBlockLoader = ({
       console.error(`"${name}" Block is not installed`);
       return;
     }
-
     setAppConfig(app.appConfig);
     setUrl(app.blocks[name]);
   }, [name, page]);
@@ -49,6 +50,7 @@ export const BlockLoader: TBlockLoader = ({
 
   const onAppConfigUpdate = useCallback(
     async (newConfig: any) => {
+      lock.current = true;
       setAppConfig(() => newConfig);
       if (name.match(/^http/)) return;
       const [appInstance] = name.split(/\./);
