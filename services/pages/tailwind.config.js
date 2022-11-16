@@ -4,6 +4,7 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
     './layouts/**/*.{js,ts,jsx,tsx}',
     './views/**/*.{js,ts,jsx,tsx}',
+    '../console/components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     fontFamily: {
