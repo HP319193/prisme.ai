@@ -75,23 +75,23 @@ const LayoutSelection = ({
 
   const filteredItems = useMemo(
     () =>
-      paginate(
-        items.filter(
-          (item) =>
-            item.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-            (typeof item.content === 'string' &&
-              item.content.toLowerCase().includes(searchValue.toLowerCase()))
-        ),
-        itemPerPage,
-        currentPage
+      items.filter(
+        (item) =>
+          item.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+          (typeof item.content === 'string' &&
+            item.content.toLowerCase().includes(searchValue.toLowerCase()))
       ),
-    [searchValue, items, itemPerPage, currentPage]
+    [searchValue]
+  );
+  const paginatedItems = useMemo(
+    () => paginate(filteredItems, itemPerPage, currentPage),
+    [searchValue, itemPerPage, currentPage, filteredItems]
   );
 
-  const totalPages = Math.ceil(items.length / itemPerPage);
+  const totalPages = Math.ceil(filteredItems.length / itemPerPage);
 
   return (
-    <Row className="flex grow h-full">
+    <Row className="flex flex-1 h-full">
       <Col span={leftPanelWidth} className="h-full">
         <SidePanel
           children={
@@ -107,12 +107,12 @@ const LayoutSelection = ({
                 <SearchInput
                   value={searchValue}
                   onChange={(e) => SetSearchValue(e.target.value)}
-                  className="grow"
+                  className="flex-1"
                   placeholder={searchLabel}
                 />
               </div>
               <div className={'flex flex-1 flex-col overflow-x-auto space-y-2'}>
-                {filteredItems.map((item) => (
+                {paginatedItems.map((item) => (
                   <ListItemWithSelection
                     {...item}
                     key={item.id}

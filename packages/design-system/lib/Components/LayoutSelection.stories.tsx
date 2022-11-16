@@ -60,3 +60,11 @@ withHeader.args = {
     },
   ],
 };
+
+export const withPagination = Template.bind({});
+withPagination.args = {
+  items: Array.from(new Array(500), (v, k) => k).map((k) => ({
+    id: `${k}`,
+    title: `test ${k}`,
+  })),
+};
