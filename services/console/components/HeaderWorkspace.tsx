@@ -178,7 +178,7 @@ const HeaderWorkspace = () => {
                 <div className="flex h-[75vh] w-[30rem]">
                   <IFrameLoader
                     className="flex flex-1"
-                    src={`https://studio.prisme.ai/${language}/pages/I55NTRH`}
+                    src={`https://help.pages.prisme.ai/${language}/`}
                   />
                 </div>
               )}
@@ -193,7 +193,7 @@ const HeaderWorkspace = () => {
                 <div className="flex h-[75vh] w-[30rem]">
                   <IFrameLoader
                     className="flex flex-1"
-                    src={`https://studio.prisme.ai/${language}/pages/xDe6PaQ`}
+                    src={`https://roadmap.pages.prisme.ai/${language}/index`}
                   />
                 </div>
               )}
