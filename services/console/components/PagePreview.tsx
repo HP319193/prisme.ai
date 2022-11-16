@@ -60,9 +60,6 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
   const updatePage = useCallback(() => {
     if (!ref.current || !ref.current.contentWindow) return;
     try {
-      console.log(
-        getAppInstances(workspace, appInstances.get(workspace.id) || [])
-      );
       ref.current.contentWindow.postMessage(
         {
           type: 'updatePagePreview',

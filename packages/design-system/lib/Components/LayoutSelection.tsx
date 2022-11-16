@@ -81,7 +81,7 @@ const LayoutSelection = ({
           (typeof item.content === 'string' &&
             item.content.toLowerCase().includes(searchValue.toLowerCase()))
       ),
-    [searchValue]
+    [searchValue, items]
   );
   const paginatedItems = useMemo(
     () => paginate(filteredItems, itemPerPage, currentPage),
