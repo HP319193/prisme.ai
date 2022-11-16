@@ -69,21 +69,38 @@ export const PagesProvider: FC<PagesProvider> = ({ children }) => {
   const createPage: PagesContext['createPage'] = useCallback(
     async (workspaceId, page) => {
       page.styles = defaultStyles;
-      return api.createPage(workspaceId, page);
+      const newPage = await api.createPage(workspaceId, page);
+      setPages((prev) => {
+        const newPages = new Map(prev);
+        const workspacePages = new Set(
+          Array.from(newPages.get(workspaceId) || []).filter(
+            ({ id }) => id !== newPage.id
+          )
+        );
+        workspacePages.add({ ...newPage, workspaceId });
+        newPages.set(workspaceId, workspacePages);
+        return newPages;
+      });
+      return newPage;
     },
     []
   );
   const savePage: PagesContext['savePage'] = useCallback(
     async (workspaceId, page, events = []) => {
       events.push('*');
-      if (events.length > 0) {
-        if (page.apiKey) {
-          await api.updateApiKey(workspaceId, page.apiKey, events);
-        } else {
-          const apiKey = await api.generateApiKey(workspaceId, events);
-          if (apiKey) {
-            page.apiKey = apiKey;
-          }
+      const files = [
+        'image/*',
+        'application/*',
+        'audio/*',
+        'video/*',
+        'text/*',
+      ];
+      if (page.apiKey) {
+        await api.updateApiKey(workspaceId, page.apiKey, events, files);
+      } else {
+        const apiKey = await api.generateApiKey(workspaceId, events, files);
+        if (apiKey) {
+          page.apiKey = apiKey;
         }
       }
       const savedPage = await api.updatePage(workspaceId, page);

@@ -10,6 +10,8 @@ const dftUtils = {
   BlockLoader: () => null,
 };
 
+const uploadFile = async (file: string) => file;
+
 export const BlocksProvider: FC<BlocksProviderProps> = ({
   children,
   externals,
@@ -20,7 +22,10 @@ export const BlocksProvider: FC<BlocksProviderProps> = ({
     value={{
       externals,
       components: { ...defaultComponents, ...components },
-      utils,
+      utils: {
+        uploadFile,
+        ...utils,
+      },
     }}
   >
     {children}

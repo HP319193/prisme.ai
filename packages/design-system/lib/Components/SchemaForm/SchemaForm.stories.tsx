@@ -4,6 +4,7 @@ import SchemaForm, { FormProps } from './SchemaForm';
 import { useField } from 'react-final-form';
 import { FieldProps, Schema } from './types';
 import TextArea from '../TextArea';
+import { action } from '@storybook/addon-actions';
 
 export default {
   title: 'Components/SchemaForm',
@@ -810,6 +811,20 @@ WithValidators.args = {
           pattern: 'Pattern is invalid',
         },
       },
+    },
+  },
+};
+
+export const WithCustomFileUpload = Template.bind({});
+WithCustomFileUpload.args = {
+  schema: {
+    type: 'string',
+    'ui:widget': 'upload',
+  },
+  utils: {
+    uploadFile: async (file) => {
+      action('uploading file')(file);
+      return 'https://global-uploads.webflow.com/60a514cee679ef23b32cefc0/624702f7a07f6c0407632de8_Prisme.ai%20-%20Logo.svg';
     },
   },
 };

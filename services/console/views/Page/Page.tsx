@@ -307,7 +307,7 @@ export const Page = () => {
       };
       setValue(newValue);
       try {
-        await savePage(workspace.id, newValue);
+        await savePage(workspace.id, newValue, eventsInPage);
         notification.success({
           message: t('pages.save.toast'),
           placement: 'bottomRight',
@@ -327,7 +327,7 @@ export const Page = () => {
         throw e;
       }
     },
-    [cleanValue, savePage, setDirty, t, value, workspace.id]
+    [cleanValue, eventsInPage, savePage, setDirty, t, value, workspace.id]
   );
 
   const { appInstances } = useApps();

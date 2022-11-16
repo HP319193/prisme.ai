@@ -37,10 +37,16 @@ export class Api extends Fetcher {
       token: string;
     }
   > {
-    return await this.post('/login', {
+    const user = await this.post<
+      Prismeai.User & {
+        token: string;
+      }
+    >('/login', {
       email,
       password,
     });
+    this._user = user;
+    return user;
   }
 
   async createAnonymousSession(): Promise<
@@ -48,7 +54,13 @@ export class Api extends Fetcher {
       token: string;
     }
   > {
-    return await this.post('/login/anonymous');
+    const user = await this.post<
+      Prismeai.User & {
+        token: string;
+      }
+    >('/login/anonymous');
+    this._user = user;
+    return user;
   }
 
   async signup(
@@ -150,7 +162,11 @@ export class Api extends Fetcher {
     return await this.delete(`/workspaces/${workspaceId}`);
   }
 
-  async generateApiKey(workspaceId: Workspace['id'], events: string[]) {
+  async generateApiKey(
+    workspaceId: Workspace['id'],
+    events: string[],
+    uploads?: string[]
+  ) {
     const { apiKey } = await this.post<{ apiKey: string }>(
       `/workspaces/${workspaceId}/apiKeys`,
       {
@@ -161,6 +177,11 @@ export class Api extends Fetcher {
               'source.sessionId': '${user.sessionId}',
             },
           },
+          uploads: uploads
+            ? {
+                mimetypes: uploads,
+              }
+            : undefined,
         },
       }
     );
@@ -170,7 +191,8 @@ export class Api extends Fetcher {
   async updateApiKey(
     workspaceId: Workspace['id'],
     apiKey: string,
-    events: string[]
+    events: string[],
+    uploads?: string[]
   ) {
     await this.put(`/workspaces/${workspaceId}/apiKeys/${apiKey}`, {
       rules: {
@@ -180,6 +202,11 @@ export class Api extends Fetcher {
             'source.sessionId': '${user.sessionId}',
           },
         },
+        uploads: uploads
+          ? {
+              mimetypes: uploads,
+            }
+          : undefined,
       },
     });
 
@@ -442,12 +469,6 @@ export class Api extends Fetcher {
     return await this.get(`/workspaces/${workspaceId}/apps`);
   }
 
-  async fetchImports(
-    workspaceId: PrismeaiAPI.ListAppInstances.Parameters.WorkspaceId
-  ): Promise<PrismeaiAPI.ListAppInstances.Responses.$200> {
-    return await this.get(`/workspaces/${workspaceId}/apps`);
-  }
-
   async getAppConfig<T>(
     workspaceId: PrismeaiAPI.GetAppInstanceConfig.Parameters.WorkspaceId,
     slug: PrismeaiAPI.GetAppInstanceConfig.Parameters.Slug
@@ -489,7 +510,6 @@ export class Api extends Fetcher {
       if (dataURI.split(',')[0].indexOf('base64') >= 0)
         byteString = atob(dataURI.split(',')[1]);
       else byteString = unescape(dataURI.split(',')[1]);
-
       // separate out the mime component
       const metadata = dataURI
         .split(';')
@@ -510,9 +530,10 @@ export class Api extends Fetcher {
     }
     const formData = new FormData();
     (Array.isArray(files) ? files : [files]).forEach((file) => {
-      formData.append('file', ...dataURItoBlob(file));
+      try {
+        formData.append('file', ...dataURItoBlob(file));
+      } catch {}
     });
-
     try {
       return await this._fetch<PrismeaiAPI.UploadFile.Responses.$200>(
         `/workspaces/${workspaceId}/files`,
@@ -570,7 +591,7 @@ export class Api extends Fetcher {
   }
 
   async callAutomation(workspaceId: string, automation: string): Promise<any> {
-    return this._fetch(`/workspaces/${workspaceId}/webhooks/${automation}`);
+    return this.get(`/workspaces/${workspaceId}/webhooks/${automation}`);
   }
 
   async getWorkspaceUsage(

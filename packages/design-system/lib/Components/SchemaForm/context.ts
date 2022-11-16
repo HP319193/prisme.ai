@@ -45,6 +45,11 @@ export interface SchemaFormContext {
     extractAutocompleteOptions: (
       schema: Schema
     ) => UiOptionsAutocomplete['autocomplete']['options'] | null;
+    uploadFile: (
+      base64File: string
+    ) => Promise<
+      string | { value: string; preview: string | ReactElement; label?: string }
+    >;
   };
 }
 
@@ -58,6 +63,7 @@ export const context = createContext<SchemaFormContext>({
   utils: {
     extractSelectOptions: () => [],
     extractAutocompleteOptions: () => [],
+    uploadFile: async () => '',
   },
 });
 
