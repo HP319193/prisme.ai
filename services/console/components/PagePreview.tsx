@@ -1,18 +1,38 @@
 import { Loading } from '@prisme.ai/design-system';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useWorkspace } from './WorkspaceProvider';
-import getConfig from 'next/config';
 import { generatePageUrl } from '../utils/urls';
-
-const {
-  publicRuntimeConfig: { PAGES_HOST = '' },
-} = getConfig();
+import { Workspace } from '../utils/api';
+import { useApps } from './AppsProvider';
 
 interface PagePreviewProps {
   page: Prismeai.Page;
 }
 
+const getAppInstances = (
+  workspace: Workspace,
+  apps: Prismeai.DetailedAppInstance[]
+) => {
+  return Object.entries(workspace.imports || {}).map(
+    ([slug, { config: appConfig }]) => ({
+      slug,
+      appConfig,
+      blocks: Object.values(
+        (apps.find(({ slug: s }) => slug === s) || { blocks: {} }).blocks
+      ).reduce(
+        (prev, { slug: name, url }) => ({
+          ...prev,
+          [`${slug}.${name}`]: url,
+        }),
+        {}
+      ),
+    })
+  );
+};
+
 export const PagePreview = ({ page }: PagePreviewProps) => {
+  const { workspace } = useWorkspace();
+  const { appInstances } = useApps();
   const ref = useRef<HTMLIFrameElement>(null);
   const pageId = useRef(page.id);
   const [loading, setLoading] = useState(true);
@@ -24,12 +44,23 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
     if (!ref.current || !ref.current.contentWindow) return;
     try {
       ref.current.contentWindow.postMessage(
-        { type: 'updatePagePreview', page: JSON.parse(JSON.stringify(page)) },
+        {
+          type: 'updatePagePreview',
+          page: JSON.parse(
+            JSON.stringify({
+              ...page,
+              appInstances: getAppInstances(
+                workspace,
+                appInstances.get(workspace.id) || []
+              ),
+            })
+          ),
+        },
         '*'
       );
       setLoading(false);
     } catch {}
-  }, [page]);
+  }, [appInstances, page, workspace]);
 
   useEffect(() => {
     if (pageId.current !== page.id) {
