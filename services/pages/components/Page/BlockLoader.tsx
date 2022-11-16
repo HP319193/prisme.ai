@@ -32,7 +32,6 @@ export const BlockLoader: TBlockLoader = ({
 
     const [appSlug] = parts;
     const app = (page?.appInstances || []).find(({ slug }) => appSlug === slug);
-
     if (!app || !app.blocks[name]) {
       console.error(`"${name}" Block is not installed`);
       return;
@@ -48,6 +47,17 @@ export const BlockLoader: TBlockLoader = ({
     events.emit(config.onInit);
   }, [events, onLoad, config]);
 
+  const onAppConfigUpdate = useCallback(
+    async (newConfig: any) => {
+      setAppConfig(() => newConfig);
+      if (name.match(/^http/)) return;
+      const [appInstance] = name.split(/\./);
+      if (!page?.workspaceId || !appInstance) return;
+      return api.updateAppConfig(page.workspaceId, appInstance, newConfig);
+    },
+    [name, page]
+  );
+
   if (!page) return null;
 
   return (
@@ -55,6 +65,7 @@ export const BlockLoader: TBlockLoader = ({
       name={name}
       url={url}
       appConfig={appConfig}
+      onAppConfigUpdate={onAppConfigUpdate}
       api={api}
       language={language}
       workspaceId={`${page.workspaceId}`}
