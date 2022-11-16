@@ -561,7 +561,7 @@
       "description_RichText": "Visualización de texto formateado mediante Markdown o HTML",
       "description_Layout": "Mostrar páginas de bloques navegables. Debe utilizarse a través de automatizaciones.",
       "panelTitle_adding": "Añadir un Block",
-      "panelTitle_editing": "Editar el Block $t(pages.blocks.name_{{block}})",
+      "panelTitle_editing": "Editar el Block {{blockName}}",
       "header": {
         "settings": {
           "title": {

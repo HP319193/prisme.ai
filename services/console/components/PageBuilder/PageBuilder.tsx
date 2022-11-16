@@ -217,6 +217,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
           title={t('pages.blocks.panelTitle', {
             context: blockSelecting ? 'adding' : 'editing',
             block: editingBlockName,
+            blockName: t('pages.blocks.name', { context: editingBlockName }),
           })}
           visible={panelIsOpen}
           onVisibleChange={hidePanel}

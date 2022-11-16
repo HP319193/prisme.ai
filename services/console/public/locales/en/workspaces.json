@@ -561,7 +561,7 @@
       "description_RichText": "Display text formatted with Markdown or HTML",
       "description_Layout": "Display navigable block pages. Must be used through automations.",
       "panelTitle_adding": "Add a Block",
-      "panelTitle_editing": "Edit Block $t(pages.blocks.name_{{block}})",
+      "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
         "settings": {
           "title": {
