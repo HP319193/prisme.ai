@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { builtinBlocks } from '@prisme.ai/blocks';
 import Panel from '../Panel';
-import { blockWithKey, context, PageBuilderContext } from './context';
+import { context, PageBuilderContext } from './context';
 import PageNewBlockForm from './Panel/PageNewBlockForm';
 import PageBlocks from './PageBlocks';
 import { nanoid } from 'nanoid';
@@ -10,7 +10,7 @@ import PageEditBlockForm from './Panel/PageEditBlockForm';
 import useBlocksConfigs from '../Page/usePageBlocksConfigs';
 import { Schema } from '@prisme.ai/design-system';
 import { extractEvents } from './extractEvents';
-import { Trans, useTranslation } from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 import useBlocks, { BlockInCatalog } from './useBlocks';
 import PoweredBy from '../PoweredBy';
 
@@ -21,7 +21,6 @@ interface PageBuilderProps {
 }
 export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
   const { t } = useTranslation('workspaces');
-  const { t: commonT } = useTranslation('common');
   const { available, variants } = useBlocks();
 
   const [panelIsOpen, setPanelIsOpen] = useState(false);
@@ -97,6 +96,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
   const addBlock: PageBuilderContext['addBlock'] = useCallback(
     async (position) => {
       function getOriginalBlock(block: string): BlockInCatalog | null {
+        console.log({ block });
         const originalBlock = available.find(({ slug }) => slug === block);
         if (!originalBlock) return null;
         if (originalBlock.block) {
