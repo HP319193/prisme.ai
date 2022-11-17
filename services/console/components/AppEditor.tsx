@@ -12,6 +12,7 @@ import { useWorkspace } from './WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
+import useLocalizedText from '../utils/useLocalizedText';
 
 interface AppEditorProps {
   schema?: Schema;
@@ -28,6 +29,7 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
   const { t: errorT } = useTranslation('errors');
   const { setDirty } = useWorkspaceLayout();
   const { appConfig, onAppConfigUpdate } = useAppConfig(workspaceId, appId);
+  const { localizeSchemaForm } = useLocalizedText();
 
   const onSubmit = async (value: any) => {
     try {
@@ -66,7 +68,7 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
   if (schema) {
     const s: Schema = {
       type: 'object',
-      properties: schema as Schema['properties'],
+      properties: localizeSchemaForm(schema) as Schema['properties'],
     };
 
     return (
