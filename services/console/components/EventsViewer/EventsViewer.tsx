@@ -87,7 +87,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
               items={generateSectionContent(events)}
               light
               onChange={(ids) => {
-                const id = ids[0];
+                const id = ids[ids.length - 1];
                 if (!id) return;
                 readEvent(id);
               }}
