@@ -48,11 +48,12 @@ export const BlockLoader: TBlockLoader = ({
     setUrl(app.blocks[name]);
   }, [name, page]);
 
+  const configInit = (config || {}).onInit;
   const onBlockLoad = useCallback(() => {
     onLoad && onLoad();
-    if (!events || !config || !config.onInit) return;
-    events.emit(config.onInit);
-  }, [events, onLoad, config]);
+    if (!events || !configInit) return;
+    events.emit(configInit);
+  }, [events, onLoad, configInit]);
 
   const onAppConfigUpdate = useCallback(
     async (newConfig: any) => {
