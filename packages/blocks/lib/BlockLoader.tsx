@@ -32,6 +32,7 @@ class BlockErrorBoundary extends React.Component<{ children: ReactElement }> {
 }
 
 export interface BlockComponentProps {
+  name?: string;
   token?: string;
   workspaceId?: string;
   appInstance?: string;
@@ -50,7 +51,6 @@ export type BlockComponent = (
 export interface BlockLoaderProps extends BlockComponentProps {
   children?: ReactNode;
   url?: string;
-  name?: string;
   onLoad?: (block: any) => void;
 }
 
@@ -134,7 +134,7 @@ const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
 
   const isJs = url && url.replace(/\?.*$/, '').match(/\.js$/);
   if (isJs) {
-    return <ReactBlock url={url} {...props} />;
+    return <ReactBlock url={url} name={name} {...props} />;
   }
 
   return <IFrameBlock url={url} {...props} />;

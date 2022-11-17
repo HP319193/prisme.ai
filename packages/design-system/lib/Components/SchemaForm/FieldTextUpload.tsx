@@ -2,7 +2,7 @@ import Description from './Description';
 import { FieldProps, UiOptionsUpload } from './types';
 import { getLabel } from './utils';
 import { useField } from 'react-final-form';
-import { ChangeEvent, useCallback } from 'react';
+import { ChangeEvent, ReactElement, useCallback, useState } from 'react';
 import { DeleteOutlined, PictureOutlined } from '@ant-design/icons';
 import Button from '../Button';
 import { Tooltip } from 'antd';
@@ -19,22 +19,47 @@ export const FieldTextUpload = ({
   options: UiOptionsUpload;
 }) => {
   const field = useField(name);
-  const { locales = {} } = useSchemaForm();
+  const {
+    locales = {},
+    utils: { uploadFile },
+  } = useSchemaForm();
+  const [preview, setPreview] = useState<ReactElement | null>(null);
+  const [previewLabel, setPreviewLabel] = useState('');
 
   const readFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
     const reader = new FileReader();
-    reader.onload = ({ target }) => {
-      if (!target) return;
-      field.input.onChange(
-        typeof target.result === 'string'
-          ? target.result.replace(
-              /base64/,
-              `filename:${file.name.replace(/;/g, '-')}; base64`
-            )
-          : target.result
+    reader.onload = async ({ target }) => {
+      if (!target || typeof target.result !== 'string') return;
+      const value = await uploadFile(
+        target.result.replace(
+          /base64/,
+          `filename:${file.name.replace(/;/g, '-')}; base64`
+        )
       );
+      setPreviewLabel('');
+      if (typeof value === 'string') {
+        field.input.onChange(value);
+        setPreview(<img src={value} className="max-h-24" />);
+      } else {
+        const { value: v, preview, label } = value;
+        if (v) {
+          field.input.onChange(v);
+          if (preview) {
+            setPreview(
+              typeof preview === 'string' ? (
+                <img src={preview} className="max-h-24" />
+              ) : (
+                preview
+              )
+            );
+          }
+          if (label) {
+            setPreviewLabel(label);
+          }
+        }
+      }
     };
     reader.readAsDataURL(file);
   }, []);
@@ -44,15 +69,15 @@ export const FieldTextUpload = ({
       <WithLabel label={label || schema.title || getLabel(name)}>
         <div className="ant-input">
           <div className="relative p-2 ">
-            <div className="flex flex-row border-4 border-dashed border-gray-200 !rounded-[0.3rem] min-h-[50px] p-2 items-center">
+            <div className="flex flex-row border-4 border-dashed border-gray-200 !rounded-[0.3rem] min-h-[50px] p-2 items-center overflow-hidden">
               <div className="mr-2">
                 {field.input.value ? (
-                  <img src={field.input.value} className="max-h-24" />
+                  preview
                 ) : (
-                  <PictureOutlined className="text-4xl text-gray-200 flex items-center" />
+                  <PictureOutlined className="text-4xl !text-gray-200 flex items-center" />
                 )}
               </div>
-              {locales.uploadLabel || 'Choose file'}
+              {previewLabel || locales.uploadLabel || 'Choose file'}
             </div>
 
             <input
@@ -65,18 +90,24 @@ export const FieldTextUpload = ({
               }
               multiple={false}
             />
-            <Tooltip
-              title={locales.uploadRemove || 'Remove file'}
-              placement="left"
-            >
-              <Button
-                onClick={() => field.input.onChange('')}
-                className="!absolute top-2 right-2"
-                variant="link"
+            {field.input.value && (
+              <Tooltip
+                title={locales.uploadRemove || 'Remove file'}
+                placement="left"
               >
-                <DeleteOutlined />
-              </Button>
-            </Tooltip>
+                <Button
+                  onClick={() => {
+                    field.input.onChange('');
+                    setPreview(null);
+                    setPreviewLabel('');
+                  }}
+                  className="!absolute top-2 right-2"
+                  variant="link"
+                >
+                  <DeleteOutlined />
+                </Button>
+              </Tooltip>
+            )}
           </div>
         </div>
       </WithLabel>

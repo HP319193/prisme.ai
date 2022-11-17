@@ -74,11 +74,13 @@ jest.mock('../AppsProvider', () => {
       [
         {
           appSlug: 'App',
+          slug: 'App',
           appName: 'App',
           blocks: [],
         },
         {
           appSlug: 'App using App With Blocks',
+          slug: 'App using App With Blocks',
           appName: 'App using App With Blocks',
           blocks: [
             {
@@ -90,6 +92,7 @@ jest.mock('../AppsProvider', () => {
         },
         {
           appSlug: 'App With Blocks',
+          slug: 'App With Blocks',
           appName: 'App With Blocks',
           blocks: [
             {

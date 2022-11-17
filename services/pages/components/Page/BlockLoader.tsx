@@ -28,6 +28,12 @@ export const BlockLoader: TBlockLoader = ({
     const parts = name.split(/\./);
 
     if (parts.length === 1) {
+      const { blocks: workspaceBlocks } =
+        (page?.appInstances || []).find(({ slug }) => slug === '') || {};
+      if (workspaceBlocks && workspaceBlocks[name]) {
+        setUrl(workspaceBlocks[name]);
+        return;
+      }
       setUrl(name);
       return;
     }
@@ -52,7 +58,7 @@ export const BlockLoader: TBlockLoader = ({
     async (newConfig: any) => {
       lock.current = true;
       setAppConfig(() => newConfig);
-      if (name.match(/^http/)) return;
+      if (name.match(/^http/) || !name.match(/\./)) return;
       const [appInstance] = name.split(/\./);
       if (!page?.workspaceId || !appInstance) return;
       return api.updateAppConfig(page.workspaceId, appInstance, newConfig);

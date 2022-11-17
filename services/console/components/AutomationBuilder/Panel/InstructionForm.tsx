@@ -56,13 +56,17 @@ export const InstructionForm: FC<InstructionFormProps> = ({
         });
         return;
       }
+
       setEdit({
         instruction: instructionName,
         value: getDefaultValue(schema.type || ''),
         schema,
       });
+      onChange({
+        [instructionName]: {},
+      });
     },
-    [getSchema, onSubmit]
+    [getSchema, onChange, onSubmit]
   );
 
   useEffect(() => {

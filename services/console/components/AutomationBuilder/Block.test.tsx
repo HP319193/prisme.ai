@@ -1,7 +1,6 @@
 import Block from './Block';
 import renderer, { act } from 'react-test-renderer';
 import { useAutomationBuilder } from './context';
-import { DeleteOutlined } from '@ant-design/icons';
 import { Popconfirm } from 'antd';
 
 jest.mock('react-flow-renderer', () => {

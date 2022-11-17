@@ -13,21 +13,38 @@ const getAppInstances = (
   workspace: Workspace,
   apps: Prismeai.DetailedAppInstance[]
 ) => {
-  return Object.entries(workspace.imports || {}).map(
-    ([slug, { config: appConfig }]) => ({
-      slug,
-      appConfig,
-      blocks: Object.values(
-        (apps.find(({ slug: s }) => slug === s) || { blocks: {} }).blocks
-      ).reduce(
-        (prev, { slug: name, url }) => ({
+  const blocks = [];
+  if (workspace.blocks) {
+    blocks.push({
+      slug: '',
+      appConfig: workspace.config,
+      blocks: Object.entries(workspace.blocks).reduce(
+        (prev, [slug, { url = '' }]) => ({
           ...prev,
-          [`${slug}.${name}`]: url,
+          [slug]: url,
         }),
         {}
       ),
-    })
-  );
+    });
+  }
+  return [
+    ...blocks,
+    ...Object.entries(workspace.imports || {}).map(
+      ([slug, { config: appConfig }]) => ({
+        slug,
+        appConfig,
+        blocks: Object.values(
+          (apps.find(({ slug: s }) => slug === s) || { blocks: {} }).blocks
+        ).reduce(
+          (prev, { slug: name, url }) => ({
+            ...prev,
+            [`${slug}.${name}`]: url,
+          }),
+          {}
+        ),
+      })
+    ),
+  ];
 };
 
 export const PagePreview = ({ page }: PagePreviewProps) => {

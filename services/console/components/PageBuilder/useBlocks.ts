@@ -47,7 +47,7 @@ export const useBlocks = () => {
       // Apps blocks
       ...((workspaceId && appInstances.get(workspaceId)) || []).reduce<
         BlockInCatalog[]
-      >((prev, { appSlug = '', appName = '', blocks, photo }) => {
+      >((prev, { slug = '', appName = '', blocks, photo }) => {
         if (!blocks || blocks.length === 0) return prev;
 
         return [
@@ -55,7 +55,7 @@ export const useBlocks = () => {
           ...blocks.map((block) => ({
             ...block,
             from: appName,
-            slug: `${appSlug}.${block.slug}`,
+            slug: `${slug}.${block.slug}`,
             name: block.name || block.slug,
             icon: photo,
           })),

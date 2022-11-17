@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { builtinBlocks } from '@prisme.ai/blocks';
 import Panel from '../Panel';
-import { blockWithKey, context, PageBuilderContext } from './context';
+import { context, PageBuilderContext } from './context';
 import PageNewBlockForm from './Panel/PageNewBlockForm';
 import PageBlocks from './PageBlocks';
 import { nanoid } from 'nanoid';
@@ -12,6 +12,7 @@ import { Schema } from '@prisme.ai/design-system';
 import { extractEvents } from './extractEvents';
 import { useTranslation } from 'next-i18next';
 import useBlocks, { BlockInCatalog } from './useBlocks';
+import PoweredBy from '../PoweredBy';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -20,7 +21,6 @@ interface PageBuilderProps {
 }
 export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
   const { t } = useTranslation('workspaces');
-  const { t: commonT } = useTranslation('common');
   const { available, variants } = useBlocks();
 
   const [panelIsOpen, setPanelIsOpen] = useState(false);
@@ -96,6 +96,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
   const addBlock: PageBuilderContext['addBlock'] = useCallback(
     async (position) => {
       function getOriginalBlock(block: string): BlockInCatalog | null {
+        console.log({ block });
         const originalBlock = available.find(({ slug }) => slug === block);
         if (!originalBlock) return null;
         if (originalBlock.block) {
@@ -210,9 +211,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
       }}
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">
-        <div className="absolute left-10 bottom-10 text-[0.75rem] text-pr-grey z-0">
-          {commonT('powered')}
-        </div>
+        <PoweredBy />
         <PageBlocks />
         <Panel
           title={t('pages.blocks.panelTitle', {

@@ -14,6 +14,9 @@ module.exports = () => {
       '<rootDir>/services/console/utils/yaml.ts',
       '<rootDir>/packages/validation',
 
+      // dists
+      '<rootDir>/.*/dist/',
+
       // Runtime
       '<rootDir>/services/runtime/src/eda',
       '<rootDir>/services/runtime/src/cache',

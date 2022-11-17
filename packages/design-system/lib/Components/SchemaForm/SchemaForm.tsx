@@ -36,14 +36,15 @@ export interface FormProps {
 const OnChange = ({
   values,
   onChange,
-  dirty,
 }: {
   values: any;
   onChange: FormProps['onChange'];
-  dirty: boolean;
 }) => {
+  const dirty = useRef(false);
   useEffect(() => {
-    if (!dirty || !onChange || !values) return;
+    const { current: isDirty } = dirty;
+    dirty.current = true;
+    if (!isDirty || !onChange || !values) return;
     onChange(values.values);
   }, [values, onChange, dirty]);
   return null;
@@ -96,6 +97,7 @@ export const SchemaForm = ({
     () => ({
       extractSelectOptions: () => [],
       extractAutocompleteOptions: () => [],
+      uploadFile: async (file: string) => file,
       ...utils,
     }),
     [utils]
@@ -114,12 +116,12 @@ export const SchemaForm = ({
         initialValues={values.current}
         mutators={{ ...arrayMutators }}
       >
-        {({ handleSubmit, dirty }) => (
+        {({ handleSubmit }) => (
           <form onSubmit={handleSubmit} className="flex-grow space-y-5">
             {onChange && (
               <FormSpy subscription={{ values: true }}>
                 {({ values }) => (
-                  <OnChange values={values} onChange={onChange} dirty={dirty} />
+                  <OnChange values={values} onChange={onChange} />
                 )}
               </FormSpy>
             )}

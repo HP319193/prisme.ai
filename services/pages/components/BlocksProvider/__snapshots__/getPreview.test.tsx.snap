@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should get anything else preview 1`] = `null`;
+
+exports[`should get audio preview 1`] = `null`;
+
+exports[`should get office preview 1`] = `null`;
+
+exports[`should get pdf preview 1`] = `null`;
+
+exports[`should get text preview 1`] = `null`;

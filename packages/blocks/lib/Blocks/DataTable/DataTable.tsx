@@ -157,7 +157,7 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
   }, []);
 
   return (
-    <div className={tw`block-data-table p-8`}>
+    <div className={tw`block-data-table`}>
       {config.title && <BlockTitle value={localize(config.title)} />}
       <div
         className={tw`block-data-table__table-container table-container overflow-auto`}

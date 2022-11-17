@@ -7,6 +7,7 @@ import tw from '../tw';
 import BlockTitle from './Internal/BlockTitle';
 import useLocalizedText from '../useLocalizedText';
 import { withI18nProvider } from '../i18n';
+import { useBlocks } from '../Provider/blocksContext';
 
 const defaultSchema = {
   type: 'string',
@@ -26,6 +27,9 @@ export const Form = ({ edit }: { edit?: boolean }) => {
   const { config, events } = useBlock<FormConfig>();
   const { t } = useTranslation();
   const { localize, localizeSchemaForm } = useLocalizedText();
+  const {
+    utils: { uploadFile },
+  } = useBlocks();
 
   const onChange = useCallback(
     (values: any) => {
@@ -54,6 +58,9 @@ export const Form = ({ edit }: { edit?: boolean }) => {
       {config.title && <BlockTitle value={localize(config.title)} />}
       <SchemaForm
         schema={localizedSchema}
+        utils={{
+          uploadFile,
+        }}
         onChange={onChange}
         onSubmit={onSubmit}
         buttons={

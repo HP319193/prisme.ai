@@ -154,6 +154,20 @@ class Pages {
       return details || { url: '', appInstance: '' };
     };
 
+    const blocks = [];
+    if (workspace.blocks) {
+      blocks.push({
+        slug: '',
+        appConfig: workspace.config,
+        blocks: Object.entries(workspace.blocks).reduce(
+          (prev, [slug, { url = '' }]) => ({
+            ...prev,
+            [slug]: url,
+          }),
+          {}
+        ),
+      });
+    }
     const appInstances = Object.entries(workspace.imports || {}).map(
       ([slug, { config: appConfig }]) => ({
         slug,
@@ -178,7 +192,7 @@ class Pages {
           ? getBlockDetails(block.name)
           : { url: '', appInstance: '' }),
       })),
-      appInstances,
+      appInstances: [...blocks, ...appInstances],
     };
     return detailedPage;
   }

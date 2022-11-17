@@ -1,4 +1,6 @@
+import { Events } from '@prisme.ai/sdk';
 import { Story } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 import { useState } from 'react';
 import { BlockProvider } from '../Provider';
 import Form from './Form';
@@ -10,6 +12,9 @@ export default {
 const Template: Story<any> = ({ defaultConfig }) => {
   const [config, setConfig] = useState<any>(defaultConfig);
   const [appConfig, setAppConfig] = useState<any>();
+  const events = {
+    emit: action('emit'),
+  } as Events;
 
   return (
     <BlockProvider
@@ -17,6 +22,7 @@ const Template: Story<any> = ({ defaultConfig }) => {
       onConfigUpdate={setConfig}
       appConfig={appConfig}
       onAppConfigUpdate={setAppConfig}
+      events={events}
     >
       <Form />
     </BlockProvider>
@@ -26,13 +32,15 @@ const Template: Story<any> = ({ defaultConfig }) => {
 export const Default = Template.bind({});
 Default.args = {
   defaultConfig: {
-    title: 'test',
-    nav: [
-      {
-        type: 'external',
-        text: 'link 1',
-        value: 'http://google.com',
+    title: 'Some form',
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+        },
       },
-    ],
+    },
+    onChange: 'valueChanged',
   },
 };
