@@ -479,7 +479,28 @@
       "label": "Ajouter une Page",
       "defaultName": "Page"
     },
-    "empty": "Des interfaces en fonction des besoins et des rôles",
+    "empty": {
+      "title": "<0>Cette page est vide…</0><1>Commencez à créer, ajoutez votre premier bloc !</1>",
+      "subtitle": "Vous ne savez pas par quoi commencer ?",
+      "suggestions": {
+        "header": {
+          "title": "Entête",
+          "text": "Présentez votre marque grâce à votre logo et une navigation"
+        },
+        "cards": {
+          "title": "Groupe de cartes",
+          "text": "Afficher des cartes"
+        },
+        "richtext": {
+          "title": "Texte enrichi",
+          "text": "Ecrivez tout ce que vous souhaitez"
+        },
+        "form": {
+          "title": "Formulaire",
+          "text": "Besoin de récupérer des leads ? Ajoutez un formulaire"
+        }
+      }
+    },
     "delete": {
       "label": "Supprimer la page",
       "confirm": {
