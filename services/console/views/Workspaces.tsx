@@ -26,6 +26,7 @@ import { removeEmpty, search } from '../utils/filterUtils';
 import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import WorkspaceMenu from '../components/Workspaces/WorkspaceMenu';
 import { Workspace } from '../utils/api';
+import HeaderPopovers from './HeaderPopovers';
 
 export const WorkspacesView = () => {
   const {
@@ -79,36 +80,7 @@ export const WorkspacesView = () => {
           <Header
             leftContent={
               <div className="flex flex-row items-center justify-center">
-                <Popover
-                  content={() => (
-                    <div className="flex h-[75vh] w-[30rem]">
-                      <IFrameLoader
-                        className="flex flex-1"
-                        src={`https://studio.prisme.ai/${language}/pages/I55NTRH`}
-                      />
-                    </div>
-                  )}
-                  overlayClassName="pr-full-popover"
-                >
-                  <Button variant="grey" className="!text-white">
-                    <Space>{t('help')}</Space>
-                  </Button>
-                </Popover>
-                <Popover
-                  content={() => (
-                    <div className="flex h-[75vh] w-[30rem]">
-                      <IFrameLoader
-                        className="flex flex-1"
-                        src={`https://studio.prisme.ai/${language}/pages/xDe6PaQ`}
-                      />
-                    </div>
-                  )}
-                  overlayClassName="pr-full-popover"
-                >
-                  <Button variant="grey" className="!text-white">
-                    <Space>{t('whatsNew')}</Space>
-                  </Button>
-                </Popover>
+                <HeaderPopovers />
               </div>
             }
           />
