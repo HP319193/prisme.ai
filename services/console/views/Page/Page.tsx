@@ -14,13 +14,12 @@ import {
   FieldProps,
   Loading,
   notification,
-  PageHeader,
   Schema,
   SchemaFormDescription,
   Tooltip,
 } from '@prisme.ai/design-system';
 import Head from 'next/head';
-import { Segmented } from 'antd';
+import { PageHeader, Segmented } from 'antd';
 import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import useLocalizedText from '../../utils/useLocalizedText';
 import PageBuilder from '../../components/PageBuilder';
@@ -413,6 +412,7 @@ export const Page = () => {
   return (
     <>
       <PageHeader
+        className="h-[4rem] flex items-center"
         title={
           <div className="flex flex-row items-center text-lg">
             <span className="font-medium -mt-[0.3rem]">
@@ -466,7 +466,7 @@ export const Page = () => {
             </div>
           </div>
         }
-        RightButtons={[
+        extra={[
           <div className="overflow-hidden" key="buttons">
             <RightButtons
               page={page}

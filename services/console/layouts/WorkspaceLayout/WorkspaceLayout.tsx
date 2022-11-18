@@ -23,6 +23,7 @@ import { generateNewName } from '../../utils/generateNewName';
 import { Workspace } from '@prisme.ai/sdk';
 import Navigation from './Navigation';
 import { DoubleLeftOutlined, WarningOutlined } from '@ant-design/icons';
+import PoweredBy from '../../components/PoweredBy';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const { workspace, createAutomation, saveSource, save } = useWorkspace();
@@ -237,20 +238,25 @@ export const WorkspaceLayout: FC = ({ children }) => {
           onCancel={() => setAppStoreVisible(false)}
         />
         <div className="h-full flex flex-row">
-          <SidePanel
-            variant="squared"
-            className={`min-w-xs ${
-              fullSidebar ? 'max-w-xs' : 'max-w-[4rem]'
-            } transition-all`}
+          <Layout
+            className={`${
+              fullSidebar ? 'max-w-xs' : 'max-w-[4.2rem]'
+            } transition-all p-0`}
           >
-            <div className="flex w-full flex-col justify-between overflow-hidden">
+            <div className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden">
               <Navigation
                 onCreateAutomation={createAutomationHandler}
                 onCreatePage={createPageHandler}
                 onInstallApp={installAppHandler}
-                className="max-h-[calc(100%-1rem)]"
+                onExpand={() => setFullSidebar(true)}
+                className="max-h-[calc(100%-3rem)]"
               />
               <div className="flex justify-end bg-white">
+                <div className="flex flex-1 items-center pl-4 whitespace-nowrap mr-5 text-[0.75rem] text-pr-grey">
+                  <a href="https://prisme.ai" target="_blank" rel="noreferrer">
+                    {t('powered', { ns: 'common' })}
+                  </a>
+                </div>
                 <Tooltip
                   title={t('workspace.sidebar', {
                     context: fullSidebar ? 'minimize' : 'extend',
@@ -258,7 +264,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
                   placement="right"
                 >
                   <DoubleLeftOutlined
-                    className={`transition-all ${
+                    className={`text-[1.6rem] m-2 mr-4 transition-all ${
                       fullSidebar ? '' : 'rotate-180'
                     }`}
                     onClick={() => setFullSidebar(!fullSidebar)}
@@ -266,7 +272,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
                 </Tooltip>
               </div>
             </div>
-          </SidePanel>
+          </Layout>
           <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-full">
             {creating ? <Loading /> : children}
           </div>

@@ -1,9 +1,5 @@
-import {
-  Modal,
-  notification,
-  PageHeader,
-  Schema,
-} from '@prisme.ai/design-system';
+import { Modal, notification, Schema } from '@prisme.ai/design-system';
+import { PageHeader } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
@@ -142,6 +138,7 @@ const Apps = ({}: AppsProps) => {
   return (
     <>
       <PageHeader
+        className="h-[4rem] flex items-center"
         title={
           <div className="flex flex-row items-center text-lg">
             {photo && (

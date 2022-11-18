@@ -16,7 +16,6 @@ import {
   Button,
   Loading,
   notification,
-  PageHeader,
   Schema,
   Space,
 } from '@prisme.ai/design-system';
@@ -30,6 +29,7 @@ import { useWorkspace } from '../components/WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import { usePrevious } from '../utils/usePrevious';
 import EditableTitle from '../components/AutomationBuilder/EditableTitle';
+import { PageHeader } from 'antd';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -307,6 +307,7 @@ export const Automation = () => {
   return (
     <>
       <PageHeader
+        className="h-[4rem] flex items-center"
         title={
           <div className="flex flex-row items-center text-lg">
             <span className="font-medium -mt-[0.3rem]">
@@ -338,7 +339,7 @@ export const Automation = () => {
             </span>
           </div>
         }
-        RightButtons={[
+        extra={[
           <Button
             onClick={save}
             disabled={saving}

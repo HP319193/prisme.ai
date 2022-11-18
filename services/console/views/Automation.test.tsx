@@ -3,9 +3,10 @@ import renderer, { act } from 'react-test-renderer';
 import AutomationBuilder from '../components/AutomationBuilder';
 import { useRouter } from 'next/router';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
-import { notification, PageHeader } from '@prisme.ai/design-system';
+import { notification } from '@prisme.ai/design-system';
 import EditDetails from '../layouts/EditDetails';
 import { useWorkspace } from '../components/WorkspaceProvider';
+import { PageHeader } from 'antd';
 
 jest.mock('../utils/useYaml', () => {
   const toJSON = jest.fn();
@@ -135,9 +136,7 @@ it('should save', async () => {
   });
 
   await act(async () => {
-    await root.root
-      .findByType(PageHeader)
-      .props.RightButtons[0].props.onClick();
+    await root.root.findByType(PageHeader).props.extra[0].props.onClick();
   });
 
   expect(useWorkspace().updateAutomation).toHaveBeenCalled();
