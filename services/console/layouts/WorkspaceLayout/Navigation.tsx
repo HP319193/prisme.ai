@@ -159,9 +159,10 @@ export const Navigation = ({
   );
   const filteredApps = useMemo(
     () =>
-      Array.from(appInstances.get(id) || []).filter(
-        ({ appSlug, slug, appName: name }) =>
-          search(searchValue)(`${appSlug} ${slug} ${localize(name)}}`)
+      Array.from(
+        appInstances.get(id) || []
+      ).filter(({ appSlug, slug, appName: name }) =>
+        search(searchValue)(`${appSlug} ${slug} ${localize(name)}}`)
       ),
     [appInstances, id, localize, searchValue]
   );
@@ -217,32 +218,6 @@ export const Navigation = ({
         >
           {t('workspace.sections.activity')}
         </Item>
-        {!(searchValue && filteredAutomations.length === 0) && (
-          <ItemsGroup
-            title={t('workspace.sections.automations')}
-            onClick={toggle('automations')}
-            open={
-              !!opens.get('automations') ||
-              (!!searchValue && filteredAutomations.length > 0)
-            }
-            onAdd={onCreateAutomation}
-            tooltip={t('workspace.add.automation')}
-          >
-            {filteredAutomations.map(([slug, { name }]) => (
-              <Item
-                key={slug}
-                href={`/workspaces/${id}/automations/${slug}`}
-                icon={
-                  <Tooltip title={localize(name)} placement="right">
-                    <BranchesOutlined />
-                  </Tooltip>
-                }
-              >
-                {localize(name)}
-              </Item>
-            ))}
-          </ItemsGroup>
-        )}
         {!(searchValue && filteredPages.length === 0) && (
           <ItemsGroup
             title={t('workspace.sections.pages')}
@@ -261,6 +236,32 @@ export const Navigation = ({
                 icon={
                   <Tooltip title={localize(name)} placement="right">
                     <FileOutlined />
+                  </Tooltip>
+                }
+              >
+                {localize(name)}
+              </Item>
+            ))}
+          </ItemsGroup>
+        )}
+        {!(searchValue && filteredAutomations.length === 0) && (
+          <ItemsGroup
+            title={t('workspace.sections.automations')}
+            onClick={toggle('automations')}
+            open={
+              !!opens.get('automations') ||
+              (!!searchValue && filteredAutomations.length > 0)
+            }
+            onAdd={onCreateAutomation}
+            tooltip={t('workspace.add.automation')}
+          >
+            {filteredAutomations.map(([slug, { name }]) => (
+              <Item
+                key={slug}
+                href={`/workspaces/${id}/automations/${slug}`}
+                icon={
+                  <Tooltip title={localize(name)} placement="right">
+                    <BranchesOutlined />
                   </Tooltip>
                 }
               >
