@@ -84,19 +84,6 @@ export class Fetcher {
     } catch {
       return text as T;
     }
-
-    if (text.status == 'fulfilled') {
-      return text.value as unknown as T;
-    }
-
-    throw new ApiError(
-      {
-        error: 'Failed to extract json and text from fetch response',
-        message: '',
-        details: { url: `${this.host}${url}` },
-      },
-      500
-    );
   }
 
   async get<T = any>(url: string) {
