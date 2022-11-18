@@ -61,18 +61,28 @@ export class Fetcher {
       throw error;
     }
 
-    const cloned = res.clone();
-    const [json, text] = await Promise.allSettled([res.json(), cloned.text()]);
+    const contentType = res.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        const response = (await res.json()) || {};
+        Object.defineProperty(response, 'headers', {
+          value: headersAsObject(res.headers),
+          configurable: false,
+          enumerable: false,
+          writable: false,
+        });
+        return response as T;
+      } catch (e) {
+        return {} as T;
+      }
+    }
 
-    if (json.status == 'fulfilled') {
-      const response = json.value;
-      Object.defineProperty(response, 'headers', {
-        value: headersAsObject(res.headers),
-        configurable: false,
-        enumerable: false,
-        writable: false,
-      });
-      return response;
+    const text = await res.text();
+
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      return text as T;
     }
 
     if (text.status == 'fulfilled') {
