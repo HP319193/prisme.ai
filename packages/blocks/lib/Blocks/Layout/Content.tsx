@@ -41,7 +41,7 @@ export const Content = ({
       className={tw`${className} content-stack__content content transition-transform  ${animationClassName}`}
     >
       {blocks &&
-        blocks.map(({ block, url, onInit, ...config }, index) => (
+        blocks.map(({ block, ...config }, index) => (
           <div
             key={index}
             className={tw`flex content__block-container block-container snap-start`}
