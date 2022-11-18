@@ -1257,7 +1257,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Workspace'
+                $ref: '#/components/schemas/DSULReadOnly'
         '404':
           description: Object not found
           content:
@@ -1532,7 +1532,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Workspace'
+                $ref: '#/components/schemas/WorkspaceVersion'
         '404':
           description: Object not found
           content:
@@ -1733,7 +1733,7 @@ paths:
               schema:
                 type: object
                 required:
-                  - id
+                  - slug
                 properties:
                   slug:
                     type: string
@@ -1830,7 +1830,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Page'
+                  $ref: '#/components/schemas/PageMeta'
         '404':
           description: Object not found
           content:
@@ -2022,46 +2022,6 @@ paths:
           schema:
             type: string
         - name: 'pageSlug'
-          in: 'path'
-          description: 'Page slug'
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Success Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DetailedPage'
-        '404':
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ObjectNotFoundError'
-        '401':
-          description: AuthenticationError
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthenticationError'
-        '403':
-          description: Bad permissions
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenError'
-
-  # Retro-compatibility
-  /v2/pages/{slug}:
-    get:
-      description: Fetch a page by slug
-      operationId: getPageBySlugLegacy
-      tags:
-        - 'Prisme.ai Workspaces'
-      parameters:
-        - name: 'slug'
           in: 'path'
           description: 'Page slug'
           required: true
@@ -2954,11 +2914,12 @@ components:
         slug:
           type: string
 
-    AppInstance:
+    AppInstanceMeta:
       type: object
       required:
         - appSlug
-      properties: &APP_INSTANCE_PROPERTIES
+      additionalProperties: false
+      properties: &AppInstanceMeta
         appSlug:
           type: string
           description: 'App unique id'
@@ -2967,13 +2928,29 @@ components:
         appVersion:
           type: string
           description: 'Defaults to the latest known app version'
-        config: {}
         slug:
           type: string
           description: Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
         disabled:
           type: boolean
           description: If disabled, this appInstance will be ignored during execution
+        updatedAt:
+          type: string
+        createdAt:
+          type: string
+        updatedBy:
+          type: string
+        createdBy:
+          type: string
+
+    AppInstance:
+      type: object
+      required:
+        - appSlug
+      additionalProperties: false
+      properties:
+        <<: *AppInstanceMeta
+        config: {}
 
     AppDetails:
       type: object
@@ -2997,8 +2974,6 @@ components:
               slug:
                 type: string
               url:
-                type: string
-              block:
                 type: string
               edit:
                 $ref: '#/components/schemas/TypedArgument'
@@ -3062,7 +3037,9 @@ components:
 
     AppInstancePatch:
       type: object
-      properties: *APP_INSTANCE_PROPERTIES
+      properties:
+        <<: *AppInstanceMeta
+        config: {}
 
     DetailedAppInstance:
       type: object
@@ -3076,12 +3053,7 @@ components:
         $ref: '#/components/schemas/DetailedAppInstance'
 
     Workspace:
-      allOf:
-        - $ref: '#/components/schemas/DSUL'
-        - type: object
-          properties:
-            createdBy:
-              type: string
+      $ref: '#/components/schemas/DSUL'
 
     WorkspaceVersion:
       type: object
@@ -3101,43 +3073,50 @@ components:
       additionalProperties: false
       required:
         - name
-      properties:
+      properties: &DSUL
         name:
           type: string
         description:
           $ref: '#/components/schemas/LocalizedText'
         photo:
           type: string
-        owner:
-          type: object
-          properties:
-            id:
-              type: string
-        imports:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/AppInstance'
         config:
           $ref: '#/components/schemas/Config'
-        automations:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/Automation'
         blocks:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/Block'
+        slug:
+          type: string
+        id:
+          type: string
+
+    DSULReadOnly:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        <<: *DSUL
+        imports:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AppInstanceMeta'
+        automations:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AutomationMeta'
+        pages:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PageMeta'
         createdAt:
           type: string
         updatedAt:
           type: string
-        id:
+        createdBy:
           type: string
-        pages:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/Page'
-        slug:
+        id:
           type: string
 
     Config:
@@ -3225,26 +3204,14 @@ components:
       items:
         $ref: '#/components/schemas/Instruction'
 
-    Automation:
+    AutomationMeta:
       type: object
       required:
-        - do
         - name
-      description: Full description at (TODO swagger url)
       additionalProperties: false
-      properties:
-        when:
-          $ref: '#/components/schemas/When'
+      properties: &AutomationMeta
         description:
           $ref: '#/components/schemas/LocalizedText'
-        arguments:
-          additionalProperties:
-            $ref: '#/components/schemas/TypedArgument'
-        do:
-          $ref: '#/components/schemas/InstructionList'
-        output:
-          description: 'Automation result expression. Might be a variable reference, an object/array with variables inside ...'
-          example: '{{result}}'
         private:
           description: "Set this to true if you don't want your automation to be accessible outside of your app. Default is false."
           example: false
@@ -3257,11 +3224,61 @@ components:
         slug:
           type: string
           description: Unique & human readable id across current workspace's automations
+        arguments:
+          additionalProperties:
+            $ref: '#/components/schemas/TypedArgument'
+        when:
+          $ref: '#/components/schemas/When'
+        emits:
+          type: array
+          items:
+            type: object
+            required:
+              - event
+            properties:
+              event:
+                type: string
+              autocomplete:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    from:
+                      type: string
+                    path:
+                      type: string
+                    template:
+                      type: string
+        updatedAt:
+          type: string
+        createdAt:
+          type: string
+        updatedBy:
+          type: string
+        createdBy:
+          type: string
+
+    Automation:
+      type: object
+      required:
+        - do
+        - name
+      additionalProperties: false
+      properties:
+        <<: *AutomationMeta
+        when:
+          $ref: '#/components/schemas/When'
+        arguments:
+          additionalProperties:
+            $ref: '#/components/schemas/TypedArgument'
+        do:
+          $ref: '#/components/schemas/InstructionList'
+        output:
+          description: 'Automation result expression. Might be a variable reference, an object/array with variables inside ...'
+          example: '{{result}}'
 
     Block:
       type: object
-      required:
-        - name
       description: Block
       additionalProperties: false
       properties:
@@ -3283,20 +3300,13 @@ components:
           $ref: '#/components/schemas/AnyValue'
           description: 'default config applied to the Block. Usefull for extended Blocks.'
 
-    Page:
-      allOf:
-        - $ref: '#/components/schemas/PageWithoutBlocks'
-        - required:
-            - name
-            - blocks
-
-    PageWithoutBlocks:
+    PageMeta:
       type: object
       required:
         - name
       description: Page
       additionalProperties: false
-      properties:
+      properties: &PageMeta
         name:
           $ref: '#/components/schemas/LocalizedText'
         description:
@@ -3305,21 +3315,9 @@ components:
           type: string
         workspaceSlug:
           type: string
-        blocks:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              config:
-                type: object
-                additionalProperties: true
         id:
           type: string
         slug:
-          type: string
-        styles:
           type: string
         createdBy:
           type: string
@@ -3333,34 +3331,68 @@ components:
           $ref: '#/components/schemas/PermissionsMap'
         apiKey:
           type: string
-        __migrate:
+
+    Page:
+      type: object
+      additionalProperties: false
+      properties:
+        <<: *PageMeta
+        blocks:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              config:
+                type: object
+                additionalProperties: true
+        styles:
+          type: string
+
+    PageDetails:
+      type: object
+      required:
+        - blocks
+        - appInstances
+      properties:
+        blocks:
+          type: array
+          items:
+            type: object
+            required:
+              - name
+              - appInstance
+            properties:
+              name:
+                type: string
+              config: {}
+              url:
+                type: string
+              appInstance:
+                type: string
+        appInstances:
+          type: array
+          items:
+            type: 'object'
+            properties:
+              slug:
+                type: string
+              appConfig: {}
+              blocks:
+                description: Map block names to their URL
+                additionalProperties:
+                  type: string
+                example:
+                  Dialog Manager.config: https://cdn-assets.prisme.ai/widgets/nlu/setup-widget/main.js
+        public:
           type: boolean
-          description: 'Temporary field for old pages conversion to DSUL'
+          description: 'Indicates whether this page is public. Reflects page permissions and cannot be set directly'
 
     DetailedPage:
       allOf:
         - $ref: '#/components/schemas/Page'
-        - properties:
-            blocks:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  url:
-                    type: string
-                  appInstance:
-                    type: string
-            appInstances:
-              type: array
-              items:
-                type: 'object'
-                properties:
-                  slug:
-                    type: string
-                  appConfig: {}
-                  blocks: {}
+        - $ref: '#/components/schemas/PageDetails'
 
     File:
       type: object
@@ -4518,11 +4550,8 @@ components:
         payload:
           type: object
           required:
-            - appInstance
             - slug
           properties:
-            appInstance:
-              $ref: '#/components/schemas/AppInstance'
             slug:
               type: string
 
@@ -4640,18 +4669,10 @@ components:
         payload:
           type: object
           required:
-            - automation
+            - automationSlug
           properties:
-            automation:
-              type: object
-              required:
-                - slug
-                - name
-              properties:
-                slug:
-                  type: string
-                name:
-                  $ref: '#/components/schemas/LocalizedText'
+            automationSlug:
+              type: string
 
     CreatedPage:
       type: object
@@ -4705,10 +4726,10 @@ components:
         payload:
           type: object
           required:
-            - page
+            - pageSlug
           properties:
-            page:
-              $ref: '#/components/schemas/PageWithoutBlocks'
+            pageSlug:
+              type: string
 
     PagePermissionsShared:
       type: object
@@ -5114,10 +5135,7 @@ components:
           example: BadParameters
         message:
           type: string
-        details:
-          type: array
-          items:
-            type: object
+        details: {}
 
     AuthenticationError:
       type: object

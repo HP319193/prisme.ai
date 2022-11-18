@@ -1,6 +1,9 @@
 function getEmitEvents(
   doList: Prismeai.InstructionList
 ): Prismeai.Emit['emit'][] {
+  if (!Array.isArray(doList)) {
+    return [];
+  }
   return doList.flatMap((instruction) => {
     const [name] = Object.keys(instruction);
     const value = instruction[name as keyof typeof instruction];
@@ -20,41 +23,16 @@ function getEmitEvents(
   });
 }
 
-function deduplicateEmit(
+export function deduplicateEmits(
   emits: Required<Prismeai.AppDetails>['events']['emit'] = []
 ) {
   const allEvents = emits.map(({ event }) => event);
   return emits.filter(({ event }, k) => !allEvents.slice(0, k).includes(event));
 }
-function deduplicateListen(
-  listens: Required<Prismeai.AppDetails>['events']['listen'] = []
-) {
-  return Array.from(new Set(listens));
-}
 
-export function extractEvents(app: Prismeai.Workspace) {
-  const { emit, listen } = Object.keys(app.automations || {}).reduce<
-    Required<Prismeai.AppDetails>['events']
-  >(
-    (prev, key) => {
-      const automation = app?.automations?.[key];
-      if (!automation || automation.disabled || automation.private) return prev;
-
-      const listen = [
-        ...(prev.listen || []),
-        ...(automation.when?.events || []),
-      ];
-      const emit = [
-        ...(prev.emit || []),
-        ...getEmitEvents(automation.do || []),
-      ];
-      return { listen, emit };
-    },
-    { emit: [], listen: [] }
-  );
-
-  return {
-    emit: deduplicateEmit(emit),
-    listen: deduplicateListen(listen),
-  };
+export function extractEmits(
+  automation: Prismeai.Automation
+): Prismeai.Emit['emit'][] {
+  const emits = getEmitEvents(automation.do || []);
+  return deduplicateEmits(emits);
 }

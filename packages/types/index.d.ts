@@ -357,7 +357,6 @@ declare namespace Prismeai {
          * Defaults to the latest known app version
          */
         appVersion?: string;
-        config?: any;
         /**
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
@@ -366,6 +365,10 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
+        updatedAt?: string;
+        updatedBy?: string;
+        createdBy?: string;
+        config?: any;
     } | {
         /**
          * example:
@@ -764,7 +767,6 @@ declare namespace Prismeai {
         blocks: {
             slug: string;
             url?: string;
-            block?: string;
             edit?: TypedArgument;
             name?: LocalizedText;
             description?: LocalizedText;
@@ -814,7 +816,6 @@ declare namespace Prismeai {
          * Defaults to the latest known app version
          */
         appVersion?: string;
-        config?: any;
         /**
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
@@ -823,8 +824,36 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
+        updatedAt?: string;
+        createdAt?: string;
+        updatedBy?: string;
+        createdBy?: string;
+        config?: any;
     }
     export type AppInstanceDetailedList = DetailedAppInstance[];
+    export interface AppInstanceMeta {
+        /**
+         * App unique id
+         */
+        appSlug: string;
+        appName?: LocalizedText;
+        /**
+         * Defaults to the latest known app version
+         */
+        appVersion?: string;
+        /**
+         * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+         */
+        slug?: string;
+        /**
+         * If disabled, this appInstance will be ignored during execution
+         */
+        disabled?: boolean;
+        updatedAt?: string;
+        createdAt?: string;
+        updatedBy?: string;
+        createdBy?: string;
+    }
     export interface AppInstancePatch {
         /**
          * App unique id
@@ -835,7 +864,6 @@ declare namespace Prismeai {
          * Defaults to the latest known app version
          */
         appVersion?: string;
-        config?: any;
         /**
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
@@ -844,6 +872,11 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
+        updatedAt?: string;
+        createdAt?: string;
+        updatedBy?: string;
+        createdBy?: string;
+        config?: any;
     }
     export interface AppUsageMetrics {
         slug: string;
@@ -865,22 +898,8 @@ declare namespace Prismeai {
          */
         message?: string;
     }
-    /**
-     * Full description at (TODO swagger url)
-     */
     export interface Automation {
-        when?: When;
         description?: LocalizedText;
-        arguments?: {
-            [name: string]: TypedArgument;
-        };
-        do: InstructionList;
-        /**
-         * Automation result expression. Might be a variable reference, an object/array with variables inside ...
-         * example:
-         * {{result}}
-         */
-        output?: any;
         /**
          * Set this to true if you don't want your automation to be accessible outside of your app. Default is false.
          * example:
@@ -898,6 +917,69 @@ declare namespace Prismeai {
          * Unique & human readable id across current workspace's automations
          */
         slug?: string;
+        arguments?: {
+            [name: string]: TypedArgument;
+        };
+        when?: When;
+        emits?: {
+            event: string;
+            autocomplete?: {
+                [name: string]: {
+                    from?: string;
+                    path?: string;
+                    template?: string;
+                };
+            };
+        }[];
+        updatedAt?: string;
+        createdAt?: string;
+        updatedBy?: string;
+        createdBy?: string;
+        do: InstructionList;
+        /**
+         * Automation result expression. Might be a variable reference, an object/array with variables inside ...
+         * example:
+         * {{result}}
+         */
+        output?: any;
+    }
+    export interface AutomationMeta {
+        description?: LocalizedText;
+        /**
+         * Set this to true if you don't want your automation to be accessible outside of your app. Default is false.
+         * example:
+         * false
+         */
+        private?: any;
+        /**
+         * Set this to true if you want to turn off this automation.
+         * example:
+         * true
+         */
+        disabled?: boolean;
+        name: LocalizedText;
+        /**
+         * Unique & human readable id across current workspace's automations
+         */
+        slug?: string;
+        arguments?: {
+            [name: string]: TypedArgument;
+        };
+        when?: When;
+        emits?: {
+            event: string;
+            autocomplete?: {
+                [name: string]: {
+                    from?: string;
+                    path?: string;
+                    template?: string;
+                };
+            };
+        }[];
+        updatedAt?: string;
+        createdAt?: string;
+        updatedBy?: string;
+        createdBy?: string;
     }
     export interface AutomationResult {
         slug: string;
@@ -910,16 +992,14 @@ declare namespace Prismeai {
          */
         error?: string;
         message?: string;
-        details?: {
-            [key: string]: any;
-        }[];
+        details?: any;
     }
     /**
      * Block
      */
     export interface Block {
         description?: LocalizedText;
-        name: LocalizedText;
+        name?: LocalizedText;
         photo?: string;
         /**
          * A block can be a javascript bundled file. Host it on the internet and put its url here.
@@ -980,7 +1060,6 @@ declare namespace Prismeai {
                  * Defaults to the latest known app version
                  */
                 appVersion?: string;
-                config?: any;
                 /**
                  * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
                  */
@@ -989,6 +1068,11 @@ declare namespace Prismeai {
                  * If disabled, this appInstance will be ignored during execution
                  */
                 disabled?: boolean;
+                updatedAt?: string;
+                createdAt?: string;
+                updatedBy?: string;
+                createdBy?: string;
+                config?: any;
                 oldConfig: any;
             };
             slug: string;
@@ -1052,7 +1136,7 @@ declare namespace Prismeai {
         type: "workspaces.automations.created";
         payload: {
             slug: string;
-            automation: /* Full description at (TODO swagger url) */ Automation;
+            automation: Automation;
         };
     }
     export interface CreatedPage {
@@ -1062,7 +1146,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.pages.created";
         payload: {
-            page: /* Page */ Page;
+            page: Page;
         };
     }
     export interface CreatedUserTopic {
@@ -1087,26 +1171,35 @@ declare namespace Prismeai {
         name: string;
         description?: LocalizedText;
         photo?: string;
-        owner?: {
-            id?: string;
-        };
-        imports?: {
-            [name: string]: AppInstance;
-        };
         config?: Config;
-        automations?: {
-            [name: string]: /* Full description at (TODO swagger url) */ Automation;
-        };
         blocks?: {
             [name: string]: /* Block */ Block;
         };
-        createdAt?: string;
-        updatedAt?: string;
+        slug?: string;
         id?: string;
-        pages?: {
-            [name: string]: /* Page */ Page;
+    }
+    export interface DSULReadOnly {
+        name: string;
+        description?: LocalizedText;
+        photo?: string;
+        config?: Config;
+        blocks?: {
+            [name: string]: /* Block */ Block;
         };
         slug?: string;
+        id?: string;
+        imports?: {
+            [name: string]: AppInstanceMeta;
+        };
+        automations?: {
+            [name: string]: AutomationMeta;
+        };
+        pages?: {
+            [name: string]: /* Page */ PageMeta;
+        };
+        createdAt?: string;
+        updatedAt?: string;
+        createdBy?: string;
     }
     export interface Delete {
         delete: {
@@ -1145,10 +1238,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.automations.deleted";
         payload: {
-            automation: {
-                slug: string;
-                name: LocalizedText;
-            };
+            automationSlug: string;
         };
     }
     export interface DeletedPage {
@@ -1158,7 +1248,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.pages.deleted";
         payload: {
-            page: /* Page */ PageWithoutBlocks;
+            pageSlug: string;
         };
     }
     export interface DeletedWorkspace {
@@ -1191,7 +1281,6 @@ declare namespace Prismeai {
          * Defaults to the latest known app version
          */
         appVersion?: string;
-        config?: Config;
         /**
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
@@ -1200,10 +1289,14 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
+        updatedAt?: string;
+        createdAt?: string;
+        updatedBy?: string;
+        createdBy?: string;
+        config?: Config;
         blocks: {
             slug: string;
             url?: string;
-            block?: string;
             edit?: TypedArgument;
             name?: LocalizedText;
             description?: LocalizedText;
@@ -1235,40 +1328,46 @@ declare namespace Prismeai {
             slug?: string;
         };
     }
-    /**
-     * Page
-     */
     export interface DetailedPage {
-        name: LocalizedText;
+        name?: LocalizedText;
         description?: LocalizedText;
         workspaceId?: string;
         workspaceSlug?: string;
-        blocks: {
-            name?: string;
-            config?: {
-                [name: string]: any;
-            };
-            url?: string;
-            appInstance?: string;
-        }[];
         id?: string;
         slug?: string;
-        styles?: string;
         createdBy?: string;
         updatedBy?: string;
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
         apiKey?: string;
-        /**
-         * Temporary field for old pages conversion to DSUL
-         */
-        __migrate?: boolean;
-        appInstances?: {
+        blocks: {
+            name: string;
+            config?: {
+                [name: string]: any;
+            };
+            url?: string;
+            appInstance: string;
+        }[];
+        styles?: string;
+        appInstances: {
             slug?: string;
             appConfig?: any;
-            blocks?: any;
+            /**
+             * Map block names to their URL
+             * example:
+             * {
+             *   "Dialog Manager.config": "https://cdn-assets.prisme.ai/widgets/nlu/setup-widget/main.js"
+             * }
+             */
+            blocks?: {
+                [name: string]: string;
+            };
         }[];
+        /**
+         * Indicates whether this page is public. Reflects page permissions and cannot be set directly
+         */
+        public?: boolean;
     }
     export interface Emit {
         emit: {
@@ -1552,33 +1651,69 @@ declare namespace Prismeai {
         error?: string;
         message?: string;
     }
-    /**
-     * Page
-     */
     export interface Page {
-        name: LocalizedText;
+        name?: LocalizedText;
         description?: LocalizedText;
         workspaceId?: string;
         workspaceSlug?: string;
-        blocks: {
-            name?: string;
-            config?: {
-                [name: string]: any;
-            };
-        }[];
         id?: string;
         slug?: string;
-        styles?: string;
         createdBy?: string;
         updatedBy?: string;
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
         apiKey?: string;
+        blocks?: {
+            name?: string;
+            config?: {
+                [name: string]: any;
+            };
+        }[];
+        styles?: string;
+    }
+    export interface PageDetails {
+        blocks: {
+            name: string;
+            config?: any;
+            url?: string;
+            appInstance: string;
+        }[];
+        appInstances: {
+            slug?: string;
+            appConfig?: any;
+            /**
+             * Map block names to their URL
+             * example:
+             * {
+             *   "Dialog Manager.config": "https://cdn-assets.prisme.ai/widgets/nlu/setup-widget/main.js"
+             * }
+             */
+            blocks?: {
+                [name: string]: string;
+            };
+        }[];
         /**
-         * Temporary field for old pages conversion to DSUL
+         * Indicates whether this page is public. Reflects page permissions and cannot be set directly
          */
-        __migrate?: boolean;
+        public?: boolean;
+    }
+    /**
+     * Page
+     */
+    export interface PageMeta {
+        name: LocalizedText;
+        description?: LocalizedText;
+        workspaceId?: string;
+        workspaceSlug?: string;
+        id?: string;
+        slug?: string;
+        createdBy?: string;
+        updatedBy?: string;
+        createdAt?: string;
+        updatedAt?: string;
+        permissions?: PermissionsMap;
+        apiKey?: string;
     }
     export interface PagePermissionsDeleted {
         /**
@@ -1602,34 +1737,6 @@ declare namespace Prismeai {
             subjectId: string;
             permissions: UserPermissions;
         };
-    }
-    /**
-     * Page
-     */
-    export interface PageWithoutBlocks {
-        name: LocalizedText;
-        description?: LocalizedText;
-        workspaceId?: string;
-        workspaceSlug?: string;
-        blocks?: {
-            name?: string;
-            config?: {
-                [name: string]: any;
-            };
-        }[];
-        id?: string;
-        slug?: string;
-        styles?: string;
-        createdBy?: string;
-        updatedBy?: string;
-        createdAt?: string;
-        updatedAt?: string;
-        permissions?: PermissionsMap;
-        apiKey?: string;
-        /**
-         * Temporary field for old pages conversion to DSUL
-         */
-        __migrate?: boolean;
     }
     export interface PendingWait {
         /**
@@ -1942,7 +2049,6 @@ declare namespace Prismeai {
          */
         type: "workspaces.apps.uninstalled";
         payload: {
-            appInstance: AppInstance;
             slug: string;
         };
     }
@@ -1966,7 +2072,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.automations.updated";
         payload: {
-            automation: /* Full description at (TODO swagger url) */ Automation;
+            automation: Automation;
             slug: string;
             /**
              * Filled with the previous automation slug when renamed
@@ -1997,7 +2103,7 @@ declare namespace Prismeai {
          */
         type: "workspaces.pages.updated";
         payload: {
-            page: /* Page */ Page;
+            page: Page;
         };
     }
     export interface UpdatedWorkspace {
@@ -2202,32 +2308,7 @@ declare namespace Prismeai {
         Schedules;
         endpoint: boolean | string;
     };
-    export interface Workspace {
-        name: string;
-        description?: LocalizedText;
-        photo?: string;
-        owner?: {
-            id?: string;
-        };
-        imports?: {
-            [name: string]: AppInstance;
-        };
-        config?: Config;
-        automations?: {
-            [name: string]: /* Full description at (TODO swagger url) */ Automation;
-        };
-        blocks?: {
-            [name: string]: /* Block */ Block;
-        };
-        createdAt?: string;
-        updatedAt?: string;
-        id?: string;
-        pages?: {
-            [name: string]: /* Page */ Page;
-        };
-        slug?: string;
-        createdBy?: string;
-    }
+    export type Workspace = DSUL;
     export interface WorkspacePermissionsDeleted {
         /**
          * example:
@@ -2379,9 +2460,9 @@ declare namespace PrismeaiAPI {
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
         }
-        export type RequestBody = /* Full description at (TODO swagger url) */ Prismeai.Automation;
+        export type RequestBody = Prismeai.Automation;
         namespace Responses {
-            export type $200 = /* Full description at (TODO swagger url) */ Prismeai.Automation;
+            export type $200 = Prismeai.Automation;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -2395,9 +2476,9 @@ declare namespace PrismeaiAPI {
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
         }
-        export type RequestBody = /* Page */ Prismeai.Page;
+        export type RequestBody = Prismeai.Page;
         namespace Responses {
-            export type $200 = /* Page */ Prismeai.Page;
+            export type $200 = Prismeai.Page;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -2506,7 +2587,7 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export interface $200 {
-                slug?: string;
+                slug: string;
             }
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -2735,7 +2816,7 @@ declare namespace PrismeaiAPI {
             automationSlug: Parameters.AutomationSlug;
         }
         namespace Responses {
-            export type $200 = /* Full description at (TODO swagger url) */ Prismeai.Automation;
+            export type $200 = Prismeai.Automation;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
@@ -2807,7 +2888,7 @@ declare namespace PrismeaiAPI {
             id: Parameters.Id;
         }
         namespace Responses {
-            export type $200 = /* Page */ Prismeai.DetailedPage;
+            export type $200 = Prismeai.DetailedPage;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
@@ -2823,21 +2904,7 @@ declare namespace PrismeaiAPI {
             pageSlug: Parameters.PageSlug;
         }
         namespace Responses {
-            export type $200 = /* Page */ Prismeai.DetailedPage;
-            export type $401 = Prismeai.AuthenticationError;
-            export type $403 = Prismeai.ForbiddenError;
-            export type $404 = Prismeai.ObjectNotFoundError;
-        }
-    }
-    namespace GetPageBySlugLegacy {
-        namespace Parameters {
-            export type Slug = string;
-        }
-        export interface PathParameters {
-            slug: Parameters.Slug;
-        }
-        namespace Responses {
-            export type $200 = /* Page */ Prismeai.DetailedPage;
+            export type $200 = Prismeai.DetailedPage;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
@@ -2908,7 +2975,7 @@ declare namespace PrismeaiAPI {
             version?: Parameters.Version;
         }
         namespace Responses {
-            export type $200 = Prismeai.Workspace;
+            export type $200 = Prismeai.DSULReadOnly;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
@@ -3012,7 +3079,7 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
         }
         namespace Responses {
-            export type $200 = /* Page */ Prismeai.Page[];
+            export type $200 = /* Page */ Prismeai.PageMeta[];
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -3127,7 +3194,7 @@ declare namespace PrismeaiAPI {
             versionId: Parameters.VersionId;
         }
         namespace Responses {
-            export type $200 = Prismeai.Workspace;
+            export type $200 = Prismeai.WorkspaceVersion;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
@@ -3270,9 +3337,9 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
             automationSlug: Parameters.AutomationSlug;
         }
-        export type RequestBody = /* Full description at (TODO swagger url) */ Prismeai.Automation;
+        export type RequestBody = Prismeai.Automation;
         namespace Responses {
-            export type $200 = /* Full description at (TODO swagger url) */ Prismeai.Automation;
+            export type $200 = Prismeai.Automation;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -3288,9 +3355,9 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
             id: Parameters.Id;
         }
-        export type RequestBody = /* Page */ Prismeai.Page;
+        export type RequestBody = Prismeai.Page;
         namespace Responses {
-            export type $200 = /* Page */ Prismeai.Page;
+            export type $200 = Prismeai.Page;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;

@@ -4,19 +4,22 @@ import { EventType } from '../../eda';
 import { logger } from '../../logger';
 import { getSuperAdmin, AccessManager } from '../../permissions';
 import { applyObjectUpdateOpLogs } from '../../utils/applyObjectUpdateOpLogs';
-import DSULStorage from '../DSULStorage';
+import DSULStorage, { DSULType } from '../DSULStorage';
 import Workspaces from './crud/workspaces';
 
 export { default as Workspaces } from './crud/workspaces';
+export { default as Automations } from './crud/automations';
+export { default as Pages } from './crud/pages';
+export { default as AppInstances } from './crud/appInstances';
 
 export async function syncWorkspacesWithConfigContexts(
   accessManager: AccessManager,
   broker: Broker,
-  workspaceStorage: DSULStorage,
-  appStorage: DSULStorage
+  workspacesStorage: DSULStorage,
+  appsStorage: DSULStorage
 ) {
   const superAdmin = await getSuperAdmin(accessManager);
-  const apps = new Apps(superAdmin, broker, appStorage);
+  const apps = new Apps(superAdmin, broker, appsStorage);
 
   await broker.on<Prismeai.UpdatedContexts['payload']>(
     EventType.UpdatedContexts,
@@ -34,7 +37,7 @@ export async function syncWorkspacesWithConfigContexts(
           superAdmin,
           apps,
           broker.child(event.source),
-          workspaceStorage
+          workspacesStorage
         );
         const currentWorkspace = await workspaces.getWorkspace(workspaceId);
 

@@ -19,7 +19,7 @@ export interface WorkspaceMetadata {
 export type SubjectInterfaces = {
   [SubjectType.Workspace]: WorkspaceMetadata;
   [SubjectType.App]: Prismeai.App;
-  [SubjectType.Page]: Prismeai.Page;
+  [SubjectType.Page]: Prismeai.PageMeta;
   [SubjectType.File]: Omit<Prismeai.File, 'url'>;
 };
 

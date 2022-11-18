@@ -1,15 +1,12 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
 import { AccessManager } from '../../permissions';
-import { Apps, Workspaces } from '../../services';
+import { Automations } from '../../services';
 import DSULStorage from '../../services/DSULStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
 
-export default function init(
-  workspacesStorage: DSULStorage,
-  appsStorage: DSULStorage
-) {
+export default function init(dsulStorage: DSULStorage) {
   const getServices = ({
     context,
     accessManager,
@@ -19,14 +16,12 @@ export default function init(
     accessManager: Required<AccessManager>;
     broker: Broker;
   }) => {
-    const apps = new Apps(accessManager, broker.child(context), appsStorage);
-    const workspaces = new Workspaces(
+    const automations = new Automations(
       accessManager,
-      apps,
       broker.child(context),
-      workspacesStorage
+      dsulStorage
     );
-    return { workspaces };
+    return { automations };
   };
 
   async function createAutomationHandler(
@@ -39,11 +34,8 @@ export default function init(
     }: Request<any, any, PrismeaiAPI.CreateAutomation.RequestBody>,
     res: Response<PrismeaiAPI.CreateAutomation.Responses.$200>
   ) {
-    const { workspaces } = getServices({ context, accessManager, broker });
-    const result = await workspaces.automations.createAutomation(
-      workspaceId,
-      body
-    );
+    const { automations } = getServices({ context, accessManager, broker });
+    const result = await automations.createAutomation(workspaceId, body);
     res.send(result);
   }
 
@@ -56,11 +48,8 @@ export default function init(
     }: Request<PrismeaiAPI.GetAutomation.PathParameters>,
     res: Response<PrismeaiAPI.GetAutomation.Responses.$200>
   ) {
-    const { workspaces } = getServices({ context, accessManager, broker });
-    const result = await workspaces.automations.getAutomation(
-      workspaceId,
-      automationSlug
-    );
+    const { automations } = getServices({ context, accessManager, broker });
+    const result = await automations.getAutomation(workspaceId, automationSlug);
     res.send(result);
   }
 
@@ -78,8 +67,8 @@ export default function init(
     >,
     res: Response<PrismeaiAPI.CreateAutomation.Responses.$200>
   ) {
-    const { workspaces } = getServices({ context, accessManager, broker });
-    const result = await workspaces.automations.updateAutomation(
+    const { automations } = getServices({ context, accessManager, broker });
+    const result = await automations.updateAutomation(
       workspaceId,
       automationSlug,
       body
@@ -96,8 +85,8 @@ export default function init(
     }: Request<PrismeaiAPI.DeleteAutomation.PathParameters>,
     res: Response<PrismeaiAPI.DeleteAutomation.Responses.$200>
   ) {
-    const { workspaces } = getServices({ context, accessManager, broker });
-    await workspaces.automations.deleteAutomation(workspaceId, automationSlug);
+    const { automations } = getServices({ context, accessManager, broker });
+    await automations.deleteAutomation(workspaceId, automationSlug);
     res.send({ slug: automationSlug });
   }
 

@@ -1,6 +1,7 @@
-import { IStorage, ObjectList } from '../types';
+import { DriverType, IStorage, ObjectList } from '../types';
 import AWS from 'aws-sdk';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
+import path from 'path';
 
 export interface S3Options {
   accessKeyId: string;
@@ -32,6 +33,10 @@ export default class S3Like implements IStorage {
       region: this.options.region,
       endpoint: this.options.endpoint,
     });
+  }
+
+  type() {
+    return DriverType.S3_LIKE;
   }
 
   public find(
@@ -169,5 +174,37 @@ export default class S3Like implements IStorage {
         }
       });
     });
+  }
+
+  public async copy(from: string, to: string) {
+    const objects = await this.find(from);
+    return await Promise.all(
+      objects.map(
+        ({ key }) =>
+          new Promise((resolve: any, reject: any) => {
+            this.client.copyObject(
+              {
+                Bucket: this.options.bucket,
+                CopySource: key,
+                Key: from === key ? key : path.join(to, key.slice(from.length)),
+                CacheControl: this.options.cacheControl,
+              },
+              function (err: any, data: any) {
+                if (err) {
+                  reject(
+                    new PrismeError(
+                      `Failed to copy from '${from}' to '${to}'`,
+                      err,
+                      ErrorSeverity.Fatal
+                    )
+                  );
+                } else {
+                  resolve(data);
+                }
+              }
+            );
+          })
+      )
+    );
   }
 }

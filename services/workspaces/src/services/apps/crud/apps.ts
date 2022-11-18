@@ -1,6 +1,6 @@
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
-import DSULStorage from '../../DSULStorage';
+import DSULStorage, { DSULType } from '../../DSULStorage';
 import { AccessManager, ActionType, SubjectType } from '../../../permissions';
 import {
   AlreadyUsedError,
@@ -14,7 +14,7 @@ import {
   MAXIMUM_APP_VERSION,
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
-import { extractEvents } from './extractEvents';
+import { deduplicateEmits } from '../../../utils/extractEmits';
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 
 export interface ListAppsQuery {
@@ -58,12 +58,16 @@ class Apps {
 
   publishApp = async (
     publish: PrismeaiAPI.PublishApp.RequestBody,
-    dsul: Prismeai.DSUL,
     versionRequest: Prismeai.WorkspaceVersion
   ) => {
     if (!publish.workspaceId) {
       throw new PrismeError('Please specify workspaceId', {});
     }
+    const dsul = await this.storage.get({
+      dsulType: DSULType.DSULIndex,
+      workspaceId: publish.workspaceId,
+      version: publish.workspaceVersion || 'current',
+    });
     if (!dsul.photo || !dsul.description) {
       throw new MissingFieldError('Missing photo or description', {
         fields: [
@@ -73,7 +77,8 @@ class Apps {
       });
     }
 
-    const app: Prismeai.App = {
+    const app: Prismeai.App & { id: string } = {
+      id: '',
       workspaceId: publish.workspaceId,
       slug: publish.slug,
       name: dsul.name,
@@ -153,19 +158,33 @@ class Apps {
       }
     }
 
-    if (dsul.blocks) {
-      const { blocks } = dsul;
-      Object.entries(blocks).forEach(([key, { block }]) => {
-        if (!block || block.match(/\./)) return;
-        if (Object.keys(blocks).includes(block)) {
-          blocks[key].block = `${app.slug}.${block}`;
-        }
-      });
-    }
-
     // Store corresponding DSUL
-    this.storage.save(app.slug!, dsul, 'current');
-    await this.storage.save(app.slug!, dsul, newVersion.name);
+    await Promise.all([
+      this.storage.copy(
+        {
+          workspaceId: app.workspaceId!,
+          version: publish.workspaceVersion || 'current',
+          parentFolder: true,
+        },
+        {
+          appSlug: app.slug,
+          parentFolder: true,
+          version: 'current',
+        }
+      ),
+      this.storage.copy(
+        {
+          workspaceId: app.workspaceId!,
+          version: publish.workspaceVersion || 'current',
+          parentFolder: true,
+        },
+        {
+          appSlug: app.slug,
+          parentFolder: true,
+          version: newVersion.name,
+        }
+      ),
+    ]);
     this.broker.send<Prismeai.PublishedApp['payload']>(
       EventType.PublishedApp,
       {
@@ -180,7 +199,7 @@ class Apps {
 
   exists = async (appSlug: string, version?: string) => {
     try {
-      await this.storage.get(appSlug, version || 'current');
+      await this.storage.get({ appSlug, version: version || 'current' });
       return true;
     } catch {
       throw new ObjectNotFoundError(
@@ -197,65 +216,50 @@ class Apps {
       SubjectType.App,
       appSlug
     );
-    return await this.storage.get(appSlug, version || 'current');
+    return await this.storage.get({ appSlug, version: version || 'current' });
   };
 
   getAppDetails = async (
-    appId: string,
+    appSlug: string,
     version?: string
   ): Promise<Prismeai.AppDetails> => {
-    const app = await this.storage.get(appId, version || 'current');
-    const hasDoc = !!(app.pages && app.pages['_doc']);
+    const [app, automations] = await Promise.all([
+      this.storage.get({ appSlug, version: version || 'current' }),
+      this.storage.folderIndex({
+        dsulType: DSULType.Automations,
+        appSlug,
+        version: version || 'current',
+        folderIndex: true,
+      }),
+    ]);
 
+    const allEventTriggers = Object.values(automations || {}).reduce<string[]>(
+      (listen, automation) => listen.concat(automation?.when?.events || []),
+      []
+    );
+    const allEmits = Object.values(automations || {}).reduce<
+      Required<Prismeai.AutomationMeta['emits']>
+    >((emits, automation) => (emits || []).concat(automation?.emits || []), []);
     return {
       config: app.config,
-      blocks: Object.entries(app.blocks || {}).map(
-        ([slug, { name, description, url, edit, block, config, photo }]) => ({
+      blocks: Object.entries(app.blocks || {}).map(([slug, block]) => {
+        return {
+          ...block,
           slug,
-          url,
-          name,
-          description,
-          edit,
-          block,
-          config,
-          photo,
-        })
-      ),
-      automations: Object.entries(app.automations || {})
-        .filter(([, { private: privateAutomation }]) => !privateAutomation)
-        .map(([slug, { name, description, arguments: args }]) => ({
-          slug,
-          name,
-          description,
-          arguments: args,
-        })),
+        };
+      }),
+      automations: Object.entries(automations || {})
+        .map(([slug, { disabled, name, description }]) =>
+          disabled ? false : { name, slug, description }
+        )
+        .filter<{ name: string; slug: string; description: string }>(
+          Boolean as any
+        ),
       photo: app.photo,
-      events: extractEvents(app),
-      documentation: hasDoc
-        ? {
-            workspaceSlug: app.slug,
-            slug: '_doc',
-          }
-        : undefined,
-    };
-  };
-
-  getAvailableSlugs = async (
-    appId: string,
-    version?: string
-  ): Promise<Prismeai.AppDetails> => {
-    const app = await this.storage.get(appId, version || 'current');
-    return {
-      blocks: Object.entries(app.blocks || {}).map(
-        ([slug, { name, description }]) => ({
-          slug,
-          name,
-          description,
-        })
-      ),
-      automations: Object.entries(
-        app.automations || {}
-      ).map(([slug, { name, description }]) => ({ slug, name, description })),
+      events: {
+        listen: Array.from(new Set(allEventTriggers)),
+        emit: deduplicateEmits(allEmits),
+      },
     };
   };
 
@@ -266,7 +270,7 @@ class Apps {
     // Load user permissions from workspace
     await this.accessManager.get(SubjectType.Workspace, app.workspaceId);
     await this.accessManager.delete(SubjectType.App, appSlug);
-    await this.storage.delete(appSlug);
+    await this.storage.delete({ appSlug, parentFolder: true });
     this.broker.send<Prismeai.DeletedApp['payload']>(
       EventType.DeletedApp,
       {

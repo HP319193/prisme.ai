@@ -1,12 +1,12 @@
 export { default as Apps } from './crud/apps';
 import fetch from 'node-fetch';
-import DSULStorage from '../DSULStorage';
 import yaml from 'js-yaml';
 import { default as Apps } from './crud/apps';
 import { AccessManager, SubjectType, getSuperAdmin } from '../../permissions';
 import { logger } from '../../logger';
 import { Broker } from '@prisme.ai/broker';
 import { areObjectsEqual } from '../../utils/getObjectsDifferences';
+import DSULStorage from '../DSULStorage';
 
 export async function autoinstallApps(
   appStorage: DSULStorage,

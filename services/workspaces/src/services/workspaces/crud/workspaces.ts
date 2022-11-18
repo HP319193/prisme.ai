@@ -3,15 +3,16 @@ import { nanoid } from 'nanoid';
 import { hri } from 'human-readable-ids';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
-import DSULStorage from '../../DSULStorage';
+import DSULStorage, { DSULType } from '../../DSULStorage';
 import {
   AccessManager,
+  ActionType,
   SubjectType,
   WorkspaceMetadata,
 } from '../../../permissions';
-import AppInstances from './appInstances';
+// import AppInstances from './appInstances';
 import Apps from '../../apps/crud/apps';
-import Automations from './automations';
+// import Automations from './automations';
 import Pages from './pages';
 import {
   Diffs,
@@ -30,7 +31,7 @@ interface DSULDiff {
   diffs: Diffs;
   value: any;
   oldValue?: any;
-  root: Prismeai.DSUL;
+  root: Prismeai.DSUL & { id: string };
   oldRoot: Prismeai.DSUL;
 }
 interface DSULDiffHandler {
@@ -40,11 +41,9 @@ interface DSULDiffHandler {
 
 class Workspaces {
   private accessManager: Required<AccessManager>;
-  private apps: Apps;
+  // private apps: Apps;
   private broker: Broker;
   private storage: DSULStorage;
-  public automations: Automations;
-  public appInstances: AppInstances;
   public pages: Pages;
 
   private diffHandlers: DSULDiffHandler[];
@@ -56,12 +55,14 @@ class Workspaces {
     storage: DSULStorage
   ) {
     this.accessManager = accessManager;
-    this.apps = apps;
     this.broker = broker;
     this.storage = storage;
-    this.automations = new Automations(this, broker);
-    this.appInstances = new AppInstances(this, this.apps, broker);
-    this.pages = new Pages(this, this.accessManager, broker);
+    this.pages = new Pages(
+      this.accessManager,
+      broker,
+      storage,
+      undefined as any
+    );
 
     this.diffHandlers = [
       {
@@ -70,14 +71,16 @@ class Workspaces {
           if (allDiffs?.[0]?.type !== DiffType.ValueUpdated) {
             return;
           }
-          const workspace = allDiffs[0].root as Prismeai.Workspace;
+          const workspace = allDiffs[0].root;
           const workspaceSlug = allDiffs[0].value as string;
+          const oldWorkspaceSlug = allDiffs[0].oldValue as string;
           if (!workspace?.id || !workspaceSlug) {
             return;
           }
           await this.pages.updatePagesWorkspaceSlug(
             workspace.id!,
-            workspaceSlug
+            workspaceSlug,
+            oldWorkspaceSlug
           );
         },
       },
@@ -93,176 +96,60 @@ class Workspaces {
           );
         },
       },
-      {
-        path: 'automations.*',
-        handler: async (allDiffs: DSULDiff[]) => {
-          for (let {
-            type,
-            value,
-            root,
-            parentKey: automationSlug,
-          } of allDiffs) {
-            const automation = value as Prismeai.Automation;
-            switch (type) {
-              case DiffType.ValueCreated:
-                await this.automations.createAutomation(
-                  root,
-                  automation,
-                  automationSlug
-                );
-                break;
-              case DiffType.ValueUpdated:
-                await this.automations.updateAutomation(
-                  root,
-                  automationSlug,
-                  automation
-                );
-                break;
-              case DiffType.ValueDeleted:
-                await this.automations.deleteAutomation(
-                  // Rebuild current dsul with the removed automation to prevent deleteAutomation from throwing an ObjectNotFoundError
-                  {
-                    ...root,
-                    automations: {
-                      ...root?.automations,
-                      [automationSlug]: automation,
-                    },
-                  },
-                  automationSlug
-                );
-                break;
-            }
-          }
-        },
-      },
-      {
-        path: 'imports.*',
-        handler: async (allDiffs: DSULDiff[]) => {
-          for (let {
-            type,
-            value,
-            oldValue,
-            root,
-            parentKey: appSlug,
-          } of allDiffs) {
-            const appInstance = value as Prismeai.AppInstance;
+      // {
+      //   path: 'imports.*',
+      //   handler: async (allDiffs: DSULDiff[]) => {
+      //     for (let {
+      //       type,
+      //       value,
+      //       oldValue,
+      //       root,
+      //       parentKey: appSlug,
+      //     } of allDiffs) {
+      //       const appInstance = value as Prismeai.AppInstance;
 
-            switch (type) {
-              case DiffType.ValueCreated:
-                // Rebuild current dsul without the installed app to prevent installApp from throwing an AlreadyUsedError
-                const { [appSlug]: currentOne, ...importsWithoutCurrentOne } =
-                  root.imports || {};
-                await this.appInstances.installApp(
-                  {
-                    ...root,
-                    imports: importsWithoutCurrentOne,
-                  },
-                  { ...appInstance, slug: appSlug }
-                );
-                break;
-              case DiffType.ValueUpdated:
-                await this.appInstances.configureApp(
-                  {
-                    ...root,
-                    imports: {
-                      ...root.imports,
-                      [appSlug]: oldValue,
-                    },
-                  },
-                  appSlug,
-                  appInstance
-                );
-                break;
-              case DiffType.ValueDeleted:
-                await this.appInstances.uninstallApp(
-                  {
-                    ...root,
-                    imports: {
-                      ...(root?.imports || {}),
-                      [appSlug]: appInstance,
-                    },
-                  },
-                  appSlug
-                );
-                break;
-            }
-          }
-        },
-      },
-      {
-        path: 'pages.*',
-        handler: async (allDiffs: DSULDiff[]) => {
-          // First find slug renaming to merge their create+delete diff into a single update
-          // Without this, corresponding permission entry would be recreated from scratch (& thus emptied)
-          const createdDiffs = allDiffs.filter(
-            (cur) => cur.type == DiffType.ValueCreated
-          );
-          const removeDiffIdxs = new Set();
-          for (let creation of createdDiffs) {
-            const sameIdDeletion = allDiffs.findIndex(
-              (cur) =>
-                cur.type == DiffType.ValueDeleted &&
-                cur.value.id == creation.value.id
-            );
-            if (sameIdDeletion !== -1) {
-              removeDiffIdxs.add(sameIdDeletion);
-              creation.type = DiffType.ValueUpdated;
-            }
-          }
-          // Merge & clean
-          allDiffs = allDiffs
-            .map((cur, idx) => {
-              if (removeDiffIdxs.has(idx)) {
-                return false;
-              }
-              delete cur?.value?.createdAt;
-              delete cur?.value?.createdBy;
-              delete cur?.value?.updatedAt;
-              delete cur?.value?.updatedBy;
-              delete cur?.value?.permissions;
-              delete cur?.value?.workspaceId;
-              delete cur?.value?.workspaceSlug;
-              if (cur?.value?.__migrate) {
-                cur.type = DiffType.ValueUpdated;
-              }
-              return cur;
-            })
-            .filter(Boolean) as DSULDiff[];
-
-          let deleteUnlinkedPages = false;
-          for (let { type, value, root, parentKey: pageSlug } of allDiffs) {
-            const page = value as Prismeai.Page;
-            page.slug = pageSlug;
-            switch (type) {
-              case DiffType.ValueCreated:
-                await this.pages.createPage(root, page);
-                deleteUnlinkedPages = true;
-                break;
-              case DiffType.ValueUpdated:
-                await this.pages.updatePage(root, { slug: pageSlug }, page);
-                break;
-              case DiffType.ValueDeleted:
-                deleteUnlinkedPages = true;
-                break;
-            }
-          }
-          if (deleteUnlinkedPages) {
-            setTimeout(async () => {
-              const workspace: Prismeai.Workspace = allDiffs?.[0]
-                ?.root as Prismeai.Workspace;
-              const knownIds = Object.values(workspace?.pages || {})
-                .map((cur) => cur.id)
-                .filter(Boolean);
-              if (knownIds?.length) {
-                await this.pages.deleteUnlinkedPages(
-                  workspace.id!,
-                  knownIds as any
-                );
-              }
-            }, 2000);
-          }
-        },
-      },
+      //       switch (type) {
+      //         case DiffType.ValueCreated:
+      //           // Rebuild current dsul without the installed app to prevent installApp from throwing an AlreadyUsedError
+      //           const { [appSlug]: currentOne, ...importsWithoutCurrentOne } =
+      //             root.imports || {};
+      //           await this.appInstances.installApp(
+      //             {
+      //               ...root,
+      //               imports: importsWithoutCurrentOne,
+      //             },
+      //             { ...appInstance, slug: appSlug }
+      //           );
+      //           break;
+      //         case DiffType.ValueUpdated:
+      //           await this.appInstances.configureApp(
+      //             {
+      //               ...root,
+      //               imports: {
+      //                 ...root.imports,
+      //                 [appSlug]: oldValue,
+      //               },
+      //             },
+      //             appSlug,
+      //             appInstance
+      //           );
+      //           break;
+      //         case DiffType.ValueDeleted:
+      //           await this.appInstances.uninstallApp(
+      //             {
+      //               ...root,
+      //               imports: {
+      //                 ...(root?.imports || {}),
+      //                 [appSlug]: appInstance,
+      //               },
+      //             },
+      //             appSlug
+      //           );
+      //           break;
+      //       }
+      //     }
+      //   },
+      // },
     ];
   }
 
@@ -270,7 +157,7 @@ class Workspaces {
    * Workspaces
    */
 
-  createWorkspace = async (workspace: Prismeai.Workspace) => {
+  createWorkspace = async (workspace: Prismeai.Workspace & { id: string }) => {
     if (!workspace.slug) {
       workspace.slug = hri.random();
     }
@@ -289,7 +176,10 @@ class Workspaces {
       slug: workspace.slug!,
     });
     await this.processEveryDiffs({} as any, workspace);
-    await this.storage.save(workspace.id || nanoid(7), workspace);
+    await this.storage.save(
+      { workspaceId: workspace.id || nanoid(7) },
+      workspace
+    );
 
     // Send events
     await this.broker.flush(true);
@@ -327,15 +217,45 @@ class Workspaces {
     return await this.getWorkspaceAsAdmin(workspaceId, version);
   };
 
-  getWorkspaceAsAdmin = async (workspaceId: string, version?: string) => {
-    return await this.storage.get(workspaceId, version || 'current');
+  getIndex = async <returnType>(
+    dsulType: DSULType,
+    workspaceId: string,
+    version?: string
+  ): Promise<returnType> => {
+    return this.storage.folderIndex({
+      dsulType,
+      workspaceId,
+      version,
+      folderIndex: true,
+    }) as Promise<returnType>;
   };
 
-  save = async (
+  getWorkspaceAsAdmin = async (workspaceId: string, version?: string) => {
+    return await this.storage.get({
+      workspaceId,
+      version: version || 'current',
+    });
+  };
+
+  getDetailedWorkspace = async (
     workspaceId: string,
-    workspace: Prismeai.Workspace,
-    versionRequest?: Prismeai.WorkspaceVersion
-  ) => {
+    version?: string
+  ): Promise<Prismeai.DSULReadOnly> => {
+    const [workspace, automations] = await Promise.all([
+      this.getWorkspace(workspaceId, version),
+      this.getIndex<Prismeai.DSULReadOnly['automations']>(
+        DSULType.Automations,
+        workspaceId,
+        version
+      ),
+    ]);
+    return {
+      ...workspace,
+      automations,
+    };
+  };
+
+  save = async (workspaceId: string, workspace: Prismeai.Workspace) => {
     const updatedWorkspaceMetadata: WorkspaceMetadata = {
       id: workspaceId,
       name: workspace.name,
@@ -344,16 +264,6 @@ class Workspaces {
       slug: workspace.slug || hri.random(),
     };
 
-    let deleteVersions;
-    if (versionRequest) {
-      const currentVersions = await this.listWorkspaceVersions(workspaceId);
-      const { newVersion, allVersions, expiredVersions } =
-        prepareNewDSULVersion(currentVersions, versionRequest);
-
-      updatedWorkspaceMetadata.versions = allVersions;
-      Object.assign(versionRequest, newVersion);
-      deleteVersions = expiredVersions;
-    }
     try {
       await this.accessManager.update(
         SubjectType.Workspace,
@@ -362,29 +272,13 @@ class Workspaces {
     } catch (err) {
       if ((err as { code: number }).code === 11000) {
         throw new AlreadyUsedError(
-          `Workspaceslug '${updatedWorkspaceMetadata.slug}' is already used`,
+          `Workspace slug '${updatedWorkspaceMetadata.slug}' is already used`,
           { slug: 'AlreadyUsedError' }
         );
       }
     }
 
-    await this.storage.save(workspaceId, workspace);
-    if (versionRequest) {
-      await this.storage.save(workspaceId, workspace, versionRequest.name);
-      this.broker
-        .send<Prismeai.PublishedWorkspaceVersion['payload']>(
-          EventType.PublishedWorkspaceVersion,
-          {
-            version: versionRequest,
-          }
-        )
-        .catch((err) => logger.error(err));
-      (deleteVersions || [])
-        .filter((cur) => cur?.name?.length && cur.name !== 'current') // an empty version would delete workspace directory
-        .map(async (cur) => await this.storage.delete(workspaceId, cur.name));
-    }
-
-    return versionRequest;
+    await this.storage.save({ workspaceId }, workspace);
   };
 
   updateWorkspace = async (
@@ -403,7 +297,10 @@ class Workspaces {
     );
 
     const currentDSUL = await this.getWorkspace(workspaceId);
-    const diffs = await this.processEveryDiffs(currentDSUL, workspace);
+    const diffs = await this.processEveryDiffs(currentDSUL, {
+      id: workspaceId,
+      ...workspace,
+    });
     if (diffs.__type === DiffType.ValueUnchanged) {
       this.broker.clear(true);
       return workspace;
@@ -442,14 +339,49 @@ class Workspaces {
 
   publishWorkspaceVersion = async (
     workspaceId: string,
-    version: Prismeai.WorkspaceVersion
+    versionRequest: Prismeai.WorkspaceVersion
   ): Promise<Required<Prismeai.WorkspaceVersion>> => {
-    const currentWorkspace = await this.getWorkspace(workspaceId);
-    return (await this.save(
-      workspaceId,
-      currentWorkspace,
-      version
-    )) as Required<Prismeai.WorkspaceVersion>;
+    const currentVersions = await this.listWorkspaceVersions(workspaceId);
+    const { newVersion, allVersions, expiredVersions } = prepareNewDSULVersion(
+      currentVersions,
+      versionRequest
+    );
+
+    const version: Required<Prismeai.WorkspaceVersion> = {
+      ...versionRequest,
+      ...newVersion,
+    };
+    await this.storage.copy(
+      { workspaceId, parentFolder: true, version: 'current' },
+      {
+        workspaceId,
+        version: version.name,
+        parentFolder: true,
+      }
+    );
+    await this.accessManager.update(SubjectType.Workspace, {
+      id: workspaceId,
+      versions: allVersions,
+    });
+    this.broker
+      .send<Prismeai.PublishedWorkspaceVersion['payload']>(
+        EventType.PublishedWorkspaceVersion,
+        {
+          version,
+        }
+      )
+      .catch((err) => logger.error(err));
+    (expiredVersions || [])
+      .filter((cur) => cur?.name?.length && cur.name !== 'current') // an empty version would delete workspace directory
+      .map(
+        async (cur) =>
+          await this.storage.delete({
+            workspaceId,
+            version: cur.name,
+            parentFolder: true,
+          })
+      );
+    return version;
   };
 
   deleteWorkspaceVersion = async (
@@ -475,7 +407,7 @@ class Workspaces {
         (cur) => cur.name !== version
       ),
     });
-    await this.storage.delete(workspaceId, version);
+    await this.storage.delete({ workspaceId, version, parentFolder: true });
 
     this.broker
       .send<Prismeai.DeletedWorkspaceVersion['payload']>(
@@ -489,9 +421,50 @@ class Workspaces {
     return targetVersion;
   };
 
+  rollbackWorkspaceVersion = async (workspaceId: string, version: string) => {
+    if (version == 'current') {
+      throw new InvalidVersionError('Cannot rollback to current version');
+    }
+    const workspaceMetadata = await this.accessManager.get(
+      SubjectType.Workspace,
+      workspaceId
+    );
+    const targetVersion = (workspaceMetadata.versions || []).find(
+      (cur) => cur.name == version
+    );
+    if (!targetVersion) {
+      throw new InvalidVersionError(`Unknown version name '${version}'`);
+    }
+    await this.accessManager.throwUnlessCan(
+      ActionType.Update,
+      SubjectType.Workspace,
+      workspaceId
+    );
+    this.broker.send<Prismeai.RollbackWorkspaceVersion['payload']>(
+      EventType.RollbackWorkspaceVersion,
+      {
+        version: targetVersion,
+      }
+    );
+    await this.storage.delete({
+      workspaceId,
+      version: 'current',
+      parentFolder: true,
+    });
+    await this.storage.copy(
+      { workspaceId, parentFolder: true, version },
+      {
+        workspaceId,
+        version: 'current',
+        parentFolder: true,
+      }
+    );
+    return targetVersion;
+  };
+
   private async processEveryDiffs(
     oldDSUL: Prismeai.DSUL,
-    newDSUL: Prismeai.DSUL
+    newDSUL: Prismeai.DSUL & { id: string }
   ) {
     const diffs = getObjectsDifferences(oldDSUL, newDSUL);
     for (let { path, handler } of this.diffHandlers) {
@@ -533,7 +506,7 @@ class Workspaces {
     workspaceId: PrismeaiAPI.DeleteWorkspace.PathParameters['workspaceId']
   ) => {
     await this.accessManager.delete(SubjectType.Workspace, workspaceId);
-    await this.storage.delete(workspaceId);
+    await this.storage.delete({ workspaceId, parentFolder: true });
     this.broker.send<Prismeai.DeletedWorkspace['payload']>(
       EventType.DeletedWorkspace,
       {

@@ -106,8 +106,8 @@ export class Workspaces extends Storage {
           case EventType.DeletedAutomation:
             const deletedAutomation = (
               event as any as Prismeai.DeletedAutomation
-            ).payload.automation;
-            workspace.deleteAutomation(deletedAutomation.slug);
+            ).payload.automationSlug;
+            workspace.deleteAutomation(deletedAutomation);
             break;
           case EventType.InstalledApp:
           case EventType.ConfiguredApp:

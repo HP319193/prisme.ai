@@ -373,7 +373,7 @@ export class AccessManager<
 
   async update<returnType extends SubjectType>(
     subjectType: returnType,
-    updatedSubject: SubjectInterfaces[returnType]
+    updatedSubject: Partial<SubjectInterfaces[returnType]> & { id: string }
   ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions, user } = this.checkAsUser();
 

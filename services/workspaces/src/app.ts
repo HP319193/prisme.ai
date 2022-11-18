@@ -15,10 +15,11 @@ import { initEDA } from './eda';
 import { uncaughtExceptionHandler } from './errors';
 import '@prisme.ai/types';
 import { initAccessManager } from './permissions';
-import DSULStorage, { DSULType } from './services/DSULStorage';
 import { autoinstallApps, syncWorkspacesWithConfigContexts } from './services';
 import FileStorage from './services/FileStorage';
 import { autoremoveExpiredUploads } from './services/uploads';
+import buildStorage from './storage';
+import DSULStorage, { DSULType } from './services/DSULStorage';
 
 process.on('uncaughtException', uncaughtExceptionHandler);
 
@@ -34,43 +35,30 @@ const broker = initEDA();
 const accessManager = initAccessManager(PERMISSIONS_STORAGE_MONGODB_OPTIONS);
 accessManager.start();
 
-const workspacesStorage = new DSULStorage(
-  DSULType.Workspace,
-  WORKSPACES_STORAGE_TYPE,
-  WORKSPACES_STORAGE_OPTIONS[WORKSPACES_STORAGE_TYPE]
-);
-
-const appsStorage = new DSULStorage(
-  DSULType.App,
-  WORKSPACES_STORAGE_TYPE,
-  WORKSPACES_STORAGE_OPTIONS[WORKSPACES_STORAGE_TYPE]
+const dsulStorage = new DSULStorage(
+  buildStorage(
+    WORKSPACES_STORAGE_TYPE,
+    WORKSPACES_STORAGE_OPTIONS[WORKSPACES_STORAGE_TYPE]
+  ),
+  DSULType.DSULIndex
 );
 
 const uploadsStorage = new FileStorage(
-  UPLOADS_STORAGE_TYPE,
-  UPLOADS_STORAGE_OPTIONS[UPLOADS_STORAGE_TYPE]
+  buildStorage(
+    UPLOADS_STORAGE_TYPE,
+    UPLOADS_STORAGE_OPTIONS[UPLOADS_STORAGE_TYPE]
+  )
 );
 
 setTimeout(() => {
-  autoinstallApps(appsStorage, accessManager);
-}, 20000); // Arbitrary 20 sec delay to make sure app API are ready.
+  autoinstallApps(dsulStorage, accessManager);
+}, 20000); // Arbitrary 20 sec delay to make sure app API are ready
 
 autoremoveExpiredUploads(uploadsStorage, accessManager);
 
-const app = initAPI(
-  accessManager,
-  workspacesStorage,
-  appsStorage,
-  uploadsStorage,
-  broker
-);
+const app = initAPI(accessManager, dsulStorage, uploadsStorage, broker);
 
-syncWorkspacesWithConfigContexts(
-  accessManager,
-  broker,
-  workspacesStorage,
-  appsStorage
-);
+// syncWorkspacesWithConfigContexts(accessManager, broker, workspacesStorage);
 
 const httpServer = http.createServer(app);
 
