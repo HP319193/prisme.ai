@@ -61,18 +61,28 @@ export class Fetcher {
       throw error;
     }
 
-    const clone = res.clone();
+    const contentType = res.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        const response = (await res.json()) || {};
+        Object.defineProperty(response, 'headers', {
+          value: headersAsObject(res.headers),
+          configurable: false,
+          enumerable: false,
+          writable: false,
+        });
+        return response as T;
+      } catch (e) {
+        return {} as T;
+      }
+    }
+
+    const text = await res.text();
+
     try {
-      const response = (await res.json()) || {};
-      Object.defineProperty(response, 'headers', {
-        value: headersAsObject(res.headers),
-        configurable: false,
-        enumerable: false,
-        writable: false,
-      });
-      return response;
-    } catch (e) {
-      return ((await clone.text()) as unknown) as T;
+      return JSON.parse(text) as T;
+    } catch {
+      return text as T;
     }
   }
 
