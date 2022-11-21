@@ -152,11 +152,11 @@ class Pages {
       dsulType: DSULType.DSULIndex,
       workspaceId: page.workspaceId,
     });
-    const detailedAppInstances = await this.appInstances.list(
+    const detailedAppInstances = await this.appInstances.detailedList(
       page.workspaceId!
     );
 
-    const appInstances = detailedAppInstances
+    const filteredAppInstances = detailedAppInstances
       .map<Prismeai.PageDetails['appInstances'][0] | false>((cur) => {
         const blocks = cur.blocks.reduce((blocks, cur) => {
           if (!cur.slug) {
@@ -181,15 +181,25 @@ class Pages {
         }
         return {
           slug: cur.slug,
-          appConfig: cur.config,
           blocks: blocks,
         };
       }, [])
       .filter<Prismeai.PageDetails['appInstances'][0]>(Boolean as any);
+
+    const appInstances = await Promise.all(
+      filteredAppInstances.map(async (cur) => {
+        const appInstance = await this.appInstances.getAppInstance(
+          page.workspaceId!,
+          cur.slug!
+        );
+        return { ...cur, config: appInstance.config || {} };
+      })
+    );
+
     if (workspace.blocks) {
       appInstances.push({
         slug: '',
-        appConfig: workspace.config,
+        config: workspace.config,
         blocks: Object.entries(workspace.blocks).reduce(
           (prev, [slug, { url = '' }]) => ({
             ...prev,
@@ -200,22 +210,10 @@ class Pages {
       });
     }
 
-    const detailedPage: Prismeai.PageDetails = {
-      blocks: (page.blocks || []).map<Prismeai.PageDetails['blocks'][0]>(
-        (cur) => {
-          return {
-            ...cur,
-            name: cur.name!,
-            appInstance:
-              cur.name && cur.name.includes('.')
-                ? cur.name.slice(0, cur.name.indexOf('.'))
-                : '',
-          };
-        }
-      ),
+    const pageDetails: Prismeai.PageDetails = {
       appInstances,
     };
-    return detailedPage;
+    return pageDetails;
   }
 
   updatePage = async (workspaceId: string, id: string, page: Prismeai.Page) => {
@@ -224,7 +222,7 @@ class Pages {
       id,
     });
 
-    const newSlug = page.slug || currentPageMeta.slug;
+    const newSlug = page.slug || currentPageMeta.slug!;
     page.slug = newSlug;
 
     await this.accessManager.throwUnlessCan(
@@ -261,6 +259,9 @@ class Pages {
 
     this.broker.send<Prismeai.UpdatedPage['payload']>(EventType.UpdatedPage, {
       page,
+      slug: newSlug,
+      oldSlug:
+        page.slug && page.slug !== currentPageMeta.slug ? page.slug : undefined,
     });
     return { slug: newSlug, ...page };
   };

@@ -58,7 +58,7 @@ autoremoveExpiredUploads(uploadsStorage, accessManager);
 
 const app = initAPI(accessManager, dsulStorage, uploadsStorage, broker);
 
-// syncWorkspacesWithConfigContexts(accessManager, broker, workspacesStorage);
+syncWorkspacesWithConfigContexts(accessManager, broker, dsulStorage);
 
 const httpServer = http.createServer(app);
 

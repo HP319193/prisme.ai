@@ -2,8 +2,8 @@ import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
 import { nanoid } from 'nanoid';
 import { AccessManager } from '../../permissions';
-import { Apps, Workspaces } from '../../services';
-import DSULStorage, { DSULType } from '../../services/DSULStorage';
+import { Workspaces } from '../../services';
+import DSULStorage from '../../services/DSULStorage';
 import FileStorage from '../../services/FileStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
@@ -21,10 +21,8 @@ export default function init(
     accessManager: Required<AccessManager>;
     broker: Broker;
   }) => {
-    const apps = new Apps(accessManager, broker.child(context), dsulStorage);
     const workspaces = new Workspaces(
       accessManager,
-      apps,
       broker.child(context),
       dsulStorage
     );

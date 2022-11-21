@@ -10,9 +10,6 @@ import {
   SubjectType,
   WorkspaceMetadata,
 } from '../../../permissions';
-// import AppInstances from './appInstances';
-import Apps from '../../apps/crud/apps';
-// import Automations from './automations';
 import Pages from './pages';
 import {
   Diffs,
@@ -41,7 +38,6 @@ interface DSULDiffHandler {
 
 class Workspaces {
   private accessManager: Required<AccessManager>;
-  // private apps: Apps;
   private broker: Broker;
   private storage: DSULStorage;
   public pages: Pages;
@@ -50,7 +46,6 @@ class Workspaces {
 
   constructor(
     accessManager: Required<AccessManager>,
-    apps: Apps,
     broker: Broker,
     storage: DSULStorage
   ) {
@@ -217,17 +212,17 @@ class Workspaces {
     return await this.getWorkspaceAsAdmin(workspaceId, version);
   };
 
-  getIndex = async <returnType>(
-    dsulType: DSULType,
+  getIndex = async <t extends DSULType>(
+    dsulType: t,
     workspaceId: string,
     version?: string
-  ): Promise<returnType> => {
-    return this.storage.folderIndex({
+  ) => {
+    return this.storage.folderIndex<t>({
       dsulType,
       workspaceId,
       version,
       folderIndex: true,
-    }) as Promise<returnType>;
+    });
   };
 
   getWorkspaceAsAdmin = async (workspaceId: string, version?: string) => {
@@ -241,17 +236,15 @@ class Workspaces {
     workspaceId: string,
     version?: string
   ): Promise<Prismeai.DSULReadOnly> => {
-    const [workspace, automations] = await Promise.all([
+    const [workspace, automations, pages] = await Promise.all([
       this.getWorkspace(workspaceId, version),
-      this.getIndex<Prismeai.DSULReadOnly['automations']>(
-        DSULType.Automations,
-        workspaceId,
-        version
-      ),
+      this.getIndex(DSULType.AutomationsIndex, workspaceId, version),
+      this.getIndex(DSULType.PagesIndex, workspaceId, version),
     ]);
     return {
       ...workspace,
-      automations,
+      automations: automations || {},
+      pages: pages || {},
     };
   };
 

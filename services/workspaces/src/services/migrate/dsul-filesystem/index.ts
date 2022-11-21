@@ -48,7 +48,6 @@ export async function migrateDSUL(
   const apps = new Apps(authorizedAccessManager, broker as any, dsulStorage);
   const workspaces = new Workspaces(
     authorizedAccessManager,
-    undefined as any,
     broker as any,
     dsulStorage
   );
@@ -99,6 +98,19 @@ export async function migrateDSUL(
       const legacy = (await legacyWorkspacesStorage.get({
         workspaceId: workspace.id,
       })) as LegacyDSUL;
+      if (Object.keys(legacy?.automations || {}).length > 200) {
+        logger.info(
+          `Skipping workspace ${workspace.name} (id ${
+            workspace.id
+          }) since it has ${
+            Object.keys(legacy?.automations || {}).length
+          } automations`
+        );
+        continue;
+      }
+      logger.info(
+        'Migrating ' + workspace.name + ' (id: ' + workspace.id + ')...'
+      );
       const migration = await migrateWorkspace(
         legacy,
         workspaces,

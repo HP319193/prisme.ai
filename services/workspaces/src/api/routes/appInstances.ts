@@ -75,7 +75,10 @@ export default function init(dsulStorage: DSULStorage) {
       broker,
     });
 
-    const currentAppInstance = await appInstances.get(workspaceId, slug);
+    const currentAppInstance = await appInstances.getAppInstance(
+      workspaceId,
+      slug
+    );
     const updatedAppInstance = await appInstances.configureApp(
       workspaceId,
       slug,
@@ -149,7 +152,7 @@ export default function init(dsulStorage: DSULStorage) {
       accessManager,
       broker,
     });
-    const result = await appInstances.list(workspaceId);
+    const result = await appInstances.detailedList(workspaceId);
     res.send(result);
   }
 
@@ -167,7 +170,10 @@ export default function init(dsulStorage: DSULStorage) {
       accessManager,
       broker,
     });
-    const appInstance = await appInstances.get(workspaceId, slug);
+    const appInstance = await appInstances.getDetailedAppInstance(
+      workspaceId,
+      slug
+    );
     res.send(appInstance);
   }
 
@@ -185,8 +191,8 @@ export default function init(dsulStorage: DSULStorage) {
       accessManager,
       broker,
     });
-    const appInstance = await appInstances.get(workspaceId, slug);
-    res.send(appInstance.config?.value || {});
+    const appInstance = await appInstances.getAppInstance(workspaceId, slug);
+    res.send(appInstance.config || {});
   }
 
   const app = express.Router({ mergeParams: true });

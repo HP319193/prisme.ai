@@ -19,7 +19,6 @@ export default function init(dsulStorage: DSULStorage) {
     const apps = new Apps(accessManager, broker.child(context), dsulStorage);
     const workspaces = new Workspaces(
       accessManager,
-      apps,
       broker.child(context),
       dsulStorage
     );

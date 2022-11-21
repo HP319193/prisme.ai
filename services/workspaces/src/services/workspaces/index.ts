@@ -1,10 +1,10 @@
 import { Broker } from '@prisme.ai/broker';
-import { Apps } from '..';
+import { AppInstances, Apps } from '..';
 import { EventType } from '../../eda';
 import { logger } from '../../logger';
 import { getSuperAdmin, AccessManager } from '../../permissions';
 import { applyObjectUpdateOpLogs } from '../../utils/applyObjectUpdateOpLogs';
-import DSULStorage, { DSULType } from '../DSULStorage';
+import DSULStorage from '../DSULStorage';
 import Workspaces from './crud/workspaces';
 
 export { default as Workspaces } from './crud/workspaces';
@@ -15,11 +15,10 @@ export { default as AppInstances } from './crud/appInstances';
 export async function syncWorkspacesWithConfigContexts(
   accessManager: AccessManager,
   broker: Broker,
-  workspacesStorage: DSULStorage,
-  appsStorage: DSULStorage
+  dsulStorage: DSULStorage
 ) {
   const superAdmin = await getSuperAdmin(accessManager);
-  const apps = new Apps(superAdmin, broker, appsStorage);
+  const apps = new Apps(superAdmin, broker, dsulStorage);
 
   await broker.on<Prismeai.UpdatedContexts['payload']>(
     EventType.UpdatedContexts,
@@ -35,27 +34,32 @@ export async function syncWorkspacesWithConfigContexts(
       try {
         const workspaces = new Workspaces(
           superAdmin,
-          apps,
           broker.child(event.source),
-          workspacesStorage
+          dsulStorage
         );
-        const currentWorkspace = await workspaces.getWorkspace(workspaceId);
+        const appInstances = new AppInstances(
+          superAdmin,
+          broker.child(event.source),
+          dsulStorage,
+          apps
+        );
 
         if (appInstanceFullSlug) {
+          const appInstance = await appInstances.getAppInstance(
+            workspaceId,
+            appInstanceFullSlug
+          );
           const updatedConfig = applyObjectUpdateOpLogs(
-            currentWorkspace.imports?.[appInstanceFullSlug]?.config || {},
+            appInstance?.config || {},
             updates
           );
-          await workspaces.appInstances.configureApp(
-            workspaceId!,
-            appInstanceFullSlug!,
-            {
-              config: updatedConfig,
-            }
-          );
+          await appInstances.configureApp(workspaceId!, appInstanceFullSlug!, {
+            config: updatedConfig,
+          });
         } else {
+          const workspace = await workspaces.getWorkspace(workspaceId);
           const updatedConfig = applyObjectUpdateOpLogs(
-            currentWorkspace.config?.value || {},
+            workspace?.config?.value || {},
             updates
           );
           await workspaces.configureWorkspace(workspaceId, updatedConfig);

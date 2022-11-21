@@ -760,43 +760,32 @@ declare namespace Prismeai {
         photo?: string;
         slug?: string;
     }
+    export type AppAutomations = {
+        slug: string;
+        name: LocalizedText;
+        description?: LocalizedText;
+        arguments: {
+            [name: string]: TypedArgument;
+        };
+    }[];
+    export type AppBlocks = {
+        slug: string;
+        url?: string;
+        edit?: TypedArgument;
+        name?: LocalizedText;
+        description?: LocalizedText;
+        arguments?: {
+            [name: string]: TypedArgument;
+        };
+    }[];
     export interface AppDetails {
         slug?: string;
         appName?: string;
         config?: Config;
-        blocks: {
-            slug: string;
-            url?: string;
-            edit?: TypedArgument;
-            name?: LocalizedText;
-            description?: LocalizedText;
-            arguments?: {
-                [name: string]: TypedArgument;
-            };
-        }[];
-        automations: {
-            slug: string;
-            name: LocalizedText;
-            description?: LocalizedText;
-        }[];
         photo?: string;
-        events?: {
-            emit?: {
-                event: string;
-                autocomplete?: {
-                    [name: string]: {
-                        from?: string;
-                        path?: string;
-                        template?: string;
-                    };
-                };
-            }[];
-            listen?: string[];
-        };
-        documentation?: {
-            workspaceSlug?: string;
-            slug?: string;
-        };
+        blocks: AppBlocks;
+        automations: AppAutomations;
+        events: AppEvents;
     }
     export interface AppEvent {
         /**
@@ -805,6 +794,19 @@ declare namespace Prismeai {
          */
         type: string;
         payload: AnyValue;
+    }
+    export interface AppEvents {
+        emit?: {
+            event: string;
+            autocomplete?: {
+                [name: string]: {
+                    from?: string;
+                    path?: string;
+                    template?: string;
+                };
+            };
+        }[];
+        listen?: string[];
     }
     export interface AppInstance {
         /**
@@ -830,7 +832,33 @@ declare namespace Prismeai {
         createdBy?: string;
         config?: any;
     }
-    export type AppInstanceDetailedList = DetailedAppInstance[];
+    export type AppInstanceList = {
+        /**
+         * App unique id
+         */
+        appSlug: string;
+        appName?: LocalizedText;
+        /**
+         * Defaults to the latest known app version
+         */
+        appVersion?: string;
+        /**
+         * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+         */
+        slug: string;
+        /**
+         * If disabled, this appInstance will be ignored during execution
+         */
+        disabled?: boolean;
+        updatedAt?: string;
+        createdAt?: string;
+        updatedBy?: string;
+        createdBy?: string;
+        photo?: string;
+        automations: AppAutomations;
+        events: AppEvents;
+        blocks: AppBlocks;
+    }[];
     export interface AppInstanceMeta {
         /**
          * App unique id
@@ -853,30 +881,6 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedBy?: string;
         createdBy?: string;
-    }
-    export interface AppInstancePatch {
-        /**
-         * App unique id
-         */
-        appSlug?: string;
-        appName?: LocalizedText;
-        /**
-         * Defaults to the latest known app version
-         */
-        appVersion?: string;
-        /**
-         * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
-         */
-        slug?: string;
-        /**
-         * If disabled, this appInstance will be ignored during execution
-         */
-        disabled?: boolean;
-        updatedAt?: string;
-        createdAt?: string;
-        updatedBy?: string;
-        createdBy?: string;
-        config?: any;
     }
     export interface AppUsageMetrics {
         slug: string;
@@ -905,7 +909,7 @@ declare namespace Prismeai {
          * example:
          * false
          */
-        private?: any;
+        private?: boolean;
         /**
          * Set this to true if you want to turn off this automation.
          * example:
@@ -950,7 +954,7 @@ declare namespace Prismeai {
          * example:
          * false
          */
-        private?: any;
+        private?: boolean;
         /**
          * Set this to true if you want to turn off this automation.
          * example:
@@ -1188,9 +1192,6 @@ declare namespace Prismeai {
         };
         slug?: string;
         id?: string;
-        imports?: {
-            [name: string]: AppInstanceMeta;
-        };
         automations?: {
             [name: string]: AutomationMeta;
         };
@@ -1293,40 +1294,11 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedBy?: string;
         createdBy?: string;
-        config?: Config;
-        blocks: {
-            slug: string;
-            url?: string;
-            edit?: TypedArgument;
-            name?: LocalizedText;
-            description?: LocalizedText;
-            arguments?: {
-                [name: string]: TypedArgument;
-            };
-        }[];
-        automations: {
-            slug: string;
-            name: LocalizedText;
-            description?: LocalizedText;
-        }[];
         photo?: string;
-        events?: {
-            emit?: {
-                event: string;
-                autocomplete?: {
-                    [name: string]: {
-                        from?: string;
-                        path?: string;
-                        template?: string;
-                    };
-                };
-            }[];
-            listen?: string[];
-        };
-        documentation?: {
-            workspaceSlug?: string;
-            slug?: string;
-        };
+        automations?: AppAutomations;
+        events?: AppEvents;
+        blocks?: AppBlocks;
+        config?: Config;
     }
     export interface DetailedPage {
         name?: LocalizedText;
@@ -1341,13 +1313,12 @@ declare namespace Prismeai {
         updatedAt?: string;
         permissions?: PermissionsMap;
         apiKey?: string;
-        blocks: {
-            name: string;
+        blocks?: {
+            name?: string;
             config?: {
                 [name: string]: any;
             };
-            url?: string;
-            appInstance: string;
+            appInstance?: string;
         }[];
         styles?: string;
         appInstances: {
@@ -1669,16 +1640,11 @@ declare namespace Prismeai {
             config?: {
                 [name: string]: any;
             };
+            appInstance?: string;
         }[];
         styles?: string;
     }
     export interface PageDetails {
-        blocks: {
-            name: string;
-            config?: any;
-            url?: string;
-            appInstance: string;
-        }[];
         appInstances: {
             slug?: string;
             appConfig?: any;
@@ -2104,6 +2070,11 @@ declare namespace Prismeai {
         type: "workspaces.pages.updated";
         payload: {
             page: Page;
+            slug: string;
+            /**
+             * Filled with the previous page slug when renamed
+             */
+            oldSlug?: string;
         };
     }
     export interface UpdatedWorkspace {
@@ -2424,7 +2395,7 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
             slug: Parameters.Slug;
         }
-        export type RequestBody = Prismeai.AppInstancePatch;
+        export type RequestBody = Prismeai.AppInstance;
         namespace Responses {
             export type $200 = Prismeai.AppInstance;
             export type $400 = Prismeai.BadParametersError;
@@ -2781,7 +2752,7 @@ declare namespace PrismeaiAPI {
             slug: Parameters.Slug;
         }
         namespace Responses {
-            export type $200 = Prismeai.AppInstance;
+            export type $200 = Prismeai.DetailedAppInstance;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -3040,7 +3011,7 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
         }
         namespace Responses {
-            export type $200 = Prismeai.AppInstanceDetailedList;
+            export type $200 = Prismeai.AppInstanceList;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;

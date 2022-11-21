@@ -41,14 +41,14 @@ type DSULQuery<t extends DSULType = any> = {
 type DSULInterfaces = {
   [DSULType.DSULIndex]: Prismeai.Workspace;
 
-  [DSULType.AutomationsIndex]: Prismeai.DSULReadOnly['automations'];
+  [DSULType.AutomationsIndex]: Prismeai.AutomationMeta;
   [DSULType.Automations]: Prismeai.Automation;
 
-  [DSULType.PagesIndex]: Prismeai.DSULReadOnly['pages'];
+  [DSULType.PagesIndex]: Prismeai.PageMeta;
   [DSULType.Pages]: Prismeai.Page;
   [DSULType.DetailedPage]: Prismeai.DetailedPage;
 
-  [DSULType.ImportsIndex]: Prismeai.DSULReadOnly['imports'];
+  [DSULType.ImportsIndex]: Prismeai.AppInstanceMeta;
   [DSULType.Imports]: Prismeai.AppInstance;
 };
 
@@ -77,7 +77,7 @@ export function getPath(dsulType: DSULType, opts: Partial<DSULQuery>) {
     folderIndex,
   } = opts;
 
-  if (folderIndex) {
+  if (folderIndex && !dsulType.includes('/')) {
     const indexType = `${dsulType}${FolderIndexSuffix}` as DSULType;
     if (!Object.values(DSULType).includes(indexType)) {
       throw new Error(
@@ -120,7 +120,7 @@ export function getPath(dsulType: DSULType, opts: Partial<DSULQuery>) {
 
   const isIndex = dsulType.includes('/');
   if (!parentFolder && !isIndex && !slug) {
-    throw new MissingFieldError('Missing slug');
+    throw new MissingFieldError('Missing slug for ' + dsulType);
   }
   const subFolder = `${baseVersionFolder}/${dsulType}`;
   const resourceFile = isIndex
@@ -168,7 +168,7 @@ export default class DSULStorage<
         },
         false
       )) || {}) as any as Record<string, DSULInterfaces[t]>;
-    } catch {
+    } catch (error) {
       return false; // No folderIndex for this type
     }
   }

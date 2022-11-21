@@ -2320,7 +2320,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AppInstanceDetailedList'
+                $ref: '#/components/schemas/AppInstanceList'
         '404':
           description: Object not found
           content:
@@ -2480,7 +2480,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AppInstance'
+                $ref: '#/components/schemas/DetailedAppInstance'
         '404':
           description: Object not found
           content:
@@ -2528,7 +2528,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AppInstancePatch'
+              $ref: '#/components/schemas/AppInstance'
 
       responses:
         '200':
@@ -2952,11 +2952,120 @@ components:
         <<: *AppInstanceMeta
         config: {}
 
+    DetailedAppInstance:
+      type: object
+      required:
+        - appSlug
+      additionalProperties: false
+      properties:
+        <<: *AppInstanceMeta
+        photo:
+          type: string
+        automations:
+          $ref: '#/components/schemas/AppAutomations'
+        events:
+          $ref: '#/components/schemas/AppEvents'
+        blocks:
+          $ref: '#/components/schemas/AppBlocks'
+        config:
+          $ref: '#/components/schemas/Config'
+
+    AppInstanceList:
+      type: array
+      items:
+        type: object
+        required:
+          - slug
+          - appSlug
+          - automations
+          - events
+          - blocks
+        additionalProperties: false
+        properties:
+          <<: *AppInstanceMeta
+          photo:
+            type: string
+          automations:
+            $ref: '#/components/schemas/AppAutomations'
+          events:
+            $ref: '#/components/schemas/AppEvents'
+          blocks:
+            $ref: '#/components/schemas/AppBlocks'
+
+    AppEvents:
+      type: object
+      properties:
+        emit:
+          type: array
+          items:
+            type: object
+            required:
+              - event
+            properties:
+              event:
+                type: string
+              autocomplete:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    from:
+                      type: string
+                    path:
+                      type: string
+                    template:
+                      type: string
+        listen:
+          type: array
+          items:
+            type: string
+
+    AppAutomations:
+      type: array
+      items:
+        type: object
+        required:
+          - slug
+          - name
+          - arguments
+        properties:
+          slug:
+            type: string
+          name:
+            $ref: '#/components/schemas/LocalizedText'
+          description:
+            $ref: '#/components/schemas/LocalizedText'
+          arguments:
+            additionalProperties:
+              $ref: '#/components/schemas/TypedArgument'
+
+    AppBlocks:
+      type: array
+      items:
+        type: object
+        required:
+          - slug
+        properties:
+          slug:
+            type: string
+          url:
+            type: string
+          edit:
+            $ref: '#/components/schemas/TypedArgument'
+          name:
+            $ref: '#/components/schemas/LocalizedText'
+          description:
+            $ref: '#/components/schemas/LocalizedText'
+          arguments:
+            additionalProperties:
+              $ref: '#/components/schemas/TypedArgument'
+
     AppDetails:
       type: object
       required:
         - automations
         - blocks
+        - events
       properties:
         slug:
           type: string
@@ -2964,93 +3073,14 @@ components:
           type: string
         config:
           $ref: '#/components/schemas/Config'
-        blocks:
-          type: array
-          items:
-            type: object
-            required:
-              - slug
-            properties:
-              slug:
-                type: string
-              url:
-                type: string
-              edit:
-                $ref: '#/components/schemas/TypedArgument'
-              name:
-                $ref: '#/components/schemas/LocalizedText'
-              description:
-                $ref: '#/components/schemas/LocalizedText'
-              arguments:
-                additionalProperties:
-                  $ref: '#/components/schemas/TypedArgument'
-        automations:
-          type: array
-          items:
-            type: object
-            required:
-              - slug
-              - name
-            properties:
-              slug:
-                type: string
-              name:
-                $ref: '#/components/schemas/LocalizedText'
-              description:
-                $ref: '#/components/schemas/LocalizedText'
         photo:
           type: string
+        blocks:
+          $ref: '#/components/schemas/AppBlocks'
+        automations:
+          $ref: '#/components/schemas/AppAutomations'
         events:
-          type: object
-          properties:
-            emit:
-              type: array
-              items:
-                type: object
-                required:
-                  - event
-                properties:
-                  event:
-                    type: string
-                  autocomplete:
-                    type: object
-                    additionalProperties:
-                      type: object
-                      properties:
-                        from:
-                          type: string
-                        path:
-                          type: string
-                        template:
-                          type: string
-            listen:
-              type: array
-              items:
-                type: string
-        documentation:
-          type: object
-          properties:
-            workspaceSlug:
-              type: string
-            slug:
-              type: string
-
-    AppInstancePatch:
-      type: object
-      properties:
-        <<: *AppInstanceMeta
-        config: {}
-
-    DetailedAppInstance:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/AppInstance'
-        - $ref: '#/components/schemas/AppDetails'
-
-    AppInstanceDetailedList:
-      type: array
-      items:
-        $ref: '#/components/schemas/DetailedAppInstance'
+          $ref: '#/components/schemas/AppEvents'
 
     Workspace:
       $ref: '#/components/schemas/DSUL'
@@ -3098,10 +3128,6 @@ components:
         - name
       properties:
         <<: *DSUL
-        imports:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/AppInstanceMeta'
         automations:
           type: object
           additionalProperties:
@@ -3213,6 +3239,7 @@ components:
         description:
           $ref: '#/components/schemas/LocalizedText'
         private:
+          type: boolean
           description: "Set this to true if you don't want your automation to be accessible outside of your app. Default is false."
           example: false
         disabled:
@@ -3347,30 +3374,16 @@ components:
               config:
                 type: object
                 additionalProperties: true
+              appInstance:
+                type: string
         styles:
           type: string
 
     PageDetails:
       type: object
       required:
-        - blocks
         - appInstances
       properties:
-        blocks:
-          type: array
-          items:
-            type: object
-            required:
-              - name
-              - appInstance
-            properties:
-              name:
-                type: string
-              config: {}
-              url:
-                type: string
-              appInstance:
-                type: string
         appInstances:
           type: array
           items:
@@ -4708,9 +4721,15 @@ components:
           type: object
           required:
             - page
+            - slug
           properties:
             page:
               $ref: '#/components/schemas/Page'
+            slug:
+              type: string
+            oldSlug:
+              type: string
+              description: Filled with the previous page slug when renamed
 
     DeletedPage:
       type: object

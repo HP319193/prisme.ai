@@ -226,18 +226,23 @@ class Apps {
     const [app, automations] = await Promise.all([
       this.storage.get({ appSlug, version: version || 'current' }),
       this.storage.folderIndex({
-        dsulType: DSULType.Automations,
+        dsulType: DSULType.AutomationsIndex,
         appSlug,
         version: version || 'current',
         folderIndex: true,
       }),
     ]);
+    const filteredAutomations = Object.entries(automations || {})
+      .map(([slug, cur]) =>
+        cur.disabled || cur.private ? false : { slug, ...cur }
+      )
+      .filter<Prismeai.Automation & { slug: string }>(Boolean as any);
 
-    const allEventTriggers = Object.values(automations || {}).reduce<string[]>(
+    const allEventTriggers = filteredAutomations.reduce<string[]>(
       (listen, automation) => listen.concat(automation?.when?.events || []),
       []
     );
-    const allEmits = Object.values(automations || {}).reduce<
+    const allEmits = filteredAutomations.reduce<
       Required<Prismeai.AutomationMeta['emits']>
     >((emits, automation) => (emits || []).concat(automation?.emits || []), []);
     return {
@@ -248,13 +253,14 @@ class Apps {
           slug,
         };
       }),
-      automations: Object.entries(automations || {})
-        .map(([slug, { disabled, name, description }]) =>
-          disabled ? false : { name, slug, description }
-        )
-        .filter<{ name: string; slug: string; description: string }>(
-          Boolean as any
-        ),
+      automations: filteredAutomations.map(
+        ({ slug, name, description, arguments: automArguments }) => ({
+          slug,
+          name,
+          description,
+          arguments: automArguments || {},
+        })
+      ),
       photo: app.photo,
       events: {
         listen: Array.from(new Set(allEventTriggers)),

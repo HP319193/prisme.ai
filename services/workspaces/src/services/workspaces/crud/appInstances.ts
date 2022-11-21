@@ -28,59 +28,65 @@ class AppInstances {
 
   list = async (
     workspaceId: string
-  ): Promise<(Prismeai.DetailedAppInstance & { slug: string })[]> => {
+  ): Promise<(Prismeai.AppInstanceMeta & { slug: string })[]> => {
     await this.accessManager.throwUnlessCan(
       ActionType.Read,
       SubjectType.Workspace,
       workspaceId
     );
     const imports = await this.storage.folderIndex({
-      dsulType: DSULType.Imports,
+      dsulType: DSULType.ImportsIndex,
       workspaceId,
     });
-    const appInstances = Object.entries(imports || {}).reduce(
-      (appInstances, [slug, appInstance]) => {
-        return [...appInstances, { ...appInstance, slug }];
-      },
-      [] as any
-    );
+    return Object.entries(imports || {}).reduce<
+      (Prismeai.AppInstanceMeta & { slug: string })[]
+    >((appInstances, [slug, appInstance]) => {
+      return [...appInstances, { ...appInstance, slug }];
+    }, []);
+  };
+
+  detailedList = async (
+    workspaceId: string
+  ): Promise<Prismeai.AppInstanceList> => {
+    const appInstances = await this.list(workspaceId);
 
     return (
       await Promise.all(
-        appInstances.map(async (cur: Prismeai.AppInstance) => {
-          try {
-            const appDetails = await this.apps.getAppDetails(
-              cur.appSlug,
-              cur.appVersion
-            );
+        appInstances.map<Promise<Prismeai.AppInstanceList[0] | false>>(
+          async (cur) => {
+            try {
+              const appDetails = await this.apps.getAppDetails(
+                cur.appSlug,
+                cur.appVersion
+              );
 
-            return {
-              ...cur,
-              ...appDetails,
-              blocks: (appDetails.blocks || []).map((block) => {
-                if (block?.slug) {
-                  block.slug = `${cur.slug}.${block.slug}`;
-                }
-                return block;
-              }),
-              config: {
-                ...appDetails?.config,
-                value: cur.config || {},
-              },
-            };
-          } catch (error) {
-            // If app does not exist anymore, just ignore this instance
-            return undefined;
+              return {
+                ...cur,
+                slug: cur.slug!,
+                photo: appDetails?.photo,
+                automations: appDetails?.automations,
+                events: appDetails?.events,
+                blocks: (appDetails.blocks || []).map((block) => {
+                  if (block?.slug) {
+                    block.slug = `${cur.slug}.${block.slug}`;
+                  }
+                  return block;
+                }),
+              };
+            } catch (error) {
+              // If app does not exist anymore, just ignore this instance
+              return false;
+            }
           }
-        })
+        )
       )
-    ).filter(Boolean);
+    ).filter<Prismeai.AppInstanceList[0]>(Boolean as any);
   };
 
-  get = async (
+  getAppInstance = async (
     workspaceId: string,
     slug: string
-  ): Promise<Prismeai.DetailedAppInstance & { slug: string }> => {
+  ): Promise<Prismeai.AppInstance & { slug: string }> => {
     await this.accessManager.throwUnlessCan(
       ActionType.Read,
       SubjectType.Workspace,
@@ -95,6 +101,14 @@ class AppInstances {
     if (!appInstance) {
       throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
     }
+    return { ...appInstance, slug };
+  };
+
+  getDetailedAppInstance = async (
+    workspaceId: string,
+    slug: string
+  ): Promise<Prismeai.DetailedAppInstance & { slug: string }> => {
+    const appInstance = await this.getAppInstance(workspaceId, slug);
     const appDetails = await this.apps.getAppDetails(
       appInstance.appSlug,
       appInstance.appVersion
@@ -107,7 +121,6 @@ class AppInstances {
         value: appInstance.config || {},
       },
       slug,
-      photo: appDetails.photo,
     };
   };
 
