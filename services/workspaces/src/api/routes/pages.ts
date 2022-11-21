@@ -1,10 +1,12 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
-import { AccessManager, Role } from '../../permissions';
-import { AppInstances, Apps, Pages, Workspaces } from '../../services';
+import { AccessManager } from '../../permissions';
+import { AppInstances, Apps, Pages } from '../../services';
 import DSULStorage from '../../services/DSULStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
+
+export { getServices as getPagesService };
 
 const getServices = ({
   context,

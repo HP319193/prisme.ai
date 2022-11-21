@@ -42,6 +42,8 @@ export enum EventType {
   UpdatedPage = 'workspaces.pages.updated',
   DeletedPage = 'workspaces.pages.deleted',
 
+  UpdatedBlocks = 'workspaces.blocks.updated',
+
   PagePermissionsShared = 'workspaces.pages.permissions.shared',
   PagePermissionsDeleted = 'workspaces.pages.permissions.deleted',
 

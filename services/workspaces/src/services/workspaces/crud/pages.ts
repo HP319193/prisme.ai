@@ -174,7 +174,7 @@ class Pages {
         // No block page is from this appInstance : do not include it !
         if (
           !(page.blocks || []).find((cur) =>
-            blockNames.includes(cur.name || '')
+            blockNames.includes(cur.slug || '')
           )
         ) {
           return false;
@@ -199,7 +199,7 @@ class Pages {
     if (workspace.blocks) {
       appInstances.push({
         slug: '',
-        config: workspace.config,
+        config: {},
         blocks: Object.entries(workspace.blocks).reduce(
           (prev, [slug, { url = '' }]) => ({
             ...prev,
@@ -222,8 +222,11 @@ class Pages {
       id,
     });
 
-    const newSlug = page.slug || currentPageMeta.slug!;
+    const oldSlug = currentPageMeta.slug!;
+    const newSlug = page.slug || oldSlug;
     page.slug = newSlug;
+    page.id = id;
+    page.workspaceSlug = currentPageMeta.workspaceSlug;
 
     await this.accessManager.throwUnlessCan(
       ActionType.Create,
@@ -234,14 +237,12 @@ class Pages {
     await this.storage.save(
       {
         workspaceId,
-        slug: currentPageMeta.slug,
+        slug: oldSlug,
         dsulType: DSULType.Pages,
       },
       {
         ...page,
-        id,
         workspaceId,
-        workspaceSlug: currentPageMeta.workspaceSlug,
       },
       {
         mode: 'update',
@@ -260,8 +261,7 @@ class Pages {
     this.broker.send<Prismeai.UpdatedPage['payload']>(EventType.UpdatedPage, {
       page,
       slug: newSlug,
-      oldSlug:
-        page.slug && page.slug !== currentPageMeta.slug ? page.slug : undefined,
+      oldSlug: newSlug !== oldSlug ? oldSlug : undefined,
     });
     return { slug: newSlug, ...page };
   };

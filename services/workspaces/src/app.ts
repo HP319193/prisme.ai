@@ -15,7 +15,10 @@ import { initEDA } from './eda';
 import { uncaughtExceptionHandler } from './errors';
 import '@prisme.ai/types';
 import { initAccessManager } from './permissions';
-import { autoinstallApps, syncWorkspacesWithConfigContexts } from './services';
+import {
+  syncWorkspacesWithConfigContexts,
+  syncDetailedPagesWithEDA,
+} from './services';
 import FileStorage from './services/FileStorage';
 import { autoremoveExpiredUploads } from './services/uploads';
 import buildStorage from './storage';
@@ -50,15 +53,12 @@ const uploadsStorage = new FileStorage(
   )
 );
 
-setTimeout(() => {
-  autoinstallApps(dsulStorage, accessManager);
-}, 20000); // Arbitrary 20 sec delay to make sure app API are ready
-
 autoremoveExpiredUploads(uploadsStorage, accessManager);
 
 const app = initAPI(accessManager, dsulStorage, uploadsStorage, broker);
 
 syncWorkspacesWithConfigContexts(accessManager, broker, dsulStorage);
+syncDetailedPagesWithEDA(accessManager, broker, dsulStorage);
 
 const httpServer = http.createServer(app);
 

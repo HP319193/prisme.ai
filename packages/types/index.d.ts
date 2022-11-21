@@ -1058,7 +1058,7 @@ declare namespace Prismeai {
                 /**
                  * App unique id
                  */
-                appSlug: string;
+                appSlug?: string;
                 appName?: LocalizedText;
                 /**
                  * Defaults to the latest known app version
@@ -1077,7 +1077,7 @@ declare namespace Prismeai {
                 updatedBy?: string;
                 createdBy?: string;
                 config?: any;
-                oldConfig: any;
+                oldConfig?: any;
             };
             slug: string;
             /**
@@ -1307,25 +1307,25 @@ declare namespace Prismeai {
         workspaceSlug?: string;
         id?: string;
         slug?: string;
+        blocks?: {
+            slug: string;
+            config?: {
+                [name: string]: any;
+            };
+            appInstance?: string;
+        }[];
         createdBy?: string;
         updatedBy?: string;
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
         apiKey?: string;
-        blocks?: {
-            name?: string;
-            config?: {
-                [name: string]: any;
-            };
-            appInstance?: string;
-        }[];
         styles?: string;
         appInstances: {
             slug?: string;
             appConfig?: any;
             /**
-             * Map block names to their URL
+             * Map block slugs to their URL
              * example:
              * {
              *   "Dialog Manager.config": "https://cdn-assets.prisme.ai/widgets/nlu/setup-widget/main.js"
@@ -1629,19 +1629,19 @@ declare namespace Prismeai {
         workspaceSlug?: string;
         id?: string;
         slug?: string;
+        blocks?: {
+            slug: string;
+            config?: {
+                [name: string]: any;
+            };
+            appInstance?: string;
+        }[];
         createdBy?: string;
         updatedBy?: string;
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
         apiKey?: string;
-        blocks?: {
-            name?: string;
-            config?: {
-                [name: string]: any;
-            };
-            appInstance?: string;
-        }[];
         styles?: string;
     }
     export interface PageDetails {
@@ -1649,7 +1649,7 @@ declare namespace Prismeai {
             slug?: string;
             appConfig?: any;
             /**
-             * Map block names to their URL
+             * Map block slugs to their URL
              * example:
              * {
              *   "Dialog Manager.config": "https://cdn-assets.prisme.ai/widgets/nlu/setup-widget/main.js"
@@ -1674,6 +1674,10 @@ declare namespace Prismeai {
         workspaceSlug?: string;
         id?: string;
         slug?: string;
+        blocks?: {
+            slug?: string;
+            appInstance?: string;
+        }[];
         createdBy?: string;
         updatedBy?: string;
         createdAt?: string;
@@ -2046,6 +2050,19 @@ declare namespace Prismeai {
             oldSlug?: string;
         };
     }
+    export interface UpdatedBlocks {
+        /**
+         * example:
+         * workspaces.blocks.updated
+         */
+        type: "workspaces.blocks.updated";
+        payload: {
+            blocks: {
+                [name: string]: /* Block */ Block;
+            };
+            workspaceSlug: string;
+        };
+    }
     export interface UpdatedContexts {
         /**
          * example:
@@ -2085,6 +2102,7 @@ declare namespace Prismeai {
         type: "workspaces.updated";
         payload: {
             workspace: Workspace;
+            oldSlug?: string;
         };
     }
     export interface UsageMetrics {

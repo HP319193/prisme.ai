@@ -80,6 +80,19 @@ class Workspaces {
         },
       },
       {
+        path: 'blocks',
+        handler: async (allDiffs: DSULDiff[]) => {
+          const workspace = allDiffs[0].root;
+          this.broker.send<Prismeai.UpdatedBlocks['payload']>(
+            EventType.UpdatedBlocks,
+            {
+              blocks: allDiffs[0].value,
+              workspaceSlug: workspace.slug!,
+            }
+          );
+        },
+      },
+      {
         path: 'config',
         handler: async (allDiffs: DSULDiff[]) => {
           this.broker.send<Prismeai.ConfiguredWorkspace['payload']>(
@@ -282,14 +295,19 @@ class Workspaces {
       workspace.slug = hri.random();
     }
     this.broker.buffer(true);
+
+    const currentDSUL = await this.getWorkspace(workspaceId);
     this.broker.send<Prismeai.UpdatedWorkspace['payload']>(
       EventType.UpdatedWorkspace,
       {
         workspace,
+        oldSlug:
+          workspace.slug && workspace.slug !== currentDSUL.slug
+            ? currentDSUL.slug
+            : undefined,
       }
     );
 
-    const currentDSUL = await this.getWorkspace(workspaceId);
     const diffs = await this.processEveryDiffs(currentDSUL, {
       id: workspaceId,
       ...workspace,

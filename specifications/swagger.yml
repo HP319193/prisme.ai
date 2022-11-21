@@ -3346,6 +3346,15 @@ components:
           type: string
         slug:
           type: string
+        blocks:
+          type: array
+          items:
+            type: object
+            properties:
+              slug:
+                type: string
+              appInstance:
+                type: string
         createdBy:
           type: string
         updatedBy:
@@ -3362,14 +3371,16 @@ components:
     Page:
       type: object
       additionalProperties: false
-      properties:
+      properties: &Page
         <<: *PageMeta
         blocks:
           type: array
           items:
             type: object
+            required:
+              - slug
             properties:
-              name:
+              slug:
                 type: string
               config:
                 type: object
@@ -3383,7 +3394,7 @@ components:
       type: object
       required:
         - appInstances
-      properties:
+      properties: &PageDetails
         appInstances:
           type: array
           items:
@@ -3393,7 +3404,7 @@ components:
                 type: string
               appConfig: {}
               blocks:
-                description: Map block names to their URL
+                description: Map block slugs to their URL
                 additionalProperties:
                   type: string
                 example:
@@ -3403,9 +3414,12 @@ components:
           description: 'Indicates whether this page is public. Reflects page permissions and cannot be set directly'
 
     DetailedPage:
-      allOf:
-        - $ref: '#/components/schemas/Page'
-        - $ref: '#/components/schemas/PageDetails'
+      type: object
+      required:
+        - appInstances
+        - slug
+      properties:
+        <<: [ *Page, *PageDetails ]
 
     File:
       type: object
@@ -4425,6 +4439,8 @@ components:
           properties:
             workspace:
               $ref: '#/components/schemas/Workspace'
+            oldSlug:
+              type: string
 
     ConfiguredWorkspace:
       type: object
@@ -4608,13 +4624,11 @@ components:
             - slug
           properties:
             appInstance:
-              allOf:
-                - $ref: '#/components/schemas/AppInstance'
-                - type: object
-                  required:
-                    - oldConfig
-                  properties:
-                    oldConfig: {}
+              type: object
+              properties:
+                <<: *AppInstanceMeta
+                config: {}
+                oldConfig: {}
             slug:
               type: string
             oldSlug:
@@ -4730,6 +4744,30 @@ components:
             oldSlug:
               type: string
               description: Filled with the previous page slug when renamed
+
+    UpdatedBlocks:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.blocks.updated
+          enum:
+            - workspaces.blocks.updated
+        payload:
+          type: object
+          required:
+            - blocks
+            - workspaceSlug
+          properties:
+            blocks:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/Block'
+            workspaceSlug:
+              type: string
 
     DeletedPage:
       type: object

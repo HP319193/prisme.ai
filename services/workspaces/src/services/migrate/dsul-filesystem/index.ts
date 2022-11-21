@@ -225,6 +225,10 @@ async function migrateWorkspace(
   }
 
   for (let [slug, page] of Object.entries(legacyPages || {})) {
+    page.blocks = (page.blocks || []).map(({ name, ...block }: any) => ({
+      slug: block.slug || name,
+      ...block,
+    }));
     await pages.createPage(workspaceId!, { ...page, slug }, true);
     if (legacy.slug) {
       const detailedPage = await pages.getDetailedPage({

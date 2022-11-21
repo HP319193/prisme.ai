@@ -208,6 +208,10 @@ export default class DSULStorage<
         name: page.name!,
         description: page.description,
         id: page.id,
+        blocks: (page.blocks || []).map(({ slug, appInstance }) => ({
+          slug,
+          appInstance,
+        })),
       };
       return indexEntry as DSULInterfaces[dsulType];
     } else {
@@ -251,9 +255,9 @@ export default class DSULStorage<
     }
   }
 
-  async save(
-    query: DSULQuery,
-    dsul: DSULInterfaces[t],
+  async save<overrideT extends DSULType = t>(
+    query: DSULQuery<overrideT>,
+    dsul: DSULInterfaces[overrideT],
     updateIndex?: { mode?: 'create' | 'update' | 'replace'; updatedBy?: string }
   ) {
     let folderIndex = await this.folderIndex(query);
@@ -297,13 +301,16 @@ export default class DSULStorage<
       // Update folderIndex
       const updatedAt = new Date().toISOString();
       folderIndex[(query as any).slug] = {
-        ...this.prepareIndexEntry(this.dsulType, dsul),
+        ...this.prepareIndexEntry<overrideT>(
+          (query.dsulType || this.dsulType) as any,
+          dsul
+        ),
         createdAt:
-          folderIndex[oldSlugBeforeRename || (query as any).slug]?.createdAt ||
-          updatedAt,
+          (folderIndex[oldSlugBeforeRename || (query as any).slug] as any)
+            ?.createdAt || updatedAt,
         createdBy:
-          folderIndex[oldSlugBeforeRename || (query as any).slug]?.createdBy ||
-          updateIndex?.updatedBy!,
+          (folderIndex[oldSlugBeforeRename || (query as any).slug] as any)
+            ?.createdBy || updateIndex?.updatedBy!,
         updatedAt,
         updatedBy: updateIndex?.updatedBy!,
       };
