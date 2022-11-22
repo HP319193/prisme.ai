@@ -1,139 +1,177 @@
 import Automations from './automations';
 import '@prisme.ai/types';
-import { ObjectNotFoundError } from '../../../errors';
+import { ActionType, SubjectType } from '../../../permissions';
+import { IStorage, DriverType } from '../../../storage/types';
+import DSULStorage, { DSULType, getPath } from '../../DSULStorage';
+import { AlreadyUsedError, ObjectNotFoundError } from '../../../errors';
 
-jest.mock('nanoid', () => ({ nanoid: () => '123456' }));
+const USER_ID = '9999';
+const WORKSPACE_ID = '123456';
+jest.mock('nanoid', () => ({ nanoid: () => WORKSPACE_ID }));
 
-const EMPTY_WORKSPACE_ID = '123456';
-const INIT_WORKSPACE_ID = '123456_INIT';
-const INI_AUTOMATION_SLUG = 'My automated';
-
-const workspaces = {
-  [EMPTY_WORKSPACE_ID]: {
-    name: 'nameWorkspace',
-    id: EMPTY_WORKSPACE_ID,
+const getMockedAccessManager = () => ({
+  user: {
+    id: USER_ID,
   },
-  [INIT_WORKSPACE_ID]: {
-    name: 'nameWorkspaceInitialized',
-    id: INIT_WORKSPACE_ID,
-    automations: {
-      [INI_AUTOMATION_SLUG]: {
-        name: 'My automatéd: /',
-        do: [],
-      },
-    },
-  },
+  throwUnlessCan: jest.fn(),
+  findAll: jest.fn(),
+  create: jest.fn(),
+  get: jest.fn(),
+  update: jest.fn(),
+  delete: jest.fn(),
+  deleteMany: jest.fn(),
+});
+
+const getMockedStorage = (): DSULStorage => {
+  const store = {};
+  const driver: IStorage = {
+    type: () => DriverType.FILESYSTEM,
+    find: () => Promise.resolve([]),
+    save: jest.fn((id: string, data: any) => {
+      store[id] = data;
+      return Promise.resolve(true);
+    }),
+    copy: jest.fn(),
+    delete: jest.fn(),
+    deleteMany: jest.fn(),
+    get: jest.fn((id: string) => {
+      if (id in store) {
+        return store[id];
+      }
+      throw new ObjectNotFoundError();
+    }),
+  };
+
+  return new DSULStorage(driver, DSULType.DSULIndex);
 };
-const getMockedWorkspaces = () => ({
-  getWorkspace: jest.fn((workspaceId) => workspaces[workspaceId]),
-  save: jest.fn(),
+const getMockedBroker = () => ({
+  send: jest.fn(),
+  buffer: jest.fn(),
+  flush: jest.fn(),
+  clear: jest.fn(),
 });
-const getMockedBroker = () => ({ send: jest.fn() });
 
-it('createAutomation should call Workspaces crud & broker', async () => {
-  const mockedWorkspaces: any = getMockedWorkspaces();
-  const mockedBroker: any = getMockedBroker();
+describe('Basic ops should call accessManager, DSULStorage, broker', () => {
+  const mockedAccessManager: any = getMockedAccessManager();
+  const dsulStorage = getMockedStorage();
+  let mockedBroker: any;
+  let automationsCrud: Automations;
+  const dsulSaveSpy = jest.spyOn(dsulStorage, 'save');
+  const dsulDeleteSpy = jest.spyOn(dsulStorage, 'delete');
 
-  const workspaceCrud = new Automations(mockedWorkspaces, mockedBroker);
-
-  const automation = {
-    name: 'My automatéd: /',
-    do: [],
-  };
-  const result = await workspaceCrud.createAutomation(
-    EMPTY_WORKSPACE_ID,
-    automation
-  );
-
-  expect(result.slug).toBe('My automated');
-  expect(mockedWorkspaces.save).toHaveBeenCalledWith(EMPTY_WORKSPACE_ID, {
-    ...workspaces[EMPTY_WORKSPACE_ID],
-    automations: {
-      [result.slug]: automation,
-    },
+  beforeEach(() => {
+    mockedBroker = getMockedBroker();
+    automationsCrud = new Automations(
+      mockedAccessManager,
+      mockedBroker,
+      dsulStorage
+    );
   });
-  expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.automations.created',
-    {
-      slug: result.slug,
-      automation,
-    }
-  );
-});
 
-it('updateAutomation should call Workspaces crud & broker', async () => {
-  const mockedWorkspaces: any = getMockedWorkspaces();
-  const mockedBroker: any = getMockedBroker();
-
-  const workspaceCrud = new Automations(mockedWorkspaces, mockedBroker);
-
-  const automation = {
-    name: 'renamed automét !',
-    do: [
-      {
-        set: {
-          name: 'someVar',
-          value: 'someValue',
-        },
-      },
-    ],
-  };
-  const result = await workspaceCrud.updateAutomation(
-    INIT_WORKSPACE_ID,
-    INI_AUTOMATION_SLUG,
-    automation
-  );
-
-  expect(result).toMatchObject({ ...automation, slug: INI_AUTOMATION_SLUG });
-  expect(mockedWorkspaces.save).toHaveBeenCalledWith(INIT_WORKSPACE_ID, {
-    ...workspaces[INIT_WORKSPACE_ID],
-    automations: {
-      [result.slug]: automation,
-    },
-  });
-  expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.automations.updated',
-    {
-      slug: result.slug,
-      automation,
-    }
-  );
-});
-
-it('updateAutomation should throw ObjectNotFound', async () => {
-  const mockedWorkspaces: any = getMockedWorkspaces();
-  const mockedBroker: any = getMockedBroker();
-
-  const workspaceCrud = new Automations(mockedWorkspaces, mockedBroker);
-
-  expect(
-    workspaceCrud.updateAutomation(INIT_WORKSPACE_ID, 'someUnknownAutomation', {
-      name: '',
+  it('createAutomation', async () => {
+    const slug = 'autom';
+    const automation: Prismeai.Automation = {
+      name: 'doSomething',
       do: [],
-    })
-  ).rejects.toThrow(ObjectNotFoundError);
-});
+      slug,
+    };
+    const result = await automationsCrud.createAutomation(
+      WORKSPACE_ID,
+      automation
+    );
 
-it('deleteAutomation should call Workspaces crud & broker', async () => {
-  const mockedWorkspaces: any = getMockedWorkspaces();
-  const mockedBroker: any = getMockedBroker();
-
-  const workspaceCrud = new Automations(mockedWorkspaces, mockedBroker);
-
-  await workspaceCrud.deleteAutomation(INIT_WORKSPACE_ID, INI_AUTOMATION_SLUG);
-
-  expect(mockedWorkspaces.save).toHaveBeenCalledWith(INIT_WORKSPACE_ID, {
-    ...workspaces[INIT_WORKSPACE_ID],
-    automations: {},
+    expect(result).toEqual(automation);
+    expect(mockedAccessManager.throwUnlessCan).toHaveBeenCalledWith(
+      ActionType.Update,
+      SubjectType.Workspace,
+      WORKSPACE_ID
+    );
+    expect(dsulSaveSpy).toHaveBeenCalledWith(
+      { workspaceId: WORKSPACE_ID, slug },
+      result,
+      {
+        mode: 'create',
+        updatedBy: USER_ID,
+      }
+    );
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.automations.created',
+      {
+        automation,
+        slug,
+      }
+    );
   });
-  expect(mockedBroker.send).toHaveBeenCalledWith(
-    'workspaces.automations.deleted',
-    {
-      automation: {
-        slug: INI_AUTOMATION_SLUG,
-        name: workspaces[INIT_WORKSPACE_ID].automations[INI_AUTOMATION_SLUG]
-          .name,
-      },
-    }
-  );
+
+  it('createAutomation throws AlreadyUsedError', async () => {
+    const slug = 'autom';
+    const automation: Prismeai.Automation = {
+      name: 'doSomething',
+      do: [],
+      slug,
+    };
+    await expect(
+      automationsCrud.createAutomation(WORKSPACE_ID, automation)
+    ).rejects.toThrowError(AlreadyUsedError);
+  });
+
+  it('updateAutomation', async () => {
+    const oldSlug = 'autom';
+    const newSlug = 'newSlug';
+    const lastDSUL = await automationsCrud.getAutomation(WORKSPACE_ID, oldSlug);
+    const automation: Prismeai.Automation = {
+      ...lastDSUL,
+      description: 'Some description',
+      slug: newSlug,
+    };
+    const result = await automationsCrud.updateAutomation(
+      WORKSPACE_ID,
+      oldSlug,
+      automation
+    );
+
+    expect(result).toEqual(automation);
+    expect(mockedAccessManager.throwUnlessCan).toHaveBeenCalledWith(
+      ActionType.Update,
+      SubjectType.Workspace,
+      WORKSPACE_ID
+    );
+    expect(dsulSaveSpy).toHaveBeenCalledWith(
+      { workspaceId: WORKSPACE_ID, slug: newSlug },
+      result,
+      {
+        mode: 'update',
+        updatedBy: USER_ID,
+      }
+    );
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.automations.updated',
+      {
+        automation,
+        slug: newSlug,
+        oldSlug,
+      }
+    );
+  });
+
+  it('deleteAutomation', async () => {
+    const slug = 'newSlug';
+    await automationsCrud.deleteAutomation(WORKSPACE_ID, slug);
+
+    expect(mockedAccessManager.throwUnlessCan).toHaveBeenCalledWith(
+      ActionType.Update,
+      SubjectType.Workspace,
+      WORKSPACE_ID
+    );
+    expect(dsulDeleteSpy).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      slug,
+    });
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.automations.deleted',
+      {
+        automationSlug: slug,
+      }
+    );
+  });
 });

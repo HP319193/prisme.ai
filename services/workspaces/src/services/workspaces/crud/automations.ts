@@ -116,10 +116,7 @@ class Automations {
       {
         automation,
         slug: automation.slug || slug,
-        oldSlug:
-          automation.slug && automation.slug !== slug
-            ? automation.slug
-            : undefined,
+        oldSlug: automation.slug && automation.slug !== slug ? slug : undefined,
       }
     );
     return { ...automation, slug: automation.slug || slug };

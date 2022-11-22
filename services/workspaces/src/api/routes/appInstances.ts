@@ -152,7 +152,7 @@ export default function init(dsulStorage: DSULStorage) {
       accessManager,
       broker,
     });
-    const result = await appInstances.detailedList(workspaceId);
+    const result = await appInstances.getDetailedList(workspaceId);
     res.send(result);
   }
 

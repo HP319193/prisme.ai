@@ -199,7 +199,7 @@ class Pages {
       dsulType: DSULType.DSULIndex,
       workspaceId: page.workspaceId,
     });
-    const detailedAppInstances = await this.appInstances.detailedList(
+    const detailedAppInstances = await this.appInstances.getDetailedList(
       page.workspaceId!
     );
 

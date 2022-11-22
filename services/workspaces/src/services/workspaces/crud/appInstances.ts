@@ -45,7 +45,7 @@ class AppInstances {
     }, []);
   };
 
-  detailedList = async (
+  getDetailedList = async (
     workspaceId: string
   ): Promise<Prismeai.AppInstanceList> => {
     const appInstances = await this.list(workspaceId);
@@ -120,6 +120,12 @@ class AppInstances {
         ...appDetails?.config,
         value: appInstance.config || {},
       },
+      blocks: (appDetails.blocks || []).map((block) => {
+        if (block?.slug) {
+          block.slug = `${slug}.${block.slug}`;
+        }
+        return block;
+      }),
       slug,
     };
   };
@@ -140,12 +146,10 @@ class AppInstances {
       await this.apps.exists(appInstance.appSlug, appInstance.appVersion);
     }
 
-    const { slug, ...appInstanceWithoutSlug } = appInstance;
     await this.storage.save(
       {
         workspaceId,
         slug: appInstance.slug,
-        dsulType: DSULType.Imports,
       },
       appInstance,
       {
@@ -156,10 +160,10 @@ class AppInstances {
 
     this.broker.send<Prismeai.InstalledAppInstance['payload']>(
       EventType.InstalledApp,
-      { appInstance: appInstanceWithoutSlug, slug },
+      { appInstance, slug: appInstance.slug },
       {
         appSlug: appInstance.appSlug,
-        appInstanceFullSlug: slug,
+        appInstanceFullSlug: appInstance.slug,
       }
     );
     return appInstance;
@@ -181,9 +185,7 @@ class AppInstances {
       slug,
       dsulType: DSULType.Imports,
     });
-    if (!currentAppInstance) {
-      throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
-    }
+
     const appInstance = {
       ...currentAppInstance,
       slug,
@@ -195,7 +197,6 @@ class AppInstances {
       {
         workspaceId,
         slug,
-        dsulType: DSULType.Imports,
       },
       appInstance,
       {
@@ -214,7 +215,7 @@ class AppInstances {
         slug: appInstance.slug,
         oldSlug:
           appInstancePatch.slug && appInstancePatch.slug !== slug
-            ? appInstancePatch.slug
+            ? slug
             : undefined,
       },
       {
@@ -240,7 +241,6 @@ class AppInstances {
     await this.storage.delete({
       workspaceId,
       slug: slug,
-      dsulType: DSULType.Imports,
     });
 
     this.broker.send<Prismeai.UninstalledAppInstance['payload']>(
