@@ -2,7 +2,7 @@ import { Broker } from '@prisme.ai/broker';
 import { getPagesService } from '../../api/routes/pages';
 import { EventType } from '../../eda';
 import { logger } from '../../logger';
-import { getSuperAdmin, AccessManager } from '../../permissions';
+import { getSuperAdmin, AccessManager, SubjectType } from '../../permissions';
 import DSULStorage, { DSULType } from '../DSULStorage';
 
 export async function syncDetailedPagesWithEDA(
@@ -61,10 +61,12 @@ export async function syncDetailedPagesWithEDA(
       EventType.ConfiguredApp,
       EventType.UpdatedPage,
       EventType.CreatedPage,
+      EventType.PagePermissionsShared,
+      EventType.PagePermissionsDeleted,
     ],
     async (event) => {
       const {
-        source: { workspaceId },
+        source: { workspaceId, userId },
       } = event;
 
       try {
@@ -154,6 +156,39 @@ export async function syncDetailedPagesWithEDA(
               dsulType: DSULType.DetailedPage,
             });
           }
+        } else if (
+          event.type == EventType.PagePermissionsShared ||
+          event.type == EventType.PagePermissionsDeleted
+        ) {
+          const { payload } = event as
+            | Prismeai.PagePermissionsShared
+            | Prismeai.PagePermissionsDeleted;
+          const isOrWasPublic =
+            !!(<Prismeai.PagePermissionsShared['payload']>payload).permissions
+              ?.public ||
+            (<Prismeai.PagePermissionsDeleted['payload']>payload).userId == '*';
+          if (!isOrWasPublic) {
+            return false;
+          }
+          const page = await superAdmin.get(SubjectType.Page, {
+            workspaceId,
+            id: payload.subjectId,
+          });
+          const isNowPublic = event.type == EventType.PagePermissionsShared;
+          await ((pages as any).storage as DSULStorage).patch(
+            {
+              workspaceSlug: page.workspaceSlug,
+              slug: page.slug,
+              dsulType: DSULType.DetailedPage,
+            },
+            {
+              public: isNowPublic,
+            } as any,
+            {
+              mode: 'update',
+              updatedBy: userId,
+            }
+          );
         }
       } catch (error) {
         logger.error(error);

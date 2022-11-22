@@ -1,6 +1,7 @@
 import Workspaces from './workspaces';
 import '@prisme.ai/types';
 import { SubjectType } from '../../../permissions';
+import { IStorage, DriverType } from '../../../storage/types';
 
 jest.mock('nanoid', () => ({ nanoid: () => '123456' }));
 
@@ -51,9 +52,13 @@ const workspaces = {
     },
   },
 };
-const getMockedStorage = () => ({
+const getMockedStorage = (): IStorage => ({
+  type: () => DriverType.FILESYSTEM,
+  find: () => Promise.resolve([]),
   save: jest.fn(),
+  copy: jest.fn(),
   delete: jest.fn(),
+  deleteMany: jest.fn(),
   get: jest.fn((workspaceId: string) => {
     if (workspaceId in workspaces) {
       return workspaces[workspaceId];

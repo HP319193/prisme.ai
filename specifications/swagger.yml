@@ -1294,7 +1294,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Workspace'
+              $ref: "#/components/schemas/DSULPatch"
 
       responses:
         '200':
@@ -3120,6 +3120,12 @@ components:
           type: string
         id:
           type: string
+
+    DSULPatch:
+      type: object
+      additionalProperties: false
+      properties:
+        <<: *DSUL
 
     DSULReadOnly:
       type: object

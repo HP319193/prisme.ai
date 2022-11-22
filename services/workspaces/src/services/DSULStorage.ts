@@ -255,10 +255,29 @@ export default class DSULStorage<
     }
   }
 
+  async patch<overrideT extends DSULType = t>(
+    query: DSULQuery<overrideT>,
+    dsulPatch: Partial<DSULInterfaces[overrideT]>,
+    updateIndex?: {
+      mode?: 'create' | 'update' | 'replace';
+      updatedBy?: string;
+    }
+  ) {
+    const currentDSUL = await this.get(query);
+    const newDSUL = {
+      ...currentDSUL,
+      ...dsulPatch,
+    };
+    return await this.save(query, newDSUL, updateIndex);
+  }
+
   async save<overrideT extends DSULType = t>(
     query: DSULQuery<overrideT>,
     dsul: DSULInterfaces[overrideT],
-    updateIndex?: { mode?: 'create' | 'update' | 'replace'; updatedBy?: string }
+    updateIndex?: {
+      mode?: 'create' | 'update' | 'replace';
+      updatedBy?: string;
+    }
   ) {
     let folderIndex = await this.folderIndex(query);
     // Check for name conflict

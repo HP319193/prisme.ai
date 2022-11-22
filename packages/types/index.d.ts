@@ -1182,6 +1182,17 @@ declare namespace Prismeai {
         slug?: string;
         id?: string;
     }
+    export interface DSULPatch {
+        name?: string;
+        description?: LocalizedText;
+        photo?: string;
+        config?: Config;
+        blocks?: {
+            [name: string]: /* Block */ Block;
+        };
+        slug?: string;
+        id?: string;
+    }
     export interface DSULReadOnly {
         name: string;
         description?: LocalizedText;
@@ -1306,7 +1317,7 @@ declare namespace Prismeai {
         workspaceId?: string;
         workspaceSlug?: string;
         id?: string;
-        slug?: string;
+        slug: string;
         blocks?: {
             slug: string;
             config?: {
@@ -3360,7 +3371,7 @@ declare namespace PrismeaiAPI {
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
         }
-        export type RequestBody = Prismeai.Workspace;
+        export type RequestBody = Prismeai.DSULPatch;
         namespace Responses {
             export type $200 = Prismeai.Workspace;
             export type $400 = Prismeai.BadParametersError;

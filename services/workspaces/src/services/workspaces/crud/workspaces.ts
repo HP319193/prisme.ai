@@ -289,14 +289,19 @@ class Workspaces {
 
   updateWorkspace = async (
     workspaceId: string,
-    workspace: Prismeai.Workspace
+    workspacePatch: Prismeai.Workspace
   ) => {
+    const currentDSUL = await this.getWorkspace(workspaceId);
+    const workspace = {
+      ...currentDSUL,
+      ...workspacePatch,
+    };
+
     if (!workspace.slug) {
       workspace.slug = hri.random();
     }
     this.broker.buffer(true);
 
-    const currentDSUL = await this.getWorkspace(workspaceId);
     this.broker.send<Prismeai.UpdatedWorkspace['payload']>(
       EventType.UpdatedWorkspace,
       {
