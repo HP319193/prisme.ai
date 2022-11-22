@@ -26,7 +26,8 @@ export async function syncDetailedPagesWithEDA(
     workspaceId: string,
     id: string,
     slug: string,
-    workspaceSlug?: string
+    workspaceSlug?: string,
+    logCtx?: any
   ) => {
     const detailedPage = await pages.getDetailedPage({
       workspaceId,
@@ -43,57 +44,43 @@ export async function syncDetailedPagesWithEDA(
       },
       detailedPage
     );
-    logger.info(
-      `DetailedPage ${slug} (${id}) within workspace ${workspaceSlug} (${workspaceId}) succesfully updated`,
-      {
-        workspaceId,
-        id,
-        workspaceSlug,
-        slug,
-      }
-    );
+    logger.info({
+      msg: `DetailedPage ${slug} (${id}) within workspace ${workspaceSlug} (${workspaceId}) succesfully updated`,
+      workspaceId,
+      id,
+      workspaceSlug,
+      slug,
+      ...logCtx,
+    });
   };
 
   broker.on(
     [
-      EventType.UpdatedWorkspace,
       EventType.UpdatedBlocks,
       EventType.ConfiguredApp,
       EventType.UpdatedPage,
       EventType.CreatedPage,
       EventType.PagePermissionsShared,
       EventType.PagePermissionsDeleted,
+      EventType.DeletedWorkspace,
     ],
     async (event) => {
       const {
-        source: { workspaceId, userId },
+        source: { workspaceId, userId, correlationId },
       } = event;
-
+      const logCtx = {
+        event: {
+          id: event.id,
+          type: event.type,
+          correlationId,
+        },
+      };
+      logger.info({
+        msg: `Syncing detailed pages with event ${event.type}`,
+        ...logCtx,
+      });
       try {
-        if (event.type == EventType.UpdatedWorkspace) {
-          const {
-            payload: { workspace, oldSlug },
-          } = event as Prismeai.UpdatedWorkspace;
-          if (workspace.slug && oldSlug) {
-            await dsulStorage.copy(
-              {
-                workspaceSlug: oldSlug,
-                dsulType: DSULType.DetailedPage,
-                parentFolder: true,
-              },
-              {
-                workspaceSlug: workspace.slug,
-                dsulType: DSULType.DetailedPage,
-                parentFolder: true,
-              }
-            );
-            await dsulStorage.delete({
-              workspaceSlug: oldSlug,
-              dsulType: DSULType.DetailedPage,
-              parentFolder: true,
-            });
-          }
-        } else if (event.type == EventType.UpdatedBlocks) {
+        if (event.type == EventType.UpdatedBlocks) {
           const {
             payload: { blocks, workspaceSlug },
           } = event as Prismeai.UpdatedBlocks;
@@ -113,7 +100,8 @@ export async function syncDetailedPagesWithEDA(
                 workspaceId!,
                 page.id!,
                 slug,
-                workspaceSlug
+                workspaceSlug,
+                logCtx
               );
             }
           }
@@ -133,7 +121,13 @@ export async function syncDetailedPagesWithEDA(
               (cur.slug || '').startsWith(`${appInstanceSlug}.`)
             );
             if (needsUpdate) {
-              await rebuildDetailedPage(workspaceId!, page.id!, slug);
+              await rebuildDetailedPage(
+                workspaceId!,
+                page.id!,
+                slug,
+                undefined,
+                logCtx
+              );
             }
           }
         } else if (
@@ -147,7 +141,8 @@ export async function syncDetailedPagesWithEDA(
             workspaceId!,
             page.id!,
             page.slug!,
-            page.workspaceSlug!
+            page.workspaceSlug!,
+            logCtx
           );
           if (oldSlug && page?.slug && page.slug !== oldSlug) {
             await ((pages as any).storage as DSULStorage).delete({
@@ -175,7 +170,7 @@ export async function syncDetailedPagesWithEDA(
             id: payload.subjectId,
           });
           const isNowPublic = event.type == EventType.PagePermissionsShared;
-          await ((pages as any).storage as DSULStorage).patch(
+          await dsulStorage.patch(
             {
               workspaceSlug: page.workspaceSlug,
               slug: page.slug,
@@ -189,9 +184,20 @@ export async function syncDetailedPagesWithEDA(
               updatedBy: userId,
             }
           );
+        } else if (event.type == EventType.DeletedWorkspace) {
+          const {
+            payload: { workspaceSlug },
+          } = event as Prismeai.DeletedWorkspace;
+          if (workspaceSlug) {
+            await dsulStorage.delete({
+              workspaceSlug: workspaceSlug,
+              dsulType: DSULType.DetailedPage,
+              parentFolder: true,
+            });
+          }
         }
-      } catch (error) {
-        logger.error(error);
+      } catch (err) {
+        logger.error({ err, ...logCtx });
         return false;
       }
 

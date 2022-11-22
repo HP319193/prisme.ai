@@ -1,6 +1,5 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
-import { nanoid } from 'nanoid';
 import { AccessManager } from '../../permissions';
 import { Workspaces } from '../../services';
 import DSULStorage from '../../services/DSULStorage';
@@ -43,7 +42,7 @@ export default function init(
       accessManager,
       broker,
     });
-    const result = await workspaces.createWorkspace({ ...body, id: nanoid() });
+    const result = await workspaces.createWorkspace(body);
     res.send(result);
   }
 
@@ -216,6 +215,28 @@ export default function init(
     res.send(version);
   }
 
+  async function duplicateWorkspaceHandler(
+    {
+      accessManager,
+      params: { workspaceId, versionId },
+      context,
+      broker,
+    }: Request<PrismeaiAPI.DuplicateWorkspaceVersion.PathParameters>,
+    res: Response<PrismeaiAPI.DuplicateWorkspaceVersion.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const workspace = await workspaces.duplicateWorkspace(
+      workspaceId,
+      versionId
+    );
+
+    res.send(workspace);
+  }
+
   const app = express.Router();
 
   app.post(`/`, asyncRoute(createWorkspaceHandler));
@@ -236,6 +257,10 @@ export default function init(
   app.post(
     `/:workspaceId/versions/:versionId/rollback`,
     asyncRoute(rollbackWorkspaceVersionHandler)
+  );
+  app.post(
+    `/:workspaceId/versions/:versionId/duplicate`,
+    asyncRoute(duplicateWorkspaceHandler)
   );
 
   return app;

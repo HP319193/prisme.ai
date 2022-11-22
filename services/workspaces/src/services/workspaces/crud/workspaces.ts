@@ -104,60 +104,6 @@ class Workspaces {
           );
         },
       },
-      // {
-      //   path: 'imports.*',
-      //   handler: async (allDiffs: DSULDiff[]) => {
-      //     for (let {
-      //       type,
-      //       value,
-      //       oldValue,
-      //       root,
-      //       parentKey: appSlug,
-      //     } of allDiffs) {
-      //       const appInstance = value as Prismeai.AppInstance;
-
-      //       switch (type) {
-      //         case DiffType.ValueCreated:
-      //           // Rebuild current dsul without the installed app to prevent installApp from throwing an AlreadyUsedError
-      //           const { [appSlug]: currentOne, ...importsWithoutCurrentOne } =
-      //             root.imports || {};
-      //           await this.appInstances.installApp(
-      //             {
-      //               ...root,
-      //               imports: importsWithoutCurrentOne,
-      //             },
-      //             { ...appInstance, slug: appSlug }
-      //           );
-      //           break;
-      //         case DiffType.ValueUpdated:
-      //           await this.appInstances.configureApp(
-      //             {
-      //               ...root,
-      //               imports: {
-      //                 ...root.imports,
-      //                 [appSlug]: oldValue,
-      //               },
-      //             },
-      //             appSlug,
-      //             appInstance
-      //           );
-      //           break;
-      //         case DiffType.ValueDeleted:
-      //           await this.appInstances.uninstallApp(
-      //             {
-      //               ...root,
-      //               imports: {
-      //                 ...(root?.imports || {}),
-      //                 [appSlug]: appInstance,
-      //               },
-      //             },
-      //             appSlug
-      //           );
-      //           break;
-      //       }
-      //     }
-      //   },
-      // },
     ];
   }
 
@@ -165,16 +111,21 @@ class Workspaces {
    * Workspaces
    */
 
-  createWorkspace = async (workspace: Prismeai.Workspace & { id: string }) => {
-    if (!workspace.slug) {
-      workspace.slug = hri.random();
-    }
+  createWorkspace = async (workspaceBody: Prismeai.Workspace) => {
+    const workspace: Prismeai.Workspace & { id: string; slug: string } = {
+      ...workspaceBody,
+      id: nanoid(7),
+      slug: workspaceBody.slug || hri.random(),
+    };
 
     this.broker.buffer(true);
     this.broker.send<Prismeai.CreatedWorkspace['payload']>(
       EventType.CreatedWorkspace,
       {
         workspace,
+      },
+      {
+        workspaceId: workspace.id,
       }
     );
 
@@ -183,11 +134,7 @@ class Workspaces {
       name: workspace.name,
       slug: workspace.slug!,
     });
-    await this.processEveryDiffs({} as any, workspace);
-    await this.storage.save(
-      { workspaceId: workspace.id || nanoid(7) },
-      workspace
-    );
+    await this.storage.save({ workspaceId: workspace.id }, workspace);
 
     // Send events
     await this.broker.flush(true);
@@ -223,6 +170,73 @@ class Workspaces {
       throw new InvalidVersionError(`Unknown version name '${version}'`);
     }
     return await this.getWorkspaceAsAdmin(workspaceId, version);
+  };
+
+  duplicateWorkspace = async (workspaceId: string, version?: string) => {
+    const {
+      slug: fromSlug,
+      id: _,
+      name: fromName,
+      ...fromWorkspace
+    } = await this.getWorkspace(workspaceId, version);
+    const newWorkspace = await this.createWorkspace({
+      ...fromWorkspace,
+      name: fromName + ' - Copie',
+      description: `Copie du workspace ${fromName}`,
+    });
+
+    // Copy automations & imports
+    const automationsQuery = {
+      version: 'current',
+      parentFolder: true,
+      dsulType: DSULType.Automations,
+    };
+    const importsQuery = {
+      ...automationsQuery,
+      dsulType: DSULType.Imports,
+    };
+    await Promise.all([
+      this.storage.copy(
+        {
+          workspaceId,
+          ...automationsQuery,
+        },
+        {
+          workspaceId: newWorkspace.id,
+          ...automationsQuery,
+        }
+      ),
+      this.storage.copy(
+        {
+          workspaceId,
+          ...importsQuery,
+        },
+        {
+          workspaceId: newWorkspace.id,
+          ...importsQuery,
+        }
+      ),
+    ]);
+
+    this.broker.send<Prismeai.DuplicatedWorkspace['payload']>(
+      EventType.DuplicatedWorkspace,
+      {
+        workspace: newWorkspace,
+        fromWorkspace: {
+          name: fromName,
+          slug: fromSlug!,
+          id: workspaceId,
+        },
+      },
+      {
+        workspaceId: newWorkspace.id,
+      }
+    );
+
+    // Duplicate pages in database
+    await this.pages.duplicateWorkspacePages(workspaceId, newWorkspace.id);
+
+    return newWorkspace;
   };
 
   getIndex = async <t extends DSULType>(
@@ -521,12 +535,32 @@ class Workspaces {
   deleteWorkspace = async (
     workspaceId: PrismeaiAPI.DeleteWorkspace.PathParameters['workspaceId']
   ) => {
+    const workspace = await this.getWorkspace(workspaceId);
+
+    // Delete workspace DB entry & check permissions
     await this.accessManager.delete(SubjectType.Workspace, workspaceId);
-    await this.storage.delete({ workspaceId, parentFolder: true });
+
+    // Delete workspace from storage
+    try {
+      await this.storage.delete({ workspaceId, parentFolder: true });
+    } catch (err) {
+      logger.err(err);
+    }
+
+    // Delete pages db entries
+    try {
+      await this.accessManager.deleteMany(SubjectType.Page, {
+        workspaceId,
+      });
+    } catch (err) {
+      logger.err(err);
+    }
+
     this.broker.send<Prismeai.DeletedWorkspace['payload']>(
       EventType.DeletedWorkspace,
       {
         workspaceId,
+        workspaceSlug: workspace.slug,
       }
     );
     return { id: workspaceId };

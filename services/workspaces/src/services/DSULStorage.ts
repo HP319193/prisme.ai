@@ -173,6 +173,69 @@ export default class DSULStorage<
     }
   }
 
+  async refreshFolderIndex<t extends DSULType>(
+    workspaceId: string,
+    dsulType: t
+  ) {
+    if (
+      !Object.values(DSULType).includes(
+        `${dsulType}${FolderIndexSuffix}` as DSULType
+      )
+    ) {
+      throw new Error(
+        `No folder index type configured for the DSULType ${dsulType}`
+      );
+    }
+
+    const files = await this.driver.find(
+      this.getPath({
+        workspaceId,
+        dsulType,
+        parentFolder: true,
+      })
+    );
+
+    const slugs = files
+      .map(({ key }) =>
+        !key || `/${key}`.startsWith(FolderIndexSuffix) || !key.endsWith('.yml')
+          ? false
+          : key.slice(0, -4)
+      )
+      .filter<string>(Boolean as any);
+
+    const dsuls = await Promise.all(
+      slugs.map((slug) =>
+        this.get(
+          {
+            workspaceId,
+            dsulType,
+            slug,
+          },
+          false
+        )
+      )
+    );
+
+    const folderIndex: FolderIndex = dsuls.reduce<FolderIndex>(
+      (folderIndex, dsul, idx) =>
+        !dsul
+          ? folderIndex
+          : {
+              ...folderIndex,
+              [slugs[idx]]: this.prepareIndexEntry(
+                dsulType,
+                dsul as any
+              ) as any,
+            },
+      {}
+    );
+
+    await this.driver.save(
+      this.getPath({ workspaceId, dsulType, folderIndex: true }),
+      yaml.dump(folderIndex, { skipInvalid: true })
+    );
+  }
+
   prepareIndexEntry<dsulType extends keyof DSULInterfaces>(
     dsulType: dsulType,
     dsul: DSULInterfaces[dsulType]

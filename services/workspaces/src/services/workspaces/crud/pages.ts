@@ -41,18 +41,20 @@ class Pages {
       page.slug = hri.random();
     }
 
-    const workspace = await this.storage.get({
-      dsulType: DSULType.DSULIndex,
-      workspaceId,
-    });
-    page.workspaceSlug = workspace.slug;
+    if (!page.workspaceSlug) {
+      const workspace = await this.storage.get({
+        dsulType: DSULType.DSULIndex,
+        workspaceId,
+      });
+      page.workspaceSlug = workspace.slug;
+    }
 
     const pageMetadata = {
       name: page.name!,
       id: page.id,
       slug: page.slug,
       workspaceId,
-      workspaceSlug: workspace.slug,
+      workspaceSlug: page.workspaceSlug,
       description: page.description,
     };
 
@@ -87,6 +89,51 @@ class Pages {
     return page;
   };
 
+  duplicateWorkspacePages = async (
+    fromWorkspaceId: string,
+    toWorkspaceId: string
+  ) => {
+    // Without this, event would be emitted in the wrong workspace (thus failing to build detailedPages)
+    this.broker = this.broker.child({
+      workspaceId: toWorkspaceId,
+    });
+
+    const pages = await this.list(fromWorkspaceId);
+    const pagesDsul = await Promise.all(
+      pages.map((cur) =>
+        this.storage.get({
+          slug: cur.slug,
+          workspaceId: cur.workspaceId,
+        })
+      )
+    );
+
+    // Avoid fetching same workspace on each createPage call
+    const toWorkspace = await this.storage.get({
+      dsulType: DSULType.DSULIndex,
+      workspaceId: toWorkspaceId,
+    });
+
+    const duplicatedPages = await Promise.all(
+      pagesDsul.map((cur) => {
+        return this.createPage(toWorkspaceId, {
+          ...cur,
+          workspaceSlug: toWorkspace.slug,
+          workspaceId: toWorkspaceId,
+        });
+      })
+    );
+
+    // Reset folderIndex as it doesn't support concurrent saves ...
+    try {
+      await this.storage.refreshFolderIndex(toWorkspaceId, DSULType.Pages);
+    } catch (err) {
+      logger.error(err);
+    }
+
+    return duplicatedPages;
+  };
+
   list = async (workspaceId: string): Promise<Prismeai.PageMeta[]> => {
     const pages = await this.accessManager.findAll(SubjectType.Page, {
       workspaceId,
@@ -119,7 +166,7 @@ class Pages {
       });
       const detailedPage = {
         ...page,
-        slug: pageMeta.slug,
+        slug: pageMeta.slug!,
         workspaceId: pageMeta.workspaceId,
         workspaceSlug: pageMeta.workspaceSlug,
         ...(await this.getPageDetails({
@@ -142,7 +189,7 @@ class Pages {
     if (!page.public) {
       await this.accessManager.get(SubjectType.Page, query);
     }
-    return page;
+    return { ...page, workspaceSlug: (<any>query).workspaceSlug };
   };
 
   private async getPageDetails(
@@ -308,18 +355,25 @@ class Pages {
         }
       );
 
-      await this.storage.copy(
-        {
+      if (oldWorkspaceSlug) {
+        await this.storage.copy(
+          {
+            workspaceSlug: oldWorkspaceSlug,
+            dsulType: DSULType.DetailedPage,
+            parentFolder: true,
+          },
+          {
+            workspaceSlug,
+            dsulType: DSULType.DetailedPage,
+            parentFolder: true,
+          }
+        );
+        await this.storage.delete({
           workspaceSlug: oldWorkspaceSlug,
           dsulType: DSULType.DetailedPage,
           parentFolder: true,
-        },
-        {
-          workspaceSlug,
-          dsulType: DSULType.DetailedPage,
-          parentFolder: true,
-        }
-      );
+        });
+      }
     } catch (err) {
       logger.warn({
         msg: 'An error occured while updating pages workspaceSlug',

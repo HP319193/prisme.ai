@@ -24,6 +24,8 @@ export enum EventType {
   DeletedWorkspaceVersion = 'workspaces.versions.deleted',
   RollbackWorkspaceVersion = 'workspaces.versions.rollback',
 
+  DuplicatedWorkspace = 'workspaces.duplicated',
+
   WorkspacePermissionsShared = 'workspaces.permissions.shared',
   WorkspacePermissionsDeleted = 'workspaces.permissions.deleted',
 

@@ -1271,6 +1271,7 @@ declare namespace Prismeai {
         type: "workspaces.deleted";
         payload: {
             workspaceId: string;
+            workspaceSlug?: string;
         };
     }
     export interface DeletedWorkspaceVersion {
@@ -1350,6 +1351,21 @@ declare namespace Prismeai {
          * Indicates whether this page is public. Reflects page permissions and cannot be set directly
          */
         public?: boolean;
+    }
+    export interface DuplicatedWorkspace {
+        /**
+         * example:
+         * workspaces.duplicated
+         */
+        type: "workspaces.duplicated";
+        payload: {
+            workspace: Workspace;
+            fromWorkspace?: {
+                name: string;
+                slug?: string;
+                id: string;
+            };
+        };
     }
     export interface Emit {
         emit: {
@@ -2659,6 +2675,22 @@ declare namespace PrismeaiAPI {
             export interface $200 {
                 id: string;
             }
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace DuplicateWorkspaceVersion {
+        namespace Parameters {
+            export type VersionId = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            versionId: Parameters.VersionId;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.Workspace;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;

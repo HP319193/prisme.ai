@@ -1552,6 +1552,51 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
+  /v2/workspaces/{workspaceId}/versions/{versionId}/duplicate:
+    post:
+      description: Duplicate this workspace version to a new workspace
+      operationId: duplicateWorkspaceVersion
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'versionId'
+          in: 'path'
+          description: 'Version name'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workspace"
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
   ## automations
   /v2/workspaces/{workspaceId}/automations:
     post:
@@ -4426,6 +4471,8 @@ components:
           properties:
             workspaceId:
               type: string
+            workspaceSlug:
+              type: string
 
     UpdatedWorkspace:
       type: object
@@ -4524,6 +4571,38 @@ components:
           properties:
             version:
               $ref: '#/components/schemas/WorkspaceVersion'
+
+    DuplicatedWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.duplicated
+          enum:
+            - workspaces.duplicated
+        payload:
+          type: object
+          required:
+            - workspace
+          properties:
+            workspace:
+              $ref: '#/components/schemas/Workspace'
+            fromWorkspace:
+              type: object
+              required:
+                - name
+                - id
+              properties:
+                name:
+                  type: string
+                slug:
+                  type: string
+                id:
+                  type: string
+
 
     WorkspacePermissionsShared:
       type: object
