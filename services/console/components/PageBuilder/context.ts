@@ -17,6 +17,7 @@ export interface PageBuilderContext {
   blocksInPage: {
     key: string;
     appName: Prismeai.LocalizedText;
+    slug: string;
     name?: Prismeai.LocalizedText;
     appInstance?: string;
     url?: string;

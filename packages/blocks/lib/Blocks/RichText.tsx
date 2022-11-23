@@ -1,5 +1,6 @@
 import Markdown from 'markdown-to-jsx';
 import { HTMLAttributes, useMemo } from 'react';
+import { BlockComponent } from '../BlockLoader';
 import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
 import useLocalizedText from '../useLocalizedText';
@@ -45,12 +46,14 @@ export const RichTextRenderer = ({
   );
 };
 
-export const RichText = () => {
+export const RichText: BlockComponent = () => {
   const { config } = useBlock<RichTextConfig>();
   const { content = '' } = config || {};
   return (
     <RichTextRenderer className="block-rich-text">{content}</RichTextRenderer>
   );
 };
+
+RichText.Preview = (props) => <RichText {...props} />;
 
 export default RichText;

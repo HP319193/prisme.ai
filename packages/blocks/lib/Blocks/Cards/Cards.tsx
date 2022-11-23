@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useBlock } from '../../Provider';
 import { withI18nProvider } from '../../i18n';
@@ -17,45 +16,32 @@ import Square from './Variants/Square';
 import Article from './Variants/Article';
 import Short from './Variants/Short';
 import Actions from './Variants/Actions';
-
-const getComponent = (variant: CardsConfig['variant']) => {
-  switch (variant) {
-    case 'square':
-      return Square;
-    case 'article':
-      return Article;
-    case 'short':
-      return Short;
-    case 'actions':
-      return Actions;
-    case 'classic':
-    default:
-      return Classic;
-  }
-};
-const typeCards = (variant: CardsConfig['variant'], cards: TCards) => {
-  switch (variant) {
-    case 'square':
-      return cards as CardSquare[];
-    case 'article':
-      return cards as CardArticle[];
-    case 'short':
-      return cards as CardShort[];
-    case 'actions':
-      return cards as CardAction[];
-    case 'classic':
-    default:
-      return cards as CardClassic[];
-  }
-};
+import { BlockComponent } from '../../BlockLoader';
 
 const cardsIsShort = (
   cards: TCards,
   variant: CardsConfig['variant']
 ): cards is CardShort[] => variant === 'short';
 
-export const Cards = ({ edit }: { edit?: boolean }) => {
-  const { t } = useTranslation();
+const getContainerStyle = (type: CardsConfig['layout']['type']) => {
+  switch (type) {
+    case 'grid':
+      return {
+        container: tw`flex flex-row flex-wrap justify-center`,
+      };
+    case 'column':
+      return {
+        container: tw`flex flex-wrap flex-col items-center`,
+      };
+    case 'carousel':
+    default:
+      return {
+        container: tw`flex flex-row flex-nowrap overflow-auto no-scrollbar pr-[100vw] snap-x snap-mandatory pb-6`,
+      };
+  }
+};
+
+export const Cards: BlockComponent = () => {
   const { config = {} as CardsConfig } = useBlock<CardsConfig>();
   const [canScroll, setCanScroll] = useState<boolean | null>(false);
 
@@ -143,59 +129,12 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
 
   const styles = useMemo(() => {
     const { layout: { type = 'carousel' } = {} } = config;
-    switch (type) {
-      case 'grid':
-        return {
-          container: tw`flex flex-row flex-wrap justify-center`,
-        };
-      case 'column':
-        return {
-          container: tw`flex flex-wrap flex-col items-center`,
-        };
-      case 'carousel':
-      default:
-        return {
-          container: tw`flex flex-row flex-nowrap overflow-auto no-scrollbar pr-[100vw] snap-x snap-mandatory pb-6`,
-        };
-    }
+    return getContainerStyle(type);
   }, [config]);
-
-  const preview = !!(!config.cards && edit);
-  const previewText = t('preview');
-  const cards = useMemo(
-    () =>
-      (Array.isArray(config.cards) && config.cards) ||
-      (preview
-        ? Array.from(
-            new Array(6),
-            (v) =>
-              ({
-                title: previewText,
-                description: previewText,
-                content: [
-                  {
-                    type: 'text',
-                    value: previewText,
-                  },
-                  {
-                    type: 'button',
-                    value: previewText,
-                  },
-                  {
-                    type: 'accordion',
-                    title: previewText,
-                    content: previewText,
-                  },
-                ],
-              } as CardClassic)
-          )
-        : []),
-    [config.cards, preview, previewText]
-  );
 
   const getCoverStyle = useCallback(
     (index: number) => {
-      const currentCards = cards;
+      const currentCards = config.cards;
 
       if (cardsIsShort(currentCards, config.variant)) return;
 
@@ -209,7 +148,7 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
         }`,
       };
     },
-    [cards]
+    [config.cards]
   );
 
   const cardsProps = {
@@ -221,7 +160,9 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
     ...config,
   };
 
-  const filteredCards = useMemo(() => (cards as []).filter(Boolean), [cards]);
+  const filteredCards = useMemo(() => (config.cards as []).filter(Boolean), [
+    config.cards,
+  ]);
 
   switch (config.variant) {
     case 'square':
@@ -255,6 +196,26 @@ export const Cards = ({ edit }: { edit?: boolean }) => {
         />
       );
   }
+};
+
+const previews = Array.from(new Array(4), (v, k) => k);
+Cards.Preview = ({ config = {} }) => {
+  const type: CardsConfig['layout']['type'] =
+    config?.layout?.type || 'carousel';
+  console.log(type);
+  return (
+    <div>
+      {config.title && <div>{config.title}</div>}
+      <div className={getContainerStyle(type).container}>
+        {previews.map((k) => (
+          <div
+            key={k}
+            className={tw`flex snap-start m-2 w-[10rem] h-[10rem] flex-card bg-gray rounded`}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default withI18nProvider(Cards);

@@ -158,7 +158,6 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
     []
   );
 
-  // Deprecated
   const blocksInPage: PageBuilderContext['blocksInPage'] = useMemo(() => {
     return (value.blocks || []).flatMap(({ key, name = '' }) => {
       if (!key) return [];
@@ -168,6 +167,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
       if (!appName && Object.keys(builtinBlocks).includes(blockName)) {
         return {
           url: undefined,
+          slug: name,
           name: blockName,
           key,
           appName: '',

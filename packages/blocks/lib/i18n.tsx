@@ -1,6 +1,7 @@
 import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { JSXElementConstructor, ReactElement, useEffect } from 'react';
+import { BlockComponent } from './BlockLoader';
 
 const i18n = createInstance({
   resources: {
@@ -65,12 +66,10 @@ const i18n = createInstance({
 
 i18n.use(initReactI18next).init();
 
-type i18nHOC<T> = (
-  Component: JSXElementConstructor<T>
-) => (props: T) => ReactElement<T>;
+type i18nHOC<T> = (Component: BlockComponent) => T;
 
-export const withI18nProvider: i18nHOC<{ edit?: boolean }> = (Component) => {
-  return (props: any & { language: string }) => {
+export const withI18nProvider: i18nHOC<BlockComponent> = (Component) => {
+  const NewComponent: BlockComponent = (props: any & { language: string }) => {
     useEffect(() => {
       i18n.changeLanguage(props.language);
     }, [props.language]);
@@ -81,6 +80,12 @@ export const withI18nProvider: i18nHOC<{ edit?: boolean }> = (Component) => {
       </I18nextProvider>
     );
   };
+
+  Object.entries(Component).forEach(
+    ([k, v]) => (NewComponent[k as keyof BlockComponent] = v)
+  );
+
+  return NewComponent;
 };
 
 export default i18n;

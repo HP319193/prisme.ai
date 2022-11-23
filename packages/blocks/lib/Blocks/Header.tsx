@@ -78,10 +78,7 @@ const Button = ({ text, type, value }: Partial<Config['nav'][number]>) => {
 };
 
 export const Header: BlockComponent = () => {
-  const { config = {} as Config, events } = useBlock<Config>();
-  const {
-    components: { Link },
-  } = useBlocks();
+  const { config = {} as Config } = useBlock<Config>();
 
   const nav = config.nav && Array.isArray(config.nav) ? config.nav : [];
 

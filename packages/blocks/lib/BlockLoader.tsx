@@ -37,15 +37,15 @@ export interface BlockComponentProps {
   workspaceId?: string;
   appInstance?: string;
   language?: string;
-  edit?: boolean;
   layout?: {
     container?: HTMLElement;
   };
+  config?: Record<any, any>;
 }
-export type BlockComponent = (
-  props: BlockComponentProps
-) => ReactElement & {
+export type BlockComponent = {
+  (props: BlockComponentProps): ReactElement | null;
   schema?: Schema;
+  Preview?: (props: BlockComponentProps) => ReactElement;
 };
 
 export interface BlockLoaderProps extends BlockComponentProps {
@@ -79,13 +79,13 @@ export const ReactBlock = ({
 
   return (
     <>
-      {loading && componentProps.edit && <Loading />}
+      {loading && <Loading />}
       {Component && <Component {...componentProps} language={language} />}
     </>
   );
 };
 
-export const IFrameBlock = ({ url, token, edit }: BlockLoaderProps) => {
+export const IFrameBlock = ({ url, token }: BlockLoaderProps) => {
   const [loading, setLoading] = useState(true);
   const [height, setHeight] = useState(100);
   const {
@@ -107,7 +107,7 @@ export const IFrameBlock = ({ url, token, edit }: BlockLoaderProps) => {
 
   return (
     <>
-      {loading && edit && <Loading />}
+      {loading && <Loading />}
       <iframe
         src={url}
         onLoad={handleLoad}
@@ -121,14 +121,14 @@ export const IFrameBlock = ({ url, token, edit }: BlockLoaderProps) => {
   );
 };
 
-const getComponentByName = (name: string) =>
-  builtinBlocks[name as keyof typeof builtinBlocks] || null;
+const getComponentByName = (name: string): BlockComponent | null =>
+  (builtinBlocks[name as keyof typeof builtinBlocks] as BlockComponent) || null;
 
 const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
   if (name) {
     const Component = getComponentByName(name);
     if (Component) {
-      return <Component edit={!!props.edit} {...props} />;
+      return <Component {...props} />;
     }
   }
 

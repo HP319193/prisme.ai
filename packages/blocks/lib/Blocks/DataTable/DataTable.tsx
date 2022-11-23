@@ -13,11 +13,7 @@ import { ColumnDefinition } from './types';
 import renderValue from './RenderValue';
 import useLocalizedText from '../../useLocalizedText';
 import { TableProps } from 'antd';
-
-const previewData = Array.from(new Array(100000), (v, k) => ({
-  Id: k,
-  label: `Preview ${k}`,
-}));
+import { BlockComponent } from '../../BlockLoader';
 
 export interface DataTableConfig {
   title?: Prismeai.LocalizedText;
@@ -39,7 +35,7 @@ const components = {
 
 const emptyArray: DataTableConfig['data'] = [];
 
-export const DataTable = ({ edit }: { edit?: boolean }) => {
+export const DataTable: BlockComponent = () => {
   const {
     t,
     i18n: { language },
@@ -47,12 +43,10 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
   const { localize } = useLocalizedText();
   const { config = { data: emptyArray }, events } = useBlock<DataTableConfig>();
 
-  const preview = !!(!config.data && edit);
-
   const [dataSource, setDataSource] = useState<any>();
 
   useEffect(() => {
-    const rawData = config.data || (preview ? previewData : []);
+    const rawData = config.data || [];
 
     setDataSource(
       Array.isArray(rawData)
@@ -62,7 +56,7 @@ export const DataTable = ({ edit }: { edit?: boolean }) => {
           }))
         : []
     );
-  }, [config.data, preview]);
+  }, [config.data]);
 
   const columns = useMemo(() => {
     const rawData = dataSource;
