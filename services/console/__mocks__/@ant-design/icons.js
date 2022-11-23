@@ -49,3 +49,6 @@ export function LeftCircleOutlined() {
 export function SearchOutlined() {
   return null;
 }
+export function CodeOutlined() {
+  return null;
+}

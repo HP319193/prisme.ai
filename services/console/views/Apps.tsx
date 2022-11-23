@@ -1,5 +1,5 @@
 import { Modal, notification, Schema } from '@prisme.ai/design-system';
-import { PageHeader, Segmented } from 'antd';
+import { PageHeader, Segmented, Tooltip } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
@@ -15,6 +15,7 @@ import AppEditor from '../components/AppEditor';
 import EditableTitle from '../components/AutomationBuilder/EditableTitle';
 import getConfig from 'next/config';
 import IFrameLoader from '../components/IFrameLoader';
+import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = '' },
@@ -155,63 +156,73 @@ const Apps = ({}: AppsProps) => {
       <PageHeader
         className="h-[4rem] flex items-center"
         title={
-          <div className="flex flex-row items-center text-lg">
-            {photo && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={photo} className="w-10 h-10 mr-2" alt={appId} />
-            )}
-
-            <span className="font-medium -mt-[0.3rem]">
-              <EditableTitle
-                value={currentApp.appName || ''}
-                onChange={(appName) =>
-                  setCurrentApp({
-                    ...currentApp,
-                    appName,
-                  })
-                }
-                onEnter={(appName) =>
-                  updateDetails({
-                    ...currentApp,
-                    appName,
-                  })
-                }
-              />
-            </span>
-            <span className="text-gray flex border-r border-l border-solid border-pr-gray-200 h-[26px] items-center px-3">
-              <EditDetails
-                schema={detailsFormSchema}
-                value={{ ...value }}
-                onSave={updateDetails}
-                onDelete={onDelete}
-                context="apps"
-                key={currentApp.slug}
-              />
-            </span>
-            {currentApp?.documentation && (
-              <div>
-                <div className="ml-3">
-                  <Segmented
-                    key="nav"
-                    options={[
-                      {
-                        label: t('apps.doc'),
-                        value: 0,
-                        icon: <EyeOutlined />,
-                      },
-                      {
-                        label: t('apps.config'),
-                        value: 1,
-                        icon: <EditOutlined />,
-                      },
-                    ]}
-                    onChange={(v) => setViewMode(+v)}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
+          <HorizontalSeparatedNav>
+            <HorizontalSeparatedNav.Separator>
+              {photo && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={photo} className="mr-2 h-[1.6rem]" alt={appId} />
+              )}
+              <span className="pr-page-title">
+                <EditableTitle
+                  value={currentApp.appName || ''}
+                  onChange={(appName) =>
+                    setCurrentApp({
+                      ...currentApp,
+                      appName,
+                    })
+                  }
+                  onEnter={(appName) =>
+                    updateDetails({
+                      ...currentApp,
+                      appName,
+                    })
+                  }
+                  className="text-accent max-w-[35vw] text-lg"
+                />
+              </span>
+            </HorizontalSeparatedNav.Separator>
+            <HorizontalSeparatedNav.Separator>
+              <Tooltip
+                title={t('details.title', { context: 'apps' })}
+                placement="bottom"
+              >
+                <EditDetails
+                  schema={detailsFormSchema}
+                  value={{ ...value }}
+                  onSave={updateDetails}
+                  onDelete={onDelete}
+                  context="apps"
+                  key={currentApp.slug}
+                />
+              </Tooltip>
+            </HorizontalSeparatedNav.Separator>
+          </HorizontalSeparatedNav>
         }
+        extra={[
+          currentApp?.documentation && (
+            <div>
+              <div className="ml-3">
+                <Segmented
+                  key="nav"
+                  options={[
+                    {
+                      label: t('apps.doc'),
+                      value: 0,
+                      icon: <EyeOutlined />,
+                    },
+                    {
+                      label: t('apps.config'),
+                      value: 1,
+                      icon: <EditOutlined />,
+                    },
+                  ]}
+                  onChange={(v) => setViewMode(+v)}
+                  className="pr-segmented-accent"
+                />
+              </div>
+            </div>
+          ),
+        ]}
       />
       <Head>
         <title>

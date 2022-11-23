@@ -10,17 +10,28 @@ import Error404 from '../Errors/404';
 import { useTranslation } from 'next-i18next';
 import cloneDeep from 'lodash/cloneDeep';
 import {
+  Button,
   Collapse,
   FieldProps,
   Loading,
   notification,
+  Popover,
   Schema,
   SchemaFormDescription,
   Tooltip,
+  Space,
 } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import { PageHeader, Segmented } from 'antd';
-import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import {
+  CodeOutlined,
+  CopyOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  LoadingOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons';
 import useLocalizedText from '../../utils/useLocalizedText';
 import PageBuilder from '../../components/PageBuilder';
 import { PageBuilderContext } from '../../components/PageBuilder/context';
@@ -34,9 +45,11 @@ import { useApps } from '../../components/AppsProvider';
 import { useWorkspace } from '../../components/WorkspaceProvider';
 import getLayout from '../../layouts/WorkspaceLayout';
 import { useWorkspaceLayout } from '../../layouts/WorkspaceLayout/context';
-import RightButtons from './RightButtons';
 import EditableTitle from '../../components/AutomationBuilder/EditableTitle';
 import api from '../../utils/api';
+import SharePage from '../../components/Share/SharePage';
+import HorizontalSeparatedNav from '../../components/HorizontalSeparatedNav';
+import CopyIcon from '../../icons/copy.svgr';
 
 const CSSEditor = ({
   name,
@@ -414,67 +427,117 @@ export const Page = () => {
       <PageHeader
         className="h-[4rem] flex items-center"
         title={
-          <div className="flex flex-row items-center text-lg">
-            <span className="font-medium -mt-[0.3rem]">
-              <EditableTitle
-                value={value.name}
-                onChange={(name) =>
-                  setValue({
-                    ...value,
-                    name,
-                  })
-                }
-                onEnter={(name) => {
-                  updateDetails({
-                    ...value,
-                    name,
-                  });
-                }}
-              />
-            </span>
-            <span className="text-gray flex border-r border-l border-solid border-pr-gray-200 h-[26px] items-center px-3">
-              <EditDetails
-                schema={detailsFormSchema}
-                value={{ ...value }}
-                onSave={updateDetails}
-                onDelete={confirmDeletePage}
-                context="pages"
-                key={`${pageId}`}
-              />
-            </span>
-            <div>
-              <div className="ml-3">
-                <Segmented
-                  key="nav"
-                  options={[
-                    {
-                      label: t('pages.preview'),
-                      value: 0,
-                      icon: <EyeOutlined />,
-                      disabled: (page?.blocks || []).length === 0,
-                    },
-                    {
-                      label: t('pages.edit'),
-                      value: 1,
-                      icon: <EditOutlined />,
-                    },
-                  ]}
-                  value={(page.blocks || []).length === 0 ? 1 : viewMode}
-                  onChange={(v) => setViewMode(+v)}
+          <HorizontalSeparatedNav>
+            <HorizontalSeparatedNav.Separator>
+              <span className="pr-page-title">
+                <EditableTitle
+                  value={value.name}
+                  onChange={(name) =>
+                    setValue({
+                      ...value,
+                      name,
+                    })
+                  }
+                  onEnter={(name) => {
+                    updateDetails({
+                      ...value,
+                      name,
+                    });
+                  }}
+                  className="text-accent max-w-[25vw] text-lg"
                 />
-              </div>
-            </div>
-          </div>
+              </span>
+            </HorizontalSeparatedNav.Separator>
+            <HorizontalSeparatedNav.Separator>
+              <Tooltip
+                title={t('details.title', { context: 'pages' })}
+                placement="bottom"
+              >
+                <EditDetails
+                  schema={detailsFormSchema}
+                  value={{ ...value }}
+                  onSave={updateDetails}
+                  onDelete={confirmDeletePage}
+                  context="pages"
+                  key={`${pageId}`}
+                />
+              </Tooltip>
+              <Popover
+                content={() => (
+                  <SharePage pageId={`${pageId}`} pageSlug={page.slug || ''} />
+                )}
+                title={t('pages.share.label')}
+              >
+                <button className="ml-4 !px-0 focus:outline-none">
+                  <Space>
+                    <Tooltip title={t('pages.share.label')} placement="bottom">
+                      <ShareAltOutlined className="text-lg" />
+                    </Tooltip>
+                  </Space>
+                </button>
+              </Popover>
+            </HorizontalSeparatedNav.Separator>
+            <HorizontalSeparatedNav.Separator>
+              <Tooltip title={t('pages.duplicate.help')} placement="bottom">
+                <button
+                  className="flex flex-row focus:outline-none items-center pr-4"
+                  onClick={() => console.log('copy')}
+                >
+                  <span className="mr-2">
+                    <CopyIcon width="1.2rem" height="1.2rem" />
+                  </span>
+                  {t('duplicate', { ns: 'common' })}
+                </button>
+              </Tooltip>
+              <Tooltip title={t('pages.source.help')} placement="bottom">
+                <button
+                  className="flex flex-row focus:outline-none items-center"
+                  onClick={() => console.log('source code')}
+                >
+                  <span className="mr-2">
+                    <CodeOutlined width="1.2rem" height="1.2rem" />
+                  </span>
+                  {t('pages.source.label')}
+                </button>
+              </Tooltip>
+            </HorizontalSeparatedNav.Separator>
+          </HorizontalSeparatedNav>
         }
         extra={[
           <div className="overflow-hidden" key="buttons">
-            <RightButtons
-              page={page}
-              pageId={`${pageId}`}
-              viewMode={viewMode}
-              save={save}
-              saving={saving}
-            />
+            <Button onClick={save} disabled={saving} variant="primary">
+              {saving && <LoadingOutlined />}
+              {t('pages.save.label')}
+            </Button>
+          </div>,
+          <div key="views">
+            <div className="ml-3">
+              <Segmented
+                key="nav"
+                options={[
+                  {
+                    value: 0,
+                    icon: (
+                      <Tooltip title={t('pages.preview')} placement="bottom">
+                        <EyeOutlined />
+                      </Tooltip>
+                    ),
+                    disabled: (page?.blocks || []).length === 0,
+                  },
+                  {
+                    value: 1,
+                    icon: (
+                      <Tooltip title={t('pages.edit')} placement="bottom">
+                        <EditOutlined />
+                      </Tooltip>
+                    ),
+                  },
+                ]}
+                value={(page.blocks || []).length === 0 ? 1 : viewMode}
+                className="pr-segmented-accent"
+                onChange={(v) => setViewMode(+v)}
+              />
+            </div>
           </div>,
         ]}
       />

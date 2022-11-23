@@ -30,8 +30,9 @@ module.exports = {
         // Antdesign secondary text color
         gray: '#939CA6',
         'light-gray': '#E5E5E5',
-        accent: '#015dff',
-        'ultra-light-accent': '#F8FAFF',
+        accent: 'var(--accent-color)',
+        'light-accent': 'var(--light-accent-color)',
+        'ultra-light-accent': 'var(--ultra-light-accent-color)',
         base: '#0A1D3B',
         error: '#ff4d4f',
         info: '#E6EFFF',
