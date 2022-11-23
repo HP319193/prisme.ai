@@ -21,7 +21,24 @@
     "title": "\"{{name}}\" workspace — $t(common:main.title)",
     "description": "Édition du workspace \"{{name}}\"",
     "share": "Partager ce workspace",
-    "empty": "<button>Créez votre première automatisation</button> pour voir votre workspace s'animer",
+    "empty": {
+      "title": "<0>Votre Workspace n'a pas encore généré d'activité…</0><1>Commencez à créer, ajoutez des pages, automations, apps !</1>",
+      "subtitle": "Vous ne savez pas par quoi commencer ?",
+      "suggestions": {
+        "page": {
+          "title": "Page",
+          "text": "Créer une page en fonction du besoin et du rôle"
+        },
+        "automation": {
+          "title": "Automation",
+          "text": "Créer une automatisation pour exécuter des instructions"
+        },
+        "app": {
+          "title": "App",
+          "text": "Installer une App pour ajouter des intégrations"
+        }
+      }
+    },
     "dirtyWarning": "Votre travail en cours n'a pas été sauvegarder. Souhaitez-vous quitter ?",
     "dirtyOk": "Quitter",
     "delete": {

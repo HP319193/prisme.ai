@@ -203,6 +203,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
         setFullSidebar,
         dirty,
         setDirty,
+        createAutomation: createAutomationHandler,
+        createPage: createPageHandler,
+        installApp: installAppHandler,
       }}
     >
       <Head>

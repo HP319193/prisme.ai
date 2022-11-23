@@ -137,7 +137,9 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
     >
       <div className="flex h-full overflow-auto flex-col" ref={ref}>
         {content}
-        <Button onClick={nextEvents}>{t('events.more')}</Button>
+        {feedSections.length > 0 && (
+          <Button onClick={nextEvents}>{t('events.more')}</Button>
+        )}
       </div>
     </Layout>
   );

@@ -17,6 +17,9 @@ export interface WorkspaceLayoutContext {
   setFullSidebar: (s: boolean) => void;
   dirty: boolean;
   setDirty: (bool: boolean) => void;
+  createAutomation: () => void;
+  createPage: () => void;
+  installApp: () => void;
 }
 
 export const workspaceLayoutContext = createContext<WorkspaceLayoutContext>({
@@ -33,6 +36,9 @@ export const workspaceLayoutContext = createContext<WorkspaceLayoutContext>({
   setFullSidebar() {},
   dirty: false,
   setDirty() {},
+  createAutomation() {},
+  createPage() {},
+  installApp() {},
 });
 
 export const useWorkspaceLayout = () => useContext(workspaceLayoutContext);
