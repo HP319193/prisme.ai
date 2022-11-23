@@ -27,6 +27,7 @@ import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import IFrameLoader from './IFrameLoader';
 import api from '../utils/api';
 import VersionModal from './VersionModal';
+import HeaderPopovers from '../views/HeaderPopovers';
 
 const HeaderWorkspace = () => {
   const {
@@ -54,13 +55,6 @@ const HeaderWorkspace = () => {
       placement: 'bottomRight',
     });
   }, [id, push, remove, t]);
-
-  const publishVersion = useCallback(async () => {
-    await update(workspace);
-    await api
-      .workspaces(workspace.id)
-      .versions.create({ description: `${new Date()}` });
-  }, [update, workspace]);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -173,36 +167,7 @@ const HeaderWorkspace = () => {
         }
         leftContent={
           <div className="flex flex-row items-center justify-center">
-            <Popover
-              content={() => (
-                <div className="flex h-[75vh] w-[30rem]">
-                  <IFrameLoader
-                    className="flex flex-1"
-                    src={`https://help.pages.prisme.ai/${language}/`}
-                  />
-                </div>
-              )}
-              overlayClassName="pr-full-popover"
-            >
-              <Button variant="grey" className="!text-white">
-                <Space className="text-lg">{t('help')}</Space>
-              </Button>
-            </Popover>
-            <Popover
-              content={() => (
-                <div className="flex h-[75vh] w-[30rem]">
-                  <IFrameLoader
-                    className="flex flex-1"
-                    src={`https://roadmap.pages.prisme.ai/${language}/index`}
-                  />
-                </div>
-              )}
-              overlayClassName="pr-full-popover"
-            >
-              <Button variant="grey" className="!text-white">
-                <Space className="text-lg">{t('whatsNew')}</Space>
-              </Button>
-            </Popover>
+            <HeaderPopovers />
             <Popover
               content={() => <ShareComponent />}
               title={label || t('share.label')}
