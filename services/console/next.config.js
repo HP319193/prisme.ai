@@ -9,6 +9,7 @@ module.exports = {
     CONSOLE_HOST: process.env.CONSOLE_HOST || '',
     PAGES_HOST: process.env.PAGES_HOST || '',
     SENTRY_DSN: process.env.SENTRY_DSN || '',
+    HEADER_POPOVERS: process.env.HEADER_POPOVERS || '{}',
   },
   webpack(config) {
     config.module.rules.push({
