@@ -41,8 +41,13 @@ const getContainerStyle = (type: CardsConfig['layout']['type']) => {
   }
 };
 
+const EMPTY_ARRAY: CardsConfig['cards'] = [];
+
 export const Cards: BlockComponent = () => {
-  const { config = {} as CardsConfig } = useBlock<CardsConfig>();
+  const {
+    config,
+    config: { cards = EMPTY_ARRAY } = {} as CardsConfig,
+  } = useBlock<CardsConfig>();
   const [canScroll, setCanScroll] = useState<boolean | null>(false);
 
   const container = useRef<HTMLDivElement>(null);
@@ -134,11 +139,9 @@ export const Cards: BlockComponent = () => {
 
   const getCoverStyle = useCallback(
     (index: number) => {
-      const currentCards = config.cards;
+      if (cardsIsShort(cards, config.variant)) return;
 
-      if (cardsIsShort(currentCards, config.variant)) return;
-
-      const cover = (currentCards[index] || {}).cover;
+      const cover = (cards[index] || {}).cover;
 
       return {
         background: `${
@@ -148,7 +151,7 @@ export const Cards: BlockComponent = () => {
         }`,
       };
     },
-    [config.cards]
+    [cards]
   );
 
   const cardsProps = {
@@ -160,9 +163,7 @@ export const Cards: BlockComponent = () => {
     ...config,
   };
 
-  const filteredCards = useMemo(() => (config.cards as []).filter(Boolean), [
-    config.cards,
-  ]);
+  const filteredCards = useMemo(() => (cards as []).filter(Boolean), [cards]);
 
   switch (config.variant) {
     case 'square':
