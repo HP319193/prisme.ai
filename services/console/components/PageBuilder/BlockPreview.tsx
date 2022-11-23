@@ -17,7 +17,6 @@ export const BlockPreview = ({ id, name, config }: BlockPreviewProps) => {
 
   useEffect(() => {
     if (block?.schema) {
-      console.log('un schema !!', block.schema);
       setBlockSchema(id, block.schema);
     }
   }, [block, id, setBlockSchema]);
