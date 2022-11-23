@@ -3,7 +3,7 @@ import { EventType } from '../../../eda';
 import { ObjectNotFoundError } from '../../../errors';
 import { AccessManager, ActionType, SubjectType } from '../../../permissions';
 import Apps from '../../apps/crud/apps';
-import DSULStorage, { DSULType } from '../../DSULStorage';
+import { DSULStorage, DSULType } from '../../dsulStorage';
 
 export interface ListAppsQuery {
   query?: string;

@@ -22,7 +22,7 @@ import {
 import FileStorage from './services/FileStorage';
 import { autoremoveExpiredUploads } from './services/uploads';
 import buildStorage from './storage';
-import DSULStorage, { DSULType } from './services/DSULStorage';
+import { DSULStorage, DSULType } from './services/dsulStorage';
 
 process.on('uncaughtException', uncaughtExceptionHandler);
 

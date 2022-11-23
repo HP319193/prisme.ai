@@ -1,4 +1,5 @@
-import { DSULType, getPath } from './DSULStorage';
+import { DSULType } from './types';
+import { getPath } from './getPath';
 
 describe('Workspaces & Apps pathes', () => {
   it('getPath can return base workspace/app directory (needed by delete workspace/app)', () => {

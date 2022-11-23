@@ -1,8 +1,9 @@
 import Workspaces from './workspaces';
 import '@prisme.ai/types';
 import { SubjectType } from '../../../permissions';
-import { IStorage, DriverType } from '../../../storage/types';
-import DSULStorage, { DSULType, getPath } from '../../DSULStorage';
+import { DSULType } from '../../DSULStorage';
+import { MockStorage } from '../../DSULStorage/__mocks__';
+import { Broker } from '@prisme.ai/broker';
 
 const DEFAULT_ID = '123456';
 jest.mock('nanoid', () => ({ nanoid: () => DEFAULT_ID }));
@@ -16,38 +17,20 @@ const getMockedAccessManager = () => ({
   deleteMany: jest.fn(),
 });
 
-const getMockedStorage = (): DSULStorage => {
-  const store = {};
-  const driver: IStorage = {
-    type: () => DriverType.FILESYSTEM,
-    find: () => Promise.resolve([]),
-    save: jest.fn((id: string, data: any) => {
-      store[id] = data;
-      return Promise.resolve(true);
-    }),
-    copy: jest.fn(),
-    delete: jest.fn(),
-    deleteMany: jest.fn(),
-    get: jest.fn((id: string) => {
-      if (id in store) {
-        return store[id];
-      }
-      return {};
-    }),
+const getMockedBroker = () => {
+  const mock: any = {
+    send: jest.fn(),
+    buffer: jest.fn(),
+    flush: jest.fn(),
+    clear: jest.fn(),
   };
-
-  return new DSULStorage(driver, DSULType.DSULIndex);
+  mock.child = jest.fn(() => mock);
+  return mock;
 };
-const getMockedBroker = () => ({
-  send: jest.fn(),
-  buffer: jest.fn(),
-  flush: jest.fn(),
-  clear: jest.fn(),
-});
 
 describe('Basic ops should call accessManager, DSULStorage, broker', () => {
   const mockedAccessManager: any = getMockedAccessManager();
-  const dsulStorage = getMockedStorage();
+  const dsulStorage = new MockStorage(DSULType.DSULIndex);
   let mockedBroker: any;
   let workspaceCrud: Workspaces;
   const dsulSaveSpy = jest.spyOn(dsulStorage, 'save');
@@ -172,6 +155,43 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
     });
 
     expect(mockedBroker.send).toHaveBeenCalledTimes(3);
+  });
+
+  it('duplicateWorkspace', async () => {
+    workspaceCrud.pages.duplicateWorkspacePages = jest.fn();
+    const lastDSUL = await workspaceCrud.getWorkspace(DEFAULT_ID);
+    const result = await workspaceCrud.duplicateWorkspace(DEFAULT_ID);
+    expect(result).toMatchObject({
+      ...lastDSUL,
+      id: expect.any(String),
+      slug: expect.any(String),
+      description: expect.any(String),
+      name: expect.any(String),
+    });
+    expect(result.slug).not.toBe(lastDSUL.slug);
+
+    expect(mockedAccessManager.get).toHaveBeenCalledWith(
+      SubjectType.Workspace,
+      DEFAULT_ID
+    );
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.duplicated',
+      {
+        workspace: result,
+        fromWorkspace: {
+          id: DEFAULT_ID,
+          name: lastDSUL.name,
+          slug: lastDSUL.slug,
+        },
+      },
+      {
+        workspaceId: result.id,
+      }
+    );
+    expect(workspaceCrud.pages.duplicateWorkspacePages).toHaveBeenCalledWith(
+      DEFAULT_ID,
+      result.id
+    );
   });
 
   it('deleteWorkspace', async () => {

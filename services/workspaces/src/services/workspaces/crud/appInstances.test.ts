@@ -1,9 +1,8 @@
 import AppInstances from './appInstances';
 import '@prisme.ai/types';
 import { ActionType, SubjectType } from '../../../permissions';
-import { IStorage, DriverType } from '../../../storage/types';
-import DSULStorage, { DSULType, getPath } from '../../DSULStorage';
-import { AlreadyUsedError, ObjectNotFoundError } from '../../../errors';
+import { DSULType } from '../../dsulStorage';
+import { MockStorage } from '../../dsulStorage/__mocks__';
 
 const USER_ID = '9999';
 const WORKSPACE_ID = '123456';
@@ -24,28 +23,6 @@ const getMockedAccessManager = () => ({
   deleteMany: jest.fn(),
 });
 
-const getMockedStorage = (): DSULStorage => {
-  const store = {};
-  const driver: IStorage = {
-    type: () => DriverType.FILESYSTEM,
-    find: () => Promise.resolve([]),
-    save: jest.fn((id: string, data: any) => {
-      store[id] = data;
-      return Promise.resolve(true);
-    }),
-    copy: jest.fn(),
-    delete: jest.fn(),
-    deleteMany: jest.fn(),
-    get: jest.fn((id: string) => {
-      if (id in store) {
-        return store[id];
-      }
-      throw new ObjectNotFoundError();
-    }),
-  };
-
-  return new DSULStorage(driver, DSULType.Imports);
-};
 const getMockedBroker = () => ({
   send: jest.fn(),
   buffer: jest.fn(),
@@ -55,7 +32,7 @@ const getMockedBroker = () => ({
 
 describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () => {
   const mockedAccessManager: any = getMockedAccessManager();
-  const dsulStorage = getMockedStorage();
+  const dsulStorage = new MockStorage(DSULType.Imports);
   let mockedBroker: any;
   let appInstancesCrud: AppInstances;
   const dsulSaveSpy = jest.spyOn(dsulStorage, 'save');
@@ -198,7 +175,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
 
 describe('Detailed appInstances', () => {
   const mockedAccessManager: any = getMockedAccessManager();
-  const dsulStorage = getMockedStorage();
+  const dsulStorage = new MockStorage(DSULType.Imports);
   let mockedBroker: any;
   let appInstancesCrud: AppInstances;
   const appDetails: Prismeai.AppDetails = {

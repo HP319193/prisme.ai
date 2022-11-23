@@ -1,6 +1,6 @@
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
-import DSULStorage, { DSULType } from '../../DSULStorage';
+import { DSULStorage, DSULType } from '../../dsulStorage';
 import { AccessManager, ActionType, SubjectType } from '../../../permissions';
 import {
   AlreadyUsedError,

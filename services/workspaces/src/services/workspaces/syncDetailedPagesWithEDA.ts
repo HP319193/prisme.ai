@@ -3,7 +3,7 @@ import { getPagesService } from '../../api/routes/pages';
 import { EventType } from '../../eda';
 import { logger } from '../../logger';
 import { getSuperAdmin, AccessManager, SubjectType } from '../../permissions';
-import DSULStorage, { DSULType } from '../DSULStorage';
+import { DSULStorage, DSULType } from '../dsulStorage';
 
 export async function syncDetailedPagesWithEDA(
   accessManager: AccessManager,

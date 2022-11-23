@@ -2,9 +2,8 @@ import AppInstances from './appInstances';
 import Pages from './pages';
 import '@prisme.ai/types';
 import { ActionType, SubjectType } from '../../../permissions';
-import { IStorage, DriverType } from '../../../storage/types';
-import DSULStorage, { DSULType, getPath } from '../../DSULStorage';
-import { ObjectNotFoundError } from '../../../errors';
+import { DSULType } from '../../dsulStorage';
+import { MockStorage } from '../../dsulStorage/__mocks__';
 
 const USER_ID = '9999';
 const WORKSPACE_ID = '123456';
@@ -29,28 +28,6 @@ const getMockedAccessManager = (get?: any) => ({
   deleteMany: jest.fn(),
 });
 
-const getMockedStorage = (initStore?: any): DSULStorage => {
-  const store = initStore || {};
-  const driver: IStorage = {
-    type: () => DriverType.FILESYSTEM,
-    find: () => Promise.resolve([]),
-    save: jest.fn((id: string, data: any) => {
-      store[id] = data;
-      return Promise.resolve(true);
-    }),
-    copy: jest.fn(),
-    delete: jest.fn(),
-    deleteMany: jest.fn(),
-    get: jest.fn((id: string) => {
-      if (id in store) {
-        return store[id];
-      }
-      throw new ObjectNotFoundError();
-    }),
-  };
-
-  return new DSULStorage(driver, DSULType.Pages);
-};
 const getMockedBroker = () => ({
   send: jest.fn(),
   buffer: jest.fn(),
@@ -60,7 +37,7 @@ const getMockedBroker = () => ({
 
 describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () => {
   const mockedAccessManager: any = getMockedAccessManager();
-  const dsulStorage = getMockedStorage();
+  const dsulStorage = new MockStorage(DSULType.Pages);
   let mockedBroker: any;
   let appInstancesCrud: AppInstances;
   let pagesCrud: Pages;
@@ -188,12 +165,16 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
 
 describe('Detailed pages', () => {
   const mockedAccessManager: any = getMockedAccessManager();
-  const dsulStorage = getMockedStorage({
-    [`workspaces/${WORKSPACE_ID}/versions/current/index.yml`]: `
+  const dsulStorage = new MockStorage(
+    DSULType.Pages,
+    {},
+    {
+      [`workspaces/${WORKSPACE_ID}/versions/current/index.yml`]: `
       blocks:
         myBlock:
           url: 'myBlockURL'`,
-  });
+    }
+  );
   let mockedBroker: any;
   let appInstancesCrud: AppInstances;
   let pagesCrud: Pages;

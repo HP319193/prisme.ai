@@ -4,7 +4,7 @@ import { EventType } from '../../../eda';
 import { AccessManager, ActionType, SubjectType } from '../../../permissions';
 import { nanoid } from 'nanoid';
 import { logger } from '../../../logger';
-import DSULStorage, { DSULType } from '../../DSULStorage';
+import { DSULType, DSULStorage } from '../../dsulStorage';
 import { AppInstances } from '../..';
 
 class Pages {

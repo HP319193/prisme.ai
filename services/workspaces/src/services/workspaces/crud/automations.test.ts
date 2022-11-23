@@ -1,9 +1,9 @@
 import Automations from './automations';
 import '@prisme.ai/types';
 import { ActionType, SubjectType } from '../../../permissions';
-import { IStorage, DriverType } from '../../../storage/types';
-import DSULStorage, { DSULType, getPath } from '../../DSULStorage';
+import { MockStorage } from '../../DSULStorage/__mocks__';
 import { AlreadyUsedError, ObjectNotFoundError } from '../../../errors';
+import { DSULType } from '../../dsulStorage';
 
 const USER_ID = '9999';
 const WORKSPACE_ID = '123456';
@@ -22,28 +22,6 @@ const getMockedAccessManager = () => ({
   deleteMany: jest.fn(),
 });
 
-const getMockedStorage = (): DSULStorage => {
-  const store = {};
-  const driver: IStorage = {
-    type: () => DriverType.FILESYSTEM,
-    find: () => Promise.resolve([]),
-    save: jest.fn((id: string, data: any) => {
-      store[id] = data;
-      return Promise.resolve(true);
-    }),
-    copy: jest.fn(),
-    delete: jest.fn(),
-    deleteMany: jest.fn(),
-    get: jest.fn((id: string) => {
-      if (id in store) {
-        return store[id];
-      }
-      throw new ObjectNotFoundError();
-    }),
-  };
-
-  return new DSULStorage(driver, DSULType.Automations);
-};
 const getMockedBroker = () => ({
   send: jest.fn(),
   buffer: jest.fn(),
@@ -53,7 +31,7 @@ const getMockedBroker = () => ({
 
 describe('Basic ops should call accessManager, DSULStorage, broker', () => {
   const mockedAccessManager: any = getMockedAccessManager();
-  const dsulStorage = getMockedStorage();
+  const dsulStorage = new MockStorage(DSULType.Automations);
   let mockedBroker: any;
   let automationsCrud: Automations;
   const dsulSaveSpy = jest.spyOn(dsulStorage, 'save');

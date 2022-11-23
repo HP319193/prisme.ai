@@ -12,7 +12,7 @@ import FileStorage from '../../services/FileStorage';
 import { UPLOADS_STORAGE_FILESYSTEM_DIRPATH } from '../../../config';
 import { AccessManager } from '../../permissions';
 import { Broker } from '@prisme.ai/broker';
-import DSULStorage from '../../services/DSULStorage';
+import { DSULStorage } from '../../services/dsulStorage';
 
 export const init = (
   app: Application,

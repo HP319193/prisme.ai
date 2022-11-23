@@ -1,137 +1,24 @@
 import yaml from 'js-yaml';
-import path from 'path';
-import { SLUG_VALIDATION_REGEXP } from '../../config';
+import { SLUG_VALIDATION_REGEXP } from '../../../config';
 import {
   AlreadyUsedError,
   InvalidSlugError,
   MissingFieldError,
   ObjectNotFoundError,
-} from '../errors';
-import { IStorage } from '../storage/types';
-import { extractEmits } from '../utils/extractEmits';
+} from '../../errors';
+import { IStorage } from '../../storage/types';
+import { extractEmits } from '../../utils/extractEmits';
+import { getPath } from './getPath';
+import {
+  DSULInterfaces,
+  DSULQuery,
+  DSULType,
+  FolderIndex,
+  FolderIndexSuffix,
+  getFolderIndexType,
+} from './types';
 
-export enum DSULType {
-  DSULIndex = 'index',
-
-  PagesIndex = 'pages/__index__',
-  Pages = 'pages',
-  DetailedPage = 'detailedPage',
-
-  AutomationsIndex = 'automations/__index__',
-  Automations = 'automations',
-
-  ImportsIndex = 'imports/__index__',
-  Imports = 'imports',
-}
-// Types ending like this will be automatically updated as FolderIndex :
-const FolderIndexSuffix = '/__index__';
-
-type DSULQuery<t extends DSULType = any> = {
-  workspaceId?: string;
-  workspaceSlug?: string;
-  appSlug?: string;
-  legacy?: boolean;
-  dsulType?: t;
-  version?: string;
-  parentFolder?: boolean;
-  slug?: string;
-  folderIndex?: boolean; // Automatically deduce proper dsulType given the current one
-};
-
-type DSULInterfaces = {
-  [DSULType.DSULIndex]: Prismeai.Workspace;
-
-  [DSULType.AutomationsIndex]: Prismeai.AutomationMeta;
-  [DSULType.Automations]: Prismeai.Automation;
-
-  [DSULType.PagesIndex]: Prismeai.PageMeta;
-  [DSULType.Pages]: Prismeai.Page;
-  [DSULType.DetailedPage]: Prismeai.DetailedPage;
-
-  [DSULType.ImportsIndex]: Prismeai.AppInstanceMeta;
-  [DSULType.Imports]: Prismeai.AppInstance;
-};
-
-export type FolderIndex = Record<
-  string,
-  {
-    name?: Prismeai.LocalizedText;
-    description?: Prismeai.LocalizedText;
-    createdAt: string;
-    createdBy: string;
-    updatedAt: string;
-    updatedBy: string;
-    [k: string]: any;
-  }
->;
-
-export function getPath(dsulType: DSULType, opts: Partial<DSULQuery>) {
-  let {
-    appSlug,
-    workspaceId,
-    workspaceSlug,
-    version,
-    slug,
-    parentFolder,
-    legacy,
-    folderIndex,
-  } = opts;
-
-  if (folderIndex && !dsulType.includes('/')) {
-    const indexType = `${dsulType}${FolderIndexSuffix}` as DSULType;
-    if (!Object.values(DSULType).includes(indexType)) {
-      throw new Error(
-        `No folder index type configured for the DSULType ${dsulType}`
-      );
-    }
-    dsulType = indexType;
-  }
-
-  if (dsulType == DSULType.DetailedPage) {
-    if (!workspaceSlug || (!parentFolder && !slug)) {
-      throw new Error('Missing workspaceSlug or page slug');
-    }
-    const baseFolder = `pages/${workspaceSlug}`;
-    return parentFolder ? baseFolder : `${baseFolder}/${slug}.yml`;
-  }
-
-  if (!workspaceId && !appSlug) {
-    throw new Error('Missing workspaceId or appSlug');
-  }
-
-  const baseFolder = `${appSlug ? 'apps' : 'workspaces'}/${
-    appSlug || workspaceId
-  }`;
-  if (parentFolder && !version && dsulType == DSULType.DSULIndex) {
-    return baseFolder;
-  }
-  if (!version) {
-    version = 'current';
-  }
-
-  if (legacy) {
-    return `${baseFolder}/${version}.yml`;
-  }
-  const baseVersionFolder = `${baseFolder}/versions/${version}`;
-
-  if (dsulType == DSULType.DSULIndex) {
-    return parentFolder ? baseVersionFolder : `${baseVersionFolder}/index.yml`;
-  }
-
-  const isIndex = dsulType.includes('/');
-  if (!parentFolder && !isIndex && !slug) {
-    throw new MissingFieldError('Missing slug for ' + dsulType);
-  }
-  const subFolder = `${baseVersionFolder}/${dsulType}`;
-  const resourceFile = isIndex
-    ? `${subFolder}.yml`
-    : `${subFolder}/${slug}.yml`;
-  return parentFolder ? path.dirname(resourceFile) : resourceFile;
-}
-
-export default class DSULStorage<
-  t extends keyof DSULInterfaces = DSULType.DSULIndex
-> {
+export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
   private driver: IStorage;
   private dsulType: DSULType;
   private dsulQuery: DSULQuery;
@@ -161,6 +48,11 @@ export default class DSULStorage<
     query: Partial<DSULQuery<t>> = {}
   ): Promise<Record<string, DSULInterfaces[t]> | false> {
     try {
+      getFolderIndexType(query.dsulType || this.dsulType);
+    } catch {
+      return false; // No folderIndex for this type
+    }
+    try {
       return ((await this.get(
         {
           ...query,
@@ -168,8 +60,8 @@ export default class DSULStorage<
         },
         false
       )) || {}) as any as Record<string, DSULInterfaces[t]>;
-    } catch (error) {
-      return false; // No folderIndex for this type
+    } catch {
+      return {}; // Uninitialized folderIndex
     }
   }
 
@@ -177,15 +69,7 @@ export default class DSULStorage<
     workspaceId: string,
     dsulType: t
   ) {
-    if (
-      !Object.values(DSULType).includes(
-        `${dsulType}${FolderIndexSuffix}` as DSULType
-      )
-    ) {
-      throw new Error(
-        `No folder index type configured for the DSULType ${dsulType}`
-      );
-    }
+    getFolderIndexType(dsulType);
 
     const files = await this.driver.find(
       this.getPath({
@@ -424,8 +308,18 @@ export default class DSULStorage<
   }
 
   async delete(query: DSULQuery) {
+    let folderIndex = await this.folderIndex(query);
+
     try {
       await this.driver.delete(this.getPath(query));
+
+      if (folderIndex !== false) {
+        const slug = (query as any).slug || '';
+        if (!(slug in folderIndex)) {
+          throw new ObjectNotFoundError();
+        }
+        delete folderIndex[slug];
+      }
     } catch {
       throw new ObjectNotFoundError(
         `Could not find DSUL object '${this.dsulType}' '${
@@ -435,11 +329,6 @@ export default class DSULStorage<
         }'`,
         { type: this.dsulType, query: { ...this.dsulQuery, ...query } }
       );
-    }
-
-    let folderIndex = await this.folderIndex(query);
-    if (folderIndex !== false) {
-      delete folderIndex[(query as any).slug || ''];
     }
 
     // Maintain subfolders index up-to-date

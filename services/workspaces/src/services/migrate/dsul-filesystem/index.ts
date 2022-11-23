@@ -2,7 +2,7 @@ import { logger } from '../../../logger';
 //@ts-ignore
 import { hri } from 'human-readable-ids';
 import { Broker } from '@prisme.ai/broker';
-import DSULStorage, { DSULType } from '../../DSULStorage';
+import { DSULStorage, DSULType } from '../../dsulStorage';
 import { AppInstances, Automations, Pages, Workspaces } from '../../workspaces';
 import {
   AccessManager,

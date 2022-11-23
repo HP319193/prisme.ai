@@ -24,7 +24,7 @@ import { EventType } from '../eda';
 import { PrismeError } from '../errors';
 import FileStorage from '../services/FileStorage';
 import { UPLOADS_MAX_SIZE } from '../../config';
-import DSULStorage from '../services/DSULStorage';
+import { DSULStorage } from '../services/dsulStorage';
 
 export function initAPI(
   accessManager: AccessManager,

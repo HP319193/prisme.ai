@@ -2,15 +2,9 @@ import { remove as removeDiacritics } from 'diacritics';
 import { parseExpression as parseCron } from 'cron-parser';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
-import {
-  AlreadyUsedError,
-  InvalidScheduleError,
-  InvalidSlugError,
-  ObjectNotFoundError,
-} from '../../../errors';
-import { SLUG_VALIDATION_REGEXP } from '../../../../config';
+import { InvalidScheduleError } from '../../../errors';
 import { hri } from 'human-readable-ids';
-import DSULStorage, { DSULType } from '../../DSULStorage';
+import { DSULType, DSULStorage } from '../../DSULStorage';
 import { AccessManager, ActionType, SubjectType } from '../../../permissions';
 
 class Automations {
