@@ -42,7 +42,7 @@ const getMockedStorage = (): DSULStorage => {
     }),
   };
 
-  return new DSULStorage(driver, DSULType.DSULIndex);
+  return new DSULStorage(driver, DSULType.Automations);
 };
 const getMockedBroker = () => ({
   send: jest.fn(),

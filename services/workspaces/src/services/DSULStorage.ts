@@ -306,12 +306,15 @@ export default class DSULStorage<
     } catch {
       if (throwIfNotFound) {
         throw new ObjectNotFoundError(
-          `Could not find DSUL object '${this.dsulType}' '${
+          `Could not find DSUL object '${query.dsulType || this.dsulType}' '${
             (query as any).slug ||
             (query as any).workspaceId ||
             (query as any).appSlug
           }'`,
-          { type: this.dsulType, query: { ...this.dsulQuery, ...query } }
+          {
+            type: query.dsulType || this.dsulType,
+            query: { ...this.dsulQuery, ...query },
+          }
         );
       }
       return undefined as any;

@@ -27,9 +27,13 @@ class Pages {
 
   createPage = async (
     workspaceId: string,
-    page: Prismeai.Page,
+    createPage: Prismeai.Page,
     replace: boolean = false // Force update if it already exists
   ) => {
+    const page = {
+      ...createPage,
+    };
+
     if (replace) {
       if (!page.id) {
         throw new Error('Missing page.id for replace mode');
@@ -46,7 +50,7 @@ class Pages {
         dsulType: DSULType.DSULIndex,
         workspaceId,
       });
-      page.workspaceSlug = workspace.slug;
+      page.workspaceSlug = workspace.slug!;
     }
 
     const pageMetadata = {
@@ -68,7 +72,6 @@ class Pages {
       {
         workspaceId,
         slug: page.slug,
-        dsulType: DSULType.Pages,
       },
       page,
       {
@@ -263,20 +266,28 @@ class Pages {
     return pageDetails;
   }
 
-  updatePage = async (workspaceId: string, id: string, page: Prismeai.Page) => {
+  updatePage = async (
+    workspaceId: string,
+    id: string,
+    pageUpdate: Prismeai.Page
+  ) => {
     const currentPageMeta = await this.accessManager.get(SubjectType.Page, {
       workspaceId,
       id,
     });
 
     const oldSlug = currentPageMeta.slug!;
-    const newSlug = page.slug || oldSlug;
-    page.slug = newSlug;
-    page.id = id;
-    page.workspaceSlug = currentPageMeta.workspaceSlug;
+    const newSlug = pageUpdate.slug || oldSlug;
+    const page: Prismeai.Page = {
+      ...pageUpdate,
+      slug: newSlug,
+      id,
+      workspaceSlug: currentPageMeta.workspaceSlug,
+      workspaceId,
+    };
 
     await this.accessManager.throwUnlessCan(
-      ActionType.Create,
+      ActionType.Update,
       SubjectType.Page,
       { id, workspaceId }
     );
@@ -285,12 +296,8 @@ class Pages {
       {
         workspaceId,
         slug: oldSlug,
-        dsulType: DSULType.Pages,
       },
-      {
-        ...page,
-        workspaceId,
-      },
+      page,
       {
         mode: 'update',
         updatedBy: this.accessManager.user?.id,
@@ -321,7 +328,6 @@ class Pages {
     await this.storage.delete({
       workspaceId: page.workspaceId,
       slug: page.slug,
-      dsulType: DSULType.Pages,
     });
     try {
       await this.storage.delete({
