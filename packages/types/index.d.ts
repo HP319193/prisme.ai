@@ -774,6 +774,10 @@ declare namespace Prismeai {
             }[];
             listen?: string[];
         };
+        documentation?: {
+            workspaceSlug?: string;
+            slug?: string;
+        };
     }
     export interface AppEvent {
         /**
@@ -1208,6 +1212,10 @@ declare namespace Prismeai {
                 };
             }[];
             listen?: string[];
+        };
+        documentation?: {
+            workspaceSlug?: string;
+            slug?: string;
         };
     }
     /**

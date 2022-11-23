@@ -484,7 +484,9 @@
         "toast": "Application publiée",
         "content": "Les Automatisations, Pages, Blocks ainsi que la configuration du Workspace seront accessibles à tous les utilisateurs qui installent votre App.\nSupprimez toute clé privée d'API avant de publier."
       }
-    }
+    },
+    "doc": "Documentation",
+    "config": "Configuration"
   },
   "pages": {
     "private": "Privé",

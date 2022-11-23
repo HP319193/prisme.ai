@@ -3052,6 +3052,13 @@ components:
               type: array
               items:
                 type: string
+        documentation:
+          type: object
+          properties:
+            workspaceSlug:
+              type: string
+            slug:
+              type: string
 
     AppInstancePatch:
       type: object

@@ -1,7 +1,7 @@
 import { Modal, notification, Schema } from '@prisme.ai/design-system';
-import { PageHeader } from 'antd';
+import { PageHeader, Segmented } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
@@ -13,6 +13,12 @@ import useLocalizedText from '../utils/useLocalizedText';
 import EditDetails from '../layouts/EditDetails';
 import AppEditor from '../components/AppEditor';
 import EditableTitle from '../components/AutomationBuilder/EditableTitle';
+import getConfig from 'next/config';
+import IFrameLoader from '../components/IFrameLoader';
+
+const {
+  publicRuntimeConfig: { PAGES_HOST = '' },
+} = getConfig();
 
 interface AppsProps extends Prismeai.DetailedAppInstance {
   workspaceId: string;
@@ -23,6 +29,7 @@ const Apps = ({}: AppsProps) => {
   const { workspace } = useWorkspace();
   const { appInstances, saveAppInstance } = useApps();
   const { localize } = useLocalizedText();
+  const [viewMode, setViewMode] = useState(0);
 
   const [currentApp, setCurrentApp] = useState<Prismeai.DetailedAppInstance>();
 
@@ -36,9 +43,11 @@ const Apps = ({}: AppsProps) => {
     const workspaceApps = appInstances.get(workspace.id);
     if (!workspaceApps) return;
 
-    setCurrentApp(
-      workspaceApps.find((appInstance) => appInstance.slug === appId)
+    const currentApp = workspaceApps.find(
+      (appInstance) => appInstance.slug === appId
     );
+    setCurrentApp(currentApp);
+    setViewMode(currentApp?.documentation ? 0 : 1);
   }, [appId, appInstances, workspace.id]);
 
   const { photo, config: { schema, block } = {} } = (currentApp || {
@@ -133,6 +142,12 @@ const Apps = ({}: AppsProps) => {
     [t]
   );
 
+  const docPage = useMemo(() => {
+    if (!currentApp?.documentation) return;
+    const { workspaceSlug, slug } = currentApp.documentation;
+    return `${window.location.protocol}//${workspaceSlug}${PAGES_HOST}/${slug}`;
+  }, [currentApp]);
+  console.log({ docPage });
   if (typeof appId !== 'string' || !currentApp) return null;
 
   return (
@@ -173,6 +188,28 @@ const Apps = ({}: AppsProps) => {
                 key={currentApp.slug}
               />
             </span>
+            {currentApp?.documentation && (
+              <div>
+                <div className="ml-3">
+                  <Segmented
+                    key="nav"
+                    options={[
+                      {
+                        label: t('apps.doc'),
+                        value: 0,
+                        icon: <EyeOutlined />,
+                      },
+                      {
+                        label: t('apps.config'),
+                        value: 1,
+                        icon: <EditOutlined />,
+                      },
+                    ]}
+                    onChange={(v) => setViewMode(+v)}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         }
       />
@@ -183,7 +220,19 @@ const Apps = ({}: AppsProps) => {
           })}
         </title>
       </Head>
-      <AppEditor schema={schema} block={block} appId={appId} key={appId} />
+      <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
+        {docPage && <IFrameLoader src={docPage} className="flex flex-1" />}
+        {viewMode === 1 && (
+          <div className="absolute top-0 bottom-0 left-0 right-0 bg-white">
+            <AppEditor
+              schema={schema}
+              block={block}
+              appId={appId}
+              key={appId}
+            />
+          </div>
+        )}
+      </div>
     </>
   );
 };
