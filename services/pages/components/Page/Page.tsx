@@ -60,7 +60,7 @@ export const Page = ({ page }: PageProps) => {
       {page.styles && (
         <style dangerouslySetInnerHTML={{ __html: page.styles }} />
       )}
-      <PoweredBy />
+
       <div
         className="flex flex-1 flex-col page-blocks w-full"
         ref={containerEl}
@@ -77,6 +77,9 @@ export const Page = ({ page }: PageProps) => {
             <BlockLoader name={name} config={blocksConfigs[index]} />
           </div>
         ))}
+      </div>
+      <div className="flex m-4">
+        <PoweredBy />
       </div>
     </div>
   );
