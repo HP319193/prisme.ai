@@ -1,11 +1,12 @@
 import { Broker } from '@prisme.ai/broker';
+import { Pages } from '..';
 import { getPagesService } from '../../api/routes/pages';
 import { EventType } from '../../eda';
 import { logger } from '../../logger';
 import { getSuperAdmin, AccessManager, SubjectType } from '../../permissions';
 import { DSULStorage, DSULType } from '../dsulStorage';
 
-export async function syncDetailedPagesWithEDA(
+export async function initDetailedPagesSyncing(
   accessManager: AccessManager,
   broker: Broker,
   dsulStorage: DSULStorage
@@ -21,7 +22,15 @@ export async function syncDetailedPagesWithEDA(
       sessionId: 'process:syncDetailedPagesWithEDA',
     },
   });
+  syncDetailedPagesWithEDA(superAdmin, broker, dsulStorage, pages);
+}
 
+export async function syncDetailedPagesWithEDA(
+  accessManager: Required<AccessManager>,
+  broker: Broker,
+  dsulStorage: DSULStorage,
+  pages: Pages
+) {
   const rebuildDetailedPage = async (
     workspaceId: string,
     id: string,
@@ -165,7 +174,7 @@ export async function syncDetailedPagesWithEDA(
           if (!isOrWasPublic) {
             return false;
           }
-          const page = await superAdmin.get(SubjectType.Page, {
+          const page = await accessManager.get(SubjectType.Page, {
             workspaceId,
             id: payload.subjectId,
           });

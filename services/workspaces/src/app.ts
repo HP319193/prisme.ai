@@ -16,8 +16,8 @@ import { uncaughtExceptionHandler } from './errors';
 import '@prisme.ai/types';
 import { initAccessManager } from './permissions';
 import {
-  syncWorkspacesWithConfigContexts,
-  syncDetailedPagesWithEDA,
+  initWorkspacesConfigSyncing,
+  initDetailedPagesSyncing,
 } from './services';
 import FileStorage from './services/FileStorage';
 import { autoremoveExpiredUploads } from './services/uploads';
@@ -57,8 +57,8 @@ autoremoveExpiredUploads(uploadsStorage, accessManager);
 
 const app = initAPI(accessManager, dsulStorage, uploadsStorage, broker);
 
-syncWorkspacesWithConfigContexts(accessManager, broker, dsulStorage);
-syncDetailedPagesWithEDA(accessManager, broker, dsulStorage);
+initWorkspacesConfigSyncing(accessManager, broker, dsulStorage);
+initDetailedPagesSyncing(accessManager, broker, dsulStorage);
 
 const httpServer = http.createServer(app);
 

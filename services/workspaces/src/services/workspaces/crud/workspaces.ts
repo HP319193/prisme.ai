@@ -39,7 +39,7 @@ interface DSULDiffHandler {
 class Workspaces {
   private accessManager: Required<AccessManager>;
   private broker: Broker;
-  private storage: DSULStorage;
+  private storage: DSULStorage<DSULType.DSULIndex>;
   public pages: Pages;
 
   private diffHandlers: DSULDiffHandler[];
@@ -51,7 +51,7 @@ class Workspaces {
   ) {
     this.accessManager = accessManager;
     this.broker = broker;
-    this.storage = storage;
+    this.storage = storage.child(DSULType.DSULIndex);
     this.pages = new Pages(
       this.accessManager,
       broker,

@@ -7,7 +7,7 @@ import { applyObjectUpdateOpLogs } from '../../utils/applyObjectUpdateOpLogs';
 import { DSULStorage } from '../dsulStorage';
 import Workspaces from './crud/workspaces';
 
-export async function syncWorkspacesWithConfigContexts(
+export async function initWorkspacesConfigSyncing(
   accessManager: AccessManager,
   broker: Broker,
   dsulStorage: DSULStorage
