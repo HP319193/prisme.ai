@@ -11,7 +11,6 @@ export const PoweredBy = () => {
       rel="noreferrer"
       className="
         pr-poweredby
-        absolute left-10 bottom-10 z-50
         text-[0.75rem] text-pr-grey
         flex justify-center items-center pr-2
       bg-white border-gray-200 border-[1px] rounded-[4px]"

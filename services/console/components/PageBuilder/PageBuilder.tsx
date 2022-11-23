@@ -211,7 +211,6 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
       }}
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">
-        <PoweredBy />
         <PageBlocks />
         <Panel
           title={t('pages.blocks.panelTitle', {
