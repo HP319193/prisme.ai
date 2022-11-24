@@ -1,6 +1,6 @@
 import { Story } from '@storybook/react';
 import { useState } from 'react';
-import { BlockProvider } from '../Provider';
+import { BlockProvider, BlocksProvider } from '../Provider';
 import Buttons from './Buttons';
 
 export default {
@@ -12,14 +12,23 @@ const Template: Story<any> = ({ defaultConfig }) => {
   const [appConfig, setAppConfig] = useState<any>();
 
   return (
-    <BlockProvider
-      config={config}
-      onConfigUpdate={setConfig}
-      appConfig={appConfig}
-      onAppConfigUpdate={setAppConfig}
+    <BlocksProvider
+      components={{
+        Link: (props) => <a {...props} />,
+        Loading: () => null,
+        DownIcon: () => null,
+      }}
+      externals={{}}
     >
-      <Buttons />
-    </BlockProvider>
+      <BlockProvider
+        config={config}
+        onConfigUpdate={setConfig}
+        appConfig={appConfig}
+        onAppConfigUpdate={setAppConfig}
+      >
+        <Buttons />
+      </BlockProvider>
+    </BlocksProvider>
   );
 };
 
@@ -30,15 +39,14 @@ Default.args = {
       {
         text: 'Button1',
         variant: 'default',
-        onClick: 'hoho je suis le père noel',
+        action: {
+          type: 'event',
+          value: 'button.je suis le pere noel',
+        },
       },
       {
         text: 'Button2',
         variant: 'primary',
-        onClick: {
-          event: 'who.am.i',
-          payload: 'pere noel',
-        },
       },
       {
         text: 'Mes messages',
@@ -54,6 +62,11 @@ Default.args = {
       {
         text: 'my url',
         variant: 'link',
+        action: {
+          type: 'url',
+          popup: true,
+          value: 'http://studio.prisme.ai',
+        },
       },
     ],
   },
