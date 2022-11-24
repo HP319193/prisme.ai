@@ -318,7 +318,6 @@ class Workspaces {
       workspace.slug = hri.random();
     }
     this.broker.buffer(true);
-
     this.broker.send<Prismeai.UpdatedWorkspace['payload']>(
       EventType.UpdatedWorkspace,
       {

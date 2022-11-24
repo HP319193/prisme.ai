@@ -142,7 +142,6 @@ export async function syncDetailedPagesWithEDA(
           event.type == EventType.CreatedPage ||
           event.type == EventType.UpdatedPage
         ) {
-          console.log('FULL EVENT : ', event);
           const {
             payload: { page, oldSlug },
           } = event as Prismeai.UpdatedPage;
