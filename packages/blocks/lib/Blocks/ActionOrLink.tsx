@@ -1,12 +1,18 @@
 import { ReactElement } from 'react';
 import { tw } from 'twind';
-import { useBlocks } from '../../Provider/blocksContext';
-import { useBlock } from '../../Provider';
-import { Action } from './types';
+import { useBlocks } from '../Provider/blocksContext';
+import { useBlock } from '../Provider';
 
 interface ActionOrLinkProps {
   children: ReactElement;
   action?: Action;
+}
+
+export interface Action {
+  type: 'event' | 'url';
+  value: string;
+  popup?: boolean;
+  payload?: any;
 }
 
 const ActionOrLink = ({ action, children }: ActionOrLinkProps) => {
