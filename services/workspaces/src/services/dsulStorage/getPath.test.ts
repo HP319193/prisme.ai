@@ -80,6 +80,21 @@ describe('Workspaces & Apps pathes', () => {
       })
     ).toEqual(`workspaces/myWorkspaceId/versions/oldVersion/index.yml`);
   });
+
+  it('getPath can return runtime.yml path', () => {
+    expect(
+      getPath(DSULType.RuntimeModel, {
+        workspaceId: 'myWorkspaceId',
+      })
+    ).toEqual(`workspaces/myWorkspaceId/versions/current/runtime.yml`);
+
+    expect(
+      getPath(DSULType.RuntimeModel, {
+        workspaceId: 'myWorkspaceId',
+        version: 'oldVersion',
+      })
+    ).toEqual(`workspaces/myWorkspaceId/versions/oldVersion/runtime.yml`);
+  });
 });
 
 describe('Workspace automations pathes', () => {

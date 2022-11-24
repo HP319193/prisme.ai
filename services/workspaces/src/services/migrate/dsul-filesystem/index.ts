@@ -253,5 +253,15 @@ async function migrateWorkspace(
     }
   }
 
+  const runtime: Prismeai.RuntimeModel = {
+    ...legacy,
+  };
+  delete runtime.blocks;
+  delete (<any>runtime).pages;
+  await ((pages as any).storage as DSULStorage).save(
+    { workspaceId, dsulType: DSULType.RuntimeModel },
+    runtime
+  );
+
   return workspaceIndex;
 }

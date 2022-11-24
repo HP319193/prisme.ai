@@ -48,6 +48,9 @@ export function getPath(dsulType: DSULType, opts: Partial<DSULQuery>) {
   if (dsulType == DSULType.DSULIndex) {
     return parentFolder ? baseVersionFolder : `${baseVersionFolder}/index.yml`;
   }
+  if (dsulType == DSULType.RuntimeModel) {
+    return `${baseVersionFolder}/runtime.yml`;
+  }
 
   const isIndex = dsulType.includes('/');
   if (!parentFolder && !isIndex && !slug) {

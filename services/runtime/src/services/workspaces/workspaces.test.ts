@@ -7,7 +7,6 @@ import path from 'path';
 import { Apps } from '../apps';
 import { AvailableModels } from '../workspaces/__mocks__/workspaces';
 import { EventType } from '../../eda';
-import { ObjectNotFoundError } from '../../errors';
 
 jest.setTimeout(5000);
 global.console.warn = jest.fn();
@@ -113,20 +112,17 @@ it('Simple workspace loading', async () => {
   );
 });
 
-it('Workspaces are kept up to date with workspaces.updated events', async () => {
+it('Workspaces are kept up to date with workspaces.configured events', async () => {
   const { workspaces, broker } = getMocks();
   const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
-  expect(workspace.dsul.automations?.myNewAutomation).toBeUndefined();
-  const myNewAutomation = buildAutomation();
 
-  await broker.send<Prismeai.UpdatedWorkspace['payload']>(
-    EventType.UpdatedWorkspace,
+  const foo = 'bar' + Math.round(Math.random() * 1000);
+  await broker.send<Prismeai.ConfiguredWorkspace['payload']>(
+    EventType.ConfiguredWorkspace,
     {
-      workspace: {
-        ...workspace.dsul,
-        automations: {
-          ...workspace.dsul.automations,
-          myNewAutomation,
+      config: {
+        value: {
+          foo,
         },
       },
     },
@@ -137,19 +133,7 @@ it('Workspaces are kept up to date with workspaces.updated events', async () => 
 
   await waitForExpect(async () => {
     const workspace = await workspaces.getWorkspace(AvailableModels.Basic);
-    expect(workspace.getAutomation('myNewAutomation')).toMatchObject(
-      expect.objectContaining(myNewAutomation)
-    );
-
-    expect(
-      workspace.getEndpointTriggers(myNewAutomation?.when?.endpoint)
-    ).toMatchObject(buildTriggers(myNewAutomation, workspace, 'endpoint'));
-    expect(
-      workspace.getEventTriggers({
-        type: myNewAutomation?.when?.events[0],
-        source: {},
-      } as any)
-    ).toMatchObject(buildTriggers(myNewAutomation, workspace, 'event'));
+    expect(workspace.dsul.config?.value?.foo).toEqual(foo);
   });
 });
 
@@ -277,10 +261,7 @@ it('Workspaces are kept up to date with workspaces.automations.deleted events', 
   await broker.send<Prismeai.DeletedAutomation['payload']>(
     EventType.DeletedAutomation,
     {
-      automation: {
-        slug: 'empty',
-        name: 'empty',
-      },
+      automationSlug: 'empty',
     },
     {
       workspaceId: workspace.id,
@@ -379,7 +360,6 @@ it('Workspaces are kept up to date with workspaces.apps.uninstalled events', asy
   await broker.send<Prismeai.UninstalledAppInstance['payload']>(
     EventType.UninstalledApp,
     {
-      appInstance,
       slug: appInstance.appSlug,
     },
     {

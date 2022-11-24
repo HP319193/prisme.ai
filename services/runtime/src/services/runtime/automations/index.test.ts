@@ -402,7 +402,7 @@ describe('Variables & Contexts', () => {
 
     const workspace: any = yaml.load(
       await (workspaces as any).driver.get(
-        `workspaces/${workspaceId}/current.yml`
+        `workspaces/${workspaceId}/versions/current/runtime.yml`
       )
     );
     const output = await execute('testWorkspaceContext', {});

@@ -1058,7 +1058,7 @@ declare namespace Prismeai {
                 /**
                  * App unique id
                  */
-                appSlug?: string;
+                appSlug: string;
                 appName?: LocalizedText;
                 /**
                  * Defaults to the latest known app version
@@ -1873,6 +1873,23 @@ declare namespace Prismeai {
         type: "workspaces.versions.rollback";
         payload: {
             version: WorkspaceVersion;
+        };
+    }
+    export interface RuntimeModel {
+        name: string;
+        description?: LocalizedText;
+        photo?: string;
+        config?: Config;
+        blocks?: {
+            [name: string]: /* Block */ Block;
+        };
+        slug?: string;
+        id?: string;
+        automations?: {
+            [name: string]: Automation;
+        };
+        imports?: {
+            [name: string]: AppInstance;
         };
     }
     export interface ScheduledAutomation {

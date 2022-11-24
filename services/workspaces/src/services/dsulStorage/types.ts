@@ -10,6 +10,8 @@ export enum DSULType {
 
   ImportsIndex = 'imports/__index__',
   Imports = 'imports',
+
+  RuntimeModel = 'runtime',
 }
 // Types ending like this will be automatically updated as FolderIndex :
 export const FolderIndexSuffix = '/__index__';
@@ -38,6 +40,8 @@ export type DSULInterfaces = {
 
   [DSULType.ImportsIndex]: Prismeai.AppInstanceMeta;
   [DSULType.Imports]: Prismeai.AppInstance;
+
+  [DSULType.RuntimeModel]: Prismeai.RuntimeModel;
 };
 
 export type FolderIndex = Record<

@@ -30,7 +30,7 @@ export class Workspaces extends Storage {
 
   startLiveUpdates() {
     const listenedEvents = [
-      EventType.UpdatedWorkspace,
+      EventType.ConfiguredWorkspace,
       EventType.DeletedWorkspace,
       EventType.CreatedAutomation,
       EventType.UpdatedAutomation,
@@ -87,11 +87,11 @@ export class Workspaces extends Storage {
               delete this.workspaces[workspaceId];
             }, 5000);
             break;
-          case EventType.UpdatedWorkspace:
+          case EventType.ConfiguredWorkspace:
             const {
-              payload: { workspace: newWorkspace },
-            } = event as any as Prismeai.UpdatedWorkspace;
-            workspace.update(newWorkspace);
+              payload: { config },
+            } = event as any as Prismeai.ConfiguredWorkspace;
+            workspace.updateConfig(config);
             break;
           case EventType.CreatedAutomation:
           case EventType.UpdatedAutomation:
@@ -190,7 +190,7 @@ export class Workspaces extends Storage {
     );
   }
 
-  async fetchWorkspace(workspaceId: string): Promise<Prismeai.Workspace> {
+  async fetchWorkspace(workspaceId: string): Promise<Prismeai.RuntimeModel> {
     try {
       // First check if it is suspended
       try {
@@ -208,9 +208,9 @@ export class Workspaces extends Storage {
       } catch {}
 
       const raw = await this.driver.get(
-        `workspaces/${workspaceId}/current.yml`
+        `workspaces/${workspaceId}/versions/current/runtime.yml`
       );
-      const dsul = yaml.load(raw) as Prismeai.Workspace;
+      const dsul = yaml.load(raw) as Prismeai.RuntimeModel;
       this.workspaces[workspaceId] = await Workspace.create(dsul, this.apps);
 
       // Check imported apps & update watched app current versions

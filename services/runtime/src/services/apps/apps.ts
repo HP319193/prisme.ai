@@ -32,10 +32,12 @@ export class Apps extends Storage {
   public async fetchApp(
     appSlug: string,
     appVersion: string
-  ): Promise<Prismeai.DSUL> {
+  ): Promise<Prismeai.RuntimeModel> {
     try {
-      const raw = await this.driver.get(`apps/${appSlug}/${appVersion}.yml`);
-      const dsul = yaml.load(raw) as Prismeai.DSUL;
+      const raw = await this.driver.get(
+        `apps/${appSlug}/versions/${appVersion}/runtime.yml`
+      );
+      const dsul = yaml.load(raw) as Prismeai.RuntimeModel;
       if (!(appSlug in this.apps)) {
         this.apps[appSlug] = { versions: {} };
       }

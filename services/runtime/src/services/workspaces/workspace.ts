@@ -40,7 +40,7 @@ export interface AppContext {
 }
 
 export class Workspace {
-  public dsul: Prismeai.Workspace;
+  public dsul: Prismeai.RuntimeModel;
   public name: string;
   public id: string;
   public config: any;
@@ -54,7 +54,7 @@ export class Workspace {
   public status?: Prismeai.SuspendedWorkspace['payload'];
 
   private constructor(
-    workspace: Prismeai.Workspace,
+    workspace: Prismeai.RuntimeModel,
     apps: Apps,
     appContext?: AppContext
   ) {
@@ -71,13 +71,13 @@ export class Workspace {
   }
 
   static async create(
-    dsul: Prismeai.Workspace,
+    dsul: Prismeai.RuntimeModel,
     apps: Apps,
     appContext?: AppContext,
     overrideConfig?: any
   ) {
     const workspace = new Workspace(dsul, apps, appContext);
-    await workspace.update({
+    await workspace.loadModel({
       ...dsul,
       config: {
         ...dsul.config,
@@ -90,16 +90,8 @@ export class Workspace {
     return workspace;
   }
 
-  async update(workspace: Prismeai.Workspace) {
-    this.name = workspace.name;
-    this.config = interpolate(workspace.config?.value || {}, {
-      config: workspace.config?.value || {},
-    });
-    this.secrets = findSecretValues(
-      this.config,
-      findSecretPaths(workspace.config?.schema || {})
-    );
-
+  async loadModel(workspace: Prismeai.RuntimeModel) {
+    await this.updateConfig(workspace.config || {});
     const { automations = {}, imports = {} } = workspace;
     this.triggers = Object.keys(automations).reduce(
       (prev, key) => {
@@ -159,6 +151,21 @@ export class Workspace {
     for (let [slug, appInstance] of Object.entries(imports || {})) {
       await this.updateImport(slug, appInstance);
     }
+  }
+
+  async updateConfig(config: Prismeai.Config) {
+    this.config = interpolate(config?.value || {}, {
+      config: config?.value || {},
+    });
+    this.secrets = findSecretValues(
+      this.config,
+      findSecretPaths(config?.schema || {})
+    );
+
+    this.dsul = {
+      ...this.dsul,
+      config,
+    };
   }
 
   async updateImport(slug: string, appInstance: Prismeai.AppInstance) {
@@ -224,14 +231,14 @@ export class Workspace {
       ...this.dsul.automations,
     };
     newAutomations[automationSlug] = automation;
-    await this.update({ ...this.dsul, automations: newAutomations });
+    await this.loadModel({ ...this.dsul, automations: newAutomations });
   }
 
   async deleteAutomation(automationSlug: string) {
     const newAutomations = { ...this.dsul.automations };
     delete newAutomations[automationSlug];
 
-    await this.update({
+    await this.loadModel({
       ...this.dsul,
       automations: newAutomations,
     });

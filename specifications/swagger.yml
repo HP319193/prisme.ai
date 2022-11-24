@@ -3166,6 +3166,18 @@ components:
         id:
           type: string
 
+    RuntimeModel:
+      allOf:
+        - $ref: "#/components/schemas/DSUL"
+        - type: object
+          properties:
+            automations:
+              additionalProperties:
+                $ref: "#/components/schemas/Automation"
+            imports:
+              additionalProperties:
+                $ref: "#/components/schemas/AppInstance"
+
     DSULPatch:
       type: object
       additionalProperties: false
@@ -4710,6 +4722,8 @@ components:
           properties:
             appInstance:
               type: object
+              required:
+                - appSlug
               properties:
                 <<: *AppInstanceMeta
                 config: {}
