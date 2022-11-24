@@ -15,14 +15,14 @@ type SubjectInterfaces = {
 export type AccessManager = GenericAccessManager<
   SubjectType,
   SubjectInterfaces,
-  Prismeai.Role
+  Prismeai.Role | Role.SuperAdmin
 >;
 
 export function initAccessManager(storage: AccessManagerOptions['storage']) {
   const accessManager = new GenericAccessManager<
     SubjectType,
     SubjectInterfaces,
-    Prismeai.Role
+    Prismeai.Role | Role.SuperAdmin
   >(
     {
       storage,

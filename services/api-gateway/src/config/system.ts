@@ -27,6 +27,10 @@ export default {
 
   API_KEY_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-api-key',
 
+  ROLE_HEADER: process.env.ROLE_HEADER || 'x-prismeai-role',
+
+  SUPER_ADMIN_EMAILS: process.env.SUPER_ADMIN_EMAILS || '',
+
   SESSION_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-token',
 
   SESSION_COOKIES_MAX_AGE: parseInt(

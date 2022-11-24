@@ -15,6 +15,9 @@ export enum SubjectType {
 }
 
 export enum Role {
+  // Internal role with full privileges
+  SuperAdmin = 'superadmin',
+
   // Owner can :
   // 1. Manage permissions + API keys
   // 2. View all workspace events
@@ -29,7 +32,7 @@ export enum Role {
 
 export const config: PermissionsConfig<
   SubjectType,
-  Prismeai.Role,
+  Prismeai.Role | Role.SuperAdmin,
   Prismeai.ApiKeyRules
 > = {
   subjects: {
@@ -41,6 +44,15 @@ export const config: PermissionsConfig<
     [SubjectType.Event]: {},
   },
   rbac: [
+    {
+      name: Role.SuperAdmin,
+      rules: [
+        {
+          action: ActionType.Manage,
+          subject: SubjectType.Event,
+        },
+      ],
+    },
     {
       name: Role.Owner,
       subjectType: SubjectType.Workspace,
