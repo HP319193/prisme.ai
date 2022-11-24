@@ -53,6 +53,60 @@ export const builtinBlocksVariants = [
   },
   {
     name: {
+      fr: 'Bouton',
+      en: 'Button',
+      es: 'Botones',
+    },
+    slug: 'Buttons_simple',
+    block: 'Buttons',
+    photo: '/images/blocks/preview-Buttons-simple.png',
+    config: {
+      buttons: [
+        {
+          text: 'Click me',
+          variant: 'default',
+          action: {
+            type: 'url',
+            value: 'https://docs.eda.prisme.ai/fr/',
+            popup: true,
+          },
+        },
+      ],
+    },
+  },
+  {
+    name: {
+      fr: 'Boutons avec étiquette',
+      en: 'Buttons with tag',
+      es: 'Botones con etiqueta',
+    },
+    slug: 'Buttons_tag',
+    block: 'Buttons',
+    photo: '/images/blocks/preview-Buttons-tag.png',
+    config: {
+      buttons: [
+        {
+          text: 'New notifications',
+          variant: 'default',
+          tag: '5',
+        },
+        {
+          text: 'Archived',
+          variant: 'default',
+          unselected: true,
+          tag: '25',
+        },
+        {
+          text: 'Starred',
+          variant: 'default',
+          unselected: true,
+          tag: '12',
+        },
+      ],
+    },
+  },
+  {
+    name: {
       fr: 'Formulaire de contact',
       en: 'Contact Form',
       es: 'Formulario de contacto',

@@ -21,19 +21,32 @@ export const Button = ({
     return variant;
   }, [variant]);
 
+  const tagBgColor = useMemo(() => {
+    if (variant === 'primary') {
+      return unselected ? `bg-[#F2F4F9]` : `bg-[#80A4FF]`;
+    }
+    return unselected ? `bg-[#F2F4F9]` : `bg-[#F2F4F9]`;
+  }, [variant, unselected]);
+
+  const unselectedStyle = useMemo(() => {
+    return unselected
+      ? variant === 'primary'
+        ? `!bg-white border border-solid text-accent`
+        : `text-[#939CA6]`
+      : '';
+  }, [variant, unselected]);
+
   return (
     <AntdButton
       type={antdType}
       htmlType={type}
       {...props}
-      className={`flex flex-row ${unselected ? 'text-[#939CA6]' : ''}`}
+      className={`flex flex-row ${unselectedStyle}`}
     >
       {children}
       {tag && (
         <div
-          className={`ml-[0.3rem] ${
-            unselected ? `bg-[#F2F4F9]` : `bg-[#F2F4F9]`
-          } rounded-[0.3rem] px-[0.3rem]`}
+          className={`ml-[0.3rem] ${tagBgColor} rounded-[0.3rem] px-[0.3rem]`}
         >
           {tag}
         </div>

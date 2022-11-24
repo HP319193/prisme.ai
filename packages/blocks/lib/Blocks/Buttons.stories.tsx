@@ -71,3 +71,40 @@ Default.args = {
     ],
   },
 };
+
+export const SimpleButton = Template.bind({});
+SimpleButton.args = {
+  defaultConfig: {
+    buttons: [
+      {
+        text: 'Click me',
+        variant: 'primary',
+      },
+    ],
+  },
+};
+
+export const TagButtons = Template.bind({});
+TagButtons.args = {
+  defaultConfig: {
+    buttons: [
+      {
+        text: 'New notifications',
+        variant: 'default',
+        tag: '5',
+      },
+      {
+        text: 'Archived',
+        variant: 'default',
+        unselected: true,
+        tag: '25',
+      },
+      {
+        text: 'Starred',
+        variant: 'default',
+        unselected: true,
+        tag: '12',
+      },
+    ],
+  },
+};

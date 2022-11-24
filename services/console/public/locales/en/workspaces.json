@@ -629,6 +629,7 @@
       "name_Form": "Form",
       "name_RichText": "Rich text",
       "name_Layout": "Navigation",
+      "name_Buttons": "Buttons group",
       "description": "",
       "description_Header": "Display page header",
       "description_Cards": "Display a cards group",
@@ -636,6 +637,7 @@
       "description_Form": "Display form",
       "description_RichText": "Display text formatted with Markdown or HTML",
       "description_Layout": "Display navigable block pages. Must be used through automations.",
+      "description_Buttons": "Display a buttons group",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
