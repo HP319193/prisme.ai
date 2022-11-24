@@ -1,9 +1,8 @@
 import Workspaces from './workspaces';
 import '@prisme.ai/types';
 import { SubjectType } from '../../../permissions';
-import { DSULType } from '../../DSULStorage';
-import { MockStorage } from '../../DSULStorage/__mocks__';
-import { Broker } from '@prisme.ai/broker';
+import { DSULType } from '../../dsulStorage';
+import { MockStorage } from '../../dsulStorage/__mocks__';
 
 const DEFAULT_ID = '123456';
 jest.mock('nanoid', () => ({ nanoid: () => DEFAULT_ID }));
@@ -34,6 +33,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
   let mockedBroker: any;
   let workspaceCrud: Workspaces;
   const dsulSaveSpy = jest.spyOn(dsulStorage, 'save');
+  const dsulDeleteSpy = jest.spyOn(dsulStorage, 'delete');
 
   beforeEach(() => {
     mockedBroker = getMockedBroker();
@@ -196,7 +196,6 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
 
   it('deleteWorkspace', async () => {
     const lastDSUL = await workspaceCrud.getWorkspace(DEFAULT_ID);
-    const dsulDeleteSpy = jest.spyOn(dsulStorage, 'delete');
     await workspaceCrud.deleteWorkspace(DEFAULT_ID);
 
     expect(mockedAccessManager.delete).toHaveBeenCalledWith(

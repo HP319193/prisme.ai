@@ -1,7 +1,6 @@
-import { last } from 'lodash';
 import { AlreadyUsedError, ObjectNotFoundError } from '../../errors';
 import { DSULStorage } from './DSULStorage';
-import { DSULType, FolderIndex } from './types';
+import { DSULType } from './types';
 import { MockStorage } from './__mocks__';
 
 const WORKSPACE_ID = 'workspaceId';

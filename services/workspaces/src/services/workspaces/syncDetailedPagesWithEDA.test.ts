@@ -6,8 +6,6 @@ import { syncDetailedPagesWithEDA } from './syncDetailedPagesWithEDA';
 import { DSULType } from '../dsulStorage';
 import { EventType } from '../../eda';
 
-// jest.setTimeout(2000);
-
 const USER_ID = 'myUserId';
 const WORKSPACE_ID = 'workspaceId';
 const WORKSPACE_SLUG = 'workspaceSlug';
@@ -335,6 +333,12 @@ describe('Sync DetailedPages with the EDA', () => {
         }),
         expect.anything()
       );
+
+      const detailedPage = await pages.getDetailedPage({
+        workspaceSlug: WORKSPACE_SLUG,
+        slug: page.slug!,
+      });
+      expect(detailedPage.public).toBe(true);
     });
 
     await broker.send<Prismeai.PagePermissionsDeleted['payload']>(
@@ -360,6 +364,12 @@ describe('Sync DetailedPages with the EDA', () => {
         }),
         expect.anything()
       );
+
+      const detailedPage = await pages.getDetailedPage({
+        workspaceSlug: WORKSPACE_SLUG,
+        slug: page.slug!,
+      });
+      expect(detailedPage.public).toBe(false);
     });
   });
 });
