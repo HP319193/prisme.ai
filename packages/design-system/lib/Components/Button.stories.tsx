@@ -20,8 +20,8 @@ export default {
   },
 };
 
-const Template: Story<ButtonProps> = ({ variant, disabled }) => (
-  <Button variant={variant} disabled={disabled}>
+const Template: Story<ButtonProps> = ({ variant, unselected, tag }) => (
+  <Button variant={variant} unselected={unselected} tag={tag}>
     I am a button !
   </Button>
 );
@@ -44,4 +44,10 @@ Link.args = {
 export const Plain = Template.bind({});
 Plain.args = {
   variant: 'primary',
+};
+
+export const WithTag = Template.bind({});
+WithTag.args = {
+  variant: 'default',
+  tag: '50',
 };
