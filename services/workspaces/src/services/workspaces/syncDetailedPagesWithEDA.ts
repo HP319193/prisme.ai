@@ -39,7 +39,6 @@ export async function syncDetailedPagesWithEDA(
     logCtx?: any
   ) => {
     const detailedPage = await pages.getDetailedPage({
-      workspaceId,
       id,
     });
     if (!workspaceSlug) {
@@ -143,6 +142,7 @@ export async function syncDetailedPagesWithEDA(
           event.type == EventType.CreatedPage ||
           event.type == EventType.UpdatedPage
         ) {
+          console.log('FULL EVENT : ', event);
           const {
             payload: { page, oldSlug },
           } = event as Prismeai.UpdatedPage;

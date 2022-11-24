@@ -86,9 +86,15 @@ class Pages {
       await this.accessManager.create(SubjectType.Page, pageMetadata);
     }
 
-    this.broker.send<Prismeai.CreatedPage['payload']>(EventType.CreatedPage, {
-      page,
-    });
+    this.broker.send<Prismeai.CreatedPage['payload']>(
+      EventType.CreatedPage,
+      {
+        page,
+      },
+      {
+        workspaceId,
+      }
+    );
     return page;
   };
 
@@ -156,9 +162,7 @@ class Pages {
   };
 
   getDetailedPage = async (
-    query:
-      | { workspaceId: string; id: string }
-      | { workspaceSlug: string; slug: string }
+    query: { id: string } | { workspaceSlug: string; slug: string }
   ): Promise<Prismeai.DetailedPage> => {
     // Admin query
     if ((<any>query).id) {
@@ -312,11 +316,15 @@ class Pages {
       workspaceSlug: currentPageMeta.workspaceSlug,
     });
 
-    this.broker.send<Prismeai.UpdatedPage['payload']>(EventType.UpdatedPage, {
-      page,
-      slug: newSlug,
-      oldSlug: newSlug !== oldSlug ? oldSlug : undefined,
-    });
+    this.broker.send<Prismeai.UpdatedPage['payload']>(
+      EventType.UpdatedPage,
+      {
+        page,
+        slug: newSlug,
+        oldSlug: newSlug !== oldSlug ? oldSlug : undefined,
+      },
+      { workspaceId }
+    );
     return { slug: newSlug, ...page };
   };
 
@@ -337,9 +345,13 @@ class Pages {
       });
     } catch {}
 
-    this.broker.send<Prismeai.DeletedPage['payload']>(EventType.DeletedPage, {
-      pageSlug: page.slug!,
-    });
+    this.broker.send<Prismeai.DeletedPage['payload']>(
+      EventType.DeletedPage,
+      {
+        pageSlug: page.slug!,
+      },
+      { workspaceId: page.workspaceId! }
+    );
     return { id };
   };
 

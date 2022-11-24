@@ -104,9 +104,15 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
       { workspaceId: result.id },
       result
     );
-    expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.updated', {
-      workspace: result,
-    });
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.updated',
+      {
+        workspace: result,
+      },
+      {
+        workspaceId: result.id,
+      }
+    );
   });
 
   it('updateWorkspace should emit specific events corresponding to each updated part', async () => {
@@ -134,10 +140,16 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
       workspace
     );
 
-    expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.updated', {
-      workspace: result,
-      oldSlug: lastDSUL.slug,
-    });
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.updated',
+      {
+        workspace: result,
+        oldSlug: lastDSUL.slug,
+      },
+      {
+        workspaceId: result.id,
+      }
+    );
     expect(workspaceCrud.pages.updatePagesWorkspaceSlug).toHaveBeenCalledWith(
       workspace.id!,
       workspace.slug,
@@ -148,11 +160,20 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
       {
         blocks: result.blocks,
         workspaceSlug: result.slug,
+      },
+      {
+        workspaceId: result.id,
       }
     );
-    expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.configured', {
-      config: result.config,
-    });
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.configured',
+      {
+        config: result.config,
+      },
+      {
+        workspaceId: result.id,
+      }
+    );
 
     expect(mockedBroker.send).toHaveBeenCalledTimes(3);
   });
@@ -213,9 +234,15 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
       { workspaceId: DEFAULT_ID }
     );
 
-    expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.deleted', {
-      workspaceId: DEFAULT_ID!,
-      workspaceSlug: lastDSUL.slug,
-    });
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.deleted',
+      {
+        workspaceId: DEFAULT_ID!,
+        workspaceSlug: lastDSUL.slug,
+      },
+      {
+        workspaceId: DEFAULT_ID!,
+      }
+    );
   });
 });

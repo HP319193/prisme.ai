@@ -229,10 +229,21 @@ async function migrateWorkspace(
       slug: block.slug || name,
       ...block,
     }));
+    try {
+      await ((pages as any).accessManager as Required<AccessManager>).get(
+        SubjectType.Page,
+        page.id!
+      );
+    } catch (err) {
+      logger.debug({
+        msg: `Skipping page ${page.id} present in workspace ${workspaceId} DSUL but not in database`,
+      });
+      continue;
+    }
     await pages.createPage(workspaceId!, { ...page, slug }, true);
+
     if (legacy.slug) {
       const detailedPage = await pages.getDetailedPage({
-        workspaceId: workspaceId!,
         id: page.id!,
       });
       await ((pages as any).storage as DSULStorage).save(

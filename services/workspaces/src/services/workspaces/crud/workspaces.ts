@@ -88,19 +88,22 @@ class Workspaces {
             {
               blocks: allDiffs[0].value,
               workspaceSlug: workspace.slug!,
-            }
+            },
+            { workspaceId: workspace.id }
           );
         },
       },
       {
         path: 'config',
         handler: async (allDiffs: DSULDiff[]) => {
+          const workspace = allDiffs[0].root;
           this.broker.send<Prismeai.ConfiguredWorkspace['payload']>(
             EventType.ConfiguredWorkspace,
             {
               config: allDiffs[0].value,
               oldConfig: allDiffs[0].oldValue,
-            }
+            },
+            { workspaceId: workspace.id! }
           );
         },
       },
@@ -324,7 +327,8 @@ class Workspaces {
           workspace.slug && workspace.slug !== currentDSUL.slug
             ? currentDSUL.slug
             : undefined,
-      }
+      },
+      { workspaceId }
     );
 
     const diffs = await this.processEveryDiffs(currentDSUL, {
@@ -474,7 +478,8 @@ class Workspaces {
       EventType.RollbackWorkspaceVersion,
       {
         version: targetVersion,
-      }
+      },
+      { workspaceId }
     );
     await this.storage.delete({
       workspaceId,
@@ -561,7 +566,8 @@ class Workspaces {
       {
         workspaceId,
         workspaceSlug: workspace.slug,
-      }
+      },
+      { workspaceId }
     );
     return { id: workspaceId };
   };

@@ -90,7 +90,7 @@ export function initPagesBackoffice(dsulStorage: DSULStorage) {
       broker,
       dsulStorage,
     });
-    const detailedPage = await pages.getDetailedPage({ workspaceId, id });
+    const detailedPage = await pages.getDetailedPage({ id });
     res.send(detailedPage);
   }
 

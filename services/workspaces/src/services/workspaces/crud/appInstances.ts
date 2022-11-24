@@ -164,6 +164,7 @@ class AppInstances {
       {
         appSlug: appInstance.appSlug,
         appInstanceFullSlug: appInstance.slug,
+        workspaceId,
       }
     );
     return appInstance;
@@ -221,6 +222,7 @@ class AppInstances {
       {
         appSlug: appInstance.appSlug,
         appInstanceFullSlug: appInstance.slug,
+        workspaceId,
       }
     );
 
@@ -249,6 +251,7 @@ class AppInstances {
       {
         appSlug: appInstance.appSlug,
         appInstanceFullSlug: slug,
+        workspaceId,
       }
     );
 

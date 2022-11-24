@@ -77,6 +77,9 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
       {
         automation,
         slug,
+      },
+      {
+        workspaceId: WORKSPACE_ID,
       }
     );
   });
@@ -128,6 +131,9 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
         automation,
         slug: newSlug,
         oldSlug,
+      },
+      {
+        workspaceId: WORKSPACE_ID,
       }
     );
   });
@@ -149,6 +155,9 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
       'workspaces.automations.deleted',
       {
         automationSlug: slug,
+      },
+      {
+        workspaceId: WORKSPACE_ID,
       }
     );
   });

@@ -91,9 +91,15 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
         updatedBy: USER_ID,
       }
     );
-    expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.pages.created', {
-      page: result,
-    });
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.pages.created',
+      {
+        page: result,
+      },
+      {
+        workspaceId: WORKSPACE_ID,
+      }
+    );
   });
 
   it('updatePage', async () => {
@@ -126,11 +132,17 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
         updatedBy: USER_ID,
       }
     );
-    expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.pages.updated', {
-      page: result,
-      slug: result.slug,
-      oldSlug,
-    });
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.pages.updated',
+      {
+        page: result,
+        slug: result.slug,
+        oldSlug,
+      },
+      {
+        workspaceId: WORKSPACE_ID,
+      }
+    );
 
     mockedAccessManager.get = jest.fn(() => ({
       slug: result.slug,
@@ -157,9 +169,15 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       slug,
       dsulType: DSULType.DetailedPage,
     });
-    expect(mockedBroker.send).toHaveBeenCalledWith('workspaces.pages.deleted', {
-      pageSlug: slug,
-    });
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.pages.deleted',
+      {
+        pageSlug: slug,
+      },
+      {
+        workspaceId: WORKSPACE_ID,
+      }
+    );
   });
 });
 
@@ -267,7 +285,6 @@ describe('Detailed pages', () => {
     });
 
     const detailedPage = await pagesCrud.getDetailedPage({
-      workspaceId: WORKSPACE_ID,
       id: page.id!,
     });
     expect(detailedPage).toEqual({

@@ -73,7 +73,8 @@ class Automations {
       {
         automation,
         slug,
-      }
+      },
+      { workspaceId }
     );
     return { ...automation, slug };
   };
@@ -111,7 +112,8 @@ class Automations {
         automation,
         slug: automation.slug || slug,
         oldSlug: automation.slug && automation.slug !== slug ? slug : undefined,
-      }
+      },
+      { workspaceId }
     );
     return { ...automation, slug: automation.slug || slug };
   };
@@ -129,7 +131,8 @@ class Automations {
       EventType.DeletedAutomation,
       {
         automationSlug: slug,
-      }
+      },
+      { workspaceId }
     );
     return { slug: slug };
   };

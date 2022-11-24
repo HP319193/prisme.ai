@@ -143,7 +143,6 @@ describe('Sync DetailedPages with the EDA', () => {
     });
 
     const detailedPage = await pages.getDetailedPage({
-      workspaceId: WORKSPACE_ID,
       id: page.id!,
     });
 
@@ -201,7 +200,6 @@ describe('Sync DetailedPages with the EDA', () => {
     });
 
     const detailedPage = await pages.getDetailedPage({
-      workspaceId: WORKSPACE_ID,
       id: page.id!,
     });
     expect(
@@ -249,7 +247,6 @@ describe('Sync DetailedPages with the EDA', () => {
     });
 
     const detailedPage = await pages.getDetailedPage({
-      workspaceId: WORKSPACE_ID,
       id: page.id!,
     });
     expect(

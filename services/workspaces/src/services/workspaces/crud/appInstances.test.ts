@@ -84,6 +84,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       {
         appSlug: appInstance.appSlug,
         appInstanceFullSlug: slug,
+        workspaceId: WORKSPACE_ID,
       }
     );
     expect(apps.exists).toHaveBeenCalledWith(
@@ -139,6 +140,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       {
         appSlug: appInstance.appSlug,
         appInstanceFullSlug: newSlug,
+        workspaceId: WORKSPACE_ID,
       }
     );
     expect(apps.exists).toHaveBeenCalledWith(
@@ -168,6 +170,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       {
         appSlug: APP_SLUG,
         appInstanceFullSlug: slug,
+        workspaceId: WORKSPACE_ID,
       }
     );
   });
