@@ -54,10 +54,13 @@ body {
 
 export const PagesProvider: FC<PagesProvider> = ({ children }) => {
   const [pages, setPages] = useState<PagesContext['pages']>(new Map());
+  const [loading, setLoading] = useState(false);
   const fetchPages: PagesContext['fetchPages'] = useCallback(
     async (workspaceId) => {
       if (!workspaceId) return;
+      setLoading(true);
       const pages = await api.getPages(workspaceId);
+      setLoading(false);
       setPages((prev) => {
         const newPages = new Map(prev);
         newPages.set(workspaceId, new Set(pages || []));
