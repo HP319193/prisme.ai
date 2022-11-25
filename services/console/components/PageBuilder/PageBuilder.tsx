@@ -31,12 +31,14 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
     | undefined
   >();
   const [blockEditing, setBlockEditing] = useState<string>();
+  const [blockEditingOnBack, setBlockEditingOnBack] = useState<() => void>();
   const [blocksSchemas, setBlocksSchemas] = useState<Map<string, Schema>>(
     new Map()
   );
   const { events } = useBlocksConfigs(value);
 
   const hidePanel = useCallback(async () => {
+    setBlockEditingOnBack(undefined);
     await setBlockSelecting(undefined);
     await setBlockEditing(undefined);
     await setPanelIsOpen(false);
@@ -130,6 +132,15 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
         blocks: newBlocks,
       });
       setEditBlock(blockKey);
+      setBlockEditingOnBack(() => () => {
+        onChange({
+          ...value,
+          blocks: value.blocks.filter(({ key }) => key !== blockKey),
+        });
+        setBlockEditing(undefined);
+        addBlock(position, blockName);
+        setBlockEditingOnBack(undefined);
+      });
     },
     [addBlockDetails, available, onChange, setEditBlock, value]
   );
@@ -230,6 +241,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
           })}
           visible={panelIsOpen}
           onVisibleChange={hidePanel}
+          onBack={blockEditingOnBack}
         >
           {blockSelecting && <PageNewBlockForm {...blockSelecting} />}
           {blockEditing && <PageEditBlockForm blockId={blockEditing} />}

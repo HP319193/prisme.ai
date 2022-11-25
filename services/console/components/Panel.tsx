@@ -1,7 +1,7 @@
-import { Button, Layout } from '@prisme.ai/design-system';
+import { Button } from '@prisme.ai/design-system';
 import { FC, useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next';
 import { CloseCircleOutlined, SettingOutlined } from '@ant-design/icons';
+import LeftIcon from '../icons/chevron.svgr';
 
 const noop = () => null;
 interface PanelProps {
@@ -9,15 +9,16 @@ interface PanelProps {
   title: string;
   onVisibleChange?: (v: boolean) => void;
   className?: string;
+  onBack?: () => void;
 }
 export const Panel: FC<PanelProps> = ({
   visible,
   title,
   onVisibleChange = noop,
+  onBack,
   className,
   children,
 }) => {
-  const { t } = useTranslation('workspaces');
   const [hidden, setHidden] = useState(true);
 
   useEffect(() => {
@@ -42,32 +43,43 @@ export const Panel: FC<PanelProps> = ({
         ease-in
         duration-200
         overflow-hidden
+        bg-surface
         ${hidden ? '' : '-translate-x-full'}
         ${className || ''}
       `}
     >
-      <Layout
-        Header={
-          <div className="flex w-full items-center justify-between flex-row p-5 bg-accent text-white font-semibold">
-            <div className="flex items-center flex-row">
-              <SettingOutlined className="text-[20px] font-bold mr-3" />
-              {title}
-            </div>
-            <Button
-              variant="grey"
-              className="flex justify-center items-center !text-white"
-              onClick={() => setHidden(true)}
+      <div className="flex w-full items-center justify-between flex-row p-5 bg-dark-accent text-white font-semibold">
+        <div className="flex items-center flex-row">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="flex mx-1 w-[20px] items-center"
             >
-              <CloseCircleOutlined />
-            </Button>
-          </div>
-        }
-        className="m-4 rounded !bg-white overflow-hidden h-full border-solid border border-gray-200"
-      >
-        <div className="flex flex-1 flex-col overflow-y-scroll  h-full">
-          <div className="flex flex-1 flex-col m-5">{children}</div>
+              <span className="flex rotate-90">
+                <LeftIcon width=".8rem" height=".8rem" />
+              </span>
+            </button>
+          )}
+          {!onBack && (
+            <SettingOutlined className="text-[20px] font-bold mr-3" />
+          )}
+          {title}
         </div>
-      </Layout>
+        <Button
+          variant="grey"
+          className="flex justify-center items-center !text-white"
+          onClick={() => setHidden(true)}
+        >
+          <CloseCircleOutlined />
+        </Button>
+      </div>
+      <div
+        className="flex flex-1 flex-col overflow-y-scroll h-full 
+        border-light-gray
+        border-l"
+      >
+        {children}
+      </div>
     </div>
   );
 };

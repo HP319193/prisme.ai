@@ -28,12 +28,14 @@ module.exports = {
     extend: {
       colors: {
         // Antdesign secondary text color
-        gray: '#939CA6',
-        'light-gray': '#E5E5E5',
+        gray: 'var(--gray-color)',
+        'light-gray': 'var(--light-gray-color)',
         accent: 'var(--accent-color)',
         'light-accent': 'var(--light-accent-color)',
         'ultra-light-accent': 'var(--ultra-light-accent-color)',
-        base: '#0A1D3B',
+        'dark-accent': 'var(--dark-accent-color)',
+        surface: 'var(--surface-color)',
+        base: 'var(--base-color)',
         error: '#ff4d4f',
         info: '#E6EFFF',
 

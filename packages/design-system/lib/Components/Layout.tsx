@@ -16,7 +16,7 @@ const Layout = ({
   children,
   ...props
 }: LayoutProps) => (
-  <AntdLayout className={`${className || ''} flex grow flex-col`} {...props}>
+  <AntdLayout className={`${className || ''} flex flex-1 flex-col`} {...props}>
     <AntdLayout.Header>
       {Header}
       {PageHeader || null}
