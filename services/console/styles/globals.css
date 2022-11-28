@@ -264,3 +264,8 @@ body .ant-dropdown-menu-item:hover {
 .pr-panel-settings .ant-tabs-ink-bar {
   background: var(--gray-color);
 }
+
+.pr-page-header-full-left .ant-page-header-heading-left,
+.pr-page-header-full-left .ant-page-header-heading-title {
+  flex: 1;
+}

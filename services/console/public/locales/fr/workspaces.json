@@ -105,6 +105,10 @@
     "label": "Éditer"
   },
   "events": {
+    "title": "Activités",
+    "search": {
+      "placeholder": "Rechercher par mots clés"
+    },
     "filters": {
       "title": "Filtres",
       "correlationId": "ID de corrélation",
@@ -112,6 +116,11 @@
       "text": "Recherche par mots clés",
       "afterDate": "À partir du",
       "beforeDate": "Jusqu'à",
+      "specific": {
+        "add": "Ajouter un champs spécifique",
+        "remove": "Supprimer cette valeur",
+        "label": "Champs"
+      },
       "query": {
         "label": "Ajouter un champs spécifique",
         "description": "Un objet JSON spécifiant la valeur attendue par chaque champs, par exemple : { \"source.workspaceId\": \"Wl4RRUN\",}",
@@ -123,7 +132,8 @@
         "title": "Suggestions de filtres",
         "help": "Sélection de filtres pré-concus pour vous aider à trouver vos évènements les plus utiles.",
         "label_versions": "Toutes les versions du Workspace"
-      }
+      },
+      "reset": "Réinitialiser les filtres"
     },
     "empty": "Il ne s'est encore rien passé ici…",
     "details": {

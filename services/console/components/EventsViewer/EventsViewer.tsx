@@ -10,19 +10,21 @@ import {
   Feed,
   Layout,
   Loading,
-  Space,
+  StretchContent,
 } from '@prisme.ai/design-system';
 import { Section } from '@prisme.ai/design-system/lib/Components/Feed';
 import { CollapseItem } from '@prisme.ai/design-system/lib/Components/Collapse';
 import { Event } from '@prisme.ai/sdk';
 import Empty from './Empty';
-import FilterEventsPopover from './FilterEventsPopover';
-import { filterEmpty } from '../../utils/prismeAi';
 import { ExceptionOutlined } from '@ant-design/icons';
 import { useWorkspace, WorkspaceContext } from '../WorkspaceProvider';
 import ShareWorkspace from '../Share/ShareWorkspace';
 import SourceDetails from '../SourceDetails';
 import SectionContent from './SectionContent';
+import { Badge, PageHeader } from 'antd';
+import HorizontalSeparatedNav from '../HorizontalSeparatedNav';
+import Filters from './Filters';
+import { useQueryString } from '../QueryStringProvider';
 
 export const EventsViewerRenderer = memo(function EventsViewerRender({
   events,
@@ -30,21 +32,66 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   readEvents,
   readEvent,
   filters,
+  updateFilters,
   workspaceName,
 }: Pick<
   WorkspaceContext,
-  'events' | 'nextEvents' | 'readEvent' | 'readEvents' | 'filters'
+  | 'events'
+  | 'nextEvents'
+  | 'readEvent'
+  | 'readEvents'
+  | 'filters'
+  | 'updateFilters'
 > & { workspaceName?: Prismeai.LocalizedText }) {
   const { t } = useTranslation('workspaces');
   const dateFormat = useDateFormat();
   const { ref, bottom } = useScrollListener<HTMLDivElement>({ margin: -1 });
   const { localize } = useLocalizedText('pages');
+  const { queryString, setQueryString } = useQueryString();
+  const filtersCount = Array.from(queryString.entries()).filter(
+    ([key]) => key !== 'text'
+  ).length;
+  const [showFilters, setShowFilters] = useState(filtersCount > 0);
+
+  const updateQuery = useCallback(
+    (text: string) => {
+      setQueryString((prevQuery) => {
+        const newQuery = new URLSearchParams(prevQuery);
+        if (text) {
+          newQuery.set('text', text);
+        } else {
+          newQuery.delete('text');
+        }
+
+        if (newQuery.toString() === prevQuery.toString()) return prevQuery;
+        return newQuery;
+      });
+    },
+    [setQueryString]
+  );
 
   useEffect(() => {
     if (bottom) {
       nextEvents();
     }
   }, [bottom, nextEvents]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const query = Array.from(queryString.entries()).reduce(
+        (prev, [k, v]) => ({
+          ...prev,
+          [k]: v,
+        }),
+        {}
+      );
+      updateFilters(query);
+    }, 200);
+
+    return () => {
+      clearTimeout(t);
+    };
+  }, [queryString, updateFilters]);
 
   const generateSectionContent = useCallback(
     (events: Set<Event<Date>>): CollapseItem[] =>
@@ -97,16 +144,11 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
     [dateFormat, events, generateSectionContent, readEvent]
   );
 
-  const feedHeaderButtons = useMemo(
-    () => [<FilterEventsPopover key="filterEvents" />],
-    []
-  );
-
   let content;
   if (events === 'loading') {
     content = <Loading />;
   } else if (feedSections.length === 0) {
-    if (filterEmpty(filters)) {
+    if (Object.keys(filters).length === 0) {
       content = <Empty />;
     } else {
       content = (
@@ -129,9 +171,47 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   return (
     <Layout
       Header={
-        <Space className="h-[4rem] border border-gray-200 border-solid w-full !border-x-0">
-          {feedHeaderButtons.map((button) => button)}
-        </Space>
+        <div className="border-b  -mt-[1px]">
+          <PageHeader
+            className="h-[4rem] flex items-center pr-page-header-full-left !border-0"
+            title={
+              <HorizontalSeparatedNav className="flex-1">
+                <HorizontalSeparatedNav.Separator>
+                  <span className="text-base font-bold">
+                    {t('events.title')}
+                  </span>
+                </HorizontalSeparatedNav.Separator>
+                <HorizontalSeparatedNav.Separator className="flex-1">
+                  <input
+                    className="flex-1 focus:outline-none text-base"
+                    placeholder={t('events.search.placeholder')}
+                    value={queryString.get('text') || ''}
+                    onChange={({ target: { value } }) => updateQuery(value)}
+                  />
+                </HorizontalSeparatedNav.Separator>
+              </HorizontalSeparatedNav>
+            }
+            extra={[
+              <Button
+                key="filters"
+                variant="grey"
+                className={showFilters ? '' : '!bg-dark-accent !text-white'}
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                {filtersCount > 0 && (
+                  <Badge count={filtersCount} status="warning" />
+                )}
+                {t('events.filters.title')}
+                {filtersCount > 0 && (
+                  <span className="ml-1 text-xs">({filtersCount})</span>
+                )}
+              </Button>,
+            ]}
+          ></PageHeader>
+          <StretchContent visible={showFilters}>
+            <Filters />
+          </StretchContent>
+        </div>
       }
       className="h-full"
     >
@@ -154,6 +234,7 @@ export const EventsViewer = () => {
     readEvents,
     readEvent,
     filters,
+    updateFilters,
     workspace: { name: workspaceName } = {},
   } = useWorkspace();
 
@@ -170,6 +251,7 @@ export const EventsViewer = () => {
     readEvents,
     readEvent,
     filters,
+    updateFilters,
     workspaceName,
   });
 
@@ -181,13 +263,22 @@ export const EventsViewer = () => {
         readEvents,
         readEvent,
         filters,
+        updateFilters,
         workspaceName,
       });
     }, 10);
     return () => {
       clearTimeout(t);
     };
-  }, [events, nextEvents, readEvents, readEvent, filters, workspaceName]);
+  }, [
+    events,
+    nextEvents,
+    readEvents,
+    readEvent,
+    filters,
+    workspaceName,
+    updateFilters,
+  ]);
 
   return <EventsViewerRenderer {...props} />;
 };

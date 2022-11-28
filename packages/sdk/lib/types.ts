@@ -9,7 +9,7 @@ export interface Event<DateType extends Date | string>
   createdAt: DateType;
 }
 
-export type EventsFilters = {
+export type EventsFilters = Record<string, string> & {
   afterDate?: PrismeaiAPI.EventsLongpolling.Parameters.AfterDate;
   beforeDate?: PrismeaiAPI.EventsLongpolling.Parameters.BeforeDate;
   text?: PrismeaiAPI.EventsLongpolling.Parameters.Text;

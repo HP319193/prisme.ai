@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FC, forwardRef, ReactChild, ReactChildren, ReactElement } from 'react';
+import { FC, forwardRef, ReactNode } from 'react';
 
 export interface CardButtonProps {
   onClick?: () => void;
@@ -7,7 +7,7 @@ export interface CardButtonProps {
   disabled?: boolean;
   className?: string;
   containerClassName?: string;
-  children: ReactElement | ReactElement[];
+  children: ReactNode;
 }
 
 const Abutton: FC<CardButtonProps> = ({
