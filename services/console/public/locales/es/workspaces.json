@@ -3,6 +3,16 @@
   "workspaces": {
     "title": "Espacios de trabajo y aplicaciones — $t(common:main.title)",
     "description": "Crear nuevos espacios de trabajo y aplicaciones, editarlos y ejecutarlos",
+    "welcome": {
+      "title": "Bienvenido {{name}},",
+      "title_noname": "Bienvenido,",
+      "content": "Aquí tienes tu galería, encuentra nuestras sugerencias para ayudarte a empezar un espacio de trabajo o busca entre tus espacios de trabajo ya creados.",
+      "help": "<a href=\"https://docs.eda.prisme.ai/fr\">¿Necesitas ayuda?</a>"
+    },
+    "suggestions": {
+      "title": "Sugerencias",
+      "error": "Se ha producido un error. Contacta con el servicio de asistencia si el problema persiste"
+    },
     "sectionTitle": "Su galería de espacios de trabajo",
     "defaultDescription": "Creado por ti",
     "search": "Encuentra un espacio de trabajo"
@@ -11,7 +21,24 @@
     "title": "\"{{name}}\" Espacios de trabajo — $t(common:main.title)",
     "description": "Editar el espacio de trabajo \"{{name}}\"",
     "share": "Compartir",
-    "empty": "<button>Crea tu primera automatización</button> para ver cómo cobra vida tu espacio de trabajo",
+    "empty": {
+      "title": "<0>Su espacio de trabajo aún no ha generado ninguna actividad…</0><1>Empieza a crear, añade páginas, automatizaciones y aplicaciones.</1>",
+      "subtitle": "¿No sabe por dónde empezar?",
+      "suggestions": {
+        "page": {
+          "title": "Página",
+          "text": "Crear una Página según la necesidad y el rol"
+        },
+        "automation": {
+          "title": "Automatización",
+          "text": "Crear una Automatización para ejecutar instrucciones"
+        },
+        "app": {
+          "title": "App",
+          "text": "Instalar una App para añadir integraciones"
+        }
+      }
+    },
     "dirtyWarning": "Tu trabajo actual no se ha guardado. ¿Cambiar de página de todos modos?",
     "dirtyOk": "Cambiar de página",
     "delete": {
@@ -128,6 +155,10 @@
       "error_slug": "El nombre técnico ya está en uso, por favor elija otro",
       "error_InvalidSlugError": "El nombre técnico contiene caracteres no válidos",
       "error": "Se ha producido un error"
+    },
+    "source": {
+      "label": "Ver el código",
+      "help": "Muestra la estructura de la Automatización en formato raw"
     },
     "endpoint": {
       "copied": "La URL ha sido copiada"
@@ -435,6 +466,7 @@
     "title": "Apps Store",
     "saveSuccess": "\nLa configuración de la aplicación se ha guardado correctamente",
     "details": {
+      "title": "Detalles de la App",
       "appName": {
         "label": "Nombre de la aplicación"
       },
@@ -457,7 +489,9 @@
         "toast": "Aplicación publicada",
         "content": "Las automatizaciones, las páginas, el block y la configuración del espacio de trabajo serán accesibles para cualquier persona que instale su aplicación.\nElimine cualquier clave de API privada que desee mantener privada primero"
       }
-    }
+    },
+    "doc": "Documentación",
+    "config": "Configuración"
   },
   "pages": {
     "private": "Privado",
@@ -469,7 +503,35 @@
       "label": "Crear una nueva Página",
       "defaultName": "Página"
     },
-    "empty": "Interfaces según las necesidades y las funciones",
+    "duplicate": {
+      "help": "Crear una copia de esta página"
+    },
+    "source": {
+      "label": "Ver el código",
+      "help": "Muestra la estructura de la página en formato raw"
+    },
+    "empty": {
+      "title": "<0>Esta página está vacía…</0><1>Empieza a crear, ¡añade tu primer bloque!</1>",
+      "subtitle": "¿No sabe por dónde empezar?",
+      "suggestions": {
+        "header": {
+          "title": "Cabecera",
+          "text": "Presente su marca con su logotipo y navegación"
+        },
+        "cards": {
+          "title": "Grupo de cartas",
+          "text": "Visualización de cartas"
+        },
+        "richtext": {
+          "title": "Texto enriquecido",
+          "text": "Escribe todo lo que quieras"
+        },
+        "form": {
+          "title": "Formulario",
+          "text": "¿Necesita conseguir clientes potenciales? Añadir un formulario"
+        }
+      }
+    },
     "delete": {
       "label": "Eliminar la Página",
       "confirm": {
@@ -495,6 +557,7 @@
       "notme": "Usted ya es el propietario de esta página."
     },
     "details": {
+      "title": "Editar detalles",
       "name": {
         "label": "Título de la página"
       },

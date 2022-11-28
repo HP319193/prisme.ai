@@ -30,7 +30,7 @@
           "text": "Créer une page en fonction du besoin et du rôle"
         },
         "automation": {
-          "title": "Automation",
+          "title": "Automatisation",
           "text": "Créer une automatisation pour exécuter des instructions"
         },
         "app": {
@@ -158,7 +158,7 @@
     },
     "source": {
       "label": "Voir le code",
-      "help": "Affiche la structure de l'automatisation' au format brut"
+      "help": "Affiche la structure de l'Automatisation au format brut"
     },
     "endpoint": {
       "copied": "L'adresse a bien été copiée"
