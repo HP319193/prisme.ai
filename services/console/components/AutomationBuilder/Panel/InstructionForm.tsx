@@ -107,7 +107,7 @@ export const InstructionForm: FC<InstructionFormProps> = ({
   }, []);
 
   return (
-    <div className="flex flex-1 flex-col h-full overflow-x-auto">
+    <div className="flex flex-1 h-full flex-col p-4">
       {!instruction && edit && edit.instruction && (
         <button
           onClick={unsetInstruction}
