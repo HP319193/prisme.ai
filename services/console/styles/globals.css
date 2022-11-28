@@ -5,6 +5,7 @@
   --light-accent-color: #e6efff;
   --ultra-light-accent-color: #f8faff;
   --dark-accent-color: #0a1d3b;
+  --link-color: var(--accent-color);
   --gray-color: #939ca6;
   --light-gray-color: #e5e5e5;
 }

@@ -14,6 +14,7 @@ import {
   Space,
 } from '@prisme.ai/design-system';
 import { SignLayout, SignType } from '../../components/SignLayout';
+import LinkInTrans from '../../components/LinkInTrans';
 
 interface Values {
   email: string;
@@ -131,10 +132,11 @@ export const SignIn = () => {
                           i18nKey="up.cgu"
                           components={{
                             a: (
-                              <a
+                              <LinkInTrans
                                 href="https://www.prisme.ai/mentions-legales"
                                 target="_blank"
                                 rel="noreferrer"
+                                className="text-link"
                               />
                             ),
                           }}
@@ -147,7 +149,7 @@ export const SignIn = () => {
               <Button
                 variant="primary"
                 disabled={loading}
-                className="w-full !h-12 !mb-4"
+                className="w-full !h-12 !mb-4 !font-bold"
                 type="submit"
               >
                 {t('up.submit')}

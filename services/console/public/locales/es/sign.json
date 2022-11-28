@@ -2,7 +2,7 @@
   "in": {
     "title": "Conexión",
     "header": "Lo que es esencial merece tu atención.\n<b>Automatiza el resto.</b>",
-    "topForm1": "ME ALEGRO DE TENERTE DE VUELTA",
+    "topForm1": "Me alegro de tenerte de vuelta",
     "topForm2": "Conéctate a Prisme.ai",
     "topForm3": "¿Aún no tienes una cuenta? <a>Regístrate</a>",
     "forgot": "<a>Restablecer la contraseña</a>",
@@ -19,7 +19,7 @@
   },
   "up": {
     "title": "Inscripción — $t(common:main.title)",
-    "topForm1": "HOLA",
+    "topForm1": "Hola",
     "topForm2": "Prueba Prisme.ai",
     "topForm3": "¿Ya tiene una cuenta?\n<a>regístrate</a>",
     "email": "Correo electrónico",
@@ -41,7 +41,7 @@
   },
   "forgot": {
     "title": "Restablecer la contraseña",
-    "topForm1": "SIN PREOCUPACIONES",
+    "topForm1": "Sin preocupaciones",
     "topForm2": "Restablecer la contraseña",
     "topForm3": "¿Aún no tienes una cuenta? <a>Regístrate</a>",
     "signin": "<a>¿Recuerdas tu contraseña?</a>",
@@ -54,7 +54,7 @@
     "submit": "Envíeme un correo electrónico"
   },
   "reset": {
-    "topForm1": "CASI ESTÁ",
+    "topForm1": "Casi está",
     "topForm2": "Elige una nueva contraseña",
     "topForm3": "¿Aún no tienes una cuenta? <a>Regístrate</a>",
     "password": "Nueva contraseña",
@@ -62,7 +62,7 @@
     "submit": "Guardar mi contraseña"
   },
   "validate": {
-    "topForm1": "CASI ESTÁ",
+    "topForm1": "Casi está",
     "topForm2": "Valide su correo electrónico",
     "topForm3": "Compruebe su buzón de correo electrónico",
     "email": "Correo electrónico",
