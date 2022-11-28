@@ -152,7 +152,7 @@ export const PageRenderer = ({
                       name,
                     });
                   }}
-                  className="text-accent max-w-[25vw] text-lg"
+                  className="text-accent max-w-[25vw]"
                 />
               </span>
             </HorizontalSeparatedNav.Separator>

@@ -337,7 +337,7 @@ export const Automation = () => {
                       name,
                     });
                   }}
-                  className="text-accent max-w-[35vw] text-lg"
+                  className="text-accent max-w-[35vw]"
                 />
               </span>
             </HorizontalSeparatedNav.Separator>
