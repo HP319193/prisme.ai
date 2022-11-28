@@ -14,6 +14,7 @@ import FieldLocalizedText from './FieldLocalizedText';
 import FieldObject from './FieldObject';
 import FieldArray from './FieldArray';
 import FieldSelect from './FieldSelect';
+import FieldRadio from './FieldRadio';
 import FieldText from './FieldText';
 import {
   FreeAdditionalProperties,
@@ -85,6 +86,7 @@ export const SchemaForm = ({
       FieldLocalizedText,
       FieldObject,
       FieldSelect,
+      FieldRadio,
       FieldText,
       FreeAdditionalProperties,
       ManagedAdditionalProperties,

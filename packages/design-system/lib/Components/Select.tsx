@@ -4,18 +4,19 @@ import { ReactNode } from 'react';
 
 const { Option, OptGroup } = AntdSelect;
 
-type SelectOption = {
+export type SelectOption = {
   value: string;
   label: string | ReactNode;
 };
 
-type SelectGroup = {
+export type SelectGroup = {
   label: string | ReactNode;
   options: SelectOption[];
 };
 
-const isSelectGroup = (i: SelectGroup | SelectOption): i is SelectGroup =>
-  !!(i as SelectGroup).options;
+export const isSelectGroup = (
+  i: SelectGroup | SelectOption
+): i is SelectGroup => !!(i as SelectGroup).options;
 
 export interface SelectProps extends AntdSelectProps {
   selectOptions: SelectOption[] | SelectGroup[];

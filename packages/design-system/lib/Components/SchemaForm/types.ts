@@ -21,6 +21,7 @@ export const UIWidgetsForString = [
   'select',
   'color',
   'autocomplete',
+  'radio',
 ] as const;
 export const UIWidgetsForLocalizedString = ['textarea'];
 export const UIWidgetsByType = {
