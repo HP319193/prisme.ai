@@ -3,6 +3,7 @@ import { syscfg } from '../config';
 import { logger } from '../logger';
 import { v4 as uuid } from 'uuid';
 import { broker } from '../eda';
+import { Role } from '../types/permissions';
 
 export interface HTTPContext {
   hostname: string;
@@ -65,6 +66,11 @@ export function requestDecorator(
   res.set(syscfg.CORRELATION_ID_HEADER, correlationId);
   if (correlationId) {
     req.headers[syscfg.CORRELATION_ID_HEADER] = correlationId;
+  }
+
+  delete req.headers[syscfg.ROLE_HEADER]; // remove role header from request, this can only be set by the api gateway itself
+  if (req.user?.email && syscfg.SUPER_ADMIN_EMAILS?.includes(req.user.email)) {
+    req.headers[syscfg.ROLE_HEADER] = Role.SuperAdmin;
   }
 
   if (userId) {
