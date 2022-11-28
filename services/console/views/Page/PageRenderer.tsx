@@ -16,11 +16,10 @@ import CopyIcon from '../../icons/copy.svgr';
 import Head from 'next/head';
 import useLocalizedText from '../../utils/useLocalizedText';
 import PagePreview from '../../components/PagePreview';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useWorkspace } from '../../components/WorkspaceProvider';
 import { useApps } from '../../components/AppsProvider';
 import { PageBuilderContext } from '../../components/PageBuilder/context';
-import { cleanValue } from './cleanValue';
 import PageBuilder from '../../components/PageBuilder';
 import CSSEditor from './CSSEditor';
 
@@ -116,6 +115,14 @@ export const PageRenderer = ({
     [value, t]
   );
 
+  const duplicate = useCallback(() => {
+    alert('coming soon');
+  }, []);
+
+  const showSource = useCallback(() => {
+    alert('coming soon');
+  }, []);
+
   return (
     <>
       <Head>
@@ -189,7 +196,7 @@ export const PageRenderer = ({
               <Tooltip title={t('pages.duplicate.help')} placement="bottom">
                 <button
                   className="flex flex-row focus:outline-none items-center pr-4"
-                  onClick={() => console.log('copy')}
+                  onClick={duplicate}
                 >
                   <span className="mr-2">
                     <CopyIcon width="1.2rem" height="1.2rem" />
@@ -200,7 +207,7 @@ export const PageRenderer = ({
               <Tooltip title={t('pages.source.help')} placement="bottom">
                 <button
                   className="flex flex-row focus:outline-none items-center"
-                  onClick={() => console.log('source code')}
+                  onClick={showSource}
                 >
                   <span className="mr-2">
                     <CodeOutlined width="1.2rem" height="1.2rem" />

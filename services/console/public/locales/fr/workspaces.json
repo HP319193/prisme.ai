@@ -156,6 +156,9 @@
       "error_InvalidSlugError": "Le nom technique contient des caractères invalides",
       "error": "Une erreur est survenue"
     },
+    "duplicate": {
+      "help": "Dupliquer l'Automatisation"
+    },
     "source": {
       "label": "Voir le code",
       "help": "Affiche la structure de l'Automatisation au format brut"

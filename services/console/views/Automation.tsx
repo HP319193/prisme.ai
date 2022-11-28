@@ -32,6 +32,7 @@ import EditableTitle from '../components/AutomationBuilder/EditableTitle';
 import { PageHeader, Tooltip } from 'antd';
 import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
 import { CodeOutlined } from '@ant-design/icons';
+import CopyIcon from '../icons/copy.svgr';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -302,6 +303,14 @@ export const Automation = () => {
     [automationId, replace, value, workspace.id]
   );
 
+  const duplicate = useCallback(() => {
+    alert('coming soon');
+  }, []);
+
+  const showSource = useCallback(() => {
+    alert('coming soon');
+  }, []);
+
   if (!value) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
   }
@@ -348,10 +357,24 @@ export const Automation = () => {
               </Tooltip>
             </HorizontalSeparatedNav.Separator>
             <HorizontalSeparatedNav.Separator>
+              <Tooltip
+                title={t('automations.duplicate.help')}
+                placement="bottom"
+              >
+                <button
+                  className="flex flex-row focus:outline-none items-center pr-4"
+                  onClick={duplicate}
+                >
+                  <span className="mr-2">
+                    <CopyIcon width="1.2rem" height="1.2rem" />
+                  </span>
+                  {t('duplicate', { ns: 'common' })}
+                </button>
+              </Tooltip>
               <Tooltip title={t('automations.source.help')} placement="bottom">
                 <button
                   className="flex flex-row focus:outline-none items-center"
-                  onClick={() => console.log('source code')}
+                  onClick={showSource}
                 >
                   <span className="mr-2">
                     <CodeOutlined width="1.2rem" height="1.2rem" />

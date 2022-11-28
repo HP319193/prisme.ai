@@ -156,6 +156,9 @@
       "error_InvalidSlugError": "Slug contains invalid characters",
       "error": "Unknown error has occured"
     },
+    "duplicate": {
+      "help": "Duplicate Automation"
+    },
     "source": {
       "label": "See code",
       "help": "Displays the structure of the automation in raw format"

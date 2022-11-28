@@ -156,6 +156,9 @@
       "error_InvalidSlugError": "El nombre técnico contiene caracteres no válidos",
       "error": "Se ha producido un error"
     },
+    "duplicate": {
+      "help": "Duplicar la Automatización"
+    },
     "source": {
       "label": "Ver el código",
       "help": "Muestra la estructura de la Automatización en formato raw"
