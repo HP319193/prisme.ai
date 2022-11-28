@@ -171,28 +171,27 @@ export const WorkspacesView = () => {
               ))}
             </div>
           </div>
-          <div className="pt-10 flex flex-col">
-            <div className="text-xl py-3 font-bold">
-              {t('workspaces.sectionTitle')}
+          {filtredWorkspacesList.length > 0 && (
+            <div className="pt-10 flex flex-col">
+              <div className="text-xl py-3 font-bold">
+                {t('workspaces.sectionTitle')}
+              </div>
+              <div className="flex flex-wrap -mx-2">
+                {filtredWorkspacesList.map((workspace) => (
+                  <WorkspaceCardButton
+                    key={workspace.id}
+                    workspace={workspace}
+                    href={`/workspaces/${workspace.id}`}
+                  >
+                    <WorkspaceMenu
+                      className="absolute top-2 right-2 invisible group-hover:visible"
+                      onDuplicate={duplicateWorkspace(workspace.id)}
+                    />
+                  </WorkspaceCardButton>
+                ))}
+              </div>
             </div>
-            <div className="flex flex-wrap -mx-2">
-              {filtredWorkspacesList.map((workspace) => (
-                <WorkspaceCardButton
-                  key={workspace.id}
-                  workspace={workspace}
-                  href={`/workspaces/${workspace.id}`}
-                >
-                  <WorkspaceMenu
-                    className="absolute top-2 right-2 invisible group-hover:visible"
-                    onDuplicate={duplicateWorkspace(workspace.id)}
-                  />
-                </WorkspaceCardButton>
-              ))}
-              {filtredWorkspacesList.length === 0 && (
-                <CardButton>Prout</CardButton>
-              )}
-            </div>
-          </div>
+          )}
         </div>
 
         <div className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]">
