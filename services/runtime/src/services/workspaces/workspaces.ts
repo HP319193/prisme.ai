@@ -70,9 +70,13 @@ export class Workspaces extends Storage {
             );
           }
         }
+
         const workspaceId = event.source.workspaceId;
-        if (!workspaceId || !(workspaceId in this.workspaces)) {
+        if (!workspaceId) {
           return true;
+        }
+        if (!(workspaceId in this.workspaces)) {
+          await this.fetchWorkspace(workspaceId);
         }
         const workspace = this.workspaces[workspaceId];
 
@@ -98,16 +102,16 @@ export class Workspaces extends Storage {
             const {
               payload: { automation, slug, oldSlug },
             } = event as any as Prismeai.UpdatedAutomation;
-            workspace.updateAutomation(slug, automation);
+            await workspace.updateAutomation(slug, automation);
             if (oldSlug) {
-              workspace.deleteAutomation(oldSlug);
+              await workspace.deleteAutomation(oldSlug);
             }
             break;
           case EventType.DeletedAutomation:
             const deletedAutomation = (
               event as any as Prismeai.DeletedAutomation
             ).payload.automationSlug;
-            workspace.deleteAutomation(deletedAutomation);
+            await workspace.deleteAutomation(deletedAutomation);
             break;
           case EventType.InstalledApp:
           case EventType.ConfiguredApp:
@@ -129,11 +133,21 @@ export class Workspaces extends Storage {
               event as any as Prismeai.UninstalledAppInstance
             ).payload.slug;
             // TODO better way to enforce this is executed after runtime processEvent
-            new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
-              workspace.deleteImport(uninstalledAppInstanceSlug);
+            delete workspace.dsul.imports?.[uninstalledAppInstanceSlug];
+            new Promise((resolve) => {
+              setTimeout(async () => {
+                await workspace.deleteImport(uninstalledAppInstanceSlug);
+                resolve(undefined);
+              }, 500);
             });
             break;
         }
+
+        await this.saveWorkspace(workspace.dsul);
+        logger.info({
+          msg: 'Persisted updated runtime.yml',
+          workspaceId: workspace.id,
+        });
         return true;
       },
       {
@@ -225,5 +239,12 @@ export class Workspaces extends Storage {
       }
       throw err;
     }
+  }
+
+  async saveWorkspace(workspace: Prismeai.RuntimeModel) {
+    await this.driver.save(
+      `workspaces/${workspace.id}/versions/current/runtime.yml`,
+      yaml.dump(workspace)
+    );
   }
 }

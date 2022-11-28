@@ -18,7 +18,6 @@ import { initAccessManager } from './permissions';
 import {
   initWorkspacesConfigSyncing,
   initDetailedPagesSyncing,
-  initRuntimeModelsSyncing,
 } from './services';
 import FileStorage from './services/FileStorage';
 import { autoremoveExpiredUploads } from './services/uploads';
@@ -60,7 +59,6 @@ const app = initAPI(accessManager, dsulStorage, uploadsStorage, broker);
 
 initWorkspacesConfigSyncing(accessManager, broker, dsulStorage);
 initDetailedPagesSyncing(accessManager, broker, dsulStorage);
-initRuntimeModelsSyncing(broker, dsulStorage);
 
 const httpServer = http.createServer(app);
 

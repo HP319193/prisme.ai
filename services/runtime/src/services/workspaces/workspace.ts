@@ -91,7 +91,7 @@ export class Workspace {
   }
 
   async loadModel(workspace: Prismeai.RuntimeModel) {
-    await this.updateConfig(workspace.config || {});
+    this.updateConfig(workspace.config || {});
     const { automations = {}, imports = {} } = workspace;
     this.triggers = Object.keys(automations).reduce(
       (prev, key) => {
@@ -153,7 +153,7 @@ export class Workspace {
     }
   }
 
-  async updateConfig(config: Prismeai.Config) {
+  updateConfig(config: Prismeai.Config) {
     this.config = interpolate(config?.value || {}, {
       config: config?.value || {},
     });
@@ -169,11 +169,17 @@ export class Workspace {
   }
 
   async updateImport(slug: string, appInstance: Prismeai.AppInstance) {
+    this.dsul.imports = {
+      ...this.dsul.imports,
+      [slug]: appInstance,
+    };
+
     if (appInstance.disabled) {
       // Remove any existing appInstance
       delete this.imports[slug];
       return;
     }
+
     const { appSlug, appVersion } = appInstance;
     const parentAppSlugs = this.appContext?.parentAppSlugs || [];
     if (parentAppSlugs.includes(appSlug)) {
@@ -221,6 +227,7 @@ export class Workspace {
 
   deleteImport(slug: string) {
     delete this.imports[slug];
+    delete this.dsul.imports?.[slug];
   }
 
   async updateAutomation(

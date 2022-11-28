@@ -70,6 +70,7 @@ const getMocks = () => {
     apps,
     broker as any
   );
+  workspaces.saveWorkspace = () => Promise.resolve();
 
   broker.start();
   brokers.push(broker);

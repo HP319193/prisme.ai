@@ -49,6 +49,7 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
     apps,
     broker as any
   );
+  workspaces.saveWorkspace = () => Promise.resolve();
 
   const runtime = new Runtime(broker as any, workspaces, new Cache());
   broker.start();
