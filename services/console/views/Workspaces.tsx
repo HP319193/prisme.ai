@@ -12,7 +12,7 @@ import plus from '../icons/plus.svg';
 import { removeEmpty, search } from '../utils/filterUtils';
 import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import WorkspaceMenu from '../components/Workspaces/WorkspaceMenu';
-import { Workspace } from '../utils/api';
+import api, { Workspace } from '../utils/api';
 import HeaderPopovers from './HeaderPopovers';
 import CardButton from '../components/Workspaces/CardButton';
 import WorkspaceCardButton from '../components/Workspaces/WorkspaceCardButton';
@@ -50,7 +50,7 @@ export const WorkspacesView = () => {
 
   const duplicateWorkspace = useCallback(
     (id: Workspace['id']) => async () => {
-      const workspace = workspaces.get(id);
+      const workspace = await api.getWorkspace(id);
       if (!workspace) {
         notification.warn({
           message: t('workspaces.suggestions.error', { context: 'duplicate' }),
@@ -62,7 +62,7 @@ export const WorkspacesView = () => {
       if (!newW) return;
       push(`/workspaces/${newW.id}`);
     },
-    [duplicate, push, t, workspaces]
+    [duplicate, push, t]
   );
 
   const [suggestions, setSuggestions] = useState<Workspace[]>([]);
