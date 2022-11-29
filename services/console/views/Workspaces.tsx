@@ -2,7 +2,14 @@ import { Input, Layout, notification } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import packageJson from '../../../package.json';
 import Header from '../components/Header';
@@ -17,6 +24,7 @@ import HeaderPopovers from './HeaderPopovers';
 import CardButton from '../components/Workspaces/CardButton';
 import WorkspaceCardButton from '../components/Workspaces/WorkspaceCardButton';
 import getConfig from 'next/config';
+import FadeScroll from '../components/FadeScroll';
 
 const {
   publicRuntimeConfig: { SUGGESTIONS_ENDPOINT = '' },
@@ -84,6 +92,19 @@ export const WorkspacesView = () => {
     fetchSuggestions();
   }, []);
 
+  const ref = useRef<HTMLDivElement>(null);
+  const [cardWidth, setCardWidth] = useState<number>();
+  useLayoutEffect(() => {
+    const listener = () => {
+      setCardWidth(ref.current?.getBoundingClientRect()?.width);
+    };
+    window.addEventListener('resize', listener);
+    listener();
+    return () => {
+      window.removeEventListener('resize', listener);
+    };
+  }, []);
+
   return (
     <>
       <Head>
@@ -142,11 +163,12 @@ export const WorkspacesView = () => {
             <div className="text-xl py-3 font-bold">
               {t('workspaces.suggestions.title')}
             </div>
-            <div className="flex flex-wrap -mx-2">
+            <div className="flex flex-nowrap -mx-2 sm:flex-col md:flex-row">
               <CardButton
                 onClick={createWorkspace}
                 disabled={loading}
                 className="p-6 flex border-accent border-dashed bg-ultra-light-accent items-center !justify-start"
+                ref={ref}
               >
                 <span className="flex min-w-[50px] bg-accent p-4 rounded">
                   <Image src={plus.src} width={27} height={27} alt="" />
@@ -157,18 +179,26 @@ export const WorkspacesView = () => {
                   })}
                 </span>
               </CardButton>
-              {suggestions.map((workspace) => (
-                <WorkspaceCardButton
-                  key={workspace.id}
-                  workspace={workspace}
-                  className="cursor-default"
-                >
-                  <WorkspaceMenu
-                    className="absolute top-2 right-2 invisible group-hover:visible"
-                    onDuplicate={duplicateWorkspace(workspace.id)}
-                  />
-                </WorkspaceCardButton>
-              ))}
+              <FadeScroll className="flex-1 ">
+                {suggestions.map((workspace) => (
+                  <div
+                    key={workspace.id}
+                    className="flex"
+                    style={{ minWidth: cardWidth && `${cardWidth}px` }}
+                  >
+                    <WorkspaceCardButton
+                      workspace={workspace}
+                      className="cursor-default"
+                      containerClassName="flex flex-1 w-[100%] md:w-[100%] lg:w-[100%] xl:w-[100%]"
+                    >
+                      <WorkspaceMenu
+                        className="absolute top-2 right-2 invisible group-hover:visible"
+                        onDuplicate={duplicateWorkspace(workspace.id)}
+                      />
+                    </WorkspaceCardButton>
+                  </div>
+                ))}
+              </FadeScroll>
             </div>
           </div>
           {filtredWorkspacesList.length > 0 && (

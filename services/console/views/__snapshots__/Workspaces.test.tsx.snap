@@ -34,10 +34,10 @@ Array [
         workspaces.suggestions.title
       </div>
       <div
-        className="flex flex-wrap -mx-2"
+        className="flex flex-nowrap -mx-2 sm:flex-col md:flex-row"
       >
         <div
-          className="relative group flex flex-col h-32 w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)]"
+          className="relative group flex flex-col h-32 w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)] "
           disabled={false}
         >
           <button
@@ -55,6 +55,26 @@ Array [
               create.label
             </span>
           </button>
+        </div>
+        <div
+          className="flex relative overflow-hidden flex-1 "
+        >
+          <div
+            className="flex relative overflow-auto flex-1 "
+            style={
+              Object {
+                "scrollSnapType": "x mandatory",
+              }
+            }
+          >
+            <div
+              className="flex flex-1"
+            />
+          </div>
+          <button
+            className="absolute right-0 top-[37%] !text-light-gray focus:outline-none text-xl"
+            onClick={[Function]}
+          />
         </div>
       </div>
     </div>
@@ -102,10 +122,10 @@ Array [
         workspaces.suggestions.title
       </div>
       <div
-        className="flex flex-wrap -mx-2"
+        className="flex flex-nowrap -mx-2 sm:flex-col md:flex-row"
       >
         <div
-          className="relative group flex flex-col h-32 w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)]"
+          className="relative group flex flex-col h-32 w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)] "
           disabled={false}
         >
           <button
@@ -124,6 +144,26 @@ Array [
             </span>
           </button>
         </div>
+        <div
+          className="flex relative overflow-hidden flex-1 "
+        >
+          <div
+            className="flex relative overflow-auto flex-1 "
+            style={
+              Object {
+                "scrollSnapType": "x mandatory",
+              }
+            }
+          >
+            <div
+              className="flex flex-1"
+            />
+          </div>
+          <button
+            className="absolute right-0 top-[37%] !text-light-gray focus:outline-none text-xl"
+            onClick={[Function]}
+          />
+        </div>
       </div>
     </div>
     <div
@@ -138,7 +178,7 @@ Array [
         className="flex flex-wrap -mx-2"
       >
         <div
-          className="relative group flex flex-col h-32 w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)]"
+          className="relative group flex flex-col h-32 w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)] "
         >
           <a
             className="flex m-2 h-full justify-between overflow-hidden rounded border p-6 flex border-light-gray border-2 bg-white items-center !justify-start relative "
@@ -178,7 +218,7 @@ Array [
           </a>
         </div>
         <div
-          className="relative group flex flex-col h-32 w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)]"
+          className="relative group flex flex-col h-32 w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)] "
         >
           <a
             className="flex m-2 h-full justify-between overflow-hidden rounded border p-6 flex border-light-gray border-2 bg-white items-center !justify-start relative "
