@@ -23,16 +23,16 @@ export const Button = ({
 
   const tagBgColor = useMemo(() => {
     if (variant === 'primary') {
-      return unselected ? `bg-[#F2F4F9]` : `bg-[#80A4FF]`;
+      return unselected ? `bg-gray-500` : `bg-light-accent`;
     }
-    return unselected ? `bg-[#F2F4F9]` : `bg-[#F2F4F9]`;
+    return `bg-gray-500`;
   }, [variant, unselected]);
 
   const unselectedStyle = useMemo(() => {
     return unselected
       ? variant === 'primary'
         ? `!bg-white border border-solid text-accent`
-        : `text-[#939CA6]`
+        : `text-gray`
       : '';
   }, [variant, unselected]);
 

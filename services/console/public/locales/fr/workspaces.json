@@ -619,6 +619,16 @@
         "sectionId": {
           "label": "Identifiant HTML de la section",
           "description": "Permet d'identifier la section pour y appliquer des styles CSS particulier ou y faire pointer un lien de type défilement automatique. Optionnel."
+        },
+        "action": {
+          "title": "Action",
+          "description": "Action déclenchée au click sur l'élément",
+          "event": "Evénement",
+          "url": "Lien",
+          "valueEvent": "Evénement à déclencher",
+          "valueLink": "Url",
+          "popup": "Ouvrir dans un nouvel onglet",
+          "payload": "Contenu de l'événement"
         }
       },
       "builtin": "Blocks de base",
@@ -709,6 +719,26 @@
           }
         }
       },
+      "buttons": {
+        "settings": {
+          "text": {
+            "label": "Texte",
+            "description": "Texte du bouton"
+          },
+          "variant": {
+            "label": "Affichage",
+            "description": "Mode d'affichage du bouton"
+          },
+          "tag": {
+            "label": "Etiquette",
+            "description": "Texte a afficher dans une étiquette à droite du bouton"
+          },
+          "unselected": {
+            "label": "Désélectionné",
+            "description": "Affiche le bouton dans un état secondaires, grisé. Utilisé par exemple pour indiquer un onglet inactif"
+          }
+        }
+      },
       "cards": {
         "settings": {
           "title": "Titre",
@@ -716,16 +746,6 @@
           "cover": "Image de couverture",
           "variant": {
             "label": "Style de cartes"
-          },
-          "action": {
-            "title": "Action",
-            "description": "Action déclenchée au click sur une carte",
-            "event": "Evénement",
-            "url": "Lien",
-            "valueEvent": "Evénement à déclencher",
-            "valueLink": "Url",
-            "popup": "Ouvrir dans un nouvel onglet",
-            "payload": "Contenu de l'événement"
           },
           "classic": {
             "label": "Classique",

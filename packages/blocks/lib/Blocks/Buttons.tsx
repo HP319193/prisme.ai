@@ -19,9 +19,7 @@ interface ButtonsConfig {
 
 export const Buttons = () => {
   const { localize } = useLocalizedText();
-  const { config: { buttons } = {} } = useBlock<ButtonsConfig>();
-
-  if (!buttons) return null;
+  const { config: { buttons = [] } = {} } = useBlock<ButtonsConfig>();
 
   return (
     <div className={`block-buttons ${tw`flex p-8 flex-1 flex-row space-x-1`}`}>
