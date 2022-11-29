@@ -71,3 +71,7 @@ export function Menu({ children = null }) {
 export function Dropdown({ children = null }) {
   return children;
 }
+
+export function PageHeader({ children = null }) {
+  return children;
+}

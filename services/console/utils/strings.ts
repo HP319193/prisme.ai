@@ -1,4 +1,5 @@
 import { remove as removeDiacritics } from 'diacritics';
+import hash from 'hash-sum';
 
 export const truncate = (
   str: string = '',
@@ -27,3 +28,7 @@ export const slugifyAutomation = (
 
   return slug;
 };
+
+export function stringToHexaColor(text: string) {
+  return hash(text).substring(0, 6);
+}

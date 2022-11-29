@@ -105,7 +105,7 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
   );
 
   return (
-    <div className="flex flex-1 h-full flex-col">
+    <div className="flex flex-1 h-full flex-col p-4">
       <SearchInput
         value={search}
         onChange={(e) => setSearch(e.target.value)}

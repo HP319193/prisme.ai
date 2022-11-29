@@ -16,7 +16,6 @@ import {
   Button,
   Loading,
   notification,
-  PageHeader,
   Schema,
   Space,
 } from '@prisme.ai/design-system';
@@ -30,6 +29,10 @@ import { useWorkspace } from '../components/WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import { usePrevious } from '../utils/usePrevious';
 import EditableTitle from '../components/AutomationBuilder/EditableTitle';
+import { PageHeader, Tooltip } from 'antd';
+import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
+import { CodeOutlined } from '@ant-design/icons';
+import CopyIcon from '../icons/copy.svgr';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -300,6 +303,14 @@ export const Automation = () => {
     [automationId, replace, value, workspace.id]
   );
 
+  const duplicate = useCallback(() => {
+    alert('coming soon');
+  }, []);
+
+  const showSource = useCallback(() => {
+    alert('coming soon');
+  }, []);
+
   if (!value) {
     return <Error404 link={`/workspaces/${workspace.id}`} />;
   }
@@ -307,38 +318,74 @@ export const Automation = () => {
   return (
     <>
       <PageHeader
+        className="h-[4rem] flex items-center"
         title={
-          <div className="flex flex-row items-center text-lg">
-            <span className="font-medium -mt-[0.3rem]">
-              <EditableTitle
-                value={value.name}
-                onChange={(name) =>
-                  setValue({
-                    ...value,
-                    name,
-                  })
-                }
-                onEnter={(name) => {
-                  updateDetails({
-                    ...value,
-                    name,
-                  });
-                }}
-              />
-            </span>
-            <span className="text-gray flex border-r border-l border-solid border-pr-gray-200 h-[26px] items-center px-3">
-              <EditDetails
-                schema={detailsFormSchema}
-                value={{ ...value, slug: automationId }}
-                onSave={updateDetails}
-                onDelete={confirmDeleteAutomation}
-                context="automations"
-                key={`${automationId}`}
-              />
-            </span>
-          </div>
+          <HorizontalSeparatedNav>
+            <HorizontalSeparatedNav.Separator>
+              <span className="pr-page-title">
+                <EditableTitle
+                  value={value.name}
+                  onChange={(name) =>
+                    setValue({
+                      ...value,
+                      name,
+                    })
+                  }
+                  onEnter={(name) => {
+                    updateDetails({
+                      ...value,
+                      name,
+                    });
+                  }}
+                  className="text-accent max-w-[35vw] text-lg"
+                />
+              </span>
+            </HorizontalSeparatedNav.Separator>
+            <HorizontalSeparatedNav.Separator>
+              <Tooltip
+                title={t('details.title', { context: 'automations' })}
+                placement="bottom"
+              >
+                <EditDetails
+                  schema={detailsFormSchema}
+                  value={{ ...value, slug: automationId }}
+                  onSave={updateDetails}
+                  onDelete={confirmDeleteAutomation}
+                  context="automations"
+                  key={`${automationId}`}
+                />
+              </Tooltip>
+            </HorizontalSeparatedNav.Separator>
+            <HorizontalSeparatedNav.Separator>
+              <Tooltip
+                title={t('automations.duplicate.help')}
+                placement="bottom"
+              >
+                <button
+                  className="flex flex-row focus:outline-none items-center pr-4"
+                  onClick={duplicate}
+                >
+                  <span className="mr-2">
+                    <CopyIcon width="1.2rem" height="1.2rem" />
+                  </span>
+                  {t('duplicate', { ns: 'common' })}
+                </button>
+              </Tooltip>
+              <Tooltip title={t('automations.source.help')} placement="bottom">
+                <button
+                  className="flex flex-row focus:outline-none items-center"
+                  onClick={showSource}
+                >
+                  <span className="mr-2">
+                    <CodeOutlined width="1.2rem" height="1.2rem" />
+                  </span>
+                  {t('automations.source.label')}
+                </button>
+              </Tooltip>
+            </HorizontalSeparatedNav.Separator>
+          </HorizontalSeparatedNav>
         }
-        RightButtons={[
+        extra={[
           <Button
             onClick={save}
             disabled={saving}

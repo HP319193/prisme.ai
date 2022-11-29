@@ -205,6 +205,7 @@ class Apps {
     version?: string
   ): Promise<Prismeai.AppDetails> => {
     const app = await this.storage.get(appId, version || 'current');
+    const hasDoc = !!(app.pages && app.pages['_doc']);
 
     return {
       config: app.config,
@@ -221,7 +222,7 @@ class Apps {
         })
       ),
       automations: Object.entries(app.automations || {})
-        .filter(([slug, { private: privateAutomation }]) => !privateAutomation)
+        .filter(([, { private: privateAutomation }]) => !privateAutomation)
         .map(([slug, { name, description, arguments: args }]) => ({
           slug,
           name,
@@ -230,6 +231,12 @@ class Apps {
         })),
       photo: app.photo,
       events: extractEvents(app),
+      documentation: hasDoc
+        ? {
+            workspaceSlug: app.slug,
+            slug: '_doc',
+          }
+        : undefined,
     };
   };
 

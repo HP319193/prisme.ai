@@ -1,5 +1,11 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import { Button, Collapse, Schema, SchemaForm } from '@prisme.ai/design-system';
+import {
+  Button,
+  Collapse,
+  Schema,
+  SchemaForm,
+  Tabs,
+} from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import debounce from 'lodash/debounce';
@@ -99,62 +105,49 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
     [t]
   );
 
-  const collapseItems = useMemo(() => {
-    let collapseItems = [
-      {
-        label: t('pages.blocks.settings.generic'),
-        content: (
-          <SchemaForm
-            schema={commonSchema}
-            onChange={debouncedMergeConfig}
-            initialValues={config}
-            buttons={[]}
-            locales={locales}
-            utils={{ extractSelectOptions }}
-          />
-        ),
-      },
-    ];
-
-    if (schema) {
-      collapseItems = [
-        {
-          label: t('pages.blocks.settings.schema'),
-          content: (
+  return (
+    <div className="pr-panel-settings flex flex-1 flex-col">
+      <Tabs className="flex flex-1">
+        {schema && (
+          <Tabs.TabPane
+            tab={
+              <div className="px-2">{t('pages.blocks.settings.generic')}</div>
+            }
+            key="config"
+          >
+            <div className="m-4">
+              <SchemaForm
+                schema={schema}
+                onChange={debouncedMergeConfig}
+                initialValues={config}
+                buttons={[]}
+                utils={{ extractSelectOptions }}
+              />
+            </div>
+          </Tabs.TabPane>
+        )}
+        <Tabs.TabPane
+          tab={<div className="px-2">{t('pages.blocks.settings.schema')}</div>}
+          key="advanced"
+        >
+          <div className="m-4">
             <SchemaForm
-              schema={schema}
+              schema={commonSchema}
               onChange={debouncedMergeConfig}
               initialValues={config}
               buttons={[]}
+              locales={locales}
               utils={{ extractSelectOptions }}
             />
-          ),
-        },
-        ...collapseItems,
-      ];
-    }
-
-    return collapseItems;
-  }, [
-    t,
-    commonSchema,
-    debouncedMergeConfig,
-    config,
-    locales,
-    extractSelectOptions,
-    schema,
-  ]);
-
-  return (
-    <div className="flex flex-1 flex-col justify-between overflow-y-auto overflow-x-hidden">
-      <div>
-        <Collapse items={collapseItems} defaultActiveKey={0} />
-      </div>
-      <div>
-        <Button onClick={removeBlock} className="!text-pr-orange">
-          <DeleteOutlined /> {t('pages.blocks.remove')}
-        </Button>
-      </div>
+          </div>
+        </Tabs.TabPane>
+      </Tabs>
+      <button
+        onClick={removeBlock}
+        className="border-t border-light-gray !text-pr-orange h-[4rem] font-bold text-left p-4"
+      >
+        {t('pages.blocks.remove')}
+      </button>
     </div>
   );
 };

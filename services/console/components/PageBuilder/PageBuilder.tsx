@@ -12,7 +12,7 @@ import { Schema } from '@prisme.ai/design-system';
 import { extractEvents } from './extractEvents';
 import { useTranslation } from 'next-i18next';
 import useBlocks, { BlockInCatalog } from './useBlocks';
-import PoweredBy from '../PoweredBy';
+import EmptyPage from './EmptyPage';
 
 interface PageBuilderProps {
   value: PageBuilderContext['page'];
@@ -31,12 +31,14 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
     | undefined
   >();
   const [blockEditing, setBlockEditing] = useState<string>();
+  const [blockEditingOnBack, setBlockEditingOnBack] = useState<() => void>();
   const [blocksSchemas, setBlocksSchemas] = useState<Map<string, Schema>>(
     new Map()
   );
   const { events } = useBlocksConfigs(value);
 
   const hidePanel = useCallback(async () => {
+    setBlockEditingOnBack(undefined);
     await setBlockSelecting(undefined);
     await setBlockEditing(undefined);
     await setPanelIsOpen(false);
@@ -94,9 +96,8 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
   }, [hidePanel]);
 
   const addBlock: PageBuilderContext['addBlock'] = useCallback(
-    async (position) => {
+    async (position, blockName) => {
       function getOriginalBlock(block: string): BlockInCatalog | null {
-        console.log({ block });
         const originalBlock = available.find(({ slug }) => slug === block);
         if (!originalBlock) return null;
         if (originalBlock.block) {
@@ -104,7 +105,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
         }
         return originalBlock;
       }
-      const block = await addBlockDetails();
+      const block = blockName || (await addBlockDetails());
       const newBlocks = [...value.blocks];
       const blockKey = nanoid();
 
@@ -131,6 +132,15 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
         blocks: newBlocks,
       });
       setEditBlock(blockKey);
+      setBlockEditingOnBack(() => () => {
+        onChange({
+          ...value,
+          blocks: value.blocks.filter(({ key }) => key !== blockKey),
+        });
+        setBlockEditing(undefined);
+        addBlock(position, blockName);
+        setBlockEditingOnBack(undefined);
+      });
     },
     [addBlockDetails, available, onChange, setEditBlock, value]
   );
@@ -195,6 +205,16 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
     (blockEditing && blocksInPage.find(({ key }) => key === blockEditing)) ||
     {};
 
+  const onAddBlock = useCallback(
+    (blockName?: string) => {
+      if (!blockName) {
+        return addBlock(0);
+      }
+      return addBlock(0, blockName);
+    },
+    [addBlock]
+  );
+
   return (
     <context.Provider
       value={{
@@ -211,7 +231,8 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
       }}
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">
-        <PageBlocks />
+        {blocksInPage.length === 0 && <EmptyPage onAddBlock={onAddBlock} />}
+        {blocksInPage.length > 0 && <PageBlocks />}
         <Panel
           title={t('pages.blocks.panelTitle', {
             context: blockSelecting ? 'adding' : 'editing',
@@ -220,6 +241,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
           })}
           visible={panelIsOpen}
           onVisibleChange={hidePanel}
+          onBack={blockEditingOnBack}
         >
           {blockSelecting && <PageNewBlockForm {...blockSelecting} />}
           {blockEditing && <PageEditBlockForm blockId={blockEditing} />}

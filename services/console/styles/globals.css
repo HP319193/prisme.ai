@@ -1,3 +1,14 @@
+:root {
+  --base-color: #0a1d3b;
+  --surface-color: white;
+  --accent-color: #015dff;
+  --light-accent-color: #e6efff;
+  --ultra-light-accent-color: #f8faff;
+  --dark-accent-color: #0a1d3b;
+  --gray-color: #939ca6;
+  --light-gray-color: #e5e5e5;
+}
+
 @font-face {
   font-family: 'Montserrat';
   src: url('/fonts/Montserrat/Montserrat-VariableFont_wght.ttf');
@@ -197,4 +208,58 @@ body .ant-modal-confirm-body .anticon {
 body .ant-modal-confirm-body .ant-modal-confirm-title {
   font-size: 1.4rem;
   padding: 0;
+}
+
+body .ant-dropdown-menu-item {
+  margin: 0.2rem 0.5rem;
+}
+body .ant-dropdown-menu-item:hover {
+  background: #e6efff;
+  border-radius: 5px;
+}
+
+.ant-segmented.pr-segmented-accent {
+  background-color: var(--light-accent-color);
+  color: var(--accent-color);
+}
+.ant-segmented.pr-segmented-accent *:hover {
+  color: var(--accent-color);
+}
+.ant-segmented.pr-segmented-accent .ant-segmented-item-selected,
+.ant-segmented.pr-segmented-accent .ant-segmented-thumb {
+  background-color: var(--accent-color);
+  color: white;
+}
+.ant-segmented.pr-segmented-accent .ant-segmented-item-selected *:hover {
+  color: white;
+}
+.ant-segmented.pr-segmented-accent .ant-segmented-thumb {
+  opacity: 0.5;
+}
+
+.pr-page-title > div {
+  margin-top: 0 !important;
+  height: 1.5rem;
+  padding-right: 1.8rem;
+}
+.pr-page-title > div > span {
+  padding: 0;
+  margin: 0;
+  line-height: 1.8rem;
+}
+.pr-page-title > div > div {
+  top: 0 !important;
+  right: -0.2rem;
+  font-size: 1.1rem;
+}
+
+.pr-panel-settings .ant-tabs-tab .ant-tabs-tab-btn {
+  color: var(--base-color);
+}
+.pr-panel-settings .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--base-color);
+  font-weight: bold;
+}
+.pr-panel-settings .ant-tabs-ink-bar {
+  background: var(--gray-color);
 }

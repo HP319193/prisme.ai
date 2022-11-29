@@ -129,7 +129,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   return (
     <Layout
       Header={
-        <Space className="h-[70px] border border-gray-200 border-solid w-full !border-x-0">
+        <Space className="h-[4rem] border border-gray-200 border-solid w-full !border-x-0">
           {feedHeaderButtons.map((button) => button)}
         </Space>
       }
@@ -137,7 +137,9 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
     >
       <div className="flex h-full overflow-auto flex-col" ref={ref}>
         {content}
-        <Button onClick={nextEvents}>{t('events.more')}</Button>
+        {feedSections.length > 0 && (
+          <Button onClick={nextEvents}>{t('events.more')}</Button>
+        )}
       </div>
     </Layout>
   );

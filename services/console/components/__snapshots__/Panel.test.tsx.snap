@@ -9,16 +9,22 @@ exports[`should render 1`] = `
         ease-in
         duration-200
         overflow-hidden
+        bg-surface
         
         
       "
 >
   <div
-    className="flex flex-1 flex-col overflow-y-scroll  h-full"
+    className="flex w-full items-center justify-between flex-row p-5 bg-dark-accent text-white font-semibold"
   >
     <div
-      className="flex flex-1 flex-col m-5"
-    />
+      className="flex items-center flex-row"
+    >
+      hey
+    </div>
   </div>
+  <div
+    className="flex flex-1 flex-col overflow-y-scroll h-full  border-light-gray border-l"
+  />
 </div>
 `;

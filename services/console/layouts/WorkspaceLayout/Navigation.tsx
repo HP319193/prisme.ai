@@ -1,13 +1,5 @@
-import {
-  AppstoreOutlined,
-  BranchesOutlined,
-  CaretRightOutlined,
-  FileOutlined,
-  HomeOutlined,
-  PlusSquareOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
-import { Input, StretchContent, Tooltip } from '@prisme.ai/design-system';
+import { AppstoreOutlined, PlusSquareOutlined } from '@ant-design/icons';
+import { StretchContent, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -20,38 +12,54 @@ import {
   useMemo,
   useEffect,
   HTMLAttributes,
+  ReactElement,
 } from 'react';
 import { useApps } from '../../components/AppsProvider';
 import { usePages } from '../../components/PagesProvider';
 import { useWorkspace } from '../../components/WorkspaceProvider';
 import { search } from '../../utils/filterUtils';
 import useLocalizedText from '../../utils/useLocalizedText';
+import ChevronIcon from '../../icons/chevron.svgr';
+import AutomationIcon from './AutomationIcon';
+import { stringToHexaColor } from '../../utils/strings';
+import PageIcon from './PageIcon';
+import HomeIcon from '../../icons/home.svgr';
+import HomeIconOutlined from '../../icons/home-outlined.svgr';
+import SearchInput from './SearchInput';
 
 interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   onCreateAutomation?: () => void;
   onCreatePage?: () => void;
   onInstallApp?: () => void;
+  onExpand?: () => void;
 }
 
 interface ItemProps {
   href: string;
-  icon: ReactChild;
+  icon: ReactChild | ((props: { selected: Boolean }) => ReactElement);
 }
-const Item: FC<ItemProps> = ({ href, icon, children }) => {
+const Item: FC<ItemProps> = ({ href, icon: Icon, children }) => {
   const { asPath } = useRouter();
+  const selected = decodeURIComponent(asPath) === href;
   return (
-    <div className="flex flex-1 leading-10">
-      <Link href={href}>
-        <a
-          className={`flex flex-row items-baseline ${
-            decodeURIComponent(asPath) === href ? 'text-accent' : ''
+    <Link href={href}>
+      <a
+        className={`flex flex-1 leading-10 px-4 py-2 ${
+          selected ? 'bg-ultra-light-accent' : ''
+        }`}
+      >
+        <div
+          className={`flex flex-1 flex-row items-center ${
+            selected ? 'text-accent' : ''
           }`}
         >
-          <div className="flex m-2">{icon}</div>
+          <div className="flex m-2 mr-4">
+            {typeof Icon === 'function' ? <Icon selected={selected} /> : Icon}
+          </div>
           <div className="flex flex-1 leading-7">{children}</div>
-        </a>
-      </Link>
-    </div>
+        </div>
+      </a>
+    </Link>
   );
 };
 
@@ -73,21 +81,26 @@ const ItemsGroup: FC<ItemsGroupProps> = ({
   return (
     <div className="flex flex-1 leading-[2.5rem]">
       <div className="flex flex-1 flex-col max-w-full">
-        <div className="flex flex-1 flex-row items-center">
+        <div className="flex flex-1 flex-row items-center border-b-[1px]">
           <button
-            className="flex flex-1 flex-row items-center outline-none focus:outline-none"
+            className="flex flex-1 flex-row items-center outline-none focus:outline-none p-4"
             onClick={onClick}
           >
-            <CaretRightOutlined
-              className={`w-[2rem] transition-transform ${
-                open ? 'rotate-90' : ''
-              }`}
-            />
+            <Tooltip title={title} placement="left">
+              <div className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center">
+                <ChevronIcon
+                  width="1rem"
+                  className={` transition-transform ${
+                    open ? '' : '-rotate-90'
+                  }`}
+                />
+              </div>
+            </Tooltip>
             <div className="flex flex-1 font-bold">{title}</div>
           </button>
           <Tooltip title={tooltip} placement="left">
             <button
-              className="flex outline-none focus:outline-none"
+              className="flex outline-none focus:outline-none p-4"
               onClick={onAdd}
             >
               <PlusSquareOutlined />
@@ -95,7 +108,9 @@ const ItemsGroup: FC<ItemsGroupProps> = ({
           </Tooltip>
         </div>
         <div className="flex flex-1">
-          <StretchContent visible={open}>{children}</StretchContent>
+          <StretchContent visible={open} className="whitespace-nowrap flex-1">
+            {children}
+          </StretchContent>
         </div>
       </div>
     </div>
@@ -106,6 +121,7 @@ export const Navigation = ({
   onCreateAutomation,
   onCreatePage,
   onInstallApp,
+  onExpand,
   ...props
 }: NavigationProps) => {
   const { t } = useTranslation('workspaces');
@@ -159,9 +175,10 @@ export const Navigation = ({
   );
   const filteredApps = useMemo(
     () =>
-      Array.from(appInstances.get(id) || []).filter(
-        ({ appSlug, slug, appName: name }) =>
-          search(searchValue)(`${appSlug} ${slug} ${localize(name)}}`)
+      Array.from(
+        appInstances.get(id) || []
+      ).filter(({ appSlug, slug, appName: name }) =>
+        search(searchValue)(`${appSlug} ${slug} ${localize(name)}}`)
       ),
     [appInstances, id, localize, searchValue]
   );
@@ -194,55 +211,36 @@ export const Navigation = ({
 
   return (
     <div className={`flex flex-col max-h-full ${props.className}`} {...props}>
-      <div className="mb-2">
-        <Input
-          prefix={<SearchOutlined />}
-          placeholder={t('workspace.search')}
-          value={searchValue}
-          onChange={({ target: { value } }) => setSearchValue(value)}
-          className="!px-[0.5rem]"
-        />
-      </div>
+      <SearchInput
+        value={searchValue}
+        onChange={setSearchValue}
+        onFocus={onExpand}
+      />
       <div
         role="navigation"
-        className="flex flex-1 flex-col overflow-auto w-[17.5rem] max-h-[calc(100%-3rem)]"
+        className="flex flex-1 flex-col overflow-auto max-h-[calc(100%-3rem)]"
       >
-        <Item
-          href={`/workspaces/${id}`}
-          icon={
-            <Tooltip title={t('workspace.sections.activity')} placement="right">
-              <HomeOutlined />
-            </Tooltip>
-          }
-        >
-          {t('workspace.sections.activity')}
-        </Item>
-        {!(searchValue && filteredAutomations.length === 0) && (
-          <ItemsGroup
-            title={t('workspace.sections.automations')}
-            onClick={toggle('automations')}
-            open={
-              !!opens.get('automations') ||
-              (!!searchValue && filteredAutomations.length > 0)
-            }
-            onAdd={onCreateAutomation}
-            tooltip={t('workspace.add.automation')}
-          >
-            {filteredAutomations.map(([slug, { name }]) => (
-              <Item
-                key={slug}
-                href={`/workspaces/${id}/automations/${slug}`}
-                icon={
-                  <Tooltip title={localize(name)} placement="right">
-                    <BranchesOutlined />
-                  </Tooltip>
-                }
+        <div className="border-b-[1px]">
+          <Item
+            href={`/workspaces/${id}`}
+            icon={({ selected }) => (
+              <Tooltip
+                title={t('workspace.sections.activity')}
+                placement="right"
               >
-                {localize(name)}
-              </Item>
-            ))}
-          </ItemsGroup>
-        )}
+                <div className="mb-1">
+                  {selected ? (
+                    <HomeIcon width="1.6rem" height="1.6rem" />
+                  ) : (
+                    <HomeIconOutlined width="1.6rem" height="1.6rem" />
+                  )}
+                </div>
+              </Tooltip>
+            )}
+          >
+            {t('workspace.sections.activity')}
+          </Item>
+        </div>
         {!(searchValue && filteredPages.length === 0) && (
           <ItemsGroup
             title={t('workspace.sections.pages')}
@@ -260,7 +258,45 @@ export const Navigation = ({
                 href={`/workspaces/${id}/pages/${slug}`}
                 icon={
                   <Tooltip title={localize(name)} placement="right">
-                    <FileOutlined />
+                    <div>
+                      <PageIcon
+                        color={`#${stringToHexaColor(localize(name))}`}
+                        width="1.6rem"
+                        height="1.6rem"
+                      />
+                    </div>
+                  </Tooltip>
+                }
+              >
+                {localize(name)}
+              </Item>
+            ))}
+          </ItemsGroup>
+        )}
+        {!(searchValue && filteredAutomations.length === 0) && (
+          <ItemsGroup
+            title={t('workspace.sections.automations')}
+            onClick={toggle('automations')}
+            open={
+              !!opens.get('automations') ||
+              (!!searchValue && filteredAutomations.length > 0)
+            }
+            onAdd={onCreateAutomation}
+            tooltip={t('workspace.add.automation')}
+          >
+            {filteredAutomations.map(([slug, { name }]) => (
+              <Item
+                key={slug}
+                href={`/workspaces/${id}/automations/${slug}`}
+                icon={
+                  <Tooltip title={localize(name)} placement="right">
+                    <div>
+                      <AutomationIcon
+                        color={`#${stringToHexaColor(localize(name))}`}
+                        width="1.6rem"
+                        height="1.6rem"
+                      />
+                    </div>
                   </Tooltip>
                 }
               >
@@ -285,17 +321,19 @@ export const Navigation = ({
                 href={`/workspaces/${id}/apps/${slug}`}
                 icon={
                   <Tooltip title={localize(name)} placement="right">
-                    {photo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={photo}
-                        height={22}
-                        width={22}
-                        alt={localize(name)}
-                      />
-                    ) : (
-                      <AppstoreOutlined />
-                    )}
+                    <div className="w-[1.6rem] h-[1.6rem]">
+                      {photo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={photo}
+                          height={22}
+                          width={22}
+                          alt={localize(name)}
+                        />
+                      ) : (
+                        <AppstoreOutlined />
+                      )}
+                    </div>
                   </Tooltip>
                 }
               >

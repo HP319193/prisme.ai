@@ -1,11 +1,12 @@
-import { EllipsisOutlined } from '@ant-design/icons';
+import { CopyOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { Dropdown, Menu } from 'antd';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 
 interface WorkspaceMenuProps {
   className?: string;
-  onDuplicate: () => void;
+  onDuplicate?: () => void;
 }
 
 export const WorkspaceMenu = ({
@@ -14,21 +15,23 @@ export const WorkspaceMenu = ({
 }: WorkspaceMenuProps) => {
   const { t } = useTranslation('workspaces');
   const items = useMemo(
-    () => [
-      {
-        key: 'duplicate',
-        label: (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onDuplicate();
-            }}
-          >
-            {t('workspace.duplicate.label')}
-          </button>
-        ),
-      },
-    ],
+    () =>
+      [
+        onDuplicate && {
+          key: 'duplicate',
+          label: (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDuplicate();
+              }}
+              className="focus:outline-none"
+            >
+              <CopyOutlined /> {t('workspace.duplicate.label')}
+            </button>
+          ),
+        },
+      ].filter(Boolean) as ItemType[],
     [t, onDuplicate]
   );
   const menu = useMemo(() => <Menu items={items} />, [items]);

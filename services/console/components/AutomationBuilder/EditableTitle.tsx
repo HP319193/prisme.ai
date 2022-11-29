@@ -30,7 +30,9 @@ const Input = forwardRef<any, any>(function Input(
       }}
       ref={ref}
       {...props}
-      className={`min-w-[5rem] max-w-[50vw] text-ellipsis overflow-hidden mr-8 mt-[0.4rem] ${props.className}`}
+      className={`min-w-[5rem] max-w-[50vw] text-ellipsis overflow-hidden mr-8 mt-[0.4rem] ${
+        props.className || ''
+      }`}
     >
       {value}
     </span>
@@ -41,13 +43,14 @@ export const EditableTitle = ({
   value,
   onChange,
   onEnter,
+  ...props
 }: EditableTitleProps) => {
   return (
     <LocalizedInput
       value={value}
       onChange={onChange}
       Input={Input}
-      InputProps={{ onEnter }}
+      InputProps={{ onEnter, ...props }}
     />
   );
 };
