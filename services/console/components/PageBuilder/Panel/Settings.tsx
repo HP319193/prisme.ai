@@ -111,7 +111,7 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
         {schema && (
           <Tabs.TabPane
             tab={
-              <div className="px-2">{t('pages.blocks.settings.generic')}</div>
+              <div className="px-2">{t('pages.blocks.settings.schema')}</div>
             }
             key="config"
           >
@@ -127,7 +127,7 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
           </Tabs.TabPane>
         )}
         <Tabs.TabPane
-          tab={<div className="px-2">{t('pages.blocks.settings.schema')}</div>}
+          tab={<div className="px-2">{t('pages.blocks.settings.generic')}</div>}
           key="advanced"
         >
           <div className="m-4">
