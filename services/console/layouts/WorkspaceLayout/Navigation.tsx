@@ -1,4 +1,4 @@
-import { AppstoreOutlined, PlusSquareOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { StretchContent, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
@@ -100,10 +100,10 @@ const ItemsGroup: FC<ItemsGroupProps> = ({
           </button>
           <Tooltip title={tooltip} placement="left">
             <button
-              className="flex outline-none focus:outline-none p-4"
+              className="flex outline-none focus:outline-none p-4 hover:text-accent"
               onClick={onAdd}
             >
-              <PlusSquareOutlined />
+              <PlusCircleOutlined />
             </button>
           </Tooltip>
         </div>
