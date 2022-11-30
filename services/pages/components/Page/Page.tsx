@@ -78,9 +78,7 @@ export const Page = ({ page }: PageProps) => {
           </div>
         ))}
       </div>
-      <div className="flex m-4">
-        <PoweredBy />
-      </div>
+      <PoweredBy />
     </div>
   );
 };
