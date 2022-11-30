@@ -1,6 +1,7 @@
-import { CloseCircleOutlined, SearchOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'next-i18next';
 import { useRef } from 'react';
+import MagnifierIcon from '../../icons/magnifier.svgr';
 
 interface SearchInputProps {
   value: string;
@@ -21,7 +22,11 @@ export const SearchInput = ({ value, onChange, onFocus }: SearchInputProps) => {
           }, 200);
         }}
       >
-        <SearchOutlined className="text-[1.6rem]" />
+        <MagnifierIcon
+          height="1.2rem"
+          width="1.2rem"
+          className="text-[1.6rem] mr-2"
+        />
       </button>
       <input
         ref={ref}
@@ -32,7 +37,7 @@ export const SearchInput = ({ value, onChange, onFocus }: SearchInputProps) => {
       />
       {value && (
         <button
-          className="focus:outline-none m-1"
+          className="focus:outline-none m-1 hover:text-accent"
           onClick={() => {
             onChange('');
             ref?.current?.focus();

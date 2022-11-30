@@ -17,7 +17,7 @@ import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useUser } from '../components/UserProvider';
 import plus from '../icons/plus.svg';
 import { removeEmpty, search } from '../utils/filterUtils';
-import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
 import WorkspaceMenu from '../components/Workspaces/WorkspaceMenu';
 import api, { Workspace } from '../utils/api';
 import HeaderPopovers from './HeaderPopovers';
@@ -25,6 +25,7 @@ import CardButton from '../components/Workspaces/CardButton';
 import WorkspaceCardButton from '../components/Workspaces/WorkspaceCardButton';
 import getConfig from 'next/config';
 import FadeScroll from '../components/FadeScroll';
+import MagnifierIcon from '../icons/magnifier.svgr';
 
 const {
   publicRuntimeConfig: { SUGGESTIONS_ENDPOINT = '' },
@@ -150,7 +151,13 @@ export const WorkspacesView = () => {
               value={searchValue}
               onChange={({ target: { value } }) => setSearchValue(value)}
               placeholder={t('workspaces.search')}
-              prefix={<SearchOutlined />}
+              prefix={
+                <MagnifierIcon
+                  width="1rem"
+                  height="1rem"
+                  className="text-gray"
+                />
+              }
               suffix={
                 searchValue && (
                   <CloseOutlined onClick={() => setSearchValue('')} />
