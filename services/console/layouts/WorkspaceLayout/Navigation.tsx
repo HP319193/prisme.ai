@@ -26,6 +26,7 @@ import PageIcon from './PageIcon';
 import HomeIcon from '../../icons/home.svgr';
 import HomeIconOutlined from '../../icons/home-outlined.svgr';
 import SearchInput from './SearchInput';
+import Highlight from '../../components/Highlight/Highlight';
 
 interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   onCreateAutomation?: () => void;
@@ -51,12 +52,12 @@ const Item: FC<ItemProps> = ({ href, icon: Icon, children }) => {
         <div
           className={`flex flex-1 flex-row items-center ${
             selected ? 'text-accent' : ''
-          }`}
+          } max-w-[85%]`}
         >
           <div className="flex m-2 mr-4">
             {typeof Icon === 'function' ? <Icon selected={selected} /> : Icon}
           </div>
-          <div className="flex flex-1 leading-7">{children}</div>
+          <div className="flex flex-1 leading-7 max-w-full">{children}</div>
         </div>
       </a>
     </Link>
@@ -268,7 +269,14 @@ export const Navigation = ({
                   </Tooltip>
                 }
               >
-                {localize(name)}
+                <div className="text-ellipsis overflow-hidden">
+                  <Highlight
+                    highlight={searchValue}
+                    component={<span className="font-bold text-accent" />}
+                  >
+                    {localize(name)}
+                  </Highlight>
+                </div>
               </Item>
             ))}
           </ItemsGroup>
@@ -300,7 +308,14 @@ export const Navigation = ({
                   </Tooltip>
                 }
               >
-                {localize(name)}
+                <div className="text-ellipsis overflow-hidden">
+                  <Highlight
+                    highlight={searchValue}
+                    component={<span className="font-bold text-accent" />}
+                  >
+                    {localize(name)}
+                  </Highlight>
+                </div>
               </Item>
             ))}
           </ItemsGroup>
@@ -337,7 +352,14 @@ export const Navigation = ({
                   </Tooltip>
                 }
               >
-                {localize(name)}
+                <div className="text-ellipsis overflow-hidden">
+                  <Highlight
+                    highlight={searchValue}
+                    component={<span className="font-bold text-accent" />}
+                  >
+                    {localize(name)}
+                  </Highlight>
+                </div>
               </Item>
             ))}
           </ItemsGroup>
