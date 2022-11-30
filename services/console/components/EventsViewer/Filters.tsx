@@ -50,10 +50,10 @@ const Filters = () => {
           newQuery.set('text', text);
         }
         if (values.beforeDate) {
-          newQuery.set('beforeDate', values.beforeDate.toString());
+          newQuery.set('beforeDate', values.beforeDate.format('YYYY-MM-DD'));
         }
         if (values.afterDate) {
-          newQuery.set('afterDate', values.afterDate.toString());
+          newQuery.set('afterDate', values.afterDate.format('YYYY-MM-DD'));
         }
         Object.entries(values.fields || {}).forEach(([k, v]) => {
           newQuery.set(k, v);
