@@ -30,7 +30,7 @@ const Input = forwardRef<any, any>(function Input(
       }}
       ref={ref}
       {...props}
-      className={`min-w-[5rem] max-w-[50vw] text-ellipsis overflow-hidden mr-8 mt-[0.4rem] ${
+      className={`min-w-[5rem] max-w-[50vw] overflow-hidden mr-8 mt-[0.4rem] ${
         props.className || ''
       }`}
     >
