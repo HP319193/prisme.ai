@@ -44,8 +44,8 @@ const Item: FC<ItemProps> = ({ href, icon: Icon, children }) => {
   return (
     <Link href={href}>
       <a
-        className={`flex flex-1 leading-10 px-4 py-2 ${
-          selected ? 'bg-ultra-light-accent' : ''
+        className={`flex flex-1 leading-10 px-4 py-2 group hover:bg-ultra-light-accent !text-base ${
+          selected ? 'bg-ultra-light-accent font-bold' : ''
         }`}
       >
         <div
