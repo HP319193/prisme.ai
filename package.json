@@ -69,6 +69,7 @@
     "@svgr/webpack": "^6.2.1",
     "@types/ace": "^0.0.47",
     "@types/color": "^3.0.3",
+    "@types/hash-sum": "^1.0.0",
     "@types/inquirer": "^8.2.0",
     "@types/jest": "^27.0.2",
     "@types/js-cookie": "^3.0.1",
@@ -111,6 +112,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "antd": "^4.23.0",
+    "hash-sum": "^2.0.0",
     "patch-package": "^6.4.7"
   }
 }

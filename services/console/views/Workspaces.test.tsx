@@ -2,6 +2,7 @@ import Workspaces from './Workspaces';
 import renderer, { act } from 'react-test-renderer';
 import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useRouter } from 'next/router';
+import CardButton from '../components/Workspaces/CardButton';
 
 jest.mock('../components/WorkspacesProvider', () => {
   const workspaces = new Map();
@@ -61,9 +62,10 @@ it('should render some workspaces', () => {
 it('should create new workspace', async () => {
   const root = renderer.create(<Workspaces />);
   await act(async () => {
-    await root.root
-      .findByProps({ id: 'createWorkspaceButton' })
-      .props.onClick();
+    const createButton = root.root.find((a) => {
+      return a.props?.children?.[1]?.props?.children === 'create.label';
+    });
+    await createButton.props.onClick();
   });
   expect(useWorkspaces().create).toHaveBeenCalledWith('create.defaultName');
   expect(useRouter().push).toHaveBeenCalledWith('/workspaces/43');

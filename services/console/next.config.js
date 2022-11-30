@@ -10,6 +10,7 @@ module.exports = {
     PAGES_HOST: process.env.PAGES_HOST || '',
     SENTRY_DSN: process.env.SENTRY_DSN || '',
     HEADER_POPOVERS: process.env.HEADER_POPOVERS || '{}',
+    SUGGESTIONS_ENDPOINT: process.env.SUGGESTIONS_ENDPOINT || '',
   },
   webpack(config) {
     config.module.rules.push({

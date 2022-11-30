@@ -23,7 +23,7 @@ export interface PageBuilderContext {
     url?: string;
     edit?: Schema | Prismeai.TypedArgument;
   }[];
-  addBlock: (position: number) => void;
+  addBlock: (position: number, blockName?: string) => void;
   setEditBlock: (blockId: string) => void;
   removeBlock: (key: string) => void;
   setBlockConfig: (key: string, config: any) => void;

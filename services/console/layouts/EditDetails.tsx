@@ -99,7 +99,9 @@ export const EditDetails = ({
       overlayClassName="min-w-[50%]"
       {...props}
     >
-      <SettingOutlined className="text-lg" />
+      <button className="text-lg text-gray focus:outline-none">
+        <SettingOutlined />
+      </button>
     </Popover>
   );
 };

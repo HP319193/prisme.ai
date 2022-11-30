@@ -1,4 +1,4 @@
-import { blockContext, builtinBlocks } from '@prisme.ai/blocks';
+import { builtinBlocks } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import { useApps } from '../AppsProvider';
@@ -14,6 +14,15 @@ export interface BlockInCatalog extends Prismeai.Block {
   icon?: string;
 }
 
+const builtInBlocksOrder = [
+  'Header',
+  'RichText',
+  'Form',
+  'DataTable',
+  'Cards',
+  'Layout',
+];
+
 export const useBlocks = () => {
   const { t } = useTranslation('workspaces');
   const {
@@ -23,13 +32,18 @@ export const useBlocks = () => {
 
   const available: BlockInCatalog[] = useMemo(() => {
     const blocks: BlockInCatalog[] = [
-      ...Object.keys(builtinBlocks).map((key) => ({
-        builtIn: true,
-        slug: key,
-        name: t('pages.blocks.name', { context: key }),
-        description: t('pages.blocks.description', { context: key }),
-        photo: `/images/blocks/preview-${key}.png`,
-      })),
+      ...Object.keys(builtinBlocks)
+        .sort(
+          (a, b) =>
+            builtInBlocksOrder.indexOf(a) - builtInBlocksOrder.indexOf(b)
+        )
+        .map((key) => ({
+          builtIn: true,
+          slug: key,
+          name: t('pages.blocks.name', { context: key }),
+          description: t('pages.blocks.description', { context: key }),
+          photo: `/images/blocks/preview-${key}.png`,
+        })),
       // Builtin variants
       ...builtinBlocksVariants.map((variant) => ({
         builtIn: true,

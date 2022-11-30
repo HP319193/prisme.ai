@@ -56,15 +56,14 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
   }, [instructionsSchemas, search]);
 
   return (
-    <div className="flex flex-1 h-full flex-col overflow-auto">
+    <>
       <SearchInput
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder={t('automations.instruction.search')}
         autoFocus={focus}
-        className="mb-6"
       />
-      <Space direction="vertical" className="flex grow overflow-x-auto">
+      <Space direction="vertical" className="flex flex-1 overflow-x-auto pt-5">
         {filteredInstructions.map(([section, icon, instructions], index) => (
           <Space
             key={section}
@@ -73,14 +72,8 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
           >
             <div className="flex flex-row items-center space-x-3">
               {icon && (
-                <img
-                  src={
-                    icon // eslint-disable-next-line @next/next/no-img-element
-                  }
-                  width={16}
-                  height={16}
-                  alt={section}
-                />
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={icon} width={16} height={16} alt={section} />
               )}
               <Title level={4} className="!mb-0">
                 {section}
@@ -91,7 +84,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
                 <Button
                   key={slug}
                   onClick={() => onSubmit(slug)}
-                  className="w-full text-left !h-fit"
+                  className="w-full text-left !h-fit !p-0"
                 >
                   <ListItem
                     title={t('automations.instruction.label', {
@@ -123,7 +116,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
           </Space>
         ))}
       </Space>
-    </div>
+    </>
   );
 };
 

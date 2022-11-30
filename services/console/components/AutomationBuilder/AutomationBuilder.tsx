@@ -111,6 +111,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
       }
     | undefined
   >();
+  const [blockEditingOnBack, setBlockEditingOnBack] = useState<() => void>();
 
   useEffect(() => {
     setTimeout(() =>
@@ -194,6 +195,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   );
 
   const hidePanel = useCallback(() => {
+    setBlockEditingOnBack(undefined);
     setPanelIsOpen(false);
     setInstructionEditing(undefined);
     setConditionEditing(undefined);
@@ -255,6 +257,15 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
       editInstructionDetails(
         instruction,
         (updatedInstruction: Prismeai.Instruction) => {
+          setBlockEditingOnBack(() => () => {
+            parent.splice(index, 1);
+            setBlockEditingOnBack(undefined);
+            addInstruction(parent, index);
+            onChange((value) => {
+              prevValue.current = { ...value };
+              return prevValue.current;
+            });
+          });
           parent.splice(
             index,
             Object.keys(instruction).length === 0 ? 0 : 1,
@@ -479,6 +490,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
           title={t('details.title_automations')}
           visible={panelIsOpen}
           onVisibleChange={hidePanel}
+          onBack={blockEditingOnBack}
         >
           {instructionEditing && <InstructionForm {...instructionEditing} />}
           {conditionEditing && <ConditionForm {...conditionEditing} />}
