@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../../utils/dates';
 import EventDetails from './EventDetails';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useScrollListener } from '../useScrollListener';
 import useLocalizedText from '../../utils/useLocalizedText';
 import {
@@ -76,8 +76,13 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
     }
   }, [bottom, nextEvents]);
 
+  const updateFiltersFn = useRef(updateFilters);
+  useEffect(() => {
+    updateFiltersFn.current = updateFilters;
+  }, [updateFilters]);
   useEffect(() => {
     const t = setTimeout(() => {
+      if (!updateFiltersFn.current) return;
       const query = Array.from(queryString.entries()).reduce(
         (prev, [k, v]) => ({
           ...prev,
@@ -85,13 +90,13 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
         }),
         {}
       );
-      updateFilters(query);
+      updateFiltersFn.current(query);
     }, 200);
 
     return () => {
       clearTimeout(t);
     };
-  }, [queryString, updateFilters]);
+  }, [queryString]);
 
   const generateSectionContent = useCallback(
     (events: Set<Event<Date>>): CollapseItem[] =>
