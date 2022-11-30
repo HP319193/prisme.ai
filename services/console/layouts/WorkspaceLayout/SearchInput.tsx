@@ -13,7 +13,7 @@ export const SearchInput = ({ value, onChange, onFocus }: SearchInputProps) => {
   return (
     <div className="flex flex-1 relative px-2 border-b-[1px] h-[4rem]">
       <button
-        className="m-4 focus:outline-none"
+        className={`m-4 focus:outline-none ${value ? 'text-accent' : ''}`}
         onClick={() => {
           onFocus && onFocus();
           setTimeout(() => {
@@ -25,7 +25,7 @@ export const SearchInput = ({ value, onChange, onFocus }: SearchInputProps) => {
       </button>
       <input
         ref={ref}
-        className="flex flex-1 outline-none"
+        className="flex flex-1 outline-none text-accent"
         value={value}
         onChange={({ target: { value } }) => onChange(value)}
         placeholder={t('workspace.search')}
