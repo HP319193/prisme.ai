@@ -53,34 +53,40 @@ const Short = ({
                 { title, subtitle, description, backgroundColor, action },
                 index
               ) => (
-                <ActionOrLink action={action}>
+                <ActionOrLink action={action} key={index}>
                   <div
-                    key={index}
-                    className={tw`cards-container__card-container card-container flex flex-col
-                  snap-start m-[0.625rem] group h-[10rem] rounded-[0.938rem] border border-[rgba(0, 0, 0, 0.20)]
+                    className={tw`cards-container__card-container card-container snap-start`}
+                  >
+                    <div
+                      className={tw`flex flex-col
+                   m-[0.625rem] group h-[10rem] rounded-[0.938rem] border border-[rgba(0,0,0,0.20)]
                   min-w-[19.563rem] max-w-[19.563rem] overflow-hidden ${getBgClassName(
                     backgroundColor
-                  )}`}
-                  >
-                    <div className={tw`space-y-[0.625rem] m-[1.25rem]`}>
-                      {subtitle && (
+                  )}
+                  transition-transform hover:translate-y-1 hover:scale-105 shadow-sm hover:shadow-lg`}
+                    >
+                      <div className={tw`space-y-[0.625rem] m-[1.25rem]`}>
+                        {subtitle && (
+                          <Truncated
+                            className={tw`text-[0.75rem] leading-[1.2] max-h-[1rem] overflow-hidden`}
+                          >
+                            {localize(subtitle)}
+                          </Truncated>
+                        )}
                         <Truncated
-                          className={tw`text-[0.75rem] leading-[1.2] max-h-[1rem] overflow-hidden`}
+                          className={tw`font-bold text-[0.875rem] leading-[1.2] max-h-[1.2rem] overflow-hidden`}
                         >
-                          {localize(subtitle)}
+                          {localize(title)}
                         </Truncated>
-                      )}
-                      <Truncated
-                        className={tw`font-bold text-[0.875rem] leading-[1.2] max-h-[1.2rem] overflow-hidden`}
-                      >
-                        {localize(title)}
-                      </Truncated>
-                      <Truncated
-                        className={tw`text-[0.875rem] leading-[1.2] max-h-[4.2rem] overflow-hidden`}
-                        ellipsis="…"
-                      >
-                        <RichTextRenderer>{description || ''}</RichTextRenderer>
-                      </Truncated>
+                        <Truncated
+                          className={tw`text-[0.875rem] leading-[1.2] max-h-[4.2rem] overflow-hidden`}
+                          ellipsis="…"
+                        >
+                          <RichTextRenderer>
+                            {description || ''}
+                          </RichTextRenderer>
+                        </Truncated>
+                      </div>
                     </div>
                   </div>
                 </ActionOrLink>

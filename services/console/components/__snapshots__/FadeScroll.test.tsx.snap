@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="flex relative overflow-hidden undefined"
+>
+  <div
+    className="flex relative overflow-auto undefined"
+    style={
+      Object {
+        "scrollSnapType": "x mandatory",
+      }
+    }
+  >
+    <div
+      className="flex flex-1"
+    >
+      <div>
+        Foo
+      </div>
+      <div>
+        Bar
+      </div>
+    </div>
+  </div>
+  <button
+    className="absolute right-0 !text-light-gray focus:outline-none text-xl"
+    onClick={[Function]}
+    style={
+      Object {
+        "top": "calc(50% - 17px)",
+      }
+    }
+  />
+</div>
+`;

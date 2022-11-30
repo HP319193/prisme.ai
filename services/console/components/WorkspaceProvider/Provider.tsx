@@ -20,7 +20,6 @@ import { usePrevious } from '../../utils/usePrevious';
 import { generateNewName } from '../../utils/generateNewName';
 import { SLUG_MATCH_INVALID_CHARACTERS } from '../../utils/regex';
 import useLocalizedText from '../../utils/useLocalizedText';
-import { map } from 'lodash';
 
 const PAGINATION_LIMIT = 15;
 

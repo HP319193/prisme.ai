@@ -1,8 +1,8 @@
 {
   "in": {
     "title": "Connexion — $t(common:main.title)",
-    "header": "Ce qui est essentiel mérite votre attention.\n<b>Automatisez le reste.</b>",
-    "topForm1": "CONTENT DE VOUS REVOIR",
+    "header": "De l'idée à la solution,<br /><b>10x plus rapidement.</b>",
+    "topForm1": "Content de vous revoir",
     "topForm2": "Connectez vous à Prisme.ai",
     "topForm3": "Pas encore de compte ? <a>S'inscrire</a>",
     "forgot": "<a>Réinitialiser votre mot de passe</a>",
@@ -19,7 +19,7 @@
   },
   "up": {
     "title": "Inscription — $t(common:main.title)",
-    "topForm1": "BONJOUR",
+    "topForm1": "Bonjour",
     "topForm2": "Essayez Prisme.ai",
     "topForm3": "Déjà un compte ? <a>connectez-vous</a>",
     "email": "E-mail",
@@ -41,7 +41,7 @@
   },
   "forgot": {
     "title": "Réinitialisation de mot de passe",
-    "topForm1": "PAS D'INQUIÉTUDE",
+    "topForm1": "Pas d'inquiétude",
     "topForm2": "Réinitialisez votre mot de passe",
     "topForm3": "Pas encore de compte ? <a>S'inscrire</a>",
     "signin": "<a>Vous vous rappelez de votre mot de passe?</a>",
@@ -54,7 +54,7 @@
     "submit": "Envoyez moi un email"
   },
   "reset": {
-    "topForm1": "ON Y EST PRESQUE",
+    "topForm1": "On y est presque",
     "topForm2": "Choisissez un nouveau mot de passe",
     "topForm3": "Pas encore de compte ? <a>S'inscrire</a>",
     "password": "Nouveau mot de passe",
@@ -62,7 +62,7 @@
     "submit": "Sauvegarder le mot de passe"
   },
   "validate": {
-    "topForm1": "ON Y EST PRESQUE",
+    "topForm1": "On y est presque",
     "topForm2": "Valider votre email",
     "topForm3": "Vérifier votre boîte de réception électronique",
     "email": "Email",

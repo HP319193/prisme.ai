@@ -47,7 +47,7 @@ export const ResetForm = ({ token }: ForgotFormProps) => {
       <Form onSubmit={submit} validate={validate}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit} className="md:w-96 flex">
-            <div className="flex flex-col grow">
+            <div className="flex flex-col flex-1">
               <Field name="password" containerClassName="!mx-0 !mb-4">
                 {({ input: { type, ...inputProps }, className }) => (
                   <Input
@@ -73,7 +73,7 @@ export const ResetForm = ({ token }: ForgotFormProps) => {
                 disabled={
                   loading || successType === OperationSuccess.passwordReset
                 }
-                className="w-full !h-12 !mb-4"
+                className="w-full !h-12 !mb-4 !font-bold"
                 type="submit"
               >
                 {t('reset.submit')}

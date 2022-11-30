@@ -177,7 +177,7 @@ const Apps = ({}: AppsProps) => {
                       appName,
                     })
                   }
-                  className="text-accent max-w-[35vw] text-lg"
+                  className="text-base font-bold max-w-[35vw]"
                 />
               </span>
             </HorizontalSeparatedNav.Separator>

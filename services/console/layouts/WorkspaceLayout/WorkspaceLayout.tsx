@@ -6,7 +6,6 @@ import {
   Loading,
   Modal,
   notification,
-  SidePanel,
   Tooltip,
 } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
@@ -23,7 +22,6 @@ import { generateNewName } from '../../utils/generateNewName';
 import { Workspace } from '@prisme.ai/sdk';
 import Navigation from './Navigation';
 import { DoubleLeftOutlined, WarningOutlined } from '@ant-design/icons';
-import PoweredBy from '../../components/PoweredBy';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const { workspace, createAutomation, saveSource, save } = useWorkspace();
@@ -267,7 +265,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
                   placement="right"
                 >
                   <DoubleLeftOutlined
-                    className={`text-[1.6rem] m-2 mr-4 transition-all ${
+                    className={`text-[0.8rem] m-2 mr-6 transition-all ${
                       fullSidebar ? '' : 'rotate-180'
                     }`}
                     onClick={() => setFullSidebar(!fullSidebar)}

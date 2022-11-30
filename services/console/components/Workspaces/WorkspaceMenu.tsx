@@ -27,7 +27,8 @@ export const WorkspaceMenu = ({
               }}
               className="focus:outline-none"
             >
-              <CopyOutlined /> {t('workspace.duplicate.label')}
+              <CopyOutlined />
+              <span className="ml-3">{t('workspace.duplicate.label')}</span>
             </button>
           ),
         },

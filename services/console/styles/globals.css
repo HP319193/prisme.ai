@@ -5,6 +5,7 @@
   --light-accent-color: #e6efff;
   --ultra-light-accent-color: #f8faff;
   --dark-accent-color: #0a1d3b;
+  --link-color: var(--accent-color);
   --gray-color: #939ca6;
   --light-gray-color: #e5e5e5;
 }
@@ -262,4 +263,9 @@ body .ant-dropdown-menu-item:hover {
 }
 .pr-panel-settings .ant-tabs-ink-bar {
   background: var(--gray-color);
+}
+
+.pr-page-header-full-left .ant-page-header-heading-left,
+.pr-page-header-full-left .ant-page-header-heading-title {
+  flex: 1;
 }

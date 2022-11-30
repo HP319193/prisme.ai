@@ -59,7 +59,7 @@ export const ValidateForm = ({
       <Button
         variant="primary"
         disabled={loading || !!counter}
-        className="md:w-96 flex !h-12 !mb-4"
+        className="md:w-96 flex !h-12 !mb-4 !font-bold"
         type="submit"
         onClick={submit}
       >
