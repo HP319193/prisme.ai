@@ -115,8 +115,9 @@ export const Page = () => {
     // For preview in console
     const listener = async (e: MessageEvent) => {
       const { type, href } = e.data || {};
+
       if (type === 'pagePreviewNavigation') {
-        const [, slug] = href.match(/^\/(.+$)/);
+        const [, slug] = href.match(/^\/(.+$)/) || [];
         if (!slug) return;
         const page = await api.getPageBySlug(
           workspace.slug || workspace.id,
