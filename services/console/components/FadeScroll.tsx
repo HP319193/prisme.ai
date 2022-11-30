@@ -10,11 +10,13 @@ import {
 
 interface FadeScrollProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactChild[];
+  navPosition?: string;
 }
 
 export const FadeScroll = ({
   children,
   className,
+  navPosition = 'calc(50% - 17px)',
   ...props
 }: FadeScrollProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -89,7 +91,10 @@ export const FadeScroll = ({
       </div>
       {showPrev && (
         <button
-          className="absolute left-0 top-[37%] !text-light-gray focus:outline-none text-xl"
+          className="absolute left-0 !text-light-gray focus:outline-none text-xl"
+          style={{
+            top: navPosition,
+          }}
           onClick={scrollPrev}
         >
           <LeftCircleOutlined className="bg-white" />
@@ -97,7 +102,10 @@ export const FadeScroll = ({
       )}
       {showNext && (
         <button
-          className="absolute right-0 top-[37%] !text-light-gray focus:outline-none text-xl"
+          className="absolute right-0 !text-light-gray focus:outline-none text-xl"
+          style={{
+            top: navPosition,
+          }}
           onClick={scrollNext}
         >
           <RightCircleOutlined className="bg-white" />
