@@ -599,7 +599,7 @@
           "label": "Titre",
           "description": "Titre affiché au dessus du block"
         },
-        "generic": "Données dynamiques",
+        "generic": "Avancé",
         "schema": "Configuration",
         "title": "Paramètres du Block",
         "toggle_on": "Afficher les réglages",
