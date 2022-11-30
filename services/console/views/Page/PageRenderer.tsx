@@ -151,6 +151,7 @@ export const PageRenderer = ({
                       ...value,
                       name,
                     });
+                    onSave();
                   }}
                   className="text-base font-bold max-w-[25vw]"
                 />
