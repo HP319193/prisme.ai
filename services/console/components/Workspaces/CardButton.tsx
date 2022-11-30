@@ -46,12 +46,18 @@ export const CardButton = forwardRef<HTMLDivElement, CardButtonProps>(
   ) {
     return (
       <div
-        className={`relative group flex flex-col h-32 w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)] ${containerClassName}`}
+        className={`
+        relative group flex flex-col h-32
+        w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)]
+        ${containerClassName}`}
         ref={ref}
         {...props}
       >
         <Abutton
-          className={`flex m-2 h-full justify-between overflow-hidden rounded border ${className}`}
+          className={`flex m-2 h-full justify-between overflow-hidden rounded border
+          transition-all
+          hover:-translate-y-1 hover:shadow-lg
+          ${className}`}
           onClick={onClick}
           href={href}
         >
