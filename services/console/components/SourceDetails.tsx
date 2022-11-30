@@ -26,7 +26,7 @@ const fetchWorkspaceDetails = async (workspaceId: string): Promise<Source> => {
   return { name, description, photo };
 };
 const fetchAppDetails = async (appSlug?: string): Promise<Source> => {
-  const [{ name = '', description = '', photo }] = (appSlug &&
+  const [{ name = '', description = '', photo = '' } = {}] = (appSlug &&
     (await api.getApps({ query: appSlug }))) || [{}];
   return { name, description, photo };
 };
