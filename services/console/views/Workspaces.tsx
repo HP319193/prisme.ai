@@ -191,7 +191,7 @@ export const WorkspacesView = () => {
                   })}
                 </span>
               </CardButton>
-              <FadeScroll className="flex-1 ">
+              <FadeScroll className="flex-1 pb-4 -mb-4">
                 {suggestions.map((workspace) => (
                   <div
                     key={workspace.id}

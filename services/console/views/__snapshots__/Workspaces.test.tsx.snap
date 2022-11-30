@@ -63,10 +63,10 @@ Array [
           </button>
         </div>
         <div
-          className="flex relative overflow-hidden flex-1 "
+          className="flex relative overflow-hidden flex-1 pb-4 -mb-4"
         >
           <div
-            className="flex relative overflow-auto flex-1 "
+            className="flex relative overflow-auto flex-1 pb-4 -mb-4"
             style={
               Object {
                 "scrollSnapType": "x mandatory",
@@ -157,10 +157,10 @@ Array [
           </button>
         </div>
         <div
-          className="flex relative overflow-hidden flex-1 "
+          className="flex relative overflow-hidden flex-1 pb-4 -mb-4"
         >
           <div
-            className="flex relative overflow-auto flex-1 "
+            className="flex relative overflow-auto flex-1 pb-4 -mb-4"
             style={
               Object {
                 "scrollSnapType": "x mandatory",
