@@ -105,6 +105,10 @@
     "label": "Edit"
   },
   "events": {
+    "title": "Activities",
+    "search": {
+      "placeholder": "Search by keywords"
+    },
     "filters": {
       "title": "Filters",
       "correlationId": "Correlation ID",
@@ -112,6 +116,11 @@
       "text": "Keyword search",
       "afterDate": "From",
       "beforeDate": "Until",
+      "specific": {
+        "add": "Add a specific field",
+        "remove": "Delete this value",
+        "label": "Fields"
+      },
       "query": {
         "label": "Filter specific fields",
         "description": "An object specifying the expected value for each field, eg: {\n  \"source.workspaceId\": \"Wl4RRUN\",\n}",
@@ -123,7 +132,8 @@
         "title": "Filter suggestions",
         "help": "Selection of pre-set filters to help you find your most useful events.",
         "label_versions": "All Workspace versions"
-      }
+      },
+      "reset": "Reset filters"
     },
     "empty": "Nothing has happened here yet…",
     "details": {
