@@ -267,7 +267,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
                   placement="right"
                 >
                   <DoubleLeftOutlined
-                    className={`text-[1.6rem] m-2 mr-4 transition-all ${
+                    className={`text-[0.8rem] m-2 mr-6 transition-all ${
                       fullSidebar ? '' : 'rotate-180'
                     }`}
                     onClick={() => setFullSidebar(!fullSidebar)}
