@@ -105,7 +105,7 @@
     "label": "Edit"
   },
   "events": {
-    "title": "Activities",
+    "title": "Activity",
     "search": {
       "placeholder": "Search by keywords"
     },
