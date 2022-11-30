@@ -44,9 +44,14 @@ export const WorkspacesView = () => {
   );
   const filtredWorkspacesList = useMemo(
     () =>
-      workspacesList.filter(({ name, description }) =>
-        search(searchValue)(`${name} ${description}`)
-      ),
+      workspacesList
+        .sort(
+          ({ updatedAt: A = 0 }, { updatedAt: B = 0 }) =>
+            +new Date(B) - +new Date(A)
+        )
+        .filter(({ name, description }) =>
+          search(searchValue)(`${name} ${description}`)
+        ),
     [searchValue, workspacesList]
   );
 
