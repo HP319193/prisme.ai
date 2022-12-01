@@ -29,13 +29,12 @@ const ActionOrLink = ({ action, children }: ActionOrLinkProps) => {
       );
     case 'url':
       return (
-        <Link href={action.value}>
-          <a
+        <Link href={action.value} target={action.popup ? '_blank' : undefined}>
+          <div
             className={tw`hover:text-theme-accent hover:border-theme-accent`}
-            target={action.popup ? '_blank' : undefined}
           >
             {children}
-          </a>
+          </div>
         </Link>
       );
     default:
