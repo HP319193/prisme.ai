@@ -4,6 +4,7 @@ import { Form } from 'react-final-form';
 import { Button, Input } from '@prisme.ai/design-system';
 import Field from '../layouts/Field';
 import { OperationSuccess, useUser } from './UserProvider';
+import LinkInTrans from './LinkInTrans';
 
 interface Values {
   email: string;
@@ -43,7 +44,7 @@ export const ForgotForm = ({}: ForgotFormProps) => {
       <Form onSubmit={submit} validate={validate}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit} className="md:w-96 flex">
-            <div className="flex flex-col grow">
+            <div className="flex flex-col flex-1">
               <Field name="email" containerClassName="!mx-0 !mb-4">
                 {({ input: { type, ...inputProps }, className }) => (
                   <Input
@@ -61,14 +62,19 @@ export const ForgotForm = ({}: ForgotFormProps) => {
                     url: '/signin',
                   }}
                   components={{
-                    a: <a className="text-xs" href={`signin`} />,
+                    a: (
+                      <LinkInTrans
+                        className="text-xs text-link"
+                        href={`signin`}
+                      />
+                    ),
                   }}
                 />
               </div>
               <Button
                 variant="primary"
                 disabled={loading || successType === OperationSuccess.emailSent}
-                className="w-full !h-12 !mb-4"
+                className="w-full !h-12 !mb-4 !font-bold"
                 type="submit"
               >
                 {t('forgot.submit')}

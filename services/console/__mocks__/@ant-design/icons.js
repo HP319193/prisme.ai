@@ -46,6 +46,9 @@ export function EllipsisOutlined() {
 export function LeftCircleOutlined() {
   return null;
 }
+export function RightCircleOutlined() {
+  return null;
+}
 export function SearchOutlined() {
   return null;
 }

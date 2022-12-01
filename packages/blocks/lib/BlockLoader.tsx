@@ -1,12 +1,13 @@
 import './i18n';
 import * as React from 'react';
 import { ReactElement, ReactNode, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { I18nextProvider, useTranslation } from 'react-i18next';
 import { BlockProvider, BlockProviderProps } from './Provider';
 import { useBlocks } from './Provider/blocksContext';
 import * as builtinBlocks from './Blocks';
 import { Schema } from '@prisme.ai/design-system';
 import useExternalModule from './utils/useExternalModule';
+import i18n from './i18n';
 
 class BlockErrorBoundary extends React.Component<{ children: ReactElement }> {
   state = {
@@ -149,17 +150,19 @@ export const BlockLoader = ({
 }: BlockProviderProps & BlockLoaderProps) => {
   return (
     <BlockErrorBoundary>
-      <BlockProvider
-        config={config}
-        onConfigUpdate={onConfigUpdate}
-        appConfig={props.appConfig}
-        onAppConfigUpdate={onAppConfigUpdate}
-        events={props.events}
-        api={api}
-        onLoad={props.onLoad}
-      >
-        <BlockRenderMethod {...props} />
-      </BlockProvider>
+      <I18nextProvider i18n={i18n}>
+        <BlockProvider
+          config={config}
+          onConfigUpdate={onConfigUpdate}
+          appConfig={props.appConfig}
+          onAppConfigUpdate={onAppConfigUpdate}
+          events={props.events}
+          api={api}
+          onLoad={props.onLoad}
+        >
+          <BlockRenderMethod {...props} />
+        </BlockProvider>
+      </I18nextProvider>
     </BlockErrorBoundary>
   );
 };

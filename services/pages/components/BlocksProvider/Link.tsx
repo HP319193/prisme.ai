@@ -22,17 +22,21 @@ export const Link = ({
   usePreview(setPreview);
 
   return (
-    <NextLink href={href || ''} {...props}>
-      {cloneElement(children, {
-        onClick(e: any) {
-          if (children.props.onClick) children.props.onClick(e);
+    <NextLink href={href || ''}>
+      <a
+        {...props}
+        onClick={(e) => {
+          props.onClick && props.onClick(e);
           if (!isPreview) return;
+
           window.parent.postMessage(
             { type: 'pagePreviewNavigation', href },
             '*'
           );
-        },
-      })}
+        }}
+      >
+        {children}
+      </a>
     </NextLink>
   );
 };

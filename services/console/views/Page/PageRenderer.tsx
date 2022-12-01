@@ -151,8 +151,9 @@ export const PageRenderer = ({
                       ...value,
                       name,
                     });
+                    onSave();
                   }}
-                  className="text-accent max-w-[25vw] text-lg"
+                  className="text-base font-bold max-w-[25vw]"
                 />
               </span>
             </HorizontalSeparatedNav.Separator>

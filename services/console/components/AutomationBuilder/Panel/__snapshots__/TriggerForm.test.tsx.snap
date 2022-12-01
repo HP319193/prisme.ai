@@ -2,6 +2,6 @@
 
 exports[`should render 1`] = `
 <div
-  className="overflow-x-auto"
+  className="overflow-x-auto p-4"
 />
 `;

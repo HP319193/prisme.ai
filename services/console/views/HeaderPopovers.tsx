@@ -37,7 +37,7 @@ export const HeaderPopovers = () => {
           overlayClassName="pr-full-popover"
         >
           <Button variant="grey" className="!text-white">
-            <Space className="text-lg">{t(label)}</Space>
+            <Space>{t(label)}</Space>
           </Button>
         </Popover>
       ))}

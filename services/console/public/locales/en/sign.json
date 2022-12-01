@@ -1,8 +1,8 @@
 {
   "in": {
     "title": "Connection",
-    "header": "What is essential deserves your focus.\n<b>Automate the rest.</b>",
-    "topForm1": "GOOD TO HAVE YOU BACK",
+    "header": "From idea to solution,<br /><b>10x faster.</b>",
+    "topForm1": "Good to have you back",
     "topForm2": "Connect to Prisme.ai",
     "topForm3": "Don't have an account yet? <a>Sign up</a>",
     "forgot": "<a>Reset your password</a>",
@@ -19,7 +19,7 @@
   },
   "up": {
     "title": "Signup — $t(common:main.title)",
-    "topForm1": "HELLO",
+    "topForm1": "Hello",
     "topForm2": "Try Prisme.ai",
     "topForm3": "Already have an account? <a>Sign in</a>",
     "email": "Email",
@@ -41,7 +41,7 @@
   },
   "forgot": {
     "title": "Reset your password",
-    "topForm1": "NO WORRIES",
+    "topForm1": "No worries",
     "topForm2": "Reset your password",
     "topForm3": "Don't have an account yet? <a>Sign up</a>",
     "signin": "<a>Remembered your password?</a>",
@@ -54,7 +54,7 @@
     "submit": "Send me an email"
   },
   "reset": {
-    "topForm1": "ALMOST THERE",
+    "topForm1": "Almost there",
     "topForm2": "Pick a new password",
     "topForm3": "Don't have an account yet? <a>Sign up</a>",
     "password": "New password",
@@ -62,7 +62,7 @@
     "submit": "Save my password"
   },
   "validate": {
-    "topForm1": "ALMOST THERE",
+    "topForm1": "Almost there",
     "topForm2": "Validate your email",
     "topForm3": "Check your email inbox",
     "email": "Email",

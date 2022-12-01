@@ -11,16 +11,27 @@ export default {
 
 const Template: Story<any> = () => {
   const [visible, setVisible] = useState(false);
+  const [lines, setLines] = useState(['', '', '']);
 
   return (
     <div className="w-72">
       <Button onClick={() => setVisible(!visible)}>Toggle</Button>
       <StretchContent visible={visible}>
         <Title>Some title</Title>
-        <Button>Some button</Button>
-        <Button>Some button</Button>
-        <Button>Some button</Button>
+        <button
+          onClick={() =>
+            setLines((lines) => {
+              return [...lines, ''];
+            })
+          }
+        >
+          Add line
+        </button>
+        {lines.map((k) => (
+          <Button key={k}>Some button</Button>
+        ))}
       </StretchContent>
+      <div>Footer</div>
     </div>
   );
 };

@@ -65,58 +65,65 @@ const Actions = ({
               ) => (
                 <div
                   key={index}
-                  className={`${tw`cards-container__card-container card-container flex flex-col
-                  snap-start m-[0.625rem] group h-[23.188rem] rounded-[0.938rem]
+                  className={tw`cards-container__card-container card-container snap-start`}
+                >
+                  <div
+                    className={tw`flex flex-col
+                  m-[0.625rem] group h-[23.188rem] rounded-[0.938rem]
                   min-w-[19.563rem] max-w-[19.563rem] overflow-hidden ${getBgClassName(
                     backgroundColor
-                  )}`}`}
-                >
-                  <div className={tw`flex flex-row m-[1.25rem]`}>
-                    <div
-                      className={tw`card-container__card-cover card-cover flex flex-row
+                  )}
+                  transition-transform hover:translate-y-1 hover:scale-105 shadow-sm hover:shadow-lg`}
+                  >
+                    <div className={tw`flex flex-row m-[1.25rem]`}>
+                      <div
+                        className={tw`card-container__card-cover card-cover flex flex-row
                   mb-0 h-[5.5rem] w-[5.25rem] min-w-[5.25rem] rounded-[0.625rem] !bg-cover !bg-center`}
-                      style={getCoverStyle(index)}
-                    />
-                    <div
-                      className={tw`flex flex-col space-y-[0.313rem] ml-[1.25rem] justify-center`}
-                    >
-                      <div className={tw`font-bold text-[1.25rem]`}>
-                        {truncate(localize(title), 14)}
-                      </div>
-                      <div className={tw`text-[0.875rem]`}>
-                        {truncate(localize(description), 43)}
+                        style={getCoverStyle(index)}
+                      />
+                      <div
+                        className={tw`flex flex-col space-y-[0.313rem] ml-[1.25rem] justify-center`}
+                      >
+                        <div className={tw`font-bold text-[1.25rem]`}>
+                          {truncate(localize(title), 14)}
+                        </div>
+                        <div className={tw`text-[0.875rem]`}>
+                          {truncate(localize(description), 43)}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div
-                    className={tw`flex flex-col flex-grow justify-center items-center`}
-                  >
-                    {content &&
-                      Array.isArray(content) &&
-                      content.slice(0, 3).map((item, index) => (
-                        <div
-                          key={index}
-                          className={`${tw`card__card-content-outer card-content-outer flex w-full py-[0.625rem] px-[1.25rem] font-semibold`}`}
-                        >
+                    <div
+                      className={tw`flex flex-col flex-grow justify-center items-center`}
+                    >
+                      {content &&
+                        Array.isArray(content) &&
+                        content.slice(0, 3).map((item, index) => (
                           <div
-                            className={tw`flex flex-grow rounded-[0.625rem] h-[3.125rem] items-center justify-center `}
+                            key={index}
+                            className={`${tw`card__card-content-outer card-content-outer flex w-full py-[0.625rem] px-[1.25rem] font-semibold`}`}
                           >
-                            <CardButton
-                              type="button"
-                              url={item.type === 'url' ? item.value : undefined}
-                              event={
-                                item.type === 'event' ? item.value : undefined
-                              }
-                              payload={item.payload}
-                              value={truncate(localize(item.text), 60)}
-                              popup={item.popup}
-                              className={tw`flex flex-grow rounded-[0.625rem] h-[3.125rem] items-center justify-center text-center font-semibold text-[0.875rem] ${getBtnClassName(
-                                backgroundColor
-                              )}`}
-                            />
+                            <div
+                              className={tw`flex flex-grow rounded-[0.625rem] h-[3.125rem] items-center justify-center `}
+                            >
+                              <CardButton
+                                type="button"
+                                url={
+                                  item.type === 'url' ? item.value : undefined
+                                }
+                                event={
+                                  item.type === 'event' ? item.value : undefined
+                                }
+                                payload={item.payload}
+                                value={truncate(localize(item.text), 60)}
+                                popup={item.popup}
+                                className={tw`flex flex-grow rounded-[0.625rem] h-[3.125rem] items-center justify-center text-center font-semibold text-[0.875rem] ${getBtnClassName(
+                                  backgroundColor
+                                )}`}
+                              />
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                    </div>
                   </div>
                 </div>
               )

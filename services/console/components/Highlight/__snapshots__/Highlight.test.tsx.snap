@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+Array [
+  <span
+    className="font-bold"
+  >
+    Foo
+  </span>,
+  <span>
+     bar
+  </span>,
+]
+`;
+
+exports[`should render with custom component 1`] = `
+Array [
+  <span
+    className="custom-class"
+  >
+    E
+  </span>,
+  <span>
+    x
+  </span>,
+  <span
+    className="custom-class"
+  >
+    e
+  </span>,
+  <span>
+    mpl
+  </span>,
+  <span
+    className="custom-class"
+  >
+    e
+  </span>,
+]
+`;
+
+exports[`should render with nothing 1`] = `
+<span>
+  foo
+</span>
+`;

@@ -20,47 +20,7 @@ exports[`should render with blocks 1`] = `
 </div>
 `;
 
-exports[`should render with blocks 2`] = `
-<div
-  className="flex flex-1 bg-white transition-transform"
->
-  <div
-    className="flex flex-row flex-1 transition-transform "
-    style={
-      Object {
-        "marginRight": "-0px",
-      }
-    }
-  >
-    <button
-      className="head__button-back button-back ml-2"
-      onClick={[MockFunction]}
-    />
-  </div>
-</div>
-`;
-
 exports[`should render with no block 1`] = `
-<div
-  className="flex flex-1 bg-white transition-transform"
->
-  <div
-    className="flex flex-row flex-1 transition-transform -translate-x-[0px]"
-    style={
-      Object {
-        "marginRight": "-0px",
-      }
-    }
-  >
-    <button
-      className="head__button-back button-back ml-2"
-      onClick={[MockFunction]}
-    />
-  </div>
-</div>
-`;
-
-exports[`should render with no block 2`] = `
 <div
   className="flex flex-1 bg-white transition-transform"
 >

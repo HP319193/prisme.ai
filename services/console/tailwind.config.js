@@ -34,6 +34,7 @@ module.exports = {
         'light-accent': 'var(--light-accent-color)',
         'ultra-light-accent': 'var(--ultra-light-accent-color)',
         'dark-accent': 'var(--dark-accent-color)',
+        link: 'var(--link-color)',
         surface: 'var(--surface-color)',
         base: 'var(--base-color)',
         error: '#ff4d4f',

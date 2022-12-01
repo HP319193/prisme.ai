@@ -4,6 +4,7 @@ import Field from '../layouts/Field';
 import { useCallback } from 'react';
 import { useUser } from './UserProvider';
 import { Trans, useTranslation } from 'next-i18next';
+import LinkInTrans from './LinkInTrans';
 
 interface Values {
   email: string;
@@ -38,7 +39,7 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
     <Form onSubmit={submit} validate={validate}>
       {({ handleSubmit }) => (
         <form onSubmit={handleSubmit} className="md:w-96 flex">
-          <div className="flex flex-col grow">
+          <div className="flex flex-col flex-1">
             <Field name="email" containerClassName="!mx-0 !mb-4">
               {({ input: { type, ...inputProps }, className }) => (
                 <Input
@@ -66,14 +67,14 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
                   url: '/forgot',
                 }}
                 components={{
-                  a: <a href={`forgot`} />,
+                  a: <LinkInTrans href={`forgot`} className="text-link" />,
                 }}
               />
             </div>
             <Button
               variant="primary"
               disabled={loading}
-              className="w-full !h-12 !mb-4"
+              className="w-full !h-12 !mb-4 !font-bold"
               type="submit"
             >
               {t('in.submit')}

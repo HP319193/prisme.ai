@@ -1,6 +1,6 @@
 import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
-import { JSXElementConstructor, ReactElement, useEffect } from 'react';
+import { useEffect } from 'react';
 import { BlockComponent } from './BlockLoader';
 
 const i18n = createInstance({
