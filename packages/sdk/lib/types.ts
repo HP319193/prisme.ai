@@ -2,6 +2,8 @@ import '@prisme.ai/types';
 
 export interface Workspace extends Prismeai.Workspace {
   id: string;
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 export interface Event<DateType extends Date | string>

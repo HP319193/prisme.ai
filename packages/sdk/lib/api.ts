@@ -119,13 +119,7 @@ export class Api extends Fetcher {
     return await this.post('/workspaces', { name });
   }
 
-  async duplicateWorkspace({
-    id,
-    name,
-  }: {
-    id: string;
-    name: string;
-  }): Promise<Workspace | null> {
+  async duplicateWorkspace({ id }: { id: string }): Promise<Workspace | null> {
     return await this.post(`/workspaces/${id}/versions/current/duplicate`, {});
   }
 
@@ -250,11 +244,16 @@ export class Api extends Fetcher {
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const { createdAt, createdBy, updatedAt, updatedBy, ...newPage } =
-      await this.post<PageWithMetadata>(
-        `/workspaces/${workspaceId}/pages`,
-        page
-      );
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...newPage
+    } = await this.post<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages`,
+      page
+    );
     return newPage;
   }
 
@@ -264,11 +263,16 @@ export class Api extends Fetcher {
     workspaceId: NonNullable<Workspace['id']>,
     page: Prismeai.Page
   ): Promise<Prismeai.Page> {
-    const { createdAt, createdBy, updatedAt, updatedBy, ...updatedPage } =
-      await this.patch<PageWithMetadata>(
-        `/workspaces/${workspaceId}/pages/${page.id}`,
-        await this.replaceAllImagesData(page, workspaceId)
-      );
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...updatedPage
+    } = await this.patch<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages/${page.id}`,
+      await this.replaceAllImagesData(page, workspaceId)
+    );
     return updatedPage;
   }
 
