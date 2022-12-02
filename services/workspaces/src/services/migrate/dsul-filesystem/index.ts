@@ -95,9 +95,17 @@ export async function migrateDSUL(
       if (!migrationNeeded) {
         continue;
       }
-      const legacy = (await legacyWorkspacesStorage.get({
-        workspaceId: workspace.id,
-      })) as LegacyDSUL;
+      let legacy: LegacyDSUL;
+      try {
+        legacy = (await legacyWorkspacesStorage.get({
+          workspaceId: workspace.id,
+        })) as LegacyDSUL;
+      } catch {
+        logger.info(
+          `Skipping workspace ${workspace.name} (id ${workspace.id}) since it does not exist in storage`
+        );
+        continue;
+      }
       if (Object.keys(legacy?.automations || {}).length > 200) {
         logger.info(
           `Skipping workspace ${workspace.name} (id ${
@@ -182,6 +190,9 @@ export async function migrateDSUL(
         msg: `Could not migrate app ${app.slug}`,
         err,
       });
+      (err as Error).message = `Could not migrate app ${app.slug} : ${
+        (<Error>err).message
+      }`;
       errors.push(err);
     }
   }
