@@ -135,7 +135,9 @@ class Pages {
 
     // Reset folderIndex as it doesn't support concurrent saves ...
     try {
-      await this.storage.refreshFolderIndex(toWorkspaceId, DSULType.Pages);
+      if (pagesDsul.length) {
+        await this.storage.refreshFolderIndex(toWorkspaceId, DSULType.Pages);
+      }
     } catch (err) {
       logger.error(err);
     }

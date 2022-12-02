@@ -199,26 +199,30 @@ class Workspaces {
       dsulType: DSULType.Imports,
     };
     await Promise.all([
-      this.storage.copy(
-        {
-          workspaceId,
-          ...automationsQuery,
-        },
-        {
-          workspaceId: newWorkspace.id,
-          ...automationsQuery,
-        }
-      ),
-      this.storage.copy(
-        {
-          workspaceId,
-          ...importsQuery,
-        },
-        {
-          workspaceId: newWorkspace.id,
-          ...importsQuery,
-        }
-      ),
+      this.storage
+        .copy(
+          {
+            workspaceId,
+            ...automationsQuery,
+          },
+          {
+            workspaceId: newWorkspace.id,
+            ...automationsQuery,
+          }
+        )
+        .catch(() => undefined), // Might crash if no import exist,
+      this.storage
+        .copy(
+          {
+            workspaceId,
+            ...importsQuery,
+          },
+          {
+            workspaceId: newWorkspace.id,
+            ...importsQuery,
+          }
+        )
+        .catch(() => undefined), // Might crash if no import exist
     ]);
 
     this.broker.send<Prismeai.DuplicatedWorkspace['payload']>(
