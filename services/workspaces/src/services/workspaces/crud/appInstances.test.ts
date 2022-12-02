@@ -256,32 +256,6 @@ describe('Detailed appInstances', () => {
     ]);
   });
 
-  it('getDetailedAppInstance', async () => {
-    const appInstance = await appInstancesCrud.getAppInstance(
-      WORKSPACE_ID,
-      APP_INSTANCE_SLUG
-    );
-    const detailedAppInstance = await appInstancesCrud.getDetailedAppInstance(
-      WORKSPACE_ID,
-      APP_INSTANCE_SLUG
-    );
-    expect(detailedAppInstance).toEqual({
-      ...appInstance,
-      ...appDetails,
-      blocks: appDetails.blocks.map((block) => {
-        if (block?.slug) {
-          block.slug = `${appInstance.slug}.${block.slug}`;
-        }
-        return block;
-      }),
-      config: {
-        ...appDetails?.config,
-        value: appInstance.config || {},
-      },
-      slug: APP_INSTANCE_SLUG,
-    });
-  });
-
   it('getDetailedList', async () => {
     const appInstance = await appInstancesCrud.getAppInstance(
       WORKSPACE_ID,

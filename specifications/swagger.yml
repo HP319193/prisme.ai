@@ -1294,7 +1294,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DSULPatch"
+              $ref: '#/components/schemas/DSULPatch'
 
       responses:
         '200':
@@ -1577,7 +1577,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Workspace"
+                $ref: '#/components/schemas/Workspace'
         '404':
           description: Object not found
           content:
@@ -2365,7 +2365,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AppInstanceList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/DetailedAppInstance'
         '404':
           description: Object not found
           content:
@@ -2525,7 +2527,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DetailedAppInstance'
+                $ref: '#/components/schemas/AppInstance'
         '404':
           description: Object not found
           content:
@@ -3001,6 +3003,10 @@ components:
       type: object
       required:
         - appSlug
+        - slug
+        - automations
+        - blocks
+        - events
       additionalProperties: false
       properties:
         <<: *AppInstanceMeta
@@ -3012,30 +3018,6 @@ components:
           $ref: '#/components/schemas/AppEvents'
         blocks:
           $ref: '#/components/schemas/AppBlocks'
-        config:
-          $ref: '#/components/schemas/Config'
-
-    AppInstanceList:
-      type: array
-      items:
-        type: object
-        required:
-          - slug
-          - appSlug
-          - automations
-          - events
-          - blocks
-        additionalProperties: false
-        properties:
-          <<: *AppInstanceMeta
-          photo:
-            type: string
-          automations:
-            $ref: '#/components/schemas/AppAutomations'
-          events:
-            $ref: '#/components/schemas/AppEvents'
-          blocks:
-            $ref: '#/components/schemas/AppBlocks'
 
     AppEvents:
       type: object
@@ -3168,15 +3150,15 @@ components:
 
     RuntimeModel:
       allOf:
-        - $ref: "#/components/schemas/DSUL"
+        - $ref: '#/components/schemas/DSUL'
         - type: object
           properties:
             automations:
               additionalProperties:
-                $ref: "#/components/schemas/Automation"
+                $ref: '#/components/schemas/Automation'
             imports:
               additionalProperties:
-                $ref: "#/components/schemas/AppInstance"
+                $ref: '#/components/schemas/AppInstance'
 
     DSULPatch:
       type: object
@@ -3199,6 +3181,10 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/PageMeta'
+        imports:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DetailedAppInstance'
         createdAt:
           type: string
         updatedAt:
@@ -3482,7 +3468,7 @@ components:
         - appInstances
         - slug
       properties:
-        <<: [ *Page, *PageDetails ]
+        <<: [*Page, *PageDetails]
 
     File:
       type: object
@@ -4614,7 +4600,6 @@ components:
                   type: string
                 id:
                   type: string
-
 
     WorkspacePermissionsShared:
       type: object

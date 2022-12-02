@@ -47,12 +47,12 @@ class AppInstances {
 
   getDetailedList = async (
     workspaceId: string
-  ): Promise<Prismeai.AppInstanceList> => {
+  ): Promise<Prismeai.DetailedAppInstance[]> => {
     const appInstances = await this.list(workspaceId);
 
     return (
       await Promise.all(
-        appInstances.map<Promise<Prismeai.AppInstanceList[0] | false>>(
+        appInstances.map<Promise<Prismeai.DetailedAppInstance[][0] | false>>(
           async (cur) => {
             try {
               const appDetails = await this.apps.getAppDetails(
@@ -80,7 +80,7 @@ class AppInstances {
           }
         )
       )
-    ).filter<Prismeai.AppInstanceList[0]>(Boolean as any);
+    ).filter<Prismeai.DetailedAppInstance[][0]>(Boolean as any);
   };
 
   getAppInstance = async (
@@ -102,32 +102,6 @@ class AppInstances {
       throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
     }
     return { ...appInstance, slug };
-  };
-
-  getDetailedAppInstance = async (
-    workspaceId: string,
-    slug: string
-  ): Promise<Prismeai.DetailedAppInstance & { slug: string }> => {
-    const appInstance = await this.getAppInstance(workspaceId, slug);
-    const appDetails = await this.apps.getAppDetails(
-      appInstance.appSlug,
-      appInstance.appVersion
-    );
-    return {
-      ...appInstance,
-      ...appDetails,
-      config: {
-        ...appDetails?.config,
-        value: appInstance.config || {},
-      },
-      blocks: (appDetails.blocks || []).map((block) => {
-        if (block?.slug) {
-          block.slug = `${slug}.${block.slug}`;
-        }
-        return block;
-      }),
-      slug,
-    };
   };
 
   installApp = async (

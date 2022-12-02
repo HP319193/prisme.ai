@@ -1,7 +1,7 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
 import { AccessManager } from '../../permissions';
-import { Workspaces } from '../../services';
+import { AppInstances, Apps, Workspaces } from '../../services';
 import { DSULStorage } from '../../services/dsulStorage';
 import FileStorage from '../../services/FileStorage';
 import { PrismeContext } from '../middlewares';
@@ -66,9 +66,31 @@ export default function init(
       accessManager,
       broker,
     });
+    const apps = new Apps(accessManager, broker.child(context), dsulStorage);
+    const appInstances = new AppInstances(
+      accessManager,
+      broker.child(context),
+      dsulStorage,
+      apps
+    );
+
     const workspace = await workspaces.getDetailedWorkspace(
       workspaceId,
       version
+    );
+
+    const workspaceAppInstances = await appInstances.getDetailedList(
+      workspaceId
+    );
+    workspace.imports = workspaceAppInstances.reduce<
+      Record<string, Prismeai.DetailedAppInstance>
+    >(
+      (appInstances, appInstance) =>
+        ({
+          ...appInstances,
+          [appInstance.slug]: appInstance,
+        } as any),
+      {} as any
     );
     res.send(workspace);
   }

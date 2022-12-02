@@ -832,33 +832,6 @@ declare namespace Prismeai {
         createdBy?: string;
         config?: any;
     }
-    export type AppInstanceList = {
-        /**
-         * App unique id
-         */
-        appSlug: string;
-        appName?: LocalizedText;
-        /**
-         * Defaults to the latest known app version
-         */
-        appVersion?: string;
-        /**
-         * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
-         */
-        slug: string;
-        /**
-         * If disabled, this appInstance will be ignored during execution
-         */
-        disabled?: boolean;
-        updatedAt?: string;
-        createdAt?: string;
-        updatedBy?: string;
-        createdBy?: string;
-        photo?: string;
-        automations: AppAutomations;
-        events: AppEvents;
-        blocks: AppBlocks;
-    }[];
     export interface AppInstanceMeta {
         /**
          * App unique id
@@ -1209,6 +1182,9 @@ declare namespace Prismeai {
         pages?: {
             [name: string]: /* Page */ PageMeta;
         };
+        imports?: {
+            [name: string]: DetailedAppInstance;
+        };
         createdAt?: string;
         updatedAt?: string;
         createdBy?: string;
@@ -1297,7 +1273,7 @@ declare namespace Prismeai {
         /**
          * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
          */
-        slug?: string;
+        slug: string;
         /**
          * If disabled, this appInstance will be ignored during execution
          */
@@ -1307,10 +1283,9 @@ declare namespace Prismeai {
         updatedBy?: string;
         createdBy?: string;
         photo?: string;
-        automations?: AppAutomations;
-        events?: AppEvents;
-        blocks?: AppBlocks;
-        config?: Config;
+        automations: AppAutomations;
+        events: AppEvents;
+        blocks: AppBlocks;
     }
     export interface DetailedPage {
         name?: LocalizedText;
@@ -2830,7 +2805,7 @@ declare namespace PrismeaiAPI {
             slug: Parameters.Slug;
         }
         namespace Responses {
-            export type $200 = Prismeai.DetailedAppInstance;
+            export type $200 = Prismeai.AppInstance;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -3089,7 +3064,7 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
         }
         namespace Responses {
-            export type $200 = Prismeai.AppInstanceList;
+            export type $200 = Prismeai.DetailedAppInstance[];
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
