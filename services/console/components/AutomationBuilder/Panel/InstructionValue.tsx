@@ -3,11 +3,11 @@ import { useTranslation } from 'next-i18next';
 import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
 import usePages from '../../PagesProvider/context';
-import { useWorkspace } from '../../WorkspaceProvider';
 import { useApps } from '../../AppsProvider';
 import { useAutomationBuilder } from '../context';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import components from './schemaFormComponents';
+import { useWorkspace } from '../../../providers/Workspace';
 
 interface InstructionValueProps {
   instruction: string;

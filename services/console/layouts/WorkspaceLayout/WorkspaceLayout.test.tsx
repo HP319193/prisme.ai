@@ -2,7 +2,7 @@ import WorkspaceLayout from './WorkspaceLayout';
 import { getLayout } from './index';
 import renderer, { act } from 'react-test-renderer';
 import { useRouter } from 'next/router';
-import { useWorkspaces } from '../../components/WorkspacesProvider';
+import { useWorkspaces } from '../../providers/Workspaces';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import { useWorkspaceLayout, WorkspaceLayoutContext } from './context';
 
@@ -17,7 +17,7 @@ jest.mock('../../components/UserProvider', () => {
   };
 });
 
-jest.mock('../../components/WorkspacesProvider', () => {
+jest.mock('../../providers/Workspaces', () => {
   const mock = {};
   return {
     useWorkspaces: () => mock,

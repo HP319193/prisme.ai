@@ -19,6 +19,7 @@ interface WorkspacesContext {
     id: string,
     version?: string
   ) => Promise<Workspace | null>;
+  refreshWorkspace: (workspace: Prismeai.DSUL) => void;
 }
 
 interface WorkspacesProviderProps {
@@ -40,6 +41,7 @@ export const workspacesContext = createContext<WorkspacesContext>({
   async duplicateWorkspace() {
     return {} as Workspace;
   },
+  refreshWorkspace() {},
 });
 
 export const useWorkspaces = () => useContext(workspacesContext);
@@ -62,7 +64,6 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
   }, []);
 
   const fetchWorkspaces: WorkspacesContext['fetchWorkspaces'] = useCallback(async () => {
-    setLoadingId(LoadingType.List, true);
     const workspaces = await api.getWorkspaces();
     setWorkspaces(
       workspaces.map(({ createdAt, updatedAt, ...workspace }) => ({
@@ -71,8 +72,7 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
         updatedAt: new Date(updatedAt),
       }))
     );
-    setLoadingId(LoadingType.List, false);
-  }, [setLoadingId]);
+  }, []);
 
   const createWorkspace: WorkspacesContext['createWorkspace'] = useCallback(
     async (name: string) => {
@@ -98,14 +98,33 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
     [fetchWorkspaces, setLoadingId]
   );
 
+  const refreshWorkspace: WorkspacesContext['refreshWorkspace'] = useCallback(
+    (workspace) => {
+      setWorkspaces((workspaces) => {
+        return workspaces.map((w) =>
+          w.id === workspace.id
+            ? { ...w, ...workspace, updatedAt: new Date() }
+            : w
+        );
+      });
+    },
+    []
+  );
+
   const prevUserId = useRef<string>();
   useEffect(() => {
     if (!user?.id || prevUserId.current === user.id) return;
 
     prevUserId.current = user.id;
 
-    fetchWorkspaces();
-  }, [fetchWorkspaces, user?.id]);
+    const initialFetch = async () => {
+      setLoadingId(LoadingType.List, true);
+      await fetchWorkspaces();
+      setLoadingId(LoadingType.List, false);
+    };
+
+    initialFetch();
+  }, [fetchWorkspaces, setLoadingId, user.id]);
 
   return (
     <workspacesContext.Provider
@@ -115,6 +134,7 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
         fetchWorkspaces,
         createWorkspace,
         duplicateWorkspace,
+        refreshWorkspace,
       }}
     >
       {children}

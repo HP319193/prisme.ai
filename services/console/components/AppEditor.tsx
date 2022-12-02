@@ -8,11 +8,11 @@ import {
 import { BlockLoader } from '@prisme.ai/blocks';
 import api from '../utils/api';
 import useAppConfig from '../utils/useAppConfig';
-import { useWorkspace } from './WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 import useLocalizedText from '../utils/useLocalizedText';
+import { useWorkspace } from '../providers/Workspace';
 
 interface AppEditorProps {
   schema?: Schema;

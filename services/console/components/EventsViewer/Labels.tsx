@@ -4,8 +4,8 @@ import { Popconfirm } from 'antd';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { FC } from 'react';
+import { useWorkspace } from '../../providers/Workspace';
 import api, { Event } from '../../utils/api';
-import { useWorkspace } from '../WorkspaceProvider';
 
 export const AutomationLabel: FC<Event<Date>> = ({
   children,

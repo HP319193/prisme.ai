@@ -1,5 +1,4 @@
 import AccountLayout from './AccountLayout';
-import { useWorkspaces } from '../../components/WorkspacesProvider';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Error404 from '../Errors/404';
@@ -12,6 +11,7 @@ import Usages from './Components/Usages';
 import ShareWorkspace from '../../components/Share/ShareWorkspace';
 import RightSidebar from './Components/RightSidebar';
 import BillingPlan from './Components/BillingPlan';
+import { useWorkspaces } from '../../providers/Workspaces';
 
 interface MyAccountProps {}
 
@@ -24,8 +24,12 @@ const MyAccount = ({}: MyAccountProps) => {
     query: { workspaceId },
   } = useRouter();
 
-  const { workspacesUsage, fetchWorkspaceUsage, loading, error } =
-    useWorkspacesUsage();
+  const {
+    workspacesUsage,
+    fetchWorkspaceUsage,
+    loading,
+    error,
+  } = useWorkspacesUsage();
 
   const { getUsersPermissions, usersPermissions } = usePermissions();
 
@@ -38,7 +42,7 @@ const MyAccount = ({}: MyAccountProps) => {
   }, [initialFetch, workspaceId]);
 
   const currentWorkspace = useMemo(
-    () => workspaces.get(`${workspaceId}`),
+    () => workspaces.find(({ id }) => id === `${workspaceId}`),
     [workspaceId, workspaces]
   );
 
@@ -77,8 +81,8 @@ const MyAccount = ({}: MyAccountProps) => {
       {loading ? (
         <Loading />
       ) : (
-        <div className="flex flex-row h-full grow">
-          <div className="flex flex-col grow m-[3.938rem] space-y-5 w-4/5">
+        <div className="flex flex-row h-full flex-1">
+          <div className="flex flex-col flex-1 m-[3.938rem] space-y-5 w-4/5">
             <BillingPlan wpName={currentWorkspace.name} />
             <Usages
               currentWorkspaceUsages={currentWorkspaceUsages || []}

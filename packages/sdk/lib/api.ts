@@ -111,7 +111,9 @@ export class Api extends Fetcher {
     return await this.get('/workspaces?limit=300');
   }
 
-  async getWorkspace(id: string): Promise<Workspace | null> {
+  async getWorkspace(
+    id: string
+  ): Promise<PrismeaiAPI.GetWorkspace.Responses.$200> {
     return await this.get(`/workspaces/${id}`);
   }
 
@@ -123,7 +125,10 @@ export class Api extends Fetcher {
     return await this.post(`/workspaces/${id}/versions/current/duplicate`, {});
   }
 
-  async updateWorkspace(workspace: Workspace): Promise<Workspace> {
+  async updateWorkspace(
+    workspace: Prismeai.DSULPatch
+  ): Promise<PrismeaiAPI.UpdateWorkspace.Responses.$200 | null> {
+    if (!workspace.id) return null;
     return await this.patch(
       `/workspaces/${workspace.id}`,
       await this.replaceAllImagesData(workspace, workspace.id)
@@ -187,10 +192,10 @@ export class Api extends Fetcher {
 
   // Automations
   async createAutomation(
-    workspace: Workspace,
+    workspaceId: Workspace['id'],
     automation: Prismeai.Automation
   ): Promise<Prismeai.Automation & { slug: string }> {
-    return await this.post(`/workspaces/${workspace.id}/automations`, {
+    return await this.post(`/workspaces/${workspaceId}/automations`, {
       ...automation,
     });
   }

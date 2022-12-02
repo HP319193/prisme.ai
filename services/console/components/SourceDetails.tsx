@@ -1,6 +1,5 @@
 import { createContext, FC, useContext, useEffect, useState } from 'react';
 import api, { Workspace } from '../utils/api';
-import { useWorkspaces } from './WorkspacesProvider';
 
 interface Source {
   name: Workspace['name'];
@@ -36,7 +35,6 @@ export const SourceDetails: FC<SourceDetailsProps> = ({
   appSlug,
   children,
 }) => {
-  const { workspaces } = useWorkspaces();
   const [details, setDetails] = useState<Source>();
 
   useEffect(() => {
@@ -55,7 +53,7 @@ export const SourceDetails: FC<SourceDetailsProps> = ({
       details && setDetails(details);
     };
     fetchDetails();
-  }, [appSlug, workspaceId, workspaces]);
+  }, [appSlug, workspaceId]);
 
   return (
     <sourceDetailsContext.Provider value={details || ({} as Source)}>

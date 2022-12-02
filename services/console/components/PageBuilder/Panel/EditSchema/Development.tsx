@@ -9,7 +9,7 @@ import { useTranslation } from 'next-i18next';
 import { usePages } from '../../../PagesProvider';
 import useSchema from '../../../SchemaForm/useSchema';
 import { useEffect, useRef } from 'react';
-import { useWorkspace } from '../../../WorkspaceProvider';
+import { useWorkspace } from '../../../../providers/Workspace';
 
 const Debug = (props: any) => {
   const { t } = useTranslation('workspaces');

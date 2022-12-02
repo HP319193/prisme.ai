@@ -1,4 +1,5 @@
 import renderer, { act } from 'react-test-renderer';
+// @ts-ignore
 import { mock } from '../../components/UserProvider';
 import api from '../../utils/api';
 import WorkspacesProvider, {

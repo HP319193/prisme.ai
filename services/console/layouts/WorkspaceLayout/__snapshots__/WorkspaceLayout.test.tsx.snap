@@ -21,7 +21,7 @@ Array [
       className="flex items-center justify-between ml-10 mt-3"
     />
     <div
-      className="flex flex-wrap flex-row align-start justify-center mt-5 overflow-y-auto"
+      className="flex flex-wrap flex-row justify-center mt-5 overflow-y-auto"
     />
   </div>,
   <div
@@ -76,7 +76,7 @@ Array [
       className="flex items-center justify-between ml-10 mt-3"
     />
     <div
-      className="flex flex-wrap flex-row align-start justify-center mt-5 overflow-y-auto"
+      className="flex flex-wrap flex-row justify-center mt-5 overflow-y-auto"
     />
   </div>,
   <div
@@ -131,7 +131,7 @@ Array [
       className="flex items-center justify-between ml-10 mt-3"
     />
     <div
-      className="flex flex-wrap flex-row align-start justify-center mt-5 overflow-y-auto"
+      className="flex flex-wrap flex-row justify-center mt-5 overflow-y-auto"
     />
   </div>,
   <div
@@ -186,7 +186,7 @@ Array [
       className="flex items-center justify-between ml-10 mt-3"
     />
     <div
-      className="flex flex-wrap flex-row align-start justify-center mt-5 overflow-y-auto"
+      className="flex flex-wrap flex-row justify-center mt-5 overflow-y-auto"
     />
   </div>,
   <div

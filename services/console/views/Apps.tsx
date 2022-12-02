@@ -2,12 +2,10 @@ import { Modal, notification, Schema } from '@prisme.ai/design-system';
 import { PageHeader, Segmented, Tooltip } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
-import { useWorkspaces } from '../components/WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import getLayout from '../layouts/WorkspaceLayout';
-import { useWorkspace } from '../components/WorkspaceProvider';
 import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import EditDetails from '../layouts/EditDetails';
@@ -16,6 +14,7 @@ import EditableTitle from '../components/AutomationBuilder/EditableTitle';
 import getConfig from 'next/config';
 import IFrameLoader from '../components/IFrameLoader';
 import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
+import { useWorkspace } from '../providers/Workspace';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = '' },
@@ -28,6 +27,7 @@ interface AppsProps extends Prismeai.DetailedAppInstance {
 
 const Apps = ({}: AppsProps) => {
   const { workspace } = useWorkspace();
+  // TODO refacto this shit
   const { appInstances, saveAppInstance } = useApps();
   const { localize } = useLocalizedText();
   const [viewMode, setViewMode] = useState(0);
@@ -55,7 +55,11 @@ const Apps = ({}: AppsProps) => {
     config: {},
   }) as Prismeai.DetailedAppInstance;
 
-  const { uninstallApp } = useWorkspaces();
+  // TODO move to AppProvider
+  //const { uninstallApp } = useWorkspaces();
+  const uninstallApp = useCallback(() => {
+    console.log('uninstallApp');
+  }, []);
   const { t } = useTranslation('workspaces');
 
   const onDelete = useCallback(() => {
@@ -66,11 +70,11 @@ const Apps = ({}: AppsProps) => {
       content: t('apps.uninstall', { appName: appId }),
       onOk: () => {
         push(`/workspaces/${workspace.id}`);
-        uninstallApp(workspace.id, appId);
+        //uninstallApp(workspace.id, appId);
       },
       okText: t('apps.uninstallConfirm', { appName: appId }),
     });
-  }, [appId, push, t, uninstallApp, workspace.id]);
+  }, [appId, push, t, /*uninstallApp, */ workspace.id]);
 
   const [value, setValue] = useState<{
     slug: string;

@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { notification } from '@prisme.ai/design-system';
 import EditDetails from '../layouts/EditDetails';
-import { useWorkspace } from '../components/WorkspaceProvider';
+import { useWorkspace } from '../providers/Workspace';
 import { PageHeader } from 'antd';
 
 jest.mock('../utils/useYaml', () => {
@@ -18,19 +18,6 @@ jest.mock('../utils/useYaml', () => {
   return useYaml;
 });
 
-jest.mock('../components/WorkspaceProvider', () => {
-  const mock = {
-    workspace: {
-      id: '42',
-      name: 'Foo',
-    },
-    updateAutomation: jest.fn(),
-  };
-
-  return {
-    useWorkspace: () => mock,
-  };
-});
 jest.mock('next/router', () => {
   const mock = {
     query: {

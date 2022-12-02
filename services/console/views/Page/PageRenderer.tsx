@@ -17,11 +17,11 @@ import Head from 'next/head';
 import useLocalizedText from '../../utils/useLocalizedText';
 import PagePreview from '../../components/PagePreview';
 import { useCallback, useMemo } from 'react';
-import { useWorkspace } from '../../components/WorkspaceProvider';
 import { useApps } from '../../components/AppsProvider';
 import { PageBuilderContext } from '../../components/PageBuilder/context';
 import PageBuilder from '../../components/PageBuilder';
 import CSSEditor from './CSSEditor';
+import { useWorkspace } from '../../providers/Workspace';
 
 interface PageRendererProps {
   value: Prismeai.Page;

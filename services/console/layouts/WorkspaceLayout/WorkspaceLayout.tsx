@@ -11,22 +11,23 @@ import {
 import { useTranslation } from 'next-i18next';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
 import WorkspaceSource from '../../views/WorkspaceSource';
-import { useWorkspace } from '../../components/WorkspaceProvider';
 import workspaceLayoutContext, { WorkspaceLayoutContext } from './context';
 import useLocalizedText from '../../utils/useLocalizedText';
 import Storage from '../../utils/Storage';
-import { useApps } from '../../components/AppsProvider';
-import usePages from '../../components/PagesProvider/context';
 import AppsStore from '../../views/AppsStore';
 import { generateNewName } from '../../utils/generateNewName';
-import { Workspace } from '@prisme.ai/sdk';
 import Navigation from './Navigation';
 import { DoubleLeftOutlined, WarningOutlined } from '@ant-design/icons';
+import { useWorkspace } from '../../providers/Workspace';
 
 export const WorkspaceLayout: FC = ({ children }) => {
-  const { workspace, createAutomation, saveSource, save } = useWorkspace();
-  const { getAppInstances } = useApps();
-  const { pages, createPage } = usePages();
+  const {
+    workspace,
+    saveWorkspace,
+    createAutomation,
+    createPage,
+  } = useWorkspace();
+
   const router = useRouter();
 
   const { localize } = useLocalizedText();
@@ -82,10 +83,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     }
   }, [fullSidebar]);
 
-  useEffect(() => {
-    getAppInstances(workspace.id);
-  }, [getAppInstances, workspace]);
-
   // Manage source panel display
   useEffect(() => {
     if (sourceDisplayed) {
@@ -101,28 +98,26 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
     setSaving(true);
     try {
-      await saveSource(newSource);
+      await saveWorkspace(newSource);
       notification.success({
         message: t('expert.save.confirm'),
         placement: 'bottomRight',
       });
     } catch {}
     setSaving(false);
-  }, [newSource, saveSource, t]);
+  }, [newSource, saveWorkspace, t]);
 
   const onSave = useCallback(
-    async (workspace: Workspace) => {
+    async (workspace: Prismeai.Workspace) => {
       setSaving(true);
-      try {
-        await save(workspace);
-        notification.success({
-          message: t('save.confirm'),
-          placement: 'bottomRight',
-        });
-      } catch {}
+      await saveWorkspace(workspace);
+      notification.success({
+        message: t('save.confirm'),
+        placement: 'bottomRight',
+      });
       setSaving(false);
     },
-    [save, t]
+    [saveWorkspace, t]
   );
 
   const displaySource = useCallback((v: boolean) => {
@@ -141,8 +136,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       name,
       do: [],
     });
-
-    setCreating(false);
+    setTimeout(() => setCreating(false));
     if (createdAutomation) {
       await router.push(
         `/workspaces/${workspace.id}/automations/${createdAutomation.slug}`
@@ -159,31 +153,33 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   const createPageHandler = useCallback(async () => {
     setCreating(true);
-
     const name = generateNewName(
       t(`pages.create.defaultName`),
-      Array.from(pages.get(workspace.id) || []).map(({ name }) => name),
+      Object.values(workspace.pages || {}).map(({ name }) => name),
       localize
     );
-
-    try {
-      const createdPage = await createPage(workspace.id, {
-        name: {
-          [language]: name,
-        },
-        blocks: [],
-      });
-
-      if (createdPage) {
-        await router.push(
-          `/workspaces/${workspace.id}/pages/${createdPage.id}`
-        );
-      }
-    } catch (e) {}
-    setCreating(false);
-  }, [t, pages, workspace.id, localize, createPage, language, router]);
+    const createdPage = await createPage({
+      name: {
+        [language]: name,
+      },
+      blocks: [],
+    });
+    setTimeout(() => setCreating(false));
+    if (createdPage) {
+      await router.push(`/workspaces/${workspace.id}/pages/${createdPage.id}`);
+    }
+  }, [
+    createPage,
+    language,
+    localize,
+    router,
+    t,
+    workspace.id,
+    workspace.pages,
+  ]);
 
   const installAppHandler = useCallback(() => setAppStoreVisible(true), []);
+
   return (
     <workspaceLayoutContext.Provider
       value={{

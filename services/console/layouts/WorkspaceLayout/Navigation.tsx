@@ -14,9 +14,6 @@ import {
   HTMLAttributes,
   ReactElement,
 } from 'react';
-import { useApps } from '../../components/AppsProvider';
-import { usePages } from '../../components/PagesProvider';
-import { useWorkspace } from '../../components/WorkspaceProvider';
 import { search } from '../../utils/filterUtils';
 import useLocalizedText from '../../utils/useLocalizedText';
 import ChevronIcon from '../../icons/chevron.svgr';
@@ -27,6 +24,7 @@ import HomeIcon from '../../icons/home.svgr';
 import HomeIconOutlined from '../../icons/home-outlined.svgr';
 import SearchInput from './SearchInput';
 import Highlight from '../../components/Highlight/Highlight';
+import { useWorkspace } from '../../providers/Workspace';
 
 interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   onCreateAutomation?: () => void;
@@ -118,6 +116,10 @@ const ItemsGroup: FC<ItemsGroupProps> = ({
   );
 };
 
+const EMPTY_AUTOMATIONS: Prismeai.DSULReadOnly['automations'] = {};
+const EMPTY_PAGES: Prismeai.DSULReadOnly['pages'] = {};
+const EMPTY_IMPORTS: Prismeai.DSULReadOnly['imports'] = {};
+
 export const Navigation = ({
   onCreateAutomation,
   onCreatePage,
@@ -130,15 +132,46 @@ export const Navigation = ({
   const { asPath } = useRouter();
   const [searchValue, setSearchValue] = useState('');
   const {
-    workspace: { id, automations = {} },
+    workspace: {
+      id,
+      automations = EMPTY_AUTOMATIONS,
+      pages = EMPTY_PAGES,
+      imports = EMPTY_IMPORTS,
+    },
   } = useWorkspace();
-  const { appInstances } = useApps();
-  const { pages } = usePages();
-
   const types = ['automations', 'pages', 'apps'] as const;
 
   const [opens, setOpens] = useState<Map<typeof types[number], boolean>>(
-    new Map()
+    new Map(
+      types.map((type) => {
+        switch (type) {
+          case 'pages':
+            return [
+              type,
+              Object.entries(pages).findIndex(
+                ([, { id: pageId }]) =>
+                  `/workspaces/${id}/pages/${pageId}` === asPath
+              ) > -1,
+            ];
+          case 'automations':
+            return [
+              type,
+              Object.entries(automations).findIndex(
+                ([slug]) => `/workspaces/${id}/automations/${slug}` === asPath
+              ) > -1,
+            ];
+          case 'apps':
+            return [
+              type,
+              Object.entries(imports).findIndex(
+                ([slug]) => `/workspaces/${id}/apps/${slug}` === asPath
+              ) > -1,
+            ];
+          default:
+            return [type, false];
+        }
+      })
+    )
   );
   const toggles = useRef<Map<typeof types[number], ItemsGroupProps['onClick']>>(
     new Map()
@@ -167,21 +200,19 @@ export const Navigation = ({
   );
   const filteredPages = useMemo(
     () =>
-      Array.from(pages.get(id) || []).filter(({ slug, name, description }) =>
+      Object.entries(pages).filter(([slug, { name, description }]) =>
         search(searchValue)(
           `${slug} ${localize(name)} ${localize(description)}}`
         )
       ),
-    [id, localize, pages, searchValue]
+    [localize, pages, searchValue]
   );
   const filteredApps = useMemo(
     () =>
-      Array.from(
-        appInstances.get(id) || []
-      ).filter(({ appSlug, slug, appName: name }) =>
-        search(searchValue)(`${appSlug} ${slug} ${localize(name)}}`)
+      Object.entries(imports).filter(([slug, { appSlug, appName }]) =>
+        search(searchValue)(`${appSlug} ${slug} ${localize(appName)}}`)
       ),
-    [appInstances, id, localize, searchValue]
+    [imports, localize, searchValue]
   );
 
   useEffect(() => {
@@ -190,11 +221,11 @@ export const Navigation = ({
       automations: Object.keys(automations).map(
         (slug) => `/workspaces/${id}/automations/${slug}`
       ),
-      pages: Array.from(pages.get(id) || []).map(
-        ({ id: pageId }) => `/workspaces/${id}/pages/${pageId}`
+      pages: Object.values(pages).map(
+        ({ id }) => `/workspaces/${id}/pages/${id}`
       ),
-      apps: Array.from(appInstances.get(id) || []).map(
-        ({ slug }) => `/workspaces/${id}/apps/${slug}`
+      apps: Object.keys(imports).map(
+        (slug) => `/workspaces/${id}/apps/${slug}`
       ),
     };
     setOpens((opens) => {
@@ -208,7 +239,7 @@ export const Navigation = ({
       });
       return changed ? newOpens : opens;
     });
-  }, [appInstances, asPath, automations, id, pages, toggle]);
+  }, [asPath, automations, id, imports, pages, toggle]);
 
   return (
     <div className={`flex flex-col max-h-full ${props.className}`} {...props}>
@@ -253,10 +284,10 @@ export const Navigation = ({
             onAdd={onCreatePage}
             tooltip={t('workspace.add.page')}
           >
-            {filteredPages.map(({ id: slug, name }) => (
+            {filteredPages.map(([slug, { id: pageId, name }]) => (
               <Item
                 key={slug}
-                href={`/workspaces/${id}/pages/${slug}`}
+                href={`/workspaces/${id}/pages/${pageId}`}
                 icon={
                   <Tooltip title={localize(name)} placement="right">
                     <div>
@@ -330,7 +361,7 @@ export const Navigation = ({
             onAdd={onInstallApp}
             tooltip={t('workspace.add.app')}
           >
-            {filteredApps.map(({ slug, appName: name, photo }) => (
+            {filteredApps.map(([slug, { appName: name = slug, photo }]) => (
               <Item
                 key={slug}
                 href={`/workspaces/${id}/apps/${slug}`}

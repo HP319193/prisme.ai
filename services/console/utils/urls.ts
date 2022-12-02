@@ -1,6 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import getConfig from 'next/config';
-import { useWorkspace } from '../components/WorkspaceProvider';
+import { useWorkspace } from '../providers/Workspace';
 
 const {
   publicRuntimeConfig: {

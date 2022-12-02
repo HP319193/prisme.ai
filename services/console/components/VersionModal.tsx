@@ -1,21 +1,7 @@
-import {
-  Input,
-  Modal,
-  notification,
-  TextArea,
-  Tooltip,
-} from '@prisme.ai/design-system';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Modal, TextArea } from '@prisme.ai/design-system';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWorkspaces } from './WorkspacesProvider';
-import {
-  SLUG_MATCH_INVALID_CHARACTERS,
-  SLUG_VALIDATION_REGEXP,
-} from '../utils/regex';
-import { useApps } from './AppsProvider';
-import { usePrevious } from '../utils/usePrevious';
-import useLocalizedText from '../utils/useLocalizedText';
-import { useWorkspace } from './WorkspaceProvider';
+import { useWorkspace } from '../providers/Workspace';
 import api from '../utils/api';
 
 interface VersionModalProps {
@@ -30,7 +16,7 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
   const { t } = useTranslation('workspaces');
 
   const onConfirm = useCallback(async () => {
-    await api.workspaces(workspace.id).versions.create({ description });
+    api.workspaces(workspace.id).versions.create({ description });
   }, [description, workspace.id]);
 
   return (

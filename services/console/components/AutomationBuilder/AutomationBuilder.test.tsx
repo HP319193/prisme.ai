@@ -5,7 +5,7 @@ import Panel from '../Panel';
 import InstructionForm from './Panel/InstructionForm';
 import ConditionForm from './Panel/ConditionForm';
 import TriggerForm from './Panel/TriggerForm';
-import { useWorkspace } from '../WorkspaceProvider';
+import { useWorkspace } from '../../providers/Workspace';
 
 jest.mock('react-flow-renderer', () => {
   const { useAutomationBuilder } = require('./context');
@@ -36,7 +36,7 @@ jest.mock('react-flow-renderer', () => {
   return ReactFlow;
 });
 
-jest.mock('../WorkspaceProvider', () => {
+jest.mock('../../providers/Workspace', () => {
   const mock = {};
   return {
     useWorkspace: () => mock,

@@ -1,10 +1,10 @@
 import { Schema } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
+import { useWorkspace } from '../../providers/Workspace';
 import { generatePageUrl } from '../../utils/urls';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { readAppConfig } from '../AutomationBuilder/Panel/readAppConfig';
-import { useWorkspace } from '../WorkspaceProvider';
 
 function getEmitEvents(
   doList: Prismeai.InstructionList

@@ -2,9 +2,9 @@ import { builtinBlocks } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import { useApps } from '../AppsProvider';
-import { useWorkspace } from '../WorkspaceProvider';
 import workspaceIcon from '../../icons/icon-workspace.svg';
 import builtinBlocksVariants from './builtinBlocksVariants';
+import { useWorkspace } from '../../providers/Workspace';
 
 export interface BlockInCatalog extends Prismeai.Block {
   slug: string;

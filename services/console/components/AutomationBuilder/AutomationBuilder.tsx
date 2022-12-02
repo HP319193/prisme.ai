@@ -36,7 +36,7 @@ import OutputBlock from './OutputBlock';
 import OutputForm from './Panel/OutputForm';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { Schema } from '@prisme.ai/design-system';
-import { useWorkspace } from '../WorkspaceProvider';
+import { useWorkspace } from '../../providers/Workspace';
 
 type InstructionSchemaTupple = [
   string,

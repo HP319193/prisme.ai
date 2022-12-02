@@ -1,9 +1,9 @@
 import { Loading } from '@prisme.ai/design-system';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useWorkspace } from './WorkspaceProvider';
 import { generatePageUrl } from '../utils/urls';
 import { Workspace } from '../utils/api';
 import { useApps } from './AppsProvider';
+import { useWorkspace } from '../providers/Workspace';
 
 interface PagePreviewProps {
   page: Prismeai.Page;
@@ -48,14 +48,14 @@ const getAppInstances = (
 };
 
 export const PagePreview = ({ page }: PagePreviewProps) => {
-  const { workspace } = useWorkspace();
+  const {
+    workspace,
+    workspace: { id, slug = id },
+  } = useWorkspace();
   const { appInstances } = useApps();
   const ref = useRef<HTMLIFrameElement>(null);
   const pageId = useRef(page.id);
   const [loading, setLoading] = useState(true);
-  const {
-    workspace: { id, slug = id },
-  } = useWorkspace();
 
   const updatePage = useCallback(() => {
     if (!ref.current || !ref.current.contentWindow) return;

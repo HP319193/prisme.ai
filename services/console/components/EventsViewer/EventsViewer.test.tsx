@@ -1,7 +1,7 @@
 import EventsViewer from './EventsViewer';
 import renderer, { act } from 'react-test-renderer';
 import { Event } from '@prisme.ai/sdk';
-import { useWorkspace } from '../WorkspaceProvider';
+import { useWorkspace } from '../../providers/Workspace';
 
 jest.mock('@prisme.ai/sdk', () => {
   class Events {
@@ -25,7 +25,7 @@ jest.mock('../../utils/dates', () => {
   };
 });
 
-jest.mock('../WorkspaceProvider', () => {
+jest.mock('../../providers/Workspace', () => {
   const mock = {
     events: new Map(),
     filters: {},

@@ -4,10 +4,7 @@ import useYaml from '../utils/useYaml';
 import CodeEditor from '../components/CodeEditor/lazy';
 import { YAMLException } from 'js-yaml';
 import { validateWorkspace } from '@prisme.ai/validation';
-import {
-  useWorkspace,
-  WorkspaceContext,
-} from '../components/WorkspaceProvider';
+import { useWorkspace, WorkspaceContext } from '../providers/Workspace';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 
 jest.mock('../utils/useYaml', () => {
@@ -42,9 +39,11 @@ jest.mock('../layouts/WorkspaceLayout/context', () => {
   };
 });
 
-jest.mock('../components/WorkspaceProvider', () => {
+jest.mock('../providers/Workspace', () => {
   const mock = {
-    setNewSource: () => null,
+    workspace: {
+      id: '42',
+    },
   };
   return {
     useWorkspace: () => mock,
@@ -182,93 +181,6 @@ automations: []
       message: 'automations should be an array',
       params: {},
       schemaPath: '/automations',
-    },
-  ]);
-});
-
-it('should find endpoints', async () => {
-  (useWorkspace() as any).workspace = {
-    name: 'foo',
-    id: '42',
-  };
-  (useYaml().toYaml as jest.Mock).mockImplementation(
-    () => `name: foo
-automations:
-  foo:
-    when:
-      endpoint: true
-`
-  );
-  const listeners: any = {};
-  const div = {
-    addEventListener: (type: string, fn: Function) => {
-      listeners[type] = listeners[type] || [];
-      listeners[type].push(fn);
-    },
-    removeEventListener: () => null,
-  };
-  (window.navigator.clipboard as any) = {
-    writeText: jest.fn(),
-  };
-  const root = renderer.create(<WorkspaceSource />, {
-    createNodeMock: (element) => {
-      if (element.type === 'div') return div;
-      return null;
-    },
-  });
-  await act(async () => {
-    await true;
-  });
-  const ed = root.root.findByType(CodeEditor);
-  expect(ed.props.annotations).toEqual([
-    {
-      column: 0,
-      row: 4,
-      text: 'http://localhost:3000/api/workspaces/42/webhooks/foo',
-      type: 'endpoint',
-    },
-  ]);
-
-  listeners.click.forEach((fn: Function) =>
-    fn({
-      target: {
-        classList: {
-          contains: () => true,
-        },
-        textContent: '5',
-      },
-    })
-  );
-
-  expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
-    'http://localhost:3000/api/workspaces/42/webhooks/foo'
-  );
-});
-
-it('should find custom endpoints', async () => {
-  (useWorkspace() as any).workspace = {
-    name: 'foo',
-    id: '42',
-  };
-  (useYaml().toYaml as jest.Mock).mockImplementation(
-    () => `name: foo
-automations:
-  foo:
-    when:
-      endpoint: custom
-`
-  );
-  const root = renderer.create(<WorkspaceSource />);
-  await act(async () => {
-    await true;
-  });
-  const ed = root.root.findByType(CodeEditor);
-  expect(ed.props.annotations).toEqual([
-    {
-      column: 0,
-      row: 4,
-      text: 'http://localhost:3000/api/workspaces/42/webhooks/custom',
-      type: 'endpoint',
     },
   ]);
 });

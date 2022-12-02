@@ -24,7 +24,7 @@ jest.mock('./builtinBlocksVariants', () => [
     },
   },
 ]);
-jest.mock('../WorkspaceProvider', () => {
+jest.mock('../../providers/Workspace', () => {
   const useWorkspace = () => ({
     workspace: {
       id: '42',

@@ -3,15 +3,6 @@ import renderer, { act } from 'react-test-renderer';
 import api from '../../utils/api';
 import { usePermissions } from './context';
 
-jest.mock('../WorkspacesProvider', () => {
-  const mock = {
-    user: {},
-  };
-  return {
-    useUser: () => mock,
-  };
-});
-
 beforeEach(() => {
   jest.resetAllMocks();
 });

@@ -1,5 +1,5 @@
+import { useWorkspace } from '../../providers/Workspace';
 import ShareWorkspacePopover from './ShareWorkspacePopover';
-import { useWorkspace } from '../WorkspaceProvider';
 
 interface ShareWorkspaceProps {
   parentWorkspaceId?: string;

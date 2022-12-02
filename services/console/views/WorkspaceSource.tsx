@@ -21,9 +21,8 @@ import {
   Space,
 } from '@prisme.ai/design-system';
 import { useRouter } from 'next/router';
-import { useWorkspaces } from '../components/WorkspacesProvider';
-import { useWorkspace } from '../components/WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
+import { useWorkspace } from '../providers/Workspace';
 
 interface Annotation {
   row: number;
@@ -42,11 +41,17 @@ interface WorkspaceSourceProps {
 }
 export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const { t } = useTranslation('workspaces');
-  const { workspace } = useWorkspace();
+  const {
+    workspace: { id, pages, automations, ...workspace },
+  } = useWorkspace();
   const { onSaveSource } = useWorkspaceLayout();
-  const { setInvalid, setNewSource, invalid, saving, displaySource } =
-    useWorkspaceLayout();
-  const { fetch } = useWorkspaces();
+  const {
+    setInvalid,
+    setNewSource,
+    invalid,
+    saving,
+    displaySource,
+  } = useWorkspaceLayout();
   const [dirty, setDirty] = useState(false);
   const [value, setValue] = useState<string | undefined>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
@@ -84,19 +89,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const initYaml = useCallback(async () => {
     try {
-      // remove workspace id and automations slugs
-      const { id, automations = {}, ...json } = workspace;
-      const cleanedJson = {
-        ...json,
-        automations: Object.keys(automations).reduce((prev, name) => {
-          const { slug, ...automation } = automations[name];
-          return {
-            ...prev,
-            [name]: automation,
-          };
-        }, {}),
-      };
-      const value = await toYaml(cleanedJson);
+      const value = await toYaml(workspace);
       setValue(value);
     } catch (e) {}
   }, [workspace, toYaml]);

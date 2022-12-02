@@ -25,7 +25,6 @@ import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import EditDetails from '../layouts/EditDetails';
 import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
 import { ApiError } from '../utils/api';
-import { useWorkspace } from '../components/WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import { usePrevious } from '../utils/usePrevious';
 import EditableTitle from '../components/AutomationBuilder/EditableTitle';
@@ -33,6 +32,7 @@ import { PageHeader, Tooltip } from 'antd';
 import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
 import { CodeOutlined } from '@ant-design/icons';
 import CopyIcon from '../icons/copy.svgr';
+import { useWorkspace } from '../providers/Workspace';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -87,7 +87,17 @@ const cleanAutomation = (automation: Prismeai.Automation) => {
 export const Automation = () => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
-  const { workspace, updateAutomation, deleteAutomation } = useWorkspace();
+  const { workspace } = useWorkspace();
+  // TODO put in a AUtomationProvider
+  const updateAutomation = useCallback(
+    () => console.log('updateAutomation'),
+    []
+  );
+  const deleteAutomation = useCallback(
+    () => console.log('deleteAutomation'),
+    []
+  );
+
   const { setDirty } = useWorkspaceLayout();
   const { getAppInstances, appInstances } = useApps();
 

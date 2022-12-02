@@ -17,7 +17,6 @@ import { CollapseItem } from '@prisme.ai/design-system/lib/Components/Collapse';
 import { Event } from '@prisme.ai/sdk';
 import Empty from './Empty';
 import { ExceptionOutlined } from '@ant-design/icons';
-import { useWorkspace, WorkspaceContext } from '../WorkspaceProvider';
 import ShareWorkspace from '../Share/ShareWorkspace';
 import SourceDetails from '../SourceDetails';
 import SectionContent from './SectionContent';
@@ -25,6 +24,7 @@ import { Badge, PageHeader } from 'antd';
 import HorizontalSeparatedNav from '../HorizontalSeparatedNav';
 import Filters from './Filters';
 import { useQueryString } from '../QueryStringProvider';
+import { useWorkspace } from '../../providers/Workspace';
 
 export const EventsViewerRenderer = memo(function EventsViewerRender({
   events,
@@ -35,7 +35,7 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
   updateFilters,
   workspaceName,
 }: Pick<
-  WorkspaceContext,
+  any, // TODO
   | 'events'
   | 'nextEvents'
   | 'readEvent'
@@ -233,42 +233,43 @@ export const EventsViewerRenderer = memo(function EventsViewerRender({
 export const EventsViewer = () => {
   const { t } = useTranslation('workspaces');
   const {
-    setShare,
-    events,
-    nextEvents,
-    readEvents,
-    readEvent,
-    filters,
-    updateFilters,
+    // setShare,
+    // events,
+    // nextEvents,
+    // readEvents,
+    // readEvent,
+    // filters,
+    // updateFilters,
+    // ça ça part dans un EventsProvider
     workspace: { name: workspaceName } = {},
   } = useWorkspace();
 
-  useEffect(() => {
-    setShare({
-      label: t('workspace.share'),
-      component: ShareWorkspace,
-    });
-  }, [setShare, t]);
+  // useEffect(() => {
+  //   setShare({
+  //     label: t('workspace.share'),
+  //     component: ShareWorkspace,
+  //   });
+  // }, [setShare, t]);
 
   const [props, setProps] = useState({
-    events,
-    nextEvents,
-    readEvents,
-    readEvent,
-    filters,
-    updateFilters,
+    // events,
+    // nextEvents,
+    // readEvents,
+    // readEvent,
+    // filters,
+    // updateFilters,
     workspaceName,
   });
 
   useEffect(() => {
     const t = setTimeout(() => {
       setProps({
-        events,
-        nextEvents,
-        readEvents,
-        readEvent,
-        filters,
-        updateFilters,
+        // events,
+        // nextEvents,
+        // readEvents,
+        // readEvent,
+        // filters,
+        // updateFilters,
         workspaceName,
       });
     }, 10);
@@ -276,15 +277,15 @@ export const EventsViewer = () => {
       clearTimeout(t);
     };
   }, [
-    events,
-    nextEvents,
-    readEvents,
-    readEvent,
-    filters,
+    // events,
+    // nextEvents,
+    // readEvents,
+    // readEvent,
+    // filters,
+    //updateFilters,
     workspaceName,
-    updateFilters,
   ]);
-
-  return <EventsViewerRenderer {...props} />;
+  return <div>To refacto</div>;
+  //return <EventsViewerRenderer {...props} />;
 };
 export default EventsViewer;

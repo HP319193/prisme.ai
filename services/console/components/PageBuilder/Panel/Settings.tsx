@@ -13,8 +13,8 @@ import useLocalizedText from '../../../utils/useLocalizedText';
 import usePages from '../../PagesProvider/context';
 import useSchema from '../../SchemaForm/useSchema';
 import { usePageBuilder } from '../context';
-import { useWorkspace } from '../../WorkspaceProvider';
 import useBlockPageConfig from '../useBlockPageConfig';
+import { useWorkspace } from '../../../providers/Workspace';
 
 interface SettingsProps {
   removeBlock: () => void;

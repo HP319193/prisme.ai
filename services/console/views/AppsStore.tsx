@@ -10,7 +10,8 @@ import {
 import { useApps } from '../components/AppsProvider';
 import IconApps from '../icons/icon-apps.svgr';
 import useLocalizedText from '../utils/useLocalizedText';
-import { useWorkspace } from '../components/WorkspaceProvider';
+import { useWorkspace } from '../providers/Workspace';
+import { generateNewName } from '../utils/generateNewName';
 
 interface AppStoreProps {
   visible: boolean;
@@ -33,6 +34,7 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   const { apps, getApps } = useApps();
   const {
     installApp,
+    workspace,
     workspace: { id: workspaceId },
   } = useWorkspace();
   const { push } = useRouter();
@@ -61,9 +63,17 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   const onAppClick = useCallback(
     async (id: string, name: string) => {
       try {
-        await installApp(workspaceId, {
+        const slug = generateNewName(
+          id,
+          Object.values(workspace.imports || {}).map(({ slug }) => slug),
+          localize,
+          0,
+          true
+        );
+
+        await installApp({
           appSlug: id,
-          appName: name,
+          slug,
         });
         push(`/workspaces/${workspaceId}/apps/${id}`);
       } catch (e) {
@@ -74,7 +84,15 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
       }
       onCancel();
     },
-    [errorT, installApp, onCancel, push, workspaceId]
+    [
+      errorT,
+      installApp,
+      localize,
+      onCancel,
+      push,
+      workspace.imports,
+      workspaceId,
+    ]
   );
 
   return (
@@ -93,26 +111,26 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
             placeholder={t('apps.search')}
           />
         </div>
-        <div className="flex flex-wrap flex-row align-start justify-center mt-5 overflow-y-auto">
+        <div className="flex flex-wrap flex-row justify-center mt-5 overflow-y-auto">
           {filteredApps.map(({ slug, name, description, photo }) => (
             <div
               key={slug}
-              className="flex flex-row w-[25rem] align-center items-center border rounded border-gray-500 p-4 m-[0.8rem] h-[9rem] cursor-pointer hover:bg-blue-200"
+              className="flex flex-row w-[25rem]  items-center border rounded border-gray-500 p-4 m-[0.8rem] h-[9rem] cursor-pointer hover:bg-blue-200"
               onClick={() => onAppClick(slug, name)}
             >
-              <div className="flex align-start justify-center w-[6rem] mr-4 flex-none">
+              <div className="flex justify-center w-[6rem] mr-4 flex-none">
                 {photo ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={photo}
-                    className="rounded text-blue h-[64px] w-[64px] object-contain"
+                    className="rounded h-[64px] w-[64px] object-contain"
                     alt={t('apps.photoAlt')}
                   />
                 ) : (
                   <IconApps width={80} height={80} className="text-gray-200" />
                 )}
               </div>
-              <div className="flex flex-col grow justify-start h-full mt-3 overflow-hidden text-ellipsis leading-[1.3rem]">
+              <div className="flex flex-col flex-1 justify-start h-full mt-3 overflow-hidden text-ellipsis leading-[1.3rem]">
                 <Title level={4}>{name}</Title>
                 <div>{localize(description)}</div>
                 {/*  Get description language, fallback to en */}

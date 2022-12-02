@@ -26,6 +26,7 @@ interface EditDetailsprops {
   context?: string;
   visible?: boolean;
   onVisibleChange?: (visible: boolean) => void;
+  disabled?: boolean;
 }
 
 export const EditDetails = ({
@@ -34,6 +35,7 @@ export const EditDetails = ({
   onSave,
   onDelete,
   context,
+  disabled,
   ...props
 }: EditDetailsprops) => {
   const { t } = useTranslation('workspaces');
@@ -89,7 +91,7 @@ export const EditDetails = ({
                 <DeleteOutlined />
                 {t('details.delete.label', { context })}
               </Button>
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="submit" disabled={disabled}>
                 {t('details.save', { context })}
               </Button>
             </div>,

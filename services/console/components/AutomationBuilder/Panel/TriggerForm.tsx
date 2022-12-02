@@ -2,10 +2,10 @@ import { useTranslation } from 'next-i18next';
 import { FC, useMemo } from 'react';
 import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
-import { useWorkspace } from '../../WorkspaceProvider';
 import { useApps } from '../../AppsProvider';
 import { useAutomationBuilder } from '../context';
 import { usePages } from '../../PagesProvider';
+import { useWorkspace } from '../../../providers/Workspace';
 
 interface TriggerFormProps {
   trigger?: Prismeai.When;

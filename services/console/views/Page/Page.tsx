@@ -7,12 +7,12 @@ import { Loading, notification } from '@prisme.ai/design-system';
 import { PageBuilderContext } from '../../components/PageBuilder/context';
 import { usePages } from '../../components/PagesProvider';
 import useKeyboardShortcut from '../../components/useKeyboardShortcut';
-import { useWorkspace } from '../../components/WorkspaceProvider';
 import getLayout from '../../layouts/WorkspaceLayout';
 import { useWorkspaceLayout } from '../../layouts/WorkspaceLayout/context';
 import api from '../../utils/api';
 import PageRenderer from './PageRenderer';
 import { cleanValue } from './cleanValue';
+import { useWorkspace } from '../../providers/Workspace';
 
 export const Page = () => {
   const { t } = useTranslation('workspaces');
