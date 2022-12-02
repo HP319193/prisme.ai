@@ -53,7 +53,17 @@ const searchFilters: {
         if (!expected) {
           return !found;
         }
-        return found === expected;
+        if (
+          typeof found !== 'string' ||
+          typeof expected !== 'string' ||
+          (expected[expected.length - 1] !== '*' && expected[0] !== '*')
+        ) {
+          return found === expected;
+        }
+        // Only support beginning OR ending wildcard for the moment
+        return expected[0] === '*'
+          ? found.endsWith(expected.slice(1))
+          : found.startsWith(expected.slice(0, -1));
       })
       .every(Boolean);
   },
