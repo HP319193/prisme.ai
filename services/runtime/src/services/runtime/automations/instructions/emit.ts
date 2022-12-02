@@ -5,7 +5,7 @@ import { AppContext } from '../../../workspaces';
 import { ContextsManager } from '../../contexts';
 
 export async function emit(
-  { event, payload, target }: Prismeai.Emit['emit'],
+  { event, payload, target, options }: Prismeai.Emit['emit'],
   broker: Broker,
   ctx: ContextsManager,
   appContext?: AppContext
@@ -23,7 +23,7 @@ export async function emit(
         sessionId: ctx.session?.sessionId || broker.parentSource?.sessionId,
       },
       RUNTIME_EMITS_BROKER_TOPIC,
-      { target }
+      { target, options }
     );
   } catch (error) {
     if (

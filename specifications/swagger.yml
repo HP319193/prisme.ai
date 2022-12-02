@@ -3423,6 +3423,8 @@ components:
                     type: string
                   template:
                     type: string
+            options:
+              $ref: "#/components/schemas/PrismeEventOptions"
     CreateUserTopic:
       type: object
       required:
@@ -3891,6 +3893,14 @@ components:
         sessionId:
           type: string
 
+    PrismeEventOptions:
+      type: object
+      properties:
+        persist:
+          type: boolean
+          description: "Whether to persist this event or not. Defaults to true"
+          default: true
+
     PrismeEvent:
       type: object
       required:
@@ -3937,6 +3947,8 @@ components:
           $ref: '#/components/schemas/AnyValue'
         target:
           $ref: '#/components/schemas/PrismeEventTarget'
+        options:
+          $ref: '#/components/schemas/PrismeEventOptions'
         error:
           type: object
           properties:

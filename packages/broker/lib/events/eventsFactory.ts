@@ -30,6 +30,9 @@ export interface PrismeEvent<T extends object = object> {
   source: EventSource;
   payload?: T;
   error?: { message: string } | BrokerError;
+  options?: {
+    persist?: boolean;
+  };
   createdAt: string;
   id: string;
 }

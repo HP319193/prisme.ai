@@ -55,6 +55,10 @@ process.on('uncaughtException', uncaughtExceptionHandler);
     },
   });
   broker.all(async function saveEvent(event): Promise<boolean> {
+    if (event?.options?.persist === false) {
+      return true;
+    }
+
     await eventsStorageStream.write(event);
     return true;
   });
