@@ -2,10 +2,12 @@ import { Schema } from 'mongoose';
 import {
   AccessManager as GenericAccessManager,
   AccessManagerOptions,
+  ApiKey as GenericApiKey,
 } from '@prisme.ai/permissions';
 import { ActionType, SubjectType, Role, config } from './config';
 
-export { SubjectType, Role, ActionType };
+type ApiKey = GenericApiKey<SubjectType.Workspace>;
+export { SubjectType, Role, ActionType, ApiKey };
 
 export interface WorkspaceMetadata {
   id: string;

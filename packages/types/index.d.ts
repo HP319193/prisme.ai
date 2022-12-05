@@ -1306,7 +1306,6 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
-        apiKey?: string;
         styles?: string;
         appInstances: {
             slug?: string;
@@ -1326,6 +1325,7 @@ declare namespace Prismeai {
          * Indicates whether this page is public. Reflects page permissions and cannot be set directly
          */
         public?: boolean;
+        apiKey: string;
     }
     export interface DuplicatedWorkspace {
         /**
@@ -1643,7 +1643,6 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
-        apiKey?: string;
         styles?: string;
     }
     export interface PageDetails {
@@ -1665,6 +1664,7 @@ declare namespace Prismeai {
          * Indicates whether this page is public. Reflects page permissions and cannot be set directly
          */
         public?: boolean;
+        apiKey: string;
     }
     /**
      * Page
@@ -1685,7 +1685,6 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
-        apiKey?: string;
     }
     export interface PagePermissionsDeleted {
         /**
@@ -2030,6 +2029,7 @@ declare namespace Prismeai {
             [key: string]: any;
         };
         secret?: boolean;
+        event?: boolean;
     }
     export interface UninstalledAppInstance {
         /**

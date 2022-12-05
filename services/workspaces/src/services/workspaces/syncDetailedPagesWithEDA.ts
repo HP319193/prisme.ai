@@ -41,6 +41,9 @@ export async function syncDetailedPagesWithEDA(
     const detailedPage = await pages.getDetailedPage({
       id,
     });
+    detailedPage.apiKey = (
+      await pages.getUpdatedPageApiKey(detailedPage)
+    ).apiKey;
     if (!workspaceSlug) {
       workspaceSlug = detailedPage.workspaceSlug;
     }

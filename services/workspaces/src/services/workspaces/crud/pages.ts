@@ -1,7 +1,12 @@
 import { Broker } from '@prisme.ai/broker';
 import { hri } from 'human-readable-ids';
 import { EventType } from '../../../eda';
-import { AccessManager, ActionType, SubjectType } from '../../../permissions';
+import {
+  AccessManager,
+  ActionType,
+  SubjectType,
+  ApiKey,
+} from '../../../permissions';
 import { nanoid } from 'nanoid';
 import { logger } from '../../../logger';
 import { DSULType, DSULStorage } from '../../dsulStorage';
@@ -181,6 +186,8 @@ class Pages {
         ...(await this.getPageDetails({
           ...page,
           workspaceId: pageMeta.workspaceId,
+          slug: pageMeta.slug!,
+          workspaceSlug: pageMeta.workspaceSlug,
         })),
         public: !!pageMeta?.permissions?.['*']?.policies?.read,
       };
@@ -266,8 +273,17 @@ class Pages {
       });
     }
 
+    let apiKey: string = '';
+    try {
+      const existingDetailedPage = await this.getDetailedPage({
+        workspaceSlug: page.workspaceSlug!,
+        slug: page.slug!,
+      });
+      apiKey = existingDetailedPage.apiKey;
+    } catch {}
     const pageDetails: Prismeai.PageDetails = {
       appInstances,
+      apiKey,
     };
     return pageDetails;
   }
@@ -330,6 +346,41 @@ class Pages {
     return { slug: newSlug, ...page };
   };
 
+  getUpdatedPageApiKey = async (
+    page: Prismeai.DetailedPage
+  ): Promise<ApiKey> => {
+    const events: string[] = ['*'];
+    const rules = {
+      events: {
+        types: events,
+        filters: {
+          'source.sessionId': '${user.sessionId}',
+        },
+      },
+    };
+    try {
+      if (page.apiKey) {
+        await this.accessManager.pullApiKey(page.apiKey);
+      }
+    } catch {
+      page.apiKey = '';
+    }
+
+    if (page.apiKey) {
+      return (await this.accessManager.updateApiKey(
+        page.apiKey,
+        SubjectType.Workspace,
+        page.workspaceId!,
+        rules
+      )) as ApiKey;
+    }
+    return (await this.accessManager.createApiKey(
+      SubjectType.Workspace,
+      page.workspaceId!,
+      rules
+    )) as ApiKey;
+  };
+
   deletePage = async (id: string) => {
     const page = await this.accessManager.get(SubjectType.Page, id);
 
@@ -340,11 +391,24 @@ class Pages {
       slug: page.slug,
     });
     try {
+      const detailedPage = await this.storage.get({
+        workspaceSlug: page.workspaceSlug,
+        slug: page.slug,
+        dsulType: DSULType.DetailedPage,
+      });
       await this.storage.delete({
         workspaceSlug: page.workspaceSlug,
         slug: page.slug,
         dsulType: DSULType.DetailedPage,
       });
+
+      if (detailedPage.apiKey) {
+        await this.accessManager.deleteApiKey(
+          detailedPage.apiKey,
+          SubjectType.Workspace,
+          page.workspaceId!
+        );
+      }
     } catch {}
 
     this.broker.send<Prismeai.DeletedPage['payload']>(

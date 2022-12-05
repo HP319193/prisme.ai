@@ -3273,6 +3273,8 @@ components:
           type: object
         secret:
           type: boolean
+        event:
+          type: boolean
 
     InstructionList:
       type: array
@@ -3414,8 +3416,6 @@ components:
           type: string
         permissions:
           $ref: '#/components/schemas/PermissionsMap'
-        apiKey:
-          type: string
 
     Page:
       type: object
@@ -3443,6 +3443,7 @@ components:
       type: object
       required:
         - appInstances
+        - apiKey
       properties: &PageDetails
         appInstances:
           type: array
@@ -3461,12 +3462,15 @@ components:
         public:
           type: boolean
           description: 'Indicates whether this page is public. Reflects page permissions and cannot be set directly'
+        apiKey:
+          type: string
 
     DetailedPage:
       type: object
       required:
         - appInstances
         - slug
+        - apiKey
       properties:
         <<: [*Page, *PageDetails]
 
@@ -3535,7 +3539,7 @@ components:
                   template:
                     type: string
             options:
-              $ref: "#/components/schemas/PrismeEventOptions"
+              $ref: '#/components/schemas/PrismeEventOptions'
     CreateUserTopic:
       type: object
       required:
@@ -4009,7 +4013,7 @@ components:
       properties:
         persist:
           type: boolean
-          description: "Whether to persist this event or not. Defaults to true"
+          description: 'Whether to persist this event or not. Defaults to true'
           default: true
 
     PrismeEvent:

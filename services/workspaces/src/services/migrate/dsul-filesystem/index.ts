@@ -251,12 +251,15 @@ async function migrateWorkspace(
       });
       continue;
     }
+    const apiKey = (<any>page).apiKey as string;
+    delete (<any>page).apiKey;
     await pages.createPage(workspaceId!, { ...page, slug }, true);
 
     if (legacy.slug) {
       const detailedPage = await pages.getDetailedPage({
         id: page.id!,
       });
+      detailedPage.apiKey = apiKey;
       await ((pages as any).storage as DSULStorage).save(
         { workspaceSlug: legacy.slug, slug, dsulType: DSULType.DetailedPage },
         detailedPage as any
