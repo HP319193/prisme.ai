@@ -43,6 +43,7 @@ setup({
         'orange-500': '#FD6E6E',
         'theme-text': 'var(--color-text)',
         'theme-accent': 'var(--color-accent)',
+        'theme-accent-light': 'var(--color-accent-light)',
         'theme-border': 'var(--color-border)',
         'theme-background': 'var(--color-background)',
         'theme-background-transparent': 'var(--color-background-transparent)',

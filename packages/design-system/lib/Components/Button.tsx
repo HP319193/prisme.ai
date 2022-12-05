@@ -23,7 +23,7 @@ export const Button = ({
 
   const tagBgColor = useMemo(() => {
     if (variant === 'primary') {
-      return unselected ? `bg-gray-500` : `bg-light-accent`;
+      return unselected ? `bg-gray-500` : `bg-theme-accent-light`;
     }
     return `bg-gray-500`;
   }, [variant, unselected]);
@@ -31,7 +31,7 @@ export const Button = ({
   const unselectedStyle = useMemo(() => {
     return unselected
       ? variant === 'primary'
-        ? `!bg-white border border-solid text-accent`
+        ? `!bg-white border border-solid text-theme-text`
         : `text-gray`
       : '';
   }, [variant, unselected]);
