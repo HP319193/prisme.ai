@@ -1,26 +1,31 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { builtinBlocks } from '@prisme.ai/blocks';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Panel from '../Panel';
-import { context, PageBuilderContext } from './context';
+import { BlockWithKey, context, PageBuilderContext } from './context';
 import PageNewBlockForm from './Panel/PageNewBlockForm';
 import PageBlocks from './PageBlocks';
 import { nanoid } from 'nanoid';
 import equal from 'fast-deep-equal';
 import PageEditBlockForm from './Panel/PageEditBlockForm';
-import useBlocksConfigs from '../Page/usePageBlocksConfigs';
-import { Schema } from '@prisme.ai/design-system';
-import { extractEvents } from './extractEvents';
 import { useTranslation } from 'next-i18next';
 import useBlocks, { BlockInCatalog } from './useBlocks';
 import EmptyPage from './EmptyPage';
 
 interface PageBuilderProps {
-  value: PageBuilderContext['page'];
-  onChange: (value: Prismeai.Page, events?: string[]) => void;
-  blocks: PageBuilderContext['blocks'];
+  value: Prismeai.Page['blocks'];
+  onChange: (value: Prismeai.Page['blocks'], events?: string[]) => void;
 }
-export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
+
+export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const { t } = useTranslation('workspaces');
+
+  const [blocks, setBlocks] = useState<BlockWithKey[]>(
+    value
+      ? value.map((block) => ({
+          ...block,
+          key: nanoid(),
+        }))
+      : []
+  );
   const { available, variants } = useBlocks();
 
   const [panelIsOpen, setPanelIsOpen] = useState(false);
@@ -32,10 +37,17 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
   >();
   const [blockEditing, setBlockEditing] = useState<string>();
   const [blockEditingOnBack, setBlockEditingOnBack] = useState<() => void>();
-  const [blocksSchemas, setBlocksSchemas] = useState<Map<string, Schema>>(
-    new Map()
-  );
-  const { events } = useBlocksConfigs(value);
+  const [blocksSchemas, setBlocksSchemas] = useState<
+    PageBuilderContext['blocksSchemas']
+  >(new Map());
+
+  const onChangeRef = useRef<any>(onChange);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+  useEffect(() => {
+    onChangeRef.current(blocks.map(({ key, ...block }) => block));
+  }, [blocks]);
 
   const hidePanel = useCallback(async () => {
     setBlockEditingOnBack(undefined);
@@ -43,12 +55,6 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
     await setBlockEditing(undefined);
     await setPanelIsOpen(false);
   }, []);
-
-  // Generate keys
-  (value.blocks || []).forEach((block: { key?: string }) => {
-    if (block.key) return;
-    block.key = nanoid();
-  });
 
   const setEditBlock = useCallback(
     async (blockId: string) => {
@@ -61,7 +67,7 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
 
   const setBlockConfig: PageBuilderContext['setBlockConfig'] = useCallback(
     (key, config) => {
-      const newBlocks = (value.blocks || []).map((block) =>
+      const newBlocks = (blocks || []).map((block) =>
         key === block.key
           ? {
               ...block,
@@ -69,18 +75,11 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
             }
           : block
       );
-      if (equal(newBlocks, value.blocks)) return;
-      const newValue = {
-        ...value,
-        blocks: newBlocks,
-      };
+      if (equal(newBlocks, blocks)) return;
 
-      onChange(
-        newValue,
-        newBlocks.flatMap(({ config }) => extractEvents(blocksSchemas, config))
-      );
+      setBlocks(newBlocks);
     },
-    [blocksSchemas, onChange, value]
+    [blocks]
   );
 
   const addBlockDetails = useCallback(async () => {
@@ -105,56 +104,47 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
         }
         return originalBlock;
       }
-      const block = blockName || (await addBlockDetails());
-      const newBlocks = [...value.blocks];
+      const slug = blockName || (await addBlockDetails());
+      const newBlocks = [...blocks];
       const blockKey = nanoid();
 
-      const blockDetails = available.find(({ slug }) => slug === block);
+      const blockDetails = available.find(({ slug: s }) => s === slug);
 
       if (!blockDetails) return;
 
-      const originalBlock = getOriginalBlock(block);
+      const originalBlock = getOriginalBlock(slug);
 
       if (!originalBlock) return;
 
       const newBlock = blockDetails.block
         ? {
-            name: originalBlock.slug,
+            slug: originalBlock.slug,
             config: blockDetails.config,
           }
         : {
-            name: originalBlock.slug,
+            slug: originalBlock.slug,
           };
 
       newBlocks.splice(position, 0, { ...newBlock, key: blockKey });
-      onChange({
-        ...value,
-        blocks: newBlocks,
-      });
+      setBlocks(newBlocks);
       setEditBlock(blockKey);
       setBlockEditingOnBack(() => () => {
-        onChange({
-          ...value,
-          blocks: value.blocks.filter(({ key }) => key !== blockKey),
-        });
+        setBlocks(blocks.filter(({ key }) => key !== blockKey));
         setBlockEditing(undefined);
-        addBlock(position, blockName);
+        addBlock(position);
         setBlockEditingOnBack(undefined);
       });
     },
-    [addBlockDetails, available, onChange, setEditBlock, value]
+    [addBlockDetails, available, blocks, setEditBlock]
   );
 
   const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
     async (key) => {
-      const newBlocks = (value.blocks || []).filter(({ key: k }) => k !== key);
-      onChange({
-        ...value,
-        blocks: newBlocks,
-      });
+      const newBlocks = (blocks || []).filter(({ key: k }) => k !== key);
+      setBlocks(newBlocks);
       await hidePanel();
     },
-    [hidePanel, onChange, value]
+    [blocks, hidePanel]
   );
 
   const setBlockSchema: PageBuilderContext['setBlockSchema'] = useCallback(
@@ -168,42 +158,8 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
     []
   );
 
-  const blocksInPage: PageBuilderContext['blocksInPage'] = useMemo(() => {
-    return (value.blocks || []).flatMap(({ key, name = '' }) => {
-      if (!key) return [];
-      const parts = name.split(/\./);
-      parts.reverse();
-      const [blockName, appName = ''] = parts;
-      if (!appName && Object.keys(builtinBlocks).includes(blockName)) {
-        return {
-          url: undefined,
-          slug: name,
-          name: blockName,
-          key,
-          appName: '',
-          appInstance: undefined,
-        };
-      }
-      const app = blocks.find(({ slug }: { slug: string }) => slug === appName);
-      if (!app) return [];
-      const block = (app.blocks || []).find(
-        ({ slug }: { slug: string }) => slug === blockName
-      );
-
-      if (!block) return [];
-      return {
-        ...block,
-        edit: block.edit || blocksSchemas.get(key),
-        key,
-        appName: app.appName,
-        appInstance: app.slug,
-      };
-    });
-  }, [value.blocks, blocks, blocksSchemas]);
-
-  const { name: editingBlockName } =
-    (blockEditing && blocksInPage.find(({ key }) => key === blockEditing)) ||
-    {};
+  const { slug: editingBlockName } =
+    (blockEditing && blocks.find(({ key }) => key === blockEditing)) || {};
 
   const onAddBlock = useCallback(
     (blockName?: string) => {
@@ -218,21 +174,19 @@ export const PageBuilder = ({ value, onChange, blocks }: PageBuilderProps) => {
   return (
     <context.Provider
       value={{
-        page: value,
-        blocks,
-        blocksInPage,
+        value: blocks,
         addBlock,
         removeBlock,
         setBlockConfig,
         setEditBlock,
-        events,
         setBlockSchema,
         catalog: variants,
+        blocksSchemas,
       }}
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">
-        {blocksInPage.length === 0 && <EmptyPage onAddBlock={onAddBlock} />}
-        {blocksInPage.length > 0 && <PageBlocks />}
+        {blocks.length === 0 && <EmptyPage onAddBlock={onAddBlock} />}
+        {blocks.length > 0 && <PageBlocks />}
         <Panel
           title={t('pages.blocks.panelTitle', {
             context: blockSelecting ? 'adding' : 'editing',

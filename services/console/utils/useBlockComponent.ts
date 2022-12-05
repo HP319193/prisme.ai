@@ -17,7 +17,7 @@ if (process.browser) {
 
 interface GetBlockUrlAttrs {
   workspaceBlocks: Workspace['blocks'];
-  apps: Prismeai.DetailedAppInstance[];
+  apps: Record<string, Prismeai.DetailedAppInstance>;
   blockName: string;
 }
 
@@ -57,6 +57,7 @@ export function loadExternalComponent(url: string): Promise<BlockComponent> {
   `;
     s.type = 'module';
     document.body.appendChild(s);
+    s.onerror = reject;
   });
 }
 
@@ -84,13 +85,13 @@ export async function getBlockComponent({
         }),
         {}
       ),
-      ...apps.reduce(
-        (prev, { appSlug, blocks }) => ({
+      ...Object.entries(apps).reduce(
+        (prev, [, { appSlug, blocks }]) => ({
           ...prev,
           ...blocks.reduce(
             (appBlocks, { slug, url }) => ({
               ...appBlocks,
-              [`${appSlug}.${slug}`]: url,
+              [slug]: url,
             }),
             {}
           ),
@@ -111,7 +112,6 @@ export async function getBlockComponent({
 
 export const useBlockComponent = (blockName: string) => {
   const { workspace } = useWorkspace();
-  const { appInstances } = useApps();
   const [block, setBlock] = useState<BlockComponent | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -120,14 +120,14 @@ export const useBlockComponent = (blockName: string) => {
       setLoading(true);
       const block = await getBlockComponent({
         workspaceBlocks: workspace.blocks,
-        apps: appInstances.get(workspace.id) || [],
+        apps: workspace.imports || {},
         blockName,
       });
       setBlock(() => block);
       setLoading(false);
     }
     getBlock();
-  }, [appInstances, blockName, workspace.blocks, workspace.id]);
+  }, [blockName, workspace.blocks, workspace.id, workspace.imports]);
   return { loading, block };
 };
 

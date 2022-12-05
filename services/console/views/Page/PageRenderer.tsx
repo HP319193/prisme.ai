@@ -16,12 +16,9 @@ import CopyIcon from '../../icons/copy.svgr';
 import Head from 'next/head';
 import useLocalizedText from '../../utils/useLocalizedText';
 import PagePreview from '../../components/PagePreview';
-import { useCallback, useMemo } from 'react';
-import { useApps } from '../../components/AppsProvider';
-import { PageBuilderContext } from '../../components/PageBuilder/context';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import PageBuilder from '../../components/PageBuilder';
 import CSSEditor from './CSSEditor';
-import { useWorkspace } from '../../providers/Workspace';
 
 interface PageRendererProps {
   value: Prismeai.Page;
@@ -43,36 +40,6 @@ export const PageRenderer = ({
 }: PageRendererProps) => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
-  const { workspace } = useWorkspace();
-  const { appInstances } = useApps();
-
-  const blocks: PageBuilderContext['blocks'] = useMemo(() => {
-    return [
-      {
-        slug: '',
-        appName: '',
-        blocks: Object.keys(workspace.blocks || {}).map((slug) => ({
-          slug,
-          ...(workspace.blocks || {})[slug],
-        })),
-      },
-      ...(appInstances.get(workspace.id) || []).map(
-        ({ slug = '', appName = '', blocks = [] }) => ({
-          slug,
-          appName,
-          blocks: blocks.map(
-            ({ slug, description = slug, name = slug, url = '', edit }) => ({
-              slug,
-              name,
-              description,
-              url,
-              edit,
-            })
-          ),
-        })
-      ),
-    ];
-  }, [appInstances, workspace.id, workspace.blocks]);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -123,6 +90,22 @@ export const PageRenderer = ({
     alert('coming soon');
   }, []);
 
+  const saveBlocks = useCallback(
+    (blocks: Prismeai.Page['blocks']) => {
+      onChange({
+        ...value,
+        blocks,
+      });
+    },
+    [onChange, value]
+  );
+
+  // Need to get the latest version with the latest value associated
+  const saveAfterChange = useRef(onSave);
+  useEffect(() => {
+    saveAfterChange.current = onSave;
+  }, [onSave]);
+
   return (
     <>
       <Head>
@@ -139,19 +122,16 @@ export const PageRenderer = ({
             <HorizontalSeparatedNav.Separator>
               <span className="pr-page-title">
                 <EditableTitle
-                  value={value.name}
-                  onChange={(name) =>
-                    onChange({
-                      ...value,
-                      name,
-                    })
-                  }
-                  onEnter={(name) => {
+                  value={value.name || ''}
+                  onChange={(name) => {
                     onChange({
                       ...value,
                       name,
                     });
-                    onSave();
+                  }}
+                  onEnter={() => {
+                    // Need to wait after the onChange changed the value
+                    setTimeout(() => saveAfterChange.current(), 1);
                   }}
                   className="text-base font-bold max-w-[25vw]"
                 />
@@ -262,7 +242,7 @@ export const PageRenderer = ({
         <PagePreview page={value} />
         {((value.blocks || []).length === 0 || viewMode === 1) && (
           <div className="absolute top-0 bottom-0 left-0 right-0 bg-white">
-            <PageBuilder value={value} onChange={onChange} blocks={blocks} />
+            <PageBuilder value={value.blocks} onChange={saveBlocks} />
           </div>
         )}
       </div>

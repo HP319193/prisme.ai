@@ -1,16 +1,9 @@
-import { DeleteOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Collapse,
-  Schema,
-  SchemaForm,
-  Tabs,
-} from '@prisme.ai/design-system';
+import { Loading, Schema, SchemaForm } from '@prisme.ai/design-system';
+import { Tabs, TabsProps } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import debounce from 'lodash/debounce';
 import useLocalizedText from '../../../utils/useLocalizedText';
-import usePages from '../../PagesProvider/context';
 import useSchema from '../../SchemaForm/useSchema';
 import { usePageBuilder } from '../context';
 import useBlockPageConfig from '../useBlockPageConfig';
@@ -18,17 +11,16 @@ import { useWorkspace } from '../../../providers/Workspace';
 
 interface SettingsProps {
   removeBlock: () => void;
-  schema?: Schema;
+  schema?: Schema | null;
   blockId: string;
 }
 
 export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
   const { t } = useTranslation('workspaces');
-  const { page } = usePageBuilder();
+  const { value } = usePageBuilder();
   const {
-    workspace: { id: workspaceId, automations },
+    workspace: { automations, pages },
   } = useWorkspace();
-  const { pages } = usePages();
   const { config, onConfigUpdate } = useBlockPageConfig({
     blockId,
   });
@@ -48,11 +40,11 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
   );
 
   const { extractSelectOptions } = useSchema({
-    pageSections: page.blocks.flatMap(({ config: { sectionId } = {} }) =>
+    pageSections: value.flatMap(({ config: { sectionId } = {} }) =>
       sectionId ? sectionId : []
     ),
     automations,
-    pages: pages.get(workspaceId),
+    pages,
   });
   const { localizeSchemaForm } = useLocalizedText();
 
@@ -105,17 +97,15 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
     [t]
   );
 
-  return (
-    <div className="pr-panel-settings flex flex-1 flex-col">
-      <Tabs className="flex flex-1">
-        {schema && (
-          <Tabs.TabPane
-            tab={
-              <div className="px-2">{t('pages.blocks.settings.schema')}</div>
-            }
-            key="config"
-          >
-            <div className="m-4">
+  const items = useMemo(() => {
+    const items: TabsProps['items'] = [];
+    if (schema !== null) {
+      items.push({
+        label: <div className="px-2">{t('pages.blocks.settings.schema')}</div>,
+        key: 'config',
+        children: (
+          <div className="m-4">
+            {schema && (
               <SchemaForm
                 schema={schema}
                 onChange={debouncedMergeConfig}
@@ -123,25 +113,42 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
                 buttons={[]}
                 utils={{ extractSelectOptions }}
               />
-            </div>
-          </Tabs.TabPane>
-        )}
-        <Tabs.TabPane
-          tab={<div className="px-2">{t('pages.blocks.settings.generic')}</div>}
-          key="advanced"
-        >
-          <div className="m-4">
-            <SchemaForm
-              schema={commonSchema}
-              onChange={debouncedMergeConfig}
-              initialValues={config}
-              buttons={[]}
-              locales={locales}
-              utils={{ extractSelectOptions }}
-            />
+            )}
+            {schema === undefined && <Loading />}
           </div>
-        </Tabs.TabPane>
-      </Tabs>
+        ),
+      });
+    }
+    items.push({
+      label: <div className="px-2">{t('pages.blocks.settings.generic')}</div>,
+      key: 'advanced',
+      children: (
+        <div className="m-4">
+          <SchemaForm
+            schema={commonSchema}
+            onChange={debouncedMergeConfig}
+            initialValues={config}
+            buttons={[]}
+            locales={locales}
+            utils={{ extractSelectOptions }}
+          />
+        </div>
+      ),
+    });
+    return items;
+  }, [
+    commonSchema,
+    config,
+    debouncedMergeConfig,
+    extractSelectOptions,
+    locales,
+    schema,
+    t,
+  ]);
+
+  return (
+    <div className="pr-panel-settings flex flex-1 flex-col">
+      <Tabs className="flex flex-1" items={items} />
       <button
         onClick={removeBlock}
         className="border-t border-light-gray !text-pr-orange h-[4rem] font-bold text-left p-4"

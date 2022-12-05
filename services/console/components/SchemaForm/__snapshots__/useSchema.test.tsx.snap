@@ -50,16 +50,6 @@ exports[`should build a select from pages 1`] = `
 Array [
   "",
   <div
-    className="flex flex-col text-neutral-200"
-  >
-    <div>
-      Foo
-    </div>
-    <div
-      className="text-neutral-500 text-xs"
-    />
-  </div>,
-  <div
     className="flex flex-col "
   >
     <div>

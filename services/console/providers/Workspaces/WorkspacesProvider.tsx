@@ -1,7 +1,6 @@
 import {
   createContext,
   ReactNode,
-  useContext,
   useState,
   useCallback,
   useEffect,
@@ -9,6 +8,7 @@ import {
 } from 'react';
 import { useUser } from '../../components/UserProvider';
 import api, { Workspace } from '../../utils/api';
+import { useContext } from '../../utils/useContext';
 
 interface WorkspacesContext {
   workspaces: Workspace[];
@@ -31,20 +31,12 @@ export enum LoadingType {
   New = '__NEW__',
 }
 
-export const workspacesContext = createContext<WorkspacesContext>({
-  workspaces: [],
-  loading: new Map([[LoadingType.List, true]]),
-  fetchWorkspaces() {},
-  async createWorkspace() {
-    return {} as Workspace;
-  },
-  async duplicateWorkspace() {
-    return {} as Workspace;
-  },
-  refreshWorkspace() {},
-});
+export const workspacesContext = createContext<WorkspacesContext | undefined>(
+  undefined
+);
 
-export const useWorkspaces = () => useContext(workspacesContext);
+export const useWorkspaces = () =>
+  useContext<WorkspacesContext>(workspacesContext);
 
 export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
   const { user } = useUser();
@@ -124,7 +116,7 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
     };
 
     initialFetch();
-  }, [fetchWorkspaces, setLoadingId, user.id]);
+  }, [fetchWorkspaces, setLoadingId, user?.id]);
 
   return (
     <workspacesContext.Provider

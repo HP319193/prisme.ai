@@ -2,13 +2,13 @@ import { Loading } from '@prisme.ai/design-system';
 import {
   createContext,
   ReactNode,
-  useContext,
   useState,
   useCallback,
   useEffect,
   useRef,
 } from 'react';
 import api from '../../utils/api';
+import { useContext } from '../../utils/useContext';
 
 interface Workspace extends Prismeai.DSULReadOnly {
   id: string;
@@ -26,7 +26,11 @@ export interface WorkspaceContext {
   createAutomation: (
     automation: Prismeai.Automation
   ) => Promise<Prismeai.Automation | null>;
+  refreshAutomation: (automation: Prismeai.Automation) => void;
+  deleteAutomation: (automation: Prismeai.Automation) => void;
   createPage: (page: Prismeai.Page) => Promise<Prismeai.Page | null>;
+  refreshPage: (page: Prismeai.Page) => void;
+  deletePage: (page: Prismeai.Page) => void;
   installApp: (
     app: Prismeai.AppInstance
   ) => Promise<Prismeai.AppInstance | null>;
@@ -38,29 +42,12 @@ interface WorkspaceProviderProps {
   children: ReactNode;
 }
 
-export const workspaceContext = createContext<WorkspaceContext>({
-  workspace: {} as Workspace,
-  loading: true,
-  fetchWorkspace() {},
-  async saveWorkspace() {
-    return {} as Prismeai.DSULReadOnly;
-  },
-  saving: false,
-  async deleteWorkspace() {
-    return {} as Prismeai.Workspace;
-  },
-  async createAutomation() {
-    return {} as Prismeai.Automation;
-  },
-  async createPage() {
-    return {} as Prismeai.Page;
-  },
-  async installApp() {
-    return {} as Prismeai.AppInstance;
-  },
-});
+export const workspaceContext = createContext<WorkspaceContext | undefined>(
+  undefined
+);
 
-export const useWorkspace = () => useContext(workspaceContext);
+export const useWorkspace = () =>
+  useContext<WorkspaceContext>(workspaceContext);
 
 export const WorkspaceProvider = ({
   id,
@@ -133,6 +120,18 @@ export const WorkspaceProvider = ({
     },
     [fetchWorkspace, workspace]
   );
+  const refreshAutomation: WorkspaceContext['refreshAutomation'] = useCallback(
+    (automation) => {
+      console.log('refresh', automation);
+    },
+    []
+  );
+  const deleteAutomation: WorkspaceContext['deleteAutomation'] = useCallback(
+    (automation) => {
+      console.log('delete', automation);
+    },
+    []
+  );
 
   const createPage: WorkspaceContext['createPage'] = useCallback(
     async (page) => {
@@ -155,6 +154,39 @@ export const WorkspaceProvider = ({
     },
     [fetchWorkspace, workspace]
   );
+  const refreshPage: WorkspaceContext['refreshPage'] = useCallback(
+    (page) => {
+      if (!workspace?.pages || !page.slug || !workspace?.pages[page.slug])
+        return;
+      setWorkspace({
+        ...workspace,
+        pages: Object.entries(workspace.pages).reduce(
+          (prev, [slug, p]) => ({
+            ...prev,
+            [slug]: slug === page.slug ? page : p,
+          }),
+          {}
+        ),
+      });
+    },
+    [workspace]
+  );
+  const deletePage: WorkspaceContext['deletePage'] = useCallback((page) => {
+    if (!workspace?.pages || !page.slug || !workspace?.pages[page.slug]) return;
+    setWorkspace({
+      ...workspace,
+      pages: Object.entries(workspace.pages).reduce(
+        (prev, [slug, p]) =>
+          slug === page.slug
+            ? prev
+            : {
+                ...prev,
+                [slug]: p,
+              },
+        {}
+      ),
+    });
+  }, []);
 
   const installApp: WorkspaceContext['installApp'] = useCallback(
     async (app) => {
@@ -203,7 +235,11 @@ export const WorkspaceProvider = ({
         saving,
         deleteWorkspace,
         createAutomation,
+        refreshAutomation,
+        deleteAutomation,
         createPage,
+        refreshPage,
+        deletePage,
         installApp,
       }}
     >

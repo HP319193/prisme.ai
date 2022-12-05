@@ -2,7 +2,6 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
 import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
-import usePages from '../../PagesProvider/context';
 import { useApps } from '../../AppsProvider';
 import { useAutomationBuilder } from '../context';
 import useLocalizedText from '../../../utils/useLocalizedText';
@@ -26,11 +25,12 @@ export const InstructionValue: FC<InstructionValueProps> = ({
 }) => {
   const { workspace } = useWorkspace();
   const { automationId } = useAutomationBuilder();
-  const { pages } = usePages();
   const { t } = useTranslation('workspaces');
   const { localizeSchemaForm, localize } = useLocalizedText();
   const { appInstances } = useApps();
 
+  // TODO ne plus charger les configs d'app mais appeller un endpoint pour avoir
+  // les autocompletion
   const { config: appInstance, appName } = useMemo(() => {
     if (!workspace.imports) return { config: workspace.config };
     const [appName] = instruction.split(/\./);
@@ -47,7 +47,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
           : { ...prev, [key]: (workspace.automations || {})[key] },
       {}
     ),
-    pages: pages.get(workspace.id),
+    pages: workspace.pages,
     apps: appInstances.get(workspace.id),
     workspace,
   });

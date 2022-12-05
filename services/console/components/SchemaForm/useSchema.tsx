@@ -102,25 +102,25 @@ export const useSchema = (store: Record<string, any> = {}) => {
               label: '',
               value: '',
             },
-            ...Array.from<Prismeai.Page>(store.pages).flatMap((page) => {
-              const { id, slug, name = slug, description } = page;
-
-              return {
-                label: (
-                  <div
-                    className={`flex flex-col ${
-                      !slug ? 'text-neutral-200' : ''
-                    }`}
-                  >
-                    <div>{localize(name)}</div>
-                    <div className="text-neutral-500 text-xs">
-                      {localize(description)}
+            ...Object.entries<Prismeai.Page>(store.pages).flatMap(
+              ([slug, { id, name = slug, description }]) => {
+                return {
+                  label: (
+                    <div
+                      className={`flex flex-col ${
+                        !slug ? 'text-neutral-200' : ''
+                      }`}
+                    >
+                      <div>{localize(name)}</div>
+                      <div className="text-neutral-500 text-xs">
+                        {localize(description)}
+                      </div>
                     </div>
-                  </div>
-                ),
-                value: slug ? generatePageUrl(workspaceSlug, slug) : id,
-              };
-            }),
+                  ),
+                  value: slug ? generatePageUrl(workspaceSlug, slug) : id,
+                };
+              }
+            ),
           ];
       }
       return null;
@@ -138,13 +138,12 @@ export const useSchema = (store: Record<string, any> = {}) => {
   const extractAutocompleteOptions = useCallback(
     (schema: Schema) => {
       const { ['ui:options']: uiOptions = {} } = schema;
-      const pages: Set<Prismeai.Page> = store.pages || new Set();
 
       switch (uiOptions.autocomplete) {
         case 'events:listen': {
-          const pagesEvents = Array.from(
-            pages
-          ).flatMap(({ name, blocks = [] }) =>
+          const pagesEvents = Object.entries<Prismeai.Page>(
+            store.pages || {}
+          ).flatMap(([, { name, blocks = [] }]) =>
             blocks.flatMap(({ config: { updateOn } = {} }) =>
               updateOn ? { name: localize(name), event: updateOn } : []
             )
@@ -205,7 +204,7 @@ export const useSchema = (store: Record<string, any> = {}) => {
           ];
         }
         case 'events:emit':
-          const workspace = store.workspace as Prismeai.Workspace;
+          const workspace = store.workspace as Prismeai.DSULReadOnly;
           const apps: Prismeai.AppDetails[] = store.apps || [];
           const automations =
             store?.automations || workspace?.automations || {};
@@ -223,9 +222,9 @@ export const useSchema = (store: Record<string, any> = {}) => {
                 !all.slice(0, index).find(({ event: e }) => e === event)
             );
 
-          const pagesEvents = Array.from(
-            pages
-          ).flatMap(({ name, blocks = [] }) =>
+          const pagesEvents = Object.entries<Prismeai.Page>(
+            store.pages || {}
+          ).flatMap(([, { name, blocks = [] }]) =>
             blocks.flatMap(({ config: { onInit } = {} }) =>
               onInit ? { name: localize(name), event: onInit } : []
             )
@@ -246,9 +245,12 @@ export const useSchema = (store: Record<string, any> = {}) => {
               const { from, path } = autocomplete[key];
               if (!from || !path) return [];
               let config = workspace.config || {};
-              if (from === 'appConfig') {
-                config = workspace.imports?.[appName]?.config || {};
-              }
+              // TODO : config is nomore passed here. We need to find another
+              // to generate this auto completions
+              // If really needed anyway…
+              // if (from === 'appConfig') {
+              //   config = workspace.imports?.[appName]?.config || {};
+              // }
               const values = readAppConfig(config, path).filter(Boolean);
               return (Array.isArray(values)
                 ? values

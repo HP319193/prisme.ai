@@ -1,5 +1,6 @@
 import useSchema from './useSchema';
 import renderer from 'react-test-renderer';
+import { workspaceContext } from '../../providers/Workspace';
 
 jest.mock('../../utils/urls', () => ({
   generatePageUrl: jest.fn(
@@ -14,7 +15,11 @@ it('should fail to build a select from config with empty store', () => {
     extractSelectOptionsFn = extractSelectOptions;
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <C />
+    </workspaceContext.Provider>
+  );
   expect(
     extractSelectOptionsFn({
       type: 'string',
@@ -42,7 +47,11 @@ it('should fail to build a select from config without path', () => {
     extractSelectOptionsFn = extractSelectOptions;
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <C />
+    </workspaceContext.Provider>
+  );
   expect(
     extractSelectOptionsFn({
       type: 'string',
@@ -70,7 +79,11 @@ it('should build a select from config', () => {
     extractSelectOptionsFn = extractSelectOptions;
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <C />
+    </workspaceContext.Provider>
+  );
   expect(
     extractSelectOptionsFn({
       type: 'string',
@@ -105,7 +118,11 @@ it('should build a select from pageSections', () => {
     extractSelectOptionsFn = extractSelectOptions;
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <C />
+    </workspaceContext.Provider>
+  );
   expect(
     extractSelectOptionsFn({
       type: 'string',
@@ -144,7 +161,11 @@ it('should build a select from automations', () => {
     extractSelectOptionsFn = extractSelectOptions;
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <C />
+    </workspaceContext.Provider>
+  );
   const options = extractSelectOptionsFn({
     type: 'string',
     'ui:widget': 'select',
@@ -188,7 +209,11 @@ it('should build a select from endpoint automations ', () => {
     extractSelectOptionsFn = extractSelectOptions;
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <C />
+    </workspaceContext.Provider>
+  );
   const options = extractSelectOptionsFn({
     type: 'string',
     'ui:widget': 'select',
@@ -211,25 +236,32 @@ it('should build a select from endpoint automations ', () => {
 });
 
 it('should build a select from pages', () => {
-  const pages = new Set([
-    {
-      id: '123',
-      name: 'Foo',
-    },
-    {
+  const pages = {
+    'do-bar': {
       id: '456',
       name: 'Bar',
       description: 'Bar automation',
-      slug: 'do-bar',
     },
-  ]);
+  };
   let extractSelectOptionsFn: Function = () => null;
   const C = () => {
     const { extractSelectOptions } = useSchema({ pages });
     extractSelectOptionsFn = extractSelectOptions;
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider
+      value={
+        {
+          workspace: {
+            pages,
+          },
+        } as any
+      }
+    >
+      <C />
+    </workspaceContext.Provider>
+  );
   const options = extractSelectOptionsFn({
     type: 'string',
     'ui:widget': 'select',
@@ -239,10 +271,6 @@ it('should build a select from pages', () => {
   });
   expect(options).toEqual([
     { label: '', value: '' },
-    {
-      label: expect.any(Object),
-      value: '123',
-    },
     {
       label: expect.any(Object),
       value: 'http://page/do-bar',
@@ -351,8 +379,11 @@ it('should autocomplete emit events', () => {
     extractAutocompleteOptionsFn = extractAutocompleteOptions;
     return null;
   };
-  renderer.create(<C />);
-
+  renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <C />
+    </workspaceContext.Provider>
+  );
   expect(
     extractAutocompleteOptionsFn({
       'ui:options': {
@@ -504,7 +535,11 @@ it('should autocomplete emit events', () => {
     extractAutocompleteOptionsFn = extractAutocompleteOptions;
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <C />
+    </workspaceContext.Provider>
+  );
 
   expect(
     extractAutocompleteOptionsFn({
@@ -567,7 +602,11 @@ it('should autocomplete events with no value', () => {
     extractAutocompleteOptionsFn = extractAutocompleteOptions;
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <C />
+    </workspaceContext.Provider>
+  );
 
   expect(
     extractAutocompleteOptionsFn({
@@ -669,7 +708,11 @@ it('should autocomplete nested emit events', () => {
     extractAutocompleteOptionsFn = extractAutocompleteOptions;
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <C />
+    </workspaceContext.Provider>
+  );
 
   expect(
     extractAutocompleteOptionsFn({
@@ -764,7 +807,11 @@ it('should autocomplete with template', () => {
     extractAutocompleteOptionsFn = extractAutocompleteOptions;
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <C />
+    </workspaceContext.Provider>
+  );
 
   expect(
     extractAutocompleteOptionsFn({

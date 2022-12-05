@@ -1,7 +1,6 @@
 import { builtinBlocks } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
-import { useApps } from '../AppsProvider';
 import workspaceIcon from '../../icons/icon-workspace.svg';
 import builtinBlocksVariants from './builtinBlocksVariants';
 import { useWorkspace } from '../../providers/Workspace';
@@ -26,9 +25,8 @@ const builtInBlocksOrder = [
 export const useBlocks = () => {
   const { t } = useTranslation('workspaces');
   const {
-    workspace: { id: workspaceId, name, blocks: workspaceBlocks, photo } = {},
+    workspace: { name, blocks: workspaceBlocks, photo, imports } = {},
   } = useWorkspace();
-  const { appInstances } = useApps();
 
   const available: BlockInCatalog[] = useMemo(() => {
     const blocks: BlockInCatalog[] = [
@@ -59,22 +57,23 @@ export const useBlocks = () => {
           }))
         : []),
       // Apps blocks
-      ...((workspaceId && appInstances.get(workspaceId)) || []).reduce<
-        BlockInCatalog[]
-      >((prev, { slug = '', appName = '', blocks, photo }) => {
-        if (!blocks || blocks.length === 0) return prev;
+      ...Object.entries(imports || {}).reduce<BlockInCatalog[]>(
+        (prev, [, { appName = '', blocks, photo }]) => {
+          if (!blocks || blocks.length === 0) return prev;
 
-        return [
-          ...prev,
-          ...blocks.map((block) => ({
-            ...block,
-            from: appName,
-            slug: `${slug}.${block.slug}`,
-            name: block.name || block.slug,
-            icon: photo,
-          })),
-        ];
-      }, []),
+          return [
+            ...prev,
+            ...blocks.map((block) => ({
+              ...block,
+              from: appName,
+              slug: block.slug,
+              name: block.name || block.slug,
+              icon: photo,
+            })),
+          ];
+        },
+        []
+      ),
     ];
     return blocks.filter(({ slug, block }, k, all) => {
       return (
@@ -82,7 +81,7 @@ export const useBlocks = () => {
         (!block || all.find(({ slug }) => block === slug))
       );
     });
-  }, [appInstances, name, photo, t, workspaceBlocks, workspaceId]);
+  }, [imports, name, photo, t, workspaceBlocks]);
 
   const variants = useMemo(() => {
     const roots: BlockInCatalog[] = [];
