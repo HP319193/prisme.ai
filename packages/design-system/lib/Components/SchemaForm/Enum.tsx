@@ -4,7 +4,7 @@ import { FieldProps } from './types';
 
 export const Enum = (props: FieldProps) => {
   const {
-    components: { FieldSelect },
+    components: { FieldSelect, FieldRadio },
   } = useSchemaForm();
   const options = useMemo(
     () =>
@@ -18,6 +18,11 @@ export const Enum = (props: FieldProps) => {
       })),
     [props.schema]
   );
+
+  if (props.schema['ui:widget'] === 'radio') {
+    if (!FieldRadio) return null;
+    return <FieldRadio {...props} options={options} />;
+  }
   if (!FieldSelect) return null;
   return <FieldSelect {...props} options={options} />;
 };
