@@ -11,6 +11,7 @@ import { nanoid } from 'nanoid';
 import { logger } from '../../../logger';
 import { DSULType, DSULStorage } from '../../dsulStorage';
 import { AppInstances } from '../..';
+import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../config';
 
 class Pages {
   private accessManager: Required<AccessManager>;
@@ -355,6 +356,7 @@ class Pages {
         types: events,
         filters: {
           'source.sessionId': '${user.sessionId}',
+          'source.serviceTopic': RUNTIME_EMITS_BROKER_TOPIC,
         },
       },
     };
@@ -390,25 +392,31 @@ class Pages {
       workspaceId: page.workspaceId,
       slug: page.slug,
     });
+
+    // Clean the page apiKey
     try {
-      const detailedPage = await this.storage.get({
+      const currentDetailedPage = await this.storage.get({
         workspaceSlug: page.workspaceSlug,
         slug: page.slug,
         dsulType: DSULType.DetailedPage,
       });
+      const pageApiKey = currentDetailedPage?.apiKey;
+      if (pageApiKey) {
+        await this.accessManager.deleteApiKey(
+          pageApiKey,
+          SubjectType.Workspace,
+          page.workspaceId!
+        );
+      }
+    } catch {}
+
+    // Delete the detailedPafge
+    try {
       await this.storage.delete({
         workspaceSlug: page.workspaceSlug,
         slug: page.slug,
         dsulType: DSULType.DetailedPage,
       });
-
-      if (detailedPage.apiKey) {
-        await this.accessManager.deleteApiKey(
-          detailedPage.apiKey,
-          SubjectType.Workspace,
-          page.workspaceId!
-        );
-      }
     } catch {}
 
     this.broker.send<Prismeai.DeletedPage['payload']>(

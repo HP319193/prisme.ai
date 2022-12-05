@@ -23,6 +23,12 @@ const getMockedAccessManager = (get?: any) => {
     update: jest.fn(),
     delete: jest.fn(),
     deleteMany: jest.fn(),
+    createApiKey: jest.fn(() => ({
+      apiKey: 'apiKey',
+    })),
+    updateApiKey: jest.fn(() => ({
+      apiKey: 'apiKey',
+    })),
   };
   accessManager.as = () => accessManager;
   return accessManager;
@@ -153,7 +159,7 @@ describe('Sync DetailedPages with the EDA', () => {
           slug: page.slug!,
           dsulType: DSULType.DetailedPage,
         },
-        detailedPage
+        { ...detailedPage, apiKey: expect.any(String) }
       );
     });
 
@@ -171,6 +177,7 @@ describe('Sync DetailedPages with the EDA', () => {
         {
           ...detailedPage,
           description: 'updated description',
+          apiKey: expect.any(String),
         }
       );
     });
@@ -219,7 +226,7 @@ describe('Sync DetailedPages with the EDA', () => {
           slug: page.slug!,
           dsulType: DSULType.DetailedPage,
         },
-        detailedPage
+        { ...detailedPage, apiKey: expect.any(String) }
       );
     });
   });
@@ -269,7 +276,7 @@ describe('Sync DetailedPages with the EDA', () => {
           slug: page.slug!,
           dsulType: DSULType.DetailedPage,
         },
-        detailedPage
+        { ...detailedPage, apiKey: expect.any(String) }
       );
     });
   });
