@@ -32,11 +32,13 @@ jest.mock('../../utils/api', () => {
   };
   return mock;
 });
-it('should render', () => {
+it('should render', async () => {
   const root = renderer.create(<WorkspacesProvider>Foo</WorkspacesProvider>);
   expect(root.toJSON()).toMatchSnapshot();
 
-  act(() => {});
+  await act(async () => {
+    await true;
+  });
 
   expect(api.getWorkspaces).toHaveBeenCalled();
 });

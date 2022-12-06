@@ -191,6 +191,15 @@ export class Api extends Fetcher {
   }
 
   // Automations
+  async getAutomation(
+    workspaceId: string,
+    automationSlug: string
+  ): Promise<PrismeaiAPI.GetAutomation.Responses.$200> {
+    return await this.get(
+      `/workspaces/${workspaceId}/automations/${automationSlug}`
+    );
+  }
+
   async createAutomation(
     workspaceId: Workspace['id'],
     automation: Prismeai.Automation
@@ -201,18 +210,18 @@ export class Api extends Fetcher {
   }
 
   async updateAutomation(
-    workspace: Workspace,
+    workspaceId: string,
     slug: string,
     automation: Prismeai.Automation
   ): Promise<Prismeai.Automation & { slug: string }> {
     return await this.patch(
-      `/workspaces/${workspace.id}/automations/${slug}`,
-      await this.replaceAllImagesData(automation, workspace.id)
+      `/workspaces/${workspaceId}/automations/${slug}`,
+      await this.replaceAllImagesData(automation, workspaceId)
     );
   }
 
-  async deleteAutomation(workspace: Workspace, slug: string): Promise<string> {
-    return await this.delete(`/workspaces/${workspace.id}/automations/${slug}`);
+  async deleteAutomation(workspaceId: string, slug: string): Promise<string> {
+    return await this.delete(`/workspaces/${workspaceId}/automations/${slug}`);
   }
 
   // Pages

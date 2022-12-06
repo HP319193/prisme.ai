@@ -2,7 +2,6 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
 import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
-import { useApps } from '../../AppsProvider';
 import { useAutomationBuilder } from '../context';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import components from './schemaFormComponents';
@@ -27,7 +26,6 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   const { automationId } = useAutomationBuilder();
   const { t } = useTranslation('workspaces');
   const { localizeSchemaForm, localize } = useLocalizedText();
-  const { appInstances } = useApps();
 
   // TODO ne plus charger les configs d'app mais appeller un endpoint pour avoir
   // les autocompletion
@@ -48,7 +46,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
       {}
     ),
     pages: workspace.pages,
-    apps: appInstances.get(workspace.id),
+    apps: workspace.imports,
     workspace,
   });
 

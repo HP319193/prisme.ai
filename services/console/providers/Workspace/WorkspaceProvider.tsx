@@ -26,11 +26,7 @@ export interface WorkspaceContext {
   createAutomation: (
     automation: Prismeai.Automation
   ) => Promise<Prismeai.Automation | null>;
-  refreshAutomation: (automation: Prismeai.Automation) => void;
-  deleteAutomation: (automation: Prismeai.Automation) => void;
   createPage: (page: Prismeai.Page) => Promise<Prismeai.Page | null>;
-  refreshPage: (page: Prismeai.Page) => void;
-  deletePage: (page: Prismeai.Page) => void;
   installApp: (
     app: Prismeai.AppInstance
   ) => Promise<Prismeai.AppInstance | null>;
@@ -120,18 +116,6 @@ export const WorkspaceProvider = ({
     },
     [fetchWorkspace, workspace]
   );
-  const refreshAutomation: WorkspaceContext['refreshAutomation'] = useCallback(
-    (automation) => {
-      console.log('refresh', automation);
-    },
-    []
-  );
-  const deleteAutomation: WorkspaceContext['deleteAutomation'] = useCallback(
-    (automation) => {
-      console.log('delete', automation);
-    },
-    []
-  );
 
   const createPage: WorkspaceContext['createPage'] = useCallback(
     async (page) => {
@@ -154,39 +138,6 @@ export const WorkspaceProvider = ({
     },
     [fetchWorkspace, workspace]
   );
-  const refreshPage: WorkspaceContext['refreshPage'] = useCallback(
-    (page) => {
-      if (!workspace?.pages || !page.slug || !workspace?.pages[page.slug])
-        return;
-      setWorkspace({
-        ...workspace,
-        pages: Object.entries(workspace.pages).reduce(
-          (prev, [slug, p]) => ({
-            ...prev,
-            [slug]: slug === page.slug ? page : p,
-          }),
-          {}
-        ),
-      });
-    },
-    [workspace]
-  );
-  const deletePage: WorkspaceContext['deletePage'] = useCallback((page) => {
-    if (!workspace?.pages || !page.slug || !workspace?.pages[page.slug]) return;
-    setWorkspace({
-      ...workspace,
-      pages: Object.entries(workspace.pages).reduce(
-        (prev, [slug, p]) =>
-          slug === page.slug
-            ? prev
-            : {
-                ...prev,
-                [slug]: p,
-              },
-        {}
-      ),
-    });
-  }, []);
 
   const installApp: WorkspaceContext['installApp'] = useCallback(
     async (app) => {
@@ -235,11 +186,7 @@ export const WorkspaceProvider = ({
         saving,
         deleteWorkspace,
         createAutomation,
-        refreshAutomation,
-        deleteAutomation,
         createPage,
-        refreshPage,
-        deletePage,
         installApp,
       }}
     >

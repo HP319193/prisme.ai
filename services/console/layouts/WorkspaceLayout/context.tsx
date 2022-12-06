@@ -1,6 +1,7 @@
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
 import { Workspace } from '@prisme.ai/sdk';
 import { ValidationError } from '../../utils/yaml';
+import { useContext } from '../../utils/useContext';
 
 export interface WorkspaceLayoutContext {
   displaySource: (status: boolean) => void;
@@ -22,25 +23,11 @@ export interface WorkspaceLayoutContext {
   installApp: () => void;
 }
 
-export const workspaceLayoutContext = createContext<WorkspaceLayoutContext>({
-  displaySource() {},
-  sourceDisplayed: false,
-  invalid: false,
-  setInvalid() {},
-  saving: false,
-  setSaving() {},
-  onSave() {},
-  onSaveSource() {},
-  setNewSource() {},
-  fullSidebar: false,
-  setFullSidebar() {},
-  dirty: false,
-  setDirty() {},
-  createAutomation() {},
-  createPage() {},
-  installApp() {},
-});
+export const workspaceLayoutContext = createContext<
+  WorkspaceLayoutContext | undefined
+>(undefined);
 
-export const useWorkspaceLayout = () => useContext(workspaceLayoutContext);
+export const useWorkspaceLayout = () =>
+  useContext<WorkspaceLayoutContext>(workspaceLayoutContext);
 
 export default workspaceLayoutContext;

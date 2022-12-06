@@ -29,8 +29,6 @@ interface PageProviderProps {
   workspaceSlug?: string;
   slug?: string;
   children: ReactNode;
-  onRefresh?: (page: Prismeai.Page) => void;
-  onDelete?: (page: Prismeai.Page) => void;
 }
 
 export const PageProvider = ({
@@ -38,8 +36,6 @@ export const PageProvider = ({
   id,
   workspaceSlug,
   slug,
-  onRefresh,
-  onDelete,
   children,
 }: PageProviderProps) => {
   const [page, setPage] = useState<PageContext['page']>();
@@ -85,12 +81,11 @@ export const PageProvider = ({
       if (!workspaceId) return null;
       setSaving(true);
       const page = await api.updatePage(workspaceId, newPage);
-      onRefresh && onRefresh(page);
       setPage(page);
       setSaving(false);
       return page;
     },
-    [onRefresh, workspaceId]
+    [workspaceId]
   );
 
   const deletePage: PageContext['deletePage'] = useCallback(async () => {
@@ -130,3 +125,5 @@ export const PageProvider = ({
     </pageContext.Provider>
   );
 };
+
+export default PageProvider;

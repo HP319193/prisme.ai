@@ -28,7 +28,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -66,7 +65,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -104,7 +102,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -142,7 +139,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -180,7 +176,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -218,7 +213,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -256,7 +250,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -294,7 +287,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -332,7 +324,6 @@ declare namespace Prismeai {
         };
         payload?: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -391,7 +382,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -429,7 +419,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -467,7 +456,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -505,7 +493,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -543,7 +530,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -581,7 +567,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -619,7 +604,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -657,7 +641,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -695,7 +678,6 @@ declare namespace Prismeai {
         };
         payload: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -1359,7 +1341,6 @@ declare namespace Prismeai {
                     template?: string;
                 };
             };
-            options?: PrismeEventOptions;
         };
     }
     export interface ExecutedAutomation {
@@ -1778,7 +1759,6 @@ declare namespace Prismeai {
         };
         payload?: AnyValue;
         target?: PrismeEventTarget;
-        options?: PrismeEventOptions;
         error?: {
             error?: string;
             message?: string;
@@ -1794,12 +1774,6 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
-    }
-    export interface PrismeEventOptions {
-        /**
-         * Whether to persist this event or not. Defaults to true
-         */
-        persist?: boolean;
     }
     export interface PrismeEventTarget {
         userTopic?: string;

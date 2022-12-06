@@ -1,21 +1,17 @@
 import {
   CloseCircleOutlined,
   DeleteOutlined,
-  DownOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import {
   Button,
-  Menu,
   Modal,
   Popover,
   Schema,
   SchemaForm,
 } from '@prisme.ai/design-system';
-import { Dropdown, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useState } from 'react';
-import api from '../utils/api';
+import { useCallback } from 'react';
 import useLocalizedText from '../utils/useLocalizedText';
 
 interface EditDetailsprops {

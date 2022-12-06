@@ -111,7 +111,6 @@ it('should get available Blocks', () => {
     return null;
   };
   renderer.create(<C />);
-  console.log(expected.available);
   expect(expected.available).toEqual([
     {
       builtIn: true,

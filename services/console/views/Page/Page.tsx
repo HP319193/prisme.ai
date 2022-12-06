@@ -57,7 +57,7 @@ const PageWithProvider = () => {
     query: { id: workspaceId, pageId },
     push,
   } = useRouter();
-  const { workspace, refreshPage, deletePage } = useWorkspace();
+  const { workspace } = useWorkspace();
 
   useEffect(() => {
     // For preview in console
@@ -82,12 +82,7 @@ const PageWithProvider = () => {
   }, [push, workspace.id, workspace.slug]);
 
   return (
-    <PageProvider
-      workspaceId={`${workspaceId}`}
-      id={`${pageId}`}
-      onRefresh={refreshPage}
-      onDelete={deletePage}
-    >
+    <PageProvider workspaceId={`${workspaceId}`} id={`${pageId}`}>
       <Page />
     </PageProvider>
   );
