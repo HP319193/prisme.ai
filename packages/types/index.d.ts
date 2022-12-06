@@ -1849,6 +1849,18 @@ declare namespace Prismeai {
             user: User;
         };
     }
+    export interface SuspendedWorkspace {
+        /**
+         * example:
+         * workspaces.suspended
+         */
+        type: "workspaces.suspended";
+        payload: {
+            workspaceId: string;
+            suspended: boolean;
+            reason: string;
+        };
+    }
     export interface TriggeredWebhook {
         /**
          * example:

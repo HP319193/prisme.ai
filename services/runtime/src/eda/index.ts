@@ -40,6 +40,8 @@ export enum EventType {
 
   CreatedUserTopic = 'events.userTopics.created',
   JoinedUserTopic = 'events.userTopics.joined',
+
+  SuspendedWorkspace = 'workspaces.suspended',
 }
 export class CallbackContext {
   public logger: Logger;

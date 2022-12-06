@@ -56,8 +56,8 @@ export async function executeAutomation(
     },
     {
       userId: ctx?.user?.id,
-    },
-    EventType.ExecutedAutomation
+      serviceTopic: EventType.ExecutedAutomation,
+    }
   );
 
   if (breakThisAutomation) {

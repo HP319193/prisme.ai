@@ -47,7 +47,9 @@ export default class Broker {
         const callbacks = this.callbacks[event.source.serviceTopic!];
         if (callbacks) {
           for (const cb of callbacks) {
-            const childBroker = this.child(event.source);
+            // We do not want serviceTopic to be spread in childparentSource
+            const { serviceTopic: _, ...childSource } = event.source;
+            const childBroker = this.child(childSource);
             try {
               await cb(event, childBroker, {
                 logger: console,
@@ -88,24 +90,20 @@ export default class Broker {
     this.running = false;
   }
 
-  private getEventTopic(
-    topic: Topic | undefined,
-    event: Omit<PrismeEvent, 'id'>
-  ) {
-    if (topic) {
-      return topic;
-    }
+  private getEventTopic(event: Omit<PrismeEvent, 'id'>) {
     if (this.forceTopic) {
       return this.forceTopic;
     }
-    return topic || event.type;
+    if (event?.source?.serviceTopic) {
+      return event?.source?.serviceTopic;
+    }
+    return event.type;
   }
 
   async send<PayloadType extends object = object>(
     eventType: string,
     payload: PayloadType,
-    partialSource?: Partial<EventSource>,
-    topic?: Topic
+    partialSource?: Partial<EventSource>
   ) {
     const overrideSource =
       payload instanceof Error ? (<any>payload).source : partialSource;
@@ -126,7 +124,7 @@ export default class Broker {
       }
     ) as PrismeEvent;
     event.id = `${eventType}-${Math.random() * 10000}`;
-    event.source.serviceTopic = this.getEventTopic(topic, event);
+    event.source.serviceTopic = this.getEventTopic(event);
 
     this._send(event);
     return Promise.resolve(event);

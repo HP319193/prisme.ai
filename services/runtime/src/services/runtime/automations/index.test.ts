@@ -10,11 +10,10 @@ import Cache from '../../../cache/__mocks__/cache';
 import { AvailableModels } from '../../workspaces/__mocks__/workspaces';
 import { EventType } from '../../../eda';
 import Runtime from '..';
-import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../config';
 import { EventSource } from '@prisme.ai/broker';
+import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../config';
 
 global.console.warn = jest.fn();
-
 let brokers = [];
 
 const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
@@ -542,7 +541,12 @@ describe('Logic', () => {
       foo: 'bar',
     });
 
-    const output = await waitPromise;
+    let output: any;
+    try {
+      output = await waitPromise;
+    } catch (error) {
+      throw error;
+    }
     expect(output).toEqual({
       foo: 'bar',
     });

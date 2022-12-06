@@ -146,24 +146,20 @@ export class Broker<CallbackContext = any> {
     this._buffer = disableBuffer ? false : [];
   }
 
-  private getEventTopic(
-    topic: Topic | undefined,
-    event: Omit<PrismeEvent, 'id'>
-  ) {
-    if (topic) {
-      return topic;
-    }
+  private getEventTopic(event: Omit<PrismeEvent, 'id'>) {
     if (this.forceTopic) {
       return this.forceTopic;
     }
-    return topic || event.type;
+    if (event?.source?.serviceTopic) {
+      return event?.source?.serviceTopic;
+    }
+    return event.type;
   }
 
   async send<PayloadType extends object = object>(
     eventType: string,
     payload: PayloadType,
     partialSource?: Partial<EventSource>,
-    topic?: Topic,
     additionalFields?: any
   ) {
     const overrideSource =
@@ -185,7 +181,7 @@ export class Broker<CallbackContext = any> {
         additionalFields,
       }
     );
-    event.source.serviceTopic = this.getEventTopic(topic, event);
+    event.source.serviceTopic = this.getEventTopic(event);
 
     if (this.beforeSendEventCallback) {
       this.beforeSendEventCallback(event);
@@ -221,7 +217,8 @@ export class Broker<CallbackContext = any> {
     cb: EventCallback<CallbackContext, PayloadType>
   ) {
     // From now on, make any broker send/rcv calls using same source as in this event
-    const childBroker = this.child(event.source, { clearUser: true });
+    const { serviceTopic: _, ...childSource } = event.source; // We do not want serviceTopic to be spread in childparentSource
+    const childBroker = this.child(childSource, { clearUser: true });
 
     try {
       const startTime = Date.now();

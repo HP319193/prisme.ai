@@ -4811,6 +4811,31 @@ components:
               type: string
               example: post
 
+    SuspendedWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.suspended
+          enum:
+            - workspaces.suspended
+        payload:
+          type: object
+          required:
+            - workspaceId
+            - suspended
+            - reason
+          properties:
+            workspaceId:
+              type: string
+            suspended:
+              type: boolean
+            reason:
+              type: string
+
     ContextSetType:
       type: string
       enum:

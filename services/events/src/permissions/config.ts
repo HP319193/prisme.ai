@@ -2,6 +2,7 @@ import {
   ActionType as NativeActionType,
   PermissionsConfig,
 } from '@prisme.ai/permissions';
+import { RUNTIME_EMITS_BROKER_TOPIC } from '../../config';
 
 export const ActionType = {
   ...NativeActionType,
@@ -68,6 +69,7 @@ export const config: PermissionsConfig<
           conditions: {
             // This role only applies to a specific workspace !
             'source.workspaceId': '${subject.id}',
+            'source.serviceTopic': RUNTIME_EMITS_BROKER_TOPIC,
           },
         },
       ],
@@ -88,6 +90,7 @@ export const config: PermissionsConfig<
           conditions: {
             // This role only applies to a specific workspace !
             'source.workspaceId': '${subject.id}',
+            'source.serviceTopic': RUNTIME_EMITS_BROKER_TOPIC,
           },
         },
         {
