@@ -477,6 +477,10 @@ export class Api extends Fetcher {
     return config;
   }
 
+  async getAppInstance(workspaceId: string, slug: string) {
+    return this.get(`/workspaces/${workspaceId}/apps/${slug}`);
+  }
+
   async saveAppInstance(
     workspaceId: PrismeaiAPI.ConfigureAppInstance.Parameters.WorkspaceId,
     slug: PrismeaiAPI.ConfigureAppInstance.Parameters.Slug,

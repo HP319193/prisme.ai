@@ -120,8 +120,6 @@ components:
         appSlug:
           type: string
           description: 'App unique id'
-        appName:
-          $ref: '#/components/schemas/LocalizedText'
         appVersion:
           type: string
           description: 'Defaults to the latest known app version'
@@ -247,7 +245,7 @@ components:
         slug:
           type: string
         appName:
-          type: string
+          $ref: '#/components/schemas/LocalizedText'
         config:
           $ref: '#/components/schemas/Config'
         photo:

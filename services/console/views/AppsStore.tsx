@@ -61,7 +61,7 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   }, [getApps, visible]);
 
   const onAppClick = useCallback(
-    async (id: string, name: string) => {
+    async (id: string) => {
       try {
         const slug = generateNewName(
           id,
@@ -116,7 +116,7 @@ const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
             <div
               key={slug}
               className="flex flex-row w-[25rem]  items-center border rounded border-gray-500 p-4 m-[0.8rem] h-[9rem] cursor-pointer hover:bg-blue-200"
-              onClick={() => onAppClick(slug, name)}
+              onClick={() => onAppClick(slug)}
             >
               <div className="flex justify-center w-[6rem] mr-4 flex-none">
                 {photo ? (
