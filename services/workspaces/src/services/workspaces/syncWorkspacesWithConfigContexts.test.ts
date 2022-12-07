@@ -10,6 +10,9 @@ jest.mock(
   () =>
     function () {
       this.exists = () => true;
+      this.getApp = () => ({
+        config: {},
+      });
     }
 );
 import { initWorkspacesConfigSyncing } from './syncWorkspacesWithConfigContexts';
@@ -39,6 +42,9 @@ const getMockedAccessManager = (get?: any) => {
 describe('Sync workspaces config with the EDA', () => {
   let mockedAccessManager: any;
   const apps = {
+    getApp: jest.fn(() => ({
+      config: {},
+    })),
     exists: jest.fn((appSlug: string, appVersion: string) => {
       return true;
     }),
@@ -178,7 +184,11 @@ describe('Sync workspaces config with the EDA', () => {
         WORKSPACE_ID,
         'NLU'
       );
-      expect(updatedAppInstance).toMatchObject(
+
+      expect({
+        ...updatedAppInstance,
+        config: updatedAppInstance.config?.value,
+      }).toMatchObject(
         expect.objectContaining({
           config: expect.objectContaining({
             ...appInstance.config,

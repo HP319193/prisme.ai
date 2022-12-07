@@ -40,6 +40,9 @@ describe('Sync DetailedPages with the EDA', () => {
     exists: jest.fn((appSlug: string, appVersion: string) => {
       return true;
     }),
+    getApp: jest.fn(() => ({
+      config: {},
+    })),
     getAppDetails: jest.fn(() => {
       // Deep copy to avoid mutating blocks & skew unit tests
       return JSON.parse(

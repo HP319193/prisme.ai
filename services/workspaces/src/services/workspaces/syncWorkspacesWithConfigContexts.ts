@@ -45,7 +45,7 @@ export async function initWorkspacesConfigSyncing(
             appInstanceFullSlug
           );
           const updatedConfig = applyObjectUpdateOpLogs(
-            appInstance?.config || {},
+            appInstance?.config?.value || {},
             updates
           );
           await appInstances.configureApp(workspaceId!, appInstanceFullSlug!, {

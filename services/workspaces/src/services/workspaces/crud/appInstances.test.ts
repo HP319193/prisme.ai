@@ -38,6 +38,9 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
   const dsulSaveSpy = jest.spyOn(dsulStorage, 'save');
   const dsulDeleteSpy = jest.spyOn(dsulStorage, 'delete');
   const apps = {
+    getApp: jest.fn(() => ({
+      config: {},
+    })),
     exists: jest.fn((appSlug: string, appVersion: string) => {
       return true;
     }),
@@ -93,7 +96,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
     );
 
     const getResult = await appInstancesCrud.getAppInstance(WORKSPACE_ID, slug);
-    expect(getResult).toEqual(result);
+    expect(getResult).toEqual({ ...result, config: { value: {} } });
   });
 
   it('configureApp', async () => {
@@ -219,6 +222,9 @@ describe('Detailed appInstances', () => {
   };
 
   const apps = {
+    getApp: jest.fn(() => ({
+      config: {},
+    })),
     exists: jest.fn(() => true),
     getAppDetails: jest.fn(() => {
       // Deep copy to avoid mutating blocks & skew unit tests
@@ -257,12 +263,12 @@ describe('Detailed appInstances', () => {
   });
 
   it('getDetailedList', async () => {
-    const appInstance = await appInstancesCrud.getAppInstance(
+    const { config: _, ...appInstance } = await appInstancesCrud.getAppInstance(
       WORKSPACE_ID,
       APP_INSTANCE_SLUG
     );
     const detailedList = await appInstancesCrud.getDetailedList(WORKSPACE_ID);
-    const { config, blocks, ...remainingAppDetails } = appDetails;
+    const { config: __, blocks, ...remainingAppDetails } = appDetails;
 
     expect(detailedList).toEqual([
       {

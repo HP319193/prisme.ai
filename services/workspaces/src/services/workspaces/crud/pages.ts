@@ -234,15 +234,16 @@ class Pages {
         if (!Object.keys(blocks).length) {
           return false;
         }
-        const blockNames = Object.keys(blocks);
+        // TODO Uncomment as soon as we've found a mean to avoid sending appConfigs to blocks
+        // const blockNames = Object.keys(blocks);
         // No block page is from this appInstance : do not include it !
-        if (
-          !(page.blocks || []).find((cur) =>
-            blockNames.includes(cur.slug || '')
-          )
-        ) {
-          return false;
-        }
+        // if (
+        //   !(page.blocks || []).find((cur) =>
+        //     blockNames.includes(cur.slug || '')
+        //   )
+        // ) {
+        //   return false;
+        // }
         return {
           slug: cur.slug,
           blocks: blocks,
@@ -256,7 +257,7 @@ class Pages {
           page.workspaceId!,
           cur.slug!
         );
-        return { ...cur, config: appInstance.config || {} };
+        return { ...cur, config: appInstance.config?.value || {} };
       })
     );
 

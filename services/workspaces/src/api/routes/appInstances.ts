@@ -189,7 +189,7 @@ export default function init(dsulStorage: DSULStorage) {
       broker,
     });
     const appInstance = await appInstances.getAppInstance(workspaceId, slug);
-    res.send(appInstance.config || {});
+    res.send(appInstance.config?.value || {});
   }
 
   const app = express.Router({ mergeParams: true });

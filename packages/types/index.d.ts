@@ -2805,7 +2805,30 @@ declare namespace PrismeaiAPI {
             slug: Parameters.Slug;
         }
         namespace Responses {
-            export type $200 = Prismeai.AppInstance;
+            export interface $200 {
+                /**
+                 * App unique id
+                 */
+                appSlug: string;
+                appName?: Prismeai.LocalizedText;
+                /**
+                 * Defaults to the latest known app version
+                 */
+                appVersion?: string;
+                /**
+                 * Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+                 */
+                slug?: string;
+                /**
+                 * If disabled, this appInstance will be ignored during execution
+                 */
+                disabled?: boolean;
+                updatedAt?: string;
+                createdAt?: string;
+                updatedBy?: string;
+                createdBy?: string;
+                config?: Prismeai.Config;
+            }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;

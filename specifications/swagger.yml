@@ -2527,7 +2527,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AppInstance'
+                allOf:
+                - $ref: "#/components/schemas/AppInstance"
+                - type: object
+                  properties:
+                    config:
+                      $ref: "#/components/schemas/Config"
         '404':
           description: Object not found
           content:

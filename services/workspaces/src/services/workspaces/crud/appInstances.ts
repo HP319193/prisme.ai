@@ -1,6 +1,5 @@
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
-import { ObjectNotFoundError } from '../../../errors';
 import { AccessManager, ActionType, SubjectType } from '../../../permissions';
 import Apps from '../../apps/crud/apps';
 import { DSULStorage, DSULType } from '../../dsulStorage';
@@ -86,7 +85,12 @@ class AppInstances {
   getAppInstance = async (
     workspaceId: string,
     slug: string
-  ): Promise<Prismeai.AppInstance & { slug: string }> => {
+  ): Promise<
+    Omit<Prismeai.AppInstance, 'config'> & {
+      slug: string;
+      config: Prismeai.Config;
+    }
+  > => {
     await this.accessManager.throwUnlessCan(
       ActionType.Read,
       SubjectType.Workspace,
@@ -98,10 +102,17 @@ class AppInstances {
       slug,
       dsulType: DSULType.Imports,
     });
-    if (!appInstance) {
-      throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
-    }
-    return { ...appInstance, slug };
+    const { value: _, ...appConfig } =
+      (await this.apps.getApp(appInstance.appSlug)).config || {};
+
+    return {
+      ...appInstance,
+      config: {
+        ...appConfig,
+        value: appInstance.config || {},
+      },
+      slug,
+    };
   };
 
   installApp = async (

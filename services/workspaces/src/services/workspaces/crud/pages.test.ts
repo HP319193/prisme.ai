@@ -53,6 +53,9 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
   const dsulSaveSpy = jest.spyOn(dsulStorage, 'save');
   const dsulDeleteSpy = jest.spyOn(dsulStorage, 'delete');
   const apps = {
+    getApp: jest.fn(() => ({
+      config: {},
+    })),
     exists: jest.fn((appSlug: string, appVersion: string) => {
       return true;
     }),
@@ -243,6 +246,9 @@ describe('Detailed pages', () => {
   };
 
   const apps = {
+    getApp: jest.fn(() => ({
+      config: {},
+    })),
     exists: jest.fn(() => true),
     getAppDetails: jest.fn(() => {
       // Deep copy to avoid mutating blocks & skew unit tests
@@ -311,6 +317,13 @@ describe('Detailed pages', () => {
               },
             },
           },
+        },
+        {
+          blocks: {
+            'Dialog Box.Editor': 'block url',
+          },
+          slug: 'Dialog Box',
+          config: {},
         },
         {
           blocks: {
