@@ -269,6 +269,20 @@ class Apps {
     };
   };
 
+  getDocumentationPage = async (appSlug: string, appVersion?: string) => {
+    try {
+      const page = await this.storage.get({
+        appSlug,
+        version: appVersion,
+        slug: '_doc',
+        dsulType: DSULType.Pages,
+      });
+      return page;
+    } catch {
+      return undefined;
+    }
+  };
+
   deleteApp = async (
     appSlug: PrismeaiAPI.DeleteApp.PathParameters['appSlug']
   ) => {

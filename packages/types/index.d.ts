@@ -1911,6 +1911,7 @@ declare namespace Prismeai {
             type?: "replace" | "merge";
         };
     }
+    export type SubjectTypes = "workspaces" | "pages";
     export interface SucceededLogin {
         /**
          * example:
@@ -2809,7 +2810,7 @@ declare namespace PrismeaiAPI {
                 /**
                  * App unique id
                  */
-                appSlug: string;
+                appSlug?: string;
                 appName?: Prismeai.LocalizedText;
                 /**
                  * Defaults to the latest known app version
@@ -2828,6 +2829,7 @@ declare namespace PrismeaiAPI {
                 updatedBy?: string;
                 createdBy?: string;
                 config?: Prismeai.Config;
+                documentation?: Prismeai.Page;
             }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
