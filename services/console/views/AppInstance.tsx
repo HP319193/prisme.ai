@@ -38,11 +38,10 @@ export const AppInstance = () => {
   }, [save]);
 
   const saveDetails = useCallback(
-    async ({ slug = '', appName = '', disabled }: Prismeai.AppInstance) => {
+    async ({ slug = '', disabled }: Prismeai.AppInstance) => {
       const newValue = {
         ...value,
         slug,
-        appName,
         disabled,
       };
       setValue(newValue);
@@ -142,51 +141,49 @@ export const AppInstance = () => {
             </HorizontalSeparatedNav.Separator>
           </HorizontalSeparatedNav>
         }
-        extra={
-          [
-            // documentation && (
-            //   <div>
-            //     <div className="ml-3">
-            //       <Segmented
-            //         key="nav"
-            //         options={[
-            //           {
-            //             label: t('apps.doc'),
-            //             value: 0,
-            //             icon: <EyeOutlined />,
-            //           },
-            //           {
-            //             label: t('apps.config'),
-            //             value: 1,
-            //             icon: <EditOutlined />,
-            //           },
-            //         ]}
-            //         onChange={(v) => setViewMode(+v)}
-            //         className="pr-segmented-accent"
-            //       />
-            //     </div>
-            //   </div>
-            // ),
-          ]
-        }
+        // extra={[
+        //   appInstance.documentation && (
+        //     <div>
+        //       <div className="ml-3">
+        //         <Segmented
+        //           key="nav"
+        //           options={[
+        //             {
+        //               label: t('apps.doc'),
+        //               value: 0,
+        //               icon: <EyeOutlined />,
+        //             },
+        //             {
+        //               label: t('apps.config'),
+        //               value: 1,
+        //               icon: <EditOutlined />,
+        //             },
+        //           ]}
+        //           onChange={(v) => setViewMode(+v)}
+        //           className="pr-segmented-accent"
+        //         />
+        //       </div>
+        //     </div>
+        //   ),
+        // ]}
       />
       <Head>
         <title>
           {t('page_title', {
-            elementName: localize(appInstance.appName),
+            elementName: localize(appInstance.slug),
           })}
         </title>
       </Head>
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
         {/*docPage && <IFrameLoader src={docPage} className="flex flex-1" />*/}
-        {viewMode === 1 && (
+        {(true || viewMode === 1) && (
           <div className="absolute top-0 bottom-0 left-0 right-0 bg-white">
-            {/* <AppEditor
-              schema={schema}
-              block={block}
-              appId={appId}
-              key={appId}
-            /> */}
+            <AppEditor
+              schema={appInstance.config.schema}
+              block={appInstance.config.block}
+              appId={appInstance.slug!}
+              key={appInstance.slug}
+            />
           </div>
         )}
       </div>

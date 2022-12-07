@@ -50,16 +50,6 @@
                 }
               }
             }
-          },
-          "options": {
-            "type": "object",
-            "properties": {
-              "persist": {
-                "type": "boolean",
-                "description": "Whether to persist this event or not. Defaults to true",
-                "default": true
-              }
-            }
           }
         }
       }

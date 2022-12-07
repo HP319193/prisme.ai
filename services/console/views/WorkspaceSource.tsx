@@ -103,7 +103,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
       if (!workspace || value === undefined) return;
       try {
         setAnnotations([]);
-        return { ...(await toJSON<Workspace>(value)), id: workspace.id };
+        return { ...(await toJSON<Workspace>(value)), id };
       } catch (e) {
         const { mark, message } = e as YAMLException;
         setAnnotations([
@@ -166,7 +166,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
       row: line - 1,
       column: 0,
       text: generateEndpoint(
-        workspace.id,
+        id,
         v === 'true'
           ? (getEndpointAutomationName(`${value}`, line) || { name: v }).name
           : v
@@ -175,7 +175,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     }));
     const allAnnotations = [...(annotations || []), ...endpoints];
     return allAnnotations;
-  }, [annotations, value, workspace]);
+  }, [annotations, id, value, workspace]);
 
   useEffect(() => {
     const { current } = ref;

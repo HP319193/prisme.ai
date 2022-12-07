@@ -9,14 +9,18 @@ import {
 import api from '../../utils/api';
 import { useContext } from '../../utils/useContext';
 
+interface Page extends Prismeai.Page {
+  apiKey?: string;
+}
+
 export interface PageContext {
-  page: Prismeai.Page;
+  page: Page;
   appInstances: Prismeai.PageDetails['appInstances'];
   loading: boolean;
-  fetchPage: () => Promise<Prismeai.Page | null>;
-  savePage: (page: Prismeai.Page) => Promise<Prismeai.Page | null>;
+  fetchPage: () => Promise<Page | null>;
+  savePage: (page: Page) => Promise<Page | null>;
   saving: boolean;
-  deletePage: () => Promise<Prismeai.Page | null>;
+  deletePage: () => Promise<Page | null>;
 }
 
 export const pageContext = createContext<PageContext | undefined>(undefined);
@@ -77,7 +81,7 @@ export const PageProvider = ({
   }, [fetchPageById, fetchPageBySlug, id, slug, workspaceId, workspaceSlug]);
 
   const savePage: PageContext['savePage'] = useCallback(
-    async (newPage) => {
+    async ({ apiKey, ...newPage }) => {
       if (!workspaceId) return null;
       setSaving(true);
       const page = await api.updatePage(workspaceId, newPage);

@@ -246,26 +246,26 @@ export const Automation = () => {
     () => [
       {
         appName: localize(workspace.name),
-        automations: workspace.automations,
+        automations: workspace.automations || {},
         icon: iconWorkspace.src,
       },
-      ...Object.entries(workspace.imports || {}).map(
-        ([appSlug, { automations, appName, photo = '' }]) => ({
-          appName: `${appSlug} (${appName})`,
-          icon: photo,
-          automations: automations.reduce(
-            (prev, { slug, name, description, ...rest }) => ({
-              ...prev,
-              [`${appSlug}.${slug}`]: {
-                name: localize(name) || '',
-                description: localize(description) || '',
-                ...rest,
-              },
-            }),
-            {}
-          ),
-        })
-      ),
+      ...Object.entries(
+        workspace.imports || ({} as Prismeai.DetailedAppInstance)
+      ).map(([slug, { automations, appSlug, photo = '' }]) => ({
+        appName: `${slug} (${appSlug})`,
+        icon: photo,
+        automations: automations.reduce(
+          (prev, { slug, name, description, ...rest }) => ({
+            ...prev,
+            [`${appSlug}.${slug}`]: {
+              name: localize(name) || '',
+              description: localize(description) || '',
+              ...rest,
+            },
+          }),
+          {}
+        ),
+      })),
     ],
     [localize, workspace.automations, workspace.imports, workspace.name]
   );

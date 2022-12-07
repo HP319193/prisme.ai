@@ -7,16 +7,18 @@ import {
   useEffect,
   useRef,
 } from 'react';
-import api from '../../utils/api';
+import api, { Events } from '../../utils/api';
 import { useContext } from '../../utils/useContext';
+import updateOnEvents from './updateOnEvents';
 
-interface Workspace extends Prismeai.DSULReadOnly {
+export interface Workspace extends Prismeai.DSULReadOnly {
   id: string;
 }
 
 export interface WorkspaceContext {
   workspace: Workspace;
   loading: boolean;
+  events: Events;
   fetchWorkspace: () => void;
   saveWorkspace: (
     workspace: Prismeai.Workspace
@@ -53,6 +55,21 @@ export const WorkspaceProvider = ({
   const [workspace, setWorkspace] = useState<WorkspaceContext['workspace']>();
   const [loading, setLoading] = useState<WorkspaceContext['loading']>(true);
   const [saving, setSaving] = useState<WorkspaceContext['saving']>(false);
+  const [events, setEvents] = useState<Events>();
+
+  useEffect(() => {
+    let events: Events;
+    const initEvents = async () => {
+      events = await api.streamEvents(id);
+      setEvents(events);
+      updateOnEvents(events, setWorkspace);
+    };
+    initEvents();
+
+    return () => {
+      events?.destroy();
+    };
+  }, [id]);
 
   useEffect(() => {
     onUpdate && workspace && onUpdate(workspace);
@@ -174,12 +191,13 @@ export const WorkspaceProvider = ({
   }, [fetchWorkspace, id]);
 
   if (loading) return <Loading />;
-  if (!workspace) return null;
+  if (!workspace || !events) return null;
 
   return (
     <workspaceContext.Provider
       value={{
         workspace,
+        events,
         loading,
         fetchWorkspace,
         saveWorkspace,
