@@ -5,7 +5,7 @@ import ajv from 'ajv';
 import fetch from 'node-fetch';
 import { EventValidationError } from '../errors';
 
-const ajValidator = new ajv({ allErrors: true, strict: 'log' });
+const ajValidator = new ajv({ allErrors: true, strict: 'log' } as any);
 let schemaMapping: Record<string, string> = {};
 let whitelistedEventPrefixes: string[] = [];
 
