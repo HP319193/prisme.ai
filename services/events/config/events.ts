@@ -12,3 +12,7 @@ export const EVENTS_BUFFER_FLUSH_EVERY = parseInt(
 export const EVENTS_RETENTION_DAYS = parseInt(
   process.env.EVENTS_RETENTION_DAYS || `${30 * 6}`
 );
+
+export const EVENTS_SCHEDULED_DELETION_DAYS = parseInt(
+  process.env.EVENTS_SCHEDULED_DELETION_DAYS || `${30 * 3}`
+);

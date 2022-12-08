@@ -246,7 +246,15 @@ Then, for when you want to run this service directly from its docker image, you 
       Number of days events are kept inside the datalake before being removed
     </td>
     <td>180</td>
-  </tr>         
+  </tr>       
+  <tr>
+    <td>EVENTS_SCHEDULED_DELETION_DAYS</td>
+    <td>events</td>
+    <td>
+      Number of days events are kept inside the datalake after deleting their workspace
+    </td>
+    <td>90</td>
+  </tr>           
 
   <tr>
     <td>SOCKETIO_REDIS_HOST</td>
