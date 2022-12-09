@@ -619,6 +619,16 @@
         "sectionId": {
           "label": "Identifiant HTML de la section",
           "description": "Permet d'identifier la section pour y appliquer des styles CSS particulier ou y faire pointer un lien de type défilement automatique. Optionnel."
+        },
+        "action": {
+          "title": "Action",
+          "description": "Action déclenchée au click sur l'élément",
+          "event": "Evénement",
+          "url": "Lien",
+          "valueEvent": "Evénement à déclencher",
+          "valueLink": "Url",
+          "popup": "Ouvrir dans un nouvel onglet",
+          "payload": "Contenu de l'événement"
         }
       },
       "builtin": "Blocks de base",
@@ -629,6 +639,7 @@
       "name_Form": "Formulaire",
       "name_RichText": "Texte enrichi",
       "name_Layout": "Navigation",
+      "name_Buttons": "Groupe de boutons",
       "description": "",
       "description_Header": "Afficher une entête de page",
       "description_Cards": "Afficher un groupe de cartes",
@@ -636,6 +647,7 @@
       "description_Form": "Afficher un formulaire",
       "description_RichText": "Afficher du texte mis en page grâce à Markdown ou HTML",
       "description_Layout": "Afficher des pages de blocks navigable. Doit être utilisé par le biais d'automatisations.",
+      "description_Buttons": "Afficher un groupe de boutons",
       "panelTitle_adding": "Ajouter un Block",
       "panelTitle_editing": "Éditer le Block {{blockName}}",
       "header": {
@@ -707,6 +719,26 @@
           }
         }
       },
+      "buttons": {
+        "settings": {
+          "text": {
+            "label": "Texte",
+            "description": "Texte du bouton"
+          },
+          "variant": {
+            "label": "Affichage",
+            "description": "Mode d'affichage du bouton"
+          },
+          "tag": {
+            "label": "Etiquette",
+            "description": "Texte a afficher dans une étiquette à droite du bouton"
+          },
+          "unselected": {
+            "label": "Désélectionné",
+            "description": "Affiche le bouton dans un état secondaires, grisé. Utilisé par exemple pour indiquer un onglet inactif"
+          }
+        }
+      },
       "cards": {
         "settings": {
           "title": "Titre",
@@ -714,16 +746,6 @@
           "cover": "Image de couverture",
           "variant": {
             "label": "Style de cartes"
-          },
-          "action": {
-            "title": "Action",
-            "description": "Action déclenchée au click sur une carte",
-            "event": "Evénement",
-            "url": "Lien",
-            "valueEvent": "Evénement à déclencher",
-            "valueLink": "Url",
-            "popup": "Ouvrir dans un nouvel onglet",
-            "payload": "Contenu de l'événement"
           },
           "classic": {
             "label": "Classique",

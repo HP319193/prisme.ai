@@ -619,6 +619,16 @@
         "sectionId": {
           "label": "HTML identifier of the section",
           "description": "Allows you to identify the section to apply particular CSS styles or point a link to it like an automatic scroll. Optional."
+        },
+        "action": {
+          "title": "Action",
+          "description": "Action triggered by a click on the card",
+          "event": "Event",
+          "url": "Link",
+          "valueEvent": "Event to trigger",
+          "valueLink": "Url",
+          "popup": "Open in new tab",
+          "payload": "Event's payload"
         }
       },
       "builtin": "Built-in Blocks",
@@ -629,6 +639,7 @@
       "name_Form": "Form",
       "name_RichText": "Rich text",
       "name_Layout": "Navigation",
+      "name_Buttons": "Buttons group",
       "description": "",
       "description_Header": "Display page header",
       "description_Cards": "Display a cards group",
@@ -636,6 +647,7 @@
       "description_Form": "Display form",
       "description_RichText": "Display text formatted with Markdown or HTML",
       "description_Layout": "Display navigable block pages. Must be used through automations.",
+      "description_Buttons": "Display a buttons group",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
@@ -707,6 +719,26 @@
           }
         }
       },
+      "buttons": {
+        "settings": {
+          "text": {
+            "label": "Text",
+            "description": "Button text"
+          },
+          "variant": {
+            "label": "Display",
+            "description": "Button's display mode"
+          },
+          "tag": {
+            "label": "Tag",
+            "description": "Tag displayed on the right of the button"
+          },
+          "unselected": {
+            "label": "Unselected",
+            "description": "Display the button in an 'unselected' mode, greyed out. Usefull to show an inactive tab for example."
+          }
+        }
+      },
       "cards": {
         "settings": {
           "title": "Title",
@@ -714,16 +746,6 @@
           "cover": "Cover image",
           "variant": {
             "label": "Cards style"
-          },
-          "action": {
-            "title": "Action",
-            "description": "Action triggered by a click on the card",
-            "event": "Event",
-            "url": "Link",
-            "valueEvent": "Event to trigger",
-            "valueLink": "Url",
-            "popup": "Open in new tab",
-            "payload": "Event's payload"
           },
           "classic": {
             "label": "Classic",
@@ -735,7 +757,7 @@
               "type": "Type",
               "type_text": "Text",
               "type_button": "Button",
-              "type_accordion": "Accorieon",
+              "type_accordion": "Accordion",
               "text": {
                 "value": "Text",
                 "value_description": "You can use HTML or Markdown."

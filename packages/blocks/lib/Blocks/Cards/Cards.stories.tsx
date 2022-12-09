@@ -129,7 +129,7 @@ const Template: Story<any> = () => {
     variant: 'actions',
     cards: [
       {
-        title: 'Les Anis de Flavigny but this is sooo long why do I write this',
+        title: 'HERE',
         description: 'Confiseur(s) but this is sooo long why do I write this',
         cover:
           'https://i.postimg.cc/Hx1yXdjj/Capture-d-e-cran-2021-04-29-a-16-03-1.png',
@@ -145,6 +145,7 @@ const Template: Story<any> = () => {
             text:
               'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
+            popup: true,
           },
         ],
       },

@@ -53,6 +53,37 @@ export const builtinBlocksVariants = [
   },
   {
     name: {
+      fr: 'Boutons avec étiquette',
+      en: 'Buttons with tag',
+      es: 'Botones con etiqueta',
+    },
+    slug: 'Buttons_tag',
+    block: 'Buttons',
+    photo: '/images/blocks/preview-Buttons-tag.png',
+    config: {
+      buttons: [
+        {
+          text: 'New notifications',
+          variant: 'default',
+          tag: '5',
+        },
+        {
+          text: 'Archived',
+          variant: 'default',
+          unselected: true,
+          tag: '25',
+        },
+        {
+          text: 'Starred',
+          variant: 'default',
+          unselected: true,
+          tag: '12',
+        },
+      ],
+    },
+  },
+  {
+    name: {
       fr: 'Formulaire de contact',
       en: 'Contact Form',
       es: 'Formulario de contacto',
