@@ -2,7 +2,7 @@ import { Trans, useTranslation } from 'next-i18next';
 import { useWorkspaceLayout } from '../../layouts/WorkspaceLayout/context';
 import SuggestionButton from '../SuggestionButton';
 
-export const EmptyWorkspace = () => {
+export const EmptyActivities = () => {
   const { t } = useTranslation('workspaces');
   const { createAutomation, createPage, installApp } = useWorkspaceLayout();
   return (
@@ -41,4 +41,4 @@ export const EmptyWorkspace = () => {
   );
 };
 
-export default EmptyWorkspace;
+export default EmptyActivities;

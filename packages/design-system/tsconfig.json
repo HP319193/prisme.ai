@@ -15,10 +15,6 @@
     "jsx": "react-jsx",
     "incremental": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "../../services/console/components/EventsViewer/ObjectInput.tsx"
-  ],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "*.test.tsx"]
 }

@@ -55,3 +55,6 @@ export function SearchOutlined() {
 export function CodeOutlined() {
   return null;
 }
+export function ExceptionOutlined() {
+  return null;
+}

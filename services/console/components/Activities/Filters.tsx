@@ -5,7 +5,7 @@ import { Field, Form, FormSpy } from 'react-final-form';
 import { filters } from './presetFilters';
 import ObjectInput from '../ObjectInput';
 import moment from 'moment';
-import { useQueryString } from '../QueryStringProvider';
+import { useQueryString } from '../../providers/QueryStringProvider';
 import { Popover } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 

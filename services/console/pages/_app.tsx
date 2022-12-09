@@ -18,7 +18,7 @@ import { AppsProvider } from '../components/AppsProvider';
 import down from '../icons/down.svg';
 import { WorkspacesUsageProvider } from '../components/WorkspacesUsage';
 import externals from '../utils/externals';
-import QueryStringProvider from '../components/QueryStringProvider';
+import QueryStringProvider from '../providers/QueryStringProvider';
 import WorkspacesProvider from '../providers/Workspaces/WorkspacesProvider';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });

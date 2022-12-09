@@ -1,5 +1,5 @@
 import renderer from 'react-test-renderer';
-import EmptyWorkspace from './Empty';
+import EmptyWorkspace from './EmptyActivities';
 import { workspaceLayoutContext } from '../../layouts/WorkspaceLayout/context';
 
 it('should render', () => {
