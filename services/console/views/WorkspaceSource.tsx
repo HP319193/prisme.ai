@@ -42,7 +42,16 @@ interface WorkspaceSourceProps {
 export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const { t } = useTranslation('workspaces');
   const {
-    workspace: { id, pages, automations, ...workspace },
+    workspace: {
+      id,
+      pages,
+      automations,
+      imports,
+      createdAt,
+      createdBy,
+      updatedAt,
+      ...workspace
+    },
   } = useWorkspace();
   const { onSaveSource } = useWorkspaceLayout();
   const {
