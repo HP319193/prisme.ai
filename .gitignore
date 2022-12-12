@@ -11,3 +11,4 @@ docker-compose-dev.yml
 **/**/local.env
 services/console/.next
 test.js
+.vscode
