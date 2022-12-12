@@ -77,3 +77,12 @@ export class InvalidConditionSyntax extends PrismeError {
     super(msg, details);
   }
 }
+
+export class SuspendedWorkspaceError extends PrismeError {
+  constructor(
+    details: Prismeai.SuspendedWorkspace['payload'],
+    msg = 'This workspace has been suspended'
+  ) {
+    super(msg, details);
+  }
+}

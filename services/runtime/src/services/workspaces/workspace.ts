@@ -47,6 +47,8 @@ export class Workspace {
   private apps: Apps;
   public secrets: Set<string>;
 
+  public status?: Prismeai.SuspendedWorkspace['payload'];
+
   private constructor(
     workspace: Prismeai.Workspace,
     apps: Apps,

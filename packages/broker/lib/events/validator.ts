@@ -123,7 +123,7 @@ export function validate(eventType: string, payload: any) {
   if (!validated) {
     throw new EventValidationError(
       `Trying to send an invalid '${eventType}' event`,
-      ajValidator.errors
+      validate.errors
     );
   }
   return validated;

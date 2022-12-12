@@ -1,7 +1,7 @@
 import yaml from 'js-yaml';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../eda';
-import { ObjectNotFoundError } from '../../errors';
+import { ObjectNotFoundError, SuspendedWorkspaceError } from '../../errors';
 import Storage, { StorageOptions } from '../../storage';
 import { DriverType } from '../../storage/types';
 import { Workspace } from './workspace';
@@ -39,11 +39,26 @@ export class Workspaces extends Storage {
       EventType.UninstalledApp,
       EventType.ConfiguredApp,
       EventType.PublishedApp,
+      EventType.SuspendedWorkspace,
     ];
 
     this.broker.on(
       listenedEvents,
       async (event, broker, { logger }) => {
+        if (event.type === EventType.SuspendedWorkspace) {
+          const suspended = (event as any as Prismeai.SuspendedWorkspace)
+            .payload;
+          await this.suspendWorkspace(suspended);
+          if (suspended.suspended) {
+            logger.info(
+              `Suspended workspace ${suspended.workspaceId} execution`
+            );
+          } else {
+            logger.info(`Resumed workspace ${suspended.workspaceId} execution`);
+          }
+          return true;
+        }
+
         if (event.type === EventType.PublishedApp) {
           const publishedApp = (event as any as Prismeai.PublishedApp).payload
             .app;
@@ -131,7 +146,32 @@ export class Workspaces extends Storage {
     if (!(workspaceId in this.workspaces)) {
       await this.fetchWorkspace(workspaceId);
     }
+    if (this.workspaces[workspaceId]?.status?.suspended) {
+      throw new SuspendedWorkspaceError(
+        this.workspaces[workspaceId]
+          .status as Prismeai.SuspendedWorkspace['payload']
+      );
+    }
     return this.workspaces[workspaceId];
+  }
+
+  async suspendWorkspace(status: Prismeai.SuspendedWorkspace['payload']) {
+    if (status.suspended) {
+      this.workspaces[status.workspaceId] = await Workspace.create(
+        {} as Prismeai.Workspace,
+        undefined as any
+      );
+      this.workspaces[status.workspaceId].status = status;
+      await this.driver.save(
+        `workspaces/${status.workspaceId}/status.yml`,
+        yaml.dump(status)
+      );
+    } else {
+      try {
+        await this.driver.delete(`workspaces/${status.workspaceId}/status.yml`);
+      } catch {} // Since all instances would try to delete only 1 can succeed
+      await this.fetchWorkspace(status.workspaceId);
+    }
   }
 
   async watchAppCurrentVersions(workspace: Workspace) {
@@ -152,6 +192,21 @@ export class Workspaces extends Storage {
 
   async fetchWorkspace(workspaceId: string): Promise<Prismeai.Workspace> {
     try {
+      // First check if it is suspended
+      try {
+        const status = yaml.load(
+          await this.driver.get(`workspaces/${workspaceId}/status.yml`)
+        ) as Prismeai.SuspendedWorkspace['payload'];
+        if (status.suspended) {
+          this.workspaces[workspaceId] = await Workspace.create(
+            {} as Prismeai.Workspace,
+            undefined as any
+          );
+          this.workspaces[workspaceId].status = status;
+          return status as any as Prismeai.Workspace;
+        }
+      } catch {}
+
       const raw = await this.driver.get(
         `workspaces/${workspaceId}/current.yml`
       );

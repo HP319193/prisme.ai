@@ -289,7 +289,7 @@ workspaces_test:
   extends: .npm_test
   only:
     changes:
-      - 'services/workspaces/*'
+      - 'services/workspaces/**/*'
   before_script:
     - export DIRECTORY=services/$WORKSPACES_DIRECTORY
 

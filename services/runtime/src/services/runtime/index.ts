@@ -280,12 +280,21 @@ export default class Runtime {
         `Can't process event '${event.type}' without source correlationId or workspaceId !`
       );
     }
-    const workspace = await this.workspaces.getWorkspace(workspaceId);
+    let workspace: Workspace;
+    try {
+      workspace = await this.workspaces.getWorkspace(workspaceId);
+    } catch (err) {
+      logger.info({
+        msg: `Skipping event ${event.id} since workspace ${workspaceId} cannot be loaded`,
+        err,
+      });
+      return;
+    }
 
     logger.debug({ msg: 'Starting to process event', event });
     const { triggers, payload } = await this.parseEvent(workspace, event);
     if (!triggers?.length) {
-      logger.trace('Did not find any matching trigger');
+      logger.debug('Did not find any matching trigger for event ' + event.type);
       return;
     }
 
@@ -335,7 +344,14 @@ export default class Runtime {
       );
     }
 
-    return await this.processTriggers(triggers, webhook, ctx, logger, broker);
+    const result = await this.processTriggers(
+      triggers,
+      webhook,
+      ctx,
+      logger,
+      broker
+    );
+    return result;
   }
 
   private async processTriggers(
@@ -359,7 +375,7 @@ export default class Runtime {
     let result;
     try {
       result = await Promise.all(
-        triggers.map(async (trigger: DetailedTrigger) => {
+        triggers.map((trigger: DetailedTrigger) => {
           return this.processTrigger(trigger, payload, ctx, logger, broker);
         })
       );
