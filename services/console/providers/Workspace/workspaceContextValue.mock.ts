@@ -1,3 +1,4 @@
+import { Events } from '../../utils/api';
 import { WorkspaceContext } from './WorkspaceProvider';
 
 export const workspaceContextValue: WorkspaceContext = {
@@ -22,6 +23,11 @@ export const workspaceContextValue: WorkspaceContext = {
   loading: false,
   saveWorkspace: jest.fn(),
   saving: false,
+  events: ({
+    on: jest.fn(),
+    all: jest.fn(),
+    destroy: jest.fn(),
+  } as unknown) as Events,
 };
 
 export default workspaceContextValue;

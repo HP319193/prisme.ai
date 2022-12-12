@@ -115,10 +115,10 @@ const ShareWorkspacePopover = ({
 
     return rows;
   }, [
+    deleteWorkspace,
     generateRowButtons,
     name,
     push,
-    remove,
     removeUserPermissions,
     subjectId,
     subjectType,

@@ -5,6 +5,7 @@ export const appInstanceContextValue: AppInstanceContext = {
     slug: 'app',
     appSlug: 'my-App',
     appName: 'My App',
+    config: {},
   },
   fetchAppInstance: jest.fn(),
   loading: false,

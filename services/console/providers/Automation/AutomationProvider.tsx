@@ -101,3 +101,5 @@ export const AutomationProvider = ({
     </automationContext.Provider>
   );
 };
+
+export default AutomationProvider;

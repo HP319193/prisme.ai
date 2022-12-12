@@ -250,7 +250,8 @@ export const Automation = () => {
         icon: iconWorkspace.src,
       },
       ...Object.entries(
-        workspace.imports || ({} as Prismeai.DetailedAppInstance)
+        workspace.imports ||
+          ({} as Record<string, Prismeai.DetailedAppInstance>)
       ).map(([slug, { automations, appSlug, photo = '' }]) => ({
         appName: `${slug} (${appSlug})`,
         icon: photo,

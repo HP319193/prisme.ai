@@ -70,7 +70,7 @@ export const AppsProvider: FC = ({ children }) => {
     async (
       workspaceId: string,
       slug: string,
-      appInstance: Prismeai.AppInstancePatch
+      appInstance: Prismeai.AppInstance
     ) => {
       if (!workspaceId) return;
       return api.saveAppInstance(workspaceId, slug, appInstance);

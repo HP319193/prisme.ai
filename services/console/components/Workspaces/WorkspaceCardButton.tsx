@@ -7,9 +7,10 @@ import { useUser } from '../UserProvider';
 import { Tooltip } from 'antd';
 import { Button } from '@prisme.ai/design-system';
 import { FC } from 'react';
+import { Workspace } from '../../utils/api';
 
 interface WorkspaceCardButtonProps extends CardButtonProps {
-  workspace: Prismeai.Workspace;
+  workspace: Workspace;
   href?: string;
 }
 export const WorkspaceCardButton: FC<WorkspaceCardButtonProps> = ({

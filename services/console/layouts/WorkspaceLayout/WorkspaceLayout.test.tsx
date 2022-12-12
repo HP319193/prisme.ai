@@ -4,6 +4,7 @@ import renderer, { act } from 'react-test-renderer';
 import { useRouter } from 'next/router';
 import { useWorkspaces } from '../../providers/Workspaces';
 import { workspaceContext } from '../../providers/Workspace';
+import workspaceContextValue from '../../providers/Workspace/workspaceContextValue.mock';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import { useWorkspaceLayout, WorkspaceLayoutContext } from './context';
 import Storage from '../../utils/Storage';
@@ -48,6 +49,12 @@ jest.mock('@prisme.ai/sdk', () => {
   class FakeEvents {
     static destroyMock = jest.fn();
     static listeners: any[] = [];
+    on(listener: Function) {
+      FakeEvents.listeners.push(listener);
+      return () => {
+        FakeEvents.listeners = [];
+      };
+    }
     all(listener: Function) {
       FakeEvents.listeners.push(listener);
       return () => {
@@ -131,7 +138,11 @@ it('should render empty', async () => {
 });
 
 it('should get layout', async () => {
-  const root = renderer.create(getLayout(<div />));
+  const root = renderer.create(
+    <workspaceContext.Provider value={workspaceContextValue}>
+      {getLayout(<div />)}
+    </workspaceContext.Provider>
+  );
   await act(async () => {
     await true;
   });

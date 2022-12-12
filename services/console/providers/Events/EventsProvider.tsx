@@ -162,3 +162,5 @@ export const EventsProvider = ({
     </eventsContext.Provider>
   );
 };
+
+export default EventsProvider;

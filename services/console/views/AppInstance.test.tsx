@@ -4,6 +4,7 @@ import { workspaceContext } from '../providers/Workspace';
 import { AppInstance } from './AppInstance';
 import workspaceContextValue from '../providers/Workspace/workspaceContextValue.mock';
 import appInstanceContextValue from '../providers/AppInstanceProvider/appInstancesContextValue.mock';
+import { workspaceLayoutContext } from '../layouts/WorkspaceLayout/context';
 
 jest.mock('../utils/useYaml', () => {
   const toJSON = jest.fn();
@@ -30,9 +31,11 @@ jest.mock('next/router', () => {
 it('should render', () => {
   const root = renderer.create(
     <workspaceContext.Provider value={workspaceContextValue}>
-      <appInstanceContext.Provider value={appInstanceContextValue}>
-        <AppInstance />
-      </appInstanceContext.Provider>
+      <workspaceLayoutContext.Provider value={{} as any}>
+        <appInstanceContext.Provider value={appInstanceContextValue}>
+          <AppInstance />
+        </appInstanceContext.Provider>
+      </workspaceLayoutContext.Provider>
     </workspaceContext.Provider>
   );
   expect(root.toJSON()).toMatchSnapshot();

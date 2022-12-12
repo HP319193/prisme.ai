@@ -1,5 +1,4 @@
 import renderer, { act } from 'react-test-renderer';
-import workspaces from '../../pages/workspaces';
 import api from '../../utils/api';
 import WorkspaceProvider, {
   useWorkspace,
@@ -7,11 +6,14 @@ import WorkspaceProvider, {
 } from './WorkspaceProvider';
 
 jest.mock('../../utils/api', () => {
+  const workspaceContextValue = require('./workspaceContextValue.mock').default;
+
   const mock = {
     getWorkspace: jest.fn((id: string) => ({
       id,
       name: 'Foo',
     })),
+    streamEvents: jest.fn((id: string) => workspaceContextValue.events),
     updateWorkspace: jest.fn((w: any) => w),
     deleteWorkspace: jest.fn((id: string) => ({
       id,

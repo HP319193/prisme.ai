@@ -300,9 +300,9 @@ export const useSchema = (store: Record<string, any> = {}) => {
               .filter(({ events: { emit = [] } = {} }) => emit.length > 0)
               .flatMap(
                 ({ events: { emit = [] } = {}, appName = '', slug = '' }) => ({
-                  label: appName,
+                  label: localize(appName),
                   options: emit.flatMap(({ event, autocomplete }) =>
-                    generateEventsAutomations(appName)(
+                    generateEventsAutomations(localize(appName))(
                       event,
                       autocomplete
                     ).flatMap((value) => ({

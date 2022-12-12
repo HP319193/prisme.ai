@@ -80,27 +80,6 @@ export const updateOnEvents = (
       setWorkspace((workspace) => workspace && callback(workspace, payload));
     });
   });
-  // events.on(
-  //   'workspaces.pages.created',
-  //   ({ payload: { page: { slug, ...page } } = {} }) => {
-  //     setWorkspace(
-  //       (workspace) =>
-  //         workspace && {
-  //           ...workspace,
-  //           pages: {
-  //             ...Object.entries(workspace.pages || {}).reduce(
-  //               (prev, [s, p]) => ({
-  //                 ...prev,
-  //                 [s]: s === slug ? page : p,
-  //               }),
-  //               {}
-  //             ),
-  //             ...(workspace.pages?.[slug] ? {} : page),
-  //           },
-  //         }
-  //     );
-  //   }
-  // );
 };
 
 export default updateOnEvents;

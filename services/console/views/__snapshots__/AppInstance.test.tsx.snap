@@ -3,5 +3,9 @@
 exports[`should render 1`] = `
 <div
   className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto"
-/>
+>
+  <div
+    className="absolute top-0 bottom-0 left-0 right-0 bg-white"
+  />
+</div>
 `;

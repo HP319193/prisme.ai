@@ -33,7 +33,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
     if (!workspace.imports) return { config: workspace.config };
     const [appName] = instruction.split(/\./);
     if (!workspace.imports[appName]) return { config: workspace.config };
-    return { config: workspace.imports[appName].config || {}, appName };
+    return { config: /*workspace.imports[appName].config || */ {}, appName };
   }, [instruction, workspace.config, workspace.imports]);
 
   const { extractSelectOptions, extractAutocompleteOptions } = useSchema({

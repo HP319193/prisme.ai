@@ -5,7 +5,7 @@ import { Events } from '@prisme.ai/sdk';
 export interface BlockProviderProps {
   config?: any;
   onConfigUpdate?: (config: any) => void;
-  appConfig?: Prismeai.DetailedAppInstance['config'];
+  appConfig?: Prismeai.AppInstance['config'];
   onAppConfigUpdate?: (config: any) => void;
   events?: Events;
   api?: any;
