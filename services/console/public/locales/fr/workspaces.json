@@ -167,7 +167,8 @@
       "error": "Une erreur est survenue"
     },
     "duplicate": {
-      "help": "Dupliquer l'Automatisation"
+      "help": "Dupliquer l'Automatisation",
+      "success": "L'Automatisation a été dupliquée"
     },
     "source": {
       "label": "Voir le code",
@@ -524,7 +525,8 @@
       "defaultName": "Page"
     },
     "duplicate": {
-      "help": "Créer une copie de cette page"
+      "help": "Créer une copie de cette page",
+      "success": "La Page a été dupliquée"
     },
     "source": {
       "label": "Voir le code",

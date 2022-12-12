@@ -35,6 +35,7 @@ import { AutomationProvider, useAutomation } from '../providers/Automation';
 import { ApiError } from '../utils/api';
 import SourceEdit from '../components/SourceEdit/SourceEdit';
 import { validateAutomation } from '@prisme.ai/validation';
+import { incrementName } from '../utils/incrementName';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -95,10 +96,11 @@ export const Automation = () => {
   } = useAutomation();
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
-  const { workspace } = useWorkspace();
+  const { workspace, createAutomation } = useWorkspace();
   const { setDirty } = useWorkspaceLayout();
   const [value, setValue] = useState(automation);
   const [displaySource, setDisplaySource] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
 
   const {
     query: { automationId },
@@ -274,9 +276,58 @@ export const Automation = () => {
     [localize, workspace.automations, workspace.imports, workspace.name]
   );
 
-  const duplicate = useCallback(() => {
-    alert('coming soon');
-  }, []);
+  const duplicate = useCallback(async () => {
+    if (!automationId) return;
+    setDuplicating(true);
+    const newName =
+      typeof automation.name === 'string'
+        ? incrementName(
+            automation.name,
+            Object.values(workspace.automations || {}).map(({ name }) =>
+              localize(name)
+            )
+          )
+        : Object.entries(automation.name).reduce(
+            (prev, [key, name]) => ({
+              ...prev,
+              [key]: incrementName(
+                name,
+                Object.values(workspace.automations || {}).map(({ name: n }) =>
+                  typeof n === 'string' ? n : n[key] || localize(n)
+                )
+              ),
+            }),
+            {}
+          );
+
+    const newSlug = incrementName(
+      `${automationId}`,
+      Object.keys(workspace.automations || {}).map((slug) => slug),
+      '{{name}} {{n}}'
+    );
+
+    await createAutomation({
+      ...automation,
+      name: newName,
+      slug: newSlug,
+    });
+
+    push(`/workspaces/${workspace.id}/automations/${newSlug}`);
+    setDuplicating(false);
+    notification.success({
+      message: t('automations.duplicate.success'),
+      placement: 'bottomRight',
+    });
+  }, [
+    automation,
+    automationId,
+    createAutomation,
+    localize,
+    push,
+    t,
+    workspace.automations,
+    workspace.id,
+  ]);
 
   const showSource = useCallback(() => {
     setDisplaySource(!displaySource);
@@ -348,8 +399,9 @@ export const Automation = () => {
                 placement="bottom"
               >
                 <button
-                  className="flex flex-row focus:outline-none items-center pr-4"
+                  className="!flex flex-row focus:outline-none items-center pr-4"
                   onClick={duplicate}
+                  disabled={duplicating}
                 >
                   <span className="mr-2">
                     <CopyIcon width="1.2rem" height="1.2rem" />

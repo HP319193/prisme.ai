@@ -1,3 +1,4 @@
+// Deprecated, use incrementName instead
 export const generateNewName = (
   defaultName: string,
   currentList: any[],

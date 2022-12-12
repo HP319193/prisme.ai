@@ -110,11 +110,14 @@ export const WorkspaceProvider = ({
 
   const createAutomation: WorkspaceContext['createAutomation'] = useCallback(
     async (automation) => {
+      console.log('mais !');
+
       if (!workspace?.id) return null;
       const newAutomation = await api.createAutomation(
         workspace.id,
         automation
       );
+      console.log('oh!', newAutomation);
 
       setWorkspace(
         (workspace) =>

@@ -30,6 +30,8 @@ interface PageRendererProps {
   saving: boolean;
   viewMode: number;
   setViewMode: (v: number) => void;
+  duplicate: () => void;
+  duplicating: boolean;
 }
 export const PageRenderer = ({
   value,
@@ -39,6 +41,8 @@ export const PageRenderer = ({
   saving,
   viewMode,
   setViewMode,
+  duplicate,
+  duplicating,
 }: PageRendererProps) => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
@@ -84,10 +88,6 @@ export const PageRenderer = ({
     }),
     [value, t]
   );
-
-  const duplicate = useCallback(() => {
-    alert('coming soon');
-  }, []);
 
   const saveBlocks = useCallback(
     (blocks: Prismeai.Page['blocks']) => {
@@ -209,6 +209,7 @@ export const PageRenderer = ({
                 <button
                   className="flex flex-row focus:outline-none items-center pr-4"
                   onClick={duplicate}
+                  disabled={duplicating}
                 >
                   <span className="mr-2">
                     <CopyIcon width="1.2rem" height="1.2rem" />

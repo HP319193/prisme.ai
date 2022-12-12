@@ -269,3 +269,9 @@ body .ant-dropdown-menu-item:hover {
 .pr-page-header-full-left .ant-page-header-heading-title {
   flex: 1;
 }
+
+body button:disabled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
