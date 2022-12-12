@@ -1,6 +1,6 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
-import { AccessManager } from '../../permissions';
+import { AccessManager, getSuperAdmin } from '../../permissions';
 import { AppInstances, Apps, Pages } from '../../services';
 import { DSULStorage } from '../../services/dsulStorage';
 import { PrismeContext } from '../middlewares';
@@ -8,7 +8,7 @@ import { asyncRoute } from '../utils/async';
 
 export { getServices as getPagesService };
 
-const getServices = ({
+const getServices = async ({
   context,
   accessManager,
   broker,
@@ -19,7 +19,11 @@ const getServices = ({
   broker: Broker;
   dsulStorage: DSULStorage;
 }) => {
-  const apps = new Apps(accessManager, broker.child(context), dsulStorage);
+  const apps = new Apps(
+    await getSuperAdmin(accessManager as AccessManager),
+    broker.child(context),
+    dsulStorage
+  );
   const appInstances = new AppInstances(
     accessManager,
     broker.child(context),
@@ -46,7 +50,7 @@ export function initPagesBackoffice(dsulStorage: DSULStorage) {
     }: Request<any, any, PrismeaiAPI.CreatePage.RequestBody>,
     res: Response<PrismeaiAPI.CreatePage.Responses.$200>
   ) {
-    const { pages } = getServices({
+    const { pages } = await getServices({
       context,
       accessManager,
       broker,
@@ -65,7 +69,7 @@ export function initPagesBackoffice(dsulStorage: DSULStorage) {
     }: Request<PrismeaiAPI.ListPages.PathParameters>,
     res: Response<PrismeaiAPI.ListPages.Responses.$200>
   ) {
-    const { pages } = getServices({
+    const { pages } = await getServices({
       context,
       accessManager,
       broker,
@@ -84,7 +88,7 @@ export function initPagesBackoffice(dsulStorage: DSULStorage) {
     }: Request<PrismeaiAPI.GetPage.PathParameters>,
     res: Response<PrismeaiAPI.GetPage.Responses.$200>
   ) {
-    const { pages } = getServices({
+    const { pages } = await getServices({
       context,
       accessManager,
       broker,
@@ -108,7 +112,7 @@ export function initPagesBackoffice(dsulStorage: DSULStorage) {
     >,
     res: Response<PrismeaiAPI.CreatePage.Responses.$200>
   ) {
-    const { pages } = getServices({
+    const { pages } = await getServices({
       context,
       accessManager,
       broker,
@@ -127,7 +131,7 @@ export function initPagesBackoffice(dsulStorage: DSULStorage) {
     }: Request<PrismeaiAPI.DeletePage.PathParameters>,
     res: Response<PrismeaiAPI.DeletePage.Responses.$200>
   ) {
-    const { pages } = getServices({
+    const { pages } = await getServices({
       context,
       accessManager,
       broker,
@@ -162,7 +166,7 @@ export function initPagesPublic(dsulStorage: DSULStorage) {
     >,
     res: Response<PrismeaiAPI.GetPage.Responses.$200>
   ) {
-    const { pages } = getServices({
+    const { pages } = await getServices({
       context,
       accessManager,
       broker,

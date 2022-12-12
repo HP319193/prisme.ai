@@ -12,7 +12,7 @@ export async function initDetailedPagesSyncing(
   dsulStorage: DSULStorage
 ) {
   const superAdmin = await getSuperAdmin(accessManager);
-  const { pages } = getPagesService({
+  const { pages } = await getPagesService({
     accessManager: superAdmin,
     broker,
     dsulStorage,
