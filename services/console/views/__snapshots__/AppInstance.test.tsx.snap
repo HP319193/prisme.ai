@@ -5,7 +5,20 @@ exports[`should render 1`] = `
   className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto"
 >
   <div
-    className="absolute top-0 bottom-0 left-0 right-0 bg-white"
-  />
+    className="
+          absolute top-0 bottom-0 right-0 left-0
+          bg-white
+          flex flex-1
+          transition-transform
+          transition-duration-200
+          transition-ease-in
+          z-[11]
+          -translate-y-full
+        "
+  >
+    <div
+      className="flex flex-1 flex-col"
+    />
+  </div>
 </div>
 `;

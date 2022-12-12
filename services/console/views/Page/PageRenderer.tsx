@@ -16,9 +16,11 @@ import CopyIcon from '../../icons/copy.svgr';
 import Head from 'next/head';
 import useLocalizedText from '../../utils/useLocalizedText';
 import PagePreview from '../../components/PagePreview';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PageBuilder from '../../components/PageBuilder';
 import CSSEditor from './CSSEditor';
+import { validatePage } from '@prisme.ai/validation';
+import SourceEdit from '../../components/SourceEdit/SourceEdit';
 
 interface PageRendererProps {
   value: Prismeai.Page;
@@ -40,6 +42,7 @@ export const PageRenderer = ({
 }: PageRendererProps) => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
+  const [displaySource, setDisplaySource] = useState(false);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -86,10 +89,6 @@ export const PageRenderer = ({
     alert('coming soon');
   }, []);
 
-  const showSource = useCallback(() => {
-    alert('coming soon');
-  }, []);
-
   const saveBlocks = useCallback(
     (blocks: Prismeai.Page['blocks']) => {
       onChange({
@@ -105,6 +104,38 @@ export const PageRenderer = ({
   useEffect(() => {
     saveAfterChange.current = onSave;
   }, [onSave]);
+
+  const showSource = useCallback(() => {
+    setDisplaySource(!displaySource);
+  }, [displaySource]);
+  const mergeSource = useCallback(
+    (source: any) => ({
+      ...value,
+      ...source,
+    }),
+    [value]
+  );
+  const validateSource = useCallback((json: any) => {
+    const isValid = validatePage(json);
+    console.log(validatePage.errors);
+    return isValid;
+  }, []);
+  const source = useMemo(() => {
+    const {
+      id,
+      workspaceSlug,
+      workspaceId,
+      apiKey,
+      ...page
+    } = value as Prismeai.Page & { apiKey: string };
+    return page;
+  }, [value]);
+  const setSource = useCallback(
+    (source: any) => {
+      onChange(mergeSource(source));
+    },
+    [mergeSource, onChange]
+  );
 
   return (
     <>
@@ -190,10 +221,18 @@ export const PageRenderer = ({
                   className="flex flex-row focus:outline-none items-center"
                   onClick={showSource}
                 >
-                  <span className="mr-2">
+                  <span
+                    className={`flex mr-2 ${
+                      displaySource ? 'text-accent' : ''
+                    }`}
+                  >
                     <CodeOutlined width="1.2rem" height="1.2rem" />
                   </span>
-                  {t('pages.source.label')}
+                  <span className="flex">
+                    {displaySource
+                      ? t('pages.source.close')
+                      : t('pages.source.label')}
+                  </span>
                 </button>
               </Tooltip>
             </HorizontalSeparatedNav.Separator>
@@ -240,6 +279,13 @@ export const PageRenderer = ({
 
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
         <PagePreview page={value} />
+        <SourceEdit
+          value={source}
+          onChange={setSource}
+          onSave={onSave}
+          visible={displaySource}
+          validate={validateSource}
+        />
         {((value.blocks || []).length === 0 || viewMode === 1) && (
           <div className="absolute top-0 bottom-0 left-0 right-0 bg-white">
             <PageBuilder value={value.blocks} onChange={saveBlocks} />

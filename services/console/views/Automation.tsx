@@ -33,6 +33,8 @@ import iconWorkspace from '../icons/icon-workspace.svg';
 import { useWorkspace } from '../providers/Workspace';
 import { AutomationProvider, useAutomation } from '../providers/Automation';
 import { ApiError } from '../utils/api';
+import SourceEdit from '../components/SourceEdit/SourceEdit';
+import { validateAutomation } from '@prisme.ai/validation';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -96,6 +98,7 @@ export const Automation = () => {
   const { workspace } = useWorkspace();
   const { setDirty } = useWorkspaceLayout();
   const [value, setValue] = useState(automation);
+  const [displaySource, setDisplaySource] = useState(false);
 
   const {
     query: { automationId },
@@ -276,8 +279,29 @@ export const Automation = () => {
   }, []);
 
   const showSource = useCallback(() => {
-    alert('coming soon');
+    setDisplaySource(!displaySource);
+  }, [displaySource]);
+  const mergeSource = useCallback(
+    (source: any) => ({
+      ...value,
+      ...source,
+    }),
+    [value]
+  );
+  const validateSource = useCallback((json: any) => {
+    const isValid = validateAutomation(json);
+    console.log(validateAutomation.errors);
+    return isValid;
   }, []);
+  const source = useMemo(() => {
+    return { slug: automationId, ...value };
+  }, [automationId, value]);
+  const setSource = useCallback(
+    (source: any) => {
+      setValue(mergeSource(source));
+    },
+    [mergeSource]
+  );
 
   return (
     <>
@@ -338,10 +362,18 @@ export const Automation = () => {
                   className="flex flex-row focus:outline-none items-center"
                   onClick={showSource}
                 >
-                  <span className="mr-2">
+                  <span
+                    className={`flex mr-2 ${
+                      displaySource ? 'text-accent' : ''
+                    }`}
+                  >
                     <CodeOutlined width="1.2rem" height="1.2rem" />
                   </span>
-                  {t('automations.source.label')}
+                  <span className="flex">
+                    {displaySource
+                      ? t('automations.source.close')
+                      : t('automations.source.label')}
+                  </span>
                 </button>
               </Tooltip>
             </HorizontalSeparatedNav.Separator>
@@ -369,7 +401,14 @@ export const Automation = () => {
           })}
         </title>
       </Head>
-      <div className="relative flex flex-1 h-full">
+      <div className="relative flex flex-1 h-full overflow-hidden">
+        <SourceEdit
+          value={source}
+          onChange={setSource}
+          onSave={save}
+          visible={displaySource}
+          validate={validateSource}
+        />
         <AutomationBuilder
           id={`${automationId}`}
           workspaceId={workspace.id}

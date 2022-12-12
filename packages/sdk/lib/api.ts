@@ -477,7 +477,10 @@ export class Api extends Fetcher {
     return config;
   }
 
-  async getAppInstance(workspaceId: string, slug: string) {
+  async getAppInstance(
+    workspaceId: string,
+    slug: string
+  ): Promise<PrismeaiAPI.GetAppInstance.Responses.$200> {
     return this.get(`/workspaces/${workspaceId}/apps/${slug}`);
   }
 

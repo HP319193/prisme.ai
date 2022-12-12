@@ -171,6 +171,7 @@
     },
     "source": {
       "label": "Voir le code",
+      "close": "Masquer le code",
       "help": "Affiche la structure de l'Automatisation au format brut"
     },
     "endpoint": {
@@ -477,7 +478,13 @@
     "configTooltip": "Paramétrer",
     "search": "Chercher une app...",
     "title": "App Store",
+    "save": "Enregistrer",
     "saveSuccess": "Configuration d'App sauvegardée avec succès",
+    "source": {
+      "label": "Voir le code",
+      "close": "Masquer le code",
+      "help": "Affiche la structure de l'App au format brut"
+    },
     "details": {
       "title": "Détails de l'App",
       "appName": {
@@ -521,6 +528,7 @@
     },
     "source": {
       "label": "Voir le code",
+      "close": "Masquer le code",
       "help": "Affiche la structure de la page au format brut"
     },
     "empty": {

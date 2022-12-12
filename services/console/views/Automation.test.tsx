@@ -10,6 +10,8 @@ import { automationContext } from '../providers/Automation';
 import { workspaceLayoutContext } from '../layouts/WorkspaceLayout/context';
 import { PageHeader } from 'antd';
 
+jest.useFakeTimers();
+
 jest.mock('../utils/useYaml', () => {
   const toJSON = jest.fn();
   const toYaml = jest.fn();
@@ -35,6 +37,14 @@ jest.mock('next/router', () => {
 jest.mock('../components/useKeyboardShortcut', () => jest.fn());
 
 jest.mock('../components/AutomationBuilder', () => () => null);
+
+jest.mock(
+  '../components/SourceEdit/SourceEdit',
+  () =>
+    function SourceEdit() {
+      return null;
+    }
+);
 
 beforeEach(() => {
   useRouter().query.automationId = 'foo';

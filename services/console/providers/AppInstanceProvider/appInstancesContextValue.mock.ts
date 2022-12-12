@@ -12,6 +12,7 @@ export const appInstanceContextValue: AppInstanceContext = {
   saveAppInstance: jest.fn(),
   saving: false,
   uninstallApp: jest.fn(),
+  documentation: null,
 };
 
 export default appInstanceContextValue;

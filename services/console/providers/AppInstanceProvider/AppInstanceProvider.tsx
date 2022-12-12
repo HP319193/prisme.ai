@@ -12,6 +12,7 @@ import { useContext } from '../../utils/useContext';
 
 export interface AppInstanceContext {
   appInstance: Prismeai.AppInstance;
+  documentation: Prismeai.Page | null;
   loading: boolean;
   fetchAppInstance: () => void;
   saveAppInstance: (
@@ -42,14 +43,24 @@ export const AppInstanceProvider = ({
   const [appInstance, setAppInstance] = useState<
     AppInstanceContext['appInstance']
   >();
+  const [documentation, setDocumentation] = useState<Prismeai.Page | null>(
+    null
+  );
   const [loading, setLoading] = useState<AppInstanceContext['loading']>(true);
   const [saving, setSaving] = useState<AppInstanceContext['saving']>(false);
 
   const fetchAppInstance: AppInstanceContext['fetchAppInstance'] = useCallback(async () => {
-    const appInstance = await api.getAppInstance(workspaceId, id);
-    if (appInstance) {
-      setAppInstance(appInstance);
-    }
+    const {
+      documentation = null,
+      appSlug = '',
+      ...rest
+    } = await api.getAppInstance(workspaceId, id);
+    const appInstance = {
+      appSlug,
+      ...rest,
+    };
+    setAppInstance(appInstance);
+    setDocumentation(documentation);
     return appInstance;
   }, [id, workspaceId]);
 
@@ -94,6 +105,7 @@ export const AppInstanceProvider = ({
     <appInstanceContext.Provider
       value={{
         appInstance,
+        documentation,
         loading,
         fetchAppInstance,
         saveAppInstance,

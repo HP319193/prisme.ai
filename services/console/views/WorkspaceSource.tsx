@@ -125,7 +125,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         ]);
       }
     },
-    [toJSON, workspace]
+    [id, toJSON, workspace]
   );
 
   const update = useCallback(
@@ -235,8 +235,10 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   return (
     <div className="flex flex-1 flex-col" ref={ref}>
       <PageHeader
-        onBack={() => displaySource(false)}
         RightButtons={[
+          <Button key="close" onClick={() => displaySource(false)}>
+            Fermer
+          </Button>,
           <Button
             onClick={save}
             disabled={saving}

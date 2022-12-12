@@ -192,7 +192,6 @@ export const WorkspaceProvider = ({
 
   if (loading) return <Loading />;
   if (!workspace || !events) return null;
-
   return (
     <workspaceContext.Provider
       value={{
