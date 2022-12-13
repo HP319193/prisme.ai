@@ -162,7 +162,12 @@ export const Automation = () => {
       try {
         const saved = await saveAutomation(cleanAutomation(newValue));
         setDirty(false);
-        saved && setValue(saved);
+        if (saved) {
+          if (automation.slug !== saved.slug) {
+            replace(`/workspaces/${workspace.id}/automations/${saved.slug}`);
+          }
+          setValue(saved);
+        }
         notification.success({
           message: t('automations.save.toast'),
           placement: 'bottomRight',
@@ -457,7 +462,9 @@ export const Automation = () => {
         <SourceEdit
           value={source}
           onChange={setSource}
-          onSave={save}
+          onSave={() => {
+            save();
+          }}
           visible={displaySource}
           validate={validateSource}
         />

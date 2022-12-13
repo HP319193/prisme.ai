@@ -57,12 +57,21 @@ function removeItemInWorkspaceList(
 }
 
 const eventsListeners: EventsListeners = {
-  'workspaces.automations.updated': (workspace, { slug, automation }) =>
-    insertItemInWorkspaceList(workspace, 'automations', slug, automation),
+  'workspaces.automations.updated': (
+    workspace,
+    { slug, oldSlug, automation }
+  ) =>
+    insertItemInWorkspaceList(
+      workspace,
+      'automations',
+      slug,
+      automation,
+      oldSlug
+    ),
   'workspaces.automations.deleted': (workspace, { automationSlug }) =>
     removeItemInWorkspaceList(workspace, 'automations', automationSlug),
-  'workspaces.pages.updated': (workspace, { slug, page }) =>
-    insertItemInWorkspaceList(workspace, 'pages', slug, page),
+  'workspaces.pages.updated': (workspace, { slug, oldSlug, page }) =>
+    insertItemInWorkspaceList(workspace, 'pages', slug, page, oldSlug),
   'workspaces.pages.deleted': (workspace, { pageSlug }) =>
     removeItemInWorkspaceList(workspace, 'pages', pageSlug),
   'workspaces.apps.configured': (workspace, { slug, oldSlug, appInstance }) =>
