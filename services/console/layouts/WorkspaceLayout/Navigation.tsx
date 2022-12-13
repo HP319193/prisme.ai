@@ -201,10 +201,10 @@ export const Navigation = ({
             onAdd={onCreatePage}
             tooltip={t('workspace.add.page')}
           >
-            {filteredPages.map(([slug, { id: pageId, name }]) => (
+            {filteredPages.map(([slug, { name }]) => (
               <Item
                 key={slug}
-                href={`/workspaces/${id}/pages/${pageId}`}
+                href={`/workspaces/${id}/pages/${slug}`}
                 icon={
                   <Tooltip title={localize(name)} placement="right">
                     <div>

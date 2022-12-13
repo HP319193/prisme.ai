@@ -81,6 +81,7 @@
     "search": "Rechercher",
     "sidebar_extend": "Étendre la navigation",
     "sidebar_minimize": "Réduire la navigation",
+    "notFound": "L'Automation' n'existe pas.",
     "versions": {
       "create": {
         "label": "Créer une version",
@@ -178,6 +179,7 @@
     "endpoint": {
       "copied": "L'adresse a bien été copiée"
     },
+    "notFound": "L'Automation n'existe pas.",
     "trigger": {
       "events": {
         "title": "Événements",
@@ -481,6 +483,7 @@
     "title": "App Store",
     "save": "Enregistrer",
     "saveSuccess": "Configuration d'App sauvegardée avec succès",
+    "notFound": "L'App n'existe pas.",
     "source": {
       "label": "Voir le code",
       "close": "Masquer le code",
@@ -533,6 +536,7 @@
       "close": "Masquer le code",
       "help": "Affiche la structure de la page au format brut"
     },
+    "notFound": "La Page n'existe pas.",
     "empty": {
       "title": "<0>Cette page est vide…</0><1>Commencez à créer, ajoutez votre premier bloc !</1>",
       "subtitle": "Vous ne savez pas par quoi commencer ?",

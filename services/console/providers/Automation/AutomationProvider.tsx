@@ -1,4 +1,5 @@
 import { Loading } from '@prisme.ai/design-system';
+import { useTranslation } from 'next-i18next';
 import {
   createContext,
   ReactNode,
@@ -6,8 +7,11 @@ import {
   useCallback,
   useState,
 } from 'react';
+import NotFound from '../../components/NotFound';
 import api from '../../utils/api';
 import { useContext } from '../../utils/useContext';
+import AutomationIconSvg from '../../icons/automation.svgr';
+import { QuestionOutlined } from '@ant-design/icons';
 
 export interface AutomationContext {
   automation: Prismeai.Automation;
@@ -33,22 +37,46 @@ interface AutomationProviderProps {
   children: ReactNode;
 }
 
+const LostAutomationIcon = ({ className }: { className?: string }) => {
+  return (
+    <div className={`relative ${className}`} style={{ width: '100px' }}>
+      <AutomationIconSvg />
+      <QuestionOutlined
+        className="text-4xl"
+        style={{
+          position: 'absolute',
+          bottom: '10px',
+          right: '10px',
+        }}
+      />
+    </div>
+  );
+};
+
 export const AutomationProvider = ({
   workspaceId,
   automationSlug,
   children,
 }: AutomationProviderProps) => {
+  const { t } = useTranslation('workspaces');
   const [automation, setAutomation] = useState<
     AutomationContext['automation']
   >();
   const [loading, setLoading] = useState<AutomationContext['loading']>(true);
   const [saving, setSaving] = useState<AutomationContext['saving']>(false);
+  const [notFound, setNotFound] = useState(false);
 
   const fetchAutomation = useCallback(async () => {
     if (!workspaceId || !automationSlug) return null;
-    const automation = await api.getAutomation(workspaceId, automationSlug);
-    setAutomation(automation);
-    return automation || null;
+    try {
+      setNotFound(false);
+      const automation = await api.getAutomation(workspaceId, automationSlug);
+      setAutomation(automation);
+      return automation || null;
+    } catch (e) {
+      setNotFound(true);
+      return null;
+    }
   }, [workspaceId, automationSlug]);
 
   const saveAutomation: AutomationContext['saveAutomation'] = useCallback(
@@ -84,6 +112,10 @@ export const AutomationProvider = ({
   }, [fetchAutomation]);
 
   if (loading) return <Loading />;
+  if (notFound)
+    return (
+      <NotFound icon={LostAutomationIcon} text={t('automations.notFound')} />
+    );
   if (!automation) return null;
 
   return (

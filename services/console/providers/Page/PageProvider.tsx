@@ -1,4 +1,6 @@
+import { FileUnknownOutlined } from '@ant-design/icons';
 import { Loading } from '@prisme.ai/design-system';
+import { useTranslation } from 'next-i18next';
 import {
   createContext,
   ReactNode,
@@ -6,6 +8,7 @@ import {
   useCallback,
   useState,
 } from 'react';
+import NotFound from '../../components/NotFound';
 import api from '../../utils/api';
 import { useContext } from '../../utils/useContext';
 
@@ -42,15 +45,18 @@ export const PageProvider = ({
   slug,
   children,
 }: PageProviderProps) => {
+  const { t } = useTranslation('workspaces');
   const [page, setPage] = useState<PageContext['page']>();
   const [appInstances, setAppInstances] = useState<PageContext['appInstances']>(
     []
   );
   const [loading, setLoading] = useState<PageContext['loading']>(true);
   const [saving, setSaving] = useState<PageContext['saving']>(false);
+  const [notFound, setNotFound] = useState(false);
 
   const fetchPageById = useCallback(async () => {
     if (!workspaceId || !id) return;
+
     const { appInstances, public: isPublic, ...page } = await api.getPage(
       workspaceId,
       id
@@ -71,13 +77,18 @@ export const PageProvider = ({
 
   const fetchPage = useCallback(async () => {
     let page: PageContext['page'] | undefined;
-    if (workspaceId && id) {
-      page = await fetchPageById();
+    setNotFound(false);
+    try {
+      if (workspaceId && id) {
+        page = await fetchPageById();
+      }
+      if (workspaceSlug && slug) {
+        page = await fetchPageBySlug();
+      }
+      return page || null;
+    } catch (e) {
+      setNotFound(true);
     }
-    if (workspaceSlug && slug) {
-      page = await fetchPageBySlug();
-    }
-    return page || null;
   }, [fetchPageById, fetchPageBySlug, id, slug, workspaceId, workspaceSlug]);
 
   const savePage: PageContext['savePage'] = useCallback(
@@ -111,6 +122,8 @@ export const PageProvider = ({
   }, [fetchPage]);
 
   if (loading) return <Loading />;
+  if (notFound)
+    return <NotFound icon={FileUnknownOutlined} text={t('pages.notFound')} />;
   if (!page) return null;
 
   return (

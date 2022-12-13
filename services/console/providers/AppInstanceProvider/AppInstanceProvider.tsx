@@ -1,4 +1,6 @@
+import { AppstoreOutlined } from '@ant-design/icons';
 import { Loading } from '@prisme.ai/design-system';
+import { useTranslation } from 'next-i18next';
 import {
   createContext,
   ReactNode,
@@ -7,6 +9,7 @@ import {
   useEffect,
   useRef,
 } from 'react';
+import NotFound from '../../components/NotFound';
 import api from '../../utils/api';
 import { useContext } from '../../utils/useContext';
 
@@ -40,6 +43,7 @@ export const AppInstanceProvider = ({
   workspaceId,
   children,
 }: AppInstanceProviderProps) => {
+  const { t } = useTranslation('workspaces');
   const [appInstance, setAppInstance] = useState<
     AppInstanceContext['appInstance']
   >();
@@ -48,20 +52,26 @@ export const AppInstanceProvider = ({
   );
   const [loading, setLoading] = useState<AppInstanceContext['loading']>(true);
   const [saving, setSaving] = useState<AppInstanceContext['saving']>(false);
+  const [notFound, setNotFound] = useState(false);
 
   const fetchAppInstance: AppInstanceContext['fetchAppInstance'] = useCallback(async () => {
-    const {
-      documentation = null,
-      appSlug = '',
-      ...rest
-    } = await api.getAppInstance(workspaceId, id);
-    const appInstance = {
-      appSlug,
-      ...rest,
-    };
-    setAppInstance(appInstance);
-    setDocumentation(documentation);
-    return appInstance;
+    try {
+      setNotFound(false);
+      const {
+        documentation = null,
+        appSlug = '',
+        ...rest
+      } = await api.getAppInstance(workspaceId, id);
+      const appInstance = {
+        appSlug,
+        ...rest,
+      };
+      setAppInstance(appInstance);
+      setDocumentation(documentation);
+      return appInstance;
+    } catch (e) {
+      setNotFound(true);
+    }
   }, [id, workspaceId]);
 
   const saveAppInstance: AppInstanceContext['saveAppInstance'] = useCallback(
@@ -99,6 +109,8 @@ export const AppInstanceProvider = ({
   }, [fetchAppInstance, id]);
 
   if (loading) return <Loading />;
+  if (notFound)
+    return <NotFound icon={AppstoreOutlined} text={t('apps.notFound')} />;
   if (!appInstance) return null;
 
   return (
