@@ -167,7 +167,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
     });
     setTimeout(() => setCreating(false));
     if (createdPage) {
-      await router.push(`/workspaces/${workspace.id}/pages/${createdPage.id}`);
+      await router.push(
+        `/workspaces/${workspace.id}/pages/${createdPage.slug}`
+      );
     }
   }, [
     createPage,

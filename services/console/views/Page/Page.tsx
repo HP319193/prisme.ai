@@ -5,7 +5,6 @@ import getLayout from '../../layouts/WorkspaceLayout';
 import PageRenderer from './PageRenderer';
 import { PageProvider, usePage } from '../../providers/Page';
 import { useWorkspace } from '../../providers/Workspace';
-import api from '../../utils/api';
 import { incrementName } from '../../utils/incrementName';
 import { notification } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
@@ -89,7 +88,7 @@ const Page = () => {
 
 const PageWithProvider = () => {
   const {
-    query: { id: workspaceId, pageId },
+    query: { pageSlug },
     push,
   } = useRouter();
   const { workspace } = useWorkspace();
@@ -101,13 +100,7 @@ const PageWithProvider = () => {
 
       if (type === 'pagePreviewNavigation') {
         const [, slug] = href.match(/^\/(.+$)/) || [];
-        if (!slug) return;
-        const page = await api.getPageBySlug(
-          workspace.slug || workspace.id,
-          slug
-        );
-        if (!page) return;
-        push(`/workspaces/${workspace.id}/pages/${page.id}`);
+        push(`/workspaces/${workspace.id}/pages/${slug}`);
       }
     };
     window.addEventListener('message', listener);
@@ -117,7 +110,11 @@ const PageWithProvider = () => {
   }, [push, workspace.id, workspace.slug]);
 
   return (
-    <PageProvider workspaceId={`${workspaceId}`} id={`${pageId}`}>
+    <PageProvider
+      workspaceId={workspace.id}
+      workspaceSlug={workspace.slug}
+      slug={`${pageSlug}`}
+    >
       <Page />
     </PageProvider>
   );
