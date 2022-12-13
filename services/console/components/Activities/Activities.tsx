@@ -78,7 +78,7 @@ export const Activities = () => {
     }
   }, [bottom, fetchNextEvents]);
 
-  const noResult = events.size === 0;
+  const noResult = !isVirgin && events.size === 0;
 
   return (
     <Layout
