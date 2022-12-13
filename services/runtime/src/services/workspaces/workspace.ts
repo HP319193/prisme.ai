@@ -1,4 +1,5 @@
 import { PUBLIC_API_URL } from '../../../config';
+import { EventType } from '../../eda';
 import { PrismeError } from '../../errors';
 import { logger } from '../../logger';
 import { interpolate } from '../../utils';
@@ -6,7 +7,7 @@ import { findSecretValues, findSecretPaths } from '../../utils/secrets';
 import { Apps } from '../apps';
 
 export type DetailedTrigger = {
-  type: 'event' | 'endpoint';
+  type: 'event' | 'endpoint' | 'schedule';
   value: string;
   automationSlug: string;
   workspace: Workspace;
@@ -20,9 +21,12 @@ export type AppName = string;
 export type AutomationName = string;
 type EventName = string;
 type EndpointName = string;
+type ScheduleName = string;
+
 export interface Triggers {
   events: Record<EventName, DetailedTrigger[]>;
   endpoints: Record<EndpointName, DetailedTrigger[]>;
+  schedules: Record<ScheduleName, DetailedTrigger[]>;
 }
 
 export type ParsedAutomationName = [AppName, AutomationName];
@@ -58,7 +62,7 @@ export class Workspace {
     this.name = workspace.name;
     this.id = workspace.id!!;
     this.config = {};
-    this.triggers = { events: {}, endpoints: {} };
+    this.triggers = { events: {}, endpoints: {}, schedules: {} };
 
     this.dsul = workspace;
     this.imports = {};
@@ -100,7 +104,11 @@ export class Workspace {
     this.triggers = Object.keys(automations).reduce(
       (prev, key) => {
         const automation = automations[key];
-        const { when, when: { events, endpoint } = {}, disabled } = automation;
+        const {
+          when,
+          when: { events, endpoint, schedules } = {},
+          disabled,
+        } = automation;
         if (!when || disabled) return prev;
         if (events) {
           events.forEach((event) => {
@@ -127,9 +135,22 @@ export class Workspace {
             },
           ];
         }
+        if (schedules) {
+          schedules.forEach((schedule) => {
+            prev.schedules[schedule] = [
+              ...(prev.schedules[schedule] || []),
+              {
+                type: 'schedule',
+                value: schedule,
+                automationSlug: key,
+                workspace: this,
+              },
+            ];
+          });
+        }
         return prev;
       },
-      { events: {}, endpoints: {} } as Triggers
+      { events: {}, endpoints: {}, schedules: {} } as Triggers
     );
 
     this.dsul = workspace;
@@ -229,6 +250,9 @@ export class Workspace {
   }
 
   getEventTriggers(event: Prismeai.PrismeEvent) {
+    if (event.type === EventType.TriggeredSchedule) {
+      return this.triggers.schedules[event.payload.schedule] || [];
+    }
     const triggers = this.triggers.events[event.type] || [];
     const [firstAppSlug, nestedAppSlugs] = this.parseAppRef(event.type);
     if (firstAppSlug in this.imports) {

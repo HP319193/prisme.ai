@@ -62,6 +62,12 @@ export class InvalidSlugError extends PrismeError {
   }
 }
 
+export class InvalidScheduleError extends PrismeError {
+  constructor(msg: string = 'Invalid schedule format', details?: any) {
+    super(msg, details);
+  }
+}
+
 export class InvalidVersionError extends PrismeError {
   constructor(msg: string) {
     super(msg, {});

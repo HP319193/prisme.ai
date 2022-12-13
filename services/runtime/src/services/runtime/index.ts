@@ -151,6 +151,7 @@ export default class Runtime {
         EventType.ExecutedAutomation,
         EventType.FailedFetch,
         EventType.TriggeredWebhook,
+        EventType.TriggeredSchedule,
       ],
       async (event, broker, { logger }) => {
         if (!event.source.workspaceId || !event.source.correlationId) {
