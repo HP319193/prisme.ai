@@ -16,6 +16,7 @@ export interface BlockInCatalog extends Prismeai.Block {
 const builtInBlocksOrder = [
   'Header',
   'RichText',
+  'Buttons',
   'Form',
   'DataTable',
   'Cards',
@@ -31,10 +32,13 @@ export const useBlocks = () => {
   const available: BlockInCatalog[] = useMemo(() => {
     const blocks: BlockInCatalog[] = [
       ...Object.keys(builtinBlocks)
-        .sort(
-          (a, b) =>
-            builtInBlocksOrder.indexOf(a) - builtInBlocksOrder.indexOf(b)
-        )
+        .sort((a, b) => {
+          const indexA = builtInBlocksOrder.indexOf(a);
+          const indexB = builtInBlocksOrder.indexOf(b);
+          return (
+            (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB)
+          );
+        })
         .map((key) => ({
           builtIn: true,
           slug: key,
