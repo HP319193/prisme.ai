@@ -300,13 +300,23 @@ export const Navigation = ({
                   </Tooltip>
                 }
               >
-                <div className="text-ellipsis overflow-hidden">
-                  <Highlight
-                    highlight={searchValue}
-                    component={<span className="font-bold text-accent" />}
-                  >
-                    {localize(name)}
-                  </Highlight>
+                <div className="flex flex-1 flex-col max-w-full">
+                  <div className="text-ellipsis overflow-hidden">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {localize(name)}
+                    </Highlight>
+                  </div>
+                  <div className="text-ellipsis overflow-hidden text-xs text-gray">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {`/${slug}`}
+                    </Highlight>
+                  </div>
                 </div>
               </Item>
             ))}
@@ -339,13 +349,23 @@ export const Navigation = ({
                   </Tooltip>
                 }
               >
-                <div className="text-ellipsis overflow-hidden">
-                  <Highlight
-                    highlight={searchValue}
-                    component={<span className="font-bold text-accent" />}
-                  >
-                    {localize(name)}
-                  </Highlight>
+                <div className="flex flex-1 flex-col max-w-full">
+                  <div className="text-ellipsis overflow-hidden">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {localize(name)}
+                    </Highlight>
+                  </div>
+                  <div className="text-ellipsis overflow-hidden text-xs text-gray">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {`/${slug}`}
+                    </Highlight>
+                  </div>
                 </div>
               </Item>
             ))}
