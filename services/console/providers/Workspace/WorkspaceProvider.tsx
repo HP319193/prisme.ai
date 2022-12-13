@@ -1,4 +1,5 @@
 import { Loading } from '@prisme.ai/design-system';
+import { useRouter } from 'next/router';
 import {
   createContext,
   ReactNode,
@@ -52,10 +53,12 @@ export const WorkspaceProvider = ({
   onUpdate,
   children,
 }: WorkspaceProviderProps) => {
+  const { replace } = useRouter();
   const [workspace, setWorkspace] = useState<WorkspaceContext['workspace']>();
   const [loading, setLoading] = useState<WorkspaceContext['loading']>(true);
   const [saving, setSaving] = useState<WorkspaceContext['saving']>(false);
   const [events, setEvents] = useState<Events>();
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     let events: Events;
@@ -76,12 +79,17 @@ export const WorkspaceProvider = ({
   }, [workspace, onUpdate]);
 
   const fetchWorkspace: WorkspaceContext['fetchWorkspace'] = useCallback(async () => {
-    const workspace = await api.getWorkspace(id);
-    if (workspace) {
-      setWorkspace({
-        id,
-        ...workspace,
-      } as Workspace);
+    setNotFound(false);
+    try {
+      const workspace = await api.getWorkspace(id);
+      if (workspace) {
+        setWorkspace({
+          id,
+          ...workspace,
+        } as Workspace);
+      }
+    } catch {
+      setNotFound(true);
     }
   }, [id]);
 
@@ -193,7 +201,13 @@ export const WorkspaceProvider = ({
     initialFetch();
   }, [fetchWorkspace, id]);
 
+  useEffect(() => {
+    if (!notFound) return;
+    replace('/workspaces');
+  }, [notFound, replace]);
+
   if (loading) return <Loading />;
+  if (notFound) return null;
   if (!workspace || !events) return null;
   return (
     <workspaceContext.Provider
