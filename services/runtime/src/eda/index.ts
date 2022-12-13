@@ -9,6 +9,7 @@ import {
   BROKER_WHITELIST_EVENT_PREFIXES,
   BROKER_NAMESPACE,
   BROKER_TOPIC_MAXLEN,
+  BROKER_EMIT_MAXLEN,
 } from '../../config';
 import { Logger, logger } from '../logger';
 
@@ -69,6 +70,7 @@ export function initEDA() {
         whitelistEventPrefixes: BROKER_WHITELIST_EVENT_PREFIXES.concat([
           'runtime.waits.fulfilled.',
         ]),
+        eventsMaxLen: BROKER_EMIT_MAXLEN,
       },
       CallbackContextCtor: CallbackContext,
     }

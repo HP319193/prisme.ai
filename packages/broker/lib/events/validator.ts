@@ -60,6 +60,7 @@ export interface ValidatorOptions {
   oasFilepath: string;
   oasUrl?: string;
   whitelistEventPrefixes?: string[];
+  eventsMaxLen?: number; // Cap events max size
 }
 export async function init({
   oasFilepath,
