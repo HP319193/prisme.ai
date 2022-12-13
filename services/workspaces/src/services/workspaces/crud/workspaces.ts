@@ -260,10 +260,11 @@ class Workspaces {
   };
 
   getWorkspaceAsAdmin = async (workspaceId: string, version?: string) => {
-    return await this.storage.get({
+    const { id: _, ...workspace } = await this.storage.get({
       workspaceId,
       version: version || 'current',
     });
+    return { id: workspaceId, ...workspace };
   };
 
   getDetailedWorkspace = async (
@@ -313,6 +314,7 @@ class Workspaces {
     workspacePatch: Prismeai.Workspace
   ) => {
     const currentDSUL = await this.getWorkspace(workspaceId);
+    currentDSUL.id = workspaceId;
     const workspace = {
       ...currentDSUL,
       ...workspacePatch,
@@ -334,10 +336,7 @@ class Workspaces {
       { workspaceId }
     );
 
-    const diffs = await this.processEveryDiffs(currentDSUL, {
-      id: workspaceId,
-      ...workspace,
-    });
+    const diffs = await this.processEveryDiffs(currentDSUL, workspace);
     if (diffs.__type === DiffType.ValueUnchanged) {
       this.broker.clear(true);
       return workspace;

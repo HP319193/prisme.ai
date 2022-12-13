@@ -211,7 +211,12 @@ class AppInstances {
       }
     );
 
-    return appInstance;
+    return {
+      ...appInstance,
+      config: {
+        value: appInstance?.config,
+      },
+    };
   };
 
   uninstallApp = async (workspaceId: string, slug: string) => {

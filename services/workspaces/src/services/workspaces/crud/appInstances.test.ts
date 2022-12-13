@@ -116,7 +116,10 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       appInstance
     );
 
-    expect(result).toEqual(appInstance);
+    expect(result).toEqual({
+      ...appInstance,
+      config: { value: appInstance?.config },
+    });
     expect(mockedAccessManager.throwUnlessCan).toHaveBeenCalledWith(
       ActionType.Update,
       SubjectType.Workspace,
@@ -124,7 +127,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
     );
     expect(dsulSaveSpy).toHaveBeenCalledWith(
       { workspaceId: WORKSPACE_ID, slug: newSlug },
-      result,
+      appInstance,
       {
         mode: 'update',
         updatedBy: USER_ID,
@@ -134,7 +137,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       'workspaces.apps.configured',
       {
         appInstance: {
-          ...result,
+          ...appInstance,
           oldConfig: {},
         },
         slug: newSlug,

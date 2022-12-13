@@ -689,7 +689,8 @@ components:
                   template:
                     type: string
             options:
-              $ref: '#/components/schemas/PrismeEventOptions'
+              $ref: "#/components/schemas/PrismeEventOptions"
+
     CreateUserTopic:
       type: object
       required:
@@ -1163,7 +1164,7 @@ components:
       properties:
         persist:
           type: boolean
-          description: 'Whether to persist this event or not. Defaults to true'
+          description: "Whether to persist this event or not. Defaults to true"
           default: true
 
     PrismeEvent:
