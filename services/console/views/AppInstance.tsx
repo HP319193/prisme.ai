@@ -138,8 +138,8 @@ export const AppInstance = () => {
   );
 
   const source = useMemo(() => {
-    const { appSlug, ...source } = value;
-    return source;
+    const { appSlug, config = {}, ...source } = value;
+    return { ...source, config: config && config.value };
   }, [value]);
   const setSource = useCallback(
     (source: any) => {
