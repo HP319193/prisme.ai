@@ -59,6 +59,12 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>10000</td>
   </tr>      
   <tr>
+    <td>BROKER_EMIT_MAXLEN</td>
+    <td>All services</td>
+    <td>Maximum size (in bytes) of emitted events</td>
+    <td>50000</td>
+  </tr>        
+  <tr>
     <td>PERMISSIONS_STORAGE_HOST</td>
     <td>All services</td>
     <td>MongoDB URL for permissions storage (must be the same for both workspaces & events)</td>

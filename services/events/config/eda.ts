@@ -37,3 +37,7 @@ export const BROKER_TOPIC_MAXLEN = parseInt(
 
 export const RUNTIME_EMITS_BROKER_TOPIC =
   process.env.RUNTIME_EMITS_BROKER_TOPIC || 'topic:runtime:emit';
+
+export const BROKER_EMIT_MAXLEN = parseInt(
+  process.env.BROKER_EMIT_MAXLEN || '50000'
+);

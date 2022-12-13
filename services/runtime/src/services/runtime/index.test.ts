@@ -382,7 +382,7 @@ describe('Simple execution', () => {
             userId,
             automationSlug: 'error',
           }),
-          error: expect.objectContaining({
+          payload: expect.objectContaining({
             error: 'ObjectNotFoundError',
           }),
         })
@@ -689,7 +689,7 @@ describe('More advanced execution with appInstances', () => {
             automationSlug: 'throw',
             appInstanceFullSlug: 'basicApp',
           }),
-          error: expect.objectContaining({
+          payload: expect.objectContaining({
             error: 'ObjectNotFoundError',
           }),
         })
@@ -826,7 +826,7 @@ describe('More advanced execution with appInstances', () => {
             userId,
             automationSlug: 'forbiddenNestedCall',
           }),
-          error: expect.objectContaining({
+          payload: expect.objectContaining({
             error: 'ObjectNotFoundError',
           }),
         })
@@ -858,7 +858,7 @@ describe('More advanced execution with appInstances', () => {
             userId,
             automationSlug: 'forbiddenPrivateCall',
           }),
-          error: expect.objectContaining({
+          payload: expect.objectContaining({
             error: 'ObjectNotFoundError',
           }),
         })
