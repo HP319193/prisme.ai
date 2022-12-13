@@ -67,8 +67,8 @@ const eventsListeners: EventsListeners = {
     removeItemInWorkspaceList(workspace, 'pages', pageSlug),
   'workspaces.apps.configured': (workspace, { slug, oldSlug, appInstance }) =>
     insertItemInWorkspaceList(workspace, 'imports', slug, appInstance, oldSlug),
-  'workspaces.apps.deleted': (workspace, { pageSlug }) =>
-    removeItemInWorkspaceList(workspace, 'pages', pageSlug),
+  'workspaces.apps.uninstalled': (workspace, { slug }) =>
+    removeItemInWorkspaceList(workspace, 'imports', slug),
 };
 
 export const updateOnEvents = (
