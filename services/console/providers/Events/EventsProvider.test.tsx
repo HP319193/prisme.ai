@@ -61,8 +61,7 @@ it('should fetch', async () => {
   getEvents.mockClear();
 
   await act(async () => {
-    const p = await context.fetchNextEvents();
-    console.log(p);
+    await context.fetchNextEvents();
   });
   expect(getEvents).toHaveBeenCalledWith('42', { limit: 50, page: 1 });
 });

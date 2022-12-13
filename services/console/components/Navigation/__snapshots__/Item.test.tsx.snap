@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  href="/foo"
+  id="next/link"
+>
+  <a
+    className="flex flex-1 leading-10 px-4 py-2 group hover:bg-ultra-light-accent !text-base "
+  >
+    <div
+      className="flex flex-1 flex-row items-center  max-w-[85%]"
+    >
+      <div
+        className="flex m-2 mr-4"
+      >
+        <div>
+          Icon
+        </div>
+      </div>
+      <div
+        className="flex flex-1 leading-7 max-w-full"
+      />
+    </div>
+  </a>
+</div>
+`;
+
+exports[`should render selected 1`] = `
+<div
+  href="/foo/bar"
+  id="next/link"
+>
+  <a
+    className="flex flex-1 leading-10 px-4 py-2 group hover:bg-ultra-light-accent !text-base bg-ultra-light-accent font-bold"
+  >
+    <div
+      className="flex flex-1 flex-row items-center text-accent max-w-[85%]"
+    >
+      <div
+        className="flex m-2 mr-4"
+      >
+        <div>
+          Icon
+        </div>
+      </div>
+      <div
+        className="flex flex-1 leading-7 max-w-full"
+      />
+    </div>
+  </a>
+</div>
+`;

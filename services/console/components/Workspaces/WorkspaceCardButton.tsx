@@ -8,6 +8,7 @@ import { Tooltip } from 'antd';
 import { Button } from '@prisme.ai/design-system';
 import { FC } from 'react';
 import { Workspace } from '../../utils/api';
+import WorkspaceIcon from './WorkspaceIcon';
 
 interface WorkspaceCardButtonProps extends CardButtonProps {
   workspace: Workspace;
@@ -34,24 +35,7 @@ export const WorkspaceCardButton: FC<WorkspaceCardButtonProps> = ({
       {...props}
     >
       <span className="flex min-w-[50px]">
-        {photo ? (
-          <div className="flex items-center justify-center flex-none">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={photo}
-              className="rounded h-[48px] w-[48px] object-cover"
-              alt={name}
-            />
-          </div>
-        ) : (
-          <Image
-            src={icon}
-            width={48}
-            height={48}
-            className="rounded"
-            alt={name}
-          />
-        )}
+        <WorkspaceIcon photo={photo} name={name} />
       </span>
       <span className="flex ml-4 flex-col items-start">
         <Tooltip title={name}>

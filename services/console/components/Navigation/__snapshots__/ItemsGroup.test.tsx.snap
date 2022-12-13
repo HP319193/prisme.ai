@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="flex flex-1 leading-[2.5rem]"
+>
+  <div
+    className="flex flex-1 flex-col max-w-full"
+  >
+    <div
+      className="flex flex-1 flex-row items-center border-b-[1px]"
+    >
+      <button
+        className="flex flex-1 flex-row items-center outline-none focus:outline-none p-4"
+      >
+        <div
+          className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center"
+        >
+          <SvgrURL
+            className=" transition-transform "
+            width="1rem"
+          />
+        </div>
+        <div
+          className="flex flex-1 font-bold"
+        >
+          Foo
+        </div>
+      </button>
+    </div>
+    <div
+      className="flex flex-1"
+    >
+      <div>
+        Bar
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render closed 1`] = `
+<div
+  className="flex flex-1 leading-[2.5rem]"
+>
+  <div
+    className="flex flex-1 flex-col max-w-full"
+  >
+    <div
+      className="flex flex-1 flex-row items-center border-b-[1px]"
+    >
+      <button
+        className="flex flex-1 flex-row items-center outline-none focus:outline-none p-4"
+      >
+        <div
+          className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center"
+        >
+          <SvgrURL
+            className=" transition-transform -rotate-90"
+            width="1rem"
+          />
+        </div>
+        <div
+          className="flex flex-1 font-bold"
+        >
+          Foo
+        </div>
+      </button>
+    </div>
+    <div
+      className="flex flex-1"
+    >
+      <div>
+        Bar
+      </div>
+    </div>
+  </div>
+</div>
+`;

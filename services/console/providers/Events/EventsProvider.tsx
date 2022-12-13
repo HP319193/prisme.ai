@@ -107,7 +107,6 @@ export const EventsProvider = ({
   // Fetch first page on init or when filters changes
   useEffect(() => {
     const initEvents = async () => {
-      console.log('WESH');
       setLoading(true);
       lastPage.current = 0;
       const events = await fetchEvents(filters);

@@ -1,30 +1,30 @@
-import { AppstoreOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { StretchContent, Tooltip } from '@prisme.ai/design-system';
+import { AppstoreOutlined } from '@ant-design/icons';
+import { Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
-  FC,
-  ReactChild,
   useRef,
   useState,
   useCallback,
   useMemo,
   useEffect,
   HTMLAttributes,
-  ReactElement,
 } from 'react';
 import { search } from '../../utils/filterUtils';
 import useLocalizedText from '../../utils/useLocalizedText';
-import ChevronIcon from '../../icons/chevron.svgr';
+
 import AutomationIcon from './AutomationIcon';
 import { stringToHexaColor } from '../../utils/strings';
 import PageIcon from './PageIcon';
 import HomeIcon from '../../icons/home.svgr';
 import HomeIconOutlined from '../../icons/home-outlined.svgr';
-import SearchInput from './SearchInput';
 import Highlight from '../../components/Highlight/Highlight';
 import { useWorkspace } from '../../providers/Workspace';
+import Item from '../../components/Navigation/Item';
+import ItemsGroup, {
+  ItemsGroupProps,
+} from '../../components/Navigation/ItemsGroup';
+import SearchInput from '../../components/Navigation/SearchInput';
 
 interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   onCreateAutomation?: () => void;
@@ -32,89 +32,6 @@ interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   onInstallApp?: () => void;
   onExpand?: () => void;
 }
-
-interface ItemProps {
-  href: string;
-  icon: ReactChild | ((props: { selected: Boolean }) => ReactElement);
-}
-const Item: FC<ItemProps> = ({ href, icon: Icon, children }) => {
-  const { asPath } = useRouter();
-  const selected = decodeURIComponent(asPath) === href;
-  return (
-    <Link href={href}>
-      <a
-        className={`flex flex-1 leading-10 px-4 py-2 group hover:bg-ultra-light-accent !text-base ${
-          selected ? 'bg-ultra-light-accent font-bold' : ''
-        }`}
-      >
-        <div
-          className={`flex flex-1 flex-row items-center ${
-            selected ? 'text-accent' : ''
-          } max-w-[85%]`}
-        >
-          <div className="flex m-2 mr-4">
-            {typeof Icon === 'function' ? <Icon selected={selected} /> : Icon}
-          </div>
-          <div className="flex flex-1 leading-7 max-w-full">{children}</div>
-        </div>
-      </a>
-    </Link>
-  );
-};
-
-interface ItemsGroupProps {
-  title: string;
-  onClick?: () => void;
-  onAdd?: () => void;
-  tooltip?: string;
-  open: boolean;
-}
-const ItemsGroup: FC<ItemsGroupProps> = ({
-  title,
-  open,
-  onClick,
-  onAdd,
-  tooltip = '',
-  children,
-}) => {
-  return (
-    <div className="flex flex-1 leading-[2.5rem]">
-      <div className="flex flex-1 flex-col max-w-full">
-        <div className="flex flex-1 flex-row items-center border-b-[1px]">
-          <button
-            className="flex flex-1 flex-row items-center outline-none focus:outline-none p-4"
-            onClick={onClick}
-          >
-            <Tooltip title={title} placement="left">
-              <div className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center">
-                <ChevronIcon
-                  width="1rem"
-                  className={` transition-transform ${
-                    open ? '' : '-rotate-90'
-                  }`}
-                />
-              </div>
-            </Tooltip>
-            <div className="flex flex-1 font-bold">{title}</div>
-          </button>
-          <Tooltip title={tooltip} placement="left">
-            <button
-              className="flex outline-none focus:outline-none p-4 hover:text-accent"
-              onClick={onAdd}
-            >
-              <PlusCircleOutlined />
-            </button>
-          </Tooltip>
-        </div>
-        <div className="flex flex-1">
-          <StretchContent visible={open} className="whitespace-nowrap flex-1">
-            {children}
-          </StretchContent>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const EMPTY_AUTOMATIONS: Prismeai.DSULReadOnly['automations'] = {};
 const EMPTY_PAGES: Prismeai.DSULReadOnly['pages'] = {};

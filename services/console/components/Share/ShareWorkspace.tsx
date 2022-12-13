@@ -1,19 +1,12 @@
-import { useWorkspace } from '../../providers/Workspace';
 import ShareWorkspacePopover from './ShareWorkspacePopover';
 
 interface ShareWorkspaceProps {
-  parentWorkspaceId?: string;
+  workspaceId: string;
 }
 
-export const ShareWorkspace = ({ parentWorkspaceId }: ShareWorkspaceProps) => {
-  const {
-    workspace: { id: workspaceId },
-  } = useWorkspace();
+export const ShareWorkspace = ({ workspaceId }: ShareWorkspaceProps) => {
   return (
-    <ShareWorkspacePopover
-      subjectType="workspaces"
-      subjectId={parentWorkspaceId || workspaceId}
-    />
+    <ShareWorkspacePopover subjectType="workspaces" subjectId={workspaceId} />
   );
 };
 

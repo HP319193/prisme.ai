@@ -77,8 +77,11 @@ export const WorkspaceProvider = ({
 
   const fetchWorkspace: WorkspaceContext['fetchWorkspace'] = useCallback(async () => {
     const workspace = await api.getWorkspace(id);
-    if (workspace && workspace.id) {
-      setWorkspace(workspace as Workspace);
+    if (workspace) {
+      setWorkspace({
+        id,
+        ...workspace,
+      } as Workspace);
     }
   }, [id]);
 
@@ -110,14 +113,11 @@ export const WorkspaceProvider = ({
 
   const createAutomation: WorkspaceContext['createAutomation'] = useCallback(
     async (automation) => {
-      console.log('mais !');
-
       if (!workspace?.id) return null;
       const newAutomation = await api.createAutomation(
         workspace.id,
         automation
       );
-      console.log('oh!', newAutomation);
 
       setWorkspace(
         (workspace) =>

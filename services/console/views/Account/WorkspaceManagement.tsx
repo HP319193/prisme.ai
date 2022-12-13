@@ -12,6 +12,7 @@ import ShareWorkspace from '../../components/Share/ShareWorkspace';
 import RightSidebar from './Components/RightSidebar';
 import BillingPlan from './Components/BillingPlan';
 import { useWorkspaces } from '../../providers/Workspaces';
+import WorkspaceProvider from '../../providers/Workspace';
 
 interface MyAccountProps {}
 
@@ -81,23 +82,25 @@ const MyAccount = ({}: MyAccountProps) => {
       {loading ? (
         <Loading />
       ) : (
-        <div className="flex flex-row h-full flex-1">
-          <div className="flex flex-col flex-1 m-[3.938rem] space-y-5 w-4/5">
-            <BillingPlan wpName={currentWorkspace.name} />
-            <Usages
-              currentWorkspaceUsages={currentWorkspaceUsages || []}
-              nbUser={
-                usersPermissions.get(`workspaces:${workspaceId}`)?.length || 0
-              }
-              error={error}
-            />
-            <div className="ml-2 font-bold">
-              {workspaceT('workspace.share')}
+        <WorkspaceProvider id={`${workspaceId}`}>
+          <div className="flex flex-row h-full flex-1">
+            <div className="flex flex-col flex-1 m-[3.938rem] space-y-5 w-4/5">
+              <BillingPlan wpName={currentWorkspace.name} />
+              <Usages
+                currentWorkspaceUsages={currentWorkspaceUsages || []}
+                nbUser={
+                  usersPermissions.get(`workspaces:${workspaceId}`)?.length || 0
+                }
+                error={error}
+              />
+              <div className="ml-2 font-bold">
+                {workspaceT('workspace.share')}
+              </div>
+              <ShareWorkspace workspaceId={`${workspaceId}`} />
             </div>
-            <ShareWorkspace parentWorkspaceId={`${workspaceId}`} />
+            <RightSidebar />
           </div>
-          <RightSidebar />
-        </div>
+        </WorkspaceProvider>
       )}
     </AccountLayout>
   );
