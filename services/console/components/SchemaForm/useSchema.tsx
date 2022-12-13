@@ -150,6 +150,7 @@ export const useSchema = (store: Record<string, any> = {}) => {
           );
 
           const apps: Prismeai.AppDetails[] = store.apps || [];
+
           const automations =
             store?.automations || store.workspace?.automations || {};
           const when: string[] = Object.keys(automations)
@@ -190,7 +191,9 @@ export const useSchema = (store: Record<string, any> = {}) => {
                   },
                 ]
               : []),
-            ...apps.flatMap(({ appName, events: { listen = [] } = {} }) =>
+            ...Object.entries<Prismeai.DetailedAppInstance>(
+              store.apps || {}
+            ).flatMap(([, { appName, events: { listen = [] } = {} }]) =>
               listen.length === 0
                 ? []
                 : {
