@@ -35,7 +35,7 @@ export interface RunContext {
 }
 
 export interface Trigger {
-  type: 'event' | 'endpoint' | 'automation';
+  type: 'event' | 'endpoint' | 'schedule' | 'automation';
   value: string;
   id?: string;
 }

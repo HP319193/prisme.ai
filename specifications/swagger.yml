@@ -3155,7 +3155,7 @@ components:
       type: object
       anyOf:
         - required: ['events']
-        - required: ['dates']
+        - required: ['schedules']
         - required: ['endpoint']
       properties:
         events:
@@ -3164,19 +3164,22 @@ components:
             type: string
           example:
             - prismeaiMessenger.event
-        dates:
-          type: array
-          items:
-            type: string
-          example:
-            - 2021-12-25T00:00
-            - '* * 1 * *'
+        schedules:
+          $ref: '#/components/schemas/Schedules'
         endpoint:
           oneOf:
             - type: boolean
               example: 'Set to true in order to activate HTTP endpoint. Slug will be trigger name by default'
             - type: string
               example: 'Slug name'
+
+    Schedules: 
+      type: array
+      items:
+        type: string
+      example:
+        - 2021-12-25T00:00
+        - '* * 1 * *'
 
     LocalizedText:
       oneOf:
@@ -4064,13 +4067,18 @@ components:
         type:
           type: string
           example: error
-        error:
+        payload:
           type: object
           required:
             - message
           properties:
+            type:
+              type: string
             message:
               type: string
+            details:
+              type: object
+              additionalProperties: true  
           additionalProperties: true
 
     ########################## API Keys #############################
@@ -4785,6 +4793,31 @@ components:
             break:
               type: boolean
 
+    ScheduledAutomation:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.automations.scheduled
+          enum:
+            - runtime.automations.scheduled
+        payload:
+          type: object
+          required:
+            - slug
+            - schedules
+          properties:
+            slug:
+              type: string
+            schedules: 
+              $ref: '#/components/schemas/Schedules'
+            details:
+              type: object
+              additionalProperties: true       
+
     TriggeredWebhook:
       type: object
       required:
@@ -4810,6 +4843,31 @@ components:
             method:
               type: string
               example: post
+
+    TriggeredSchedule:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.schedules.triggered
+          enum:
+            - runtime.schedules.triggered
+        payload:
+          type: object
+          required:
+            - workspaceId
+            - automationSlug
+            - schedule
+          properties:
+            workspaceId:
+              type: string
+            automationSlug:
+              type: string    
+            schedule:
+              type: string  
 
     SuspendedWorkspace:
       type: object

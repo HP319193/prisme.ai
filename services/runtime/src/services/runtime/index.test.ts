@@ -15,7 +15,7 @@ import { EventType } from '../../eda';
 
 global.console.warn = jest.fn();
 
-let brokers = [];
+let brokers: Broker[] = [];
 
 const getMocks = (
   partialSource: Partial<EventSource>,

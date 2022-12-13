@@ -158,7 +158,34 @@ Workspaces can only listen to a limited subset of the available native events :
         }
         ```
       </td>
-    </tr>                                
+    </tr>   
+    <tr>
+      <td><b>runtime.schedules.triggered</b></td>
+      <td>A schedule has been triggered</td>
+      <td>
+        ```
+        {
+            workspaceId: "workspace id",
+            automationSlug: "automation slug",
+            schedule: "*/15 * * * *"
+        }
+        ```
+      </td>
+    </tr>
+    <tr>
+      <td><b>runtime.automations.scheduled</b></td>
+      <td>An automation has been succesfully scheduled following its schedules</td>
+      <td>
+        ```
+        {
+            slug: "automation slug",
+            schedules: [
+              "*/15 * * * *"
+            ]
+        }
+        ```
+      </td>
+    </tr>                                    
   </table>    
 </center>
 

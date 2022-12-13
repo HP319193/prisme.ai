@@ -1,9 +1,11 @@
 import { remove as removeDiacritics } from 'diacritics';
+import { parseExpression as parseCron } from 'cron-parser';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import Workspaces from './workspaces';
 import {
   AlreadyUsedError,
+  InvalidScheduleError,
   InvalidSlugError,
   ObjectNotFoundError,
 } from '../../../errors';
@@ -16,6 +18,17 @@ class Automations {
   constructor(workspaces: Workspaces, broker: Broker) {
     this.broker = broker;
     this.workspaces = workspaces;
+  }
+
+  private validateSchedules(schedules: Prismeai.When['schedules'] = []) {
+    for (const schedule of schedules) {
+      try {
+        // Only verify if it is a well formatted cron
+        parseCron(schedule);
+      } catch (e) {
+        throw new InvalidScheduleError(undefined, e);
+      }
+    }
   }
 
   private generateAutomationSlug(
@@ -53,6 +66,10 @@ class Automations {
       automationSlug || this.generateAutomationSlug(workspace, automation.name);
     if (!SLUG_VALIDATION_REGEXP.test(slug)) {
       throw new InvalidSlugError(slug);
+    }
+
+    if (automation.when?.schedules) {
+      this.validateSchedules(automation.when?.schedules);
     }
 
     const updatedWorkspace = {
@@ -110,6 +127,10 @@ class Automations {
         `Could not find automation '${automationSlug}'`,
         { workspaceId, automationSlug }
       );
+    }
+
+    if (automation.when?.schedules) {
+      this.validateSchedules(automation.when?.schedules);
     }
 
     const updatedWorkspace = {

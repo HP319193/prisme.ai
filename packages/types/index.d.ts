@@ -30,9 +30,8 @@ declare namespace Prismeai {
         target?: PrismeEventTarget;
         options?: PrismeEventOptions;
         error?: {
-            [name: string]: any;
             error?: string;
-            message: string;
+            message?: string;
             details?: AnyValue;
             /**
              * example:
@@ -1486,9 +1485,13 @@ declare namespace Prismeai {
          * error
          */
         type: string;
-        error?: {
+        payload: {
             [name: string]: any;
+            type?: string;
             message: string;
+            details?: {
+                [name: string]: any;
+            };
         };
     }
     export interface InstalledAppInstance {
@@ -1767,6 +1770,35 @@ declare namespace Prismeai {
             version: WorkspaceVersion;
         };
     }
+    export interface ScheduledAutomation {
+        /**
+         * example:
+         * runtime.automations.scheduled
+         */
+        type: "runtime.automations.scheduled";
+        payload: {
+            slug: string;
+            schedules: /**
+             * example:
+             * [
+             *   "2021-12-25T00:00",
+             *   "* * 1 * *"
+             * ]
+             */
+            Schedules;
+            details?: {
+                [name: string]: any;
+            };
+        };
+    }
+    /**
+     * example:
+     * [
+     *   "2021-12-25T00:00",
+     *   "* * 1 * *"
+     * ]
+     */
+    export type Schedules = string[];
     export interface Set {
         set: {
             /**
@@ -1859,6 +1891,18 @@ declare namespace Prismeai {
             workspaceId: string;
             suspended: boolean;
             reason: string;
+        };
+    }
+    export interface TriggeredSchedule {
+        /**
+         * example:
+         * runtime.schedules.triggered
+         */
+        type: "runtime.schedules.triggered";
+        payload: {
+            workspaceId: string;
+            automationSlug: string;
+            schedule: string;
         };
     }
     export interface TriggeredWebhook {
@@ -2113,14 +2157,14 @@ declare namespace Prismeai {
          * ]
          */
         events: string[];
-        /**
+        schedules?: /**
          * example:
          * [
          *   "2021-12-25T00:00",
          *   "* * 1 * *"
          * ]
          */
-        dates?: string[];
+        Schedules;
         endpoint?: boolean | string;
     } | {
         /**
@@ -2130,14 +2174,14 @@ declare namespace Prismeai {
          * ]
          */
         events?: string[];
-        /**
+        schedules: /**
          * example:
          * [
          *   "2021-12-25T00:00",
          *   "* * 1 * *"
          * ]
          */
-        dates: string[];
+        Schedules;
         endpoint?: boolean | string;
     } | {
         /**
@@ -2147,14 +2191,14 @@ declare namespace Prismeai {
          * ]
          */
         events?: string[];
-        /**
+        schedules?: /**
          * example:
          * [
          *   "2021-12-25T00:00",
          *   "* * 1 * *"
          * ]
          */
-        dates?: string[];
+        Schedules;
         endpoint: boolean | string;
     };
     export interface Workspace {

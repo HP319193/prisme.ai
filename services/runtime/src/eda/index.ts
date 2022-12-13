@@ -18,7 +18,9 @@ export enum EventType {
   SuccededLogin = 'gateway.login.succeeded',
 
   ExecutedAutomation = 'runtime.automations.executed',
+  ScheduledAutomation = 'runtime.automations.scheduled',
   TriggeredWebhook = 'runtime.webhooks.triggered',
+  TriggeredSchedule = 'runtime.schedules.triggered',
   UpdatedContexts = 'runtime.contexts.updated',
   PendingWait = 'runtime.waits.pending',
   FulfilledWait = 'runtime.waits.fulfilled.{{id}}',
