@@ -159,9 +159,9 @@ const HeaderWorkspace = () => {
         leftContent={
           <div className="flex flex-row items-center justify-center">
             <HeaderPopovers />
-            {/*<Popover
-              content={() => <ShareComponent />}
-              title={label || t('share.label')}
+            <Popover
+              content={() => <ShareWorkspace workspaceId={workspace.id} />}
+              title={t('share.label')}
               titleClassName="!bg-white !text-black"
             >
               <Button variant="grey" className="!text-white">
@@ -170,7 +170,7 @@ const HeaderWorkspace = () => {
                   <ShareAltOutlined />
                 </Space>
               </Button>
-        </Popover>*/}
+            </Popover>
             <div className="mx-[1.875rem] h-[1.625rem] border-r border-white border-solid" />
           </div>
         }

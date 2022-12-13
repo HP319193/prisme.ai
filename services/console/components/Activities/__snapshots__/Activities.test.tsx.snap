@@ -189,14 +189,5 @@ exports[`should render virgin workspace 1`] = `
       </div>
     </div>
   </div>
-  <div
-    className="flex flex-1 justify-center items-center"
-  >
-    <div
-      className="flex flex-1 justify-center items-center flex-col"
-    >
-      events.filters.empty
-    </div>
-  </div>
 </div>
 `;
