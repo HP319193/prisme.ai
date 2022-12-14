@@ -1,4 +1,5 @@
 import { Broker } from '@prisme.ai/broker';
+//@ts-ignore
 import { hri } from 'human-readable-ids';
 import { EventType } from '../../../eda';
 import {
