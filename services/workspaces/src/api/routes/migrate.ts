@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { migrateDSUL } from '../../services/migrate';
 import { asyncRoute } from '../utils/async';
-import { DSULStorage } from '../../services/dsulStorage';
+import { DSULStorage } from '../../services/DSULStorage';
 import { AccessManager } from '../../permissions';
 import { MIGRATION_TOKEN } from '../../../config';
 import { ForbiddenError } from '@prisme.ai/permissions';

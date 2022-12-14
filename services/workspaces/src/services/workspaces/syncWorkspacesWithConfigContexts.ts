@@ -4,7 +4,7 @@ import { EventType } from '../../eda';
 import { logger } from '../../logger';
 import { getSuperAdmin, AccessManager } from '../../permissions';
 import { applyObjectUpdateOpLogs } from '../../utils/applyObjectUpdateOpLogs';
-import { DSULStorage } from '../dsulStorage';
+import { DSULStorage } from '../DSULStorage';
 import Workspaces from './crud/workspaces';
 
 export async function initWorkspacesConfigSyncing(

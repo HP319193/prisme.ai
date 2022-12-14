@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express';
 import { MissingFieldError } from '../../errors';
 import { AccessManager } from '../../permissions';
 import { AppInstances, Apps } from '../../services';
-import { DSULStorage } from '../../services/dsulStorage';
+import { DSULStorage } from '../../services/DSULStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
 

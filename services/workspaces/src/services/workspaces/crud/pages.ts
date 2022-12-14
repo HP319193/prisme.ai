@@ -10,7 +10,7 @@ import {
 } from '../../../permissions';
 import { nanoid } from 'nanoid';
 import { logger } from '../../../logger';
-import { DSULType, DSULStorage } from '../../dsulStorage';
+import { DSULType, DSULStorage } from '../../DSULStorage';
 import { AppInstances } from '../..';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../config';
 

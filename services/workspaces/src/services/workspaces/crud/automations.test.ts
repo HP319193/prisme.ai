@@ -1,9 +1,9 @@
 import Automations from './automations';
 import '@prisme.ai/types';
 import { ActionType, SubjectType } from '../../../permissions';
-import { MockStorage } from '../../dsulStorage/__mocks__';
+import { MockStorage } from '../../DSULStorage/__mocks__';
 import { AlreadyUsedError, ObjectNotFoundError } from '../../../errors';
-import { DSULType } from '../../dsulStorage';
+import { DSULType } from '../../DSULStorage';
 
 const USER_ID = '9999';
 const WORKSPACE_ID = '123456';

@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import { hri } from 'human-readable-ids';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
-import { DSULType, DSULStorage } from '../../dsulStorage';
+import { DSULType, DSULStorage } from '../../DSULStorage';
 import {
   AccessManager,
   ActionType,

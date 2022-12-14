@@ -2,7 +2,7 @@ import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import { AccessManager, ActionType, SubjectType } from '../../../permissions';
 import Apps from '../../apps/crud/apps';
-import { DSULStorage, DSULType } from '../../dsulStorage';
+import { DSULStorage, DSULType } from '../../DSULStorage';
 
 export interface ListAppsQuery {
   query?: string;

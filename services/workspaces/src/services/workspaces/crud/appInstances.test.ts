@@ -1,8 +1,8 @@
 import AppInstances from './appInstances';
 import '@prisme.ai/types';
 import { ActionType, SubjectType } from '../../../permissions';
-import { DSULType } from '../../dsulStorage';
-import { MockStorage } from '../../dsulStorage/__mocks__';
+import { DSULType } from '../../DSULStorage';
+import { MockStorage } from '../../DSULStorage/__mocks__';
 
 const USER_ID = '9999';
 const WORKSPACE_ID = '123456';

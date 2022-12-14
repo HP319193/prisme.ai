@@ -4,7 +4,7 @@ import { getPagesService } from '../../api/routes/pages';
 import { EventType } from '../../eda';
 import { logger } from '../../logger';
 import { getSuperAdmin, AccessManager, SubjectType } from '../../permissions';
-import { DSULStorage, DSULType } from '../dsulStorage';
+import { DSULStorage, DSULType } from '../DSULStorage';
 
 export async function initDetailedPagesSyncing(
   accessManager: AccessManager,

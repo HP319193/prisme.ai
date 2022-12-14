@@ -1,8 +1,8 @@
 import Workspaces from './workspaces';
 import '@prisme.ai/types';
 import { SubjectType } from '../../../permissions';
-import { DSULType } from '../../dsulStorage';
-import { MockStorage } from '../../dsulStorage/__mocks__';
+import { DSULType } from '../../DSULStorage';
+import { MockStorage } from '../../DSULStorage/__mocks__';
 
 const DEFAULT_ID = '123456';
 jest.mock('nanoid', () => ({ nanoid: () => DEFAULT_ID }));

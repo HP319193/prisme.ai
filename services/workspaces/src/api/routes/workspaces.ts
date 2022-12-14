@@ -2,7 +2,7 @@ import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
 import { AccessManager } from '../../permissions';
 import { AppInstances, Apps, Workspaces } from '../../services';
-import { DSULStorage } from '../../services/dsulStorage';
+import { DSULStorage } from '../../services/DSULStorage';
 import FileStorage from '../../services/FileStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';

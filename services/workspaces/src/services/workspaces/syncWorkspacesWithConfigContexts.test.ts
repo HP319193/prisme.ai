@@ -1,8 +1,8 @@
 import Broker from '@prisme.ai/broker/lib/__mocks__/broker';
 import waitForExpect from 'wait-for-expect';
-import { MockStorage } from '../dsulStorage/__mocks__';
+import { MockStorage } from '../DSULStorage/__mocks__';
 import { AppInstances, Workspaces } from '.';
-import { DSULType } from '../dsulStorage';
+import { DSULType } from '../DSULStorage';
 import { EventType } from '../../eda';
 
 jest.mock(
