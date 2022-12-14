@@ -7,6 +7,7 @@ import { InvalidScheduleError } from '../../../errors';
 import { hri } from 'human-readable-ids';
 import { DSULType, DSULStorage } from '../../DSULStorage';
 import { AccessManager, ActionType, SubjectType } from '../../../permissions';
+import { extractAutomationEvents } from '../../../utils/extractEvents';
 
 class Automations {
   private accessManager: Required<AccessManager>;
@@ -48,6 +49,21 @@ class Automations {
       .slice(0, 20);
   }
 
+  async getProcessedEvents(
+    workspaceId: string,
+    automation: Prismeai.Automation
+  ) {
+    let config = {};
+    try {
+      const workspace = await this.storage.get({
+        workspaceId,
+        dsulType: DSULType.DSULIndex,
+      });
+      config = workspace?.config?.value || {};
+    } catch {}
+    return extractAutomationEvents(automation, config);
+  }
+
   createAutomation = async (
     workspaceId: string,
     automation: Prismeai.Automation,
@@ -64,9 +80,12 @@ class Automations {
     if (automation.when?.schedules) {
       this.validateSchedules(automation.when?.schedules);
     }
+    const events = await this.getProcessedEvents(workspaceId, automation);
+
     await this.storage.save({ workspaceId, slug }, automation, {
       mode: replace ? 'replace' : 'create',
       updatedBy: this.accessManager.user?.id,
+      additionalIndexFields: { events },
     });
 
     this.broker.send<Prismeai.CreatedAutomation['payload']>(
@@ -74,6 +93,7 @@ class Automations {
       {
         automation,
         slug,
+        events,
       },
       { workspaceId }
     );
@@ -103,9 +123,12 @@ class Automations {
     if (automation.when?.schedules) {
       this.validateSchedules(automation.when?.schedules);
     }
+    const events = await this.getProcessedEvents(workspaceId, automation);
+
     await this.storage.save({ workspaceId, slug }, automation, {
       mode: 'update',
       updatedBy: this.accessManager.user?.id,
+      additionalIndexFields: { events },
     });
     this.broker.send<Prismeai.UpdatedAutomation['payload']>(
       EventType.UpdatedAutomation,
@@ -113,6 +136,7 @@ class Automations {
         automation,
         slug: automation.slug || slug,
         oldSlug: automation.slug && automation.slug !== slug ? slug : undefined,
+        events,
       },
       { workspaceId }
     );

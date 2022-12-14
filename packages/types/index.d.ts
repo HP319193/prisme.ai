@@ -778,15 +778,6 @@ declare namespace Prismeai {
             [name: string]: TypedArgument;
         };
     }[];
-    export interface AppDetails {
-        slug?: string;
-        appName?: LocalizedText;
-        config?: Config;
-        photo?: string;
-        blocks: AppBlocks;
-        automations: AppAutomations;
-        events: AppEvents;
-    }
     export interface AppEvent {
         /**
          * example:
@@ -794,19 +785,6 @@ declare namespace Prismeai {
          */
         type: string;
         payload: AnyValue;
-    }
-    export interface AppEvents {
-        emit?: {
-            event: string;
-            autocomplete?: {
-                [name: string]: {
-                    from?: string;
-                    path?: string;
-                    template?: string;
-                };
-            };
-        }[];
-        listen?: string[];
     }
     export interface AppInstance {
         /**
@@ -899,15 +877,14 @@ declare namespace Prismeai {
         };
         when?: When;
         emits?: {
+            /**
+             * example:
+             * prismeaiMessenger.message
+             */
             event: string;
-            autocomplete?: {
-                [name: string]: {
-                    from?: string;
-                    path?: string;
-                    template?: string;
-                };
-            };
+            autocomplete?: EmitAutocomplete;
         }[];
+        events?: ProcessedEvents;
         updatedAt?: string;
         createdAt?: string;
         updatedBy?: string;
@@ -944,15 +921,14 @@ declare namespace Prismeai {
         };
         when?: When;
         emits?: {
+            /**
+             * example:
+             * prismeaiMessenger.message
+             */
             event: string;
-            autocomplete?: {
-                [name: string]: {
-                    from?: string;
-                    path?: string;
-                    template?: string;
-                };
-            };
+            autocomplete?: EmitAutocomplete;
         }[];
+        events?: ProcessedEvents;
         updatedAt?: string;
         createdAt?: string;
         updatedBy?: string;
@@ -1057,6 +1033,7 @@ declare namespace Prismeai {
              * Filled with the previous appInstance slug when renamed
              */
             oldSlug?: string;
+            events?: ProcessedEvents;
         };
     }
     export interface ConfiguredWorkspace {
@@ -1114,6 +1091,7 @@ declare namespace Prismeai {
         payload: {
             slug: string;
             automation: Automation;
+            events?: ProcessedEvents;
         };
     }
     export interface CreatedPage {
@@ -1124,6 +1102,7 @@ declare namespace Prismeai {
         type: "workspaces.pages.created";
         payload: {
             page: Page;
+            events?: ProcessedEvents;
         };
     }
     export interface CreatedUserTopic {
@@ -1284,7 +1263,7 @@ declare namespace Prismeai {
         createdBy?: string;
         photo?: string;
         automations: AppAutomations;
-        events: AppEvents;
+        events: ProcessedEvents;
         blocks: AppBlocks;
     }
     export interface DetailedPage {
@@ -1301,6 +1280,7 @@ declare namespace Prismeai {
             };
             appInstance?: string;
         }[];
+        events?: ProcessedEvents;
         createdBy?: string;
         updatedBy?: string;
         createdAt?: string;
@@ -1352,14 +1332,15 @@ declare namespace Prismeai {
             payload?: AnyValue;
             target?: PrismeEventTarget;
             private?: boolean;
-            autocomplete?: {
-                [name: string]: {
-                    from?: string;
-                    path?: string;
-                    template?: string;
-                };
-            };
+            autocomplete?: EmitAutocomplete;
             options?: PrismeEventOptions;
+        };
+    }
+    export interface EmitAutocomplete {
+        [name: string]: {
+            from?: string;
+            path?: string;
+            template?: string;
         };
     }
     export interface ExecutedAutomation {
@@ -1575,6 +1556,7 @@ declare namespace Prismeai {
         payload: {
             appInstance: AppInstance;
             slug: string;
+            events?: ProcessedEvents;
         };
     }
     export type Instruction = Emit | Wait | Set | Delete | Conditions | Repeat | All | Break | Fetch | Comment | {
@@ -1638,6 +1620,7 @@ declare namespace Prismeai {
             };
             appInstance?: string;
         }[];
+        events?: ProcessedEvents;
         createdBy?: string;
         updatedBy?: string;
         createdAt?: string;
@@ -1680,6 +1663,7 @@ declare namespace Prismeai {
             slug?: string;
             appInstance?: string;
         }[];
+        events?: ProcessedEvents;
         createdBy?: string;
         updatedBy?: string;
         createdAt?: string;
@@ -1805,6 +1789,10 @@ declare namespace Prismeai {
         userTopic?: string;
         userId?: string;
         sessionId?: string;
+    }
+    export interface ProcessedEvents {
+        emit?: string[];
+        listen?: string[];
     }
     export interface PublishedApp {
         /**
@@ -2068,6 +2056,7 @@ declare namespace Prismeai {
              * Filled with the previous automation slug when renamed
              */
             oldSlug?: string;
+            events?: ProcessedEvents;
         };
     }
     export interface UpdatedBlocks {
@@ -2112,6 +2101,7 @@ declare namespace Prismeai {
              * Filled with the previous page slug when renamed
              */
             oldSlug?: string;
+            events?: ProcessedEvents;
         };
     }
     export interface UpdatedWorkspace {

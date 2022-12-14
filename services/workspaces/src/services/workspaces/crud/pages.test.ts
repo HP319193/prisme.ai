@@ -4,6 +4,7 @@ import '@prisme.ai/types';
 import { ActionType, SubjectType } from '../../../permissions';
 import { DSULType } from '../../DSULStorage';
 import { MockStorage } from '../../DSULStorage/__mocks__';
+import { AppDetails } from '../../apps/crud/apps';
 
 const USER_ID = '9999';
 const WORKSPACE_ID = '123456';
@@ -86,6 +87,10 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       workspaceSlug: WORKSPACE_SLUG,
       blocks: [],
     };
+    const events = {
+      emit: [],
+      listen: [],
+    };
     const result = await pagesCrud.createPage(WORKSPACE_ID, page);
     pageId = result.id;
 
@@ -101,12 +106,14 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       {
         mode: 'create',
         updatedBy: USER_ID,
+        additionalIndexFields: { events },
       }
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
       'workspaces.pages.created',
       {
         page: result,
+        events,
       },
       {
         workspaceId: WORKSPACE_ID,
@@ -124,8 +131,16 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       blocks: [
         {
           slug: 'Custom Code.Editor',
+          config: {
+            onInit: 'emitted',
+            updateOn: 'listened',
+          },
         },
       ],
+    };
+    const events = {
+      emit: ['emitted'],
+      listen: ['listened'],
     };
 
     const result = await pagesCrud.updatePage(WORKSPACE_ID, pageId, page);
@@ -142,6 +157,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       {
         mode: 'update',
         updatedBy: USER_ID,
+        additionalIndexFields: { events },
       }
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
@@ -150,6 +166,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
         page: result,
         slug: result.slug,
         oldSlug,
+        events,
       },
       {
         workspaceId: WORKSPACE_ID,
@@ -208,7 +225,7 @@ describe('Detailed pages', () => {
   let mockedBroker: any;
   let appInstancesCrud: AppInstances;
   let pagesCrud: Pages;
-  const appDetails: Prismeai.AppDetails = {
+  const appDetails: AppDetails = {
     photo: 'somePhotoUrl',
     config: {
       schema: {
@@ -235,12 +252,6 @@ describe('Detailed pages', () => {
       },
     ],
     events: {
-      emit: [
-        {
-          event: 'executed',
-          autocomplete: {},
-        },
-      ],
       listen: ['request'],
     },
   };

@@ -1,6 +1,7 @@
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import { AccessManager, ActionType, SubjectType } from '../../../permissions';
+import { computeEventsFromEmits } from '../../../utils/extractEvents';
 import Apps from '../../apps/crud/apps';
 import { DSULStorage, DSULType } from '../../DSULStorage';
 
@@ -64,7 +65,7 @@ class AppInstances {
                 slug: cur.slug!,
                 photo: appDetails?.photo,
                 automations: appDetails?.automations,
-                events: appDetails?.events,
+                events: (cur as any)?.events || {},
                 blocks: (appDetails.blocks || []).map((block) => {
                   if (block?.slug) {
                     block.slug = `${cur.slug}.${block.slug}`;
@@ -115,6 +116,23 @@ class AppInstances {
     };
   };
 
+  async getProcessedEvents(appInstance: Prismeai.AppInstance) {
+    const events: Prismeai.ProcessedEvents = { listen: [], emit: [] };
+    try {
+      const appDetails = await this.apps.getAppDetails(
+        appInstance.appSlug,
+        appInstance.appVersion
+      );
+      const duplicatedEvents = (appDetails.emits || []).flatMap((emit) =>
+        computeEventsFromEmits(emit, appInstance.config)
+      );
+
+      events.listen = appDetails?.events?.listen || [];
+      events.emit = [...new Set(duplicatedEvents)];
+    } catch {}
+    return events;
+  }
+
   installApp = async (
     workspaceId: string,
     appInstance: Prismeai.AppInstance & { slug: string },
@@ -130,6 +148,7 @@ class AppInstances {
     if (!replace) {
       await this.apps.exists(appInstance.appSlug, appInstance.appVersion);
     }
+    const events = await this.getProcessedEvents(appInstance);
 
     await this.storage.save(
       {
@@ -140,12 +159,13 @@ class AppInstances {
       {
         mode: replace ? 'replace' : 'create',
         updatedBy: this.accessManager.user?.id,
+        additionalIndexFields: { events },
       }
     );
 
     this.broker.send<Prismeai.InstalledAppInstance['payload']>(
       EventType.InstalledApp,
-      { appInstance, slug: appInstance.slug },
+      { appInstance, slug: appInstance.slug, events },
       {
         appSlug: appInstance.appSlug,
         appInstanceFullSlug: appInstance.slug,
@@ -179,6 +199,8 @@ class AppInstances {
     };
 
     await this.apps.exists(appInstance.appSlug, appInstance.appVersion);
+    const events = await this.getProcessedEvents(appInstance);
+
     await this.storage.save(
       {
         workspaceId,
@@ -188,6 +210,7 @@ class AppInstances {
       {
         mode: 'update',
         updatedBy: this.accessManager.user?.id,
+        additionalIndexFields: { events },
       }
     );
 
@@ -203,6 +226,7 @@ class AppInstances {
           appInstancePatch.slug && appInstancePatch.slug !== slug
             ? slug
             : undefined,
+        events,
       },
       {
         appSlug: appInstance.appSlug,

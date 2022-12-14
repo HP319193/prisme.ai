@@ -3,6 +3,7 @@ import '@prisme.ai/types';
 import { ActionType, SubjectType } from '../../../permissions';
 import { DSULType } from '../../DSULStorage';
 import { MockStorage } from '../../DSULStorage/__mocks__';
+import { AppDetails } from '../../apps/crud/apps';
 
 const USER_ID = '9999';
 const WORKSPACE_ID = '123456';
@@ -62,6 +63,10 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       appSlug: APP_SLUG,
       slug: APP_INSTANCE_SLUG,
     };
+    const events = {
+      emit: [],
+      listen: [],
+    };
     const result = await appInstancesCrud.installApp(WORKSPACE_ID, appInstance);
 
     expect(result).toEqual(appInstance);
@@ -76,6 +81,9 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       {
         mode: 'create',
         updatedBy: USER_ID,
+        additionalIndexFields: {
+          events,
+        },
       }
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
@@ -83,6 +91,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       {
         appInstance,
         slug,
+        events,
       },
       {
         appSlug: appInstance.appSlug,
@@ -110,6 +119,10 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
         foo: 'bar',
       },
     };
+    const events = {
+      emit: [],
+      listen: [],
+    };
     const result = await appInstancesCrud.configureApp(
       WORKSPACE_ID,
       oldSlug,
@@ -131,6 +144,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       {
         mode: 'update',
         updatedBy: USER_ID,
+        additionalIndexFields: { events },
       }
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
@@ -142,6 +156,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
         },
         slug: newSlug,
         oldSlug,
+        events,
       },
       {
         appSlug: appInstance.appSlug,
@@ -187,7 +202,7 @@ describe('Detailed appInstances', () => {
   const dsulStorage = new MockStorage(DSULType.Imports);
   let mockedBroker: any;
   let appInstancesCrud: AppInstances;
-  const appDetails: Prismeai.AppDetails = {
+  const appDetails: AppDetails = {
     photo: 'somePhotoUrl',
     config: {
       schema: {
@@ -214,14 +229,20 @@ describe('Detailed appInstances', () => {
       },
     ],
     events: {
-      emit: [
-        {
-          event: 'executed',
-          autocomplete: {},
-        },
-      ],
       listen: ['request'],
     },
+    emits: [
+      {
+        event: '{{event}}',
+        autocomplete: {
+          event: {
+            template: 'intents.detected.${value}',
+            from: 'appConfig',
+            path: 'intents[*]~',
+          },
+        },
+      },
+    ],
   };
 
   const apps = {
@@ -247,6 +268,16 @@ describe('Detailed appInstances', () => {
     const appInstance: Prismeai.AppInstance & { slug: string } = {
       appSlug: APP_SLUG,
       slug: APP_INSTANCE_SLUG,
+      config: {
+        intents: {
+          welcome: {
+            phrases: 'bonjour',
+          },
+          goodbye: {
+            phrases: 'aurevoir',
+          },
+        },
+      },
     };
     return await appInstancesCrud.installApp(WORKSPACE_ID, appInstance);
   });
@@ -261,6 +292,10 @@ describe('Detailed appInstances', () => {
         updatedAt: expect.any(String),
         updatedBy: USER_ID,
         slug: APP_INSTANCE_SLUG,
+        events: {
+          emit: ['intents.detected.welcome', 'intents.detected.goodbye'],
+          listen: ['request'],
+        },
       },
     ]);
   });
@@ -271,7 +306,12 @@ describe('Detailed appInstances', () => {
       APP_INSTANCE_SLUG
     );
     const detailedList = await appInstancesCrud.getDetailedList(WORKSPACE_ID);
-    const { config: __, blocks, ...remainingAppDetails } = appDetails;
+    const {
+      config: __,
+      blocks,
+      emits: ___,
+      ...remainingAppDetails
+    } = appDetails;
 
     expect(detailedList).toEqual([
       {
@@ -288,6 +328,10 @@ describe('Detailed appInstances', () => {
         createdBy: USER_ID,
         updatedAt: expect.any(String),
         updatedBy: USER_ID,
+        events: {
+          ...appDetails?.events,
+          emit: ['intents.detected.welcome', 'intents.detected.goodbye'],
+        },
       },
     ]);
   });

@@ -7,7 +7,6 @@ import {
   ObjectNotFoundError,
 } from '../../errors';
 import { IStorage } from '../../storage/types';
-import { extractEmits } from '../../utils/extractEmits';
 import { getPath } from './getPath';
 import {
   DSULInterfaces,
@@ -122,7 +121,8 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
 
   prepareIndexEntry<dsulType extends keyof DSULInterfaces>(
     dsulType: dsulType,
-    dsul: DSULInterfaces[dsulType]
+    dsul: DSULInterfaces[dsulType],
+    additionalIndexFields?: Record<string, any>
   ): DSULInterfaces[dsulType] {
     if (dsulType == DSULType.Automations) {
       const automation = dsul as DSULInterfaces[DSULType.Automations];
@@ -133,10 +133,7 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
         private: automation.private,
         disabled: automation.disabled,
         when: automation.when,
-        emits: extractEmits(automation).map(({ event, autocomplete }) => ({
-          event,
-          autocomplete,
-        })),
+        ...additionalIndexFields,
       };
       return indexEntry as DSULInterfaces[dsulType];
     } else if (dsulType == DSULType.Imports) {
@@ -146,6 +143,7 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
         appName: appInstance.appName,
         appVersion: appInstance.appVersion,
         disabled: appInstance.disabled,
+        ...additionalIndexFields,
       };
       return indexEntry as DSULInterfaces[dsulType];
     }
@@ -159,6 +157,7 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
           slug,
           appInstance,
         })),
+        ...additionalIndexFields,
       };
       return indexEntry as DSULInterfaces[dsulType];
     } else {
@@ -227,6 +226,7 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
     updateIndex?: {
       mode?: 'create' | 'update' | 'replace';
       updatedBy?: string;
+      additionalIndexFields?: Record<string, any>;
     }
   ) {
     let folderIndex = await this.folderIndex(query);
@@ -272,7 +272,8 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
       folderIndex[(query as any).slug] = {
         ...this.prepareIndexEntry<overrideT>(
           (query.dsulType || this.dsulType) as any,
-          dsul
+          dsul,
+          updateIndex?.additionalIndexFields
         ),
         createdAt:
           (folderIndex[oldSlugBeforeRename || (query as any).slug] as any)

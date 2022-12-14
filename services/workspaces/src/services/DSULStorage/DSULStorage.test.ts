@@ -55,13 +55,11 @@ describe('Store basic metadata inside the folder index', () => {
         name: 'My first autom',
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
-        emits: [],
       },
       secondAutom: {
         name: 'My second autom',
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
-        emits: [],
       },
     };
     expect(folderIndex1).toEqual(lastFolderIndex);

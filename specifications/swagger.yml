@@ -165,33 +165,17 @@ components:
         automations:
           $ref: '#/components/schemas/AppAutomations'
         events:
-          $ref: '#/components/schemas/AppEvents'
+          $ref: '#/components/schemas/ProcessedEvents'
         blocks:
           $ref: '#/components/schemas/AppBlocks'
 
-    AppEvents:
+    ProcessedEvents:
       type: object
       properties:
         emit:
           type: array
           items:
-            type: object
-            required:
-              - event
-            properties:
-              event:
-                type: string
-              autocomplete:
-                type: object
-                additionalProperties:
-                  type: object
-                  properties:
-                    from:
-                      type: string
-                    path:
-                      type: string
-                    template:
-                      type: string
+            type: string
         listen:
           type: array
           items:
@@ -236,28 +220,6 @@ components:
           arguments:
             additionalProperties:
               $ref: '#/components/schemas/TypedArgument'
-
-    AppDetails:
-      type: object
-      required:
-        - automations
-        - blocks
-        - events
-      properties:
-        slug:
-          type: string
-        appName:
-          $ref: '#/components/schemas/LocalizedText'
-        config:
-          $ref: '#/components/schemas/Config'
-        photo:
-          type: string
-        blocks:
-          $ref: '#/components/schemas/AppBlocks'
-        automations:
-          $ref: '#/components/schemas/AppAutomations'
-        events:
-          $ref: '#/components/schemas/AppEvents'
 
     Workspace:
       $ref: '#/components/schemas/DSUL'
@@ -466,17 +428,11 @@ components:
             properties:
               event:
                 type: string
+                example: 'prismeaiMessenger.message'
               autocomplete:
-                type: object
-                additionalProperties:
-                  type: object
-                  properties:
-                    from:
-                      type: string
-                    path:
-                      type: string
-                    template:
-                      type: string
+                $ref: "#/components/schemas/EmitAutocomplete"
+        events:
+          $ref: '#/components/schemas/ProcessedEvents'
         updatedAt:
           type: string
         createdAt:
@@ -556,6 +512,8 @@ components:
                 type: string
               appInstance:
                 type: string
+        events:
+          $ref: '#/components/schemas/ProcessedEvents'
         createdBy:
           type: string
         updatedBy:
@@ -657,6 +615,17 @@ components:
 
     ###############################################################################################################################################
     ############################################################ Automation Instructions ############################################################
+    EmitAutocomplete:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          from:
+            type: string
+          path:
+            type: string
+          template:
+            type: string
     Emit:
       type: object
       required:
@@ -678,16 +647,7 @@ components:
             private:
               type: boolean
             autocomplete:
-              type: object
-              additionalProperties:
-                type: object
-                properties:
-                  from:
-                    type: string
-                  path:
-                    type: string
-                  template:
-                    type: string
+              $ref: "#/components/schemas/EmitAutocomplete"
             options:
               $ref: "#/components/schemas/PrismeEventOptions"
 
@@ -1845,6 +1805,8 @@ components:
               $ref: '#/components/schemas/AppInstance'
             slug:
               type: string
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
 
     ConfiguredAppInstance:
       type: object
@@ -1876,6 +1838,8 @@ components:
             oldSlug:
               type: string
               description: Filled with the previous appInstance slug when renamed
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
 
     CreatedAutomation:
       type: object
@@ -1898,6 +1862,8 @@ components:
               type: string
             automation:
               $ref: '#/components/schemas/Automation'
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
 
     UpdatedAutomation:
       type: object
@@ -1923,6 +1889,8 @@ components:
             oldSlug:
               type: string
               description: Filled with the previous automation slug when renamed
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
 
     DeletedAutomation:
       type: object
@@ -1961,6 +1929,8 @@ components:
           properties:
             page:
               $ref: '#/components/schemas/Page'
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
 
     UpdatedPage:
       type: object
@@ -1986,6 +1956,8 @@ components:
             oldSlug:
               type: string
               description: Filled with the previous page slug when renamed
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
 
     UpdatedBlocks:
       type: object

@@ -13,6 +13,7 @@ import { logger } from '../../../logger';
 import { DSULType, DSULStorage } from '../../DSULStorage';
 import { AppInstances } from '../..';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../config';
+import { extractPageEvents } from '../../../utils/extractEvents';
 
 class Pages {
   private accessManager: Required<AccessManager>;
@@ -74,6 +75,7 @@ class Pages {
       SubjectType.Page,
       { id: page.id, workspaceId }
     );
+    const events = extractPageEvents(page);
 
     await this.storage.save(
       {
@@ -84,6 +86,7 @@ class Pages {
       {
         mode: replace ? 'replace' : 'create',
         updatedBy: this.accessManager.user?.id,
+        additionalIndexFields: { events },
       }
     );
     // Legacy migration
@@ -97,6 +100,7 @@ class Pages {
       EventType.CreatedPage,
       {
         page,
+        events,
       },
       {
         workspaceId,
@@ -316,6 +320,7 @@ class Pages {
       SubjectType.Page,
       { id, workspaceId }
     );
+    const events = extractPageEvents(page);
 
     await this.storage.save(
       {
@@ -326,6 +331,7 @@ class Pages {
       {
         mode: 'update',
         updatedBy: this.accessManager.user?.id,
+        additionalIndexFields: { events },
       }
     );
     await this.accessManager.update(SubjectType.Page, {
@@ -343,6 +349,7 @@ class Pages {
         page,
         slug: newSlug,
         oldSlug: newSlug !== oldSlug ? oldSlug : undefined,
+        events,
       },
       { workspaceId }
     );

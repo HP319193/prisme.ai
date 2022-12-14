@@ -53,6 +53,10 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
       do: [],
       slug,
     };
+    const events = {
+      emit: [],
+      listen: [],
+    };
     const result = await automationsCrud.createAutomation(
       WORKSPACE_ID,
       automation
@@ -70,6 +74,9 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
       {
         mode: 'create',
         updatedBy: USER_ID,
+        additionalIndexFields: {
+          events,
+        },
       }
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
@@ -77,6 +84,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
       {
         automation,
         slug,
+        events,
       },
       {
         workspaceId: WORKSPACE_ID,
@@ -103,7 +111,21 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
     const automation: Prismeai.Automation = {
       ...lastDSUL,
       description: 'Some description',
+      when: {
+        events: ['listened'],
+      },
+      do: [
+        {
+          emit: {
+            event: 'emitted',
+          },
+        },
+      ],
       slug: newSlug,
+    };
+    const events = {
+      emit: ['emitted'],
+      listen: ['listened'],
     };
     const result = await automationsCrud.updateAutomation(
       WORKSPACE_ID,
@@ -123,6 +145,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
       {
         mode: 'update',
         updatedBy: USER_ID,
+        additionalIndexFields: { events },
       }
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
@@ -131,6 +154,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
         automation,
         slug: newSlug,
         oldSlug,
+        events,
       },
       {
         workspaceId: WORKSPACE_ID,

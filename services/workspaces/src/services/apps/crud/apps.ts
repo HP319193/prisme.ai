@@ -14,13 +14,25 @@ import {
   MAXIMUM_APP_VERSION,
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
-import { deduplicateEmits } from '../../../utils/extractEmits';
+import { deduplicateEmits } from '../../../utils/extractEvents';
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 
 export interface ListAppsQuery {
   text?: string;
   workspaceId?: string;
 }
+
+export interface AppDetails {
+  slug?: string;
+  appName?: Prismeai.LocalizedText;
+  config?: Prismeai.Config;
+  photo?: string;
+  blocks: Prismeai.AppBlocks;
+  automations: Prismeai.AppAutomations;
+  events: Omit<Prismeai.ProcessedEvents, 'emit'>;
+  emits?: Prismeai.Emit['emit'][];
+}
+
 class Apps {
   private accessManager: Required<AccessManager>;
   private broker: Broker;
@@ -222,7 +234,7 @@ class Apps {
   getAppDetails = async (
     appSlug: string,
     version?: string
-  ): Promise<Prismeai.AppDetails> => {
+  ): Promise<AppDetails> => {
     const [app, automations] = await Promise.all([
       this.storage.get({ appSlug, version: version || 'current' }),
       this.storage.folderIndex({
@@ -236,14 +248,14 @@ class Apps {
       .map(([slug, cur]) =>
         cur.disabled || cur.private ? false : { slug, ...cur }
       )
-      .filter<Prismeai.Automation & { slug: string }>(Boolean as any);
+      .filter<Prismeai.AutomationMeta & { slug: string }>(Boolean as any);
 
     const allEventTriggers = filteredAutomations.reduce<string[]>(
       (listen, automation) => listen.concat(automation?.when?.events || []),
       []
     );
     const allEmits = filteredAutomations.reduce<
-      Required<Prismeai.AutomationMeta['emits']>
+      Required<Prismeai.Emit['emit'][]>
     >((emits, automation) => (emits || []).concat(automation?.emits || []), []);
     return {
       config: app.config,
@@ -262,9 +274,9 @@ class Apps {
         })
       ),
       photo: app.photo,
+      emits: deduplicateEmits(allEmits),
       events: {
         listen: Array.from(new Set(allEventTriggers)),
-        emit: deduplicateEmits(allEmits),
       },
     };
   };
