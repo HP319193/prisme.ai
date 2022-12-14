@@ -57,9 +57,15 @@ export default class S3Like implements IStorage {
           out.push(
             ...(Contents || [])
               .filter((cur) => cur.Key)
-              .map((cur) => ({
-                key: fullKeys ? cur.Key!! : cur.Key!!?.split('/')[0],
-              }))
+              .map((cur) => {
+                if (fullKeys) {
+                  return { key: cur.Key!! };
+                }
+                const splittedKey = cur.Key!!?.split('/');
+                return {
+                  key: splittedKey[splittedKey.length - 1],
+                };
+              })
           );
           !IsTruncated
             ? resolve(out)
