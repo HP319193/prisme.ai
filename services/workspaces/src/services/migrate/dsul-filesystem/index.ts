@@ -139,7 +139,7 @@ export async function migrateDSUL(
   const workspacesMigrated = migrated.length;
   logger.info(`Migrated ${workspacesMigrated} workspaces.`);
 
-  const allApps = await apps.listApps();
+  const allApps = await apps.listApps({}, { pagination: { limit: 1000 } });
   const targetApps =
     opts.app.toLowerCase() == 'all'
       ? allApps
