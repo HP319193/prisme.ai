@@ -81,6 +81,7 @@
     "search": "Search",
     "sidebar_extend": "Extend navigation",
     "sidebar_minimize": "Minimize navigation",
+    "notFound": "Workspace not found.",
     "versions": {
       "create": {
         "label": "Create a version",
@@ -167,15 +168,18 @@
       "error": "Unknown error has occured"
     },
     "duplicate": {
-      "help": "Duplicate Automation"
+      "help": "Duplicate Automation",
+      "success": "Automation has been duplicated"
     },
     "source": {
       "label": "See code",
+      "close": "Hide code",
       "help": "Displays the structure of the automation in raw format"
     },
     "endpoint": {
       "copied": "Endpoint has been copied"
     },
+    "notFound": "Automation not found.",
     "trigger": {
       "events": {
         "title": "Events",
@@ -477,7 +481,14 @@
     "configTooltip": "Configuration",
     "search": "Search for an app...",
     "title": "App Store",
+    "save": "Save",
     "saveSuccess": "App config saved successfully",
+    "notFound": "App not found.",
+    "source": {
+      "label": "See code",
+      "close": "Hide code",
+      "help": "Displays the App structure in raw format"
+    },
     "details": {
       "title": "App details",
       "appName": {
@@ -517,12 +528,15 @@
       "defaultName": "Page"
     },
     "duplicate": {
-      "help": "Create a copy of this Page"
+      "help": "Create a copy of this Page",
+      "success": "Page has been duplicated"
     },
     "source": {
       "label": "See code",
+      "close": "Hide code",
       "help": "Displays the Page structure in raw format"
     },
+    "notFound": "Page not found.",
     "empty": {
       "title": "<0>This page is empty…</0><1>Start creating, add your first block!</1>",
       "subtitle": "Not sure where to start?",

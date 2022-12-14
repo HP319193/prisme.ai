@@ -81,7 +81,7 @@
     "search": "Rechercher",
     "sidebar_extend": "Étendre la navigation",
     "sidebar_minimize": "Réduire la navigation",
-    "notFound": "L'Automation' n'existe pas.",
+    "notFound": "Le Workspace n'existe pas.",
     "versions": {
       "create": {
         "label": "Créer une version",
@@ -179,7 +179,7 @@
     "endpoint": {
       "copied": "L'adresse a bien été copiée"
     },
-    "notFound": "L'Automation n'existe pas.",
+    "notFound": "L'Automatisation n'existe pas.",
     "trigger": {
       "events": {
         "title": "Événements",
