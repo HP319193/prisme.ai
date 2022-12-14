@@ -25,7 +25,7 @@ const sendEvent = async (
       validateEvents:
         partialSource?.serviceTopic !== RUNTIME_EMITS_BROKER_TOPIC,
     })
-    .send(event.type, event.payload || {});
+    .send(event.type, event.payload || {}, {}, true);
 };
 
 export { sendEvent };

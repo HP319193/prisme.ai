@@ -160,27 +160,46 @@ export class Broker<CallbackContext = any> {
     eventType: string,
     payload: PayloadType,
     partialSource?: Partial<EventSource>,
-    additionalFields?: any
-  ) {
+    additionalFields?: any,
+    throwErrors?: boolean
+  ): Promise<PrismeEvent | false> {
     const overrideSource =
       payload instanceof Error ? (<any>payload).source : partialSource;
-    const event = this.eventsFactory.create(
-      eventType,
-      payload,
-      {
-        ...this.parentSource,
-        ...(overrideSource || {}),
-        host: {
-          replica: this.consumer.name,
-          ...(partialSource?.host || {}),
-          service: this.service,
+    let event: Omit<PrismeEvent, 'id'>;
+    try {
+      event = this.eventsFactory.create(
+        eventType,
+        payload,
+        {
+          ...this.parentSource,
+          ...(overrideSource || {}),
+          host: {
+            replica: this.consumer.name,
+            ...(partialSource?.host || {}),
+            service: this.service,
+          },
         },
-      },
-      {
-        validateEvent: this.validateEvents,
-        additionalFields,
+        {
+          validateEvent: this.validateEvents,
+          additionalFields,
+        }
+      );
+    } catch (err) {
+      if (throwErrors) {
+        throw err;
       }
-    );
+      console.error({
+        level: 50,
+        time: Date.now(),
+        err,
+        details: (<any>err).details,
+        event: {
+          type: eventType,
+          payload: JSON.stringify(payload),
+        },
+      });
+      return Promise.resolve(false);
+    }
     event.source.serviceTopic = this.getEventTopic(event);
 
     if (this.beforeSendEventCallback) {

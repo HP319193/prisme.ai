@@ -23,7 +23,8 @@ export async function emit(
         sessionId: ctx.session?.sessionId || broker.parentSource?.sessionId,
         serviceTopic: RUNTIME_EMITS_BROKER_TOPIC,
       },
-      { target, options }
+      { target, options },
+      true
     );
   } catch (error) {
     if (

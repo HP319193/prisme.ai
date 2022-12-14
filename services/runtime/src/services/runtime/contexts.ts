@@ -248,9 +248,12 @@ export class ContextsManager {
         {
           // Current broker instance topic is normally emit's one, so we have to switch to native events topic :
           serviceTopic: EventType.UpdatedContexts,
-        }
+        },
+        true
       );
-      this.alreadyProcessedUpdateIds.add(updatedEvent.id);
+      if (updatedEvent) {
+        this.alreadyProcessedUpdateIds.add(updatedEvent.id);
+      }
     }
   }
 

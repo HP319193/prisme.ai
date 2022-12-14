@@ -109,6 +109,12 @@ export class EventsFactory {
             eventType,
             eventSize,
             maxSize: this.validatorOpts?.eventsMaxLen,
+            source: {
+              workspaceId: event?.source?.workspaceId,
+              correlationId: event?.source?.correlationId,
+              userId: event?.source?.userId,
+              sessionId: event?.source?.sessionId,
+            },
           }
         );
       }
