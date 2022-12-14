@@ -37,6 +37,16 @@ jest.mock('../../utils/api', () => {
   };
   return mock;
 });
+
+jest.mock('next/router', () => {
+  const mock = {
+    replace: jest.fn(),
+  };
+  return {
+    useRouter: () => mock,
+  };
+});
+
 it('should render', async () => {
   const root = renderer.create(
     <WorkspaceProvider id="42">Foo</WorkspaceProvider>

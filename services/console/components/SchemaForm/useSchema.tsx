@@ -30,9 +30,13 @@ function getEmitEvents(
 
 export const useSchema = (store: Record<string, any> = {}) => {
   const { localize } = useLocalizedText();
-  const { t } = useTranslation('workspaces');
   const {
-    workspace: { slug: workspaceSlug = '' },
+    workspace: {
+      slug: workspaceSlug = '',
+      config: { value: config } = {},
+      automations = {},
+      pages = {},
+    },
   } = useWorkspace();
   const extractSelectOptions = useCallback(
     (schema: Schema) => {
@@ -42,7 +46,7 @@ export const useSchema = (store: Record<string, any> = {}) => {
         case 'config':
           const { path = '' } = uiOptions;
           if (!path) return null;
-          const values: string[] = readAppConfig(store.config, path);
+          const values: string[] = readAppConfig(config, path);
           return [
             {
               label: '',
@@ -65,44 +69,42 @@ export const useSchema = (store: Record<string, any> = {}) => {
             })),
           ];
         case 'automations':
-          if (!store.automations) return [];
+          if (!automations) return [];
           return [
             {
               label: '',
               value: '',
             },
-            ...Object.keys(store.automations).flatMap((key) => {
-              const { slug = key, name, description, when } = store.automations[
-                key
-              ];
-
-              if (
-                uiOptions.filter === 'endpoint' &&
-                (!when || !when.endpoint)
-              ) {
-                return [];
-              }
-              return {
-                label: (
-                  <div className="flex flex-col">
-                    <div>{localize(name) || slug}</div>
-                    <div className="text-neutral-500 text-xs">
-                      {localize(description)}
+            ...Object.entries(automations).flatMap(
+              ([key, { slug = key, name, description, when }]) => {
+                if (
+                  uiOptions.filter === 'endpoint' &&
+                  (!when || !when.endpoint)
+                ) {
+                  return [];
+                }
+                return {
+                  label: (
+                    <div className="flex flex-col">
+                      <div>{localize(name) || slug}</div>
+                      <div className="text-neutral-500 text-xs">
+                        {localize(description)}
+                      </div>
                     </div>
-                  </div>
-                ),
-                value: slug,
-              };
-            }),
+                  ),
+                  value: slug,
+                };
+              }
+            ),
           ];
         case 'pages':
-          if (!store.pages) return null;
+          if (!pages) return null;
           return [
             {
               label: '',
               value: '',
             },
-            ...Object.entries<Prismeai.Page>(store.pages).flatMap(
+            ...Object.entries(pages).flatMap(
               ([slug, { id, name = slug, description }]) => {
                 return {
                   label: (
@@ -125,203 +127,22 @@ export const useSchema = (store: Record<string, any> = {}) => {
       }
       return null;
     },
-    [
-      localize,
-      store.automations,
-      store.config,
-      store.pageSections,
-      store.pages,
-      workspaceSlug,
-    ]
+    [automations, config, localize, pages, store.pageSections, workspaceSlug]
   );
 
-  const extractAutocompleteOptions = useCallback(
-    (schema: Schema) => {
-      const { ['ui:options']: uiOptions = {} } = schema;
+  const extractAutocompleteOptions = useCallback((schema: Schema) => {
+    const { ['ui:options']: uiOptions = {} } = schema;
 
-      switch (uiOptions.autocomplete) {
-        case 'events:listen': {
-          const pagesEvents = Object.entries<Prismeai.Page>(
-            store.pages || {}
-          ).flatMap(([, { name, blocks = [] }]) =>
-            blocks.flatMap(({ config: { updateOn } = {} }) =>
-              updateOn ? { name: localize(name), event: updateOn } : []
-            )
-          );
-
-          const apps: Prismeai.AppDetails[] = store.apps || [];
-
-          const automations =
-            store?.automations || store.workspace?.automations || {};
-          const when: string[] = Object.keys(automations)
-            .flatMap((key) => {
-              const { events } = (automations[key] || {}).when || {};
-              return events || [];
-            }, [])
-            .filter(Boolean);
-
-          return [
-            ...(when.length > 0
-              ? [
-                  {
-                    label: store.workspace.name,
-                    options: when.map((event) => ({
-                      label: event,
-                      value: event,
-                    })),
-                  },
-                ]
-              : []),
-            ...(pagesEvents.length > 0
-              ? [
-                  {
-                    label: t('pages.link'),
-                    options: pagesEvents.map(({ name, event }) => ({
-                      label: (
-                        <div>
-                          {event}
-                          <span className="text-[10px] text-neutral-500">
-                            {' '}
-                            — {name}
-                          </span>
-                        </div>
-                      ),
-                      value: event,
-                    })),
-                  },
-                ]
-              : []),
-            ...Object.entries<Prismeai.DetailedAppInstance>(
-              store.apps || {}
-            ).flatMap(([, { appName, events: { listen = [] } = {} }]) =>
-              listen.length === 0
-                ? []
-                : {
-                    label: appName,
-                    options: (listen || []).map((event) => ({
-                      label: event,
-                      value: event,
-                    })),
-                  }
-            ),
-          ];
-        }
-        case 'events:emit':
-          const workspace = store.workspace as Prismeai.DSULReadOnly;
-          const apps: Prismeai.AppDetails[] = store.apps || [];
-          const automations =
-            store?.automations || workspace?.automations || {};
-
-          const events = Object.keys(automations)
-            .flatMap((key) => {
-              const automation = automations[key];
-              if (!automation.do || automation.do.length === 0) return [];
-              return getEmitEvents(automation.do);
-            })
-            // Remove empty and deduplicate
-            .filter(
-              ({ event }, index, all) =>
-                event &&
-                !all.slice(0, index).find(({ event: e }) => e === event)
-            );
-
-          const pagesEvents = Object.entries<Prismeai.Page>(
-            store.pages || {}
-          ).flatMap(([, { name, blocks = [] }]) =>
-            blocks.flatMap(({ config: { onInit } = {} }) =>
-              onInit ? { name: localize(name), event: onInit } : []
-            )
-          );
-
-          const generateEventsAutomations = (appName: string) => (
-            event: string,
-            autocomplete: Prismeai.Emit['emit']['autocomplete']
-          ) => {
-            if (!autocomplete || Object.keys(autocomplete).length === 0)
-              return [event];
-            // Only read first parameter while the UI is simple
-            // To manage many parameters, we would need an autocomplete inside
-            // the value autocompleted
-            return Object.keys(autocomplete).flatMap((key) => {
-              if (!event.match(`{{${key}}}`)) return;
-              const template = autocomplete[key].template || '${value}';
-              const { from, path } = autocomplete[key];
-              if (!from || !path) return [];
-              let config = workspace.config || {};
-              // TODO : config is nomore passed here. We need to find another
-              // to generate this auto completions
-              // If really needed anyway…
-              // if (from === 'appConfig') {
-              //   config = workspace.imports?.[appName]?.config || {};
-              // }
-              const values = readAppConfig(config, path).filter(Boolean);
-              return (Array.isArray(values)
-                ? values
-                : [values]
-              ).flatMap((value) =>
-                template.replace('${value}', event.replace(`{{${key}}}`, value))
-              );
-            });
-          };
-
-          return [
-            ...(events.length > 0
-              ? [
-                  {
-                    label: store.workspace.name,
-                    options: events
-                      .flatMap(({ event, autocomplete }) =>
-                        generateEventsAutomations('')(event, autocomplete)
-                      )
-                      .flatMap((event) => ({
-                        label: event,
-                        value: event,
-                      })),
-                  },
-                ]
-              : []),
-            ...(pagesEvents.length > 0
-              ? [
-                  {
-                    label: t('pages.link'),
-                    options: pagesEvents.map(({ name, event }) => ({
-                      label: (
-                        <div>
-                          {event}
-                          <span className="text-[10px] text-neutral-500">
-                            {' '}
-                            — {name}
-                          </span>
-                        </div>
-                      ),
-                      value: event,
-                    })),
-                  },
-                ]
-              : []),
-            ...apps
-              .filter(({ events: { emit = [] } = {} }) => emit.length > 0)
-              .flatMap(
-                ({ events: { emit = [] } = {}, appName = '', slug = '' }) => ({
-                  label: localize(appName),
-                  options: emit.flatMap(({ event, autocomplete }) =>
-                    generateEventsAutomations(localize(appName))(
-                      event,
-                      autocomplete
-                    ).flatMap((value) => ({
-                      label: value,
-                      value: `${slug}.${value}`,
-                    }))
-                  ),
-                })
-              ),
-          ];
+    switch (uiOptions.autocomplete) {
+      case 'events:listen': {
+        return [];
       }
+      case 'events:emit':
+        return [];
+    }
 
-      return [];
-    },
-    [localize, store, t]
-  );
+    return [];
+  }, []);
 
   return { extractSelectOptions, extractAutocompleteOptions };
 };
