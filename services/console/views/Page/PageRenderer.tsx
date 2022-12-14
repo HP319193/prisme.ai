@@ -21,6 +21,7 @@ import PageBuilder from '../../components/PageBuilder';
 import CSSEditor from './CSSEditor';
 import { validatePage } from '@prisme.ai/validation';
 import SourceEdit from '../../components/SourceEdit/SourceEdit';
+import { defaultStyles } from './defaultStyles';
 
 interface PageRendererProps {
   value: Prismeai.Page;
@@ -175,11 +176,20 @@ export const PageRenderer = ({
               >
                 <EditDetails
                   schema={detailsFormSchema}
-                  value={{ ...value }}
+                  value={{
+                    ...value,
+                    styles:
+                      value.styles === undefined ? defaultStyles : value.styles,
+                  }}
                   onSave={async (v) => {
                     onChange({
                       ...value,
                       ...v,
+                      styles: v.styles || '',
+                    });
+                    // Need to wait after the onChange changed the value
+                    setTimeout(() => {
+                      saveAfterChange.current();
                     });
                   }}
                   onDelete={onDelete}
