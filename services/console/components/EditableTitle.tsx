@@ -1,6 +1,7 @@
 import { useContentEditable } from '@prisme.ai/design-system';
-import { forwardRef, HTMLAttributes, useEffect, useRef, useState } from 'react';
-import LocalizedInput from '../LocalizedInput';
+import { useTranslation } from 'next-i18next';
+import { forwardRef, HTMLAttributes } from 'react';
+import LocalizedInput from './LocalizedInput';
 
 interface EditableTitleProps
   extends Omit<HTMLAttributes<HTMLInputElement>, 'onChange'> {
@@ -45,12 +46,16 @@ export const EditableTitle = ({
   onEnter,
   ...props
 }: EditableTitleProps) => {
+  const {
+    i18n: { language },
+  } = useTranslation();
   return (
     <LocalizedInput
       value={value}
       onChange={onChange}
       Input={Input}
       InputProps={{ onEnter, ...props }}
+      initialLang={language}
     />
   );
 };

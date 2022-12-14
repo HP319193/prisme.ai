@@ -23,7 +23,7 @@ import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import EditDetails from '../layouts/EditDetails';
 import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
-import EditableTitle from '../components/AutomationBuilder/EditableTitle';
+import EditableTitle from '../components/EditableTitle';
 import { PageHeader, Tooltip } from 'antd';
 import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
 import { CodeOutlined } from '@ant-design/icons';

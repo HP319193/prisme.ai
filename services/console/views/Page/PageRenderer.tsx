@@ -8,7 +8,7 @@ import {
 import { Button, FieldProps, Popover, Schema } from '@prisme.ai/design-system';
 import { PageHeader, Segmented, Space, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
-import EditableTitle from '../../components/AutomationBuilder/EditableTitle';
+import EditableTitle from '../../components/EditableTitle';
 import HorizontalSeparatedNav from '../../components/HorizontalSeparatedNav';
 import SharePage from '../../components/Share/SharePage';
 import EditDetails from '../../layouts/EditDetails';
