@@ -69,7 +69,7 @@ export async function migrateDSUL(
     appInstances
   );
 
-  const allWorkspaces = await workspaces.findWorkspaces({ limit: 1000 });
+  const allWorkspaces = await workspaces.findWorkspaces({ limit: 3000 });
   const targetWorkspaces =
     opts.workspace.toLowerCase() == 'all'
       ? allWorkspaces
@@ -106,7 +106,10 @@ export async function migrateDSUL(
         );
         continue;
       }
-      if (Object.keys(legacy?.automations || {}).length > 200) {
+      if (
+        Object.keys(legacy?.automations || {}).length > 500 &&
+        opts.workspace != workspace.id
+      ) {
         logger.info(
           `Skipping workspace ${workspace.name} (id ${
             workspace.id
@@ -139,7 +142,7 @@ export async function migrateDSUL(
   const workspacesMigrated = migrated.length;
   logger.info(`Migrated ${workspacesMigrated} workspaces.`);
 
-  const allApps = await apps.listApps({}, { pagination: { limit: 1000 } });
+  const allApps = await apps.listApps({}, { pagination: { limit: 3000 } });
   const targetApps =
     opts.app.toLowerCase() == 'all'
       ? allApps
