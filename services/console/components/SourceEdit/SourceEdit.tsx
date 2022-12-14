@@ -45,7 +45,7 @@ export const SourceEdit = <T,>({
     async (value: string) => {
       if (!original || value === undefined) return;
       try {
-        setAnnotations([]);
+        setAnnotations((prev) => (prev.length === 0 ? prev : []));
         return await toJSON<T>(value);
       } catch (e) {
         const { mark, message } = e as YAMLException;

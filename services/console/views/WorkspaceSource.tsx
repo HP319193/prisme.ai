@@ -111,7 +111,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     async (value: string) => {
       if (!workspace || value === undefined) return;
       try {
-        setAnnotations([]);
+        setAnnotations((prev) => (prev.length === 0 ? prev : []));
         return { ...(await toJSON<Workspace>(value)), id };
       } catch (e) {
         const { mark, message } = e as YAMLException;
