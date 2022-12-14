@@ -6,36 +6,17 @@ import { generatePageUrl } from '../../utils/urls';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { readAppConfig } from '../AutomationBuilder/Panel/readAppConfig';
 
-function getEmitEvents(
-  doList: Prismeai.InstructionList
-): Prismeai.Emit['emit'][] {
-  if (!Array.isArray(doList)) return [];
-  return (doList || []).flatMap((instruction) => {
-    const [name] = Object.keys(instruction);
-    const value = instruction[name as keyof typeof instruction];
-
-    if (Array.isArray(value)) {
-      return getEmitEvents(value as Prismeai.InstructionList);
-    }
-    if (name === 'conditions') {
-      return Object.keys(value).flatMap((key) => getEmitEvents(value[key]));
-    }
-    if (name === 'repeat') {
-      return getEmitEvents((value as Prismeai.Repeat['repeat']).do);
-    }
-    if (name !== 'emit') return [];
-    return (instruction as Prismeai.Emit).emit;
-  });
-}
-
 export const useSchema = (store: Record<string, any> = {}) => {
   const { localize } = useLocalizedText();
+  const { t } = useTranslation('workspaces');
   const {
     workspace: {
+      name: workspaceName,
       slug: workspaceSlug = '',
       config: { value: config } = {},
       automations = {},
       pages = {},
+      imports = {},
     },
   } = useWorkspace();
   const extractSelectOptions = useCallback(
@@ -130,19 +111,62 @@ export const useSchema = (store: Record<string, any> = {}) => {
     [automations, config, localize, pages, store.pageSections, workspaceSlug]
   );
 
-  const extractAutocompleteOptions = useCallback((schema: Schema) => {
-    const { ['ui:options']: uiOptions = {} } = schema;
+  const extractAutocompleteOptions = useCallback(
+    (schema: Schema) => {
+      const { ['ui:options']: uiOptions = {} } = schema;
 
-    switch (uiOptions.autocomplete) {
-      case 'events:listen': {
-        return [];
+      function extract(type: 'listen' | 'emit') {
+        return [
+          ...Object.entries({ automations, pages }).flatMap(([key, list]) => {
+            const events = Object.entries(list).flatMap(
+              ([, { events = {} }]) => {
+                return events?.[type] || [];
+              }
+            );
+            if (events.length === 0) return [];
+            return [
+              {
+                label: t('events.autocomplete.label', {
+                  context: key,
+                  workspace: workspaceName,
+                }),
+                options: events.map((event) => ({
+                  label: event,
+                  value: event,
+                })),
+              },
+            ];
+          }),
+          ...Object.entries(imports).flatMap(([slug, { events = {} }]) => {
+            if (!events || !events[type]) return [];
+
+            return [
+              {
+                label: t('events.autocomplete.label', {
+                  context: 'imports',
+                  app: slug,
+                }),
+                options: (events[type] || []).map((event) => ({
+                  label: event,
+                  value: event,
+                })),
+              },
+            ];
+          }),
+        ];
       }
-      case 'events:emit':
-        return [];
-    }
+      switch (uiOptions.autocomplete) {
+        case 'events:listen': {
+          return extract('listen');
+        }
+        case 'events:emit':
+          return extract('emit');
+      }
 
-    return [];
-  }, []);
+      return [];
+    },
+    [automations, imports, pages, t, workspaceName]
+  );
 
   return { extractSelectOptions, extractAutocompleteOptions };
 };

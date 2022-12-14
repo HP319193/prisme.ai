@@ -141,7 +141,12 @@
       "name": "Attribut",
       "value": "Valeur"
     },
-    "more": "Charger les évènements plus anciens"
+    "more": "Charger les évènements plus anciens",
+    "autocomplete": {
+      "label": "{{workspace}}",
+      "label_pages": "Pages",
+      "label_imports": "{{app}}"
+    }
   },
   "automations": {
     "link": "Automatisations",
