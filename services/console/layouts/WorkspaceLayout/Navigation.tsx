@@ -108,27 +108,45 @@ export const Navigation = ({
 
   const filteredAutomations = useMemo(
     () =>
-      Object.entries(automations).filter(([slug, { name, description }]) =>
-        search(searchValue)(
-          `${slug} ${localize(name)} ${localize(description)}}`
+      Object.entries(automations)
+        .filter(([slug, { name, description }]) =>
+          search(searchValue)(
+            `${slug} ${localize(name)} ${localize(description)}}`
+          )
         )
-      ),
+        .sort(([a], [b]) => {
+          if (a.toLowerCase() < b.toLowerCase()) return -1;
+          if (a.toLowerCase() > b.toLowerCase()) return 1;
+          return 0;
+        }),
     [automations, localize, searchValue]
   );
   const filteredPages = useMemo(
     () =>
-      Object.entries(pages).filter(([slug, { name, description }]) =>
-        search(searchValue)(
-          `${slug} ${localize(name)} ${localize(description)}}`
+      Object.entries(pages)
+        .filter(([slug, { name, description }]) =>
+          search(searchValue)(
+            `${slug} ${localize(name)} ${localize(description)}}`
+          )
         )
-      ),
+        .sort(([a], [b]) => {
+          if (a.toLowerCase() < b.toLowerCase()) return -1;
+          if (a.toLowerCase() > b.toLowerCase()) return 1;
+          return 0;
+        }),
     [localize, pages, searchValue]
   );
   const filteredApps = useMemo(
     () =>
-      Object.entries(imports).filter(([slug, { appSlug, appName }]) =>
-        search(searchValue)(`${appSlug} ${slug} ${localize(appName)}}`)
-      ),
+      Object.entries(imports)
+        .filter(([slug, { appSlug, appName }]) =>
+          search(searchValue)(`${appSlug} ${slug} ${localize(appName)}}`)
+        )
+        .sort(([a], [b]) => {
+          if (a.toLowerCase() < b.toLowerCase()) return -1;
+          if (a.toLowerCase() > b.toLowerCase()) return 1;
+          return 0;
+        }),
     [imports, localize, searchValue]
   );
 
