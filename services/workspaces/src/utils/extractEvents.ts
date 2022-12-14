@@ -51,7 +51,9 @@ export function computeEventsFromEmits(
     const template = autocomplete[key].template || '${value}';
     const { from, path } = autocomplete[key];
     if (!from || !path) return [];
-    const values: string[] = JSONPath({ path, json: config }).filter(Boolean);
+    const values: string[] = (
+      JSONPath({ path, json: config }) as string[]
+    ).filter(Boolean);
     return (Array.isArray(values) ? values : [values]).flatMap((value) =>
       template.replace('${value}', event.replace(`{{${key}}}`, value))
     );
@@ -68,7 +70,9 @@ export function extractAutomationEvents(
   config: any
 ): Prismeai.ProcessedEvents {
   const emits = deduplicateEmits(extractAutomationEmits(automation.do || []));
-  const events = emits.flatMap((emit) => computeEventsFromEmits(emit, config));
+  const events = emits
+    .flatMap((emit) => computeEventsFromEmits(emit, config))
+    .filter(Boolean);
 
   return {
     listen: automation?.when?.events || [],

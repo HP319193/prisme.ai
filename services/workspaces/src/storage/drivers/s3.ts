@@ -41,6 +41,7 @@ export default class S3Like implements IStorage {
 
   public find(
     prefix: string,
+    fullKeys?: boolean,
     continuationToken?: string,
     out: ObjectList = []
   ): Promise<ObjectList> {
@@ -57,12 +58,12 @@ export default class S3Like implements IStorage {
             ...(Contents || [])
               .filter((cur) => cur.Key)
               .map((cur) => ({
-                key: cur.Key!!?.split('/')[0],
+                key: fullKeys ? cur.Key!! : cur.Key!!?.split('/')[0],
               }))
           );
           !IsTruncated
             ? resolve(out)
-            : resolve(this.find(prefix, NextContinuationToken, out));
+            : resolve(this.find(prefix, fullKeys, NextContinuationToken, out));
         })
         .catch(reject);
     });
@@ -177,7 +178,7 @@ export default class S3Like implements IStorage {
   }
 
   public async copy(from: string, to: string) {
-    const objects = await this.find(from);
+    const objects = await this.find(from, true);
     return await Promise.all(
       objects.map(
         ({ key }) =>
@@ -185,7 +186,7 @@ export default class S3Like implements IStorage {
             this.client.copyObject(
               {
                 Bucket: this.options.bucket,
-                CopySource: key,
+                CopySource: `/${this.options.bucket}/${key}`,
                 Key: from === key ? key : path.join(to, key.slice(from.length)),
                 CacheControl: this.options.cacheControl,
               },
