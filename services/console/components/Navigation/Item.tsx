@@ -12,7 +12,7 @@ export const Item: FC<ItemProps> = ({ href, icon: Icon, children }) => {
   return (
     <Link href={href}>
       <a
-        className={`flex flex-1 leading-10 px-4 py-2 group hover:bg-ultra-light-accent !text-base ${
+        className={`flex flex-1 leading-10 px-4 py-2 group hover:bg-ultra-light-accent !text-base whitespace-nowrap ${
           selected ? 'bg-ultra-light-accent font-bold' : ''
         }`}
       >

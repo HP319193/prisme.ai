@@ -37,7 +37,9 @@ export const ItemsGroup: FC<ItemsGroupProps> = ({
                 />
               </div>
             </Tooltip>
-            <div className="flex flex-1 font-bold">{title}</div>
+            <div className="flex flex-1 font-bold whitespace-nowrap">
+              {title}
+            </div>
           </button>
           {onAdd && (
             <Tooltip title={tooltip} placement="left">

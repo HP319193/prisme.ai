@@ -1,4 +1,4 @@
-import AccountLayout from './AccountLayout';
+import { getLayout } from './AccountLayout';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Error404 from '../Errors/404';
@@ -14,9 +14,7 @@ import BillingPlan from './Components/BillingPlan';
 import { useWorkspaces } from '../../providers/Workspaces';
 import WorkspaceProvider from '../../providers/Workspace';
 
-interface MyAccountProps {}
-
-const MyAccount = ({}: MyAccountProps) => {
+const WorkspaceManagement = () => {
   const { t } = useTranslation('user');
   const { t: workspaceT } = useTranslation('workspaces');
 
@@ -71,7 +69,7 @@ const MyAccount = ({}: MyAccountProps) => {
   }
 
   return (
-    <AccountLayout>
+    <>
       <Head>
         <title>
           {t('title.workspaceManagement', {
@@ -102,8 +100,10 @@ const MyAccount = ({}: MyAccountProps) => {
           </div>
         </WorkspaceProvider>
       )}
-    </AccountLayout>
+    </>
   );
 };
 
-export default MyAccount;
+WorkspaceManagement.getLayout = getLayout;
+
+export default WorkspaceManagement;

@@ -1,6 +1,6 @@
 import Header from '../../components/Header';
 import { Layout } from '@prisme.ai/design-system';
-import { ReactNode, useState } from 'react';
+import { ReactElement, ReactNode, useState } from 'react';
 import { useWorkspaces } from '../../providers/Workspaces';
 import Navigation from './Components/Navigation';
 import Expand from '../../components/Navigation/Expand';
@@ -37,6 +37,10 @@ const AccountLayout = ({ children }: AccountLayoutProps) => {
       </div>
     </Layout>
   );
+};
+
+export const getLayout = (page: ReactElement) => {
+  return <AccountLayout>{page}</AccountLayout>;
 };
 
 export default AccountLayout;

@@ -1,4 +1,3 @@
-import { AppstoreOutlined } from '@ant-design/icons';
 import { Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
@@ -13,7 +12,6 @@ import {
 import { search } from '../../../utils/filterUtils';
 import useLocalizedText from '../../../utils/useLocalizedText';
 
-import { stringToHexaColor } from '../../../utils/strings';
 import SearchInput from '../../../components/Navigation/SearchInput';
 import Highlight from '../../../components/Highlight/Highlight';
 import Item from '../../../components/Navigation/Item';
@@ -122,7 +120,7 @@ export const Navigation = ({
                 title={t('workspace.sections.activity')}
                 placement="right"
               >
-                <div className="mb-1">
+                <div className="mb-1 mr-1">
                   <Avatar width={17} height={17} />
                 </div>
               </Tooltip>
@@ -148,7 +146,7 @@ export const Navigation = ({
                   href={`/account/workspaces/${id}`}
                   icon={
                     <Tooltip title={name} placement="right">
-                      <div>
+                      <div style={{ width: '2rem' }}>
                         <WorkspaceIcon photo={photo} name={name} size={20} />
                       </div>
                     </Tooltip>
