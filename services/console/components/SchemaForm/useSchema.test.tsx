@@ -457,140 +457,139 @@ xit('should autocomplete emit events', () => {
 });
 
 xit('should autocomplete emit events', () => {
-  let extractAutocompleteOptionsFn: Function = () => null;
-  const workspace = {
-    id: '42',
-    name: 'workspace',
-    imports: {
-      'App A': {
-        slug: 'App A',
-        events: {
-          emit: [
-            {
-              event: 'App A emit A',
-            },
-            {
-              event: 'App A emit B {{foo}}',
-              autocomplete: {
-                foo: {
-                  from: 'appConfig',
-                  path: 'items[*]~',
-                },
-              },
-            },
-          ],
-          listen: ['App A listen A'],
-        },
-      },
-      'App B': {
-        slug: 'App B',
-        events: {
-          emit: [
-            {
-              event: 'App B emit A',
-            },
-          ],
-          listen: ['App B listen A', 'App B listen B'],
-        },
-      },
-    },
-    automations: {
-      foo: {
-        when: {
-          events: ['listen A', 'listen B'],
-        },
-        do: [
-          {
-            emit: {
-              event: 'emit A',
-            },
-          },
-          {
-            wait: {
-              timeout: 42,
-            },
-          },
-          {
-            emit: {
-              event: 'emit B',
-            },
-          },
-        ],
-      },
-      bar: {
-        when: {
-          events: ['listen C'],
-        },
-      },
-      empty: {
-        do: [
-          {
-            emit: {
-              event: 'emit C',
-            },
-          },
-        ],
-      },
-    },
-  };
-  const C = () => {
-    const { extractAutocompleteOptions } = useSchema();
-    extractAutocompleteOptionsFn = extractAutocompleteOptions;
-    return null;
-  };
-  renderer.create(
-    <workspaceContext.Provider value={{ ...workspaceContextValue, workspace }}>
-      <C />
-    </workspaceContext.Provider>
-  );
-
-  expect(
-    extractAutocompleteOptionsFn({
-      'ui:options': {
-        autocomplete: 'events:listen',
-      },
-    })
-  ).toEqual([
-    {
-      label: 'workspace',
-      options: [
-        {
-          label: 'listen A',
-          value: 'listen A',
-        },
-        {
-          label: 'listen B',
-          value: 'listen B',
-        },
-        {
-          label: 'listen C',
-          value: 'listen C',
-        },
-      ],
-    },
-    {
-      label: 'App A',
-      options: [
-        {
-          label: 'App A listen A',
-          value: 'App A listen A',
-        },
-      ],
-    },
-    {
-      label: 'App B',
-      options: [
-        {
-          label: 'App B listen A',
-          value: 'App B listen A',
-        },
-        {
-          label: 'App B listen B',
-          value: 'App B listen B',
-        },
-      ],
-    },
-  ]);
+  // let extractAutocompleteOptionsFn: Function = () => null;
+  // const workspace = {
+  //   id: '42',
+  //   name: 'workspace',
+  //   imports: {
+  //     'App A': {
+  //       slug: 'App A',
+  //       events: {
+  //         emit: [
+  //           {
+  //             event: 'App A emit A',
+  //           },
+  //           {
+  //             event: 'App A emit B {{foo}}',
+  //             autocomplete: {
+  //               foo: {
+  //                 from: 'appConfig',
+  //                 path: 'items[*]~',
+  //               },
+  //             },
+  //           },
+  //         ],
+  //         listen: ['App A listen A'],
+  //       },
+  //     },
+  //     'App B': {
+  //       slug: 'App B',
+  //       events: {
+  //         emit: [
+  //           {
+  //             event: 'App B emit A',
+  //           },
+  //         ],
+  //         listen: ['App B listen A', 'App B listen B'],
+  //       },
+  //     },
+  //   },
+  //   automations: {
+  //     foo: {
+  //       when: {
+  //         events: ['listen A', 'listen B'],
+  //       },
+  //       do: [
+  //         {
+  //           emit: {
+  //             event: 'emit A',
+  //           },
+  //         },
+  //         {
+  //           wait: {
+  //             timeout: 42,
+  //           },
+  //         },
+  //         {
+  //           emit: {
+  //             event: 'emit B',
+  //           },
+  //         },
+  //       ],
+  //     },
+  //     bar: {
+  //       when: {
+  //         events: ['listen C'],
+  //       },
+  //     },
+  //     empty: {
+  //       do: [
+  //         {
+  //           emit: {
+  //             event: 'emit C',
+  //           },
+  //         },
+  //       ],
+  //     },
+  //   },
+  // };
+  // const C = () => {
+  //   const { extractAutocompleteOptions } = useSchema();
+  //   extractAutocompleteOptionsFn = extractAutocompleteOptions;
+  //   return null;
+  // };
+  // renderer.create(
+  //   <workspaceContext.Provider value={{ ...workspaceContextValue, workspace }}>
+  //     <C />
+  //   </workspaceContext.Provider>
+  // );
+  // expect(
+  //   extractAutocompleteOptionsFn({
+  //     'ui:options': {
+  //       autocomplete: 'events:listen',
+  //     },
+  //   })
+  // ).toEqual([
+  //   {
+  //     label: 'workspace',
+  //     options: [
+  //       {
+  //         label: 'listen A',
+  //         value: 'listen A',
+  //       },
+  //       {
+  //         label: 'listen B',
+  //         value: 'listen B',
+  //       },
+  //       {
+  //         label: 'listen C',
+  //         value: 'listen C',
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     label: 'App A',
+  //     options: [
+  //       {
+  //         label: 'App A listen A',
+  //         value: 'App A listen A',
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     label: 'App B',
+  //     options: [
+  //       {
+  //         label: 'App B listen A',
+  //         value: 'App B listen A',
+  //       },
+  //       {
+  //         label: 'App B listen B',
+  //         value: 'App B listen B',
+  //       },
+  //     ],
+  //   },
+  // ]);
 });
 
 it('should autocomplete events with no value', () => {

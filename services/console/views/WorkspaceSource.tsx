@@ -61,7 +61,6 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     saving,
     displaySource,
   } = useWorkspaceLayout();
-  const [dirty, setDirty] = useState(false);
   const [value, setValue] = useState<string | undefined>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const { toJSON, toYaml } = useYaml();
@@ -84,7 +83,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
       });
     };
     const listener = (path: string) => {
-      if (dirty && !confirm) {
+      if (!confirm) {
         askForConfirmation(path);
         events.emit('routeChangeError');
         throw `routeChange aborted. This error can be safely ignored - https://github.com/zeit/next.js/issues/2476.`;
@@ -94,7 +93,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     return () => {
       events.off('routeChangeStart', listener);
     };
-  }, [dirty, confirm, events, t, displaySource, push]);
+  }, [confirm, events, t, displaySource, push]);
 
   const initYaml = useCallback(async () => {
     try {
@@ -130,7 +129,6 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const update = useCallback(
     async (newValue: string) => {
-      setDirty(true);
       try {
         const json = await checkSyntaxAndReturnYAML(newValue);
 
@@ -138,10 +136,9 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         validateWorkspace(json);
         setInvalid((validateWorkspace.errors as ValidationError[]) || false);
         setNewSource(json);
-        setDirty(true);
       } catch (e) {}
     },
-    [checkSyntaxAndReturnYAML, setDirty, setInvalid, setNewSource]
+    [checkSyntaxAndReturnYAML, setInvalid, setNewSource]
   );
 
   useEffect(() => {
@@ -213,7 +210,6 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const save = useCallback(() => {
     onSaveSource();
-    setDirty(false);
   }, [onSaveSource]);
 
   const shortcuts = useMemo(

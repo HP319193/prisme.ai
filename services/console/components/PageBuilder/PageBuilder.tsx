@@ -18,13 +18,20 @@ interface PageBuilderProps {
 export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const { t } = useTranslation('workspaces');
 
-  const [blocks, setBlocks] = useState<BlockWithKey[]>(
+  const [blocks, _setBlocks] = useState<BlockWithKey[]>(
     value
       ? value.map((block) => ({
           ...block,
           key: nanoid(),
         }))
       : []
+  );
+  const setBlocks = useCallback(
+    (blocks: BlockWithKey[]) => {
+      _setBlocks(blocks);
+      onChange(blocks.map(({ key, ...block }) => block));
+    },
+    [onChange]
   );
   const { available, variants } = useBlocks();
 
@@ -40,14 +47,6 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const [blocksSchemas, setBlocksSchemas] = useState<
     PageBuilderContext['blocksSchemas']
   >(new Map());
-
-  const onChangeRef = useRef<any>(onChange);
-  useEffect(() => {
-    onChangeRef.current = onChange;
-  }, [onChange]);
-  useEffect(() => {
-    onChangeRef.current(blocks.map(({ key, ...block }) => block));
-  }, [blocks]);
 
   const hidePanel = useCallback(async () => {
     setBlockEditingOnBack(undefined);

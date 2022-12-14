@@ -21,6 +21,7 @@ import AppInstanceProvider, {
 } from '../providers/AppInstanceProvider';
 import { useWorkspace } from '../providers/Workspace';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
+import useDirtyWarning from '../utils/useDirtyWarning';
 import useLocalizedText from '../utils/useLocalizedText';
 
 export const AppInstance = () => {
@@ -41,6 +42,7 @@ export const AppInstance = () => {
   const [value, setValue] = useState(appInstance);
   const [displaySource, setDisplaySource] = useState(false);
   const [viewMode, setViewMode] = useState(0);
+  const [dirty] = useDirtyWarning(appInstance, value);
 
   const save = useCallback(() => {
     saveAppInstance(value);
@@ -213,7 +215,7 @@ export const AppInstance = () => {
               onClick={save}
               className="!flex flex-row"
               variant="primary"
-              disabled={saving}
+              disabled={!dirty || saving}
             >
               {t('apps.save')}
             </Button>

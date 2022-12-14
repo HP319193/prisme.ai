@@ -33,6 +33,7 @@ interface PageRendererProps {
   setViewMode: (v: number) => void;
   duplicate: () => void;
   duplicating: boolean;
+  dirty: boolean;
 }
 export const PageRenderer = ({
   value,
@@ -44,6 +45,7 @@ export const PageRenderer = ({
   setViewMode,
   duplicate,
   duplicating,
+  dirty,
 }: PageRendererProps) => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
@@ -251,7 +253,11 @@ export const PageRenderer = ({
         }
         extra={[
           <div className="overflow-hidden" key="buttons">
-            <Button onClick={onSave} disabled={saving} variant="primary">
+            <Button
+              onClick={onSave}
+              disabled={!dirty || saving}
+              variant="primary"
+            >
               {saving && <LoadingOutlined />}
               {t('pages.save.label')}
             </Button>

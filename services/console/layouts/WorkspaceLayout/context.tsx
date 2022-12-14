@@ -16,8 +16,6 @@ export interface WorkspaceLayoutContext {
   setNewSource: (fn: WorkspaceLayoutContext['newSource']) => void;
   fullSidebar: boolean;
   setFullSidebar: (s: boolean) => void;
-  dirty: boolean;
-  setDirty: (bool: boolean) => void;
   createAutomation: () => void;
   createPage: () => void;
   installApp: () => void;

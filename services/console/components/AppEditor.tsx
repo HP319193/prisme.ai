@@ -8,7 +8,6 @@ import {
 import { BlockLoader } from '@prisme.ai/blocks';
 import api from '../utils/api';
 import useAppConfig from '../utils/useAppConfig';
-import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 import useLocalizedText from '../utils/useLocalizedText';
@@ -27,7 +26,6 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
   const { t } = useTranslation('workspaces');
   const { t: commmonT } = useTranslation('common');
   const { t: errorT } = useTranslation('errors');
-  const { setDirty } = useWorkspaceLayout();
   const { appConfig, onAppConfigUpdate } = useAppConfig(workspaceId, appId);
   const { localizeSchemaForm } = useLocalizedText();
 
@@ -38,7 +36,6 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
         message: t('apps.saveSuccess'),
         placement: 'bottomRight',
       });
-      setDirty(false);
     } catch (e) {
       notification.error({
         message: errorT('unknown', { errorName: e }),
@@ -58,9 +55,8 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
         {}
       );
       if (JSON.stringify(prevValue) === JSON.stringify(value || {})) return;
-      setDirty(true);
     },
-    [appConfig, setDirty]
+    [appConfig]
   );
 
   if (!appConfig) return <Loading />;

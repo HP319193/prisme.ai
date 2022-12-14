@@ -88,6 +88,7 @@ export const PageProvider = ({
       return page || null;
     } catch (e) {
       setNotFound(true);
+      return null;
     }
   }, [fetchPageById, fetchPageBySlug, id, slug, workspaceId, workspaceSlug]);
 

@@ -58,3 +58,6 @@ export function CodeOutlined() {
 export function ExceptionOutlined() {
   return null;
 }
+export function WarningOutlined() {
+  return null;
+}

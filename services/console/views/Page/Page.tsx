@@ -8,6 +8,7 @@ import { useWorkspace } from '../../providers/Workspace';
 import { incrementName } from '../../utils/incrementName';
 import { notification } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
+import useDirtyWarning from '../../utils/useDirtyWarning';
 
 const Page = () => {
   const { t } = useTranslation('workspaces');
@@ -21,6 +22,7 @@ const Page = () => {
   const [viewMode, setViewMode] = useState(
     Object.keys(page.blocks || {}).length === 0 ? 1 : 0
   );
+  const [dirty] = useDirtyWarning(page, value);
   const [duplicating, setDuplicating] = useState(false);
   const duplicate = useCallback(async () => {
     if (!page.id || !page.slug) return;
@@ -82,6 +84,7 @@ const Page = () => {
       setViewMode={setViewMode}
       duplicate={duplicate}
       duplicating={duplicating}
+      dirty={dirty}
     />
   );
 };

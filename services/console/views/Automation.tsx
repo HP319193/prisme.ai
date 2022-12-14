@@ -22,7 +22,6 @@ import useLocalizedText from '../utils/useLocalizedText';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import EditDetails from '../layouts/EditDetails';
 import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
-import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import EditableTitle from '../components/EditableTitle';
 import { PageHeader, Tooltip } from 'antd';
 import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
@@ -36,6 +35,7 @@ import { ApiError } from '../utils/api';
 import SourceEdit from '../components/SourceEdit/SourceEdit';
 import { validateAutomation } from '@prisme.ai/validation';
 import { incrementName } from '../utils/incrementName';
+import useDirtyWarning from '../utils/useDirtyWarning';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -97,10 +97,10 @@ export const Automation = () => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const { workspace, createAutomation } = useWorkspace();
-  const { setDirty } = useWorkspaceLayout();
   const [value, setValue] = useState(automation);
   const [displaySource, setDisplaySource] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
+  const [dirty] = useDirtyWarning(automation, value);
 
   const {
     query: { automationId },
@@ -161,7 +161,6 @@ export const Automation = () => {
       if (newValue !== value) setValue(newValue);
       try {
         const saved = await saveAutomation(cleanAutomation(newValue));
-        setDirty(false);
         if (saved) {
           if (automation.slug !== saved.slug) {
             replace(`/workspaces/${workspace.id}/automations/${saved.slug}`);
@@ -186,7 +185,7 @@ export const Automation = () => {
         }
       }
     },
-    [saveAutomation, setDirty, t, value]
+    [automation.slug, replace, saveAutomation, t, value, workspace.id]
   );
 
   // Need to get the latest version with the latest value associated
@@ -439,7 +438,7 @@ export const Automation = () => {
         extra={[
           <Button
             onClick={() => save()}
-            disabled={saving}
+            disabled={!dirty || saving}
             key="1"
             className="!flex flex-row"
             variant="primary"

@@ -12,6 +12,14 @@ import { PageHeader } from 'antd';
 
 jest.useFakeTimers();
 
+jest.mock(
+  '../utils/useDirtyWarning',
+  () =>
+    function useDirtyWarning() {
+      return [];
+    }
+);
+
 jest.mock('../utils/useYaml', () => {
   const toJSON = jest.fn();
   const toYaml = jest.fn();
