@@ -185,7 +185,68 @@ Workspaces can only listen to a limited subset of the available native events :
         }
         ```
       </td>
-    </tr>                                    
+    </tr>
+    <tr>
+      <td><b>workspaces.pages.permissions.shared</b></td>
+      <td>Some page has been shared with someone</td>
+      <td>
+        ```
+          {
+          "subjectId": "<pageId>",
+          "permissions": {
+              "email": "<user email>",
+              "policies": {
+                "read": true
+              },
+              "id": "<user id>"
+            }
+          }
+        ```
+      </td>
+    </tr>    
+    <tr>
+      <td><b>workspaces.pages.permissions.deleted</b></td>
+      <td>Someone's access to the page has been removed</td>
+      <td>
+        ```
+          {
+            "subjectId": "<pageId>",
+            "userId": "<user id>",
+            "email": "<user email>"
+          }
+        ```
+      </td>
+    </tr>        
+    <tr>
+      <td><b>workspaces.versions.published</b></td>
+      <td>A new workspace version has been committed</td>
+      <td>
+        ```
+          {
+            "version": {
+              "name": "version name",
+              "createdAt": "iso date",
+              "description": "version description"
+            }
+          }
+        ```
+      </td>
+    </tr>   
+    <tr>
+      <td><b>workspaces.versions.rollback</b></td>
+      <td>A previous version has been rolled-back</td>
+      <td>
+        ```
+          {
+            "version": {
+              "name": "version name",
+              "createdAt": "iso date",
+              "description": "version description"
+            }
+          }
+        ```
+      </td>
+    </tr>                
   </table>    
 </center>
 
