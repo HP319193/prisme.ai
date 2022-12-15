@@ -33,6 +33,9 @@ export enum EventType {
   CreatedAutomation = 'workspaces.automations.created',
   UpdatedAutomation = 'workspaces.automations.updated',
   DeletedAutomation = 'workspaces.automations.deleted',
+  PublishedWorkspaceVersion = 'workspaces.versions.published',
+  DeletedWorkspaceVersion = 'workspaces.versions.deleted',
+  RollbackWorkspaceVersion = 'workspaces.versions.rollback',
 
   InstalledApp = 'workspaces.apps.installed',
   UninstalledApp = 'workspaces.apps.uninstalled',
@@ -45,6 +48,8 @@ export enum EventType {
   JoinedUserTopic = 'events.userTopics.joined',
 
   SuspendedWorkspace = 'workspaces.suspended',
+  PagePermissionsShared = 'workspaces.pages.permissions.shared',
+  PagePermissionsDeleted = 'workspaces.pages.permissions.deleted',
 }
 export class CallbackContext {
   public logger: Logger;

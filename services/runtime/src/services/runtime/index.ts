@@ -152,6 +152,11 @@ export default class Runtime {
         EventType.FailedFetch,
         EventType.TriggeredWebhook,
         EventType.TriggeredSchedule,
+        EventType.PagePermissionsShared,
+        EventType.PagePermissionsDeleted,
+        EventType.PublishedWorkspaceVersion,
+        EventType.DeletedWorkspaceVersion,
+        EventType.RollbackWorkspaceVersion,
       ],
       async (event, broker, { logger }) => {
         if (!event.source.workspaceId || !event.source.correlationId) {
