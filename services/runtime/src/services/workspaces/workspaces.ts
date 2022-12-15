@@ -31,7 +31,6 @@ export class Workspaces extends Storage {
   startLiveUpdates() {
     const listenedEvents = [
       EventType.CreatedWorkspace,
-      EventType.DuplicatedWorkspace,
       EventType.ConfiguredWorkspace,
       EventType.DeletedWorkspace,
       EventType.CreatedAutomation,
@@ -64,20 +63,13 @@ export class Workspaces extends Storage {
         if (event.type === EventType.CreatedWorkspace) {
           const workspace = (event as any as Prismeai.CreatedWorkspace).payload
             .workspace;
-          await this.loadWorkspace(workspace);
-          await this.saveWorkspace(workspace);
-          return true;
-        } else if (event.type === EventType.DuplicatedWorkspace) {
-          const { workspace: baseSettings, fromWorkspace } = (
-            event as any as Prismeai.DuplicatedWorkspace
-          ).payload;
-          const templateModel = await this.getWorkspace(fromWorkspace?.id!);
-          const newDSUL = {
-            ...templateModel.dsul,
-            ...baseSettings,
-          };
-          await this.loadWorkspace(newDSUL);
-          await this.saveWorkspace(newDSUL);
+          try {
+            await this.fetchWorkspace(workspace.id!);
+          } catch {
+            // Do not reset model if it already exists (i.e duplicated workspace)
+            await this.loadWorkspace(workspace);
+            await this.saveWorkspace(workspace);
+          }
           return true;
         }
 
@@ -247,7 +239,8 @@ export class Workspaces extends Storage {
         `workspaces/${workspaceId}/versions/current/runtime.yml`
       );
       const dsul = yaml.load(raw) as Prismeai.RuntimeModel;
-      await this.loadWorkspace(dsul);
+      // Stored id might not be true in case of a duplicated workspace
+      await this.loadWorkspace({ ...dsul, id: workspaceId });
 
       return dsul;
     } catch (err) {

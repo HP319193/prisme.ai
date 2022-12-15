@@ -210,7 +210,7 @@ class Workspaces {
             ...automationsQuery,
           }
         )
-        .catch(() => undefined), // Might crash if no import exist,
+        .catch(() => undefined),
       this.storage
         .copy(
           {
@@ -223,6 +223,18 @@ class Workspaces {
           }
         )
         .catch(() => undefined), // Might crash if no import exist
+      this.storage
+        .copy(
+          {
+            workspaceId,
+            dsulType: DSULType.RuntimeModel,
+          },
+          {
+            workspaceId: newWorkspace.id,
+            dsulType: DSULType.RuntimeModel,
+          }
+        )
+        .catch(() => undefined),
     ]);
 
     this.broker.send<Prismeai.DuplicatedWorkspace['payload']>(
