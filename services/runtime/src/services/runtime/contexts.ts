@@ -73,7 +73,8 @@ export interface Contexts {
   $workspace: Partial<Prismeai.DSUL>;
 }
 
-export type ContextUpdateOpLog = Prismeai.UpdatedContexts['payload']['updates'][0];
+export type ContextUpdateOpLog =
+  Prismeai.UpdatedContexts['payload']['updates'][0];
 
 export enum ContextType {
   Run = 'run',
@@ -427,9 +428,8 @@ export class ContextsManager {
     const splittedPath = parseVariableName(path);
 
     try {
-      const { parent, lastKey, context, subPath } = this.findParentVariableFor(
-        splittedPath
-      );
+      const { parent, lastKey, context, subPath } =
+        this.findParentVariableFor(splittedPath);
       const prevValue = parent[lastKey];
 
       const opLog: ContextUpdateOpLog = {

@@ -121,10 +121,12 @@ class Pages {
     const pages = await this.list(fromWorkspaceId);
     const pagesDsul = await Promise.all(
       pages.map((cur) =>
-        this.storage.get({
-          slug: cur.slug,
-          workspaceId: cur.workspaceId,
-        })
+        this.storage
+          .get({
+            slug: cur.slug,
+            workspaceId: cur.workspaceId,
+          })
+          .catch(() => undefined)
       )
     );
 
@@ -135,7 +137,7 @@ class Pages {
     });
 
     const duplicatedPages = await Promise.all(
-      pagesDsul.map((cur) => {
+      pagesDsul.filter(Boolean).map((cur) => {
         return this.createPage(toWorkspaceId, {
           ...cur,
           workspaceSlug: toWorkspace.slug,

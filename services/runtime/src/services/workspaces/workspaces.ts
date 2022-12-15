@@ -30,6 +30,8 @@ export class Workspaces extends Storage {
 
   startLiveUpdates() {
     const listenedEvents = [
+      EventType.CreatedWorkspace,
+      EventType.DuplicatedWorkspace,
       EventType.ConfiguredWorkspace,
       EventType.DeletedWorkspace,
       EventType.CreatedAutomation,
@@ -56,6 +58,26 @@ export class Workspaces extends Storage {
           } else {
             logger.info(`Resumed workspace ${suspended.workspaceId} execution`);
           }
+          return true;
+        }
+
+        if (event.type === EventType.CreatedWorkspace) {
+          const workspace = (event as any as Prismeai.CreatedWorkspace).payload
+            .workspace;
+          await this.loadWorkspace(workspace);
+          await this.saveWorkspace(workspace);
+          return true;
+        } else if (event.type === EventType.DuplicatedWorkspace) {
+          const { workspace: baseSettings, fromWorkspace } = (
+            event as any as Prismeai.DuplicatedWorkspace
+          ).payload;
+          const templateModel = await this.getWorkspace(fromWorkspace?.id!);
+          const newDSUL = {
+            ...templateModel.dsul,
+            ...baseSettings,
+          };
+          await this.loadWorkspace(newDSUL);
+          await this.saveWorkspace(newDSUL);
           return true;
         }
 
@@ -117,7 +139,7 @@ export class Workspaces extends Storage {
           case EventType.ConfiguredApp:
             const {
               payload: {
-                appInstance,
+                appInstance: { oldConfig, ...appInstance },
                 slug: appInstanceSlug,
                 oldSlug: appInstanceOldSlug,
               },
@@ -225,12 +247,7 @@ export class Workspaces extends Storage {
         `workspaces/${workspaceId}/versions/current/runtime.yml`
       );
       const dsul = yaml.load(raw) as Prismeai.RuntimeModel;
-      this.workspaces[workspaceId] = await Workspace.create(dsul, this.apps);
-
-      // Check imported apps & update watched app current versions
-      if (dsul.imports) {
-        this.watchAppCurrentVersions(this.workspaces[workspaceId]);
-      }
+      await this.loadWorkspace(dsul);
 
       return dsul;
     } catch (err) {
@@ -239,6 +256,19 @@ export class Workspaces extends Storage {
       }
       throw err;
     }
+  }
+
+  private async loadWorkspace(workspace: Prismeai.RuntimeModel) {
+    this.workspaces[workspace.id!] = await Workspace.create(
+      workspace,
+      this.apps
+    );
+
+    // Check imported apps & update watched app current versions
+    if (workspace.imports) {
+      this.watchAppCurrentVersions(this.workspaces[workspace.id!]);
+    }
+    return this.workspaces[workspace.id!];
   }
 
   async saveWorkspace(workspace: Prismeai.RuntimeModel) {

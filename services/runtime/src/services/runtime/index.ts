@@ -94,12 +94,8 @@ export default class Runtime {
     this.broker.on<Prismeai.SucceededLogin['payload']>(
       [EventType.SuccededLogin],
       async (event) => {
-        const {
-          token,
-          id: sessionId,
-          expiresIn = 30 * 24 * 60 * 60,
-          expires,
-        } = event?.payload?.session || {};
+        const { token, id: sessionId, expiresIn = 30 * 24 * 60 * 60, expires } =
+          event?.payload?.session || {};
         const userId = event?.payload?.id;
         if (!token || !userId || !sessionId) {
           return true;
@@ -157,6 +153,7 @@ export default class Runtime {
         EventType.PublishedWorkspaceVersion,
         EventType.DeletedWorkspaceVersion,
         EventType.RollbackWorkspaceVersion,
+        EventType.DuplicatedWorkspace,
       ],
       async (event, broker, { logger }) => {
         if (!event.source.workspaceId || !event.source.correlationId) {
@@ -431,7 +428,7 @@ export default class Runtime {
         }
       );
 
-      const childCtx = ctx.childAutomation(automation, payload, broker, {
+      const childCtx = ctx.childAutomation(automation, payload, childBroker, {
         type: trigger.type,
         value: trigger.value,
         id: trigger.type === 'event' ? payload.id : undefined,
@@ -496,7 +493,8 @@ export default class Runtime {
       const payload = (<PrismeEvent<Prismeai.ConfiguredAppInstance['payload']>>(
         event
       ))?.payload;
-      await workspace.updateImport(payload!.slug!, payload!.appInstance!);
+      const { oldConfig, ...appInstance } = payload?.appInstance!;
+      await workspace.updateImport(payload!.slug!, appInstance!);
     }
 
     const triggers = workspace.getEventTriggers(event);
@@ -530,6 +528,27 @@ export default class Runtime {
       triggers.push(
         ...Object.values(workspace.imports || {}).flatMap((workspace) =>
           workspace.getEventTriggers(event)
+        )
+      );
+    }
+
+    // On duplicated workspace, simuluate apps installed events
+    if (event.type === EventType.DuplicatedWorkspace) {
+      triggers.push(
+        ...Object.entries(workspace.dsul.imports || {}).flatMap(
+          ([slug, appInstance]) =>
+            workspace.getEventTriggers({
+              ...event,
+              source: {
+                ...event.source,
+                appInstanceFullSlug: slug,
+              },
+              type: EventType.InstalledApp,
+              payload: {
+                appInstance,
+                slug,
+              },
+            })
         )
       );
     }
