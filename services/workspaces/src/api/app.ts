@@ -113,10 +113,17 @@ export function initAPI(
         );
       }
     },
-    onRevoked: async (req, subjectType, subjectId, userId, subject) => {
+    onRevoked: async (
+      req,
+      subjectType,
+      subjectId,
+      { id: userId, email },
+      subject
+    ) => {
       const payload = {
         subjectId,
         userId,
+        email,
       };
       const source = { workspaceId: req.context.workspaceId };
       if (subjectType === SubjectType.Page) {

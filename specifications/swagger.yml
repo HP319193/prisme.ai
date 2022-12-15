@@ -3173,7 +3173,7 @@ components:
             - type: string
               example: 'Slug name'
 
-    Schedules: 
+    Schedules:
       type: array
       items:
         type: string
@@ -4078,7 +4078,7 @@ components:
               type: string
             details:
               type: object
-              additionalProperties: true  
+              additionalProperties: true
           additionalProperties: true
 
     ########################## API Keys #############################
@@ -4501,6 +4501,8 @@ components:
               type: string
             userId:
               type: string
+            email:
+              type: string
 
     UninstalledAppInstance:
       type: object
@@ -4751,6 +4753,8 @@ components:
               type: string
             userId:
               type: string
+            email:
+              type: string
 
     ########################## Runtime events ##########################
 
@@ -4812,11 +4816,11 @@ components:
           properties:
             slug:
               type: string
-            schedules: 
+            schedules:
               $ref: '#/components/schemas/Schedules'
             details:
               type: object
-              additionalProperties: true       
+              additionalProperties: true
 
     TriggeredWebhook:
       type: object
@@ -4865,9 +4869,9 @@ components:
             workspaceId:
               type: string
             automationSlug:
-              type: string    
+              type: string
             schedule:
-              type: string  
+              type: string
 
     SuspendedWorkspace:
       type: object

@@ -1589,6 +1589,7 @@ declare namespace Prismeai {
         payload: {
             subjectId: string;
             userId: string;
+            email?: string;
         };
     }
     export interface PagePermissionsShared {
@@ -2236,6 +2237,7 @@ declare namespace Prismeai {
         payload: {
             subjectId: string;
             userId: string;
+            email?: string;
         };
     }
     export interface WorkspacePermissionsShared {

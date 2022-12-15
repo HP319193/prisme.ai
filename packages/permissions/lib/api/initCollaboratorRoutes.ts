@@ -20,7 +20,7 @@ export interface PermissionsRoutesCallbacks<SubjectType extends string> {
     req: Request<any, any, any> & ExtendedRequest<SubjectType>,
     subjectType: string,
     subjectId: string,
-    userId: string,
+    user: { id: string; email?: string },
     subject: object & { id: string }
   ) => any;
 }
@@ -164,7 +164,20 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     );
 
     if (callbacks?.onRevoked) {
-      callbacks.onRevoked(req, subjectType, subjectId, userId, subject);
+      let email;
+      if (userId !== '*') {
+        try {
+          const users = await fetchUsers({ ids: [userId] });
+          email = users?.[0]?.email;
+        } catch {}
+      }
+      callbacks.onRevoked(
+        req,
+        subjectType,
+        subjectId,
+        { id: userId, email },
+        subject
+      );
     }
 
     return res.send({ id: userId });
