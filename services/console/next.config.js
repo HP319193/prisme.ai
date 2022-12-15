@@ -11,6 +11,7 @@ module.exports = {
     SENTRY_DSN: process.env.SENTRY_DSN || '',
     HEADER_POPOVERS: process.env.HEADER_POPOVERS || '{}',
     SUGGESTIONS_ENDPOINT: process.env.SUGGESTIONS_ENDPOINT || '',
+    BILLING_HOME: process.env.BILLING_HOME || '',
   },
   webpack(config) {
     config.module.rules.push({

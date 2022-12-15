@@ -9,26 +9,25 @@ import { useTranslation } from 'next-i18next';
 import { usePermissions } from '../../components/PermissionsProvider';
 import Usages from './Components/Usages';
 import ShareWorkspace from '../../components/Share/ShareWorkspace';
-import RightSidebar from './Components/RightSidebar';
 import BillingPlan from './Components/BillingPlan';
 import { useWorkspaces } from '../../providers/Workspaces';
 import WorkspaceProvider from '../../providers/Workspace';
+import { useUser } from '../../components/UserProvider';
 
 const WorkspaceManagement = () => {
   const { t } = useTranslation('user');
   const { t: workspaceT } = useTranslation('workspaces');
+  const {
+    user: { email },
+  } = useUser();
 
   const { workspaces } = useWorkspaces();
   const {
     query: { workspaceId },
   } = useRouter();
 
-  const {
-    workspacesUsage,
-    fetchWorkspaceUsage,
-    loading,
-    error,
-  } = useWorkspacesUsage();
+  const { workspacesUsage, fetchWorkspaceUsage, loading, error } =
+    useWorkspacesUsage();
 
   const { getUsersPermissions, usersPermissions } = usePermissions();
 
@@ -67,7 +66,6 @@ const WorkspaceManagement = () => {
   if (!currentWorkspace) {
     return <Error404 link={`/account`} />;
   }
-
   return (
     <>
       <Head>
@@ -83,7 +81,11 @@ const WorkspaceManagement = () => {
         <WorkspaceProvider id={`${workspaceId}`}>
           <div className="flex flex-row h-full flex-1">
             <div className="flex flex-col flex-1 m-[3.938rem] space-y-5 w-4/5">
-              <BillingPlan wpName={currentWorkspace.name} />
+              <BillingPlan
+                wpName={currentWorkspace.name}
+                wpId={currentWorkspace.id}
+                userEmail={email as string}
+              />
               <Usages
                 currentWorkspaceUsages={currentWorkspaceUsages || []}
                 nbUser={
@@ -96,7 +98,6 @@ const WorkspaceManagement = () => {
               </div>
               <ShareWorkspace workspaceId={`${workspaceId}`} />
             </div>
-            <RightSidebar />
           </div>
         </WorkspaceProvider>
       )}
