@@ -272,6 +272,15 @@ describe('It should handle variables within {{}}', () => {
 
 it('works with the regexp() keyword on matches instruction.', () => {
   expect(
+    evaluate(
+      '{{validation.regexp}} and {{value}} and {{value}} not matches regex({{validation.regexp}})',
+      {
+        value: null,
+        validation: {},
+      }
+    )
+  ).toEqual(false);
+  expect(
     evaluate('"luke.skywalker@gmail.com" matches regex(luke)', {})
   ).toEqual(true);
   expect(
