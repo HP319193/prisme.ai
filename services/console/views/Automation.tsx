@@ -261,7 +261,7 @@ export const Automation = () => {
       ...Object.entries(
         workspace.imports ||
           ({} as Record<string, Prismeai.DetailedAppInstance>)
-      ).map(([slug, { automations, appSlug, photo = '' }]) => ({
+      ).map(([slug, { automations = [], appSlug, photo = '' }]) => ({
         appName: `${slug} (${appSlug})`,
         icon: photo,
         automations: automations.reduce(
