@@ -86,13 +86,15 @@
       "create": {
         "label": "Créer une version",
         "description": "Créez une nouvelle version vers laquelle vous pourrez revenir à tout instant même après avoir enregistré des modification sur votre Workspace.",
-        "name": "Décrivez votre version si vous le désirez"
+        "name": "Décrivez votre version si vous le désirez",
+        "success": "Nouvelle version crée. Vous pourrez la retrouver dans l'Activité de votre Workspace."
       },
       "rollback": {
         "label": "Revenir à cette version",
         "description": "Revenir à cette version. Attention, l'état actuel de votre Workspace ne sera pas conservé.",
         "confirm": "Attention, l'état actuel de votre Workspace sera perdu si vous n'en avez pas enregistré une version.",
-        "confirm_ok": "Revenir à cette version"
+        "confirm_ok": "Revenir à cette version",
+        "success": "Retour à la version précédente avec succès."
       }
     }
   },

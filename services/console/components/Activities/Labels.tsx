@@ -1,5 +1,5 @@
 import { WarningOutlined } from '@ant-design/icons';
-import { Button } from '@prisme.ai/design-system';
+import { Button, notification } from '@prisme.ai/design-system';
 import { Popconfirm } from 'antd';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
@@ -82,6 +82,10 @@ export const RollbackVersion: FC<Event<Date>> = ({
         e?.stopPropagation();
         if (!workspaceId || !version) return;
         api.workspaces(workspaceId).versions.rollback(version.name);
+        notification.success({
+          message: t('workspace.versions.rollback.success'),
+          placement: 'bottomRight',
+        });
       }}
     >
       <Button className="font-bold" onClick={(e) => e.stopPropagation()}>
