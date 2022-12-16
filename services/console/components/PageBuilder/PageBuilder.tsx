@@ -15,17 +15,24 @@ interface PageBuilderProps {
   onChange: (value: Prismeai.Page['blocks'], events?: string[]) => void;
 }
 
+function addKeyToBlocks(value: PageBuilderProps['value']) {
+  return value
+    ? value.map((block) => ({
+        ...block,
+        key: nanoid(),
+      }))
+    : [];
+}
+
 export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const { t } = useTranslation('workspaces');
 
-  const [blocks, _setBlocks] = useState<BlockWithKey[]>(
-    value
-      ? value.map((block) => ({
-          ...block,
-          key: nanoid(),
-        }))
-      : []
-  );
+  const [blocks, _setBlocks] = useState<BlockWithKey[]>(addKeyToBlocks(value));
+
+  useEffect(() => {
+    _setBlocks(addKeyToBlocks(value));
+  }, [value]);
+
   const setBlocks = useCallback(
     (blocks: BlockWithKey[]) => {
       _setBlocks(blocks);
@@ -78,7 +85,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
 
       setBlocks(newBlocks);
     },
-    [blocks]
+    [blocks, setBlocks]
   );
 
   const addBlockDetails = useCallback(async () => {
@@ -134,7 +141,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
         setBlockEditingOnBack(undefined);
       });
     },
-    [addBlockDetails, available, blocks, setEditBlock]
+    [addBlockDetails, available, blocks, setBlocks, setEditBlock]
   );
 
   const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
@@ -143,7 +150,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
       setBlocks(newBlocks);
       await hidePanel();
     },
-    [blocks, hidePanel]
+    [blocks, hidePanel, setBlocks]
   );
 
   const setBlockSchema: PageBuilderContext['setBlockSchema'] = useCallback(
