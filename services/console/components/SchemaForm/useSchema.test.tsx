@@ -382,12 +382,20 @@ it('should get emit events', () => {
     imports: {
       ifoo: {
         name: 'foo',
+        appSlug: 'foo',
+        slug: 'foo',
+        automations: [],
+        blocks: [],
         events: {
           listen: ['l5'],
         },
       },
       ibar: {
         name: 'bar',
+        appSlug: 'bar',
+        slug: 'bar',
+        automations: [],
+        blocks: [],
         do: [],
         events: {
           emit: ['e4'],
@@ -463,6 +471,176 @@ it('should get emit events', () => {
         {
           label: 'l3',
           value: 'l3',
+        },
+      ],
+    },
+    {
+      label: 'events.autocomplete.label',
+      options: [
+        {
+          label: 'l4',
+          value: 'l4',
+        },
+      ],
+    },
+    {
+      label: 'events.autocomplete.label',
+      options: [
+        {
+          label: 'l5',
+          value: 'l5',
+        },
+      ],
+    },
+    {
+      label: 'events.autocomplete.label',
+      options: [
+        {
+          label: 'l6',
+          value: 'l6',
+        },
+      ],
+    },
+  ]);
+});
+
+it('should not have duplicate events', () => {
+  let extractAutocompleteOptionsFn: Function = () => null;
+  const apps = [{}];
+  const C = () => {
+    const { extractAutocompleteOptions } = useSchema({
+      workspace,
+      apps,
+    });
+    extractAutocompleteOptionsFn = extractAutocompleteOptions;
+    return null;
+  };
+  const workspace = {
+    id: '43',
+    name: 'Foo',
+    automations: {
+      afoo: {
+        name: 'foo',
+        do: [],
+        events: {
+          emit: ['e1', 'e2'],
+          listen: ['l1', 'l2'],
+        },
+      },
+      abar: {
+        name: 'bar',
+        do: [],
+        events: {
+          emit: ['e1', 'e2'],
+          listen: ['l1', 'l2'],
+        },
+      },
+    },
+    pages: {
+      pfoo: {
+        name: 'foo',
+        events: {
+          emit: ['e3'],
+          listen: ['l4'],
+        },
+      },
+      pbar: {
+        name: 'bar',
+        do: [],
+        events: {
+          emit: ['e3'],
+          listen: ['l4'],
+        },
+      },
+    },
+    imports: {
+      ifoo: {
+        name: 'foo',
+        appSlug: 'foo',
+        slug: 'foo',
+        automations: [],
+        blocks: [],
+        events: {
+          listen: ['l5'],
+        },
+      },
+      ibar: {
+        name: 'bar',
+        appSlug: 'bar',
+        slug: 'bar',
+        automations: [],
+        blocks: [],
+        do: [],
+        events: {
+          emit: ['e4'],
+          listen: ['l6'],
+        },
+      },
+    },
+  };
+  renderer.create(
+    <workspaceContext.Provider value={{ ...workspaceContextValue, workspace }}>
+      <C />
+    </workspaceContext.Provider>
+  );
+
+  expect(
+    extractAutocompleteOptionsFn({
+      'ui:options': {
+        autocomplete: 'events:emit',
+      },
+    })
+  ).toEqual([
+    {
+      label: 'events.autocomplete.label',
+      options: [
+        {
+          label: 'e1',
+          value: 'e1',
+        },
+        {
+          label: 'e2',
+          value: 'e2',
+        },
+      ],
+    },
+    {
+      label: 'events.autocomplete.label',
+      options: [
+        {
+          label: 'e3',
+          value: 'e3',
+        },
+      ],
+    },
+    {
+      label: 'events.autocomplete.label',
+      options: [
+        {
+          label: 'e4',
+          value: 'e4',
+        },
+      ],
+    },
+  ]);
+
+  expect(
+    extractAutocompleteOptionsFn({
+      'ui:options': {
+        autocomplete: 'events:listen',
+      },
+    })
+  ).toEqual([
+    {
+      label: 'events.autocomplete.label',
+      options: [
+        {
+          label: 'l1',
+          value: 'l1',
+        },
+        {
+          label: 'l2',
+          value: 'l2',
         },
       ],
     },

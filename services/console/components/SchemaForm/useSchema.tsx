@@ -118,19 +118,19 @@ export const useSchema = (store: Record<string, any> = {}) => {
       function extract(type: 'listen' | 'emit') {
         return [
           ...Object.entries({ automations, pages }).flatMap(([key, list]) => {
-            const events = Object.entries(list).flatMap(
-              ([, { events = {} }]) => {
+            const events = new Set(
+              Object.entries(list).flatMap(([, { events = {} }]) => {
                 return events?.[type] || [];
-              }
+              })
             );
-            if (events.length === 0) return [];
+            if (events.size === 0) return [];
             return [
               {
                 label: t('events.autocomplete.label', {
                   context: key,
                   workspace: workspaceName,
                 }),
-                options: events.map((event) => ({
+                options: Array.from(events).map((event) => ({
                   label: event,
                   value: event,
                 })),
