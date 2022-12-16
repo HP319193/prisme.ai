@@ -72,16 +72,18 @@ export const RollbackVersion: FC<Event<Date>> = ({
   payload: { version },
 }) => {
   const { t } = useTranslation('workspaces');
+  const { fetchWorkspace } = useWorkspace();
   return (
     <Popconfirm
       title={t('workspace.versions.rollback.confirm')}
       okText={t('workspace.versions.rollback.confirm_ok')}
       cancelText={t('cancel', { ns: 'common' })}
       onCancel={(e) => e?.stopPropagation()}
-      onConfirm={(e) => {
+      onConfirm={async (e) => {
         e?.stopPropagation();
         if (!workspaceId || !version) return;
-        api.workspaces(workspaceId).versions.rollback(version.name);
+        await api.workspaces(workspaceId).versions.rollback(version.name);
+        fetchWorkspace();
         notification.success({
           message: t('workspace.versions.rollback.success'),
           placement: 'bottomRight',
