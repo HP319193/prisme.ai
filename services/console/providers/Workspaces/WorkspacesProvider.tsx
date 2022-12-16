@@ -19,6 +19,7 @@ export interface WorkspacesContext {
     id: string,
     version?: string
   ) => Promise<Workspace | null>;
+  duplicating: Set<string>;
   refreshWorkspace: (workspace: Prismeai.DSUL, deleted?: true) => void;
 }
 
@@ -46,6 +47,9 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
   const [loading, setLoading] = useState<WorkspacesContext['loading']>(
     new Map([[LoadingType.List, true]])
   );
+  const [duplicating, setDuplicating] = useState<
+    WorkspacesContext['duplicating']
+  >(new Set());
 
   const setLoadingId = useCallback((id: string, state: boolean) => {
     setLoading((loading) => {
@@ -79,12 +83,16 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
 
   const duplicateWorkspace: WorkspacesContext['duplicateWorkspace'] = useCallback(
     async (id, version = 'current') => {
+      setDuplicating((prev) => new Set([...Array.from(prev), id]));
       setLoadingId(id, true);
       const newWorkspace = await api.duplicateWorkspace({ id });
       if (newWorkspace) {
         fetchWorkspaces();
       }
       setLoadingId(id, false);
+      setDuplicating(
+        (prev) => new Set(Array.from(prev).filter((i) => id !== i))
+      );
       return newWorkspace;
     },
     [fetchWorkspaces, setLoadingId]
@@ -128,6 +136,7 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
         fetchWorkspaces,
         createWorkspace,
         duplicateWorkspace,
+        duplicating,
         refreshWorkspace,
       }}
     >

@@ -42,6 +42,7 @@ export const WorkspacesView = () => {
     loading,
     createWorkspace,
     duplicateWorkspace,
+    duplicating,
   } = useWorkspaces();
 
   const { user } = useUser();
@@ -240,6 +241,7 @@ export const WorkspacesView = () => {
                     <WorkspaceMenu
                       className="absolute top-2 right-2 invisible group-hover:visible"
                       onDuplicate={handleDuplicateWorkspace(workspace.id)}
+                      duplicating={duplicating.has(workspace.id)}
                     />
                   </WorkspaceCardButton>
                 ))}
