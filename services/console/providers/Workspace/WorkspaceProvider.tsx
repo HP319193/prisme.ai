@@ -10,6 +10,7 @@ import {
 } from 'react';
 import api, { Events } from '../../utils/api';
 import { useContext } from '../../utils/useContext';
+import { WorkspacesContext } from '../Workspaces';
 import updateOnEvents from './updateOnEvents';
 
 export interface Workspace extends Prismeai.DSULReadOnly {
@@ -37,7 +38,7 @@ export interface WorkspaceContext {
 
 interface WorkspaceProviderProps {
   id: string;
-  onUpdate?: (workspace: Workspace) => void;
+  onUpdate?: WorkspacesContext['refreshWorkspace'];
   children: ReactNode;
 }
 
@@ -115,9 +116,9 @@ export const WorkspaceProvider = ({
     if (!workspace?.id) return null;
     const deleted = await api.deleteWorkspace(workspace.id);
     setWorkspace(undefined);
-
+    onUpdate && onUpdate(deleted, true);
     return deleted;
-  }, [workspace]);
+  }, [onUpdate, workspace]);
 
   const createAutomation: WorkspaceContext['createAutomation'] = useCallback(
     async (automation) => {

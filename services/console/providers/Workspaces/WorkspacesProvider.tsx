@@ -10,7 +10,7 @@ import { useUser } from '../../components/UserProvider';
 import api, { Workspace } from '../../utils/api';
 import { useContext } from '../../utils/useContext';
 
-interface WorkspacesContext {
+export interface WorkspacesContext {
   workspaces: Workspace[];
   loading: Map<string, boolean>;
   fetchWorkspaces: () => void;
@@ -19,7 +19,7 @@ interface WorkspacesContext {
     id: string,
     version?: string
   ) => Promise<Workspace | null>;
-  refreshWorkspace: (workspace: Prismeai.DSUL) => void;
+  refreshWorkspace: (workspace: Prismeai.DSUL, deleted?: true) => void;
 }
 
 interface WorkspacesProviderProps {
@@ -91,12 +91,14 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
   );
 
   const refreshWorkspace: WorkspacesContext['refreshWorkspace'] = useCallback(
-    (workspace) => {
+    (workspace, deleted) => {
       setWorkspaces((workspaces) => {
-        return workspaces.map((w) =>
+        return workspaces.flatMap((w) =>
           w.id === workspace.id
-            ? { ...w, ...workspace, updatedAt: new Date() }
-            : w
+            ? deleted
+              ? []
+              : [{ ...w, ...workspace, updatedAt: new Date() }]
+            : [w]
         );
       });
     },
