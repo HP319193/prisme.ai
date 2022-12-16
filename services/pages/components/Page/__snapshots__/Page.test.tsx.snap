@@ -5,11 +5,6 @@ exports[`should render blocks 1`] = `
   className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-auto min-h-full snap-mandatory"
 >
   <div
-    className="absolute left-2 bottom-2 text-[0.75rem] text-pr-grey z-0"
-  >
-    powered
-  </div>
-  <div
     className="flex flex-1 flex-col page-blocks w-full"
   >
     <div
@@ -19,6 +14,141 @@ exports[`should render blocks 1`] = `
       className="page-block block- block-RichText snap-start z-10"
     />
   </div>
+  <a
+    className=" pr-poweredby text-[0.75rem] text-pr-grey flex justify-center items-center pr-2 m-4 self-start bg-white border-gray-200 border-[1px] rounded-[4px]"
+    href="https://prisme.ai"
+    rel="noreferrer"
+    style={
+      Object {
+        "boxShadow": "0 2px 2px #888",
+      }
+    }
+    target="_blank"
+  >
+    <div
+      className="flex m-2"
+    >
+      <span
+        style={
+          Object {
+            "background": "none",
+            "border": 0,
+            "boxSizing": "border-box",
+            "display": "inline-block",
+            "height": "initial",
+            "margin": 0,
+            "maxWidth": "100%",
+            "opacity": 1,
+            "overflow": "hidden",
+            "padding": 0,
+            "position": "relative",
+            "width": "initial",
+          }
+        }
+      >
+        <span
+          style={
+            Object {
+              "background": "none",
+              "border": 0,
+              "boxSizing": "border-box",
+              "display": "block",
+              "height": "initial",
+              "margin": 0,
+              "maxWidth": "100%",
+              "opacity": 1,
+              "padding": 0,
+              "width": "initial",
+            }
+          }
+        >
+          <img
+            alt=""
+            aria-hidden={true}
+            src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2716%27%20height=%2716%27/%3e"
+            style={
+              Object {
+                "background": "none",
+                "border": 0,
+                "display": "block",
+                "height": "initial",
+                "margin": 0,
+                "maxWidth": "100%",
+                "opacity": 1,
+                "padding": 0,
+                "width": "initial",
+              }
+            }
+          />
+        </span>
+        <img
+          alt="Prisme.ai"
+          data-nimg="intrinsic"
+          decoding="async"
+          onError={[Function]}
+          onLoad={[Function]}
+          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          style={
+            Object {
+              "border": "none",
+              "bottom": 0,
+              "boxSizing": "border-box",
+              "display": "block",
+              "height": 0,
+              "left": 0,
+              "margin": "auto",
+              "maxHeight": "100%",
+              "maxWidth": "100%",
+              "minHeight": "100%",
+              "minWidth": "100%",
+              "objectFit": undefined,
+              "objectPosition": undefined,
+              "padding": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+              "width": 0,
+            }
+          }
+        />
+        <noscript>
+          <img
+            alt="Prisme.ai"
+            data-nimg="intrinsic"
+            decoding="async"
+            loading="lazy"
+            src="/file.svg"
+            srcSet="/file.svg 1x, /file.svg 2x"
+            style={
+              Object {
+                "border": "none",
+                "bottom": 0,
+                "boxSizing": "border-box",
+                "display": "block",
+                "height": 0,
+                "left": 0,
+                "margin": "auto",
+                "maxHeight": "100%",
+                "maxWidth": "100%",
+                "minHeight": "100%",
+                "minWidth": "100%",
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "padding": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": 0,
+              }
+            }
+          />
+        </noscript>
+      </span>
+    </div>
+    <div>
+      powered
+    </div>
+  </a>
 </div>
 `;
 
@@ -27,12 +157,142 @@ exports[`should render empty page 1`] = `
   className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-auto min-h-full snap-mandatory"
 >
   <div
-    className="absolute left-2 bottom-2 text-[0.75rem] text-pr-grey z-0"
-  >
-    powered
-  </div>
-  <div
     className="flex flex-1 flex-col page-blocks w-full"
   />
+  <a
+    className=" pr-poweredby text-[0.75rem] text-pr-grey flex justify-center items-center pr-2 m-4 self-start bg-white border-gray-200 border-[1px] rounded-[4px]"
+    href="https://prisme.ai"
+    rel="noreferrer"
+    style={
+      Object {
+        "boxShadow": "0 2px 2px #888",
+      }
+    }
+    target="_blank"
+  >
+    <div
+      className="flex m-2"
+    >
+      <span
+        style={
+          Object {
+            "background": "none",
+            "border": 0,
+            "boxSizing": "border-box",
+            "display": "inline-block",
+            "height": "initial",
+            "margin": 0,
+            "maxWidth": "100%",
+            "opacity": 1,
+            "overflow": "hidden",
+            "padding": 0,
+            "position": "relative",
+            "width": "initial",
+          }
+        }
+      >
+        <span
+          style={
+            Object {
+              "background": "none",
+              "border": 0,
+              "boxSizing": "border-box",
+              "display": "block",
+              "height": "initial",
+              "margin": 0,
+              "maxWidth": "100%",
+              "opacity": 1,
+              "padding": 0,
+              "width": "initial",
+            }
+          }
+        >
+          <img
+            alt=""
+            aria-hidden={true}
+            src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2716%27%20height=%2716%27/%3e"
+            style={
+              Object {
+                "background": "none",
+                "border": 0,
+                "display": "block",
+                "height": "initial",
+                "margin": 0,
+                "maxWidth": "100%",
+                "opacity": 1,
+                "padding": 0,
+                "width": "initial",
+              }
+            }
+          />
+        </span>
+        <img
+          alt="Prisme.ai"
+          data-nimg="intrinsic"
+          decoding="async"
+          onError={[Function]}
+          onLoad={[Function]}
+          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          style={
+            Object {
+              "border": "none",
+              "bottom": 0,
+              "boxSizing": "border-box",
+              "display": "block",
+              "height": 0,
+              "left": 0,
+              "margin": "auto",
+              "maxHeight": "100%",
+              "maxWidth": "100%",
+              "minHeight": "100%",
+              "minWidth": "100%",
+              "objectFit": undefined,
+              "objectPosition": undefined,
+              "padding": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+              "width": 0,
+            }
+          }
+        />
+        <noscript>
+          <img
+            alt="Prisme.ai"
+            data-nimg="intrinsic"
+            decoding="async"
+            loading="lazy"
+            src="/file.svg"
+            srcSet="/file.svg 1x, /file.svg 2x"
+            style={
+              Object {
+                "border": "none",
+                "bottom": 0,
+                "boxSizing": "border-box",
+                "display": "block",
+                "height": 0,
+                "left": 0,
+                "margin": "auto",
+                "maxHeight": "100%",
+                "maxWidth": "100%",
+                "minHeight": "100%",
+                "minWidth": "100%",
+                "objectFit": undefined,
+                "objectPosition": undefined,
+                "padding": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+                "width": 0,
+              }
+            }
+          />
+        </noscript>
+      </span>
+    </div>
+    <div>
+      powered
+    </div>
+  </a>
 </div>
 `;
