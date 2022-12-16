@@ -27,13 +27,11 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   const { t } = useTranslation('workspaces');
   const { localizeSchemaForm, localize } = useLocalizedText();
 
-  // TODO ne plus charger les configs d'app mais appeller un endpoint pour avoir
-  // les autocompletion
   const { config: appInstance, appName } = useMemo(() => {
     if (!workspace.imports) return { config: workspace.config };
     const [appName] = instruction.split(/\./);
     if (!workspace.imports[appName]) return { config: workspace.config };
-    return { config: /*workspace.imports[appName].config || */ {}, appName };
+    return { config: {}, appName };
   }, [instruction, workspace.config, workspace.imports]);
 
   const { extractSelectOptions, extractAutocompleteOptions } = useSchema({

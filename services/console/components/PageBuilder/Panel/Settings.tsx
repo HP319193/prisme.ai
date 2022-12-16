@@ -40,9 +40,9 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
   );
 
   const { extractSelectOptions } = useSchema({
-    pageSections: value.flatMap(({ config: { sectionId } = {} }) =>
-      sectionId ? sectionId : []
-    ),
+    pageSections: Array.from(
+      value.values()
+    ).flatMap(({ config: { sectionId } = {} }) => (sectionId ? sectionId : [])),
     automations,
     pages,
   });
