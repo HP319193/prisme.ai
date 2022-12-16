@@ -292,10 +292,14 @@ const AppInstanceWithProvider = () => {
   const {
     query: { appId },
   } = useRouter();
-  const { workspace } = useWorkspace();
+  const { workspace, events } = useWorkspace();
 
   return (
-    <AppInstanceProvider id={`${appId}`} workspaceId={workspace.id}>
+    <AppInstanceProvider
+      id={`${appId}`}
+      workspaceId={workspace.id}
+      events={events}
+    >
       <AppInstance />
     </AppInstanceProvider>
   );

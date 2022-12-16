@@ -10,7 +10,7 @@ import {
   useRef,
 } from 'react';
 import NotFound from '../../components/NotFound';
-import api from '../../utils/api';
+import api, { Events } from '../../utils/api';
 import { useContext } from '../../utils/useContext';
 
 export interface AppInstanceContext {
@@ -28,6 +28,7 @@ export interface AppInstanceContext {
 interface AppInstanceProviderProps {
   id: string;
   workspaceId: string;
+  events: Events;
   children: ReactNode;
 }
 
@@ -41,6 +42,7 @@ export const useAppInstance = () =>
 export const AppInstanceProvider = ({
   id,
   workspaceId,
+  events,
   children,
 }: AppInstanceProviderProps) => {
   const { t } = useTranslation('workspaces');
@@ -107,6 +109,22 @@ export const AppInstanceProvider = ({
     };
     initialFetch();
   }, [fetchAppInstance, id]);
+
+  useEffect(() => {
+    const off = events.on('workspaces.apps.configured', ({ payload }) => {
+      if (
+        !appInstance ||
+        !payload.appInstance ||
+        appInstance.slug !== payload.appInstance.slug
+      )
+        return;
+      setAppInstance(payload.appInstance);
+    });
+
+    return () => {
+      off();
+    };
+  }, [appInstance, events]);
 
   if (loading) return <Loading />;
   if (notFound)

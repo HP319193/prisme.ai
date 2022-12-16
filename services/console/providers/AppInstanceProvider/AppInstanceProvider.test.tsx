@@ -6,7 +6,7 @@ import {
 } from './AppInstanceProvider';
 import { workspaceContext } from '../Workspace';
 import workspaceContextValue from '../Workspace/workspaceContextValue.mock';
-import api from '../../utils/api';
+import api, { Events } from '../../utils/api';
 
 jest.mock('../../utils/api', () => {
   const mock = {
@@ -22,12 +22,17 @@ jest.mock('../../utils/api', () => {
   return mock;
 });
 
+const off = jest.fn;
+const events = ({
+  on: jest.fn(() => off),
+} as unknown) as Events;
 it('should render', async () => {
   const root = renderer.create(
     <workspaceContext.Provider value={workspaceContextValue}>
       <AppInstanceProvider
         workspaceId={workspaceContextValue.workspace.id}
         id="42"
+        events={events}
       >
         Foo
       </AppInstanceProvider>
@@ -48,6 +53,7 @@ it('should fetch appInstance', async () => {
       <AppInstanceProvider
         workspaceId={workspaceContextValue.workspace.id}
         id="my-app"
+        events={events}
       >
         <T />
       </AppInstanceProvider>
@@ -69,6 +75,7 @@ it('should refetch appInstance', async () => {
       <AppInstanceProvider
         workspaceId={workspaceContextValue.workspace.id}
         id="my-app"
+        events={events}
       >
         <T />
       </AppInstanceProvider>
@@ -97,6 +104,7 @@ it('should save app instance', async () => {
       <AppInstanceProvider
         workspaceId={workspaceContextValue.workspace.id}
         id="my-app"
+        events={events}
       >
         <T />
       </AppInstanceProvider>
@@ -125,6 +133,7 @@ it('should uninstall app instance', async () => {
       <AppInstanceProvider
         workspaceId={workspaceContextValue.workspace.id}
         id="my-app"
+        events={events}
       >
         <T />
       </AppInstanceProvider>
