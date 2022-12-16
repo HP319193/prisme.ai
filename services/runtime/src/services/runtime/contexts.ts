@@ -251,7 +251,7 @@ export class ContextsManager {
         },
         true
       );
-      if (updatedEvent) {
+      if (updatedEvent !== false) {
         this.alreadyProcessedUpdateIds.add(updatedEvent.id);
       }
     }

@@ -106,6 +106,8 @@ export class Broker<CallbackContext = any> {
       clearUser?: boolean;
     }
   ): Broker<CallbackContext> {
+    // We do not want next broker.sends defaulting to the parent Broker serviceTopic
+    delete parentSource.serviceTopic;
     const child = Object.assign({}, this, {
       parentSource: {
         ...this.parentSource,

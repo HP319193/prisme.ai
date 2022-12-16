@@ -41,7 +41,6 @@ Array [
         relative group flex flex-col h-32
         w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)]
         "
-          disabled={false}
         >
           <button
             className="flex m-2 h-full justify-between overflow-hidden rounded border
@@ -140,7 +139,6 @@ Array [
         relative group flex flex-col h-32
         w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)]
         "
-          disabled={false}
         >
           <button
             className="flex m-2 h-full justify-between overflow-hidden rounded border
@@ -185,111 +183,6 @@ Array [
               }
             }
           />
-        </div>
-      </div>
-    </div>
-    <div
-      className="pt-10 flex flex-col"
-    >
-      <div
-        className="text-xl py-3 font-bold"
-      >
-        workspaces.sectionTitle
-      </div>
-      <div
-        className="flex flex-wrap -mx-2"
-      >
-        <div
-          className="
-        relative group flex flex-col h-32
-        w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)]
-        "
-        >
-          <a
-            className="flex m-2 h-full justify-between overflow-hidden rounded border
-          transition-all
-          hover:-translate-y-1 hover:shadow-lg
-          p-6 flex border-light-gray border-2 bg-white items-center !justify-start relative "
-            href="/workspaces/1"
-            onClick={[Function]}
-            onMouseEnter={[Function]}
-            onTouchStart={[Function]}
-          >
-            <button
-              className="flex items-center max-w-full focus:outline-none"
-            >
-              <span
-                className="flex min-w-[50px]"
-              >
-                <div />
-              </span>
-              <span
-                className="flex ml-4 flex-col items-start"
-              >
-                <div
-                  className="overflow-hidden whitespace-nowrap text-ellipsis mb-0 max-w-full font-bold"
-                >
-                  foo
-                </div>
-                <div
-                  className="overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]"
-                >
-                  
-                </div>
-                edit.label
-              </span>
-              <button
-                className="rotate-90"
-                onClick={[Function]}
-              />
-            </button>
-          </a>
-        </div>
-        <div
-          className="
-        relative group flex flex-col h-32
-        w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)]
-        "
-        >
-          <a
-            className="flex m-2 h-full justify-between overflow-hidden rounded border
-          transition-all
-          hover:-translate-y-1 hover:shadow-lg
-          p-6 flex border-light-gray border-2 bg-white items-center !justify-start relative "
-            href="/workspaces/42"
-            onClick={[Function]}
-            onMouseEnter={[Function]}
-            onTouchStart={[Function]}
-          >
-            <button
-              className="flex items-center max-w-full focus:outline-none"
-            >
-              <span
-                className="flex min-w-[50px]"
-              >
-                <div />
-              </span>
-              <span
-                className="flex ml-4 flex-col items-start"
-              >
-                <div
-                  className="overflow-hidden whitespace-nowrap text-ellipsis mb-0 max-w-full font-bold"
-                >
-                  bar
-                </div>
-                <div
-                  className="overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]"
-                >
-                  
-                </div>
-                edit.label
-              </span>
-              <button
-                className="rotate-90"
-                onClick={[Function]}
-              />
-            </button>
-          </a>
         </div>
       </div>
     </div>

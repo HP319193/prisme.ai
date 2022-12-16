@@ -102,10 +102,11 @@ export class Schedules {
           break;
         case EventType.DeletedAutomation:
           // Delete specific schedule
-          const deletedAutomation = (event as any as Prismeai.DeletedAutomation)
-            .payload.automation;
+          const deletedAutomationSlug = (
+            event as any as Prismeai.DeletedAutomation
+          ).payload.automationSlug;
 
-          this.scheduler.delete(workspaceId, deletedAutomation.slug);
+          this.scheduler.delete(workspaceId, deletedAutomationSlug);
           break;
         case EventType.DeletedWorkspace:
           this.scheduler.delete(workspaceId);

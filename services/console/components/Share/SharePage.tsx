@@ -28,7 +28,6 @@ interface userPermissionForm {
 
 const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
   const { t } = useTranslation('workspaces');
-  const { t: commonT } = useTranslation('common');
   const pageHost = usePageEndpoint();
   const { user } = useUser();
   const {
@@ -184,7 +183,7 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
                     variant="primary"
                     className="flex items-center justify-center !w-[9.375rem] !h-[2.5rem] !rounded-[0.94rem]"
                   >
-                    {commonT('add')}
+                    {t('add', { ns: 'common' })}
                   </Button>
                 </div>
               </form>

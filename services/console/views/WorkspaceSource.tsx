@@ -21,9 +21,8 @@ import {
   Space,
 } from '@prisme.ai/design-system';
 import { useRouter } from 'next/router';
-import { useWorkspaces } from '../components/WorkspacesProvider';
-import { useWorkspace } from '../components/WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
+import { useWorkspace } from '../providers/Workspace';
 
 interface Annotation {
   row: number;
@@ -42,12 +41,26 @@ interface WorkspaceSourceProps {
 }
 export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const { t } = useTranslation('workspaces');
-  const { workspace } = useWorkspace();
+  const {
+    workspace: {
+      id,
+      pages,
+      automations,
+      imports,
+      createdAt,
+      createdBy,
+      updatedAt,
+      ...workspace
+    },
+  } = useWorkspace();
   const { onSaveSource } = useWorkspaceLayout();
-  const { setInvalid, setNewSource, invalid, saving, displaySource } =
-    useWorkspaceLayout();
-  const { fetch } = useWorkspaces();
-  const [dirty, setDirty] = useState(false);
+  const {
+    setInvalid,
+    setNewSource,
+    invalid,
+    saving,
+    displaySource,
+  } = useWorkspaceLayout();
   const [value, setValue] = useState<string | undefined>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const { toJSON, toYaml } = useYaml();
@@ -70,7 +83,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
       });
     };
     const listener = (path: string) => {
-      if (dirty && !confirm) {
+      if (!confirm) {
         askForConfirmation(path);
         events.emit('routeChangeError');
         throw `routeChange aborted. This error can be safely ignored - https://github.com/zeit/next.js/issues/2476.`;
@@ -80,23 +93,11 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     return () => {
       events.off('routeChangeStart', listener);
     };
-  }, [dirty, confirm, events, t, displaySource, push]);
+  }, [confirm, events, t, displaySource, push]);
 
   const initYaml = useCallback(async () => {
     try {
-      // remove workspace id and automations slugs
-      const { id, automations = {}, ...json } = workspace;
-      const cleanedJson = {
-        ...json,
-        automations: Object.keys(automations).reduce((prev, name) => {
-          const { slug, ...automation } = automations[name];
-          return {
-            ...prev,
-            [name]: automation,
-          };
-        }, {}),
-      };
-      const value = await toYaml(cleanedJson);
+      const value = await toYaml(workspace);
       setValue(value);
     } catch (e) {}
   }, [workspace, toYaml]);
@@ -109,8 +110,8 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     async (value: string) => {
       if (!workspace || value === undefined) return;
       try {
-        setAnnotations([]);
-        return { ...(await toJSON<Workspace>(value)), id: workspace.id };
+        setAnnotations((prev) => (prev.length === 0 ? prev : []));
+        return { ...(await toJSON<Workspace>(value)), id };
       } catch (e) {
         const { mark, message } = e as YAMLException;
         setAnnotations([
@@ -123,12 +124,11 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         ]);
       }
     },
-    [toJSON, workspace]
+    [id, toJSON, workspace]
   );
 
   const update = useCallback(
     async (newValue: string) => {
-      setDirty(true);
       try {
         const json = await checkSyntaxAndReturnYAML(newValue);
 
@@ -136,10 +136,9 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         validateWorkspace(json);
         setInvalid((validateWorkspace.errors as ValidationError[]) || false);
         setNewSource(json);
-        setDirty(true);
       } catch (e) {}
     },
-    [checkSyntaxAndReturnYAML, setDirty, setInvalid, setNewSource]
+    [checkSyntaxAndReturnYAML, setInvalid, setNewSource]
   );
 
   useEffect(() => {
@@ -173,7 +172,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
       row: line - 1,
       column: 0,
       text: generateEndpoint(
-        workspace.id,
+        id,
         v === 'true'
           ? (getEndpointAutomationName(`${value}`, line) || { name: v }).name
           : v
@@ -182,7 +181,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     }));
     const allAnnotations = [...(annotations || []), ...endpoints];
     return allAnnotations;
-  }, [annotations, value, workspace]);
+  }, [annotations, id, value, workspace]);
 
   useEffect(() => {
     const { current } = ref;
@@ -211,7 +210,6 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const save = useCallback(() => {
     onSaveSource();
-    setDirty(false);
   }, [onSaveSource]);
 
   const shortcuts = useMemo(
@@ -233,8 +231,10 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   return (
     <div className="flex flex-1 flex-col" ref={ref}>
       <PageHeader
-        onBack={() => displaySource(false)}
         RightButtons={[
+          <Button key="close" onClick={() => displaySource(false)}>
+            Fermer
+          </Button>,
           <Button
             onClick={save}
             disabled={saving}

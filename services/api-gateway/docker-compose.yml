@@ -33,3 +33,4 @@ services:
       SESSIONS_STORAGE_HOST: redis://redis/2
       BROKER_HOST: redis://redis/10
       PERMISSIONS_STORAGE_HOST: mongodb://mongo/permissions
+      SUPER_ADMIN_EMAILS: martin.caussanel@gmail.com

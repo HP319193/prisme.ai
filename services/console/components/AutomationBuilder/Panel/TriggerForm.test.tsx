@@ -1,5 +1,6 @@
 import TriggerForm from './TriggerForm';
 import renderer from 'react-test-renderer';
+import { workspaceContext } from '../../../providers/Workspace';
 
 it('should render', () => {
   const trigger = {
@@ -7,7 +8,9 @@ it('should render', () => {
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <TriggerForm trigger={trigger} onChange={onChange} />
+    <workspaceContext.Provider value={{ workspace: { imports: {} } } as any}>
+      <TriggerForm trigger={trigger} onChange={onChange} />
+    </workspaceContext.Provider>
   );
   expect(root.toJSON()).toMatchSnapshot();
 });

@@ -29,6 +29,7 @@ export const Highlight = ({
           cloneElement(
             component as DetailedReactHTMLElement<any, HTMLElement>,
             {
+              key: `${start}-${end}`,
               children: text,
             }
           )

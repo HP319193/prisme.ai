@@ -1,21 +1,17 @@
 import {
   CloseCircleOutlined,
   DeleteOutlined,
-  DownOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import {
   Button,
-  Menu,
   Modal,
   Popover,
   Schema,
   SchemaForm,
 } from '@prisme.ai/design-system';
-import { Dropdown, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useState } from 'react';
-import api from '../utils/api';
+import { useCallback } from 'react';
 import useLocalizedText from '../utils/useLocalizedText';
 
 interface EditDetailsprops {
@@ -26,6 +22,7 @@ interface EditDetailsprops {
   context?: string;
   visible?: boolean;
   onVisibleChange?: (visible: boolean) => void;
+  disabled?: boolean;
 }
 
 export const EditDetails = ({
@@ -34,6 +31,7 @@ export const EditDetails = ({
   onSave,
   onDelete,
   context,
+  disabled,
   ...props
 }: EditDetailsprops) => {
   const { t } = useTranslation('workspaces');
@@ -89,7 +87,7 @@ export const EditDetails = ({
                 <DeleteOutlined />
                 {t('details.delete.label', { context })}
               </Button>
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="submit" disabled={disabled}>
                 {t('details.save', { context })}
               </Button>
             </div>,

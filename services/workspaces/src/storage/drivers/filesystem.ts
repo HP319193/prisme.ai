@@ -1,6 +1,6 @@
-import { IStorage, ObjectList } from '../types';
+import { DriverType, IStorage, ObjectList } from '../types';
 import { join, dirname } from 'path';
-import fs from 'fs';
+import fs, { promises as promisesFs } from 'fs';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 
 export interface FilesystemOptions {
@@ -15,6 +15,20 @@ const mkdir = (path: string, recursive: boolean = true) => {
   fs.mkdirSync(path, { recursive });
 };
 
+async function copyDir(src: string, dest: string) {
+  mkdir(dest);
+  let entries = await promisesFs.readdir(src, { withFileTypes: true });
+
+  for (let entry of entries) {
+    let srcPath = join(src, entry.name);
+    let destPath = join(dest, entry.name);
+
+    entry.isDirectory()
+      ? await copyDir(srcPath, destPath)
+      : await promisesFs.copyFile(srcPath, destPath);
+  }
+}
+
 export default class Filesystem implements IStorage {
   private options: FilesystemOptions;
 
@@ -24,6 +38,10 @@ export default class Filesystem implements IStorage {
       dirpath: options.dirpath || defaultFilesystemOptions.dirpath,
     };
     mkdir(this.options.dirpath || '');
+  }
+
+  type() {
+    return DriverType.FILESYSTEM;
   }
 
   private getPath(key: string) {
@@ -94,5 +112,35 @@ export default class Filesystem implements IStorage {
         return this.delete(key);
       })
     );
+  }
+
+  async copy(from: string, to: string, directory: boolean = false) {
+    const fromFilepath = this.getPath(from);
+    const toFilepath = this.getPath(to);
+
+    const parentDirectory = dirname(toFilepath);
+    mkdir(parentDirectory);
+
+    try {
+      if (directory) {
+        await copyDir(fromFilepath, toFilepath);
+      } else {
+        await promisesFs.copyFile(fromFilepath, toFilepath);
+      }
+    } catch (err) {
+      if (
+        !directory &&
+        (`${err}`.includes('ENOTSUP: operation not supported on socket') ||
+          `${err}`.includes('EISDIR: illegal operation on a directory'))
+      ) {
+        await this.copy(from, to, true);
+        return;
+      }
+      throw new PrismeError(
+        `Failed to copy from '${fromFilepath}' to '${toFilepath}'`,
+        err,
+        ErrorSeverity.Fatal
+      );
+    }
   }
 }

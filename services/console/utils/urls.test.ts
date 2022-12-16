@@ -1,6 +1,6 @@
 import { generateEndpoint, getSubmodain, usePageEndpoint } from './urls';
 // @ts-ignore
-import { mock } from '../components/WorkspaceProvider';
+import { mock } from '../providers/Workspace';
 
 jest.mock('next/config', () => () => ({
   publicRuntimeConfig: {
@@ -9,7 +9,7 @@ jest.mock('next/config', () => () => ({
   },
 }));
 
-jest.mock('../components/WorkspaceProvider', () => {
+jest.mock('../providers/Workspace', () => {
   const mock = {
     slug: 'my.website',
   };

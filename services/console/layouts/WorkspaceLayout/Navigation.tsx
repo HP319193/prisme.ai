@@ -1,32 +1,30 @@
-import { AppstoreOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { StretchContent, Tooltip } from '@prisme.ai/design-system';
+import { AppstoreOutlined } from '@ant-design/icons';
+import { Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
-  FC,
-  ReactChild,
   useRef,
   useState,
   useCallback,
   useMemo,
   useEffect,
   HTMLAttributes,
-  ReactElement,
 } from 'react';
-import { useApps } from '../../components/AppsProvider';
-import { usePages } from '../../components/PagesProvider';
-import { useWorkspace } from '../../components/WorkspaceProvider';
 import { search } from '../../utils/filterUtils';
 import useLocalizedText from '../../utils/useLocalizedText';
-import ChevronIcon from '../../icons/chevron.svgr';
+
 import AutomationIcon from './AutomationIcon';
 import { stringToHexaColor } from '../../utils/strings';
 import PageIcon from './PageIcon';
 import HomeIcon from '../../icons/home.svgr';
 import HomeIconOutlined from '../../icons/home-outlined.svgr';
-import SearchInput from './SearchInput';
 import Highlight from '../../components/Highlight/Highlight';
+import { useWorkspace } from '../../providers/Workspace';
+import Item from '../../components/Navigation/Item';
+import ItemsGroup, {
+  ItemsGroupProps,
+} from '../../components/Navigation/ItemsGroup';
+import SearchInput from '../../components/Navigation/SearchInput';
 
 interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   onCreateAutomation?: () => void;
@@ -35,88 +33,9 @@ interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   onExpand?: () => void;
 }
 
-interface ItemProps {
-  href: string;
-  icon: ReactChild | ((props: { selected: Boolean }) => ReactElement);
-}
-const Item: FC<ItemProps> = ({ href, icon: Icon, children }) => {
-  const { asPath } = useRouter();
-  const selected = decodeURIComponent(asPath) === href;
-  return (
-    <Link href={href}>
-      <a
-        className={`flex flex-1 leading-10 px-4 py-2 group hover:bg-ultra-light-accent !text-base ${
-          selected ? 'bg-ultra-light-accent font-bold' : ''
-        }`}
-      >
-        <div
-          className={`flex flex-1 flex-row items-center ${
-            selected ? 'text-accent' : ''
-          } max-w-[85%]`}
-        >
-          <div className="flex m-2 mr-4">
-            {typeof Icon === 'function' ? <Icon selected={selected} /> : Icon}
-          </div>
-          <div className="flex flex-1 leading-7 max-w-full">{children}</div>
-        </div>
-      </a>
-    </Link>
-  );
-};
-
-interface ItemsGroupProps {
-  title: string;
-  onClick?: () => void;
-  onAdd?: () => void;
-  tooltip?: string;
-  open: boolean;
-}
-const ItemsGroup: FC<ItemsGroupProps> = ({
-  title,
-  open,
-  onClick,
-  onAdd,
-  tooltip = '',
-  children,
-}) => {
-  return (
-    <div className="flex flex-1 leading-[2.5rem]">
-      <div className="flex flex-1 flex-col max-w-full">
-        <div className="flex flex-1 flex-row items-center border-b-[1px]">
-          <button
-            className="flex flex-1 flex-row items-center outline-none focus:outline-none p-4"
-            onClick={onClick}
-          >
-            <Tooltip title={title} placement="left">
-              <div className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center">
-                <ChevronIcon
-                  width="1rem"
-                  className={` transition-transform ${
-                    open ? '' : '-rotate-90'
-                  }`}
-                />
-              </div>
-            </Tooltip>
-            <div className="flex flex-1 font-bold">{title}</div>
-          </button>
-          <Tooltip title={tooltip} placement="left">
-            <button
-              className="flex outline-none focus:outline-none p-4 hover:text-accent"
-              onClick={onAdd}
-            >
-              <PlusCircleOutlined />
-            </button>
-          </Tooltip>
-        </div>
-        <div className="flex flex-1">
-          <StretchContent visible={open} className="whitespace-nowrap flex-1">
-            {children}
-          </StretchContent>
-        </div>
-      </div>
-    </div>
-  );
-};
+const EMPTY_AUTOMATIONS: Prismeai.DSULReadOnly['automations'] = {};
+const EMPTY_PAGES: Prismeai.DSULReadOnly['pages'] = {};
+const EMPTY_IMPORTS: Prismeai.DSULReadOnly['imports'] = {};
 
 export const Navigation = ({
   onCreateAutomation,
@@ -130,15 +49,45 @@ export const Navigation = ({
   const { asPath } = useRouter();
   const [searchValue, setSearchValue] = useState('');
   const {
-    workspace: { id, automations = {} },
+    workspace: {
+      id,
+      automations = EMPTY_AUTOMATIONS,
+      pages = EMPTY_PAGES,
+      imports = EMPTY_IMPORTS,
+    },
   } = useWorkspace();
-  const { appInstances } = useApps();
-  const { pages } = usePages();
-
   const types = ['automations', 'pages', 'apps'] as const;
 
   const [opens, setOpens] = useState<Map<typeof types[number], boolean>>(
-    new Map()
+    new Map(
+      types.map((type) => {
+        switch (type) {
+          case 'pages':
+            return [
+              type,
+              Object.keys(pages).findIndex(
+                (slug) => `/workspaces/${id}/pages/${slug}` === asPath
+              ) > -1,
+            ];
+          case 'automations':
+            return [
+              type,
+              Object.keys(automations).findIndex(
+                (slug) => `/workspaces/${id}/automations/${slug}` === asPath
+              ) > -1,
+            ];
+          case 'apps':
+            return [
+              type,
+              Object.keys(imports).findIndex(
+                (slug) => `/workspaces/${id}/apps/${slug}` === asPath
+              ) > -1,
+            ];
+          default:
+            return [type, false];
+        }
+      })
+    )
   );
   const toggles = useRef<Map<typeof types[number], ItemsGroupProps['onClick']>>(
     new Map()
@@ -158,30 +107,46 @@ export const Navigation = ({
 
   const filteredAutomations = useMemo(
     () =>
-      Object.entries(automations).filter(([slug, { name, description }]) =>
-        search(searchValue)(
-          `${slug} ${localize(name)} ${localize(description)}}`
+      Object.entries(automations)
+        .filter(([slug, { name, description }]) =>
+          search(searchValue)(
+            `${slug} ${localize(name)} ${localize(description)}}`
+          )
         )
-      ),
+        .sort(([a], [b]) => {
+          if (a.toLowerCase() < b.toLowerCase()) return -1;
+          if (a.toLowerCase() > b.toLowerCase()) return 1;
+          return 0;
+        }),
     [automations, localize, searchValue]
   );
   const filteredPages = useMemo(
     () =>
-      Array.from(pages.get(id) || []).filter(({ slug, name, description }) =>
-        search(searchValue)(
-          `${slug} ${localize(name)} ${localize(description)}}`
+      Object.entries(pages)
+        .filter(([slug, { name, description }]) =>
+          search(searchValue)(
+            `${slug} ${localize(name)} ${localize(description)}}`
+          )
         )
-      ),
-    [id, localize, pages, searchValue]
+        .sort(([a], [b]) => {
+          if (a.toLowerCase() < b.toLowerCase()) return -1;
+          if (a.toLowerCase() > b.toLowerCase()) return 1;
+          return 0;
+        }),
+    [localize, pages, searchValue]
   );
   const filteredApps = useMemo(
     () =>
-      Array.from(
-        appInstances.get(id) || []
-      ).filter(({ appSlug, slug, appName: name }) =>
-        search(searchValue)(`${appSlug} ${slug} ${localize(name)}}`)
-      ),
-    [appInstances, id, localize, searchValue]
+      Object.entries(imports)
+        .filter(([slug, { appSlug, appName }]) =>
+          search(searchValue)(`${appSlug} ${slug} ${localize(appName)}}`)
+        )
+        .sort(([a], [b]) => {
+          if (a.toLowerCase() < b.toLowerCase()) return -1;
+          if (a.toLowerCase() > b.toLowerCase()) return 1;
+          return 0;
+        }),
+    [imports, localize, searchValue]
   );
 
   useEffect(() => {
@@ -190,11 +155,11 @@ export const Navigation = ({
       automations: Object.keys(automations).map(
         (slug) => `/workspaces/${id}/automations/${slug}`
       ),
-      pages: Array.from(pages.get(id) || []).map(
-        ({ id: pageId }) => `/workspaces/${id}/pages/${pageId}`
+      pages: Object.values(pages).map(
+        ({ id }) => `/workspaces/${id}/pages/${id}`
       ),
-      apps: Array.from(appInstances.get(id) || []).map(
-        ({ slug }) => `/workspaces/${id}/apps/${slug}`
+      apps: Object.keys(imports).map(
+        (slug) => `/workspaces/${id}/apps/${slug}`
       ),
     };
     setOpens((opens) => {
@@ -208,7 +173,7 @@ export const Navigation = ({
       });
       return changed ? newOpens : opens;
     });
-  }, [appInstances, asPath, automations, id, pages, toggle]);
+  }, [asPath, automations, id, imports, pages, toggle]);
 
   return (
     <div className={`flex flex-col max-h-full ${props.className}`} {...props}>
@@ -253,7 +218,7 @@ export const Navigation = ({
             onAdd={onCreatePage}
             tooltip={t('workspace.add.page')}
           >
-            {filteredPages.map(({ id: slug, name }) => (
+            {filteredPages.map(([slug, { name }]) => (
               <Item
                 key={slug}
                 href={`/workspaces/${id}/pages/${slug}`}
@@ -269,13 +234,23 @@ export const Navigation = ({
                   </Tooltip>
                 }
               >
-                <div className="text-ellipsis overflow-hidden">
-                  <Highlight
-                    highlight={searchValue}
-                    component={<span className="font-bold text-accent" />}
-                  >
-                    {localize(name)}
-                  </Highlight>
+                <div className="flex flex-1 flex-col max-w-full">
+                  <div className="text-ellipsis overflow-hidden">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {localize(name)}
+                    </Highlight>
+                  </div>
+                  <div className="text-ellipsis overflow-hidden text-xs text-gray">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {`/${slug}`}
+                    </Highlight>
+                  </div>
                 </div>
               </Item>
             ))}
@@ -308,13 +283,23 @@ export const Navigation = ({
                   </Tooltip>
                 }
               >
-                <div className="text-ellipsis overflow-hidden">
-                  <Highlight
-                    highlight={searchValue}
-                    component={<span className="font-bold text-accent" />}
-                  >
-                    {localize(name)}
-                  </Highlight>
+                <div className="flex flex-1 flex-col max-w-full">
+                  <div className="text-ellipsis overflow-hidden">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {localize(name)}
+                    </Highlight>
+                  </div>
+                  <div className="text-ellipsis overflow-hidden text-xs text-gray">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {`/${slug}`}
+                    </Highlight>
+                  </div>
                 </div>
               </Item>
             ))}
@@ -330,7 +315,7 @@ export const Navigation = ({
             onAdd={onInstallApp}
             tooltip={t('workspace.add.app')}
           >
-            {filteredApps.map(({ slug, appName: name, photo }) => (
+            {filteredApps.map(([slug, { appName: name = slug, photo }]) => (
               <Item
                 key={slug}
                 href={`/workspaces/${id}/apps/${slug}`}

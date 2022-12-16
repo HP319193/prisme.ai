@@ -10,10 +10,8 @@ import { useTranslation } from 'next-i18next';
 export const PageBlocks = () => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
-  const { setEditBlock, page } = usePageBuilder();
+  const { setEditBlock, value } = usePageBuilder();
   const containerEl = useRef<HTMLDivElement>(null);
-
-  const { blocks } = page;
 
   return (
     <div
@@ -24,9 +22,9 @@ export const PageBlocks = () => {
         <div className="mb-6">
           <AddBlock after={-1} />
         </div>
-        {blocks.map(
-          ({ key, config, name }, index) =>
-            name &&
+        {value.map(
+          ({ key, config, slug }, index) =>
+            slug &&
             key && (
               <div key={key} className="flex flex-col snap-start">
                 <div className="flex flex-1 max-w-full mb-6">
@@ -35,12 +33,12 @@ export const PageBlocks = () => {
                       className="flex font-bold flex-1 justify-between focus:outline-none"
                       onClick={() => setEditBlock(key)}
                     >
-                      {t('pages.blocks.name', { context: localize(name) })}
+                      {t('pages.blocks.name', { context: slug })}
                       <EditOutlined />
                     </button>
                     <BlockPreview
-                      id={key || name}
-                      name={name}
+                      id={key || slug}
+                      slug={slug}
                       config={config}
                     />
                   </div>

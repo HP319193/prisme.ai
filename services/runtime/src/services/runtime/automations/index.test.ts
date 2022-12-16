@@ -49,6 +49,7 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
     apps,
     broker as any
   );
+  workspaces.saveWorkspace = () => Promise.resolve();
 
   const runtime = new Runtime(broker as any, workspaces, new Cache());
   broker.start();
@@ -402,7 +403,7 @@ describe('Variables & Contexts', () => {
 
     const workspace: any = yaml.load(
       await (workspaces as any).driver.get(
-        `workspaces/${workspaceId}/current.yml`
+        `workspaces/${workspaceId}/versions/current/runtime.yml`
       )
     );
     const output = await execute('testWorkspaceContext', {});

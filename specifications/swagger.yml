@@ -20,6 +20,2413 @@ security:
   - SessionHeaderAuth: []
     ApiKeyAuth: []
 
+components:
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+    SessionHeaderAuth:
+      type: apiKey
+      in: header
+      name: x-prismeai-token
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Prismeai-API-Key
+
+  schemas:
+    AnyValue: {}
+    Object:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique id
+
+    Contact:
+      allOf:
+        - required:
+            - firstName
+          type: object
+          properties:
+            firstName:
+              type: string
+              description: Name
+            lastName:
+              type: string
+              description: Name
+            photo:
+              type: string
+              description: Profile picture URL
+
+        - $ref: '#/components/schemas/Object'
+
+    User:
+      allOf:
+        - type: object
+          properties:
+            email:
+              type: string
+              example: foo@prisme.ai
+            status:
+              type: string
+              enum:
+                - pending
+                - validated
+                - deactivated
+            language:
+              type: string
+            authData: &AUTH_DATA
+              type: object
+              properties:
+                facebook:
+                  type: object
+                anonymous:
+                  type: object
+              additionalProperties: true
+        - $ref: '#/components/schemas/Contact'
+
+    App:
+      type: object
+      required:
+        - workspaceId
+      properties:
+        workspaceId:
+          type: string
+        versions:
+          oneOf:
+            - type: array
+              items:
+                type: string
+            - type: array
+              items:
+                $ref: '#/components/schemas/WorkspaceVersion'
+        name:
+          type: string
+        description:
+          $ref: '#/components/schemas/LocalizedText'
+        photo:
+          type: string
+        slug:
+          type: string
+
+    AppInstanceMeta:
+      type: object
+      required:
+        - appSlug
+      additionalProperties: false
+      properties: &AppInstanceMeta
+        appSlug:
+          type: string
+          description: 'App unique id'
+        appName:
+          $ref: '#/components/schemas/LocalizedText'
+        appVersion:
+          type: string
+          description: 'Defaults to the latest known app version'
+        slug:
+          type: string
+          description: Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
+        disabled:
+          type: boolean
+          description: If disabled, this appInstance will be ignored during execution
+        updatedAt:
+          type: string
+        createdAt:
+          type: string
+        updatedBy:
+          type: string
+        createdBy:
+          type: string
+
+    AppInstance:
+      type: object
+      required:
+        - appSlug
+      additionalProperties: false
+      properties:
+        <<: *AppInstanceMeta
+        config: {}
+
+    DetailedAppInstance:
+      type: object
+      required:
+        - appSlug
+        - slug
+        - automations
+        - blocks
+        - events
+      additionalProperties: false
+      properties:
+        <<: *AppInstanceMeta
+        photo:
+          type: string
+        automations:
+          $ref: '#/components/schemas/AppAutomations'
+        events:
+          $ref: '#/components/schemas/ProcessedEvents'
+        blocks:
+          $ref: '#/components/schemas/AppBlocks'
+
+    ProcessedEvents:
+      type: object
+      properties:
+        emit:
+          type: array
+          items:
+            type: string
+        listen:
+          type: array
+          items:
+            type: string
+
+    AppAutomations:
+      type: array
+      items:
+        type: object
+        required:
+          - slug
+          - name
+          - arguments
+        properties:
+          slug:
+            type: string
+          name:
+            $ref: '#/components/schemas/LocalizedText'
+          description:
+            $ref: '#/components/schemas/LocalizedText'
+          arguments:
+            additionalProperties:
+              $ref: '#/components/schemas/TypedArgument'
+
+    AppBlocks:
+      type: array
+      items:
+        type: object
+        required:
+          - slug
+        properties:
+          slug:
+            type: string
+          url:
+            type: string
+          edit:
+            $ref: '#/components/schemas/TypedArgument'
+          name:
+            $ref: '#/components/schemas/LocalizedText'
+          description:
+            $ref: '#/components/schemas/LocalizedText'
+          arguments:
+            additionalProperties:
+              $ref: '#/components/schemas/TypedArgument'
+
+    Workspace:
+      $ref: '#/components/schemas/DSUL'
+
+    WorkspaceVersion:
+      type: object
+      required:
+        - description
+      properties:
+        name:
+          type: string
+          description: 'Version name. If left empty, will be auto generated'
+        createdAt:
+          type: string
+        description:
+          $ref: '#/components/schemas/LocalizedText'
+
+    DSUL:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties: &DSUL
+        name:
+          type: string
+        description:
+          $ref: '#/components/schemas/LocalizedText'
+        photo:
+          type: string
+        config:
+          $ref: '#/components/schemas/Config'
+        blocks:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Block'
+        slug:
+          type: string
+        id:
+          type: string
+
+    RuntimeModel:
+      allOf:
+        - $ref: '#/components/schemas/DSUL'
+        - type: object
+          properties:
+            automations:
+              additionalProperties:
+                $ref: '#/components/schemas/Automation'
+            imports:
+              additionalProperties:
+                $ref: '#/components/schemas/AppInstance'
+
+    DSULPatch:
+      type: object
+      additionalProperties: false
+      properties:
+        <<: *DSUL
+
+    DSULReadOnly:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        <<: *DSUL
+        automations:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AutomationMeta'
+        pages:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PageMeta'
+        imports:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DetailedAppInstance'
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        createdBy:
+          type: string
+        id:
+          type: string
+
+    Config:
+      type: object
+      additionalProperties: false
+      properties:
+        schema:
+          additionalProperties:
+            $ref: '#/components/schemas/TypedArgument'
+        block:
+          type: string
+        value: {}
+
+    When:
+      type: object
+      anyOf:
+        - required: ['events']
+        - required: ['schedules']
+        - required: ['endpoint']
+      properties:
+        events:
+          type: array
+          items:
+            type: string
+          example:
+            - prismeaiMessenger.event
+        schedules:
+          $ref: '#/components/schemas/Schedules'
+        endpoint:
+          oneOf:
+            - type: boolean
+              example: 'Set to true in order to activate HTTP endpoint. Slug will be trigger name by default'
+            - type: string
+              example: 'Slug name'
+
+    Schedules:
+      type: array
+      items:
+        type: string
+      example:
+        - 2021-12-25T00:00
+        - '* * 1 * *'
+
+    LocalizedText:
+      oneOf:
+        - type: object
+          additionalProperties:
+            type: string
+          example:
+            fr: 'Bonjour'
+            en: 'Hello'
+        - type: string
+          example: Bonjour
+
+    TypedArgument:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - string
+            - number
+            - object
+            - array
+            - boolean
+            - localized:string
+            - localized:number
+            - localized:boolean
+        properties:
+          additionalProperties:
+            $ref: '#/components/schemas/TypedArgument'
+        description:
+          $ref: '#/components/schemas/LocalizedText'
+        items:
+          $ref: '#/components/schemas/TypedArgument'
+        ui:widget:
+          type: string
+        ui:options:
+          type: object
+        secret:
+          type: boolean
+        event:
+          type: boolean
+
+    InstructionList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Instruction'
+
+    AutomationMeta:
+      type: object
+      required:
+        - name
+      additionalProperties: false
+      properties: &AutomationMeta
+        description:
+          $ref: '#/components/schemas/LocalizedText'
+        private:
+          type: boolean
+          description: "Set this to true if you don't want your automation to be accessible outside of your app. Default is false."
+          example: false
+        disabled:
+          type: boolean
+          description: 'Set this to true if you want to turn off this automation.'
+          example: true
+        name:
+          $ref: '#/components/schemas/LocalizedText'
+        slug:
+          type: string
+          description: Unique & human readable id across current workspace's automations
+        arguments:
+          additionalProperties:
+            $ref: '#/components/schemas/TypedArgument'
+        when:
+          $ref: '#/components/schemas/When'
+        emits:
+          type: array
+          items:
+            type: object
+            required:
+              - event
+            properties:
+              event:
+                type: string
+                example: 'prismeaiMessenger.message'
+              autocomplete:
+                $ref: "#/components/schemas/EmitAutocomplete"
+        events:
+          $ref: '#/components/schemas/ProcessedEvents'
+        updatedAt:
+          type: string
+        createdAt:
+          type: string
+        updatedBy:
+          type: string
+        createdBy:
+          type: string
+
+    Automation:
+      type: object
+      required:
+        - do
+        - name
+      additionalProperties: false
+      properties:
+        <<: *AutomationMeta
+        when:
+          $ref: '#/components/schemas/When'
+        arguments:
+          additionalProperties:
+            $ref: '#/components/schemas/TypedArgument'
+        do:
+          $ref: '#/components/schemas/InstructionList'
+        output:
+          description: 'Automation result expression. Might be a variable reference, an object/array with variables inside ...'
+          example: '{{result}}'
+
+    Block:
+      type: object
+      description: Block
+      additionalProperties: false
+      properties:
+        description:
+          $ref: '#/components/schemas/LocalizedText'
+        name:
+          $ref: '#/components/schemas/LocalizedText'
+        photo:
+          type: string
+        url:
+          type: string
+          description: 'A block can be a javascript bundled file. Host it on the internet and put its url here.'
+        edit:
+          $ref: '#/components/schemas/TypedArgument'
+        block:
+          type: string
+          description: A block can extends another one by giving its name here
+        config:
+          $ref: '#/components/schemas/AnyValue'
+          description: 'default config applied to the Block. Usefull for extended Blocks.'
+
+    PageMeta:
+      type: object
+      required:
+        - name
+      description: Page
+      additionalProperties: false
+      properties: &PageMeta
+        name:
+          $ref: '#/components/schemas/LocalizedText'
+        description:
+          $ref: '#/components/schemas/LocalizedText'
+        workspaceId:
+          type: string
+        workspaceSlug:
+          type: string
+        id:
+          type: string
+        slug:
+          type: string
+        blocks:
+          type: array
+          items:
+            type: object
+            properties:
+              slug:
+                type: string
+              appInstance:
+                type: string
+        events:
+          $ref: '#/components/schemas/ProcessedEvents'
+        createdBy:
+          type: string
+        updatedBy:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        permissions:
+          $ref: '#/components/schemas/PermissionsMap'
+
+    Page:
+      type: object
+      additionalProperties: false
+      properties: &Page
+        <<: *PageMeta
+        blocks:
+          type: array
+          items:
+            type: object
+            required:
+              - slug
+            properties:
+              slug:
+                type: string
+              config:
+                type: object
+                additionalProperties: true
+              appInstance:
+                type: string
+        styles:
+          type: string
+
+    PageDetails:
+      type: object
+      required:
+        - appInstances
+        - apiKey
+      properties: &PageDetails
+        appInstances:
+          type: array
+          items:
+            type: 'object'
+            properties:
+              slug:
+                type: string
+              appConfig: {}
+              blocks:
+                description: Map block slugs to their URL
+                additionalProperties:
+                  type: string
+                example:
+                  Dialog Manager.config: https://cdn-assets.prisme.ai/widgets/nlu/setup-widget/main.js
+        public:
+          type: boolean
+          description: 'Indicates whether this page is public. Reflects page permissions and cannot be set directly'
+        apiKey:
+          type: string
+
+    DetailedPage:
+      type: object
+      required:
+        - appInstances
+        - slug
+        - apiKey
+      properties:
+        <<: [*Page, *PageDetails]
+
+    File:
+      type: object
+      required:
+        - name
+        - url
+        - mimetype
+        - size
+        - workspaceId
+        - path
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        mimetype:
+          type: string
+        size:
+          type: number
+        workspaceId:
+          type: string
+        path:
+          type: string
+        expiresAt:
+          type: string
+        expiresAfter:
+          type: number
+          description: Number of seconds after which the file will be automatically removed
+        metadata:
+          type: object
+          additionalProperties: true
+
+    ###############################################################################################################################################
+    ############################################################ Automation Instructions ############################################################
+    EmitAutocomplete:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          from:
+            type: string
+          path:
+            type: string
+          template:
+            type: string
+    Emit:
+      type: object
+      required:
+        - emit
+      maxProperties: 1
+      properties:
+        emit:
+          type: object
+          required:
+            - event
+          properties:
+            event:
+              type: string
+              example: 'prismeaiMessenger.message'
+            payload:
+              $ref: '#/components/schemas/AnyValue'
+            target:
+              $ref: '#/components/schemas/PrismeEventTarget'
+            private:
+              type: boolean
+            autocomplete:
+              $ref: "#/components/schemas/EmitAutocomplete"
+            options:
+              $ref: "#/components/schemas/PrismeEventOptions"
+
+    CreateUserTopic:
+      type: object
+      required:
+        - createUserTopic
+      maxProperties: 1
+      properties:
+        createUserTopic:
+          $ref: '#/components/schemas/UserTopic'
+
+    JoinUserTopic:
+      type: object
+      required:
+        - joinUserTopic
+      maxProperties: 1
+      properties:
+        joinUserTopic:
+          type: object
+          required:
+            - topic
+          properties:
+            topic:
+              type: string
+              example: 'conversation:56'
+            userIds:
+              type: array
+              items:
+                type: string
+              description: Subscribing user ids. If undefined, defaults to current user
+
+    Wait:
+      type: object
+      required:
+        - wait
+      maxProperties: 1
+      properties:
+        wait:
+          type: object
+          required:
+            - oneOf
+          properties:
+            oneOf:
+              type: array
+              items:
+                type: object
+                required:
+                  - event
+                properties:
+                  event:
+                    type: string
+                    example: 'prismeaiMessenger.message'
+                  filters:
+                    type: object
+                    description: "Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
+                    additionalProperties:
+                      type: string
+                    example:
+                      automationSlug: someId
+                      someObjectField.someNestedField: 'foo'
+                  cancelTriggers:
+                    type: boolean
+                    description: If true, do not send this event to the the usual triggers
+            timeout:
+              type: number
+              description: After N seconds, timeout & outputs an empty result. Defaults to 20
+            output:
+              type: string
+              description: Will save the caught event inside this variable
+              example: nameOfResultVariable
+
+    Set:
+      type: object
+      required:
+        - 'set'
+      maxProperties: 1
+      properties:
+        set:
+          type: object
+          required:
+            - name
+            - value
+          properties:
+            name:
+              type: string
+              description: Variable name, might be "foo", "session.sessionScopedFoo", "global.globalScopedFoo", "user.userScopedFoo", ...
+            value:
+              $ref: '#/components/schemas/AnyValue'
+              description: variable value
+            type:
+              type: string
+              enum:
+                - replace
+                - merge
+              description: 'Choose merge in order to merge target variable with value. Value takes precedence.'
+
+    Delete:
+      type: object
+      required:
+        - delete
+      maxProperties: 1
+      properties:
+        delete:
+          type: object
+          required:
+            - name
+          properties:
+            name:
+              type: string
+              description: Variable name to remove
+
+    Conditions:
+      type: object
+      required:
+        - default
+      properties:
+        default:
+          $ref: '#/components/schemas/InstructionList'
+      additionalProperties:
+        $ref: '#/components/schemas/InstructionList'
+      minProperties: 2
+
+    Repeat:
+      type: object
+      required:
+        - 'repeat'
+      maxProperties: 1
+      properties:
+        repeat:
+          type: object
+          oneOf:
+            - required: ['on', 'do']
+              properties:
+                on:
+                  type: string
+                do:
+                  $ref: '#/components/schemas/InstructionList'
+                  hidden: true
+            - required: ['until', 'do']
+              properties:
+                until:
+                  type: number
+                do:
+                  $ref: '#/components/schemas/InstructionList'
+                  hidden: true
+          description: One of "on" or "until" is required
+
+    All:
+      type: object
+      required:
+        - 'all'
+      maxProperties: 1
+      properties:
+        all:
+          description: Execute each instruction in parallel. Pause current automation execution until all instructions are processed.
+          type: array
+          items:
+            $ref: '#/components/schemas/Instruction'
+
+    Break:
+      type: object
+      required:
+        - 'break'
+      maxProperties: 1
+      properties:
+        break:
+          description: Stop current automation execution. Have one option that allow a break to break all parent automations.
+          type: object
+          properties:
+            scope:
+              type: string
+              enum:
+                - all
+                - automation
+              description: The scope argument defines in which scope the break will take effect. It only breaks the current automation by default, it can also break all parent automations. More options might become available in the future.
+
+    Fetch:
+      type: object
+      required:
+        - 'fetch'
+      maxProperties: 1
+      properties:
+        fetch: &fetchBody
+          description: Send an HTTP request
+          type: object
+          required:
+            - url
+          properties:
+            url:
+              type: string
+            method:
+              type: string
+              enum:
+                - get
+                - post
+                - put
+                - patch
+                - delete
+            headers:
+              type: object
+              additionalProperties:
+                type: 'string'
+            query:
+              type: object
+              description: Object defining querystring parameters
+              additionalProperties:
+                type: 'string'
+            body:
+              description: HTTP request body
+              $ref: '#/components/schemas/AnyValue'
+            emitErrors:
+              description: 'If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default'
+              type: boolean
+              default: true
+            multipart:
+              description: Sends a multipart/form-data HTTP request
+              type: array
+              items:
+                type: object
+                required:
+                  - fieldname
+                  - value
+                properties:
+                  fieldname:
+                    type: string
+                  value:
+                    type: string
+                    description: Must be a string. Raw files must be given as base64
+                  filename:
+                    type: string
+                    description: 'Filename is required when value is a base64 encoded file'
+                  contentType:
+                    type: string
+                    description: Optional MIME content-type
+            output:
+              type: string
+              description: Name of the variable which will hold the result
+
+    Comment:
+      type: object
+      required:
+        - 'comment'
+      maxProperties: 1
+      properties:
+        comment:
+          description: Do nothing but display a comment in instructions list
+          type: string
+
+    Instruction:
+      anyOf:
+        - $ref: '#/components/schemas/Emit'
+        - $ref: '#/components/schemas/Wait'
+        - $ref: '#/components/schemas/Set'
+        - $ref: '#/components/schemas/Delete'
+        - $ref: '#/components/schemas/Conditions'
+        - $ref: '#/components/schemas/Repeat'
+        - $ref: '#/components/schemas/All'
+        - $ref: '#/components/schemas/Break'
+        - $ref: '#/components/schemas/Fetch'
+        - $ref: '#/components/schemas/Comment'
+        - type: object
+          additionalProperties: true
+          minProperties: 1
+          maxProperties: 1
+
+    AutomationResult:
+      type: object
+      required:
+        - slug
+      properties:
+        slug:
+          type: string
+        output:
+          $ref: '#/components/schemas/AnyValue'
+
+    ################################################################################################################################
+    ################################################# Permissions ##################################################################
+    PermissionsList:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserPermissions'
+      example:
+        - email: admin@prisme.ai
+          role: admin
+        - email: readonly@prisme.ai
+          policies:
+            read: true
+        - public: true
+          policies:
+            read: true
+
+    Role:
+      type: string
+      enum:
+        - owner
+        - editor
+
+    Policies:
+      properties:
+        read:
+          type: boolean
+        write:
+          type: boolean
+        update:
+          type: boolean
+        create:
+          type: boolean
+        manage_permissions:
+          type: boolean
+
+    UserPermissions:
+      type: object
+      additionalProperties: false
+      oneOf:
+        - required: ['email']
+        - required: ['public']
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        public:
+          type: boolean
+        role:
+          $ref: '#/components/schemas/Role'
+        policies:
+          $ref: '#/components/schemas/Policies'
+
+    PermissionsMap:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          role:
+            $ref: '#/components/schemas/Role'
+          policies:
+            $ref: '#/components/schemas/Policies'
+
+    ApiKeyRules:
+      type: object
+      properties:
+        events:
+          type: object
+          properties:
+            types:
+              type: array
+              items:
+                type: string
+              example:
+                - allowedEvent1
+                - allowedEvent2
+            filters:
+              description: "Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
+              additionalProperties:
+                type: string
+              example:
+                automationSlug: someId
+                someObjectField.someNestedField: 'foo'
+        uploads:
+          type: object
+          properties:
+            mimetypes:
+              type: array
+              items:
+                type: string
+              example:
+                - image/*
+                - audio/*
+
+    ApiKey:
+      type: object
+      additionalProperties: false
+      required:
+        - apiKey
+        - rules
+        - subjectType
+        - subjectId
+      properties:
+        apiKey:
+          type: string
+        subjectType:
+          type: string
+        subjectId:
+          type: string
+        rules:
+          $ref: '#/components/schemas/ApiKeyRules'
+
+    ################################################################################################################################
+    ############################################################ Workspace Usage ############################################################
+    WorkspaceUsage:
+      type: object
+      required:
+        - workspaceId
+        - beforeDate
+        - afterDate
+        - total
+        - apps
+      properties:
+        workspaceId:
+          type: string
+        beforeDate:
+          type: string
+        afterDate:
+          type: string
+        total:
+          $ref: '#/components/schemas/UsageMetrics'
+        apps:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppUsageMetrics'
+
+    UsageMetrics:
+      type: object
+      required:
+        - automationRuns
+        - transactions
+        - httpTransactions
+        - eventTransactions
+        - sessions
+        - users
+      additionalProperties: false
+      properties:
+        transactions:
+          type: number
+        automationRuns:
+          type: number
+        httpTransactions:
+          type: number
+        eventTransactions:
+          type: number
+        sessions:
+          type: number
+        users:
+          type: number
+
+    AppUsageMetrics:
+      type: object
+      required:
+        - slug
+        - total
+      properties:
+        slug:
+          type: string
+        total:
+          $ref: '#/components/schemas/UsageMetrics'
+        appInstances:
+          type: array
+          items:
+            type: object
+            required:
+              - slug
+              - total
+            properties:
+              slug:
+                type: string
+              total:
+                $ref: '#/components/schemas/UsageMetrics'
+
+    ################################################################################################################################
+    ############################################################ Events ############################################################
+    PrismeEventTarget:
+      type: object
+      properties:
+        userTopic:
+          type: string
+        userId:
+          type: string
+        sessionId:
+          type: string
+
+    PrismeEventOptions:
+      type: object
+      properties:
+        persist:
+          type: boolean
+          description: "Whether to persist this event or not. Defaults to true"
+          default: true
+
+    PrismeEvent:
+      type: object
+      required:
+        - type
+        - source
+        - createdAt
+        - id
+      properties:
+        type:
+          type: string
+          example: apps.someApp.someCustomEvent
+        source:
+          type: object
+          required:
+            - correlationId
+            - host
+          properties:
+            appSlug:
+              type: string
+            appInstanceFullSlug:
+              type: string
+            appInstanceDepth:
+              type: number
+            automationSlug:
+              type: string
+            userId:
+              type: string
+            sessionId:
+              type: string
+            workspaceId:
+              type: string
+            host:
+              type: object
+              required:
+                - service
+              properties:
+                service:
+                  type: string
+            correlationId:
+              type: string
+            serviceTopic:
+              type: string
+        payload:
+          $ref: '#/components/schemas/AnyValue'
+        target:
+          $ref: '#/components/schemas/PrismeEventTarget'
+        options:
+          $ref: '#/components/schemas/PrismeEventOptions'
+        error:
+          type: object
+          properties:
+            error:
+              type: string
+            message:
+              type: string
+            details:
+              $ref: '#/components/schemas/AnyValue'
+            level:
+              type: string
+              enum:
+                - warning
+                - error
+                - fatal
+              example: warning
+        createdAt:
+          type: string
+          description: Creation date (ISO8601)
+        id:
+          type: string
+
+    AllEventRequests:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/components/schemas/GenericErrorEvent'
+          - $ref: '#/components/schemas/FailedLogin'
+          - $ref: '#/components/schemas/SucceededLogin'
+          - $ref: '#/components/schemas/ExecutedAutomation'
+          - $ref: '#/components/schemas/UpdatedContexts'
+          - $ref: '#/components/schemas/CreatedWorkspace'
+          - $ref: '#/components/schemas/UpdatedWorkspace'
+          - $ref: '#/components/schemas/DeletedWorkspace'
+          - $ref: '#/components/schemas/InstalledAppInstance'
+          - $ref: '#/components/schemas/UninstalledAppInstance'
+          - $ref: '#/components/schemas/ConfiguredAppInstance'
+          - $ref: '#/components/schemas/CreatedAutomation'
+          - $ref: '#/components/schemas/UpdatedAutomation'
+          - $ref: '#/components/schemas/DeletedAutomation'
+          - $ref: '#/components/schemas/CreatedPage'
+          - $ref: '#/components/schemas/UpdatedPage'
+          - $ref: '#/components/schemas/DeletedPage'
+          - $ref: '#/components/schemas/AppEvent'
+
+    AllEventResponses:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/components/schemas/PrismeEvent' # custom event
+          # or a native event
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/GenericErrorEvent'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/FailedLogin'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/SucceededLogin'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/ExecutedAutomation'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/UpdatedContexts'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/CreatedWorkspace'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/UpdatedWorkspace'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/DeletedWorkspace'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/AppInstance'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/ConfiguredAppInstance'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/InstalledAppInstance'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/UninstalledAppInstance'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/CreatedAutomation'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/UpdatedAutomation'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/DeletedAutomation'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/CreatedPage'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/UpdatedPage'
+          - allOf:
+              - $ref: '#/components/schemas/PrismeEvent'
+              - $ref: '#/components/schemas/DeletedPage'
+
+    GenericErrorEvent:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: error
+        payload:
+          type: object
+          required:
+            - message
+          properties:
+            type:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+              additionalProperties: true
+          additionalProperties: true
+
+    ########################## API Keys #############################
+    SubjectTypes:
+      type: string
+      enum: &KNOWN_SUBJECT_TYPES
+        - workspaces
+        - pages
+    CreatedApiKey:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apikeys.created
+          enum:
+            - apikeys.created
+        payload: &API_KEY_EVENT_PAYLOAD
+          type: object
+          required:
+            - apiKey
+            - subjectType
+            - subjectId
+            - rules
+          properties:
+            apiKey:
+              type: string
+            subjectType:
+              type: string
+              enum: *KNOWN_SUBJECT_TYPES
+            subjectId:
+              type: string
+            rules:
+              $ref: '#/components/schemas/ApiKeyRules'
+
+    UpdatedApiKey:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apikeys.updated
+          enum:
+            - apikeys.updated
+        payload: *API_KEY_EVENT_PAYLOAD
+
+    DeletedApiKey:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apikeys.deleted
+          enum:
+            - apikeys.deleted
+        payload:
+          type: object
+          required:
+            - apiKey
+            - subjectType
+            - subjectId
+          properties:
+            apiKey:
+              type: string
+            subjectType:
+              type: string
+              enum: *KNOWN_SUBJECT_TYPES
+            subjectId:
+              type: string
+
+    ########################## API Gateway ##########################
+    FailedLogin:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.login.failed
+          enum:
+            - gateway.login.failed
+        payload:
+          type: object
+          required:
+            - ip
+            - email
+          properties:
+            ip:
+              type: string
+            email:
+              type: string
+
+    SucceededLogin:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.login.succeeded
+          enum:
+            - gateway.login.succeeded
+        payload:
+          type: object
+          required:
+            - ip
+            - id
+            - session
+            - authData
+          properties:
+            ip:
+              type: string
+            email:
+              type: string
+            id:
+              type: string
+            authData: *AUTH_DATA
+            session:
+              type: object
+              required:
+                - id
+                - token
+                - expiresIn
+                - expires
+              properties:
+                id:
+                  type: string
+                token:
+                  type: string
+                expiresIn:
+                  type: number
+                  description: 'Expires in N seconds'
+                expires:
+                  type: string
+                  description: 'Expires ISODate'
+
+    SucceededSignup:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.signup.succeeded
+          enum:
+            - gateway.signup.succeeded
+        payload:
+          type: object
+          required:
+            - ip
+            - user
+          properties:
+            ip:
+              type: string
+            user:
+              $ref: '#/components/schemas/User'
+
+    SucceededPasswordReset:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.passwordReset.succeeded
+          enum:
+            - gateway.passwordReset.succeeded
+        payload:
+          type: object
+          required:
+            - ip
+            - email
+          properties:
+            ip:
+              type: string
+            email:
+              type: string
+
+    SucceededPasswordResetRequested:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.passwordReset.requested
+          enum:
+            - gateway.passwordReset.requested
+        payload:
+          type: object
+          required:
+            - ip
+            - email
+          properties:
+            ip:
+              type: string
+            email:
+              type: string
+
+    ########################## Apps events ##########################
+    PublishedApp:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apps.published
+          enum:
+            - apps.published
+        payload:
+          type: object
+          required:
+            - app
+          properties:
+            app:
+              $ref: '#/components/schemas/App'
+
+    DeletedApp:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: apps.deleted
+          enum:
+            - apps.deleted
+        payload:
+          type: object
+          required:
+            - appSlug
+          properties:
+            appSlug:
+              type: string
+
+    ########################## Workspaces events ##########################
+    CreatedWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.created
+          enum:
+            - workspaces.created
+        payload:
+          type: object
+          required:
+            - workspace
+          properties:
+            workspace:
+              $ref: '#/components/schemas/Workspace'
+
+    DeletedWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.deleted
+          enum:
+            - workspaces.deleted
+        payload:
+          type: object
+          required:
+            - workspaceId
+          properties:
+            workspaceId:
+              type: string
+            workspaceSlug:
+              type: string
+
+    UpdatedWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.updated
+          enum:
+            - workspaces.updated
+        payload:
+          type: object
+          required:
+            - workspace
+          properties:
+            workspace:
+              $ref: '#/components/schemas/Workspace'
+            oldSlug:
+              type: string
+
+    ConfiguredWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.configured
+          enum:
+            - workspaces.configured
+        payload:
+          type: object
+          required:
+            - config
+          properties:
+            config:
+              $ref: '#/components/schemas/Config'
+            oldConfig: {}
+
+    PublishedWorkspaceVersion:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.versions.published
+          enum:
+            - workspaces.versions.published
+        payload:
+          type: object
+          required:
+            - version
+          properties:
+            version:
+              $ref: '#/components/schemas/WorkspaceVersion'
+
+    DeletedWorkspaceVersion:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.versions.deleted
+          enum:
+            - workspaces.versions.deleted
+        payload:
+          type: object
+          required:
+            - version
+          properties:
+            version:
+              $ref: '#/components/schemas/WorkspaceVersion'
+
+    RollbackWorkspaceVersion:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.versions.rollback
+          enum:
+            - workspaces.versions.rollback
+        payload:
+          type: object
+          required:
+            - version
+          properties:
+            version:
+              $ref: '#/components/schemas/WorkspaceVersion'
+
+    DuplicatedWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.duplicated
+          enum:
+            - workspaces.duplicated
+        payload:
+          type: object
+          required:
+            - workspace
+          properties:
+            workspace:
+              $ref: '#/components/schemas/Workspace'
+            fromWorkspace:
+              type: object
+              required:
+                - name
+                - id
+              properties:
+                name:
+                  type: string
+                slug:
+                  type: string
+                id:
+                  type: string
+
+    WorkspacePermissionsShared:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.permissions.shared
+          enum:
+            - workspaces.permissions.shared
+        payload:
+          type: object
+          required:
+            - subjectId
+            - permissions
+          properties:
+            subjectId:
+              type: string
+            permissions:
+              $ref: '#/components/schemas/UserPermissions'
+
+    WorkspacePermissionsDeleted:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.permissions.deleted
+          enum:
+            - workspaces.permissions.deleted
+        payload:
+          type: object
+          required:
+            - subjectId
+            - userId
+          properties:
+            subjectId:
+              type: string
+            userId:
+              type: string
+
+    UninstalledAppInstance:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.apps.uninstalled
+          enum:
+            - workspaces.apps.uninstalled
+        payload:
+          type: object
+          required:
+            - slug
+          properties:
+            slug:
+              type: string
+
+    InstalledAppInstance:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.apps.installed
+          enum:
+            - workspaces.apps.installed
+        payload:
+          type: object
+          required:
+            - appInstance
+            - slug
+          properties:
+            appInstance:
+              $ref: '#/components/schemas/AppInstance'
+            slug:
+              type: string
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
+
+    ConfiguredAppInstance:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.apps.configured
+          enum:
+            - workspaces.apps.configured
+        payload:
+          type: object
+          required:
+            - appInstance
+            - slug
+          properties:
+            appInstance:
+              type: object
+              required:
+                - appSlug
+              properties:
+                <<: *AppInstanceMeta
+                config: {}
+                oldConfig: {}
+            slug:
+              type: string
+            oldSlug:
+              type: string
+              description: Filled with the previous appInstance slug when renamed
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
+
+    CreatedAutomation:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.automations.created
+          enum:
+            - workspaces.automations.created
+        payload:
+          type: object
+          required:
+            - automation
+            - slug
+          properties:
+            slug:
+              type: string
+            automation:
+              $ref: '#/components/schemas/Automation'
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
+
+    UpdatedAutomation:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.automations.updated
+          enum:
+            - workspaces.automations.updated
+        payload:
+          type: object
+          required:
+            - automation
+            - slug
+          properties:
+            automation:
+              $ref: '#/components/schemas/Automation'
+            slug:
+              type: string
+            oldSlug:
+              type: string
+              description: Filled with the previous automation slug when renamed
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
+
+    DeletedAutomation:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.automations.deleted
+          enum:
+            - workspaces.automations.deleted
+        payload:
+          type: object
+          required:
+            - automationSlug
+          properties:
+            automationSlug:
+              type: string
+
+    CreatedPage:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.pages.created
+          enum:
+            - workspaces.pages.created
+        payload:
+          type: object
+          required:
+            - page
+          properties:
+            page:
+              $ref: '#/components/schemas/Page'
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
+
+    UpdatedPage:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.pages.updated
+          enum:
+            - workspaces.pages.updated
+        payload:
+          type: object
+          required:
+            - page
+            - slug
+          properties:
+            page:
+              $ref: '#/components/schemas/Page'
+            slug:
+              type: string
+            oldSlug:
+              type: string
+              description: Filled with the previous page slug when renamed
+            events:
+              $ref: "#/components/schemas/ProcessedEvents"
+
+    UpdatedBlocks:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.blocks.updated
+          enum:
+            - workspaces.blocks.updated
+        payload:
+          type: object
+          required:
+            - blocks
+            - workspaceSlug
+          properties:
+            blocks:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/Block'
+            workspaceSlug:
+              type: string
+
+    DeletedPage:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.pages.deleted
+          enum:
+            - workspaces.pages.deleted
+        payload:
+          type: object
+          required:
+            - pageSlug
+          properties:
+            pageSlug:
+              type: string
+
+    PagePermissionsShared:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.pages.permissions.shared
+          enum:
+            - workspaces.pages.permissions.shared
+        payload:
+          type: object
+          required:
+            - subjectId
+            - permissions
+          properties:
+            subjectId:
+              type: string
+            permissions:
+              $ref: '#/components/schemas/UserPermissions'
+
+    PagePermissionsDeleted:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.pages.permissions.deleted
+          enum:
+            - workspaces.pages.permissions.deleted
+        payload:
+          type: object
+          required:
+            - subjectId
+            - userId
+          properties:
+            subjectId:
+              type: string
+            userId:
+              type: string
+
+    ########################## Runtime events ##########################
+
+    ExecutedAutomation:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.automations.executed
+          enum:
+            - runtime.automations.executed
+        payload:
+          type: object
+          required:
+            - slug
+            - trigger
+            - payload
+            - output
+            - duration
+            - break
+          properties:
+            slug:
+              type: string
+            trigger:
+              type: object
+              properties:
+                type:
+                  type: string
+                value:
+                  type: string
+            payload:
+              type: object
+            output:
+              $ref: '#/components/schemas/AnyValue'
+            duration:
+              type: number
+            break:
+              type: boolean
+
+    ScheduledAutomation:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.automations.scheduled
+          enum:
+            - runtime.automations.scheduled
+        payload:
+          type: object
+          required:
+            - slug
+            - schedules
+          properties:
+            slug:
+              type: string
+            schedules:
+              $ref: '#/components/schemas/Schedules'
+            details:
+              type: object
+              additionalProperties: true
+
+    TriggeredWebhook:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.webhooks.triggered
+          enum:
+            - runtime.webhooks.triggered
+        payload:
+          type: object
+          required:
+            - workspaceId
+            - automationSlug
+            - method
+          properties:
+            workspaceId:
+              type: string
+            automationSlug:
+              type: string
+            method:
+              type: string
+              example: post
+
+    TriggeredSchedule:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.schedules.triggered
+          enum:
+            - runtime.schedules.triggered
+        payload:
+          type: object
+          required:
+            - workspaceId
+            - automationSlug
+            - schedule
+          properties:
+            workspaceId:
+              type: string
+            automationSlug:
+              type: string
+            schedule:
+              type: string
+
+    SuspendedWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.suspended
+          enum:
+            - workspaces.suspended
+        payload:
+          type: object
+          required:
+            - workspaceId
+            - suspended
+            - reason
+          properties:
+            workspaceId:
+              type: string
+            suspended:
+              type: boolean
+            reason:
+              type: string
+
+    ContextSetType:
+      type: string
+      enum:
+        - replace
+        - merge
+        - push
+        - delete
+
+    UpdatedContexts:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.contexts.updated
+          enum:
+            - runtime.contexts.updated
+        payload:
+          type: object
+          required:
+            - updates
+          properties:
+            updates:
+              type: array
+              items:
+                type: object
+                required:
+                  - type
+                  - path
+                  - fullPath
+                  - context
+                properties:
+                  type:
+                    $ref: '#/components/schemas/ContextSetType'
+                  path:
+                    type: string
+                  fullPath:
+                    type: string
+                  context:
+                    type: string
+                  value: {}
+
+    PendingWait:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.waits.pending
+          enum:
+            - runtime.waits.pending
+        payload:
+          type: object
+          required:
+            - id
+            - expiresAt
+            - wait
+          properties:
+            id:
+              type: string
+            expiresAt:
+              type: number
+            wait:
+              $ref: '#/components/schemas/Wait/properties/wait'
+
+    FulfilledWait:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.waits.fulfilled.{{id}}
+          enum:
+            - runtime.waits.fulfilled.{{id}}
+        payload:
+          type: object
+          required:
+            - wait
+            - event
+          properties:
+            id:
+              type: string
+            event:
+              $ref: '#/components/schemas/PrismeEvent'
+
+    FailedFetch:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.fetch.failed
+          enum:
+            - runtime.fetch.failed
+        payload:
+          type: object
+          required:
+            - request
+            - response
+          properties:
+            request: *fetchBody
+            response:
+              type: object
+              required:
+                - status
+                - body
+                - headers
+              properties:
+                status:
+                  type: number
+                body: {}
+                headers:
+                  type: object
+
+    ########################## Topics events ##########################
+    UserTopic:
+      type: object
+      required:
+        - topic
+      properties:
+        topic:
+          type: string
+          example: 'conversation:56'
+        userIds:
+          type: array
+          items:
+            type: string
+          description: Subscribing user ids
+
+    CreatedUserTopic:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: userTopics.created
+          enum:
+            - userTopics.created
+        payload:
+          $ref: '#/components/schemas/UserTopic'
+
+    JoinedUserTopic:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: userTopics.joined
+          enum:
+            - userTopics.joined
+        payload:
+          type: object
+          required:
+            - topic
+            - user
+          properties:
+            user:
+              type: object
+              properties:
+                id:
+                  type: string
+            topic:
+              type: string
+
+    AppEvent:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: someCustomEvent
+        payload:
+          $ref: '#/components/schemas/AnyValue'
+
+    GenericError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: ObjectNotFound
+        message:
+          type: string
+        details:
+          $ref: '#/components/schemas/AnyValue'
+
+    ObjectNotFoundError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: ObjectNotFound
+        message:
+          type: string
+
+    BadParametersError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: BadParameters
+        message:
+          type: string
+        details: {}
+
+    AuthenticationError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: AuthenticationError
+        message:
+          type: string
+          example: Unauthenticated
+
+    ForbiddenError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: ForbiddenError
+        message:
+          type: string
+          example: Forbidden
+
+  ## End of schemas
 paths:
   ############################################# gateway
   /v2/login:
@@ -320,9 +2727,7 @@ paths:
           required: true
           schema:
             type: string
-            enum: &KNOWN_SUBJECT_TYPES
-              - workspaces
-              - pages
+            enum: *KNOWN_SUBJECT_TYPES
         - name: subjectId
           in: path
           description: The target subject id (i.e workspaceId if subjectType is 'workspace')
@@ -1257,7 +3662,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Workspace'
+                $ref: '#/components/schemas/DSULReadOnly'
         '404':
           description: Object not found
           content:
@@ -1294,7 +3699,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Workspace'
+              $ref: '#/components/schemas/DSULPatch'
 
       responses:
         '200':
@@ -1532,6 +3937,51 @@ paths:
           content:
             application/json:
               schema:
+                $ref: '#/components/schemas/WorkspaceVersion'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  /v2/workspaces/{workspaceId}/versions/{versionId}/duplicate:
+    post:
+      description: Duplicate this workspace version to a new workspace
+      operationId: duplicateWorkspaceVersion
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'versionId'
+          in: 'path'
+          description: 'Version name'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
                 $ref: '#/components/schemas/Workspace'
         '404':
           description: Object not found
@@ -1733,7 +4183,7 @@ paths:
               schema:
                 type: object
                 required:
-                  - id
+                  - slug
                 properties:
                   slug:
                     type: string
@@ -1830,7 +4280,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Page'
+                  $ref: '#/components/schemas/PageMeta'
         '404':
           description: Object not found
           content:
@@ -2022,46 +4472,6 @@ paths:
           schema:
             type: string
         - name: 'pageSlug'
-          in: 'path'
-          description: 'Page slug'
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Success Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DetailedPage'
-        '404':
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ObjectNotFoundError'
-        '401':
-          description: AuthenticationError
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthenticationError'
-        '403':
-          description: Bad permissions
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenError'
-
-  # Retro-compatibility
-  /v2/pages/{slug}:
-    get:
-      description: Fetch a page by slug
-      operationId: getPageBySlugLegacy
-      tags:
-        - 'Prisme.ai Workspaces'
-      parameters:
-        - name: 'slug'
           in: 'path'
           description: 'Page slug'
           required: true
@@ -2360,7 +4770,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AppInstanceDetailedList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/DetailedAppInstance'
         '404':
           description: Object not found
           content:
@@ -2513,14 +4925,19 @@ paths:
           required: true
           schema:
             type: string
-
       responses:
         '200':
           description: Success Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AppInstance'
+                type: object
+                properties:
+                  <<: *AppInstanceMeta
+                  config:
+                    $ref: '#/components/schemas/Config'
+                  documentation:
+                    $ref: '#/components/schemas/Page'
         '404':
           description: Object not found
           content:
@@ -2568,7 +4985,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AppInstancePatch'
+              $ref: '#/components/schemas/AppInstance'
 
       responses:
         '200':
@@ -2862,2279 +5279,3 @@ paths:
                 $ref: '#/components/schemas/ForbiddenError'
 
   ## End of APIs
-
-components:
-  securitySchemes:
-    CookieAuth:
-      type: apiKey
-      in: cookie
-      name: connect.sid
-    SessionHeaderAuth:
-      type: apiKey
-      in: header
-      name: x-prismeai-token
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: X-Prismeai-API-Key
-
-  schemas:
-    AnyValue: {}
-    Object:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique id
-
-    Contact:
-      allOf:
-        - required:
-            - firstName
-          type: object
-          properties:
-            firstName:
-              type: string
-              description: Name
-            lastName:
-              type: string
-              description: Name
-            photo:
-              type: string
-              description: Profile picture URL
-
-        - $ref: '#/components/schemas/Object'
-
-    User:
-      allOf:
-        - type: object
-          properties:
-            email:
-              type: string
-              example: foo@prisme.ai
-            status:
-              type: string
-              enum:
-                - pending
-                - validated
-                - deactivated
-            language:
-              type: string
-            authData: &AUTH_DATA
-              type: object
-              properties:
-                facebook:
-                  type: object
-                anonymous:
-                  type: object
-              additionalProperties: true
-        - $ref: '#/components/schemas/Contact'
-
-    App:
-      type: object
-      required:
-        - workspaceId
-      properties:
-        workspaceId:
-          type: string
-        versions:
-          oneOf:
-            - type: array
-              items:
-                type: string
-            - type: array
-              items:
-                $ref: '#/components/schemas/WorkspaceVersion'
-        name:
-          type: string
-        description:
-          $ref: '#/components/schemas/LocalizedText'
-        photo:
-          type: string
-        slug:
-          type: string
-
-    AppInstance:
-      type: object
-      required:
-        - appSlug
-      properties: &APP_INSTANCE_PROPERTIES
-        appSlug:
-          type: string
-          description: 'App unique id'
-        appName:
-          $ref: '#/components/schemas/LocalizedText'
-        appVersion:
-          type: string
-          description: 'Defaults to the latest known app version'
-        config: {}
-        slug:
-          type: string
-          description: Unique & human readable id across current workspace's appInstances, which will be used to call this app automations
-        disabled:
-          type: boolean
-          description: If disabled, this appInstance will be ignored during execution
-
-    AppDetails:
-      type: object
-      required:
-        - automations
-        - blocks
-      properties:
-        slug:
-          type: string
-        appName:
-          type: string
-        config:
-          $ref: '#/components/schemas/Config'
-        blocks:
-          type: array
-          items:
-            type: object
-            required:
-              - slug
-            properties:
-              slug:
-                type: string
-              url:
-                type: string
-              block:
-                type: string
-              edit:
-                $ref: '#/components/schemas/TypedArgument'
-              name:
-                $ref: '#/components/schemas/LocalizedText'
-              description:
-                $ref: '#/components/schemas/LocalizedText'
-              arguments:
-                additionalProperties:
-                  $ref: '#/components/schemas/TypedArgument'
-        automations:
-          type: array
-          items:
-            type: object
-            required:
-              - slug
-              - name
-            properties:
-              slug:
-                type: string
-              name:
-                $ref: '#/components/schemas/LocalizedText'
-              description:
-                $ref: '#/components/schemas/LocalizedText'
-        photo:
-          type: string
-        events:
-          type: object
-          properties:
-            emit:
-              type: array
-              items:
-                type: object
-                required:
-                  - event
-                properties:
-                  event:
-                    type: string
-                  autocomplete:
-                    type: object
-                    additionalProperties:
-                      type: object
-                      properties:
-                        from:
-                          type: string
-                        path:
-                          type: string
-                        template:
-                          type: string
-            listen:
-              type: array
-              items:
-                type: string
-        documentation:
-          type: object
-          properties:
-            workspaceSlug:
-              type: string
-            slug:
-              type: string
-
-    AppInstancePatch:
-      type: object
-      properties: *APP_INSTANCE_PROPERTIES
-
-    DetailedAppInstance:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/AppInstance'
-        - $ref: '#/components/schemas/AppDetails'
-
-    AppInstanceDetailedList:
-      type: array
-      items:
-        $ref: '#/components/schemas/DetailedAppInstance'
-
-    Workspace:
-      allOf:
-        - $ref: '#/components/schemas/DSUL'
-        - type: object
-          properties:
-            createdBy:
-              type: string
-
-    WorkspaceVersion:
-      type: object
-      required:
-        - description
-      properties:
-        name:
-          type: string
-          description: 'Version name. If left empty, will be auto generated'
-        createdAt:
-          type: string
-        description:
-          $ref: '#/components/schemas/LocalizedText'
-
-    DSUL:
-      type: object
-      additionalProperties: false
-      required:
-        - name
-      properties:
-        name:
-          type: string
-        description:
-          $ref: '#/components/schemas/LocalizedText'
-        photo:
-          type: string
-        owner:
-          type: object
-          properties:
-            id:
-              type: string
-        imports:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/AppInstance'
-        config:
-          $ref: '#/components/schemas/Config'
-        automations:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/Automation'
-        blocks:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/Block'
-        createdAt:
-          type: string
-        updatedAt:
-          type: string
-        id:
-          type: string
-        pages:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/Page'
-        slug:
-          type: string
-
-    Config:
-      type: object
-      additionalProperties: false
-      properties:
-        schema:
-          additionalProperties:
-            $ref: '#/components/schemas/TypedArgument'
-        block:
-          type: string
-        value: {}
-
-    When:
-      type: object
-      anyOf:
-        - required: ['events']
-        - required: ['schedules']
-        - required: ['endpoint']
-      properties:
-        events:
-          type: array
-          items:
-            type: string
-          example:
-            - prismeaiMessenger.event
-        schedules:
-          $ref: '#/components/schemas/Schedules'
-        endpoint:
-          oneOf:
-            - type: boolean
-              example: 'Set to true in order to activate HTTP endpoint. Slug will be trigger name by default'
-            - type: string
-              example: 'Slug name'
-
-    Schedules:
-      type: array
-      items:
-        type: string
-      example:
-        - 2021-12-25T00:00
-        - '* * 1 * *'
-
-    LocalizedText:
-      oneOf:
-        - type: object
-          additionalProperties:
-            type: string
-          example:
-            fr: 'Bonjour'
-            en: 'Hello'
-        - type: string
-          example: Bonjour
-
-    TypedArgument:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - string
-            - number
-            - object
-            - array
-            - boolean
-            - localized:string
-            - localized:number
-            - localized:boolean
-        properties:
-          additionalProperties:
-            $ref: '#/components/schemas/TypedArgument'
-        description:
-          $ref: '#/components/schemas/LocalizedText'
-        items:
-          $ref: '#/components/schemas/TypedArgument'
-        ui:widget:
-          type: string
-        ui:options:
-          type: object
-        secret:
-          type: boolean
-
-    InstructionList:
-      type: array
-      items:
-        $ref: '#/components/schemas/Instruction'
-
-    Automation:
-      type: object
-      required:
-        - do
-        - name
-      description: Full description at (TODO swagger url)
-      additionalProperties: false
-      properties:
-        when:
-          $ref: '#/components/schemas/When'
-        description:
-          $ref: '#/components/schemas/LocalizedText'
-        arguments:
-          additionalProperties:
-            $ref: '#/components/schemas/TypedArgument'
-        do:
-          $ref: '#/components/schemas/InstructionList'
-        output:
-          description: 'Automation result expression. Might be a variable reference, an object/array with variables inside ...'
-          example: '{{result}}'
-        private:
-          description: "Set this to true if you don't want your automation to be accessible outside of your app. Default is false."
-          example: false
-        disabled:
-          type: boolean
-          description: 'Set this to true if you want to turn off this automation.'
-          example: true
-        name:
-          $ref: '#/components/schemas/LocalizedText'
-        slug:
-          type: string
-          description: Unique & human readable id across current workspace's automations
-
-    Block:
-      type: object
-      required:
-        - name
-      description: Block
-      additionalProperties: false
-      properties:
-        description:
-          $ref: '#/components/schemas/LocalizedText'
-        name:
-          $ref: '#/components/schemas/LocalizedText'
-        photo:
-          type: string
-        url:
-          type: string
-          description: 'A block can be a javascript bundled file. Host it on the internet and put its url here.'
-        edit:
-          $ref: '#/components/schemas/TypedArgument'
-        block:
-          type: string
-          description: A block can extends another one by giving its name here
-        config:
-          $ref: '#/components/schemas/AnyValue'
-          description: 'default config applied to the Block. Usefull for extended Blocks.'
-
-    Page:
-      allOf:
-        - $ref: '#/components/schemas/PageWithoutBlocks'
-        - required:
-            - name
-            - blocks
-
-    PageWithoutBlocks:
-      type: object
-      required:
-        - name
-      description: Page
-      additionalProperties: false
-      properties:
-        name:
-          $ref: '#/components/schemas/LocalizedText'
-        description:
-          $ref: '#/components/schemas/LocalizedText'
-        workspaceId:
-          type: string
-        workspaceSlug:
-          type: string
-        blocks:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              config:
-                type: object
-                additionalProperties: true
-        id:
-          type: string
-        slug:
-          type: string
-        styles:
-          type: string
-        createdBy:
-          type: string
-        updatedBy:
-          type: string
-        createdAt:
-          type: string
-        updatedAt:
-          type: string
-        permissions:
-          $ref: '#/components/schemas/PermissionsMap'
-        apiKey:
-          type: string
-        __migrate:
-          type: boolean
-          description: 'Temporary field for old pages conversion to DSUL'
-
-    DetailedPage:
-      allOf:
-        - $ref: '#/components/schemas/Page'
-        - properties:
-            blocks:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  url:
-                    type: string
-                  appInstance:
-                    type: string
-            appInstances:
-              type: array
-              items:
-                type: 'object'
-                properties:
-                  slug:
-                    type: string
-                  appConfig: {}
-                  blocks: {}
-
-    File:
-      type: object
-      required:
-        - name
-        - url
-        - mimetype
-        - size
-        - workspaceId
-        - path
-      properties:
-        name:
-          type: string
-        url:
-          type: string
-        mimetype:
-          type: string
-        size:
-          type: number
-        workspaceId:
-          type: string
-        path:
-          type: string
-        expiresAt:
-          type: string
-        expiresAfter:
-          type: number
-          description: Number of seconds after which the file will be automatically removed
-        metadata:
-          type: object
-          additionalProperties: true
-
-    ###############################################################################################################################################
-    ############################################################ Automation Instructions ############################################################
-    Emit:
-      type: object
-      required:
-        - emit
-      maxProperties: 1
-      properties:
-        emit:
-          type: object
-          required:
-            - event
-          properties:
-            event:
-              type: string
-              example: 'prismeaiMessenger.message'
-            payload:
-              $ref: '#/components/schemas/AnyValue'
-            target:
-              $ref: '#/components/schemas/PrismeEventTarget'
-            private:
-              type: boolean
-            autocomplete:
-              type: object
-              additionalProperties:
-                type: object
-                properties:
-                  from:
-                    type: string
-                  path:
-                    type: string
-                  template:
-                    type: string
-            options:
-              $ref: "#/components/schemas/PrismeEventOptions"
-    CreateUserTopic:
-      type: object
-      required:
-        - createUserTopic
-      maxProperties: 1
-      properties:
-        createUserTopic:
-          $ref: '#/components/schemas/UserTopic'
-
-    JoinUserTopic:
-      type: object
-      required:
-        - joinUserTopic
-      maxProperties: 1
-      properties:
-        joinUserTopic:
-          type: object
-          required:
-            - topic
-          properties:
-            topic:
-              type: string
-              example: 'conversation:56'
-            userIds:
-              type: array
-              items:
-                type: string
-              description: Subscribing user ids. If undefined, defaults to current user
-
-    Wait:
-      type: object
-      required:
-        - wait
-      maxProperties: 1
-      properties:
-        wait:
-          type: object
-          required:
-            - oneOf
-          properties:
-            oneOf:
-              type: array
-              items:
-                type: object
-                required:
-                  - event
-                properties:
-                  event:
-                    type: string
-                    example: 'prismeaiMessenger.message'
-                  filters:
-                    type: object
-                    description: "Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
-                    additionalProperties:
-                      type: string
-                    example:
-                      automationSlug: someId
-                      someObjectField.someNestedField: 'foo'
-                  cancelTriggers:
-                    type: boolean
-                    description: If true, do not send this event to the the usual triggers
-            timeout:
-              type: number
-              description: After N seconds, timeout & outputs an empty result. Defaults to 20
-            output:
-              type: string
-              description: Will save the caught event inside this variable
-              example: nameOfResultVariable
-
-    Set:
-      type: object
-      required:
-        - 'set'
-      maxProperties: 1
-      properties:
-        set:
-          type: object
-          required:
-            - name
-            - value
-          properties:
-            name:
-              type: string
-              description: Variable name, might be "foo", "session.sessionScopedFoo", "global.globalScopedFoo", "user.userScopedFoo", ...
-            value:
-              $ref: '#/components/schemas/AnyValue'
-              description: variable value
-            type:
-              type: string
-              enum:
-                - replace
-                - merge
-              description: 'Choose merge in order to merge target variable with value. Value takes precedence.'
-
-    Delete:
-      type: object
-      required:
-        - delete
-      maxProperties: 1
-      properties:
-        delete:
-          type: object
-          required:
-            - name
-          properties:
-            name:
-              type: string
-              description: Variable name to remove
-
-    Conditions:
-      type: object
-      required:
-        - default
-      properties:
-        default:
-          $ref: '#/components/schemas/InstructionList'
-      additionalProperties:
-        $ref: '#/components/schemas/InstructionList'
-      minProperties: 2
-
-    Repeat:
-      type: object
-      required:
-        - 'repeat'
-      maxProperties: 1
-      properties:
-        repeat:
-          type: object
-          oneOf:
-            - required: ['on', 'do']
-              properties:
-                on:
-                  type: string
-                do:
-                  $ref: '#/components/schemas/InstructionList'
-                  hidden: true
-            - required: ['until', 'do']
-              properties:
-                until:
-                  type: number
-                do:
-                  $ref: '#/components/schemas/InstructionList'
-                  hidden: true
-          description: One of "on" or "until" is required
-
-    All:
-      type: object
-      required:
-        - 'all'
-      maxProperties: 1
-      properties:
-        all:
-          description: Execute each instruction in parallel. Pause current automation execution until all instructions are processed.
-          type: array
-          items:
-            $ref: '#/components/schemas/Instruction'
-
-    Break:
-      type: object
-      required:
-        - 'break'
-      maxProperties: 1
-      properties:
-        break:
-          description: Stop current automation execution. Have one option that allow a break to break all parent automations.
-          type: object
-          properties:
-            scope:
-              type: string
-              enum:
-                - all
-                - automation
-              description: The scope argument defines in which scope the break will take effect. It only breaks the current automation by default, it can also break all parent automations. More options might become available in the future.
-
-    Fetch:
-      type: object
-      required:
-        - 'fetch'
-      maxProperties: 1
-      properties:
-        fetch: &fetchBody
-          description: Send an HTTP request
-          type: object
-          required:
-            - url
-          properties:
-            url:
-              type: string
-            method:
-              type: string
-              enum:
-                - get
-                - post
-                - put
-                - patch
-                - delete
-            headers:
-              type: object
-              additionalProperties:
-                type: 'string'
-            query:
-              type: object
-              description: Object defining querystring parameters
-              additionalProperties:
-                type: 'string'
-            body:
-              description: HTTP request body
-              $ref: '#/components/schemas/AnyValue'
-            emitErrors:
-              description: 'If HTTP response status code is 4xx or 5xx, emits a runtime.fetch.failed event by default'
-              type: boolean
-              default: true
-            multipart:
-              description: Sends a multipart/form-data HTTP request
-              type: array
-              items:
-                type: object
-                required:
-                  - fieldname
-                  - value
-                properties:
-                  fieldname:
-                    type: string
-                  value:
-                    type: string
-                    description: Must be a string. Raw files must be given as base64
-                  filename:
-                    type: string
-                    description: 'Filename is required when value is a base64 encoded file'
-                  contentType:
-                    type: string
-                    description: Optional MIME content-type
-            output:
-              type: string
-              description: Name of the variable which will hold the result
-
-    Comment:
-      type: object
-      required:
-        - 'comment'
-      maxProperties: 1
-      properties:
-        comment:
-          description: Do nothing but display a comment in instructions list
-          type: string
-
-    Instruction:
-      anyOf:
-        - $ref: '#/components/schemas/Emit'
-        - $ref: '#/components/schemas/Wait'
-        - $ref: '#/components/schemas/Set'
-        - $ref: '#/components/schemas/Delete'
-        - $ref: '#/components/schemas/Conditions'
-        - $ref: '#/components/schemas/Repeat'
-        - $ref: '#/components/schemas/All'
-        - $ref: '#/components/schemas/Break'
-        - $ref: '#/components/schemas/Fetch'
-        - $ref: '#/components/schemas/Comment'
-        - type: object
-          additionalProperties: true
-          minProperties: 1
-          maxProperties: 1
-
-    AutomationResult:
-      type: object
-      required:
-        - slug
-      properties:
-        slug:
-          type: string
-        output:
-          $ref: '#/components/schemas/AnyValue'
-
-    ################################################################################################################################
-    ################################################# Permissions ##################################################################
-    PermissionsList:
-      type: array
-      items:
-        $ref: '#/components/schemas/UserPermissions'
-      example:
-        - email: admin@prisme.ai
-          role: admin
-        - email: readonly@prisme.ai
-          policies:
-            read: true
-        - public: true
-          policies:
-            read: true
-
-    Role:
-      type: string
-      enum:
-        - owner
-        - editor
-
-    Policies:
-      properties:
-        read:
-          type: boolean
-        write:
-          type: boolean
-        update:
-          type: boolean
-        create:
-          type: boolean
-        manage_permissions:
-          type: boolean
-
-    UserPermissions:
-      type: object
-      additionalProperties: false
-      oneOf:
-        - required: ['email']
-        - required: ['public']
-      properties:
-        email:
-          type: string
-        id:
-          type: string
-        public:
-          type: boolean
-        role:
-          $ref: '#/components/schemas/Role'
-        policies:
-          $ref: '#/components/schemas/Policies'
-
-    PermissionsMap:
-      type: object
-      additionalProperties:
-        type: object
-        properties:
-          role:
-            $ref: '#/components/schemas/Role'
-          policies:
-            $ref: '#/components/schemas/Policies'
-
-    ApiKeyRules:
-      type: object
-      properties:
-        events:
-          type: object
-          properties:
-            types:
-              type: array
-              items:
-                type: string
-              example:
-                - allowedEvent1
-                - allowedEvent2
-            filters:
-              description: "Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator "
-              additionalProperties:
-                type: string
-              example:
-                automationSlug: someId
-                someObjectField.someNestedField: 'foo'
-        uploads:
-          type: object
-          properties:
-            mimetypes:
-              type: array
-              items:
-                type: string
-              example:
-                - image/*
-                - audio/*
-
-    ApiKey:
-      type: object
-      additionalProperties: false
-      required:
-        - apiKey
-        - rules
-        - subjectType
-        - subjectId
-      properties:
-        apiKey:
-          type: string
-        subjectType:
-          type: string
-        subjectId:
-          type: string
-        rules:
-          $ref: '#/components/schemas/ApiKeyRules'
-
-    ################################################################################################################################
-    ############################################################ Workspace Usage ############################################################
-    WorkspaceUsage:
-      type: object
-      required:
-        - workspaceId
-        - beforeDate
-        - afterDate
-        - total
-        - apps
-      properties:
-        workspaceId:
-          type: string
-        beforeDate:
-          type: string
-        afterDate:
-          type: string
-        total:
-          $ref: '#/components/schemas/UsageMetrics'
-        apps:
-          type: array
-          items:
-            $ref: '#/components/schemas/AppUsageMetrics'
-
-    UsageMetrics:
-      type: object
-      required:
-        - automationRuns
-        - transactions
-        - httpTransactions
-        - eventTransactions
-        - sessions
-        - users
-      additionalProperties: false
-      properties:
-        transactions:
-          type: number
-        automationRuns:
-          type: number
-        httpTransactions:
-          type: number
-        eventTransactions:
-          type: number
-        sessions:
-          type: number
-        users:
-          type: number
-
-    AppUsageMetrics:
-      type: object
-      required:
-        - slug
-        - total
-      properties:
-        slug:
-          type: string
-        total:
-          $ref: '#/components/schemas/UsageMetrics'
-        appInstances:
-          type: array
-          items:
-            type: object
-            required:
-              - slug
-              - total
-            properties:
-              slug:
-                type: string
-              total:
-                $ref: '#/components/schemas/UsageMetrics'
-
-    ################################################################################################################################
-    ############################################################ Events ############################################################
-    PrismeEventTarget:
-      type: object
-      properties:
-        userTopic:
-          type: string
-        userId:
-          type: string
-        sessionId:
-          type: string
-
-    PrismeEventOptions:
-      type: object
-      properties:
-        persist:
-          type: boolean
-          description: "Whether to persist this event or not. Defaults to true"
-          default: true
-
-    PrismeEvent:
-      type: object
-      required:
-        - type
-        - source
-        - createdAt
-        - id
-      properties:
-        type:
-          type: string
-          example: apps.someApp.someCustomEvent
-        source:
-          type: object
-          required:
-            - correlationId
-            - host
-          properties:
-            appSlug:
-              type: string
-            appInstanceFullSlug:
-              type: string
-            appInstanceDepth:
-              type: number
-            automationSlug:
-              type: string
-            userId:
-              type: string
-            sessionId:
-              type: string
-            workspaceId:
-              type: string
-            host:
-              type: object
-              required:
-                - service
-              properties:
-                service:
-                  type: string
-            correlationId:
-              type: string
-            serviceTopic:
-              type: string
-        payload:
-          $ref: '#/components/schemas/AnyValue'
-        target:
-          $ref: '#/components/schemas/PrismeEventTarget'
-        options:
-          $ref: '#/components/schemas/PrismeEventOptions'
-        error:
-          type: object
-          properties:
-            error:
-              type: string
-            message:
-              type: string
-            details:
-              $ref: '#/components/schemas/AnyValue'
-            level:
-              type: string
-              enum:
-                - warning
-                - error
-                - fatal
-              example: warning
-        createdAt:
-          type: string
-          description: Creation date (ISO8601)
-        id:
-          type: string
-
-    AllEventRequests:
-      type: array
-      items:
-        anyOf:
-          - $ref: '#/components/schemas/GenericErrorEvent'
-          - $ref: '#/components/schemas/FailedLogin'
-          - $ref: '#/components/schemas/SucceededLogin'
-          - $ref: '#/components/schemas/ExecutedAutomation'
-          - $ref: '#/components/schemas/UpdatedContexts'
-          - $ref: '#/components/schemas/CreatedWorkspace'
-          - $ref: '#/components/schemas/UpdatedWorkspace'
-          - $ref: '#/components/schemas/DeletedWorkspace'
-          - $ref: '#/components/schemas/InstalledAppInstance'
-          - $ref: '#/components/schemas/UninstalledAppInstance'
-          - $ref: '#/components/schemas/ConfiguredAppInstance'
-          - $ref: '#/components/schemas/CreatedAutomation'
-          - $ref: '#/components/schemas/UpdatedAutomation'
-          - $ref: '#/components/schemas/DeletedAutomation'
-          - $ref: '#/components/schemas/CreatedPage'
-          - $ref: '#/components/schemas/UpdatedPage'
-          - $ref: '#/components/schemas/DeletedPage'
-          - $ref: '#/components/schemas/AppEvent'
-
-    AllEventResponses:
-      type: array
-      items:
-        anyOf:
-          - $ref: '#/components/schemas/PrismeEvent' # custom event
-          # or a native event
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/GenericErrorEvent'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/FailedLogin'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/SucceededLogin'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/ExecutedAutomation'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/UpdatedContexts'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/CreatedWorkspace'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/UpdatedWorkspace'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/DeletedWorkspace'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/AppInstance'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/ConfiguredAppInstance'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/InstalledAppInstance'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/UninstalledAppInstance'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/CreatedAutomation'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/UpdatedAutomation'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/DeletedAutomation'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/CreatedPage'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/UpdatedPage'
-          - allOf:
-              - $ref: '#/components/schemas/PrismeEvent'
-              - $ref: '#/components/schemas/DeletedPage'
-
-    GenericErrorEvent:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: error
-        payload:
-          type: object
-          required:
-            - message
-          properties:
-            type:
-              type: string
-            message:
-              type: string
-            details:
-              type: object
-              additionalProperties: true
-          additionalProperties: true
-
-    ########################## API Keys #############################
-    CreatedApiKey:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: apikeys.created
-          enum:
-            - apikeys.created
-        payload: &API_KEY_EVENT_PAYLOAD
-          type: object
-          required:
-            - apiKey
-            - subjectType
-            - subjectId
-            - rules
-          properties:
-            apiKey:
-              type: string
-            subjectType:
-              type: string
-              enum: *KNOWN_SUBJECT_TYPES
-            subjectId:
-              type: string
-            rules:
-              $ref: '#/components/schemas/ApiKeyRules'
-
-    UpdatedApiKey:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: apikeys.updated
-          enum:
-            - apikeys.updated
-        payload: *API_KEY_EVENT_PAYLOAD
-
-    DeletedApiKey:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: apikeys.deleted
-          enum:
-            - apikeys.deleted
-        payload:
-          type: object
-          required:
-            - apiKey
-            - subjectType
-            - subjectId
-          properties:
-            apiKey:
-              type: string
-            subjectType:
-              type: string
-              enum: *KNOWN_SUBJECT_TYPES
-            subjectId:
-              type: string
-
-    ########################## API Gateway ##########################
-    FailedLogin:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: gateway.login.failed
-          enum:
-            - gateway.login.failed
-        payload:
-          type: object
-          required:
-            - ip
-            - email
-          properties:
-            ip:
-              type: string
-            email:
-              type: string
-
-    SucceededLogin:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: gateway.login.succeeded
-          enum:
-            - gateway.login.succeeded
-        payload:
-          type: object
-          required:
-            - ip
-            - id
-            - session
-            - authData
-          properties:
-            ip:
-              type: string
-            email:
-              type: string
-            id:
-              type: string
-            authData: *AUTH_DATA
-            session:
-              type: object
-              required:
-                - id
-                - token
-                - expiresIn
-                - expires
-              properties:
-                id:
-                  type: string
-                token:
-                  type: string
-                expiresIn:
-                  type: number
-                  description: 'Expires in N seconds'
-                expires:
-                  type: string
-                  description: 'Expires ISODate'
-
-    SucceededSignup:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: gateway.signup.succeeded
-          enum:
-            - gateway.signup.succeeded
-        payload:
-          type: object
-          required:
-            - ip
-            - user
-          properties:
-            ip:
-              type: string
-            user:
-              $ref: '#/components/schemas/User'
-
-    SucceededPasswordReset:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: gateway.passwordReset.succeeded
-          enum:
-            - gateway.passwordReset.succeeded
-        payload:
-          type: object
-          required:
-            - ip
-            - email
-          properties:
-            ip:
-              type: string
-            email:
-              type: string
-
-    SucceededPasswordResetRequested:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: gateway.passwordReset.requested
-          enum:
-            - gateway.passwordReset.requested
-        payload:
-          type: object
-          required:
-            - ip
-            - email
-          properties:
-            ip:
-              type: string
-            email:
-              type: string
-
-    ########################## Apps events ##########################
-    PublishedApp:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: apps.published
-          enum:
-            - apps.published
-        payload:
-          type: object
-          required:
-            - app
-          properties:
-            app:
-              $ref: '#/components/schemas/App'
-
-    DeletedApp:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: apps.deleted
-          enum:
-            - apps.deleted
-        payload:
-          type: object
-          required:
-            - appSlug
-          properties:
-            appSlug:
-              type: string
-
-    ########################## Workspaces events ##########################
-    CreatedWorkspace:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.created
-          enum:
-            - workspaces.created
-        payload:
-          type: object
-          required:
-            - workspace
-          properties:
-            workspace:
-              $ref: '#/components/schemas/Workspace'
-
-    DeletedWorkspace:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.deleted
-          enum:
-            - workspaces.deleted
-        payload:
-          type: object
-          required:
-            - workspaceId
-          properties:
-            workspaceId:
-              type: string
-
-    UpdatedWorkspace:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.updated
-          enum:
-            - workspaces.updated
-        payload:
-          type: object
-          required:
-            - workspace
-          properties:
-            workspace:
-              $ref: '#/components/schemas/Workspace'
-
-    ConfiguredWorkspace:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.configured
-          enum:
-            - workspaces.configured
-        payload:
-          type: object
-          required:
-            - config
-          properties:
-            config:
-              $ref: '#/components/schemas/Config'
-            oldConfig: {}
-
-    PublishedWorkspaceVersion:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.versions.published
-          enum:
-            - workspaces.versions.published
-        payload:
-          type: object
-          required:
-            - version
-          properties:
-            version:
-              $ref: '#/components/schemas/WorkspaceVersion'
-
-    DeletedWorkspaceVersion:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.versions.deleted
-          enum:
-            - workspaces.versions.deleted
-        payload:
-          type: object
-          required:
-            - version
-          properties:
-            version:
-              $ref: '#/components/schemas/WorkspaceVersion'
-
-    RollbackWorkspaceVersion:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.versions.rollback
-          enum:
-            - workspaces.versions.rollback
-        payload:
-          type: object
-          required:
-            - version
-          properties:
-            version:
-              $ref: '#/components/schemas/WorkspaceVersion'
-
-    WorkspacePermissionsShared:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.permissions.shared
-          enum:
-            - workspaces.permissions.shared
-        payload:
-          type: object
-          required:
-            - subjectId
-            - permissions
-          properties:
-            subjectId:
-              type: string
-            permissions:
-              $ref: '#/components/schemas/UserPermissions'
-
-    WorkspacePermissionsDeleted:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.permissions.deleted
-          enum:
-            - workspaces.permissions.deleted
-        payload:
-          type: object
-          required:
-            - subjectId
-            - userId
-          properties:
-            subjectId:
-              type: string
-            userId:
-              type: string
-            email:
-              type: string
-
-    UninstalledAppInstance:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.apps.uninstalled
-          enum:
-            - workspaces.apps.uninstalled
-        payload:
-          type: object
-          required:
-            - appInstance
-            - slug
-          properties:
-            appInstance:
-              $ref: '#/components/schemas/AppInstance'
-            slug:
-              type: string
-
-    InstalledAppInstance:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.apps.installed
-          enum:
-            - workspaces.apps.installed
-        payload:
-          type: object
-          required:
-            - appInstance
-            - slug
-          properties:
-            appInstance:
-              $ref: '#/components/schemas/AppInstance'
-            slug:
-              type: string
-
-    ConfiguredAppInstance:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.apps.configured
-          enum:
-            - workspaces.apps.configured
-        payload:
-          type: object
-          required:
-            - appInstance
-            - slug
-          properties:
-            appInstance:
-              allOf:
-                - $ref: '#/components/schemas/AppInstance'
-                - type: object
-                  required:
-                    - oldConfig
-                  properties:
-                    oldConfig: {}
-            slug:
-              type: string
-            oldSlug:
-              type: string
-              description: Filled with the previous appInstance slug when renamed
-
-    CreatedAutomation:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.automations.created
-          enum:
-            - workspaces.automations.created
-        payload:
-          type: object
-          required:
-            - automation
-            - slug
-          properties:
-            slug:
-              type: string
-            automation:
-              $ref: '#/components/schemas/Automation'
-
-    UpdatedAutomation:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.automations.updated
-          enum:
-            - workspaces.automations.updated
-        payload:
-          type: object
-          required:
-            - automation
-            - slug
-          properties:
-            automation:
-              $ref: '#/components/schemas/Automation'
-            slug:
-              type: string
-            oldSlug:
-              type: string
-              description: Filled with the previous automation slug when renamed
-
-    DeletedAutomation:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.automations.deleted
-          enum:
-            - workspaces.automations.deleted
-        payload:
-          type: object
-          required:
-            - automation
-          properties:
-            automation:
-              type: object
-              required:
-                - slug
-                - name
-              properties:
-                slug:
-                  type: string
-                name:
-                  $ref: '#/components/schemas/LocalizedText'
-
-    CreatedPage:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.pages.created
-          enum:
-            - workspaces.pages.created
-        payload:
-          type: object
-          required:
-            - page
-          properties:
-            page:
-              $ref: '#/components/schemas/Page'
-
-    UpdatedPage:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.pages.updated
-          enum:
-            - workspaces.pages.updated
-        payload:
-          type: object
-          required:
-            - page
-          properties:
-            page:
-              $ref: '#/components/schemas/Page'
-
-    DeletedPage:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.pages.deleted
-          enum:
-            - workspaces.pages.deleted
-        payload:
-          type: object
-          required:
-            - page
-          properties:
-            page:
-              $ref: '#/components/schemas/PageWithoutBlocks'
-
-    PagePermissionsShared:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.pages.permissions.shared
-          enum:
-            - workspaces.pages.permissions.shared
-        payload:
-          type: object
-          required:
-            - subjectId
-            - permissions
-          properties:
-            subjectId:
-              type: string
-            permissions:
-              $ref: '#/components/schemas/UserPermissions'
-
-    PagePermissionsDeleted:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.pages.permissions.deleted
-          enum:
-            - workspaces.pages.permissions.deleted
-        payload:
-          type: object
-          required:
-            - subjectId
-            - userId
-          properties:
-            subjectId:
-              type: string
-            userId:
-              type: string
-            email:
-              type: string
-
-    ########################## Runtime events ##########################
-
-    ExecutedAutomation:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.automations.executed
-          enum:
-            - runtime.automations.executed
-        payload:
-          type: object
-          required:
-            - slug
-            - trigger
-            - payload
-            - output
-            - duration
-            - break
-          properties:
-            slug:
-              type: string
-            trigger:
-              type: object
-              properties:
-                type:
-                  type: string
-                value:
-                  type: string
-            payload:
-              type: object
-            output:
-              $ref: '#/components/schemas/AnyValue'
-            duration:
-              type: number
-            break:
-              type: boolean
-
-    ScheduledAutomation:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.automations.scheduled
-          enum:
-            - runtime.automations.scheduled
-        payload:
-          type: object
-          required:
-            - slug
-            - schedules
-          properties:
-            slug:
-              type: string
-            schedules:
-              $ref: '#/components/schemas/Schedules'
-            details:
-              type: object
-              additionalProperties: true
-
-    TriggeredWebhook:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.webhooks.triggered
-          enum:
-            - runtime.webhooks.triggered
-        payload:
-          type: object
-          required:
-            - workspaceId
-            - automationSlug
-            - method
-          properties:
-            workspaceId:
-              type: string
-            automationSlug:
-              type: string
-            method:
-              type: string
-              example: post
-
-    TriggeredSchedule:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.schedules.triggered
-          enum:
-            - runtime.schedules.triggered
-        payload:
-          type: object
-          required:
-            - workspaceId
-            - automationSlug
-            - schedule
-          properties:
-            workspaceId:
-              type: string
-            automationSlug:
-              type: string
-            schedule:
-              type: string
-
-    SuspendedWorkspace:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.suspended
-          enum:
-            - workspaces.suspended
-        payload:
-          type: object
-          required:
-            - workspaceId
-            - suspended
-            - reason
-          properties:
-            workspaceId:
-              type: string
-            suspended:
-              type: boolean
-            reason:
-              type: string
-
-    ContextSetType:
-      type: string
-      enum:
-        - replace
-        - merge
-        - push
-        - delete
-
-    UpdatedContexts:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.contexts.updated
-          enum:
-            - runtime.contexts.updated
-        payload:
-          type: object
-          required:
-            - updates
-          properties:
-            updates:
-              type: array
-              items:
-                type: object
-                required:
-                  - type
-                  - path
-                  - fullPath
-                  - context
-                properties:
-                  type:
-                    $ref: '#/components/schemas/ContextSetType'
-                  path:
-                    type: string
-                  fullPath:
-                    type: string
-                  context:
-                    type: string
-                  value: {}
-
-    PendingWait:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.waits.pending
-          enum:
-            - runtime.waits.pending
-        payload:
-          type: object
-          required:
-            - id
-            - expiresAt
-            - wait
-          properties:
-            id:
-              type: string
-            expiresAt:
-              type: number
-            wait:
-              $ref: '#/components/schemas/Wait/properties/wait'
-
-    FulfilledWait:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.waits.fulfilled.{{id}}
-          enum:
-            - runtime.waits.fulfilled.{{id}}
-        payload:
-          type: object
-          required:
-            - wait
-            - event
-          properties:
-            id:
-              type: string
-            event:
-              $ref: '#/components/schemas/PrismeEvent'
-
-    FailedFetch:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.fetch.failed
-          enum:
-            - runtime.fetch.failed
-        payload:
-          type: object
-          required:
-            - request
-            - response
-          properties:
-            request: *fetchBody
-            response:
-              type: object
-              required:
-                - status
-                - body
-                - headers
-              properties:
-                status:
-                  type: number
-                body: {}
-                headers:
-                  type: object
-
-    ########################## Topics events ##########################
-    UserTopic:
-      type: object
-      required:
-        - topic
-      properties:
-        topic:
-          type: string
-          example: 'conversation:56'
-        userIds:
-          type: array
-          items:
-            type: string
-          description: Subscribing user ids
-
-    CreatedUserTopic:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: userTopics.created
-          enum:
-            - userTopics.created
-        payload:
-          $ref: '#/components/schemas/UserTopic'
-
-    JoinedUserTopic:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: userTopics.joined
-          enum:
-            - userTopics.joined
-        payload:
-          type: object
-          required:
-            - topic
-            - user
-          properties:
-            user:
-              type: object
-              properties:
-                id:
-                  type: string
-            topic:
-              type: string
-
-    AppEvent:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: someCustomEvent
-        payload:
-          $ref: '#/components/schemas/AnyValue'
-
-    GenericError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: ObjectNotFound
-        message:
-          type: string
-        details:
-          $ref: '#/components/schemas/AnyValue'
-
-    ObjectNotFoundError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: ObjectNotFound
-        message:
-          type: string
-
-    BadParametersError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: BadParameters
-        message:
-          type: string
-        details:
-          type: array
-          items:
-            type: object
-
-    AuthenticationError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: AuthenticationError
-        message:
-          type: string
-          example: Unauthenticated
-
-    ForbiddenError:
-      type: object
-      properties:
-        error:
-          type: string
-          example: ForbiddenError
-        message:
-          type: string
-          example: Forbidden

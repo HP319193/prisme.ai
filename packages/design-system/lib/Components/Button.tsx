@@ -41,7 +41,7 @@ export const Button = ({
       type={antdType}
       htmlType={type}
       {...props}
-      className={`flex flex-row ${unselectedStyle}`}
+      className={`flex flex-row ${unselectedStyle} ${props.className || ''}`}
     >
       {children}
       {tag && (

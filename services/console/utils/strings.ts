@@ -12,7 +12,7 @@ export const truncate = (
 };
 
 export const slugifyAutomation = (
-  workspace: Prismeai.Workspace,
+  automations: Record<string, Prismeai.Automation>,
   automationName: string
 ) => {
   const base = removeDiacritics(automationName)
@@ -21,7 +21,7 @@ export const slugifyAutomation = (
     .slice(0, 20);
   let slug = base;
   let idx = -1;
-  while (slug in (workspace.automations || {})) {
+  while (slug in (automations || {})) {
     idx++;
     slug = `${base}-${idx}`;
   }

@@ -13,6 +13,8 @@ import { AvailableModels } from '../workspaces/__mocks__/workspaces';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../config';
 import { EventType } from '../../eda';
 
+// jest.setTimeout(1000);
+
 global.console.warn = jest.fn();
 
 let brokers: Broker[] = [];
@@ -40,6 +42,7 @@ const getMocks = (
     apps,
     broker as any
   );
+  workspaces.saveWorkspace = () => Promise.resolve();
   const runtime = new Runtime(broker as any, workspaces, new Cache());
 
   brokers.push(broker);
@@ -1006,9 +1009,6 @@ describe("AppInstance's lifecycle events", () => {
     const event = await broker.send<Prismeai.UninstalledAppInstance['payload']>(
       EventType.UninstalledApp,
       {
-        appInstance: {
-          appSlug: AvailableModels.BasicApp,
-        },
         slug: AvailableModels.BasicApp,
       },
       {

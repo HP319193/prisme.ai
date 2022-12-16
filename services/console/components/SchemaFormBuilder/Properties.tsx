@@ -114,7 +114,7 @@ export const Properties = ({
         <Collapse
           key={key}
           items={[item]}
-          expandIconPosition="left"
+          expandIconPosition="start"
           icon={item.isEmpty ? () => <div className="w-3" /> : undefined}
         />
       ))}

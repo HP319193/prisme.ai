@@ -1,32 +1,27 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import {
-  Layout,
-  Loading,
-  Modal,
-  notification,
-  Tooltip,
-} from '@prisme.ai/design-system';
+import { Layout, Loading, notification } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
 import WorkspaceSource from '../../views/WorkspaceSource';
-import { useWorkspace } from '../../components/WorkspaceProvider';
 import workspaceLayoutContext, { WorkspaceLayoutContext } from './context';
 import useLocalizedText from '../../utils/useLocalizedText';
 import Storage from '../../utils/Storage';
-import { useApps } from '../../components/AppsProvider';
-import usePages from '../../components/PagesProvider/context';
 import AppsStore from '../../views/AppsStore';
 import { generateNewName } from '../../utils/generateNewName';
-import { Workspace } from '@prisme.ai/sdk';
 import Navigation from './Navigation';
-import { DoubleLeftOutlined, WarningOutlined } from '@ant-design/icons';
+import { useWorkspace } from '../../providers/Workspace';
+import Expand from '../../components/Navigation/Expand';
 
 export const WorkspaceLayout: FC = ({ children }) => {
-  const { workspace, createAutomation, saveSource, save } = useWorkspace();
-  const { getAppInstances } = useApps();
-  const { pages, createPage } = usePages();
+  const {
+    workspace,
+    saveWorkspace,
+    createAutomation,
+    createPage,
+  } = useWorkspace();
+
   const router = useRouter();
 
   const { localize } = useLocalizedText();
@@ -50,29 +45,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     !Storage.get('__workpaceSidebarMinimized')
   );
   const [appStoreVisible, setAppStoreVisible] = useState(false);
-  const [dirty, setDirty] = useState(false);
-
-  useEffect(() => {
-    const onRouteChangeStart = (url: string) => {
-      if (!dirty) return;
-      Modal.confirm({
-        icon: <WarningOutlined />,
-        content: t('workspace.dirtyWarning'),
-        onOk: () => {
-          setDirty(false);
-          setTimeout(() => router.push(url));
-        },
-        okText: t('workspace.dirtyOk'),
-        cancelText: t('cancel', { ns: 'common' }),
-      });
-      throw 'wait for warning';
-    };
-    router.events.on('routeChangeStart', onRouteChangeStart);
-
-    return () => {
-      router.events.off('routeChangeStart', onRouteChangeStart);
-    };
-  }, [dirty, router, t]);
 
   useEffect(() => {
     if (fullSidebar) {
@@ -81,10 +53,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
       Storage.set('__workpaceSidebarMinimized', 1);
     }
   }, [fullSidebar]);
-
-  useEffect(() => {
-    getAppInstances(workspace.id);
-  }, [getAppInstances, workspace]);
 
   // Manage source panel display
   useEffect(() => {
@@ -101,28 +69,26 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
     setSaving(true);
     try {
-      await saveSource(newSource);
+      await saveWorkspace(newSource);
       notification.success({
         message: t('expert.save.confirm'),
         placement: 'bottomRight',
       });
     } catch {}
     setSaving(false);
-  }, [newSource, saveSource, t]);
+  }, [newSource, saveWorkspace, t]);
 
   const onSave = useCallback(
-    async (workspace: Workspace) => {
+    async (workspace: Prismeai.Workspace) => {
       setSaving(true);
-      try {
-        await save(workspace);
-        notification.success({
-          message: t('save.confirm'),
-          placement: 'bottomRight',
-        });
-      } catch {}
+      await saveWorkspace(workspace);
+      notification.success({
+        message: t('save.confirm'),
+        placement: 'bottomRight',
+      });
       setSaving(false);
     },
-    [save, t]
+    [saveWorkspace, t]
   );
 
   const displaySource = useCallback((v: boolean) => {
@@ -141,8 +107,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       name,
       do: [],
     });
-
-    setCreating(false);
+    setTimeout(() => setCreating(false));
     if (createdAutomation) {
       await router.push(
         `/workspaces/${workspace.id}/automations/${createdAutomation.slug}`
@@ -159,31 +124,35 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   const createPageHandler = useCallback(async () => {
     setCreating(true);
-
     const name = generateNewName(
       t(`pages.create.defaultName`),
-      Array.from(pages.get(workspace.id) || []).map(({ name }) => name),
+      Object.values(workspace.pages || {}).map(({ name }) => name),
       localize
     );
-
-    try {
-      const createdPage = await createPage(workspace.id, {
-        name: {
-          [language]: name,
-        },
-        blocks: [],
-      });
-
-      if (createdPage) {
-        await router.push(
-          `/workspaces/${workspace.id}/pages/${createdPage.id}`
-        );
-      }
-    } catch (e) {}
-    setCreating(false);
-  }, [t, pages, workspace.id, localize, createPage, language, router]);
+    const createdPage = await createPage({
+      name: {
+        [language]: name,
+      },
+      blocks: [],
+    });
+    setTimeout(() => setCreating(false));
+    if (createdPage) {
+      await router.push(
+        `/workspaces/${workspace.id}/pages/${createdPage.slug}`
+      );
+    }
+  }, [
+    createPage,
+    language,
+    localize,
+    router,
+    t,
+    workspace.id,
+    workspace.pages,
+  ]);
 
   const installAppHandler = useCallback(() => setAppStoreVisible(true), []);
+
   return (
     <workspaceLayoutContext.Provider
       value={{
@@ -199,8 +168,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
         setNewSource,
         fullSidebar,
         setFullSidebar,
-        dirty,
-        setDirty,
         createAutomation: createAutomationHandler,
         createPage: createPageHandler,
         installApp: installAppHandler,
@@ -252,26 +219,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
                 onExpand={() => setFullSidebar(true)}
                 className="max-h-[calc(100%-3rem)]"
               />
-              <div className="flex justify-end bg-white">
-                <div className="flex flex-1 items-center pl-4 whitespace-nowrap mr-5 text-[0.75rem] text-pr-grey">
-                  <a href="https://prisme.ai" target="_blank" rel="noreferrer">
-                    {t('powered', { ns: 'common' })}
-                  </a>
-                </div>
-                <Tooltip
-                  title={t('workspace.sidebar', {
-                    context: fullSidebar ? 'minimize' : 'extend',
-                  })}
-                  placement="right"
-                >
-                  <DoubleLeftOutlined
-                    className={`text-[0.8rem] m-2 mr-6 transition-all ${
-                      fullSidebar ? '' : 'rotate-180'
-                    }`}
-                    onClick={() => setFullSidebar(!fullSidebar)}
-                  />
-                </Tooltip>
-              </div>
+              <Expand
+                expanded={fullSidebar}
+                onToggle={() => setFullSidebar(!fullSidebar)}
+              />
             </div>
           </Layout>
           <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-full">

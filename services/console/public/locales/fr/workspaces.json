@@ -81,17 +81,20 @@
     "search": "Rechercher",
     "sidebar_extend": "Étendre la navigation",
     "sidebar_minimize": "Réduire la navigation",
+    "notFound": "Le Workspace n'existe pas.",
     "versions": {
       "create": {
         "label": "Créer une version",
         "description": "Créez une nouvelle version vers laquelle vous pourrez revenir à tout instant même après avoir enregistré des modification sur votre Workspace.",
-        "name": "Décrivez votre version si vous le désirez"
+        "name": "Décrivez votre version si vous le désirez",
+        "success": "Nouvelle version crée. Vous pourrez la retrouver dans l'Activité de votre Workspace."
       },
       "rollback": {
         "label": "Revenir à cette version",
         "description": "Revenir à cette version. Attention, l'état actuel de votre Workspace ne sera pas conservé.",
         "confirm": "Attention, l'état actuel de votre Workspace sera perdu si vous n'en avez pas enregistré une version.",
-        "confirm_ok": "Revenir à cette version"
+        "confirm_ok": "Revenir à cette version",
+        "success": "Retour à la version précédente avec succès."
       }
     }
   },
@@ -140,7 +143,12 @@
       "name": "Attribut",
       "value": "Valeur"
     },
-    "more": "Charger les évènements plus anciens"
+    "more": "Charger les évènements plus anciens",
+    "autocomplete": {
+      "label": "{{workspace}}",
+      "label_pages": "Pages",
+      "label_imports": "{{app}}"
+    }
   },
   "automations": {
     "link": "Automatisations",
@@ -167,15 +175,18 @@
       "error": "Une erreur est survenue"
     },
     "duplicate": {
-      "help": "Dupliquer l'Automatisation"
+      "help": "Dupliquer l'Automatisation",
+      "success": "L'Automatisation a été dupliquée"
     },
     "source": {
       "label": "Voir le code",
+      "close": "Masquer le code",
       "help": "Affiche la structure de l'Automatisation au format brut"
     },
     "endpoint": {
       "copied": "L'adresse a bien été copiée"
     },
+    "notFound": "L'Automatisation n'existe pas.",
     "trigger": {
       "events": {
         "title": "Événements",
@@ -471,13 +482,20 @@
     "link": "Apps",
     "empty": "Tout est App",
     "install": "Ajouter une App",
-    "uninstall": "Êtes vous sûr de vouloir supprimer {{appName}} de votre workspace ?",
-    "uninstallConfirm": "Désinstaller {{appName}}",
+    "uninstall": "Êtes vous sûr de vouloir supprimer {{slug}} de votre workspace ?",
+    "uninstallConfirm": "Désinstaller {{slug}}",
     "uninstallTooltip": "Désinstaller",
     "configTooltip": "Paramétrer",
     "search": "Chercher une app...",
     "title": "App Store",
+    "save": "Enregistrer",
     "saveSuccess": "Configuration d'App sauvegardée avec succès",
+    "notFound": "L'App n'existe pas.",
+    "source": {
+      "label": "Voir le code",
+      "close": "Masquer le code",
+      "help": "Affiche la structure de l'App au format brut"
+    },
     "details": {
       "title": "Détails de l'App",
       "appName": {
@@ -517,12 +535,15 @@
       "defaultName": "Page"
     },
     "duplicate": {
-      "help": "Créer une copie de cette page"
+      "help": "Créer une copie de cette page",
+      "success": "La Page a été dupliquée"
     },
     "source": {
       "label": "Voir le code",
+      "close": "Masquer le code",
       "help": "Affiche la structure de la page au format brut"
     },
+    "notFound": "La Page n'existe pas.",
     "empty": {
       "title": "<0>Cette page est vide…</0><1>Commencez à créer, ajoutez votre premier bloc !</1>",
       "subtitle": "Vous ne savez pas par quoi commencer ?",

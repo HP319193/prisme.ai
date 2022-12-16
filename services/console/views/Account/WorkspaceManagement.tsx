@@ -1,5 +1,4 @@
-import AccountLayout from './AccountLayout';
-import { useWorkspaces } from '../../components/WorkspacesProvider';
+import { getLayout } from './AccountLayout';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Error404 from '../Errors/404';
@@ -12,10 +11,10 @@ import Usages from './Components/Usages';
 import ShareWorkspace from '../../components/Share/ShareWorkspace';
 import RightSidebar from './Components/RightSidebar';
 import BillingPlan from './Components/BillingPlan';
+import { useWorkspaces } from '../../providers/Workspaces';
+import WorkspaceProvider from '../../providers/Workspace';
 
-interface MyAccountProps {}
-
-const MyAccount = ({}: MyAccountProps) => {
+const WorkspaceManagement = () => {
   const { t } = useTranslation('user');
   const { t: workspaceT } = useTranslation('workspaces');
 
@@ -24,8 +23,12 @@ const MyAccount = ({}: MyAccountProps) => {
     query: { workspaceId },
   } = useRouter();
 
-  const { workspacesUsage, fetchWorkspaceUsage, loading, error } =
-    useWorkspacesUsage();
+  const {
+    workspacesUsage,
+    fetchWorkspaceUsage,
+    loading,
+    error,
+  } = useWorkspacesUsage();
 
   const { getUsersPermissions, usersPermissions } = usePermissions();
 
@@ -38,7 +41,7 @@ const MyAccount = ({}: MyAccountProps) => {
   }, [initialFetch, workspaceId]);
 
   const currentWorkspace = useMemo(
-    () => workspaces.get(`${workspaceId}`),
+    () => workspaces.find(({ id }) => id === `${workspaceId}`),
     [workspaceId, workspaces]
   );
 
@@ -66,7 +69,7 @@ const MyAccount = ({}: MyAccountProps) => {
   }
 
   return (
-    <AccountLayout>
+    <>
       <Head>
         <title>
           {t('title.workspaceManagement', {
@@ -77,26 +80,30 @@ const MyAccount = ({}: MyAccountProps) => {
       {loading ? (
         <Loading />
       ) : (
-        <div className="flex flex-row h-full grow">
-          <div className="flex flex-col grow m-[3.938rem] space-y-5 w-4/5">
-            <BillingPlan wpName={currentWorkspace.name} />
-            <Usages
-              currentWorkspaceUsages={currentWorkspaceUsages || []}
-              nbUser={
-                usersPermissions.get(`workspaces:${workspaceId}`)?.length || 0
-              }
-              error={error}
-            />
-            <div className="ml-2 font-bold">
-              {workspaceT('workspace.share')}
+        <WorkspaceProvider id={`${workspaceId}`}>
+          <div className="flex flex-row h-full flex-1">
+            <div className="flex flex-col flex-1 m-[3.938rem] space-y-5 w-4/5">
+              <BillingPlan wpName={currentWorkspace.name} />
+              <Usages
+                currentWorkspaceUsages={currentWorkspaceUsages || []}
+                nbUser={
+                  usersPermissions.get(`workspaces:${workspaceId}`)?.length || 0
+                }
+                error={error}
+              />
+              <div className="ml-2 font-bold">
+                {workspaceT('workspace.share')}
+              </div>
+              <ShareWorkspace workspaceId={`${workspaceId}`} />
             </div>
-            <ShareWorkspace parentWorkspaceId={`${workspaceId}`} />
+            <RightSidebar />
           </div>
-          <RightSidebar />
-        </div>
+        </WorkspaceProvider>
       )}
-    </AccountLayout>
+    </>
   );
 };
 
-export default MyAccount;
+WorkspaceManagement.getLayout = getLayout;
+
+export default WorkspaceManagement;

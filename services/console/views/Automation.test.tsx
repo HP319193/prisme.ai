@@ -1,12 +1,24 @@
-import Automation from './Automation';
+import { Automation } from './Automation';
 import renderer, { act } from 'react-test-renderer';
 import AutomationBuilder from '../components/AutomationBuilder';
 import { useRouter } from 'next/router';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { notification } from '@prisme.ai/design-system';
 import EditDetails from '../layouts/EditDetails';
-import { useWorkspace } from '../components/WorkspaceProvider';
+import { workspaceContext } from '../providers/Workspace';
+import { automationContext } from '../providers/Automation';
+import { workspaceLayoutContext } from '../layouts/WorkspaceLayout/context';
 import { PageHeader } from 'antd';
+
+jest.useFakeTimers();
+
+jest.mock(
+  '../utils/useDirtyWarning',
+  () =>
+    function useDirtyWarning() {
+      return [];
+    }
+);
 
 jest.mock('../utils/useYaml', () => {
   const toJSON = jest.fn();
@@ -18,19 +30,6 @@ jest.mock('../utils/useYaml', () => {
   return useYaml;
 });
 
-jest.mock('../components/WorkspaceProvider', () => {
-  const mock = {
-    workspace: {
-      id: '42',
-      name: 'Foo',
-    },
-    updateAutomation: jest.fn(),
-  };
-
-  return {
-    useWorkspace: () => mock,
-  };
-});
 jest.mock('next/router', () => {
   const mock = {
     query: {
@@ -47,59 +46,65 @@ jest.mock('../components/useKeyboardShortcut', () => jest.fn());
 
 jest.mock('../components/AutomationBuilder', () => () => null);
 
-beforeEach(() => {
-  useWorkspace().workspace = {
-    id: '42',
-    name: 'foo',
-    createdAt: '',
-    updatedAt: '',
-    automations: {
-      foo: {
-        name: 'Hello',
-        do: [],
-      },
-      bar: {
-        name: 'World',
-        do: [],
-      },
-    },
-  };
+jest.mock(
+  '../components/SourceEdit/SourceEdit',
+  () =>
+    function SourceEdit() {
+      return null;
+    }
+);
 
+beforeEach(() => {
   useRouter().query.automationId = 'foo';
 });
 
+const automationContextValue: any = {
+  automation: {
+    slug: 'foo',
+    do: [],
+  },
+  saveAutomation: jest.fn(),
+  saving: false,
+  deleteAutomation: jest.fn(),
+};
+
 it('should render', () => {
-  const root = renderer.create(<Automation />);
+  const root = renderer.create(
+    <workspaceContext.Provider value={{ workspace: { id: '42' } } as any}>
+      <workspaceLayoutContext.Provider value={{} as any}>
+        <automationContext.Provider value={automationContextValue}>
+          <Automation />
+        </automationContext.Provider>
+      </workspaceLayoutContext.Provider>
+    </workspaceContext.Provider>
+  );
   expect(root.toJSON()).toMatchSnapshot();
 });
 
 it('should render redirect', () => {
   useRouter().query.automationId = 'not found';
-  const root = renderer.create(<Automation />);
+  const root = renderer.create(
+    <workspaceContext.Provider value={{ workspace: { id: '42' } } as any}>
+      <workspaceLayoutContext.Provider value={{} as any}>
+        <automationContext.Provider value={automationContextValue}>
+          <Automation />
+        </automationContext.Provider>
+      </workspaceLayoutContext.Provider>
+    </workspaceContext.Provider>
+  );
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it('should update value', async () => {
-  const root = renderer.create(<Automation />);
-  expect(root.root.findByType(AutomationBuilder).props.value).toEqual({
-    name: 'Hello',
-    do: [],
-  });
-
-  (useRouter() as any).query.automationId = 'bar';
-
-  act(() => {
-    root.update(<Automation />);
-  });
-
-  expect(root.root.findByType(AutomationBuilder).props.value).toEqual({
-    name: 'World',
-    do: [],
-  });
-});
-
 it('should change url after changing slug', async () => {
-  const root = renderer.create(<Automation />);
+  const root = renderer.create(
+    <workspaceContext.Provider value={{ workspace: { id: '42' } } as any}>
+      <workspaceLayoutContext.Provider value={{} as any}>
+        <automationContext.Provider value={automationContextValue}>
+          <Automation />
+        </automationContext.Provider>
+      </workspaceLayoutContext.Provider>
+    </workspaceContext.Provider>
+  );
   const title = renderer.create(root.root.findByType(PageHeader).props.title);
 
   act(() => {
@@ -129,7 +134,15 @@ it('should change url after changing slug', async () => {
 });
 
 it('should save', async () => {
-  const root = renderer.create(<Automation />);
+  const root = renderer.create(
+    <workspaceContext.Provider value={{ workspace: { id: '42' } } as any}>
+      <workspaceLayoutContext.Provider value={{} as any}>
+        <automationContext.Provider value={automationContextValue}>
+          <Automation />
+        </automationContext.Provider>
+      </workspaceLayoutContext.Provider>
+    </workspaceContext.Provider>
+  );
 
   act(() => {
     return;
@@ -139,12 +152,20 @@ it('should save', async () => {
     await root.root.findByType(PageHeader).props.extra[0].props.onClick();
   });
 
-  expect(useWorkspace().updateAutomation).toHaveBeenCalled();
+  expect(automationContextValue.saveAutomation).toHaveBeenCalled();
   expect(notification.success).toHaveBeenCalledWith;
 });
 
 it('should save on shortcut', async () => {
-  const root = renderer.create(<Automation />);
+  const root = renderer.create(
+    <workspaceContext.Provider value={{ workspace: { id: '42' } } as any}>
+      <workspaceLayoutContext.Provider value={{} as any}>
+        <automationContext.Provider value={automationContextValue}>
+          <Automation />
+        </automationContext.Provider>
+      </workspaceLayoutContext.Provider>
+    </workspaceContext.Provider>
+  );
 
   act(() => {
     return;
@@ -155,5 +176,5 @@ it('should save on shortcut', async () => {
     await (useKeyboardShortcut as jest.Mock).mock.calls[0][0][0].command(e);
   });
   expect(e.preventDefault).toHaveBeenCalled();
-  expect(useWorkspace().updateAutomation).toHaveBeenCalled();
+  expect(automationContextValue.saveAutomation).toHaveBeenCalled();
 });

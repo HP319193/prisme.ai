@@ -1,10 +1,9 @@
 import { builtinBlocks } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
-import { useApps } from '../AppsProvider';
-import { useWorkspace } from '../WorkspaceProvider';
 import workspaceIcon from '../../icons/icon-workspace.svg';
 import builtinBlocksVariants from './builtinBlocksVariants';
+import { useWorkspace } from '../../providers/Workspace';
 
 export interface BlockInCatalog extends Prismeai.Block {
   slug: string;
@@ -17,6 +16,7 @@ export interface BlockInCatalog extends Prismeai.Block {
 const builtInBlocksOrder = [
   'Header',
   'RichText',
+  'Buttons',
   'Form',
   'DataTable',
   'Cards',
@@ -26,17 +26,19 @@ const builtInBlocksOrder = [
 export const useBlocks = () => {
   const { t } = useTranslation('workspaces');
   const {
-    workspace: { id: workspaceId, name, blocks: workspaceBlocks, photo } = {},
+    workspace: { name, blocks: workspaceBlocks, photo, imports } = {},
   } = useWorkspace();
-  const { appInstances } = useApps();
 
   const available: BlockInCatalog[] = useMemo(() => {
     const blocks: BlockInCatalog[] = [
       ...Object.keys(builtinBlocks)
-        .sort(
-          (a, b) =>
-            builtInBlocksOrder.indexOf(a) - builtInBlocksOrder.indexOf(b)
-        )
+        .sort((a, b) => {
+          const indexA = builtInBlocksOrder.indexOf(a);
+          const indexB = builtInBlocksOrder.indexOf(b);
+          return (
+            (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB)
+          );
+        })
         .map((key) => ({
           builtIn: true,
           slug: key,
@@ -59,22 +61,23 @@ export const useBlocks = () => {
           }))
         : []),
       // Apps blocks
-      ...((workspaceId && appInstances.get(workspaceId)) || []).reduce<
-        BlockInCatalog[]
-      >((prev, { slug = '', appName = '', blocks, photo }) => {
-        if (!blocks || blocks.length === 0) return prev;
+      ...Object.entries(imports || {}).reduce<BlockInCatalog[]>(
+        (prev, [, { appName = '', blocks, photo }]) => {
+          if (!blocks || blocks.length === 0) return prev;
 
-        return [
-          ...prev,
-          ...blocks.map((block) => ({
-            ...block,
-            from: appName,
-            slug: `${slug}.${block.slug}`,
-            name: block.name || block.slug,
-            icon: photo,
-          })),
-        ];
-      }, []),
+          return [
+            ...prev,
+            ...blocks.map((block) => ({
+              ...block,
+              from: appName,
+              slug: block.slug,
+              name: block.name || block.slug,
+              icon: photo,
+            })),
+          ];
+        },
+        []
+      ),
     ];
     return blocks.filter(({ slug, block }, k, all) => {
       return (
@@ -82,7 +85,7 @@ export const useBlocks = () => {
         (!block || all.find(({ slug }) => block === slug))
       );
     });
-  }, [appInstances, name, photo, t, workspaceBlocks, workspaceId]);
+  }, [imports, name, photo, t, workspaceBlocks]);
 
   const variants = useMemo(() => {
     const roots: BlockInCatalog[] = [];

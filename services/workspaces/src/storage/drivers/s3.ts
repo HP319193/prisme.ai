@@ -1,6 +1,7 @@
-import { IStorage, ObjectList } from '../types';
+import { DriverType, IStorage, ObjectList } from '../types';
 import AWS from 'aws-sdk';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
+import path from 'path';
 
 export interface S3Options {
   accessKeyId: string;
@@ -34,8 +35,13 @@ export default class S3Like implements IStorage {
     });
   }
 
+  type() {
+    return DriverType.S3_LIKE;
+  }
+
   public find(
     prefix: string,
+    fullKeys?: boolean,
     continuationToken?: string,
     out: ObjectList = []
   ): Promise<ObjectList> {
@@ -51,13 +57,19 @@ export default class S3Like implements IStorage {
           out.push(
             ...(Contents || [])
               .filter((cur) => cur.Key)
-              .map((cur) => ({
-                key: cur.Key!!?.split('/')[0],
-              }))
+              .map((cur) => {
+                if (fullKeys) {
+                  return { key: cur.Key!! };
+                }
+                const splittedKey = cur.Key!!?.split('/');
+                return {
+                  key: splittedKey[splittedKey.length - 1],
+                };
+              })
           );
           !IsTruncated
             ? resolve(out)
-            : resolve(this.find(prefix, NextContinuationToken, out));
+            : resolve(this.find(prefix, fullKeys, NextContinuationToken, out));
         })
         .catch(reject);
     });
@@ -169,5 +181,37 @@ export default class S3Like implements IStorage {
         }
       });
     });
+  }
+
+  public async copy(from: string, to: string) {
+    const objects = await this.find(from, true);
+    return await Promise.all(
+      objects.map(
+        ({ key }) =>
+          new Promise((resolve: any, reject: any) => {
+            this.client.copyObject(
+              {
+                Bucket: this.options.bucket,
+                CopySource: `/${this.options.bucket}/${key}`,
+                Key: from === key ? key : path.join(to, key.slice(from.length)),
+                CacheControl: this.options.cacheControl,
+              },
+              function (err: any, data: any) {
+                if (err) {
+                  reject(
+                    new PrismeError(
+                      `Failed to copy from '${from}' to '${to}'`,
+                      err,
+                      ErrorSeverity.Fatal
+                    )
+                  );
+                } else {
+                  resolve(data);
+                }
+              }
+            );
+          })
+      )
+    );
   }
 }

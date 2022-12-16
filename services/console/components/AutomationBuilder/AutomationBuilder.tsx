@@ -24,7 +24,6 @@ import Repeat from './Repeat';
 import TriggerBlock from './TriggerBlock';
 import Conditions from './Conditions';
 import iconPrisme from '../../icons/icon-prisme.svg';
-import iconWorkspace from '../../icons/icon-workspace.svg';
 import Panel from '../Panel';
 import InstructionForm from './Panel/InstructionForm';
 import ConditionForm from './Panel/ConditionForm';
@@ -36,7 +35,6 @@ import OutputBlock from './OutputBlock';
 import OutputForm from './Panel/OutputForm';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { Schema } from '@prisme.ai/design-system';
-import { useWorkspace } from '../WorkspaceProvider';
 
 type InstructionSchemaTupple = [
   string,
@@ -44,7 +42,8 @@ type InstructionSchemaTupple = [
   { icon: string }
 ];
 interface AutomationBuilderProps {
-  id?: string;
+  id: string;
+  workspaceId: string;
   value: Prismeai.Automation;
   onChange: Dispatch<SetStateAction<Prismeai.Automation>>;
   customInstructions?: {
@@ -72,7 +71,8 @@ const edgeTypes = {
 };
 
 export const AutomationBuilder: FC<AutomationBuilderProps> = ({
-  id = '',
+  id,
+  workspaceId,
   value,
   onChange,
   customInstructions,
@@ -122,16 +122,11 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     );
   }, [zoomPanHelper, id]);
 
-  const {
-    workspace,
-    workspace: { automations = {} },
-  } = useWorkspace();
-
   const elements = useMemo(() => {
     const flow = buildFlow(value);
     if (value.when && value.when.endpoint) {
       flow[0].data.endpoint = generateEndpoint(
-        workspace.id,
+        workspaceId,
         `${
           value.when.endpoint === 'true' || value.when.endpoint === true
             ? id
@@ -140,7 +135,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
       );
     }
     return flow;
-  }, [id, value, workspace.id]);
+  }, [id, value, workspaceId]);
 
   const instructionsSchemas: InstructionSchemaTupple[] = useMemo(
     () => [
@@ -155,14 +150,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         ),
         { icon: iconPrisme.src },
       ],
-      ...[
-        {
-          appName: localize(workspace.name),
-          automations,
-          icon: iconWorkspace.src,
-        },
-        ...(customInstructions || []),
-      ].map<InstructionSchemaTupple>(
+      ...(customInstructions || []).map<InstructionSchemaTupple>(
         ({ appName = '', automations, icon = '' }) => {
           return [
             appName,
@@ -191,7 +179,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         }
       ),
     ],
-    [automations, customInstructions, id, localize, t, workspace.name]
+    [customInstructions, id, localize, t]
   );
 
   const hidePanel = useCallback(() => {

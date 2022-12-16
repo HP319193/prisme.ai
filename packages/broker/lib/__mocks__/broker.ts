@@ -146,4 +146,7 @@ export default class Broker {
       this.callbacks[topic].push(cb);
     }
   }
+
+  async buffer() {}
+  async flush() {}
 }

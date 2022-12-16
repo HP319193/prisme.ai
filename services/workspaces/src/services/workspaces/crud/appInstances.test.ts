@@ -1,240 +1,150 @@
 import AppInstances from './appInstances';
 import '@prisme.ai/types';
-import {
-  AlreadyUsedError,
-  MissingFieldError,
-  ObjectNotFoundError,
-} from '../../../errors';
+import { ActionType, SubjectType } from '../../../permissions';
+import { DSULType } from '../../DSULStorage';
+import { MockStorage } from '../../DSULStorage/__mocks__';
+import { AppDetails } from '../../apps/crud/apps';
 
-jest.mock('nanoid', () => ({ nanoid: () => '123456' }));
+const USER_ID = '9999';
+const WORKSPACE_ID = '123456';
+const APP_SLUG = 'Custom Code';
+const APP_INSTANCE_SLUG = 'myCode';
+jest.mock('nanoid', () => ({ nanoid: () => WORKSPACE_ID }));
 
-const EMPTY_WORKSPACE_ID = '123456';
-const APP_WORKSPACE_ID = 'APP_WORKPSACE_ID';
-const ALREADY_INSTALLED_WORKSPACE_ID = 'ALREADY_INSTALLED_APP_WORKSPACE_ID';
-const INI_AUTOMATION_SLUG = 'My automated';
-const APP_ID = 'myAppId';
-const APP_INSTANCE_SLUG = 'appInstanceSlug';
-
-const workspaces = {
-  [EMPTY_WORKSPACE_ID]: {
-    name: 'nameWorkspace',
-    id: EMPTY_WORKSPACE_ID,
+const getMockedAccessManager = () => ({
+  user: {
+    id: USER_ID,
   },
-  [APP_WORKSPACE_ID]: {
-    name: 'nameWorkspaceInitialized',
-    id: APP_WORKSPACE_ID,
-    automations: {
-      [INI_AUTOMATION_SLUG]: {
-        name: 'My automatéd: /',
-        do: [],
-      },
-    },
-  },
-
-  [ALREADY_INSTALLED_WORKSPACE_ID]: {
-    name: 'alreadyInstalledAppWorkspaceName',
-    id: ALREADY_INSTALLED_WORKSPACE_ID,
-    imports: {
-      [APP_INSTANCE_SLUG]: {
-        appSlug: APP_ID,
-        version: '1',
-      },
-      anotherSlugThatWillConflict: {
-        appSlug: APP_ID,
-        version: '0',
-      },
-    },
-    automations: {},
-  },
-
-  [EMPTY_WORKSPACE_ID]: {
-    name: 'nameWorkspace',
-    id: EMPTY_WORKSPACE_ID,
-  },
-};
-
-const apps = {
-  [APP_ID]: {
-    name: 'My app name',
-    workspaceId: APP_WORKSPACE_ID,
-    versions: ['2', '1', '0'],
-  },
-};
-const getMockedWorkspaces = () => ({
-  getWorkspace: jest.fn((workspaceId) => workspaces[workspaceId]),
-  save: jest.fn(),
+  throwUnlessCan: jest.fn(),
+  findAll: jest.fn(),
+  create: jest.fn(),
+  get: jest.fn(),
+  update: jest.fn(),
+  delete: jest.fn(),
+  deleteMany: jest.fn(),
 });
-const getMockedApps = () => ({
-  getApp: jest.fn((appSlug, version?: string) => {
-    if (!(appSlug in apps)) {
-      throw new Error();
-    }
-    if (
-      version &&
-      version !== 'current' &&
-      !(apps[appSlug].versions || []).includes(version)
-    ) {
-      throw new Error();
-    }
-    return apps[appSlug];
-  }),
-  exists: jest.fn((appSlug, version?: string) => {
-    if (!(appSlug in apps)) {
-      throw new ObjectNotFoundError();
-    }
-    if (
-      version &&
-      version !== 'current' &&
-      !(apps[appSlug].versions || []).includes(version)
-    ) {
-      throw new ObjectNotFoundError();
-    }
-    return apps[appSlug];
-  }),
+
+const getMockedBroker = () => ({
+  send: jest.fn(),
+  buffer: jest.fn(),
+  flush: jest.fn(),
+  clear: jest.fn(),
 });
-const getMockedBroker = () => ({ send: jest.fn() });
 
-describe('installApp', () => {
-  it('installApp should call Workspaces crud & broker', async () => {
-    const mockedWorkspaces: any = getMockedWorkspaces();
-    const mockedBroker: any = getMockedBroker();
-    const mockedApps: any = getMockedApps();
+describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () => {
+  const mockedAccessManager: any = getMockedAccessManager();
+  const dsulStorage = new MockStorage(DSULType.Imports);
+  let mockedBroker: any;
+  let appInstancesCrud: AppInstances;
+  const dsulSaveSpy = jest.spyOn(dsulStorage, 'save');
+  const dsulDeleteSpy = jest.spyOn(dsulStorage, 'delete');
+  const apps = {
+    getApp: jest.fn(() => ({
+      config: {},
+    })),
+    exists: jest.fn((appSlug: string, appVersion: string) => {
+      return true;
+    }),
+  };
 
-    const appInstancesCrud = new AppInstances(
-      mockedWorkspaces,
-      mockedApps,
-      mockedBroker
+  beforeEach(() => {
+    mockedBroker = getMockedBroker();
+    appInstancesCrud = new AppInstances(
+      mockedAccessManager,
+      mockedBroker,
+      dsulStorage,
+      apps as any
     );
+  });
 
-    const appInstance = {
-      appSlug: APP_ID,
-    };
-    const result = await appInstancesCrud.installApp(EMPTY_WORKSPACE_ID, {
-      ...appInstance,
+  it('installApp', async () => {
+    const slug = APP_INSTANCE_SLUG;
+    const appInstance: Prismeai.AppInstance & { slug: string } = {
+      appSlug: APP_SLUG,
       slug: APP_INSTANCE_SLUG,
-    });
+    };
+    const events = {
+      emit: [],
+      listen: [],
+    };
+    const result = await appInstancesCrud.installApp(WORKSPACE_ID, appInstance);
 
-    expect(result).toMatchObject(appInstance);
-    expect(mockedWorkspaces.save).toHaveBeenCalledWith(EMPTY_WORKSPACE_ID, {
-      ...workspaces[EMPTY_WORKSPACE_ID],
-      imports: { [APP_INSTANCE_SLUG]: appInstance },
-    });
+    expect(result).toEqual(appInstance);
+    expect(mockedAccessManager.throwUnlessCan).toHaveBeenCalledWith(
+      ActionType.Update,
+      SubjectType.Workspace,
+      WORKSPACE_ID
+    );
+    expect(dsulSaveSpy).toHaveBeenCalledWith(
+      { workspaceId: WORKSPACE_ID, slug },
+      result,
+      {
+        mode: 'create',
+        updatedBy: USER_ID,
+        additionalIndexFields: {
+          events,
+        },
+      }
+    );
     expect(mockedBroker.send).toHaveBeenCalledWith(
       'workspaces.apps.installed',
       {
         appInstance,
-        slug: APP_INSTANCE_SLUG,
+        slug,
+        events,
       },
-      expect.anything()
+      {
+        appSlug: appInstance.appSlug,
+        appInstanceFullSlug: slug,
+        workspaceId: WORKSPACE_ID,
+      }
     );
+    expect(apps.exists).toHaveBeenCalledWith(
+      appInstance.appSlug,
+      appInstance.appVersion
+    );
+
+    const getResult = await appInstancesCrud.getAppInstance(WORKSPACE_ID, slug);
+    expect(getResult).toEqual({ ...result, config: { value: {} } });
   });
 
-  it('installApp should throw MissingFieldError if slug not defined', async () => {
-    const mockedWorkspaces: any = getMockedWorkspaces();
-    const mockedBroker: any = getMockedBroker();
-    const mockedApps: any = getMockedApps();
-
-    const appInstancesCrud = new AppInstances(
-      mockedWorkspaces,
-      mockedApps,
-      mockedBroker
-    );
-
-    expect(
-      appInstancesCrud.installApp(EMPTY_WORKSPACE_ID, { appSlug: '' } as any)
-    ).rejects.toThrow(MissingFieldError);
-  });
-
-  it('installApp should throw AlreadyUsedError if slug already in use', async () => {
-    const mockedWorkspaces: any = getMockedWorkspaces();
-    const mockedBroker: any = getMockedBroker();
-    const mockedApps: any = getMockedApps();
-
-    const appInstancesCrud = new AppInstances(
-      mockedWorkspaces,
-      mockedApps,
-      mockedBroker
-    );
-
-    expect(
-      appInstancesCrud.installApp(ALREADY_INSTALLED_WORKSPACE_ID, {
-        appSlug: '',
-        slug: APP_INSTANCE_SLUG,
-      } as any)
-    ).rejects.toThrow(AlreadyUsedError);
-  });
-
-  it('installApp should throw ObjectNotFoundError if app not found', async () => {
-    const mockedWorkspaces: any = getMockedWorkspaces();
-    const mockedBroker: any = getMockedBroker();
-    const mockedApps: any = getMockedApps();
-
-    const appInstancesCrud = new AppInstances(
-      mockedWorkspaces,
-      mockedApps,
-      mockedBroker
-    );
-
-    expect(
-      appInstancesCrud.installApp(EMPTY_WORKSPACE_ID, {
-        appSlug: 'someUnknownAppId',
-        slug: APP_INSTANCE_SLUG,
-      } as any)
-    ).rejects.toThrow(ObjectNotFoundError);
-  });
-
-  it('installApp should throw ObjectNotFoundError if app version not found', async () => {
-    const mockedWorkspaces: any = getMockedWorkspaces();
-    const mockedBroker: any = getMockedBroker();
-    const mockedApps: any = getMockedApps();
-
-    const appInstancesCrud = new AppInstances(
-      mockedWorkspaces,
-      mockedApps,
-      mockedBroker
-    );
-
-    expect(
-      appInstancesCrud.installApp(EMPTY_WORKSPACE_ID, {
-        appSlug: APP_ID,
-        appVersion: 'someUnknownVersion',
-        slug: APP_INSTANCE_SLUG,
-      } as any)
-    ).rejects.toThrow(ObjectNotFoundError);
-  });
-});
-
-describe('configureApp', () => {
-  it('configureApp should call Workspaces crud & broker', async () => {
-    const mockedWorkspaces: any = getMockedWorkspaces();
-    const mockedBroker: any = getMockedBroker();
-    const mockedApps: any = getMockedApps();
-
-    const appInstancesCrud = new AppInstances(
-      mockedWorkspaces,
-      mockedApps,
-      mockedBroker
-    );
-
-    const appInstance = {
-      appSlug: APP_ID,
-      version: '2',
+  it('configureApp', async () => {
+    const oldSlug = APP_INSTANCE_SLUG;
+    const newSlug = APP_INSTANCE_SLUG + 'Updated';
+    const appInstance: Prismeai.AppInstance & { slug: string } = {
+      appSlug: APP_SLUG,
+      slug: newSlug,
+      appVersion: 'someVersion',
+      config: {
+        foo: 'bar',
+      },
+    };
+    const events = {
+      emit: [],
+      listen: [],
     };
     const result = await appInstancesCrud.configureApp(
-      ALREADY_INSTALLED_WORKSPACE_ID,
-      APP_INSTANCE_SLUG,
+      WORKSPACE_ID,
+      oldSlug,
       appInstance
     );
 
-    expect(result).toMatchObject(appInstance);
-    expect(mockedWorkspaces.save).toHaveBeenCalledWith(
-      ALREADY_INSTALLED_WORKSPACE_ID,
+    expect(result).toEqual({
+      ...appInstance,
+      config: { value: appInstance?.config },
+    });
+    expect(mockedAccessManager.throwUnlessCan).toHaveBeenCalledWith(
+      ActionType.Update,
+      SubjectType.Workspace,
+      WORKSPACE_ID
+    );
+    expect(dsulSaveSpy).toHaveBeenCalledWith(
+      { workspaceId: WORKSPACE_ID, slug: newSlug },
+      appInstance,
       {
-        ...workspaces[ALREADY_INSTALLED_WORKSPACE_ID],
-        imports: {
-          ...workspaces[ALREADY_INSTALLED_WORKSPACE_ID].imports,
-          [APP_INSTANCE_SLUG]: appInstance,
-        },
+        mode: 'update',
+        updatedBy: USER_ID,
+        additionalIndexFields: { events },
       }
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
@@ -242,97 +152,187 @@ describe('configureApp', () => {
       {
         appInstance: {
           ...appInstance,
-          oldConfig: expect.objectContaining({}),
+          oldConfig: {},
         },
-        slug: APP_INSTANCE_SLUG,
+        slug: newSlug,
+        oldSlug,
+        events,
       },
-      expect.anything()
+      {
+        appSlug: appInstance.appSlug,
+        appInstanceFullSlug: newSlug,
+        workspaceId: WORKSPACE_ID,
+      }
+    );
+    expect(apps.exists).toHaveBeenCalledWith(
+      appInstance.appSlug,
+      appInstance.appVersion
     );
   });
 
-  it('configureApp should throw ObjectNotFound if appInstance not found', async () => {
-    const mockedWorkspaces: any = getMockedWorkspaces();
-    const mockedBroker: any = getMockedBroker();
-    const mockedApps: any = getMockedApps();
+  it('uninstallApp', async () => {
+    const slug = APP_INSTANCE_SLUG + 'Updated';
+    await appInstancesCrud.uninstallApp(WORKSPACE_ID, slug);
 
-    const appInstancesCrud = new AppInstances(
-      mockedWorkspaces,
-      mockedApps,
-      mockedBroker
+    expect(mockedAccessManager.throwUnlessCan).toHaveBeenCalledWith(
+      ActionType.Update,
+      SubjectType.Workspace,
+      WORKSPACE_ID
     );
-
-    const appInstance = {
-      appSlug: APP_ID,
-      version: '2',
-      slug: APP_INSTANCE_SLUG,
-    };
-    expect(
-      appInstancesCrud.configureApp(
-        ALREADY_INSTALLED_WORKSPACE_ID,
-        'someUnknownAppInstanceSlug',
-        appInstance
-      )
-    ).rejects.toThrow(ObjectNotFoundError);
-  });
-
-  it('configureApp should throw AlreadyUsedError if trying to rename for an already used slug', async () => {
-    const mockedWorkspaces: any = getMockedWorkspaces();
-    const mockedBroker: any = getMockedBroker();
-    const mockedApps: any = getMockedApps();
-
-    const appInstancesCrud = new AppInstances(
-      mockedWorkspaces,
-      mockedApps,
-      mockedBroker
+    expect(dsulDeleteSpy).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      slug,
+    });
+    expect(mockedBroker.send).toHaveBeenCalledWith(
+      'workspaces.apps.uninstalled',
+      {
+        slug,
+      },
+      {
+        appSlug: APP_SLUG,
+        appInstanceFullSlug: slug,
+        workspaceId: WORKSPACE_ID,
+      }
     );
-
-    const appInstance = {
-      appSlug: APP_ID,
-      version: '2',
-      slug: 'anotherSlugThatWillConflict',
-    };
-    expect(
-      appInstancesCrud.configureApp(
-        ALREADY_INSTALLED_WORKSPACE_ID,
-        APP_INSTANCE_SLUG,
-        appInstance
-      )
-    ).rejects.toThrow(AlreadyUsedError);
   });
 });
 
-describe('uninstallApp', () => {
-  it('uninstallApp should call Workspaces crud & broker', async () => {
-    const mockedWorkspaces: any = getMockedWorkspaces();
-    const mockedBroker: any = getMockedBroker();
-    const mockedApps: any = getMockedApps();
+describe('Detailed appInstances', () => {
+  const mockedAccessManager: any = getMockedAccessManager();
+  const dsulStorage = new MockStorage(DSULType.Imports);
+  let mockedBroker: any;
+  let appInstancesCrud: AppInstances;
+  const appDetails: AppDetails = {
+    photo: 'somePhotoUrl',
+    config: {
+      schema: {
+        API_URL: {
+          type: 'string',
+        },
+      },
+    },
+    automations: [
+      {
+        name: 'Initializer',
+        slug: 'init',
+        arguments: {
+          text: {
+            type: 'string',
+          },
+        },
+      },
+    ],
+    blocks: [
+      {
+        slug: 'Editor',
+        url: 'block url',
+      },
+    ],
+    events: {
+      listen: ['request'],
+    },
+    emits: [
+      {
+        event: '{{event}}',
+        autocomplete: {
+          event: {
+            template: 'intents.detected.${value}',
+            from: 'appConfig',
+            path: 'intents[*]~',
+          },
+        },
+      },
+    ],
+  };
 
-    const appInstancesCrud = new AppInstances(
-      mockedWorkspaces,
-      mockedApps,
-      mockedBroker
+  const apps = {
+    getApp: jest.fn(() => ({
+      config: {},
+    })),
+    exists: jest.fn(() => true),
+    getAppDetails: jest.fn(() => {
+      // Deep copy to avoid mutating blocks & skew unit tests
+      return JSON.parse(JSON.stringify(appDetails));
+    }),
+  };
+
+  beforeAll(async () => {
+    mockedBroker = getMockedBroker();
+    appInstancesCrud = new AppInstances(
+      mockedAccessManager,
+      mockedBroker,
+      dsulStorage,
+      apps as any
     );
 
-    await appInstancesCrud.uninstallApp(
-      ALREADY_INSTALLED_WORKSPACE_ID,
+    const appInstance: Prismeai.AppInstance & { slug: string } = {
+      appSlug: APP_SLUG,
+      slug: APP_INSTANCE_SLUG,
+      config: {
+        intents: {
+          welcome: {
+            phrases: 'bonjour',
+          },
+          goodbye: {
+            phrases: 'aurevoir',
+          },
+        },
+      },
+    };
+    return await appInstancesCrud.installApp(WORKSPACE_ID, appInstance);
+  });
+
+  it('list : list workspace appInstances', async () => {
+    const appInstances = await appInstancesCrud.list(WORKSPACE_ID);
+    expect(appInstances).toEqual([
+      {
+        appSlug: APP_SLUG,
+        createdAt: expect.any(String),
+        createdBy: USER_ID,
+        updatedAt: expect.any(String),
+        updatedBy: USER_ID,
+        slug: APP_INSTANCE_SLUG,
+        events: {
+          emit: ['intents.detected.welcome', 'intents.detected.goodbye'],
+          listen: ['request'],
+        },
+      },
+    ]);
+  });
+
+  it('getDetailedList', async () => {
+    const { config: _, ...appInstance } = await appInstancesCrud.getAppInstance(
+      WORKSPACE_ID,
       APP_INSTANCE_SLUG
     );
+    const detailedList = await appInstancesCrud.getDetailedList(WORKSPACE_ID);
+    const {
+      config: __,
+      blocks,
+      emits: ___,
+      ...remainingAppDetails
+    } = appDetails;
 
-    const { [APP_INSTANCE_SLUG]: removedOne, ...importsWithoutRemovedOne } =
-      workspaces[ALREADY_INSTALLED_WORKSPACE_ID].imports;
-
-    expect(mockedWorkspaces.save).toHaveBeenCalledWith(
-      ALREADY_INSTALLED_WORKSPACE_ID,
+    expect(detailedList).toEqual([
       {
-        ...workspaces[ALREADY_INSTALLED_WORKSPACE_ID],
-        imports: importsWithoutRemovedOne,
-      }
-    );
-
-    expect(mockedBroker.send).toHaveBeenCalledWith(
-      'workspaces.apps.uninstalled',
-      { appInstance: removedOne, slug: APP_INSTANCE_SLUG },
-      expect.anything()
-    );
+        ...appInstance,
+        ...remainingAppDetails,
+        blocks: blocks.map((block) => {
+          if (block?.slug) {
+            block.slug = `${appInstance.slug}.${block.slug}`;
+          }
+          return block;
+        }),
+        slug: APP_INSTANCE_SLUG,
+        createdAt: expect.any(String),
+        createdBy: USER_ID,
+        updatedAt: expect.any(String),
+        updatedBy: USER_ID,
+        events: {
+          ...appDetails?.events,
+          emit: ['intents.detected.welcome', 'intents.detected.goodbye'],
+        },
+      },
+    ]);
   });
 });

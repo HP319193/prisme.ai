@@ -1,3 +1,4 @@
+// Deprecated, use incrementName instead
 export const generateNewName = (
   defaultName: string,
   currentList: any[],
@@ -5,7 +6,6 @@ export const generateNewName = (
   startingVersion: number = 0,
   useHyphen?: boolean
 ) => {
-  // const defaultName = t(`${type}.create.defaultName`);
   let version = startingVersion;
   let generateName: Function;
   if (useHyphen) {

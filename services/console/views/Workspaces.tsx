@@ -1,4 +1,4 @@
-import { Input, Layout, notification } from '@prisme.ai/design-system';
+import { Input, Layout, Loading, notification } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -13,19 +13,21 @@ import {
 import { useTranslation, Trans } from 'react-i18next';
 import packageJson from '../../../package.json';
 import Header from '../components/Header';
-import { useWorkspaces } from '../components/WorkspacesProvider';
+import { LoadingType, useWorkspaces } from '../providers/Workspaces';
 import { useUser } from '../components/UserProvider';
 import plus from '../icons/plus.svg';
 import { removeEmpty, search } from '../utils/filterUtils';
 import { CloseOutlined } from '@ant-design/icons';
 import WorkspaceMenu from '../components/Workspaces/WorkspaceMenu';
-import api, { Workspace } from '../utils/api';
+import { Workspace } from '../utils/api';
 import HeaderPopovers from './HeaderPopovers';
 import CardButton from '../components/Workspaces/CardButton';
 import WorkspaceCardButton from '../components/Workspaces/WorkspaceCardButton';
 import getConfig from 'next/config';
 import FadeScroll from '../components/FadeScroll';
 import MagnifierIcon from '../icons/magnifier.svgr';
+import { generateNewName } from '../utils/generateNewName';
+import useLocalizedText from '../utils/useLocalizedText';
 
 const {
   publicRuntimeConfig: { SUGGESTIONS_ENDPOINT = '' },
@@ -33,10 +35,17 @@ const {
 
 export const WorkspacesView = () => {
   const { t } = useTranslation('workspaces');
+  const { localize } = useLocalizedText();
   const { push } = useRouter();
-  const { workspaces, create, duplicate } = useWorkspaces();
+  const {
+    workspaces,
+    loading,
+    createWorkspace,
+    duplicateWorkspace,
+    duplicating,
+  } = useWorkspaces();
+
   const { user } = useUser();
-  const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const workspacesList = useMemo(
     () => Array.from(workspaces.values()).filter(removeEmpty),
@@ -55,28 +64,24 @@ export const WorkspacesView = () => {
     [searchValue, workspacesList]
   );
 
-  const createWorkspace = useCallback(async () => {
-    setLoading(true);
-    const { id } = await create(t('create.defaultName'));
+  const handleCreateWorkspace = useCallback(async () => {
+    const { id } = await createWorkspace(
+      generateNewName(
+        t('create.defaultName'),
+        workspaces.map(({ name }) => name),
+        localize
+      )
+    );
     push(`/workspaces/${id}`);
-    setLoading(false);
-  }, [create, push, t]);
+  }, [createWorkspace, localize, push, t, workspaces]);
 
-  const duplicateWorkspace = useCallback(
+  const handleDuplicateWorkspace = useCallback(
     (id: Workspace['id']) => async () => {
-      const workspace = await api.getWorkspace(id);
-      if (!workspace) {
-        notification.warn({
-          message: t('workspaces.suggestions.error', { context: 'duplicate' }),
-          placement: 'bottomRight',
-        });
-        return;
-      }
-      const newW = await duplicate(workspace);
-      if (!newW) return;
-      push(`/workspaces/${newW.id}`);
+      const workspace = await duplicateWorkspace(id);
+      if (!workspace) return;
+      push(`/workspaces/${workspace.id}`);
     },
-    [duplicate, push, t]
+    [duplicateWorkspace, push]
   );
 
   const [suggestions, setSuggestions] = useState<Workspace[]>([]);
@@ -177,8 +182,8 @@ export const WorkspacesView = () => {
             </div>
             <div className="flex flex-nowrap -mx-2 sm:flex-col md:flex-row">
               <CardButton
-                onClick={createWorkspace}
-                disabled={loading}
+                onClick={handleCreateWorkspace}
+                disabled={loading.get(LoadingType.New)}
                 className="p-6 flex border-accent border-dashed bg-ultra-light-accent items-center !justify-start"
                 ref={ref}
               >
@@ -187,7 +192,7 @@ export const WorkspacesView = () => {
                 </span>
                 <span className="flex font-bold ml-4 ">
                   {t('create.label', {
-                    context: workspaces.size === 0 ? 'first' : '',
+                    context: workspaces.length === 0 ? 'first' : '',
                   })}
                 </span>
               </CardButton>
@@ -208,7 +213,7 @@ export const WorkspacesView = () => {
                     >
                       <WorkspaceMenu
                         className="absolute top-2 right-2 invisible group-hover:visible"
-                        onDuplicate={duplicateWorkspace(workspace.id)}
+                        onDuplicate={handleDuplicateWorkspace(workspace.id)}
                       />
                     </WorkspaceCardButton>
                   </div>
@@ -216,7 +221,12 @@ export const WorkspacesView = () => {
               </FadeScroll>
             </div>
           </div>
-          {filtredWorkspacesList.length > 0 && (
+          {loading.get(LoadingType.List) && (
+            <div className="pt-24 flex flex-col">
+              <Loading />
+            </div>
+          )}
+          {!loading.get(LoadingType.List) && filtredWorkspacesList.length > 0 && (
             <div className="pt-10 flex flex-col">
               <div className="text-xl py-3 font-bold">
                 {t('workspaces.sectionTitle')}
@@ -230,7 +240,8 @@ export const WorkspacesView = () => {
                   >
                     <WorkspaceMenu
                       className="absolute top-2 right-2 invisible group-hover:visible"
-                      onDuplicate={duplicateWorkspace(workspace.id)}
+                      onDuplicate={handleDuplicateWorkspace(workspace.id)}
+                      duplicating={duplicating.has(workspace.id)}
                     />
                   </WorkspaceCardButton>
                 ))}

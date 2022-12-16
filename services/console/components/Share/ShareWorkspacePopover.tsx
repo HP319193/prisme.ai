@@ -17,18 +17,12 @@ import { useTranslation } from 'react-i18next';
 import { usePermissions } from '../PermissionsProvider';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useUser } from '../UserProvider';
-import { useWorkspaces } from '../WorkspacesProvider';
 import { useRouter } from 'next/router';
-import { useWorkspace } from '../WorkspaceProvider';
+import { useWorkspace } from '../../providers/Workspace';
 
 interface SharePopoverProps {
   subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType;
   subjectId: string;
-}
-
-interface userPermissionForm {
-  email: string;
-  role: Prismeai.Role;
 }
 
 type SelectOption = {
@@ -49,8 +43,8 @@ const ShareWorkspacePopover = ({
     removeUserPermissions,
   } = usePermissions();
   const { user } = useUser();
-  const { remove } = useWorkspaces();
   const {
+    deleteWorkspace,
     workspace: { name },
   } = useWorkspace();
   const { push } = useRouter();
@@ -109,7 +103,7 @@ const ShareWorkspacePopover = ({
           if (id === userId) {
             // User is removing himself his access to the workspace
             push('/workspaces');
-            remove({ id: subjectId }, true);
+            deleteWorkspace();
             notification.success({
               message: t('share.leave', { name }),
               placement: 'bottomRight',
@@ -121,10 +115,10 @@ const ShareWorkspacePopover = ({
 
     return rows;
   }, [
+    deleteWorkspace,
     generateRowButtons,
     name,
     push,
-    remove,
     removeUserPermissions,
     subjectId,
     subjectType,

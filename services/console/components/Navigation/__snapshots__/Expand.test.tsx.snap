@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="flex justify-end bg-white"
+>
+  <div
+    className="flex flex-1 items-center pl-4 whitespace-nowrap mr-5 text-[0.75rem] text-pr-grey"
+  >
+    <a
+      href="https://prisme.ai"
+      rel="noreferrer"
+      target="_blank"
+    >
+      powered
+    </a>
+  </div>
+</div>
+`;
+
+exports[`should toggle 1`] = `
+<div
+  className="flex justify-end bg-white"
+>
+  <div
+    className="flex flex-1 items-center pl-4 whitespace-nowrap mr-5 text-[0.75rem] text-pr-grey"
+  >
+    <a
+      href="https://prisme.ai"
+      rel="noreferrer"
+      target="_blank"
+    >
+      powered
+    </a>
+  </div>
+</div>
+`;

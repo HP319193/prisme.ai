@@ -2,6 +2,7 @@ import InstructionForm from './InstructionForm';
 import renderer, { act } from 'react-test-renderer';
 import InstructionSelection from './InstructionSelection';
 import InstructionValue from './InstructionValue';
+import { workspaceContext } from '../../../providers/Workspace';
 
 jest.mock('../../../utils/useYaml', () => {
   const toJSON = jest.fn();
@@ -92,7 +93,9 @@ it('should set instruction with params', async () => {
   const onChange = jest.fn();
   const onSubmit = jest.fn();
   const root = renderer.create(
-    <InstructionForm onChange={onChange} onSubmit={onSubmit} />
+    <workspaceContext.Provider value={{ workspace: { imports: {} } } as any}>
+      <InstructionForm onChange={onChange} onSubmit={onSubmit} />
+    </workspaceContext.Provider>
   );
 
   await act(async () => {

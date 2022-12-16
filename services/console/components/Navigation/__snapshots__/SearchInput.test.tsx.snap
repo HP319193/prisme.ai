@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="flex flex-1 relative px-2 border-b-[1px] h-[4rem]"
+>
+  <button
+    className="m-4 focus:outline-none text-accent"
+    onClick={[Function]}
+  >
+    <SvgrURL
+      className="text-[1.6rem] mr-2"
+      height="1.2rem"
+      width="1.2rem"
+    />
+  </button>
+  <input
+    className="flex flex-1 outline-none text-accent"
+    onChange={[Function]}
+    placeholder="workspace.search"
+    value="foo"
+  />
+  <button
+    className="focus:outline-none m-1 hover:text-accent"
+    onClick={[Function]}
+  />
+</div>
+`;

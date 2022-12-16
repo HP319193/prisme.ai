@@ -1,5 +1,6 @@
 import Workspace from './Workspace';
 import renderer from 'react-test-renderer';
+import WorkspaceProvider from '../providers/Workspace';
 
 jest.mock('next/router', () => {
   const mock = { push: jest.fn() };
@@ -27,6 +28,10 @@ jest.mock('./WorkspaceSource', () => {
 });
 
 it('should render', () => {
-  const root = renderer.create(<Workspace />);
+  const root = renderer.create(
+    <WorkspaceProvider id="42">
+      <Workspace />
+    </WorkspaceProvider>
+  );
   expect(root.toJSON()).toMatchSnapshot();
 });

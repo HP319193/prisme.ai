@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { Loading as DSLoading } from '@prisme.ai/design-system';
 import { BlocksProvider } from '@prisme.ai/blocks';
 import UserProvider from '../components/UserProvider';
-import WorkspacesProvider from '../components/WorkspacesProvider';
 import { NextPage } from 'next';
 import React, { HTMLAttributes, ReactElement, ReactNode } from 'react';
 import Head from 'next/head';
@@ -16,11 +15,11 @@ import '@prisme.ai/design-system/styles/index.css';
 import '@prisme.ai/design-system/styles/prismeai-theme.css';
 import PermissionsProvider from '../components/PermissionsProvider';
 import { AppsProvider } from '../components/AppsProvider';
-import PagesProvider from '../components/PagesProvider/PagesProvider';
 import down from '../icons/down.svg';
 import { WorkspacesUsageProvider } from '../components/WorkspacesUsage';
 import externals from '../utils/externals';
-import QueryStringProvider from '../components/QueryStringProvider';
+import QueryStringProvider from '../providers/QueryStringProvider';
+import WorkspacesProvider from '../providers/Workspaces/WorkspacesProvider';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -61,24 +60,22 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   if (Component.isPublic) {
     return (
       <UserProvider anonymous>
-        <PagesProvider>
-          <BlocksProvider
-            externals={externals}
-            components={{ Link, Loading, DownIcon }}
-          >
-            <Head>
-              <title>{t('main.title')}</title>
-              <meta name="description" content={t('main.description')} />
-              <meta
-                name="viewport"
-                content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
-              />
-              <link rel="icon" href="/favicon.png" />
-            </Head>
-            <Sentry />
-            {getLayout(<Component {...pageProps} />)}
-          </BlocksProvider>
-        </PagesProvider>
+        <BlocksProvider
+          externals={externals}
+          components={{ Link, Loading, DownIcon }}
+        >
+          <Head>
+            <title>{t('main.title')}</title>
+            <meta name="description" content={t('main.description')} />
+            <meta
+              name="viewport"
+              content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+            />
+            <link rel="icon" href="/favicon.png" />
+          </Head>
+          <Sentry />
+          {getLayout(<Component {...pageProps} />)}
+        </BlocksProvider>
       </UserProvider>
     );
   }
@@ -90,27 +87,22 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <WorkspacesUsageProvider>
             <PermissionsProvider>
               <AppsProvider>
-                <PagesProvider>
-                  <BlocksProvider
-                    externals={externals}
-                    components={{ Link, Loading, DownIcon }}
-                  >
-                    <Head>
-                      <title>{t('main.title')}</title>
-                      <meta
-                        name="viewport"
-                        content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
-                      />
-                      <meta
-                        name="description"
-                        content={t('main.description')}
-                      />
-                      <link rel="icon" href="/favicon.png" />
-                    </Head>
-                    <Sentry />
-                    {getLayout(<Component {...pageProps} />)}
-                  </BlocksProvider>
-                </PagesProvider>
+                <BlocksProvider
+                  externals={externals}
+                  components={{ Link, Loading, DownIcon }}
+                >
+                  <Head>
+                    <title>{t('main.title')}</title>
+                    <meta
+                      name="viewport"
+                      content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+                    />
+                    <meta name="description" content={t('main.description')} />
+                    <link rel="icon" href="/favicon.png" />
+                  </Head>
+                  <Sentry />
+                  {getLayout(<Component {...pageProps} />)}
+                </BlocksProvider>
               </AppsProvider>
             </PermissionsProvider>
           </WorkspacesUsageProvider>

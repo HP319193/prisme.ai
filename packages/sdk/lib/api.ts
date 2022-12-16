@@ -111,7 +111,9 @@ export class Api extends Fetcher {
     return await this.get('/workspaces?limit=300');
   }
 
-  async getWorkspace(id: string): Promise<Workspace | null> {
+  async getWorkspace(
+    id: string
+  ): Promise<PrismeaiAPI.GetWorkspace.Responses.$200> {
     return await this.get(`/workspaces/${id}`);
   }
 
@@ -119,39 +121,14 @@ export class Api extends Fetcher {
     return await this.post('/workspaces', { name });
   }
 
-  async duplicateWorkspace({
-    id,
-    name,
-  }: {
-    id: string;
-    name: string;
-  }): Promise<Workspace | null> {
-    const workspace = await this.getWorkspace(id);
-    if (!workspace) {
-      return null;
-    }
-    const {
-      description,
-      photo,
-      imports,
-      config,
-      automations,
-      blocks,
-      pages,
-    } = workspace;
-    return await this.post('/workspaces', {
-      name,
-      description,
-      photo,
-      imports,
-      config,
-      automations,
-      blocks,
-      pages,
-    });
+  async duplicateWorkspace({ id }: { id: string }): Promise<Workspace | null> {
+    return await this.post(`/workspaces/${id}/versions/current/duplicate`, {});
   }
 
-  async updateWorkspace(workspace: Workspace): Promise<Workspace> {
+  async updateWorkspace(
+    workspace: Prismeai.DSULPatch
+  ): Promise<PrismeaiAPI.UpdateWorkspace.Responses.$200 | null> {
+    if (!workspace.id) return null;
     return await this.patch(
       `/workspaces/${workspace.id}`,
       await this.replaceAllImagesData(workspace, workspace.id)
@@ -214,28 +191,37 @@ export class Api extends Fetcher {
   }
 
   // Automations
+  async getAutomation(
+    workspaceId: string,
+    automationSlug: string
+  ): Promise<PrismeaiAPI.GetAutomation.Responses.$200> {
+    return await this.get(
+      `/workspaces/${workspaceId}/automations/${automationSlug}`
+    );
+  }
+
   async createAutomation(
-    workspace: Workspace,
+    workspaceId: Workspace['id'],
     automation: Prismeai.Automation
   ): Promise<Prismeai.Automation & { slug: string }> {
-    return await this.post(`/workspaces/${workspace.id}/automations`, {
+    return await this.post(`/workspaces/${workspaceId}/automations`, {
       ...automation,
     });
   }
 
   async updateAutomation(
-    workspace: Workspace,
+    workspaceId: string,
     slug: string,
     automation: Prismeai.Automation
   ): Promise<Prismeai.Automation & { slug: string }> {
     return await this.patch(
-      `/workspaces/${workspace.id}/automations/${slug}`,
-      await this.replaceAllImagesData(automation, workspace.id)
+      `/workspaces/${workspaceId}/automations/${slug}`,
+      await this.replaceAllImagesData(automation, workspaceId)
     );
   }
 
-  async deleteAutomation(workspace: Workspace, slug: string): Promise<string> {
-    return await this.delete(`/workspaces/${workspace.id}/automations/${slug}`);
+  async deleteAutomation(workspaceId: string, slug: string): Promise<string> {
+    return await this.delete(`/workspaces/${workspaceId}/automations/${slug}`);
   }
 
   // Pages
@@ -489,6 +475,13 @@ export class Api extends Fetcher {
       { ...config }
     );
     return config;
+  }
+
+  async getAppInstance(
+    workspaceId: string,
+    slug: string
+  ): Promise<PrismeaiAPI.GetAppInstance.Responses.$200> {
+    return this.get(`/workspaces/${workspaceId}/apps/${slug}`);
   }
 
   async saveAppInstance(

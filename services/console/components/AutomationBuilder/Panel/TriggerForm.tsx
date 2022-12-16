@@ -2,10 +2,8 @@ import { useTranslation } from 'next-i18next';
 import { FC, useMemo } from 'react';
 import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
-import { useWorkspace } from '../../WorkspaceProvider';
-import { useApps } from '../../AppsProvider';
 import { useAutomationBuilder } from '../context';
-import { usePages } from '../../PagesProvider';
+import { useWorkspace } from '../../../providers/Workspace';
 
 interface TriggerFormProps {
   trigger?: Prismeai.When;
@@ -18,12 +16,10 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
   const { t } = useTranslation('workspaces');
 
   const { workspace } = useWorkspace();
-  const { appInstances } = useApps();
   const { automationId } = useAutomationBuilder();
-  const { pages } = usePages();
   const { extractAutocompleteOptions } = useSchema({
     config: workspace.config,
-    apps: appInstances.get(workspace.id),
+    apps: workspace.imports,
     automations: Object.keys(workspace.automations || {}).reduce(
       (prev, key) =>
         key === automationId
@@ -35,7 +31,7 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
       {}
     ),
     workspace,
-    pages: pages.get(workspace.id),
+    pages: workspace.pages,
   });
 
   const initialValue = useMemo(

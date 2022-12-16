@@ -19,6 +19,9 @@ it('should render empty page', () => {
   const page: Parameters<typeof Page>[0]['page'] = {
     name: 'Foo',
     blocks: [],
+    apiKey: '',
+    slug: 'foo',
+    appInstances: [],
   };
   const root = renderer.create(<Page page={page} />);
   expect(root.toJSON()).toMatchSnapshot();
@@ -27,12 +30,15 @@ it('should render empty page', () => {
 it('should render blocks', () => {
   const page: Parameters<typeof Page>[0]['page'] = {
     name: 'Foo',
+    apiKey: '',
+    slug: 'foo',
+    appInstances: [],
     blocks: [
       {
-        name: 'Header',
+        slug: 'Header',
       },
       {
-        name: 'RichText',
+        slug: 'RichText',
       },
     ],
   };
@@ -44,6 +50,9 @@ it('should add JS API in window object', () => {
   const { events } = usePage();
   const page: Parameters<typeof Page>[0]['page'] = {
     name: 'Foo',
+    apiKey: '',
+    slug: 'foo',
+    appInstances: [],
     blocks: [],
   };
   const root = renderer.create(<Page page={page} />);

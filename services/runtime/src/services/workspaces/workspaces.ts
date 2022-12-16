@@ -30,7 +30,8 @@ export class Workspaces extends Storage {
 
   startLiveUpdates() {
     const listenedEvents = [
-      EventType.UpdatedWorkspace,
+      EventType.CreatedWorkspace,
+      EventType.ConfiguredWorkspace,
       EventType.DeletedWorkspace,
       EventType.CreatedAutomation,
       EventType.UpdatedAutomation,
@@ -59,6 +60,19 @@ export class Workspaces extends Storage {
           return true;
         }
 
+        if (event.type === EventType.CreatedWorkspace) {
+          const workspace = (event as any as Prismeai.CreatedWorkspace).payload
+            .workspace;
+          try {
+            await this.fetchWorkspace(workspace.id!);
+          } catch {
+            // Do not reset model if it already exists (i.e duplicated workspace)
+            await this.loadWorkspace(workspace);
+            await this.saveWorkspace(workspace);
+          }
+          return true;
+        }
+
         if (event.type === EventType.PublishedApp) {
           const publishedApp = (event as any as Prismeai.PublishedApp).payload
             .app;
@@ -70,9 +84,13 @@ export class Workspaces extends Storage {
             );
           }
         }
+
         const workspaceId = event.source.workspaceId;
-        if (!workspaceId || !(workspaceId in this.workspaces)) {
+        if (!workspaceId) {
           return true;
+        }
+        if (!(workspaceId in this.workspaces)) {
+          await this.fetchWorkspace(workspaceId);
         }
         const workspace = this.workspaces[workspaceId];
 
@@ -87,33 +105,33 @@ export class Workspaces extends Storage {
               delete this.workspaces[workspaceId];
             }, 5000);
             break;
-          case EventType.UpdatedWorkspace:
+          case EventType.ConfiguredWorkspace:
             const {
-              payload: { workspace: newWorkspace },
-            } = event as any as Prismeai.UpdatedWorkspace;
-            workspace.update(newWorkspace);
+              payload: { config },
+            } = event as any as Prismeai.ConfiguredWorkspace;
+            workspace.updateConfig(config);
             break;
           case EventType.CreatedAutomation:
           case EventType.UpdatedAutomation:
             const {
               payload: { automation, slug, oldSlug },
             } = event as any as Prismeai.UpdatedAutomation;
-            workspace.updateAutomation(slug, automation);
+            await workspace.updateAutomation(slug, automation);
             if (oldSlug) {
-              workspace.deleteAutomation(oldSlug);
+              await workspace.deleteAutomation(oldSlug);
             }
             break;
           case EventType.DeletedAutomation:
             const deletedAutomation = (
               event as any as Prismeai.DeletedAutomation
-            ).payload.automation;
-            workspace.deleteAutomation(deletedAutomation.slug);
+            ).payload.automationSlug;
+            await workspace.deleteAutomation(deletedAutomation);
             break;
           case EventType.InstalledApp:
           case EventType.ConfiguredApp:
             const {
               payload: {
-                appInstance,
+                appInstance: { oldConfig, ...appInstance },
                 slug: appInstanceSlug,
                 oldSlug: appInstanceOldSlug,
               },
@@ -129,11 +147,21 @@ export class Workspaces extends Storage {
               event as any as Prismeai.UninstalledAppInstance
             ).payload.slug;
             // TODO better way to enforce this is executed after runtime processEvent
-            new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
-              workspace.deleteImport(uninstalledAppInstanceSlug);
+            delete workspace.dsul.imports?.[uninstalledAppInstanceSlug];
+            new Promise((resolve) => {
+              setTimeout(async () => {
+                await workspace.deleteImport(uninstalledAppInstanceSlug);
+                resolve(undefined);
+              }, 500);
             });
             break;
         }
+
+        await this.saveWorkspace(workspace.dsul);
+        logger.info({
+          msg: 'Persisted updated runtime.yml',
+          workspaceId: workspace.id,
+        });
         return true;
       },
       {
@@ -190,7 +218,7 @@ export class Workspaces extends Storage {
     );
   }
 
-  async fetchWorkspace(workspaceId: string): Promise<Prismeai.Workspace> {
+  async fetchWorkspace(workspaceId: string): Promise<Prismeai.RuntimeModel> {
     try {
       // First check if it is suspended
       try {
@@ -208,15 +236,11 @@ export class Workspaces extends Storage {
       } catch {}
 
       const raw = await this.driver.get(
-        `workspaces/${workspaceId}/current.yml`
+        `workspaces/${workspaceId}/versions/current/runtime.yml`
       );
-      const dsul = yaml.load(raw) as Prismeai.Workspace;
-      this.workspaces[workspaceId] = await Workspace.create(dsul, this.apps);
-
-      // Check imported apps & update watched app current versions
-      if (dsul.imports) {
-        this.watchAppCurrentVersions(this.workspaces[workspaceId]);
-      }
+      const dsul = yaml.load(raw) as Prismeai.RuntimeModel;
+      // Stored id might not be true in case of a duplicated workspace
+      await this.loadWorkspace({ ...dsul, id: workspaceId });
 
       return dsul;
     } catch (err) {
@@ -225,5 +249,25 @@ export class Workspaces extends Storage {
       }
       throw err;
     }
+  }
+
+  private async loadWorkspace(workspace: Prismeai.RuntimeModel) {
+    this.workspaces[workspace.id!] = await Workspace.create(
+      workspace,
+      this.apps
+    );
+
+    // Check imported apps & update watched app current versions
+    if (workspace.imports) {
+      this.watchAppCurrentVersions(this.workspaces[workspace.id!]);
+    }
+    return this.workspaces[workspace.id!];
+  }
+
+  async saveWorkspace(workspace: Prismeai.RuntimeModel) {
+    await this.driver.save(
+      `workspaces/${workspace.id}/versions/current/runtime.yml`,
+      yaml.dump(workspace)
+    );
   }
 }

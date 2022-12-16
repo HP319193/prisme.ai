@@ -50,6 +50,8 @@ export enum EventType {
   SuspendedWorkspace = 'workspaces.suspended',
   PagePermissionsShared = 'workspaces.pages.permissions.shared',
   PagePermissionsDeleted = 'workspaces.pages.permissions.deleted',
+
+  DuplicatedWorkspace = 'workspaces.duplicated',
 }
 export class CallbackContext {
   public logger: Logger;

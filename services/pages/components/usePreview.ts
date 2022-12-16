@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 
-export const usePreview = (onPreview: (page: Prismeai.Page) => void) => {
+export const usePreview = (
+  onPreview: (page: Prismeai.DetailedPage) => void
+) => {
   useEffect(() => {
     // For preview in console
     const listener = (e: MessageEvent) => {

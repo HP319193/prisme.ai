@@ -398,13 +398,6 @@ Then, for when you want to run this service directly from its docker image, you 
   </tr>
 
   <tr>
-    <td>AUTOINSTALL_APP_*</td>
-    <td>workspaces</td>
-    <td>Some workspace source code yaml file URL to import as an app on startup</td>
-    <td>3002</td>
-  </tr>     
-
-  <tr>
     <td>UPLOADS_STORAGE_TYPE</td>
     <td>workspaces</td>
     <td>Uploads storage driver (FILESYSTEM | S3_LIKE). Must be the same instance for workspaces.</td>
