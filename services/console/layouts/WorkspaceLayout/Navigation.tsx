@@ -65,23 +65,22 @@ export const Navigation = ({
           case 'pages':
             return [
               type,
-              Object.entries(pages).findIndex(
-                ([, { id: pageId }]) =>
-                  `/workspaces/${id}/pages/${pageId}` === asPath
+              Object.keys(pages).findIndex(
+                (slug) => `/workspaces/${id}/pages/${slug}` === asPath
               ) > -1,
             ];
           case 'automations':
             return [
               type,
-              Object.entries(automations).findIndex(
-                ([slug]) => `/workspaces/${id}/automations/${slug}` === asPath
+              Object.keys(automations).findIndex(
+                (slug) => `/workspaces/${id}/automations/${slug}` === asPath
               ) > -1,
             ];
           case 'apps':
             return [
               type,
-              Object.entries(imports).findIndex(
-                ([slug]) => `/workspaces/${id}/apps/${slug}` === asPath
+              Object.keys(imports).findIndex(
+                (slug) => `/workspaces/${id}/apps/${slug}` === asPath
               ) > -1,
             ];
           default:
