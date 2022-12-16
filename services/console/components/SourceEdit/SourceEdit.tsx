@@ -16,6 +16,7 @@ interface SourceEditProps {
   onChange: (value: SourceEditProps['value']) => void;
   onSave: () => void;
   visible?: boolean;
+  mounted?: boolean;
   validate?: (value: any) => boolean;
 }
 
@@ -24,6 +25,7 @@ export const SourceEdit = <T,>({
   onChange,
   onSave,
   visible = true,
+  mounted = true,
   validate,
 }: SourceEditProps) => {
   const { toJSON, toYaml } = useYaml();
@@ -100,11 +102,17 @@ export const SourceEdit = <T,>({
 
   // Manage source panel display
   useEffect(() => {
+    let t: NodeJS.Timeout;
     if (visible) {
       setMountComponent(true);
     } else {
-      setTimeout(() => setMountComponent(false), 200);
+      t = setTimeout(() => setMountComponent(false), 200);
     }
+    return () => {
+      if (!t) return;
+      clearTimeout(t);
+      setMountComponent(false);
+    };
   }, [visible]);
 
   if (value === undefined) return null;
@@ -123,7 +131,7 @@ export const SourceEdit = <T,>({
         `}
     >
       <div className="flex flex-1 flex-col">
-        {mountSourceComponent && (
+        {mounted && mountSourceComponent && (
           <CodeEditor
             mode="yaml"
             value={value}

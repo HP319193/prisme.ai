@@ -41,8 +41,13 @@ export const AppInstance = () => {
   ) || [, {}];
   const [value, setValue] = useState(appInstance);
   const [displaySource, setDisplaySource] = useState(false);
+  const [mountSource, setMountSource] = useState(true);
   const [viewMode, setViewMode] = useState(0);
   const [dirty] = useDirtyWarning(appInstance, value);
+
+  useEffect(() => {
+    setValue(appInstance);
+  }, [appInstance]);
 
   const save = useCallback(() => {
     saveAppInstance(value);
@@ -55,15 +60,19 @@ export const AppInstance = () => {
 
   const saveDetails = useCallback(
     async ({ slug = '', disabled }: Prismeai.AppInstance) => {
+      const { config, ...prevValue } = value;
       const newValue = {
-        ...value,
+        ...prevValue,
         slug,
         disabled,
       };
       setValue(newValue);
       try {
+        // Force source to be reloaded
+        setMountSource(false);
         await saveAppInstance(newValue);
         push(`/workspaces/${workspace.id}/apps/${slug}`);
+        setTimeout(() => setMountSource(true), 10);
         notification.success({
           message: t('apps.saveSuccess'),
           placement: 'bottomRight',
@@ -265,11 +274,13 @@ export const AppInstance = () => {
             />
           </div>
         )}
+
         <SourceEdit
           value={source}
           onChange={setSource}
           onSave={save}
           visible={displaySource}
+          mounted={mountSource}
           validate={validateSource}
         />
       </div>
