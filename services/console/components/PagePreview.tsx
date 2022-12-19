@@ -48,22 +48,10 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
 
   const onLoad = useCallback(() => {
     setLoading(false);
-  }, []);
+    updatePage();
+  }, [updatePage]);
 
-  const [initialSlug, setInitialSlug] = useState(page.slug);
-
-  useEffect(() => {
-    setInitialSlug((slug) => {
-      if (slug || !page.slug) return slug;
-      return page.slug;
-    });
-  }, [page]);
-
-  const url = useMemo(() => generatePageUrl(slug, initialSlug || ''), [
-    slug,
-    initialSlug,
-  ]);
-
+  const url = generatePageUrl(slug, page.slug || '');
   return (
     <div className="flex flex-1 relative">
       <iframe ref={ref} src={url} className="flex flex-1" onLoad={onLoad} />
