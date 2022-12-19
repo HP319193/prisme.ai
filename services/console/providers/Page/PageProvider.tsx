@@ -46,6 +46,7 @@ export const PageProvider = ({
   children,
 }: PageProviderProps) => {
   const { t } = useTranslation('workspaces');
+  const [currentSlug, setCurrentSlug] = useState(slug);
   const [page, setPage] = useState<PageContext['page']>();
   const [appInstances, setAppInstances] = useState<PageContext['appInstances']>(
     []
@@ -98,6 +99,7 @@ export const PageProvider = ({
       setSaving(true);
       const page = await api.updatePage(workspaceId, newPage);
       setPage(page);
+      setCurrentSlug(page.slug);
       setSaving(false);
       return page;
     },
@@ -113,6 +115,7 @@ export const PageProvider = ({
 
   useEffect(() => {
     const initPage = async () => {
+      setCurrentSlug(slug);
       setLoading(true);
       const page = await fetchPage();
       setLoading(false);
@@ -120,7 +123,7 @@ export const PageProvider = ({
       setPage(page);
     };
     initPage();
-  }, [fetchPage]);
+  }, [fetchPage, slug]);
 
   if (loading) return <Loading />;
   if (notFound)

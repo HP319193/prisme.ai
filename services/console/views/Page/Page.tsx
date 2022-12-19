@@ -9,6 +9,7 @@ import { incrementName } from '../../utils/incrementName';
 import { notification } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import useDirtyWarning from '../../utils/useDirtyWarning';
+import { replaceSilently } from '../../utils/urls';
 
 const Page = () => {
   const { t } = useTranslation('workspaces');
@@ -34,13 +35,13 @@ const Page = () => {
       { keepOriginal: true }
     );
     const { apiKey, ...newPage } = page;
-    const { id } =
+    const { slug } =
       (await createPage({
         ...newPage,
         slug: newSlug,
       })) || {};
-    if (id) {
-      push(`/workspaces/${workspaceId}/pages/${id}`);
+    if (slug) {
+      push(`/workspaces/${workspaceId}/pages/${slug}`);
     }
     setDuplicating(false);
     notification.success({
@@ -58,9 +59,15 @@ const Page = () => {
     deletePage();
   }, [deletePage, page.workspaceId, replace]);
 
-  const save = useCallback(() => {
-    savePage(value);
-  }, [value, savePage]);
+  const save = useCallback(async () => {
+    const prevSlug = page.slug;
+    const saved = await savePage(value);
+    if (!saved) return;
+    const { slug } = saved;
+    if (slug !== prevSlug) {
+      replaceSilently(`/workspaces/${workspaceId}/pages/${slug}`);
+    }
+  }, [page.slug, savePage, value, workspaceId]);
 
   useKeyboardShortcut([
     {

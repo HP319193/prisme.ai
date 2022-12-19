@@ -46,6 +46,7 @@ export const AppInstanceProvider = ({
   children,
 }: AppInstanceProviderProps) => {
   const { t } = useTranslation('workspaces');
+  const [slug, setSlug] = useState(id);
   const [appInstance, setAppInstance] = useState<
     AppInstanceContext['appInstance']
   >();
@@ -87,6 +88,9 @@ export const AppInstanceProvider = ({
       );
       setAppInstance(newAppInstance);
       setSaving(false);
+      if (newAppInstance.slug) {
+        setSlug(newAppInstance.slug);
+      }
       return newAppInstance;
     },
     [appInstance, workspaceId]
@@ -142,6 +146,7 @@ export const AppInstanceProvider = ({
     <appInstanceContext.Provider
       value={{
         appInstance,
+        // TODO : afficher la dod avec un /_doc dans services/pages
         documentation,
         loading,
         fetchAppInstance,

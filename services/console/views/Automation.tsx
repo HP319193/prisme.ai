@@ -36,6 +36,7 @@ import SourceEdit from '../components/SourceEdit/SourceEdit';
 import { validateAutomation } from '@prisme.ai/validation';
 import { incrementName } from '../utils/incrementName';
 import useDirtyWarning from '../utils/useDirtyWarning';
+import { replaceSilently } from '../utils/urls';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -163,7 +164,9 @@ export const Automation = () => {
         const saved = await saveAutomation(cleanAutomation(newValue));
         if (saved) {
           if (automation.slug !== saved.slug) {
-            replace(`/workspaces/${workspace.id}/automations/${saved.slug}`);
+            replaceSilently(
+              `/workspaces/${workspace.id}/automations/${saved.slug}`
+            );
           }
           setValue(saved);
         }
@@ -185,7 +188,7 @@ export const Automation = () => {
         }
       }
     },
-    [automation.slug, replace, saveAutomation, t, value, workspace.id]
+    [automation.slug, saveAutomation, t, value, workspace.id]
   );
 
   // Need to get the latest version with the latest value associated
@@ -224,11 +227,9 @@ export const Automation = () => {
       }
       save(newValue);
       if (prevSlug === slug) return;
-      replace(`/workspaces/${workspace.id}/automations/${slug}`, undefined, {
-        shallow: true,
-      });
+      replaceSilently(`/workspaces/${workspace.id}/automations/${slug}`);
     },
-    [replace, save, value, workspace.id]
+    [save, value, workspace.id]
   );
 
   useKeyboardShortcut([
@@ -243,13 +244,13 @@ export const Automation = () => {
   ]);
 
   const confirmDeleteAutomation = useCallback(() => {
-    push(`/workspaces/${workspace.id}`);
+    replace(`/workspaces/${workspace.id}`);
     deleteAutomation();
     notification.success({
       message: t('details.delete.toast', { context: 'automations' }),
       placement: 'bottomRight',
     });
-  }, [deleteAutomation, push, t, workspace]);
+  }, [deleteAutomation, replace, t, workspace]);
 
   const customInstructions = useMemo(
     () => [

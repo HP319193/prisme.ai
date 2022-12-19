@@ -21,6 +21,7 @@ import AppInstanceProvider, {
 } from '../providers/AppInstanceProvider';
 import { useWorkspace } from '../providers/Workspace';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
+import { replaceSilently } from '../utils/urls';
 import useDirtyWarning from '../utils/useDirtyWarning';
 import useLocalizedText from '../utils/useLocalizedText';
 
@@ -35,7 +36,7 @@ export const AppInstance = () => {
   const { workspace } = useWorkspace();
   const { localize } = useLocalizedText();
   const { t } = useTranslation('workspaces');
-  const { push } = useRouter();
+  const { replace } = useRouter();
   const [, { photo }] = Object.entries(workspace.imports || {}).find(
     ([slug]) => slug === appInstance.slug
   ) || [, {}];
@@ -49,9 +50,19 @@ export const AppInstance = () => {
     setValue(appInstance);
   }, [appInstance]);
 
-  const save = useCallback(() => {
-    saveAppInstance(value);
-  }, [saveAppInstance, value]);
+  const save = useCallback(
+    async (newValue = value) => {
+      const prevSlug = appInstance.slug;
+      const updated = await saveAppInstance(newValue);
+      if (!updated) return null;
+      const { slug } = updated;
+      if (prevSlug !== slug) {
+        replaceSilently(`/workspaces/${workspace.id}/apps/${slug}`);
+      }
+      return updated;
+    },
+    [appInstance.slug, saveAppInstance, value, workspace.id]
+  );
   // Need to get the latest version with the latest value associated
   const saveAfterChange = useRef(save);
   useEffect(() => {
@@ -70,8 +81,7 @@ export const AppInstance = () => {
       try {
         // Force source to be reloaded
         setMountSource(false);
-        await saveAppInstance(newValue);
-        push(`/workspaces/${workspace.id}/apps/${slug}`);
+        await save(newValue);
         setTimeout(() => setMountSource(true), 10);
         notification.success({
           message: t('apps.saveSuccess'),
@@ -91,7 +101,7 @@ export const AppInstance = () => {
         throw e;
       }
     },
-    [push, saveAppInstance, t, value, workspace.id]
+    [save, t, value]
   );
 
   const onDelete = useCallback(() => {
@@ -99,12 +109,12 @@ export const AppInstance = () => {
       icon: <DeleteOutlined />,
       content: t('apps.uninstall', appInstance),
       onOk: () => {
-        push(`/workspaces/${workspace.id}`);
+        replace(`/workspaces/${workspace.id}`);
         uninstallApp();
       },
       okText: t('apps.uninstallConfirm', appInstance),
     });
-  }, [appInstance, push, t, uninstallApp, workspace.id]);
+  }, [appInstance, replace, t, uninstallApp, workspace.id]);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -222,7 +232,7 @@ export const AppInstance = () => {
           displaySource ? (
             <Button
               key="save"
-              onClick={save}
+              onClick={() => save()}
               className="!flex flex-row"
               variant="primary"
               disabled={!dirty || saving}
@@ -280,7 +290,7 @@ export const AppInstance = () => {
         <SourceEdit
           value={source}
           onChange={setSource}
-          onSave={save}
+          onSave={() => save()}
           visible={displaySource}
           mounted={mountSource}
           validate={validateSource}
