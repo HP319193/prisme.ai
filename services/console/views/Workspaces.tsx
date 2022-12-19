@@ -135,7 +135,7 @@ export const WorkspacesView = () => {
         contentClassName="overflow-y-auto"
         className="max-w-full"
       >
-        <div className="mx-32 my-16">
+        <div className="mx-4 md:mx-8 lg:mx-32 my-4 md:my-8 lg:my-16">
           <div className="bg-info px-14 py-8 rounded-[15px]">
             <div className="text-2xl py-3 font-bold">
               {t('workspaces.welcome.title', {
