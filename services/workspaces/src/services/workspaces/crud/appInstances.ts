@@ -90,6 +90,10 @@ class AppInstances {
     Omit<Prismeai.AppInstance, 'config'> & {
       slug: string;
       config: Prismeai.Config;
+      documentation: {
+        workspaceSlug: string;
+        slug: string;
+      };
     }
   > => {
     await this.accessManager.throwUnlessCan(
@@ -103,8 +107,9 @@ class AppInstances {
       slug,
       dsulType: DSULType.Imports,
     });
-    const { value: _, ...appConfig } =
-      (await this.apps.getApp(appInstance.appSlug)).config || {};
+    const { config, slug: workspaceSlug } =
+      (await this.apps.getApp(appInstance.appSlug)) || {};
+    const { value: _, ...appConfig } = config || {};
 
     return {
       ...appInstance,
@@ -113,6 +118,10 @@ class AppInstances {
         value: appInstance.config || {},
       },
       slug,
+      documentation: {
+        workspaceSlug: workspaceSlug!,
+        slug: '_doc',
+      },
     };
   };
 

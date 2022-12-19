@@ -24,7 +24,7 @@ export default function init(dsulStorage: DSULStorage) {
       dsulStorage,
       apps
     );
-    return { appInstances, apps };
+    return { appInstances };
   };
 
   async function installAppHandler(
@@ -165,19 +165,13 @@ export default function init(dsulStorage: DSULStorage) {
     }: Request<PrismeaiAPI.GetAppInstance.PathParameters, any, any, any>,
     res: Response<PrismeaiAPI.GetAppInstance.Responses.$200>
   ) {
-    const { appInstances, apps } = getServices({
+    const { appInstances } = getServices({
       context,
       accessManager,
       broker,
     });
     const appInstance = await appInstances.getAppInstance(workspaceId, slug);
-    res.send({
-      ...appInstance,
-      documentation: await apps.getDocumentationPage(
-        appInstance.appSlug,
-        appInstance.appVersion
-      ),
-    });
+    res.send(appInstance);
   }
 
   async function getAppConfigHandler(

@@ -92,7 +92,7 @@ class Apps {
     const app: Prismeai.App & { id: string } = {
       id: '',
       workspaceId: publish.workspaceId,
-      slug: publish.slug,
+      slug: publish.slug!,
       name: dsul.name,
       description: dsul.description,
       photo: dsul.photo,
@@ -228,7 +228,11 @@ class Apps {
       SubjectType.App,
       appSlug
     );
-    return await this.storage.get({ appSlug, version: version || 'current' });
+    const dsul = await this.storage.get({
+      appSlug,
+      version: version || 'current',
+    });
+    return dsul;
   };
 
   getAppDetails = async (
@@ -279,20 +283,6 @@ class Apps {
         listen: Array.from(new Set(allEventTriggers)),
       },
     };
-  };
-
-  getDocumentationPage = async (appSlug: string, appVersion?: string) => {
-    try {
-      const page = await this.storage.get({
-        appSlug,
-        version: appVersion,
-        slug: '_doc',
-        dsulType: DSULType.Pages,
-      });
-      return page;
-    } catch {
-      return undefined;
-    }
   };
 
   deleteApp = async (
