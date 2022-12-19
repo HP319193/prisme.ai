@@ -15,12 +15,10 @@ import CodeEditor from '../components/CodeEditor/lazy';
 import {
   Button,
   Loading,
-  Modal,
   notification,
   PageHeader,
   Space,
 } from '@prisme.ai/design-system';
-import { useRouter } from 'next/router';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import { useWorkspace } from '../providers/Workspace';
 
@@ -65,35 +63,6 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const { toJSON, toYaml } = useYaml();
   const ref = useRef<HTMLDivElement>(null);
-  const { push, events } = useRouter();
-  const [confirm, setConfirm] = useState(false);
-
-  useEffect(() => {
-    const askForConfirmation = async (path: string) => {
-      await Modal.confirm({
-        okText: t('expert.exit.confirm'),
-        cancelText: t('expert.exit.cancel'),
-        title: t('expert.exit.confirm_title'),
-        content: t('expert.exit.confirm_message'),
-        onOk: () => {
-          setConfirm(true);
-          displaySource(false);
-          setTimeout(() => push(path), 1);
-        },
-      });
-    };
-    const listener = (path: string) => {
-      if (!confirm) {
-        askForConfirmation(path);
-        events.emit('routeChangeError');
-        throw `routeChange aborted. This error can be safely ignored - https://github.com/zeit/next.js/issues/2476.`;
-      }
-    };
-    events.on('routeChangeStart', listener);
-    return () => {
-      events.off('routeChangeStart', listener);
-    };
-  }, [confirm, events, t, displaySource, push]);
 
   const initYaml = useCallback(async () => {
     try {
