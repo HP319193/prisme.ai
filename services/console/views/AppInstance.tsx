@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import AppEditor from '../components/AppEditor';
 import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
+import IFrameLoader from '../components/IFrameLoader';
 import SourceEdit from '../components/SourceEdit/SourceEdit';
 import EditDetails from '../layouts/EditDetails';
 import getLayout from '../layouts/WorkspaceLayout';
@@ -21,7 +22,7 @@ import AppInstanceProvider, {
 } from '../providers/AppInstanceProvider';
 import { useWorkspace } from '../providers/Workspace';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
-import { replaceSilently } from '../utils/urls';
+import { generatePageUrl, replaceSilently } from '../utils/urls';
 import useDirtyWarning from '../utils/useDirtyWarning';
 import useLocalizedText from '../utils/useLocalizedText';
 
@@ -274,8 +275,15 @@ export const AppInstance = () => {
         </title>
       </Head>
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
-        {/** TODO */}
-        {/*docPage && <IFrameLoader src={docPage} className="flex flex-1" />*/}
+        {documentation && documentation.workspaceSlug && documentation.slug && (
+          <IFrameLoader
+            src={generatePageUrl(
+              documentation.workspaceSlug,
+              documentation.slug
+            )}
+            className="flex flex-1"
+          />
+        )}
         {viewMode === 1 && (
           <div className="absolute top-0 bottom-0 left-0 right-0 bg-white">
             <AppEditor
