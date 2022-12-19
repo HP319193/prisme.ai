@@ -18,8 +18,13 @@ import {
 } from '../../../utils/getObjectsDifferences';
 import { extractObjectsByPath } from '../../../utils/extractObjectsByPath';
 import { logger } from '../../../logger';
-import { AlreadyUsedError, InvalidVersionError } from '../../../errors';
+import {
+  AlreadyUsedError,
+  InvalidSlugError,
+  InvalidVersionError,
+} from '../../../errors';
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
+import { SLUG_VALIDATION_REGEXP } from '../../../../config';
 
 interface DSULDiff {
   type: DiffType;
@@ -71,6 +76,9 @@ class Workspaces {
           const oldWorkspaceSlug = allDiffs[0].oldValue as string;
           if (!workspace?.id || !workspaceSlug) {
             return;
+          }
+          if (!SLUG_VALIDATION_REGEXP.test(workspaceSlug!)) {
+            throw new InvalidSlugError(workspaceSlug);
           }
           await this.pages.updatePagesWorkspaceSlug(
             workspace.id!,
