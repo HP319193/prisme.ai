@@ -26,8 +26,7 @@ import WorkspaceCardButton from '../components/Workspaces/WorkspaceCardButton';
 import getConfig from 'next/config';
 import FadeScroll from '../components/FadeScroll';
 import MagnifierIcon from '../icons/magnifier.svgr';
-import { generateNewName } from '../utils/generateNewName';
-import useLocalizedText from '../utils/useLocalizedText';
+import { incrementName } from '../utils/incrementName';
 
 const {
   publicRuntimeConfig: { SUGGESTIONS_ENDPOINT = '' },
@@ -35,7 +34,6 @@ const {
 
 export const WorkspacesView = () => {
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedText();
   const { push } = useRouter();
   const {
     workspaces,
@@ -66,14 +64,13 @@ export const WorkspacesView = () => {
 
   const handleCreateWorkspace = useCallback(async () => {
     const { id } = await createWorkspace(
-      generateNewName(
+      incrementName(
         t('create.defaultName'),
-        workspaces.map(({ name }) => name),
-        localize
+        workspaces.map(({ name }) => name)
       )
     );
     push(`/workspaces/${id}`);
-  }, [createWorkspace, localize, push, t, workspaces]);
+  }, [createWorkspace, push, t, workspaces]);
 
   const handleDuplicateWorkspace = useCallback(
     (id: Workspace['id']) => async () => {

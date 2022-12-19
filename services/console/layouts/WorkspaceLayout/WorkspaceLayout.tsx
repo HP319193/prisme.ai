@@ -9,10 +9,10 @@ import workspaceLayoutContext, { WorkspaceLayoutContext } from './context';
 import useLocalizedText from '../../utils/useLocalizedText';
 import Storage from '../../utils/Storage';
 import AppsStore from '../../views/AppsStore';
-import { generateNewName } from '../../utils/generateNewName';
 import Navigation from './Navigation';
 import { useWorkspace } from '../../providers/Workspace';
 import Expand from '../../components/Navigation/Expand';
+import { incrementName } from '../../utils/incrementName';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
@@ -98,10 +98,11 @@ export const WorkspaceLayout: FC = ({ children }) => {
   const createAutomationHandler = useCallback(async () => {
     setCreating(true);
 
-    const name = generateNewName(
+    const name = incrementName(
       t(`automations.create.defaultName`),
-      Object.values(workspace.automations || {}).map(({ name }) => name),
-      localize
+      Object.values(workspace.automations || {}).map(({ name }) =>
+        localize(name)
+      )
     );
     const createdAutomation = await createAutomation({
       name,
@@ -124,10 +125,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   const createPageHandler = useCallback(async () => {
     setCreating(true);
-    const name = generateNewName(
+    const name = incrementName(
       t(`pages.create.defaultName`),
-      Object.values(workspace.pages || {}).map(({ name }) => name),
-      localize
+      Object.values(workspace.pages || {}).map(({ name }) => localize(name))
     );
     const createdPage = await createPage({
       name: {

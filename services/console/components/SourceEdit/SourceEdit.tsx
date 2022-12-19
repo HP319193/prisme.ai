@@ -1,6 +1,6 @@
 import { YAMLException } from 'js-yaml';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useYaml from '../../utils/useYaml';
 import CodeEditor from '../CodeEditor/lazy';
 

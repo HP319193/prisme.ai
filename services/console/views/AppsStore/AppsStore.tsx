@@ -11,10 +11,10 @@ import {
 import IconApps from '../../icons/icon-apps.svgr';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { useWorkspace } from '../../providers/Workspace';
-import { generateNewName } from '../../utils/generateNewName';
 import AppsProvider, { useApps } from '../../providers/Apps/AppsProvider';
 import SearchInput from '../../components/Navigation/SearchInput';
 import useScrollListener from '../../components/useScrollListener';
+import { incrementName } from '../../utils/incrementName';
 
 interface AppStoreProps {
   visible: boolean;
@@ -44,19 +44,17 @@ export const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   const onAppClick = useCallback(
     async (id: string) => {
       try {
-        const slug = generateNewName(
+        const slug = incrementName(
           id,
           Object.values(workspace.imports || {}).map(({ slug }) => slug),
-          localize,
-          0,
-          true
+          '{{name}}-{{n}}'
         );
 
         await installApp({
           appSlug: id,
           slug,
         });
-        push(`/workspaces/${workspaceId}/apps/${id}`);
+        push(`/workspaces/${workspaceId}/apps/${slug}`);
       } catch (e) {
         notification.error({
           message: errorT('unknown', { errorName: e }),
@@ -65,15 +63,7 @@ export const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
       }
       onCancel();
     },
-    [
-      errorT,
-      installApp,
-      localize,
-      onCancel,
-      push,
-      workspace.imports,
-      workspaceId,
-    ]
+    [errorT, installApp, onCancel, push, workspace.imports, workspaceId]
   );
 
   useEffect(() => {
