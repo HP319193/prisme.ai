@@ -19,15 +19,13 @@ class BlockErrorBoundary extends React.Component<{ children: ReactElement }> {
   }
 
   componentDidCatch(error: any, errorInfo: any) {
-    // Vous pouvez aussi enregistrer l'erreur au sein d'un service de rapport.console.error(error, errorInfo);
+    console.error(error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
-      // Vous pouvez afficher n'importe quelle UI de repli.
       return <h1>Something went wrong.</h1>;
     }
-
     return this.props.children;
   }
 }

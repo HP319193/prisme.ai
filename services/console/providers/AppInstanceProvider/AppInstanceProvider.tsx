@@ -118,7 +118,14 @@ export const AppInstanceProvider = ({
         appInstance.slug !== payload.appInstance.slug
       )
         return;
-      setAppInstance(payload.appInstance);
+      const updated = {
+        ...appInstance,
+        config: {
+          ...appInstance.config,
+          value: payload.appInstance.config,
+        },
+      };
+      setAppInstance(updated);
     });
 
     return () => {
