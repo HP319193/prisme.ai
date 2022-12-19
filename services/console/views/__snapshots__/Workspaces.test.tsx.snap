@@ -50,7 +50,7 @@ Array [
             onClick={[Function]}
           >
             <span
-              className="flex min-w-[50px] bg-accent p-4 rounded"
+              className="flex min-w-[50px] bg-accent p-4 rounded items-center justify-center"
             >
               <div />
             </span>
@@ -88,6 +88,9 @@ Array [
         </div>
       </div>
     </div>
+    <div
+      className="pt-24 flex flex-col"
+    />
   </div>,
   <div
     className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]"
@@ -148,7 +151,7 @@ Array [
             onClick={[Function]}
           >
             <span
-              className="flex min-w-[50px] bg-accent p-4 rounded"
+              className="flex min-w-[50px] bg-accent p-4 rounded items-center justify-center"
             >
               <div />
             </span>
@@ -186,6 +189,9 @@ Array [
         </div>
       </div>
     </div>
+    <div
+      className="pt-24 flex flex-col"
+    />
   </div>,
   <div
     className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]"

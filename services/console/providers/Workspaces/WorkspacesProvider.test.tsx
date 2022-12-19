@@ -2,10 +2,7 @@ import renderer, { act } from 'react-test-renderer';
 // @ts-ignore
 import { mock } from '../../components/UserProvider';
 import api from '../../utils/api';
-import WorkspacesProvider, {
-  LoadingType,
-  useWorkspaces,
-} from './WorkspacesProvider';
+import WorkspacesProvider, { useWorkspaces } from './WorkspacesProvider';
 
 jest.mock('../../components/UserProvider', () => {
   const mock = {
@@ -67,7 +64,7 @@ it('should refetch when user changes', async () => {
 });
 
 it('should load', async () => {
-  let loading: ReturnType<typeof useWorkspaces>['loading'] = new Map();
+  let loading: ReturnType<typeof useWorkspaces>['loading'] = false;
   let workspaces: ReturnType<typeof useWorkspaces>['workspaces'] = [];
   const T = () => {
     const context = useWorkspaces();
@@ -81,13 +78,13 @@ it('should load', async () => {
     </WorkspacesProvider>
   );
 
-  expect(loading.get(LoadingType.List)).toBe(true);
+  expect(loading).toBe(true);
 
   await act(async () => {
     await true;
   });
 
-  expect(loading.get(LoadingType.List)).toBe(false);
+  expect(loading).toBe(false);
   expect(workspaces.length).toBe(1);
   expect(workspaces[0].updatedAt).toBeInstanceOf(Date);
   expect(workspaces[0].createdAt).toBeInstanceOf(Date);
@@ -95,11 +92,11 @@ it('should load', async () => {
 
 it('should create a workspace', async () => {
   let createWorkspace: ReturnType<typeof useWorkspaces>['createWorkspace'];
-  let loading: ReturnType<typeof useWorkspaces>['loading'] = new Map();
+  let creating: ReturnType<typeof useWorkspaces>['creating'] = false;
   const T = () => {
     const context = useWorkspaces();
     createWorkspace = context.createWorkspace;
-    loading = context.loading;
+    creating = context.creating;
     return null;
   };
   const root = renderer.create(
@@ -112,7 +109,7 @@ it('should create a workspace', async () => {
     createWorkspace('Foo');
   });
 
-  expect(loading.get(LoadingType.New)).toBe(true);
+  expect(creating).toBe(true);
 
   await act(async () => {
     await true;
@@ -120,18 +117,18 @@ it('should create a workspace', async () => {
 
   expect(api.createWorkspace).toHaveBeenCalledWith('Foo');
 
-  expect(loading.get(LoadingType.New)).toBe(false);
+  expect(creating).toBe(false);
 });
 
 it('should duplicate a workspace', async () => {
   let duplicateWorkspace: ReturnType<
     typeof useWorkspaces
   >['duplicateWorkspace'];
-  let loading: ReturnType<typeof useWorkspaces>['loading'] = new Map();
+  let duplicating: ReturnType<typeof useWorkspaces>['duplicating'] = new Set();
   const T = () => {
     const context = useWorkspaces();
     duplicateWorkspace = context.duplicateWorkspace;
-    loading = context.loading;
+    duplicating = context.duplicating;
     return null;
   };
   const root = renderer.create(
@@ -144,7 +141,7 @@ it('should duplicate a workspace', async () => {
     duplicateWorkspace('42');
   });
 
-  expect(loading.get('42')).toBe(true);
+  expect(duplicating.has('42')).toBe(true);
 
   await act(async () => {
     await true;
@@ -152,5 +149,5 @@ it('should duplicate a workspace', async () => {
 
   expect(api.duplicateWorkspace).toHaveBeenCalledWith({ id: '42' });
 
-  expect(loading.get('42')).toBe(false);
+  expect(duplicating.has('42')).toBe(false);
 });

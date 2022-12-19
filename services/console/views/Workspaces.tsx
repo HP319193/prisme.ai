@@ -13,11 +13,11 @@ import {
 import { useTranslation, Trans } from 'react-i18next';
 import packageJson from '../../../package.json';
 import Header from '../components/Header';
-import { LoadingType, useWorkspaces } from '../providers/Workspaces';
+import { useWorkspaces } from '../providers/Workspaces';
 import { useUser } from '../components/UserProvider';
 import plus from '../icons/plus.svg';
 import { removeEmpty, search } from '../utils/filterUtils';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import WorkspaceMenu from '../components/Workspaces/WorkspaceMenu';
 import { Workspace } from '../utils/api';
 import HeaderPopovers from './HeaderPopovers';
@@ -38,6 +38,7 @@ export const WorkspacesView = () => {
   const {
     workspaces,
     loading,
+    creating,
     createWorkspace,
     duplicateWorkspace,
     duplicating,
@@ -180,12 +181,16 @@ export const WorkspacesView = () => {
             <div className="flex flex-nowrap -mx-2 sm:flex-col md:flex-row">
               <CardButton
                 onClick={handleCreateWorkspace}
-                disabled={loading.get(LoadingType.New)}
+                disabled={creating}
                 className="p-6 flex border-accent border-dashed bg-ultra-light-accent items-center !justify-start"
                 ref={ref}
               >
-                <span className="flex min-w-[50px] bg-accent p-4 rounded">
-                  <Image src={plus.src} width={27} height={27} alt="" />
+                <span className="flex min-w-[50px] bg-accent p-4 rounded items-center justify-center">
+                  {creating ? (
+                    <LoadingOutlined className="text-3xl !text-white" />
+                  ) : (
+                    <Image src={plus.src} width={24} height={24} alt="" />
+                  )}
                 </span>
                 <span className="flex font-bold ml-4 ">
                   {t('create.label', {
@@ -218,12 +223,12 @@ export const WorkspacesView = () => {
               </FadeScroll>
             </div>
           </div>
-          {loading.get(LoadingType.List) && (
+          {loading && (
             <div className="pt-24 flex flex-col">
               <Loading />
             </div>
           )}
-          {!loading.get(LoadingType.List) && filtredWorkspacesList.length > 0 && (
+          {!loading && filtredWorkspacesList.length > 0 && (
             <div className="pt-10 flex flex-col">
               <div className="text-xl py-3 font-bold">
                 {t('workspaces.sectionTitle')}

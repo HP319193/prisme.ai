@@ -12,9 +12,10 @@ import { useContext } from '../../utils/useContext';
 
 export interface WorkspacesContext {
   workspaces: Workspace[];
-  loading: Map<string, boolean>;
+  loading: boolean;
   fetchWorkspaces: () => void;
   createWorkspace: (name: string) => Promise<Workspace>;
+  creating: boolean;
   duplicateWorkspace: (
     id: string,
     version?: string
@@ -25,11 +26,6 @@ export interface WorkspacesContext {
 
 interface WorkspacesProviderProps {
   children: ReactNode;
-}
-
-export enum LoadingType {
-  List = '__LIST__',
-  New = '__NEW__',
 }
 
 export const workspacesContext = createContext<WorkspacesContext | undefined>(
@@ -44,20 +40,13 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
   const [workspaces, setWorkspaces] = useState<WorkspacesContext['workspaces']>(
     []
   );
-  const [loading, setLoading] = useState<WorkspacesContext['loading']>(
-    new Map([[LoadingType.List, true]])
+  const [loading, setLoading] = useState<WorkspacesContext['loading']>(true);
+  const [creating, setCreating] = useState<WorkspacesContext['creating']>(
+    false
   );
   const [duplicating, setDuplicating] = useState<
     WorkspacesContext['duplicating']
   >(new Set());
-
-  const setLoadingId = useCallback((id: string, state: boolean) => {
-    setLoading((loading) => {
-      const newLoading = new Map(loading);
-      newLoading.set(id, state);
-      return newLoading;
-    });
-  }, []);
 
   const fetchWorkspaces: WorkspacesContext['fetchWorkspaces'] = useCallback(async () => {
     const workspaces = await api.getWorkspaces();
@@ -72,30 +61,39 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
 
   const createWorkspace: WorkspacesContext['createWorkspace'] = useCallback(
     async (name: string) => {
-      setLoadingId(LoadingType.New, true);
-      const workspace = await api.createWorkspace(name);
-      setLoadingId(LoadingType.New, false);
-      fetchWorkspaces();
-      return workspace;
+      setCreating(true);
+      const created = await api.createWorkspace(name);
+      setCreating(false);
+      setWorkspaces((prev) => [
+        ...prev,
+        {
+          ...created,
+          createdAt: new Date(created.createdAt),
+          updatedAt: new Date(created.updatedAt),
+        },
+      ]);
+      return created;
     },
-    [fetchWorkspaces, setLoadingId]
+    []
   );
 
   const duplicateWorkspace: WorkspacesContext['duplicateWorkspace'] = useCallback(
     async (id, version = 'current') => {
       setDuplicating((prev) => new Set([...Array.from(prev), id]));
-      setLoadingId(id, true);
       const newWorkspace = await api.duplicateWorkspace({ id });
       if (newWorkspace) {
-        fetchWorkspaces();
+        setWorkspaces((prev) =>
+          prev.map((prevW) =>
+            prevW.id === newWorkspace.id ? newWorkspace : prevW
+          )
+        );
       }
-      setLoadingId(id, false);
       setDuplicating(
         (prev) => new Set(Array.from(prev).filter((i) => id !== i))
       );
       return newWorkspace;
     },
-    [fetchWorkspaces, setLoadingId]
+    []
   );
 
   const refreshWorkspace: WorkspacesContext['refreshWorkspace'] = useCallback(
@@ -120,13 +118,13 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
     prevUserId.current = user.id;
 
     const initialFetch = async () => {
-      setLoadingId(LoadingType.List, true);
+      setLoading(true);
       await fetchWorkspaces();
-      setLoadingId(LoadingType.List, false);
+      setLoading(false);
     };
 
     initialFetch();
-  }, [fetchWorkspaces, setLoadingId, user?.id]);
+  }, [fetchWorkspaces, user?.id]);
 
   return (
     <workspacesContext.Provider
@@ -135,6 +133,7 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
         loading,
         fetchWorkspaces,
         createWorkspace,
+        creating,
         duplicateWorkspace,
         duplicating,
         refreshWorkspace,
