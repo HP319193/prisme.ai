@@ -57,8 +57,8 @@ class Apps {
       {
         ...(text?.length
           ? {
-              $text: {
-                $search: text,
+              slug: {
+                $regex: text,
               },
             }
           : {}),
