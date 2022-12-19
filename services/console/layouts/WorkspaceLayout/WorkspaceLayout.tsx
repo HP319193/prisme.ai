@@ -108,12 +108,13 @@ export const WorkspaceLayout: FC = ({ children }) => {
       name,
       do: [],
     });
-    setTimeout(() => setCreating(false));
     if (createdAutomation) {
       await router.push(
         `/workspaces/${workspace.id}/automations/${createdAutomation.slug}`
       );
     }
+    // Delayed to avoid seeing current page
+    setTimeout(() => setCreating(false));
   }, [
     createAutomation,
     localize,
@@ -135,12 +136,13 @@ export const WorkspaceLayout: FC = ({ children }) => {
       },
       blocks: [],
     });
-    setTimeout(() => setCreating(false));
     if (createdPage) {
       await router.push(
         `/workspaces/${workspace.id}/pages/${createdPage.slug}`
       );
     }
+    // Delayed to avoid seeing current page
+    setTimeout(() => setCreating(false));
   }, [
     createPage,
     language,
