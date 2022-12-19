@@ -121,7 +121,7 @@ export const EventsProvider = ({
     };
   }, [fetchEvents, filters]);
 
-  // Init decicated websocket
+  // Init dedicated websocket
   useEffect(() => {
     const initSocket = async () => {
       eventsSocket.current = await api.streamEvents(workspaceId, filters);

@@ -2,8 +2,8 @@ import useLocalizedText from '@prisme.ai/blocks/lib/useLocalizedText';
 import { Tooltip } from '@prisme.ai/design-system';
 import { Trans, useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
+import { useWorkspace } from '../../providers/Workspace';
 import { Event } from '../../utils/api';
-import { useApps } from '../AppsProvider';
 import { useSourceDetails } from '../SourceDetails';
 import {
   AppLabel,
@@ -32,7 +32,9 @@ export const SectionContent = ({
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const { photo, name, description } = useSourceDetails();
-  const { appInstances } = useApps();
+  const {
+    workspace: { imports = {} },
+  } = useWorkspace();
 
   const labelValues = useMemo(() => {
     let automationSlug =
@@ -42,8 +44,9 @@ export const SectionContent = ({
       '';
 
     if (event.source.appSlug) {
-      const apps = appInstances.get(event.source.workspaceId || '') || [];
-      const app = apps.find(({ appSlug }) => appSlug === event.source.appSlug);
+      const app = Object.values(imports).find(
+        ({ appSlug }) => appSlug === event.source.appSlug
+      );
       const automation = app?.automations.find(
         ({ slug }) => slug === automationSlug
       );
@@ -78,7 +81,7 @@ export const SectionContent = ({
       appSlug: event?.payload?.appInstance?.appSlug,
       appName: event?.payload?.appInstance?.appName,
     };
-  }, [appInstances, event, localize, t]);
+  }, [event, imports, localize, t]);
 
   const cleanedType = `${type}`.match(/^runtime\.waits\.fulfilled/)
     ? 'runtime.waits.fulfilled'

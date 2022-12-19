@@ -91,6 +91,7 @@ components:
       type: object
       required:
         - workspaceId
+        - slug
       properties:
         workspaceId:
           type: string
@@ -109,6 +110,14 @@ components:
         photo:
           type: string
         slug:
+          type: string
+        updatedAt:
+          type: string
+        createdAt:
+          type: string
+        updatedBy:
+          type: string
+        createdBy:
           type: string
 
     AppInstanceMeta:
@@ -430,7 +439,7 @@ components:
                 type: string
                 example: 'prismeaiMessenger.message'
               autocomplete:
-                $ref: "#/components/schemas/EmitAutocomplete"
+                $ref: '#/components/schemas/EmitAutocomplete'
         events:
           $ref: '#/components/schemas/ProcessedEvents'
         updatedAt:
@@ -647,9 +656,9 @@ components:
             private:
               type: boolean
             autocomplete:
-              $ref: "#/components/schemas/EmitAutocomplete"
+              $ref: '#/components/schemas/EmitAutocomplete'
             options:
-              $ref: "#/components/schemas/PrismeEventOptions"
+              $ref: '#/components/schemas/PrismeEventOptions'
 
     CreateUserTopic:
       type: object
@@ -1124,7 +1133,7 @@ components:
       properties:
         persist:
           type: boolean
-          description: "Whether to persist this event or not. Defaults to true"
+          description: 'Whether to persist this event or not. Defaults to true'
           default: true
 
     PrismeEvent:
@@ -1806,7 +1815,7 @@ components:
             slug:
               type: string
             events:
-              $ref: "#/components/schemas/ProcessedEvents"
+              $ref: '#/components/schemas/ProcessedEvents'
 
     ConfiguredAppInstance:
       type: object
@@ -1839,7 +1848,7 @@ components:
               type: string
               description: Filled with the previous appInstance slug when renamed
             events:
-              $ref: "#/components/schemas/ProcessedEvents"
+              $ref: '#/components/schemas/ProcessedEvents'
 
     CreatedAutomation:
       type: object
@@ -1863,7 +1872,7 @@ components:
             automation:
               $ref: '#/components/schemas/Automation'
             events:
-              $ref: "#/components/schemas/ProcessedEvents"
+              $ref: '#/components/schemas/ProcessedEvents'
 
     UpdatedAutomation:
       type: object
@@ -1890,7 +1899,7 @@ components:
               type: string
               description: Filled with the previous automation slug when renamed
             events:
-              $ref: "#/components/schemas/ProcessedEvents"
+              $ref: '#/components/schemas/ProcessedEvents'
 
     DeletedAutomation:
       type: object
@@ -1930,7 +1939,7 @@ components:
             page:
               $ref: '#/components/schemas/Page'
             events:
-              $ref: "#/components/schemas/ProcessedEvents"
+              $ref: '#/components/schemas/ProcessedEvents'
 
     UpdatedPage:
       type: object
@@ -1957,7 +1966,7 @@ components:
               type: string
               description: Filled with the previous page slug when renamed
             events:
-              $ref: "#/components/schemas/ProcessedEvents"
+              $ref: '#/components/schemas/ProcessedEvents'
 
     UpdatedBlocks:
       type: object

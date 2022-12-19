@@ -758,7 +758,11 @@ declare namespace Prismeai {
         name?: string;
         description?: LocalizedText;
         photo?: string;
-        slug?: string;
+        slug: string;
+        updatedAt?: string;
+        createdAt?: string;
+        updatedBy?: string;
+        createdBy?: string;
     }
     export type AppAutomations = {
         slug: string;
@@ -1679,7 +1683,6 @@ declare namespace Prismeai {
         payload: {
             subjectId: string;
             userId: string;
-            email?: string;
         };
     }
     export interface PagePermissionsShared {
@@ -2317,7 +2320,6 @@ declare namespace Prismeai {
         payload: {
             subjectId: string;
             userId: string;
-            email?: string;
         };
     }
     export interface WorkspacePermissionsShared {
