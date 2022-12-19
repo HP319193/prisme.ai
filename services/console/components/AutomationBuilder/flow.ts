@@ -54,7 +54,7 @@ export class Flow {
           type: 'empty',
           data: {
             withButton: key !== Flow.NEW_CONDITION,
-            parent: parent.conditions[key],
+            parent: parent.conditions && parent.conditions[key],
             key,
           },
           position: {
