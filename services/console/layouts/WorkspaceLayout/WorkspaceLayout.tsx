@@ -19,7 +19,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
     workspace,
     saveWorkspace,
     createAutomation,
+    creatingAutomation,
     createPage,
+    creatingPage,
   } = useWorkspace();
 
   const router = useRouter();
@@ -30,7 +32,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     i18n: { language },
   } = useTranslation('workspaces');
 
-  const [creating, setCreating] = useState(false);
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
@@ -96,8 +97,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }, []);
 
   const createAutomationHandler = useCallback(async () => {
-    setCreating(true);
-
     const name = incrementName(
       t(`automations.create.defaultName`),
       Object.values(workspace.automations || {}).map(({ name }) =>
@@ -113,8 +112,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
         `/workspaces/${workspace.id}/automations/${createdAutomation.slug}`
       );
     }
-    // Delayed to avoid seeing current page
-    setTimeout(() => setCreating(false));
   }, [
     createAutomation,
     localize,
@@ -125,7 +122,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
   ]);
 
   const createPageHandler = useCallback(async () => {
-    setCreating(true);
     const name = incrementName(
       t(`pages.create.defaultName`),
       Object.values(workspace.pages || {}).map(({ name }) => localize(name))
@@ -141,8 +137,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
         `/workspaces/${workspace.id}/pages/${createdPage.slug}`
       );
     }
-    // Delayed to avoid seeing current page
-    setTimeout(() => setCreating(false));
   }, [
     createPage,
     language,
@@ -228,7 +222,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
             </div>
           </Layout>
           <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-full">
-            {creating ? <Loading /> : children}
+            {creatingAutomation || creatingPage ? <Loading /> : children}
           </div>
         </div>
       </Layout>

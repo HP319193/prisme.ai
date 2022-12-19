@@ -1,4 +1,4 @@
-import { PlusCircleOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { StretchContent } from '@prisme.ai/design-system';
 import { Tooltip } from 'antd';
 import { FC } from 'react';
@@ -8,6 +8,7 @@ export interface ItemsGroupProps {
   title: string;
   onClick?: () => void;
   onAdd?: () => void;
+  creating?: boolean;
   tooltip?: string;
   open: boolean;
 }
@@ -16,6 +17,7 @@ export const ItemsGroup: FC<ItemsGroupProps> = ({
   open,
   onClick,
   onAdd,
+  creating,
   tooltip = '',
   children,
 }) => {
@@ -46,8 +48,9 @@ export const ItemsGroup: FC<ItemsGroupProps> = ({
               <button
                 className="flex outline-none focus:outline-none p-4 hover:text-accent"
                 onClick={onAdd}
+                disabled={creating}
               >
-                <PlusCircleOutlined />
+                {creating ? <LoadingOutlined /> : <PlusCircleOutlined />}
               </button>
             </Tooltip>
           )}

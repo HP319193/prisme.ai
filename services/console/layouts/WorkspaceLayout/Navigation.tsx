@@ -55,6 +55,8 @@ export const Navigation = ({
       pages = EMPTY_PAGES,
       imports = EMPTY_IMPORTS,
     },
+    creatingAutomation,
+    creatingPage,
   } = useWorkspace();
   const types = ['automations', 'pages', 'apps'] as const;
 
@@ -216,6 +218,7 @@ export const Navigation = ({
               (!!searchValue && filteredPages.length > 0)
             }
             onAdd={onCreatePage}
+            creating={creatingPage}
             tooltip={t('workspace.add.page')}
           >
             {filteredPages.map(([slug, { name }]) => (
@@ -265,6 +268,7 @@ export const Navigation = ({
               (!!searchValue && filteredAutomations.length > 0)
             }
             onAdd={onCreateAutomation}
+            creating={creatingAutomation}
             tooltip={t('workspace.add.automation')}
           >
             {filteredAutomations.map(([slug, { name }]) => (
