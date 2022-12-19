@@ -60,6 +60,11 @@
       "name": {
         "label": "Workspace name"
       },
+      "slug": {
+        "label": "Subdomain",
+        "error": "Must be composed only of unaccented alphanumeric characters, spaces and \"-\", \"_\"",
+        "unique": "This subdomain is no longer available. Please choose another one."
+      },
       "description": {
         "label": "Description"
       },
