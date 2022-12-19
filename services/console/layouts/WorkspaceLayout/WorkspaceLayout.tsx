@@ -188,7 +188,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
           transition-transform
           transition-duration-200
           transition-ease-in
-          z-[11]
+          z-20
           ${displaySourceView ? '' : '-translate-y-full'}
         `}
       >
