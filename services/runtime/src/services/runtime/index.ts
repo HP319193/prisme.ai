@@ -94,8 +94,12 @@ export default class Runtime {
     this.broker.on<Prismeai.SucceededLogin['payload']>(
       [EventType.SuccededLogin],
       async (event) => {
-        const { token, id: sessionId, expiresIn = 30 * 24 * 60 * 60, expires } =
-          event?.payload?.session || {};
+        const {
+          token,
+          id: sessionId,
+          expiresIn = 30 * 24 * 60 * 60,
+          expires,
+        } = event?.payload?.session || {};
         const userId = event?.payload?.id;
         if (!token || !userId || !sessionId) {
           return true;

@@ -106,20 +106,22 @@ export class Broker<CallbackContext = any> {
       clearUser?: boolean;
     }
   ): Broker<CallbackContext> {
+    const childSource = {
+      ...this.parentSource,
+      ...parentSource,
+      userId: opts?.clearUser
+        ? undefined
+        : parentSource.userId || this.parentSource.userId,
+      sessionId: parentSource.sessionId || this.parentSource.sessionId,
+      workspaceId: parentSource.workspaceId || this.parentSource.workspaceId,
+      correlationId:
+        parentSource.correlationId || this.parentSource.correlationId,
+    };
     // We do not want next broker.sends defaulting to the parent Broker serviceTopic
-    delete parentSource.serviceTopic;
+    delete childSource.serviceTopic;
+
     const child = Object.assign({}, this, {
-      parentSource: {
-        ...this.parentSource,
-        ...parentSource,
-        userId: opts?.clearUser
-          ? undefined
-          : parentSource.userId || this.parentSource.userId,
-        sessionId: parentSource.sessionId || this.parentSource.sessionId,
-        workspaceId: parentSource.workspaceId || this.parentSource.workspaceId,
-        correlationId:
-          parentSource.correlationId || this.parentSource.correlationId,
-      },
+      parentSource: childSource,
       _buffer: false,
       ...opts,
     });
