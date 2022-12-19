@@ -221,6 +221,7 @@ export const AppInstance = () => {
         extra={[
           displaySource ? (
             <Button
+              key="save"
               onClick={save}
               className="!flex flex-row"
               variant="primary"
@@ -230,7 +231,7 @@ export const AppInstance = () => {
             </Button>
           ) : (
             documentation && (
-              <div>
+              <div key="doc">
                 <div className="ml-3">
                   <Segmented
                     key="nav"
@@ -263,6 +264,7 @@ export const AppInstance = () => {
         </title>
       </Head>
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
+        {/** TODO */}
         {/*docPage && <IFrameLoader src={docPage} className="flex flex-1" />*/}
         {viewMode === 1 && (
           <div className="absolute top-0 bottom-0 left-0 right-0 bg-white">
