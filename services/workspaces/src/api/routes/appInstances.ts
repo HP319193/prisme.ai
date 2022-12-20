@@ -1,14 +1,14 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
 import { MissingFieldError } from '../../errors';
-import { AccessManager } from '../../permissions';
+import { AccessManager, getSuperAdmin } from '../../permissions';
 import { AppInstances, Apps } from '../../services';
 import { DSULStorage } from '../../services/DSULStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
 
 export default function init(dsulStorage: DSULStorage) {
-  const getServices = ({
+  const getServices = async ({
     context,
     accessManager,
     broker,
@@ -17,7 +17,11 @@ export default function init(dsulStorage: DSULStorage) {
     accessManager: Required<AccessManager>;
     broker: Broker;
   }) => {
-    const apps = new Apps(accessManager, broker.child(context), dsulStorage);
+    const apps = new Apps(
+      await getSuperAdmin(accessManager as any),
+      broker.child(context),
+      dsulStorage
+    );
     const appInstances = new AppInstances(
       accessManager,
       broker.child(context),
@@ -41,7 +45,7 @@ export default function init(dsulStorage: DSULStorage) {
     >,
     res: Response<PrismeaiAPI.InstallAppInstance.Responses.$200>
   ) {
-    const { appInstances } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
@@ -69,7 +73,7 @@ export default function init(dsulStorage: DSULStorage) {
     >,
     res: Response<PrismeaiAPI.UpdateAppInstanceConfig.Responses.$200>
   ) {
-    const { appInstances } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
@@ -107,7 +111,7 @@ export default function init(dsulStorage: DSULStorage) {
     >,
     res: Response<PrismeaiAPI.ConfigureAppInstance.Responses.$200>
   ) {
-    const { appInstances } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
@@ -129,7 +133,7 @@ export default function init(dsulStorage: DSULStorage) {
     }: Request<PrismeaiAPI.UninstallAppInstance.PathParameters>,
     res: Response<PrismeaiAPI.UninstallAppInstance.Responses.$200>
   ) {
-    const { appInstances } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
@@ -147,7 +151,7 @@ export default function init(dsulStorage: DSULStorage) {
     }: Request<PrismeaiAPI.ListAppInstances.PathParameters, any, any, any>,
     res: Response<PrismeaiAPI.ListAppInstances.Responses.$200>
   ) {
-    const { appInstances } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
@@ -165,7 +169,7 @@ export default function init(dsulStorage: DSULStorage) {
     }: Request<PrismeaiAPI.GetAppInstance.PathParameters, any, any, any>,
     res: Response<PrismeaiAPI.GetAppInstance.Responses.$200>
   ) {
-    const { appInstances } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
@@ -183,7 +187,7 @@ export default function init(dsulStorage: DSULStorage) {
     }: Request<PrismeaiAPI.GetAppInstanceConfig.PathParameters, any, any, any>,
     res: Response<PrismeaiAPI.GetAppInstanceConfig.Responses.$200>
   ) {
-    const { appInstances } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
