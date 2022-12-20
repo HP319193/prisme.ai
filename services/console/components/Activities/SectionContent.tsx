@@ -47,7 +47,7 @@ export const SectionContent = ({
       const app = Object.values(imports).find(
         ({ appSlug }) => appSlug === event.source.appSlug
       );
-      const automation = app?.automations.find(
+      const automation = app?.automations?.find(
         ({ slug }) => slug === automationSlug
       );
 
