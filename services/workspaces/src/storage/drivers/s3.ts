@@ -163,14 +163,14 @@ export default class S3Like implements IStorage {
     );
   }
 
-  public save(key: string, data: any) {
+  public async save(key: string, data: any) {
     const params = {
       Bucket: this.options.bucket,
       Key: key,
       Body: data,
       CacheControl: this.options.cacheControl,
     };
-    return new Promise((resolve: any, reject: any) => {
+    const result = await new Promise((resolve: any, reject: any) => {
       this.client.putObject(params, function (err: any, data: any) {
         if (err) {
           reject(
@@ -181,20 +181,25 @@ export default class S3Like implements IStorage {
         }
       });
     });
+    await this.waitForObjectPropagation(key);
+    return result;
   }
 
   public async copy(from: string, to: string) {
     const objects = await this.find(from, true);
-    return await Promise.all(
-      objects.map(
-        ({ key }) =>
+    const copyPaths = objects.map(({ key }) => ({
+      CopySource: `/${this.options.bucket}/${key}`,
+      Key: from === key ? key : path.join(to, key.slice(from.length)),
+    }));
+    const result = await Promise.all(
+      copyPaths.map(
+        (copy) =>
           new Promise((resolve: any, reject: any) => {
             this.client.copyObject(
               {
                 Bucket: this.options.bucket,
-                CopySource: `/${this.options.bucket}/${key}`,
-                Key: from === key ? key : path.join(to, key.slice(from.length)),
                 CacheControl: this.options.cacheControl,
+                ...copy,
               },
               function (err: any, data: any) {
                 if (err) {
@@ -213,5 +218,23 @@ export default class S3Like implements IStorage {
           })
       )
     );
+    await this.waitForObjectPropagation(copyPaths[copyPaths.length - 1].Key);
+    return result;
+  }
+
+  private async waitForObjectPropagation(
+    path: string,
+    delay = 300,
+    maxWait = 2000
+  ) {
+    let waited = 0;
+    do {
+      try {
+        await this.get(path);
+        return;
+      } catch {}
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      waited += delay;
+    } while (waited < maxWait);
   }
 }
