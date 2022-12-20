@@ -44,7 +44,7 @@ export const AppInstance = () => {
   const [value, setValue] = useState(appInstance);
   const [displaySource, setDisplaySource] = useState(false);
   const [mountSource, setMountSource] = useState(true);
-  const [viewMode, setViewMode] = useState(0);
+  const [viewMode, setViewMode] = useState(documentation ? 0 : 1);
   const [dirty] = useDirtyWarning(appInstance, value);
 
   useEffect(() => {
