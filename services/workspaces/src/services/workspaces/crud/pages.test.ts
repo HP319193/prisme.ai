@@ -321,7 +321,7 @@ describe('Detailed pages', () => {
           blocks: {
             'Custom Code.Editor': 'block url',
           },
-          config: {
+          appConfig: {
             functions: {
               foo: {
                 code: 'return "hello world";',
@@ -334,14 +334,14 @@ describe('Detailed pages', () => {
             'Dialog Box.Editor': 'block url',
           },
           slug: 'Dialog Box',
-          config: {},
+          appConfig: {},
         },
         {
           blocks: {
             myBlock: 'myBlockURL',
           },
           slug: '',
-          config: {},
+          appConfig: {},
         },
       ],
       public: false,

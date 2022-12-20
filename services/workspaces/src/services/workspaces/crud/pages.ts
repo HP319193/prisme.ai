@@ -264,14 +264,14 @@ class Pages {
           page.workspaceId!,
           cur.slug!
         );
-        return { ...cur, config: appInstance.config?.value || {} };
+        return { ...cur, appConfig: appInstance.config?.value || {} };
       })
     );
 
     if (workspace.blocks) {
       appInstances.push({
         slug: '',
-        config: {},
+        appConfig: {},
         blocks: Object.entries(workspace.blocks).reduce(
           (prev, [slug, { url = '' }]) => ({
             ...prev,
