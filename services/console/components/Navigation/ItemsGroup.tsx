@@ -30,7 +30,7 @@ export const ItemsGroup: FC<ItemsGroupProps> = ({
             onClick={onClick}
           >
             <Tooltip title={title} placement="left">
-              <div className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center">
+              <div className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center items-center">
                 <ChevronIcon
                   width="1rem"
                   className={` transition-transform ${
