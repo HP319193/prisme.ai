@@ -64,9 +64,10 @@ export class Workspaces extends Storage {
           const workspace = (event as any as Prismeai.CreatedWorkspace).payload
             .workspace;
           try {
+            // In case of a duplicated workspace, the model should have been already duplicated
             await this.fetchWorkspace(workspace.id!);
           } catch {
-            // Do not reset model if it already exists (i.e duplicated workspace)
+            // Otherwise, simply init the model
             await this.loadWorkspace(workspace);
             await this.saveWorkspace(workspace);
           }
@@ -90,7 +91,16 @@ export class Workspaces extends Storage {
           return true;
         }
         if (!(workspaceId in this.workspaces)) {
-          await this.fetchWorkspace(workspaceId);
+          try {
+            await this.fetchWorkspace(workspaceId);
+          } catch (error) {
+            const workspace = {
+              id: workspaceId,
+              name: 'Workspace name has been reset',
+            };
+            await this.loadWorkspace(workspace);
+            await this.saveWorkspace(workspace);
+          }
         }
         const workspace = this.workspaces[workspaceId];
 
