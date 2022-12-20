@@ -992,6 +992,10 @@
           "content": {
             "label": "Contenu au format HTML ou Markdown",
             "description": "Vous pouvez ici afficher n'importe quel contenu riche en utilisant le format HTML ou Markdown. Vous pouvez même mélanger les deux."
+          },
+          "allowScripts": {
+            "label": "Autoriser les scripts",
+            "description": "Autoriser l'execution de code javascript inclus dans des balises <script>"
           }
         }
       }

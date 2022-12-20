@@ -30,7 +30,7 @@ class BlockErrorBoundary extends React.Component<{ children: ReactElement }> {
   }
 }
 
-export interface BlockComponentProps {
+export interface BlockComponentProps<T = any> {
   name?: string;
   token?: string;
   workspaceId?: string;
@@ -39,12 +39,12 @@ export interface BlockComponentProps {
   layout?: {
     container?: HTMLElement;
   };
-  config?: Record<any, any>;
+  config?: T;
 }
-export type BlockComponent = {
-  (props: BlockComponentProps): ReactElement | null;
+export type BlockComponent<T = any> = {
+  (props: BlockComponentProps<T>): ReactElement | null;
   schema?: Schema;
-  Preview?: (props: BlockComponentProps) => ReactElement;
+  Preview?: (props: BlockComponentProps<T>) => ReactElement;
 };
 
 export interface BlockLoaderProps extends BlockComponentProps {

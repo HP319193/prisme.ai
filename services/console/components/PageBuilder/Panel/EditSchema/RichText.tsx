@@ -9,6 +9,11 @@ const schema: Schema = {
       description: 'pages.blocks.richtext.settings.content.description',
       'ui:widget': 'textarea',
     },
+    allowScripts: {
+      type: 'boolean',
+      title: 'pages.blocks.richtext.settings.allowScripts.label',
+      description: 'pages.blocks.richtext.settings.allowScripts.description',
+    },
   },
 };
 
