@@ -88,15 +88,18 @@ class Automations {
       additionalIndexFields: { events },
     });
 
-    this.broker.send<Prismeai.CreatedAutomation['payload']>(
-      EventType.CreatedAutomation,
-      {
-        automation,
-        slug,
-        events,
-      },
-      { workspaceId }
-    );
+    // For legacy migration, do not emit this event as it might reset existing apps config
+    if (!replace) {
+      this.broker.send<Prismeai.CreatedAutomation['payload']>(
+        EventType.CreatedAutomation,
+        {
+          automation,
+          slug,
+          events,
+        },
+        { workspaceId }
+      );
+    }
     return { ...automation, slug };
   };
 

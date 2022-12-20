@@ -169,15 +169,18 @@ class AppInstances {
       }
     );
 
-    this.broker.send<Prismeai.InstalledAppInstance['payload']>(
-      EventType.InstalledApp,
-      { appInstance, slug: appInstance.slug, events },
-      {
-        appSlug: appInstance.appSlug,
-        appInstanceFullSlug: appInstance.slug,
-        workspaceId,
-      }
-    );
+    // For legacy migration, do not emit this event as it might reset existing apps config
+    if (!replace) {
+      this.broker.send<Prismeai.InstalledAppInstance['payload']>(
+        EventType.InstalledApp,
+        { appInstance, slug: appInstance.slug, events },
+        {
+          appSlug: appInstance.appSlug,
+          appInstanceFullSlug: appInstance.slug,
+          workspaceId,
+        }
+      );
+    }
     return appInstance;
   };
 
