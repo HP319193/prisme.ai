@@ -93,7 +93,13 @@ export async function fetch(
   }
   const parsedURL = new URL(url);
   for (let [key, val] of Object.entries(query || {})) {
-    parsedURL.searchParams.append(key, val);
+    if (Array.isArray(val)) {
+      val.forEach((cur) => {
+        parsedURL.searchParams.append(key, cur);
+      });
+    } else {
+      parsedURL.searchParams.append(key, val);
+    }
   }
   const result = await nodeFetch(parsedURL, params);
   const responseBody = await getResponseBody(result);

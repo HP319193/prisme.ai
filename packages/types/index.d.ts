@@ -757,6 +757,11 @@ declare namespace Prismeai {
         versions?: string[] | WorkspaceVersion[];
         name?: string;
         description?: LocalizedText;
+        documentation?: {
+            workspaceSlug: string;
+            slug: string;
+        };
+        config?: Config;
         photo?: string;
         slug: string;
         updatedAt?: string;
@@ -2782,7 +2787,7 @@ declare namespace PrismeaiAPI {
             version?: Parameters.Version;
         }
         namespace Responses {
-            export type $200 = Prismeai.DSUL;
+            export type $200 = Prismeai.App;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;

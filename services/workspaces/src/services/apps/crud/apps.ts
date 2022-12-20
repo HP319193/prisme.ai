@@ -1,7 +1,7 @@
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import { DSULStorage, DSULType } from '../../DSULStorage';
-import { AccessManager, ActionType, SubjectType } from '../../../permissions';
+import { AccessManager, SubjectType } from '../../../permissions';
 import {
   AlreadyUsedError,
   InvalidSlugError,
@@ -57,9 +57,19 @@ class Apps {
       {
         ...(text?.length
           ? {
-              slug: {
-                $regex: text,
-              },
+              $or: [
+                {
+                  slug: {
+                    $regex: text,
+                    $options: 'i',
+                  },
+                },
+                {
+                  $text: {
+                    $search: text,
+                  },
+                },
+              ],
             }
           : {}),
         ...query,
@@ -89,6 +99,20 @@ class Apps {
       });
     }
 
+    let documentation: Prismeai.App['documentation'];
+    try {
+      if (dsul.slug) {
+        await this.storage.get({
+          dsulType: DSULType.DetailedPage,
+          workspaceSlug: dsul.slug,
+          slug: '_doc',
+        });
+        documentation = {
+          workspaceSlug: dsul.slug!,
+          slug: '_doc',
+        };
+      }
+    } catch {}
     const app: Prismeai.App & { id: string } = {
       id: '',
       workspaceId: publish.workspaceId,
@@ -96,6 +120,7 @@ class Apps {
       name: dsul.name,
       description: dsul.description,
       photo: dsul.photo,
+      documentation,
     };
 
     // Fetch existing workspace app
@@ -222,17 +247,17 @@ class Apps {
     }
   };
 
-  getApp = async (appSlug: string, version?: string) => {
-    await this.accessManager.throwUnlessCan(
-      ActionType.GetAppSourceCode,
-      SubjectType.App,
-      appSlug
-    );
+  getApp = async (appSlug: string, version?: string): Promise<Prismeai.App> => {
     const dsul = await this.storage.get({
       appSlug,
       version: version || 'current',
     });
-    return dsul;
+    const { value, ...config } = dsul.config || {};
+    const app = await this.accessManager.get(SubjectType.App, appSlug);
+    return {
+      ...app,
+      config,
+    };
   };
 
   getAppDetails = async (

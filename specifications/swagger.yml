@@ -107,6 +107,18 @@ components:
           type: string
         description:
           $ref: '#/components/schemas/LocalizedText'
+        documentation:
+          type: object
+          required:
+            - workspaceSlug
+            - slug
+          properties:
+            workspaceSlug:
+              type: string
+            slug:
+              type: string
+        config:
+          $ref: "#/components/schemas/Config"
         photo:
           type: string
         slug:
@@ -4646,7 +4658,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DSUL'
+                $ref: '#/components/schemas/App'
         '404':
           description: Object not found
           content:
