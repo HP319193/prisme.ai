@@ -168,8 +168,8 @@ const HeaderWorkspace = () => {
               onSave={updateDetails}
               onDelete={confirmDelete}
               context="workspaces"
-              visible={popoverIsVisible}
-              onVisibleChange={setPopoverIsVisible}
+              open={popoverIsVisible}
+              onOpenChange={setPopoverIsVisible}
               disabled={saving}
             />
           </div>

@@ -10,18 +10,17 @@ import {
   Schema,
   SchemaForm,
 } from '@prisme.ai/design-system';
+import { PopoverProps } from '@prisme.ai/design-system/lib/Components/Popover';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 import useLocalizedText from '../utils/useLocalizedText';
 
-interface EditDetailsprops {
+interface EditDetailsprops extends Omit<PopoverProps, 'content'> {
   schema: Schema;
   value: any;
   onSave: (values: any) => Promise<void | Record<string, string>>;
   onDelete: () => void;
   context?: string;
-  visible?: boolean;
-  onVisibleChange?: (visible: boolean) => void;
   disabled?: boolean;
 }
 
@@ -56,22 +55,22 @@ export const EditDetails = ({
 
   return (
     <Popover
-      title={({ setVisible }) => (
+      title={({ setOpen }) => (
         <div className="flex flex-1 justify-between">
           {t('details.title', { context })}
-          <button onClick={() => setVisible(false)}>
+          <button onClick={() => setOpen(false)}>
             <CloseCircleOutlined />
           </button>
         </div>
       )}
       destroyTooltipOnHide
-      content={({ setVisible }) => (
+      content={({ setOpen }) => (
         <SchemaForm
           schema={schema}
           onSubmit={async (values) => {
             const errors = await onSave(values);
             if (!errors || Object.keys(errors).length === 0) {
-              setVisible(false);
+              setOpen(false);
               return;
             }
             return errors;

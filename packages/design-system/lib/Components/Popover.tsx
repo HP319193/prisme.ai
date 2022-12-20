@@ -8,14 +8,11 @@ import {
   useState,
 } from 'react';
 
-type SetVisible = (visible: boolean) => void;
+type SetOpen = (open: boolean) => void;
 export interface PopoverProps extends AntdPopoverProps {
   children?: ReactElement;
-  content: FC<{ setVisible: SetVisible }>;
-  title?: string | ReactNode | FC<{ setVisible: SetVisible }>;
-  initialVisible?: boolean;
-  visible?: boolean;
-  onVisibleChange?: (visible: boolean) => void;
+  content: FC<{ setOpen: SetOpen }>;
+  title?: string | ReactNode | FC<{ setOpen: SetOpen }>;
   titleClassName?: string;
 }
 
@@ -23,32 +20,31 @@ const Popover: FC<PopoverProps> = ({
   title,
   children,
   content,
-  initialVisible = false,
-  visible: controlledVisible,
-  onVisibleChange,
+  open,
+  onOpenChange,
   titleClassName,
   ...otherProps
 }) => {
-  const [visible, setVisible] = useState(initialVisible);
+  const [visible, setVisible] = useState(open);
 
   useEffect(() => {
-    if (controlledVisible === undefined) return;
-    setVisible(controlledVisible);
-  }, [controlledVisible]);
+    if (open === undefined) return;
+    setVisible(open);
+  }, [open]);
 
   const toggleVisible = useCallback(
-    (visible: boolean) => {
-      if (onVisibleChange) onVisibleChange(visible);
-      else setVisible(visible);
+    (open: boolean) => {
+      onOpenChange && onOpenChange(open);
+      setVisible(open);
     },
-    [onVisibleChange]
+    [onOpenChange]
   );
 
   return (
     <AntdPopover
       content={
         <div className="flex flex-1 h-full overflow-auto">
-          {content({ setVisible: toggleVisible })}
+          {content({ setOpen: toggleVisible })}
         </div>
       }
       title={
@@ -58,7 +54,9 @@ const Popover: FC<PopoverProps> = ({
               titleClassName || ''
             }`}
           >
-            {typeof title === 'function' ? title({ setVisible }) : title}
+            {typeof title === 'function'
+              ? title({ setOpen: toggleVisible })
+              : title}
           </div>
         ) : (
           <div
@@ -68,7 +66,10 @@ const Popover: FC<PopoverProps> = ({
       }
       trigger="click"
       open={visible}
-      onOpenChange={(visible) => toggleVisible(visible)}
+      onOpenChange={(open) => {
+        toggleVisible(open);
+        onOpenChange && onOpenChange(open);
+      }}
       {...otherProps}
     >
       {children}
