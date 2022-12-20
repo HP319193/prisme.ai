@@ -471,11 +471,21 @@ class Pages {
             parentFolder: true,
           }
         );
-        await this.storage.delete({
-          workspaceSlug: oldWorkspaceSlug,
-          dsulType: DSULType.DetailedPage,
-          parentFolder: true,
-        });
+        // Wait before deleting old folder to make sure new files have been propertly copied (i.e S3 eventual consistency)
+        setTimeout(() => {
+          this.storage
+            .delete({
+              workspaceSlug: oldWorkspaceSlug,
+              dsulType: DSULType.DetailedPage,
+              parentFolder: true,
+            })
+            .catch((err) =>
+              logger.warn({
+                msg: 'An error occured while deleting old detailed page folder after workspace renaming',
+                err,
+              })
+            );
+        }, 2000);
       }
     } catch (err) {
       logger.warn({
