@@ -39,7 +39,8 @@ export async function syncDetailedPagesWithEDA(
     logCtx?: any
   ) => {
     const detailedPage = await pages.getDetailedPage({
-      id,
+      workspaceId,
+      slug: slug!,
     });
     detailedPage.apiKey = (
       await pages.getUpdatedPageApiKey(detailedPage)

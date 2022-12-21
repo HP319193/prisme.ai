@@ -19,7 +19,7 @@ const getMockedAccessManager = (get?: any) => {
     throwUnlessCan: jest.fn(),
     findAll: jest.fn(),
     create: jest.fn(),
-    get: jest.fn(get || (() => ({}))),
+    get: jest.fn(get || (() => ({ id: WORKSPACE_ID }))),
     update: jest.fn(),
     delete: jest.fn(),
     deleteMany: jest.fn(),
@@ -99,6 +99,7 @@ describe('Sync DetailedPages with the EDA', () => {
       slug: pageSlug,
       workspaceId: WORKSPACE_ID,
       workspaceSlug: WORKSPACE_SLUG,
+      id: WORKSPACE_ID,
     }));
     broker = new Broker();
     appInstances = new AppInstances(
@@ -152,7 +153,8 @@ describe('Sync DetailedPages with the EDA', () => {
     });
 
     const detailedPage = await pages.getDetailedPage({
-      id: page.id!,
+      workspaceId: page.workspaceId!,
+      slug: page.slug!,
     });
 
     await waitForExpect(async () => {
@@ -166,7 +168,7 @@ describe('Sync DetailedPages with the EDA', () => {
       );
     });
 
-    await pages.updatePage(WORKSPACE_ID, page.id!, {
+    await pages.updatePage(WORKSPACE_ID, page.slug!, {
       ...page,
       description: 'updated description',
     });
@@ -210,7 +212,8 @@ describe('Sync DetailedPages with the EDA', () => {
     });
 
     const detailedPage = await pages.getDetailedPage({
-      id: page.id!,
+      workspaceId: page.workspaceId!,
+      slug: page.slug!,
     });
     expect(
       (detailedPage.appInstances || []).find((cur) => cur.slug == '')
@@ -257,7 +260,8 @@ describe('Sync DetailedPages with the EDA', () => {
     });
 
     const detailedPage = await pages.getDetailedPage({
-      id: page.id!,
+      workspaceId: page.workspaceId!,
+      slug: page.slug!,
     });
     expect(
       (detailedPage.appInstances || []).find((cur) => cur.slug == 'Custom Code')

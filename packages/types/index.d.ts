@@ -2620,12 +2620,12 @@ declare namespace PrismeaiAPI {
     }
     namespace DeletePage {
         namespace Parameters {
-            export type Id = string;
+            export type Slug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            id: Parameters.Id;
+            slug: Parameters.Slug;
         }
         namespace Responses {
             export interface $200 {
@@ -2926,12 +2926,12 @@ declare namespace PrismeaiAPI {
     }
     namespace GetPage {
         namespace Parameters {
-            export type Id = string;
+            export type Slug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            id: Parameters.Id;
+            slug: Parameters.Slug;
         }
         namespace Responses {
             export type $200 = Prismeai.DetailedPage;
@@ -3394,12 +3394,12 @@ declare namespace PrismeaiAPI {
     }
     namespace UpdatePage {
         namespace Parameters {
-            export type Id = string;
+            export type Slug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            id: Parameters.Id;
+            slug: Parameters.Slug;
         }
         export type RequestBody = Prismeai.Page;
         namespace Responses {

@@ -177,10 +177,12 @@ class Pages {
   };
 
   getDetailedPage = async (
-    query: { id: string } | { workspaceSlug: string; slug: string }
+    query:
+      | { workspaceId: string; slug: string }
+      | { workspaceSlug: string; slug: string }
   ): Promise<Prismeai.DetailedPage> => {
     // Admin query
-    if ((<any>query).id) {
+    if ((<any>query).workspaceId) {
       const pageMeta = await this.accessManager.get(SubjectType.Page, query);
       const page = await this.storage.get({
         slug: pageMeta.slug,
@@ -299,13 +301,14 @@ class Pages {
 
   updatePage = async (
     workspaceId: string,
-    id: string,
+    slug: string,
     pageUpdate: Prismeai.Page
   ) => {
     const currentPageMeta = await this.accessManager.get(SubjectType.Page, {
       workspaceId,
-      id,
+      slug,
     });
+    const id = currentPageMeta.id!;
 
     const oldSlug = currentPageMeta.slug!;
     const newSlug = pageUpdate.slug || oldSlug;
@@ -394,8 +397,12 @@ class Pages {
     )) as ApiKey;
   };
 
-  deletePage = async (id: string) => {
-    const page = await this.accessManager.get(SubjectType.Page, id);
+  deletePage = async (workspaceId: string, slug: string) => {
+    const page = await this.accessManager.get(SubjectType.Page, {
+      workspaceId,
+      slug,
+    });
+    const id = page.id!;
 
     await this.accessManager.delete(SubjectType.Page, id);
 

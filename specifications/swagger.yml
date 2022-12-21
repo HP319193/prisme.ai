@@ -4328,7 +4328,7 @@ paths:
                 $ref: '#/components/schemas/BadParametersError'
 
   # Pages
-  /v2/workspaces/{workspaceId}/pages/{id}:
+  /v2/workspaces/{workspaceId}/pages/{slug}:
     get:
       description: Fetch a page
       operationId: getPage
@@ -4341,9 +4341,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: 'id'
+        - name: 'slug'
           in: 'path'
-          description: 'Page id'
+          description: 'Page slug'
           required: true
           schema:
             type: string
@@ -4385,9 +4385,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: 'id'
+        - name: 'slug'
           in: 'path'
-          description: 'Page id'
+          description: 'Page slug'
           required: true
           schema:
             type: string
@@ -4442,9 +4442,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: 'id'
+        - name: 'slug'
           in: 'path'
-          description: 'Page id'
+          description: 'Page slug'
           required: true
           schema:
             type: string
