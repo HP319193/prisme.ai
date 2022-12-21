@@ -1,7 +1,3 @@
-export type Data = any;
-export type Query = any;
-export type SavedData = Data & { id: string };
-
 export interface StorageOptions {
   driver: string;
   host: string;
@@ -9,12 +5,12 @@ export interface StorageOptions {
   driverOptions: any;
 }
 
-export interface StorageDriver {
+export interface StorageDriver<Model> {
   connect(): Promise<void>;
   close(): Promise<void>;
 
-  save(data: Data): Promise<SavedData>;
-  get(id: string): Promise<SavedData>;
-  find(query: Query): Promise<SavedData[]>;
+  save(data: Model): Promise<Model>;
+  get(id: string): Promise<Model>;
+  find(query: Partial<Model> & Record<string, any>): Promise<Model[]>;
   delete(id: string): Promise<boolean>;
 }

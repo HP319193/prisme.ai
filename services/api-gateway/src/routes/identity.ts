@@ -102,7 +102,7 @@ async function resetPasswordHandler(
         EventType.SucceededPasswordReset,
         {
           ip: req.context?.http?.ip,
-          email: user?.email,
+          email: user?.email!,
         }
       )
       .catch((err) => req.logger.error(err));
@@ -172,7 +172,7 @@ async function findContactsHandler(
 ) {
   const identity = services.identity(context, logger);
   return res.send({
-    contacts: await identity.find({
+    contacts: await identity.findContacts({
       email,
       ids,
     }),

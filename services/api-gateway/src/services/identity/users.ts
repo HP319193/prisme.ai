@@ -19,6 +19,7 @@ import { comparePasswords, hashPassword } from './utils';
 import { EmailTemplate, sendMail } from '../../utils/email';
 import { syscfg, mails as mailConfig } from '../../config';
 import { logger, Logger } from '../../logger';
+import { User } from '.';
 
 const { RESET_PASSWORD_URL, LOGIN_URL } = mailConfig;
 
@@ -35,7 +36,7 @@ export enum UserStatus {
 }
 
 export const sendResetPasswordLink =
-  (Users: StorageDriver, ctx?: PrismeContext, logger?: Logger) =>
+  (Users: StorageDriver<User>, ctx?: PrismeContext, logger?: Logger) =>
   async ({ email = '', language = '' }: any) => {
     const existingUsers = await Users.find({
       email: email.toLowerCase().trim(),
@@ -83,8 +84,8 @@ export const sendResetPasswordLink =
   };
 
 export const resetPassword =
-  (Users: StorageDriver, ctx?: PrismeContext, logger?: Logger) =>
-  async ({ password, token }: any) => {
+  (Users: StorageDriver<User>, ctx?: PrismeContext, logger?: Logger) =>
+  async ({ password, token }: any): Promise<Prismeai.User> => {
     const users = await Users.find({
       'resetPassword.token': token,
       'resetPassword.expiresAt': { $gte: Date.now() },
@@ -109,12 +110,11 @@ export const resetPassword =
       resetPassword: {},
     });
 
-    delete savedUser.password;
-    return savedUser;
+    return filterUserFields(savedUser);
   };
 
 export const sendAccountValidationLink =
-  (Users: StorageDriver, ctx?: PrismeContext, logger?: Logger) =>
+  (Users: StorageDriver<User>, ctx?: PrismeContext, logger?: Logger) =>
   async ({ email = '', language = '' }: any) => {
     const existingUsers = await Users.find({
       email: email.toLowerCase().trim(),
@@ -158,8 +158,8 @@ export const sendAccountValidationLink =
   };
 
 export const validateAccount =
-  (Users: StorageDriver, ctx?: PrismeContext, logger?: Logger) =>
-  async ({ token }: any) => {
+  (Users: StorageDriver<User>, ctx?: PrismeContext, logger?: Logger) =>
+  async ({ token }: any): Promise<Prismeai.User> => {
     const users = await Users.find({
       'validationToken.token': token,
       'validationToken.expiresAt': { $gte: Date.now() },
@@ -176,19 +176,17 @@ export const validateAccount =
       status: 'validated',
     });
 
-    delete savedUser.password;
-    delete savedUser.validationToken;
-    return savedUser;
+    return filterUserFields(savedUser);
   };
 
-export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
+export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   async function ({
     email,
     password,
     firstName,
     lastName,
     language,
-  }: PrismeaiAPI.Signup.RequestBody) {
+  }: PrismeaiAPI.Signup.RequestBody): Promise<Prismeai.User> {
     email = email.toLowerCase().trim();
 
     const existingUsers = await Users.find({ email });
@@ -218,7 +216,6 @@ export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
       ...user,
       password: hash,
     });
-    delete savedUser.password;
 
     try {
       await sendAccountValidationLink(Users, ctx)({ email, language });
@@ -229,17 +226,15 @@ export const signup = (Users: StorageDriver, ctx?: PrismeContext) =>
       });
     }
 
-    return Promise.resolve(savedUser);
+    return Promise.resolve({ ...user, id: savedUser.id! });
   };
 
-export const get = (Users: StorageDriver, ctx?: PrismeContext) =>
+// User getter for /me
+export const get = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   async function (id: string): Promise<Prismeai.User> {
     try {
       const user = await Users.get(id);
-      delete user.password;
-      delete user.validationToken;
-      delete user.resetPassword;
-      return user;
+      return filterUserFields(user);
     } catch (err) {
       logger.warn({
         msg: `An error occured while trying to fetch user ${id}`,
@@ -250,24 +245,50 @@ export const get = (Users: StorageDriver, ctx?: PrismeContext) =>
     }
   };
 
-export const login = (Users: StorageDriver, ctx?: PrismeContext) =>
+const filterUserFields = (user: User): Prismeai.User => {
+  const {
+    email,
+    status,
+    firstName,
+    lastName,
+    photo,
+    authData,
+    language,
+    mfa,
+    id,
+  } = user;
+  return {
+    email,
+    status,
+    firstName,
+    lastName,
+    photo,
+    id,
+    authData,
+    language,
+    mfa,
+  };
+};
+
+export const login = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   async function (email: string, password: string) {
     const users = await Users.find({ email: email.toLowerCase().trim() });
     if (!users.length) {
       throw new AuthenticationError();
     }
-    if (!(await comparePasswords(password, users[0].password))) {
+    if (!(await comparePasswords(password, users[0].password!))) {
       throw new AuthenticationError();
     }
     if (users[0].status && users[0].status !== UserStatus.Validated) {
       throw new ValidateEmailError();
     }
-    delete users[0].password;
-    delete users[0].resetPassword;
-    return users[0];
+    return filterUserFields(users[0]);
   };
 
-export const anonymousLogin = (Users: StorageDriver, ctx?: PrismeContext) =>
+export const anonymousLogin = (
+  Users: StorageDriver<User>,
+  ctx?: PrismeContext
+) =>
   async function () {
     const user: Prismeai.User = {
       firstName:
@@ -283,8 +304,8 @@ export interface FindUserQuery {
   email?: string;
   ids?: string[];
 }
-export const find = (Users: StorageDriver, ctx?: PrismeContext) =>
-  async function ({ email, ids }: FindUserQuery) {
+export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
+  async function ({ email, ids }: FindUserQuery): Promise<Prismeai.Contact[]> {
     if (email) {
       return await Users.find({ email: email.toLowerCase().trim() });
     }
@@ -296,7 +317,13 @@ export const find = (Users: StorageDriver, ctx?: PrismeContext) =>
             $in: mongoIds,
           },
         });
-        return users.map(({ password, validationToken, ...user }) => user);
+        return users.map(({ email, firstName, lastName, photo, id }) => ({
+          email,
+          firstName,
+          lastName,
+          photo,
+          id,
+        }));
       } catch (error) {
         throw new PrismeError(`Invalid id (${ids.join(',')})`, { ids }, 400);
       }

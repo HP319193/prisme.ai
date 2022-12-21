@@ -62,6 +62,13 @@ components:
 
         - $ref: '#/components/schemas/Object'
 
+    SupportedMFA:
+      type: string
+      enum:
+        - totp
+        - none
+        - ""
+
     User:
       allOf:
         - type: object
@@ -85,6 +92,8 @@ components:
                 anonymous:
                   type: object
               additionalProperties: true
+            mfa:
+              $ref: '#/components/schemas/SupportedMFA'
         - $ref: '#/components/schemas/Contact'
 
     App:
@@ -2471,6 +2480,8 @@ paths:
                   type: string
                 password:
                   type: string
+                totp:
+                  type: string
 
       responses:
         '200':
@@ -2538,6 +2549,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthenticationError'
+
+  /v2/account/mfa:
+    post:
+      description: Setup MFA
+      operationId: setupMFA
+      tags:
+        - API Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - method
+                - currentPassword
+              properties:
+                method:
+                  $ref: '#/components/schemas/SupportedMFA'
+                currentPassword:
+                  type: string
+
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                  - qrImage
+                properties:
+                  key:
+                    type: string
+                  qrImage:
+                    type: string
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+
 
   /v2/contacts/{contactId}:
     get:

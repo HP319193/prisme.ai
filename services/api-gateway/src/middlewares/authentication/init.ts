@@ -1,5 +1,7 @@
 import { Application } from 'express';
 import passport from 'passport';
+//@ts-ignore
+import { Strategy as TotpStrategy } from 'passport-totp';
 
 import cookieParser from 'cookie-parser';
 import redis from 'redis';

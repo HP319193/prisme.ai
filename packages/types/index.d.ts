@@ -1974,6 +1974,7 @@ declare namespace Prismeai {
             user: User;
         };
     }
+    export type SupportedMFA = "totp" | "none" | "";
     export interface SuspendedWorkspace {
         /**
          * example:
@@ -2148,6 +2149,7 @@ declare namespace Prismeai {
                 [key: string]: any;
             };
         };
+        mfa?: SupportedMFA;
         /**
          * Name
          */
@@ -2374,6 +2376,7 @@ declare namespace PrismeaiAPI {
                         [key: string]: any;
                     };
                 };
+                mfa?: Prismeai.SupportedMFA;
                 /**
                  * Name
                  */
@@ -2504,6 +2507,7 @@ declare namespace PrismeaiAPI {
         export interface RequestBody {
             email: string;
             password: string;
+            totp?: string;
         }
         namespace Responses {
             export interface $200 {
@@ -2523,6 +2527,7 @@ declare namespace PrismeaiAPI {
                         [key: string]: any;
                     };
                 };
+                mfa?: Prismeai.SupportedMFA;
                 /**
                  * Name
                  */
@@ -2903,6 +2908,7 @@ declare namespace PrismeaiAPI {
                         [key: string]: any;
                     };
                 };
+                mfa?: Prismeai.SupportedMFA;
                 /**
                  * Name
                  */
@@ -3282,6 +3288,19 @@ declare namespace PrismeaiAPI {
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace SetupMFA {
+        export interface RequestBody {
+            method: Prismeai.SupportedMFA;
+            currentPassword: string;
+        }
+        namespace Responses {
+            export interface $200 {
+                key: string;
+                qrImage: string;
+            }
+            export type $400 = Prismeai.BadParametersError;
         }
     }
     namespace Share {
