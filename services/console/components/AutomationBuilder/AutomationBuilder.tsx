@@ -123,18 +123,23 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   }, [zoomPanHelper, id]);
 
   const elements = useMemo(() => {
-    const flow = buildFlow(value);
-    if (value.when && value.when.endpoint) {
-      flow[0].data.endpoint = generateEndpoint(
-        workspaceId,
-        `${
-          value.when.endpoint === 'true' || value.when.endpoint === true
-            ? id
-            : value.when.endpoint
-        }`
-      );
+    try {
+      const flow = buildFlow(value);
+      if (value.when && value.when.endpoint) {
+        flow[0].data.endpoint = generateEndpoint(
+          workspaceId,
+          `${
+            value.when.endpoint === 'true' || value.when.endpoint === true
+              ? id
+              : value.when.endpoint
+          }`
+        );
+      }
+      return flow;
+    } catch (e) {
+      console.error(e);
+      return [];
     }
-    return flow;
   }, [id, value, workspaceId]);
 
   const instructionsSchemas: InstructionSchemaTupple[] = useMemo(

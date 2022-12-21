@@ -15,7 +15,7 @@ export const AutomationIcon = ({
   const backgroundColor = new Color(color).fade(0.8).toString();
   return (
     <div
-      className="flex p-[3px] rounded-[3px]"
+      className="flex p-[3px] rounded-[3px] justify-center"
       style={{ width, height, color, backgroundColor }}
     >
       <AutomationIconSvg />

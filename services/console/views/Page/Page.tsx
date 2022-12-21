@@ -9,6 +9,7 @@ import { incrementName } from '../../utils/incrementName';
 import { notification } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import useDirtyWarning from '../../utils/useDirtyWarning';
+import { replaceSilently } from '../../utils/urls';
 
 const Page = () => {
   const { t } = useTranslation('workspaces');
@@ -34,13 +35,13 @@ const Page = () => {
       { keepOriginal: true }
     );
     const { apiKey, ...newPage } = page;
-    const { id } =
+    const { slug } =
       (await createPage({
         ...newPage,
         slug: newSlug,
       })) || {};
-    if (id) {
-      push(`/workspaces/${workspaceId}/pages/${id}`);
+    if (slug) {
+      push(`/workspaces/${workspaceId}/pages/${slug}`);
     }
     setDuplicating(false);
     notification.success({
@@ -58,9 +59,15 @@ const Page = () => {
     deletePage();
   }, [deletePage, page.workspaceId, replace]);
 
-  const save = useCallback(() => {
-    savePage(value);
-  }, [value, savePage]);
+  const save = useCallback(async () => {
+    const prevSlug = page.slug;
+    const saved = await savePage(value);
+    if (!saved) return;
+    const { slug } = saved;
+    if (slug !== prevSlug) {
+      replaceSilently(`/workspaces/${workspaceId}/pages/${slug}`);
+    }
+  }, [page.slug, savePage, value, workspaceId]);
 
   useKeyboardShortcut([
     {
@@ -91,10 +98,9 @@ const Page = () => {
 
 const PageWithProvider = () => {
   const {
-    query: { pageSlug },
+    query: { pageSlug, id: workspaceId },
     push,
   } = useRouter();
-  const { workspace } = useWorkspace();
 
   useEffect(() => {
     // For preview in console
@@ -103,21 +109,17 @@ const PageWithProvider = () => {
 
       if (type === 'pagePreviewNavigation') {
         const [, slug] = href.match(/^\/(.+$)/) || [];
-        push(`/workspaces/${workspace.id}/pages/${slug}`);
+        push(`/workspaces/${workspaceId}/pages/${slug}`);
       }
     };
     window.addEventListener('message', listener);
     return () => {
       window.removeEventListener('message', listener);
     };
-  }, [push, workspace.id, workspace.slug]);
+  }, [push, workspaceId]);
 
   return (
-    <PageProvider
-      workspaceId={workspace.id}
-      workspaceSlug={workspace.slug}
-      slug={`${pageSlug}`}
-    >
+    <PageProvider workspaceId={`${workspaceId}`} slug={`${pageSlug}`}>
       <Page />
     </PageProvider>
   );

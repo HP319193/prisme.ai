@@ -32,16 +32,12 @@ export const usePage = () => useContext<PageContext>(pageContext);
 
 interface PageProviderProps {
   workspaceId?: string;
-  id?: string;
-  workspaceSlug?: string;
   slug?: string;
   children: ReactNode;
 }
 
 export const PageProvider = ({
   workspaceId,
-  id,
-  workspaceSlug,
   slug,
   children,
 }: PageProviderProps) => {
@@ -54,43 +50,21 @@ export const PageProvider = ({
   const [saving, setSaving] = useState<PageContext['saving']>(false);
   const [notFound, setNotFound] = useState(false);
 
-  const fetchPageById = useCallback(async () => {
-    if (!workspaceId || !id) return;
-
-    const { appInstances, public: isPublic, ...page } = await api.getPage(
-      workspaceId,
-      id
-    );
-    setAppInstances(appInstances);
-    return page;
-  }, [workspaceId, id]);
-
-  const fetchPageBySlug = useCallback(async () => {
-    if (!workspaceSlug || !slug) return;
-    const { appInstances, public: isPublic, ...page } = await api.getPageBySlug(
-      workspaceSlug,
-      slug
-    );
-    setAppInstances(appInstances);
-    return page;
-  }, [workspaceSlug, slug]);
-
   const fetchPage = useCallback(async () => {
-    let page: PageContext['page'] | undefined;
     setNotFound(false);
+    if (!workspaceId || !slug) return null;
     try {
-      if (workspaceId && id) {
-        page = await fetchPageById();
-      }
-      if (workspaceSlug && slug) {
-        page = await fetchPageBySlug();
-      }
+      const { appInstances, public: isPublic, ...page } = await api.getPage(
+        workspaceId,
+        slug
+      );
+      setAppInstances(appInstances);
       return page || null;
     } catch (e) {
       setNotFound(true);
       return null;
     }
-  }, [fetchPageById, fetchPageBySlug, id, slug, workspaceId, workspaceSlug]);
+  }, [slug, workspaceId]);
 
   const savePage: PageContext['savePage'] = useCallback(
     async ({ apiKey, ...newPage }) => {
@@ -105,9 +79,9 @@ export const PageProvider = ({
   );
 
   const deletePage: PageContext['deletePage'] = useCallback(async () => {
-    if (!workspaceId || !page?.id) return null;
+    if (!workspaceId || !page?.slug) return null;
     setPage(undefined);
-    api.deletePage(workspaceId, page.id);
+    api.deletePage(workspaceId, page.slug);
     return page;
   }, [page, workspaceId]);
 
@@ -120,7 +94,7 @@ export const PageProvider = ({
       setPage(page);
     };
     initPage();
-  }, [fetchPage]);
+  }, [fetchPage, slug]);
 
   if (loading) return <Loading />;
   if (notFound)

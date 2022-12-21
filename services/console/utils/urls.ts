@@ -39,3 +39,12 @@ export function generatePageUrl(workspaceSlug: string, pageSlug: string) {
     pageSlug === 'index' ? '' : pageSlug
   }`;
 }
+
+export function replaceSilently(newPath: string) {
+  const [, lang] = window.location.pathname.split('/') || [];
+  window.history.replaceState(
+    {},
+    '',
+    `/${lang}${newPath}`.replace(/\/\//, '/')
+  );
+}

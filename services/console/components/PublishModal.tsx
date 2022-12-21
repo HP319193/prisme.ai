@@ -5,7 +5,6 @@ import {
   SLUG_MATCH_INVALID_CHARACTERS,
   SLUG_VALIDATION_REGEXP,
 } from '../utils/regex';
-import { useApps } from './AppsProvider';
 import { usePrevious } from '../utils/usePrevious';
 import useLocalizedText from '../utils/useLocalizedText';
 import api from '../utils/api';
@@ -17,7 +16,6 @@ interface PublishModalProps {
 }
 
 const PublishModal = ({ visible, close }: PublishModalProps) => {
-  const { getApps } = useApps();
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
@@ -28,7 +26,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   const prevWorkspaceId = usePrevious(workspace.id);
 
   const getCurrentlyPublishedApp = useCallback(async () => {
-    const currentlyPublishedApp = await getApps({
+    const currentlyPublishedApp = await api.getApps({
       workspaceId: workspace.id,
     });
     if (currentlyPublishedApp) {
@@ -38,7 +36,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
         setAlreadyPublished(true);
       }
     }
-  }, [getApps, workspace.id]);
+  }, [workspace.id]);
 
   useEffect(() => {
     if (prevWorkspaceId === workspace.id) return;

@@ -16,7 +16,7 @@ module.exports = {
     config.module.rules.push({
       test: /\.svgr$/i,
       issuer: /\.[jt]sx?$/,
-      use: ['@svgr/webpack'],
+      use: [{ loader: '@svgr/webpack', options: { icon: true } }],
     });
     config.resolve.fallback = {
       ...config.resolve.fallback,

@@ -62,6 +62,7 @@ export const AutomationProvider = ({
   const [automation, setAutomation] = useState<
     AutomationContext['automation']
   >();
+  const [slug, setSlug] = useState(automationSlug);
   const [loading, setLoading] = useState<AutomationContext['loading']>(true);
   const [saving, setSaving] = useState<AutomationContext['saving']>(false);
   const [notFound, setNotFound] = useState(false);
@@ -85,31 +86,35 @@ export const AutomationProvider = ({
       setSaving(true);
       const saved = await api.updateAutomation(
         workspaceId,
-        automationSlug,
+        slug,
         newAutomation
       );
+      if (saved.slug !== slug) {
+        setSlug(saved.slug);
+      }
       setAutomation(saved);
       setSaving(false);
       return saved;
     },
-    [automation, automationSlug, workspaceId]
+    [automation, slug, workspaceId]
   );
 
   const deleteAutomation: AutomationContext['deleteAutomation'] = useCallback(async () => {
     if (!workspaceId || !automation) return null;
     setAutomation(undefined);
-    api.deleteAutomation(workspaceId, automationSlug);
+    api.deleteAutomation(workspaceId, slug);
     return automation;
-  }, [automation, automationSlug, workspaceId]);
+  }, [automation, slug, workspaceId]);
 
   useEffect(() => {
     const initAutomation = async () => {
+      setSlug(automationSlug);
       setLoading(true);
       await fetchAutomation();
       setLoading(false);
     };
     initAutomation();
-  }, [fetchAutomation]);
+  }, [automationSlug, fetchAutomation]);
 
   if (loading) return <Loading />;
   if (notFound)

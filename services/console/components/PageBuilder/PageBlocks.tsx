@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import useLocalizedText from '../../utils/useLocalizedText';
 import { usePageBuilder } from './context';
 
 import AddBlock from './AddBlock';
@@ -9,7 +8,6 @@ import { useTranslation } from 'next-i18next';
 
 export const PageBlocks = () => {
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedText();
   const { setEditBlock, value } = usePageBuilder();
   const containerEl = useRef<HTMLDivElement>(null);
 
@@ -22,8 +20,8 @@ export const PageBlocks = () => {
         <div className="mb-6">
           <AddBlock after={-1} />
         </div>
-        {value.map(
-          ({ key, config, slug }, index) =>
+        {Array.from(value.entries()).map(
+          ([key, { config, slug }], index) =>
             slug &&
             key && (
               <div key={key} className="flex flex-col snap-start">

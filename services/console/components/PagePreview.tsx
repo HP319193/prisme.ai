@@ -38,6 +38,17 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
   }, [page, appInstances]);
 
   useEffect(() => {
+    const listener = ({ data }: MessageEvent) => {
+      if (data !== 'page-ready') return;
+      updatePage();
+    };
+    window.addEventListener('message', listener);
+    return () => {
+      window.removeEventListener('message', listener);
+    };
+  }, [updatePage]);
+
+  useEffect(() => {
     if (pageId.current !== page.id) {
       pageId.current = page.id;
       setLoading(true);
@@ -48,22 +59,10 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
 
   const onLoad = useCallback(() => {
     setLoading(false);
-  }, []);
+    updatePage();
+  }, [updatePage]);
 
-  const [initialSlug, setInitialSlug] = useState(page.slug);
-
-  useEffect(() => {
-    setInitialSlug((slug) => {
-      if (slug || !page.slug) return slug;
-      return page.slug;
-    });
-  }, [page]);
-
-  const url = useMemo(() => generatePageUrl(slug, initialSlug || ''), [
-    slug,
-    initialSlug,
-  ]);
-
+  const url = generatePageUrl(slug, page.slug || '');
   return (
     <div className="flex flex-1 relative">
       <iframe ref={ref} src={url} className="flex flex-1" onLoad={onLoad} />

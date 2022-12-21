@@ -7,15 +7,9 @@ import { PageContext, PageProvider, usePage } from './PageProvider';
 
 jest.mock('../../utils/api', () => {
   const mock = {
-    getPage: jest.fn((workspaceId: string, id: string) => ({
-      id,
-      slug: 'my-page',
-      name: 'My Page',
-    })),
-    getPageBySlug: jest.fn((w: string, slug: string) => ({
-      id: '124',
+    getPage: jest.fn((workspaceId: string, slug: string) => ({
       slug,
-      name: slug,
+      name: 'My Page',
     })),
     updatePage: jest.fn((workspaceId: string, data: any) => data),
     deletePage: jest.fn(),
@@ -26,7 +20,7 @@ jest.mock('../../utils/api', () => {
 it('should render', async () => {
   const root = renderer.create(
     <workspaceContext.Provider value={workspaceContextValue}>
-      <PageProvider workspaceId={workspaceContextValue.workspace.id} id="42">
+      <PageProvider workspaceId={workspaceContextValue.workspace.id} slug="42">
         Foo
       </PageProvider>
     </workspaceContext.Provider>
@@ -48,7 +42,10 @@ const T = () => {
 it('should fetch page', async () => {
   const root = renderer.create(
     <workspaceContext.Provider value={workspaceContextValue}>
-      <PageProvider workspaceId={workspaceContextValue.workspace.id} id="123">
+      <PageProvider
+        workspaceId={workspaceContextValue.workspace.id}
+        slug="my-page"
+      >
         <T />
       </PageProvider>
     </workspaceContext.Provider>
@@ -58,35 +55,18 @@ it('should fetch page', async () => {
   });
   expect(context.loading).toBe(false);
   expect(context.page).toEqual({
-    id: '123',
     slug: 'my-page',
     name: 'My Page',
-  });
-});
-
-it('should fetch page by slug', async () => {
-  const root = renderer.create(
-    <workspaceContext.Provider value={workspaceContextValue}>
-      <PageProvider workspaceSlug="my-workspace" slug="my-page">
-        <T />
-      </PageProvider>
-    </workspaceContext.Provider>
-  );
-  await act(async () => {
-    await true;
-  });
-  expect(context.loading).toBe(false);
-  expect(context.page).toEqual({
-    id: '124',
-    slug: 'my-page',
-    name: 'my-page',
   });
 });
 
 it('should refetch page', async () => {
   const root = renderer.create(
     <workspaceContext.Provider value={workspaceContextValue}>
-      <PageProvider workspaceId={workspaceContextValue.workspace.id} id="123">
+      <PageProvider
+        workspaceId={workspaceContextValue.workspace.id}
+        slug="my-page"
+      >
         <T />
       </PageProvider>
     </workspaceContext.Provider>
@@ -95,24 +75,26 @@ it('should refetch page', async () => {
     await true;
   });
 
-  expect(api.getPage).toHaveBeenCalledWith('42', '123');
+  expect(api.getPage).toHaveBeenCalledWith('42', 'my-page');
   (api.getPage as jest.Mock).mockClear();
 
   await act(async () => {
     const page = await context.fetchPage();
     expect(page).toEqual({
-      id: '123',
       slug: 'my-page',
       name: 'My Page',
     });
   });
-  expect(api.getPage).toHaveBeenCalledWith('42', '123');
+  expect(api.getPage).toHaveBeenCalledWith('42', 'my-page');
 });
 
 it('should save page', async () => {
   const root = renderer.create(
     <workspaceContext.Provider value={workspaceContextValue}>
-      <PageProvider workspaceId={workspaceContextValue.workspace.id} id="123">
+      <PageProvider
+        workspaceId={workspaceContextValue.workspace.id}
+        slug="my-page"
+      >
         <T />
       </PageProvider>
     </workspaceContext.Provider>
@@ -123,18 +105,15 @@ it('should save page', async () => {
 
   await act(async () => {
     const newPage = await context.savePage({
-      id: '123',
       slug: 'my-new-page',
       name: 'My new Page',
     });
     expect(newPage).toEqual({
-      id: '123',
       slug: 'my-new-page',
       name: 'My new Page',
     });
   });
   expect(api.updatePage).toHaveBeenCalledWith('42', {
-    id: '123',
     slug: 'my-new-page',
     name: 'My new Page',
   });
@@ -143,7 +122,10 @@ it('should save page', async () => {
 it('should delete page', async () => {
   const root = renderer.create(
     <workspaceContext.Provider value={workspaceContextValue}>
-      <PageProvider workspaceId={workspaceContextValue.workspace.id} id="123">
+      <PageProvider
+        workspaceId={workspaceContextValue.workspace.id}
+        slug="my-page"
+      >
         <T />
       </PageProvider>
     </workspaceContext.Provider>
@@ -155,10 +137,9 @@ it('should delete page', async () => {
   await act(async () => {
     const deleted = await context.deletePage();
     expect(deleted).toEqual({
-      id: '123',
       slug: 'my-page',
       name: 'My Page',
     });
   });
-  expect(api.deletePage).toHaveBeenCalledWith('42', '123');
+  expect(api.deletePage).toHaveBeenCalledWith('42', 'my-page');
 });

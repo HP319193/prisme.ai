@@ -177,10 +177,12 @@ class Pages {
   };
 
   getDetailedPage = async (
-    query: { id: string } | { workspaceSlug: string; slug: string }
+    query:
+      | { workspaceId: string; slug: string }
+      | { workspaceSlug: string; slug: string }
   ): Promise<Prismeai.DetailedPage> => {
     // Admin query
-    if ((<any>query).id) {
+    if ((<any>query).workspaceId) {
       const pageMeta = await this.accessManager.get(SubjectType.Page, query);
       const page = await this.storage.get({
         slug: pageMeta.slug,
@@ -264,14 +266,14 @@ class Pages {
           page.workspaceId!,
           cur.slug!
         );
-        return { ...cur, config: appInstance.config?.value || {} };
+        return { ...cur, appConfig: appInstance.config?.value || {} };
       })
     );
 
     if (workspace.blocks) {
       appInstances.push({
         slug: '',
-        config: {},
+        appConfig: {},
         blocks: Object.entries(workspace.blocks).reduce(
           (prev, [slug, { url = '' }]) => ({
             ...prev,
@@ -299,13 +301,14 @@ class Pages {
 
   updatePage = async (
     workspaceId: string,
-    id: string,
+    slug: string,
     pageUpdate: Prismeai.Page
   ) => {
     const currentPageMeta = await this.accessManager.get(SubjectType.Page, {
       workspaceId,
-      id,
+      slug,
     });
+    const id = currentPageMeta.id!;
 
     const oldSlug = currentPageMeta.slug!;
     const newSlug = pageUpdate.slug || oldSlug;
@@ -394,8 +397,12 @@ class Pages {
     )) as ApiKey;
   };
 
-  deletePage = async (id: string) => {
-    const page = await this.accessManager.get(SubjectType.Page, id);
+  deletePage = async (workspaceId: string, slug: string) => {
+    const page = await this.accessManager.get(SubjectType.Page, {
+      workspaceId,
+      slug,
+    });
+    const id = page.id!;
 
     await this.accessManager.delete(SubjectType.Page, id);
 
@@ -471,11 +478,21 @@ class Pages {
             parentFolder: true,
           }
         );
-        await this.storage.delete({
-          workspaceSlug: oldWorkspaceSlug,
-          dsulType: DSULType.DetailedPage,
-          parentFolder: true,
-        });
+        // Wait before deleting old folder to make sure new files have been propertly copied (i.e S3 eventual consistency)
+        setTimeout(() => {
+          this.storage
+            .delete({
+              workspaceSlug: oldWorkspaceSlug,
+              dsulType: DSULType.DetailedPage,
+              parentFolder: true,
+            })
+            .catch((err) =>
+              logger.warn({
+                msg: 'An error occured while deleting old detailed page folder after workspace renaming',
+                err,
+              })
+            );
+        }, 2000);
       }
     } catch (err) {
       logger.warn({

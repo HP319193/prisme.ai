@@ -1,6 +1,5 @@
 import { BlockComponent, builtinBlocks } from '@prisme.ai/blocks';
 import { useEffect, useState } from 'react';
-import { useApps } from '../components/AppsProvider';
 import { Workspace } from './api';
 import externals from '../utils/externals';
 import { useWorkspace } from '../providers/Workspace';

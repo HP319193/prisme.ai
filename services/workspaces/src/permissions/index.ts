@@ -21,7 +21,9 @@ export interface WorkspaceMetadata {
 export type SubjectInterfaces = {
   [SubjectType.Workspace]: WorkspaceMetadata;
   [SubjectType.App]: Prismeai.App;
-  [SubjectType.Page]: Prismeai.PageMeta;
+  [SubjectType.Page]: Omit<Prismeai.PageMeta, 'name'> & {
+    name?: Prismeai.LocalizedText;
+  };
   [SubjectType.File]: Omit<Prismeai.File, 'url'>;
 };
 
@@ -52,6 +54,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           versions: Schema.Types.Mixed,
           description: Schema.Types.Mixed,
           name: { type: String, text: true },
+          documentation: Schema.Types.Mixed,
           photo: String,
           slug: { type: String, index: true },
         },

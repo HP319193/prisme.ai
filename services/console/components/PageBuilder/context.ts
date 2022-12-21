@@ -3,12 +3,11 @@ import { Schema } from '@prisme.ai/design-system';
 import { BlockInCatalog } from './useBlocks';
 import { useContext } from '../../utils/useContext';
 
-export type BlockWithKey = NonNullable<Prismeai.Page['blocks']>[number] & {
-  key: string;
-};
+export type Block = NonNullable<Prismeai.Page['blocks']>[number];
+export type BlocksWithKeys = Map<string, Block>;
 
 export interface PageBuilderContext {
-  value: BlockWithKey[];
+  value: BlocksWithKeys;
   addBlock: (position: number, blockName?: string) => void;
   setEditBlock: (blockId: string) => void;
   removeBlock: (key: string) => void;

@@ -9,17 +9,19 @@ import workspaceLayoutContext, { WorkspaceLayoutContext } from './context';
 import useLocalizedText from '../../utils/useLocalizedText';
 import Storage from '../../utils/Storage';
 import AppsStore from '../../views/AppsStore';
-import { generateNewName } from '../../utils/generateNewName';
 import Navigation from './Navigation';
 import { useWorkspace } from '../../providers/Workspace';
 import Expand from '../../components/Navigation/Expand';
+import { incrementName } from '../../utils/incrementName';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
     workspace,
     saveWorkspace,
     createAutomation,
+    creatingAutomation,
     createPage,
+    creatingPage,
   } = useWorkspace();
 
   const router = useRouter();
@@ -30,7 +32,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
     i18n: { language },
   } = useTranslation('workspaces');
 
-  const [creating, setCreating] = useState(false);
   const [sourceDisplayed, setSourceDisplayed] = useState(false);
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
@@ -96,18 +97,16 @@ export const WorkspaceLayout: FC = ({ children }) => {
   }, []);
 
   const createAutomationHandler = useCallback(async () => {
-    setCreating(true);
-
-    const name = generateNewName(
+    const name = incrementName(
       t(`automations.create.defaultName`),
-      Object.values(workspace.automations || {}).map(({ name }) => name),
-      localize
+      Object.values(workspace.automations || {}).map(({ name }) =>
+        localize(name)
+      )
     );
     const createdAutomation = await createAutomation({
       name,
       do: [],
     });
-    setTimeout(() => setCreating(false));
     if (createdAutomation) {
       await router.push(
         `/workspaces/${workspace.id}/automations/${createdAutomation.slug}`
@@ -123,11 +122,9 @@ export const WorkspaceLayout: FC = ({ children }) => {
   ]);
 
   const createPageHandler = useCallback(async () => {
-    setCreating(true);
-    const name = generateNewName(
+    const name = incrementName(
       t(`pages.create.defaultName`),
-      Object.values(workspace.pages || {}).map(({ name }) => name),
-      localize
+      Object.values(workspace.pages || {}).map(({ name }) => localize(name))
     );
     const createdPage = await createPage({
       name: {
@@ -135,7 +132,6 @@ export const WorkspaceLayout: FC = ({ children }) => {
       },
       blocks: [],
     });
-    setTimeout(() => setCreating(false));
     if (createdPage) {
       await router.push(
         `/workspaces/${workspace.id}/pages/${createdPage.slug}`
@@ -192,7 +188,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
           transition-transform
           transition-duration-200
           transition-ease-in
-          z-[11]
+          z-20
           ${displaySourceView ? '' : '-translate-y-full'}
         `}
       >
@@ -226,7 +222,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
             </div>
           </Layout>
           <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-full">
-            {creating ? <Loading /> : children}
+            {creatingAutomation || creatingPage ? <Loading /> : children}
           </div>
         </div>
       </Layout>

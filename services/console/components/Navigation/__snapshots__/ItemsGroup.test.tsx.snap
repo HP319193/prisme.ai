@@ -14,7 +14,7 @@ exports[`should render 1`] = `
         className="flex flex-1 flex-row items-center outline-none focus:outline-none p-4"
       >
         <div
-          className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center"
+          className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center items-center"
         >
           <SvgrURL
             className=" transition-transform "
@@ -53,7 +53,7 @@ exports[`should render closed 1`] = `
         className="flex flex-1 flex-row items-center outline-none focus:outline-none p-4"
       >
         <div
-          className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center"
+          className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center items-center"
         >
           <SvgrURL
             className=" transition-transform -rotate-90"

@@ -3,7 +3,7 @@
 exports[`should render empty 1`] = `
 Array [
   <div
-    className="mx-32 my-16"
+    className="mx-4 md:mx-8 lg:mx-32 my-4 md:my-8 lg:my-16"
   >
     <div
       className="bg-info px-14 py-8 rounded-[15px]"
@@ -50,7 +50,7 @@ Array [
             onClick={[Function]}
           >
             <span
-              className="flex min-w-[50px] bg-accent p-4 rounded"
+              className="flex min-w-[50px] bg-accent p-4 rounded items-center justify-center"
             >
               <div />
             </span>
@@ -88,6 +88,9 @@ Array [
         </div>
       </div>
     </div>
+    <div
+      className="pt-24 flex flex-col"
+    />
   </div>,
   <div
     className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]"
@@ -101,7 +104,7 @@ Array [
 exports[`should render some workspaces 1`] = `
 Array [
   <div
-    className="mx-32 my-16"
+    className="mx-4 md:mx-8 lg:mx-32 my-4 md:my-8 lg:my-16"
   >
     <div
       className="bg-info px-14 py-8 rounded-[15px]"
@@ -148,7 +151,7 @@ Array [
             onClick={[Function]}
           >
             <span
-              className="flex min-w-[50px] bg-accent p-4 rounded"
+              className="flex min-w-[50px] bg-accent p-4 rounded items-center justify-center"
             >
               <div />
             </span>
@@ -186,6 +189,9 @@ Array [
         </div>
       </div>
     </div>
+    <div
+      className="pt-24 flex flex-col"
+    />
   </div>,
   <div
     className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]"

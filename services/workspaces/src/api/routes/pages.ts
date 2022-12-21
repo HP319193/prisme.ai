@@ -82,7 +82,7 @@ export function initPagesBackoffice(dsulStorage: DSULStorage) {
   async function getPageHandler(
     {
       context,
-      params: { workspaceId, id },
+      params: { workspaceId, slug },
       accessManager,
       broker,
     }: Request<PrismeaiAPI.GetPage.PathParameters>,
@@ -94,14 +94,14 @@ export function initPagesBackoffice(dsulStorage: DSULStorage) {
       broker,
       dsulStorage,
     });
-    const detailedPage = await pages.getDetailedPage({ id });
+    const detailedPage = await pages.getDetailedPage({ workspaceId, slug });
     res.send(detailedPage);
   }
 
   async function updatePageHandler(
     {
       context,
-      params: { workspaceId, id },
+      params: { workspaceId, slug },
       body,
       accessManager,
       broker,
@@ -118,14 +118,14 @@ export function initPagesBackoffice(dsulStorage: DSULStorage) {
       broker,
       dsulStorage,
     });
-    const result = await pages.updatePage(workspaceId, id, body);
+    const result = await pages.updatePage(workspaceId, slug, body);
     res.send(result);
   }
 
   async function deletePageHandler(
     {
       context,
-      params: { id },
+      params: { workspaceId, slug },
       accessManager,
       broker,
     }: Request<PrismeaiAPI.DeletePage.PathParameters>,
@@ -137,7 +137,7 @@ export function initPagesBackoffice(dsulStorage: DSULStorage) {
       broker,
       dsulStorage,
     });
-    const deleted = await pages.deletePage(id);
+    const deleted = await pages.deletePage(workspaceId, slug);
 
     res.send(deleted);
   }
@@ -146,9 +146,9 @@ export function initPagesBackoffice(dsulStorage: DSULStorage) {
 
   app.get(`/`, asyncRoute(listPagesHandler));
   app.post(`/`, asyncRoute(createPageHandler));
-  app.patch(`/:id`, asyncRoute(updatePageHandler));
-  app.delete(`/:id`, asyncRoute(deletePageHandler));
-  app.get(`/:id`, asyncRoute(getPageHandler));
+  app.patch(`/:slug`, asyncRoute(updatePageHandler));
+  app.delete(`/:slug`, asyncRoute(deletePageHandler));
+  app.get(`/:slug`, asyncRoute(getPageHandler));
 
   return app;
 }

@@ -6,6 +6,7 @@ import {
   MissingFieldError,
   ObjectNotFoundError,
 } from '../../errors';
+import { logger } from '../../logger';
 import { IStorage } from '../../storage/types';
 import { getPath } from './getPath';
 import {
@@ -301,10 +302,17 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
     );
     // Maintain subfolders index up-to-date
     if (folderIndex) {
-      await this.driver.save(
-        this.getPath({ ...query, folderIndex: true }),
-        yaml.dump(folderIndex, { skipInvalid: true })
-      );
+      this.driver
+        .save(
+          this.getPath({ ...query, folderIndex: true }),
+          yaml.dump(folderIndex, { skipInvalid: true })
+        )
+        .catch((err) => {
+          logger.warn({
+            msg: 'Could not write DSUL folder index file',
+            err,
+          });
+        });
     }
   }
 

@@ -25,6 +25,7 @@ import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
 import VersionModal from './VersionModal';
 import HeaderPopovers from '../views/HeaderPopovers';
 import { useWorkspace } from '../providers/Workspace';
+import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
@@ -53,6 +54,14 @@ const HeaderWorkspace = () => {
         name: {
           type: 'localized:string',
           title: t('workspace.details.name.label'),
+        },
+        slug: {
+          type: 'string',
+          title: t('workspace.details.slug.label'),
+          pattern: SLUG_VALIDATION_REGEXP.source,
+          errors: {
+            pattern: t('workspace.details.slug.error'),
+          },
         },
         description: {
           type: 'localized:string',
@@ -108,10 +117,19 @@ const HeaderWorkspace = () => {
   );
 
   const updateDetails = useCallback(
-    async (values: any) => {
-      await saveWorkspace(values);
+    async ({ slug, ...values }: any) => {
+      saveWorkspace(values);
+      if (slug !== workspace.slug) {
+        try {
+          await saveWorkspace({ ...values, slug });
+        } catch {
+          return {
+            slug: t('workspace.details.slug.unique'),
+          };
+        }
+      }
     },
-    [saveWorkspace]
+    [saveWorkspace, t, workspace.slug]
   );
 
   const hideSource = useCallback(() => {
@@ -150,8 +168,8 @@ const HeaderWorkspace = () => {
               onSave={updateDetails}
               onDelete={confirmDelete}
               context="workspaces"
-              visible={popoverIsVisible}
-              onVisibleChange={setPopoverIsVisible}
+              open={popoverIsVisible}
+              onOpenChange={setPopoverIsVisible}
               disabled={saving}
             />
           </div>

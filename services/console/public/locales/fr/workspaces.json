@@ -60,6 +60,11 @@
       "name": {
         "label": "Nom du Workspace"
       },
+      "slug": {
+        "label": "Sous domaine",
+        "error": "Doit être composé uniquement des caractères alphanumériques non accentués, espaces et \"-\", \"_\"",
+        "unique": "Ce sous domaine n'est plus disponible. Veuillez en choisir un autre."
+      },
       "description": {
         "label": "Description"
       },

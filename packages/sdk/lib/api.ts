@@ -242,9 +242,9 @@ export class Api extends Fetcher {
 
   async getPage(
     workspaceId: PrismeaiAPI.GetPage.Parameters.WorkspaceId,
-    pageId: PrismeaiAPI.GetPage.Parameters.Id
+    pageSlug: PrismeaiAPI.GetPage.Parameters.Slug
   ): Promise<Prismeai.DetailedPage> {
-    return await this.get(`/workspaces/${workspaceId}/pages/${pageId}`);
+    return await this.get(`/workspaces/${workspaceId}/pages/${pageSlug}`);
   }
 
   async getPageBySlug(
@@ -255,8 +255,8 @@ export class Api extends Fetcher {
   }
 
   async createPage(
-    workspaceId: NonNullable<Workspace['id']>,
-    page: Prismeai.Page
+    workspaceId: PrismeaiAPI.CreatePage.Parameters.WorkspaceId,
+    page: PrismeaiAPI.CreatePage.RequestBody
   ): Promise<Prismeai.Page> {
     const {
       createdAt,
@@ -271,11 +271,9 @@ export class Api extends Fetcher {
     return newPage;
   }
 
-  // Replace images as dataurl to uploaded url in any type of data
-
   async updatePage(
-    workspaceId: NonNullable<Workspace['id']>,
-    page: Prismeai.Page
+    workspaceId: PrismeaiAPI.UpdatePage.Parameters.WorkspaceId,
+    page: PrismeaiAPI.UpdatePage.RequestBody
   ): Promise<Prismeai.Page> {
     const {
       createdAt,
@@ -284,17 +282,18 @@ export class Api extends Fetcher {
       updatedBy,
       ...updatedPage
     } = await this.patch<PageWithMetadata>(
-      `/workspaces/${workspaceId}/pages/${page.id}`,
+      `/workspaces/${workspaceId}/pages/${page.slug}`,
+      // Replace images as dataurl to uploaded url in any type of data
       await this.replaceAllImagesData(page, workspaceId)
     );
     return updatedPage;
   }
 
   async deletePage(
-    workspaceId: NonNullable<Workspace['id']>,
-    pageId: string
-  ): Promise<Pick<Prismeai.Page, 'id'>> {
-    return await this.delete(`/workspaces/${workspaceId}/pages/${pageId}`);
+    workspaceId: PrismeaiAPI.DeletePage.Parameters.WorkspaceId,
+    pageSlug: PrismeaiAPI.DeletePage.Parameters.Slug
+  ): Promise<PrismeaiAPI.DeletePage.Responses.$200> {
+    return await this.delete(`/workspaces/${workspaceId}/pages/${pageSlug}`);
   }
 
   // Events

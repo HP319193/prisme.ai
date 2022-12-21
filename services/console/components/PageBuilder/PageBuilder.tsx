@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Panel from '../Panel';
-import { BlockWithKey, context, PageBuilderContext } from './context';
+import { context, PageBuilderContext, BlocksWithKeys } from './context';
 import PageNewBlockForm from './Panel/PageNewBlockForm';
 import PageBlocks from './PageBlocks';
 import { nanoid } from 'nanoid';
@@ -15,25 +15,44 @@ interface PageBuilderProps {
   onChange: (value: Prismeai.Page['blocks'], events?: string[]) => void;
 }
 
+function addKeyToBlocks(
+  value: PageBuilderProps['value'],
+  prevValue: BlocksWithKeys = new Map()
+): BlocksWithKeys {
+  if (!value) return prevValue;
+  return new Map(
+    value.flatMap((block) => {
+      if (!block) return [];
+      const [key = nanoid()] =
+        Array.from(prevValue.entries()).find(([k, v]) => v === block) || [];
+      return [[key, block]];
+    })
+  );
+}
+
 export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const { t } = useTranslation('workspaces');
 
-  const [blocks, _setBlocks] = useState<BlockWithKey[]>(
-    value
-      ? value.map((block) => ({
-          ...block,
-          key: nanoid(),
-        }))
-      : []
-  );
+  const [blocks, _setBlocks] = useState<BlocksWithKeys>(addKeyToBlocks(value));
+
+  const dontReloadValue = useRef(false);
   const setBlocks = useCallback(
-    (blocks: BlockWithKey[]) => {
+    (blocks: BlocksWithKeys) => {
       _setBlocks(blocks);
-      onChange(blocks.map(({ key, ...block }) => block));
+      dontReloadValue.current = true;
+      onChange(Array.from(blocks.values()));
     },
     [onChange]
   );
   const { available, variants } = useBlocks();
+
+  useEffect(() => {
+    if (dontReloadValue.current) {
+      dontReloadValue.current = false;
+      return;
+    }
+    _setBlocks(addKeyToBlocks(value));
+  }, [value]);
 
   const [panelIsOpen, setPanelIsOpen] = useState(false);
   const [blockSelecting, setBlockSelecting] = useState<
@@ -66,19 +85,21 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
 
   const setBlockConfig: PageBuilderContext['setBlockConfig'] = useCallback(
     (key, config) => {
-      const newBlocks = (blocks || []).map((block) =>
-        key === block.key
-          ? {
-              ...block,
-              config,
-            }
-          : block
-      );
-      if (equal(newBlocks, blocks)) return;
-
+      const prevBlock = blocks.get(key);
+      if (!prevBlock) return;
+      const newBlock = {
+        ...prevBlock,
+        config,
+      };
+      if (equal(newBlock, prevBlock)) return;
+      const newBlocks = new Map(blocks);
+      newBlocks.set(key, {
+        ...prevBlock,
+        config,
+      });
       setBlocks(newBlocks);
     },
-    [blocks]
+    [blocks, setBlocks]
   );
 
   const addBlockDetails = useCallback(async () => {
@@ -104,7 +125,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
         return originalBlock;
       }
       const slug = blockName || (await addBlockDetails());
-      const newBlocks = [...blocks];
+      const newBlocks = Array.from(blocks.entries());
       const blockKey = nanoid();
 
       const blockDetails = available.find(({ slug: s }) => s === slug);
@@ -124,26 +145,32 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
             slug: originalBlock.slug,
           };
 
-      newBlocks.splice(position, 0, { ...newBlock, key: blockKey });
-      setBlocks(newBlocks);
+      newBlocks.splice(position, 0, [blockKey, newBlock]);
+
+      setBlocks(new Map(newBlocks));
       setEditBlock(blockKey);
       setBlockEditingOnBack(() => () => {
-        setBlocks(blocks.filter(({ key }) => key !== blockKey));
+        setBlocks(
+          new Map(
+            Array.from(blocks.entries()).filter(([key]) => key !== blockKey)
+          )
+        );
         setBlockEditing(undefined);
         addBlock(position);
         setBlockEditingOnBack(undefined);
       });
     },
-    [addBlockDetails, available, blocks, setEditBlock]
+    [addBlockDetails, available, blocks, setBlocks, setEditBlock]
   );
 
   const removeBlock: PageBuilderContext['removeBlock'] = useCallback(
     async (key) => {
-      const newBlocks = (blocks || []).filter(({ key: k }) => k !== key);
+      const newBlocks = new Map(blocks);
+      newBlocks.delete(key);
       setBlocks(newBlocks);
       await hidePanel();
     },
-    [blocks, hidePanel]
+    [blocks, hidePanel, setBlocks]
   );
 
   const setBlockSchema: PageBuilderContext['setBlockSchema'] = useCallback(
@@ -158,7 +185,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   );
 
   const { slug: editingBlockName } =
-    (blockEditing && blocks.find(({ key }) => key === blockEditing)) || {};
+    (blockEditing && blocks.get(blockEditing)) || {};
 
   const onAddBlock = useCallback(
     (blockName?: string) => {
@@ -184,20 +211,22 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
       }}
     >
       <div className="relative flex flex-1 overflow-x-hidden h-full">
-        {blocks.length === 0 && <EmptyPage onAddBlock={onAddBlock} />}
-        {blocks.length > 0 && <PageBlocks />}
+        {blocks.size === 0 && <EmptyPage onAddBlock={onAddBlock} />}
+        {blocks.size > 0 && <PageBlocks />}
         <Panel
           title={t('pages.blocks.panelTitle', {
             context: blockSelecting ? 'adding' : 'editing',
             block: editingBlockName,
             blockName: t('pages.blocks.name', { context: editingBlockName }),
           })}
-          visible={panelIsOpen}
+          visible={panelIsOpen && !!(blockSelecting || editingBlockName)}
           onVisibleChange={hidePanel}
           onBack={blockEditingOnBack}
         >
           {blockSelecting && <PageNewBlockForm {...blockSelecting} />}
-          {blockEditing && <PageEditBlockForm blockId={blockEditing} />}
+          {editingBlockName && blockEditing && (
+            <PageEditBlockForm blockId={blockEditing} />
+          )}
         </Panel>
       </div>
     </context.Provider>

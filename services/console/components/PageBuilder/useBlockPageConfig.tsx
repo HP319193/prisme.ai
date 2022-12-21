@@ -8,10 +8,10 @@ interface BlockConfigProviderProps {
 const useBlockPageConfig = ({ blockId }: BlockConfigProviderProps) => {
   const { setBlockConfig, value } = usePageBuilder();
 
-  const config = useMemo(
-    () => ((value || []).find(({ key }) => blockId === key) || {}).config || {},
-    [value, blockId]
-  );
+  const config = useMemo(() => (value.get(blockId) || {}).config || {}, [
+    value,
+    blockId,
+  ]);
   const onConfigUpdate = useCallback(
     (config: any) => {
       if (!blockId) {

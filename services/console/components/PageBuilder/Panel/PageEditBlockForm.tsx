@@ -14,27 +14,23 @@ const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
   const { localizeSchemaForm } = useLocalizedText();
   const { value, removeBlock, blocksSchemas } = usePageBuilder();
   const { available } = useBlocks();
-
-  const { slug = '' } = value.find(({ key }) => key === blockId) || {};
+  const { slug } = value.get(blockId) || {};
 
   const editedBlock = available.find(({ slug: s }) => s === slug);
 
   const editSchema =
-    editedBlock &&
-    (editedBlock.edit || getEditSchema(slug) || blocksSchemas.get(blockId));
+    (editedBlock && (editedBlock.edit || getEditSchema(editedBlock.slug))) ||
+    blocksSchemas.get(blockId);
 
-  const schema: Schema | undefined | null = useMemo(() => {
-    return (
-      editSchema &&
-      localizeSchemaForm(
-        editSchema.type
-          ? editSchema
-          : ({
-              type: 'object',
-              properties: editSchema,
-            } as Schema)
-      )
-    );
+  const schema: Schema | undefined = useMemo(() => {
+    if (!editSchema) return;
+    const schema = editSchema.type
+      ? editSchema
+      : ({
+          type: 'object',
+          properties: editSchema,
+        } as Schema);
+    return localizeSchemaForm(schema);
   }, [editSchema, localizeSchemaForm]);
 
   return (

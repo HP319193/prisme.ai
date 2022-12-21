@@ -104,7 +104,8 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       appInstance.appVersion
     );
 
-    const getResult = await appInstancesCrud.getAppInstance(WORKSPACE_ID, slug);
+    const { documentation, ...getResult } =
+      await appInstancesCrud.getAppInstance(WORKSPACE_ID, slug);
     expect(getResult).toEqual({ ...result, config: { value: {} } });
   });
 
@@ -301,10 +302,11 @@ describe('Detailed appInstances', () => {
   });
 
   it('getDetailedList', async () => {
-    const { config: _, ...appInstance } = await appInstancesCrud.getAppInstance(
-      WORKSPACE_ID,
-      APP_INSTANCE_SLUG
-    );
+    const {
+      config: _,
+      documentation: ____,
+      ...appInstance
+    } = await appInstancesCrud.getAppInstance(WORKSPACE_ID, APP_INSTANCE_SLUG);
     const detailedList = await appInstancesCrud.getDetailedList(WORKSPACE_ID);
     const {
       config: __,

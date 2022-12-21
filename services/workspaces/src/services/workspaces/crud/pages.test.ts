@@ -23,6 +23,7 @@ const getMockedAccessManager = (get?: any) => ({
     slug: PAGE_SLUG,
     workspaceId: WORKSPACE_ID,
     workspaceSlug: WORKSPACE_SLUG,
+    id: WORKSPACE_ID,
   })),
   update: jest.fn(),
   delete: jest.fn(),
@@ -143,7 +144,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       listen: ['listened'],
     };
 
-    const result = await pagesCrud.updatePage(WORKSPACE_ID, pageId, page);
+    const result = await pagesCrud.updatePage(WORKSPACE_ID, page.slug, page);
 
     expect(result).toEqual({ ...page, id: pageId });
     expect(mockedAccessManager.throwUnlessCan).toHaveBeenCalledWith(
@@ -177,13 +178,15 @@ describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () =
       slug: result.slug,
       workspaceId: WORKSPACE_ID,
       workspaceSlug: WORKSPACE_SLUG,
+      id: result.id,
     }));
   });
 
   it('deletePage', async () => {
     const slug = PAGE_SLUG + 'Updated';
+    const pageId = WORKSPACE_ID;
 
-    await pagesCrud.deletePage(pageId);
+    await pagesCrud.deletePage(WORKSPACE_ID, slug);
 
     expect(mockedAccessManager.delete).toHaveBeenCalledWith(
       SubjectType.Page,
@@ -311,7 +314,8 @@ describe('Detailed pages', () => {
     });
 
     const detailedPage = await pagesCrud.getDetailedPage({
-      id: page.id!,
+      workspaceId: page.workspaceId!,
+      slug: page.slug!,
     });
     expect(detailedPage).toEqual({
       ...page,
@@ -321,7 +325,7 @@ describe('Detailed pages', () => {
           blocks: {
             'Custom Code.Editor': 'block url',
           },
-          config: {
+          appConfig: {
             functions: {
               foo: {
                 code: 'return "hello world";',
@@ -334,14 +338,14 @@ describe('Detailed pages', () => {
             'Dialog Box.Editor': 'block url',
           },
           slug: 'Dialog Box',
-          config: {},
+          appConfig: {},
         },
         {
           blocks: {
             myBlock: 'myBlockURL',
           },
           slug: '',
-          config: {},
+          appConfig: {},
         },
       ],
       public: false,

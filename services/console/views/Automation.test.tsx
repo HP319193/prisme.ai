@@ -9,6 +9,7 @@ import { workspaceContext } from '../providers/Workspace';
 import { automationContext } from '../providers/Automation';
 import { workspaceLayoutContext } from '../layouts/WorkspaceLayout/context';
 import { PageHeader } from 'antd';
+import { replaceSilently } from '../utils/urls';
 
 jest.useFakeTimers();
 
@@ -53,6 +54,10 @@ jest.mock(
       return null;
     }
 );
+
+jest.mock('../utils/urls', () => ({
+  replaceSilently: jest.fn(),
+}));
 
 beforeEach(() => {
   useRouter().query.automationId = 'foo';
@@ -124,12 +129,8 @@ it('should change url after changing slug', async () => {
     await true;
   });
 
-  expect(useRouter().replace).toHaveBeenCalledWith(
-    '/workspaces/42/automations/foofoo',
-    undefined,
-    {
-      shallow: true,
-    }
+  expect(replaceSilently).toHaveBeenCalledWith(
+    '/workspaces/42/automations/foofoo'
   );
 });
 

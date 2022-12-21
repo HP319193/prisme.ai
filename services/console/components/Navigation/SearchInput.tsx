@@ -7,8 +7,14 @@ interface SearchInputProps {
   value: string;
   onChange: (v: string) => void;
   onFocus?: () => void;
+  placeholder?: string;
 }
-export const SearchInput = ({ value, onChange, onFocus }: SearchInputProps) => {
+export const SearchInput = ({
+  value,
+  onChange,
+  onFocus,
+  placeholder = 'workspace.search',
+}: SearchInputProps) => {
   const { t } = useTranslation('workspaces');
   const ref = useRef<HTMLInputElement>(null);
   return (
@@ -33,7 +39,7 @@ export const SearchInput = ({ value, onChange, onFocus }: SearchInputProps) => {
         className="flex flex-1 outline-none text-accent"
         value={value}
         onChange={({ target: { value } }) => onChange(value)}
-        placeholder={t('workspace.search')}
+        placeholder={t(placeholder)}
       />
       {value && (
         <button

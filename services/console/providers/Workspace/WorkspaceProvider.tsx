@@ -30,7 +30,9 @@ export interface WorkspaceContext {
   createAutomation: (
     automation: Prismeai.Automation
   ) => Promise<Prismeai.Automation | null>;
+  creatingAutomation: boolean;
   createPage: (page: Prismeai.Page) => Promise<Prismeai.Page | null>;
+  creatingPage: boolean;
   installApp: (
     app: Prismeai.AppInstance
   ) => Promise<Prismeai.AppInstance | null>;
@@ -58,6 +60,12 @@ export const WorkspaceProvider = ({
   const [workspace, setWorkspace] = useState<WorkspaceContext['workspace']>();
   const [loading, setLoading] = useState<WorkspaceContext['loading']>(true);
   const [saving, setSaving] = useState<WorkspaceContext['saving']>(false);
+  const [creatingAutomation, setCreatingAutomation] = useState<
+    WorkspaceContext['creatingAutomation']
+  >(false);
+  const [creatingPage, setCreatingPage] = useState<
+    WorkspaceContext['creatingPage']
+  >(false);
   const [events, setEvents] = useState<Events>();
   const [notFound, setNotFound] = useState(false);
 
@@ -123,6 +131,7 @@ export const WorkspaceProvider = ({
   const createAutomation: WorkspaceContext['createAutomation'] = useCallback(
     async (automation) => {
       if (!workspace?.id) return null;
+      setCreatingAutomation(true);
       const newAutomation = await api.createAutomation(
         workspace.id,
         automation
@@ -140,6 +149,7 @@ export const WorkspaceProvider = ({
             },
           }
       );
+      setTimeout(() => setCreatingAutomation(false), 200);
       fetchWorkspace();
       return newAutomation;
     },
@@ -149,6 +159,7 @@ export const WorkspaceProvider = ({
   const createPage: WorkspaceContext['createPage'] = useCallback(
     async (page) => {
       if (!workspace?.id) return null;
+      setCreatingPage(true);
       const newPage = await api.createPage(workspace.id, page);
       setWorkspace(
         (workspace) =>
@@ -162,6 +173,7 @@ export const WorkspaceProvider = ({
             },
           }
       );
+      setTimeout(() => setCreatingPage(false), 200);
       fetchWorkspace();
       return newPage;
     },
@@ -221,7 +233,9 @@ export const WorkspaceProvider = ({
         saving,
         deleteWorkspace,
         createAutomation,
+        creatingAutomation,
         createPage,
+        creatingPage,
         installApp,
       }}
     >

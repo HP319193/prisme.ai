@@ -260,7 +260,8 @@ async function migrateWorkspace(
 
     if (legacy.slug) {
       const detailedPage = await pages.getDetailedPage({
-        id: page.id!,
+        workspaceId: page.workspaceId!,
+        slug: page.slug!,
       });
       detailedPage.apiKey = apiKey;
       await ((pages as any).storage as DSULStorage).save(

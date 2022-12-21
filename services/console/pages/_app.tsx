@@ -14,7 +14,6 @@ import '../styles/tailwind-console.css';
 import '@prisme.ai/design-system/styles/index.css';
 import '@prisme.ai/design-system/styles/prismeai-theme.css';
 import PermissionsProvider from '../components/PermissionsProvider';
-import { AppsProvider } from '../components/AppsProvider';
 import down from '../icons/down.svg';
 import { WorkspacesUsageProvider } from '../components/WorkspacesUsage';
 import externals from '../utils/externals';
@@ -86,24 +85,22 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <WorkspacesProvider>
           <WorkspacesUsageProvider>
             <PermissionsProvider>
-              <AppsProvider>
-                <BlocksProvider
-                  externals={externals}
-                  components={{ Link, Loading, DownIcon }}
-                >
-                  <Head>
-                    <title>{t('main.title')}</title>
-                    <meta
-                      name="viewport"
-                      content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
-                    />
-                    <meta name="description" content={t('main.description')} />
-                    <link rel="icon" href="/favicon.png" />
-                  </Head>
-                  <Sentry />
-                  {getLayout(<Component {...pageProps} />)}
-                </BlocksProvider>
-              </AppsProvider>
+              <BlocksProvider
+                externals={externals}
+                components={{ Link, Loading, DownIcon }}
+              >
+                <Head>
+                  <title>{t('main.title')}</title>
+                  <meta
+                    name="viewport"
+                    content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+                  />
+                  <meta name="description" content={t('main.description')} />
+                  <link rel="icon" href="/favicon.png" />
+                </Head>
+                <Sentry />
+                {getLayout(<Component {...pageProps} />)}
+              </BlocksProvider>
             </PermissionsProvider>
           </WorkspacesUsageProvider>
         </WorkspacesProvider>

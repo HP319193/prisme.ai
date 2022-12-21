@@ -90,6 +90,10 @@ class AppInstances {
     Omit<Prismeai.AppInstance, 'config'> & {
       slug: string;
       config: Prismeai.Config;
+      documentation?: {
+        workspaceSlug: string;
+        slug: string;
+      };
     }
   > => {
     await this.accessManager.throwUnlessCan(
@@ -103,8 +107,9 @@ class AppInstances {
       slug,
       dsulType: DSULType.Imports,
     });
-    const { value: _, ...appConfig } =
-      (await this.apps.getApp(appInstance.appSlug)).config || {};
+    const { documentation, config: appConfig } = await this.apps.getApp(
+      appInstance.appSlug
+    );
 
     return {
       ...appInstance,
@@ -113,6 +118,7 @@ class AppInstances {
         value: appInstance.config || {},
       },
       slug,
+      documentation,
     };
   };
 
@@ -163,15 +169,18 @@ class AppInstances {
       }
     );
 
-    this.broker.send<Prismeai.InstalledAppInstance['payload']>(
-      EventType.InstalledApp,
-      { appInstance, slug: appInstance.slug, events },
-      {
-        appSlug: appInstance.appSlug,
-        appInstanceFullSlug: appInstance.slug,
-        workspaceId,
-      }
-    );
+    // For legacy migration, do not emit this event as it might reset existing apps config
+    if (!replace) {
+      this.broker.send<Prismeai.InstalledAppInstance['payload']>(
+        EventType.InstalledApp,
+        { appInstance, slug: appInstance.slug, events },
+        {
+          appSlug: appInstance.appSlug,
+          appInstanceFullSlug: appInstance.slug,
+          workspaceId,
+        }
+      );
+    }
     return appInstance;
   };
 

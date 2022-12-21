@@ -757,8 +757,17 @@ declare namespace Prismeai {
         versions?: string[] | WorkspaceVersion[];
         name?: string;
         description?: LocalizedText;
+        documentation?: {
+            workspaceSlug: string;
+            slug: string;
+        };
+        config?: Config;
         photo?: string;
-        slug?: string;
+        slug: string;
+        updatedAt?: string;
+        createdAt?: string;
+        updatedBy?: string;
+        createdBy?: string;
     }
     export type AppAutomations = {
         slug: string;
@@ -1679,7 +1688,6 @@ declare namespace Prismeai {
         payload: {
             subjectId: string;
             userId: string;
-            email?: string;
         };
     }
     export interface PagePermissionsShared {
@@ -2317,7 +2325,6 @@ declare namespace Prismeai {
         payload: {
             subjectId: string;
             userId: string;
-            email?: string;
         };
     }
     export interface WorkspacePermissionsShared {
@@ -2613,12 +2620,12 @@ declare namespace PrismeaiAPI {
     }
     namespace DeletePage {
         namespace Parameters {
-            export type Id = string;
+            export type Slug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            id: Parameters.Id;
+            slug: Parameters.Slug;
         }
         namespace Responses {
             export interface $200 {
@@ -2780,7 +2787,7 @@ declare namespace PrismeaiAPI {
             version?: Parameters.Version;
         }
         namespace Responses {
-            export type $200 = Prismeai.DSUL;
+            export type $200 = Prismeai.App;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
@@ -2919,12 +2926,12 @@ declare namespace PrismeaiAPI {
     }
     namespace GetPage {
         namespace Parameters {
-            export type Id = string;
+            export type Slug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            id: Parameters.Id;
+            slug: Parameters.Slug;
         }
         namespace Responses {
             export type $200 = Prismeai.DetailedPage;
@@ -3387,12 +3394,12 @@ declare namespace PrismeaiAPI {
     }
     namespace UpdatePage {
         namespace Parameters {
-            export type Id = string;
+            export type Slug = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
-            id: Parameters.Id;
+            slug: Parameters.Slug;
         }
         export type RequestBody = Prismeai.Page;
         namespace Responses {
