@@ -25,6 +25,7 @@ export const usePageFetcher = () => {
     (page: Prismeai.DetailedPage | null, error?: number | null) => {
       if (page || (error && ![401, 403].includes(error))) {
         setPage(page);
+        setLoading(false);
         return;
       }
 

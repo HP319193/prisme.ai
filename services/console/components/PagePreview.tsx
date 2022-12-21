@@ -38,6 +38,17 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
   }, [page, appInstances]);
 
   useEffect(() => {
+    const listener = ({ data }: MessageEvent) => {
+      if (data !== 'page-ready') return;
+      updatePage();
+    };
+    window.addEventListener('message', listener);
+    return () => {
+      window.removeEventListener('message', listener);
+    };
+  }, [updatePage]);
+
+  useEffect(() => {
     if (pageId.current !== page.id) {
       pageId.current = page.id;
       setLoading(true);

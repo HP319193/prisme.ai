@@ -1,5 +1,7 @@
+import Page from './Page';
+
 export const NotFoundError = () => {
-  return <div>Not found</div>;
+  return <Page page={null} error={404} />;
 };
 
 export default NotFoundError;
