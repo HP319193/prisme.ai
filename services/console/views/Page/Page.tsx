@@ -98,10 +98,9 @@ const Page = () => {
 
 const PageWithProvider = () => {
   const {
-    query: { pageSlug },
+    query: { pageSlug, id: workspaceId },
     push,
   } = useRouter();
-  const { workspace } = useWorkspace();
 
   useEffect(() => {
     // For preview in console
@@ -110,21 +109,17 @@ const PageWithProvider = () => {
 
       if (type === 'pagePreviewNavigation') {
         const [, slug] = href.match(/^\/(.+$)/) || [];
-        push(`/workspaces/${workspace.id}/pages/${slug}`);
+        push(`/workspaces/${workspaceId}/pages/${slug}`);
       }
     };
     window.addEventListener('message', listener);
     return () => {
       window.removeEventListener('message', listener);
     };
-  }, [push, workspace.id, workspace.slug]);
+  }, [push, workspaceId]);
 
   return (
-    <PageProvider
-      workspaceId={workspace.id}
-      workspaceSlug={workspace.slug}
-      slug={`${pageSlug}`}
-    >
+    <PageProvider workspaceId={`${workspaceId}`} slug={`${pageSlug}`}>
       <Page />
     </PageProvider>
   );
