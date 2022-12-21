@@ -12,14 +12,15 @@ interface PageEditBlockFormProps {
 
 const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
   const { localizeSchemaForm } = useLocalizedText();
-  const { value, removeBlock } = usePageBuilder();
+  const { value, removeBlock, blocksSchemas } = usePageBuilder();
   const { available } = useBlocks();
   const { slug } = value.get(blockId) || {};
 
   const editedBlock = available.find(({ slug: s }) => s === slug);
 
   const editSchema =
-    editedBlock && (editedBlock.edit || getEditSchema(`${editedBlock.slug}`));
+    (editedBlock && (editedBlock.edit || getEditSchema(editedBlock.slug))) ||
+    blocksSchemas.get(blockId);
 
   const schema: Schema | undefined = useMemo(() => {
     if (!editSchema) return;
