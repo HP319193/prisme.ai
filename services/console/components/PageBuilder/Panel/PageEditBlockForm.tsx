@@ -19,11 +19,14 @@ const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
   const editedBlock = available.find(({ slug: s }) => s === slug);
 
   const editSchema =
-    (editedBlock && (editedBlock.edit || getEditSchema(editedBlock.slug))) ||
-    blocksSchemas.get(blockId);
+    (editedBlock &&
+      (editedBlock.edit ||
+        blocksSchemas.get(blockId) ||
+        getEditSchema(editedBlock.slug))) ||
+    null;
 
-  const schema: Schema | undefined = useMemo(() => {
-    if (!editSchema) return;
+  const schema: Schema | null | undefined = useMemo(() => {
+    if (!editSchema) return editSchema;
     const schema = editSchema.type
       ? editSchema
       : ({
