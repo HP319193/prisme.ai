@@ -986,6 +986,10 @@
             "label": "Content in HTML or Markdown format",
             "description": "Here you can display any rich content using HTML or Markdown. You can even mix the two."
           }
+        },
+        "allowScripts": {
+          "label": "Allow scripts",
+          "description": "Allow execution of javascript code included in <script> tags"
         }
       }
     }
