@@ -7,16 +7,15 @@ it('should fetch', async () => {
   // @ts-ignore
   global.fetch = jest.fn(() => ({
     ok: true,
-    headers: [['foo', 'bar']],
-    json() {
-      return undefined;
+    headers: new Headers([['foo', 'bar']]),
+    text() {
+      return '';
     },
     clone() {
       return { ...this };
     },
   }));
   const o = await fetcher.get('url');
-  expect(o.headers).toEqual({ foo: 'bar' });
   expect(global.fetch).toHaveBeenCalledWith('http/url', {
     headers: expect.any(Headers),
     method: 'GET',
@@ -31,9 +30,9 @@ it('should fetch with auth', async () => {
   // @ts-ignore
   global.fetch = jest.fn(() => ({
     ok: true,
-    headers: {},
-    json() {
-      return {};
+    headers: new Headers(),
+    text() {
+      return '';
     },
     clone() {
       return { ...this };
@@ -55,9 +54,9 @@ it('should fetch with api key', async () => {
   // @ts-ignore
   global.fetch = jest.fn(() => ({
     ok: true,
-    headers: {},
-    json() {
-      return {};
+    headers: new Headers(),
+    text() {
+      return '';
     },
     clone() {
       return { ...this };
@@ -129,7 +128,7 @@ it('should post', async () => {
   // @ts-ignore
   global.fetch = jest.fn(() => ({
     ok: true,
-    headers: {},
+    headers: new Headers([['content-type', 'application/json']]),
     json() {
       return {};
     },
@@ -149,7 +148,7 @@ it('should post with body', async () => {
   // @ts-ignore
   global.fetch = jest.fn(() => ({
     ok: true,
-    headers: {},
+    headers: new Headers([['content-type', 'application/json']]),
     json() {
       return {};
     },
@@ -170,7 +169,7 @@ it('should put', async () => {
   // @ts-ignore
   global.fetch = jest.fn(() => ({
     ok: true,
-    headers: {},
+    headers: new Headers([['content-type', 'application/json']]),
     json() {
       return {};
     },
@@ -191,7 +190,7 @@ it('should patch', async () => {
   // @ts-ignore
   global.fetch = jest.fn(() => ({
     ok: true,
-    headers: {},
+    headers: new Headers([['content-type', 'application/json']]),
     json() {
       return {};
     },
@@ -212,7 +211,7 @@ it('should delete', async () => {
   // @ts-ignore
   global.fetch = jest.fn(() => ({
     ok: true,
-    headers: {},
+    headers: new Headers([['content-type', 'application/json']]),
     json() {
       return {};
     },
@@ -232,7 +231,7 @@ it('should use formData', async () => {
   // @ts-ignore
   global.fetch = jest.fn(() => ({
     ok: true,
-    headers: {},
+    headers: new Headers([['content-type', 'application/json']]),
     json() {
       return {};
     },

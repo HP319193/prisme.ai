@@ -132,19 +132,10 @@ it('should call delete /workspaces/42', async () => {
 it('should call post /workspaces/42/automations', () => {
   const api = new Api('/fake/');
   api.post = jest.fn();
-  api.createAutomation(
-    {
-      id: '42',
-      name: 'foo',
-      automations: {},
-      createdAt: '',
-      updatedAt: '',
-    },
-    {
-      name: 'foo',
-      do: [],
-    }
-  );
+  api.createAutomation('42', {
+    name: 'foo',
+    do: [],
+  });
   expect(api.post).toHaveBeenCalledWith('/workspaces/42/automations', {
     name: 'foo',
     do: [],
@@ -154,20 +145,10 @@ it('should call post /workspaces/42/automations', () => {
 it('should call patch /workspaces/42/automations', async () => {
   const api = new Api('/fake/');
   api.patch = jest.fn();
-  await api.updateAutomation(
-    {
-      id: '42',
-      name: 'foo',
-      automations: {},
-      createdAt: '',
-      updatedAt: '',
-    },
-    '42-1',
-    {
-      name: 'foo',
-      do: [],
-    }
-  );
+  await api.updateAutomation('42', '42-1', {
+    name: 'foo',
+    do: [],
+  });
   expect(api.patch).toHaveBeenCalledWith('/workspaces/42/automations/42-1', {
     name: 'foo',
     do: [],
@@ -177,16 +158,7 @@ it('should call patch /workspaces/42/automations', async () => {
 it('should call delete /workspaces/42/automations/42-1', () => {
   const api = new Api('/fake/');
   api.delete = jest.fn();
-  api.deleteAutomation(
-    {
-      id: '42',
-      name: 'foo',
-      automations: {},
-      createdAt: '',
-      updatedAt: '',
-    },
-    '42-1'
-  );
+  api.deleteAutomation('42', '42-1');
   expect(api.delete).toHaveBeenCalledWith('/workspaces/42/automations/42-1');
 });
 
@@ -437,10 +409,11 @@ it('should create page', () => {
 
 it('should update page', async () => {
   const api = new Api('/fake/');
-  api.patch = jest.fn((): any => ({ id: '123' }));
-  await api.updatePage('42', { id: '123' } as Prismeai.Page);
-  expect(api.patch).toHaveBeenCalledWith(`/workspaces/42/pages/123`, {
+  api.patch = jest.fn((): any => ({ slug: 'my-page' }));
+  await api.updatePage('42', { id: '123', slug: 'my-page' } as Prismeai.Page);
+  expect(api.patch).toHaveBeenCalledWith(`/workspaces/42/pages/my-page`, {
     id: '123',
+    slug: 'my-page',
   });
 });
 
