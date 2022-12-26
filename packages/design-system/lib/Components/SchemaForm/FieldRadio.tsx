@@ -1,12 +1,7 @@
 import { Radio } from 'antd';
 import { ReactNode } from 'react';
 import { FieldInputProps, useField } from 'react-final-form';
-import {
-  isSelectGroup,
-  SelectGroup,
-  SelectOption,
-  SelectProps,
-} from '../Select';
+import { isSelectGroup, SelectProps } from '../Select';
 import Description from './Description';
 import { useSelectOptions } from './FieldSelect';
 import { FieldProps } from './types';
