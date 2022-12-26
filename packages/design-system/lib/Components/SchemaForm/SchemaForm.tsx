@@ -119,7 +119,7 @@ export const SchemaForm = ({
         mutators={{ ...arrayMutators }}
       >
         {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit} className="flex-grow space-y-5">
+          <form onSubmit={handleSubmit} className="pr-form">
             {onChange && (
               <FormSpy subscription={{ values: true }}>
                 {({ values }) => (

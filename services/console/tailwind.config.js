@@ -37,7 +37,8 @@ module.exports = {
         link: 'var(--link-color)',
         surface: 'var(--surface-color)',
         base: 'var(--base-color)',
-        error: '#ff4d4f',
+        warning: 'var(--warning-color)',
+        error: 'var(--error-color)',
         info: '#E6EFFF',
 
         'pr-orange': '#FF9261',

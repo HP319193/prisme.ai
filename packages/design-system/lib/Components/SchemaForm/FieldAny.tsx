@@ -1,15 +1,21 @@
 import { useCallback, useState } from 'react';
 import { useField } from 'react-final-form';
-import { useSchemaForm } from './context';
-import Description from './Description';
+import { SchemaFormContext, useSchemaForm } from './context';
 import { FieldProps } from './types';
-import { getLabel } from './utils';
+import FieldContainer from './FieldContainer';
+import Label from './Label';
+import InfoBubble from './InfoBubble';
+import { Input, Tooltip } from 'antd';
+import { getError } from './utils';
 
-export const FieldAny = ({ schema, name, label }: FieldProps) => {
-  const {
-    components: { JSONEditor = 'textarea' },
-  } = useSchemaForm();
-  const field = useField(name);
+export const FieldAny = ({
+  JSONEditor,
+  ...props
+}: FieldProps & {
+  JSONEditor: SchemaFormContext['components']['JSONEditor'];
+}) => {
+  const Editor = JSONEditor || Input.TextArea;
+  const field = useField(props.name);
   const [value, setValue] = useState(
     typeof field.input.value === 'string'
       ? field.input.value
@@ -25,19 +31,39 @@ export const FieldAny = ({ schema, name, label }: FieldProps) => {
     }
   }, []);
 
+  const hasError = getError(field.meta);
+
   return (
-    <div className="flex flex-1 flex-col my-2">
-      <Description text={schema.description}>
-        <label className="flex">
-          {label || schema.title || getLabel(name)}
-        </label>
-        <JSONEditor
-          className="flex flex-1 w-full outline-none"
+    <FieldContainer {...props} className="pr-form-any">
+      <Label
+        field={field}
+        schema={props.schema}
+        className="pr-form-any__label pr-form-label"
+      >
+        {props.label}
+      </Label>
+      <Tooltip title={hasError} overlayClassName="pr-form-error">
+        <Editor
+          className="pr-form-any__input pr-form-input"
           value={value}
           onChange={(e) => onChange(typeof e === 'string' ? e : e.target.value)}
+          status={hasError ? 'error' : ''}
         />
-      </Description>
-    </div>
+      </Tooltip>
+      <InfoBubble
+        className="pr-form-any__description"
+        text={props.schema.description}
+      />
+    </FieldContainer>
   );
 };
-export default FieldAny;
+
+const LinkedFieldAny = (props: FieldProps) => {
+  const {
+    components: { JSONEditor },
+  } = useSchemaForm();
+
+  return <FieldAny {...props} JSONEditor={JSONEditor} />;
+};
+
+export default LinkedFieldAny;

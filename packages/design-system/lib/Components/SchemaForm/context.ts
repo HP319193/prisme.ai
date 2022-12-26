@@ -1,6 +1,7 @@
 import { UiOptionsSelect, Schema } from '@prisme.ai/design-system';
 import { createContext, FC, ReactElement, useContext } from 'react';
 import { SelectProps } from '../Select';
+import { DefaultFieldContainer } from './FieldContainer';
 import { FieldProps, UiOptionsAutocomplete } from './types';
 
 type FieldComponent<T = any> = (props: FieldProps & T) => ReactElement | null;
@@ -54,12 +55,11 @@ export interface SchemaFormContext {
   };
 }
 
-export const FieldContainer: FC<FieldProps> = ({ children }) =>
-  children as ReactElement;
+export const FieldContainer = DefaultFieldContainer;
 export const context = createContext<SchemaFormContext>({
   locales: {},
   components: {
-    FieldContainer,
+    FieldContainer: DefaultFieldContainer,
   },
   utils: {
     extractSelectOptions: () => [],

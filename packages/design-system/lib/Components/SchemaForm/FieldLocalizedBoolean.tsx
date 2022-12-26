@@ -1,21 +1,25 @@
 import { Switch } from 'antd';
 import { useField } from 'react-final-form';
 import { LocalizedInput } from '../..';
-import Description from './Description';
+import FieldContainer from './FieldContainer';
+import InfoBubble from './InfoBubble';
+import Label from './Label';
 import { FieldProps } from './types';
-import { getLabel } from './utils';
 
 const LocalizedSwitch = ({
   value,
   onChange,
+  id,
 }: {
   value: boolean;
   onChange: any;
+  id: string;
 }) => {
   return (
     <Switch
       checked={value}
       onChange={(checked) => onChange({ target: { value: checked } })}
+      id={id}
     />
   );
 };
@@ -24,23 +28,28 @@ export const FieldLocalizedBoolean = (props: FieldProps) => {
   const field = useField(props.name);
 
   return (
-    <div className="relative flex mt-5 flex-1">
-      <Description text={props.schema.description}>
-        <div className="ant-input flex flex-row items-center flex-1 !rounded-[0.3rem] h-[2.5rem] basis-[2.5rem] invalid:border-red-500 invalid:text-red-500">
-          <label className="flex cursor-pointer">
-            <LocalizedInput
-              {...field.input}
-              Input={LocalizedSwitch}
-              InputProps={props}
-              className="!static"
-            />
-            <span className="text-[10px] text-gray ml-2">
-              {props.label || props.schema.title || getLabel(props.name)}
-            </span>
-          </label>
-        </div>
-      </Description>
-    </div>
+    <FieldContainer
+      {...props}
+      className="pr-form-boolean pr-form-boolean--localized"
+    >
+      <Label
+        field={field}
+        schema={props.schema}
+        className="pr-form-boolean__label pr-form-label"
+      >
+        {props.label}
+      </Label>
+      <LocalizedInput
+        {...field.input}
+        Input={LocalizedSwitch}
+        InputProps={{ ...props, id: field.input.name }}
+        className="pr-form-boolean__input pr-form-input"
+      />
+      <InfoBubble
+        className="pr-form-boolean__description"
+        text={props.schema.description}
+      />
+    </FieldContainer>
   );
 };
 

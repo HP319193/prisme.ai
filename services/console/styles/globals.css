@@ -8,6 +8,8 @@
   --link-color: var(--accent-color);
   --gray-color: #939ca6;
   --light-gray-color: #e5e5e5;
+  --warning-color: #ff4d4f;
+  --error-color: #ff4d4f;
 }
 
 @font-face {

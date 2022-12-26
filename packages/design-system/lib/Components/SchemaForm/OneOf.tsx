@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useField } from 'react-final-form';
 import Select from '../Select';
-import { useSchemaForm } from './context';
-import Description from './Description';
+import { SchemaFormContext, useSchemaForm } from './context';
 import Field from './Field';
 import { FieldProps, Schema, UiOptionsOneOf } from './types';
 import { getLabel, typesMatch } from './utils';
+import FieldContainer from './FieldContainer';
 
 function isUiOptionsOneOf(
   uiOptions: Schema['ui:options']
@@ -43,11 +43,13 @@ const getInitialIndex = (
   return `${Math.max(0, index)}`;
 };
 
-export const OneOf = ({ schema, name, label }: FieldProps) => {
-  const { locales = {} } = useSchemaForm();
-  const field = useField(name);
+export const OneOf = ({
+  locales,
+  ...props
+}: FieldProps & { locales: SchemaFormContext['locales'] }) => {
+  const field = useField(props.name);
 
-  const { oneOf = [], 'ui:options': uiOptions } = schema;
+  const { oneOf = [], 'ui:options': uiOptions } = props.schema;
   const [selected, setSelected] = useState(
     getInitialIndex(
       field.input.value,
@@ -74,7 +76,7 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
     const { index = 0 } = uiOptionsOneOf
       ? uiOptionsOneOf.oneOf.options[+selected]
       : { index: +selected };
-    const cleanedSchema = { ...schema };
+    const cleanedSchema = { ...props.schema };
     delete cleanedSchema.oneOf;
     const partialSchema = oneOf[index] || {};
     const childSchema: Schema = { ...cleanedSchema, ...partialSchema };
@@ -83,9 +85,9 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
     if (!partialSchema.description) {
       delete childSchema.description;
     }
-    if (childSchema.properties && schema.properties) {
+    if (childSchema.properties && props.schema.properties) {
       childSchema.properties = {
-        ...schema.properties,
+        ...props.schema.properties,
         ...childSchema.properties,
       };
     }
@@ -125,23 +127,21 @@ export const OneOf = ({ schema, name, label }: FieldProps) => {
     }
   }, [selected]);
 
-  const title = schema.title || getLabel(name);
+  const title = props.schema.title || getLabel(props.name);
 
   return (
-    <Description text={schema.description} className="pt-1">
-      <div className="flex flex-1 flex-col">
-        {title && <label className="flex">{title}</label>}
-        <Select
-          selectOptions={options}
-          onChange={setSelected}
-          value={selected}
-        />
-        {schema.type !== undefined && (
-          <Field schema={childSchema} name={name} label={label} />
-        )}
-      </div>
-    </Description>
+    <FieldContainer {...props} className="pr-form-one-of">
+      {title && <label className="pr-form-one-of__label">{title}</label>}
+      <Select selectOptions={options} onChange={setSelected} value={selected} />
+      {props.schema.type !== undefined && (
+        <Field schema={childSchema} name={props.name} label={props.label} />
+      )}
+    </FieldContainer>
   );
 };
 
-export default OneOf;
+const Linked = (props: FieldProps) => {
+  const { locales = {} } = useSchemaForm();
+  return <OneOf {...props} locales={locales} />;
+};
+export default Linked;

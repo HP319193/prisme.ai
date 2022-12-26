@@ -1,20 +1,25 @@
-import { Tooltip } from 'antd';
+import { Input, Tooltip } from 'antd';
 import { ChangeEvent, useCallback } from 'react';
 import { useField } from 'react-final-form';
-import Input from '../Input';
-import { useSchemaForm } from './context';
-import Description from './Description';
+import { SchemaFormContext, useSchemaForm } from './context';
 import FieldAutocomplete from './FieldAutocomplete';
-import FieldDate from './FieldDate';
+import DefaultFieldDate from './FieldDate';
 import FieldTextColor from './FieldTextColor';
 import FieldTextTextArea from './FieldTextTextArea';
 import FieldTextUpload from './FieldTextUpload';
 import { FieldProps, UiOptionsTextArea, UiOptionsUpload } from './types';
-import { getLabel, getError } from './utils';
+import { getError } from './utils';
+import InfoBubble from './InfoBubble';
+import { Label } from './Label';
+import FieldContainer from './FieldContainer';
 
-export const FieldText = (props: FieldProps) => {
+export const FieldText = ({
+  FieldDate = DefaultFieldDate,
+  ...props
+}: FieldProps & {
+  FieldDate: SchemaFormContext['components']['FieldDate'];
+}) => {
   const field = useField(props.name);
-  const { components } = useSchemaForm();
   const { 'ui:widget': uiWidget, 'ui:options': uiOptions } = props.schema;
 
   const onChange = useCallback(
@@ -40,8 +45,7 @@ export const FieldText = (props: FieldProps) => {
         />
       );
     case 'date':
-      const Component = components.FieldDate || FieldDate;
-      return <Component {...props} />;
+      return <FieldDate {...props} />;
     case 'color':
       return <FieldTextColor {...props} />;
     case 'autocomplete':
@@ -49,23 +53,41 @@ export const FieldText = (props: FieldProps) => {
   }
 
   const hasError = getError(field.meta);
+
   return (
-    <Description text={props.schema.description}>
-      <components.FieldContainer {...props}>
-        <Tooltip title={hasError} color="#ff4d4f">
-          <Input
-            {...field.input}
-            placeholder={props.schema.placeholder || ''}
-            onChange={onChange}
-            label={props.label || props.schema.title || getLabel(props.name)}
-            type={props.schema.type === 'number' ? 'number' : 'text'}
-            disabled={props.schema.disabled}
-            status={hasError ? 'error' : ''}
-          />
-        </Tooltip>
-      </components.FieldContainer>
-    </Description>
+    <FieldContainer {...props} className="pr-form-text">
+      <Label
+        field={field}
+        schema={props.schema}
+        className="pr-form-text__label pr-form-label"
+      >
+        {props.label}
+      </Label>
+      <Tooltip title={hasError} overlayClassName="pr-form-error">
+        <Input
+          {...field.input}
+          placeholder={props.schema.placeholder || ''}
+          onChange={onChange}
+          type={props.schema.type === 'number' ? 'number' : 'text'}
+          disabled={props.schema.disabled}
+          status={hasError ? 'error' : ''}
+          className="pr-form-text__input pr-form-input"
+          id={field.input.name}
+        />
+      </Tooltip>
+      <InfoBubble
+        className="pr-form-text__description"
+        text={props.schema.description}
+      />
+    </FieldContainer>
   );
 };
 
-export default FieldText;
+const LinkedFieldText = (props: FieldProps) => {
+  const {
+    components: { FieldDate },
+  } = useSchemaForm();
+  return <FieldText {...props} FieldDate={FieldDate} />;
+};
+
+export default LinkedFieldText;

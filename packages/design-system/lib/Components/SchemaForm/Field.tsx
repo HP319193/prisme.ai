@@ -1,15 +1,17 @@
 import { useMemo } from 'react';
 import { useField } from 'react-final-form';
-import { useSchemaForm } from './context';
+import { SchemaFormContext, useSchemaForm } from './context';
 import Enum from './Enum';
 import OneOf from './OneOf';
 import { FieldProps } from './types';
 import { getFieldOptions } from './utils';
 
-export const Field = (props: FieldProps) => {
+export const Field = ({
+  components,
+  ...props
+}: FieldProps & { components: SchemaFormContext['components'] }) => {
   useField(props.name, getFieldOptions(props.schema));
-  // Set default value
-  const { components } = useSchemaForm();
+
   const Component = useMemo(() => {
     if (props.schema.oneOf) {
       return OneOf;
@@ -52,4 +54,10 @@ export const Field = (props: FieldProps) => {
 
   return <Component {...props} />;
 };
-export default Field;
+
+const LinkedField = (props: FieldProps) => {
+  const { components } = useSchemaForm();
+  return <Field {...props} components={components} />;
+};
+
+export default LinkedField;

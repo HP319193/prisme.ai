@@ -1,25 +1,25 @@
+import { Input } from 'antd';
 import { useMemo } from 'react';
 import { useField } from 'react-final-form';
 import { LocalizedInput } from '../..';
-import TextArea from '../TextArea';
-import Description from './Description';
+import FieldContainer from './FieldContainer';
 import FieldTextUpload from './FieldTextUpload';
+import InfoBubble from './InfoBubble';
+import Label from './Label';
 import { FieldProps, UiOptionsTextArea, UiOptionsUpload } from './types';
-import { getLabel } from './utils';
 
 export const FieldLocalizedText = (props: FieldProps) => {
   const field = useField(props.name);
   const { 'ui:widget': uiWidget, 'ui:options': uiOptions } = props.schema;
-  const [Input, InputProps] = useMemo(() => {
+  const [, type] = (props.schema.type || '').split(':');
+  const [InputComponent, InputProps] = useMemo(() => {
     const commonProps = {
-      label: props.label || props.schema.title || getLabel(props.name),
-      containerClassName: 'flex flex-1',
-      type: props.schema.type === 'number' ? 'number' : 'text',
+      type: type === 'number' ? 'number' : 'text',
     };
     switch (uiWidget) {
       case 'textarea':
         return [
-          TextArea,
+          Input.TextArea,
           {
             ...commonProps,
             ...((uiOptions || { textarea: {} }) as UiOptionsTextArea).textarea,
@@ -34,19 +34,34 @@ export const FieldLocalizedText = (props: FieldProps) => {
           },
         ];
       default:
-        return [undefined, commonProps];
+        return [Input, commonProps];
     }
   }, [uiWidget]);
 
   return (
-    <Description text={props.schema.description}>
+    <FieldContainer
+      {...props}
+      className={`pr-form-${type} pr-form-${type}--localized`}
+    >
+      <Label
+        field={field}
+        schema={props.schema}
+        className={`pr-form-${type}__label pr-form-label`}
+      >
+        {props.label}
+      </Label>
       <LocalizedInput
         {...field.input}
-        Input={Input}
+        Input={InputComponent}
         InputProps={InputProps}
         iconMarginTop="2.3rem"
+        className={`pr-form-${type}__input pr-form-input`}
       />
-    </Description>
+      <InfoBubble
+        className={`pr-form-${type}__description`}
+        text={props.schema.description}
+      />
+    </FieldContainer>
   );
 };
 
