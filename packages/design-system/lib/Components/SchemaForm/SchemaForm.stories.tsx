@@ -36,6 +36,9 @@ const Template: Story<FormProps> = (props) => {
         initialValues={value}
         onSubmit={setValue}
         onChange={setValue}
+        locales={{
+          freeAdditionalPropertiesLabel: 'Free additional properties',
+        }}
       />
       <pre>
         <code>{value && JSON.stringify(value, null, '  ')}</code>
@@ -981,7 +984,35 @@ WithStyles.args = {
       ...all,
       first: {
         type: 'object',
-        properties: all,
+        properties: {
+          ...all,
+          chose: {
+            title: 'String or date ?',
+            oneOf: [
+              {
+                title: 'as string',
+                value: 'string',
+                properties: {
+                  value: {
+                    type: 'string',
+                    title: 'String value',
+                  },
+                },
+              },
+              {
+                title: 'as date',
+                value: 'date',
+                properties: {
+                  value: {
+                    type: 'string',
+                    'ui:widget': 'date',
+                    title: 'Pick date',
+                  },
+                },
+              },
+            ],
+          },
+        },
         title: 'first',
         description: 'first',
         additionalProperties: true,
@@ -996,6 +1027,25 @@ WithStyles.args = {
           title: 'more properties',
           description: 'more properties',
         },
+        oneOf: [
+          {
+            title: 'This',
+            properties: {
+              this: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            title: 'That',
+            properties: {
+              that: {
+                type: 'object',
+                additionalProperties: true,
+              },
+            },
+          },
+        ],
       },
       third: {
         type: 'object',

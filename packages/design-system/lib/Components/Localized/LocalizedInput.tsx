@@ -66,7 +66,6 @@ export const LocalizedInput = ({
   setLangTooltip = 'choose language',
   addLangTooltip = 'Add {{lang}}',
   deleteTooltip = 'remove language',
-  iconMarginTop = 0,
   className,
   initialLang = 'en',
 }: LocalizedInputProps) => {
@@ -159,7 +158,7 @@ export const LocalizedInput = ({
       {
         label: availableLangsTitle,
         options: Array.from(unsetLanguages.entries()).map(([value, label]) => ({
-          label: (
+          label: label && (
             <div className="flex flex-1 flex-row">
               <Tooltip
                 title={addLangTooltip.replace(/\{\{lang\}\}/, label)}
@@ -199,14 +198,7 @@ export const LocalizedInput = ({
         {...InputProps}
       />
       <Tooltip title={setLangTooltip} placement="left">
-        <div
-          className="absolute top-2 right-2"
-          style={{
-            top: `calc(0.3rem + ${iconMarginTop}${
-              typeof iconMarginTop == 'number' ? 'px' : ''
-            })`,
-          }}
-        >
+        <div className="absolute top-2 right-2">
           <CustomSelect
             options={langs}
             value={selectedLang}

@@ -48,9 +48,11 @@ const getInitialValue = (schema: Schema, value: any) => {
 
 export const FreeAdditionalProperties = ({
   JSONEditor = TextAreaField,
+  locales,
   ...props
 }: AdditionalPropertiesProps & {
   JSONEditor: SchemaFormContext['components']['JSONEditor'];
+  locales: SchemaFormContext['locales'];
 }) => {
   const [value, setValue] = useState(
     getInitialValue(props.schema, props.field.input.value)
@@ -83,6 +85,9 @@ export const FreeAdditionalProperties = ({
       {...props}
       className="pr-form-additional-properties pr-form-additional-properties--free"
     >
+      {locales.freeAdditionalPropertiesLabel && (
+        <label>{locales.freeAdditionalPropertiesLabel}</label>
+      )}
       <JSONEditor
         onChange={(value) =>
           typeof value === 'string'
@@ -244,10 +249,16 @@ export const FieldAdditionalProperties = ({ schema, name }: FieldProps) => {
 
   if (schema.additionalProperties === true) {
     return (
-      <Free field={field} schema={schema} name={name} JSONEditor={JSONEditor} />
+      <Free
+        field={field}
+        schema={schema}
+        name={name}
+        JSONEditor={JSONEditor}
+        locales={locales}
+      />
     );
   }
-
+  console.log(locales);
   return (
     <Managed schema={schema} field={field} name={name} locales={locales} />
   );

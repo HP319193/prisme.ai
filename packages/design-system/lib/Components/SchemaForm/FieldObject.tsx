@@ -5,7 +5,6 @@ import LayoutBasic from './LayoutBasic';
 import LayoutGrid from './LayoutGrid';
 import { FieldProps, Schema, UiOptionsGrid } from './types';
 import FieldContainer from './FieldContainer';
-import Label from './Label';
 import InfoBubble from './InfoBubble';
 import StretchContent from '../StretchContent';
 import { getLabel } from './utils';
@@ -20,7 +19,7 @@ function isUiOptionsGrid(
 export const FieldObject = (props: FieldProps) => {
   const { additionalProperties, 'ui:options': uiOptions } = props.schema;
   const field = useField(props.name, { defaultValue: props.schema.default });
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   const grid = isUiOptionsGrid(uiOptions) && uiOptions.grid;
 

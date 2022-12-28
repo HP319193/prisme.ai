@@ -22,6 +22,7 @@ export interface SchemaFormContext {
     oneOfOption?: string;
     uploadLabel?: string;
     uploadRemove?: string;
+    freeAdditionalPropertiesLabel?: string;
   };
   components: {
     FieldContainer: FC<FieldProps>;

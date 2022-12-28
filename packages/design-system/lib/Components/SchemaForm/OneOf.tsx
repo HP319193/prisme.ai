@@ -131,8 +131,14 @@ export const OneOf = ({
 
   return (
     <FieldContainer {...props} className="pr-form-one-of">
-      {title && <label className="pr-form-one-of__label">{title}</label>}
-      <Select selectOptions={options} onChange={setSelected} value={selected} />
+      <label className="pr-form-label pr-form-one-of__label">{title}</label>
+      <div className="pr-form-input pr-form-one-of__input">
+        <Select
+          selectOptions={options}
+          onChange={setSelected}
+          value={selected}
+        />
+      </div>
       {props.schema.type !== undefined && (
         <Field schema={childSchema} name={props.name} label={props.label} />
       )}

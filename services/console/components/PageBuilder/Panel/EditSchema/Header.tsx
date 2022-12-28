@@ -114,111 +114,94 @@ export const schema: Schema = {
         type: 'object',
         title: 'pages.blocks.header.settings.nav.items.label',
         description: 'pages.blocks.header.settings.nav.items.description',
+        add: 'pages.blocks.header.settings.nav.items.add',
+        remove: 'pages.blocks.header.settings.nav.items.remove',
         properties: {
-          type: {
-            hidden: true,
-          },
           text: {
             type: 'string',
             title: 'pages.blocks.header.settings.nav.items.text.label',
             description:
               'pages.blocks.header.settings.nav.items.text.description',
           },
-        },
-        oneOf: [
-          {
-            title: 'pages.blocks.header.settings.nav.items.external.label',
-            description: 'pages.blocks.header.settings.nav.items.description',
-            properties: {
-              value: {
-                type: 'string',
-                title:
-                  'pages.blocks.header.settings.nav.items.external.value.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.external.value.description',
-              },
-            },
-          },
-          {
-            title: 'pages.blocks.header.settings.nav.items.internal.label',
-            description:
-              'pages.blocks.header.settings.nav.items.internal.description',
-            properties: {
-              value: {
-                type: 'string',
-                title:
-                  'pages.blocks.header.settings.nav.items.internal.value.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.internal.value.description',
-                'ui:widget': 'select',
-                'ui:options': {
-                  from: 'pages',
-                },
-              },
-            },
-          },
-          {
-            title: 'pages.blocks.header.settings.nav.items.inside.label',
-            description:
-              'pages.blocks.header.settings.nav.items.inside.description',
-            properties: {
-              value: {
-                type: 'string',
-                title:
-                  'pages.blocks.header.settings.nav.items.inside.value.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.inside.value.description',
-                'ui:widget': 'select',
-                'ui:options': {
-                  from: 'pageSections',
-                },
-              },
-            },
-          },
-          {
-            title: 'pages.blocks.header.settings.nav.items.event.label',
-            description:
-              'pages.blocks.header.settings.nav.items.event.description',
-            properties: {
-              value: {
-                type: 'string',
-                title:
-                  'pages.blocks.header.settings.nav.items.event.value.label',
-                description:
-                  'pages.blocks.header.settings.nav.items.event.value.description',
-              },
-            },
-          },
-        ],
-        'ui:options': {
-          oneOf: {
-            options: [
+          type: {
+            title: 'pages.blocks.header.settings.nav.items.type.label',
+            oneOf: [
               {
-                label: 'pages.blocks.header.settings.nav.items.external.label',
-                index: 0,
-                value: {
-                  type: 'external',
+                title: 'pages.blocks.header.settings.nav.items.external.label',
+                description:
+                  'pages.blocks.header.settings.nav.items.external.description',
+                value: 'external',
+                properties: {
+                  value: {
+                    type: 'string',
+                    title:
+                      'pages.blocks.header.settings.nav.items.external.value.label',
+                    description:
+                      'pages.blocks.header.settings.nav.items.external.value.description',
+                  },
                 },
               },
               {
-                label: 'pages.blocks.header.settings.nav.items.internal.label',
-                index: 1,
-                value: {
-                  type: 'internal',
+                title: 'pages.blocks.header.settings.nav.items.internal.label',
+                description:
+                  'pages.blocks.header.settings.nav.items.internal.description',
+                value: 'internal',
+                properties: {
+                  value: {
+                    type: 'string',
+                    title:
+                      'pages.blocks.header.settings.nav.items.internal.value.label',
+                    description:
+                      'pages.blocks.header.settings.nav.items.internal.value.description',
+                    'ui:widget': 'select',
+                    'ui:options': {
+                      from: 'pages',
+                    },
+                  },
                 },
               },
               {
-                label: 'pages.blocks.header.settings.nav.items.inside.label',
-                index: 2,
-                value: {
-                  type: 'inside',
+                title: 'pages.blocks.header.settings.nav.items.inside.label',
+                description:
+                  'pages.blocks.header.settings.nav.items.inside.description',
+                value: 'inside',
+                properties: {
+                  value: {
+                    type: 'string',
+                    title:
+                      'pages.blocks.header.settings.nav.items.inside.value.label',
+                    description:
+                      'pages.blocks.header.settings.nav.items.inside.value.description',
+                    'ui:widget': 'select',
+                    'ui:options': {
+                      from: 'pageSections',
+                    },
+                  },
                 },
               },
               {
-                label: 'pages.blocks.header.settings.nav.items.event.label',
-                index: 3,
-                value: {
-                  type: 'event',
+                title: 'pages.blocks.header.settings.nav.items.event.label',
+                description:
+                  'pages.blocks.header.settings.nav.items.event.description',
+                value: 'event',
+                properties: {
+                  value: {
+                    type: 'string',
+                    title:
+                      'pages.blocks.header.settings.nav.items.event.value.label',
+                    description:
+                      'pages.blocks.header.settings.nav.items.event.value.description',
+                    'ui:widget': 'autocomplete',
+                    'ui:options': {
+                      autocomplete: 'events:listen',
+                    },
+                  },
+                  payload: {
+                    title:
+                      'pages.blocks.header.settings.nav.items.event.payload.label',
+                    description:
+                      'pages.blocks.header.settings.nav.items.event.payload.description',
+                  },
                 },
               },
             ],

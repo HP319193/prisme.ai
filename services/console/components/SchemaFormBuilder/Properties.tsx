@@ -1,12 +1,6 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Collapse,
-  Divider,
-  Input,
-  Schema,
-  Tooltip,
-} from '@prisme.ai/design-system';
+import { Divider, Input, Schema, Tooltip } from '@prisme.ai/design-system';
+import { Button, Collapse } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import SchemaFormBuilder from './SchemaFormBuilder';
@@ -17,11 +11,7 @@ interface PropertiesProps {
   addLabel?: string;
 }
 
-export const Properties = ({
-  value,
-  onChange,
-  addLabel = 'schema.property.add',
-}: PropertiesProps) => {
+export const Properties = ({ value, onChange, addLabel }: PropertiesProps) => {
   const { t } = useTranslation('workspaces');
   const update = useCallback(
     (updatedKey: keyof typeof value) => (schema: Schema) => {
@@ -69,57 +59,48 @@ export const Properties = ({
     [onChange, value]
   );
 
-  const items = useMemo(
-    () =>
-      Object.keys(value || {}).map((key) => ({
-        isEmpty: !key,
-        label: (
-          <div
-            className="relative flex flex-1"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Input
-              label={t('schema.property.name')}
-              value={key}
-              onChange={({ target: { value } }) => updateKey(key)(value)}
-              pattern={/^[a-zA-Z0-9_]+$/.source}
-              containerClassName="flex flex-1"
-            />
-            <Tooltip title={t('schema.property.delete')} placement="left">
-              <button
-                type="button"
-                onClick={remove(key)}
-                className="absolute top-[2.8rem] right-3 text-gray hover:text-orange-500"
-              >
-                <DeleteOutlined />
-              </button>
-            </Tooltip>
-          </div>
-        ),
-        content: key ? (
-          <div>
-            <div className="pl-4 border-l-[1px] border-x-gray-200">
-              <SchemaFormBuilder value={value[key]} onChange={update(key)} />
+  return (
+    <Collapse
+      className="flex flex-1 flex-col pr-collapse-light"
+      bordered={false}
+    >
+      {Object.entries(value || {}).map(([key, v], i) => (
+        <Collapse.Panel
+          key={i}
+          className="flex flex-1 flex-col !p-4 -mx-[1rem]"
+          header={
+            <div
+              className="relative flex flex-1"
+              onClick={(e) => {
+                const target = e.target as HTMLElement;
+                if (target.nodeName.toLowerCase() === 'label') return;
+                e.stopPropagation();
+              }}
+            >
+              <Input
+                label={t('schema.property.name')}
+                value={key}
+                onChange={({ target: { value } }) => updateKey(key)(value)}
+                pattern={/^[a-zA-Z0-9_]+$/.source}
+                containerClassName="flex flex-1"
+              />
+              <div className="absolute -top-3 -right-2">
+                <Tooltip title={t('schema.property.delete')} placement="left">
+                  <Button onClick={remove(key)}>
+                    <DeleteOutlined />
+                  </Button>
+                </Tooltip>
+              </div>
             </div>
+          }
+        >
+          <div className="flex flex-1 flex-col ml-7">
+            <SchemaFormBuilder value={v} onChange={update(key)} />
             <Divider />
           </div>
-        ) : null,
-      })),
-    [remove, t, update, updateKey, value]
-  );
-
-  return (
-    <div className="flex flex-1 flex-col centered-collapse">
-      {items.map((item, key) => (
-        <Collapse
-          key={key}
-          items={[item]}
-          expandIconPosition="start"
-          icon={item.isEmpty ? () => <div className="w-3" /> : undefined}
-        />
+        </Collapse.Panel>
       ))}
-      <Button onClick={add}>{t(addLabel)}</Button>
-    </div>
+    </Collapse>
   );
 };
 
