@@ -35,10 +35,11 @@ import OutputBlock from './OutputBlock';
 import OutputForm from './Panel/OutputForm';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { Schema } from '@prisme.ai/design-system';
+import removeAccent from 'remove-accents';
 
 type InstructionSchemaTupple = [
   string,
-  Record<string, Schema & { description?: string }>,
+  Record<string, Schema & { description?: string; search?: string }>,
   { icon: string }
 ];
 interface AutomationBuilderProps {
@@ -149,7 +150,16 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         Object.keys(BUILTIN_INSTRUCTIONS).reduce(
           (prev, name) => ({
             ...prev,
-            [name]: (BUILTIN_INSTRUCTIONS as any)[name].properties[name],
+            [name]: {
+              ...(BUILTIN_INSTRUCTIONS as any)[name].properties[name],
+              search: removeAccent(
+                `${t('automations.instruction.label', {
+                  context: name,
+                })} ${t('automations.instruction.description', {
+                  context: name,
+                })}`
+              ),
+            },
           }),
           {}
         ),
@@ -175,7 +185,12 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
                   type: 'object',
                   properties,
                   description: localize(automations[name].description),
-                  name: automations[name].name,
+                  name: localize(automations[name].name),
+                  search: removeAccent(
+                    `${localize(automations[name].name)} ${localize(
+                      automations[name].description
+                    )}`
+                  ),
                 },
               };
             }, {}),
