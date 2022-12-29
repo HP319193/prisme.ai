@@ -187,13 +187,14 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [customInstructions, id, localize, t]
   );
 
-  const hidePanel = useCallback(() => {
+  const hidePanel = useCallback(async () => {
     setBlockEditingOnBack(undefined);
     setPanelIsOpen(false);
     setInstructionEditing(undefined);
     setConditionEditing(undefined);
     setTriggerEditing(undefined);
     setOutputEditing(undefined);
+    return new Promise((resolve) => setTimeout(resolve, 10));
   }, []);
 
   const prevValue = useRef(value);
@@ -205,18 +206,16 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
 
   const editInstructionDetails = useCallback(
     async (instruction: Prismeai.Instruction, onChange: any) => {
-      hidePanel();
-      setTimeout(() => {
-        setInstructionEditing({
-          instruction,
-          onChange,
-          onSubmit: (instruction) => {
-            onChange(instruction);
-            hidePanel();
-          },
-        });
-        setPanelIsOpen(true);
+      await hidePanel();
+      setInstructionEditing({
+        instruction,
+        onChange,
+        onSubmit: (instruction) => {
+          onChange(instruction);
+          hidePanel();
+        },
       });
+      setPanelIsOpen(true);
     },
     [hidePanel]
   );
@@ -289,8 +288,8 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   );
 
   const editConditionDetails = useCallback(
-    (condition: string, onChange: (condition: string) => void) => {
-      hidePanel();
+    async (condition: string, onChange: (condition: string) => void) => {
+      await hidePanel();
       setConditionEditing({
         condition,
         onChange,
@@ -349,8 +348,8 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [hidePanel, onChange]
   );
 
-  const editTrigger: AutomationBuilderContext['editTrigger'] = useCallback(() => {
-    hidePanel();
+  const editTrigger: AutomationBuilderContext['editTrigger'] = useCallback(async () => {
+    await hidePanel();
     setTriggerEditing({
       trigger: value.when,
       onChange: (when) => {
@@ -363,8 +362,8 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     setPanelIsOpen(true);
   }, [hidePanel, onChange, value]);
 
-  const editOutput: AutomationBuilderContext['editOutput'] = useCallback(() => {
-    hidePanel();
+  const editOutput: AutomationBuilderContext['editOutput'] = useCallback(async () => {
+    await hidePanel();
     setOutputEditing({
       output: value.output,
       onChange: (output) => {
