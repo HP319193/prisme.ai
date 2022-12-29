@@ -70,12 +70,16 @@ export const PageProvider = ({
     async ({ apiKey, ...newPage }) => {
       if (!workspaceId) return null;
       setSaving(true);
-      const page = await api.updatePage(workspaceId, newPage);
-      setPage(page);
+      const updated = await api.updatePage(
+        workspaceId,
+        newPage,
+        page && page.slug
+      );
+      setPage(updated);
       setSaving(false);
-      return page;
+      return updated;
     },
-    [workspaceId]
+    [page, workspaceId]
   );
 
   const deletePage: PageContext['deletePage'] = useCallback(async () => {
