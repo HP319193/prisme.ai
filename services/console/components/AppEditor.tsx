@@ -68,20 +68,15 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
     };
 
     return (
-      <div className="p-6">
+      <div>
         <SchemaForm
           schema={s}
           onChange={onChange}
           onSubmit={onSubmit}
           initialValues={appConfig}
           buttons={[
-            <div className="flex w-full justify-end mt-5" key="submit">
-              <Button
-                type="submit"
-                className="!p-1"
-                variant="primary"
-                key="submit"
-              >
+            <div className="pr-form-submit flex justify-end" key="submit">
+              <Button type="submit" variant="primary" key="submit">
                 {commmonT('save')}
               </Button>
             </div>,

@@ -129,7 +129,7 @@ export const SchemaForm = ({
             )}
             <Field schema={schema} name={root} />
             {buttons || (
-              <Button type="submit" className="!p-1">
+              <Button type="submit" className="pr-form-submit">
                 {locales.submit || 'Submit'}
               </Button>
             )}
