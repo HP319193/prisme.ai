@@ -40,6 +40,9 @@ export function Panel({ children = null }) {
 export function Collapse({ children = null }) {
   return children;
 }
+Collapse.Panel = function Panel({ children = null }) {
+  return children;
+};
 
 export function Input({ children = null }) {
   return children;

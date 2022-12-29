@@ -315,7 +315,9 @@ export const SchemaFormBuilder = ({
                     ...value,
                     properties: {
                       ...value.properties,
-                      '': {},
+                      '': {
+                        type: 'string',
+                      },
                     },
                   })
                 }
