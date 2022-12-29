@@ -1,21 +1,8 @@
-import {
-  Input,
-  Modal,
-  notification,
-  TextArea,
-  Tooltip,
-} from '@prisme.ai/design-system';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Modal, notification, TextArea } from '@prisme.ai/design-system';
+import { useRouter } from 'next/router';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWorkspaces } from './WorkspacesProvider';
-import {
-  SLUG_MATCH_INVALID_CHARACTERS,
-  SLUG_VALIDATION_REGEXP,
-} from '../utils/regex';
-import { useApps } from './AppsProvider';
-import { usePrevious } from '../utils/usePrevious';
-import useLocalizedText from '../utils/useLocalizedText';
-import { useWorkspace } from './WorkspaceProvider';
+import { useWorkspace } from '../providers/Workspace';
 import api from '../utils/api';
 
 interface VersionModalProps {
@@ -28,10 +15,26 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
 
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
+  const { push } = useRouter();
 
   const onConfirm = useCallback(async () => {
-    await api.workspaces(workspace.id).versions.create({ description });
-  }, [description, workspace.id]);
+    try {
+      await api.workspaces(workspace.id).versions.create({ description });
+      notification.success({
+        message: (
+          <button className="text-left">
+            {t('workspace.versions.create.success')}
+          </button>
+        ),
+        placement: 'bottomRight',
+        onClick: () => {
+          push(
+            `/workspaces/${workspace.id}?type=workspaces.versions.published`
+          );
+        },
+      });
+    } catch (e) {}
+  }, [description, push, t, workspace.id]);
 
   return (
     <Modal

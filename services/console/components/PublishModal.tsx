@@ -1,15 +1,14 @@
 import { Input, Modal, notification, Tooltip } from '@prisme.ai/design-system';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWorkspaces } from './WorkspacesProvider';
 import {
   SLUG_MATCH_INVALID_CHARACTERS,
   SLUG_VALIDATION_REGEXP,
 } from '../utils/regex';
-import { useApps } from './AppsProvider';
 import { usePrevious } from '../utils/usePrevious';
 import useLocalizedText from '../utils/useLocalizedText';
-import { useWorkspace } from './WorkspaceProvider';
+import api from '../utils/api';
+import { useWorkspace } from '../providers/Workspace';
 
 interface PublishModalProps {
   visible: boolean;
@@ -17,13 +16,9 @@ interface PublishModalProps {
 }
 
 const PublishModal = ({ visible, close }: PublishModalProps) => {
-  const { getApps } = useApps();
-  const { publishApp } = useWorkspaces();
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
-  const { t: commonT } = useTranslation('common');
-  const { t: errorT } = useTranslation('errors');
   const [publishSlug, setPublishSlug] = useState(
     localize(workspace.name).replace(SLUG_MATCH_INVALID_CHARACTERS, '')
   );
@@ -31,7 +26,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   const prevWorkspaceId = usePrevious(workspace.id);
 
   const getCurrentlyPublishedApp = useCallback(async () => {
-    const currentlyPublishedApp = await getApps({
+    const currentlyPublishedApp = await api.getApps({
       workspaceId: workspace.id,
     });
     if (currentlyPublishedApp) {
@@ -41,7 +36,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
         setAlreadyPublished(true);
       }
     }
-  }, [getApps, workspace.id]);
+  }, [workspace.id]);
 
   useEffect(() => {
     if (prevWorkspaceId === workspace.id) return;
@@ -50,7 +45,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
 
   const onConfirm = useCallback(async () => {
     try {
-      await publishApp({
+      await api.publishApp({
         workspaceId: workspace.id,
         slug: publishSlug,
       });
@@ -61,13 +56,13 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
     } catch (err) {
       const error = err as Error;
       notification.error({
-        message: errorT('unknown', { errorName: error.message }),
+        message: t('unknown', { errorName: error.message, ns: 'errors' }),
         placement: 'bottomRight',
       });
       console.error(error);
       return null;
     }
-  }, [errorT, publishApp, publishSlug, t, workspace.id]);
+  }, [publishSlug, t, workspace.id]);
 
   const isSlugValid = useMemo(
     () => publishSlug.length > 0 && SLUG_VALIDATION_REGEXP.test(publishSlug),
@@ -88,7 +83,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
         disabled: !isSlugValid,
       }}
       okText={t('apps.publish.confirm.ok')}
-      cancelText={commonT('cancel')}
+      cancelText={t('cancel', { ns: 'common' })}
       onCancel={close}
     >
       <div className="p-10">

@@ -1,17 +1,14 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
 import { MissingFieldError } from '../../errors';
-import { AccessManager } from '../../permissions';
-import { Apps, Workspaces } from '../../services';
-import DSULStorage from '../../services/DSULStorage';
+import { AccessManager, getSuperAdmin } from '../../permissions';
+import { AppInstances, Apps } from '../../services';
+import { DSULStorage } from '../../services/DSULStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
 
-export default function init(
-  workspacesStorage: DSULStorage,
-  appsStorage: DSULStorage
-) {
-  const getServices = ({
+export default function init(dsulStorage: DSULStorage) {
+  const getServices = async ({
     context,
     accessManager,
     broker,
@@ -20,14 +17,18 @@ export default function init(
     accessManager: Required<AccessManager>;
     broker: Broker;
   }) => {
-    const apps = new Apps(accessManager, broker.child(context), appsStorage);
-    const workspaces = new Workspaces(
-      accessManager,
-      apps,
+    const apps = new Apps(
+      await getSuperAdmin(accessManager as any),
       broker.child(context),
-      workspacesStorage
+      dsulStorage
     );
-    return { workspaces };
+    const appInstances = new AppInstances(
+      accessManager,
+      broker.child(context),
+      dsulStorage,
+      apps
+    );
+    return { appInstances };
   };
 
   async function installAppHandler(
@@ -44,7 +45,7 @@ export default function init(
     >,
     res: Response<PrismeaiAPI.InstallAppInstance.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
@@ -53,7 +54,7 @@ export default function init(
       throw new MissingFieldError(`Missing 'slug' field`, { field: 'slug' });
     }
     const appInstance = body as Prismeai.AppInstance & { slug: string };
-    await workspaces.appInstances.installApp(workspaceId, appInstance);
+    await appInstances.installApp(workspaceId, appInstance);
     res.send(appInstance);
   }
 
@@ -72,17 +73,17 @@ export default function init(
     >,
     res: Response<PrismeaiAPI.UpdateAppInstanceConfig.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
     });
 
-    const currentAppInstance = await workspaces.appInstances.get(
+    const currentAppInstance = await appInstances.getAppInstance(
       workspaceId,
       slug
     );
-    const updatedAppInstance = await workspaces.appInstances.configureApp(
+    const updatedAppInstance = await appInstances.configureApp(
       workspaceId,
       slug,
       {
@@ -110,12 +111,12 @@ export default function init(
     >,
     res: Response<PrismeaiAPI.ConfigureAppInstance.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
     });
-    const appInstance = await workspaces.appInstances.configureApp(
+    const appInstance = await appInstances.configureApp(
       workspaceId,
       slug,
       body
@@ -132,12 +133,12 @@ export default function init(
     }: Request<PrismeaiAPI.UninstallAppInstance.PathParameters>,
     res: Response<PrismeaiAPI.UninstallAppInstance.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
     });
-    await workspaces.appInstances.uninstallApp(workspaceId, slug);
+    await appInstances.uninstallApp(workspaceId, slug);
     res.send({ id: slug });
   }
 
@@ -150,13 +151,13 @@ export default function init(
     }: Request<PrismeaiAPI.ListAppInstances.PathParameters, any, any, any>,
     res: Response<PrismeaiAPI.ListAppInstances.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
     });
-    const appInstances = await workspaces.appInstances.list(workspaceId);
-    res.send(appInstances);
+    const result = await appInstances.getDetailedList(workspaceId);
+    res.send(result);
   }
 
   async function getAppHandler(
@@ -168,12 +169,12 @@ export default function init(
     }: Request<PrismeaiAPI.GetAppInstance.PathParameters, any, any, any>,
     res: Response<PrismeaiAPI.GetAppInstance.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
     });
-    const appInstance = await workspaces.appInstances.get(workspaceId, slug);
+    const appInstance = await appInstances.getAppInstance(workspaceId, slug);
     res.send(appInstance);
   }
 
@@ -186,12 +187,12 @@ export default function init(
     }: Request<PrismeaiAPI.GetAppInstanceConfig.PathParameters, any, any, any>,
     res: Response<PrismeaiAPI.GetAppInstanceConfig.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { appInstances } = await getServices({
       context,
       accessManager,
       broker,
     });
-    const appInstance = await workspaces.appInstances.get(workspaceId, slug);
+    const appInstance = await appInstances.getAppInstance(workspaceId, slug);
     res.send(appInstance.config?.value || {});
   }
 

@@ -7,8 +7,7 @@ import {
 } from '../../config';
 import { logger } from '../logger';
 import { AccessManager, Role, SubjectType } from '../permissions';
-import Storage, { StorageOptions } from '../storage';
-import { DriverType } from '../storage/types';
+import { DriverType, IStorage } from '../storage/types';
 import { UPLOADS_MAX_SIZE, UPLOADS_ALLOWED_MIMETYPES } from '../../config';
 import { InvalidUploadError } from '../errors';
 
@@ -23,12 +22,10 @@ export type FileUploadRequest = Omit<
   buffer: Buffer;
 };
 
-class FileStorage extends Storage {
-  constructor(
-    driverType: DriverType,
-    driverOptions: StorageOptions[DriverType]
-  ) {
-    super(driverType, driverOptions);
+class FileStorage {
+  private driver: IStorage;
+  constructor(driver: IStorage) {
+    this.driver = driver;
   }
 
   getPath(workspaceId: string, filename: string, fileId: string) {
@@ -54,7 +51,7 @@ class FileStorage extends Storage {
     const result = await accessManager.findAll(SubjectType.File, query, opts);
     return result.map((file) => ({
       ...file,
-      url: this.getUrl(this.driverType, file.path, baseUrl),
+      url: this.getUrl(this.driver.type(), file.path, baseUrl),
     }));
   }
 
@@ -64,7 +61,10 @@ class FileStorage extends Storage {
     baseUrl: string
   ) {
     const file = await accessManager.get(SubjectType.File, id);
-    return { ...file, url: this.getUrl(this.driverType, file.path, baseUrl) };
+    return {
+      ...file,
+      url: this.getUrl(this.driver.type(), file.path, baseUrl),
+    };
   }
 
   private validateUploads(files: FileUploadRequest[]) {
@@ -131,7 +131,7 @@ class FileStorage extends Storage {
 
           return {
             ...details,
-            url: this.getUrl(this.driverType, path, baseUrl),
+            url: this.getUrl(this.driver.type(), path, baseUrl),
           };
         }
       )

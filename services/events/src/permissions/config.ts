@@ -2,6 +2,7 @@ import {
   ActionType as NativeActionType,
   PermissionsConfig,
 } from '@prisme.ai/permissions';
+import { RUNTIME_EMITS_BROKER_TOPIC } from '../../config';
 
 export const ActionType = {
   ...NativeActionType,
@@ -30,6 +31,10 @@ export enum Role {
   Editor = 'editor',
 }
 
+// This role only applies to a specific workspace !
+const workspaceFilter = {
+  'source.workspaceId': '${subject.id}',
+};
 export const config: PermissionsConfig<
   SubjectType,
   Prismeai.Role | Role.SuperAdmin,
@@ -58,17 +63,17 @@ export const config: PermissionsConfig<
       subjectType: SubjectType.Workspace,
       rules: [
         {
-          action: [
-            ActionType.Create,
-            ActionType.Read,
-            ActionType.GetValues,
-            ActionType.GetUsage,
-          ],
+          action: [ActionType.Create],
           subject: SubjectType.Event,
           conditions: {
-            // This role only applies to a specific workspace !
-            'source.workspaceId': '${subject.id}',
+            ...workspaceFilter,
+            'source.serviceTopic': RUNTIME_EMITS_BROKER_TOPIC,
           },
+        },
+        {
+          action: [ActionType.Read, ActionType.GetValues, ActionType.GetUsage],
+          subject: SubjectType.Event,
+          conditions: workspaceFilter,
         },
       ],
     },
@@ -78,17 +83,17 @@ export const config: PermissionsConfig<
       subjectType: SubjectType.Workspace,
       rules: [
         {
-          action: [
-            ActionType.Create,
-            ActionType.Read,
-            ActionType.GetValues,
-            ActionType.GetUsage,
-          ],
+          action: [ActionType.Create],
           subject: SubjectType.Event,
           conditions: {
-            // This role only applies to a specific workspace !
-            'source.workspaceId': '${subject.id}',
+            ...workspaceFilter,
+            'source.serviceTopic': RUNTIME_EMITS_BROKER_TOPIC,
           },
+        },
+        {
+          action: [ActionType.Read, ActionType.GetValues, ActionType.GetUsage],
+          subject: SubjectType.Event,
+          conditions: workspaceFilter,
         },
         {
           inverted: true,

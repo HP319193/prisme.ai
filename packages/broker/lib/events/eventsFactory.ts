@@ -30,6 +30,9 @@ export interface PrismeEvent<T extends object = object> {
   source: EventSource;
   payload?: T;
   error?: { message: string } | BrokerError;
+  options?: {
+    persist?: boolean;
+  };
   createdAt: string;
   id: string;
 }
@@ -49,9 +52,11 @@ const EVENT_NAMES_REGEXP = new RegExp('^[a-zA-Z0-9 ._-]*$');
 
 export class EventsFactory {
   public ready: Promise<any>;
+  private validatorOpts: ValidatorOptions;
 
   constructor({ validator }: EventsFactoryOptions) {
     this.ready = initValidator(validator);
+    this.validatorOpts = validator;
   }
 
   create(
@@ -72,9 +77,9 @@ export class EventsFactory {
     const data =
       payload instanceof Error
         ? (payload as BrokerError).toJSON
-          ? { error: (payload as BrokerError).toJSON() }
+          ? { payload: (payload as BrokerError).toJSON() }
           : {
-              error: {
+              payload: {
                 message: payload.message,
               },
             }
@@ -86,12 +91,35 @@ export class EventsFactory {
       !partialSource?.correlationId ? { correlationId: uniqueId() } : undefined
     );
 
-    return {
+    const event = {
       ...additionalFields,
       type: eventType,
       source,
       createdAt: new Date().toISOString(),
       ...data,
     };
+
+    if (this.validatorOpts?.eventsMaxLen) {
+      const eventSize = JSON.stringify(event).length;
+      if (eventSize > this.validatorOpts?.eventsMaxLen) {
+        throw new EventValidationError(
+          `Event '${eventType}' too large : ${eventSize} bytes exceeds the maximum authorized limit (${this.validatorOpts?.eventsMaxLen})`,
+          {
+            reason: 'EventTooLarge',
+            eventType,
+            eventSize,
+            maxSize: this.validatorOpts?.eventsMaxLen,
+            source: {
+              workspaceId: event?.source?.workspaceId,
+              correlationId: event?.source?.correlationId,
+              userId: event?.source?.userId,
+              sessionId: event?.source?.sessionId,
+            },
+          }
+        );
+      }
+    }
+
+    return event;
   }
 }

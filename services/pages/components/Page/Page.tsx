@@ -39,10 +39,9 @@ export const Page = ({ page }: PageProps) => {
   const blocks = useMemo(
     () =>
       page && typeof page === 'object'
-        ? (page.blocks || []).map(({ name = '', url, config, appInstance }) => {
+        ? (page.blocks || []).map(({ slug = '', config, appInstance }) => {
             return {
-              name,
-              url,
+              slug,
               appInstance,
               config,
             };
@@ -65,16 +64,16 @@ export const Page = ({ page }: PageProps) => {
         className="flex flex-1 flex-col page-blocks w-full"
         ref={containerEl}
       >
-        {blocks.map(({ name = '', appInstance = '' }, index) => (
+        {blocks.map(({ slug = '', appInstance = '' }, index) => (
           <div
             key={index}
             className={`page-block block-${appInstance.replace(
               /\s/g,
               '-'
-            )} block-${name.replace(/\s/g, '-')} snap-start z-10`}
+            )} block-${slug.replace(/\s/g, '-')} snap-start z-10`}
             id={(blocksConfigs[index] || {}).sectionId}
           >
-            <BlockLoader name={name} config={blocksConfigs[index]} />
+            <BlockLoader name={slug} config={blocksConfigs[index]} />
           </div>
         ))}
       </div>

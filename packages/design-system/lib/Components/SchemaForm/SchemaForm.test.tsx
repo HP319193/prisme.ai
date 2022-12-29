@@ -182,6 +182,18 @@ it('should use ui:widgets', () => {
           },
         },
       },
+      radio: {
+        type: 'string',
+        'ui:widget': 'radio',
+        'ui:options': {
+          select: {
+            options: [
+              { label: 'Foo', value: 'foo' },
+              { label: 'Bar', value: 'bar' },
+            ],
+          },
+        },
+      },
       date: {
         type: 'string',
         'ui:widget': 'date',

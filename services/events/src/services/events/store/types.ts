@@ -36,4 +36,5 @@ export interface EventsStore {
     workspaceId: string,
     opts: PrismeaiAPI.WorkspaceUsage.QueryParameters
   ): Promise<Prismeai.WorkspaceUsage>;
+  closeWorkspace(workspaceId: string): Promise<any>;
 }

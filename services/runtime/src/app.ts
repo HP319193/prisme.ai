@@ -14,18 +14,11 @@ import { uncaughtExceptionHandler } from './errors';
 import '@prisme.ai/types';
 import Runtime from './services/runtime';
 import { Workspaces } from './services/workspaces';
-import { buildCache } from './cache';
 import { Apps } from './services/apps';
+import { Schedules } from './services/schedules';
+import { buildCache } from './cache';
 
 process.on('uncaughtException', uncaughtExceptionHandler);
-
-async function exit() {
-  await broker.close();
-  process.exit(0);
-}
-
-process.on('SIGTERM', exit);
-process.on('SIGINT', exit);
 
 const broker = initEDA();
 
@@ -45,9 +38,20 @@ const broker = initEDA();
     broker
   );
   const runtime = new Runtime(broker, workspaces, cache);
+  const schedules = new Schedules(broker);
 
   runtime.start();
   workspaces.startLiveUpdates();
+  schedules.start();
+
+  async function exit() {
+    await schedules.close();
+    await broker.close();
+    process.exit(0);
+  }
+
+  process.on('SIGTERM', exit);
+  process.on('SIGINT', exit);
 
   const app = initAPI(runtime, broker);
   const httpServer = http.createServer(app);

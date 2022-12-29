@@ -35,7 +35,7 @@ export interface RunContext {
 }
 
 export interface Trigger {
-  type: 'event' | 'endpoint' | 'automation';
+  type: 'event' | 'endpoint' | 'schedule' | 'automation';
   value: string;
   id?: string;
 }
@@ -245,11 +245,15 @@ export class ContextsManager {
         {
           updates,
         },
-        undefined,
-        // Current broker instance topic is normally emit's one, so we have to switch to native events topic :
-        EventType.UpdatedContexts
+        {
+          // Current broker instance topic is normally emit's one, so we have to switch to native events topic :
+          serviceTopic: EventType.UpdatedContexts,
+        },
+        true
       );
-      this.alreadyProcessedUpdateIds.add(updatedEvent.id);
+      if (updatedEvent !== false) {
+        this.alreadyProcessedUpdateIds.add(updatedEvent.id);
+      }
     }
   }
 

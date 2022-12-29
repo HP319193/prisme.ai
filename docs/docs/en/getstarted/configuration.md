@@ -59,6 +59,12 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>10000</td>
   </tr>      
   <tr>
+    <td>BROKER_EMIT_MAXLEN</td>
+    <td>All services</td>
+    <td>Maximum size (in bytes) of emitted events</td>
+    <td>50000</td>
+  </tr>        
+  <tr>
     <td>PERMISSIONS_STORAGE_HOST</td>
     <td>All services</td>
     <td>MongoDB URL for permissions storage (must be the same for both workspaces & events)</td>
@@ -246,7 +252,15 @@ Then, for when you want to run this service directly from its docker image, you 
       Number of days events are kept inside the datalake before being removed
     </td>
     <td>180</td>
-  </tr>         
+  </tr>       
+  <tr>
+    <td>EVENTS_SCHEDULED_DELETION_DAYS</td>
+    <td>events</td>
+    <td>
+      Number of days events are kept inside the datalake after deleting their workspace
+    </td>
+    <td>90</td>
+  </tr>           
 
   <tr>
     <td>SOCKETIO_REDIS_HOST</td>
@@ -382,13 +396,6 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Listening port number</td>
     <td>3002</td>
   </tr>
-
-  <tr>
-    <td>AUTOINSTALL_APP_*</td>
-    <td>workspaces</td>
-    <td>Some workspace source code yaml file URL to import as an app on startup</td>
-    <td>3002</td>
-  </tr>     
 
   <tr>
     <td>UPLOADS_STORAGE_TYPE</td>

@@ -5,7 +5,9 @@ import Panel from '../Panel';
 import InstructionForm from './Panel/InstructionForm';
 import ConditionForm from './Panel/ConditionForm';
 import TriggerForm from './Panel/TriggerForm';
-import { useWorkspace } from '../WorkspaceProvider';
+import { useWorkspace } from '../../providers/Workspace';
+
+jest.useFakeTimers();
 
 jest.mock('react-flow-renderer', () => {
   const { useAutomationBuilder } = require('./context');
@@ -36,7 +38,7 @@ jest.mock('react-flow-renderer', () => {
   return ReactFlow;
 });
 
-jest.mock('../WorkspaceProvider', () => {
+jest.mock('../../providers/Workspace', () => {
   const mock = {};
   return {
     useWorkspace: () => mock,
@@ -52,18 +54,6 @@ beforeEach(() => {
   useWorkspace().workspace = {
     id: '42',
     name: 'foo',
-    automations: {
-      automationFoo: {
-        name: 'Foo',
-        do: [],
-      },
-      automationBar: {
-        name: 'Foo',
-        do: [],
-      },
-    },
-    createdAt: '',
-    updatedAt: '',
   };
 });
 
@@ -74,7 +64,12 @@ it('should render', () => {
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <AutomationBuilder id="a" value={value} onChange={onChange} />
+    <AutomationBuilder
+      id="a"
+      workspaceId="42"
+      value={value}
+      onChange={onChange}
+    />
   );
   expect(root.toJSON()).toMatchSnapshot();
 });
@@ -87,7 +82,12 @@ it('should fit zoom', () => {
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <AutomationBuilder id="a" value={value} onChange={onChange} />
+    <AutomationBuilder
+      id="a"
+      workspaceId="42"
+      value={value}
+      onChange={onChange}
+    />
   );
 
   act(() => {
@@ -97,20 +97,38 @@ it('should fit zoom', () => {
   expect(useZoomPanHelper().fitView).toHaveBeenCalled();
 });
 
-it('should build instructions schemas', () => {
+it('should build custom instructions schemas', () => {
   const value = {
     name: 'Automation',
     do: [],
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+    <AutomationBuilder
+      id="automationBar"
+      workspaceId="42"
+      value={value}
+      onChange={onChange}
+      customInstructions={[
+        {
+          appName: 'Foo',
+          automations: {
+            automationFoo: {
+              name: 'Foo',
+            },
+            automationBar: {
+              name: 'Bar',
+            },
+          },
+        },
+      ]}
+    />
   );
   expect((ReactFlow as any).context.instructionsSchemas.length).toBe(2);
   expect((ReactFlow as any).context.instructionsSchemas[0][0]).toBe(
     'automations.instruction.title_builtin'
   );
-  expect((ReactFlow as any).context.instructionsSchemas[1][0]).toBe('foo');
+  expect((ReactFlow as any).context.instructionsSchemas[1][0]).toBe('Foo');
   expect(
     Object.keys((ReactFlow as any).context.instructionsSchemas[1][1])
   ).toEqual(['automationFoo']);
@@ -124,7 +142,12 @@ it('should hide panel', async () => {
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+    <AutomationBuilder
+      id="automationBar"
+      workspaceId="42"
+      value={value}
+      onChange={onChange}
+    />
   );
 
   await act(async () => {
@@ -146,22 +169,46 @@ it('should get schema', () => {
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+    <AutomationBuilder
+      id="automationBar"
+      workspaceId="42"
+      value={value}
+      onChange={onChange}
+    />
   );
   expect((ReactFlow as any).context.getSchema('emit').properties).toBeDefined();
 });
 
-it('should get app', () => {
+it('should get app', async () => {
   const value = {
     name: 'Automation',
     do: [],
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+    <AutomationBuilder
+      id="automationBar"
+      workspaceId="42"
+      value={value}
+      onChange={onChange}
+      customInstructions={[
+        {
+          appName: 'App Foo',
+          automations: {
+            automationFoo: {
+              name: 'Foo',
+            },
+            automationBar: {
+              name: 'Bar',
+            },
+          },
+          icon: '/file.svg',
+        },
+      ]}
+    />
   );
   expect((ReactFlow as any).context.getApp('automationFoo')).toEqual({
-    name: 'foo',
+    name: 'App Foo',
     icon: '/file.svg',
     instructionName: 'Foo',
   });
@@ -175,9 +222,14 @@ it('should add instruction', async () => {
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+    <AutomationBuilder
+      id="automationBar"
+      workspaceId="42"
+      value={value}
+      onChange={onChange}
+    />
   );
-  act(() => {
+  await act(async () => {
     (ReactFlow as any).context.addInstruction(value.do, 0);
     jest.runAllTimers();
   });
@@ -212,9 +264,14 @@ it('should remove instruction', async () => {
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+    <AutomationBuilder
+      id="automationBar"
+      workspaceId="42"
+      value={value}
+      onChange={onChange}
+    />
   );
-  act(() => {
+  await act(async () => {
     (ReactFlow as any).context.removeInstruction(value.do, 0);
   });
 
@@ -233,9 +290,14 @@ it('should edit instruction', async () => {
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+    <AutomationBuilder
+      id="automationBar"
+      workspaceId="42"
+      value={value}
+      onChange={onChange}
+    />
   );
-  act(() => {
+  await act(async () => {
     (ReactFlow as any).context.editInstruction(value.do, 0);
     jest.runAllTimers();
   });
@@ -268,9 +330,14 @@ it('should edit condition', async () => {
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+    <AutomationBuilder
+      id="automationBar"
+      workspaceId="42"
+      value={value}
+      onChange={onChange}
+    />
   );
-  act(() => {
+  await act(async () => {
     (ReactFlow as any).context.editCondition(value.do[0]);
   });
 
@@ -294,7 +361,7 @@ it('should edit condition', async () => {
   });
   jest.clearAllMocks();
 
-  act(() => {
+  await act(async () => {
     (ReactFlow as any).context.editCondition(value.do[0]);
   });
   await act(async () => {
@@ -323,7 +390,12 @@ it('should edit trigger', async () => {
   };
   const onChange = jest.fn();
   const root = renderer.create(
-    <AutomationBuilder id="automationBar" value={value} onChange={onChange} />
+    <AutomationBuilder
+      id="automationBar"
+      workspaceId="42"
+      value={value}
+      onChange={onChange}
+    />
   );
   act(() => {
     (ReactFlow as any).context.editTrigger();

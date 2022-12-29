@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 import AutomationBuilder from '../components/AutomationBuilder';
 import getLayout from '../layouts/WorkspaceLayout';
-import Error404 from './Errors/404';
 import useKeyboardShortcut from '../components/useKeyboardShortcut';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
@@ -19,20 +18,25 @@ import {
   Schema,
   Space,
 } from '@prisme.ai/design-system';
-import { useApps } from '../components/AppsProvider';
 import useLocalizedText from '../utils/useLocalizedText';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import EditDetails from '../layouts/EditDetails';
 import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
-import { ApiError } from '../utils/api';
-import { useWorkspace } from '../components/WorkspaceProvider';
-import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
-import { usePrevious } from '../utils/usePrevious';
-import EditableTitle from '../components/AutomationBuilder/EditableTitle';
+import EditableTitle from '../components/EditableTitle';
 import { PageHeader, Tooltip } from 'antd';
 import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
 import { CodeOutlined } from '@ant-design/icons';
 import CopyIcon from '../icons/copy.svgr';
+import iconWorkspace from '../icons/icon-workspace.svg';
+
+import { useWorkspace } from '../providers/Workspace';
+import { AutomationProvider, useAutomation } from '../providers/Automation';
+import { ApiError } from '../utils/api';
+import SourceEdit from '../components/SourceEdit/SourceEdit';
+import { validateAutomation } from '@prisme.ai/validation';
+import { incrementName } from '../utils/incrementName';
+import useDirtyWarning from '../utils/useDirtyWarning';
+import { replaceSilently } from '../utils/urls';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -85,50 +89,25 @@ const cleanAutomation = (automation: Prismeai.Automation) => {
 };
 
 export const Automation = () => {
+  const {
+    automation,
+    saveAutomation,
+    saving,
+    deleteAutomation,
+  } = useAutomation();
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
-  const { workspace, updateAutomation, deleteAutomation } = useWorkspace();
-  const { setDirty } = useWorkspaceLayout();
-  const { getAppInstances, appInstances } = useApps();
-
-  useEffect(() => {
-    getAppInstances(workspace.id);
-  }, [getAppInstances, workspace.id]);
+  const { workspace, createAutomation } = useWorkspace();
+  const [value, setValue] = useState(automation);
+  const [displaySource, setDisplaySource] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
+  const [dirty] = useDirtyWarning(automation, value);
 
   const {
     query: { automationId },
     push,
     replace,
   } = useRouter();
-
-  const automation = (workspace.automations || {})[`${automationId}`];
-  const originalAutomation = useRef(automation);
-  const prevAutomationId = usePrevious(automationId);
-
-  const [value, setValue] = useState<Prismeai.Automation>(automation || {});
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    setValue(automation);
-  }, [automation]);
-
-  useEffect(() => {
-    if (prevAutomationId === automationId) return;
-    originalAutomation.current = automation;
-  }, [automation, automationId, prevAutomationId]);
-
-  useEffect(() => {
-    if (!value) return;
-    const { slug, ...original } = originalAutomation.current || {};
-    const { slug: slug1, ...currentValue } = value;
-
-    if (
-      automationId === prevAutomationId &&
-      JSON.stringify(original) !== JSON.stringify(currentValue)
-    ) {
-      setDirty(true);
-    }
-  }, [value, automationId, prevAutomationId, setDirty, automation]);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -178,23 +157,23 @@ export const Automation = () => {
     [t]
   );
 
-  const saveAutomation = useRef(
-    async (automationId: string, automation: Prismeai.Automation) => {
-      setSaving(true);
+  const save = useCallback(
+    async (newValue = value) => {
+      if (newValue !== value) setValue(newValue);
       try {
-        const saved = await updateAutomation(
-          automationId,
-          cleanAutomation(automation)
-        );
+        const saved = await saveAutomation(cleanAutomation(newValue));
+        if (saved) {
+          if (automation.slug !== saved.slug) {
+            replaceSilently(
+              `/workspaces/${workspace.id}/automations/${saved.slug}`
+            );
+          }
+          setValue(saved);
+        }
         notification.success({
           message: t('automations.save.toast'),
           placement: 'bottomRight',
         });
-        setSaving(false);
-        if (saved) {
-          originalAutomation.current = saved;
-        }
-        return saved;
       } catch (e) {
         const { details, error } = e as ApiError;
 
@@ -204,64 +183,21 @@ export const Automation = () => {
           }),
           placement: 'bottomRight',
         });
-        setSaving(false);
         if (error === 'InvalidSlugError') {
           details.slug = t('automations.save.error_InvalidSlugError');
         }
-        throw details;
       }
-    }
-  );
-
-  const save = useCallback(async () => {
-    const saved = await saveAutomation.current(`${automationId}`, value);
-    setDirty(false);
-    saved && setValue({ ...saved });
-  }, [automationId, setDirty, value]);
-
-  useKeyboardShortcut([
-    {
-      key: 's',
-      meta: true,
-      command: (e) => {
-        e.preventDefault();
-        save();
-      },
     },
-  ]);
-
-  const confirmDeleteAutomation = useCallback(() => {
-    push(`/workspaces/${workspace.id}`);
-    deleteAutomation(`${automationId}`);
-    notification.success({
-      message: t('details.delete.toast', { context: 'automations' }),
-      placement: 'bottomRight',
-    });
-  }, [automationId, deleteAutomation, push, t, workspace]);
-
-  const customInstructions = useMemo(
-    () =>
-      (appInstances.get(workspace.id) || []).map(
-        ({ slug: appSlug, automations, appName, photo = '' }) => ({
-          appName: `${appSlug} (${appName})`,
-          icon: photo,
-          automations: automations.reduce(
-            (prev, { slug, name, description, ...rest }) => ({
-              ...prev,
-              [`${appSlug}.${slug}`]: {
-                name: localize(name) || '',
-                description: localize(description) || '',
-                ...rest,
-              },
-            }),
-            {}
-          ),
-        })
-      ),
-    [appInstances, localize, workspace.id]
+    [automation.slug, saveAutomation, t, value, workspace.id]
   );
 
-  const updateDetails = useCallback(
+  // Need to get the latest version with the latest value associated
+  const saveAfterChange = useRef(save);
+  useEffect(() => {
+    saveAfterChange.current = save;
+  }, [save]);
+
+  const saveDetails = useCallback(
     async ({
       slug,
       name,
@@ -289,31 +225,139 @@ export const Automation = () => {
       if (_private) {
         newValue.private = true;
       }
-      setValue(newValue);
-      try {
-        await saveAutomation.current(`${automationId}`, newValue);
-        if (prevSlug === slug) return;
-        replace(`/workspaces/${workspace.id}/automations/${slug}`, undefined, {
-          shallow: true,
-        });
-      } catch (e) {
-        return e as Record<string, string>;
-      }
+      save(newValue);
+      if (prevSlug === slug) return;
+      replaceSilently(`/workspaces/${workspace.id}/automations/${slug}`);
     },
-    [automationId, replace, value, workspace.id]
+    [save, value, workspace.id]
   );
 
-  const duplicate = useCallback(() => {
-    alert('coming soon');
-  }, []);
+  useKeyboardShortcut([
+    {
+      key: 's',
+      meta: true,
+      command: (e) => {
+        e.preventDefault();
+        save();
+      },
+    },
+  ]);
+
+  const confirmDeleteAutomation = useCallback(() => {
+    replace(`/workspaces/${workspace.id}`);
+    deleteAutomation();
+    notification.success({
+      message: t('details.delete.toast', { context: 'automations' }),
+      placement: 'bottomRight',
+    });
+  }, [deleteAutomation, replace, t, workspace]);
+
+  const customInstructions = useMemo(
+    () => [
+      {
+        appName: localize(workspace.name),
+        automations: workspace.automations || {},
+        icon: iconWorkspace.src,
+      },
+      ...Object.entries(
+        workspace.imports ||
+          ({} as Record<string, Prismeai.DetailedAppInstance>)
+      ).map(([slug, { automations = [], appSlug, photo = '' }]) => ({
+        appName: `${slug} (${appSlug})`,
+        icon: photo,
+        automations: automations.reduce(
+          (prev, { slug: automationSlug, name, description, ...rest }) => ({
+            ...prev,
+            [`${slug}.${automationSlug}`]: {
+              name: localize(name) || '',
+              description: localize(description) || '',
+              ...rest,
+            },
+          }),
+          {}
+        ),
+      })),
+    ],
+    [localize, workspace.automations, workspace.imports, workspace.name]
+  );
+
+  const duplicate = useCallback(async () => {
+    if (!automationId) return;
+    setDuplicating(true);
+    const newName =
+      typeof automation.name === 'string'
+        ? incrementName(
+            automation.name,
+            Object.values(workspace.automations || {}).map(({ name }) =>
+              localize(name)
+            )
+          )
+        : Object.entries(automation.name).reduce(
+            (prev, [key, name]) => ({
+              ...prev,
+              [key]: incrementName(
+                name,
+                Object.values(workspace.automations || {}).map(({ name: n }) =>
+                  typeof n === 'string' ? n : n[key] || localize(n)
+                )
+              ),
+            }),
+            {}
+          );
+
+    const newSlug = incrementName(
+      `${automationId}`,
+      Object.keys(workspace.automations || {}).map((slug) => slug),
+      '{{name}} {{n}}'
+    );
+
+    await createAutomation({
+      ...automation,
+      name: newName,
+      slug: newSlug,
+    });
+
+    push(`/workspaces/${workspace.id}/automations/${newSlug}`);
+    setDuplicating(false);
+    notification.success({
+      message: t('automations.duplicate.success'),
+      placement: 'bottomRight',
+    });
+  }, [
+    automation,
+    automationId,
+    createAutomation,
+    localize,
+    push,
+    t,
+    workspace.automations,
+    workspace.id,
+  ]);
 
   const showSource = useCallback(() => {
-    alert('coming soon');
+    setDisplaySource(!displaySource);
+  }, [displaySource]);
+  const mergeSource = useCallback(
+    (source: any) => ({
+      ...value,
+      ...source,
+    }),
+    [value]
+  );
+  const validateSource = useCallback((json: any) => {
+    const isValid = validateAutomation(json);
+    console.log(validateAutomation.errors);
+    return isValid;
   }, []);
-
-  if (!value) {
-    return <Error404 link={`/workspaces/${workspace.id}`} />;
-  }
+  const source = useMemo(() => {
+    return { slug: automationId, ...value };
+  }, [automationId, value]);
+  const setSource = useCallback(
+    (source: any) => {
+      setValue(mergeSource(source));
+    },
+    [mergeSource]
+  );
 
   return (
     <>
@@ -331,11 +375,9 @@ export const Automation = () => {
                       name,
                     })
                   }
-                  onEnter={(name) => {
-                    updateDetails({
-                      ...value,
-                      name,
-                    });
+                  onEnter={() => {
+                    // Need to wait after the onChange changed the value
+                    setTimeout(() => saveAfterChange.current(), 1);
                   }}
                   className="text-base font-bold max-w-[35vw]"
                 />
@@ -348,8 +390,8 @@ export const Automation = () => {
               >
                 <EditDetails
                   schema={detailsFormSchema}
-                  value={{ ...value, slug: automationId }}
-                  onSave={updateDetails}
+                  value={value}
+                  onSave={saveDetails}
                   onDelete={confirmDeleteAutomation}
                   context="automations"
                   key={`${automationId}`}
@@ -362,8 +404,9 @@ export const Automation = () => {
                 placement="bottom"
               >
                 <button
-                  className="flex flex-row focus:outline-none items-center pr-4"
+                  className="!flex flex-row focus:outline-none items-center pr-4"
                   onClick={duplicate}
+                  disabled={duplicating}
                 >
                   <span className="mr-2">
                     <CopyIcon width="1.2rem" height="1.2rem" />
@@ -376,10 +419,18 @@ export const Automation = () => {
                   className="flex flex-row focus:outline-none items-center"
                   onClick={showSource}
                 >
-                  <span className="mr-2">
+                  <span
+                    className={`flex mr-2 ${
+                      displaySource ? 'text-accent' : ''
+                    }`}
+                  >
                     <CodeOutlined width="1.2rem" height="1.2rem" />
                   </span>
-                  {t('automations.source.label')}
+                  <span className="flex">
+                    {displaySource
+                      ? t('automations.source.close')
+                      : t('automations.source.label')}
+                  </span>
                 </button>
               </Tooltip>
             </HorizontalSeparatedNav.Separator>
@@ -387,8 +438,8 @@ export const Automation = () => {
         }
         extra={[
           <Button
-            onClick={save}
-            disabled={saving}
+            onClick={() => save()}
+            disabled={!dirty || saving}
             key="1"
             className="!flex flex-row"
             variant="primary"
@@ -407,9 +458,19 @@ export const Automation = () => {
           })}
         </title>
       </Head>
-      <div className="relative flex flex-1 h-full">
+      <div className="relative flex flex-1 h-full overflow-hidden">
+        <SourceEdit
+          value={source}
+          onChange={setSource}
+          onSave={() => {
+            save();
+          }}
+          visible={displaySource}
+          validate={validateSource}
+        />
         <AutomationBuilder
           id={`${automationId}`}
+          workspaceId={workspace.id}
           value={value}
           onChange={setValue}
           customInstructions={customInstructions}
@@ -419,6 +480,20 @@ export const Automation = () => {
   );
 };
 
-Automation.getLayout = getLayout;
+export const AutomationWithProvider = () => {
+  const { workspace } = useWorkspace();
+  const {
+    query: { automationId },
+  } = useRouter();
 
-export default Automation;
+  return (
+    <AutomationProvider
+      workspaceId={workspace.id}
+      automationSlug={`${automationId}`}
+    >
+      <Automation />
+    </AutomationProvider>
+  );
+};
+AutomationWithProvider.getLayout = getLayout;
+export default AutomationWithProvider;

@@ -40,7 +40,7 @@ export const BlockLoader: TBlockLoader = ({
 
     const [appSlug] = parts;
     const app = (page?.appInstances || []).find(({ slug }) => appSlug === slug);
-    if (!app || !app.blocks[name]) {
+    if (!app || !app.blocks?.[name]) {
       console.error(`"${name}" Block is not installed`);
       return;
     }

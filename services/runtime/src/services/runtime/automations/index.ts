@@ -35,6 +35,10 @@ export async function executeAutomation(
         ...broker.parentSource,
         automationSlug: automation.slug,
       };
+      (<any>error).details = {
+        ...(<any>error).details,
+        payload: ctx.payload,
+      };
       throw error;
     }
     breakRaised = true;
@@ -56,8 +60,8 @@ export async function executeAutomation(
     },
     {
       userId: ctx?.user?.id,
-    },
-    EventType.ExecutedAutomation
+      serviceTopic: EventType.ExecutedAutomation,
+    }
   );
 
   if (breakThisAutomation) {

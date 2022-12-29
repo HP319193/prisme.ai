@@ -60,6 +60,11 @@
       "name": {
         "label": "Workspace name"
       },
+      "slug": {
+        "label": "Subdomain",
+        "error": "Must be composed only of unaccented alphanumeric characters, spaces and \"-\", \"_\"",
+        "unique": "This subdomain is no longer available. Please choose another one."
+      },
       "description": {
         "label": "Description"
       },
@@ -81,6 +86,7 @@
     "search": "Search",
     "sidebar_extend": "Extend navigation",
     "sidebar_minimize": "Minimize navigation",
+    "notFound": "Workspace not found.",
     "versions": {
       "create": {
         "label": "Create a version",
@@ -167,15 +173,18 @@
       "error": "Unknown error has occured"
     },
     "duplicate": {
-      "help": "Duplicate Automation"
+      "help": "Duplicate Automation",
+      "success": "Automation has been duplicated"
     },
     "source": {
       "label": "See code",
+      "close": "Hide code",
       "help": "Displays the structure of the automation in raw format"
     },
     "endpoint": {
       "copied": "Endpoint has been copied"
     },
+    "notFound": "Automation not found.",
     "trigger": {
       "events": {
         "title": "Events",
@@ -477,7 +486,14 @@
     "configTooltip": "Configuration",
     "search": "Search for an app...",
     "title": "App Store",
+    "save": "Save",
     "saveSuccess": "App config saved successfully",
+    "notFound": "App not found.",
+    "source": {
+      "label": "See code",
+      "close": "Hide code",
+      "help": "Displays the App structure in raw format"
+    },
     "details": {
       "title": "App details",
       "appName": {
@@ -517,12 +533,15 @@
       "defaultName": "Page"
     },
     "duplicate": {
-      "help": "Create a copy of this Page"
+      "help": "Create a copy of this Page",
+      "success": "Page has been duplicated"
     },
     "source": {
       "label": "See code",
+      "close": "Hide code",
       "help": "Displays the Page structure in raw format"
     },
+    "notFound": "Page not found.",
     "empty": {
       "title": "<0>This page is empty…</0><1>Start creating, add your first block!</1>",
       "subtitle": "Not sure where to start?",
@@ -619,6 +638,16 @@
         "sectionId": {
           "label": "HTML identifier of the section",
           "description": "Allows you to identify the section to apply particular CSS styles or point a link to it like an automatic scroll. Optional."
+        },
+        "action": {
+          "title": "Action",
+          "description": "Action triggered by a click on the card",
+          "event": "Event",
+          "url": "Link",
+          "valueEvent": "Event to trigger",
+          "valueLink": "Url",
+          "popup": "Open in new tab",
+          "payload": "Event's payload"
         }
       },
       "builtin": "Built-in Blocks",
@@ -629,6 +658,7 @@
       "name_Form": "Form",
       "name_RichText": "Rich text",
       "name_Layout": "Navigation",
+      "name_Buttons": "Buttons group",
       "description": "",
       "description_Header": "Display page header",
       "description_Cards": "Display a cards group",
@@ -636,6 +666,7 @@
       "description_Form": "Display form",
       "description_RichText": "Display text formatted with Markdown or HTML",
       "description_Layout": "Display navigable block pages. Must be used through automations.",
+      "description_Buttons": "Display a buttons group",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
@@ -707,6 +738,26 @@
           }
         }
       },
+      "buttons": {
+        "settings": {
+          "text": {
+            "label": "Text",
+            "description": "Button text"
+          },
+          "variant": {
+            "label": "Display",
+            "description": "Button's display mode"
+          },
+          "tag": {
+            "label": "Tag",
+            "description": "Tag displayed on the right of the button"
+          },
+          "unselected": {
+            "label": "Unselected",
+            "description": "Display the button in an 'unselected' mode, greyed out. Usefull to show an inactive tab for example."
+          }
+        }
+      },
       "cards": {
         "settings": {
           "title": "Title",
@@ -714,16 +765,6 @@
           "cover": "Cover image",
           "variant": {
             "label": "Cards style"
-          },
-          "action": {
-            "title": "Action",
-            "description": "Action triggered by a click on the card",
-            "event": "Event",
-            "url": "Link",
-            "valueEvent": "Event to trigger",
-            "valueLink": "Url",
-            "popup": "Open in new tab",
-            "payload": "Event's payload"
           },
           "classic": {
             "label": "Classic",
@@ -735,7 +776,7 @@
               "type": "Type",
               "type_text": "Text",
               "type_button": "Button",
-              "type_accordion": "Accorieon",
+              "type_accordion": "Accordion",
               "text": {
                 "value": "Text",
                 "value_description": "You can use HTML or Markdown."
@@ -945,6 +986,10 @@
             "label": "Content in HTML or Markdown format",
             "description": "Here you can display any rich content using HTML or Markdown. You can even mix the two."
           }
+        },
+        "allowScripts": {
+          "label": "Allow scripts",
+          "description": "Allow execution of javascript code included in <script> tags"
         }
       }
     }
@@ -1097,7 +1142,9 @@
     "type_workspaces.versions.rollback": "Version {{event.payload.version.name}} has been rollbacked",
     "type_apps.published": "The app {{appName}} has been published",
     "type_runtime.automations.executed": "The <automation>{{automation}}</automation> has been executed",
+    "type_runtime.automations.scheduled": "The <automation>{{automation}}</automation> has been scheduled",
     "type_runtime.webhooks.triggered": "The <automation>{{automation}}</automation> was triggered by URL",
+    "type_runtime.schedules.triggered": "The <automation>{{automation}}</automation> was triggered according to its schedule",
     "type_runtime.waits.pending": "Automation <automation>{{automation}}</automation> is pending {{waits}}",
     "type_runtime.waits.pending_oneOf_one": "of the event <event>{{events}}</event>",
     "type_runtime.waits.pending_oneOf_other": "of events <event>{{events}}</event>",

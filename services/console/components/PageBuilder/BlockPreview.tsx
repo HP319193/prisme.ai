@@ -4,22 +4,22 @@ import useBlockComponent from '../../utils/useBlockComponent';
 import { usePageBuilder } from './context';
 
 interface BlockPreviewProps extends Prismeai.Block {
-  name: string;
+  slug: string;
   id: string;
 }
 
-export const BlockPreview = ({ id, name, config }: BlockPreviewProps) => {
-  const { block } = useBlockComponent(name);
+export const BlockPreview = ({ id, slug, config }: BlockPreviewProps) => {
+  const { block, loading } = useBlockComponent(slug);
+
   const { setBlockSchema } = usePageBuilder();
   const {
     i18n: { language },
   } = useTranslation();
 
   useEffect(() => {
-    if (block?.schema) {
-      setBlockSchema(id, block.schema);
-    }
-  }, [block, id, setBlockSchema]);
+    if (loading) return;
+    setBlockSchema(id, block?.schema || null);
+  }, [block, id, setBlockSchema, loading]);
 
   if (block?.Preview) {
     return (

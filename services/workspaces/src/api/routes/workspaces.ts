@@ -1,17 +1,14 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
-import { nanoid } from 'nanoid';
-import { EventType } from '../../eda';
 import { AccessManager } from '../../permissions';
-import { Apps, Workspaces } from '../../services';
-import DSULStorage from '../../services/DSULStorage';
+import { AppInstances, Apps, Workspaces } from '../../services';
+import { DSULStorage } from '../../services/DSULStorage';
 import FileStorage from '../../services/FileStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
 
 export default function init(
-  workspacesStorage: DSULStorage,
-  appsStorage: DSULStorage,
+  dsulStorage: DSULStorage,
   uploadsStorage: FileStorage
 ) {
   const getServices = ({
@@ -23,12 +20,10 @@ export default function init(
     accessManager: Required<AccessManager>;
     broker: Broker;
   }) => {
-    const apps = new Apps(accessManager, broker.child(context), appsStorage);
     const workspaces = new Workspaces(
       accessManager,
-      apps,
       broker.child(context),
-      workspacesStorage
+      dsulStorage
     );
     return { workspaces };
   };
@@ -42,8 +37,6 @@ export default function init(
     }: Request<any, any, PrismeaiAPI.CreateWorkspace.RequestBody>,
     res: Response<PrismeaiAPI.CreateWorkspace.Responses.$200>
   ) {
-    body.id = nanoid(7);
-
     const { workspaces } = getServices({
       context,
       accessManager,
@@ -73,8 +66,33 @@ export default function init(
       accessManager,
       broker,
     });
-    const result = await workspaces.getWorkspace(workspaceId, version);
-    res.send(result);
+    const apps = new Apps(accessManager, broker.child(context), dsulStorage);
+    const appInstances = new AppInstances(
+      accessManager,
+      broker.child(context),
+      dsulStorage,
+      apps
+    );
+
+    const workspace = await workspaces.getDetailedWorkspace(
+      workspaceId,
+      version
+    );
+
+    const workspaceAppInstances = await appInstances.getDetailedList(
+      workspaceId
+    );
+    workspace.imports = workspaceAppInstances.reduce<
+      Record<string, Prismeai.DetailedAppInstance>
+    >(
+      (appInstances, appInstance) =>
+        ({
+          ...appInstances,
+          [appInstance.slug]: appInstance,
+        } as any),
+      {} as any
+    );
+    res.send(workspace);
   }
 
   async function updateWorkspaceHandler(
@@ -211,23 +229,34 @@ export default function init(
       accessManager,
       broker,
     });
-    const targetVersion = await workspaces.getWorkspace(workspaceId, versionId);
-    const result = await workspaces.updateWorkspace(workspaceId, targetVersion);
-
-    const availableVersions = await workspaces.listWorkspaceVersions(
-      workspaceId
-    );
-    broker.send<Prismeai.RollbackWorkspaceVersion['payload']>(
-      EventType.RollbackWorkspaceVersion,
-      {
-        version: availableVersions.find((cur) => cur.name == versionId) || {
-          name: versionId,
-          description: '',
-        },
-      }
+    const version = await workspaces.rollbackWorkspaceVersion(
+      workspaceId,
+      versionId
     );
 
-    res.send(result);
+    res.send(version);
+  }
+
+  async function duplicateWorkspaceHandler(
+    {
+      accessManager,
+      params: { workspaceId, versionId },
+      context,
+      broker,
+    }: Request<PrismeaiAPI.DuplicateWorkspaceVersion.PathParameters>,
+    res: Response<PrismeaiAPI.DuplicateWorkspaceVersion.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const workspace = await workspaces.duplicateWorkspace(
+      workspaceId,
+      versionId
+    );
+
+    res.send(workspace);
   }
 
   const app = express.Router();
@@ -250,6 +279,10 @@ export default function init(
   app.post(
     `/:workspaceId/versions/:versionId/rollback`,
     asyncRoute(rollbackWorkspaceVersionHandler)
+  );
+  app.post(
+    `/:workspaceId/versions/:versionId/duplicate`,
+    asyncRoute(duplicateWorkspaceHandler)
   );
 
   return app;

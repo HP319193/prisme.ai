@@ -7,24 +7,16 @@ export interface StorageOptions {
   [DriverType.FILESYSTEM]: FilesystemOptions;
 }
 
-export default class Storage {
-  protected driver: IStorage;
-  protected driverType: DriverType;
-
-  public constructor(
-    driverType: DriverType,
-    options: StorageOptions[DriverType]
-  ) {
-    this.driverType = driverType;
-    switch (driverType) {
-      case DriverType.S3_LIKE:
-        this.driver = new S3(options as S3Options);
-        break;
-      case DriverType.FILESYSTEM:
-        this.driver = new Filesystem(options as FilesystemOptions);
-        break;
-      default:
-        throw new Error(`Unknown storage driver ${driverType}`);
-    }
+export default function buildStorage(
+  driverType: DriverType,
+  options: StorageOptions[DriverType]
+): IStorage {
+  switch (driverType) {
+    case DriverType.S3_LIKE:
+      return new S3(options as S3Options);
+    case DriverType.FILESYSTEM:
+      return new Filesystem(options as FilesystemOptions);
+    default:
+      throw new Error(`Unknown storage driver ${driverType}`);
   }
 }

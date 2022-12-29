@@ -9,6 +9,7 @@ import {
   BROKER_WHITELIST_EVENT_PREFIXES,
   BROKER_NAMESPACE,
   BROKER_TOPIC_MAXLEN,
+  BROKER_EMIT_MAXLEN,
 } from '../../config';
 import { Logger, logger } from '../logger';
 
@@ -17,7 +18,9 @@ export enum EventType {
   SuccededLogin = 'gateway.login.succeeded',
 
   ExecutedAutomation = 'runtime.automations.executed',
+  ScheduledAutomation = 'runtime.automations.scheduled',
   TriggeredWebhook = 'runtime.webhooks.triggered',
+  TriggeredSchedule = 'runtime.schedules.triggered',
   UpdatedContexts = 'runtime.contexts.updated',
   PendingWait = 'runtime.waits.pending',
   FulfilledWait = 'runtime.waits.fulfilled.{{id}}',
@@ -30,6 +33,9 @@ export enum EventType {
   CreatedAutomation = 'workspaces.automations.created',
   UpdatedAutomation = 'workspaces.automations.updated',
   DeletedAutomation = 'workspaces.automations.deleted',
+  PublishedWorkspaceVersion = 'workspaces.versions.published',
+  DeletedWorkspaceVersion = 'workspaces.versions.deleted',
+  RollbackWorkspaceVersion = 'workspaces.versions.rollback',
 
   InstalledApp = 'workspaces.apps.installed',
   UninstalledApp = 'workspaces.apps.uninstalled',
@@ -40,6 +46,12 @@ export enum EventType {
 
   CreatedUserTopic = 'events.userTopics.created',
   JoinedUserTopic = 'events.userTopics.joined',
+
+  SuspendedWorkspace = 'workspaces.suspended',
+  PagePermissionsShared = 'workspaces.pages.permissions.shared',
+  PagePermissionsDeleted = 'workspaces.pages.permissions.deleted',
+
+  DuplicatedWorkspace = 'workspaces.duplicated',
 }
 export class CallbackContext {
   public logger: Logger;
@@ -67,6 +79,7 @@ export function initEDA() {
         whitelistEventPrefixes: BROKER_WHITELIST_EVENT_PREFIXES.concat([
           'runtime.waits.fulfilled.',
         ]),
+        eventsMaxLen: BROKER_EMIT_MAXLEN,
       },
       CallbackContextCtor: CallbackContext,
     }

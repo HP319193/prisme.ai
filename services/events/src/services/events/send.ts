@@ -5,7 +5,7 @@ import { ActionType, SubjectType } from '../../permissions';
 
 const sendEvent = async (
   workspaceId: string,
-  event: { type: string; payload?: any },
+  event: { type: string; payload?: any; source?: { serviceTopic?: string } },
   accessManager: Required<AccessManager>,
   broker: Broker
 ) => {
@@ -13,6 +13,7 @@ const sendEvent = async (
     workspaceId: workspaceId,
     userId: accessManager.user.id,
     sessionId: accessManager.user.sessionId,
+    serviceTopic: event?.source?.serviceTopic || RUNTIME_EMITS_BROKER_TOPIC,
   };
   await accessManager.throwUnlessCan(ActionType.Create, SubjectType.Event, {
     ...event,
@@ -21,10 +22,18 @@ const sendEvent = async (
 
   return await broker
     .child(partialSource, {
-      validateEvents: false,
-      forceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+      validateEvents:
+        partialSource?.serviceTopic !== RUNTIME_EMITS_BROKER_TOPIC,
     })
-    .send(event.type, event.payload || {});
+    .send(
+      event.type,
+      event.payload || {},
+      {
+        serviceTopic: partialSource.serviceTopic,
+      },
+      {},
+      true
+    );
 };
 
 export { sendEvent };

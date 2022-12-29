@@ -6,18 +6,17 @@ import {
   SchemaFormDescription,
   Tooltip,
 } from '@prisme.ai/design-system';
-import { defaultStyles } from '../../components/PagesProvider';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
+import { defaultStyles } from './defaultStyles';
+
 export const CSSEditor = ({
   name,
   sectionIds,
 }: FieldProps & { sectionIds: { id: string; name: string }[] }) => {
   const { t } = useTranslation('workspaces');
-  const field = useField(name, {
-    defaultValue: defaultStyles,
-  });
+  const field = useField(name);
   const [reseting, setReseting] = useState(false);
   useEffect(() => {
     if (!reseting) return;

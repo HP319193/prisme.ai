@@ -19,17 +19,16 @@ import {
   initApiKeysRoutes,
   initCollaboratorRoutes,
 } from '@prisme.ai/permissions';
-import DSULStorage from '../services/DSULStorage';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../eda';
 import { PrismeError } from '../errors';
 import FileStorage from '../services/FileStorage';
 import { UPLOADS_MAX_SIZE } from '../../config';
+import { DSULStorage } from '../services/DSULStorage';
 
 export function initAPI(
   accessManager: AccessManager,
-  workspacesStorage: DSULStorage,
-  appsStorage: DSULStorage,
+  dsulStorage: DSULStorage,
   uploadsStorage: FileStorage,
   broker: Broker
 ) {
@@ -113,10 +112,17 @@ export function initAPI(
         );
       }
     },
-    onRevoked: async (req, subjectType, subjectId, userId, subject) => {
+    onRevoked: async (
+      req,
+      subjectType,
+      subjectId,
+      { id: userId, email },
+      subject
+    ) => {
       const payload = {
         subjectId,
         userId,
+        email,
       };
       const source = { workspaceId: req.context.workspaceId };
       if (subjectType === SubjectType.Page) {
@@ -151,14 +157,7 @@ export function initAPI(
   /**
    * User routes
    */
-  initRoutes(
-    app,
-    workspacesStorage,
-    appsStorage,
-    uploadsStorage,
-    accessManager,
-    broker
-  );
+  initRoutes(app, dsulStorage, uploadsStorage, accessManager, broker);
 
   /**
    * ERROR HANDLING

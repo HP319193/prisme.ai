@@ -99,10 +99,7 @@ export class Events {
     return () => this.client.offAny(listener);
   }
 
-  on(
-    ev: string,
-    listener: (eventName: string, eventData: Prismeai.PrismeEvent) => void
-  ) {
+  on(ev: string, listener: (eventData: Prismeai.PrismeEvent) => void) {
     this.listeners.set(ev, [...(this.listeners.get(ev) || []), listener]);
 
     this.client.on(ev, listener);

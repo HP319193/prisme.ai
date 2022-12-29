@@ -39,6 +39,9 @@ export function requestDecorator(
     !req.header(syscfg.CORRELATION_ID_HEADER)
       ? uuid()
       : (req.header(syscfg.CORRELATION_ID_HEADER) as string);
+  const adminEmails = syscfg.SUPER_ADMIN_EMAILS?.split(',').map((email) =>
+    email.trim()
+  );
 
   const context: PrismeContext = {
     correlationId,
@@ -69,7 +72,7 @@ export function requestDecorator(
   }
 
   delete req.headers[syscfg.ROLE_HEADER]; // remove role header from request, this can only be set by the api gateway itself
-  if (req.user?.email && syscfg.SUPER_ADMIN_EMAILS?.includes(req.user.email)) {
+  if (req.user?.email && adminEmails.includes(req.user.email)) {
     req.headers[syscfg.ROLE_HEADER] = Role.SuperAdmin;
   }
 

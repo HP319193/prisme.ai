@@ -3,7 +3,7 @@ import BlockTitle from '../../Internal/BlockTitle';
 import { CardArticle, CardProps } from '../types';
 import useLocalizedText from '../../../useLocalizedText';
 import CarouselNavigation from '../CarouselNavigation';
-import ActionOrLink from '../ActionOrLink';
+import ActionOrLink from '../../ActionOrLink';
 import Truncated from '../Truncated';
 import { RichTextRenderer } from '../../RichText';
 

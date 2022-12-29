@@ -55,10 +55,14 @@ export const SchemaFormBuilder = ({
 
       if (type === 'ui:widget') {
         const newValue = { ...value };
-        if (v === 'enum') {
+        if (['enum', 'radio'].includes(v)) {
           newValue.enum = newValue.enum || [];
           newValue.type = 'string';
-          delete newValue['ui:widget'];
+          if (v === 'radio') {
+            newValue['ui:widget'] = 'radio';
+          } else {
+            delete newValue['ui:widget'];
+          }
         } else {
           delete newValue.enum;
           newValue['ui:widget'] = v;
@@ -167,7 +171,11 @@ export const SchemaFormBuilder = ({
           <Select
             selectOptions={uiWidget || []}
             label={t('schema.property.widget.label')}
-            value={value.enum ? 'enum' : value['ui:widget'] || ''}
+            value={
+              value.enum && !value['ui:widget']
+                ? 'enum'
+                : value['ui:widget'] || ''
+            }
             onChange={update('ui:widget')}
           />
         </SchemaFormDescription>

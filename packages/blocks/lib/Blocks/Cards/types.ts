@@ -1,11 +1,5 @@
 import { RefObject } from 'react';
-
-export interface Action {
-  type: 'event' | 'url';
-  value: string;
-  popup?: boolean;
-  payload?: any;
-}
+import { Action } from '../ActionOrLink';
 
 export interface CardButtonType {
   type: 'button';

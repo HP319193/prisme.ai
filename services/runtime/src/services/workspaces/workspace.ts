@@ -1,4 +1,5 @@
 import { PUBLIC_API_URL } from '../../../config';
+import { EventType } from '../../eda';
 import { PrismeError } from '../../errors';
 import { logger } from '../../logger';
 import { interpolate } from '../../utils';
@@ -6,7 +7,7 @@ import { findSecretValues, findSecretPaths } from '../../utils/secrets';
 import { Apps } from '../apps';
 
 export type DetailedTrigger = {
-  type: 'event' | 'endpoint';
+  type: 'event' | 'endpoint' | 'schedule';
   value: string;
   automationSlug: string;
   workspace: Workspace;
@@ -20,9 +21,12 @@ export type AppName = string;
 export type AutomationName = string;
 type EventName = string;
 type EndpointName = string;
+type ScheduleName = string;
+
 export interface Triggers {
   events: Record<EventName, DetailedTrigger[]>;
   endpoints: Record<EndpointName, DetailedTrigger[]>;
+  schedules: Record<ScheduleName, DetailedTrigger[]>;
 }
 
 export type ParsedAutomationName = [AppName, AutomationName];
@@ -36,7 +40,7 @@ export interface AppContext {
 }
 
 export class Workspace {
-  public dsul: Prismeai.Workspace;
+  public dsul: Prismeai.RuntimeModel;
   public name: string;
   public id: string;
   public config: any;
@@ -47,8 +51,10 @@ export class Workspace {
   private apps: Apps;
   public secrets: Set<string>;
 
+  public status?: Prismeai.SuspendedWorkspace['payload'];
+
   private constructor(
-    workspace: Prismeai.Workspace,
+    workspace: Prismeai.RuntimeModel,
     apps: Apps,
     appContext?: AppContext
   ) {
@@ -56,7 +62,7 @@ export class Workspace {
     this.name = workspace.name;
     this.id = workspace.id!!;
     this.config = {};
-    this.triggers = { events: {}, endpoints: {} };
+    this.triggers = { events: {}, endpoints: {}, schedules: {} };
 
     this.dsul = workspace;
     this.imports = {};
@@ -65,13 +71,13 @@ export class Workspace {
   }
 
   static async create(
-    dsul: Prismeai.Workspace,
+    dsul: Prismeai.RuntimeModel,
     apps: Apps,
     appContext?: AppContext,
     overrideConfig?: any
   ) {
     const workspace = new Workspace(dsul, apps, appContext);
-    await workspace.update({
+    await workspace.loadModel({
       ...dsul,
       config: {
         ...dsul.config,
@@ -84,21 +90,17 @@ export class Workspace {
     return workspace;
   }
 
-  async update(workspace: Prismeai.Workspace) {
-    this.name = workspace.name;
-    this.config = interpolate(workspace.config?.value || {}, {
-      config: workspace.config?.value || {},
-    });
-    this.secrets = findSecretValues(
-      this.config,
-      findSecretPaths(workspace.config?.schema || {})
-    );
-
+  async loadModel(workspace: Prismeai.RuntimeModel) {
+    this.updateConfig(workspace.config || {});
     const { automations = {}, imports = {} } = workspace;
     this.triggers = Object.keys(automations).reduce(
       (prev, key) => {
         const automation = automations[key];
-        const { when, when: { events, endpoint } = {}, disabled } = automation;
+        const {
+          when,
+          when: { events, endpoint, schedules } = {},
+          disabled,
+        } = automation;
         if (!when || disabled) return prev;
         if (events) {
           events.forEach((event) => {
@@ -125,9 +127,22 @@ export class Workspace {
             },
           ];
         }
+        if (schedules) {
+          schedules.forEach((schedule) => {
+            prev.schedules[schedule] = [
+              ...(prev.schedules[schedule] || []),
+              {
+                type: 'schedule',
+                value: schedule,
+                automationSlug: key,
+                workspace: this,
+              },
+            ];
+          });
+        }
         return prev;
       },
-      { events: {}, endpoints: {} } as Triggers
+      { events: {}, endpoints: {}, schedules: {} } as Triggers
     );
 
     this.dsul = workspace;
@@ -138,12 +153,33 @@ export class Workspace {
     }
   }
 
+  updateConfig(config: Prismeai.Config) {
+    this.config = interpolate(config?.value || {}, {
+      config: config?.value || {},
+    });
+    this.secrets = findSecretValues(
+      this.config,
+      findSecretPaths(config?.schema || {})
+    );
+
+    this.dsul = {
+      ...this.dsul,
+      config,
+    };
+  }
+
   async updateImport(slug: string, appInstance: Prismeai.AppInstance) {
+    this.dsul.imports = {
+      ...this.dsul.imports,
+      [slug]: appInstance,
+    };
+
     if (appInstance.disabled) {
       // Remove any existing appInstance
       delete this.imports[slug];
       return;
     }
+
     const { appSlug, appVersion } = appInstance;
     const parentAppSlugs = this.appContext?.parentAppSlugs || [];
     if (parentAppSlugs.includes(appSlug)) {
@@ -191,6 +227,7 @@ export class Workspace {
 
   deleteImport(slug: string) {
     delete this.imports[slug];
+    delete this.dsul.imports?.[slug];
   }
 
   async updateAutomation(
@@ -201,14 +238,14 @@ export class Workspace {
       ...this.dsul.automations,
     };
     newAutomations[automationSlug] = automation;
-    await this.update({ ...this.dsul, automations: newAutomations });
+    await this.loadModel({ ...this.dsul, automations: newAutomations });
   }
 
   async deleteAutomation(automationSlug: string) {
     const newAutomations = { ...this.dsul.automations };
     delete newAutomations[automationSlug];
 
-    await this.update({
+    await this.loadModel({
       ...this.dsul,
       automations: newAutomations,
     });
@@ -227,6 +264,9 @@ export class Workspace {
   }
 
   getEventTriggers(event: Prismeai.PrismeEvent) {
+    if (event.type === EventType.TriggeredSchedule) {
+      return this.triggers.schedules[event.payload.schedule] || [];
+    }
     const triggers = this.triggers.events[event.type] || [];
     const [firstAppSlug, nestedAppSlugs] = this.parseAppRef(event.type);
     if (firstAppSlug in this.imports) {

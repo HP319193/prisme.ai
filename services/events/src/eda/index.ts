@@ -3,6 +3,7 @@ import { Broker, PendingEvents, PrismeEvent } from '@prisme.ai/broker';
 import {
   APP_NAME,
   BROKER_DRIVER,
+  BROKER_EMIT_MAXLEN,
   BROKER_HOST,
   BROKER_NAMESPACE,
   BROKER_PASSWORD,
@@ -52,6 +53,7 @@ export const broker = new Broker<CallbackContext>(
     validator: {
       oasFilepath: EVENTS_OAS_PATH,
       whitelistEventPrefixes: BROKER_WHITELIST_EVENT_PREFIXES,
+      eventsMaxLen: BROKER_EMIT_MAXLEN,
     },
     CallbackContextCtor: CallbackContext,
   }

@@ -24,7 +24,7 @@ jest.mock('./builtinBlocksVariants', () => [
     },
   },
 ]);
-jest.mock('../WorkspaceProvider', () => {
+jest.mock('../../providers/Workspace', () => {
   const useWorkspace = () => ({
     workspace: {
       id: '42',
@@ -62,47 +62,35 @@ jest.mock('../WorkspaceProvider', () => {
           },
         },
       },
-    },
-  });
-  return { useWorkspace };
-});
-
-jest.mock('../AppsProvider', () => {
-  const appInstances = new Map([
-    [
-      '42',
-      [
-        {
-          appSlug: 'App',
+      imports: {
+        App: {
           slug: 'App',
           appName: 'App',
           blocks: [],
         },
-        {
-          appSlug: 'App using App With Blocks',
+        'App using App With Blocks': {
           slug: 'App using App With Blocks',
           appName: 'App using App With Blocks',
           blocks: [
             {
-              slug: 'another app block',
+              slug: 'App using App With Blocks.another app block',
               name: 'Another App Block',
               block: 'App With Blocks.app block',
             },
           ],
         },
-        {
-          appSlug: 'App With Blocks',
+        'App With Blocks': {
           slug: 'App With Blocks',
           appName: 'App With Blocks',
           blocks: [
             {
-              slug: 'app block',
+              slug: 'App With Blocks.app block',
               name: 'App Block',
               url: 'http://app.block',
               description: 'some text',
             },
             {
-              slug: 'app block 2',
+              slug: 'App With Blocks.app block 2',
               name: 'App Block 2',
               description: 'some text',
               block: 'Form',
@@ -110,11 +98,10 @@ jest.mock('../AppsProvider', () => {
             },
           ],
         },
-      ],
-    ],
-  ]);
-  const useApps = () => ({ appInstances });
-  return { useApps };
+      },
+    },
+  });
+  return { useWorkspace };
 });
 
 it('should get available Blocks', () => {
@@ -124,7 +111,6 @@ it('should get available Blocks', () => {
     return null;
   };
   renderer.create(<C />);
-
   expect(expected.available).toEqual([
     {
       builtIn: true,

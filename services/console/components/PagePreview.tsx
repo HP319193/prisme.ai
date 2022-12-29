@@ -1,61 +1,22 @@
 import { Loading } from '@prisme.ai/design-system';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useWorkspace } from './WorkspaceProvider';
 import { generatePageUrl } from '../utils/urls';
-import { Workspace } from '../utils/api';
-import { useApps } from './AppsProvider';
+import { useWorkspace } from '../providers/Workspace';
+import { usePage } from '../providers/Page';
 
 interface PagePreviewProps {
   page: Prismeai.Page;
 }
 
-const getAppInstances = (
-  workspace: Workspace,
-  apps: Prismeai.DetailedAppInstance[]
-) => {
-  const blocks = [];
-  if (workspace.blocks) {
-    blocks.push({
-      slug: '',
-      appConfig: workspace.config,
-      blocks: Object.entries(workspace.blocks).reduce(
-        (prev, [slug, { url = '' }]) => ({
-          ...prev,
-          [slug]: url,
-        }),
-        {}
-      ),
-    });
-  }
-  return [
-    ...blocks,
-    ...Object.entries(workspace.imports || {}).map(
-      ([slug, { config: appConfig }]) => ({
-        slug,
-        appConfig,
-        blocks: Object.values(
-          (apps.find(({ slug: s }) => slug === s) || { blocks: {} }).blocks
-        ).reduce(
-          (prev, { slug: name, url }) => ({
-            ...prev,
-            [`${slug}.${name}`]: url,
-          }),
-          {}
-        ),
-      })
-    ),
-  ];
-};
-
 export const PagePreview = ({ page }: PagePreviewProps) => {
-  const { workspace } = useWorkspace();
-  const { appInstances } = useApps();
-  const ref = useRef<HTMLIFrameElement>(null);
-  const pageId = useRef(page.id);
-  const [loading, setLoading] = useState(true);
   const {
     workspace: { id, slug = id },
   } = useWorkspace();
+  const { appInstances } = usePage();
+
+  const ref = useRef<HTMLIFrameElement>(null);
+  const pageId = useRef(page.id);
+  const [loading, setLoading] = useState(true);
 
   const updatePage = useCallback(() => {
     if (!ref.current || !ref.current.contentWindow) return;
@@ -66,10 +27,7 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
           page: JSON.parse(
             JSON.stringify({
               ...page,
-              appInstances: getAppInstances(
-                workspace,
-                appInstances.get(workspace.id) || []
-              ),
+              appInstances,
             })
           ),
         },
@@ -77,7 +35,18 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
       );
       setLoading(false);
     } catch {}
-  }, [appInstances, page, workspace]);
+  }, [page, appInstances]);
+
+  useEffect(() => {
+    const listener = ({ data }: MessageEvent) => {
+      if (data !== 'page-ready') return;
+      updatePage();
+    };
+    window.addEventListener('message', listener);
+    return () => {
+      window.removeEventListener('message', listener);
+    };
+  }, [updatePage]);
 
   useEffect(() => {
     if (pageId.current !== page.id) {
@@ -90,22 +59,10 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
 
   const onLoad = useCallback(() => {
     setLoading(false);
-  }, []);
+    updatePage();
+  }, [updatePage]);
 
-  const [initialSlug, setInitialSlug] = useState(page.slug);
-
-  useEffect(() => {
-    setInitialSlug((slug) => {
-      if (slug || !page.slug) return slug;
-      return page.slug;
-    });
-  }, [page]);
-
-  const url = useMemo(() => generatePageUrl(slug, initialSlug || ''), [
-    slug,
-    initialSlug,
-  ]);
-
+  const url = generatePageUrl(slug, page.slug || '');
   return (
     <div className="flex flex-1 relative">
       <iframe ref={ref} src={url} className="flex flex-1" onLoad={onLoad} />

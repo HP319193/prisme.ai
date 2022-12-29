@@ -2,14 +2,11 @@ import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
 import { AccessManager } from '../../permissions';
 import { Apps, Workspaces } from '../../services';
-import DSULStorage from '../../services/DSULStorage';
+import { DSULStorage } from '../../services/DSULStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
 
-export default function init(
-  workspacesStorage: DSULStorage,
-  appsStorage: DSULStorage
-) {
+export default function init(dsulStorage: DSULStorage) {
   const getServices = ({
     context,
     accessManager,
@@ -19,12 +16,11 @@ export default function init(
     accessManager: Required<AccessManager>;
     broker: Broker;
   }) => {
-    const apps = new Apps(accessManager, broker.child(context), appsStorage);
+    const apps = new Apps(accessManager, broker.child(context), dsulStorage);
     const workspaces = new Workspaces(
       accessManager,
-      apps,
       broker.child(context),
-      workspacesStorage
+      dsulStorage
     );
     return { apps, workspaces };
   };
@@ -46,12 +42,9 @@ export default function init(
     const workspaceVersions = await workspaces.listWorkspaceVersions(
       body.workspaceId
     );
-    const dsul = await workspaces.getWorkspace(
-      body.workspaceId,
-      body.workspaceVersion
-    );
+
     const versionRequest = {
-      description: '',
+      description: 'App release',
       ...workspaceVersions.find((cur) => cur.name == body.workspaceVersion),
     };
     if (body.name) {
@@ -60,7 +53,7 @@ export default function init(
     if (body.description) {
       versionRequest.description = body.description;
     }
-    const result = await apps.publishApp(body, dsul, versionRequest);
+    const result = await apps.publishApp(body, versionRequest);
     res.send(result);
   }
 

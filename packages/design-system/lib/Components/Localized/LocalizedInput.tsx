@@ -42,11 +42,19 @@ export interface LocalizedInputProps {
   deleteTooltip?: string;
   iconMarginTop?: number | string;
   className?: string;
+  initialLang?: string;
 }
 
 const DftInput = forwardRef((props: InputProps, ref: any) => (
   <Input ref={ref} {...props} />
 ));
+
+function getInitialLang(text: LocalizedTextObject, initialLang: string) {
+  if (Object.hasOwn(text, initialLang)) {
+    return initialLang;
+  }
+  return Object.keys(text)[0];
+}
 
 export const LocalizedInput = ({
   value,
@@ -60,9 +68,10 @@ export const LocalizedInput = ({
   deleteTooltip = 'remove language',
   iconMarginTop = 0,
   className,
+  initialLang = 'en',
 }: LocalizedInputProps) => {
   const [selectedLang, setSelectedLang] = useState(
-    isLocalizedTextObject(value) ? Object.keys(value)[0] : ''
+    isLocalizedTextObject(value) ? getInitialLang(value, initialLang) : ''
   );
   const input = useRef<any>(null);
 

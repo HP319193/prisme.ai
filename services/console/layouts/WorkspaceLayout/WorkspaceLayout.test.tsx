@@ -2,9 +2,12 @@ import WorkspaceLayout from './WorkspaceLayout';
 import { getLayout } from './index';
 import renderer, { act } from 'react-test-renderer';
 import { useRouter } from 'next/router';
-import { useWorkspaces } from '../../components/WorkspacesProvider';
+import { useWorkspaces } from '../../providers/Workspaces';
+import { workspaceContext } from '../../providers/Workspace';
+import workspaceContextValue from '../../providers/Workspace/workspaceContextValue.mock';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import { useWorkspaceLayout, WorkspaceLayoutContext } from './context';
+import Storage from '../../utils/Storage';
 
 jest.useFakeTimers();
 
@@ -17,7 +20,7 @@ jest.mock('../../components/UserProvider', () => {
   };
 });
 
-jest.mock('../../components/WorkspacesProvider', () => {
+jest.mock('../../providers/Workspaces', () => {
   const mock = {};
   return {
     useWorkspaces: () => mock,
@@ -46,6 +49,12 @@ jest.mock('@prisme.ai/sdk', () => {
   class FakeEvents {
     static destroyMock = jest.fn();
     static listeners: any[] = [];
+    on(listener: Function) {
+      FakeEvents.listeners.push(listener);
+      return () => {
+        FakeEvents.listeners = [];
+      };
+    }
     all(listener: Function) {
       FakeEvents.listeners.push(listener);
       return () => {
@@ -117,16 +126,11 @@ beforeEach(() => {
 });
 
 it('should render empty', async () => {
-  const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
-  await act(async () => {
-    await true;
-  });
-  expect(root.toJSON()).toMatchSnapshot();
-});
-
-it('should render 404', async () => {
-  useRouter().query.id = '12';
-  const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
+  const root = renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <WorkspaceLayout>Foo</WorkspaceLayout>
+    </workspaceContext.Provider>
+  );
   await act(async () => {
     await true;
   });
@@ -134,22 +138,13 @@ it('should render 404', async () => {
 });
 
 it('should get layout', async () => {
-  const root = renderer.create(getLayout(<div />));
+  const root = renderer.create(
+    <workspaceContext.Provider value={workspaceContextValue}>
+      {getLayout(<div />)}
+    </workspaceContext.Provider>
+  );
   await act(async () => {
     await true;
-  });
-  expect(root.toJSON()).toMatchSnapshot();
-});
-
-it('should render fetching', async () => {
-  (useWorkspaces().fetch as jest.Mock).mockImplementation(() => ({
-    id: '42',
-    name: 'foo',
-    automations: [],
-  }));
-  const root = renderer.create(<WorkspaceLayout>Foo</WorkspaceLayout>);
-  await act(async () => {
-    await root.update(<WorkspaceLayout>Foo</WorkspaceLayout>);
   });
   expect(root.toJSON()).toMatchSnapshot();
 });
@@ -162,9 +157,11 @@ it('should display source after mount', async () => {
     return null;
   };
   const root = renderer.create(
-    <WorkspaceLayout>
-      <Test />
-    </WorkspaceLayout>
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <WorkspaceLayout>
+        <Test />
+      </WorkspaceLayout>
+    </workspaceContext.Provider>
   );
   await act(async () => {
     await true;
@@ -184,4 +181,130 @@ it('should display source after mount', async () => {
   expect(root.root.findAllByType('div')[0].props.className).not.toContain(
     '-translate-y-100'
   );
+});
+
+it('should save workspace', async () => {
+  let context: WorkspaceLayoutContext = {} as WorkspaceLayoutContext;
+  const Test = () => {
+    context = useWorkspaceLayout();
+    return null;
+  };
+  const saveWorkspace = jest.fn();
+  const root = renderer.create(
+    <workspaceContext.Provider value={{ workspace: {}, saveWorkspace } as any}>
+      <WorkspaceLayout>
+        <Test />
+      </WorkspaceLayout>
+    </workspaceContext.Provider>
+  );
+  await act(async () => {
+    const newWorkspace = {} as any;
+    await context.onSave(newWorkspace);
+  });
+
+  expect(saveWorkspace).toHaveBeenCalledWith({});
+});
+
+it('should save workspace source', async () => {
+  let context: WorkspaceLayoutContext = {} as WorkspaceLayoutContext;
+  const Test = () => {
+    context = useWorkspaceLayout();
+    return null;
+  };
+  const saveWorkspace = jest.fn();
+  const root = renderer.create(
+    <workspaceContext.Provider value={{ workspace: {}, saveWorkspace } as any}>
+      <WorkspaceLayout>
+        <Test />
+      </WorkspaceLayout>
+    </workspaceContext.Provider>
+  );
+  await act(async () => {
+    await true;
+  });
+  await act(async () => {
+    const newWorkspace = {} as any;
+    await context.setNewSource(newWorkspace);
+    await context.onSaveSource();
+  });
+  expect(saveWorkspace).toHaveBeenCalledWith({});
+});
+
+it('should create new automation', async () => {
+  let context: WorkspaceLayoutContext = {} as WorkspaceLayoutContext;
+  const Test = () => {
+    context = useWorkspaceLayout();
+    return null;
+  };
+  const createAutomation = jest.fn(() => ({ slug: 'foo' }));
+  const root = renderer.create(
+    <workspaceContext.Provider
+      value={{ workspace: {}, createAutomation } as any}
+    >
+      <WorkspaceLayout>
+        <Test />
+      </WorkspaceLayout>
+    </workspaceContext.Provider>
+  );
+  await act(async () => {
+    await context.createAutomation();
+  });
+
+  expect(createAutomation).toHaveBeenCalledWith({
+    name: 'automations.create.defaultName',
+    do: [],
+  });
+});
+
+it('should create new page', async () => {
+  let context: WorkspaceLayoutContext = {} as WorkspaceLayoutContext;
+  const Test = () => {
+    context = useWorkspaceLayout();
+    return null;
+  };
+  const createPage = jest.fn(() => ({ slug: 'foo' }));
+  const root = renderer.create(
+    <workspaceContext.Provider value={{ workspace: {}, createPage } as any}>
+      <WorkspaceLayout>
+        <Test />
+      </WorkspaceLayout>
+    </workspaceContext.Provider>
+  );
+  await act(async () => {
+    await context.createPage();
+  });
+
+  expect(createPage).toHaveBeenCalledWith({
+    name: {
+      en: 'pages.create.defaultName',
+    },
+    blocks: [],
+  });
+});
+
+it('should set fullsidebar', async () => {
+  let context: WorkspaceLayoutContext = {} as WorkspaceLayoutContext;
+  jest.spyOn(Storage, 'set');
+  const Test = () => {
+    context = useWorkspaceLayout();
+    return null;
+  };
+  const root = renderer.create(
+    <workspaceContext.Provider value={{ workspace: {} } as any}>
+      <WorkspaceLayout>
+        <Test />
+      </WorkspaceLayout>
+    </workspaceContext.Provider>
+  );
+  await act(async () => {
+    await true;
+  });
+  expect(context.fullSidebar).toBe(true);
+  expect(Storage.set).toHaveBeenCalledWith('__workpaceSidebarMinimized', 0);
+
+  act(() => {
+    context.setFullSidebar(false);
+  });
+  expect(context.fullSidebar).toBe(false);
+  expect(Storage.set).toHaveBeenCalledWith('__workpaceSidebarMinimized', 1);
 });

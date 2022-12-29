@@ -2,6 +2,7 @@ import elasticsearch from '@elastic/elasticsearch';
 import { StoreDriverOptions } from '.';
 import {
   EVENTS_RETENTION_DAYS,
+  EVENTS_SCHEDULED_DELETION_DAYS,
   EVENTS_STORAGE_ES_BULK_REFRESH,
 } from '../../../../config';
 import { EventType } from '../../../eda';
@@ -33,6 +34,9 @@ export class ElasticsearchStore implements EventsStore {
     const policyName = `policy-events${
       this.namespace ? '-' + this.namespace : ''
     }`;
+    const deletionScheduledPolicyName = `policy-events-deletion-scheduled${
+      this.namespace ? '-' + this.namespace : ''
+    }`;
     const templateName = `template-events${
       this.namespace ? '-' + this.namespace : ''
     }`;
@@ -56,6 +60,22 @@ export class ElasticsearchStore implements EventsStore {
             },
             delete: {
               min_age: `${EVENTS_RETENTION_DAYS - ROLLOVER_AT_DAYS}d`,
+              actions: {
+                delete: {},
+              },
+            },
+          },
+        },
+      },
+    });
+
+    await this.client.ilm.putLifecycle({
+      policy: deletionScheduledPolicyName,
+      body: {
+        policy: {
+          phases: {
+            delete: {
+              min_age: `${EVENTS_SCHEDULED_DELETION_DAYS}d`,
               actions: {
                 delete: {},
               },
@@ -537,6 +557,30 @@ export class ElasticsearchStore implements EventsStore {
     };
 
     return usage;
+  }
+
+  async closeWorkspace(workspaceId: string): Promise<any> {
+    const index = this.getWorkspaceEventsIndexName(workspaceId);
+    const scheduledDeletionPolicy = `policy-events-deletion-scheduled${
+      this.namespace ? '-' + this.namespace : ''
+    }`;
+    // 1. Delete current ilm policy
+    await this.client.ilm.removePolicy({
+      index,
+    });
+
+    // 2. Apply deletion policy
+    await this.client.indices.putSettings({
+      index,
+      body: {
+        index: {
+          lifecycle: {
+            name: scheduledDeletionPolicy,
+            origination_date: Date.now(),
+          },
+        },
+      },
+    });
   }
 }
 

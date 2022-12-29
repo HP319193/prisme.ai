@@ -619,6 +619,7 @@
       "name_Form": "Formulario",
       "name_RichText": "Texto enriquecido",
       "name_Layout": "Navegación",
+      "name_Buttons": "Grupo de botones",
       "description": "",
       "description_Header": "Encabezado de página",
       "description_Cards": "Mostrar un grupo de mapas",
@@ -626,6 +627,7 @@
       "description_Form": "Mostrar un formulario",
       "description_RichText": "Visualización de texto formateado mediante Markdown o HTML",
       "description_Layout": "Mostrar páginas de bloques navegables. Debe utilizarse a través de automatizaciones.",
+      "description_Buttons": "Mostrar un grupo de botones",
       "panelTitle_adding": "Añadir un Block",
       "panelTitle_editing": "Editar el Block {{blockName}}",
       "header": {

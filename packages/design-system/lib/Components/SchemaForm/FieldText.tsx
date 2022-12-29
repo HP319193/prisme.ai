@@ -10,7 +10,7 @@ import FieldTextColor from './FieldTextColor';
 import FieldTextTextArea from './FieldTextTextArea';
 import FieldTextUpload from './FieldTextUpload';
 import { FieldProps, UiOptionsTextArea, UiOptionsUpload } from './types';
-import { getFieldOptions, getLabel, getError } from './utils';
+import { getLabel, getError } from './utils';
 
 export const FieldText = (props: FieldProps) => {
   const field = useField(props.name);

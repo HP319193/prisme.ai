@@ -1,6 +1,11 @@
-import { generateEndpoint, getSubmodain, usePageEndpoint } from './urls';
+import {
+  generateEndpoint,
+  getSubmodain,
+  replaceSilently,
+  usePageEndpoint,
+} from './urls';
 // @ts-ignore
-import { mock } from '../components/WorkspaceProvider';
+import { mock } from '../providers/Workspace';
 
 jest.mock('next/config', () => () => ({
   publicRuntimeConfig: {
@@ -9,7 +14,7 @@ jest.mock('next/config', () => () => ({
   },
 }));
 
-jest.mock('../components/WorkspaceProvider', () => {
+jest.mock('../providers/Workspace', () => {
   const mock = {
     slug: 'my.website',
   };
@@ -36,4 +41,14 @@ it('should get pages host', () => {
 
 it('should get subdomain', () => {
   expect(getSubmodain('my.website.pages.prisme.ai')).toBe('my.website');
+});
+
+it('should replace silently current url', () => {
+  const replaceState = jest.fn();
+  window.history.replaceState = replaceState;
+  // @ts-ignore
+  delete window.location;
+  window.location = { pathname: '/fr/foo/bar' } as Location;
+  replaceSilently('/somewhere/else');
+  expect(replaceState).toBeCalledWith({}, '', '/fr/somewhere/else');
 });

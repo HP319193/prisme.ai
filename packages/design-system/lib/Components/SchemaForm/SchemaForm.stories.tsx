@@ -454,6 +454,14 @@ UIWidgets.args = {
         description: 'Display a color picker. Only available for string types.',
         'ui:widget': 'color',
       },
+      radio: {
+        type: 'string',
+        title: 'radio',
+        description: 'Display radio buttons instead of select',
+        'ui:widget': 'radio',
+        enum: [1, 2, 4],
+        enumNames: ['One', 'Two', 'Three'],
+      },
       custom: {
         type: 'string',
         title: 'React Component',

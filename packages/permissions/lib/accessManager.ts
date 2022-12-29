@@ -327,7 +327,10 @@ export class AccessManager<
     const { permissions } = this.checkAsUser();
     const subject = await this.fetch(subjectType, query);
     if (!subject) {
-      throw new ObjectNotFoundError();
+      throw new ObjectNotFoundError('Object not found', {
+        subjectType,
+        query,
+      });
     }
 
     await this.throwUnlessCan(ActionType.Read, subjectType, subject.toJSON());
@@ -373,13 +376,18 @@ export class AccessManager<
 
   async update<returnType extends SubjectType>(
     subjectType: returnType,
-    updatedSubject: SubjectInterfaces[returnType]
+    updatedSubject: Partial<SubjectInterfaces[returnType]> & { id: string }
   ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions, user } = this.checkAsUser();
 
     const currentSubject = await this.fetch(subjectType, updatedSubject.id);
     if (!currentSubject) {
-      throw new ObjectNotFoundError();
+      throw new ObjectNotFoundError('Object not found', {
+        subjectType,
+        query: {
+          id: updatedSubject.id,
+        },
+      });
     }
 
     await this.throwUnlessCan(
@@ -405,7 +413,12 @@ export class AccessManager<
   ): Promise<void> {
     const subject = await this.fetch(subjectType, id);
     if (!subject) {
-      throw new ObjectNotFoundError();
+      throw new ObjectNotFoundError('Object not found', {
+        subjectType,
+        query: {
+          id,
+        },
+      });
     }
 
     await this.throwUnlessCan(ActionType.Delete, subjectType, subject.toJSON());
@@ -444,7 +457,12 @@ export class AccessManager<
 
     const doc = await this.fetch(subjectType, id);
     if (!doc) {
-      throw new ObjectNotFoundError();
+      throw new ObjectNotFoundError('Object not found', {
+        subjectType,
+        query: {
+          id,
+        },
+      });
     }
 
     await this.throwUnlessCan(
@@ -474,7 +492,12 @@ export class AccessManager<
 
     const doc = await this.fetch(subjectType, id);
     if (!doc) {
-      throw new ObjectNotFoundError();
+      throw new ObjectNotFoundError('Object not found', {
+        subjectType,
+        query: {
+          id,
+        },
+      });
     }
 
     await this.throwUnlessCan(
@@ -519,7 +542,12 @@ export class AccessManager<
         ? await this.fetch(subjectType, idOrSubject)
         : idOrSubject;
     if (!subject) {
-      throw new ObjectNotFoundError();
+      throw new ObjectNotFoundError('Object not found', {
+        subjectType,
+        query: {
+          id: idOrSubject,
+        },
+      });
     }
 
     await this.pullRoleFromSubjectFieldRefs(

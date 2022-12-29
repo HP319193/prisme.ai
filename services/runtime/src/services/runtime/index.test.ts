@@ -13,9 +13,11 @@ import { AvailableModels } from '../workspaces/__mocks__/workspaces';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../config';
 import { EventType } from '../../eda';
 
+// jest.setTimeout(1000);
+
 global.console.warn = jest.fn();
 
-let brokers = [];
+let brokers: Broker[] = [];
 
 const getMocks = (
   partialSource: Partial<EventSource>,
@@ -40,6 +42,7 @@ const getMocks = (
     apps,
     broker as any
   );
+  workspaces.saveWorkspace = () => Promise.resolve();
   const runtime = new Runtime(broker as any, workspaces, new Cache());
 
   brokers.push(broker);
@@ -382,7 +385,7 @@ describe('Simple execution', () => {
             userId,
             automationSlug: 'error',
           }),
-          error: expect.objectContaining({
+          payload: expect.objectContaining({
             error: 'ObjectNotFoundError',
           }),
         })
@@ -689,7 +692,7 @@ describe('More advanced execution with appInstances', () => {
             automationSlug: 'throw',
             appInstanceFullSlug: 'basicApp',
           }),
-          error: expect.objectContaining({
+          payload: expect.objectContaining({
             error: 'ObjectNotFoundError',
           }),
         })
@@ -826,7 +829,7 @@ describe('More advanced execution with appInstances', () => {
             userId,
             automationSlug: 'forbiddenNestedCall',
           }),
-          error: expect.objectContaining({
+          payload: expect.objectContaining({
             error: 'ObjectNotFoundError',
           }),
         })
@@ -858,7 +861,7 @@ describe('More advanced execution with appInstances', () => {
             userId,
             automationSlug: 'forbiddenPrivateCall',
           }),
-          error: expect.objectContaining({
+          payload: expect.objectContaining({
             error: 'ObjectNotFoundError',
           }),
         })
@@ -1006,9 +1009,6 @@ describe("AppInstance's lifecycle events", () => {
     const event = await broker.send<Prismeai.UninstalledAppInstance['payload']>(
       EventType.UninstalledApp,
       {
-        appInstance: {
-          appSlug: AvailableModels.BasicApp,
-        },
         slug: AvailableModels.BasicApp,
       },
       {

@@ -27,7 +27,7 @@ const Collapse = ({
   items,
   light,
   icon,
-  expandIconPosition = 'right',
+  expandIconPosition = 'end',
   className,
   ...collapseProps
 }: CollapseProps) => {

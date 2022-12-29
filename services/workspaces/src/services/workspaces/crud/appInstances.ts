@@ -1,187 +1,228 @@
 import { Broker } from '@prisme.ai/broker';
-import { SLUG_VALIDATION_REGEXP } from '../../../../config';
 import { EventType } from '../../../eda';
-import {
-  AlreadyUsedError,
-  InvalidSlugError,
-  MissingFieldError,
-  ObjectNotFoundError,
-} from '../../../errors';
+import { AccessManager, ActionType, SubjectType } from '../../../permissions';
+import { computeEventsFromEmits } from '../../../utils/extractEvents';
 import Apps from '../../apps/crud/apps';
-import Workspaces from './workspaces';
+import { DSULStorage, DSULType } from '../../DSULStorage';
 
 export interface ListAppsQuery {
   query?: string;
 }
 class AppInstances {
-  private workspaces: Workspaces;
-  private apps: Apps;
+  private accessManager: Required<AccessManager>;
   private broker: Broker;
+  private storage: DSULStorage<DSULType.Imports>;
+  private apps: Apps;
 
-  constructor(workspaces: Workspaces, apps: Apps, broker: Broker) {
-    this.workspaces = workspaces;
-    this.apps = apps;
+  constructor(
+    accessManager: Required<AccessManager>,
+    broker: Broker,
+    workspacesStorage: DSULStorage,
+    apps: Apps
+  ) {
+    this.accessManager = accessManager;
     this.broker = broker;
+    this.storage = workspacesStorage.child(DSULType.Imports);
+    this.apps = apps;
   }
 
   list = async (
     workspaceId: string
-  ): Promise<(Prismeai.DetailedAppInstance & { slug: string })[]> => {
-    const workspace = await this.workspaces.getWorkspace(workspaceId);
-    const appInstances = Object.entries(workspace.imports || {}).reduce(
-      (appInstances, [slug, appInstance]) => {
-        return [...appInstances, { ...appInstance, slug }];
-      },
-      [] as any
+  ): Promise<(Prismeai.AppInstanceMeta & { slug: string })[]> => {
+    await this.accessManager.throwUnlessCan(
+      ActionType.Read,
+      SubjectType.Workspace,
+      workspaceId
     );
-    return (
-      await Promise.all(
-        appInstances.map(async (cur: Prismeai.AppInstance) => {
-          try {
-            const appDetails = await this.apps.getAppDetails(
-              cur.appSlug,
-              cur.appVersion
-            );
-            return {
-              ...cur,
-              ...appDetails,
-              config: {
-                ...appDetails?.config,
-                value: cur.config || {},
-              },
-            };
-          } catch (error) {
-            // If app does not exist anymore, just ignore this instance
-            return undefined;
-          }
-        })
-      )
-    ).filter(Boolean);
+    const imports = await this.storage.folderIndex({
+      dsulType: DSULType.ImportsIndex,
+      workspaceId,
+    });
+    return Object.entries(imports || {}).reduce<
+      (Prismeai.AppInstanceMeta & { slug: string })[]
+    >((appInstances, [slug, appInstance]) => {
+      return [...appInstances, { ...appInstance, slug }];
+    }, []);
   };
 
-  get = async (
+  getDetailedList = async (
+    workspaceId: string
+  ): Promise<Prismeai.DetailedAppInstance[]> => {
+    const appInstances = await this.list(workspaceId);
+
+    return (
+      await Promise.all(
+        appInstances.map<Promise<Prismeai.DetailedAppInstance[][0] | false>>(
+          async (cur) => {
+            try {
+              const appDetails = await this.apps.getAppDetails(
+                cur.appSlug,
+                cur.appVersion
+              );
+
+              return {
+                ...cur,
+                slug: cur.slug!,
+                photo: appDetails?.photo,
+                automations: appDetails?.automations,
+                events: (cur as any)?.events || {},
+                blocks: (appDetails.blocks || []).map((block) => {
+                  if (block?.slug) {
+                    block.slug = `${cur.slug}.${block.slug}`;
+                  }
+                  return block;
+                }),
+              };
+            } catch (error) {
+              // If app does not exist anymore, just ignore this instance
+              return false;
+            }
+          }
+        )
+      )
+    ).filter<Prismeai.DetailedAppInstance[][0]>(Boolean as any);
+  };
+
+  getAppInstance = async (
     workspaceId: string,
     slug: string
-  ): Promise<Prismeai.DetailedAppInstance & { slug: string }> => {
-    const workspace = await this.workspaces.getWorkspace(workspaceId);
-    const appInstance = (workspace.imports || {})[slug];
-    if (!appInstance) {
-      throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
+  ): Promise<
+    Omit<Prismeai.AppInstance, 'config'> & {
+      slug: string;
+      config: Prismeai.Config;
+      documentation?: {
+        workspaceSlug: string;
+        slug: string;
+      };
     }
-    const appDetails = await this.apps.getAppDetails(
-      appInstance.appSlug,
-      appInstance.appVersion
+  > => {
+    await this.accessManager.throwUnlessCan(
+      ActionType.Read,
+      SubjectType.Workspace,
+      workspaceId
     );
+
+    const appInstance = await this.storage.get({
+      workspaceId,
+      slug,
+      dsulType: DSULType.Imports,
+    });
+    const { documentation, config: appConfig } = await this.apps.getApp(
+      appInstance.appSlug
+    );
+
     return {
       ...appInstance,
-      ...appDetails,
       config: {
-        ...appDetails?.config,
+        ...appConfig,
         value: appInstance.config || {},
       },
       slug,
-      photo: appDetails.photo,
+      documentation,
     };
   };
 
-  private validateSlug(workspace: Prismeai.Workspace, slug: string) {
-    if (!slug || !slug.trim()) {
-      throw new MissingFieldError('Missing app instance slug', {
-        field: 'slug',
-      });
-    }
-    if (!SLUG_VALIDATION_REGEXP.test(slug)) {
-      throw new InvalidSlugError(slug);
-    }
-    if (slug in (workspace.imports || {})) {
-      throw new AlreadyUsedError('App instance slug already in use');
-    }
+  async getProcessedEvents(appInstance: Prismeai.AppInstance) {
+    const events: Prismeai.ProcessedEvents = { listen: [], emit: [] };
+    try {
+      const appDetails = await this.apps.getAppDetails(
+        appInstance.appSlug,
+        appInstance.appVersion
+      );
+      const duplicatedEvents = (appDetails.emits || []).flatMap((emit) =>
+        computeEventsFromEmits(emit, appInstance.config)
+      );
+
+      events.listen = appDetails?.events?.listen || [];
+      events.emit = [...new Set(duplicatedEvents)];
+    } catch {}
+    return events;
   }
 
   installApp = async (
-    workspaceId: string | Prismeai.Workspace,
-    appInstance: Prismeai.AppInstance & { slug: string }
+    workspaceId: string,
+    appInstance: Prismeai.AppInstance & { slug: string },
+    replace: boolean = false // Force update if it already exists
   ) => {
-    if (!appInstance.slug) {
-      throw new MissingFieldError(`Missing 'slug' field`, { field: 'slug' });
+    await this.accessManager.throwUnlessCan(
+      ActionType.Update,
+      SubjectType.Workspace,
+      workspaceId
+    );
+
+    // For legacy migration,, do not check that app exists as it might not be migrated yet
+    if (!replace) {
+      await this.apps.exists(appInstance.appSlug, appInstance.appVersion);
     }
-    const workspace =
-      typeof workspaceId === 'string'
-        ? await this.workspaces.getWorkspace(workspaceId)
-        : workspaceId;
+    const events = await this.getProcessedEvents(appInstance);
 
-    this.validateSlug(workspace, appInstance.slug);
-    await this.apps.exists(appInstance.appSlug, appInstance.appVersion);
-
-    const { slug, ...appInstanceWithoutSlug } = appInstance;
-    const updatedWorkspace = {
-      ...workspace,
-      imports: {
-        ...(workspace.imports || {}),
-        [appInstance.slug]: appInstanceWithoutSlug,
-      },
-    };
-    // Persist only if we've been given a workspaceId string, otherwise simply return the updated workspace
-    if (typeof workspaceId === 'string') {
-      await this.workspaces.save(workspaceId, updatedWorkspace);
-    }
-
-    this.broker.send<Prismeai.InstalledAppInstance['payload']>(
-      EventType.InstalledApp,
-      { appInstance: appInstanceWithoutSlug, slug },
+    await this.storage.save(
       {
-        appSlug: appInstance.appSlug,
-        appInstanceFullSlug: slug,
+        workspaceId,
+        slug: appInstance.slug,
+      },
+      appInstance,
+      {
+        mode: replace ? 'replace' : 'create',
+        updatedBy: this.accessManager.user?.id,
+        additionalIndexFields: { events },
       }
     );
+
+    // For legacy migration, do not emit this event as it might reset existing apps config
+    if (!replace) {
+      this.broker.send<Prismeai.InstalledAppInstance['payload']>(
+        EventType.InstalledApp,
+        { appInstance, slug: appInstance.slug, events },
+        {
+          appSlug: appInstance.appSlug,
+          appInstanceFullSlug: appInstance.slug,
+          workspaceId,
+        }
+      );
+    }
     return appInstance;
   };
 
   configureApp = async (
-    workspaceId: string | Prismeai.Workspace,
+    workspaceId: string,
     slug: string,
     appInstancePatch: Partial<Prismeai.AppInstance>
   ) => {
-    const workspace =
-      typeof workspaceId === 'string'
-        ? await this.workspaces.getWorkspace(workspaceId)
-        : workspaceId;
+    await this.accessManager.throwUnlessCan(
+      ActionType.Update,
+      SubjectType.Workspace,
+      workspaceId
+    );
 
-    const currentAppInstance = (workspace.imports || {})[slug];
-    if (!currentAppInstance) {
-      throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
-    }
+    const currentAppInstance = await this.storage.get({
+      workspaceId,
+      slug,
+      dsulType: DSULType.Imports,
+    });
 
-    delete (<any>currentAppInstance).slug;
-    const { slug: renamedSlug, ...patchWithoutSlug } = appInstancePatch;
     const appInstance = {
       ...currentAppInstance,
-      ...patchWithoutSlug,
+      slug,
+      ...appInstancePatch,
     };
-
-    const updatedWorkspace = {
-      ...workspace,
-      imports: {
-        ...workspace.imports,
-        [slug]: appInstance,
-      },
-    };
-
-    // Slug renaming
-    let oldSlug;
-    if (renamedSlug && renamedSlug !== slug) {
-      this.validateSlug(workspace, renamedSlug);
-      oldSlug = slug;
-      delete updatedWorkspace.imports[oldSlug];
-      updatedWorkspace.imports[renamedSlug] = appInstance;
-    }
 
     await this.apps.exists(appInstance.appSlug, appInstance.appVersion);
+    const events = await this.getProcessedEvents(appInstance);
 
-    // Persist only if we've been given a workspaceId string, otherwise simply return the updated workspace
-    if (typeof workspaceId === 'string') {
-      await this.workspaces.save(workspaceId, updatedWorkspace);
-    }
+    await this.storage.save(
+      {
+        workspaceId,
+        slug,
+      },
+      appInstance,
+      {
+        mode: 'update',
+        updatedBy: this.accessManager.user?.id,
+        additionalIndexFields: { events },
+      }
+    );
+
     this.broker.send<Prismeai.ConfiguredAppInstance['payload']>(
       EventType.ConfiguredApp,
       {
@@ -189,49 +230,51 @@ class AppInstances {
           ...appInstance,
           oldConfig: currentAppInstance.config || {},
         },
-        slug: renamedSlug || slug,
-        oldSlug,
+        slug: appInstance.slug,
+        oldSlug:
+          appInstancePatch.slug && appInstancePatch.slug !== slug
+            ? slug
+            : undefined,
+        events,
       },
       {
         appSlug: appInstance.appSlug,
-        appInstanceFullSlug: renamedSlug || slug,
+        appInstanceFullSlug: appInstance.slug,
+        workspaceId,
       }
     );
 
-    return appInstance;
+    return {
+      ...appInstance,
+      config: {
+        value: appInstance?.config,
+      },
+    };
   };
 
-  uninstallApp = async (
-    workspaceId: string | Prismeai.Workspace,
-    slug: string
-  ) => {
-    const workspace =
-      typeof workspaceId === 'string'
-        ? await this.workspaces.getWorkspace(workspaceId)
-        : workspaceId;
-
-    const appInstance = (workspace.imports || {})[slug];
-    if (!appInstance) {
-      throw new ObjectNotFoundError(`Unknown app instance '${slug}'`);
-    }
-
-    const { [slug]: removedApp, ...importsWithoutRemovedOne } =
-      workspace.imports || {};
-    const updatedWorkspace = {
-      ...workspace,
-      imports: importsWithoutRemovedOne,
-    };
-    // Persist only if we've been given a workspaceId string, otherwise simply return the updated workspace
-    if (typeof workspaceId === 'string') {
-      await this.workspaces.save(workspaceId, updatedWorkspace);
-    }
+  uninstallApp = async (workspaceId: string, slug: string) => {
+    await this.accessManager.throwUnlessCan(
+      ActionType.Update,
+      SubjectType.Workspace,
+      workspaceId
+    );
+    const appInstance = await this.storage.get({
+      workspaceId,
+      slug,
+      dsulType: DSULType.Imports,
+    });
+    await this.storage.delete({
+      workspaceId,
+      slug: slug,
+    });
 
     this.broker.send<Prismeai.UninstalledAppInstance['payload']>(
       EventType.UninstalledApp,
-      { appInstance, slug },
+      { slug },
       {
         appSlug: appInstance.appSlug,
         appInstanceFullSlug: slug,
+        workspaceId,
       }
     );
 

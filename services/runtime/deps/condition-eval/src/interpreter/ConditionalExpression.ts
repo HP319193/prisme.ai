@@ -1,10 +1,15 @@
+import RegexParser from 'regex-parser';
 import Evaluatable from '../Evaluatable';
 import { evaluateNode } from '../utils';
 
 const handleMatches = (left: any, right: any) => {
   if (Array.isArray(right)) {
     // That means we matched a regexp() expression. As it returns an array of strings instead of a string.
-    return `${left}`.match(new RegExp(right.join('')));
+    const stringRegex = right.join('');
+    if (!stringRegex) {
+      return [];
+    }
+    return `${left}`.match(new RegExp(RegexParser(stringRegex)));
   }
   return `${left}`.match(right);
 };

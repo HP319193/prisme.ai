@@ -13,7 +13,6 @@ import {
   Space,
   Tooltip,
 } from '@prisme.ai/design-system';
-import { useWorkspaces } from './WorkspacesProvider';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import Header from './Header';
@@ -22,26 +21,18 @@ import PublishModal from './PublishModal';
 import EditDetails from '../layouts/EditDetails';
 import useLocalizedText from '../utils/useLocalizedText';
 import Link from 'next/link';
-import { useWorkspace } from './WorkspaceProvider';
 import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
-import IFrameLoader from './IFrameLoader';
-import api from '../utils/api';
 import VersionModal from './VersionModal';
 import HeaderPopovers from '../views/HeaderPopovers';
+import { useWorkspace } from '../providers/Workspace';
+import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 
 const HeaderWorkspace = () => {
-  const {
-    t,
-    i18n: { language },
-  } = useTranslation('workspaces');
+  const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
-  const { remove, update } = useWorkspaces();
+  const { workspace, deleteWorkspace, saveWorkspace, saving } = useWorkspace();
   const [popoverIsVisible, setPopoverIsVisible] = useState(false);
-  const {
-    workspace,
-    workspace: { id, name: currentWorkspace },
-    share: { label, component: ShareComponent = ShareWorkspace } = {},
-  } = useWorkspace();
+
   const { push } = useRouter();
   const [publishVisible, setPublishVisible] = useState(false);
   const [versionVisible, setVersionVisible] = useState(false);
@@ -49,12 +40,12 @@ const HeaderWorkspace = () => {
 
   const confirmDelete = useCallback(() => {
     push('/workspaces');
-    remove({ id });
+    deleteWorkspace();
     notification.success({
       message: t('workspace.delete.toast'),
       placement: 'bottomRight',
     });
-  }, [id, push, remove, t]);
+  }, [deleteWorkspace, push, t]);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -63,6 +54,14 @@ const HeaderWorkspace = () => {
         name: {
           type: 'localized:string',
           title: t('workspace.details.name.label'),
+        },
+        slug: {
+          type: 'string',
+          title: t('workspace.details.slug.label'),
+          pattern: SLUG_VALIDATION_REGEXP.source,
+          errors: {
+            pattern: t('workspace.details.slug.error'),
+          },
         },
         description: {
           type: 'localized:string',
@@ -118,10 +117,19 @@ const HeaderWorkspace = () => {
   );
 
   const updateDetails = useCallback(
-    async (values: any) => {
-      await update({ ...workspace, ...values });
+    async ({ slug, ...values }: any) => {
+      saveWorkspace(values);
+      if (slug !== workspace.slug) {
+        try {
+          await saveWorkspace({ ...values, slug });
+        } catch {
+          return {
+            slug: t('workspace.details.slug.unique'),
+          };
+        }
+      }
     },
-    [update, workspace]
+    [saveWorkspace, t, workspace.slug]
   );
 
   const hideSource = useCallback(() => {
@@ -142,14 +150,14 @@ const HeaderWorkspace = () => {
       <Header
         title={
           <div className="flex flex-row items-center absolute left-0 right-0 lg:justify-center z-[-1] justify-start lg:ml-0 ml-[5rem]">
-            <Tooltip title={localize(currentWorkspace)} placement="bottom">
+            <Tooltip title={localize(workspace.name)} placement="bottom">
               <div className="flex max-w-[20%] mr-2">
                 <Link href={`/workspaces/${workspace.id}`}>
                   <a
                     className="text-white whitespace-nowrap text-ellipsis overflow-hidden"
                     onClick={hideSource}
                   >
-                    {localize(currentWorkspace)}
+                    {localize(workspace.name)}
                   </a>
                 </Link>
               </div>
@@ -160,8 +168,9 @@ const HeaderWorkspace = () => {
               onSave={updateDetails}
               onDelete={confirmDelete}
               context="workspaces"
-              visible={popoverIsVisible}
-              onVisibleChange={setPopoverIsVisible}
+              open={popoverIsVisible}
+              onOpenChange={setPopoverIsVisible}
+              disabled={saving}
             />
           </div>
         }
@@ -169,8 +178,8 @@ const HeaderWorkspace = () => {
           <div className="flex flex-row items-center justify-center">
             <HeaderPopovers />
             <Popover
-              content={() => <ShareComponent />}
-              title={label || t('share.label')}
+              content={() => <ShareWorkspace workspaceId={workspace.id} />}
+              title={t('share.label')}
               titleClassName="!bg-white !text-black"
             >
               <Button variant="grey" className="!text-white">

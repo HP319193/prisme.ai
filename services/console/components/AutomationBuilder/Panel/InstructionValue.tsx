@@ -2,12 +2,10 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
 import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
-import usePages from '../../PagesProvider/context';
-import { useWorkspace } from '../../WorkspaceProvider';
-import { useApps } from '../../AppsProvider';
 import { useAutomationBuilder } from '../context';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import components from './schemaFormComponents';
+import { useWorkspace } from '../../../providers/Workspace';
 
 interface InstructionValueProps {
   instruction: string;
@@ -26,16 +24,14 @@ export const InstructionValue: FC<InstructionValueProps> = ({
 }) => {
   const { workspace } = useWorkspace();
   const { automationId } = useAutomationBuilder();
-  const { pages } = usePages();
   const { t } = useTranslation('workspaces');
   const { localizeSchemaForm, localize } = useLocalizedText();
-  const { appInstances } = useApps();
 
   const { config: appInstance, appName } = useMemo(() => {
     if (!workspace.imports) return { config: workspace.config };
     const [appName] = instruction.split(/\./);
     if (!workspace.imports[appName]) return { config: workspace.config };
-    return { config: workspace.imports[appName].config || {}, appName };
+    return { config: {}, appName };
   }, [instruction, workspace.config, workspace.imports]);
 
   const { extractSelectOptions, extractAutocompleteOptions } = useSchema({
@@ -47,8 +43,8 @@ export const InstructionValue: FC<InstructionValueProps> = ({
           : { ...prev, [key]: (workspace.automations || {})[key] },
       {}
     ),
-    pages: pages.get(workspace.id),
-    apps: appInstances.get(workspace.id),
+    pages: workspace.pages,
+    apps: workspace.imports,
     workspace,
   });
 

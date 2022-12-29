@@ -1,31 +1,27 @@
 import {
   CloseCircleOutlined,
   DeleteOutlined,
-  DownOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import {
   Button,
-  Menu,
   Modal,
   Popover,
   Schema,
   SchemaForm,
 } from '@prisme.ai/design-system';
-import { Dropdown, Tooltip } from 'antd';
+import { PopoverProps } from '@prisme.ai/design-system/lib/Components/Popover';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useState } from 'react';
-import api from '../utils/api';
+import { useCallback } from 'react';
 import useLocalizedText from '../utils/useLocalizedText';
 
-interface EditDetailsprops {
+interface EditDetailsprops extends Omit<PopoverProps, 'content'> {
   schema: Schema;
   value: any;
   onSave: (values: any) => Promise<void | Record<string, string>>;
   onDelete: () => void;
   context?: string;
-  visible?: boolean;
-  onVisibleChange?: (visible: boolean) => void;
+  disabled?: boolean;
 }
 
 export const EditDetails = ({
@@ -34,6 +30,7 @@ export const EditDetails = ({
   onSave,
   onDelete,
   context,
+  disabled,
   ...props
 }: EditDetailsprops) => {
   const { t } = useTranslation('workspaces');
@@ -58,22 +55,22 @@ export const EditDetails = ({
 
   return (
     <Popover
-      title={({ setVisible }) => (
+      title={({ setOpen }) => (
         <div className="flex flex-1 justify-between">
           {t('details.title', { context })}
-          <button onClick={() => setVisible(false)}>
+          <button onClick={() => setOpen(false)}>
             <CloseCircleOutlined />
           </button>
         </div>
       )}
       destroyTooltipOnHide
-      content={({ setVisible }) => (
+      content={({ setOpen }) => (
         <SchemaForm
           schema={schema}
           onSubmit={async (values) => {
             const errors = await onSave(values);
             if (!errors || Object.keys(errors).length === 0) {
-              setVisible(false);
+              setOpen(false);
               return;
             }
             return errors;
@@ -89,7 +86,7 @@ export const EditDetails = ({
                 <DeleteOutlined />
                 {t('details.delete.label', { context })}
               </Button>
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="submit" disabled={disabled}>
                 {t('details.save', { context })}
               </Button>
             </div>,

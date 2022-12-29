@@ -5,7 +5,7 @@ import { AppContext } from '../../../workspaces';
 import { ContextsManager } from '../../contexts';
 
 export async function emit(
-  { event, payload, target }: Prismeai.Emit['emit'],
+  { event, payload, target, options }: Prismeai.Emit['emit'],
   broker: Broker,
   ctx: ContextsManager,
   appContext?: AppContext
@@ -21,9 +21,10 @@ export async function emit(
         userId: undefined, // Only custom events sent from API or Websocket have their source userId sent
         // sessionId might have been manually changed since given broker initialization
         sessionId: ctx.session?.sessionId || broker.parentSource?.sessionId,
+        serviceTopic: RUNTIME_EMITS_BROKER_TOPIC,
       },
-      RUNTIME_EMITS_BROKER_TOPIC,
-      { target }
+      { target, options },
+      true
     );
   } catch (error) {
     if (

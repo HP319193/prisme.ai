@@ -151,6 +151,13 @@ export default class Runtime {
         EventType.ExecutedAutomation,
         EventType.FailedFetch,
         EventType.TriggeredWebhook,
+        EventType.TriggeredSchedule,
+        EventType.PagePermissionsShared,
+        EventType.PagePermissionsDeleted,
+        EventType.PublishedWorkspaceVersion,
+        EventType.DeletedWorkspaceVersion,
+        EventType.RollbackWorkspaceVersion,
+        EventType.DuplicatedWorkspace,
       ],
       async (event, broker, { logger }) => {
         if (!event.source.workspaceId || !event.source.correlationId) {
@@ -280,12 +287,21 @@ export default class Runtime {
         `Can't process event '${event.type}' without source correlationId or workspaceId !`
       );
     }
-    const workspace = await this.workspaces.getWorkspace(workspaceId);
+    let workspace: Workspace;
+    try {
+      workspace = await this.workspaces.getWorkspace(workspaceId);
+    } catch (err) {
+      logger.info({
+        msg: `Skipping event ${event.id} since workspace ${workspaceId} cannot be loaded`,
+        err,
+      });
+      return;
+    }
 
     logger.debug({ msg: 'Starting to process event', event });
     const { triggers, payload } = await this.parseEvent(workspace, event);
     if (!triggers?.length) {
-      logger.trace('Did not find any matching trigger');
+      logger.debug('Did not find any matching trigger for event ' + event.type);
       return;
     }
 
@@ -335,7 +351,14 @@ export default class Runtime {
       );
     }
 
-    return await this.processTriggers(triggers, webhook, ctx, logger, broker);
+    const result = await this.processTriggers(
+      triggers,
+      webhook,
+      ctx,
+      logger,
+      broker
+    );
+    return result;
   }
 
   private async processTriggers(
@@ -359,7 +382,7 @@ export default class Runtime {
     let result;
     try {
       result = await Promise.all(
-        triggers.map(async (trigger: DetailedTrigger) => {
+        triggers.map((trigger: DetailedTrigger) => {
           return this.processTrigger(trigger, payload, ctx, logger, broker);
         })
       );
@@ -409,7 +432,7 @@ export default class Runtime {
         }
       );
 
-      const childCtx = ctx.childAutomation(automation, payload, broker, {
+      const childCtx = ctx.childAutomation(automation, payload, childBroker, {
         type: trigger.type,
         value: trigger.value,
         id: trigger.type === 'event' ? payload.id : undefined,
@@ -474,7 +497,8 @@ export default class Runtime {
       const payload = (<PrismeEvent<Prismeai.ConfiguredAppInstance['payload']>>(
         event
       ))?.payload;
-      await workspace.updateImport(payload!.slug!, payload!.appInstance!);
+      const { oldConfig, ...appInstance } = payload?.appInstance!;
+      await workspace.updateImport(payload!.slug!, appInstance!);
     }
 
     const triggers = workspace.getEventTriggers(event);
@@ -508,6 +532,27 @@ export default class Runtime {
       triggers.push(
         ...Object.values(workspace.imports || {}).flatMap((workspace) =>
           workspace.getEventTriggers(event)
+        )
+      );
+    }
+
+    // On duplicated workspace, simuluate apps installed events
+    if (event.type === EventType.DuplicatedWorkspace) {
+      triggers.push(
+        ...Object.entries(workspace.dsul.imports || {}).flatMap(
+          ([slug, appInstance]) =>
+            workspace.getEventTriggers({
+              ...event,
+              source: {
+                ...event.source,
+                appInstanceFullSlug: slug,
+              },
+              type: EventType.InstalledApp,
+              payload: {
+                appInstance,
+                slug,
+              },
+            })
         )
       );
     }

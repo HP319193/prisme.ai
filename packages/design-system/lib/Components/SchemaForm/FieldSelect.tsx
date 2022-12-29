@@ -12,18 +12,15 @@ function isUiOptionsSelect(
   return !!uiOptions && !!(uiOptions as UiOptionsSelect).select;
 }
 
-export const FieldSelect = ({
-  schema,
-  label,
-  name,
-  options,
-}: FieldProps & { options?: SelectProps['selectOptions'] }) => {
-  const field = useField(name);
+export function useSelectOptions(
+  schema: Schema,
+  options?: SelectProps['selectOptions']
+) {
   const {
     utils: { extractSelectOptions },
   } = useSchemaForm();
 
-  const selectOptions = useMemo(() => {
+  return useMemo(() => {
     if (options) return options;
     const { 'ui:options': uiOptions } = schema;
     if (isUiOptionsSelect(uiOptions)) return uiOptions.select.options;
@@ -32,6 +29,16 @@ export const FieldSelect = ({
 
     return Array.isArray(_options) ? _options : [];
   }, [extractSelectOptions]);
+}
+
+export const FieldSelect = ({
+  schema,
+  label,
+  name,
+  options,
+}: FieldProps & { options?: SelectProps['selectOptions'] }) => {
+  const field = useField(name);
+  const selectOptions = useSelectOptions(schema, options);
 
   return (
     <Description text={schema.description}>

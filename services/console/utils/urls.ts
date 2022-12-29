@@ -1,6 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import getConfig from 'next/config';
-import { useWorkspace } from '../components/WorkspaceProvider';
+import { useWorkspace } from '../providers/Workspace';
 
 const {
   publicRuntimeConfig: {
@@ -38,4 +38,13 @@ export function generatePageUrl(workspaceSlug: string, pageSlug: string) {
   return `${window.location.protocol}//${workspaceSlug}${PAGES_HOST}/${
     pageSlug === 'index' ? '' : pageSlug
   }`;
+}
+
+export function replaceSilently(newPath: string) {
+  const [, lang] = window.location.pathname.split('/') || [];
+  window.history.replaceState(
+    {},
+    '',
+    `/${lang}${newPath}`.replace(/\/\//, '/')
+  );
 }

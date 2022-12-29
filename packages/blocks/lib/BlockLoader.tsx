@@ -19,20 +19,18 @@ class BlockErrorBoundary extends React.Component<{ children: ReactElement }> {
   }
 
   componentDidCatch(error: any, errorInfo: any) {
-    // Vous pouvez aussi enregistrer l'erreur au sein d'un service de rapport.console.error(error, errorInfo);
+    console.error(error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
-      // Vous pouvez afficher n'importe quelle UI de repli.
       return <h1>Something went wrong.</h1>;
     }
-
     return this.props.children;
   }
 }
 
-export interface BlockComponentProps {
+export interface BlockComponentProps<T = any> {
   name?: string;
   token?: string;
   workspaceId?: string;
@@ -41,12 +39,12 @@ export interface BlockComponentProps {
   layout?: {
     container?: HTMLElement;
   };
-  config?: Record<any, any>;
+  config?: T;
 }
-export type BlockComponent = {
-  (props: BlockComponentProps): ReactElement | null;
+export type BlockComponent<T = any> = {
+  (props: BlockComponentProps<T>): ReactElement | null;
   schema?: Schema;
-  Preview?: (props: BlockComponentProps) => ReactElement;
+  Preview?: (props: BlockComponentProps<T>) => ReactElement;
 };
 
 export interface BlockLoaderProps extends BlockComponentProps {

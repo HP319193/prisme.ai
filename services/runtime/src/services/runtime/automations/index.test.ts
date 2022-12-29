@@ -10,11 +10,10 @@ import Cache from '../../../cache/__mocks__/cache';
 import { AvailableModels } from '../../workspaces/__mocks__/workspaces';
 import { EventType } from '../../../eda';
 import Runtime from '..';
-import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../config';
 import { EventSource } from '@prisme.ai/broker';
+import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../config';
 
 global.console.warn = jest.fn();
-
 let brokers = [];
 
 const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
@@ -50,6 +49,7 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
     apps,
     broker as any
   );
+  workspaces.saveWorkspace = () => Promise.resolve();
 
   const runtime = new Runtime(broker as any, workspaces, new Cache());
   broker.start();
@@ -403,7 +403,7 @@ describe('Variables & Contexts', () => {
 
     const workspace: any = yaml.load(
       await (workspaces as any).driver.get(
-        `workspaces/${workspaceId}/current.yml`
+        `workspaces/${workspaceId}/versions/current/runtime.yml`
       )
     );
     const output = await execute('testWorkspaceContext', {});
@@ -542,7 +542,12 @@ describe('Logic', () => {
       foo: 'bar',
     });
 
-    const output = await waitPromise;
+    let output: any;
+    try {
+      output = await waitPromise;
+    } catch (error) {
+      throw error;
+    }
     expect(output).toEqual({
       foo: 'bar',
     });

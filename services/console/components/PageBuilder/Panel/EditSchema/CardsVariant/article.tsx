@@ -1,6 +1,6 @@
 import { CardVariants } from '@prisme.ai/blocks';
 import { Schema } from '@prisme.ai/design-system';
-import eventOrLink from './eventOrLink';
+import eventOrLink from '../eventOrLink';
 
 const article: Schema = {
   title: 'pages.blocks.cards.settings.article.label',

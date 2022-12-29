@@ -24,3 +24,7 @@ export const BROKER_NAMESPACE = process.env.BROKER_NAMESPACE;
 export const BROKER_TOPIC_MAXLEN = parseInt(
   process.env.BROKER_TOPIC_MAXLEN || '10000'
 );
+
+export const BROKER_EMIT_MAXLEN = parseInt(
+  process.env.BROKER_EMIT_MAXLEN || '50000'
+);

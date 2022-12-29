@@ -66,7 +66,9 @@
 Produced events :
 
 - **runtime.webhooks.triggered**
+- **runtime.schedules.triggered**
 - **runtime.automations.executed**
+- **runtime.automations.scheduled**
 
 [Documentation](/api)
 

@@ -4,7 +4,7 @@ import api, { Events } from '../../../console/utils/api';
 export const usePageEvents = (page: Prismeai.Page | null) => {
   const [events, setEvents] = useState<Events>();
   const [blocksConfigs, setBlocksConfigs] = useState<
-    NonNullable<Prismeai.Page['blocks'][number]['config']>[]
+    NonNullable<Prismeai.Page['blocks']>[number]['config'][]
   >([]);
 
   // Init blocks config

@@ -17,6 +17,7 @@ module.exports = {
         'graph-border': '#ced2d8',
         'graph-background': '#E7EDF9',
         'graph-accent': '#015DFF',
+        'light-accent': '#80A4FF',
         'prisme-darkblue': '#0A1D3B',
         'green-400': '#649D9F',
         'green-200': '#E7F6F6',

@@ -2,12 +2,12 @@
 
 exports[`should render 1`] = `
 <div
-  className="relative flex flex-1 h-full"
+  className="relative flex flex-1 h-full overflow-hidden"
 />
 `;
 
 exports[`should render redirect 1`] = `
 <div
-  className="relative flex flex-1 h-full"
+  className="relative flex flex-1 h-full overflow-hidden"
 />
 `;

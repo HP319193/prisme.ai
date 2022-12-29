@@ -1,20 +1,27 @@
 import Workspaces from './Workspaces';
 import renderer, { act } from 'react-test-renderer';
-import { useWorkspaces } from '../components/WorkspacesProvider';
+import { useWorkspaces } from '../providers/Workspaces';
 import { useRouter } from 'next/router';
-import CardButton from '../components/Workspaces/CardButton';
+import { Workspace } from '../utils/api';
 
-jest.mock('../components/WorkspacesProvider', () => {
-  const workspaces = new Map();
-  const create = jest.fn(() => ({
+jest.mock('../providers/Workspaces', () => {
+  const workspaces: Workspace[] = [];
+  const createWorkspace = jest.fn(() => ({
     id: '43',
   }));
+  const loading = new Map();
+  const LoadingType = {
+    New: 'New',
+    List: 'List',
+  };
 
   return {
     useWorkspaces: () => ({
       workspaces,
-      create,
+      createWorkspace,
+      loading,
     }),
+    LoadingType,
   };
 });
 jest.mock('next/router', () => {
@@ -32,7 +39,7 @@ jest.mock('next/image', () => {
 });
 
 beforeEach(() => {
-  useWorkspaces().workspaces.clear();
+  useWorkspaces().workspaces = [];
 });
 
 it('should render empty', () => {
@@ -41,20 +48,24 @@ it('should render empty', () => {
 });
 
 it('should render some workspaces', () => {
-  useWorkspaces().workspaces.set('1', {
-    id: '1',
-    name: 'foo',
-    automations: {},
-    createdAt: '2021-12-15',
-    updatedAt: '2021-12-15',
-  });
-  useWorkspaces().workspaces.set('42', {
-    id: '42',
-    name: 'bar',
-    automations: {},
-    createdAt: '2021-12-15',
-    updatedAt: '2021-12-15',
-  });
+  useWorkspaces().workspaces = [
+    {
+      id: '1',
+      name: 'foo',
+      createdAt: new Date('2021-12-15'),
+      createdBy: '123',
+      updatedAt: new Date('2021-12-15'),
+      updatedBy: '123',
+    },
+    {
+      id: '42',
+      name: 'bar',
+      createdAt: new Date('2021-12-15'),
+      createdBy: '123',
+      updatedAt: new Date('2021-12-15'),
+      updatedBy: '123',
+    },
+  ];
   const root = renderer.create(<Workspaces />);
   expect(root.toJSON()).toMatchSnapshot();
 });
@@ -67,6 +78,8 @@ it('should create new workspace', async () => {
     });
     await createButton.props.onClick();
   });
-  expect(useWorkspaces().create).toHaveBeenCalledWith('create.defaultName');
+  expect(useWorkspaces().createWorkspace).toHaveBeenCalledWith(
+    'create.defaultName'
+  );
   expect(useRouter().push).toHaveBeenCalledWith('/workspaces/43');
 });

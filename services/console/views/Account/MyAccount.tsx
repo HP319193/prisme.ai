@@ -1,4 +1,4 @@
-import AccountLayout from './AccountLayout';
+import { getLayout } from './AccountLayout';
 import { useTranslation } from 'next-i18next';
 import Avatar from '../../icons/avatar.svgr';
 import { useUser } from '../../components/UserProvider';
@@ -16,12 +16,12 @@ const MyAccount = ({}: MyAccountProps) => {
   }
 
   return (
-    <AccountLayout>
+    <>
       <Head>
         <title>{t('title.myAccount')}</title>
       </Head>
-      <div className="flex flex-col grow">
-        <div className="flex flex-col grow m-[3.938rem]">
+      <div className="flex flex-col flex-1">
+        <div className="flex flex-col flex-1 m-[3.938rem]">
           <div className="text-[3rem] font-bold mb-[2rem]">
             {t('account_my')}
           </div>
@@ -38,8 +38,10 @@ const MyAccount = ({}: MyAccountProps) => {
           </div>
         </div>
       </div>
-    </AccountLayout>
+    </>
   );
 };
+
+MyAccount.getLayout = getLayout;
 
 export default MyAccount;

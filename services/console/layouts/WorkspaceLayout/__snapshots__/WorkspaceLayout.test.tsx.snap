@@ -10,7 +10,7 @@ Array [
           transition-transform
           transition-duration-200
           transition-ease-in
-          z-[11]
+          z-20
           -translate-y-full
         "
   />,
@@ -18,11 +18,35 @@ Array [
     className="flex flex-col h-[70vh] overflow-hidden"
   >
     <div
-      className="flex items-center justify-between ml-10 mt-3"
-    />
+      className="flex items-center justify-between"
+    >
+      <div
+        className="flex flex-1 relative px-2 border-b-[1px] h-[4rem]"
+      >
+        <button
+          className="m-4 focus:outline-none "
+          onClick={[Function]}
+        >
+          <SvgrURL
+            className="text-[1.6rem] mr-2"
+            height="1.2rem"
+            width="1.2rem"
+          />
+        </button>
+        <input
+          className="flex flex-1 outline-none text-accent"
+          onChange={[Function]}
+          placeholder="apps.search"
+          value=""
+        />
+        
+      </div>
+    </div>
     <div
-      className="flex flex-wrap flex-row align-start justify-center mt-5 overflow-y-auto"
-    />
+      className="flex flex-1 flex-wrap flex-row justify-center mt-5 overflow-y-auto"
+    >
+      events.more
+    </div>
   </div>,
   <div
     className="h-full flex flex-row"
@@ -55,61 +79,6 @@ Array [
 ]
 `;
 
-exports[`should render 404 1`] = `
-Array [
-  <div
-    className="
-          absolute top-[75px] bottom-0 right-0 left-0
-          bg-white
-          flex flex-1
-          transition-transform
-          transition-duration-200
-          transition-ease-in
-          z-[11]
-          -translate-y-full
-        "
-  />,
-  <div
-    className="flex flex-col h-[70vh] overflow-hidden"
-  >
-    <div
-      className="flex items-center justify-between ml-10 mt-3"
-    />
-    <div
-      className="flex flex-wrap flex-row align-start justify-center mt-5 overflow-y-auto"
-    />
-  </div>,
-  <div
-    className="h-full flex flex-row"
-  >
-    <div
-      className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden"
-    >
-      <div
-        className="flex justify-end bg-white"
-      >
-        <div
-          className="flex flex-1 items-center pl-4 whitespace-nowrap mr-5 text-[0.75rem] text-pr-grey"
-        >
-          <a
-            href="https://prisme.ai"
-            rel="noreferrer"
-            target="_blank"
-          >
-            powered
-          </a>
-        </div>
-      </div>
-    </div>
-    <div
-      className="flex h-full flex-col flex-1 min-w-[500px] max-w-full"
-    >
-      Foo
-    </div>
-  </div>,
-]
-`;
-
 exports[`should render empty 1`] = `
 Array [
   <div
@@ -120,7 +89,7 @@ Array [
           transition-transform
           transition-duration-200
           transition-ease-in
-          z-[11]
+          z-20
           -translate-y-full
         "
   />,
@@ -128,66 +97,35 @@ Array [
     className="flex flex-col h-[70vh] overflow-hidden"
   >
     <div
-      className="flex items-center justify-between ml-10 mt-3"
-    />
-    <div
-      className="flex flex-wrap flex-row align-start justify-center mt-5 overflow-y-auto"
-    />
-  </div>,
-  <div
-    className="h-full flex flex-row"
-  >
-    <div
-      className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden"
+      className="flex items-center justify-between"
     >
       <div
-        className="flex justify-end bg-white"
+        className="flex flex-1 relative px-2 border-b-[1px] h-[4rem]"
       >
-        <div
-          className="flex flex-1 items-center pl-4 whitespace-nowrap mr-5 text-[0.75rem] text-pr-grey"
+        <button
+          className="m-4 focus:outline-none "
+          onClick={[Function]}
         >
-          <a
-            href="https://prisme.ai"
-            rel="noreferrer"
-            target="_blank"
-          >
-            powered
-          </a>
-        </div>
+          <SvgrURL
+            className="text-[1.6rem] mr-2"
+            height="1.2rem"
+            width="1.2rem"
+          />
+        </button>
+        <input
+          className="flex flex-1 outline-none text-accent"
+          onChange={[Function]}
+          placeholder="apps.search"
+          value=""
+        />
+        
       </div>
     </div>
     <div
-      className="flex h-full flex-col flex-1 min-w-[500px] max-w-full"
+      className="flex flex-1 flex-wrap flex-row justify-center mt-5 overflow-y-auto"
     >
-      Foo
+      events.more
     </div>
-  </div>,
-]
-`;
-
-exports[`should render fetching 1`] = `
-Array [
-  <div
-    className="
-          absolute top-[75px] bottom-0 right-0 left-0
-          bg-white
-          flex flex-1
-          transition-transform
-          transition-duration-200
-          transition-ease-in
-          z-[11]
-          -translate-y-full
-        "
-  />,
-  <div
-    className="flex flex-col h-[70vh] overflow-hidden"
-  >
-    <div
-      className="flex items-center justify-between ml-10 mt-3"
-    />
-    <div
-      className="flex flex-wrap flex-row align-start justify-center mt-5 overflow-y-auto"
-    />
   </div>,
   <div
     className="h-full flex flex-row"

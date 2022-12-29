@@ -272,6 +272,15 @@ describe('It should handle variables within {{}}', () => {
 
 it('works with the regexp() keyword on matches instruction.', () => {
   expect(
+    evaluate(
+      '{{validation.regexp}} and {{value}} and {{value}} not matches regex({{validation.regexp}})',
+      {
+        value: null,
+        validation: {},
+      }
+    )
+  ).toEqual(false);
+  expect(
     evaluate('"luke.skywalker@gmail.com" matches regex(luke)', {})
   ).toEqual(true);
   expect(
@@ -302,7 +311,8 @@ it('works with the regexp() keyword on matches instruction.', () => {
   ).toEqual(false);
   expect(
     evaluate('"luke.skywalker@gmail.com" matches regex(/skywalker/)', {})
-  ).toEqual(false); // Indeed, we have to keep in mind that the regexp() keyword is not a regexp, and use the javascript new RegExp by passing the content as a string.
+  ).toEqual(true); // Regex can now be parsed and properly matched !!
+  expect(evaluate('"LOWERCASE" matches regex(/lowercase/i)', {})).toEqual(true);
   expect(
     evaluate(
       `"bonjour.georges@gmail.com" matches regex([a-z0-9]+@[a-z]+.[a-z]{2,3})`,

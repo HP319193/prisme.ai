@@ -6,14 +6,12 @@ interface BlockConfigProviderProps {
 }
 
 const useBlockPageConfig = ({ blockId }: BlockConfigProviderProps) => {
-  const { setBlockConfig, page, events } = usePageBuilder();
+  const { setBlockConfig, value } = usePageBuilder();
 
-  const config = useMemo(
-    () =>
-      ((page.blocks || []).find(({ key }) => blockId === key) || {}).config ||
-      {},
-    [page.blocks, blockId]
-  );
+  const config = useMemo(() => (value.get(blockId) || {}).config || {}, [
+    value,
+    blockId,
+  ]);
   const onConfigUpdate = useCallback(
     (config: any) => {
       if (!blockId) {
@@ -27,7 +25,6 @@ const useBlockPageConfig = ({ blockId }: BlockConfigProviderProps) => {
   return {
     config,
     onConfigUpdate,
-    events,
   };
 };
 
