@@ -1,10 +1,5 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
-import {
-  FieldProps,
-  getSchemaFormLabel,
-  SchemaFormDescription,
-  Tooltip,
-} from '@prisme.ai/design-system';
+import { FieldProps, schemaFormUtils, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { useField } from 'react-final-form';
@@ -42,31 +37,37 @@ export const FieldAny = ({ schema, name, label }: FieldProps) => {
     return style;
   }, [invalidJSON]);
 
+  const hasError = invalidJSON
+    ? t('automations.instruction.anyFieldError')
+    : schemaFormUtils.getError(field.meta);
+
   return (
-    <div className="flex flex-1 flex-col my-2">
-      <SchemaFormDescription text={schema.description}>
-        <label className="text-[10px] text-gray">
-          {label || schema.title || getSchemaFormLabel(name)}
-        </label>
-        <CodeEditorInline
-          value={value}
-          onChange={onChange}
-          mode="json"
-          style={codeStyle}
-        />
-        <div
-          className={`flex items-center justify-end text-pr-orange text-xs mr-2 ${
-            invalidJSON ? '' : 'invisible'
+    <div className="pr-form-field">
+      <label className="pr-form-label">
+        {label || schema.title || schemaFormUtils.getLabel(name)}
+      </label>
+      <Tooltip title={schema.description} placement="right">
+        <button type="button" className="pr-form-description">
+          <InfoCircleOutlined />
+        </button>
+      </Tooltip>
+      <div className="pr-form-input">
+        <Tooltip
+          title={hasError}
+          overlayClassName={`pr-form-error${
+            invalidJSON ? ' pr-form-error--warning' : ''
           }`}
         >
-          <Tooltip title={t('automations.instruction.anyFieldErrorTooltip')}>
-            <div>
-              {t('automations.instruction.anyFieldError')}
-              <InfoCircleOutlined className="ml-2" />
-            </div>
-          </Tooltip>
-        </div>
-      </SchemaFormDescription>
+          <div className="flex flex-1">
+            <CodeEditorInline
+              value={value}
+              onChange={onChange}
+              mode="json"
+              style={codeStyle}
+            />
+          </div>
+        </Tooltip>
+      </div>
     </div>
   );
 };

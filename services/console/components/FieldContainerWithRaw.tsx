@@ -40,6 +40,7 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
   name,
   label,
   children,
+  className,
 }) => {
   const { t } = useTranslation('workspaces');
   const field = useField(name);
@@ -83,30 +84,27 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
   }, [children, displayRaw]);
 
   return (
-    <>
-      <div className="flex flex-1 flex-col relative">
-        <Tooltip
-          title={t('form.raw', { context: displayRaw ? 'hide' : '' })}
-          placement="left"
+    <div className={`pr-form-field ${className}`}>
+      <Tooltip
+        title={t('form.raw', { context: displayRaw ? 'hide' : '' })}
+        placement="left"
+      >
+        <button
+          className={`absolute ${
+            className === 'pr-form-object' ? 'top-4 right-4' : 'top-0 right-0'
+          } mt-[0.35rem] flex flex-1 flex-row z-[1] text-[12px] items-center`}
+          onClick={toggle}
         >
-          <button
-            className={`absolute top-0 mt-[0.35rem] ${
-              schema.description ? 'right-8' : 'right-1'
-            } flex flex-1 flex-row z-[1] text-[12px] items-center`}
-            onClick={toggle}
-          >
-            {displayRaw ? <CodeFilled /> : <CodeOutlined />}
-          </button>
-        </Tooltip>
-
-        <div className="space-y-5">{!displayRaw && children}</div>
-      </div>
+          {displayRaw ? <CodeFilled /> : <CodeOutlined />}
+        </button>
+      </Tooltip>
+      {!displayRaw && children}
       {displayRaw && (
         <>
-          <label className={labelClassName}>
+          <label className={`pr-form-input ${labelClassName}`}>
             {label || schema.title || name.replace(/^values./, '')}
           </label>
-          <div className="space-y-5">
+          <div className="pr-form-input">
             <CodeEditorInline
               mode="json"
               value={value}
@@ -116,7 +114,7 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
           </div>
         </>
       )}
-    </>
+    </div>
   );
 };
 

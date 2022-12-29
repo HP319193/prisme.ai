@@ -42,10 +42,6 @@ export const Properties = ({ value, onChange, addLabel }: PropertiesProps) => {
     [onChange, value]
   );
 
-  const add = useCallback(() => {
-    onChange({ ...value, '': { type: 'string' } });
-  }, [onChange, value]);
-
   const remove = useCallback(
     (oldKey: string) => () => {
       onChange(

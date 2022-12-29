@@ -8,7 +8,7 @@
   --link-color: var(--accent-color);
   --gray-color: #939ca6;
   --light-gray-color: #e5e5e5;
-  --warning-color: #ff4d4f;
+  --warning-color: orange;
   --error-color: #ff4d4f;
   /* Schema Form */
   --pr-form-object-border: 1px solid var(--light-gray-color);
@@ -285,4 +285,9 @@ body button:disabled {
 
 button {
   outline: none !important;
+}
+
+.pr-form-error.pr-form-error--warning .ant-tooltip-inner,
+.pr-form-error.pr-form-error--warning .ant-tooltip-arrow-content::before {
+  background: var(--warning-color);
 }

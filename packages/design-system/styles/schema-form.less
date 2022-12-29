@@ -208,5 +208,9 @@
   align-items: stretch;
 }
 
-.pr-form-object__property--grid-line {
+.pr-form-additional-properties__property
+  > .pr-form-additional-properties__property-value
+  > .pr-form-object {
+  border: 0;
+  margin-top: calc(var(--pr-form-margin-size) / 2);
 }

@@ -1,6 +1,6 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { Input, Tooltip } from 'antd';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FieldRenderProps, useField } from 'react-final-form';
 import Button from '../Button';
 import TextArea from '../TextArea';
@@ -8,7 +8,7 @@ import { SchemaFormContext, useSchemaForm } from './context';
 import Field from './Field';
 import FieldContainer from './FieldContainer';
 import { FieldProps, Schema } from './types';
-import { getDefaultValue } from './utils';
+import { EMPTY, getDefaultValue } from './utils';
 
 interface AdditionalPropertiesProps extends FieldProps {
   field: FieldRenderProps<any, HTMLElement, any>;
@@ -45,6 +45,15 @@ const getInitialValue = (schema: Schema, value: any) => {
   if (typeof value === 'string') return value;
   return JSON.stringify(cleanValue(schema, value), null, '  ');
 };
+
+function isFilled(v: any) {
+  switch (typeof v) {
+    case 'object':
+      return Object.keys(v).length === 0;
+    default:
+      return !!v;
+  }
+}
 
 export const FreeAdditionalProperties = ({
   JSONEditor = TextAreaField,
@@ -187,7 +196,7 @@ export const ManagedAdditionalProperties = (
             <Input
               value={key}
               onChange={({ target: { value } }) => updateKey(key)(value)}
-              disabled={value}
+              disabled={isFilled(value)}
             />
           </div>
           <span className="pr-form-additional-properties__property-separator">
@@ -204,7 +213,7 @@ export const ManagedAdditionalProperties = (
                   ? 'Value'
                   : props.locales.propertyValue
               }
-              name={`${props.name}.${key || 'EMPTY'}`}
+              name={`${props.name}.${key || EMPTY}`}
             />
           </div>
 
@@ -258,7 +267,7 @@ export const FieldAdditionalProperties = ({ schema, name }: FieldProps) => {
       />
     );
   }
-  console.log(locales);
+
   return (
     <Managed schema={schema} field={field} name={name} locales={locales} />
   );

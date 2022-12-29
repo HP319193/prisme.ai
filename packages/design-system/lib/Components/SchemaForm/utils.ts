@@ -2,6 +2,7 @@ import { FieldMetaState, UseFieldConfig } from 'react-final-form';
 import { Schema } from './types';
 
 export const root = 'values';
+export const EMPTY = '__EMPTY__';
 
 export const getDefaultValue = (type: Schema['type']) => {
   switch (type) {
@@ -21,7 +22,7 @@ export const getDefaultValue = (type: Schema['type']) => {
 
 export const getLabel = (name: string) => {
   const [, ...parts] = name.split(/\./);
-  return parts.join('.');
+  return parts.map((part) => (part === EMPTY ? '' : part)).join('.');
 };
 
 export const typesMatch = (schema: Schema, value: any): boolean => {

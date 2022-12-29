@@ -1,5 +1,4 @@
 export * from './SchemaForm';
 export * from './types';
-import { getLabel as getSchemaFormLabel } from './utils';
-export { getSchemaFormLabel };
+export * as schemaFormUtils from './utils';
 export { default as SchemaFormField } from './Field';
