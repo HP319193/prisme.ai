@@ -25,15 +25,13 @@ export const getLabel = (name: string) => {
 };
 
 export const typesMatch = (schema: Schema, value: any): boolean => {
+  if (value === undefined) return false;
+
   if (schema.properties) {
-    return Object.keys(schema.properties).every((name) => {
-      return schema.properties && schema.properties[name]
-        ? typesMatch(schema.properties[name], value[name])
-        : false;
+    return Object.entries(schema.properties).every(([name, property]) => {
+      return property && value ? typesMatch(property, value[name]) : false;
     });
   }
-
-  if (value === undefined) return false;
 
   switch (schema.type) {
     case 'string':
