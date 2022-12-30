@@ -339,6 +339,7 @@ it('should edit condition', async () => {
   );
   await act(async () => {
     (ReactFlow as any).context.editCondition(value.do[0]);
+    jest.runAllTimers();
   });
 
   expect(root.root.findByType(ConditionForm)).toBeDefined();
@@ -363,9 +364,11 @@ it('should edit condition', async () => {
 
   await act(async () => {
     (ReactFlow as any).context.editCondition(value.do[0]);
+    jest.runAllTimers();
   });
   await act(async () => {
     await root.root.findByType(ConditionForm).props.onChange('$a == 2');
+    jest.runAllTimers();
   });
 
   expect(onChange).toHaveBeenCalledWith(expect.any(Function));
@@ -397,8 +400,9 @@ it('should edit trigger', async () => {
       onChange={onChange}
     />
   );
-  act(() => {
+  await act(async () => {
     (ReactFlow as any).context.editTrigger();
+    jest.runAllTimers();
   });
 
   expect(root.root.findByType(TriggerForm)).toBeDefined();
