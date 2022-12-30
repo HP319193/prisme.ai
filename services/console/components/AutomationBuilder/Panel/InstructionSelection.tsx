@@ -11,6 +11,7 @@ import { FC, useMemo, useState } from 'react';
 import { useAutomationBuilder } from '../context';
 import { truncate } from '../../../utils/strings';
 import useLocalizedText from '../../../utils/useLocalizedText';
+import removeAccent from 'remove-accents';
 
 export interface InstructionSelectionProps {
   onSubmit: (key: string) => void;
@@ -26,6 +27,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
   const { instructionsSchemas } = useAutomationBuilder();
 
   const [search, setSearch] = useState('');
+
   const filteredInstructions = useMemo(() => {
     return instructionsSchemas
       .reduce<
@@ -37,11 +39,11 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
       >((prev, [name, list, more]) => {
         const matching = (search
           ? Object.keys(list).filter((slug) =>
-              `${slug} ${(list[slug] || {}).title || ''} ${
-                (list[slug] || {}).description || ''
-              }`
+              ((list[slug] || {}).search || '')
                 .toLowerCase()
-                .match(`${search}`.replace(/\s/g, '.*').toLowerCase())
+                .match(
+                  `${removeAccent(search)}`.replace(/\s/g, '.*').toLowerCase()
+                )
             )
           : Object.keys(list)
         ).map((name) => ({

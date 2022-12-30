@@ -12,8 +12,21 @@ jest.mock('../context', () => {
 
 beforeEach(() => {
   useAutomationBuilder().instructionsSchemas = [
-    ['logical', { emit: {}, wait: {} }, { icon: '/icon' }],
-    ['workspace', { kermit: {}, waitress: {} }, { icon: '/icon' }],
+    [
+      'logical',
+      {
+        emit: { search: 'emit' },
+        wait: {
+          search: 'wait',
+        },
+      },
+      { icon: '/icon' },
+    ],
+    [
+      'workspace',
+      { kermit: { search: 'kermit' }, waitress: { search: 'waitress' } },
+      { icon: '/icon' },
+    ],
   ];
 });
 
