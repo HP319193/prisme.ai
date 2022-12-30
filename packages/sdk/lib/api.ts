@@ -273,7 +273,8 @@ export class Api extends Fetcher {
 
   async updatePage(
     workspaceId: PrismeaiAPI.UpdatePage.Parameters.WorkspaceId,
-    page: PrismeaiAPI.UpdatePage.RequestBody
+    page: PrismeaiAPI.UpdatePage.RequestBody,
+    prevSlug = page.slug
   ): Promise<Prismeai.Page> {
     const {
       createdAt,
@@ -282,7 +283,7 @@ export class Api extends Fetcher {
       updatedBy,
       ...updatedPage
     } = await this.patch<PageWithMetadata>(
-      `/workspaces/${workspaceId}/pages/${page.slug}`,
+      `/workspaces/${workspaceId}/pages/${prevSlug}`,
       // Replace images as dataurl to uploaded url in any type of data
       await this.replaceAllImagesData(page, workspaceId)
     );

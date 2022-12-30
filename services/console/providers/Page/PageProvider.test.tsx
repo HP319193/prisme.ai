@@ -113,10 +113,14 @@ it('should save page', async () => {
       name: 'My new Page',
     });
   });
-  expect(api.updatePage).toHaveBeenCalledWith('42', {
-    slug: 'my-new-page',
-    name: 'My new Page',
-  });
+  expect(api.updatePage).toHaveBeenCalledWith(
+    '42',
+    {
+      slug: 'my-new-page',
+      name: 'My new Page',
+    },
+    'my-page'
+  );
 });
 
 it('should delete page', async () => {
