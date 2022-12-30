@@ -33,7 +33,7 @@ it('should generate endpoint', () => {
 });
 
 it('should get pages host', () => {
-  expect(usePageEndpoint()).toBe('https://my.website.pages.prisme.ai/en');
+  expect(usePageEndpoint()).toBe('http://my.website.pages.prisme.ai/en');
 
   mock.slug = '';
   expect(usePageEndpoint()).toBe('');
