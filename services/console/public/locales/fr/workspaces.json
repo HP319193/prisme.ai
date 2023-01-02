@@ -193,6 +193,7 @@
     },
     "notFound": "L'Automatisation n'existe pas.",
     "trigger": {
+      "panel": "Édition du déclencheur",
       "events": {
         "title": "Événements",
         "item": "Événement",
@@ -217,6 +218,7 @@
       "save": "Ajouter"
     },
     "instruction": {
+      "panel": "Édition de l'instruction",
       "title_builtin": "Logique",
       "label": "{{context}}",
       "label_emit": "Émet l'événement",
@@ -292,8 +294,14 @@
             "description": "L'évènement ne sera pas proposé à l'autocompletion pour les utilisateurs de votre workspace une fois transformé en tant qu'App."
           },
           "autocomplete": {
-            "label": "Auto-completion (AVANCÉ)",
+            "label": "Auto-completion",
             "description": "Spécifie la façon dont votre évènement sera proposé à l'autocompletion pour les utilisateurs de votre workspace une fois transformé en tant qu'App."
+          },
+          "options": {
+            "persist": {
+              "label": "Persist",
+              "description": "Si cet événement doit persister ou non. La valeur par défaut est true."
+            }
           }
         },
         "wait": {
@@ -431,6 +439,7 @@
       }
     },
     "output": {
+      "panel": "Édition de la sortie",
       "label": "<pre><code>{{output}}</code></pre>",
       "edit": {
         "title": "Retourner la valeur :",
@@ -452,6 +461,7 @@
       "save": "Ajouter"
     },
     "condition": {
+      "panel": "Édition de la condition",
       "edit": {
         "title": "Condition",
         "description": "Condition pour choisir ce chemin",
@@ -1007,21 +1017,6 @@
           "add": "Ajouter un champs"
         }
       },
-      "development": {
-        "error": "Erreur inconnue",
-        "error_url": "Veuillez choisir une url de module javascript valide",
-        "error_loading": "Impossible de charger votre Block. Veuillez vérifier que votre environnement de développement est bien lancé et que vous avez bien copié la bonne URL.",
-        "settings": {
-          "url": {
-            "label": "URL du Block",
-            "description": "Lancez la commande `npm start`. Une URL sera affichée. Collez là dans ce champs afin de charger votre Block dans la console."
-          },
-          "block": {
-            "label": "Configuration du Block",
-            "description": "La configuration de votre Block. Si rien ne s'affiche, ajouter une propriété statique `schema` à votre composant React."
-          }
-        }
-      },
       "richtext": {
         "settings": {
           "content": {
@@ -1171,7 +1166,9 @@
       "name_autocomplete": "Autocompletion",
       "description_autocomplete": "Propose une autocompletion au cours de la frappe",
       "name_color": "Couleur",
-      "description_color": "Sélecteur de couleur"
+      "description_color": "Sélecteur de couleur",
+      "name_html": "HTML",
+      "description_html": "Contenu enrichi (HTML)"
     },
     "properties": {
       "label": "Propriétés de l'objet",

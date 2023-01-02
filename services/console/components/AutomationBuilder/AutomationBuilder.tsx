@@ -464,6 +464,27 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [instructionsSchemas, localize, t]
   );
 
+  const [panelTitle, setPanelTitle] = useState('');
+  useEffect(() => {
+    if (instructionEditing) {
+      setPanelTitle(t('automations.instruction.panel'));
+      return;
+    }
+    if (conditionEditing) {
+      setPanelTitle(t('automations.condition.panel'));
+      return;
+    }
+    if (triggerEditing) {
+      setPanelTitle(t('automations.trigger.panel'));
+      return;
+    }
+    if (outputEditing) {
+      setPanelTitle(t('automations.output.panel'));
+      return;
+    }
+    setPanelTitle(t('details.title_automations'));
+  }, [conditionEditing, instructionEditing, outputEditing, t, triggerEditing]);
+
   return (
     <automationBuilderContext.Provider
       value={{
@@ -494,7 +515,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
           <Controls />
         </ReactFlow>
         <Panel
-          title={t('details.title_automations')}
+          title={panelTitle}
           visible={panelIsOpen}
           onVisibleChange={hidePanel}
           onBack={blockEditingOnBack}

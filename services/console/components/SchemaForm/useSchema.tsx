@@ -139,6 +139,8 @@ export const useSchema = (store: Record<string, any> = {}) => {
           }),
           ...Object.entries(imports).flatMap(([slug, { events = {} }]) => {
             if (!events || !events[type]) return [];
+            const typedEvents = events[type];
+            if (!typedEvents || typedEvents.length === 0) return [];
 
             return [
               {
@@ -146,7 +148,7 @@ export const useSchema = (store: Record<string, any> = {}) => {
                   context: 'imports',
                   app: slug,
                 }),
-                options: (events[type] || []).map((event) => ({
+                options: typedEvents.map((event) => ({
                   label: event,
                   value: event,
                 })),
