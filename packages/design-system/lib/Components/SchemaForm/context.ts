@@ -37,6 +37,7 @@ export interface SchemaFormContext {
     FieldSelect?: FieldComponent<{ options?: SelectProps['selectOptions'] }>;
     FieldRadio?: FieldComponent<{ options?: SelectProps['selectOptions'] }>;
     FieldDate?: FieldComponent;
+    FieldHTML?: FieldComponent;
     JSONEditor?: InputComponent;
     FreeAdditionalProperties?: FieldComponent;
     ManagedAdditionalProperties?: FieldComponent;

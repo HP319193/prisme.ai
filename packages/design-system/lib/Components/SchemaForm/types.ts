@@ -22,6 +22,7 @@ export const UIWidgetsForString = [
   'color',
   'autocomplete',
   'radio',
+  'html',
 ] as const;
 export const UIWidgetsForLocalizedString = ['textarea'];
 export const UIWidgetsByType = {
@@ -78,6 +79,11 @@ export type UiOptionsAutocomplete = {
 export type UiOptionsDate = {
   date: DatePickerProps;
 };
+export type UiOptionsHTML = {
+  html: {
+    htmlModeOnly?: boolean;
+  };
+};
 export interface Schema extends Record<string, any> {
   // Field type
   type?: SchemaTypes;
@@ -128,6 +134,7 @@ export interface Schema extends Record<string, any> {
     | UiOptionsDate
     | UiOptionsAutocomplete
     | UiOptionsDynamicAutocomplete
+    | UiOptionsHTML
     | Record<string, any>;
 }
 

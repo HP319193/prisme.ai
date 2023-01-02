@@ -12,12 +12,15 @@ import { getError } from './utils';
 import InfoBubble from './InfoBubble';
 import { Label } from './Label';
 import FieldContainer from './FieldContainer';
+import FieldNotImplemented from './FieldNotImplemented';
 
 export const FieldText = ({
   FieldDate = DefaultFieldDate,
+  FieldHTML = FieldNotImplemented,
   ...props
 }: FieldProps & {
   FieldDate: SchemaFormContext['components']['FieldDate'];
+  FieldHTML: SchemaFormContext['components']['FieldHTML'];
 }) => {
   const field = useField(props.name);
   const { 'ui:widget': uiWidget, 'ui:options': uiOptions } = props.schema;
@@ -50,6 +53,8 @@ export const FieldText = ({
       return <FieldTextColor {...props} />;
     case 'autocomplete':
       return <FieldAutocomplete {...props} />;
+    case 'html':
+      return <FieldHTML {...props} />;
   }
 
   const hasError = getError(field.meta);
@@ -85,9 +90,9 @@ export const FieldText = ({
 
 const LinkedFieldText = (props: FieldProps) => {
   const {
-    components: { FieldDate },
+    components: { FieldDate, FieldHTML },
   } = useSchemaForm();
-  return <FieldText {...props} FieldDate={FieldDate} />;
+  return <FieldText {...props} FieldDate={FieldDate} FieldHTML={FieldHTML} />;
 };
 
 export default LinkedFieldText;
