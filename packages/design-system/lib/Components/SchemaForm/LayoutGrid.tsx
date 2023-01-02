@@ -13,17 +13,21 @@ export const LayoutGrid = ({ grid, name, schema }: LayoutGridProps) => {
   return (
     <>
       {grid.map((lines, lindex) => (
-        <div key={`${lindex}`} className="flex flex-col space-y-5">
+        <div
+          key={`${lindex}`}
+          className="pr-form-object__property pr-form-object__property--grid"
+        >
           {lines.map((rows, rindex) => (
-            <div key={`${rindex}`} className="flex flex-row">
+            <div
+              key={`${rindex}`}
+              className="pr-form-object__property--grid-line"
+            >
               {rows.map(
                 (field, index) =>
                   !!properties[field] && (
                     <div
                       key={`${index}`}
-                      className={`flex flex-1 ${
-                        index === rows.length - 1 ? '' : 'mr-2'
-                      }`}
+                      className="pr-form-object__property--grid-row"
                     >
                       <Field
                         key={field}

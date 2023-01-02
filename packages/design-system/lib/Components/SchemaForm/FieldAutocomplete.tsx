@@ -1,16 +1,17 @@
 import { useField } from 'react-final-form';
-import { AutoComplete } from 'antd';
-import Description from './Description';
+import { AutoComplete, Input, Tooltip } from 'antd';
 import {
   FieldProps,
   Schema,
   UiOptionsAutocomplete,
   UiOptionsDynamicAutocomplete,
 } from './types';
-import { getLabel } from './utils';
 import { useMemo } from 'react';
-import { useSchemaForm } from './context';
-import { Input } from '../..';
+import { SchemaFormContext, useSchemaForm } from './context';
+import FieldContainer from './FieldContainer';
+import Label from './Label';
+import InfoBubble from './InfoBubble';
+import { getError } from './utils';
 
 function isUiOptionsAutocomplete(
   uiOptions: Schema['ui:options']
@@ -26,40 +27,69 @@ function isUiOptionsDynamicAutocomplete(
   return !!opt && !!opt.autocomplete && typeof opt.autocomplete === 'string';
 }
 
-export const FieldAutocomplete = ({ schema, name, label }: FieldProps) => {
-  const {
-    utils: { extractAutocompleteOptions },
-  } = useSchemaForm();
-  const field = useField(name);
-  const { 'ui:options': uiOptions } = schema;
+export const FieldAutocomplete = ({
+  extractAutocompleteOptions,
+  ...props
+}: FieldProps & {
+  extractAutocompleteOptions: SchemaFormContext['utils']['extractAutocompleteOptions'];
+}) => {
+  const field = useField(props.name);
+  const { 'ui:options': uiOptions } = props.schema;
   const options = useMemo(() => {
     if (isUiOptionsDynamicAutocomplete(uiOptions)) {
-      return extractAutocompleteOptions(schema) || [];
+      return extractAutocompleteOptions(props.schema) || [];
     }
     if (isUiOptionsAutocomplete(uiOptions))
       return uiOptions.autocomplete.options || [];
 
     return [];
-  }, [extractAutocompleteOptions, schema, uiOptions]);
+  }, [extractAutocompleteOptions, props.schema, uiOptions]);
+  const hasError = getError(field.meta);
 
   return (
-    <Description text={schema.description} className="flex flex-1">
-      <AutoComplete
-        className="!flex flex-1 cursor-default schema-form-autocomplete"
-        options={options}
-        value={field.input.value}
-        onSelect={field.input.onChange}
-        onChange={field.input.onChange}
-        filterOption={(inputValue, option) =>
-          `${option?.value || ''}`
-            .toUpperCase()
-            .indexOf(`${inputValue || ''}`.toUpperCase()) !== -1
-        }
+    <FieldContainer {...props} className="pr-form-autocomplete">
+      <Label
+        field={field}
+        schema={props.schema}
+        className="pr-form-autocomplete__label pr-form-label"
       >
-        <Input label={label || schema.title || getLabel(name)} />
-      </AutoComplete>
-    </Description>
+        {props.label}
+      </Label>
+      <Tooltip title={hasError} overlayClassName="pr-form-error">
+        <AutoComplete
+          className="pr-form-autocomplete__input pr-form-input"
+          options={options}
+          value={field.input.value}
+          onSelect={field.input.onChange}
+          onChange={field.input.onChange}
+          filterOption={(inputValue, option) =>
+            `${option?.value || ''}`
+              .toUpperCase()
+              .indexOf(`${inputValue || ''}`.toUpperCase()) !== -1
+          }
+        >
+          <Input status={hasError ? 'error' : ''} />
+        </AutoComplete>
+      </Tooltip>
+      <InfoBubble
+        className="pr-form-autocomplete__description"
+        text={props.schema.description}
+      />
+    </FieldContainer>
   );
 };
 
-export default FieldAutocomplete;
+const LinkedFieldAutocomplete = (props: FieldProps) => {
+  const {
+    utils: { extractAutocompleteOptions },
+  } = useSchemaForm();
+
+  return (
+    <FieldAutocomplete
+      {...props}
+      extractAutocompleteOptions={extractAutocompleteOptions}
+    />
+  );
+};
+
+export default LinkedFieldAutocomplete;

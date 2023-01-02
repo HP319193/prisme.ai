@@ -1,14 +1,14 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import { Tooltip } from 'antd';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Input, Tooltip } from 'antd';
+import { useCallback, useEffect, useState } from 'react';
 import { FieldRenderProps, useField } from 'react-final-form';
 import Button from '../Button';
-import Input from '../Input';
 import TextArea from '../TextArea';
 import { SchemaFormContext, useSchemaForm } from './context';
 import Field from './Field';
+import FieldContainer from './FieldContainer';
 import { FieldProps, Schema } from './types';
-import { getDefaultValue } from './utils';
+import { EMPTY, getDefaultValue } from './utils';
 
 interface AdditionalPropertiesProps extends FieldProps {
   field: FieldRenderProps<any, HTMLElement, any>;
@@ -46,31 +46,41 @@ const getInitialValue = (schema: Schema, value: any) => {
   return JSON.stringify(cleanValue(schema, value), null, '  ');
 };
 
+function isFilled(v: any) {
+  switch (typeof v) {
+    case 'object':
+      return Object.keys(v).length === 0;
+    default:
+      return !!v;
+  }
+}
+
 export const FreeAdditionalProperties = ({
-  schema,
-  field,
-}: AdditionalPropertiesProps) => {
+  JSONEditor = TextAreaField,
+  locales,
+  ...props
+}: AdditionalPropertiesProps & {
+  JSONEditor: SchemaFormContext['components']['JSONEditor'];
+  locales: SchemaFormContext['locales'];
+}) => {
   const [value, setValue] = useState(
-    getInitialValue(schema, field.input.value)
+    getInitialValue(props.schema, props.field.input.value)
   );
-  const {
-    components: { JSONEditor = TextAreaField },
-  } = useSchemaForm();
   useEffect(() => {
     try {
       const json = JSON.parse(value);
-      const keys = Object.keys(schema.properties || {});
-      const cleanedValue = Object.keys(field.input.value || {}).reduce(
+      const keys = Object.keys(props.schema.properties || {});
+      const cleanedValue = Object.keys(props.field.input.value || {}).reduce(
         (prev, key) =>
           keys.includes(key)
             ? {
                 ...prev,
-                [key]: field.input.value[key],
+                [key]: props.field.input.value[key],
               }
             : prev,
         {}
       );
-      field.input.onChange({
+      props.field.input.onChange({
         ...cleanedValue,
         ...json,
       });
@@ -80,71 +90,48 @@ export const FreeAdditionalProperties = ({
   }, [value]);
 
   return (
-    <JSONEditor
-      onChange={(value) =>
-        typeof value === 'string'
-          ? setValue(value)
-          : setValue(value.target.value)
-      }
-      value={value}
-    />
+    <FieldContainer
+      {...props}
+      className="pr-form-additional-properties pr-form-additional-properties--free"
+    >
+      {locales.freeAdditionalPropertiesLabel && (
+        <label>{locales.freeAdditionalPropertiesLabel}</label>
+      )}
+      <JSONEditor
+        onChange={(value) =>
+          typeof value === 'string'
+            ? setValue(value)
+            : setValue(value.target.value)
+        }
+        value={value}
+      />
+    </FieldContainer>
   );
 };
 
-export const ManagedAdditionalProperties = ({
-  schema,
-  field,
-  name,
-}: AdditionalPropertiesProps) => {
-  const [value, setValue] = useState<Record<string, any>>(field.input.value);
-  const { locales = {} } = useSchemaForm();
-
-  const lock = useRef(false);
+export const ManagedAdditionalProperties = (
+  props: AdditionalPropertiesProps & { locales: SchemaFormContext['locales'] }
+) => {
+  const [value, setValue] = useState<Record<string, any>>(
+    props.field.input.value
+  );
 
   useEffect(() => {
-    if (lock.current) {
-      lock.current = false;
-      return;
-    }
-    const keys = Object.keys(schema.properties || {});
-    const cleanedValue = Object.keys(field.input.value || {}).reduce(
-      (prev, key) =>
-        keys.includes(key)
-          ? {
-              ...prev,
-              [key]: field.input.value[key],
-            }
-          : prev,
-      {}
-    );
-
-    lock.current = true;
-    field.input.onChange({
-      ...cleanedValue,
-      ...value,
-    });
-  }, [value]);
-
-  useEffect(() => {
-    if (lock.current) {
-      lock.current = false;
-      return;
-    }
     setValue(() => {
-      const keys = Object.keys(schema.properties || {});
-      const cleanedValue = Object.keys(field.input.value || {}).reduce(
+      const keys = Object.keys(props.schema.properties || {});
+      const cleanedValue = Object.keys(props.field.input.value || {}).reduce(
         (prev, key) =>
           keys.includes(key)
             ? prev
             : {
                 ...prev,
-                [key]: field.input.value[key],
+                [key]: props.field.input.value[key],
               },
         {}
       );
       return cleanedValue;
     });
-  }, [field.input.value]);
+  }, [props.field.input.value]);
 
   const addKey = useCallback(() => {
     setValue((value) =>
@@ -152,108 +139,138 @@ export const ManagedAdditionalProperties = ({
         ? value
         : {
             ...value,
-            '': getDefaultValue((schema.additionalProperties as Schema).type),
+            '': getDefaultValue(
+              (props.schema.additionalProperties as Schema).type
+            ),
           }
     );
   }, []);
 
   const updateKey = useCallback(
     (prevKey: string) => (newKey: string) => {
-      setValue((value) =>
-        Object.keys(value).reduce(
-          (prev, key) => ({
-            ...prev,
-            [key === prevKey ? newKey : key]: value[key],
-          }),
-          {}
-        )
+      const newValue = Object.entries(value).reduce(
+        (prev, [key, v]) => ({
+          ...prev,
+          [key === prevKey ? newKey : key]: v,
+        }),
+        {}
       );
+      setValue(newValue);
+      if (!newKey) return;
+      props.field.input.onChange(newValue);
     },
-    []
+    [value, props.field]
   );
 
   const removeKey = useCallback(
     (prevKey: string) => () => {
-      setValue((value) =>
-        Object.keys(value).reduce(
-          (prev, key) =>
+      const newValue = Object.entries(value)
+        .filter(([key]) => key)
+        .reduce(
+          (prev, [key, v]) =>
             key === prevKey
               ? prev
               : {
                   ...prev,
-                  [key]: value[key],
+                  [key]: v,
                 },
           {}
-        )
-      );
+        );
+      setValue(newValue);
+      props.field.input.onChange(newValue);
     },
-    []
+    [value, props.field]
   );
 
   return (
-    <div>
-      {Object.keys(value).map((key, index) => (
-        <div key={index} className="flex flex-1 flex-row items-start">
-          <Input
-            value={key}
-            onChange={({ target: { value } }) => updateKey(key)(value)}
-            label={locales.propertyKey || 'Key'}
-          />
-          <span className="mt-[2rem]"> : </span>
-          <div className="mt-[1rem] flex flex-1">
+    <FieldContainer {...props} className="pr-form-additional-properties">
+      {Object.entries(value).map(([key, value], index) => (
+        <div
+          key={index}
+          className="pr-form-additional-properties__property pr-form-input"
+        >
+          <div className="pr-form-additional-properties__property-key">
+            <label className="pr-form-label">
+              {props.locales.propertyKey || 'Key'}
+            </label>
+            <Input
+              value={key}
+              onChange={({ target: { value } }) => updateKey(key)(value)}
+              disabled={isFilled(value)}
+            />
+          </div>
+          <span className="pr-form-additional-properties__property-separator">
+             : 
+          </span>
+          <div className="pr-form-additional-properties__property-value">
             <Field
               schema={{
-                ...(schema.additionalProperties as Schema),
+                ...(props.schema.additionalProperties as Schema),
                 disabled: key ? undefined : true,
               }}
               label={
-                locales.propertyValue === undefined
+                props.locales.propertyValue === undefined
                   ? 'Value'
-                  : locales.propertyValue
+                  : props.locales.propertyValue
               }
-              name={`${name}.${key}`}
+              name={`${props.name}.${key || EMPTY}`}
             />
           </div>
 
           <Tooltip
             title={
-              (schema.additionalProperties as Schema)?.remove ||
-              locales.removeProperty ||
+              (props.schema.additionalProperties as Schema)?.remove ||
+              props.locales.removeProperty ||
               'Remove'
             }
             placement="left"
           >
-            <Button onClick={removeKey(key)} className="!px-1">
+            <Button
+              onClick={removeKey(key)}
+              className="pr-form-additional-properties__property-delete"
+            >
               <DeleteOutlined />
             </Button>
           </Tooltip>
         </div>
       ))}
       <Button onClick={addKey}>
-        {(schema.additionalProperties as Schema)?.add ||
-          locales.addProperty ||
+        {(props.schema.additionalProperties as Schema)?.add ||
+          props.locales.addProperty ||
           'Add a property'}
       </Button>
-    </div>
+    </FieldContainer>
   );
 };
 
 export const FieldAdditionalProperties = ({ schema, name }: FieldProps) => {
   const field = useField(name);
   const {
+    locales,
     components: {
       FreeAdditionalProperties: Free = FreeAdditionalProperties,
       ManagedAdditionalProperties: Managed = ManagedAdditionalProperties,
+      JSONEditor,
     },
   } = useSchemaForm();
 
   if (!schema || !schema.additionalProperties) return null;
 
   if (schema.additionalProperties === true) {
-    return <Free field={field} schema={schema} name={name} />;
+    return (
+      <Free
+        field={field}
+        schema={schema}
+        name={name}
+        JSONEditor={JSONEditor}
+        locales={locales}
+      />
+    );
   }
 
-  return <Managed schema={schema} field={field} name={name} />;
+  return (
+    <Managed schema={schema} field={field} name={name} locales={locales} />
+  );
 };
 
 export default FieldAdditionalProperties;

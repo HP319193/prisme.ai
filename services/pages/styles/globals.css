@@ -1,3 +1,14 @@
+:root {
+  --light-gray-color: #e5e5e5;
+  --accent-color: #015dff;
+  --error-color: #ff4d4f;
+  /* Schema Form */
+  --pr-form-object-border: 1px solid var(--light-gray-color);
+  --pr-form-accent-color: var(--accent-color);
+  --pr-form-error-color: var(--error-color);
+  --pr-form-margin-size: 1rem;
+}
+
 @font-face {
   font-family: 'Montserrat';
   src: url('/fonts/Montserrat/Montserrat-VariableFont_wght.ttf');

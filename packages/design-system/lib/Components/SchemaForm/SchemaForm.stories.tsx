@@ -5,6 +5,7 @@ import { useField } from 'react-final-form';
 import { FieldProps, Schema } from './types';
 import TextArea from '../TextArea';
 import { action } from '@storybook/addon-actions';
+import '../../../styles/schema-form.css';
 
 export default {
   title: 'Components/SchemaForm',
@@ -12,14 +13,32 @@ export default {
 };
 
 const Template: Story<FormProps> = (props) => {
+  document.body.classList.remove('sb-main-padded');
   const [value, setValue] = useState<{ values: any }>(props.initialValues);
   return (
     <div>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `html {
+            font-size: 13px;
+}
+:root {
+  --pr-form-object-border: 1px solid gray;
+  --pr-form-accent-color: #015dff;
+  --pr-form-error-color: #ff4d4f;
+  --pr-form-margin-size: 1.6rem;
+}
+      `,
+        }}
+      ></style>
       <SchemaForm
         {...props}
         initialValues={value}
         onSubmit={setValue}
         onChange={setValue}
+        locales={{
+          freeAdditionalPropertiesLabel: 'Free additional properties',
+        }}
       />
       <pre>
         <code>{value && JSON.stringify(value, null, '  ')}</code>
@@ -487,19 +506,23 @@ Localized.args = {
       localizedString: {
         type: 'localized:string',
         title: 'Localized string',
+        description: 'Localized string description',
       },
       localizedTextarea: {
         type: 'localized:string',
         title: 'Localized string',
+        description: 'Localized string description',
         'ui:widget': 'textarea',
       },
       localizedNumber: {
         type: 'localized:number',
         title: 'Localized number',
+        description: 'Localized number description',
       },
       localizedBoolean: {
         type: 'localized:boolean',
         title: 'Localized boolean',
+        description: 'Localized boolean description',
       },
     },
   },
@@ -716,7 +739,6 @@ WithDefaultValues.args = {
 
 export const WithAutocompletee = (props: FormProps) => {
   const [value, setValue] = useState<{ values: any }>(props.initialValues);
-
   return (
     <div>
       <SchemaForm
@@ -739,7 +761,18 @@ WithAutocompletee.args = {
         type: 'string',
         'ui:widget': 'autocomplete',
         'ui:options': {
-          autocomplete: 'events',
+          autocomplete: {
+            options: [
+              {
+                label: 'Foo',
+                value: 'foo',
+              },
+              {
+                label: 'Bar',
+                value: 'bar',
+              },
+            ],
+          },
         },
       },
     },
@@ -833,6 +866,217 @@ WithCustomFileUpload.args = {
     uploadFile: async (file) => {
       action('uploading file')(file);
       return 'https://global-uploads.webflow.com/60a514cee679ef23b32cefc0/624702f7a07f6c0407632de8_Prisme.ai%20-%20Logo.svg';
+    },
+  },
+};
+
+const all: Schema['properties'] = {
+  string: {
+    type: 'string',
+    title: 'string',
+    description: 'string',
+    placeholder: 'string',
+    pattern: '^a',
+    errors: {
+      pattern: 'must start with letter a',
+    },
+  },
+  number: {
+    type: 'number',
+    title: 'number',
+    description: 'number',
+    placeholder: 'number',
+    pattern: '^1',
+    errors: {
+      pattern: 'must start with number 1',
+    },
+  },
+  boolean: {
+    type: 'boolean',
+    title: 'boolean',
+    description: 'boolean',
+  },
+  enum: {
+    type: 'string',
+    title: 'enum',
+    description: 'enum',
+    placeholder: 'enum',
+    enum: ['1', '2', '3'],
+    enumNames: ['One', 'Two', 'Three'],
+  },
+  textarea: {
+    type: 'string',
+    title: 'textarea',
+    description: 'textarea',
+    'ui:widget': 'textarea',
+    placeholder: `on
+many
+lines`,
+    pattern: '^a',
+    errors: {
+      pattern: 'must start with letter a',
+    },
+  },
+  upload: {
+    type: 'string',
+    title: 'upload',
+    description: 'upload',
+    'ui:widget': 'upload',
+  },
+  date: {
+    type: 'string',
+    title: 'date',
+    description: 'date',
+    'ui:widget': 'date',
+  },
+  color: {
+    type: 'string',
+    title: 'color',
+    description: 'color',
+    'ui:widget': 'color',
+  },
+  radio: {
+    type: 'string',
+    title: 'radio',
+    description: 'radio',
+    'ui:widget': 'radio',
+    enum: ['1', '2', '3'],
+    enumNames: ['One', 'Two', 'Three'],
+  },
+  autocomplete: {
+    type: 'string',
+    title: 'autocomplete',
+    description: 'autocomplete',
+    pattern: '^.{2}',
+    errors: {
+      pattern: 'must have at least two character',
+    },
+    'ui:widget': 'autocomplete',
+    'ui:options': {
+      autocomplete: {
+        options: [
+          {
+            label: 'One (1)',
+            value: 'One',
+          },
+          {
+            label: 'Two (2)',
+            value: 'Two',
+          },
+          {
+            label: 'Three (3)',
+            value: 'Three',
+          },
+        ],
+      },
+    },
+  },
+  any: {
+    title: 'any',
+    description: 'any',
+  },
+};
+export const WithStyles = Template.bind({});
+WithStyles.args = {
+  schema: {
+    type: 'object',
+    properties: {
+      ...all,
+      first: {
+        type: 'object',
+        properties: {
+          ...all,
+          chose: {
+            title: 'String or date ?',
+            oneOf: [
+              {
+                title: 'as string',
+                value: 'string',
+                properties: {
+                  value: {
+                    type: 'string',
+                    title: 'String value',
+                  },
+                },
+              },
+              {
+                title: 'as date',
+                value: 'date',
+                properties: {
+                  value: {
+                    type: 'string',
+                    'ui:widget': 'date',
+                    title: 'Pick date',
+                  },
+                },
+              },
+            ],
+          },
+        },
+        title: 'first',
+        description: 'first',
+        additionalProperties: true,
+      },
+      second: {
+        type: 'object',
+        properties: all,
+        title: 'second',
+        description: 'second',
+        additionalProperties: {
+          type: 'string',
+          title: 'more properties',
+          description: 'more properties',
+        },
+        oneOf: [
+          {
+            title: 'This',
+            properties: {
+              this: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            title: 'That',
+            properties: {
+              that: {
+                type: 'object',
+                additionalProperties: true,
+              },
+            },
+          },
+        ],
+      },
+      third: {
+        type: 'object',
+        properties: {
+          four: {
+            type: 'object',
+            properties: {
+              fifth: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
+      array: {
+        type: 'array',
+        title: 'string[]',
+        description: 'string[]',
+        items: {
+          type: 'string',
+          title: 'string',
+          description: 'string',
+        },
+      },
+      arrayOfObjects: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: all,
+        },
+      },
     },
   },
 };

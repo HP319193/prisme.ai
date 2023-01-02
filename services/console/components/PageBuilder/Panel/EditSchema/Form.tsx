@@ -1,28 +1,46 @@
 import { FieldProps, Schema, Tooltip } from '@prisme.ai/design-system';
 import { ElementType } from 'react';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useField } from 'react-final-form';
 import { useTranslation } from 'next-i18next';
 import Properties from '../../../SchemaFormBuilder/Properties';
+import { Button } from 'antd';
 
 const SchemaEditor = ({ name }: FieldProps & { Properties: ElementType }) => {
   const field = useField(name);
   const { t } = useTranslation('workspaces');
 
   return (
-    <div className="flex flex-1 mt-4">
-      <div className="ant-input ">
-        <div className="text-gray pl-4 flex flex-1 flex-row justify-between">
-          {t('pages.blocks.form.schema.label')}
-          <div className="text-accent mr-2">
-            <Tooltip
-              title={t('pages.blocks.form.schema.description')}
-              placement="left"
-            >
-              <InfoCircleOutlined />
-            </Tooltip>
-          </div>
-        </div>
+    <div className="pr-form-field">
+      <label className="pr-form-label">
+        {t('pages.blocks.form.schema.label')}
+      </label>
+      <div className="pr-form-description">
+        <Tooltip
+          title={t('pages.blocks.form.schema.description')}
+          placement="left"
+        >
+          <InfoCircleOutlined />
+        </Tooltip>
+      </div>
+      <div className="absolute -top-2 -right-2">
+        <Tooltip title={t('pages.blocks.form.schema.add')} placement="left">
+          <Button
+            onClick={() =>
+              field.input.onChange({
+                ...field.input.value,
+                properties: {
+                  ...field.input.value.properties,
+                  '': { type: 'string' },
+                },
+              })
+            }
+          >
+            <PlusOutlined />
+          </Button>
+        </Tooltip>
+      </div>
+      <div className="pr-form-input">
         <Properties
           value={field.input.value.properties}
           onChange={(v: Record<string, Schema>) =>
@@ -31,7 +49,6 @@ const SchemaEditor = ({ name }: FieldProps & { Properties: ElementType }) => {
               properties: v,
             })
           }
-          addLabel={t('pages.blocks.form.schema.add')}
         />
       </div>
     </div>
@@ -53,10 +70,12 @@ const schema: Schema = {
     submitLabel: {
       type: 'localized:string',
       title: 'pages.blocks.form.submitLabel.label',
+      description: 'pages.blocks.form.submitLabel.description',
     },
     hideSubmit: {
       type: 'boolean',
       title: 'pages.blocks.form.hideSubmit.label',
+      description: 'pages.blocks.form.hideSubmit.description',
     },
     onSubmit: {
       type: 'string',

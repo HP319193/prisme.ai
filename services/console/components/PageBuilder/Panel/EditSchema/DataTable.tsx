@@ -1,4 +1,5 @@
 import { Schema } from '@prisme.ai/design-system';
+import eventOrLink from './eventOrLink';
 
 const schema = {
   type: 'object',
@@ -16,9 +17,15 @@ const schema = {
         type: 'object',
         additionalProperties: {
           type: 'string',
+          title: 'prout',
+          add: 'pages.blocks.datatable.settings.data.items.properties.add',
+          remove:
+            'pages.blocks.datatable.settings.data.items.properties.remove',
         },
         title: 'pages.blocks.datatable.settings.data.items.label',
         description: 'pages.blocks.datatable.settings.data.items.description',
+        add: 'pages.blocks.datatable.settings.data.items.add',
+        remove: 'pages.blocks.datatable.settings.data.items.remove',
       },
     },
     columns: {
@@ -64,88 +71,7 @@ const schema = {
             description:
               'pages.blocks.datatable.settings.columns.items.format.description',
           },
-          actions: {
-            type: 'array',
-            title:
-              'pages.blocks.datatable.settings.columns.items.actions.label',
-            description:
-              'pages.blocks.datatable.settings.columns.items.actions.description',
-            items: {
-              type: 'object',
-              title:
-                'pages.blocks.datatable.settings.columns.items.actions.items.label',
-              description:
-                'pages.blocks.datatable.settings.columns.items.actions.items.description',
-              add:
-                'pages.blocks.datatable.settings.columns.items.actions.items.add',
-              remove:
-                'pages.blocks.datatable.settings.columns.items.actions.items.remove',
-              properties: {
-                label: {
-                  type: 'localized:string',
-                  title:
-                    'pages.blocks.datatable.settings.columns.items.actions.items._label.label',
-                  description:
-                    'pages.blocks.datatable.settings.columns.items.actions.items._label.description',
-                },
-              },
-              oneOf: [
-                {
-                  title:
-                    'pages.blocks.datatable.settings.columns.items.actions.items.event.label',
-                  description:
-                    'pages.blocks.datatable.settings.columns.items.actions.items.event.description',
-                  properties: {
-                    event: {
-                      type: 'string',
-                      title:
-                        'pages.blocks.datatable.settings.columns.items.actions.items.event.label',
-                      description:
-                        'pages.blocks.datatable.settings.columns.items.actions.items.event.description',
-                    },
-                    payload: {
-                      type: 'string',
-                      title:
-                        'pages.blocks.datatable.settings.columns.items.actions.items.payload.label',
-                      description:
-                        'pages.blocks.datatable.settings.columns.items.actions.items.payload.description',
-                    },
-                  },
-                },
-                {
-                  title:
-                    'pages.blocks.datatable.settings.columns.items.actions.items.url.label',
-                  description:
-                    'pages.blocks.datatable.settings.columns.items.actions.items.url.description',
-                  properties: {
-                    url: {
-                      type: 'string',
-                      title:
-                        'pages.blocks.datatable.settings.columns.items.actions.items.url.label',
-                      description:
-                        'pages.blocks.datatable.settings.columns.items.actions.items.url.description',
-                    },
-                  },
-                },
-              ],
-              'ui:options': {
-                oneOf: {
-                  options: [
-                    {
-                      index: 0,
-                      label:
-                        'pages.blocks.datatable.settings.columns.items.actions.items.event.label',
-                    },
-                    {
-                      index: 1,
-                      label:
-                        'pages.blocks.datatable.settings.columns.items.actions.items.url.label',
-                    },
-                  ],
-                },
-              },
-            },
-          },
+          actions: eventOrLink,
           onEdit: {
             type: 'string',
             title: 'pages.blocks.datatable.settings.columns.items.onEdit.label',

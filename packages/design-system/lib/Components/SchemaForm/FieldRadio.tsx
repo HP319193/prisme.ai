@@ -2,8 +2,9 @@ import { Radio } from 'antd';
 import { ReactNode } from 'react';
 import { FieldInputProps, useField } from 'react-final-form';
 import { isSelectGroup, SelectProps } from '../Select';
-import Description from './Description';
+import FieldContainer from './FieldContainer';
 import { useSelectOptions } from './FieldSelect';
+import InfoBubble from './InfoBubble';
 import { FieldProps } from './types';
 import { getLabel } from './utils';
 
@@ -17,13 +18,17 @@ const RadioGroup = ({
   onChange: FieldInputProps<any, HTMLElement>['onChange'];
 }) => {
   return (
-    <div>
-      <label className="flex mb-[0.625rem]">{label}</label>
-      <Radio.Group onChange={onChange}>
-        {options?.map((option) => {
+    <>
+      <label className="pr-form-radio__label pr-form-label">{label}</label>
+      <Radio.Group
+        onChange={onChange}
+        className="pr-form-radio__input pr-form-input"
+      >
+        {options?.map((option, k) => {
           if (isSelectGroup(option)) {
             return (
               <RadioGroup
+                key={k}
                 options={option.options}
                 label={option.label}
                 onChange={onChange}
@@ -31,34 +36,35 @@ const RadioGroup = ({
             );
           }
           return (
-            <Radio key={`${label}`} value={option.value}>
+            <Radio key={k} value={option.value}>
               {option.label}
             </Radio>
           );
         })}
       </Radio.Group>
-    </div>
+    </>
   );
 };
 
-export const FieldRadio = ({
-  schema,
-  label,
-  name,
-  options,
-}: FieldProps & { options?: SelectProps['selectOptions'] }) => {
-  const field = useField(name);
-  const selectOptions = useSelectOptions(schema, options);
+export const FieldRadio = (
+  props: FieldProps & { options?: SelectProps['selectOptions'] }
+) => {
+  const field = useField(props.name);
+  const selectOptions = useSelectOptions(props.schema, props.options);
   if (!selectOptions) return null;
 
   return (
-    <Description text={schema.description}>
+    <FieldContainer {...props} className="pr-form-radio">
       <RadioGroup
-        label={label || schema.title || getLabel(name)}
+        label={props.label || props.schema.title || getLabel(props.name)}
         options={selectOptions}
         onChange={field.input.onChange}
       />
-    </Description>
+      <InfoBubble
+        className="pr-form-radio__description"
+        text={props.schema.description}
+      />
+    </FieldContainer>
   );
 };
 

@@ -107,7 +107,7 @@ export const InstructionForm: FC<InstructionFormProps> = ({
   }, []);
 
   return (
-    <div className="flex flex-1 h-full flex-col p-4">
+    <div className="flex flex-1 h-full flex-col">
       {!instruction && edit && edit.instruction && (
         <button
           onClick={unsetInstruction}
@@ -117,7 +117,9 @@ export const InstructionForm: FC<InstructionFormProps> = ({
         </button>
       )}
       {edit && !edit.instruction && (
-        <InstructionSelection onSubmit={setInstruction} />
+        <div className="flex flex-1 flex-col m-4">
+          <InstructionSelection onSubmit={setInstruction} />
+        </div>
       )}
       {edit && edit.instruction && (
         <InstructionValue

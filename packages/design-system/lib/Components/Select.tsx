@@ -20,42 +20,38 @@ export const isSelectGroup = (
 
 export interface SelectProps extends AntdSelectProps {
   selectOptions: SelectOption[] | SelectGroup[];
-  label?: string;
   overrideContainerClassName?: string;
 }
 
 const Select = ({
   selectOptions,
-  label,
   overrideContainerClassName,
   ...otherProps
 }: SelectProps) => (
-  <WithLabel label={label} overrideClassName={overrideContainerClassName}>
-    <AntdSelect
-      {...otherProps}
-      className={`flex ${otherProps.className || ''}`}
-      dropdownMatchSelectWidth={false}
-    >
-      {selectOptions.map((item, index) => {
-        if (isSelectGroup(item)) {
-          return (
-            <OptGroup key={index} label={item.label}>
-              {item.options.map((item, k) => (
-                <Option key={`${index}-${k}`} value={item.value}>
-                  {item.label}
-                </Option>
-              ))}
-            </OptGroup>
-          );
-        }
+  <AntdSelect
+    {...otherProps}
+    className={`flex ${otherProps.className || ''}`}
+    dropdownMatchSelectWidth={false}
+  >
+    {selectOptions.map((item, index) => {
+      if (isSelectGroup(item)) {
         return (
-          <Option key={index} value={item.value}>
-            {item.label}
-          </Option>
+          <OptGroup key={index} label={item.label}>
+            {item.options.map((item, k) => (
+              <Option key={`${index}-${k}`} value={item.value}>
+                {item.label}
+              </Option>
+            ))}
+          </OptGroup>
         );
-      })}
-    </AntdSelect>
-  </WithLabel>
+      }
+      return (
+        <Option key={index} value={item.value}>
+          {item.label}
+        </Option>
+      );
+    })}
+  </AntdSelect>
 );
 
 export default Select;

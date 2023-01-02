@@ -137,10 +137,6 @@ export function SchemaForm({ children = null }) {
   return children;
 }
 
-export function SchemaFormDescription({ children = null }) {
-  return children;
-}
-
 export function Tree({ children = null }) {
   return children;
 }

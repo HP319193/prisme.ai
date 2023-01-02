@@ -103,19 +103,17 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
       items.push({
         label: <div className="px-2">{t('pages.blocks.settings.schema')}</div>,
         key: 'config',
-        children: (
-          <div className="m-4">
-            {schema && (
-              <SchemaForm
-                schema={schema}
-                onChange={debouncedMergeConfig}
-                initialValues={config}
-                buttons={[]}
-                utils={{ extractSelectOptions }}
-              />
-            )}
-            {schema === undefined && <Loading />}
-          </div>
+        children: schema ? (
+          <SchemaForm
+            schema={schema}
+            onChange={debouncedMergeConfig}
+            initialValues={config}
+            buttons={[]}
+            locales={locales}
+            utils={{ extractSelectOptions }}
+          />
+        ) : (
+          <Loading />
         ),
       });
     }
@@ -123,16 +121,14 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
       label: <div className="px-2">{t('pages.blocks.settings.generic')}</div>,
       key: 'advanced',
       children: (
-        <div className="m-4">
-          <SchemaForm
-            schema={commonSchema}
-            onChange={debouncedMergeConfig}
-            initialValues={config}
-            buttons={[]}
-            locales={locales}
-            utils={{ extractSelectOptions }}
-          />
-        </div>
+        <SchemaForm
+          schema={commonSchema}
+          onChange={debouncedMergeConfig}
+          initialValues={config}
+          buttons={[]}
+          locales={locales}
+          utils={{ extractSelectOptions }}
+        />
       ),
     });
     return items;

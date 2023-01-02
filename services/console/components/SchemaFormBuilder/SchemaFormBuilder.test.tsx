@@ -72,9 +72,10 @@ it('should add properties in object', () => {
   });
 
   expect(root.root.findAllByType(Properties).length).toBe(1);
-
   act(() => {
-    root.root.findByType(Properties).findByType(Button).props.onClick();
+    const button = root.root.findByProps({ title: 'schema.properties.add' })
+      .children[0] as renderer.ReactTestInstance;
+    button.props.onClick();
   });
   expect(onChange).toHaveBeenCalledWith({
     type: 'object',

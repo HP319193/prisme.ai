@@ -61,3 +61,9 @@ export function ExceptionOutlined() {
 export function WarningOutlined() {
   return null;
 }
+export function RightOutlined() {
+  return null;
+}
+export function InfoCircleOutlined() {
+  return null;
+}
