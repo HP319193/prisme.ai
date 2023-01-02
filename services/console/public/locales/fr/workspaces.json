@@ -1215,6 +1215,8 @@
   },
   "form": {
     "raw": "Insérer une valeur brute (permet notamment de saisir du texte, et donc des variables interpolées)",
-    "raw_hide": "Respecter le type de donnée exigé"
+    "raw_hide": "Respecter le type de donnée exigé",
+    "html": "Éditer au format HTML",
+    "html_hide": "Revenir en mode d'édition simple"
   }
 }

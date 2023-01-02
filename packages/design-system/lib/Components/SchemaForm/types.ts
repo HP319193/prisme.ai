@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from 'react';
+import { FunctionComponent, ReactNode } from 'react';
 import { DatePickerProps } from '../DatePicker';
 import { TextAreaProps } from '../TextArea';
 
@@ -116,7 +116,7 @@ export interface Schema extends Record<string, any> {
   // Validation errors messages
   errors?: Record<string, string>;
   // Custom widget
-  'ui:widget'?: UIWidgets | ((props: any) => ReactElement);
+  'ui:widget'?: UIWidgets | FunctionComponent<FieldProps>;
   // Options for UI components
   'ui:options'?:
     | UiOptionsGrid

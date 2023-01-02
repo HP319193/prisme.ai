@@ -43,6 +43,7 @@ export interface LocalizedInputProps {
   iconMarginTop?: number | string;
   className?: string;
   initialLang?: string;
+  unmountOnLangChange?: boolean;
 }
 
 const DftInput = forwardRef((props: InputProps, ref: any) => (
@@ -68,10 +69,12 @@ export const LocalizedInput = ({
   deleteTooltip = 'remove language',
   className,
   initialLang = 'en',
+  unmountOnLangChange = false,
 }: LocalizedInputProps) => {
   const [selectedLang, setSelectedLang] = useState(
     isLocalizedTextObject(value) ? getInitialLang(value, initialLang) : ''
   );
+  const [mounted, setMounted] = useState(true);
   const input = useRef<any>(null);
 
   const setValue = useCallback(
@@ -89,11 +92,13 @@ export const LocalizedInput = ({
   );
 
   const addLang = useCallback(
-    (lang: string) => {
+    async (lang: string) => {
+      await setMounted(false);
       setSelectedLang(lang);
       if (typeof value === 'string') {
         setValue(value, lang);
       }
+      setMounted(true);
       input.current && input.current.focus && input.current.focus();
     },
     [value]
@@ -189,14 +194,17 @@ export const LocalizedInput = ({
 
   return (
     <div className={`flex flex-1 flex-row relative ${className}`}>
-      <Component
-        ref={input}
-        value={isLocalizedTextObject(value) ? value[selectedLang] : value}
-        onChange={({ target: { value } }: ChangeEvent<HTMLInputElement>) =>
-          setValue(value, selectedLang)
-        }
-        {...InputProps}
-      />
+      {(!unmountOnLangChange || mounted) && (
+        <Component
+          ref={input}
+          value={isLocalizedTextObject(value) ? value[selectedLang] : value}
+          onChange={(v: ChangeEvent<HTMLInputElement> | string) => {
+            const value = typeof v === 'string' ? v : v.target.value;
+            setValue(value, selectedLang);
+          }}
+          {...InputProps}
+        />
+      )}
       <Tooltip title={setLangTooltip} placement="left">
         <div className="absolute top-2 right-2">
           <CustomSelect
