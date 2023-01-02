@@ -55,7 +55,11 @@ class Automations {
     let counter = 0;
     do {
       slug = generate(++counter);
-    } while (existingAutomations && slug in existingAutomations);
+    } while (
+      existingAutomations &&
+      slug in existingAutomations &&
+      counter < 100
+    );
     return slug;
   }
 
