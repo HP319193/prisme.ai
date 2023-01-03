@@ -144,8 +144,10 @@ export const BlockLoader = ({
   onConfigUpdate,
   onAppConfigUpdate,
   api,
+  language,
   ...props
 }: BlockProviderProps & BlockLoaderProps) => {
+  i18n.changeLanguage(language);
   return (
     <BlockErrorBoundary>
       <I18nextProvider i18n={i18n}>
