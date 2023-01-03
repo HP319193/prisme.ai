@@ -1,6 +1,13 @@
 import './i18n';
-import * as React from 'react';
-import { ReactElement, ReactNode, useState } from 'react';
+import {
+  ReactElement,
+  ReactNode,
+  useState,
+  useEffect,
+  useRef,
+  Component,
+  useCallback,
+} from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import { BlockProvider, BlockProviderProps } from './Provider';
 import { useBlocks } from './Provider/blocksContext';
@@ -9,7 +16,7 @@ import { Schema } from '@prisme.ai/design-system';
 import useExternalModule from './utils/useExternalModule';
 import i18n from './i18n';
 
-class BlockErrorBoundary extends React.Component<{ children: ReactElement }> {
+class BlockErrorBoundary extends Component<{ children: ReactElement }> {
   state = {
     hasError: false,
   };
@@ -71,7 +78,7 @@ export const ReactBlock = ({
     externals,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!onLoad || !module || loading) return;
     onLoad(module);
   }, [onLoad, module, loading]);
@@ -90,7 +97,7 @@ export const IFrameBlock = ({ url, token }: BlockLoaderProps) => {
   const {
     components: { Loading },
   } = useBlocks();
-  const handleLoad = React.useCallback(
+  const handleLoad = useCallback(
     (e: any) => {
       setLoading(false);
       e.target.contentWindow.postMessage(
@@ -123,11 +130,26 @@ export const IFrameBlock = ({ url, token }: BlockLoaderProps) => {
 const getComponentByName = (name: string): BlockComponent | null =>
   (builtinBlocks[name as keyof typeof builtinBlocks] as BlockComponent) || null;
 
+const BuiltinBlock = ({
+  name,
+  onLoad,
+  Component,
+  ...props
+}: BlockLoaderProps & { name: string; Component: BlockComponent }) => {
+  const loaded = useRef(false);
+  useEffect(() => {
+    if (loaded.current || !onLoad) return;
+    loaded.current = true;
+    onLoad(Component);
+  }, []);
+  return Component ? <Component {...props} /> : null;
+};
+
 const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
   if (name) {
     const Component = getComponentByName(name);
     if (Component) {
-      return <Component {...props} />;
+      return <BuiltinBlock Component={Component} name={name} {...props} />;
     }
   }
 
@@ -147,7 +169,10 @@ export const BlockLoader = ({
   language,
   ...props
 }: BlockProviderProps & BlockLoaderProps) => {
-  i18n.changeLanguage(language);
+  useEffect(() => {
+    if (i18n.language === language) return;
+    i18n.changeLanguage(language);
+  }, [language]);
   return (
     <BlockErrorBoundary>
       <I18nextProvider i18n={i18n}>

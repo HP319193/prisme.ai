@@ -6,17 +6,23 @@ import { usePage } from './PageProvider';
 
 export const BlockLoader: TBlockLoader = ({
   name = '',
-  config,
+  config: initialConfig,
   onLoad,
   container,
 }) => {
   const [url, setUrl] = useState('');
+  const [config, setConfig] = useState<typeof initialConfig>();
   const [appConfig, setAppConfig] = useState<any>();
   const { page, events } = usePage();
+  const [loaded, setLoaded] = useState(false);
   const {
     i18n: { language },
   } = useTranslation();
   const lock = useRef(false);
+
+  useEffect(() => {
+    setConfig(initialConfig);
+  }, [initialConfig]);
 
   useEffect(() => {
     if (lock.current || !name) return;
@@ -48,12 +54,69 @@ export const BlockLoader: TBlockLoader = ({
     setUrl(app.blocks[name]);
   }, [name, page]);
 
-  const configInit = (config || {}).onInit;
+  const { onInit, updateOn, automation } = initialConfig || {};
   const onBlockLoad = useCallback(() => {
+    setLoaded(true);
+  }, []);
+
+  const initWithAutomation = useCallback(async () => {
+    if (!page || !page.workspaceId || !loaded) return;
+    try {
+      const newConfig = await api.callAutomation(page.workspaceId, automation);
+      setConfig((prev = {}) => ({ ...prev, ...newConfig }));
+    } catch {}
+  }, [automation, loaded, page]);
+
+  useEffect(() => {
+    if (!loaded || !events) return;
     onLoad && onLoad();
-    if (!events || !configInit) return;
-    events.emit(configInit);
-  }, [events, onLoad, configInit]);
+    // Set listeners
+    let off: Function[] = [];
+    if (updateOn) {
+      off.push(
+        events.on(updateOn, ({ payload: config }) => {
+          setConfig((prev = {}) => ({ ...prev, ...config }));
+        })
+      );
+    }
+
+    if (onInit) {
+      const payload: any = {
+        page: page && page.id,
+        config: initialConfig,
+      };
+      if (window.location.search) {
+        payload.query = Array.from(
+          new URLSearchParams(window.location.search).entries()
+        ).reduce(
+          (prev, [key, value]) => ({
+            ...prev,
+            [key]: value,
+          }),
+          {}
+        );
+      }
+      events.emit(onInit, payload);
+    }
+
+    if (automation) {
+      initWithAutomation();
+    }
+
+    return () => {
+      off.forEach((off) => off());
+    };
+  }, [
+    events,
+    onLoad,
+    updateOn,
+    onInit,
+    page,
+    initialConfig,
+    loaded,
+    automation,
+    initWithAutomation,
+  ]);
 
   const onAppConfigUpdate = useCallback(
     async (newConfig: any) => {
