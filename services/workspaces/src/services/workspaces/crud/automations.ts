@@ -135,7 +135,7 @@ class Automations {
       workspaceId
     );
     const automation = await this.storage.get({ workspaceId, slug });
-    return automation;
+    return { ...automation, slug };
   };
 
   updateAutomation = async (

@@ -808,6 +808,8 @@ components:
                 do:
                   $ref: '#/components/schemas/InstructionList'
                   hidden: true
+                until:
+                  type: number
             - required: ['until', 'do']
               properties:
                 until:
