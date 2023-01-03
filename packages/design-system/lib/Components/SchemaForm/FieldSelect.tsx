@@ -49,6 +49,7 @@ export const FieldSelect = (
       </Label>
       <Select
         selectOptions={selectOptions}
+        value={field.input.value}
         onChange={field.input.onChange}
         id={field.input.name}
         className="pr-form-select__input pr-form-input"
