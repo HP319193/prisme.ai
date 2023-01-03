@@ -35,7 +35,10 @@ class Automations {
     }
   }
 
-  private generateAutomationSlug(localizedName?: Prismeai.LocalizedText) {
+  private generateAutomationSlug(
+    localizedName?: Prismeai.LocalizedText,
+    existingAutomations?: Prismeai.DSULReadOnly['automations']
+  ) {
     if (!localizedName) {
       return hri.random();
     }
@@ -43,10 +46,21 @@ class Automations {
       typeof localizedName === 'object'
         ? localizedName[Object.keys(localizedName)[0]]
         : (localizedName as string);
-    return removeDiacritics(name)
-      .replace(/[^a-zA-Z0-9 _-]+/g, '')
-      .trim()
-      .slice(0, 20);
+    const generate = (counter?: number) =>
+      removeDiacritics(counter ? `${name}-${counter}` : name)
+        .replace(/[^a-zA-Z0-9 _-]+/g, '')
+        .trim()
+        .slice(0, 20);
+    let slug = generate();
+    let counter = 0;
+    do {
+      slug = generate(++counter);
+    } while (
+      existingAutomations &&
+      slug in existingAutomations &&
+      counter < 100
+    );
+    return slug;
   }
 
   async getProcessedEvents(
@@ -74,8 +88,19 @@ class Automations {
       SubjectType.Workspace,
       workspaceId
     );
+    let existingAutomations: Prismeai.DSULReadOnly['automations'] = {};
+    try {
+      const automationsIndex = await this.storage.folderIndex({
+        dsulType: DSULType.AutomationsIndex,
+        workspaceId,
+      });
+      if (automationsIndex) {
+        existingAutomations = automationsIndex;
+      }
+    } catch {}
     const slug =
-      automation.slug || this.generateAutomationSlug(automation.name);
+      automation.slug ||
+      (await this.generateAutomationSlug(automation.name, existingAutomations));
 
     if (automation.when?.schedules) {
       this.validateSchedules(automation.when?.schedules);
