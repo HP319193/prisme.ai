@@ -291,3 +291,7 @@ button {
 .pr-form-error.pr-form-error--warning .ant-tooltip-arrow-content::before {
   background: var(--warning-color);
 }
+
+.pr-form-additional-properties__property-separator {
+  align-self: inherit !important;
+}
