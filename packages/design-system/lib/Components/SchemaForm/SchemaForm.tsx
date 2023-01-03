@@ -119,7 +119,7 @@ export const SchemaForm = ({
         mutators={{ ...arrayMutators }}
       >
         {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit} className="pr-form">
+          <form onSubmit={handleSubmit} className="flex-grow space-y-5">
             {onChange && (
               <FormSpy subscription={{ values: true }}>
                 {({ values }) => (
@@ -129,7 +129,7 @@ export const SchemaForm = ({
             )}
             <Field schema={schema} name={root} />
             {buttons || (
-              <Button type="submit" className="pr-form-submit">
+              <Button type="submit" className="!p-1">
                 {locales.submit || 'Submit'}
               </Button>
             )}

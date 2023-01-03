@@ -1,12 +1,11 @@
 import { FieldProps, Schema, Tooltip } from '@prisme.ai/design-system';
-import { ElementType } from 'react';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useField } from 'react-final-form';
 import { useTranslation } from 'next-i18next';
 import Properties from '../../../SchemaFormBuilder/Properties';
 import { Button } from 'antd';
 
-const SchemaEditor = ({ name }: FieldProps & { Properties: ElementType }) => {
+const SchemaEditor = ({ name }: FieldProps) => {
   const field = useField(name);
   const { t } = useTranslation('workspaces');
 

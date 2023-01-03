@@ -7,20 +7,23 @@ import DefaultFieldDate from './FieldDate';
 import FieldTextColor from './FieldTextColor';
 import FieldTextTextArea from './FieldTextTextArea';
 import FieldTextUpload from './FieldTextUpload';
-import { FieldProps, UiOptionsTextArea, UiOptionsUpload } from './types';
+import {
+  FieldProps,
+  UiOptionsHTML,
+  UiOptionsTextArea,
+  UiOptionsUpload,
+} from './types';
 import { getError } from './utils';
 import InfoBubble from './InfoBubble';
 import { Label } from './Label';
 import FieldContainer from './FieldContainer';
-import FieldNotImplemented from './FieldNotImplemented';
+import FieldHTML from './FieldHTML';
 
 export const FieldText = ({
   FieldDate = DefaultFieldDate,
-  FieldHTML = FieldNotImplemented,
   ...props
 }: FieldProps & {
   FieldDate: SchemaFormContext['components']['FieldDate'];
-  FieldHTML: SchemaFormContext['components']['FieldHTML'];
 }) => {
   const field = useField(props.name);
   const { 'ui:widget': uiWidget, 'ui:options': uiOptions } = props.schema;
@@ -90,9 +93,9 @@ export const FieldText = ({
 
 const LinkedFieldText = (props: FieldProps) => {
   const {
-    components: { FieldDate, FieldHTML },
+    components: { FieldDate },
   } = useSchemaForm();
-  return <FieldText {...props} FieldDate={FieldDate} FieldHTML={FieldHTML} />;
+  return <FieldText {...props} FieldDate={FieldDate} />;
 };
 
 export default LinkedFieldText;

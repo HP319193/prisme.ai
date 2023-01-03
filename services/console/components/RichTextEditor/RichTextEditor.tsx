@@ -8,7 +8,7 @@ import 'react-quill/dist/quill.snow.css';
 import CodeEditor from '../CodeEditor/lazy';
 import pretty from 'pretty';
 
-interface RichTextEditorProps {
+export interface RichTextEditorProps {
   value: string;
   onChange: (v: string) => void;
   htmlModeOnly?: boolean;
@@ -41,7 +41,7 @@ export const RichTextEditor = ({
     lastHeight.current = ref.current.editor.container.getBoundingClientRect().height;
   }
   return (
-    <div className="flex flex-1 flex-col m-2">
+    <div className="flex flex-1 flex-col">
       {!htmlModeOnly && (
         <div className="flex flex-1 justify-end">
           <Tooltip
