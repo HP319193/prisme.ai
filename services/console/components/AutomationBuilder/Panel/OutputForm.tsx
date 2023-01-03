@@ -27,7 +27,7 @@ export const OutputForm: FC<OutputFormProps> = ({ output, onChange }) => {
   );
 
   return (
-    <div className="flex flex-1 flex-col h-full overflow-x-auto p-4">
+    <div className="flex flex-1 flex-col h-full overflow-x-auto">
       <SchemaForm
         schema={schema}
         onChange={onChange}
