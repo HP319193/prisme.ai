@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import services from '../services';
 import passport from 'passport';
 import {
+  enforceMFA,
   isAuthenticated,
   isInternallyAuthenticated,
 } from '../middlewares/authentication';
@@ -39,9 +40,7 @@ const loginHandler = (strategy: string) =>
           }
 
           req.session.prismeaiSessionId = uuid();
-          if (user.mfa && user.mfa !== 'none') {
-            req.session.missingMFA = true;
-          }
+          req.session.mfaValidated = false;
           const expires = new Date(
             Date.now() + syscfg.SESSION_COOKIES_MAX_AGE * 1000
           ).toISOString();
@@ -171,6 +170,7 @@ async function setupUserMFAHandler(
   const identity = services.identity(context, req.logger);
 
   const mfa = await identity.setupUserMFA(user!, body);
+  req.session.mfaValidated = true;
   await identity.updateUser({
     mfa: body.method,
     id: user?.id!,
@@ -187,7 +187,7 @@ async function mfaHandler(
   const identity = services.identity(context, req.logger);
 
   await identity.validateMFA(user!, body);
-  req.session.missingMFA = false;
+  req.session.mfaValidated = true;
   return res.send({ success: true });
 }
 
@@ -236,7 +236,7 @@ app.post(`/logout`, logoutHandler);
 app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/user/password`, resetPasswordHandler);
 app.post(`/user/validate`, validateAccountHandler);
-app.post(`/user/mfa`, reAuthenticate, setupUserMFAHandler);
+app.post(`/user/mfa`, reAuthenticate, enforceMFA, setupUserMFAHandler);
 
 // Internal routes
 app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);
