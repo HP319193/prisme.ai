@@ -14,9 +14,7 @@ export interface RichTextEditorProps {
 export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   const { t } = useTranslation('workspaces');
   const [displayRaw, setDisplayRaw] = useState(!isWysiwygSupported(value));
-  console.log(value, displayRaw, isWysiwygSupported(value));
-  const ref = useRef<ReactQuill>(null);
-  const lastHeight = useRef(0);
+
   const toggle = useCallback(() => {
     setDisplayRaw(!displayRaw);
     if (displayRaw) {
@@ -26,10 +24,6 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     }
   }, [displayRaw, onChange, value]);
 
-  if (ref.current) {
-    // @ts-ignore
-    lastHeight.current = ref.current.editor.container.getBoundingClientRect().height;
-  }
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex flex-1 justify-end">
@@ -48,14 +42,11 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
         </Tooltip>
       </div>
       {displayRaw ? (
-        <div
-          className="flex flex-1 rounded-[.3rem]"
-          //style={{ height: `${lastHeight.current}px` }}
-        >
+        <div className="flex flex-1 rounded-[.3rem]">
           <CodeEditorInline mode="html" value={value} onChange={onChange} />
         </div>
       ) : (
-        <Quill ref={ref} theme="snow" value={value} onChange={onChange} />
+        <Quill theme="snow" value={value} onChange={onChange} />
       )}
     </div>
   );
