@@ -209,3 +209,46 @@ body .ant-modal-confirm-title {
   font-size: 1.4rem;
   padding: 0;
 }
+
+.pr-form-error.pr-form-error--warning .ant-tooltip-inner,
+.pr-form-error.pr-form-error--warning .ant-tooltip-arrow-content::before {
+  background: var(--warning-color);
+}
+
+.pr-form-additional-properties__property-separator {
+  align-self: inherit !important;
+}
+
+.pr-form-object__property .quill {
+  margin: 0 0 4rem 0;
+  width: 100%;
+  font-family: montserrat;
+}
+
+.pr-form-string__input--html .pr-localized-input__selector {
+  top: -0.5rem;
+  right: 0;
+}
+.pr-form-string__input--html .pr-rich-text__html {
+  margin-right: 1.5rem;
+}
+
+.quill .ql-toolbar.ql-snow {
+  border: 0;
+  margin: 0;
+  padding: 0.5rem 0;
+  white-space: nowrap;
+}
+.quill .ql-container.ql-snow {
+  border: 1px solid var(--light-gray-color) !important;
+  border-radius: 0.3rem;
+}
+
+.quill .ql-html::before {
+  content: '';
+  width: 1rem;
+  height: 1rem;
+  background-image: url('/images/code.png');
+  background-size: cover;
+  display: block;
+}

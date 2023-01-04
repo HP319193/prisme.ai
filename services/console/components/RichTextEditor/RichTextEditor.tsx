@@ -1,10 +1,8 @@
-import { CodeOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
 import Quill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import pretty from 'pretty';
 import { isWysiwygSupported } from './isWysiwygSupported';

@@ -1,5 +1,5 @@
 import '../i18n';
-import { Button, Schema, SchemaForm } from '@prisme.ai/design-system';
+import { Button, Schema } from '@prisme.ai/design-system';
 import { useBlock } from '../Provider';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useMemo } from 'react';
@@ -24,6 +24,9 @@ interface FormConfig {
 }
 
 export const Form: BlockComponent = () => {
+  const {
+    components: { SchemaForm },
+  } = useBlocks();
   const { config, events } = useBlock<FormConfig>();
   const { t } = useTranslation();
   const { localize, localizeSchemaForm } = useLocalizedText();
