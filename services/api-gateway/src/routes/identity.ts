@@ -39,6 +39,9 @@ const loginHandler = (strategy: string) =>
           }
 
           req.session.prismeaiSessionId = uuid();
+          if (user.mfa && user.mfa !== 'none') {
+            req.session.missingMFA = true;
+          }
           const expires = new Date(
             Date.now() + syscfg.SESSION_COOKIES_MAX_AGE * 1000
           ).toISOString();
@@ -159,7 +162,7 @@ async function validateAccountHandler(
   return res.send({ success: true });
 }
 
-async function setupUserMFA(
+async function setupUserMFAHandler(
   req: Request<any, any, PrismeaiAPI.SetupMFA.RequestBody>,
   res: Response<PrismeaiAPI.SetupMFA.Responses.$200>,
   next: NextFunction
@@ -173,6 +176,19 @@ async function setupUserMFA(
     id: user?.id!,
   });
   return res.send(mfa);
+}
+
+async function mfaHandler(
+  req: Request<any, any, PrismeaiAPI.MFA.RequestBody>,
+  res: Response<PrismeaiAPI.MFA.Responses.$200>,
+  next: NextFunction
+) {
+  const { user, context, body } = req;
+  const identity = services.identity(context, req.logger);
+
+  await identity.validateMFA(user!, body);
+  req.session.missingMFA = false;
+  return res.send({ success: true });
 }
 
 async function meHandler(
@@ -212,6 +228,7 @@ const app = express.Router();
 
 app.post(`/login`, loginHandler('local'));
 app.post(`/login/anonymous`, loginHandler('anonymous'));
+app.post(`/login/mfa`, isAuthenticated, mfaHandler);
 app.post(`/signup`, signupHandler);
 app.post(`/logout`, logoutHandler);
 
@@ -219,7 +236,7 @@ app.post(`/logout`, logoutHandler);
 app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/user/password`, resetPasswordHandler);
 app.post(`/user/validate`, validateAccountHandler);
-app.post(`/user/mfa`, reAuthenticate, setupUserMFA);
+app.post(`/user/mfa`, reAuthenticate, setupUserMFAHandler);
 
 // Internal routes
 app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);

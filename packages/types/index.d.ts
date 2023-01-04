@@ -2508,7 +2508,6 @@ declare namespace PrismeaiAPI {
         export interface RequestBody {
             email: string;
             password: string;
-            totp?: string;
         }
         namespace Responses {
             export interface $200 {
@@ -3158,6 +3157,17 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export interface $200 {
             }
+        }
+    }
+    namespace MFA {
+        export interface RequestBody {
+            totp: string;
+        }
+        namespace Responses {
+            export interface $200 {
+                success: boolean;
+            }
+            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace PublishApp {

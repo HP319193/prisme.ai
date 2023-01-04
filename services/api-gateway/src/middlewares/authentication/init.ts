@@ -1,7 +1,5 @@
 import { Application } from 'express';
 import passport from 'passport';
-//@ts-ignore
-import { Strategy as TotpStrategy } from 'passport-totp';
 
 import cookieParser from 'cookie-parser';
 import redis from 'redis';
@@ -109,15 +107,4 @@ async function initPassportStrategies(
       }
     })
   );
-
-  // passport.use(
-  //   new TotpStrategy(function (user, done) {
-  //     OTPKeys.findOne({ userId: user.id }, function (err, key) {
-  //       if (err) {
-  //         return done(err);
-  //       }
-  //       return done(null, key.key, key.period);
-  //     });
-  //   })
-  // );
 }

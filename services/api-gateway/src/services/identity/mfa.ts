@@ -1,8 +1,13 @@
-import { totp, authenticator } from 'otplib';
+import { authenticator } from 'otplib';
 import { OTPKey } from '.';
 import { Logger } from '../../logger';
 import { PrismeContext } from '../../middlewares';
 import { StorageDriver } from '../../storage';
+import {
+  AuthenticationError,
+  NotFoundError,
+  RequestValidationError,
+} from '../../types/errors';
 import { buildQRCode } from './utils';
 
 export const setupUserMFA =
@@ -36,7 +41,7 @@ export const setupOTP =
     user: Prismeai.User,
     mfa: PrismeaiAPI.SetupMFA.RequestBody
   ): Promise<OTPValidation> => {
-    const { step: period } = totp.allOptions();
+    const { step: period } = authenticator.allOptions();
     const secret = authenticator.generateSecret(20);
     const otpURL = authenticator.keyuri(user.email!, 'Prisme.ai', secret);
 
@@ -55,4 +60,26 @@ export const setupOTP =
       qrImage: buildQRCode(otpURL),
       secret,
     };
+  };
+
+export const validateMFA =
+  (OTPKeys: StorageDriver<OTPKey>) =>
+  async (user: Prismeai.User, credentials: PrismeaiAPI.MFA.RequestBody) => {
+    if (!user.mfa || user.mfa == 'none') {
+      throw new NotFoundError('No MFA configured');
+    }
+
+    if (user.mfa === 'totp') {
+      const otpKey = (await OTPKeys.find({ userId: user.id }))[0];
+      if (!otpKey) {
+        throw new NotFoundError('No MFA configured');
+      }
+      if (!credentials.totp) {
+        throw new RequestValidationError('Missing totp field');
+      }
+      const isValid = authenticator.check(credentials.totp, otpKey.secret);
+      if (!isValid) {
+        throw new AuthenticationError('Bad TOTP');
+      }
+    }
   };

@@ -2480,15 +2480,13 @@ paths:
                   type: string
                 password:
                   type: string
-                totp:
-                  type: string
 
       responses:
-        '200':
+        '200': &LoginResponse
           description: Success Response
           content:
             application/json:
-              schema: &LOGIN_SCHEMA
+              schema:
                 allOf:
                   - $ref: '#/components/schemas/User'
                   - type: object
@@ -2518,11 +2516,38 @@ paths:
       security:
         - ApiKeyAuth: []
       responses:
+        '200': *LoginResponse
+
+  /v2/login/mfa:
+    post:
+      description: MFA
+      operationId: MFA
+      tags:
+        - API Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - totp
+              properties:
+                totp:
+                  type: string
+
+      responses:
         '200':
           description: Success Response
           content:
             application/json:
-              schema: *LOGIN_SCHEMA
+              schema:
+                type: object
+                required:
+                  - success
+                properties:
+                  success:
+                    type: boolean
+        '401': *AuthenticationError
 
   /v2/me:
     get:

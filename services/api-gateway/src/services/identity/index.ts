@@ -14,7 +14,7 @@ import {
   validateAccount,
   sendAccountValidationLink,
 } from './users';
-import { setupUserMFA } from './mfa';
+import { setupUserMFA, validateMFA } from './mfa';
 import { OTPKey, User } from './types';
 export * from './types';
 
@@ -33,6 +33,7 @@ export default (ctx?: PrismeContext, logger?: Logger) => {
     resetPassword: resetPassword(Users, ctx, logger),
     validateAccount: validateAccount(Users, ctx, logger),
     sendAccountValidationLink: sendAccountValidationLink(Users, ctx, logger),
-    setupUserMFA: setupUserMFA(OTPKeys),
+    setupUserMFA: setupUserMFA(OTPKeys, ctx, logger),
+    validateMFA: validateMFA(OTPKeys),
   };
 };
