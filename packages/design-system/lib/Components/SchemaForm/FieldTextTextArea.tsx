@@ -24,17 +24,18 @@ export const FieldTextTextArea = ({
       >
         {props.label}
       </Label>
-      <Tooltip title={hasError} overlayClassName="pr-form-error">
-        <TextArea
-          {...field.input}
-          {...(options && options.textarea)}
-          placeholder={props.schema.placeholder || ''}
-          id={field.input.name}
-          className="pr-form-text__input pr-form-input"
-          autoSize
-          status={hasError ? 'error' : ''}
-        />
-      </Tooltip>
+      <div className="pr-form-text__input pr-form-input">
+        <Tooltip title={hasError} overlayClassName="pr-form-error">
+          <TextArea
+            {...field.input}
+            {...(options && options.textarea)}
+            placeholder={props.schema.placeholder || ''}
+            id={field.input.name}
+            autoSize
+            status={hasError ? 'error' : ''}
+          />
+        </Tooltip>
+      </div>
       <InfoBubble
         className="pr-form-text__description"
         text={props.schema.description}
