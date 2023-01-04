@@ -1476,6 +1476,28 @@ components:
                   type: string
                   description: 'Expires ISODate'
 
+    FailedMFA:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.mfa.failed
+          enum:
+            - gateway.mfa.failed
+        payload:
+          type: object
+          required:
+            - ip
+            - email
+          properties:
+            ip:
+              type: string
+            email:
+              type: string
+
     SucceededSignup:
       type: object
       required:

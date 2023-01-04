@@ -183,10 +183,17 @@ async function mfaHandler(
   res: Response<PrismeaiAPI.MFA.Responses.$200>,
   next: NextFunction
 ) {
-  const { user, context, body } = req;
+  const { user, context, body, broker } = req;
   const identity = services.identity(context, req.logger);
-
-  await identity.validateMFA(user!, body);
+  try {
+    await identity.validateMFA(user!, body);
+  } catch (err) {
+    broker.send<Prismeai.FailedMFA['payload']>(EventType.FailedMFA, {
+      email: user?.email!,
+      ip: req.context?.http?.ip,
+    });
+    throw err;
+  }
   req.session.mfaValidated = true;
   return res.send({ success: true });
 }

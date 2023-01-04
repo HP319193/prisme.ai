@@ -1445,6 +1445,17 @@ declare namespace Prismeai {
             email: string;
         };
     }
+    export interface FailedMFA {
+        /**
+         * example:
+         * gateway.mfa.failed
+         */
+        type: "gateway.mfa.failed";
+        payload: {
+            ip: string;
+            email: string;
+        };
+    }
     export interface Fetch {
         /**
          * Send an HTTP request
