@@ -1,11 +1,15 @@
 import { useMemo } from 'react';
-import { useSchemaForm } from './context';
+import { SchemaFormContext, useSchemaForm } from './context';
 import { FieldProps } from './types';
 
-export const Enum = (props: FieldProps) => {
-  const {
-    components: { FieldSelect, FieldRadio },
-  } = useSchemaForm();
+export const Enum = ({
+  FieldSelect,
+  FieldRadio,
+  ...props
+}: FieldProps & {
+  FieldSelect: SchemaFormContext['components']['FieldSelect'];
+  FieldRadio: SchemaFormContext['components']['FieldRadio'];
+}) => {
   const options = useMemo(
     () =>
       (props.schema.enum && Array.isArray(props.schema.enum)
@@ -27,4 +31,11 @@ export const Enum = (props: FieldProps) => {
   return <FieldSelect {...props} options={options} />;
 };
 
-export default Enum;
+export const LinkedEnum = (props: FieldProps) => {
+  const {
+    components: { FieldSelect, FieldRadio },
+  } = useSchemaForm();
+  return <Enum {...props} FieldSelect={FieldSelect} FieldRadio={FieldRadio} />;
+};
+
+export default LinkedEnum;

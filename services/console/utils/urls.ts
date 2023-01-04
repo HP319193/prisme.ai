@@ -27,7 +27,7 @@ export const usePageEndpoint = () => {
 
   if (!slug) return '';
 
-  return `https://${slug}${PAGES_HOST}/${language}`;
+  return `${window.location.protocol}//${slug}${PAGES_HOST}/${language}`;
 };
 
 export function getSubmodain(host: string) {

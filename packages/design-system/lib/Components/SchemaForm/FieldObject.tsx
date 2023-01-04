@@ -1,12 +1,14 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useField } from 'react-final-form';
-import { useSchemaForm } from './context';
-import Description from './Description';
 import FieldAdditionalProperties from './FieldAdditionalProperties';
 import LayoutBasic from './LayoutBasic';
 import LayoutGrid from './LayoutGrid';
 import { FieldProps, Schema, UiOptionsGrid } from './types';
+import FieldContainer from './FieldContainer';
+import InfoBubble from './InfoBubble';
+import StretchContent from '../StretchContent';
 import { getLabel } from './utils';
+import { RightOutlined } from '@ant-design/icons';
 
 function isUiOptionsGrid(
   uiOptions: Schema['ui:options']
@@ -16,14 +18,10 @@ function isUiOptionsGrid(
 
 export const FieldObject = (props: FieldProps) => {
   const { additionalProperties, 'ui:options': uiOptions } = props.schema;
-  const { components } = useSchemaForm();
   const field = useField(props.name, { defaultValue: props.schema.default });
+  const [visible, setVisible] = useState(true);
 
   const grid = isUiOptionsGrid(uiOptions) && uiOptions.grid;
-  const noBorder =
-    props.name.split(/\./).length === 1 ||
-    !props.schema.properties ||
-    Object.keys(props.schema.properties).length === 0;
 
   const schemaWithPropertiesWithOneOf = useMemo(() => {
     const { properties } = props.schema;
@@ -76,20 +74,28 @@ export const FieldObject = (props: FieldProps) => {
     field.input.onChange(cleanedValue);
   }, [field.input.value, schemaWithPropertiesWithOneOf]);
 
+  const label = props.label || props.schema.title || getLabel(field.input.name);
   return (
-    <Description
-      text={props.schema.description}
-      className={`space-y-5 ${
-        noBorder
-          ? ''
-          : 'p-2 pl-3 pr-1 border-[1px] border-gray-200 !rounded-[0.3rem] mt-[1rem]'
-      }`}
-    >
-      <div className="flex flex-1 flex-col">
-        <components.FieldContainer {...props}>
-          <label className="flex font-semibold max-w-[80%]">
-            {props.label || props.schema.title || getLabel(props.name)}
-          </label>
+    <FieldContainer {...props} className="pr-form-object">
+      {label && (
+        <button
+          type="button"
+          className={`pr-form-object__label pr-form-label ${
+            visible ? 'pr-form-object__label--visible' : ''
+          }`}
+          onClick={() => setVisible(!visible)}
+        >
+          <RightOutlined className="pr-form-object__label-icon" />
+          <span>{label}</span>
+
+          <InfoBubble
+            className="pr-form-object__description"
+            text={props.schema.description}
+          />
+        </button>
+      )}
+      <StretchContent visible={!label || visible}>
+        <div className="pr-form-object__properties">
           {grid && (
             <LayoutGrid
               grid={grid}
@@ -106,9 +112,9 @@ export const FieldObject = (props: FieldProps) => {
               schema={schemaWithPropertiesWithOneOf}
             />
           )}
-        </components.FieldContainer>
-      </div>
-    </Description>
+        </div>
+      </StretchContent>
+    </FieldContainer>
   );
 };
 

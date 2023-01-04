@@ -24,7 +24,6 @@ export interface PageProps {
 }
 
 export const Page = ({ page }: PageProps) => {
-  const { t } = useTranslation('common');
   const { localize } = useLocalizedText();
   const { blocksConfigs, events } = usePage();
   const containerEl = useRef<HTMLDivElement>(null);

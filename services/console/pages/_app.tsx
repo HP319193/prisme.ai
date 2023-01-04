@@ -13,6 +13,7 @@ import '../styles/globals.css';
 import '../styles/tailwind-console.css';
 import '@prisme.ai/design-system/styles/index.css';
 import '@prisme.ai/design-system/styles/prismeai-theme.css';
+import '@prisme.ai/design-system/styles/schema-form.css';
 import PermissionsProvider from '../components/PermissionsProvider';
 import down from '../icons/down.svg';
 import { WorkspacesUsageProvider } from '../components/WorkspacesUsage';

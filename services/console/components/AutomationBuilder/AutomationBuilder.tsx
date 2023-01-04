@@ -35,10 +35,11 @@ import OutputBlock from './OutputBlock';
 import OutputForm from './Panel/OutputForm';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { Schema } from '@prisme.ai/design-system';
+import removeAccent from 'remove-accents';
 
 type InstructionSchemaTupple = [
   string,
-  Record<string, Schema & { description?: string }>,
+  Record<string, Schema & { description?: string; search?: string }>,
   { icon: string }
 ];
 interface AutomationBuilderProps {
@@ -149,7 +150,16 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
         Object.keys(BUILTIN_INSTRUCTIONS).reduce(
           (prev, name) => ({
             ...prev,
-            [name]: (BUILTIN_INSTRUCTIONS as any)[name].properties[name],
+            [name]: {
+              ...(BUILTIN_INSTRUCTIONS as any)[name].properties[name],
+              search: removeAccent(
+                `${t('automations.instruction.label', {
+                  context: name,
+                })} ${t('automations.instruction.description', {
+                  context: name,
+                })}`
+              ),
+            },
           }),
           {}
         ),
@@ -175,7 +185,12 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
                   type: 'object',
                   properties,
                   description: localize(automations[name].description),
-                  name: automations[name].name,
+                  name: localize(automations[name].name),
+                  search: removeAccent(
+                    `${localize(automations[name].name)} ${localize(
+                      automations[name].description
+                    )}`
+                  ),
                 },
               };
             }, {}),
@@ -187,13 +202,14 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [customInstructions, id, localize, t]
   );
 
-  const hidePanel = useCallback(() => {
+  const hidePanel = useCallback(async () => {
     setBlockEditingOnBack(undefined);
     setPanelIsOpen(false);
     setInstructionEditing(undefined);
     setConditionEditing(undefined);
     setTriggerEditing(undefined);
     setOutputEditing(undefined);
+    return new Promise((resolve) => setTimeout(resolve, 10));
   }, []);
 
   const prevValue = useRef(value);
@@ -205,18 +221,16 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
 
   const editInstructionDetails = useCallback(
     async (instruction: Prismeai.Instruction, onChange: any) => {
-      hidePanel();
-      setTimeout(() => {
-        setInstructionEditing({
-          instruction,
-          onChange,
-          onSubmit: (instruction) => {
-            onChange(instruction);
-            hidePanel();
-          },
-        });
-        setPanelIsOpen(true);
+      await hidePanel();
+      setInstructionEditing({
+        instruction,
+        onChange,
+        onSubmit: (instruction) => {
+          onChange(instruction);
+          hidePanel();
+        },
       });
+      setPanelIsOpen(true);
     },
     [hidePanel]
   );
@@ -289,8 +303,8 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
   );
 
   const editConditionDetails = useCallback(
-    (condition: string, onChange: (condition: string) => void) => {
-      hidePanel();
+    async (condition: string, onChange: (condition: string) => void) => {
+      await hidePanel();
       setConditionEditing({
         condition,
         onChange,
@@ -349,8 +363,8 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [hidePanel, onChange]
   );
 
-  const editTrigger: AutomationBuilderContext['editTrigger'] = useCallback(() => {
-    hidePanel();
+  const editTrigger: AutomationBuilderContext['editTrigger'] = useCallback(async () => {
+    await hidePanel();
     setTriggerEditing({
       trigger: value.when,
       onChange: (when) => {
@@ -363,8 +377,8 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     setPanelIsOpen(true);
   }, [hidePanel, onChange, value]);
 
-  const editOutput: AutomationBuilderContext['editOutput'] = useCallback(() => {
-    hidePanel();
+  const editOutput: AutomationBuilderContext['editOutput'] = useCallback(async () => {
+    await hidePanel();
     setOutputEditing({
       output: value.output,
       onChange: (output) => {
@@ -450,6 +464,27 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
     [instructionsSchemas, localize, t]
   );
 
+  const [panelTitle, setPanelTitle] = useState('');
+  useEffect(() => {
+    if (instructionEditing) {
+      setPanelTitle(t('automations.instruction.panel'));
+      return;
+    }
+    if (conditionEditing) {
+      setPanelTitle(t('automations.condition.panel'));
+      return;
+    }
+    if (triggerEditing) {
+      setPanelTitle(t('automations.trigger.panel'));
+      return;
+    }
+    if (outputEditing) {
+      setPanelTitle(t('automations.output.panel'));
+      return;
+    }
+    setPanelTitle(t('details.title_automations'));
+  }, [conditionEditing, instructionEditing, outputEditing, t, triggerEditing]);
+
   return (
     <automationBuilderContext.Provider
       value={{
@@ -480,7 +515,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
           <Controls />
         </ReactFlow>
         <Panel
-          title={t('details.title_automations')}
+          title={panelTitle}
           visible={panelIsOpen}
           onVisibleChange={hidePanel}
           onBack={blockEditingOnBack}

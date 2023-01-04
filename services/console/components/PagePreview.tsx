@@ -1,6 +1,6 @@
 import { Loading } from '@prisme.ai/design-system';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { generatePageUrl } from '../utils/urls';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { usePageEndpoint } from '../utils/urls';
 import { useWorkspace } from '../providers/Workspace';
 import { usePage } from '../providers/Page';
 
@@ -13,6 +13,7 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
     workspace: { id, slug = id },
   } = useWorkspace();
   const { appInstances } = usePage();
+  const pageEndpoint = usePageEndpoint();
 
   const ref = useRef<HTMLIFrameElement>(null);
   const pageId = useRef(page.id);
@@ -62,7 +63,7 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
     updatePage();
   }, [updatePage]);
 
-  const url = generatePageUrl(slug, page.slug || '');
+  const url = `${pageEndpoint}/${page.slug}`;
   return (
     <div className="flex flex-1 relative">
       <iframe ref={ref} src={url} className="flex flex-1" onLoad={onLoad} />

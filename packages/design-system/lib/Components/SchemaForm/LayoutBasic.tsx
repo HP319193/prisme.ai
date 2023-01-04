@@ -9,11 +9,12 @@ export const LayoutBasic = ({ name, schema }: FieldProps) => {
   return (
     <>
       {Object.keys(properties).map((property) => (
-        <Field
-          key={property}
-          name={`${name}.${property}`}
-          schema={{ disabled: schema.disabled, ...properties[property] }}
-        />
+        <div key={property} className="pr-form-object__property">
+          <Field
+            name={`${name}.${property}`}
+            schema={{ disabled: schema.disabled, ...properties[property] }}
+          />
+        </div>
       ))}
     </>
   );

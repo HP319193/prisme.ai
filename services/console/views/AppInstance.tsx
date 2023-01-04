@@ -274,7 +274,7 @@ export const AppInstance = () => {
           })}
         </title>
       </Head>
-      <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
+      <div className="relative flex flex-1 h-full overflow-y-auto">
         {documentation && documentation.workspaceSlug && documentation.slug && (
           <IFrameLoader
             src={generatePageUrl(

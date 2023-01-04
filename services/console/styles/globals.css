@@ -8,6 +8,13 @@
   --link-color: var(--accent-color);
   --gray-color: #939ca6;
   --light-gray-color: #e5e5e5;
+  --warning-color: orange;
+  --error-color: #ff4d4f;
+  /* Schema Form */
+  --pr-form-object-border: 1px solid var(--light-gray-color);
+  --pr-form-accent-color: var(--accent-color);
+  --pr-form-error-color: var(--error-color);
+  --pr-form-margin-size: 1rem;
 }
 
 @font-face {
@@ -274,4 +281,17 @@ body button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+button {
+  outline: none !important;
+}
+
+.pr-form-error.pr-form-error--warning .ant-tooltip-inner,
+.pr-form-error.pr-form-error--warning .ant-tooltip-arrow-content::before {
+  background: var(--warning-color);
+}
+
+.pr-form-additional-properties__property-separator {
+  align-self: inherit !important;
 }

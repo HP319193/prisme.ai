@@ -193,6 +193,7 @@
     },
     "notFound": "L'Automatisation n'existe pas.",
     "trigger": {
+      "panel": "Édition du déclencheur",
       "events": {
         "title": "Événements",
         "item": "Événement",
@@ -217,6 +218,7 @@
       "save": "Ajouter"
     },
     "instruction": {
+      "panel": "Édition de l'instruction",
       "title_builtin": "Logique",
       "label": "{{context}}",
       "label_emit": "Émet l'événement",
@@ -292,8 +294,14 @@
             "description": "L'évènement ne sera pas proposé à l'autocompletion pour les utilisateurs de votre workspace une fois transformé en tant qu'App."
           },
           "autocomplete": {
-            "label": "Auto-completion (AVANCÉ)",
+            "label": "Auto-completion",
             "description": "Spécifie la façon dont votre évènement sera proposé à l'autocompletion pour les utilisateurs de votre workspace une fois transformé en tant qu'App."
+          },
+          "options": {
+            "persist": {
+              "label": "Persist",
+              "description": "Si cet événement doit persister ou non. La valeur par défaut est true."
+            }
           }
         },
         "wait": {
@@ -431,6 +439,7 @@
       }
     },
     "output": {
+      "panel": "Édition de la sortie",
       "label": "<pre><code>{{output}}</code></pre>",
       "edit": {
         "title": "Retourner la valeur :",
@@ -452,6 +461,7 @@
       "save": "Ajouter"
     },
     "condition": {
+      "panel": "Édition de la condition",
       "edit": {
         "title": "Condition",
         "description": "Condition pour choisir ce chemin",
@@ -480,7 +490,8 @@
     },
     "arguments": {
       "title": "Arguments",
-      "description": "Spécification des paramètres pouvant être passés à votre automatisation quand elle est utilisée en tant qu'instruction d'une autre automatisation. Un formulaire sera généré conformément à la structure que vous allez spécifier ici."
+      "description": "Spécification des paramètres pouvant être passés à votre automatisation quand elle est utilisée en tant qu'instruction d'une autre automatisation. Un formulaire sera généré conformément à la structure que vous allez spécifier ici.",
+      "add": "Ajouter un argument"
     }
   },
   "apps": {
@@ -709,8 +720,15 @@
             "description": "Vous pouvez ajouter des liens vers des adresses web ou des boutons envoyant des événements.",
             "items": {
               "label": "Boutons",
+              "description": "Configuration du Boutons",
+              "add": "Ajouter un Bouton",
+              "remove": "Supprimer le bouton",
+              "type": {
+                "label": "Type d'action"
+              },
               "external": {
                 "label": "Page externe",
+                "description": "Adresse HTTP vers n'importe quelle page web",
                 "value": {
                   "label": "Adresse web",
                   "description": "Indiquez l'adresse web de la page (https://…)."
@@ -718,6 +736,7 @@
               },
               "internal": {
                 "label": "Page de workspace",
+                "description": "Lien vers une Page de Workspace",
                 "value": {
                   "label": "Page",
                   "description": "Choisissez une page de votre Workspace."
@@ -725,6 +744,7 @@
               },
               "inside": {
                 "label": "Défiler vers une section",
+                "description": "Ancre dans cette même page. Vous pouvez définir un nom d'ancre dans la section \"Avancée\" des paramètres de n'importe quel Block.",
                 "value": {
                   "label": "Identifiant du Block",
                   "description": "Choisissez un des blocks de votre page vers lequel faire défiler."
@@ -732,9 +752,14 @@
               },
               "event": {
                 "label": "Déclencher un événement",
+                "description": "L'évènement défini sera déclenché sur cette action. Vous pourrez alors enchainer sur une Automatisation.",
                 "value": {
                   "label": "Événement",
                   "description": "Indiquez le nom de l'événement à déclencher."
+                },
+                "payload": {
+                  "label": "Données",
+                  "description": "Données à envoyer avec l'évènement."
                 }
               },
               "text": {
@@ -747,21 +772,33 @@
       },
       "buttons": {
         "settings": {
-          "text": {
-            "label": "Texte",
-            "description": "Texte du bouton"
-          },
-          "variant": {
-            "label": "Affichage",
-            "description": "Mode d'affichage du bouton"
-          },
-          "tag": {
-            "label": "Etiquette",
-            "description": "Texte a afficher dans une étiquette à droite du bouton"
-          },
-          "unselected": {
-            "label": "Désélectionné",
-            "description": "Affiche le bouton dans un état secondaires, grisé. Utilisé par exemple pour indiquer un onglet inactif"
+          "label": "Boutons",
+          "description": "Vous pouvez ajouter autant de boutons que souhaité.",
+          "items": {
+            "label": "Bouton",
+            "description": "Configuration du bouton",
+            "add": "Ajouter un Bouton",
+            "remove": "Supprimer le Bouton",
+            "text": {
+              "label": "Texte",
+              "description": "Texte du bouton"
+            },
+            "variant": {
+              "label": "Affichage",
+              "description": "Mode d'affichage du bouton",
+              "label_default": "Simple",
+              "label_primary": "Principal",
+              "label_grey": "Monochrome",
+              "label_link": "Lien"
+            },
+            "tag": {
+              "label": "Etiquette",
+              "description": "Texte a afficher dans une étiquette à droite du bouton"
+            },
+            "unselected": {
+              "label": "Désélectionné",
+              "description": "Affiche le bouton dans un état secondaire, grisé. Utilisé par exemple pour indiquer un onglet inactif"
+            }
           }
         }
       },
@@ -864,11 +901,17 @@
       "datatable": {
         "settings": {
           "data": {
-            "label": "Tableau de données à afficher",
+            "label": "Lignes de données",
             "description": "Ce Block attends un tableau d'objets dont la structure est à votre convenance mais identique pour chaque élément du tableau.",
             "items": {
-              "label": "Ligne",
-              "description": "Les clés de l'objet seront les colonnes du tableau."
+              "label": "Ligne de données",
+              "description": "Les clés de l'objet seront les colonnes du tableau.",
+              "add": "Ajouter une ligne de données",
+              "remove": "Supprimer la ligne de données",
+              "properties": {
+                "add": "Ajouter une cellule",
+                "remove": "Supprimer la cellule"
+              }
             }
           },
           "columns": {
@@ -953,10 +996,12 @@
       },
       "form": {
         "submitLabel": {
-          "label": "Texte de validation"
+          "label": "Libellé du bouton de validation",
+          "description": "Modifier le texte du bouton de validation du formulaire"
         },
         "hideSubmit": {
-          "label": "Cacher le bouton de validation"
+          "label": "Cacher le bouton de validation",
+          "description": "Vous pouvez masquer le bouton de validation du formulaire, par exemple si vous préfèrez valider le formulaire à la frappe."
         },
         "onSubmit": {
           "label": "Événement à la validation",
@@ -970,21 +1015,6 @@
           "label": "Spécification du formulaire",
           "description": "Utilisez l'interface de construction de formulaire pour ajouter les champs de votre choix.",
           "add": "Ajouter un champs"
-        }
-      },
-      "development": {
-        "error": "Erreur inconnue",
-        "error_url": "Veuillez choisir une url de module javascript valide",
-        "error_loading": "Impossible de charger votre Block. Veuillez vérifier que votre environnement de développement est bien lancé et que vous avez bien copié la bonne URL.",
-        "settings": {
-          "url": {
-            "label": "URL du Block",
-            "description": "Lancez la commande `npm start`. Une URL sera affichée. Collez là dans ce champs afin de charger votre Block dans la console."
-          },
-          "block": {
-            "label": "Configuration du Block",
-            "description": "La configuration de votre Block. Si rien ne s'affiche, ajouter une propriété statique `schema` à votre composant React."
-          }
         }
       },
       "richtext": {
@@ -1103,7 +1133,9 @@
         "label": "Liste de valeurs spécifiques",
         "description": "Vous pouvez imposer une valeur parmi une sélection spécifique. Un menu déroulant sera alors affiché à l'utilisateur.",
         "add": "Ajouter une valeur",
-        "remove": "Supprimer cette valeur"
+        "remove": "Supprimer cette valeur",
+        "key": "Libellé",
+        "value": "Valeur"
       }
     },
     "types": {
@@ -1128,7 +1160,24 @@
       "name_date": "Date",
       "description_date": "Un calendrier sera affiché. La valeur sera formatté en tant que date.",
       "name_enum": "Liste déroulante",
-      "description_enum": "Vous choisissez la liste des valeurs possibles. Seule une de ces valeurs sera autorisée."
+      "description_enum": "Vous choisissez la liste des valeurs possibles. Seule une de ces valeurs sera autorisée.",
+      "name_radio": "Radio",
+      "description_radio": "Liste de valeurs sous forme de boutons radio",
+      "name_autocomplete": "Autocompletion",
+      "description_autocomplete": "Propose une autocompletion au cours de la frappe",
+      "name_color": "Couleur",
+      "description_color": "Sélecteur de couleur",
+      "name_html": "HTML",
+      "description_html": "Contenu enrichi (HTML)"
+    },
+    "properties": {
+      "label": "Propriétés de l'objet",
+      "description": "Définition des propriétés de l'objet",
+      "add": "Ajouter une propriété"
+    },
+    "items": {
+      "label": "Items",
+      "description": "Définition de chaque élément du tableau"
     }
   },
   "feed": {

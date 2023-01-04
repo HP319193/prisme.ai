@@ -2,23 +2,22 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { FC } from 'react';
 
-interface DescriptionProps {
+interface InfoBubbleProps {
   text?: string;
   className?: string;
 }
 
-export const Description: FC<DescriptionProps> = ({
+export const InfoBubble: FC<InfoBubbleProps> = ({
   children,
+  className = '',
   text,
-  className,
 }) => {
   if (!text) return <>{children}</>;
 
   return (
-    <div className={`relative w-full ${className}`}>
-      {children}
-      <Tooltip title={text} placement="left">
-        <button type="button" className="absolute top-0 right-2 !m-0">
+    <div className={`${className} pr-form-description`}>
+      <Tooltip title={text} placement="right">
+        <button type="button" className="pr-form-description__button">
           <InfoCircleOutlined />
         </button>
       </Tooltip>
@@ -26,4 +25,4 @@ export const Description: FC<DescriptionProps> = ({
   );
 };
 
-export default Description;
+export default InfoBubble;

@@ -65,27 +65,6 @@ export const usePageBlocksConfigs = (
       }
     });
 
-    blocks.forEach(({ config, config: { onInit } = {} }) => {
-      if (onInit) {
-        const payload: any = {
-          page: cachedPage.id,
-          config,
-        };
-        if (window.location.search) {
-          payload.query = Array.from(
-            new URLSearchParams(window.location.search).entries()
-          ).reduce(
-            (prev, [key, value]) => ({
-              ...prev,
-              [key]: value,
-            }),
-            {}
-          );
-        }
-        socket.emit(onInit, payload);
-      }
-    });
-
     return () => {
       off.current && off.current();
     };

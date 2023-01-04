@@ -2,36 +2,23 @@
 
 exports[`should render a single input 1`] = `
 <form
-  className="flex-grow space-y-5"
+  className="pr-form"
   onSubmit={[Function]}
 >
   <div
-    className="flex flex-1 flex-col justify-between "
-  >
-    
-  </div>
+    className="pr-form-field pr-form-text"
+  />
 </form>
 `;
 
 exports[`should render buttons 1`] = `
 <form
-  className="flex-grow space-y-5"
+  className="pr-form"
   onSubmit={[Function]}
 >
   <div
-    className="flex flex-1 flex-col my-2"
-  >
-    <label
-      className="flex"
-    >
-      
-    </label>
-    <textarea
-      className="flex flex-1 w-full outline-none"
-      onChange={[Function]}
-      value=""
-    />
-  </div>
+    className="pr-form-field pr-form-any"
+  />
   <button>
     foo
   </button>
@@ -43,149 +30,172 @@ exports[`should render buttons 1`] = `
 
 exports[`should render empty form 1`] = `
 <form
-  className="flex-grow space-y-5"
+  className="pr-form"
   onSubmit={[Function]}
 >
   <div
-    className="flex flex-1 flex-col my-2"
-  >
-    <label
-      className="flex"
-    >
-      
-    </label>
-    <textarea
-      className="flex flex-1 w-full outline-none"
-      onChange={[Function]}
-      value=""
-    />
-  </div>
+    className="pr-form-field pr-form-any"
+  />
   Submit
 </form>
 `;
 
 exports[`should render no button 1`] = `
 <form
-  className="flex-grow space-y-5"
+  className="pr-form"
   onSubmit={[Function]}
 >
   <div
-    className="flex flex-1 flex-col my-2"
-  >
-    <label
-      className="flex"
-    >
-      
-    </label>
-    <textarea
-      className="flex flex-1 w-full outline-none"
-      onChange={[Function]}
-      value=""
-    />
-  </div>
+    className="pr-form-field pr-form-any"
+  />
 </form>
 `;
 
 exports[`should render single all types 1`] = `
 <form
-  className="flex-grow space-y-5"
+  className="pr-form"
   onSubmit={[Function]}
 >
   <div
-    className="flex flex-1 flex-col"
+    className="pr-form-field pr-form-object"
   >
-    <label
-      className="flex font-semibold max-w-[80%]"
-    >
-      
-    </label>
+    
     <div
-      className="flex flex-1 flex-col justify-between "
+      className="transition-[height] overflow-hidden will-change-contents "
     >
-      <label
-        className="flex mb-[0.625rem]"
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "string",
-          }
-        }
-      />
-    </div>
-    <div
-      className="flex flex-1 flex-col justify-between "
-    >
-      <label
-        className="flex mb-[0.625rem]"
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "number",
-          }
-        }
-      />
-    </div>
-    <div
-      className="relative flex flex-1"
-    >
-      <div
-        className="flex items-center flex-1 !rounded-[0.3rem] h-[2.5rem] basis-[2.5rem] invalid:border-red-500 invalid:text-red-500"
-      >
-        <label
-          className="flex cursor-pointer"
-        >
-          <span
-            className="ml-2"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "boolean",
-              }
-            }
-          />
-        </label>
-      </div>
-    </div>
-    <div
-      className="flex flex-1 flex-col"
-    >
-      <label
-        className="flex mb-5"
-      >
-        Localized
-      </label>
-      <div
-        className="ml-2 flex-1 space-y-5"
-      />
-      <div
-        className="flex w-full justify-end mt-5"
-      >
-        <span
-          className="underline"
-        >
-          Add item
-        </span>
-      </div>
-    </div>
-    <div
-      className="flex flex-1 flex-col"
-    >
-      <label
-        className="flex font-semibold max-w-[80%]"
-      >
-        object
-      </label>
-      <div
-        className="flex flex-1 flex-col justify-between "
-      />
-    </div>
-    <div
-      className="flex flex-1 flex-col"
-    >
-      <label
-        className="flex font-semibold max-w-[80%]"
-      >
-        objectWithAdditionalProperties
-      </label>
       <div>
-        Add a property
+        <div
+          className="pr-form-object__properties"
+        >
+          <div
+            className="pr-form-object__property"
+          >
+            <div
+              className="pr-form-field pr-form-text"
+            >
+              <label
+                className="pr-form-text__label pr-form-label"
+                htmlFor="values.string"
+              >
+                string
+              </label>
+            </div>
+          </div>
+          <div
+            className="pr-form-object__property"
+          >
+            <div
+              className="pr-form-field pr-form-text"
+            >
+              <label
+                className="pr-form-text__label pr-form-label"
+                htmlFor="values.number"
+              >
+                number
+              </label>
+            </div>
+          </div>
+          <div
+            className="pr-form-object__property"
+          >
+            <div
+              className="pr-form-field pr-form-boolean"
+            >
+              <label
+                className="pr-form-boolean__label pr-form-label"
+                htmlFor="values.boolean"
+              >
+                boolean
+              </label>
+            </div>
+          </div>
+          <div
+            className="pr-form-object__property"
+          >
+            <div
+              className="pr-form-field pr-form-array"
+            >
+              <label
+                className="pr-form-array__label pr-form-label"
+                htmlFor="values.array"
+              >
+                Localized
+              </label>
+              <div
+                className="pr-form-array__item "
+              />
+              <div
+                className="pr-form-array__item-add"
+              />
+            </div>
+          </div>
+          <div
+            className="pr-form-object__property"
+          >
+            <div
+              className="pr-form-field pr-form-object"
+            >
+              <button
+                className="pr-form-object__label pr-form-label pr-form-object__label--visible"
+                onClick={[Function]}
+                type="button"
+              >
+                <span>
+                  object
+                </span>
+              </button>
+              <div
+                className="transition-[height] overflow-hidden will-change-contents "
+              >
+                <div>
+                  <div
+                    className="pr-form-object__properties"
+                  >
+                    <div
+                      className="pr-form-field pr-form-additional-properties pr-form-additional-properties--free"
+                    >
+                      <div
+                        className="flex flex-1 flex-col justify-between "
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="pr-form-object__property"
+          >
+            <div
+              className="pr-form-field pr-form-object"
+            >
+              <button
+                className="pr-form-object__label pr-form-label pr-form-object__label--visible"
+                onClick={[Function]}
+                type="button"
+              >
+                <span>
+                  objectWithAdditionalProperties
+                </span>
+              </button>
+              <div
+                className="transition-[height] overflow-hidden will-change-contents "
+              >
+                <div>
+                  <div
+                    className="pr-form-object__properties"
+                  >
+                    <div
+                      className="pr-form-field pr-form-additional-properties"
+                    >
+                      Add a property
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -194,7 +204,7 @@ exports[`should render single all types 1`] = `
 
 exports[`should set custom components 1`] = `
 <form
-  className="flex-grow space-y-5"
+  className="pr-form"
   onSubmit={[Function]}
 >
   <div>
@@ -206,137 +216,148 @@ exports[`should set custom components 1`] = `
 
 exports[`should set locales 1`] = `
 <form
-  className="flex-grow space-y-5"
+  className="pr-form"
   onSubmit={[Function]}
 >
   <div
-    className="flex flex-1 flex-col justify-between "
-  >
-    
-  </div>
+    className="pr-form-field pr-form-text"
+  />
   SUBMIT
 </form>
 `;
 
 exports[`should use ui:widgets 1`] = `
 <form
-  className="flex-grow space-y-5"
+  className="pr-form"
   onSubmit={[Function]}
 >
   <div
-    className="flex flex-1 flex-col"
+    className="pr-form-field pr-form-object"
   >
-    <label
-      className="flex font-semibold max-w-[80%]"
-    >
-      
-    </label>
+    
     <div
-      className="flex flex-1 flex-col"
+      className="transition-[height] overflow-hidden will-change-contents "
     >
-      <label
-        className="flex mb-5"
-      >
-        array
-      </label>
-      <div
-        className="flex flex-row flex-wrap"
-      />
-      <div
-        className="flex w-full justify-end mt-5"
-      >
-        <span
-          className="underline"
-        >
-          Add item
-        </span>
-      </div>
-    </div>
-    <div
-      className="flex flex-1 flex-col justify-between "
-    >
-      <label
-        className="flex mb-[0.625rem]"
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "upload",
-          }
-        }
-      />
-      <div
-        className="ant-input"
-      >
+      <div>
         <div
-          className="relative p-2 "
+          className="pr-form-object__properties"
         >
           <div
-            className="flex flex-row border-4 border-dashed border-gray-200 !rounded-[0.3rem] min-h-[50px] p-2 items-center overflow-hidden"
+            className="pr-form-object__property"
           >
             <div
-              className="mr-2"
-            />
-            Choose file
+              className="pr-form-field pr-form-array"
+            >
+              <label
+                className="pr-form-array__label pr-form-label"
+                htmlFor="values.array"
+              >
+                array
+              </label>
+              <div
+                className="pr-form-array__item pr-form-array__item--as-row"
+              />
+              <div
+                className="pr-form-array__item-add"
+              />
+            </div>
           </div>
-          <input
-            accept="image/jpeg"
-            className="absolute top-0 left-0 right-0 bottom-0 opacity-0 cursor-pointer"
-            multiple={false}
-            onChange={[Function]}
-            type="file"
-          />
-          
+          <div
+            className="pr-form-object__property"
+          >
+            <div
+              className="pr-form-field pr-form-upload"
+            >
+              <label
+                className="pr-form-upload__label pr-form-label"
+                htmlFor="values.upload"
+              >
+                upload
+              </label>
+              <div
+                className="pr-form-upload__input pr-form-input"
+              >
+                <div
+                  className="pr-form-upload__placeholder"
+                >
+                  <div
+                    className="pr-form-upload__preview"
+                  />
+                  Choose file
+                </div>
+                <input
+                  accept="image/jpeg"
+                  multiple={false}
+                  onChange={[Function]}
+                  type="file"
+                />
+                
+              </div>
+            </div>
+          </div>
+          <div
+            className="pr-form-object__property"
+          >
+            <div
+              className="pr-form-field pr-form-text pr-form-text--textarea"
+            >
+              <label
+                className="pr-form-text__label pr-form-label"
+                htmlFor="values.textarea"
+              >
+                textarea
+              </label>
+            </div>
+          </div>
+          <div
+            className="pr-form-object__property"
+          >
+            <div
+              className="pr-form-field pr-form-select"
+            >
+              <label
+                className="pr-form-select__label pr-form-label"
+                htmlFor="values.select"
+              >
+                select
+              </label>
+              Foo
+              Bar
+            </div>
+          </div>
+          <div
+            className="pr-form-object__property"
+          >
+            <div
+              className="pr-form-field pr-form-text"
+            >
+              <label
+                className="pr-form-text__label pr-form-label"
+                htmlFor="values.radio"
+              >
+                radio
+              </label>
+            </div>
+          </div>
+          <div
+            className="pr-form-object__property"
+          >
+            <div
+              className="pr-form-field pr-form-date"
+            >
+              <label
+                className="pr-form-date__label pr-form-label"
+                htmlFor="values.date"
+              >
+                date
+              </label>
+              <div
+                className="pr-form-date__input pr-form-input"
+              />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div
-      className="flex flex-1 flex-col justify-between "
-    >
-      <label
-        className="flex mb-[0.625rem]"
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "textarea",
-          }
-        }
-      />
-    </div>
-    <div
-      className="flex flex-1 flex-col justify-between "
-    >
-      <label
-        className="flex mb-[0.625rem]"
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "select",
-          }
-        }
-      />
-      Foo
-      Bar
-    </div>
-    <div
-      className="flex flex-1 flex-col justify-between "
-    >
-      <label
-        className="flex mb-[0.625rem]"
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "radio",
-          }
-        }
-      />
-    </div>
-    <div
-      className="flex flex-1 flex-col justify-between flex-1"
-    >
-      <label
-        className="flex mb-[0.625rem]"
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "date",
-          }
-        }
-      />
     </div>
   </div>
   Submit

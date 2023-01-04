@@ -1,14 +1,9 @@
 import { useField } from 'react-final-form';
 import { CodeEditor } from '../../components/CodeEditor/lazy';
-import {
-  Collapse,
-  FieldProps,
-  SchemaFormDescription,
-  Tooltip,
-} from '@prisme.ai/design-system';
+import { Collapse, FieldProps, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { defaultStyles } from './defaultStyles';
 
 export const CSSEditor = ({
@@ -52,11 +47,21 @@ export const CSSEditor = ({
     () => [
       {
         label: (
-          <SchemaFormDescription text={t('pages.details.styles.description')}>
+          <div>
             <div className="flex w-[95%] justify-between items-center">
-              <label className="font-normal cursor-pointer">
-                {t('pages.details.styles.label')}
-              </label>
+              <div>
+                <label className="font-bold">
+                  {t('pages.details.styles.label')}
+                </label>
+                <Tooltip
+                  title={t('pages.details.styles.description')}
+                  placement="right"
+                >
+                  <button type="button" className="ml-2">
+                    <InfoCircleOutlined />
+                  </button>
+                </Tooltip>
+              </div>
               <Tooltip title={t('pages.details.styles.reset.description')}>
                 <button
                   type="button"
@@ -70,7 +75,7 @@ export const CSSEditor = ({
                 </button>
               </Tooltip>
             </div>
-          </SchemaFormDescription>
+          </div>
         ),
         content: (
           <div className="relative flex h-80 mt-0 rounded-b overflow-hidden">

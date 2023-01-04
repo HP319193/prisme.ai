@@ -1829,6 +1829,7 @@ declare namespace Prismeai {
         repeat: /* One of "on" or "until" is required */ {
             on: string;
             do: InstructionList;
+            until?: number;
         } | {
             until: number;
             do: InstructionList;

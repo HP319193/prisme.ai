@@ -135,4 +135,5 @@ export interface FieldProps {
   schema: Schema;
   name: string;
   label?: string;
+  className?: string;
 }

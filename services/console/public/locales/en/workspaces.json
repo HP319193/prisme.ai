@@ -91,13 +91,15 @@
       "create": {
         "label": "Create a version",
         "description": "Create a new version to which you can return at any time even after saving changes to your Workspace.",
-        "name": "Describe your version if you wish"
+        "name": "Describe your version if you wish",
+        "success": "New version created. You will be able to find it in the Activity of your Workspace."
       },
       "rollback": {
         "label": "Rollback to this version",
         "description": "Rollback to this version. Please note that the current state of your Workspace will not be kept.",
         "confirm": "Please note that the current state of your Workspace will be lost if you have not saved a version.",
-        "confirm_ok": "Rollback to this version"
+        "confirm_ok": "Rollback to this version",
+        "success": "Back to the previous version with success."
       }
     }
   },
@@ -146,7 +148,12 @@
       "name": "Field",
       "value": "Value"
     },
-    "more": "Load older events"
+    "more": "Load older events",
+    "autocomplete": {
+      "label": "{{workspace}}",
+      "label_pages": "Pages",
+      "label_imports": "{{app}}"
+    }
   },
   "automations": {
     "link": "Automations",
@@ -186,6 +193,7 @@
     },
     "notFound": "Automation not found.",
     "trigger": {
+      "panel": "Edit trigger",
       "events": {
         "title": "Events",
         "item": "Event",
@@ -210,6 +218,7 @@
       "save": "Save"
     },
     "instruction": {
+      "panel": "Edit instruction",
       "title_builtin": "Logical",
       "label": "{{context}}",
       "label_emit": "Emit event",
@@ -285,8 +294,14 @@
             "description": "The event will not be autocomplete for users of your workspace once it is transformed into an App."
           },
           "autocomplete": {
-            "label": "Autocompletion (ADVANCED)",
+            "label": "Autocompletion",
             "description": "Specifies how your event will be offered to autocomplete for users of your workspace once transformed into an App."
+          },
+          "options": {
+            "persist": {
+              "label": "Persist",
+              "description": "Whether to persist this event or not. Defaults to true"
+            }
           }
         },
         "wait": {
@@ -379,8 +394,8 @@
             "description": "The body accompanying the request. Can be of any type."
           },
           "emitErrors": {
-            "label": "Émettre un évènement lors des erreurs",
-            "description": "Si le code d'état de la réponse HTTP est 4xx ou 5xx, émet un événement runtime.fetch.failed par défaut."
+            "label": "Emit event when errors occur",
+            "description": "If the status code of the HTTP response is 4xx or 5xx, emits a runtime.fetch.failed event by default."
           },
           "multipart": {
             "label": "multipart/form-data",
@@ -424,6 +439,7 @@
       }
     },
     "output": {
+      "panel": "Edit output",
       "label": "<pre><code>{{output}}</code></pre>",
       "edit": {
         "title": "Return value:",
@@ -445,6 +461,7 @@
       "save": "Add"
     },
     "condition": {
+      "panel": "Edit condition",
       "edit": {
         "title": "Condition",
         "description": "Condition to choose this path",
@@ -473,7 +490,8 @@
     },
     "arguments": {
       "title": "Arguments",
-      "description": "Specification of the parameters that can be passed to your automation when it is used as a statement of another automation. A form will be generated according to the structure you specify here."
+      "description": "Specification of the parameters that can be passed to your automation when it is used as a statement of another automation. A form will be generated according to the structure you specify here.",
+      "add": "Add an argument"
     }
   },
   "apps": {
@@ -702,8 +720,15 @@
             "description": "You can add links to web addresses or buttons sending events.",
             "items": {
               "label": "Buttons",
+              "description": "Button configuration",
+              "add": "Add a button",
+              "remove": "Remove button",
+              "type": {
+                "label": "Action type"
+              },
               "external": {
                 "label": "External page",
+                "description": "HTTP address to any web page",
                 "value": {
                   "label": "Web address",
                   "description": "Indicate the web address of the page (https://...)."
@@ -711,6 +736,7 @@
               },
               "internal": {
                 "label": "Workspace's page",
+                "description": "Link to a Workspace Page",
                 "value": {
                   "label": "Page",
                   "description": "Choose a page in your Workspace."
@@ -718,6 +744,7 @@
               },
               "inside": {
                 "label": "Scroll to a section",
+                "description": "Anchor in this same page. You can define an anchor name in the \"Advanced\" section of any Block's settings.",
                 "value": {
                   "label": "Block ID",
                   "description": "Choose one of the blocks on your page to scroll to."
@@ -725,9 +752,14 @@
               },
               "event": {
                 "label": "Trigger an event",
+                "description": "The defined event will be triggered on this action. You can then proceed to an Automation.",
                 "value": {
                   "label": "Event",
                   "description": "Specify the name of the event to be triggered."
+                },
+                "payload": {
+                  "label": "Payload",
+                  "description": "Payload sent with event."
                 }
               },
               "text": {
@@ -740,21 +772,33 @@
       },
       "buttons": {
         "settings": {
-          "text": {
-            "label": "Text",
-            "description": "Button text"
-          },
-          "variant": {
-            "label": "Display",
-            "description": "Button's display mode"
-          },
-          "tag": {
-            "label": "Tag",
-            "description": "Tag displayed on the right of the button"
-          },
-          "unselected": {
-            "label": "Unselected",
-            "description": "Display the button in an 'unselected' mode, greyed out. Usefull to show an inactive tab for example."
+          "label": "Buttons",
+          "description": "You can add as many buttons as you want.",
+          "items": {
+            "label": "Button",
+            "description": "Button configuration",
+            "add": "Add a Button",
+            "remove": "Remove Button",
+            "text": {
+              "label": "Text",
+              "description": "Button text"
+            },
+            "variant": {
+              "label": "Display",
+              "description": "Button display mode",
+              "label_default": "Simple",
+              "label_primary": "Primary",
+              "label_grey": "Monochrome",
+              "label_link": "Link"
+            },
+            "tag": {
+              "label": "Tag",
+              "description": "Text to be displayed in a label on the right of the button"
+            },
+            "unselected": {
+              "label": "Unselected",
+              "description": "Displays the button in a secondary, grayed out state. Used for example to indicate an inactive tab"
+            }
           }
         }
       },
@@ -861,7 +905,13 @@
             "description": "This block waits for an array of objects whose structure is at your convenience but identical for each element of the array.",
             "items": {
               "label": "Line",
-              "description": "The keys of the object will be the columns of the table."
+              "description": "The keys of the object will be the columns of the table.",
+              "add": "Add a line of data",
+              "remove": "Delete the data line",
+              "properties": {
+                "add": "Add a cell",
+                "remove": "Delete the cell"
+              }
             }
           },
           "columns": {
@@ -946,10 +996,12 @@
       },
       "form": {
         "submitLabel": {
-          "label": "Submit button text"
+          "label": "Submit button text",
+          "description": "Modify the text of the form validation button"
         },
         "hideSubmit": {
-          "label": "Hide submit button"
+          "label": "Hide submit button",
+          "description": "You can hide the form validation button, for example if you prefer to validate the form as you type."
         },
         "onSubmit": {
           "label": "On submit event",
@@ -965,31 +1017,16 @@
           "add": "Add a control"
         }
       },
-      "development": {
-        "error": "Unknown error",
-        "error_url": "Please choose a valid javascript module url",
-        "error_loading": "Unable to load your Block. Please check that your development environment is running and that you have copied the correct URL.",
-        "settings": {
-          "url": {
-            "label": "URL of the Block",
-            "description": "Issue the command `npm start`. A URL will be displayed. Paste it into this field to load your Block into the console."
-          },
-          "block": {
-            "label": "Block configuration",
-            "description": "The configuration of your Block. If nothing is displayed, add a static property `schema` to your React component."
-          }
-        }
-      },
       "richtext": {
         "settings": {
           "content": {
             "label": "Content in HTML or Markdown format",
             "description": "Here you can display any rich content using HTML or Markdown. You can even mix the two."
+          },
+          "allowScripts": {
+            "label": "Allow scripts",
+            "description": "Allow execution of javascript code included in <script> tags"
           }
-        },
-        "allowScripts": {
-          "label": "Allow scripts",
-          "description": "Allow execution of javascript code included in <script> tags"
         }
       }
     }
@@ -1096,7 +1133,9 @@
         "label": "List of specific values",
         "description": "You can impose a value from a specific selection. A drop-down menu will then be displayed to the user.",
         "add": "Add a value",
-        "remove": "Delete this value"
+        "remove": "Delete this value",
+        "key": "Label",
+        "value": "Value"
       }
     },
     "types": {
@@ -1121,7 +1160,24 @@
       "name_date": "Date",
       "description_date": "A calendar will be displayed. The value will be formatted as a date.",
       "name_enum": "Drop-down list",
-      "description_enum": "You choose the list of possible values. Only one of these values will be allowed."
+      "description_enum": "You choose the list of possible values. Only one of these values will be allowed.",
+      "name_radio": "Radio",
+      "description_radio": "List of values in the form of radio buttons",
+      "name_autocomplete": "Autocompletion",
+      "description_autocomplete": "Provides autocompletion during typing",
+      "name_color": "Color",
+      "description_color": "Color selector",
+      "name_html": "HTML",
+      "description_html": "Rich content (HTML)"
+    },
+    "properties": {
+      "label": "Object properties",
+      "description": "Definition of the object's properties",
+      "add": "Add a property"
+    },
+    "items": {
+      "label": "Items",
+      "description": "Definition of each element of the table"
     }
   },
   "feed": {
@@ -1159,6 +1215,8 @@
   },
   "form": {
     "raw": "Insert a raw value (allows you to enter text, and therefore interpolated variables)",
-    "raw_hide": "Respect the type of data required"
+    "raw_hide": "Respect the type of data required",
+    "html": "Edit in HTML format",
+    "html_hide": "Return to simple editing mode"
   }
 }

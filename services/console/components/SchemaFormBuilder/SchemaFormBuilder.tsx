@@ -1,11 +1,12 @@
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Schema,
-  SchemaFormDescription,
   schemaTypes,
   Select,
   Tooltip,
   UIWidgetsByType,
 } from '@prisme.ai/design-system';
+import { Button } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo } from 'react';
 import LocalizedInput from '../LocalizedInput';
@@ -164,13 +165,22 @@ export const SchemaFormBuilder = ({
   return (
     <div className="flex flex-1 flex-col space-y-5">
       <div className="flex flex-row">
-        <SchemaFormDescription
-          className="flex flex-1 mr-2"
-          text={t('schema.property.widget.description')}
-        >
+        <div className="flex flex-1 flex-col mr-1">
+          <div className="flex flex-row mb-2">
+            <label className="font-bold">
+              {t('schema.property.widget.label')}
+            </label>
+            <Tooltip
+              title={t('schema.property.widget.description')}
+              placement="right"
+            >
+              <button type="button" className="ml-2">
+                <InfoCircleOutlined />
+              </button>
+            </Tooltip>
+          </div>
           <Select
             selectOptions={uiWidget || []}
-            label={t('schema.property.widget.label')}
             value={
               value.enum && !value['ui:widget']
                 ? 'enum'
@@ -178,58 +188,79 @@ export const SchemaFormBuilder = ({
             }
             onChange={update('ui:widget')}
           />
-        </SchemaFormDescription>
+        </div>
 
-        <SchemaFormDescription
-          className="flex flex-1"
-          text={t('schema.property.type.description')}
-        >
+        <div className="flex flex-1 flex-col ml-1">
+          <div className="flex flex-row mb-2">
+            <label className="font-bold">
+              {t('schema.property.type.label')}
+            </label>
+            <Tooltip
+              title={t('schema.property.type.description')}
+              placement="right"
+            >
+              <button type="button" className="ml-2">
+                <InfoCircleOutlined />
+              </button>
+            </Tooltip>
+          </div>
           <Select
             selectOptions={options}
-            label={t('schema.property.type.label')}
             value={value.type || ''}
             onChange={update('type')}
           />
-        </SchemaFormDescription>
+        </div>
       </div>
       {!!value.enum && (
         <div className="flex flex-1 mt-2 pl-4 border-l-[1px] border-gray-200">
           <Enum value={value} onChange={update('enum')} />
         </div>
       )}
-      <LocalizedInput
-        value={value.title || ''}
-        onChange={update('title')}
-        InputProps={{
-          label: t('schema.property.title'),
-        }}
-        iconMarginTop={'2.3rem'}
-      />
-      <SchemaFormDescription
-        text={t('schema.property.description.description')}
-      >
+      <div>
+        <div className="flex flex-row">
+          <label className="font-bold">{t('schema.property.title')}</label>
+        </div>
+      </div>
+      <LocalizedInput value={value.title || ''} onChange={update('title')} />
+      <div>
+        <div className="flex flex-row">
+          <label className="font-bold">
+            {t('schema.property.description.label')}
+          </label>
+          <Tooltip
+            title={t('schema.property.description.description')}
+            placement="right"
+          >
+            <button type="button" className="ml-2">
+              <InfoCircleOutlined />
+            </button>
+          </Tooltip>
+        </div>
         <LocalizedInput
           value={value.description || ''}
           onChange={update('description')}
-          InputProps={{
-            label: t('schema.property.description.label'),
-          }}
-          iconMarginTop={'2.3rem'}
         />
-      </SchemaFormDescription>
+      </div>
       {value.type && (
-        <SchemaFormDescription
-          text={t('schema.property.placeholder.description')}
-        >
+        <div>
+          <div className="flex flex-row">
+            <label className="font-bold">
+              {t('schema.property.placeholder.label')}
+            </label>
+            <Tooltip
+              title={t('schema.property.placeholder.description')}
+              placement="right"
+            >
+              <button type="button" className="ml-2">
+                <InfoCircleOutlined />
+              </button>
+            </Tooltip>
+          </div>
           <LocalizedInput
             value={value.placeholder || ''}
             onChange={update('placeholder')}
-            InputProps={{
-              label: t('schema.property.placeholder.label'),
-            }}
-            iconMarginTop={'2.3rem'}
           />
-        </SchemaFormDescription>
+        </div>
       )}
 
       {/*
@@ -243,7 +274,17 @@ export const SchemaFormBuilder = ({
         {t('schema.property.required')}
       </label>*/}
       {value.type === 'array' && (
-        <div className="flex flex-1 pl-4 border-l-[1px] border-gray-200">
+        <div>
+          <div className="flex flex-1 flex-row justify-between items-baseline">
+            <div className="mb-4">
+              <label className="font-bold">{t('schema.items.label')}</label>
+              <Tooltip title={t('schema.items.description')} placement="right">
+                <button type="button" className="ml-2">
+                  <InfoCircleOutlined />
+                </button>
+              </Tooltip>
+            </div>
+          </div>
           <SchemaFormBuilder
             value={value.items || {}}
             onChange={update('items')}
@@ -251,7 +292,40 @@ export const SchemaFormBuilder = ({
         </div>
       )}
       {value.type === 'object' && (
-        <div className="flex flex-1 pl-4 border-l-[1px] border-gray-200">
+        <div className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-row justify-between items-baseline">
+            <div>
+              <label className="font-bold">
+                {t('schema.properties.label')}
+              </label>
+              <Tooltip
+                title={t('schema.properties.description')}
+                placement="right"
+              >
+                <button type="button" className="ml-2">
+                  <InfoCircleOutlined />
+                </button>
+              </Tooltip>
+            </div>
+            <Tooltip title={t('schema.properties.add')} placement="left">
+              <Button
+                className="-mr-2"
+                onClick={() =>
+                  onChange({
+                    ...value,
+                    properties: {
+                      ...value.properties,
+                      '': {
+                        type: 'string',
+                      },
+                    },
+                  })
+                }
+              >
+                <PlusOutlined />
+              </Button>
+            </Tooltip>
+          </div>
           <Properties
             value={value.properties || {}}
             onChange={update('properties')}

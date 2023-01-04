@@ -1,28 +1,29 @@
-import Description from './Description';
 import { FieldProps, UiOptionsUpload } from './types';
-import { getLabel } from './utils';
 import { useField } from 'react-final-form';
 import { ChangeEvent, ReactElement, useCallback, useState } from 'react';
 import { DeleteOutlined, PictureOutlined } from '@ant-design/icons';
 import Button from '../Button';
 import { Tooltip } from 'antd';
-import { useSchemaForm } from './context';
-import { WithLabel } from '../Label';
+import { SchemaFormContext, useSchemaForm } from './context';
+import { Label } from './Label';
+import InfoBubble from './InfoBubble';
+import FieldContainer from './FieldContainer';
 
 const defaultAccept = 'image/gif,image/jpeg,image/png,image/svg+xml,';
-export const FieldTextUpload = ({
-  schema = {},
-  label,
-  name,
-  options,
-}: FieldProps & {
+
+interface FieldTextUploadProps extends FieldProps {
   options: UiOptionsUpload;
+}
+
+export const FieldTextUpload = ({
+  locales,
+  uploadFile,
+  ...props
+}: FieldTextUploadProps & {
+  locales: SchemaFormContext['locales'];
+  uploadFile: SchemaFormContext['utils']['uploadFile'];
 }) => {
-  const field = useField(name);
-  const {
-    locales = {},
-    utils: { uploadFile },
-  } = useSchemaForm();
+  const field = useField(props.name);
   const [preview, setPreview] = useState<ReactElement | null>(null);
   const [previewLabel, setPreviewLabel] = useState('');
 
@@ -65,54 +66,72 @@ export const FieldTextUpload = ({
   }, []);
 
   return (
-    <Description text={schema.description}>
-      <WithLabel label={label || schema.title || getLabel(name)}>
-        <div className="ant-input">
-          <div className="relative p-2 ">
-            <div className="flex flex-row border-4 border-dashed border-gray-200 !rounded-[0.3rem] min-h-[50px] p-2 items-center overflow-hidden">
-              <div className="mr-2">
-                {field.input.value ? (
-                  preview
-                ) : (
-                  <PictureOutlined className="text-4xl !text-gray-200 flex items-center" />
-                )}
-              </div>
-              {previewLabel || locales.uploadLabel || 'Choose file'}
-            </div>
-
-            <input
-              type="file"
-              className="absolute top-0 left-0 right-0 bottom-0 opacity-0 cursor-pointer"
-              onChange={readFile}
-              accept={
-                (options && options.upload && options.upload.accept) ||
-                defaultAccept
-              }
-              multiple={false}
-            />
-            {field.input.value && (
-              <Tooltip
-                title={locales.uploadRemove || 'Remove file'}
-                placement="left"
-              >
-                <Button
-                  onClick={() => {
-                    field.input.onChange('');
-                    setPreview(null);
-                    setPreviewLabel('');
-                  }}
-                  className="!absolute top-2 right-2"
-                  variant="link"
-                >
-                  <DeleteOutlined />
-                </Button>
-              </Tooltip>
+    <FieldContainer {...props} className="pr-form-upload">
+      <Label
+        field={field}
+        schema={props.schema}
+        className="pr-form-upload__label pr-form-label"
+      >
+        {props.label}
+      </Label>
+      <div className="pr-form-upload__input pr-form-input">
+        <div className="pr-form-upload__placeholder">
+          <div className="pr-form-upload__preview">
+            {field.input.value ? (
+              preview
+            ) : (
+              <PictureOutlined className="text-4xl !text-gray-200 flex items-center" />
             )}
           </div>
+          {previewLabel || locales.uploadLabel || 'Choose file'}
         </div>
-      </WithLabel>
-    </Description>
+
+        <input
+          type="file"
+          onChange={readFile}
+          accept={
+            (props.options &&
+              props.options.upload &&
+              props.options.upload.accept) ||
+            defaultAccept
+          }
+          multiple={false}
+        />
+        {field.input.value && (
+          <div className="pr-form-upload__delete">
+            <Tooltip
+              title={locales.uploadRemove || 'Remove file'}
+              placement="left"
+            >
+              <Button
+                onClick={() => {
+                  field.input.onChange('');
+                  setPreview(null);
+                  setPreviewLabel('');
+                }}
+                variant="link"
+              >
+                <DeleteOutlined />
+              </Button>
+            </Tooltip>
+          </div>
+        )}
+      </div>
+      <InfoBubble
+        className="pr-form-upload__description"
+        text={props.schema.description}
+      />
+    </FieldContainer>
   );
 };
 
-export default FieldTextUpload;
+const LinkedFieldTextUpload = (props: FieldTextUploadProps) => {
+  const {
+    locales = {},
+    utils: { uploadFile },
+  } = useSchemaForm();
+  return (
+    <FieldTextUpload {...props} locales={locales} uploadFile={uploadFile} />
+  );
+};
+export default LinkedFieldTextUpload;

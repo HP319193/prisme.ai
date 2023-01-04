@@ -2,9 +2,10 @@ import { useMemo } from 'react';
 import { useField } from 'react-final-form';
 import Select, { SelectProps } from '../Select';
 import { useSchemaForm } from './context';
-import Description from './Description';
 import { FieldProps, Schema, UiOptionsSelect } from './types';
-import { getLabel } from './utils';
+import { Label } from './Label';
+import InfoBubble from './InfoBubble';
+import FieldContainer from './FieldContainer';
 
 function isUiOptionsSelect(
   uiOptions: Schema['ui:options']
@@ -31,24 +32,35 @@ export function useSelectOptions(
   }, [extractSelectOptions]);
 }
 
-export const FieldSelect = ({
-  schema,
-  label,
-  name,
-  options,
-}: FieldProps & { options?: SelectProps['selectOptions'] }) => {
-  const field = useField(name);
-  const selectOptions = useSelectOptions(schema, options);
+export const FieldSelect = (
+  props: FieldProps & { options?: SelectProps['selectOptions'] }
+) => {
+  const field = useField(props.name);
+  const selectOptions = useSelectOptions(props.schema, props.options);
 
   return (
-    <Description text={schema.description}>
+    <FieldContainer {...props} className="pr-form-select">
+      <Label
+        field={field}
+        schema={props.schema}
+        className="pr-form-select__label pr-form-label"
+      >
+        {props.label}
+      </Label>
       <Select
-        value={field.input.value}
         selectOptions={selectOptions}
+        value={field.input.value}
         onChange={field.input.onChange}
-        label={label || schema.title || getLabel(name)}
+        id={field.input.name}
+        className="pr-form-select__input pr-form-input"
+        placeholder={props.schema.placeholder || ''}
+        showSearch
       />
-    </Description>
+      <InfoBubble
+        className="pr-form-select__description"
+        text={props.schema.description}
+      />
+    </FieldContainer>
   );
 };
 
