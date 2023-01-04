@@ -1,4 +1,4 @@
-import { Data, Query, SavedData, StorageDriver } from '.';
+import { StorageDriver, SaveOpts } from '.';
 import {
   Collection,
   Db,
@@ -9,7 +9,7 @@ import {
   WithId,
 } from 'mongodb';
 
-export class MongodbDriver implements StorageDriver {
+export class MongodbDriver implements StorageDriver<any> {
   private client: MongoClient;
   private collectionName: string;
   private db?: Db;
@@ -37,35 +37,46 @@ export class MongodbDriver implements StorageDriver {
     return await this.client.close();
   }
 
-  async save(data: Data): Promise<SavedData> {
+  async save(data: any, opts: SaveOpts<any>) {
     const { _id, id, ...object } = data;
     const collection = await this.collection();
 
-    _id || id
-      ? await collection.updateOne(
-          { _id: new ObjectId(_id || id) },
-          { $set: object }
-        )
-      : await collection.insertOne(data);
+    if (opts?.upsertQuery) {
+      await collection.updateOne(
+        opts?.upsertQuery,
+        { $set: data },
+        {
+          upsert: true,
+        }
+      );
+    } else if (_id || id) {
+      await collection.updateOne(
+        { _id: new ObjectId(_id || id) },
+        { $set: object }
+      );
+    } else {
+      await collection.insertOne(data);
+    }
 
     return this.prepareData(data);
   }
 
-  async get(id: string): Promise<SavedData> {
+  async get(id: string) {
     const collection = await this.collection();
     const document = await collection.findOne({ _id: new ObjectId(id) });
     return this.prepareData(document);
   }
 
-  async find(query: Query): Promise<SavedData> {
+  async find(query: Record<string, string>) {
     const collection = await this.collection();
     const result = await collection.find(query);
     return (await result.toArray()).map((cur) => this.prepareData(cur));
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string | Record<string, any>): Promise<boolean> {
     const collection = await this.collection();
-    const result = await collection.deleteOne({ _id: new ObjectId(id) });
+    const query = typeof id == 'object' ? id : { _id: new ObjectId(id) };
+    const result = await collection.deleteOne(query);
     return result.acknowledged;
   }
 
@@ -74,7 +85,7 @@ export class MongodbDriver implements StorageDriver {
       return data;
     }
 
-    const savedData: SavedData = {
+    const savedData: any = {
       ...data,
       id: `${data._id}`,
     };

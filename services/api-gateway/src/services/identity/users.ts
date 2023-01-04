@@ -270,6 +270,12 @@ const filterUserFields = (user: User): Prismeai.User => {
   };
 };
 
+export const updateUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
+  async function (user: Partial<User> & { id: string }) {
+    // MongoDB driver always $set & so can have partial object, but care if another driver gets in !
+    await Users.save(user as User);
+  };
+
 export const login = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   async function (email: string, password: string) {
     const users = await Users.find({ email: email.toLowerCase().trim() });

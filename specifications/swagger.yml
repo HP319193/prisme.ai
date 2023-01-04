@@ -2500,7 +2500,9 @@ paths:
                         type: string
                       sessionId:
                         type: string
-        '401':
+                      expires:
+                        type: string
+        '401': &AuthenticationError
           description: AuthenticationError
           content:
             application/json:
@@ -2550,7 +2552,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationError'
 
-  /v2/account/mfa:
+  /v2/user/mfa:
     post:
       description: Setup MFA
       operationId: setupMFA
@@ -2576,21 +2578,29 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - key
-                  - qrImage
-                properties:
-                  key:
-                    type: string
-                  qrImage:
-                    type: string
+                oneOf:
+                - type: object
+                  required:
+                    - secret
+                    - qrImage
+                  properties:
+                    secret:
+                      type: string
+                    qrImage:
+                      type: string
+                - type: object
+                  required:
+                    - method
+                  properties:
+                    method:
+                      type: string
         '400':
           description: Bad parameters
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadParametersError'
+        '401': *AuthenticationError
 
 
   /v2/contacts/{contactId}:

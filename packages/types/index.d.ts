@@ -2395,6 +2395,7 @@ declare namespace PrismeaiAPI {
                 id?: string;
                 token: string;
                 sessionId: string;
+                expires?: string;
             }
         }
     }
@@ -2546,6 +2547,7 @@ declare namespace PrismeaiAPI {
                 id?: string;
                 token: string;
                 sessionId: string;
+                expires?: string;
             }
             export type $401 = Prismeai.AuthenticationError;
         }
@@ -3296,11 +3298,14 @@ declare namespace PrismeaiAPI {
             currentPassword: string;
         }
         namespace Responses {
-            export interface $200 {
-                key: string;
+            export type $200 = {
+                secret: string;
                 qrImage: string;
-            }
+            } | {
+                method: string;
+            };
             export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace Share {

@@ -39,10 +39,14 @@ const loginHandler = (strategy: string) =>
           }
 
           req.session.prismeaiSessionId = uuid();
+          const expires = new Date(
+            Date.now() + syscfg.SESSION_COOKIES_MAX_AGE * 1000
+          ).toISOString();
           res.send({
             ...user,
             token: req.sessionID,
             sessionId: req.session.prismeaiSessionId,
+            expires,
           });
           const provider = strategy === 'local' ? 'prismeai' : strategy;
           await req.broker.send<Prismeai.SucceededLogin['payload']>(
@@ -58,9 +62,7 @@ const loginHandler = (strategy: string) =>
                 id: req.session.prismeaiSessionId,
                 token: req.sessionID,
                 expiresIn: syscfg.SESSION_COOKIES_MAX_AGE,
-                expires: new Date(
-                  Date.now() + syscfg.SESSION_COOKIES_MAX_AGE * 1000
-                ).toISOString(),
+                expires,
               },
             }
           );
@@ -68,6 +70,17 @@ const loginHandler = (strategy: string) =>
       }
     )(req, res, next);
   };
+
+async function reAuthenticate(req: Request, res: Response, next: NextFunction) {
+  if (!req.user?.email || !req.body?.currentPassword) {
+    throw new AuthenticationError();
+  }
+
+  const password: string = req.body.currentPassword;
+  const identity = services.identity(req.context, req.logger);
+  await identity.login(req.user.email, password);
+  return next();
+}
 
 async function signupHandler(
   req: Request<any, any, PrismeaiAPI.Signup.RequestBody>,
@@ -146,6 +159,22 @@ async function validateAccountHandler(
   return res.send({ success: true });
 }
 
+async function setupUserMFA(
+  req: Request<any, any, PrismeaiAPI.SetupMFA.RequestBody>,
+  res: Response<PrismeaiAPI.SetupMFA.Responses.$200>,
+  next: NextFunction
+) {
+  const { user, context, body } = req;
+  const identity = services.identity(context, req.logger);
+
+  const mfa = await identity.setupUserMFA(user!, body);
+  await identity.updateUser({
+    mfa: body.method,
+    id: user?.id!,
+  });
+  return res.send(mfa);
+}
+
 async function meHandler(
   req: Request,
   res: Response<PrismeaiAPI.GetMyProfile.Responses.$200>
@@ -184,10 +213,14 @@ const app = express.Router();
 app.post(`/login`, loginHandler('local'));
 app.post(`/login/anonymous`, loginHandler('anonymous'));
 app.post(`/signup`, signupHandler);
-app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/logout`, logoutHandler);
+
+// User account
+app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/user/password`, resetPasswordHandler);
 app.post(`/user/validate`, validateAccountHandler);
+app.post(`/user/mfa`, reAuthenticate, setupUserMFA);
+
 // Internal routes
 app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);
 

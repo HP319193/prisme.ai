@@ -18,3 +18,10 @@ export async function comparePasswords(
 ) {
   return await bcrypt.compare(plainPassword, hashedPassword);
 }
+
+export function buildQRCode(data: any) {
+  return (
+    'https://chart.googleapis.com/chart?chs=166x166&chld=L|0&cht=qr&chl=' +
+    encodeURIComponent(data)
+  );
+}
