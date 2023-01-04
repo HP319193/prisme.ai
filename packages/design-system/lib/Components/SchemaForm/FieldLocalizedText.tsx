@@ -74,7 +74,9 @@ export const FieldLocalizedText = ({
         Input={InputComponent}
         InputProps={InputProps}
         iconMarginTop="2.3rem"
-        className={`pr-form-${type}__input pr-form-input`}
+        className={`pr-form-${type}__input ${
+          uiWidget ? `pr-form-${type}__input--${uiWidget}` : ''
+        } pr-form-input`}
       />
       <InfoBubble
         className={`pr-form-${type}__description`}

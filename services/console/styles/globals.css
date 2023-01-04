@@ -301,12 +301,20 @@ button {
   width: 100%;
   font-family: montserrat;
 }
+
+.pr-form-string__input--html .pr-localized-input__selector {
+  top: -0.5rem;
+  right: 0;
+}
+.pr-form-string__input--html .pr-rich-text__html {
+  margin-right: 1.5rem;
+}
+
 .quill .ql-toolbar.ql-snow {
   border: 0;
   margin: 0;
   padding: 0.5rem 0;
   white-space: nowrap;
-  overflow: auto;
 }
 .quill .ql-container.ql-snow {
   border: 1px solid var(--light-gray-color) !important;

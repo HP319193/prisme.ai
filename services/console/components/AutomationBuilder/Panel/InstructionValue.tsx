@@ -108,7 +108,7 @@ export const InstructionValue: FC<InstructionValueProps> = ({
     }),
     [t]
   );
-  console.log(schema);
+
   if (!schema) return null;
 
   return (

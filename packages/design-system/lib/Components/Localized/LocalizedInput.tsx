@@ -206,7 +206,7 @@ export const LocalizedInput = ({
         />
       )}
       <Tooltip title={setLangTooltip} placement="left">
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-2 right-2 pr-localized-input__selector">
           <CustomSelect
             options={langs}
             value={selectedLang}
