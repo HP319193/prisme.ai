@@ -131,7 +131,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
           workspaceId,
           `${
             value.when.endpoint === 'true' || value.when.endpoint === true
-              ? id
+              ? value.slug || id // value.slug can be more up to date than id
               : value.when.endpoint
           }`
         );
