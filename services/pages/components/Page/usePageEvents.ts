@@ -1,16 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import api, { Events } from '../../../console/utils/api';
 
+function resetBlocksConfig(page: Prismeai.Page) {
+  return (page.blocks || []).map(({ config }) => config || {});
+}
+
 export const usePageEvents = (page: Prismeai.Page | null) => {
   const [events, setEvents] = useState<Events>();
   const [blocksConfigs, setBlocksConfigs] = useState<
     NonNullable<Prismeai.Page['blocks']>[number]['config'][]
-  >([]);
+  >(page ? resetBlocksConfig(page) : []);
 
   // Init blocks config
   useEffect(() => {
     if (!page) return;
-    setBlocksConfigs((page.blocks || []).map(({ config }) => config || {}));
+    setBlocksConfigs(resetBlocksConfig(page));
   }, [page]);
 
   // init socket

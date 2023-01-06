@@ -22,11 +22,14 @@ type NextPageWithLayout = NextPage & {
   isPublic?: boolean;
 };
 
-type AppPropsWithLayout = AppProps & {
+type AppPropsWithLayout = AppProps<{
+  page?: Prismeai.DetailedPage;
+  error?: number | null;
+}> & {
   Component: NextPageWithLayout;
 };
 
-function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+function MyApp({ Component, pageProps: { page, error } }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
 
@@ -41,7 +44,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <WorkspaceProvider>
       <UserProvider anonymous isPublic>
-        <PageProvider>
+        <PageProvider page={page} error={error}>
           <BlocksProvider>
             <Head>
               <title>{t('main.title')}</title>
@@ -53,7 +56,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
               <link rel="icon" href="/favicon.png" />
             </Head>
             <Sentry />
-            {getLayout(<Component {...pageProps} />)}
+            {getLayout(<Component />)}
           </BlocksProvider>
         </PageProvider>
       </UserProvider>

@@ -153,7 +153,13 @@ const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
     }
   }
 
+  if (typeof window === 'undefined') {
+    // SSR, return nothing
+    return null;
+  }
+
   const isJs = url && url.replace(/\?.*$/, '').match(/\.js$/);
+
   if (isJs) {
     return <ReactBlock url={url} name={name} {...props} />;
   }
@@ -173,6 +179,7 @@ export const BlockLoader = ({
     if (i18n.language === language) return;
     i18n.changeLanguage(language);
   }, [language]);
+
   return (
     <BlockErrorBoundary>
       <I18nextProvider i18n={i18n}>

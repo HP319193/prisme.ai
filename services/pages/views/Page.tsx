@@ -13,20 +13,14 @@ export interface PageProps extends Omit<PageRendererProps, 'page'> {
   page: PageRendererProps['page'] | null;
 }
 
-export const Page = ({ page: pageFromServer, error }: PageProps) => {
-  const { page, setPage, loading, fetchPage } = usePage();
+export const Page = () => {
+  const { page, error, loading, fetchPage } = usePage();
   const { setId } = useWorkspace();
   const [displayError, setDisplayError] = useState(false);
-  const currentPage = page || pageFromServer;
-
   useEffect(() => {
     if (!page || !page.workspaceId) return;
     setId(page.workspaceId);
   }, [page, setId]);
-
-  useEffect(() => {
-    setPage(pageFromServer, error);
-  }, [pageFromServer, error, setPage]);
 
   useEffect(() => {
     if (!loading && error && error && ![401, 403].includes(error)) {
@@ -35,13 +29,13 @@ export const Page = ({ page: pageFromServer, error }: PageProps) => {
     }
   }, [error, loading]);
 
-  if (!currentPage && loading) return <Loading />;
+  if (!page && loading) return <Loading />;
 
-  if (currentPage) {
-    if (currentPage.apiKey) {
-      api.apiKey = currentPage.apiKey;
+  if (page) {
+    if (page.apiKey) {
+      api.apiKey = page.apiKey;
     }
-    return <PageRenderer page={currentPage} />;
+    return <PageRenderer page={page} error={error} />;
   }
 
   if (error && ![401, 403].includes(error)) {
