@@ -1,4 +1,4 @@
-import { TBlockLoader, BlockLoader as BLoader } from '@prisme.ai/blocks';
+import { BlockLoader as BLoader, TBlockLoader } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import api from '../../../console/utils/api';
@@ -76,6 +76,9 @@ export const BlockLoader: TBlockLoader = ({
       off.push(
         events.on(updateOn, ({ payload: config }) => {
           setConfig((prev = {}) => ({ ...prev, ...config }));
+          if (config.userTopics) {
+            events.listenTopics(config.userTopics);
+          }
         })
       );
     }
