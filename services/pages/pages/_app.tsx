@@ -40,7 +40,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <WorkspaceProvider>
-      <UserProvider anonymous>
+      <UserProvider anonymous isPublic>
         <PageProvider>
           <BlocksProvider>
             <Head>

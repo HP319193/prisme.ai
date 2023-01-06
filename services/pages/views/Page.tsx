@@ -17,6 +17,7 @@ export const Page = ({ page: pageFromServer, error }: PageProps) => {
   const { page, setPage, loading, fetchPage } = usePage();
   const { setId } = useWorkspace();
   const [displayError, setDisplayError] = useState(false);
+  const currentPage = page || pageFromServer;
 
   useEffect(() => {
     if (!page || !page.workspaceId) return;
@@ -34,13 +35,13 @@ export const Page = ({ page: pageFromServer, error }: PageProps) => {
     }
   }, [error, loading]);
 
-  if (!page && loading) return <Loading />;
+  if (!currentPage && loading) return <Loading />;
 
-  if (page) {
-    if (page.apiKey) {
-      api.apiKey = page.apiKey;
+  if (currentPage) {
+    if (currentPage.apiKey) {
+      api.apiKey = currentPage.apiKey;
     }
-    return <PageRenderer page={page} />;
+    return <PageRenderer page={currentPage} />;
   }
 
   if (error && ![401, 403].includes(error)) {
