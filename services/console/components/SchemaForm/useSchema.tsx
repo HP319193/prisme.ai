@@ -27,7 +27,7 @@ export const useSchema = (store: Record<string, any> = {}) => {
         case 'config':
           const { path = '' } = uiOptions;
           if (!path) return null;
-          const values: string[] = readAppConfig(config, path);
+          const values: string[] = readAppConfig(config, path) || [];
           return [
             {
               label: '',
