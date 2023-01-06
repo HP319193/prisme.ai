@@ -80,6 +80,7 @@ export const SectionContent = ({
       waits: getWaits(),
       appSlug: event?.payload?.appInstance?.appSlug,
       appName: event?.payload?.appInstance?.appName,
+      share: event?.payload?.permissions?.email || event?.payload?.email,
     };
   }, [event, imports, localize, t]);
 
