@@ -2,7 +2,7 @@ import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import NextLink from 'next/link';
 import Image from 'next/image';
-import { Loading as DSLoading } from '@prisme.ai/design-system';
+import { Loading as DSLoading, SchemaForm } from '@prisme.ai/design-system';
 import { BlocksProvider } from '@prisme.ai/blocks';
 import UserProvider from '../components/UserProvider';
 import { NextPage } from 'next';
@@ -14,6 +14,7 @@ import '../styles/tailwind-console.css';
 import '@prisme.ai/design-system/styles/index.css';
 import '@prisme.ai/design-system/styles/prismeai-theme.css';
 import '@prisme.ai/design-system/styles/schema-form.css';
+import 'react-quill/dist/quill.snow.css';
 import PermissionsProvider from '../components/PermissionsProvider';
 import down from '../icons/down.svg';
 import { WorkspacesUsageProvider } from '../components/WorkspacesUsage';
@@ -62,7 +63,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <UserProvider anonymous>
         <BlocksProvider
           externals={externals}
-          components={{ Link, Loading, DownIcon }}
+          components={{ Link, Loading, DownIcon, SchemaForm }}
         >
           <Head>
             <title>{t('main.title')}</title>
@@ -88,7 +89,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             <PermissionsProvider>
               <BlocksProvider
                 externals={externals}
-                components={{ Link, Loading, DownIcon }}
+                components={{ Link, Loading, DownIcon, SchemaForm }}
               >
                 <Head>
                   <title>{t('main.title')}</title>

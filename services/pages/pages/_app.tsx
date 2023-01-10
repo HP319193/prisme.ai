@@ -10,6 +10,7 @@ import '../styles/tailwind-console.css';
 import '@prisme.ai/design-system/styles/index.css';
 import '@prisme.ai/design-system/styles/prismeai-theme.css';
 import '@prisme.ai/design-system/styles/schema-form.css';
+import 'react-quill/dist/quill.snow.css';
 import { PageProvider } from '../components/Page/PageProvider';
 import BlocksProvider from '../components/BlocksProvider/BlocksProvider';
 import WorkspaceProvider from '../components/Workspace';

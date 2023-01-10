@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useField } from 'react-final-form';
 import { CodeEditorInline } from '../../CodeEditor/lazy';
 import FieldContainerWithRaw from '../../FieldContainerWithRaw';
+import RichTextEditor from '../../RichTextEditor';
 
 export const FieldAny = ({ schema, name, label }: FieldProps) => {
   const { t } = useTranslation('workspaces');
@@ -80,5 +81,6 @@ const components = {
   FieldContainer: FieldContainerWithRaw,
   JSONEditor,
   FreeAdditionalProperties: FieldAny,
+  HTMLEditor: RichTextEditor,
 };
 export default components;

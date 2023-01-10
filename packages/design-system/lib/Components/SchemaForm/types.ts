@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from 'react';
+import { FunctionComponent, ReactNode } from 'react';
 import { DatePickerProps } from '../DatePicker';
 import { TextAreaProps } from '../TextArea';
 
@@ -22,6 +22,7 @@ export const UIWidgetsForString = [
   'color',
   'autocomplete',
   'radio',
+  'html',
 ] as const;
 export const UIWidgetsForLocalizedString = ['textarea'];
 export const UIWidgetsByType = {
@@ -78,6 +79,11 @@ export type UiOptionsAutocomplete = {
 export type UiOptionsDate = {
   date: DatePickerProps;
 };
+export type UiOptionsHTML = {
+  html: {
+    htmlModeOnly?: boolean;
+  };
+};
 export interface Schema extends Record<string, any> {
   // Field type
   type?: SchemaTypes;
@@ -116,7 +122,7 @@ export interface Schema extends Record<string, any> {
   // Validation errors messages
   errors?: Record<string, string>;
   // Custom widget
-  'ui:widget'?: UIWidgets | ((props: any) => ReactElement);
+  'ui:widget'?: UIWidgets | FunctionComponent<FieldProps>;
   // Options for UI components
   'ui:options'?:
     | UiOptionsGrid
@@ -128,6 +134,7 @@ export interface Schema extends Record<string, any> {
     | UiOptionsDate
     | UiOptionsAutocomplete
     | UiOptionsDynamicAutocomplete
+    | UiOptionsHTML
     | Record<string, any>;
 }
 

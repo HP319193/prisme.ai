@@ -7,11 +7,17 @@ import DefaultFieldDate from './FieldDate';
 import FieldTextColor from './FieldTextColor';
 import FieldTextTextArea from './FieldTextTextArea';
 import FieldTextUpload from './FieldTextUpload';
-import { FieldProps, UiOptionsTextArea, UiOptionsUpload } from './types';
+import {
+  FieldProps,
+  UiOptionsHTML,
+  UiOptionsTextArea,
+  UiOptionsUpload,
+} from './types';
 import { getError } from './utils';
 import InfoBubble from './InfoBubble';
 import { Label } from './Label';
 import FieldContainer from './FieldContainer';
+import FieldHTML from './FieldHTML';
 
 export const FieldText = ({
   FieldDate = DefaultFieldDate,
@@ -50,6 +56,8 @@ export const FieldText = ({
       return <FieldTextColor {...props} />;
     case 'autocomplete':
       return <FieldAutocomplete {...props} />;
+    case 'html':
+      return <FieldHTML {...props} />;
   }
 
   const hasError = getError(field.meta);

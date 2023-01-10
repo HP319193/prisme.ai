@@ -2,13 +2,24 @@ import { Input } from 'antd';
 import { useMemo } from 'react';
 import { useField } from 'react-final-form';
 import { LocalizedInput } from '../..';
+import { SchemaFormContext, useSchemaForm } from './context';
 import FieldContainer from './FieldContainer';
 import FieldTextUpload from './FieldTextUpload';
 import InfoBubble from './InfoBubble';
 import Label from './Label';
-import { FieldProps, UiOptionsTextArea, UiOptionsUpload } from './types';
+import {
+  FieldProps,
+  UiOptionsHTML,
+  UiOptionsTextArea,
+  UiOptionsUpload,
+} from './types';
 
-export const FieldLocalizedText = (props: FieldProps) => {
+export const FieldLocalizedText = ({
+  HTMLEditor,
+  ...props
+}: FieldProps & {
+  HTMLEditor: SchemaFormContext['components']['HTMLEditor'];
+}) => {
   const field = useField(props.name);
   const { 'ui:widget': uiWidget, 'ui:options': uiOptions } = props.schema;
   const [, type] = (props.schema.type || '').split(':');
@@ -33,6 +44,14 @@ export const FieldLocalizedText = (props: FieldProps) => {
             ...((uiOptions || { upload: {} }) as UiOptionsUpload).upload,
           },
         ];
+      case 'html':
+        return [
+          HTMLEditor,
+          {
+            ...commonProps,
+            ...((uiOptions || { html: {} }) as UiOptionsHTML).html,
+          },
+        ];
       default:
         return [Input, commonProps];
     }
@@ -55,7 +74,9 @@ export const FieldLocalizedText = (props: FieldProps) => {
         Input={InputComponent}
         InputProps={InputProps}
         iconMarginTop="2.3rem"
-        className={`pr-form-${type}__input pr-form-input`}
+        className={`pr-form-${type}__input ${
+          uiWidget ? `pr-form-${type}__input--${uiWidget}` : ''
+        } pr-form-input`}
       />
       <InfoBubble
         className={`pr-form-${type}__description`}
@@ -64,5 +85,9 @@ export const FieldLocalizedText = (props: FieldProps) => {
     </FieldContainer>
   );
 };
+const LinkedFieldLocalizedText = (props: FieldProps) => {
+  const { components: { HTMLEditor } = {} } = useSchemaForm();
+  return <FieldLocalizedText {...props} HTMLEditor={HTMLEditor} />;
+};
 
-export default FieldLocalizedText;
+export default LinkedFieldLocalizedText;

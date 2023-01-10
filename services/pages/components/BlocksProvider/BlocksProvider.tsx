@@ -8,6 +8,7 @@ import Link from './Link';
 import DownIcon from './DownIcon';
 import Loading from './Loading';
 import BlockLoader from '../Page/BlockLoader';
+import SchemaForm from './SchemaForm';
 
 export const BlocksProvider: FC = ({ children }) => {
   const { id } = useWorkspace();
@@ -27,7 +28,7 @@ export const BlocksProvider: FC = ({ children }) => {
   return (
     <Provider
       externals={externals}
-      components={{ Link, Loading, DownIcon }}
+      components={{ Link, Loading, DownIcon, SchemaForm }}
       utils={{ uploadFile, BlockLoader }}
     >
       {children}
