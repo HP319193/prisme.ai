@@ -8,7 +8,7 @@ export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
   const [page, setPage] = useState<Prismeai.DetailedPage | null>(
     pageFromServer || null
   );
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const {
     query: { slug = 'index' },
   } = useRouter();

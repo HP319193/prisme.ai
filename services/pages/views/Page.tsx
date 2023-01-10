@@ -45,6 +45,10 @@ export const Page = () => {
     return <Loading />;
   }
 
+  if (typeof window === 'undefined') {
+    return <div className="flex m-auto">Error {error}</div>;
+  }
+
   return (
     <div className="flex m-auto">
       <SigninForm onSignin={fetchPage} />
