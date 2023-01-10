@@ -252,12 +252,12 @@ export default class Runtime {
   }
 
   async getContexts(
-    workspaceId: string,
-    session: PrismeaiSession,
-    correlationId: string
+    source: PrismeContext,
+    session: PrismeaiSession
   ): Promise<ContextsManager> {
+    const { workspaceId, correlationId, automationDepth } = source;
     const ctx = new ContextsManager(
-      workspaceId,
+      workspaceId!,
       session,
       correlationId,
       this.cache,
@@ -267,6 +267,7 @@ export default class Runtime {
       ...ADDITIONAL_GLOBAL_VARS,
       apiUrl: PUBLIC_API_URL,
     };
+    ctx.depth = automationDepth || 0;
     await ctx.fetch();
 
     if (!(correlationId in this.contexts)) {
@@ -373,11 +374,7 @@ export default class Runtime {
       sessionId: source.sessionId!!,
       authData: {},
     };
-    const ctx = await this.getContexts(
-      source.workspaceId!!,
-      session,
-      source.correlationId!!
-    );
+    const ctx = await this.getContexts(source, session);
 
     let result;
     try {

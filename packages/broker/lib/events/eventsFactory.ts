@@ -23,6 +23,7 @@ export interface EventSource {
   host?: Host;
   correlationId?: string;
   serviceTopic?: Topic;
+  automationDepth?: number;
 }
 
 export interface PrismeEvent<T extends object = object> {

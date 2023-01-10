@@ -17,6 +17,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -55,6 +56,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -93,6 +95,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -131,6 +134,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -169,6 +173,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -207,6 +212,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -245,6 +251,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -283,6 +290,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -321,6 +329,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -380,6 +389,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -418,6 +428,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -456,6 +467,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -494,6 +506,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -532,6 +545,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -570,6 +584,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -608,6 +623,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -646,6 +662,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -684,6 +701,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -1759,6 +1777,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;

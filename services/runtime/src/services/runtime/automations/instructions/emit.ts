@@ -22,6 +22,7 @@ export async function emit(
         // sessionId might have been manually changed since given broker initialization
         sessionId: ctx.session?.sessionId || broker.parentSource?.sessionId,
         serviceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+        automationDepth: ctx.depth,
       },
       { target, options },
       true

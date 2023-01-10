@@ -23,6 +23,7 @@ export interface PrismeContext {
   sessionId: string;
   workspaceId?: string;
   http?: HTTPContext;
+  automationDepth?: number;
 }
 
 export function requestDecorator(broker: Broker) {

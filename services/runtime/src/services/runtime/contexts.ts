@@ -104,7 +104,7 @@ export class ContextsManager {
   private broker: Broker;
 
   public payload: any;
-  private depth: number;
+  public depth: number;
   private appContext?: AppContext;
   public trigger?: Trigger;
   private automationSlug?: string;
@@ -201,11 +201,6 @@ export class ContextsManager {
         ...this.contexts?.session,
         ...fetchedContexts.session,
       };
-    }
-
-    // Restore previous depth
-    if (fetchedContexts?.run?.depth) {
-      this.depth = fetchedContexts.run.depth;
     }
   }
 
@@ -355,7 +350,7 @@ export class ContextsManager {
     findSecretValues(payload, automation.secretPaths, this.secrets);
     automation.workspace.secrets.forEach((secret) => this.secrets.add(secret));
 
-    return this.child(
+    const child = this.child(
       {
         config: automation.workspace.config,
         $workspace: automation.workspace.dsul,
@@ -375,6 +370,8 @@ export class ContextsManager {
         },
       }
     );
+
+    return child;
   }
 
   private findParentVariableFor(splittedPath: SplittedPath) {
@@ -543,13 +540,11 @@ export class ContextsManager {
 
   async securityChecks() {
     if (this.depth > MAXIMUM_SUCCESSIVE_CALLS) {
-      throw new TooManyCallError('Reached maximum number of successive calls', {
+      throw new TooManyCallError('Reached maximum number of nested calls', {
         limit: MAXIMUM_SUCCESSIVE_CALLS,
       });
     }
     // TODO check memory usage
     this.depth++;
-
-    await this.save(ContextType.Run);
   }
 }

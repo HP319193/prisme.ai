@@ -432,4 +432,19 @@ automations:
       endpoint: true
 
 
+  repeatEmit:
+    name: repeatEmit
+    when:
+      endpoint: true
+    do:
+      - repeat:
+          until: 10
+          do:
+            - emit:
+                event: noop
+                payload:
+                  index: '{{$index}}'
+    output:
+      run: '{{run}}'
+
 
