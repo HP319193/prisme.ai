@@ -56,6 +56,8 @@ The root object and all its children are made with the same structure:
         * `color`: Display a color picker.
         * `autocomplete`: Dispkay a text input with autocompletion.
         * `upload`: Display a file picker. Set the choose file as data-URI format as field value. You'll probably need to upload your file and replace it with a URI before submitting the form.
+        * `radio`: works with `enum`, then display a list of radio box instead of a select.
+        * `html`: Display a WYSIWYG editor to generate HTML content.
     * localized string type:
         * `textarea`
     * any type:
@@ -72,6 +74,9 @@ The root object and all its children are made with the same structure:
     * widget upload:
         * `upload`: Object with property:
             * `accept`: string describing file types allowed to be picked by user in file picker. (see [MDN](https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input/file#accept))
+    * widget html:
+        * `html`: Object with property:
+            * `htmlModeOnly`: set to `true` if you want to show only HTML Code editor. Leave it undefined to let user switch between wysiwyg and code editor.
     * type string;
         * `autocomplete`: Source of autocomplete values. Can be:
             * "events:emit": Retreive all events emitted by current workspace and all its installed apps

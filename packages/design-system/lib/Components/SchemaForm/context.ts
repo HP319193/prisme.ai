@@ -2,13 +2,15 @@ import { UiOptionsSelect, Schema } from '@prisme.ai/design-system';
 import { createContext, FC, ReactElement, useContext } from 'react';
 import { SelectProps } from '../Select';
 import { DefaultFieldContainer } from './FieldContainer';
-import { FieldProps, UiOptionsAutocomplete } from './types';
+import { FieldProps, UiOptionsAutocomplete, UiOptionsHTML } from './types';
 
 type FieldComponent<T = any> = (props: FieldProps & T) => ReactElement | null;
-type InputComponent = (props: {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement> | string) => void;
-}) => ReactElement;
+type InputComponent<T = {}> = (
+  props: T & {
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement> | string) => void;
+  }
+) => ReactElement;
 
 export interface SchemaFormContext {
   locales: {
@@ -38,6 +40,7 @@ export interface SchemaFormContext {
     FieldRadio?: FieldComponent<{ options?: SelectProps['selectOptions'] }>;
     FieldDate?: FieldComponent;
     JSONEditor?: InputComponent;
+    HTMLEditor?: InputComponent<{ options?: UiOptionsHTML }>;
     FreeAdditionalProperties?: FieldComponent;
     ManagedAdditionalProperties?: FieldComponent;
   };

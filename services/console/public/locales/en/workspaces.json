@@ -1219,6 +1219,6 @@
     "raw": "Insert a raw value (allows you to enter text, and therefore interpolated variables)",
     "raw_hide": "Respect the type of data required",
     "html": "Edit in HTML format",
-    "html_hide": "Return to simple editing mode"
+    "html_hide": "Be careful, by returning to the simple editing mode, you risk losing tags or HTML attributes not managed by it."
   }
 }

@@ -142,7 +142,7 @@ const Filters = () => {
                 </Field>
               </div>
             </div>
-            <div className="mb-4">
+            <div className="mb-4 flex flex-row">
               <Button className="!text-xs" onClick={reset}>
                 {t('events.filters.reset')}
               </Button>
