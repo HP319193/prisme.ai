@@ -1,9 +1,10 @@
-import Markdown from 'markdown-to-jsx';
-import { HTMLAttributes, useEffect, useMemo } from 'react';
+import { HTMLAttributes, ReactNode, useEffect } from 'react';
 import { BlockComponent } from '../BlockLoader';
 import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
 import useLocalizedText from '../useLocalizedText';
+import parser, { DOMNode, Element, domToReact } from 'html-react-parser';
+import { marked } from 'marked';
 
 interface RichTextConfig {
   content: string | Prismeai.LocalizedText;
@@ -36,9 +37,27 @@ class ScriptsLoader {
     this.queue.push(s);
     this.nextInQueue();
   }
+
+  addScript({
+    src,
+    script,
+    ...attrs
+  }: HTMLScriptElement & { script?: string }) {
+    const s = document.createElement('script');
+    script && (s.innerText = script);
+    Object.entries(attrs).forEach(([k, v]) => s.setAttribute(k, `${v}`));
+    if (s.hasAttribute('async')) {
+      document.body.appendChild(s);
+      return;
+    }
+    this.add(s);
+  }
 }
 const scriptsLoader = new ScriptsLoader();
-const Script = ({ children, ...props }: HTMLScriptElement) => {
+const Script = ({
+  children,
+  ...props
+}: Omit<HTMLScriptElement, 'children'> & { children: ReactNode }) => {
   useEffect(() => {
     const s = document.createElement('script');
     s.innerText = typeof children === 'string' ? children : '';
@@ -59,10 +78,13 @@ const NoScript = () => {
   return null;
 };
 
+function isElement(domNode: DOMNode): domNode is Element {
+  return !!(domNode as Element).name;
+}
+
 export const RichTextRenderer = ({
   children,
   allowScripts = false,
-  ...props
 }: Omit<RichTextConfig, 'content'> & {
   children: RichTextConfig['content'];
 } & HTMLAttributes<HTMLDivElement>) => {
@@ -71,31 +93,41 @@ export const RichTextRenderer = ({
     components: { Link },
   } = useBlocks();
 
-  const options = useMemo(
-    () => ({
-      overrides: {
-        a: Link,
-        script: allowScripts ? Script : NoScript,
-      },
-      forceBlock: true,
-    }),
-    [allowScripts]
-  );
-
   if (!children) return null;
 
-  return (
-    <Markdown {...props} options={options}>
-      {localize(children)}
-    </Markdown>
-  );
+  const options = {
+    replace(domNode: DOMNode) {
+      if (!isElement(domNode)) return domNode;
+      switch (domNode.name) {
+        case 'script':
+          if (!allowScripts) return <NoScript />;
+
+          return (
+            <Script
+              {...((domNode.attribs as unknown) as HTMLScriptElement)}
+              children={domToReact(domNode.children, options)}
+            />
+          );
+        case 'a':
+          return (
+            <Link
+              {...((domNode.attribs as unknown) as HTMLAnchorElement)}
+              children={domToReact(domNode.children, options)}
+            />
+          );
+        default:
+          return domNode;
+      }
+    },
+  };
+
+  return <>{parser(marked(localize(children)), options)}</>;
 };
 
 export const RichText: BlockComponent<RichTextConfig> = () => {
   const { config: { content = '', ...config } = {} } = useBlock<
     RichTextConfig
   >();
-
   return (
     <RichTextRenderer className="block-rich-text" {...config}>
       {content}

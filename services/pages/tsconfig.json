@@ -21,7 +21,8 @@
     "**/*.ts",
     "**/*.tsx",
     "__mocks__/react-i18next.js",
-    "utils/yaml.worker.ts"
+    "utils/yaml.worker.ts",
+    "utils/urls"
   ],
   "exclude": ["node_modules", "*.test.tsx"]
 }

@@ -35,6 +35,15 @@ const components = {
 
 const emptyArray: DataTableConfig['data'] = [];
 
+function initDataSource(data: DataTableConfig['data']) {
+  return Array.isArray(data)
+    ? data.map((item: any, k: number) => ({
+        key: k,
+        ...item,
+      }))
+    : [];
+}
+
 export const DataTable: BlockComponent = () => {
   const {
     t,
@@ -43,19 +52,12 @@ export const DataTable: BlockComponent = () => {
   const { localize } = useLocalizedText();
   const { config = { data: emptyArray }, events } = useBlock<DataTableConfig>();
 
-  const [dataSource, setDataSource] = useState<any>();
+  const [dataSource, setDataSource] = useState<any>(
+    initDataSource(config.data)
+  );
 
   useEffect(() => {
-    const rawData = config.data || [];
-
-    setDataSource(
-      Array.isArray(rawData)
-        ? rawData.map((item: any, k: number) => ({
-            key: k,
-            ...item,
-          }))
-        : []
-    );
+    setDataSource(initDataSource(config.data));
   }, [config.data]);
 
   const columns = useMemo(() => {
