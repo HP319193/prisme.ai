@@ -6,8 +6,9 @@ import Form from './Form';
 import Header from './Header';
 import RichText from './RichText';
 import Buttons from './Buttons';
+import Hero from './Hero';
 
-const Schemas = { Cards, DataTable, Form, Header, RichText, Buttons };
+const Schemas = { Cards, DataTable, Form, Header, RichText, Buttons, Hero };
 
 const getEditSchema = (blockName: string): Schema | null =>
   Schemas[blockName as keyof typeof Schemas] || null;

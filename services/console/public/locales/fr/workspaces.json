@@ -1028,6 +1028,40 @@
             "description": "Autoriser l'execution de code javascript inclus dans des balises <script>"
           }
         }
+      },
+      "hero": {
+        "settings": {
+          "title": {
+            "label": "Titre",
+            "description": "Le titre du Hero."
+          },
+          "lead": {
+            "label": "Sous-titre",
+            "description": "Le sous-titre du Hero."
+          },
+          "content": {
+            "label": "Contenu supplémentaire",
+            "description": "Vous pouvez compléter votre contenu avec une liste de Blocks.",
+            "add": "Ajouter un Block",
+            "remove": "Supprimer le Block",
+            "items": {
+              "label": "Block",
+              "description": "Spécification du Block.",
+              "name": {
+                "label": "Nom du Block",
+                "description": "Le nom du Block à afficher"
+              }
+            }
+          },
+          "img": {
+            "label": "Image",
+            "description": "Une image idéealement au format carré et de bonne taille."
+          },
+          "backgroundColor": {
+            "label": "Couleur de fond",
+            "description": "La couleur de fond du Hero."
+          }
+        }
       }
     }
   },

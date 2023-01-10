@@ -15,6 +15,7 @@ export interface BlockInCatalog extends Prismeai.Block {
 
 const builtInBlocksOrder = [
   'Header',
+  'Hero',
   'RichText',
   'Buttons',
   'Form',
