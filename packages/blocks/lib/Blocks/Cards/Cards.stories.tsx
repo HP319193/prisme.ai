@@ -1,5 +1,5 @@
 import { Story } from '@storybook/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { BlockProvider, BlocksProvider } from '../../Provider';
 import { PreviewInStory } from '../PreviewInStory';
 import Cards from './Cards';
@@ -273,12 +273,25 @@ const Template: Story<any> = () => {
   });
   const [appConfig, setAppConfig] = useState<any>();
 
+  const config6 = useMemo(
+    () => ({
+      variant: 'classic',
+      cards: [
+        {
+          title: 'Une seule carte',
+        },
+      ],
+    }),
+    []
+  );
+
   return (
     <BlocksProvider
       components={{
         Link: (props) => <a {...props} />,
         Loading: () => null,
         DownIcon: () => null,
+        SchemaForm: () => null,
       }}
       externals={{}}
     >
@@ -322,6 +335,9 @@ const Template: Story<any> = () => {
       >
         <Cards />
         {Cards.Preview && <PreviewInStory Preview={Cards.Preview} />}
+      </BlockProvider>
+      <BlockProvider config={config6}>
+        <Cards />
       </BlockProvider>
     </BlocksProvider>
   );

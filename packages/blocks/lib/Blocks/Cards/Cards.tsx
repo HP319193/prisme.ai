@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useBlock } from '../../Provider';
 import { withI18nProvider } from '../../i18n';
 import tw from '../../tw';
@@ -36,7 +43,7 @@ const getContainerStyle = (type: CardsConfig['layout']['type']) => {
     case 'carousel':
     default:
       return {
-        container: tw`flex flex-row flex-nowrap overflow-auto no-scrollbar pr-[100vw] snap-x snap-mandatory pb-6`,
+        container: tw`flex flex-row flex-nowrap overflow-auto no-scrollbar snap-x snap-mandatory pb-6`,
       };
   }
 };
@@ -119,18 +126,16 @@ export const Cards: BlockComponent = () => {
     };
   });
 
-  useEffect(
-    () =>
-      setCanScroll(
-        (!config.layout ||
-          !config.layout.type ||
-          config.layout.type === 'carousel') &&
-          container.current &&
-          container.current.scrollWidth >
-            container.current.getBoundingClientRect().width
-      ),
-    [config.layout]
-  );
+  useLayoutEffect(() => {
+    setCanScroll(
+      (!config.layout ||
+        !config.layout.type ||
+        config.layout.type === 'carousel') &&
+        container.current &&
+        container.current.scrollWidth >
+          container.current.getBoundingClientRect().width
+    );
+  }, [config.layout, cards]);
 
   const styles = useMemo(() => {
     const { layout: { type = 'carousel' } = {} } = config;
@@ -203,7 +208,7 @@ const previews = Array.from(new Array(4), (v, k) => k);
 Cards.Preview = ({ config = {} }) => {
   const type: CardsConfig['layout']['type'] =
     config?.layout?.type || 'carousel';
-  console.log(type);
+
   return (
     <div>
       {config.title && <div>{config.title}</div>}
