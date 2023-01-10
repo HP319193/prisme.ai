@@ -1175,6 +1175,8 @@ components:
               type: number
             automationSlug:
               type: string
+            automationDepth:
+              type: number
             userId:
               type: string
             sessionId:
