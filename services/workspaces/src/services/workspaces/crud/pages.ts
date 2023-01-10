@@ -365,13 +365,16 @@ class Pages {
     page: Prismeai.DetailedPage
   ): Promise<ApiKey> => {
     const events: string[] = ['*'];
-    const rules = {
+    const rules: Prismeai.ApiKeyRules = {
       events: {
         types: events,
         filters: {
           'source.sessionId': '${user.sessionId}',
           'source.serviceTopic': RUNTIME_EMITS_BROKER_TOPIC,
         },
+      },
+      uploads: {
+        mimetypes: ['*'],
       },
     };
     try {
