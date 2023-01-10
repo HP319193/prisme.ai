@@ -37,7 +37,7 @@ const Article = ({
           >
             {(cards as CardArticle[]).map(
               ({ title, subtitle, tag, description, action }, index) => (
-                <ActionOrLink action={action}>
+                <ActionOrLink action={action} key={index}>
                   <div
                     key={index}
                     className={tw`cards-container__card-container card-container snap-start`}

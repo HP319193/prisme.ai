@@ -23,13 +23,15 @@ export const Buttons = () => {
 
   return (
     <div className={`block-buttons ${tw`flex p-8 flex-1 flex-row space-x-1`}`}>
-      {buttons.map(({ text, action, tag, unselected, variant = 'default' }) => (
-        <ActionOrLink action={action}>
-          <Button variant={variant} tag={tag} unselected={unselected}>
-            {localize(text)}
-          </Button>
-        </ActionOrLink>
-      ))}
+      {buttons.map(
+        ({ text, action, tag, unselected, variant = 'default' }, index) => (
+          <ActionOrLink action={action} key={index}>
+            <Button variant={variant} tag={tag} unselected={unselected}>
+              {localize(text)}
+            </Button>
+          </ActionOrLink>
+        )
+      )}
     </div>
   );
 };
