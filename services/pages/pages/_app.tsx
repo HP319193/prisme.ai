@@ -11,7 +11,10 @@ import '@prisme.ai/design-system/styles/index.css';
 import '@prisme.ai/design-system/styles/prismeai-theme.css';
 import '@prisme.ai/design-system/styles/schema-form.css';
 import 'react-quill/dist/quill.snow.css';
-import { PageProvider } from '../components/Page/PageProvider';
+import {
+  PageProvider,
+  PageProviderProps,
+} from '../components/Page/PageProvider';
 import BlocksProvider from '../components/BlocksProvider/BlocksProvider';
 import WorkspaceProvider from '../components/Workspace';
 
@@ -22,14 +25,14 @@ type NextPageWithLayout = NextPage & {
   isPublic?: boolean;
 };
 
-type AppPropsWithLayout = AppProps<{
-  page?: Prismeai.DetailedPage;
-  error?: number | null;
-}> & {
+type AppPropsWithLayout = AppProps<PageProviderProps> & {
   Component: NextPageWithLayout;
 };
 
-function MyApp({ Component, pageProps: { page, error } }: AppPropsWithLayout) {
+function MyApp({
+  Component,
+  pageProps: { page, error, initialConfig },
+}: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
 
@@ -44,7 +47,7 @@ function MyApp({ Component, pageProps: { page, error } }: AppPropsWithLayout) {
   return (
     <WorkspaceProvider>
       <UserProvider anonymous isPublic>
-        <PageProvider page={page} error={error}>
+        <PageProvider page={page} error={error} initialConfig={initialConfig}>
           <BlocksProvider>
             <Head>
               <title>{t('main.title')}</title>

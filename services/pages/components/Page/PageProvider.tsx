@@ -18,20 +18,22 @@ export const pageContext = createContext<PageContext>({
 
 export const usePage = () => useContext(pageContext);
 
-interface PageProviderProps {
+export interface PageProviderProps {
   page?: PageContext['page'];
   error?: number | null;
+  initialConfig?: Record<string, any>[];
 }
 
 export const PageProvider: FC<PageProviderProps> = ({
   page: pageFromServer,
   error,
+  initialConfig,
   children,
 }) => {
   const { page, setPage, loading, fetchPage } = usePageFetcher(
     pageFromServer || undefined
   );
-  const { blocksConfigs, events } = usePageEvents(page);
+  const { blocksConfigs, events } = usePageEvents(page, initialConfig);
 
   return (
     <pageContext.Provider
