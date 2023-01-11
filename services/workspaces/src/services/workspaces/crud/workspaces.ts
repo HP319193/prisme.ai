@@ -496,13 +496,6 @@ class Workspaces {
       SubjectType.Workspace,
       workspaceId
     );
-    this.broker.send<Prismeai.RollbackWorkspaceVersion['payload']>(
-      EventType.RollbackWorkspaceVersion,
-      {
-        version: targetVersion,
-      },
-      { workspaceId }
-    );
     await this.storage.delete({
       workspaceId,
       version: 'current',
@@ -515,6 +508,13 @@ class Workspaces {
         version: 'current',
         parentFolder: true,
       }
+    );
+    this.broker.send<Prismeai.RollbackWorkspaceVersion['payload']>(
+      EventType.RollbackWorkspaceVersion,
+      {
+        version: targetVersion,
+      },
+      { workspaceId }
     );
     return targetVersion;
   };

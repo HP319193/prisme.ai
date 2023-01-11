@@ -41,6 +41,7 @@ export class Workspaces extends Storage {
       EventType.ConfiguredApp,
       EventType.PublishedApp,
       EventType.SuspendedWorkspace,
+      EventType.RollbackWorkspaceVersion,
     ];
 
     this.broker.on(
@@ -71,6 +72,10 @@ export class Workspaces extends Storage {
             await this.loadWorkspace(workspace);
             await this.saveWorkspace(workspace);
           }
+          return true;
+        } else if (event.type === EventType.RollbackWorkspaceVersion) {
+          const { workspaceId } = (event as any as Prismeai.PrismeEvent).source;
+          await this.fetchWorkspace(workspaceId!);
           return true;
         }
 
