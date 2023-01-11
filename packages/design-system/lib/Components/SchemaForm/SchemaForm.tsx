@@ -90,6 +90,7 @@ export const SchemaForm = ({
       FieldText,
       FreeAdditionalProperties,
       ManagedAdditionalProperties,
+      UiWidgets: {},
       ...components,
     }),
     [components]

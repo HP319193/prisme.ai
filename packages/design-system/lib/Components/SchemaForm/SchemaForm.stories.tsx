@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { Story } from '@storybook/react';
 import SchemaForm, { FormProps } from './SchemaForm';
 import { useField } from 'react-final-form';
@@ -6,6 +6,7 @@ import { FieldProps, Schema } from './types';
 import TextArea from '../TextArea';
 import { action } from '@storybook/addon-actions';
 import '../../../styles/schema-form.css';
+import { FieldComponent } from './context';
 
 export default {
   title: 'Components/SchemaForm',
@@ -1079,4 +1080,57 @@ WithStyles.args = {
       },
     },
   },
+};
+
+const CustomField: FieldComponent = () => {
+  return <div>CustomField</div>;
+};
+export const WithCustomUiWidget: Story<FormProps> = () => {
+  document.body.classList.remove('sb-main-padded');
+  const [value, setValue] = useState<{ values: any }>({});
+  const schema: Schema = useMemo(
+    () => ({
+      type: 'array',
+      items: {
+        type: 'object',
+        'ui:widget': 'customField',
+      },
+    }),
+    []
+  );
+  return (
+    <div>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `html {
+            font-size: 13px;
+}
+:root {
+  --pr-form-object-border: 1px solid gray;
+  --pr-form-accent-color: #015dff;
+  --pr-form-error-color: #ff4d4f;
+  --pr-form-margin-size: 1.6rem;
+}
+      `,
+        }}
+      ></style>
+      <SchemaForm
+        schema={schema}
+        initialValues={value}
+        onSubmit={setValue}
+        onChange={setValue}
+        locales={{
+          freeAdditionalPropertiesLabel: 'Free additional properties',
+        }}
+        components={{
+          UiWidgets: {
+            customField: CustomField,
+          },
+        }}
+      />
+      <pre>
+        <code>{value && JSON.stringify(value, null, '  ')}</code>
+      </pre>
+    </div>
+  );
 };

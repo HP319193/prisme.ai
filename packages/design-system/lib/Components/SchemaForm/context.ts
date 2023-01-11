@@ -4,8 +4,10 @@ import { SelectProps } from '../Select';
 import { DefaultFieldContainer } from './FieldContainer';
 import { FieldProps, UiOptionsAutocomplete, UiOptionsHTML } from './types';
 
-type FieldComponent<T = any> = (props: FieldProps & T) => ReactElement | null;
-type InputComponent<T = {}> = (
+export type FieldComponent<T = any> = (
+  props: FieldProps & T
+) => ReactElement | null;
+export type InputComponent<T = {}> = (
   props: T & {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement> | string) => void;
@@ -43,6 +45,7 @@ export interface SchemaFormContext {
     HTMLEditor?: InputComponent<{ options?: UiOptionsHTML }>;
     FreeAdditionalProperties?: FieldComponent;
     ManagedAdditionalProperties?: FieldComponent;
+    UiWidgets: Record<string, FieldComponent>;
   };
   utils: {
     extractSelectOptions: (

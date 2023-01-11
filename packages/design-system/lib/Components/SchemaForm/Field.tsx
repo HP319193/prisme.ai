@@ -21,6 +21,10 @@ export const Field = ({
       return UiWidget;
     }
 
+    if (UiWidget && components.UiWidgets && components.UiWidgets[UiWidget]) {
+      return components.UiWidgets[UiWidget];
+    }
+
     // This widget can be used with any type
     if (UiWidget === 'select') {
       return components.FieldSelect;
