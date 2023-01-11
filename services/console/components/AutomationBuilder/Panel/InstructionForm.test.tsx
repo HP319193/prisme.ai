@@ -39,6 +39,10 @@ jest.mock('../context', () => {
   };
 });
 
+jest.mock('../../SchemaForm/BlockSelector', () => {
+  return () => null;
+});
+
 it('should render', () => {
   const onSubmit = jest.fn();
   const onChange = jest.fn();

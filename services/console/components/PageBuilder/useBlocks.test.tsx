@@ -1,4 +1,6 @@
 import renderer from 'react-test-renderer';
+import { workspaceContext, Workspace } from '../../providers/Workspace';
+import workspaceContextValue from '../../providers/Workspace/workspaceContextValue.mock';
 import useBlocks from './useBlocks';
 
 jest.mock('./builtinBlocksVariants', () => [
@@ -24,84 +26,84 @@ jest.mock('./builtinBlocksVariants', () => [
     },
   },
 ]);
-jest.mock('../../providers/Workspace', () => {
-  const useWorkspace = () => ({
-    workspace: {
-      id: '42',
-      blocks: {
-        'My custom form': {
-          name: 'My custom form',
-          block: 'Form',
-          config: {
-            type: 'string',
-            title: 'just a single field',
-          },
-        },
-        'My other custom form': {
-          name: 'My other custom form',
-          block: 'My custom form',
-          config: {
-            type: 'string',
-            title: 'just a single field',
-          },
-        },
-        'My crazy other custom form': {
-          name: 'My crazy other custom form',
-          block: 'My other custom form',
-          config: {
-            type: 'string',
-            title: 'just a single field',
-          },
-        },
-        'Unavailable block': {
-          name: 'Because its from an uninstalled App',
-          block: 'UninstalledApp.Block',
-          config: {
-            type: 'string',
-            title: 'just a single field',
-          },
-        },
-      },
-      imports: {
-        App: {
-          slug: 'App',
-          appName: 'App',
-          blocks: [],
-        },
-        'App using App With Blocks': {
-          slug: 'App using App With Blocks',
-          appName: 'App using App With Blocks',
-          blocks: [
-            {
-              slug: 'App using App With Blocks.another app block',
-              name: 'Another App Block',
-              block: 'App With Blocks.app block',
-            },
-          ],
-        },
-        'App With Blocks': {
-          slug: 'App With Blocks',
-          appName: 'App With Blocks',
-          blocks: [
-            {
-              slug: 'App With Blocks.app block',
-              name: 'App Block',
-              url: 'http://app.block',
-              description: 'some text',
-            },
-            {
-              slug: 'App With Blocks.app block 2',
-              name: 'App Block 2',
-              description: 'some text',
-              block: 'Form',
-              config: {},
-            },
-          ],
-        },
+const workspace: any = {
+  id: '42',
+  name: 'Foo',
+  blocks: {
+    'My custom form': {
+      name: 'My custom form',
+      block: 'Form',
+      config: {
+        type: 'string',
+        title: 'just a single field',
       },
     },
-  });
-  return { useWorkspace };
+    'My other custom form': {
+      name: 'My other custom form',
+      block: 'My custom form',
+      config: {
+        type: 'string',
+        title: 'just a single field',
+      },
+    },
+    'My crazy other custom form': {
+      name: 'My crazy other custom form',
+      block: 'My other custom form',
+      config: {
+        type: 'string',
+        title: 'just a single field',
+      },
+    },
+    'Unavailable block': {
+      name: 'Because its from an uninstalled App',
+      block: 'UninstalledApp.Block',
+      config: {
+        type: 'string',
+        title: 'just a single field',
+      },
+    },
+  },
+  imports: {
+    App: {
+      slug: 'App',
+      appName: 'App',
+      blocks: [],
+    },
+    'App using App With Blocks': {
+      slug: 'App using App With Blocks',
+      appName: 'App using App With Blocks',
+      blocks: [
+        {
+          slug: 'App using App With Blocks.another app block',
+          name: 'Another App Block',
+          block: 'App With Blocks.app block',
+        },
+      ],
+    },
+    'App With Blocks': {
+      slug: 'App With Blocks',
+      appName: 'App With Blocks',
+      blocks: [
+        {
+          slug: 'App With Blocks.app block',
+          name: 'App Block',
+          url: 'http://app.block',
+          description: 'some text',
+        },
+        {
+          slug: 'App With Blocks.app block 2',
+          name: 'App Block 2',
+          description: 'some text',
+          block: 'Form',
+          config: {},
+        },
+      ],
+    },
+  },
+};
+
+jest.mock('../SchemaForm/BlockSelector', () => {
+  return () => null;
 });
 
 it('should get available Blocks', () => {
@@ -110,7 +112,11 @@ it('should get available Blocks', () => {
     expected = useBlocks();
     return null;
   };
-  renderer.create(<C />);
+  renderer.create(
+    <workspaceContext.Provider value={{ ...workspaceContextValue, workspace }}>
+      <C />
+    </workspaceContext.Provider>
+  );
   expect(expected.available).toEqual([
     {
       builtIn: true,
@@ -151,7 +157,7 @@ it('should get available Blocks', () => {
     {
       slug: 'My custom form',
       name: 'My custom form',
-      from: undefined,
+      from: 'Foo',
       block: 'Form',
       icon: '/file.svg',
       config: { type: 'string', title: 'just a single field' },
@@ -159,7 +165,7 @@ it('should get available Blocks', () => {
     {
       slug: 'My other custom form',
       name: 'My other custom form',
-      from: undefined,
+      from: 'Foo',
       block: 'My custom form',
       icon: '/file.svg',
       config: { type: 'string', title: 'just a single field' },
@@ -167,7 +173,7 @@ it('should get available Blocks', () => {
     {
       slug: 'My crazy other custom form',
       name: 'My crazy other custom form',
-      from: undefined,
+      from: 'Foo',
       block: 'My other custom form',
       icon: '/file.svg',
       config: { type: 'string', title: 'just a single field' },
@@ -231,7 +237,7 @@ it('should get available Blocks', () => {
         {
           slug: 'My custom form',
           name: 'My custom form',
-          from: undefined,
+          from: 'Foo',
           block: 'Form',
           config: { type: 'string', title: 'just a single field' },
           icon: '/file.svg',
@@ -239,7 +245,7 @@ it('should get available Blocks', () => {
         {
           slug: 'My other custom form',
           name: 'My other custom form',
-          from: undefined,
+          from: 'Foo',
           block: 'Form',
           config: { type: 'string', title: 'just a single field' },
           icon: '/file.svg',
@@ -247,7 +253,7 @@ it('should get available Blocks', () => {
         {
           slug: 'My crazy other custom form',
           name: 'My crazy other custom form',
-          from: undefined,
+          from: 'Foo',
           block: 'Form',
           config: { type: 'string', title: 'just a single field' },
           icon: '/file.svg',

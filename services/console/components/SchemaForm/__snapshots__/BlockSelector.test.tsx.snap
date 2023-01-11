@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render 1`] = `
+<div
+  className="pr-form-field pr-form-block-selector pr-form-object"
+>
+  <button
+    className="pr-form-raw absolute top-0 right-0 mt-[0.35rem] flex flex-1 flex-row z-[1] text-[12px] items-center"
+    onClick={[Function]}
+  />
+  <button
+    className="pr-form-object__label pr-form-label pr-form-object__label--visible"
+    onClick={[Function]}
+    type="button"
+  >
+    <span />
+  </button>
+  <div
+    className="pr-form-object__properties"
+  >
+    <div
+      className="flex-col m-[1rem]"
+    >
+      <div
+        className="flex flex-col"
+      >
+        <label
+          className="pr-form-block-selector__label pr-form-label"
+          htmlFor="undefined.name"
+        >
+          form.blockSelector.name.label
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+`;
