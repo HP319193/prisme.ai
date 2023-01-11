@@ -122,7 +122,10 @@ class Workspaces {
    * Workspaces
    */
 
-  createWorkspace = async (workspaceBody: Prismeai.Workspace) => {
+  createWorkspace = async (
+    workspaceBody: Prismeai.Workspace,
+    emit: boolean = true
+  ) => {
     const workspace: Prismeai.Workspace & { id: string; slug: string } = {
       ...workspaceBody,
       id: nanoid(7),
@@ -130,15 +133,17 @@ class Workspaces {
     };
 
     this.broker.buffer(true);
-    this.broker.send<Prismeai.CreatedWorkspace['payload']>(
-      EventType.CreatedWorkspace,
-      {
-        workspace,
-      },
-      {
-        workspaceId: workspace.id,
-      }
-    );
+    if (emit) {
+      this.broker.send<Prismeai.CreatedWorkspace['payload']>(
+        EventType.CreatedWorkspace,
+        {
+          workspace,
+        },
+        {
+          workspaceId: workspace.id,
+        }
+      );
+    }
 
     await this.accessManager.create(SubjectType.Workspace, {
       id: workspace.id,
@@ -190,11 +195,14 @@ class Workspaces {
       name: fromName,
       ...fromWorkspace
     } = await this.getWorkspace(workspaceId, version);
-    const newWorkspace = await this.createWorkspace({
-      ...fromWorkspace,
-      name: fromName + ' - Copie',
-      description: `Copie du workspace ${fromName}`,
-    });
+    const newWorkspace = await this.createWorkspace(
+      {
+        ...fromWorkspace,
+        name: fromName + ' - Copie',
+        description: `Copie du workspace ${fromName}`,
+      },
+      false
+    );
 
     // Copy automations & imports
     const automationsQuery = {
@@ -496,13 +504,6 @@ class Workspaces {
       SubjectType.Workspace,
       workspaceId
     );
-    this.broker.send<Prismeai.RollbackWorkspaceVersion['payload']>(
-      EventType.RollbackWorkspaceVersion,
-      {
-        version: targetVersion,
-      },
-      { workspaceId }
-    );
     await this.storage.delete({
       workspaceId,
       version: 'current',
@@ -515,6 +516,13 @@ class Workspaces {
         version: 'current',
         parentFolder: true,
       }
+    );
+    this.broker.send<Prismeai.RollbackWorkspaceVersion['payload']>(
+      EventType.RollbackWorkspaceVersion,
+      {
+        version: targetVersion,
+      },
+      { workspaceId }
     );
     return targetVersion;
   };
