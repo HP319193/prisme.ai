@@ -64,14 +64,8 @@ export class Workspaces extends Storage {
         if (event.type === EventType.CreatedWorkspace) {
           const workspace = (event as any as Prismeai.CreatedWorkspace).payload
             .workspace;
-          try {
-            // In case of a duplicated workspace, the model should have been already duplicated
-            await this.fetchWorkspace(workspace.id!);
-          } catch {
-            // Otherwise, simply init the model
-            await this.loadWorkspace(workspace);
-            await this.saveWorkspace(workspace);
-          }
+          await this.loadWorkspace(workspace);
+          await this.saveWorkspace(workspace);
           return true;
         } else if (event.type === EventType.RollbackWorkspaceVersion) {
           const { workspaceId } = (event as any as Prismeai.PrismeEvent).source;
