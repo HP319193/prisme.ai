@@ -23,15 +23,7 @@ const schema: Schema = {
         type: 'object',
         title: 'pages.blocks.hero.settings.content.items.label',
         description: 'pages.blocks.hero.settings.content.items.description',
-        properties: {
-          name: {
-            type: 'string',
-            title: 'pages.blocks.hero.settings.content.items.name.label',
-            description:
-              'pages.blocks.hero.settings.content.items.name.description',
-          },
-        },
-        additionalProperties: true,
+        'ui:widget': 'blockSelector',
       },
     },
     img: {

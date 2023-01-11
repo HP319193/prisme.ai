@@ -8,6 +8,7 @@ import useSchema from '../../SchemaForm/useSchema';
 import { usePageBuilder } from '../context';
 import useBlockPageConfig from '../useBlockPageConfig';
 import { useWorkspace } from '../../../providers/Workspace';
+import components from '../../SchemaForm/schemaFormComponents';
 
 interface SettingsProps {
   removeBlock: () => void;
@@ -111,6 +112,7 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
             buttons={[]}
             locales={locales}
             utils={{ extractSelectOptions }}
+            components={components}
           />
         ) : (
           <Loading />

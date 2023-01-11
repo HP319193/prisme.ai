@@ -1,5 +1,4 @@
 import { Select as AntdSelect, SelectProps as AntdSelectProps } from 'antd';
-import { WithLabel } from '../';
 import { ReactNode } from 'react';
 
 const { Option, OptGroup } = AntdSelect;

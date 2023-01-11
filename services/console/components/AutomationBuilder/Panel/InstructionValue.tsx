@@ -4,7 +4,7 @@ import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
 import { useAutomationBuilder } from '../context';
 import useLocalizedText from '../../../utils/useLocalizedText';
-import components from './schemaFormComponents';
+import components from '../../SchemaForm/schemaFormComponents';
 import { useWorkspace } from '../../../providers/Workspace';
 
 interface InstructionValueProps {

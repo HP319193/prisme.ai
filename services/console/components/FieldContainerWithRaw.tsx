@@ -90,7 +90,7 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
         placement="left"
       >
         <button
-          className={`absolute ${
+          className={`pr-form-raw absolute ${
             className === 'pr-form-object' ? 'top-4 right-4' : 'top-0 right-0'
           } mt-[0.35rem] flex flex-1 flex-row z-[1] text-[12px] items-center`}
           onClick={toggle}

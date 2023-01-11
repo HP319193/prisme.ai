@@ -4,7 +4,7 @@ import { SelectProps } from '../Select';
 import { DefaultFieldContainer } from './FieldContainer';
 import { FieldProps, UiOptionsAutocomplete, UiOptionsHTML } from './types';
 
-export type FieldComponent<T = any> = (
+export type FieldComponent<T = {}> = (
   props: FieldProps & T
 ) => ReactElement | null;
 export type InputComponent<T = {}> = (
@@ -67,6 +67,7 @@ export const context = createContext<SchemaFormContext>({
   locales: {},
   components: {
     FieldContainer: DefaultFieldContainer,
+    UiWidgets: {},
   },
   utils: {
     extractSelectOptions: () => [],

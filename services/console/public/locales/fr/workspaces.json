@@ -671,6 +671,7 @@
       "builtin": "Blocks de base",
       "name": "{{context}}",
       "name_Header": "Entête",
+      "name_Hero": "Hero",
       "name_Cards": "Groupe de cartes",
       "name_DataTable": "Tableau de données",
       "name_Form": "Formulaire",
@@ -679,6 +680,7 @@
       "name_Buttons": "Groupe de boutons",
       "description": "",
       "description_Header": "Afficher une entête de page",
+      "description_Hero": "Afficher un Hero de page",
       "description_Cards": "Afficher un groupe de cartes",
       "description_DataTable": "Afficher un tableau de données",
       "description_Form": "Afficher un formulaire",
@@ -1253,6 +1255,12 @@
     "raw": "Insérer une valeur brute (permet notamment de saisir du texte, et donc des variables interpolées)",
     "raw_hide": "Respecter le type de donnée exigé",
     "html": "Éditer au format HTML",
-    "html_hide": "Attention, en revenant au mode d'édition simple, vous risquez de perdre des balises ou des attributs HTML non gérés par celui-ci."
+    "html_hide": "Attention, en revenant au mode d'édition simple, vous risquez de perdre des balises ou des attributs HTML non gérés par celui-ci.",
+    "blockSelector": {
+      "name": {
+        "label": "Choix du Block",
+        "description": "Choisissez un Block parmi ceux proposés par Prisme.ai et ceux provenant des Apps que vous avez installés sur votre Workspace."
+      }
+    }
   }
 }

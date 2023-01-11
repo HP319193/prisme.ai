@@ -7,12 +7,7 @@ import DefaultFieldDate from './FieldDate';
 import FieldTextColor from './FieldTextColor';
 import FieldTextTextArea from './FieldTextTextArea';
 import FieldTextUpload from './FieldTextUpload';
-import {
-  FieldProps,
-  UiOptionsHTML,
-  UiOptionsTextArea,
-  UiOptionsUpload,
-} from './types';
+import { FieldProps, UiOptionsTextArea, UiOptionsUpload } from './types';
 import { getError } from './utils';
 import InfoBubble from './InfoBubble';
 import { Label } from './Label';
