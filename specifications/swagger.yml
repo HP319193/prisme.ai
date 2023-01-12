@@ -121,6 +121,10 @@ components:
           $ref: "#/components/schemas/Config"
         photo:
           type: string
+        labels:
+          type: array
+          items:
+            type: string
         slug:
           type: string
         updatedAt:
@@ -152,6 +156,10 @@ components:
         disabled:
           type: boolean
           description: If disabled, this appInstance will be ignored during execution
+        labels:
+          type: array
+          items:
+            type: string
         updatedAt:
           type: string
         createdAt:
@@ -280,6 +288,10 @@ components:
           type: string
         id:
           type: string
+        labels:
+          type: array
+          items:
+            type: string
 
     RuntimeModel:
       allOf:
@@ -440,6 +452,10 @@ components:
             $ref: '#/components/schemas/TypedArgument'
         when:
           $ref: '#/components/schemas/When'
+        labels:
+          type: array
+          items:
+            type: string
         emits:
           type: array
           items:
@@ -533,6 +549,10 @@ components:
                 type: string
               appInstance:
                 type: string
+        labels:
+          type: array
+          items:
+            type: string
         events:
           $ref: '#/components/schemas/ProcessedEvents'
         createdBy:
@@ -3598,6 +3618,12 @@ paths:
           required: false
           schema:
             type: number
+        - name: 'labels'
+          in: 'query'
+          description: 'Comma-separated labels list to filter on'
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Success Response
@@ -4556,6 +4582,12 @@ paths:
           description: 'Page size'
           schema:
             type: number
+        - name: 'labels'
+          in: 'query'
+          description: 'Comma-separated labels list to filter on'
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Success Response

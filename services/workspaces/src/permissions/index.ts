@@ -16,6 +16,7 @@ export interface WorkspaceMetadata {
   photo?: string;
   versions?: Required<Prismeai.WorkspaceVersion>[];
   description?: Prismeai.LocalizedText;
+  labels?: string[];
 }
 
 export type SubjectInterfaces = {
@@ -48,6 +49,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           description: Schema.Types.Mixed,
           versions: Schema.Types.Mixed,
           slug: { type: String, index: true, unique: true, sparse: true },
+          labels: [String],
         },
         [SubjectType.App]: {
           workspaceId: { type: String, index: true },
@@ -57,6 +59,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           documentation: Schema.Types.Mixed,
           photo: String,
           slug: { type: String, index: true },
+          labels: [String],
         },
         [SubjectType.Page]: {
           workspaceId: { type: String, index: true },
@@ -67,6 +70,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
           slug: { type: String },
           styles: { type: String },
           apiKey: { type: String },
+          labels: [String],
         },
         [SubjectType.File]: {
           workspaceId: { type: String, index: true },
