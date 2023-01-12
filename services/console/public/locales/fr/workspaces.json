@@ -139,7 +139,11 @@
       "suggestions": {
         "title": "Suggestions de filtres",
         "help": "Sélection de filtres pré-concus pour vous aider à trouver vos évènements les plus utiles.",
-        "label_versions": "Toutes les versions du Workspace"
+        "label_versions": "Versions du workspace",
+        "label_updates": "Modifications du workspace",
+        "label_webhooks": "Appels webhooks",
+        "label_errors": "Erreurs",
+        "label_shares": "Partages d'accès"
       },
       "reset": "Réinitialiser les filtres"
     },
