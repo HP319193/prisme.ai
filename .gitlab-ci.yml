@@ -30,8 +30,8 @@ variables:
   EVENTS_K8S_NAME: 'prismeai-events'
 
 stages:
-  - dependencies
   - test
+  - dependencies
   - build_docker
   - deploy
   - performance
@@ -43,20 +43,19 @@ stages:
 
 backend_npm_install:
   stage: dependencies
-  only:
-    changes:
-      - 'services/api-gateway/package.json'
-      - 'services/runtime/package.json'
-      - 'services/workspaces/package.json'
-      - 'services/events/package.json'
-      - 'packages/**/*'
-      - 'specifications/swagger.yml'
-    refs:
-      - main
-      - tags
-      - /^feature\/.*$/
-      - /^fix\/.*$/
-      - /^pipeline\/.*$/
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
+      changes: &BACKEND_DEPS_CHANGES
+        - 'services/api-gateway/package.json'
+        - 'services/runtime/package.json'
+        - 'services/workspaces/package.json'
+        - 'services/events/package.json'
+        - 'packages/permissions/**/*'
+        - 'packages/broker/**/*'
+        - 'specifications/swagger.yml'
+      when: manual
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
+      changes: *BACKEND_DEPS_CHANGES
   image: docker:stable
   services:
     - docker:stable-dind
