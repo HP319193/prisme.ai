@@ -118,7 +118,7 @@ export const DataTable: BlockComponent = () => {
           language,
           format,
           onEdit,
-          actions: actions?.map((action) => ({
+          actions: (actions || []).map((action) => ({
             ...action,
             label: localize(action.label),
           })),

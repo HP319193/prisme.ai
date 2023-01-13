@@ -4,9 +4,12 @@ export type DataType = typeof types[number];
 
 export interface Action {
   label: Prismeai.LocalizedText;
-  event?: string;
-  payload?: any;
-  url?: string;
+  action: {
+    type: 'event' | 'url';
+    event?: string;
+    payload?: any;
+    url?: string;
+  };
 }
 
 export type FormatDate = Intl.DateTimeFormatOptions;

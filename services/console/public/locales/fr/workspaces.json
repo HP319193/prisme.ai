@@ -662,10 +662,22 @@
           "description": "Action déclenchée au click sur l'élément",
           "event": "Evénement",
           "url": "Lien",
-          "valueEvent": "Evénement à déclencher",
-          "valueLink": "Url",
-          "popup": "Ouvrir dans un nouvel onglet",
-          "payload": "Contenu de l'événement"
+          "valueEvent": {
+            "label": "Evénement à déclencher",
+            "description": "Le nom de l'évènement qui sera envoyé au click."
+          },
+          "valueLink": {
+            "label": "Url",
+            "description": "Adresse web en https."
+          },
+          "popup": {
+            "label": "Ouvrir dans un nouvel onglet",
+            "description": "Ouvre le lien dans un nouvel onglet au lieu de remplacer la page courante."
+          },
+          "payload": {
+            "label": "Charge de données",
+            "description": "Objet de données qui accompagne l'évènement."
+          }
         }
       },
       "builtin": "Blocks de base",
@@ -944,11 +956,11 @@
                 "description": "Format à appliquer à la donnée en cas de type nombre ou date."
               },
               "actions": {
-                "label": "Actions",
+                "label": "Boutons d'actions",
                 "description": "Vous pouvez afficher des boutons d'action si vous n'avez pas choisi de clé",
                 "items": {
-                  "label": "Action",
-                  "description": "Spécification de l'action",
+                  "label": "Bouton d'action",
+                  "description": "Que fait le bouton d'action ?",
                   "add": "Ajouter une action",
                   "remove": "Supprimer l'action",
                   "_label": {
