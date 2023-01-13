@@ -17,6 +17,7 @@ import { useTranslation } from 'next-i18next';
 import useLocalizedText from '../../utils/useLocalizedText';
 import getEditSchema from '../PageBuilder/Panel/EditSchema/getEditSchema';
 import { RightOutlined } from '@ant-design/icons';
+import { BlockComponent, loadModule } from '@prisme.ai/blocks';
 
 export const BlockSelector: FieldComponent = (props) => {
   const { t } = useTranslation('workspaces');
@@ -37,6 +38,13 @@ export const BlockSelector: FieldComponent = (props) => {
       if (block.builtIn) {
         const schema = getEditSchema(block.slug);
         setSchema(schema && localizeSchemaForm(schema));
+        return;
+      }
+      if (block.url) {
+        const module = await loadModule<BlockComponent>(block.url);
+        if (module && module.schema) {
+          setSchema(module.schema);
+        }
       }
     },
     [blocks, localizeSchemaForm]
