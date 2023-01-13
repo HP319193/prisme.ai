@@ -29,7 +29,11 @@ export const UIWidgetsByType = {
   [schemaTypes[0]]: UIWidgetsForString,
   [schemaTypes[1]]: UIWidgetsForLocalizedString,
 };
-export type UIWidgets = typeof UIWidgetsForString[number];
+
+type StringWithAutocomplete<T> = T | (string & {});
+export type UIWidgets = StringWithAutocomplete<
+  typeof UIWidgetsForString[number]
+>;
 
 export type UiOptionsGrid = {
   grid: string[][][];

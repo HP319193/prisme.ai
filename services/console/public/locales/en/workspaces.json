@@ -1028,6 +1028,40 @@
             "description": "Allow execution of javascript code included in <script> tags"
           }
         }
+      },
+      "hero": {
+        "settings": {
+          "title": {
+            "label": "Title",
+            "description": "Hero title."
+          },
+          "lead": {
+            "label": "Lead",
+            "description": "Hero lead."
+          },
+          "content": {
+            "label": "Additional content",
+            "description": "You can complete your content with a list of Blocks.",
+            "add": "Add a Block",
+            "remove": "Delete Block",
+            "items": {
+              "label": "Block",
+              "description": "Block specification.",
+              "name": {
+                "label": "Block name",
+                "description": "Name of Block to display"
+              }
+            }
+          },
+          "img": {
+            "label": "Image",
+            "description": "Une image idéealement au format carré et de bonne taille."
+          },
+          "backgroundColor": {
+            "label": "Couleur de fond",
+            "description": "La couleur de fond du Hero."
+          }
+        }
       }
     }
   },

@@ -9,6 +9,42 @@ type ExternalModule = Function;
 
 const Cache = new Map();
 
+export async function loadModule<T = {}>(url: string) {
+  const cache: Map<string, Promise<T>> = Cache;
+  if (!cache.get(url)) {
+    cache.set(
+      url,
+      new Promise((resolve, reject) => {
+        const uniqMethod = `__load_${(Math.random() * 1000).toFixed()}`;
+        // @ts-ignore
+        window[uniqMethod] = (module) => {
+          // @ts-ignore
+          delete window[uniqMethod];
+          document.body.removeChild(s);
+          resolve(module.default);
+        };
+        // @ts-ignore
+        window[`${uniqMethod}_error`] = (e) => {
+          reject(e);
+        };
+        const s = document.createElement('script');
+
+        s.innerHTML = `
+    import * as module from '${url}';
+    try {
+      window['${uniqMethod}'](module);
+    } catch (e) {
+      window['${uniqMethod}_error'](e);
+    }
+    `;
+        s.type = 'module';
+        document.body.appendChild(s);
+      })
+    );
+  }
+  return cache.get(url);
+}
+
 export const useExternalModule = <T = ExternalModule>({
   url,
   externals = {},
@@ -17,44 +53,15 @@ export const useExternalModule = <T = ExternalModule>({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>();
 
-  const loadModule = useCallback(async () => {
-    const cache: Map<string, Promise<T>> = Cache;
-    if (!cache.get(url)) {
-      cache.set(
-        url,
-        new Promise((resolve) => {
-          const uniqMethod = `__load_${(Math.random() * 1000).toFixed()}`;
-          // @ts-ignore
-          window[uniqMethod] = (module) => {
-            // @ts-ignore
-            delete window[uniqMethod];
-            document.body.removeChild(s);
-            resolve(module.default);
-            setLoading(false);
-          };
-          // @ts-ignore
-          window[`${uniqMethod}_error`] = (e) => {
-            setLoading(false);
-            setError(e);
-          };
-          const s = document.createElement('script');
-
-          s.innerHTML = `
-    import * as module from '${url}';
+  const fetchModule = useCallback(async () => {
     try {
-      window['${uniqMethod}'](module);
+      const module = await loadModule<T>(url);
+      setModule(module ? () => module : null);
+      setLoading(false);
     } catch (e) {
-      window['${uniqMethod}_error'](e);
+      setLoading(false);
+      setError(e);
     }
-    `;
-          s.type = 'module';
-          document.body.appendChild(s);
-        })
-      );
-    }
-    const module = await cache.get(url);
-    setModule(module ? () => module : null);
-    setLoading(false);
   }, [url]);
 
   useEffect(() => {
@@ -67,8 +74,8 @@ export const useExternalModule = <T = ExternalModule>({
         ...externals,
       };
     }
-    loadModule();
-  }, [url, externals, loadModule]);
+    fetchModule();
+  }, [url, externals, fetchModule]);
 
   return { module, loading, error };
 };

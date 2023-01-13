@@ -145,6 +145,10 @@ export function StretchContent({ children = null }) {
   return children;
 }
 
+export function InfoBubble({ children = null }) {
+  return children;
+}
+
 export const schemaTypes = [
   'string',
   'localized:string',
@@ -170,3 +174,14 @@ export function useLocalizedText(t, language) {
     localizeSchemaForm,
   };
 }
+
+export const schemaFormUtils = {
+  getError: jest.fn(() => false),
+  getLabel: jest.fn((label) => label),
+};
+
+export const useSchemaForm = jest.fn(() => ({
+  utils: {},
+  locales: {},
+  components: {},
+}));

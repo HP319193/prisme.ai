@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import api from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
 import { usePreview } from '../usePreview';
@@ -35,6 +35,12 @@ export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
     },
     [fetchPage]
   );
+
+  useEffect(() => {
+    if (pageFromServer) return;
+    setLoading(true);
+    fetchPage();
+  }, [fetchPage, pageFromServer]);
 
   usePreview(setPage);
 

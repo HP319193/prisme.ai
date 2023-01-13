@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import { Schema, SchemaForm } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import components from './schemaFormComponents';
+import components from '../../SchemaForm/schemaFormComponents';
 
 interface OutputFormProps {
   output?: string;

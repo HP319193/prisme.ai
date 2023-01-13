@@ -50,6 +50,10 @@ jest.mock('../Panel', () => {
   return Panel;
 });
 
+jest.mock('../SchemaForm/BlockSelector', () => {
+  return () => null;
+});
+
 beforeEach(() => {
   useWorkspace().workspace = {
     id: '42',

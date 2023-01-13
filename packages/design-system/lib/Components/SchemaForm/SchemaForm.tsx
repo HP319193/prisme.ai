@@ -16,10 +16,6 @@ import FieldArray from './FieldArray';
 import FieldSelect from './FieldSelect';
 import FieldRadio from './FieldRadio';
 import FieldText from './FieldText';
-import {
-  FreeAdditionalProperties,
-  ManagedAdditionalProperties,
-} from './FieldAdditionalProperties';
 
 export interface FormProps {
   schema: Schema;
@@ -88,8 +84,7 @@ export const SchemaForm = ({
       FieldSelect,
       FieldRadio,
       FieldText,
-      FreeAdditionalProperties,
-      ManagedAdditionalProperties,
+      UiWidgets: {},
       ...components,
     }),
     [components]

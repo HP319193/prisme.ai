@@ -67,3 +67,6 @@ export function RightOutlined() {
 export function InfoCircleOutlined() {
   return null;
 }
+export function EyeTwoTone() {
+  return null;
+}

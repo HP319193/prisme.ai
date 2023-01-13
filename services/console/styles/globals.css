@@ -329,3 +329,8 @@ button {
   background-size: cover;
   display: block;
 }
+.pr-form-array > .pr-form-raw,
+.pr-form-object > .pr-form-raw {
+  top: 1rem !important;
+  right: 1rem !important;
+}

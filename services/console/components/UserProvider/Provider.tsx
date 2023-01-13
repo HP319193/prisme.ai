@@ -37,6 +37,7 @@ async function authFromConsole() {
       const { type, token } = e.data;
       if (type === 'api.token') {
         api.token = token;
+        Storage.set('auth-token', token);
         clearTimeout(t);
         resolve(token);
       }
