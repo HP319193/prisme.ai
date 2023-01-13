@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useScrollListener } from '../useScrollListener';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { Button, Layout, StretchContent } from '@prisme.ai/design-system';
-import { Badge, PageHeader } from 'antd';
+import { Badge, PageHeader, Tooltip } from 'antd';
 import HorizontalSeparatedNav from '../HorizontalSeparatedNav';
 import Filters from './Filters';
 import { useQueryString } from '../../providers/QueryStringProvider';
@@ -11,7 +11,12 @@ import { useWorkspace } from '../../providers/Workspace';
 import { useEvents } from '../../providers/Events';
 import EventsList from './EventsList';
 import EmptyActivities from './EmptyActivities';
-import { ExceptionOutlined } from '@ant-design/icons';
+import {
+  ExceptionOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
 
 export const Activities = () => {
   const { t } = useTranslation('workspaces');
@@ -23,12 +28,16 @@ export const Activities = () => {
     events,
     loading,
     setFilters,
+    filters,
     fetchEvents,
     fetchNextEvents,
     hasMore,
     read,
     isRead,
     isVirgin,
+    running,
+    start,
+    stop,
   } = useEvents();
   const { queryString, setQueryString } = useQueryString();
   const { ref, bottom } = useScrollListener<HTMLDivElement>({ margin: -1 });
@@ -127,7 +136,43 @@ export const Activities = () => {
       }
       className="h-full"
     >
-      <div className="flex h-full overflow-auto flex-col" ref={ref}>
+      <div className="relative flex h-full overflow-auto flex-col" ref={ref}>
+        <div className="absolute top-4 right-6 flex flex-row items-center text-xs">
+          <span className="flex text-gray">
+            {t('events.running.label', { context: running ? '' : 'off' })}
+          </span>
+          <Tooltip
+            title={t('events.running.description', {
+              context: running ? 'off' : '',
+            })}
+            placement="left"
+          >
+            <button
+              onClick={running ? stop : start}
+              className={`text-2xl ml-2`}
+            >
+              {running ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
+            </button>
+          </Tooltip>
+          <Tooltip
+            title={t('events.reload.description', {
+              context: running ? 'off' : '',
+            })}
+            placement="left"
+          >
+            <button
+              onClick={() => {
+                setFilters({ ...filters });
+              }}
+              disabled={running}
+              className={`flex mt-1 ml-2 text-2xl ${
+                running ? 'text-light-gray' : ''
+              }`}
+            >
+              <ReloadOutlined />
+            </button>
+          </Tooltip>
+        </div>
         {!loading && isVirgin && <EmptyActivities />}
         {!loading && noResult && (
           <div className="flex flex-1 justify-center items-center">

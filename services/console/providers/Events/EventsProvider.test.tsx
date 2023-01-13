@@ -14,9 +14,7 @@ jest.mock('../../utils/api', () => {
   const mock = {
     mockEvent,
     getEvents: jest.fn(() => []),
-    streamEvents: jest.fn(() => ({
-      all: jest.fn(() => mockEvent),
-    })),
+    streamEvents: jest.fn(() => mockEvent),
   };
   return mock;
 });
@@ -48,11 +46,7 @@ it('should fetch', async () => {
   );
 
   await act(async () => {
-    await true;
-  });
-  expect(api.streamEvents).toHaveBeenCalledWith('42', {});
-  jest.runAllTimers();
-  await act(async () => {
+    jest.runAllTimers();
     await true;
   });
 
@@ -64,4 +58,33 @@ it('should fetch', async () => {
     await context.fetchNextEvents();
   });
   expect(getEvents).toHaveBeenCalledWith('42', { limit: 50, page: 1 });
+});
+
+it('should init events', async () => {
+  const root = renderer.create(
+    <workspaceContext.Provider value={workspaceContextValue}>
+      <EventsProvider workspaceId={workspaceContextValue.workspace.id}>
+        <T />
+      </EventsProvider>
+    </workspaceContext.Provider>
+  );
+
+  await act(async () => {
+    await true;
+  });
+
+  expect(api.streamEvents).not.toHaveBeenCalled();
+
+  await act(async () => {
+    await context.start();
+  });
+
+  expect(api.streamEvents).toHaveBeenCalledWith('42', {});
+
+  await act(async () => {
+    await context.stop();
+  });
+
+  // @ts-ignore
+  expect(api.mockEvent.destroy).toHaveBeenCalled();
 });

@@ -2,8 +2,26 @@
 
 exports[`should render no result 1`] = `
 <div
-  className="flex h-full overflow-auto flex-col"
+  className="relative flex h-full overflow-auto flex-col"
 >
+  <div
+    className="absolute top-4 right-6 flex flex-row items-center text-xs"
+  >
+    <span
+      className="flex text-gray"
+    >
+      events.running.label
+    </span>
+    <button
+      className="text-2xl ml-2"
+      onClick={[MockFunction]}
+    />
+    <button
+      className="flex mt-1 ml-2 text-2xl "
+      disabled={false}
+      onClick={[Function]}
+    />
+  </div>
   <div
     className="flex flex-1 justify-center items-center"
   >
@@ -18,16 +36,52 @@ exports[`should render no result 1`] = `
 
 exports[`should render some events 1`] = `
 <div
-  className="flex h-full overflow-auto flex-col"
+  className="relative flex h-full overflow-auto flex-col"
 >
+  <div
+    className="absolute top-4 right-6 flex flex-row items-center text-xs"
+  >
+    <span
+      className="flex text-gray"
+    >
+      events.running.label
+    </span>
+    <button
+      className="text-2xl ml-2"
+      onClick={[MockFunction]}
+    />
+    <button
+      className="flex mt-1 ml-2 text-2xl "
+      disabled={false}
+      onClick={[Function]}
+    />
+  </div>
   events.more
 </div>
 `;
 
 exports[`should render virgin workspace 1`] = `
 <div
-  className="flex h-full overflow-auto flex-col"
+  className="relative flex h-full overflow-auto flex-col"
 >
+  <div
+    className="absolute top-4 right-6 flex flex-row items-center text-xs"
+  >
+    <span
+      className="flex text-gray"
+    >
+      events.running.label
+    </span>
+    <button
+      className="text-2xl ml-2"
+      onClick={[MockFunction]}
+    />
+    <button
+      className="flex mt-1 ml-2 text-2xl "
+      disabled={false}
+      onClick={[Function]}
+    />
+  </div>
   <div
     className="flex flex-1 justify-between flex-col p-28"
   >
