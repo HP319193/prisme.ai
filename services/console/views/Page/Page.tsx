@@ -129,7 +129,7 @@ const Page = () => {
 
 const PageWithProvider = () => {
   const {
-    query: { pageSlug, id: workspaceId },
+    query: { pageSlug = [], id: workspaceId },
     push,
   } = useRouter();
 
@@ -149,8 +149,10 @@ const PageWithProvider = () => {
     };
   }, [push, workspaceId]);
 
+  const slug = (Array.isArray(pageSlug) ? pageSlug : [pageSlug]).join('/');
+
   return (
-    <PageProvider workspaceId={`${workspaceId}`} slug={`${pageSlug}`}>
+    <PageProvider workspaceId={`${workspaceId}`} slug={`${slug}`}>
       <Page />
     </PageProvider>
   );
