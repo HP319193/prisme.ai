@@ -662,10 +662,22 @@
           "description": "Action triggered by a click on the card",
           "event": "Event",
           "url": "Link",
-          "valueEvent": "Event to trigger",
-          "valueLink": "Url",
-          "popup": "Open in new tab",
-          "payload": "Event's payload"
+          "valueEvent": {
+            "label": "Event to trigger",
+            "description": "The name of the event that will be sent to the click."
+          },
+          "valueLink": {
+            "label": "Url",
+            "description": "Web address in https."
+          },
+          "popup": {
+            "label": "Open in new tab",
+            "description": "Opens the link in a new tab instead of replacing the current page."
+          },
+          "payload": {
+            "label": "Payload",
+            "description": "Data object that accompanies the event."
+          }
         }
       },
       "builtin": "Built-in Blocks",
@@ -944,11 +956,11 @@
                 "description": "Format to apply to the data in case of number or date type."
               },
               "actions": {
-                "label": "Actions",
+                "label": "Action buttons",
                 "description": "You can display action buttons if you have not chosen a key",
                 "items": {
-                  "label": "Action",
-                  "description": "Specification of the action",
+                  "label": "Action button",
+                  "description": "What does the action button do?",
                   "add": "Add an action",
                   "remove": "Delete action",
                   "_label": {

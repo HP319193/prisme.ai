@@ -93,7 +93,7 @@ export const renderValue = ({
       if (actions) {
         return Array.isArray(actions) ? (
           <>
-            {actions.map(({ label, event, payload, url }) => (
+            {actions.map(({ label, action: { event, payload, url } = {} }) => (
               <Button
                 key={`${label}${event}${url}`}
                 type="button"
