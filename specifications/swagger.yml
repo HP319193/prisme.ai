@@ -209,6 +209,18 @@ components:
           type: array
           items:
             type: string
+        autocomplete:
+          type: array
+          items:
+            type: object
+            required:
+              - event
+            properties:
+              event:
+                type: string
+                example: 'prismeaiMessenger.message'
+              autocomplete:
+                $ref: '#/components/schemas/EmitAutocomplete'
 
     AppAutomations:
       type: array
@@ -456,18 +468,6 @@ components:
           type: array
           items:
             type: string
-        emits:
-          type: array
-          items:
-            type: object
-            required:
-              - event
-            properties:
-              event:
-                type: string
-                example: 'prismeaiMessenger.message'
-              autocomplete:
-                $ref: '#/components/schemas/EmitAutocomplete'
         events:
           $ref: '#/components/schemas/ProcessedEvents'
         updatedAt:
