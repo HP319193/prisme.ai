@@ -68,6 +68,7 @@ class Pages {
       workspaceId,
       workspaceSlug: page.workspaceSlug,
       description: page.description,
+      labels: page.labels,
     };
 
     await this.accessManager.throwUnlessCan(
@@ -167,6 +168,7 @@ class Pages {
       name: cur.name!,
       slug: cur.slug!,
       description: cur.description,
+      labels: cur.labels,
       createdAt: cur.createdAt,
       createdBy: cur.createdBy,
       updatedAt: cur.updatedAt,
@@ -346,6 +348,7 @@ class Pages {
       slug: newSlug,
       workspaceId,
       workspaceSlug: currentPageMeta.workspaceSlug,
+      labels: page.labels,
     });
 
     this.broker.send<Prismeai.UpdatedPage['payload']>(

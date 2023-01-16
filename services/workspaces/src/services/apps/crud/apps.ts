@@ -20,6 +20,7 @@ import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 export interface ListAppsQuery {
   text?: string;
   workspaceId?: string;
+  labels?: string;
 }
 
 export interface AppDetails {
@@ -49,9 +50,17 @@ class Apps {
   }
 
   listApps = async (
-    { text, ...query }: ListAppsQuery = {},
+    { text, labels, ...query }: ListAppsQuery = {},
     opts?: FindOptions
   ) => {
+    const mongoQuery = {
+      ...query,
+      ...(labels && {
+        labels: {
+          $in: labels.split(','),
+        },
+      }),
+    };
     return await this.accessManager.findAll(
       SubjectType.App,
       {
@@ -72,7 +81,7 @@ class Apps {
               ],
             }
           : {}),
-        ...query,
+        ...mongoQuery,
       },
       opts
     );
@@ -121,6 +130,7 @@ class Apps {
       description: dsul.description,
       photo: dsul.photo,
       documentation,
+      labels: dsul.labels,
     };
 
     // Fetch existing workspace app

@@ -160,17 +160,20 @@ class Workspaces {
   findWorkspaces = async (
     query?: PrismeaiAPI.GetWorkspaces.QueryParameters
   ) => {
-    const { limit, page } = query || {};
-    return await this.accessManager.findAll(
-      SubjectType.Workspace,
-      {},
-      {
-        pagination: {
-          limit,
-          page,
-        },
-      }
-    );
+    const { limit, page, labels } = query || {};
+    const mongoQuery = labels
+      ? {
+          labels: {
+            $in: labels.split(','),
+          },
+        }
+      : {};
+    return await this.accessManager.findAll(SubjectType.Workspace, mongoQuery, {
+      pagination: {
+        limit,
+        page,
+      },
+    });
   };
 
   getWorkspace = async (workspaceId: string, version?: string) => {
@@ -318,6 +321,7 @@ class Workspaces {
       photo: workspace.photo,
       description: workspace.description,
       slug: workspace.slug || hri.random(),
+      labels: workspace.labels,
     };
 
     try {
