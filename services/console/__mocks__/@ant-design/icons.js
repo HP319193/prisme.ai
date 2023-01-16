@@ -70,3 +70,12 @@ export function InfoCircleOutlined() {
 export function EyeTwoTone() {
   return null;
 }
+export function PlayCircleOutlined() {
+  return null;
+}
+export function PauseCircleOutlined() {
+  return null;
+}
+export function ReloadOutlined() {
+  return null;
+}

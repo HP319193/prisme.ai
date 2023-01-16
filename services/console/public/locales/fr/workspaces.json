@@ -117,6 +117,16 @@
     "search": {
       "placeholder": "Rechercher par mots clés"
     },
+    "running": {
+      "label": "Les évènements sont affichés en temps réel",
+      "label_off": "La mise à jour des évènements est en pause",
+      "description": "Démarrer la mise à jour en temps réel. Attention, les performances de votre navigateur peuvent être dégradées.",
+      "description_off": "Arrêter la mise à jour en temps réel"
+    },
+    "reload": {
+      "description": "Charger les derniers évènements.",
+      "description_off": "Désactiver la mise à jour en temps réel pour recharger les évènements manuellement."
+    },
     "filters": {
       "title": "Filtres",
       "correlationId": "ID de corrélation",

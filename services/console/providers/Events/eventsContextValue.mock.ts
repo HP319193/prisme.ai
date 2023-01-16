@@ -11,6 +11,9 @@ export const eventsContextValue: EventsContext = {
   read: jest.fn(),
   isVirgin: false,
   setFilters: jest.fn(),
+  running: false,
+  start: jest.fn(),
+  stop: jest.fn(),
 };
 
 export default eventsContextValue;
