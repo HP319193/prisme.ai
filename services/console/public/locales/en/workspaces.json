@@ -139,7 +139,11 @@
       "suggestions": {
         "title": "Filter suggestions",
         "help": "Selection of pre-set filters to help you find your most useful events.",
-        "label_versions": "All Workspace versions"
+        "label_versions": "Workspace versions",
+        "label_updates": "Workspace updates",
+        "label_webhooks": "Webhooks calls",
+        "label_errors": "Errors",
+        "label_shares": "Workspace shares"
       },
       "reset": "Reset filters"
     },

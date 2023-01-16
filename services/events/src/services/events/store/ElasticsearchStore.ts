@@ -196,7 +196,9 @@ export class ElasticsearchStore implements EventsStore {
     if (options.types) {
       filter.push({
         terms: {
-          type: options.types,
+          type: Array.isArray(options.types)
+            ? options.types
+            : (options.types as string).split(','),
         },
       });
     }
@@ -238,7 +240,9 @@ export class ElasticsearchStore implements EventsStore {
                 },
               }
             : {
-                match: {
+                [typeof value === 'string' && value.includes('*')
+                  ? 'wildcard'
+                  : 'match']: {
                   [key]: value,
                 },
               }
