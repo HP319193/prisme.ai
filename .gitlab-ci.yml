@@ -208,32 +208,30 @@ console_deploy:
     - export K8S_NAME=$CONSOLE_K8S_NAME
 
 ## Pages jobs
-# No tests yet
+pages_check:
+  stage: test
+  script:
+    - >
+      if ! [[ -d node_modules/ ]] ; then
+        BUILD_PACKAGES=0 npm ci
+      fi
+    - npm run build:packages
+    - npm run check:pages
+  needs: []
+  only:
+    changes:
+      - 'services/pages/**/*'
+  before_script:
+    - export DIRECTORY=services/$PAGES_DIRECTORY
 
-# pages_check:
-#   stage: test
-#   script:
-#     - >
-#       if ! [[ -d node_modules/ ]] ; then
-#         BUILD_PACKAGES=0 npm ci
-#       fi
-#     - npm run build:packages
-#     - npm run check:pages
-#   needs: []
-#   only:
-#     changes:
-#       - 'services/pages/**/*'
-#   before_script:
-#     - export DIRECTORY=services/$PAGES_DIRECTORY
-
-# pages_test:
-#   extends: .npm_test
-#   needs: []
-#   only:
-#     changes:
-#       - 'services/pages/**/*'
-#   before_script:
-#     - export DIRECTORY=services/$PAGES_DIRECTORY
+pages_test:
+  extends: .npm_test
+  needs: []
+  only:
+    changes:
+      - 'services/pages/**/*'
+  before_script:
+    - export DIRECTORY=services/$PAGES_DIRECTORY
 
 pages_build_docker:
   extends: .build_docker
