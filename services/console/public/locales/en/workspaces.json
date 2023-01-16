@@ -117,6 +117,16 @@
     "search": {
       "placeholder": "Search by keywords"
     },
+    "running": {
+      "label": "Events are displayed in real time",
+      "label_off": "The event update is paused",
+      "description": "Start the update in real time. Please note that the performance of your browser may be degraded.",
+      "description_off": "Stop the real time update"
+    },
+    "reload": {
+      "description": "Load the latest events.",
+      "description_off": "Disable real time update to reload events manually."
+    },
     "filters": {
       "title": "Filters",
       "correlationId": "Correlation ID",
@@ -687,6 +697,7 @@
       "builtin": "Built-in Blocks",
       "name": "{{context}}",
       "name_Header": "Header",
+      "name_Hero": "Hero",
       "name_Cards": "Cards group",
       "name_DataTable": "Data table",
       "name_Form": "Form",
@@ -695,6 +706,7 @@
       "name_Buttons": "Buttons group",
       "description": "",
       "description_Header": "Display page header",
+      "description_Hero": "Display a Hero of page",
       "description_Cards": "Display a cards group",
       "description_DataTable": "Display a data table",
       "description_Form": "Display form",
@@ -1031,6 +1043,10 @@
           "label": "Form specification",
           "description": "Use the form builder interface to add the fields of your choice.",
           "add": "Add a control"
+        },
+        "disabledSubmit": {
+          "label": "Disable the validation button",
+          "description": "Allows you to disable the form validation button. This parameter is useful to be sent by an Automation during the operation of the page, for example immediately after receiving the event corresponding to onSubmit, to show the user that his request is taken into account."
         }
       },
       "richtext": {
@@ -1269,6 +1285,12 @@
     "raw": "Insert a raw value (allows you to enter text, and therefore interpolated variables)",
     "raw_hide": "Respect the type of data required",
     "html": "Edit in HTML format",
-    "html_hide": "Be careful, by returning to the simple editing mode, you risk losing tags or HTML attributes not managed by it."
+    "html_hide": "Be careful, by returning to the simple editing mode, you risk losing tags or HTML attributes not managed by it.",
+    "blockSelector": {
+      "name": {
+        "label": "Choice of Block",
+        "description": "Choose a Block among those proposed by Prisme.ai and those from the Apps you have installed on your Workspace."
+      }
+    }
   }
 }
