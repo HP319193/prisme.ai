@@ -26,7 +26,11 @@ export const Buttons = () => {
       {buttons.map(
         ({ text, action, tag, unselected, variant = 'default' }, index) => (
           <ActionOrLink action={action} key={index}>
-            <Button variant={variant} tag={tag} unselected={unselected}>
+            <Button
+              variant={variant}
+              tag={localize(tag)}
+              unselected={unselected}
+            >
               {localize(text)}
             </Button>
           </ActionOrLink>
