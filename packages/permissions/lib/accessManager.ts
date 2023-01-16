@@ -367,6 +367,11 @@ export class AccessManager<
       updatedBy: user.id,
       createdAt: date.toISOString(),
       updatedAt: date.toISOString(),
+      permissions: {
+        [user.id]: {
+          role: 'owner',
+        },
+      },
     });
     object.id = subject.id || object._id!!.toString();
     await object.save();

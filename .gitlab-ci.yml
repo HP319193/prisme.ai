@@ -164,6 +164,7 @@ console_check:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       changes: &CONSOLE_CHANGES
         - 'services/console/**/*'
+        - 'packages/**/*'
     - !reference [console_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$CONSOLE_DIRECTORY
@@ -218,25 +219,29 @@ pages_check:
     - npm run build:packages
     - npm run check:pages
   needs: []
-  only:
-    changes:
-      - 'services/pages/**/*'
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes: &PAGES_CHANGES
+        - 'services/pages/**/*'
+        - 'packages/**/*'
+    - !reference [pages_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$PAGES_DIRECTORY
 
 pages_test:
   extends: .npm_test
   needs: []
-  only:
-    changes:
-      - 'services/pages/**/*'
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes: *PAGES_CHANGES
+    - !reference [pages_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$PAGES_DIRECTORY
 
 pages_build_docker:
   extends: .build_docker
-  # needs:
-  #   - pages_test
+  needs:
+    - pages_test
   stage: build_docker
   image: docker:stable
   services:
@@ -245,6 +250,7 @@ pages_build_docker:
     - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
       changes: &PAGES_CHANGES
         - 'services/pages/**/*'
+        - 'packages/**/*'
       when: manual
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
       changes: *PAGES_CHANGES
