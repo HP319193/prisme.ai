@@ -1043,6 +1043,10 @@
           "label": "Spécification du formulaire",
           "description": "Utilisez l'interface de construction de formulaire pour ajouter les champs de votre choix.",
           "add": "Ajouter un champs"
+        },
+        "disabledSubmit": {
+          "label": "Désactiver le bouton de validation",
+          "description": "Permet de désactiver le bouton de validation du formulaire. Ce paramètre est utile d'être envoyé par une Automatisation pendant le fonctionnement de le page, par exemple immédiatement après avoir reçu l'évènement correspondant au onSubmit, pour montrer à l'utilisateur que sa requête est prise en compte."
         }
       },
       "richtext": {
