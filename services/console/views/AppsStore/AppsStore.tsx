@@ -121,7 +121,7 @@ export const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
                   )}
                 </div>
                 <div className="flex flex-col flex-1 justify-start h-full mt-3 overflow-hidden text-ellipsis leading-[1.3rem]">
-                  <Title level={4}>{name}</Title>
+                  <Title level={4}>{slug}</Title>
                   <div>{localize(description)}</div>
                 </div>
               </div>
