@@ -38,7 +38,7 @@ const emptyArray: DataTableConfig['data'] = [];
 function initDataSource(data: DataTableConfig['data']) {
   return Array.isArray(data)
     ? data.map((item: any, k: number) => ({
-        key: k,
+        key: `${k}`,
         ...item,
       }))
     : [];
@@ -61,7 +61,7 @@ export const DataTable: BlockComponent = () => {
   }, [config.data]);
 
   const columns = useMemo(() => {
-    const rawData = dataSource;
+    const rawData = config.data;
 
     if (!Array.isArray(rawData) || !rawData[0]) return [];
 
@@ -118,10 +118,13 @@ export const DataTable: BlockComponent = () => {
           language,
           format,
           onEdit,
-          actions: (actions || []).map((action) => ({
-            ...action,
-            label: localize(action.label),
-          })),
+          actions:
+            actions && Array.isArray(actions)
+              ? actions.map((action) => ({
+                  ...action,
+                  label: localize(action.label),
+                }))
+              : undefined,
           events,
         }),
       })
