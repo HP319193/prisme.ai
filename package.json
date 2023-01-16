@@ -37,8 +37,8 @@
     "publish:sdk": "npm publish --workspace=@prisme.ai/sdk --access=public",
     "check:console": "tsc -p services/console/tsconfig.json",
     "check:pages": "tsc -p services/pages/tsconfig.json",
-    "check:translations:console": "ts-node scripts/checkTranslations.ts services/console/public/locales en",
-    "check:translations:pages": "ts-node scripts/checkTranslations.ts services/pages/public/locales en",
+    "check:translations:console": "npx ts-node scripts/checkTranslations.ts services/console/public/locales en",
+    "check:translations:pages": "npx ts-node scripts/checkTranslations.ts services/pages/public/locales en",
     "test": "jest --collect-coverage"
   },
   "repository": {
