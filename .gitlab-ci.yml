@@ -179,10 +179,16 @@ console_test:
   before_script:
     - export DIRECTORY=services/$CONSOLE_DIRECTORY
 
+console_check_translations:
+  stage: test
+  script:
+    - npm run check:translations:console
+
 console_build_docker:
   extends: .build_docker
   needs:
     - console_test
+    - console_check_translations
   stage: build_docker
   image: docker:stable
   services:
@@ -238,10 +244,16 @@ pages_test:
   before_script:
     - export DIRECTORY=services/$PAGES_DIRECTORY
 
+pages_check_translations:
+  stage: test
+  script:
+    - npm run check:translations:pages
+
 pages_build_docker:
   extends: .build_docker
   needs:
     - pages_test
+    - pages_check_translations
   stage: build_docker
   image: docker:stable
   services:
