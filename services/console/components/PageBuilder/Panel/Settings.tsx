@@ -1,7 +1,7 @@
 import { Loading, Schema, SchemaForm } from '@prisme.ai/design-system';
 import { Tabs, TabsProps } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import debounce from 'lodash/debounce';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import useSchema from '../../SchemaForm/useSchema';
@@ -26,26 +26,44 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
   const { config, onConfigUpdate } = useBlockPageConfig({
     blockId,
   });
+  const {
+    onInit,
+    updateOn,
+    automation,
+    sectionId,
+    ...initialConfigBlocks
+  } = config;
+  const initialConfigAdvanced = { onInit, updateOn, automation, sectionId };
+  const [configBlock, setConfigBlock] = useState(initialConfigBlocks);
+  const [configAdvanced, setConfigAdvanced] = useState(initialConfigAdvanced);
 
   const mergeConfig = useCallback(
-    (newConfig: Record<string, any>) => {
-      onConfigUpdate(
-        mergeAndCleanObjects(config, newConfig, {
-          shallow: true,
-          inexistantIsUndefined: true,
-        })
-      );
+    (block: typeof configBlock, advanced: typeof configAdvanced) => {
+      onConfigUpdate({
+        ...block,
+        ...advanced,
+      });
     },
-    [config, onConfigUpdate]
+    [onConfigUpdate]
   );
 
   const debouncedMergeConfig = useMemo(
     () =>
-      debounce((newConfig: Record<string, any>) => {
-        mergeConfig(newConfig);
-      }, 500),
+      debounce(
+        (
+          block: Parameters<typeof mergeConfig>[0],
+          advanced: Parameters<typeof mergeConfig>[1]
+        ) => {
+          mergeConfig(block, advanced);
+        },
+        500
+      ),
     [mergeConfig]
   );
+
+  useEffect(() => {
+    debouncedMergeConfig(configBlock, configAdvanced);
+  }, [configAdvanced, configBlock, debouncedMergeConfig, mergeConfig]);
 
   const { extractSelectOptions } = useSchema({
     pageSections: Array.from(
@@ -114,7 +132,7 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
         children: schema ? (
           <SchemaForm
             schema={schema}
-            onChange={debouncedMergeConfig}
+            onChange={setConfigBlock}
             initialValues={config}
             buttons={[]}
             locales={locales}
@@ -132,7 +150,7 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
       children: (
         <SchemaForm
           schema={commonSchema}
-          onChange={debouncedMergeConfig}
+          onChange={setConfigAdvanced}
           initialValues={config}
           buttons={[]}
           locales={locales}
@@ -141,15 +159,7 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
       ),
     });
     return items;
-  }, [
-    commonSchema,
-    config,
-    debouncedMergeConfig,
-    extractSelectOptions,
-    locales,
-    schema,
-    t,
-  ]);
+  }, [commonSchema, config, extractSelectOptions, locales, schema, t]);
 
   return (
     <div className="pr-panel-settings flex flex-1 flex-col">
