@@ -156,6 +156,51 @@ export const config: PermissionsConfig<
         },
       ],
     },
+
+    {
+      name: Role.Owner,
+      subjectType: SubjectType.Page,
+      rules: [
+        {
+          action: ActionType.Manage,
+          subject: SubjectType.Page,
+          conditions: {
+            // This role only applies to a specific workspace !
+            id: '${subject.id}',
+          },
+        },
+      ],
+    },
+
+    {
+      name: Role.Owner,
+      subjectType: SubjectType.App,
+      rules: [
+        {
+          action: ActionType.Manage,
+          subject: SubjectType.App,
+          conditions: {
+            // This role only applies to a specific workspace !
+            id: '${subject.id}',
+          },
+        },
+      ],
+    },
+
+    {
+      name: Role.Owner,
+      subjectType: SubjectType.File,
+      rules: [
+        {
+          action: ActionType.Manage,
+          subject: SubjectType.File,
+          conditions: {
+            // This role only applies to a specific workspace !
+            id: '${subject.id}',
+          },
+        },
+      ],
+    },
   ],
   abac: [
     // Those who can't create workspace will be blocked by gateway api on POST
