@@ -48,11 +48,7 @@ export const Form: BlockComponent = () => {
   );
 
   useEffect(() => {
-    if (
-      !config.values ||
-      JSON.stringify(config.values) === JSON.stringify(initialValues)
-    )
-      return;
+    if (!config.values || config.values === initialValues) return;
 
     const resetForm = async (values: any) => {
       setMountedForm(false);
