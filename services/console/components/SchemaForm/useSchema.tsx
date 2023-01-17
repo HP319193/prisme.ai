@@ -2,7 +2,6 @@ import { Schema } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 import { useWorkspace } from '../../providers/Workspace';
-import { generatePageUrl } from '../../utils/urls';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { readAppConfig } from '../AutomationBuilder/Panel/readAppConfig';
 
@@ -12,13 +11,13 @@ export const useSchema = (store: Record<string, any> = {}) => {
   const {
     workspace: {
       name: workspaceName,
-      slug: workspaceSlug = '',
       config: { value: config } = {},
       automations = {},
       pages = {},
       imports = {},
     },
   } = useWorkspace();
+
   const extractSelectOptions = useCallback(
     (schema: Schema) => {
       const { 'ui:options': uiOptions = {} } = schema;
@@ -108,7 +107,7 @@ export const useSchema = (store: Record<string, any> = {}) => {
       }
       return null;
     },
-    [automations, config, localize, pages, store.pageSections, workspaceSlug]
+    [automations, config, localize, pages, store.pageSections]
   );
 
   const extractAutocompleteOptions = useCallback(

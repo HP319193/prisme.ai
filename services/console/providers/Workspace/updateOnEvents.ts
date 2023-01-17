@@ -5,7 +5,7 @@ import { Workspace } from './WorkspaceProvider';
 type EventCallback = (workspace: Workspace, payload: any) => Workspace;
 type EventsListeners = Record<string, EventCallback>;
 
-function insertItemInWorkspaceList(
+export function insertItemInWorkspaceList(
   workspace: Workspace,
   list: string,
   slug: string,
@@ -74,8 +74,17 @@ const eventsListeners: EventsListeners = {
     insertItemInWorkspaceList(workspace, 'pages', slug, page, oldSlug),
   'workspaces.pages.deleted': (workspace, { pageSlug }) =>
     removeItemInWorkspaceList(workspace, 'pages', pageSlug),
-  'workspaces.apps.configured': (workspace, { slug, oldSlug, appInstance }) =>
-    insertItemInWorkspaceList(workspace, 'imports', slug, appInstance, oldSlug),
+  'workspaces.apps.configured': (
+    workspace,
+    { slug, oldSlug, appInstance, events }
+  ) =>
+    insertItemInWorkspaceList(
+      workspace,
+      'imports',
+      slug,
+      { ...appInstance, events },
+      oldSlug
+    ),
   'workspaces.apps.uninstalled': (workspace, { slug }) =>
     removeItemInWorkspaceList(workspace, 'imports', slug),
 };
