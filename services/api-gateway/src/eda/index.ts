@@ -18,6 +18,7 @@ export enum EventType {
   Error = 'error',
   SucceededLogin = 'gateway.login.succeeded',
   FailedLogin = 'gateway.login.failed',
+  FailedMFA = 'gateway.mfa.failed',
   SucceededSignup = 'gateway.signup.succeeded',
   SucceededPasswordResetRequested = 'gateway.passwordReset.requested',
   SucceededPasswordReset = 'gateway.passwordReset.succeeded',
