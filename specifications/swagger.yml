@@ -121,6 +121,10 @@ components:
           $ref: "#/components/schemas/Config"
         photo:
           type: string
+        labels:
+          type: array
+          items:
+            type: string
         slug:
           type: string
         updatedAt:
@@ -152,6 +156,10 @@ components:
         disabled:
           type: boolean
           description: If disabled, this appInstance will be ignored during execution
+        labels:
+          type: array
+          items:
+            type: string
         updatedAt:
           type: string
         createdAt:
@@ -201,6 +209,18 @@ components:
           type: array
           items:
             type: string
+        autocomplete:
+          type: array
+          items:
+            type: object
+            required:
+              - event
+            properties:
+              event:
+                type: string
+                example: 'prismeaiMessenger.message'
+              autocomplete:
+                $ref: '#/components/schemas/EmitAutocomplete'
 
     AppAutomations:
       type: array
@@ -280,6 +300,10 @@ components:
           type: string
         id:
           type: string
+        labels:
+          type: array
+          items:
+            type: string
 
     RuntimeModel:
       allOf:
@@ -440,18 +464,10 @@ components:
             $ref: '#/components/schemas/TypedArgument'
         when:
           $ref: '#/components/schemas/When'
-        emits:
+        labels:
           type: array
           items:
-            type: object
-            required:
-              - event
-            properties:
-              event:
-                type: string
-                example: 'prismeaiMessenger.message'
-              autocomplete:
-                $ref: '#/components/schemas/EmitAutocomplete'
+            type: string
         events:
           $ref: '#/components/schemas/ProcessedEvents'
         updatedAt:
@@ -533,6 +549,10 @@ components:
                 type: string
               appInstance:
                 type: string
+        labels:
+          type: array
+          items:
+            type: string
         events:
           $ref: '#/components/schemas/ProcessedEvents'
         createdBy:
@@ -1175,6 +1195,8 @@ components:
               type: number
             automationSlug:
               type: string
+            automationDepth:
+              type: number
             userId:
               type: string
             sessionId:
@@ -3596,6 +3618,12 @@ paths:
           required: false
           schema:
             type: number
+        - name: 'labels'
+          in: 'query'
+          description: 'Comma-separated labels list to filter on'
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Success Response
@@ -4554,6 +4582,12 @@ paths:
           description: 'Page size'
           schema:
             type: number
+        - name: 'labels'
+          in: 'query'
+          description: 'Comma-separated labels list to filter on'
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Success Response

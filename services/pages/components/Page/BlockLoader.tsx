@@ -11,7 +11,7 @@ export const BlockLoader: TBlockLoader = ({
   container,
 }) => {
   const [url, setUrl] = useState('');
-  const [config, setConfig] = useState<typeof initialConfig>();
+  const [config, setConfig] = useState<typeof initialConfig>(initialConfig);
   const [appConfig, setAppConfig] = useState<any>();
   const { page, events } = usePage();
   const [loaded, setLoaded] = useState(false);

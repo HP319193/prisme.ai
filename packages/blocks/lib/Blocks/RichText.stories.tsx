@@ -66,7 +66,7 @@ OneTag.args = {
 export const NestedDivs = Template.bind({});
 NestedDivs.args = {
   defaultConfig: {
-    content: `<div class="contacts">
+    content: `<div class="contacts" prout-truc="chose">
                     <div class="contactElement">
                       Hello 
                     </div>
@@ -82,5 +82,14 @@ WithScript.args = {
 <script>alert(jQuery)</script>
 `,
     allowScripts: true,
+  },
+};
+
+export const WithLinks = Template.bind({});
+WithLinks.args = {
+  defaultConfig: {
+    content: `<a href="https://prisme.ai">Prisme.ai</a>
+<a href="https://prisme.ai" target="_blank">Prisme.ai too</a>
+`,
   },
 };

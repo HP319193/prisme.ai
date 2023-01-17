@@ -134,6 +134,7 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
         private: automation.private,
         disabled: automation.disabled,
         when: automation.when,
+        labels: automation.labels,
         ...additionalIndexFields,
       };
       return indexEntry as DSULInterfaces[dsulType];
@@ -144,6 +145,7 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
         appName: appInstance.appName,
         appVersion: appInstance.appVersion,
         disabled: appInstance.disabled,
+        labels: appInstance.labels,
         ...additionalIndexFields,
       };
       return indexEntry as DSULInterfaces[dsulType];
@@ -158,6 +160,7 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
           slug,
           appInstance,
         })),
+        labels: page.labels,
         ...additionalIndexFields,
       };
       return indexEntry as DSULInterfaces[dsulType];

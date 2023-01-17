@@ -122,7 +122,10 @@ class Workspaces {
    * Workspaces
    */
 
-  createWorkspace = async (workspaceBody: Prismeai.Workspace) => {
+  createWorkspace = async (
+    workspaceBody: Prismeai.Workspace,
+    emit: boolean = true
+  ) => {
     const workspace: Prismeai.Workspace & { id: string; slug: string } = {
       ...workspaceBody,
       id: nanoid(7),
@@ -130,15 +133,17 @@ class Workspaces {
     };
 
     this.broker.buffer(true);
-    this.broker.send<Prismeai.CreatedWorkspace['payload']>(
-      EventType.CreatedWorkspace,
-      {
-        workspace,
-      },
-      {
-        workspaceId: workspace.id,
-      }
-    );
+    if (emit) {
+      this.broker.send<Prismeai.CreatedWorkspace['payload']>(
+        EventType.CreatedWorkspace,
+        {
+          workspace,
+        },
+        {
+          workspaceId: workspace.id,
+        }
+      );
+    }
 
     await this.accessManager.create(SubjectType.Workspace, {
       id: workspace.id,
@@ -155,17 +160,20 @@ class Workspaces {
   findWorkspaces = async (
     query?: PrismeaiAPI.GetWorkspaces.QueryParameters
   ) => {
-    const { limit, page } = query || {};
-    return await this.accessManager.findAll(
-      SubjectType.Workspace,
-      {},
-      {
-        pagination: {
-          limit,
-          page,
-        },
-      }
-    );
+    const { limit, page, labels } = query || {};
+    const mongoQuery = labels
+      ? {
+          labels: {
+            $in: labels.split(','),
+          },
+        }
+      : {};
+    return await this.accessManager.findAll(SubjectType.Workspace, mongoQuery, {
+      pagination: {
+        limit,
+        page,
+      },
+    });
   };
 
   getWorkspace = async (workspaceId: string, version?: string) => {
@@ -190,11 +198,14 @@ class Workspaces {
       name: fromName,
       ...fromWorkspace
     } = await this.getWorkspace(workspaceId, version);
-    const newWorkspace = await this.createWorkspace({
-      ...fromWorkspace,
-      name: fromName + ' - Copie',
-      description: `Copie du workspace ${fromName}`,
-    });
+    const newWorkspace = await this.createWorkspace(
+      {
+        ...fromWorkspace,
+        name: fromName + ' - Copie',
+        description: `Copie du workspace ${fromName}`,
+      },
+      false
+    );
 
     // Copy automations & imports
     const automationsQuery = {
@@ -310,6 +321,7 @@ class Workspaces {
       photo: workspace.photo,
       description: workspace.description,
       slug: workspace.slug || hri.random(),
+      labels: workspace.labels,
     };
 
     try {
@@ -496,13 +508,6 @@ class Workspaces {
       SubjectType.Workspace,
       workspaceId
     );
-    this.broker.send<Prismeai.RollbackWorkspaceVersion['payload']>(
-      EventType.RollbackWorkspaceVersion,
-      {
-        version: targetVersion,
-      },
-      { workspaceId }
-    );
     await this.storage.delete({
       workspaceId,
       version: 'current',
@@ -515,6 +520,13 @@ class Workspaces {
         version: 'current',
         parentFolder: true,
       }
+    );
+    this.broker.send<Prismeai.RollbackWorkspaceVersion['payload']>(
+      EventType.RollbackWorkspaceVersion,
+      {
+        version: targetVersion,
+      },
+      { workspaceId }
     );
     return targetVersion;
   };

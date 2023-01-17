@@ -19,9 +19,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
-  const [publishSlug, setPublishSlug] = useState(
-    localize(workspace.name).replace(SLUG_MATCH_INVALID_CHARACTERS, '')
-  );
+  const [publishSlug, setPublishSlug] = useState('');
   const [alreadyPublished, setAlreadyPublished] = useState(false);
   const prevWorkspaceId = usePrevious(workspace.id);
 
@@ -38,6 +36,13 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
     }
   }, [workspace.id]);
 
+  const slug = useMemo(
+    () =>
+      publishSlug ||
+      localize(workspace.name).replace(SLUG_MATCH_INVALID_CHARACTERS, ''),
+    [localize, publishSlug, workspace.name]
+  );
+
   useEffect(() => {
     if (prevWorkspaceId === workspace.id) return;
     getCurrentlyPublishedApp();
@@ -47,7 +52,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
     try {
       await api.publishApp({
         workspaceId: workspace.id,
-        slug: publishSlug,
+        slug,
       });
       notification.success({
         message: t('apps.publish.confirm.toast'),
@@ -62,11 +67,11 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
       console.error(error);
       return null;
     }
-  }, [publishSlug, t, workspace.id]);
+  }, [slug, t, workspace.id]);
 
   const isSlugValid = useMemo(
-    () => publishSlug.length > 0 && SLUG_VALIDATION_REGEXP.test(publishSlug),
-    [publishSlug]
+    () => slug.length > 0 && SLUG_VALIDATION_REGEXP.test(slug),
+    [slug]
   );
 
   return (
@@ -102,7 +107,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
               disabled={alreadyPublished}
               status={!isSlugValid ? 'error' : undefined}
               label={t('apps.publish.confirm.slugInput')}
-              value={publishSlug}
+              value={slug}
               onChange={(event) => setPublishSlug(event.target.value)}
             />
           </div>

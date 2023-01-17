@@ -30,8 +30,8 @@ variables:
   EVENTS_K8S_NAME: 'prismeai-events'
 
 stages:
-  - dependencies
   - test
+  - dependencies
   - build_docker
   - deploy
   - performance
@@ -43,20 +43,19 @@ stages:
 
 backend_npm_install:
   stage: dependencies
-  only:
-    changes:
-      - 'services/api-gateway/package.json'
-      - 'services/runtime/package.json'
-      - 'services/workspaces/package.json'
-      - 'services/events/package.json'
-      - 'packages/**/*'
-      - 'specifications/swagger.yml'
-    refs:
-      - main
-      - tags
-      - /^feature\/.*$/
-      - /^fix\/.*$/
-      - /^pipeline\/.*$/
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
+      changes: &BACKEND_DEPS_CHANGES
+        - 'services/api-gateway/package.json'
+        - 'services/runtime/package.json'
+        - 'services/workspaces/package.json'
+        - 'services/events/package.json'
+        - 'packages/permissions/**/*'
+        - 'packages/broker/**/*'
+        - 'specifications/swagger.yml'
+      when: manual
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
+      changes: *BACKEND_DEPS_CHANGES
   image: docker:stable
   services:
     - docker:stable-dind
@@ -161,18 +160,22 @@ console_check:
     - npm run build:packages
     - npm run check:console
   needs: []
-  only:
-    changes:
-      - 'services/console/**/*'
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes: &CONSOLE_CHANGES
+        - 'services/console/**/*'
+        - 'packages/**/*'
+    - !reference [console_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$CONSOLE_DIRECTORY
 
 console_test:
   extends: .npm_test
   needs: []
-  only:
-    changes:
-      - 'services/console/**/*'
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes: *CONSOLE_CHANGES
+    - !reference [console_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$CONSOLE_DIRECTORY
 
@@ -184,15 +187,12 @@ console_build_docker:
   image: docker:stable
   services:
     - docker:stable-dind
-  only:
-    refs:
-      - main
-      - tags
-      - master
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-    changes:
-      - 'services/console/**/*'
+  rules: &CONSOLE_DEPLOY_RULES
+    - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
+      changes: *CONSOLE_CHANGES
+      when: manual
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
+      changes: *CONSOLE_CHANGES
   before_script:
     - export DIRECTORY=services/$CONSOLE_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -202,65 +202,58 @@ console_deploy:
   extends: .deploy_k8s
   needs:
     - console_build_docker
-  only:
-    refs:
-      - main
-      - tags
-      - master
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-    changes:
-      - 'services/console/**/*'
+  rules: *CONSOLE_DEPLOY_RULES
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME
     - export K8S_NAME=$CONSOLE_K8S_NAME
 
 ## Pages jobs
-# No tests yet
+pages_check:
+  stage: test
+  script:
+    - >
+      if ! [[ -d node_modules/ ]] ; then
+        BUILD_PACKAGES=0 npm ci
+      fi
+    - npm run build:packages
+    - npm run check:pages
+  needs: []
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes: &PAGES_CHANGES
+        - 'services/pages/**/*'
+        - 'packages/**/*'
+    - !reference [pages_build_docker, rules]
+  before_script:
+    - export DIRECTORY=services/$PAGES_DIRECTORY
 
-# pages_check:
-#   stage: test
-#   script:
-#     - >
-#       if ! [[ -d node_modules/ ]] ; then
-#         BUILD_PACKAGES=0 npm ci
-#       fi
-#     - npm run build:packages
-#     - npm run check:pages
-#   needs: []
-#   only:
-#     changes:
-#       - 'services/pages/**/*'
-#   before_script:
-#     - export DIRECTORY=services/$PAGES_DIRECTORY
-
-# pages_test:
-#   extends: .npm_test
-#   needs: []
-#   only:
-#     changes:
-#       - 'services/pages/**/*'
-#   before_script:
-#     - export DIRECTORY=services/$PAGES_DIRECTORY
+pages_test:
+  extends: .npm_test
+  needs: []
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes: *PAGES_CHANGES
+    - !reference [pages_build_docker, rules]
+  before_script:
+    - export DIRECTORY=services/$PAGES_DIRECTORY
 
 pages_build_docker:
   extends: .build_docker
-  # needs:
-  #   - pages_test
+  needs:
+    - pages_test
   stage: build_docker
   image: docker:stable
   services:
     - docker:stable-dind
-  only:
-    refs:
-      - main
-      - tags
-      - master
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-    changes:
-      - 'services/pages/**/*'
+  rules: &PAGES_DEPLOY_RULES
+    - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
+      changes: &PAGES_CHANGES
+        - 'services/pages/**/*'
+        - 'packages/**/*'
+      when: manual
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
+      changes: *PAGES_CHANGES
   before_script:
     - export DIRECTORY=services/$PAGES_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -270,15 +263,7 @@ pages_deploy:
   extends: .deploy_k8s
   needs:
     - pages_build_docker
-  only:
-    refs:
-      - main
-      - tags
-      - master
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-    changes:
-      - 'services/pages/**/*'
+  rules: *PAGES_DEPLOY_RULES
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$PAGES_IMAGE_NAME
@@ -287,9 +272,11 @@ pages_deploy:
 ## Workspaces jobs
 workspaces_test:
   extends: .npm_test
-  only:
-    changes:
-      - 'services/workspaces/**/*'
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes: &WORKSPACES_CHANGES
+        - 'services/workspaces/**/*'
+    - !reference [workspaces_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$WORKSPACES_DIRECTORY/src
 
@@ -302,15 +289,12 @@ workspaces_build_docker:
   image: docker:stable
   services:
     - docker:stable-dind
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-      - tags
-    changes:
-      - 'services/workspaces/**/*'
+  rules: &WORKSPACES_DEPLOY_RULES
+    - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
+      changes: *WORKSPACES_CHANGES
+      when: manual
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
+      changes: *WORKSPACES_CHANGES
   before_script:
     - export DIRECTORY=services/$WORKSPACES_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -325,15 +309,7 @@ workspaces_deploy:
   image:
     name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
     entrypoint: ['/bin/sh', '-c']
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-      - tags
-    changes:
-      - 'services/workspaces/**/*'
+  rules: *WORKSPACES_DEPLOY_RULES
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME
@@ -342,9 +318,11 @@ workspaces_deploy:
 ## Runtime jobs
 runtime_test:
   extends: .npm_test
-  only:
-    changes:
-      - 'services/runtime/**/*'
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes: &RUNTIME_CHANGES
+        - 'services/runtime/**/*'
+    - !reference [runtime_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$RUNTIME_DIRECTORY
 
@@ -357,15 +335,12 @@ runtime_build_docker:
   image: docker:stable
   services:
     - docker:stable-dind
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-      - tags
-    changes:
-      - 'services/runtime/**/*'
+  rules: &RUNTIME_DEPLOY_RULES
+    - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
+      changes: *RUNTIME_CHANGES
+      when: manual
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
+      changes: *RUNTIME_CHANGES
   before_script:
     - export DIRECTORY=services/$RUNTIME_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -375,15 +350,7 @@ runtime_deploy:
   extends: .deploy_k8s
   needs:
     - runtime_build_docker
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-      - tags
-    changes:
-      - 'services/runtime/**/*'
+  rules: *RUNTIME_DEPLOY_RULES
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
@@ -397,15 +364,13 @@ api-gateway_build_docker:
   image: docker:stable
   services:
     - docker:stable-dind
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-      - tags
-    changes:
-      - 'services/api-gateway/**/*'
+  rules: &API_GATEWAY_DEPLOY_RULES
+    - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
+      changes: &API_GATEWAY_CHANGES
+        - 'services/api-gateway/**/*'
+      when: manual
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
+      changes: *API_GATEWAY_CHANGES
   before_script:
     - export DIRECTORY=services/$API_GATEWAY_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -415,15 +380,7 @@ api-gateway_deploy:
   extends: .deploy_k8s
   needs:
     - api-gateway_build_docker
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-      - tags
-    changes:
-      - 'services/api-gateway/**/*'
+  rules: *API_GATEWAY_DEPLOY_RULES
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME
@@ -432,9 +389,11 @@ api-gateway_deploy:
 ## Events jobs
 events_test:
   extends: .npm_test
-  only:
-    changes:
-      - 'services/events/**/*'
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes: &EVENTS_CHANGES
+        - 'services/events/**/*'
+    - !reference [events_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$EVENTS_DIRECTORY
 
@@ -447,15 +406,13 @@ events_build_docker:
   image: docker:stable
   services:
     - docker:stable-dind
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-      - tags
-    changes:
-      - 'services/events/**/*'
+  rules: &EVENTS_DEPLOY_RULES
+    - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
+      changes: &EVENTS_CHANGES
+        - 'services/events/**/*'
+      when: manual
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
+      changes: *EVENTS_CHANGES
   before_script:
     - export DIRECTORY=services/$EVENTS_DIRECTORY
     - export DOCKER_HOST=tcp://docker:2375
@@ -465,15 +422,7 @@ events_deploy:
   extends: .deploy_k8s
   needs:
     - events_build_docker
-  only:
-    refs:
-      - /^feature\/.*$/
-      - /^pipeline\/.*$/
-      - main
-      - master
-      - tags
-    changes:
-      - 'services/events/**/*'
+  rules: *EVENTS_DEPLOY_RULES
   before_script:
     - export KUBECONFIG=$KUBECONFIG
     - export IMAGE_NAME=$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME

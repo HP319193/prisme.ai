@@ -86,6 +86,11 @@ const schema: Schema = {
       title: 'pages.blocks.form.onChange.label',
       description: 'pages.blocks.form.onChange.description',
     },
+    disabledSubmit: {
+      type: 'boolean',
+      title: 'pages.blocks.form.disabledSubmit.label',
+      description: 'pages.blocks.form.disabledSubmit.description',
+    },
   },
 };
 

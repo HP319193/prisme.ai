@@ -24,6 +24,7 @@ import Article from './Variants/Article';
 import Short from './Variants/Short';
 import Actions from './Variants/Actions';
 import { BlockComponent } from '../../BlockLoader';
+import useLocalizedText from '../../useLocalizedText';
 
 const cardsIsShort = (
   cards: TCards,
@@ -206,12 +207,15 @@ export const Cards: BlockComponent = () => {
 
 const previews = Array.from(new Array(4), (v, k) => k);
 Cards.Preview = ({ config = {} }) => {
+  const { localize } = useLocalizedText();
   const type: CardsConfig['layout']['type'] =
     config?.layout?.type || 'carousel';
 
+  const title = localize(config.title);
+
   return (
     <div>
-      {config.title && <div>{config.title}</div>}
+      {title && <div>{title}</div>}
       <div className={getContainerStyle(type).container}>
         {previews.map((k) => (
           <div

@@ -12,6 +12,10 @@ jest.mock('../../../utils/useYaml', () => {
   return useYaml;
 });
 
+jest.mock('../../SchemaForm/BlockSelector', () => {
+  return () => null;
+});
+
 it('should render', () => {
   const onChange = jest.fn();
   const root = renderer.create(

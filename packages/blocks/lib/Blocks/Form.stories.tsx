@@ -1,7 +1,7 @@
 import { Events } from '@prisme.ai/sdk';
 import { Story } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BlockProvider } from '../Provider';
 import Form from './Form';
 
@@ -13,8 +13,21 @@ const Template: Story<any> = ({ defaultConfig }) => {
   const [config, setConfig] = useState<any>(defaultConfig);
   const [appConfig, setAppConfig] = useState<any>();
   const events = {
-    emit: action('emit'),
+    emit: (type: string) => {
+      if (type === config.onSubmit) {
+        setConfig((prev: any) => ({ ...prev, disabledSubmit: true }));
+        setTimeout(() => {
+          setConfig((prev: any) => ({ ...prev, disabledSubmit: false }));
+        }, 500);
+      }
+
+      action('emit')();
+    },
   } as Events;
+
+  useEffect(() => {
+    setConfig(defaultConfig);
+  }, [defaultConfig]);
 
   return (
     <BlockProvider
@@ -42,5 +55,6 @@ Default.args = {
       },
     },
     onChange: 'valueChanged',
+    onSubmit: 'submited',
   },
 };

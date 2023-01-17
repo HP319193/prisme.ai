@@ -8,6 +8,8 @@ import useSchema from '../../SchemaForm/useSchema';
 import { usePageBuilder } from '../context';
 import useBlockPageConfig from '../useBlockPageConfig';
 import { useWorkspace } from '../../../providers/Workspace';
+import components from '../../SchemaForm/schemaFormComponents';
+import { mergeAndCleanObjects } from '../../../utils/objects';
 
 interface SettingsProps {
   removeBlock: () => void;
@@ -26,8 +28,14 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
   });
 
   const mergeConfig = useCallback(
-    (newConfig: Record<string, any>) =>
-      onConfigUpdate({ ...config, ...newConfig }),
+    (newConfig: Record<string, any>) => {
+      onConfigUpdate(
+        mergeAndCleanObjects(config, newConfig, {
+          shallow: true,
+          inexistantIsUndefined: true,
+        })
+      );
+    },
     [config, onConfigUpdate]
   );
 
@@ -111,6 +119,7 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
             buttons={[]}
             locales={locales}
             utils={{ extractSelectOptions }}
+            components={components}
           />
         ) : (
           <Loading />

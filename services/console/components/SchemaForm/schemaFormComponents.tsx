@@ -3,9 +3,10 @@ import { FieldProps, schemaFormUtils, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { useField } from 'react-final-form';
-import { CodeEditorInline } from '../../CodeEditor/lazy';
-import FieldContainerWithRaw from '../../FieldContainerWithRaw';
-import RichTextEditor from '../../RichTextEditor';
+import { CodeEditorInline } from '../CodeEditor/lazy';
+import FieldContainerWithRaw from '../FieldContainerWithRaw';
+import RichTextEditor from '../RichTextEditor';
+import BlockSelector from './BlockSelector';
 
 export const FieldAny = ({ schema, name, label }: FieldProps) => {
   const { t } = useTranslation('workspaces');
@@ -82,5 +83,8 @@ const components = {
   JSONEditor,
   FreeAdditionalProperties: FieldAny,
   HTMLEditor: RichTextEditor,
+  UiWidgets: {
+    blockSelector: BlockSelector,
+  },
 };
 export default components;

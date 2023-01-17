@@ -189,7 +189,7 @@ export default class S3Like implements IStorage {
     const objects = await this.find(from, true);
     const copyPaths = objects.map(({ key }) => ({
       CopySource: `/${this.options.bucket}/${key}`,
-      Key: from === key ? key : path.join(to, key.slice(from.length)),
+      Key: from === key ? to : path.join(to, key.slice(from.length)),
     }));
     const result = await Promise.all(
       copyPaths.map(

@@ -71,7 +71,34 @@ const schema = {
             description:
               'pages.blocks.datatable.settings.columns.items.format.description',
           },
-          actions: eventOrLink,
+          actions: {
+            type: 'array',
+            title:
+              'pages.blocks.datatable.settings.columns.items.actions.label',
+            description:
+              'pages.blocks.datatable.settings.columns.items.actions.description',
+            items: {
+              title:
+                'pages.blocks.datatable.settings.columns.items.actions.items.label',
+              description:
+                'pages.blocks.datatable.settings.columns.items.actions.items.description',
+              add:
+                'pages.blocks.datatable.settings.columns.items.actions.items.add',
+              remove:
+                'pages.blocks.datatable.settings.columns.items.actions.items.remove',
+              type: 'object',
+              properties: {
+                label: {
+                  type: 'string',
+                  title:
+                    'pages.blocks.datatable.settings.columns.items.actions.items._label.label',
+                  description:
+                    'pages.blocks.datatable.settings.columns.items.actions.items._label.description',
+                },
+                action: eventOrLink,
+              },
+            },
+          },
           onEdit: {
             type: 'string',
             title: 'pages.blocks.datatable.settings.columns.items.onEdit.label',

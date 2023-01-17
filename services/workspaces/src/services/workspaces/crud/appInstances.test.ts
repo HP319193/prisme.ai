@@ -231,19 +231,19 @@ describe('Detailed appInstances', () => {
     ],
     events: {
       listen: ['request'],
-    },
-    emits: [
-      {
-        event: '{{event}}',
-        autocomplete: {
-          event: {
-            template: 'intents.detected.${value}',
-            from: 'appConfig',
-            path: 'intents[*]~',
+      autocomplete: [
+        {
+          event: '{{event}}',
+          autocomplete: {
+            event: {
+              template: 'intents.detected.${value}',
+              from: 'appConfig',
+              path: 'intents[*]~',
+            },
           },
         },
-      },
-    ],
+      ],
+    },
   };
 
   const apps = {
@@ -294,7 +294,10 @@ describe('Detailed appInstances', () => {
         updatedBy: USER_ID,
         slug: APP_INSTANCE_SLUG,
         events: {
-          emit: ['intents.detected.welcome', 'intents.detected.goodbye'],
+          emit: [
+            `${APP_INSTANCE_SLUG}.intents.detected.welcome`,
+            `${APP_INSTANCE_SLUG}.intents.detected.goodbye`,
+          ],
           listen: ['request'],
         },
       },
@@ -308,12 +311,7 @@ describe('Detailed appInstances', () => {
       ...appInstance
     } = await appInstancesCrud.getAppInstance(WORKSPACE_ID, APP_INSTANCE_SLUG);
     const detailedList = await appInstancesCrud.getDetailedList(WORKSPACE_ID);
-    const {
-      config: __,
-      blocks,
-      emits: ___,
-      ...remainingAppDetails
-    } = appDetails;
+    const { config: __, blocks, ...remainingAppDetails } = appDetails;
 
     expect(detailedList).toEqual([
       {
@@ -331,8 +329,11 @@ describe('Detailed appInstances', () => {
         updatedAt: expect.any(String),
         updatedBy: USER_ID,
         events: {
-          ...appDetails?.events,
-          emit: ['intents.detected.welcome', 'intents.detected.goodbye'],
+          listen: appDetails?.events?.listen,
+          emit: [
+            `${APP_INSTANCE_SLUG}.intents.detected.welcome`,
+            `${APP_INSTANCE_SLUG}.intents.detected.goodbye`,
+          ],
         },
       },
     ]);

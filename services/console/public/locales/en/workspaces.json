@@ -117,6 +117,16 @@
     "search": {
       "placeholder": "Search by keywords"
     },
+    "running": {
+      "label": "Events are displayed in real time",
+      "label_off": "The event update is paused",
+      "description": "Start the update in real time. Please note that the performance of your browser may be degraded.",
+      "description_off": "Stop the real time update"
+    },
+    "reload": {
+      "description": "Load the latest events.",
+      "description_off": "Disable real time update to reload events manually."
+    },
     "filters": {
       "title": "Filters",
       "correlationId": "Correlation ID",
@@ -139,7 +149,11 @@
       "suggestions": {
         "title": "Filter suggestions",
         "help": "Selection of pre-set filters to help you find your most useful events.",
-        "label_versions": "All Workspace versions"
+        "label_versions": "Workspace versions",
+        "label_updates": "Workspace updates",
+        "label_webhooks": "Webhooks calls",
+        "label_errors": "Errors",
+        "label_shares": "Workspace shares"
       },
       "reset": "Reset filters"
     },
@@ -662,15 +676,28 @@
           "description": "Action triggered by a click on the card",
           "event": "Event",
           "url": "Link",
-          "valueEvent": "Event to trigger",
-          "valueLink": "Url",
-          "popup": "Open in new tab",
-          "payload": "Event's payload"
+          "valueEvent": {
+            "label": "Event to trigger",
+            "description": "The name of the event that will be sent to the click."
+          },
+          "valueLink": {
+            "label": "Url",
+            "description": "Web address in https."
+          },
+          "popup": {
+            "label": "Open in new tab",
+            "description": "Opens the link in a new tab instead of replacing the current page."
+          },
+          "payload": {
+            "label": "Payload",
+            "description": "Data object that accompanies the event."
+          }
         }
       },
       "builtin": "Built-in Blocks",
       "name": "{{context}}",
       "name_Header": "Header",
+      "name_Hero": "Hero",
       "name_Cards": "Cards group",
       "name_DataTable": "Data table",
       "name_Form": "Form",
@@ -679,6 +706,7 @@
       "name_Buttons": "Buttons group",
       "description": "",
       "description_Header": "Display page header",
+      "description_Hero": "Display a Hero of page",
       "description_Cards": "Display a cards group",
       "description_DataTable": "Display a data table",
       "description_Form": "Display form",
@@ -944,11 +972,11 @@
                 "description": "Format to apply to the data in case of number or date type."
               },
               "actions": {
-                "label": "Actions",
+                "label": "Action buttons",
                 "description": "You can display action buttons if you have not chosen a key",
                 "items": {
-                  "label": "Action",
-                  "description": "Specification of the action",
+                  "label": "Action button",
+                  "description": "What does the action button do?",
                   "add": "Add an action",
                   "remove": "Delete action",
                   "_label": {
@@ -1015,6 +1043,10 @@
           "label": "Form specification",
           "description": "Use the form builder interface to add the fields of your choice.",
           "add": "Add a control"
+        },
+        "disabledSubmit": {
+          "label": "Disable the validation button",
+          "description": "Allows you to disable the form validation button. This parameter is useful to be sent by an Automation during the operation of the page, for example immediately after receiving the event corresponding to onSubmit, to show the user that his request is taken into account."
         }
       },
       "richtext": {
@@ -1026,6 +1058,40 @@
           "allowScripts": {
             "label": "Allow scripts",
             "description": "Allow execution of javascript code included in <script> tags"
+          }
+        }
+      },
+      "hero": {
+        "settings": {
+          "title": {
+            "label": "Title",
+            "description": "Hero title."
+          },
+          "lead": {
+            "label": "Lead",
+            "description": "Hero lead."
+          },
+          "content": {
+            "label": "Additional content",
+            "description": "You can complete your content with a list of Blocks.",
+            "add": "Add a Block",
+            "remove": "Delete Block",
+            "items": {
+              "label": "Block",
+              "description": "Block specification.",
+              "name": {
+                "label": "Block name",
+                "description": "Name of Block to display"
+              }
+            }
+          },
+          "img": {
+            "label": "Image",
+            "description": "Une image idéealement au format carré et de bonne taille."
+          },
+          "backgroundColor": {
+            "label": "Couleur de fond",
+            "description": "La couleur de fond du Hero."
           }
         }
       }
@@ -1191,18 +1257,18 @@
     "type_workspaces.apps.uninstalled": "The app {{appName}} has been uninstalled",
     "type_workspaces.apps.configured": "The app <app>{{appName}}</app> has been configured",
     "type_workspaces.automations.created": "The automation <automation>{{automation}}</automation> has been created",
-    "type_workspaces.automations.updated": "The <automation>{{automation}}</automation> has been updated",
-    "type_workspaces.automations.deleted": "The <automation>{{automation}}</automation> has been removed",
+    "type_workspaces.automations.updated": "The automation <automation>{{automation}}</automation> has been updated",
+    "type_workspaces.automations.deleted": "The automation <automation>{{automation}}</automation> has been removed",
     "type_workspaces.pages.updated": "The <page>{{page}}</page> has been updated",
     "type_workspaces.versions.published": "The <tooltip title=\"{{event.payload.version.description}}\">{{event.payload.version.name}}</tooltip> version has been created. <rollback>Rollback to this version</rollback>",
     "type_workspaces.versions.rollback": "Version {{event.payload.version.name}} has been rollbacked",
     "type_workspaces.permissions.shared": "The Workspace has been shared with {{share}}",
     "type_workspaces.permissions.deleted": "The Workspace is no longer shared with {{share}}",
     "type_apps.published": "The app {{appName}} has been published",
-    "type_runtime.automations.executed": "The <automation>{{automation}}</automation> has been executed",
-    "type_runtime.automations.scheduled": "The <automation>{{automation}}</automation> has been scheduled",
-    "type_runtime.webhooks.triggered": "The <automation>{{automation}}</automation> was triggered by URL",
-    "type_runtime.schedules.triggered": "The <automation>{{automation}}</automation> was triggered according to its schedule",
+    "type_runtime.automations.executed": "The automation <automation>{{automation}}</automation> has been executed",
+    "type_runtime.automations.scheduled": "The automation <automation>{{automation}}</automation> has been scheduled",
+    "type_runtime.webhooks.triggered": "The automation <automation>{{automation}}</automation> was triggered by URL",
+    "type_runtime.schedules.triggered": "The automation <automation>{{automation}}</automation> was triggered according to its schedule",
     "type_runtime.waits.pending": "Automation <automation>{{automation}}</automation> is pending {{waits}}",
     "type_runtime.waits.pending_oneOf_one": "of the event <event>{{events}}</event>",
     "type_runtime.waits.pending_oneOf_other": "of events <event>{{events}}</event>",
@@ -1219,6 +1285,12 @@
     "raw": "Insert a raw value (allows you to enter text, and therefore interpolated variables)",
     "raw_hide": "Respect the type of data required",
     "html": "Edit in HTML format",
-    "html_hide": "Be careful, by returning to the simple editing mode, you risk losing tags or HTML attributes not managed by it."
+    "html_hide": "Be careful, by returning to the simple editing mode, you risk losing tags or HTML attributes not managed by it.",
+    "blockSelector": {
+      "name": {
+        "label": "Choice of Block",
+        "description": "Choose a Block among those proposed by Prisme.ai and those from the Apps you have installed on your Workspace."
+      }
+    }
   }
 }

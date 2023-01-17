@@ -17,6 +17,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -55,6 +56,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -93,6 +95,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -131,6 +134,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -169,6 +173,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -207,6 +212,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -245,6 +251,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -283,6 +290,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -321,6 +329,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -365,6 +374,7 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
+        labels?: string[];
         updatedAt?: string;
         updatedBy?: string;
         createdBy?: string;
@@ -380,6 +390,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -418,6 +429,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -456,6 +468,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -494,6 +507,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -532,6 +546,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -570,6 +585,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -608,6 +624,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -646,6 +663,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -684,6 +702,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -763,6 +782,7 @@ declare namespace Prismeai {
         };
         config?: Config;
         photo?: string;
+        labels?: string[];
         slug: string;
         updatedAt?: string;
         createdAt?: string;
@@ -813,6 +833,7 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
+        labels?: string[];
         updatedAt?: string;
         createdAt?: string;
         updatedBy?: string;
@@ -837,6 +858,7 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
+        labels?: string[];
         updatedAt?: string;
         createdAt?: string;
         updatedBy?: string;
@@ -885,14 +907,7 @@ declare namespace Prismeai {
             [name: string]: TypedArgument;
         };
         when?: When;
-        emits?: {
-            /**
-             * example:
-             * prismeaiMessenger.message
-             */
-            event: string;
-            autocomplete?: EmitAutocomplete;
-        }[];
+        labels?: string[];
         events?: ProcessedEvents;
         updatedAt?: string;
         createdAt?: string;
@@ -929,14 +944,7 @@ declare namespace Prismeai {
             [name: string]: TypedArgument;
         };
         when?: When;
-        emits?: {
-            /**
-             * example:
-             * prismeaiMessenger.message
-             */
-            event: string;
-            autocomplete?: EmitAutocomplete;
-        }[];
+        labels?: string[];
         events?: ProcessedEvents;
         updatedAt?: string;
         createdAt?: string;
@@ -1030,6 +1038,7 @@ declare namespace Prismeai {
                  * If disabled, this appInstance will be ignored during execution
                  */
                 disabled?: boolean;
+                labels?: string[];
                 updatedAt?: string;
                 createdAt?: string;
                 updatedBy?: string;
@@ -1142,6 +1151,7 @@ declare namespace Prismeai {
         };
         slug?: string;
         id?: string;
+        labels?: string[];
     }
     export interface DSULPatch {
         name?: string;
@@ -1153,6 +1163,7 @@ declare namespace Prismeai {
         };
         slug?: string;
         id?: string;
+        labels?: string[];
     }
     export interface DSULReadOnly {
         name: string;
@@ -1164,6 +1175,7 @@ declare namespace Prismeai {
         };
         slug?: string;
         id?: string;
+        labels?: string[];
         automations?: {
             [name: string]: AutomationMeta;
         };
@@ -1266,6 +1278,7 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
+        labels?: string[];
         updatedAt?: string;
         createdAt?: string;
         updatedBy?: string;
@@ -1289,6 +1302,7 @@ declare namespace Prismeai {
             };
             appInstance?: string;
         }[];
+        labels?: string[];
         events?: ProcessedEvents;
         createdBy?: string;
         updatedBy?: string;
@@ -1629,6 +1643,7 @@ declare namespace Prismeai {
             };
             appInstance?: string;
         }[];
+        labels?: string[];
         events?: ProcessedEvents;
         createdBy?: string;
         updatedBy?: string;
@@ -1672,6 +1687,7 @@ declare namespace Prismeai {
             slug?: string;
             appInstance?: string;
         }[];
+        labels?: string[];
         events?: ProcessedEvents;
         createdBy?: string;
         updatedBy?: string;
@@ -1759,6 +1775,7 @@ declare namespace Prismeai {
             appInstanceFullSlug?: string;
             appInstanceDepth?: number;
             automationSlug?: string;
+            automationDepth?: number;
             userId?: string;
             sessionId?: string;
             workspaceId?: string;
@@ -1801,6 +1818,14 @@ declare namespace Prismeai {
     export interface ProcessedEvents {
         emit?: string[];
         listen?: string[];
+        autocomplete?: {
+            /**
+             * example:
+             * prismeaiMessenger.message
+             */
+            event: string;
+            autocomplete?: EmitAutocomplete;
+        }[];
     }
     export interface PublishedApp {
         /**
@@ -1856,6 +1881,7 @@ declare namespace Prismeai {
         };
         slug?: string;
         id?: string;
+        labels?: string[];
         automations?: {
             [name: string]: Automation;
         };
@@ -2822,6 +2848,7 @@ declare namespace PrismeaiAPI {
                  * If disabled, this appInstance will be ignored during execution
                  */
                 disabled?: boolean;
+                labels?: string[];
                 updatedAt?: string;
                 createdAt?: string;
                 updatedBy?: string;
@@ -3030,12 +3057,14 @@ declare namespace PrismeaiAPI {
     }
     namespace GetWorkspaces {
         namespace Parameters {
+            export type Labels = string;
             export type Limit = number;
             export type Page = number;
         }
         export interface QueryParameters {
             page?: Parameters.Page;
             limit?: Parameters.Limit;
+            labels?: Parameters.Labels;
         }
         namespace Responses {
             export type $200 = {
@@ -3249,6 +3278,7 @@ declare namespace PrismeaiAPI {
     }
     namespace SearchApps {
         namespace Parameters {
+            export type Labels = string;
             export type Limit = number;
             export type Page = number;
             export type Text = string;
@@ -3259,6 +3289,7 @@ declare namespace PrismeaiAPI {
             workspaceId?: Parameters.WorkspaceId;
             page?: Parameters.Page;
             limit?: Parameters.Limit;
+            labels?: Parameters.Labels;
         }
         namespace Responses {
             export type $200 = Prismeai.App[];

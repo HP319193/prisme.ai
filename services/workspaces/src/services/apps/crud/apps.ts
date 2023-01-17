@@ -14,12 +14,12 @@ import {
   MAXIMUM_APP_VERSION,
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
-import { deduplicateEmits } from '../../../utils/extractEvents';
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 
 export interface ListAppsQuery {
   text?: string;
   workspaceId?: string;
+  labels?: string;
 }
 
 export interface AppDetails {
@@ -29,8 +29,7 @@ export interface AppDetails {
   photo?: string;
   blocks: Prismeai.AppBlocks;
   automations: Prismeai.AppAutomations;
-  events: Omit<Prismeai.ProcessedEvents, 'emit'>;
-  emits?: Prismeai.Emit['emit'][];
+  events: Prismeai.ProcessedEvents;
 }
 
 class Apps {
@@ -49,9 +48,17 @@ class Apps {
   }
 
   listApps = async (
-    { text, ...query }: ListAppsQuery = {},
+    { text, labels, ...query }: ListAppsQuery = {},
     opts?: FindOptions
   ) => {
+    const mongoQuery = {
+      ...query,
+      ...(labels && {
+        labels: {
+          $in: labels.split(','),
+        },
+      }),
+    };
     return await this.accessManager.findAll(
       SubjectType.App,
       {
@@ -72,7 +79,7 @@ class Apps {
               ],
             }
           : {}),
-        ...query,
+        ...mongoQuery,
       },
       opts
     );
@@ -121,6 +128,7 @@ class Apps {
       description: dsul.description,
       photo: dsul.photo,
       documentation,
+      labels: dsul.labels,
     };
 
     // Fetch existing workspace app
@@ -283,9 +291,18 @@ class Apps {
       (listen, automation) => listen.concat(automation?.when?.events || []),
       []
     );
-    const allEmits = filteredAutomations.reduce<
-      Required<Prismeai.Emit['emit'][]>
-    >((emits, automation) => (emits || []).concat(automation?.emits || []), []);
+    const allStaticEmits = filteredAutomations.reduce<string[]>(
+      (emits, automation) =>
+        (emits || []).concat(automation?.events?.emit || []),
+      []
+    );
+    const allAutocompleteEmits = filteredAutomations.reduce<
+      Prismeai.Emit['emit'][]
+    >(
+      (emits, automation) =>
+        (emits || []).concat(automation?.events?.autocomplete || []),
+      []
+    );
     return {
       config: app.config,
       blocks: Object.entries(app.blocks || {}).map(([slug, block]) => {
@@ -303,9 +320,10 @@ class Apps {
         })
       ),
       photo: app.photo,
-      emits: deduplicateEmits(allEmits),
       events: {
         listen: Array.from(new Set(allEventTriggers)),
+        emit: allStaticEmits,
+        autocomplete: allAutocompleteEmits,
       },
     };
   };

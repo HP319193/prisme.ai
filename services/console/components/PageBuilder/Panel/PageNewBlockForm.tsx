@@ -113,10 +113,7 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
         className="mb-6"
       />
       <Space direction="vertical" className="flex flex-1 overflow-x-auto -m-5">
-        <Collapse
-          items={collapses}
-          defaultActiveKey={collapses.map(({ key }) => key)}
-        />
+        <Collapse items={collapses} />
       </Space>
     </div>
   );

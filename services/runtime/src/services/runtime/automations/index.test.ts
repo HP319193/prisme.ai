@@ -656,6 +656,37 @@ it('Run context is synchronized between event-triggered cascading automations', 
   });
 });
 
+it('run.depth does not increase on automations triggered by repeated emits', async () => {
+  const { execute, sendEventSpy } = getMocks();
+
+  const output = await execute('repeatEmit', {});
+  expect(output.run.depth).toEqual(1);
+  await waitForExpect(async () => {
+    for (let index = 0; index < 10; index++) {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            automationSlug: 'noop',
+          }),
+          payload: expect.objectContaining({
+            payload: expect.objectContaining({
+              payload: expect.objectContaining({
+                index,
+              }),
+            }),
+            output: expect.objectContaining({
+              run: expect.objectContaining({
+                depth: 2,
+              }),
+            }),
+          }),
+        })
+      );
+    }
+  });
+});
+
 afterAll(async () => {
   brokers.forEach((broker) => broker.close());
 });

@@ -100,8 +100,14 @@ it('should init block', () => {
   });
 
   const child = root.root.children[0] as renderer.ReactTestInstance;
-  child.props.onLoad();
 
-  expect(events!.emit).toHaveBeenCalledWith('initBlock');
+  act(() => {
+    child.props.onLoad();
+  });
+
+  expect(events!.emit).toHaveBeenCalledWith('initBlock', {
+    config: { onInit: 'initBlock' },
+    page: undefined,
+  });
   expect(onLoad).toHaveBeenCalled();
 });

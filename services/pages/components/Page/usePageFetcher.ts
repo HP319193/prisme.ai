@@ -1,12 +1,14 @@
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import api from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
 import { usePreview } from '../usePreview';
 
-export const usePageFetcher = () => {
-  const [page, setPage] = useState<Prismeai.DetailedPage | null>(null);
-  const [loading, setLoading] = useState(true);
+export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
+  const [page, setPage] = useState<Prismeai.DetailedPage | null>(
+    pageFromServer || null
+  );
+  const [loading, setLoading] = useState(false);
   const {
     query: { slug = 'index' },
   } = useRouter();
@@ -33,6 +35,12 @@ export const usePageFetcher = () => {
     },
     [fetchPage]
   );
+
+  useEffect(() => {
+    if (pageFromServer) return;
+    setLoading(true);
+    fetchPage();
+  }, [fetchPage, pageFromServer]);
 
   usePreview(setPage);
 

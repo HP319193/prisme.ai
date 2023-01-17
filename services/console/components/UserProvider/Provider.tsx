@@ -23,6 +23,7 @@ const PUBLIC_URLS = [
 interface UserProviderProps {
   anonymous?: boolean;
   redirectTo?: string;
+  isPublic?: boolean;
 }
 
 async function authFromConsole() {
@@ -36,6 +37,7 @@ async function authFromConsole() {
       const { type, token } = e.data;
       if (type === 'api.token') {
         api.token = token;
+        Storage.set('auth-token', token);
         clearTimeout(t);
         resolve(token);
       }
@@ -49,6 +51,7 @@ export const UserProvider: FC<UserProviderProps> = ({
   anonymous,
   redirectTo,
   children,
+  isPublic = false,
 }) => {
   const [user, setUser] = useState<UserContext['user']>(null);
   const [loading, setLoading] = useState<UserContext['loading']>(true);
@@ -291,7 +294,7 @@ export const UserProvider: FC<UserProviderProps> = ({
     };
   }, []);
 
-  const isPublicUrl = PUBLIC_URLS.includes(route);
+  const isPublicUrl = isPublic || PUBLIC_URLS.includes(route);
 
   if (!isPublicUrl && loading) return <Loading />;
 

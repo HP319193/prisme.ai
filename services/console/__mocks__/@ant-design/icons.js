@@ -67,3 +67,15 @@ export function RightOutlined() {
 export function InfoCircleOutlined() {
   return null;
 }
+export function EyeTwoTone() {
+  return null;
+}
+export function PlayCircleOutlined() {
+  return null;
+}
+export function PauseCircleOutlined() {
+  return null;
+}
+export function ReloadOutlined() {
+  return null;
+}

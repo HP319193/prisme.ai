@@ -26,6 +26,9 @@ export interface EventsContext {
   isRead: (id: string) => boolean;
   read: (id: string) => void;
   isVirgin: boolean;
+  running: boolean;
+  start: () => void;
+  stop: () => void;
 }
 
 export const eventsContext = createContext<EventsContext | undefined>(
@@ -50,6 +53,7 @@ export const EventsProvider = ({
   const [eventsRead, setEventsRead] = useState<Set<string>>(
     new Set(Storage.get(`${READ_KEY}-${workspaceId}`))
   );
+  const [running, setRunning] = useState(false);
   const eventsSocket = useRef<Events>();
 
   const lastPage = useRef(0);
@@ -121,26 +125,36 @@ export const EventsProvider = ({
     };
   }, [fetchEvents, filters]);
 
-  // Init dedicated websocket
-  useEffect(() => {
-    const initSocket = async () => {
-      eventsSocket.current = await api.streamEvents(workspaceId, filters);
-      eventsSocket.current.all((type, event) => {
-        setEvents((prev) => {
-          const newEvent: Event<Date> = {
-            ...event,
-            createdAt: new Date(event.createdAt),
-          };
-          return new Set([newEvent, ...Array.from(prev)]);
-        });
+  const start = useCallback(() => {
+    setRunning(true);
+  }, []);
+
+  const stop = useCallback(() => {
+    setRunning(false);
+  }, []);
+
+  const initSocket = useCallback(async () => {
+    eventsSocket.current = await api.streamEvents(workspaceId, filters);
+    eventsSocket.current.all((type, event) => {
+      setEvents((prev) => {
+        const newEvent: Event<Date> = {
+          ...event,
+          createdAt: new Date(event.createdAt),
+        };
+        return new Set([newEvent, ...Array.from(prev)]);
       });
-    };
-    initSocket();
+    });
+  }, [filters, workspaceId]);
+
+  useEffect(() => {
+    if (running) {
+      initSocket();
+    }
 
     return () => {
       eventsSocket.current && eventsSocket.current.destroy();
     };
-  }, [workspaceId, filters]);
+  }, [initSocket, running]);
 
   return (
     <eventsContext.Provider
@@ -155,6 +169,9 @@ export const EventsProvider = ({
         isRead,
         read,
         isVirgin,
+        running,
+        start,
+        stop,
       }}
     >
       {children}
