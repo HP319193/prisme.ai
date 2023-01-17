@@ -277,7 +277,7 @@ body .ant-dropdown-menu-item:hover {
   flex: 1;
 }
 
-body button:disabled {
+body button:not(.ant-btn):disabled {
   display: flex;
   align-items: center;
   justify-content: center;
