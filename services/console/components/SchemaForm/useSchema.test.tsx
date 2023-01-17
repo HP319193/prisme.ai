@@ -290,7 +290,7 @@ it('should build a select from pages', () => {
     { label: '', value: '' },
     {
       label: expect.any(Object),
-      value: 'http://page/do-bar',
+      value: '/do-bar',
     },
   ]);
   const labels = renderer.create(
