@@ -82,7 +82,7 @@ export const Form: BlockComponent = () => {
   }, [config.schema, localizeSchemaForm]);
 
   if (!config.schema) return null;
-  console.log({ disabledSubmit });
+
   return (
     <div className={tw`block-form p-8 flex-1`}>
       {config.title && <BlockTitle value={localize(config.title)} />}

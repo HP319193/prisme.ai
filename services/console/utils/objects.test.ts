@@ -133,4 +133,14 @@ describe('mergeAndCleanObjects', () => {
       ],
     });
   });
+
+  it('should shallow merge', () => {
+    expect(
+      mergeAndCleanObjects(
+        { foo: { bar: 1, babar: 2 } },
+        { foo: { bar: 2 } },
+        { shallow: true }
+      )
+    ).toEqual({ foo: { bar: 2 } });
+  });
 });

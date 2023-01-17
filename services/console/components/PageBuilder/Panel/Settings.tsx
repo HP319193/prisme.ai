@@ -29,7 +29,9 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
 
   const mergeConfig = useCallback(
     (newConfig: Record<string, any>) => {
-      onConfigUpdate(mergeAndCleanObjects(config, newConfig));
+      onConfigUpdate(
+        mergeAndCleanObjects(config, newConfig, { shallow: true })
+      );
     },
     [config, onConfigUpdate]
   );

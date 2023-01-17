@@ -11,14 +11,21 @@ export const removedUndefinedProperties = (
     return newObject;
   }, {});
 
-export function mergeAndCleanObjects(a: any, b: any) {
+interface MergeAndCleanObjectsOptions {
+  shallow?: boolean;
+}
+export function mergeAndCleanObjects(
+  a: any,
+  b: any,
+  { shallow = false }: MergeAndCleanObjectsOptions = {}
+) {
   const out = { ...a };
   Object.entries(b).forEach(([k, v]) => {
     if (v === undefined) {
       delete out[k];
       return;
     }
-    if (typeof v === 'object' && !Array.isArray(v)) {
+    if (!shallow && typeof v === 'object' && !Array.isArray(v)) {
       out[k] = mergeAndCleanObjects(out[k], v);
       return;
     }
