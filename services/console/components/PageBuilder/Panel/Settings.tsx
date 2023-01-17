@@ -30,7 +30,10 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
   const mergeConfig = useCallback(
     (newConfig: Record<string, any>) => {
       onConfigUpdate(
-        mergeAndCleanObjects(config, newConfig, { shallow: true })
+        mergeAndCleanObjects(config, newConfig, {
+          shallow: true,
+          inexistantIsUndefined: true,
+        })
       );
     },
     [config, onConfigUpdate]

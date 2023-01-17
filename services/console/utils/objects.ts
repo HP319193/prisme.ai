@@ -13,14 +13,25 @@ export const removedUndefinedProperties = (
 
 interface MergeAndCleanObjectsOptions {
   shallow?: boolean;
+  inexistantIsUndefined?: boolean;
 }
 export function mergeAndCleanObjects(
   a: any,
   b: any,
-  { shallow = false }: MergeAndCleanObjectsOptions = {}
+  {
+    shallow = false,
+    inexistantIsUndefined = false,
+  }: MergeAndCleanObjectsOptions = {}
 ) {
   const out = { ...a };
-  Object.entries(b).forEach(([k, v]) => {
+  const keys = Array.from(
+    new Set([
+      ...Object.keys(b),
+      ...(inexistantIsUndefined ? Object.keys(a) : []),
+    ])
+  );
+  keys.forEach((k) => {
+    const v = b[k];
     if (v === undefined) {
       delete out[k];
       return;

@@ -143,4 +143,23 @@ describe('mergeAndCleanObjects', () => {
       )
     ).toEqual({ foo: { bar: 2 } });
   });
+
+  it('should clean inexistant values', () => {
+    expect(
+      mergeAndCleanObjects(
+        {
+          foo: '1',
+          bar: 2,
+        },
+        {
+          foo: '1',
+        },
+        {
+          inexistantIsUndefined: true,
+        }
+      )
+    ).toEqual({
+      foo: '1',
+    });
+  });
 });
