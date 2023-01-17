@@ -129,12 +129,14 @@ class AppInstances {
         appInstance.appSlug,
         appInstance.appVersion
       );
-      const duplicatedEvents = (appDetails.emits || []).flatMap((emit) =>
-        computeEventsFromEmits(emit, appInstance.config)
+      const duplicatedEvents = (appDetails.events?.autocomplete || []).flatMap(
+        (emit) => computeEventsFromEmits(emit, appInstance.config)
       );
 
       events.listen = appDetails?.events?.listen || [];
-      events.emit = [...new Set(duplicatedEvents)];
+      events.emit = [
+        ...new Set((appDetails?.events?.emit || []).concat(duplicatedEvents)),
+      ].map((cur) => `${appInstance.slug}.${cur}`);
     } catch {}
     return events;
   }

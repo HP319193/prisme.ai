@@ -46,7 +46,8 @@ export function computeEventsFromEmits(
   // Only read first parameter while the UI is simple
   // To manage many parameters, we would need an autocomplete inside
   // the value autocompleted
-  return Object.keys(autocomplete).flatMap((key) => {
+
+  const computedEvents = Object.keys(autocomplete).flatMap((key) => {
     if (!event.match(`{{${key}}}`)) return [];
     const template = autocomplete[key].template || '${value}';
     const { from, path } = autocomplete[key];
@@ -58,6 +59,8 @@ export function computeEventsFromEmits(
       template.replace('${value}', event.replace(`{{${key}}}`, value))
     );
   });
+
+  return computedEvents;
 }
 
 export function deduplicateEmits(emits: Required<Emit[]> = []) {
@@ -73,17 +76,21 @@ export function extractAutomationEvents(
   const events = emits
     .flatMap((emit) => computeEventsFromEmits(emit, config))
     .filter(Boolean);
-
   return {
     listen: automation?.when?.events || [],
     emit: [...new Set(events)],
+    autocomplete: emits
+      .filter((cur) => Object.keys(cur.autocomplete || {}).length > 0)
+      .map(({ event, autocomplete }) => ({ event, autocomplete })),
   };
 }
 
 export function extractPageEvents(
   page: Prismeai.Page
 ): Prismeai.ProcessedEvents {
-  return (page?.blocks || []).reduce<Required<Prismeai.ProcessedEvents>>(
+  return (page?.blocks || []).reduce<
+    Required<Omit<Prismeai.ProcessedEvents, 'autocomplete'>>
+  >(
     (events, block) => {
       if (block?.config?.onInit) {
         events.emit.push(block?.config?.onInit);

@@ -56,6 +56,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
     const events = {
       emit: [],
       listen: [],
+      autocomplete: [],
     };
     const result = await automationsCrud.createAutomation(
       WORKSPACE_ID,
@@ -126,6 +127,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
     const events = {
       emit: ['emitted'],
       listen: ['listened'],
+      autocomplete: [],
     };
     const result = await automationsCrud.updateAutomation(
       WORKSPACE_ID,

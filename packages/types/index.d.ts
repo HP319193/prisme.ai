@@ -908,14 +908,6 @@ declare namespace Prismeai {
         };
         when?: When;
         labels?: string[];
-        emits?: {
-            /**
-             * example:
-             * prismeaiMessenger.message
-             */
-            event: string;
-            autocomplete?: EmitAutocomplete;
-        }[];
         events?: ProcessedEvents;
         updatedAt?: string;
         createdAt?: string;
@@ -953,14 +945,6 @@ declare namespace Prismeai {
         };
         when?: When;
         labels?: string[];
-        emits?: {
-            /**
-             * example:
-             * prismeaiMessenger.message
-             */
-            event: string;
-            autocomplete?: EmitAutocomplete;
-        }[];
         events?: ProcessedEvents;
         updatedAt?: string;
         createdAt?: string;
@@ -1834,6 +1818,14 @@ declare namespace Prismeai {
     export interface ProcessedEvents {
         emit?: string[];
         listen?: string[];
+        autocomplete?: {
+            /**
+             * example:
+             * prismeaiMessenger.message
+             */
+            event: string;
+            autocomplete?: EmitAutocomplete;
+        }[];
     }
     export interface PublishedApp {
         /**
