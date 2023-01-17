@@ -37,6 +37,11 @@ export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
   );
 
   useEffect(() => {
+    if (!pageFromServer) return;
+    setPage(pageFromServer);
+  }, [pageFromServer]);
+
+  useEffect(() => {
     if (pageFromServer) return;
     setLoading(true);
     fetchPage();
