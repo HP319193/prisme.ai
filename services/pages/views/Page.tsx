@@ -23,8 +23,8 @@ export const Page = () => {
   }, [page, setId]);
 
   useEffect(() => {
+    window.parent.postMessage('page-ready', '*');
     if (!loading && error && error && ![401, 403].includes(error)) {
-      window.parent.postMessage('page-ready', '*');
       setTimeout(() => setDisplayError(true), 10);
     }
   }, [error, loading]);

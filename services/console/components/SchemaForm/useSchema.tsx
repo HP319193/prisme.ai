@@ -100,7 +100,7 @@ export const useSchema = (store: Record<string, any> = {}) => {
                       </div>
                     </div>
                   ),
-                  value: slug ? generatePageUrl(workspaceSlug, slug) : id,
+                  value: slug ? `/${slug}` : id,
                 };
               }
             ),
