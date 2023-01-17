@@ -1459,6 +1459,17 @@ declare namespace Prismeai {
             email: string;
         };
     }
+    export interface FailedMFA {
+        /**
+         * example:
+         * gateway.mfa.failed
+         */
+        type: "gateway.mfa.failed";
+        payload: {
+            ip: string;
+            email: string;
+        };
+    }
     export interface Fetch {
         /**
          * Send an HTTP request
@@ -2001,6 +2012,7 @@ declare namespace Prismeai {
             user: User;
         };
     }
+    export type SupportedMFA = "totp" | "none" | "";
     export interface SuspendedWorkspace {
         /**
          * example:
@@ -2175,6 +2187,7 @@ declare namespace Prismeai {
                 [key: string]: any;
             };
         };
+        mfa?: SupportedMFA;
         /**
          * Name
          */
@@ -2401,6 +2414,7 @@ declare namespace PrismeaiAPI {
                         [key: string]: any;
                     };
                 };
+                mfa?: Prismeai.SupportedMFA;
                 /**
                  * Name
                  */
@@ -2419,6 +2433,7 @@ declare namespace PrismeaiAPI {
                 id?: string;
                 token: string;
                 sessionId: string;
+                expires?: string;
             }
         }
     }
@@ -2550,6 +2565,7 @@ declare namespace PrismeaiAPI {
                         [key: string]: any;
                     };
                 };
+                mfa?: Prismeai.SupportedMFA;
                 /**
                  * Name
                  */
@@ -2568,6 +2584,7 @@ declare namespace PrismeaiAPI {
                 id?: string;
                 token: string;
                 sessionId: string;
+                expires?: string;
             }
             export type $401 = Prismeai.AuthenticationError;
         }
@@ -2931,6 +2948,7 @@ declare namespace PrismeaiAPI {
                         [key: string]: any;
                     };
                 };
+                mfa?: Prismeai.SupportedMFA;
                 /**
                  * Name
                  */
@@ -3182,6 +3200,17 @@ declare namespace PrismeaiAPI {
             }
         }
     }
+    namespace MFA {
+        export interface RequestBody {
+            totp: string;
+        }
+        namespace Responses {
+            export interface $200 {
+                success: boolean;
+            }
+            export type $401 = Prismeai.AuthenticationError;
+        }
+    }
     namespace PublishApp {
         export interface RequestBody {
             workspaceId: string;
@@ -3314,6 +3343,22 @@ declare namespace PrismeaiAPI {
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace SetupMFA {
+        export interface RequestBody {
+            method: Prismeai.SupportedMFA;
+            currentPassword: string;
+        }
+        namespace Responses {
+            export type $200 = {
+                secret: string;
+                qrImage: string;
+            } | {
+                method: string;
+            };
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace Share {

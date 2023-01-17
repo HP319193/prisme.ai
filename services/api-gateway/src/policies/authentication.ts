@@ -1,17 +1,20 @@
 import express from 'express';
 import { syscfg } from '../config';
 import { AuthenticationError } from '../types/errors';
+import { enforceMFA as mfaMiddleware } from '../middlewares/authentication/isAuthenticated';
 
 export interface Params {
   injectUserIdHeader?: boolean;
   optional?: boolean;
   allowApiKeyOnly?: boolean;
+  enforceMFA?: boolean;
 }
 
 export const validatorSchema = {
   injectUserIdHeader: 'boolean',
   optional: 'boolean',
   allowApiKeyOnly: 'boolean',
+  enforceMFA: 'boolean',
 };
 
 export async function init(params: Params) {
@@ -19,6 +22,7 @@ export async function init(params: Params) {
     injectUserIdHeader = true,
     optional = false,
     allowApiKeyOnly = false,
+    enforceMFA = true,
   } = params;
 
   return async (
@@ -35,6 +39,9 @@ export async function init(params: Params) {
     }
     if (!req.user && !optional) {
       throw new AuthenticationError();
+    }
+    if (enforceMFA && !optional) {
+      return mfaMiddleware(req, res, next);
     }
     next();
   };

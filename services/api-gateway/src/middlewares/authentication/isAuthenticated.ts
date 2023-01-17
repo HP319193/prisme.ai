@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { syscfg } from '../../config';
-import { AuthenticationError } from '../../types/errors';
+import { AuthenticationError, MissingMFA } from '../../types/errors';
 
 export function isAuthenticated(
   req: Request,
@@ -25,4 +25,15 @@ export function isInternallyAuthenticated(
   }
 
   throw new AuthenticationError();
+}
+
+export function enforceMFA(req: Request, res: Response, next: NextFunction) {
+  const { user, session } = req;
+  if (!user) {
+    throw new AuthenticationError();
+  }
+  if (user.mfa && user.mfa !== 'none' && !session.mfaValidated) {
+    throw new MissingMFA();
+  }
+  next();
 }

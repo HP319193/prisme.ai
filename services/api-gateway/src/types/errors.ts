@@ -72,6 +72,12 @@ export class InvalidPassword extends PrismeError {
   }
 }
 
+export class MissingMFA extends PrismeError {
+  constructor(msg: string = `Please complete multi-factor authentication`) {
+    super(msg, undefined, 401);
+  }
+}
+
 export class InvalidOrExpiredToken extends PrismeError {
   constructor(msg: string = `Invalid or expired token`) {
     super(msg, undefined, 400);
