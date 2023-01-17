@@ -18,7 +18,7 @@ export function mergeAndCleanObjects(a: any, b: any) {
       delete out[k];
       return;
     }
-    if (typeof v === 'object') {
+    if (typeof v === 'object' && !Array.isArray(v)) {
       out[k] = mergeAndCleanObjects(out[k], v);
       return;
     }

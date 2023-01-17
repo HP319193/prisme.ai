@@ -80,4 +80,57 @@ describe('mergeAndCleanObjects', () => {
       bar: { other: 3 },
     });
   });
+
+  it('should not break arrays', () => {
+    expect(
+      mergeAndCleanObjects(
+        {
+          foo: [],
+          bar: [{}, {}],
+        },
+        { bar: [] }
+      )
+    ).toEqual({
+      foo: [],
+      bar: [],
+    });
+  });
+
+  it('should clean in nested arrays', () => {
+    expect(
+      mergeAndCleanObjects(
+        {
+          foo: [
+            {
+              bar: {
+                sub: true,
+              },
+            },
+            {
+              bar: {
+                sub: false,
+              },
+            },
+          ],
+        },
+        {
+          foo: [
+            {
+              bar: {
+                sub: false,
+              },
+            },
+          ],
+        }
+      )
+    ).toEqual({
+      foo: [
+        {
+          bar: {
+            sub: false,
+          },
+        },
+      ],
+    });
+  });
 });
