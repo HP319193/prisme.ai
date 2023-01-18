@@ -704,6 +704,7 @@
       "name_RichText": "Rich text",
       "name_Layout": "Navigation",
       "name_Buttons": "Buttons group",
+      "name_BlocksList": "Blocks list",
       "description": "",
       "description_Header": "Display page header",
       "description_Hero": "Display a Hero of page",
@@ -713,6 +714,7 @@
       "description_RichText": "Display text formatted with Markdown or HTML",
       "description_Layout": "Display navigable block pages. Must be used through automations.",
       "description_Buttons": "Display a buttons group",
+      "description_BlocksList": "Display a Blocks list",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
@@ -1072,7 +1074,23 @@
             "description": "Hero lead."
           },
           "content": {
-            "label": "Additional content",
+            "label": "Content",
+            "description": "You can customize this section with a list of any available Blocks."
+          },
+          "img": {
+            "label": "Image",
+            "description": "Une image idéealement au format carré et de bonne taille."
+          },
+          "backgroundColor": {
+            "label": "Couleur de fond",
+            "description": "La couleur de fond du Hero."
+          }
+        }
+      },
+      "blockslist": {
+        "settings": {
+          "blocks": {
+            "label": "Blocks",
             "description": "You can complete your content with a list of Blocks.",
             "add": "Add a Block",
             "remove": "Delete Block",
@@ -1085,13 +1103,11 @@
               }
             }
           },
-          "img": {
-            "label": "Image",
-            "description": "Une image idéealement au format carré et de bonne taille."
-          },
-          "backgroundColor": {
-            "label": "Couleur de fond",
-            "description": "La couleur de fond du Hero."
+          "styles": {
+            "label": "Styles",
+            "description": "You can apply a style configuration to the container element. You may for example set { display: flex; flexDirection: row } to display your blocks horizontally.",
+            "add": "Add a style",
+            "remove": "Remove style"
           }
         }
       }

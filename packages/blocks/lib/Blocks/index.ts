@@ -6,3 +6,4 @@ export { default as DataTable } from './DataTable';
 export { default as Form } from './Form';
 export { default as Layout } from './Layout';
 export { default as Buttons } from './Buttons';
+export { default as BlocksList } from './BlocksList';

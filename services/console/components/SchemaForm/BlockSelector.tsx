@@ -51,8 +51,8 @@ export const BlockSelector: FieldComponent = (props) => {
   );
 
   useEffect(() => {
-    fetchSchema(field.input.value?.name);
-  }, [fetchSchema, field.input.value?.name]);
+    fetchSchema(field.input.value?.slug);
+  }, [fetchSchema, field.input.value?.slug]);
 
   const prevValues = useRef(values);
   useEffect(() => {
@@ -143,11 +143,11 @@ export const BlockSelector: FieldComponent = (props) => {
                   {t('form.blockSelector.name.label')}
                 </label>
                 <Select
-                  id={`${field.input.name}.name`}
+                  id={`${field.input.name}.slug`}
                   selectOptions={selectOptions}
-                  value={field.input.value?.name}
-                  onChange={(name) => {
-                    setValues({ name });
+                  value={field.input.value?.slug}
+                  onChange={(slug) => {
+                    setValues({ slug });
                   }}
                   showSearch
                   filterOption={filterOption}

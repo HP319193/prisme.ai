@@ -704,6 +704,7 @@
       "name_RichText": "Texte enrichi",
       "name_Layout": "Navigation",
       "name_Buttons": "Groupe de boutons",
+      "name_BlocksList": "Liste de Blocks",
       "description": "",
       "description_Header": "Afficher une entête de page",
       "description_Hero": "Afficher un Hero de page",
@@ -713,6 +714,7 @@
       "description_RichText": "Afficher du texte mis en page grâce à Markdown ou HTML",
       "description_Layout": "Afficher des pages de blocks navigable. Doit être utilisé par le biais d'automatisations.",
       "description_Buttons": "Afficher un groupe de boutons",
+      "description_BlocksList": "Afficher une liste de Blocks",
       "panelTitle_adding": "Ajouter un Block",
       "panelTitle_editing": "Éditer le Block {{blockName}}",
       "header": {
@@ -1073,6 +1075,22 @@
           },
           "content": {
             "label": "Contenu supplémentaire",
+            "description": "Vous pouvez compléter votre contenu avec une liste de Blocks."
+          },
+          "img": {
+            "label": "Image",
+            "description": "Une image idéealement au format carré et de bonne taille."
+          },
+          "backgroundColor": {
+            "label": "Couleur de fond",
+            "description": "La couleur de fond du Hero."
+          }
+        }
+      },
+      "blockslist": {
+        "settings": {
+          "blocks": {
+            "label": "Contenu supplémentaire",
             "description": "Vous pouvez compléter votre contenu avec une liste de Blocks.",
             "add": "Ajouter un Block",
             "remove": "Supprimer le Block",
@@ -1085,13 +1103,11 @@
               }
             }
           },
-          "img": {
-            "label": "Image",
-            "description": "Une image idéealement au format carré et de bonne taille."
-          },
-          "backgroundColor": {
-            "label": "Couleur de fond",
-            "description": "La couleur de fond du Hero."
+          "styles": {
+            "label": "Styles",
+            "description": "Vous pouvez appliquer n'importe quel style à l'élément conteneur. Vous pouvez par exemple configurer { display: flex; flexDirection: row } pour afficher vos blocks à l'horizontale.",
+            "add": "Ajouter un style",
+            "remove": "Supprimer le style"
           }
         }
       }

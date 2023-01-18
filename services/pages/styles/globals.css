@@ -233,6 +233,10 @@ body .ant-modal-confirm-title {
   margin-right: 1.5rem;
 }
 
+.pr-form-object .pr-form-label--raw {
+  margin: var(--pr-form-margin-size);
+}
+
 .quill .ql-toolbar.ql-snow {
   border: 0;
   margin: 0;

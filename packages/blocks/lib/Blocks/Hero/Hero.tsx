@@ -2,11 +2,12 @@ import { BlockComponent } from '../../BlockLoader';
 import { useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
 import tw from '../../tw';
+import { BlocksList, BlocksListConfig } from '../BlocksList';
 
 export interface HeroConfig {
   title: string;
   lead: string;
-  content?: (Record<string, any> & { name: string })[];
+  content?: BlocksListConfig;
   img: string;
   backgroundColor: string;
 }
@@ -27,13 +28,7 @@ export const Hero: BlockComponent<HeroConfig> = () => {
         <div className="pr-block-hero__text">
           <h1 className={tw`pr-block-hero__title text-5xl`}>{title}</h1>
           <p className={tw`pr-block-hero__lead mt-4`}>{lead}</p>
-          {content && (
-            <div className="pr-block-hero__content">
-              {content.map(({ name, ...config }, key) => (
-                <BlockLoader key={key} name={name} config={config} />
-              ))}
-            </div>
-          )}
+          {content && <BlocksList {...content} />}
         </div>
         {img && (
           <div className={tw`pr-block-hero__img max-w-sm w-full`}>
