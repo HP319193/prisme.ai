@@ -125,7 +125,6 @@ export const DataTable: BlockComponent = () => {
                   label: localize(action.label),
                 }))
               : undefined,
-          events,
         }),
       })
     );

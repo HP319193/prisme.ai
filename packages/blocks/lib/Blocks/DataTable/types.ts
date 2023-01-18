@@ -6,9 +6,9 @@ export interface Action {
   label: Prismeai.LocalizedText;
   action: {
     type: 'event' | 'url';
-    event?: string;
+    value?: string;
     payload?: any;
-    url?: string;
+    popup?: boolean;
   };
 }
 
