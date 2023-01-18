@@ -100,6 +100,13 @@ jest.mock('@prisme.ai/sdk', () => {
 
 jest.mock('./Navigation', () => () => null);
 
+jest.mock('../../components/BlocksProvider', () => {
+  function BlocksProvider({ children }: any) {
+    return <>{children}</>;
+  }
+  return { BlocksProvider };
+});
+
 beforeEach(() => {
   useRouter().query.id = '42';
   (useWorkspaces() as any).workspaces = new Map([

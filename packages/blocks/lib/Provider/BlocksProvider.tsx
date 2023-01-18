@@ -3,11 +3,14 @@ import { FC } from 'react';
 import * as defaultComponents from './defaultComponents';
 
 interface BlocksProviderProps extends Omit<BlocksDependenciesContext, 'utils'> {
-  utils?: BlocksDependenciesContext['utils'];
+  utils?: Partial<BlocksDependenciesContext['utils']>;
 }
 
 const dftUtils = {
   BlockLoader: () => null,
+  getWorkspaceHost() {
+    return `${window.location.protocol}//${window.location.host}`;
+  },
 };
 
 const uploadFile = async (file: string) => file;
@@ -25,6 +28,7 @@ export const BlocksProvider: FC<BlocksProviderProps> = ({
       utils: {
         uploadFile,
         ...utils,
+        ...dftUtils,
       },
     }}
   >
