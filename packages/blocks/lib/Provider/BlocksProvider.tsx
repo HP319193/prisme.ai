@@ -27,8 +27,8 @@ export const BlocksProvider: FC<BlocksProviderProps> = ({
       components: { ...defaultComponents, ...components },
       utils: {
         uploadFile,
-        ...utils,
         ...dftUtils,
+        ...utils,
       },
     }}
   >
