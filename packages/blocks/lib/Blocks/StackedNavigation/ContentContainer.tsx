@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Content from './Content';
-import { Content as IContent, LayoutContext, useLayout } from './context';
+import {
+  Content as IContent,
+  StackedNavigationContext,
+  useStackedNavigation,
+} from './context';
 import tw from '../../tw';
 
 interface ContentContainerProps {
-  history: LayoutContext['history'];
+  history: StackedNavigationContext['history'];
   marginTop: number;
   marginBottom: number;
 }
@@ -88,7 +92,7 @@ export const ContentContainerRenderer = ({
 };
 
 export const ContentContainer = () => {
-  const { history, headBox } = useLayout();
+  const { history, headBox } = useStackedNavigation();
   const marginTop = headBox ? +headBox.height.toFixed() : 0;
   return useMemo(
     () => (

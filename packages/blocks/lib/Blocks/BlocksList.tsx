@@ -4,9 +4,15 @@ import { useBlocks } from '../Provider/blocksContext';
 export interface BlocksListConfig {
   blocks: ({ slug: string } & Record<string, any>)[];
   styles?: Record<string, string>;
+  className?: string;
+  blocksClassName?: string;
 }
 
-export const BlocksList = ({ blocks = [], styles }: BlocksListConfig) => {
+export const BlocksList = ({
+  blocks = [],
+  styles,
+  className,
+}: BlocksListConfig) => {
   const {
     utils: { BlockLoader },
   } = useBlocks();
@@ -16,7 +22,9 @@ export const BlocksList = ({ blocks = [], styles }: BlocksListConfig) => {
   return (
     <div style={styles} className="pr-block-blocks-list">
       {blocks.map(({ slug, ...config }, key) => (
-        <BlockLoader key={key} name={slug} config={config} />
+        <div key={key} className={className}>
+          <BlockLoader name={slug} config={config} />
+        </div>
       ))}
     </div>
   );

@@ -2,17 +2,19 @@ import ResizeObserver from 'resize-observer-polyfill';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBlock } from '../../Provider';
 import ContentContainer from './ContentContainer';
-import { LayoutConfig, layoutContext } from './context';
+import { StackedNavigationConfig, stackedNavigationContext } from './context';
 import Head from './Head';
 import tw from '../../tw';
 import { BlockComponent } from '../../BlockLoader';
 
 const EmptyArray: any[] = [];
 
-export const Layout: BlockComponent = () => {
-  const { config } = useBlock<LayoutConfig>();
+export const StackedNavigation: BlockComponent = () => {
+  const { config } = useBlock<StackedNavigationConfig>();
   const { head = EmptyArray, content } = config || {};
-  const [history, setHistory] = useState<LayoutConfig['content'][]>([]);
+  const [history, setHistory] = useState<StackedNavigationConfig['content'][]>(
+    []
+  );
   const headEl = useRef<HTMLDivElement>(null);
   const [headBox, setHeadBox] = useState<DOMRect>();
 
@@ -54,7 +56,7 @@ export const Layout: BlockComponent = () => {
   }, []);
 
   return (
-    <layoutContext.Provider
+    <stackedNavigationContext.Provider
       value={{
         head,
         history,
@@ -69,8 +71,8 @@ export const Layout: BlockComponent = () => {
         <Head />
       </div>
       <ContentContainer />
-    </layoutContext.Provider>
+    </stackedNavigationContext.Provider>
   );
 };
 
-export default Layout;
+export default StackedNavigation;

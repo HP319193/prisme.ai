@@ -1,8 +1,7 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { BlockContext, useBlock } from '../../Provider';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Content as IContent } from './context';
 import tw from '../../tw';
-import { useBlocks } from '../../Provider/blocksContext';
+import { BlocksList } from '../BlocksList';
 
 interface ContentProps {
   content: IContent;
@@ -17,9 +16,6 @@ export const Content = ({
   onUnmount,
   removed,
 }: ContentProps) => {
-  const {
-    utils: { BlockLoader },
-  } = useBlocks();
   const [animationClassName, setAnimationClassName] = useState(
     tw`translate-x-full`
   );
@@ -35,24 +31,22 @@ export const Content = ({
     setTimeout(onUnmount, 200);
   }, [removed]);
 
+  const legacyBlocks = blocks.map(({ block, slug, ...rest }) => ({
+    slug: slug || block || '',
+    ...rest,
+  }));
+
   return (
     <div
       ref={containerEl}
       className={tw`${className} content-stack__content content transition-transform  ${animationClassName}`}
     >
-      {blocks &&
-        blocks.map(({ block, ...config }, index) => (
-          <div
-            key={index}
-            className={tw`flex content__block-container block-container snap-start`}
-          >
-            <BlockLoader
-              config={config}
-              name={block}
-              container={containerEl.current || undefined}
-            />
-          </div>
-        ))}
+      {blocks && (
+        <BlocksList
+          blocks={legacyBlocks}
+          className={tw`flex content__block-container block-container snap-start`}
+        />
+      )}
     </div>
   );
 };
