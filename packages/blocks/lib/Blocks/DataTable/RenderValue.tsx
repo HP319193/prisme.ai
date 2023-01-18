@@ -67,7 +67,7 @@ export const renderValue = ({
       }
     }
     case 'boolean':
-      return <Switch defaultChecked={!!value} disabled={!onEdit} />;
+      return <Switch checked={!!value} disabled={!onEdit} />;
     case 'tags':
       const tags = Array.isArray(value) ? value : [value];
 

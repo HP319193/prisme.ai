@@ -17,6 +17,7 @@ interface EditableCellProps {
   record: Item;
   type: DataType;
   handleSave: (record: Item) => void;
+  value: any;
 }
 
 const TypesAutoEdit = ['boolean'];
@@ -24,7 +25,7 @@ const TypesEditable = ['string', 'number', 'boolean', 'date'];
 
 const CellInput = forwardRef<any, any>(
   (
-    { dataIndex, title, save, type }: EditableCellProps & { save: any },
+    { dataIndex, title, save, type, value }: EditableCellProps & { save: any },
     ref
   ) => {
     if (type === 'boolean') {
@@ -34,7 +35,7 @@ const CellInput = forwardRef<any, any>(
           name={dataIndex}
           valuePropName="checked"
         >
-          <Switch onChange={save} />
+          <Switch onChange={save} checked={value} />
         </Form.Item>
       );
     }

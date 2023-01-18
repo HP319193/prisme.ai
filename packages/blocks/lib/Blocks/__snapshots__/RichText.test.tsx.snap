@@ -1,24 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should render 1`] = `
-<div
-  className="block-rich-text"
->
+Array [
   <h1
     id="title"
   >
     Title
-  </h1>
+  </h1>,
+  "
+",
   <h2
     id="subtitle"
   >
     Subtitle
-  </h2>
+  </h2>,
+  "
+",
   <p>
     Some content with 
     <a>
       HTML
     </a>
-  </p>
-</div>
+  </p>,
+  "
+",
+]
 `;
