@@ -4,6 +4,7 @@ import { Tag } from 'antd';
 import Color from 'color';
 import { ColumnDefinition } from './types';
 import { interpolate } from '../../interpolate';
+import { useBlock } from '../../Provider';
 
 const generateColor = (str: string) => {
   const cyrb53 = function (str = '', seed = 0) {
@@ -28,7 +29,6 @@ const generateColor = (str: string) => {
 };
 
 interface RenderValueAttributes extends ColumnDefinition {
-  events?: Events;
   language: string;
 }
 
@@ -39,9 +39,9 @@ export const renderValue = ({
   format,
   onEdit,
   actions,
-  events,
 }: RenderValueAttributes) => (_: any, item: any) => {
   const value = key ? item[key] : undefined;
+  const { events } = useBlock();
 
   switch (type) {
     case 'number': {
@@ -93,27 +93,35 @@ export const renderValue = ({
       if (actions) {
         return Array.isArray(actions) ? (
           <>
-            {actions.map(({ label, action: { event, payload, url } = {} }) => (
-              <Button
-                key={`${label}${event}${url}`}
-                type="button"
-                onClick={() => {
-                  const { key, ...data } = item;
-                  if (event) {
-                    events?.emit(event, {
-                      ...interpolate(payload, data),
-                      data,
-                      key,
-                    });
-                  }
-                  if (url) {
-                    window.open(interpolate(url, data));
-                  }
-                }}
-              >
-                {label}
-              </Button>
-            ))}
+            {actions.map(
+              ({ label, action: { type, value, payload, popup } = {} }) => (
+                <Button
+                  key={`${label}${type}${value}`}
+                  type="button"
+                  onClick={() => {
+                    if (!value) return;
+                    const { key, ...data } = item;
+                    if (type === 'event') {
+                      events?.emit(value, {
+                        ...interpolate(payload, data),
+                        data,
+                        key,
+                      });
+                    }
+                    if (type === 'url') {
+                      const href = interpolate(value, data);
+                      if (popup) {
+                        window.open(href);
+                      } else {
+                        window.location = href;
+                      }
+                    }
+                  }}
+                >
+                  {label}
+                </Button>
+              )
+            )}
           </>
         ) : null;
       }
