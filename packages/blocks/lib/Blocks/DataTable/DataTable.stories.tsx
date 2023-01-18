@@ -1,10 +1,10 @@
 import { Events } from '@prisme.ai/sdk';
 import { Story } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import { useState } from 'react';
-import { BlockProvider } from '../Provider';
-import { DataTableConfig } from './DataTable';
-import { DataTable } from './index';
+import { useEffect, useState } from 'react';
+import { BlockProvider } from '../../Provider';
+import { DataTableConfig } from '.';
+import { DataTable } from '../index';
 
 export default {
   title: 'Blocks/DataTable',
@@ -19,6 +19,10 @@ const Template: Story<any> = ({ defaultConfig }) => {
   const [config, setConfig] = useState<any>(defaultConfig);
   const [appConfig, setAppConfig] = useState<any>();
 
+  useEffect(() => {
+    setConfig(defaultConfig);
+  }, [defaultConfig]);
+
   return (
     <BlockProvider
       config={config}
@@ -27,7 +31,7 @@ const Template: Story<any> = ({ defaultConfig }) => {
       onAppConfigUpdate={setAppConfig}
       events={events as Events}
     >
-      <DataTable edit={false} />
+      <DataTable />
     </BlockProvider>
   );
 };
