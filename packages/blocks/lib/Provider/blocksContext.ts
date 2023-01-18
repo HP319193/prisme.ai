@@ -13,6 +13,7 @@ export interface BlocksDependenciesContext {
   };
   utils: Partial<SchemaFormContext['utils']> & {
     BlockLoader: TBlockLoader;
+    getWorkspaceHost: () => string;
   };
 }
 
@@ -27,6 +28,9 @@ export const blocksContext = createContext<BlocksDependenciesContext>({
   utils: {
     BlockLoader: () => null,
     uploadFile: async (base64: string) => '',
+    getWorkspaceHost() {
+      return `${window.location.protocol}//${window.location.host}`;
+    },
   },
 });
 export const useBlocks = () => useContext(blocksContext);

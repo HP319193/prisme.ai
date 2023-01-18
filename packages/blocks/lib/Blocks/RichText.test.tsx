@@ -6,6 +6,7 @@ import RichText from './RichText';
 const Link: FC = ({ children }) => <a>{children}</a>;
 const Loading = () => <div />;
 const DownIcon = () => <div />;
+const SchemaForm = () => <div />;
 
 it('should render', () => {
   const content = {
@@ -16,7 +17,10 @@ Some content with <a href="https://prisme.ai">HTML</a>
 `,
   };
   const root = renderer.create(
-    <BlocksProvider components={{ Link, Loading, DownIcon }} externals={{}}>
+    <BlocksProvider
+      components={{ Link, Loading, DownIcon, SchemaForm }}
+      externals={{}}
+    >
       <BlockProvider config={{ content }}>
         <RichText />
       </BlockProvider>
