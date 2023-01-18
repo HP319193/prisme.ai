@@ -83,25 +83,6 @@ export const BlockLoader: TBlockLoader = ({
       );
     }
 
-    if (onInit) {
-      const payload: any = {
-        page: page && page.id,
-        config: initialConfig,
-      };
-      if (window.location.search) {
-        payload.query = Array.from(
-          new URLSearchParams(window.location.search).entries()
-        ).reduce(
-          (prev, [key, value]) => ({
-            ...prev,
-            [key]: value,
-          }),
-          {}
-        );
-      }
-      events.emit(onInit, payload);
-    }
-
     if (automation) {
       initWithAutomation();
     }
@@ -120,6 +101,30 @@ export const BlockLoader: TBlockLoader = ({
     automation,
     initWithAutomation,
   ]);
+
+  const alreadySendInit = useRef(false);
+  useEffect(() => {
+    if (!events || alreadySendInit.current) return;
+    if (onInit) {
+      alreadySendInit.current = true;
+      const payload: any = {
+        page: page && page.id,
+        config: initialConfig,
+      };
+      if (window.location.search) {
+        payload.query = Array.from(
+          new URLSearchParams(window.location.search).entries()
+        ).reduce(
+          (prev, [key, value]) => ({
+            ...prev,
+            [key]: value,
+          }),
+          {}
+        );
+      }
+      events.emit(onInit, payload);
+    }
+  }, [events, initialConfig, onInit, page]);
 
   const onAppConfigUpdate = useCallback(
     async (newConfig: any) => {
