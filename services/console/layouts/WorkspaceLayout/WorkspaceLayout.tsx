@@ -13,6 +13,7 @@ import Navigation from './Navigation';
 import { useWorkspace } from '../../providers/Workspace';
 import Expand from '../../components/Navigation/Expand';
 import { incrementName } from '../../utils/incrementName';
+import { BlocksProvider } from '../../components/BlocksProvider';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
@@ -169,19 +170,20 @@ export const WorkspaceLayout: FC = ({ children }) => {
         installApp: installAppHandler,
       }}
     >
-      <Head>
-        <title>
-          {t('workspace.title', { name: localize(workspace.name) })}
-        </title>
-        <meta
-          name="description"
-          content={t('workspace.description', {
-            name: localize(workspace.name),
-          })}
-        />
-      </Head>
-      <div
-        className={`
+      <BlocksProvider>
+        <Head>
+          <title>
+            {t('workspace.title', { name: localize(workspace.name) })}
+          </title>
+          <meta
+            name="description"
+            content={t('workspace.description', {
+              name: localize(workspace.name),
+            })}
+          />
+        </Head>
+        <div
+          className={`
           absolute top-[75px] bottom-0 right-0 left-0
           bg-white
           flex flex-1
@@ -191,41 +193,42 @@ export const WorkspaceLayout: FC = ({ children }) => {
           z-20
           ${displaySourceView ? '' : '-translate-y-full'}
         `}
-      >
-        {mountSourceComponent && (
-          <WorkspaceSource onLoad={() => setDisplaySourceView(true)} />
-        )}
-      </div>
-      <Layout Header={<HeaderWorkspace />}>
-        <AppsStore
-          visible={appStoreVisible}
-          onCancel={() => setAppStoreVisible(false)}
-        />
-        <div className="h-full flex flex-row">
-          <Layout
-            className={`${
-              fullSidebar ? 'max-w-xs' : 'max-w-[4.2rem]'
-            } transition-all p-0`}
-          >
-            <div className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden">
-              <Navigation
-                onCreateAutomation={createAutomationHandler}
-                onCreatePage={createPageHandler}
-                onInstallApp={installAppHandler}
-                onExpand={() => setFullSidebar(true)}
-                className="max-h-[calc(100%-3rem)]"
-              />
-              <Expand
-                expanded={fullSidebar}
-                onToggle={() => setFullSidebar(!fullSidebar)}
-              />
-            </div>
-          </Layout>
-          <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-full">
-            {creatingAutomation || creatingPage ? <Loading /> : children}
-          </div>
+        >
+          {mountSourceComponent && (
+            <WorkspaceSource onLoad={() => setDisplaySourceView(true)} />
+          )}
         </div>
-      </Layout>
+        <Layout Header={<HeaderWorkspace />}>
+          <AppsStore
+            visible={appStoreVisible}
+            onCancel={() => setAppStoreVisible(false)}
+          />
+          <div className="h-full flex flex-row">
+            <Layout
+              className={`${
+                fullSidebar ? 'max-w-xs' : 'max-w-[4.2rem]'
+              } transition-all p-0`}
+            >
+              <div className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden">
+                <Navigation
+                  onCreateAutomation={createAutomationHandler}
+                  onCreatePage={createPageHandler}
+                  onInstallApp={installAppHandler}
+                  onExpand={() => setFullSidebar(true)}
+                  className="max-h-[calc(100%-3rem)]"
+                />
+                <Expand
+                  expanded={fullSidebar}
+                  onToggle={() => setFullSidebar(!fullSidebar)}
+                />
+              </div>
+            </Layout>
+            <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-full">
+              {creatingAutomation || creatingPage ? <Loading /> : children}
+            </div>
+          </div>
+        </Layout>
+      </BlocksProvider>
     </workspaceLayoutContext.Provider>
   );
 };
