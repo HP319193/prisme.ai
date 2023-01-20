@@ -154,7 +154,7 @@ export const BlockLoader: TBlockLoader = ({
 
   return (
     <BLoader
-      name={name}
+      name={getBlockName(name)}
       url={url}
       appConfig={appConfig}
       onAppConfigUpdate={onAppConfigUpdate}
