@@ -42,6 +42,7 @@ export const Page = ({ page }: PageProps) => {
               slug,
               appInstance,
               config,
+              key: `block-${parseInt(`${Math.random() * 10000}`)}`,
             };
           })
         : [],
@@ -62,9 +63,9 @@ export const Page = ({ page }: PageProps) => {
         className="flex flex-1 flex-col page-blocks w-full"
         ref={containerEl}
       >
-        {blocks.map(({ slug = '', appInstance = '' }, index) => (
+        {blocks.map(({ slug = '', appInstance = '', key }, index) => (
           <div
-            key={index}
+            key={key}
             className={`page-block block-${appInstance.replace(
               /\s/g,
               '-'
