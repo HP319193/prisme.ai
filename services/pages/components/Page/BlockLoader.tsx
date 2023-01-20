@@ -4,6 +4,18 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import api from '../../../console/utils/api';
 import { usePage } from './PageProvider';
 
+/**
+ * This function aims to replace deprecated Block names by the new one
+ */
+function getBlockName(name: string) {
+  switch (name) {
+    case 'Layout':
+      return 'StackedNavigation';
+    default:
+      return name;
+  }
+}
+
 export const BlockLoader: TBlockLoader = ({
   name = '',
   config: initialConfig,
@@ -40,7 +52,7 @@ export const BlockLoader: TBlockLoader = ({
         setUrl(workspaceBlocks[name]);
         return;
       }
-      setUrl(name);
+      setUrl(getBlockName(name));
       return;
     }
 
@@ -142,7 +154,7 @@ export const BlockLoader: TBlockLoader = ({
 
   return (
     <BLoader
-      name={name}
+      name={getBlockName(name)}
       url={url}
       appConfig={appConfig}
       onAppConfigUpdate={onAppConfigUpdate}

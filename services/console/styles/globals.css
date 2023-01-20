@@ -310,6 +310,13 @@ button {
   margin-right: 1.5rem;
 }
 
+.pr-form-object .pr-form-label--raw {
+  margin: var(--pr-form-margin-size);
+}
+.pr-form .ant-select {
+  margin-bottom: var(--pr-form-margin-size);
+}
+
 .quill .ql-toolbar.ql-snow {
   border: 0;
   margin: 0;
@@ -333,4 +340,8 @@ button {
 .pr-form-object > .pr-form-raw {
   top: 1rem !important;
   right: 1rem !important;
+}
+
+.pr-panel-settings .ant-tabs-nav {
+  margin-bottom: 0 !important;
 }

@@ -335,6 +335,7 @@ export class ContextsManager {
         ...opts.additionalGlobals,
       },
       trigger: opts.trigger || this.trigger,
+      opLogs: [],
     });
 
     Object.setPrototypeOf(child, ContextsManager.prototype);

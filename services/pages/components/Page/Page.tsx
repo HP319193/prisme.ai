@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useRef } from 'react';
 import useLocalizedText from '../../../console/utils/useLocalizedText';
 import api, { Events } from '../../../console/utils/api';

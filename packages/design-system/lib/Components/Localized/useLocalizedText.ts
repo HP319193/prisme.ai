@@ -5,7 +5,8 @@ import { Schema } from '../SchemaForm';
 const valueIsALocale = (value: any) => {
   return (
     typeof value === 'string' ||
-    (typeof value === 'object' &&
+    (value &&
+      typeof value === 'object' &&
       Object.keys(value).every((key) => key.length === 2))
   );
 };

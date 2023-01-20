@@ -1,8 +1,9 @@
 import { Story } from '@storybook/react';
 import { useMemo, useState } from 'react';
-import { BlockProvider } from '../../Provider';
+import { BlockProvider, BlocksProvider } from '../../Provider';
 import { LayoutConfig } from './context';
-import Layout from './Layout';
+import Layout from './StackedNavigation';
+import { BlockLoader } from '../../BlockLoader';
 
 export default {
   title: 'Blocks/Layout',
@@ -12,7 +13,7 @@ const Template: Story<any> = () => {
   const [config, setConfig] = useState<LayoutConfig>({
     head: [
       {
-        block: 'Header',
+        slug: 'Header',
         title: 'Exemple of Layout',
         nav: [
           {
@@ -27,7 +28,7 @@ const Template: Story<any> = () => {
       title: 'summary',
       blocks: [
         {
-          block: 'Cards',
+          slug: 'Cards',
           cards: [
             {
               title: 'Démarrer une conversation',
@@ -78,7 +79,7 @@ const Template: Story<any> = () => {
                 title: 'Conversation',
                 blocks: [
                   {
-                    block: 'RichText',
+                    slug: 'RichText',
                     content: 'Je suis un chat miaou',
                   },
                 ],
@@ -101,11 +102,13 @@ const Template: Story<any> = () => {
             if (event === 'navigate marchés step 2') {
               cards.push({
                 title: 'Une nouvelle carte',
-                content: [{
-                  type: 'button',
-                  value: 'Retourner chez les producteurs',
-                  event: 'navigate producteurs locaux'
-                }],
+                content: [
+                  {
+                    type: 'button',
+                    value: 'Retourner chez les producteurs',
+                    event: 'navigate producteurs locaux',
+                  },
+                ],
               });
             }
             return setConfig((config) => ({
@@ -114,11 +117,11 @@ const Template: Story<any> = () => {
                 title: 'Marchés',
                 blocks: [
                   {
-                    block: 'RichText',
+                    slug: 'RichText',
                     content: 'Voici les marchés',
                   },
                   {
-                    block: 'Cards',
+                    slug: 'Cards',
                     cards,
                   },
                 ],
@@ -131,7 +134,7 @@ const Template: Story<any> = () => {
                 title: 'Producteurs locaux',
                 blocks: [
                   {
-                    block: 'RichText',
+                    slug: 'RichText',
                     content: 'Voici les producteurs',
                   },
                 ],
@@ -144,11 +147,11 @@ const Template: Story<any> = () => {
                 title: 'Menus cantine',
                 blocks: [
                   {
-                    block: 'RichText',
+                    slug: 'RichText',
                     content: 'Voici les menus',
                   },
                   {
-                    block: 'Cards',
+                    slug: 'Cards',
                     cards: [
                       {
                         title: 'Démarrer une conversation',
@@ -163,7 +166,7 @@ const Template: Story<any> = () => {
                     ],
                   },
                   {
-                    block: 'Cards',
+                    slug: 'Cards',
                     cards: [
                       {
                         title: 'Démarrer une conversation',
@@ -178,7 +181,7 @@ const Template: Story<any> = () => {
                     ],
                   },
                   {
-                    block: 'Cards',
+                    slug: 'Cards',
                     cards: [
                       {
                         title: 'Démarrer une conversation',
@@ -202,7 +205,18 @@ const Template: Story<any> = () => {
   );
 
   return (
-    <>
+    <BlocksProvider
+      components={{
+        Link: (props) => <a {...props} />,
+        Loading: () => null,
+        DownIcon: () => null,
+        SchemaForm: () => null,
+      }}
+      externals={{}}
+      utils={{
+        BlockLoader,
+      }}
+    >
       <style>{`body {padding: 0 ! important;}`}</style>
       <BlockProvider
         config={config}
@@ -211,9 +225,9 @@ const Template: Story<any> = () => {
         onAppConfigUpdate={setAppConfig}
         events={events}
       >
-        <Layout edit={false} />
+        <Layout />
       </BlockProvider>
-    </>
+    </BlocksProvider>
   );
 };
 

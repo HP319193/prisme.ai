@@ -101,7 +101,9 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
       {!displayRaw && children}
       {displayRaw && (
         <>
-          <label className={`pr-form-input ${labelClassName}`}>
+          <label
+            className={`pr-form-label pr-form-label--raw ${labelClassName}`}
+          >
             {label || schema.title || name.replace(/^values./, '')}
           </label>
           <div className="pr-form-input">

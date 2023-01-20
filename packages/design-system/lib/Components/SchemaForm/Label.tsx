@@ -10,7 +10,8 @@ interface LabelProps {
 }
 
 export const Label = ({ className, children, field, schema }: LabelProps) => {
-  const label = children || schema.title || getLabel(field.input.name);
+  const label =
+    children || schema.title || getLabel(field.input.name, schema.title);
   if (!label) return null;
   return (
     <label className={className} htmlFor={field.input.name}>
