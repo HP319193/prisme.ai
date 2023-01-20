@@ -691,11 +691,11 @@
           "payload": {
             "label": "Payload",
             "description": "Data object that accompanies the event."
-          },
-          "className": {
-            "label": "Element class name",
-            "description": "Specify a custom class for the element containing the Block to facilitate the layout in CSS."
           }
+        },
+        "className": {
+          "label": "Element class name",
+          "description": "Specify a custom class for the element containing the Block to facilitate the layout in CSS."
         }
       },
       "builtin": "Built-in Blocks",
