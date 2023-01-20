@@ -29,15 +29,7 @@ const CellInput = forwardRef<any, any>(
     ref
   ) => {
     if (type === 'boolean') {
-      return (
-        <Form.Item
-          style={{ margin: 0 }}
-          name={dataIndex}
-          valuePropName="checked"
-        >
-          <Switch onChange={save} checked={value} />
-        </Form.Item>
-      );
+      return <Switch onChange={save} checked={value} />;
     }
     return (
       <Form.Item
