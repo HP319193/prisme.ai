@@ -1,6 +1,7 @@
 import { BlockLoader as BLoader, TBlockLoader } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useUser } from '../../../console/components/UserProvider';
 import api from '../../../console/utils/api';
 import { usePage } from './PageProvider';
 
@@ -22,6 +23,7 @@ export const BlockLoader: TBlockLoader = ({
   onLoad,
   container,
 }) => {
+  const { user } = useUser();
   const [url, setUrl] = useState('');
   const [config, setConfig] = useState<typeof initialConfig>(initialConfig);
   const [appConfig, setAppConfig] = useState<any>();
@@ -73,15 +75,15 @@ export const BlockLoader: TBlockLoader = ({
   }, []);
 
   const initWithAutomation = useCallback(async () => {
-    if (!page || !page.workspaceId || !loaded) return;
+    if (!user || !page || !page.workspaceId || !loaded) return;
     try {
       const newConfig = await api.callAutomation(page.workspaceId, automation);
       setConfig((prev = {}) => ({ ...prev, ...newConfig }));
     } catch {}
-  }, [automation, loaded, page]);
+  }, [automation, loaded, page, user]);
 
   useEffect(() => {
-    if (!loaded || !events) return;
+    if (!user || !loaded || !events) return;
     onLoad && onLoad();
     // Set listeners
     let off: Function[] = [];
@@ -114,11 +116,12 @@ export const BlockLoader: TBlockLoader = ({
     loaded,
     automation,
     initWithAutomation,
+    user,
   ]);
 
   const alreadySentInit = useRef(false);
   useEffect(() => {
-    if (!listening || !events || alreadySentInit.current) return;
+    if (!user || !listening || !events || alreadySentInit.current) return;
     if (onInit) {
       alreadySentInit.current = true;
       const payload: any = {
@@ -138,7 +141,7 @@ export const BlockLoader: TBlockLoader = ({
       }
       events.emit(onInit, payload);
     }
-  }, [events, initialConfig, listening, onInit, page]);
+  }, [events, initialConfig, listening, onInit, page, user]);
 
   const onAppConfigUpdate = useCallback(
     async (newConfig: any) => {

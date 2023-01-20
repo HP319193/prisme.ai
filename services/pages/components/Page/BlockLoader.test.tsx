@@ -26,6 +26,17 @@ jest.mock('./PageProvider', () => {
   };
 });
 
+jest.mock('../../../console/components/UserProvider', () => {
+  const user = {};
+  return {
+    useUser() {
+      return {
+        user,
+      };
+    },
+  };
+});
+
 it('should render a builtin block', () => {
   const root = renderer.create(<BlockLoader name="RichText" />);
   const child = root.root.children[0] as renderer.ReactTestInstance;
