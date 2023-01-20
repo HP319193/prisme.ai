@@ -2,5 +2,8 @@
   "404": "Cette page n'existe pas. Revenez à l'accueil.",
   "unknown": "Une erreur est survenue: \"{{errorName}}\"",
   "share": "Une erreur est survenue",
-  "share_CollaboratorNotFound": "Cet email ne correspond à aucun utilisateur existant."
+  "share_CollaboratorNotFound": "Cet email ne correspond à aucun utilisateur existant.",
+  "openapi": "{{path}} {{context}}",
+  "openapi_should NOT have additional properties": "{{path}} est invalide",
+  "openapi_should be object": "{{path}} doit être un objet"
 }

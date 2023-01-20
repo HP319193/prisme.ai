@@ -10,6 +10,7 @@ import { notification } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import useDirtyWarning from '../../utils/useDirtyWarning';
 import { replaceSilently } from '../../utils/urls';
+import { ApiError } from '../../utils/api';
 
 const Page = () => {
   const { t } = useTranslation('workspaces');
@@ -61,13 +62,43 @@ const Page = () => {
 
   const save = useCallback(async () => {
     const prevSlug = page.slug;
-    const saved = await savePage(value);
-    if (!saved) return;
-    const { slug } = saved;
-    if (slug !== prevSlug) {
-      replaceSilently(`/workspaces/${workspaceId}/pages/${slug}`);
+    try {
+      const saved = await savePage(value);
+      if (!saved) return;
+      notification.success({
+        message: t('pages.save.toast'),
+        placement: 'bottomRight',
+      });
+      const { slug } = saved;
+      if (slug !== prevSlug) {
+        replaceSilently(`/workspaces/${workspaceId}/pages/${slug}`);
+      }
+    } catch (e) {
+      const { details, error } = e as ApiError;
+      const description = (
+        <ul>
+          {details ? (
+            details.map(({ path, message }: any, key: number) => (
+              <li key={key}>
+                {t('openapi', {
+                  context: message,
+                  path: path.replace(/^\.body\./, ''),
+                  ns: 'errors',
+                })}
+              </li>
+            ))
+          ) : (
+            <li>{t('pages.save.reason', { context: error })}</li>
+          )}
+        </ul>
+      );
+      notification.error({
+        message: t('pages.save.error'),
+        description,
+        placement: 'bottomRight',
+      });
     }
-  }, [page.slug, savePage, value, workspaceId]);
+  }, [page.slug, savePage, t, value, workspaceId]);
 
   useKeyboardShortcut([
     {

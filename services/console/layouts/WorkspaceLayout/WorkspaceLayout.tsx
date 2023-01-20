@@ -14,6 +14,7 @@ import { useWorkspace } from '../../providers/Workspace';
 import Expand from '../../components/Navigation/Expand';
 import { incrementName } from '../../utils/incrementName';
 import { BlocksProvider } from '../../components/BlocksProvider';
+import { ApiError } from '../../utils/api';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
@@ -76,7 +77,27 @@ export const WorkspaceLayout: FC = ({ children }) => {
         message: t('expert.save.confirm'),
         placement: 'bottomRight',
       });
-    } catch {}
+    } catch (e) {
+      const { details } = e as ApiError;
+      const description = (
+        <ul>
+          {details.map(({ path, message }: any, key: number) => (
+            <li key={key}>
+              {t('openapi', {
+                context: message,
+                path: path.replace(/^\.body\./, ''),
+                ns: 'errors',
+              })}
+            </li>
+          ))}
+        </ul>
+      );
+      notification.error({
+        message: t('expert.save.fail'),
+        description,
+        placement: 'bottomRight',
+      });
+    }
     setSaving(false);
   }, [newSource, saveWorkspace, t]);
 

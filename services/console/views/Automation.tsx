@@ -176,16 +176,28 @@ export const Automation = () => {
         });
       } catch (e) {
         const { details, error } = e as ApiError;
-
+        const description = (
+          <ul>
+            {details ? (
+              details.map(({ path, message }: any, key: number) => (
+                <li key={key}>
+                  {t('openapi', {
+                    context: message,
+                    path: path.replace(/^\.body\./, ''),
+                    ns: 'errors',
+                  })}
+                </li>
+              ))
+            ) : (
+              <li>{t('automations.save.reason', { context: error })}</li>
+            )}
+          </ul>
+        );
         notification.error({
-          message: t('automations.save.error', {
-            context: Object.keys(details || {})[0],
-          }),
+          message: t('automations.save.error'),
+          description,
           placement: 'bottomRight',
         });
-        if (error === 'InvalidSlugError') {
-          details.slug = t('automations.save.error_InvalidSlugError');
-        }
       }
     },
     [automation.slug, saveAutomation, t, value, workspace.id]
