@@ -31,6 +31,7 @@ export const BlockLoader: TBlockLoader = ({
     i18n: { language },
   } = useTranslation();
   const lock = useRef(false);
+  const [listening, setListening] = useState(false);
 
   useEffect(() => {
     setConfig(initialConfig);
@@ -94,6 +95,7 @@ export const BlockLoader: TBlockLoader = ({
         })
       );
     }
+    setListening(true);
 
     if (automation) {
       initWithAutomation();
@@ -114,11 +116,11 @@ export const BlockLoader: TBlockLoader = ({
     initWithAutomation,
   ]);
 
-  const alreadySendInit = useRef(false);
+  const alreadySentInit = useRef(false);
   useEffect(() => {
-    if (!events || alreadySendInit.current) return;
+    if (!listening || !events || alreadySentInit.current) return;
     if (onInit) {
-      alreadySendInit.current = true;
+      alreadySentInit.current = true;
       const payload: any = {
         page: page && page.id,
         config: initialConfig,
@@ -136,7 +138,7 @@ export const BlockLoader: TBlockLoader = ({
       }
       events.emit(onInit, payload);
     }
-  }, [events, initialConfig, onInit, page]);
+  }, [events, initialConfig, listening, onInit, page]);
 
   const onAppConfigUpdate = useCallback(
     async (newConfig: any) => {
