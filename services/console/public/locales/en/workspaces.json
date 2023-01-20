@@ -691,6 +691,10 @@
           "payload": {
             "label": "Payload",
             "description": "Data object that accompanies the event."
+          },
+          "className": {
+            "label": "Element class name",
+            "description": "Specify a custom class for the element containing the Block to facilitate the layout in CSS."
           }
         }
       },
@@ -1102,12 +1106,6 @@
                 "description": "Name of Block to display"
               }
             }
-          },
-          "styles": {
-            "label": "Styles",
-            "description": "You can apply a style configuration to the container element. You may for example set { display: flex; flexDirection: row } to display your blocks horizontally.",
-            "add": "Add a style",
-            "remove": "Remove style"
           }
         }
       }

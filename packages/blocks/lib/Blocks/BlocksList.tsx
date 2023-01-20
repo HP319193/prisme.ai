@@ -3,15 +3,14 @@ import { useBlocks } from '../Provider/blocksContext';
 
 export interface BlocksListConfig {
   blocks: ({ slug: string } & Record<string, any>)[];
-  styles?: Record<string, string>;
   className?: string;
   blocksClassName?: string;
 }
 
 export const BlocksList = ({
   blocks = [],
-  styles,
   className,
+  blocksClassName,
 }: BlocksListConfig) => {
   const {
     utils: { BlockLoader },
@@ -20,9 +19,14 @@ export const BlocksList = ({
   if (!Array.isArray(blocks)) return null;
 
   return (
-    <div style={styles} className="pr-block-blocks-list">
+    <div className={`pr-block-blocks-list ${className ? className : ''}`}>
       {blocks.map(({ slug, ...config }, key) => (
-        <div key={key} className={className}>
+        <div
+          key={key}
+          className={`pr-block-blocks-list__block ${
+            blocksClassName ? blocksClassName : ''
+          }`}
+        >
           <BlockLoader name={slug} config={config} />
         </div>
       ))}

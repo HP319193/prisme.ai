@@ -44,7 +44,7 @@ export const Content = ({
       {blocks && (
         <BlocksList
           blocks={legacyBlocks}
-          className={tw`flex content__block-container block-container snap-start`}
+          blocksClassName={tw`flex content__block-container block-container snap-start`}
         />
       )}
     </div>

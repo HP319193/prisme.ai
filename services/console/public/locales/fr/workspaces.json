@@ -692,6 +692,10 @@
             "label": "Charge de données",
             "description": "Objet de données qui accompagne l'évènement."
           }
+        },
+        "className": {
+          "label": "Classe de l'élément",
+          "description": "Spécifiez une classe personnalisée pour l'élément contenant le Block pour faciliter la mise en page en CSS."
         }
       },
       "builtin": "Blocks de base",
@@ -1090,8 +1094,8 @@
       "blockslist": {
         "settings": {
           "blocks": {
-            "label": "Contenu supplémentaire",
-            "description": "Vous pouvez compléter votre contenu avec une liste de Blocks.",
+            "label": "Blocks",
+            "description": "Liste des Blocks.",
             "add": "Ajouter un Block",
             "remove": "Supprimer le Block",
             "items": {
@@ -1102,12 +1106,6 @@
                 "description": "Le nom du Block à afficher"
               }
             }
-          },
-          "styles": {
-            "label": "Styles",
-            "description": "Vous pouvez appliquer n'importe quel style à l'élément conteneur. Vous pouvez par exemple configurer { display: flex; flexDirection: row } pour afficher vos blocks à l'horizontale.",
-            "add": "Ajouter un style",
-            "remove": "Supprimer le style"
           }
         }
       }

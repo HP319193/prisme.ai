@@ -2,15 +2,23 @@
 
 exports[`should render 1`] = `
 <div
-  className="pr-block-blocks-list"
+  className="pr-block-blocks-list "
 >
-  <div>
-    Block 
-    Header
+  <div
+    className="pr-block-blocks-list__block "
+  >
+    <div>
+      Block 
+      Header
+    </div>
   </div>
-  <div>
-    Block 
-    RichText
+  <div
+    className="pr-block-blocks-list__block "
+  >
+    <div>
+      Block 
+      RichText
+    </div>
   </div>
 </div>
 `;

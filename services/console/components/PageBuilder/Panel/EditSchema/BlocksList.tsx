@@ -1,4 +1,5 @@
 import { Schema } from '@prisme.ai/design-system';
+import commonSchema from './commonSchema';
 
 const schema: Schema = {
   type: 'object',
@@ -17,16 +18,7 @@ const schema: Schema = {
         'ui:widget': 'blockSelector',
       },
     },
-    styles: {
-      type: 'object',
-      title: 'pages.blocks.blockslist.settings.styles.label',
-      description: 'pages.blocks.blockslist.settings.styles.description',
-      additionalProperties: {
-        type: 'string',
-        add: 'pages.blocks.blockslist.settings.styles.add',
-        remove: 'pages.blocks.blockslist.settings.styles.remove',
-      },
-    },
+    ...commonSchema.properties,
   },
 };
 
