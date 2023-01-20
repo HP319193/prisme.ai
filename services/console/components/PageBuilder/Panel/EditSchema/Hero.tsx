@@ -1,4 +1,5 @@
 import { Schema } from '@prisme.ai/design-system';
+import blocksListSchema from './BlocksList';
 
 const schema: Schema = {
   type: 'object',
@@ -14,17 +15,9 @@ const schema: Schema = {
       description: 'pages.blocks.hero.settings.lead.description',
     },
     content: {
-      type: 'array',
+      ...blocksListSchema,
       title: 'pages.blocks.hero.settings.content.label',
       description: 'pages.blocks.hero.settings.content.description',
-      add: 'pages.blocks.hero.settings.content.add',
-      remove: 'pages.blocks.lead.settings.content.remove',
-      items: {
-        type: 'object',
-        title: 'pages.blocks.hero.settings.content.items.label',
-        description: 'pages.blocks.hero.settings.content.items.description',
-        'ui:widget': 'blockSelector',
-      },
     },
     img: {
       type: 'string',

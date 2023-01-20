@@ -1,10 +1,10 @@
 import { Story } from '@storybook/react';
 import { useEffect, useState } from 'react';
-import { BlockProvider, BlocksProvider } from '../../Provider';
-import Hero from './Hero';
+import { BlockProvider, BlocksProvider } from '../Provider';
+import BlocksList from './BlocksList';
 
 export default {
-  title: 'Blocks/Hero',
+  title: 'Blocks/BlocksList',
 };
 
 const Template: Story<any> = ({ defaultConfig }) => {
@@ -34,7 +34,7 @@ const Template: Story<any> = ({ defaultConfig }) => {
         appConfig={appConfig}
         onAppConfigUpdate={setAppConfig}
       >
-        <Hero />
+        <BlocksList />
       </BlockProvider>
     </BlocksProvider>
   );
@@ -43,15 +43,19 @@ const Template: Story<any> = ({ defaultConfig }) => {
 export const Default = Template.bind({});
 Default.args = {
   defaultConfig: {
-    title: 'Hero title',
-    lead: 'A very short introduction/summary of the page.',
-    img: 'https://design-system.w3.org/dist/assets/svg/illustration-2.svg',
-    backgroundColor: '#f8f8fb',
-    content: [
+    blocks: [
+      {
+        slug: 'Header',
+        title: 'Some title',
+      },
       {
         slug: 'RichText',
         content: '<p>Hello <strong>World</strong></p>',
       },
     ],
+    styles: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
   },
 };

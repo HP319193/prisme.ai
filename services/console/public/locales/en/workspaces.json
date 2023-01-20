@@ -691,6 +691,10 @@
           "payload": {
             "label": "Payload",
             "description": "Data object that accompanies the event."
+          },
+          "className": {
+            "label": "Element class name",
+            "description": "Specify a custom class for the element containing the Block to facilitate the layout in CSS."
           }
         }
       },
@@ -702,8 +706,9 @@
       "name_DataTable": "Data table",
       "name_Form": "Form",
       "name_RichText": "Rich text",
-      "name_Layout": "Navigation",
+      "name_StackedNavigation": "Stacked Navigation",
       "name_Buttons": "Buttons group",
+      "name_BlocksList": "Blocks list",
       "description": "",
       "description_Header": "Display page header",
       "description_Hero": "Display a Hero of page",
@@ -711,8 +716,9 @@
       "description_DataTable": "Display a data table",
       "description_Form": "Display form",
       "description_RichText": "Display text formatted with Markdown or HTML",
-      "description_Layout": "Display navigable block pages. Must be used through automations.",
+      "description_StackedNavigation": "Display navigable block pages. Must be used through automations.",
       "description_Buttons": "Display a buttons group",
+      "description_BlocksList": "Display a Blocks list",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
@@ -1072,7 +1078,23 @@
             "description": "Hero lead."
           },
           "content": {
-            "label": "Additional content",
+            "label": "Content",
+            "description": "You can customize this section with a list of any available Blocks."
+          },
+          "img": {
+            "label": "Image",
+            "description": "Une image idéealement au format carré et de bonne taille."
+          },
+          "backgroundColor": {
+            "label": "Couleur de fond",
+            "description": "La couleur de fond du Hero."
+          }
+        }
+      },
+      "blockslist": {
+        "settings": {
+          "blocks": {
+            "label": "Blocks",
             "description": "You can complete your content with a list of Blocks.",
             "add": "Add a Block",
             "remove": "Delete Block",
@@ -1084,14 +1106,6 @@
                 "description": "Name of Block to display"
               }
             }
-          },
-          "img": {
-            "label": "Image",
-            "description": "Une image idéealement au format carré et de bonne taille."
-          },
-          "backgroundColor": {
-            "label": "Couleur de fond",
-            "description": "La couleur de fond du Hero."
           }
         }
       }
