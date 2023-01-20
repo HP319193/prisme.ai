@@ -11,10 +11,10 @@ function getPath(path: string, lang: string, filename: string = '') {
 
 function compareKeys(a: any, b: any): boolean {
   return Object.entries(a).reduce((prev, [k, v]) => {
-    if (typeof v === 'object') {
-      return prev && compareKeys(a[k], b[k]);
-    }
-    return prev && b.hasOwnProperty(k);
+    return (
+      (prev && b.hasOwnProperty(k) && typeof v !== 'object') ||
+      compareKeys(v, b[k])
+    );
   }, true);
 }
 
@@ -28,19 +28,23 @@ function check(path: string) {
       const contentToCheck = JSON.parse(
         fs.readFileSync(getPath(path, languageToCheck, file)).toString() || ''
       );
-      const result = compareKeys(content, contentToCheck);
+      const result =
+        compareKeys(content, contentToCheck) &&
+        compareKeys(contentToCheck, content);
+
       if (!result) {
-        console.error(
-          `File ${getPath(
-            path,
-            languageToCheck,
-            file
-          )} is not synced with ${MAIN_LANGUAGE}`
-        );
+        throw new Error('');
       }
       return prev && result;
     } catch {
-      return prev && false;
+      console.error(
+        `File ${getPath(
+          path,
+          languageToCheck,
+          file
+        )} is not synced with ${MAIN_LANGUAGE}`
+      );
+      return false;
     }
   }, true);
 }
