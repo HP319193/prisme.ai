@@ -47,6 +47,6 @@ process.on('uncaughtException', uncaughtExceptionHandler);
   initAPI(app, httpServer, subscriptions, store, accessManager, cache);
 
   httpServer.listen(PORT, function () {
-    console.log(`${APP_NAME} listening on ${PORT}.`);
+    console.log(`${APP_NAME} listening on ${PORT}`);
   });
 })();
