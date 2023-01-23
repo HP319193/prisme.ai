@@ -111,6 +111,33 @@ export const builtinBlocksVariants = [
       },
     },
   },
+  {
+    name: {
+      fr: 'Mise en page en colonnes',
+      en: 'Columns layout',
+    },
+    slug: 'BlocksList_columns',
+    block: 'BlocksList',
+    description: {
+      fr:
+        'Une mise en page commune avec entête, pied de page et trois colonnes',
+      en: 'A common layout with header, footer and three columns.',
+    },
+    photo: '/images/blocks/preview.jpg',
+    config: {
+      blocks: [
+        {
+          slug: 'BlocksList',
+        },
+        {
+          slug: 'BlocksList',
+        },
+        {
+          slug: 'BlocksList',
+        },
+      ],
+    },
+  },
 ];
 
 export default builtinBlocksVariants;

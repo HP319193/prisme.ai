@@ -1,9 +1,12 @@
+import { useRef } from 'react';
 import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
+import prefixCSS from '../utils/prefixCSS';
+import { BaseBlock } from './BaseBlock';
+import { BaseBlockConfig } from './types';
 
-export interface BlocksListConfig {
+export interface BlocksListConfig extends BaseBlockConfig {
   blocks: ({ slug: string } & Record<string, any>)[];
-  className?: string;
   blocksClassName?: string;
 }
 
@@ -20,7 +23,7 @@ export const BlocksList = ({
 
   return (
     <div className={`pr-block-blocks-list ${className ? className : ''}`}>
-      {blocks.map(({ slug, ...config }, key) => (
+      {blocks.filter(Boolean).map(({ slug, ...config }, key) => (
         <div
           key={key}
           className={`pr-block-blocks-list__block ${
@@ -36,8 +39,11 @@ export const BlocksList = ({
 
 export const BlocksListInContext = () => {
   const { config } = useBlock<BlocksListConfig>();
-
-  return <BlocksList {...config} />;
+  return (
+    <BaseBlock>
+      <BlocksList {...config} />
+    </BaseBlock>
+  );
 };
 
 export default BlocksListInContext;

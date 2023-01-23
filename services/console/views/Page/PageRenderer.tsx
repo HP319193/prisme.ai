@@ -22,6 +22,7 @@ import CSSEditor from './CSSEditor';
 import { validatePage } from '@prisme.ai/validation';
 import SourceEdit from '../../components/SourceEdit/SourceEdit';
 import { defaultStyles } from './defaultStyles';
+import useSectionsIds from '../../providers/Page/useSectionsIds';
 
 interface PageRendererProps {
   value: Prismeai.Page;
@@ -50,6 +51,7 @@ export const PageRenderer = ({
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const [displaySource, setDisplaySource] = useState(false);
+  const sectionsIds = useSectionsIds();
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -72,19 +74,7 @@ export const PageRenderer = ({
         styles: {
           type: 'string',
           'ui:widget': (props: FieldProps) => (
-            <CSSEditor
-              {...props}
-              sectionIds={
-                value
-                  ? (
-                      value.blocks || []
-                    ).flatMap(
-                      ({ config: { sectionId, name = sectionId } = {} }) =>
-                        sectionId ? { id: sectionId, name } : []
-                    )
-                  : []
-              }
-            />
+            <CSSEditor {...props} sectionIds={sectionsIds} />
           ),
         },
       },
