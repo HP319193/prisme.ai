@@ -181,6 +181,10 @@ console_test:
 
 console_check_translations:
   stage: test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes: *CONSOLE_CHANGES
+    - !reference [console_build_docker, rules]
   script:
     - npm run check:translations:console
 
@@ -246,6 +250,10 @@ pages_test:
 
 pages_check_translations:
   stage: test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes: *PAGES_CHANGES
+    - !reference [pages_build_docker, rules]
   script:
     - npm run check:translations:pages
 
@@ -295,7 +303,9 @@ workspaces_test:
 workspaces_build_docker:
   extends: .build_docker
   needs:
-    - workspaces_test
+    - job: workspaces_test
+    - job: backend_npm_install
+      optional: true
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
@@ -341,7 +351,9 @@ runtime_test:
 runtime_build_docker:
   extends: .build_docker
   needs:
-    - runtime_test
+    - job: runtime_test
+    - job: backend_npm_install
+      optional: true
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
@@ -412,7 +424,9 @@ events_test:
 events_build_docker:
   extends: .build_docker
   needs:
-    - events_test
+    - job: events_test
+    - job: backend_npm_install
+      optional: true
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
