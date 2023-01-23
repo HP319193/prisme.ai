@@ -189,9 +189,10 @@
     "save": {
       "label": "Save",
       "toast": "Automation has been saved",
-      "error_slug": "Slug is already in use, please choose another one",
-      "error_InvalidSlugError": "Slug contains invalid characters",
-      "error": "Unknown error has occured"
+      "error": "La sauvegarde a échoué",
+      "reason": "{{context}}",
+      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
+      "reason_InvalidSlugError": "Slug contains invalid characters."
     },
     "duplicate": {
       "help": "Duplicate Automation",
@@ -518,7 +519,14 @@
     "configTooltip": "Configuration",
     "search": "Search for an app...",
     "title": "App Store",
-    "save": "Save",
+    "save": {
+      "label": "Save",
+      "toast": "App has been saved",
+      "error": "Save failed",
+      "reason": "{{context}}",
+      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
+      "reason_InvalidSlugError": "Slug contains invalid characters."
+    },
     "saveSuccess": "App config saved successfully",
     "notFound": "App not found.",
     "source": {
@@ -609,8 +617,10 @@
     "save": {
       "label": "Save",
       "toast": "Page has been saved",
-      "error_slug": "Slug is already in use, please choose another one",
-      "error": "Unknown error has occured"
+      "error": "Save failed",
+      "reason": "{{context}}",
+      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
+      "reason_InvalidSlugError": "Slug contains invalid characters."
     },
     "share": {
       "label": "Share this page",

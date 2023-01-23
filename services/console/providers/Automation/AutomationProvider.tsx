@@ -84,17 +84,22 @@ export const AutomationProvider = ({
     async (newAutomation) => {
       if (!workspaceId || !automation) return null;
       setSaving(true);
-      const saved = await api.updateAutomation(
-        workspaceId,
-        slug,
-        newAutomation
-      );
-      if (saved.slug !== slug) {
-        setSlug(saved.slug);
+      try {
+        const saved = await api.updateAutomation(
+          workspaceId,
+          slug,
+          newAutomation
+        );
+        if (saved.slug !== slug) {
+          setSlug(saved.slug);
+        }
+        setAutomation(saved);
+        setSaving(false);
+        return saved;
+      } catch (e) {
+        setSaving(false);
+        throw e;
       }
-      setAutomation(saved);
-      setSaving(false);
-      return saved;
     },
     [automation, slug, workspaceId]
   );

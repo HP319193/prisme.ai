@@ -189,9 +189,10 @@
     "save": {
       "label": "Enregistrer",
       "toast": "L'automatisation a bien été enregistrée",
-      "error_slug": "Le nom technique est déjà utilisé, veuillez en choisir un autre",
-      "error_InvalidSlugError": "Le nom technique contient des caractères invalides",
-      "error": "Une erreur est survenue"
+      "error": "La sauvegarde a échoué",
+      "reason": "{{context}}",
+      "reason_AlreadyUsedError": "Le nom technique est déjà utilisé, veuillez en choisir un autre",
+      "reason_InvalidSlugError": "Le nom technique contient des caractères invalides"
     },
     "duplicate": {
       "help": "Dupliquer l'Automatisation",
@@ -518,7 +519,14 @@
     "configTooltip": "Paramétrer",
     "search": "Chercher une app...",
     "title": "App Store",
-    "save": "Enregistrer",
+    "save": {
+      "label": "Enregistrer",
+      "toast": "L'App a bien été enregistrée",
+      "error": "La sauvegarde a échoué",
+      "reason": "{{context}}",
+      "reason_AlreadyUsedError": "Le nom technique est déjà utilisé, veuillez en choisir un autre",
+      "reason_InvalidSlugError": "Le nom technique contient des caractères invalides"
+    },
     "saveSuccess": "Configuration d'App sauvegardée avec succès",
     "notFound": "L'App n'existe pas.",
     "source": {
@@ -609,8 +617,10 @@
     "save": {
       "label": "Enregistrer",
       "toast": "La page a bien été enregistrée",
-      "error_slug": "Le nom technique est déjà utilisé, veuillez en choisir un autre",
-      "error": "Une erreur est survenue"
+      "error": "La sauvegarde a échoué",
+      "reason": "{{context}}",
+      "reason_AlreadyUsedError": "Le nom technique est déjà utilisé, veuillez en choisir un autre",
+      "reason_InvalidSlugError": "Le nom technique contient des caractères invalides"
     },
     "share": {
       "label": "Partager cette page",
