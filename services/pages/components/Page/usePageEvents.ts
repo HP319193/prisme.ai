@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useUser } from '../../../console/components/UserProvider';
 import api, { Events } from '../../../console/utils/api';
 
 function resetBlocksConfig(
@@ -15,6 +16,7 @@ export const usePageEvents = (
   page: Prismeai.Page | null,
   initialConfig: Record<string, any>[] = []
 ) => {
+  const { user } = useUser();
   const [events, setEvents] = useState<Events>();
   const [blocksConfigs, setBlocksConfigs] = useState<
     NonNullable<Prismeai.Page['blocks']>[number]['config'][]
@@ -49,7 +51,7 @@ export const usePageEvents = (
       });
     }
     initEvents();
-  }, [page]);
+  }, [page, user]);
   useEffect(() => {
     return () => {
       events?.destroy();
