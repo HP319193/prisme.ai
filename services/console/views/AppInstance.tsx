@@ -21,6 +21,7 @@ import AppInstanceProvider, {
   useAppInstance,
 } from '../providers/AppInstanceProvider';
 import { useWorkspace } from '../providers/Workspace';
+import { ApiError } from '../utils/api';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import { generatePageUrl, replaceSilently } from '../utils/urls';
 import useDirtyWarning from '../utils/useDirtyWarning';
@@ -54,15 +55,45 @@ export const AppInstance = () => {
   const save = useCallback(
     async (newValue = value) => {
       const prevSlug = appInstance.slug;
-      const updated = await saveAppInstance(newValue);
-      if (!updated) return null;
-      const { slug } = updated;
-      if (prevSlug !== slug) {
-        replaceSilently(`/workspaces/${workspace.id}/apps/${slug}`);
+      try {
+        const updated = await saveAppInstance(newValue);
+        if (!updated) return null;
+        notification.success({
+          message: t('apps.save.toast'),
+          placement: 'bottomRight',
+        });
+        const { slug } = updated;
+        if (prevSlug !== slug) {
+          replaceSilently(`/workspaces/${workspace.id}/apps/${slug}`);
+        }
+        return updated;
+      } catch (e) {
+        const { details, error } = e as ApiError;
+        const description = (
+          <ul>
+            {details ? (
+              details.map(({ path, message }: any, key: number) => (
+                <li key={key}>
+                  {t('openapi', {
+                    context: message,
+                    path: path.replace(/^\.body\./, ''),
+                    ns: 'errors',
+                  })}
+                </li>
+              ))
+            ) : (
+              <li>{t('apps.save.reason', { context: error })}</li>
+            )}
+          </ul>
+        );
+        notification.error({
+          message: t('apps.save.error'),
+          description,
+          placement: 'bottomRight',
+        });
       }
-      return updated;
     },
-    [appInstance.slug, saveAppInstance, value, workspace.id]
+    [appInstance.slug, saveAppInstance, t, value, workspace.id]
   );
   // Need to get the latest version with the latest value associated
   const saveAfterChange = useRef(save);
@@ -238,7 +269,7 @@ export const AppInstance = () => {
               variant="primary"
               disabled={!dirty || saving}
             >
-              {t('apps.save')}
+              {t('apps.save.label')}
             </Button>
           ) : (
             documentation && (

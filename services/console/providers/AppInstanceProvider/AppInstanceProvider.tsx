@@ -81,17 +81,22 @@ export const AppInstanceProvider = ({
     async (data) => {
       if (!workspaceId || !appInstance || !appInstance.slug) return null;
       setSaving(true);
-      const newAppInstance = await api.saveAppInstance(
-        workspaceId,
-        appInstance.slug,
-        data
-      );
-      setAppInstance(newAppInstance);
-      setSaving(false);
-      if (newAppInstance.slug) {
-        setSlug(newAppInstance.slug);
+      try {
+        const newAppInstance = await api.saveAppInstance(
+          workspaceId,
+          appInstance.slug,
+          data
+        );
+        setAppInstance(newAppInstance);
+        setSaving(false);
+        if (newAppInstance.slug) {
+          setSlug(newAppInstance.slug);
+        }
+        return newAppInstance;
+      } catch (e) {
+        setSaving(false);
+        throw e;
       }
-      return newAppInstance;
     },
     [appInstance, workspaceId]
   );
