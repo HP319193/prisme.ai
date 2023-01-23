@@ -70,14 +70,19 @@ export const PageProvider = ({
     async ({ apiKey, ...newPage }) => {
       if (!workspaceId) return null;
       setSaving(true);
-      const updated = await api.updatePage(
-        workspaceId,
-        newPage,
-        page && page.slug
-      );
-      setPage(updated);
-      setSaving(false);
-      return updated;
+      try {
+        const updated = await api.updatePage(
+          workspaceId,
+          newPage,
+          page && page.slug
+        );
+        setPage(updated);
+        setSaving(false);
+        return updated;
+      } catch (e) {
+        setSaving(false);
+        throw e;
+      }
     },
     [page, workspaceId]
   );
