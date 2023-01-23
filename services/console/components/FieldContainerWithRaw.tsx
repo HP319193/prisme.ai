@@ -94,6 +94,7 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
             className === 'pr-form-object' ? 'top-4 right-4' : 'top-0 right-0'
           } mt-[0.35rem] flex flex-1 flex-row z-[1] text-[12px] items-center`}
           onClick={toggle}
+          tabIndex={-1}
         >
           {displayRaw ? <CodeFilled /> : <CodeOutlined />}
         </button>
