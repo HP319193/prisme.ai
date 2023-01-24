@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Form, useField } from 'react-final-form';
 import { SchemaFormContext, useSchemaForm } from './context';
 import Enum from './Enum';
@@ -11,7 +11,18 @@ export const Field = ({
   components,
   ...props
 }: FieldProps & { components: SchemaFormContext['components'] }) => {
-  useField(props.name, getFieldOptions(props.schema));
+  const field = useField(props.name, getFieldOptions(props.schema));
+
+  // Update value with default value
+  const [_default, setDefault] = useState();
+  useEffect(() => {
+    if (!_default && props.schema.default) {
+      setDefault(props.schema.default);
+    }
+  }, [_default, props.schema.default]);
+  useEffect(() => {
+    field.input.onChange(_default);
+  }, [_default]);
 
   const Component = useMemo(() => {
     if (props.schema.oneOf) {

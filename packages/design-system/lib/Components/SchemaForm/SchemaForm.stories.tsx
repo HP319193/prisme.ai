@@ -1134,3 +1134,15 @@ export const WithCustomUiWidget: Story<FormProps> = () => {
     </div>
   );
 };
+
+export const WithDefault = () => (
+  <Template
+    schema={{
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+        default: 'foo',
+      },
+    }}
+  />
+);
