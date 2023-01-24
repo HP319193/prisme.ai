@@ -20,3 +20,5 @@ export interface OTPKey {
   userId: string;
   period: number;
 }
+
+export type AccessToken = Prismeai.AccessToken;

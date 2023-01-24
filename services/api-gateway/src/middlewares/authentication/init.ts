@@ -1,4 +1,4 @@
-import { Application } from 'express';
+import { Application, Request } from 'express';
 import passport from 'passport';
 
 import cookieParser from 'cookie-parser';
@@ -21,10 +21,25 @@ export async function init(app: Application) {
     password: storage.Sessions.password,
     ...storage.Sessions.driverOptions,
   });
+  const sessionsStore = new (connectRedis(expressSession))({
+    client: redisClient,
+  });
+
+  // First check for access token to generate their session before express-session
+  app.use(async function (req, res, next) {
+    const token = req.headers[syscfg.SESSION_HEADER];
+    if (typeof token === 'string' && token.startsWith('at:')) {
+      const identity = services.identity();
+      req.session = (await identity.validateAccessToken(
+        token
+      )) as Request['session'];
+    }
+    next();
+  });
 
   app.use(
     expressSession({
-      store: new (connectRedis(expressSession))({ client: redisClient }),
+      store: sessionsStore,
       //@ts-ignore
       sessionid: (req: express.Request) => req.headers[syscfg.SESSION_HEADER],
       saveUninitialized: false,
