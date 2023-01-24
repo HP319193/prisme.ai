@@ -1,8 +1,15 @@
+import { CacheDriver } from '../cache';
+
 export interface StorageOptions {
   driver: string;
   host: string;
   password?: string;
   driverOptions: any;
+  cache?: {
+    key: string;
+    ttl?: number;
+    driver: CacheDriver;
+  };
 }
 
 export interface SaveOpts<Model> {

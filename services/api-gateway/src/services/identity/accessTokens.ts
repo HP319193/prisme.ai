@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { AccessToken } from '.';
+import { AccessToken } from './types';
 import { StorageDriver } from '../../storage';
 import {
   AuthenticationError,
@@ -46,13 +46,12 @@ export const deleteAccessToken =
     user: Prismeai.User,
     token: string
   ): Promise<PrismeaiAPI.CreateAccessToken.Responses.$200> => {
-    const accessToken = (
-      await AccessTokens.find({ userId: user.id, token })
-    )[0];
+    const query = { userId: user.id, token };
+    const accessToken = (await AccessTokens.find(query))[0];
     if (!accessToken) {
       throw new NotFoundError('Access token not found');
     }
-    await AccessTokens.delete(accessToken.id!);
+    await AccessTokens.delete(query);
     return accessToken;
   };
 
@@ -60,7 +59,6 @@ export const validateAccessToken =
   (AccessTokens: StorageDriver<AccessToken>) =>
   async (token: string): Promise<Express.CustomSessionFields> => {
     const accessToken = (await AccessTokens.find({ token }))[0];
-    // TODO cache
     if (!accessToken) {
       throw new AuthenticationError('Invalid access token');
     }
