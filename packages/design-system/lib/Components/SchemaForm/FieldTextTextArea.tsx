@@ -31,7 +31,7 @@ export const FieldTextTextArea = ({
             {...(options && options.textarea)}
             placeholder={props.schema.placeholder || ''}
             id={field.input.name}
-            autoSize
+            autoSize={!options?.textarea?.rows}
             status={hasError ? 'error' : ''}
           />
         </Tooltip>
