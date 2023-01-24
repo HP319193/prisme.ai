@@ -8,6 +8,7 @@ import RichText from './RichText';
 import Buttons from './Buttons';
 import Hero from './Hero';
 import BlocksList from './BlocksList';
+import Footer from './Footer';
 
 const Schemas = {
   Cards,
@@ -18,6 +19,7 @@ const Schemas = {
   Buttons,
   Hero,
   BlocksList,
+  Footer,
 };
 
 const getEditSchema = (blockName: string): Schema | null =>

@@ -3,6 +3,7 @@ import localStorage from './localStorage';
 
 const checkLocalStorage = () => {
   try {
+    if (!localStorage) throw new Error();
     localStorage.setItem('__test', '1');
     localStorage.removeItem('__test');
     return true;

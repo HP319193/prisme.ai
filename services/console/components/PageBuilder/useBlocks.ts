@@ -21,7 +21,9 @@ const builtInBlocksOrder = [
   'Form',
   'DataTable',
   'Cards',
-  'Layout',
+  'Footer',
+  'BlocksList',
+  'StackedNavigation',
 ];
 
 export const useBlocks = () => {

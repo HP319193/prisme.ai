@@ -2,14 +2,28 @@ import { useField } from 'react-final-form';
 import { CodeEditor } from '../../components/CodeEditor/lazy';
 import { Collapse, FieldProps, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { defaultStyles } from './defaultStyles';
 
+interface SectionId {
+  id: string;
+  name: string;
+}
+
+function compareSectionsIds(a: SectionId[], b: SectionId[]) {
+  return Object.values(a).reduce((prev, { id, name }) => {
+    const inB = b.find(({ id: bid }) => id === bid);
+    if (!inB) return false;
+    return prev && name === inB.name;
+  }, true);
+}
+
+const emptyArray: SectionId[] = [];
 export const CSSEditor = ({
   name,
-  sectionIds,
-}: FieldProps & { sectionIds: { id: string; name: string }[] }) => {
+  sectionIds = emptyArray,
+}: FieldProps & { sectionIds?: SectionId[] }) => {
   const { t } = useTranslation('workspaces');
   const field = useField(name);
   const [reseting, setReseting] = useState(false);
@@ -18,31 +32,39 @@ export const CSSEditor = ({
     field.input.onChange(defaultStyles);
     setReseting(false);
   }, [field.input, reseting]);
-  const completers = useMemo(
-    () => [
-      {
-        identifierRegexps: [/^#/],
-        getCompletions(
-          editor: any,
-          session: any,
-          pos: any,
-          prefix: any,
-          callback: Function
-        ) {
-          callback(
-            null,
-            sectionIds.map(({ id, name }) => ({
-              name,
-              value: `#${id}`,
-              score: 1,
-              meta: name,
-            }))
-          );
+
+  const [completers, setCompleters] = useState<any>();
+  const prevSectionsIds = useRef<typeof sectionIds>([]);
+  useEffect(() => {
+    if (
+      !compareSectionsIds(sectionIds, prevSectionsIds.current) ||
+      !compareSectionsIds(prevSectionsIds.current, sectionIds)
+    ) {
+      setCompleters([
+        {
+          identifierRegexps: [/^#/],
+          getCompletions(
+            editor: any,
+            session: any,
+            pos: any,
+            prefix: any,
+            callback: Function
+          ) {
+            callback(
+              null,
+              sectionIds.map(({ id, name }) => ({
+                name,
+                value: `#${id}`,
+                score: 1,
+                meta: name,
+              }))
+            );
+          },
         },
-      },
-    ],
-    [sectionIds]
-  );
+      ]);
+    }
+  }, [sectionIds]);
+
   const items = useMemo(
     () => [
       {

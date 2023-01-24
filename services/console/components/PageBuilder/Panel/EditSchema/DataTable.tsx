@@ -16,8 +16,6 @@ const schema = {
       items: {
         type: 'object',
         additionalProperties: {
-          type: 'string',
-          title: 'prout',
           add: 'pages.blocks.datatable.settings.data.items.properties.add',
           remove:
             'pages.blocks.datatable.settings.data.items.properties.remove',

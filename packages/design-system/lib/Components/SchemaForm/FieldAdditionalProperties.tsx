@@ -5,10 +5,9 @@ import { FieldRenderProps, useField } from 'react-final-form';
 import Button from '../Button';
 import TextArea from '../TextArea';
 import { SchemaFormContext, useSchemaForm } from './context';
-import Field from './Field';
+import { SelfField } from './Field';
 import FieldContainer from './FieldContainer';
 import { FieldProps, Schema } from './types';
-import { EMPTY, getDefaultValue } from './utils';
 
 interface AdditionalPropertiesProps extends FieldProps {
   field: FieldRenderProps<any, HTMLElement, any>;
@@ -45,15 +44,6 @@ const getInitialValue = (schema: Schema, value: any) => {
   if (typeof value === 'string') return value;
   return JSON.stringify(cleanValue(schema, value), null, '  ');
 };
-
-function isFilled(v: any) {
-  switch (typeof v) {
-    case 'object':
-      return Object.keys(v).length === 0;
-    default:
-      return !!v;
-  }
-}
 
 export const FreeAdditionalProperties = ({
   JSONEditor = TextAreaField,
@@ -112,108 +102,84 @@ export const FreeAdditionalProperties = ({
 export const ManagedAdditionalProperties = (
   props: AdditionalPropertiesProps & { locales: SchemaFormContext['locales'] }
 ) => {
-  const [value, setValue] = useState<Record<string, any>>(
-    props.field.input.value
+  const [value, setValue] = useState(Object.entries(props.field.input.value));
+
+  const updateKey = useCallback(
+    (i: number) => (v: string) => {
+      setValue((prev) => {
+        const newValue = [...prev];
+        newValue[i][0] = v;
+        return newValue;
+      });
+    },
+    []
+  );
+  const updateValue = useCallback(
+    (i: number) => (v: string) => {
+      setValue((prev) => {
+        const newValue = [...prev];
+        newValue[i][1] = v;
+        return newValue;
+      });
+    },
+    []
+  );
+  const add = useCallback(() => {
+    setValue((prev) => {
+      const newValue = [...prev, ['', ''] as [string, string]];
+      return newValue;
+    });
+  }, []);
+  const remove = useCallback(
+    (i: number) => () => {
+      setValue((prev) => {
+        const newValue = prev.filter((item, index) => i !== index);
+        return newValue;
+      });
+    },
+    []
   );
 
   useEffect(() => {
-    setValue(() => {
-      const keys = Object.keys(props.schema.properties || {});
-      const cleanedValue = Object.keys(props.field.input.value || {}).reduce(
-        (prev, key) =>
-          keys.includes(key)
-            ? prev
-            : {
-                ...prev,
-                [key]: props.field.input.value[key],
-              },
-        {}
-      );
-      return cleanedValue;
-    });
-  }, [props.field.input.value]);
-
-  const addKey = useCallback(() => {
-    setValue((value) =>
-      value.hasOwnProperty('')
-        ? value
-        : {
-            ...value,
-            '': getDefaultValue(
-              (props.schema.additionalProperties as Schema).type
-            ),
-          }
-    );
-  }, []);
-
-  const updateKey = useCallback(
-    (prevKey: string) => (newKey: string) => {
-      const newValue = Object.entries(value).reduce(
-        (prev, [key, v]) => ({
-          ...prev,
-          [key === prevKey ? newKey : key]: v,
-        }),
-        {}
-      );
-      setValue(newValue);
-      if (!newKey) return;
-      props.field.input.onChange(newValue);
-    },
-    [value, props.field]
-  );
-
-  const removeKey = useCallback(
-    (prevKey: string) => () => {
-      const newValue = Object.entries(value)
-        .filter(([key]) => key)
-        .reduce(
-          (prev, [key, v]) =>
-            key === prevKey
-              ? prev
-              : {
-                  ...prev,
-                  [key]: v,
-                },
-          {}
-        );
-      setValue(newValue);
-      props.field.input.onChange(newValue);
-    },
-    [value, props.field]
-  );
+    props.field.input.onChange(Object.fromEntries(value));
+  }, [value]);
 
   return (
     <FieldContainer {...props} className="pr-form-additional-properties">
-      {Object.entries(value).map(([key, value], index) => (
+      {value.map(([key, value], index) => (
         <div
           key={index}
           className="pr-form-additional-properties__property pr-form-input"
         >
           <div className="pr-form-additional-properties__property-key">
-            <label className="pr-form-label">
-              {props.locales.propertyKey || 'Key'}
+            <label
+              className="pr-form-label"
+              htmlFor={`${props.field.name}-${index}`}
+            >
+              {props.schema.propertyKey || props.locales.propertyKey || 'Key'}
             </label>
             <Input
               value={key}
-              onChange={({ target: { value } }) => updateKey(key)(value)}
-              disabled={isFilled(value)}
+              onChange={({ target: { value } }) => updateKey(index)(value)}
+              id={`${props.field.name}-${index}`}
             />
           </div>
           <span className="pr-form-additional-properties__property-separator">
              : 
           </span>
           <div className="pr-form-additional-properties__property-value">
-            <Field
+            <SelfField
               schema={{
                 ...(props.schema.additionalProperties as Schema),
-                disabled: key ? undefined : true,
               }}
               label={
+                props.schema.propertyValue ||
                 props.locales.propertyValue === undefined
                   ? 'Value'
                   : props.locales.propertyValue
               }
-              name={`${props.name}.${key || EMPTY}`}
+              value={value}
+              onChange={updateValue(index)}
             />
           </div>
 
@@ -226,7 +192,7 @@ export const ManagedAdditionalProperties = (
             placement="left"
           >
             <Button
-              onClick={removeKey(key)}
+              onClick={remove(index)}
               className="pr-form-additional-properties__property-delete"
             >
               <DeleteOutlined />
@@ -234,7 +200,7 @@ export const ManagedAdditionalProperties = (
           </Tooltip>
         </div>
       ))}
-      <Button onClick={addKey}>
+      <Button onClick={add}>
         {(props.schema.additionalProperties as Schema)?.add ||
           props.locales.addProperty ||
           'Add a property'}

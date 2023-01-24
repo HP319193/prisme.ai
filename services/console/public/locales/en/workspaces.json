@@ -719,6 +719,7 @@
       "name_StackedNavigation": "Stacked Navigation",
       "name_Buttons": "Buttons group",
       "name_BlocksList": "Blocks list",
+      "name_Footer": "Footer",
       "description": "",
       "description_Header": "Display page header",
       "description_Hero": "Display a Hero of page",
@@ -729,6 +730,7 @@
       "description_StackedNavigation": "Display navigable block pages. Must be used through automations.",
       "description_Buttons": "Display a buttons group",
       "description_BlocksList": "Display a Blocks list",
+      "description_Footer": "Display a Footer",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
@@ -1116,6 +1118,14 @@
                 "description": "Name of Block to display"
               }
             }
+          }
+        }
+      },
+      "footer": {
+        "settings": {
+          "content": {
+            "label": "Footer content",
+            "description": "You can configure your footer using a list of Blocks."
           }
         }
       }

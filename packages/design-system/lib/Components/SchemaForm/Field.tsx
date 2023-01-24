@@ -1,16 +1,28 @@
-import { useMemo } from 'react';
-import { useField } from 'react-final-form';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Form, useField } from 'react-final-form';
 import { SchemaFormContext, useSchemaForm } from './context';
 import Enum from './Enum';
 import OneOf from './OneOf';
 import { FieldProps } from './types';
 import { getFieldOptions } from './utils';
+import { OnChange } from 'react-final-form-listeners';
 
 export const Field = ({
   components,
   ...props
 }: FieldProps & { components: SchemaFormContext['components'] }) => {
-  useField(props.name, getFieldOptions(props.schema));
+  const field = useField(props.name, getFieldOptions(props.schema));
+
+  // Update value with default value
+  const [_default, setDefault] = useState();
+  useEffect(() => {
+    if (!_default && props.schema.default) {
+      setDefault(props.schema.default);
+    }
+  }, [_default, props.schema.default]);
+  useEffect(() => {
+    field.input.onChange(_default);
+  }, [_default]);
 
   const Component = useMemo(() => {
     if (props.schema.oneOf) {
@@ -62,6 +74,30 @@ export const Field = ({
 const LinkedField = (props: FieldProps) => {
   const { components } = useSchemaForm();
   return <Field {...props} components={components} />;
+};
+
+export const SelfField = (
+  props: Pick<FieldProps, 'schema' | 'label'> & {
+    value: any;
+    onChange: (v: any) => void;
+  }
+) => {
+  const values = useRef({ values: props.value });
+  return (
+    <Form onSubmit={props.onChange} initialValues={values.current}>
+      {() => (
+        <>
+          <OnChange name="values">
+            {(value, previous) => {
+              if (previous === value) return;
+              props.onChange(value);
+            }}
+          </OnChange>
+          <LinkedField {...props} name="values" />
+        </>
+      )}
+    </Form>
+  );
 };
 
 export default LinkedField;

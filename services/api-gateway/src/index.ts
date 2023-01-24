@@ -36,13 +36,12 @@ app.listen(syscfg.PORT, () => {
   logger.info(`Running on port ${syscfg.PORT}`);
 });
 
-process.on('uncaughtException', gracefulShutdown);
-
 async function gracefulShutdown() {
   await closeStorage();
   await broker.close();
   process.exit(0);
 }
 
+process.on('uncaughtException', gracefulShutdown);
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
