@@ -111,6 +111,93 @@ export const builtinBlocksVariants = [
       },
     },
   },
+  {
+    name: {
+      fr: 'Mise en page en colonnes',
+      en: 'Columns layout',
+      es: '',
+    },
+    slug: 'BlocksList_columns',
+    block: 'BlocksList',
+    description: {
+      fr:
+        'Une mise en page commune avec entête, pied de page et trois colonnes',
+      en: 'A common layout with header, footer and three columns.',
+      es: '',
+    },
+    photo: '/images/blocks/preview-BlocksList_columns.png',
+    config: {
+      blocks: [
+        {
+          slug: 'BlocksList',
+          blocks: [
+            {
+              slug: 'Header',
+              title: 'Title',
+            },
+          ],
+        },
+        {
+          slug: 'BlocksList',
+          blocks: [
+            {
+              slug: 'BlocksList',
+              blocks: [
+                {
+                  slug: 'RichText',
+                  content: 'Left Sidebar',
+                },
+              ],
+            },
+            {
+              slug: 'BlocksList',
+              blocks: [
+                {
+                  slug: 'RichText',
+                  content: 'Main content',
+                },
+              ],
+            },
+            {
+              slug: 'BlocksList',
+              blocks: [
+                {
+                  slug: 'RichText',
+                  content: 'Right Sidebar',
+                },
+              ],
+            },
+          ],
+          css: `:block {
+              display: flex;
+              flex-direction: row
+            }
+`,
+        },
+        {
+          slug: 'Footer',
+          content: {
+            blocks: [
+              {
+                slug: 'RichText',
+                content: '<p>Footer<p>',
+              },
+            ],
+          },
+        },
+      ],
+      css: `:block {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+        }
+
+        :block :nth-child(2) {
+          flex: 1;
+        }
+`,
+    },
+  },
 ];
 
 export default builtinBlocksVariants;

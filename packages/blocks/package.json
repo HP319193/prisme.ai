@@ -9,6 +9,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@prisme.ai/design-system": "1.0.4",
+    "css": "^3.0.0",
     "html-react-parser": "^3.0.7",
     "i18next": "^21.6.12",
     "lodash.get": "^4.4.2",
