@@ -1,5 +1,7 @@
 import { RefObject } from 'react';
 import { Action } from '../ActionOrLink';
+import { BlocksListConfig } from '../BlocksList';
+import { BaseBlockConfig } from '../types';
 
 export interface CardButtonType {
   type: 'button';
@@ -78,12 +80,17 @@ export interface CardClassic {
   )[];
 }
 
+export interface CardBlocks {
+  content: BlocksListConfig;
+}
+
 export const cardVariants = [
   'classic',
   'short',
   'article',
   'square',
   'actions',
+  'blocks',
 ] as const;
 
 export type CardVariant = typeof cardVariants[number];
@@ -93,9 +100,10 @@ export type Cards =
   | CardShort[]
   | CardArticle[]
   | CardSquare[]
-  | CardAction[];
+  | CardAction[]
+  | CardBlocks[];
 
-export interface CardsConfig {
+export interface CardsConfig extends BaseBlockConfig {
   title: Prismeai.LocalizedText;
   cards: Cards;
   variant: CardVariant;

@@ -40,7 +40,7 @@ const CarouselNavigation = ({
       {scrollable && (
         <div className={`${tw`block-cards__scroll text-white text-l`}`}>
           <div
-            className={tw`block-cards__scroll__left absolute flex justify-center top-16 left-6 h-8 w-8 bg-black rounded-[100%] shadow-lg transition-all ${
+            className={tw`block-cards__scroll__left absolute flex justify-center top-[40%] left-6 h-8 w-8 bg-black rounded-[100%] shadow-lg transition-all ${
               displayedArrows.left ? 'opacity-100' : 'opacity-0'
             }`}
           >
@@ -58,7 +58,7 @@ const CarouselNavigation = ({
             </Tooltip>
           </div>
           <div
-            className={tw`block-cards__scroll__right absolute flex justify-center top-16 right-6 h-8 w-8 bg-black rounded-[100%] shadow-lg`}
+            className={tw`block-cards__scroll__right absolute flex justify-center top-[40%] right-6 h-8 w-8 bg-black rounded-[100%] shadow-lg`}
           >
             <Tooltip title={t('cards.next')} placement="left">
               <button
