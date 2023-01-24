@@ -3,6 +3,7 @@ import services from '../services';
 import passport from 'passport';
 import {
   enforceMFA,
+  forbidAccessTokens,
   isAuthenticated,
   isInternallyAuthenticated,
 } from '../middlewares/authentication';
@@ -277,6 +278,13 @@ async function findContactsHandler(
 
 const app = express.Router();
 
+app.get(`/me`, isAuthenticated, meHandler);
+// Internal routes
+app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);
+
+// From there, only routes restricted to users, forbidden to access tokens
+app.use(forbidAccessTokens);
+
 app.post(`/login`, loginHandler('local'));
 app.post(`/login/anonymous`, loginHandler('anonymous'));
 app.post(`/login/mfa`, isAuthenticated, mfaHandler);
@@ -284,7 +292,6 @@ app.post(`/signup`, signupHandler);
 app.post(`/logout`, logoutHandler);
 
 // User account
-app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/user/password`, resetPasswordHandler);
 app.post(`/user/validate`, validateAccountHandler);
 app.post(`/user/mfa`, reAuthenticate, enforceMFA, setupUserMFAHandler);
@@ -296,8 +303,5 @@ app.delete(
   isAuthenticated,
   deleteAccessTokenHandler
 );
-
-// Internal routes
-app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);
 
 export default app;

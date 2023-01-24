@@ -37,3 +37,20 @@ export function enforceMFA(req: Request, res: Response, next: NextFunction) {
   }
   next();
 }
+
+export function forbidAccessTokens(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { session } = req;
+  if (
+    typeof session.prismeaiSessionId === 'string' &&
+    session.prismeaiSessionId.startsWith('at:')
+  ) {
+    throw new AuthenticationError(
+      'Calling this API with an access token is forbidden.'
+    );
+  }
+  next();
+}
