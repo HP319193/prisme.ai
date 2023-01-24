@@ -101,6 +101,10 @@ export interface Schema extends Record<string, any> {
   add?: string;
   // Remove button label when in a list of items or properties
   remove?: string;
+  // Property key label
+  propertyKey?: string;
+  // Property value label
+  propertyValue?: string;
   // For object type, object properties
   properties?: Record<string, Schema>;
   // Schema of object additional properties

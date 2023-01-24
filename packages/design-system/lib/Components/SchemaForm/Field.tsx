@@ -1,10 +1,11 @@
-import { useMemo } from 'react';
-import { useField } from 'react-final-form';
+import { useMemo, useRef } from 'react';
+import { Form, useField } from 'react-final-form';
 import { SchemaFormContext, useSchemaForm } from './context';
 import Enum from './Enum';
 import OneOf from './OneOf';
 import { FieldProps } from './types';
 import { getFieldOptions } from './utils';
+import { OnChange } from 'react-final-form-listeners';
 
 export const Field = ({
   components,
@@ -62,6 +63,30 @@ export const Field = ({
 const LinkedField = (props: FieldProps) => {
   const { components } = useSchemaForm();
   return <Field {...props} components={components} />;
+};
+
+export const SelfField = (
+  props: Pick<FieldProps, 'schema' | 'label'> & {
+    value: any;
+    onChange: (v: any) => void;
+  }
+) => {
+  const values = useRef({ values: props.value });
+  return (
+    <Form onSubmit={props.onChange} initialValues={values.current}>
+      {() => (
+        <>
+          <OnChange name="values">
+            {(value, previous) => {
+              if (previous === value) return;
+              props.onChange(value);
+            }}
+          </OnChange>
+          <LinkedField {...props} name="values" />
+        </>
+      )}
+    </Form>
+  );
 };
 
 export default LinkedField;
