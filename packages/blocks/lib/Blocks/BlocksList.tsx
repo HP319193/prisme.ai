@@ -1,7 +1,5 @@
-import { useRef } from 'react';
 import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
-import prefixCSS from '../utils/prefixCSS';
 import { BaseBlock } from './BaseBlock';
 import { BaseBlockConfig } from './types';
 

@@ -115,6 +115,7 @@ export const builtinBlocksVariants = [
     name: {
       fr: 'Mise en page en colonnes',
       en: 'Columns layout',
+      es: '',
     },
     slug: 'BlocksList_columns',
     block: 'BlocksList',
@@ -122,6 +123,7 @@ export const builtinBlocksVariants = [
       fr:
         'Une mise en page commune avec entête, pied de page et trois colonnes',
       en: 'A common layout with header, footer and three columns.',
+      es: '',
     },
     photo: '/images/blocks/preview-BlocksList_columns.png',
     config: {
@@ -173,13 +175,15 @@ export const builtinBlocksVariants = [
 `,
         },
         {
-          slug: 'BlocksList',
-          blocks: [
-            {
-              slug: 'RichText',
-              content: '<p>Footer<p>',
-            },
-          ],
+          slug: 'Footer',
+          content: {
+            blocks: [
+              {
+                slug: 'RichText',
+                content: '<p>Footer<p>',
+              },
+            ],
+          },
         },
       ],
       css: `:block {
