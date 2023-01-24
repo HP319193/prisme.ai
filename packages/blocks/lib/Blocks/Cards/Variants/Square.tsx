@@ -62,7 +62,7 @@ const Square = ({
                       >
                         <div className={tw`flex flex-col text-white`}>
                           <Truncated
-                            className={tw`font-bold text-[1.25rem] mb-2 leading-[1.2] max-h-[3rem] overflow-hidden`}
+                            className={tw`font-bold text-[1.25rem] mb-2 leading-[1.2] max-h-[4.6rem] overflow-hidden`}
                           >
                             {localize(title)}
                           </Truncated>

@@ -74,7 +74,7 @@ const Short = ({
                           </Truncated>
                         )}
                         <Truncated
-                          className={tw`font-bold text-[0.875rem] leading-[1.2] max-h-[1.2rem] overflow-hidden`}
+                          className={tw`font-bold text-[0.875rem] leading-[1.2] max-h-[2rem] overflow-hidden`}
                         >
                           {localize(title)}
                         </Truncated>
