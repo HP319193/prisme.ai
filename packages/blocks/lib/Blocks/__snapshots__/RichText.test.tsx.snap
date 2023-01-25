@@ -2,27 +2,38 @@
 
 exports[`should render 1`] = `
 Array [
-  <h1
-    id="title"
+  <style
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "",
+      }
+    }
+  />,
+  <div
+    className="pr-block-rich-text  block-19"
   >
-    Title
-  </h1>,
-  "
-",
-  <h2
-    id="subtitle"
-  >
-    Subtitle
-  </h2>,
-  "
-",
-  <p>
-    Some content with 
-    <a>
-      HTML
-    </a>
-  </p>,
-  "
-",
+    <h1
+      id="title"
+    >
+      Title
+    </h1>
+    
+
+    <h2
+      id="subtitle"
+    >
+      Subtitle
+    </h2>
+    
+
+    <p>
+      Some content with 
+      <a>
+        HTML
+      </a>
+    </p>
+    
+
+  </div>,
 ]
 `;
