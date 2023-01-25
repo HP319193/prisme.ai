@@ -9,6 +9,7 @@ import Buttons from './Buttons';
 import Hero from './Hero';
 import BlocksList from './BlocksList';
 import Footer from './Footer';
+import Image from './Image';
 
 const Schemas = {
   Cards,
@@ -20,6 +21,7 @@ const Schemas = {
   Hero,
   BlocksList,
   Footer,
+  Image,
 };
 
 const getEditSchema = (blockName: string): Schema | null =>

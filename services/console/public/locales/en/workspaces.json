@@ -1135,6 +1135,22 @@
             "description": "You can configure your footer using a list of Blocks."
           }
         }
+      },
+      "image": {
+        "settings": {
+          "src": {
+            "label": "Image",
+            "description": "Choose an image on your storage space."
+          },
+          "caption": {
+            "label": "Caption",
+            "description": "Enter a text to accompany your image."
+          },
+          "alt": {
+            "label": "Textual alternative",
+            "description": "Text describing the image to help with accessibility."
+          }
+        }
       }
     }
   },

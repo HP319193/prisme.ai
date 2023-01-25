@@ -24,7 +24,11 @@ export const FieldTextUpload = ({
   uploadFile: SchemaFormContext['utils']['uploadFile'];
 }) => {
   const field = useField(props.name);
-  const [preview, setPreview] = useState<ReactElement | null>(null);
+  const [preview, setPreview] = useState<ReactElement | null>(
+    field.input.value ? (
+      <img src={field.input.value} className="max-h-24" />
+    ) : null
+  );
   const [previewLabel, setPreviewLabel] = useState('');
 
   const readFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {

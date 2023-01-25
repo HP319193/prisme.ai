@@ -1135,6 +1135,22 @@
             "description": "Vous pouvez configurer votre pied de page à l'aide d'une liste de Blocks."
           }
         }
+      },
+      "image": {
+        "settings": {
+          "src": {
+            "label": "Image",
+            "description": "Choisissez une image sur votre espace de stockage."
+          },
+          "caption": {
+            "label": "Légende",
+            "description": "Indiquez un texte pour accompagner votre image."
+          },
+          "alt": {
+            "label": "Alternative textuelle",
+            "description": "Texte décrivant l'image pour aider à l'accessibilité."
+          }
+        }
       }
     }
   },
