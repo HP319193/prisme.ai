@@ -22,6 +22,7 @@ const builtInBlocksOrder = [
   'Form',
   'DataTable',
   'Cards',
+  'Breadcrumbs',
   'Footer',
   'BlocksList',
   'StackedNavigation',

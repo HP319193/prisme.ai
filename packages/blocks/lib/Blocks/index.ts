@@ -8,4 +8,5 @@ export { default as Form } from './Form';
 export { default as StackedNavigation } from './StackedNavigation';
 export { default as Buttons } from './Buttons';
 export { default as Footer } from './Footer';
+export { default as Breadcrumbs } from './Breadcrumbs';
 export { default as BlocksList } from './BlocksList';
