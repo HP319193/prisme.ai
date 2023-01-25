@@ -1,20 +1,19 @@
-import '../i18n';
 import { Button, Schema } from '@prisme.ai/design-system';
-import { useBlock } from '../Provider';
+import { BlockContext, useBlock } from '../Provider';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import tw from '../tw';
 import BlockTitle from './Internal/BlockTitle';
 import useLocalizedText from '../useLocalizedText';
-import { useBlocks } from '../Provider/blocksContext';
-import { BlockComponent } from '../BlockLoader';
+import {
+  BlocksDependenciesContext,
+  useBlocks,
+} from '../Provider/blocksContext';
+import { BaseBlock } from './BaseBlock';
+import { BaseBlockConfig } from './types';
 
-const defaultSchema = {
-  type: 'string',
-  title: 'preview',
-};
+const defaultSchema = {};
 
-interface FormConfig {
+interface FormConfig extends BaseBlockConfig {
   title?: Prismeai.LocalizedText;
   schema: Schema;
   onChange?: string;
@@ -26,16 +25,21 @@ interface FormConfig {
   values?: Record<string, any>;
 }
 
-export const Form: BlockComponent = () => {
-  const {
-    components: { SchemaForm },
-  } = useBlocks();
-  const { config, events } = useBlock<FormConfig>();
+interface FormProps extends FormConfig {
+  events: BlockContext['events'];
+  SchemaForm: BlocksDependenciesContext['components']['SchemaForm'];
+  uploadFile: BlocksDependenciesContext['utils']['uploadFile'];
+}
+
+export const Form = ({
+  events,
+  SchemaForm,
+  uploadFile,
+  className,
+  ...config
+}: FormProps) => {
   const { t } = useTranslation();
   const { localize, localizeSchemaForm } = useLocalizedText();
-  const {
-    utils: { uploadFile },
-  } = useBlocks();
   const [mountedForm, setMountedForm] = useState(true);
   const [initialValues, setInitialValues] = useState(config.values || {});
 
@@ -80,7 +84,7 @@ export const Form: BlockComponent = () => {
   if (!config.schema) return null;
 
   return (
-    <div className={tw`block-form p-8 flex-1`}>
+    <div className={`pr-block-form ${className}          block-form`}>
       {config.title && <BlockTitle value={localize(config.title)} />}
       {mountedForm && (
         <SchemaForm
@@ -97,12 +101,12 @@ export const Form: BlockComponent = () => {
               : [
                   <div
                     key={0}
-                    className={tw`block-form__buttons-container buttons-container flex flex-1 justify-end mt-2 pt-4`}
+                    className="pr-block-form__buttons-container        block-form__buttons-container buttons-container"
                   >
                     <Button
                       type="submit"
                       variant="primary"
-                      className={tw`buttons-container__button button !py-4 !px-8 h-full`}
+                      className="pr-block-form__button        buttons-container__button button"
                       disabled={!!config.disabledSubmit}
                     >
                       {localize(config.submitLabel) || t('form.submit')}
@@ -116,4 +120,46 @@ export const Form: BlockComponent = () => {
   );
 };
 
-export default Form;
+const defaultStyles = `:block {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+:block .pr-block-form__buttons-container {
+  display: flex;
+  flex: 1 1 0%;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+}
+
+:block .pr-block-form__button {
+  padding-bottom: 1rem !important;
+  padding-top: 1rem !important;
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+  height: 100%;
+}`;
+export const FormInContext = () => {
+  const {
+    components: { SchemaForm },
+    utils: { uploadFile },
+  } = useBlocks();
+  const { config, events } = useBlock<FormConfig>();
+
+  return (
+    <BaseBlock defaultStyles={defaultStyles}>
+      <Form
+        {...config}
+        SchemaForm={SchemaForm}
+        uploadFile={uploadFile}
+        events={events}
+      />
+    </BaseBlock>
+  );
+};
+FormInContext.styles = defaultStyles;
+
+export default FormInContext;
