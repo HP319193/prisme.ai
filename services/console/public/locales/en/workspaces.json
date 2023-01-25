@@ -706,6 +706,11 @@
         "className": {
           "label": "Element class name",
           "description": "Specify a custom class for the element containing the Block to facilitate the layout in CSS."
+        },
+        "css": {
+          "label": "CSS styles applied to the Block",
+          "description": "You can use the keyword \":block\" to target the element containing the Block.",
+          "reset": "Reset styles"
         }
       },
       "builtin": "Built-in Blocks",
@@ -1133,6 +1138,22 @@
           "content": {
             "label": "Footer content",
             "description": "You can configure your footer using a list of Blocks."
+          }
+        }
+      },
+      "image": {
+        "settings": {
+          "src": {
+            "label": "Image",
+            "description": "Choose an image on your storage space."
+          },
+          "caption": {
+            "label": "Caption",
+            "description": "Enter a text to accompany your image."
+          },
+          "alt": {
+            "label": "Textual alternative",
+            "description": "Text describing the image to help with accessibility."
           }
         }
       }

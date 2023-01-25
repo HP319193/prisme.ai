@@ -3,7 +3,7 @@ import BlockTitle from '../../Internal/BlockTitle';
 import { CardClassic, CardProps } from '../types';
 import CardButton from '../CardButton';
 import Accordion from '../Accordion';
-import { RichTextRenderer } from '../../RichText';
+import { RichText } from '../../RichText';
 import useLocalizedText from '../../../useLocalizedText';
 import CarouselNavigation from '../CarouselNavigation';
 
@@ -70,7 +70,7 @@ const Classic = ({
                       <div
                         className={`${tw`card__card-description card-description text-[10px] my-2 text-neutral-500 text-center`}`}
                       >
-                        <RichTextRenderer>{description || ''}</RichTextRenderer>
+                        <RichText>{description || ''}</RichText>
                       </div>
                       {content &&
                         Array.isArray(content) &&
@@ -119,9 +119,9 @@ const Classic = ({
                                       'accordion-content-container__content content'
                                     }
                                   >
-                                    <RichTextRenderer>
+                                    <RichText>
                                       {localize(item.content)}
-                                    </RichTextRenderer>
+                                    </RichText>
                                   </div>
                                 </Accordion>
                               </div>

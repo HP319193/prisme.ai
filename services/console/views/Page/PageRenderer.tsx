@@ -285,7 +285,7 @@ export const PageRenderer = ({
       />
 
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
-        <PagePreview page={value} />
+        <PagePreview page={value} visible={viewMode === 0} />
         <SourceEdit
           value={source}
           onChange={setSource}

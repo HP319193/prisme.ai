@@ -17,6 +17,7 @@ const builtInBlocksOrder = [
   'Header',
   'Hero',
   'RichText',
+  'Image',
   'Buttons',
   'Form',
   'DataTable',

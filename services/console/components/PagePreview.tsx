@@ -6,12 +6,10 @@ import { usePage } from '../providers/Page';
 
 interface PagePreviewProps {
   page: Prismeai.Page;
+  visible?: boolean;
 }
 
-export const PagePreview = ({ page }: PagePreviewProps) => {
-  const {
-    workspace: { id, slug = id },
-  } = useWorkspace();
+export const PagePreview = ({ page, visible = true }: PagePreviewProps) => {
   const { appInstances } = usePage();
   const pageEndpoint = usePageEndpoint();
 
@@ -20,7 +18,7 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
   const [loading, setLoading] = useState(true);
 
   const updatePage = useCallback(() => {
-    if (!ref.current || !ref.current.contentWindow) return;
+    if (!ref.current || !ref.current.contentWindow || !visible) return;
     try {
       ref.current.contentWindow.postMessage(
         {
@@ -36,7 +34,7 @@ export const PagePreview = ({ page }: PagePreviewProps) => {
       );
       setLoading(false);
     } catch {}
-  }, [page, appInstances]);
+  }, [page, appInstances, visible]);
 
   useEffect(() => {
     const listener = ({ data }: MessageEvent) => {

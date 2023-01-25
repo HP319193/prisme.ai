@@ -3,7 +3,7 @@ import useLocalizedText from '../../useLocalizedText';
 import { useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
 import tw from '../../tw';
-import { RichTextRenderer } from '../RichText';
+import { RichText } from '../RichText';
 import { CardButtonType } from './types';
 
 const CardButton: FC<CardButtonType> = ({
@@ -42,7 +42,7 @@ const CardButton: FC<CardButtonType> = ({
               />
             )}
           </div>
-          <RichTextRenderer>{localize(value)}</RichTextRenderer>
+          <RichText>{localize(value)}</RichText>
         </a>
       </Link>
     );
@@ -68,11 +68,11 @@ const CardButton: FC<CardButtonType> = ({
             />
           )}
         </div>
-        <RichTextRenderer>{localize(value)}</RichTextRenderer>
+        <RichText>{localize(value)}</RichText>
       </button>
     );
   }
-  return <RichTextRenderer>{localize(value)}</RichTextRenderer>;
+  return <RichText>{localize(value)}</RichText>;
 };
 
 export default CardButton;

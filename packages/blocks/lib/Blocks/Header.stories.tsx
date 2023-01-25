@@ -18,7 +18,7 @@ const Template: Story<any> = ({ defaultConfig }) => {
       appConfig={appConfig}
       onAppConfigUpdate={setAppConfig}
     >
-      <Header edit={false} />
+      <Header />
     </BlockProvider>
   );
 };

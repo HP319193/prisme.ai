@@ -1,5 +1,6 @@
 import { Schema } from '@prisme.ai/design-system';
 import blocksListSchema from './BlocksList';
+import commonSchema from './commonSchema';
 
 const schema: Schema = {
   type: 'object',
@@ -36,6 +37,7 @@ const schema: Schema = {
       description: 'pages.blocks.lead.settings.backgroundColor.description',
       'ui:widget': 'color',
     },
+    ...commonSchema.properties,
   },
 };
 

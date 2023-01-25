@@ -1,11 +1,19 @@
 import { FieldProps, Schema } from '@prisme.ai/design-system';
-import useSectionsIds from '../../../../providers/Page/useSectionsIds';
 import CSSEditor from '../../../../views/Page/CSSEditor';
 
+const defaultStyles = `:block {
+  
+}`;
 const CSSEditorField = (props: FieldProps) => {
   return (
     <div className="m-4">
-      <CSSEditor {...props} />
+      <CSSEditor
+        {...props}
+        label="pages.blocks.settings.css.label"
+        description="pages.blocks.settings.css.description"
+        reset="pages.blocks.settings.css.reset"
+        defaultStyles={defaultStyles}
+      />
     </div>
   );
 };
@@ -20,9 +28,8 @@ export const commonSchema: Schema = {
     },
     css: {
       type: 'string',
-      title: 'pages.blocks.settings.className.label',
-      description: 'pages.blocks.settings.className.description',
       'ui:widget': CSSEditorField,
+      defaut: defaultStyles,
     },
   },
 };

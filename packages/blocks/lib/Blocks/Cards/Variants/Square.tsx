@@ -6,7 +6,7 @@ import useLocalizedText from '../../../useLocalizedText';
 import CarouselNavigation from '../CarouselNavigation';
 import ActionOrLink from '../../ActionOrLink';
 import Truncated from '../Truncated';
-import { RichTextRenderer } from '../../RichText';
+import { RichText } from '../../RichText';
 
 interface SquareProps extends CardProps<CardSquare[]> {}
 
@@ -73,9 +73,7 @@ const Square = ({
                             className={tw`text-[0.875rem] leading-[1.2] max-h-[4.2rem] overflow-hidden`}
                             ellipsis="…"
                           >
-                            <RichTextRenderer>
-                              {description || ''}
-                            </RichTextRenderer>
+                            <RichText>{description || ''}</RichText>
                           </Truncated>
                         </div>
                       </div>
