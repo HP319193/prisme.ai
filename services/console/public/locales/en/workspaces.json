@@ -706,6 +706,11 @@
         "className": {
           "label": "Element class name",
           "description": "Specify a custom class for the element containing the Block to facilitate the layout in CSS."
+        },
+        "css": {
+          "label": "CSS styles applied to the Block",
+          "description": "You can use the keyword \":block\" to target the element containing the Block.",
+          "reset": "Reset styles"
         }
       },
       "builtin": "Built-in Blocks",

@@ -706,6 +706,11 @@
         "className": {
           "label": "Classe de l'élément",
           "description": "Spécifiez une classe personnalisée pour l'élément contenant le Block pour faciliter la mise en page en CSS."
+        },
+        "css": {
+          "label": "Styles CSS appliqué au Block",
+          "description": "Vous pouvez utiliser le mot clé \":block\"  pour cibler l'élément contenant le Block.",
+          "reset": "Revenir au styles de départ"
         }
       },
       "builtin": "Blocks de base",
