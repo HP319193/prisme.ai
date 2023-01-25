@@ -40,11 +40,14 @@ const Actions = ({
   getCoverStyle,
   canScroll,
   scroll,
+  className = '',
 }: ActionsProps) => {
   const { localize } = useLocalizedText();
 
   return (
-    <div className={tw`block-cards variant-article flex flex-col w-full`}>
+    <div
+      className={tw`block-cards variant-article flex flex-col w-full ${className}`}
+    >
       {title && <BlockTitle value={localize(title)} />}
       <div
         className={tw`block-cards__cards-container cards-container relative !pt-0 w-full overflow-hidden`}
