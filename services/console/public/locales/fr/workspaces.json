@@ -725,6 +725,7 @@
       "name_Buttons": "Groupe de boutons",
       "name_BlocksList": "Liste de Blocks",
       "name_Footer": "Pied de page",
+      "name_Breadcrumbs": "Fil d'ariane",
       "description": "",
       "description_Header": "Afficher une entête de page",
       "description_Hero": "Afficher un Hero de page",
@@ -735,6 +736,7 @@
       "description_StackedNavigation": "Afficher des pages de blocks navigable. Doit être utilisé par le biais d'automatisations.",
       "description_Buttons": "Afficher un groupe de boutons",
       "description_BlocksList": "Afficher une liste de Blocks",
+      "description_Breadcrumbs": "Afficher un fil d'ariane",
       "description_Footer": "Afficher un pied de page",
       "panelTitle_adding": "Ajouter un Block",
       "panelTitle_editing": "Éditer le Block {{blockName}}",
@@ -1154,6 +1156,28 @@
           "alt": {
             "label": "Alternative textuelle",
             "description": "Texte décrivant l'image pour aider à l'accessibilité."
+          }
+        }
+      },
+      "breadcrumbs": {
+        "settings": {
+          "links": {
+            "label": "Liens",
+            "description": "Liens du fil d'ariane dans l'ordre d'affichage.",
+            "items": {
+              "label": "Lien",
+              "description": "Configueation du lien",
+              "add": "Ajouter un lien",
+              "remove": "Supprimer le lien",
+              "href": {
+                "label": "Lien vers une de vos Pages",
+                "description": "Adresse vers une de vos pages."
+              },
+              "_label": {
+                "label": "Libéllé du lien",
+                "description": "Texte affiché."
+              }
+            }
           }
         }
       }

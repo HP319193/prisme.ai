@@ -725,6 +725,7 @@
       "name_Buttons": "Buttons group",
       "name_BlocksList": "Blocks list",
       "name_Footer": "Footer",
+      "name_Breadcrumbs": "Breadcrumbs",
       "description": "",
       "description_Header": "Display page header",
       "description_Hero": "Display a Hero of page",
@@ -736,6 +737,7 @@
       "description_Buttons": "Display a buttons group",
       "description_BlocksList": "Display a Blocks list",
       "description_Footer": "Display a Footer",
+      "description_Breadcrumbs": "Display Breadcrumbs",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
@@ -1154,6 +1156,28 @@
           "alt": {
             "label": "Textual alternative",
             "description": "Text describing the image to help with accessibility."
+          }
+        }
+      },
+      "breadcrumbs": {
+        "settings": {
+          "links": {
+            "label": "Links",
+            "description": "Breadcrumb links in order of display.",
+            "items": {
+              "label": "Link",
+              "description": "Link settings",
+              "add": "Add a link",
+              "remove": "Delete link",
+              "href": {
+                "label": "Link to one of your Pages",
+                "description": "Web address to one of your Workspace's Page."
+              },
+              "_label": {
+                "label": "Link label",
+                "description": "Displayed label."
+              }
+            }
           }
         }
       }

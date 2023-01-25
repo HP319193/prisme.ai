@@ -4,6 +4,7 @@ import prefixCSS from '../utils/prefixCSS';
 
 interface BaseBlock {
   children: ReactElement;
+  defaultStyles?: string;
 }
 
 const ids = new Set();
@@ -16,9 +17,9 @@ function generateId() {
   return newId;
 }
 
-export const BaseBlock = ({ children }: BaseBlock) => {
+export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
   const {
-    config: { className, css },
+    config: { className, css = defaultStyles },
   } = useBlock();
 
   const containerClassName = useRef(generateId());
