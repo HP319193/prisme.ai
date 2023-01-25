@@ -21,7 +21,6 @@ export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
   const {
     config: { className, css = defaultStyles },
   } = useBlock();
-
   const containerClassName = useRef(generateId());
   return (
     <>

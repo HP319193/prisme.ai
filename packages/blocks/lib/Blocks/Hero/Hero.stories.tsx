@@ -16,27 +16,14 @@ const Template: Story<any> = ({ defaultConfig }) => {
   }, [defaultConfig]);
 
   return (
-    <BlocksProvider
-      components={{
-        Link: (props) => <a {...props} />,
-        Loading: () => null,
-        DownIcon: () => null,
-        SchemaForm: () => null,
-      }}
-      externals={{}}
-      utils={{
-        BlockLoader: ({ name, ...config }) => <div>Block {name}</div>,
-      }}
+    <BlockProvider
+      config={config}
+      onConfigUpdate={setConfig}
+      appConfig={appConfig}
+      onAppConfigUpdate={setAppConfig}
     >
-      <BlockProvider
-        config={config}
-        onConfigUpdate={setConfig}
-        appConfig={appConfig}
-        onAppConfigUpdate={setAppConfig}
-      >
-        <Hero />
-      </BlockProvider>
-    </BlocksProvider>
+      <Hero />
+    </BlockProvider>
   );
 };
 
