@@ -910,6 +910,13 @@
           "square": {
             "label": "Square"
           },
+          "blocks": {
+            "label": "Blocks",
+            "content": {
+              "label": "Contenu de la carte",
+              "description": "Composez votre carte à l'aide de Blocks"
+            }
+          },
           "actions": {
             "label": "Actions",
             "content": {

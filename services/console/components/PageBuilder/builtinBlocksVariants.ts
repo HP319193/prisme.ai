@@ -3,7 +3,6 @@ export const builtinBlocksVariants = [
     name: {
       fr: 'Cartes style court',
       en: 'Cards Short',
-      es: 'Cartas cortas',
     },
     slug: 'Cards_Short',
     block: 'Cards',
@@ -16,7 +15,6 @@ export const builtinBlocksVariants = [
     name: {
       fr: 'Cartes style article',
       en: 'Cards Article',
-      es: 'Artículo cartas',
     },
     slug: 'Cards_Article',
     block: 'Cards',
@@ -29,7 +27,6 @@ export const builtinBlocksVariants = [
     name: {
       fr: 'Cartes style carré',
       en: 'Cards Square',
-      es: 'Cuadrado cartas',
     },
     slug: 'Cards_Square',
     block: 'Cards',
@@ -42,7 +39,6 @@ export const builtinBlocksVariants = [
     name: {
       fr: "Cartes d'actions",
       en: 'Actions cards',
-      es: 'Acción cartas',
     },
     slug: 'Cards_Action',
     block: 'Cards',
@@ -53,9 +49,20 @@ export const builtinBlocksVariants = [
   },
   {
     name: {
+      fr: 'Cartes à Blocks',
+      en: 'Blocks cards',
+    },
+    slug: 'Cards_Blocks',
+    block: 'Cards',
+    photo: '/images/blocks/preview-Cards-blocks.png',
+    config: {
+      variant: 'blocks',
+    },
+  },
+  {
+    name: {
       fr: 'Boutons avec étiquette',
       en: 'Buttons with tag',
-      es: 'Botones con etiqueta',
     },
     slug: 'Buttons_tag',
     block: 'Buttons',
@@ -86,14 +93,12 @@ export const builtinBlocksVariants = [
     name: {
       fr: 'Formulaire de contact',
       en: 'Contact Form',
-      es: 'Formulario de contacto',
     },
     slug: 'Form_Contact',
     block: 'Form',
     description: {
       fr: 'Un formulaire de contact avec email et message',
       en: 'A contact form with email and message',
-      es: 'Un formulario de contacto con correo electrónico y mensaje',
     },
     photo: '/images/blocks/preview.jpg',
     config: {
@@ -115,7 +120,6 @@ export const builtinBlocksVariants = [
     name: {
       fr: 'Mise en page en colonnes',
       en: 'Columns layout',
-      es: '',
     },
     slug: 'BlocksList_columns',
     block: 'BlocksList',
@@ -123,7 +127,6 @@ export const builtinBlocksVariants = [
       fr:
         'Une mise en page commune avec entête, pied de page et trois colonnes',
       en: 'A common layout with header, footer and three columns.',
-      es: '',
     },
     photo: '/images/blocks/preview-BlocksList_columns.png',
     config: {

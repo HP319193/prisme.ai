@@ -6,14 +6,22 @@ interface BaseBlock {
   children: ReactElement;
 }
 
+const ids = new Set();
+function generateId() {
+  let newId;
+  while (!newId || ids.has(newId)) {
+    newId = `block-${parseInt(`${Math.random() * 1000}`)}`;
+  }
+
+  return newId;
+}
+
 export const BaseBlock = ({ children }: BaseBlock) => {
   const {
     config: { className, css },
   } = useBlock();
 
-  const containerClassName = useRef(
-    `block-${parseInt(`${Math.random() * 1000}`)}`
-  );
+  const containerClassName = useRef(generateId());
   return (
     <>
       <style

@@ -17,6 +17,7 @@ const Square = ({
   container,
   canScroll,
   scroll,
+  className = '',
 }: SquareProps) => {
   const { localize } = useLocalizedText();
 
@@ -33,7 +34,9 @@ const Square = ({
   );
 
   return (
-    <div className={tw`block-cards variant-square flex flex-col w-full`}>
+    <div
+      className={tw`block-cards variant-square flex flex-col w-full ${className}`}
+    >
       {title && <BlockTitle value={localize(title)} />}
       <div
         className={tw`block-cards__cards-container cards-container relative !pt-0 w-full overflow-hidden`}

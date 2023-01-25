@@ -12,6 +12,7 @@ import tw from '../../tw';
 import {
   CardAction,
   CardArticle,
+  CardBlocks,
   CardClassic,
   Cards as TCards,
   CardsConfig,
@@ -23,13 +24,18 @@ import Square from './Variants/Square';
 import Article from './Variants/Article';
 import Short from './Variants/Short';
 import Actions from './Variants/Actions';
-import { BlockComponent } from '../../BlockLoader';
 import useLocalizedText from '../../useLocalizedText';
+import Blocks from './Variants/Blocks';
+import { BaseBlock } from '../BaseBlock';
 
 const cardsIsShort = (
   cards: TCards,
   variant: CardsConfig['variant']
 ): cards is CardShort[] => variant === 'short';
+const cardsIsBlocks = (
+  cards: TCards,
+  variant: CardsConfig['variant']
+): cards is CardBlocks[] => variant === 'blocks';
 
 const getContainerStyle = (type: CardsConfig['layout']['type']) => {
   switch (type) {
@@ -51,11 +57,13 @@ const getContainerStyle = (type: CardsConfig['layout']['type']) => {
 
 const EMPTY_ARRAY: CardsConfig['cards'] = [];
 
-export const Cards: BlockComponent = () => {
-  const {
-    config,
-    config: { cards = EMPTY_ARRAY } = {} as CardsConfig,
-  } = useBlock<CardsConfig>();
+export const Cards = ({
+  cards = EMPTY_ARRAY,
+  layout,
+  variant,
+  className,
+  ...config
+}: CardsConfig) => {
   const [canScroll, setCanScroll] = useState<boolean | null>(false);
 
   const container = useRef<HTMLDivElement>(null);
@@ -110,10 +118,10 @@ export const Cards: BlockComponent = () => {
 
   useEffect(() => {
     if (
-      !config.layout ||
-      !config.layout.type ||
-      config.layout.type !== 'carousel' ||
-      !config.layout.autoScroll ||
+      !layout ||
+      !layout.type ||
+      layout.type !== 'carousel' ||
+      !layout.autoScroll ||
       !container.current
     )
       return;
@@ -129,23 +137,21 @@ export const Cards: BlockComponent = () => {
 
   useLayoutEffect(() => {
     setCanScroll(
-      (!config.layout ||
-        !config.layout.type ||
-        config.layout.type === 'carousel') &&
+      (!layout || !layout.type || layout.type === 'carousel') &&
         container.current &&
         container.current.scrollWidth >
           container.current.getBoundingClientRect().width
     );
-  }, [config.layout, cards]);
+  }, [layout, cards]);
 
   const styles = useMemo(() => {
-    const { layout: { type = 'carousel' } = {} } = config;
+    const { type = 'carousel' } = layout || {};
     return getContainerStyle(type);
-  }, [config]);
+  }, [layout]);
 
   const getCoverStyle = useCallback(
     (index: number) => {
-      if (cardsIsShort(cards, config.variant)) return;
+      if (cardsIsShort(cards, variant) || cardsIsBlocks(cards, variant)) return;
 
       const cover = (cards[index] || {}).cover;
 
@@ -166,12 +172,15 @@ export const Cards: BlockComponent = () => {
     canScroll,
     scroll,
     getCoverStyle,
+    layout,
+    variant,
+    className,
     ...config,
   };
 
   const filteredCards = useMemo(() => (cards as []).filter(Boolean), [cards]);
 
-  switch (config.variant) {
+  switch (variant) {
     case 'square':
       return (
         <Square {...cardsProps} cards={(filteredCards as CardSquare[]) || []} />
@@ -194,6 +203,10 @@ export const Cards: BlockComponent = () => {
           cards={(filteredCards as CardAction[]) || []}
         />
       );
+    case 'blocks':
+      return (
+        <Blocks {...cardsProps} cards={(filteredCards as CardBlocks[]) || []} />
+      );
     case 'classic':
     default:
       return (
@@ -206,7 +219,7 @@ export const Cards: BlockComponent = () => {
 };
 
 const previews = Array.from(new Array(4), (v, k) => k);
-Cards.Preview = ({ config = {} }) => {
+Cards.Preview = ({ config }: { config: CardsConfig }) => {
   const { localize } = useLocalizedText();
   const type: CardsConfig['layout']['type'] =
     config?.layout?.type || 'carousel';
@@ -228,4 +241,13 @@ Cards.Preview = ({ config = {} }) => {
   );
 };
 
-export default withI18nProvider(Cards);
+export const CardsInContext = () => {
+  const { config } = useBlock<CardsConfig>();
+  return (
+    <BaseBlock>
+      <Cards {...config} />
+    </BaseBlock>
+  );
+};
+
+export default withI18nProvider(CardsInContext);

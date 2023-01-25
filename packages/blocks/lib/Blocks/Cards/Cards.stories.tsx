@@ -285,6 +285,28 @@ const Template: Story<any> = () => {
     []
   );
 
+  const config7 = useMemo(
+    () => ({
+      variant: 'blocks',
+      css: `:block {
+        color: red;
+      }`,
+      cards: [
+        {
+          content: {
+            blocks: [
+              {
+                slug: 'RichText',
+                content: '<p>Hello <strong>World</strong></p>',
+              },
+            ],
+          },
+        },
+      ],
+    }),
+    []
+  );
+
   return (
     <BlocksProvider
       components={{
@@ -294,6 +316,9 @@ const Template: Story<any> = () => {
         SchemaForm: () => null,
       }}
       externals={{}}
+      utils={{
+        BlockLoader: ({ name, ...config }) => <div>Block {name}</div>,
+      }}
     >
       <BlockProvider
         config={config}
@@ -337,6 +362,9 @@ const Template: Story<any> = () => {
         {Cards.Preview && <PreviewInStory Preview={Cards.Preview} />}
       </BlockProvider>
       <BlockProvider config={config6}>
+        <Cards />
+      </BlockProvider>
+      <BlockProvider config={config7}>
         <Cards />
       </BlockProvider>
     </BlocksProvider>
