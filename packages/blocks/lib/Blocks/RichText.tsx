@@ -5,6 +5,7 @@ import { useBlocks } from '../Provider/blocksContext';
 import useLocalizedText from '../useLocalizedText';
 import parser, { DOMNode, Element, domToReact } from 'html-react-parser';
 import { marked } from 'marked';
+import { BaseBlock } from './BaseBlock';
 
 interface RichTextConfig {
   content: string | Prismeai.LocalizedText;
@@ -82,9 +83,10 @@ function isElement(domNode: DOMNode): domNode is Element {
   return !!(domNode as Element).name;
 }
 
-export const RichTextRenderer = ({
+export const RichText = ({
   children,
   allowScripts = false,
+  className = '',
 }: Omit<RichTextConfig, 'content'> & {
   children: RichTextConfig['content'];
 } & HTMLAttributes<HTMLDivElement>) => {
@@ -121,24 +123,28 @@ export const RichTextRenderer = ({
     },
   };
 
-  return <>{parser(marked(localize(children)), options)}</>;
+  return (
+    <div className={`pr-block-rich-text ${className}`}>
+      {parser(marked(localize(children)), options)}
+    </div>
+  );
 };
 
-export const RichText: BlockComponent<RichTextConfig> = () => {
+export const RichTextInContext: BlockComponent<RichTextConfig> = () => {
   const { config: { content = '', ...config } = {} } = useBlock<
     RichTextConfig
   >();
   return (
-    <RichTextRenderer className="block-rich-text" {...config}>
-      {content}
-    </RichTextRenderer>
+    <BaseBlock>
+      <RichText {...config}>{content}</RichText>
+    </BaseBlock>
   );
 };
 
-RichText.Preview = ({
+RichTextInContext.Preview = ({
   config: { content = '', allowScripts, ...config } = {},
 }) => {
-  return <RichTextRenderer {...config}>{content}</RichTextRenderer>;
+  return <RichText {...config}>{content}</RichText>;
 };
 
-export default RichText;
+export default RichTextInContext;

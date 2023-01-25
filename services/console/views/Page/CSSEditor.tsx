@@ -4,7 +4,7 @@ import { Collapse, FieldProps, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { defaultStyles } from './defaultStyles';
+import { defaultStyles as _defaultStyles } from './defaultStyles';
 
 interface SectionId {
   id: string;
@@ -20,10 +20,23 @@ function compareSectionsIds(a: SectionId[], b: SectionId[]) {
 }
 
 const emptyArray: SectionId[] = [];
+
+interface CSSEditorProps extends FieldProps {
+  sectionIds?: SectionId[];
+  label?: string;
+  description?: string;
+  reset?: string;
+  defaultStyles?: string;
+}
+
 export const CSSEditor = ({
   name,
   sectionIds = emptyArray,
-}: FieldProps & { sectionIds?: SectionId[] }) => {
+  label = 'pages.details.styles.label',
+  description = 'pages.details.styles.description',
+  reset = 'pages.details.styles.reset.description',
+  defaultStyles = _defaultStyles,
+}: CSSEditorProps) => {
   const { t } = useTranslation('workspaces');
   const field = useField(name);
   const [reseting, setReseting] = useState(false);
@@ -31,7 +44,7 @@ export const CSSEditor = ({
     if (!reseting) return;
     field.input.onChange(defaultStyles);
     setReseting(false);
-  }, [field.input, reseting]);
+  }, [defaultStyles, field.input, reseting]);
 
   const [completers, setCompleters] = useState<any>();
   const prevSectionsIds = useRef<typeof sectionIds>([]);
@@ -72,19 +85,14 @@ export const CSSEditor = ({
           <div>
             <div className="flex w-[95%] justify-between items-center">
               <div>
-                <label className="font-bold">
-                  {t('pages.details.styles.label')}
-                </label>
-                <Tooltip
-                  title={t('pages.details.styles.description')}
-                  placement="right"
-                >
+                <label className="font-bold">{t(label)}</label>
+                <Tooltip title={t(description)} placement="right">
                   <button type="button" className="ml-2">
                     <InfoCircleOutlined />
                   </button>
                 </Tooltip>
               </div>
-              <Tooltip title={t('pages.details.styles.reset.description')}>
+              <Tooltip title={t(reset)}>
                 <button
                   type="button"
                   className="text-gray hover:text-orange-500 pr-2 flex items-center"
@@ -113,7 +121,15 @@ export const CSSEditor = ({
         ),
       },
     ],
-    [completers, field.input.onChange, field.input.value, reseting, t]
+    [
+      completers,
+      description,
+      field.input.onChange,
+      field.input.value,
+      label,
+      reseting,
+      t,
+    ]
   );
   return (
     <div className="my-2 p-0 border-[1px] border-gray-200 rounded">
