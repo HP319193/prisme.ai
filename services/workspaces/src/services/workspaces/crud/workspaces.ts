@@ -25,7 +25,7 @@ import {
 } from '../../../errors';
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 import { SLUG_VALIDATION_REGEXP } from '../../../../config';
-import { fetchUsers } from '@prisme.ai/permissions/lib/api/fetchUsers';
+import { fetchUsers } from '@prisme.ai/permissions';
 
 interface DSULDiff {
   type: DiffType;
