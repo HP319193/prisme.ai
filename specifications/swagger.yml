@@ -3828,6 +3828,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: 'email'
+          in: 'query'
+          description: 'Some admin email to filter on'
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Success Response

@@ -3102,6 +3102,7 @@ declare namespace PrismeaiAPI {
     }
     namespace GetWorkspaces {
         namespace Parameters {
+            export type Email = string;
             export type Labels = string;
             export type Limit = number;
             export type Page = number;
@@ -3110,6 +3111,7 @@ declare namespace PrismeaiAPI {
             page?: Parameters.Page;
             limit?: Parameters.Limit;
             labels?: Parameters.Labels;
+            email?: Parameters.Email;
         }
         namespace Responses {
             export type $200 = {
