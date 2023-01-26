@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { syscfg } from '../../config';
 import { AuthenticationError, MissingMFA } from '../../types/errors';
+import { Role } from '../../types/permissions';
 
 export function isAuthenticated(
   req: Request,
@@ -21,6 +22,11 @@ export function isInternallyAuthenticated(
 ) {
   const apiKey = req.headers[syscfg.API_KEY_HEADER];
   if (apiKey && apiKey === syscfg.INTERNAL_API_KEY) {
+    return next();
+  }
+
+  const role = req.headers[syscfg.ROLE_HEADER];
+  if (role === Role.SuperAdmin) {
     return next();
   }
 
