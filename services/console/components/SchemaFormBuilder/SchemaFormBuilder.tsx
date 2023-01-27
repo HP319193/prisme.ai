@@ -12,8 +12,9 @@ import { useCallback, useMemo } from 'react';
 import LocalizedInput from '../LocalizedInput';
 import Enum from './Enum';
 import Properties from './Properties';
+import UiOptions from './UiOptions';
 
-const WidgetsByType = {
+const WidgetsByType: Record<string, readonly string[]> = {
   ...UIWidgetsByType,
   string: Array.from(
     new Set([...UIWidgetsByType.string.filter((t) => t !== 'select'), 'enum'])
@@ -106,7 +107,7 @@ export const SchemaFormBuilder = ({
   );
 
   const options = useMemo(() => {
-    const uiWidget = value['ui:widget'] || value.enum ? 'enum' : null;
+    const uiWidget = value['ui:widget'] || (value.enum ? 'enum' : null);
 
     const uiWidgetIsSet = !!(uiWidget && typeof uiWidget === 'string');
     const filteredTypes = uiWidgetIsSet
@@ -332,6 +333,7 @@ export const SchemaFormBuilder = ({
           />
         </div>
       )}
+      <UiOptions value={value} onChange={onChange} />
     </div>
   );
 };

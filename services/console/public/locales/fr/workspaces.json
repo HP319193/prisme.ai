@@ -1322,7 +1322,9 @@
       "name_color": "Couleur",
       "description_color": "Sélecteur de couleur",
       "name_html": "HTML",
-      "description_html": "Contenu enrichi (HTML)"
+      "description_html": "Contenu enrichi (HTML)",
+      "name_slider": "Glissière",
+      "description_slider": "Sélection d'une valeur numérique sur une glissière"
     },
     "properties": {
       "label": "Propriétés de l'objet",
@@ -1332,6 +1334,25 @@
     "items": {
       "label": "Items",
       "description": "Définition de chaque élément du tableau"
+    },
+    "uiOptions": {
+      "label": "Options du champs",
+      "slider": {
+        "steps": {
+          "add": "Ajouter une étape",
+          "remove": "Supprimer l'étape",
+          "label": "Étapes",
+          "value": {
+            "label": "Valeur"
+          },
+          "_label": {
+            "label": "Libellé"
+          },
+          "description": {
+            "label": "Description"
+          }
+        }
+      }
     }
   },
   "feed": {
