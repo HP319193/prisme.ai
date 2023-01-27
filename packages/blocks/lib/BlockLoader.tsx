@@ -164,7 +164,17 @@ const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
     return <ReactBlock url={url} name={name} {...props} />;
   }
 
-  return <IFrameBlock url={url} {...props} />;
+  if (url?.match(/^http/)) {
+    return <IFrameBlock url={url} {...props} />;
+  }
+
+  console.error(`Invalid Block : `, {
+    name,
+    url,
+    ...props,
+  });
+
+  return null;
 };
 
 export const BlockLoader = ({

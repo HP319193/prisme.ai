@@ -3,7 +3,6 @@ import { useBlocks } from '../Provider/blocksContext';
 import { BaseBlock } from './BaseBlock';
 import { BaseBlockConfig } from './types';
 import { BlocksDependenciesContext } from '../Provider/blocksContext';
-import { useEffect, useState } from 'react';
 
 export interface BreadcrumbsConfig extends BaseBlockConfig {
   links: {

@@ -161,7 +161,7 @@ class Workspaces {
   findWorkspaces = async (
     query?: PrismeaiAPI.GetWorkspaces.QueryParameters
   ) => {
-    const { limit, page, labels, email } = query || {};
+    const { limit, page, labels, email, name, sort } = query || {};
     let mongoQuery: any = {};
     if (email) {
       const users = await fetchUsers({
@@ -179,11 +179,19 @@ class Workspaces {
         $in: labels.split(','),
       };
     }
+    if (name) {
+      mongoQuery['name'] = {
+        $regex: name,
+        $options: 'i',
+      };
+    }
+
     return await this.accessManager.findAll(SubjectType.Workspace, mongoQuery, {
       pagination: {
         limit,
         page,
       },
+      sort,
     });
   };
 

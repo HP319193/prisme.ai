@@ -1,9 +1,10 @@
 import { useBlock } from '../Provider';
 import useLocalizedText from '../useLocalizedText';
 import { Button } from '@prisme.ai/design-system';
-import tw from '../tw';
 import { ButtonProps } from '@prisme.ai/design-system/lib/Components/Button';
 import ActionOrLink, { Action } from './ActionOrLink';
+import { BaseBlock } from './BaseBlock';
+import { BaseBlockConfig } from './types';
 
 export interface ButtonElementProps {
   text: Prismeai.LocalizedText;
@@ -13,16 +14,15 @@ export interface ButtonElementProps {
   unselected: boolean;
 }
 
-interface ButtonsConfig {
+interface ButtonsConfig extends BaseBlockConfig {
   buttons: ButtonElementProps[];
 }
 
-export const Buttons = () => {
+export const Buttons = ({ buttons = [], className }: ButtonsConfig) => {
   const { localize } = useLocalizedText();
-  const { config: { buttons = [] } = {} } = useBlock<ButtonsConfig>();
 
   return (
-    <div className={`block-buttons ${tw`flex p-8 flex-1 flex-row space-x-1`}`}>
+    <div className={`pr-block-buttons block-buttons ${className}`}>
       {buttons.map(
         ({ text, action, tag, unselected, variant = 'default' }, index) => (
           <ActionOrLink action={action} key={index}>
@@ -30,6 +30,7 @@ export const Buttons = () => {
               variant={variant}
               tag={localize(tag)}
               unselected={unselected}
+              className="pr-block-buttons__button"
             >
               {localize(text)}
             </Button>
@@ -40,4 +41,21 @@ export const Buttons = () => {
   );
 };
 
-export default Buttons;
+const defaultStyles = `:block {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: row;
+  margin: 0 .25rem;
+}`;
+export const ButtonsInContext = () => {
+  const { config } = useBlock<ButtonsConfig>();
+
+  return (
+    <BaseBlock defaultStyles={defaultStyles}>
+      <Buttons {...config} />
+    </BaseBlock>
+  );
+};
+ButtonsInContext.styles = defaultStyles;
+
+export default ButtonsInContext;

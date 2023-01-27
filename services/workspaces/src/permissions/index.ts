@@ -44,7 +44,7 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
       storage,
       schemas: {
         [SubjectType.Workspace]: {
-          name: String,
+          name: { type: String, text: true },
           photo: String,
           description: Schema.Types.Mixed,
           versions: Schema.Types.Mixed,

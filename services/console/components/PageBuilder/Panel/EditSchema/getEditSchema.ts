@@ -11,6 +11,7 @@ import BlocksList from './BlocksList';
 import Footer from './Footer';
 import Image from './Image';
 import Breadcrumbs from './Breadcrumbs';
+import Action from './Action';
 
 const Schemas = {
   Cards,
@@ -24,6 +25,7 @@ const Schemas = {
   Footer,
   Image,
   Breadcrumbs,
+  Action,
 };
 
 const getEditSchema = (blockName: string): Schema | null =>

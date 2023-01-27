@@ -3105,13 +3105,17 @@ declare namespace PrismeaiAPI {
             export type Email = string;
             export type Labels = string;
             export type Limit = number;
+            export type Name = string;
             export type Page = number;
+            export type Sort = string;
         }
         export interface QueryParameters {
             page?: Parameters.Page;
             limit?: Parameters.Limit;
             labels?: Parameters.Labels;
+            name?: Parameters.Name;
             email?: Parameters.Email;
+            sort?: Parameters.Sort;
         }
         namespace Responses {
             export type $200 = {

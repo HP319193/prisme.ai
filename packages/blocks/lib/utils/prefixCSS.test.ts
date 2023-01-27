@@ -52,3 +52,30 @@ it('should work with a big css content', () => {
     .toString();
   expect(prefixCSS(css, '.prefix')).toBe(expected);
 });
+
+it('should parse media queries', () => {
+  const css = `:block .pr-block-hero__container {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+  justify-content: space-between;
+}
+
+@media (max-width: 500px) {
+  :block .pr-block-hero__container {
+    flex-direction: column;
+  }
+}`;
+  expect(prefixCSS(css, '.prefix')).toEqual(`.prefix .pr-block-hero__container {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+  justify-content: space-between;
+}
+
+@media (max-width: 500px) {
+  .prefix .pr-block-hero__container {
+    flex-direction: column;
+  }
+}`);
+});

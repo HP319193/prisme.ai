@@ -1,4 +1,9 @@
-import { Collapse, SearchInput, Space } from '@prisme.ai/design-system';
+import {
+  Collapse,
+  SearchInput,
+  Space,
+  Tooltip,
+} from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import useLocalizedText from '../../../utils/useLocalizedText';
@@ -72,35 +77,48 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
 
   const collapses = useMemo(
     () =>
-      filteredCatalog.map(({ slug, name, variants, hidden, ...block }) => {
-        return {
-          key: slug,
-          label: localize(name),
-          content: (
-            <div className={`flex flex-wrap ${hidden ? '' : '-mt-8'}`}>
-              {!hidden && (
-                <BlockButton
-                  slug={slug}
-                  name={name}
-                  {...block}
-                  onClick={() => onSubmit(slug)}
-                />
-              )}
-
-              {variants &&
-                Array.isArray(variants) &&
-                variants.map((block) => (
+      filteredCatalog.map(
+        ({ slug, name, variants, hidden, description, from, ...block }) => {
+          return {
+            key: slug,
+            label: (
+              <Tooltip
+                title={
+                  <>
+                    <span>{localize(description) || localize(name)}</span>
+                    {from && <span className="italic ml-2">({from})</span>}
+                  </>
+                }
+              >
+                <div className="flex flex-1">{localize(name)}</div>
+              </Tooltip>
+            ),
+            content: (
+              <div className={`flex flex-wrap ${hidden ? '' : '-mt-8'}`}>
+                {!hidden && (
                   <BlockButton
-                    key={block.slug}
+                    slug={slug}
+                    name={name}
                     {...block}
-                    onClick={() => onSubmit(block.slug)}
-                    isVariant
+                    onClick={() => onSubmit(slug)}
                   />
-                ))}
-            </div>
-          ),
-        };
-      }),
+                )}
+
+                {variants &&
+                  Array.isArray(variants) &&
+                  variants.map((block) => (
+                    <BlockButton
+                      key={block.slug}
+                      {...block}
+                      onClick={() => onSubmit(block.slug)}
+                      isVariant
+                    />
+                  ))}
+              </div>
+            ),
+          };
+        }
+      ),
     [filteredCatalog, localize, onSubmit]
   );
 
