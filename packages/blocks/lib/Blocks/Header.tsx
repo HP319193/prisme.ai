@@ -48,16 +48,14 @@ const Button = ({ text, type, value }: Partial<Config['nav'][number]>) => {
     case 'external':
     case 'internal':
       return (
-        <Link href={value}>
-          <a className="block-header__nav-item-link">
-            <button
-              className="block-header__nav-item-button"
-              dangerouslySetInnerHTML={
-                typeof text === 'string' ? { __html: text } : undefined
-              }
-              children={typeof text === 'string' ? undefined : text}
-            />
-          </a>
+        <Link href={value} className="block-header__nav-item-link">
+          <button
+            className="block-header__nav-item-button"
+            dangerouslySetInnerHTML={
+              typeof text === 'string' ? { __html: text } : undefined
+            }
+            children={typeof text === 'string' ? undefined : text}
+          />
         </Link>
       );
     case 'inside':
