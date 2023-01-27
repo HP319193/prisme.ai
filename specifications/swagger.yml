@@ -3828,10 +3828,23 @@ paths:
           required: false
           schema:
             type: string
+        - name: 'name'
+          in: 'query'
+          description: 'Search by workspace name'
+          required: false
+          schema:
+            type: string
         - name: 'email'
           in: 'query'
           description: 'Some admin email to filter on'
           required: false
+          schema:
+            type: string
+        - name: 'sort'
+          in: 'query'
+          description: 'Sort by a specific field'
+          required: false
+          example: '-createdAt'
           schema:
             type: string
       responses:

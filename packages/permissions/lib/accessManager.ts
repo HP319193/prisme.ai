@@ -50,6 +50,7 @@ export interface FindOptions {
     page?: number;
     limit?: number;
   };
+  sort?: string;
 }
 
 const DEFAULT_FIND_PAGE_SIZE = 20;
@@ -310,6 +311,7 @@ export class AccessManager<
       ...additionalQuery,
       ...mongoQuery.getQuery(),
     })
+      .sort(opts?.sort!)
       .skip(page * limit)
       .limit(limit);
 
