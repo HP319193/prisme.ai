@@ -23,27 +23,26 @@ const CardButton: FC<CardButtonType> = ({
   } = useBlocks();
   if (url) {
     return (
-      <Link href={url}>
-        <a
-          className={tw`card-content-outer__button-link button-link ${className}`}
-          target={popup ? '_blank' : undefined}
+      <Link
+        href={url}
+        className={tw`card-content-outer__button-link button-link ${className}`}
+        target={popup ? '_blank' : undefined}
+      >
+        <div
+          className={tw`button-link__image-container image-container flex mr-2`}
         >
-          <div
-            className={tw`button-link__image-container image-container flex mr-2`}
-          >
-            {icon && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                className="image-container__image image image-container__image--custom image--custom"
-                src={icon}
-                alt={localize(value)}
-                height={16}
-                width={16}
-              />
-            )}
-          </div>
-          <RichText>{localize(value)}</RichText>
-        </a>
+          {icon && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              className="image-container__image image image-container__image--custom image--custom"
+              src={icon}
+              alt={localize(value)}
+              height={16}
+              width={16}
+            />
+          )}
+        </div>
+        <RichText>{localize(value)}</RichText>
       </Link>
     );
   }
