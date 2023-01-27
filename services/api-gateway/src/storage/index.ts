@@ -65,8 +65,9 @@ export function buildStorage<Model>(
     }
 
     async save(data: any, opts: SaveOpts<any>) {
-      this.updateCache(data);
-      return await super.save(data, opts);
+      const ret = await super.save(data, opts);
+      this.updateCache(ret);
+      return ret;
     }
 
     async find(query: Partial<Model> & Record<string, any>) {
