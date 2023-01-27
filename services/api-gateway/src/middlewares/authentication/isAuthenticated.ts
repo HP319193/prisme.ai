@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { syscfg } from '../../config';
 import { AuthenticationError, MissingMFA } from '../../types/errors';
+import { Role } from '../../types/permissions';
 
 export function isAuthenticated(
   req: Request,
@@ -24,6 +25,11 @@ export function isInternallyAuthenticated(
     return next();
   }
 
+  const role = req.headers[syscfg.ROLE_HEADER];
+  if (role === Role.SuperAdmin) {
+    return next();
+  }
+
   throw new AuthenticationError();
 }
 
@@ -34,6 +40,23 @@ export function enforceMFA(req: Request, res: Response, next: NextFunction) {
   }
   if (user.mfa && user.mfa !== 'none' && !session.mfaValidated) {
     throw new MissingMFA();
+  }
+  next();
+}
+
+export function forbidAccessTokens(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { session } = req;
+  if (
+    typeof session.prismeaiSessionId === 'string' &&
+    session.prismeaiSessionId.startsWith('at:')
+  ) {
+    throw new AuthenticationError(
+      'Calling this API with an access token is forbidden.'
+    );
   }
   next();
 }

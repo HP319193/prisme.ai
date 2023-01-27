@@ -3,6 +3,7 @@ import services from '../services';
 import passport from 'passport';
 import {
   enforceMFA,
+  forbidAccessTokens,
   isAuthenticated,
   isInternallyAuthenticated,
 } from '../middlewares/authentication';
@@ -99,6 +100,16 @@ async function signupHandler(
   return res.send(user);
 }
 
+async function meHandler(
+  req: Request,
+  res: Response<PrismeaiAPI.GetMyProfile.Responses.$200>
+) {
+  res.send({
+    ...(req.user as any),
+    sessionId: req.session.prismeaiSessionId,
+  });
+}
+
 async function resetPasswordHandler(
   req: Request<any, any, any>, // <any, any, PrismeaiAPI.ResetPassword.RequestBody> seems not well supported because of oneOf
   res: Response<PrismeaiAPI.ResetPassword.Responses.$200>,
@@ -161,6 +172,10 @@ async function validateAccountHandler(
   return res.send({ success: true });
 }
 
+/**
+ * MFA
+ */
+
 async function setupUserMFAHandler(
   req: Request<any, any, PrismeaiAPI.SetupMFA.RequestBody>,
   res: Response<PrismeaiAPI.SetupMFA.Responses.$200>,
@@ -198,14 +213,44 @@ async function mfaHandler(
   return res.send({ success: true });
 }
 
-async function meHandler(
+/**
+ * Access Tokens
+ */
+async function listAccessTokensHandler(
   req: Request,
-  res: Response<PrismeaiAPI.GetMyProfile.Responses.$200>
+  res: Response<PrismeaiAPI.ListAccessTokens.Responses.$200>,
+  next: NextFunction
 ) {
-  res.send({
-    ...(req.user as any),
-    sessionId: req.session.prismeaiSessionId,
-  });
+  const { user, context } = req;
+  const identity = services.identity(context, req.logger);
+  const accessTokens = await identity.listAccessTokens(user!);
+  return res.send(accessTokens);
+}
+
+async function createAccessTokenHandler(
+  req: Request<any, any, PrismeaiAPI.CreateAccessToken.RequestBody>,
+  res: Response<PrismeaiAPI.CreateAccessToken.Responses.$200>,
+  next: NextFunction
+) {
+  const { user, context, body } = req;
+  const identity = services.identity(context, req.logger);
+  const accessToken = await identity.createAccessToken(user!, body);
+  return res.send(accessToken);
+}
+
+async function deleteAccessTokenHandler(
+  req: Request<{ token: string }>,
+  res: Response<PrismeaiAPI.DeleteAccessToken.Responses.$200>,
+  next: NextFunction
+) {
+  const {
+    user,
+    context,
+    params: { token },
+  } = req;
+  const identity = services.identity(context, req.logger);
+  const accessToken = await identity.deleteAccessToken(user!, token);
+  return res.send(accessToken);
 }
 
 async function logoutHandler(req: Request, res: Response) {
@@ -233,6 +278,13 @@ async function findContactsHandler(
 
 const app = express.Router();
 
+app.get(`/me`, isAuthenticated, meHandler);
+// Internal routes
+app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);
+
+// From there, only routes restricted to users, forbidden to access tokens
+app.use(forbidAccessTokens);
+
 app.post(`/login`, loginHandler('local'));
 app.post(`/login/anonymous`, loginHandler('anonymous'));
 app.post(`/login/mfa`, isAuthenticated, mfaHandler);
@@ -240,12 +292,16 @@ app.post(`/signup`, signupHandler);
 app.post(`/logout`, logoutHandler);
 
 // User account
-app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/user/password`, resetPasswordHandler);
 app.post(`/user/validate`, validateAccountHandler);
 app.post(`/user/mfa`, reAuthenticate, enforceMFA, setupUserMFAHandler);
 
-// Internal routes
-app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);
+app.get(`/user/accessTokens`, isAuthenticated, listAccessTokensHandler);
+app.post(`/user/accessTokens`, isAuthenticated, createAccessTokenHandler);
+app.delete(
+  `/user/accessTokens/:token`,
+  isAuthenticated,
+  deleteAccessTokenHandler
+);
 
 export default app;

@@ -25,6 +25,7 @@ import {
 } from '../../../errors';
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 import { SLUG_VALIDATION_REGEXP } from '../../../../config';
+import { fetchUsers } from '@prisme.ai/permissions';
 
 interface DSULDiff {
   type: DiffType;
@@ -160,14 +161,24 @@ class Workspaces {
   findWorkspaces = async (
     query?: PrismeaiAPI.GetWorkspaces.QueryParameters
   ) => {
-    const { limit, page, labels } = query || {};
-    const mongoQuery = labels
-      ? {
-          labels: {
-            $in: labels.split(','),
-          },
-        }
-      : {};
+    const { limit, page, labels, email } = query || {};
+    let mongoQuery: any = {};
+    if (email) {
+      const users = await fetchUsers({
+        email,
+      });
+      if (!users?.length) {
+        return [];
+      }
+      mongoQuery[`permissions.${users[0].id}`] = {
+        $exists: true,
+      };
+    }
+    if (labels) {
+      mongoQuery.labels = {
+        $in: labels.split(','),
+      };
+    }
     return await this.accessManager.findAll(SubjectType.Workspace, mongoQuery, {
       pagination: {
         limit,

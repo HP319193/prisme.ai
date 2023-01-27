@@ -6,6 +6,7 @@ const ENVS = [
   'SENTRY_DSN',
   'CONSOLE_HOST',
   'SUGGESTIONS_ENDPOINT',
+  'BILLING_HOME',
 ];
 
 //services/pages/.next/server/pages/default/404.html

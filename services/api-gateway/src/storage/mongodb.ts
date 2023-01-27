@@ -1,4 +1,4 @@
-import { StorageDriver, SaveOpts } from '.';
+import { StorageDriver, SaveOpts, StorageOptions } from '.';
 import {
   Collection,
   Db,
@@ -15,8 +15,9 @@ export class MongodbDriver implements StorageDriver<any> {
   private db?: Db;
   private _collection?: Collection;
 
-  constructor(url: string, opts: MongoClientOptions, collectionName: string) {
-    this.client = new MongoClient(url, opts);
+  constructor(collectionName: string, opts: StorageOptions) {
+    const { host, driverOptions } = opts;
+    this.client = new MongoClient(host, driverOptions as MongoClientOptions);
     this.collectionName = collectionName;
   }
 

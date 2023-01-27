@@ -1070,6 +1070,23 @@ components:
                 - image/*
                 - audio/*
 
+    AccessToken:
+      type: object
+      required:
+        - expiresAt
+        - name
+      properties:
+        expiresAt:
+          type: string
+        name:
+          type: string
+        token:
+          type: string
+        userId:
+          type: string
+        id:
+          type: string
+
     ApiKey:
       type: object
       additionalProperties: false
@@ -2623,6 +2640,82 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationError'
 
+  /v2/user/accessTokens:
+    get:
+      description: Retrieve user personal access tokens
+      operationId: listAccessTokens
+      tags:
+        - API Gateway
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccessToken'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+    post:
+      description: Create a personal access token
+      operationId: createAccessToken
+      tags:
+        - API Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccessToken"
+
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccessToken"
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+        '401': *AuthenticationError
+
+  /v2/user/accessTokens/{token}:
+    delete:
+      description: Revoke an access token
+      operationId: deleteAccessToken
+      tags:
+        - API Gateway
+      parameters:
+        - name: 'token'
+          in: 'path'
+          description: 'Token'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+
+
   /v2/user/mfa:
     post:
       description: Setup MFA
@@ -3732,6 +3825,12 @@ paths:
         - name: 'labels'
           in: 'query'
           description: 'Comma-separated labels list to filter on'
+          required: false
+          schema:
+            type: string
+        - name: 'email'
+          in: 'query'
+          description: 'Some admin email to filter on'
           required: false
           schema:
             type: string

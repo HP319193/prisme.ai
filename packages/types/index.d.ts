@@ -1,4 +1,11 @@
 declare namespace Prismeai {
+    export interface AccessToken {
+        expiresAt: string;
+        name: string;
+        token?: string;
+        userId?: string;
+        id?: string;
+    }
     export interface All {
         /**
          * Execute each instruction in parallel. Pause current automation execution until all instructions are processed.
@@ -2481,6 +2488,14 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace CreateAccessToken {
+        export type RequestBody = Prismeai.AccessToken;
+        namespace Responses {
+            export type $200 = Prismeai.AccessToken;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+        }
+    }
     namespace CreateApiKey {
         namespace Parameters {
             export type SubjectId = string;
@@ -2586,6 +2601,18 @@ declare namespace PrismeaiAPI {
                 sessionId: string;
                 expires?: string;
             }
+            export type $401 = Prismeai.AuthenticationError;
+        }
+    }
+    namespace DeleteAccessToken {
+        namespace Parameters {
+            export type Token = string;
+        }
+        export interface PathParameters {
+            token: Parameters.Token;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.AccessToken;
             export type $401 = Prismeai.AuthenticationError;
         }
     }
@@ -3075,6 +3102,7 @@ declare namespace PrismeaiAPI {
     }
     namespace GetWorkspaces {
         namespace Parameters {
+            export type Email = string;
             export type Labels = string;
             export type Limit = number;
             export type Page = number;
@@ -3083,6 +3111,7 @@ declare namespace PrismeaiAPI {
             page?: Parameters.Page;
             limit?: Parameters.Limit;
             labels?: Parameters.Labels;
+            email?: Parameters.Email;
         }
         namespace Responses {
             export type $200 = {
@@ -3107,6 +3136,12 @@ declare namespace PrismeaiAPI {
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace ListAccessTokens {
+        namespace Responses {
+            export type $200 = Prismeai.AccessToken[];
+            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace ListApiKeys {
