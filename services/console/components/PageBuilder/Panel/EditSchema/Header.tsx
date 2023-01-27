@@ -1,4 +1,6 @@
+import { builtinBlocks } from '@prisme.ai/blocks';
 import { Schema } from '@prisme.ai/design-system';
+import { getCommonSchema } from './commonSchema';
 
 export const schema: Schema = {
   type: 'object',
@@ -210,6 +212,7 @@ export const schema: Schema = {
       },
     },
   },
+  ...getCommonSchema(builtinBlocks.Header.styles),
 };
 
 export default schema;

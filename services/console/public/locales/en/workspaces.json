@@ -726,6 +726,7 @@
       "name_BlocksList": "Blocks list",
       "name_Footer": "Footer",
       "name_Breadcrumbs": "Breadcrumbs",
+      "name_Action": "Action",
       "description": "",
       "description_Header": "Display page header",
       "description_Hero": "Display a Hero of page",
@@ -738,6 +739,7 @@
       "description_BlocksList": "Display a Blocks list",
       "description_Footer": "Display a Footer",
       "description_Breadcrumbs": "Display Breadcrumbs",
+      "description_Action": "Display an action button capable of navigating to a link, a page, a section of the page or triggering an event.",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
