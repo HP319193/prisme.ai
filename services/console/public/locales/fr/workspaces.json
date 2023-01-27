@@ -1168,7 +1168,7 @@
             "description": "Liens du fil d'ariane dans l'ordre d'affichage.",
             "items": {
               "label": "Lien",
-              "description": "Configueation du lien",
+              "description": "Configuration du lien",
               "add": "Ajouter un lien",
               "remove": "Supprimer le lien",
               "href": {
