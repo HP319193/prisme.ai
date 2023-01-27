@@ -1,5 +1,6 @@
 import { cloneElement, ReactElement, useRef } from 'react';
 import { useBlock } from '../Provider';
+import generateId from '../utils/generateId';
 import prefixCSS from '../utils/prefixCSS';
 
 interface BaseBlock {
@@ -7,21 +8,10 @@ interface BaseBlock {
   defaultStyles?: string;
 }
 
-const ids = new Set();
-function generateId() {
-  let newId;
-  while (!newId || ids.has(newId)) {
-    newId = `block-${parseInt(`${Math.random() * 1000}`)}`;
-  }
-
-  return newId;
-}
-
 export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
   const {
     config: { className, css = defaultStyles },
   } = useBlock();
-
   const containerClassName = useRef(generateId());
   return (
     <>

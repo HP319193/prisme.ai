@@ -10,7 +10,7 @@ Array [
     }
   />,
   <div
-    className="pr-block-rich-text  block-19"
+    className="pr-block-rich-text  unique-id"
   >
     <h1
       id="title"

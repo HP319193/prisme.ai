@@ -1,112 +1,71 @@
 import { Menu } from '@prisme.ai/design-system';
-import '../i18n';
-import tw from '../tw';
 import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
 
-import { withI18nProvider } from '../i18n';
-import { ReactChild } from 'react';
-import { BlockComponent } from '../BlockLoader';
+import { Action, ActionConfig, ActionProps } from './Action';
+import { BaseBlockConfig } from './types';
+import { BaseBlock } from './BaseBlock';
+import { useMemo } from 'react';
 
-interface Action {
-  type: 'external' | 'internal' | 'inside' | 'event';
-  value: string;
-}
-
-interface Config {
+interface HeaderConfig extends BaseBlockConfig {
   title?: string;
   logo?: {
     src: string;
     alt: string;
-    action?: Action;
+    action?: Omit<ActionConfig, 'text'>;
   };
-  nav: (Action & {
-    text: string | ReactChild;
-  })[];
+  nav: ActionConfig[];
 }
 
-const Button = ({ text, type, value }: Partial<Config['nav'][number]>) => {
-  const { events } = useBlock<Config>();
-  const {
-    components: { Link },
-  } = useBlocks();
-  switch (type) {
-    case 'event':
-      return (
-        <button
-          onClick={() => {
-            if (!events || !value) return;
-            events.emit(value);
-          }}
-          className={tw`block-header__nav-item-button`}
-          dangerouslySetInnerHTML={
-            typeof text === 'string' ? { __html: text } : undefined
-          }
-          children={typeof text === 'string' ? undefined : text}
-        />
-      );
-    case 'external':
-    case 'internal':
-      return (
-        <Link href={value} className="block-header__nav-item-link">
-          <button
-            className="block-header__nav-item-button"
-            dangerouslySetInnerHTML={
-              typeof text === 'string' ? { __html: text } : undefined
-            }
-            children={typeof text === 'string' ? undefined : text}
-          />
-        </Link>
-      );
-    case 'inside':
-      return (
-        <a href={`#${value}`} className="block-header__nav-item-link">
-          <button
-            className="block-header__nav-item-button"
-            dangerouslySetInnerHTML={
-              typeof text === 'string' ? { __html: text } : undefined
-            }
-            children={typeof text === 'string' ? undefined : text}
-          />
-        </a>
-      );
-    default:
-      return <>{text}</>;
-  }
-};
+interface HeaderProps
+  extends HeaderConfig,
+    Pick<ActionProps, 'Link' | 'events'> {}
 
-export const Header: BlockComponent = () => {
-  const { config = {} as Config } = useBlock<Config>();
-
+export const Header = ({ Link, events, className, ...config }: HeaderProps) => {
   const nav = config.nav && Array.isArray(config.nav) ? config.nav : [];
 
+  const logo = useMemo(
+    () =>
+      config.logo ? (
+        <img
+          src={config.logo.src}
+          alt={config.logo.alt}
+          className="pr-block-header__logo-image"
+        />
+      ) : null,
+    [config.logo]
+  );
+
   return (
-    <div
-      className={tw`block-header flex flex-1 justify-between md:items-center`}
-    >
-      <div className={tw`block-header__left left flex min-w-[6.25rem]`}>
-        <div className={tw`left__logo logo flex justify-center`}>
-          {config.logo && config.logo.src && (
-            <Button
-              {...config.logo.action}
-              text={
-                <img
-                  src={config.logo.src}
-                  alt={config.logo.alt}
-                  className={tw`logo__image image max-h-12`}
-                />
-              }
-            />
-          )}
-        </div>
-        <h1 className={tw`left__title title flex items-center m-0 font-bold`}>
+    <div className={`pr-block-header ${className}            block-header`}>
+      <div className="pr-block-header__left          block-header__left">
+        {logo && (
+          <div className="pr-block-header__logo              left__logo logo">
+            {config.logo?.action && (
+              <Action
+                {...config.logo.action}
+                text={logo}
+                Link={Link}
+                events={events}
+              />
+            )}
+            {!config.logo?.action && logo}
+          </div>
+        )}
+        <h1 className="pr-block-header__title           left__title">
           {config.title}
         </h1>
       </div>
       <Menu
         items={nav.map((props, k) => ({
           label: (
-            <Button type={props.type} value={props.value} text={props.text} />
+            <Action
+              type={props.type}
+              value={props.value}
+              text={props.text}
+              Link={Link}
+              events={events}
+            />
           ),
           key: `${k}`,
         }))}
@@ -122,4 +81,57 @@ export const Header: BlockComponent = () => {
   );
 };
 
-export default withI18nProvider(Header);
+const defaultStyles = `:block {
+  display: flex;
+  flex: 1 1 0%;
+  justify-content: space-between;
+}
+
+@media (min-width:768px) {
+  :block {
+    align-items: center;
+  }
+}
+
+.pr-block-header__left {
+  display: flex;
+  min-width: 6.25rem;
+}
+
+.pr-block-header__logo,
+.pr-block-header__logo a {
+  display: flex;
+  justify-content: center;
+}
+.pr-block-header__logo {
+  margin-right: 1rem;
+}
+
+.pr-block-header__logo-image {
+  max-height: 3rem;
+}
+
+.pr-block-header__title {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-weight: 700;
+}
+`;
+
+export const HeaderInContext = () => {
+  const { config, events } = useBlock<HeaderConfig>();
+  const {
+    components: { Link },
+  } = useBlocks();
+
+  return (
+    <BaseBlock defaultStyles={defaultStyles}>
+      <Header {...config} Link={Link} events={events} />
+    </BaseBlock>
+  );
+};
+
+HeaderInContext.styles = defaultStyles;
+
+export default HeaderInContext;

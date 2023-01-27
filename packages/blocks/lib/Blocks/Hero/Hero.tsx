@@ -1,10 +1,9 @@
-import { BlockComponent } from '../../BlockLoader';
 import { useBlock } from '../../Provider';
-import { useBlocks } from '../../Provider/blocksContext';
-import tw from '../../tw';
+import { BaseBlock } from '../BaseBlock';
 import { BlocksList, BlocksListConfig } from '../BlocksList';
+import { BaseBlockConfig } from '../types';
 
-export interface HeroConfig {
+export interface HeroConfig extends BaseBlockConfig {
   title: string;
   lead: string;
   content?: BlocksListConfig;
@@ -12,26 +11,26 @@ export interface HeroConfig {
   backgroundColor: string;
 }
 
-export const Hero: BlockComponent<HeroConfig> = () => {
-  const {
-    config: { title, lead, content, img, backgroundColor },
-  } = useBlock<HeroConfig>();
-  const {
-    utils: { BlockLoader },
-  } = useBlocks();
+interface HeroProps extends HeroConfig {}
 
+export const Hero = ({
+  className,
+  title,
+  lead,
+  content,
+  img,
+  backgroundColor,
+}: HeroProps) => {
   return (
-    <div className="pr-block-hero" style={{ backgroundColor }}>
-      <div
-        className={tw`pr-block-hero__container flex flex-col p-4 justify-between sm:flex-row`}
-      >
+    <div className={`pr-block-hero ${className}`} style={{ backgroundColor }}>
+      <div className="pr-block-hero__container">
         <div className="pr-block-hero__text">
-          <h1 className={tw`pr-block-hero__title text-5xl`}>{title}</h1>
-          <p className={tw`pr-block-hero__lead mt-4`}>{lead}</p>
+          <h1 className="pr-block-hero__title">{title}</h1>
+          <p className="pr-block-hero__lead">{lead}</p>
           {content && <BlocksList {...content} />}
         </div>
         {img && (
-          <div className={tw`pr-block-hero__img max-w-sm w-full`}>
+          <div className="pr-block-hero__img">
             <img src={img} role="img" alt="" />
           </div>
         )}
@@ -40,4 +39,38 @@ export const Hero: BlockComponent<HeroConfig> = () => {
   );
 };
 
-export default Hero;
+const defaultStyles = `:block .pr-block-hero__container {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+  justify-content: space-between;
+}
+@media (max-width: 500px) {
+  :block .pr-block-hero__container {
+    flex-direction: column;
+  }
+}
+:block .pr-block-hero__title {
+  font-size: 3rem;
+}
+:block .pr-block-hero__lead {
+  margin-top: 1rem;
+}
+:block .pr-block-hero__img {
+  max-width: 24rem;
+  width: 100%;
+}
+`;
+
+export const HeroInContext = () => {
+  const { config } = useBlock<HeroConfig>();
+
+  return (
+    <BaseBlock defaultStyles={defaultStyles}>
+      <Hero {...config} />
+    </BaseBlock>
+  );
+};
+HeroInContext.styles = defaultStyles;
+
+export default HeroInContext;

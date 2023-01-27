@@ -1,7 +1,7 @@
 import { Events } from '@prisme.ai/sdk';
 import { Story } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlockProvider } from '../Provider';
 import Form from './Form';
 
@@ -9,34 +9,29 @@ export default {
   title: 'Blocks/Form',
 };
 
-const Template: Story<any> = ({ defaultConfig }) => {
-  const [config, setConfig] = useState<any>(defaultConfig);
-  const [appConfig, setAppConfig] = useState<any>();
-  const events = {
-    emit: (type: string) => {
-      if (type === config.onSubmit) {
-        setConfig((prev: any) => ({ ...prev, disabledSubmit: true }));
-        setTimeout(() => {
-          setConfig((prev: any) => ({ ...prev, disabledSubmit: false }));
-        }, 500);
-      }
+const Template: Story<any> = (config) => {
+  const [localConfig, setLocalConfig] = useState<any>(config);
+  const onSubmit = useRef(config.onSubmit);
+  const events = useMemo(
+    () =>
+      ({
+        emit: (type: string, payload: any) => {
+          if (type === onSubmit.current) {
+            console.log('wesh');
+            setLocalConfig({ disabledSubmit: true });
+            setTimeout(() => {
+              setLocalConfig({ disabledSubmit: false });
+            }, 500);
+          }
 
-      action('emit')();
-    },
-  } as Events;
-
-  useEffect(() => {
-    setConfig(defaultConfig);
-  }, [defaultConfig]);
+          action('emit')(type, payload);
+        },
+      } as Events),
+    []
+  );
 
   return (
-    <BlockProvider
-      config={config}
-      onConfigUpdate={setConfig}
-      appConfig={appConfig}
-      onAppConfigUpdate={setAppConfig}
-      events={events}
-    >
+    <BlockProvider config={{ ...config, ...localConfig }} events={events}>
       <Form />
     </BlockProvider>
   );
@@ -44,17 +39,15 @@ const Template: Story<any> = ({ defaultConfig }) => {
 
 export const Default = Template.bind({});
 Default.args = {
-  defaultConfig: {
-    title: 'Some form',
-    schema: {
-      type: 'object',
-      properties: {
-        email: {
-          type: 'string',
-        },
+  title: 'Some form',
+  schema: {
+    type: 'object',
+    properties: {
+      email: {
+        type: 'string',
       },
     },
-    onChange: 'valueChanged',
-    onSubmit: 'submited',
   },
+  onChange: 'valueChanged',
+  onSubmit: 'submited',
 };

@@ -19,13 +19,12 @@ export const BlockButton = ({
   icon,
 }: BlockButtonProps) => {
   const { localize } = useLocalizedText();
-  const localizedDescription = localize(description);
 
   return (
     <Tooltip
       title={
         <>
-          <span>{localizedDescription || localize(name)}</span>
+          <span>{localize(description) || localize(name)}</span>
           {from && <span className="italic ml-2">({from})</span>}
         </>
       }
