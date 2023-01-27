@@ -774,8 +774,8 @@
             "label": "Navigation",
             "description": "Vous pouvez ajouter des liens vers des adresses web ou des boutons envoyant des événements.",
             "items": {
-              "label": "Boutons",
-              "description": "Configuration du Boutons",
+              "label": "Bouton",
+              "description": "Configuration du Bouton",
               "add": "Ajouter un Bouton",
               "remove": "Supprimer le bouton",
               "type": {

@@ -774,7 +774,7 @@
             "label": "Navigation",
             "description": "You can add links to web addresses or buttons sending events.",
             "items": {
-              "label": "Buttons",
+              "label": "Button",
               "description": "Button configuration",
               "add": "Add a button",
               "remove": "Remove button",
