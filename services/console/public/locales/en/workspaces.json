@@ -1322,7 +1322,9 @@
       "name_color": "Color",
       "description_color": "Color selector",
       "name_html": "HTML",
-      "description_html": "Rich content (HTML)"
+      "description_html": "Rich content (HTML)",
+      "name_slider": "Slider",
+      "description_slider": "Select a numeric value on a slider"
     },
     "properties": {
       "label": "Object properties",
@@ -1332,6 +1334,25 @@
     "items": {
       "label": "Items",
       "description": "Definition of each element of the table"
+    },
+    "uiOptions": {
+      "label": "Field options",
+      "slider": {
+        "steps": {
+          "add": "Add a step",
+          "remove": "Delete step",
+          "label": "Steps",
+          "value": {
+            "label": "Value"
+          },
+          "_label": {
+            "label": "Label"
+          },
+          "description": {
+            "label": "Description"
+          }
+        }
+      }
     }
   },
   "feed": {

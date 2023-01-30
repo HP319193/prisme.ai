@@ -23,11 +23,15 @@ export const UIWidgetsForString = [
   'autocomplete',
   'radio',
   'html',
+  'slider',
 ] as const;
-export const UIWidgetsForLocalizedString = ['textarea'];
+export const UIWidgetsForLocalizedString = ['textarea'] as const;
+export const UIWidgetsForNumber = ['slider'] as const;
 export const UIWidgetsByType = {
   [schemaTypes[0]]: UIWidgetsForString,
   [schemaTypes[1]]: UIWidgetsForLocalizedString,
+  [schemaTypes[2]]: UIWidgetsForNumber,
+  [schemaTypes[3]]: UIWidgetsForNumber,
 };
 
 type StringWithAutocomplete<T> = T | (string & {});
@@ -88,6 +92,16 @@ export type UiOptionsHTML = {
     htmlModeOnly?: boolean;
   };
 };
+export type UiOptionsSlider = {
+  slider: {
+    steps: {
+      label: string;
+      description: string;
+      value: string | number;
+    }[];
+    step?: number;
+  };
+};
 export interface Schema extends Record<string, any> {
   // Field type
   type?: SchemaTypes;
@@ -143,6 +157,7 @@ export interface Schema extends Record<string, any> {
     | UiOptionsAutocomplete
     | UiOptionsDynamicAutocomplete
     | UiOptionsHTML
+    | UiOptionsSlider
     | Record<string, any>;
 }
 

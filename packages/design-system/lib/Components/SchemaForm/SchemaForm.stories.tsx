@@ -482,6 +482,90 @@ UIWidgets.args = {
         enum: [1, 2, 4],
         enumNames: ['One', 'Two', 'Three'],
       },
+      slider: {
+        type: 'number',
+        title: 'Slider',
+        description: 'Display a slider with static values',
+        'ui:widget': 'slider',
+        'ui:options': {
+          slider: {
+            steps: [
+              {
+                label: '7 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 7,
+              },
+              {
+                label: '10 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 10,
+              },
+              {
+                label: '12 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 12,
+              },
+              {
+                label: '15 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 15,
+              },
+              {
+                label: '20 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 20,
+              },
+              {
+                label: '25 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 25,
+              },
+            ],
+          },
+        },
+      },
+      slider2: {
+        type: 'number',
+        title: 'Slider',
+        description: 'Display a slider with static values',
+        'ui:widget': 'slider',
+        'ui:options': {
+          slider: {
+            steps: [
+              {
+                label: '7 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 0,
+              },
+              {
+                label: '10 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 1,
+              },
+              {
+                label: '12 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 2,
+              },
+              {
+                label: '15 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 3,
+              },
+              {
+                label: '20 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 4,
+              },
+              {
+                label: '25 ans',
+                description: '<div>Mensualités n€/mois<br/> bla bla</div>',
+                value: 5,
+              },
+            ],
+          },
+        },
+      },
       custom: {
         type: 'string',
         title: 'React Component',

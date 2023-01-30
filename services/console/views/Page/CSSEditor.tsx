@@ -127,6 +127,7 @@ export const CSSEditor = ({
       field.input.onChange,
       field.input.value,
       label,
+      reset,
       reseting,
       t,
     ]
