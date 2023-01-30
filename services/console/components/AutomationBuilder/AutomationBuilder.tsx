@@ -153,7 +153,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
             [name]: {
               ...(BUILTIN_INSTRUCTIONS as any)[name].properties[name],
               search: removeAccent(
-                `${t('automations.instruction.label', {
+                `${name} ${t('automations.instruction.label', {
                   context: name,
                 })} ${t('automations.instruction.description', {
                   context: name,
@@ -187,7 +187,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
                   description: localize(automations[name].description),
                   name: localize(automations[name].name),
                   search: removeAccent(
-                    `${localize(automations[name].name)} ${localize(
+                    `${name} ${localize(automations[name].name)} ${localize(
                       automations[name].description
                     )}`
                   ),
