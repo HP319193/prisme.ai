@@ -70,12 +70,7 @@ export const Header = ({ Link, events, className, ...config }: HeaderProps) => {
           key: `${k}`,
         }))}
         onClick={(e) => {}}
-        style={{
-          width: '65%',
-          justifyContent: 'flex-end',
-          color: 'var(--color-text)',
-          backgroundColor: 'transparent',
-        }}
+        className="pr-block-header_right"
       />
     </div>
   );
@@ -116,6 +111,13 @@ const defaultStyles = `:block {
   align-items: center;
   margin: 0;
   font-weight: 700;
+}
+
+.pr-block-header_right {
+  width: 65%;
+  justify-content: flex-end;
+  color: var(--color-text);
+  background-color: transparent;
 }
 `;
 
