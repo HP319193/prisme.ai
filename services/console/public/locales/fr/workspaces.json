@@ -153,7 +153,8 @@
         "label_updates": "Modifications du workspace",
         "label_webhooks": "Appels webhooks",
         "label_errors": "Erreurs",
-        "label_shares": "Partages d'accès"
+        "label_shares": "Partages d'accès",
+        "label_application": "Evénements applicatifs"
       },
       "reset": "Réinitialiser les filtres"
     },
