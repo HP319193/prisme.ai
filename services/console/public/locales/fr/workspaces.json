@@ -269,6 +269,10 @@
         "add": "Ajouter un item",
         "remove": "Supprimer l'item"
       },
+      "output": {
+        "label": "Attribuer la sortie à la variable",
+        "description": "La sortie de cette Automatisation peut être stockée dans une variable afin d'être utilisée dans une instruction suivante."
+      },
       "delete": "Supprimer l'instruction ?",
       "delete_condition": "Supprimer la condition ?",
       "form": {

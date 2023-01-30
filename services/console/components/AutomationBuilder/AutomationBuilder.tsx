@@ -177,7 +177,8 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
                 } || {};
               properties.output = properties.output || {
                 type: 'string',
-                description: t('automations.output.description'),
+                description: t('automations.instruction.output.description'),
+                title: t('automations.instruction.output.label'),
               };
               return {
                 ...prev,
