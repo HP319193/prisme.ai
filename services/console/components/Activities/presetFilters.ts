@@ -14,4 +14,7 @@ export const filters = {
   shares: {
     type: 'workspaces*permissions.*',
   },
+  application: {
+    'source.serviceTopic': 'topic:runtime:emit',
+  },
 };
