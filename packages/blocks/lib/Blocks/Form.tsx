@@ -85,7 +85,9 @@ export const Form = ({
 
   return (
     <div className={`pr-block-form ${className}          block-form`}>
-      {config.title && <BlockTitle value={localize(config.title)} />}
+      {config.title && (
+        <div className="pr-block-form__title">{localize(config.title)}</div>
+      )}
       {mountedForm && (
         <SchemaForm
           schema={localizedSchema}
