@@ -8,6 +8,7 @@ export interface BreadcrumbsConfig extends BaseBlockConfig {
   links: {
     href: string;
     label: string;
+    className?: boolean;
   }[];
 }
 export interface BreadcrumbsProps extends BreadcrumbsConfig {
@@ -26,14 +27,21 @@ export const Breadcrumbs = ({
       aria-label="Breadcrumb"
     >
       <ol className="pr-block-breadcrumbs__list" role="list">
-        {(links || []).map(({ href, label }, key) => (
+        {(links || []).map(({ href, label, className }, key) => (
           <li
             key={key}
-            className={`pr-block-breadcrumbs__link ${
+            className={`pr-block-breadcrumbs__item ${className} ${
               key === last ? 'pr-block-breadcrumbs__link--current' : ''
             }`}
           >
-            <Link href={href}>{label}</Link>
+            {href && (
+              <Link href={href} className="pr-block-breadcrumbs__link">
+                {label}
+              </Link>
+            )}
+            {!href && (
+              <span className="pr-block-breadcrumbs__link">{label}</span>
+            )}
           </li>
         ))}
       </ol>
@@ -50,11 +58,11 @@ const defaultStyles = `:block .pr-block-breadcrumbs__list {
   display: flex;
 }
 
-:block .pr-block-breadcrumbs__link--current a {
+:block .pr-block-breadcrumbs__link--current .pr-block-breadcrumbs__link {
   font-weight: bold;
 }
 
-:block .pr-block-breadcrumbs__link:not(:last-child):after {
+:block .pr-block-breadcrumbs__item:not(:last-child):after {
   content: '>';
   display: flex;
   margin: 0 1rem;
