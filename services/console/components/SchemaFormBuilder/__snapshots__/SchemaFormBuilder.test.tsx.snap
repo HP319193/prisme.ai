@@ -300,6 +300,45 @@ Object {
             }
           />
         </div>,
+        <UiOptions
+          onChange={[MockFunction]}
+          value={
+            Object {
+              "properties": Object {
+                "boolean": Object {
+                  "type": "boolean",
+                },
+                "lorem": Object {
+                  "properties": Object {
+                    "a": Object {
+                      "type": "string",
+                    },
+                    "b": Object {
+                      "items": Object {
+                        "items": Object {
+                          "items": Object {
+                            "type": "string",
+                          },
+                          "type": "array",
+                        },
+                        "type": "array",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "type": "object",
+                },
+                "number": Object {
+                  "type": "number",
+                },
+                "string": Object {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            }
+          }
+        />,
       ],
       "className": "flex flex-1 flex-col space-y-5",
     },
@@ -1842,6 +1881,14 @@ Object {
                               </div>,
                               false,
                               false,
+                              <UiOptions
+                                onChange={[Function]}
+                                value={
+                                  Object {
+                                    "type": "string",
+                                  }
+                                }
+                              />,
                             ],
                             "className": "flex flex-1 flex-col space-y-5",
                           },
@@ -2689,6 +2736,18 @@ Object {
                               ],
                               "type": "div",
                             },
+                            Object {
+                              "instance": null,
+                              "nodeType": "component",
+                              "props": Object {
+                                "onChange": [Function],
+                                "value": Object {
+                                  "type": "string",
+                                },
+                              },
+                              "rendered": null,
+                              "type": [Function],
+                            },
                           ],
                           "type": "div",
                         },
@@ -2965,6 +3024,14 @@ Object {
                               </div>,
                               false,
                               false,
+                              <UiOptions
+                                onChange={[Function]}
+                                value={
+                                  Object {
+                                    "type": "number",
+                                  }
+                                }
+                              />,
                             ],
                             "className": "flex flex-1 flex-col space-y-5",
                           },
@@ -3764,6 +3831,18 @@ Object {
                               ],
                               "type": "div",
                             },
+                            Object {
+                              "instance": null,
+                              "nodeType": "component",
+                              "props": Object {
+                                "onChange": [Function],
+                                "value": Object {
+                                  "type": "number",
+                                },
+                              },
+                              "rendered": null,
+                              "type": [Function],
+                            },
                           ],
                           "type": "div",
                         },
@@ -4040,6 +4119,14 @@ Object {
                               </div>,
                               false,
                               false,
+                              <UiOptions
+                                onChange={[Function]}
+                                value={
+                                  Object {
+                                    "type": "boolean",
+                                  }
+                                }
+                              />,
                             ],
                             "className": "flex flex-1 flex-col space-y-5",
                           },
@@ -4839,6 +4926,18 @@ Object {
                               ],
                               "type": "div",
                             },
+                            Object {
+                              "instance": null,
+                              "nodeType": "component",
+                              "props": Object {
+                                "onChange": [Function],
+                                "value": Object {
+                                  "type": "boolean",
+                                },
+                              },
+                              "rendered": null,
+                              "type": [Function],
+                            },
                           ],
                           "type": "div",
                         },
@@ -5224,6 +5323,31 @@ Object {
                                   }
                                 />
                               </div>,
+                              <UiOptions
+                                onChange={[Function]}
+                                value={
+                                  Object {
+                                    "properties": Object {
+                                      "a": Object {
+                                        "type": "string",
+                                      },
+                                      "b": Object {
+                                        "items": Object {
+                                          "items": Object {
+                                            "items": Object {
+                                              "type": "string",
+                                            },
+                                            "type": "array",
+                                          },
+                                          "type": "array",
+                                        },
+                                        "type": "array",
+                                      },
+                                    },
+                                    "type": "object",
+                                  }
+                                }
+                              />,
                             ],
                             "className": "flex flex-1 flex-col space-y-5",
                           },
@@ -6640,6 +6764,14 @@ Object {
                                                     </div>,
                                                     false,
                                                     false,
+                                                    <UiOptions
+                                                      onChange={[Function]}
+                                                      value={
+                                                        Object {
+                                                          "type": "string",
+                                                        }
+                                                      }
+                                                    />,
                                                   ],
                                                   "className": "flex flex-1 flex-col space-y-5",
                                                 },
@@ -7487,6 +7619,18 @@ Object {
                                                     ],
                                                     "type": "div",
                                                   },
+                                                  Object {
+                                                    "instance": null,
+                                                    "nodeType": "component",
+                                                    "props": Object {
+                                                      "onChange": [Function],
+                                                      "value": Object {
+                                                        "type": "string",
+                                                      },
+                                                    },
+                                                    "rendered": null,
+                                                    "type": [Function],
+                                                  },
                                                 ],
                                                 "type": "div",
                                               },
@@ -7829,6 +7973,23 @@ Object {
                                                       />
                                                     </div>,
                                                     false,
+                                                    <UiOptions
+                                                      onChange={[Function]}
+                                                      value={
+                                                        Object {
+                                                          "items": Object {
+                                                            "items": Object {
+                                                              "items": Object {
+                                                                "type": "string",
+                                                              },
+                                                              "type": "array",
+                                                            },
+                                                            "type": "array",
+                                                          },
+                                                          "type": "array",
+                                                        }
+                                                      }
+                                                    />,
                                                   ],
                                                   "className": "flex flex-1 flex-col space-y-5",
                                                 },
@@ -9016,6 +9177,20 @@ Object {
                                                                 />
                                                               </div>,
                                                               false,
+                                                              <UiOptions
+                                                                onChange={[Function]}
+                                                                value={
+                                                                  Object {
+                                                                    "items": Object {
+                                                                      "items": Object {
+                                                                        "type": "string",
+                                                                      },
+                                                                      "type": "array",
+                                                                    },
+                                                                    "type": "array",
+                                                                  }
+                                                                }
+                                                              />,
                                                             ],
                                                             "className": "flex flex-1 flex-col space-y-5",
                                                           },
@@ -10194,6 +10369,17 @@ Object {
                                                                           />
                                                                         </div>,
                                                                         false,
+                                                                        <UiOptions
+                                                                          onChange={[Function]}
+                                                                          value={
+                                                                            Object {
+                                                                              "items": Object {
+                                                                                "type": "string",
+                                                                              },
+                                                                              "type": "array",
+                                                                            }
+                                                                          }
+                                                                        />,
                                                                       ],
                                                                       "className": "flex flex-1 flex-col space-y-5",
                                                                     },
@@ -11349,6 +11535,14 @@ Object {
                                                                                   </div>,
                                                                                   false,
                                                                                   false,
+                                                                                  <UiOptions
+                                                                                    onChange={[Function]}
+                                                                                    value={
+                                                                                      Object {
+                                                                                        "type": "string",
+                                                                                      }
+                                                                                    }
+                                                                                  />,
                                                                                 ],
                                                                                 "className": "flex flex-1 flex-col space-y-5",
                                                                               },
@@ -12196,6 +12390,18 @@ Object {
                                                                                   ],
                                                                                   "type": "div",
                                                                                 },
+                                                                                Object {
+                                                                                  "instance": null,
+                                                                                  "nodeType": "component",
+                                                                                  "props": Object {
+                                                                                    "onChange": [Function],
+                                                                                    "value": Object {
+                                                                                      "type": "string",
+                                                                                    },
+                                                                                  },
+                                                                                  "rendered": null,
+                                                                                  "type": [Function],
+                                                                                },
                                                                               ],
                                                                               "type": "div",
                                                                             },
@@ -12203,6 +12409,21 @@ Object {
                                                                           },
                                                                         ],
                                                                         "type": "div",
+                                                                      },
+                                                                      Object {
+                                                                        "instance": null,
+                                                                        "nodeType": "component",
+                                                                        "props": Object {
+                                                                          "onChange": [Function],
+                                                                          "value": Object {
+                                                                            "items": Object {
+                                                                              "type": "string",
+                                                                            },
+                                                                            "type": "array",
+                                                                          },
+                                                                        },
+                                                                        "rendered": null,
+                                                                        "type": [Function],
                                                                       },
                                                                     ],
                                                                     "type": "div",
@@ -12212,6 +12433,24 @@ Object {
                                                               ],
                                                               "type": "div",
                                                             },
+                                                            Object {
+                                                              "instance": null,
+                                                              "nodeType": "component",
+                                                              "props": Object {
+                                                                "onChange": [Function],
+                                                                "value": Object {
+                                                                  "items": Object {
+                                                                    "items": Object {
+                                                                      "type": "string",
+                                                                    },
+                                                                    "type": "array",
+                                                                  },
+                                                                  "type": "array",
+                                                                },
+                                                              },
+                                                              "rendered": null,
+                                                              "type": [Function],
+                                                            },
                                                           ],
                                                           "type": "div",
                                                         },
@@ -12219,6 +12458,27 @@ Object {
                                                       },
                                                     ],
                                                     "type": "div",
+                                                  },
+                                                  Object {
+                                                    "instance": null,
+                                                    "nodeType": "component",
+                                                    "props": Object {
+                                                      "onChange": [Function],
+                                                      "value": Object {
+                                                        "items": Object {
+                                                          "items": Object {
+                                                            "items": Object {
+                                                              "type": "string",
+                                                            },
+                                                            "type": "array",
+                                                          },
+                                                          "type": "array",
+                                                        },
+                                                        "type": "array",
+                                                      },
+                                                    },
+                                                    "rendered": null,
+                                                    "type": [Function],
                                                   },
                                                 ],
                                                 "type": "div",
@@ -12245,6 +12505,35 @@ Object {
                               ],
                               "type": "div",
                             },
+                            Object {
+                              "instance": null,
+                              "nodeType": "component",
+                              "props": Object {
+                                "onChange": [Function],
+                                "value": Object {
+                                  "properties": Object {
+                                    "a": Object {
+                                      "type": "string",
+                                    },
+                                    "b": Object {
+                                      "items": Object {
+                                        "items": Object {
+                                          "items": Object {
+                                            "type": "string",
+                                          },
+                                          "type": "array",
+                                        },
+                                        "type": "array",
+                                      },
+                                      "type": "array",
+                                    },
+                                  },
+                                  "type": "object",
+                                },
+                              },
+                              "rendered": null,
+                              "type": [Function],
+                            },
                           ],
                           "type": "div",
                         },
@@ -12269,6 +12558,49 @@ Object {
           },
         ],
         "type": "div",
+      },
+      Object {
+        "instance": null,
+        "nodeType": "component",
+        "props": Object {
+          "onChange": [MockFunction],
+          "value": Object {
+            "properties": Object {
+              "boolean": Object {
+                "type": "boolean",
+              },
+              "lorem": Object {
+                "properties": Object {
+                  "a": Object {
+                    "type": "string",
+                  },
+                  "b": Object {
+                    "items": Object {
+                      "items": Object {
+                        "items": Object {
+                          "type": "string",
+                        },
+                        "type": "array",
+                      },
+                      "type": "array",
+                    },
+                    "type": "array",
+                  },
+                },
+                "type": "object",
+              },
+              "number": Object {
+                "type": "number",
+              },
+              "string": Object {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        },
+        "rendered": null,
+        "type": [Function],
       },
     ],
     "type": "div",
