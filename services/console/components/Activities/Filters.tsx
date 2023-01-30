@@ -50,10 +50,10 @@ const Filters = () => {
           newQuery.set('text', text);
         }
         if (values.beforeDate) {
-          newQuery.set('beforeDate', values.beforeDate.format('YYYY-MM-DD'));
+          newQuery.set('beforeDate', values.beforeDate.format());
         }
         if (values.afterDate) {
-          newQuery.set('afterDate', values.afterDate.format('YYYY-MM-DD'));
+          newQuery.set('afterDate', values.afterDate.format());
         }
         Object.entries(values.fields || {}).forEach(([k, v]) => {
           newQuery.set(k, v);
@@ -105,7 +105,14 @@ const Filters = () => {
                         <span className="mr-2">
                           {t('events.filters.afterDate')}
                         </span>
-                        <DatePicker {...input} />
+                        <DatePicker
+                          showNow={true}
+                          showTime={{
+                            defaultValue: moment('00:00:00', 'HH:mm:ss'),
+                          }}
+                          format={'DD/MM/YYYY HH:mm:ss'}
+                          {...input}
+                        />
                       </label>
                     )}
                   </Field>
@@ -117,7 +124,14 @@ const Filters = () => {
                         <span className="mr-2">
                           {t('events.filters.beforeDate')}
                         </span>
-                        <DatePicker {...input} />
+                        <DatePicker
+                          showNow={true}
+                          showTime={{
+                            defaultValue: moment('23:59:59', 'HH:mm:ss'),
+                          }}
+                          format={'DD/MM/YYYY HH:mm:ss'}
+                          {...input}
+                        />
                       </label>
                     )}
                   </Field>
