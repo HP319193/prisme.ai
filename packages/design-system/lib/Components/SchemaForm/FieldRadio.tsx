@@ -35,9 +35,13 @@ const RadioGroup = ({
               />
             );
           }
+
           return (
             <Radio key={k} value={option.value}>
-              {option.label}
+              {typeof option.label === 'string' && (
+                <span dangerouslySetInnerHTML={{ __html: option.label }} />
+              )}
+              {typeof option.label !== 'string' && option.label}
             </Radio>
           );
         })}

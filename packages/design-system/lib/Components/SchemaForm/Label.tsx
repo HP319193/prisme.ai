@@ -14,9 +14,11 @@ export const Label = ({ className, children, field, schema }: LabelProps) => {
     children || schema.title || getLabel(field.input.name, schema.title);
   if (!label) return null;
   return (
-    <label className={className} htmlFor={field.input.name}>
-      {label}
-    </label>
+    <label
+      className={className}
+      htmlFor={field.input.name}
+      dangerouslySetInnerHTML={{ __html: label }}
+    />
   );
 };
 
