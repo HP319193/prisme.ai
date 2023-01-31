@@ -75,10 +75,13 @@ exports[`should render single all types 1`] = `
             >
               <label
                 className="pr-form-text__label pr-form-label"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "string",
+                  }
+                }
                 htmlFor="values.string"
-              >
-                string
-              </label>
+              />
             </div>
           </div>
           <div
@@ -89,10 +92,13 @@ exports[`should render single all types 1`] = `
             >
               <label
                 className="pr-form-text__label pr-form-label"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "number",
+                  }
+                }
                 htmlFor="values.number"
-              >
-                number
-              </label>
+              />
             </div>
           </div>
           <div
@@ -103,10 +109,13 @@ exports[`should render single all types 1`] = `
             >
               <label
                 className="pr-form-boolean__label pr-form-label"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "boolean",
+                  }
+                }
                 htmlFor="values.boolean"
-              >
-                boolean
-              </label>
+              />
             </div>
           </div>
           <div
@@ -270,10 +279,13 @@ exports[`should use ui:widgets 1`] = `
             >
               <label
                 className="pr-form-upload__label pr-form-label"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "upload",
+                  }
+                }
                 htmlFor="values.upload"
-              >
-                upload
-              </label>
+              />
               <div
                 className="pr-form-upload__input pr-form-input"
               >
@@ -303,10 +315,16 @@ exports[`should use ui:widgets 1`] = `
             >
               <label
                 className="pr-form-text__label pr-form-label"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "textarea",
+                  }
+                }
                 htmlFor="values.textarea"
-              >
-                textarea
-              </label>
+              />
+              <div
+                className="pr-form-text__input pr-form-input"
+              />
             </div>
           </div>
           <div
@@ -317,10 +335,13 @@ exports[`should use ui:widgets 1`] = `
             >
               <label
                 className="pr-form-select__label pr-form-label"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "select",
+                  }
+                }
                 htmlFor="values.select"
-              >
-                select
-              </label>
+              />
               Foo
               Bar
             </div>
@@ -333,10 +354,13 @@ exports[`should use ui:widgets 1`] = `
             >
               <label
                 className="pr-form-text__label pr-form-label"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "radio",
+                  }
+                }
                 htmlFor="values.radio"
-              >
-                radio
-              </label>
+              />
             </div>
           </div>
           <div
@@ -347,10 +371,13 @@ exports[`should use ui:widgets 1`] = `
             >
               <label
                 className="pr-form-date__label pr-form-label"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "date",
+                  }
+                }
                 htmlFor="values.date"
-              >
-                date
-              </label>
+              />
               <div
                 className="pr-form-date__input pr-form-input"
               />
