@@ -2042,6 +2042,7 @@ declare namespace Prismeai {
             workspaceId: string;
             automationSlug: string;
             schedule: string;
+            appInstanceSlug?: string;
         };
     }
     export interface TriggeredWebhook {

@@ -263,9 +263,17 @@ export class Workspace {
     );
   }
 
-  getEventTriggers(event: Prismeai.PrismeEvent) {
+  getEventTriggers(event: Prismeai.PrismeEvent): DetailedTrigger[] {
     if (event.type === EventType.TriggeredSchedule) {
-      return this.triggers.schedules[event.payload.schedule] || [];
+      const { appInstanceSlug, ...payload } =
+        (event as Prismeai.TriggeredSchedule).payload || {};
+      if (appInstanceSlug && appInstanceSlug in this.imports) {
+        return this.imports[appInstanceSlug].getEventTriggers({
+          ...event,
+          payload,
+        });
+      }
+      return this.triggers.schedules[payload.schedule] || [];
     }
     const triggers = this.triggers.events[event.type] || [];
     const [firstAppSlug, nestedAppSlugs] = this.parseAppRef(event.type);

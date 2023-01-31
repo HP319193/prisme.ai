@@ -6,7 +6,7 @@ import { DriverType } from '../../storage/types';
 type AppSlug = string;
 type AppVersion = string;
 interface App {
-  versions: Record<AppVersion, Prismeai.DSUL>;
+  versions: Record<AppVersion, Prismeai.RuntimeModel>;
 }
 
 export class Apps extends Storage {

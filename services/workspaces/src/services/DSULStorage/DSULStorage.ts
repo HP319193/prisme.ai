@@ -240,7 +240,7 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
         throw new Error(`Missing updateIndex param`);
       }
       const slug = query.slug!;
-      if (!SLUG_VALIDATION_REGEXP.test(slug)) {
+      if (!SLUG_VALIDATION_REGEXP.test(dsul?.slug || slug)) {
         throw new InvalidSlugError(slug);
       }
       if (!slug) {

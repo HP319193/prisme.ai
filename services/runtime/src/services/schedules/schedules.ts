@@ -1,5 +1,6 @@
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../eda';
+import { Apps } from '../apps';
 import { Scheduler } from './scheduler';
 
 // This is the main Schedules service
@@ -7,28 +8,39 @@ import { Scheduler } from './scheduler';
 // For this, it will perform :
 // - Schedule creation
 // - Schedule renaming (automation slug changed)
-// Dependencies : Broker, Storage, Redis
+// Dependencies : Broker, Storage, Redis, Apps
 
 export class Schedules {
   private broker: Broker;
   private scheduler: Scheduler;
+  private apps: Apps;
 
-  constructor(broker: Broker) {
+  constructor(broker: Broker, apps: Apps) {
     this.broker = broker;
     this.scheduler = new Scheduler({
       success: this.scheduleSuccess.bind(this),
       error: this.scheduleError.bind(this),
     });
+    this.apps = apps;
   }
 
   async scheduleSuccess(data: Prismeai.TriggeredSchedule['payload']) {
+    const payload: Prismeai.TriggeredSchedule['payload'] = {
+      ...data,
+    };
+    const appInstanceSeparator = payload.automationSlug.indexOf('.');
+    if (appInstanceSeparator != -1) {
+      payload.appInstanceSlug = payload.automationSlug.slice(
+        0,
+        appInstanceSeparator
+      );
+      payload.automationSlug = payload.automationSlug.slice(
+        appInstanceSeparator + 1
+      );
+    }
     await this.broker.send<Prismeai.TriggeredSchedule['payload']>(
       EventType.TriggeredSchedule,
-      {
-        workspaceId: data.workspaceId,
-        automationSlug: data.automationSlug,
-        schedule: data.schedule,
-      },
+      payload,
       { workspaceId: data.workspaceId }
     );
   }
@@ -52,9 +64,14 @@ export class Schedules {
   start() {
     const listenedEvents = [
       EventType.DeletedWorkspace,
+
       EventType.CreatedAutomation,
       EventType.UpdatedAutomation,
       EventType.DeletedAutomation,
+
+      EventType.InstalledApp,
+      EventType.ConfiguredApp,
+      EventType.UninstalledApp,
     ];
 
     this.broker.on(listenedEvents, async (event, broker, { logger }) => {
@@ -64,50 +81,62 @@ export class Schedules {
       }
 
       logger.info({
-        msg: 'Received an updated automation',
+        msg: 'Received updated schedules',
         event,
       });
       switch (event.type) {
+        // Workspace automations
         case EventType.CreatedAutomation:
         case EventType.UpdatedAutomation:
           const {
             payload: {
-              automation: { when: { schedules } = {} } = {},
-              slug,
-              oldSlug,
+              automation,
+              slug: automationSlug,
+              oldSlug: automationOldSlug,
             },
           } = event as any as Prismeai.UpdatedAutomation;
-          // Launch cron if there is a trigger
-          if (schedules) {
-            const launched = await this.scheduler.launch(
-              workspaceId,
-              slug,
-              schedules
-            );
-            await this.broker.send(
-              EventType.ScheduledAutomation,
-              {
-                slug,
-                schedules,
-                details: {
-                  launched,
-                },
-              },
-              { workspaceId, automationSlug: slug }
-            );
-          }
-          if (oldSlug) {
-            this.scheduler.delete(workspaceId, oldSlug);
-          }
+          await this.scheduleAutomation(
+            workspaceId,
+            { ...automation, slug: automationSlug },
+            automationOldSlug
+          );
           break;
+
         case EventType.DeletedAutomation:
-          // Delete specific schedule
           const deletedAutomationSlug = (
             event as any as Prismeai.DeletedAutomation
           ).payload.automationSlug;
-
-          this.scheduler.delete(workspaceId, deletedAutomationSlug);
+          await this.unscheduleAutomation(workspaceId, deletedAutomationSlug);
           break;
+
+        // App instances
+        case EventType.InstalledApp:
+        case EventType.ConfiguredApp:
+          const {
+            payload: {
+              appInstance,
+              slug: appInstanceSlug,
+              oldSlug: appInstanceOldSlug,
+            },
+          } = event as any as Prismeai.ConfiguredAppInstance;
+          await this.scheduleAppInstance(
+            workspaceId,
+            { ...appInstance, slug: appInstanceSlug },
+            appInstanceOldSlug
+          );
+          break;
+
+        case EventType.UninstalledApp:
+          const uninstalledAppInstanceSlug = (
+            event as any as Prismeai.UninstalledAppInstance
+          )?.payload?.slug;
+          await this.unscheduleAppInstance(
+            workspaceId,
+            uninstalledAppInstanceSlug
+          );
+          break;
+
+        // Workspace deletion
         case EventType.DeletedWorkspace:
           this.scheduler.delete(workspaceId);
           break;
@@ -118,5 +147,91 @@ export class Schedules {
 
   async close() {
     return await this.scheduler.close();
+  }
+
+  private async scheduleAutomation(
+    workspaceId: string,
+    automation: Prismeai.Automation,
+    oldSlug?: string
+  ) {
+    const slug = automation.slug!;
+    const schedules = automation?.when?.schedules || [];
+    if (oldSlug) {
+      this.scheduler.delete(workspaceId, oldSlug);
+    } else if (automation.disabled || !schedules.length) {
+      this.scheduler.delete(workspaceId, slug);
+      return;
+    }
+
+    // Launch cron if there is a trigger
+    if (schedules?.length) {
+      const launched = await this.scheduler.launch(
+        workspaceId,
+        slug,
+        schedules
+      );
+      await this.broker.send(
+        EventType.ScheduledAutomation,
+        {
+          slug,
+          schedules,
+          details: {
+            launched,
+          },
+        },
+        { workspaceId, automationSlug: slug }
+      );
+    }
+  }
+
+  private async unscheduleAutomation(
+    workspaceId: string,
+    automationSlug: string
+  ) {
+    this.scheduler.delete(workspaceId, automationSlug);
+  }
+
+  private async scheduleAppInstance(
+    workspaceId: string,
+    appInstance: Prismeai.AppInstance,
+    oldSlug?: string
+  ) {
+    const slug = appInstance.slug!;
+    if (oldSlug) {
+      this.scheduler.delete(workspaceId, oldSlug);
+    }
+    const app = await this.apps.getApp(
+      appInstance?.appSlug,
+      appInstance?.appVersion
+    );
+    const schedules = Object.entries(app.automations || {})
+      .map(([automationSlug, automation]) => {
+        if (
+          automation.private ||
+          automation.disabled ||
+          !automation?.when?.schedules?.length
+        ) {
+          return false;
+        }
+
+        return {
+          slug: `${slug}.${automationSlug}`,
+          schedules: automation.when.schedules,
+        };
+      })
+      .filter<{ slug: string; schedules: string[] }>(Boolean as any);
+    await Promise.all(
+      schedules.map(({ slug, schedules }) =>
+        this.scheduler.launch(workspaceId, slug, schedules)
+      )
+    );
+  }
+
+  private async unscheduleAppInstance(
+    workspaceId: string,
+    appInstanceSlug: string
+  ) {
+    const slug = `${appInstanceSlug}.*`;
+    this.scheduler.delete(workspaceId, slug);
   }
 }

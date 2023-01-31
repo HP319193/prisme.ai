@@ -36,6 +36,9 @@ These events can be :
 * [**Emitted**](../instructions#emit) from the same workspace
 * **Emitted** from an [**AppInstance**](../apps#emit-instruction)
 
+## Schedules
+An automation can be regularly triggered, based on a list of cron schedules.  
+
 #### Supported native events  
 
 Workspaces can only listen to a limited subset of the available native events :  

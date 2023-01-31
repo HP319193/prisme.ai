@@ -2255,6 +2255,8 @@ components:
               type: string
             schedule:
               type: string
+            appInstanceSlug:
+              type: string
 
     SuspendedWorkspace:
       type: object

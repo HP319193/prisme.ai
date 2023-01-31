@@ -38,7 +38,7 @@ const broker = initEDA();
     broker
   );
   const runtime = new Runtime(broker, workspaces, cache);
-  const schedules = new Schedules(broker);
+  const schedules = new Schedules(broker, apps);
 
   runtime.start();
   workspaces.startLiveUpdates();
