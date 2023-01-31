@@ -2,7 +2,6 @@ import { Button, Schema } from '@prisme.ai/design-system';
 import { BlockContext, useBlock } from '../Provider';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import BlockTitle from './Internal/BlockTitle';
 import useLocalizedText from '../useLocalizedText';
 import {
   BlocksDependenciesContext,
@@ -10,6 +9,7 @@ import {
 } from '../Provider/blocksContext';
 import { BaseBlock } from './BaseBlock';
 import { BaseBlockConfig } from './types';
+import { Action, ActionConfig } from './Action';
 
 const defaultSchema = {};
 
@@ -23,19 +23,23 @@ interface FormConfig extends BaseBlockConfig {
   disabledSubmit?: boolean;
   disableSubmitDelay?: number;
   values?: Record<string, any>;
+  buttons?: ActionConfig[];
 }
 
 interface FormProps extends FormConfig {
   events: BlockContext['events'];
   SchemaForm: BlocksDependenciesContext['components']['SchemaForm'];
+  Link: BlocksDependenciesContext['components']['Link'];
   uploadFile: BlocksDependenciesContext['utils']['uploadFile'];
 }
 
 export const Form = ({
   events,
   SchemaForm,
+  Link,
   uploadFile,
   className,
+  buttons,
   ...config
 }: FormProps) => {
   const { t } = useTranslation();
@@ -81,6 +85,14 @@ export const Form = ({
     return localizeSchemaForm(config.schema || defaultSchema);
   }, [config.schema, localizeSchemaForm]);
 
+  const customButtons = useMemo(
+    () =>
+      (buttons || []).map((button, key) => (
+        <Action key={key} {...button} events={events} Link={Link} />
+      )),
+    [buttons, events, Link]
+  );
+
   if (!config.schema) return null;
 
   return (
@@ -105,6 +117,7 @@ export const Form = ({
                     key={0}
                     className="pr-block-form__buttons-container        block-form__buttons-container buttons-container"
                   >
+                    {customButtons}
                     <Button
                       type="submit"
                       variant="primary"
@@ -146,7 +159,7 @@ const defaultStyles = `:block {
 }`;
 export const FormInContext = () => {
   const {
-    components: { SchemaForm },
+    components: { SchemaForm, Link },
     utils: { uploadFile },
   } = useBlocks();
   const { config, events } = useBlock<FormConfig>();
@@ -158,6 +171,7 @@ export const FormInContext = () => {
         SchemaForm={SchemaForm}
         uploadFile={uploadFile}
         events={events}
+        Link={Link}
       />
     </BaseBlock>
   );
