@@ -346,6 +346,12 @@ export class ElasticsearchStore implements EventsStore {
           maxRetries: 3,
         }
       );
+      if (result.body._shards?.failed) {
+        logger.warn({
+          msg: 'Some Elasticsearch shards failed when querying events',
+          shards: result.body._shards,
+        });
+      }
       return result.body;
     } catch (error: any) {
       if ((error?.message || '').startsWith('index_not_found_exception')) {
@@ -424,7 +430,9 @@ export class ElasticsearchStore implements EventsStore {
     options: PrismeaiAPI.WorkspaceUsage.QueryParameters
   ): Promise<Prismeai.WorkspaceUsage> {
     const filter: any = [
-      { term: { 'source.serviceTopic': EventType.ExecutedAutomation } },
+      {
+        term: { 'source.serviceTopic': EventType.ExecutedAutomation },
+      },
     ];
     if (options.afterDate) {
       filter.push({
@@ -498,13 +506,7 @@ export class ElasticsearchStore implements EventsStore {
         },
       }
     );
-    const { _shards, hits, aggregations } = result;
-    if (_shards?.failed) {
-      logger.warn({
-        msg: 'Some Elasticsearch shards failed when agggregating workspace usage',
-        shards: _shards,
-      });
-    }
+    const { hits, aggregations } = result;
 
     const mapMetricsElasticBuckets = (
       elasticBuckets: MetricsElasticBucket,
@@ -560,7 +562,138 @@ export class ElasticsearchStore implements EventsStore {
       ),
     };
 
+    try {
+      usage.apps = await this.getAppCustomUsage(
+        workspaceId,
+        options,
+        usage.apps
+      );
+    } catch (err) {
+      logger.warn({
+        msg: 'Could not retrieve custom app usage',
+        err,
+        workspaceId,
+      });
+    }
+
     return usage;
+  }
+
+  async getAppCustomUsage(
+    workspaceId: string,
+    options: PrismeaiAPI.WorkspaceUsage.QueryParameters,
+    apps: Prismeai.WorkspaceUsage['apps']
+  ): Promise<Prismeai.WorkspaceUsage['apps']> {
+    const filter: any = [
+      { wildcard: { type: '*.usage' } },
+      { term: { 'source.appInstanceDepth': 1 } },
+    ];
+    if (options.afterDate) {
+      filter.push({
+        range: {
+          createdAt: {
+            gt: options.afterDate,
+          },
+        },
+      });
+    }
+
+    if (options.beforeDate) {
+      filter.push({
+        range: {
+          createdAt: {
+            lt: options.beforeDate,
+          },
+        },
+      });
+    }
+
+    const result: any = await this._search(
+      workspaceId,
+      { limit: 0 },
+      {
+        query: {
+          bool: {
+            filter,
+          },
+        },
+
+        aggs: {
+          apps: {
+            terms: { field: 'source.appSlug' },
+            aggs: {
+              appInstances: {
+                terms: {
+                  field: 'source.appInstanceFullSlug',
+                },
+                aggs: {
+                  lastUsage: {
+                    top_hits: {
+                      size: 1,
+                      sort: { '@timestamp': 'desc' },
+                      _source: {
+                        includes: ['payload.*'],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+    );
+    const { aggregations } = result;
+    const appsUsage = mapElasticBuckets(aggregations.apps.buckets);
+    return apps.map((cur) => {
+      const appUsage = appsUsage[cur.slug!];
+      if (!appUsage?.buckets?.appInstances?.buckets) {
+        return cur;
+      }
+      const appInstancesUsage = mapElasticBuckets(
+        appUsage?.buckets?.appInstances?.buckets
+      );
+      const metricsPerAppInstance: Record<
+        string,
+        Record<string, number>
+      > = Object.entries(appInstancesUsage).reduce(
+        (prevTotal, [appInstanceSlug, { buckets }]) => {
+          if (!buckets?.lastUsage?.hits?.hits?.[0]?._source?.payload?.metrics) {
+            return prevTotal;
+          }
+          const customMetrics =
+            buckets?.lastUsage?.hits?.hits?.[0]?._source?.payload?.metrics;
+          return {
+            ...prevTotal,
+            [appInstanceSlug]: customMetrics,
+          };
+        },
+        {}
+      );
+
+      if (cur.appInstances) {
+        cur.appInstances = cur.appInstances.map((cur) => {
+          if (cur.slug && cur.slug in metricsPerAppInstance) {
+            cur.total.custom = metricsPerAppInstance[cur.slug];
+          }
+          return cur;
+        });
+      }
+
+      cur.total.custom = Object.values(metricsPerAppInstance).reduce(
+        (prevCustom, cur) => ({
+          ...Object.entries(cur).reduce(
+            (prev, [k, v]) => ({
+              ...prev,
+              [k]: (prevCustom[k] || 0) + v,
+            }),
+            prevCustom
+          ),
+        }),
+        {}
+      );
+      return cur;
+    });
   }
 
   async closeWorkspace(workspaceId: string): Promise<any> {
@@ -601,7 +734,9 @@ type ElasticBucket<
   buckets: ElasticBucket[];
 } & AdditionalBuckets;
 
-function mapElasticBuckets(buckets: ElasticBucket[]) {
+function mapElasticBuckets(
+  buckets: ElasticBucket[]
+): Record<string, { count: number; buckets: any }> {
   return buckets.reduce(
     (prev: any, { key, doc_count, ...buckets }: any) => ({
       ...prev,

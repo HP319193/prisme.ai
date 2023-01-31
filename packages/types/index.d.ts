@@ -871,6 +871,21 @@ declare namespace Prismeai {
         updatedBy?: string;
         createdBy?: string;
     }
+    export interface AppUsageEvent {
+        /**
+         * example:
+         * usage
+         */
+        type: "usage";
+        payload: {
+            metrics: {
+                [name: string]: {
+                    value: number;
+                    action: "set" | "increment";
+                };
+            };
+        };
+    }
     export interface AppUsageMetrics {
         slug: string;
         total: UsageMetrics;
@@ -2177,6 +2192,9 @@ declare namespace Prismeai {
         eventTransactions: number;
         sessions: number;
         users: number;
+        custom?: {
+            [name: string]: any;
+        };
     }
     export interface User {
         /**
