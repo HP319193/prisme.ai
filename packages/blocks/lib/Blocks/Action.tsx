@@ -33,6 +33,7 @@ export const Action = ({
           className={`pr-block-action pr-block-action--event ${className}            block-header__nav-item-button`}
         >
           <button
+            type="button"
             onClick={() => {
               if (!events || !value) return;
               events.emit(value);
@@ -52,6 +53,7 @@ export const Action = ({
           className={`pr-block-action pr-block-action--link ${className}            block-header__nav-item-link`}
         >
           <button
+            type="button"
             className="block-header__nav-item-button"
             dangerouslySetInnerHTML={
               typeof text === 'string' ? { __html: text } : undefined
@@ -67,6 +69,7 @@ export const Action = ({
           className={`pr-block-action pr-block-action--link ${className}            block-header__nav-item-link`}
         >
           <button
+            type="button"
             className="block-header__nav-item-button"
             dangerouslySetInnerHTML={
               typeof text === 'string' ? { __html: text } : undefined
