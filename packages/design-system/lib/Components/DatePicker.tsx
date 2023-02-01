@@ -18,7 +18,6 @@ const DatePicker = ({
   value,
   onChange,
   className,
-  placeholder,
   ...props
 }: DatePickerProps) => {
   const _value = stringValue ? moment(stringValue) : value;
@@ -29,7 +28,6 @@ const DatePicker = ({
       value={_value}
       onChange={onChange}
       className={`h-[2.5rem] basis-[2.5rem] flex flex-1 ${className}`}
-      placeholder=""
       {...props}
     />
   );
