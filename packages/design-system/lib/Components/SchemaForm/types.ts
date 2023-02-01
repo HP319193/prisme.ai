@@ -140,9 +140,19 @@ export interface Schema extends Record<string, any> {
   // Disable the field
   disabled?: true;
   // Validation by regexp
+  // @deprecated
   pattern?: string;
   // Validation errors messages
+  // @deprecated
   errors?: Record<string, string>;
+  validators?: Record<
+    'pattern' | 'min' | 'max' | 'tel' | 'email' | 'date',
+    | {
+        value?: string | number | boolean;
+        message?: string;
+      }
+    | true
+  >;
   // Custom widget
   'ui:widget'?: UIWidgets | FunctionComponent<FieldProps>;
   // Options for UI components

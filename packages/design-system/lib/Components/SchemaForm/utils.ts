@@ -52,15 +52,69 @@ export const typesMatch = (schema: Schema, value: any): boolean => {
 };
 
 export function getFieldOptions({
+  validators = {} as Schema['validators'],
   pattern,
   errors = {},
   default: defaultValue,
 }: Schema = {}): UseFieldConfig<any, any> {
+  if (!validators) return defaultValue;
+  if (pattern && !validators.pattern) {
+    validators.pattern = {
+      value: pattern,
+      message: errors?.pattern,
+    };
+  }
   return {
-    validate: (value: any) => {
-      if (pattern && !new RegExp(pattern).test(`${value}`)) {
-        return errors.pattern || 'pattern';
-      }
+    validate: (toCheck: any) => {
+      return Object.entries(validators).reduce<null | string>(
+        (prev, [type, options]) => {
+          const { value = '', message = '' } =
+            typeof options === 'boolean' ? {} : options;
+          if (prev) return prev;
+          switch (type) {
+            case 'pattern':
+              if (
+                typeof value !== 'string' ||
+                !new RegExp(value).test(`${toCheck}`)
+              ) {
+                return message || 'pattern';
+              }
+              return null;
+            case 'tel':
+              if (!new RegExp(/^[0-9\+]+$/).test(`${toCheck}`)) {
+                return message || 'tel';
+              }
+              return null;
+            case 'min':
+              if (+toCheck < +(value || 0)) {
+                return message || 'min';
+              }
+              return null;
+            case 'max':
+              if (+toCheck > +(value || 0)) {
+                return message || 'max';
+              }
+              return null;
+            case 'email':
+              if (
+                !new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).test(
+                  `${toCheck}`
+                )
+              ) {
+                return message || 'email';
+              }
+              return null;
+            case 'date':
+              const date = new Date(toCheck);
+              if (date.toString() === 'Invalid Date') {
+                return message || 'date';
+              }
+              return null;
+          }
+          return prev;
+        },
+        null
+      );
     },
     defaultValue,
   };
