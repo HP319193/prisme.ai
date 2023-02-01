@@ -11,6 +11,7 @@ export interface ActionConfig extends BaseBlockConfig {
   type: 'external' | 'internal' | 'inside' | 'event';
   value: string;
   text: string | ReactChild;
+  payload?: any;
 }
 
 export interface ActionProps extends ActionConfig {
@@ -22,6 +23,7 @@ export const Action = ({
   type,
   value,
   text,
+  payload,
   className,
   Link,
   events,
@@ -33,9 +35,10 @@ export const Action = ({
           className={`pr-block-action pr-block-action--event ${className}            block-header__nav-item-button`}
         >
           <button
+            type="button"
             onClick={() => {
               if (!events || !value) return;
-              events.emit(value);
+              events.emit(value, payload);
             }}
             dangerouslySetInnerHTML={
               typeof text === 'string' ? { __html: text } : undefined
@@ -52,6 +55,7 @@ export const Action = ({
           className={`pr-block-action pr-block-action--link ${className}            block-header__nav-item-link`}
         >
           <button
+            type="button"
             className="block-header__nav-item-button"
             dangerouslySetInnerHTML={
               typeof text === 'string' ? { __html: text } : undefined
@@ -67,6 +71,7 @@ export const Action = ({
           className={`pr-block-action pr-block-action--link ${className}            block-header__nav-item-link`}
         >
           <button
+            type="button"
             className="block-header__nav-item-button"
             dangerouslySetInnerHTML={
               typeof text === 'string' ? { __html: text } : undefined

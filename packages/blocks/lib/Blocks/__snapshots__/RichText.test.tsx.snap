@@ -2,15 +2,11 @@
 
 exports[`should render 1`] = `
 Array [
-  <style
-    dangerouslySetInnerHTML={
-      Object {
-        "__html": "",
-      }
-    }
-  />,
+  <style>
+    
+  </style>,
   <div
-    className="pr-block-rich-text  unique-id"
+    className="pr-block-rich-text  "
   >
     <h1
       id="title"

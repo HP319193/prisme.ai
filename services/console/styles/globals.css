@@ -49,7 +49,7 @@ body {
   scroll-behavior: smooth;
   font-weight: 300;
   font-size: 13px;
-  font-family: Montserrat, sans-serif;
+  font-family: Montserrat, sans-serif !important;
   min-height: 100vh;
 }
 body h1.ant-typography,

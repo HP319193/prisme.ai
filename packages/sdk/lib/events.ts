@@ -112,10 +112,11 @@ export class Events {
     };
   }
 
-  emit(event: string, payload?: any) {
+  emit(event: string, payload?: any, options?: any) {
     this.client.emit('event', {
       type: event,
       payload,
+      options,
     });
   }
 

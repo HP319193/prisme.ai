@@ -21,6 +21,8 @@ interface ButtonsConfig extends BaseBlockConfig {
 export const Buttons = ({ buttons = [], className }: ButtonsConfig) => {
   const { localize } = useLocalizedText();
 
+  if (!Array.isArray(buttons)) return null;
+
   return (
     <div className={`pr-block-buttons block-buttons ${className}`}>
       {buttons.map(

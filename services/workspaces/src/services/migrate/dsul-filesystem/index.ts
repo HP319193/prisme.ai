@@ -33,14 +33,14 @@ export async function migrateDSUL(
   const legacyWorkspacesStorage = dsulStorage.child(DSULType.DSULIndex, {
     legacy: true,
   });
-  if (!opts.workspace) {
+  if (!opts.workspace || opts.workspace == 'all') {
     throw new MissingFieldError(
-      'Missing workspace body param. Please specify either "all" or a valid workspaceId'
+      'Missing or invalid workspace body param. Please specify a valid workspaceId'
     );
   }
-  if (!opts.app) {
+  if (!opts.app || opts.app == 'all') {
     throw new MissingFieldError(
-      'Missing app body param. Please specify either "all" or a valid appSlug'
+      'Missing or invalid app body param. Please specify a valid appSlug'
     );
   }
 

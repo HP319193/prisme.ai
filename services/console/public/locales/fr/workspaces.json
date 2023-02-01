@@ -153,7 +153,8 @@
         "label_updates": "Modifications du workspace",
         "label_webhooks": "Appels webhooks",
         "label_errors": "Erreurs",
-        "label_shares": "Partages d'accès"
+        "label_shares": "Partages d'accès",
+        "label_application": "Evénements applicatifs"
       },
       "reset": "Réinitialiser les filtres"
     },
@@ -267,6 +268,10 @@
       "item": {
         "add": "Ajouter un item",
         "remove": "Supprimer l'item"
+      },
+      "output": {
+        "label": "Attribuer la sortie à la variable",
+        "description": "La sortie de cette Automatisation peut être stockée dans une variable afin d'être utilisée dans une instruction suivante."
       },
       "delete": "Supprimer l'instruction ?",
       "delete_condition": "Supprimer la condition ?",

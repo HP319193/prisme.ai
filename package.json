@@ -39,7 +39,7 @@
     "check:pages": "tsc -p services/pages/tsconfig.json",
     "check:translations:console": "npx ts-node scripts/checkTranslations.ts services/console/public/locales en",
     "check:translations:pages": "npx ts-node scripts/checkTranslations.ts services/pages/public/locales en",
-    "check:front": "npm run check:console && npm run check:pages && npm test -- packages/blocks && npm test -- packages/design-system && npm test -- services/console && npm test -- services/pages",
+    "check:front": "npm run check:console && npm run check:pages && npm test -- packages/blocks -u && npm test -- packages/design-system -u && npm test -- services/console -u && npm test -- services/pages -u",
     "test": "jest --collect-coverage"
   },
   "repository": {

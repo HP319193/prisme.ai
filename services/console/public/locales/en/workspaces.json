@@ -153,7 +153,8 @@
         "label_updates": "Workspace updates",
         "label_webhooks": "Webhooks calls",
         "label_errors": "Errors",
-        "label_shares": "Workspace shares"
+        "label_shares": "Workspace shares",
+        "label_application": "Applications events"
       },
       "reset": "Reset filters"
     },
@@ -267,6 +268,10 @@
       "item": {
         "add": "Add an item",
         "remove": "Delete item"
+      },
+      "output": {
+        "label": "Assign the output to the variable",
+        "description": "The output of this Automation can be stored in a variable to be used in a next instruction."
       },
       "delete": "Delete instruction?",
       "delete_condition": "Delete condition?",

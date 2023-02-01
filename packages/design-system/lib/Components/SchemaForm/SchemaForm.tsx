@@ -113,8 +113,13 @@ export const SchemaForm = ({
         initialValues={values.current}
         mutators={{ ...arrayMutators }}
       >
-        {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit} className="pr-form">
+        {({ handleSubmit, hasValidationErrors }) => (
+          <form
+            onSubmit={handleSubmit}
+            className={`pr-form ${
+              hasValidationErrors ? 'pr-form--has-validation-errors' : ''
+            }`}
+          >
             {onChange && (
               <FormSpy subscription={{ values: true }}>
                 {({ values }) => (
@@ -124,7 +129,11 @@ export const SchemaForm = ({
             )}
             <Field schema={schema} name={root} />
             {buttons || (
-              <Button type="submit" className="pr-form-submit">
+              <Button
+                type="submit"
+                className="pr-form-submit"
+                disabled={hasValidationErrors}
+              >
                 {locales.submit || 'Submit'}
               </Button>
             )}

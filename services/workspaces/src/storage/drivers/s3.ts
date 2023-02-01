@@ -181,7 +181,9 @@ export default class S3Like implements IStorage {
         }
       });
     });
-    await this.waitForObjectPropagation(key);
+    try {
+      await this.waitForObjectPropagation(key);
+    } catch {}
     return result;
   }
 
@@ -218,7 +220,9 @@ export default class S3Like implements IStorage {
           })
       )
     );
-    await this.waitForObjectPropagation(copyPaths[copyPaths.length - 1].Key);
+    try {
+      await this.waitForObjectPropagation(copyPaths[copyPaths.length - 1].Key);
+    } catch {}
     return result;
   }
 

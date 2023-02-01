@@ -118,9 +118,13 @@ export default class BullMQ implements ISchedule {
     if (!workspaceId) return false;
 
     const jobs = await this.queue.getRepeatableJobs();
-    const removableJobs = jobs.filter(({ id }) =>
-      id.includes(getJobId(workspaceId, automationSlug))
-    );
+    const removableJobs = jobs.filter(({ id }) => {
+      const targetJob = getJobId(workspaceId, automationSlug);
+      if (targetJob.endsWith('*')) {
+        return id.startsWith(targetJob.slice(0, -1));
+      }
+      return id.includes(targetJob);
+    });
 
     for (const job of removableJobs) {
       await this.queue.removeRepeatableByKey(job.key);

@@ -9,10 +9,12 @@ import { FieldProps } from './types';
 import { getLabel } from './utils';
 
 const RadioGroup = ({
+  value,
   onChange,
   label,
   options,
 }: {
+  value: string;
   label?: string | ReactNode;
   options: ReturnType<typeof useSelectOptions>;
   onChange: FieldInputProps<any, HTMLElement>['onChange'];
@@ -23,6 +25,7 @@ const RadioGroup = ({
       <Radio.Group
         onChange={onChange}
         className="pr-form-radio__input pr-form-input"
+        value={value}
       >
         {options?.map((option, k) => {
           if (isSelectGroup(option)) {
@@ -32,12 +35,17 @@ const RadioGroup = ({
                 options={option.options}
                 label={option.label}
                 onChange={onChange}
+                value={value}
               />
             );
           }
+
           return (
             <Radio key={k} value={option.value}>
-              {option.label}
+              {typeof option.label === 'string' && (
+                <span dangerouslySetInnerHTML={{ __html: option.label }} />
+              )}
+              {typeof option.label !== 'string' && option.label}
             </Radio>
           );
         })}
@@ -50,6 +58,7 @@ export const FieldRadio = (
   props: FieldProps & { options?: SelectProps['selectOptions'] }
 ) => {
   const field = useField(props.name);
+
   const selectOptions = useSelectOptions(props.schema, props.options);
   if (!selectOptions) return null;
 
@@ -59,6 +68,7 @@ export const FieldRadio = (
         label={props.label || props.schema.title || getLabel(props.name)}
         options={selectOptions}
         onChange={field.input.onChange}
+        value={field.input.value}
       />
       <InfoBubble
         className="pr-form-radio__description"

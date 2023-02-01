@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, useRef } from 'react';
+import { cloneElement, ReactElement, useEffect, useState } from 'react';
 import { useBlock } from '../Provider';
 import generateId from '../utils/generateId';
 import prefixCSS from '../utils/prefixCSS';
@@ -9,19 +9,20 @@ interface BaseBlock {
 }
 
 export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
+  const [containerClassName, setContainerClassName] = useState('');
   const {
     config: { className, css = defaultStyles },
   } = useBlock();
-  const containerClassName = useRef(generateId());
+
+  useEffect(() => {
+    setContainerClassName(generateId());
+  }, []);
+
   return (
     <>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: prefixCSS(css || '', `.${containerClassName.current}`),
-        }}
-      />
+      <style>{prefixCSS(css || '', `.${containerClassName}`)}</style>
       {cloneElement(children, {
-        className: [className, containerClassName.current].join(' '),
+        className: [className, containerClassName].join(' '),
       })}
     </>
   );

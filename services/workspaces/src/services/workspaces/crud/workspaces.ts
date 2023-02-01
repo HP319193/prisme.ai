@@ -512,6 +512,8 @@ class Workspaces {
     if (version == 'current') {
       throw new InvalidVersionError('Cannot rollback to current version');
     }
+
+    // Retrieve full version details from database
     const workspaceMetadata = await this.accessManager.get(
       SubjectType.Workspace,
       workspaceId
@@ -522,11 +524,26 @@ class Workspaces {
     if (!targetVersion) {
       throw new InvalidVersionError(`Unknown version name '${version}'`);
     }
+
+    // Check that target version is still available in storage
+    try {
+      await this.storage.get({
+        workspaceId,
+        version,
+      });
+    } catch {
+      throw new InvalidVersionError(
+        `Version '${version} not available anymore'`
+      );
+    }
+
     await this.accessManager.throwUnlessCan(
       ActionType.Update,
       SubjectType.Workspace,
       workspaceId
     );
+
+    // Rollback
     await this.storage.delete({
       workspaceId,
       version: 'current',
