@@ -32,6 +32,7 @@ export const FieldDate = (props: FieldProps) => {
             ? uiOptions.date
             : undefined)}
           className="!flex-[unset]"
+          placeholder={props.schema.placeholder}
         />
       </div>
       <InfoBubble
