@@ -1,5 +1,13 @@
+import { FC } from 'react';
 import Field from './Field';
 import { FieldProps } from './types';
+
+const Container: FC<{
+  hidden: boolean;
+}> = ({ hidden, children }) => {
+  if (hidden) return <>{children}</>;
+  return <div className="pr-form-object__property">{children}</div>;
+};
 
 export const LayoutBasic = ({ name, schema }: FieldProps) => {
   const { properties } = schema;
@@ -8,13 +16,13 @@ export const LayoutBasic = ({ name, schema }: FieldProps) => {
 
   return (
     <>
-      {Object.keys(properties).map((property) => (
-        <div key={property} className="pr-form-object__property">
+      {Object.entries(properties).map(([propertyName, property]) => (
+        <Container key={propertyName} hidden={!!property.hidden}>
           <Field
-            name={`${name}.${property}`}
-            schema={{ disabled: schema.disabled, ...properties[property] }}
+            name={`${name}.${propertyName}`}
+            schema={{ disabled: schema.disabled, ...property }}
           />
-        </div>
+        </Container>
       ))}
     </>
   );
