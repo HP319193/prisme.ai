@@ -146,7 +146,7 @@ export interface Schema extends Record<string, any> {
   // @deprecated
   errors?: Record<string, string>;
   validators?: Record<
-    'pattern' | 'min' | 'max' | 'tel' | 'email' | 'date',
+    'required' | 'pattern' | 'min' | 'max' | 'tel' | 'email' | 'date',
     | {
         value?: string | number | boolean;
         message?: string;

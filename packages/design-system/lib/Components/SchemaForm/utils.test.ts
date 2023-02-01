@@ -1,6 +1,17 @@
 import { Schema } from './types';
 import { getFieldOptions } from './utils';
 
+it('should validate required', () => {
+  const { validate } = getFieldOptions({
+    validators: {
+      required: true,
+    } as Schema['validators'],
+  });
+  expect(validate).toBeDefined();
+  expect(validate && validate('abc', ['abc'])).toBe(null);
+  expect(validate && validate('', [''])).toBe('required');
+});
+
 it('should validate regexp', () => {
   const { validate } = getFieldOptions({
     validators: {

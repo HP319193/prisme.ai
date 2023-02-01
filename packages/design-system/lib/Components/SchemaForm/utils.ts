@@ -72,6 +72,10 @@ export function getFieldOptions({
             typeof options === 'boolean' ? {} : options;
           if (prev) return prev;
           switch (type) {
+            case 'required':
+              if (['', undefined, null].includes(toCheck)) {
+                return message || 'required';
+              }
             case 'pattern':
               if (
                 typeof value !== 'string' ||
