@@ -11,6 +11,7 @@ export interface ActionConfig extends BaseBlockConfig {
   type: 'external' | 'internal' | 'inside' | 'event';
   value: string;
   text: string | ReactChild;
+  payload?: any;
 }
 
 export interface ActionProps extends ActionConfig {
@@ -22,6 +23,7 @@ export const Action = ({
   type,
   value,
   text,
+  payload,
   className,
   Link,
   events,
@@ -36,7 +38,7 @@ export const Action = ({
             type="button"
             onClick={() => {
               if (!events || !value) return;
-              events.emit(value);
+              events.emit(value, payload);
             }}
             dangerouslySetInnerHTML={
               typeof text === 'string' ? { __html: text } : undefined
