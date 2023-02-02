@@ -28,13 +28,8 @@ import useDirtyWarning from '../utils/useDirtyWarning';
 import useLocalizedText from '../utils/useLocalizedText';
 
 export const AppInstance = () => {
-  const {
-    appInstance,
-    documentation,
-    saveAppInstance,
-    saving,
-    uninstallApp,
-  } = useAppInstance();
+  const { appInstance, documentation, saveAppInstance, saving, uninstallApp } =
+    useAppInstance();
   const { workspace } = useWorkspace();
   const { localize } = useLocalizedText();
   const { t } = useTranslation('workspaces');
@@ -137,16 +132,9 @@ export const AppInstance = () => {
   );
 
   const onDelete = useCallback(() => {
-    Modal.confirm({
-      icon: <DeleteOutlined />,
-      content: t('apps.uninstall', appInstance),
-      onOk: () => {
-        replace(`/workspaces/${workspace.id}`);
-        uninstallApp();
-      },
-      okText: t('apps.uninstallConfirm', appInstance),
-    });
-  }, [appInstance, replace, t, uninstallApp, workspace.id]);
+    replace(`/workspaces/${workspace.id}`);
+    uninstallApp();
+  }, [replace, uninstallApp, workspace.id]);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
