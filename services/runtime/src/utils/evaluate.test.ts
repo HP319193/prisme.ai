@@ -272,6 +272,12 @@ describe('It should handle variables within {{}}', () => {
 
 it('works with the regexp() keyword on matches instruction.', () => {
   expect(
+    evaluate('{{text}} matches regex({{word}})', {
+      text: 'ScAtMaN',
+      word: '/scatman/i',
+    })
+  ).toEqual(true);
+  expect(
     evaluate(
       '{{validation.regexp}} and {{value}} and {{value}} not matches regex({{validation.regexp}})',
       {
