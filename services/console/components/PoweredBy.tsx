@@ -13,7 +13,7 @@ export const PoweredBy = () => {
         pr-poweredby
         text-[0.75rem] text-pr-grey
         flex justify-center items-center pr-2 m-4 self-start
-      bg-white border-gray-200 border-[1px] rounded-[4px]"
+      bg-white border-gray-200 border-[1px] rounded-[4px] !font-[Montserrat]"
       style={{
         boxShadow: '0 2px 2px #888',
       }}
