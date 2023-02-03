@@ -80,7 +80,7 @@ export const ContentContainerRenderer = ({
         {pages.map(({ content, removed }, index) => (
           <Content
             key={index}
-            className={tw`absolute overflow-auto top-0 left-0 right-0 bottom-0`}
+            className={tw`absolute top-0 left-0 right-0 bottom-0`}
             content={content}
             onUnmount={onUnmount}
             removed={removed}

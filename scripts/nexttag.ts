@@ -7,6 +7,5 @@ const patch =
   `${date.getHours()}`.padStart(2, '0') +
   `${date.getMinutes()}`.padStart(2, '0');
 
-process.stdout.write(`${major}.${minor}.${patch}
-`);
+process.stdout.write(`v${major}.${minor}.${patch}`);
 process.exit();

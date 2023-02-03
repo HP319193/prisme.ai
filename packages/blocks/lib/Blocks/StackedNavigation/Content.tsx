@@ -39,12 +39,13 @@ export const Content = ({
   return (
     <div
       ref={containerEl}
-      className={tw`${className} content-stack__content content transition-transform  ${animationClassName}`}
+      className={tw`${className} flex content-stack__content content transition-transform  ${animationClassName}`}
     >
       {blocks && (
         <BlocksList
           blocks={legacyBlocks}
-          blocksClassName={tw`flex content__block-container block-container snap-start`}
+          className="flex flex-1 flex-col max-w-full overflow-auto"
+          blocksClassName={tw`flex content__block-container block-container snap-start max-h-full`}
         />
       )}
     </div>
