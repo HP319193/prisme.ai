@@ -608,6 +608,23 @@ export class ElasticsearchStore implements EventsStore {
       });
     }
 
+    const usageAggregationPainless = (input: string) => `
+    def reduce = [:];
+    for (map in ${input}) {
+      for (entry in map.entrySet()) {
+        def value = entry.getValue();
+        if (value instanceof Map && value.containsKey('value') && value.containsKey('action') && (value.value instanceof int || value.value instanceof long || value.value instanceof float || value.value instanceof double || value.value instanceof short || value.value instanceof byte)) {
+            if (!reduce.containsKey(entry.getKey()) || value.action == "set")
+              reduce[entry.getKey()] = value.value;
+            else
+              reduce[entry.getKey()] += value.value;
+        } else if (value instanceof int || value instanceof long || value instanceof float || value instanceof double || value instanceof short || value instanceof byte) {
+          reduce[entry.getKey()] = value;
+        }
+      }
+    }
+    return reduce;
+    `;
     const result: any = await this._search(
       workspaceId,
       { limit: 0 },
@@ -625,15 +642,21 @@ export class ElasticsearchStore implements EventsStore {
               appInstances: {
                 terms: {
                   field: 'source.appInstanceFullSlug',
+                  size: 3000,
                 },
                 aggs: {
-                  lastUsage: {
-                    top_hits: {
-                      size: 1,
-                      sort: { '@timestamp': 'desc' },
-                      _source: {
-                        includes: ['payload.*'],
-                      },
+                  usage: {
+                    scripted_metric: {
+                      init_script: 'state.metrics = []',
+                      // 1. Build each shard state from all documents
+                      map_script: `if (params['_source'].containsKey('payload') && params['_source'].payload.containsKey('metrics') && params['_source'].payload.metrics instanceof Map)
+                          state.metrics.add(params['_source'].payload.metrics)`,
+
+                      // Combine each shard state into a single value
+                      combine_script: usageAggregationPainless('state.metrics'),
+
+                      // Combine shards values into the final one
+                      reduce_script: usageAggregationPainless('states'),
                     },
                   },
                 },
@@ -658,14 +681,12 @@ export class ElasticsearchStore implements EventsStore {
         Record<string, number>
       > = Object.entries(appInstancesUsage).reduce(
         (prevTotal, [appInstanceSlug, { buckets }]) => {
-          if (!buckets?.lastUsage?.hits?.hits?.[0]?._source?.payload?.metrics) {
+          if (!buckets?.usage?.value) {
             return prevTotal;
           }
-          const customMetrics =
-            buckets?.lastUsage?.hits?.hits?.[0]?._source?.payload?.metrics;
           return {
             ...prevTotal,
-            [appInstanceSlug]: customMetrics,
+            [appInstanceSlug]: buckets?.usage?.value,
           };
         },
         {}
