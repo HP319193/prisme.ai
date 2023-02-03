@@ -611,13 +611,9 @@ export class ElasticsearchStore implements EventsStore {
     const usageAggregationPainless = (input: string) => `
     def reduce = [:];
     reduce["metrics"] = [:];
-    // reduce["timestamp"] = 0;
+    reduce["fieldTimestamps"] = [:];
     // Loop over each metrics report
     for (record in ${input}) {
-      def timestamp = record.timestamp;
-      if (!reduce.containsKey('timestamp')) {
-        reduce['timestamp'] = timestamp;
-      }
 
       // Loop over each individual metric
       for (entry in record.metrics.entrySet()) {
@@ -625,6 +621,13 @@ export class ElasticsearchStore implements EventsStore {
         def metric = entry.getValue();
         def value = false;
         def action = "set";
+        // How old is this value ?
+        def valueTimestamp = 0;
+        if (record.containsKey('fieldTimestamps') && record.fieldTimestamps.containsKey(metricName)) {
+          valueTimestamp = record.fieldTimestamps[metricName];
+        } else if (record.containsKey('timestamp')) {
+          valueTimestamp = record.timestamp;
+        }
 
         // Retrieve value & action
         if (metric instanceof Map && metric.containsKey('value')) {
@@ -638,11 +641,16 @@ export class ElasticsearchStore implements EventsStore {
 
         // Check type
         if (value instanceof int || metric instanceof long || metric instanceof float || metric instanceof double || metric instanceof short || metric instanceof byte) {
+          if (!reduce['fieldTimestamps'].containsKey(metricName)) {
+            reduce['fieldTimestamps'][metricName] = valueTimestamp;
+          }
+
           // Set or add
           if (!reduce["metrics"].containsKey(metricName) || action == "set") {
-            // For set, check that is a newer record
-            if (timestamp >= reduce['timestamp']) {
+            // For set, check that is a newer value
+            if (valueTimestamp >= reduce['fieldTimestamps'][metricName]) {
               reduce["metrics"][metricName] = value;
+              reduce['fieldTimestamps'][metricName] = valueTimestamp;
             }
           } else {
             reduce["metrics"][metricName] += value;
