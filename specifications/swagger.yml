@@ -1152,6 +1152,9 @@ components:
           type: number
         users:
           type: number
+        custom:
+          type: object
+          additionalProperties: true
 
     AppUsageMetrics:
       type: object
@@ -1267,6 +1270,38 @@ components:
           description: Creation date (ISO8601)
         id:
           type: string
+
+    AppUsageEvent:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: usage
+          enum:
+            - usage
+        payload:
+          type: object
+          required:
+            - metrics
+          properties:
+            metrics:
+              type: object
+              additionalProperties:
+                type: object
+                required:
+                  - value
+                  - action
+                properties:
+                  value:
+                    type: number
+                  action:
+                    type: string
+                    enum:
+                      - set
+                      - increment
 
     AllEventRequests:
       type: array

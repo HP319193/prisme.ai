@@ -7,6 +7,7 @@
   --pr-form-accent-color: var(--accent-color);
   --pr-form-error-color: var(--error-color);
   --pr-form-margin-size: 1rem;
+  font-family: Montserrat, sans-serif;
 }
 
 @font-face {

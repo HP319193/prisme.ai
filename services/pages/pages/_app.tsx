@@ -6,7 +6,6 @@ import React, { ReactElement, ReactNode } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
-import '../styles/tailwind-console.css';
 import '@prisme.ai/design-system/styles/index.css';
 import '@prisme.ai/design-system/styles/prismeai-theme.css';
 import '@prisme.ai/design-system/styles/schema-form.css';
