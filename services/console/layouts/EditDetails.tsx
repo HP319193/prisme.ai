@@ -37,21 +37,22 @@ export const EditDetails = ({
   const { localize } = useLocalizedText();
 
   const confirmDelete = useCallback(() => {
+    const tOptions = {
+      name: localize(value.name) || value.slug,
+      context,
+    };
     Modal.confirm({
       icon: <DeleteOutlined />,
-      title: t('details.delete.confirm.title', {
-        name: localize(value.name),
-        context,
-      }),
-      content: t('details.delete.confirm.content', { context }),
-      cancelText: t('details.delete.confirm.cancel', { context }),
-      okText: t('details.delete.confirm.ok', { context }),
+      title: t('details.delete.confirm.title', tOptions),
+      content: t('details.delete.confirm.content', tOptions),
+      cancelText: t('details.delete.confirm.cancel', tOptions),
+      okText: t('details.delete.confirm.ok', tOptions),
       onOk: () => {
         onDelete();
       },
       zIndex: 1031,
     });
-  }, [context, localize, onDelete, t, value.name]);
+  }, [context, localize, onDelete, t, value.name, value.slug]);
 
   return (
     <Popover

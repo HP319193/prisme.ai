@@ -79,7 +79,9 @@ export const SectionContent = ({
       event: event?.payload?.event?.type,
       waits: getWaits(),
       appSlug: event?.payload?.appInstance?.appSlug,
-      appName: event?.payload?.appInstance?.appName,
+      appName:
+        event?.payload?.appInstance?.appName ||
+        event?.payload?.appInstance?.slug,
       share: event?.payload?.permissions?.email || event?.payload?.email,
     };
   }, [event, imports, localize, t]);
