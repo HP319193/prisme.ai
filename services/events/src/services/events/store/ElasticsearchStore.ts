@@ -610,16 +610,43 @@ export class ElasticsearchStore implements EventsStore {
 
     const usageAggregationPainless = (input: string) => `
     def reduce = [:];
-    for (map in ${input}) {
-      for (entry in map.entrySet()) {
-        def value = entry.getValue();
-        if (value instanceof Map && value.containsKey('value') && value.containsKey('action') && (value.value instanceof int || value.value instanceof long || value.value instanceof float || value.value instanceof double || value.value instanceof short || value.value instanceof byte)) {
-            if (!reduce.containsKey(entry.getKey()) || value.action == "set")
-              reduce[entry.getKey()] = value.value;
-            else
-              reduce[entry.getKey()] += value.value;
-        } else if (value instanceof int || value instanceof long || value instanceof float || value instanceof double || value instanceof short || value instanceof byte) {
-          reduce[entry.getKey()] = value;
+    reduce["metrics"] = [:];
+    // reduce["timestamp"] = 0;
+    // Loop over each metrics report
+    for (record in ${input}) {
+      def timestamp = record.timestamp;
+      if (!reduce.containsKey('timestamp')) {
+        reduce['timestamp'] = timestamp;
+      }
+
+      // Loop over each individual metric
+      for (entry in record.metrics.entrySet()) {
+        def metricName = entry.getKey();
+        def metric = entry.getValue();
+        def value = false;
+        def action = "set";
+
+        // Retrieve value & action
+        if (metric instanceof Map && metric.containsKey('value')) {
+          value = metric.value;
+          if (metric.containsKey('action') && metric.action instanceof String) {
+            action = metric.action;
+          }
+        } else {
+          value = metric;
+        }
+
+        // Check type
+        if (value instanceof int || metric instanceof long || metric instanceof float || metric instanceof double || metric instanceof short || metric instanceof byte) {
+          // Set or add
+          if (!reduce["metrics"].containsKey(metricName) || action == "set") {
+            // For set, check that is a newer record
+            if (timestamp >= reduce['timestamp']) {
+              reduce["metrics"][metricName] = value;
+            }
+          } else {
+            reduce["metrics"][metricName] += value;
+          }
         }
       }
     }
@@ -649,8 +676,13 @@ export class ElasticsearchStore implements EventsStore {
                     scripted_metric: {
                       init_script: 'state.metrics = []',
                       // 1. Build each shard state from all documents
-                      map_script: `if (params['_source'].containsKey('payload') && params['_source'].payload.containsKey('metrics') && params['_source'].payload.metrics instanceof Map)
-                          state.metrics.add(params['_source'].payload.metrics)`,
+                      map_script: `
+                        if (params['_source'].containsKey('payload') && params['_source'].payload.containsKey('metrics') && params['_source'].payload.metrics instanceof Map) {
+                          Map record = [:];
+                          record["metrics"] = params['_source'].payload.metrics;
+                          record["timestamp"] = doc['createdAt'].value.getMillis();
+                          state.metrics.add(record)
+                        }`,
 
                       // Combine each shard state into a single value
                       combine_script: usageAggregationPainless('state.metrics'),
@@ -686,7 +718,7 @@ export class ElasticsearchStore implements EventsStore {
           }
           return {
             ...prevTotal,
-            [appInstanceSlug]: buckets?.usage?.value,
+            [appInstanceSlug]: buckets?.usage?.value?.metrics,
           };
         },
         {}
@@ -713,6 +745,11 @@ export class ElasticsearchStore implements EventsStore {
         }),
         {}
       );
+      if (typeof (cur.total?.custom as any).billing === 'number') {
+        (cur.total?.custom as any).billing = Math.floor(
+          (cur.total?.custom as any).billing
+        );
+      }
       return cur;
     });
   }
