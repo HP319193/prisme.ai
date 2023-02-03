@@ -37,3 +37,13 @@ This **config** variable is also avaible in the workspace config itself, as well
 [More details on variables usage](automations#variables).  
 
 The **config** object accepts an additional field specific to apps : [**config.schema**](apps#defining-an-app-config-schema)
+
+## Versioning and backups
+Versions can be made to store the current workspace's state. It includes everything in the workspace. Later on, you can
+restore your workspace to be in the same state as a previous version (current Automations, apps, pages, config will be replaced).
+To save the current state, simply access the workspace's settings, then "create a version".
+In the newly shown input, you can leave a message to recognize this version, or leave it blank.  
+To restore a previous version, access the event feed, and on "filters", select "filters suggestions", and finally "Workspace versions".
+The activity feed will now show all your versions. 
+
+Video walk-through : https://www.loom.com/share/67483c03226647bb8e8fb8824ccfd78c
