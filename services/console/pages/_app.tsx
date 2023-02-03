@@ -1,11 +1,8 @@
 import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
-import NextLink from 'next/link';
-import Image from 'next/image';
-import { Loading as DSLoading, SchemaForm } from '@prisme.ai/design-system';
 import UserProvider from '../components/UserProvider';
 import { NextPage } from 'next';
-import React, { HTMLAttributes, ReactElement, ReactNode } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
@@ -15,15 +12,10 @@ import '@prisme.ai/design-system/styles/prismeai-theme.css';
 import '@prisme.ai/design-system/styles/schema-form.css';
 import 'react-quill/dist/quill.snow.css';
 import PermissionsProvider from '../components/PermissionsProvider';
-import down from '../icons/down.svg';
 import { WorkspacesUsageProvider } from '../components/WorkspacesUsage';
-import externals from '../utils/externals';
 import QueryStringProvider from '../providers/QueryStringProvider';
 import WorkspacesProvider from '../providers/Workspaces/WorkspacesProvider';
-import {
-  BlocksProvider,
-  PublicBlocksProvider,
-} from '../components/BlocksProvider';
+import { PublicBlocksProvider } from '../components/BlocksProvider';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -35,19 +27,6 @@ type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
-
-const Loading = () => (
-  <DSLoading className="bg-white absolute top-0 right-0 bottom-0 left-0" />
-);
-const Link = ({
-  href = '',
-  ...props
-}: { href: string } & HTMLAttributes<HTMLAnchorElement>) => {
-  return <NextLink {...props} href={href || ''} />;
-};
-const DownIcon = ({ className }: { className?: string }) => (
-  <Image src={down.src} width={14} height={14} alt="" className={className} />
-);
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
