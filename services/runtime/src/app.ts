@@ -21,9 +21,10 @@ import { buildCache } from './cache';
 process.on('uncaughtException', uncaughtExceptionHandler);
 
 const broker = initEDA();
+const schedulesBroker = initEDA(`${APP_NAME}-schedules`);
 
 (async function () {
-  await broker.ready;
+  await Promise.all([broker.ready, schedulesBroker.ready]);
   const cache = await buildCache(CONTEXTS_CACHE);
   await cache.connect();
 
@@ -38,15 +39,18 @@ const broker = initEDA();
     broker
   );
   const runtime = new Runtime(broker, workspaces, cache);
-  const schedules = new Schedules(broker, apps);
+  const schedules = new Schedules(schedulesBroker, apps);
 
   runtime.start();
   workspaces.startLiveUpdates();
   schedules.start();
 
   async function exit() {
-    await schedules.close();
-    await broker.close();
+    await Promise.all([
+      schedules.close(),
+      broker.close(),
+      schedulesBroker.close(),
+    ]);
     process.exit(0);
   }
 
