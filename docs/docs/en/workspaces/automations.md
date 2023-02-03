@@ -55,10 +55,12 @@ The automation will be scheduled "on the hour", that means if you schedule it to
 Also, when you schedule your automation keep in mind that it will be executed based on the **UTC timezone**.  
 The following schedule : `0 5 * * *` means it will be run every day at 5:00 UTC.
 
-If you need help creating your cron, here is a little [tool](https://crontab.guru/) that can help writing one.     
-   
+If you need help creating your cron, here is a little [tool](https://crontab.guru/) that can help writing one. 
 
-#### Supported native events  
+Here is a video walkthrough about scheduling:
+<a href="https://www.loom.com/share/860571466810477996287c9f61a63eed"> <p>🕑 Schedule an automation · Prisme.ai - 3 February 2023 - Watch Video</p> <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/860571466810477996287c9f61a63eed-1675441648113-with-play.gif"> </a>
+
+### Supported native events  
 
 Workspaces can only listen to a limited subset of the available native events :  
 
