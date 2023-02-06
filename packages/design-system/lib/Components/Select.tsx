@@ -25,32 +25,16 @@ export interface SelectProps extends AntdSelectProps {
 const Select = ({
   selectOptions,
   overrideContainerClassName,
+  value,
   ...otherProps
 }: SelectProps) => (
   <AntdSelect
     {...otherProps}
     className={`flex ${otherProps.className || ''}`}
     dropdownMatchSelectWidth={false}
-  >
-    {selectOptions.map((item, index) => {
-      if (isSelectGroup(item)) {
-        return (
-          <OptGroup key={index} label={item.label}>
-            {item.options.map((item, k) => (
-              <Option key={`${index}-${k}`} value={item.value}>
-                {item.label}
-              </Option>
-            ))}
-          </OptGroup>
-        );
-      }
-      return (
-        <Option key={index} value={item.value}>
-          {item.label}
-        </Option>
-      );
-    })}
-  </AntdSelect>
+    options={selectOptions}
+    value={value || value === 0 ? value : undefined}
+  />
 );
 
 export default Select;
