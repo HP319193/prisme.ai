@@ -61,10 +61,10 @@ export class CallbackContext {
   }
 }
 
-export function initEDA() {
+export function initEDA(service = APP_NAME) {
   const broker = new Broker<CallbackContext>(
     {
-      service: APP_NAME,
+      service,
     },
     {
       driver: {

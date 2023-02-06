@@ -36,8 +36,27 @@ These events can be :
 * [**Emitted**](../instructions#emit) from the same workspace
 * **Emitted** from an [**AppInstance**](../apps#emit-instruction)
 
-## Schedules
-An automation can be regularly triggered, based on a list of cron schedules.  
+### Schedules
+An automation can be regularly triggered, based on a list of cron **schedules**.  
+An automation can be schedule **at most** every 15 minutes.    
+
+Here is a valid example of schedule :   
+```yaml
+when:
+  schedules:
+    - '* * * * *'
+```  
+*As stated before, this example will be triggered every 15 minutes even if it describes a cron that should be executed "at every minute".*
+
+Whenever an automation is successfully planned a `runtime.automations.scheduled` event is emitted within the workspace, you can observe it on the workspace's Activity Feed.    
+
+The automation will be scheduled "on the hour", that means if you schedule it to repeat every 20 minutes at 3:14, the job will first run at 3:20, then 3:40, and so on.     
+
+Also, when you schedule your automation keep in mind that it will be executed based on the **UTC timezone**.  
+The following schedule : `0 5 * * *` means it will be run every day at 5:00 UTC.
+
+If you need help creating your cron, here is a little [tool](https://crontab.guru/) that can help writing one.     
+   
 
 #### Supported native events  
 
