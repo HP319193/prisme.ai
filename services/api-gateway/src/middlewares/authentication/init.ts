@@ -23,6 +23,7 @@ export async function init(app: Application) {
   });
   const sessionsStore = new (connectRedis(expressSession))({
     client: redisClient,
+    disableTouch: true, // Without this, sessions TTL are reset on every request
   });
 
   // First check for access token to generate their session before express-session
