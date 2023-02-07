@@ -17,8 +17,7 @@ interface UsagesProps {
 const Usages = ({ currentWorkspaceUsages, nbUser, error }: UsagesProps) => {
   const { t } = useTranslation('user');
 
-  const userCount = nbUser + 1;
-  const userQuota = Math.min(userCount / SUBSCRIPTION_USERS, 100);
+  const userQuota = Math.min(nbUser / SUBSCRIPTION_USERS, 100);
 
   return (
     <div className="space-y-5">
@@ -55,7 +54,7 @@ const Usages = ({ currentWorkspaceUsages, nbUser, error }: UsagesProps) => {
               <div>{workspaceUsage.slug}</div>
               <div className="flex flex-col items-end text-right text-[0.75rem]">
                 <div className="flex flex-row justify-center items-center">
-                  {userCount} / {SUBSCRIPTION_USERS}
+                  {nbUser} / {SUBSCRIPTION_USERS}
                   &nbsp;
                   {t('usage.access')}
                   <div className="ml-2 w-[5rem] h-[5.1px] bg-[#BFD7FF] rounded overflow-hidden">
