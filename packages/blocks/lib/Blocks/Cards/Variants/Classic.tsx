@@ -27,7 +27,7 @@ const Classic = ({
     >
       {title && <BlockTitle value={localize(title)} />}
       <div
-        className={tw`block-cards__cards-container cards-container relative !pt-0 w-full overflow-hidden`}
+        className={tw`block-cards__cards-container cards-container relative !pt-0 w-full`}
       >
         <CarouselNavigation
           scroll={scroll}
