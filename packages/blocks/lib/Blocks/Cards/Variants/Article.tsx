@@ -48,7 +48,7 @@ const Article = ({
                     <div
                       className={tw`flex flex-col
                   m-[0.625rem] group h-[23.188rem] rounded-[0.938rem] border border-[rgba(0,0,0,0.20)]
-                  min-w-[19.563rem] max-w-[19.563rem] bg-white overflow-hidden
+                  min-w-[19.563rem] max-w-[19.563rem] bg-white
                   group transition-transform hover:translate-y-1 hover:scale-105 shadow-sm hover:shadow-lg`}
                     >
                       <div

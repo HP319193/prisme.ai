@@ -342,8 +342,6 @@ exports[`should use ui:widgets 1`] = `
                 }
                 htmlFor="values.select"
               />
-              Foo
-              Bar
             </div>
           </div>
           <div

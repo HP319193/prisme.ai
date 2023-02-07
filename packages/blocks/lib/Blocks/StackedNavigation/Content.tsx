@@ -45,7 +45,7 @@ export const Content = ({
         <BlocksList
           blocks={legacyBlocks}
           className="flex flex-1 flex-col max-w-full overflow-auto"
-          blocksClassName={tw`flex content__block-container block-container snap-start max-h-full`}
+          blocksClassName={tw`flex flex-1 content__block-container block-container snap-start max-h-full`}
         />
       )}
     </div>
