@@ -5,6 +5,9 @@ import api, { Events } from '../../../console/utils/api';
 import { BlockLoader } from './BlockLoader';
 import { usePage } from './PageProvider';
 import PoweredBy from '../../../console/components/PoweredBy';
+import dynamic from 'next/dynamic';
+
+const Debug = dynamic(() => import('../Debug'), { ssr: false });
 
 declare global {
   interface Window {
@@ -77,6 +80,7 @@ export const Page = ({ page }: PageProps) => {
         ))}
       </div>
       <PoweredBy />
+      <Debug />
     </div>
   );
 };
