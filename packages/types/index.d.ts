@@ -2190,6 +2190,7 @@ declare namespace Prismeai {
         automationRuns: number;
         httpTransactions: number;
         eventTransactions: number;
+        scheduleTransactions: number;
         sessions: number;
         users: number;
         custom?: {

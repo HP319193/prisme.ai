@@ -121,6 +121,12 @@ export class ElasticsearchStore implements EventsStore {
               'source.appInstanceFullSlug': {
                 type: 'keyword',
               },
+              'source.appInstanceSlug': {
+                type: 'keyword',
+              },
+              'source.automationDepth': {
+                type: 'short',
+              },
               'source.automationSlug': {
                 type: 'keyword',
               },
@@ -454,14 +460,38 @@ export class ElasticsearchStore implements EventsStore {
       });
     }
 
-    const metricAggs = {
-      triggerTypes: {
-        terms: { field: 'payload.trigger.type' },
+    const rootAutomationDepthFilter = {
+      bool: {
+        must_not: [
+          {
+            exists: { field: 'source.automationDepth' },
+          },
+          {
+            match: { 'payload.trigger.type': 'automation' },
+          },
+        ],
       },
+    };
+
+    const metricAggs = {
       transactions: {
         cardinality: {
           field: 'source.correlationId',
-          missing: 'N/A',
+        },
+      },
+      rootTriggers: {
+        filter: rootAutomationDepthFilter,
+        aggs: {
+          types: {
+            terms: { field: 'payload.trigger.type' },
+            aggs: {
+              transactions: {
+                cardinality: {
+                  field: 'source.correlationId',
+                },
+              },
+            },
+          },
         },
       },
       sessions: {
@@ -476,7 +506,11 @@ export class ElasticsearchStore implements EventsStore {
       },
     };
     type MetricsElasticBucket = ElasticBucket<{
-      triggerTypes: ElasticBucket;
+      rootTriggers: ElasticBucket<{
+        types: {
+          buckets: ElasticBucket[];
+        };
+      }>;
       transactions: { value: number };
       users: { value: number };
     }>;
@@ -485,6 +519,7 @@ export class ElasticsearchStore implements EventsStore {
       workspaceId,
       { limit: 0 },
       {
+        track_total_hits: true,
         query: {
           bool: {
             filter,
@@ -512,22 +547,19 @@ export class ElasticsearchStore implements EventsStore {
       elasticBuckets: MetricsElasticBucket,
       automationRuns: number
     ): Prismeai.UsageMetrics => {
-      const nonEventTriggers = (
-        elasticBuckets.triggerTypes?.buckets || []
-      ).reduce((total: number, { key, doc_count }: ElasticBucket) => {
-        return key === 'event' || key === 'automation'
-          ? total
-          : total + doc_count;
-      }, 0);
-      const triggerTypes = mapElasticBuckets(
-        elasticBuckets.triggerTypes?.buckets || []
+      const rootTriggers = mapElasticBuckets(
+        elasticBuckets.rootTriggers?.types?.buckets || []
       );
       const transactions = elasticBuckets?.transactions?.value || 0;
       const metrics: Prismeai.UsageMetrics = {
         automationRuns,
         transactions,
-        httpTransactions: triggerTypes?.endpoint?.count || 0,
-        eventTransactions: transactions - nonEventTriggers,
+        httpTransactions:
+          rootTriggers?.endpoint?.buckets?.transactions?.value || 0,
+        eventTransactions:
+          rootTriggers?.event?.buckets?.transactions?.value || 0,
+        scheduleTransactions:
+          rootTriggers?.schedule?.buckets?.transactions?.value || 0,
         sessions: aggregations?.sessions?.value,
         users: aggregations?.users?.value,
       };
@@ -797,7 +829,7 @@ type ElasticBucket<
 > = {
   key: string;
   doc_count: number;
-  buckets: ElasticBucket[];
+  buckets?: ElasticBucket[];
 } & AdditionalBuckets;
 
 function mapElasticBuckets(
