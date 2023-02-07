@@ -1136,6 +1136,7 @@ components:
         - transactions
         - httpTransactions
         - eventTransactions
+        - scheduleTransactions
         - sessions
         - users
       additionalProperties: false
@@ -1147,6 +1148,8 @@ components:
         httpTransactions:
           type: number
         eventTransactions:
+          type: number
+        scheduleTransactions:
           type: number
         sessions:
           type: number
