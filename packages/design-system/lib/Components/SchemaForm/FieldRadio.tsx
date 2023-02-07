@@ -21,7 +21,9 @@ const RadioGroup = ({
 }) => {
   return (
     <>
-      <label className="pr-form-radio__label pr-form-label">{label}</label>
+      {label && label !== '' && (
+        <label className="pr-form-radio__label pr-form-label">{label}</label>
+      )}
       <Radio.Group
         onChange={onChange}
         className="pr-form-radio__input pr-form-input"
@@ -65,7 +67,11 @@ export const FieldRadio = (
   return (
     <FieldContainer {...props} className="pr-form-radio">
       <RadioGroup
-        label={props.label || props.schema.title || getLabel(props.name)}
+        label={
+          props.label ||
+          props.schema.title ||
+          getLabel(props.name, props.schema.title)
+        }
         options={selectOptions}
         onChange={field.input.onChange}
         value={field.input.value}
