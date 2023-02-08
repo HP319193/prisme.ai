@@ -596,6 +596,8 @@ components:
                 type: string
         styles:
           type: string
+        updateOn:
+          type: string
 
     PageDetails:
       type: object

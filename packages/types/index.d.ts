@@ -1332,6 +1332,7 @@ declare namespace Prismeai {
         updatedAt?: string;
         permissions?: PermissionsMap;
         styles?: string;
+        updateOn?: string;
         appInstances: {
             slug?: string;
             appConfig?: any;
@@ -1684,6 +1685,7 @@ declare namespace Prismeai {
         updatedAt?: string;
         permissions?: PermissionsMap;
         styles?: string;
+        updateOn?: string;
     }
     export interface PageDetails {
         appInstances: {
