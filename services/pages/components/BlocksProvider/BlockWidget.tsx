@@ -2,7 +2,7 @@ import { useBlock } from '@prisme.ai/blocks';
 import { InfoBubble, schemaFormUtils } from '@prisme.ai/design-system';
 import { FieldComponent } from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
 import { Tooltip } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useField } from 'react-final-form';
 import BlockLoader from '../Page/BlockLoader';
 
@@ -12,21 +12,19 @@ export const BlockWidget: FieldComponent = ({
   className,
   label,
 }) => {
-  const {
-    ['ui:options']: { block: { slug, onChange, ...config } } = {},
-  } = schema;
+  const { ['ui:options']: { block } = {} } = schema;
   const { events } = useBlock();
   const field = useField(name);
 
   useEffect(() => {
-    if (!onChange || !events) return;
-    const off = events.on(onChange, ({ payload }) => {
+    if (!block.onChange || !events) return;
+    const off = events.on(block.onChange, ({ payload }) => {
       field.input.onChange(payload);
     });
     return () => {
       off();
     };
-  }, [onChange, events, field.input]);
+  }, [block.onChange, events, field.input]);
 
   const hasError = schemaFormUtils.getError(field.meta);
 
@@ -43,7 +41,7 @@ export const BlockWidget: FieldComponent = ({
         }}
       />
       <Tooltip title={hasError} overlayClassName="pr-form-error">
-        <BlockLoader name={slug} config={config} />
+        <BlockLoader name={block.slug} config={block} />
       </Tooltip>
       <InfoBubble
         className="pr-form-block__description"
