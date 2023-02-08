@@ -62,20 +62,10 @@
 
 {% block scripts %}
   {{ super() }}
-  <script type="text/javascript" src="//cdn.prisme.ai/wegobot_inject.js" charset="UTF-8"></script>
-  <script type="text/javascript">
-    injectWegobot(
-    {
-      "botId": "2PtNaiaxig",
-      "fullscreen": false,
-      "apiCredentials": {
-        "parse": {
-          "APP_ID": "lrzrR2WoKff6oXTyZaQUUHY2KPkf4dkxizs8oAm4",
-          "SESSION_TOKEN_KEY": "SESSION_GOGOWEGO_TOKEN_KEY",
-          "API_BASE_URL": "https://api.prisme.ai/parse/1"
-        }
-      }
-    }
-    );
-    </script>
+ <script src="https://cdn-assets.prisme.ai/blocks/popover/inject/index.js"></script>
+<script type="text/javascript">
+Prismeai.popover({
+  "url": "https://prisme-ai-support-inbox.pages.prisme.ai/en/clientChat"
+})
+</script>
 {% endblock %}
