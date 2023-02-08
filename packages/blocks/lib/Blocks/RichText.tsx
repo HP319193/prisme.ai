@@ -83,6 +83,19 @@ function isElement(domNode: DOMNode): domNode is Element {
   return !!(domNode as Element).name;
 }
 
+function parseConfig(config: Record<string, any>): typeof config {
+  return Object.entries(config).reduce((prev, [k, v]) => {
+    let value = v;
+    try {
+      value = JSON.parse(v);
+    } catch {}
+    return {
+      ...prev,
+      [k]: value,
+    };
+  }, {});
+}
+
 export const RichText = ({
   children,
   allowScripts = false,
@@ -93,6 +106,7 @@ export const RichText = ({
   const { localize } = useLocalizedText();
   const {
     components: { Link },
+    utils: { BlockLoader },
   } = useBlocks();
 
   if (!children) return null;
@@ -117,6 +131,9 @@ export const RichText = ({
               children={domToReact(domNode.children, options)}
             />
           );
+        case 'pr-block':
+          const { slug, ...config } = domNode.attribs;
+          return <BlockLoader name={slug} config={parseConfig(config)} />;
         default:
           return domNode;
       }
