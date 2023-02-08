@@ -27,19 +27,24 @@ export const BlockWidget: FieldComponent = ({
   }, [block.onChange, events, field.input]);
 
   const hasError = schemaFormUtils.getError(field.meta);
-
+  const _label =
+    label ||
+    schema.title ||
+    schemaFormUtils.getLabel(field.input.name, schema.title);
   return (
     <div className="pr-form-block">
-      <label
-        className={`${className} pr-form-block__label pr-form-label`}
-        htmlFor={field.input.name}
-        dangerouslySetInnerHTML={{
-          __html:
-            label ||
-            schema.title ||
-            schemaFormUtils.getLabel(field.input.name, schema.title),
-        }}
-      />
+      {_label && _label !== '' && (
+        <label
+          className={`${className} pr-form-block__label pr-form-label`}
+          htmlFor={field.input.name}
+          dangerouslySetInnerHTML={{
+            __html:
+              label ||
+              schema.title ||
+              schemaFormUtils.getLabel(field.input.name, schema.title),
+          }}
+        />
+      )}
       <Tooltip title={hasError} overlayClassName="pr-form-error">
         <BlockLoader name={block.slug} config={block} />
       </Tooltip>
