@@ -2,6 +2,16 @@ import renderer, { act } from 'react-test-renderer';
 import api, { Events } from '../../../console/utils/api';
 import usePageEvents from './usePageEvents';
 
+jest.mock('next/router', () => {
+  const mock = {
+    push: jest.fn(),
+  };
+  return {
+    useRouter() {
+      return mock;
+    },
+  };
+});
 const events = ({
   destroy: jest.fn(),
 } as any) as Events;

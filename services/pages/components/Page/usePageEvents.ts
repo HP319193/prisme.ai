@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useUser } from '../../../console/components/UserProvider';
 import api, { Events } from '../../../console/utils/api';
@@ -21,6 +22,7 @@ export const usePageEvents = (
   const [blocksConfigs, setBlocksConfigs] = useState<
     NonNullable<Prismeai.Page['blocks']>[number]['config'][]
   >(page ? resetBlocksConfig(page, initialConfig) : []);
+  const { push } = useRouter();
 
   // Init blocks config
   useEffect(() => {
@@ -57,6 +59,20 @@ export const usePageEvents = (
       events?.destroy();
     };
   }, [events]);
+
+  // Listen to update page events
+  useEffect(() => {
+    if (!page || !events || !page.updateOn) return;
+    events.on(page.updateOn, ({ payload: { url } }) => {
+      if (url) {
+        if (url.match(/^http/)) {
+          window.location = url;
+        } else {
+          push(url);
+        }
+      }
+    });
+  }, [events, page, push]);
 
   return { blocksConfigs, events };
 };
