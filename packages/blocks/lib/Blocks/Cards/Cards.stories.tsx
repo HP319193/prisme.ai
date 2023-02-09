@@ -18,7 +18,7 @@ const Template: Story<any> = () => {
         subtitle: 'Publié le 13 juillet 2022',
         tag: 'Mobilités',
         description:
-          'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
+          'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village. Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village. Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
         backgroundColor: 'black',
       },
       {
@@ -26,8 +26,7 @@ const Template: Story<any> = () => {
           'Gares de Labège : attention au travaux !  ainsi que ce texte long très long mais bon cest pas grave',
         subtitle:
           'Publié le 13 juillet 2022 ainsi que ce texte long très long mais bon cest pas grave',
-        tag:
-          'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
+        tag: 'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
         description:
           'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
         backgroundColor: 'white',
@@ -37,8 +36,7 @@ const Template: Story<any> = () => {
           'Gares de Labège : attention au travaux !  ainsi que ce texte long très long mais bon cest pas grave',
         subtitle:
           'Publié le 13 juillet 2022 ainsi que ce texte long très long mais bon cest pas grave',
-        tag:
-          'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
+        tag: 'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
         description:
           'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
         backgroundColor: 'transparent-black',
@@ -48,8 +46,7 @@ const Template: Story<any> = () => {
           'Gares de Labège : attention au travaux !  ainsi que ce texte long très long mais bon cest pas grave',
         subtitle:
           'Publié le 13 juillet 2022 ainsi que ce texte long très long mais bon cest pas grave',
-        tag:
-          'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
+        tag: 'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
         description:
           'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
         backgroundColor: 'transparent-white',
@@ -87,8 +84,7 @@ const Template: Story<any> = () => {
           'Gares de Labège : attention au travaux !  ainsi que ce texte long très long mais bon cest pas grave',
         subtitle:
           'Publié le 13 juillet 2022 ainsi que ce texte long très long mais bon cest pas grave',
-        tag:
-          'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
+        tag: 'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
         description:
           'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
         cover:
@@ -136,14 +132,12 @@ const Template: Story<any> = () => {
         content: [
           {
             type: 'event',
-            text:
-              'test but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'test but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'triggerEvent',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
             popup: true,
           },
@@ -157,20 +151,17 @@ const Template: Story<any> = () => {
         content: [
           {
             type: 'event',
-            text:
-              'test but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'test but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'triggerEvent',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
         ],
@@ -183,32 +174,27 @@ const Template: Story<any> = () => {
         content: [
           {
             type: 'event',
-            text:
-              'test but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'test but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'triggerEvent',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
         ],
@@ -221,8 +207,7 @@ const Template: Story<any> = () => {
         content: [
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
         ],

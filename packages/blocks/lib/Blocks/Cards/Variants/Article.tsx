@@ -64,8 +64,9 @@ const Article = ({
                             style={{
                               backgroundColor: 'rgba(0,0,0, 0.75)',
                             }}
+                            text={localize(tag)}
                           >
-                            {localize(tag)}
+                            {(truncatedText) => truncatedText}
                           </Truncated>
                         )}
                       </div>
@@ -73,20 +74,25 @@ const Article = ({
                         {subtitle && (
                           <Truncated
                             className={tw`text-[0.75rem] leading-[1.2] max-h-[1rem] overflow-hidden`}
+                            text={localize(subtitle)}
                           >
-                            {localize(subtitle)}
+                            {(truncatedText) => truncatedText}
                           </Truncated>
                         )}
                         <Truncated
                           className={tw`font-bold text-[1.25rem] leading-[1.2] max-h-[3rem] overflow-hidden`}
+                          text={localize(title)}
                         >
-                          {localize(title)}
+                          {(truncatedText) => truncatedText}
                         </Truncated>
                         <Truncated
                           className={tw`text-[0.875rem] leading-[1.2] max-h-[4.2rem] overflow-hidden`}
+                          text={localize(description)}
                           ellipsis="…"
                         >
-                          <RichText>{description || ''}</RichText>
+                          {(truncatedText) => (
+                            <RichText>{truncatedText || ''}</RichText>
+                          )}
                         </Truncated>
                       </div>
                     </div>
