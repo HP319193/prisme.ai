@@ -79,19 +79,27 @@ const Actions = ({
                   transition-transform hover:translate-y-1 hover:scale-105 shadow-sm hover:shadow-lg`}
                   >
                     <div className={tw`flex flex-row m-[1.25rem]`}>
-                      <div
-                        className={tw`card-container__card-cover card-cover flex flex-row
+                      {getCoverStyle(index) && (
+                        <div
+                          className={tw`card-container__card-cover card-cover flex flex-row
                   mb-0 h-[5.5rem] w-[5.25rem] min-w-[5.25rem] rounded-[0.625rem] !bg-cover !bg-center`}
-                        style={getCoverStyle(index)}
-                      />
+                          style={getCoverStyle(index)}
+                        />
+                      )}
                       <div
-                        className={tw`flex flex-col space-y-[0.313rem] ml-[1.25rem] justify-center`}
+                        className={tw`flex flex-col space-y-[0.313rem] ml-[1.25rem] justify-center h-[5.5rem]`}
                       >
                         <div className={tw`font-bold text-[1.25rem]`}>
-                          {truncate(localize(title), 14)}
+                          {truncate(
+                            localize(title),
+                            getCoverStyle(index) ? 14 : 25
+                          )}
                         </div>
                         <div className={tw`text-[0.875rem]`}>
-                          {truncate(localize(description), 43)}
+                          {truncate(
+                            localize(description),
+                            getCoverStyle(index) ? 43 : 80
+                          )}
                         </div>
                       </div>
                     </div>
