@@ -8,6 +8,7 @@ export const ActionType = {
   ...NativeActionType,
   GetValues: 'GetValues',
   GetUsage: 'GetUsage',
+  AggregateSearch: 'AggregateSearch',
 };
 
 export enum SubjectType {
@@ -56,6 +57,10 @@ export const config: PermissionsConfig<
           action: ActionType.Manage,
           subject: SubjectType.Event,
         },
+        {
+          action: ActionType.Manage,
+          subject: SubjectType.Workspace,
+        },
       ],
     },
     {
@@ -74,6 +79,13 @@ export const config: PermissionsConfig<
           action: [ActionType.Read, ActionType.GetValues, ActionType.GetUsage],
           subject: SubjectType.Event,
           conditions: workspaceFilter,
+        },
+        {
+          action: [ActionType.AggregateSearch],
+          subject: SubjectType.Workspace,
+          conditions: {
+            id: '${subject.id}',
+          },
         },
       ],
     },

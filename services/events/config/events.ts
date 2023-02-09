@@ -16,3 +16,6 @@ export const EVENTS_RETENTION_DAYS = parseInt(
 export const EVENTS_SCHEDULED_DELETION_DAYS = parseInt(
   process.env.EVENTS_SCHEDULED_DELETION_DAYS || `${30 * 3}`
 );
+
+export const ELASTIC_SEARCH_TIMEOUT =
+  process.env.ELASTIC_SEARCH_TIMEOUT || '50ms';

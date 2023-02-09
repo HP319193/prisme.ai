@@ -3775,6 +3775,93 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
+  /v2/workspaces/{workspaceId}/search:
+    post:
+      description: Generic search API to query or aggregate events & DSUL objects
+      operationId: search
+      tags:
+        - 'Prisme.ai Events'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'ID of workspace to search in'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - query
+              properties:
+                scope:
+                  type: string
+                  enum:
+                    - events
+                limit:
+                  type: number
+                  description: "Page size. Limit response documents, but aggregations still execute on all documents matching the given query"
+                page:
+                  type: number
+                  description: "Page number returned by response's documents field"
+                query:
+                  type: object
+                  additionalProperties: true
+                  description: "Elasticsearch DSL query to filter response documents"
+                aggs:
+                  type: object
+                  additionalProperties: true
+                  description: "Elasticsearch aggregations executed on response documents"
+
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  size:
+                    type: number
+                  documents:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+                  aggs:
+                    type: object
+                    additionalProperties: true
+
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+
+
   ############################################# runtime
   /v2/workspaces/{workspaceId}/webhooks/{automationSlug}:
     post: &POST_WEBHOOK
