@@ -92,7 +92,7 @@ export const BlockLoader: TBlockLoader = ({
         events.on(updateOn, ({ payload: config }) => {
           setConfig((prev = {}) => ({ ...prev, ...config }));
           if (config.userTopics) {
-            events.listenTopics(config.userTopics);
+            events.listenTopics({ event: updateOn, topics: config.userTopics });
           }
         })
       );

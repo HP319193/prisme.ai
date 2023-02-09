@@ -1051,9 +1051,13 @@
               "label": "Numéro de la page courante",
               "description": "Affichera le numéro de la page affichée."
             },
-            "pages": {
-              "label": "Nombre de pages",
-              "description": "Nombre de pages disponibles."
+            "itemCount": {
+              "label": "Nombre d'éléments",
+              "description": "Nombre total d'éléments."
+            },
+            "pageSize": {
+              "label": "Nombre d'éléments par page",
+              "description": "Nombre d'éléments à afficher sur chaque page."
             }
           }
         }

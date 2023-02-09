@@ -17,7 +17,7 @@ export class Events {
   protected client: Socket;
   public workspaceId: string;
   private filters: Record<string, any>[];
-  private listenedUserTopics: Set<string>;
+  private listenedUserTopics: Map<string, string[]>;
   private listeners: Map<string, Function[]> = new Map();
 
   constructor({
@@ -74,7 +74,7 @@ export class Events {
     });
 
     this.filters = [filters || {}];
-    this.listenedUserTopics = new Set();
+    this.listenedUserTopics = new Map();
   }
 
   get socket() {
@@ -120,21 +120,23 @@ export class Events {
     });
   }
 
-  listenTopics(topics: string | string[]) {
+  listenTopics({
+    event,
+    topics,
+  }: {
+    event: string;
+    topics: string | string[];
+  }) {
     topics = Array.isArray(topics) ? topics : [topics];
 
-    const initialTopicsNb = this.listenedUserTopics.size;
-    topics.forEach((topic) => {
-      this.listenedUserTopics.add(topic);
-    });
-    if (initialTopicsNb === this.listenedUserTopics.size) {
-      return;
-    }
+    this.listenedUserTopics.set(event, topics);
 
     this.filters = [
       { ...this.filters[0] },
       {
-        'target.userTopic': Array.from(this.listenedUserTopics),
+        'target.userTopic': Array.from(this.listenedUserTopics).flatMap(
+          ([_event, topics]) => topics
+        ),
       },
     ];
     this.updateFilters({
