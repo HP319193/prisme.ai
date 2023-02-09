@@ -149,6 +149,7 @@ export const DataTable: BlockComponent = () => {
       total: itemCount,
       current: page,
       pageSize: pageSize,
+      showSizeChanger: false,
       onChange: (page) => {
         events?.emit(event, {
           page,
