@@ -882,4 +882,74 @@ automations:
 ```
 </details>
 
+# Paginated DataTable
+
+This page and automation allow to browse big collections with infinite amount of data.
+This uses a Collection app which was renamed as "TodoList". 
+
+Video explanation: https://www.loom.com/share/3b68d9c039104bb1a730bd8c393b140e
+
+<details>
+  <summary>See DSUL</summary> 
+
+Page:
+
+```yaml
+slug: long-table
+name:
+  fr: Long Table
+blocks:
+  - slug: DataTable
+    config:
+      data: []
+      onInit: initTodoTable
+      updateOn: updateTodoTable
+```
+
+Automation:
+
+```yaml
+slug: updateTodoTable
+name: Update Todo Table
+do:
+  - set:
+      name: pageSize
+      value: 10
+  - conditions:
+      '{{run.trigger.value}} == "accessPage"':
+        - set:
+            name: page
+            value: '{{payload.page}}'
+      default:
+        - set:
+            name: page
+            value: 1
+  - TodoList.find:
+      query: {}
+      options:
+        limit: '{{pageSize}}'
+        page: '{{page}}'
+      output: tasks
+  - TodoList.reportUsage:
+      output: tasksUsage
+  - emit:
+      options:
+        persist: true
+      autocomplete: {}
+      event: updateTodoTable
+      payload:
+        data: '{{tasks}}'
+        pagination:
+          event: accessPage
+          page: '{{page}}'
+          itemCount: '{{tasksUsage.documents}}'
+          pageSize: '{{pageSize}}'
+when:
+  events:
+    - initTodoTable
+    - accessPage
+  endpoint: false
+```
+</details>
+
 
