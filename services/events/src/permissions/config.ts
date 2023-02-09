@@ -6,7 +6,6 @@ import { RUNTIME_EMITS_BROKER_TOPIC } from '../../config';
 
 export const ActionType = {
   ...NativeActionType,
-  GetValues: 'GetValues',
   GetUsage: 'GetUsage',
   AggregateSearch: 'AggregateSearch',
 };
@@ -76,12 +75,12 @@ export const config: PermissionsConfig<
           },
         },
         {
-          action: [ActionType.Read, ActionType.GetValues, ActionType.GetUsage],
+          action: [ActionType.Read],
           subject: SubjectType.Event,
           conditions: workspaceFilter,
         },
         {
-          action: [ActionType.AggregateSearch],
+          action: [ActionType.GetUsage, ActionType.AggregateSearch],
           subject: SubjectType.Workspace,
           conditions: {
             id: '${subject.id}',
@@ -103,9 +102,16 @@ export const config: PermissionsConfig<
           },
         },
         {
-          action: [ActionType.Read, ActionType.GetValues, ActionType.GetUsage],
+          action: [ActionType.Read],
           subject: SubjectType.Event,
           conditions: workspaceFilter,
+        },
+        {
+          action: [ActionType.GetUsage, ActionType.AggregateSearch],
+          subject: SubjectType.Workspace,
+          conditions: {
+            id: '${subject.id}',
+          },
         },
         {
           inverted: true,
@@ -124,7 +130,7 @@ export const config: PermissionsConfig<
   ],
   abac: [
     {
-      action: [ActionType.Read, ActionType.GetValues],
+      action: [ActionType.Read],
       subject: SubjectType.Event,
       conditions: {
         'target.userTopic': {
@@ -134,7 +140,7 @@ export const config: PermissionsConfig<
     },
 
     {
-      action: [ActionType.Read, ActionType.GetValues],
+      action: [ActionType.Read],
       subject: SubjectType.Event,
       conditions: {
         'target.userId': '${user.id}',
@@ -142,7 +148,7 @@ export const config: PermissionsConfig<
     },
 
     {
-      action: [ActionType.Read, ActionType.GetValues],
+      action: [ActionType.Read],
       subject: SubjectType.Event,
       conditions: {
         'target.sessionId': '${user.sessionId}',

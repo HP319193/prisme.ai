@@ -2822,52 +2822,6 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
-    namespace EventsValues {
-        namespace Parameters {
-            export type AfterDate = string;
-            export type AppInstanceDepth = number;
-            export type BeforeDate = string;
-            export type BeforeId = string;
-            export type Fields = string;
-            export type Limit = number;
-            export type Page = number;
-            export interface Query {
-                [name: string]: any;
-            }
-            export type Text = string;
-            export type Types = string;
-            export type WorkspaceId = string;
-        }
-        export interface PathParameters {
-            workspaceId: Parameters.WorkspaceId;
-        }
-        export interface QueryParameters {
-            text?: Parameters.Text;
-            beforeId?: Parameters.BeforeId;
-            appInstanceDepth?: Parameters.AppInstanceDepth;
-            query?: Parameters.Query;
-            types?: Parameters.Types;
-            afterDate?: Parameters.AfterDate;
-            beforeDate?: Parameters.BeforeDate;
-            page?: Parameters.Page;
-            limit?: Parameters.Limit;
-            fields: Parameters.Fields;
-        }
-        namespace Responses {
-            export interface $200 {
-                result: {
-                    [name: string]: {
-                        value: any;
-                        count: number;
-                    }[];
-                };
-            }
-            export type $400 = Prismeai.BadParametersError;
-            export type $401 = Prismeai.AuthenticationError;
-            export type $403 = Prismeai.ForbiddenError;
-            export type $404 = Prismeai.ObjectNotFoundError;
-        }
-    }
     namespace GetApp {
         namespace Parameters {
             export type AppSlug = string;
