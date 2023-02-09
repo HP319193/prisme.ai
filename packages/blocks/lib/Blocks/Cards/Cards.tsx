@@ -151,16 +151,15 @@ export const Cards = ({
 
   const getCoverStyle = useCallback(
     (index: number) => {
-      if (cardsIsShort(cards, variant) || cardsIsBlocks(cards, variant)) return;
+      if (cardsIsShort(cards, variant) || cardsIsBlocks(cards, variant))
+        return null;
 
       const cover = (cards[index] || {}).cover;
 
+      if (!cover) return null;
+
       return {
-        background: `${
-          cover
-            ? `url("${cover}")`
-            : 'linear-gradient(rgba(81, 81, 81, 0), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.20)), rgb(140, 140, 140)'
-        }`,
+        background: `url("${cover}")`,
       };
     },
     [cards]
