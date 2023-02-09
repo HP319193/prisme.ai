@@ -67,7 +67,7 @@ export const FieldTextUpload = ({
       }
     };
     reader.readAsDataURL(file);
-  }, []);
+  }, [setPreviewLabel, setPreview, preview, uploadFile]);
 
   return (
     <FieldContainer {...props} className="pr-form-upload">
