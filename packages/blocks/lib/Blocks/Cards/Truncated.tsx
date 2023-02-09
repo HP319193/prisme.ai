@@ -1,17 +1,27 @@
 import { Tooltip } from 'antd';
-import { FC, HTMLAttributes, useEffect, useRef, useState } from 'react';
+import {
+  HTMLAttributes,
+  ReactElement,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { truncate } from '../../utils/truncate';
 
 interface TruncatedProps extends HTMLAttributes<HTMLDivElement> {
   className?: string;
   ellipsis?: string;
+  children: (text: string) => ReactElement | string;
+  text: string;
 }
 
-export const Truncated: FC<TruncatedProps> = ({
+export const Truncated = ({
   className,
   children,
+  text,
   ellipsis,
   ...props
-}) => {
+}: TruncatedProps) => {
   const refContainer = useRef<HTMLDivElement>(null);
   const refOverflowed = useRef<HTMLDivElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
@@ -24,9 +34,9 @@ export const Truncated: FC<TruncatedProps> = ({
   }, []);
 
   return (
-    <Tooltip title={isTruncated && children}>
+    <Tooltip title={isTruncated && truncate(`${text}`, 350)}>
       <div ref={refContainer} className={`relative ${className}`} {...props}>
-        <div ref={refOverflowed}>{children}</div>
+        <div ref={refOverflowed}>{children(text)}</div>
         {isTruncated && ellipsis && (
           <div className="absolute bottom-0 right-0">{ellipsis}</div>
         )}

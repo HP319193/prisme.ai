@@ -66,14 +66,18 @@ const Square = ({
                         <div className={tw`flex flex-col text-white`}>
                           <Truncated
                             className={tw`font-bold text-[1.25rem] mb-2 leading-[1.2] max-h-[4.6rem] overflow-hidden`}
+                            text={localize(title)}
                           >
-                            {localize(title)}
+                            {(truncatedText) => truncatedText}
                           </Truncated>
                           <Truncated
                             className={tw`text-[0.875rem] leading-[1.2] max-h-[4.2rem] overflow-hidden`}
+                            text={localize(description)}
                             ellipsis="…"
                           >
-                            <RichText>{description || ''}</RichText>
+                            {(truncatedText) => (
+                              <RichText>{truncatedText || ''}</RichText>
+                            )}
                           </Truncated>
                         </div>
                       </div>
