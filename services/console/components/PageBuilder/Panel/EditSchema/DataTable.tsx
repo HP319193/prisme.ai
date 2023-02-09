@@ -80,8 +80,7 @@ const schema = {
                 'pages.blocks.datatable.settings.columns.items.actions.items.label',
               description:
                 'pages.blocks.datatable.settings.columns.items.actions.items.description',
-              add:
-                'pages.blocks.datatable.settings.columns.items.actions.items.add',
+              add: 'pages.blocks.datatable.settings.columns.items.actions.items.add',
               remove:
                 'pages.blocks.datatable.settings.columns.items.actions.items.remove',
               type: 'object',
@@ -128,6 +127,12 @@ const schema = {
           title: 'pages.blocks.datatable.settings.pagination.pages.label',
           description:
             'pages.blocks.datatable.settings.pagination.pages.description',
+        },
+        pageSize: {
+          type: 'number',
+          title: 'pages.blocks.datatable.settings.pagination.pageSize.label',
+          description:
+            'pages.blocks.datatable.settings.pagination.pageSize.description',
         },
       },
     },

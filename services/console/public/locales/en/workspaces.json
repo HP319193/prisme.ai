@@ -1054,6 +1054,10 @@
             "pages": {
               "label": "Pages count",
               "description": "Number of pages available."
+            },
+            "pageSize": {
+              "label": "Pages size",
+              "description": "Number of item per page."
             }
           }
         }

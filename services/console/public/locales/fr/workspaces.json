@@ -1054,6 +1054,10 @@
             "pages": {
               "label": "Nombre de pages",
               "description": "Nombre de pages disponibles."
+            },
+            "pageSize": {
+              "label": "Nombre d'éléments par page",
+              "description": "Nombre d'éléments à afficher sur chaque page."
             }
           }
         }
