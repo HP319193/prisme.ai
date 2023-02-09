@@ -122,7 +122,7 @@ const schema = {
           description:
             'pages.blocks.datatable.settings.pagination.page.description',
         },
-        pages: {
+        itemCount: {
           type: 'number',
           title: 'pages.blocks.datatable.settings.pagination.pages.label',
           description:

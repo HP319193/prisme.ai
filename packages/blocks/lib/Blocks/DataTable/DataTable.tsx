@@ -22,7 +22,7 @@ export interface DataTableConfig {
   pagination?: {
     event: string;
     page: number;
-    pages: number;
+    itemCount: number;
     pageSize?: number;
   };
 }
@@ -143,9 +143,10 @@ export const DataTable: BlockComponent = () => {
 
   const pagination = useMemo(() => {
     if (!config.pagination || !config.pagination.event) return undefined;
-    const { event, page, pages, pageSize = 10 } = config.pagination;
+    const { event, page, itemCount, pageSize = 10 } = config.pagination;
+
     return {
-      total: pages,
+      total: itemCount,
       current: page,
       pageSize: pageSize,
       onChange: (page) => {
@@ -154,7 +155,7 @@ export const DataTable: BlockComponent = () => {
         });
       },
     } as TableProps<any>['pagination'];
-  }, []);
+  }, [config.pagination]);
 
   return (
     <div className={tw`block-data-table`}>

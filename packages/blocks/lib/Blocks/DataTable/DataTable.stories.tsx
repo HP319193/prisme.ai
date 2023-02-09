@@ -345,7 +345,7 @@ WithEventBasedPagination.args = {
     pagination: {
       event: 'paginate',
       page: 3,
-      pages: 42,
+      itemCount: 50,
       pageSize: 2,
     },
   } as DataTableConfig,

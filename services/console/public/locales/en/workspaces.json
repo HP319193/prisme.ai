@@ -1051,9 +1051,9 @@
               "label": "Current page number",
               "description": "Will display the number of the page displayed."
             },
-            "pages": {
-              "label": "Pages count",
-              "description": "Number of pages available."
+            "itemCount": {
+              "label": "Item count",
+              "description": "Total number of items."
             },
             "pageSize": {
               "label": "Pages size",
