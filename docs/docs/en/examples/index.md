@@ -1,7 +1,7 @@
 # Form Management
 Build a form with file upload and send the result by email & post data to salesforce
 
-## [Live Demo](https://form-mail-salesforce.pages.prisme.ai)
+## [Live demo](https://form-mail-salesforce.pages.prisme.ai)
 
 <details>
   <summary>See DSUL </summary>
@@ -150,7 +150,7 @@ automations:
 
 # Mini Marketplace
 A projetct starter to have a marketplace to manage freelances & projects
-## [Live Demo](https://mini-marketplace.pages.prisme.ai)
+## [Live demo](https://mini-marketplace.pages.prisme.ai)
 
 
 <details>
@@ -704,7 +704,7 @@ automations:
 # Chatbot with slot filling
 Type message such as " I Love fruits" or "I love kiwi"
 
-## [Online demo](https://prefered-fruits.pages.prisme.ai/en)
+## [Live demo](https://prefered-fruits.pages.prisme.ai/en)
 
 <details>
   <summary>See DSUL</summary> 
@@ -889,6 +889,8 @@ This uses a Collection app which was renamed as "TodoList".
 
 Video explanation: https://www.loom.com/share/3b68d9c039104bb1a730bd8c393b140e
 
+## [Live demo](https://todo-list-example.pages.prisme.ai/en/long-table)
+
 <details>
   <summary>See DSUL</summary> 
 
@@ -902,8 +904,14 @@ blocks:
   - slug: DataTable
     config:
       data: []
+      columns:
+        - label: Task
+          key: task
+        - label: Content
+          key: content
       onInit: initTodoTable
       updateOn: updateTodoTable
+
 ```
 
 Automation:
