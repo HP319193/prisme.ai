@@ -98,6 +98,7 @@ export type UiOptionsSlider = {
       label: string;
       description: string;
       value: string | number;
+      className?: string;
     }[];
     step?: number;
   };

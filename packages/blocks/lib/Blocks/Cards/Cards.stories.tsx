@@ -18,7 +18,7 @@ const Template: Story<any> = () => {
         subtitle: 'Publié le 13 juillet 2022',
         tag: 'Mobilités',
         description:
-          'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
+          'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village. Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village. Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
         backgroundColor: 'black',
       },
       {
@@ -26,8 +26,7 @@ const Template: Story<any> = () => {
           'Gares de Labège : attention au travaux !  ainsi que ce texte long très long mais bon cest pas grave',
         subtitle:
           'Publié le 13 juillet 2022 ainsi que ce texte long très long mais bon cest pas grave',
-        tag:
-          'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
+        tag: 'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
         description:
           'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
         backgroundColor: 'white',
@@ -37,8 +36,7 @@ const Template: Story<any> = () => {
           'Gares de Labège : attention au travaux !  ainsi que ce texte long très long mais bon cest pas grave',
         subtitle:
           'Publié le 13 juillet 2022 ainsi que ce texte long très long mais bon cest pas grave',
-        tag:
-          'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
+        tag: 'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
         description:
           'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
         backgroundColor: 'transparent-black',
@@ -48,8 +46,7 @@ const Template: Story<any> = () => {
           'Gares de Labège : attention au travaux !  ainsi que ce texte long très long mais bon cest pas grave',
         subtitle:
           'Publié le 13 juillet 2022 ainsi que ce texte long très long mais bon cest pas grave',
-        tag:
-          'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
+        tag: 'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
         description:
           'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
         backgroundColor: 'transparent-white',
@@ -71,7 +68,7 @@ const Template: Story<any> = () => {
         subtitle: 'Publié le 13 juillet 2022',
         tag: 'Mobilités',
         description:
-          'Pour accueillir<br/>des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
+          'Pour accueillir <br/> des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
         cover:
           'https://i.postimg.cc/Hx1yXdjj/Capture-d-e-cran-2021-04-29-a-16-03-1.png',
         action: {
@@ -87,12 +84,18 @@ const Template: Story<any> = () => {
           'Gares de Labège : attention au travaux !  ainsi que ce texte long très long mais bon cest pas grave',
         subtitle:
           'Publié le 13 juillet 2022 ainsi que ce texte long très long mais bon cest pas grave',
-        tag:
-          'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
+        tag: 'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
         description:
           'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
-        cover:
-          'https://i.postimg.cc/Hx1yXdjj/Capture-d-e-cran-2021-04-29-a-16-03-1.png',
+      },
+      {
+        title:
+          'Gares de Labège : attention au travaux !  ainsi que ce texte long très long mais bon cest pas grave',
+        subtitle:
+          'Publié le 13 juillet 2022 ainsi que ce texte long très long mais bon cest pas grave',
+        tag: 'Mobilités  ainsi que ce texte long très long mais bon cest pas grave',
+        description:
+          'Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village. Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village. Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village. Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village. Pour accueillir des rames TER nouvelle génération et offrir des avantages de confort aux voyageurs, SNCF Réseau réalise des travaux d’allongement de quais dans les gares de Labège-Innopole et Labège-Village.',
       },
       {},
       {},
@@ -116,8 +119,6 @@ const Template: Story<any> = () => {
           'Les Anis de Flavigny avec un texte plus long car cest cool des fois',
         description:
           'Confiseur(s) avec un texte plus long car cest cool des fois avec un texte plus long car cest cool des fois',
-        cover:
-          'https://i.postimg.cc/Hx1yXdjj/Capture-d-e-cran-2021-04-29-a-16-03-1.png',
       },
       {},
       {},
@@ -136,14 +137,12 @@ const Template: Story<any> = () => {
         content: [
           {
             type: 'event',
-            text:
-              'test but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'test but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'triggerEvent',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
             popup: true,
           },
@@ -151,26 +150,22 @@ const Template: Story<any> = () => {
       },
       {
         title: 'Les Anis de Flavigny but this is sooo long why do I write this',
-        description: 'Confiseur(s) but this is sooo long why do I write this',
-        cover:
-          'https://i.postimg.cc/Hx1yXdjj/Capture-d-e-cran-2021-04-29-a-16-03-1.png',
+        description:
+          'Confiseur(s) but this is sooo long why do I write this Confiseur(s) but this is sooo long why do I write this Confiseur(s) but this is sooo long why do I write this',
         content: [
           {
             type: 'event',
-            text:
-              'test but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'test but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'triggerEvent',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
         ],
@@ -183,32 +178,27 @@ const Template: Story<any> = () => {
         content: [
           {
             type: 'event',
-            text:
-              'test but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'test but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'triggerEvent',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
         ],
@@ -221,8 +211,7 @@ const Template: Story<any> = () => {
         content: [
           {
             type: 'url',
-            text:
-              'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
+            text: 'Contact but this is sooo long why do I write this but this is sooo long why do I write this',
             value: 'http://google.com',
           },
         ],

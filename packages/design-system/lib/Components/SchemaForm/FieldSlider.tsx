@@ -18,7 +18,7 @@ export const FieldSlider = ({
   const marks = useMemo(
     () =>
       (steps || []).reduce(
-        (prev, { label, description, value }) => ({
+        (prev, { label, description, value, className }) => ({
           ...prev,
           [value]: {
             label: (
@@ -27,6 +27,7 @@ export const FieldSlider = ({
                   <div dangerouslySetInnerHTML={{ __html: description }} />
                 }
                 placement="bottom"
+                overlayClassName={className}
               >
                 <div>{label}</div>
               </Tooltip>
@@ -43,7 +44,7 @@ export const FieldSlider = ({
   }, [steps]);
 
   return (
-    <FieldContainer {...props} className="pr-form-text pr-form-text--textarea">
+    <FieldContainer {...props} className="pr-form-text pr-form-text--slider">
       <Label
         field={field}
         schema={props.schema}
@@ -61,6 +62,7 @@ export const FieldSlider = ({
             className="flex-1"
             min={min}
             max={max}
+            tooltip={{ formatter: null }}
           />
         </Tooltip>
       </div>
