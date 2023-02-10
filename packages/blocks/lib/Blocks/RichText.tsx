@@ -6,6 +6,7 @@ import useLocalizedText from '../useLocalizedText';
 import parser, { DOMNode, Element, domToReact } from 'html-react-parser';
 import { marked } from 'marked';
 import { BaseBlock } from './BaseBlock';
+import { keysKebabToCamel } from '../utils/kebabToCamel';
 
 interface RichTextConfig {
   content: string | Prismeai.LocalizedText;
@@ -133,7 +134,12 @@ export const RichText = ({
           );
         case 'pr-block':
           const { slug, ...config } = domNode.attribs;
-          return <BlockLoader name={slug} config={parseConfig(config)} />;
+          return (
+            <BlockLoader
+              name={slug}
+              config={parseConfig(keysKebabToCamel(config))}
+            />
+          );
         default:
           return domNode;
       }

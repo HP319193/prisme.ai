@@ -1,7 +1,7 @@
 # Form Management
 Build a form with file upload and send the result by email & post data to salesforce
 
-## [Live Demo](https://form-mail-salesforce.pages.prisme.ai)
+## [Live demo](https://form-mail-salesforce.pages.prisme.ai)
 
 <details>
   <summary>See DSUL </summary>
@@ -150,7 +150,7 @@ automations:
 
 # Mini Marketplace
 A projetct starter to have a marketplace to manage freelances & projects
-## [Live Demo](https://mini-marketplace.pages.prisme.ai)
+## [Live demo](https://mini-marketplace.pages.prisme.ai)
 
 
 <details>
@@ -704,7 +704,7 @@ automations:
 # Chatbot with slot filling
 Type message such as " I Love fruits" or "I love kiwi"
 
-## [Online demo](https://prefered-fruits.pages.prisme.ai/en)
+## [Live demo](https://prefered-fruits.pages.prisme.ai/en)
 
 <details>
   <summary>See DSUL</summary> 
@@ -879,6 +879,84 @@ automations:
             - Dialog Box.sendText:
                 text: '{{payload.message.text}}'
 
+```
+</details>
+
+# Paginated DataTable
+
+This page and automation allow to browse big collections with infinite amount of data.
+This uses a Collection app which was renamed as "TodoList". 
+
+Video explanation: https://www.loom.com/share/3b68d9c039104bb1a730bd8c393b140e
+
+## [Live demo](https://todo-list-example.pages.prisme.ai/en/long-table)
+
+<details>
+  <summary>See DSUL</summary> 
+
+Page:
+
+```yaml
+slug: long-table
+name:
+  fr: Long Table
+blocks:
+  - slug: DataTable
+    config:
+      data: []
+      columns:
+        - label: Task
+          key: task
+        - label: Content
+          key: content
+      onInit: initTodoTable
+      updateOn: updateTodoTable
+
+```
+
+Automation:
+
+```yaml
+slug: updateTodoTable
+name: Update Todo Table
+do:
+  - set:
+      name: pageSize
+      value: 10
+  - conditions:
+      '{{run.trigger.value}} == "accessPage"':
+        - set:
+            name: page
+            value: '{{payload.page}}'
+      default:
+        - set:
+            name: page
+            value: 1
+  - TodoList.find:
+      query: {}
+      options:
+        limit: '{{pageSize}}'
+        page: '{{page}}'
+      output: tasks
+  - TodoList.reportUsage:
+      output: tasksUsage
+  - emit:
+      options:
+        persist: true
+      autocomplete: {}
+      event: updateTodoTable
+      payload:
+        data: '{{tasks}}'
+        pagination:
+          event: accessPage
+          page: '{{page}}'
+          itemCount: '{{tasksUsage.documents}}'
+          pageSize: '{{pageSize}}'
+when:
+  events:
+    - initTodoTable
+    - accessPage
+  endpoint: false
 ```
 </details>
 
