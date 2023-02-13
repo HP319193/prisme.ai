@@ -166,7 +166,7 @@ const Filters = () => {
                 showArrow
                 placement="bottom"
                 content={
-                  <div>
+                  <div className="flex flex-col">
                     {builtinFilters.map(({ label, filter }) => (
                       <Button
                         key={label}
@@ -179,6 +179,7 @@ const Filters = () => {
                           setSuggestionsPopupState(false);
                         }}
                         icon={<FilterOutlined />}
+                        className="!text-left"
                       >
                         {label}
                       </Button>
