@@ -62,6 +62,7 @@ export const Header = ({ Link, events, className, ...config }: HeaderProps) => {
             <Action
               type={props.type}
               value={props.value}
+              payload={props.payload}
               text={props.text}
               Link={Link}
               events={events}
