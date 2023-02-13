@@ -1,5 +1,9 @@
 import express, { Request, Response } from 'express';
-import { ELASTIC_SEARCH_TIMEOUT } from '../../../config';
+import {
+  ELASTIC_SEARCH_FORBIDDEN_AGGS,
+  ELASTIC_SEARCH_FORBIDDEN_MAX_DEPTH,
+  ELASTIC_SEARCH_TIMEOUT,
+} from '../../../config';
 import { PrismeError, SearchError } from '../../errors';
 import { ActionType, SubjectType } from '../../permissions';
 import { EventsStore } from '../../services/events/store';
@@ -33,6 +37,7 @@ export function initSearchRoutes(eventsStore: EventsStore) {
         SubjectType.Workspace,
         workspaceId
       );
+      validateElasticAggregation({ aggs });
     }
     try {
       const { hits, aggregations } = await elastic._search(
@@ -74,4 +79,26 @@ export function initSearchRoutes(eventsStore: EventsStore) {
   app.post(`/`, asyncRoute(<any>getWorkspaceSearchHandler));
 
   return app;
+}
+
+function validateElasticAggregation(agg: any, depth = 0) {
+  const { aggs: subAggs, ...curAggs } = agg || {};
+  if (subAggs) {
+    Object.entries(subAggs).forEach(([aggName, agg]) =>
+      validateElasticAggregation(agg, depth + 1)
+    );
+  }
+  const forbiddenKeyword = ELASTIC_SEARCH_FORBIDDEN_AGGS.find(
+    (forbiddenKeyword) => forbiddenKeyword in curAggs
+  );
+  if (forbiddenKeyword) {
+    throw new SearchError(
+      `Can't process aggregations : keyword '${forbiddenKeyword}' is forbidden'`
+    );
+  }
+  if (depth > ELASTIC_SEARCH_FORBIDDEN_MAX_DEPTH) {
+    throw new SearchError(
+      `Can't process aggregations : exceeds maximum depth of ${ELASTIC_SEARCH_FORBIDDEN_MAX_DEPTH}`
+    );
+  }
 }
