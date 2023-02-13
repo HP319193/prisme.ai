@@ -1397,7 +1397,8 @@
     "type_apikeys.updated": "An API key has been updated",
     "type_apikeys.created": "An API key has been created",
     "type_apikeys.deleted": "An API key has been deleted",
-    "type_error": "<error>An error has occurred</error>"
+    "type_error": "<error>An error has occurred</error>",
+    "replay": "Emit this event again with same payload."
   },
   "form": {
     "raw": "Insert a raw value (allows you to enter text, and therefore interpolated variables)",

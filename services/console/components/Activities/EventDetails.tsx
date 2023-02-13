@@ -1,11 +1,15 @@
 import { FC, MouseEvent, useCallback, useMemo } from 'react';
-import { Table } from '@prisme.ai/design-system';
+import { Table, Tooltip } from '@prisme.ai/design-system';
 import { Event } from '@prisme.ai/sdk';
 import { useTranslation } from 'next-i18next';
 import { selectText } from '../../utils/dom';
 import { truncate } from '../../utils/strings';
+import { PlayCircleOutlined } from '@ant-design/icons';
+import { useWorkspace } from '../../providers/Workspace';
 
-interface EventsDetailsProps extends Event<Date> {}
+interface EventsDetailsProps {
+  event: Event<Date>;
+}
 
 const PAYLOAD_TRUNCATE_LENGTH = 400;
 
@@ -24,7 +28,10 @@ interface EventRecord {
   fullPayload: string;
 }
 
-export const EventDetails: FC<EventsDetailsProps> = (event) => {
+export const EventDetails: FC<EventsDetailsProps & { replay: () => void }> = ({
+  replay,
+  event,
+}) => {
   const { t } = useTranslation('workspaces');
   const dataSource = useMemo(() => {
     const stringifiedPayload = JSON.stringify(event.payload, null, ' ');
@@ -130,29 +137,58 @@ export const EventDetails: FC<EventsDetailsProps> = (event) => {
     }
   }, []);
 
+  const isEmit = event?.source?.serviceTopic === 'topic:runtime:emit';
+
   return (
-    <Table
-      dataSource={dataSource}
-      columns={[
-        { title: t('events.details.name'), dataIndex: 'name', key: 'name' },
-        { title: t('events.details.value'), dataIndex: 'value', key: 'value' },
-      ]}
-      bordered
-      pagination={{ pageSize: 50, position: [] }}
-      scroll={{ y: 500 }}
-      expandable={{
-        expandedRowRender: (record) => record.payloadValue,
-        rowExpandable: (record) =>
-          record.name === 'payload' &&
-          !!record.fullPayload &&
-          record.fullPayload.length > PAYLOAD_TRUNCATE_LENGTH,
-      }}
-      expandRowByClick
-      onRow={() => ({
-        onClick: onRowClick,
-      })}
-    />
+    <div className="relative">
+      <Table
+        dataSource={dataSource}
+        columns={[
+          { title: t('events.details.name'), dataIndex: 'name', key: 'name' },
+          {
+            title: t('events.details.value'),
+            dataIndex: 'value',
+            key: 'value',
+          },
+        ]}
+        bordered
+        pagination={{ pageSize: 50, position: [] }}
+        scroll={{ y: 500 }}
+        expandable={{
+          expandedRowRender: (record) => record.payloadValue,
+          rowExpandable: (record) =>
+            record.name === 'payload' &&
+            !!record.fullPayload &&
+            record.fullPayload.length > PAYLOAD_TRUNCATE_LENGTH,
+        }}
+        expandRowByClick
+        onRow={() => ({
+          onClick: onRowClick,
+        })}
+      />
+      {isEmit && (
+        <Tooltip title={t('feed.replay')} placement="right">
+          <button
+            className="absolute top-[1.3rem] left-[1.3rem]"
+            onClick={replay}
+          >
+            <PlayCircleOutlined />
+          </button>
+        </Tooltip>
+      )}
+    </div>
   );
 };
 
-export default EventDetails;
+export const LinkedEventDetails: FC<Event<Date>> = (event) => {
+  const { events } = useWorkspace();
+  const replay = useCallback(() => {
+    events.emit(event.type, event.payload);
+  }, [events, event.payload, event.type]);
+  return useMemo(() => <EventDetails event={event} replay={replay} />, [
+    event,
+    replay,
+  ]);
+};
+
+export default LinkedEventDetails;
