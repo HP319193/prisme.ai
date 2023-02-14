@@ -81,10 +81,10 @@ class Workspaces {
           if (!SLUG_VALIDATION_REGEXP.test(workspaceSlug!)) {
             throw new InvalidSlugError(workspaceSlug);
           }
-          await this.pages.updatePagesWorkspaceSlug(
+          await this.pages.updateWorkspacePagesMeta(
             workspace.id!,
-            workspaceSlug,
-            oldWorkspaceSlug
+            { workspaceSlug },
+            { workspaceSlug: oldWorkspaceSlug }
           );
         },
       },
@@ -113,6 +113,27 @@ class Workspaces {
               oldConfig: allDiffs[0].oldValue,
             },
             { workspaceId: workspace.id! }
+          );
+        },
+      },
+
+      {
+        path: 'customDomains',
+        handler: async (allDiffs: DSULDiff[]) => {
+          if (allDiffs?.[0]?.type === DiffType.ValueUnchanged) {
+            return;
+          }
+          const workspace = allDiffs[0].root;
+          if (!workspace?.id || !workspace?.slug) {
+            return;
+          }
+          const customDomains = allDiffs[0].value as string[];
+          const oldCustomDomains = allDiffs[0].oldValue as string[];
+
+          await this.pages.updateWorkspacePagesMeta(
+            workspace.id!,
+            { customDomains },
+            { customDomains: oldCustomDomains }
           );
         },
       },
@@ -341,6 +362,7 @@ class Workspaces {
       description: workspace.description,
       slug: workspace.slug || hri.random(),
       labels: workspace.labels,
+      customDomains: workspace.customDomains,
     };
 
     try {

@@ -133,7 +133,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
       },
     };
 
-    workspaceCrud.pages.updatePagesWorkspaceSlug = jest.fn();
+    workspaceCrud.pages.updateWorkspacePagesMeta = jest.fn();
 
     const result = await workspaceCrud.updateWorkspace(
       workspace.id!,
@@ -150,10 +150,10 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
         workspaceId: result.id,
       }
     );
-    expect(workspaceCrud.pages.updatePagesWorkspaceSlug).toHaveBeenCalledWith(
+    expect(workspaceCrud.pages.updateWorkspacePagesMeta).toHaveBeenCalledWith(
       workspace.id!,
-      workspace.slug,
-      lastDSUL.slug
+      { workspaceSlug: workspace.slug },
+      { workspaceSlug: lastDSUL.slug }
     );
     expect(mockedBroker.send).toHaveBeenCalledWith(
       'workspaces.blocks.updated',

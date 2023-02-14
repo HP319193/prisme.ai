@@ -48,7 +48,11 @@ const getMockedBroker = () => ({
 
 describe('Basic ops should call accessManager, DSULStorage, broker & Apps', () => {
   const mockedAccessManager: any = getMockedAccessManager();
-  const dsulStorage = new MockStorage(DSULType.Pages);
+  const dsulStorage = new MockStorage(DSULType.Pages, undefined, {
+    [`workspaces/${WORKSPACE_ID}/versions/current/index.yml`]: `
+      slug: 'myWorkspaceSlug'
+      `,
+  });
   let mockedBroker: any;
   let appInstancesCrud: AppInstances;
   let pagesCrud: Pages;
@@ -220,6 +224,7 @@ describe('Detailed pages', () => {
     {},
     {
       [`workspaces/${WORKSPACE_ID}/versions/current/index.yml`]: `
+      slug: 'myWorkspaceSlug'
       blocks:
         myBlock:
           url: 'myBlockURL'`,
