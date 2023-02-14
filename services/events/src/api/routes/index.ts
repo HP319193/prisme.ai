@@ -4,6 +4,7 @@ import { Application } from 'express';
 import sys from './sys';
 import { initEventsRoutes } from './events';
 import { initUsageRoutes } from './usage';
+import { initSearchRoutes } from './search';
 import { initWebsockets } from './websockets';
 import { Subscriptions } from '../../services/events/Subscriptions';
 import { EventsStore } from '../../services/events/store';
@@ -27,6 +28,10 @@ export const init = (
   app.use(
     `${root}/workspaces/:workspaceId/usage`,
     initUsageRoutes(eventsStore)
+  );
+  app.use(
+    `${root}/workspaces/:workspaceId/search`,
+    initSearchRoutes(eventsStore)
   );
 };
 export default init;

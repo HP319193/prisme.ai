@@ -148,7 +148,7 @@ export const RichText = ({
 
   return (
     <div className={`pr-block-rich-text ${className}`}>
-      {parser(marked(localize(children)), options)}
+      {parser(marked(localize(children) || ''), options)}
     </div>
   );
 };

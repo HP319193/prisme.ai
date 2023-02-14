@@ -1,5 +1,5 @@
-import { ReactElement, useCallback, useEffect, useMemo, useRef } from 'react';
-import { Form, FormSpy } from 'react-final-form';
+import { ReactElement, useCallback, useMemo, useRef } from 'react';
+import { Form } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import Field from './Field';
 import { Schema } from './types';
@@ -16,6 +16,7 @@ import FieldArray from './FieldArray';
 import FieldSelect from './FieldSelect';
 import FieldRadio from './FieldRadio';
 import FieldText from './FieldText';
+import { OnChange } from 'react-final-form-listeners';
 
 export interface FormProps {
   schema: Schema;
@@ -29,23 +30,6 @@ export interface FormProps {
   components?: Partial<SchemaFormContext['components']>;
   utils?: Partial<SchemaFormContext['utils']>;
 }
-
-const OnChange = ({
-  values,
-  onChange,
-}: {
-  values: any;
-  onChange: FormProps['onChange'];
-}) => {
-  const dirty = useRef(false);
-  useEffect(() => {
-    const { current: isDirty } = dirty;
-    dirty.current = true;
-    if (!isDirty || !onChange || !values) return;
-    onChange(values.values);
-  }, [values, onChange, dirty]);
-  return null;
-};
 
 const DefaultLocales = {};
 
@@ -121,11 +105,12 @@ export const SchemaForm = ({
             }`}
           >
             {onChange && (
-              <FormSpy subscription={{ values: true }}>
-                {({ values }) => (
-                  <OnChange values={values} onChange={onChange} />
-                )}
-              </FormSpy>
+              <OnChange name="values">
+                {(value, previous) => {
+                  if (previous === value) return;
+                  onChange(value);
+                }}
+              </OnChange>
             )}
             <Field schema={schema} name={root} />
             {buttons || (

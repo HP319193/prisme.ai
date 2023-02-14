@@ -17,9 +17,11 @@ export function initUsageRoutes(eventsStore: EventsStore) {
     >,
     res: Response<PrismeaiAPI.WorkspaceUsage.Responses.$200>
   ) {
-    await accessManager.throwUnlessCan(ActionType.GetUsage, SubjectType.Event, {
-      source: { workspaceId },
-    } as Prismeai.PrismeEvent);
+    await accessManager.throwUnlessCan(
+      ActionType.GetUsage,
+      SubjectType.Workspace,
+      workspaceId
+    );
     const usage = await eventsStore.workspaceUsage(workspaceId, query);
     return res.send(usage);
   }

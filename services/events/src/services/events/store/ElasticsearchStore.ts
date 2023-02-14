@@ -6,7 +6,7 @@ import {
   EVENTS_STORAGE_ES_BULK_REFRESH,
 } from '../../../../config';
 import { EventType } from '../../../eda';
-import { InvalidFiltersError, ObjectNotFoundError } from '../../../errors';
+import { ObjectNotFoundError } from '../../../errors';
 import { logger } from '../../../logger';
 import { preprocess } from './preprocess';
 import { EventsStore, SearchOptions } from './types';
@@ -274,62 +274,6 @@ export class ElasticsearchStore implements EventsStore {
       },
       ...additionalBody,
     };
-  }
-
-  async values(
-    workspaceId: string,
-    options: SearchOptions,
-    fields: string[],
-    size = 500
-  ): Promise<PrismeaiAPI.EventsValues.Responses.$200['result']> {
-    const body = this.buildSearchBody(options);
-    body.aggs = fields.reduce(
-      (aggs, field) => ({
-        ...aggs,
-        [field]: {
-          terms: {
-            field,
-            size,
-          },
-        },
-      }),
-      {}
-    );
-
-    try {
-      const { aggregations } = await this._search(
-        workspaceId,
-        { ...options, limit: 0 },
-        body
-      );
-      return Object.entries(aggregations || {}).reduce(
-        (values, [field, { buckets }]: any) => ({
-          ...values,
-          [field]: buckets.map(
-            ({
-              key: value,
-              doc_count: count,
-            }: {
-              key: string;
-              doc_count: number;
-            }) => ({
-              value,
-              count,
-            })
-          ),
-        }),
-        {}
-      );
-    } catch (error) {
-      if (
-        ((<any>error)?.message || '').includes('Text fields are not optimised')
-      ) {
-        throw new InvalidFiltersError(
-          `Can't retrieve distinct values from one of the requested fields as it looks like a 'text' field and not a 'keyword'`
-        );
-      }
-      throw error;
-    }
   }
 
   async _search(

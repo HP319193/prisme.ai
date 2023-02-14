@@ -2,6 +2,10 @@
 
 exports[`should render 1`] = `
 <div
-  className="Table"
-/>
+  className="relative"
+>
+  <div
+    className="Table"
+  />
+</div>
 `;
