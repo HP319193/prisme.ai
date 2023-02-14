@@ -1,47 +1,47 @@
-import { useBlock } from '../Provider';
+import { BlockContext, useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
 import { BaseBlock } from './BaseBlock';
 import { BaseBlockConfig } from './types';
 import { BlocksDependenciesContext } from '../Provider/blocksContext';
+import { ActionConfig, Action } from './Action';
 
 export interface BreadcrumbsConfig extends BaseBlockConfig {
-  links: {
-    href: string;
-    label: string;
+  links: ({
     className?: boolean;
-  }[];
+  } & ActionConfig)[];
 }
 export interface BreadcrumbsProps extends BreadcrumbsConfig {
   Link: BlocksDependenciesContext['components']['Link'];
+  events: BlockContext['events'];
 }
 
 export const Breadcrumbs = ({
   className = '',
   links,
   Link,
+  events,
 }: BreadcrumbsProps) => {
   const last = (links || []).length - 1;
+
   return (
     <nav
       className={`pr-block-breadcrumbs ${className}`}
       aria-label="Breadcrumb"
     >
       <ol className="pr-block-breadcrumbs__list" role="list">
-        {(links || []).map(({ href, label, className }, key) => (
+        {(links || []).map(({ className = '', ...action }, key) => (
           <li
             key={key}
             className={`pr-block-breadcrumbs__item ${className} ${
               key === last ? 'pr-block-breadcrumbs__link--current' : ''
             }`}
           >
-            {href && (
-              <Link href={href} className="pr-block-breadcrumbs__link">
-                {label}
-              </Link>
-            )}
-            {!href && (
-              <span className="pr-block-breadcrumbs__link">{label}</span>
-            )}
+            <Action
+              {...action}
+              events={events}
+              Link={Link}
+              className="pr-block-breadcrumbs__action"
+            />
           </li>
         ))}
       </ol>
@@ -69,13 +69,13 @@ const defaultStyles = `:block .pr-block-breadcrumbs__list {
 }`;
 
 export const BreadcrumbsInContext = () => {
-  const { config } = useBlock<BreadcrumbsConfig>();
+  const { config, events } = useBlock<BreadcrumbsConfig>();
   const {
     components: { Link },
   } = useBlocks();
   return (
     <BaseBlock defaultStyles={defaultStyles}>
-      <Breadcrumbs {...config} Link={Link} />
+      <Breadcrumbs {...config} Link={Link} events={events} />
     </BaseBlock>
   );
 };
