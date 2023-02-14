@@ -33,6 +33,7 @@ export const usePageEvents = (
   // init socket
   const prevSocketWorkspaceId = useRef('');
   useEffect(() => {
+    if (!user) return;
     async function initEvents() {
       if (
         !page ||
@@ -45,6 +46,7 @@ export const usePageEvents = (
       });
 
       prevSocketWorkspaceId.current = page.workspaceId;
+
       setEvents((prev) => {
         if (prev) {
           prev.destroy();

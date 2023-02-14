@@ -1,4 +1,5 @@
 import renderer, { act } from 'react-test-renderer';
+import { userContext } from '../../../console/components/UserProvider';
 import api, { Events } from '../../../console/utils/api';
 import usePageEvents from './usePageEvents';
 
@@ -38,7 +39,11 @@ it('should set events for page', async () => {
     expected = usePageEvents(page);
     return null;
   };
-  const root = renderer.create(<T page={page} />);
+  const root = renderer.create(
+    <userContext.Provider value={{ user: {} } as any}>
+      <T page={page} />
+    </userContext.Provider>
+  );
   await act(async () => {
     return;
   });
@@ -53,7 +58,11 @@ it('should set events for page', async () => {
   expect(expected.events).toBe(events);
 
   await act(async () => {
-    await root.update(<T page={{ ...page, workspaceId: '43' }} />);
+    await root.update(
+      <userContext.Provider value={{ user: {} } as any}>
+        <T page={{ ...page, workspaceId: '43' }} />
+      </userContext.Provider>
+    );
   });
 
   expect(expected.events.destroy).toHaveBeenCalled();
