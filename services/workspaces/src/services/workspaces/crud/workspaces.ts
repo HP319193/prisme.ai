@@ -7,6 +7,7 @@ import { DSULType, DSULStorage } from '../../DSULStorage';
 import {
   AccessManager,
   ActionType,
+  getSuperAdmin,
   SubjectType,
   WorkspaceMetadata,
 } from '../../../permissions';
@@ -129,7 +130,25 @@ class Workspaces {
           }
           const customDomains = allDiffs[0].value as string[];
           const oldCustomDomains = allDiffs[0].oldValue as string[];
-
+          const superAdmin = await getSuperAdmin(
+            this.accessManager as AccessManager
+          );
+          const conflictingWorkspaces = await superAdmin.findAll(
+            SubjectType.Workspace,
+            {
+              id: {
+                $ne: workspace.id,
+              },
+              customDomains: {
+                $in: customDomains,
+              },
+            }
+          );
+          if (conflictingWorkspaces?.length) {
+            throw new AlreadyUsedError(
+              'One of the custom domains is already used by another workspae'
+            );
+          }
           await this.pages.updateWorkspacePagesMeta(
             workspace.id!,
             { customDomains },
