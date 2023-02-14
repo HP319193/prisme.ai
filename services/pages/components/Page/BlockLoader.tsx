@@ -121,26 +121,25 @@ export const BlockLoader: TBlockLoader = ({
 
   const alreadySentInit = useRef(false);
   useEffect(() => {
-    if (!user || !listening || !events || alreadySentInit.current) return;
-    if (onInit) {
-      alreadySentInit.current = true;
-      const payload: any = {
-        page: page && page.id,
-        config: initialConfig,
-      };
-      if (window.location.search) {
-        payload.query = Array.from(
-          new URLSearchParams(window.location.search).entries()
-        ).reduce(
-          (prev, [key, value]) => ({
-            ...prev,
-            [key]: value,
-          }),
-          {}
-        );
-      }
-      events.emit(onInit, payload);
+    if (!user || !listening || !events || alreadySentInit.current || !onInit)
+      return;
+    alreadySentInit.current = true;
+    const payload: any = {
+      page: page && page.id,
+      config: initialConfig,
+    };
+    if (window.location.search) {
+      payload.query = Array.from(
+        new URLSearchParams(window.location.search).entries()
+      ).reduce(
+        (prev, [key, value]) => ({
+          ...prev,
+          [key]: value,
+        }),
+        {}
+      );
     }
+    events.emit(onInit, payload);
   }, [events, initialConfig, listening, onInit, page, user]);
 
   const onAppConfigUpdate = useCallback(
