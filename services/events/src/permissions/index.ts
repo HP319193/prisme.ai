@@ -8,7 +8,7 @@ import { config, Role, SubjectType, ActionType } from './config';
 export { SubjectType, Role, ActionType };
 
 type SubjectInterfaces = {
-  [SubjectType.Workspace]: { id: string; name: string };
+  [SubjectType.Workspace]: { id: string; name?: string };
   [SubjectType.Event]: Prismeai.PrismeEvent | PrismeEvent;
 };
 
