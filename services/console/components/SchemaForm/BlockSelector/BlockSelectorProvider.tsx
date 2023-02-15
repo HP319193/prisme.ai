@@ -9,7 +9,7 @@ import useBlocks, { BlockInCatalog } from '../../PageBuilder/useBlocks';
 interface BlockSelectorContext {
   blocks: BlockInCatalog[];
   selectBlock: (selected: string | null) => void;
-  selectedBlock: BlockInCatalog;
+  selectedBlock: BlockInCatalog | null;
   schema: Schema | null;
 }
 
@@ -62,6 +62,7 @@ export const BlockSelectorProvider: FC = ({ children }) => {
       value={{
         blocks,
         selectBlock,
+        selectedBlock,
         schema,
       }}
     >

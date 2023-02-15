@@ -7,9 +7,15 @@ export interface SchemaSelectorProps {
   id?: string;
   value: string;
   onChange: (v: string) => void;
+  className?: string;
 }
 
-export const Selector = ({ id = '', value, onChange }: SchemaSelectorProps) => {
+export const Selector = ({
+  id = '',
+  value,
+  onChange,
+  className = '',
+}: SchemaSelectorProps) => {
   const { blocks } = useBlockSelector();
   const { localize } = useLocalizedText();
   const selectOptions = useMemo(
@@ -63,6 +69,7 @@ export const Selector = ({ id = '', value, onChange }: SchemaSelectorProps) => {
       onChange={onChange}
       showSearch
       filterOption={filterOption}
+      className={className}
     />
   );
 };

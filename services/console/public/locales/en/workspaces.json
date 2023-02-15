@@ -356,6 +356,10 @@
           }
         },
         "set": {
+          "interface": {
+            "label": "Value structure",
+            "description": "You can choose the data structure of one of the blocks available in your Workspace to facilitate its filling."
+          },
           "name": {
             "label": "Variable name",
             "description": "Indicate the name of the variable in which your data will be stored. You can then access it using the interpolation syntax. For example, a variable named `foo` will be accessible elsewhere using `{{foo}}`."
