@@ -137,7 +137,10 @@ export const RichText = ({
           return (
             <BlockLoader
               name={slug}
-              config={parseConfig(keysKebabToCamel(config))}
+              config={{
+                ...parseConfig(keysKebabToCamel(config)),
+                parentClassName: className,
+              }}
             />
           );
         default:

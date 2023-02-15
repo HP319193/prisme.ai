@@ -6,6 +6,7 @@ import { useAutomationBuilder } from '../context';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import components from '../../SchemaForm/schemaFormComponents';
 import { useWorkspace } from '../../../providers/Workspace';
+import { InstructionValueSet } from './InstructionValueSet';
 
 interface InstructionValueProps {
   instruction: string;
@@ -110,6 +111,20 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   );
 
   if (!schema) return null;
+
+  if (instruction === 'set') {
+    return (
+      <InstructionValueSet
+        schema={cleanedSchema}
+        onChange={onChange}
+        initialValues={value}
+        buttons={EmptyButtons}
+        components={components}
+        locales={locales}
+        utils={{ extractSelectOptions, extractAutocompleteOptions }}
+      />
+    );
+  }
 
   return (
     <SchemaForm

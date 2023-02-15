@@ -113,6 +113,8 @@ const BlockUI = React.forwardRef(
           items-center
           ${blockClassName.editTextClassName || ''}
           font-light
+          overflow-hidden
+          text-left
           `}
         style={{
           background: 'none',

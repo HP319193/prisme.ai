@@ -67,7 +67,7 @@ components:
       enum:
         - totp
         - none
-        - ""
+        - ''
 
     User:
       allOf:
@@ -127,7 +127,7 @@ components:
             slug:
               type: string
         config:
-          $ref: "#/components/schemas/Config"
+          $ref: '#/components/schemas/Config'
         photo:
           type: string
         labels:
@@ -787,6 +787,9 @@ components:
             name:
               type: string
               description: Variable name, might be "foo", "session.sessionScopedFoo", "global.globalScopedFoo", "user.userScopedFoo", ...
+            interface:
+              type: string
+              description: The ID of the schema form representing the structure of the value
             value:
               $ref: '#/components/schemas/AnyValue'
               description: variable value
@@ -2713,7 +2716,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AccessToken"
+              $ref: '#/components/schemas/AccessToken'
 
       responses:
         '200':
@@ -2721,7 +2724,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AccessToken"
+                $ref: '#/components/schemas/AccessToken'
         '400':
           description: Bad parameters
           content:
@@ -2757,7 +2760,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationError'
 
-
   /v2/user/mfa:
     post:
       description: Setup MFA
@@ -2785,21 +2787,21 @@ paths:
             application/json:
               schema:
                 oneOf:
-                - type: object
-                  required:
-                    - secret
-                    - qrImage
-                  properties:
-                    secret:
-                      type: string
-                    qrImage:
-                      type: string
-                - type: object
-                  required:
-                    - method
-                  properties:
-                    method:
-                      type: string
+                  - type: object
+                    required:
+                      - secret
+                      - qrImage
+                    properties:
+                      secret:
+                        type: string
+                      qrImage:
+                        type: string
+                  - type: object
+                    required:
+                      - method
+                    properties:
+                      method:
+                        type: string
         '400':
           description: Bad parameters
           content:
@@ -2807,7 +2809,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadParametersError'
         '401': *AuthenticationError
-
 
   /v2/contacts/{contactId}:
     get:
@@ -3687,18 +3688,18 @@ paths:
                     - events
                 limit:
                   type: number
-                  description: "Page size. Limit response documents, but aggregations still execute on all documents matching the given query"
+                  description: 'Page size. Limit response documents, but aggregations still execute on all documents matching the given query'
                 page:
                   type: number
                   description: "Page number returned by response's documents field"
                 query:
                   type: object
                   additionalProperties: true
-                  description: "Elasticsearch DSL query to filter response documents"
+                  description: 'Elasticsearch DSL query to filter response documents'
                 aggs:
                   type: object
                   additionalProperties: true
-                  description: "Elasticsearch aggregations executed on response documents"
+                  description: 'Elasticsearch aggregations executed on response documents'
 
       responses:
         '200':
@@ -3743,7 +3744,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadParametersError'
-
 
   ############################################# runtime
   /v2/workspaces/{workspaceId}/webhooks/{automationSlug}:

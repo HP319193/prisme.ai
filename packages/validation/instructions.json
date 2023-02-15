@@ -139,6 +139,10 @@
             "type": "string",
             "description": "Variable name, might be \"foo\", \"session.sessionScopedFoo\", \"global.globalScopedFoo\", \"user.userScopedFoo\", ..."
           },
+          "interface": {
+            "type": "string",
+            "description": "The ID of the schema form representing the structure of the value"
+          },
           "value": {
             "description": "variable value"
           },

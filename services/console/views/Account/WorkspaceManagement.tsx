@@ -26,8 +26,12 @@ const WorkspaceManagement = () => {
     query: { workspaceId },
   } = useRouter();
 
-  const { workspacesUsage, fetchWorkspaceUsage, loading, error } =
-    useWorkspacesUsage();
+  const {
+    workspacesUsage,
+    fetchWorkspaceUsage,
+    loading,
+    error,
+  } = useWorkspacesUsage();
 
   const { getUsersPermissions, usersPermissions } = usePermissions();
 
@@ -63,6 +67,9 @@ const WorkspaceManagement = () => {
     ];
   }, [currentWorkspace, workspaceId, workspacesUsage]);
 
+  if (loading) {
+    return <Loading />;
+  }
   if (!currentWorkspace) {
     return <Error404 link={`/account`} />;
   }

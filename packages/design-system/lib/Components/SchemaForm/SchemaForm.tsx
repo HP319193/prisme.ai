@@ -18,7 +18,7 @@ import FieldRadio from './FieldRadio';
 import FieldText from './FieldText';
 import { OnChange } from 'react-final-form-listeners';
 
-export interface FormProps {
+export interface SchemaFormProps {
   schema: Schema;
   onSubmit?: (
     values: any
@@ -42,7 +42,7 @@ export const SchemaForm = ({
   locales = DefaultLocales,
   components,
   utils,
-}: FormProps) => {
+}: SchemaFormProps) => {
   if (!schema) return null;
   const values = useRef({ values: initialValues });
 

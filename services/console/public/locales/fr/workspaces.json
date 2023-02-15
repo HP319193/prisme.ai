@@ -356,6 +356,10 @@
           }
         },
         "set": {
+          "interface": {
+            "label": "Structure de la valeur",
+            "description": "Vous pouvez choisir la structure de donnée de l'un des Blocks disponible dans votre Workspace pour faciliter son remplissage."
+          },
           "name": {
             "label": "Nom de la variable",
             "description": "Indiquer le nom de la variable dans laquelle sera stocké votre donnée. Vous pourrez ensuite y accéder grâce à la syntaxe d'interpolation. Par exemple, une variable nommée `foo` sera accessible ailleurs grâce à `{{foo}}`."

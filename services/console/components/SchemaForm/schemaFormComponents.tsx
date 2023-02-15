@@ -6,7 +6,7 @@ import { useField } from 'react-final-form';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import FieldContainerWithRaw from '../FieldContainerWithRaw';
 import RichTextEditor from '../RichTextEditor';
-import BlockSelector from './BlockSelector';
+import BlockSelector from './BlockSelector/BlockSelector';
 
 export const FieldAny = ({ schema, name, label }: FieldProps) => {
   const { t } = useTranslation('workspaces');

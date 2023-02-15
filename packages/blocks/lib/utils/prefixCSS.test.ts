@@ -9,7 +9,10 @@ it('should prefix css', () => {
     color: red;
   }
   `,
-      '.prefix'
+      {
+        block: '.prefix',
+        parent: '.parent',
+      }
     )
   ).toBe(`.prefix .some-class {
   color: red;
@@ -30,7 +33,10 @@ it('should replace :block', () => {
     color: orange;
   }
   `,
-      '.prefix'
+      {
+        block: '.prefix',
+        parent: '.parent',
+      }
     )
   ).toBe(`.prefix .some-class {
   color: red;
@@ -50,7 +56,12 @@ it('should work with a big css content', () => {
   const expected = fs
     .readFileSync(`${__dirname}/prefixCSS.expected.css`)
     .toString();
-  expect(prefixCSS(css, '.prefix')).toBe(expected);
+  expect(
+    prefixCSS(css, {
+      block: '.prefix',
+      parent: '.parent',
+    })
+  ).toBe(expected);
 });
 
 it('should parse media queries', () => {
@@ -66,7 +77,12 @@ it('should parse media queries', () => {
     flex-direction: column;
   }
 }`;
-  expect(prefixCSS(css, '.prefix')).toEqual(`.prefix .pr-block-hero__container {
+  expect(
+    prefixCSS(css, {
+      block: '.prefix',
+      parent: '.parent',
+    })
+  ).toEqual(`.prefix .pr-block-hero__container {
   display: flex;
   flex-direction: row;
   padding: 1rem;
@@ -77,5 +93,21 @@ it('should parse media queries', () => {
   .prefix .pr-block-hero__container {
     flex-direction: column;
   }
+}`);
+});
+
+it('should not replace :parent', () => {
+  expect(
+    prefixCSS(
+      `:parent {
+  background: red;
+}`,
+      {
+        block: '.prefix',
+        parent: '.parent',
+      }
+    )
+  ).toBe(`.parent {
+  background: red;
 }`);
 });
