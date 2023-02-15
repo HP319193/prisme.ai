@@ -64,6 +64,8 @@ Array [
           items-center
           
           font-light
+          overflow-hidden
+          text-left
           "
       style={
         Object {
