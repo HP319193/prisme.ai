@@ -278,6 +278,11 @@ body .ant-dropdown-menu-item:hover {
   flex: 1;
 }
 
+.panel-is-large .pr-form-object__properties .pr-form-object__properties {
+  margin-left: 2rem;
+  border-left: 1px solid var(--light-gray-color);
+}
+
 body button:not(.ant-btn):disabled {
   display: flex;
   align-items: center;

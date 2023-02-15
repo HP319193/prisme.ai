@@ -1404,6 +1404,11 @@
     "type_error": "<error>An error has occurred</error>",
     "replay": "Emit this event again with same payload."
   },
+  "panel": {
+    "close": "Close",
+    "enlarge": "Enlarge",
+    "enlarge_off": "Reduce"
+  },
   "form": {
     "raw": "Insert a raw value (allows you to enter text, and therefore interpolated variables)",
     "raw_hide": "Respect the type of data required",
