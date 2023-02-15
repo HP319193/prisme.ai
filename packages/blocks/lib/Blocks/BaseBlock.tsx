@@ -11,7 +11,7 @@ interface BaseBlock {
 export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
   const [containerClassName, setContainerClassName] = useState('');
   const {
-    config: { className, css = defaultStyles },
+    config: { className, parentClassName = '', css = defaultStyles },
   } = useBlock();
 
   useEffect(() => {
@@ -20,7 +20,12 @@ export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
 
   return (
     <>
-      <style>{prefixCSS(css || '', `.${containerClassName}`)}</style>
+      <style>
+        {prefixCSS(css || '', {
+          block: `.${containerClassName}`,
+          parent: `.${parentClassName}`,
+        })}
+      </style>
       {cloneElement(children, {
         className: [className, containerClassName].join(' '),
       })}
