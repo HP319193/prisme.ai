@@ -1404,6 +1404,11 @@
     "type_error": "<error>Une erreur est survenue</error>",
     "replay": "Émettre cet évènement à nouveau avec les mêmes données"
   },
+  "panel": {
+    "close": "Fermer",
+    "enlarge": "Aggrandir",
+    "enlarge_off": "Réduire"
+  },
   "form": {
     "raw": "Insérer une valeur brute (permet notamment de saisir du texte, et donc des variables interpolées)",
     "raw_hide": "Respecter le type de donnée exigé",

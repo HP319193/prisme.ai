@@ -3,8 +3,9 @@
 exports[`should render 1`] = `
 <div
   className="
+        
         flex
-        absolute top-0 bottom-0 -right-[30rem] w-[30rem] z-10 flex-col
+        absolute top-0 bottom-0 w-[30rem] -right-[30rem] z-10 flex-col
         transition-transform
         ease-in
         duration-200
@@ -22,6 +23,7 @@ exports[`should render 1`] = `
     >
       hey
     </div>
+    <div />
   </div>
   <div
     className="flex flex-1 flex-col overflow-y-scroll h-full  border-light-gray border-l"

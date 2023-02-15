@@ -83,7 +83,7 @@ export const CSSEditor = ({
       {
         label: (
           <div>
-            <div className="flex w-[95%] justify-between items-center">
+            <div className="flex w-full justify-between items-center">
               <div>
                 <label className="font-bold">{t(label)}</label>
                 <Tooltip title={t(description)} placement="right">
