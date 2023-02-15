@@ -16,7 +16,10 @@ const {
 } = getConfig();
 
 const BillingPlan = ({ wpName, wpId, userEmail }: BillingPlanProps) => {
-  const { t } = useTranslation('user');
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation('user');
 
   return (
     <>
@@ -30,7 +33,10 @@ const BillingPlan = ({ wpName, wpId, userEmail }: BillingPlanProps) => {
           {BILLING_HOME ? (
             <iframe
               height={300}
-              src={`${BILLING_HOME}?workspaceId=${wpId}&email=${userEmail}`}
+              src={`${BILLING_HOME.replace(
+                /\{\{lang\}\}/,
+                language
+              )}?workspaceId=${wpId}&email=${userEmail}`}
             ></iframe>
           ) : (
             <>
