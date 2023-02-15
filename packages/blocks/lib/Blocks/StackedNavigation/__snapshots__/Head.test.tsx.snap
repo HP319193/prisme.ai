@@ -20,7 +20,7 @@ exports[`should render with blocks 1`] = `
       className="pr-block-blocks-list "
     >
       <div
-        className="pr-block-blocks-list__block "
+        className="pr-block-blocks-list__block pr-block-blocks-list__block--0 "
       />
     </div>
   </div>

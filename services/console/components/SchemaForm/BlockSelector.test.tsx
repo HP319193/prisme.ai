@@ -1,5 +1,5 @@
 import renderer from 'react-test-renderer';
-import BlockSelector from './BlockSelector';
+import BlockSelector from './BlockSelector/BlockSelector';
 
 jest.mock('react-final-form', () => {
   const mock = {
