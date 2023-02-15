@@ -79,3 +79,9 @@ export function PauseCircleOutlined() {
 export function ReloadOutlined() {
   return null;
 }
+export function CompressOutlined() {
+  return null;
+}
+export function ExpandOutlined() {
+  return null;
+}

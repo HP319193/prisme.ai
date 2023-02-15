@@ -1,7 +1,14 @@
-import { Button } from '@prisme.ai/design-system';
-import { FC, useEffect, useState } from 'react';
-import { CloseCircleOutlined, SettingOutlined } from '@ant-design/icons';
+import { Button, Tooltip } from '@prisme.ai/design-system';
+import { FC, useCallback, useEffect, useState } from 'react';
+import {
+  CloseCircleOutlined,
+  CompressOutlined,
+  ExpandOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
 import LeftIcon from '../icons/chevron.svgr';
+import Storage from '../utils/Storage';
+import { useTranslation } from 'next-i18next';
 
 const noop = () => null;
 interface PanelProps {
@@ -19,7 +26,9 @@ export const Panel: FC<PanelProps> = ({
   className,
   children,
 }) => {
+  const { t } = useTranslation('workspaces');
   const [hidden, setHidden] = useState(true);
+  const [large, setLarge] = useState(!!Storage.get('__panel__large'));
 
   useEffect(() => {
     if (hidden) {
@@ -34,11 +43,26 @@ export const Panel: FC<PanelProps> = ({
     setTimeout(() => setHidden(!visible), 1);
   }, [visible]);
 
+  const toggleLarge = useCallback(() => {
+    setLarge((prev) => {
+      const large = !prev;
+      if (large) {
+        Storage.set('__panel__large', 1);
+      } else {
+        Storage.remove('__panel__large');
+      }
+      return large;
+    });
+  }, []);
+
   return (
     <div
       className={`
+        ${large ? 'panel-is-large' : ''}
         flex
-        absolute top-0 bottom-0 -right-[30rem] w-[30rem] z-10 flex-col
+        absolute top-0 bottom-0 ${
+          large ? 'w-full -right-full' : 'w-[30rem] -right-[30rem]'
+        } z-10 flex-col
         transition-transform
         ease-in
         duration-200
@@ -65,13 +89,29 @@ export const Panel: FC<PanelProps> = ({
           )}
           {title}
         </div>
-        <Button
-          variant="grey"
-          className="flex justify-center items-center !text-white"
-          onClick={() => setHidden(true)}
-        >
-          <CloseCircleOutlined />
-        </Button>
+        <div>
+          <Tooltip
+            title={t('panel.enlarge', { context: large ? 'off' : 'on' })}
+            placement="bottom"
+          >
+            <Button
+              variant="grey"
+              className="flex justify-center items-center !text-white"
+              onClick={toggleLarge}
+            >
+              {large ? <CompressOutlined /> : <ExpandOutlined />}
+            </Button>
+          </Tooltip>
+          <Tooltip title={t('panel.close')} placement="bottom">
+            <Button
+              variant="grey"
+              className="flex justify-center items-center !text-white"
+              onClick={() => setHidden(true)}
+            >
+              <CloseCircleOutlined />
+            </Button>
+          </Tooltip>
+        </div>
       </div>
       <div
         className="flex flex-1 flex-col overflow-y-scroll h-full 
