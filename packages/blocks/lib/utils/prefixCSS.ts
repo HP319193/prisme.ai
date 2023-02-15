@@ -5,11 +5,22 @@ import parse from 'css/lib/parse';
 // @ts-ignore
 import Identity from 'css/lib/stringify/identity';
 
-export function prefixCSS(cssText: string, prefix: string) {
+export function prefixCSS(
+  cssText: string,
+  {
+    block,
+    parent,
+  }: {
+    block: string;
+    parent: string;
+  }
+) {
   function replaceSelectors(selectors: any) {
-    return (selectors || []).map((sel: string) =>
-      sel.match(/:block/) ? sel.replace(/:block/, prefix) : `${prefix} ${sel}`
-    );
+    return (selectors || []).map((sel: string) => {
+      if (sel.match(/:block/)) return sel.replace(/:block/, block);
+      if (sel.match(/:parent/)) return sel.replace(/:parent/, parent);
+      return `${block} ${sel}`;
+    });
   }
 
   function processRules(rules: any) {
