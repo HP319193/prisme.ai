@@ -117,7 +117,29 @@ it('should get available Blocks', () => {
       <C />
     </workspaceContext.Provider>
   );
+
   expect(expected.available).toEqual([
+    {
+      builtIn: true,
+      slug: 'Header',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-Header.png',
+    },
+    {
+      builtIn: true,
+      slug: 'Hero',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-Hero.png',
+    },
+    {
+      builtIn: true,
+      slug: 'Buttons',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-Buttons.png',
+    },
     {
       builtIn: true,
       slug: 'Form',
@@ -131,6 +153,13 @@ it('should get available Blocks', () => {
       name: 'pages.blocks.name',
       description: 'pages.blocks.description',
       photo: '/images/blocks/preview-Cards.png',
+    },
+    {
+      builtIn: true,
+      slug: 'Breadcrumbs',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-Breadcrumbs.png',
     },
     {
       builtIn: true,
@@ -203,8 +232,29 @@ it('should get available Blocks', () => {
       icon: undefined,
     },
   ]);
-
+  console.log(expected.variants);
   expect(expected.variants).toEqual([
+    {
+      builtIn: true,
+      slug: 'Header',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-Header.png',
+    },
+    {
+      builtIn: true,
+      slug: 'Hero',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-Hero.png',
+    },
+    {
+      builtIn: true,
+      slug: 'Buttons',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-Buttons.png',
+    },
     {
       builtIn: true,
       slug: 'Form',
@@ -275,6 +325,13 @@ it('should get available Blocks', () => {
       name: 'pages.blocks.name',
       description: 'pages.blocks.description',
       photo: '/images/blocks/preview-Cards.png',
+    },
+    {
+      builtIn: true,
+      slug: 'Breadcrumbs',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-Breadcrumbs.png',
     },
     {
       description: 'some text',

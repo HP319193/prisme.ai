@@ -1,58 +1,33 @@
 import {
   InfoBubble,
-  Schema,
-  SchemaForm,
   schemaFormUtils,
-  Select,
   StretchContent,
-  useSchemaForm,
 } from '@prisme.ai/design-system';
 import { FieldComponent } from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
 import { useField } from 'react-final-form';
 import { Tooltip } from 'antd';
-import FieldContainerWithRaw from '../FieldContainerWithRaw';
-import useBlocks from '../PageBuilder/useBlocks';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import FieldContainerWithRaw from '../../FieldContainerWithRaw';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import useLocalizedText from '../../utils/useLocalizedText';
-import getEditSchema from '../PageBuilder/Panel/EditSchema/getEditSchema';
 import { RightOutlined } from '@ant-design/icons';
-import { BlockComponent, loadModule } from '@prisme.ai/blocks';
+import Selector from './Selector';
+import {
+  BlockSelectorProvider,
+  useBlockSelector,
+} from './BlockSelectorProvider';
+import Form from './Form';
 
 export const BlockSelector: FieldComponent = (props) => {
+  const { selectBlock, schema } = useBlockSelector();
   const { t } = useTranslation('workspaces');
-  const { localize, localizeSchemaForm } = useLocalizedText();
   const field = useField(props.name);
   const hasError = schemaFormUtils.getError(field.meta);
-  const { variants: blocks } = useBlocks();
-  const [schema, setSchema] = useState<Schema | null>(null);
   const [values, setValues] = useState(field.input.value || {});
-  const { utils, locales, components } = useSchemaForm();
   const [visible, setVisible] = useState(true);
 
-  const fetchSchema = useCallback(
-    async (name: string) => {
-      await setSchema(null);
-      const block = blocks.find(({ slug }) => slug === name);
-      if (!block) return null;
-      if (block.builtIn) {
-        const schema = getEditSchema(block.slug);
-        setSchema(schema && localizeSchemaForm(schema));
-        return;
-      }
-      if (block.url) {
-        const module = await loadModule<BlockComponent>(block.url);
-        if (module && module.schema) {
-          setSchema(module.schema);
-        }
-      }
-    },
-    [blocks, localizeSchemaForm]
-  );
-
   useEffect(() => {
-    fetchSchema(field.input.value?.slug);
-  }, [fetchSchema, field.input.value?.slug]);
+    selectBlock(field.input.value?.slug);
+  }, [field.input.value?.slug, selectBlock]);
 
   const prevValues = useRef(values);
   useEffect(() => {
@@ -64,49 +39,6 @@ export const BlockSelector: FieldComponent = (props) => {
     if (JSON.stringify(field.input.value) === JSON.stringify(newValue)) return;
     field.input.onChange(newValue);
   }, [field.input, values]);
-
-  const selectOptions = useMemo(
-    () =>
-      blocks.map(({ slug, name, description, photo }) => ({
-        label: (
-          <Tooltip
-            title={
-              localize(description) ? (
-                <>
-                  {localize(description)}
-                  {photo && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={photo}
-                      alt={localize(name)}
-                      className="bg-white rounded"
-                    />
-                  )}
-                </>
-              ) : (
-                ''
-              )
-            }
-          >
-            <div className="flex flex-1">{localize(name)}</div>
-          </Tooltip>
-        ),
-        value: slug,
-      })),
-    [blocks, localize]
-  );
-
-  const filterOption = useCallback(
-    (input: string, options: any) => {
-      const block = blocks.find(({ slug }) => slug === options.value);
-      if (!block) return false;
-      const search = `${block.slug} ${localize(block.name)} ${localize(
-        block.description
-      )}`.toLowerCase();
-      return search.includes(input);
-    },
-    [blocks, localize]
-  );
 
   return (
     <FieldContainerWithRaw
@@ -142,26 +74,18 @@ export const BlockSelector: FieldComponent = (props) => {
                 >
                   {t('form.blockSelector.name.label')}
                 </label>
-                <Select
+                <Selector
                   id={`${field.input.name}.slug`}
-                  selectOptions={selectOptions}
                   value={field.input.value?.slug}
                   onChange={(slug) => {
                     setValues({ slug });
                   }}
-                  showSearch
-                  filterOption={filterOption}
                 />
               </div>
               {schema && (
                 <div className="!-mx-[1rem]">
-                  <SchemaForm
-                    schema={schema}
-                    locales={locales}
-                    buttons={[]}
-                    initialValues={values}
-                    utils={utils}
-                    components={components}
+                  <Form
+                    values={values}
                     onChange={(v) => {
                       setValues((prev: any) => {
                         const newValue = {
@@ -184,4 +108,10 @@ export const BlockSelector: FieldComponent = (props) => {
   );
 };
 
-export default BlockSelector;
+export const LinkedBlockSelector: FieldComponent = (props) => (
+  <BlockSelectorProvider>
+    <BlockSelector {...props} />
+  </BlockSelectorProvider>
+);
+
+export default LinkedBlockSelector;

@@ -1960,6 +1960,10 @@ declare namespace Prismeai {
              */
             name: string;
             /**
+             * The ID of the schema form representing the structure of the value
+             */
+            interface?: string;
+            /**
              * variable value
              */
             value: AnyValue;
