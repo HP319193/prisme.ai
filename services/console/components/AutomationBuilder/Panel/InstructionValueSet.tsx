@@ -45,7 +45,7 @@ const InterfaceSelector = (props: FieldProps) => {
           <CloseCircleOutlined />
         </button>
       </div>
-      <div className="pr-form-text__description pr-form-description">
+      <div className="pr-form-description">
         <InfoBubble
           className="pr-form-object__description"
           text={props.schema.description}
@@ -56,19 +56,26 @@ const InterfaceSelector = (props: FieldProps) => {
 };
 
 const ValueEditor = (props: FieldProps) => {
+  const { t } = useTranslation('workspaces');
   const { schema } = useBlockSelector();
   const field = useField(props.name);
 
   if (schema)
     return (
       <FieldContainerWithRaw {...props}>
-        <div className="flex flex-1 -m-4 mt-4">
+        <label htmlFor={`${field.input.name}.name`} className="pr-form-label">
+          {t('automations.instruction.form.set.value.label')}
+        </label>
+        <div className="pr-form-input flex flex-1 -m-4 mt-4">
           <SchemaForm
             schema={schema}
             initialValues={field.input.value}
             onChange={field.input.onChange}
             components={components}
           />
+        </div>
+        <div className="pr-form-description">
+          <InfoBubble text={props.schema.description} />
         </div>
       </FieldContainerWithRaw>
     );
