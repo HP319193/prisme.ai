@@ -1,7 +1,6 @@
 import { Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useRef, useState } from 'react';
-import ReactQuill from 'react-quill';
+import { useCallback, useState } from 'react';
 import Quill from 'react-quill';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import pretty from 'pretty';
@@ -46,7 +45,7 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
           <CodeEditorInline mode="html" value={value} onChange={onChange} />
         </div>
       ) : (
-        <Quill theme="snow" value={value} onChange={onChange} />
+        <Quill theme="snow" defaultValue={value} onChange={onChange} />
       )}
     </div>
   );
