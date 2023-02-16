@@ -26,12 +26,8 @@ const WorkspaceManagement = () => {
     query: { workspaceId },
   } = useRouter();
 
-  const {
-    workspacesUsage,
-    fetchWorkspaceUsage,
-    loading,
-    error,
-  } = useWorkspacesUsage();
+  const { workspacesUsage, fetchWorkspaceUsage, loading, error } =
+    useWorkspacesUsage();
 
   const { getUsersPermissions, usersPermissions } = usePermissions();
 
@@ -52,19 +48,12 @@ const WorkspaceManagement = () => {
     fetchWorkspaceUsage(`${workspaceId}`);
   }, [fetchWorkspaceUsage, workspaceId]);
 
-  const currentWorkspaceUsages = useMemo(() => {
+  const appsUsages = useMemo(() => {
     if (!currentWorkspace) return;
     const currentWorkspaceUsageObject = workspacesUsage.get(`${workspaceId}`);
     if (!currentWorkspaceUsageObject) return;
 
-    return [
-      {
-        slug: currentWorkspace.name,
-        total: currentWorkspaceUsageObject.total,
-        photo: currentWorkspace.photo,
-      },
-      ...currentWorkspaceUsageObject.apps,
-    ];
+    return currentWorkspaceUsageObject.apps;
   }, [currentWorkspace, workspaceId, workspacesUsage]);
 
   if (loading) {
@@ -86,25 +75,21 @@ const WorkspaceManagement = () => {
         <Loading />
       ) : (
         <WorkspaceProvider id={`${workspaceId}`}>
-          <div className="flex flex-row h-full flex-1">
-            <div className="flex flex-col flex-1 m-[3.938rem] space-y-5 w-4/5">
-              <BillingPlan
-                wpName={currentWorkspace.name}
-                wpId={currentWorkspace.id}
-                userEmail={email as string}
-              />
-              <Usages
-                currentWorkspaceUsages={currentWorkspaceUsages || []}
-                nbUser={
-                  usersPermissions.get(`workspaces:${workspaceId}`)?.length || 0
-                }
-                error={error}
-              />
-              <div className="ml-2 font-bold">
-                {workspaceT('workspace.share')}
-              </div>
-              <ShareWorkspace workspaceId={`${workspaceId}`} />
+          <div className="flex flex-col h-full flex-1 overflow-auto p-[4rem] space-y-5">
+            <BillingPlan
+              wpName={currentWorkspace.name}
+              wpId={currentWorkspace.id}
+              userEmail={email as string}
+            />
+            <Usages
+              appsUsages={appsUsages || []}
+              wpId={currentWorkspace.id}
+              error={error}
+            />
+            <div className="ml-2 font-bold">
+              {workspaceT('workspace.share')}
             </div>
+            <ShareWorkspace workspaceId={`${workspaceId}`} />
           </div>
         </WorkspaceProvider>
       )}

@@ -4,35 +4,53 @@ import { WarningOutlined } from '@ant-design/icons';
 import { useTranslation } from 'next-i18next';
 import { AppUsageMetricsWithPhoto } from '../../../components/WorkspacesUsage';
 import { ApiError } from '@prisme.ai/sdk';
-
-const SUBSCRIPTION_USERS = 1;
-const SUBSCRIPTION_INTERACTION = 10000;
+import getConfig from 'next/config';
 
 interface UsagesProps {
-  currentWorkspaceUsages: AppUsageMetricsWithPhoto[];
-  nbUser: number;
+  appsUsages: AppUsageMetricsWithPhoto[];
+  wpId: string;
   error?: ApiError;
 }
 
-const Usages = ({ currentWorkspaceUsages, nbUser, error }: UsagesProps) => {
-  const { t } = useTranslation('user');
+const {
+  publicRuntimeConfig: { BILLING_USAGE = '' },
+} = getConfig();
 
-  const userQuota = Math.min(nbUser / SUBSCRIPTION_USERS, 100);
+const Usages = ({ appsUsages, wpId, error }: UsagesProps) => {
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation('user');
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-row items-center text-gray font-semibold">
-        <Image src={stat.src} width={17} height={17} alt="" />
-        <div className="ml-2 uppercase">{t('usage.title')}</div>
-      </div>
-      <div className="flex flex-col space-y-5">
+    <div className="space-y-5 flex flex-col">
+      {BILLING_USAGE && (
+        <>
+          <div className="flex flex-row items-center text-gray font-semibold">
+            <Image src={stat.src} width={17} height={17} alt="" />
+            <div className="ml-2 uppercase">{t('usage.title')}</div>
+          </div>
+          <iframe
+            height={150}
+            src={`${BILLING_USAGE.replace(
+              /\{\{lang\}\}/,
+              language
+            )}?workspaceId=${wpId}`}
+          ></iframe>
+        </>
+      )}
+      <div className="flex flex-col space-y-5 w-[44rem]">
         {error && (
           <div className="ml-6 flex flex-row text-red-700">
             <WarningOutlined className="!flex items-center justify-center mr-2" />
             <div>{t('usage.old')}</div>
           </div>
         )}
-        {currentWorkspaceUsages.map((workspaceUsage) => (
+        <div className="flex flex-row items-center text-gray font-semibold">
+          <Image src={stat.src} width={17} height={17} alt="" />
+          <div className="ml-2 uppercase">{t('usage.apps.title')}</div>
+        </div>
+        {appsUsages.map((workspaceUsage) => (
           <div key={workspaceUsage.slug} className="flex flex-row">
             {workspaceUsage.photo ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -54,48 +72,9 @@ const Usages = ({ currentWorkspaceUsages, nbUser, error }: UsagesProps) => {
               <div>{workspaceUsage.slug}</div>
               <div className="flex flex-col items-end text-right text-[0.75rem]">
                 <div className="flex flex-row justify-center items-center">
-                  {nbUser} / {SUBSCRIPTION_USERS}
-                  &nbsp;
-                  {t('usage.access')}
-                  <div className="ml-2 w-[5rem] h-[5.1px] bg-[#BFD7FF] rounded overflow-hidden">
-                    <div
-                      style={{
-                        width: `${Math.max(userQuota * 100, 2)}%`,
-                      }}
-                      className={`${
-                        userQuota * 100 >= 100 ? 'bg-orange-500' : 'bg-accent'
-                      } h-[5.1px]`}
-                    ></div>
-                  </div>
-                </div>
-                <div className="flex flex-row justify-center items-center">
-                  {workspaceUsage.total.transactions} /{' '}
-                  {SUBSCRIPTION_INTERACTION}
+                  {workspaceUsage.total.transactions}
                   &nbsp;
                   {t('usage.interaction')}
-                  <div className="ml-2 w-[5rem] h-[5.1px] bg-[#BFD7FF] rounded overflow-hidden">
-                    <div
-                      style={{
-                        width: `${Math.min(
-                          Math.max(
-                            (workspaceUsage.total.transactions /
-                              SUBSCRIPTION_INTERACTION) *
-                              100,
-                            2
-                          ),
-                          100
-                        )}%`,
-                      }}
-                      className={`${
-                        (workspaceUsage.total.transactions /
-                          SUBSCRIPTION_INTERACTION) *
-                          100 >=
-                        100
-                          ? 'bg-orange-500'
-                          : 'bg-accent'
-                      } h-[5.1px]`}
-                    ></div>
-                  </div>
                 </div>
               </div>
             </div>
