@@ -29,10 +29,10 @@ const BillingPlan = ({ wpName, wpId, userEmail }: BillingPlanProps) => {
           <Image src={lightning.src} width={17} height={17} alt="" />
           <div className="ml-2 uppercase">{t('billing.title')}</div>
         </div>
-        <div className="flex flex-col ml-6">
+        <div className="flex flex-col">
           {BILLING_HOME ? (
             <iframe
-              height={300}
+              height={200}
               src={`${BILLING_HOME.replace(
                 /\{\{lang\}\}/,
                 language

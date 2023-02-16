@@ -150,7 +150,7 @@ const ShareWorkspacePopover = ({
   ]);
 
   return (
-    <div className="w-[42rem] space-y-5">
+    <div className="w-[44rem] space-y-5">
       <div className="flex flex-grow flex-row items-center justify-center">
         <Input
           placeholder={t('share.email')}

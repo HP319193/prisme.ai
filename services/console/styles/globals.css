@@ -184,6 +184,10 @@ a.ant-btn.pr-btn-primary-small {
   border-bottom-right-radius: 0.94rem !important;
 }
 
+.ant-select.pr-noLeftSelect {
+  margin-right: 0.5rem;
+}
+
 .pr-full-popover .ant-popover-inner-content {
   margin: 0;
   padding: 0;

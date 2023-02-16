@@ -7,6 +7,7 @@ const ENVS = [
   'CONSOLE_HOST',
   'SUGGESTIONS_ENDPOINT',
   'BILLING_HOME',
+  'BILLING_USAGE',
 ];
 
 //services/pages/.next/server/pages/default/404.html
