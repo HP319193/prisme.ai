@@ -79,3 +79,9 @@ export class InvalidUploadError extends PrismeError {
     super(msg || 'Invalid uploaded file', details);
   }
 }
+
+export class InvalidCustomDomainError extends PrismeError {
+  constructor(msg: string, details: any = {}) {
+    super(msg || 'Invalid custom domain', details);
+  }
+}

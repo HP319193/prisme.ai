@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid';
+const dns = require('dns');
 //@ts-ignore
 import { hri } from 'human-readable-ids';
 import { Broker } from '@prisme.ai/broker';
@@ -7,6 +8,7 @@ import { DSULType, DSULStorage } from '../../DSULStorage';
 import {
   AccessManager,
   ActionType,
+  getSuperAdmin,
   SubjectType,
   WorkspaceMetadata,
 } from '../../../permissions';
@@ -20,11 +22,16 @@ import { extractObjectsByPath } from '../../../utils/extractObjectsByPath';
 import { logger } from '../../../logger';
 import {
   AlreadyUsedError,
+  InvalidCustomDomainError,
   InvalidSlugError,
   InvalidVersionError,
+  PrismeError,
 } from '../../../errors';
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
-import { SLUG_VALIDATION_REGEXP } from '../../../../config';
+import {
+  CUSTOM_DOMAINS_CNAME,
+  SLUG_VALIDATION_REGEXP,
+} from '../../../../config';
 import { fetchUsers } from '@prisme.ai/permissions';
 
 interface DSULDiff {
@@ -81,10 +88,10 @@ class Workspaces {
           if (!SLUG_VALIDATION_REGEXP.test(workspaceSlug!)) {
             throw new InvalidSlugError(workspaceSlug);
           }
-          await this.pages.updatePagesWorkspaceSlug(
+          await this.pages.updateWorkspacePagesMeta(
             workspace.id!,
-            workspaceSlug,
-            oldWorkspaceSlug
+            { workspaceSlug },
+            { workspaceSlug: oldWorkspaceSlug }
           );
         },
       },
@@ -113,6 +120,94 @@ class Workspaces {
               oldConfig: allDiffs[0].oldValue,
             },
             { workspaceId: workspace.id! }
+          );
+        },
+      },
+
+      {
+        path: 'customDomains',
+        handler: async (allDiffs: DSULDiff[]) => {
+          if (allDiffs?.[0]?.type === DiffType.ValueUnchanged) {
+            return;
+          }
+          if (!CUSTOM_DOMAINS_CNAME) {
+            throw new PrismeError(
+              'Custom domains feature currently disabled',
+              {}
+            );
+          }
+          const workspace = allDiffs[0].root;
+          if (!workspace?.id || !workspace?.slug) {
+            return;
+          }
+          const customDomains = allDiffs[0].value as string[];
+          const oldCustomDomains = allDiffs[0].oldValue as string[];
+          const superAdmin = await getSuperAdmin(
+            this.accessManager as AccessManager
+          );
+          const conflictingWorkspaces = await superAdmin.findAll(
+            SubjectType.Workspace,
+            {
+              id: {
+                $ne: workspace.id,
+              },
+              customDomains: {
+                $in: customDomains,
+              },
+            }
+          );
+          if (conflictingWorkspaces?.length) {
+            throw new AlreadyUsedError(
+              'One of the custom domains is already used by another workspae'
+            );
+          }
+
+          await Promise.all(
+            customDomains.map((cur) => {
+              return new Promise((resolve, reject) => {
+                dns.resolveCname(
+                  cur,
+                  function onLookup(err: any, addresses: string[]) {
+                    if (err && err.code == 'ENOTFOUND') {
+                      reject(
+                        new InvalidCustomDomainError(
+                          `Invalid custom domain '${cur}' : unknown host`,
+                          err
+                        )
+                      );
+                      return;
+                    } else if (err && err?.code !== 'ENODATA') {
+                      reject(
+                        new InvalidCustomDomainError(
+                          `Invalid custom domain ${cur}`,
+                          err
+                        )
+                      );
+                      return;
+                    }
+                    if (
+                      !addresses?.length ||
+                      !addresses.some(
+                        (cur: string) => cur === CUSTOM_DOMAINS_CNAME
+                      )
+                    ) {
+                      reject(
+                        new InvalidCustomDomainError(
+                          `Custom domain '${cur}' is missing a CNAME rule towards '${CUSTOM_DOMAINS_CNAME}'. If the CNAME is already configured, a delay might be caused by the DNS propagation time.`
+                        )
+                      );
+                    } else {
+                      resolve(addresses);
+                    }
+                  }
+                );
+              });
+            })
+          );
+          await this.pages.updateWorkspacePagesMeta(
+            workspace.id!,
+            { customDomains },
+            { customDomains: oldCustomDomains }
           );
         },
       },
@@ -341,6 +436,7 @@ class Workspaces {
       description: workspace.description,
       slug: workspace.slug || hri.random(),
       labels: workspace.labels,
+      customDomains: workspace.customDomains,
     };
 
     try {

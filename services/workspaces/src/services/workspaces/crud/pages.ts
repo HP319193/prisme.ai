@@ -53,13 +53,11 @@ class Pages {
       page.slug = hri.random();
     }
 
-    if (!page.workspaceSlug) {
-      const workspace = await this.storage.get({
-        dsulType: DSULType.DSULIndex,
-        workspaceId,
-      });
-      page.workspaceSlug = workspace.slug!;
-    }
+    const workspace = await this.storage.get({
+      dsulType: DSULType.DSULIndex,
+      workspaceId,
+    });
+    page.workspaceSlug = workspace.slug!;
 
     const pageMetadata = {
       name: page.name!,
@@ -69,6 +67,7 @@ class Pages {
       workspaceSlug: page.workspaceSlug,
       description: page.description,
       labels: page.labels,
+      customDomains: workspace.customDomains,
     };
 
     await this.accessManager.throwUnlessCan(
@@ -210,11 +209,27 @@ class Pages {
     if (!(<any>query).workspaceSlug || !(<any>query).slug) {
       throw new Error('Missing slug or workspaceSlug');
     }
+    const workspaceSlug = (<any>query)?.workspaceSlug as string;
+    // Fetch by custom domain
+    let permissionsAlreadyChecked = false;
+    if (workspaceSlug.includes('.')) {
+      const customDomain = workspaceSlug.includes(':')
+        ? workspaceSlug.slice(0, workspaceSlug.indexOf(':'))
+        : workspaceSlug;
+      const pageMeta = await this.accessManager.get(SubjectType.Page, {
+        slug: (<any>query).slug,
+        customDomains: {
+          $in: [customDomain],
+        },
+      });
+      permissionsAlreadyChecked = true;
+      (<any>query).workspaceSlug = pageMeta.workspaceSlug;
+    }
     const page = await this.storage.get({
       ...query,
       dsulType: DSULType.DetailedPage,
     });
-    if (!page.public) {
+    if (!page.public && !permissionsAlreadyChecked) {
       await this.accessManager.get(SubjectType.Page, query);
     }
     return { ...page, workspaceSlug: (<any>query).workspaceSlug };
@@ -453,10 +468,10 @@ class Pages {
     return { id };
   };
 
-  updatePagesWorkspaceSlug = async (
+  updateWorkspacePagesMeta = async (
     workspaceId: string,
-    workspaceSlug: string,
-    oldWorkspaceSlug: string
+    newValues: Partial<Prismeai.PageMeta>,
+    prevValues: Partial<Prismeai.PageMeta>
   ) => {
     const Pages = await this.accessManager.model(SubjectType.Page);
     try {
@@ -465,21 +480,19 @@ class Pages {
           workspaceId,
         },
         {
-          $set: {
-            workspaceSlug,
-          },
+          $set: newValues,
         }
       );
 
-      if (oldWorkspaceSlug) {
+      if (prevValues.workspaceSlug && newValues.workspaceSlug) {
         await this.storage.copy(
           {
-            workspaceSlug: oldWorkspaceSlug,
+            workspaceSlug: prevValues.workspaceSlug,
             dsulType: DSULType.DetailedPage,
             parentFolder: true,
           },
           {
-            workspaceSlug,
+            workspaceSlug: newValues.workspaceSlug,
             dsulType: DSULType.DetailedPage,
             parentFolder: true,
           }
@@ -488,7 +501,7 @@ class Pages {
         setTimeout(() => {
           this.storage
             .delete({
-              workspaceSlug: oldWorkspaceSlug,
+              workspaceSlug: prevValues.workspaceSlug,
               dsulType: DSULType.DetailedPage,
               parentFolder: true,
             })
@@ -502,8 +515,12 @@ class Pages {
       }
     } catch (err) {
       logger.warn({
-        msg: 'An error occured while updating pages workspaceSlug',
+        msg: 'An error occured while updating workspaces pages',
         err,
+        details: {
+          newValues,
+          prevValues,
+        },
       });
     }
   };
