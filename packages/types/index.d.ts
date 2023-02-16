@@ -1174,6 +1174,7 @@ declare namespace Prismeai {
         slug?: string;
         id?: string;
         labels?: string[];
+        customDomains?: string[];
     }
     export interface DSULPatch {
         name?: string;
@@ -1186,6 +1187,7 @@ declare namespace Prismeai {
         slug?: string;
         id?: string;
         labels?: string[];
+        customDomains?: string[];
     }
     export interface DSULReadOnly {
         name: string;
@@ -1198,6 +1200,7 @@ declare namespace Prismeai {
         slug?: string;
         id?: string;
         labels?: string[];
+        customDomains?: string[];
         automations?: {
             [name: string]: AutomationMeta;
         };
@@ -1331,6 +1334,7 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
+        customDomains?: string[];
         styles?: string;
         updateOn?: string;
         appInstances: {
@@ -1684,6 +1688,7 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
+        customDomains?: string[];
         styles?: string;
         updateOn?: string;
     }
@@ -1729,6 +1734,7 @@ declare namespace Prismeai {
         createdAt?: string;
         updatedAt?: string;
         permissions?: PermissionsMap;
+        customDomains?: string[];
     }
     export interface PagePermissionsDeleted {
         /**
@@ -1917,6 +1923,7 @@ declare namespace Prismeai {
         slug?: string;
         id?: string;
         labels?: string[];
+        customDomains?: string[];
         automations?: {
             [name: string]: Automation;
         };

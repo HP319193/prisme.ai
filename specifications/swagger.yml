@@ -313,6 +313,10 @@ components:
           type: array
           items:
             type: string
+        customDomains:
+          type: array
+          items:
+            type: string
 
     RuntimeModel:
       allOf:
@@ -574,6 +578,10 @@ components:
           type: string
         permissions:
           $ref: '#/components/schemas/PermissionsMap'
+        customDomains:
+          type: array
+          items:
+            type: string
 
     Page:
       type: object

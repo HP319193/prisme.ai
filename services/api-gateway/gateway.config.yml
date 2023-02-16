@@ -21,9 +21,9 @@ endpoints:
 
   events:
     paths:
-      - '/v2/workspaces/*/events*'
-      - '/v2/workspaces/*/usage*'
-      - '/v2/workspaces/*/search*'
+      - '/v2/workspaces/*/events'
+      - '/v2/workspaces/*/usage'
+      - '/v2/workspaces/*/search'
 
   console:
     path: '*'
