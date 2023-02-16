@@ -25,6 +25,7 @@ export interface DataTableConfig {
     itemCount: number;
     pageSize?: number;
   };
+  customProps?: any;
 }
 
 const components = {
@@ -170,6 +171,7 @@ export const DataTable: BlockComponent = () => {
           locale={locales}
           components={components}
           pagination={pagination}
+          {...config.customProps}
         />
       </div>
     </div>

@@ -136,6 +136,12 @@ const schema = {
         },
       },
     },
+    customProps: {
+      type: 'object',
+      additionalProperties: true,
+      title: 'pages.blocks.datatable.settings.customProps.label',
+      description: 'pages.blocks.datatable.settings.customProps.description',
+    },
   },
 } as Schema;
 
