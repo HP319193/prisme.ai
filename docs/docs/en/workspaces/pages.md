@@ -17,7 +17,7 @@ In order to make a block available to the page editor, it needs to be declared i
 blocks:
   config:
     name: Block name
-    description: Block descripition 
+    description: Block description 
     url: https://cdn.company.com/public/someblock/main.js
 ```
 

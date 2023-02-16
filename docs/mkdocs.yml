@@ -51,8 +51,8 @@ nav:
           - i18n.conditions: workspaces/conditions.md
       - Pages:
           - Pages: workspaces/pages.md
-          - Blocks:
-              - Form: blocks/form.md
+      - Blocks:
+          - Form: blocks/form.md
       - Schema Form: workspaces/schemaform.md
   - API: /api
   - i18n.architecture:
