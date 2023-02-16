@@ -18,6 +18,9 @@
     "history": "Historique"
   },
   "usage": {
+    "apps": {
+      "title": "Usage mensuel des applications installées"
+    },
     "title": "Usage mensuel",
     "interaction": "interactions",
     "access": "Accès",

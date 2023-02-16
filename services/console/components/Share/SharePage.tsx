@@ -139,7 +139,7 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
   }, [link, t]);
 
   return (
-    <div className="w-[42rem] space-y-5">
+    <div className="w-[44rem] space-y-5">
       <div className="flex flex-row">
         <div className="flex flex-row">
           <Space className="flex flex-row">

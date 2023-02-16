@@ -18,6 +18,9 @@
     "history": "Long history"
   },
   "usage": {
+    "apps": {
+      "title": "Apps monthly usage"
+    },
     "title": "Monthly usage",
     "interaction": "interactions",
     "access": "Accesses",
