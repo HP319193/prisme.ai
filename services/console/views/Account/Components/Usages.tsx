@@ -46,40 +46,44 @@ const Usages = ({ appsUsages, wpId, error }: UsagesProps) => {
             <div>{t('usage.old')}</div>
           </div>
         )}
-        <div className="flex flex-row items-center text-gray font-semibold">
-          <Image src={stat.src} width={17} height={17} alt="" />
-          <div className="ml-2 uppercase">{t('usage.apps.title')}</div>
-        </div>
-        {appsUsages.map((workspaceUsage) => (
-          <div key={workspaceUsage.slug} className="flex flex-row">
-            {workspaceUsage.photo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={workspaceUsage.photo}
-                className={
-                  'h-[3.125rem] w-[3.125rem] rounded-[0.625rem] mr-[1.25rem] object-contain'
-                }
-                alt=""
-              />
-            ) : (
-              <div className="flex justify-center items-center h-[3.125rem] w-[3.125rem] rounded-[0.625rem] bg-[#E6EFFF] mr-[1.25rem]">
-                <div className="font-semibold text-accent">
-                  {workspaceUsage.slug.substring(0, 2)}
-                </div>
-              </div>
-            )}
-            <div className="flex flex-1 justify-between">
-              <div>{workspaceUsage.slug}</div>
-              <div className="flex flex-col items-end text-right text-[0.75rem]">
-                <div className="flex flex-row justify-center items-center">
-                  {workspaceUsage.total.transactions}
-                  &nbsp;
-                  {t('usage.interaction')}
-                </div>
-              </div>
+        {appsUsages && appsUsages.length > 0 && (
+          <>
+            <div className="flex flex-row items-center text-gray font-semibold">
+              <Image src={stat.src} width={17} height={17} alt="" />
+              <div className="ml-2 uppercase">{t('usage.apps.title')}</div>
             </div>
-          </div>
-        ))}
+            {appsUsages.map((workspaceUsage) => (
+              <div key={workspaceUsage.slug} className="flex flex-row">
+                {workspaceUsage.photo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={workspaceUsage.photo}
+                    className={
+                      'h-[3.125rem] w-[3.125rem] rounded-[0.625rem] mr-[1.25rem] object-contain'
+                    }
+                    alt=""
+                  />
+                ) : (
+                  <div className="flex justify-center items-center h-[3.125rem] w-[3.125rem] rounded-[0.625rem] bg-[#E6EFFF] mr-[1.25rem]">
+                    <div className="font-semibold text-accent">
+                      {workspaceUsage.slug.substring(0, 2)}
+                    </div>
+                  </div>
+                )}
+                <div className="flex flex-1 justify-between">
+                  <div>{workspaceUsage.slug}</div>
+                  <div className="flex flex-col items-end text-right text-[0.75rem]">
+                    <div className="flex flex-row justify-center items-center">
+                      {workspaceUsage.total.transactions}
+                      &nbsp;
+                      {t('usage.interaction')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
