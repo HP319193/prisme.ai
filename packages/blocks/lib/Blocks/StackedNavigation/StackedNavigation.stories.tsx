@@ -1,7 +1,7 @@
 import { Story } from '@storybook/react';
 import { useMemo, useState } from 'react';
 import { BlockProvider, BlocksProvider } from '../../Provider';
-import { LayoutConfig } from './context';
+import { StackedNavigationConfig } from './context';
 import Layout from './StackedNavigation';
 import { BlockLoader } from '../../BlockLoader';
 
@@ -10,7 +10,7 @@ export default {
 };
 
 const Template: Story<any> = () => {
-  const [config, setConfig] = useState<LayoutConfig>({
+  const [config, setConfig] = useState<StackedNavigationConfig>({
     head: [
       {
         slug: 'Header',

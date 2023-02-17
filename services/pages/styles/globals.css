@@ -60,6 +60,10 @@ a {
   text-decoration: none;
 }
 
+button {
+  outline: none !important;
+}
+
 * {
   box-sizing: border-box;
 }
