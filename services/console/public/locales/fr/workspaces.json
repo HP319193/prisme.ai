@@ -1131,6 +1131,12 @@
           "allowScripts": {
             "label": "Autoriser les scripts",
             "description": "Autoriser l'execution de code javascript inclus dans des balises <script>"
+          },
+          "values": {
+            "label": "Valeurs interpolées",
+            "description": "Vous pouvez insérer des valeurs en utilisant la notation {{nomDeLaVariable}} dans votre contenu HTML.",
+            "add": "Ajouter une valeur",
+            "remove": "Supprimer la valeur"
           }
         }
       },

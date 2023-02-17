@@ -1131,6 +1131,12 @@
           "allowScripts": {
             "label": "Allow scripts",
             "description": "Allow execution of javascript code included in <script> tags"
+          },
+          "values": {
+            "label": "Interpolated values",
+            "description": "You can insert values using the {{variableName}} notation into your HTML content.",
+            "add": "Add a value",
+            "remove": "Delete the value"
           }
         }
       },
