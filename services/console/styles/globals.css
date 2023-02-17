@@ -320,6 +320,10 @@ button {
   margin-right: 1.5rem;
 }
 
+.pr-form-array__item-add {
+  margin-right: 1rem;
+}
+
 .pr-form-object .pr-form-label--raw {
   margin: var(--pr-form-margin-size);
 }

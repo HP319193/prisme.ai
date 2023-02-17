@@ -26,6 +26,7 @@ const builtInBlocksOrder = [
   'Breadcrumbs',
   'Footer',
   'BlocksList',
+  'Carousel',
   'StackedNavigation',
   'TabsView',
 ];
