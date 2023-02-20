@@ -46,7 +46,10 @@ In the newly shown input, you can leave a message to recognize this version, or 
 To restore a previous version, access the event feed, and on "filters", select "filters suggestions", and finally "Workspace versions".
 The activity feed will now show all your versions. 
 
-Video walk-through : https://www.loom.com/share/67483c03226647bb8e8fb8824ccfd78c
+<a href="https://www.loom.com/share/67483c03226647bb8e8fb8824ccfd78c">
+    <p>Versionning - EN - Watch Video</p>
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/67483c03226647bb8e8fb8824ccfd78c-with-play.gif">
+  </a>
 
 ## Events  
 Each workspace has a continuous and real-time stream of **events** describing what's happening at any time.  
@@ -57,8 +60,12 @@ Events can be **native** or **custom** :
 Workspaces can **emit** custom events in order to simply record that something special happened or to trigger some other automations which will be executed in parallel.  
 Workspaces can **listen** to [some **native events**](automations#supported-native-events) and [every custom events](automations#events) in order to execute any desired workflow inside theirs [automations](automations).  
 
-Events are stored up to 3 years after their creation and can ben viewed / searched at anytime from the **Activity** view of the workspace.  
-**Activity** video walk-through : https://www.loom.com/share/0d60cacef42e4600aade3972050d53fe  
+Events are stored up to 3 years after their creation and can ben viewed / searched at anytime from the **Activity** view of the workspace.
+
+<a href="https://www.loom.com/share/0d60cacef42e4600aade3972050d53fe">
+    <p>Activity View - Watch Video</p>
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/0d60cacef42e4600aade3972050d53fe-with-play.gif">
+  </a>
 
 
 
