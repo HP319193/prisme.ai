@@ -1063,6 +1063,10 @@
               "label": "Nombre d'éléments par page",
               "description": "Nombre d'éléments à afficher sur chaque page."
             }
+          },
+          "customProps": {
+            "label": "Propriétés additionelles",
+            "description": "Propriétés supplémentaires à envoyer au tableau, comme supporté par la librairie ant design : https://ant.design/components/table"
           }
         }
       },

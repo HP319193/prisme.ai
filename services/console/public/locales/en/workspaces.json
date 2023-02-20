@@ -1063,6 +1063,10 @@
               "label": "Pages size",
               "description": "Number of item per page."
             }
+          },
+          "customProps": {
+            "label": "Additional properties",
+            "description": "Additional properties to send to the Table, as supported by ant design : https://ant.design/components/table"
           }
         }
       },
