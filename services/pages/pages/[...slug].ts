@@ -9,19 +9,20 @@ export { default } from '../views/Page';
 
 export const getServerSideProps: GetServerSideProps<
   PageProps,
-  { slug: string }
+  { slug: string[] }
 > = async ({ req, res, locale = '', params: { slug } = {} }) => {
   if (!slug || req.url === '/favicon.ico')
     return {
       notFound: true,
     };
+
   let page: PageProps['page'] = null;
   let error: number | null = null;
   let initialConfig: Record<string, any>[] = [];
 
   const workspaceSlug = getSubmodain(req.headers.host || '');
   try {
-    page = await api.getPageBySlug(workspaceSlug, slug);
+    page = await api.getPageBySlug(workspaceSlug, slug.join('/'));
     initialConfig = await getBlocksConfigFromServer(page);
   } catch (e) {
     res.statusCode = error = (e as HTTPError).code;
