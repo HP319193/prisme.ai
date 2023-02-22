@@ -18,7 +18,7 @@ export const EVENTS_SCHEDULED_DELETION_DAYS = parseInt(
 );
 
 export const ELASTIC_SEARCH_TIMEOUT =
-  process.env.ELASTIC_SEARCH_TIMEOUT || '50ms';
+  process.env.ELASTIC_SEARCH_TIMEOUT || '2000ms';
 
 export const ELASTIC_SEARCH_FORBIDDEN_AGGS = (
   process.env.ELASTIC_SEARCH_FORBIDDEN_AGGS || 'scripted_metric'
