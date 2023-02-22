@@ -128,3 +128,13 @@ export function getError({ dirty, error, submitError }: FieldMetaState<any>) {
   const hasError = dirty && (error || submitError);
   return typeof hasError === 'string' ? hasError : '';
 }
+
+export function getInputMode(schema: Schema) {
+  if (schema.validators && schema.validators.tel) {
+    return 'tel';
+  }
+  if (schema.validators && schema.validators.email) {
+    return 'email';
+  }
+  return schema.type === 'number' ? 'numeric' : 'text';
+}
