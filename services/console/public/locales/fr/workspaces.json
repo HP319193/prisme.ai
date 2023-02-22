@@ -265,6 +265,7 @@
       "search": "Rechercher",
       "anyFieldError": "JSON Invalide",
       "anyFieldErrorTooltip": "Il s'agit d'un avertissement, l'instruction sera quand même sauvegardée",
+      "link": "Éditer l'Automatisation",
       "item": {
         "add": "Ajouter un item",
         "remove": "Supprimer l'item"

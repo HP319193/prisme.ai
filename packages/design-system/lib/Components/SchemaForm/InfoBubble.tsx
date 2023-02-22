@@ -1,9 +1,9 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 
 interface InfoBubbleProps {
-  text?: string;
+  text?: string | ReactNode;
   className?: string;
 }
 

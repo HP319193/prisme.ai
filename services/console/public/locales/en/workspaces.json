@@ -265,6 +265,7 @@
       "search": "Search",
       "anyFieldError": "Invalid JSON",
       "anyFieldErrorTooltip": "This is just a warning, the instruction will still save",
+      "link": "Edit Automation",
       "item": {
         "add": "Add an item",
         "remove": "Delete item"

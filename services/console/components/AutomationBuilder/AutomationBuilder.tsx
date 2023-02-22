@@ -427,12 +427,15 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
       const localizeSchema = (schema: Schema, name: string) => {
         if (!name) return schema;
         const localizedSchema = { ...schema };
+        const { title, description } = localizedSchema;
         localizedSchema.title =
           l(`automations.instruction.form.${name}.label`) ||
-          localize(localizedSchema.title);
+          (typeof title === 'string' ? localize(title) : title);
         localizedSchema.description =
           l(`automations.instruction.form.${name}.description`) ||
-          localize(localizedSchema.description);
+          (typeof description === 'string'
+            ? localize(description)
+            : description);
         localizedSchema.add = l(`automations.instruction.form.${name}.add`);
         localizedSchema.remove = l(
           `automations.instruction.form.${name}.remove`

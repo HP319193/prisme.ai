@@ -31,19 +31,22 @@ export const BlockWidget: FieldComponent = ({
     label ||
     schema.title ||
     schemaFormUtils.getLabel(field.input.name, schema.title);
+  const children =
+    label ||
+    schema.title ||
+    schemaFormUtils.getLabel(field.input.name, schema.title);
   return (
     <div className="pr-form-block">
       {_label && _label !== '' && (
         <label
           className={`${className} pr-form-block__label pr-form-label`}
           htmlFor={field.input.name}
-          dangerouslySetInnerHTML={{
-            __html:
-              label ||
-              schema.title ||
-              schemaFormUtils.getLabel(field.input.name, schema.title),
-          }}
-        />
+          dangerouslySetInnerHTML={
+            typeof children === 'string' ? { __html: children } : undefined
+          }
+        >
+          {typeof children === 'object' ? children : undefined}
+        </label>
       )}
       <Tooltip title={hasError} overlayClassName="pr-form-error">
         <BlockLoader name={block.slug} config={block} />

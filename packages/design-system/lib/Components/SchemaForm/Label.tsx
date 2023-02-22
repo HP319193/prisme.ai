@@ -10,14 +10,28 @@ interface LabelProps {
 }
 
 export const Label = ({ className, children, field, schema }: LabelProps) => {
-  const label =
-    children || schema.title || getLabel(field.input.name, schema.title);
+  const { title } = schema;
+
+  if (typeof title === 'object') {
+    return (
+      <label className={className} htmlFor={field.input.name}>
+        {title}
+      </label>
+    );
+  }
+
+  const label = children || title || getLabel(field.input.name, title);
   if (!label) return null;
+
+  if (typeof label === 'object') {
+    return null;
+  }
+
   return (
     <label
       className={className}
       htmlFor={field.input.name}
-      dangerouslySetInnerHTML={{ __html: label }}
+      dangerouslySetInnerHTML={{ __html: `${label}` }}
     />
   );
 };

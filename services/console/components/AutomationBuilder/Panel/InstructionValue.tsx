@@ -1,12 +1,14 @@
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
-import { Schema, SchemaForm } from '@prisme.ai/design-system';
+import { Schema, SchemaForm, Tooltip } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
 import { useAutomationBuilder } from '../context';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import components from '../../SchemaForm/schemaFormComponents';
 import { useWorkspace } from '../../../providers/Workspace';
 import { InstructionValueSet } from './InstructionValueSet';
+import Link from 'next/link';
+import { LinkOutlined } from '@ant-design/icons';
 
 interface InstructionValueProps {
   instruction: string;
@@ -27,6 +29,10 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   const { automationId } = useAutomationBuilder();
   const { t } = useTranslation('workspaces');
   const { localizeSchemaForm, localize } = useLocalizedText();
+
+  const isWorkspaceAutomation = Object.keys(
+    workspace.automations || {}
+  ).includes(instruction);
 
   const { config: appInstance, appName } = useMemo(() => {
     if (!workspace.imports) return { config: workspace.config };
@@ -52,12 +58,30 @@ export const InstructionValue: FC<InstructionValueProps> = ({
   const cleanedSchema = useMemo<Schema>(() => {
     const cleaned = {
       ...localizeSchemaForm(schema),
-      title: t('automations.instruction.label', {
-        context:
-          appName && localize(schema.name)
-            ? `${localize(schema.name)} (${appName})`
-            : instruction,
-      }),
+      title: (
+        <>
+          {t('automations.instruction.label', {
+            context:
+              appName && localize(schema.name)
+                ? `${localize(schema.name)} (${appName})`
+                : instruction,
+          })}
+          {isWorkspaceAutomation && (
+            <Link
+              href={`/workspaces/${workspace.id}/automations/${instruction}`}
+            >
+              <a className="ml-2" onClick={(e) => e.stopPropagation()}>
+                <Tooltip
+                  title={t('automations.instruction.link')}
+                  placement="bottom"
+                >
+                  <LinkOutlined />
+                </Tooltip>
+              </a>
+            </Link>
+          )}
+        </>
+      ),
       description: t('automations.instruction.description', {
         context: instruction,
         default: schema.description,
