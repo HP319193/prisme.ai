@@ -1,4 +1,10 @@
-import { ReactElement, useCallback, useMemo, useRef } from 'react';
+import {
+  MutableRefObject,
+  ReactElement,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 import { Form } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import Field from './Field';
@@ -17,6 +23,7 @@ import FieldSelect from './FieldSelect';
 import FieldRadio from './FieldRadio';
 import FieldText from './FieldText';
 import { OnChange } from 'react-final-form-listeners';
+import { FormApi } from 'final-form';
 
 export interface SchemaFormProps {
   schema: Schema;
@@ -29,6 +36,7 @@ export interface SchemaFormProps {
   locales?: SchemaFormContext['locales'];
   components?: Partial<SchemaFormContext['components']>;
   utils?: Partial<SchemaFormContext['utils']>;
+  formRef?: MutableRefObject<FormApi<any, any>>;
 }
 
 const DefaultLocales = {};
@@ -42,6 +50,7 @@ export const SchemaForm = ({
   locales = DefaultLocales,
   components,
   utils,
+  formRef,
 }: SchemaFormProps) => {
   if (!schema) return null;
   const values = useRef({ values: initialValues });
@@ -97,33 +106,36 @@ export const SchemaForm = ({
         initialValues={values.current}
         mutators={{ ...arrayMutators }}
       >
-        {({ handleSubmit, hasValidationErrors }) => (
-          <form
-            onSubmit={handleSubmit}
-            className={`pr-form ${
-              hasValidationErrors ? 'pr-form--has-validation-errors' : ''
-            }`}
-          >
-            {onChange && (
-              <OnChange name="values">
-                {(value, previous) => {
-                  if (previous === value) return;
-                  onChange(value);
-                }}
-              </OnChange>
-            )}
-            <Field schema={schema} name={root} />
-            {buttons || (
-              <Button
-                type="submit"
-                className="pr-form-submit"
-                disabled={hasValidationErrors}
-              >
-                {locales.submit || 'Submit'}
-              </Button>
-            )}
-          </form>
-        )}
+        {({ handleSubmit, hasValidationErrors, form }) => {
+          formRef && (formRef.current = form);
+          return (
+            <form
+              onSubmit={handleSubmit}
+              className={`pr-form ${
+                hasValidationErrors ? 'pr-form--has-validation-errors' : ''
+              }`}
+            >
+              {onChange && (
+                <OnChange name="values">
+                  {(value, previous) => {
+                    if (previous === value) return;
+                    onChange(value);
+                  }}
+                </OnChange>
+              )}
+              <Field schema={schema} name={root} />
+              {buttons || (
+                <Button
+                  type="submit"
+                  className="pr-form-submit"
+                  disabled={hasValidationErrors}
+                >
+                  {locales.submit || 'Submit'}
+                </Button>
+              )}
+            </form>
+          );
+        }}
       </Form>
     </context.Provider>
   );

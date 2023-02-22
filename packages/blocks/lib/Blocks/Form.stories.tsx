@@ -17,7 +17,6 @@ const Template: Story<any> = (config) => {
       ({
         emit: (type: string, payload: any) => {
           if (type === onSubmit.current) {
-            console.log('wesh');
             setLocalConfig({ disabledSubmit: true });
             setTimeout(() => {
               setLocalConfig({ disabledSubmit: false });
@@ -29,6 +28,11 @@ const Template: Story<any> = (config) => {
       } as Events),
     []
   );
+
+  useEffect(() => {
+    if (JSON.stringify(config) === JSON.stringify(localConfig)) return;
+    setLocalConfig(config);
+  }, [config]);
 
   return (
     <BlockProvider config={{ ...config, ...localConfig }} events={events}>
@@ -50,4 +54,5 @@ Default.args = {
   },
   onChange: 'valueChanged',
   onSubmit: 'submited',
+  values: {},
 };
