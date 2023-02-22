@@ -46,6 +46,7 @@ export const Form = ({
   const { localize, localizeSchemaForm } = useLocalizedText();
   const [mountedForm, setMountedForm] = useState(true);
   const [initialValues, setInitialValues] = useState(config.values || {});
+  const canChange = useRef(true);
 
   const onChange = useCallback(
     (values: any) => {
@@ -60,8 +61,10 @@ export const Form = ({
 
     const resetForm = async (values: any) => {
       setMountedForm(false);
+      canChange.current = false;
       await setInitialValues(values);
-      setMountedForm(true);
+      await setMountedForm(true);
+      canChange.current = true;
     };
     resetForm(config.values);
   }, [config.values]);
@@ -107,7 +110,10 @@ export const Form = ({
             uploadFile,
           }}
           initialValues={initialValues}
-          onChange={onChange}
+          onChange={(v: any) => {
+            if (!canChange.current) return;
+            onChange(v);
+          }}
           onSubmit={onSubmit}
           buttons={
             config.hideSubmit
