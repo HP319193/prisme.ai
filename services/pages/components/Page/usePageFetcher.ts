@@ -9,14 +9,16 @@ export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
     pageFromServer || null
   );
   const [loading, setLoading] = useState(false);
-  const { asPath } = useRouter();
-  const slug = asPath.replace(/^\//, '');
+  const {
+    query: { slug: path = '' },
+  } = useRouter();
+  const slug = Array.isArray(path) ? path.join('/') : path;
 
   const fetchPage = useCallback(async () => {
     try {
       const workspaceSlug = getSubmodain(window.location.host);
 
-      const page = await api.getPageBySlug(workspaceSlug, `${slug}`);
+      const page = await api.getPageBySlug(workspaceSlug, slug);
       setPage(page);
     } catch (e) {}
     setLoading(false);
