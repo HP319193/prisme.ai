@@ -118,7 +118,16 @@ export const InstructionValue: FC<InstructionValueProps> = ({
       };
     }
     return cleaned;
-  }, [instruction, localizeSchemaForm, localize, appName, schema, t]);
+  }, [
+    localizeSchemaForm,
+    schema,
+    t,
+    appName,
+    localize,
+    instruction,
+    isWorkspaceAutomation,
+    workspace.id,
+  ]);
 
   const locales = useMemo(
     () => ({
