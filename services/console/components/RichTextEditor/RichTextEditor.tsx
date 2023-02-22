@@ -12,7 +12,7 @@ export interface RichTextEditorProps {
 }
 export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   const { t } = useTranslation('workspaces');
-  const [displayRaw, setDisplayRaw] = useState(!isWysiwygSupported(value));
+  const [displayRaw, setDisplayRaw] = useState(!isWysiwygSupported(`${value}`));
 
   const toggle = useCallback(() => {
     setDisplayRaw(!displayRaw);
@@ -42,10 +42,14 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       </div>
       {displayRaw ? (
         <div className="flex flex-1 rounded-[.3rem]">
-          <CodeEditorInline mode="html" value={value} onChange={onChange} />
+          <CodeEditorInline
+            mode="html"
+            value={`${value}`}
+            onChange={onChange}
+          />
         </div>
       ) : (
-        <Quill theme="snow" defaultValue={value} onChange={onChange} />
+        <Quill theme="snow" defaultValue={`${value}`} onChange={onChange} />
       )}
     </div>
   );

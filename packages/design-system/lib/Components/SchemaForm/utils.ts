@@ -20,7 +20,7 @@ export const getDefaultValue = (type: Schema['type']) => {
   }
 };
 
-export const getLabel = (name: string, schemaTitle?: string) => {
+export const getLabel = (name: string, schemaTitle?: Schema['title']) => {
   if (schemaTitle === '') return '';
   const [, ...parts] = name.split(/\./);
   return parts.map((part) => (part === EMPTY ? '' : part)).join('.');

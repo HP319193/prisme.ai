@@ -9,9 +9,8 @@ export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
     pageFromServer || null
   );
   const [loading, setLoading] = useState(false);
-  const {
-    query: { slug = 'index' },
-  } = useRouter();
+  const { asPath } = useRouter();
+  const slug = asPath.replace(/^\//, '');
 
   const fetchPage = useCallback(async () => {
     try {

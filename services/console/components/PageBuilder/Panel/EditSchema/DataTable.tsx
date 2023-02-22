@@ -124,9 +124,9 @@ const schema = {
         },
         itemCount: {
           type: 'number',
-          title: 'pages.blocks.datatable.settings.pagination.pages.label',
+          title: 'pages.blocks.datatable.settings.pagination.itemCount.label',
           description:
-            'pages.blocks.datatable.settings.pagination.pages.description',
+            'pages.blocks.datatable.settings.pagination.itemCount.description',
         },
         pageSize: {
           type: 'number',
@@ -135,6 +135,12 @@ const schema = {
             'pages.blocks.datatable.settings.pagination.pageSize.description',
         },
       },
+    },
+    customProps: {
+      type: 'object',
+      additionalProperties: true,
+      title: 'pages.blocks.datatable.settings.customProps.label',
+      description: 'pages.blocks.datatable.settings.customProps.description',
     },
   },
 } as Schema;

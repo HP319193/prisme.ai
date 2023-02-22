@@ -107,9 +107,9 @@ export interface Schema extends Record<string, any> {
   // Field type
   type?: SchemaTypes;
   // Field label
-  title?: string;
+  title?: string | ReactNode;
   // Description in a help tooltip
-  description?: string;
+  description?: string | ReactNode;
   // Input placeholder
   placeholder?: string;
   // Add button label when in a list of items or properties
