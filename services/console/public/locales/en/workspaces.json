@@ -265,6 +265,10 @@
       "search": "Search",
       "anyFieldError": "Invalid JSON",
       "anyFieldErrorTooltip": "This is just a warning, the instruction will still save",
+      "additionnalProperties": {
+        "label": "Additional properties",
+        "description": "Define additional properties in the form of a JSON"
+      },
       "link": "Edit Automation",
       "item": {
         "add": "Add an item",

@@ -265,6 +265,10 @@
       "search": "Rechercher",
       "anyFieldError": "JSON Invalide",
       "anyFieldErrorTooltip": "Il s'agit d'un avertissement, l'instruction sera quand même sauvegardée",
+      "additionnalProperties": {
+        "label": "Propriétés additionnelles",
+        "description": "Définissez des propriétés additionnelles sous le forme d'un JSON"
+      },
       "link": "Éditer l'Automatisation",
       "item": {
         "add": "Ajouter un item",
