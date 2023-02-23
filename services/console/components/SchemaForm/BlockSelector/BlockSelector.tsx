@@ -23,7 +23,7 @@ export const BlockSelector: FieldComponent = (props) => {
   const field = useField(props.name);
   const hasError = schemaFormUtils.getError(field.meta);
   const [values, setValues] = useState(field.input.value || {});
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     selectBlock(field.input.value?.slug);

@@ -16,10 +16,12 @@ function isUiOptionsGrid(
   return !!uiOptions && !!(uiOptions as UiOptionsGrid).grid;
 }
 
-export const FieldObject = (props: FieldProps) => {
+export const FieldObject = (initialVisibility: boolean = true) => (
+  props: FieldProps
+) => {
   const { additionalProperties, 'ui:options': uiOptions } = props.schema;
   const field = useField(props.name, { defaultValue: props.schema.default });
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(initialVisibility);
 
   const grid = isUiOptionsGrid(uiOptions) && uiOptions.grid;
 

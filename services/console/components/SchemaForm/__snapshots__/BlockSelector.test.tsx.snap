@@ -10,7 +10,7 @@ exports[`should render 1`] = `
     tabIndex={-1}
   />
   <button
-    className="pr-form-object__label pr-form-label pr-form-object__label--visible"
+    className="pr-form-object__label pr-form-label "
     onClick={[Function]}
     type="button"
   >
