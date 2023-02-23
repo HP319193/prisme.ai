@@ -124,8 +124,7 @@ export const builtinBlocksVariants = [
     slug: 'BlocksList_columns',
     block: 'BlocksList',
     description: {
-      fr:
-        'Une mise en page commune avec entête, pied de page et trois colonnes',
+      fr: 'Une mise en page commune avec entête, pied de page et trois colonnes',
       en: 'A common layout with header, footer and three columns.',
     },
     photo: '/images/blocks/preview-BlocksList_columns.png',
@@ -195,7 +194,7 @@ export const builtinBlocksVariants = [
           min-height: 100vh;
         }
 
-        :block :nth-child(2) {
+        :block:nth-child(2) {
           flex: 1;
         }
 `,

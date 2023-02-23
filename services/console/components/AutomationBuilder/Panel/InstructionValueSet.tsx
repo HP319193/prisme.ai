@@ -62,22 +62,18 @@ const ValueEditor = (props: FieldProps) => {
 
   if (schema)
     return (
-      <FieldContainerWithRaw {...props}>
-        <label htmlFor={`${field.input.name}.name`} className="pr-form-label">
-          {t('automations.instruction.form.set.value.label')}
-        </label>
-        <div className="pr-form-input flex flex-1 -m-4 mt-4">
-          <SchemaForm
-            schema={schema}
-            initialValues={field.input.value}
-            onChange={field.input.onChange}
-            components={components}
-          />
-        </div>
-        <div className="pr-form-description">
-          <InfoBubble text={props.schema.description} />
-        </div>
-      </FieldContainerWithRaw>
+      <SchemaForm
+        schema={{
+          ...schema,
+          title: t('automations.instruction.form.set.value.label'),
+          description: props.schema.description,
+        }}
+        initialValues={field.input.value}
+        onChange={field.input.onChange}
+        components={components}
+        initialFieldObjectVisibility={false}
+        buttons={[]}
+      />
     );
   return <FieldAny {...props} />;
 };
