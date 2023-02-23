@@ -6,9 +6,10 @@ import { Action, ActionConfig, ActionProps } from './Action';
 import { BaseBlockConfig } from './types';
 import { BaseBlock } from './BaseBlock';
 import { useMemo } from 'react';
+import useLocalizedText from '../useLocalizedText';
 
 interface HeaderConfig extends BaseBlockConfig {
-  title?: string;
+  title?: Prismeai.LocalizedText;
   logo?: {
     src: string;
     alt: string;
@@ -22,6 +23,7 @@ interface HeaderProps
     Pick<ActionProps, 'Link' | 'events'> {}
 
 export const Header = ({ Link, events, className, ...config }: HeaderProps) => {
+  const { localize } = useLocalizedText();
   const nav = config.nav && Array.isArray(config.nav) ? config.nav : [];
 
   const logo = useMemo(
@@ -53,7 +55,7 @@ export const Header = ({ Link, events, className, ...config }: HeaderProps) => {
           </div>
         )}
         <h1 className="pr-block-header__title           left__title">
-          {config.title}
+          {localize(config.title)}
         </h1>
       </div>
       <Menu
