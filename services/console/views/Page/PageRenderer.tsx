@@ -20,7 +20,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PageBuilder from '../../components/PageBuilder';
 import CSSEditor from './CSSEditor';
 import { validatePage } from '@prisme.ai/validation';
-import SourceEdit from '../../components/SourceEdit/SourceEdit';
+import SourceEdit, {
+  ValidationError,
+} from '../../components/SourceEdit/SourceEdit';
 import { defaultStyles } from './defaultStyles';
 import useSectionsIds from '../../providers/Page/useSectionsIds';
 
@@ -108,9 +110,11 @@ export const PageRenderer = ({
     }),
     [value]
   );
+  const [validationError, setValidationError] = useState<ValidationError>();
   const validateSource = useCallback((json: any) => {
     const isValid = validatePage(json);
-    console.log(validatePage.errors);
+    const [error] = validatePage.errors || [];
+    setValidationError(error as ValidationError);
     return isValid;
   }, []);
   const source = useMemo(() => {
@@ -292,6 +296,7 @@ export const PageRenderer = ({
           onSave={onSave}
           visible={displaySource}
           validate={validateSource}
+          error={validationError}
         />
         {((value.blocks || []).length === 0 || viewMode === 1) && (
           <div className="absolute top-0 bottom-0 left-0 right-0 bg-white">

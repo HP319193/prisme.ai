@@ -32,7 +32,9 @@ import iconWorkspace from '../icons/icon-workspace.svg';
 import { useWorkspace } from '../providers/Workspace';
 import { AutomationProvider, useAutomation } from '../providers/Automation';
 import { ApiError } from '../utils/api';
-import SourceEdit from '../components/SourceEdit/SourceEdit';
+import SourceEdit, {
+  ValidationError,
+} from '../components/SourceEdit/SourceEdit';
 import { validateAutomation } from '@prisme.ai/validation';
 import { incrementName } from '../utils/incrementName';
 import useDirtyWarning from '../utils/useDirtyWarning';
@@ -356,11 +358,14 @@ export const Automation = () => {
     }),
     [value]
   );
+  const [validationError, setValidationError] = useState<ValidationError>();
   const validateSource = useCallback((json: any) => {
     const isValid = validateAutomation(json);
-    console.log(validateAutomation.errors);
+    const [error] = validateAutomation.errors || [];
+    setValidationError(error as ValidationError);
     return isValid;
   }, []);
+
   const source = useMemo(() => {
     return { slug: automationId, ...value };
   }, [automationId, value]);
@@ -479,6 +484,7 @@ export const Automation = () => {
           }}
           visible={displaySource}
           validate={validateSource}
+          error={validationError}
         />
         <AutomationBuilder
           id={`${automationId}`}
