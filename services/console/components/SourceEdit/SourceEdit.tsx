@@ -1,3 +1,4 @@
+import { WarningOutlined } from '@ant-design/icons';
 import { YAMLException } from 'js-yaml';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -11,6 +12,12 @@ interface Annotation {
   type: 'error';
 }
 
+export interface ValidationError {
+  instancePath: string;
+  keyword: string;
+  message: string;
+}
+
 interface SourceEditProps {
   value: any;
   onChange: (value: SourceEditProps['value']) => void;
@@ -18,6 +25,7 @@ interface SourceEditProps {
   visible?: boolean;
   mounted?: boolean;
   validate?: (value: any) => boolean;
+  error?: ValidationError;
 }
 
 export const SourceEdit = <T,>({
@@ -27,6 +35,7 @@ export const SourceEdit = <T,>({
   visible = true,
   mounted = true,
   validate,
+  error,
 }: SourceEditProps) => {
   const { toJSON, toYaml } = useYaml();
   const { t } = useTranslation('workspaces');
@@ -140,6 +149,15 @@ export const SourceEdit = <T,>({
             onLoad={onLoad}
             shortcuts={shortcuts}
           />
+        )}
+        {error && (
+          <div className="bg-warning p-2 flex items-center">
+            <WarningOutlined />
+            <strong className="mx-2">{error.instancePath}</strong>
+            <span>
+              {error.keyword} {error.message}
+            </span>
+          </div>
         )}
       </div>
     </div>

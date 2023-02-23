@@ -1,12 +1,7 @@
-import {
-  CodeOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-} from '@ant-design/icons';
+import { CodeOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { Button, Schema } from '@prisme.ai/design-system';
 import { validateAppInstance } from '@prisme.ai/validation';
-import { Modal, notification, PageHeader, Segmented, Tooltip } from 'antd';
+import { notification, PageHeader, Segmented, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -14,7 +9,9 @@ import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import AppEditor from '../components/AppEditor';
 import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
 import IFrameLoader from '../components/IFrameLoader';
-import SourceEdit from '../components/SourceEdit/SourceEdit';
+import SourceEdit, {
+  ValidationError,
+} from '../components/SourceEdit/SourceEdit';
 import EditDetails from '../layouts/EditDetails';
 import getLayout from '../layouts/WorkspaceLayout';
 import AppInstanceProvider, {
@@ -28,8 +25,13 @@ import useDirtyWarning from '../utils/useDirtyWarning';
 import useLocalizedText from '../utils/useLocalizedText';
 
 export const AppInstance = () => {
-  const { appInstance, documentation, saveAppInstance, saving, uninstallApp } =
-    useAppInstance();
+  const {
+    appInstance,
+    documentation,
+    saveAppInstance,
+    saving,
+    uninstallApp,
+  } = useAppInstance();
   const { workspace } = useWorkspace();
   const { localize } = useLocalizedText();
   const { t } = useTranslation('workspaces');
@@ -169,10 +171,12 @@ export const AppInstance = () => {
     }),
     [value]
   );
+  const [validationError, setValidationError] = useState<ValidationError>();
   const validateSource = useCallback(
     (json: any) => {
       const isValid = validateAppInstance(mergeSource(json));
-      console.log(validateAppInstance.errors);
+      const [error] = validateAppInstance.errors || [];
+      setValidationError(error as ValidationError);
       return isValid;
     },
     [mergeSource]
@@ -321,6 +325,7 @@ export const AppInstance = () => {
           visible={displaySource}
           mounted={mountSource}
           validate={validateSource}
+          error={validationError}
         />
       </div>
     </>
