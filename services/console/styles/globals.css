@@ -352,6 +352,11 @@ button {
   right: 1rem !important;
 }
 
+.pr-form-array__item-add,
+.pr-form-array__item-field-remove {
+  margin-right: 1rem;
+}
+
 .pr-panel-settings .ant-tabs-nav {
   margin-bottom: 0 !important;
 }

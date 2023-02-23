@@ -37,6 +37,7 @@ export interface SchemaFormProps {
   components?: Partial<SchemaFormContext['components']>;
   utils?: Partial<SchemaFormContext['utils']>;
   formRef?: MutableRefObject<FormApi<any, any>>;
+  initialFieldObjectVisibility?: boolean;
 }
 
 const DefaultLocales = {};
@@ -51,6 +52,7 @@ export const SchemaForm = ({
   components,
   utils,
   formRef,
+  initialFieldObjectVisibility = true,
 }: SchemaFormProps) => {
   if (!schema) return null;
   const values = useRef({ values: initialValues });
@@ -73,14 +75,14 @@ export const SchemaForm = ({
       FieldDate,
       FieldLocalizedBoolean,
       FieldLocalizedText,
-      FieldObject,
+      FieldObject: FieldObject(initialFieldObjectVisibility),
       FieldSelect,
       FieldRadio,
       FieldText,
       UiWidgets: {},
       ...components,
     }),
-    [components]
+    [components, initialFieldObjectVisibility]
   );
 
   const utilsWithDefault = useMemo(
