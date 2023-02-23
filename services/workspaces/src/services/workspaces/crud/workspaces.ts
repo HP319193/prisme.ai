@@ -316,6 +316,9 @@ class Workspaces {
       {
         ...fromWorkspace,
         name: fromName + ' - Copie',
+        labels: (fromWorkspace.labels || []).filter(
+          (cur) => cur !== 'suggestions'
+        ),
         description: `Copie du workspace ${fromName}`,
       },
       false

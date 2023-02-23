@@ -5,6 +5,11 @@ import { useCallback } from 'react';
 import { useUser } from './UserProvider';
 import { Trans, useTranslation } from 'next-i18next';
 import LinkInTrans from './LinkInTrans';
+import getConfig from 'next/config';
+
+const {
+  publicRuntimeConfig: { CONSOLE_HOST = '' },
+} = getConfig();
 
 interface Values {
   email: string;
@@ -63,11 +68,13 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
               <Trans
                 t={t}
                 i18nKey="in.forgot"
-                values={{
-                  url: '/forgot',
-                }}
                 components={{
-                  a: <LinkInTrans href={`forgot`} className="text-link" />,
+                  a: (
+                    <LinkInTrans
+                      href={`${CONSOLE_HOST}/forgot`}
+                      className="text-link"
+                    />
+                  ),
                 }}
               />
             </div>

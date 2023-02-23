@@ -57,6 +57,10 @@ export const Page = ({ page }: PageProps) => {
       <Head>
         <title>{localize(page.name)}</title>
         <meta name="description" content={localize(page.description)} />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, user-scalable=no"
+        />
       </Head>
       {page.styles && (
         <style dangerouslySetInnerHTML={{ __html: page.styles }} />

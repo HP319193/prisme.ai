@@ -1,4 +1,4 @@
-import { Button, Schema } from '@prisme.ai/design-system';
+import { Button, Schema, SchemaFormProps } from '@prisme.ai/design-system';
 import { BlockContext, useBlock } from '../Provider';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -10,6 +10,7 @@ import {
 import { BaseBlock } from './BaseBlock';
 import { BaseBlockConfig } from './types';
 import { Action, ActionConfig } from './Action';
+import get from 'lodash.get';
 
 const defaultSchema = {};
 
@@ -44,8 +45,9 @@ export const Form = ({
 }: FormProps) => {
   const { t } = useTranslation();
   const { localize, localizeSchemaForm } = useLocalizedText();
-  const [mountedForm, setMountedForm] = useState(true);
   const [initialValues, setInitialValues] = useState(config.values || {});
+  const canChange = useRef(true);
+  const formRef: SchemaFormProps['formRef'] = useRef<any>();
 
   const onChange = useCallback(
     (values: any) => {
@@ -56,14 +58,25 @@ export const Form = ({
   );
 
   useEffect(() => {
-    if (!config.values || config.values === initialValues) return;
-
-    const resetForm = async (values: any) => {
-      setMountedForm(false);
-      await setInitialValues(values);
-      setMountedForm(true);
+    const update = async () => {
+      const form = formRef?.current;
+      if (!form) return;
+      canChange.current = false;
+      const fields = form.getRegisteredFields();
+      await fields
+        .filter((field) => field !== 'values')
+        .forEach((name) => {
+          const field = form.getFieldState(name);
+          if (!field) return;
+          const newValue = get({ values: config.values }, name);
+          if (newValue === undefined) return;
+          if (field.value !== newValue) {
+            form.change(name, newValue);
+          }
+        });
+      canChange.current = true;
     };
-    resetForm(config.values);
+    update();
   }, [config.values]);
 
   const disabledSubmit = useRef(false);
@@ -100,37 +113,39 @@ export const Form = ({
       {config.title && (
         <div className="pr-block-form__title">{localize(config.title)}</div>
       )}
-      {mountedForm && (
-        <SchemaForm
-          schema={localizedSchema}
-          utils={{
-            uploadFile,
-          }}
-          initialValues={initialValues}
-          onChange={onChange}
-          onSubmit={onSubmit}
-          buttons={
-            config.hideSubmit
-              ? []
-              : [
-                  <div
-                    key={0}
-                    className="pr-block-form__buttons-container        block-form__buttons-container buttons-container"
+      <SchemaForm
+        schema={localizedSchema}
+        utils={{
+          uploadFile,
+        }}
+        initialValues={initialValues}
+        onChange={(v: any) => {
+          if (!canChange.current) return;
+          onChange(v);
+        }}
+        onSubmit={onSubmit}
+        buttons={
+          config.hideSubmit
+            ? []
+            : [
+                <div
+                  key={0}
+                  className="pr-block-form__buttons-container        block-form__buttons-container buttons-container"
+                >
+                  {customButtons}
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    className="pr-block-form__button        buttons-container__button button"
+                    disabled={!!config.disabledSubmit}
                   >
-                    {customButtons}
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      className="pr-block-form__button        buttons-container__button button"
-                      disabled={!!config.disabledSubmit}
-                    >
-                      {localize(config.submitLabel) || t('form.submit')}
-                    </Button>
-                  </div>,
-                ]
-          }
-        />
-      )}
+                    {localize(config.submitLabel) || t('form.submit')}
+                  </Button>
+                </div>,
+              ]
+        }
+        formRef={formRef}
+      />
     </div>
   );
 };

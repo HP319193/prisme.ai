@@ -9,11 +9,12 @@ import FieldTextTextArea from './FieldTextTextArea';
 import FieldTextUpload from './FieldTextUpload';
 import {
   FieldProps,
+  Schema,
   UiOptionsSlider,
   UiOptionsTextArea,
   UiOptionsUpload,
 } from './types';
-import { getError } from './utils';
+import { getError, getInputMode } from './utils';
 import InfoBubble from './InfoBubble';
 import { Label } from './Label';
 import FieldContainer from './FieldContainer';
@@ -70,6 +71,8 @@ export const FieldText = ({
 
   const hasError = getError(field.meta);
 
+  const inputMode = getInputMode(props.schema);
+
   return (
     <FieldContainer {...props} className="pr-form-text">
       <Label
@@ -89,6 +92,7 @@ export const FieldText = ({
           status={hasError ? 'error' : ''}
           className="pr-form-text__input pr-form-input"
           id={field.input.name}
+          inputMode={inputMode}
         />
       </Tooltip>
       <InfoBubble

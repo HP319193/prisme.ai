@@ -1,5 +1,5 @@
 import { Schema } from './types';
-import { getFieldOptions } from './utils';
+import { getFieldOptions, getInputMode } from './utils';
 
 it('should validate required', () => {
   const { validate } = getFieldOptions({
@@ -120,4 +120,38 @@ it('should validate deprecated pattern', () => {
   expect(validate).toBeDefined();
   expect(validate && validate('abc', ['abc'])).toBe(null);
   expect(validate && validate('123', ['123'])).toBe('pattern');
+});
+
+it('should get input mode', () => {
+  expect(
+    getInputMode({
+      type: 'string',
+    })
+  ).toBe('text');
+  expect(
+    getInputMode({
+      type: 'number',
+    })
+  ).toBe('numeric');
+  expect(
+    getInputMode({
+      type: 'string',
+      validators: {
+        tel: true,
+      },
+    } as Schema)
+  ).toBe('tel');
+  expect(
+    getInputMode({
+      type: 'number',
+      validators: {
+        email: true,
+      },
+    } as Schema)
+  ).toBe('email');
+  expect(
+    getInputMode({
+      type: 'boolean',
+    })
+  ).toBe('text');
 });
