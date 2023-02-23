@@ -10,7 +10,7 @@ import {
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
 
-const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces'].map(
+const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces', '/pages'].map(
   (cur) => `${PUBLIC_API_URL}${cur}`
 );
 
