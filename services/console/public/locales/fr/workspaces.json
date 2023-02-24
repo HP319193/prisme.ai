@@ -738,6 +738,7 @@
       "name_Footer": "Pied de page",
       "name_Breadcrumbs": "Fil d'ariane",
       "name_Action": "Action",
+      "name_TabsView": "Vue en onglets",
       "description": "",
       "description_Header": "Afficher une entête de page",
       "description_Hero": "Afficher un Hero de page",
@@ -751,6 +752,7 @@
       "description_Breadcrumbs": "Afficher un fil d'ariane",
       "description_Action": "Afficher un bouton d'action capable de faire naviguer vers un lien, une page, une section de la page ou de délencher un évènement.",
       "description_Footer": "Afficher un pied de page",
+      "description_TabsView": "Afficher des onglets",
       "panelTitle_adding": "Ajouter un Block",
       "panelTitle_editing": "Éditer le Block {{blockName}}",
       "header": {
@@ -1197,6 +1199,24 @@
               "_label": {
                 "label": "Libéllé du lien",
                 "description": "Texte affiché."
+              }
+            }
+          }
+        }
+      },
+      "tabsview": {
+        "settings": {
+          "tabs": {
+            "label": "Onglets",
+            "description": "Définissez vos onglets et leur contenu associé",
+            "items": {
+              "label": "Onglet",
+              "description": "Définissez un onglet",
+              "add": "Ajouter un onglet",
+              "remove": "Supprimer l'onglet",
+              "content": {
+                "label": "Contenu",
+                "description": "Le contenu affiché quand l'onget est sélectionné."
               }
             }
           }
