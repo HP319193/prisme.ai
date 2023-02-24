@@ -12,6 +12,7 @@ import Footer from './Footer';
 import Image from './Image';
 import Breadcrumbs from './Breadcrumbs';
 import Action from './Action';
+import TabsView from './TabsView';
 
 const Schemas = {
   Cards,
@@ -26,6 +27,7 @@ const Schemas = {
   Image,
   Breadcrumbs,
   Action,
+  TabsView,
 };
 
 const getEditSchema = (blockName: string): Schema | null =>

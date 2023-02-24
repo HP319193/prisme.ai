@@ -1,6 +1,7 @@
 :root {
   --light-gray-color: #e5e5e5;
   --accent-color: #015dff;
+  --accent-contrast-color: white;
   --error-color: #ff4d4f;
   /* Schema Form */
   --pr-form-object-border: 1px solid var(--light-gray-color);

@@ -27,6 +27,7 @@ const builtInBlocksOrder = [
   'Footer',
   'BlocksList',
   'StackedNavigation',
+  'TabsView',
 ];
 
 export const useBlocks = () => {

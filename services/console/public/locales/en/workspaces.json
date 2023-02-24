@@ -738,6 +738,7 @@
       "name_Footer": "Footer",
       "name_Breadcrumbs": "Breadcrumbs",
       "name_Action": "Action",
+      "name_TabsView": "Tabs view",
       "description": "",
       "description_Header": "Display page header",
       "description_Hero": "Display a Hero of page",
@@ -751,6 +752,7 @@
       "description_Footer": "Display a Footer",
       "description_Breadcrumbs": "Display Breadcrumbs",
       "description_Action": "Display an action button capable of navigating to a link, a page, a section of the page or triggering an event.",
+      "description_TabsView": "Display tabs",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
@@ -1197,6 +1199,24 @@
               "_label": {
                 "label": "Link label",
                 "description": "Displayed label."
+              }
+            }
+          }
+        }
+      },
+      "tabsview": {
+        "settings": {
+          "tabs": {
+            "label": "Tabs",
+            "description": "Define your tabs and their associated content",
+            "items": {
+              "label": "Tab",
+              "description": "Define a tab",
+              "add": "Add a tab",
+              "remove": "Remove tab",
+              "content": {
+                "label": "Content",
+                "description": "The content displayed when the onget is selected."
               }
             }
           }

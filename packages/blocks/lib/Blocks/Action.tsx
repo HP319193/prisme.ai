@@ -1,4 +1,4 @@
-import { ReactChild } from 'react';
+import { ReactNode } from 'react';
 import { BlockContext, useBlock } from '../Provider';
 import {
   BlocksDependenciesContext,
@@ -10,13 +10,14 @@ import { BaseBlockConfig } from './types';
 export interface ActionConfig extends BaseBlockConfig {
   type: 'external' | 'internal' | 'inside' | 'event';
   value: string;
-  text: string | ReactChild;
+  text: ReactNode;
   payload?: any;
 }
 
 export interface ActionProps extends ActionConfig {
   events: BlockContext['events'];
   Link: BlocksDependenciesContext['components']['Link'];
+  onClick?: () => void;
 }
 
 export const Action = ({
@@ -27,6 +28,7 @@ export const Action = ({
   className,
   Link,
   events,
+  onClick,
 }: ActionProps) => {
   switch (type) {
     case 'event':
@@ -37,6 +39,7 @@ export const Action = ({
           <button
             type="button"
             onClick={() => {
+              onClick && onClick();
               if (!events || !value) return;
               events.emit(value, payload);
             }}
@@ -56,6 +59,9 @@ export const Action = ({
         >
           <button
             type="button"
+            onClick={() => {
+              onClick && onClick();
+            }}
             className="block-header__nav-item-button"
             dangerouslySetInnerHTML={
               typeof text === 'string' ? { __html: text } : undefined
@@ -72,6 +78,9 @@ export const Action = ({
         >
           <button
             type="button"
+            onClick={() => {
+              onClick && onClick();
+            }}
             className="block-header__nav-item-button"
             dangerouslySetInnerHTML={
               typeof text === 'string' ? { __html: text } : undefined
