@@ -6,14 +6,7 @@ exports[`should render blocks 1`] = `
 >
   <div
     className="flex flex-1 flex-col page-blocks w-full"
-  >
-    <div
-      className="page-block block- block-Header snap-start z-10"
-    />
-    <div
-      className="page-block block- block-RichText snap-start z-10"
-    />
-  </div>
+  />
   <a
     className=" pr-poweredby text-[0.75rem] text-pr-grey flex justify-center items-center pr-2 m-4 self-start bg-white border-gray-200 border-[1px] rounded-[4px] !font-[Montserrat]"
     href="https://prisme.ai"
