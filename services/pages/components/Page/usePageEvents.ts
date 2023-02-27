@@ -3,32 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useUser } from '../../../console/components/UserProvider';
 import api, { Events } from '../../../console/utils/api';
 
-function resetBlocksConfig(
-  page: Prismeai.Page,
-  initialConfig: Record<string, any>[] = []
-) {
-  return (page.blocks || []).map(({ config }, index) => ({
-    ...(config || {}),
-    ...(initialConfig[index] || {}),
-  }));
-}
-
-export const usePageEvents = (
-  page: Prismeai.Page | null,
-  initialConfig: Record<string, any>[] = []
-) => {
+export const usePageEvents = (page: Prismeai.Page | null) => {
   const { user } = useUser();
   const [events, setEvents] = useState<Events>();
-  const [blocksConfigs, setBlocksConfigs] = useState<
-    NonNullable<Prismeai.Page['blocks']>[number]['config'][]
-  >(page ? resetBlocksConfig(page, initialConfig) : []);
   const { push } = useRouter();
-
-  // Init blocks config
-  useEffect(() => {
-    if (!page) return;
-    setBlocksConfigs(resetBlocksConfig(page));
-  }, [page]);
 
   // init socket
   const prevSocketWorkspaceId = useRef('');
@@ -76,7 +54,7 @@ export const usePageEvents = (
     });
   }, [events, page, push]);
 
-  return { blocksConfigs, events };
+  return { events };
 };
 
 export default usePageEvents;

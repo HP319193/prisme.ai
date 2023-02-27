@@ -47,13 +47,6 @@ it('should set events for page', async () => {
   await act(async () => {
     return;
   });
-  expect(expected.blocksConfigs).toEqual([
-    {
-      foo: 'bar',
-      updateOn: 'updateBlock',
-      automation: 'initBlock',
-    },
-  ]);
 
   expect(expected.events).toBe(events);
 

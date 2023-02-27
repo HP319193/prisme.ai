@@ -4,7 +4,7 @@ import { BlockInCatalog } from './useBlocks';
 import { useContext } from '../../utils/useContext';
 
 export type Block = NonNullable<Prismeai.Page['blocks']>[number];
-export type BlocksWithKeys = Map<string, Block>;
+export type BlocksWithKeys = Map<string, Block & { config?: any }>;
 
 export interface PageBuilderContext {
   value: BlocksWithKeys;

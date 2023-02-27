@@ -12,7 +12,6 @@ export const pageContext = createContext<PageContext>({
   setPage() {},
   loading: false,
   async fetchPage() {},
-  blocksConfigs: [],
   events: undefined,
 });
 
@@ -27,13 +26,12 @@ export interface PageProviderProps {
 export const PageProvider: FC<PageProviderProps> = ({
   page: pageFromServer,
   error,
-  initialConfig,
   children,
 }) => {
   const { page, setPage, loading, fetchPage } = usePageFetcher(
     pageFromServer || undefined
   );
-  const { blocksConfigs, events } = usePageEvents(page, initialConfig);
+  const { events } = usePageEvents(page);
 
   return (
     <pageContext.Provider
@@ -42,7 +40,6 @@ export const PageProvider: FC<PageProviderProps> = ({
         setPage,
         loading,
         fetchPage,
-        blocksConfigs,
         events,
         error,
       }}

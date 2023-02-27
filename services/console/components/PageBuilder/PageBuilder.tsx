@@ -95,7 +95,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
       const newBlocks = new Map(blocks);
       newBlocks.set(key, {
         ...prevBlock,
-        config,
+        ...config,
       });
       setBlocks(newBlocks);
     },
