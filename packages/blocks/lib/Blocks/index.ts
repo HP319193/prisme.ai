@@ -11,3 +11,4 @@ export { default as Footer } from './Footer';
 export { default as Breadcrumbs } from './Breadcrumbs';
 export { default as BlocksList } from './BlocksList';
 export { default as Action } from './Action';
+export { default as TabsView } from './TabsView';

@@ -163,6 +163,13 @@ it('should get available Blocks', () => {
     },
     {
       builtIn: true,
+      slug: 'TabsView',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-TabsView.png',
+    },
+    {
+      builtIn: true,
       name: 'Contact Form',
       slug: 'Form_Contact',
       block: 'Form',
@@ -232,7 +239,7 @@ it('should get available Blocks', () => {
       icon: undefined,
     },
   ]);
-  console.log(expected.variants);
+
   expect(expected.variants).toEqual([
     {
       builtIn: true,
@@ -332,6 +339,13 @@ it('should get available Blocks', () => {
       name: 'pages.blocks.name',
       description: 'pages.blocks.description',
       photo: '/images/blocks/preview-Breadcrumbs.png',
+    },
+    {
+      builtIn: true,
+      slug: 'TabsView',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-TabsView.png',
     },
     {
       description: 'some text',
