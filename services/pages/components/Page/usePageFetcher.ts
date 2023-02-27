@@ -18,7 +18,10 @@ export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
     try {
       const workspaceSlug = getSubmodain(window.location.host);
 
-      const page = await api.getPageBySlug(workspaceSlug, slug);
+      const page = await api.getPageBySlug(
+        workspaceSlug,
+        slug === '' ? 'index' : slug
+      );
       setPage(page);
     } catch (e) {}
     setLoading(false);
