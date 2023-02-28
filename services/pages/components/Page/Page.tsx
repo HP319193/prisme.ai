@@ -39,10 +39,14 @@ export const Page = ({ page }: PageProps) => {
 
   const blocksListConfig = useMemo(() => {
     const blocks = (page.blocks || []).map(
-      ({ config: oldSchoolConfig, ...config }) => ({
-        ...oldSchoolConfig,
-        ...config,
-      })
+      ({ config: oldSchoolConfig, ...config }) => {
+        const { className = '', ...consolidatedConfig } = {
+          ...oldSchoolConfig,
+          ...config,
+        };
+        consolidatedConfig.className = `${className} block-${consolidatedConfig.slug}`;
+        return consolidatedConfig;
+      }
     );
     return {
       ...page,
