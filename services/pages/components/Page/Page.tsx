@@ -27,7 +27,7 @@ export interface PageProps {
 
 export const Page = ({ page }: PageProps) => {
   const { localize } = useLocalizedText();
-  const { blocksConfigs, events } = usePage();
+  const { events } = usePage();
   const containerEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,20 +37,18 @@ export const Page = ({ page }: PageProps) => {
     window.Prisme.ai.events = events;
   }, [events]);
 
-  const blocks = useMemo(
-    () =>
-      page && typeof page === 'object'
-        ? (page.blocks || []).map(({ slug = '', config, appInstance }) => {
-            return {
-              slug,
-              appInstance,
-              config,
-              key: `block-${parseInt(`${Math.random() * 10000}`)}`,
-            };
-          })
-        : [],
-    [page]
-  );
+  const blocksListConfig = useMemo(() => {
+    const blocks = (page.blocks || []).map(
+      ({ config: oldSchoolConfig, ...config }) => ({
+        ...oldSchoolConfig,
+        ...config,
+      })
+    );
+    return {
+      ...page,
+      blocks,
+    };
+  }, [page]);
 
   return (
     <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-auto min-h-full snap-mandatory">
@@ -70,18 +68,7 @@ export const Page = ({ page }: PageProps) => {
         className="flex flex-1 flex-col page-blocks w-full"
         ref={containerEl}
       >
-        {blocks.map(({ slug = '', appInstance = '', key }, index) => (
-          <div
-            key={key}
-            className={`page-block block-${appInstance.replace(
-              /\s/g,
-              '-'
-            )} block-${slug.replace(/\s/g, '-')} snap-start z-10`}
-            id={(blocksConfigs[index] || {}).sectionId}
-          >
-            <BlockLoader name={slug} config={blocksConfigs[index]} />
-          </div>
-        ))}
+        <BlockLoader name="BlocksList" config={blocksListConfig} />
       </div>
       <PoweredBy />
       <Debug />

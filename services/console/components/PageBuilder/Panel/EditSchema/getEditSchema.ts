@@ -13,6 +13,7 @@ import Image from './Image';
 import Breadcrumbs from './Breadcrumbs';
 import Action from './Action';
 import TabsView from './TabsView';
+import Carousel from './Carousel';
 
 const Schemas = {
   Cards,
@@ -28,6 +29,7 @@ const Schemas = {
   Breadcrumbs,
   Action,
   TabsView,
+  Carousel,
 };
 
 const getEditSchema = (blockName: string): Schema | null =>

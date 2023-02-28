@@ -38,7 +38,7 @@ const schema: Schema = {
       description: 'pages.blocks.lead.settings.backgroundColor.description',
       'ui:widget': 'color',
     },
-    ...getCommonSchema(builtinBlocks.Hero.styles),
+    ...getCommonSchema(builtinBlocks.Hero.styles || ''),
   },
 };
 

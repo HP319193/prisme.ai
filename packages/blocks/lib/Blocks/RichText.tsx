@@ -7,10 +7,12 @@ import parser, { DOMNode, Element, domToReact } from 'html-react-parser';
 import { marked } from 'marked';
 import { BaseBlock } from './BaseBlock';
 import { keysKebabToCamel } from '../utils/kebabToCamel';
+import mustache from 'mustache';
 
 interface RichTextConfig {
   content: string | Prismeai.LocalizedText;
   allowScripts?: boolean;
+  values?: Record<string, ReactNode>;
 }
 
 class ScriptsLoader {
@@ -101,6 +103,7 @@ export const RichText = ({
   children,
   allowScripts = false,
   className = '',
+  values = {},
 }: Omit<RichTextConfig, 'content'> & {
   children: RichTextConfig['content'];
 } & HTMLAttributes<HTMLDivElement>) => {
@@ -151,7 +154,10 @@ export const RichText = ({
 
   return (
     <div className={`pr-block-rich-text ${className}`}>
-      {parser(marked(localize(children) || ''), options)}
+      {parser(
+        mustache.render(marked(localize(children) || ''), values),
+        options
+      )}
     </div>
   );
 };

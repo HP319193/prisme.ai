@@ -21,7 +21,7 @@ export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
   return (
     <>
       <style>
-        {prefixCSS(css || '', {
+        {prefixCSS((css || '').replace(/@import\s+default;/, defaultStyles), {
           block: `.${containerClassName}`,
           parent: `.${parentClassName}`,
         })}

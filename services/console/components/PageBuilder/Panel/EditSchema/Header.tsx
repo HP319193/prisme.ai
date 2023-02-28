@@ -211,7 +211,7 @@ export const schema: Schema = {
         },
       },
     },
-    ...getCommonSchema(builtinBlocks.Header.styles),
+    ...getCommonSchema(builtinBlocks.Header.styles || ''),
   },
 };
 

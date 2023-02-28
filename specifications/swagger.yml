@@ -597,14 +597,22 @@ components:
             properties:
               slug:
                 type: string
-              config:
-                type: object
-                additionalProperties: true
               appInstance:
                 type: string
+              initOn:
+                type: string
+              updateOn:
+                type: string
+              automation:
+                type: string
+            additionalProperties: true
         styles:
           type: string
+        initOn:
+          type: string
         updateOn:
+          type: string
+        automation:
           type: string
 
     PageDetails:

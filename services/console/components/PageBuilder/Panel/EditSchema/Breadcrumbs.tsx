@@ -36,7 +36,7 @@ const schema: Schema = {
         },
       },
     },
-    ...getCommonSchema(builtinBlocks.Breadcrumbs.styles),
+    ...getCommonSchema(builtinBlocks.Breadcrumbs.styles || ''),
   },
 };
 

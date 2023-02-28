@@ -87,16 +87,14 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     (key, config) => {
       const prevBlock = blocks.get(key);
       if (!prevBlock) return;
+      const { config: oldSchoolConfig, ...prevBlockData } = prevBlock;
       const newBlock = {
-        ...prevBlock,
-        config,
+        ...prevBlockData,
+        ...config,
       };
       if (equal(newBlock, prevBlock)) return;
       const newBlocks = new Map(blocks);
-      newBlocks.set(key, {
-        ...prevBlock,
-        config,
-      });
+      newBlocks.set(key, newBlock);
       setBlocks(newBlocks);
     },
     [blocks, setBlocks]
