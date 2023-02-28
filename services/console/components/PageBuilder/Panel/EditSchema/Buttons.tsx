@@ -57,7 +57,7 @@ const schema: Schema = {
         },
       },
     },
-    ...getCommonSchema(builtinBlocks.Buttons.styles),
+    ...getCommonSchema(builtinBlocks.Buttons.styles || ''),
   },
 };
 

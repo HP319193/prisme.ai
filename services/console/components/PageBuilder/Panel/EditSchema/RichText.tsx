@@ -50,6 +50,16 @@ const schema: Schema = {
       title: 'pages.blocks.richtext.settings.allowScripts.label',
       description: 'pages.blocks.richtext.settings.allowScripts.description',
     },
+    values: {
+      type: 'object',
+      title: 'pages.blocks.richtext.settings.values.label',
+      description: 'pages.blocks.richtext.settings.values.description',
+      additionalProperties: {
+        type: 'string',
+        add: 'pages.blocks.richtext.settings.values.add',
+        remove: 'pages.blocks.richtext.settings.values.remove',
+      },
+    },
     ...commonSchema.properties,
   },
 };

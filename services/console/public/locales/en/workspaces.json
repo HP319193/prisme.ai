@@ -739,6 +739,7 @@
       "name_Breadcrumbs": "Breadcrumbs",
       "name_Action": "Action",
       "name_TabsView": "Tabs view",
+      "name_Carousel": "Carousel",
       "description": "",
       "description_Header": "Display page header",
       "description_Hero": "Display a Hero of page",
@@ -753,6 +754,7 @@
       "description_Breadcrumbs": "Display Breadcrumbs",
       "description_Action": "Display an action button capable of navigating to a link, a page, a section of the page or triggering an event.",
       "description_TabsView": "Display tabs",
+      "description_Carousel": "Displaying Blocks in a horizontal Carousel",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
@@ -866,6 +868,22 @@
             "unselected": {
               "label": "Unselected",
               "description": "Displays the button in a secondary, grayed out state. Used for example to indicate an inactive tab"
+            }
+          }
+        }
+      },
+      "carousel": {
+        "settings": {
+          "autoscroll": {
+            "label": "Auto scroll",
+            "description": "You can activate and configure the automatic scrolling of the content.",
+            "active": {
+              "label": "Activate",
+              "description": "Activate automatic scrolling. Scrolling will still be possible manually with the buttons and the keyboard."
+            },
+            "speed": {
+              "label": "Scroll speed",
+              "description": "Setting the page change speed in seconds."
             }
           }
         }
@@ -1113,6 +1131,12 @@
           "allowScripts": {
             "label": "Allow scripts",
             "description": "Allow execution of javascript code included in <script> tags"
+          },
+          "values": {
+            "label": "Interpolated values",
+            "description": "You can insert values using the {{variableName}} notation into your HTML content.",
+            "add": "Add a value",
+            "remove": "Delete the value"
           }
         }
       },

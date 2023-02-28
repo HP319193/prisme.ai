@@ -739,6 +739,7 @@
       "name_Breadcrumbs": "Fil d'ariane",
       "name_Action": "Action",
       "name_TabsView": "Vue en onglets",
+      "name_Carousel": "Carousel",
       "description": "",
       "description_Header": "Afficher une entête de page",
       "description_Hero": "Afficher un Hero de page",
@@ -753,6 +754,7 @@
       "description_Action": "Afficher un bouton d'action capable de faire naviguer vers un lien, une page, une section de la page ou de délencher un évènement.",
       "description_Footer": "Afficher un pied de page",
       "description_TabsView": "Afficher des onglets",
+      "description_Carousel": "Afficher des Blocks dans un Carousel horizontal",
       "panelTitle_adding": "Ajouter un Block",
       "panelTitle_editing": "Éditer le Block {{blockName}}",
       "header": {
@@ -870,6 +872,22 @@
           }
         }
       },
+      "carousel": {
+        "settings": {
+          "autoscroll": {
+            "label": "Défilement automatique",
+            "description": "Vous pouvez activer et configurer le défilement automatique du contenu.",
+            "active": {
+              "label": "Activé",
+              "description": "Activer le défilement automatique. Le défilement sera toujours possible manuellement avec les boutons et le clavier."
+            },
+            "speed": {
+              "label": "Vitesse de défilement",
+              "description": "Réglage de la vitesse de changement de page en secondes."
+            }
+          }
+        }
+      },
       "cards": {
         "settings": {
           "title": "Titre",
@@ -961,14 +979,14 @@
           "card": "Carte",
           "layout": {
             "title": "Mise en page",
-            "description": "Vous pouvez changer de mode d'affichage. Par défaut, les cartes seront affichées à l'aide d'un carousel.",
+            "description": "Vous pouvez changer de mode d'affichage. Par défaut, les cartes seront affichées à l'aide d'un carrousel.",
             "style": "Style",
-            "carousel": "Carousel",
+            "carousel": "Carrousel",
             "grid": "Grille",
             "column": "Colonne",
             "autoScroll": {
               "title": "Défilement automatique",
-              "description": "Activez cette option pour que le carousel défile automatiquement toutes les 5 secondes."
+              "description": "Activez cette option pour que le carrousel défile automatiquement toutes les 5 secondes."
             }
           }
         }
@@ -1113,6 +1131,12 @@
           "allowScripts": {
             "label": "Autoriser les scripts",
             "description": "Autoriser l'execution de code javascript inclus dans des balises <script>"
+          },
+          "values": {
+            "label": "Valeurs interpolées",
+            "description": "Vous pouvez insérer des valeurs en utilisant la notation {{nomDeLaVariable}} dans votre contenu HTML.",
+            "add": "Ajouter une valeur",
+            "remove": "Supprimer la valeur"
           }
         }
       },
