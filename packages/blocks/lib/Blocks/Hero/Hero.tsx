@@ -9,6 +9,7 @@ export interface HeroConfig extends BaseBlockConfig {
   content?: BlocksListConfig;
   img: string;
   backgroundColor: string;
+  level: 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 interface HeroProps extends HeroConfig {}
@@ -20,12 +21,14 @@ export const Hero = ({
   content,
   img,
   backgroundColor,
+  level = 2,
 }: HeroProps) => {
+  const H = `h${level}` as keyof JSX.IntrinsicElements;
   return (
     <div className={`pr-block-hero ${className}`} style={{ backgroundColor }}>
       <div className="pr-block-hero__container">
         <div className="pr-block-hero__text">
-          <h1 className="pr-block-hero__title">{title}</h1>
+          <H className="pr-block-hero__title">{title}</H>
           <p className="pr-block-hero__lead">{lead}</p>
           {content && <BlocksList {...content} />}
         </div>

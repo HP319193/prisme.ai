@@ -4,21 +4,13 @@ exports[`should render 1`] = `
 <div
   className="pr-block-blocks-list "
 >
-  <div
-    className="pr-block-blocks-list__block pr-block-blocks-list__block--0 "
-  >
-    <div>
-      Block 
-      Header
-    </div>
+  <div>
+    Block 
+    Header
   </div>
-  <div
-    className="pr-block-blocks-list__block pr-block-blocks-list__block--1 "
-  >
-    <div>
-      Block 
-      RichText
-    </div>
+  <div>
+    Block 
+    RichText
   </div>
 </div>
 `;

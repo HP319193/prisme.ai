@@ -1161,6 +1161,10 @@
           "backgroundColor": {
             "label": "Couleur de fond",
             "description": "La couleur de fond du Hero."
+          },
+          "level": {
+            "label": "Title level",
+            "description": "Defines the level of the tag applied to the title."
           }
         }
       },

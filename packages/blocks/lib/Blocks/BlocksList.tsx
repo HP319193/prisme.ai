@@ -21,22 +21,19 @@ export const BlocksList = ({
 
   return (
     <div className={`pr-block-blocks-list ${className ? className : ''}`}>
-      {blocks.filter(Boolean).map(({ slug, ...config }, key) => (
-        <div
-          key={key}
-          className={`pr-block-blocks-list__block pr-block-blocks-list__block--${key} ${
-            blocksClassName ? blocksClassName : ''
-          }`}
-        >
+      {blocks
+        .filter(Boolean)
+        .map(({ slug, className = '', ...config }, key) => (
           <BlockLoader
+            key={key}
             name={slug}
             config={{
               ...config,
               parentClassName: `pr-block-blocks-list__block--${key}`,
+              className: `pr-block-blocks-list__block pr-block-blocks-list__block--${key} ${className}`,
             }}
           />
-        </div>
-      ))}
+        ))}
     </div>
   );
 };

@@ -16,6 +16,7 @@ self.onmessage = ({ data: { action, data, id } }) => {
           styles: {
             '!!null': 'empty',
           },
+          lineWidth: 999,
         });
         break;
     }

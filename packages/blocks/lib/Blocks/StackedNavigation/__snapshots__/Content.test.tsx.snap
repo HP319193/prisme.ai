@@ -26,11 +26,7 @@ exports[`should render with blocks 1`] = `
 >
   <div
     className="pr-block-blocks-list flex flex-1 flex-col max-w-full overflow-auto"
-  >
-    <div
-      className="pr-block-blocks-list__block pr-block-blocks-list__block--0 flex flex-1 content__block-container block-container snap-start max-h-full"
-    />
-  </div>
+  />
 </div>
 `;
 
