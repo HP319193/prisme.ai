@@ -1,7 +1,7 @@
 import { Form } from 'react-final-form';
 import { Button, Input } from '@prisme.ai/design-system';
 import Field from '../layouts/Field';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useUser } from './UserProvider';
 import { Trans, useTranslation } from 'next-i18next';
 import LinkInTrans from './LinkInTrans';
@@ -23,9 +23,11 @@ interface SigninFormProps {
 export const SigninForm = ({ onSignin }: SigninFormProps) => {
   const { t } = useTranslation('sign');
   const { loading, signin } = useUser();
+  const [error, setError] = useState(false);
   const submit = useCallback(
     async ({ email, password }: Values) => {
       const user = await signin(email, password);
+      setError(!user);
       onSignin(user);
     },
     [onSignin, signin]
@@ -78,6 +80,12 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
                 }}
               />
             </div>
+
+            {error && (
+              <div className="text-error mb-2">
+                {t('in.error', { context: 'AuthenticationError' })}
+              </div>
+            )}
             <Button
               variant="primary"
               disabled={loading}

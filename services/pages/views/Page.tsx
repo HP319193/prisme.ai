@@ -51,7 +51,7 @@ export const Page = () => {
 
   return (
     <div className="flex m-auto">
-      <SigninForm onSignin={fetchPage} />
+      <SigninForm onSignin={(user) => user && fetchPage()} />
     </div>
   );
 };
