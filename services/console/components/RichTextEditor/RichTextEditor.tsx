@@ -31,6 +31,7 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
           placement="left"
         >
           <button
+            type="button"
             className={`pr-rich-text__html mt-0 ${
               displayRaw ? 'text-primary' : 'text-gray'
             } text-xs`}
