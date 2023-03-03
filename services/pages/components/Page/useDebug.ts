@@ -3,9 +3,14 @@ import Storage from '../../../console/utils/Storage';
 
 const DEBUG_KEY = '__blocksDebug';
 
+let initialDebug: any[] = [];
+try {
+  initialDebug = JSON.parse(Storage.get(DEBUG_KEY));
+} catch {}
+
 export function useDebug() {
   const [debug, setDebug] = useState<Map<string, string>>(
-    new Map(JSON.parse(Storage.get(DEBUG_KEY)))
+    new Map(initialDebug)
   );
 
   const debugSetBlocks = useCallback((name, url) => {
