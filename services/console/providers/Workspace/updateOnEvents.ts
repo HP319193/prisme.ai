@@ -70,6 +70,8 @@ const eventsListeners: EventsListeners = {
     ),
   'workspaces.automations.deleted': (workspace, { automationSlug }) =>
     removeItemInWorkspaceList(workspace, 'automations', automationSlug),
+  'workspaces.pages.created': (workspace, { page }) =>
+    insertItemInWorkspaceList(workspace, 'pages', page.slug, page),
   'workspaces.pages.updated': (workspace, { slug, oldSlug, page }) =>
     insertItemInWorkspaceList(workspace, 'pages', slug, page, oldSlug),
   'workspaces.pages.deleted': (workspace, { pageSlug }) =>

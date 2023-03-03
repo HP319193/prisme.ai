@@ -39,10 +39,15 @@ export const WorkspacesView = () => {
     workspaces,
     loading,
     creating,
+    fetchWorkspaces,
     createWorkspace,
     duplicateWorkspace,
     duplicating,
   } = useWorkspaces();
+
+  useEffect(() => {
+    fetchWorkspaces();
+  }, [fetchWorkspaces]);
 
   const { user } = useUser();
   const [searchValue, setSearchValue] = useState('');
