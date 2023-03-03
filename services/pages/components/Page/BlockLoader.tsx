@@ -3,7 +3,9 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useUser } from '../../../console/components/UserProvider';
 import api from '../../../console/utils/api';
+import Storage from '../../../console/utils/Storage';
 import { usePage } from './PageProvider';
+import { useDebug } from './useDebug';
 
 /**
  * This function aims to replace deprecated Block names by the new one
@@ -35,9 +37,7 @@ export const BlockLoader: TBlockLoader = ({
   const lock = useRef(false);
   const [listening, setListening] = useState(false);
 
-  useEffect(() => {
-    setConfig(initialConfig);
-  }, [initialConfig]);
+  const debug = useDebug();
 
   useEffect(() => {
     if (lock.current || !name) return;
@@ -65,9 +65,14 @@ export const BlockLoader: TBlockLoader = ({
       console.error(`"${name}" Block is not installed`);
       return;
     }
+
+    const debugUrl = debug.get(name);
+    if (debugUrl) {
+      app.blocks[name] = debugUrl;
+    }
     setAppConfig(app.appConfig);
     setUrl(app.blocks[name]);
-  }, [name, page]);
+  }, [debug, name, page]);
 
   const { onInit, updateOn, automation } = initialConfig || {};
   const onBlockLoad = useCallback(() => {

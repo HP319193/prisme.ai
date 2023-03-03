@@ -29,6 +29,12 @@ type AppPropsWithLayout = AppProps<PageProviderProps> & {
   Component: NextPageWithLayout;
 };
 
+if (typeof window !== 'undefined') {
+  window.Prisme = window.Prisme || {};
+  window.Prisme.ai = window.Prisme.ai || {};
+  window.Prisme.ai.debug = window.Prisme.ai.debug || {};
+}
+
 function MyApp({
   Component,
   pageProps: { page, error, initialConfig },
