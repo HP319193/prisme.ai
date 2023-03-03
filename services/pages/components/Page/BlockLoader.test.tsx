@@ -2,6 +2,12 @@ import renderer, { act } from 'react-test-renderer';
 import BlockLoader from './BlockLoader';
 import { usePage } from './PageProvider';
 
+window.Prisme = {
+  ai: {
+    debug: {},
+  },
+} as any;
+
 jest.mock('./PageProvider', () => {
   const mock = {
     page: {

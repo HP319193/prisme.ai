@@ -41,25 +41,29 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
     []
   );
   const [loading, setLoading] = useState<WorkspacesContext['loading']>(true);
-  const [creating, setCreating] =
-    useState<WorkspacesContext['creating']>(false);
+  const [creating, setCreating] = useState<WorkspacesContext['creating']>(
+    false
+  );
   const [duplicating, setDuplicating] = useState<
     WorkspacesContext['duplicating']
   >(new Set());
 
-  const fetchWorkspaces: WorkspacesContext['fetchWorkspaces'] =
-    useCallback(async () => {
-      const workspaces = await api.getWorkspaces();
-      setWorkspaces(
-        workspaces
-          .filter((cur) => !(cur.labels || []).includes('suggestions'))
-          .map(({ createdAt, updatedAt, ...workspace }) => ({
-            ...workspace,
-            createdAt: new Date(createdAt),
-            updatedAt: new Date(updatedAt),
-          }))
-      );
-    }, []);
+  const fetching = useRef(false);
+  const fetchWorkspaces: WorkspacesContext['fetchWorkspaces'] = useCallback(async () => {
+    if (fetching.current) return;
+    fetching.current = true;
+    const workspaces = await api.getWorkspaces();
+    setWorkspaces(
+      workspaces
+        .filter((cur) => !(cur.labels || []).includes('suggestions'))
+        .map(({ createdAt, updatedAt, ...workspace }) => ({
+          ...workspace,
+          createdAt: new Date(createdAt),
+          updatedAt: new Date(updatedAt),
+        }))
+    );
+    fetching.current = false;
+  }, [fetching]);
 
   const createWorkspace: WorkspacesContext['createWorkspace'] = useCallback(
     async (name: string) => {
@@ -79,8 +83,8 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
     []
   );
 
-  const duplicateWorkspace: WorkspacesContext['duplicateWorkspace'] =
-    useCallback(async (id, version = 'current') => {
+  const duplicateWorkspace: WorkspacesContext['duplicateWorkspace'] = useCallback(
+    async (id, version = 'current') => {
       setDuplicating((prev) => new Set([...Array.from(prev), id]));
       const newWorkspace = await api.duplicateWorkspace({ id });
       if (newWorkspace) {
@@ -94,7 +98,9 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
         (prev) => new Set(Array.from(prev).filter((i) => id !== i))
       );
       return newWorkspace;
-    }, []);
+    },
+    []
+  );
 
   const refreshWorkspace: WorkspacesContext['refreshWorkspace'] = useCallback(
     (workspace, deleted) => {

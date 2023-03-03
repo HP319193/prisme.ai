@@ -15,11 +15,14 @@ jest.mock('../providers/Workspaces', () => {
     List: 'List',
   };
 
+  const fetchWorkspaces = jest.fn();
+
   return {
     useWorkspaces: () => ({
       workspaces,
       createWorkspace,
       loading,
+      fetchWorkspaces,
     }),
     LoadingType,
   };

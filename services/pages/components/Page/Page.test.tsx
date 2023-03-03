@@ -3,6 +3,12 @@ import api from '../../../console/utils/api';
 import Page from './Page';
 import { usePage } from './PageProvider';
 
+window.Prisme = {
+  ai: {
+    debug: {},
+  },
+} as any;
+
 jest.mock('./PageProvider', () => {
   const mock = {
     events: {
