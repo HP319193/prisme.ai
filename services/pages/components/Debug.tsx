@@ -1,24 +1,23 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Storage from '../../console/utils/Storage';
 import { usePage } from './Page/PageProvider';
-
-declare global {
-  interface Window {
-    toggleDebug: () => void;
-  }
-}
 
 export const Debug = () => {
   const [display, setDisplay] = useState(!!Storage.get('__debug'));
   const { events } = usePage();
 
-  window.toggleDebug = useCallback(() => {
-    if (display) {
-      Storage.remove('__debug');
-    } else {
-      Storage.set('__debug', '1');
-    }
-    setDisplay(!display);
+  useEffect(() => {
+    window.Prisme.ai.debug.events = {
+      state: display,
+      toggle() {
+        if (display) {
+          Storage.remove('__debug');
+        } else {
+          Storage.set('__debug', '1');
+        }
+        setDisplay(!display);
+      },
+    };
   }, [display]);
 
   useEffect(() => {

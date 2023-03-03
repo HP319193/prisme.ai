@@ -89,7 +89,7 @@ export const Panel: FC<PanelProps> = ({
           )}
           {title}
         </div>
-        <div>
+        <div className="flex">
           <Tooltip
             title={t('panel.enlarge', { context: large ? 'off' : 'on' })}
             placement="bottom"

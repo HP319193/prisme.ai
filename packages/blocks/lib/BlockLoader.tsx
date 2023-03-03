@@ -52,6 +52,7 @@ export type BlockComponent<T = any> = {
   (props: BlockComponentProps<T>): ReactElement | null;
   schema?: Schema;
   Preview?: (props: BlockComponentProps<T>) => ReactElement;
+  styles?: string;
 };
 
 export interface BlockLoaderProps extends BlockComponentProps {

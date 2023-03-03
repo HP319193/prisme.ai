@@ -23,7 +23,9 @@ exports[`should render 1`] = `
     >
       hey
     </div>
-    <div />
+    <div
+      className="flex"
+    />
   </div>
   <div
     className="flex flex-1 flex-col overflow-y-scroll h-full  border-light-gray border-l"

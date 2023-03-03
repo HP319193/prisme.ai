@@ -1,24 +1,13 @@
 import Head from 'next/head';
 import { useEffect, useMemo, useRef } from 'react';
 import useLocalizedText from '../../../console/utils/useLocalizedText';
-import api, { Events } from '../../../console/utils/api';
+import api from '../../../console/utils/api';
 import { BlockLoader } from './BlockLoader';
 import { usePage } from './PageProvider';
 import PoweredBy from '../../../console/components/PoweredBy';
 import dynamic from 'next/dynamic';
 
 const Debug = dynamic(() => import('../Debug'), { ssr: false });
-
-declare global {
-  interface Window {
-    Prisme: {
-      ai: {
-        api: typeof api;
-        events?: Events;
-      };
-    };
-  }
-}
 
 export interface PageProps {
   page: Prismeai.DetailedPage;
