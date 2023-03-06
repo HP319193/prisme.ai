@@ -13,7 +13,7 @@ interface TriggerDisplayProps {
   endpoint?: string;
 }
 export const TriggerDisplay: FC<TriggerDisplayProps> = ({
-  value = {},
+  value = {} as Prismeai.When,
   endpoint = '',
 }) => {
   const { t } = useTranslation('workspaces');
@@ -25,23 +25,28 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
       placement: 'bottomRight',
     });
   };
+  const { schedules, events } = value;
 
-  if (!endpoint && (!value.events || !value.events.length)) {
+  if (
+    !endpoint &&
+    (!events || !events.length) &&
+    (!schedules || !schedules.length)
+  ) {
     return <div />;
   }
 
   return (
     <div>
-      {value.events && value.events.length > 0 && (
+      {events && events.length > 0 && (
         <div>
           {t('automations.trigger.events.display', {
-            events: value.events.map((event) => truncate(event, 10)),
-            count: value.events.length,
+            events: events.map((event) => truncate(event, 10)),
+            count: events.length,
           })}
         </div>
       )}
       {endpoint && (
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-start">
           <Trans
             t={t}
             i18nKey="automations.trigger.endpoint.display"
@@ -66,6 +71,13 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
           >
             <a>The endpoint</a> is hit
           </Trans>
+        </div>
+      )}
+      {schedules && schedules.length > 0 && (
+        <div>
+          {t('automations.trigger.schedules.display', {
+            count: schedules.length,
+          })}
         </div>
       )}
     </div>

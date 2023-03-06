@@ -1,9 +1,17 @@
 import { useTranslation } from 'next-i18next';
-import { FC, useMemo } from 'react';
-import { Schema, SchemaForm } from '@prisme.ai/design-system';
+import { FC, FunctionComponent, useMemo } from 'react';
+import { FieldProps, Schema, SchemaForm } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
 import { useAutomationBuilder } from '../context';
 import { useWorkspace } from '../../../providers/Workspace';
+import dynamic from 'next/dynamic';
+
+const Schedule = dynamic(() => import('./Schedule'), {
+  ssr: false,
+});
+const ScheduleWidget = (props: FieldProps) => {
+  return <Schedule {...props} />;
+};
 
 interface TriggerFormProps {
   trigger?: Prismeai.When;
@@ -38,6 +46,7 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
     () => ({
       events: trigger?.events || [],
       endpoint: trigger?.endpoint ?? false,
+      schedules: trigger?.schedules ?? [],
     }),
     [trigger]
   );
@@ -58,10 +67,15 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
             },
           },
         },
-        // dates: {
-        //   title: t('automations.trigger.dates.title'),
-        //   description: t('automations.trigger.dates.help'),
-        // },
+        schedules: {
+          type: 'array',
+          title: t('automations.trigger.schedules.title'),
+          description: t('automations.trigger.schedules.help'),
+          items: {
+            type: 'string',
+            'ui:widget': ScheduleWidget,
+          },
+        },
         endpoint: {
           type: 'boolean',
           title: t('automations.trigger.endpoint.custom'),

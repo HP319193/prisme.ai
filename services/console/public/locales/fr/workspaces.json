@@ -218,11 +218,6 @@
         "display_other": "L'un des événements {{events}} survient",
         "help": "L'automatisation sera exécutées à chaque fois que l'un des événements suivants se produira."
       },
-      "dates": {
-        "title": "Dates",
-        "_help": "L'automatisation sera exécutées à chaque intervale de temps spécifié.",
-        "help": "Bientôt disponible"
-      },
       "endpoint": {
         "title": "URL",
         "display": "<a>L'URL<icon /></a> est appelée",
@@ -230,6 +225,12 @@
         "help": "L'automatisation sera exécutées à chaque fois qu'une url sera appelée.",
         "custom": "Accessible par url",
         "url": "URL personnalisée"
+      },
+      "schedules": {
+        "title": "Planification",
+        "help": "Vous pouvez planifier l'exécution de votre Automation à certains moments récurants. Vous pouvez ajouter plusieurs programmations au format crontab. Attention, le temps minimum entre deux exécutions est de 15mn.",
+        "display": "{{count}} planification",
+        "display_other": "{{count}} planifications"
       },
       "save": "Ajouter"
     },
