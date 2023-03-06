@@ -23,6 +23,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   } catch (e) {
     res.statusCode = error = (e as HTTPError).code;
     if (error === 404) {
+      console.error('404', workspaceSlug, 'index');
       return {
         notFound: true,
       };

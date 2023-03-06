@@ -27,6 +27,7 @@ export const getServerSideProps: GetServerSideProps<
   } catch (e) {
     res.statusCode = error = (e as HTTPError).code;
     if (error === 404) {
+      console.error('404', workspaceSlug, slug);
       return {
         notFound: true,
       };
