@@ -220,7 +220,7 @@
       },
       "schedules": {
         "title": "Schedules",
-        "help": "You can schedule your Automation to run at certain recurring times. You can add several schedules in crontab format.",
+        "help": "You can schedule your Automation to run at certain recurring times. You can add several schedules in crontab format. Warning, the minimum time between two executions is 15mn.",
         "display": "{{count}} schedule",
         "display_other": "{{count}} schedules"
       },

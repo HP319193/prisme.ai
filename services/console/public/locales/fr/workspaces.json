@@ -228,7 +228,7 @@
       },
       "schedules": {
         "title": "Planification",
-        "help": "Vous pouvez planifier l'exécution de votre Automation à certains moments récurants. Vous pouvez ajouter plusieurs programmations au format crontab.",
+        "help": "Vous pouvez planifier l'exécution de votre Automation à certains moments récurants. Vous pouvez ajouter plusieurs programmations au format crontab. Attention, le temps minimum entre deux exécutions est de 15mn.",
         "display": "{{count}} planification",
         "display_other": "{{count}} planifications"
       },
