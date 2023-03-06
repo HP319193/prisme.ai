@@ -28,7 +28,7 @@ export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
   useEffect(() => {
     if (!blocksStyles) return;
     const blockStyle = prefixCSS(
-      (css || '').replace(/@import\s+default;/, defaultStyles),
+      (css || '').replace(/@import\s+default;/, defaultStyles || ''),
       {
         block: `.${containerClassName}`,
         parent: `.${parentClassName}`,
