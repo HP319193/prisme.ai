@@ -40,6 +40,10 @@ export const BlockLoader: TBlockLoader = ({
   const debug = useDebug();
 
   useEffect(() => {
+    setConfig(initialConfig);
+  }, [initialConfig]);
+
+  useEffect(() => {
     if (lock.current || !name) return;
     if (name.match(/^http/)) {
       setUrl(name);
