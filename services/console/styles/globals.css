@@ -364,3 +364,11 @@ button {
 .pr-panel-settings .ant-tabs-nav {
   margin-bottom: 0 !important;
 }
+
+.react-js-cron-field {
+  align-items: baseline !important;
+}
+
+.react-js-cron > div:not([class]) {
+  flex-wrap: wrap;
+}

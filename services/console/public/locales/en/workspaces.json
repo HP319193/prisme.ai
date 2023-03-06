@@ -218,10 +218,11 @@
         "display_other": "One of the events {{events}} occurs",
         "help": "Automation will be run everytime one of this event will be fired."
       },
-      "dates": {
-        "title": "Dates",
-        "_help": "Automation will be run at every specified date interval.",
-        "help": "Soon available"
+      "schedules": {
+        "title": "Schedules",
+        "help": "You can schedule your Automation to run at certain recurring times. You can add several schedules in crontab format.",
+        "display": "{{count}} schedule",
+        "display_other": "{{count}} schedules"
       },
       "endpoint": {
         "title": "URL",
