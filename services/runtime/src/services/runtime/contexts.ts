@@ -254,13 +254,23 @@ export class ContextsManager {
 
   public async applyUpdateOpLogs(
     updates: ContextUpdateOpLog[],
-    updateId: string
+    updateId: string,
+    sourceSessionId: string
   ) {
     if (this.alreadyProcessedUpdateIds.has(updateId)) {
       return;
     }
     this.alreadyProcessedUpdateIds.add(updateId);
     for (const update of updates) {
+      // For user/session op logs, check that they come from the same sessionId
+      if (
+        (update.context === ContextType.User ||
+          update.context === ContextType.Session) &&
+        sourceSessionId &&
+        sourceSessionId !== this.session?.sessionId
+      ) {
+        continue;
+      }
       await this.set(update.fullPath, update.value, {
         persist: false,
         type: update.type,

@@ -127,7 +127,11 @@ export default class Runtime {
         const contexts = this.contexts[event.source.correlationId!];
         if (updates?.length && contexts.length) {
           contexts.forEach((cur) => {
-            cur.applyUpdateOpLogs(updates as ContextUpdateOpLog[], event.id);
+            cur.applyUpdateOpLogs(
+              updates as ContextUpdateOpLog[],
+              event.id,
+              event.source?.sessionId!
+            );
           });
         }
         return true;
