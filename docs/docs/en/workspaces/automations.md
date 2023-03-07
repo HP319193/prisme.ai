@@ -400,15 +400,18 @@ If `session.myObjectVariable` equals to `{"mickey": "house"}` and `item.field` e
 
 * **global** : this context is shared by all authenticated users for the same workspace.  
 * **user** : this context holds user-specific data and spans accross sessions    
-* **session** : this context holds session-specific data. It is automatically removed when the user session expires, as defined by Gateway API.  
-* **run** : this context holds some technical information about current run, and is automatically removed **60 seconds** after the initial trigger (configurable with **CONTEXT_RUN_EXPIRE_TIME** env var)  
+* **session** : this context holds session-specific data. It is automatically removed when the user session expires, as defined by Gateway API. In case of a manually set session, it expires **1 hour**  after the last set (configurable with **CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME** env var)
+* **run** : this context holds some technical information about current run, and is automatically removed **60 seconds** after the last automation run (configurable with **CONTEXT_RUN_EXPIRE_TIME** env var)  
 * **config** : this context holds current [workspace](../#config) or [AppInstance](../apps#config-variable) config 
 * **$workspace** : this read-only context holds current workspace definition, allowing to read any of its sections like installed apps config (i.e $workspace.imports.myApp.config)
 
-Except for $workspace, all of these contexts might be written to using [set](../instructions#set) instruction.  
+Except for $workspace, all of these contexts might be written to using [set](../instructions#set) instruction, in which case written data would be persisted and made available in subsequent requests. The only exception is when setting variables inside session/user contexts from an unauthenticated webhook,  **user** and **session** will not be persisted.  
 
-However, **note that user and session contexts rely on an authenticated user id for being persisted**.  
-In case the automation is triggered from a webhook without any session cookie / token, **user** and **session** will not be persisted, making any variable **set** not visible from subsequent requests (and possibly silently breaking some workspace functionnality).  
+However, sessions can be manually created or switched by [setting](../instructions#set) the **session.id** field ; **user** and **session** contexts are then automatically reloaded with values from the targeted user contexts (or initialized, if the sessionId does not exist).  
+This allows unauthenticated webhooks to retrieve persisted user / sessions contexts identified by custom webhook fields (i.e a facebook userId, ...).  
+
+Any set variable to one of these contexts is automatically synchronized with parents or child automations triggered for the same run (i.e correlationId), making the freshly set variable visible in these parallel automations.
+
 
 ### Detailed contexts
 
@@ -456,8 +459,6 @@ In case the automation is triggered from a webhook without any session cookie / 
   </table>
 </center>
 
-When an automation [sets](../instructions#set) **session.id** field, **user** and **session** contexts are automatically reloaded with values from the targeted user contexts.  
-This allows unauthenticated webhooks to retrieve persisted user / sessions contexts identified by custom webhook fields (i.e a facebook userId, ...).  
 
 #### Session
 <center>
@@ -517,5 +518,3 @@ If current user comes from an unauthenticated [**endpoint**](#url) call, its **s
     </tr>                   
   </table>
 </center>
-
-Custom **run** variables (defined through **set** instruction) are automatically synchronized between concurrent automations running for the same correlationId (i.e cascading automations triggered by events)
