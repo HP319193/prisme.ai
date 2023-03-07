@@ -37,3 +37,11 @@ export const PUBLIC_API_URL =
 
 export const FETCH_USER_AGENT_HEADER =
   process.env.FETCH_USER_AGENT_HEADER || 'Prisme.ai Workspaces';
+
+export const SYNCHRONIZE_CONTEXTS = [
+  'run',
+  'config',
+  'session',
+  'user',
+  'global',
+];

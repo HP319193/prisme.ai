@@ -9,7 +9,6 @@ import {
 import { Cache } from '../../cache';
 import {
   ContextsManager,
-  ContextType,
   ContextUpdateOpLog,
   PrismeaiSession,
 } from './contexts';
@@ -20,6 +19,7 @@ import {
   RUNTIME_EMITS_BROKER_TOPIC,
   ADDITIONAL_GLOBAL_VARS,
   PUBLIC_API_URL,
+  SYNCHRONIZE_CONTEXTS,
 } from '../../../config';
 import { jsonPathMatches, redact } from '../../utils';
 import { PrismeContext } from '../../api/middlewares';
@@ -121,8 +121,8 @@ export default class Runtime {
     this.broker.on<Prismeai.UpdatedContexts['payload']>(
       EventType.UpdatedContexts,
       (event) => {
-        const updates = event.payload?.updates.filter(
-          (cur) => cur.context === ContextType.Run
+        const updates = event.payload?.updates.filter((cur) =>
+          SYNCHRONIZE_CONTEXTS.includes(cur.context)
         );
         const contexts = this.contexts[event.source.correlationId!];
         if (updates?.length && contexts.length) {

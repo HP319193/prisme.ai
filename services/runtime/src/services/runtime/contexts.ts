@@ -4,6 +4,7 @@ import {
   CONTEXT_RUN_EXPIRE_TIME,
   CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME,
   MAXIMUM_SUCCESSIVE_CALLS,
+  SYNCHRONIZE_CONTEXTS,
 } from '../../../config';
 import { Cache } from '../../cache';
 import { InvalidInstructionError, TooManyCallError } from '../../errors';
@@ -226,9 +227,8 @@ export class ContextsManager {
       });
     }
 
-    const updates = this.opLogs.filter(
-      (cur) =>
-        cur.context === ContextType.Config || cur.context === ContextType.Run
+    const updates = this.opLogs.filter((cur) =>
+      SYNCHRONIZE_CONTEXTS.includes(cur.context)
     );
 
     this.opLogs = [];
