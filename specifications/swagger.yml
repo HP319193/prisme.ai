@@ -3716,6 +3716,12 @@ paths:
                   type: object
                   additionalProperties: true
                   description: 'Elasticsearch aggregations executed on response documents'
+                sort:
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties: true
+                    description: 'Elasticsearch sort'
 
       responses:
         '200':
