@@ -62,7 +62,7 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>BROKER_EMIT_MAXLEN</td>
     <td>All services</td>
     <td>Maximum size (in bytes) of emitted events</td>
-    <td>50000</td>
+    <td>100000</td>
   </tr>        
   <tr>
     <td>PERMISSIONS_STORAGE_HOST</td>

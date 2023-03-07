@@ -26,5 +26,5 @@ export const BROKER_TOPIC_MAXLEN = parseInt(
 );
 
 export const BROKER_EMIT_MAXLEN = parseInt(
-  process.env.BROKER_EMIT_MAXLEN || '50000'
+  process.env.BROKER_EMIT_MAXLEN || '100000'
 );
