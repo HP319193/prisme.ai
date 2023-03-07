@@ -3366,6 +3366,9 @@ declare namespace PrismeaiAPI {
             aggs?: {
                 [name: string]: any;
             };
+            sort?: {
+                [name: string]: any;
+            }[];
         }
         namespace Responses {
             export interface $200 {
