@@ -4,6 +4,7 @@ import {
   CONTEXT_RUN_EXPIRE_TIME,
   CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME,
   MAXIMUM_SUCCESSIVE_CALLS,
+  SYNCHRONIZE_CONTEXTS,
 } from '../../../config';
 import { Cache } from '../../cache';
 import { InvalidInstructionError, TooManyCallError } from '../../errors';
@@ -226,9 +227,8 @@ export class ContextsManager {
       });
     }
 
-    const updates = this.opLogs.filter(
-      (cur) =>
-        cur.context === ContextType.Config || cur.context === ContextType.Run
+    const updates = this.opLogs.filter((cur) =>
+      SYNCHRONIZE_CONTEXTS.includes(cur.context)
     );
 
     this.opLogs = [];
@@ -244,6 +244,11 @@ export class ContextsManager {
           // Current broker instance topic is normally emit's one, so we have to switch to native events topic :
           serviceTopic: EventType.UpdatedContexts,
         },
+        {
+          options: {
+            persist: false,
+          },
+        },
         true
       );
       if (updatedEvent !== false) {
@@ -254,13 +259,23 @@ export class ContextsManager {
 
   public async applyUpdateOpLogs(
     updates: ContextUpdateOpLog[],
-    updateId: string
+    updateId: string,
+    sourceSessionId: string
   ) {
     if (this.alreadyProcessedUpdateIds.has(updateId)) {
       return;
     }
     this.alreadyProcessedUpdateIds.add(updateId);
     for (const update of updates) {
+      // For user/session op logs, check that they come from the same sessionId
+      if (
+        (update.context === ContextType.User ||
+          update.context === ContextType.Session) &&
+        sourceSessionId &&
+        sourceSessionId !== this.session?.sessionId
+      ) {
+        continue;
+      }
       await this.set(update.fullPath, update.value, {
         persist: false,
         type: update.type,

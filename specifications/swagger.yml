@@ -814,6 +814,7 @@ components:
               enum:
                 - replace
                 - merge
+                - push
               description: 'Choose merge in order to merge target variable with value. Value takes precedence.'
 
     Delete:

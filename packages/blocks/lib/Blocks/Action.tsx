@@ -12,6 +12,7 @@ export interface ActionConfig extends BaseBlockConfig {
   value: string;
   text: ReactNode;
   payload?: any;
+  popup?: boolean;
 }
 
 export interface ActionProps extends ActionConfig {
@@ -29,6 +30,7 @@ export const Action = ({
   Link,
   events,
   onClick,
+  popup,
 }: ActionProps) => {
   switch (type) {
     case 'event':
@@ -38,6 +40,7 @@ export const Action = ({
         >
           <button
             type="button"
+            className="pr-block-action__button"
             onClick={() => {
               onClick && onClick();
               if (!events || !value) return;
@@ -56,13 +59,14 @@ export const Action = ({
         <Link
           href={value}
           className={`pr-block-action pr-block-action--link ${className}            block-header__nav-item-link`}
+          target={popup ? '_blank' : undefined}
         >
           <button
             type="button"
             onClick={() => {
               onClick && onClick();
             }}
-            className="block-header__nav-item-button"
+            className="pr-block-action__button            block-header__nav-item-button"
             dangerouslySetInnerHTML={
               typeof text === 'string' ? { __html: text } : undefined
             }
@@ -81,7 +85,7 @@ export const Action = ({
             onClick={() => {
               onClick && onClick();
             }}
-            className="block-header__nav-item-button"
+            className="pr-block-action__button           block-header__nav-item-button"
             dangerouslySetInnerHTML={
               typeof text === 'string' ? { __html: text } : undefined
             }

@@ -1983,7 +1983,7 @@ declare namespace Prismeai {
             /**
              * Choose merge in order to merge target variable with value. Value takes precedence.
              */
-            type?: "replace" | "merge";
+            type?: "replace" | "merge" | "push";
         };
     }
     export type SubjectTypes = "workspaces" | "pages";

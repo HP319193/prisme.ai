@@ -52,7 +52,7 @@ const HeaderWorkspace = () => {
       type: 'object',
       properties: {
         name: {
-          type: 'localized:string',
+          type: 'string',
           title: t('workspace.details.name.label'),
         },
         slug: {

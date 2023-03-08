@@ -803,6 +803,10 @@
                 "value": {
                   "label": "Adresse web",
                   "description": "Indiquez l'adresse web de la page (https://…)."
+                },
+                "popup": {
+                  "label": "Ouverture dans un nouvel onglet",
+                  "description": "Activez pour que la page s'ouvre dans un nouveau onglet au lieu de remplacer la page en cours."
                 }
               },
               "internal": {

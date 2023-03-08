@@ -30,6 +30,13 @@ export const schema: Schema = {
               description:
                 'pages.blocks.header.settings.nav.items.external.value.description',
             },
+            popup: {
+              type: 'boolean',
+              title:
+                'pages.blocks.header.settings.nav.items.external.popup.label',
+              description:
+                'pages.blocks.header.settings.nav.items.external.popup.description',
+            },
           },
         },
         {
