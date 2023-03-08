@@ -21,7 +21,7 @@ export const Field = ({
     }
   }, [_default, props.schema.default]);
   useEffect(() => {
-    if (!_default) return;
+    if (!_default || field.input.value !== undefined) return;
     field.input.onChange(_default);
   }, [_default]);
 
