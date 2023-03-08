@@ -55,7 +55,7 @@ Set a new or existing variable
 
 - **name** : Variable name
 - **value** : Variable value (might be a JSON object, a string, a number, ...)
-- **type** : **replace** to replace target variable with given value, or **merge** to try merging objects or arrays. **replace** by default
+- **type** : **replace** to replace target variable with given value, **merge** to try merging objects or arrays, or **push** to push to an array. **replace** by default
 
 When setting object fields, parent objects are created on-the-fly :
 
@@ -78,6 +78,11 @@ Here, `some` and `some.house` are automatically created :
 It is also possible to create lists and automatically add items to their end with a variable name suffix `[]` :
 
 ```
+- set:
+    name: session.names
+    type: push
+    value: Mickael
+# or :
 - set:
     name: session.names[]
     value: Mickael
@@ -144,6 +149,7 @@ Sends an HTTP request to call external web services
 - **query** : Query string (as an object)
 - **body** : Request body (might be a JSON object, a string, a number, ...)
 - **multipart** : List of field definitions for multipart/form-data requests
+- **emitErrors** : Boolean enabling or disabling error events upon 4xx or 5xx responses. Enabled by default.  
 - **output** : Name of the variable that will store the response body
 
 When receiving 4xx or 5xx HTTP errors, a native event `runtime.fetch.failed` is automatically emitted, including both request & response contents.
@@ -166,7 +172,8 @@ If **Content-Type** header is set to 'application/x-www-form-urlencoded', the **
 
 ### Emit
 
-Emit a new event.
+Emit a new event.  
+Events size must not exceed **100Ko**, larger events are blocked and an error event is emitted.
 
 **Parameters :**
 
@@ -175,6 +182,7 @@ Emit a new event.
 - **target** : An optional object specifying this event target
 - **autocomplete** : An optional object helping to find all events that can be computed when you set variables in your event value
 - **private** : Optionnal Boolean. Exclude this event name from autocomplete values. Set it to `false` if you don't want your event is known from out of your application.
+- **options** : optional object  
 
 **target parameters :**
 
@@ -184,7 +192,11 @@ Emit a new event.
 
 Event targets are automatically granted read access to the event
 
-### Autocomplete
+**options parameters :**  
+
+- **persist** : boolean enabling or disabling events persistence. Enabled by default.  
+
+**autocomplete parameter :**
 
 When a field use an **autocomplete** widget and ask for **events:emit** or **events:listen** data source, they will be extracted from current workspace and all its installed apps instructions. If the event is a simple string, no problem, but if it contains variables, this is a way to help people to know what are the expected values.
 
@@ -205,11 +217,12 @@ config:
 ```
 
 ```yaml
-event: 'event.{{var}}'
-autocomplete:
-  var:
-    from: config
-    path: things~
+- emit:
+    event: 'event.{{var}}'
+    autocomplete:
+      var:
+        from: config
+        path: things~
 ```
 
 or
