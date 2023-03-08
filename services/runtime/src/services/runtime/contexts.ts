@@ -244,6 +244,11 @@ export class ContextsManager {
           // Current broker instance topic is normally emit's one, so we have to switch to native events topic :
           serviceTopic: EventType.UpdatedContexts,
         },
+        {
+          options: {
+            persist: false,
+          },
+        },
         true
       );
       if (updatedEvent !== false) {

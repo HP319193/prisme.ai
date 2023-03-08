@@ -154,6 +154,16 @@ export const config: PermissionsConfig<
         'target.sessionId': '${user.sessionId}',
       },
     },
+
+    // Nobody should read contexts synchronization events
+    {
+      inverted: true,
+      action: [ActionType.Create, ActionType.Read],
+      subject: SubjectType.Event,
+      conditions: {
+        type: 'runtime.contexts.updated',
+      },
+    },
   ],
   customRulesBuilder: (role) => {
     if (role.type !== 'apiKey') {
