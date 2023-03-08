@@ -189,8 +189,9 @@ export default class S3Like implements IStorage {
 
   public async copy(from: string, to: string) {
     const objects = await this.find(from, true);
+    // If we do not replace whitespaces with +, API raised an error upon double whitespaces
     const copyPaths = objects.map(({ key }) => ({
-      CopySource: `/${this.options.bucket}/${key}`,
+      CopySource: `/${this.options.bucket}/${key}`.replace(/(\s)/g, '+'),
       Key: from === key ? to : path.join(to, key.slice(from.length)),
     }));
     const result = await Promise.all(
@@ -207,7 +208,7 @@ export default class S3Like implements IStorage {
                 if (err) {
                   reject(
                     new PrismeError(
-                      `Failed to copy from '${from}' to '${to}'`,
+                      `Failed to copy from '${copy.CopySource}' to '${copy.Key}'`,
                       err,
                       ErrorSeverity.Fatal
                     )
