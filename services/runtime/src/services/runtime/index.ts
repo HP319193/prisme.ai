@@ -125,7 +125,7 @@ export default class Runtime {
           SYNCHRONIZE_CONTEXTS.includes(cur.context)
         );
         const contexts = this.contexts[event.source.correlationId!];
-        if (updates?.length && contexts.length) {
+        if (updates?.length && contexts?.length) {
           contexts.forEach((cur) => {
             cur.applyUpdateOpLogs(
               updates as ContextUpdateOpLog[],
