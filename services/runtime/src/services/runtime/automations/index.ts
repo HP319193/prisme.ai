@@ -55,6 +55,7 @@ export async function executeAutomation(
       payload: ctx.payload,
       output,
       duration: Date.now() - startedAt,
+      startedAt: new Date(startedAt).toISOString(),
       trigger: ctx.trigger!,
       break: breakRaised,
     },
