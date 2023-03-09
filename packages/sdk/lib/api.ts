@@ -589,8 +589,20 @@ export class Api extends Fetcher {
     return replaced;
   }
 
-  async callAutomation(workspaceId: string, automation: string): Promise<any> {
-    return this.get(`/workspaces/${workspaceId}/webhooks/${automation}`);
+  async callAutomation(
+    workspaceId: string,
+    automation: string,
+    params: any
+  ): Promise<any> {
+    const queryString = Object.keys(params)
+      .map((key) => key + '=' + params[key])
+      .join('&');
+
+    return this.get(
+      `/workspaces/${workspaceId}/webhooks/${automation}${
+        queryString ? `?${queryString}` : ''
+      }`
+    );
   }
 
   async getWorkspaceUsage(
