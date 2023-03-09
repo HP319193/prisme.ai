@@ -1413,6 +1413,7 @@ declare namespace Prismeai {
             };
             output: AnyValue;
             duration: number;
+            startedAt: string;
             break: boolean;
         };
     }

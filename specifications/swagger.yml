@@ -2220,6 +2220,7 @@ components:
             - payload
             - output
             - duration
+            - startedAt
             - break
           properties:
             slug:
@@ -2237,6 +2238,8 @@ components:
               $ref: '#/components/schemas/AnyValue'
             duration:
               type: number
+            startedAt:
+              type: string
             break:
               type: boolean
 
