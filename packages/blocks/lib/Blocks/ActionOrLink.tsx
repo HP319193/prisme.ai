@@ -27,7 +27,15 @@ const ActionOrLink = ({ action, children }: ActionOrLinkProps) => {
     case 'event':
       return (
         <div
-          onClick={() => events?.emit(action.value, action.payload)}
+          onClick={() => {
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            const query = Object.fromEntries(urlSearchParams.entries());
+
+            events?.emit(action.value, {
+              ...(Object.keys(query).length > 0 ? { query } : {}),
+              ...action.payload,
+            });
+          }}
           className={tw`cursor-pointer hover:text-theme-accent hover:border-theme-accent`}
         >
           {children}
