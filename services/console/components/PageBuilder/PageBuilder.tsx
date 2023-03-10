@@ -87,11 +87,22 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
     (key, config) => {
       const prevBlock = blocks.get(key);
       if (!prevBlock) return;
+
       const { config: oldSchoolConfig, ...prevBlockData } = prevBlock;
-      const newBlock = {
+      let newBlock = {
         ...prevBlockData,
         ...config,
       };
+
+      // TODO : remove this debt by migrate all pages
+      if (prevBlock.slug === 'Popover.Popover') {
+        newBlock = {
+          ...prevBlock,
+          config,
+        };
+      }
+      //\TODO
+
       if (equal(newBlock, prevBlock)) return;
       const newBlocks = new Map(blocks);
       newBlocks.set(key, newBlock);

@@ -122,7 +122,9 @@ export const useBlockComponent = (blockName: string) => {
         apps: workspace.imports || {},
         blockName,
       });
-      setBlock(() => block);
+      try {
+        setBlock(() => block);
+      } catch {}
       setLoading(false);
     }
     getBlock();
