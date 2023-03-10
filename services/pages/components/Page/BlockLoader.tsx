@@ -86,7 +86,14 @@ export const BlockLoader: TBlockLoader = ({
   const initWithAutomation = useCallback(async () => {
     if (!user || !page || !page.workspaceId || !loaded) return;
     try {
-      const newConfig = await api.callAutomation(page.workspaceId, automation);
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const query = Object.fromEntries(urlSearchParams.entries());
+
+      const newConfig = await api.callAutomation(
+        page.workspaceId,
+        automation,
+        query
+      );
       setConfig((prev = {}) => ({ ...prev, ...newConfig }));
     } catch {}
   }, [automation, loaded, page, user]);

@@ -15,9 +15,7 @@ export function getBlocksConfigFromServer(page: Prismeai.DetailedPage) {
         try {
           const config = await fetch(generateEndpoint(workspaceId, automation));
           return await config.json();
-        } catch (e) {
-          return {};
-        }
+        } catch {}
         return {};
       }
     )
