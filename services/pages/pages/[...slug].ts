@@ -16,6 +16,15 @@ export const getServerSideProps: GetServerSideProps<
       notFound: true,
     };
 
+  if (slug.join('/') === 'index') {
+    return {
+      redirect: {
+        permanent: true,
+        destination: '/',
+      },
+    };
+  }
+
   let page: PageProps['page'] = null;
   let error: number | null = null;
   let initialConfig: Record<string, any>[] = [];
