@@ -196,7 +196,7 @@ export const PageRenderer = ({
                 content={() => (
                   <SharePage
                     pageId={`${value.id}`}
-                    pageSlug={value.slug || ''}
+                    pageSlug={value.slug === 'index' ? '' : value.slug || ''}
                   />
                 )}
                 title={t('pages.share.label')}
