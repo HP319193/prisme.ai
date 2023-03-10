@@ -2,7 +2,7 @@
 
 exports[`should render 1`] = `
 <div
-  className="pr-block-rich-text  "
+  className="pr-block-rich-text  __block-unique-id"
 >
   <h1
     id="title"
