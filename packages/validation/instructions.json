@@ -150,7 +150,8 @@
             "type": "string",
             "enum": [
               "replace",
-              "merge"
+              "merge",
+              "push"
             ],
             "description": "Choose merge in order to merge target variable with value. Value takes precedence."
           }

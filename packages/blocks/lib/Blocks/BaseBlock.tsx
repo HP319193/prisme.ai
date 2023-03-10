@@ -1,7 +1,7 @@
 import { cloneElement, ReactElement, useEffect, useState } from 'react';
 import { useBlock } from '../Provider';
 import generateId from '../utils/generateId';
-import prefixCSS from '../utils/prefixCSS';
+import getBlockStyles from '../utils/getBlockStyles';
 
 interface BaseBlock {
   children: ReactElement;
@@ -16,24 +16,19 @@ if (typeof window !== 'undefined') {
 }
 
 export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
-  const [containerClassName, setContainerClassName] = useState('');
   const {
-    config: { className, parentClassName = '', css = defaultStyles },
+    config: { className, parentClassName = '', css = defaultStyles, cssId },
   } = useBlock();
-
-  useEffect(() => {
-    setContainerClassName(generateId());
-  }, []);
+  const [containerClassName] = useState(`__block-${cssId || generateId()}`);
 
   useEffect(() => {
     if (!blocksStyles) return;
-    const blockStyle = prefixCSS(
-      (css || '').replace(/@import\s+default;/, defaultStyles || ''),
-      {
-        block: `.${containerClassName}`,
-        parent: `.${parentClassName}`,
-      }
-    );
+    const blockStyle = getBlockStyles({
+      css,
+      defaultStyles,
+      containerClassName,
+      parentClassName,
+    });
     styles.add(blockStyle);
     blocksStyles.textContent = Array.from(styles).join('\n');
 

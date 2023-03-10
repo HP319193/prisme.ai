@@ -37,7 +37,7 @@ if (typeof window !== 'undefined') {
 
 function MyApp({
   Component,
-  pageProps: { page, error, initialConfig },
+  pageProps: { page, error, styles, initialConfig },
 }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
@@ -49,6 +49,8 @@ function MyApp({
     location.pathname = `${currentLang}/${location.pathname}`;
     return null;
   }
+
+  const serverSideStyles = typeof window === 'undefined' && styles;
 
   return (
     <WorkspaceProvider>
@@ -63,6 +65,7 @@ function MyApp({
                 content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
               />
               <link rel="icon" href="/favicon.png" />
+              {serverSideStyles && <style>{serverSideStyles}</style>}
             </Head>
             <Sentry />
             {getLayout(<Component />)}
