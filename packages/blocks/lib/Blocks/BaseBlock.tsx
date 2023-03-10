@@ -1,6 +1,5 @@
 import { cloneElement, ReactElement, useEffect, useState } from 'react';
 import { useBlock } from '../Provider';
-import generateId from '../utils/generateId';
 import prefixCSS from '../utils/prefixCSS';
 
 interface BaseBlock {
@@ -15,6 +14,8 @@ if (typeof window !== 'undefined') {
   document.querySelector('head')?.appendChild(blocksStyles);
 }
 
+const id = { last: 0 };
+
 export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
   const [containerClassName, setContainerClassName] = useState('');
   const {
@@ -22,7 +23,7 @@ export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
   } = useBlock();
 
   useEffect(() => {
-    setContainerClassName(generateId());
+    setContainerClassName(`block-${++id.last}`);
   }, []);
 
   useEffect(() => {
