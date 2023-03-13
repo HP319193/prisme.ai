@@ -71,7 +71,7 @@ export const Header = ({ Link, events, className, ...config }: HeaderProps) => {
           key: `${k}`,
         }))}
         onClick={(e) => {}}
-        className="pr-block-header_right"
+        className="pr-block-header__right"
       />
     </div>
   );
