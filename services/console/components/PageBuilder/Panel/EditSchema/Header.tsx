@@ -6,7 +6,7 @@ export const schema: Schema = {
   type: 'object',
   properties: {
     title: {
-      type: 'string',
+      type: 'localized:string',
       title: 'pages.blocks.header.settings.title.label',
       description: 'pages.blocks.header.settings.title.description',
     },
