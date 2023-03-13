@@ -62,12 +62,10 @@ export const Header = ({ Link, events, className, ...config }: HeaderProps) => {
         items={nav.map((props, k) => ({
           label: (
             <Action
-              type={props.type}
-              value={props.value}
               payload={props.payload}
-              text={props.text}
               Link={Link}
               events={events}
+              {...props}
             />
           ),
           key: `${k}`,
