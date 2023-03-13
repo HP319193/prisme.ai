@@ -133,6 +133,14 @@ export const config: PermissionsConfig<
       action: [ActionType.Read],
       subject: SubjectType.Event,
       conditions: {
+        'source.userId': '${user.id}',
+      },
+    },
+
+    {
+      action: [ActionType.Read],
+      subject: SubjectType.Event,
+      conditions: {
         'target.userTopic': {
           $in: '${user.topics}',
         },
