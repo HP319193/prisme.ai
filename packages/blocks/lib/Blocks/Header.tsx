@@ -114,7 +114,7 @@ const defaultStyles = `:block {
   font-weight: 700;
 }
 
-.pr-block-header_right {
+.pr-block-header__right {
   width: 65%;
   justify-content: flex-end;
   color: var(--color-text);
