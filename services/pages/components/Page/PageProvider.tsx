@@ -20,6 +20,7 @@ export const usePage = () => useContext(pageContext);
 export interface PageProviderProps {
   page?: PageContext['page'];
   error?: number | null;
+  styles?: string;
   initialConfig?: Record<string, any>[];
 }
 

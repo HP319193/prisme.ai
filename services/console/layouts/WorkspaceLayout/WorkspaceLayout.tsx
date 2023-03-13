@@ -15,6 +15,7 @@ import Expand from '../../components/Navigation/Expand';
 import { incrementName } from '../../utils/incrementName';
 import { BlocksProvider } from '../../components/BlocksProvider';
 import { ApiError } from '../../utils/api';
+import Tabs from './Tabs';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
@@ -219,7 +220,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
             <WorkspaceSource onLoad={() => setDisplaySourceView(true)} />
           )}
         </div>
-        <Layout Header={<HeaderWorkspace />}>
+        <Layout Header={<HeaderWorkspace />} className="max-w-full">
           <AppsStore
             visible={appStoreVisible}
             onCancel={() => setAppStoreVisible(false)}
@@ -245,6 +246,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
               </div>
             </Layout>
             <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-full">
+              <Tabs />
               {creatingAutomation || creatingPage ? <Loading /> : children}
             </div>
           </div>
