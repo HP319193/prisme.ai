@@ -41,6 +41,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
       page,
       error: error || null,
       initialConfig,
+      styles,
       ...(await serverSideTranslations(locale, ['common', 'sign', 'pages'])),
     },
   };
