@@ -1,10 +1,10 @@
 import { Switch, Button } from '@prisme.ai/design-system';
-import { Events } from '@prisme.ai/sdk';
 import { Tag } from 'antd';
 import Color from 'color';
 import { ColumnDefinition } from './types';
 import { interpolate } from '../../interpolate';
 import { useBlock } from '../../Provider';
+import { RichText } from '../RichText';
 
 const generateColor = (str: string) => {
   const cyrb53 = function (str = '', seed = 0) {
@@ -90,8 +90,8 @@ export const renderValue = ({
       );
     case 'string':
     default:
-      if (actions) {
-        return Array.isArray(actions) ? (
+      if (actions && Array.isArray(actions) && actions.length > 0) {
+        return (
           <>
             {actions.map(
               ({ label, action: { type, value, payload, popup } = {} }) => (
@@ -123,12 +123,13 @@ export const renderValue = ({
               )
             )}
           </>
-        ) : null;
+        );
       }
       if (typeof value === 'object') {
         return JSON.stringify(value);
       }
-      return value;
+
+      return <RichText>{value}</RichText>;
   }
 };
 export default renderValue;
