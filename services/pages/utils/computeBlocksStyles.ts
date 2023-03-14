@@ -8,11 +8,14 @@ export function computePageStyles(page: Prismeai.DetailedPage) {
       const config = block.config ? block.config : block;
       config.cssId = ++ids.last;
       const slug = block.slug || '';
+      const { styles: defaultStyles } = (builtinBlocks as any)[slug] || {
+        styles: '',
+      };
 
       styles.push(
         getBlockStyles({
           css: config.css,
-          defaultStyles: builtinBlocks[slug] ? builtinBlocks[slug].styles : '',
+          defaultStyles,
           containerClassName: `__block-${config.cssId}`,
           parentClassName: '',
         })
