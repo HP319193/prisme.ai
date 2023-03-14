@@ -35,7 +35,7 @@ export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
     return () => {
       styles.delete(blockStyle);
     };
-  }, [css, containerClassName, parentClassName]);
+  }, [css, defaultStyles, containerClassName, parentClassName]);
 
   return cloneElement(children, {
     className: [className, containerClassName].join(' '),

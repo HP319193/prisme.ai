@@ -1,4 +1,4 @@
-import { getBlockStyles } from '@prisme.ai/blocks';
+import { getBlockStyles, builtinBlocks } from '@prisme.ai/blocks';
 
 export function computePageStyles(page: Prismeai.DetailedPage) {
   const ids = { last: 0 };
@@ -6,17 +6,17 @@ export function computePageStyles(page: Prismeai.DetailedPage) {
   function computeBlocksStyles(blocks: any = []) {
     return blocks.map((block: any) => {
       const config = block.config ? block.config : block;
-      if (config.css) {
-        config.cssId = ++ids.last;
-        styles.push(
-          getBlockStyles({
-            css: config.css,
-            defaultStyles: '',
-            containerClassName: `__block-${config.cssId}`,
-            parentClassName: '',
-          })
-        );
-      }
+      config.cssId = ++ids.last;
+      const slug = block.slug || '';
+
+      styles.push(
+        getBlockStyles({
+          css: config.css,
+          defaultStyles: builtinBlocks[slug] ? builtinBlocks[slug].styles : '',
+          containerClassName: `__block-${config.cssId}`,
+          parentClassName: '',
+        })
+      );
       if (config.blocks) {
         config.blocks = computeBlocksStyles(config.blocks);
       }
