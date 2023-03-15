@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import { filter } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useWorkspace, WorkspaceContext } from '../../providers/Workspace';
 import Storage from '../../utils/Storage';
 import { stringToHexaColor } from '../../utils/strings';
@@ -48,9 +48,11 @@ function getType(tab: string) {
 interface IconProps {
   tab: string;
   color: string;
-  imports?: Prismeai.DSULReadOnly['imports'];
 }
-const Icon = ({ tab, color, imports }: IconProps) => {
+const Icon = ({ tab, color }: IconProps) => {
+  const {
+    workspace: { imports },
+  } = useWorkspace();
   const type = getType(tab);
   const slug = getSlug(tab);
 
@@ -71,6 +73,57 @@ const Icon = ({ tab, color, imports }: IconProps) => {
     default:
       return null;
   }
+};
+
+interface TabProps {
+  href: string;
+  label: string;
+  title: string;
+  isCurrent?: boolean;
+  previousIsCurrent?: boolean;
+  onClose?: (e: React.MouseEvent) => void;
+  className?: string;
+  icon?: ReactNode;
+}
+const Tab = ({
+  href,
+  label,
+  title,
+  isCurrent,
+  previousIsCurrent,
+  onClose,
+  className = '',
+  icon,
+}: TabProps) => {
+  return (
+    <Link href={href} passHref>
+      <Tooltip title={title} placement="bottom">
+        <a
+          href={href}
+          className={`px-4 py-[0.75rem] pb-[0.75rem] mt-1 pr-1 flex flex-nowrap items-center group rounded-t ${
+            isCurrent ? 'bg-white font-bold' : ''
+          }  whitespace-nowrap hover:text-base ${className}`}
+        >
+          {!isCurrent && !previousIsCurrent && (
+            <div className="border-l border-light-gray h-full mr-4 -ml-6" />
+          )}
+          <div>
+            {icon || <Icon tab={href} color={`#${stringToHexaColor(title)}`} />}
+          </div>
+          <div className="mx-2">{label}</div>
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-sm mr-2 transition-opacity opacity-0 group-hover:opacity-100"
+            >
+              <CloseOutlined />
+            </button>
+          )}
+        </a>
+      </Tooltip>
+    </Link>
+  );
 };
 
 export const Tabs = () => {
@@ -181,57 +234,43 @@ export const Tabs = () => {
     return slug === currentSlug && type === currentType;
   }, []);
 
+  const previousIsCurrent = useCallback(
+    (tab: string) => {
+      const previousIndex = Array.from(tabs).indexOf(tab) - 1;
+      const previous =
+        previousIndex < 0
+          ? `/workspaces/${workspace.id}`
+          : Array.from(tabs)[previousIndex];
+
+      return !!previous && isCurrent(previous);
+    },
+    [isCurrent, tabs, workspace.id]
+  );
+
   return (
-    <div className="flex flex-row overflow-auto">
-      <Link href={`/workspaces/${workspace.id}`} passHref>
-        <Tooltip title="Activité" placement="bottom">
-          <a
-            href={`/workspaces/${workspace.id}`}
-            className={`px-4 py-2 mt-1 pr-1 flex flex-nowrap items-center group border-l border-white ${
-              isCurrent(`/workspaces/${workspace.id}`)
-                ? 'white border-neutral-200 border-t border-l border-r'
-                : 'bg-neutral-200'
-            }  whitespace-nowrap hover:text-base`}
-          >
-            <div>
-              <HomeIconOutlined />
-            </div>
-            <div className="mx-2">Activité</div>
-          </a>
-        </Tooltip>
-      </Link>
+    <div className="flex flex-row overflow-auto bg-ultra-light-accent pt-[0.55rem] -mb-[1px]">
+      <Tab
+        label="Activités"
+        title="Activités"
+        href={`/workspaces/${workspace.id}`}
+        isCurrent={isCurrent(`/workspaces/${workspace.id}`)}
+        previousIsCurrent={previousIsCurrent(`/workspaces/${workspace.id}`)}
+        className="!pr-4"
+        icon={<HomeIconOutlined />}
+      />
       {Array.from(tabs).map((tab) => (
-        <Link key={tab} href={tab} passHref>
-          <Tooltip title={localize(getTitle(tab))} placement="bottom">
-            <a
-              href={tab}
-              className={`px-4 py-2 mt-1 pr-1 flex flex-nowrap items-center group border-l border-white ${
-                isCurrent(tab)
-                  ? 'white border-neutral-200 border-t border-l border-r'
-                  : 'bg-neutral-200'
-              }  whitespace-nowrap hover:text-base`}
-            >
-              <div>
-                <Icon
-                  tab={tab}
-                  color={`#${stringToHexaColor(localize(getTitle(tab)))}`}
-                  imports={workspace.imports}
-                />
-              </div>
-              <div className="mx-2">{getSlug(tab)}</div>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  close(tab);
-                }}
-                className="text-sm mr-2 transition-opacity opacity-0 group-hover:opacity-100"
-              >
-                <CloseOutlined />
-              </button>
-            </a>
-          </Tooltip>
-        </Link>
+        <Tab
+          key={tab}
+          label={getSlug(tab)}
+          title={localize(getTitle(tab))}
+          href={tab}
+          isCurrent={isCurrent(tab)}
+          previousIsCurrent={previousIsCurrent(tab)}
+          onClose={(e) => {
+            e.preventDefault();
+            close(tab);
+          }}
+        />
       ))}
     </div>
   );

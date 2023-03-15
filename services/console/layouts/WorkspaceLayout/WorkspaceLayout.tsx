@@ -206,7 +206,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         </Head>
         <div
           className={`
-          absolute top-[75px] bottom-0 right-0 left-0
+          absolute top-[72px] bottom-0 right-0 left-0
           bg-white
           flex flex-1
           transition-transform
