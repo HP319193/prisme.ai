@@ -11,6 +11,7 @@ import { ReplaceStateEvent } from '../../utils/urls';
 import useLocalizedText from '../../utils/useLocalizedText';
 import AutomationIcon from './AutomationIcon';
 import PageIcon from './PageIcon';
+import HomeIconOutlined from '../../icons/home-outlined.svgr';
 
 function getTabsFromStorage(workspaceId: string) {
   try {
@@ -182,6 +183,23 @@ export const Tabs = () => {
 
   return (
     <div className="flex flex-row overflow-auto">
+      <Link href={`/workspaces/${workspace.id}`} passHref>
+        <Tooltip title="Activité" placement="bottom">
+          <a
+            href={`/workspaces/${workspace.id}`}
+            className={`px-4 py-2 mt-1 pr-1 flex flex-nowrap items-center group border-l border-white ${
+              isCurrent(`/workspaces/${workspace.id}`)
+                ? 'white border-neutral-200 border-t border-l border-r'
+                : 'bg-neutral-200'
+            }  whitespace-nowrap hover:text-base`}
+          >
+            <div>
+              <HomeIconOutlined />
+            </div>
+            <div className="mx-2">Activité</div>
+          </a>
+        </Tooltip>
+      </Link>
       {Array.from(tabs).map((tab) => (
         <Link key={tab} href={tab} passHref>
           <Tooltip title={localize(getTitle(tab))} placement="bottom">
