@@ -1,5 +1,5 @@
 import { AppstoreOutlined, CloseOutlined } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import { Dropdown, Menu, Tooltip } from 'antd';
 import { filter } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -12,6 +12,8 @@ import useLocalizedText from '../../utils/useLocalizedText';
 import AutomationIcon from './AutomationIcon';
 import PageIcon from './PageIcon';
 import HomeIconOutlined from '../../icons/home-outlined.svgr';
+import MenuItem from 'antd/lib/menu/MenuItem';
+import { useTranslation } from 'next-i18next';
 
 function getTabsFromStorage(workspaceId: string) {
   try {
@@ -129,6 +131,7 @@ const Tab = ({
 export const Tabs = () => {
   const { asPath, push } = useRouter();
   const { localize } = useLocalizedText();
+  const { t } = useTranslation('workspaces');
 
   const { workspace } = useWorkspace();
   const [tabs, setTabs] = useState<Set<string>>(
@@ -211,6 +214,12 @@ export const Tabs = () => {
     [workspace, push]
   );
 
+  const closeAll = useCallback(() => {
+    setTabs(new Set());
+    Storage.remove(`__tabs_${workspace.id}`);
+    push(`/workspaces/${workspace.id}`);
+  }, [push, workspace.id]);
+
   const getTitle = useCallback(
     (tab: string) => {
       const doc = getDocument(tab, workspace);
@@ -248,30 +257,44 @@ export const Tabs = () => {
   );
 
   return (
-    <div className="flex flex-row overflow-auto bg-ultra-light-accent pt-[0.55rem] -mb-[1px]">
-      <Tab
-        label="Activités"
-        title="Activités"
-        href={`/workspaces/${workspace.id}`}
-        isCurrent={isCurrent(`/workspaces/${workspace.id}`)}
-        previousIsCurrent={previousIsCurrent(`/workspaces/${workspace.id}`)}
-        className="!pr-4"
-        icon={<HomeIconOutlined />}
-      />
-      {Array.from(tabs).map((tab) => (
+    <div className="flex flex-row justify-between bg-ultra-light-accent pt-[0.55rem] -mb-[1px]">
+      <div className="flex flex-row overflow-auto">
         <Tab
-          key={tab}
-          label={getSlug(tab)}
-          title={localize(getTitle(tab))}
-          href={tab}
-          isCurrent={isCurrent(tab)}
-          previousIsCurrent={previousIsCurrent(tab)}
-          onClose={(e) => {
-            e.preventDefault();
-            close(tab);
-          }}
+          label="Activités"
+          title="Activités"
+          href={`/workspaces/${workspace.id}`}
+          isCurrent={isCurrent(`/workspaces/${workspace.id}`)}
+          previousIsCurrent={previousIsCurrent(`/workspaces/${workspace.id}`)}
+          className="!pr-4"
+          icon={<HomeIconOutlined />}
         />
-      ))}
+        {Array.from(tabs).map((tab) => (
+          <Tab
+            key={tab}
+            label={getSlug(tab)}
+            title={localize(getTitle(tab))}
+            href={tab}
+            isCurrent={isCurrent(tab)}
+            previousIsCurrent={previousIsCurrent(tab)}
+            onClose={(e) => {
+              e.preventDefault();
+              close(tab);
+            }}
+          />
+        ))}
+      </div>
+      <Dropdown
+        trigger={['click']}
+        overlay={
+          <Menu>
+            <MenuItem className="whitespace-nowrap" onClick={closeAll}>
+              {t('workspace.tabs.closeAll')}
+            </MenuItem>
+          </Menu>
+        }
+      >
+        <button className="p-4 rotate-90">•••</button>
+      </Dropdown>
     </div>
   );
 };
