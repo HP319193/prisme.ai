@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useField } from 'react-final-form';
 import Select, { SelectProps } from '../Select';
 import { useSchemaForm } from './context';
@@ -38,6 +38,14 @@ export const FieldSelect = (
   const field = useField(props.name);
   const selectOptions = useSelectOptions(props.schema, props.options);
 
+  const filterOption = useCallback(
+    (input, option) =>
+      `${option.label || ''} ${option.valiue || ''}`
+        .toLowerCase()
+        .includes(input.toLowerCase()),
+    []
+  );
+
   return (
     <FieldContainer {...props} className="pr-form-select">
       <Label
@@ -55,6 +63,7 @@ export const FieldSelect = (
         className="pr-form-select__input pr-form-input"
         placeholder={props.schema.placeholder || ''}
         showSearch
+        filterOption={filterOption}
       />
       <InfoBubble
         className="pr-form-select__description"
