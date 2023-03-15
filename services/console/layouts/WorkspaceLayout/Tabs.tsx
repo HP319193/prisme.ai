@@ -1,5 +1,6 @@
 import { AppstoreOutlined, CloseOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
+import { filter } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -66,7 +67,6 @@ const Icon = ({ tab, color, imports }: IconProps) => {
           <img src={photo} height={22} width={22} alt={tab} />
         );
       return <AppstoreOutlined />;
-      return null;
     default:
       return null;
   }
@@ -94,6 +94,17 @@ export const Tabs = () => {
       ),
     ]);
   }, [workspace]);
+
+  useEffect(() => {
+    setTabs((prev) => {
+      const prevSize = prev.size;
+      const filtered = Array.from(prev).filter((tab) =>
+        workspaceLinks.has(tab)
+      );
+      if (filtered.length !== prevSize) return new Set(filtered);
+      return prev;
+    });
+  }, [workspaceLinks]);
 
   useEffect(() => {
     const listener = (e: Event) => {
