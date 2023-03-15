@@ -46,8 +46,11 @@ export const WorkspaceLayout: FC = ({ children }) => {
   >();
   const [saving, setSaving] = useState(false);
   const [fullSidebar, setFullSidebar] = useState(
-    !Storage.get('__workpaceSidebarMinimized')
+    Storage.get('__workpaceSidebarMinimized') === null
+      ? window.innerWidth > 500
+      : !Storage.get('__workpaceSidebarMinimized')
   );
+
   const [appStoreVisible, setAppStoreVisible] = useState(false);
 
   useEffect(() => {

@@ -186,7 +186,7 @@ export const Navigation = ({
       />
       <div
         role="navigation"
-        className="flex flex-1 flex-col overflow-auto max-h-[calc(100%-3rem)]"
+        className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden max-h-[calc(100%-3rem)]"
       >
         <div className="border-b-[1px]">
           <Item
