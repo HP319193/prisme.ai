@@ -2,14 +2,10 @@ import { CloseOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
-import {
-  useWorkspace,
-  workspaceContext,
-  WorkspaceContext,
-} from '../../providers/Workspace';
-import { Workspace } from '../../utils/api';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useWorkspace, WorkspaceContext } from '../../providers/Workspace';
 import Storage from '../../utils/Storage';
+import { ReplaceStateEvent } from '../../utils/urls';
 import useLocalizedText from '../../utils/useLocalizedText';
 
 function getTabsFromStorage(workspaceId: string) {
@@ -44,17 +40,50 @@ export const Tabs = () => {
     new Set(getTabsFromStorage(workspace.id))
   );
 
+  const workspaceLinks = useMemo(() => {
+    return new Set([
+      ...Object.keys(workspace.automations || {}).map(
+        (slug) => `/workspaces/${workspace.id}/automations/${slug}`
+      ),
+      ...Object.keys(workspace.pages || {}).map(
+        (slug) => `/workspaces/${workspace.id}/pages/${slug}`
+      ),
+      ...Object.keys(workspace.imports || {}).map(
+        (slug) => `/workspaces/${workspace.id}/apps/${slug}`
+      ),
+    ]);
+  }, [workspace]);
+
+  useEffect(() => {
+    const listener = (e: Event) => {
+      const { prevLocation, nextLocation } = e as ReplaceStateEvent;
+      setTabs(
+        (prev) =>
+          new Set(
+            Array.from(prev).map((tab) =>
+              tab === prevLocation ? nextLocation : tab
+            )
+          )
+      );
+    };
+    window.addEventListener('replaceState', listener);
+
+    return () => {
+      window.removeEventListener('replaceState', listener);
+    };
+  }, []);
+
   useEffect(() => {
     const tab = decodeURIComponent(asPath);
 
-    if (!getDocument(tab, workspace)) return;
+    if (!workspaceLinks.has(tab)) return;
 
     setTabs((prev) => {
       const newTabs = [...Array.from(prev), tab];
       Storage.set(`__tabs_${workspace.id}`, newTabs);
       return new Set(newTabs);
     });
-  }, [asPath, workspace]);
+  }, [asPath, workspace, workspaceLinks]);
 
   const close = useCallback(
     (tab: string) => {
@@ -75,10 +104,12 @@ export const Tabs = () => {
     },
     [workspace, push]
   );
+
   const getSlug = useCallback((tab: string) => {
     const [slug] = tab.split(/\//).reverse();
     return slug;
   }, []);
+
   const getTitle = useCallback(
     (tab: string) => {
       const doc = getDocument(tab, workspace);
@@ -91,16 +122,15 @@ export const Tabs = () => {
     },
     [workspace]
   );
-  const isCurrent = useCallback(
-    (tab: string) => {
-      const [slug, type] = tab.split(/\//).reverse();
-      const [currentSlug, currentType] = decodeURIComponent(asPath)
-        .split(/\//)
-        .reverse();
-      return slug === currentSlug && type === currentType;
-    },
-    [asPath]
-  );
+  const isCurrent = useCallback((tab: string) => {
+    const [, , ...url] = window.location.pathname.split(/\//);
+    const path = `/${url.join('/')}`;
+    const [slug, type] = tab.split(/\//).reverse();
+    const [currentSlug, currentType] = decodeURIComponent(path)
+      .split(/\//)
+      .reverse();
+    return slug === currentSlug && type === currentType;
+  }, []);
 
   return (
     <div className="flex flex-row overflow-auto">
