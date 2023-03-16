@@ -23,7 +23,13 @@ export async function initEDAMetrics(
     },
   });
 
-  const processedLabels = ['event', 'consumer', 'workspace', 'producer'];
+  const processedLabels = [
+    'event',
+    'consumer',
+    'workspace',
+    'producer',
+    'serviceTopic',
+  ];
   const processDurationMetrics = new client.Histogram({
     name: 'events_process_duration',
     help:
@@ -49,6 +55,7 @@ export async function initEDAMetrics(
       consumer: broker.service,
       workspace: event?.source?.workspaceId,
       producer: event?.source?.host?.service,
+      serviceTopic: event?.source?.serviceTopic,
     };
     processDurationMetrics.labels(vals).observe(metrics.procesDuration);
     pickupDelayMetrics.labels(vals).observe(metrics.pickupDelay);
