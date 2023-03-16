@@ -312,27 +312,26 @@ export interface FindUserQuery {
 }
 export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   async function ({ email, ids }: FindUserQuery): Promise<Prismeai.Contact[]> {
+    let users: User[] = [];
     if (email) {
-      return await Users.find({ email: email.toLowerCase().trim() });
-    }
-    if (ids) {
+      users = await Users.find({ email: email.toLowerCase().trim() });
+    } else if (ids) {
       try {
         const mongoIds = ids.map((id) => new ObjectId(id));
-        const users = await Users.find({
+        users = await Users.find({
           _id: {
             $in: mongoIds,
           },
         });
-        return users.map(({ email, firstName, lastName, photo, id }) => ({
-          email,
-          firstName,
-          lastName,
-          photo,
-          id,
-        }));
       } catch (error) {
         throw new PrismeError(`Invalid id (${ids.join(',')})`, { ids }, 400);
       }
     }
-    return [];
+    return users.map(({ email, firstName, lastName, photo, id }) => ({
+      email,
+      firstName,
+      lastName,
+      photo,
+      id,
+    }));
   };
