@@ -95,7 +95,7 @@ export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
       };
 
       // TODO : remove this debt by migrate all pages
-      if (prevBlock.slug === 'Popover.Popover') {
+      if (['Popover.Popover', 'Charts Block.charts'].includes(prevBlock.slug)) {
         newBlock = {
           ...prevBlock,
           config,
