@@ -40,7 +40,7 @@ export const FieldSelect = (
 
   const filterOption = useCallback(
     (input, option) =>
-      `${option.label || ''} ${option.valiue || ''}`
+      `${option?.label || ''} ${option?.value || ''}`
         .toLowerCase()
         .includes(input.toLowerCase()),
     []
