@@ -188,27 +188,6 @@ export const Navigation = ({
         role="navigation"
         className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden max-h-[calc(100%-3rem)]"
       >
-        <div className="border-b-[1px]">
-          <Item
-            href={`/workspaces/${id}`}
-            icon={({ selected }) => (
-              <Tooltip
-                title={t('workspace.sections.activity')}
-                placement="right"
-              >
-                <div className="mb-1">
-                  {selected ? (
-                    <HomeIcon width="1.6rem" height="1.6rem" />
-                  ) : (
-                    <HomeIconOutlined width="1.6rem" height="1.6rem" />
-                  )}
-                </div>
-              </Tooltip>
-            )}
-          >
-            {t('workspace.sections.activity')}
-          </Item>
-        </div>
         {!(searchValue && filteredPages.length === 0) && (
           <ItemsGroup
             title={t('workspace.sections.pages')}
