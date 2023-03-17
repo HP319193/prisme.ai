@@ -31,6 +31,7 @@ export class Workspaces extends Storage {
   startLiveUpdates() {
     const listenedEvents = [
       EventType.CreatedWorkspace,
+      EventType.UpdatedWorkspace,
       EventType.ConfiguredWorkspace,
       EventType.DeletedWorkspace,
       EventType.CreatedAutomation,
@@ -113,6 +114,16 @@ export class Workspaces extends Storage {
             setTimeout(() => {
               delete this.workspaces[workspaceId];
             }, 5000);
+            break;
+          case EventType.UpdatedWorkspace:
+            const {
+              payload: { workspace: updatedDSUL },
+            } = event as any as Prismeai.UpdatedWorkspace;
+            workspace.dsul = {
+              ...workspace.dsul,
+              ...updatedDSUL,
+            };
+            workspace.name = updatedDSUL.name;
             break;
           case EventType.ConfiguredWorkspace:
             const {
