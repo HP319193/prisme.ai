@@ -442,6 +442,34 @@ UIWidgets.args = {
           },
         },
       },
+      tags: {
+        type: 'array',
+        title: 'tags',
+        description: 'Display a tags selector.',
+        'ui:widget': 'tags',
+        'ui:options': {
+          allowNew: false,
+          tags: {
+            options: [
+              {
+                label: 'Foo',
+                value: 'foo',
+                color: '#ff00aa',
+              },
+              {
+                label: 'Bar',
+                value: 'bar',
+                color: '#11bbaa',
+              },
+              {
+                label: 'Daz',
+                value: 'daz',
+                color: '#558fff',
+              },
+            ],
+          },
+        },
+      },
       select: {
         type: 'string',
         title: 'select',
