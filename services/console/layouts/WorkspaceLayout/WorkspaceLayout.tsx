@@ -46,8 +46,11 @@ export const WorkspaceLayout: FC = ({ children }) => {
   >();
   const [saving, setSaving] = useState(false);
   const [fullSidebar, setFullSidebar] = useState(
-    !Storage.get('__workpaceSidebarMinimized')
+    Storage.get('__workpaceSidebarMinimized') === null
+      ? window.innerWidth > 500
+      : !Storage.get('__workpaceSidebarMinimized')
   );
+
   const [appStoreVisible, setAppStoreVisible] = useState(false);
 
   useEffect(() => {
@@ -206,7 +209,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         </Head>
         <div
           className={`
-          absolute top-[75px] bottom-0 right-0 left-0
+          absolute top-[72px] bottom-0 right-0 left-0
           bg-white
           flex flex-1
           transition-transform
@@ -245,7 +248,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
                 />
               </div>
             </Layout>
-            <div className="flex h-full flex-col flex-1 min-w-[500px] max-w-full">
+            <div className="flex h-full flex-col flex-1 min-w-[1px] max-w-full">
               <Tabs />
               {creatingAutomation || creatingPage ? <Loading /> : children}
             </div>

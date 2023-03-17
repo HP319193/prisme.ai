@@ -40,11 +40,21 @@ export function generatePageUrl(workspaceSlug: string, pageSlug: string) {
   }`;
 }
 
+export class ReplaceStateEvent extends Event {
+  public prevLocation = '';
+  public nextLocation = '';
+}
+
 export function replaceSilently(newPath: string) {
-  const [, lang] = window.location.pathname.split('/') || [];
+  const [, lang, ...url] = window.location.pathname.split('/') || [];
+  const e = new ReplaceStateEvent('replaceState');
+  e.prevLocation = `/${url.join('/')}`;
+  e.nextLocation = newPath;
   window.history.replaceState(
     {},
     '',
     `/${lang}${newPath}`.replace(/\/\//, '/')
   );
+
+  window?.dispatchEvent(e);
 }

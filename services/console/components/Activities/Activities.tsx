@@ -92,7 +92,7 @@ export const Activities = () => {
   return (
     <Layout
       Header={
-        <div className="border-b  -mt-[1px]">
+        <div className="border-b mt-[1.5px]">
           <PageHeader
             className="h-[4rem] flex items-center pr-page-header-full-left !border-0"
             title={

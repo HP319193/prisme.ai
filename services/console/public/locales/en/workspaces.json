@@ -101,6 +101,9 @@
         "confirm_ok": "Rollback to this version",
         "success": "Back to the previous version with success."
       }
+    },
+    "tabs": {
+      "closeAll": "Close all tabs"
     }
   },
   "create": {
