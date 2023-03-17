@@ -3,18 +3,21 @@ import el from 'date-fns/esm/locale/el/index.js';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import SliderOptions from './SliderOptions';
+import TagsOptions from './TagsOptions';
 
 interface UiOptionsProps {
   value: Schema;
   onChange: (schema: Schema) => void;
 }
 
-const WidgetsWithOptions = ['slider'];
+const WidgetsWithOptions = ['slider', 'tags'];
 
 const getOptionsForm = (widget: typeof WidgetsWithOptions[number]) => {
   switch (widget) {
     case 'slider':
       return SliderOptions;
+    case 'tags':
+      return TagsOptions;
   }
 };
 

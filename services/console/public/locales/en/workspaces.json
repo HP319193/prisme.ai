@@ -1402,7 +1402,9 @@
       "name_html": "HTML",
       "description_html": "Rich content (HTML)",
       "name_slider": "Slider",
-      "description_slider": "Select a numeric value on a slider"
+      "description_slider": "Select a numeric value on a slider",
+      "name_tags": "Multiple select",
+      "description_tags": "Select multiple values"
     },
     "properties": {
       "label": "Object properties",
@@ -1415,6 +1417,25 @@
     },
     "uiOptions": {
       "label": "Field options",
+      "tags": {
+        "title": "Tags",
+        "options": {
+          "title": "Option"
+        },
+        "value": {
+          "title": "Value"
+        },
+        "label": {
+          "title": "Label"
+        },
+        "color": {
+          "title": "Color"
+        },
+        "allowNew": {
+          "title": "Allow new entris",
+          "description": "Allow additional properties, other than the listed ones"
+        }
+      },
       "slider": {
         "steps": {
           "add": "Add a step",

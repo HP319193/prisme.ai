@@ -8,6 +8,12 @@ export type SelectOption = {
   label: string | ReactNode;
 };
 
+export type TagsOption = {
+  value: string;
+  label: string | ReactNode;
+  color?: string;
+};
+
 export type SelectGroup = {
   label: string | ReactNode;
   options: SelectOption[];
@@ -18,7 +24,7 @@ export const isSelectGroup = (
 ): i is SelectGroup => !!(i as SelectGroup).options;
 
 export interface SelectProps extends AntdSelectProps {
-  selectOptions: SelectOption[] | SelectGroup[];
+  selectOptions: SelectOption[] | SelectGroup[] | TagsOption[];
   overrideContainerClassName?: string;
 }
 

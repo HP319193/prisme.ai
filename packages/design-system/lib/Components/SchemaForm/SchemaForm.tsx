@@ -19,6 +19,7 @@ import FieldLocalizedBoolean from './FieldLocalizedBoolean';
 import FieldLocalizedText from './FieldLocalizedText';
 import FieldObject from './FieldObject';
 import FieldArray from './FieldArray';
+import FieldTags from './FieldTags';
 import FieldSelect from './FieldSelect';
 import FieldRadio from './FieldRadio';
 import FieldText from './FieldText';
@@ -76,6 +77,7 @@ export const SchemaForm = ({
       FieldLocalizedBoolean,
       FieldLocalizedText,
       FieldObject: FieldObject(initialFieldObjectVisibility),
+      FieldTags,
       FieldSelect,
       FieldRadio,
       FieldText,

@@ -1,6 +1,7 @@
 import { FunctionComponent, ReactNode } from 'react';
 import { DatePickerProps } from '../DatePicker';
 import { TextAreaProps } from '../TextArea';
+import { TagsOption } from '../Select';
 
 export const schemaTypes = [
   'string',
@@ -27,11 +28,13 @@ export const UIWidgetsForString = [
 ] as const;
 export const UIWidgetsForLocalizedString = ['textarea'] as const;
 export const UIWidgetsForNumber = ['slider'] as const;
+export const UIWidgetsForArray = ['tags'] as const;
 export const UIWidgetsByType = {
   [schemaTypes[0]]: UIWidgetsForString,
   [schemaTypes[1]]: UIWidgetsForLocalizedString,
   [schemaTypes[2]]: UIWidgetsForNumber,
   [schemaTypes[3]]: UIWidgetsForNumber,
+  [schemaTypes[7]]: UIWidgetsForArray,
 };
 
 type StringWithAutocomplete<T> = T | (string & {});
@@ -62,6 +65,12 @@ export type UiOptionsUpload = {
   upload: {
     // https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input/file#accept
     accept?: string;
+  };
+};
+export type UiOptionsTags = {
+  tags: {
+    allowNew?: boolean;
+    options: TagsOption[];
   };
 };
 export type UiOptionsSelect = {
@@ -164,6 +173,7 @@ export interface Schema extends Record<string, any> {
     | UiOptionsTextArea
     | UiOptionsUpload
     | UiOptionsSelect
+    | UiOptionsTags
     | UiOptionsDate
     | UiOptionsAutocomplete
     | UiOptionsDynamicAutocomplete
