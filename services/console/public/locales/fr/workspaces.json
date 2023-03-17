@@ -101,6 +101,9 @@
         "confirm_ok": "Revenir à cette version",
         "success": "Retour à la version précédente avec succès."
       }
+    },
+    "tabs": {
+      "closeAll": "Fermez tous les onglets"
     }
   },
   "create": {
