@@ -50,4 +50,5 @@ export {
   Switch,
   Tooltip,
   Tabs,
+  Tag,
 } from 'antd';
