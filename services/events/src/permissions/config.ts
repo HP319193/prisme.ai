@@ -129,13 +129,13 @@ export const config: PermissionsConfig<
     },
   ],
   abac: [
-    {
-      action: [ActionType.Read],
-      subject: SubjectType.Event,
-      conditions: {
-        'source.userId': '${user.id}',
-      },
-    },
+    // {
+    //   action: [ActionType.Read],
+    //   subject: SubjectType.Event,
+    //   conditions: {
+    //     'source.userId': '${user.id}',
+    //   },
+    // },
 
     {
       action: [ActionType.Read],
