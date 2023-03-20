@@ -78,9 +78,11 @@ export class ClientPool {
     const client = createClient({
       url: opts.host,
       password: opts.password,
-      name: `${this.opts?.consumer?.service} broker ${(Math.random() + 1)
+      name: `${this.opts?.consumer?.service}-broker-${this.clients.length}-${(
+        Math.random() + 1
+      )
         .toString(36)
-        .substring(7)} (${blocking ? 'blocking' : 'non-blocking'})`,
+        .substring(7)} (${blocking ? '-blocking' : '-non-blocking'})`,
     });
     client.on('error', (err: Error) => {
       console.error(`Error occured with broker redis driver : ${err}`);
