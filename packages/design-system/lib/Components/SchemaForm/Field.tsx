@@ -61,6 +61,9 @@ export const Field = ({
       case 'object':
         return components.FieldObject;
       case 'array':
+        if (UiWidget === 'tags') {
+          return components.FieldTags;
+        }
         return components.FieldArray;
       default:
         return components.FieldAny;

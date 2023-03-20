@@ -1402,7 +1402,9 @@
       "name_html": "HTML",
       "description_html": "Contenu enrichi (HTML)",
       "name_slider": "Glissière",
-      "description_slider": "Sélection d'une valeur numérique sur une glissière"
+      "description_slider": "Sélection d'une valeur numérique sur une glissière",
+      "name_tags": "Sélection multiple",
+      "description_tags": "Sélection de plusieurs valeurs"
     },
     "properties": {
       "label": "Propriétés de l'objet",
@@ -1415,6 +1417,25 @@
     },
     "uiOptions": {
       "label": "Options du champs",
+      "tags": {
+        "title": "Tags",
+        "options": {
+          "title": "Option"
+        },
+        "value": {
+          "title": "Valeur"
+        },
+        "label": {
+          "title": "Label"
+        },
+        "color": {
+          "title": "Couleur"
+        },
+        "allowNew": {
+          "title": "Entrée libre",
+          "description": "Permet de spécifier d'autres valeurs que celles listées"
+        }
+      },
       "slider": {
         "steps": {
           "add": "Ajouter une étape",

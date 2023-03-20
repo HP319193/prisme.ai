@@ -35,7 +35,13 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     url: SOCKETIO_REDIS_HOST,
     password: SOCKETIO_REDIS_PASSWORD,
   });
+  redisPubClient.on('error', (err: Error) => {
+    console.error(`Error occured with websockets redis pub client : ${err}`);
+  });
   const redisSubClient = redisPubClient.duplicate();
+  redisPubClient.on('error', (err: Error) => {
+    console.error(`Error occured with websockets redis sub client : ${err}`);
+  });
 
   Promise.all([redisPubClient.connect(), redisSubClient.connect()]).then(() => {
     io.adapter(createAdapter(redisPubClient, redisSubClient) as any);
