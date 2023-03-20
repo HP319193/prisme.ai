@@ -46,7 +46,7 @@ export const Page = () => {
   }
 
   if (typeof window === 'undefined') {
-    return <div className="flex m-auto">Error {error}</div>;
+    return null;
   }
 
   return (
