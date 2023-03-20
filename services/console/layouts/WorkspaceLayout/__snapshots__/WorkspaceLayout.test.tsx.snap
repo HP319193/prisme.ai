@@ -87,12 +87,14 @@ Array [
               className="border-l border-light-gray h-full mr-4 -ml-6"
             />
             <div>
-              <SvgrURL />
+              <SvgrURL
+                className="mx-2"
+              />
             </div>
             <div
               className="mx-2"
             >
-              Activités
+              events.title
             </div>
           </a>
         </div>
@@ -195,12 +197,14 @@ Array [
               className="border-l border-light-gray h-full mr-4 -ml-6"
             />
             <div>
-              <SvgrURL />
+              <SvgrURL
+                className="mx-2"
+              />
             </div>
             <div
               className="mx-2"
             >
-              Activités
+              events.title
             </div>
           </a>
         </div>
