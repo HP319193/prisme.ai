@@ -1324,7 +1324,7 @@ declare namespace Prismeai {
             [name: string]: any;
             slug: string;
             appInstance?: string;
-            initOn?: string;
+            onInit?: string;
             updateOn?: string;
             automation?: string;
         }[];
@@ -1337,8 +1337,9 @@ declare namespace Prismeai {
         permissions?: PermissionsMap;
         customDomains?: string[];
         styles?: string;
-        initOn?: string;
+        onInit?: string;
         updateOn?: string;
+        notifyOn?: string;
         automation?: string;
         appInstances: {
             slug?: string;
@@ -1682,7 +1683,7 @@ declare namespace Prismeai {
             [name: string]: any;
             slug: string;
             appInstance?: string;
-            initOn?: string;
+            onInit?: string;
             updateOn?: string;
             automation?: string;
         }[];
@@ -1695,8 +1696,9 @@ declare namespace Prismeai {
         permissions?: PermissionsMap;
         customDomains?: string[];
         styles?: string;
-        initOn?: string;
+        onInit?: string;
         updateOn?: string;
+        notifyOn?: string;
         automation?: string;
     }
     export interface PageDetails {

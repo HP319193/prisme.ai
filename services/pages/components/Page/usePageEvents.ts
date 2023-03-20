@@ -34,6 +34,7 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
     }
     initEvents();
   }, [page, user]);
+
   useEffect(() => {
     return () => {
       events?.destroy();
@@ -42,16 +43,27 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
 
   // Listen to update page events
   useEffect(() => {
-    if (!page || !events || !page.updateOn) return;
-    events.on(page.updateOn, ({ payload: { url } }) => {
-      if (url) {
-        if (url.match(/^http/)) {
-          window.location = url;
-        } else {
-          push(url);
-        }
-      }
-    });
+    if (!page || !events) return;
+    const offs: Function[] = [];
+
+    if (page.notifyOn) {
+      offs.push(
+        events.on(page.notifyOn, async ({ payload: { title, body, icon } }) => {
+          try {
+            await Notification.requestPermission();
+            new Notification(title, {
+              body,
+              icon,
+              vibrate: 200,
+            });
+          } catch {}
+        })
+      );
+    }
+
+    return () => {
+      offs.forEach((off) => off());
+    };
   }, [events, page, push]);
 
   return { events };
