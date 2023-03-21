@@ -19,6 +19,7 @@ const loginHandler = (strategy: string) =>
     res: Response<PrismeaiAPI.CredentialsAuth.Responses.$200>,
     next: NextFunction
   ) {
+    console.log('req');
     passport.authenticate(
       strategy,
       { session: true },

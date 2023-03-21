@@ -2,9 +2,10 @@ import { PrismeEvent } from '@prisme.ai/broker';
 import http from 'http';
 import { Server } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
-import { createClient } from '@node-redis/client';
+import { createClient } from '@redis/client';
 import {
   API_KEY_HEADER,
+  APP_NAME,
   SESSION_ID_HEADER,
   SOCKETIO_COOKIE_MAX_AGE,
   SOCKETIO_REDIS_HOST,
@@ -34,7 +35,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
   const redisPubClient = createClient({
     url: SOCKETIO_REDIS_HOST,
     password: SOCKETIO_REDIS_PASSWORD,
-    name: 'Websockets',
+    name: `${APP_NAME}-websockets`,
   });
   redisPubClient.on('error', (err: Error) => {
     console.error(`Error occured with websockets redis pub client : ${err}`);
