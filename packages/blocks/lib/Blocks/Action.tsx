@@ -4,6 +4,7 @@ import {
   BlocksDependenciesContext,
   useBlocks,
 } from '../Provider/blocksContext';
+import useLocalizedText from '../useLocalizedText';
 import { BaseBlock } from './BaseBlock';
 import { BaseBlockConfig } from './types';
 
@@ -32,6 +33,8 @@ export const Action = ({
   onClick,
   popup,
 }: ActionProps) => {
+  const { localize } = useLocalizedText();
+  const html = localize(text as {});
   switch (type) {
     case 'event':
       return (
@@ -46,10 +49,8 @@ export const Action = ({
               if (!events || !value) return;
               events.emit(value, payload);
             }}
-            dangerouslySetInnerHTML={
-              typeof text === 'string' ? { __html: text } : undefined
-            }
-            children={typeof text === 'string' ? undefined : text}
+            dangerouslySetInnerHTML={html ? { __html: html } : undefined}
+            children={html ? undefined : text}
           />
         </div>
       );
@@ -67,10 +68,8 @@ export const Action = ({
               onClick && onClick();
             }}
             className="pr-block-action__button            block-header__nav-item-button"
-            dangerouslySetInnerHTML={
-              typeof text === 'string' ? { __html: text } : undefined
-            }
-            children={typeof text === 'string' ? undefined : text}
+            dangerouslySetInnerHTML={html ? { __html: html } : undefined}
+            children={html ? undefined : text}
           />
         </Link>
       );
@@ -86,15 +85,15 @@ export const Action = ({
               onClick && onClick();
             }}
             className="pr-block-action__button           block-header__nav-item-button"
-            dangerouslySetInnerHTML={
-              typeof text === 'string' ? { __html: text } : undefined
-            }
-            children={typeof text === 'string' ? undefined : text}
+            dangerouslySetInnerHTML={html ? { __html: html } : undefined}
+            children={html ? undefined : text}
           />
         </a>
       );
     default:
-      return <span className={`pr-block-action ${className}`}>{text}</span>;
+      return (
+        <span className={`pr-block-action ${className}`}>{html || text}</span>
+      );
   }
 };
 const defaultStyles = `:block {
