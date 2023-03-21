@@ -23,14 +23,11 @@ const ListItem = ({
     className={`flex grow border border-gray-200 rounded px-6 py-4 items-center justify-between cursor-pointer text-black ${className}`}
     onClick={onClick}
   >
-    <Space
-      direction="vertical"
-      className="items-baseline overflow-hidden h-full"
-    >
+    <div className="flex flex-col space-y-2 items-baseline overflow-hidden h-full">
       <Text>{title}</Text>
       {content && <Text className={tw`text-gray`}>{content}</Text>}
-    </Space>
-    <Space>{rightContent || <RightOutlined />}</Space>
+    </div>
+    <div>{rightContent || <RightOutlined />}</div>
   </div>
 );
 
