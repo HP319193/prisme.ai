@@ -42,7 +42,7 @@ Array [
       <div
         className="flex flex-1 justify-between"
       >
-        Logical
+        automations.instruction.label
         <button
           className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
@@ -119,7 +119,7 @@ Array [
       <div
         className="flex flex-1 justify-between"
       >
-        Logical
+        automations.instruction.label
         <button
           className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
@@ -196,7 +196,7 @@ Array [
       <div
         className="flex flex-1 justify-between"
       >
-        Logical
+        automations.instruction.label
         <button
           className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
@@ -273,7 +273,7 @@ Array [
       <div
         className="flex flex-1 justify-between"
       >
-        Logical
+        automations.instruction.label
         <button
           className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
@@ -350,7 +350,7 @@ Array [
       <div
         className="flex flex-1 justify-between"
       >
-        Logical
+        automations.instruction.label
         <button
           className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
@@ -427,7 +427,7 @@ Array [
       <div
         className="flex flex-1 justify-between"
       >
-        Logical
+        automations.instruction.label
         <button
           className="border-none cursor-pointer flex justify-center items-center"
           onClick={[Function]}
