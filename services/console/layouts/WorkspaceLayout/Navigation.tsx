@@ -16,8 +16,6 @@ import useLocalizedText from '../../utils/useLocalizedText';
 import AutomationIcon from './AutomationIcon';
 import { stringToHexaColor } from '../../utils/strings';
 import PageIcon from './PageIcon';
-import HomeIcon from '../../icons/home.svgr';
-import HomeIconOutlined from '../../icons/home-outlined.svgr';
 import Highlight from '../../components/Highlight/Highlight';
 import { useWorkspace } from '../../providers/Workspace';
 import Item from '../../components/Navigation/Item';

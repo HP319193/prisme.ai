@@ -81,7 +81,7 @@ export const PageRenderer = ({
         },
       },
     }),
-    [value, t]
+    [t, sectionsIds]
   );
 
   const saveBlocks = useCallback(
