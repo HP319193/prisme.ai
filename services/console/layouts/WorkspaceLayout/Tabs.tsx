@@ -260,13 +260,13 @@ export const Tabs = () => {
     <div className="flex flex-row justify-between bg-ultra-light-accent pt-[0.55rem] -mb-[1px]">
       <div className="flex flex-row overflow-auto">
         <Tab
-          label="Activités"
-          title="Activités"
+          label={t('events.title')}
+          title={t('events.title')}
           href={`/workspaces/${workspace.id}`}
           isCurrent={isCurrent(`/workspaces/${workspace.id}`)}
           previousIsCurrent={previousIsCurrent(`/workspaces/${workspace.id}`)}
           className="!pr-4"
-          icon={<HomeIconOutlined />}
+          icon={<HomeIconOutlined className="mx-2" />}
         />
         {Array.from(tabs).map((tab) => (
           <Tab

@@ -34,6 +34,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
   const redisPubClient = createClient({
     url: SOCKETIO_REDIS_HOST,
     password: SOCKETIO_REDIS_PASSWORD,
+    name: 'Websockets',
   });
   redisPubClient.on('error', (err: Error) => {
     console.error(`Error occured with websockets redis pub client : ${err}`);

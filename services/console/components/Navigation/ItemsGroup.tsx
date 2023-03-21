@@ -26,7 +26,7 @@ export const ItemsGroup: FC<ItemsGroupProps> = ({
       <div className="flex flex-1 flex-col max-w-full">
         <div className="flex flex-1 flex-row items-center border-b-[1px]">
           <button
-            className="flex flex-1 flex-row items-center outline-none focus:outline-none p-4"
+            className="flex flex-1 flex-row items-center outline-none focus:outline-none p-[0.74rem]"
             onClick={onClick}
           >
             <Tooltip title={title} placement="left">

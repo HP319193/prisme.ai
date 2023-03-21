@@ -11,7 +11,7 @@ exports[`should render 1`] = `
       className="flex flex-1 flex-row items-center border-b-[1px]"
     >
       <button
-        className="flex flex-1 flex-row items-center outline-none focus:outline-none p-4"
+        className="flex flex-1 flex-row items-center outline-none focus:outline-none p-[0.74rem]"
       >
         <div
           className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center items-center"
@@ -50,7 +50,7 @@ exports[`should render closed 1`] = `
       className="flex flex-1 flex-row items-center border-b-[1px]"
     >
       <button
-        className="flex flex-1 flex-row items-center outline-none focus:outline-none p-4"
+        className="flex flex-1 flex-row items-center outline-none focus:outline-none p-[0.74rem]"
       >
         <div
           className="flex m-2 mr-4 w-[1.6rem] h-[1.6rem] justify-center items-center"
