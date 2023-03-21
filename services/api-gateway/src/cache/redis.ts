@@ -1,6 +1,6 @@
-import { createClient } from '@node-redis/client';
-import { RedisClientType } from '@node-redis/client/dist/lib/client';
+import { createClient, RedisClientType } from '@redis/client';
 import { SetOptions } from '.';
+import { eda } from '../config';
 import { CacheDriver, CacheOptions } from './types';
 
 export default class RedisCache implements CacheDriver {
@@ -10,6 +10,7 @@ export default class RedisCache implements CacheDriver {
     this.client = createClient({
       url: opts.host,
       password: opts.password,
+      name: `${eda.APP_NAME}-cache`,
     });
     this.client.on('error', (err: Error) => {
       console.error(`Error occured with cache redis driver : ${err}`);

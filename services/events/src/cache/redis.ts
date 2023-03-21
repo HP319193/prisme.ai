@@ -1,5 +1,5 @@
-import { createClient } from '@node-redis/client';
-import { RedisClientType } from '@node-redis/client/dist/lib/client';
+import { createClient } from '@redis/client';
+import { RedisClientType } from '@redis/client/dist/lib/client';
 import { SetOptions } from '.';
 import { CacheDriver, CacheOptions } from './types';
 

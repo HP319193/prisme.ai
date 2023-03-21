@@ -2,10 +2,10 @@ import { Application, Request } from 'express';
 import passport from 'passport';
 
 import cookieParser from 'cookie-parser';
-import redis from 'redis';
+import { createClient } from '@redis/client';
 import expressSession from 'express-session';
 import connectRedis from 'connect-redis';
-import { storage, syscfg } from '../../config';
+import { storage, syscfg, eda } from '../../config';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as CustomStrategy } from 'passport-custom';
 import { logger } from '../../logger';
@@ -16,11 +16,14 @@ import { UserStatus } from '../../services/identity/users';
 export async function init(app: Application) {
   app.use(cookieParser());
 
-  const redisClient = redis.createClient({
+  const redisClient = createClient({
     url: storage.Sessions.host,
+    legacyMode: true,
     password: storage.Sessions.password,
+    name: `${eda.APP_NAME}-sessions`,
     ...storage.Sessions.driverOptions,
   });
+  await redisClient.connect();
   const sessionsStore = new (connectRedis(expressSession))({
     client: redisClient,
     disableTouch: true, // Without this, sessions TTL are reset on every request

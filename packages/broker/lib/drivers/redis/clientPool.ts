@@ -1,24 +1,23 @@
-import { createClient } from '@node-redis/client';
-import { RedisClientType } from '@node-redis/client/dist/lib/client';
-import { StreamsMessagesReply } from '@node-redis/client/dist/lib/commands/generic-transformers';
+import {
+  createClient,
+  RedisFunctions,
+  RedisModules,
+  RedisScripts,
+} from '@redis/client';
+import { StreamsMessagesReply } from '@redis/client/dist/lib/commands/generic-transformers';
+import { RedisClientType } from '@redis/client';
 import { DriverOptions, SubscriptionOptions } from '..';
 
 const NoGroupErrRegexp = new RegExp(/No such key '([a-zA-Z0-9_\-.:]+)'/);
 const MAX_CLIENTS = 10;
 const BLOCKING_TIME = 1000;
 
+type RedisClient = RedisClientType<RedisModules, RedisFunctions, RedisScripts>;
 interface ClientInfo {
-  client: RedisClientType;
+  client: RedisClient;
   blocking: boolean;
   ready: Promise<boolean>;
   available: boolean;
-}
-
-interface XPendingReply {
-  pending: number;
-  firstId: string | null;
-  lastId: number | null;
-  consumers: Array<string> | null;
 }
 
 export type StreamName = string;
@@ -82,12 +81,12 @@ export class ClientPool {
         Math.random() + 1
       )
         .toString(36)
-        .substring(7)} (${blocking ? '-blocking' : '-non-blocking'})`,
+        .substring(7)}${blocking ? '-blocking' : '-non-blocking'}`,
     });
     client.on('error', (err: Error) => {
       console.error(`Error occured with broker redis driver : ${err}`);
     });
-    const clientInfo = {
+    const clientInfo: ClientInfo = {
       blocking,
       client,
       ready: client.connect().then(() => true),
@@ -106,7 +105,7 @@ export class ClientPool {
 
   // Execute a redis command with a client available for BLOCK mode whenever possible
   private async execute<T>(
-    command: (client: RedisClientType, blocking: boolean) => T,
+    command: (client: RedisClient, blocking: boolean) => T,
     targetStreams: string[]
   ) {
     const client = this.getClient(targetStreams);
@@ -255,10 +254,10 @@ export class ClientPool {
     return reply.reduce((streams, { name, messages }) => {
       return {
         ...streams,
-        [name]: messages
+        [name as string]: messages
           .map(({ id, message: raw }) => {
             try {
-              const message = JSON.parse(raw.value);
+              const message = JSON.parse(raw.value as string);
               return {
                 id,
                 ...message,
@@ -281,7 +280,7 @@ export class ClientPool {
       .then((ret: number) => ret == 1);
   }
 
-  async pendingMessages(stream: string, group: string): Promise<XPendingReply> {
+  async pendingMessages(stream: string, group: string) {
     return this.nonblocking.client.xPending(stream, group);
   }
 }
