@@ -599,7 +599,7 @@ components:
                 type: string
               appInstance:
                 type: string
-              initOn:
+              onInit:
                 type: string
               updateOn:
                 type: string
@@ -608,9 +608,11 @@ components:
             additionalProperties: true
         styles:
           type: string
-        initOn:
+        onInit:
           type: string
         updateOn:
+          type: string
+        notifyOn:
           type: string
         automation:
           type: string
