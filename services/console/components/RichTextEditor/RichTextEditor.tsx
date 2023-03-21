@@ -1,6 +1,6 @@
 import { Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Quill from 'react-quill';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import pretty from 'pretty';
@@ -12,7 +12,12 @@ export interface RichTextEditorProps {
 }
 export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   const { t } = useTranslation('workspaces');
-  const [displayRaw, setDisplayRaw] = useState(!isWysiwygSupported(`${value}`));
+  const [displayRaw, setDisplayRaw] = useState(true);
+
+  const initialValue = useRef(value);
+  useEffect(() => {
+    setDisplayRaw(!isWysiwygSupported(`${initialValue.current}`));
+  }, []);
 
   const toggle = useCallback(() => {
     setDisplayRaw(!displayRaw);
