@@ -254,6 +254,8 @@ export const Block: FC<NodeProps & BlockProps> = ({
           <div className="flex flex-1 justify-between">
             {data.title
               ? t('automations.node.title', { context: data.title })
+              : data.label
+              ? t('automations.instruction.label', { context: data.label })
               : name}
             {removable && (
               <Popconfirm
