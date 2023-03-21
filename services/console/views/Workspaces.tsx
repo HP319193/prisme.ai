@@ -106,6 +106,14 @@ export const WorkspacesView = () => {
     fetchSuggestions();
   }, []);
 
+  const filtredSuggestions = useMemo(
+    () =>
+      suggestions.filter(({ name, description }) =>
+        search(searchValue)(`${name} ${description}`)
+      ),
+    [searchValue, suggestions]
+  );
+
   const ref = useRef<HTMLDivElement>(null);
   const [cardWidth, setCardWidth] = useState<number>();
   useLayoutEffect(() => {
@@ -207,7 +215,7 @@ export const WorkspacesView = () => {
                 className="flex-1 pb-4 -mb-4"
                 navPosition="calc(50% - 20px)"
               >
-                {suggestions.map((workspace) => (
+                {filtredSuggestions.map((workspace) => (
                   <div
                     key={workspace.id}
                     className="flex"
