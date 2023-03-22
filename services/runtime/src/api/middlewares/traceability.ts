@@ -12,7 +12,7 @@ export interface HTTPContext {
   hostname: string;
   originalUrl: string;
   method: string;
-  ip: string;
+  ip?: string;
   path: string;
 }
 
@@ -20,7 +20,7 @@ export interface PrismeContext {
   app?: string;
   correlationId: string;
   userId: string;
-  ip: string;
+  ip?: string;
   sessionId: string;
   workspaceId?: string;
   http?: HTTPContext;
