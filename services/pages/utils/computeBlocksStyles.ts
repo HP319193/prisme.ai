@@ -6,6 +6,7 @@ export function computePageStyles(page: Prismeai.DetailedPage) {
   // @ts-ignore
   page.cssId = ++ids.last;
   function computeBlocksStyles(blocks: any = []) {
+    if (!Array.isArray(blocks)) return blocks;
     return blocks.map((block: any) => {
       const config = block.config ? block.config : block;
       config.cssId = ++ids.last;
@@ -28,7 +29,7 @@ export function computePageStyles(page: Prismeai.DetailedPage) {
       return block;
     });
   }
-  page.blocks = computeBlocksStyles(page.blocks);
+  page.blocks = computeBlocksStyles(page.blocks || []);
 
   return { page, styles: styles.join('\n') };
 }
