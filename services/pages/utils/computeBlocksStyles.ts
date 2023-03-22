@@ -3,6 +3,8 @@ import { getBlockStyles, builtinBlocks } from '@prisme.ai/blocks';
 export function computePageStyles(page: Prismeai.DetailedPage) {
   const ids = { last: 0 };
   const styles: string[] = [];
+  // @ts-ignore
+  page.cssId = ++ids.last;
   function computeBlocksStyles(blocks: any = []) {
     return blocks.map((block: any) => {
       const config = block.config ? block.config : block;

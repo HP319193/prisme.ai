@@ -11,7 +11,6 @@ export interface BlocksListConfig extends BaseBlockConfig {
 export const BlocksList = ({
   blocks = [],
   className,
-  blocksClassName,
 }: BlocksListConfig) => {
   const {
     utils: { BlockLoader },
