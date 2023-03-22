@@ -26,6 +26,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -65,6 +66,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -104,6 +106,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -143,6 +146,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -182,6 +186,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -221,6 +226,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -260,6 +266,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -299,6 +306,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -338,6 +346,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -399,6 +408,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -438,6 +448,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -477,6 +488,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -516,6 +528,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -555,6 +568,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -594,6 +608,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -633,6 +648,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -672,6 +688,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -711,6 +728,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {
@@ -1827,6 +1845,7 @@ declare namespace Prismeai {
             automationSlug?: string;
             automationDepth?: number;
             userId?: string;
+            ip?: string;
             sessionId?: string;
             workspaceId?: string;
             host: {

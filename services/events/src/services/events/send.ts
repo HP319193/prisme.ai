@@ -7,7 +7,8 @@ const sendEvent = async (
   workspaceId: string,
   event: { type: string; payload?: any; source?: { serviceTopic?: string } },
   accessManager: Required<AccessManager>,
-  broker: Broker
+  broker: Broker,
+  additionalSource?: Partial<EventSource>
 ) => {
   const partialSource: Partial<EventSource> = {
     workspaceId: workspaceId,
@@ -30,6 +31,7 @@ const sendEvent = async (
       event.payload || {},
       {
         serviceTopic: partialSource.serviceTopic,
+        ...additionalSource,
       },
       {},
       true

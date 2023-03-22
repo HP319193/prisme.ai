@@ -18,6 +18,7 @@ export interface EventSource {
   appInstanceDepth?: number;
   automationSlug?: string;
   userId?: string;
+  ip?: string;
   sessionId?: string;
   workspaceId?: string;
   host?: Host;

@@ -1255,6 +1255,8 @@ components:
               type: number
             userId:
               type: string
+            ip:
+              type: string
             sessionId:
               type: string
             workspaceId:

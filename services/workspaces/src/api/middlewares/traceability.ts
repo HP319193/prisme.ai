@@ -22,6 +22,7 @@ export interface PrismeContext {
   correlationId: string;
   userId: string;
   sessionId: string;
+  ip: string;
   workspaceId?: string;
   http?: HTTPContext;
 }
@@ -37,6 +38,7 @@ export function requestDecorator(broker: Broker) {
         uniqueId()) as string,
       userId: req.header(USER_ID_HEADER) as string,
       sessionId: req.header(SESSION_ID_HEADER) as string,
+      ip: req.ip,
       workspaceId: workspaceId,
       http: {
         originalUrl: req.originalUrl,
