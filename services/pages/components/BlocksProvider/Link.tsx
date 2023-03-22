@@ -1,12 +1,7 @@
-import {
-  cloneElement,
-  HTMLAttributes,
-  ReactElement,
-  useCallback,
-  useState,
-} from 'react';
+import { HTMLAttributes, ReactElement, useCallback, useState } from 'react';
 import NextLink from 'next/link';
 import { usePreview } from '../usePreview';
+import { useRouter } from 'next/router';
 
 export const Link = ({
   href,
@@ -16,13 +11,18 @@ export const Link = ({
   HTMLAnchorElement
 >) => {
   const [isPreview, setIsPreview] = useState(false);
+  const { asPath } = useRouter();
   const setPreview = useCallback(() => {
     setIsPreview(true);
   }, []);
   usePreview(setPreview);
 
+  const fullHref = `${
+    !href || href.match(/^\?/) ? asPath.replace(/\?.*$/, '') : ''
+  }${href || ''}`;
+
   return (
-    <NextLink href={href || ''}>
+    <NextLink href={fullHref}>
       <a
         {...props}
         onClick={(e) => {
