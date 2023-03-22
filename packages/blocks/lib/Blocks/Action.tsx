@@ -11,7 +11,7 @@ import { BaseBlockConfig } from './types';
 export interface ActionConfig extends BaseBlockConfig {
   type: 'external' | 'internal' | 'inside' | 'event';
   value: string;
-  text: ReactNode;
+  text: ReactNode | Prismeai.LocalizedText;
   payload?: any;
   popup?: boolean;
 }
