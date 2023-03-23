@@ -126,12 +126,17 @@ export class EventsFactory {
       }
     }
 
-    if (
-      this.validatorOpts?.redactPrivateIps &&
-      event?.source?.ip &&
-      isPrivateIP(event?.source?.ip)
-    ) {
-      delete event.source.ip;
+    if (typeof event?.source?.ip === 'string') {
+      // x-forwarded-for http header might have multiple forwarded ip, comma separated
+      if (event?.source?.ip.includes(',')) {
+        event.source.ip = event?.source?.ip.split(',')[0];
+      }
+      if (
+        this.validatorOpts?.redactPrivateIps &&
+        isPrivateIP(event?.source?.ip)
+      ) {
+        delete event.source.ip;
+      }
     }
 
     return event;
