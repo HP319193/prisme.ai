@@ -1,5 +1,5 @@
 import { BrokerError, EventValidationError } from '../errors';
-import { uniqueId } from '../utils';
+import { isPrivateIP, uniqueId } from '../utils';
 import { init as initValidator, validate, ValidatorOptions } from './validator';
 
 export interface Consumer {
@@ -58,7 +58,10 @@ export class EventsFactory {
 
   constructor({ validator }: EventsFactoryOptions) {
     this.ready = initValidator(validator);
-    this.validatorOpts = validator;
+    this.validatorOpts = {
+      redactPrivateIps: true,
+      ...validator,
+    };
   }
 
   create(
@@ -120,6 +123,14 @@ export class EventsFactory {
           }
         );
       }
+    }
+
+    if (
+      this.validatorOpts?.redactPrivateIps &&
+      event?.source?.ip &&
+      isPrivateIP(event?.source?.ip)
+    ) {
+      delete event.source.ip;
     }
 
     return event;
