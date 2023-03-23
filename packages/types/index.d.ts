@@ -53,6 +53,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -93,6 +94,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -133,6 +135,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -173,6 +176,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -213,6 +217,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -253,6 +258,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -293,6 +299,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -333,6 +340,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -373,6 +381,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
         /**
          * App unique id
          */
@@ -435,6 +444,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -475,6 +485,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -515,6 +526,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -555,6 +567,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -595,6 +608,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -635,6 +649,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -675,6 +690,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -715,6 +731,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     } | {
         /**
          * example:
@@ -755,6 +772,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     })[];
     export type AnyValue = any;
     export interface ApiKey {
@@ -1872,6 +1890,7 @@ declare namespace Prismeai {
          */
         createdAt: string;
         id: string;
+        size: number;
     }
     export interface PrismeEventOptions {
         /**

@@ -37,6 +37,7 @@ export interface PrismeEvent<T extends object = object> {
   };
   createdAt: string;
   id: string;
+  size: number;
 }
 
 export interface EventsFactoryOptions {
@@ -96,7 +97,7 @@ export class EventsFactory {
       !partialSource?.correlationId ? { correlationId: uniqueId() } : undefined
     );
 
-    const event = {
+    const event: PrismeEvent = {
       ...additionalFields,
       type: eventType,
       source,
@@ -104,15 +105,15 @@ export class EventsFactory {
       ...data,
     };
 
+    event.size = JSON.stringify(event).length;
     if (this.validatorOpts?.eventsMaxLen) {
-      const eventSize = JSON.stringify(event).length;
-      if (eventSize > this.validatorOpts?.eventsMaxLen) {
+      if (event.size > this.validatorOpts?.eventsMaxLen) {
         throw new EventValidationError(
-          `Event '${eventType}' too large : ${eventSize} bytes exceeds the maximum authorized limit (${this.validatorOpts?.eventsMaxLen})`,
+          `Event '${eventType}' too large : ${event.size} bytes exceeds the maximum authorized limit (${this.validatorOpts?.eventsMaxLen})`,
           {
             reason: 'EventTooLarge',
             eventType,
-            eventSize,
+            eventSize: event.size,
             maxSize: this.validatorOpts?.eventsMaxLen,
             source: {
               workspaceId: event?.source?.workspaceId,
