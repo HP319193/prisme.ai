@@ -515,6 +515,14 @@ If current user comes from an unauthenticated [**endpoint**](#url) call, its **s
     <tr>
       <td><b>run.trigger.value</b></td>
       <td>Trigger value of the current automation run (event/endpoint/ automation name)</td>
-    </tr>                   
+    </tr>        
+    <tr>
+      <td><b>run.automationSlug</b></td>
+      <td>Current automation slug</td>
+    </tr>                       
+    <tr>
+      <td><b>run.ip</b></td>
+      <td>Source event or HTTP request IP</td>
+    </tr>                           
   </table>
 </center>

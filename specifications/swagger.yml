@@ -1233,6 +1233,7 @@ components:
         - source
         - createdAt
         - id
+        - size
       properties:
         type:
           type: string
@@ -1254,6 +1255,8 @@ components:
             automationDepth:
               type: number
             userId:
+              type: string
+            ip:
               type: string
             sessionId:
               type: string
@@ -1297,6 +1300,8 @@ components:
           description: Creation date (ISO8601)
         id:
           type: string
+        size:
+          type: number
 
     AppUsageEvent:
       type: object

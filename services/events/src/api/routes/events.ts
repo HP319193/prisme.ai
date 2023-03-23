@@ -11,6 +11,7 @@ import { asyncRoute } from '../utils/async';
 export function initEventsRoutes(eventsStore: EventsStore) {
   async function sendEventHandler(
     {
+      ip,
       logger,
       body,
       params: { workspaceId },
@@ -23,7 +24,9 @@ export function initEventsRoutes(eventsStore: EventsStore) {
 
     const result = await Promise.all(
       body.events.map((event) =>
-        sendEvent(workspaceId, event, accessManager, broker)
+        sendEvent(workspaceId, event, accessManager, broker, {
+          ip,
+        })
       )
     );
     res.send(result);

@@ -99,26 +99,26 @@ export class Broker<CallbackContext = any> {
   }
 
   child(
-    parentSource: Partial<EventSource>,
+    newParentSource: Partial<EventSource>,
     opts?: {
       validateEvents?: boolean;
       forceTopic?: string;
       clearUser?: boolean;
     }
   ): Broker<CallbackContext> {
+    // Some source metadata should not persist in child brokers
+    const {
+      ip: _,
+      serviceTopic: __,
+      ...previousParentSource
+    } = this.parentSource;
     const childSource = {
-      ...this.parentSource,
-      ...parentSource,
+      ...previousParentSource,
+      ...newParentSource,
       userId: opts?.clearUser
         ? undefined
-        : parentSource.userId || this.parentSource.userId,
-      sessionId: parentSource.sessionId || this.parentSource.sessionId,
-      workspaceId: parentSource.workspaceId || this.parentSource.workspaceId,
-      correlationId:
-        parentSource.correlationId || this.parentSource.correlationId,
+        : newParentSource.userId || previousParentSource.userId,
     };
-    // We do not want next broker.sends defaulting to the parent Broker serviceTopic
-    delete childSource.serviceTopic;
 
     const child = Object.assign({}, this, {
       parentSource: childSource,

@@ -29,6 +29,7 @@ export async function initEDAMetrics(
     'workspace',
     'producer',
     'serviceTopic',
+    'size',
   ];
   const processDurationMetrics = new client.Histogram({
     name: 'events_process_duration',
@@ -56,6 +57,7 @@ export async function initEDAMetrics(
       workspace: event?.source?.workspaceId,
       producer: event?.source?.host?.service,
       serviceTopic: event?.source?.serviceTopic,
+      size: event?.size,
     };
     processDurationMetrics.labels(vals).observe(metrics.procesDuration);
     pickupDelayMetrics.labels(vals).observe(metrics.pickupDelay);

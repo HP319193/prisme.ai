@@ -126,12 +126,17 @@ export const EventDetails: FC<EventsDetailsProps & { replay: () => void }> = ({
         name: 'id',
         value: event.id,
       },
+      {
+        key: 'size',
+        name: 'size',
+        value: event.size,
+      },
     ].filter(Boolean) as EventRecord[];
   }, [event]);
   const onRowClick = useCallback(({ target }: MouseEvent) => {
-    const valueTd = (target as HTMLTableRowElement).parentNode?.querySelectorAll(
-      'td'
-    );
+    const valueTd = (
+      target as HTMLTableRowElement
+    ).parentNode?.querySelectorAll('td');
     if (valueTd && valueTd.length === 3) {
       selectText(valueTd[2]);
     }
@@ -185,10 +190,10 @@ export const LinkedEventDetails: FC<Event<Date>> = (event) => {
   const replay = useCallback(() => {
     events.emit(event.type, event.payload);
   }, [events, event.payload, event.type]);
-  return useMemo(() => <EventDetails event={event} replay={replay} />, [
-    event,
-    replay,
-  ]);
+  return useMemo(
+    () => <EventDetails event={event} replay={replay} />,
+    [event, replay]
+  );
 };
 
 export default LinkedEventDetails;

@@ -82,10 +82,15 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     });
 
     // Handle events creation
+    const userIp = Array.isArray(socket.handshake.headers?.['x-forwarded-for'])
+      ? socket.handshake.headers?.['x-forwarded-for'][0]
+      : socket.handshake.headers?.['x-forwarded-for'] ||
+        socket.handshake.address;
     const childBroker = events.broker.child({
       workspaceId,
       userId: userId as string,
       sessionId: sessionId as string,
+      ip: userIp,
     });
     socket.onAny(
       async (type, payload: Prismeai.PrismeEvent | SearchOptions) => {
@@ -95,7 +100,10 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
               workspaceId,
               payload as Prismeai.PrismeEvent,
               subscription.accessManager,
-              childBroker
+              childBroker,
+              {
+                ip: userIp,
+              }
             );
           } else if (type === 'filters') {
             subscription.searchOptions = payload as SearchOptions;

@@ -43,6 +43,13 @@ stages:
 
 backend_npm_install:
   stage: dependencies
+  needs:
+    - job: runtime_test
+      optional: true
+    - job: workspaces_test
+      optional: true
+    - job: events_test
+      optional: true
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
       changes: &BACKEND_DEPS_CHANGES

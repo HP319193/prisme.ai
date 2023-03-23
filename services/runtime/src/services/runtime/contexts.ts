@@ -13,6 +13,7 @@ import { EventType } from '../../eda';
 import { parseVariableName, SplittedPath } from '../../utils/parseVariableName';
 import { AppContext, DetailedAutomation } from '../workspaces';
 import { findSecretValues } from '../../utils/secrets';
+import { PrismeContext } from '../../api/middlewares';
 
 type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
@@ -27,6 +28,7 @@ export interface RunContext {
   automationSlug?: string;
   date?: string; // ISO8601 date
   trigger?: Trigger; // Current call origin (event/endpoint/automation)
+  ip?: string;
 
   // Only set if running inside an app instance :
   appSlug?: string; // App unique slug
@@ -116,22 +118,21 @@ export class ContextsManager {
   private alreadyProcessedUpdateIds: Set<string>;
 
   constructor(
-    workspaceId: string,
+    ctx: PrismeContext,
     session: PrismeaiSession,
-    correlationId: string,
     cache: Cache,
     broker: Broker
   ) {
-    this.workspaceId = workspaceId;
+    this.workspaceId = ctx.workspaceId!;
     this.session = session;
-    this.correlationId = correlationId;
+    this.correlationId = ctx.correlationId;
     this.cache = cache;
-    this.depth = 0;
+    this.depth = ctx.automationDepth || 0;
     this.contexts = {
       $workspace: {},
       local: {},
       global: {
-        workspaceId,
+        workspaceId: ctx.workspaceId!,
       },
       user: {
         id: session.userId,
@@ -140,13 +141,14 @@ export class ContextsManager {
       config: {},
       run: {
         depth: this.depth,
-        correlationId,
+        correlationId: ctx.correlationId!,
+        ip: ctx.ip,
       },
     };
     this.logger = logger.child({
       userId: session.userId,
-      workspaceId,
-      correlationId,
+      workspaceId: ctx.workspaceId,
+      correlationId: ctx.correlationId,
     });
 
     this.payload = {};

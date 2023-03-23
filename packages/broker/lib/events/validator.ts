@@ -61,6 +61,7 @@ export interface ValidatorOptions {
   oasUrl?: string;
   whitelistEventPrefixes?: string[];
   eventsMaxLen?: number; // Cap events max size
+  redactPrivateIps?: boolean; // Remove private ip from events source
 }
 export async function init({
   oasFilepath,

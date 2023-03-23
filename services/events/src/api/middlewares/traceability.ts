@@ -12,7 +12,7 @@ export interface HTTPContext {
   hostname: string;
   originalUrl: string;
   method: string;
-  ip: string;
+  ip?: string;
   path: string;
 }
 
@@ -20,6 +20,7 @@ export interface PrismeContext {
   app?: string;
   correlationId: string;
   userId: string;
+  ip?: string;
   sessionId: string;
   workspaceId?: string;
   http?: HTTPContext;
@@ -36,6 +37,7 @@ export function requestDecorator(
   const context: PrismeContext = {
     correlationId: (req.header(CORRELATION_ID_HEADER) || uniqueId()) as string,
     userId: req.header(USER_ID_HEADER) as string,
+    ip: req.ip,
     sessionId: req.header(SESSION_ID_HEADER) as string,
     workspaceId: workspaceId,
     http: {
