@@ -104,8 +104,8 @@ export class EventsFactory {
       createdAt: new Date().toISOString(),
       ...data,
     };
-
     event.size = JSON.stringify(event).length;
+
     if (this.validatorOpts?.eventsMaxLen) {
       if (event.size > this.validatorOpts?.eventsMaxLen) {
         throw new EventValidationError(
