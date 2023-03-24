@@ -10,6 +10,7 @@ import useLocalizedText from '../useLocalizedText';
 
 interface HeaderConfig extends BaseBlockConfig {
   title?: Prismeai.LocalizedText;
+  level: 1 | 2 | 3 | 4 | 5 | 6;
   logo?: {
     src: string;
     alt: string;
@@ -22,7 +23,13 @@ interface HeaderProps
   extends HeaderConfig,
     Pick<ActionProps, 'Link' | 'events'> {}
 
-export const Header = ({ Link, events, className, ...config }: HeaderProps) => {
+export const Header = ({
+  Link,
+  events,
+  className,
+  level = 1,
+  ...config
+}: HeaderProps) => {
   const { localize } = useLocalizedText();
   const nav = config.nav && Array.isArray(config.nav) ? config.nav : [];
 
@@ -37,6 +44,8 @@ export const Header = ({ Link, events, className, ...config }: HeaderProps) => {
       ) : null,
     [config.logo]
   );
+
+  const H = `h${level}` as keyof JSX.IntrinsicElements;
 
   return (
     <div className={`pr-block-header ${className}            block-header`}>
@@ -54,9 +63,9 @@ export const Header = ({ Link, events, className, ...config }: HeaderProps) => {
             {!config.logo?.action && logo}
           </div>
         )}
-        <h1 className="pr-block-header__title           left__title">
+        <H className="pr-block-header__title           left__title">
           {localize(config.title)}
-        </h1>
+        </H>
       </div>
       <Menu
         items={nav.map((props, k) => ({

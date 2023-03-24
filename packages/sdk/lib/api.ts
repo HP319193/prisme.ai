@@ -594,14 +594,9 @@ export class Api extends Fetcher {
     automation: string,
     params: any
   ): Promise<any> {
-    const queryString = Object.keys(params)
-      .map((key) => key + '=' + params[key])
-      .join('&');
-
-    return this.get(
-      `/workspaces/${workspaceId}/webhooks/${automation}${
-        queryString ? `?${queryString}` : ''
-      }`
+    return this.post(
+      `/workspaces/${workspaceId}/webhooks/${automation}`,
+      params
     );
   }
 

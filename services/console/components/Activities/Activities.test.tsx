@@ -64,6 +64,7 @@ it('should render some events', () => {
                   },
                   correlationId: 'osef',
                 },
+                size: 0,
               },
               {
                 id: '3',
@@ -75,6 +76,7 @@ it('should render some events', () => {
                   },
                   correlationId: 'osef',
                 },
+                size: 0,
               },
               {
                 id: '2',
@@ -86,6 +88,7 @@ it('should render some events', () => {
                   },
                   correlationId: 'osef',
                 },
+                size: 0,
               },
               {
                 id: '1',
@@ -97,6 +100,7 @@ it('should render some events', () => {
                   },
                   correlationId: 'osef',
                 },
+                size: 0,
               },
             ]),
           }}

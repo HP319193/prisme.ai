@@ -767,6 +767,10 @@
             "label": "Titre",
             "description": "Titre de votre page."
           },
+          "level": {
+            "label": "Niveau du titre",
+            "description": "Définit le niveau de la balise appliquée au titre."
+          },
           "logo": {
             "label": "Logo",
             "description": "Image affichée à côté du titre. Optionnel.",

@@ -12,6 +12,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   req,
   res,
   locale = '',
+  query,
 }) => {
   let page: PageProps['page'] = null;
   let error: number | null = null;
@@ -20,12 +21,17 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
   const workspaceSlug = getSubmodain(req.headers.host || '');
   try {
-    const { page: p, styles: s } = computePageStyles(
-      await api.getPageBySlug(workspaceSlug, 'index')
-    );
+    page = await api.getPageBySlug(workspaceSlug, 'index');
+    page = (await getBlocksConfigFromServer(
+      page,
+      query
+    )) as Prismeai.DetailedPage;
+    if (!page) {
+      throw new Error('404');
+    }
+    const { page: p, styles: s } = computePageStyles(page);
     page = p;
     styles = s;
-    initialConfig = await getBlocksConfigFromServer(page);
   } catch (e) {
     res.statusCode = error = (e as HTTPError).code;
     if (error === 404) {
