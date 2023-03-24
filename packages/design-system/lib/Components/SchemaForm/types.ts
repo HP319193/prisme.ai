@@ -91,6 +91,7 @@ export type UiOptionsAutocomplete = {
       value?: any;
       options?: { label: string | ReactNode; value?: any }[];
     }[];
+    minChars?: number;
   };
 };
 export type UiOptionsDate = {
