@@ -37,6 +37,7 @@ const event: Event<Date> = {
       service: 'acme',
     },
   },
+  size: 0,
 };
 
 it('should render', () => {
