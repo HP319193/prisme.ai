@@ -1,3 +1,4 @@
+import { isLocalizedObject } from '@prisme.ai/design-system';
 import { ReactNode } from 'react';
 import { BlockContext, useBlock } from '../Provider';
 import {
@@ -34,7 +35,7 @@ export const Action = ({
   popup,
 }: ActionProps) => {
   const { localize } = useLocalizedText();
-  const html = localize(text as {});
+  const html = isLocalizedObject(text) ? localize(text as {}) : null;
   switch (type) {
     case 'event':
       return (
