@@ -233,6 +233,9 @@ body {
   height: 2.5rem;
   border-radius: 0.3rem;
 }
+body .ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+  border: none;
+}
 
 .ant-select-selection-item {
   display: flex;
@@ -330,7 +333,8 @@ body {
   height: unset;
   min-height: 2.5rem;
 }
-.pr-form-tags .ant-select-multiple .ant-select-selection-search-input, .ant-select-multiple .ant-select-selection-search-mirror {
+.pr-form-tags .ant-select-multiple .ant-select-selection-search-input,
+.ant-select-multiple .ant-select-selection-search-mirror {
   height: unset;
 }
 .pr-form-tags .ant-select-multiple .ant-select-selection-item {
