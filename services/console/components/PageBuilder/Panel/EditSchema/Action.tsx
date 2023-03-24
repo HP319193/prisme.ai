@@ -10,7 +10,7 @@ export const schema: Schema = {
   remove: 'pages.blocks.header.settings.nav.items.remove',
   properties: {
     text: {
-      type: 'string',
+      type: 'localized:string',
       title: 'pages.blocks.header.settings.nav.items.text.label',
       description: 'pages.blocks.header.settings.nav.items.text.description',
     },

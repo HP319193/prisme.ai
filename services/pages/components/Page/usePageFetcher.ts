@@ -10,7 +10,7 @@ export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
   );
   const [loading, setLoading] = useState(false);
   const {
-    query: { slug: path = '' },
+    query: { pageSlug: path = '' },
   } = useRouter();
   const slug = Array.isArray(path) ? path.join('/') : path;
 

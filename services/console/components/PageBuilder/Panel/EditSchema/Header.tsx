@@ -10,6 +10,14 @@ export const schema: Schema = {
       title: 'pages.blocks.header.settings.title.label',
       description: 'pages.blocks.header.settings.title.description',
     },
+    level: {
+      type: 'number',
+      title: 'pages.blocks.header.settings.level.label',
+      description: 'pages.blocks.header.settings.level.description',
+      enum: [1, 2, 3, 4, 5, 6],
+      enumNames: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+      default: 2,
+    },
     logo: {
       type: 'object',
       title: 'pages.blocks.header.settings.logo.label',

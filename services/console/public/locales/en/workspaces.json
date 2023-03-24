@@ -767,6 +767,10 @@
             "label": "Title",
             "description": "Title of your page."
           },
+          "level": {
+            "label": "Title level",
+            "description": "Defines the level of the tag applied to the title."
+          },
           "logo": {
             "label": "Logo",
             "description": "Image displayed next to the title. Optional.",

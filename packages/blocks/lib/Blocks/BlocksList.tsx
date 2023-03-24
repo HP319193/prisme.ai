@@ -8,11 +8,7 @@ export interface BlocksListConfig extends BaseBlockConfig {
   blocksClassName?: string;
 }
 
-export const BlocksList = ({
-  blocks = [],
-  className,
-  blocksClassName,
-}: BlocksListConfig) => {
+export const BlocksList = ({ blocks = [], className }: BlocksListConfig) => {
   const {
     utils: { BlockLoader },
   } = useBlocks();
@@ -25,7 +21,7 @@ export const BlocksList = ({
         .filter(Boolean)
         .map(({ slug, className = '', ...config }, key) => (
           <BlockLoader
-            key={key}
+            key={`${key}-${slug}`}
             name={slug}
             config={{
               ...config,

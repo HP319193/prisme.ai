@@ -1,6 +1,5 @@
 import { AppstoreOutlined, CloseOutlined } from '@ant-design/icons';
 import { Dropdown, Menu, Tooltip } from 'antd';
-import { filter } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
@@ -25,7 +24,8 @@ function getTabsFromStorage(workspaceId: string) {
 }
 
 function getDocument(tab: string, workspace: WorkspaceContext['workspace']) {
-  const [slug, type] = tab.split(/\//).reverse();
+  const [, , type, slug] =
+    tab.match(/(^.+)(automations|pages|imports)\/(.+$)/) || [];
 
   switch (type) {
     case 'automations':
@@ -39,11 +39,12 @@ function getDocument(tab: string, workspace: WorkspaceContext['workspace']) {
 }
 
 function getSlug(tab: string) {
-  const [slug] = tab.split(/\//).reverse();
+  const [, , , slug] =
+    tab.match(/(^.+)(automations|pages|imports)\/(.+$)/) || [];
   return slug;
 }
 function getType(tab: string) {
-  const [, type] = tab.split(/\//).reverse();
+  const [, , type] = tab.match(/(^.+)(automations|pages|imports)\/(.+$)/) || [];
   return type;
 }
 

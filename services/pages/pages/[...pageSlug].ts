@@ -10,14 +10,14 @@ export { default } from '../views/Page';
 
 export const getServerSideProps: GetServerSideProps<
   PageProps,
-  { slug: string[] }
-> = async ({ req, res, locale = '', params: { slug } = {} }) => {
-  if (!slug || req.url === '/favicon.ico')
+  { pageSlug: string[] }
+> = async ({ req, res, locale = '', params: { pageSlug } = {}, query }) => {
+  if (!pageSlug || req.url === '/favicon.ico')
     return {
       notFound: true,
     };
 
-  if (slug.join('/') === 'index') {
+  if (pageSlug.join('/') === 'index') {
     return {
       redirect: {
         permanent: true,
@@ -33,16 +33,21 @@ export const getServerSideProps: GetServerSideProps<
 
   const workspaceSlug = getSubmodain(req.headers.host || '');
   try {
-    const { page: p, styles: s } = computePageStyles(
-      await api.getPageBySlug(workspaceSlug, slug.join('/'))
-    );
+    page = await api.getPageBySlug(workspaceSlug, pageSlug.join('/'));
+    page = (await getBlocksConfigFromServer(
+      page,
+      query
+    )) as Prismeai.DetailedPage;
+    if (!page) {
+      throw new Error('404');
+    }
+    const { page: p, styles: s } = computePageStyles(page);
     page = p;
     styles = s;
-    initialConfig = await getBlocksConfigFromServer(page);
   } catch (e) {
     res.statusCode = error = (e as HTTPError).code;
     if (error === 404) {
-      console.error('404', workspaceSlug, slug);
+      console.error('404', workspaceSlug, pageSlug);
       return {
         notFound: true,
       };
