@@ -23,14 +23,7 @@ export async function initEDAMetrics(
     },
   });
 
-  const processedLabels = [
-    'event',
-    'consumer',
-    'workspace',
-    'producer',
-    'serviceTopic',
-    'size',
-  ];
+  const processedLabels = ['consumer', 'workspace', 'producer', 'serviceTopic'];
   const processDurationMetrics = new client.Histogram({
     name: 'events_process_duration',
     help:
@@ -49,17 +42,23 @@ export async function initEDAMetrics(
     registers: [registry],
     buckets: [1, 10, 50, 100, 300, 500, 700, 1000, 2000],
   });
+  const eventSizeMetrics = new client.Histogram({
+    name: 'events_size',
+    help: 'Events size histogram labeled with ' + processedLabels.join(', '),
+    labelNames: processedLabels,
+    registers: [registry],
+    buckets: [1, 10, 50, 100, 300, 500, 700, 1000, 2000],
+  });
 
   broker.onProcessedEventCallback = (event, metrics) => {
     const vals = {
-      event: event.type,
       consumer: broker.service,
       workspace: event?.source?.workspaceId,
       producer: event?.source?.host?.service,
       serviceTopic: event?.source?.serviceTopic,
-      size: event?.size,
     };
     processDurationMetrics.labels(vals).observe(metrics.procesDuration);
     pickupDelayMetrics.labels(vals).observe(metrics.pickupDelay);
+    eventSizeMetrics.labels(vals).observe(event?.size);
   };
 }
