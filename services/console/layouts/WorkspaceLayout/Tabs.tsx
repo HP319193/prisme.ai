@@ -25,7 +25,7 @@ function getTabsFromStorage(workspaceId: string) {
 
 function getDocument(tab: string, workspace: WorkspaceContext['workspace']) {
   const [, , type, slug] =
-    tab.match(/(^.+)(automations|pages|imports)\/(.+$)/) || [];
+    tab.match(/(^.+)(automations|pages|apps)\/(.+$)/) || [];
 
   switch (type) {
     case 'automations':
@@ -39,12 +39,11 @@ function getDocument(tab: string, workspace: WorkspaceContext['workspace']) {
 }
 
 function getSlug(tab: string) {
-  const [, , , slug] =
-    tab.match(/(^.+)(automations|pages|imports)\/(.+$)/) || [];
+  const [, , , slug] = tab.match(/(^.+)(automations|pages|apps)\/(.+$)/) || [];
   return slug;
 }
 function getType(tab: string) {
-  const [, , type] = tab.match(/(^.+)(automations|pages|imports)\/(.+$)/) || [];
+  const [, , type] = tab.match(/(^.+)(automations|pages|apps)\/(.+$)/) || [];
   return type;
 }
 
