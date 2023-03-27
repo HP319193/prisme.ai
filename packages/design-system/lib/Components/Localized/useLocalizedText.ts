@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import '@prisme.ai/types';
 import { Schema } from '../SchemaForm';
 
-const valueIsALocale = (value: any) => {
+export const isLocalizedObject = (value: any) => {
   return (
     typeof value === 'string' ||
     (value &&
@@ -20,7 +20,7 @@ const translatable = [
 ];
 const isTranslatedElement = (key: string, value: any) => {
   if (translatable.includes(key)) {
-    return valueIsALocale(value);
+    return isLocalizedObject(value);
   }
   return false;
 };
@@ -46,7 +46,7 @@ export const useLocalizedText = (t: any, language: string) => {
           const isArray = Array.isArray(mayBeTranslatable);
           if (
             isArray &&
-            mayBeTranslatable.every((key) => valueIsALocale(key))
+            mayBeTranslatable.every((key) => isLocalizedObject(key))
           ) {
             return mayBeTranslatable.map((key) => localize(key));
           }

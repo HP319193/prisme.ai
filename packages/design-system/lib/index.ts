@@ -33,7 +33,10 @@ export { default as useContentEditable } from './utils/useContentEditable';
 
 export * from './Components/SchemaForm';
 
-export { default as useLocalizedText } from './Components/Localized/useLocalizedText';
+export {
+  default as useLocalizedText,
+  isLocalizedObject,
+} from './Components/Localized/useLocalizedText';
 
 // TODO : Remove this
 export {
