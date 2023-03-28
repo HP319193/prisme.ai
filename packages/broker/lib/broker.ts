@@ -119,6 +119,8 @@ export class Broker<CallbackContext = any> {
         ? undefined
         : newParentSource.userId || previousParentSource.userId,
     };
+    // We never want to keep serviceTopic from given sources. In order to set a topic, use "this.forceTopic" or send partial source parameter
+    delete childSource.serviceTopic;
 
     const child = Object.assign({}, this, {
       parentSource: childSource,
