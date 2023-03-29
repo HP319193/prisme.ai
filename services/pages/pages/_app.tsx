@@ -2,7 +2,7 @@ import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import UserProvider from '../../console/components/UserProvider';
 import { NextPage } from 'next';
-import React, { ReactElement, ReactNode } from 'react';
+import React, { ReactElement, ReactNode, useEffect } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
@@ -17,6 +17,7 @@ import {
 } from '../components/Page/PageProvider';
 import BlocksProvider from '../components/BlocksProvider/BlocksProvider';
 import WorkspaceProvider from '../components/Workspace';
+import api from '../../console/utils/api';
 
 const Sentry = dynamic(import('../../console/utils/Sentry'), { ssr: false });
 
@@ -41,6 +42,8 @@ function MyApp({
 }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
+
+  api.language = i18n.language;
 
   if (i18n.language === 'default' && typeof window !== 'undefined') {
     const availableLanguages: string[] = (i18n.options as any).locales;

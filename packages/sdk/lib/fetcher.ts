@@ -14,6 +14,7 @@ export class Fetcher {
   public host: string;
   public token: string | null = null;
   protected _apiKey: string | null = null;
+  public language: string | undefined;
 
   constructor(host: string) {
     this.host = host;
@@ -35,6 +36,10 @@ export class Fetcher {
 
     if (this._apiKey && !headers.has('x-prismeai-apikey')) {
       headers.append('x-prismeai-api-key', this._apiKey);
+    }
+
+    if (this.language) {
+      headers.append('accept-language', this.language);
     }
 
     if (

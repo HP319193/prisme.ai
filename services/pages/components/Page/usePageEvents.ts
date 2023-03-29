@@ -46,6 +46,20 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
     if (!page || !events) return;
     const offs: Function[] = [];
 
+    if (page.updateOn) {
+      offs.push(
+        events.on(page.updateOn, ({ payload: { url } }) => {
+          if (url) {
+            if (url.match(/^http/)) {
+              window.location = url;
+            } else {
+              push(url);
+            }
+          }
+        })
+      );
+    }
+
     if (page.notifyOn) {
       offs.push(
         events.on(page.notifyOn, async ({ payload: { title, body, icon } }) => {

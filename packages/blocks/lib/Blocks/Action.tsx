@@ -93,7 +93,11 @@ export const Action = ({
       );
     default:
       return (
-        <span className={`pr-block-action ${className}`}>{html || text}</span>
+        <span
+          className={`pr-block-action ${className}`}
+          dangerouslySetInnerHTML={html ? { __html: html } : undefined}
+          children={html ? undefined : text}
+        />
       );
   }
 };

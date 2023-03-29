@@ -85,6 +85,7 @@ export const FieldText = ({
       <Tooltip title={hasError} overlayClassName="pr-form-error">
         <Input
           {...field.input}
+          value={typeof field.input.value === 'string' ? field.input.value : ''}
           placeholder={props.schema.placeholder || ''}
           onChange={onChange}
           type={props.schema.type === 'number' ? 'number' : 'text'}

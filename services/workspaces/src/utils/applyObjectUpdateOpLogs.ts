@@ -18,10 +18,17 @@ export function applyObjectUpdateOpLogs(
         ? [...parent[lastKey], update.value]
         : [update.value];
     } else if (update.type === 'merge') {
-      parent[lastKey] = {
-        ...(typeof parent[lastKey] === 'object' ? parent[lastKey] : {}),
-        ...update.value,
-      };
+      if (Array.isArray(update.value)) {
+        parent[lastKey] = [
+          ...(Array.isArray(parent[lastKey]) ? parent[lastKey] : []),
+          ...update.value,
+        ];
+      } else {
+        parent[lastKey] = {
+          ...(typeof parent[lastKey] === 'object' ? parent[lastKey] : {}),
+          ...update.value,
+        };
+      }
     } else if (update.type === 'delete') {
       delete parent[lastKey];
     }

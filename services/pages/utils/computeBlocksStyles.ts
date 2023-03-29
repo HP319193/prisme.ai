@@ -1,15 +1,14 @@
 import { getBlockStyles, builtinBlocks } from '@prisme.ai/blocks';
 
 export function computePageStyles(page: Prismeai.DetailedPage) {
-  const ids = { last: 0 };
   const styles: string[] = [];
   // @ts-ignore
-  page.cssId = ++ids.last;
+  page.cssId = parseInt(Math.random() * 10000000, 10);
   function computeBlocksStyles(blocks: any = []) {
     if (!Array.isArray(blocks)) return blocks;
     return blocks.map((block: any) => {
       const config = block.config ? block.config : block;
-      config.cssId = ++ids.last;
+      config.cssId = parseInt(`${Math.random() * 10000000}`, 10);
       const slug = block.slug || '';
       const { styles: defaultStyles } = (builtinBlocks as any)[slug] || {
         styles: '',
