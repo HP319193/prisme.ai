@@ -87,7 +87,7 @@ export const FieldText = ({
           {...field.input}
           value={
             ['string', 'number'].includes(typeof field.input.value)
-              ? field.input.value
+              ? `${field.input.value}`
               : ''
           }
           placeholder={props.schema.placeholder || ''}
