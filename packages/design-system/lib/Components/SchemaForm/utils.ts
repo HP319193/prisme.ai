@@ -101,7 +101,7 @@ export function getFieldOptions({
               return null;
             case 'email':
               if (
-                !new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).test(
+                !new RegExp(/^[\w-\.\+]+@([\w-]+\.)+[\w-]{2,4}$/).test(
                   `${toCheck}`
                 )
               ) {
