@@ -40,15 +40,22 @@ export async function initWorkspacesConfigSyncing(
         );
 
         if (appInstanceFullSlug) {
+          const [rootAppSlug, ...nestedApps] = appInstanceFullSlug.split('.');
           const appInstance = await appInstances.getAppInstance(
             workspaceId,
-            appInstanceFullSlug
+            rootAppSlug
           );
           const updatedConfig = applyObjectUpdateOpLogs(
             appInstance?.config?.value || {},
-            updates
+            nestedApps.length
+              ? // If config update comes from a nested app, initialize corresponding keys in root app config
+                updates.map((cur) => ({
+                  ...cur,
+                  path: `${nestedApps.join('.')}.${cur.path}`,
+                }))
+              : updates
           );
-          await appInstances.configureApp(workspaceId!, appInstanceFullSlug!, {
+          await appInstances.configureApp(workspaceId!, rootAppSlug!, {
             config: updatedConfig,
           });
         } else {
