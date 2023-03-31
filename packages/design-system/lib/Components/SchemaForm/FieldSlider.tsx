@@ -18,30 +18,48 @@ export const FieldSlider = ({
   const marks = useMemo(
     () =>
       (steps || []).reduce(
-        (prev, { label, description, value, className }) => ({
-          ...prev,
-          [value]: {
-            label: (
-              <Tooltip
-                title={
-                  <div dangerouslySetInnerHTML={{ __html: description }} />
-                }
-                placement="bottom"
-                overlayClassName={className}
-              >
-                <div>{label}</div>
-              </Tooltip>
-            ),
-          },
-        }),
+        (prev, { label, description, value, className }, index) => {
+          let additionalProps = {};
+          if (field.input.value === index) {
+            additionalProps = {
+              open: field.input.value === index,
+              style: {
+                zIndex: 10,
+              },
+            };
+          }
+
+          return {
+            ...prev,
+            [value]: {
+              label: (
+                <Tooltip
+                  {...additionalProps}
+                  title={
+                    <div dangerouslySetInnerHTML={{ __html: description }} />
+                  }
+                  placement="bottom"
+                  overlayClassName={className}
+                >
+                  <div>{label}</div>
+                </Tooltip>
+              ),
+            },
+          };
+        },
         {}
       ),
-    [steps]
+    [steps, field.input.value]
   );
   const { min, max } = useMemo(() => {
     const values = (steps || []).map(({ value }) => +value);
     return { min: Math.min(...values), max: Math.max(...values) };
   }, [steps]);
+
+  const hasPreview =
+    steps &&
+    steps[field.input.value] &&
+    marks?.[field.input.value as keyof typeof marks];
 
   return (
     <FieldContainer {...props} className="pr-form-text pr-form-text--slider">
@@ -70,6 +88,14 @@ export const FieldSlider = ({
         className="pr-form-text__description"
         text={props.schema.description}
       />
+      {hasPreview && (
+        <div
+          className="order-3 mt-8 invisible"
+          dangerouslySetInnerHTML={{
+            __html: steps[field.input.value].description,
+          }}
+        />
+      )}
     </FieldContainer>
   );
 };
