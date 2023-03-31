@@ -5,7 +5,6 @@ import { useBlock } from '../../Provider';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import BlockTitle from '../Internal/BlockTitle';
-import { withI18nProvider } from '../../i18n';
 
 import EditableRow from './EditableRow';
 import EditableCell from './EditableCell';
@@ -177,4 +176,4 @@ export const DataTable: BlockComponent = () => {
     </div>
   );
 };
-export default withI18nProvider(DataTable);
+export default DataTable;

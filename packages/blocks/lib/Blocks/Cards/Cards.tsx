@@ -7,7 +7,6 @@ import {
   useState,
 } from 'react';
 import { useBlock } from '../../Provider';
-import { withI18nProvider } from '../../i18n';
 import tw from '../../tw';
 import {
   CardAction,
@@ -249,4 +248,4 @@ export const CardsInContext = () => {
   );
 };
 
-export default withI18nProvider(CardsInContext);
+export default CardsInContext;
