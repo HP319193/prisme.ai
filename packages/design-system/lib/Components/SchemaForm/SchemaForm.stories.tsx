@@ -594,6 +594,59 @@ UIWidgets.args = {
           },
         },
       },
+      simulation: {
+        type: 'number',
+        title: '',
+        default: 1,
+        'ui:widget': 'slider',
+        'ui:options': {
+          slider: {
+            steps: [
+              {
+                label: '7 ans',
+                description:
+                  '\n<div class="simulation-item__title">Mensualité</div>\n<div class="simulation-item__monthly">2 298 €/mois *</div>\n<div class="simulation-item__separator"></div>\n<div class="simulation-item__rate">Taux : 2,00% *</div>\n<div class="simulation-item__legal">Taux débiteur fixe* hors frais de dossier et hors assurance</div>\n',
+                value: 0,
+                className: 'simulation-tooltip',
+              },
+              {
+                label: '10 ans',
+                description:
+                  '\n<div class="simulation-item__title">Mensualité</div>\n<div class="simulation-item__monthly">1 755 €/mois *</div>\n<div class="simulation-item__separator"></div>\n<div class="simulation-item__rate">Taux : 3,20% *</div>\n<div class="simulation-item__legal">Taux débiteur fixe* hors frais de dossier et hors assurance</div>\n',
+                value: 1,
+                className: 'simulation-tooltip',
+              },
+              {
+                label: '15 ans',
+                description:
+                  '\n<div class="simulation-item__title">Mensualité</div>\n<div class="simulation-item__monthly">1 287 €/mois *</div>\n<div class="simulation-item__separator"></div>\n<div class="simulation-item__rate">Taux : 3,50% *</div>\n<div class="simulation-item__legal">Taux débiteur fixe* hors frais de dossier et hors assurance</div>\n',
+                value: 2,
+                className: 'simulation-tooltip',
+              },
+              {
+                label: '20 ans',
+                description:
+                  '\n<div class="simulation-item__title">Mensualité</div>\n<div class="simulation-item__monthly">1 063 €/mois *</div>\n<div class="simulation-item__separator"></div>\n<div class="simulation-item__rate">Taux : 3,70% *</div>\n<div class="simulation-item__legal">Taux débiteur fixe* hors frais de dossier et hors assurance</div>\n',
+                value: 3,
+                className: 'simulation-tooltip',
+              },
+              {
+                label: '25 ans',
+                description:
+                  '\n<div class="simulation-item__title">Mensualité</div>\n<div class="simulation-item__monthly">940 €/mois *</div>\n<div class="simulation-item__separator"></div>\n<div class="simulation-item__rate">Taux : 3,90% *</div>\n<div class="simulation-item__legal">Taux débiteur fixe* hors frais de dossier et hors assurance</div>\n',
+                value: 4,
+                className: 'simulation-tooltip',
+              },
+            ],
+            showTooltip: 'always',
+          },
+        },
+        validators: {
+          required: {
+            message: 'Veuillez choisir une option',
+          },
+        },
+      },
       custom: {
         type: 'string',
         title: 'React Component',
