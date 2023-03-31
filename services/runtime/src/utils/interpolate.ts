@@ -1,6 +1,7 @@
 'use strict';
 
 import { parseVariableName } from './parseVariableName';
+import { evaluate as evaluateExpr } from './evaluate';
 
 const getValueFromCtx = (pathStr: string, context: any) => {
   const path = parseVariableName(pathStr);
@@ -9,8 +10,15 @@ const getValueFromCtx = (pathStr: string, context: any) => {
   }, context);
 };
 
-const evaluate = (expr: any, ctx: any, { asString = false } = {}) => {
-  const value = getValueFromCtx(expr, ctx);
+const evaluate = (
+  expr: any,
+  ctx: any,
+  options: { evalExpr?: boolean; asString?: boolean }
+) => {
+  const { asString = false, evalExpr = false } = options;
+  const value = evalExpr
+    ? evaluateExpr(expr, ctx, false)
+    : getValueFromCtx(expr, ctx);
   if (typeof value !== 'string') {
     if (asString) {
       return typeof value === 'undefined' || value == null
@@ -27,7 +35,7 @@ export const interpolate = (
   target: any,
   context = {},
   exclude: string[] = [],
-  pattern = /\{\{([^{}]*?)\}\}/g
+  pattern = /\{\{([^{}]*?)\}\}|\{\%([^{}]*?)\%\}/g
 ): any => {
   if (!context) {
     context = {};
@@ -40,22 +48,33 @@ export const interpolate = (
         replaceAgain = false;
         target = target.replace(
           pattern,
-          (_: any, expr: any, index: number, fullStr: string) => {
+          (
+            fullMatch: any,
+            varExpr: any,
+            evalExpr: any,
+            index: number,
+            fullStr: string
+          ) => {
             // Do not replace the last & full string variable as it would break objects into "[object Object]"
-            if (index == 0 && expr.length + 4 === fullStr.length) {
-              // Stringify only if current substr does not span the whole string)
+            if (index == 0 && fullMatch.length === fullStr.length) {
               return fullStr;
             }
             replaceAgain = true;
-            return evaluate(expr, context, {
+            return evaluate(varExpr || evalExpr, context, {
               asString: true,
+              evalExpr: !!evalExpr,
             });
           }
         );
       } while (replaceAgain);
       // If remaining variable name spans the whole string, we can return the variable itself as it is
-      if (target.startsWith('{{') && target.endsWith('}}')) {
-        return evaluate(target.substring(2, target.length - 2), context);
+      if (
+        (target.startsWith('{{') && target.endsWith('}}')) ||
+        (target.startsWith('{%') && target.endsWith('%}'))
+      ) {
+        return evaluate(target.substring(2, target.length - 2), context, {
+          evalExpr: target.startsWith('{%'),
+        });
       }
       return target;
     } catch (e) {
