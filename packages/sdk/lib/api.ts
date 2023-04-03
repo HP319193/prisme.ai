@@ -108,7 +108,7 @@ export class Api extends Fetcher {
 
   // Workspaces
   async getWorkspaces(): Promise<Workspace[]> {
-    return await this.get('/workspaces?limit=300');
+    return await this.get('/workspaces?limit=600');
   }
 
   async getWorkspace(
@@ -262,16 +262,11 @@ export class Api extends Fetcher {
     workspaceId: PrismeaiAPI.CreatePage.Parameters.WorkspaceId,
     page: PrismeaiAPI.CreatePage.RequestBody
   ): Promise<Prismeai.Page> {
-    const {
-      createdAt,
-      createdBy,
-      updatedAt,
-      updatedBy,
-      ...newPage
-    } = await this.post<PageWithMetadata>(
-      `/workspaces/${workspaceId}/pages`,
-      page
-    );
+    const { createdAt, createdBy, updatedAt, updatedBy, ...newPage } =
+      await this.post<PageWithMetadata>(
+        `/workspaces/${workspaceId}/pages`,
+        page
+      );
     return newPage;
   }
 
@@ -280,17 +275,12 @@ export class Api extends Fetcher {
     page: PrismeaiAPI.UpdatePage.RequestBody,
     prevSlug: PrismeaiAPI.DeletePage.Parameters.Slug = page.slug || ''
   ): Promise<Prismeai.Page> {
-    const {
-      createdAt,
-      createdBy,
-      updatedAt,
-      updatedBy,
-      ...updatedPage
-    } = await this.patch<PageWithMetadata>(
-      `/workspaces/${workspaceId}/pages/${encodeURIComponent(prevSlug)}`,
-      // Replace images as dataurl to uploaded url in any type of data
-      await this.replaceAllImagesData(page, workspaceId)
-    );
+    const { createdAt, createdBy, updatedAt, updatedBy, ...updatedPage } =
+      await this.patch<PageWithMetadata>(
+        `/workspaces/${workspaceId}/pages/${encodeURIComponent(prevSlug)}`,
+        // Replace images as dataurl to uploaded url in any type of data
+        await this.replaceAllImagesData(page, workspaceId)
+      );
     return updatedPage;
   }
 
