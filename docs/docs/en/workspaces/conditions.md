@@ -5,13 +5,13 @@
 These conditions are described using a very common expression syntax across programming languages, not so difficult to use but still very powerful.  
 
 [Variables](../instructions#variables) can be used in most parts of conditions.  
-Expression syntax is not restricted to conditions but can also be evaluated anywhere, simply by wrapping the expression with `${...}`, as follows :  
+Expression syntax is not restricted to conditions but can also be evaluated anywhere, simply by wrapping the expression with `{% ... %}`, as follows :  
 ```yaml
 - emit:
     event: someEvent
     payload:
-      is20GreaterThan18: "${20 > 18}" # Will evaluate to true
-      currentTimestamp: "${date({{run.date}}).ts}" # Will evaluate to current timestamp
+      is20GreaterThan18: "{% 20 > 18 %}" # Will evaluate to true
+      currentTimestamp: "{% date({{run.date}}) %}" # Will evaluate to current timestamp
 ```
 
 ## Basic operators
