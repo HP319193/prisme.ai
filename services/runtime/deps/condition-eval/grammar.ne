@@ -13,7 +13,9 @@
                         closingBracket: "]",
                         comma: ",",
                         openP: { match: "(", push: "main" },
+                        openCondBrackets: { match: /\{\%/, push: "main" },
                         closingP: { match: ")", pop: true },
+                        closingCondBrackets: { match: /\%\}/, push: "main" },
                         ws:     /[ \t]+/,
                         number: /[0-9]+/,
                         matches: /[Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
@@ -125,6 +127,7 @@ unaryExpression ->
         | variable {% id %}
         | %bang _ unaryExpression {% ([,,node]) => new NegationExpression(node) %}
         | %openP _ expression _ %closingP {% d => d[2] %}
+        | %openCondBrackets _ expression _ %closingCondBrackets {% d => d[2] %}
         | functionCall {% ([value]) => new FunctionCall(value) %}
 
 variable -> %dcbl _ variablePath _ %dcbr {% ([,,path]) => new Variable(path)  %}

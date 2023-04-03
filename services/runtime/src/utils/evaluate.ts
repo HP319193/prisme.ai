@@ -12,7 +12,8 @@ export const evaluate = (
    * We do not use the scope of mathjs as variables should already be defined and interpolated (see interpolate.ts)
    */
   try {
-    return angelEval(expression, scope, strictBoolean); // Use angel-eval fork
+    const result = angelEval(expression, scope, strictBoolean); // Use angel-eval fork
+    return result;
   } catch (e: any) {
     if (!(e instanceof InvalidExpressionSyntax)) {
       throw new InvalidExpressionSyntax(e.message, { expression });

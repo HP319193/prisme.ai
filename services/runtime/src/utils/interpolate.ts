@@ -36,57 +36,61 @@ export const interpolate = (
   target: any,
   context = {},
   exclude: string[] = [],
-  pattern = /\{\{([^{}]*?)\}\}|\{\%([^{}]*?)\%\}/g
+  patterns = [/\{\%(.+)\%\}/, /\{\{([^{}]*?)\}\}/g]
 ): any => {
   if (!context) {
     context = {};
   }
-  if (typeof target === 'string') {
-    try {
-      // First replace nested variables
-      let replaceAgain = true;
-      do {
-        replaceAgain = false;
-        target = target.replace(
-          pattern,
-          (
-            fullMatch: any,
-            varExpr: any,
-            evalExpr: any,
-            index: number,
-            fullStr: string
-          ) => {
-            // Do not replace the last & full string variable as it would break objects into "[object Object]"
-            if (index == 0 && fullMatch.length === fullStr.length) {
-              return fullStr;
+  if (typeof target === 'string' && target.includes('{')) {
+    // As we do not want to stringify variables inside an {% %} expression,
+    // we need to first match & evaluate these outer most expressions before
+    // injecting others regular {{variables}}
+    for (let [patternIdx, pattern] of Object.entries(patterns)) {
+      try {
+        // First replace nested variables
+        let replaceAgain = true;
+        do {
+          replaceAgain = false;
+          target = target.replace(
+            pattern,
+            (fullMatch: any, expr: any, index: number, fullStr: string) => {
+              // Do not replace the last & full string variable as it would break objects into "[object Object]"
+              if (index == 0 && fullMatch.length === fullStr.length) {
+                replaceAgain = false;
+                return fullStr;
+              }
+              replaceAgain = true;
+              return evaluate(expr, context, {
+                asString: true,
+                evalExpr: fullMatch.startsWith('{%'),
+              });
             }
-            replaceAgain = true;
-            return evaluate(varExpr || evalExpr, context, {
-              asString: true,
-              evalExpr: !!evalExpr,
-            });
-          }
-        );
-      } while (replaceAgain);
-      // If remaining variable name spans the whole string, we can return the variable itself as it is
-      if (
-        (target.startsWith('{{') && target.endsWith('}}')) ||
-        (target.startsWith('{%') && target.endsWith('%}'))
-      ) {
-        return evaluate(target.substring(2, target.length - 2), context, {
-          evalExpr: target.startsWith('{%'),
-        });
+          );
+        } while (replaceAgain);
+        // If remaining variable name spans the whole string, we can return the variable itself as it is
+        if (
+          (patternIdx == '0' &&
+            target.startsWith('{%') &&
+            target.endsWith('%}')) ||
+          (patternIdx == '1' &&
+            target.startsWith('{{') &&
+            target.endsWith('}}'))
+        ) {
+          return evaluate(target.substring(2, target.length - 2), context, {
+            evalExpr: target.startsWith('{%'),
+          });
+        }
+      } catch (e) {
+        if (e instanceof PrismeError) {
+          throw e;
+        }
+        throw new Error(`Could not interpolate string "${target}": ${e}`);
       }
-      return target;
-    } catch (e) {
-      if (e instanceof PrismeError) {
-        throw e;
-      }
-      throw new Error(`Could not interpolate string "${target}": ${e}`);
     }
+    return target;
   } else if (Array.isArray(target)) {
     return target.map((value: any) =>
-      interpolate(value, context, exclude, pattern)
+      interpolate(value, context, exclude, patterns)
     );
   } else if (target && typeof target === 'object') {
     return Object.entries(target).reduce(
@@ -94,7 +98,7 @@ export const interpolate = (
         ...acc,
         [key]: exclude.includes(key)
           ? value
-          : interpolate(value, context, exclude, pattern),
+          : interpolate(value, context, exclude, patterns),
       }),
       {}
     );
