@@ -63,6 +63,9 @@ class DateExpression extends Evaluatable {
           return date.getUTCSeconds();
         case 'date':
           return date.getUTCDate();
+        case 'iso':
+          return date.toISOString();
+        case 'ts':
         case null:
         case undefined:
           return date.getTime();

@@ -550,5 +550,15 @@ describe('Should handle basic math features', () => {
     expect(evaluate('rand(10, 11) * {{var}} + 2', { var: 10 }, false)).toEqual(
       102
     );
+
+    expect(
+      evaluate(
+        'date(date({{date}}).ts + 3600*24*1000).iso',
+        {
+          date: '2023-04-03T18:58:54.526Z',
+        },
+        false
+      )
+    ).toEqual('2023-04-04T18:58:54.526Z');
   });
 });
