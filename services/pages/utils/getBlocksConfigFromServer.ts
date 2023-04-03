@@ -2,8 +2,7 @@ import { generateEndpoint } from '../../console/utils/urls';
 
 export async function getBlocksConfigFromServer(
   page: Prismeai.DetailedPage,
-  query = {},
-  language = 'en'
+  query = {}
 ) {
   const { workspaceId } = page;
   if (!workspaceId) return [];
@@ -16,7 +15,6 @@ export async function getBlocksConfigFromServer(
       headers: {
         'x-prismeai-api-key': page.apiKey,
         'Content-Type': 'application/json',
-        'accept-language': language,
       },
     });
     return await res.json();

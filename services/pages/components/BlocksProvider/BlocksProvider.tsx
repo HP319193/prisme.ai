@@ -9,13 +9,9 @@ import DownIcon from './DownIcon';
 import Loading from './Loading';
 import BlockLoader from '../Page/BlockLoader';
 import SchemaForm from './SchemaForm';
-import { useTranslation } from 'next-i18next';
 
 export const BlocksProvider: FC = ({ children }) => {
   const { id } = useWorkspace();
-  const {
-    i18n: { language },
-  } = useTranslation();
   const uploadFile = useCallback(
     async (file: string) => {
       if (!id) return file;
@@ -34,7 +30,6 @@ export const BlocksProvider: FC = ({ children }) => {
       externals={externals}
       components={{ Link, Loading, DownIcon, SchemaForm }}
       utils={{ uploadFile, BlockLoader }}
-      language={language}
     >
       {children}
     </Provider>

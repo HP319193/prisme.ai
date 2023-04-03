@@ -3,7 +3,7 @@ import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { useEffect } from 'react';
 import { BlockComponent } from './BlockLoader';
 
-export const i18n = createInstance({
+const i18n = createInstance({
   resources: {
     en: {
       translation: {
