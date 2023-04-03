@@ -11,3 +11,7 @@ export const useTranslation = () => {
 export const Trans = ({ children = null }) => {
   return children;
 };
+
+export const initReactI18next = {};
+
+export const I18nextProvider = ({ children }) => children;
