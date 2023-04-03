@@ -501,3 +501,29 @@ it('Date formatting', () => {
     )
   ).toEqual('13:07');
 });
+
+it('Variable type testing', () => {
+  const ctx = {
+    someArray: [],
+    someObject: {},
+  };
+  expect(evaluate('isArray({{someArray}})', ctx)).toBe(true);
+  expect(evaluate('isObject({{someArray}})', ctx)).toBe(false);
+  expect(evaluate('isObject({{someUnknownVar}})', ctx)).toBe(false);
+  expect(evaluate('isObject()', ctx)).toBe(false);
+
+  expect(evaluate('isObject({{someObject}})', ctx)).toBe(true);
+  expect(evaluate('isArray({{someObject}})', ctx)).toBe(false);
+  expect(evaluate('isArray({{someUnknownVar}})', ctx)).toBe(false);
+  expect(evaluate('isArray()', ctx)).toBe(false);
+});
+
+it('Math operators', () => {
+  const rand = evaluate('rand()', {}, false);
+  expect(rand).toBeGreaterThanOrEqual(0);
+  expect(rand).toBeLessThan(1);
+
+  const rand2 = evaluate('rand(60, 63)', {}, false);
+  expect(rand2).toBeGreaterThanOrEqual(60);
+  expect(rand2).toBeLessThan(63);
+});

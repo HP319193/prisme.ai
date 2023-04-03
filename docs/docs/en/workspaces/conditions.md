@@ -53,6 +53,10 @@ Expression syntax is not restricted to conditions but can also be evaluated anyw
 `{{someKey}} not in "my,string,list"`
 `{{someKey}} not in {{myStringList}}`
 
+**Testing variables types** :  
+`isArray({{someVariable}})`  
+`isObject({{someVariable}})`  
+
 
 ## Logical operators  
 
@@ -118,3 +122,11 @@ Using this same `date` keyword, we can also generate localized & human readable 
 See all formatting options on https://day.js.org/docs/en/display/format.  
 Default language is English, but can be changed with the 3rd parameter ([see available languages](https://github.com/iamkun/dayjs/tree/dev/src/locale)).   
 Default time zone is 'Europe/Paris' (explaining the +2 hours shift above), but can be changed with the 4th parameter.
+
+## Math
+Basic arithmetic operators are supported :  
+
+We can also generate a random number greater than or equal to a minimum value and  less than a maximum value :  
+`rand(50, 150)`  
+
+`rand()` without any parameter returns a random floating number between 0 and 1.  
