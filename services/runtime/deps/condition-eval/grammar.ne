@@ -38,6 +38,11 @@
                         sqstr: /'.*?'/,
                         dqstr: /".*?"/,
                         dcbl: { match: /{{/, push: "variable" },
+                        plus: "+",
+                        minus: "-",
+                        multiply: "*",
+                        divide: "/",
+                        modulo: "%",
                 },
                 variable: {
                         dcbl: { match: /{{/, push: "variable" },
@@ -75,6 +80,7 @@ const NullConstant = require('./interpreter/NullConstant').default;
 const NumberConstant = require('./interpreter/NumberConstant').default;
 const StringConstant = require('./interpreter/StringConstant').default;
 const DateExpression = require('./interpreter/DateExpression').default;
+const MathematicalExpression = require('./interpreter/MathematicalExpression').default;
 
 const arrayify = item => Array.isArray(item) ? item : [item];
 const joinFirst =
@@ -128,7 +134,8 @@ unaryExpression ->
         | %bang _ unaryExpression {% ([,,node]) => new NegationExpression(node) %}
         | %openP _ expression _ %closingP {% d => d[2] %}
         | %openCondBrackets _ expression _ %closingCondBrackets {% d => d[2] %}
-        | functionCall {% ([value]) => new FunctionCall(value) %}
+        | functionCall {% id %}
+        | mathematicalExpression {% id %}
 
 variable -> %dcbl _ variablePath _ %dcbr {% ([,,path]) => new Variable(path)  %}
 
@@ -163,11 +170,46 @@ optionalResultSubkey
 functionCall
     -> %word "(" functionParams ")" optionalResultSubkey
         {%
-            d => ({
+            d => new FunctionCall({
                 functionName: d[0].value,
                 arguments: d[2],
                 resultKey: d[4]
             })
         %}
 
+# Math
+mathematicalExpression
+    ->  _ AdditionSubstraction _ {% data => data[1] %}
+
+
+AdditionSubstraction
+    ->  AdditionSubstraction _ "+" _ ModuloMultiplyDivide
+        {% data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] }) %}
+    |   AdditionSubstraction _ "-" _ ModuloMultiplyDivide
+        {% data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] }) %}
+    |   ModuloMultiplyDivide
+        {% id %}
+
+
+ModuloMultiplyDivide
+    ->  ModuloMultiplyDivide _ "%" _ Parenthesized
+        {% data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] }) %}
+    | ModuloMultiplyDivide _ "*" _ Parenthesized
+        {% data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] }) %}
+    | ModuloMultiplyDivide _ "/" _ Parenthesized
+        {% data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] }) %}
+    | Parenthesized
+        {% id %}
+
+Parenthesized
+    ->  %openP _ mathematicalExpression _ %closingP   {% data => data[2] %}
+    | Term {% id %}
+
+Term
+    ->  number {% ([value]) => new NumberConstant(value) %}
+    | variable {% id %}
+    | functionCall {% id %}
+
+
+# Misc
 _ -> [\s]:* {% () => null %}

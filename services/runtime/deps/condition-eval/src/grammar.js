@@ -42,6 +42,11 @@ function id(x) { return x[0]; }
                         sqstr: /'.*?'/,
                         dqstr: /".*?"/,
                         dcbl: { match: /{{/, push: "variable" },
+                        plus: "+",
+                        minus: "-",
+                        multiply: "*",
+                        divide: "/",
+                        modulo: "%",
                 },
                 variable: {
                         dcbl: { match: /{{/, push: "variable" },
@@ -93,6 +98,7 @@ const NullConstant = require('./interpreter/NullConstant').default;
 const NumberConstant = require('./interpreter/NumberConstant').default;
 const StringConstant = require('./interpreter/StringConstant').default;
 const DateExpression = require('./interpreter/DateExpression').default;
+const MathematicalExpression = require('./interpreter/MathematicalExpression').default;
 
 const arrayify = item => Array.isArray(item) ? item : [item];
 const joinFirst =
@@ -257,7 +263,8 @@ var grammar = {
     {"name": "unaryExpression", "symbols": [(lexer.has("bang") ? {type: "bang"} : bang), "_", "unaryExpression"], "postprocess": ([,,node]) => new NegationExpression(node)},
     {"name": "unaryExpression", "symbols": [(lexer.has("openP") ? {type: "openP"} : openP), "_", "expression", "_", (lexer.has("closingP") ? {type: "closingP"} : closingP)], "postprocess": d => d[2]},
     {"name": "unaryExpression", "symbols": [(lexer.has("openCondBrackets") ? {type: "openCondBrackets"} : openCondBrackets), "_", "expression", "_", (lexer.has("closingCondBrackets") ? {type: "closingCondBrackets"} : closingCondBrackets)], "postprocess": d => d[2]},
-    {"name": "unaryExpression", "symbols": ["functionCall"], "postprocess": ([value]) => new FunctionCall(value)},
+    {"name": "unaryExpression", "symbols": ["functionCall"], "postprocess": id},
+    {"name": "unaryExpression", "symbols": ["mathematicalExpression"], "postprocess": id},
     {"name": "variable", "symbols": [(lexer.has("dcbl") ? {type: "dcbl"} : dcbl), "_", "variablePath", "_", (lexer.has("dcbr") ? {type: "dcbr"} : dcbr)], "postprocess": ([,,path]) => new Variable(path)},
     {"name": "variablePath", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
     {"name": "variablePath", "symbols": ["variablePath", (lexer.has("openingBracket") ? {type: "openingBracket"} : openingBracket), "expression", (lexer.has("closingBracket") ? {type: "closingBracket"} : closingBracket)], "postprocess": d => [...arrayify(d[0]), d[2]]},
@@ -278,12 +285,25 @@ var grammar = {
     {"name": "optionalResultSubkey", "symbols": [], "postprocess": () => null},
     {"name": "optionalResultSubkey", "symbols": [{"literal":"."}, (lexer.has("word") ? {type: "word"} : word)], "postprocess": d => d[1].value},
     {"name": "functionCall", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":"("}, "functionParams", {"literal":")"}, "optionalResultSubkey"], "postprocess": 
-        d => ({
+        d => new FunctionCall({
             functionName: d[0].value,
             arguments: d[2],
             resultKey: d[4]
         })
                 },
+    {"name": "mathematicalExpression", "symbols": ["_", "AdditionSubstraction", "_"], "postprocess": data => data[1]},
+    {"name": "AdditionSubstraction", "symbols": ["AdditionSubstraction", "_", {"literal":"+"}, "_", "ModuloMultiplyDivide"], "postprocess": data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] })},
+    {"name": "AdditionSubstraction", "symbols": ["AdditionSubstraction", "_", {"literal":"-"}, "_", "ModuloMultiplyDivide"], "postprocess": data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] })},
+    {"name": "AdditionSubstraction", "symbols": ["ModuloMultiplyDivide"], "postprocess": id},
+    {"name": "ModuloMultiplyDivide", "symbols": ["ModuloMultiplyDivide", "_", {"literal":"%"}, "_", "Parenthesized"], "postprocess": data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] })},
+    {"name": "ModuloMultiplyDivide", "symbols": ["ModuloMultiplyDivide", "_", {"literal":"*"}, "_", "Parenthesized"], "postprocess": data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] })},
+    {"name": "ModuloMultiplyDivide", "symbols": ["ModuloMultiplyDivide", "_", {"literal":"/"}, "_", "Parenthesized"], "postprocess": data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] })},
+    {"name": "ModuloMultiplyDivide", "symbols": ["Parenthesized"], "postprocess": id},
+    {"name": "Parenthesized", "symbols": [(lexer.has("openP") ? {type: "openP"} : openP), "_", "mathematicalExpression", "_", (lexer.has("closingP") ? {type: "closingP"} : closingP)], "postprocess": data => data[2]},
+    {"name": "Parenthesized", "symbols": ["Term"], "postprocess": id},
+    {"name": "Term", "symbols": ["number"], "postprocess": ([value]) => new NumberConstant(value)},
+    {"name": "Term", "symbols": ["variable"], "postprocess": id},
+    {"name": "Term", "symbols": ["functionCall"], "postprocess": id},
     {"name": "_$ebnf$1", "symbols": []},
     {"name": "_$ebnf$1", "symbols": ["_$ebnf$1", /[\s]/], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "_", "symbols": ["_$ebnf$1"], "postprocess": () => null}

@@ -90,6 +90,90 @@ describe('Should handle basic conditions features', () => {
     expect(evaluate('bonjour matches "matches"')).toEqual(false);
     expect(evaluate('"matches" matches "matches"')).toEqual(true);
   });
+
+  it('Variable type testing', () => {
+    const ctx = {
+      someArray: [],
+      someObject: {},
+    };
+    expect(evaluate('isArray({{someArray}})', ctx)).toBe(true);
+    expect(evaluate('isObject({{someArray}})', ctx)).toBe(false);
+    expect(evaluate('isObject({{someUnknownVar}})', ctx)).toBe(false);
+    expect(evaluate('isObject()', ctx)).toBe(false);
+
+    expect(evaluate('isObject({{someObject}})', ctx)).toBe(true);
+    expect(evaluate('isArray({{someObject}})', ctx)).toBe(false);
+    expect(evaluate('isArray({{someUnknownVar}})', ctx)).toBe(false);
+    expect(evaluate('isArray()', ctx)).toBe(false);
+  });
+
+  it('works with the regexp() keyword on matches instruction.', () => {
+    expect(
+      evaluate('{{text}} matches regex({{word}})', {
+        text: 'ScAtMaN',
+        word: '/scatman/i',
+      })
+    ).toEqual(true);
+    expect(
+      evaluate(
+        '{{validation.regexp}} and {{value}} and {{value}} not matches regex({{validation.regexp}})',
+        {
+          value: null,
+          validation: {},
+        }
+      )
+    ).toEqual(false);
+    expect(
+      evaluate('"luke.skywalker@gmail.com" matches regex(luke)', {})
+    ).toEqual(true);
+    expect(
+      evaluate(`"bonjour.georges@gmail.com" matches REGEX({{myRegex}})`, {
+        myRegex: 'bonjour',
+      })
+    ).toEqual(true);
+    expect(
+      evaluate(
+        `"bonjour.georges@gmail.com" matches REGEX({{myRegex}}|aurevoir)`,
+        {
+          myRegex: 'bonjour',
+        }
+      )
+    ).toEqual(true);
+    expect(
+      evaluate('"luke.skywalker@gmail.com" matches regex(darkvader)', {})
+    ).toEqual(false);
+    expect(
+      evaluate(`"bonjour.georges@gmail.com" matches REGEX({{myRegex}})`, {
+        myRegex: 'aurevoir',
+      })
+    ).toEqual(false);
+    expect(
+      evaluate(`"bonjour.georges@gmail.com" matches REGEX({{myRegex}})`, {
+        myRegex: 'aurevoir',
+      })
+    ).toEqual(false);
+    expect(
+      evaluate('"luke.skywalker@gmail.com" matches regex(/skywalker/)', {})
+    ).toEqual(true); // Regex can now be parsed and properly matched !!
+    expect(evaluate('"LOWERCASE" matches regex(/lowercase/i)', {})).toEqual(
+      true
+    );
+    expect(
+      evaluate(
+        `"bonjour.georges@gmail.com" matches regex([a-z0-9]+@[a-z]+.[a-z]{2,3})`,
+        {}
+      )
+    ).toEqual(true);
+    expect(
+      evaluate(
+        `"bonjour.georges@gmail.com" not matches regex([a-z0-9]+@[a-z]+.[a-z]{2,3})`,
+        {}
+      )
+    ).toEqual(false);
+    expect(
+      evaluate(`"bonjour.georges@gmail.com" matches REGEX([0-9]+)`, {})
+    ).toEqual(false);
+  });
 });
 
 describe('It should handle variables within {{}}', () => {
@@ -270,260 +354,201 @@ describe('It should handle variables within {{}}', () => {
   });
 });
 
-it('works with the regexp() keyword on matches instruction.', () => {
-  expect(
-    evaluate('{{text}} matches regex({{word}})', {
-      text: 'ScAtMaN',
-      word: '/scatman/i',
-    })
-  ).toEqual(true);
-  expect(
-    evaluate(
-      '{{validation.regexp}} and {{value}} and {{value}} not matches regex({{validation.regexp}})',
-      {
-        value: null,
-        validation: {},
-      }
-    )
-  ).toEqual(false);
-  expect(
-    evaluate('"luke.skywalker@gmail.com" matches regex(luke)', {})
-  ).toEqual(true);
-  expect(
-    evaluate(`"bonjour.georges@gmail.com" matches REGEX({{myRegex}})`, {
-      myRegex: 'bonjour',
-    })
-  ).toEqual(true);
-  expect(
-    evaluate(
-      `"bonjour.georges@gmail.com" matches REGEX({{myRegex}}|aurevoir)`,
-      {
-        myRegex: 'bonjour',
-      }
-    )
-  ).toEqual(true);
-  expect(
-    evaluate('"luke.skywalker@gmail.com" matches regex(darkvader)', {})
-  ).toEqual(false);
-  expect(
-    evaluate(`"bonjour.georges@gmail.com" matches REGEX({{myRegex}})`, {
-      myRegex: 'aurevoir',
-    })
-  ).toEqual(false);
-  expect(
-    evaluate(`"bonjour.georges@gmail.com" matches REGEX({{myRegex}})`, {
-      myRegex: 'aurevoir',
-    })
-  ).toEqual(false);
-  expect(
-    evaluate('"luke.skywalker@gmail.com" matches regex(/skywalker/)', {})
-  ).toEqual(true); // Regex can now be parsed and properly matched !!
-  expect(evaluate('"LOWERCASE" matches regex(/lowercase/i)', {})).toEqual(true);
-  expect(
-    evaluate(
-      `"bonjour.georges@gmail.com" matches regex([a-z0-9]+@[a-z]+.[a-z]{2,3})`,
-      {}
-    )
-  ).toEqual(true);
-  expect(
-    evaluate(
-      `"bonjour.georges@gmail.com" not matches regex([a-z0-9]+@[a-z]+.[a-z]{2,3})`,
-      {}
-    )
-  ).toEqual(false);
-  expect(
-    evaluate(`"bonjour.georges@gmail.com" matches REGEX([0-9]+)`, {})
-  ).toEqual(false);
+describe('Should handle date parsing & formatting', () => {
+  it('works with the date() keyword.', () => {
+    expect(evaluate('date("2022-04-13T08:00:05.493Z").hour == 8', {})).toEqual(
+      true
+    );
+
+    expect(
+      evaluate('date("2022-04-13T08:04:05.493Z").minute == 4', {
+        mydate: '2022-04-13T08:04:05.493Z',
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate('date({{mydate}}).minute > 34 && date({{mydate}}).minute < 37', {
+        mydate: '2022-06-23T08:36:05.493Z',
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate('date({{mydate}}).second >= 5 && date({{mydate}}).second < 6', {
+        mydate: '2022-06-23T08:36:05.493Z',
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate('date({{mydate}}).date == 23', {
+        mydate: '2022-06-23T08:36:05.493Z',
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate('date({{mydate}}).month >= 6 && date({{mydate}}).month < 10', {
+        mydate: '2022-06-23T08:36:05.493Z',
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate('date({{mydate}}).year == 2022', {
+        mydate: '2022-06-23T08:36:05.493Z',
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate('date({{mydate}}).day == 3', {
+        mydate: '2022-04-13T08:36:05.493Z',
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate('date({{mydate}}).day in {{allowedDays}}', {
+        mydate: '2022-04-13T08:36:05.493Z',
+        allowedDays: [1, 2, 3, 4],
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate('date({{mydate}}).day not in {{allowedDays}}', {
+        mydate: '2022-04-09T08:36:05.493Z',
+        allowedDays: [6, 7],
+      })
+    ).toEqual(false);
+
+    expect(
+      evaluate('date({{dateBefore}}) < date({{dateAfter}})', {
+        dateBefore: '2022-04-09T08:36:05.493Z',
+        dateAfter: '2022-04-09T08:39:05.493Z',
+      })
+    ).toEqual(true);
+
+    expect(
+      evaluate('date({{dateAfter}}) < date({{dateBefore}})', {
+        dateBefore: '2022-04-09T08:36:05.493Z',
+        dateAfter: '2022-04-09T08:39:05.493Z',
+      })
+    ).toEqual(false);
+
+    expect(
+      evaluate('date({{dates[{{after}}]}}) < date({{dates[{{before}}]}})', {
+        dates: {
+          before: '2022-04-09T08:36:05.493Z',
+          after: '2022-04-09T08:39:05.493Z',
+        },
+        after: 'after',
+        before: 'before',
+      })
+    ).toEqual(false);
+
+    expect(
+      evaluate(
+        '{{global.googlespeech.cache[{{audioId}}].url}} && date({{global.googlespeech.cache[{{audioId}}].expiresAt}}) > date({{run.date}})',
+        {}
+      )
+    ).toEqual(false);
+  });
+
+  it('Date formatting', () => {
+    expect(
+      evaluate(
+        'date({{date}}, "DD/MM/YYYY")',
+        {
+          date: '2023-03-31T17:07:23.975Z',
+        },
+        false
+      )
+    ).toEqual('31/03/2023');
+
+    expect(
+      evaluate(
+        'date({{date}}, "l")',
+        {
+          date: '2023-03-31T17:07:23.975Z',
+        },
+        false
+      )
+    ).toEqual('3/31/2023');
+
+    expect(
+      evaluate(
+        'date({{date}}, "LT")',
+        {
+          date: '2023-03-31T17:07:23.975Z',
+        },
+        false
+      )
+    ).toEqual('7:07 PM');
+
+    expect(
+      evaluate(
+        'date({{date}}, "LT", "fr")',
+        {
+          date: '2023-03-31T17:07:23.975Z',
+        },
+        false
+      )
+    ).toEqual('19:07');
+
+    expect(
+      evaluate(
+        'date({{date}}, "lll", "fr")',
+        {
+          date: '2023-03-31T17:07:23.975Z',
+        },
+        false
+      )
+    ).toEqual('31 mars 2023 19:07');
+
+    expect(
+      evaluate(
+        'date({{date}}, "l LT")',
+        {
+          date: '2023-03-31T17:07:23.975Z',
+        },
+        false
+      )
+    ).toEqual('3/31/2023 7:07 PM');
+
+    expect(
+      evaluate(
+        'date({{date}}, "LT", "fr", "America/New_York")',
+        {
+          date: '2023-03-31T17:07:23.975Z',
+        },
+        false
+      )
+    ).toEqual('13:07');
+  });
 });
 
-it('works with the date() keyword.', () => {
-  expect(evaluate('date("2022-04-13T08:00:05.493Z").hour == 8', {})).toEqual(
-    true
-  );
+describe('Should handle basic math features', () => {
+  it('Basic math operators', () => {
+    const rand = evaluate('rand()', {}, false);
+    expect(rand).toBeGreaterThanOrEqual(0);
+    expect(rand).toBeLessThan(1);
 
-  expect(
-    evaluate('date("2022-04-13T08:04:05.493Z").minute == 4', {
-      mydate: '2022-04-13T08:04:05.493Z',
-    })
-  ).toEqual(true);
+    const rand2 = evaluate('rand(60, 63)', {}, false);
+    expect(rand2).toBeGreaterThanOrEqual(60);
+    expect(rand2).toBeLessThan(63);
 
-  expect(
-    evaluate('date({{mydate}}).minute > 34 && date({{mydate}}).minute < 37', {
-      mydate: '2022-06-23T08:36:05.493Z',
-    })
-  ).toEqual(true);
+    expect(evaluate('1+1', {}, false)).toEqual(2);
+    expect(evaluate('1+{{var}}', { var: 2 }, false)).toEqual(3);
+    expect(evaluate('{{var}}+1', { var: 2 }, false)).toEqual(3);
+    expect(evaluate('{{var}} * {{var}}', { var: 2 }, false)).toEqual(4);
 
-  expect(
-    evaluate('date({{mydate}}).second >= 5 && date({{mydate}}).second < 6', {
-      mydate: '2022-06-23T08:36:05.493Z',
-    })
-  ).toEqual(true);
+    expect(evaluate('{{var}} * {{var}} + 10', { var: 2 }, false)).toEqual(14);
+    expect(evaluate('{{var}} * {{var}} + 10 / 2', { var: 2 }, false)).toEqual(
+      9
+    );
 
-  expect(
-    evaluate('date({{mydate}}).date == 23', {
-      mydate: '2022-06-23T08:36:05.493Z',
-    })
-  ).toEqual(true);
+    expect(evaluate('{{var}} * ({{var}} + 10)', { var: 2 }, false)).toEqual(24);
+    expect(evaluate('({{var}} * {{var}} + 10) / 2', { var: 2 }, false)).toEqual(
+      7
+    );
 
-  expect(
-    evaluate('date({{mydate}}).month >= 6 && date({{mydate}}).month < 10', {
-      mydate: '2022-06-23T08:36:05.493Z',
-    })
-  ).toEqual(true);
-
-  expect(
-    evaluate('date({{mydate}}).year == 2022', {
-      mydate: '2022-06-23T08:36:05.493Z',
-    })
-  ).toEqual(true);
-
-  expect(
-    evaluate('date({{mydate}}).day == 3', {
-      mydate: '2022-04-13T08:36:05.493Z',
-    })
-  ).toEqual(true);
-
-  expect(
-    evaluate('date({{mydate}}).day in {{allowedDays}}', {
-      mydate: '2022-04-13T08:36:05.493Z',
-      allowedDays: [1, 2, 3, 4],
-    })
-  ).toEqual(true);
-
-  expect(
-    evaluate('date({{mydate}}).day not in {{allowedDays}}', {
-      mydate: '2022-04-09T08:36:05.493Z',
-      allowedDays: [6, 7],
-    })
-  ).toEqual(false);
-
-  expect(
-    evaluate('date({{dateBefore}}) < date({{dateAfter}})', {
-      dateBefore: '2022-04-09T08:36:05.493Z',
-      dateAfter: '2022-04-09T08:39:05.493Z',
-    })
-  ).toEqual(true);
-
-  expect(
-    evaluate('date({{dateAfter}}) < date({{dateBefore}})', {
-      dateBefore: '2022-04-09T08:36:05.493Z',
-      dateAfter: '2022-04-09T08:39:05.493Z',
-    })
-  ).toEqual(false);
-
-  expect(
-    evaluate('date({{dates[{{after}}]}}) < date({{dates[{{before}}]}})', {
-      dates: {
-        before: '2022-04-09T08:36:05.493Z',
-        after: '2022-04-09T08:39:05.493Z',
-      },
-      after: 'after',
-      before: 'before',
-    })
-  ).toEqual(false);
-
-  expect(
-    evaluate(
-      '{{global.googlespeech.cache[{{audioId}}].url}} && date({{global.googlespeech.cache[{{audioId}}].expiresAt}}) > date({{run.date}})',
-      {}
-    )
-  ).toEqual(false);
-});
-
-it('Date formatting', () => {
-  expect(
-    evaluate(
-      'date({{date}}, "DD/MM/YYYY")',
-      {
-        date: '2023-03-31T17:07:23.975Z',
-      },
-      false
-    )
-  ).toEqual('31/03/2023');
-
-  expect(
-    evaluate(
-      'date({{date}}, "l")',
-      {
-        date: '2023-03-31T17:07:23.975Z',
-      },
-      false
-    )
-  ).toEqual('3/31/2023');
-
-  expect(
-    evaluate(
-      'date({{date}}, "LT")',
-      {
-        date: '2023-03-31T17:07:23.975Z',
-      },
-      false
-    )
-  ).toEqual('7:07 PM');
-
-  expect(
-    evaluate(
-      'date({{date}}, "LT", "fr")',
-      {
-        date: '2023-03-31T17:07:23.975Z',
-      },
-      false
-    )
-  ).toEqual('19:07');
-
-  expect(
-    evaluate(
-      'date({{date}}, "lll", "fr")',
-      {
-        date: '2023-03-31T17:07:23.975Z',
-      },
-      false
-    )
-  ).toEqual('31 mars 2023 19:07');
-
-  expect(
-    evaluate(
-      'date({{date}}, "l LT")',
-      {
-        date: '2023-03-31T17:07:23.975Z',
-      },
-      false
-    )
-  ).toEqual('3/31/2023 7:07 PM');
-
-  expect(
-    evaluate(
-      'date({{date}}, "LT", "fr", "America/New_York")',
-      {
-        date: '2023-03-31T17:07:23.975Z',
-      },
-      false
-    )
-  ).toEqual('13:07');
-});
-
-it('Variable type testing', () => {
-  const ctx = {
-    someArray: [],
-    someObject: {},
-  };
-  expect(evaluate('isArray({{someArray}})', ctx)).toBe(true);
-  expect(evaluate('isObject({{someArray}})', ctx)).toBe(false);
-  expect(evaluate('isObject({{someUnknownVar}})', ctx)).toBe(false);
-  expect(evaluate('isObject()', ctx)).toBe(false);
-
-  expect(evaluate('isObject({{someObject}})', ctx)).toBe(true);
-  expect(evaluate('isArray({{someObject}})', ctx)).toBe(false);
-  expect(evaluate('isArray({{someUnknownVar}})', ctx)).toBe(false);
-  expect(evaluate('isArray()', ctx)).toBe(false);
-});
-
-it('Math operators', () => {
-  const rand = evaluate('rand()', {}, false);
-  expect(rand).toBeGreaterThanOrEqual(0);
-  expect(rand).toBeLessThan(1);
-
-  const rand2 = evaluate('rand(60, 63)', {}, false);
-  expect(rand2).toBeGreaterThanOrEqual(60);
-  expect(rand2).toBeLessThan(63);
+    expect(evaluate('rand(10, 11) * {{var}} + 2', { var: 10 }, false)).toEqual(
+      102
+    );
+  });
 });
