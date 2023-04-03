@@ -8,9 +8,10 @@
                 main: {
                         dot: ".",
                         regex: { match: /[rR][eE][gG][eE][xX]\(/, push: 'regex' },
-                        date: { match: /[dD][aA][tT][eE]\(/, push: 'date' },
                         openingBracket: "[",
                         closingBracket: "]",
+                        closingBracket: "]",
+                        comma: ",",
                         openP: { match: "(", push: "main" },
                         closingP: { match: ")", pop: true },
                         ws:     /[ \t]+/,
@@ -51,14 +52,6 @@
                         dcbl: { match: /{{/, push: "variable" },
                         closingP: { match: /\)$/, pop: true },
                         anything: { match: /[^)]+/, lineBreaks: true }
-                },
-                date: {
-                        dcbl: { match: /{{/, push: "variable" },
-                        closingP: { match: /\)/, pop: true },
-                        word: /[a-zA-Z0-9_:.-]+/,
-                        sqstr: /'.*?'/,
-                        dqstr: /".*?"/,
-                        anything: { match: /[^)]+/, lineBreaks: true }
                 }
         });
 %}
@@ -74,6 +67,7 @@
 const Variable = require('./interpreter/Variable').default;
 const ConditionalExpression = require('./interpreter/ConditionalExpression').default;
 const NegationExpression = require('./interpreter/NegationExpression').default;
+const FunctionCall = require('./interpreter/FunctionCall').default;
 const BooleanConstant = require('./interpreter/BooleanConstant').default;
 const NullConstant = require('./interpreter/NullConstant').default;
 const NumberConstant = require('./interpreter/NumberConstant').default;
@@ -128,10 +122,10 @@ unaryExpression ->
         | undefinedLiteral {% ([value]) => new Variable(value) %}
         | number {% ([value]) => new NumberConstant(value) %}
         | string {% ([value]) => new StringConstant(value) %}
-        | date {% ([value]) => new DateExpression(value) %}
         | variable {% id %}
         | %bang _ unaryExpression {% ([,,node]) => new NegationExpression(node) %}
         | %openP _ expression _ %closingP {% d => d[2] %}
+        | functionCall {% ([value]) => new FunctionCall(value) %}
 
 variable -> %dcbl _ variablePath _ %dcbr {% ([,,path]) => new Variable(path)  %}
 
@@ -140,10 +134,6 @@ variablePath ->
 		| variablePath %openingBracket expression %closingBracket {% d => [...arrayify(d[0]), d[2]] %}
         | variablePath _ %dot _ %word {% d => [...arrayify(d[0]), d[4]] %}
 
-insideADate -> string {% id %} | variable {% id %}
-date ->
-        %date insideADate %closingP %dot %word {% ([, date, , , elem]) => [date, elem.value] %}
-        | %date insideADate %closingP {% ([, date]) => [date] %}
 string ->
         %dqstr {% retrieveActualString(`"`) %}
         | %sqstr {% retrieveActualString(`'`) %}
@@ -153,5 +143,28 @@ number -> jsonfloat {% id %}
 boolean -> %true {% () => true %} | %false {% () => false %}
 nullLiteral -> %null {% () => null %}
 undefinedLiteral -> %undefined {% () => undefined %}
+
+# Functions
+functionParams
+    -> null {% () => [] %}
+    |  _ unaryExpression _  {% d => [d[1]] %}
+    |  _ unaryExpression _ "," functionParams
+        {%
+            d => [d[1], ...d[4]]
+        %}
+
+optionalResultSubkey
+    -> null {% () => null %}
+    | "." %word {% d => d[1].value  %}
+
+functionCall
+    -> %word "(" functionParams ")" optionalResultSubkey
+        {%
+            d => ({
+                functionName: d[0].value,
+                arguments: d[2],
+                resultKey: d[4]
+            })
+        %}
 
 _ -> [\s]:* {% () => null %}

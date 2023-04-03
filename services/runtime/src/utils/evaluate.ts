@@ -1,5 +1,5 @@
 import { evaluate as angelEval } from '../../deps/condition-eval';
-import { InvalidConditionSyntax } from '../errors';
+import { InvalidExpressionSyntax } from '../errors';
 
 export const evaluate = (
   expression: string,
@@ -14,6 +14,9 @@ export const evaluate = (
   try {
     return angelEval(expression, scope, strictBoolean); // Use angel-eval fork
   } catch (e: any) {
-    throw new InvalidConditionSyntax(e.message, { expression });
+    if (!(e instanceof InvalidExpressionSyntax)) {
+      throw new InvalidExpressionSyntax(e.message, { expression });
+    }
+    throw e;
   }
 };

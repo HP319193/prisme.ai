@@ -2,6 +2,7 @@
 
 import { parseVariableName } from './parseVariableName';
 import { evaluate as evaluateExpr } from './evaluate';
+import { PrismeError } from '../errors';
 
 const getValueFromCtx = (pathStr: string, context: any) => {
   const path = parseVariableName(pathStr);
@@ -78,6 +79,9 @@ export const interpolate = (
       }
       return target;
     } catch (e) {
+      if (e instanceof PrismeError) {
+        throw e;
+      }
       throw new Error(`Could not interpolate string "${target}": ${e}`);
     }
   } else if (Array.isArray(target)) {

@@ -45,3 +45,6 @@ export const SYNCHRONIZE_CONTEXTS = [
   'user',
   'global',
 ];
+
+export const DEFAULT_LOCALE = process.env.DEFAULT_LOCALE || 'en';
+export const DEFAULT_TIMEZONE = process.env.DEFAULT_TIMEZONE || 'Europe/Paris';

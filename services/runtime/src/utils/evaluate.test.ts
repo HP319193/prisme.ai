@@ -342,7 +342,7 @@ it('works with the date() keyword.', () => {
   );
 
   expect(
-    evaluate('date(2022-04-13T08:04:05.493Z).minute == 4', {
+    evaluate('date("2022-04-13T08:04:05.493Z").minute == 4', {
       mydate: '2022-04-13T08:04:05.493Z',
     })
   ).toEqual(true);
@@ -428,4 +428,76 @@ it('works with the date() keyword.', () => {
       {}
     )
   ).toEqual(false);
+});
+
+it('Date formatting', () => {
+  expect(
+    evaluate(
+      'date({{date}}, "DD/MM/YYYY")',
+      {
+        date: '2023-03-31T17:07:23.975Z',
+      },
+      false
+    )
+  ).toEqual('31/03/2023');
+
+  expect(
+    evaluate(
+      'date({{date}}, "l")',
+      {
+        date: '2023-03-31T17:07:23.975Z',
+      },
+      false
+    )
+  ).toEqual('3/31/2023');
+
+  expect(
+    evaluate(
+      'date({{date}}, "LT")',
+      {
+        date: '2023-03-31T17:07:23.975Z',
+      },
+      false
+    )
+  ).toEqual('7:07 PM');
+
+  expect(
+    evaluate(
+      'date({{date}}, "LT", "fr")',
+      {
+        date: '2023-03-31T17:07:23.975Z',
+      },
+      false
+    )
+  ).toEqual('19:07');
+
+  expect(
+    evaluate(
+      'date({{date}}, "lll", "fr")',
+      {
+        date: '2023-03-31T17:07:23.975Z',
+      },
+      false
+    )
+  ).toEqual('31 mars 2023 19:07');
+
+  expect(
+    evaluate(
+      'date({{date}}, "l LT")',
+      {
+        date: '2023-03-31T17:07:23.975Z',
+      },
+      false
+    )
+  ).toEqual('3/31/2023 7:07 PM');
+
+  expect(
+    evaluate(
+      'date({{date}}, "LT", "fr", "America/New_York")',
+      {
+        date: '2023-03-31T17:07:23.975Z',
+      },
+      false
+    )
+  ).toEqual('13:07');
 });
