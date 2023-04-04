@@ -47,7 +47,7 @@ class FunctionCall extends Evaluatable {
         return min === 0 && max === 1 ? rand : Math.floor(rand);
       case 'round':
         const [number, decimals = 0] = functionArgs;
-        if (typeof number !== 'number' && typeof decimals !== 'number') {
+        if (typeof number !== 'number' || typeof decimals !== 'number') {
           throw new InvalidExpressionSyntax(
             `Invalid parameters ${number} and ${decimals} given to round function`
           );
