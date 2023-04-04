@@ -163,13 +163,13 @@ export default class S3Like implements IStorage {
     );
   }
 
-  public async save(key: string, data: any, opts: SaveOptions) {
+  public async save(key: string, data: any, opts?: SaveOptions) {
     const params = {
       Bucket: this.options.bucket,
       Key: key,
       Body: data,
       CacheControl: this.options.cacheControl,
-      ContentType: opts.mimetype,
+      ContentType: opts?.mimetype,
     };
     const result = await new Promise((resolve: any, reject: any) => {
       this.client.putObject(params, function (err: any, data: any) {
