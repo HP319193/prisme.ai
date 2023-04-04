@@ -8,11 +8,14 @@
                 main: {
                         dot: ".",
                         regex: { match: /[rR][eE][gG][eE][xX]\(/, push: 'regex' },
-                        date: { match: /[dD][aA][tT][eE]\(/, push: 'date' },
                         openingBracket: "[",
                         closingBracket: "]",
+                        closingBracket: "]",
+                        comma: ",",
                         openP: { match: "(", push: "main" },
+                        openCondBrackets: { match: /\{\%/, push: "main" },
                         closingP: { match: ")", pop: true },
+                        closingCondBrackets: { match: /\%\}/, push: "main" },
                         ws:     /[ \t]+/,
                         number: /[0-9]+/,
                         matches: /[Mm][Aa][Tt][Cc][Hh][Ee][Ss]/,
@@ -35,6 +38,11 @@
                         sqstr: /'.*?'/,
                         dqstr: /".*?"/,
                         dcbl: { match: /{{/, push: "variable" },
+                        plus: "+",
+                        minus: "-",
+                        multiply: "*",
+                        divide: "/",
+                        modulo: "%",
                 },
                 variable: {
                         dcbl: { match: /{{/, push: "variable" },
@@ -51,14 +59,6 @@
                         dcbl: { match: /{{/, push: "variable" },
                         closingP: { match: /\)$/, pop: true },
                         anything: { match: /[^)]+/, lineBreaks: true }
-                },
-                date: {
-                        dcbl: { match: /{{/, push: "variable" },
-                        closingP: { match: /\)/, pop: true },
-                        word: /[a-zA-Z0-9_:.-]+/,
-                        sqstr: /'.*?'/,
-                        dqstr: /".*?"/,
-                        anything: { match: /[^)]+/, lineBreaks: true }
                 }
         });
 %}
@@ -74,11 +74,13 @@
 const Variable = require('./interpreter/Variable').default;
 const ConditionalExpression = require('./interpreter/ConditionalExpression').default;
 const NegationExpression = require('./interpreter/NegationExpression').default;
+const FunctionCall = require('./interpreter/FunctionCall').default;
 const BooleanConstant = require('./interpreter/BooleanConstant').default;
 const NullConstant = require('./interpreter/NullConstant').default;
 const NumberConstant = require('./interpreter/NumberConstant').default;
 const StringConstant = require('./interpreter/StringConstant').default;
 const DateExpression = require('./interpreter/DateExpression').default;
+const MathematicalExpression = require('./interpreter/MathematicalExpression').default;
 
 const arrayify = item => Array.isArray(item) ? item : [item];
 const joinFirst =
@@ -128,10 +130,12 @@ unaryExpression ->
         | undefinedLiteral {% ([value]) => new Variable(value) %}
         | number {% ([value]) => new NumberConstant(value) %}
         | string {% ([value]) => new StringConstant(value) %}
-        | date {% ([value]) => new DateExpression(value) %}
         | variable {% id %}
         | %bang _ unaryExpression {% ([,,node]) => new NegationExpression(node) %}
         | %openP _ expression _ %closingP {% d => d[2] %}
+        | %openCondBrackets _ expression _ %closingCondBrackets {% d => d[2] %}
+        | functionCall {% id %}
+        | mathematicalExpression {% id %}
 
 variable -> %dcbl _ variablePath _ %dcbr {% ([,,path]) => new Variable(path)  %}
 
@@ -140,10 +144,6 @@ variablePath ->
 		| variablePath %openingBracket expression %closingBracket {% d => [...arrayify(d[0]), d[2]] %}
         | variablePath _ %dot _ %word {% d => [...arrayify(d[0]), d[4]] %}
 
-insideADate -> string {% id %} | variable {% id %}
-date ->
-        %date insideADate %closingP %dot %word {% ([, date, , , elem]) => [date, elem.value] %}
-        | %date insideADate %closingP {% ([, date]) => [date] %}
 string ->
         %dqstr {% retrieveActualString(`"`) %}
         | %sqstr {% retrieveActualString(`'`) %}
@@ -154,4 +154,62 @@ boolean -> %true {% () => true %} | %false {% () => false %}
 nullLiteral -> %null {% () => null %}
 undefinedLiteral -> %undefined {% () => undefined %}
 
+# Functions
+functionParams
+    -> null {% () => [] %}
+    |  _ unaryExpression _  {% d => [d[1]] %}
+    |  _ unaryExpression _ "," functionParams
+        {%
+            d => [d[1], ...d[4]]
+        %}
+
+optionalResultSubkey
+    -> null {% () => null %}
+    | "." %word {% d => d[1].value  %}
+
+functionCall
+    -> %word "(" functionParams ")" optionalResultSubkey
+        {%
+            d => new FunctionCall({
+                functionName: d[0].value,
+                arguments: d[2],
+                resultKey: d[4]
+            })
+        %}
+
+# Math
+mathematicalExpression
+    ->  _ AdditionSubstraction _ {% data => data[1] %}
+
+
+AdditionSubstraction
+    ->  AdditionSubstraction _ "+" _ ModuloMultiplyDivide
+        {% data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] }) %}
+    |   AdditionSubstraction _ "-" _ ModuloMultiplyDivide
+        {% data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] }) %}
+    |   ModuloMultiplyDivide
+        {% id %}
+
+
+ModuloMultiplyDivide
+    ->  ModuloMultiplyDivide _ "%" _ Parenthesized
+        {% data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] }) %}
+    | ModuloMultiplyDivide _ "*" _ Parenthesized
+        {% data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] }) %}
+    | ModuloMultiplyDivide _ "/" _ Parenthesized
+        {% data => new MathematicalExpression({ leftTerm: data[0], op: data[2].value, rightTerm: data[4] }) %}
+    | Parenthesized
+        {% id %}
+
+Parenthesized
+    ->  %openP _ mathematicalExpression _ %closingP   {% data => data[2] %}
+    | Term {% id %}
+
+Term
+    ->  number {% ([value]) => new NumberConstant(value) %}
+    | variable {% id %}
+    | functionCall {% id %}
+
+
+# Misc
 _ -> [\s]:* {% () => null %}

@@ -72,8 +72,11 @@ export class InvalidInstructionError extends PrismeError {
   }
 }
 
-export class InvalidConditionSyntax extends PrismeError {
-  constructor(msg: string = 'Invalid syntax in a condition', details?: any) {
+export class InvalidExpressionSyntax extends PrismeError {
+  constructor(
+    msg: string = 'Invalid syntax in a condition or expression',
+    details?: any
+  ) {
     super(msg, details);
   }
 }

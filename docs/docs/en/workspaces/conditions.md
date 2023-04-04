@@ -2,9 +2,17 @@
 
 [Condition](../instructions#conditions) instructions allows to execute different instructions depending on contextual informations such as the user age, an input form value, ...  
 
-These conditions are described using a very common syntax across programming languages, not so difficult to use but still very powerful.  
+These conditions are described using a very common expression syntax across programming languages, not so difficult to use but still very powerful.  
 
-[Variables](../instructions#variables) can be used in most parts of conditions. 
+[Variables](../instructions#variables) can be used in most parts of conditions.  
+Expression syntax is not restricted to conditions but can also be evaluated anywhere, simply by wrapping the expression with `{% ... %}`, as follows :  
+```yaml
+- emit:
+    event: someEvent
+    payload:
+      is20GreaterThan18: "{% 20 > 18 %}" # Will evaluate to true
+      currentTimestamp: "{% date({{run.date}}) %}" # Will evaluate to current timestamp
+```
 
 ## Basic operators
 
@@ -45,6 +53,10 @@ These conditions are described using a very common syntax across programming lan
 `{{someKey}} not in "my,string,list"`
 `{{someKey}} not in {{myStringList}}`
 
+**Testing variables types** :  
+`isArray(someVariable)`  
+`isObject(someVariable)`  
+
 
 ## Logical operators  
 
@@ -72,6 +84,7 @@ When using the `match` operator, a **RegExp** can also be provided with the `reg
 `
 
 ## Dates
+### Parsing
 As long as they are ISO8601 dates, dates can be tested directly within conditions :  
 
 `date("2022-04-13T08:00:05.493Z").hour == 8`   
@@ -82,6 +95,46 @@ As long as they are ISO8601 dates, dates can be tested directly within condition
 `date({{mydate}}).year == 2022`  
 `date({{mydate}}).day == 3`  
 `date({{mydate}}).day in {{allowedDays}}`     
+`date({{mydate}}).ts == 1649836805493`  
 
 * Tested values are **UTC** based  
 * **day** starts on **0** for **Sunday** (so **3** is **Wednesday**)
+
+### Formatting
+Using this same `date` keyword, we can also generate localized & human readable date strings from some valid ISO8601 date :  
+
+`date("2023-03-31T17:07:23.975Z", "l") == "3/31/2023"`
+
+`date("2023-03-31T17:07:23.975Z", "DD/MM/YYYY") == "3/31/2023"`
+
+`date("2023-03-31T17:07:23.975Z", "LT") == "7:07 PM"`
+
+`date("2023-03-31T17:07:23.975Z", "LT", "fr") == "19:07"`
+
+`date("2023-03-31T17:07:23.975Z", "LT", "fr") == "19:07"`
+
+`date("2023-03-31T17:07:23.975Z", "lll", "fr") == "31 mars 2023 19:07"`
+
+`date("2023-03-31T17:07:23.975Z", "l LT") == "3/31/2023 7:07 PM`
+
+`date("2023-03-31T17:07:23.975Z", "LT", "fr", "America/New_York") == "13:07"`
+
+See all formatting options on https://day.js.org/docs/en/display/format.  
+Default language is English, but can be changed with the 3rd parameter ([see available languages](https://github.com/iamkun/dayjs/tree/dev/src/locale)).   
+Default time zone is 'Europe/Paris' (explaining the +2 hours shift above), but can be changed with the 4th parameter.
+
+## Math
+The following math operators are supported : +, -, *, /, % and parenthesis.  
+
+Examples:  
+`1+1`  
+`1+{{someVariable}}`  
+`{{firstVar}} * {{secondVar}}`  
+`({{firstVar}} * {{secondVar}} + 10) / 2`   
+
+We can also generate a random number greater than or equal to a minimum value and  less than a maximum value :  
+`rand(50, 150)`  
+
+`rand()` without any parameter returns a random floating-point number between 0 and 1.  
+
+Functions like rand() can also be combined with mathematical operators : `rand(10, 11) * {{var}} + 2`

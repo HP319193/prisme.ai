@@ -459,3 +459,67 @@ it('array of numbers should be kept intact', async () => {
     },
   ]);
 });
+
+describe('Expressions can be evaluated with {% %}', () => {
+  it('Basic expressions', () => {
+    expect(interpolate('{% 1 < 2 %}', {})).toBe(true);
+    expect(interpolate('stringified = {% 1 > 2 %}', {})).toEqual(
+      'stringified = false'
+    );
+  });
+
+  it('Variables inside expressions', () => {
+    expect(
+      interpolate('{% date({{run.date}}).date %}', {
+        run: {
+          date: '2023-03-31T16:38:51.190Z',
+        },
+      })
+    ).toEqual(31);
+
+    expect(
+      interpolate('{% date({{run[{{key}}]}}).date %}', {
+        key: 'date',
+        run: {
+          date: '2023-03-31T16:38:51.190Z',
+        },
+      })
+    ).toEqual(31);
+  });
+
+  it('Nested expressions', () => {
+    expect(
+      interpolate('{% date({{run.date}}).date %} < 2', {
+        run: {
+          date: '2023-03-31T16:38:51.190Z',
+        },
+      })
+    ).toEqual('31 < 2');
+
+    expect(
+      interpolate('{% {% date({{run[{{key}}]}}).date %} < 30 %}', {
+        key: 'date',
+        run: {
+          date: '2023-03-31T16:38:51.190Z',
+        },
+      })
+    ).toEqual(false);
+    expect(
+      interpolate('{% {% date({{run[{{key}}]}}).date %} < 32 %}', {
+        key: 'date',
+        run: {
+          date: '2023-03-31T16:38:51.190Z',
+        },
+      })
+    ).toEqual(true);
+    expect(
+      interpolate('{% {% date({{run[{{key}}]}}).date %} < {{max}} %}', {
+        key: 'date',
+        run: {
+          date: '2023-03-31T16:38:51.190Z',
+        },
+        max: 32,
+      })
+    ).toEqual(true);
+  });
+});

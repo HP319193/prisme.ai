@@ -36,7 +36,6 @@ const _parse = (expression: string) => {
     return node;
   } catch (e: any) {
     const segments = e.message?.split(/\r?\n/g).slice(0, 4);
-
     segments[2] = segments[2].substring(1);
     segments[3] = segments[3].substring(1);
 
