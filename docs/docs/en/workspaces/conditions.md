@@ -124,6 +124,8 @@ Default language is English, but can be changed with the 3rd parameter ([see ava
 Default time zone is 'Europe/Paris' (explaining the +2 hours shift above), but can be changed with the 4th parameter.
 
 ## Math
+
+### Operators
 The following math operators are supported : +, -, *, /, % and parenthesis.  
 
 Examples:  
@@ -132,9 +134,15 @@ Examples:
 `{{firstVar}} * {{secondVar}}`  
 `({{firstVar}} * {{secondVar}} + 10) / 2`   
 
-We can also generate a random number greater than or equal to a minimum value and  less than a maximum value :  
-`rand(50, 150)`  
+### Functions
 
+**rand** lets you generate a random number greater than or equal to a minimum value and  less than a maximum value :  
+`rand(50, 150)`  
 `rand()` without any parameter returns a random floating-point number between 0 and 1.  
+
+**round** lets you round a number to a specified precision (defaults to 0) :  
+`round(10.2) == 10`  
+`round(10.2,1) == 10.2`  
+`round(10.26,1) == 10.3`  
 
 Functions like rand() can also be combined with mathematical operators : `rand(10, 11) * {{var}} + 2`

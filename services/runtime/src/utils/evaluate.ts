@@ -18,6 +18,10 @@ export const evaluate = (
     if (!(e instanceof InvalidExpressionSyntax)) {
       throw new InvalidExpressionSyntax(e.message, { expression });
     }
+    e.details = {
+      ...e.details,
+      expression,
+    };
     throw e;
   }
 };

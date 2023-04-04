@@ -563,5 +563,13 @@ describe('Should handle basic math features', () => {
         false
       )
     ).toEqual('2023-04-04T18:58:54.526Z');
+
+    expect(evaluate('round({{var}})', { var: 10 }, false)).toEqual(10);
+    expect(evaluate('round({{var}})', { var: 10.2 }, false)).toEqual(10);
+    expect(evaluate('round({{var}}, 1)', { var: 10.2 }, false)).toEqual(10.2);
+    expect(evaluate('round({{var}}, 1)', { var: 10.26 }, false)).toEqual(10.3);
+    expect(evaluate('round({{var}}, 2)', { var: 10.262 }, false)).toEqual(
+      10.26
+    );
   });
 });
