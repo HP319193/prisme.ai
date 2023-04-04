@@ -96,9 +96,12 @@ describe('Should handle basic conditions features', () => {
       someArray: [],
       someObject: {},
     };
+    expect(evaluate('isArray()', ctx)).toBe(false);
     expect(evaluate('isArray({{someArray}})', ctx)).toBe(true);
+    expect(evaluate('isArray(someArray)', ctx)).toBe(true);
     expect(evaluate('isObject({{someArray}})', ctx)).toBe(false);
     expect(evaluate('isObject({{someUnknownVar}})', ctx)).toBe(false);
+    expect(evaluate('isObject(someUnknownVar)', ctx)).toBe(false);
     expect(evaluate('isObject()', ctx)).toBe(false);
 
     expect(evaluate('isObject({{someObject}})', ctx)).toBe(true);

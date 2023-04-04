@@ -1,6 +1,7 @@
 import { InvalidExpressionSyntax } from '../../../../src/errors';
 import Evaluatable from '../Evaluatable';
 import DateExpression from './DateExpression';
+import get from 'lodash/get';
 
 class FunctionCall extends Evaluatable {
   functionName: string;
@@ -29,11 +30,17 @@ class FunctionCall extends Evaluatable {
       case 'date':
         return new DateExpression(functionPayload).evaluate(context);
       case 'isArray':
-        return Array.isArray(functionArgs[0]);
+        const arrayValue =
+          typeof functionArgs[0] === 'string' && functionArgs[0]
+            ? get(context, functionArgs[0])
+            : functionArgs[0];
+        return Array.isArray(arrayValue);
       case 'isObject':
-        return (
-          !Array.isArray(functionArgs[0]) && typeof functionArgs[0] === 'object'
-        );
+        const objectValue =
+          typeof functionArgs[0] === 'string' && functionArgs[0]
+            ? get(context, functionArgs[0])
+            : functionArgs[0];
+        return !Array.isArray(objectValue) && typeof objectValue === 'object';
       case 'rand':
         const [min = 0, max = 1] = functionArgs;
         const rand = Math.random() * (max - min) + min;

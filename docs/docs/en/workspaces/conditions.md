@@ -54,8 +54,8 @@ Expression syntax is not restricted to conditions but can also be evaluated anyw
 `{{someKey}} not in {{myStringList}}`
 
 **Testing variables types** :  
-`isArray({{someVariable}})`  
-`isObject({{someVariable}})`  
+`isArray(someVariable)`  
+`isObject(someVariable)`  
 
 
 ## Logical operators  
