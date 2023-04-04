@@ -1,155 +1,16 @@
-# Form Management
-Build a form with file upload and send the result by email & post data to salesforce
+# Banking Simulator
+Build a platform to simulate banking services
 
-## [Live demo](https://form-mail-salesforce.pages.prisme.ai)
+## [Live demo](https://sofiap.pages.prisme.ai/en)
 
-<details>
-  <summary>See DSUL </summary>
 
-```
-name: Form
-slug: form-mail-salesforce
-pages:
-  index:
-    name: My Form
-    blocks:
-      - name: Form
-        config:
-          title: Complaint
-          schema:
-            type: object
-            properties:
-              firstName:
-                type: string
-                title: First Name
-              lastName:
-                type: string
-                title: Last Name
-              message:
-                type: string
-                ui:widget: textarea
-                title: Message
-              date:
-                type: string
-                ui:widget: date
-                title: Date
-              file:
-                type: string
-                ui:widget: upload
-                title: Invoice
-          submitLabel: Send
-          onSubmit: submit-form
-      - name: Cards
-        config:
-          variant: square
-          layout:
-            type: carousel
-          title: My complaints
-          cards:
-            - action:
-                type: event
-              title: Claim 1
-              cover: >-
-                https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/I8zxscG/JDcutMLzCnm65nKjccpGM.Prisme.ai
-                Embleme.png
-    styles: |-
+# AI Inbox
+Streamline your customer interactions with AI Inbox. The ultimate solution for intelligent and omnichannel message processing
 
-      body {
-        --color-accent: #015dff;
-        --color-background: white;
-        --color-text: black;
-        --color-border: black;
-        --color-background-transparent: rgba(0,0,0,0.05);
-        --color-input-background: white;
-        background-color: var(--color-background);
-      }
-
-      .content-stack__content {
-        background-color: var(--color-background);
-        margin-top: 1rem;
-      }
-
-      .content-stack__content .block-form {
-        padding-left: 2rem !important;
-      }
-      .content-stack__content .block-cards,
-      .content-stack__content .block-rich-text {
-        padding-left: 2rem;
-      }
-
-      .page-blocks {
-        padding: 2rem;
-      }
-
-      .block-form {
-        padding: 0;
-      }
-
-      .block-form label {
-        color: var(--color-text)
-      }
-
-      .block-form .ant-input {
-        width: calc(100% - 2rem);
-        border-radius: 0.625rem;
-        border-color: var(--color-border);
-        color: var(--color-text);
-        background-color: var(--color-input-background);
-      }
-
-      .block-form .ant-input::placeholder {
-        color: black;
-      }
-    workspaceSlug: loud-mole-60
-    id: FwHBmYJ
-    apiKey: e293ea5a-5298-48c8-9d59-e209aa45e497
-    workspaceId: I8zxscG
-imports:
-  Salesforce:
-    appSlug: Salesforce
-    appName: Salesforce
-    config:
-      clientId: XX
-      clientSecret: XX
-      username: XX
-      password: XX
-      loginHost: XX
-  SendMail:
-    appSlug: SendMail
-    appName: SendMail
-automations:
-  Submit-form:
-    name: Submit-form
-    do:
-      - conditions:
-          '{{file}}':
-            - Salesforce.post-lead:
-                lead:
-                  email: '{{payload.email}}'
-                  firstName: '{{payload. firstName}}'
-                  lastName: '{{payload. lastName}}'
-                  company: '{{payload. company}}'
-                output: leadSalesforce
-            - SendMail.sendMail:
-                to: sales@company.com
-                replyTo: no-reply@example.com
-                subject: New Customers
-                body: |-
-                  Hey,
-
-                  New customer with complain {{leadSalesforce.id}}
-          default: []
-    when:
-      events:
-        - submit-form
-      endpoint: false
-
-```
-
-</details>
+## [Live demo](https://inbox-product.pages.prisme.ai/en)
 
 # Mini Marketplace
-A projetct starter to have a marketplace to manage freelances & projects
+A project starter to have a marketplace to manage freelances & projects
 ## [Live demo](https://mini-marketplace.pages.prisme.ai)
 
 
