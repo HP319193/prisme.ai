@@ -7,6 +7,7 @@ import { BaseBlockConfig } from './types';
 import { BaseBlock } from './BaseBlock';
 import { useMemo } from 'react';
 import useLocalizedText from '../useLocalizedText';
+import { useTranslation } from 'react-i18next';
 
 interface HeaderConfig extends BaseBlockConfig {
   title?: Prismeai.LocalizedText;
@@ -30,6 +31,9 @@ export const Header = ({
   level = 1,
   ...config
 }: HeaderProps) => {
+  const {
+    i18n: { language },
+  } = useTranslation();
   const { localize } = useLocalizedText();
   const nav = config.nav && Array.isArray(config.nav) ? config.nav : [];
 
