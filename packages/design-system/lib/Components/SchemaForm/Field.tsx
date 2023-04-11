@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Form, useField } from 'react-final-form';
+import arrayMutators from 'final-form-arrays';
 import { SchemaFormContext, useSchemaForm } from './context';
 import Enum from './Enum';
 import OneOf from './OneOf';
@@ -88,7 +89,11 @@ export const SelfField = (
 ) => {
   const values = useRef({ values: props.value });
   return (
-    <Form onSubmit={props.onChange} initialValues={values.current}>
+    <Form
+      onSubmit={props.onChange}
+      initialValues={values.current}
+      mutators={{ ...arrayMutators }}
+    >
       {() => (
         <>
           <OnChange name="values">
