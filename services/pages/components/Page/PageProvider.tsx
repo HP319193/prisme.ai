@@ -1,6 +1,7 @@
 import { createContext, FC, useContext } from 'react';
 import usePageEvents from './usePageEvents';
 import usePageFetcher from './usePageFetcher';
+import usePageParent from './usePageParent';
 
 export interface PageContext
   extends ReturnType<typeof usePageFetcher>,
@@ -33,6 +34,7 @@ export const PageProvider: FC<PageProviderProps> = ({
     pageFromServer || undefined
   );
   const { events } = usePageEvents(page);
+  usePageParent(events);
 
   return (
     <pageContext.Provider
