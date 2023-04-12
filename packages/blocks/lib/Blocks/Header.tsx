@@ -50,6 +50,7 @@ export const Header = ({
   );
 
   const H = `h${level}` as keyof JSX.IntrinsicElements;
+  const title = localize(config.title);
 
   return (
     <div className={`pr-block-header ${className}            block-header`}>
@@ -67,9 +68,11 @@ export const Header = ({
             {!config.logo?.action && logo}
           </div>
         )}
-        <H className="pr-block-header__title           left__title">
-          {localize(config.title)}
-        </H>
+        {title && (
+          <H className="pr-block-header__title           left__title">
+            {title}
+          </H>
+        )}
       </div>
       <Menu
         items={nav.map((props, k) => ({
