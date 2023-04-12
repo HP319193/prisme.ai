@@ -220,6 +220,9 @@ const defaultStyles = `:block {
 .pr-block-carousel__arrow--right {
   right: 1rem;
 }
+.pr-block-blocks-list > .pr-block-blocks-list__block {
+  flex-shrink: 0;
+}
 `;
 
 export const CarouselInContext = () => {
