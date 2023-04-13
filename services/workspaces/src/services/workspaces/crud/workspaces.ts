@@ -394,6 +394,25 @@ class Workspaces {
     return newWorkspace;
   };
 
+  exportWorkspace = async (
+    workspaceId: string,
+    version?: string,
+    format?: string
+  ) => {
+    await this.getWorkspace(workspaceId, version);
+
+    const archive = await this.storage.export(
+      {
+        workspaceId,
+        version,
+        parentFolder: true,
+      },
+      format
+    );
+
+    return archive;
+  };
+
   getIndex = async <t extends DSULType>(
     dsulType: t,
     workspaceId: string,

@@ -16,6 +16,15 @@ export interface IStorage {
 
   delete(id: string): any;
   deleteMany(ids: string[]): any;
+
+  export(
+    prefix: string,
+    format?: string
+  ): Promise<{
+    extension: string;
+    mimetype?: string;
+    buffer: Buffer;
+  }>;
 }
 
 export enum DriverType {

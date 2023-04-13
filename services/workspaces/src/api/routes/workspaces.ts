@@ -259,6 +259,39 @@ export default function init(
     res.send(workspace);
   }
 
+  async function exportWorkspaceHandler(
+    {
+      accessManager,
+      params: { workspaceId, versionId },
+      query: { format },
+      context,
+      broker,
+    }: Request<PrismeaiAPI.ExportWorkspaceVersion.PathParameters>,
+    res: Response<PrismeaiAPI.ExportWorkspaceVersion.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    const archive = await workspaces.exportWorkspace(
+      workspaceId,
+      versionId,
+      format as string
+    );
+    res.setHeader(
+      'Content-disposition',
+      `attachment; filename=${workspaceId}-${versionId || 'current'}.${
+        archive.extension
+      }`
+    );
+    res.setHeader(
+      'Content-type',
+      archive.mimetype || 'application/octet-stream'
+    );
+    res.send(archive.buffer as any);
+  }
+
   const app = express.Router();
 
   app.post(`/`, asyncRoute(createWorkspaceHandler));
@@ -283,6 +316,10 @@ export default function init(
   app.post(
     `/:workspaceId/versions/:versionId/duplicate`,
     asyncRoute(duplicateWorkspaceHandler)
+  );
+  app.post(
+    `/:workspaceId/versions/:versionId/export`,
+    asyncRoute(exportWorkspaceHandler)
   );
 
   return app;

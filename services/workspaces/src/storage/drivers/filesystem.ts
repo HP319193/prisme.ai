@@ -1,5 +1,6 @@
+import archiver from 'archiver';
 import { DriverType, IStorage, ObjectList } from '../types';
-import { join, dirname } from 'path';
+import { join, dirname, basename } from 'path';
 import fs, { promises as promisesFs } from 'fs';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 
@@ -142,5 +143,63 @@ export default class Filesystem implements IStorage {
         ErrorSeverity.Fatal
       );
     }
+  }
+
+  async export(path: string, format: string = 'zip') {
+    const fullPath = this.getPath(path);
+    const parentDirectory = dirname(fullPath);
+
+    let isDirectory;
+    try {
+      isDirectory = fs.lstatSync(fullPath).isDirectory();
+    } catch {
+      throw new ObjectNotFoundError();
+    }
+
+    const archive = archiver((format as any) || 'zip', {
+      zlib: { level: 9 }, // Sets the compression level.
+    });
+
+    const buffers: Buffer[] = [];
+    archive.on('readable', function (buffer) {
+      for (;;) {
+        let buffer = archive.read();
+        if (!buffer) {
+          break;
+        }
+        buffers.push(buffer);
+      }
+    });
+
+    const completionPromise = new Promise<Buffer>((resolve, reject) => {
+      archive.on('warning', function (err) {
+        if (err.code === 'ENOENT') {
+          reject(new ObjectNotFoundError());
+        } else {
+          reject(err);
+        }
+      });
+      archive.on('error', function (err) {
+        reject(err);
+      });
+      archive.on('end', () => {
+        const buffer = Buffer.concat(buffers);
+        resolve(buffer);
+      });
+    });
+
+    if (isDirectory) {
+      archive.directory(fullPath, basename(fullPath));
+    } else {
+      archive.append(fs.createReadStream(fullPath), {
+        name: basename(fullPath),
+      });
+    }
+
+    archive.finalize();
+    return completionPromise.then((buffer) => ({
+      buffer,
+      extension: format,
+    }));
   }
 }

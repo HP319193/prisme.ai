@@ -4321,6 +4321,60 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
+  /v2/workspaces/{workspaceId}/versions/{versionId}/export:
+    post:
+      description: Export this workspace as an archive
+      operationId: exportWorkspaceVersion
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'versionId'
+          in: 'path'
+          description: 'Version name'
+          required: true
+          schema:
+            type: string
+        - name: 'format'
+          in: 'query'
+          description: 'Archive format'
+          schema:
+            type: string
+            enum:
+              - zip
+              - tar
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
   ## automations
   /v2/workspaces/{workspaceId}/automations:
     post:

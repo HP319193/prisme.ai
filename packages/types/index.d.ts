@@ -2880,6 +2880,26 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace ExportWorkspaceVersion {
+        namespace Parameters {
+            export type Format = "zip" | "tar" | "gzip";
+            export type VersionId = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            versionId: Parameters.VersionId;
+        }
+        export interface QueryParameters {
+            format?: Parameters.Format;
+        }
+        namespace Responses {
+            export type $200 = string; // binary
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace GetApp {
         namespace Parameters {
             export type AppSlug = string;

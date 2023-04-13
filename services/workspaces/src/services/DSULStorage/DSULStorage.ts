@@ -355,4 +355,8 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
   async copy(fromQuery: DSULQuery, toQuery: DSULQuery) {
     await this.driver.copy(this.getPath(fromQuery), this.getPath(toQuery));
   }
+
+  async export(query: DSULQuery, format?: string) {
+    return await this.driver.export(this.getPath(query), format);
+  }
 }
