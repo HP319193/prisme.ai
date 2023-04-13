@@ -1,3 +1,4 @@
+import archiver from 'archiver';
 import { DriverType, IStorage, ObjectList, SaveOptions } from '../types';
 import AWS from 'aws-sdk';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
@@ -76,13 +77,13 @@ export default class S3Like implements IStorage {
   }
 
   public get(key: string) {
-    return new Promise((resolve: any, reject: any) => {
+    return new Promise<Buffer>((resolve: any, reject: any) => {
       this.client.getObject(
         {
           Key: key,
           Bucket: this.options.bucket,
         },
-        function (err: any, data: any) {
+        function (err: any, data) {
           if (err) {
             reject(new ObjectNotFoundError());
           } else {
@@ -242,5 +243,52 @@ export default class S3Like implements IStorage {
       await new Promise((resolve) => setTimeout(resolve, delay));
       waited += delay;
     } while (waited < maxWait);
+  }
+
+  async export(prefix: string, format: string = 'zip') {
+    const keys = await this.find(prefix, true);
+    const archive = archiver((format as any) || 'zip', {
+      zlib: { level: 9 }, // Sets the compression level.
+    });
+
+    const buffers: Buffer[] = [];
+    archive.on('readable', function (buffer) {
+      for (;;) {
+        let buffer = archive.read();
+        if (!buffer) {
+          break;
+        }
+        buffers.push(buffer);
+      }
+    });
+
+    await Promise.all(
+      keys.map(
+        async ({ key }) =>
+          await this.get(key).then((body) => {
+            archive.append(body, {
+              name: key.slice(
+                key === prefix ? path.dirname(key).length : prefix.length
+              ),
+            });
+          })
+      )
+    );
+
+    const completionPromise = new Promise<Buffer>((resolve, reject) => {
+      archive.on('error', function (err) {
+        reject(err);
+      });
+      archive.on('end', () => {
+        const buffer = Buffer.concat(buffers);
+        resolve(buffer);
+      });
+    });
+
+    archive.finalize();
+    return completionPromise.then((buffer) => ({
+      buffer,
+      extension: format,
+    }));
   }
 }

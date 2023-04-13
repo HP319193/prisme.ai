@@ -147,7 +147,6 @@ export default class Filesystem implements IStorage {
 
   async export(path: string, format: string = 'zip') {
     const fullPath = this.getPath(path);
-    const parentDirectory = dirname(fullPath);
 
     let isDirectory;
     try {
