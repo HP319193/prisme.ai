@@ -3,6 +3,7 @@ import { DriverType, IStorage, ObjectList, SaveOptions } from '../types';
 import AWS from 'aws-sdk';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 import path from 'path';
+import stream from 'stream';
 
 export interface S3Options {
   accessKeyId: string;
@@ -245,22 +246,30 @@ export default class S3Like implements IStorage {
     } while (waited < maxWait);
   }
 
-  async export(prefix: string, format: string = 'zip') {
+  async export(
+    prefix: string,
+    format: string = 'zip',
+    outStream?: stream.Writable
+  ) {
     const keys = await this.find(prefix, true);
     const archive = archiver((format as any) || 'zip', {
       zlib: { level: 9 }, // Sets the compression level.
     });
 
     const buffers: Buffer[] = [];
-    archive.on('readable', function (buffer) {
-      for (;;) {
-        let buffer = archive.read();
-        if (!buffer) {
-          break;
+    if (outStream) {
+      archive.pipe(outStream);
+    } else {
+      archive.on('readable', function () {
+        for (;;) {
+          let buffer = archive.read();
+          if (!buffer) {
+            break;
+          }
+          buffers.push(buffer);
         }
-        buffers.push(buffer);
-      }
-    });
+      });
+    }
 
     await Promise.all(
       keys.map(
@@ -275,20 +284,19 @@ export default class S3Like implements IStorage {
       )
     );
 
-    const completionPromise = new Promise<Buffer>((resolve, reject) => {
-      archive.on('error', function (err) {
-        reject(err);
-      });
-      archive.on('end', () => {
-        const buffer = Buffer.concat(buffers);
-        resolve(buffer);
-      });
-    });
+    const completionPromise = new Promise<Buffer | 'streamed'>(
+      (resolve, reject) => {
+        archive.on('error', function (err) {
+          reject(err);
+        });
+        archive.on('end', () => {
+          const buffer = outStream ? 'streamed' : Buffer.concat(buffers);
+          resolve(buffer);
+        });
+      }
+    );
 
     archive.finalize();
-    return completionPromise.then((buffer) => ({
-      buffer,
-      extension: format,
-    }));
+    return completionPromise;
   }
 }

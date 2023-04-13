@@ -1,4 +1,5 @@
 import archiver from 'archiver';
+import stream from 'stream';
 import { DriverType, IStorage, ObjectList } from '../types';
 import { join, dirname, basename } from 'path';
 import fs, { promises as promisesFs } from 'fs';
@@ -145,7 +146,11 @@ export default class Filesystem implements IStorage {
     }
   }
 
-  async export(path: string, format: string = 'zip') {
+  async export(
+    path: string,
+    format: string = 'zip',
+    outStream?: stream.Writable
+  ) {
     const fullPath = this.getPath(path);
 
     let isDirectory;
@@ -160,32 +165,38 @@ export default class Filesystem implements IStorage {
     });
 
     const buffers: Buffer[] = [];
-    archive.on('readable', function (buffer) {
-      for (;;) {
-        let buffer = archive.read();
-        if (!buffer) {
-          break;
+    if (outStream) {
+      archive.pipe(outStream);
+    } else {
+      archive.on('readable', function (buffer) {
+        for (;;) {
+          let buffer = archive.read();
+          if (!buffer) {
+            break;
+          }
+          buffers.push(buffer);
         }
-        buffers.push(buffer);
-      }
-    });
+      });
+    }
 
-    const completionPromise = new Promise<Buffer>((resolve, reject) => {
-      archive.on('warning', function (err) {
-        if (err.code === 'ENOENT') {
-          reject(new ObjectNotFoundError());
-        } else {
+    const completionPromise = new Promise<Buffer | 'streamed'>(
+      (resolve, reject) => {
+        archive.on('warning', function (err) {
+          if (err.code === 'ENOENT') {
+            reject(new ObjectNotFoundError());
+          } else {
+            reject(err);
+          }
+        });
+        archive.on('error', function (err) {
           reject(err);
-        }
-      });
-      archive.on('error', function (err) {
-        reject(err);
-      });
-      archive.on('end', () => {
-        const buffer = Buffer.concat(buffers);
-        resolve(buffer);
-      });
-    });
+        });
+        archive.on('end', () => {
+          const buffer = outStream ? 'streamed' : Buffer.concat(buffers);
+          resolve(buffer);
+        });
+      }
+    );
 
     if (isDirectory) {
       archive.directory(fullPath, basename(fullPath));
@@ -196,9 +207,6 @@ export default class Filesystem implements IStorage {
     }
 
     archive.finalize();
-    return completionPromise.then((buffer) => ({
-      buffer,
-      extension: format,
-    }));
+    return completionPromise;
   }
 }

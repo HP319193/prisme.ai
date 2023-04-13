@@ -263,7 +263,7 @@ export default function init(
     {
       accessManager,
       params: { workspaceId, versionId },
-      query: { format },
+      query,
       context,
       broker,
     }: Request<PrismeaiAPI.ExportWorkspaceVersion.PathParameters>,
@@ -274,22 +274,13 @@ export default function init(
       accessManager,
       broker,
     });
-    const archive = await workspaces.exportWorkspace(
-      workspaceId,
-      versionId,
-      format as string
-    );
+    const format: string = (query.format as string) || 'zip';
     res.setHeader(
       'Content-disposition',
-      `attachment; filename=${workspaceId}-${versionId || 'current'}.${
-        archive.extension
-      }`
+      `attachment; filename=${workspaceId}-${versionId || 'current'}.${format}`
     );
-    res.setHeader(
-      'Content-type',
-      archive.mimetype || 'application/octet-stream'
-    );
-    res.send(archive.buffer as any);
+    res.setHeader('Content-type', 'application/octet-stream');
+    await workspaces.exportWorkspace(workspaceId, versionId, format, res);
   }
 
   const app = express.Router();

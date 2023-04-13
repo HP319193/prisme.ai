@@ -1,4 +1,5 @@
 import yaml from 'js-yaml';
+import stream from 'stream';
 import { SLUG_VALIDATION_REGEXP } from '../../../config';
 import {
   AlreadyUsedError,
@@ -356,7 +357,7 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
     await this.driver.copy(this.getPath(fromQuery), this.getPath(toQuery));
   }
 
-  async export(query: DSULQuery, format?: string) {
-    return await this.driver.export(this.getPath(query), format);
+  async export(query: DSULQuery, format?: string, outStream?: stream.Writable) {
+    return await this.driver.export(this.getPath(query), format, outStream);
   }
 }

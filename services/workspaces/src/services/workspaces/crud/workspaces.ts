@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 const dns = require('dns');
+import stream from 'stream';
 //@ts-ignore
 import { hri } from 'human-readable-ids';
 import { Broker } from '@prisme.ai/broker';
@@ -397,7 +398,8 @@ class Workspaces {
   exportWorkspace = async (
     workspaceId: string,
     version?: string,
-    format?: string
+    format?: string,
+    outStream?: stream.Writable
   ) => {
     await this.getWorkspace(workspaceId, version);
 
@@ -407,7 +409,8 @@ class Workspaces {
         version,
         parentFolder: true,
       },
-      format
+      format,
+      outStream
     );
 
     return archive;
