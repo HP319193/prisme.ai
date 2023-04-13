@@ -146,7 +146,7 @@ export const Form = ({
               ]
         }
         formRef={formRef}
-        initialFieldObjectVisibility={config.collapsed ? false : true}
+        initialFieldObjectVisibility={!config.collapsed}
       />
     </div>
   );
