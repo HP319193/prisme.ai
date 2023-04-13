@@ -25,6 +25,7 @@ interface FormConfig extends BaseBlockConfig {
   disableSubmitDelay?: number;
   values?: Record<string, any>;
   buttons?: ActionConfig[];
+  collapsed?: boolean;
 }
 
 interface FormProps extends FormConfig {
@@ -145,6 +146,7 @@ export const Form = ({
               ]
         }
         formRef={formRef}
+        initialFieldObjectVisibility={config.collapsed ? false : true}
       />
     </div>
   );
