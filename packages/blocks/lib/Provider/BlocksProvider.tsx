@@ -1,9 +1,12 @@
 import blocksContext, { BlocksDependenciesContext } from './blocksContext';
 import { FC } from 'react';
 import * as defaultComponents from './defaultComponents';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../i18n';
 
 interface BlocksProviderProps extends Omit<BlocksDependenciesContext, 'utils'> {
   utils?: Partial<BlocksDependenciesContext['utils']>;
+  language?: string;
 }
 
 const dftUtils = {
@@ -20,18 +23,26 @@ export const BlocksProvider: FC<BlocksProviderProps> = ({
   externals,
   utils = dftUtils,
   components,
-}) => (
-  <blocksContext.Provider
-    value={{
-      externals,
-      components: { ...defaultComponents, ...components },
-      utils: {
-        uploadFile,
-        ...dftUtils,
-        ...utils,
-      },
-    }}
-  >
-    {children}
-  </blocksContext.Provider>
-);
+  language,
+}) => {
+  if (i18n.language !== language) {
+    i18n.changeLanguage(language);
+  }
+  return (
+    <blocksContext.Provider
+      value={{
+        externals,
+        components: { ...defaultComponents, ...components },
+        utils: {
+          uploadFile,
+          ...dftUtils,
+          ...utils,
+        },
+      }}
+    >
+      {children}
+    </blocksContext.Provider>
+  );
+};
+
+export default BlocksProvider;

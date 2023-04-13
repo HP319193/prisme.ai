@@ -68,9 +68,14 @@ export const TabsView = ({
         })}
       </div>
       <div className="pr-block-tabs-view__content">
-        {tabs[currentTab] && tabs[currentTab].content && (
-          <BlocksList {...tabs[currentTab].content} />
-        )}
+        {tabs.map((tab, index) => (
+          <BlocksList
+            {...tabs[currentTab].content}
+            className={`${tab.content.className || ''}${
+              index === currentTab ? '' : 'hidden'
+            }`}
+          />
+        ))}
       </div>
     </div>
   );

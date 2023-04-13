@@ -427,6 +427,10 @@ Any set variable to one of these contexts is automatically synchronized with par
       <td>Current workspaceId</td>
     </tr>       
     <tr>
+      <td><b>global.workspaceName</b></td>
+      <td>Current workspace name</td>
+    </tr>           
+    <tr>
       <td><b>global.apiUrl</b></td>
       <td>Current API instance public url (fulfilled by runtime **PUBLIC_API_URL** variable)</td>
     </tr>           

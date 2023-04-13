@@ -139,7 +139,9 @@ class FileStorage {
 
     await Promise.all(
       fileDetails.map(async (file, idx) => {
-        await this.driver.save(file.path, files[idx].buffer);
+        await this.driver.save(file.path, files[idx].buffer, {
+          mimetype: file.mimetype,
+        });
       })
     );
 

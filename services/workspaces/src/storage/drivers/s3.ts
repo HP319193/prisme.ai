@@ -1,4 +1,4 @@
-import { DriverType, IStorage, ObjectList } from '../types';
+import { DriverType, IStorage, ObjectList, SaveOptions } from '../types';
 import AWS from 'aws-sdk';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 import path from 'path';
@@ -163,12 +163,13 @@ export default class S3Like implements IStorage {
     );
   }
 
-  public async save(key: string, data: any) {
+  public async save(key: string, data: any, opts?: SaveOptions) {
     const params = {
       Bucket: this.options.bucket,
       Key: key,
       Body: data,
       CacheControl: this.options.cacheControl,
+      ContentType: opts?.mimetype,
     };
     const result = await new Promise((resolve: any, reject: any) => {
       this.client.putObject(params, function (err: any, data: any) {

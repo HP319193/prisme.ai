@@ -1,13 +1,17 @@
 export type ObjectList = {
   key: string;
 }[];
+
+export interface SaveOptions {
+  mimetype?: string;
+}
 export interface IStorage {
   type(): DriverType;
 
   get(id: string): Promise<any>;
   find(prefix: string): Promise<ObjectList>;
 
-  save(id: string, data: any): Promise<any>;
+  save(id: string, data: any, options?: SaveOptions): Promise<any>;
   copy(from: string, to: string): Promise<any>;
 
   delete(id: string): any;
