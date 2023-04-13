@@ -549,6 +549,7 @@ export class ContextsManager {
         ...global,
         ...this.additionalGlobals,
         workspaceId: this.workspaceId,
+        workspaceName: this.contexts?.['$workspace']?.name,
       },
     };
   }
