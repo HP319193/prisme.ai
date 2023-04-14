@@ -71,7 +71,7 @@ export const TabsView = ({
         {tabs.map((tab, index) => (
           <BlocksList
             {...tabs[index].content}
-            className={`${tab.content.className || ''}${
+            className={`${tab.content?.className || ''}${
               index === currentTab ? '' : 'hidden'
             }`}
           />
