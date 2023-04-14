@@ -28,6 +28,16 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     }
   }, [displayRaw, onChange, value]);
 
+  const ignoreValueChange = useRef(false);
+  const [quillMounted, setQuillMounted] = useState(true);
+  useEffect(() => {
+    if (ignoreValueChange.current) return;
+    setQuillMounted(false);
+    setTimeout(() => {
+      setQuillMounted(true);
+    });
+  }, [value]);
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex flex-1 justify-end">
@@ -54,9 +64,19 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
             onChange={onChange}
           />
         </div>
-      ) : (
-        <Quill theme="snow" defaultValue={`${value}`} onChange={onChange} />
-      )}
+      ) : quillMounted ? (
+        <Quill
+          theme="snow"
+          defaultValue={`${value}`}
+          onChange={(v) => {
+            ignoreValueChange.current = true;
+            setTimeout(() => {
+              ignoreValueChange.current = false;
+            }, 10);
+            onChange(v);
+          }}
+        />
+      ) : null}
     </div>
   );
 };
