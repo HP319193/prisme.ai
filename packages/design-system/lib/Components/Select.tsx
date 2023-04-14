@@ -40,6 +40,18 @@ const Select = ({
     dropdownMatchSelectWidth={false}
     options={selectOptions}
     value={value || value === 0 ? value : undefined}
+    onInputKeyDown={(e) => {
+      // Ant hijack the Enter key to open the menu. We don't like thath
+      // This lines makes enterKey submit the form if the menu is closed.
+      if (e.key !== 'Enter') return;
+      const input = e.target as HTMLInputElement;
+      const isOpen = input.closest('.ant-select-open');
+      if (isOpen) return;
+      e.stopPropagation();
+      const { form } = input;
+      const button = form?.querySelector('[type=submit]') as HTMLButtonElement;
+      button?.click();
+    }}
   />
 );
 
