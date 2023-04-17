@@ -67,15 +67,16 @@ class Workspaces {
   constructor(
     accessManager: Required<AccessManager>,
     broker: Broker,
-    storage: DSULStorage
+    storage: DSULStorage,
+    enableCache?: boolean
   ) {
     this.accessManager = accessManager;
     this.broker = broker;
-    this.storage = storage.child(DSULType.DSULIndex);
+    this.storage = storage.child(DSULType.DSULIndex, {}, enableCache);
     this.pages = new Pages(
       this.accessManager,
       broker,
-      storage,
+      this.storage,
       undefined as any
     );
 

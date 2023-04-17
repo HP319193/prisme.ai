@@ -6,7 +6,7 @@ import { UPLOADS_MAX_SIZE } from '../../../config';
 import { InvalidUploadError, MissingFieldError } from '../../errors';
 import { AccessManager } from '../../permissions';
 import { AppInstances, Apps, Workspaces } from '../../services';
-import { DSULStorage } from '../../services/DSULStorage';
+import { DSULStorage, DSULType } from '../../services/DSULStorage';
 import FileStorage from '../../services/FileStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
@@ -19,15 +19,18 @@ export default function init(
     context,
     accessManager,
     broker,
+    enableCache,
   }: {
     context: PrismeContext;
     accessManager: Required<AccessManager>;
     broker: Broker;
+    enableCache?: boolean;
   }) => {
     const workspaces = new Workspaces(
       accessManager,
       broker.child(context),
-      dsulStorage
+      dsulStorage,
+      enableCache
     );
     return { workspaces };
   };
@@ -303,6 +306,8 @@ export default function init(
       context,
       accessManager,
       broker,
+      // Without cache, many redundant requests make imports much longer & resource consuming
+      enableCache: true,
     });
     if (!file?.buffer) {
       throw new MissingFieldError('Missing archive');
@@ -316,7 +321,6 @@ export default function init(
       'current',
       file?.buffer
     );
-
     res.send(updatedDetailedWorkspace);
   }
 

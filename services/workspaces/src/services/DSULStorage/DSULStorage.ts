@@ -8,6 +8,7 @@ import {
   ObjectNotFoundError,
 } from '../../errors';
 import { logger } from '../../logger';
+import { cache } from '../../storage/cache';
 import { IStorage } from '../../storage/types';
 import { getPath } from './getPath';
 import {
@@ -32,7 +33,8 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
 
   child<newT extends keyof DSULInterfaces>(
     dsulType: newT,
-    dsulQuery: DSULQuery = {}
+    dsulQuery: DSULQuery = {},
+    enableCache?: boolean
   ): DSULStorage<newT> {
     const child = Object.assign({}, this, {
       dsulType,
@@ -41,6 +43,11 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
         ...dsulQuery,
       },
     });
+    if (enableCache) {
+      (child as any).driver = cache(this.driver);
+    } else if ((this.driver as any).cache) {
+      (child as any).driver = (this.driver as any).__proto__;
+    }
     Object.setPrototypeOf(child, DSULStorage.prototype);
     return child;
   }
