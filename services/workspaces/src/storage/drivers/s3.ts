@@ -270,9 +270,7 @@ export default class S3Like implements IStorage {
         async ({ key }) =>
           await this.get(key).then((body) => {
             archive.append(body, {
-              name: key.slice(
-                key === prefix ? path.dirname(key).length : prefix.length
-              ),
+              name: key.slice(path.dirname(prefix).length),
             });
           })
       )
