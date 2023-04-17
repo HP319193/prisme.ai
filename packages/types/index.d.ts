@@ -3191,7 +3191,10 @@ declare namespace PrismeaiAPI {
             archive: string; // binary
         }
         namespace Responses {
-            export type $200 = Prismeai.DSULReadOnly;
+            export interface $200 {
+                imported: string[];
+                workspace: Prismeai.DSULReadOnly;
+            }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -3206,7 +3209,10 @@ declare namespace PrismeaiAPI {
             archive: string; // binary
         }
         namespace Responses {
-            export type $200 = Prismeai.DSULReadOnly;
+            export interface $200 {
+                imported: string[];
+                workspace: Prismeai.DSULReadOnly;
+            }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;

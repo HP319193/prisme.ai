@@ -803,6 +803,7 @@ class Workspaces {
       apps
     );
 
+    let imported: string[] = [];
     await processArchive(zipBuffer, async (filepath: string, stream) => {
       const [folder, subfile, mustBeNull] = filepath.split('/').slice(1);
       if (
@@ -865,7 +866,11 @@ class Workspaces {
               await imports.installApp(workspaceId, content);
             }
             break;
+
+          default:
+            return;
         }
+        imported.push(filepath);
       } catch (err) {
         console.warn({
           msg: 'Some error occured while importing a workspace archive',
@@ -876,7 +881,15 @@ class Workspaces {
       }
     });
 
-    return await this.getDetailedWorkspace(workspaceId, version, true);
+    const updatedDetailedWorkspace = await this.getDetailedWorkspace(
+      workspaceId,
+      version,
+      true
+    );
+    return {
+      imported,
+      workspace: updatedDetailedWorkspace,
+    };
   };
 }
 

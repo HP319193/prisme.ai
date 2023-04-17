@@ -4121,7 +4121,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DSULReadOnly'
+                type: object
+                required:
+                  - imported
+                  - workspace
+                properties:
+                  imported:
+                    type: array
+                    items:
+                      type: string
+                  workspace:
+                    $ref: '#/components/schemas/DSULReadOnly'
         '401':
           description: AuthenticationError
           content:
