@@ -45,7 +45,7 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
     });
     if (enableCache) {
       (child as any).driver = cache(this.driver);
-    } else if ((this.driver as any).cache) {
+    } else if (enableCache === false && (this.driver as any).cache) {
       (child as any).driver = (this.driver as any).__proto__;
     }
     Object.setPrototypeOf(child, DSULStorage.prototype);
@@ -313,10 +313,24 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
     );
     // Maintain subfolders index up-to-date
     if (folderIndex) {
+      const folderIndexPath = this.getPath({ ...query, folderIndex: true });
+      // If we have cache enabled, pull again folderIndex to synchronize concurrent promises as during workspaces import
+      let latestFolderIndex;
+      if (
+        (this.driver as any).cache &&
+        folderIndexPath in (this.driver as any).cache
+      ) {
+        latestFolderIndex = yaml.load(
+          (this.driver as any).cache[folderIndexPath]
+        ) as any;
+      }
       this.driver
         .save(
-          this.getPath({ ...query, folderIndex: true }),
-          yaml.dump(folderIndex, { skipInvalid: true })
+          folderIndexPath,
+          yaml.dump(
+            { ...latestFolderIndex, ...folderIndex },
+            { skipInvalid: true }
+          )
         )
         .catch((err) => {
           logger.warn({

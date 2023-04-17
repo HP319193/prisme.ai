@@ -4130,6 +4130,11 @@ paths:
                     type: array
                     items:
                       type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
                   workspace:
                     $ref: '#/components/schemas/DSULReadOnly'
         '401':

@@ -16,8 +16,8 @@ export function cache(driver: IStorage): IStorage {
       return value;
     },
     async save(id: string, data: any, ...args: any) {
-      const result = await super.save(id, data, ...args);
       this.cache[id] = data;
+      const result = await super.save(id, data, ...args);
       return result;
     },
   } as any as IStorage;

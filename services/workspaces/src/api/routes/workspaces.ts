@@ -6,7 +6,7 @@ import { UPLOADS_MAX_SIZE } from '../../../config';
 import { InvalidUploadError, MissingFieldError } from '../../errors';
 import { AccessManager } from '../../permissions';
 import { AppInstances, Apps, Workspaces } from '../../services';
-import { DSULStorage, DSULType } from '../../services/DSULStorage';
+import { DSULStorage } from '../../services/DSULStorage';
 import FileStorage from '../../services/FileStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
@@ -315,7 +315,7 @@ export default function init(
 
     const target = workspaceId
       ? { id: workspaceId }
-      : await workspaces.createWorkspace(body);
+      : await workspaces.createWorkspace({ name: 'Import' });
     const updatedDetailedWorkspace = await workspaces.importDSUL(
       target.id,
       'current',

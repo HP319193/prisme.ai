@@ -805,82 +805,43 @@ class Workspaces {
     );
 
     let imported: string[] = [];
+    let errors: any[] = [];
+    let batch: Promise<void>[] = [];
+    const BATCH_SIZE = 20; // Run 20 read / save at a time
+
     await processArchive(zipBuffer, async (filepath: string, stream) => {
-      const [folder, subfile, mustBeNull] = filepath.split('/').slice(1);
-      if (
-        !['index.yml', 'pages', 'automations', 'imports'].includes(folder) ||
-        subfile === '__index__.yml' ||
-        mustBeNull ||
-        (folder == 'index.yml' && subfile)
-      ) {
+      const savePromise = new Promise<void>(async (resolve) => {
+        try {
+          const buffer = await streamToBuffer(stream);
+          const content: any = yaml.load(buffer.toString());
+
+          await this.applyDSULFile(
+            filepath.split('/').slice(1),
+            workspace,
+            content,
+            automations,
+            imports
+          );
+          imported.push(filepath);
+          resolve();
+        } catch (err) {
+          errors.push({
+            msg: 'Some error occured while importing a workspace archive',
+            workspaceId: workspaceId,
+            filepath,
+            err,
+          });
+        }
+      });
+
+      batch.push(savePromise);
+      if (batch.length < BATCH_SIZE) {
         return;
       }
-      try {
-        const buffer = await streamToBuffer(stream);
-        const content: any = yaml.load(buffer.toString());
-
-        switch (folder) {
-          case 'index.yml':
-            await this.updateWorkspace(workspace.id!, {
-              ...content,
-              name: `${content.name} - Import`,
-              slug: workspace.slug,
-              id: workspace.id,
-            });
-            break;
-
-          case 'pages':
-            const oldSlug =
-              Object.entries(workspace.pages || {}).find(
-                ([key, pageMeta]) => pageMeta.id === content.id
-              )?.[0] || '';
-            if (
-              content.slug in (workspace.pages || {}) ||
-              oldSlug in (workspace.pages || {})
-            ) {
-              await this.pages.updatePage(
-                workspaceId,
-                oldSlug || content.slug,
-                content
-              );
-            } else {
-              await this.pages.createPage(workspaceId, content);
-            }
-            break;
-
-          case 'automations':
-            if (content.slug in (workspace.automations || {})) {
-              await automations.updateAutomation(
-                workspaceId,
-                content.slug,
-                content
-              );
-            } else {
-              await automations.createAutomation(workspaceId, content);
-            }
-            break;
-
-          case 'imports':
-            if (content.slug in (workspace.imports || {})) {
-              await imports.configureApp(workspaceId, content.slug, content);
-            } else {
-              await imports.installApp(workspaceId, content);
-            }
-            break;
-
-          default:
-            return;
-        }
-        imported.push(filepath);
-      } catch (err) {
-        console.warn({
-          msg: 'Some error occured while importing a workspace archive',
-          workspaceId: workspaceId,
-          filepath,
-          err,
-        });
-      }
+      await Promise.all(batch);
+      batch = [];
     });
+    await Promise.all(batch);
 
     const updatedDetailedWorkspace = await this.getDetailedWorkspace(
       workspaceId,
@@ -889,9 +850,81 @@ class Workspaces {
     );
     return {
       imported,
+      errors,
       workspace: updatedDetailedWorkspace,
     };
   };
+
+  async applyDSULFile(
+    path: string[],
+    workspace: Prismeai.DSULReadOnly,
+    content: any,
+    automations: Automations,
+    appInstances: AppInstances
+  ) {
+    const [folder, subfile, mustBeNull] = path;
+    if (
+      !['index.yml', 'pages', 'automations', 'imports'].includes(folder) ||
+      subfile === '__index__.yml' ||
+      mustBeNull ||
+      (folder == 'index.yml' && subfile)
+    ) {
+      return;
+    }
+
+    switch (folder) {
+      case 'index.yml':
+        await this.updateWorkspace(workspace.id!, {
+          ...content,
+          name: `${content.name} - Import`,
+          slug: workspace.slug,
+          id: workspace.id,
+        });
+        break;
+
+      case 'pages':
+        const oldSlug =
+          Object.entries(workspace.pages || {}).find(
+            ([key, pageMeta]) => pageMeta.id === content.id
+          )?.[0] || '';
+        if (
+          content.slug in (workspace.pages || {}) ||
+          oldSlug in (workspace.pages || {})
+        ) {
+          await this.pages.updatePage(
+            workspace.id!,
+            oldSlug || content.slug,
+            content
+          );
+        } else {
+          await this.pages.createPage(workspace.id!, content);
+        }
+        break;
+
+      case 'automations':
+        if (content.slug in (workspace.automations || {})) {
+          await automations.updateAutomation(
+            workspace.id!,
+            content.slug,
+            content
+          );
+        } else {
+          await automations.createAutomation(workspace.id!, content);
+        }
+        break;
+
+      case 'imports':
+        if (content.slug in (workspace.imports || {})) {
+          await appInstances.configureApp(workspace.id!, content.slug, content);
+        } else {
+          await appInstances.installApp(workspace.id!, content);
+        }
+        break;
+
+      default:
+        return;
+    }
+  }
 }
 
 export default Workspaces;

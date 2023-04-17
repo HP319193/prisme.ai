@@ -3193,6 +3193,9 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export interface $200 {
                 imported: string[];
+                errors?: {
+                    [name: string]: any;
+                }[];
                 workspace: Prismeai.DSULReadOnly;
             }
             export type $400 = Prismeai.BadParametersError;
@@ -3211,6 +3214,9 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export interface $200 {
                 imported: string[];
+                errors?: {
+                    [name: string]: any;
+                }[];
                 workspace: Prismeai.DSULReadOnly;
             }
             export type $400 = Prismeai.BadParametersError;
