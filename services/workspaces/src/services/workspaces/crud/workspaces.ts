@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
 const dns = require('dns');
 import stream from 'stream';
+import yaml from 'js-yaml';
 //@ts-ignore
 import { hri } from 'human-readable-ids';
 import { Broker } from '@prisme.ai/broker';
@@ -14,6 +15,8 @@ import {
   WorkspaceMetadata,
 } from '../../../permissions';
 import Pages from './pages';
+import AppInstances from './appInstances';
+import Automations from './automations';
 import {
   Diffs,
   DiffType,
@@ -34,6 +37,9 @@ import {
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
 import { fetchUsers } from '@prisme.ai/permissions';
+import { processArchive } from '../../../utils/processArchive';
+import { streamToBuffer } from '../../../utils/streamToBuffer';
+import { Apps } from '../../apps';
 
 interface DSULDiff {
   type: DiffType;
@@ -395,27 +401,6 @@ class Workspaces {
     return newWorkspace;
   };
 
-  exportWorkspace = async (
-    workspaceId: string,
-    version?: string,
-    format?: string,
-    outStream?: stream.Writable
-  ) => {
-    await this.getWorkspace(workspaceId, version);
-
-    const archive = await this.storage.export(
-      {
-        workspaceId,
-        version,
-        parentFolder: true,
-      },
-      format,
-      outStream
-    );
-
-    return archive;
-  };
-
   getIndex = async <t extends DSULType>(
     dsulType: t,
     workspaceId: string,
@@ -439,17 +424,27 @@ class Workspaces {
 
   getDetailedWorkspace = async (
     workspaceId: string,
-    version?: string
+    version?: string,
+    includeImports?: boolean
   ): Promise<Prismeai.DSULReadOnly> => {
     const [workspace, automations, pages] = await Promise.all([
       this.getWorkspace(workspaceId, version),
       this.getIndex(DSULType.AutomationsIndex, workspaceId, version),
       this.getIndex(DSULType.PagesIndex, workspaceId, version),
     ]);
+    let imports;
+    if (includeImports) {
+      imports = (await this.getIndex(
+        DSULType.ImportsIndex,
+        workspaceId,
+        version
+      )) as any;
+    }
     return {
       ...workspace,
       automations: automations || {},
       pages: pages || {},
+      imports,
     };
   };
 
@@ -761,6 +756,127 @@ class Workspaces {
       { workspaceId }
     );
     return { id: workspaceId };
+  };
+
+  exportWorkspace = async (
+    workspaceId: string,
+    version?: string,
+    format?: string,
+    outStream?: stream.Writable
+  ) => {
+    await this.getWorkspace(workspaceId, version);
+
+    const archive = await this.storage.export(
+      {
+        workspaceId,
+        version,
+        parentFolder: true,
+      },
+      format,
+      outStream
+    );
+
+    return archive;
+  };
+
+  importDSUL = async (
+    workspaceId: string,
+    version: string,
+    zipBuffer: Buffer
+  ) => {
+    const workspace = await this.getDetailedWorkspace(
+      workspaceId,
+      version,
+      true
+    );
+
+    const automations = new Automations(
+      this.accessManager,
+      this.broker,
+      this.storage
+    );
+    const apps = new Apps(this.accessManager, this.broker, this.storage);
+    const imports = new AppInstances(
+      this.accessManager,
+      this.broker,
+      this.storage,
+      apps
+    );
+
+    await processArchive(zipBuffer, async (filepath: string, stream) => {
+      const [folder, subfile, mustBeNull] = filepath.split('/').slice(1);
+      if (
+        !['index.yml', 'pages', 'automations', 'imports'].includes(folder) ||
+        subfile === '__index__.yml' ||
+        mustBeNull ||
+        (folder == 'index.yml' && subfile)
+      ) {
+        return;
+      }
+      try {
+        const buffer = await streamToBuffer(stream);
+        const content: any = yaml.load(buffer.toString());
+
+        switch (folder) {
+          case 'index.yml':
+            await this.updateWorkspace(workspace.id!, {
+              ...content,
+              name: `${content.name} - Import`,
+              slug: workspace.slug,
+              id: workspace.id,
+            });
+            break;
+
+          case 'pages':
+            const oldSlug =
+              Object.entries(workspace.pages || {}).find(
+                ([key, pageMeta]) => pageMeta.id === content.id
+              )?.[0] || '';
+            if (
+              content.slug in (workspace.pages || {}) ||
+              oldSlug in (workspace.pages || {})
+            ) {
+              await this.pages.updatePage(
+                workspaceId,
+                oldSlug || content.slug,
+                content
+              );
+            } else {
+              await this.pages.createPage(workspaceId, content);
+            }
+            break;
+
+          case 'automations':
+            if (content.slug in (workspace.automations || {})) {
+              await automations.updateAutomation(
+                workspaceId,
+                content.slug,
+                content
+              );
+            } else {
+              await automations.createAutomation(workspaceId, content);
+            }
+            break;
+
+          case 'imports':
+            if (content.slug in (workspace.imports || {})) {
+              await imports.configureApp(workspaceId, content.slug, content);
+            } else {
+              await imports.installApp(workspaceId, content);
+            }
+            break;
+        }
+      } catch (err) {
+        console.warn({
+          msg: 'Some error occured while importing a workspace archive',
+          workspaceId: workspaceId,
+          filepath,
+          err,
+        });
+      }
+    });
+
+    return await this.getDetailedWorkspace(workspaceId, version, true);
   };
 }
 

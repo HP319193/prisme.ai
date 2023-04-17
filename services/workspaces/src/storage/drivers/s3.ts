@@ -4,6 +4,7 @@ import AWS from 'aws-sdk';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 import path from 'path';
 import stream from 'stream';
+import { streamToBuffer } from '../../utils/streamToBuffer';
 
 export interface S3Options {
   accessKeyId: string;
@@ -256,19 +257,12 @@ export default class S3Like implements IStorage {
       zlib: { level: 9 }, // Sets the compression level.
     });
 
-    const buffers: Buffer[] = [];
+    let completionPromise: Promise<'streamed' | Buffer>;
     if (outStream) {
       archive.pipe(outStream);
+      completionPromise = Promise.resolve('streamed');
     } else {
-      archive.on('readable', function () {
-        for (;;) {
-          let buffer = archive.read();
-          if (!buffer) {
-            break;
-          }
-          buffers.push(buffer);
-        }
-      });
+      completionPromise = streamToBuffer(archive);
     }
 
     await Promise.all(
@@ -282,18 +276,6 @@ export default class S3Like implements IStorage {
             });
           })
       )
-    );
-
-    const completionPromise = new Promise<Buffer | 'streamed'>(
-      (resolve, reject) => {
-        archive.on('error', function (err) {
-          reject(err);
-        });
-        archive.on('end', () => {
-          const buffer = outStream ? 'streamed' : Buffer.concat(buffers);
-          resolve(buffer);
-        });
-      }
     );
 
     archive.finalize();

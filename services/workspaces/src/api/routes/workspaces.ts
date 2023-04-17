@@ -1,5 +1,9 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
+import multer from 'multer';
+import path from 'path';
+import { UPLOADS_MAX_SIZE } from '../../../config';
+import { InvalidUploadError, MissingFieldError } from '../../errors';
 import { AccessManager } from '../../permissions';
 import { AppInstances, Apps, Workspaces } from '../../services';
 import { DSULStorage } from '../../services/DSULStorage';
@@ -274,13 +278,46 @@ export default function init(
       accessManager,
       broker,
     });
-    const format: string = (query.format as string) || 'zip';
+    // Tar is also supported by underlying archiver package, but not by import package (yauzl)
+    const format: string = 'zip';
     res.setHeader(
       'Content-disposition',
       `attachment; filename=${workspaceId}-${versionId || 'current'}.${format}`
     );
     res.setHeader('Content-type', 'application/octet-stream');
     await workspaces.exportWorkspace(workspaceId, versionId, format, res);
+  }
+
+  async function importWorkspaceHandler(
+    {
+      context,
+      body,
+      file,
+      params: { workspaceId },
+      broker,
+      accessManager,
+    }: Request<PrismeaiAPI.ImportExistingWorkspace.PathParameters, any>,
+    res: Response<PrismeaiAPI.ImportExistingWorkspace.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    if (!file?.buffer) {
+      throw new MissingFieldError('Missing archive');
+    }
+
+    const target = workspaceId
+      ? { id: workspaceId }
+      : await workspaces.createWorkspace(body);
+    const updatedDetailedWorkspace = await workspaces.importDSUL(
+      target.id,
+      'current',
+      file?.buffer
+    );
+
+    res.send(updatedDetailedWorkspace);
   }
 
   const app = express.Router();
@@ -308,9 +345,39 @@ export default function init(
     `/:workspaceId/versions/:versionId/duplicate`,
     asyncRoute(duplicateWorkspaceHandler)
   );
+
   app.post(
     `/:workspaceId/versions/:versionId/export`,
     asyncRoute(exportWorkspaceHandler)
+  );
+  const upload = multer({
+    limits: {
+      fieldSize: UPLOADS_MAX_SIZE,
+    },
+    fileFilter: (req, file, callback) => {
+      const allowedExts = ['.zip'];
+      const ext = path.extname(file.originalname);
+      if (!allowedExts.includes(ext)) {
+        return callback(
+          new InvalidUploadError(
+            `Invalid uploaded file '${
+              file.originalname
+            }' : extension must be one of ${allowedExts.join(', ')}`
+          )
+        );
+      }
+      callback(null, true);
+    },
+  });
+  app.post(
+    `/import`,
+    upload.single('archive'),
+    asyncRoute(importWorkspaceHandler)
+  );
+  app.post(
+    `/:workspaceId/import`,
+    upload.single('archive'),
+    asyncRoute(importWorkspaceHandler)
   );
 
   return app;

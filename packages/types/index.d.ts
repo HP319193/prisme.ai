@@ -2882,16 +2882,12 @@ declare namespace PrismeaiAPI {
     }
     namespace ExportWorkspaceVersion {
         namespace Parameters {
-            export type Format = "zip" | "tar" | "gzip";
             export type VersionId = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
             workspaceId: Parameters.WorkspaceId;
             versionId: Parameters.VersionId;
-        }
-        export interface QueryParameters {
-            format?: Parameters.Format;
         }
         namespace Responses {
             export type $200 = string; // binary
@@ -3176,6 +3172,42 @@ declare namespace PrismeaiAPI {
                 id?: string;
                 name?: string;
             }[];
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+        }
+    }
+    namespace ImportExistingWorkspace {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        export interface RequestBody {
+            [name: string]: any;
+            /**
+             * Zip archive binary data
+             */
+            archive: string; // binary
+        }
+        namespace Responses {
+            export type $200 = Prismeai.DSULReadOnly;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+        }
+    }
+    namespace ImportNewWorkspace {
+        export interface RequestBody {
+            [name: string]: any;
+            /**
+             * Zip archive binary data
+             */
+            archive: string; // binary
+        }
+        namespace Responses {
+            export type $200 = Prismeai.DSULReadOnly;
+            export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
         }

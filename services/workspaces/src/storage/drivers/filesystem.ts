@@ -4,6 +4,7 @@ import { DriverType, IStorage, ObjectList } from '../types';
 import { join, dirname, basename } from 'path';
 import fs, { promises as promisesFs } from 'fs';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
+import { streamToBuffer } from '../../utils/streamToBuffer';
 
 export interface FilesystemOptions {
   dirpath?: string;
@@ -164,39 +165,13 @@ export default class Filesystem implements IStorage {
       zlib: { level: 9 }, // Sets the compression level.
     });
 
-    const buffers: Buffer[] = [];
+    let completionPromise: Promise<'streamed' | Buffer>;
     if (outStream) {
       archive.pipe(outStream);
+      completionPromise = Promise.resolve('streamed');
     } else {
-      archive.on('readable', function (buffer) {
-        for (;;) {
-          let buffer = archive.read();
-          if (!buffer) {
-            break;
-          }
-          buffers.push(buffer);
-        }
-      });
+      completionPromise = streamToBuffer(archive);
     }
-
-    const completionPromise = new Promise<Buffer | 'streamed'>(
-      (resolve, reject) => {
-        archive.on('warning', function (err) {
-          if (err.code === 'ENOENT') {
-            reject(new ObjectNotFoundError());
-          } else {
-            reject(err);
-          }
-        });
-        archive.on('error', function (err) {
-          reject(err);
-        });
-        archive.on('end', () => {
-          const buffer = outStream ? 'streamed' : Buffer.concat(buffers);
-          resolve(buffer);
-        });
-      }
-    );
 
     if (isDirectory) {
       archive.directory(fullPath, basename(fullPath));
