@@ -739,6 +739,7 @@
       "name_StackedNavigation": "Stacked Navigation",
       "name_Buttons": "Buttons group",
       "name_BlocksList": "Blocks list",
+      "name_BlocksGrid": "Blocks grid",
       "name_Footer": "Footer",
       "name_Breadcrumbs": "Breadcrumbs",
       "name_Action": "Action",
@@ -1194,6 +1195,27 @@
                 "label": "Block name",
                 "description": "Name of Block to display"
               }
+            }
+          }
+        }
+      },
+      "blocksGrid": {
+        "settings": {
+          "blocks": {
+            "label": "Blocks",
+            "description": "You can complete your content with a list of Blocks.",
+            "add": "Add a Block",
+            "remove": "Delete Block",
+            "items": {
+              "label": "Block",
+              "description": "Block specification.",
+              "block": {
+                "name": {
+                  "label": "Block name",
+                  "description": "Name of Block to display"
+                }
+              },
+              "layout": {}
             }
           }
         }

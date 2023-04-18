@@ -739,6 +739,7 @@
       "name_StackedNavigation": "Navigation empilée",
       "name_Buttons": "Groupe de boutons",
       "name_BlocksList": "Liste de Blocks",
+      "name_BlocksGrid": "Grille de blocks",
       "name_Footer": "Pied de page",
       "name_Breadcrumbs": "Fil d'ariane",
       "name_Action": "Action",
@@ -1180,7 +1181,7 @@
           }
         }
       },
-      "blockslist": {
+      "blocksGrid": {
         "settings": {
           "blocks": {
             "label": "Blocks",
@@ -1194,6 +1195,27 @@
                 "label": "Nom du Block",
                 "description": "Le nom du Block à afficher"
               }
+            }
+          }
+        }
+      },
+      "gridLayout": {
+        "settings": {
+          "blocks": {
+            "label": "Blocks",
+            "description": "Liste des Blocks.",
+            "add": "Ajouter un Block",
+            "remove": "Supprimer le Block",
+            "items": {
+              "label": "Block",
+              "description": "Spécification du Block.",
+              "block": {
+                "name": {
+                  "label": "Nom du Block",
+                  "description": "Le nom du Block à afficher"
+                }
+              },
+              "layout": {}
             }
           }
         }
