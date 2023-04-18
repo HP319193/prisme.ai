@@ -30,8 +30,6 @@ export const BlocksGrid = ({
   className = '',
 }: BlocksGridConfig) => {
   const [layoutState, setLayoutState] = useState<ReactGridLayout.Layout[]>([]);
-  const [lastLayoutStateCorrectHeight, setLastLayoutStateCorrectHeight] =
-    useState<ReactGridLayout.Layout[]>();
   const [currentBlocks, setCurrentBlocks] = useState<JSX.Element[]>();
 
   const {
@@ -73,85 +71,12 @@ export const BlocksGrid = ({
     setLayoutState(layoutFromConfig);
   }, [blocks]);
 
-  // This is to handle maxRows
-  // see https://github.com/react-grid-layout/react-grid-layout/issues/1104
-  const onLayoutChange = (newLayout: ReactGridLayout.Layout[]) => {
-    setLayoutState(newLayout);
-    resetOldLayoutIfNewHeightTooBig(newLayout);
-  };
-
-  // This is to handle maxRows
-  const resetOldLayoutIfNewHeightTooBig = (
-    newLayout: ReactGridLayout.Layout[]
-  ) => {
-    if (
-      !globalLayout ||
-      !globalLayout.maxRows ||
-      !lastLayoutStateCorrectHeight
-    ) {
-      return;
-    }
-
-    const maxRows = globalLayout.maxRows;
-
-    let updatedLayout: ReactGridLayout.Layout[] = [...newLayout];
-
-    if (maxRows !== 1) return;
-
-    const updatedBlockIndex = newLayout.findIndex(
-      (block, index) => layoutState[index].w !== block.w
-    );
-
-    if (updatedBlockIndex !== -1) {
-      const adjustedLayout = [...newLayout];
-      let nextIndex;
-      if (updatedBlockIndex < adjustedLayout.length - 1) {
-        nextIndex = updatedBlockIndex + 1;
-      } else {
-        nextIndex = updatedBlockIndex - 1;
-      }
-      const nextBlock = { ...adjustedLayout[nextIndex] };
-
-      const changedCurrentW =
-        adjustedLayout[updatedBlockIndex].w - layoutState[updatedBlockIndex].w;
-      const nextBlockNewW = nextBlock.w - changedCurrentW;
-
-      if (
-        nextBlockNewW > 0 &&
-        (!nextBlock.minW || nextBlockNewW > nextBlock.minW)
-      ) {
-        nextBlock.w = nextBlockNewW;
-        adjustedLayout[nextIndex] = { ...nextBlock };
-        updatedLayout = [...adjustedLayout];
-      }
-    }
-
-    const isTooBig = updatedLayout.some(
-      (block: ReactGridLayout.Layout) => block.y >= maxRows
-    );
-
-    if (isTooBig) {
-      setLayoutState(lastLayoutStateCorrectHeight);
-    } else {
-      setLayoutState(updatedLayout);
-    }
-  };
-
-  // This is to handle maxRows
-  const saveCurrentLayouts = () => {
-    if (!layoutState) return;
-    setLastLayoutStateCorrectHeight([...layoutState]);
-  };
-
   return (
     <ResponsiveBlocksGrid
       {...globalLayout}
       breakpoints={{ lg: 1200 }}
       className={`pr-blocks-grid ${className}`}
       layouts={{ lg: layoutState }}
-      onDragStart={saveCurrentLayouts}
-      onResizeStart={saveCurrentLayouts}
-      onLayoutChange={onLayoutChange}
       margin={globalLayout?.margin || [0, 0]}
     >
       {currentBlocks}
