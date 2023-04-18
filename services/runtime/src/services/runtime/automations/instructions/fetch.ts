@@ -73,12 +73,14 @@ export async function fetch(
       delete (params.headers as any)['content-type'];
       params.body = new FormData();
       for (const { fieldname, value, ...opts } of multipart) {
+        let convertedValue: any = value;
         const isBase64 = base64Regex.test(value as any);
-        (params.body as FormData).append(
-          fieldname,
-          isBase64 ? Buffer.from(value as any, 'base64') : value,
-          opts
-        );
+        if (isBase64) {
+          convertedValue = Buffer.from(value as any, 'base64');
+        } else if (Array.isArray(value)) {
+          convertedValue = Buffer.from(value);
+        }
+        (params.body as FormData).append(fieldname, convertedValue, opts);
       }
     } else if (
       lowercasedHeaders['content-type'] &&

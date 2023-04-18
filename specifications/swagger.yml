@@ -4095,6 +4095,83 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
+  /v2/workspaces/import:
+    post:
+      description: Import a workspace archive into a new workspace
+      operationId: importNewWorkspace
+      tags:
+        - 'Prisme.ai Workspaces'
+      requestBody: &ImportRequestBody
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - archive
+              additionalProperties: true
+              properties:
+                archive:
+                  type: string
+                  format: binary
+                  description: Zip archive binary data
+
+      responses: &ImportResponses
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - imported
+                  - workspace
+                properties:
+                  imported:
+                    type: array
+                    items:
+                      type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+                  workspace:
+                    $ref: '#/components/schemas/DSULReadOnly'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+
+  /v2/workspaces/{workspaceId}/import:
+    post:
+      description: Import a workspace archive
+      operationId: importExistingWorkspace
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      requestBody: *ImportRequestBody
+      responses: *ImportResponses
+
   /v2/workspaces/{workspaceId}/versions:
     get:
       description: List workspace versions
@@ -4302,6 +4379,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Workspace'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  /v2/workspaces/{workspaceId}/versions/{versionId}/export:
+    post:
+      description: Export this workspace to a zip archive
+      operationId: exportWorkspaceVersion
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'versionId'
+          in: 'path'
+          description: 'Version name'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
         '404':
           description: Object not found
           content:

@@ -1,5 +1,7 @@
 import { nanoid } from 'nanoid';
 const dns = require('dns');
+import stream from 'stream';
+import yaml from 'js-yaml';
 //@ts-ignore
 import { hri } from 'human-readable-ids';
 import { Broker } from '@prisme.ai/broker';
@@ -13,6 +15,8 @@ import {
   WorkspaceMetadata,
 } from '../../../permissions';
 import Pages from './pages';
+import AppInstances from './appInstances';
+import Automations from './automations';
 import {
   Diffs,
   DiffType,
@@ -30,9 +34,13 @@ import {
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 import {
   CUSTOM_DOMAINS_CNAME,
+  IMPORT_BATCH_SIZE,
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
 import { fetchUsers } from '@prisme.ai/permissions';
+import { processArchive } from '../../../utils/processArchive';
+import { streamToBuffer } from '../../../utils/streamToBuffer';
+import { Apps } from '../../apps';
 
 interface DSULDiff {
   type: DiffType;
@@ -60,15 +68,16 @@ class Workspaces {
   constructor(
     accessManager: Required<AccessManager>,
     broker: Broker,
-    storage: DSULStorage
+    storage: DSULStorage,
+    enableCache?: boolean
   ) {
     this.accessManager = accessManager;
     this.broker = broker;
-    this.storage = storage.child(DSULType.DSULIndex);
+    this.storage = storage.child(DSULType.DSULIndex, {}, enableCache);
     this.pages = new Pages(
       this.accessManager,
       broker,
-      storage,
+      this.storage,
       undefined as any
     );
 
@@ -417,17 +426,27 @@ class Workspaces {
 
   getDetailedWorkspace = async (
     workspaceId: string,
-    version?: string
+    version?: string,
+    includeImports?: boolean
   ): Promise<Prismeai.DSULReadOnly> => {
     const [workspace, automations, pages] = await Promise.all([
       this.getWorkspace(workspaceId, version),
       this.getIndex(DSULType.AutomationsIndex, workspaceId, version),
       this.getIndex(DSULType.PagesIndex, workspaceId, version),
     ]);
+    let imports;
+    if (includeImports) {
+      imports = (await this.getIndex(
+        DSULType.ImportsIndex,
+        workspaceId,
+        version
+      )) as any;
+    }
     return {
       ...workspace,
       automations: automations || {},
       pages: pages || {},
+      imports,
     };
   };
 
@@ -740,6 +759,185 @@ class Workspaces {
     );
     return { id: workspaceId };
   };
+
+  exportWorkspace = async (
+    workspaceId: string,
+    version?: string,
+    format?: string,
+    outStream?: stream.Writable
+  ) => {
+    await this.getWorkspace(workspaceId, version);
+
+    const archive = await this.storage.export(
+      {
+        workspaceId,
+        version,
+        parentFolder: true,
+      },
+      outStream,
+      {
+        format,
+        exclude: [`${version}/runtime.yml`, `__index__.yml`],
+      }
+    );
+
+    return archive;
+  };
+
+  importDSUL = async (
+    workspaceId: string,
+    version: string,
+    zipBuffer: Buffer
+  ) => {
+    const workspace = await this.getDetailedWorkspace(
+      workspaceId,
+      version,
+      true
+    );
+
+    const automations = new Automations(
+      this.accessManager,
+      this.broker,
+      this.storage
+    );
+    const apps = new Apps(this.accessManager, this.broker, this.storage);
+    const imports = new AppInstances(
+      this.accessManager,
+      this.broker,
+      this.storage,
+      apps
+    );
+
+    let imported: string[] = [];
+    let errors: any[] = [];
+    let batch: Promise<void>[] = [];
+    let counter = 0;
+    await processArchive(zipBuffer, async (filepath: string, stream) => {
+      if (counter > 5000) {
+        throw new PrismeError(
+          'Workspace archive cannot have more than 5000 files',
+          {}
+        );
+      }
+      counter++;
+      const savePromise = new Promise<void>(async (resolve) => {
+        try {
+          const buffer = await streamToBuffer(stream);
+          const content: any = yaml.load(buffer.toString());
+
+          const applied = await this.applyDSULFile(
+            filepath.split('/').slice(1),
+            workspace,
+            content,
+            automations,
+            imports
+          );
+          if (applied) {
+            imported.push(filepath);
+          }
+        } catch (err) {
+          errors.push({
+            msg: 'Some error occured while importing a workspace archive',
+            workspaceId: workspaceId,
+            filepath,
+            err,
+          });
+        }
+        resolve();
+      });
+
+      batch.push(savePromise);
+      if (batch.length < IMPORT_BATCH_SIZE) {
+        return;
+      }
+      await Promise.all(batch);
+      batch = [];
+    });
+    await Promise.all(batch);
+
+    const updatedDetailedWorkspace = await this.getDetailedWorkspace(
+      workspaceId,
+      version,
+      true
+    );
+    return {
+      imported,
+      errors,
+      workspace: updatedDetailedWorkspace,
+    };
+  };
+
+  async applyDSULFile(
+    path: string[],
+    workspace: Prismeai.DSULReadOnly,
+    content: any,
+    automations: Automations,
+    appInstances: AppInstances
+  ) {
+    const [folder, subfile, mustBeNull] = path;
+    if (
+      !['index.yml', 'pages', 'automations', 'imports'].includes(folder) ||
+      subfile === '__index__.yml' ||
+      mustBeNull ||
+      (folder == 'index.yml' && subfile)
+    ) {
+      return false;
+    }
+
+    switch (folder) {
+      case 'index.yml':
+        await this.updateWorkspace(workspace.id!, {
+          ...content,
+          name: `${content.name} - Import`,
+          slug: workspace.slug,
+          id: workspace.id,
+        });
+        break;
+
+      case 'pages':
+        const oldSlug =
+          Object.entries(workspace.pages || {}).find(
+            ([key, pageMeta]) => pageMeta.id === content.id
+          )?.[0] || '';
+        if (
+          content.slug in (workspace.pages || {}) ||
+          oldSlug in (workspace.pages || {})
+        ) {
+          await this.pages.updatePage(
+            workspace.id!,
+            oldSlug || content.slug,
+            content
+          );
+        } else {
+          await this.pages.createPage(workspace.id!, content);
+        }
+        break;
+
+      case 'automations':
+        if (content.slug in (workspace.automations || {})) {
+          await automations.updateAutomation(
+            workspace.id!,
+            content.slug,
+            content
+          );
+        } else {
+          await automations.createAutomation(workspace.id!, content);
+        }
+        break;
+
+      case 'imports':
+        if (content.slug in (workspace.imports || {})) {
+          await appInstances.configureApp(workspace.id!, content.slug, content);
+        } else {
+          await appInstances.installApp(workspace.id!, content);
+        }
+        break;
+
+      default:
+        return false;
+    }
+    return true;
+  }
 }
 
 export default Workspaces;

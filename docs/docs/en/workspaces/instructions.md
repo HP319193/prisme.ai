@@ -163,7 +163,7 @@ If **Content-Type** header is set to 'application/x-www-form-urlencoded', the **
     url: ..
     multipart:
       - fieldname: file
-        value: someBase64EncodedFile
+        value: someBase64EncodedFile | someBufferArray
         filename: filename.png # Required if value is a file
         contentType: image/png # Optional
       - fieldname: metadata

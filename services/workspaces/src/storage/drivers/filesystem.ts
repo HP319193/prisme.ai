@@ -1,7 +1,10 @@
-import { DriverType, IStorage, ObjectList } from '../types';
-import { join, dirname } from 'path';
+import archiver from 'archiver';
+import stream from 'stream';
+import { DriverType, ExportOptions, IStorage, ObjectList } from '../types';
+import { join, dirname, basename } from 'path';
 import fs, { promises as promisesFs } from 'fs';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
+import { streamToBuffer } from '../../utils/streamToBuffer';
 
 export interface FilesystemOptions {
   dirpath?: string;
@@ -142,5 +145,44 @@ export default class Filesystem implements IStorage {
         ErrorSeverity.Fatal
       );
     }
+  }
+
+  async export(
+    path: string,
+    outStream?: stream.Writable,
+    opts?: ExportOptions
+  ) {
+    const { format } = opts || {};
+    const fullPath = this.getPath(path);
+
+    let isDirectory;
+    try {
+      isDirectory = fs.lstatSync(fullPath).isDirectory();
+    } catch {
+      throw new ObjectNotFoundError();
+    }
+
+    const archive = archiver((format as any) || 'zip', {
+      zlib: { level: 9 }, // Sets the compression level.
+    });
+
+    let completionPromise: Promise<'streamed' | Buffer>;
+    if (outStream) {
+      archive.pipe(outStream);
+      completionPromise = Promise.resolve('streamed');
+    } else {
+      completionPromise = streamToBuffer(archive);
+    }
+
+    if (isDirectory) {
+      archive.directory(fullPath, basename(fullPath));
+    } else {
+      archive.append(fs.createReadStream(fullPath), {
+        name: basename(fullPath),
+      });
+    }
+
+    archive.finalize();
+    return completionPromise;
   }
 }

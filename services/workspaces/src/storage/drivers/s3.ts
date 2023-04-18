@@ -1,7 +1,16 @@
-import { DriverType, IStorage, ObjectList, SaveOptions } from '../types';
+import archiver from 'archiver';
+import {
+  DriverType,
+  ExportOptions,
+  IStorage,
+  ObjectList,
+  SaveOptions,
+} from '../types';
 import AWS from 'aws-sdk';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 import path from 'path';
+import stream from 'stream';
+import { streamToBuffer } from '../../utils/streamToBuffer';
 
 export interface S3Options {
   accessKeyId: string;
@@ -76,13 +85,13 @@ export default class S3Like implements IStorage {
   }
 
   public get(key: string) {
-    return new Promise((resolve: any, reject: any) => {
+    return new Promise<Buffer>((resolve: any, reject: any) => {
       this.client.getObject(
         {
           Key: key,
           Bucket: this.options.bucket,
         },
-        function (err: any, data: any) {
+        function (err: any, data) {
           if (err) {
             reject(new ObjectNotFoundError());
           } else {
@@ -242,5 +251,41 @@ export default class S3Like implements IStorage {
       await new Promise((resolve) => setTimeout(resolve, delay));
       waited += delay;
     } while (waited < maxWait);
+  }
+
+  async export(
+    prefix: string,
+    outStream?: stream.Writable,
+    opts?: ExportOptions
+  ) {
+    const { format, exclude = [] } = opts || {};
+    const keys = await this.find(prefix, true);
+    const archive = archiver((format as any) || 'zip', {
+      zlib: { level: 9 }, // Sets the compression level.
+    });
+
+    let completionPromise: Promise<'streamed' | Buffer>;
+    if (outStream) {
+      archive.pipe(outStream);
+      completionPromise = Promise.resolve('streamed');
+    } else {
+      completionPromise = streamToBuffer(archive);
+    }
+
+    await Promise.all(
+      keys.map(async ({ key }) => {
+        if (exclude.some((cur) => key.endsWith(cur))) {
+          return;
+        }
+        return await this.get(key).then((body) => {
+          archive.append(body, {
+            name: key.slice(path.dirname(prefix).length),
+          });
+        });
+      })
+    );
+
+    archive.finalize();
+    return completionPromise;
   }
 }
