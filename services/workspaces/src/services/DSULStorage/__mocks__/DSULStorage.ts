@@ -13,6 +13,7 @@ const getMockedStorage = (initStore?: any): IStorage => {
       return Promise.resolve(true);
     }),
     copy: jest.fn(),
+    export: jest.fn(),
     delete: jest.fn(),
     deleteMany: jest.fn(),
     get: jest.fn((id: string) => {

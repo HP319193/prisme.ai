@@ -1,3 +1,5 @@
+import stream from 'stream';
+
 export type ObjectList = {
   key: string;
 }[];
@@ -5,6 +7,12 @@ export type ObjectList = {
 export interface SaveOptions {
   mimetype?: string;
 }
+
+export interface ExportOptions {
+  format?: string;
+  exclude?: string[];
+}
+
 export interface IStorage {
   type(): DriverType;
 
@@ -16,6 +24,12 @@ export interface IStorage {
 
   delete(id: string): any;
   deleteMany(ids: string[]): any;
+
+  export(
+    prefix: string,
+    outStream?: stream.Writable,
+    opts?: ExportOptions
+  ): Promise<Buffer | 'streamed'>;
 }
 
 export enum DriverType {

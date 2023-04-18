@@ -74,6 +74,8 @@ export function initAPI(
         '^/sys',
         '^/v2/files/',
         '^/v2/workspaces/.*/files',
+        '^/v2/workspaces/import',
+        '^/v2/workspaces/.*/import',
         '^/v2/pages/.*/permissions',
       ],
     }),

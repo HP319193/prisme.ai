@@ -1,4 +1,5 @@
 import yaml from 'js-yaml';
+import stream from 'stream';
 import { SLUG_VALIDATION_REGEXP } from '../../../config';
 import {
   AlreadyUsedError,
@@ -7,7 +8,8 @@ import {
   ObjectNotFoundError,
 } from '../../errors';
 import { logger } from '../../logger';
-import { IStorage } from '../../storage/types';
+import { cache } from '../../storage/cache';
+import { ExportOptions, IStorage } from '../../storage/types';
 import { getPath } from './getPath';
 import {
   DSULInterfaces,
@@ -31,7 +33,8 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
 
   child<newT extends keyof DSULInterfaces>(
     dsulType: newT,
-    dsulQuery: DSULQuery = {}
+    dsulQuery: DSULQuery = {},
+    enableCache?: boolean
   ): DSULStorage<newT> {
     const child = Object.assign({}, this, {
       dsulType,
@@ -40,6 +43,11 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
         ...dsulQuery,
       },
     });
+    if (enableCache) {
+      (child as any).driver = cache(this.driver);
+    } else if (enableCache === false && (this.driver as any).cache) {
+      (child as any).driver = (this.driver as any).__proto__;
+    }
     Object.setPrototypeOf(child, DSULStorage.prototype);
     return child;
   }
@@ -305,10 +313,24 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
     );
     // Maintain subfolders index up-to-date
     if (folderIndex) {
+      const folderIndexPath = this.getPath({ ...query, folderIndex: true });
+      // If we have cache enabled, pull again folderIndex to synchronize concurrent promises as during workspaces import
+      let latestFolderIndex;
+      if (
+        (this.driver as any).cache &&
+        folderIndexPath in (this.driver as any).cache
+      ) {
+        latestFolderIndex = yaml.load(
+          (this.driver as any).cache[folderIndexPath]
+        ) as any;
+      }
       this.driver
         .save(
-          this.getPath({ ...query, folderIndex: true }),
-          yaml.dump(folderIndex, { skipInvalid: true })
+          folderIndexPath,
+          yaml.dump(
+            { ...latestFolderIndex, ...folderIndex },
+            { skipInvalid: true }
+          )
         )
         .catch((err) => {
           logger.warn({
@@ -354,5 +376,13 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
 
   async copy(fromQuery: DSULQuery, toQuery: DSULQuery) {
     await this.driver.copy(this.getPath(fromQuery), this.getPath(toQuery));
+  }
+
+  async export(
+    query: DSULQuery,
+    outStream?: stream.Writable,
+    opts?: ExportOptions
+  ) {
+    return await this.driver.export(this.getPath(query), outStream, opts);
   }
 }

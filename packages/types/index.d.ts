@@ -2880,6 +2880,22 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace ExportWorkspaceVersion {
+        namespace Parameters {
+            export type VersionId = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            versionId: Parameters.VersionId;
+        }
+        namespace Responses {
+            export type $200 = string; // binary
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace GetApp {
         namespace Parameters {
             export type AppSlug = string;
@@ -3156,6 +3172,54 @@ declare namespace PrismeaiAPI {
                 id?: string;
                 name?: string;
             }[];
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+        }
+    }
+    namespace ImportExistingWorkspace {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        export interface RequestBody {
+            [name: string]: any;
+            /**
+             * Zip archive binary data
+             */
+            archive: string; // binary
+        }
+        namespace Responses {
+            export interface $200 {
+                imported: string[];
+                errors?: {
+                    [name: string]: any;
+                }[];
+                workspace: Prismeai.DSULReadOnly;
+            }
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+        }
+    }
+    namespace ImportNewWorkspace {
+        export interface RequestBody {
+            [name: string]: any;
+            /**
+             * Zip archive binary data
+             */
+            archive: string; // binary
+        }
+        namespace Responses {
+            export interface $200 {
+                imported: string[];
+                errors?: {
+                    [name: string]: any;
+                }[];
+                workspace: Prismeai.DSULReadOnly;
+            }
+            export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
         }

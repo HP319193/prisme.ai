@@ -12,7 +12,6 @@ class MathematicalExpression extends Evaluatable {
     this.leftTerm = leftTerm;
     this.rightTerm = rightTerm;
     this.op = op;
-    console.log(JSON.stringify(params, null, 2));
   }
 
   evaluate(context: any) {
