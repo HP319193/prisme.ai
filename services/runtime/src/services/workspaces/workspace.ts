@@ -154,9 +154,15 @@ export class Workspace {
   }
 
   updateConfig(config: Prismeai.Config) {
-    this.config = interpolate(config?.value || {}, {
-      config: config?.value || {},
-    });
+    this.config = interpolate(
+      config?.value || {},
+      {
+        config: config?.value || {},
+      },
+      {
+        undefinedVars: 'leave',
+      }
+    );
     this.secrets = findSecretValues(
       this.config,
       findSecretPaths(config?.schema || {})
@@ -193,9 +199,15 @@ export class Workspace {
     try {
       const dsul = await this.apps.getApp(appSlug, appVersion);
       const importParentAppSlugs = parentAppSlugs.concat(appSlug);
-      const interpolatedAppConfig = interpolate(appInstance.config || {}, {
-        config: this.config,
-      });
+      const interpolatedAppConfig = interpolate(
+        appInstance.config || {},
+        {
+          config: this.config,
+        },
+        {
+          undefinedVars: 'leave',
+        }
+      );
       this.imports[slug] = await Workspace.create(
         dsul,
         this.apps,

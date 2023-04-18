@@ -154,5 +154,5 @@ function interpolateInstruction(
   } else if (instructionName == InstructionType.Conditions) {
     interpolationExclude.push('conditions');
   }
-  return interpolate(instruction, ctx, interpolationExclude);
+  return interpolate(instruction, ctx, { exclude: interpolationExclude });
 }

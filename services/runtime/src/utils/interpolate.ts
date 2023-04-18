@@ -4,6 +4,11 @@ import { parseVariableName } from './parseVariableName';
 import { evaluate as evaluateExpr } from './evaluate';
 import { PrismeError } from '../errors';
 
+export interface InterpolateOptions {
+  exclude?: string[];
+  undefinedVars?: 'leave' | 'remove';
+}
+
 const getValueFromCtx = (pathStr: string, context: any) => {
   const path = parseVariableName(pathStr);
   return path.reduce((prev: any, nextPath: any) => {
@@ -14,13 +19,20 @@ const getValueFromCtx = (pathStr: string, context: any) => {
 const evaluate = (
   expr: any,
   ctx: any,
-  options: { evalExpr?: boolean; asString?: boolean }
+  options: InterpolateOptions & { evalExpr?: boolean; asString?: boolean }
 ) => {
-  const { asString = false, evalExpr = false } = options;
+  const {
+    asString = false,
+    evalExpr = false,
+    undefinedVars = 'remove',
+  } = options;
+
   const value = evalExpr
     ? evaluateExpr(expr, ctx, false)
     : getValueFromCtx(expr, ctx);
-  if (typeof value !== 'string') {
+  if (typeof value === 'undefined' && undefinedVars === 'leave') {
+    return evalExpr ? `{% ${expr} %}` : `{{${expr}}}`;
+  } else if (typeof value !== 'string') {
     if (asString) {
       return typeof value === 'undefined' || value == null
         ? ''
@@ -35,9 +47,10 @@ const evaluate = (
 export const interpolate = (
   target: any,
   context = {},
-  exclude: string[] = [],
+  opts: InterpolateOptions = {},
   patterns = [/\{\%(.+)\%\}/, /\{\{([^{}]*?)\}\}/g]
 ): any => {
+  const { exclude = [] } = opts;
   if (!context) {
     context = {};
   }
@@ -61,6 +74,7 @@ export const interpolate = (
               }
               replaceAgain = true;
               return evaluate(expr, context, {
+                ...opts,
                 asString: true,
                 evalExpr: fullMatch.startsWith('{%'),
               });
@@ -77,6 +91,7 @@ export const interpolate = (
             target.endsWith('}}'))
         ) {
           return evaluate(target.substring(2, target.length - 2), context, {
+            ...opts,
             evalExpr: target.startsWith('{%'),
           });
         }
@@ -90,7 +105,7 @@ export const interpolate = (
     return target;
   } else if (Array.isArray(target)) {
     return target.map((value: any) =>
-      interpolate(value, context, exclude, patterns)
+      interpolate(value, context, opts, patterns)
     );
   } else if (target && typeof target === 'object') {
     return Object.entries(target).reduce(
@@ -98,7 +113,7 @@ export const interpolate = (
         ...acc,
         [key]: exclude.includes(key)
           ? value
-          : interpolate(value, context, exclude, patterns),
+          : interpolate(value, context, opts, patterns),
       }),
       {}
     );
