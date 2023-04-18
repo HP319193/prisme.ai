@@ -7,6 +7,12 @@ export type ObjectList = {
 export interface SaveOptions {
   mimetype?: string;
 }
+
+export interface ExportOptions {
+  format?: string;
+  exclude?: string[];
+}
+
 export interface IStorage {
   type(): DriverType;
 
@@ -21,8 +27,8 @@ export interface IStorage {
 
   export(
     prefix: string,
-    format?: string,
-    outStream?: stream.Writable
+    outStream?: stream.Writable,
+    opts?: ExportOptions
   ): Promise<Buffer | 'streamed'>;
 }
 

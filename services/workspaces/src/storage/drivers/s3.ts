@@ -1,5 +1,11 @@
 import archiver from 'archiver';
-import { DriverType, IStorage, ObjectList, SaveOptions } from '../types';
+import {
+  DriverType,
+  ExportOptions,
+  IStorage,
+  ObjectList,
+  SaveOptions,
+} from '../types';
 import AWS from 'aws-sdk';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 import path from 'path';
@@ -249,9 +255,10 @@ export default class S3Like implements IStorage {
 
   async export(
     prefix: string,
-    format: string = 'zip',
-    outStream?: stream.Writable
+    outStream?: stream.Writable,
+    opts?: ExportOptions
   ) {
+    const { format, exclude = [] } = opts || {};
     const keys = await this.find(prefix, true);
     const archive = archiver((format as any) || 'zip', {
       zlib: { level: 9 }, // Sets the compression level.
@@ -266,14 +273,16 @@ export default class S3Like implements IStorage {
     }
 
     await Promise.all(
-      keys.map(
-        async ({ key }) =>
-          await this.get(key).then((body) => {
-            archive.append(body, {
-              name: key.slice(path.dirname(prefix).length),
-            });
-          })
-      )
+      keys.map(async ({ key }) => {
+        if (exclude.some((cur) => key.endsWith(cur))) {
+          return;
+        }
+        return await this.get(key).then((body) => {
+          archive.append(body, {
+            name: key.slice(path.dirname(prefix).length),
+          });
+        });
+      })
     );
 
     archive.finalize();

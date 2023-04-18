@@ -13,3 +13,7 @@ export const MAXIMUM_APP_VERSION = parseInt(
 );
 
 export const CUSTOM_DOMAINS_CNAME = process.env.CUSTOM_DOMAINS_CNAME;
+
+export const IMPORT_BATCH_SIZE = parseInt(
+  process.env.IMPORT_BATCH_SIZE || '50'
+);

@@ -9,7 +9,7 @@ import {
 } from '../../errors';
 import { logger } from '../../logger';
 import { cache } from '../../storage/cache';
-import { IStorage } from '../../storage/types';
+import { ExportOptions, IStorage } from '../../storage/types';
 import { getPath } from './getPath';
 import {
   DSULInterfaces,
@@ -378,7 +378,11 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
     await this.driver.copy(this.getPath(fromQuery), this.getPath(toQuery));
   }
 
-  async export(query: DSULQuery, format?: string, outStream?: stream.Writable) {
-    return await this.driver.export(this.getPath(query), format, outStream);
+  async export(
+    query: DSULQuery,
+    outStream?: stream.Writable,
+    opts?: ExportOptions
+  ) {
+    return await this.driver.export(this.getPath(query), outStream, opts);
   }
 }

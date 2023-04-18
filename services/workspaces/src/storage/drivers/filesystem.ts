@@ -1,6 +1,6 @@
 import archiver from 'archiver';
 import stream from 'stream';
-import { DriverType, IStorage, ObjectList } from '../types';
+import { DriverType, ExportOptions, IStorage, ObjectList } from '../types';
 import { join, dirname, basename } from 'path';
 import fs, { promises as promisesFs } from 'fs';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
@@ -149,9 +149,10 @@ export default class Filesystem implements IStorage {
 
   async export(
     path: string,
-    format: string = 'zip',
-    outStream?: stream.Writable
+    outStream?: stream.Writable,
+    opts?: ExportOptions
   ) {
+    const { format } = opts || {};
     const fullPath = this.getPath(path);
 
     let isDirectory;

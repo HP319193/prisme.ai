@@ -34,6 +34,7 @@ import {
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 import {
   CUSTOM_DOMAINS_CNAME,
+  IMPORT_BATCH_SIZE,
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
 import { fetchUsers } from '@prisme.ai/permissions';
@@ -773,8 +774,11 @@ class Workspaces {
         version,
         parentFolder: true,
       },
-      format,
-      outStream
+      outStream,
+      {
+        format,
+        exclude: [`${version}/runtime.yml`, `__index__.yml`],
+      }
     );
 
     return archive;
@@ -807,22 +811,30 @@ class Workspaces {
     let imported: string[] = [];
     let errors: any[] = [];
     let batch: Promise<void>[] = [];
-    const BATCH_SIZE = 20; // Run 20 read / save at a time
-
+    let counter = 0;
     await processArchive(zipBuffer, async (filepath: string, stream) => {
+      if (counter > 1000) {
+        throw new PrismeError(
+          'Workspace archive cannot have more than 1000 files',
+          {}
+        );
+      }
+      counter++;
       const savePromise = new Promise<void>(async (resolve) => {
         try {
           const buffer = await streamToBuffer(stream);
           const content: any = yaml.load(buffer.toString());
 
-          await this.applyDSULFile(
+          const applied = await this.applyDSULFile(
             filepath.split('/').slice(1),
             workspace,
             content,
             automations,
             imports
           );
-          imported.push(filepath);
+          if (applied) {
+            imported.push(filepath);
+          }
           resolve();
         } catch (err) {
           errors.push({
@@ -835,7 +847,7 @@ class Workspaces {
       });
 
       batch.push(savePromise);
-      if (batch.length < BATCH_SIZE) {
+      if (batch.length < IMPORT_BATCH_SIZE) {
         return;
       }
       await Promise.all(batch);
@@ -869,7 +881,7 @@ class Workspaces {
       mustBeNull ||
       (folder == 'index.yml' && subfile)
     ) {
-      return;
+      return false;
     }
 
     switch (folder) {
@@ -922,8 +934,9 @@ class Workspaces {
         break;
 
       default:
-        return;
+        return false;
     }
+    return true;
   }
 }
 
