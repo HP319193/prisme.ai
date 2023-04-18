@@ -36,9 +36,15 @@ export const getServerSideProps: GetServerSideProps<
     page = await api.getPageBySlug(workspaceSlug, pageSlug.join('/'));
     page = (await getBlocksConfigFromServer(
       page,
-      query,
+      {
+        ...query,
+        pageSlug: Array.isArray(query.pageSlug)
+          ? query.pageSlug.join('')
+          : query.pageSlug,
+      },
       locale
     )) as Prismeai.DetailedPage;
+
     if (!page) {
       throw new Error('404');
     }
