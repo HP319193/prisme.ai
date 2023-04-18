@@ -87,7 +87,10 @@ export const BlockLoader: TBlockLoader = ({
     if (!user || !page || !page.workspaceId || !loaded) return;
     try {
       const urlSearchParams = new URLSearchParams(window.location.search);
-      const query = Object.fromEntries(urlSearchParams.entries());
+      const query = {
+        pageSlug: page.slug,
+        ...Object.fromEntries(urlSearchParams.entries()),
+      };
 
       const newConfig = await api.callAutomation(
         page.workspaceId,

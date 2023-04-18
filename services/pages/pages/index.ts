@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     page = await api.getPageBySlug(workspaceSlug, 'index');
     page = (await getBlocksConfigFromServer(
       page,
-      query,
+      { ...query, pageSlug: 'index' },
       locale
     )) as Prismeai.DetailedPage;
     if (!page) {
