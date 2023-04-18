@@ -813,9 +813,9 @@ class Workspaces {
     let batch: Promise<void>[] = [];
     let counter = 0;
     await processArchive(zipBuffer, async (filepath: string, stream) => {
-      if (counter > 1000) {
+      if (counter > 5000) {
         throw new PrismeError(
-          'Workspace archive cannot have more than 1000 files',
+          'Workspace archive cannot have more than 5000 files',
           {}
         );
       }
@@ -835,7 +835,6 @@ class Workspaces {
           if (applied) {
             imported.push(filepath);
           }
-          resolve();
         } catch (err) {
           errors.push({
             msg: 'Some error occured while importing a workspace archive',
@@ -844,6 +843,7 @@ class Workspaces {
             err,
           });
         }
+        resolve();
       });
 
       batch.push(savePromise);
