@@ -129,9 +129,13 @@ export const RichText = ({
             />
           );
         case 'a':
+          const {
+            style,
+            ...attribs
+          } = (domNode.attribs as unknown) as HTMLAnchorElement;
           return (
             <Link
-              {...((domNode.attribs as unknown) as HTMLAnchorElement)}
+              {...attribs}
               children={domToReact(domNode.children, options)}
             />
           );

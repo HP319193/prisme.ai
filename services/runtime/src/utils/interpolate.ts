@@ -30,8 +30,8 @@ const evaluate = (
   const value = evalExpr
     ? evaluateExpr(expr, ctx, false)
     : getValueFromCtx(expr, ctx);
-  if (typeof value === 'undefined' && undefinedVars === 'leave') {
-    return evalExpr ? `{% ${expr} %}` : `{{${expr}}}`;
+  if (typeof value === 'undefined' && !evalExpr && undefinedVars === 'leave') {
+    return `{{${expr}}}`;
   } else if (typeof value !== 'string') {
     if (asString) {
       return typeof value === 'undefined' || value == null
@@ -72,12 +72,15 @@ export const interpolate = (
                 replaceAgain = false;
                 return fullStr;
               }
-              replaceAgain = true;
-              return evaluate(expr, context, {
+              const evaluated = evaluate(expr, context, {
                 ...opts,
                 asString: true,
                 evalExpr: fullMatch.startsWith('{%'),
               });
+              // The only reason for which evaluate might return a "{{expression}}"" again is that var is undefined & opts.undefinedVars == 'leave'
+              // Without setting replaceAgain to false in that case, it would end in an infinite loop !!
+              replaceAgain = !evaluated.startsWith('{{');
+              return evaluated;
             }
           );
         } while (replaceAgain);
