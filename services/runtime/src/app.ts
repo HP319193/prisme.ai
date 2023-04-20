@@ -22,6 +22,7 @@ process.on('uncaughtException', uncaughtExceptionHandler);
 
 const broker = initEDA();
 const schedulesBroker = initEDA(`${APP_NAME}-schedules`);
+const workspacesSynchroBroker = initEDA(`${APP_NAME}-workspaces-synchro`);
 
 (async function () {
   await Promise.all([broker.ready, schedulesBroker.ready]);
@@ -36,7 +37,7 @@ const schedulesBroker = initEDA(`${APP_NAME}-schedules`);
     WORKSPACES_STORAGE_TYPE,
     WORKSPACES_STORAGE_OPTIONS[WORKSPACES_STORAGE_TYPE],
     apps,
-    broker
+    workspacesSynchroBroker
   );
   const runtime = new Runtime(broker, workspaces, cache);
   const schedules = new Schedules(schedulesBroker, apps);
