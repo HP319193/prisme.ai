@@ -2,7 +2,9 @@ import { useCallback } from 'react';
 import '@prisme.ai/types';
 import { Schema } from '../SchemaForm';
 
-export const isLocalizedObject = (value: any) => {
+export const isLocalizedObject = (
+  value: any
+): value is Prismeai.LocalizedText => {
   return (
     typeof value === 'string' ||
     (value &&

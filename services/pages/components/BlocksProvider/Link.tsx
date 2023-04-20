@@ -21,8 +21,10 @@ export const Link = ({
     !href || href.match(/^\?/) ? asPath.replace(/\?.*$/, '') : ''
   }${href || ''}`;
 
+  const [, lang, url] = fullHref.match(/^\/?(\w{2})\/(.*$)/) || [, , fullHref];
+
   return (
-    <NextLink href={fullHref}>
+    <NextLink href={url} locale={lang}>
       <a
         {...props}
         onClick={(e) => {

@@ -1,9 +1,11 @@
+import { isLocalizedObject } from '@prisme.ai/design-system';
 import { ReactNode, useState } from 'react';
 import { BlockContext, useBlock } from '../../Provider';
 import {
   BlocksDependenciesContext,
   useBlocks,
 } from '../../Provider/blocksContext';
+import useLocalizedText from '../../useLocalizedText';
 import { ActionConfig, Action } from '../Action';
 import { BaseBlock } from '../BaseBlock';
 import { BlocksList, BlocksListConfig } from '../BlocksList';
@@ -33,6 +35,7 @@ export const TabsView = ({
   events,
   Link,
 }: TabsViewProps) => {
+  const { localize } = useLocalizedText();
   const [currentTab, setCurrentTab] = useState(0);
   return (
     <div className={`pr-block-tabs-view ${className}`}>
@@ -62,7 +65,7 @@ export const TabsView = ({
                 currentTab === k ? 'pr-block-tabs-view__tab--active' : ''
               }`}
             >
-              {text}
+              {isLocalizedObject(text) ? localize(text) : text}
             </button>
           );
         })}
