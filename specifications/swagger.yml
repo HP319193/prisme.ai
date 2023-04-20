@@ -1773,6 +1773,30 @@ components:
             oldSlug:
               type: string
 
+    ImportedWorkspace:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.imported
+          enum:
+            - workspaces.imported
+        payload:
+          type: object
+          required:
+            - workspace
+            - files
+          properties:
+            workspace:
+              $ref: '#/components/schemas/Workspace'
+            files:
+              type: array
+              items:
+                type: string
+
     ConfiguredWorkspace:
       type: object
       required:
@@ -2207,6 +2231,25 @@ components:
               type: string
 
     ########################## Runtime events ##########################
+
+    UpdatedRuntimeDSUL:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.dsul.updated
+          enum:
+            - runtime.dsul.updated
+        payload:
+          type: object
+          required:
+            - workspaceId
+          properties:
+            workspaceId:
+              type: string
 
     ExecutedAutomation:
       type: object

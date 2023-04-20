@@ -1,4 +1,4 @@
-import { IStorage } from '../types';
+import { IStorage, ObjectList } from '../types';
 import { dirname, join } from 'path';
 import fs from 'fs';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
@@ -28,6 +28,23 @@ export default class Filesystem implements IStorage {
 
   private getPath(key: string) {
     return join(this.options.dirpath || '', key);
+  }
+
+  async find(path: string): Promise<ObjectList> {
+    const fullpath = this.getPath(path);
+    return new Promise((resolve, reject) => {
+      fs.readdir(fullpath, (err, files) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(
+            files.map((path) => ({
+              key: path,
+            }))
+          );
+        }
+      });
+    });
   }
 
   async get(key: string) {

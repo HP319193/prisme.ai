@@ -28,6 +28,8 @@ export enum EventType {
 
   CreatedWorkspace = 'workspaces.created',
   ConfiguredWorkspace = 'workspaces.configured',
+  ImportedWorkspace = 'workspaces.imported',
+  UpdatedRuntimeDSUL = 'runtime.dsul.updated',
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
   CreatedAutomation = 'workspaces.automations.created',

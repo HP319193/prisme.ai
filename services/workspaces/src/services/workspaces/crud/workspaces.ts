@@ -861,6 +861,18 @@ class Workspaces {
       version,
       true
     );
+    this.broker.send<Prismeai.ImportedWorkspace['payload']>(
+      EventType.ImportedWorkspace,
+      {
+        workspace: {
+          id: workspaceId,
+          slug: updatedDetailedWorkspace.slug,
+          name: updatedDetailedWorkspace.name,
+        },
+        files: imported,
+      },
+      { workspaceId }
+    );
     return {
       imported,
       errors,
@@ -885,7 +897,7 @@ class Workspaces {
       return false;
     }
 
-    const slug = parse(subfile).name;
+    const slug = parse(subfile || '').name;
     switch (folder) {
       case 'index.yml':
         await this.updateWorkspace(workspace.id!, {

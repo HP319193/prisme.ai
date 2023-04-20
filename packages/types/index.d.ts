@@ -1649,6 +1649,17 @@ declare namespace Prismeai {
             };
         };
     }
+    export interface ImportedWorkspace {
+        /**
+         * example:
+         * workspaces.imported
+         */
+        type: "workspaces.imported";
+        payload: {
+            workspace: Workspace;
+            files: string[];
+        };
+    }
     export interface InstalledAppInstance {
         /**
          * example:
@@ -2232,6 +2243,16 @@ declare namespace Prismeai {
              */
             oldSlug?: string;
             events?: ProcessedEvents;
+        };
+    }
+    export interface UpdatedRuntimeDSUL {
+        /**
+         * example:
+         * runtime.dsul.updated
+         */
+        type: "runtime.dsul.updated";
+        payload: {
+            workspaceId: string;
         };
     }
     export interface UpdatedWorkspace {
