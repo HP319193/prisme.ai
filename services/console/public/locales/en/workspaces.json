@@ -736,10 +736,11 @@
       "name_DataTable": "Data table",
       "name_Form": "Form",
       "name_RichText": "Rich text",
-      "name_StackedNavigation": "Stacked Navigation",
+      "name_StackedNavigation": ^^"Stacked Navigation",
       "name_Buttons": "Buttons group",
       "name_BlocksList": "Blocks list",
       "name_BlocksGrid": "Blocks grid",
+      "name_BlocksSplit": "Split blocks view",
       "name_Footer": "Footer",
       "name_Breadcrumbs": "Breadcrumbs",
       "name_Action": "Action",
@@ -1196,6 +1197,19 @@
                 "description": "Name of Block to display"
               }
             }
+          }
+        }
+      },
+      "blocksSplit": {
+        "settings": {
+          "firstBlock": {
+            "label": "First block"
+          },
+          "secondBlock": {
+            "label": "Second block"
+          },
+          "genericBlocks": {
+            "description": "Block specification."
           }
         }
       },

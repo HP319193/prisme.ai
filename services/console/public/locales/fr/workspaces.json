@@ -740,6 +740,7 @@
       "name_Buttons": "Groupe de boutons",
       "name_BlocksList": "Liste de Blocks",
       "name_BlocksGrid": "Grille de blocks",
+      "name_BlocksSpit": "Vue de Blocks scindés",
       "name_Footer": "Pied de page",
       "name_Breadcrumbs": "Fil d'ariane",
       "name_Action": "Action",
@@ -1178,6 +1179,37 @@
           "level": {
             "label": "Niveau du titre",
             "description": "Définit le niveau de la balise appliquée au titre."
+          }
+        }
+      },
+      "blockslist": {
+        "settings": {
+          "blocks": {
+            "label": "Blocks",
+            "description": "Liste des Blocks.",
+            "add": "Ajouter un Block",
+            "remove": "Supprimer le Block",
+            "items": {
+              "label": "Block",
+              "description": "Spécification du Block.",
+              "name": {
+                "label": "Nom du Block",
+                "description": "Le nom du Block à afficher"
+              }
+            }
+          }
+        }
+      },
+      "blocksSplit": {
+        "settings": {
+          "firstBlock": {
+            "label": "Premier block"
+          },
+          "secondBlock": {
+            "label": "Second block"
+          },
+          "genericBlocks": {
+            "description": "Spécifications du block."
           }
         }
       },
