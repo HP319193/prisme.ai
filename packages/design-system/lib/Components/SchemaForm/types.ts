@@ -75,10 +75,11 @@ export type UiOptionsTags = {
 };
 export type UiOptionsSelect = {
   select: {
-    options: {
+    options?: {
       label: string | ReactNode;
       value: any;
     }[];
+    hideSearch?: boolean;
   };
 };
 export type UiOptionsDynamicAutocomplete = {
