@@ -1,3 +1,4 @@
+import { parse } from 'path';
 import { nanoid } from 'nanoid';
 const dns = require('dns');
 import stream from 'stream';
@@ -884,6 +885,7 @@ class Workspaces {
       return false;
     }
 
+    const slug = parse(subfile).name;
     switch (folder) {
       case 'index.yml':
         await this.updateWorkspace(workspace.id!, {
@@ -909,6 +911,7 @@ class Workspaces {
             content
           );
         } else {
+          content.slug = slug;
           await this.pages.createPage(workspace.id!, content);
         }
         break;
@@ -921,6 +924,7 @@ class Workspaces {
             content
           );
         } else {
+          content.slug = slug;
           await automations.createAutomation(workspace.id!, content);
         }
         break;
@@ -929,6 +933,7 @@ class Workspaces {
         if (content.slug in (workspace.imports || {})) {
           await appInstances.configureApp(workspace.id!, content.slug, content);
         } else {
+          content.slug = slug;
           await appInstances.installApp(workspace.id!, content);
         }
         break;
