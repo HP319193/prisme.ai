@@ -756,7 +756,9 @@
       "description_StackedNavigation": "Afficher des pages de blocks navigable. Doit être utilisé par le biais d'automatisations.",
       "description_Buttons": "Afficher un groupe de boutons",
       "description_BlocksList": "Afficher une liste de Blocks",
-      "description_Breadcrumbs": "Afficher un fil d'ariane",
+      "description_BlocksGrid": "Afficher une grille de Blocks",
+      "description_BlocksSplit": "Afficher deux blocks avec une bordure étendable",
+      "description_Breadcrumbs": "Afficher un fil d'ariane",d
       "description_Action": "Afficher un bouton d'action capable de faire naviguer vers un lien, une page, une section de la page ou de délencher un évènement.",
       "description_Footer": "Afficher un pied de page",
       "description_TabsView": "Afficher des onglets",
@@ -1227,27 +1229,6 @@
                 "label": "Nom du Block",
                 "description": "Le nom du Block à afficher"
               }
-            }
-          }
-        }
-      },
-      "gridLayout": {
-        "settings": {
-          "blocks": {
-            "label": "Blocks",
-            "description": "Liste des Blocks.",
-            "add": "Ajouter un Block",
-            "remove": "Supprimer le Block",
-            "items": {
-              "label": "Block",
-              "description": "Spécification du Block.",
-              "block": {
-                "name": {
-                  "label": "Nom du Block",
-                  "description": "Le nom du Block à afficher"
-                }
-              },
-              "layout": {}
             }
           }
         }
