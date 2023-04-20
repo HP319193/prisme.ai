@@ -92,8 +92,28 @@ export class Workspaces extends Storage {
       EventType.UpdatedRuntimeDSUL,
     ];
     this.broker.on(
-      alwaysListenedEvents,
+      onceListenedEvents.concat(alwaysListenedEvents),
       async (event, _, { logger }) => {
+        // Handle update events to keep model updated in real-time but do not persist
+        if (onceListenedEvents.includes(event.type as any)) {
+          const workspaceId = event.source.workspaceId;
+          if (!workspaceId) {
+            return true;
+          }
+          if (!(workspaceId in this.workspaces)) {
+            try {
+              await this.fetchWorkspace(workspaceId);
+            } catch (error) {
+              return true;
+            }
+          }
+          const workspace = this.workspaces[workspaceId];
+          await this.applyWorkspaceEvent(workspace, event);
+          if (!alwaysListenedEvents.includes(event.type as any)) {
+            return true;
+          }
+        }
+
         if (event.type === EventType.SuspendedWorkspace) {
           const suspended = (event as any as Prismeai.SuspendedWorkspace)
             .payload;
