@@ -27,6 +27,10 @@ const evaluate = (
     undefinedVars = 'remove',
   } = options;
 
+  if (evalExpr) {
+    console.log('PARSING EXPRESSION');
+    console.log(expr);
+  }
   const value = evalExpr
     ? evaluateExpr(expr, ctx, false)
     : getValueFromCtx(expr, ctx);
@@ -72,14 +76,16 @@ export const interpolate = (
                 replaceAgain = false;
                 return fullStr;
               }
+              const evalExpr = fullMatch.startsWith('{%');
               const evaluated = evaluate(expr, context, {
                 ...opts,
                 asString: true,
-                evalExpr: fullMatch.startsWith('{%'),
+                evalExpr,
               });
               // The only reason for which evaluate might return a "{{expression}}"" again is that var is undefined & opts.undefinedVars == 'leave'
               // Without setting replaceAgain to false in that case, it would end in an infinite loop !!
-              replaceAgain = !evaluated.startsWith('{{');
+              // Also, we dont want to reprocess the result of some evalExpr (allowing to prevent some {{variable}} from being interpolated : {% '{{var}}' %})
+              replaceAgain = !evaluated.startsWith('{{') && !evalExpr;
               return evaluated;
             }
           );

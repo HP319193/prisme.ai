@@ -477,13 +477,24 @@ describe('Expressions can be evaluated with {% %}', () => {
       })
     ).toEqual(31);
 
+    const ctx = {
+      key: 'date',
+      run: {
+        date: '2023-03-31T16:38:51.190Z',
+      },
+    };
+    expect(interpolate('{% date({{run[{{key}}]}}).date %}', ctx)).toEqual(31);
+
+    // This let preventing some variable expression from being interpolated !
+    expect(interpolate('{% "{{someVar}}" %}', {})).toEqual('{{someVar}}');
     expect(
-      interpolate('{% date({{run[{{key}}]}}).date %}', {
-        key: 'date',
-        run: {
-          date: '2023-03-31T16:38:51.190Z',
-        },
-      })
+      interpolate('{% "{% date({{run[{{key}}]}}).date %}" %}', {})
+    ).toEqual('{% date({{run[{{key}}]}}).date %}');
+    expect(
+      interpolate(
+        interpolate('{% "{% date({{run[{{key}}]}}).date %}" %}', {}),
+        ctx
+      )
     ).toEqual(31);
   });
 
