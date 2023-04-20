@@ -303,6 +303,7 @@ export default class Runtime {
     }
 
     return await this.processTriggers(
+      workspace,
       triggers,
       payload,
       event.source as PrismeContext,
@@ -349,6 +350,7 @@ export default class Runtime {
     }
 
     const result = await this.processTriggers(
+      workspace,
       triggers,
       webhook,
       ctx,
@@ -359,6 +361,7 @@ export default class Runtime {
   }
 
   private async processTriggers(
+    workspace: Workspace,
     triggers: DetailedTrigger[],
     payload: any,
     source: PrismeContext,
@@ -371,7 +374,10 @@ export default class Runtime {
       authData: {},
     };
     const ctx = await this.getContexts(source, session);
-
+    ctx.additionalGlobals = {
+      ...ctx.additionalGlobals,
+      workspaceName: workspace.dsul.name,
+    };
     let result;
     try {
       result = await Promise.all(

@@ -51,6 +51,7 @@ const workspacesSynchroBroker = initEDA(`${APP_NAME}-workspaces-synchro`);
       schedules.close(),
       broker.close(),
       schedulesBroker.close(),
+      workspacesSynchroBroker.close(),
     ]);
     process.exit(0);
   }
