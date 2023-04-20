@@ -104,6 +104,7 @@ export class Broker<CallbackContext = any> {
       validateEvents?: boolean;
       forceTopic?: string;
       clearUser?: boolean;
+      buffer?: boolean;
     }
   ): Broker<CallbackContext> {
     // Some source metadata should not persist in child brokers
@@ -128,6 +129,9 @@ export class Broker<CallbackContext = any> {
       ...opts,
     });
     Object.setPrototypeOf(child, Broker.prototype);
+    if (opts?.buffer) {
+      (child as Broker)._buffer = [];
+    }
     return child;
   }
 

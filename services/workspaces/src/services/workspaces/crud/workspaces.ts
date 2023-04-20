@@ -798,7 +798,13 @@ class Workspaces {
 
     const automations = new Automations(
       this.accessManager,
-      this.broker,
+      this.broker.child(
+        {},
+        {
+          // We dont want to emit automations related events, runtime will synchronize the entire model at once on the workspaces.imported event
+          buffer: true,
+        }
+      ),
       this.storage
     );
     const apps = new Apps(this.accessManager, this.broker, this.storage);
