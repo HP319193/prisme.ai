@@ -740,7 +740,7 @@
       "name_Buttons": "Groupe de boutons",
       "name_BlocksList": "Liste de Blocks",
       "name_BlocksGrid": "Grille de blocks",
-      "name_BlocksSpit": "Vue de Blocks scindés",
+      "name_BlocksSplit": "Vue de Blocks scindés",
       "name_Footer": "Pied de page",
       "name_Breadcrumbs": "Fil d'ariane",
       "name_Action": "Action",
@@ -758,7 +758,7 @@
       "description_BlocksList": "Afficher une liste de Blocks",
       "description_BlocksGrid": "Afficher une grille de Blocks",
       "description_BlocksSplit": "Afficher deux blocks avec une bordure étendable",
-      "description_Breadcrumbs": "Afficher un fil d'ariane",d
+      "description_Breadcrumbs": "Afficher un fil d'ariane",
       "description_Action": "Afficher un bouton d'action capable de faire naviguer vers un lien, une page, une section de la page ou de délencher un évènement.",
       "description_Footer": "Afficher un pied de page",
       "description_TabsView": "Afficher des onglets",
