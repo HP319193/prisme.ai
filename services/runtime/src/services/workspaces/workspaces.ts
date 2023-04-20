@@ -75,9 +75,9 @@ export class Workspaces extends Storage {
         msg: 'Received an updated workspace through events',
         event,
       });
-      await this.applyWorkspaceEvent(workspace, event);
+      const updatedWorkspace = await this.applyWorkspaceEvent(workspace, event);
 
-      await this.saveWorkspace(workspace.dsul);
+      await this.saveWorkspace(updatedWorkspace.dsul);
       logger.info({
         msg: 'Persisted updated runtime.yml',
         workspaceId: workspace.id,
@@ -132,7 +132,10 @@ export class Workspaces extends Storage {
     );
   }
 
-  async applyWorkspaceEvent(workspace: Workspace, event: PrismeEvent) {
+  async applyWorkspaceEvent(
+    workspace: Workspace,
+    event: PrismeEvent
+  ): Promise<Workspace> {
     switch (event.type) {
       case EventType.DeletedWorkspace:
         // TODO better way to enforce this is executed after runtime processEvent
@@ -202,16 +205,30 @@ export class Workspaces extends Storage {
       case EventType.ImportedWorkspace:
         const importPayload =
           event.payload as Prismeai.ImportedWorkspace['payload'];
-        try {
-          await this.rebuildWorkspaceDSUL(importPayload.workspace.id!);
-        } catch (err) {
-          console.error({
-            msg: 'Could not rebuild workspace DSUL after an import. This workspace might not function correctly.',
-            err,
-          });
+        const rebuiltWorkspace = await new Promise<Workspace | undefined>(
+          (resolve) => {
+            setTimeout(async () => {
+              try {
+                const rebuilt = await this.rebuildWorkspaceDSUL(
+                  importPayload.workspace.id!
+                );
+                resolve(rebuilt);
+              } catch (err) {
+                console.error({
+                  msg: 'Could not rebuild workspace DSUL after an import. This workspace might not function correctly.',
+                  err,
+                });
+              }
+              resolve(undefined);
+            }, 2000); // Wait 2 seconds for other replicas to finish writting previous events & avoid any conflict that could overwrite our rebuilt model
+          }
+        );
+        if (rebuiltWorkspace) {
+          return rebuiltWorkspace;
         }
         break;
     }
+    return workspace;
   }
 
   async getWorkspace(workspaceId: string) {
