@@ -161,6 +161,7 @@ export class Workspace {
       },
       {
         undefinedVars: 'leave',
+        evalExpr: false,
       }
     );
     this.secrets = findSecretValues(
@@ -206,6 +207,7 @@ export class Workspace {
         },
         {
           undefinedVars: 'leave',
+          evalExpr: false,
         }
       );
       this.imports[slug] = await Workspace.create(

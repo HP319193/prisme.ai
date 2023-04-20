@@ -7,6 +7,7 @@ import { PrismeError } from '../errors';
 export interface InterpolateOptions {
   exclude?: string[];
   undefinedVars?: 'leave' | 'remove';
+  evalExpr?: boolean;
 }
 
 const getValueFromCtx = (pathStr: string, context: any) => {
@@ -17,25 +18,27 @@ const getValueFromCtx = (pathStr: string, context: any) => {
 };
 
 const evaluate = (
-  expr: any,
+  exprWithBrackets: any,
   ctx: any,
-  options: InterpolateOptions & { evalExpr?: boolean; asString?: boolean }
+  options: InterpolateOptions & { asString?: boolean }
 ) => {
   const {
     asString = false,
-    evalExpr = false,
+    evalExpr = true,
     undefinedVars = 'remove',
   } = options;
 
-  if (evalExpr) {
-    console.log('PARSING EXPRESSION');
-    console.log(expr);
+  const isExpr = exprWithBrackets.startsWith('{%');
+  if (isExpr && !evalExpr) {
+    return exprWithBrackets;
   }
-  const value = evalExpr
+  const expr = exprWithBrackets.slice(2, -2);
+
+  const value = isExpr
     ? evaluateExpr(expr, ctx, false)
     : getValueFromCtx(expr, ctx);
   if (typeof value === 'undefined' && !evalExpr && undefinedVars === 'leave') {
-    return `{{${expr}}}`;
+    return exprWithBrackets;
   } else if (typeof value !== 'string') {
     if (asString) {
       return typeof value === 'undefined' || value == null
@@ -52,7 +55,7 @@ export const interpolate = (
   target: any,
   context = {},
   opts: InterpolateOptions = {},
-  patterns = [/\{\%(.+)\%\}/, /\{\{([^{}]*?)\}\}/g]
+  patterns = [/(\{\%.+\%\})/, /(\{\{[^{}]*?\}\})/g]
 ): any => {
   const { exclude = [] } = opts;
   if (!context) {
@@ -76,16 +79,15 @@ export const interpolate = (
                 replaceAgain = false;
                 return fullStr;
               }
-              const evalExpr = fullMatch.startsWith('{%');
               const evaluated = evaluate(expr, context, {
-                ...opts,
                 asString: true,
-                evalExpr,
+                ...opts,
               });
               // The only reason for which evaluate might return a "{{expression}}"" again is that var is undefined & opts.undefinedVars == 'leave'
               // Without setting replaceAgain to false in that case, it would end in an infinite loop !!
               // Also, we dont want to reprocess the result of some evalExpr (allowing to prevent some {{variable}} from being interpolated : {% '{{var}}' %})
-              replaceAgain = !evaluated.startsWith('{{') && !evalExpr;
+              replaceAgain =
+                !evaluated.startsWith('{{') && !fullMatch.startsWith('{%');
               return evaluated;
             }
           );
@@ -99,10 +101,7 @@ export const interpolate = (
             target.startsWith('{{') &&
             target.endsWith('}}'))
         ) {
-          return evaluate(target.substring(2, target.length - 2), context, {
-            ...opts,
-            evalExpr: target.startsWith('{%'),
-          });
+          return evaluate(target, context, opts);
         }
       } catch (e) {
         if (e instanceof PrismeError) {
