@@ -79,7 +79,7 @@ export default class S3Like implements IStorage {
         },
         function (err: any, data: any) {
           if (err) {
-            reject(new ObjectNotFoundError());
+            reject(new ObjectNotFoundError('Object not found : ' + key));
           } else {
             resolve(data.Body);
           }

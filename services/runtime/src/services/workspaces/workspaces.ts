@@ -202,7 +202,14 @@ export class Workspaces extends Storage {
       case EventType.ImportedWorkspace:
         const importPayload =
           event.payload as Prismeai.ImportedWorkspace['payload'];
-        await this.rebuildWorkspaceDSUL(importPayload.workspace.id!);
+        try {
+          await this.rebuildWorkspaceDSUL(importPayload.workspace.id!);
+        } catch (err) {
+          console.error({
+            msg: 'Could not rebuild workspace DSUL after an import. This workspace might not function correctly.',
+            err,
+          });
+        }
         break;
     }
   }
@@ -318,7 +325,7 @@ export class Workspaces extends Storage {
   }
 
   async rebuildWorkspaceDSUL(workspaceId: string) {
-    const workspaceDirectory = `workspaces/${workspaceId}/versions/current/`;
+    const workspaceDirectory = `workspaces/${workspaceId}/versions/current`;
     const automationsDirectory = `${workspaceDirectory}/automations`;
     const importsDirectory = `${workspaceDirectory}/imports`;
     const [workspaceIndexRaw, automationFiles, importFiles] = await Promise.all(
