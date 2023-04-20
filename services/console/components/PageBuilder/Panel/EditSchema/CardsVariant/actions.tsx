@@ -86,6 +86,12 @@ const actions: Schema = {
                           title:
                             'pages.blocks.cards.settings.actions.content.value_url',
                         },
+                        popup: {
+                          title: 'pages.blocks.settings.action.popup.label',
+                          description:
+                            'pages.blocks.settings.action.popup.description',
+                          type: 'boolean',
+                        },
                       },
                     },
                   ],
