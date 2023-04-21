@@ -221,12 +221,6 @@
         "display_other": "One of the events {{events}} occurs",
         "help": "Automation will be run everytime one of this event will be fired."
       },
-      "schedules": {
-        "title": "Schedules",
-        "help": "You can schedule your Automation to run at certain recurring times. You can add several schedules in crontab format. Warning, the minimum time between two executions is 15mn.",
-        "display": "{{count}} schedule",
-        "display_other": "{{count}} schedules"
-      },
       "endpoint": {
         "title": "URL",
         "display": "<a>The URL <icon /></a> is hit",
@@ -234,6 +228,12 @@
         "help": "Automation will be run everytime the URL will be hit.",
         "custom": "Accessible by URL",
         "url": "Custom URL"
+      },
+      "schedules": {
+        "title": "Schedules",
+        "help": "You can schedule your Automation to run at certain recurring times. You can add several schedules in crontab format. Warning, the minimum time between two executions is 15mn.",
+        "display": "{{count}} schedule",
+        "display_other": "{{count}} schedules"
       },
       "save": "Save"
     },
@@ -739,6 +739,8 @@
       "name_StackedNavigation": "Stacked Navigation",
       "name_Buttons": "Buttons group",
       "name_BlocksList": "Blocks list",
+      "name_BlocksGrid": "Blocks grid",
+      "name_BlocksSplit": "Split blocks view",
       "name_Footer": "Footer",
       "name_Breadcrumbs": "Breadcrumbs",
       "name_Action": "Action",
@@ -754,6 +756,8 @@
       "description_StackedNavigation": "Display navigable block pages. Must be used through automations.",
       "description_Buttons": "Display a buttons group",
       "description_BlocksList": "Display a Blocks list",
+      "description_BlocksGrid": "Display a Blocks grid",
+      "description_BlocksSplit": "Display two blocks with expansible border",
       "description_Footer": "Display a Footer",
       "description_Breadcrumbs": "Display Breadcrumbs",
       "description_Action": "Display an action button capable of navigating to a link, a page, a section of the page or triggering an event.",
@@ -1181,6 +1185,37 @@
         }
       },
       "blockslist": {
+        "settings": {
+          "blocks": {
+            "label": "Blocks",
+            "description": "You can complete your content with a list of Blocks.",
+            "add": "Add a Block",
+            "remove": "Delete Block",
+            "items": {
+              "label": "Block",
+              "description": "Block specification.",
+              "name": {
+                "label": "Block name",
+                "description": "Name of Block to display"
+              }
+            }
+          }
+        }
+      },
+      "blocksSplit": {
+        "settings": {
+          "firstBlock": {
+            "label": "First block"
+          },
+          "secondBlock": {
+            "label": "Second block"
+          },
+          "genericBlocks": {
+            "description": "Block specification."
+          }
+        }
+      },
+      "blocksGrid": {
         "settings": {
           "blocks": {
             "label": "Blocks",
