@@ -124,6 +124,7 @@ it('should init block', () => {
 
   expect(events!.emit).toHaveBeenCalledWith('initBlock', {
     config: { onInit: 'initBlock' },
+    language: 'en',
     page: undefined,
   });
   expect(onLoad).toHaveBeenCalled();
