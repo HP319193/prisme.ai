@@ -29,5 +29,5 @@ export async function all(
     );
   }
 
-  return await Promise.allSettled(promises);
+  return await Promise.all(promises);
 }
