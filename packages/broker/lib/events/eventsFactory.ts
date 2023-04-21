@@ -65,21 +65,13 @@ export class EventsFactory {
     };
   }
 
-  create(
+  // This must not throw, so we can safely use it to emit errors in last resort
+  safeFormat(
     eventType: string,
     payload: object,
     partialSource: Partial<EventSource>,
-    { validateEvent, additionalFields }: CreateEventOptions
-  ): Omit<PrismeEvent, 'id'> {
-    if (!EVENT_NAMES_REGEXP.test(eventType)) {
-      throw new EventValidationError(
-        `Invalid event name '${eventType}' : only allowed characters are letters, numbers, whitespaces, . _ and -`,
-        { event: eventType }
-      );
-    }
-    if (validateEvent && !(payload instanceof Error)) {
-      validate(eventType, payload);
-    }
+    { additionalFields }: CreateEventOptions
+  ): PrismeEvent {
     const data =
       payload instanceof Error
         ? (payload as BrokerError).toJSON
@@ -106,6 +98,40 @@ export class EventsFactory {
     };
     event.size = JSON.stringify(event).length;
 
+    if (typeof event?.source?.ip === 'string') {
+      // x-forwarded-for http header might have multiple forwarded ip, comma separated
+      if (event?.source?.ip.includes(',')) {
+        event.source.ip = event?.source?.ip.split(',')[0];
+      }
+      if (
+        this.validatorOpts?.redactPrivateIps &&
+        isPrivateIP(event?.source?.ip)
+      ) {
+        delete event.source.ip;
+      }
+    }
+    return event;
+  }
+
+  create(
+    eventType: string,
+    payload: object,
+    partialSource: Partial<EventSource>,
+    opts: CreateEventOptions
+  ): Omit<PrismeEvent, 'id'> {
+    const { validateEvent, additionalFields } = opts;
+    if (!EVENT_NAMES_REGEXP.test(eventType)) {
+      throw new EventValidationError(
+        `Invalid event name '${eventType}' : only allowed characters are letters, numbers, whitespaces, . _ and -`,
+        { event: eventType }
+      );
+    }
+    if (validateEvent && !(payload instanceof Error)) {
+      validate(eventType, payload);
+    }
+
+    const event = this.safeFormat(eventType, payload, partialSource, opts);
+
     if (this.validatorOpts?.eventsMaxLen) {
       if (event.size > this.validatorOpts?.eventsMaxLen) {
         throw new EventValidationError(
@@ -123,19 +149,6 @@ export class EventsFactory {
             },
           }
         );
-      }
-    }
-
-    if (typeof event?.source?.ip === 'string') {
-      // x-forwarded-for http header might have multiple forwarded ip, comma separated
-      if (event?.source?.ip.includes(',')) {
-        event.source.ip = event?.source?.ip.split(',')[0];
-      }
-      if (
-        this.validatorOpts?.redactPrivateIps &&
-        isPrivateIP(event?.source?.ip)
-      ) {
-        delete event.source.ip;
       }
     }
 
