@@ -101,13 +101,13 @@ export const BlocksSplit = ({
       }`}
     >
       <div
-        className="pr-block-blocks-split__wrapper wrapper-0 overflow-hidden"
+        className="flex flex-1 pr-block-blocks-split__wrapper wrapper-1 overflow-hidden"
         style={{ width: position }}
       >
         {memoizedBlocks[0]}
       </div>
       <SampleSplitter {...separatorProps} />
-      <div className="pr-block-blocks-split__wrapper wrapper-0 overflow-hidden">
+      <div className="flex flex-1 pr-block-blocks-split__wrapper wrapper-2 overflow-hidden">
         {memoizedBlocks[1]}
       </div>
     </div>
