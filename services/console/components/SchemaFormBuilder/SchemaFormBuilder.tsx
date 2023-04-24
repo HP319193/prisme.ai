@@ -4,6 +4,7 @@ import {
   schemaTypes,
   Select,
   Tooltip,
+  UiOptionsSelect,
   UIWidgetsByType,
 } from '@prisme.ai/design-system';
 import { Button } from 'antd';
@@ -88,6 +89,16 @@ export const SchemaFormBuilder = ({
           enum: v.enum,
           enumNames: v.enumNames,
         };
+
+        const hideSearch = v?.['ui:options']?.select?.hideSearch;
+        if (typeof hideSearch === 'boolean') {
+          newValueWithEnum['ui:options'] = {
+            select: {
+              hideSearch,
+            },
+          };
+        }
+
         if (!newValueWithEnum.enum) {
           delete newValueWithEnum.enum;
         }
@@ -214,7 +225,16 @@ export const SchemaFormBuilder = ({
       </div>
       {!!value.enum && (
         <div className="flex flex-1 mt-2 pl-4 border-l-[1px] border-gray-200">
-          <Enum value={value} onChange={update('enum')} />
+          <Enum
+            value={{
+              ...value,
+              'ui:options': {
+                select: (value?.['ui:options'] as UiOptionsSelect)
+                  ?.select as Omit<UiOptionsSelect['select'], 'options'>,
+              },
+            }}
+            onChange={update('enum')}
+          />
         </div>
       )}
       <div>
