@@ -107,7 +107,7 @@ export const BlocksSplit = ({
         {memoizedBlocks[0]}
       </div>
       <SampleSplitter {...separatorProps} />
-      <div className="pr-block-blocks-split__wrapper wrapper-0 overflow-hidden">
+      <div className="pr-block-blocks-split__wrapper wrapper-1 overflow-hidden">
         {memoizedBlocks[1]}
       </div>
     </div>
