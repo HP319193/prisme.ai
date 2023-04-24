@@ -119,7 +119,7 @@ export class EventsFactory {
     partialSource: Partial<EventSource>,
     opts: CreateEventOptions
   ): Omit<PrismeEvent, 'id'> {
-    const { validateEvent, additionalFields } = opts;
+    const { validateEvent } = opts;
     if (!EVENT_NAMES_REGEXP.test(eventType)) {
       throw new EventValidationError(
         `Invalid event name '${eventType}' : only allowed characters are letters, numbers, whitespaces, . _ and -`,

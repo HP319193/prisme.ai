@@ -11,6 +11,8 @@ export interface BlocksSplitConfig extends BaseBlockConfig {
   firstBlock: { slug: string } & Record<string, any>;
   secondBlock: { slug: string } & Record<string, any>;
   axis: 'x' | 'y';
+  reverse: boolean;
+  disabled: boolean;
   initial: number;
   min: number;
   blocksClassName?: string;
@@ -44,6 +46,8 @@ export const BlocksSplit = ({
   secondBlock,
   axis = 'x',
   initial = 250,
+  reverse = false,
+  disabled = false,
   min = 50,
   className,
 }: BlocksSplitConfig) => {
@@ -54,6 +58,8 @@ export const BlocksSplit = ({
   const { position, separatorProps } = useResizable({
     axis,
     initial,
+    reverse,
+    disabled,
     min,
   });
 
@@ -74,8 +80,6 @@ export const BlocksSplit = ({
   }, [firstBlock, secondBlock]);
 
   if (!Array.isArray(memoizedBlocks)) return null;
-
-  console.log('memoizedBlocks', memoizedBlocks);
 
   if (memoizedBlocks.length !== 2)
     return (
