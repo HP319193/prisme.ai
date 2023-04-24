@@ -739,6 +739,8 @@
       "name_StackedNavigation": "Navigation empilée",
       "name_Buttons": "Groupe de boutons",
       "name_BlocksList": "Liste de Blocks",
+      "name_BlocksGrid": "Grille de blocks",
+      "name_BlocksSplit": "Vue de Blocks scindés",
       "name_Footer": "Pied de page",
       "name_Breadcrumbs": "Fil d'ariane",
       "name_Action": "Action",
@@ -754,6 +756,8 @@
       "description_StackedNavigation": "Afficher des pages de blocks navigable. Doit être utilisé par le biais d'automatisations.",
       "description_Buttons": "Afficher un groupe de boutons",
       "description_BlocksList": "Afficher une liste de Blocks",
+      "description_BlocksGrid": "Afficher une grille de Blocks",
+      "description_BlocksSplit": "Afficher deux blocks avec une bordure étendable",
       "description_Breadcrumbs": "Afficher un fil d'ariane",
       "description_Action": "Afficher un bouton d'action capable de faire naviguer vers un lien, une page, une section de la page ou de délencher un évènement.",
       "description_Footer": "Afficher un pied de page",
@@ -1181,6 +1185,37 @@
         }
       },
       "blockslist": {
+        "settings": {
+          "blocks": {
+            "label": "Blocks",
+            "description": "Liste des Blocks.",
+            "add": "Ajouter un Block",
+            "remove": "Supprimer le Block",
+            "items": {
+              "label": "Block",
+              "description": "Spécification du Block.",
+              "name": {
+                "label": "Nom du Block",
+                "description": "Le nom du Block à afficher"
+              }
+            }
+          }
+        }
+      },
+      "blocksSplit": {
+        "settings": {
+          "firstBlock": {
+            "label": "Premier block"
+          },
+          "secondBlock": {
+            "label": "Second block"
+          },
+          "genericBlocks": {
+            "description": "Spécifications du block."
+          }
+        }
+      },
+      "blocksGrid": {
         "settings": {
           "blocks": {
             "label": "Blocks",

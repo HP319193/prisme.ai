@@ -798,7 +798,13 @@ class Workspaces {
 
     const automations = new Automations(
       this.accessManager,
-      this.broker,
+      this.broker.child(
+        {},
+        {
+          // We dont want to emit automations related events, runtime will synchronize the entire model at once on the workspaces.imported event
+          buffer: true,
+        }
+      ),
       this.storage
     );
     const apps = new Apps(this.accessManager, this.broker, this.storage);
@@ -861,6 +867,18 @@ class Workspaces {
       version,
       true
     );
+    this.broker.send<Prismeai.ImportedWorkspace['payload']>(
+      EventType.ImportedWorkspace,
+      {
+        workspace: {
+          id: workspaceId,
+          slug: updatedDetailedWorkspace.slug,
+          name: updatedDetailedWorkspace.name,
+        },
+        files: imported,
+      },
+      { workspaceId }
+    );
     return {
       imported,
       errors,
@@ -885,7 +903,7 @@ class Workspaces {
       return false;
     }
 
-    const slug = parse(subfile).name;
+    const slug = parse(subfile || '').name;
     switch (folder) {
       case 'index.yml':
         await this.updateWorkspace(workspace.id!, {

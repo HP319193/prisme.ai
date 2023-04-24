@@ -3,7 +3,12 @@ import {
   InfoCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { Button, Tooltip } from '@prisme.ai/design-system';
+import {
+  Button,
+  SchemaForm,
+  Tooltip,
+  UiOptionsSelect,
+} from '@prisme.ai/design-system';
 import { Input } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useCallback } from 'react';
@@ -11,6 +16,7 @@ import { ChangeEvent, useCallback } from 'react';
 interface Value {
   enum?: string[];
   enumNames?: string[];
+  'ui:options'?: { select: Omit<UiOptionsSelect['select'], 'options'> };
 }
 interface EnumProps {
   value: Value;
@@ -33,7 +39,8 @@ export const Enum = ({ value, onChange }: EnumProps) => {
       const newEnumNames = (value.enumNames || []).filter(
         (v, k) => k !== index
       );
-      const newValue: any = {};
+      const { enum: _enum, enumNames, ...prevValue } = value;
+      const newValue: any = prevValue;
       if (newEnum.length) {
         newValue.enum = newEnum;
       }
@@ -47,26 +54,24 @@ export const Enum = ({ value, onChange }: EnumProps) => {
   );
 
   const updateValue = useCallback(
-    (index: number) => ({
-      target: { value: v },
-    }: ChangeEvent<HTMLInputElement>) => {
-      const newValue = { ...value, enum: value.enum || [] };
-      newValue.enum[index] = v;
-      onChange(newValue);
-    },
+    (index: number) =>
+      ({ target: { value: v } }: ChangeEvent<HTMLInputElement>) => {
+        const newValue = { ...value, enum: value.enum || [] };
+        newValue.enum[index] = v;
+        onChange(newValue);
+      },
     [onChange, value]
   );
   const updateLabel = useCallback(
-    (index: number) => ({
-      target: { value: v },
-    }: ChangeEvent<HTMLInputElement>) => {
-      const newEnumNames = [...(value.enumNames || [])];
-      newEnumNames[index] = v;
-      onChange({
-        ...value,
-        enumNames: newEnumNames.map((v) => v || ''),
-      });
-    },
+    (index: number) =>
+      ({ target: { value: v } }: ChangeEvent<HTMLInputElement>) => {
+        const newEnumNames = [...(value.enumNames || [])];
+        newEnumNames[index] = v;
+        onChange({
+          ...value,
+          enumNames: newEnumNames.map((v) => v || ''),
+        });
+      },
     [onChange, value]
   );
 
@@ -119,6 +124,26 @@ export const Enum = ({ value, onChange }: EnumProps) => {
           </div>
         ))}
       </div>
+      <SchemaForm
+        schema={{
+          type: 'boolean',
+          title: 'schema.property.enum.uiOptions.select.hideSearch.title',
+        }}
+        buttons={[]}
+        initialValues={value}
+        onChange={(formVal) => {
+          onChange({
+            ...value,
+            'ui:options': {
+              ...(value?.['ui:options'] || {}),
+              select: {
+                ...(value?.['ui:options']?.select || {}),
+                hideSearch: formVal,
+              },
+            },
+          });
+        }}
+      />
     </div>
   );
 };

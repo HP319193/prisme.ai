@@ -24,7 +24,7 @@ export function useSelectOptions(
   return useMemo(() => {
     if (options) return options;
     const { 'ui:options': uiOptions } = schema;
-    if (isUiOptionsSelect(uiOptions)) return uiOptions.select.options;
+    if (isUiOptionsSelect(uiOptions)) return uiOptions.select?.options;
 
     const _options = extractSelectOptions(schema);
 
@@ -46,6 +46,13 @@ export const FieldSelect = (
     []
   );
 
+  const fieldOptions = isUiOptionsSelect(props.schema['ui:options'])
+    ? props.schema['ui:options']
+    : undefined;
+  const showSearch = !fieldOptions?.select?.hideSearch;
+
+  console.log('props.schema', props.schema);
+
   return (
     <FieldContainer {...props} className="pr-form-select">
       <Label
@@ -56,13 +63,13 @@ export const FieldSelect = (
         {props.label}
       </Label>
       <Select
-        selectOptions={selectOptions}
+        selectOptions={selectOptions || []}
         value={field.input.value}
         onChange={field.input.onChange}
         id={field.input.name}
         className="pr-form-select__input pr-form-input"
         placeholder={props.schema.placeholder || ''}
-        showSearch
+        showSearch={showSearch}
         filterOption={filterOption}
       />
       <InfoBubble

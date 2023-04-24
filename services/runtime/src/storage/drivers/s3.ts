@@ -1,4 +1,4 @@
-import { IStorage } from '../types';
+import { IStorage, ObjectList } from '../types';
 import AWS from 'aws-sdk';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 
@@ -34,6 +34,42 @@ export default class S3Like implements IStorage {
     });
   }
 
+  public find(
+    prefix: string,
+    fullKeys?: boolean,
+    continuationToken?: string,
+    out: ObjectList = []
+  ): Promise<ObjectList> {
+    return new Promise((resolve, reject) => {
+      this.client
+        .listObjectsV2({
+          Bucket: this.options.bucket,
+          ContinuationToken: continuationToken,
+          Prefix: prefix,
+        })
+        .promise()
+        .then(({ Contents, IsTruncated, NextContinuationToken }) => {
+          out.push(
+            ...(Contents || [])
+              .filter((cur) => cur.Key)
+              .map((cur) => {
+                if (fullKeys) {
+                  return { key: cur.Key!! };
+                }
+                const splittedKey = cur.Key!!?.split('/');
+                return {
+                  key: splittedKey[splittedKey.length - 1],
+                };
+              })
+          );
+          !IsTruncated
+            ? resolve(out)
+            : resolve(this.find(prefix, fullKeys, NextContinuationToken, out));
+        })
+        .catch(reject);
+    });
+  }
+
   public get(key: string) {
     return new Promise((resolve: any, reject: any) => {
       this.client.getObject(
@@ -43,7 +79,7 @@ export default class S3Like implements IStorage {
         },
         function (err: any, data: any) {
           if (err) {
-            reject(new ObjectNotFoundError());
+            reject(new ObjectNotFoundError('Object not found : ' + key));
           } else {
             resolve(data.Body);
           }

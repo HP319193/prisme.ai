@@ -146,6 +146,7 @@ export const BlockLoader: TBlockLoader = ({
     const payload: any = {
       page: page && page.id,
       config: initialConfig,
+      language,
     };
     if (window.location.search) {
       payload.query = Array.from(

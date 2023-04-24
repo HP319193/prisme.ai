@@ -104,6 +104,7 @@ export class Broker<CallbackContext = any> {
       validateEvents?: boolean;
       forceTopic?: string;
       clearUser?: boolean;
+      buffer?: boolean;
     }
   ): Broker<CallbackContext> {
     // Some source metadata should not persist in child brokers
@@ -128,6 +129,9 @@ export class Broker<CallbackContext = any> {
       ...opts,
     });
     Object.setPrototypeOf(child, Broker.prototype);
+    if (opts?.buffer) {
+      (child as Broker)._buffer = [];
+    }
     return child;
   }
 
@@ -172,27 +176,35 @@ export class Broker<CallbackContext = any> {
     const overrideSource =
       payload instanceof Error ? (<any>payload).source : partialSource;
     let event: Omit<PrismeEvent, 'id'>;
+    const source = {
+      ...this.parentSource,
+      ...(overrideSource || {}),
+      host: {
+        replica: this.consumer.name,
+        ...(partialSource?.host || {}),
+        service: this.service,
+      },
+    };
     try {
-      event = this.eventsFactory.create(
-        eventType,
-        payload,
-        {
-          ...this.parentSource,
-          ...(overrideSource || {}),
-          host: {
-            replica: this.consumer.name,
-            ...(partialSource?.host || {}),
-            service: this.service,
-          },
-        },
-        {
-          validateEvent: this.validateEvents,
-          additionalFields,
-        }
-      );
+      event = this.eventsFactory.create(eventType, payload, source, {
+        validateEvent: this.validateEvents,
+        additionalFields,
+      });
     } catch (err) {
       if (throwErrors) {
         throw err;
+      } else {
+        (<any>err).source = source;
+        const errEvent = this.eventsFactory.safeFormat(
+          'error',
+          err as any,
+          source,
+          {
+            validateEvent: false,
+            additionalFields,
+          }
+        );
+        this.driver.send(errEvent, source.serviceTopic || 'error').catch();
       }
       console.error({
         level: 50,

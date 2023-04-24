@@ -5,11 +5,29 @@ const MAIN_LANGUAGE = 'fr';
 const path = process.argv[2];
 const languageToCheck = process.argv[3];
 
+let errorKey = '';
+
 function getPath(path: string, lang: string, filename: string = '') {
   return `./${path}/${lang}/${filename}`;
 }
 
 function compareKeys(a: any, b: any): boolean {
+  return Object.entries(a).reduce((prev, [k, v]) => {
+    const hasProperty = prev && b.hasOwnProperty(k) && typeof v !== 'object';
+    if (hasProperty) {
+      return true;
+    }
+
+    if (!b[k]) {
+      console.error(`Key "${k}" is missing on one file`);
+      return false;
+    }
+
+    return compareKeys(v, b[k]);
+  }, true);
+}
+
+function compareKeys2(a: any, b: any): boolean {
   return Object.entries(a).reduce((prev, [k, v]) => {
     return (
       (prev && b.hasOwnProperty(k) && typeof v !== 'object') ||
@@ -36,14 +54,17 @@ function check(path: string) {
         throw new Error('');
       }
       return prev && result;
-    } catch {
+    } catch (e) {
       console.error(
         `File ${getPath(
           path,
           languageToCheck,
           file
-        )} is not synced with ${MAIN_LANGUAGE}`
+        )} is not synced with ${MAIN_LANGUAGE}. Key ${errorKey} is missing in one file.`
       );
+      if (e) {
+        console.error('Additional error trace', e);
+      }
       return false;
     }
   }, true);

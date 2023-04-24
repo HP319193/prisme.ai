@@ -197,7 +197,60 @@ export const builtinBlocksVariants = [
         :block:nth-child(2) {
           flex: 1;
         }
-`,
+      `,
+    },
+  },
+  {
+    name: {
+      fr: 'Mise en page en grille',
+      en: 'Grid Layout',
+    },
+    slug: 'BlocksGrid_analytics',
+    block: 'BlocksGrid',
+    description: {
+      fr: 'Une grille personalisable de contenu analytics',
+      en: 'A draggable grid with analytics content',
+    },
+    photo: '/images/blocks/preview-BlocksGrid_analytics.png',
+    config: {
+      blocks: [
+        {
+          block: {
+            slug: 'RichText',
+            content: `<div style="display:flex;align-items:center">
+                  <div style="box-shadow: 0px 7px 14px -6px rgba(0,0,0,0.1);border-radius:1rem;padding:2rem;margin: 1rem;display:flex;flex-direction:column;">
+                    <div style="font-size:2rem">30</div>
+                    <div>Total users</div>
+                  </div>
+                </div>`,
+          },
+          layout: {
+            isResizable: false,
+            x: 0,
+            y: 0,
+            h: 1,
+            w: 3,
+          },
+        },
+        {
+          block: {
+            slug: 'RichText',
+            content: `<div style="display:flex;align-items:center">
+                  <div style="box-shadow: 0px 7px 14px -6px rgba(0,0,0,0.1);border-radius:1rem;padding:2rem;margin: 1rem;display:flex;flex-direction:column;">
+                    <div style="font-size:2rem">50</div>
+                    <div>Total conversations</div>
+                  </div>
+                </div>`,
+          },
+          layout: {
+            isResizable: false,
+            x: 4,
+            y: 0,
+            h: 1,
+            w: 3,
+          },
+        },
+      ],
     },
   },
 ];

@@ -26,6 +26,7 @@ const builtInBlocksOrder = [
   'Breadcrumbs',
   'Footer',
   'BlocksList',
+  'BlocksGrid',
   'Carousel',
   'StackedNavigation',
   'TabsView',
@@ -33,9 +34,8 @@ const builtInBlocksOrder = [
 
 export const useBlocks = () => {
   const { t } = useTranslation('workspaces');
-  const {
-    workspace: { name, blocks: workspaceBlocks, photo, imports } = {},
-  } = useWorkspace();
+  const { workspace: { name, blocks: workspaceBlocks, photo, imports } = {} } =
+    useWorkspace();
 
   const available: BlockInCatalog[] = useMemo(() => {
     const blocks: BlockInCatalog[] = [

@@ -48,7 +48,7 @@
                         dcbl: { match: /{{/, push: "variable" },
                         openingBracket: "[",
                         dot: ".",
-                        word: /[a-zA-Z0-9_]+/,
+                        word: /[a-zA-Z0-9_$]+/,
                         sqstr: /'.*?'/,
                         dqstr: /".*?"/,
                         closingBracket: "]",
