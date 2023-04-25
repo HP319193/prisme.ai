@@ -1184,9 +1184,9 @@ declare namespace Prismeai {
     export interface CreatedUserTopic {
         /**
          * example:
-         * userTopics.created
+         * events.userTopics.created
          */
-        type: "userTopics.created";
+        type: "events.userTopics.created";
         payload: UserTopic;
     }
     export interface CreatedWorkspace {
@@ -1692,9 +1692,9 @@ declare namespace Prismeai {
     export interface JoinedUserTopic {
         /**
          * example:
-         * userTopics.joined
+         * events.userTopics.joined
          */
-        type: "userTopics.joined";
+        type: "events.userTopics.joined";
         payload: {
             user: {
                 id?: string;

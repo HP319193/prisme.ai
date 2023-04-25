@@ -5,7 +5,12 @@ import { ActionType, SubjectType } from '../../permissions';
 
 const sendEvent = async (
   workspaceId: string,
-  event: { type: string; payload?: any; source?: { serviceTopic?: string } },
+  event: {
+    type: string;
+    payload?: any;
+    target?: Prismeai.PrismeEventTarget;
+    source?: { serviceTopic?: string };
+  },
   accessManager: Required<AccessManager>,
   broker: Broker,
   additionalSource?: Partial<EventSource>
@@ -33,7 +38,9 @@ const sendEvent = async (
         serviceTopic: partialSource.serviceTopic,
         ...additionalSource,
       },
-      {},
+      {
+        target: event.target,
+      },
       true
     );
 };
