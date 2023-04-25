@@ -7,7 +7,13 @@ import yaml from 'js-yaml';
 import { hri } from 'human-readable-ids';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
-import { DSULType, DSULStorage } from '../../DSULStorage';
+import {
+  DSULType,
+  DSULStorage,
+  FolderIndex,
+  DSULFolders,
+  DSULRootFiles,
+} from '../../DSULStorage';
 import {
   AccessManager,
   ActionType,
@@ -42,6 +48,7 @@ import { fetchUsers } from '@prisme.ai/permissions';
 import { processArchive } from '../../../utils/processArchive';
 import { streamToBuffer } from '../../../utils/streamToBuffer';
 import { Apps } from '../../apps';
+import { Security } from '../..';
 
 interface DSULDiff {
   type: DiffType;
@@ -345,6 +352,18 @@ class Workspaces {
       dsulType: DSULType.Imports,
     };
     await Promise.all([
+      this.storage
+        .copy(
+          {
+            workspaceId,
+            dsulType: DSULType.Security,
+          },
+          {
+            workspaceId: newWorkspace.id,
+            dsulType: DSULType.Security,
+          }
+        )
+        .catch(() => undefined),
       this.storage
         .copy(
           {
@@ -778,7 +797,7 @@ class Workspaces {
       outStream,
       {
         format,
-        exclude: [`${version}/runtime.yml`, `__index__.yml`],
+        exclude: [`${version}/${DSULType.RuntimeModel}.yml`, `__index__.yml`],
       }
     );
 
@@ -814,6 +833,11 @@ class Workspaces {
       this.storage,
       apps
     );
+    const security = new Security(
+      this.accessManager,
+      this.broker,
+      this.storage
+    );
 
     let imported: string[] = [];
     let errors: any[] = [];
@@ -837,7 +861,8 @@ class Workspaces {
             workspace,
             content,
             automations,
-            imports
+            imports,
+            security
           );
           if (applied) {
             imported.push(filepath);
@@ -891,21 +916,22 @@ class Workspaces {
     workspace: Prismeai.DSULReadOnly,
     content: any,
     automations: Automations,
-    appInstances: AppInstances
+    appInstances: AppInstances,
+    security: Security
   ) {
     const [folder, subfile, mustBeNull] = path;
+    const subfileSlug = parse(subfile || '').name;
+    const folderName = parse(folder || '').name;
     if (
-      !['index.yml', 'pages', 'automations', 'imports'].includes(folder) ||
-      subfile === '__index__.yml' ||
-      mustBeNull ||
-      (folder == 'index.yml' && subfile)
+      subfileSlug === FolderIndex || // Ignore FolderIndexes
+      mustBeNull || // There should be at max 1 subfolder
+      (subfileSlug && subfile.startsWith('.')) // Ignore hidden files
     ) {
       return false;
     }
 
-    const slug = parse(subfile || '').name;
-    switch (folder) {
-      case 'index.yml':
+    switch (folderName) {
+      case DSULType.DSULIndex:
         await this.updateWorkspace(workspace.id!, {
           ...content,
           name: `${content.name} - Import`,
@@ -914,7 +940,11 @@ class Workspaces {
         });
         break;
 
-      case 'pages':
+      case DSULType.Security:
+        await security.updateSecurity(workspace.id!, content);
+        break;
+
+      case DSULFolders.Pages:
         const oldSlug =
           Object.entries(workspace.pages || {}).find(
             ([key, pageMeta]) => pageMeta.id === content.id
@@ -929,12 +959,12 @@ class Workspaces {
             content
           );
         } else {
-          content.slug = slug;
+          content.slug = subfileSlug;
           await this.pages.createPage(workspace.id!, content);
         }
         break;
 
-      case 'automations':
+      case DSULFolders.Automations:
         if (content.slug in (workspace.automations || {})) {
           await automations.updateAutomation(
             workspace.id!,
@@ -942,16 +972,16 @@ class Workspaces {
             content
           );
         } else {
-          content.slug = slug;
+          content.slug = subfileSlug;
           await automations.createAutomation(workspace.id!, content);
         }
         break;
 
-      case 'imports':
+      case DSULFolders.Imports:
         if (content.slug in (workspace.imports || {})) {
           await appInstances.configureApp(workspace.id!, content.slug, content);
         } else {
-          content.slug = slug;
+          content.slug = subfileSlug;
           await appInstances.installApp(workspace.id!, content);
         }
         break;

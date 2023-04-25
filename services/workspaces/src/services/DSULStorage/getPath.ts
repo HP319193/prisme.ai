@@ -1,13 +1,12 @@
 import path from 'path';
 import { MissingFieldError } from '../../errors';
-import { DSULQuery, DSULType, getFolderIndexType } from './types';
+import {
+  DSULQuery,
+  DSULType,
+  getFolderIndexType,
+  DSULRootFiles,
+} from './types';
 
-// These dsul types will be fetched at the root app/workspace directory with {{enumValue}}.yml
-const rootFiles = [
-  DSULType.DSULIndex,
-  DSULType.Security,
-  DSULType.RuntimeModel,
-];
 export function getPath(dsulType: DSULType, opts: Partial<DSULQuery>) {
   let {
     appSlug,
@@ -52,7 +51,7 @@ export function getPath(dsulType: DSULType, opts: Partial<DSULQuery>) {
   const baseVersionFolder = `${baseFolder}/versions/${version}`;
 
   // Root files
-  if (rootFiles.includes(dsulType)) {
+  if (DSULRootFiles.includes(dsulType)) {
     return parentFolder
       ? baseVersionFolder
       : `${baseVersionFolder}/${dsulType}.yml`;

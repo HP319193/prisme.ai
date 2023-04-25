@@ -1,13 +1,9 @@
-import { remove as removeDiacritics } from 'diacritics';
-import { parseExpression as parseCron } from 'cron-parser';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
-import { InvalidScheduleError } from '../../../errors';
 // @ts-ignore
 import { hri } from 'human-readable-ids';
 import { DSULType, DSULStorage } from '../../DSULStorage';
 import { AccessManager, ActionType, SubjectType } from '../../../permissions';
-import { extractAutomationEvents } from '../../../utils/extractEvents';
 
 class Security {
   private accessManager: Required<AccessManager>;
@@ -67,6 +63,9 @@ class Security {
       EventType.UpdatedWorkspaceSecurity,
       {
         security: updatedSecurity,
+      },
+      {
+        workspaceId,
       }
     );
     return updatedSecurity;
