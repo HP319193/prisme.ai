@@ -101,7 +101,7 @@ export const BlocksSplit = ({
       }`}
     >
       <div
-        className="flex flex-1 pr-block-blocks-split__wrapper wrapper-1 overflow-hidden"
+        className="flex pr-block-blocks-split__wrapper wrapper-1 overflow-hidden"
         style={{ width: position }}
       >
         {memoizedBlocks[0]}
