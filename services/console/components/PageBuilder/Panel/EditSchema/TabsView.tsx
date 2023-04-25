@@ -31,6 +31,16 @@ export const schema: Schema = {
         },
       },
     },
+    direction: {
+      type: 'string',
+      enum: ['horizontal', 'vertical'],
+      label: 'pages.blocks.tabsview.settings.direction.label',
+      enumNames: [
+        'pages.blocks.tabsview.settings.direction.horizontal',
+        'pages.blocks.tabsview.settings.direction.vertical',
+      ],
+      default: 'horizontal',
+    },
     ...getCommonSchema(builtinBlocks.TabsView.styles),
   },
 };
