@@ -1289,6 +1289,11 @@
       },
       "tabsview": {
         "settings": {
+          "direction": {
+            "horizontal": "Horizontal",
+            "vertical": "Vertical",
+            "label": "Direction"
+          },
           "tabs": {
             "label": "Onglets",
             "description": "Définissez vos onglets et leur contenu associé",
