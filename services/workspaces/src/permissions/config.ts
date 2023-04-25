@@ -12,6 +12,7 @@ export const ActionType = {
 
 export enum SubjectType {
   Workspace = 'workspaces',
+  Event = 'events',
   App = 'apps',
   Page = 'pages',
   File = 'files',

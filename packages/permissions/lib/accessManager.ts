@@ -646,7 +646,9 @@ export class AccessManager<
     >;
 
     // Validate role
-    this.buildRules(role);
+    if ((<any>role.rules)?.length) {
+      this.buildRules(role);
+    }
 
     const savedApiKey = await RolesModel.findOneAndUpdate(
       {
@@ -710,7 +712,8 @@ export class AccessManager<
       .map((cur) => cur.toJSON())
       .map((cur) => ({
         ...cur,
-        casl: cur.casl ? JSON.parse(cur.casl as any) : undefined,
+        casl:
+          typeof cur.casl === 'string' ? JSON.parse(cur.casl as any) : cur.casl,
       }));
   }
 

@@ -12,7 +12,6 @@ import {
   DSULStorage,
   FolderIndex,
   DSULFolders,
-  DSULRootFiles,
 } from '../../DSULStorage';
 import {
   AccessManager,

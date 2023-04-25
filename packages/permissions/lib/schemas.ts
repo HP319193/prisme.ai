@@ -18,7 +18,7 @@ export enum NativeSubjectType {
 export type CustomRole<SubjectType extends string, CustomRules = any> = {
   name: string;
   id: string;
-  type: 'apiKey';
+  type: 'apiKey' | 'casl';
   subjectType: SubjectType;
   subjectId: string;
   rules: CustomRules;

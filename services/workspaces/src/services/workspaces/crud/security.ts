@@ -3,8 +3,24 @@ import { EventType } from '../../../eda';
 // @ts-ignore
 import { hri } from 'human-readable-ids';
 import { DSULType, DSULStorage } from '../../DSULStorage';
-import { AccessManager, ActionType, SubjectType } from '../../../permissions';
+import {
+  AccessManager,
+  ActionType,
+  Role,
+  SubjectType,
+} from '../../../permissions';
+import { CustomRole } from '@prisme.ai/permissions';
+import { InvalidSecurity } from '../../../errors';
+import { getObjectsDifferences } from '../../../utils/getObjectsDifferences';
+import { logger } from '../../../logger';
 
+const OnlyAllowedSubjects = [
+  SubjectType.Workspace,
+  SubjectType.Event,
+  SubjectType.Page,
+  SubjectType.File,
+];
+const OnlyAllowedActions = Object.values(ActionType);
 class Security {
   private accessManager: Required<AccessManager>;
   private broker: Broker;
@@ -45,6 +61,144 @@ class Security {
     }
   };
 
+  private getRoleId(workspaceId: string, name: string) {
+    return `workspaces/${workspaceId}/role/${name}`;
+  }
+
+  private buildRoles = (
+    workspaceId: string,
+    authorizations: Prismeai.WorkspaceAuthorizations
+  ) => {
+    const builtRoles = (authorizations?.rules || []).reduce<
+      Record<string, CustomRole<SubjectType, any>>
+    >((builtRoles, { role: attachedRole, action, subject, conditions }) => {
+      const attachedRoles = Array.isArray(attachedRole)
+        ? attachedRole
+        : [attachedRole || 'default'];
+      const actions = Array.isArray(action) ? action : [action];
+      const subjects = Array.isArray(subject) ? subject : [subject];
+
+      if (
+        !subjects.length ||
+        subjects.some(
+          (subject) => !OnlyAllowedSubjects.includes(subject as SubjectType)
+        )
+      ) {
+        throw new InvalidSecurity(
+          `Forbidden subjectType '${subject}' found in security rules`
+        );
+      }
+      if (
+        !actions.length ||
+        actions.some(
+          (action) => !OnlyAllowedActions.includes(action as SubjectType)
+        )
+      ) {
+        throw new InvalidSecurity(
+          `Forbidden actionType '${action}' found in security rules`
+        );
+      }
+
+      attachedRoles.forEach((roleName) => {
+        if (roleName === Role.Owner) {
+          throw new InvalidSecurity(
+            `Reserved role '${roleName} cannot be overriden !'`
+          );
+        } else if (
+          roleName !== 'default' &&
+          !(roleName in (authorizations?.roles || {}))
+        ) {
+          throw new InvalidSecurity(
+            `Unknown custom role '${roleName}' referenced in a rule`
+          );
+        }
+
+        if (!(roleName in builtRoles)) {
+          builtRoles[roleName] = {
+            id: this.getRoleId(workspaceId, roleName),
+            type: 'casl',
+            name: roleName,
+            subjectType: SubjectType.Workspace,
+            subjectId: workspaceId,
+            rules: [],
+            casl: [],
+          };
+        }
+
+        builtRoles[roleName].casl?.push({
+          action,
+          subject,
+          conditions: {
+            ...conditions,
+            workspaceId,
+          },
+        });
+      });
+      return builtRoles;
+    }, {});
+
+    return Object.values(builtRoles);
+  };
+
+  private updateAuthorizations = async (
+    workspaceId: string,
+    authorizations: Prismeai.WorkspaceAuthorizations
+  ) => {
+    const builtRoles = this.buildRoles(workspaceId, authorizations);
+    const currentRoles = await this.accessManager.findRoles(
+      SubjectType.Workspace,
+      workspaceId
+    );
+    const currentRolesMapping = currentRoles
+      .filter((cur) => cur.type === 'casl')
+      .reduce<Record<string, CustomRole<SubjectType, any>>>(
+        (mapping, { _id: _, __v: __, ...role }: any) => ({
+          ...mapping,
+          [role.id]: role,
+        }),
+        {}
+      );
+    const updatedRolesMapping = builtRoles.reduce<
+      Record<string, CustomRole<SubjectType, any>>
+    >(
+      (mapping, role) => ({
+        ...mapping,
+        [role.id]: role,
+      }),
+      {}
+    );
+    const diffs = getObjectsDifferences(
+      currentRolesMapping,
+      updatedRolesMapping
+    );
+
+    const rolesToUpdate = Object.entries(diffs.data)
+      .filter(
+        ([_, diff]: any) =>
+          diff.__type === 'updated' || diff.__type === 'created'
+      )
+      .map(([id]: any) => updatedRolesMapping[id]);
+    const rolesToDelete = Object.entries(diffs.data)
+      .filter(([_, diff]: any) => diff.__type === 'deleted')
+      .map(([id]: any) => currentRolesMapping[id]);
+
+    const savedRoles = rolesToUpdate.map((role) =>
+      this.accessManager.saveRole(role).then(() => true)
+    );
+    const deletedRoles = rolesToDelete.map((role) =>
+      this.accessManager.deleteRole(role.id)
+    );
+
+    await Promise.all(savedRoles.concat(deletedRoles));
+    logger.info({
+      msg: `Workspace ${workspaceId} updated ${savedRoles.length} roles and deleted ${rolesToDelete.length} others`,
+      updatedRoles: rolesToUpdate.map((cur) => cur.id),
+      deletedRoles: rolesToDelete.map((cur) => cur.id),
+    });
+
+    return authorizations;
+  };
+
   updateSecurity = async (
     workspaceId: string,
     security: Prismeai.WorkspaceSecurity
@@ -56,6 +210,12 @@ class Security {
     );
 
     const updatedSecurity = { ...security };
+    if (updatedSecurity.authorizations) {
+      updatedSecurity.authorizations = await this.updateAuthorizations(
+        workspaceId,
+        updatedSecurity.authorizations
+      );
+    }
     await this.storage.save({ workspaceId }, updatedSecurity, {
       mode: 'replace',
     });

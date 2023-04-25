@@ -274,6 +274,8 @@ components:
     Workspace:
       $ref: '#/components/schemas/DSUL'
 
+    ## Workspace security & access control
+
     WorkspaceSecurity:
       type: object
       additionalProperties: false
@@ -317,6 +319,31 @@ components:
             apiKey:
               type: object
 
+    SubjectTypes:
+      type: string
+      enum:
+        - apps
+        - pages
+        - files
+        - events
+        - workspaces
+
+    SharableSubjectTypes:
+      type: string
+      enum:
+        - pages
+        - workspaces
+
+    ActionTypes:
+      type: string
+      enum:
+        - create
+        - read
+        - update
+        - delete
+        - manage_permissions
+        - manage_security
+
     PermissionRule:
       type: object
       additionalProperties: false
@@ -324,24 +351,24 @@ components:
         - action
         - subject
       properties:
-        roles:
-          type: array
-          items:
-            type: string
+        role:
+          oneOf:
+            - type: array
+              items:
+                type: string
+            - type: string
         action:
-          type: string
-          enum:
-            - create
-            - read
-            - update
-            - delete
-            - manage_permissions
-            - manage_security
+          oneOf:
+            - $ref: "#/components/schemas/ActionTypes"
+            - type: array
+              items:
+                $ref: "#/components/schemas/ActionTypes"
         subject:
-          type: string
-          enum:
-            - pages
-            - files
+          oneOf:
+            - $ref: "#/components/schemas/SubjectTypes"
+            - type: array
+              items:
+                $ref: "#/components/schemas/SubjectTypes"
         conditions:
           type: object
           additionalProperties: true
@@ -1516,11 +1543,6 @@ components:
           additionalProperties: true
 
     ########################## API Keys #############################
-    SubjectTypes:
-      type: string
-      enum: &KNOWN_SUBJECT_TYPES
-        - workspaces
-        - pages
     CreatedApiKey:
       type: object
       required:
@@ -1544,7 +1566,8 @@ components:
               type: string
             subjectType:
               type: string
-              enum: *KNOWN_SUBJECT_TYPES
+              enum:
+                - workspaces
             subjectId:
               type: string
             rules:
@@ -1585,7 +1608,8 @@ components:
               type: string
             subjectType:
               type: string
-              enum: *KNOWN_SUBJECT_TYPES
+              enum:
+                - workspaces
             subjectId:
               type: string
 
@@ -3167,7 +3191,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ObjectNotFoundError'
 
-  ############################################# permissions routes
+  ############################################# permissions
   /v2/{subjectType}/{subjectId}/permissions:
     post:
       description: Share the object with someone via a given role or specific permission
@@ -3180,8 +3204,7 @@ paths:
           description: 'The target subject type'
           required: true
           schema:
-            type: string
-            enum: *KNOWN_SUBJECT_TYPES
+            $ref: "#/components/schemas/SharableSubjectTypes"
         - name: subjectId
           in: path
           description: The target subject id (i.e workspaceId if subjectType is 'workspace')
@@ -3237,8 +3260,7 @@ paths:
           description: 'The target subject type'
           required: true
           schema:
-            type: string
-            enum: *KNOWN_SUBJECT_TYPES
+            $ref: "#/components/schemas/SharableSubjectTypes"
         - name: subjectId
           in: path
           description: The target subject id (i.e workspaceId if subjectType is 'workspace')
@@ -3295,8 +3317,7 @@ paths:
           description: 'The target subject type'
           required: true
           schema:
-            type: string
-            enum: *KNOWN_SUBJECT_TYPES
+            $ref: "#/components/schemas/SharableSubjectTypes"
         - name: subjectId
           in: path
           description: The target subject id (i.e workspaceId if subjectType is 'workspace')
@@ -3359,8 +3380,7 @@ paths:
           description: 'The target subject type'
           required: true
           schema:
-            type: string
-            enum: *KNOWN_SUBJECT_TYPES
+            $ref: "#/components/schemas/SharableSubjectTypes"
         - name: subjectId
           in: path
           description: The target subject id (i.e workspaceId if subjectType is 'workspace')
@@ -3412,8 +3432,7 @@ paths:
           description: 'The target subject type'
           required: true
           schema:
-            type: string
-            enum: *KNOWN_SUBJECT_TYPES
+            $ref: "#/components/schemas/SharableSubjectTypes"
         - name: subjectId
           in: path
           description: The target subject id (i.e workspaceId if subjectType is 'workspace')
@@ -3476,8 +3495,7 @@ paths:
           description: 'The target subject type'
           required: true
           schema:
-            type: string
-            enum: *KNOWN_SUBJECT_TYPES
+            $ref: "#/components/schemas/SharableSubjectTypes"
         - name: subjectId
           in: path
           description: The target subject id (i.e workspaceId if subjectType is 'workspace')
@@ -3539,8 +3557,7 @@ paths:
           description: 'The target subject type'
           required: true
           schema:
-            type: string
-            enum: *KNOWN_SUBJECT_TYPES
+            $ref: "#/components/schemas/SharableSubjectTypes"
         - name: subjectId
           in: path
           description: The target subject id (i.e workspaceId if subjectType is 'workspace')
