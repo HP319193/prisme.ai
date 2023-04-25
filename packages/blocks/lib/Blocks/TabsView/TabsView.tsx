@@ -16,6 +16,7 @@ interface TabsViewConfig extends BaseBlockConfig {
     text: ReactNode;
     content: BlocksListConfig;
   } & ActionConfig)[];
+  direction: 'vertical' | 'horizontal';
 }
 
 interface TabsViewProps extends TabsViewConfig {
@@ -31,15 +32,25 @@ function isAction(
 
 export const TabsView = ({
   tabs = [],
+  direction,
   className,
   events,
   Link,
 }: TabsViewProps) => {
   const { localize } = useLocalizedText();
   const [currentTab, setCurrentTab] = useState(0);
+  const isHorizontal = direction === 'horizontal';
   return (
-    <div className={`pr-block-tabs-view ${className}`}>
-      <div className="pr-block-tabs-view__tabs">
+    <div
+      className={`pr-block-tabs-view ${
+        isHorizontal ? 'flex-col' : 'flex-row'
+      } ${className}`}
+    >
+      <div
+        className={`pr-block-tabs-view__tabs ${
+          isHorizontal ? 'flex-row' : 'flex-col'
+        }`}
+      >
         {tabs.map(({ text, ...action }, k) => {
           const navigate = () => setCurrentTab(k);
 
@@ -86,13 +97,11 @@ export const TabsView = ({
 
 const defaultStyles = `:block {
   display: flex;
-  flex-direction: column;
   flex: 1;
 }
 
 .pr-block-tabs-view__tabs {
   display: flex;
-  flex-direction: row;
 }
 
 .pr-block-tabs-view__tab {

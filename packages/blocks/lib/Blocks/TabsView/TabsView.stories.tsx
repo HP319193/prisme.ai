@@ -131,3 +131,49 @@ WithAction.args = {
     },
   ],
 };
+
+export const Vertical = Template.bind({});
+Vertical.args = {
+  direction: 'vertical',
+  tabs: [
+    {
+      text: '<img src="https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/toda3iP/JoNFhsa1g9KMl-q45q4vr.Vector.png" />',
+      content: {
+        blocks: [
+          {
+            slug: 'RichText',
+            content: 'This is the documentation',
+          },
+        ],
+      },
+      type: 'event',
+      value: 'click on documentation',
+    },
+    {
+      text: '<img src="https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/toda3iP/wCXCpqFvVC1nLQ0lsk_05.Vector(1).png" />',
+      content: {
+        blocks: [
+          {
+            slug: 'RichText',
+            content: 'This is the changelog',
+          },
+        ],
+      },
+      type: 'event',
+      value: 'click on changelog',
+    },
+    {
+      text: '<img src="https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/toda3iP/sS1ciqJ8eYWuVkAaLhJc_.Vector(2).png" />',
+      content: {
+        blocks: [
+          {
+            slug: 'RichText',
+            content: 'This is the API',
+          },
+        ],
+      },
+      type: 'event',
+      value: 'click on api',
+    },
+  ],
+};
