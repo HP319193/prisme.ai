@@ -13,6 +13,8 @@ interface RichTextConfig {
   content: string | Prismeai.LocalizedText;
   allowScripts?: boolean;
   values?: Record<string, ReactNode>;
+  markdown?: boolean;
+  container?: string;
 }
 
 class ScriptsLoader {
@@ -104,6 +106,8 @@ export const RichText = ({
   allowScripts = false,
   className = '',
   values = {},
+  markdown = true,
+  container = 'div',
 }: Omit<RichTextConfig, 'content'> & {
   children: RichTextConfig['content'];
 } & HTMLAttributes<HTMLDivElement>) => {
@@ -156,13 +160,15 @@ export const RichText = ({
     },
   };
 
+  const text = localize(children) || '';
+  const toRender = markdown ? marked(text) : text;
+  const Container = container as keyof JSX.IntrinsicElements;
+  const child = parser(mustache.render(toRender, values), options);
+
+  if (!Container) return <>{child}</>;
+
   return (
-    <div className={`pr-block-rich-text ${className}`}>
-      {parser(
-        mustache.render(marked(localize(children) || ''), values),
-        options
-      )}
-    </div>
+    <Container className={`pr-block-rich-text ${className}`}>{child}</Container>
   );
 };
 
