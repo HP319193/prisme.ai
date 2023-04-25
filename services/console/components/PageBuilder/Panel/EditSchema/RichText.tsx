@@ -60,6 +60,12 @@ const schema: Schema = {
         remove: 'pages.blocks.richtext.settings.values.remove',
       },
     },
+    markdown: {
+      type: 'boolean',
+      title: 'pages.blocks.richtext.settings.markdown.label',
+      description: 'pages.blocks.richtext.settings.markdown.description',
+      default: true,
+    },
     ...commonSchema.properties,
   },
 };

@@ -1149,6 +1149,10 @@
             "description": "Vous pouvez insérer des valeurs en utilisant la notation {{nomDeLaVariable}} dans votre contenu HTML.",
             "add": "Ajouter une valeur",
             "remove": "Supprimer la valeur"
+          },
+          "markdown": {
+            "label": "Interpréter le contenu comme du Markdown",
+            "description": "Votre contenu peut contenir du HTML et du Markdown pour faciliter sa mise en page. Cependant, si vous préférez qu'il reste inaltéré par le moteur de rendu Markdown, activez cette option."
           }
         }
       },

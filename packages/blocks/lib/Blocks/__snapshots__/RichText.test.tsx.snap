@@ -28,3 +28,21 @@ exports[`should render 1`] = `
 
 </div>
 `;
+
+exports[`should render without markdown 1`] = `
+<div
+  className="pr-block-rich-text  __block-unique-id"
+>
+  hello world
+</div>
+`;
+
+exports[`should render without p 1`] = `
+<div
+  className="pr-block-rich-text  __block-unique-id"
+>
+  hello world
+  
+
+</div>
+`;

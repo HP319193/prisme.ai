@@ -1149,6 +1149,10 @@
             "description": "You can insert values using the {{variableName}} notation into your HTML content.",
             "add": "Add a value",
             "remove": "Delete the value"
+          },
+          "markdown": {
+            "label": "Interpreting content as Markdown",
+            "description": "Your content can contain both HTML and Markdown for easy formatting. However, if you prefer to keep it unaltered by the Markdown rendering engine, enable this option."
           }
         }
       },
