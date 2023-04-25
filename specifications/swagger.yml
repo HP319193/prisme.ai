@@ -274,6 +274,79 @@ components:
     Workspace:
       $ref: '#/components/schemas/DSUL'
 
+    WorkspaceSecurity:
+      type: object
+      additionalProperties: false
+      properties:
+        authorizations:
+          $ref: '#/components/schemas/WorkspaceAuthorizations'
+
+    WorkspaceAuthorizations:
+      type: object
+      additionalProperties: false
+      properties:
+        roles:
+          additionalProperties:
+            $ref: "#/components/schemas/WorkspaceRole"
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/PermissionRule"
+
+    WorkspaceRole:
+      type: object
+      additionalProperties: false
+      properties:
+        description:
+          type: string
+        auth:
+          type: object
+          properties:
+            prismeai:
+              type: object
+              properties:
+                anonymous:
+                  type: boolean
+            basic:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+            apiKey:
+              type: object
+
+    PermissionRule:
+      type: object
+      additionalProperties: false
+      required:
+        - action
+        - subject
+      properties:
+        roles:
+          type: array
+          items:
+            type: string
+        action:
+          type: string
+          enum:
+            - create
+            - read
+            - update
+            - delete
+            - manage_permissions
+            - manage_security
+        subject:
+          type: string
+          enum:
+            - pages
+            - files
+        conditions:
+          type: object
+          additionalProperties: true
+
+
     WorkspaceVersion:
       type: object
       required:
@@ -1816,6 +1889,25 @@ components:
             config:
               $ref: '#/components/schemas/Config'
             oldConfig: {}
+
+    UpdatedWorkspaceSecurity:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.security.updated
+          enum:
+            - workspaces.security.updated
+        payload:
+          type: object
+          required:
+            - security
+          properties:
+            security:
+              $ref: "#/components/schemas/WorkspaceSecurity"
 
     PublishedWorkspaceVersion:
       type: object
@@ -4987,6 +5079,157 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
+
+  ## Workspace security
+  /v2/workspaces/{workspaceId}/security:
+    get:
+      description: Get workspace security
+      operationId: getSecurity
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceSecurity'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+    put:
+      description: Update workspace security
+      operationId: updateSecurity
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceSecurity'
+
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceSecurity'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+
+  /v2/workspaces/{workspaceId}/security/roles:
+    get:
+      description: Get workspace roles
+      operationId: getRoles
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - name
+                  properties:
+                    name:
+                      type: string
+                    description:
+                      type: string
+
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
 
   ## apps
   /v2/apps:

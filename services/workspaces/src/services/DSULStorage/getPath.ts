@@ -2,6 +2,12 @@ import path from 'path';
 import { MissingFieldError } from '../../errors';
 import { DSULQuery, DSULType, getFolderIndexType } from './types';
 
+// These dsul types will be fetched at the root app/workspace directory with {{enumValue}}.yml
+const rootFiles = [
+  DSULType.DSULIndex,
+  DSULType.Security,
+  DSULType.RuntimeModel,
+];
 export function getPath(dsulType: DSULType, opts: Partial<DSULQuery>) {
   let {
     appSlug,
@@ -45,13 +51,14 @@ export function getPath(dsulType: DSULType, opts: Partial<DSULQuery>) {
   }
   const baseVersionFolder = `${baseFolder}/versions/${version}`;
 
-  if (dsulType == DSULType.DSULIndex) {
-    return parentFolder ? baseVersionFolder : `${baseVersionFolder}/index.yml`;
-  }
-  if (dsulType == DSULType.RuntimeModel) {
-    return `${baseVersionFolder}/runtime.yml`;
+  // Root files
+  if (rootFiles.includes(dsulType)) {
+    return parentFolder
+      ? baseVersionFolder
+      : `${baseVersionFolder}/${dsulType}.yml`;
   }
 
+  // Nested folders with slugged filenames
   const isIndex = dsulType.includes('/');
   if (!parentFolder && !isIndex && !slug) {
     throw new MissingFieldError('Missing slug for ' + dsulType);

@@ -1826,6 +1826,14 @@ declare namespace Prismeai {
             wait: Wait.Properties.Wait;
         };
     }
+    export interface PermissionRule {
+        roles?: string[];
+        action: "create" | "read" | "update" | "delete" | "manage_permissions" | "manage_security";
+        subject: "pages" | "files";
+        conditions?: {
+            [name: string]: any;
+        };
+    }
     /**
      * example:
      * [
@@ -2266,6 +2274,16 @@ declare namespace Prismeai {
             oldSlug?: string;
         };
     }
+    export interface UpdatedWorkspaceSecurity {
+        /**
+         * example:
+         * workspaces.security.updated
+         */
+        type: "workspaces.security.updated";
+        payload: {
+            security: WorkspaceSecurity;
+        };
+    }
     export interface UsageMetrics {
         transactions: number;
         automationRuns: number;
@@ -2464,6 +2482,12 @@ declare namespace Prismeai {
         endpoint: boolean | string;
     };
     export type Workspace = DSUL;
+    export interface WorkspaceAuthorizations {
+        roles?: {
+            [name: string]: WorkspaceRole;
+        };
+        rules?: PermissionRule[];
+    }
     export interface WorkspacePermissionsDeleted {
         /**
          * example:
@@ -2485,6 +2509,24 @@ declare namespace Prismeai {
             subjectId: string;
             permissions: UserPermissions;
         };
+    }
+    export interface WorkspaceRole {
+        description?: string;
+        auth?: {
+            prismeai?: {
+                anonymous?: boolean;
+            };
+            basic?: {
+                username?: string;
+                password?: string;
+            };
+            apiKey?: {
+                [key: string]: any;
+            };
+        };
+    }
+    export interface WorkspaceSecurity {
+        authorizations?: WorkspaceAuthorizations;
     }
     export interface WorkspaceUsage {
         workspaceId: string;
@@ -3140,6 +3182,39 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace GetRoles {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        namespace Responses {
+            export type $200 = {
+                name: string;
+                description?: string;
+            }[];
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace GetSecurity {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.WorkspaceSecurity;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace GetThisContact {
         namespace Parameters {
             export type ContactId = string;
@@ -3688,6 +3763,22 @@ declare namespace PrismeaiAPI {
         export type RequestBody = Prismeai.Page;
         namespace Responses {
             export type $200 = Prismeai.Page;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace UpdateSecurity {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        export type RequestBody = Prismeai.WorkspaceSecurity;
+        namespace Responses {
+            export type $200 = Prismeai.WorkspaceSecurity;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;

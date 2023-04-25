@@ -7,6 +7,7 @@ import {
 export const ActionType = {
   ...NativeActionType,
   GetAppSourceCode: 'GetAppSourceCode',
+  ManageSecurity: 'manage_security',
 };
 
 export enum SubjectType {

@@ -1,6 +1,8 @@
 export enum DSULType {
   DSULIndex = 'index',
 
+  Security = 'security',
+
   PagesIndex = 'pages/__index__',
   Pages = 'pages',
   DetailedPage = 'detailedPage',
@@ -30,6 +32,7 @@ export type DSULQuery<t extends DSULType = any> = {
 
 export type DSULInterfaces = {
   [DSULType.DSULIndex]: Prismeai.Workspace;
+  [DSULType.Security]: Prismeai.WorkspaceSecurity;
 
   [DSULType.AutomationsIndex]: Prismeai.AutomationMeta;
   [DSULType.Automations]: Prismeai.Automation;

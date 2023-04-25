@@ -4,6 +4,7 @@ import sys from './sys';
 import initMigrate from './migrate';
 import initWorkspaces from './workspaces';
 import initAutomations from './automations';
+import initSecurity from './security';
 import initApps from './apps';
 import initAppInstances from './appInstances';
 import { initPagesBackoffice, initPagesPublic } from './pages';
@@ -43,6 +44,11 @@ export const init = (
   app.use(
     `${root}/workspaces/:workspaceId/pages`,
     initPagesBackoffice(dsulStorage)
+  );
+
+  app.use(
+    `${root}/workspaces/:workspaceId/security`,
+    initSecurity(dsulStorage)
   );
 
   const files = initFiles(uploadsStorage);
