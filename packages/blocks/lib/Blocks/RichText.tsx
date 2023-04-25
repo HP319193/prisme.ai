@@ -165,7 +165,7 @@ export const RichText = ({
   const Container = container as keyof JSX.IntrinsicElements;
   const child = parser(mustache.render(toRender, values), options);
 
-  if (!Container) return child;
+  if (!Container) return <>{child}</>;
 
   return (
     <Container className={`pr-block-rich-text ${className}`}>{child}</Container>

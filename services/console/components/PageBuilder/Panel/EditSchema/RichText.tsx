@@ -66,6 +66,12 @@ const schema: Schema = {
       description: 'pages.blocks.richtext.settings.markdown.description',
       default: true,
     },
+    container: {
+      type: 'string',
+      title: 'pages.blocks.richtext.settings.container.label',
+      description: 'pages.blocks.richtext.settings.container.description',
+      default: true,
+    },
     ...commonSchema.properties,
   },
 };
