@@ -2541,9 +2541,9 @@ components:
       properties:
         type:
           type: string
-          example: userTopics.created
+          example: events.userTopics.created
           enum:
-            - userTopics.created
+            - events.userTopics.created
         payload:
           $ref: '#/components/schemas/UserTopic'
 
@@ -2555,9 +2555,9 @@ components:
       properties:
         type:
           type: string
-          example: userTopics.joined
+          example: events.userTopics.joined
           enum:
-            - userTopics.joined
+            - events.userTopics.joined
         payload:
           type: object
           required:

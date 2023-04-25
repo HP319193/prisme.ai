@@ -34,3 +34,18 @@ Some content with <a href="https://prisme.ai">HTML</a>
   );
   expect(root.toJSON()).toMatchSnapshot();
 });
+
+it('should render without markdown', () => {
+  const content = 'hello world';
+  const root = renderer.create(
+    <BlocksProvider
+      components={{ Link, Loading, DownIcon, SchemaForm }}
+      externals={{}}
+    >
+      <BlockProvider config={{ content, markdown: false }}>
+        <RichText />
+      </BlockProvider>
+    </BlocksProvider>
+  );
+  expect(root.toJSON()).toMatchSnapshot();
+});

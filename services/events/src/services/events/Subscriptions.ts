@@ -93,7 +93,7 @@ export class Subscriptions {
   }
 
   start() {
-    // Unpartitioned listener (for websockets : we do not know which prisme.ai-events instance holds which socket)
+    // Unpartitioned listener (for websockets & topics subscriptions : we do not know which prisme.ai-events instance holds which socket)
     this.broker.all(
       async (event, broker, { logger }) => {
         logger.trace({ msg: 'Received event', event });
@@ -122,6 +122,7 @@ export class Subscriptions {
       }
     );
 
+    // Update all active websockets with new subscriptions
     this.broker.on<
       Prismeai.CreatedUserTopic['payload'] | Prismeai.JoinedUserTopic['payload']
     >(
@@ -136,27 +137,59 @@ export class Subscriptions {
           ? [(<any>event.payload).user?.id]
           : (<any>event.payload).userIds;
         const topicName = event.payload.topic;
+        if (!topicName) {
+          return true;
+        }
+        await Promise.all(
+          userIds.map(async (userId) => {
+            const activeSubscriptions =
+              this.subscribers[workspaceId]?.userIds[userId] || [];
+            activeSubscriptions.forEach(async ({ accessManager }) => {
+              const workspaceUser = {
+                ...accessManager.user,
+                topics: [
+                  ...new Set(
+                    (accessManager.user.topics || []).concat([topicName])
+                  ),
+                ],
+              };
+              accessManager.user = workspaceUser;
+              accessManager.updatePermissions(workspaceUser);
+            });
+          })
+        );
+
+        return true;
+      },
+      {
+        GroupPartitions: false,
+      }
+    );
+
+    // Persist userTopics subscriptions in cache
+    this.broker.on<
+      Prismeai.CreatedUserTopic['payload'] | Prismeai.JoinedUserTopic['payload']
+    >(
+      [EventType.CreatedUserTopic, EventType.JoinedUserTopic],
+      async (event) => {
+        if (!event?.payload) {
+          return true;
+        }
+        const workspaceId = event?.source?.workspaceId!;
+
+        const userIds: string[] = (<any>event.payload).user?.id
+          ? [(<any>event.payload).user?.id]
+          : (<any>event.payload).userIds;
+        const topicName = event.payload.topic;
+        if (!topicName) {
+          return true;
+        }
         await Promise.all(
           userIds.map(async (userId) => {
             const result = await this.cache.joinUserTopic(
               workspaceId,
               userId,
               topicName
-            );
-            const activeSubscriptions =
-              this.subscribers[workspaceId]?.userIds[userId] || [];
-            activeSubscriptions.forEach(
-              async ({ sessionId, accessManager }) => {
-                const workspaceUser = await getWorkspaceUser(
-                  workspaceId,
-                  {
-                    id: userId,
-                    sessionId,
-                  },
-                  this.cache
-                );
-                accessManager.updatePermissions(workspaceUser);
-              }
             );
             return result;
           })
