@@ -853,6 +853,10 @@
                 "description": "Text displayed in the navigation button."
               }
             }
+          },
+          "fixed": {
+            "label": "Fixed header",
+            "description": "If enabled, the header will remain hanging at the top of the screen during the scroll."
           }
         }
       },

@@ -2,7 +2,7 @@
 
 exports[`should render blocks 1`] = `
 <div
-  className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-auto min-h-full snap-mandatory"
+  className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] min-h-full"
 >
   <div
     className="flex flex-1 flex-col page-blocks w-full"
@@ -147,7 +147,7 @@ exports[`should render blocks 1`] = `
 
 exports[`should render empty page 1`] = `
 <div
-  className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-auto min-h-full snap-mandatory"
+  className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] min-h-full"
 >
   <div
     className="flex flex-1 flex-col page-blocks w-full"

@@ -44,7 +44,7 @@ export const Page = ({ page }: PageProps) => {
   }, [page]);
 
   return (
-    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] overflow-auto min-h-full snap-mandatory">
+    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] min-h-full">
       <Head>
         <title>{localize(page.name)}</title>
         <meta name="description" content={localize(page.description)} />

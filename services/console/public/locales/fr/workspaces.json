@@ -853,6 +853,10 @@
                 "description": "Texte affiché dans le bouton de navigation."
               }
             }
+          },
+          "fixed": {
+            "label": "Entête fixe",
+            "description": "Si activé, l'entête restera accroché en haut de l'écran pendant le scroll."
           }
         }
       },

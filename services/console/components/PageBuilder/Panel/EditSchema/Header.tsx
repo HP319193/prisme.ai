@@ -219,6 +219,11 @@ export const schema: Schema = {
         },
       },
     },
+    fixed: {
+      type: 'boolean',
+      title: 'pages.blocks.header.settings.fixed.label',
+      description: 'pages.blocks.header.settings.fixed.description',
+    },
     ...getCommonSchema(builtinBlocks.Header.styles || ''),
   },
 };
