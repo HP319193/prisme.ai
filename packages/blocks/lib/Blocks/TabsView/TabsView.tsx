@@ -98,10 +98,13 @@ export const TabsView = ({
 const defaultStyles = `:block {
   display: flex;
   flex: 1;
+  flex-direction: column;
 }
 
 .pr-block-tabs-view__tabs {
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .pr-block-tabs-view__tab {
