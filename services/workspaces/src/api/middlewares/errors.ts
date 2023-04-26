@@ -11,6 +11,7 @@ enum KnownErrorCodes {
   ForbiddenError = 'ForbiddenError',
   BrokerError = 'BrokerError',
   InvalidAPIKey = 'InvalidAPIKey',
+  UnknownRole = 'UnknownRole',
 }
 
 function errorHttpStatus(err: Error, serverError: boolean) {

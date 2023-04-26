@@ -125,14 +125,31 @@ class Security {
           };
         }
 
-        builtRoles[roleName].casl?.push({
-          action,
-          subject,
-          conditions: {
-            ...conditions,
-            workspaceId,
-          },
-        });
+        const subjectsWithoutEvents = subjects.filter(
+          (cur) => cur !== 'events'
+        );
+        if (subjectsWithoutEvents.length) {
+          builtRoles[roleName].casl?.push({
+            action: actions,
+            subject: subjectsWithoutEvents,
+            conditions: {
+              ...conditions,
+              workspaceId,
+            },
+          });
+        }
+        // Properly format event-specific conditions
+        if (subjectsWithoutEvents.length !== subjects.length) {
+          builtRoles[roleName].casl?.push({
+            action: actions,
+            subject: 'events',
+            conditions: {
+              ...conditions,
+              'source.workspaceId': workspaceId,
+              'source.serviceTopic': 'topic:runtime:emit',
+            },
+          });
+        }
       });
       return builtRoles;
     }, {});
@@ -238,12 +255,15 @@ class Security {
       SubjectType.Workspace,
       workspaceId
     );
-    return Object.entries(security?.authorizations?.roles || {}).map(
-      ([name, role]) => ({
-        name,
-        description: role?.description,
-      })
-    );
+    const roles = {
+      [Role.Owner]: {},
+      [Role.Editor]: {},
+      ...security?.authorizations?.roles,
+    };
+    return Object.entries(roles).map(([name, role]) => ({
+      name,
+      description: (<any>role)?.description,
+    }));
   };
 }
 

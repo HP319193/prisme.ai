@@ -7,7 +7,13 @@ import {
   InvalidPermissions,
   UnknownRole,
 } from './errors';
-import { User, ActionType, RoleTemplates, PermissionsConfig } from './types';
+import {
+  User,
+  ActionType,
+  RoleTemplates,
+  PermissionsConfig,
+  RoleTemplate,
+} from './types';
 
 type UserId = string;
 
@@ -31,17 +37,17 @@ export class Permissions<
   private subjects: Record<SubjectType, SubjectOptions<Role>>;
   private user: User<Role>;
   private roleTemplates: RoleTemplates<SubjectType, Role>;
+  private abac: Rules;
   private rules: Rules;
   private loadedRoleIds: Set<string>;
   public ability: Ability;
-  private config: PermissionsConfig<SubjectType, Role>;
 
   constructor(user: User<Role>, config: PermissionsConfig<SubjectType, Role>) {
     this.user = user;
     const { rbac, abac, subjects } = config;
     this.roleTemplates = rbac;
+    this.abac = abac;
     this.subjects = subjects;
-    this.config = config;
 
     this.loadedRoleIds = new Set();
     this.rules = sortRules([
@@ -52,6 +58,33 @@ export class Permissions<
     if (user.role) {
       this.loadRole(user.role);
     }
+  }
+
+  public loadRoles(roles: RoleTemplates<SubjectType, Role>) {
+    const newRolesMapping = roles.reduce<
+      Record<string, RoleTemplate<SubjectType, Role>>
+    >(
+      (mapping, role) => ({
+        ...mapping,
+        [`${role.subjectType}.${role.name}`]: role,
+      }),
+      {}
+    );
+
+    const currentRolesMapping = this.roleTemplates.reduce<
+      Record<string, RoleTemplate<SubjectType, Role>>
+    >(
+      (mapping, role) => ({
+        ...mapping,
+        [`${role.subjectType}.${role.name}`]: role,
+      }),
+      {}
+    );
+
+    this.roleTemplates = Object.values({
+      ...currentRolesMapping,
+      ...newRolesMapping,
+    });
   }
 
   private findRoleTemplate(role: Role, subjectType?: SubjectType) {
@@ -240,7 +273,7 @@ export class Permissions<
 
   updateUserRules(user: User<Role>) {
     this.user = user;
-    this.loadRules(this.config?.abac);
+    this.loadRules(this.abac);
   }
 
   loadRules(rules: Rules, context: Record<string, any> = {}) {

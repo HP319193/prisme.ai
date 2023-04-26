@@ -41,6 +41,9 @@ const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
     storage: {
       host: 'mongodb://localhost:27017/testCASL',
     },
+    rbac: {
+      enabledSubjectTypes: [SubjectType.Workspace],
+    },
     schemas: {
       user: new mongoose.Schema({}),
       workspace: new mongoose.Schema({
