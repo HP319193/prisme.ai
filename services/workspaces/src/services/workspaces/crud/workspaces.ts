@@ -43,7 +43,7 @@ import {
   IMPORT_BATCH_SIZE,
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
-import { fetchUsers } from '@prisme.ai/permissions';
+import { fetchUsers, NativeSubjectType } from '@prisme.ai/permissions';
 import { processArchive } from '../../../utils/processArchive';
 import { streamToBuffer } from '../../../utils/streamToBuffer';
 import { Apps } from '../../apps';
@@ -751,6 +751,10 @@ class Workspaces {
 
     // Delete workspace DB entry & check permissions
     await this.accessManager.delete(SubjectType.Workspace, workspaceId);
+    await this.accessManager.deleteMany(NativeSubjectType.Roles as any, {
+      subjectType: 'workspaces',
+      subjectId: workspaceId,
+    });
 
     // Delete workspace from storage
     try {

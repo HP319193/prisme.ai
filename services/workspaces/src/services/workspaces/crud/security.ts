@@ -16,9 +16,9 @@ import { logger } from '../../../logger';
 
 const OnlyAllowedSubjects = [
   SubjectType.Workspace,
-  SubjectType.Event,
   SubjectType.Page,
   SubjectType.File,
+  'events',
 ];
 const OnlyAllowedActions = Object.values(ActionType);
 class Security {

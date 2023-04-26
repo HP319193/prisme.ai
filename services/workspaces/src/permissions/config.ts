@@ -1,6 +1,7 @@
 import { Ability, RawRuleOf } from '@casl/ability';
 import {
   ActionType as NativeActionType,
+  NativeSubjectType,
   PermissionsConfig,
 } from '@prisme.ai/permissions';
 
@@ -12,7 +13,6 @@ export const ActionType = {
 
 export enum SubjectType {
   Workspace = 'workspaces',
-  Event = 'events',
   App = 'apps',
   Page = 'pages',
   File = 'files',
@@ -114,6 +114,14 @@ export const config: PermissionsConfig<
           subject: SubjectType.File,
           conditions: {
             workspaceId: '${subject.id}',
+          },
+        },
+        {
+          action: ActionType.Manage,
+          subject: NativeSubjectType.Roles,
+          conditions: {
+            subjectId: '${subject.id}',
+            subjectType: 'workspaces',
           },
         },
       ],
