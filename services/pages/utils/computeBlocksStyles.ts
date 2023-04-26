@@ -4,6 +4,7 @@ export function computePageStyles(page: Prismeai.DetailedPage) {
   const styles: string[] = [];
 
   function computeCss(o: any): any {
+    if (!o) return o;
     if (Array.isArray(o)) {
       return o.map(computeCss);
     }
