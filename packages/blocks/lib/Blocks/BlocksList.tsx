@@ -15,6 +15,10 @@ export const BlocksList = ({ blocks = [], className }: BlocksListConfig) => {
   } = useBlocks();
 
   const memoizedBlocks = useMemo(() => {
+    if (!Array.isArray(blocks)) {
+      console.error('blocks must be an array');
+      return [];
+    }
     return blocks
       .filter(Boolean)
       .map(({ slug, className = '', ...config }, key) => (
