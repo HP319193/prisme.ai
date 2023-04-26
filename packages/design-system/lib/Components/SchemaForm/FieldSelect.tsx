@@ -51,8 +51,6 @@ export const FieldSelect = (
     : undefined;
   const showSearch = !fieldOptions?.select?.hideSearch;
 
-  console.log('props.schema', props.schema);
-
   return (
     <FieldContainer {...props} className="pr-form-select">
       <Label
