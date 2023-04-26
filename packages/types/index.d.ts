@@ -1833,9 +1833,13 @@ declare namespace Prismeai {
          */
         role?: /* The roles to which this rule is restricted */ string[] | string;
         /**
-         * The actions that we want to allow
+         * If true, will forbid instead of allow
          */
-        action: /* The actions that we want to allow */ ActionTypes | ActionTypes[];
+        inverted?: boolean;
+        /**
+         * The actions that we want to allow/deny
+         */
+        action: /* The actions that we want to allow/deny */ ActionTypes | ActionTypes[];
         subject: SubjectTypes | SubjectTypes[];
         /**
          * Matching conditions written using a subset of MongoDB queries. This rule will take effect only if conditions match (or are empty). See https://casl.js.org/v5/en/guide/conditions-in-depth

@@ -71,88 +71,96 @@ class Security {
   ) => {
     const builtRoles = (authorizations?.rules || []).reduce<
       Record<string, CustomRole<SubjectType, any>>
-    >((builtRoles, { role: attachedRole, action, subject, conditions }) => {
-      const attachedRoles = Array.isArray(attachedRole)
-        ? attachedRole
-        : [attachedRole || 'default'];
-      const actions = Array.isArray(action) ? action : [action];
-      const subjects = Array.isArray(subject) ? subject : [subject];
+    >(
+      (
+        builtRoles,
+        { role: attachedRole, action, subject, inverted, conditions }
+      ) => {
+        const attachedRoles = Array.isArray(attachedRole)
+          ? attachedRole
+          : [attachedRole || 'default'];
+        const actions = Array.isArray(action) ? action : [action];
+        const subjects = Array.isArray(subject) ? subject : [subject];
 
-      if (
-        !subjects.length ||
-        subjects.some(
-          (subject) => !OnlyAllowedSubjects.includes(subject as SubjectType)
-        )
-      ) {
-        throw new InvalidSecurity(
-          `Forbidden subjectType '${subject}' found in security rules`
-        );
-      }
-      if (
-        !actions.length ||
-        actions.some(
-          (action) => !OnlyAllowedActions.includes(action as SubjectType)
-        )
-      ) {
-        throw new InvalidSecurity(
-          `Forbidden actionType '${action}' found in security rules`
-        );
-      }
-
-      attachedRoles.forEach((roleName) => {
-        if (roleName === Role.Owner) {
-          throw new InvalidSecurity(
-            `Reserved role '${roleName} cannot be overriden !'`
-          );
-        } else if (
-          roleName !== 'default' &&
-          !(roleName in (authorizations?.roles || {}))
+        if (
+          !subjects.length ||
+          subjects.some(
+            (subject) => !OnlyAllowedSubjects.includes(subject as SubjectType)
+          )
         ) {
           throw new InvalidSecurity(
-            `Unknown custom role '${roleName}' referenced in a rule`
+            `Forbidden subjectType '${subject}' found in security rules`
+          );
+        }
+        if (
+          !actions.length ||
+          actions.some(
+            (action) => !OnlyAllowedActions.includes(action as SubjectType)
+          )
+        ) {
+          throw new InvalidSecurity(
+            `Forbidden actionType '${action}' found in security rules`
           );
         }
 
-        if (!(roleName in builtRoles)) {
-          builtRoles[roleName] = {
-            id: this.getRoleId(workspaceId, roleName),
-            type: 'casl',
-            name: roleName,
-            subjectType: SubjectType.Workspace,
-            subjectId: workspaceId,
-            rules: [],
-            casl: [],
-          };
-        }
+        attachedRoles.forEach((roleName) => {
+          if (roleName === Role.Owner) {
+            throw new InvalidSecurity(
+              `Reserved role '${roleName} cannot be overriden !'`
+            );
+          } else if (
+            roleName !== 'default' &&
+            !(roleName in (authorizations?.roles || {}))
+          ) {
+            throw new InvalidSecurity(
+              `Unknown custom role '${roleName}' referenced in a rule`
+            );
+          }
 
-        const subjectsWithoutEvents = subjects.filter(
-          (cur) => cur !== 'events'
-        );
-        if (subjectsWithoutEvents.length) {
-          builtRoles[roleName].casl?.push({
-            action: actions,
-            subject: subjectsWithoutEvents,
-            conditions: {
-              ...conditions,
-              workspaceId,
-            },
-          });
-        }
-        // Properly format event-specific conditions
-        if (subjectsWithoutEvents.length !== subjects.length) {
-          builtRoles[roleName].casl?.push({
-            action: actions,
-            subject: 'events',
-            conditions: {
-              ...conditions,
-              'source.workspaceId': workspaceId,
-              'source.serviceTopic': 'topic:runtime:emit',
-            },
-          });
-        }
-      });
-      return builtRoles;
-    }, {});
+          if (!(roleName in builtRoles)) {
+            builtRoles[roleName] = {
+              id: this.getRoleId(workspaceId, roleName),
+              type: 'casl',
+              name: roleName,
+              subjectType: SubjectType.Workspace,
+              subjectId: workspaceId,
+              rules: [],
+              casl: [],
+            };
+          }
+
+          const subjectsWithoutEvents = subjects.filter(
+            (cur) => cur !== 'events'
+          );
+          if (subjectsWithoutEvents.length) {
+            builtRoles[roleName].casl?.push({
+              action: actions,
+              subject: subjectsWithoutEvents,
+              inverted,
+              conditions: {
+                ...conditions,
+                workspaceId,
+              },
+            });
+          }
+          // Properly format event-specific conditions
+          if (subjectsWithoutEvents.length !== subjects.length) {
+            builtRoles[roleName].casl?.push({
+              action: actions,
+              subject: 'events',
+              inverted,
+              conditions: {
+                ...conditions,
+                'source.workspaceId': workspaceId,
+                'source.serviceTopic': 'topic:runtime:emit',
+              },
+            });
+          }
+        });
+        return builtRoles;
+      },
+      {}
+    );
 
     return Object.values(builtRoles);
   };

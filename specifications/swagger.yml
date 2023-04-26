@@ -362,8 +362,11 @@ components:
               items:
                 type: string
             - type: string
+        inverted:
+          type: boolean
+          description: "If true, will forbid instead of allow"
         action:
-          description: "The actions that we want to allow"
+          description: "The actions that we want to allow/deny"
           oneOf:
             - $ref: "#/components/schemas/ActionTypes"
             - type: array
