@@ -352,12 +352,14 @@ components:
         - subject
       properties:
         role:
+          description: "The roles to which this rule is restricted"
           oneOf:
             - type: array
               items:
                 type: string
             - type: string
         action:
+          description: "The actions that we want to allow"
           oneOf:
             - $ref: "#/components/schemas/ActionTypes"
             - type: array
@@ -371,6 +373,7 @@ components:
                 $ref: "#/components/schemas/SubjectTypes"
         conditions:
           type: object
+          description: "Matching conditions written using a subset of MongoDB queries. This rule will take effect only if conditions match (or are empty). See https://casl.js.org/v5/en/guide/conditions-in-depth"
           additionalProperties: true
 
 
@@ -1118,9 +1121,6 @@ components:
 
     Role:
       type: string
-      enum:
-        - owner
-        - editor
 
     Policies:
       properties:

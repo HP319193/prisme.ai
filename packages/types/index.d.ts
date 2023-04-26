@@ -1968,7 +1968,7 @@ declare namespace Prismeai {
             do: InstructionList;
         };
     }
-    export type Role = "owner" | "editor";
+    export type Role = string;
     export interface RollbackWorkspaceVersion {
         /**
          * example:

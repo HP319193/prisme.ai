@@ -115,22 +115,24 @@ export function nativeRules(
   subjects: Record<any, SubjectOptions<any>>
 ) {
   const anySubjectPermissionsGrantEquivalentActions: RawRuleOf<Ability>[] =
-    Object.values(ActionType).flatMap((action) => [
-      {
-        action,
-        subject: 'all',
-        conditions: {
-          [`permissions.\${user.id}.policies.${action}`]: true,
+    Object.values(ActionType)
+      .filter((cur) => cur !== ActionType.Create && cur !== ActionType.Manage)
+      .flatMap((action) => [
+        {
+          action,
+          subject: 'all',
+          conditions: {
+            [`permissions.\${user.id}.policies.${action}`]: true,
+          },
         },
-      },
-      {
-        action,
-        subject: 'all',
-        conditions: {
-          [`permissions.*.policies.${action}`]: true,
+        {
+          action,
+          subject: 'all',
+          conditions: {
+            [`permissions.*.policies.${action}`]: true,
+          },
         },
-      },
-    ]);
+      ]);
 
   const anySubjectRoleGrantReadAccess: RawRuleOf<Ability>[] = Object.entries(
     subjects

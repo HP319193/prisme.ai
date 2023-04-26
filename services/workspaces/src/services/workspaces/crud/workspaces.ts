@@ -751,7 +751,8 @@ class Workspaces {
 
     // Delete workspace DB entry & check permissions
     await this.accessManager.delete(SubjectType.Workspace, workspaceId);
-    await this.accessManager.deleteMany(NativeSubjectType.Roles as any, {
+    const superAdmin = await getSuperAdmin(this.accessManager as AccessManager);
+    await superAdmin.deleteMany(NativeSubjectType.Roles as any, {
       subjectType: 'workspaces',
       subjectId: workspaceId,
     });
@@ -765,7 +766,7 @@ class Workspaces {
 
     // Delete pages db entries
     try {
-      await this.accessManager.deleteMany(SubjectType.Page, {
+      await superAdmin.deleteMany(SubjectType.Page, {
         workspaceId,
       });
     } catch (err) {

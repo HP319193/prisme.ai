@@ -79,6 +79,7 @@ export const config: PermissionsConfig<
             SubjectType.App,
             SubjectType.File,
             SubjectType.Page,
+            NativeSubjectType.Roles,
           ],
         },
       ],

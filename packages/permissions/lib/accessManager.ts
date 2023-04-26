@@ -363,17 +363,21 @@ export class AccessManager<
     await this.throwUnlessCan(ActionType.Create, subjectType, <any>subject!!);
     const Model = this.model(subjectType);
     const date = new Date();
+    const autoAssignRole =
+      this.permissionsConfig.subjects[subjectType]?.author?.assignRole;
     const object = new Model({
       ...this.filterFieldsBeforeUpdate(subject),
       createdBy: user.id,
       updatedBy: user.id,
       createdAt: date.toISOString(),
       updatedAt: date.toISOString(),
-      permissions: {
-        [user.id]: {
-          role: 'owner',
-        },
-      },
+      permissions: autoAssignRole
+        ? {
+            [user.id]: {
+              role: autoAssignRole,
+            },
+          }
+        : {},
     });
     object.id = subject.id || object._id!!.toString();
     await object.save();
@@ -633,7 +637,7 @@ export class AccessManager<
       throw new PrismeError('A role id is required for saving');
     }
 
-    await await this.throwUnlessCan(
+    await this.throwUnlessCan(
       ActionType.ManagePermissions,
       role.subjectType,
       role.subjectId
@@ -678,7 +682,7 @@ export class AccessManager<
       throw new ObjectNotFoundError();
     }
     const role = doc.toJSON();
-    await await this.throwUnlessCan(
+    await this.throwUnlessCan(
       ActionType.ManagePermissions,
       role.subjectType,
       role.subjectId
