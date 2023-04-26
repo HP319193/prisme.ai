@@ -17,7 +17,7 @@ exports[`should render with blocks 1`] = `
       onClick={[MockFunction]}
     />
     <div
-      className="pr-block-blocks-list "
+      className="pr-block-blocks-list flex-1"
     />
   </div>
 </div>
@@ -40,7 +40,7 @@ exports[`should render with no block 1`] = `
       onClick={[MockFunction]}
     />
     <div
-      className="pr-block-blocks-list "
+      className="pr-block-blocks-list flex-1"
     />
   </div>
 </div>
