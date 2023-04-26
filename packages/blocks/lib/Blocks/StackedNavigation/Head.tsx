@@ -46,7 +46,7 @@ export const HeadRenderer = ({
         >
           <LeftCircleOutlined />
         </button>
-        {blocks && <BlocksList blocks={legacyBlocks} />}
+        {blocks && <BlocksList blocks={legacyBlocks} className="flex-1" />}
       </div>
     </div>
   );

@@ -31,7 +31,7 @@ export const Hero = ({
       <div className="pr-block-hero__container">
         <div className="pr-block-hero__text">
           <H className="pr-block-hero__title">{localize(title)}</H>
-          <p className="pr-block-hero__lead">{localize(lead)}</p>
+          {lead && <p className="pr-block-hero__lead">{localize(lead)}</p>}
           {content && <BlocksList {...content} />}
         </div>
         {img && (

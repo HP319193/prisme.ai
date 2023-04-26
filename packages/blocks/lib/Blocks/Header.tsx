@@ -137,6 +137,7 @@ const defaultStyles = `:block {
   min-height: 4rem;
   --pr-header-color: var(--color-accent, rgba(0,0,0,.8));
   --pr-header-contrast: var(--color-accent-contrast, white);
+  --pr-header-logo-height: 3rem;
 }
 .pr-block-header__container {
   display: flex;
@@ -177,6 +178,7 @@ const defaultStyles = `:block {
 }
 .pr-block-header__logo {
   margin-right: 1rem;
+  height: var(--pr-header-logo-height, 3rem);
 }
 
 .pr-block-header__logo-image {

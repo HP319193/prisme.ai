@@ -65,7 +65,7 @@ export const StackedNavigation: BlockComponent = () => {
       }}
     >
       <div
-        className={tw`block-layout__head head fixed top-0 left-0 right-0 z-50`}
+        className={tw`block-layout__head head fixed flex-1 top-0 left-0 right-0 z-50`}
         ref={headEl}
       >
         <Head />
