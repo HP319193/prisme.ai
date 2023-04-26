@@ -49,11 +49,11 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
     if (page.updateOn) {
       offs.push(
         events.on(page.updateOn, ({ payload: { url, redirect } }) => {
-          function redirectGet(url: string) {
+          function redirectGet(url: string, locale?: string) {
             if (url.match(/^http/)) {
               window.location.href = url;
             } else {
-              push(url);
+              push(url, undefined, { locale });
             }
           }
           function redirectPost(url: string, body: Record<string, string>) {
@@ -72,12 +72,12 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
           }
 
           if (redirect) {
-            const { url, method = 'get', body = {} } = redirect;
+            const { url, method = 'get', body = {}, locale } = redirect;
             if (!url) return;
             if (`${method}`.toLowerCase() === 'get') {
-              return redirectGet(url);
+              return redirectGet(url, locale);
             }
-            redirectPost(url, body);
+            return redirectPost(url, body);
           }
           if (url) {
             redirectGet(url);

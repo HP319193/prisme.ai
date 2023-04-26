@@ -1,11 +1,12 @@
 import { useBlock } from '../../Provider';
+import useLocalizedText from '../../useLocalizedText';
 import { BaseBlock } from '../BaseBlock';
 import { BlocksList, BlocksListConfig } from '../BlocksList';
 import { BaseBlockConfig } from '../types';
 
 export interface HeroConfig extends BaseBlockConfig {
-  title: string;
-  lead: string;
+  title: Prismeai.LocalizedText;
+  lead: Prismeai.LocalizedText;
   content?: BlocksListConfig;
   img: string;
   backgroundColor: string;
@@ -23,13 +24,14 @@ export const Hero = ({
   backgroundColor,
   level = 2,
 }: HeroProps) => {
+  const { localize } = useLocalizedText();
   const H = `h${level}` as keyof JSX.IntrinsicElements;
   return (
     <div className={`pr-block-hero ${className}`} style={{ backgroundColor }}>
       <div className="pr-block-hero__container">
         <div className="pr-block-hero__text">
-          <H className="pr-block-hero__title">{title}</H>
-          <p className="pr-block-hero__lead">{lead}</p>
+          <H className="pr-block-hero__title">{localize(title)}</H>
+          <p className="pr-block-hero__lead">{localize(lead)}</p>
           {content && <BlocksList {...content} />}
         </div>
         {img && (
