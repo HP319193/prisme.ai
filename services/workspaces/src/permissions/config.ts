@@ -7,8 +7,10 @@ import {
 
 export const ActionType = {
   ...NativeActionType,
-  GetAppSourceCode: 'GetAppSourceCode',
+  GetAppSourceCode: 'read_app_dsul',
   ManageSecurity: 'manage_security',
+  GetUsage: 'get_usage',
+  AggregateSearch: 'aggregate_search',
 };
 
 export enum SubjectType {

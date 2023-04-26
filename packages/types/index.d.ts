@@ -6,7 +6,7 @@ declare namespace Prismeai {
         userId?: string;
         id?: string;
     }
-    export type ActionTypes = "create" | "read" | "update" | "delete" | "manage_permissions" | "manage_security";
+    export type ActionTypes = "create" | "read" | "update" | "delete" | "manage_permissions" | "manage_security" | "read_app_dsul" | "get_usage" | "aggregate_search";
     export interface All {
         /**
          * Execute each instruction in parallel. Pause current automation execution until all instructions are processed.
@@ -1828,9 +1828,18 @@ declare namespace Prismeai {
         };
     }
     export interface PermissionRule {
-        role?: string[] | string;
-        action: ActionTypes | ActionTypes[];
+        /**
+         * The roles to which this rule is restricted
+         */
+        role?: /* The roles to which this rule is restricted */ string[] | string;
+        /**
+         * The actions that we want to allow
+         */
+        action: /* The actions that we want to allow */ ActionTypes | ActionTypes[];
         subject: SubjectTypes | SubjectTypes[];
+        /**
+         * Matching conditions written using a subset of MongoDB queries. This rule will take effect only if conditions match (or are empty). See https://casl.js.org/v5/en/guide/conditions-in-depth
+         */
         conditions?: {
             [name: string]: any;
         };

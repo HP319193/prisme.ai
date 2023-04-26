@@ -6,8 +6,8 @@ import { RUNTIME_EMITS_BROKER_TOPIC } from '../../config';
 
 export const ActionType = {
   ...NativeActionType,
-  GetUsage: 'GetUsage',
-  AggregateSearch: 'AggregateSearch',
+  GetUsage: 'get_usage',
+  AggregateSearch: 'aggregate_search',
 };
 
 export enum SubjectType {

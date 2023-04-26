@@ -343,6 +343,10 @@ components:
         - delete
         - manage_permissions
         - manage_security
+        - read_app_dsul
+        - get_usage
+        - aggregate_search
+
 
     PermissionRule:
       type: object
