@@ -40,7 +40,7 @@ export const TabsView = ({
 }: TabsViewProps) => {
   const { localize } = useLocalizedText();
   const [currentTab, setCurrentTab] = useState(0);
-  const isHorizontal = direction === 'horizontal';
+  const isHorizontal = direction !== 'vertical';
   return (
     <div
       className={`pr-block-tabs-view ${
