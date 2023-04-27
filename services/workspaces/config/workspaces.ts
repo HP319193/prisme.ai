@@ -17,3 +17,8 @@ export const CUSTOM_DOMAINS_CNAME = process.env.CUSTOM_DOMAINS_CNAME;
 export const IMPORT_BATCH_SIZE = parseInt(
   process.env.IMPORT_BATCH_SIZE || '50'
 );
+
+// Permissions
+export const FIRST_CUSTOM_RULE_PRIORITY = 100;
+// last priority must be lower than platform-level priority rules as used in permissions/config.ts
+export const LAST_CUSTOM_RULE_PRIORITY = 999;

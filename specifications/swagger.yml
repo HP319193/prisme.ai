@@ -364,7 +364,9 @@ components:
             - type: string
         inverted:
           type: boolean
-          description: "If true, will forbid instead of allow"
+          description:  "If true, will forbid instead of allow"
+        reason:
+          type: string
         action:
           description: "The actions that we want to allow/deny"
           oneOf:

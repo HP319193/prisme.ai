@@ -1,9 +1,10 @@
-import { Ability, RawRuleOf } from '@casl/ability';
 import {
+  Rule,
   ActionType as NativeActionType,
   NativeSubjectType,
   PermissionsConfig,
 } from '@prisme.ai/permissions';
+import { LAST_CUSTOM_RULE_PRIORITY } from '../../config';
 
 export const ActionType = {
   ...NativeActionType,
@@ -83,6 +84,7 @@ export const config: PermissionsConfig<
             SubjectType.Page,
             NativeSubjectType.Roles,
           ],
+          priority: LAST_CUSTOM_RULE_PRIORITY + 1000,
         },
       ],
     },
@@ -233,7 +235,7 @@ export const config: PermissionsConfig<
     let rules = [];
     if (role.subjectType === SubjectType.Workspace) {
       if (role?.rules?.uploads) {
-        const uploadsRule: RawRuleOf<Ability> = {
+        const uploadsRule: Rule = {
           action: [ActionType.Create, ActionType.Read, ActionType.Delete],
           subject: SubjectType.File,
           conditions: {

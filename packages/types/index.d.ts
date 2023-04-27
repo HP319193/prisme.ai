@@ -1836,6 +1836,7 @@ declare namespace Prismeai {
          * If true, will forbid instead of allow
          */
         inverted?: boolean;
+        reason?: string;
         /**
          * The actions that we want to allow/deny
          */

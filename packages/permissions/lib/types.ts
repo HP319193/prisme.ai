@@ -42,11 +42,14 @@ export interface User<Role extends string> {
   [k: string]: any;
 }
 
-export type Rules = RawRuleOf<Ability>[];
+export type Rule = RawRuleOf<Ability> & {
+  priority?: number;
+};
+export type Rules = Rule[];
 export interface RoleTemplate<SubjectType extends string, Role extends string> {
   name: Role;
   subjectType?: SubjectType;
-  rules: RawRuleOf<Ability>[];
+  rules: Rules;
 }
 export type RoleTemplates<
   SubjectType extends string,
@@ -73,7 +76,7 @@ export interface PermissionsConfig<
   abac: Rules;
   customRulesBuilder?: (
     role: Omit<CustomRole<SubjectType, CustomRules>, 'casl'>
-  ) => RawRuleOf<Ability>[];
+  ) => Rules;
 }
 
 export type PermissionsMiddleware = (

@@ -13,6 +13,10 @@ import { CustomRole } from '@prisme.ai/permissions';
 import { InvalidSecurity } from '../../../errors';
 import { getObjectsDifferences } from '../../../utils/getObjectsDifferences';
 import { logger } from '../../../logger';
+import {
+  FIRST_CUSTOM_RULE_PRIORITY,
+  LAST_CUSTOM_RULE_PRIORITY,
+} from '../../../../config';
 
 const OnlyAllowedSubjects = [
   SubjectType.Workspace,
@@ -21,6 +25,7 @@ const OnlyAllowedSubjects = [
   'events',
 ];
 const OnlyAllowedActions = Object.values(ActionType);
+
 class Security {
   private accessManager: Required<AccessManager>;
   private broker: Broker;
@@ -74,7 +79,8 @@ class Security {
     >(
       (
         builtRoles,
-        { role: attachedRole, action, subject, inverted, conditions }
+        { role: attachedRole, action, subject, inverted, reason, conditions },
+        ruleIdx
       ) => {
         const attachedRoles = Array.isArray(attachedRole)
           ? attachedRole
@@ -132,11 +138,20 @@ class Security {
           const subjectsWithoutEvents = subjects.filter(
             (cur) => cur !== 'events'
           );
+
+          const ruleWithoutConditions = {
+            action: actions,
+            inverted,
+            reason,
+            priority:
+              FIRST_CUSTOM_RULE_PRIORITY + ruleIdx < LAST_CUSTOM_RULE_PRIORITY
+                ? FIRST_CUSTOM_RULE_PRIORITY + ruleIdx
+                : LAST_CUSTOM_RULE_PRIORITY,
+          };
           if (subjectsWithoutEvents.length) {
             builtRoles[roleName].casl?.push({
-              action: actions,
+              ...ruleWithoutConditions,
               subject: subjectsWithoutEvents,
-              inverted,
               conditions: {
                 ...conditions,
                 workspaceId,
@@ -146,9 +161,8 @@ class Security {
           // Properly format event-specific conditions
           if (subjectsWithoutEvents.length !== subjects.length) {
             builtRoles[roleName].casl?.push({
-              action: actions,
+              ...ruleWithoutConditions,
               subject: 'events',
-              inverted,
               conditions: {
                 ...conditions,
                 'source.workspaceId': workspaceId,
