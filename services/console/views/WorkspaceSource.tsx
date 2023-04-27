@@ -10,7 +10,10 @@ import {
 } from '../utils/yaml';
 import { generateEndpoint } from '../utils/urls';
 import { useTranslation } from 'next-i18next';
-import { validateWorkspace } from '@prisme.ai/validation';
+import {
+  validateWorkspace,
+  validateWorkspaceSecurity,
+} from '@prisme.ai/validation';
 import CodeEditor from '../components/CodeEditor/lazy';
 import {
   Button,
@@ -19,8 +22,12 @@ import {
   PageHeader,
   Space,
 } from '@prisme.ai/design-system';
-import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
+import {
+  DisplayedSourceType,
+  useWorkspaceLayout,
+} from '../layouts/WorkspaceLayout/context';
 import { useWorkspace } from '../providers/Workspace';
+import api from '../utils/api';
 
 interface Annotation {
   row: number;
@@ -36,8 +43,12 @@ const getEndpointAutomationName = (value: string, line: number) => {
 
 interface WorkspaceSourceProps {
   onLoad?: () => void;
+  sourceDisplayed: DisplayedSourceType;
 }
-export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
+export const WorkspaceSource: FC<WorkspaceSourceProps> = ({
+  onLoad,
+  sourceDisplayed,
+}) => {
   const { t } = useTranslation('workspaces');
   const {
     workspace: {
@@ -52,13 +63,8 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     },
   } = useWorkspace();
   const { onSaveSource } = useWorkspaceLayout();
-  const {
-    setInvalid,
-    setNewSource,
-    invalid,
-    saving,
-    displaySource,
-  } = useWorkspaceLayout();
+  const { setInvalid, setNewSource, invalid, saving, displaySource } =
+    useWorkspaceLayout();
   const [value, setValue] = useState<string | undefined>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const { toJSON, toYaml } = useYaml();
@@ -66,10 +72,16 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
 
   const initYaml = useCallback(async () => {
     try {
-      const value = await toYaml(workspace);
-      setValue(value);
+      if (sourceDisplayed === DisplayedSourceType.Config) {
+        const value = await toYaml(workspace);
+        setValue(value);
+      } else if (sourceDisplayed === DisplayedSourceType.Roles) {
+        const security = await api.getWorkspaceSecurity(id);
+        const value = await toYaml(security);
+        setValue(value);
+      }
     } catch (e) {}
-  }, [workspace, toYaml]);
+  }, [workspace, toYaml, sourceDisplayed]);
 
   useEffect(() => {
     initYaml();
@@ -102,8 +114,12 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
         const json = await checkSyntaxAndReturnYAML(newValue);
 
         if (!json) return;
-        validateWorkspace(json);
-        setInvalid((validateWorkspace.errors as ValidationError[]) || false);
+        const validate =
+          sourceDisplayed === DisplayedSourceType.Config
+            ? validateWorkspace
+            : validateWorkspaceSecurity;
+        validate(json);
+        setInvalid((validate.errors as ValidationError[]) || false);
         setNewSource(json);
       } catch (e) {}
     },
@@ -201,7 +217,10 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({ onLoad }) => {
     <div className="flex flex-1 flex-col" ref={ref}>
       <PageHeader
         RightButtons={[
-          <Button key="close" onClick={() => displaySource(false)}>
+          <Button
+            key="close"
+            onClick={() => displaySource(DisplayedSourceType.None)}
+          >
             Fermer
           </Button>,
           <Button
