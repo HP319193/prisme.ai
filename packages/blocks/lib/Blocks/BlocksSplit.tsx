@@ -101,14 +101,18 @@ export const BlocksSplit = ({
       }`}
     >
       <div
-        className="flex pr-block-blocks-split__wrapper wrapper-1 overflow-hidden"
+        className={`flex ${
+          reverse ? 'flex-1' : ''
+        } pr-block-blocks-split__wrapper wrapper-1 overflow-hidden`}
         style={!reverse ? { width: position } : {}}
       >
         {memoizedBlocks[0]}
       </div>
       <SampleSplitter {...separatorProps} />
       <div
-        className="flex flex-1 pr-block-blocks-split__wrapper wrapper-2 overflow-hidden"
+        className={`flex ${
+          !reverse ? 'flex-1' : ''
+        } pr-block-blocks-split__wrapper wrapper-2 overflow-hidden`}
         style={reverse ? { width: position } : {}}
       >
         {memoizedBlocks[1]}
