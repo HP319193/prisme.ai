@@ -41,6 +41,8 @@ const ShareWorkspacePopover = ({
     getUsersPermissions,
     addUserPermissions,
     removeUserPermissions,
+    roles,
+    getRoles,
   } = usePermissions();
   const { user } = useUser();
   const {
@@ -50,11 +52,8 @@ const ShareWorkspacePopover = ({
   const { push } = useRouter();
 
   const rolesOptions = useMemo<SelectOption[]>(
-    () => [
-      { value: 'owner', label: t('share.roles.owner') },
-      { value: 'editor', label: t('share.roles.editor') },
-    ],
-    [t]
+    () => roles.map((role) => ({ value: role.name, label: role.name })),
+    [roles]
   );
 
   const [emailInput, setEmailInput] = useState('');
@@ -77,6 +76,7 @@ const ShareWorkspacePopover = ({
 
   const initialFetch = useRef(async () => {
     getUsersPermissions(subjectType, subjectId);
+    getRoles(subjectType, subjectId);
   });
 
   useEffect(() => {
