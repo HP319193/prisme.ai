@@ -14,6 +14,7 @@ import { BaseBlockConfig } from '../types';
 interface TabsViewConfig extends BaseBlockConfig {
   tabs: ({
     text: ReactNode;
+    selectedText?: ReactNode;
     content: BlocksListConfig;
   } & ActionConfig)[];
   direction: 'vertical' | 'horizontal';
@@ -51,13 +52,15 @@ export const TabsView = ({
           isHorizontal ? 'flex-row' : 'flex-col'
         }`}
       >
-        {tabs.map(({ text, ...action }, k) => {
+        {tabs.map(({ text, selectedText, ...action }, k) => {
           const navigate = () => setCurrentTab(k);
+          const currentText =
+            currentTab === k && selectedText ? selectedText : text;
 
           if (isAction(action)) {
             return (
               <Action
-                text={text}
+                text={currentText}
                 {...action}
                 events={events}
                 Link={Link}
@@ -76,7 +79,9 @@ export const TabsView = ({
                 currentTab === k ? 'pr-block-tabs-view__tab--active' : ''
               }`}
             >
-              {isLocalizedObject(text) ? localize(text) : text}
+              {isLocalizedObject(currentText)
+                ? localize(currentText)
+                : currentText}
             </button>
           );
         })}
