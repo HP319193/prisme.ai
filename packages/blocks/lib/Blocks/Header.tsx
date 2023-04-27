@@ -190,6 +190,7 @@ const defaultStyles = `:block {
   align-items: center;
   margin: 0;
   font-weight: 700;
+  color: var(--color-text);
 }
 
 .pr-block-header__right {
