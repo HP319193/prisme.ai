@@ -169,7 +169,10 @@ class Security {
     workspaceId: string,
     authorizations: Prismeai.WorkspaceAuthorizations
   ) => {
+    // Build & validate roles
     const builtRoles = this.buildRoles(workspaceId, authorizations);
+
+    // Compare new roles specs with current ones
     const currentRoles = await this.accessManager.findRoles(
       SubjectType.Workspace,
       workspaceId
@@ -207,6 +210,24 @@ class Security {
       .filter(([_, diff]: any) => diff.__type === 'deleted')
       .map(([id]: any) => currentRolesMapping[id]);
 
+    // Check that deleted roles are not in used
+    const workspace = await this.accessManager.get(
+      SubjectType.Workspace,
+      workspaceId
+    );
+    const sharedRoles = Object.values(workspace.permissions || {}).map(
+      (cur) => cur?.role
+    );
+    const cantDeleteThatRole = rolesToDelete.find((cur) =>
+      sharedRoles.includes(cur.name)
+    );
+    if (cantDeleteThatRole) {
+      throw new InvalidSecurity(
+        `Can't delete ${cantDeleteThatRole.name} role as it is still assigned to some user in your workspace`
+      );
+    }
+
+    // Separate update & delete queries
     const savedRoles = rolesToUpdate.map((role) =>
       this.accessManager.saveRole(role).then(() => true)
     );
