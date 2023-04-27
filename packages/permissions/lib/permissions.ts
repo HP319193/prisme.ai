@@ -13,6 +13,7 @@ import {
   RoleTemplates,
   PermissionsConfig,
   RoleTemplate,
+  DefaultRole,
 } from './types';
 
 type UserId = string;
@@ -252,7 +253,7 @@ export class Permissions<
     subjectType?: SubjectType,
     subject?: Subject<Role>
   ) {
-    const roleId = subjectType ? `${subjectType}/${subject?.id}` : role;
+    const roleId = subjectType ? `${subjectType}/${subject?.id}/${role}` : role;
     if (this.loadedRoleIds.has(roleId)) {
       return;
     }
@@ -260,12 +261,14 @@ export class Permissions<
     const roleTemplate = role
       ? this.findRoleTemplate(role, subjectType)
       : undefined;
-    if (!roleTemplate) {
+    if (!roleTemplate && role !== DefaultRole) {
       throw new UnknownRole(
         `User '${this.user.id}' is assigned an unknown ${
           subjectType || ''
         } role '${role}'.`
       );
+    } else if (!roleTemplate) {
+      return;
     }
 
     return this.loadRules(roleTemplate?.rules || [], { subject });
@@ -284,6 +287,9 @@ export class Permissions<
   }
 
   pullRoleFromSubject(subjectType: SubjectType, subject: Subject<Role>) {
+    // Auto load 'default' role if defined, as it applies to everyone
+    this.loadRole(DefaultRole as Role, subjectType, subject);
+
     // Auto assign "author" role for subjects created by the user
     const authorAssignedRole = this.subjects[subjectType]?.author?.assignRole;
     if (authorAssignedRole && subject.createdBy === this.user.id) {

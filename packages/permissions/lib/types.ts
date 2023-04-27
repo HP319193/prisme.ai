@@ -53,6 +53,9 @@ export type RoleTemplates<
   Role extends string
 > = RoleTemplate<SubjectType, Role>[];
 
+// This is a special role matching everyone to apply generic "abac" rules through custom roles
+export const DefaultRole = 'default';
+
 export interface SubjectOptions<Role> {
   author?: {
     assignRole?: Role;
