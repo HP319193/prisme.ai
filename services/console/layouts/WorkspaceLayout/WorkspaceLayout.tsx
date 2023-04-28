@@ -82,8 +82,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
         placement: 'bottomRight',
       });
     } catch (e) {
-      const { details } = e as ApiError;
-      const description = (
+      const { details, message } = e as ApiError;
+      const description = Array.isArray(details) ? (
         <ul>
           {details.map(({ path, message }: any, key: number) => (
             <li key={key}>
@@ -95,6 +95,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
             </li>
           ))}
         </ul>
+      ) : (
+        message
       );
       notification.error({
         message: t('expert.save.fail'),
