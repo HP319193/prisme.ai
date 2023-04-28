@@ -215,6 +215,9 @@ const defaultStyles = `:block {
   :block {
     height: 4rem;
   }
+  .pr-block-header__container {
+    padding-bottom: 2rem;
+  }
   .pr-block__menu {
     position: absolute;
     top: 0;
