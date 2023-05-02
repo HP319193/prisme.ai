@@ -712,6 +712,8 @@ export class AccessManager<
     // Validate role
     if ((<any>role.rules)?.length) {
       this.buildRules(role);
+    } else if (typeof role.casl === 'object') {
+      (<any>role).casl = JSON.stringify(role.casl);
     }
 
     const savedApiKey = await RolesModel.findOneAndUpdate(

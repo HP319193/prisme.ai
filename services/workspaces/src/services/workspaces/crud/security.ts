@@ -147,15 +147,33 @@ class Security {
           };
           subjects.forEach((subject) => {
             if (subject === 'events') {
-              builtRoles[roleName].casl?.push({
-                ...ruleWithoutConditions,
-                subject: 'events',
-                conditions: {
-                  ...conditions,
-                  'source.workspaceId': workspaceId,
-                  'source.serviceTopic': 'topic:runtime:emit',
-                },
-              });
+              const actionsWithoutCreate = actions.filter(
+                (cur) => cur !== ActionType.Create
+              );
+              if (actionsWithoutCreate.length) {
+                builtRoles[roleName].casl?.push({
+                  ...ruleWithoutConditions,
+                  subject: 'events',
+                  action: actionsWithoutCreate,
+                  conditions: {
+                    ...conditions,
+                    'source.workspaceId': workspaceId,
+                  },
+                });
+              }
+              // Create specific conditions : No one but the platform should be able to emit native events
+              if (actionsWithoutCreate.length !== actions.length) {
+                builtRoles[roleName].casl?.push({
+                  ...ruleWithoutConditions,
+                  subject: 'events',
+                  action: 'create',
+                  conditions: {
+                    ...conditions,
+                    'source.workspaceId': workspaceId,
+                    'source.serviceTopic': 'topic:runtime:emit',
+                  },
+                });
+              }
             } else {
               const workspaceIdField =
                 subject === SubjectType.Workspace ? 'id' : 'workspaceId';
