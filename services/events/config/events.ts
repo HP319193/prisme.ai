@@ -27,8 +27,3 @@ export const ELASTIC_SEARCH_FORBIDDEN_AGGS = (
 export const ELASTIC_SEARCH_FORBIDDEN_MAX_DEPTH = parseInt(
   process.env.ELASTIC_SEARCH_FORBIDDEN_MAX_DEPTH || '5'
 );
-
-// Permissions
-export const FIRST_CUSTOM_RULE_PRIORITY = 100;
-// last priority must be lower than platform-level priority rules as used in permissions/config.ts
-export const LAST_CUSTOM_RULE_PRIORITY = 999;

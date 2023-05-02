@@ -41,6 +41,7 @@ import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 import {
   CUSTOM_DOMAINS_CNAME,
   IMPORT_BATCH_SIZE,
+  INIT_WORKSPACE_SECURITY,
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
 import { fetchUsers, NativeSubjectType } from '@prisme.ai/permissions';
@@ -263,6 +264,20 @@ class Workspaces {
       slug: workspace.slug!,
     });
     await this.storage.save({ workspaceId: workspace.id }, workspace);
+
+    try {
+      const security = new Security(
+        this.accessManager,
+        this.broker,
+        this.storage
+      );
+      await security.updateSecurity(workspace.id, INIT_WORKSPACE_SECURITY);
+    } catch (err) {
+      logger.warn({
+        msg: 'Could not initialize workspace security section after its creation',
+        err,
+      });
+    }
 
     // Send events
     await this.broker.flush(true);
