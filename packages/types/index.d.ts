@@ -1396,7 +1396,7 @@ declare namespace Prismeai {
          * Indicates whether this page is public. Reflects page permissions and cannot be set directly
          */
         public?: boolean;
-        apiKey: string;
+        apiKey?: string;
     }
     export interface DuplicatedWorkspace {
         /**

@@ -301,7 +301,7 @@ class Pages {
       });
     }
 
-    let apiKey: string = '';
+    let apiKey: string | undefined = '';
     try {
       const existingDetailedPage = await this.getDetailedPage({
         workspaceSlug: page.workspaceSlug!,

@@ -183,7 +183,7 @@ it('should display source after mount', async () => {
   expect(() => root.root.findByType(WorkspaceSource)).toThrow();
 
   act(() => {
-    context.displaySource('config');
+    context.displaySource('config' as any);
   });
   expect(root.root.findByType(WorkspaceSource)).toBeDefined();
   act(() => {
