@@ -734,7 +734,6 @@ components:
       type: object
       required:
         - appInstances
-        - apiKey
       properties: &PageDetails
         appInstances:
           type: array
