@@ -36,6 +36,11 @@ jest.mock('../layouts/WorkspaceLayout/context', () => {
   };
   return {
     useWorkspaceLayout: () => mock,
+    DisplayedSourceType: {
+      Config: 'config',
+      Roles: 'roles',
+      None: 'none',
+    },
   };
 });
 
@@ -88,7 +93,9 @@ it('should check syntax', async () => {
   name: foo
 `
   );
-  const root = renderer.create(<WorkspaceSource />);
+  const root = renderer.create(
+    <WorkspaceSource sourceDisplayed={'config' as any} />
+  );
   await act(async () => {
     await true;
   });
@@ -141,7 +148,9 @@ it('should check workspace format', async () => {
   name: foo
 `
   );
-  const root = renderer.create(<WorkspaceSource />);
+  const root = renderer.create(
+    <WorkspaceSource sourceDisplayed={'config' as any} />
+  );
   await act(async () => {
     await true;
   });
@@ -152,7 +161,7 @@ it('should check workspace format', async () => {
     name: 'foo',
     automations: [],
   }));
-  ((validateWorkspace as any) as jest.Mock).mockImplementation(() => {
+  (validateWorkspace as any as jest.Mock).mockImplementation(() => {
     validateWorkspace.errors = [
       {
         instancePath: '/automations',
@@ -199,7 +208,9 @@ automations:
         - bar
 `
   );
-  const root = renderer.create(<WorkspaceSource />);
+  const root = renderer.create(
+    <WorkspaceSource sourceDisplayed={'config' as any} />
+  );
   await act(async () => {
     await true;
   });
@@ -272,7 +283,9 @@ automations:
     },
   ];
 
-  const root = renderer.create(<WorkspaceSource />);
+  const root = renderer.create(
+    <WorkspaceSource sourceDisplayed={'config' as any} />
+  );
   await act(async () => {
     await true;
   });

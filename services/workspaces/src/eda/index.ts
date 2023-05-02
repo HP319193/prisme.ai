@@ -20,6 +20,7 @@ export enum EventType {
   ConfiguredWorkspace = 'workspaces.configured',
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
+  UpdatedWorkspaceSecurity = 'workspaces.security.updated',
 
   PublishedWorkspaceVersion = 'workspaces.versions.published',
   DeletedWorkspaceVersion = 'workspaces.versions.deleted',

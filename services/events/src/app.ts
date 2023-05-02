@@ -33,7 +33,10 @@ process.on('uncaughtException', uncaughtExceptionHandler);
   const app = express();
   const httpServer = http.createServer(app);
 
-  const accessManager = initAccessManager(PERMISSIONS_STORAGE_MONGODB_OPTIONS);
+  const accessManager = initAccessManager(
+    PERMISSIONS_STORAGE_MONGODB_OPTIONS,
+    broker
+  );
   accessManager.start();
 
   const cache = await buildCache(EVENTS_TOPICS_CACHE);

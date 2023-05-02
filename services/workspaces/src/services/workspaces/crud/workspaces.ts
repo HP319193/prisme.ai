@@ -7,7 +7,12 @@ import yaml from 'js-yaml';
 import { hri } from 'human-readable-ids';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
-import { DSULType, DSULStorage } from '../../DSULStorage';
+import {
+  DSULType,
+  DSULStorage,
+  FolderIndex,
+  DSULFolders,
+} from '../../DSULStorage';
 import {
   AccessManager,
   ActionType,
@@ -36,12 +41,14 @@ import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 import {
   CUSTOM_DOMAINS_CNAME,
   IMPORT_BATCH_SIZE,
+  INIT_WORKSPACE_SECURITY,
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
-import { fetchUsers } from '@prisme.ai/permissions';
+import { fetchUsers, NativeSubjectType } from '@prisme.ai/permissions';
 import { processArchive } from '../../../utils/processArchive';
 import { streamToBuffer } from '../../../utils/streamToBuffer';
 import { Apps } from '../../apps';
+import { Security } from '../..';
 
 interface DSULDiff {
   type: DiffType;
@@ -258,6 +265,20 @@ class Workspaces {
     });
     await this.storage.save({ workspaceId: workspace.id }, workspace);
 
+    try {
+      const security = new Security(
+        this.accessManager,
+        this.broker,
+        this.storage
+      );
+      await security.updateSecurity(workspace.id, INIT_WORKSPACE_SECURITY);
+    } catch (err) {
+      logger.warn({
+        msg: 'Could not initialize workspace security section after its creation',
+        err,
+      });
+    }
+
     // Send events
     await this.broker.flush(true);
     return workspace;
@@ -345,6 +366,18 @@ class Workspaces {
       dsulType: DSULType.Imports,
     };
     await Promise.all([
+      this.storage
+        .copy(
+          {
+            workspaceId,
+            dsulType: DSULType.Security,
+          },
+          {
+            workspaceId: newWorkspace.id,
+            dsulType: DSULType.Security,
+          }
+        )
+        .catch(() => undefined),
       this.storage
         .copy(
           {
@@ -474,6 +507,8 @@ class Workspaces {
           { slug: 'AlreadyUsedError' }
         );
       }
+      // Throw permissions errors !
+      throw err;
     }
 
     await this.storage.save({ workspaceId }, workspace);
@@ -733,6 +768,11 @@ class Workspaces {
 
     // Delete workspace DB entry & check permissions
     await this.accessManager.delete(SubjectType.Workspace, workspaceId);
+    const superAdmin = await getSuperAdmin(this.accessManager as AccessManager);
+    await superAdmin.deleteMany(NativeSubjectType.Roles as any, {
+      subjectType: 'workspaces',
+      subjectId: workspaceId,
+    });
 
     // Delete workspace from storage
     try {
@@ -743,7 +783,7 @@ class Workspaces {
 
     // Delete pages db entries
     try {
-      await this.accessManager.deleteMany(SubjectType.Page, {
+      await superAdmin.deleteMany(SubjectType.Page, {
         workspaceId,
       });
     } catch (err) {
@@ -778,7 +818,7 @@ class Workspaces {
       outStream,
       {
         format,
-        exclude: [`${version}/runtime.yml`, `__index__.yml`],
+        exclude: [`${version}/${DSULType.RuntimeModel}.yml`, `__index__.yml`],
       }
     );
 
@@ -814,6 +854,11 @@ class Workspaces {
       this.storage,
       apps
     );
+    const security = new Security(
+      this.accessManager,
+      this.broker,
+      this.storage
+    );
 
     let imported: string[] = [];
     let errors: any[] = [];
@@ -837,7 +882,8 @@ class Workspaces {
             workspace,
             content,
             automations,
-            imports
+            imports,
+            security
           );
           if (applied) {
             imported.push(filepath);
@@ -891,21 +937,22 @@ class Workspaces {
     workspace: Prismeai.DSULReadOnly,
     content: any,
     automations: Automations,
-    appInstances: AppInstances
+    appInstances: AppInstances,
+    security: Security
   ) {
     const [folder, subfile, mustBeNull] = path;
+    const subfileSlug = parse(subfile || '').name;
+    const folderName = parse(folder || '').name;
     if (
-      !['index.yml', 'pages', 'automations', 'imports'].includes(folder) ||
-      subfile === '__index__.yml' ||
-      mustBeNull ||
-      (folder == 'index.yml' && subfile)
+      subfileSlug === FolderIndex || // Ignore FolderIndexes
+      mustBeNull || // There should be at max 1 subfolder
+      (subfileSlug && subfile.startsWith('.')) // Ignore hidden files
     ) {
       return false;
     }
 
-    const slug = parse(subfile || '').name;
-    switch (folder) {
-      case 'index.yml':
+    switch (folderName) {
+      case DSULType.DSULIndex:
         await this.updateWorkspace(workspace.id!, {
           ...content,
           name: `${content.name} - Import`,
@@ -914,7 +961,11 @@ class Workspaces {
         });
         break;
 
-      case 'pages':
+      case DSULType.Security:
+        await security.updateSecurity(workspace.id!, content);
+        break;
+
+      case DSULFolders.Pages:
         const oldSlug =
           Object.entries(workspace.pages || {}).find(
             ([key, pageMeta]) => pageMeta.id === content.id
@@ -929,12 +980,12 @@ class Workspaces {
             content
           );
         } else {
-          content.slug = slug;
+          content.slug = subfileSlug;
           await this.pages.createPage(workspace.id!, content);
         }
         break;
 
-      case 'automations':
+      case DSULFolders.Automations:
         if (content.slug in (workspace.automations || {})) {
           await automations.updateAutomation(
             workspace.id!,
@@ -942,16 +993,16 @@ class Workspaces {
             content
           );
         } else {
-          content.slug = slug;
+          content.slug = subfileSlug;
           await automations.createAutomation(workspace.id!, content);
         }
         break;
 
-      case 'imports':
+      case DSULFolders.Imports:
         if (content.slug in (workspace.imports || {})) {
           await appInstances.configureApp(workspace.id!, content.slug, content);
         } else {
-          content.slug = slug;
+          content.slug = subfileSlug;
           await appInstances.installApp(workspace.id!, content);
         }
         break;

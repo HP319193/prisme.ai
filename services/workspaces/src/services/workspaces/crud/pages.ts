@@ -379,6 +379,7 @@ class Pages {
     return { slug: newSlug, ...page };
   };
 
+  // TODO remove as soon as every pages have been migrated to Custom Roles
   getUpdatedPageApiKey = async (
     page: Prismeai.DetailedPage
   ): Promise<ApiKey> => {

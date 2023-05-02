@@ -8,6 +8,11 @@ it('injectConditions should replace user & subject variables', () => {
       },
       'source.workspaceId': '${subject.id}',
       'source.userId': '${user.id}',
+      'source.sessionId': '${user.sessionId}',
+      'source.sessionIdAlias': '${session.id}',
+      isntReplaced: '{user.id}',
+      alsoWorks: '{{user.id}}',
+      customCtx: '{{session.foo}}',
     },
     {
       user: {
@@ -18,6 +23,9 @@ it('injectConditions should replace user & subject variables', () => {
       subject: {
         id: 'myWorkspaceId',
       },
+      session: {
+        foo: 'bar',
+      },
     }
   );
 
@@ -27,6 +35,11 @@ it('injectConditions should replace user & subject variables', () => {
     },
     'source.workspaceId': 'myWorkspaceId',
     'source.userId': 'myUserId',
+    'source.sessionId': 'sessionId',
+    'source.sessionIdAlias': 'sessionId',
+    isntReplaced: '{user.id}',
+    alsoWorks: 'myUserId',
+    customCtx: 'bar',
   });
 });
 

@@ -4,6 +4,8 @@ import { AccessManager, BaseSubject, ApiKey, PublicAccess } from '..';
 import abacWithRoles, { Role } from '../examples/abacWithRoles';
 import apiKeys from '../examples/apiKeys';
 
+jest.setTimeout(2000);
+
 enum ActionType {
   Manage = 'manage', // Super admin : permits every action
   ManagePermissions = 'manage_permissions',
@@ -38,6 +40,9 @@ const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
   {
     storage: {
       host: 'mongodb://localhost:27017/testCASL',
+    },
+    rbac: {
+      enabledSubjectTypes: [SubjectType.Workspace],
     },
     schemas: {
       user: new mongoose.Schema({}),
@@ -221,7 +226,7 @@ describe('CRUD with a predefined role', () => {
       SubjectType.Workspace,
       adminYWorkspaces[0].id,
       adminZ.user!!,
-      Role.Admin
+      Role.Owner
     );
 
     // Make a workspace public
@@ -237,7 +242,7 @@ describe('CRUD with a predefined role', () => {
       SubjectType.Workspace,
       adminYWorkspaces[2].id,
       PublicAccess,
-      Role.Admin
+      Role.Owner
     );
 
     // Grant by permission
@@ -352,11 +357,11 @@ describe('Role & Permissions granting', () => {
       SubjectType.Workspace,
       createdWorkspace.id,
       adminB.user!!,
-      Role.Admin
+      Role.Owner
     );
     expect(sharedWorkspace?.permissions).toMatchObject({
       [adminB?.user?.id!!]: {
-        role: Role.Admin,
+        role: Role.Owner,
       },
     });
 
@@ -371,7 +376,7 @@ describe('Role & Permissions granting', () => {
       SubjectType.Workspace,
       createdWorkspace.id,
       adminB.user!!,
-      Role.Admin
+      Role.Owner
     );
     expect(unsharedWorkspace?.permissions).toMatchObject({
       [adminB.user.id]: {},
@@ -455,7 +460,7 @@ describe('Role & Permissions granting', () => {
       SubjectType.Workspace,
       workspace.id,
       collaborator.user!!,
-      Role.Admin
+      Role.Owner
     );
 
     // Check that collaborator now can read & update the page (but not its permissions field !)
@@ -471,7 +476,7 @@ describe('API Keys', () => {
     name: 'ourWorkspace',
     permissions: {
       [adminAId]: {
-        role: 'admin',
+        role: 'owner',
       },
     },
   };
@@ -480,10 +485,10 @@ describe('API Keys', () => {
     name: 'anotherWorkspace',
     permissions: {
       anotherAdminId: {
-        role: 'admin',
+        role: 'owner',
       },
       [adminBId]: {
-        role: 'admin',
+        role: 'owner',
       },
     },
   };

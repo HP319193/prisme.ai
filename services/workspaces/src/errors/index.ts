@@ -85,3 +85,9 @@ export class InvalidCustomDomainError extends PrismeError {
     super(msg || 'Invalid custom domain', details);
   }
 }
+
+export class InvalidSecurity extends PrismeError {
+  constructor(msg: string, details: any = []) {
+    super(msg || 'Invalid security specifications', details);
+  }
+}

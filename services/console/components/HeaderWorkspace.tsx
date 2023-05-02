@@ -21,7 +21,10 @@ import PublishModal from './PublishModal';
 import EditDetails from '../layouts/EditDetails';
 import useLocalizedText from '../utils/useLocalizedText';
 import Link from 'next/link';
-import { useWorkspaceLayout } from '../layouts/WorkspaceLayout/context';
+import {
+  DisplayedSourceType,
+  useWorkspaceLayout,
+} from '../layouts/WorkspaceLayout/context';
 import VersionModal from './VersionModal';
 import HeaderPopovers from '../views/HeaderPopovers';
 import { useWorkspace } from '../providers/Workspace';
@@ -77,16 +80,48 @@ const HeaderWorkspace = () => {
         links: {
           'ui:widget': () => (
             <div className="!flex flex-1 justify-between !mt-4 !mb-6">
-              <Button
-                className="flex items-center"
-                onClick={() => {
-                  displaySource(!sourceDisplayed);
-                  setPopoverIsVisible(false);
-                }}
-              >
-                <CodeOutlined className="mr-2" />
-                {t(`expert.${sourceDisplayed ? 'hide' : 'show'}`)}
-              </Button>
+              <div className="flex flex-col items-start">
+                <Button
+                  className="flex items-center"
+                  onClick={() => {
+                    displaySource(
+                      sourceDisplayed === DisplayedSourceType.Config
+                        ? DisplayedSourceType.None
+                        : DisplayedSourceType.Config
+                    );
+                    setPopoverIsVisible(false);
+                  }}
+                >
+                  <CodeOutlined className="mr-2" />
+                  {t(
+                    `expert.${
+                      sourceDisplayed === DisplayedSourceType.Config
+                        ? 'hide'
+                        : 'show'
+                    }`
+                  )}
+                </Button>
+                <Button
+                  className="flex items-center"
+                  onClick={() => {
+                    displaySource(
+                      sourceDisplayed === DisplayedSourceType.Roles
+                        ? DisplayedSourceType.None
+                        : DisplayedSourceType.Roles
+                    );
+                    setPopoverIsVisible(false);
+                  }}
+                >
+                  <CodeOutlined className="mr-2" />
+                  {t(
+                    `expert.${
+                      sourceDisplayed === DisplayedSourceType.Roles
+                        ? 'hide'
+                        : 'security'
+                    }`
+                  )}
+                </Button>
+              </div>
               <div className="flex flex-col items-start">
                 <Button
                   className="flex items-center"
@@ -134,7 +169,7 @@ const HeaderWorkspace = () => {
 
   const hideSource = useCallback(() => {
     if (!sourceDisplayed) return;
-    displaySource(false);
+    displaySource(DisplayedSourceType.None);
   }, [displaySource, sourceDisplayed]);
 
   return (

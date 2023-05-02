@@ -5,6 +5,8 @@ import {
   ApiKey as GenericApiKey,
 } from '@prisme.ai/permissions';
 import { ActionType, SubjectType, Role, config } from './config';
+import { Broker } from '@prisme.ai/broker';
+import { EventType } from '../eda';
 
 type ApiKey = GenericApiKey<SubjectType.Workspace>;
 export { SubjectType, Role, ActionType, ApiKey };
@@ -35,7 +37,10 @@ export type AccessManager = GenericAccessManager<
   Prismeai.Role | Role.SuperAdmin
 >;
 
-export function initAccessManager(storage: AccessManagerOptions['storage']) {
+export function initAccessManager(
+  storage: AccessManagerOptions['storage'],
+  broker: Broker
+) {
   const accessManager = new GenericAccessManager<
     SubjectType,
     SubjectInterfaces,
@@ -43,6 +48,10 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
   >(
     {
       storage,
+      rbac: {
+        cacheCustomRoles: true,
+        enabledSubjectTypes: [SubjectType.Workspace],
+      },
       schemas: {
         [SubjectType.Workspace]: {
           name: { type: String, text: true },
@@ -102,6 +111,27 @@ export function initAccessManager(storage: AccessManagerOptions['storage']) {
     }
   );
 
+  // Synchronize custom roles caches
+  let superAdmin: Required<AccessManager>;
+  getSuperAdmin(accessManager).then(
+    (accessManager) => (superAdmin = accessManager)
+  );
+  broker.on<Prismeai.UpdatedWorkspaceSecurity['payload']>(
+    EventType.UpdatedWorkspaceSecurity,
+    async (event) => {
+      if (!event.source.workspaceId) {
+        return true;
+      }
+      await superAdmin.pullRole({
+        subjectType: SubjectType.Workspace,
+        subjectId: event.source.workspaceId,
+      });
+      return true;
+    },
+    {
+      GroupPartitions: false,
+    }
+  );
   return accessManager;
 }
 

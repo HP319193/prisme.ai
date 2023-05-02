@@ -1318,6 +1318,7 @@
   },
   "expert": {
     "show": "Edit the source code",
+    "security": "Manage roles",
     "hide": "Hide the source code",
     "exit": {
       "confirm_title": "Changes in progress",

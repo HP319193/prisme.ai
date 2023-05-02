@@ -6,7 +6,11 @@ import { useWorkspaces } from '../../providers/Workspaces';
 import { workspaceContext } from '../../providers/Workspace';
 import workspaceContextValue from '../../providers/Workspace/workspaceContextValue.mock';
 import WorkspaceSource from '../../views/WorkspaceSource';
-import { useWorkspaceLayout, WorkspaceLayoutContext } from './context';
+import {
+  DisplayedSourceType,
+  useWorkspaceLayout,
+  WorkspaceLayoutContext,
+} from './context';
 import Storage from '../../utils/Storage';
 
 jest.useFakeTimers();
@@ -179,7 +183,7 @@ it('should display source after mount', async () => {
   expect(() => root.root.findByType(WorkspaceSource)).toThrow();
 
   act(() => {
-    context.displaySource(true);
+    context.displaySource('config');
   });
   expect(root.root.findByType(WorkspaceSource)).toBeDefined();
   act(() => {
@@ -204,6 +208,7 @@ it('should save workspace', async () => {
       </WorkspaceLayout>
     </workspaceContext.Provider>
   );
+
   await act(async () => {
     const newWorkspace = {} as any;
     await context.onSave(newWorkspace);
@@ -227,6 +232,7 @@ it('should save workspace source', async () => {
     </workspaceContext.Provider>
   );
   await act(async () => {
+    await context.displaySource(DisplayedSourceType.Config);
     await true;
   });
   await act(async () => {

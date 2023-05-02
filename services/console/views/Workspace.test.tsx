@@ -14,7 +14,7 @@ jest.mock('../layouts/WorkspaceLayout', () => {
   const mock = {
     events: new Map(),
     filters: {},
-    displaySource: false,
+    displaySource: 'config',
     workspace: { id: '42', name: 'Foo' },
   };
   return {

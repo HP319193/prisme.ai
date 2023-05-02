@@ -1,12 +1,17 @@
-import { Ability, RawRuleOf } from '@casl/ability';
 import {
+  Rule,
   ActionType as NativeActionType,
+  NativeSubjectType,
   PermissionsConfig,
 } from '@prisme.ai/permissions';
+import { LAST_CUSTOM_RULE_PRIORITY } from '../../config';
 
 export const ActionType = {
   ...NativeActionType,
-  GetAppSourceCode: 'GetAppSourceCode',
+  GetAppSourceCode: 'read_app_dsul',
+  ManageSecurity: 'manage_security',
+  GetUsage: 'get_usage',
+  AggregateSearch: 'aggregate_search',
 };
 
 export enum SubjectType {
@@ -77,7 +82,9 @@ export const config: PermissionsConfig<
             SubjectType.App,
             SubjectType.File,
             SubjectType.Page,
+            NativeSubjectType.Roles,
           ],
+          priority: LAST_CUSTOM_RULE_PRIORITY + 1000,
         },
       ],
     },
@@ -114,6 +121,14 @@ export const config: PermissionsConfig<
             workspaceId: '${subject.id}',
           },
         },
+        {
+          action: ActionType.Manage,
+          subject: NativeSubjectType.Roles,
+          conditions: {
+            subjectId: '${subject.id}',
+            subjectType: 'workspaces',
+          },
+        },
       ],
     },
 
@@ -124,6 +139,7 @@ export const config: PermissionsConfig<
         {
           action: [ActionType.Update, ActionType.Read],
           subject: SubjectType.Workspace,
+          reason: 'Native Workspace Editor',
           conditions: {
             // This role only applies to a specific workspace !
             id: '${subject.id}',
@@ -135,6 +151,7 @@ export const config: PermissionsConfig<
             ActionType.Read,
             ActionType.GetAppSourceCode,
           ],
+          reason: 'Native Workspace Editor',
           subject: SubjectType.App,
           conditions: {
             workspaceId: '${subject.id}',
@@ -143,6 +160,7 @@ export const config: PermissionsConfig<
         {
           action: [ActionType.Update, ActionType.Read],
           subject: SubjectType.Page,
+          reason: 'Native Workspace Editor',
           conditions: {
             workspaceId: '${subject.id}',
           },
@@ -150,6 +168,7 @@ export const config: PermissionsConfig<
         {
           action: [ActionType.Manage],
           subject: SubjectType.File,
+          reason: 'Native Workspace Editor',
           conditions: {
             workspaceId: '${subject.id}',
           },
@@ -220,7 +239,7 @@ export const config: PermissionsConfig<
     let rules = [];
     if (role.subjectType === SubjectType.Workspace) {
       if (role?.rules?.uploads) {
-        const uploadsRule: RawRuleOf<Ability> = {
+        const uploadsRule: Rule = {
           action: [ActionType.Create, ActionType.Read, ActionType.Delete],
           subject: SubjectType.File,
           conditions: {

@@ -5,7 +5,10 @@ import { Layout, Loading, notification } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import HeaderWorkspace from '../../components/HeaderWorkspace';
 import WorkspaceSource from '../../views/WorkspaceSource';
-import workspaceLayoutContext, { WorkspaceLayoutContext } from './context';
+import workspaceLayoutContext, {
+  DisplayedSourceType,
+  WorkspaceLayoutContext,
+} from './context';
 import useLocalizedText from '../../utils/useLocalizedText';
 import Storage from '../../utils/Storage';
 import AppsStore from '../../views/AppsStore';
@@ -14,7 +17,7 @@ import { useWorkspace } from '../../providers/Workspace';
 import Expand from '../../components/Navigation/Expand';
 import { incrementName } from '../../utils/incrementName';
 import { BlocksProvider } from '../../components/BlocksProvider';
-import { ApiError } from '../../utils/api';
+import api, { ApiError } from '../../utils/api';
 import Tabs from './Tabs';
 
 export const WorkspaceLayout: FC = ({ children }) => {
@@ -35,15 +38,15 @@ export const WorkspaceLayout: FC = ({ children }) => {
     i18n: { language },
   } = useTranslation('workspaces');
 
-  const [sourceDisplayed, setSourceDisplayed] = useState(false);
+  const [sourceDisplayed, setSourceDisplayed] = useState(
+    DisplayedSourceType.None
+  );
   const [mountSourceComponent, setMountComponent] = useState(false);
   const [displaySourceView, setDisplaySourceView] = useState(false);
-  const [invalid, setInvalid] = useState<WorkspaceLayoutContext['invalid']>(
-    false
-  );
-  const [newSource, setNewSource] = useState<
-    WorkspaceLayoutContext['newSource']
-  >();
+  const [invalid, setInvalid] =
+    useState<WorkspaceLayoutContext['invalid']>(false);
+  const [newSource, setNewSource] =
+    useState<WorkspaceLayoutContext['newSource']>();
   const [saving, setSaving] = useState(false);
   const [fullSidebar, setFullSidebar] = useState(
     Storage.get('__workpaceSidebarMinimized') === null
@@ -63,7 +66,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   // Manage source panel display
   useEffect(() => {
-    if (sourceDisplayed) {
+    if (sourceDisplayed !== DisplayedSourceType.None) {
       setMountComponent(true);
     } else {
       setDisplaySourceView(false);
@@ -76,7 +79,15 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
     setSaving(true);
     try {
-      await saveWorkspace(newSource);
+      if (sourceDisplayed === DisplayedSourceType.Config) {
+        await saveWorkspace(newSource);
+      } else if (sourceDisplayed === DisplayedSourceType.Roles) {
+        delete (newSource as any).id;
+        await api.updateWorkspaceSecurity(
+          workspace.id,
+          newSource as Prismeai.WorkspaceSecurity
+        );
+      }
       notification.success({
         message: t('expert.save.confirm'),
         placement: 'bottomRight',
@@ -120,7 +131,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [saveWorkspace, t]
   );
 
-  const displaySource = useCallback((v: boolean) => {
+  const displaySource = useCallback((v: DisplayedSourceType) => {
     setSourceDisplayed(v);
   }, []);
 
@@ -222,7 +233,11 @@ export const WorkspaceLayout: FC = ({ children }) => {
         `}
         >
           {mountSourceComponent && (
-            <WorkspaceSource onLoad={() => setDisplaySourceView(true)} />
+            <WorkspaceSource
+              key={sourceDisplayed}
+              sourceDisplayed={sourceDisplayed}
+              onLoad={() => setDisplaySourceView(true)}
+            />
           )}
         </div>
         <Layout Header={<HeaderWorkspace />} className="max-w-full">

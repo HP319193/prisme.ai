@@ -1,5 +1,13 @@
+export enum DSULFolders {
+  Pages = 'pages',
+  Automations = 'automations',
+  Imports = 'imports',
+}
+
 export enum DSULType {
   DSULIndex = 'index',
+
+  Security = 'security',
 
   PagesIndex = 'pages/__index__',
   Pages = 'pages',
@@ -13,8 +21,17 @@ export enum DSULType {
 
   RuntimeModel = 'runtime',
 }
+
+// These dsul types will be fetched at the root app/workspace directory with {{enumValue}}.yml
+export const DSULRootFiles = [
+  DSULType.DSULIndex,
+  DSULType.Security,
+  DSULType.RuntimeModel,
+];
+
 // Types ending like this will be automatically updated as FolderIndex :
-export const FolderIndexSuffix = '/__index__';
+export const FolderIndex = '__index__';
+export const FolderIndexSuffix = `/${FolderIndex}`;
 
 export type DSULQuery<t extends DSULType = any> = {
   workspaceId?: string;
@@ -30,6 +47,7 @@ export type DSULQuery<t extends DSULType = any> = {
 
 export type DSULInterfaces = {
   [DSULType.DSULIndex]: Prismeai.Workspace;
+  [DSULType.Security]: Prismeai.WorkspaceSecurity;
 
   [DSULType.AutomationsIndex]: Prismeai.AutomationMeta;
   [DSULType.Automations]: Prismeai.Automation;

@@ -33,7 +33,7 @@ export default class GatewayConfig {
   private injectEnvironmentVariables(raw: string) {
     const regexp = new RegExp(/\${([^}]+)}/g);
     const matches = raw.match(regexp);
-    return (matches || []).reduce((config, pattern) => {
+    return (matches! || []).reduce((config, pattern) => {
       const [variable, defaultValue] = pattern.slice(2, -1).split(':-');
       if (process.env[variable] || defaultValue) {
         //@ts-ignore

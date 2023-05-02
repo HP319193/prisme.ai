@@ -60,12 +60,10 @@ export const WorkspaceProvider = ({
   const [workspace, setWorkspace] = useState<WorkspaceContext['workspace']>();
   const [loading, setLoading] = useState<WorkspaceContext['loading']>(true);
   const [saving, setSaving] = useState<WorkspaceContext['saving']>(false);
-  const [creatingAutomation, setCreatingAutomation] = useState<
-    WorkspaceContext['creatingAutomation']
-  >(false);
-  const [creatingPage, setCreatingPage] = useState<
-    WorkspaceContext['creatingPage']
-  >(false);
+  const [creatingAutomation, setCreatingAutomation] =
+    useState<WorkspaceContext['creatingAutomation']>(false);
+  const [creatingPage, setCreatingPage] =
+    useState<WorkspaceContext['creatingPage']>(false);
   const [events, setEvents] = useState<Events>();
   const [notFound, setNotFound] = useState(false);
 
@@ -87,20 +85,21 @@ export const WorkspaceProvider = ({
     onUpdate && workspace && onUpdate(workspace);
   }, [workspace, onUpdate]);
 
-  const fetchWorkspace: WorkspaceContext['fetchWorkspace'] = useCallback(async () => {
-    setNotFound(false);
-    try {
-      const workspace = await api.getWorkspace(id);
-      if (workspace) {
-        setWorkspace({
-          id,
-          ...workspace,
-        } as Workspace);
+  const fetchWorkspace: WorkspaceContext['fetchWorkspace'] =
+    useCallback(async () => {
+      setNotFound(false);
+      try {
+        const workspace = await api.getWorkspace(id);
+        if (workspace) {
+          setWorkspace({
+            id,
+            ...workspace,
+          } as Workspace);
+        }
+      } catch {
+        setNotFound(true);
       }
-    } catch {
-      setNotFound(true);
-    }
-  }, [id]);
+    }, [id]);
 
   const saveWorkspace: WorkspaceContext['saveWorkspace'] = useCallback(
     async (data) => {
@@ -120,13 +119,14 @@ export const WorkspaceProvider = ({
     [workspace]
   );
 
-  const deleteWorkspace: WorkspaceContext['deleteWorkspace'] = useCallback(async () => {
-    if (!workspace?.id) return null;
-    const deleted = await api.deleteWorkspace(workspace.id);
-    setWorkspace(undefined);
-    onUpdate && onUpdate(deleted, true);
-    return deleted;
-  }, [onUpdate, workspace]);
+  const deleteWorkspace: WorkspaceContext['deleteWorkspace'] =
+    useCallback(async () => {
+      if (!workspace?.id) return null;
+      const deleted = await api.deleteWorkspace(workspace.id);
+      setWorkspace(undefined);
+      onUpdate && onUpdate(deleted, true);
+      return deleted;
+    }, [onUpdate, workspace]);
 
   const createAutomation: WorkspaceContext['createAutomation'] = useCallback(
     async (automation) => {
