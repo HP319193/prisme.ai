@@ -42,17 +42,6 @@ class Security {
     this.storage = workspacesStorage.child(DSULType.Security);
   }
 
-  // private validateSchedules(schedules: Prismeai.When['schedules'] = []) {
-  //   for (const schedule of schedules) {
-  //     try {
-  //       // Only verify if it is a well formatted cron
-  //       parseCron(schedule);
-  //     } catch (e) {
-  //       throw new InvalidScheduleError(undefined, e);
-  //     }
-  //   }
-  // }
-
   getSecurity = async (workspaceId: string) => {
     await this.accessManager.throwUnlessCan(
       ActionType.Read,

@@ -7,6 +7,7 @@ import { extractObjectsByPath } from './utils';
 export interface RuleContext {
   user: User<string>;
   subject?: { id?: string };
+  [k: string]: any;
 }
 
 function injectPlaceholders(value: any, ctx: RuleContext) {
@@ -14,10 +15,17 @@ function injectPlaceholders(value: any, ctx: RuleContext) {
     return value;
   }
 
-  const placeholders = Array.from(value.matchAll(/\$\{[a-zA-Z.]+\}/g));
+  const placeholders = Array.from(
+    value.matchAll(/(\$\{[a-zA-Z.]+\})|(\{\{[a-zA-Z.]+\}\})/g)
+  );
   const initLength = value.length;
   for (let placeholder of placeholders) {
-    const variableName = placeholder[0].slice(2, -1);
+    let variableName = placeholder[0].startsWith('${')
+      ? placeholder[0].slice(2, -1)
+      : placeholder[0].slice(2, -2);
+    // session.id alias, for DSUL-like naming
+    variableName =
+      variableName === 'session.id' ? 'user.sessionId' : variableName;
     const variableValue = extractObjectsByPath(ctx, variableName);
     if (variableValue == undefined) {
       return;
