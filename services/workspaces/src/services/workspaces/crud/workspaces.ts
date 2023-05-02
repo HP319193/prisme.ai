@@ -492,6 +492,7 @@ class Workspaces {
           { slug: 'AlreadyUsedError' }
         );
       }
+      throw err;
     }
 
     await this.storage.save({ workspaceId }, workspace);
