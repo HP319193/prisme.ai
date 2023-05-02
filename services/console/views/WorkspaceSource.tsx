@@ -73,12 +73,16 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({
   const initYaml = useCallback(async () => {
     try {
       if (sourceDisplayed === DisplayedSourceType.Config) {
-        const value = await toYaml(workspace);
-        setValue(value);
+        const newValue = await toYaml(workspace);
+        setValue(newValue);
       } else if (sourceDisplayed === DisplayedSourceType.Roles) {
+        // Without this, api.getWorkspaceSecurity is fetched with every keystroke ...
+        if (value?.length) {
+          return;
+        }
         const security = await api.getWorkspaceSecurity(id);
-        const value = await toYaml(security);
-        setValue(value);
+        const newValue = await toYaml(security);
+        setValue(newValue);
       }
     } catch (e) {}
   }, [workspace, toYaml, sourceDisplayed]);
