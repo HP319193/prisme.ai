@@ -43,7 +43,7 @@ const getEndpointAutomationName = (value: string, line: number) => {
 
 interface WorkspaceSourceProps {
   onLoad?: () => void;
-  sourceDisplayed: DisplayedSourceType;
+  sourceDisplayed?: DisplayedSourceType;
 }
 export const WorkspaceSource: FC<WorkspaceSourceProps> = ({
   onLoad,
