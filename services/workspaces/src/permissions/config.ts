@@ -139,6 +139,7 @@ export const config: PermissionsConfig<
         {
           action: [ActionType.Update, ActionType.Read],
           subject: SubjectType.Workspace,
+          reason: 'Native Workspace Editor',
           conditions: {
             // This role only applies to a specific workspace !
             id: '${subject.id}',
@@ -150,6 +151,7 @@ export const config: PermissionsConfig<
             ActionType.Read,
             ActionType.GetAppSourceCode,
           ],
+          reason: 'Native Workspace Editor',
           subject: SubjectType.App,
           conditions: {
             workspaceId: '${subject.id}',
@@ -158,6 +160,7 @@ export const config: PermissionsConfig<
         {
           action: [ActionType.Update, ActionType.Read],
           subject: SubjectType.Page,
+          reason: 'Native Workspace Editor',
           conditions: {
             workspaceId: '${subject.id}',
           },
@@ -165,6 +168,7 @@ export const config: PermissionsConfig<
         {
           action: [ActionType.Manage],
           subject: SubjectType.File,
+          reason: 'Native Workspace Editor',
           conditions: {
             workspaceId: '${subject.id}',
           },

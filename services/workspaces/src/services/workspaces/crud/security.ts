@@ -22,6 +22,7 @@ const OnlyAllowedSubjects = [
   SubjectType.Workspace,
   SubjectType.Page,
   SubjectType.File,
+  SubjectType.App,
   'events',
 ];
 const OnlyAllowedActions = Object.values(ActionType);
@@ -135,10 +136,6 @@ class Security {
             };
           }
 
-          const subjectsWithoutEvents = subjects.filter(
-            (cur) => cur !== 'events'
-          );
-
           const ruleWithoutConditions = {
             action: actions,
             inverted,
@@ -148,28 +145,30 @@ class Security {
                 ? FIRST_CUSTOM_RULE_PRIORITY + ruleIdx
                 : LAST_CUSTOM_RULE_PRIORITY,
           };
-          if (subjectsWithoutEvents.length) {
-            builtRoles[roleName].casl?.push({
-              ...ruleWithoutConditions,
-              subject: subjectsWithoutEvents,
-              conditions: {
-                ...conditions,
-                workspaceId,
-              },
-            });
-          }
-          // Properly format event-specific conditions
-          if (subjectsWithoutEvents.length !== subjects.length) {
-            builtRoles[roleName].casl?.push({
-              ...ruleWithoutConditions,
-              subject: 'events',
-              conditions: {
-                ...conditions,
-                'source.workspaceId': workspaceId,
-                'source.serviceTopic': 'topic:runtime:emit',
-              },
-            });
-          }
+          subjects.forEach((subject) => {
+            if (subject === 'events') {
+              builtRoles[roleName].casl?.push({
+                ...ruleWithoutConditions,
+                subject: 'events',
+                conditions: {
+                  ...conditions,
+                  'source.workspaceId': workspaceId,
+                  'source.serviceTopic': 'topic:runtime:emit',
+                },
+              });
+            } else {
+              const workspaceIdField =
+                subject === SubjectType.Workspace ? 'id' : 'workspaceId';
+              builtRoles[roleName].casl?.push({
+                ...ruleWithoutConditions,
+                subject,
+                conditions: {
+                  ...conditions,
+                  [workspaceIdField]: workspaceId,
+                },
+              });
+            }
+          });
         });
         return builtRoles;
       },
@@ -232,8 +231,8 @@ class Security {
     const sharedRoles = Object.values(workspace.permissions || {}).map(
       (cur) => cur?.role
     );
-    const cantDeleteThatRole = rolesToDelete.find((cur) =>
-      sharedRoles.includes(cur.name)
+    const cantDeleteThatRole = rolesToDelete.find(
+      (cur) => sharedRoles.includes(cur.name) && cur.name !== 'editor'
     );
     if (cantDeleteThatRole) {
       throw new InvalidSecurity(

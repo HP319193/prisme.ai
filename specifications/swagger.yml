@@ -337,6 +337,7 @@ components:
     ActionTypes:
       type: string
       enum:
+        - manage
         - create
         - read
         - update

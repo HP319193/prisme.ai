@@ -492,6 +492,7 @@ class Workspaces {
           { slug: 'AlreadyUsedError' }
         );
       }
+      // Throw permissions errors !
       throw err;
     }
 
