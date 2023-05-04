@@ -1,12 +1,13 @@
 import { Schema } from 'mongoose';
-import { Ability, RawRuleOf, MongoQuery } from '@casl/ability';
-import { User, ActionType } from './types';
+import { MongoQuery } from '@casl/ability';
+import { Rule, Rules, User, ActionType } from './types';
 import { RoleTemplates, SubjectOptions } from '..';
 import { extractObjectsByPath } from './utils';
 
 export interface RuleContext {
   user: User<string>;
   subject?: { id?: string };
+  [k: string]: any;
 }
 
 function injectPlaceholders(value: any, ctx: RuleContext) {
@@ -14,10 +15,17 @@ function injectPlaceholders(value: any, ctx: RuleContext) {
     return value;
   }
 
-  const placeholders = Array.from(value.matchAll(/\$\{[a-zA-Z.]+\}/g));
+  const placeholders = Array.from(
+    value.matchAll(/(\$\{[a-zA-Z.]+\})|(\{\{[a-zA-Z.]+\}\})/g)
+  );
   const initLength = value.length;
   for (let placeholder of placeholders) {
-    const variableName = placeholder[0].slice(2, -1);
+    let variableName = placeholder[0].startsWith('${')
+      ? placeholder[0].slice(2, -1)
+      : placeholder[0].slice(2, -2);
+    // session.id alias, for DSUL-like naming
+    variableName =
+      variableName === 'session.id' ? 'user.sessionId' : variableName;
     const variableValue = extractObjectsByPath(ctx, variableName);
     if (variableValue == undefined) {
       return;
@@ -74,12 +82,9 @@ export function injectConditions(
   return injectedConditions;
 }
 
-export function injectRules(
-  rules: RawRuleOf<Ability>[],
-  ctx: RuleContext
-): RawRuleOf<Ability>[] {
+export function injectRules(rules: Rules, ctx: RuleContext): Rules {
   return rules
-    .map((cur): RawRuleOf<Ability> | false => {
+    .map((cur): Rule | false => {
       let conditions: MongoQuery = cur.conditions || {};
       const rulesNb = Object.keys(conditions).length;
       if (rulesNb) {
@@ -91,15 +96,18 @@ export function injectRules(
       }
       return { ...cur, conditions };
     })
-    .filter(
-      (cur: RawRuleOf<Ability> | false): cur is RawRuleOf<Ability> =>
-        cur !== false
-    );
+    .filter((cur: Rule | false): cur is Rule => cur !== false);
 }
 
 // Sort rules from the most generic to the most specific (otherwise 'cannot' rules could be overriden by 'can')
-export function sortRules(rules: RawRuleOf<Ability>[]) {
+export function sortRules(rules: Rules) {
   return rules.sort((a, b) => {
+    if ((!a.priority && b.priority) || (a.priority && !b.priority)) {
+      return b.priority ? -1 : 1; // 'cannot' rules always in last positions
+    }
+    if (a.priority && b.priority) {
+      return b.priority > a.priority ? -1 : 1;
+    }
     if ((!a.inverted && b.inverted) || (a.inverted && !b.inverted)) {
       return b.inverted ? -1 : 1; // 'cannot' rules always in last positions
     }
@@ -114,8 +122,11 @@ export function nativeRules(
   roles: RoleTemplates<any, string>,
   subjects: Record<any, SubjectOptions<any>>
 ) {
-  const anySubjectPermissionsGrantEquivalentActions: RawRuleOf<Ability>[] =
-    Object.values(ActionType).flatMap((action) => [
+  const anySubjectPermissionsGrantEquivalentActions: Rules = Object.values(
+    ActionType
+  )
+    .filter((cur) => cur !== ActionType.Create && cur !== ActionType.Manage)
+    .flatMap((action) => [
       {
         action,
         subject: 'all',
@@ -132,40 +143,40 @@ export function nativeRules(
       },
     ]);
 
-  const anySubjectRoleGrantReadAccess: RawRuleOf<Ability>[] = Object.entries(
-    subjects
-  ).flatMap(([subjectType, subjectOpts]) => {
-    const rolesWithReadPolicy = roles
-      .filter((cur) => cur.subjectType && cur.subjectType === subjectType)
-      .map((cur) => cur.name);
-    return [
-      {
-        subject: subjectType as string,
-        action: ActionType.Read as string,
-        conditions: {
-          'permissions.${user.id}.role': {
-            $exists: true,
-            $in: rolesWithReadPolicy,
+  const anySubjectRoleGrantReadAccess: Rules = Object.entries(subjects).flatMap(
+    ([subjectType, subjectOpts]) => {
+      const rolesWithReadPolicy = roles
+        .filter((cur) => cur.subjectType && cur.subjectType === subjectType)
+        .map((cur) => cur.name);
+      return [
+        {
+          subject: subjectType as string,
+          action: ActionType.Read as string,
+          conditions: {
+            'permissions.${user.id}.role': {
+              $exists: true,
+              $in: rolesWithReadPolicy,
+            },
           },
         },
-      },
-      {
-        subject: subjectType as string,
-        action: ActionType.Read as string,
-        conditions: {
-          'permissions.*.role': {
-            $exists: true,
-            $in: rolesWithReadPolicy,
+        {
+          subject: subjectType as string,
+          action: ActionType.Read as string,
+          conditions: {
+            'permissions.*.role': {
+              $exists: true,
+              $in: rolesWithReadPolicy,
+            },
           },
         },
-      },
-    ];
-  });
+      ];
+    }
+  );
 
   const subjectsWithAuthorManagePolicy = Object.entries(subjects)
     .filter(([_, subjectOpts]) => !subjectOpts?.author?.disableManagePolicy)
     .map(([subjectType]) => subjectType);
-  const subjectAuthorsHaveManageAccess: RawRuleOf<Ability>[] = [
+  const subjectAuthorsHaveManageAccess: Rules = [
     {
       // Everyone can manage its own subject
       action: ActionType.Manage,
@@ -197,7 +208,7 @@ export function nativeRules(
 }
 
 export async function validateRules(
-  rules: RawRuleOf<Ability>[],
+  rules: Rules,
   schemas: Record<string, Schema | false>
 ) {
   for (const rule of rules) {

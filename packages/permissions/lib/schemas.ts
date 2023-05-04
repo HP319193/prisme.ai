@@ -9,6 +9,7 @@ export const Roles = new Schema({
   subjectId: String,
   rules: Schema.Types.Mixed,
   casl: Schema.Types.Mixed,
+  disabled: Boolean,
 });
 
 export enum NativeSubjectType {
@@ -18,11 +19,12 @@ export enum NativeSubjectType {
 export type CustomRole<SubjectType extends string, CustomRules = any> = {
   name: string;
   id: string;
-  type: 'apiKey';
+  type: 'apiKey' | 'casl';
   subjectType: SubjectType;
   subjectId: string;
   rules: CustomRules;
   casl?: Rules;
+  disabled?: boolean;
 };
 
 export type ApiKey<SubjectType extends string, CustomRules = any> = Omit<

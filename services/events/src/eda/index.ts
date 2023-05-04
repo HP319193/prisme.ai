@@ -17,6 +17,7 @@ export enum EventType {
   Error = 'error',
   CreatedWorkspace = 'workspaces.created',
   UpdatedWorkspace = 'workspaces.updated',
+  UpdatedWorkspaceSecurity = 'workspaces.security.updated',
   DeletedWorkspace = 'workspaces.deleted',
   InstalledApp = 'workspaces.apps.installed',
   ConfiguredApp = 'workspaces.apps.configured',

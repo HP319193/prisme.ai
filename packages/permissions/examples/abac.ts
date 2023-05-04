@@ -9,7 +9,7 @@ export enum SubjectType {
 }
 
 enum Role {
-  Admin = 'admin',
+  Owner = 'owner',
   Collaborator = 'collaborator',
   Guest = 'guest',
 }
@@ -24,7 +24,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
   ),
   rbac: [
     {
-      name: Role.Admin,
+      name: Role.Owner,
       rules: [],
     },
 

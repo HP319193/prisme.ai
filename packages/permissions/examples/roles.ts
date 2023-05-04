@@ -14,7 +14,7 @@ export enum Role {
   Guest = 'guest',
 
   // Workspace roles
-  Admin = 'admin',
+  Owner = 'owner',
   Collaborator = 'collaborator',
 }
 
@@ -24,7 +24,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
       ...subjects,
       [cur]:
         cur === SubjectType.Workspace
-          ? { author: { assignRole: Role.Admin } }
+          ? { author: { assignRole: Role.Owner } }
           : {},
     }),
     {} as any
@@ -47,7 +47,7 @@ const config: PermissionsConfig<SubjectType, Role> = {
 
     // Workspace roles
     {
-      name: Role.Admin,
+      name: Role.Owner,
       subjectType: SubjectType.Workspace,
       rules: [
         {

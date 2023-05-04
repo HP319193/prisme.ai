@@ -15,15 +15,11 @@ import {
   User,
   UserSubject,
   PublicAccess,
+  RoleTemplate,
 } from '..';
 import { validateRules } from './rulesBuilder';
 import { extractObjectsByPath } from './utils';
-import {
-  InvalidAPIKey,
-  ObjectNotFoundError,
-  PrismeError,
-  UnknownRole,
-} from './errors';
+import { InvalidAPIKey, ObjectNotFoundError, PrismeError } from './errors';
 
 type Document<T, Role extends string> = Omit<mongoose.Document<T>, 'toJSON'> &
   BaseSubject<Role> & {
@@ -43,6 +39,10 @@ export interface AccessManagerOptions<SubjectType extends string = string> {
     SubjectType,
     false | mongoose.Schema | Record<string, object>
   >;
+  rbac?: {
+    cacheCustomRoles?: boolean;
+    enabledSubjectTypes?: SubjectType[];
+  };
 }
 
 export interface FindOptions {
@@ -81,6 +81,7 @@ export class AccessManager<
   public user?: User<Role>;
   private subjectFieldRefs: Record<SubjectType, SubjectFieldRef<SubjectType>[]>;
   private alreadyPulledSubjectFieldRefs: Set<any>;
+  private customRoles?: Record<string, CustomRole<SubjectType, CustomRules>[]>;
 
   constructor(
     opts: AccessManagerOptions<SubjectType>,
@@ -135,6 +136,7 @@ export class AccessManager<
 
     this.alreadyPulledSubjectFieldRefs = new Set();
     this.subjectFieldRefs = this.buildSubjectFieldRefs(permissionsConfig);
+    this.customRoles = opts?.rbac?.cacheCustomRoles ? {} : undefined;
   }
 
   buildSubjectFieldRefs(
@@ -219,15 +221,41 @@ export class AccessManager<
     this.permissions?.updateUserRules(user);
   }
 
-  async pullRoleFromSubjectFieldRefs<returnType extends SubjectType>(
+  async pullRoleFromSubject<returnType extends SubjectType>(
     subjectType: returnType,
-    subject: SubjectInterfaces[returnType]
-  ) {
+    subjectOrId: string | SubjectInterfaces[returnType]
+  ): Promise<void> {
+    const { permissions } = this.checkAsUser();
+    const subject =
+      typeof subjectOrId === 'string'
+        ? (await this.fetch(subjectType, subjectOrId))?.toJSON()
+        : subjectOrId;
+    if (!subject) {
+      return;
+    }
+
+    // Pull all custom roles defined for this subject type
+    await this.pullRole(
+      {
+        subjectType,
+        subjectId: subject.id,
+      },
+      {
+        cache: true,
+      }
+    );
+
+    // If we are given an id, only look permissions field in fetched object
+    if (typeof subjectOrId === 'string') {
+      return permissions.pullRoleFromSubject(subjectType, subject);
+    }
+
+    // If we are given a full object, check for field refs & fetch related objects permissions
     if (!(subjectType in this.subjectFieldRefs)) {
       return;
     }
 
-    return await Promise.all(
+    await Promise.all(
       this.subjectFieldRefs[subjectType].map(
         async ({ subject: parentSubject, field }) => {
           const refValue = extractObjectsByPath(subject, field);
@@ -235,24 +263,10 @@ export class AccessManager<
             return Promise.resolve(true);
           }
           this.alreadyPulledSubjectFieldRefs.add(refValue);
-          return await this.pullRoleFromSubject(parentSubject, {
-            id: refValue,
-          });
+          return await this.pullRoleFromSubject(parentSubject, refValue);
         }
       )
     );
-  }
-
-  async pullRoleFromSubject<returnType extends SubjectType>(
-    subjectType: returnType,
-    query: string | FilterQuery<SubjectInterfaces[returnType], Role>
-  ) {
-    const { permissions } = this.checkAsUser();
-    const model = await this.fetch(subjectType, query);
-    if (!model) {
-      return;
-    }
-    return permissions.pullRoleFromSubject(subjectType, model.toJSON());
   }
 
   private async fetch<returnType extends SubjectType>(
@@ -297,10 +311,7 @@ export class AccessManager<
     opts?: FindOptions
   ): Promise<(SubjectInterfaces[returnType] & BaseSubject<Role>)[]> {
     if (additionalQuery) {
-      await this.pullRoleFromSubjectFieldRefs(
-        subjectType,
-        <any>additionalQuery
-      );
+      await this.pullRoleFromSubject(subjectType, <any>additionalQuery);
     }
     const { permissions } = this.checkAsUser();
     const Model = this.model(subjectType);
@@ -363,17 +374,21 @@ export class AccessManager<
     await this.throwUnlessCan(ActionType.Create, subjectType, <any>subject!!);
     const Model = this.model(subjectType);
     const date = new Date();
+    const autoAssignRole =
+      this.permissionsConfig.subjects[subjectType]?.author?.assignRole;
     const object = new Model({
       ...this.filterFieldsBeforeUpdate(subject),
       createdBy: user.id,
       updatedBy: user.id,
       createdAt: date.toISOString(),
       updatedAt: date.toISOString(),
-      permissions: {
-        [user.id]: {
-          role: 'owner',
-        },
-      },
+      permissions: autoAssignRole
+        ? {
+            [user.id]: {
+              role: autoAssignRole,
+            },
+          }
+        : {},
     });
     object.id = subject.id || object._id!!.toString();
     await object.save();
@@ -477,6 +492,15 @@ export class AccessManager<
       subjectType,
       doc.toJSON()
     );
+    await this.pullRole(
+      {
+        subjectType,
+        subjectId: id,
+      },
+      {
+        cache: true,
+      }
+    );
     const updatedSubject = permissions.grant(
       permission,
       subjectType,
@@ -530,7 +554,7 @@ export class AccessManager<
     subject: SubjectInterfaces[returnType]
   ): Promise<boolean> {
     const { permissions } = this.checkAsUser();
-    await this.pullRoleFromSubjectFieldRefs(
+    await this.pullRoleFromSubject(
       subjectType,
       typeof subject.toJSON === 'function' ? subject.toJSON() : subject
     );
@@ -557,7 +581,7 @@ export class AccessManager<
       });
     }
 
-    await this.pullRoleFromSubjectFieldRefs(
+    await this.pullRoleFromSubject(
       subjectType,
       typeof subject.toJSON === 'function' ? subject.toJSON() : subject
     );
@@ -575,7 +599,7 @@ export class AccessManager<
     subjectType: returnType,
     subjects: SubjectInterfaces[returnType][]
   ): Promise<SubjectInterfaces[returnType][]> {
-    await this.pullRoleFromSubjectFieldRefs(subjectType, subjects[0]);
+    await this.pullRoleFromSubject(subjectType, subjects[0]);
     const filtered = await Promise.all(
       subjects.map(async (cur) => {
         const accessible = await this.can(actionType, subjectType, cur);
@@ -585,35 +609,67 @@ export class AccessManager<
     return filtered.filter(Boolean) as SubjectInterfaces[returnType][];
   }
 
-  private async pullRole(
+  async pullRole(
     query: mongoose.FilterQuery<
       Document<CustomRole<SubjectType, CustomRules>, Role>
-    >
+    >,
+    opts?: { loadRules?: boolean; cache?: boolean }
   ) {
-    const { permissions } = this.checkAsUser();
-    const RolesModel = (await this.model(
-      <any>NativeSubjectType.Roles
-    )) as any as AccessibleRecordModel<
-      Document<CustomRole<SubjectType, CustomRules>, any>
-    >;
-
-    const docs = await RolesModel.find(query);
-
-    if (!docs.length) {
-      throw new UnknownRole();
+    if (
+      query.subjectType &&
+      (!this.opts?.rbac?.enabledSubjectTypes ||
+        !this.opts.rbac.enabledSubjectTypes.includes(query.subjectType))
+    ) {
+      return [];
     }
-    permissions.loadRules(
-      docs.flatMap((cur) => {
-        const role = cur.toJSON();
-        if (role.casl) {
-          return JSON.parse(role.casl as any as string);
-        }
-        if (Object.keys(role.rules || {}).length) {
-          return this.buildRules(role);
-        }
-        return [];
-      })
-    );
+    const { permissions } = this.checkAsUser();
+
+    const cacheKey = Object.entries(query)
+      .map(([k, v]) => `${k}:${v}`)
+      .sort()
+      .join(',');
+    let roles =
+      opts?.cache && this.customRoles ? this.customRoles[cacheKey] : undefined;
+    if (!roles) {
+      const RolesModel = (await this.model(
+        <any>NativeSubjectType.Roles
+      )) as any as AccessibleRecordModel<
+        Document<CustomRole<SubjectType, CustomRules>, any>
+      >;
+
+      const docs = await RolesModel.find(query);
+      roles = docs.map((cur) => cur.toJSON()).filter((cur) => !cur.disabled);
+      if (this.customRoles && (opts?.cache || cacheKey in this.customRoles)) {
+        this.customRoles[cacheKey] = roles;
+      }
+    }
+
+    if (!roles?.length) {
+      return [];
+    }
+    // Maybe we should get rid of CustomRules syntax (originally made to ease api keys configuration) & have a single RoleTemplate interface ?
+    const roleTemplates = roles.map<RoleTemplate<SubjectType, Role>>((role) => {
+      let rules =
+        typeof role.casl === 'string' ? JSON.parse(role.casl) : role.casl;
+      if (!rules && Object.keys(role.rules || {}).length) {
+        rules = this.buildRules(role);
+      }
+      return {
+        name: role.name as Role,
+        subjectType: role.subjectType,
+        rules,
+      };
+    });
+
+    // loadRules make generated rules immediately effective (i.e apiKey or forced role sent within a request),
+    // while loadRoles make these rules available in case we load an object with one of these role names assigned
+    if (opts?.loadRules) {
+      permissions.loadRules(roleTemplates.flatMap((role) => role.rules));
+    } else {
+      permissions.loadRoles(roleTemplates);
+    }
+
+    return roles;
   }
 
   private buildRules(role: CustomRole<SubjectType, CustomRules>) {
@@ -632,8 +688,16 @@ export class AccessManager<
     if (!role.id) {
       throw new PrismeError('A role id is required for saving');
     }
+    if (
+      !this.opts?.rbac?.enabledSubjectTypes ||
+      !this.opts.rbac.enabledSubjectTypes.includes(role.subjectType)
+    ) {
+      throw new PrismeError(
+        `Custom roles are not enabled for subjectType '${role.subjectType}'`
+      );
+    }
 
-    await await this.throwUnlessCan(
+    await this.throwUnlessCan(
       ActionType.ManagePermissions,
       role.subjectType,
       role.subjectId
@@ -646,7 +710,11 @@ export class AccessManager<
     >;
 
     // Validate role
-    this.buildRules(role);
+    if ((<any>role.rules)?.length) {
+      this.buildRules(role);
+    } else if (typeof role.casl === 'object') {
+      (<any>role).casl = JSON.stringify(role.casl);
+    }
 
     const savedApiKey = await RolesModel.findOneAndUpdate(
       {
@@ -676,7 +744,7 @@ export class AccessManager<
       throw new ObjectNotFoundError();
     }
     const role = doc.toJSON();
-    await await this.throwUnlessCan(
+    await this.throwUnlessCan(
       ActionType.ManagePermissions,
       role.subjectType,
       role.subjectId
@@ -710,15 +778,19 @@ export class AccessManager<
       .map((cur) => cur.toJSON())
       .map((cur) => ({
         ...cur,
-        casl: cur.casl ? JSON.parse(cur.casl as any) : undefined,
+        casl:
+          typeof cur.casl === 'string' ? JSON.parse(cur.casl as any) : cur.casl,
       }));
   }
 
   async pullApiKey(apiKey: string) {
     try {
-      return await this.pullRole({ name: apiKey });
+      const roles = await this.pullRole({ name: apiKey }, { loadRules: true });
+      if (!roles.length) {
+        throw new InvalidAPIKey();
+      }
+      return roles;
     } catch (error) {
-      console.log(error);
       throw new InvalidAPIKey();
     }
   }

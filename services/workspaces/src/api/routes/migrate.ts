@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { migrateDSUL } from '../../services/migrate';
+import { initCustomRoles } from '../../services/migrate';
 import { asyncRoute } from '../utils/async';
 import { DSULStorage } from '../../services/DSULStorage';
 import { AccessManager } from '../../permissions';
@@ -12,11 +12,11 @@ export default function init(
   accessManager: AccessManager,
   broker: Broker
 ) {
-  async function migrateDSULFilesystem(
+  async function initCustomRolesHandler(
     { body, logger, context }: Request,
     res: Response
   ) {
-    const result = await migrateDSUL(
+    const result = await initCustomRoles(
       workspacesStorage,
       accessManager,
       broker,
@@ -28,7 +28,7 @@ export default function init(
   const app = express.Router();
   app.use(protectMigrationRoutes);
 
-  app.post(`/dsul-filesystem`, asyncRoute(migrateDSULFilesystem));
+  app.post(`/custom-roles`, asyncRoute(initCustomRolesHandler));
 
   return app;
 }

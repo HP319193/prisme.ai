@@ -2,12 +2,15 @@ import {
   ActionType as NativeActionType,
   PermissionsConfig,
 } from '@prisme.ai/permissions';
-import { RUNTIME_EMITS_BROKER_TOPIC } from '../../config';
+import {
+  LAST_CUSTOM_RULE_PRIORITY,
+  RUNTIME_EMITS_BROKER_TOPIC,
+} from '../../config';
 
 export const ActionType = {
   ...NativeActionType,
-  GetUsage: 'GetUsage',
-  AggregateSearch: 'AggregateSearch',
+  GetUsage: 'get_usage',
+  AggregateSearch: 'aggregate_search',
 };
 
 export enum SubjectType {
@@ -55,10 +58,12 @@ export const config: PermissionsConfig<
         {
           action: ActionType.Manage,
           subject: SubjectType.Event,
+          priority: LAST_CUSTOM_RULE_PRIORITY + 1000,
         },
         {
           action: ActionType.Manage,
           subject: SubjectType.Workspace,
+          priority: LAST_CUSTOM_RULE_PRIORITY + 1000,
         },
       ],
     },
@@ -134,6 +139,7 @@ export const config: PermissionsConfig<
       subject: SubjectType.Event,
       conditions: {
         'source.userId': '${user.id}',
+        'source.serviceTopic': 'topic:runtime:emit',
       },
     },
 
@@ -171,6 +177,7 @@ export const config: PermissionsConfig<
       conditions: {
         type: 'runtime.contexts.updated',
       },
+      priority: LAST_CUSTOM_RULE_PRIORITY + 1000,
     },
   ],
   customRulesBuilder: (role) => {

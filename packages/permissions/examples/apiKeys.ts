@@ -9,7 +9,7 @@ export enum SubjectType {
 }
 
 export enum Role {
-  Admin = 'admin',
+  Owner = 'owner',
   Collaborator = 'collaborator',
   Guest = 'guest',
 }
@@ -20,14 +20,14 @@ const config: PermissionsConfig<SubjectType, Role, Prismeai.ApiKeyRules> = {
       ...subjects,
       [cur]:
         cur === SubjectType.Workspace
-          ? { author: { assignRole: Role.Admin } }
+          ? { author: { assignRole: Role.Owner } }
           : {},
     }),
     {} as any
   ),
   rbac: [
     {
-      name: Role.Admin,
+      name: Role.Owner,
       rules: [],
     },
 

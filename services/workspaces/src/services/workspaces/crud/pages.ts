@@ -301,7 +301,7 @@ class Pages {
       });
     }
 
-    let apiKey: string = '';
+    let apiKey: string | undefined = '';
     try {
       const existingDetailedPage = await this.getDetailedPage({
         workspaceSlug: page.workspaceSlug!,
@@ -379,6 +379,7 @@ class Pages {
     return { slug: newSlug, ...page };
   };
 
+  // TODO remove as soon as every pages have been migrated to Custom Roles
   getUpdatedPageApiKey = async (
     page: Prismeai.DetailedPage
   ): Promise<ApiKey> => {

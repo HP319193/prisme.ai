@@ -117,6 +117,25 @@ export class Api extends Fetcher {
     return await this.get(`/workspaces/${id}`);
   }
 
+  async getWorkspaceSecurity(
+    id: string
+  ): Promise<PrismeaiAPI.GetSecurity.Responses.$200> {
+    return await this.get(`/workspaces/${id}/security`);
+  }
+
+  async updateWorkspaceSecurity(
+    workspaceId: string,
+    security: Prismeai.WorkspaceSecurity
+  ): Promise<PrismeaiAPI.UpdateSecurity.Responses.$200> {
+    return await this.put(`/workspaces/${workspaceId}/security`, security);
+  }
+
+  async getWorkspaceRoles(
+    id: string
+  ): Promise<PrismeaiAPI.GetRoles.Responses.$200> {
+    return await this.get(`/workspaces/${id}/security/roles`);
+  }
+
   async createWorkspace(name: string): Promise<Workspace> {
     return await this.post('/workspaces', { name });
   }

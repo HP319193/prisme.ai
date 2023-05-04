@@ -241,44 +241,46 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
       additionalIndexFields?: Record<string, any>;
     }
   ) {
+    const newSlug: string | undefined = (dsul as any)?.slug;
+    const querySlug = query.slug!;
+
     let folderIndex = await this.folderIndex(query);
     // Check for name conflict
     if (folderIndex !== false) {
       if (!updateIndex) {
         throw new Error(`Missing updateIndex param`);
       }
-      const slug = query.slug!;
-      if (!SLUG_VALIDATION_REGEXP.test(dsul?.slug || slug)) {
-        throw new InvalidSlugError(slug);
+      if (newSlug && !SLUG_VALIDATION_REGEXP.test(newSlug)) {
+        throw new InvalidSlugError(newSlug);
       }
-      if (!slug) {
+      if (!querySlug) {
         throw new MissingFieldError(
           `Missing slug in order to save given ${this.dsulType}`
         );
       }
 
       const oldSlugBeforeRename =
-        updateIndex?.mode == 'update' && dsul?.slug && slug !== dsul?.slug
-          ? slug
+        updateIndex?.mode == 'update' && newSlug && querySlug !== newSlug
+          ? querySlug
           : '';
 
       if (
-        (updateIndex?.mode == 'create' && slug in folderIndex) ||
-        (oldSlugBeforeRename && (<any>dsul)?.slug in folderIndex)
+        (updateIndex?.mode == 'create' && querySlug in folderIndex) ||
+        (oldSlugBeforeRename && newSlug && newSlug in folderIndex)
       ) {
         throw new AlreadyUsedError(
           `${this.dsulType} slug ${
-            oldSlugBeforeRename ? dsul?.slug : slug
+            oldSlugBeforeRename ? newSlug : querySlug
           } already exists`
         );
-      } else if (updateIndex?.mode == 'update' && !(slug in folderIndex)) {
+      } else if (updateIndex?.mode == 'update' && !(querySlug in folderIndex)) {
         throw new ObjectNotFoundError(
-          `Could not find DSUL object '${this.dsulType}' '${slug}'`,
+          `Could not find DSUL object '${this.dsulType}' '${querySlug}'`,
           { type: this.dsulType, query }
         );
       }
 
-      (query as any).slug = oldSlugBeforeRename ? dsul?.slug! : slug;
+      (query as any).slug = oldSlugBeforeRename ? newSlug! : querySlug;
       // Update folderIndex
       const updatedAt = new Date().toISOString();
       folderIndex[(query as any).slug] = {

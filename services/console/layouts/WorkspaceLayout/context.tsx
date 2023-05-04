@@ -3,9 +3,14 @@ import { Workspace } from '@prisme.ai/sdk';
 import { ValidationError } from '../../utils/yaml';
 import { useContext } from '../../utils/useContext';
 
+export enum DisplayedSourceType {
+  Config = 'config',
+  Roles = 'roles',
+  None = 'none',
+}
 export interface WorkspaceLayoutContext {
-  displaySource: (status: boolean) => void;
-  sourceDisplayed: boolean;
+  displaySource: (type: DisplayedSourceType) => void;
+  sourceDisplayed: DisplayedSourceType;
   invalid: false | ValidationError[];
   setInvalid: (invalid: WorkspaceLayoutContext['invalid']) => void;
   saving: boolean;

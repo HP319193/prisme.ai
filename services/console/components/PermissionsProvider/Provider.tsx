@@ -42,50 +42,55 @@ export const PermissionsProvider: FC = ({ children }) => {
   const [usersPermissions, setUsersPermissions] = useState<
     PermissionsContext['usersPermissions']
   >(new Map());
+  const [roles, setRoles] = useState<PrismeaiAPI.GetRoles.Responses.$200>([
+    { name: 'owner' },
+    { name: 'editor' },
+  ]);
   const { t } = useTranslation('errors');
 
-  const addUserPermissions: PermissionsContext['addUserPermissions'] = useCallback(
-    async (subjectType, subjectId, permissions) => {
-      const backupUsersPermissions = new Map(usersPermissions);
+  const addUserPermissions: PermissionsContext['addUserPermissions'] =
+    useCallback(
+      async (subjectType, subjectId, permissions) => {
+        const backupUsersPermissions = new Map(usersPermissions);
 
-      // optimistic
-      setUsersPermissions(
-        addUserToMap(
-          `${subjectType}:${subjectId}`,
-          usersPermissions,
-          permissions
-        )
-      );
-
-      try {
-        const fetchedUserPermissions = await api.addPermissions(
-          subjectType,
-          subjectId,
-          permissions
-        );
+        // optimistic
         setUsersPermissions(
           addUserToMap(
             `${subjectType}:${subjectId}`,
             usersPermissions,
-            fetchedUserPermissions
+            permissions
           )
         );
-        return fetchedUserPermissions;
-      } catch (e) {
-        notification.error({
-          message: t('share', { context: (e as ApiError).error }),
-          placement: 'bottomRight',
-        });
 
-        setUsersPermissions(backupUsersPermissions);
-        return null;
-      }
-    },
-    [t, usersPermissions]
-  );
+        try {
+          const fetchedUserPermissions = await api.addPermissions(
+            subjectType,
+            subjectId,
+            permissions
+          );
+          setUsersPermissions(
+            addUserToMap(
+              `${subjectType}:${subjectId}`,
+              usersPermissions,
+              fetchedUserPermissions
+            )
+          );
+          return fetchedUserPermissions;
+        } catch (e) {
+          notification.error({
+            message: t('share', { context: (e as ApiError).error }),
+            placement: 'bottomRight',
+          });
 
-  const getUsersPermissions: PermissionsContext['getUsersPermissions'] = useCallback(
-    async (subjectType, subjectId) => {
+          setUsersPermissions(backupUsersPermissions);
+          return null;
+        }
+      },
+      [t, usersPermissions]
+    );
+
+  const getUsersPermissions: PermissionsContext['getUsersPermissions'] =
+    useCallback(async (subjectType, subjectId) => {
       try {
         const fetchedUsersPermissions = await api.getPermissions(
           subjectType,
@@ -107,29 +112,14 @@ export const PermissionsProvider: FC = ({ children }) => {
       } catch (e) {
         return [];
       }
-    },
-    []
-  );
+    }, []);
 
-  const removeUserPermissions: PermissionsContext['removeUserPermissions'] = useCallback(
-    async (subjectType, subjectId, userEmail) => {
-      const backupUsersPermissions = new Map(usersPermissions);
+  const removeUserPermissions: PermissionsContext['removeUserPermissions'] =
+    useCallback(
+      async (subjectType, subjectId, userEmail) => {
+        const backupUsersPermissions = new Map(usersPermissions);
 
-      // optimistic
-      setUsersPermissions((usersPermissions) =>
-        removeUserFromMap(
-          `${subjectType}:${subjectId}`,
-          usersPermissions,
-          userEmail
-        )
-      );
-
-      try {
-        const deletedUserPermissions = await api.deletePermissions(
-          subjectType,
-          subjectId,
-          userEmail
-        );
+        // optimistic
         setUsersPermissions((usersPermissions) =>
           removeUserFromMap(
             `${subjectType}:${subjectId}`,
@@ -137,27 +127,56 @@ export const PermissionsProvider: FC = ({ children }) => {
             userEmail
           )
         );
-        return deletedUserPermissions;
-      } catch (e) {
-        notification.error({
-          message: t('unknown', { errorName: e }),
-          placement: 'bottomRight',
-        });
 
-        setUsersPermissions(backupUsersPermissions);
-        return null;
+        try {
+          const deletedUserPermissions = await api.deletePermissions(
+            subjectType,
+            subjectId,
+            userEmail
+          );
+          setUsersPermissions((usersPermissions) =>
+            removeUserFromMap(
+              `${subjectType}:${subjectId}`,
+              usersPermissions,
+              userEmail
+            )
+          );
+          return deletedUserPermissions;
+        } catch (e) {
+          notification.error({
+            message: t('unknown', { errorName: e }),
+            placement: 'bottomRight',
+          });
+
+          setUsersPermissions(backupUsersPermissions);
+          return null;
+        }
+      },
+      [t, usersPermissions]
+    );
+
+  const getRoles: PermissionsContext['getRoles'] = useCallback(
+    async (_, subjectId) => {
+      try {
+        const roles = await api.getWorkspaceRoles(subjectId);
+        setRoles(roles);
+        return roles;
+      } catch (e) {
+        return [];
       }
     },
-    [t, usersPermissions]
+    []
   );
 
   return (
     <context.Provider
       value={{
         usersPermissions,
+        roles,
         addUserPermissions,
         removeUserPermissions,
         getUsersPermissions,
+        getRoles,
       }}
     >
       {children}

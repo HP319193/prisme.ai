@@ -7,7 +7,14 @@ import {
   InvalidPermissions,
   UnknownRole,
 } from './errors';
-import { User, ActionType, RoleTemplates, PermissionsConfig } from './types';
+import {
+  User,
+  ActionType,
+  RoleTemplates,
+  PermissionsConfig,
+  RoleTemplate,
+  DefaultRole,
+} from './types';
 
 type UserId = string;
 
@@ -31,17 +38,17 @@ export class Permissions<
   private subjects: Record<SubjectType, SubjectOptions<Role>>;
   private user: User<Role>;
   private roleTemplates: RoleTemplates<SubjectType, Role>;
+  private abac: Rules;
   private rules: Rules;
   private loadedRoleIds: Set<string>;
   public ability: Ability;
-  private config: PermissionsConfig<SubjectType, Role>;
 
   constructor(user: User<Role>, config: PermissionsConfig<SubjectType, Role>) {
     this.user = user;
     const { rbac, abac, subjects } = config;
     this.roleTemplates = rbac;
+    this.abac = abac;
     this.subjects = subjects;
-    this.config = config;
 
     this.loadedRoleIds = new Set();
     this.rules = sortRules([
@@ -52,6 +59,33 @@ export class Permissions<
     if (user.role) {
       this.loadRole(user.role);
     }
+  }
+
+  public loadRoles(roles: RoleTemplates<SubjectType, Role>) {
+    const newRolesMapping = roles.reduce<
+      Record<string, RoleTemplate<SubjectType, Role>>
+    >(
+      (mapping, role) => ({
+        ...mapping,
+        [`${role.subjectType}.${role.name}`]: role,
+      }),
+      {}
+    );
+
+    const currentRolesMapping = this.roleTemplates.reduce<
+      Record<string, RoleTemplate<SubjectType, Role>>
+    >(
+      (mapping, role) => ({
+        ...mapping,
+        [`${role.subjectType}.${role.name}`]: role,
+      }),
+      {}
+    );
+
+    this.roleTemplates = Object.values({
+      ...currentRolesMapping,
+      ...newRolesMapping,
+    });
   }
 
   private findRoleTemplate(role: Role, subjectType?: SubjectType) {
@@ -219,7 +253,7 @@ export class Permissions<
     subjectType?: SubjectType,
     subject?: Subject<Role>
   ) {
-    const roleId = subjectType ? `${subjectType}/${subject?.id}` : role;
+    const roleId = subjectType ? `${subjectType}/${subject?.id}/${role}` : role;
     if (this.loadedRoleIds.has(roleId)) {
       return;
     }
@@ -227,12 +261,14 @@ export class Permissions<
     const roleTemplate = role
       ? this.findRoleTemplate(role, subjectType)
       : undefined;
-    if (!roleTemplate) {
+    if (!roleTemplate && role !== DefaultRole) {
       throw new UnknownRole(
         `User '${this.user.id}' is assigned an unknown ${
           subjectType || ''
         } role '${role}'.`
       );
+    } else if (!roleTemplate) {
+      return;
     }
 
     return this.loadRules(roleTemplate?.rules || [], { subject });
@@ -240,7 +276,7 @@ export class Permissions<
 
   updateUserRules(user: User<Role>) {
     this.user = user;
-    this.loadRules(this.config?.abac);
+    this.loadRules(this.abac);
   }
 
   loadRules(rules: Rules, context: Record<string, any> = {}) {
@@ -251,6 +287,9 @@ export class Permissions<
   }
 
   pullRoleFromSubject(subjectType: SubjectType, subject: Subject<Role>) {
+    // Auto load 'default' role if defined, as it applies to everyone
+    this.loadRole(DefaultRole as Role, subjectType, subject);
+
     // Auto assign "author" role for subjects created by the user
     const authorAssignedRole = this.subjects[subjectType]?.author?.assignRole;
     if (authorAssignedRole && subject.createdBy === this.user.id) {

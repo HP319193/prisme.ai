@@ -7,14 +7,19 @@ import { MockStorage } from '../../DSULStorage/__mocks__';
 const DEFAULT_ID = '123456';
 jest.mock('nanoid', () => ({ nanoid: () => DEFAULT_ID }));
 
-const getMockedAccessManager = () => ({
-  findAll: jest.fn(),
-  create: jest.fn(),
-  get: jest.fn(),
-  update: jest.fn(),
-  delete: jest.fn(),
-  deleteMany: jest.fn(),
-});
+const getMockedAccessManager = () => {
+  const mock = {
+    findAll: jest.fn(),
+    create: jest.fn(),
+    get: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    deleteMany: jest.fn(),
+  };
+  (<any>mock).as = jest.fn(() => mock);
+
+  return mock;
+};
 
 const getMockedBroker = () => {
   const mock: any = {

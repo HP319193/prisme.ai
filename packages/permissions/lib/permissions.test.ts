@@ -21,7 +21,7 @@ export enum SubjectType {
 }
 
 enum Role {
-  Admin = 'admin',
+  Owner = 'owner',
   Collaborator = 'collaborator',
   Guest = 'guest',
 }
@@ -30,15 +30,24 @@ describe('Access management', () => {
   const config: PermissionsConfig<SubjectType, Role> = configs.accessManagement;
 
   it('Admins can create workspaces/pages', () => {
-    const perms = new Permissions({ id: 'myUserId', role: Role.Admin }, config);
+    const perms = new Permissions({ id: 'myUserId', role: Role.Owner }, config);
     expect(perms.can(ActionType.Create, SubjectType.Workspace)).toBe(true);
     expect(perms.can(ActionType.Create, SubjectType.Page)).toBe(true);
   });
 
   it('Guests cannot create workspaces nor pages', () => {
+    // If we dont provide specific examples, test will fail as native rules on "createdBy" field would theoritically allow the creation
     const perms = new Permissions({ id: 'myUserId', role: Role.Guest }, config);
-    expect(perms.can(ActionType.Create, SubjectType.Workspace)).toBe(false);
-    expect(perms.can(ActionType.Create, SubjectType.Page)).toBe(false);
+    expect(
+      perms.can(ActionType.Create, SubjectType.Workspace, {
+        name: 'some name',
+      })
+    ).toBe(false);
+    expect(
+      perms.can(ActionType.Create, SubjectType.Page, {
+        name: 'some name',
+      })
+    ).toBe(false);
   });
 
   it('Admin can read all events', () => {
@@ -47,7 +56,7 @@ describe('Access management', () => {
     } as any as Subject;
 
     const permsAdmin = new Permissions(
-      { id: 'myUserId', role: Role.Admin },
+      { id: 'myUserId', role: Role.Owner },
       config
     );
     expect(permsAdmin.can(ActionType.Read, SubjectType.Event)).toBe(true);
@@ -76,14 +85,26 @@ describe('Access management', () => {
       { id: 'myUserId', role: Role.Guest },
       config
     );
-    expect(permsGuest.can(ActionType.Delete, SubjectType.Event)).toBe(false);
+
+    // If we dont provide a specific example, test will fail as native rules on "permissions.*.policies.*" would theoritically allow deletion/update
+    const event = {
+      type: 'someEvent',
+      payload: {},
+    };
+    expect(permsGuest.can(ActionType.Delete, SubjectType.Event, event)).toBe(
+      false
+    );
 
     const permsAdmin = new Permissions(
-      { id: 'myUserId', role: Role.Admin },
+      { id: 'myUserId', role: Role.Owner },
       config
     );
-    expect(permsAdmin.can(ActionType.Delete, SubjectType.Event)).toBe(false);
-    expect(permsAdmin.can(ActionType.Update, SubjectType.Event)).toBe(false);
+    expect(permsAdmin.can(ActionType.Delete, SubjectType.Event, event)).toBe(
+      false
+    );
+    expect(permsAdmin.can(ActionType.Update, SubjectType.Event, event)).toBe(
+      false
+    );
   });
 
   it('All reads should be refused by default', () => {
@@ -121,7 +142,7 @@ describe('ABAC > Some custom attribute based authorization', () => {
     expect(permsGuest.can(ActionType.Read, SubjectType.Page, page)).toBe(true);
 
     const permsAdmin = new Permissions(
-      { id: 'myUserId', role: Role.Admin },
+      { id: 'myUserId', role: Role.Owner },
       config
     );
     expect(permsAdmin.can(ActionType.Read, SubjectType.Page, page)).toBe(true);
@@ -165,7 +186,7 @@ describe('ABAC > Owner permissions', () => {
     ).toBe(true);
 
     const adminPerms = new Permissions(
-      { id: 'myUserId', role: Role.Admin },
+      { id: 'myUserId', role: Role.Owner },
       config
     );
     expect(
@@ -181,7 +202,7 @@ describe('ABAC > Owner permissions', () => {
   });
 
   it('Nobody (including admins) should be able to read/update a workspace/page of someone else', () => {
-    const perms = new Permissions({ id: 'myUserId', role: Role.Admin }, config);
+    const perms = new Permissions({ id: 'myUserId', role: Role.Owner }, config);
     expect(
       perms.can(ActionType.Read, SubjectType.Workspace, <any>{
         id: 'gneuh',
@@ -210,7 +231,7 @@ describe('ABAC > Owner permissions', () => {
   });
 
   it('Anyone should be able to read/update a page wih public read/update policies', () => {
-    const perms = new Permissions({ id: 'myUserId', role: Role.Admin }, config);
+    const perms = new Permissions({ id: 'myUserId', role: Role.Owner }, config);
     const publicPermissions = {
       [PublicAccess]: {
         policies: {
@@ -246,7 +267,7 @@ describe('ABAC > Owner permissions', () => {
 
   it('Admin or guest can manage their own user', () => {
     const permsAdmin = new Permissions(
-      { id: 'myUserId', role: Role.Admin },
+      { id: 'myUserId', role: Role.Owner },
       config
     );
     expect(
@@ -268,7 +289,7 @@ describe('ABAC > Owner permissions', () => {
 
   it('Nobody (including admins) should be able to manage some other user', () => {
     const permsAdmin = new Permissions(
-      { id: 'myUserId', role: Role.Admin },
+      { id: 'myUserId', role: Role.Owner },
       config
     );
     expect(
@@ -291,7 +312,7 @@ describe('ABAC > Owner permissions', () => {
 
 describe('ABAC > Grant permissions', () => {
   it('Any admin can grant a specific permission to someone else on its own workspace', () => {
-    const adminUser = { id: 'adminUserId', role: Role.Admin };
+    const adminUser = { id: 'adminUserId', role: Role.Owner };
     const collaboratorUser = {
       id: 'collaboratorId',
       role: Role.Collaborator,
@@ -333,7 +354,7 @@ describe('ABAC > Grant permissions', () => {
   });
 
   it('Any admin can make his page publicly readable', () => {
-    const adminUser = { id: 'adminUserId', role: Role.Admin };
+    const adminUser = { id: 'adminUserId', role: Role.Owner };
     const collaboratorUser = {
       id: 'collaboratorId',
       role: Role.Collaborator,
@@ -384,7 +405,7 @@ describe('ABAC > Grant permissions', () => {
   });
 
   it('Any admin can grant a list of permissions to someone else on its own workspace', () => {
-    const adminUser = { id: 'adminUserId', role: Role.Admin };
+    const adminUser = { id: 'adminUserId', role: Role.Owner };
     const collaboratorUser = {
       id: 'collaboratorId',
       role: Role.Collaborator,
@@ -458,7 +479,7 @@ describe('ABAC > Grant permissions', () => {
   });
 
   it('Any admin can grant a specific permission to someone else on a workspace he has been granted manage_permissions permission', () => {
-    const adminUser = { id: 'adminUserId', role: Role.Admin };
+    const adminUser = { id: 'adminUserId', role: Role.Owner };
     const collaboratorUser = {
       id: 'collaboratorId',
       role: Role.Collaborator,
@@ -533,7 +554,7 @@ describe('ABAC > Grant permissions', () => {
   });
 
   it('An admin can revoke a specific permission from any collaborator on one of his workspaces', () => {
-    const adminUser = { id: 'adminUserId', role: Role.Admin };
+    const adminUser = { id: 'adminUserId', role: Role.Owner };
     const collaboratorUser = {
       id: 'collaboratorId',
       role: Role.Collaborator,
@@ -583,7 +604,7 @@ describe('ABAC > Grant permissions', () => {
 
   it('No admin can update collaborators field without manage_permissions permission', () => {
     const adminPerms = new Permissions(
-      { id: 'myUserId', role: Role.Admin },
+      { id: 'myUserId', role: Role.Owner },
       config
     );
     const workspace = {
@@ -628,7 +649,7 @@ describe('Subject-attached Roles', () => {
       createdBy: 'someOtherAdminId',
       permissions: {
         [adminUser.id]: {
-          role: Role.Admin,
+          role: Role.Owner,
         },
       },
     } as Subject;
@@ -649,7 +670,7 @@ describe('Subject-attached Roles', () => {
       createdBy: 'someOtherAdminId',
       permissions: {
         [adminUser.id]: {
-          role: Role.Admin,
+          role: Role.Owner,
         },
       },
     } as Subject;
@@ -664,7 +685,7 @@ describe('Subject-attached Roles', () => {
       createdBy: 'someOtherAdminId',
       permissions: {
         someOtherAdminId: {
-          role: Role.Admin,
+          role: Role.Owner,
         },
       },
     } as any as Subject;
@@ -718,7 +739,7 @@ describe('Subject-attached Roles', () => {
       createdBy: 'someOtherAdminId',
       permissions: {
         [adminUser.id]: {
-          role: Role.Admin,
+          role: Role.Owner,
         },
       },
     } as Subject;
@@ -752,7 +773,7 @@ describe('Subject-attached Roles', () => {
       createdBy: 'someOtherAdminId',
       permissions: {
         [adminUser.id]: {
-          role: Role.Admin,
+          role: Role.Owner,
         },
       },
     } as Subject;
@@ -786,7 +807,7 @@ describe('Subject-attached Roles', () => {
       createdBy: 'someOtherGuy',
       permissions: {
         [adminUser.id]: {
-          role: Role.Admin,
+          role: Role.Owner,
         },
       },
     } as Subject;

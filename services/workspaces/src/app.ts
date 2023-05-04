@@ -35,7 +35,10 @@ process.on('SIGINT', exit);
 
 const broker = initEDA();
 
-const accessManager = initAccessManager(PERMISSIONS_STORAGE_MONGODB_OPTIONS);
+const accessManager = initAccessManager(
+  PERMISSIONS_STORAGE_MONGODB_OPTIONS,
+  broker
+);
 accessManager.start();
 
 const dsulStorage = new DSULStorage(
