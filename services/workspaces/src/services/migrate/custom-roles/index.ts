@@ -144,12 +144,7 @@ export async function initCustomRoles(
   let workspacesWithPrivateSharedPages = 0;
   for (let task of migrationTasks) {
     try {
-      let {
-        workspaceId,
-        hasSomePublicPage,
-        hasSomePrivateSharedPage,
-        workspaceLabels,
-      } = task;
+      let { workspaceId, hasSomePrivateSharedPage, workspaceLabels } = task;
       // Check that DSUL index exists
       await workspaces.getWorkspaceAsAdmin(workspaceId);
 

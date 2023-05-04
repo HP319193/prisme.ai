@@ -370,18 +370,6 @@ class Workspaces {
         .copy(
           {
             workspaceId,
-            dsulType: DSULType.Security,
-          },
-          {
-            workspaceId: newWorkspace.id,
-            dsulType: DSULType.Security,
-          }
-        )
-        .catch(() => undefined),
-      this.storage
-        .copy(
-          {
-            workspaceId,
             ...automationsQuery,
           },
           {
@@ -433,6 +421,22 @@ class Workspaces {
 
     // Duplicate pages in database
     await this.pages.duplicateWorkspacePages(workspaceId, newWorkspace.id);
+
+    try {
+      const security = new Security(
+        this.accessManager,
+        this.broker,
+        this.storage
+      );
+      const sourceWorkspaceSecurity = await security.getSecurity(workspaceId);
+      await security.updateSecurity(newWorkspace.id, sourceWorkspaceSecurity);
+    } catch (err) {
+      logger.warn({
+        msg: 'Could not duplicate workspace security during workspace duplication',
+        workspaceId,
+        err,
+      });
+    }
 
     return newWorkspace;
   };
