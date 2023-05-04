@@ -638,7 +638,7 @@ export class AccessManager<
       >;
 
       const docs = await RolesModel.find(query);
-      roles = docs.map((cur) => cur.toJSON());
+      roles = docs.map((cur) => cur.toJSON()).filter((cur) => !cur.disabled);
       if (this.customRoles && (opts?.cache || cacheKey in this.customRoles)) {
         this.customRoles[cacheKey] = roles;
       }
