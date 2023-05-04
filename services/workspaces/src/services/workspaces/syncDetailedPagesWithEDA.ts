@@ -52,10 +52,6 @@ export async function syncDetailedPagesWithEDA(
         );
         (<any>detailedPage).apiKey = undefined;
       }
-    } else {
-      detailedPage.apiKey = (
-        await pages.getUpdatedPageApiKey(detailedPage)
-      ).apiKey;
     }
     if (!workspaceSlug) {
       workspaceSlug = detailedPage.workspaceSlug;
