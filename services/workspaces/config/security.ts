@@ -53,11 +53,15 @@ export const INIT_WORKSPACE_SECURITY: Prismeai.WorkspaceSecurity = {
         action: 'create',
         subject: 'events',
         reason: `Anyone can create any events`,
+        conditions: {
+          'source.serviceTopic': 'topic:runtime:emit',
+        },
       },
       {
         action: 'read',
         subject: 'events',
         conditions: {
+          'source.serviceTopic': 'topic:runtime:emit',
           'source.sessionId': '{{session.id}}',
         },
         reason: `Anyone can read any events from its own session`,
