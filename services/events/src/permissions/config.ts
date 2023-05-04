@@ -139,6 +139,7 @@ export const config: PermissionsConfig<
       subject: SubjectType.Event,
       conditions: {
         'source.userId': '${user.id}',
+        'source.serviceTopic': 'topic:runtime:emit',
       },
     },
 
