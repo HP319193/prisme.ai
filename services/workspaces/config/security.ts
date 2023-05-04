@@ -47,6 +47,31 @@ export const INIT_WORKSPACE_SECURITY: Prismeai.WorkspaceSecurity = {
           },
         },
       },
+
+      // By default, everyone can create events & listen their responses
+      {
+        action: 'create',
+        subject: 'events',
+        reason: `Anyone can create any events`,
+      },
+      {
+        action: 'read',
+        subject: 'events',
+        conditions: {
+          'source.sessionId': '{{session.id}}',
+        },
+        reason: `Anyone can read any events from its own session`,
+      },
+      {
+        action: 'create',
+        subject: 'files',
+        conditions: {
+          mimetype: {
+            $regex: '^(.*)$',
+          },
+        },
+        reason: `Anyone can upload any file`,
+      },
     ],
   },
 };

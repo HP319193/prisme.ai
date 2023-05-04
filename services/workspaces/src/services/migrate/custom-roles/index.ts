@@ -15,33 +15,6 @@ import {
 } from '../../../../config';
 
 const SECURITY_MIGRATED_WORKSPACE_LABEL = 'customRoles:migrated';
-const SECURITY_WILDCARD_RULES_WORKSPACE_LABEL = 'customRoles:wildcardRules';
-
-const WildCardRules = [
-  {
-    action: 'create',
-    subject: 'events',
-    reason: `Anyone can create any events (source=${SECURITY_MIGRATED_WORKSPACE_LABEL})`,
-  },
-  {
-    action: 'read',
-    subject: 'events',
-    conditions: {
-      'source.sessionId': '{{session.id}}',
-    },
-    reason: `Anyone can read any events from its own session (source=${SECURITY_MIGRATED_WORKSPACE_LABEL})`,
-  },
-  {
-    action: 'create',
-    subject: 'files',
-    conditions: {
-      mimetype: {
-        $regex: '^(.*)$',
-      },
-    },
-    reason: `Anyone can upload any file (source=${SECURITY_MIGRATED_WORKSPACE_LABEL})`,
-  },
-];
 
 interface MigrationOptions {
   workspace: string;
@@ -186,14 +159,6 @@ export async function initCustomRoles(
 
       if (hasSomePrivateSharedPage) {
         workspacesWithPrivateSharedPages++;
-      }
-
-      if (
-        hasSomePublicPage &&
-        !workspaceLabels.includes(SECURITY_WILDCARD_RULES_WORKSPACE_LABEL)
-      ) {
-        addRules.push(...WildCardRules);
-        addLabels.push(SECURITY_WILDCARD_RULES_WORKSPACE_LABEL);
       }
 
       if (!workspaceLabels.includes(SECURITY_MIGRATED_WORKSPACE_LABEL)) {
