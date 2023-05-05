@@ -51,6 +51,7 @@ export const errorDecorator = (
     Object.values(KnownErrorCodes).includes(
       (err as PrismeError).error as KnownErrorCodes
     ) ||
+    (err.stack || '').includes('PrismeError') ||
     (err?.constructor &&
       Object.getPrototypeOf(err?.constructor)?.name === 'PrismeError');
   // Server error and stack trace is available - it is most likely a developer error

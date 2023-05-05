@@ -1,7 +1,8 @@
 import { createContext, useContext } from 'react';
+import { UserPermissions } from '../../utils/api';
 
 type SubjectType = PrismeaiAPI.GetPermissions.Parameters.SubjectType;
-type UserPermissions = Prismeai.UserPermissions;
+
 type Roles = PrismeaiAPI.GetRoles.Responses.$200;
 export interface PermissionsContext {
   usersPermissions: Map<string, UserPermissions[]>;
@@ -10,7 +11,7 @@ export interface PermissionsContext {
     subjectType: SubjectType,
     subjectId: string,
     permissions: UserPermissions
-  ) => Promise<PrismeaiAPI.Share.Responses.$200 | null>;
+  ) => Promise<UserPermissions | null>;
   removeUserPermissions: (
     subjectType: SubjectType,
     subjectId: string,

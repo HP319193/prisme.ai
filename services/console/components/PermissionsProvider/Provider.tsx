@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 import isEqual from 'lodash/isEqual';
 import { notification } from '@prisme.ai/design-system';
 import context, { PermissionsContext } from './context';
-import api, { ApiError } from '../../utils/api';
-
-type UserPermissions = Prismeai.UserPermissions;
+import api, { UserPermissions, ApiError } from '../../utils/api';
 
 const addUserToMap = (
   subjectId: string,

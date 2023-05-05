@@ -179,9 +179,10 @@ export async function syncDetailedPagesWithEDA(
             | Prismeai.PagePermissionsShared
             | Prismeai.PagePermissionsDeleted;
           const isOrWasPublic =
-            !!(<Prismeai.PagePermissionsShared['payload']>payload).permissions
+            !!(<Prismeai.PagePermissionsShared['payload']>payload).target
               ?.public ||
-            (<Prismeai.PagePermissionsDeleted['payload']>payload).userId == '*';
+            (<Prismeai.PagePermissionsDeleted['payload']>payload).target?.id ==
+              '*';
           if (!isOrWasPublic) {
             return false;
           }
