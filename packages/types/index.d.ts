@@ -1858,7 +1858,7 @@ declare namespace Prismeai {
      * [
      *   {
      *     "target": {
-     *       "email": "admin@prisme.ai"
+     *       "id": "userId1"
      *     },
      *     "permissions": {
      *       "role": "admin"
@@ -1866,7 +1866,7 @@ declare namespace Prismeai {
      *   },
      *   {
      *     "target": {
-     *       "email": "readonly@prisme.ai"
+     *       "id": "userId2"
      *     },
      *     "permissions": {
      *       "policies": {
@@ -2371,25 +2371,20 @@ declare namespace Prismeai {
         };
     }
     export type UserPermissionsTarget = {
-        email?: string;
         id: string;
         public?: boolean;
         role?: string;
+        displayName?: string;
     } | {
-        email: string;
-        id?: string;
-        public?: boolean;
-        role?: string;
-    } | {
-        email?: string;
         id?: string;
         public: boolean;
         role?: string;
+        displayName?: string;
     } | {
-        email?: string;
         id?: string;
         public?: boolean;
         role: string;
+        displayName?: string;
     };
     export interface UserTopic {
         /**
@@ -3010,6 +3005,22 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace FindContacts {
+        export type RequestBody = {
+            email: string;
+            ids?: string[];
+        } | {
+            email?: string;
+            ids: string[];
+        };
+        namespace Responses {
+            export interface $200 {
+                contacts: Prismeai.Contact[];
+            }
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace GetApp {
         namespace Parameters {
             export type AppSlug = string;
@@ -3209,7 +3220,7 @@ declare namespace PrismeaiAPI {
                  * [
                  *   {
                  *     "target": {
-                 *       "email": "admin@prisme.ai"
+                 *       "id": "userId1"
                  *     },
                  *     "permissions": {
                  *       "role": "admin"
@@ -3217,7 +3228,7 @@ declare namespace PrismeaiAPI {
                  *   },
                  *   {
                  *     "target": {
-                 *       "email": "readonly@prisme.ai"
+                 *       "id": "userId2"
                  *     },
                  *     "permissions": {
                  *       "policies": {
@@ -3274,19 +3285,6 @@ declare namespace PrismeaiAPI {
             export type $200 = Prismeai.WorkspaceSecurity;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
-            export type $403 = Prismeai.ForbiddenError;
-            export type $404 = Prismeai.ObjectNotFoundError;
-        }
-    }
-    namespace GetThisContact {
-        namespace Parameters {
-            export type ContactId = string;
-        }
-        export interface PathParameters {
-            contactId: Parameters.ContactId;
-        }
-        namespace Responses {
-            export type $200 = Prismeai.Contact;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }

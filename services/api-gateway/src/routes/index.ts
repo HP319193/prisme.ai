@@ -30,7 +30,7 @@ export default async function initRoutes(
   app.use(
     bodyParser.json({ limit: syscfg.REQUEST_MAX_SIZE }),
     validationMiddleware({
-      ignorePaths: ['^/sys', '^/v2/contacts'],
+      ignorePaths: ['^/sys'],
     }),
     validationErrorMiddleware
   );

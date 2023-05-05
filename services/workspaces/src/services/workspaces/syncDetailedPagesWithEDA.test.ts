@@ -319,8 +319,10 @@ describe('Sync DetailedPages with the EDA', () => {
     await broker.send<Prismeai.PagePermissionsShared['payload']>(
       EventType.PagePermissionsShared,
       {
-        permissions: {
+        target: {
           public: true,
+        },
+        permissions: {
           policies: {
             read: true,
           },
@@ -355,7 +357,9 @@ describe('Sync DetailedPages with the EDA', () => {
     await broker.send<Prismeai.PagePermissionsDeleted['payload']>(
       EventType.PagePermissionsDeleted,
       {
-        userId: '*',
+        target: {
+          id: '*',
+        },
         subjectId: page.id!,
       },
       {

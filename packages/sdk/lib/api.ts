@@ -4,8 +4,7 @@ import { Event, Workspace } from './types';
 import { Events } from './events';
 import { removedUndefinedProperties } from './utils';
 import WorkspacesEndpoint from './endpoints/workspaces';
-
-type UserPermissions = Prismeai.UserPermissions;
+import ApiError from './ApiError';
 
 interface PageWithMetadata extends Prismeai.Page {
   createdAt: string;
@@ -13,6 +12,16 @@ interface PageWithMetadata extends Prismeai.Page {
   updatedAt: string;
   updatedBy: string;
 }
+
+export type UserPermissions = {
+  permissions: Prismeai.UserPermissions['permissions'];
+  target: {
+    id?: string;
+    email?: string;
+    public?: boolean;
+    displayName?: string;
+  };
+};
 
 export class Api extends Fetcher {
   private sessionId?: string;
@@ -383,31 +392,88 @@ export class Api extends Fetcher {
     }
   }
 
+  async findContacts(
+    query: PrismeaiAPI.FindContacts.RequestBody
+  ): Promise<PrismeaiAPI.FindContacts.Responses.$200> {
+    return await this.post(`/contacts`, query);
+  }
+
   async getPermissions(
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string
-  ): Promise<PrismeaiAPI.GetPermissions.Responses.$200> {
-    return await this.get(`/${subjectType}/${subjectId}/permissions`);
+  ): Promise<{ result: UserPermissions[] }> {
+    const permissions: PrismeaiAPI.GetPermissions.Responses.$200 =
+      await this.get(`/${subjectType}/${subjectId}/permissions`);
+    const contacts = await this.findContacts({
+      ids: permissions.result
+        .filter((cur) => cur.target.id && cur.target.id !== '*')
+        .map((cur) => cur.target.id!),
+    });
+    return {
+      result: permissions.result.map((perm) => {
+        const user = perm.target.id
+          ? contacts.contacts.find((cur) => cur.id === perm.target.id)
+          : undefined;
+        const displayName = `${user?.firstName} ${user?.lastName}`;
+        return {
+          ...perm,
+          target: {
+            ...perm.target,
+            id: perm.target.id!,
+            displayName,
+          },
+        };
+      }),
+    };
   }
 
   async addPermissions(
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string,
     permissions: UserPermissions
-  ): Promise<PrismeaiAPI.Share.Responses.$200> {
-    return await this.post(
+  ): Promise<UserPermissions> {
+    const email: string = (<any>permissions).target.email;
+    const contacts = email
+      ? await this.findContacts({
+          email,
+        })
+      : { contacts: [] };
+    if (!contacts.contacts.length) {
+      throw new ApiError(
+        {
+          error: 'CollaboratorNotFound',
+          message: 'This user does not exist',
+          details: { email },
+        },
+        404
+      );
+    }
+    const result: PrismeaiAPI.Share.Responses.$200 = await this.post(
       `/${subjectType}/${subjectId}/permissions`,
-      permissions
+      {
+        ...permissions,
+        target: {
+          id: contacts?.contacts[0].id,
+        },
+      }
     );
+    return {
+      ...result,
+      target: {
+        ...result.target,
+        id: result.target.id!,
+        email,
+      },
+    };
   }
 
   async deletePermissions(
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string,
-    userEmail: string
+    userId: string
   ): Promise<PrismeaiAPI.RevokePermissions.Responses.$200> {
     return await this.delete(
-      `/${subjectType}/${subjectId}/permissions/${userEmail}`
+      `/${subjectType}/${subjectId}/permissions/${userId}`
     );
   }
 

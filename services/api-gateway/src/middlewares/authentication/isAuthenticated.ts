@@ -25,12 +25,16 @@ export function isInternallyAuthenticated(
     return next();
   }
 
-  const role = req.headers[syscfg.ROLE_HEADER];
-  if (role === Role.SuperAdmin) {
+  if (isSuperAdmin(req)) {
     return next();
   }
 
   throw new AuthenticationError();
+}
+
+export function isSuperAdmin(req: Request) {
+  const role = req.headers[syscfg.ROLE_HEADER];
+  return role === Role.SuperAdmin;
 }
 
 export function enforceMFA(req: Request, res: Response, next: NextFunction) {

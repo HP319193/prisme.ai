@@ -71,7 +71,7 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
       .filter(({ target }) => !!target?.id && target?.id != '*') // Public permission has id='*'
       .map(({ target }) => ({
         key: target?.id,
-        email: target?.email,
+        displayName: target?.displayName,
         actions: generateRowButtons(() => {
           if (!target?.id) return;
           removeUserPermissions(subjectType, subjectId, target?.id);
@@ -200,7 +200,11 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
           <Table
             dataSource={dataSource}
             columns={[
-              { title: t('share.email'), dataIndex: 'email', key: 'email' },
+              {
+                title: t('share.displayName'),
+                dataIndex: 'displayName',
+                key: 'displayName',
+              },
               {
                 title: t('share.actions'),
                 dataIndex: 'actions',

@@ -96,7 +96,7 @@ const ShareWorkspacePopover = ({
       .filter(({ target }) => !!target?.id && target?.id != '*') // Public permission has id='*'
       .map(({ target, permissions }) => ({
         key: target?.id,
-        email: target?.email,
+        displayName: target?.displayName,
         role: permissions.role,
         actions: generateRowButtons(() => {
           if (!target?.id) return;
@@ -184,7 +184,11 @@ const ShareWorkspacePopover = ({
       <Table
         dataSource={dataSource}
         columns={[
-          { title: t('share.email'), dataIndex: 'email', key: 'email' },
+          {
+            title: t('share.displayName'),
+            dataIndex: 'displayName',
+            key: 'displayName',
+          },
           {
             title: t('share.role'),
             dataIndex: 'role',
