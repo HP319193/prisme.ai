@@ -100,16 +100,15 @@ const ShareWorkspacePopover = ({
         role: permissions.role,
         actions: generateRowButtons(() => {
           if (!target?.id) return;
+          removeUserPermissions(subjectType, subjectId, target?.id);
           if (target?.id === userId) {
             // User is removing himself his access to the workspace
             push('/workspaces');
-            deleteWorkspace();
             notification.success({
               message: t('share.leave', { name }),
               placement: 'bottomRight',
             });
           }
-          removeUserPermissions(subjectType, subjectId, target?.id);
         }),
       }));
 
