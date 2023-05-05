@@ -15,7 +15,7 @@ const addUserToMap = (
   const newUsersPermissions = new Map(usersPermissions);
   newUsersPermissions.set(subjectId, [
     ...(usersPermissions.get(subjectId) || []).filter(
-      ({ email }) => email !== newUserPermissions.email
+      ({ target }) => target?.email !== newUserPermissions?.target?.email
     ),
     newUserPermissions,
   ]);
@@ -31,7 +31,7 @@ const removeUserFromMap = (
   );
   newUsersPermissions.set(subjectId, [
     ...(usersPermissions.get(subjectId) || []).filter(
-      ({ email, id }) => email !== userEmail && id !== userEmail
+      ({ target }) => target?.email !== userEmail && target?.id !== userEmail
     ),
   ]);
 

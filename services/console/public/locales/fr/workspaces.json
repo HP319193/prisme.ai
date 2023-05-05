@@ -1527,7 +1527,7 @@
     "type_workspaces.pages.updated": "La page <page>{{page}}</page> a été mise à jour",
     "type_workspaces.versions.published": "La version <tooltip title=\"{{event.payload.version.description}}\">{{event.payload.version.name}}</tooltip> a été créée. <rollback>Revenir à cette version</rollback>",
     "type_workspaces.versions.rollback": "La version {{event.payload.version.name}} a été récupérée",
-    "type_workspaces.permissions.shared": "Le Workspace a été partagée avec {{share}}",
+    "type_workspaces.permissions.shared": "Le Workspace a été partagé avec {{share}}",
     "type_workspaces.permissions.deleted": "Le Workspace n'est plus partagé avec {{share}}",
     "type_apps.published": "L'app {{appName}} a été publiée",
     "type_runtime.automations.executed": "L'automatisation <automation>{{automation}}</automation> a été exécutée",

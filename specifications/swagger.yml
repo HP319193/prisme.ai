@@ -1118,14 +1118,20 @@ components:
       items:
         $ref: '#/components/schemas/UserPermissions'
       example:
-        - email: admin@prisme.ai
-          role: admin
-        - email: readonly@prisme.ai
-          policies:
-            read: true
-        - public: true
-          policies:
-            read: true
+        - target:
+            email: admin@prisme.ai
+          permissions:
+            role: admin
+        - target:
+            email: readonly@prisme.ai
+          permissions:
+            policies:
+              read: true
+        - target:
+            public: true
+          permissions:
+            policies:
+              read: true
 
     Role:
       type: string
@@ -1143,12 +1149,13 @@ components:
         manage_permissions:
           type: boolean
 
-    UserPermissions:
+    UserPermissionsTarget:
       type: object
-      additionalProperties: false
-      oneOf:
+      anyOf:
+        - required: ['id']
         - required: ['email']
         - required: ['public']
+        - required: ['role']
       properties:
         email:
           type: string
@@ -1157,9 +1164,24 @@ components:
         public:
           type: boolean
         role:
-          $ref: '#/components/schemas/Role'
-        policies:
-          $ref: '#/components/schemas/Policies'
+          type: string
+
+    UserPermissions:
+      type: object
+      additionalProperties: false
+      required:
+        - target
+        - permissions
+      properties: &UserPermissions
+        target:
+          $ref: "#/components/schemas/UserPermissionsTarget"
+        permissions:
+          type: object
+          properties:
+            role:
+              $ref: '#/components/schemas/Role'
+            policies:
+              $ref: '#/components/schemas/Policies'
 
     PermissionsMap:
       type: object
@@ -2045,11 +2067,11 @@ components:
           required:
             - subjectId
             - permissions
+            - target
           properties:
             subjectId:
               type: string
-            permissions:
-              $ref: '#/components/schemas/UserPermissions'
+            <<: *UserPermissions
 
     WorkspacePermissionsDeleted:
       type: object
@@ -2066,12 +2088,12 @@ components:
           type: object
           required:
             - subjectId
-            - userId
+            - target
           properties:
             subjectId:
               type: string
-            userId:
-              type: string
+            target:
+              $ref: '#/components/schemas/UserPermissionsTarget'
 
     UninstalledAppInstance:
       type: object
@@ -2326,11 +2348,11 @@ components:
           required:
             - subjectId
             - permissions
+            - target
           properties:
             subjectId:
               type: string
-            permissions:
-              $ref: '#/components/schemas/UserPermissions'
+            <<: *UserPermissions
 
     PagePermissionsDeleted:
       type: object
@@ -2347,12 +2369,12 @@ components:
           type: object
           required:
             - subjectId
-            - userId
+            - target
           properties:
             subjectId:
               type: string
-            userId:
-              type: string
+            target:
+              $ref: '#/components/schemas/UserPermissionsTarget'
 
     ########################## Runtime events ##########################
 

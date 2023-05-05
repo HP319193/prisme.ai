@@ -1801,7 +1801,7 @@ declare namespace Prismeai {
         type: "workspaces.pages.permissions.deleted";
         payload: {
             subjectId: string;
-            userId: string;
+            target: UserPermissionsTarget;
         };
     }
     export interface PagePermissionsShared {
@@ -1812,7 +1812,11 @@ declare namespace Prismeai {
         type: "workspaces.pages.permissions.shared";
         payload: {
             subjectId: string;
-            permissions: UserPermissions;
+            target: UserPermissionsTarget;
+            permissions: {
+                role?: Role;
+                policies?: Policies;
+            };
         };
     }
     export interface PendingWait {
@@ -1853,19 +1857,31 @@ declare namespace Prismeai {
      * example:
      * [
      *   {
-     *     "email": "admin@prisme.ai",
-     *     "role": "admin"
-     *   },
-     *   {
-     *     "email": "readonly@prisme.ai",
-     *     "policies": {
-     *       "read": true
+     *     "target": {
+     *       "email": "admin@prisme.ai"
+     *     },
+     *     "permissions": {
+     *       "role": "admin"
      *     }
      *   },
      *   {
-     *     "public": true,
-     *     "policies": {
-     *       "read": true
+     *     "target": {
+     *       "email": "readonly@prisme.ai"
+     *     },
+     *     "permissions": {
+     *       "policies": {
+     *         "read": true
+     *       }
+     *     }
+     *   },
+     *   {
+     *     "target": {
+     *       "public": true
+     *     },
+     *     "permissions": {
+     *       "policies": {
+     *         "read": true
+     *       }
      *     }
      *   }
      * ]
@@ -2347,18 +2363,33 @@ declare namespace Prismeai {
          */
         id?: string;
     }
-    export type UserPermissions = {
+    export interface UserPermissions {
+        target: UserPermissionsTarget;
+        permissions: {
+            role?: Role;
+            policies?: Policies;
+        };
+    }
+    export type UserPermissionsTarget = {
+        email?: string;
+        id: string;
+        public?: boolean;
+        role?: string;
+    } | {
         email: string;
         id?: string;
         public?: boolean;
-        role?: Role;
-        policies?: Policies;
+        role?: string;
     } | {
         email?: string;
         id?: string;
         public: boolean;
-        role?: Role;
-        policies?: Policies;
+        role?: string;
+    } | {
+        email?: string;
+        id?: string;
+        public?: boolean;
+        role: string;
     };
     export interface UserTopic {
         /**
@@ -2512,7 +2543,7 @@ declare namespace Prismeai {
         type: "workspaces.permissions.deleted";
         payload: {
             subjectId: string;
-            userId: string;
+            target: UserPermissionsTarget;
         };
     }
     export interface WorkspacePermissionsShared {
@@ -2523,7 +2554,11 @@ declare namespace Prismeai {
         type: "workspaces.permissions.shared";
         payload: {
             subjectId: string;
-            permissions: UserPermissions;
+            target: UserPermissionsTarget;
+            permissions: {
+                role?: Role;
+                policies?: Policies;
+            };
         };
     }
     export interface WorkspaceRole {
@@ -3173,19 +3208,31 @@ declare namespace PrismeaiAPI {
                  * example:
                  * [
                  *   {
-                 *     "email": "admin@prisme.ai",
-                 *     "role": "admin"
-                 *   },
-                 *   {
-                 *     "email": "readonly@prisme.ai",
-                 *     "policies": {
-                 *       "read": true
+                 *     "target": {
+                 *       "email": "admin@prisme.ai"
+                 *     },
+                 *     "permissions": {
+                 *       "role": "admin"
                  *     }
                  *   },
                  *   {
-                 *     "public": true,
-                 *     "policies": {
-                 *       "read": true
+                 *     "target": {
+                 *       "email": "readonly@prisme.ai"
+                 *     },
+                 *     "permissions": {
+                 *       "policies": {
+                 *         "read": true
+                 *       }
+                 *     }
+                 *   },
+                 *   {
+                 *     "target": {
+                 *       "public": true
+                 *     },
+                 *     "permissions": {
+                 *       "policies": {
+                 *         "read": true
+                 *       }
                  *     }
                  *   }
                  * ]

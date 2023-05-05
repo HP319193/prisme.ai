@@ -86,10 +86,10 @@ export function initAPI(
    * Sharing routes
    */
   initCollaboratorRoutes<SubjectType>(app, {
-    onShared: async (req, subjectType, subjectId, permissions, subject) => {
+    onShared: async (req, subjectType, subjectId, share, subject) => {
       const payload = {
         subjectId,
-        permissions,
+        ...share,
       };
       const source = { workspaceId: req.context.workspaceId };
       if (subjectType === SubjectType.Page) {
@@ -114,17 +114,10 @@ export function initAPI(
         );
       }
     },
-    onRevoked: async (
-      req,
-      subjectType,
-      subjectId,
-      { id: userId, email },
-      subject
-    ) => {
+    onRevoked: async (req, subjectType, subjectId, target, subject) => {
       const payload = {
         subjectId,
-        userId,
-        email,
+        target,
       };
       const source = { workspaceId: req.context.workspaceId };
       if (subjectType === SubjectType.Page) {

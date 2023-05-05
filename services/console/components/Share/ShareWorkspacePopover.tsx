@@ -93,14 +93,14 @@ const ShareWorkspacePopover = ({
     }
 
     const rows = data
-      .filter(({ id }) => !!id && id != '*') // Public permission has id='*'
-      .map(({ email, role, id }) => ({
-        key: id,
-        email,
-        role,
+      .filter(({ target }) => !!target?.id && target?.id != '*') // Public permission has id='*'
+      .map(({ target, permissions }) => ({
+        key: target?.id,
+        email: target?.email,
+        role: permissions.role,
         actions: generateRowButtons(() => {
-          if (!id) return;
-          if (id === userId) {
+          if (!target?.id) return;
+          if (target?.id === userId) {
             // User is removing himself his access to the workspace
             push('/workspaces');
             deleteWorkspace();
@@ -109,7 +109,7 @@ const ShareWorkspacePopover = ({
               placement: 'bottomRight',
             });
           }
-          removeUserPermissions(subjectType, subjectId, id);
+          removeUserPermissions(subjectType, subjectId, target?.id);
         }),
       }));
 
@@ -136,8 +136,12 @@ const ShareWorkspacePopover = ({
       return;
     }
     addUserPermissions(subjectType, subjectId, {
-      email: emailInput,
-      role: roleInput,
+      target: {
+        email: emailInput,
+      },
+      permissions: {
+        role: roleInput,
+      },
     });
   }, [
     addUserPermissions,

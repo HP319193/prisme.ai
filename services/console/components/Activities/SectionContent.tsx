@@ -82,7 +82,7 @@ export const SectionContent = ({
       appName:
         event?.payload?.appInstance?.appName ||
         event?.payload?.appInstance?.slug,
-      share: event?.payload?.permissions?.email || event?.payload?.email,
+      share: event?.payload?.target?.id,
     };
   }, [event, imports, localize, t]);
 

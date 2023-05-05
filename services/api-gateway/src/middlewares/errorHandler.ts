@@ -16,7 +16,8 @@ export default function (
 
     if (
       err instanceof errors.PrismeError ||
-      (err.stack || '').includes('PrismeError')
+      (err?.constructor &&
+        Object.getPrototypeOf(err?.constructor)?.name === 'PrismeError')
     ) {
       res
         .status((<errors.PrismeError>err).httpCode || 400)
