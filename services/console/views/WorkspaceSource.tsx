@@ -63,8 +63,13 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({
     },
   } = useWorkspace();
   const { onSaveSource } = useWorkspaceLayout();
-  const { setInvalid, setNewSource, invalid, saving, displaySource } =
-    useWorkspaceLayout();
+  const {
+    setInvalid,
+    setNewSource,
+    invalid,
+    saving,
+    displaySource,
+  } = useWorkspaceLayout();
   const [value, setValue] = useState<string | undefined>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const { toJSON, toYaml } = useYaml();
@@ -127,7 +132,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({
         setNewSource(json);
       } catch (e) {}
     },
-    [checkSyntaxAndReturnYAML, setInvalid, setNewSource]
+    [checkSyntaxAndReturnYAML, setInvalid, setNewSource, sourceDisplayed]
   );
 
   useEffect(() => {

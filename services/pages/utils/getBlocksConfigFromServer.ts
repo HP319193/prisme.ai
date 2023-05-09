@@ -14,7 +14,7 @@ export async function getBlocksConfigFromServer(
       method: 'post',
       body: JSON.stringify(query),
       headers: {
-        'x-prismeai-api-key': page.apiKey,
+        'x-prismeai-api-key': page.apiKey || '',
         'Content-Type': 'application/json',
         'accept-language': language,
       },
