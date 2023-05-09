@@ -1,4 +1,9 @@
-import { Button, Schema, SchemaFormProps } from '@prisme.ai/design-system';
+import {
+  Button,
+  Schema,
+  SchemaFormProps,
+  UiOptionsCommon,
+} from '@prisme.ai/design-system';
 import { BlockContext, useBlock } from '../Provider';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -11,6 +16,7 @@ import { BaseBlock } from './BaseBlock';
 import { BaseBlockConfig } from './types';
 import { Action, ActionConfig } from './Action';
 import get from 'lodash.get';
+import getFieldFromValuePath from '../utils/getFieldFromValuePath';
 
 const defaultSchema = {};
 
@@ -35,6 +41,12 @@ interface FormProps extends FormConfig {
   uploadFile: BlocksDependenciesContext['utils']['uploadFile'];
 }
 
+function isCommonOptions(
+  options: Schema['ui:options']
+): options is UiOptionsCommon {
+  return !!(options as UiOptionsCommon).field;
+}
+
 export const Form = ({
   events,
   SchemaForm,
@@ -46,7 +58,7 @@ export const Form = ({
 }: FormProps) => {
   const { t } = useTranslation();
   const { localize, localizeSchemaForm } = useLocalizedText();
-  const [initialValues, setInitialValues] = useState(config.values || {});
+  const [initialValues] = useState(config.values || {});
   const canChange = useRef(true);
   const formRef: SchemaFormProps['formRef'] = useRef<any>();
 
@@ -66,6 +78,21 @@ export const Form = ({
       const fields = form.getRegisteredFields();
       await fields
         .filter((field) => field !== 'values')
+        .filter((field) => {
+          const schema = getFieldFromValuePath(
+            { properties: { values: config.schema } },
+            field
+          );
+          if (!schema) return true;
+          const { 'ui:options': options } = schema;
+          if (!options || !isCommonOptions(options)) return true;
+          if (options.field.updateValue === false) return false;
+          if (options.field.updateValue === 'blur') {
+            const { active } = form.getFieldState(field) || {};
+            return !active;
+          }
+          return true;
+        })
         .forEach((name) => {
           const field = form.getFieldState(name);
           if (!field) return;

@@ -42,6 +42,11 @@ export type UIWidgets = StringWithAutocomplete<
   typeof UIWidgetsForString[number]
 >;
 
+export type UiOptionsCommon = {
+  field: {
+    updateValue?: false | 'blur';
+  };
+};
 export type UiOptionsGrid = {
   grid: string[][][];
 };
@@ -112,6 +117,7 @@ export type UiOptionsSlider = {
       className?: string;
     }[];
     step?: number;
+    showTooltip?: 'always' | 'hover';
   };
 };
 export interface Schema extends Record<string, any> {
@@ -169,6 +175,7 @@ export interface Schema extends Record<string, any> {
   'ui:widget'?: UIWidgets | FunctionComponent<FieldProps>;
   // Options for UI components
   'ui:options'?:
+    | UiOptionsCommon
     | UiOptionsGrid
     | UiOptionsOneOf
     | UiOptionsArray
