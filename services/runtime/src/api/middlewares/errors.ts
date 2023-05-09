@@ -50,7 +50,10 @@ export const errorDecorator = (
   const isKnownErrorCode =
     Object.values(KnownErrorCodes).includes(
       (err as PrismeError).error as KnownErrorCodes
-    ) || (err.stack || '').includes('PrismeError');
+    ) ||
+    (err.stack || '').includes('PrismeError') ||
+    (err?.constructor &&
+      Object.getPrototypeOf(err?.constructor)?.name === 'PrismeError');
   // Server error and stack trace is available - it is most likely a developer error
   const serverError =
     !isKnownErrorCode &&

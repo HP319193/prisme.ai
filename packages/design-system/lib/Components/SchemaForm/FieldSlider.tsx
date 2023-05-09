@@ -13,14 +13,14 @@ export const FieldSlider = ({
 }: FieldProps & { options: UiOptionsSlider }) => {
   const field = useField(props.name);
   const hasError = getError(field.meta);
-  const { slider: { steps, step } = {} } = options;
+  const { slider: { steps, step, showTooltip } = {} } = options;
 
   const marks = useMemo(
     () =>
       (steps || []).reduce(
         (prev, { label, description, value, className }, index) => {
           let additionalProps = {};
-          if (field.input.value === index) {
+          if (showTooltip === 'always' && field.input.value === index) {
             additionalProps = {
               open: field.input.value === index,
               style: {
@@ -41,7 +41,7 @@ export const FieldSlider = ({
                   placement="bottom"
                   overlayClassName={className}
                 >
-                  <div>{label}</div>
+                  <div className="pr-form-text--slider__tooltip">{label}</div>
                 </Tooltip>
               ),
             },

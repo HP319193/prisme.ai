@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 import isEqual from 'lodash/isEqual';
 import { notification } from '@prisme.ai/design-system';
 import context, { PermissionsContext } from './context';
-import api, { ApiError } from '../../utils/api';
-
-type UserPermissions = Prismeai.UserPermissions;
+import api, { UserPermissions, ApiError } from '../../utils/api';
 
 const addUserToMap = (
   subjectId: string,
@@ -15,7 +13,7 @@ const addUserToMap = (
   const newUsersPermissions = new Map(usersPermissions);
   newUsersPermissions.set(subjectId, [
     ...(usersPermissions.get(subjectId) || []).filter(
-      ({ email }) => email !== newUserPermissions.email
+      ({ target }) => target?.email !== newUserPermissions?.target?.email
     ),
     newUserPermissions,
   ]);
@@ -31,7 +29,7 @@ const removeUserFromMap = (
   );
   newUsersPermissions.set(subjectId, [
     ...(usersPermissions.get(subjectId) || []).filter(
-      ({ email, id }) => email !== userEmail && id !== userEmail
+      ({ target }) => target?.email !== userEmail && target?.id !== userEmail
     ),
   ]);
 

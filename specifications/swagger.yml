@@ -1118,14 +1118,20 @@ components:
       items:
         $ref: '#/components/schemas/UserPermissions'
       example:
-        - email: admin@prisme.ai
-          role: admin
-        - email: readonly@prisme.ai
-          policies:
-            read: true
-        - public: true
-          policies:
-            read: true
+        - target:
+            id: userId1
+          permissions:
+            role: admin
+        - target:
+            id: userId2
+          permissions:
+            policies:
+              read: true
+        - target:
+            public: true
+          permissions:
+            policies:
+              read: true
 
     Role:
       type: string
@@ -1143,23 +1149,38 @@ components:
         manage_permissions:
           type: boolean
 
-    UserPermissions:
+    UserPermissionsTarget:
       type: object
-      additionalProperties: false
-      oneOf:
-        - required: ['email']
+      anyOf:
+        - required: ['id']
         - required: ['public']
+        - required: ['role']
       properties:
-        email:
-          type: string
         id:
           type: string
         public:
           type: boolean
         role:
-          $ref: '#/components/schemas/Role'
-        policies:
-          $ref: '#/components/schemas/Policies'
+          type: string
+        displayName:
+          type: string
+
+    UserPermissions:
+      type: object
+      additionalProperties: false
+      required:
+        - target
+        - permissions
+      properties: &UserPermissions
+        target:
+          $ref: "#/components/schemas/UserPermissionsTarget"
+        permissions:
+          type: object
+          properties:
+            role:
+              $ref: '#/components/schemas/Role'
+            policies:
+              $ref: '#/components/schemas/Policies'
 
     PermissionsMap:
       type: object
@@ -2045,11 +2066,11 @@ components:
           required:
             - subjectId
             - permissions
+            - target
           properties:
             subjectId:
               type: string
-            permissions:
-              $ref: '#/components/schemas/UserPermissions'
+            <<: *UserPermissions
 
     WorkspacePermissionsDeleted:
       type: object
@@ -2066,12 +2087,12 @@ components:
           type: object
           required:
             - subjectId
-            - userId
+            - target
           properties:
             subjectId:
               type: string
-            userId:
-              type: string
+            target:
+              $ref: '#/components/schemas/UserPermissionsTarget'
 
     UninstalledAppInstance:
       type: object
@@ -2326,11 +2347,11 @@ components:
           required:
             - subjectId
             - permissions
+            - target
           properties:
             subjectId:
               type: string
-            permissions:
-              $ref: '#/components/schemas/UserPermissions'
+            <<: *UserPermissions
 
     PagePermissionsDeleted:
       type: object
@@ -2347,12 +2368,12 @@ components:
           type: object
           required:
             - subjectId
-            - userId
+            - target
           properties:
             subjectId:
               type: string
-            userId:
-              type: string
+            target:
+              $ref: '#/components/schemas/UserPermissionsTarget'
 
     ########################## Runtime events ##########################
 
@@ -3004,26 +3025,41 @@ paths:
                 $ref: '#/components/schemas/BadParametersError'
         '401': *AuthenticationError
 
-  /v2/contacts/{contactId}:
-    get:
+  /v2/contacts:
+    post:
       description: Retrieve some public contact
-      operationId: getThisContact
+      operationId: findContacts
       tags:
         - API Gateway
-      parameters:
-        - name: 'contactId'
-          in: 'path'
-          description: 'Contact ID'
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - required: ["email"]
+                - required: ["ids"]
+              properties:
+                email:
+                  type: string
+                ids:
+                  type: array
+                  items:
+                    type: string
       responses:
         '200':
           description: Success Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Contact'
+                type: object
+                required:
+                  - contacts
+                properties:
+                  contacts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Contact'
         '404':
           description: Object not found
           content:

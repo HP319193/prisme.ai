@@ -72,8 +72,11 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
           }
 
           if (redirect) {
-            const { url, method = 'get', body = {}, locale } = redirect;
+            const { url, method = 'get', body = {}, locale, push } = redirect;
             if (!url) return;
+            if (push) {
+              return window.history.pushState({}, '', url);
+            }
             if (`${method}`.toLowerCase() === 'get') {
               return redirectGet(url, locale);
             }

@@ -93,23 +93,22 @@ const ShareWorkspacePopover = ({
     }
 
     const rows = data
-      .filter(({ id }) => !!id && id != '*') // Public permission has id='*'
-      .map(({ email, role, id }) => ({
-        key: id,
-        email,
-        role,
+      .filter(({ target }) => !!target?.id && target?.id != '*') // Public permission has id='*'
+      .map(({ target, permissions }) => ({
+        key: target?.id,
+        displayName: target?.displayName,
+        role: permissions.role,
         actions: generateRowButtons(() => {
-          if (!id) return;
-          if (id === userId) {
+          if (!target?.id) return;
+          removeUserPermissions(subjectType, subjectId, target?.id);
+          if (target?.id === userId) {
             // User is removing himself his access to the workspace
             push('/workspaces');
-            deleteWorkspace();
             notification.success({
               message: t('share.leave', { name }),
               placement: 'bottomRight',
             });
           }
-          removeUserPermissions(subjectType, subjectId, id);
         }),
       }));
 
@@ -136,8 +135,12 @@ const ShareWorkspacePopover = ({
       return;
     }
     addUserPermissions(subjectType, subjectId, {
-      email: emailInput,
-      role: roleInput,
+      target: {
+        email: emailInput,
+      },
+      permissions: {
+        role: roleInput,
+      },
     });
   }, [
     addUserPermissions,
@@ -180,7 +183,11 @@ const ShareWorkspacePopover = ({
       <Table
         dataSource={dataSource}
         columns={[
-          { title: t('share.email'), dataIndex: 'email', key: 'email' },
+          {
+            title: t('share.displayName'),
+            dataIndex: 'displayName',
+            key: 'displayName',
+          },
           {
             title: t('share.role'),
             dataIndex: 'role',

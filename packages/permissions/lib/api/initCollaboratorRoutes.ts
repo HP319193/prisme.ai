@@ -20,7 +20,7 @@ export interface PermissionsRoutesCallbacks<SubjectType extends string> {
     req: Request<any, any, any> & ExtendedRequest<SubjectType>,
     subjectType: string,
     subjectId: string,
-    user: { id: string; email?: string },
+    target: Prismeai.UserPermissionsTarget,
     subject: object & { id: string }
   ) => any;
 }
@@ -45,33 +45,25 @@ export function initCollaboratorRoutes<SubjectType extends string>(
       subjectType as SubjectType,
       subjectId
     );
+
     await accessManager.throwUnlessCan(
       ActionType.ManagePermissions,
       subjectType as SubjectType,
       subject
     );
 
-    const contacts = await fetchUsers({
-      ids: Object.keys(subject.permissions || {})
-        .map((userId) => userId)
-        .filter((userId) => userId !== PublicAccess),
-    });
-
     const users = await Promise.all(
       Object.entries(subject.permissions || {}).map(
-        async ([userId, collaborator]) => {
-          if (userId === PublicAccess) {
-            return {
-              ...(collaborator as SubjectCollaborator<Prismeai.Role>),
-              id: userId,
-              public: true,
-            };
-          }
-
+        async ([userId, permissions]: [string, any]) => {
           return {
-            ...(collaborator as SubjectCollaborator<Prismeai.Role>),
-            id: userId,
-            email: contacts.find((cur) => cur.id === userId)?.email || '',
+            target:
+              userId === PublicAccess
+                ? {
+                    id: userId,
+                    public: true,
+                  }
+                : { id: userId },
+            permissions: permissions as SubjectCollaborator<string>,
           };
         }
       )
@@ -95,15 +87,19 @@ export function initCollaboratorRoutes<SubjectType extends string>(
       accessManager,
       body,
     } = req;
-    const { email, public: publicShare, ...permissions } = body;
-    const users: ((Prismeai.User & { id: string }) | typeof PublicAccess)[] =
-      publicShare ? [PublicAccess] : await fetchUsers({ email });
+    const { target, permissions } = body;
+    const { id, public: publicShare } = target;
+    const users: (Prismeai.User & { id: string })[] = publicShare
+      ? [{ id: PublicAccess } as any]
+      : await fetchUsers({ ids: [id!] });
     if (!users.length) {
-      throw new CollaboratorNotFound(
-        `Could not find any user corresponding to ${email}`
-      );
+      throw new CollaboratorNotFound(`This user does not exist`);
     }
     const collaborator = users[0];
+    target.id = (<any>collaborator)?.id;
+    target.displayName = `${(<any>collaborator)?.firstName} ${
+      (<any>collaborator)?.lastName
+    }`;
 
     const sharedSubject = await accessManager.grant(
       subjectType as SubjectType,
@@ -118,24 +114,16 @@ export function initCollaboratorRoutes<SubjectType extends string>(
         subjectType,
         subjectId,
         {
-          ...body,
-          id: (<any>collaborator)?.id,
+          target,
+          permissions,
         },
         sharedSubject
       );
     }
 
-    if (collaborator === PublicAccess) {
-      return res.send({
-        ...(sharedSubject.permissions?.[PublicAccess] || {}),
-        public: true,
-        id: PublicAccess,
-      });
-    }
     return res.send({
-      ...(sharedSubject.permissions?.[<any>collaborator.id] || {}),
-      email,
-      id: collaborator.id,
+      target,
+      permissions,
     });
   }
 
@@ -164,18 +152,18 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     );
 
     if (callbacks?.onRevoked) {
-      let email;
+      let displayName;
       if (userId !== '*') {
         try {
           const users = await fetchUsers({ ids: [userId] });
-          email = users?.[0]?.email;
+          displayName = `${users?.[0]?.firstName} ${users?.[0]?.lastName}`;
         } catch {}
       }
       callbacks.onRevoked(
         req,
         subjectType,
         subjectId,
-        { id: userId, email },
+        { id: userId, displayName },
         subject
       );
     }

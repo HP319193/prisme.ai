@@ -68,13 +68,13 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
     }
 
     const rows = data
-      .filter(({ id }) => !!id && id != '*') // Public permission has id='*'
-      .map(({ email, id }) => ({
-        key: id,
-        email,
+      .filter(({ target }) => !!target?.id && target?.id != '*') // Public permission has id='*'
+      .map(({ target }) => ({
+        key: target?.id,
+        displayName: target?.displayName,
         actions: generateRowButtons(() => {
-          if (!id) return;
-          removeUserPermissions(subjectType, subjectId, id);
+          if (!target?.id) return;
+          removeUserPermissions(subjectType, subjectId, target?.id);
         }),
       }));
 
@@ -93,7 +93,7 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
     if (!data) {
       return setIsPublic(false);
     }
-    setIsPublic(!!data.find(({ public: p }) => p));
+    setIsPublic(!!data.find(({ target: { public: p } }) => p));
   }, [subjectId, usersPermissions]);
 
   const togglePublic = useCallback(
@@ -101,8 +101,12 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
       setIsPublic(isPublic);
       if (isPublic) {
         await addUserPermissions('pages', subjectId, {
-          public: true,
-          policies: { read: true },
+          target: {
+            public: true,
+          },
+          permissions: {
+            policies: { read: true },
+          },
         });
       } else {
         await removeUserPermissions('pages', subjectId, '*');
@@ -120,8 +124,12 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
       return;
     }
     addUserPermissions(subjectType, subjectId, {
-      email,
-      policies: { read: true },
+      target: {
+        email,
+      },
+      permissions: {
+        policies: { read: true },
+      },
     });
   };
 
@@ -192,7 +200,11 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
           <Table
             dataSource={dataSource}
             columns={[
-              { title: t('share.email'), dataIndex: 'email', key: 'email' },
+              {
+                title: t('share.displayName'),
+                dataIndex: 'displayName',
+                key: 'displayName',
+              },
               {
                 title: t('share.actions'),
                 dataIndex: 'actions',

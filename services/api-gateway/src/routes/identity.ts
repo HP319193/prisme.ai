@@ -5,7 +5,7 @@ import {
   enforceMFA,
   forbidAccessTokens,
   isAuthenticated,
-  isInternallyAuthenticated,
+  isSuperAdmin,
 } from '../middlewares/authentication';
 import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
@@ -263,25 +263,36 @@ async function logoutHandler(req: Request, res: Response) {
  * Internal route
  */
 async function findContactsHandler(
-  { context, body: { email, ids }, logger }: Request<any, any, FindUserQuery>,
+  req: Request<any, any, FindUserQuery>,
   res: Response<{
     contacts: Prismeai.User[];
   }>
 ) {
+  const {
+    context,
+    body: { email, ids },
+    logger,
+    user,
+  } = req;
+  if (user?.authData?.anonymous) {
+    throw new AuthenticationError();
+  }
   const identity = services.identity(context, logger);
   return res.send({
-    contacts: await identity.findContacts({
-      email,
-      ids,
-    }),
+    contacts: await identity.findContacts(
+      {
+        email,
+        ids,
+      },
+      isSuperAdmin(req)
+    ),
   });
 }
 
 const app = express.Router();
 
 app.get(`/me`, isAuthenticated, meHandler);
-// Internal routes
-app.post(`/contacts`, isInternallyAuthenticated, findContactsHandler);
+app.post(`/contacts`, findContactsHandler);
 
 // From there, only routes restricted to users, forbidden to access tokens
 app.use(forbidAccessTokens);

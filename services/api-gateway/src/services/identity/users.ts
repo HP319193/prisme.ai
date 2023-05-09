@@ -311,7 +311,10 @@ export interface FindUserQuery {
   ids?: string[];
 }
 export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
-  async function ({ email, ids }: FindUserQuery): Promise<Prismeai.Contact[]> {
+  async function (
+    { email, ids }: FindUserQuery,
+    addEmail?: boolean
+  ): Promise<Prismeai.Contact[]> {
     let users: User[] = [];
     if (email) {
       users = await Users.find({ email: email.toLowerCase().trim() });
@@ -328,7 +331,7 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       }
     }
     return users.map(({ email, firstName, lastName, photo, id }) => ({
-      email,
+      email: addEmail ? email : undefined,
       firstName,
       lastName,
       photo,

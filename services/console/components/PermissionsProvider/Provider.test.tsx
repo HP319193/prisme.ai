@@ -29,14 +29,22 @@ it('should fetch userPermissions', async () => {
     Promise.resolve({
       result: [
         {
-          id: '42',
-          email: 'user@tropfort.com',
-          role: 'owner',
+          target: {
+            id: '42',
+            email: 'user@tropfort.com',
+          },
+          permissions: {
+            role: 'owner',
+          },
         },
         {
-          id: '43',
-          email: 'user2@tropfort.com',
-          role: 'editor',
+          target: {
+            id: '43',
+            email: 'user2@tropfort.com',
+          },
+          permissions: {
+            role: 'editor',
+          },
         },
       ],
     } as any)
@@ -63,14 +71,22 @@ it('should fetch userPermissions', async () => {
         'workspaces:workspaceId11',
         [
           {
-            id: '42',
-            email: 'user@tropfort.com',
-            role: 'owner',
+            target: {
+              id: '42',
+              email: 'user@tropfort.com',
+            },
+            permissions: {
+              role: 'owner',
+            },
           },
           {
-            id: '43',
-            email: 'user2@tropfort.com',
-            role: 'editor',
+            target: {
+              id: '43',
+              email: 'user2@tropfort.com',
+            },
+            permissions: {
+              role: 'editor',
+            },
           },
         ],
       ],
@@ -83,14 +99,22 @@ it('should not fetch workspaces', async () => {
     Promise.resolve({
       result: [
         {
-          id: '42',
-          email: 'user@tropfort.com',
-          role: 'owner',
+          target: {
+            id: '42',
+            email: 'user@tropfort.com',
+          },
+          permissions: {
+            role: 'owner',
+          },
         },
         {
-          id: '43',
-          email: 'user2@tropfort.com',
-          role: 'editor',
+          target: {
+            id: '43',
+            email: 'user2@tropfort.com',
+          },
+          permissions: {
+            role: 'editor',
+          },
         },
       ],
     } as any)
@@ -116,9 +140,13 @@ it('should not fetch workspaces', async () => {
 it('should give user permissions', async () => {
   jest.spyOn(api, 'addPermissions').mockReturnValue(
     Promise.resolve({
-      id: '44',
-      email: 'user3@tropfort.com',
-      role: 'editor',
+      target: {
+        id: '44',
+        email: 'user3@tropfort.com',
+      },
+      permissions: {
+        role: 'editor',
+      },
     } as any)
   );
   let context: any = {};
@@ -136,22 +164,34 @@ it('should give user permissions', async () => {
       'workspaces',
       'workspaceId11',
       {
-        id: '44',
-        role: 'owner',
+        target: {
+          id: '44',
+        },
+        permissions: {
+          role: 'owner',
+        },
       }
     );
     expect(api.addPermissions).toHaveBeenCalledWith(
       'workspaces',
       'workspaceId11',
       {
-        id: '44',
-        role: 'owner',
+        target: {
+          id: '44',
+        },
+        permissions: {
+          role: 'owner',
+        },
       }
     );
     expect(expected).toEqual({
-      id: '44',
-      email: 'user3@tropfort.com',
-      role: 'editor',
+      target: {
+        id: '44',
+        email: 'user3@tropfort.com',
+      },
+      permissions: {
+        role: 'editor',
+      },
     });
   });
 
@@ -164,9 +204,13 @@ it('should give user permissions', async () => {
         'workspaces:workspaceId11',
         [
           {
-            id: '44',
-            email: 'user3@tropfort.com',
-            role: 'editor',
+            target: {
+              id: '44',
+              email: 'user3@tropfort.com',
+            },
+            permissions: {
+              role: 'editor',
+            },
           },
         ],
       ],
@@ -179,23 +223,35 @@ it("should add user to provider's list", async () => {
     Promise.resolve({
       result: [
         {
-          id: '42',
-          email: 'user@tropfort.com',
-          role: 'owner',
+          target: {
+            id: '42',
+            email: 'user@tropfort.com',
+          },
+          permissions: {
+            role: 'owner',
+          },
         },
         {
-          id: '43',
-          email: 'user2@tropfort.com',
-          role: 'editor',
+          target: {
+            id: '43',
+            email: 'user2@tropfort.com',
+          },
+          permissions: {
+            role: 'editor',
+          },
         },
       ],
     } as any)
   );
   jest.spyOn(api, 'addPermissions').mockReturnValue(
     Promise.resolve({
-      id: '44',
-      email: 'user3@tropfort.com',
-      role: 'editor',
+      target: {
+        id: '44',
+        email: 'user3@tropfort.com',
+      },
+      permissions: {
+        role: 'editor',
+      },
     } as any)
   );
   let context: any = {};
@@ -218,22 +274,34 @@ it("should add user to provider's list", async () => {
       'workspaces',
       'workspaceId11',
       {
-        id: '44',
-        role: 'owner',
+        target: {
+          id: '44',
+        },
+        permissions: {
+          role: 'owner',
+        },
       }
     );
     expect(api.addPermissions).toHaveBeenCalledWith(
       'workspaces',
       'workspaceId11',
       {
-        id: '44',
-        role: 'owner',
+        target: {
+          id: '44',
+        },
+        permissions: {
+          role: 'owner',
+        },
       }
     );
     expect(expected).toEqual({
-      id: '44',
-      email: 'user3@tropfort.com',
-      role: 'editor',
+      target: {
+        id: '44',
+        email: 'user3@tropfort.com',
+      },
+      permissions: {
+        role: 'editor',
+      },
     });
   });
 
@@ -246,19 +314,31 @@ it("should add user to provider's list", async () => {
         'workspaces:workspaceId11',
         [
           {
-            id: '42',
-            email: 'user@tropfort.com',
-            role: 'owner',
+            target: {
+              id: '42',
+              email: 'user@tropfort.com',
+            },
+            permissions: {
+              role: 'owner',
+            },
           },
           {
-            id: '43',
-            email: 'user2@tropfort.com',
-            role: 'editor',
+            target: {
+              id: '43',
+              email: 'user2@tropfort.com',
+            },
+            permissions: {
+              role: 'editor',
+            },
           },
           {
-            id: '44',
-            email: 'user3@tropfort.com',
-            role: 'editor',
+            target: {
+              id: '44',
+              email: 'user3@tropfort.com',
+            },
+            permissions: {
+              role: 'editor',
+            },
           },
         ],
       ],
@@ -272,14 +352,22 @@ it("should remove a user's permissions", async () => {
     Promise.resolve({
       result: [
         {
-          id: '42',
-          email: 'user@tropfort.com',
-          role: 'owner',
+          target: {
+            id: '42',
+            email: 'user@tropfort.com',
+          },
+          permissions: {
+            role: 'owner',
+          },
         },
         {
-          id: '43',
-          email: 'user2@tropfort.com',
-          role: 'editor',
+          target: {
+            id: '43',
+            email: 'user2@tropfort.com',
+          },
+          permissions: {
+            role: 'editor',
+          },
         },
       ],
     } as any)
@@ -322,9 +410,13 @@ it("should remove a user's permissions", async () => {
         'workspaces:workspaceId11',
         [
           {
-            id: '42',
-            email: 'user@tropfort.com',
-            role: 'owner',
+            target: {
+              id: '42',
+              email: 'user@tropfort.com',
+            },
+            permissions: {
+              role: 'owner',
+            },
           },
         ],
       ],
