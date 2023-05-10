@@ -1,4 +1,5 @@
 import api, { Api } from './api';
+import ApiError from './ApiError';
 import WorkspacesEndpoint from './endpoints/workspaces';
 import WorkspacesVersionsEndpoint from './endpoints/workspacesVersions';
 
@@ -84,7 +85,7 @@ it('should call get /workspaces', () => {
   const api = new Api('/fake/');
   api.get = jest.fn();
   api.getWorkspaces();
-  expect(api.get).toHaveBeenCalledWith('/workspaces?limit=300');
+  expect(api.get).toHaveBeenCalledWith('/workspaces?limit=600');
 });
 
 it('should call get /workspaces/42', () => {
@@ -508,12 +509,14 @@ it('should post events', async () => {
   const res = await api.postEvents('42', [
     {
       type: 'foo',
+      payload: {},
     },
   ]);
   expect(api.post).toHaveBeenCalledWith('/workspaces/42/events', {
     events: [
       {
         type: 'foo',
+        payload: {},
       },
     ],
   });
@@ -525,32 +528,75 @@ it('should post events', async () => {
   const res2 = await api.postEvents('42', [
     {
       type: 'foo',
+      payload: {},
     },
   ]);
   expect(res2).toBe(false);
 });
 
-it('should get permissions', async () => {
+describe('permissions', () => {
   const api = new Api('/fake/');
-  api.get = jest.fn((): any => {});
-  api.getPermissions('pages', 'id');
-  expect(api.get).toHaveBeenCalledWith('/pages/id/permissions');
-});
-
-it('should add permissions', async () => {
-  const api = new Api('/fake/');
-  api.post = jest.fn((): any => {});
-  api.addPermissions('pages', 'id', { email: 'foo' });
-  expect(api.post).toHaveBeenCalledWith('/pages/id/permissions', {
-    email: 'foo',
+  api.get = jest.fn((path: string): any => {
+    if (path === '/pages/id/permissions') {
+      return {
+        result: [],
+      };
+    }
   });
-});
+  api.post = jest.fn((path: string, body: any): any => {
+    if (path === '/pages/id/permissions') {
+      return body;
+    }
+  });
+  api.findContacts = jest.fn(({ email }): any => {
+    if (email === 'foo@bar.com')
+      return {
+        contacts: [
+          {
+            id: '1234',
+          },
+        ],
+      };
+    return { contacts: [] };
+  });
+  api.getPermissions('pages', 'id');
 
-it('should delete permissions', async () => {
-  const api = new Api('/fake/');
-  api.delete = jest.fn((): any => {});
-  api.deletePermissions('pages', 'id', 'foo');
-  expect(api.delete).toHaveBeenCalledWith('/pages/id/permissions/foo');
+  it('should get permissions', async () => {
+    expect(api.get).toHaveBeenCalledWith('/pages/id/permissions');
+  });
+
+  it('should add permissions', async () => {
+    await api.addPermissions('pages', 'id', {
+      permissions: {},
+      target: { email: 'foo@bar.com' },
+    });
+    expect(api.post).toHaveBeenCalledWith('/pages/id/permissions', {
+      permissions: {},
+      target: {
+        id: '1234',
+      },
+    });
+  });
+
+  it('should fail to add permissions', async () => {
+    let expected: ApiError = {} as ApiError;
+    try {
+      await api.addPermissions('pages', 'id', {
+        permissions: {},
+        target: { email: 'foofoo@bar.com' },
+      });
+    } catch (e) {
+      console.log(e);
+      expected = e as ApiError;
+    }
+    expect(expected.message).toBe('This user does not exist');
+  });
+
+  it('should delete permissions', async () => {
+    api.delete = jest.fn((): any => {});
+    api.deletePermissions('pages', 'id', 'foo');
+    expect(api.delete).toHaveBeenCalledWith('/pages/id/permissions/foo');
+  });
 });
 
 it('should get apps', async () => {
@@ -661,9 +707,12 @@ it('should upload files', async () => {
 
 it('should call automation', () => {
   const api = new Api('/fake/');
-  api.get = jest.fn((): any => {});
+  api.post = jest.fn((): any => {});
   api.callAutomation('42', 'automation');
-  expect(api.get).toHaveBeenCalledWith('/workspaces/42/webhooks/automation');
+  expect(api.post).toHaveBeenCalledWith(
+    '/workspaces/42/webhooks/automation',
+    undefined
+  );
 });
 
 it('should get workspace usage', () => {
