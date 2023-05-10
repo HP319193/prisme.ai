@@ -169,12 +169,18 @@ WithMetaData.args = {
         label: 'Title',
         key: 'title',
         onEdit: 'editTitle',
+        validators: {
+          required: 'the title is required',
+        },
       },
       {
         label: 'Count',
         key: 'count',
         type: 'number',
         onEdit: 'editCount',
+        validators: {
+          required: true,
+        },
       },
       {
         label: 'Checked ?',

@@ -246,6 +246,18 @@ const defaultStyles = `:block {
     right: 1rem;
     font-size: 1.8rem;
   }
+  .pr-block__menu-toggle svg path {
+    color: var(--accent-color);
+  }
+  .pr-block__menu-toggle--close svg path {
+    color: var(--accent-contrast-color);
+  }
+}
+.pr-block__menu .pr-block-action {
+  transition: color .1s ease-in;
+}
+.pr-block__menu .pr-block-action:hover {
+  color: var(--color-accent);
 }
 `;
 

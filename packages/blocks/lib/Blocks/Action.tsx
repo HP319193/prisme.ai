@@ -39,9 +39,7 @@ export const Action = ({
   switch (type) {
     case 'event':
       return (
-        <div
-          className={`pr-block-action pr-block-action--event ${className}            block-header__nav-item-button`}
-        >
+        <div className={`pr-block-action pr-block-action--event ${className}`}>
           <button
             type="button"
             className="pr-block-action__button"
@@ -60,7 +58,7 @@ export const Action = ({
       return (
         <Link
           href={value}
-          className={`pr-block-action pr-block-action--link ${className}            block-header__nav-item-link`}
+          className={`pr-block-action pr-block-action--link ${className}`}
           target={popup ? '_blank' : undefined}
         >
           <button
@@ -68,7 +66,7 @@ export const Action = ({
             onClick={() => {
               onClick && onClick();
             }}
-            className="pr-block-action__button            block-header__nav-item-button"
+            className="pr-block-action__button"
             dangerouslySetInnerHTML={html ? { __html: html } : undefined}
             children={html ? undefined : text}
           />
@@ -78,14 +76,14 @@ export const Action = ({
       return (
         <a
           href={`#${value}`}
-          className={`pr-block-action pr-block-action--link ${className}            block-header__nav-item-link`}
+          className={`pr-block-action pr-block-action--link ${className}`}
         >
           <button
             type="button"
             onClick={() => {
               onClick && onClick();
             }}
-            className="pr-block-action__button           block-header__nav-item-button"
+            className="pr-block-action__button"
             dangerouslySetInnerHTML={html ? { __html: html } : undefined}
             children={html ? undefined : text}
           />
@@ -102,7 +100,15 @@ export const Action = ({
   }
 };
 const defaultStyles = `:block {
-
+  padding: 1rem;
+}
+:block .pr-block-action__button{
+  padding: 0.5rem 1rem;
+}
+:block.pr-block-action--event .pr-block-action__button {
+  background: var(--accent-color);
+  color: var(--accent-contrast-color);
+  border-radius: 0.5rem;
 }`;
 export const ActionInContext = () => {
   const { config, events } = useBlock<ActionConfig>();

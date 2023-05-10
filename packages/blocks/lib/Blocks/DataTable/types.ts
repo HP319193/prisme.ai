@@ -22,4 +22,12 @@ export interface ColumnDefinition {
   format?: FormatDate | FormatNumber;
   actions?: Action[];
   onEdit?: string;
+  validators?: Record<
+    'required' | 'pattern' | 'min' | 'max' | 'tel' | 'email' | 'date',
+    | {
+        value?: string | number | boolean;
+        message?: string;
+      }
+    | true
+  >;
 }
