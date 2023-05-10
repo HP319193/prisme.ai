@@ -68,7 +68,7 @@ export const DataTable: BlockComponent = () => {
 
     const columnsSpecification =
       config.columns ||
-      Object.keys(rawData[0]).map((key) => ({
+      Object.keys(rawData[0]).map<ColumnDefinition>((key) => ({
         key,
         label: key,
         type: 'string',
@@ -92,7 +92,15 @@ export const DataTable: BlockComponent = () => {
     };
 
     return columnsSpecification.map(
-      ({ key, label = key, type = 'string', actions, onEdit, format }) => ({
+      ({
+        key,
+        label = key,
+        type = 'string',
+        actions,
+        onEdit,
+        format,
+        validators,
+      }) => ({
         title: localize(label),
         dataIndex: key,
         key,
@@ -112,6 +120,7 @@ export const DataTable: BlockComponent = () => {
           title: key,
           handleSave: onEdit ? handleSave(onEdit) : null,
           type,
+          validators,
         }),
         render: renderValue({
           key,
@@ -119,6 +128,7 @@ export const DataTable: BlockComponent = () => {
           language,
           format,
           onEdit,
+          validators,
           actions:
             actions && Array.isArray(actions)
               ? actions.map((action) => ({

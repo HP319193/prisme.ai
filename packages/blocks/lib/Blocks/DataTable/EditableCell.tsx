@@ -1,7 +1,7 @@
 import { FC, forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { Input, InputRef, Form, Switch } from 'antd';
 import { useEditable } from './EditableContext';
-import { DataType } from './types';
+import { ColumnDefinition, DataType } from './types';
 import tw from '../../tw';
 
 interface Item {
@@ -18,6 +18,7 @@ interface EditableCellProps {
   type: DataType;
   handleSave: (record: Item) => void;
   value: any;
+  validators?: ColumnDefinition['validators'];
 }
 
 const TypesAutoEdit = ['boolean'];
@@ -25,23 +26,30 @@ const TypesEditable = ['string', 'number', 'boolean', 'date'];
 
 const CellInput = forwardRef<any, any>(
   (
-    { dataIndex, title, save, type, value }: EditableCellProps & { save: any },
+    {
+      dataIndex,
+      title,
+      save,
+      type,
+      value,
+      validators,
+    }: EditableCellProps & { save: any },
     ref
   ) => {
     if (type === 'boolean') {
       return <Switch onChange={save} checked={value} />;
     }
+    const rules = useMemo(
+      () =>
+        Object.entries(validators || {}).map(([k, v]) => ({
+          [k]: !!v,
+          message: typeof v === 'string' ? v : `${title} is ${k}.`,
+        })),
+      [validators]
+    );
+
     return (
-      <Form.Item
-        style={{ margin: 0 }}
-        name={dataIndex}
-        rules={[
-          {
-            required: true,
-            message: `${title} is required.`,
-          },
-        ]}
-      >
+      <Form.Item style={{ margin: 0 }} name={dataIndex} rules={rules}>
         <Input ref={ref} onPressEnter={save} onBlur={save} type={type} />
       </Form.Item>
     );
@@ -56,6 +64,7 @@ const EditableCell: FC<EditableCellProps> = ({
   record,
   handleSave,
   type,
+  validators,
   ...restProps
 }) => {
   const [editing, setEditing] = useState(TypesAutoEdit.includes(type));
@@ -94,6 +103,7 @@ const EditableCell: FC<EditableCellProps> = ({
           dataIndex={dataIndex}
           type={type}
           save={save}
+          validators={validators}
         />
       ) : (
         <div
