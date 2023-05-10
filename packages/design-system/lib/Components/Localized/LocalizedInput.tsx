@@ -2,6 +2,7 @@ import {
   ChangeEvent,
   forwardRef,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -76,6 +77,17 @@ export const LocalizedInput = ({
   );
   const [mounted, setMounted] = useState(true);
   const input = useRef<any>(null);
+
+  useEffect(() => {
+    if (typeof value === 'object' && !value[selectedLang]) {
+      const langs = Object.keys(value);
+      if (langs.includes(initialLang)) {
+        setSelectedLang(initialLang);
+      } else {
+        setSelectedLang(langs[0]);
+      }
+    }
+  }, [value]);
 
   const setValue = useCallback(
     (text: string, selectedLang: string) => {

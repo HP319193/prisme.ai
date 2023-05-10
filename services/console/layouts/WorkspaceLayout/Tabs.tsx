@@ -201,17 +201,19 @@ export const Tabs = () => {
         const tabIndex = prevTabs.indexOf(tab);
         const newTabs = prevTabs.filter((t) => t !== tab);
         Storage.set(`__tabs_${workspace.id}`, newTabs);
-        if (newTabs.length === 0) {
-          push(`/workspaces/${workspace.id}`);
-        } else if (newTabs[tabIndex]) {
-          push(newTabs[tabIndex]);
-        } else {
-          push(newTabs[tabIndex - 1]);
+        if (tab === asPath) {
+          if (newTabs.length === 0) {
+            push(`/workspaces/${workspace.id}`);
+          } else if (newTabs[tabIndex]) {
+            push(newTabs[tabIndex]);
+          } else {
+            push(newTabs[tabIndex - 1]);
+          }
         }
         return new Set(newTabs);
       });
     },
-    [workspace, push]
+    [workspace, push, asPath]
   );
 
   const closeAll = useCallback(() => {
