@@ -290,11 +290,16 @@ export class Api extends Fetcher {
     workspaceId: PrismeaiAPI.CreatePage.Parameters.WorkspaceId,
     page: PrismeaiAPI.CreatePage.RequestBody
   ): Promise<Prismeai.Page> {
-    const { createdAt, createdBy, updatedAt, updatedBy, ...newPage } =
-      await this.post<PageWithMetadata>(
-        `/workspaces/${workspaceId}/pages`,
-        page
-      );
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...newPage
+    } = await this.post<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages`,
+      page
+    );
     return newPage;
   }
 
@@ -303,12 +308,17 @@ export class Api extends Fetcher {
     page: PrismeaiAPI.UpdatePage.RequestBody,
     prevSlug: PrismeaiAPI.DeletePage.Parameters.Slug = page.slug || ''
   ): Promise<Prismeai.Page> {
-    const { createdAt, createdBy, updatedAt, updatedBy, ...updatedPage } =
-      await this.patch<PageWithMetadata>(
-        `/workspaces/${workspaceId}/pages/${encodeURIComponent(prevSlug)}`,
-        // Replace images as dataurl to uploaded url in any type of data
-        await this.replaceAllImagesData(page, workspaceId)
-      );
+    const {
+      createdAt,
+      createdBy,
+      updatedAt,
+      updatedBy,
+      ...updatedPage
+    } = await this.patch<PageWithMetadata>(
+      `/workspaces/${workspaceId}/pages/${encodeURIComponent(prevSlug)}`,
+      // Replace images as dataurl to uploaded url in any type of data
+      await this.replaceAllImagesData(page, workspaceId)
+    );
     return updatedPage;
   }
 
@@ -402,8 +412,9 @@ export class Api extends Fetcher {
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string
   ): Promise<{ result: UserPermissions[] }> {
-    const permissions: PrismeaiAPI.GetPermissions.Responses.$200 =
-      await this.get(`/${subjectType}/${subjectId}/permissions`);
+    const permissions: PrismeaiAPI.GetPermissions.Responses.$200 = await this.get(
+      `/${subjectType}/${subjectId}/permissions`
+    );
     const contacts = await this.findContacts({
       ids: permissions.result
         .filter((cur) => cur.target.id && cur.target.id !== '*')
@@ -432,30 +443,30 @@ export class Api extends Fetcher {
     subjectId: string,
     permissions: UserPermissions
   ): Promise<UserPermissions> {
-    const email: string = (<any>permissions).target.email;
-    const contacts = email
-      ? await this.findContacts({
-          email,
-        })
-      : { contacts: [] };
-    if (!contacts.contacts.length) {
-      throw new ApiError(
-        {
-          error: 'CollaboratorNotFound',
-          message: 'This user does not exist',
-          details: { email },
-        },
-        404
-      );
+    const body = { ...permissions };
+    const { email } = permissions.target;
+
+    if (email) {
+      const contacts = await this.findContacts({
+        email,
+      });
+
+      if (!contacts.contacts.length) {
+        throw new ApiError(
+          {
+            error: 'CollaboratorNotFound',
+            message: 'This user does not exist',
+            details: { email },
+          },
+          404
+        );
+      }
+      body.target = { id: contacts.contacts[0].id };
     }
+
     const result: PrismeaiAPI.Share.Responses.$200 = await this.post(
       `/${subjectType}/${subjectId}/permissions`,
-      {
-        ...permissions,
-        target: {
-          id: contacts?.contacts[0].id,
-        },
-      }
+      body
     );
     return {
       ...result,
@@ -667,7 +678,7 @@ export class Api extends Fetcher {
   async callAutomation(
     workspaceId: string,
     automation: string,
-    params: any
+    params?: any
   ): Promise<any> {
     return this.post(
       `/workspaces/${workspaceId}/webhooks/${automation}`,
