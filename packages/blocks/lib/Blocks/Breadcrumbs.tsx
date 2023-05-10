@@ -49,11 +49,17 @@ export const Breadcrumbs = ({
   );
 };
 
-const defaultStyles = `:block .pr-block-breadcrumbs__list {
+const defaultStyles = `:block {
+  padding: 1rem;
+}
+:block .pr-block-breadcrumbs__list {
   display: flex;
   flex-direction: row;
 }
-
+.pr-block-breadcrumbs__item  {
+  flex-direction: row;
+  display: flex;
+}
 :block .pr-block-breadcrumbs__link {
   display: flex;
 }

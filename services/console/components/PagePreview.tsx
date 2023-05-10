@@ -61,7 +61,12 @@ export const PagePreview = ({ page, visible = true }: PagePreviewProps) => {
     updatePage();
   }, [updatePage]);
 
-  const url = `${pageEndpoint}/${page.slug}`;
+  const [url, setUrl] = useState(`${pageEndpoint}/${page.slug}`);
+  useEffect(() => {
+    // Reload new url with a delay because of backend is a too slow
+    setTimeout(() => setUrl(`${pageEndpoint}/${page.slug}`), 500);
+  }, [page.slug, pageEndpoint]);
+
   return (
     <div className="flex flex-1 relative">
       <iframe ref={ref} src={url} className="flex flex-1" onLoad={onLoad} />

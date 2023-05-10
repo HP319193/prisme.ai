@@ -1,6 +1,7 @@
 import { Schema } from '@prisme.ai/design-system';
 import { getCommonSchema } from './commonSchema';
 import { builtinBlocks } from '@prisme.ai/blocks';
+import actionSchema from './Action';
 
 const schema: Schema = {
   type: 'object',
@@ -9,7 +10,8 @@ const schema: Schema = {
       type: 'array',
       title: 'pages.blocks.breadcrumbs.settings.links.label',
       description: 'pages.blocks.breadcrumbs.settings.links.description',
-      items: {
+      items: actionSchema,
+      _items: {
         type: 'object',
         title: 'pages.blocks.breadcrumbs.settings.links.items.label',
         description:
@@ -27,7 +29,7 @@ const schema: Schema = {
               from: 'pages',
             },
           },
-          label: {
+          text: {
             type: 'string',
             title: 'pages.blocks.breadcrumbs.settings.links.items._label.label',
             description:

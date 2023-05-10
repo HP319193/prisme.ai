@@ -49,6 +49,11 @@ const defaultStyles = `:block .pr-block-hero__container {
   flex-direction: row;
   padding: 1rem;
   justify-content: space-between;
+
+  max-width: 70%;
+  margin: 0 auto;
+  padding: 5rem 0;
+  font-size: 1.6rem;
 }
 @media (max-width: 500px) {
   :block .pr-block-hero__container {
@@ -57,6 +62,7 @@ const defaultStyles = `:block .pr-block-hero__container {
 }
 :block .pr-block-hero__title {
   font-size: 3rem;
+  font-weight: 700;
 }
 :block .pr-block-hero__lead {
   margin-top: 1rem;
