@@ -24,6 +24,22 @@ interface EditableCellProps {
 const TypesAutoEdit = ['boolean'];
 const TypesEditable = ['string', 'number', 'boolean', 'date'];
 
+const castValue = (value: any, type: DataType) => {
+  if (typeof value !== type) {
+    try {
+      switch (type) {
+        case 'string':
+          return String(value);
+        case 'number':
+          return Number(value);
+        case 'boolean':
+          return Boolean(value);
+      }
+    } catch (error) {}
+  }
+  return value;
+};
+
 const CellInput = forwardRef<any, any>(
   (
     {
@@ -80,24 +96,8 @@ const EditableCell: FC<EditableCellProps> = ({
 
   const toggleEdit = () => {
     setEditing(!editing);
-    const value = castValue(record[dataIndex]);
+    const value = castValue(record[dataIndex], type);
     form && form.setFieldsValue({ [dataIndex]: value });
-  };
-
-  const castValue = (value: any) => {
-    if (typeof value !== type) {
-      try {
-        switch (type) {
-          case 'string':
-            return String(value);
-          case 'number':
-            return Number(value);
-          case 'boolean':
-            return Boolean(value);
-        }
-      } catch (error) {}
-    }
-    return value;
   };
 
   const save = async () => {
