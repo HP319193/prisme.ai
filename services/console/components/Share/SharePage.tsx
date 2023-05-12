@@ -16,17 +16,19 @@ import { usePermissions } from '../PermissionsProvider';
 import { DeleteOutlined, LinkOutlined } from '@ant-design/icons';
 import { useUser } from '../UserProvider';
 import { usePageEndpoint } from '../../utils/urls';
+import { UserPermissions } from '../../utils/api';
 
 interface SharePageProps {
   pageId: string;
   pageSlug: string;
+  workspaceId: string;
 }
 
 interface userPermissionForm {
   email: string;
 }
 
-const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
+const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
   const { t } = useTranslation('workspaces');
   const pageHost = usePageEndpoint();
   const { user } = useUser();
@@ -35,9 +37,13 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
     getUsersPermissions,
     addUserPermissions,
     removeUserPermissions,
+    getRoles,
+    roles,
   } = usePermissions();
   const subjectType = 'pages';
   const subjectId = `${pageId}`;
+
+  const roleNames = useMemo(() => roles.map((role) => role.name), [roles]);
 
   const generateRowButtons = useCallback(
     (onDelete: Function) => (
@@ -54,6 +60,7 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
 
   const initialFetch = useCallback(async () => {
     getUsersPermissions(subjectType, subjectId);
+    getRoles('workspaces', workspaceId);
   }, [getUsersPermissions, subjectType, subjectId]);
 
   useEffect(() => {
@@ -68,16 +75,14 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
     }
 
     const rows = data
-      .filter(({ target }) => !!target?.id && target?.id != '*') // Public permission has id='*'
+      .filter(({ target }) => !!target?.id && !target.public)
       .map(({ target }) => ({
         key: target?.id,
         displayName: target?.displayName,
         actions: generateRowButtons(() => {
-          if (!target?.id) return;
-          removeUserPermissions(subjectType, subjectId, target?.id);
+          removeUserPermissions(subjectType, subjectId, target);
         }),
       }));
-
     return rows;
   }, [
     generateRowButtons,
@@ -109,14 +114,17 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
           },
         });
       } else {
-        await removeUserPermissions('pages', subjectId, '*');
+        await removeUserPermissions('pages', subjectId, { public: true });
       }
     },
     [addUserPermissions, removeUserPermissions, subjectId]
   );
 
   const onSubmit = ({ email }: userPermissionForm) => {
-    if (email === user.email) {
+    let target: UserPermissions['target'] = { email };
+    if (roleNames.includes(email)) {
+      target = { role: email };
+    } else if (email === user.email) {
       notification.warning({
         message: t('pages.share.notme'),
         placement: 'bottomRight',
@@ -124,9 +132,7 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
       return;
     }
     addUserPermissions(subjectType, subjectId, {
-      target: {
-        email,
-      },
+      target,
       permissions: {
         policies: { read: true },
       },
@@ -182,7 +188,7 @@ const SharePage = ({ pageId, pageSlug }: SharePageProps) => {
                   >
                     {({ input }) => (
                       <>
-                        <Input label={t('share.email')} {...input} />
+                        <Input label={t('share.emailOrRole')} {...input} />
                       </>
                     )}
                   </FieldContainer>

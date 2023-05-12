@@ -5,6 +5,16 @@ import { notification } from '@prisme.ai/design-system';
 import context, { PermissionsContext } from './context';
 import api, { UserPermissions, ApiError } from '../../utils/api';
 
+const permissionTargetToId = (target: UserPermissions['target']): string => {
+  if (target.public) {
+    return '*';
+  }
+  if (target.role) {
+    return `role:${target.role}`;
+  }
+  return target.id!;
+};
+
 const addUserToMap = (
   subjectId: string,
   usersPermissions: Map<string, UserPermissions[]>,
@@ -13,7 +23,7 @@ const addUserToMap = (
   const newUsersPermissions = new Map(usersPermissions);
   newUsersPermissions.set(subjectId, [
     ...(usersPermissions.get(subjectId) || []).filter(
-      ({ target }) => target?.email !== newUserPermissions?.target?.email
+      ({ target }) => target?.id !== newUserPermissions?.target?.id
     ),
     newUserPermissions,
   ]);
@@ -22,14 +32,14 @@ const addUserToMap = (
 const removeUserFromMap = (
   subjectId: string,
   usersPermissions: Map<string, UserPermissions[]>,
-  userEmail: string
+  id: string
 ) => {
   const newUsersPermissions = new Map<string, UserPermissions[]>(
     usersPermissions
   );
   newUsersPermissions.set(subjectId, [
     ...(usersPermissions.get(subjectId) || []).filter(
-      ({ target }) => target?.email !== userEmail && target?.id !== userEmail
+      ({ target }) => target?.id !== id
     ),
   ]);
 
@@ -114,15 +124,16 @@ export const PermissionsProvider: FC = ({ children }) => {
 
   const removeUserPermissions: PermissionsContext['removeUserPermissions'] =
     useCallback(
-      async (subjectType, subjectId, userEmail) => {
+      async (subjectType, subjectId, target) => {
         const backupUsersPermissions = new Map(usersPermissions);
+        const permId = permissionTargetToId(target);
 
         // optimistic
         setUsersPermissions((usersPermissions) =>
           removeUserFromMap(
             `${subjectType}:${subjectId}`,
             usersPermissions,
-            userEmail
+            permId
           )
         );
 
@@ -130,13 +141,13 @@ export const PermissionsProvider: FC = ({ children }) => {
           const deletedUserPermissions = await api.deletePermissions(
             subjectType,
             subjectId,
-            userEmail
+            permId
           );
           setUsersPermissions((usersPermissions) =>
             removeUserFromMap(
               `${subjectType}:${subjectId}`,
               usersPermissions,
-              userEmail
+              permId
             )
           );
           return deletedUserPermissions;

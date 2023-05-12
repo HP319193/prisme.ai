@@ -64,6 +64,25 @@ class Security {
     workspaceId: string,
     authorizations: Prismeai.WorkspaceAuthorizations
   ) => {
+    const { editor: _, owner: __, ...roles } = authorizations?.roles || {};
+    const initRoles = Object.keys(roles).reduce<
+      Record<string, CustomRole<SubjectType, any>>
+    >(
+      (initRoles, roleName) => ({
+        ...initRoles,
+        [roleName]: {
+          id: this.getRoleId(workspaceId, roleName),
+          type: 'casl',
+          name: roleName,
+          subjectType: SubjectType.Workspace,
+          subjectId: workspaceId,
+          rules: [],
+          casl: [],
+        },
+      }),
+      {}
+    );
+
     const builtRoles = (authorizations?.rules || []).reduce<
       Record<string, CustomRole<SubjectType, any>>
     >(
@@ -179,7 +198,7 @@ class Security {
         });
         return builtRoles;
       },
-      {}
+      initRoles
     );
 
     return Object.values(builtRoles);

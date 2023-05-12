@@ -12,6 +12,7 @@ enum KnownErrorCodes {
   BrokerError = 'BrokerError',
   UnknownRole = 'UnknownRole',
   InvalidAPIKey = 'InvalidAPIKey',
+  PrismeError = 'PrismeError',
 }
 
 function errorHttpStatus(err: Error, serverError: boolean) {
