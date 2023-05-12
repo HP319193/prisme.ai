@@ -146,6 +146,10 @@ const defaultStyles = `:block {
   position: relative;
   background-color: var(--pr-header-contrast);
 }
+:block.pr-block-header--fixed {
+  position: relative;
+  z-index: 1;
+}
 :block.pr-block-header--fixed .pr-block-header__container {
   position: fixed;
   left: 0;
