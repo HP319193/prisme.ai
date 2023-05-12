@@ -37,7 +37,8 @@ const evaluate = (
   const value = isExpr
     ? evaluateExpr(expr, ctx, false)
     : getValueFromCtx(expr, ctx);
-  if (typeof value === 'undefined' && !evalExpr && undefinedVars === 'leave') {
+
+  if (typeof value === 'undefined' && undefinedVars === 'leave') {
     return exprWithBrackets;
   } else if (typeof value !== 'string') {
     if (asString) {
@@ -87,7 +88,8 @@ export const interpolate = (
               // Without setting replaceAgain to false in that case, it would end in an infinite loop !!
               // Also, we dont want to reprocess the result of some evalExpr (allowing to prevent some {{variable}} from being interpolated : {% '{{var}}' %})
               replaceAgain =
-                !evaluated.startsWith('{{') && !fullMatch.startsWith('{%');
+                (!evaluated.startsWith('{{') && !fullMatch.startsWith('{%')) ||
+                opts.undefinedVars !== 'leave';
               return evaluated;
             }
           );

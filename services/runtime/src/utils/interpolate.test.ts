@@ -460,11 +460,36 @@ it('array of numbers should be kept intact', async () => {
   ]);
 });
 
+it('should support an option undefinedVars : "leave"', async () => {
+  expect(
+    interpolate(
+      [
+        {
+          type: 'text',
+          value: 'This is everything we know about you : {{unknownVar}}',
+        },
+      ],
+      {},
+      {
+        undefinedVars: 'leave',
+      }
+    )
+  ).toEqual([
+    {
+      type: 'text',
+      value: `This is everything we know about you : {{unknownVar}}`,
+    },
+  ]);
+});
+
 describe('Expressions can be evaluated with {% %}', () => {
   it('Basic expressions', () => {
     expect(interpolate('{% 1 < 2 %}', {})).toBe(true);
     expect(interpolate('stringified = {% 1 > 2 %}', {})).toEqual(
       'stringified = false'
+    );
+    expect(interpolate('stringified = {% 1 > 2 %} \n {% 2 > 1 %}', {})).toEqual(
+      'stringified = false \n true'
     );
   });
 

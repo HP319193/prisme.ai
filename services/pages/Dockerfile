@@ -34,8 +34,8 @@ COPY --from=build /www/node_modules/  /www/node_modules/
 # Pages dependencies
 COPY --from=build /www/services/console/  /www/services/console/
 
-EXPOSE 3000
-ENV PORT 3000
+EXPOSE 3100
+ENV PORT 3100
 ENV NODE_ENV production
 
 # Next.js collects completely anonymous telemetry data about general usage.
