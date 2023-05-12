@@ -103,8 +103,8 @@ export const schema: Schema = {
         },
       ],
     },
+    ...getCommonSchema(builtinBlocks.Action.styles || ''),
   },
-  ...getCommonSchema(builtinBlocks.Header.styles || ''),
 };
 
 export default schema;
