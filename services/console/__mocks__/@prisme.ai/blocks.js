@@ -13,5 +13,6 @@ export const builtinBlocks = {
   Hero: FakedBlock,
   Breadcrumbs: FakedBlock,
   TabsView: FakedBlock,
+  Action: FakedBlock,
 };
 export const CardVariants = [];

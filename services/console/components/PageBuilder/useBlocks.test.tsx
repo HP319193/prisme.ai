@@ -135,6 +135,13 @@ it('should get available Blocks', () => {
     },
     {
       builtIn: true,
+      slug: 'Action',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-Action.png',
+    },
+    {
+      builtIn: true,
       slug: 'Buttons',
       name: 'pages.blocks.name',
       description: 'pages.blocks.description',
@@ -254,6 +261,13 @@ it('should get available Blocks', () => {
       name: 'pages.blocks.name',
       description: 'pages.blocks.description',
       photo: '/images/blocks/preview-Hero.png',
+    },
+    {
+      builtIn: true,
+      slug: 'Action',
+      name: 'pages.blocks.name',
+      description: 'pages.blocks.description',
+      photo: '/images/blocks/preview-Action.png',
     },
     {
       builtIn: true,
