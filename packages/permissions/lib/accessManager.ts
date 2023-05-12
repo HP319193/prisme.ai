@@ -14,11 +14,11 @@ import {
   SubjectCollaborator,
   User,
   UserSubject,
-  PublicAccess,
   RoleTemplate,
+  SubjectRelations,
 } from '..';
 import { validateRules } from './rulesBuilder';
-import { extractObjectsByPath } from './utils';
+import { buildSubjectRelations, getParentSubjectIds } from './utils';
 import { InvalidAPIKey, ObjectNotFoundError, PrismeError } from './errors';
 
 type Document<T, Role extends string> = Omit<mongoose.Document<T>, 'toJSON'> &
@@ -55,11 +55,6 @@ export interface FindOptions {
 
 const DEFAULT_FIND_PAGE_SIZE = 20;
 
-interface SubjectFieldRef<SubjectType> {
-  field: string;
-  subject: SubjectType;
-}
-
 export type FilterQuery<
   SubjectInterface,
   Role extends string = string
@@ -79,7 +74,7 @@ export class AccessManager<
   private permissionsConfig: PermissionsConfig<SubjectType, Role, CustomRules>;
   private permissions?: Permissions<SubjectType, Role>;
   public user?: User<Role>;
-  private subjectFieldRefs: Record<SubjectType, SubjectFieldRef<SubjectType>[]>;
+  private subjectRelations: SubjectRelations<SubjectType>;
   private alreadyPulledSubjectFieldRefs: Set<any>;
   private customRoles?: Record<string, CustomRole<SubjectType, CustomRules>[]>;
 
@@ -135,56 +130,8 @@ export class AccessManager<
     }, {} as Record<SubjectType, AccessibleRecordModel<Document<any, Role>>>);
 
     this.alreadyPulledSubjectFieldRefs = new Set();
-    this.subjectFieldRefs = this.buildSubjectFieldRefs(permissionsConfig);
+    this.subjectRelations = buildSubjectRelations(permissionsConfig);
     this.customRoles = opts?.rbac?.cacheCustomRoles ? {} : undefined;
-  }
-
-  buildSubjectFieldRefs(
-    permissionsConfig: PermissionsConfig<SubjectType, Role, CustomRules>
-  ) {
-    return (permissionsConfig.rbac || []).reduce((subjectFieldRefs, role) => {
-      const parentSubject = role.subjectType;
-      if (!parentSubject || !role?.rules?.length) {
-        return subjectFieldRefs;
-      }
-      const fieldRefs = role.rules
-        .map(({ subject: childSubject, inverted, conditions }) => {
-          if (inverted || !conditions || childSubject == parentSubject) {
-            return false;
-          }
-          const childField: string = Object.keys(conditions).find(
-            (field) => conditions[field] === '${subject.id}'
-          ) as string;
-          return {
-            field: childField,
-            subject: childSubject,
-          };
-        })
-        .filter(Boolean) as SubjectFieldRef<SubjectType>[];
-
-      return {
-        ...subjectFieldRefs,
-        ...fieldRefs.reduce(
-          (fieldRefs, cur) => ({
-            ...fieldRefs,
-            [cur.subject]: [
-              {
-                subject: parentSubject,
-                field: cur.field,
-              },
-              ...(subjectFieldRefs[cur.subject as SubjectType] || []),
-            ].filter(
-              (cur, idx, arr) =>
-                arr.findIndex(
-                  ({ subject, field }) =>
-                    cur.subject === subject && cur.field === field
-                ) === idx
-            ),
-          }),
-          {}
-        ),
-      };
-    }, {} as Record<SubjectType, SubjectFieldRef<SubjectType>[]>);
   }
 
   async start() {
@@ -250,20 +197,21 @@ export class AccessManager<
       return permissions.pullRoleFromSubject(subjectType, subject);
     }
 
-    // If we are given a full object, check for field refs & fetch related objects permissions
-    if (!(subjectType in this.subjectFieldRefs)) {
-      return;
-    }
-
+    // If we are given a full object, check for parent objects & fetch their permissions
     await Promise.all(
-      this.subjectFieldRefs[subjectType].map(
-        async ({ subject: parentSubject, field }) => {
-          const refValue = extractObjectsByPath(subject, field);
-          if (!refValue || this.alreadyPulledSubjectFieldRefs.has(refValue)) {
+      getParentSubjectIds(this.subjectRelations, subjectType, subject).map(
+        async ({
+          subjectType: parentSubjectType,
+          subjectId: parentSubjectId,
+        }) => {
+          if (this.alreadyPulledSubjectFieldRefs.has(parentSubjectId)) {
             return Promise.resolve(true);
           }
-          this.alreadyPulledSubjectFieldRefs.add(refValue);
-          return await this.pullRoleFromSubject(parentSubject, refValue);
+          this.alreadyPulledSubjectFieldRefs.add(parentSubjectId);
+          return await this.pullRoleFromSubject(
+            parentSubjectType,
+            parentSubjectId
+          );
         }
       )
     );
@@ -472,7 +420,7 @@ export class AccessManager<
   async grant<returnType extends SubjectType>(
     subjectType: returnType,
     id: string,
-    user: User<Role> | typeof PublicAccess,
+    user: Prismeai.UserPermissionsTarget,
     permission: ActionType | ActionType[] | Role | SubjectCollaborator<Role>
   ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions } = this.checkAsUser();
@@ -492,6 +440,12 @@ export class AccessManager<
       subjectType,
       doc.toJSON()
     );
+
+    if (user.role && (permission as SubjectCollaborator<Role>)?.role) {
+      throw new PrismeError(
+        'Cant bind a role to another role. Only policies are supported'
+      );
+    }
     await this.pullRole(
       {
         subjectType,
@@ -516,8 +470,7 @@ export class AccessManager<
   async revoke<returnType extends SubjectType>(
     subjectType: returnType,
     id: string,
-    user: User<Role> | typeof PublicAccess,
-    permission: ActionType | ActionType[] | Role | 'all' = 'all'
+    permId: string
   ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
     const { permissions } = this.checkAsUser();
 
@@ -537,10 +490,10 @@ export class AccessManager<
       doc.toJSON()
     );
     const updatedSubject = permissions.revoke(
-      permission,
+      'all',
       subjectType,
       doc.toJSON(),
-      user
+      permId
     );
 
     doc.set(updatedSubject);

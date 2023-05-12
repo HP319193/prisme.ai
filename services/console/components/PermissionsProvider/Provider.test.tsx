@@ -388,15 +388,13 @@ it("should remove a user's permissions", async () => {
   });
 
   await act(async () => {
-    await context.removeUserPermissions(
-      'workspaces',
-      'workspaceId11',
-      'user2@tropfort.com'
-    );
+    await context.removeUserPermissions('workspaces', 'workspaceId11', {
+      id: '43',
+    });
     expect(api.deletePermissions).toHaveBeenCalledWith(
       'workspaces',
       'workspaceId11',
-      'user2@tropfort.com'
+      '43'
     );
   });
 

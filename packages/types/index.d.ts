@@ -3564,14 +3564,14 @@ declare namespace PrismeaiAPI {
     }
     namespace RevokePermissions {
         namespace Parameters {
+            export type Id = string;
             export type SubjectId = string;
             export type SubjectType = Prismeai.SharableSubjectTypes;
-            export type UserId = string;
         }
         export interface PathParameters {
             subjectType: Parameters.SubjectType;
             subjectId: Parameters.SubjectId;
-            userId: Parameters.UserId;
+            id: Parameters.Id;
         }
         namespace Responses {
             export interface $200 {

@@ -2,10 +2,10 @@ import {
   ActionType,
   Permissions,
   PermissionsConfig,
-  PublicAccess,
   SubjectCollaborators,
 } from '..';
 import configs from '../examples';
+import { PublicAccess } from './utils';
 
 export type Subject = Record<string, any> & {
   id?: string;
@@ -339,7 +339,7 @@ describe('ABAC > Grant permissions', () => {
         ActionType.Read,
         SubjectType.Workspace,
         adminWorkspace,
-        collaboratorUser
+        { id: collaboratorUser.id }
       ) as any as Subject;
     }).not.toThrow();
 
@@ -381,7 +381,7 @@ describe('ABAC > Grant permissions', () => {
         ActionType.Read,
         SubjectType.Workspace,
         adminWorkspace,
-        PublicAccess
+        { public: true }
       ) as any as Subject;
     }).not.toThrow();
 
@@ -439,7 +439,7 @@ describe('ABAC > Grant permissions', () => {
         [ActionType.Read, ActionType.Delete],
         SubjectType.Workspace,
         adminWorkspace,
-        collaboratorUser
+        { id: collaboratorUser.id }
       ) as any as Subject;
     }).not.toThrow();
     // He can also update collaborators field manually
@@ -502,7 +502,7 @@ describe('ABAC > Grant permissions', () => {
         ActionType.Read,
         SubjectType.Workspace,
         adminWorkspace,
-        collaboratorUser2
+        { id: collaboratorUser2.id }
       )
     ).toThrow();
     // Our last collaborator can't read this workspace either
@@ -520,7 +520,7 @@ describe('ABAC > Grant permissions', () => {
         ActionType.ManagePermissions,
         SubjectType.Workspace,
         adminWorkspace,
-        collaboratorUser
+        { id: collaboratorUser.id }
       ) as any as Subject;
     }).not.toThrow();
 
@@ -539,7 +539,7 @@ describe('ABAC > Grant permissions', () => {
         ActionType.Read,
         SubjectType.Workspace,
         sharedWorkspace!!,
-        collaboratorUser2
+        { id: collaboratorUser2.id }
       ) as any as Subject;
     }).not.toThrow();
 
@@ -588,7 +588,7 @@ describe('ABAC > Grant permissions', () => {
         [ActionType.Read, ActionType.Delete],
         SubjectType.Workspace,
         adminWorkspace,
-        collaboratorUser
+        collaboratorUser.id
       ) as any as Subject;
     }).not.toThrow();
 
@@ -819,7 +819,7 @@ describe('Subject-attached Roles', () => {
         Role.Collaborator,
         SubjectType.Workspace,
         adminWorkspace,
-        futureCollaboratorUser
+        { id: futureCollaboratorUser.id }
       ) as any as Subject;
     }).not.toThrow();
 
@@ -836,5 +836,52 @@ describe('Subject-attached Roles', () => {
         sharedWorkspace!!
       )
     ).toBe(true);
+  });
+
+  it('Someone with a workspace custom role can read a page if it has been shared to this role', () => {
+    const user = {
+      id: 'someRandomUser',
+    };
+    const userPerms = new Permissions(user, config);
+    // Load custom role
+    userPerms.loadRoles([
+      {
+        name: 'agent' as any,
+        subjectType: SubjectType.Workspace,
+        rules: [],
+      },
+    ]);
+    const hisWorkspace = {
+      id: 'hisWorkspaceId',
+      createdBy: 'someOtherAdminId',
+      permissions: {
+        [user.id]: {
+          role: 'agent' as any,
+        },
+      },
+    } as Subject;
+
+    const page = {
+      id: 'pageId',
+      workspaceId: 'hisWorkspaceId',
+      permissions: {},
+    } as any as Subject;
+
+    // We cannot read this page until parent workspace permissions are loaded :
+    expect(userPerms.can(ActionType.Read, SubjectType.Page, page)).toBe(false);
+    userPerms.pullRoleFromSubject(SubjectType.Workspace, hisWorkspace);
+
+    // Neither until page is shared to this role :
+    expect(userPerms.can(ActionType.Read, SubjectType.Page, page)).toBe(false);
+
+    // Share to this role
+    page.permissions!['role:agent'] = {
+      policies: {
+        read: true,
+      },
+    };
+
+    // User now can read it !
+    expect(userPerms.can(ActionType.Read, SubjectType.Page, page)).toBe(true);
   });
 });

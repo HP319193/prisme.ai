@@ -19,6 +19,7 @@ export type UserPermissions = {
     id?: string;
     email?: string;
     public?: boolean;
+    role?: string;
     displayName?: string;
   };
 };
@@ -290,16 +291,11 @@ export class Api extends Fetcher {
     workspaceId: PrismeaiAPI.CreatePage.Parameters.WorkspaceId,
     page: PrismeaiAPI.CreatePage.RequestBody
   ): Promise<Prismeai.Page> {
-    const {
-      createdAt,
-      createdBy,
-      updatedAt,
-      updatedBy,
-      ...newPage
-    } = await this.post<PageWithMetadata>(
-      `/workspaces/${workspaceId}/pages`,
-      page
-    );
+    const { createdAt, createdBy, updatedAt, updatedBy, ...newPage } =
+      await this.post<PageWithMetadata>(
+        `/workspaces/${workspaceId}/pages`,
+        page
+      );
     return newPage;
   }
 
@@ -308,17 +304,12 @@ export class Api extends Fetcher {
     page: PrismeaiAPI.UpdatePage.RequestBody,
     prevSlug: PrismeaiAPI.DeletePage.Parameters.Slug = page.slug || ''
   ): Promise<Prismeai.Page> {
-    const {
-      createdAt,
-      createdBy,
-      updatedAt,
-      updatedBy,
-      ...updatedPage
-    } = await this.patch<PageWithMetadata>(
-      `/workspaces/${workspaceId}/pages/${encodeURIComponent(prevSlug)}`,
-      // Replace images as dataurl to uploaded url in any type of data
-      await this.replaceAllImagesData(page, workspaceId)
-    );
+    const { createdAt, createdBy, updatedAt, updatedBy, ...updatedPage } =
+      await this.patch<PageWithMetadata>(
+        `/workspaces/${workspaceId}/pages/${encodeURIComponent(prevSlug)}`,
+        // Replace images as dataurl to uploaded url in any type of data
+        await this.replaceAllImagesData(page, workspaceId)
+      );
     return updatedPage;
   }
 
@@ -412,20 +403,21 @@ export class Api extends Fetcher {
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string
   ): Promise<{ result: UserPermissions[] }> {
-    const permissions: PrismeaiAPI.GetPermissions.Responses.$200 = await this.get(
-      `/${subjectType}/${subjectId}/permissions`
-    );
+    const permissions: PrismeaiAPI.GetPermissions.Responses.$200 =
+      await this.get(`/${subjectType}/${subjectId}/permissions`);
     const contacts = await this.findContacts({
       ids: permissions.result
-        .filter((cur) => cur.target.id && cur.target.id !== '*')
+        .filter((cur) => cur.target.id && !cur.target.displayName)
         .map((cur) => cur.target.id!),
     });
     return {
       result: permissions.result.map((perm) => {
-        const user = perm.target.id
-          ? contacts.contacts.find((cur) => cur.id === perm.target.id)
-          : undefined;
-        const displayName = `${user?.firstName} ${user?.lastName}`;
+        const user =
+          perm.target.id && !perm.target.displayName
+            ? contacts.contacts.find((cur) => cur.id === perm.target.id)
+            : undefined;
+        const displayName =
+          perm.target.displayName || `${user?.firstName} ${user?.lastName}`;
         return {
           ...perm,
           target: {
@@ -481,11 +473,9 @@ export class Api extends Fetcher {
   async deletePermissions(
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string,
-    userId: string
+    id: string
   ): Promise<PrismeaiAPI.RevokePermissions.Responses.$200> {
-    return await this.delete(
-      `/${subjectType}/${subjectId}/permissions/${userId}`
-    );
+    return await this.delete(`/${subjectType}/${subjectId}/permissions/${id}`);
   }
 
   async getApps({

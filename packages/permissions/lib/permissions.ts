@@ -14,11 +14,18 @@ import {
   PermissionsConfig,
   RoleTemplate,
   DefaultRole,
+  SubjectRelations,
 } from './types';
+import {
+  buildSubjectRelations,
+  getParentSubjectIds,
+  permissionTargetToId,
+  PublicAccess,
+  RolePrefix,
+} from './utils';
 
 type UserId = string;
 
-export const PublicAccess = '*';
 interface Subject<Role extends string> {
   id?: string;
   permissions?: Record<
@@ -40,7 +47,9 @@ export class Permissions<
   private roleTemplates: RoleTemplates<SubjectType, Role>;
   private abac: Rules;
   private rules: Rules;
+  private subjectRelations: SubjectRelations<SubjectType>;
   private loadedRoleIds: Set<string>;
+  private loadedSubjectRoles: Record<string, string>; // map subjectType+subjectId to its role
   public ability: Ability;
 
   constructor(user: User<Role>, config: PermissionsConfig<SubjectType, Role>) {
@@ -51,6 +60,7 @@ export class Permissions<
     this.subjects = subjects;
 
     this.loadedRoleIds = new Set();
+    this.loadedSubjectRoles = {};
     this.rules = sortRules([
       ...nativeRules(user, config.rbac, config.subjects),
       ...injectRules(abac, { user }),
@@ -59,6 +69,7 @@ export class Permissions<
     if (user.role) {
       this.loadRole(user.role);
     }
+    this.subjectRelations = buildSubjectRelations(config);
   }
 
   public loadRoles(roles: RoleTemplates<SubjectType, Role>) {
@@ -90,7 +101,8 @@ export class Permissions<
 
   private findRoleTemplate(role: Role, subjectType?: SubjectType) {
     return this.roleTemplates.find(
-      (cur) => cur.name === role && cur.subjectType == subjectType
+      (cur) =>
+        cur.name === role && (cur.subjectType == subjectType || !subjectType)
     );
   }
 
@@ -98,11 +110,17 @@ export class Permissions<
     permission: ActionType | ActionType[] | Role | SubjectCollaborator<Role>,
     subjectType: SubjectType,
     subject: Subject<Role>,
-    user: User<Role> | typeof PublicAccess
+    target: Prismeai.UserPermissionsTarget
   ): Subject<Role> {
     this.throwUnlessCan(ActionType.ManagePermissions, subjectType, subject);
 
-    const userId: string = user === PublicAccess ? user : user.id;
+    const targetStr = permissionTargetToId(target);
+
+    if (target.role && !this.findRoleTemplate(target.role as Role)) {
+      throw new UnknownRole(
+        `Can't assign permissions to users with role '${target.role}' as it does not seem to exist .`
+      );
+    }
 
     // Update entire user
     if (typeof permission === 'object' && !Array.isArray(permission)) {
@@ -118,9 +136,9 @@ export class Permissions<
 
       if (role && !this.findRoleTemplate(role, subjectType)) {
         throw new UnknownRole(
-          `Can't assign ${subjectType || ''} role '${role}' to user '${
-            this.user.id
-          }' as it does not seem to exist .`
+          `Can't assign ${
+            subjectType || ''
+          } role '${role}' to '${targetStr}' as role '${role}' does not seem to exist .`
         );
       }
 
@@ -128,7 +146,7 @@ export class Permissions<
         ...subject,
         permissions: {
           ...subject.permissions,
-          [userId]: permission as SubjectCollaborator<Role>,
+          [targetStr]: permission as SubjectCollaborator<Role>,
         },
       };
     }
@@ -137,12 +155,12 @@ export class Permissions<
     const roleTemplate = this.findRoleTemplate(permission as Role, subjectType);
     if (typeof permission === 'string' && roleTemplate) {
       const role = permission as Role;
-      const contributor = subject.permissions?.[userId] || {};
+      const contributor = subject.permissions?.[targetStr] || {};
       return {
         ...subject,
         permissions: {
           ...subject.permissions,
-          [userId]: {
+          [targetStr]: {
             ...contributor,
             role: role,
           },
@@ -155,13 +173,13 @@ export class Permissions<
       Array.isArray(permission) ? permission : [permission]
     ) as string[];
     const { policies: currentPolicies, ...contributor } =
-      subject.permissions?.[userId] || {};
+      subject.permissions?.[targetStr] || {};
 
     return {
       ...subject,
       permissions: {
         ...subject.permissions,
-        [userId]: {
+        [targetStr]: {
           ...contributor,
           policies: actions.reduce(
             (policies, permission) => ({
@@ -179,11 +197,9 @@ export class Permissions<
     permission: ActionType | ActionType[] | Role | 'all',
     subjectType: SubjectType,
     subject: Subject<Role>,
-    user: User<Role> | typeof PublicAccess
+    permId: string
   ) {
     this.throwUnlessCan(ActionType.ManagePermissions, subjectType, subject);
-
-    const userId: string = user === PublicAccess ? user : user.id;
 
     // Revoke a role
     const isExistingRole = !!this.findRoleTemplate(
@@ -196,10 +212,10 @@ export class Permissions<
     ) {
       const role = permission;
       const { role: currentRole, ...contributor } =
-        subject.permissions?.[userId] || {};
+        subject.permissions?.[permId] || {};
       if (role === 'all') {
         // Revoke all policies & role
-        const { [userId]: him, ...contributorsWithoutHim } =
+        const { [permId]: him, ...contributorsWithoutHim } =
           subject.permissions || {};
         return {
           ...subject,
@@ -215,7 +231,7 @@ export class Permissions<
         ...subject,
         permissions: {
           ...subject.permissions,
-          [userId]: contributor,
+          [permId]: contributor,
         },
       };
     }
@@ -225,13 +241,13 @@ export class Permissions<
       ? permission
       : [permission];
     const { policies: currentPolicies, ...contributor } =
-      subject.permissions?.[userId] || {};
+      subject.permissions?.[permId] || {};
 
     return {
       ...subject,
       permissions: {
         ...subject.permissions,
-        [userId]: {
+        [permId]: {
           ...contributor,
           policies: Object.entries(currentPolicies || {}).reduce(
             (policies, [permission, enabled]) => {
@@ -249,18 +265,23 @@ export class Permissions<
 
   // Update current ability with a new role, which might be related to a specific subject
   private loadRole(
-    role: Role,
+    // Either a role name or object ready to use
+    role: Role | RoleTemplate<SubjectType, Role>,
     subjectType?: SubjectType,
     subject?: Subject<Role>
   ) {
-    const roleId = subjectType ? `${subjectType}/${subject?.id}/${role}` : role;
+    const roleId = subjectType
+      ? `${subjectType}/${subject?.id}/${(<any>role)?.name || role}`
+      : (<any>role)?.name || role;
     if (this.loadedRoleIds.has(roleId)) {
       return;
     }
     this.loadedRoleIds.add(roleId);
-    const roleTemplate = role
-      ? this.findRoleTemplate(role, subjectType)
-      : undefined;
+
+    let roleTemplate: RoleTemplate<SubjectType, Role> | undefined = role as any;
+    if (typeof roleTemplate === 'string') {
+      roleTemplate = this.findRoleTemplate(roleTemplate, subjectType);
+    }
     if (!roleTemplate && role !== DefaultRole) {
       throw new UnknownRole(
         `User '${this.user.id}' is assigned an unknown ${
@@ -300,11 +321,55 @@ export class Permissions<
     const { role: userRole } = subject.permissions?.[this.user.id] || {};
     if (userRole) {
       this.loadRole(userRole, subjectType, subject);
+      // Keep this in memory in case a child subject might given policies to this role
+      this.loadedSubjectRoles[`${subjectType}.${subject.id}`] = userRole;
     }
 
     const { role: publicRole } = subject.permissions?.[PublicAccess] || {};
     if (publicRole) {
       this.loadRole(publicRole, subjectType, subject);
+    }
+
+    // Handle permissions describing parentRole -> policies relation within a child object (i.e { "role:agent":  { "policies": { "read": true } } })
+    const parentSubjectWithARole = getParentSubjectIds(
+      this.subjectRelations,
+      subjectType,
+      subject
+    ).find(
+      ({ subjectType, subjectId }) =>
+        this.loadedSubjectRoles[`${subjectType}.${subjectId}`]
+    );
+    const parentRole =
+      this.loadedSubjectRoles[
+        `${parentSubjectWithARole?.subjectType}.${parentSubjectWithARole?.subjectId}`
+      ];
+    const permissionsFromParentSubjectRole =
+      parentRole && (subject.permissions || {})[`${RolePrefix}${parentRole}`];
+    if (
+      permissionsFromParentSubjectRole &&
+      Object.keys(permissionsFromParentSubjectRole?.policies || {})
+    ) {
+      this.loadRole(
+        {
+          name: `${subjectType}.${subject.id}.${parentRole}` as any,
+          rules: [
+            {
+              // Allow requested policies for this specific subject
+              subject: subjectType,
+              action: Object.entries(
+                permissionsFromParentSubjectRole?.policies || {}
+              )
+                .filter(([, enabled]) => enabled)
+                .map(([policy]) => policy),
+              conditions: {
+                id: subject.id!,
+              },
+            },
+          ],
+        },
+        subjectType,
+        subject
+      );
     }
   }
 

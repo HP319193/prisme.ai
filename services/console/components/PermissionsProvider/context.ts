@@ -15,7 +15,7 @@ export interface PermissionsContext {
   removeUserPermissions: (
     subjectType: SubjectType,
     subjectId: string,
-    userEmail: string
+    target: UserPermissions['target']
   ) => Promise<PrismeaiAPI.RevokePermissions.Responses.$200 | null>;
   getUsersPermissions: (
     subjectType: SubjectType,

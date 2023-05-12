@@ -3349,9 +3349,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationError'
 
-  /v2/{subjectType}/{subjectId}/permissions/{userId}:
+  /v2/{subjectType}/{subjectId}/permissions/{id}:
     delete:
-      description: Revoke all role & permissions from a user
+      description: Revoke a specific set of permissions by id ('userId' or '*' for public or 'role:roleName')
       operationId: revokePermissions
       tags:
         - permissions
@@ -3368,9 +3368,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: userId
+        - name: id
           in: path
-          description: The target user id
+          description: The target permission id
           required: true
           schema:
             type: string

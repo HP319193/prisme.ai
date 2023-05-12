@@ -2,8 +2,8 @@ import '@prisme.ai/types';
 import { NextFunction, Request, Response, Router } from 'express';
 import { ActionType } from '../..';
 import { CollaboratorNotFound } from '../errors';
-import { PublicAccess } from '../permissions';
 import { SubjectCollaborator } from '../types';
+import { permissionIdToTarget, permissionTargetToId } from '../utils';
 import { fetchUsers } from './fetchUsers';
 import { asyncRoute, ExtendedRequest } from './utils';
 
@@ -54,15 +54,9 @@ export function initCollaboratorRoutes<SubjectType extends string>(
 
     const users = await Promise.all(
       Object.entries(subject.permissions || {}).map(
-        async ([userId, permissions]: [string, any]) => {
+        async ([permId, permissions]: [string, any]) => {
           return {
-            target:
-              userId === PublicAccess
-                ? {
-                    id: userId,
-                    public: true,
-                  }
-                : { id: userId },
+            target: permissionIdToTarget(permId),
             permissions: permissions as SubjectCollaborator<string>,
           };
         }
@@ -88,23 +82,32 @@ export function initCollaboratorRoutes<SubjectType extends string>(
       body,
     } = req;
     const { target, permissions } = body;
-    const { id, public: publicShare } = target;
-    const users: (Prismeai.User & { id: string })[] = publicShare
-      ? [{ id: PublicAccess } as any]
-      : await fetchUsers({ ids: [id!] });
-    if (!users.length) {
-      throw new CollaboratorNotFound(`This user does not exist`);
+    const { id, public: publicShare, role } = target;
+
+    target.id = permissionTargetToId(target);
+    if (role) {
+      // Share to a role
+      target.displayName = `Role: ${role}`;
+    } else if (publicShare) {
+      // Share to everyone
+      target.displayName = 'Public';
+    } else if (id) {
+      // Share to a userId. Must be handled last as others target have their respective id too (i.e id="*"" for public)
+      const users: (Prismeai.User & { id: string })[] = await fetchUsers({
+        ids: [id!],
+      });
+      if (!users.length) {
+        throw new CollaboratorNotFound(`This user does not exist`);
+      }
+      target.displayName = `${<any>users[0].firstName} ${<any>(
+        users[0].lastName
+      )}`;
     }
-    const collaborator = users[0];
-    target.id = (<any>collaborator)?.id;
-    target.displayName = `${(<any>collaborator)?.firstName} ${
-      (<any>collaborator)?.lastName
-    }`;
 
     const sharedSubject = await accessManager.grant(
       subjectType as SubjectType,
       subjectId,
-      collaborator,
+      target,
       permissions
     );
 
@@ -138,24 +141,16 @@ export function initCollaboratorRoutes<SubjectType extends string>(
     next: NextFunction
   ) {
     const {
-      params: { subjectType, subjectId, userId },
+      params: { subjectType, subjectId, id },
       accessManager,
     } = req;
-    const subject = await accessManager.revoke(
-      <any>subjectType,
-      subjectId,
-      userId === PublicAccess
-        ? PublicAccess
-        : {
-            id: userId,
-          }
-    );
+    const subject = await accessManager.revoke(<any>subjectType, subjectId, id);
 
     if (callbacks?.onRevoked) {
       let displayName;
-      if (userId !== '*') {
+      if (id !== '*') {
         try {
-          const users = await fetchUsers({ ids: [userId] });
+          const users = await fetchUsers({ ids: [id] });
           displayName = `${users?.[0]?.firstName} ${users?.[0]?.lastName}`;
         } catch {}
       }
@@ -163,16 +158,16 @@ export function initCollaboratorRoutes<SubjectType extends string>(
         req,
         subjectType,
         subjectId,
-        { id: userId, displayName },
+        { id: id, displayName },
         subject
       );
     }
 
-    return res.send({ id: userId });
+    return res.send({ id: id });
   }
 
   const baseRoute = '/v2/:subjectType/:subjectId/permissions';
   app.get(`${baseRoute}`, asyncRoute(getPermissionsHandler));
   app.post(`${baseRoute}`, asyncRoute(shareHandler));
-  app.delete(`${baseRoute}/:userId`, asyncRoute(revokeCollaborator));
+  app.delete(`${baseRoute}/:id`, asyncRoute(revokeCollaborator));
 }
