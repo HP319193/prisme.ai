@@ -79,6 +79,16 @@ export interface PermissionsConfig<
   ) => Rules;
 }
 
+export type SubjectRelations<SubjectType extends string> = Record<
+  SubjectType,
+  SubjectFieldRef<SubjectType>[]
+>;
+
+export interface SubjectFieldRef<SubjectType> {
+  field: string;
+  subject: SubjectType;
+}
+
 export type PermissionsMiddleware = (
   req: Request<
     PrismeaiAPI.GetPermissions.PathParameters,

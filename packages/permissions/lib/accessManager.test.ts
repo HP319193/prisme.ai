@@ -225,7 +225,7 @@ describe('CRUD with a predefined role', () => {
     adminYWorkspaces[0] = await adminY.grant(
       SubjectType.Workspace,
       adminYWorkspaces[0].id,
-      adminZ.user!!,
+      { id: adminZ.user.id },
       Role.Owner
     );
 
@@ -233,7 +233,7 @@ describe('CRUD with a predefined role', () => {
     adminYWorkspaces[1] = await adminY.grant(
       SubjectType.Workspace,
       adminYWorkspaces[1].id,
-      PublicAccess,
+      { public: true },
       ActionType.Read
     );
 
@@ -241,7 +241,7 @@ describe('CRUD with a predefined role', () => {
     adminYWorkspaces[2] = await adminY.grant(
       SubjectType.Workspace,
       adminYWorkspaces[2].id,
-      PublicAccess,
+      { public: true },
       Role.Owner
     );
 
@@ -249,7 +249,7 @@ describe('CRUD with a predefined role', () => {
     adminZWorkspaces[1] = await adminZ.grant(
       SubjectType.Workspace,
       adminZWorkspaces[1].id,
-      adminY.user!!,
+      { id: adminY.user.id },
       ActionType.Read
     );
 
@@ -295,7 +295,7 @@ describe('CRUD with a predefined role', () => {
     const sharedWorkspace = await adminZ.grant(
       SubjectType.Workspace,
       workspace.id,
-      collabZ.user,
+      { id: collabZ.user.id },
       Role.Collaborator
     );
 
@@ -356,7 +356,7 @@ describe('Role & Permissions granting', () => {
     const sharedWorkspace = await adminA.grant(
       SubjectType.Workspace,
       createdWorkspace.id,
-      adminB.user!!,
+      { id: adminB.user.id },
       Role.Owner
     );
     expect(sharedWorkspace?.permissions).toMatchObject({
@@ -371,16 +371,13 @@ describe('Role & Permissions granting', () => {
     ).resolves.toMatchObject(sharedWorkspace);
   });
 
-  it('Any admin can revoke a specific role of someone else on its own workspace', async () => {
+  it('Any admin can revoke all permissions from someone else on its own workspace', async () => {
     const unsharedWorkspace = await adminA.revoke(
       SubjectType.Workspace,
       createdWorkspace.id,
-      adminB.user!!,
-      Role.Owner
+      adminB.user.id!!
     );
-    expect(unsharedWorkspace?.permissions).toMatchObject({
-      [adminB.user.id]: {},
-    });
+    expect(unsharedWorkspace?.permissions).not.toHaveProperty(adminB.user.id);
 
     // Refresh adminB to force him to "forgot" he was admin
     // TODO a way to automatically detect that ?
@@ -414,7 +411,7 @@ describe('Role & Permissions granting', () => {
     const sharedPage = await adminA.grant(
       SubjectType.Page,
       page.id,
-      collaborator.user!!,
+      { id: collaborator.user.id },
       [ActionType.Read, ActionType.Update]
     );
 
@@ -459,7 +456,7 @@ describe('Role & Permissions granting', () => {
     await adminA.grant(
       SubjectType.Workspace,
       workspace.id,
-      collaborator.user!!,
+      { id: collaborator.user.id },
       Role.Owner
     );
 

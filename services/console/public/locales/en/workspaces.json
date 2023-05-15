@@ -1338,6 +1338,7 @@
   "share": {
     "label": "Share",
     "email": "Email",
+    "emailOrRole": "Email or Role",
     "displayName": "User",
     "role": "Role",
     "access": "Access",

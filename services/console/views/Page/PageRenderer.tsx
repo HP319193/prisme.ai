@@ -118,13 +118,8 @@ export const PageRenderer = ({
     return isValid;
   }, []);
   const source = useMemo(() => {
-    const {
-      id,
-      workspaceSlug,
-      workspaceId,
-      apiKey,
-      ...page
-    } = value as Prismeai.Page & { apiKey: string };
+    const { id, workspaceSlug, workspaceId, apiKey, ...page } =
+      value as Prismeai.Page & { apiKey: string };
     return page;
   }, [value]);
   const setSource = useCallback(
@@ -197,6 +192,7 @@ export const PageRenderer = ({
                   <SharePage
                     pageId={`${value.id}`}
                     pageSlug={value.slug === 'index' ? '' : value.slug || ''}
+                    workspaceId={value.workspaceId!}
                   />
                 )}
                 title={t('pages.share.label')}

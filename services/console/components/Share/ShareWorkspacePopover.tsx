@@ -93,14 +93,13 @@ const ShareWorkspacePopover = ({
     }
 
     const rows = data
-      .filter(({ target }) => !!target?.id && target?.id != '*') // Public permission has id='*'
+      .filter(({ target }) => !target?.public)
       .map(({ target, permissions }) => ({
         key: target?.id,
         displayName: target?.displayName,
         role: permissions.role,
         actions: generateRowButtons(() => {
-          if (!target?.id) return;
-          removeUserPermissions(subjectType, subjectId, target?.id);
+          removeUserPermissions(subjectType, subjectId, target);
           if (target?.id === userId) {
             // User is removing himself his access to the workspace
             push('/workspaces');
