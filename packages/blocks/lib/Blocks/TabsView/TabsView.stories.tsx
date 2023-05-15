@@ -132,6 +132,48 @@ WithAction.args = {
   ],
 };
 
+export const WithBlocksList = Template.bind({});
+WithBlocksList.args = {
+  tabs: [
+    {
+      text: 'Chat',
+      content: {
+        blocks: [
+          {
+            slug: 'RichText',
+            content: 'This is the chat',
+          },
+        ],
+      }
+    },
+    {
+      text: {
+        blocks: [{
+          slug: "RichText",
+          content: "Notifications"
+        }, {
+          slug: "RichText",
+          content: ' (3)',
+          css: ``
+        }],
+        css: `:block {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+        }`
+      },
+      content: {
+        blocks: [
+          {
+            slug: 'RichText',
+            content: 'This is the notifications',
+          },
+        ],
+      }
+    },
+  ],
+};
+
 export const Vertical = Template.bind({});
 Vertical.args = {
   direction: 'vertical',
