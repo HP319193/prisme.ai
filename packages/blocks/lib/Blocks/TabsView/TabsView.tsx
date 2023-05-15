@@ -63,7 +63,7 @@ export const TabsView = ({
 
           if (isBlocksList(text)) {
             return (
-              <button onClick={navigate} className={`pr-block-tabs-view__tab ${
+              <button key={k} type="button" onClick={navigate} className={`pr-block-tabs-view__tab ${
                   currentTab === k ? 'pr-block-tabs-view__tab--active' : ''
                 }`}>
               <BlockProvider config={text}>
@@ -75,6 +75,7 @@ export const TabsView = ({
           if (isAction(action)) {
             return (
               <Action
+                 key={k}
                 text={currentText}
                 {...action}
                 events={events}
@@ -88,6 +89,7 @@ export const TabsView = ({
           }
           return (
             <button
+               key={k}
               type="button"
               onClick={navigate}
               className={`pr-block-tabs-view__tab ${
