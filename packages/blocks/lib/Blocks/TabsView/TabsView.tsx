@@ -1,6 +1,6 @@
 import { isLocalizedObject } from '@prisme.ai/design-system';
 import { ReactNode, useState } from 'react';
-import { BlockContext, useBlock } from '../../Provider';
+import { BlockContext, BlockProvider, useBlock } from '../../Provider';
 import {
   BlocksDependenciesContext,
   useBlocks,
@@ -8,12 +8,12 @@ import {
 import useLocalizedText from '../../useLocalizedText';
 import { ActionConfig, Action } from '../Action';
 import { BaseBlock } from '../BaseBlock';
-import { BlocksList, BlocksListConfig } from '../BlocksList';
+import BlocksList, { BlocksListConfig } from '../BlocksList';
 import { BaseBlockConfig } from '../types';
 
 interface TabsViewConfig extends BaseBlockConfig {
   tabs: ({
-    text: ReactNode;
+    text: ReactNode | BlocksListConfig;
     selectedText?: ReactNode;
     content: BlocksListConfig;
   } & ActionConfig)[];
@@ -29,6 +29,10 @@ function isAction(
   action: Partial<TabsViewConfig['tabs'][number]>
 ): action is Omit<ActionConfig, 'text'> {
   return !!(action.type && action.value);
+}
+
+function isBlocksList(text: TabsViewConfig['tabs'][number]['text']): text is BlocksListConfig {
+  return !!(text as BlocksListConfig).blocks;
 }
 
 export const TabsView = ({
@@ -57,6 +61,17 @@ export const TabsView = ({
           const currentText =
             currentTab === k && selectedText ? selectedText : text;
 
+          if (isBlocksList(text)) {
+            return (
+              <button onClick={navigate} className={`pr-block-tabs-view__tab ${
+                  currentTab === k ? 'pr-block-tabs-view__tab--active' : ''
+                }`}>
+              <BlockProvider config={text}>
+                <BlocksList />
+              </BlockProvider>
+                </button>
+            )
+          }
           if (isAction(action)) {
             return (
               <Action
@@ -88,12 +103,13 @@ export const TabsView = ({
       </div>
       <div className="pr-block-tabs-view__content">
         {tabs.map((tab, index) => (
-          <BlocksList
-            {...tabs[index].content}
-            className={`${tab.content?.className || ''}${
-              index === currentTab ? '' : 'hidden'
-            }`}
-          />
+          <BlockProvider config={{
+            ...tabs[index].content, className: `${tab.content?.className || ''}${index === currentTab ? '' : 'hidden'
+              }`
+          }}>
+
+            <BlocksList />
+          </BlockProvider>
         ))}
       </div>
     </div>
