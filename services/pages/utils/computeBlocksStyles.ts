@@ -9,7 +9,7 @@ export function computePageStyles(page: Prismeai.DetailedPage) {
       return o.map(computeCss);
     }
     if (typeof o === 'object') {
-      if (o.css !== undefined) {
+      if (!o.cssId && o.css !== undefined || o.slug !== undefined) {
         const slug = o.slug || '';
         const { styles: defaultStyles } = (builtinBlocks as any)[slug] || {
           styles: '',
