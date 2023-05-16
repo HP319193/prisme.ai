@@ -3,11 +3,12 @@ import http from 'http';
 import {
   APP_NAME,
   CONTEXTS_CACHE,
+  PERMISSIONS_STORAGE_MONGODB_OPTIONS,
   PORT,
   WORKSPACES_STORAGE_OPTIONS,
   WORKSPACES_STORAGE_TYPE,
 } from '../config';
-
+import { initAccessManager } from './permissions';
 import { init as initAPI } from './api';
 import { initEDA } from './eda';
 import { uncaughtExceptionHandler } from './errors';
@@ -26,6 +27,13 @@ const workspacesSynchroBroker = initEDA(`${APP_NAME}-workspaces-synchro`);
 
 (async function () {
   await Promise.all([broker.ready, schedulesBroker.ready]);
+
+  const accessManager = initAccessManager(
+    PERMISSIONS_STORAGE_MONGODB_OPTIONS,
+    broker
+  );
+  accessManager.start();
+
   const cache = await buildCache(CONTEXTS_CACHE);
   await cache.connect();
 
@@ -39,7 +47,7 @@ const workspacesSynchroBroker = initEDA(`${APP_NAME}-workspaces-synchro`);
     apps,
     workspacesSynchroBroker
   );
-  const runtime = new Runtime(broker, workspaces, cache);
+  const runtime = new Runtime(broker, workspaces, cache, accessManager);
   const schedules = new Schedules(schedulesBroker, apps);
 
   runtime.start();

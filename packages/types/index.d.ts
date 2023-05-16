@@ -6,7 +6,7 @@ declare namespace Prismeai {
         userId?: string;
         id?: string;
     }
-    export type ActionTypes = "manage" | "create" | "read" | "update" | "delete" | "manage_permissions" | "manage_security" | "read_app_dsul" | "get_usage" | "aggregate_search";
+    export type ActionTypes = "manage" | "create" | "read" | "update" | "delete" | "manage_permissions" | "manage_security" | "read_app_dsul" | "get_usage" | "aggregate_search" | "execute";
     export interface All {
         /**
          * Execute each instruction in parallel. Pause current automation execution until all instructions are processed.
@@ -979,6 +979,9 @@ declare namespace Prismeai {
          * {{result}}
          */
         output?: any;
+        authorizations?: {
+            action?: string;
+        };
     }
     export interface AutomationMeta {
         description?: LocalizedText;
@@ -2078,7 +2081,7 @@ declare namespace Prismeai {
         };
     }
     export type SharableSubjectTypes = "pages" | "workspaces";
-    export type SubjectTypes = "apps" | "pages" | "files" | "events" | "workspaces";
+    export type SubjectTypes = "apps" | "pages" | "files" | "events" | "workspaces" | "automations";
     export interface SucceededLogin {
         /**
          * example:

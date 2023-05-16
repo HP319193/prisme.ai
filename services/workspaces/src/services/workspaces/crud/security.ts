@@ -24,6 +24,7 @@ const OnlyAllowedSubjects = [
   SubjectType.File,
   SubjectType.App,
   'events',
+  'automations',
 ];
 const OnlyAllowedActions = Object.values(ActionType);
 
@@ -184,7 +185,14 @@ class Security {
               }
             } else {
               const workspaceIdField =
-                subject === SubjectType.Workspace ? 'id' : 'workspaceId';
+                {
+                  [SubjectType.Workspace]: 'id',
+                  [SubjectType.App]: 'workspaceId',
+                  [SubjectType.File]: 'workspaceId',
+                  [SubjectType.Page]: 'workspaceId',
+                  ['automations']: 'runningWorkspaceId',
+                }[subject] || 'workspaceId';
+
               builtRoles[roleName].casl?.push({
                 ...ruleWithoutConditions,
                 subject,

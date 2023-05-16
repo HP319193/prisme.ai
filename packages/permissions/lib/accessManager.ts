@@ -186,6 +186,7 @@ export class AccessManager<
       {
         subjectType,
         subjectId: subject.id,
+        type: 'casl',
       },
       {
         cache: true,
@@ -578,6 +579,7 @@ export class AccessManager<
     const { permissions } = this.checkAsUser();
 
     const cacheKey = Object.entries(query)
+      .filter(([k, v]) => k !== 'type')
       .map(([k, v]) => `${k}:${v}`)
       .sort()
       .join(',');

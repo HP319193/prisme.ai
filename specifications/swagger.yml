@@ -327,6 +327,7 @@ components:
         - files
         - events
         - workspaces
+        - automations
 
     SharableSubjectTypes:
       type: string
@@ -347,6 +348,7 @@ components:
         - read_app_dsul
         - get_usage
         - aggregate_search
+        - execute
 
 
     PermissionRule:
@@ -623,6 +625,11 @@ components:
         output:
           description: 'Automation result expression. Might be a variable reference, an object/array with variables inside ...'
           example: '{{result}}'
+        authorizations:
+          type: object
+          properties:
+            action:
+              type: string
 
     Block:
       type: object

@@ -12,6 +12,7 @@ export const ActionType = {
   ManageSecurity: 'manage_security',
   GetUsage: 'get_usage',
   AggregateSearch: 'aggregate_search',
+  Execute: 'execute',
 };
 
 export enum SubjectType {

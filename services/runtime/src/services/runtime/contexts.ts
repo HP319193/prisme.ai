@@ -14,6 +14,7 @@ import { parseVariableName, SplittedPath } from '../../utils/parseVariableName';
 import { AppContext, DetailedAutomation } from '../workspaces';
 import { findSecretValues } from '../../utils/secrets';
 import { PrismeContext } from '../../api/middlewares';
+import { AccessManager, ActionType, SubjectType } from '../../permissions';
 
 type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
@@ -116,12 +117,14 @@ export class ContextsManager {
 
   private opLogs: ContextUpdateOpLog[];
   private alreadyProcessedUpdateIds: Set<string>;
+  private accessManager: Required<AccessManager>;
 
   constructor(
     ctx: PrismeContext,
     session: PrismeaiSession,
     cache: Cache,
-    broker: Broker
+    broker: Broker,
+    accessManager: AccessManager
   ) {
     this.workspaceId = ctx.workspaceId!;
     this.session = session;
@@ -156,6 +159,7 @@ export class ContextsManager {
     this.secrets = new Set();
     this.opLogs = [];
     this.alreadyProcessedUpdateIds = new Set();
+    this.accessManager = accessManager as any;
   }
 
   async fetch(contexts?: ContextType[]) {
@@ -204,6 +208,13 @@ export class ContextsManager {
         ...this.contexts?.session,
         ...fetchedContexts.session,
       };
+    }
+
+    if (fetchedContexts.user) {
+      this.accessManager = await this.accessManager.as({
+        id: this.session?.userId!,
+        sessionId: this.session?.sessionId,
+      });
     }
   }
 
@@ -356,12 +367,18 @@ export class ContextsManager {
     return child;
   }
 
-  childAutomation(
+  async childAutomation(
     automation: DetailedAutomation,
     payload: any,
     broker: Broker,
     trigger?: Trigger
-  ): ContextsManager {
+  ): Promise<ContextsManager> {
+    await this.accessManager.throwUnlessCan(
+      ActionType.Execute,
+      SubjectType.Automation,
+      automation
+    );
+
     findSecretValues(payload, automation.secretPaths, this.secrets);
     automation.workspace.secrets.forEach((secret) => this.secrets.add(secret));
 

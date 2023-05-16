@@ -116,7 +116,7 @@ export async function runInstructions(
       logger,
       broker,
       cache,
-      (nextAutomation, payload) => {
+      async (nextAutomation, payload) => {
         const childBroker = broker.child({
           appSlug: nextAutomation.workspace.appContext?.appSlug,
           appInstanceFullSlug:
@@ -125,7 +125,7 @@ export async function runInstructions(
           appInstanceDepth:
             nextAutomation.workspace.appContext?.parentAppSlugs?.length || 0,
         });
-        const childCtx = ctx.childAutomation(
+        const childCtx = await ctx.childAutomation(
           nextAutomation,
           payload,
           childBroker

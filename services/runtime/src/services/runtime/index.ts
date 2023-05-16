@@ -23,6 +23,7 @@ import {
 } from '../../../config';
 import { jsonPathMatches, redact } from '../../utils';
 import { PrismeContext } from '../../api/middlewares';
+import { AccessManager, SubjectType } from '../../permissions';
 
 interface PendingWait {
   event: string;
@@ -63,12 +64,20 @@ export default class Runtime {
   private pendingWaits: Record<EventName, PendingWait[]>;
   private contexts: Record<string, ContextsManager[]>;
 
-  constructor(broker: Broker, workspaces: Workspaces, cache: Cache) {
+  private accessManager: AccessManager;
+
+  constructor(
+    broker: Broker,
+    workspaces: Workspaces,
+    cache: Cache,
+    accessManager: AccessManager
+  ) {
     this.broker = broker;
     this.workspaces = workspaces;
     this.cache = cache;
     this.pendingWaits = {};
     this.contexts = {};
+    this.accessManager = accessManager;
   }
 
   async start() {
@@ -91,57 +100,16 @@ export default class Runtime {
     };
 
     // Pull session tokens to inhect them within their corresponding context
-    this.broker.on<Prismeai.SucceededLogin['payload']>(
-      [EventType.SuccededLogin],
-      async (event) => {
-        const {
-          token,
-          id: sessionId,
-          expiresIn = 30 * 24 * 60 * 60,
-          expires,
-        } = event?.payload?.session || {};
-        const userId = event?.payload?.id;
-        if (!token || !userId || !sessionId) {
-          return true;
-        }
-        await this.cache.setSession({
-          userId,
-          sessionId,
-          token,
-          expiresIn,
-          expires,
-          authData: event?.payload?.authData,
-          email: event?.payload?.email,
-        });
-        return true;
-      }
-    );
+    this.startSessionsSynchronization();
 
-    // Sync contexts
-    this.broker.on<Prismeai.UpdatedContexts['payload']>(
-      EventType.UpdatedContexts,
-      (event) => {
-        const updates = event.payload?.updates.filter((cur) =>
-          SYNCHRONIZE_CONTEXTS.includes(cur.context)
-        );
-        const contexts = this.contexts[event.source.correlationId!];
-        if (updates?.length && contexts?.length) {
-          contexts.forEach((cur) => {
-            cur.applyUpdateOpLogs(
-              updates as ContextUpdateOpLog[],
-              event.id,
-              event.source?.sessionId!
-            );
-          });
-        }
-        return true;
-      },
-      {
-        GroupPartitions: false,
-      }
-    );
+    this.startContextsSynchronization();
 
-    // Start processing events
+    this.startEventsProcessing();
+
+    this.startAccessManagerCacheSynchronization();
+  }
+
+  private startEventsProcessing() {
     this.broker.on(
       [
         RUNTIME_EMITS_BROKER_TOPIC,
@@ -192,6 +160,59 @@ export default class Runtime {
       },
       {
         GroupPartitions: false,
+      }
+    );
+  }
+
+  private async startContextsSynchronization() {
+    this.broker.on<Prismeai.UpdatedContexts['payload']>(
+      EventType.UpdatedContexts,
+      (event) => {
+        const updates = event.payload?.updates.filter((cur) =>
+          SYNCHRONIZE_CONTEXTS.includes(cur.context)
+        );
+        const contexts = this.contexts[event.source.correlationId!];
+        if (updates?.length && contexts?.length) {
+          contexts.forEach((cur) => {
+            cur.applyUpdateOpLogs(
+              updates as ContextUpdateOpLog[],
+              event.id,
+              event.source?.sessionId!
+            );
+          });
+        }
+        return true;
+      },
+      {
+        GroupPartitions: false,
+      }
+    );
+  }
+
+  private async startSessionsSynchronization() {
+    this.broker.on<Prismeai.SucceededLogin['payload']>(
+      [EventType.SuccededLogin],
+      async (event) => {
+        const {
+          token,
+          id: sessionId,
+          expiresIn = 30 * 24 * 60 * 60,
+          expires,
+        } = event?.payload?.session || {};
+        const userId = event?.payload?.id;
+        if (!token || !userId || !sessionId) {
+          return true;
+        }
+        await this.cache.setSession({
+          userId,
+          sessionId,
+          token,
+          expiresIn,
+          expires,
+          authData: event?.payload?.authData,
+          email: event?.payload?.email,
+        });
+        return true;
       }
     );
   }
@@ -259,7 +280,13 @@ export default class Runtime {
     source: PrismeContext,
     session: PrismeaiSession
   ): Promise<ContextsManager> {
-    const ctx = new ContextsManager(source, session, this.cache, this.broker);
+    const ctx = new ContextsManager(
+      source,
+      session,
+      this.cache,
+      this.broker,
+      this.accessManager
+    );
     ctx.additionalGlobals = {
       ...ADDITIONAL_GLOBAL_VARS,
       apiUrl: PUBLIC_API_URL,
@@ -431,11 +458,16 @@ export default class Runtime {
         }
       );
 
-      const childCtx = ctx.childAutomation(automation, payload, childBroker, {
-        type: trigger.type,
-        value: trigger.value,
-        id: trigger.type === 'event' ? payload.id : undefined,
-      });
+      const childCtx = await ctx.childAutomation(
+        automation,
+        payload,
+        childBroker,
+        {
+          type: trigger.type,
+          value: trigger.value,
+          id: trigger.type === 'event' ? payload.id : undefined,
+        }
+      );
 
       const output = await this.executeAutomation(
         trigger.workspace,
@@ -564,5 +596,48 @@ export default class Runtime {
         payload: event.payload,
       },
     };
+  }
+
+  private async startAccessManagerCacheSynchronization() {
+    const workspaces: Record<string, Prismeai.Workspace> = {};
+    const uncachedFetch = (<any>this.accessManager).fetch.bind(
+      this.accessManager
+    );
+    // Patch accessManager.fetch to cache workspaces
+    (<any>this.accessManager).fetch = (
+      subjectType: SubjectType,
+      id: string
+    ) => {
+      if (
+        subjectType === SubjectType.Workspace &&
+        typeof id === 'string' &&
+        workspaces[id]
+      ) {
+        return workspaces[id];
+      }
+      const ret = uncachedFetch(subjectType, id);
+      if (subjectType === SubjectType.Workspace && typeof id === 'string') {
+        workspaces[id] = ret;
+      }
+      return ret;
+    };
+
+    // Update our workspaces cache
+    this.broker.on<Prismeai.WorkspacePermissionsShared['payload']>(
+      [
+        EventType.WorkspacePermissionsShared,
+        EventType.WorkspacePermissionsDeleted,
+      ],
+      (event) => {
+        const { workspaceId } = event.source;
+        if (workspaceId && workspaceId in workspaces) {
+          delete workspaces[workspaceId];
+        }
+        return true;
+      },
+      {
+        GroupPartitions: false,
+      }
+    );
   }
 }
