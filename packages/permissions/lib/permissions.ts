@@ -404,10 +404,15 @@ export class Permissions<
       );
     } catch (error) {
       if (error instanceof ForbiddenError) {
-        throw new PrismeaiForbiddenError(error.message, {
-          action: error.action,
-          subjectType: error.subjectType,
-        });
+        throw new PrismeaiForbiddenError(
+          `${error.message} ${(<any>subject).id || (<any>subject).slug}`,
+          {
+            action: error.action,
+            subjectType: error.subjectType,
+            id: (<any>subject).id,
+            slug: (<any>subject).slug,
+          }
+        );
       }
       throw error;
     }

@@ -1,6 +1,6 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import { AccessManager, BaseSubject, ApiKey, PublicAccess } from '..';
+import { AccessManager, BaseSubject, ApiKey } from '..';
 import abacWithRoles, { Role } from '../examples/abacWithRoles';
 import apiKeys from '../examples/apiKeys';
 

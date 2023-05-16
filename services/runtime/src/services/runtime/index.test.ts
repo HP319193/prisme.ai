@@ -1,5 +1,5 @@
 import waitForExpect from 'wait-for-expect';
-
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import Runtime from '.';
 import { Broker } from '@prisme.ai/broker/lib/__mocks__';
 import { EventSource } from '@prisme.ai/broker';
@@ -12,17 +12,41 @@ import Cache from '../../cache/__mocks__/cache';
 import { AvailableModels } from '../workspaces/__mocks__/workspaces';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../config';
 import { EventType } from '../../eda';
+import {
+  AccessManager,
+  getSuperAdmin,
+  initAccessManager,
+  SubjectType,
+} from '../../permissions';
 
-// jest.setTimeout(1000);
+jest.setTimeout(2000);
 
 global.console.warn = jest.fn();
 
+let mongod: MongoMemoryServer;
 let brokers: Broker[] = [];
+
+const getMockedAccessManager = () => {
+  const mock = {
+    findAll: jest.fn(),
+    throwUnlessCan: jest.fn(),
+    create: jest.fn(),
+    get: jest.fn(),
+    fetch: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    deleteMany: jest.fn(),
+  };
+  (<any>mock).as = jest.fn(() => mock);
+
+  return mock;
+};
 
 const getMocks = (
   partialSource: Partial<EventSource>,
   mockExecuteAutomation: boolean = true,
-  opts?: any
+  opts?: any,
+  accessManager?: AccessManager
 ) => {
   const parentBroker = new Broker();
   const broker = parentBroker.child(partialSource, {
@@ -43,7 +67,13 @@ const getMocks = (
     broker as any
   );
   workspaces.saveWorkspace = () => Promise.resolve();
-  const runtime = new Runtime(broker as any, workspaces, new Cache());
+  const mockedAccessManager = accessManager || getMockedAccessManager();
+  const runtime = new Runtime(
+    broker as any,
+    workspaces,
+    new Cache(),
+    mockedAccessManager as any
+  );
 
   brokers.push(broker);
   workspaces.startLiveUpdates();
@@ -1082,6 +1112,274 @@ describe("AppInstance's lifecycle events", () => {
   });
 });
 
+describe('Automations execution permissions', () => {
+  let baseAccessManager: AccessManager;
+  let superAdmin: Required<AccessManager>;
+  let broker, runtime, sendEventSpy;
+
+  beforeAll(async () => {
+    mongod = await MongoMemoryServer.create();
+    baseAccessManager = initAccessManager(
+      {
+        host: mongod.getUri(),
+      },
+      { on: jest.fn() } as any
+    );
+    await baseAccessManager.start();
+
+    const mocks = getMocks(
+      {
+        workspaceId: AvailableModels.Basic,
+        userId: 'randomUser',
+      },
+      false,
+      {},
+      baseAccessManager
+    );
+    broker = mocks.broker;
+    runtime = mocks.runtime;
+    sendEventSpy = mocks.sendEventSpy;
+
+    broker.start();
+    runtime.start();
+
+    superAdmin = await getSuperAdmin(baseAccessManager);
+
+    // Init testing workspace
+    await superAdmin.create(SubjectType.Workspace, {
+      id: AvailableModels.Basic,
+      name: AvailableModels.Basic,
+    });
+
+    // Init our custom role
+    await superAdmin.saveRole({
+      name: 'agent',
+      id: `workspaces/${AvailableModels.Basic}/role/agent`,
+      subjectType: SubjectType.Workspace,
+      subjectId: AvailableModels.Basic,
+      type: 'casl',
+      rules: [],
+      casl: [
+        {
+          action: 'execute',
+          subject: 'automations',
+          conditions: {
+            'authorizations.action': {
+              $in: ['protected'],
+            },
+          },
+        },
+      ],
+    });
+    await superAdmin.pullRole({
+      subjectType: SubjectType.Workspace,
+      subjectId: AvailableModels.Basic,
+    });
+
+    // Init owner / editor
+    await superAdmin.grant(
+      SubjectType.Workspace,
+      AvailableModels.Basic,
+      { id: 'owner' },
+      {
+        role: 'owner',
+      }
+    );
+    await superAdmin.grant(
+      SubjectType.Workspace,
+      AvailableModels.Basic,
+      { id: 'editor' },
+      {
+        role: 'editor',
+      }
+    );
+
+    await superAdmin.grant(
+      SubjectType.Workspace,
+      AvailableModels.Basic,
+      { id: 'agent' },
+      {
+        role: 'agent',
+      }
+    );
+  });
+
+  it('Automations with authorizations.action cannot be executed without explicit permission', async () => {
+    let event = await broker.send(
+      'protected',
+      {},
+      { userId: 'randomUser', sessionId: 'randomUser' }
+    );
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.Error,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId: 'randomUser',
+          }),
+          payload: expect.objectContaining({
+            error: 'ForbiddenError',
+          }),
+        })
+      );
+    });
+  });
+
+  it('Automations with authorizations.action can be executed by owner/editor', async () => {
+    let event = await broker.send(
+      'protected',
+      {},
+      { userId: 'owner', sessionId: 'owner' }
+    );
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId: 'owner',
+            automationSlug: 'protected',
+          }),
+          payload: expect.objectContaining({
+            output: 'success',
+          }),
+        })
+      );
+    });
+
+    event = await broker.send(
+      'protected',
+      {},
+      { userId: 'editor', sessionId: 'editor' }
+    );
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId: 'editor',
+            automationSlug: 'protected',
+          }),
+          payload: expect.objectContaining({
+            output: 'success',
+          }),
+        })
+      );
+    });
+
+    // Also works with nested protected automations
+    // ... with direct call
+    event = await broker.send(
+      'protected',
+      { call: true },
+      { userId: 'owner', sessionId: 'owner' }
+    );
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId: 'owner',
+            automationSlug: 'nestedProtected',
+          }),
+        })
+      );
+    });
+
+    // ... or emit
+    event = await broker.send(
+      'protected',
+      { emit: true },
+      { userId: 'owner', sessionId: 'owner' }
+    );
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId: 'owner',
+            automationSlug: 'nestedProtected',
+          }),
+        })
+      );
+    });
+  });
+
+  it('Automations with authorizations.action can be executed with a custom role explicitly allowing this', async () => {
+    let event = await broker.send(
+      'protected',
+      {},
+      { userId: 'agent', sessionId: 'agent' }
+    );
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId: 'agent',
+            automationSlug: 'protected',
+          }),
+          payload: expect.objectContaining({
+            output: 'success',
+          }),
+        })
+      );
+    });
+  });
+
+  it('Permissions also apply to nested automation, with direct calls or through emits', async () => {
+    // Agent has no access to nestedProtected ...
+
+    // ... either from emits
+    let event = await broker.send(
+      'protected',
+      { emit: true },
+      { userId: 'agent', sessionId: 'agent' }
+    );
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.Error,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+          }),
+          payload: expect.objectContaining({
+            error: 'ForbiddenError',
+          }),
+        })
+      );
+    });
+
+    // ... or Direct calls
+    event = await broker.send(
+      'protected',
+      { call: true },
+      { userId: 'agent', sessionId: 'agent' }
+    );
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.Error,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+          }),
+          payload: expect.objectContaining({
+            error: 'ForbiddenError',
+          }),
+        })
+      );
+    });
+  });
+});
+
 afterAll(async () => {
   brokers.forEach((broker) => broker.close());
+  if (mongod) {
+    await mongod.stop();
+  }
 });

@@ -69,7 +69,7 @@ export function initAccessManager(
   return accessManager;
 }
 
-async function getSuperAdmin(baseAccessManager: AccessManager) {
+export async function getSuperAdmin(baseAccessManager: AccessManager) {
   return await baseAccessManager.as({
     id: 'api',
     sessionId: 'adminSession',

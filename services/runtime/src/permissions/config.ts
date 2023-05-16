@@ -52,6 +52,11 @@ export const config: PermissionsConfig<
           subject: SubjectType.Automation,
           priority: LAST_CUSTOM_RULE_PRIORITY + 1000,
         },
+        {
+          action: ActionType.Manage,
+          subject: SubjectType.Workspace,
+          priority: LAST_CUSTOM_RULE_PRIORITY + 1000,
+        },
       ],
     },
     {
