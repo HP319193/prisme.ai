@@ -20,11 +20,12 @@ if (IS_LOCAL_STORAGE_AVAILABLE) {
     configurable: true,
   });
 }
+const ls = localStorage!
 
 export const Storage = {
   get: (k: string) => {
     if (IS_LOCAL_STORAGE_AVAILABLE) {
-      const v = localStorage.getItem(k);
+      const v = ls.getItem(k);
       try {
         return JSON.parse(v || '');
       } catch (e) {
@@ -37,13 +38,13 @@ export const Storage = {
   set: (k: string, v: any) => {
     const value = typeof v === 'object' ? JSON.stringify(v) : v;
     if (IS_LOCAL_STORAGE_AVAILABLE) {
-      return localStorage.setItem(k, value);
+      return ls.setItem(k, value);
     }
     return Cookie.set(k, value);
   },
   remove: (k: string) => {
     if (IS_LOCAL_STORAGE_AVAILABLE) {
-      return localStorage.removeItem(k);
+      return ls.removeItem(k);
     }
     Cookie.remove(k);
   },
