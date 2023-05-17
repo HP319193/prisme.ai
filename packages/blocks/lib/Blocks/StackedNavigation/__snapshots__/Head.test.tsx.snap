@@ -16,9 +16,6 @@ exports[`should render with blocks 1`] = `
       className="head__button-back button-back ml-2"
       onClick={[MockFunction]}
     />
-    <div
-      className="pr-block-blocks-list flex-1"
-    />
   </div>
 </div>
 `;
@@ -38,9 +35,6 @@ exports[`should render with no block 1`] = `
     <button
       className="head__button-back button-back ml-2"
       onClick={[MockFunction]}
-    />
-    <div
-      className="pr-block-blocks-list flex-1"
     />
   </div>
 </div>
