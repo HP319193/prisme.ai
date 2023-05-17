@@ -8,6 +8,7 @@ import { marked } from 'marked';
 import { BaseBlock } from './BaseBlock';
 import { keysKebabToCamel } from '../utils/kebabToCamel';
 import mustache from 'mustache';
+import { Tooltip } from 'antd';
 
 interface RichTextConfig {
   content: string | Prismeai.LocalizedText;
@@ -128,15 +129,13 @@ export const RichText = ({
 
           return (
             <Script
-              {...((domNode.attribs as unknown) as HTMLScriptElement)}
+              {...(domNode.attribs as unknown as HTMLScriptElement)}
               children={domToReact(domNode.children, options)}
             />
           );
         case 'a':
-          const {
-            style,
-            ...attribs
-          } = (domNode.attribs as unknown) as HTMLAnchorElement;
+          const { style, ...attribs } =
+            domNode.attribs as unknown as HTMLAnchorElement;
           return (
             <Link
               {...attribs}
@@ -152,6 +151,13 @@ export const RichText = ({
                 ...parseConfig(keysKebabToCamel(config)),
                 parentClassName: className,
               }}
+            />
+          );
+        case 'pr-tooltip':
+          return (
+            <Tooltip
+              {...domNode.attribs}
+              children={domToReact(domNode.children, options)}
             />
           );
         default:
@@ -173,9 +179,8 @@ export const RichText = ({
 };
 
 export const RichTextInContext: BlockComponent<RichTextConfig> = () => {
-  const { config: { content = '', ...config } = {} } = useBlock<
-    RichTextConfig
-  >();
+  const { config: { content = '', ...config } = {} } =
+    useBlock<RichTextConfig>();
   return (
     <BaseBlock>
       <RichText {...config}>{content}</RichText>
